@@ -20,9 +20,9 @@ public class JsonCodeFormatter implements NutsCodeFormat {
 
 
     @Override
-    public NutsTextNode tokenToNode(String text, String nodeType,NutsSession session) {
+    public NutsText tokenToNode(String text, String nodeType,NutsSession session) {
         factory.setSession(session);
-        return factory.plain(text);
+        return factory.forPlain(text);
     }
 
     @Override
@@ -32,16 +32,16 @@ public class JsonCodeFormatter implements NutsCodeFormat {
     }
 
     @Override
-    public NutsTextNode textToNode(String text, NutsSession session) {
+    public NutsText textToNode(String text, NutsSession session) {
         factory.setSession(session);
-        List<NutsTextNode> all = new ArrayList<>();
+        List<NutsText> all = new ArrayList<>();
         StringReaderExt ar = new StringReaderExt(text);
         while (ar.hasNext()) {
             switch (ar.peekChar()) {
                 case '{':
                 case '}':
                 case ':': {
-                    all.add(factory.styled(String.valueOf(ar.nextChar()), NutsTextNodeStyle.separator()));
+                    all.add(factory.forStyled(String.valueOf(ar.nextChar()), NutsTextNodeStyle.separator()));
                     break;
                 }
                 case '\'': {
@@ -67,11 +67,11 @@ public class JsonCodeFormatter implements NutsCodeFormat {
                 }
                 case '.':
                 case '-':{
-                    NutsTextNode[] d = StringReaderExtUtils.readNumber(session, ar);
+                    NutsText[] d = StringReaderExtUtils.readNumber(session, ar);
                     if(d!=null) {
                         all.addAll(Arrays.asList(d));
                     }else{
-                        all.add(factory.styled(String.valueOf(ar.nextChar()), NutsTextNodeStyle.separator()));
+                        all.add(factory.forStyled(String.valueOf(ar.nextChar()), NutsTextNodeStyle.separator()));
                     }
                     break;
                 }
@@ -81,7 +81,7 @@ public class JsonCodeFormatter implements NutsCodeFormat {
                     }else if(ar.peekChars("/*")){
                         all.addAll(Arrays.asList(StringReaderExtUtils.readSlashStarComments(session,ar)));
                     }else{
-                        all.add(factory.styled(String.valueOf(ar.nextChar()), NutsTextNodeStyle.separator()));
+                        all.add(factory.forStyled(String.valueOf(ar.nextChar()), NutsTextNodeStyle.separator()));
                     }
                     break;
                 }
@@ -89,27 +89,27 @@ public class JsonCodeFormatter implements NutsCodeFormat {
                     if(Character.isWhitespace(ar.peekChar())){
                         all.addAll(Arrays.asList(StringReaderExtUtils.readSpaces(session,ar)));
                     }else {
-                        NutsTextNode[] d = StringReaderExtUtils.readJSIdentifier(session, ar);
+                        NutsText[] d = StringReaderExtUtils.readJSIdentifier(session, ar);
                         if (d != null) {
                             if (d.length == 1 && d[0].getType() == NutsTextNodeType.PLAIN) {
-                                String txt = ((NutsTextNodePlain) d[0]).getText();
+                                String txt = ((NutsTextPlain) d[0]).getText();
                                 switch (txt) {
                                     case "true":
                                     case "false": {
-                                        d[0] = factory.styled(d[0], NutsTextNodeStyle.keyword());
+                                        d[0] = factory.forStyled(d[0], NutsTextNodeStyle.keyword());
                                         break;
                                     }
                                 }
                             }
                             all.addAll(Arrays.asList(d));
                         } else {
-                            all.add(factory.styled(String.valueOf(ar.nextChar()), NutsTextNodeStyle.separator()));
+                            all.add(factory.forStyled(String.valueOf(ar.nextChar()), NutsTextNodeStyle.separator()));
                         }
                     }
                     break;
                 }
             }
         }
-        return factory.list(all.toArray(new NutsTextNode[0]));
+        return factory.forList(all.toArray(new NutsText[0]));
     }
 }

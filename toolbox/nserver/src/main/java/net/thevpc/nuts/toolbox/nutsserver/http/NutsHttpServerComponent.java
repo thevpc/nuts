@@ -206,7 +206,7 @@ public class NutsHttpServerComponent implements NutsServerComponent {
         PrintStream out = session.out();
         NutsTextManager factory = session.getWorkspace().formats().text();
         out.printf("Nuts Http Service '%s' running %s at %s\n", serverId,
-                factory.styled(
+                factory.forStyled(
                         (httpConfig.isTls()?"https":"http"),NutsTextNodeStyle.primary(1)
                 ),
                 inetSocketAddress);

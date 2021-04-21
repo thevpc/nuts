@@ -34,12 +34,12 @@ public class DefaultNutsTextManager implements NutsTextManager {
     }
 
     @Override
-    public NutsTextNode parse(String t) {
-        return t == null ? blank() : parser().parse(new StringReader(t));
+    public NutsText parse(String t) {
+        return t == null ? forBlank() : parser().parse(new StringReader(t));
     }
 
     @Override
-    public NutsTextNodeParser parser() {
+    public NutsTextParser parser() {
         checkSession();
         return new DefaultNutsTextNodeParser(getSession());
     }
@@ -61,17 +61,17 @@ public class DefaultNutsTextManager implements NutsTextManager {
     }
 
     @Override
-    public NutsTextNode blank() {
-        return plain("");
+    public NutsText forBlank() {
+        return forPlain("");
     }
 
     @Override
-    public NutsTextNode nodeFor(Object t) {
+    public NutsText toText(Object t) {
         if (t == null) {
-            return blank();
+            return forBlank();
         }
-        if (t instanceof NutsTextNode) {
-            return (NutsTextNode) t;
+        if (t instanceof NutsText) {
+            return (NutsText) t;
         }
         if (t instanceof NutsFormattable) {
             return parse(((NutsFormattable) t).formatter().format());
@@ -83,27 +83,27 @@ public class DefaultNutsTextManager implements NutsTextManager {
             return ((NutsString) t).toNode();
         }
         if (t instanceof Number) {
-            return styled(t.toString(), NutsTextNodeStyle.number());
+            return forStyled(t.toString(), NutsTextNodeStyle.number());
         }
         if (t instanceof Date || t instanceof Temporal) {
-            return styled(t.toString(), NutsTextNodeStyle.date());
+            return forStyled(t.toString(), NutsTextNodeStyle.date());
         }
         if (t instanceof Boolean) {
-            return styled(t.toString(), NutsTextNodeStyle.bool());
+            return forStyled(t.toString(), NutsTextNodeStyle.bool());
         }
         if (t instanceof Path || t instanceof File || t instanceof URL) {
-            return styled(t.toString(), NutsTextNodeStyle.path());
+            return forStyled(t.toString(), NutsTextNodeStyle.path());
         }
         if (t instanceof Throwable) {
-            return styled(
+            return forStyled(
                     CoreStringUtils.exceptionToString((Throwable) t),
                     NutsTextNodeStyle.error()
             );
         }
-        return plain(t.toString());
+        return forPlain(t.toString());
     }
 
-    private NutsTextNode _NutsFormattedMessage_toString(NutsMessage m) {
+    private NutsText _NutsFormattedMessage_toString(NutsMessage m) {
         checkSession();
         NutsTextFormatStyle style = m.getStyle();
         if (style == null) {
@@ -127,7 +127,7 @@ public class DefaultNutsTextManager implements NutsTextManager {
                 //do nothing, support format pattern
                 args2[i] = a;
             } else {
-                args2[i] = txt.nodeFor(a).toString();
+                args2[i] = txt.toText(a).toString();
             }
         }
         switch (style) {
@@ -144,60 +144,60 @@ public class DefaultNutsTextManager implements NutsTextManager {
     }
 
     @Override
-    public NutsTextNodePlain plain(String t) {
+    public NutsTextPlain forPlain(String t) {
         checkSession();
-        return new DefaultNutsTextNodePlain(getSession(), t);
+        return new DefaultNutsTextPlain(getSession(), t);
     }
 
     @Override
-    public NutsTextNodeList list(NutsTextNode... nodes) {
-        return list(Arrays.asList(nodes));
+    public NutsTextList forList(NutsText... nodes) {
+        return forList(Arrays.asList(nodes));
     }
 
     @Override
-    public NutsTextNodeList list(Collection<NutsTextNode> nodes) {
+    public NutsTextList forList(Collection<NutsText> nodes) {
         checkSession();
         if (nodes == null) {
-            return new DefaultNutsTextNodeList(getSession(), new NutsTextNode[0]);
+            return new DefaultNutsTextList(getSession(), new NutsText[0]);
         }
-        return new DefaultNutsTextNodeList(getSession(), nodes.toArray(new NutsTextNode[0]));
+        return new DefaultNutsTextList(getSession(), nodes.toArray(new NutsText[0]));
     }
 
     @Override
-    public NutsTextNodeStyled styled(String other, NutsTextNodeStyle decorations) {
-        return styled(plain(other), decorations);
+    public NutsTextStyled forStyled(String other, NutsTextNodeStyle decorations) {
+        return forStyled(forPlain(other), decorations);
     }
     
 
     @Override
-    public NutsTextNodeStyled styled(NutsString other, NutsTextNodeStyle decorations) {
-        return styled(other.toString(), decorations);
+    public NutsTextStyled forStyled(NutsString other, NutsTextNodeStyle decorations) {
+        return forStyled(other.toString(), decorations);
     }
 
     @Override
-    public NutsTextNodeStyled styled(String other, NutsTextNodeStyles decorations) {
-        return styled(plain(other), decorations);
+    public NutsTextStyled forStyled(String other, NutsTextNodeStyles decorations) {
+        return forStyled(forPlain(other), decorations);
     }
 
     @Override
-    public NutsTextNodeStyled styled(NutsString other, NutsTextNodeStyles decorations) {
-        return styled(ws.formats().text().parse(other.toString()), decorations);
+    public NutsTextStyled forStyled(NutsString other, NutsTextNodeStyles decorations) {
+        return forStyled(ws.formats().text().parse(other.toString()), decorations);
     }
 
     @Override
-    public NutsTextNodeStyled styled(NutsTextNode other, NutsTextNodeStyles styles) {
+    public NutsTextStyled forStyled(NutsText other, NutsTextNodeStyles styles) {
         return createStyled(other, styles, true);
     }
 
     @Override
-    public NutsTextNodeCommand command(NutsTerminalCommand command) {
+    public NutsTextCommand forCommand(NutsTerminalCommand command) {
         checkSession();
-        return new DefaultNutsTextNodeCommand(getSession(), "```!", command, "", "```");
+        return new DefaultNutsTextCommand(getSession(), "```!", command, "", "```");
     }
 
 
     @Override
-    public NutsTextNodeAnchor anchor(String anchorName) {
+    public NutsTextAnchor forAnchor(String anchorName) {
         return createAnchor(
                 "```!",
                 "", "```", anchorName
@@ -205,7 +205,7 @@ public class DefaultNutsTextManager implements NutsTextManager {
     }
 
     @Override
-    public NutsTextNodeLink link(NutsTextNode value) {
+    public NutsTextLink forLink(NutsText value) {
         return createLink(
                 "```!",
                 "", "```", value
@@ -214,7 +214,7 @@ public class DefaultNutsTextManager implements NutsTextManager {
 
 
     @Override
-    public NutsTextNodeCode code(String lang, String text) {
+    public NutsTextCode forCode(String lang, String text) {
         checkSession();
         if (text == null) {
             text = "";
@@ -231,7 +231,7 @@ public class DefaultNutsTextManager implements NutsTextManager {
         }
     }
 
-    public NutsTextNode title(NutsTextNode t, int level) {
+    public NutsText title(NutsText t, int level) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < level; i++) {
             sb.append("#");
@@ -240,69 +240,69 @@ public class DefaultNutsTextManager implements NutsTextManager {
         return createTitle(sb.toString(), level, t, true);
     }
 
-    public NutsTextNode fg(String t, int level) {
-        return fg(plain(t), level);
+    public NutsText fg(String t, int level) {
+        return fg(forPlain(t), level);
     }
 
-    public NutsTextNode fg(NutsTextNode t, int level) {
+    public NutsText fg(NutsText t, int level) {
         NutsTextNodeStyle textStyle = NutsTextNodeStyle.primary(level);
         return createStyled("##:p" + level + ":", "##", t, NutsTextNodeStyles.of(textStyle), true);
     }
 
-    public NutsTextNode bg(String t, int level) {
-        return bg(plain(t), level);
+    public NutsText bg(String t, int level) {
+        return bg(forPlain(t), level);
     }
 
-    public NutsTextNode bg(NutsTextNode t, int variant) {
+    public NutsText bg(NutsText t, int variant) {
         NutsTextNodeStyle textStyle = NutsTextNodeStyle.primary(variant);
         return createStyled("##:s" + variant + ":", "##", t, NutsTextNodeStyles.of(textStyle), true);
     }
 
-    public NutsTextNode comments(String image) {
+    public NutsText comments(String image) {
         return fg(image, 4);
     }
 
-    public NutsTextNode literal(String image) {
+    public NutsText literal(String image) {
         return fg(image, 1);
     }
 
-    public NutsTextNode stringLiteral(String image) {
+    public NutsText stringLiteral(String image) {
         return fg(image, 3);
     }
 
-    public NutsTextNode numberLiteral(String image) {
+    public NutsText numberLiteral(String image) {
         return fg(image, 1);
     }
 
-    public NutsTextNode reservedWord(String image) {
+    public NutsText reservedWord(String image) {
         return fg(image, 1);
     }
 
-    public NutsTextNode annotation(String image) {
+    public NutsText annotation(String image) {
         return fg(image, 3);
     }
 
-    public NutsTextNode separator(String image) {
+    public NutsText separator(String image) {
         return fg(image, 6);
     }
 
-    public NutsTextNode commandName(String image) {
+    public NutsText commandName(String image) {
         return fg(image, 1);
     }
 
-    public NutsTextNode subCommand1Name(String image) {
+    public NutsText subCommand1Name(String image) {
         return fg(image, 2);
     }
 
-    public NutsTextNode subCommand2Name(String image) {
+    public NutsText subCommand2Name(String image) {
         return fg(image, 3);
     }
 
-    public NutsTextNode optionName(String image) {
+    public NutsText optionName(String image) {
         return fg(image, 4);
     }
 
-    public NutsTextNode userInput(String image) {
+    public NutsText userInput(String image) {
         return fg(image, 8);
     }
 
@@ -311,9 +311,9 @@ public class DefaultNutsTextManager implements NutsTextManager {
      *
      * @param other other
      * @param textNodeStyle textNodeStyle
-     * @return NutsTextNode
+     * @return NutsText
      */
-    public NutsTextNodeStyled styled(NutsTextNode other, NutsTextNodeStyle textNodeStyle) {
+    public NutsTextStyled forStyled(NutsText other, NutsTextNodeStyle textNodeStyle) {
         return createStyled(other, NutsTextNodeStyles.of(textNodeStyle), true);
     }
 
@@ -362,8 +362,8 @@ public class DefaultNutsTextManager implements NutsTextManager {
         return ss;
     }
 
-    public NutsTextNodeStyled createStyled(NutsTextNode child, NutsTextNodeStyles textStyles, boolean completed) {
-        NutsTextNode curr = child;
+    public NutsTextStyled createStyled(NutsText child, NutsTextNodeStyles textStyles, boolean completed) {
+        NutsText curr = child;
         if (textStyles == null || textStyles.isNone()) {
             return createStyled("", "", child, textStyles, completed);
         }
@@ -421,50 +421,50 @@ public class DefaultNutsTextManager implements NutsTextManager {
                 }
             }
         }
-        return (NutsTextNodeStyled) curr;
+        return (NutsTextStyled) curr;
     }
 
-    public NutsTextNodeStyled createStyled(String start, String end, NutsTextNode child, NutsTextNodeStyles textStyle, boolean completed) {
+    public NutsTextStyled createStyled(String start, String end, NutsText child, NutsTextNodeStyles textStyle, boolean completed) {
         if (textStyle == null) {
             textStyle = NutsTextNodeStyles.NONE;
         }
         checkSession();
-        return new DefaultNutsTextNodeStyled(getSession(), start, end, child, completed, textStyle);
+        return new DefaultNutsTextStyled(getSession(), start, end, child, completed, textStyle);
     }
 
-    public NutsTextNodeCode createCode(String start, String kind, String separator, String end, String text) {
+    public NutsTextCode createCode(String start, String kind, String separator, String end, String text) {
         checkSession();
-        return new DefaultNutsTextNodeCode(getSession(), start, kind, separator, end, text);
+        return new DefaultNutsTextCode(getSession(), start, kind, separator, end, text);
     }
 
-    public NutsTextNodeCommand createCommand(String start, NutsTerminalCommand command, String separator, String end) {
+    public NutsTextCommand createCommand(String start, NutsTerminalCommand command, String separator, String end) {
         checkSession();
-        return new DefaultNutsTextNodeCommand(getSession(), start, command, separator, end);
+        return new DefaultNutsTextCommand(getSession(), start, command, separator, end);
     }
 
-    public NutsTextNodeLink createLink(String start, String separator, String end, NutsTextNode value) {
+    public NutsTextLink createLink(String start, String separator, String end, NutsText value) {
         checkSession();
-        return new DefaultNutsTextNodeLink(getSession(), start, separator, end, value);
+        return new DefaultNutsTextLink(getSession(), start, separator, end, value);
     }
 
-    public NutsTextNodeAnchor createAnchor(String start, String separator, String end, String value) {
+    public NutsTextAnchor createAnchor(String start, String separator, String end, String value) {
         checkSession();
-        return new DefaultNutsTextNodeAnchor(getSession(), start, separator, end, value);
+        return new DefaultNutsTextAnchor(getSession(), start, separator, end, value);
     }
 
-    public NutsTextNode createTitle(String start, int level, NutsTextNode child, boolean complete) {
+    public NutsText createTitle(String start, int level, NutsText child, boolean complete) {
         checkSession();
-        return new DefaultNutsTextNodeTitle(getSession(), start, level, child);
+        return new DefaultNutsTextTitle(getSession(), start, level, child);
     }
 
     @Override
-    public NutsTitleNumberSequence createTitleNumberSequence() {
+    public NutsTextNumbering forNumbering() {
         checkSession();
         return new DefaultNutsTitleNumberSequence("");
     }
 
     @Override
-    public NutsTitleNumberSequence createTitleNumberSequence(String pattern) {
+    public NutsTextNumbering forTitleNumberSequence(String pattern) {
         checkSession();
         return new DefaultNutsTitleNumberSequence((pattern == null || pattern.isEmpty()) ? "1.1.1.a.1" : pattern);
     }

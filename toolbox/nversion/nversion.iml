@@ -13,7 +13,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="nuts" />
     <orderEntry type="module" module-name="thevpc-common-io" />
-    <orderEntry type="module" module-name="thevpc-common-ssh" />
+    <orderEntry type="library" name="Maven: net.thevpc.common:thevpc-common-ssh:1.1.6" level="project" />
     <orderEntry type="library" name="Maven: com.jcraft:jsch:0.1.55" level="project" />
     <orderEntry type="module" module-name="thevpc-common-strings" />
     <orderEntry type="module" module-name="thevpc-common-xfile" />

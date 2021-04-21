@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.core.format.text.parser.steps;
 
 import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextNodeParser;
-import net.thevpc.nuts.NutsTextNode;
+import net.thevpc.nuts.NutsText;
 
 public class DispatchAction extends ParserStep {
     private boolean spreadLines;
@@ -24,7 +24,7 @@ public class DispatchAction extends ParserStep {
     }
 
     @Override
-    public NutsTextNode toNode() {
+    public NutsText toNode() {
         throw new IllegalArgumentException();
     }
 

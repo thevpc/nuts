@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.core.format.text.parser.steps;
 
-import net.thevpc.nuts.NutsTextNode;
 import net.thevpc.nuts.NutsTextNodeStyle;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.core.format.text.DefaultNutsTextManager;
@@ -9,6 +8,7 @@ import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.thevpc.nuts.NutsText;
 
 public class TitleParserStep extends ParserStep {
 
@@ -37,20 +37,20 @@ public class TitleParserStep extends ParserStep {
     }
 
     @Override
-    public NutsTextNode toNode() {
+    public NutsText toNode() {
         String s = start.toString();
 //        NutsTextManager text = ws.formats().text();
         DefaultNutsTextManager factory0 = (DefaultNutsTextManager) ws.formats().text();
         String s0=s.trim();
-        NutsTextNode child=null;
+        NutsText child=null;
         if (children.size() == 1) {
             child=children.get(0).toNode();
         }else{
-            List<NutsTextNode> all = new ArrayList<>();
+            List<NutsText> all = new ArrayList<>();
             for (ParserStep a : children) {
                 all.add(a.toNode());
             }
-            child= ws.formats().text().list(all);
+            child= ws.formats().text().forList(all);
         }
         return factory0.createTitle(s,s0.length()-1 ,child,isComplete());
     }

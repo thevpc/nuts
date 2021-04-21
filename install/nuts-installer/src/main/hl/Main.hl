@@ -8,10 +8,10 @@ fun main(String[] args){
     String apiVersion,jarLocation;
     for(line:metadata.split("\n").trim){
         if(p"[^#].*" ~ line){
-            var (key,value)=line.splitFirst(':|=');
-            switch(key.trim){
-                case "apiVersion": apiVersion=value.trim;
-                case "jarLocation":jarLocation=value.trim;
+            var (key,value)=line.split('[:|=]').map(String::trim);
+            switch(key){
+                case "apiVersion": apiVersion=value;
+                case "jarLocation":jarLocation=value;
                 default:{}
             }
         }

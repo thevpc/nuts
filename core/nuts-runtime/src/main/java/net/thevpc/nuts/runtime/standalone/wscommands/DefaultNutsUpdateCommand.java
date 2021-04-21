@@ -326,7 +326,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
             if (updates.length == 0) {
                 out.printf("All components are [[up-to-date]]. You are running latest version%s.%n", result.getAllResults().length > 1 ? "s" : "");
             } else {
-                out.printf("Workspace has %s component%s to update.%n", ws.formats().text().styled("" + updates.length, NutsTextNodeStyle.primary(1)),
+                out.printf("Workspace has %s component%s to update.%n", ws.formats().text().forStyled("" + updates.length, NutsTextNodeStyle.primary(1)),
                         (updates.length > 1 ? "s" : ""));
                 int widthCol1 = 2;
                 int widthCol2 = 2;
@@ -338,14 +338,14 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                 for (NutsUpdateResult update : updates) {
                     if (update.isUpdateVersionAvailable()) {
                         out.printf("%s  : %s => %s%n",
-                                factory.styled(CoreStringUtils.alignLeft(update.getLocal().getId().getVersion().toString(), widthCol2), NutsTextNodeStyle.primary(6)),
+                                factory.forStyled(CoreStringUtils.alignLeft(update.getLocal().getId().getVersion().toString(), widthCol2), NutsTextNodeStyle.primary(6)),
                                 CoreStringUtils.alignLeft(update.getAvailable().getId().getShortName(), widthCol1),
-                                factory.plain(update.getAvailable().getId().getVersion().toString()), NutsTextNodeStyle.primary(4));
+                                factory.forPlain(update.getAvailable().getId().getVersion().toString()), NutsTextNodeStyle.primary(4));
                     } else if (update.isUpdateStatusAvailable()) {
                         out.printf("%s  : %s => %s%n",
-                                factory.styled(CoreStringUtils.alignLeft(update.getLocal().getId().getVersion().toString(), widthCol2), NutsTextNodeStyle.primary(6)),
+                                factory.forStyled(CoreStringUtils.alignLeft(update.getLocal().getId().getVersion().toString(), widthCol2), NutsTextNodeStyle.primary(6)),
                                 CoreStringUtils.alignLeft(update.getAvailable().getId().getShortName(), widthCol1),
-                                factory.styled("set as default", NutsTextNodeStyle.primary(4)));
+                                factory.forStyled("set as default", NutsTextNodeStyle.primary(4)));
                     }
                 }
             }
@@ -558,7 +558,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
             if (r.isUpdateForced()) {
                 if (d0 == null) {
                     out.printf("%s is [updated] to latest version %s%n",
-                            factory.styled(simpleName, NutsTextNodeStyle.primary(3)),
+                            factory.forStyled(simpleName, NutsTextNodeStyle.primary(3)),
                             d1 == null ? null : d1.getId().getVersion()
                     );
                 } else if (d1 == null) {
@@ -568,13 +568,13 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                     NutsVersion v1 = d1.getId().getVersion();
                     if (v1.compareTo(v0) <= 0) {
                         if (v1.compareTo(v0) == 0) {
-                            out.printf("%s is [forced] to %s %n", factory.styled(simpleName, NutsTextNodeStyle.primary(3)), d0.getId().getVersion());
+                            out.printf("%s is [forced] to %s %n", factory.forStyled(simpleName, NutsTextNodeStyle.primary(3)), d0.getId().getVersion());
                         } else {
                             out.printf("%s is [forced] from %s to older version %s%n",
-                                    factory.styled(simpleName, NutsTextNodeStyle.primary(3)), d0.getId().getVersion(), d1.getId().getVersion());
+                                    factory.forStyled(simpleName, NutsTextNodeStyle.primary(3)), d0.getId().getVersion(), d1.getId().getVersion());
                         }
                     } else {
-                        out.printf("%s is [updated] from %s to latest version %s%n", factory.styled(simpleName, NutsTextNodeStyle.primary(3)),
+                        out.printf("%s is [updated] from %s to latest version %s%n", factory.forStyled(simpleName, NutsTextNodeStyle.primary(3)),
                                 d0.getId().getVersion(), d1.getId().getVersion());
                     }
                 }

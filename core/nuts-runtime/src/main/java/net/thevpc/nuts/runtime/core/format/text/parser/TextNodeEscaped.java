@@ -31,7 +31,7 @@
 // */
 //public class TextNodeEscaped implements NutsTextNode {
 //
-////    public static final TextNodeEscaped NULL = new NutsTextNodePlain("");
+////    public static final TextNodeEscaped NULL = new NutsTextPlain("");
 //    private String value;
 //
 //    public TextNodeEscaped(String value) {

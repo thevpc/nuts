@@ -224,6 +224,11 @@ public class CProgressBar {
         return this;
     }
 
+    public CProgressBar setSession(NutsSession session) {
+        this.session = session;
+        return this;
+    }
+
     public String progress(int percent) {
         if (session != null) {
             return progressWithSession(percent);

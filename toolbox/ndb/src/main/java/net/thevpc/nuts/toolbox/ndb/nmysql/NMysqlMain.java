@@ -444,7 +444,7 @@ public class NMysqlMain implements NdbSupport {
                         if (c.getDatabase(name.getDatabaseName(), NutsOpenMode.OPEN_OR_NULL) != null) {
                             overrideExisting = true;
                             if (!service.getContext().getSession().getTerminal().ask()
-                                    .forBoolean("already exists %s. override?", factory.styled(name.toString(),
+                                    .forBoolean("already exists %s. override?", factory.forStyled(name.toString(),
                                                     NutsTextNodeStyle.primary(3))
                                     )
                                     .setDefaultValue(false).getBooleanValue()) {
@@ -455,7 +455,7 @@ public class NMysqlMain implements NdbSupport {
                         if (c.getDatabase(name.getDatabaseName(), NutsOpenMode.OPEN_OR_NULL) != null) {
                             overrideExisting = true;
                             if (!service.getContext().getSession().getTerminal().ask()
-                                    .forBoolean("already exists %s. override?",factory.styled(name.toString(),NutsTextNodeStyle.primary(3)))
+                                    .forBoolean("already exists %s. override?",factory.forStyled(name.toString(),NutsTextNodeStyle.primary(3)))
                                     .setDefaultValue(false).getBooleanValue()) {
                                 throw new NutsExecutionException(service.getContext().getSession(), "already exists " + name, 2);
                             }
@@ -510,21 +510,21 @@ public class NMysqlMain implements NdbSupport {
                         if (add) {
                             if (overrideExisting) {
                                 service.getContext().getSession().out().printf("adding local config (with override) %s%n",
-                                        factory.styled(
+                                        factory.forStyled(
                                         StringUtils.coalesce(name.getConfigName(), "default"),NutsTextNodeStyle.primary(3))
                                 );
                             } else {
                                 service.getContext().getSession().out().printf("adding local config %s%n",
-                                        factory.styled(
+                                        factory.forStyled(
                                         StringUtils.coalesce(name.getConfigName(), "default"),NutsTextNodeStyle.primary(3)));
                             }
                         } else {
                             if (overrideExisting) {
                                 service.getContext().getSession().out().printf("updating local config (with override) %s%n",
-                                        factory.styled(StringUtils.coalesce(name.getConfigName(), "default"),NutsTextNodeStyle.primary(3)));
+                                        factory.forStyled(StringUtils.coalesce(name.getConfigName(), "default"),NutsTextNodeStyle.primary(3)));
                             } else {
                                 service.getContext().getSession().out().printf("updating local config %s%n",
-                                        factory.styled(
+                                        factory.forStyled(
                                         StringUtils.coalesce(name.getConfigName(), "default"),NutsTextNodeStyle.primary(3)));
                             }
                         }
@@ -570,19 +570,19 @@ public class NMysqlMain implements NdbSupport {
                         if (add) {
                             if (overrideExisting) {
                                 service.getContext().getSession().out().printf("adding local instance (with override) %s%n",
-                                        factory.styled(r.getFullName(),NutsTextNodeStyle.primary(3)));
+                                        factory.forStyled(r.getFullName(),NutsTextNodeStyle.primary(3)));
                             } else {
                                 service.getContext().getSession().out().printf("adding local instance %s%n",
-                                        factory.styled(r.getFullName(),NutsTextNodeStyle.primary(3)));
+                                        factory.forStyled(r.getFullName(),NutsTextNodeStyle.primary(3)));
                             }
                         } else {
                             if (overrideExisting) {
                                 service.getContext().getSession().out().printf("updating local instance (with override) %s%n",
-                                        factory.styled(r.getFullName(),NutsTextNodeStyle.primary(3))
+                                        factory.forStyled(r.getFullName(),NutsTextNodeStyle.primary(3))
                                 );
                             } else {
                                 service.getContext().getSession().out().printf("updating local instance %s%n",
-                                        factory.styled(r.getFullName(),NutsTextNodeStyle.primary(3))
+                                        factory.forStyled(r.getFullName(),NutsTextNodeStyle.primary(3))
                                 );
                             }
                         }
@@ -612,7 +612,7 @@ public class NMysqlMain implements NdbSupport {
                         if (c.getDatabase(name.getDatabaseName(),NutsOpenMode.OPEN_OR_NULL) != null) {
                             overrideExisting = true;
                             if (!service.getContext().getSession().getTerminal().ask()
-                                    .forBoolean("already exists %s. override?", factory.styled(name.toString(),NutsTextNodeStyle.primary(3)))
+                                    .forBoolean("already exists %s. override?", factory.forStyled(name.toString(),NutsTextNodeStyle.primary(3)))
                                     .setDefaultValue(false).getBooleanValue()) {
                                 throw new NutsExecutionException(service.getContext().getSession(), "already exists " + name, 2);
                             }
@@ -621,7 +621,7 @@ public class NMysqlMain implements NdbSupport {
                         if (c.getDatabase(name.getDatabaseName(),NutsOpenMode.OPEN_OR_NULL) != null) {
                             overrideExisting = true;
                             if (!service.getContext().getSession().getTerminal().ask()
-                                    .forBoolean("already exists %s. override?", factory.styled(name.toString(),NutsTextNodeStyle.primary(3)))
+                                    .forBoolean("already exists %s. override?", factory.forStyled(name.toString(),NutsTextNodeStyle.primary(3)))
                                     .setDefaultValue(false).getBooleanValue()) {
                                 throw new NutsExecutionException(service.getContext().getSession(), "already exists " + name, 2);
                             }
@@ -648,18 +648,18 @@ public class NMysqlMain implements NdbSupport {
                         if (add) {
                             if (overrideExisting) {
                                 service.getContext().getSession().out().printf("adding remote config (with override) %s%n",
-                                        factory.styled(StringUtils.coalesce(name.getConfigName(), "default"),NutsTextNodeStyle.primary(3)));
+                                        factory.forStyled(StringUtils.coalesce(name.getConfigName(), "default"),NutsTextNodeStyle.primary(3)));
                             } else {
                                 service.getContext().getSession().out().printf("adding remote config %s%n",
-                                        factory.styled(StringUtils.coalesce(name.getConfigName(), "default"),NutsTextNodeStyle.primary(3)));
+                                        factory.forStyled(StringUtils.coalesce(name.getConfigName(), "default"),NutsTextNodeStyle.primary(3)));
                             }
                         } else {
                             if (overrideExisting) {
                                 service.getContext().getSession().out().printf("updating remote config (with override) %s%n",
-                                        factory.styled(StringUtils.coalesce(name.getConfigName(), "default"),NutsTextNodeStyle.primary(3)));
+                                        factory.forStyled(StringUtils.coalesce(name.getConfigName(), "default"),NutsTextNodeStyle.primary(3)));
                             } else {
                                 service.getContext().getSession().out().printf("updating remote config %s%n",
-                                        factory.styled(StringUtils.coalesce(name.getConfigName(), "default"),NutsTextNodeStyle.primary(3)));
+                                        factory.forStyled(StringUtils.coalesce(name.getConfigName(), "default"),NutsTextNodeStyle.primary(3)));
                             }
                         }
                     }
@@ -681,19 +681,19 @@ public class NMysqlMain implements NdbSupport {
                         if (add) {
                             if (overrideExisting) {
                                 service.getContext().getSession().out().printf("adding remote instance (with override) %s%n",
-                                        factory.styled(r.getFullName(),NutsTextNodeStyle.primary(3)));
+                                        factory.forStyled(r.getFullName(),NutsTextNodeStyle.primary(3)));
                             } else {
                                 service.getContext().getSession().out().printf("adding remote instance %s%n",
-                                        factory.styled(r.getFullName(),NutsTextNodeStyle.primary(3)));
+                                        factory.forStyled(r.getFullName(),NutsTextNodeStyle.primary(3)));
                             }
                         } else {
                             if (overrideExisting) {
                                 service.getContext().getSession().out().printf("updating remote instance (with override) %s%n",
-                                        factory.styled(r.getFullName(),NutsTextNodeStyle.primary(3))
+                                        factory.forStyled(r.getFullName(),NutsTextNodeStyle.primary(3))
                                 );
                             } else {
                                 service.getContext().getSession().out().printf("updating remote instance %s%n",
-                                        factory.styled(r.getFullName(),NutsTextNodeStyle.primary(3)));
+                                        factory.forStyled(r.getFullName(),NutsTextNodeStyle.primary(3)));
                             }
                         }
                     }
@@ -891,21 +891,22 @@ public class NMysqlMain implements NdbSupport {
 
         NutsSession session = service.getContext().getSession();
         if (session.isIterableOut()) {
+            long index=0;
             try {
                 session.getIterableOutput().start();
                 for (LocaleOrRemote cnf : result) {
                     if(cnf.local!=null) {
                         for (Map.Entry<String, LocalMysqlDatabaseConfig> db : cnf.local.getDatabases().entrySet()) {
-                            session.getIterableOutput().next(toObject(db.getKey(),cnf.name,db.getValue(),describe,false, service.getContext()));
+                            session.getIterableOutput().next(toObject(db.getKey(),cnf.name,db.getValue(),describe,false, service.getContext()),index++);
                         }
                     }else{
                         for (Map.Entry<String, RemoteMysqlDatabaseConfig> db : cnf.remote.getDatabases().entrySet()) {
-                            session.getIterableOutput().next(toObject(db.getKey(),cnf.name,db.getValue(),describe,false, service.getContext()));
+                            session.getIterableOutput().next(toObject(db.getKey(),cnf.name,db.getValue(),describe,false, service.getContext()),index++);
                         }
                     }
                 }
             } finally {
-                session.getIterableOutput().complete();
+                session.getIterableOutput().complete(index);
             }
         } else {
             switch (session.getOutputFormat()) {

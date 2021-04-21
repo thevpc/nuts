@@ -69,14 +69,6 @@ public interface NutsFormatManager {
      */
     NutsObjectFormat object();
 
-    /**
-     * create iterable format instance
-     *
-     * @return iterable format
-     * @since 0.5.6
-     */
-    NutsIterableOutput iter();
-
     NutsTextManager text();
 
 

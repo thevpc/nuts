@@ -97,7 +97,7 @@ public class LsCommand extends SimpleNshBuiltin {
         Date accessed;
 //        boolean dir;
 //        boolean regular;
-//        boolean link;
+//        boolean forLink;
 //        boolean other;
         boolean config;
         boolean exec2;
@@ -243,17 +243,17 @@ public class LsCommand extends SimpleNshBuiltin {
         String name = new File(item.path).getName();
         NutsFormatManager text = session.getWorkspace().formats();
         if (item.hidden) {
-            out.println(text.text().styled(name,NutsTextNodeStyle.pale()));
+            out.println(text.text().forStyled(name,NutsTextNodeStyle.pale()));
         } else if (item.type == 'd') {
-            out.println(text.text().styled(name,NutsTextNodeStyle.primary(3)));
+            out.println(text.text().forStyled(name,NutsTextNodeStyle.primary(3)));
         } else if (item.exec2 || item.jperms.charAt(2) == 'x') {
-            out.println(text.text().styled(name,NutsTextNodeStyle.primary(4)));
+            out.println(text.text().forStyled(name,NutsTextNodeStyle.primary(4)));
         } else if (item.config) {
-            out.println(text.text().styled(name,NutsTextNodeStyle.primary(5)));
+            out.println(text.text().forStyled(name,NutsTextNodeStyle.primary(5)));
         } else if (item.archive) {
-            out.println(text.text().styled(name,NutsTextNodeStyle.primary(1)));
+            out.println(text.text().forStyled(name,NutsTextNodeStyle.primary(1)));
         } else {
-            out.println(text.text().plain(name));
+            out.println(text.text().forPlain(name));
         }
     }
 

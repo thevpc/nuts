@@ -39,13 +39,13 @@ public class Nsh extends NutsApplication {
         NutsWorkspace ws = applicationContext.getWorkspace();
         NutsWorkspaceConfigManager cfg = ws.config();
 //        HashMap<String, String> parameters = new HashMap<>();
-//        parameters.put("list", nshIdStr + " --no-color -c find-command");
-//        parameters.put("find", nshIdStr + " --no-color -c find-command %n");
+//        parameters.put("forList", nshIdStr + " --no-color -c find-forCommand");
+//        parameters.put("find", nshIdStr + " --no-color -c find-forCommand %n");
 //        parameters.put("exec", nshIdStr + " -c %n");
 //        cfg.installCommandFactory(
 //                new NutsWorkspaceCommandFactoryConfig()
 //                        .setFactoryId("nsh")
-//                        .setFactoryType("command")
+//                        .setFactoryType("forCommand")
 //                        .setPriority(1)
 //                        .setParameters(parameters)
 //        );
@@ -90,14 +90,14 @@ public class Nsh extends NutsApplication {
             NutsTextManager factory = session.getWorkspace().formats().text();
             if (firstInstalled.size() > 0) {
                 session.out().printf("registered %s nsh commands : %s \n",
-                        factory.styled(""+firstInstalled.size(),NutsTextNodeStyle.primary(3))
-                        ,factory.styled(String.join(", ", firstInstalled),NutsTextNodeStyle.primary(3))
+                        factory.forStyled(""+firstInstalled.size(),NutsTextNodeStyle.primary(3))
+                        ,factory.forStyled(String.join(", ", firstInstalled),NutsTextNodeStyle.primary(3))
                 );
             }
             if (reinstalled.size() > 0) {
                 session.out().printf("re-registered %s nsh commands : %s \n",
-                        factory.styled(""+reinstalled.size(),NutsTextNodeStyle.primary(3))
-                        ,factory.styled(String.join(", ", reinstalled),NutsTextNodeStyle.primary(3))
+                        factory.forStyled(""+reinstalled.size(),NutsTextNodeStyle.primary(3))
+                        ,factory.forStyled(String.join(", ", reinstalled),NutsTextNodeStyle.primary(3))
                 );
             }
         }
@@ -129,7 +129,7 @@ public class Nsh extends NutsApplication {
                     if (applicationContext.getSession().isPlainTrace()) {
                         NutsTextManager factory = ws.formats().text();
                         applicationContext.getSession().err().printf("unable to uninstall %s.\n",
-                                factory.styled(command.getName(),NutsTextNodeStyle.primary(3))
+                                factory.forStyled(command.getName(),NutsTextNodeStyle.primary(3))
                         );
                     }
                 }

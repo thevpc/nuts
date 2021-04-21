@@ -26,45 +26,30 @@
  */
 package net.thevpc.nuts.runtime.core.format.text.parser;
 
-
-import net.thevpc.nuts.NutsTextNode;
-import net.thevpc.nuts.NutsTextNodeCode;
-import net.thevpc.nuts.NutsTextNodeType;
-import net.thevpc.nuts.runtime.core.format.text.DefaultNutsTextManager;
-import net.thevpc.nuts.NutsCodeFormat;
 import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NutsTextLink;
+import net.thevpc.nuts.NutsTextNodeType;
+import net.thevpc.nuts.NutsText;
 
 /**
  * Created by vpc on 5/23/17.
  */
-public class DefaultNutsTextNodeCode extends NutsTextNodeSpecialBase implements NutsTextNodeCode {
+public class DefaultNutsTextLink extends NutsTextSpecialBase implements NutsTextLink {
+    private NutsText value;
 
-    private final String text;
-
-    public DefaultNutsTextNodeCode(NutsSession ws, String start, String kind, String separator, String end, String text) {
-        super(ws,start, kind,
-                (kind != null && kind.length() > 0
-                        &&
-                        text != null && text.length() > 0
-                        && (separator == null || separator.isEmpty())) ? " " : separator
-                , end);
-        this.text = text;
+    public DefaultNutsTextLink(NutsSession ws, String start, String separator, String end, NutsText value) {
+        super(ws, start, "link", separator, end);
+        this.value = value;
     }
 
     @Override
-    public NutsTextNode parse(NutsSession session) {
-        NutsCodeFormat t = ((DefaultNutsTextManager) getWorkspace().formats().text())
-                .setSession(session)
-                .resolveBlocTextFormatter(getKind());
-        return t.textToNode(text, session);
+    public NutsText getChild() {
+        return value;
     }
 
     @Override
     public NutsTextNodeType getType() {
-        return NutsTextNodeType.CODE;
+        return NutsTextNodeType.LINK;
     }
 
-    public String getText() {
-        return text;
-    }
 }

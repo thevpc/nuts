@@ -2,11 +2,11 @@ package net.thevpc.nuts.runtime.core.format.text.parser.steps;
 
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextNodeParser;
-import net.thevpc.nuts.NutsTextNode;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import net.thevpc.nuts.NutsText;
 
 public class RootParserStep extends ParserStep {
     boolean spreadLines;
@@ -44,11 +44,11 @@ public class RootParserStep extends ParserStep {
     }
 
     @Override
-    public NutsTextNode toNode() {
+    public NutsText toNode() {
         if (available.size() == 1) {
             return available.get(0).toNode();
         }
-        List<NutsTextNode> all = new ArrayList<>();
+        List<NutsText> all = new ArrayList<>();
         boolean partial = false;
         for (ParserStep a : available) {
             if (!partial && !a.isComplete()) {
@@ -56,7 +56,7 @@ public class RootParserStep extends ParserStep {
             }
             all.add(a.toNode());
         }
-        return ws.formats().text().list(all);
+        return ws.formats().text().forList(all);
     }
 
     @Override

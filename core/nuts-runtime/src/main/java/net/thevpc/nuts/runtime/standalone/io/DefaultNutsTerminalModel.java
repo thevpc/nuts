@@ -219,14 +219,14 @@ public class DefaultNutsTerminalModel {
         if (isFormatted(out)) {
             if (out instanceof PrintStream) {
                 try {
-                    ((PrintStream) out).printf("%s", session.getWorkspace().formats().text().command(command));
+                    ((PrintStream) out).printf("%s", session.getWorkspace().formats().text().forCommand(command));
                     out.flush();
                 } catch (IOException ex) {
                     throw new UncheckedIOException(ex);
                 }
             } else {
                 try {
-                    ((PrintStream) out).write(session.getWorkspace().formats().text().command(command).toString().getBytes());
+                    ((PrintStream) out).write(session.getWorkspace().formats().text().forCommand(command).toString().getBytes());
                     out.flush();
                 } catch (IOException ex) {
                     throw new UncheckedIOException(ex);

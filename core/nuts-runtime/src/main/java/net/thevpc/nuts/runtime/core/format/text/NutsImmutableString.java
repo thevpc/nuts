@@ -27,10 +27,10 @@
 package net.thevpc.nuts.runtime.core.format.text;
 
 import net.thevpc.nuts.NutsString;
-import net.thevpc.nuts.NutsTextNode;
 import net.thevpc.nuts.NutsWorkspace;
 
 import java.io.StringReader;
+import net.thevpc.nuts.NutsText;
 
 /**
  * @author thevpc
@@ -54,7 +54,7 @@ public class NutsImmutableString implements NutsString {
                 parser().filterText(value);
     }
 
-    public NutsTextNode toNode() {
+    public NutsText toNode() {
         return ws.formats().text().parser().parse(new StringReader(value));
     }
 

@@ -2,14 +2,14 @@ package net.thevpc.nuts.runtime.core.format.text.parser;
 
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsString;
-import net.thevpc.nuts.NutsTextNode;
 import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.NutsText;
 
-public abstract class AbstractNutsTextNode implements NutsTextNode {
+public abstract class AbstractNutsText implements NutsText {
 
     private NutsSession session;
 
-    public AbstractNutsTextNode(NutsSession session) {
+    public AbstractNutsText(NutsSession session) {
         this.session = session;
     }
 
@@ -42,7 +42,7 @@ public abstract class AbstractNutsTextNode implements NutsTextNode {
     }
 
     @Override
-    public NutsTextNode toNode() {
+    public NutsText toNode() {
         return this;
     }
 

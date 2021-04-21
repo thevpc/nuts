@@ -191,9 +191,9 @@ public class WorkspaceService {
                 .append(p2.getId(), NutsTextNodeStyle.primary(4))
                 .append(" ")
                 .appendJoined(
-                        text.text().plain(", "),
+                        text.text().forPlain(", "),
                         p2.getTechnologies().stream().map(
-                                x -> text.text().styled(x, NutsTextNodeStyle.primary(5))
+                                x -> text.text().forStyled(x, NutsTextNodeStyle.primary(5))
                         ).collect(Collectors.toList())
                 )
                 .append(" : ")
@@ -341,7 +341,7 @@ public class WorkspaceService {
             if (progress && appContext.getSession().isPlainOut()) {
                 maxSize = Math.max(maxSize, projectService.getConfig().getId().length());
                 appContext.getSession().out().printf("(%s / %s) %s", (i + 1), all.size(), _StringUtils.alignLeft(projectService.getConfig().getId(), maxSize));
-                appContext.getSession().sendTerminalCommand(NutsTerminalCommand.LATER_RESET_LINE);
+                appContext.getSession().getTerminal().sendOutCommand(NutsTerminalCommand.LATER_RESET_LINE);
             }
             d.local = projectService.detectLocalVersion();
             d.remote = d.local == null ? null : projectService.detectRemoteVersion();
@@ -438,20 +438,20 @@ public class WorkspaceService {
                         status += " ";
                         len++;
                     }
-                    switch (tf.text().plain(p2.status).filteredText()) {
+                    switch (tf.text().forPlain(p2.status).filteredText()) {
                         case "new": {
                             appContext.getSession().out().printf("[%s] %s : %s",
-                                    tfactory.styled("new", NutsTextNodeStyle.primary(3)),
+                                    tfactory.forStyled("new", NutsTextNodeStyle.primary(3)),
                                     p2.id,
-                                    tfactory.styled(p2.local, NutsTextNodeStyle.primary(2))
+                                    tfactory.forStyled(p2.local, NutsTextNodeStyle.primary(2))
                             );
                             break;
                         }
                         case "commitable": {
                             appContext.getSession().out().printf("[%s] %s : %s - %s",
-                                    tfactory.styled("commitable", NutsTextNodeStyle.primary(4)),
+                                    tfactory.forStyled("commitable", NutsTextNodeStyle.primary(4)),
                                     p2.id,
-                                    tfactory.styled(p2.local, NutsTextNodeStyle.primary(2)),
+                                    tfactory.forStyled(p2.local, NutsTextNodeStyle.primary(2)),
                                     p2.remote
                             );
                             break;
@@ -463,7 +463,7 @@ public class WorkspaceService {
                         }
                         case "old": {
                             appContext.getSession().out().printf("[%s] %s : ```error %s``` - %s",
-                                    tfactory.styled("old", NutsTextNodeStyle.primary(2)),
+                                    tfactory.forStyled("old", NutsTextNodeStyle.primary(2)),
                                     p2.id, p2.local, p2.remote);
                             break;
                         }
@@ -622,9 +622,9 @@ public class WorkspaceService {
                                 if (appContext.getSession().isPlainOut()) {
                                     appContext.getSession().out().printf("```error [CONFLICT]``` multiple paths for the same id %s. "
                                             + "please consider adding .nuts-info file with " + SCAN + "=false  :  %s -- %s%n",
-                                            tfactory.styled(p2.getId(), NutsTextNodeStyle.primary(2)),
-                                            tfactory.styled(p2.getPath(), NutsTextNodeStyle.path()),
-                                            tfactory.styled(p3.getPath(), NutsTextNodeStyle.path())
+                                            tfactory.forStyled(p2.getId(), NutsTextNodeStyle.primary(2)),
+                                            tfactory.forStyled(p2.getPath(), NutsTextNodeStyle.path()),
+                                            tfactory.forStyled(p3.getPath(), NutsTextNodeStyle.path())
                                     );
                                 }
                                 if (structuredOutContentType) {
@@ -668,7 +668,7 @@ public class WorkspaceService {
                             }
                             if (interactive) {
                                 String id = appContext.getSession().getTerminal().readLine("enter Id %s: ",
-                                        (p2.getId() == null ? "" : ("(" + text.text().plain(p2.getId()) + ")")));
+                                        (p2.getId() == null ? "" : ("(" + text.text().forPlain(p2.getId()) + ")")));
                                 if (!_StringUtils.isBlank(id)) {
                                     p2.setId(id);
                                 }

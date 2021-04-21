@@ -1,13 +1,13 @@
 package net.thevpc.nuts.runtime.core.format.text.bloc;
 
 import net.thevpc.nuts.NutsSupportLevelContext;
-import net.thevpc.nuts.NutsTextNode;
 import net.thevpc.nuts.NutsTextNodeStyle;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.spi.NutsComponent;
 import net.thevpc.nuts.NutsCodeFormat;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsTextManager;
+import net.thevpc.nuts.NutsText;
 
 public class CustomStyleBlocTextFormatter implements NutsCodeFormat {
 
@@ -22,13 +22,13 @@ public class CustomStyleBlocTextFormatter implements NutsCodeFormat {
     }
 
     @Override
-    public NutsTextNode textToNode(String text, NutsSession session) {
-        return factory.setSession(session).styled(factory.setSession(session).plain(text), style);
+    public NutsText textToNode(String text, NutsSession session) {
+        return factory.setSession(session).forStyled(factory.setSession(session).forPlain(text), style);
     }
 
     @Override
-    public NutsTextNode tokenToNode(String text, String nodeType, NutsSession session) {
-        return factory.setSession(session).plain(text);
+    public NutsText tokenToNode(String text, String nodeType, NutsSession session) {
+        return factory.setSession(session).forPlain(text);
     }
 
     @Override

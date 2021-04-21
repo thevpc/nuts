@@ -15,58 +15,9 @@ public class UnmodifiableTerminal extends AbstractNutsTerminal implements NutsSe
     }
 
     @Override
-    public void setParent(NutsTerminalBase parent) {
-    }
-
-    @Override
-    public NutsTerminalBase getParent() {
-        return getBase().getParent();
-    }
-
-    @Override
-    public PrintStream out() {
-        return getBase().out();
-    }
-
-    @Override
-    public PrintStream err() {
-        return getBase().err();
-    }
-
-    @Override
-    public InputStream in() {
-        return getBase().in();
-    }
-
-    @Override
-    public void setIn(InputStream in) {
-
-    }
-
-    @Override
-    public void setOut(PrintStream out) {
-
-    }
-
-    @Override
-    public void setErr(PrintStream out) {
-
-    }
-
-    @Override
     public NutsSessionTerminal setMode(NutsTerminalMode mode) {
         //
         return this;
-    }
-
-    @Override
-    public NutsTerminalMode getOutMode() {
-        return getBase().getOutMode();
-    }
-
-    @Override
-    public NutsTerminalMode getErrMode() {
-        return getBase().getErrMode();
     }
 
     @Override
@@ -80,10 +31,14 @@ public class UnmodifiableTerminal extends AbstractNutsTerminal implements NutsSe
     }
 
     @Override
-    public NutsSessionTerminal copy() {
-        return getBase().copy();
+    public NutsTerminalMode getErrMode() {
+        return getBase().getErrMode();
     }
 
+    @Override
+    public NutsTerminalMode getOutMode() {
+        return getBase().getOutMode();
+    }
 
     @Override
     public String readLine(String promptFormat, Object... params) {
@@ -93,6 +48,26 @@ public class UnmodifiableTerminal extends AbstractNutsTerminal implements NutsSe
     @Override
     public char[] readPassword(String prompt, Object... params) {
         return getBase().readPassword(prompt, params);
+    }
+
+    @Override
+    public <T> NutsQuestion<T> ask() {
+        return getBase().ask();
+    }
+
+    @Override
+    public InputStream in() {
+        return getBase().in();
+    }
+
+    @Override
+    public PrintStream out() {
+        return getBase().out();
+    }
+
+    @Override
+    public PrintStream err() {
+        return getBase().err();
     }
 
     @Override
@@ -106,8 +81,25 @@ public class UnmodifiableTerminal extends AbstractNutsTerminal implements NutsSe
     }
 
     @Override
+    public NutsTerminalBase printProgress(float progress, String prompt, Object... params) {
+        getBase().printProgress(progress, prompt, params);
+        return this;
+    }
+
+    @Override
+    public NutsTerminalBase printProgress(String prompt, Object... params) {
+        getBase().printProgress(prompt, params);
+        return this;
+    }
+
+    @Override
     public InputStream getIn() {
         return getBase().getIn();
+    }
+
+    @Override
+    public void setIn(InputStream in) {
+
     }
 
     @Override
@@ -116,13 +108,32 @@ public class UnmodifiableTerminal extends AbstractNutsTerminal implements NutsSe
     }
 
     @Override
+    public void setOut(PrintStream out) {
+
+    }
+
+    @Override
     public PrintStream getErr() {
         return getBase().getErr();
     }
 
     @Override
-    public <T> NutsQuestion<T> ask() {
-        return getBase().ask();
+    public NutsTerminalBase getParent() {
+        return getBase().getParent();
+    }
+
+    @Override
+    public void setParent(NutsTerminalBase parent) {
+    }
+
+    @Override
+    public void setErr(PrintStream out) {
+
+    }
+
+    @Override
+    public NutsSessionTerminal copy() {
+        return getBase().copy();
     }
 
     @Override
@@ -134,4 +145,15 @@ public class UnmodifiableTerminal extends AbstractNutsTerminal implements NutsSe
         return base;
     }
 
+    @Override
+    public NutsTerminal sendOutCommand(NutsTerminalCommand command) {
+         getBase().sendOutCommand(command);
+        return this;
+    }
+
+    @Override
+    public NutsTerminal sendErrCommand(NutsTerminalCommand command) {
+        getBase().sendErrCommand(command);
+        return this;
+    }
 }

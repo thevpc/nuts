@@ -45,10 +45,10 @@ public class RemoteNutsSearchCommand extends AbstractNutsSearchCommand {
                 .set("ids", e.forArray().addAll(Arrays.stream(getIds())
                         .map(Object::toString).toArray(String[]::new)).build());
         if (getIdFilter() != null) {
-            eb.set("idFilter", e.convertToElement(getIdFilter()));
+            eb.set("idFilter", e.toElement(getIdFilter()));
         }
         if (getDescriptorFilter() != null) {
-            eb.set("descriptorFilter", ws.formats().element().convertToElement(getDescriptorFilter()));
+            eb.set("descriptorFilter", ws.formats().element().toElement(getDescriptorFilter()));
         }
         if (getInstallStatus() != null) {
             eb.set("installStatus", e.forString(getInstallStatus().toString()));
@@ -76,10 +76,10 @@ public class RemoteNutsSearchCommand extends AbstractNutsSearchCommand {
                 .set("ids", e.forArray().addAll(Arrays.stream(getIds())
                         .map(Object::toString).toArray(String[]::new)).build());
         if (getIdFilter() != null) {
-            eb.set("idFilter", ws.formats().element().convertToElement(getIdFilter()));
+            eb.set("idFilter", ws.formats().element().toElement(getIdFilter()));
         }
         if (getDescriptorFilter() != null) {
-            eb.set("descriptorFilter", ws.formats().element().convertToElement(getDescriptorFilter()));
+            eb.set("descriptorFilter", ws.formats().element().toElement(getDescriptorFilter()));
         }
         if (getInstallStatus() != null) {
             eb.set("installStatus", e.forString(getInstallStatus().toString()));

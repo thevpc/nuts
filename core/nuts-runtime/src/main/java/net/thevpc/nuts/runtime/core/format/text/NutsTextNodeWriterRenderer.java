@@ -1,9 +1,9 @@
 package net.thevpc.nuts.runtime.core.format.text;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextNodeCommand;
-import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextNodeStyled;
-import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextNodeTitle;
+import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextCommand;
+import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextStyled;
+import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextTitle;
 import net.thevpc.nuts.runtime.core.format.text.renderer.AnsiUnixTermPrintRenderer;
 import net.thevpc.nuts.runtime.core.format.text.renderer.StyleRenderer;
 
@@ -63,7 +63,7 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
     }
 
     @Override
-    public void writeNode(NutsTextNode node) {
+    public void writeNode(NutsText node) {
         writeNode(node, getWriteConfiguration());
     }
 
@@ -95,32 +95,32 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
         return false;
     }
 
-    public void writeNode(NutsTextNode node, NutsTextNodeWriteConfiguration ctx) {
+    public void writeNode(NutsText node, NutsTextNodeWriteConfiguration ctx) {
         writeNode(new AnsiEscapeCommand[0], node, ctx);
     }
 
-    private void writeNode(AnsiEscapeCommand[] formats, NutsTextNode node, NutsTextNodeWriteConfiguration ctx) {
+    private void writeNode(AnsiEscapeCommand[] formats, NutsText node, NutsTextNodeWriteConfiguration ctx) {
         if (formats == null) {
             formats = new AnsiEscapeCommand[0];
         }
         switch (node.getType()) {
             case PLAIN: {
-                NutsTextNodePlain p = (NutsTextNodePlain) node;
+                NutsTextPlain p = (NutsTextPlain) node;
                 writeRaw(AnsiEscapeCommands.list(formats), p.getText(), ctx.isFiltered());
 //        }else if (text instanceof TextNodeEscaped) {
 //            TextNodeEscaped p = (TextNodeEscaped) text;
-//            writeRaw(AnsiEscapeCommands.list(formats), p.getChild(), ctx.isFiltered());
+//            writeRaw(AnsiEscapeCommands.forList(formats), p.getChild(), ctx.isFiltered());
                 break;
             }
             case LIST: {
-                NutsTextNodeList s = (NutsTextNodeList) node;
-                for (NutsTextNode n : s) {
+                NutsTextList s = (NutsTextList) node;
+                for (NutsText n : s) {
                     writeNode(formats, n, ctx);
                 }
                 break;
             }
             case STYLED: {
-                DefaultNutsTextNodeStyled s = (DefaultNutsTextNodeStyled) node;
+                DefaultNutsTextStyled s = (DefaultNutsTextStyled) node;
                 NutsTextNodeStyles styles = s.getStyles();
                 NutsTextNodeStyles format = ws.formats().text().getTheme().toBasicStyles(styles, session);
                 AnsiEscapeCommand[] s2 = _appendFormats(formats, format);
@@ -128,19 +128,19 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
                 break;
             }
             case TITLE: {
-                DefaultNutsTextNodeTitle s = (DefaultNutsTextNodeTitle) node;
+                DefaultNutsTextTitle s = (DefaultNutsTextTitle) node;
                 DefaultNutsTextManager factory0 = (DefaultNutsTextManager) ws.formats().text();
                 AnsiEscapeCommand[] s2 = _appendFormats(formats, ws.formats().text().getTheme().toBasicStyles(NutsTextNodeStyles.of(NutsTextNodeStyle.title(s.getLevel())), session
                 ));
                 if (ctx.isTitleNumberEnabled()) {
-                    NutsTitleNumberSequence seq = ctx.getTitleNumberSequence();
+                    NutsTextNumbering seq = ctx.getTitleNumberSequence();
                     if (seq == null) {
-                        seq = ws.formats().text().createTitleNumberSequence();
+                        seq = ws.formats().text().forNumbering();
                         ctx.setTitleNumberSequence(seq);
                     }
-                    NutsTitleNumberSequence a = seq.newLevel(s.getLevel());
-                    NutsTextNode sWithTitle = factory0.list(
-                            ws.formats().text().plain(a.toString() + " "),
+                    NutsTextNumbering a = seq.newLevel(s.getLevel());
+                    NutsText sWithTitle = factory0.forList(
+                            ws.formats().text().forPlain(a.toString() + " "),
                             s.getChild()
                     );
                     writeNode(s2, sWithTitle, ctx);
@@ -149,14 +149,14 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
                 }
 //        } else if (text instanceof TextNodeUnStyled) {
 //            TextNodeUnStyled s = (TextNodeUnStyled) text;
-//            writeNode(formats, new NutsTextNodePlain(s.getStart()), ctx);
+//            writeNode(formats, new NutsTextPlain(s.getStart()), ctx);
 //            writeNode(formats, s.getChild(), ctx);
-//            writeNode(formats, new NutsTextNodePlain(s.getEnd()), ctx);
+//            writeNode(formats, new NutsTextPlain(s.getEnd()), ctx);
                 break;
             }
             case COMMAND: {
-                DefaultNutsTextNodeCommand s = (DefaultNutsTextNodeCommand) node;
-                AnsiEscapeCommand yy = DefaultNutsTextNodeCommand.parseAnsiEscapeCommand(s.getCommand(), ws);
+                DefaultNutsTextCommand s = (DefaultNutsTextCommand) node;
+                AnsiEscapeCommand yy = DefaultNutsTextCommand.parseAnsiEscapeCommand(s.getCommand(), ws);
                 AnsiEscapeCommand[] s2 = _appendFormats(formats, yy);
                 writeRaw(AnsiEscapeCommands.list(s2), "", ctx.isFiltered());
                 break;
@@ -170,18 +170,18 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
                 DefaultNutsTextManager factory0 = (DefaultNutsTextManager) ws.formats().text();
                 writeNode(
                         formats,
-                        factory0.createStyled(((NutsTextNodeLink) node).getChild(),
+                        factory0.createStyled(((NutsTextLink) node).getChild(),
                                 NutsTextNodeStyles.of(NutsTextNodeStyle.underlined()),
                                 true
                         ),
                         ctx
                 );
-                writeRaw(AnsiEscapeCommands.list(formats), "see: " + ((NutsTextNodeLink) node).getChild(), ctx.isFiltered());
+                writeRaw(AnsiEscapeCommands.list(formats), "see: " + ((NutsTextLink) node).getChild(), ctx.isFiltered());
                 break;
             }
             case CODE: {
-                NutsTextNodeCode node1 = (NutsTextNodeCode) node;
-                NutsTextNode cn = node1.parse(session);
+                NutsTextCode node1 = (NutsTextCode) node;
+                NutsText cn = node1.parse(session);
                 writeNode(formats, cn, ctx);
                 break;
             }

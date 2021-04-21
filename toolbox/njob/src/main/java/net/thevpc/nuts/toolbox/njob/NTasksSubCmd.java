@@ -158,7 +158,7 @@ public class NTasksSubCmd {
             service.tasks().addTask(t);
             if (context.getSession().isPlainTrace()) {
                 context.getSession().out().printf("task %s (%s) added.\n",
-                        context.getWorkspace().formats().text().styled(t.getId(), NutsTextNodeStyle.primary(5)),
+                        context.getWorkspace().formats().text().forStyled(t.getId(), NutsTextNodeStyle.primary(5)),
                         t.getName()
                 );
             }
@@ -397,8 +397,8 @@ public class NTasksSubCmd {
                 service.tasks().updateTask(task);
                 if (context.getSession().isPlainTrace()) {
                     context.getSession().out().printf("task %s (%s) updated.\n",
-                            text.text().styled(task.getId(), NutsTextNodeStyle.primary(5)),
-                            text.text().styled(task.getName(), NutsTextNodeStyle.primary(1))
+                            text.text().forStyled(task.getId(), NutsTextNodeStyle.primary(5)),
+                            text.text().forStyled(task.getName(), NutsTextNodeStyle.primary(1))
                     );
                 }
             }
@@ -630,13 +630,13 @@ public class NTasksSubCmd {
                 if (service.tasks().removeTask(t.getId())) {
                     if (context.getSession().isPlainTrace()) {
                         context.getSession().out().printf("task %s removed.\n",
-                                text.text().styled(a.toString(), NutsTextNodeStyle.primary(5))
+                                text.text().forStyled(a.toString(), NutsTextNodeStyle.primary(5))
                         );
                     }
                 } else {
                     context.getSession().out().printf("task %s %s.\n",
-                            text.text().styled(a.toString(), NutsTextNodeStyle.primary(5)),
-                            text.text().styled("not found", NutsTextNodeStyle.error())
+                            text.text().forStyled(a.toString(), NutsTextNodeStyle.primary(5)),
+                            text.text().forStyled("not found", NutsTextNodeStyle.error())
                     );
                 }
             }

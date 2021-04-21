@@ -24,50 +24,8 @@
 package net.thevpc.nuts.runtime.core.sessionaware;
 
 import java.util.Set;
-import net.thevpc.nuts.NutsBootManager;
-import net.thevpc.nuts.NutsCommandAliasManager;
-import net.thevpc.nuts.NutsCommandLineManager;
-import net.thevpc.nuts.NutsConcurrentManager;
-import net.thevpc.nuts.NutsDefinition;
-import net.thevpc.nuts.NutsDependencyManager;
-import net.thevpc.nuts.NutsDeployCommand;
-import net.thevpc.nuts.NutsDescriptor;
-import net.thevpc.nuts.NutsDescriptorManager;
-import net.thevpc.nuts.NutsExecCommand;
-import net.thevpc.nuts.NutsFetchCommand;
-import net.thevpc.nuts.NutsFilterManager;
-import net.thevpc.nuts.NutsFormatManager;
-import net.thevpc.nuts.NutsIOManager;
-import net.thevpc.nuts.NutsId;
-import net.thevpc.nuts.NutsIdManager;
-import net.thevpc.nuts.NutsIdType;
-import net.thevpc.nuts.NutsImportManager;
-import net.thevpc.nuts.NutsInfoFormat;
-import net.thevpc.nuts.NutsInstallCommand;
-import net.thevpc.nuts.NutsInstallStatus;
-import net.thevpc.nuts.NutsInstallerComponent;
-import net.thevpc.nuts.NutsLogManager;
-import net.thevpc.nuts.NutsPushCommand;
-import net.thevpc.nuts.NutsRepositoryManager;
-import net.thevpc.nuts.NutsSdkManager;
-import net.thevpc.nuts.NutsSearchCommand;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsSupportLevelContext;
-import net.thevpc.nuts.NutsTerminalManager;
-import net.thevpc.nuts.NutsUndeployCommand;
-import net.thevpc.nuts.NutsUninstallCommand;
-import net.thevpc.nuts.NutsUpdateCommand;
-import net.thevpc.nuts.NutsUpdateStatisticsCommand;
-import net.thevpc.nuts.NutsVersionManager;
-import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.NutsWorkspaceAppsManager;
-import net.thevpc.nuts.NutsWorkspaceConfigManager;
-import net.thevpc.nuts.NutsWorkspaceEnvManager;
-import net.thevpc.nuts.NutsWorkspaceEventManager;
-import net.thevpc.nuts.NutsWorkspaceExtensionManager;
-import net.thevpc.nuts.NutsWorkspaceLocationManager;
-import net.thevpc.nuts.NutsWorkspaceOptions;
-import net.thevpc.nuts.NutsWorkspaceSecurityManager;
+
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.core.commands.ws.NutsExecutionContextBuilder;
 import net.thevpc.nuts.runtime.core.repos.NutsInstalledRepository;
@@ -396,4 +354,8 @@ public class NutsWorkspaceSessionAwareImpl implements NutsWorkspace, NutsWorkspa
         return ((NutsWorkspaceExt) ws).defaultSession();
     }
 
+    @Override
+    public NutsTextManager text() {
+        return ws.text().setSession(getSession());
+    }
 }

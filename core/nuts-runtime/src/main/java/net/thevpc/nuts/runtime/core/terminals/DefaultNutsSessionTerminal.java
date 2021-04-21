@@ -3,6 +3,8 @@ package net.thevpc.nuts.runtime.core.terminals;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.DefaultNutsQuestion;
+import net.thevpc.nuts.runtime.standalone.util.SearchTraceHelper;
+import net.thevpc.nuts.runtime.standalone.util.console.CProgressBar;
 import net.thevpc.nuts.spi.NutsTerminalBase;
 
 import java.io.*;
@@ -20,6 +22,7 @@ public class DefaultNutsSessionTerminal extends AbstractNutsTerminal implements 
     protected NutsTerminalBase parent;
     protected NutsTerminalMode outMode = NutsTerminalMode.FORMATTED;
     protected NutsTerminalMode errMode = NutsTerminalMode.FORMATTED;
+    protected CProgressBar progressBar;
 
     @Override
     public void setSession(NutsSession session) {
@@ -192,6 +195,41 @@ public class DefaultNutsSessionTerminal extends AbstractNutsTerminal implements 
     }
 
     @Override
+    public NutsTerminalBase printProgress(float progress, String prompt, Object... params) {
+        if(getParent()!=null) {
+            getParent().printProgress(progress, prompt, params);
+        }else{
+            getProgressBar().printProgress(
+                    Float.isNaN(progress)?-1:
+                    (int)(progress*100),
+                    session.getWorkspace().formats().text().toText(NutsMessage.cstyle(prompt,params)).toString(),
+                    err()
+            );
+        }
+        return this;
+    }
+
+    @Override
+    public NutsTerminalBase printProgress(String prompt, Object... params) {
+        if(getParent()!=null) {
+            getParent().printProgress(prompt, params);
+        }else{
+            getProgressBar().printProgress(-1,
+                    session.getWorkspace().formats().text().toText(NutsMessage.cstyle(prompt,params)).toString(),
+                    err()
+                    );
+        }
+        return this;
+    }
+
+    private CProgressBar getProgressBar() {
+        if(progressBar==null){
+            progressBar=SearchTraceHelper.createProgressBar(session);
+        }
+        return progressBar;
+    }
+
+    @Override
     public char[] readPassword(PrintStream out, String prompt, Object... params) {
         if (out == null) {
             out = out();
@@ -338,5 +376,16 @@ public class DefaultNutsSessionTerminal extends AbstractNutsTerminal implements 
             }
             return base();
         }
+    }
+
+    @Override
+    public NutsSessionTerminal sendOutCommand(NutsTerminalCommand command) {
+        session.getWorkspace().term().sendTerminalCommand(out(), command);
+        return this;
+    }
+    @Override
+    public NutsSessionTerminal sendErrCommand(NutsTerminalCommand command) {
+        session.getWorkspace().term().sendTerminalCommand(out(), command);
+        return this;
     }
 }

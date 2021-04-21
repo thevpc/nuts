@@ -64,7 +64,7 @@ public class NOpenAPIService {
             );
             if (appContext.getSession().isPlainTrace()) {
                 appContext.getSession().out().printf("generated pdf %s\n",
-                        appContext.getWorkspace().formats().text().styled(
+                        appContext.getWorkspace().formats().text().forStyled(
                                 target, NutsTextNodeStyle.primary(4)
                         )
                 );
@@ -85,7 +85,7 @@ public class NOpenAPIService {
         }
         if (trace) {
             appContext.getSession().out().printf("generated src %s\n",
-                    appContext.getWorkspace().formats().text().styled(
+                    appContext.getWorkspace().formats().text().forStyled(
                             target, NutsTextNodeStyle.primary(4)
                     )
             );
@@ -135,7 +135,7 @@ public class NOpenAPIService {
             return appContext.getWorkspace().formats().element().setContentType(NutsContentType.JSON).parse(inputStream, NutsElement.class);
         } else {
             final Object o = new Yaml().load(inputStream);
-            return appContext.getWorkspace().formats().element().convertToElement(o);
+            return appContext.getWorkspace().formats().element().toElement(o);
         }
     }
 
@@ -191,13 +191,14 @@ public class NOpenAPIService {
             NutsObjectElement srvObj = (NutsObjectElement) srv.asObject();
             all.add(MdFactory.title(4, srvObj.getString("url")));
             all.add(MdFactory.text(srvObj.getString("description")));
-            if (srvObj.get(prv.forString("variables")).asObject().size() > 0) {
+            NutsElement vars = srvObj.get(prv.forString("variables"));
+            if (vars!=null && !vars.isEmpty()) {
                 MdTableBuilder mdTableBuilder = MdFactory.table().addColumns(
                         MdFactory.column().setName("NAME"),
                         MdFactory.column().setName("SPEC"),
                         MdFactory.column().setName("DESCRIPTION")
                 );
-                for (NutsElementEntry variables : srvObj.get(prv.forString("variables")).asObject()) {
+                for (NutsElementEntry variables : vars.asObject()) {
                     mdTableBuilder.addRows(
                             MdFactory.row().addCells(
                                     MdFactory.text(variables.getKey().asString()),
@@ -365,7 +366,7 @@ public class NOpenAPIService {
                     all.add(tab);
                 }
                 NutsObjectElement requestBody = call.getObject("requestBody");
-                if (!requestBody.isEmpty()) {
+                if (requestBody!=null && !requestBody.isEmpty()) {
                     boolean required = requestBody.getBoolean("required");
                     String desc = requestBody.getString("description");
                     NutsObjectElement r = requestBody.getObject("content");
@@ -398,7 +399,8 @@ public class NOpenAPIService {
         NutsElementFormat prv = appContext.getWorkspace().formats().element().setSession(appContext.getSession());
         String descSep = " // ";
         if (o.isObject()) {
-            if (o.asObject().get(prv.forString("schema")).isObject()) {
+            NutsElement a = o.asObject().get(prv.forString("schema"));
+            if (a!=null && a.isObject()) {
                 NutsObjectElement schema = o.asObject().getObject("schema");
                 String t = schema.getString("type");
                 if (t.equals("object")) {
@@ -408,7 +410,7 @@ public class NOpenAPIService {
                     }
                     sb.append("\n" + indent + "}");
                     NutsElement desc = o.asObject().get(prv.forString("description"));
-                    if (!desc.asString().isEmpty()) {
+                    if (desc!=null && !desc.asString().isEmpty()) {
                         return sb + descSep + desc.asString();
                     }
                     return sb.toString();
@@ -422,73 +424,76 @@ public class NOpenAPIService {
                     }
                     sb.append("\n" + indent + "}");
                     NutsElement desc = o.asObject().get(prv.forString("description"));
-                    if (!desc.asString().isEmpty()) {
+                    if (desc!=null && !desc.asString().isEmpty()) {
                         return sb + descSep + desc.asString();
                     }
                     return sb.toString();
-                } else if (t.equals("boolean")) {
-                    NutsElement ee = o.asObject().get(prv.forString("example"));
-                    if (!ee.isNull()) {
-                        if (ee.isString()) {
+                } else {
+                    NutsElement anEnum = o.asObject().get(prv.forString("enum"));
+                    if (t.equals("boolean")) {
+                        NutsElement ee = o.asObject().get(prv.forString("example"));
+                        if (ee!=null && !ee.isNull()) {
+                            if (ee.isString()) {
+                                return ee.asString();
+                            }
                             return ee.asString();
                         }
-                        return ee.asString();
-                    }
-                    NutsElement desc = o.asObject().get(prv.forString("description"));
-                    NutsArrayElement en = o.asObject().get(prv.forString("enum")).asArray();
-                    if (en.isEmpty()) {
-                        String r = "boolean ALLOWED:" + en.stream().map(x -> x.isNull() ? "null" : x.asString()).collect(Collectors.joining(", "));
-                        if (!desc.asString().isEmpty()) {
-                            return r + descSep + desc.asString();
+                        NutsElement desc = o.asObject().get(prv.forString("description"));
+                        NutsArrayElement en = anEnum==null?null:anEnum.asArray();
+                        if (en!=null && en.isEmpty()) {
+                            String r = "boolean ALLOWED:" + en.stream().map(x -> x.isNull() ? "null" : x.asString()).collect(Collectors.joining(", "));
+                            if (!desc.asString().isEmpty()) {
+                                return r + descSep + desc.asString();
+                            }
+                            return r;
+                        } else {
+                            if (desc!=null && !desc.asString().isEmpty()) {
+                                return "boolean" + descSep + desc.asString();
+                            }
+                            return "boolean";
                         }
-                        return r;
-                    } else {
-                        if (!desc.asString().isEmpty()) {
-                            return "boolean" + descSep + desc.asString();
-                        }
-                        return "boolean";
-                    }
-                } else if (t.equals("string")) {
-                    NutsElement ee = o.asObject().get(prv.forString("example"));
-                    if (!ee.isNull()) {
-                        if (ee.isString()) {
+                    } else if (t.equals("string")) {
+                        NutsElement ee = o.asObject().get(prv.forString("example"));
+                        if (ee!=null && !ee.isNull()) {
+                            if (ee.isString()) {
+                                return "\'" + ee.asString() + "\'";
+                            }
                             return "\'" + ee.asString() + "\'";
                         }
-                        return "\'" + ee.asString() + "\'";
-                    }
-                    NutsElement desc = o.asObject().get(prv.forString("description"));
-                    NutsArrayElement en = o.asObject().get(prv.forString("enum")).asArray();
-                    if (!en.isEmpty()) {
-                        String r = "string ALLOWED:" + en.stream().map(x -> x.isNull() ? "null" : x.asString()).collect(Collectors.joining(", "));
-                        if (!desc.asString().isEmpty()) {
-                            return r + descSep + desc.asString();
+                        NutsElement desc = o.asObject().get(prv.forString("description"));
+                        NutsArrayElement en = anEnum==null?null:anEnum.asArray();
+                        if (en!=null && !en.isEmpty()) {
+                            String r = "string ALLOWED:" + en.stream().map(x -> x.isNull() ? "null" : x.asString()).collect(Collectors.joining(", "));
+                            if (desc!=null && !desc.asString().isEmpty()) {
+                                return r + descSep + desc.asString();
+                            }
+                            return r;
+                        } else {
+                            if (desc!=null && !desc.asString().isEmpty()) {
+                                return "string" + descSep + desc.asString();
+                            }
+                            return "string";
                         }
-                        return r;
-                    } else {
-                        if (!desc.asString().isEmpty()) {
-                            return "string" + descSep + desc.asString();
+                    } else if (t.equals("integer")) {
+                        NutsElement desc = o.asObject().get(prv.forString("description"));
+                        NutsArrayElement en = anEnum==null?null:anEnum.asArray();
+                        if (en!=null && !en.isEmpty()) {
+                            String r = "integer ALLOWED:" + en.stream().map(x -> x.isNull() ? "null" : x.asString()).collect(Collectors.joining(", "));
+                            if (!desc.asString().isEmpty()) {
+                                return r + descSep + desc.asString();
+                            }
+                            return r;
+                        } else {
+                            if (desc!=null && !desc.asString().isEmpty()) {
+                                return "integer" + descSep + desc.asString();
+                            }
+                            return "integer";
                         }
-                        return "string";
-                    }
-                } else if (t.equals("integer")) {
-                    NutsElement desc = o.asObject().get(prv.forString("description"));
-                    NutsArrayElement en = o.asObject().get(prv.forString("enum")).asArray();
-                    if (!en.isEmpty()) {
-                        String r = "integer ALLOWED:" + en.stream().map(x -> x.isNull() ? "null" : x.asString()).collect(Collectors.joining(", "));
-                        if (!desc.asString().isEmpty()) {
-                            return r + descSep + desc.asString();
-                        }
-                        return r;
-                    } else {
-                        if (!desc.asString().isEmpty()) {
-                            return "integer" + descSep + desc.asString();
-                        }
-                        return "integer";
                     }
                 }
-            } else if (o.asObject().get(prv.forString("type")).isNull()) {
+            } else if (o.asObject().get(prv.forString("type"))==null || o.asObject().get(prv.forString("type")).isNull()) {
                 NutsElement desc = o.asObject().get(prv.forString("description"));
-                if (!desc.asString().isEmpty()) {
+                if (desc!=null && !desc.asString().isEmpty()) {
                     return "null" + "\n" + desc.asString();
                 }
                 return "null";

@@ -53,10 +53,10 @@ public class DefaultTempAction implements NutsTempAction {
         File rootFolder = null;
         NutsRepository repositoryById = null;
         if (repositoryId == null) {
-            rootFolder = Paths.get(ws.locations().getStoreLocation(NutsStoreLocation.TEMP)).toFile();
+            rootFolder = Paths.get(ws.locations().setSession(getSession()).getStoreLocation(NutsStoreLocation.TEMP)).toFile();
         } else {
             repositoryById = ws.repos().setSession(session).getRepository(repositoryId);
-            rootFolder = Paths.get(repositoryById.config().getStoreLocation(NutsStoreLocation.TEMP)).toFile();
+            rootFolder = Paths.get(repositoryById.config().setSession(session).getStoreLocation(NutsStoreLocation.TEMP)).toFile();
         }
         NutsId appId = session.getAppId();
         if(appId==null){
@@ -66,7 +66,7 @@ public class DefaultTempAction implements NutsTempAction {
             rootFolder=new File(
                     rootFolder,
                     NutsConstants.Folders.ID+File.separator
-                            +ws.locations().getDefaultIdBasedir(appId)
+                            +ws.locations().setSession(session).getDefaultIdBasedir(appId)
             );
         }
         if (name == null) {

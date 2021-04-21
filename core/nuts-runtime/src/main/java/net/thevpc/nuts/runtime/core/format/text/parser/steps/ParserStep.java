@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.core.format.text.parser.steps;
 
 import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextNodeParser;
-import net.thevpc.nuts.NutsTextNode;
+import net.thevpc.nuts.NutsText;
 
 public abstract class ParserStep {
 
@@ -9,7 +9,7 @@ public abstract class ParserStep {
 
     public abstract void appendChild(ParserStep tt);
 
-    public abstract NutsTextNode toNode();
+    public abstract NutsText toNode();
 
     public abstract void end(DefaultNutsTextNodeParser.State p);
 

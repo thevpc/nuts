@@ -169,7 +169,7 @@ public class XNode {
                     all.add(entryNode(keyStr, me.getValue(), session, format));
                 } else {
                     all.add(entryNode(keyStr, ws.formats().element().setSession(session)
-                            .convertToElement(Arrays.asList(map)), session, format));
+                            .toElement(Arrays.asList(map)), session, format));
                 }
             }
             return all;

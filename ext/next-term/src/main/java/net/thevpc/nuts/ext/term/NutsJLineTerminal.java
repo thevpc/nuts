@@ -125,11 +125,11 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase, NutsSessionAwa
         return errMode;
     }
 
-    private AttributedString toAttributedString(NutsTextNode n, NutsTextNodeStyles styles) {
+    private AttributedString toAttributedString(NutsText n, NutsTextNodeStyles styles) {
         switch (n.getType()) {
             case PLAIN: {
                 styles=workspace.formats().text().getTheme().toBasicStyles(styles, session);
-                NutsTextNodePlain p = (NutsTextNodePlain) n;
+                NutsTextPlain p = (NutsTextPlain) n;
                 if (styles.isNone()) {
                     return new AttributedString(p.getText());
                 } else {
@@ -187,31 +187,31 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase, NutsSessionAwa
                 return new AttributedString("");
             }
             case CODE: {
-                NutsTextNodeCode p = (NutsTextNodeCode) n;
-                NutsTextNode nn = p.parse(session);
+                NutsTextCode p = (NutsTextCode) n;
+                NutsText nn = p.parse(session);
                 return toAttributedString(nn, NutsTextNodeStyles.NONE);
             }
             case TITLE: {
-                NutsTextNodeTitle p = (NutsTextNodeTitle) n;
+                NutsTextTitle p = (NutsTextTitle) n;
                 return toAttributedString(p.getChild(), NutsTextNodeStyles.NONE);
             }
             case LINK: {
-                NutsTextNodeLink p = (NutsTextNodeLink) n;
+                NutsTextLink p = (NutsTextLink) n;
                 return toAttributedString(
                         p.getChild(),
                         styles.append(NutsTextNodeStyle.underlined())
                 );
             }
             case LIST: {
-                NutsTextNodeList p = (NutsTextNodeList) n;
+                NutsTextList p = (NutsTextList) n;
                 AttributedStringBuilder b = new AttributedStringBuilder();
-                for (NutsTextNode a : p) {
+                for (NutsText a : p) {
                     b.append(toAttributedString(a, styles));
                 }
                 return b.toAttributedString();
             }
             case STYLED: {
-                NutsTextNodeStyled p = (NutsTextNodeStyled) n;
+                NutsTextStyled p = (NutsTextStyled) n;
                 if (styles.isNone()) {
                     return toAttributedString(p.getChild(), p.getStyles());
                 } else {
@@ -249,7 +249,7 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase, NutsSessionAwa
                         public AttributedString highlight(LineReader reader, String buffer) {
                             NutsTextManager text = workspace.formats().text();
                             NutsCommandReadHighlighter h = getCommandReadHighlighter();
-                            NutsTextNode n=(h!=null)?h.highlight(buffer, session):text.plain(buffer);
+                            NutsText n=(h!=null)?h.highlight(buffer, session):text.forPlain(buffer);
                             return toAttributedString(n, NutsTextNodeStyles.NONE);
                         }
 

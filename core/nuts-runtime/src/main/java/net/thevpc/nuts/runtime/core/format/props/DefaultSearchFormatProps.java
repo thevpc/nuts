@@ -50,7 +50,7 @@ public class DefaultSearchFormatProps extends DefaultSearchFormatBase {
         NutsFormatUtils.putAllInProps(String.valueOf(index + 1), p,
                 getWorkspace().formats().element()
                         .setSession(getSession())
-                        .convertToElement(object)
+                        .toElement(object)
         );
         CoreIOUtils.storeProperties(p, getWriter(), false);
         getWriter().flush();

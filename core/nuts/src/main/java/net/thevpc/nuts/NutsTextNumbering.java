@@ -3,10 +3,10 @@ package net.thevpc.nuts;
 /**
  * @category Format
  */
-public interface NutsTitleNumberSequence {
+public interface NutsTextNumbering {
     NutsTitleNumber[] getPattern();
 
-    NutsTitleNumberSequence newLevel(int level);
+    NutsTextNumbering newLevel(int level);
 
     NutsTitleNumber getNumber(int index);
 

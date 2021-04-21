@@ -44,7 +44,7 @@ public class Test07_ColorfulStream {
         NutsWorkspace ws = Nuts.openWorkspace();
         {
             NutsSession session = ws.createSession();
-            NutsTextNode node = new DefaultNutsTextNodeParser(session).parse(new StringReader(s));
+            NutsText node = new DefaultNutsTextNodeParser(session).parse(new StringReader(s));
             NutsTextNodeWriter w = new NutsTextNodeWriterRenderer(System.out, AnsiUnixTermPrintRenderer.ANSI_RENDERER, session)
                     .setWriteConfiguration(new NutsTextNodeWriteConfiguration().setTitleNumberEnabled(true));
             w.writeNode(node);
@@ -107,7 +107,7 @@ public class Test07_ColorfulStream {
 //        System.out.println(text);
 //        System.out.println("\n--------------------------------");
 //        NutsTextNodeParser parser = new DefaultNutsTextNodeParser(ws);
-//        NutsTextNode node = parser.parse(new StringReader(text));
+//        NutsText node = parser.parse(new StringReader(text));
 //        System.out.println(node);
 //        System.out.println("\n--------------------------------");
 //        w.writeNode(node);
@@ -162,7 +162,7 @@ public class Test07_ColorfulStream {
 //        System.out.println(text);
 //        System.out.println("\n--------------------------------");
 //        NutsTextNodeParser parser = new DefaultNutsTextNodeParser(ws);
-//        NutsTextNode node = parser.parse(new StringReader(text));
+//        NutsText node = parser.parse(new StringReader(text));
 //        System.out.println(node);
 //        System.out.println("\n--------------------------------");
 //        w.writeNode(node);
@@ -189,7 +189,7 @@ public class Test07_ColorfulStream {
 //        System.out.println(text);
 //        System.out.println("\n--------------------------------");
 //        NutsTextNodeParser parser = new DefaultNutsTextNodeParser(ws);
-//        NutsTextNode node = parser.parse(new StringReader(text));
+//        NutsText node = parser.parse(new StringReader(text));
 //        System.out.println(node);
 //        System.out.println("\n--------------------------------");
 //        w.writeNode(node);
@@ -228,18 +228,18 @@ public class Test07_ColorfulStream {
 //        }
 //        {
 //            String t_string = "###ø####aa####ø###";
-//            NutsTextNode node = new DefaultNutsTextNodeParser(ws).parse(new StringReader(t_string));
+//            NutsText node = new DefaultNutsTextNodeParser(ws).parse(new StringReader(t_string));
 //            System.out.println();
 //            NutsTextNodeWriter w = new NutsTextNodeWriterStringer(System.out, ws)
 //                    .setWriteConfiguration(new NutsTextNodeWriteConfiguration().setTitleNumberEnabled(true));
 //            Assertions.assertTrue(
-//                    node instanceof NutsTextNodeStyled
+//                    node instanceof NutsTextStyled
 //            );
 //            Assertions.assertTrue(
-//                    ((NutsTextNodeStyled) node).getChild() instanceof NutsTextNodeStyled
+//                    ((NutsTextStyled) node).getChild() instanceof NutsTextStyled
 //            );
 //            Assertions.assertTrue(
-//                    ((NutsTextNodeStyled) (((NutsTextNodeStyled) node).getChild())).getChild() instanceof NutsTextNodePlain
+//                    ((NutsTextStyled) (((NutsTextStyled) node).getChild())).getChild() instanceof NutsTextPlain
 //            );
 //            w.writeNode(node);
 //        }
@@ -482,7 +482,7 @@ public class Test07_ColorfulStream {
 //
 //        NutsWorkspace ws = Nuts.openWorkspace();
 //        {
-//            NutsTextNode command = ws.formats().text().command(NutsTerminalManager.CMD_LATER_RESET_LINE);
+//            NutsText command = ws.formats().text().command(NutsTerminalManager.CMD_LATER_RESET_LINE);
 //            NutsTextNodeWriter w = new NutsTextNodeWriterRenderer(System.out, AnsiUnixTermPrintRenderer.ANSI_RENDERER, ws)
 //                    .setWriteConfiguration(new NutsTextNodeWriteConfiguration().setTitleNumberEnabled(true));
 //            w.writeNode(command);

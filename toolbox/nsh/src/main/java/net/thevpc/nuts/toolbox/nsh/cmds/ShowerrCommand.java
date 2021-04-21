@@ -76,23 +76,23 @@ public class ShowerrCommand extends SimpleNshBuiltin {
         JShellResult r = context.getResult();
         if (r.getCode() == 0) {
             context.out().println(
-                    context.getWorkspace().formats().text().styled(
+                    context.getWorkspace().formats().text().forStyled(
                             "last command ended successfully with no errors.", NutsTextNodeStyle.success()
                     ));
         } else {
             context.out().println(
                     context.getWorkspace().formats().text()
-                            .styled("last command ended abnormally with the following error :",NutsTextNodeStyle.error())
+                            .forStyled("last command ended abnormally with the following error :",NutsTextNodeStyle.error())
             );
             if (r.getMessage() != null) {
                 context.out().println(context.getWorkspace().formats().text()
-                        .styled(r.getMessage(),NutsTextNodeStyle.error()
+                        .forStyled(r.getMessage(),NutsTextNodeStyle.error()
                         ));
             }
             if (r.getStackTrace() != null) {
                 context.err().println(
                         context.getWorkspace().formats().text()
-                                .styled(r.getStackTrace(),NutsTextNodeStyle.error())
+                                .forStyled(r.getStackTrace(),NutsTextNodeStyle.error())
                 );
             }
         }

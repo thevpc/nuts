@@ -41,7 +41,7 @@ import java.util.logging.Logger;
 public class NutsJavaShell extends JShell {
 
     private static final Logger LOG = Logger.getLogger(NutsJavaShell.class.getName());
-    //        String command = null;
+    //        String forCommand = null;
     long boot_startMillis;
     private NutsApplicationContext appContext;
     private File histFile = null;
@@ -222,8 +222,8 @@ public class NutsJavaShell extends JShell {
                 )
                 .setCommandReadHighlighter(new NutsCommandReadHighlighter() {
                     @Override
-                    public NutsTextNode highlight(String buffer, NutsSession session) {
-                        return session.getWorkspace().formats().text().code("sh", buffer).parse(session);
+                    public NutsText highlight(String buffer, NutsSession session) {
+                        return session.getWorkspace().formats().text().forCode("sh", buffer).parse(session);
                     }
                 });
         super.executeInteractive(context);

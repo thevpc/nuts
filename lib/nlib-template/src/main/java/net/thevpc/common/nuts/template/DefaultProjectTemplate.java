@@ -440,7 +440,7 @@ public class DefaultProjectTemplate implements ProjectTemplate {
             p = resolveFirstPomFile(getProjectRootFolder());
             if (p != null) {
                 if (!getSession().getTerminal().ask().forBoolean("accept project location %s?",
-                        applicationContext.getWorkspace().formats().text().styled(p.getPath(),NutsTextNodeStyle.path()))
+                        applicationContext.getWorkspace().formats().text().forStyled(p.getPath(),NutsTextNodeStyle.path()))
                         .setDefaultValue(false)
                         .getBooleanValue()) {
                     throw new NutsUserCancelException(getSession());

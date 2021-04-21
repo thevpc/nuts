@@ -2,10 +2,10 @@ package net.thevpc.nuts.runtime.core.format.text.parser.steps;
 
 import net.thevpc.nuts.NutsIllegalArgumentException;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsTextNode;
 import net.thevpc.nuts.runtime.core.format.text.DefaultNutsTextManager;
 import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextNodeParser;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+import net.thevpc.nuts.NutsText;
 
 
 public class NewLineParserStep extends ParserStep {
@@ -37,9 +37,9 @@ public class NewLineParserStep extends ParserStep {
     }
 
     @Override
-    public NutsTextNode toNode() {
+    public NutsText toNode() {
         DefaultNutsTextManager factory0 = (DefaultNutsTextManager) session.getWorkspace().formats().text();
-        return factory0.plain(start.toString());
+        return factory0.forPlain(start.toString());
     }
 
     @Override

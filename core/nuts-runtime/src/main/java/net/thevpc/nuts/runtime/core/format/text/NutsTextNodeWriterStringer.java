@@ -11,7 +11,7 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
     private OutputStream out;
     private NutsWorkspace ws;
 
-    public static String toString(NutsTextNode n, NutsWorkspace ws) {
+    public static String toString(NutsText n, NutsWorkspace ws) {
         if (n == null) {
             return "";
         }
@@ -26,7 +26,7 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
     }
 
     @Override
-    public void writeNode(NutsTextNode node) {
+    public void writeNode(NutsText node) {
         writeNode(node, getWriteConfiguration());
     }
 
@@ -45,7 +45,7 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
         return true;
     }
 
-    public void writeNode(NutsTextNode node, NutsTextNodeWriteConfiguration ctx) {
+    public void writeNode(NutsText node, NutsTextNodeWriteConfiguration ctx) {
         if (node == null) {
             return;
         }
@@ -54,7 +54,7 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
         }
         switch (node.getType()) {
             case PLAIN:
-                NutsTextNodePlain p = (NutsTextNodePlain) node;
+                NutsTextPlain p = (NutsTextPlain) node;
                 if (ctx.isFiltered()) {
                     writeRaw(p.getText());
                 } else {
@@ -62,14 +62,14 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
                 }
                 break;
             case LIST: {
-                NutsTextNodeList s = (NutsTextNodeList) node;
-                for (NutsTextNode n : s) {
+                NutsTextList s = (NutsTextList) node;
+                for (NutsText n : s) {
                     writeNode(n, ctx);
                 }
                 break;
             }
             case STYLED: {
-                DefaultNutsTextNodeStyled s = (DefaultNutsTextNodeStyled) node;
+                DefaultNutsTextStyled s = (DefaultNutsTextStyled) node;
                 if (ctx.isFiltered()) {
                     writeNode(s.getChild(), ctx);
                 } else {
@@ -80,7 +80,7 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
                             writeNode(s.getChild(), ctx);
                         } else {
                             writeNode(
-                                    ws.formats().text().styled(s.getChild(), s.getStyles().removeFirst()),
+                                    ws.formats().text().forStyled(s.getChild(), s.getStyles().removeFirst()),
                                     ctx);
                         }
                         writeRaw(s.getEnd());
@@ -92,7 +92,7 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
                             writeNode(s.getChild(), ctx);
                         } else {
                             writeNode(
-                                    ws.formats().text().styled(s.getChild(), s.getStyles().removeFirst()),
+                                    ws.formats().text().forStyled(s.getChild(), s.getStyles().removeFirst()),
                                     ctx);
                         }
                         writeRaw(s.getEnd());
@@ -102,17 +102,17 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
                 break;
             }
             case TITLE: {
-                DefaultNutsTextNodeTitle s = (DefaultNutsTextNodeTitle) node;
+                DefaultNutsTextTitle s = (DefaultNutsTextTitle) node;
                 if (!ctx.isFiltered()) {
                     writeRaw(s.getStart());
                 }
                 if (ctx.isTitleNumberEnabled()) {
-                    NutsTitleNumberSequence seq = ctx.getTitleNumberSequence();
+                    NutsTextNumbering seq = ctx.getTitleNumberSequence();
                     if (seq == null) {
-                        seq = ws.formats().text().createTitleNumberSequence();
+                        seq = ws.formats().text().forNumbering();
                         ctx.setTitleNumberSequence(seq);
                     }
-                    NutsTitleNumberSequence a = seq.newLevel(s.getTextStyleCode().length());
+                    NutsTextNumbering a = seq.newLevel(s.getTextStyleCode().length());
                     String ts = a.toString() + " ";
 //                if(startWritten){
 //                    ts=" "+ts;
@@ -128,7 +128,7 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
                 break;
             }
             case COMMAND: {
-                DefaultNutsTextNodeCommand s = (DefaultNutsTextNodeCommand) node;
+                DefaultNutsTextCommand s = (DefaultNutsTextCommand) node;
                 if (!ctx.isFiltered()) {
                     writeRaw(s.getStart());
                     writeRaw(s.getKind());
@@ -143,7 +143,7 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
                 break;
             }
             case ANCHOR: {
-                DefaultNutsTextNodeAnchor s = (DefaultNutsTextNodeAnchor) node;
+                DefaultNutsTextAnchor s = (DefaultNutsTextAnchor) node;
                 if (!ctx.isFiltered()) {
                     writeRaw(s.getStart());
                     writeRaw(s.getKind());
@@ -155,7 +155,7 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
                 break;
             }
             case LINK: {
-                DefaultNutsTextNodeLink s = (DefaultNutsTextNodeLink) node;
+                DefaultNutsTextLink s = (DefaultNutsTextLink) node;
                 if (!ctx.isFiltered()) {
                     writeRaw(s.getStart());
                     writeRaw(s.getKind());
@@ -169,7 +169,7 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
                 break;
             }
             case CODE: {
-                DefaultNutsTextNodeCode s = (DefaultNutsTextNodeCode) node;
+                DefaultNutsTextCode s = (DefaultNutsTextCode) node;
                 if (!ctx.isFiltered()) {
                     writeRaw(s.getStart());
                     writeRaw(s.getKind());

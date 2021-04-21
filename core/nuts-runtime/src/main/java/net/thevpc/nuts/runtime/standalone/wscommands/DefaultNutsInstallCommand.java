@@ -468,9 +468,9 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                     .append(kind).append(" ").append((all.size() > 1 ? "artifacts are" : "artifact is"))
                     .append(" going to be ").append(action).append(" : ")
                     .appendJoined(
-                            ws.formats().text().plain(", "),
+                            ws.formats().text().forPlain(", "),
                             all.stream().map(x
-                                    -> ws.formats().text().nodeFor(
+                                    -> ws.formats().text().toText(
                                     x.builder().omitImportedGroupId().build()
                             )
                             ).collect(Collectors.toList())

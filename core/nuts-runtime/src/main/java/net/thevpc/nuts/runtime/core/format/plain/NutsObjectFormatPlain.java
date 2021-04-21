@@ -88,7 +88,7 @@ public class NutsObjectFormatPlain extends NutsObjectFormatBase {
         } else {
             printElement(w, getWorkspace().formats().element()
                     .setSession(getSession())
-                    .convertToElement(value));
+                    .toElement(value));
         }
     }
 
@@ -114,7 +114,7 @@ public class NutsObjectFormatPlain extends NutsObjectFormatBase {
                 break;
             }
             case INSTANT: {
-                out.print(getWorkspace().formats().text().plain(value.asPrimitive().getInstant().toString()).toString());
+                out.print(getWorkspace().formats().text().forPlain(value.asPrimitive().getInstant().toString()).toString());
                 out.flush();
                 break;
             }

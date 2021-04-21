@@ -187,6 +187,17 @@ public class RepoDefinitionResolver {
                                         .setType("nuts+dirtext")
                         );
             }
+            case "dev":
+            case "thevpc": {
+                return new NutsAddRepositoryOptions().setName("thevpc")
+                        .setFailSafe(false).setCreate(true)
+                        .setOrder(NutsAddRepositoryOptions.ORDER_USER_REMOTE)
+                        .setConfig(
+                                new NutsRepositoryConfig()
+                                        .setLocation("http://thevpc.net/maven")
+                                        .setType("nuts+dirtext")
+                        );
+            }
             default: {
                 String ppath = s.getUrl();
                 String name = s.getName();

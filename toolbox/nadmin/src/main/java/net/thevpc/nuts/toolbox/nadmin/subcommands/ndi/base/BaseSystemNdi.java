@@ -247,7 +247,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             if (exists) {
                 if (!context.getSession().getTerminal().ask().setDefaultValue(false).setSession(context.getSession())
                         .forBoolean("override existing script %s ?",
-                                context.getWorkspace().formats().text().styled(
+                                context.getWorkspace().formats().text().forStyled(
                                         NdiUtils.betterPath(ff.toString()), NutsTextNodeStyle.path()
                                 )
                         ).getBooleanValue()) {
@@ -283,7 +283,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         NutsTextManager factory = context.getWorkspace().formats().text();
         if (Files.isRegularFile(f)) {
             if (session.getTerminal().ask().forBoolean("tool %s will be removed. Confirm?",
-                    factory.styled(NdiUtils.betterPath(f.toString()), NutsTextNodeStyle.path())
+                    factory.forStyled(NdiUtils.betterPath(f.toString()), NutsTextNodeStyle.path())
             )
                     .setDefaultValue(true)
                     .getBooleanValue()) {
@@ -293,7 +293,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                     throw new UncheckedIOException(ex);
                 }
                 if (session.isPlainTrace()) {
-                    session.out().printf("tool %s removed.%n", factory.styled(NdiUtils.betterPath(f.toString()), NutsTextNodeStyle.path()));
+                    session.out().printf("tool %s removed.%n", factory.forStyled(NdiUtils.betterPath(f.toString()), NutsTextNodeStyle.path()));
                 }
             }
         }
@@ -486,7 +486,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         if (!force && Files.exists(script)) {
             if (context.getSession().getTerminal().ask().setDefaultValue(true).setSession(context.getSession())
                     .forBoolean("override existing script %s ?",
-                            context.getWorkspace().formats().text().styled(
+                            context.getWorkspace().formats().text().forStyled(
                                     NdiUtils.betterPath(script.toString()), NutsTextNodeStyle.path()
                             )
                     ).getBooleanValue()) {
@@ -520,7 +520,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             if (!force && Files.exists(ff2)) {
                 if (!context.getSession().getTerminal().ask().setSession(context.getSession())
                         .forBoolean("override existing script %s ?",
-                                context.getWorkspace().formats().text().styled(NdiUtils.betterPath(ff2.toString()), NutsTextNodeStyle.path()))
+                                context.getWorkspace().formats().text().forStyled(NdiUtils.betterPath(ff2.toString()), NutsTextNodeStyle.path()))
                         .setDefaultValue(false)
                         .getBooleanValue()) {
                     gen = false;
@@ -531,7 +531,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                 if (trace && context.getSession().isPlainTrace()) {
                     context.getSession().out().printf((Files.exists(ff2) ? "re-installing" : "installing")
                             + " script %s %n",
-                            context.getWorkspace().formats().text().styled(NdiUtils.betterPath(ff2.toString()), NutsTextNodeStyle.path())
+                            context.getWorkspace().formats().text().forStyled(NdiUtils.betterPath(ff2.toString()), NutsTextNodeStyle.path())
                     );
                 }
                 try {

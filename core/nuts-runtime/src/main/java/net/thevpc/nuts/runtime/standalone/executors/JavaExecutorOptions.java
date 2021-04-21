@@ -261,7 +261,7 @@ public final class JavaExecutorOptions {
 
                         NutsTextManager tfactory = text.text();
                         msgString.append("multiple runnable classes detected  - actually ")
-                                .append(tfactory.styled("" + possibleClasses.size(), NutsTextNodeStyle.primary(5)))
+                                .append(tfactory.forStyled("" + possibleClasses.size(), NutsTextNodeStyle.primary(5)))
                                 .append(" . Select one :\n");
                         int x = ((int) Math.log(possibleClasses.size())) + 2;
                         for (int i = 0; i < possibleClasses.size(); i++) {

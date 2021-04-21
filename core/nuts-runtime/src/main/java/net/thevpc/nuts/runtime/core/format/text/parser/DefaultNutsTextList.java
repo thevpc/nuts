@@ -24,26 +24,26 @@
  */
 package net.thevpc.nuts.runtime.core.format.text.parser;
 
-import net.thevpc.nuts.NutsTextNode;
-import net.thevpc.nuts.NutsTextNodeList;
+import net.thevpc.nuts.NutsTextList;
 import net.thevpc.nuts.NutsTextNodeType;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NutsText;
 
 /**
  * Created by vpc on 5/23/17.
  */
-public class DefaultNutsTextNodeList extends AbstractNutsTextNode implements NutsTextNodeList {
+public class DefaultNutsTextList extends AbstractNutsText implements NutsTextList {
 
-    private List<NutsTextNode> children = new ArrayList<NutsTextNode>();
+    private List<NutsText> children = new ArrayList<NutsText>();
 
-    public DefaultNutsTextNodeList(NutsSession ws, NutsTextNode... children) {
+    public DefaultNutsTextList(NutsSession ws, NutsText... children) {
         super(ws);
         if (children != null) {
-            for (NutsTextNode c : children) {
+            for (NutsText c : children) {
                 if (c != null) {
                     this.children.add(c);
                 }
@@ -52,9 +52,9 @@ public class DefaultNutsTextNodeList extends AbstractNutsTextNode implements Nut
     }
 
     @Override
-    public NutsTextNode simplify() {
+    public NutsText simplify() {
         if (isEmpty()) {
-            return new DefaultNutsTextNodePlain(getSession(), "");
+            return new DefaultNutsTextPlain(getSession(), "");
         }
         if (size() == 1) {
             return get(0);
@@ -68,7 +68,7 @@ public class DefaultNutsTextNodeList extends AbstractNutsTextNode implements Nut
     }
 
     @Override
-    public NutsTextNode get(int index) {
+    public NutsText get(int index) {
         return children.get(index);
     }
 
@@ -78,7 +78,7 @@ public class DefaultNutsTextNodeList extends AbstractNutsTextNode implements Nut
     }
 
     @Override
-    public Iterator<NutsTextNode> iterator() {
+    public Iterator<NutsText> iterator() {
         return children.iterator();
     }
     

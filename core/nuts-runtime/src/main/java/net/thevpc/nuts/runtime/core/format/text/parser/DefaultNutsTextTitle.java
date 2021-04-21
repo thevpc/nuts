@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- * Nuts : Network Updatable Things Service
- * (universal package manager)
+ *            Nuts : Network Updatable Things Service
+ *                  (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -11,7 +11,7 @@
  * architecture to help supporting a large range of sub managers / repositories.
  *
  * <br>
- * <p>
+ *
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -23,33 +23,51 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
- */
+*/
 package net.thevpc.nuts.runtime.core.format.text.parser;
 
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsTextNode;
-import net.thevpc.nuts.NutsTextNodeLink;
+import net.thevpc.nuts.NutsTextTitle;
 import net.thevpc.nuts.NutsTextNodeType;
+import net.thevpc.nuts.NutsText;
 
 /**
  * Created by vpc on 5/23/17.
  */
-public class DefaultNutsTextNodeLink extends NutsTextNodeSpecialBase implements NutsTextNodeLink {
-    private NutsTextNode value;
+public class DefaultNutsTextTitle extends AbstractNutsText implements NutsTextTitle {
 
-    public DefaultNutsTextNodeLink(NutsSession ws, String start, String separator, String end, NutsTextNode value) {
-        super(ws, start, "link", separator, end);
-        this.value = value;
+    private final String start;
+    private NutsText child;
+    private int level;
+
+    public DefaultNutsTextTitle(NutsSession ws, String start, int level, NutsText child) {
+        super(ws);
+        this.start = start;
+        this.level = level;
+        this.child = child;
     }
 
-    @Override
-    public NutsTextNode getChild() {
-        return value;
+    public int getLevel() {
+        return level;
     }
 
     @Override
     public NutsTextNodeType getType() {
-        return NutsTextNodeType.LINK;
+        return NutsTextNodeType.TITLE;
+    }
+
+    public String getTextStyleCode() {
+        String s= start.trim();
+        int u = s.indexOf(')');
+        return s.substring(0,u);//+start.charAt(0);
+    }
+
+    public String getStart() {
+        return start;
+    }
+
+    public NutsText getChild() {
+        return child;
     }
 
 }

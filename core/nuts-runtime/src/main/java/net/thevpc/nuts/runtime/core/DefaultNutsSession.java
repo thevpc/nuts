@@ -37,7 +37,6 @@ import java.util.*;
 import java.util.logging.Filter;
 import java.util.logging.Level;
 
-import net.thevpc.nuts.runtime.core.format.CustomNutsIncrementalOutputFormat;
 import net.thevpc.nuts.runtime.core.sessionaware.NutsWorkspaceSessionAwareImpl;
 
 /**
@@ -60,8 +59,8 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     private Filter logFileFilter;
     private NutsConfirmationMode confirm = null;
     private NutsContentType outputFormat;
-    protected NutsIterableFormat iterFormatHandler = null;
-    protected NutsIterableOutput iterFormat = null;
+//    protected NutsIterableFormat iterFormatHandler = null;
+//    protected NutsIterableOutput iterFormat = null;
     protected NutsWorkspace ws = null;
     protected List<String> outputFormatOptions = new ArrayList<>();
     private NutsFetchStrategy fetchStrategy = null;
@@ -75,6 +74,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     private Instant expireTime;
     private NutsId appId;
     private String locale;
+    private boolean iterableOut;
 
     public DefaultNutsSession(NutsWorkspace ws) {
         this.ws = new NutsWorkspaceSessionAwareImpl(this,ws);
@@ -143,7 +143,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         } else {
             this.outputFormat = other.getOutputFormat();
         }
-        this.iterFormat = null;
+        this.iterableOut = other.isIterableOut();
         this.outputFormatOptions.clear();
         this.outputFormatOptions.addAll(Arrays.asList(other.getOutputFormatOptions()));
         this.progressOptions = other.getProgressOptions();
@@ -338,31 +338,19 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     }
 
     @Override
-    public NutsIterableFormat getIterableFormat() {
-        return iterFormatHandler;
-    }
-
-    @Override
-    public NutsIterableOutput getIterableOutput() {
-        if (iterFormatHandler == null) {
+    public NutsIterableFormat getIterableOutput() {
+        if(!iterableOut){
             return null;
         }
-        if (iterFormat == null) {
-            iterFormat = new CustomNutsIncrementalOutputFormat(ws, iterFormatHandler);
-            iterFormat.setSession(this);
-        }
-        return iterFormat;
-    }
-
-    @Override
-    public NutsSession setIterableFormat(NutsIterableFormat f) {
-        if (f == null) {
-            this.iterFormatHandler = null;
-        } else {
-            this.iterFormatHandler = f;
-            this.setOutputFormat(f.getOutputFormat());
-        }
-        return this;
+        return getWorkspace().formats().element().setContentType(getOutputFormat()).iter(out());
+//        if (iterFormatHandler == null) {
+//            return null;
+//        }
+//        if (iterFormat == null) {
+//            iterFormat = new CustomNutsIncrementalOutputFormat(ws, iterFormatHandler);
+//            iterFormat.setSession(this);
+//        }
+//        return iterFormat;
     }
 
     @Override
@@ -650,7 +638,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                 }
                 case "-f":
                 case "--fetch": {
-                    NutsArgument v = cmdLine.nextString();
+                    a = cmdLine.nextString();
                     if (enabled) {
                         this.setFetchStrategy(NutsFetchStrategy.valueOf(a.getStringValue("").toUpperCase().replace("-", "_")));
                     }
@@ -830,13 +818,6 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
 
     @Override
     public NutsContentType getOutputFormat(NutsContentType defaultValue) {
-        NutsIterableFormat f = getIterableFormat();
-        if (f != null) {
-            NutsContentType o = f.getOutputFormat();
-            if (o != null) {
-                return o;
-            }
-        }
         if (this.outputFormat != null) {
             return this.outputFormat;
         }
@@ -881,7 +862,13 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
 
     @Override
     public boolean isIterableOut() {
-        return getIterableFormat() != null;
+        return iterableOut;
+    }
+
+    @Override
+    public NutsSession setIterableOut(boolean iterableOut) {
+        this.iterableOut = iterableOut;
+        return this;
     }
 
     @Override
@@ -1050,12 +1037,6 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     @Override
     public PrintStream out() {
         return terminal.out();
-    }
-
-    @Override
-    public NutsSession sendTerminalCommand(NutsTerminalCommand command) {
-        getWorkspace().term().sendTerminalCommand(out(), command);
-        return this;
     }
 
     @Override

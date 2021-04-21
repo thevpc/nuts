@@ -292,11 +292,9 @@ class PrivateNutsRepositorySelector {
             case "vpc-public-nuts": {
                 return "https://raw.githubusercontent.com/thevpc/vpc-public-nuts/master";
             }
+            case "dev": 
             case "thevpc": {
-                return "http://thevpc.net";
-            }
-            case "tahabensalah": {
-                return "http://tahabensalah.net";
+                return "http://thevpc.net/maven";
             }
         }
         return path;

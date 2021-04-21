@@ -43,10 +43,10 @@ public class CoreCommonUtils {
         NutsWorkspace ws = session.getWorkspace();
         NutsFormatManager txt = ws.formats();
         if (o == null) {
-            return txt.text().blank();
+            return txt.text().forBlank();
         }
         if (o instanceof NutsFormattable) {
-            return txt.text().nodeFor(o);
+            return txt.text().toText(o);
         }
         if (o instanceof NutsPrimitiveElement) {
             o = ((NutsPrimitiveElement) o).getValue();
@@ -56,15 +56,15 @@ public class CoreCommonUtils {
             Collection<NutsElementEntry> c = ((NutsObjectElement) o).children();
             Object[] a = c.toArray();
             if (a.length == 0) {
-                return txt.text().blank();
+                return txt.text().forBlank();
             }
             if (a.length == 1) {
-                return txt.text().plain(stringValue(a[0]));
+                return txt.text().forPlain(stringValue(a[0]));
             }
             return txt.text().builder()
                     .append("{")
                     .appendJoined(
-                            txt.text().plain(", "),
+                            txt.text().forPlain(", "),
                             c.stream().map(x -> stringValueFormatted(x, escapeString, session)).collect(Collectors.toList())
                     )
                     .append("}");
@@ -76,7 +76,7 @@ public class CoreCommonUtils {
             sb.append("=");
             if (ne.getValue().type() == NutsElementType.STRING) {
                 sb.append(
-                        txt.text().nodeFor(
+                        txt.text().toText(
                                 CoreStringUtils.dblQuote(stringValueFormatted(ne.getValue(), escapeString, session).toString())
                         ));
 //            } else if (ne.getValue().type() == NutsElementType.NUTS_STRING) {
@@ -93,7 +93,7 @@ public class CoreCommonUtils {
             if (ne.getValue() instanceof String
                     || (ne.getValue() instanceof NutsElement && ((NutsElement) ne.getValue()).isString())) {
                 sb.append(
-                        txt.text().nodeFor(
+                        txt.text().toText(
                                 CoreStringUtils.dblQuote(stringValueFormatted(ne.getValue(), escapeString, session).toString())
                         )
                 );
@@ -107,26 +107,26 @@ public class CoreCommonUtils {
             o = ((Map) o).entrySet();
         }
         if (o == null) {
-            return txt.text().blank();
+            return txt.text().forBlank();
         }
         if (o instanceof Boolean) {
-            txt.text().plain(String.valueOf(o));
+            txt.text().forPlain(String.valueOf(o));
         }
         if (o.getClass().isEnum()) {
-            return txt.text().plain(CoreEnumUtils.getEnumString((Enum) o));
+            return txt.text().forPlain(CoreEnumUtils.getEnumString((Enum) o));
         }
         if (o instanceof Instant) {
-            return txt.text().plain(
+            return txt.text().forPlain(
                     CoreNutsUtils.DEFAULT_DATE_TIME_FORMATTER.format(((Instant) o))
             );
         }
         if (o instanceof Temporal) {
-            return txt.text().plain(
+            return txt.text().forPlain(
                     CoreNutsUtils.DEFAULT_DATE_TIME_FORMATTER.format(((Temporal) o))
             );
         }
         if (o instanceof Date) {
-            return txt.text().plain(
+            return txt.text().forPlain(
                     CoreNutsUtils.DEFAULT_DATE_TIME_FORMATTER.format(((Date) o).toInstant())
             );
         }
@@ -134,16 +134,16 @@ public class CoreCommonUtils {
             Collection c = ((Collection) o);
             Object[] a = c.toArray();
             if (a.length == 0) {
-                return txt.text().blank();
+                return txt.text().forBlank();
             }
             if (a.length == 1) {
-                return txt.text().plain(stringValue(a[0]));
+                return txt.text().forPlain(stringValue(a[0]));
             }
             List<NutsString> ll = ((Collection<Object>) c).stream().map(x -> stringValueFormatted(x, escapeString, session)).collect(Collectors.toList());
             return txt.text().builder()
                     .append("[")
                     .appendJoined(
-                            txt.text().plain(", "),
+                            txt.text().forPlain(", "),
                             ll
                     )
                     .append("]");
@@ -152,16 +152,16 @@ public class CoreCommonUtils {
             Map c = ((Map) o);
             Map.Entry[] a = (Map.Entry[]) c.entrySet().toArray(new Map.Entry[0]);
             if (a.length == 0) {
-                return txt.text().blank();
+                return txt.text().forBlank();
             }
             if (a.length == 1) {
-                return txt.text().plain(stringValue(a[0]));
+                return txt.text().forPlain(stringValue(a[0]));
             }
             List<NutsString> ll = Arrays.stream(a).map(x -> stringValueFormatted(x, escapeString, session)).collect(Collectors.toList());
             return txt.text().builder()
                     .append("{")
                     .appendJoined(
-                            txt.text().plain(", "),
+                            txt.text().forPlain(", "),
                             ll
                     )
                     .append("}");
@@ -169,7 +169,7 @@ public class CoreCommonUtils {
         if (o.getClass().isArray()) {
             int len = Array.getLength(o);
             if (len == 0) {
-                return txt.text().blank();
+                return txt.text().forBlank();
             }
             if (len == 1) {
                 return stringValueFormatted(Array.get(o, 0), escapeString, session);
@@ -181,7 +181,7 @@ public class CoreCommonUtils {
             return txt.text().builder()
                     .append("[")
                     .appendJoined(
-                            txt.text().plain(", "),
+                            txt.text().forPlain(", "),
                             all
                     )
                     .append("]");
@@ -199,7 +199,7 @@ public class CoreCommonUtils {
             }
             return stringValueFormatted(all, escapeString, session);
         }
-        return txt.text().plain(o.toString());
+        return txt.text().forPlain(o.toString());
     }
 
     public static String stringValue(Object o) {

@@ -3,11 +3,11 @@ package net.thevpc.nuts;
 /**
  * @category Format
  */
-public interface NutsTextNodeCode extends NutsTextNode{
+public interface NutsTextCode extends NutsText{
     /**
      * return a parsed instance of this code
      * @param  session session
      * @return return
      */
-    NutsTextNode parse(NutsSession session);
+    NutsText parse(NutsSession session);
 }

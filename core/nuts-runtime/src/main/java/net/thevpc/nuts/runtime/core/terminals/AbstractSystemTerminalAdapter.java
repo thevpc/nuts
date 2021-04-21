@@ -11,6 +11,7 @@ import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.DefaultNutsQuestion;
 import net.thevpc.nuts.spi.NutsInputStreamTransparentAdapter;
 import net.thevpc.nuts.spi.NutsSystemTerminalBase;
+import net.thevpc.nuts.spi.NutsTerminalBase;
 
 public abstract class AbstractSystemTerminalAdapter extends AbstractNutsTerminal implements NutsSystemTerminal, NutsSessionAware {
 
@@ -212,6 +213,18 @@ public abstract class AbstractSystemTerminalAdapter extends AbstractNutsTerminal
         return getParent().readPassword(out, prompt, params);
     }
 
+    @Override
+    public NutsTerminalBase printProgress(float progress, String prompt, Object... params) {
+        getParent().printProgress(progress, prompt, params);
+        return this;
+    }
+
+    @Override
+    public NutsTerminalBase printProgress(String prompt, Object... params) {
+        getParent().printProgress(prompt, params);
+        return this;
+    }
+
     public boolean isAutoCompleteSupported() {
         return getParent().isAutoCompleteSupported();
     }
@@ -237,7 +250,15 @@ public abstract class AbstractSystemTerminalAdapter extends AbstractNutsTerminal
         getParent().setCommandReadHighlighter(commandReadHighlighter);
         return this;
     }
-    
-    
 
+    @Override
+    public NutsTerminal sendOutCommand(NutsTerminalCommand command) {
+        session.getWorkspace().term().sendTerminalCommand(out(), command);
+        return this;
+    }
+    @Override
+    public NutsTerminal sendErrCommand(NutsTerminalCommand command) {
+        session.getWorkspace().term().sendTerminalCommand(out(), command);
+        return this;
+    }
 }

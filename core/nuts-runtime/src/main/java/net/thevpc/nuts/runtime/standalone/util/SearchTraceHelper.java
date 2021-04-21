@@ -6,10 +6,14 @@ import net.thevpc.nuts.runtime.standalone.util.console.CProgressBar;
 import java.util.Stack;
 
 public class SearchTraceHelper {
+    public static CProgressBar createProgressBar(NutsSession s){
+        return new CProgressBar(s).setSuffixMoveLineStart(true).setPrefixMoveLineStart(true);
+    }
+
     public static CProgressBar resolveCProgressBar(NutsSession s) {
         Stack<CProgressBar> tt = resolve(s);
         if (tt.isEmpty()) {
-            CProgressBar p = new CProgressBar(s).setSuffixMoveLineStart(true).setPrefixMoveLineStart(true);
+            CProgressBar p = createProgressBar(s);
             tt.push(p);
             return p;
         } else {

@@ -26,51 +26,30 @@
 */
 package net.thevpc.nuts.runtime.core.format.text.parser;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NutsTextPlain;
+import net.thevpc.nuts.NutsTextNodeType;
 
 /**
  * Created by vpc on 5/23/17.
  */
-public class DefaultNutsTextNodeStyled extends AbstractNutsTextNode implements NutsTextNodeStyled {
+public class DefaultNutsTextPlain extends AbstractNutsText implements NutsTextPlain {
 
-    private final String start;
-    private final String end;
-    private NutsTextNode child;
-    private NutsTextNodeStyles textStyles;
-    private boolean completed;
+    private String text;
 
-    public DefaultNutsTextNodeStyled(NutsSession ws,String start, String end, NutsTextNode child, boolean completed, NutsTextNodeStyles textStyle) {
+    public DefaultNutsTextPlain(NutsSession ws, String text) {
         super(ws);
-        this.start = start;
-        this.end = end;
-        this.child = child;
-        this.completed = completed;
-        this.textStyles = textStyle;
-    }
-
-    @Override
-    public NutsTextNodeStyles getStyles() {
-        return textStyles;
+        this.text = text==null?"":text;
     }
 
     @Override
     public NutsTextNodeType getType() {
-        return NutsTextNodeType.STYLED;
+        return NutsTextNodeType.PLAIN;
     }
-
-
-    public String getEnd() {
-        return end;
-    }
-
-    public String getStart() {
-        return start;
-    }
-
 
     @Override
-    public NutsTextNode getChild() {
-        return child;
+    public String getText() {
+        return text;
     }
 
 }

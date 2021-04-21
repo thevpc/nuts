@@ -76,14 +76,6 @@ public interface NutsTreeFormat extends NutsObjectFormat {
     NutsTreeFormat setNodeFormat(NutsTreeNodeFormat nodeFormat);
 
     /**
-     * update node format
-     *
-     * @param nodeFormat new node format
-     * @return {@code this} instance
-     */
-    NutsTreeFormat nodeFormat(NutsTreeNodeFormat nodeFormat);
-
-    /**
      * return linkFormat
      *
      * @return linkFormat
@@ -97,14 +89,6 @@ public interface NutsTreeFormat extends NutsObjectFormat {
      * @return {@code this} instance
      */
     NutsTreeFormat setLinkFormat(NutsTreeLinkFormat linkFormat);
-
-    /**
-     * update link format
-     *
-     * @param linkFormat new link format
-     * @return {@code this} instance
-     */
-    NutsTreeFormat linkFormat(NutsTreeLinkFormat linkFormat);
 
     /**
      * return tree model

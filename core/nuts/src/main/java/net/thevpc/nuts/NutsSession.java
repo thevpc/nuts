@@ -42,7 +42,7 @@ public interface NutsSession extends NutsCommandLineConfigurable {
     /**
      * When true, operations are invited to print to output stream extra
      * information about processing. Output may be in different formats
-     * according to {@link #getOutputFormat()} and {@link #getIterableFormat()}
+     * according to {@link #getOutputFormat()} and {@link #isIterableOut()}
      *
      * @return true if trace flag is armed
      */
@@ -57,6 +57,8 @@ public interface NutsSession extends NutsCommandLineConfigurable {
      * @return true plain non iterable format AND trace are armed
      */
     boolean isPlainTrace();
+
+    NutsSession setIterableOut(boolean iterableOut);
 
     /**
      * true if iterable format and trace flag are armed. equivalent to {@code isTrace()
@@ -106,7 +108,7 @@ public interface NutsSession extends NutsCommandLineConfigurable {
      * change trace flag value. When true, operations are invited to print to
      * output stream information about processing. Output may be in different
      * formats according to {@link #getOutputFormat()} and
-     * {@link #getIterableFormat()}
+     * {@link #isIterableOut()}
      *
      * @param trace new value
      * @return {@code this} instance
@@ -242,8 +244,8 @@ public interface NutsSession extends NutsCommandLineConfigurable {
      * return effective trace output format. The effective trace output format
      * is the value of {@code getIterableFormat().getOutputFormat()} whenever {@code getIterableFormat()!=null
      * } otherwise it returns simply the value defined by calling
-     * {@link #setOutputFormat(NutsContentType)}. If none of null null null     {@link #setIterableFormat(NutsIterableFormat)
-     * } or {@link #setOutputFormat(NutsContentType)} has been called (or called
+     * {@link #setOutputFormat(NutsContentType)}. If none of null null null     {@link #setIterableOut(boolean)}
+     * {@link #setOutputFormat(NutsContentType)} has been called (or called
      * with null values) {@link NutsContentType#PLAIN} should be returned.
      *
      * @return effective trace output format
@@ -508,17 +510,6 @@ public interface NutsSession extends NutsCommandLineConfigurable {
      */
     PrintStream out();
 
-    /**
-     * equivalent to
-     * <pre>
-     * workspace.io().term().sendTerminalCommand(thisSession.out(), command);
-     * </pre>
-     *
-     * @param command terminal command
-     * @return {@code this} instance
-     */
-    NutsSession sendTerminalCommand(NutsTerminalCommand command);
-
     InputStream in();
 
     /**
@@ -529,26 +520,11 @@ public interface NutsSession extends NutsCommandLineConfigurable {
     PrintStream err();
 
     /**
-     * return iterable output
+     * return new instance of iterable output
      *
      * @return iterable output
      */
-    NutsIterableOutput getIterableOutput();
-
-    /**
-     * return iterable output format
-     *
-     * @return iterable output format
-     */
-    NutsIterableFormat getIterableFormat();
-
-    /**
-     * set iterable output format
-     *
-     * @param value iterable output format
-     * @return {@code this} instance
-     */
-    NutsSession setIterableFormat(NutsIterableFormat value);
+    NutsIterableFormat getIterableOutput();
 
     /**
      * current terminal

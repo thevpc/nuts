@@ -38,13 +38,13 @@ public interface NutsPropertiesFormat extends NutsObjectFormat {
      * return model to format
      * @return model to format
      */
-    Map getModel();
+    Map<?,?> getModel();
 
     /**
      * return true is key has to be sorted when formatting
      * @return true is key has to be sorted when formatting
      */
-    boolean isSort();
+    boolean isSorted();
 
     /**
      * return key/value separator, default is " = "
@@ -57,34 +57,14 @@ public interface NutsPropertiesFormat extends NutsObjectFormat {
      * @param separator key/value separator
      * @return {@code this} instance
      */
-    NutsPropertiesFormat separator(String separator);
-
-    /**
-     * set key/value separator
-     * @param separator key/value separator
-     * @return {@code this} instance
-     */
     NutsPropertiesFormat setSeparator(String separator);
 
     /**
-     * enable key sorting
-     * @return {@code this} instance
-     */
-    NutsPropertiesFormat sort();
-
-    /**
      * enable/disable key sorting
      * @param sort when true enable sorting
      * @return {@code this} instance
      */
-    NutsPropertiesFormat sort(boolean sort);
-
-    /**
-     * enable/disable key sorting
-     * @param sort when true enable sorting
-     * @return {@code this} instance
-     */
-    NutsPropertiesFormat setSort(boolean sort);
+    NutsPropertiesFormat setSorted(boolean sort);
 
     /**
      * update session

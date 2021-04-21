@@ -270,7 +270,7 @@ public final class CoreStringUtils {
      * copied from StringUtils (in order to remove dependency)
      *
      * @param string value
-     * @return true if blank
+     * @return true if forBlank
      */
     public static boolean isBlank(String string) {
         return string == null || string.trim().isEmpty();

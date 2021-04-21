@@ -2,10 +2,10 @@ package net.thevpc.nuts.runtime.core.format.text.parser.steps;
 
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextNodeParser;
-import net.thevpc.nuts.NutsTextNode;
 import net.thevpc.nuts.runtime.bundles.string.StringBuilder2;
 
 import java.util.function.IntPredicate;
+import net.thevpc.nuts.NutsText;
 
 public class PlainParserStep extends ParserStep {
 
@@ -196,8 +196,8 @@ public class PlainParserStep extends ParserStep {
     }
 
     @Override
-    public NutsTextNode toNode() {
-        return ws.formats().text().plain(value.toString());
+    public NutsText toNode() {
+        return ws.formats().text().forPlain(value.toString());
     }
 
     @Override

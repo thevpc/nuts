@@ -1,9 +1,7 @@
 package net.thevpc.nuts.runtime.standalone;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.format.DefaultNutsIncrementalOutputFormat;
 import net.thevpc.nuts.runtime.core.format.DefaultNutsObjectFormat;
-//import net.thevpc.nuts.runtime.core.format.DefaultNutsStringFormat;
 import net.thevpc.nuts.runtime.core.format.elem.DefaultNutsElementFormat;
 import net.thevpc.nuts.runtime.core.format.tree.DefaultTreeFormat;
 import net.thevpc.nuts.runtime.core.format.props.DefaultPropertiesFormat;
@@ -68,11 +66,6 @@ public class DefaultNutsFormatManager implements NutsFormatManager {
     @Override
     public NutsObjectFormat object() {
         return new DefaultNutsObjectFormat(ws).setSession(getSession());
-    }
-
-    @Override
-    public NutsIterableOutput iter() {
-        return new DefaultNutsIncrementalOutputFormat(ws).setSession(getSession());
     }
 
     @Override

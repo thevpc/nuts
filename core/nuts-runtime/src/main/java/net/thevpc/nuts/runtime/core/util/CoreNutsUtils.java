@@ -646,13 +646,13 @@ public class CoreNutsUtils {
         return false;
     }
 
-    public static NutsIterableOutput getValidOutputFormat(NutsSession session) {
-        NutsIterableOutput f = session.getIterableOutput();
-        if (f == null) {
-            return session.getWorkspace().formats().iter().setSession(session);
-        }
-        return f;
-    }
+//    public static NutsIterableFormat getValidOutputFormat(NutsSession session) {
+//        NutsIterableFormat f = session.getIterableOutput();
+//        if (f == null) {
+//            return session.getWorkspace().formats().element().setContentType(session.getOutputFormat()).iter(session.out());
+//        }
+//        return f;
+//    }
 
     public static void traceMessage(NutsLogger log, Level lvl, String name, NutsSession session, NutsFetchMode fetchMode, NutsId id, NutsLogVerb tracePhase, String title, long startTime, String extraMsg) {
         if (!log.isLoggable(lvl)) {

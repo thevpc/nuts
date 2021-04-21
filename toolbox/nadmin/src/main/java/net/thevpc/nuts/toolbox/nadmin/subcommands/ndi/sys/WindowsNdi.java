@@ -180,7 +180,7 @@ public class WindowsNdi extends BaseSystemNdi {
             NutsTextManager factory = context.getWorkspace().formats().text();
             if (session.isTrace()) {
                 out.printf("```error ATTENTION``` To run any nuts command you should use the pre-configured shell at \"%s\".%n",
-                        factory.styled(desktopSpecificVersionShortcutPath, NutsTextNodeStyle.path()));
+                        factory.forStyled(desktopSpecificVersionShortcutPath, NutsTextNodeStyle.path()));
             }
             return new UpdatedPaths(
                     new String[]{desktopGlobalShortcutPath, desktopSpecificVersionShortcutPath, menuGlobalShortcutPath, menuSpecificVersionShortcutPath},
@@ -253,7 +253,7 @@ public class WindowsNdi extends BaseSystemNdi {
                 }
                 context.getSession().out().printf((context.getSession().isPlainTrace() ? "force " : "") + "updating %s to point to workspace %s%n",
                         formattedUpdatedNames,
-                        ws.formats().text().styled(ws.locations().getWorkspaceLocation(), NutsTextNodeStyle.path())
+                        ws.formats().text().forStyled(ws.locations().getWorkspaceLocation(), NutsTextNodeStyle.path())
                 );
             }
             if (persistentConfig) {

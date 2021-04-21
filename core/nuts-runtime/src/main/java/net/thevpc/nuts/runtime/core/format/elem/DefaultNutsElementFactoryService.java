@@ -843,7 +843,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         public NutsElement createElement(NutsId o, Type typeOfSrc, NutsElementFactoryContext context) {
             if (context.element().isNtf()) {
 //                NutsWorkspace ws = context.getSession().getWorkspace();
-//                NutsTextNode n = ws.formats().text().nodeFor(ws.id().formatter(o).setNtf(true).format());
+//                NutsText n = ws.formats().text().toText(ws.id().formatter(o).setNtf(true).format());
 //                return ws.formats().element().forPrimitive().buildNutsString(n);
                 NutsWorkspace ws = context.getSession().getWorkspace();
                 return ws.formats().element().forString(ws.id().formatter(o).setNtf(true).format());
@@ -875,7 +875,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         public NutsElement createElement(NutsVersion o, Type typeOfSrc, NutsElementFactoryContext context) {
             if (context.element().isNtf()) {
                 NutsWorkspace ws = context.getSession().getWorkspace();
-//                NutsTextNode n = ws.formats().text().nodeFor(ws.version().formatter(o).setNtf(true).format());
+//                NutsText n = ws.formats().text().toText(ws.version().formatter(o).setNtf(true).format());
 //                return ws.formats().element().forPrimitive().buildNutsString(n);
                 return ws.formats().element().forString(ws.version().formatter(o).setNtf(true).format());
             } else {
@@ -901,9 +901,9 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         public NutsElement createElement(Path o, Type typeOfSrc, NutsElementFactoryContext context) {
             if (context.element().isNtf()) {
                 NutsWorkspace ws = context.getSession().getWorkspace();
-//                NutsTextNode n = ws.formats().text().styled(o.toString(), NutsTextNodeStyle.path());
+//                NutsText n = ws.formats().text().forStyled(o.toString(), NutsTextNodeStyle.path());
 //                return ws.formats().element().forPrimitive().buildNutsString(n);
-                NutsTextNode n = ws.formats().text().styled(o.toString(), NutsTextNodeStyle.path());
+                NutsText n = ws.formats().text().forStyled(o.toString(), NutsTextNodeStyle.path());
                 return ws.formats().element().forString(n.toString());
             } else {
                 return context.defaultObjectToElement(o.toString(), null);
@@ -927,9 +927,9 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         public NutsElement createElement(File o, Type typeOfSrc, NutsElementFactoryContext context) {
             if (context.element().isNtf()) {
                 NutsWorkspace ws = context.getSession().getWorkspace();
-//                NutsTextNode n = ws.formats().text().styled(o.toString(), NutsTextNodeStyle.path());
+//                NutsText n = ws.formats().text().forStyled(o.toString(), NutsTextNodeStyle.path());
 //                return ws.formats().element().forPrimitive().buildNutsString(n);
-                NutsTextNode n = ws.formats().text().styled(o.toString(), NutsTextNodeStyle.path());
+                NutsText n = ws.formats().text().forStyled(o.toString(), NutsTextNodeStyle.path());
                 return ws.formats().element().forString(n.toString());
             } else {
                 return context.defaultObjectToElement(o.toString(), null);
@@ -1002,7 +1002,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
                 //use compact form
                 if (context.element().isNtf()) {
                     NutsWorkspace ws = context.getSession().getWorkspace();
-//                    NutsTextNode n = ws.formats().text().parse(
+//                    NutsText n = ws.formats().text().parse(
 //                            ws.dependency().formatter().setNtf(true).setValue(o).format()
 //                    );
 //                    return ws.formats().element().forPrimitive().buildNutsString(n);
@@ -1023,7 +1023,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
                 //use compact form
                 if (context.element().isNtf()) {
                     NutsWorkspace ws = context.getSession().getWorkspace();
-//                    NutsTextNode n = ws.formats().text().parse(
+//                    NutsText n = ws.formats().text().parse(
 //                            ws.dependency().formatter().setNtf(true).setValue(o).format()
 //                    );
 //                    return ws.formats().element().forPrimitive().buildNutsString(n);

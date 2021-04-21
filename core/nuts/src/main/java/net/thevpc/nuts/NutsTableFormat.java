@@ -62,9 +62,7 @@ public interface NutsTableFormat extends NutsObjectFormat {
 
     NutsTableFormat setBorder(NutsTableBordersFormat border);
 
-    NutsTableFormat setVisibleColumn(int col, boolean visible);
-
-    NutsTableFormat unsetVisibleColumn(int col);
+    NutsTableFormat setVisibleColumn(int col, Boolean visible);
 
     Boolean getVisibleColumn(int col);
 

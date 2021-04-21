@@ -5,7 +5,6 @@
  */
 package net.thevpc.nuts.runtime.core.format.text.parser;
 
-import net.thevpc.nuts.NutsTextNode;
 import net.thevpc.nuts.NutsTextNodeVisitor;
 import net.thevpc.nuts.NutsTextNodeWriteConfiguration;
 import net.thevpc.nuts.NutsWorkspace;
@@ -19,6 +18,7 @@ import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NutsText;
 
 /**
  * @author thevpc
@@ -83,7 +83,7 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
         }
         return sb.toString();
     }
-//    public static NutsTextNode convert(FDocNode n) {
+//    public static NutsText convert(FDocNode n) {
 //        if (n != null) {
 //            if (n instanceof FDocNode.Plain) {
 //                FDocNode.Plain p = (FDocNode.Plain) n;
@@ -147,7 +147,7 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
 //                        if (p.getNode() instanceof FDocNode.Plain) {
 //                            String s = ((FDocNode.Plain) p.getNode()).getValue();
 //                            if (s.startsWith("#") && s.length() > 1 && s.indexOf('#', 1) < 0) {
-//                                return new NutsTextNodeAnchor(
+//                                return new NutsTextAnchor(
 //                                        p.getStart() + "#",
 //                                        p.getEnd(),
 //                                        s.substring(1));
@@ -177,50 +177,50 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
 //                    case "@@@@@@@@":
 //                    case "@@@@@@@@@":
 //                    case "@@@@@@@@@@": {
-//                        return new NutsTextNodeStyled(p.getStart(), p.getEnd(), createStyle(p.getStart()), convert(p.getNode()));
+//                        return new NutsTextStyled(p.getStart(), p.getEnd(), createStyle(p.getStart()), convert(p.getNode()));
 //                    }
 //                }
-//                NutsTextNode convert = convert(p.getNode());
+//                NutsText convert = convert(p.getNode());
 //                return convert;
-////                if (convert instanceof NutsTextNodePlain) {
-////                    return new NutsTextNodePlain(((NutsTextNodePlain) convert).getValue());
+////                if (convert instanceof NutsTextPlain) {
+////                    return new NutsTextPlain(((NutsTextPlain) convert).getValue());
 ////                } else {
-////                    return new NutsTextNodePlain(convert.toString());
+////                    return new NutsTextPlain(convert.toString());
 ////                }
-////                return new NutsTextNodePlain(String.valueOf(n.toString()));
+////                return new NutsTextPlain(String.valueOf(n.toString()));
 //            } else if (n instanceof FDocNode.Title) {
 //                FDocNode.Title p = (FDocNode.Title) n;
 //                String sc = p.getStyleCode();
-//                return new NutsTextNodeTitle(p.getStart(), createStyle(sc), convert(p.getNode()));
+//                return new NutsTextTitle(p.getStart(), createStyle(sc), convert(p.getNode()));
 //            }
 //
 //        }
 //        throw new UnsupportedOperationException("Unsupported type " + n.getClass().getSimpleName());
 //    }
 
-//    private static NutsTextNode wrap(NutsTextNode t, String prefix, String suffix, AnsiEscapeCommand format) {
-//        if (t instanceof NutsTextNodePlain) {
-//            NutsTextNodePlain y = new NutsTextNodePlain(
+//    private static NutsText wrap(NutsText t, String prefix, String suffix, AnsiEscapeCommand format) {
+//        if (t instanceof NutsTextPlain) {
+//            NutsTextPlain y = new NutsTextPlain(
 //                    prefix +
-//                            ((NutsTextNodePlain) t).getValue()
+//                            ((NutsTextPlain) t).getValue()
 //                            + suffix
 //            );
 //            if (format == null) {
 //                return y;
 //            }
-//            return new NutsTextNodeStyled(prefix, suffix, format, y);
+//            return new NutsTextStyled(prefix, suffix, format, y);
 //        }
-//        NutsTextNodeList y = new NutsTextNodeList(
-//                new NutsTextNodePlain(prefix),
+//        NutsTextList y = new NutsTextList(
+//                new NutsTextPlain(prefix),
 //                t,
-//                new NutsTextNodePlain(suffix)
+//                new NutsTextPlain(suffix)
 //        );
 //        if (format == null) {
 //            return y;
 //        }
-//        return new NutsTextNodeStyled(prefix, suffix, format, y);
+//        return new NutsTextStyled(prefix, suffix, format, y);
 //    }
-//    private static NutsTextNode convert(List<FDocNode> n) {
+//    private static NutsText convert(List<FDocNode> n) {
 //        if (n.size() == 1) {
 //            return convert(n.get(0));
 //        }
@@ -228,7 +228,7 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
 //        for (FDocNode node : n) {
 //            children.add(convert(node));
 //        }
-//        return new NutsTextNodeList(children.toArray(new NutsTextNode[0]));
+//        return new NutsTextList(children.toArray(new NutsText[0]));
 //    }
     public void reset() {
         state.reset();
@@ -456,7 +456,7 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
             return statusStack.isEmpty() || root().isEmpty();
         }
 
-        public NutsTextNode consumeFDocNode() {
+        public NutsText consumeFDocNode() {
             ParserStep s = root().poll();
             if (s == null) {
                 return null;
@@ -464,7 +464,7 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
             return s.toNode();
         }
 
-        public NutsTextNode consumeNode(NutsTextNodeVisitor visitor) {
+        public NutsText consumeNode(NutsTextNodeVisitor visitor) {
             ParserStep s = root().poll();
             if (s == null) {
                 while (!statusStack.isEmpty()) {
@@ -489,7 +489,7 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
             if (s == null) {
                 return null;
             }
-            NutsTextNode n = s.toNode();
+            NutsText n = s.toNode();
             if (visitor != null) {
                 visitor.visit(n);
             }

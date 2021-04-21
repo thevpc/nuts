@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- * Nuts : Network Updatable Things Service
- * (universal package manager)
+ *            Nuts : Network Updatable Things Service
+ *                  (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -11,7 +11,7 @@
  * architecture to help supporting a large range of sub managers / repositories.
  *
  * <br>
- * <p>
+ *
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -23,32 +23,54 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
- */
+*/
 package net.thevpc.nuts.runtime.core.format.text.parser;
 
-
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsTextNodeAnchor;
-import net.thevpc.nuts.NutsTextNodeType;
+import net.thevpc.nuts.*;
 
 /**
  * Created by vpc on 5/23/17.
  */
-public class DefaultNutsTextNodeAnchor extends NutsTextNodeSpecialBase implements NutsTextNodeAnchor {
-    private String value;
+public class DefaultNutsTextStyled extends AbstractNutsText implements NutsTextStyled {
 
-    public DefaultNutsTextNodeAnchor(NutsSession ws,String start, String separator, String end, String value) {
-        super(ws,start, "anchor", separator, end);
-        this.value = value;
+    private final String start;
+    private final String end;
+    private NutsText child;
+    private NutsTextNodeStyles textStyles;
+    private boolean completed;
+
+    public DefaultNutsTextStyled(NutsSession ws, String start, String end, NutsText child, boolean completed, NutsTextNodeStyles textStyle) {
+        super(ws);
+        this.start = start;
+        this.end = end;
+        this.child = child;
+        this.completed = completed;
+        this.textStyles = textStyle;
     }
 
-    public String getValue() {
-        return value;
+    @Override
+    public NutsTextNodeStyles getStyles() {
+        return textStyles;
     }
 
     @Override
     public NutsTextNodeType getType() {
-        return NutsTextNodeType.ANCHOR;
+        return NutsTextNodeType.STYLED;
+    }
+
+
+    public String getEnd() {
+        return end;
+    }
+
+    public String getStart() {
+        return start;
+    }
+
+
+    @Override
+    public NutsText getChild() {
+        return child;
     }
 
 }

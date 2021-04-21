@@ -3,6 +3,6 @@ package net.thevpc.nuts;
 /**
  * @category Format
  */
-public interface NutsTextNodeCommand extends NutsTextNode {
+public interface NutsTextCommand extends NutsText {
     NutsTerminalCommand getCommand();
 }

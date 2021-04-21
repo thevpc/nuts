@@ -7,9 +7,11 @@ package net.thevpc.nuts.runtime.core.format;
 
 import java.io.PrintStream;
 import java.util.Iterator;
+
+import net.thevpc.nuts.NutsIterableFormat;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.NutsIterableOutput;
+//import net.thevpc.nuts.NutsIterableOutput;
 
 /**
  *
@@ -19,7 +21,7 @@ public class NutsPrintIterator<T> implements Iterator<T> {
 
     Iterator<T> curr;
     NutsWorkspace ws;
-    NutsIterableOutput listFormat;
+    NutsIterableFormat listFormat;
     PrintStream out;
     NutsFetchDisplayOptions displayOptions;
     long count = 0;
@@ -31,19 +33,18 @@ public class NutsPrintIterator<T> implements Iterator<T> {
         this.listFormat = session.getIterableOutput();
         this.displayOptions = displayOptions;
         if (this.listFormat == null) {
-            this.listFormat = ws.formats().iter();
+            this.listFormat = session.getWorkspace().formats().element().setContentType(session.getOutputFormat()).iter(out);
         }
         this.listFormat
-                .setSession(session)
                 .configure(true, displayOptions.toCommandLineOptions())
-                .out(out);
+                ;
     }
 
     @Override
     public boolean hasNext() {
         boolean p = curr.hasNext();
         if (!p) {
-            listFormat.complete();
+            listFormat.complete(count);
         }
         return p;
     }
@@ -54,7 +55,7 @@ public class NutsPrintIterator<T> implements Iterator<T> {
         if (count == 0) {
             listFormat.start();
         }
-        listFormat.next(n);
+        listFormat.next(n,count);
         count++;
         return n;
     }

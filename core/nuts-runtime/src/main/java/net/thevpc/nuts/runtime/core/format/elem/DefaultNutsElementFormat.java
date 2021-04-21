@@ -15,7 +15,14 @@ import java.util.function.Predicate;
 
 import net.thevpc.nuts.runtime.bundles.io.ByteArrayPrintStream;
 import net.thevpc.nuts.runtime.core.format.DefaultFormatBase;
+import net.thevpc.nuts.runtime.core.format.NutsFetchDisplayOptions;
+import net.thevpc.nuts.runtime.core.format.json.DefaultSearchFormatJson;
+import net.thevpc.nuts.runtime.core.format.plain.DefaultSearchFormatPlain;
+import net.thevpc.nuts.runtime.core.format.props.DefaultSearchFormatProps;
+import net.thevpc.nuts.runtime.core.format.table.DefaultSearchFormatTable;
 import net.thevpc.nuts.runtime.core.format.text.DefaultNutsTextManagerModel;
+import net.thevpc.nuts.runtime.core.format.tree.DefaultSearchFormatTree;
+import net.thevpc.nuts.runtime.core.format.xml.DefaultSearchFormatXml;
 import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
@@ -235,17 +242,17 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
         if (to == null || to.isInstance(any)) {
             return (T) any;
         }
-        NutsElement e = convertToElement(any);
+        NutsElement e = toElement(any);
         return (T) elementToObject(e, to);
     }
 
     private void print(PrintStream out, NutsElementStreamFormat format) {
         checkSession();
-        NutsElement elem = convertToElement(value);
+        NutsElement elem = toElement(value);
         if (getSession().getWorkspace().term().setSession(getSession()).isFormatted(out)) {
             ByteArrayPrintStream bos = new ByteArrayPrintStream();
             format.printElement(elem, bos, compact, createFactoryContext());
-            out.print(getSession().getWorkspace().formats().text().code(getContentType().id(), bos.toString()));
+            out.print(getSession().getWorkspace().formats().text().forCode(getContentType().id(), bos.toString()));
         } else {
             format.printElement(elem, out, compact, createFactoryContext());
         }
@@ -267,7 +274,7 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
     }
 
     @Override
-    public NutsElement convertToElement(Object o) {
+    public NutsElement toElement(Object o) {
         return createFactoryContext().objectToElement(o, null);
     }
 
@@ -461,5 +468,18 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
             return forNull();
         }
         return new DefaultNutsPrimitiveElement(NutsElementType.INSTANT, DefaultNutsPrimitiveElement.parseDate(value));
+    }
+
+    @Override
+    public NutsIterableFormat iter(PrintStream writer) {
+        switch (getContentType()){
+            case JSON:return new DefaultSearchFormatJson(getSession(),writer,new NutsFetchDisplayOptions(getSession().getWorkspace()));
+            case XML:return new DefaultSearchFormatXml(getSession(),writer,new NutsFetchDisplayOptions(getSession().getWorkspace()));
+            case PLAIN:return new DefaultSearchFormatPlain(getSession(),writer,new NutsFetchDisplayOptions(getSession().getWorkspace()));
+            case TABLE:return new DefaultSearchFormatTable(getSession(),writer,new NutsFetchDisplayOptions(getSession().getWorkspace()));
+            case TREE:return new DefaultSearchFormatTree(getSession(),writer,new NutsFetchDisplayOptions(getSession().getWorkspace()));
+            case PROPS:return new DefaultSearchFormatProps(getSession(),writer,new NutsFetchDisplayOptions(getSession().getWorkspace()));
+        }
+        throw new NutsIllegalArgumentException(getSession(),"unsupported iterator for "+getContentType());
     }
 }

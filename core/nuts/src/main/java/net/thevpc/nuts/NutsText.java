@@ -30,6 +30,6 @@ package net.thevpc.nuts;
  * Created by vpc on 5/23/17.
  * @category Format
  */
-public interface NutsTextNode extends NutsString{
+public interface NutsText extends NutsString{
     NutsTextNodeType getType();
 }

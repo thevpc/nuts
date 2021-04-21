@@ -169,15 +169,15 @@ public class AnyNixNdi extends BaseSystemNdi {
             if (!updatedNames.isEmpty()) {
                 if (context.getSession().isPlainTrace()) {
                     context.getSession().out().printf((context.getSession().isPlainTrace() ? "force " : "") + "updating %s to point to workspace %s%n",
-                            factory.styled(String.join(", ", updatedNames),NutsTextNodeStyle.primary(3)),
-                            factory.styled(ws.locations().getWorkspaceLocation(),NutsTextNodeStyle.path())
+                            factory.forStyled(String.join(", ", updatedNames),NutsTextNodeStyle.primary(3)),
+                            factory.forStyled(ws.locations().getWorkspaceLocation(),NutsTextNodeStyle.path())
                             );
                 }
                 context.getSession().getTerminal().ask()
                         .forBoolean(
                                 "```error ATTENTION``` You may need to re-run terminal or issue \"%s\" in your current terminal for new environment to take effect.%n"
                                         + "Please type 'ok' if you agree, 'why' if you need more explanation or 'cancel' to cancel updates.",
-                                factory.styled(". ~/" + getBashrcName(),NutsTextNodeStyle.path())
+                                factory.forStyled(". ~/" + getBashrcName(),NutsTextNodeStyle.path())
                         )
                         .setHintMessage("")
                         .setSession(context.getSession())
@@ -199,12 +199,12 @@ public class AnyNixNdi extends BaseSystemNdi {
                                 }
                                 if ("why".equalsIgnoreCase(r)) {
                                     PrintStream out = context.getSession().out();
-                                    out.printf("\\\"%s\\\" is a special file in your home that is invoked upon each interactive terminal launch.%n", factory.styled(getBashrcName(),NutsTextNodeStyle.path()));
+                                    out.printf("\\\"%s\\\" is a special file in your home that is invoked upon each interactive terminal launch.%n", factory.forStyled(getBashrcName(),NutsTextNodeStyle.path()));
                                     out.print("It helps configuring environment variables. ```sh nuts``` make usage of such facility to update your **PATH** env variable\n");
                                     out.print("to point to current ```sh nuts``` workspace, so that when you call a ```sh nuts``` command it will be resolved correctly...\n");
-                                    out.printf("However updating \\\"%s\\\" does not affect the running process/terminal. So you have basically two choices :%n", factory.styled(getBashrcName(),NutsTextNodeStyle.path()));
+                                    out.printf("However updating \\\"%s\\\" does not affect the running process/terminal. So you have basically two choices :%n", factory.forStyled(getBashrcName(),NutsTextNodeStyle.path()));
                                     out.print(" - Either to restart the process/terminal (konsole, term, xterm, sh, bash, ...)%n");
-                                    out.printf(" - Or to run by your self the \\\"%s\\\" script (don\\'t forget the leading dot)%n", factory.styled(". ~/" + getBashrcName(),NutsTextNodeStyle.path()));
+                                    out.printf(" - Or to run by your self the \\\"%s\\\" script (don\\'t forget the leading dot)%n", factory.forStyled(". ~/" + getBashrcName(),NutsTextNodeStyle.path()));
                                     throw new NutsValidationException(context.getSession(), "Try again...'");
                                 } else if ("cancel".equalsIgnoreCase(r) || "cancel!".equalsIgnoreCase(r)) {
                                     throw new NutsUserCancelException(context.getSession());

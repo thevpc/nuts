@@ -11,45 +11,41 @@ public interface NutsTextManager {
 
     NutsSession getSession();
 
-    NutsTextNode blank();
-
     NutsTextNodeBuilder builder();
 
-    NutsTextNode nodeFor(Object t);
+    NutsText forBlank();
 
-    NutsTextNodePlain plain(String t);
+    NutsText toText(Object t);
 
-    NutsTextNodeList list(NutsTextNode... nodes);
+    NutsTextPlain forPlain(String t);
 
-    NutsTextNodeList list(Collection<NutsTextNode> nodes);
+    NutsTextList forList(NutsText... nodes);
 
-    NutsTextNodeStyled styled(String other, NutsTextNodeStyles decorations);
+    NutsTextList forList(Collection<NutsText> nodes);
 
-    NutsTextNodeStyled styled(NutsString other, NutsTextNodeStyles decorations);
+    NutsTextStyled forStyled(String other, NutsTextNodeStyles decorations);
 
-    NutsTextNodeStyled styled(NutsTextNode other, NutsTextNodeStyles decorations);
+    NutsTextStyled forStyled(NutsString other, NutsTextNodeStyles decorations);
 
-    NutsTextNodeStyled styled(String other, NutsTextNodeStyle decorations);
+    NutsTextStyled forStyled(NutsText other, NutsTextNodeStyles decorations);
 
-    NutsTextNodeStyled styled(NutsString other, NutsTextNodeStyle decorations);
+    NutsTextStyled forStyled(String other, NutsTextNodeStyle decorations);
 
-    NutsTextNodeStyled styled(NutsTextNode other, NutsTextNodeStyle decorations);
+    NutsTextStyled forStyled(NutsString other, NutsTextNodeStyle decorations);
 
-    NutsTextNodeCommand command(NutsTerminalCommand command);
+    NutsTextStyled forStyled(NutsText other, NutsTextNodeStyle decorations);
 
-    NutsTextNodeCode code(String lang, String text);
+    NutsTextCommand forCommand(NutsTerminalCommand command);
 
-    NutsTitleNumberSequence createTitleNumberSequence();
+    NutsTextCode forCode(String lang, String text);
 
-    NutsTitleNumberSequence createTitleNumberSequence(String pattern);
+    NutsTextNumbering forNumbering();
 
-    public NutsTextNode parse(String t);
+    NutsTextNumbering forTitleNumberSequence(String pattern);
 
-    public NutsTextNodeParser parser();
+    NutsTextAnchor forAnchor(String anchorName);
 
-    NutsTextNodeAnchor anchor(String anchorName);
-
-    NutsTextNodeLink link(NutsTextNode value);
+    NutsTextLink forLink(NutsText value);
 
     NutsTextFormatTheme getTheme();
 
@@ -62,4 +58,9 @@ public interface NutsTextManager {
     NutsTextManager removeCodeFormat(NutsCodeFormat format);
 
     NutsCodeFormat[] getCodeFormats();
+
+    NutsText parse(String t);
+
+    NutsTextParser parser();
+
 }

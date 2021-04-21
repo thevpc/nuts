@@ -7,7 +7,7 @@ public class NutsTextNodeWriteConfiguration {
     private boolean filtered;
     private boolean titleNumberEnabled;
     private boolean lineNumberEnabled;
-    private NutsTitleNumberSequence titleNumberSequence;
+    private NutsTextNumbering titleNumberSequence;
 
     public boolean isLineNumberEnabled() {
         return lineNumberEnabled;
@@ -27,11 +27,11 @@ public class NutsTextNodeWriteConfiguration {
         return this;
     }
 
-    public NutsTitleNumberSequence getTitleNumberSequence() {
+    public NutsTextNumbering getTitleNumberSequence() {
         return titleNumberSequence;
     }
 
-    public NutsTextNodeWriteConfiguration setTitleNumberSequence(NutsTitleNumberSequence titleNumberSequence) {
+    public NutsTextNodeWriteConfiguration setTitleNumberSequence(NutsTextNumbering titleNumberSequence) {
         this.titleNumberSequence = titleNumberSequence;
         return this;
     }

@@ -62,9 +62,9 @@ public class DeleteFoldersNAdminSubCommand extends AbstractNAdminSubCommand {
             Path storeLocation = Paths.get(sstoreLocation);
             if (Files.exists(storeLocation)) {
                 context.getSession().out().printf("```error deleting``` %s for workspace %s folder %s ...%n",
-                        factory.styled(folder.id(),NutsTextNodeStyle.primary(1)),
-                        factory.styled(context.getWorkspace().getName(),NutsTextNodeStyle.primary(1)),
-                        factory.styled(storeLocation.toString(),NutsTextNodeStyle.path()));
+                        factory.forStyled(folder.id(),NutsTextNodeStyle.primary(1)),
+                        factory.forStyled(context.getWorkspace().getName(),NutsTextNodeStyle.primary(1)),
+                        factory.forStyled(storeLocation.toString(),NutsTextNodeStyle.path()));
                 if (force
                         || context.getSession().getTerminal().ask()
                         .forBoolean("force delete?").setDefaultValue(false).setSession(context.getSession())
@@ -89,9 +89,9 @@ public class DeleteFoldersNAdminSubCommand extends AbstractNAdminSubCommand {
             NutsTextManager factory = context.getWorkspace().formats().text();
             if (Files.exists(storeLocation)) {
                 context.getSession().out().printf("```error deleting``` %s for repository %s folder %s ...%n",
-                        factory.styled(folder.id(),NutsTextNodeStyle.primary(1)),
-                        factory.styled(repository.getName(),NutsTextNodeStyle.primary(1)),
-                        factory.styled(storeLocation.toString(),NutsTextNodeStyle.path()));
+                        factory.forStyled(folder.id(),NutsTextNodeStyle.primary(1)),
+                        factory.forStyled(repository.getName(),NutsTextNodeStyle.primary(1)),
+                        factory.forStyled(storeLocation.toString(),NutsTextNodeStyle.path()));
                 if (force
                         || context.getSession().getTerminal().ask()
                         .forBoolean("Force Delete?").setDefaultValue(false).setSession(context.getSession())
@@ -134,7 +134,7 @@ public class DeleteFoldersNAdminSubCommand extends AbstractNAdminSubCommand {
         if (s != null) {
             if (Files.exists(s)) {
                 context.getSession().out().printf("```error deleting``` %s folder %s ...%n",
-                        context.getWorkspace().formats().text().styled("cache",NutsTextNodeStyle.primary(1))
+                        context.getWorkspace().formats().text().forStyled("cache",NutsTextNodeStyle.primary(1))
                         ,s);
                 if (force
                         || context.getSession().getTerminal().ask()

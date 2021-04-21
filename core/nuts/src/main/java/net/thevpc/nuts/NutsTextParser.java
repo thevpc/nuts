@@ -7,8 +7,8 @@ import java.io.Reader;
 /**
  * @category Format
  */
-public interface NutsTextNodeParser {
-//    NutsTextNode parse(String text);
+public interface NutsTextParser {
+//    NutsText parse(String text);
 
     String escapeText(String text);
 
@@ -20,9 +20,9 @@ public interface NutsTextNodeParser {
 
     long parse(Reader in, NutsTextNodeVisitor visitor);
 
-    NutsTextNode parse(InputStream in);
+    NutsText parse(InputStream in);
 
-    NutsTextNode parse(Reader in);
+    NutsText parse(Reader in);
 
     long parseIncremental(byte[] buf, int off, int len, NutsTextNodeVisitor visitor);
 
@@ -40,23 +40,23 @@ public interface NutsTextNodeParser {
 
     void reset();
 
-    NutsTextNode parseIncremental(byte[] buf);
+    NutsText parseIncremental(byte[] buf);
 
-    NutsTextNode parseIncremental(char[] buf);
+    NutsText parseIncremental(char[] buf);
 
-    NutsTextNode parseIncremental(String buf);
+    NutsText parseIncremental(String buf);
 
-    NutsTextNode parseIncremental(char buf);
+    NutsText parseIncremental(char buf);
 
-    NutsTextNode parseIncremental(byte[] buf, int off, int len);
+    NutsText parseIncremental(byte[] buf, int off, int len);
 
-    NutsTextNode parseIncremental(char[] buf, int off, int len);
+    NutsText parseIncremental(char[] buf, int off, int len);
 
-    NutsTextNode parseRemaining();
+    NutsText parseRemaining();
 
-    NutsTextNode parseResource(String resourceName, NutsTextFormatLoader loader);
+    NutsText parseResource(String resourceName, NutsTextFormatLoader loader);
 
-    NutsTextNode parseResource(String resourceName, Reader reader, NutsTextFormatLoader loader);
+    NutsText parseResource(String resourceName, Reader reader, NutsTextFormatLoader loader);
 
     NutsTextFormatLoader createLoader(ClassLoader loader);
 

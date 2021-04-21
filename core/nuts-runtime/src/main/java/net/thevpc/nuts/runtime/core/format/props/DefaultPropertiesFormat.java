@@ -13,7 +13,7 @@ import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
 public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFormat> implements NutsPropertiesFormat {
 
     public static final String OPTION_MULTILINE_PROPERTY = "--multiline-property";
-    private boolean sort;
+    private boolean sorted;
     private boolean compact;
     private boolean javaProps;
     private final String rootName = "";
@@ -68,7 +68,7 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
         LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
         fillMap(getWorkspace().formats().element()
                 .setSession(getSession())
-                .convertToElement(value), map, rootName);
+                .toElement(value), map, rootName);
         return map;
     }
 
@@ -128,23 +128,8 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
         return buildModel();
     }
 
-    @Override
-    public NutsPropertiesFormat sort() {
-        return sort(true);
-    }
-
-    @Override
-    public NutsPropertiesFormat separator(String separator) {
-        return setSeparator(separator);
-    }
-
-    @Override
-    public NutsPropertiesFormat sort(boolean sort) {
-        return setSort(sort);
-    }
-
-    public boolean isSort() {
-        return sort;
+    public boolean isSorted() {
+        return sorted;
     }
 
 //    @Override
@@ -172,8 +157,8 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
         return this;
     }
 
-    public DefaultPropertiesFormat setSort(boolean sort) {
-        this.sort = sort;
+    public DefaultPropertiesFormat setSorted(boolean sort) {
+        this.sorted = sort;
         return this;
     }
 
@@ -183,10 +168,10 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
         PrintStream out = getValidPrintStream(w);
         Map<Object, Object> mm;
         Map model = buildModel();
-        if (sort) {
+        if (sorted) {
             mm = new LinkedHashMap<>();
             List<Object> keys = new ArrayList(model.keySet());
-            if (sort) {
+            if (sorted) {
                 keys.sort(null);
             }
             for (Object k : keys) {
@@ -197,9 +182,9 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
             mm = model;
         }
         if (javaProps) {
-            CoreIOUtils.storeProperties(ObjectOutputFormatWriterHelper.explodeMap(mm), w, sort);
+            CoreIOUtils.storeProperties(ObjectOutputFormatWriterHelper.explodeMap(mm), w, sorted);
         } else {
-            printMap(out, getWorkspace().formats().text().blank(), mm);
+            printMap(out, getWorkspace().formats().text().forBlank(), mm);
         }
     }
 
@@ -258,12 +243,12 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
     private void printKeyValue(PrintStream out, NutsString prefix, int len, String fancySep, NutsString key, NutsString value) {
         NutsFormatManager txt = getWorkspace().formats();
         if (prefix == null) {
-            prefix = txt.text().blank();
+            prefix = txt.text().forBlank();
         }
         NutsString formattedKey = compact ? key
                 : txt.text().builder().append(key).append(CoreStringUtils.fillString(' ', len - key.textLength()));
         if (fancySep != null) {
-            NutsString cc = compact ? key : txt.text().plain(CoreStringUtils.alignLeft("", len + 3));
+            NutsString cc = compact ? key : txt.text().forPlain(CoreStringUtils.alignLeft("", len + 3));
             String[] split = value.toString().split(fancySep);
             if (split.length == 0) {
                 out.print(prefix);
@@ -296,7 +281,7 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
             if (prefix.isEmpty() || prefix.toString().endsWith("#")) {
                 out.print("ø");
             }
-            out.printf("%s", txt.text().styled(formattedKey, NutsTextNodeStyle.primary(3)));
+            out.printf("%s", txt.text().forStyled(formattedKey, NutsTextNodeStyle.primary(3)));
             if (separator.isEmpty() || separator.startsWith("#")) {
                 out.print("ø");
             }
@@ -309,7 +294,7 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
         if (escapeText) {
             return CoreCommonUtils.stringValueFormatted(o, escapeText, getSession());
         } else {
-            return getWorkspace().formats().text().plain(String.valueOf(o));
+            return getWorkspace().formats().text().forPlain(String.valueOf(o));
         }
     }
 

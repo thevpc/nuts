@@ -167,4 +167,5 @@ public interface NutsWorkspace extends NutsComponent<NutsWorkspaceOptions> {
     
     NutsTerminalManager term();
 
+    NutsTextManager text();
 }

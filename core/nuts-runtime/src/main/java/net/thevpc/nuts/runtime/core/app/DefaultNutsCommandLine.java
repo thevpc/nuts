@@ -197,12 +197,12 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
 
     @Override
     public NutsCommandLine unexpectedArgument(NutsMessage errorMessage) {
-        return unexpectedArgument(getWorkspace().formats().text().nodeFor(errorMessage));
+        return unexpectedArgument(getWorkspace().formats().text().toText(errorMessage));
     }
 
     @Override
     public NutsCommandLine unexpectedArgument(String errorMessage) {
-        return unexpectedArgument(getWorkspace().formats().text().nodeFor(errorMessage));
+        return unexpectedArgument(getWorkspace().formats().text().toText(errorMessage));
     }
 
     @Override
@@ -217,12 +217,12 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
 
     @Override
     public NutsCommandLine required(String errorMessage) {
-        return required(getWorkspace().formats().text().nodeFor(errorMessage));
+        return required(getWorkspace().formats().text().toText(errorMessage));
     }
 
     @Override
     public NutsCommandLine required(NutsMessage errorMessage) {
-        return required(getWorkspace().formats().text().nodeFor(errorMessage));
+        return required(getWorkspace().formats().text().toText(errorMessage));
     }
 
     @Override
@@ -233,7 +233,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
                 return this;
             }
             throwError((errorMessage == null || errorMessage.isEmpty())
-                    ? getWorkspace().formats().text().nodeFor("missing arguments")
+                    ? getWorkspace().formats().text().toText("missing arguments")
                     : errorMessage
             );
         }
@@ -636,7 +636,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
 
     @Override
     public void throwError(NutsMessage message) {
-        throwError(getWorkspace().formats().text().nodeFor(message));
+        throwError(getWorkspace().formats().text().toText(message));
     }
 
     @Override
@@ -897,7 +897,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
     }
 
     private NutsString highlightText(String text) {
-        return getWorkspace().formats().text().styled(text, NutsTextNodeStyle.primary(3));
+        return getWorkspace().formats().text().forStyled(text, NutsTextNodeStyle.primary(3));
     }
 
     private boolean _configureLast(NutsCommandLine commandLine, NutsCommandLineConfigurable configurable) {

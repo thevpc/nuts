@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -11,7 +11,7 @@
  * architecture to help supporting a large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -23,44 +23,46 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.runtime.core.format.text.parser;
 
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsTextNode;
+import net.thevpc.nuts.NutsTerminalCommand;
+import net.thevpc.nuts.NutsTextCommand;
+import net.thevpc.nuts.NutsTextNodeType;
+import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.runtime.core.format.text.AnsiEscapeCommand;
+import net.thevpc.nuts.runtime.core.format.text.DefaultAnsiEscapeCommand;
 
 /**
  * Created by vpc on 5/23/17.
  */
-public abstract class NutsTextNodeSpecialBase extends AbstractNutsTextNode implements NutsTextNode {
+public class DefaultNutsTextCommand extends NutsTextSpecialBase implements NutsTextCommand {
 
-    private final String start;
-    private final String kind;
-    private final String separator;
-    private final String end;
+    private final NutsTerminalCommand command;
 
-    public NutsTextNodeSpecialBase(NutsSession ws,String start, String kind, String separator, String end) {
-        super(ws);
-        this.start=start==null?"":start;
-        this.end=end==null?"":end;
-        this.kind = kind==null?"":kind;
-        this.separator = separator==null?"":separator;
+    public DefaultNutsTextCommand(NutsSession ws, String start, NutsTerminalCommand command, String separator, String end) {
+        super(ws, start, command.getName(),
+                (command.getArgs() != null && command.getArgs().length() > 0 && (separator == null || separator.isEmpty())) ? " " : separator
+                , end);
+        this.command = command;
     }
 
-    public String getKind() {
-        return kind;
+    public static AnsiEscapeCommand parseAnsiEscapeCommand(NutsTerminalCommand v, NutsWorkspace ws) {
+        //this might be a command !!
+        if(v==null){
+            return null;
+        }
+        return new DefaultAnsiEscapeCommand(v);
     }
 
-    public String getSeparator() {
-        return separator;
+    @Override
+    public NutsTextNodeType getType() {
+        return NutsTextNodeType.COMMAND;
     }
 
-    public String getStart() {
-        return start;
+    @Override
+    public NutsTerminalCommand getCommand() {
+        return command;
     }
-
-    public String getEnd() {
-        return end;
-    }
-
 }

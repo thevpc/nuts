@@ -91,7 +91,7 @@ public class NJobsSubCmd {
             service.jobs().addJob(t);
             if (context.getSession().isPlainTrace()) {
                 context.getSession().out().printf("job %s (%s) added.\n",
-                        context.getWorkspace().formats().text().styled(t.getId(), NutsTextNodeStyle.primary(5)),
+                        context.getWorkspace().formats().text().forStyled(t.getId(), NutsTextNodeStyle.primary(5)),
                         t.getName()
                 );
             }
@@ -205,8 +205,8 @@ public class NJobsSubCmd {
                 service.jobs().updateJob(job);
                 if (context.getSession().isPlainTrace()) {
                     context.getSession().out().printf("job %s (%s) updated.\n",
-                            text.text().styled(job.getId(), NutsTextNodeStyle.primary(5)),
-                            text.text().styled(job.getName(), NutsTextNodeStyle.primary(1))
+                            text.text().forStyled(job.getId(), NutsTextNodeStyle.primary(5)),
+                            text.text().forStyled(job.getName(), NutsTextNodeStyle.primary(1))
                     );
                 }
             }
@@ -258,13 +258,13 @@ public class NJobsSubCmd {
                 if (service.jobs().removeJob(t.getId())) {
                     if (context.getSession().isPlainTrace()) {
                         context.getSession().out().printf("job %s removed.\n",
-                                text.text().styled(a.toString(), NutsTextNodeStyle.primary(5))
+                                text.text().forStyled(a.toString(), NutsTextNodeStyle.primary(5))
                         );
                     }
                 } else {
                     context.getSession().out().printf("job %s %s.\n",
-                            text.text().styled(a.toString(), NutsTextNodeStyle.primary(5)),
-                            text.text().styled("not found", NutsTextNodeStyle.error())
+                            text.text().forStyled(a.toString(), NutsTextNodeStyle.primary(5)),
+                            text.text().forStyled("not found", NutsTextNodeStyle.error())
                     );
                 }
             }
@@ -431,7 +431,7 @@ public class NJobsSubCmd {
                 List<NJob> lastResults = new ArrayList<>();
                 int[] index = new int[1];
                 r.forEach(x -> {
-                    NutsString durationString = ws.formats().text().styled(String.valueOf(timeUnit0 == null ? x.getDuration() : x.getDuration().toUnit(timeUnit0, hoursPerDay)), NutsTextNodeStyle.keyword());
+                    NutsString durationString = ws.formats().text().forStyled(String.valueOf(timeUnit0 == null ? x.getDuration() : x.getDuration().toUnit(timeUnit0, hoursPerDay)), NutsTextNodeStyle.keyword());
                     index[0]++;
                     lastResults.add(x);
                     m.newRow().addCells(
@@ -445,7 +445,7 @@ public class NJobsSubCmd {
 
                             } : new Object[]{
                                 parent.createHashId(index[0], -1),
-                                ws.formats().text().styled(x.getId(), NutsTextNodeStyle.pale()),
+                                ws.formats().text().forStyled(x.getId(), NutsTextNodeStyle.pale()),
                                 parent.getFormattedDate(x.getStartTime()),
                                 durationString,
                                 parent.getFormattedProject(x.getProject() == null ? "*" : x.getProject()),

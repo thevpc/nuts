@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.core.format.text.parser.steps;
 
-import net.thevpc.nuts.NutsTextNode;
 import net.thevpc.nuts.NutsTextNodeStyle;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.bundles.collections.EvictingCharQueue;
@@ -12,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.IntPredicate;
 import net.thevpc.nuts.NutsTextNodeStyles;
+import net.thevpc.nuts.NutsText;
 
 public class StyledParserStep extends ParserStep {
 
@@ -29,7 +29,7 @@ public class StyledParserStep extends ParserStep {
     private boolean wasSharp = false;
     private boolean atPresentEnded = false;
     private List<NutsTextNodeStyle> atVals = new ArrayList<>();
-    private NutsTextNode atInvalid;
+    private NutsText atInvalid;
     private boolean parsedAt = false;
     private StyledParserStepCommandParser parseHelper = new StyledParserStepCommandParser();
     private EvictingCharQueue charQueue = new EvictingCharQueue(5);
@@ -190,7 +190,7 @@ public class StyledParserStep extends ParserStep {
     }
 
     @Override
-    public NutsTextNode toNode() {
+    public NutsText toNode() {
         DefaultNutsTextManager factory0 = (DefaultNutsTextManager) ws.formats().text();
         String start = this.start.toString();
         String end = this.end.toString();
@@ -204,7 +204,7 @@ public class StyledParserStep extends ParserStep {
                 parsedAt = true;
                 NutsTextNodeStyles parsedStyles = parseHelper.parse(atStr.toString());
                 if (parsedStyles == null) {
-                    atInvalid = ws.formats().text().plain(atStr.toString());
+                    atInvalid = ws.formats().text().forPlain(atStr.toString());
                 } else {
                     for (NutsTextNodeStyle parsedStyle : parsedStyles) {
                         atVals.add(parsedStyle);
@@ -223,18 +223,18 @@ public class StyledParserStep extends ParserStep {
             }
         }
 
-        NutsTextNode child = null;
+        NutsText child = null;
         if (children.size() == 1) {
             child = children.get(0).toNode();
         } else {
-            List<NutsTextNode> allChildren = new ArrayList<>();
+            List<NutsText> allChildren = new ArrayList<>();
             for (ParserStep a : children) {
                 allChildren.add(a.toNode());
             }
-            child = ws.formats().text().list(allChildren.toArray(new NutsTextNode[0]));
+            child = ws.formats().text().forList(allChildren.toArray(new NutsText[0]));
         }
         if (atInvalid != null) {
-            child = ws.formats().text().list(atInvalid, child);
+            child = ws.formats().text().forList(atInvalid, child);
         }
         if (all.isEmpty()) {
             all.add(NutsTextNodeStyle.primary(1));

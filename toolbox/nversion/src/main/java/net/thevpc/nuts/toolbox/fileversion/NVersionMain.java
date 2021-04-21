@@ -128,7 +128,7 @@ public class NVersionMain extends NutsApplication {
             NutsFormatManager text = context.getWorkspace().formats();
             NutsTextManager tfactory = text.text();
             if (table) {
-                NutsPropertiesFormat tt = context.getWorkspace().formats().props().setSort(sort);
+                NutsPropertiesFormat tt = context.getWorkspace().formats().props().setSorted(sort);
                 Properties pp = new Properties();
                 for (Map.Entry<String, Set<VersionDescriptor>> entry : results.entrySet()) {
                     VersionDescriptor o = entry.getValue().toArray(new VersionDescriptor[0])[0];
@@ -162,24 +162,24 @@ public class NVersionMain extends NutsApplication {
                 for (String k : keys) {
                     if (results.size() > 1) {
                         if (longFormat || all) {
-                            out.printf("%s:%n", tfactory.styled(k, NutsTextNodeStyle.primary(3)));
+                            out.printf("%s:%n", tfactory.forStyled(k, NutsTextNodeStyle.primary(3)));
                         } else {
-                            out.printf("%s: ", tfactory.styled(k, NutsTextNodeStyle.primary(3)));
+                            out.printf("%s: ", tfactory.forStyled(k, NutsTextNodeStyle.primary(3)));
                         }
                     }
                     Set<VersionDescriptor> v = results.get(k);
                     for (VersionDescriptor descriptor : v) {
                         if (nameFormat) {
-                            out.printf("%s%n", tfactory.styled(descriptor.getId().getShortName(), NutsTextNodeStyle.primary(4)));
+                            out.printf("%s%n", tfactory.forStyled(descriptor.getId().getShortName(), NutsTextNodeStyle.primary(4)));
                         } else if (idFormat) {
-                            out.printf("%s%n", tfactory.nodeFor(descriptor.getId()));
+                            out.printf("%s%n", tfactory.toText(descriptor.getId()));
                         } else if (longFormat) {
-                            out.printf("%s%n", tfactory.nodeFor(descriptor.getId()));
+                            out.printf("%s%n", tfactory.toText(descriptor.getId()));
                             NutsPropertiesFormat f = context.getWorkspace().formats().props()
-                                    .setSort(true);
+                                    .setSorted(true);
                             f.setValue(descriptor.getProperties()).print(out);
                         } else {
-                            out.printf("%s%n", tfactory.nodeFor(descriptor.getId().getVersion()));
+                            out.printf("%s%n", tfactory.toText(descriptor.getId().getVersion()));
                         }
                         if (!all) {
                             break;

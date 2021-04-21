@@ -150,16 +150,6 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
     }
 
     @Override
-    public NutsTreeFormat nodeFormat(NutsTreeNodeFormat nodeFormat) {
-        return setNodeFormat(nodeFormat);
-    }
-
-    @Override
-    public NutsTreeFormat linkFormat(NutsTreeLinkFormat linkFormat) {
-        return setLinkFormat(linkFormatter);
-    }
-
-    @Override
     public String toString() {
         ByteArrayOutputStream b = new ByteArrayOutputStream();
         PrintStream out = CoreIOUtils.toPrintStream(b, getSession());
@@ -394,7 +384,7 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
         if (vv.length == 0 || vv.length == 1) {
             return null;
         }
-        return Arrays.stream(vv).map(x -> getWorkspace().formats().text().nodeFor(x)).toArray(NutsString[]::new);
+        return Arrays.stream(vv).map(x -> getWorkspace().formats().text().toText(x)).toArray(NutsString[]::new);
     }
 
     private String getMultilineSeparator(NutsString key) {

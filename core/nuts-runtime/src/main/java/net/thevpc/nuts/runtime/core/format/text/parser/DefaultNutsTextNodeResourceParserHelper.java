@@ -13,17 +13,17 @@ import java.util.StringTokenizer;
 
 public class DefaultNutsTextNodeResourceParserHelper {
 
-    private NutsTextNodeParser parser;
+    private NutsTextParser parser;
     private NutsSession session;
     private NutsWorkspaceVarExpansionFunction pathExpansionConverter;
 
-    public DefaultNutsTextNodeResourceParserHelper(NutsTextNodeParser parser, NutsSession session) {
+    public DefaultNutsTextNodeResourceParserHelper(NutsTextParser parser, NutsSession session) {
         this.parser = parser;
         this.session = session;
         pathExpansionConverter = new NutsWorkspaceVarExpansionFunction(session.getWorkspace());
     }
 
-    public NutsTextNode parseResource(String resourceName, NutsTextFormatLoader loader) {
+    public NutsText parseResource(String resourceName, NutsTextFormatLoader loader) {
         if (loader == null) {
             throw new NutsIllegalArgumentException(session, "missing loader");
         }
@@ -42,7 +42,7 @@ public class DefaultNutsTextNodeResourceParserHelper {
         return new NutsTextFormatLoaderFile(root);
     }
 
-    public NutsTextNode parseResource(String resourceName, Reader reader, NutsTextFormatLoader loader) {
+    public NutsText parseResource(String resourceName, Reader reader, NutsTextFormatLoader loader) {
         if (loader == null) {
             throw new NutsIllegalArgumentException(session, "missing loader");
         }
@@ -70,9 +70,9 @@ public class DefaultNutsTextNodeResourceParserHelper {
 //            urlPath = urlPath.substring(1);
 //        }
 //        int interr = urlPath.indexOf('?');
-//        String anchor = null;
+//        String forAnchor = null;
 //        if (interr > 0) {
-//            anchor = urlPath.substring(interr + 1);
+//            forAnchor = urlPath.substring(interr + 1);
 //            urlPath = urlPath.substring(interr + 1);
 //        }
 //        URL resource = classLoader.getResource(urlPath);
@@ -91,16 +91,16 @@ public class DefaultNutsTextNodeResourceParserHelper {
 //            in = new InputStreamReader(NutsWorkspaceUtils.of(ws).openURL(resource));
 //        }
 //        try (Reader is = in) {
-//            return loadHelp(is, classLoader, true, depth, vars, anchor);
+//            return loadHelp(is, classLoader, true, depth, vars, forAnchor);
 //        } catch (IOException ex) {
 //            throw new UncheckedIOException(ex);
 //        }
 //    }
 //
-//    private String loadHelp(Reader is, ClassLoader classLoader, boolean err, int depth, boolean vars, String anchor) {
-//        return processHelp(CoreIOUtils.loadString(is, true), classLoader, err, depth, vars, anchor);
+//    private String loadHelp(Reader is, ClassLoader classLoader, boolean err, int depth, boolean vars, String forAnchor) {
+//        return processHelp(CoreIOUtils.loadString(is, true), classLoader, err, depth, vars, forAnchor);
 //    }
-    private NutsTextNode processHelp(String s, NutsTextFormatLoader classLoader, boolean vars, String anchor) {
+    private NutsText processHelp(String s, NutsTextFormatLoader classLoader, boolean vars, String anchor) {
 
         StringBuilder sb = new StringBuilder();
         if (s != null) {
@@ -113,7 +113,7 @@ public class DefaultNutsTextNodeResourceParserHelper {
                     } else if (e.startsWith("#!include<") && e.trim().endsWith(">")) {
                         e = e.trim();
                         e = e.substring("#!include<".length(), e.length() - 1);
-                        NutsTextNode other = null;
+                        NutsText other = null;
                         try {
                             other = parseResource(e, classLoader);
                         } catch (Throwable t) {
@@ -132,24 +132,24 @@ public class DefaultNutsTextNodeResourceParserHelper {
         if (vars) {
             help = StringPlaceHolderParser.replaceDollarPlaceHolders(help, pathExpansionConverter);
         }
-        NutsTextNodeParser p = new DefaultNutsTextNodeParser(session);
-        NutsTextNode node = p.parse(new StringReader(help));
+        NutsTextParser p = new DefaultNutsTextNodeParser(session);
+        NutsText node = p.parse(new StringReader(help));
         if (anchor != null) {
-            List<NutsTextNode> ok = new ArrayList<>();
+            List<NutsText> ok = new ArrayList<>();
             boolean start = false;
             if (node.getType() == NutsTextNodeType.LIST) {
-                for (NutsTextNode o : ((NutsTextNodeList) node)) {
+                for (NutsText o : ((NutsTextList) node)) {
                     if (start) {
                         ok.add(o);
                     } else if (o.getType() == NutsTextNodeType.ANCHOR) {
-                        if (anchor.equals(((DefaultNutsTextNodeAnchor) o).getValue())) {
+                        if (anchor.equals(((DefaultNutsTextAnchor) o).getValue())) {
                             start = true;
                         }
                     }
                 }
             }
             if (start) {
-                node = session.getWorkspace().formats().text().list(ok);
+                node = session.getWorkspace().formats().text().forList(ok);
             }
             return node;
         }

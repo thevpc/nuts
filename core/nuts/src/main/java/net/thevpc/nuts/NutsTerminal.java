@@ -157,4 +157,8 @@ public interface NutsTerminal extends NutsTerminalBase {
      * @return terminal's error stream
      */
     PrintStream err();
+
+    NutsTerminal sendOutCommand(NutsTerminalCommand command);
+    NutsTerminal sendErrCommand(NutsTerminalCommand command);
+
 }

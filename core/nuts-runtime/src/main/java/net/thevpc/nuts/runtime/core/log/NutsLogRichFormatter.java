@@ -29,7 +29,7 @@ public class NutsLogRichFormatter extends Formatter {
                     wRecord.getSession(),
                     wRecord.getLevel(),
                     wRecord.getVerb(),
-                    ws.formats().text().setSession(wRecord.getSession()).nodeFor(
+                    ws.formats().text().setSession(wRecord.getSession()).toText(
                             new NutsMessage(
                                 wRecord.getFormatStyle(),
                                     wRecord.getMessage(),
@@ -68,7 +68,7 @@ public class NutsLogRichFormatter extends Formatter {
             NutsTextManager ff = tf.text();
             String date = CoreNutsUtils.DEFAULT_DATE_TIME_FORMATTER.format(Instant.ofEpochMilli(wRecord.getMillis()));
 
-            sb.append(ff.styled(date,NutsTextNodeStyle.pale()));
+            sb.append(ff.forStyled(date,NutsTextNodeStyle.pale()));
             boolean verboseLog = false;//read from session or workspace;
             if (verboseLog) {
                 sb.append(" ");
@@ -207,7 +207,7 @@ public class NutsLogRichFormatter extends Formatter {
             NutsString msgStr =
                     wRecord.getWorkspace().formats().text()
                             .setSession(wRecord.getSession())
-                            .nodeFor(
+                            .toText(
                     new NutsMessage(style,
                             message,
                             parameters2

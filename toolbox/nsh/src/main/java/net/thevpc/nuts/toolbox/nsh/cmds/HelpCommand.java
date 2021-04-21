@@ -68,17 +68,17 @@ public class HelpCommand extends AbstractNshBuiltin {
         Function<String, String> ss = code ? new Function<String, String>() {
             @Override
             public String apply(String t) {
-                return text.text().plain(t).toString();
+                return text.text().forPlain(t).toString();
             }
         } : x -> x;
         if (commandLine.isExecMode()) {
             if (commandNames.isEmpty()) {
-                NutsTextNode n = text.text().parser().parseResource("/net/thevpc/nuts/toolbox/nsh.ntf",
+                NutsText n = text.text().parser().parseResource("/net/thevpc/nuts/toolbox/nsh.ntf",
                         text.text().parser().createLoader(HelpCommand.class.getClassLoader())
                 );
                 String helpText = (n==null?"no help found":n.toString());
                 context.out().println(ss.apply(helpText));
-                context.out().println(context.workspace().formats().text().styled("AVAILABLE COMMANDS ARE:", NutsTextNodeStyle.primary(1)));
+                context.out().println(context.workspace().formats().text().forStyled("AVAILABLE COMMANDS ARE:", NutsTextNodeStyle.primary(1)));
                 JShellBuiltin[] commands = context.getGlobalContext().builtins().getAll();
                 Arrays.sort(commands, new Comparator<JShellBuiltin>() {
                     @Override
@@ -94,17 +94,17 @@ public class HelpCommand extends AbstractNshBuiltin {
                     }
                 }
                 for (JShellBuiltin cmd : commands) {
-                    context.out().printf("%s : ", text.text().styled(StringUtils.alignLeft(cmd.getName(), max),NutsTextNodeStyle.primary(4)));
+                    context.out().printf("%s : ", text.text().forStyled(StringUtils.alignLeft(cmd.getName(), max),NutsTextNodeStyle.primary(4)));
                     context.out().println(ss.apply(cmd.getHelpHeader())); //formatted
                 }
             } else {
                 for (String commandName : commandNames) {
                     JShellBuiltin command1 = context.getGlobalContext().builtins().find(commandName);
                     if (command1 == null) {
-                        context.err().printf("command not found : %s\n", text.text().styled(commandName,NutsTextNodeStyle.error()));
+                        context.err().printf("command not found : %s\n", text.text().forStyled(commandName,NutsTextNodeStyle.error()));
                     } else {
                         String help = command1.getHelp();
-                        context.out().printf("%s : %s\f", text.text().styled("COMMAND",NutsTextNodeStyle.primary(4)),"commandName");
+                        context.out().printf("%s : %s\f", text.text().forStyled("COMMAND",NutsTextNodeStyle.primary(4)),"commandName");
                         context.out().println(ss.apply(help));
                     }
                 }

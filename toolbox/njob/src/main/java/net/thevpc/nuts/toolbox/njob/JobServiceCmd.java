@@ -92,15 +92,15 @@ public class JobServiceCmd {
             long allJobsCount = service.jobs().findLastJobs(null, -1, null, null, null, null, null).count();
             NutsFormatManager text = context.getWorkspace().formats();
             NutsTextManager factory = text.text();
-            context.getSession().out().printf("%s open task%s\n", factory.styled("" + tasksCount, NutsTextNodeStyle.primary(1)), tasksCount == 1 ? "" : "s");
-            context.getSession().out().printf("%s job%s %s\n", factory.styled("" + allJobsCount, NutsTextNodeStyle.primary(1)), allJobsCount == 1 ? "" : "s",
+            context.getSession().out().printf("%s open task%s\n", factory.forStyled("" + tasksCount, NutsTextNodeStyle.primary(1)), tasksCount == 1 ? "" : "s");
+            context.getSession().out().printf("%s job%s %s\n", factory.forStyled("" + allJobsCount, NutsTextNodeStyle.primary(1)), allJobsCount == 1 ? "" : "s",
                     allJobsCount == 0 ? ""
                             : text.text().builder()
                                     .append("(")
                                     .append("" + jobsCount, NutsTextNodeStyle.primary(1))
                                     .append(" this month)")
             );
-            context.getSession().out().printf("%s project%s\n", factory.styled("" + projectsCount, NutsTextNodeStyle.primary(1)), projectsCount == 1 ? "" : "s");
+            context.getSession().out().printf("%s project%s\n", factory.forStyled("" + projectsCount, NutsTextNodeStyle.primary(1)), projectsCount == 1 ? "" : "s");
         }
     }
 
@@ -132,68 +132,68 @@ public class JobServiceCmd {
 
     protected NutsString getCheckedString(Boolean x) {
         if (x == null) {
-            return context.getWorkspace().formats().text().plain("");
+            return context.getWorkspace().formats().text().forPlain("");
         }
         if (x) {
-            return context.getWorkspace().formats().text().plain("\u2611");
+            return context.getWorkspace().formats().text().forPlain("\u2611");
         } else {
-            return context.getWorkspace().formats().text().plain("\u25A1");
+            return context.getWorkspace().formats().text().forPlain("\u25A1");
         }
     }
 
     protected NutsString getPriorityString(NPriority x) {
         if (x == null) {
-            return context.getWorkspace().formats().text().plain("N");
+            return context.getWorkspace().formats().text().forPlain("N");
         }
         switch (x) {
             case NONE:
-                return ws.formats().text().styled("0", NutsTextNodeStyle.pale());
+                return ws.formats().text().forStyled("0", NutsTextNodeStyle.pale());
             case LOW:
-                return ws.formats().text().styled("L", NutsTextNodeStyle.pale());
+                return ws.formats().text().forStyled("L", NutsTextNodeStyle.pale());
             case NORMAL:
-                return ws.formats().text().plain("N");
+                return ws.formats().text().forPlain("N");
             case MEDIUM:
-                return ws.formats().text().styled("M", NutsTextNodeStyle.primary(1));
+                return ws.formats().text().forStyled("M", NutsTextNodeStyle.primary(1));
             case URGENT:
-                return ws.formats().text().styled("U", NutsTextNodeStyle.primary(2));
+                return ws.formats().text().forStyled("U", NutsTextNodeStyle.primary(2));
             case HIGH:
-                return ws.formats().text().styled("H", NutsTextNodeStyle.primary(3));
+                return ws.formats().text().forStyled("H", NutsTextNodeStyle.primary(3));
             case CRITICAL:
-                return ws.formats().text().styled("C", NutsTextNodeStyle.fail());
+                return ws.formats().text().forStyled("C", NutsTextNodeStyle.fail());
         }
-        return context.getWorkspace().formats().text().plain("?");
+        return context.getWorkspace().formats().text().forPlain("?");
     }
 
     protected NutsString getStatusString(NTaskStatus x) {
         NutsFormatManager text = ws.formats();
         if (x == null) {
-            return text.text().plain("*");
+            return text.text().forPlain("*");
         }
         switch (x) {
             case TODO:
-                return text.text().plain("\u24c9");
+                return text.text().forPlain("\u24c9");
             case DONE:
-                return text.text().styled("\u2611", NutsTextNodeStyle.success());
+                return text.text().forStyled("\u2611", NutsTextNodeStyle.success());
             case WIP:
-                return text.text().styled("\u24CC", NutsTextNodeStyle.primary(1));
+                return text.text().forStyled("\u24CC", NutsTextNodeStyle.primary(1));
             case CANCELLED:
-                return text.text().styled("\u2718", NutsTextNodeStyle.fail());
+                return text.text().forStyled("\u2718", NutsTextNodeStyle.fail());
         }
-        return context.getWorkspace().formats().text().plain("?");
+        return context.getWorkspace().formats().text().forPlain("?");
     }
 
     private NutsString getFlagString(String x, int index) {
         switch (index) {
             case 1:
-                return ws.formats().text().styled(x, NutsTextNodeStyle.primary(1));
+                return ws.formats().text().forStyled(x, NutsTextNodeStyle.primary(1));
             case 2:
-                return ws.formats().text().styled(x, NutsTextNodeStyle.primary(2));
+                return ws.formats().text().forStyled(x, NutsTextNodeStyle.primary(2));
             case 3:
-                return ws.formats().text().styled(x, NutsTextNodeStyle.primary(3));
+                return ws.formats().text().forStyled(x, NutsTextNodeStyle.primary(3));
             case 4:
-                return ws.formats().text().styled(x, NutsTextNodeStyle.primary(4));
+                return ws.formats().text().forStyled(x, NutsTextNodeStyle.primary(4));
             case 5:
-                return ws.formats().text().styled(x, NutsTextNodeStyle.primary(5));
+                return ws.formats().text().forStyled(x, NutsTextNodeStyle.primary(5));
         }
         throw new NutsIllegalArgumentException(context.getSession(), "Invalid index " + index);
     }
@@ -204,7 +204,7 @@ public class JobServiceCmd {
         }
         switch (x) {
             case NONE:
-                return context.getWorkspace().formats().text().plain("\u2690");
+                return context.getWorkspace().formats().text().forPlain("\u2690");
 
             case STAR1:
                 return getFlagString("\u2605", 1);
@@ -261,7 +261,7 @@ public class JobServiceCmd {
             case PHONE5:
                 return getFlagString("\u260E", 5);
         }
-        return context.getWorkspace().formats().text().plain("[" + x.toString().toLowerCase() + "]");
+        return context.getWorkspace().formats().text().forPlain("[" + x.toString().toLowerCase() + "]");
     }
 
     protected <T> Predicate<T> appendPredicate(Predicate<T> whereFilter, Predicate<T> t) {
@@ -297,8 +297,8 @@ public class JobServiceCmd {
                 )
                 .setCommandReadHighlighter(new NutsCommandReadHighlighter() {
                     @Override
-                    public NutsTextNode highlight(String buffer, NutsSession session) {
-                        return session.getWorkspace().formats().text().code("sh", buffer).parse(session);
+                    public NutsText highlight(String buffer, NutsSession session) {
+                        return session.getWorkspace().formats().text().forCode("sh", buffer).parse(session);
                     }
                 });
         context.getWorkspace().env().setProperty(JobServiceCmd.class.getName(), this);
@@ -313,8 +313,8 @@ public class JobServiceCmd {
 
         session.out().printf(
                 "%s interactive mode. type %s to quit.%n",
-                factory.styled(context.getAppId().getArtifactId() + " " + context.getAppId().getVersion(), NutsTextNodeStyle.primary(1)),
-                factory.styled("q", NutsTextNodeStyle.error())
+                factory.forStyled(context.getAppId().getArtifactId() + " " + context.getAppId().getVersion(), NutsTextNodeStyle.primary(1)),
+                factory.forStyled("q", NutsTextNodeStyle.error())
         );
         InputStream in = session.getTerminal().in();
         Exception lastError = null;

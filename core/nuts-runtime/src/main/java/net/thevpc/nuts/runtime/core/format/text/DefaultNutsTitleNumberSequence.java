@@ -1,14 +1,14 @@
 package net.thevpc.nuts.runtime.core.format.text;
 
 import net.thevpc.nuts.NutsTitleNumber;
-import net.thevpc.nuts.NutsTitleNumberSequence;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.thevpc.nuts.NutsTextNumbering;
 
 /**
  */
-public class DefaultNutsTitleNumberSequence implements NutsTitleNumberSequence {
+public class DefaultNutsTitleNumberSequence implements NutsTextNumbering {
     private NutsTitleNumber[] value;
     private String[] separators;
 
@@ -75,7 +75,7 @@ public class DefaultNutsTitleNumberSequence implements NutsTitleNumberSequence {
         return new IntNutsTitleNumber(0);
     }
 
-    public NutsTitleNumberSequence newLevel(int level) {
+    public NutsTextNumbering newLevel(int level) {
 //        level = level - 1;
         if (level <= 0) {
             throw new IllegalArgumentException("Invalid level. must be >= 1");
@@ -137,7 +137,7 @@ public class DefaultNutsTitleNumberSequence implements NutsTitleNumberSequence {
     }
 
     //        @Override
-    public NutsTitleNumberSequence setValue(NutsTitleNumber[] newValue) {
+    public NutsTextNumbering setValue(NutsTitleNumber[] newValue) {
         return new DefaultNutsTitleNumberSequence(newValue);
     }
 

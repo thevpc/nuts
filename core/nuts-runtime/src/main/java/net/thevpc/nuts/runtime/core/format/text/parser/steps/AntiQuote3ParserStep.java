@@ -1,11 +1,11 @@
 package net.thevpc.nuts.runtime.core.format.text.parser.steps;
 
 import net.thevpc.nuts.NutsTerminalCommand;
-import net.thevpc.nuts.NutsTextNode;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.core.format.text.DefaultNutsTextManager;
 import net.thevpc.nuts.runtime.core.format.text.parser.*;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+import net.thevpc.nuts.NutsText;
 
 public class AntiQuote3ParserStep extends ParserStep {
 
@@ -41,7 +41,7 @@ public class AntiQuote3ParserStep extends ParserStep {
                     if (start.length() < maxSize) {
                         start.append(c);
                     } else {
-                        //too much, ignore it all and consider it as plain
+                        //too much, ignore it all and consider it as forPlain
                         start.append(c);
                         p.applyDropReplace(new PlainParserStep(start.toString(),spreadLines,false,ws,p,cc->cc=='\''));
                     }
@@ -125,7 +125,7 @@ public class AntiQuote3ParserStep extends ParserStep {
     }
 
     @Override
-    public NutsTextNode toNode() {
+    public NutsText toNode() {
         char[] dst = new char[value.length()];
         value.getChars(0,value.length(), dst,0 );
         DefaultNutsTextManager factory0 = (DefaultNutsTextManager) ws.formats().text();
@@ -174,7 +174,7 @@ public class AntiQuote3ParserStep extends ParserStep {
                             start2,
                             w.toString(),
                             end.toString(),
-                            factory0.plain(value)
+                            factory0.forPlain(value)
                     );
                 }
             }

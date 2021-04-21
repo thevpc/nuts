@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,17 +24,16 @@
 package net.thevpc.nuts.runtime.core.format.table;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.bundles.string.StringBuilder2;
+import net.thevpc.nuts.runtime.core.format.DefaultFormatBase;
+import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.util.*;
-
-import net.thevpc.nuts.runtime.core.format.DefaultFormatBase;
-import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.bundles.string.StringBuilder2;
 
 /**
  * Created by vpc on 2/17/17.
@@ -93,6 +92,10 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
     private List<Boolean> visibleColumns = new ArrayList<>();
     private boolean visibleHeader = true;
 
+    public DefaultTableFormat(NutsWorkspace ws) {
+        super(ws, "table-format");
+    }
+
     public static Set<String> getAvailableTableBorders() {
         return new HashSet<>(Arrays.asList(
                 "default",
@@ -129,8 +132,64 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         return null;
     }
 
-    public DefaultTableFormat(NutsWorkspace ws) {
-        super(ws, "table-format");
+    public static void formatAndHorizontalAlign(StringBuilder sb, NutsPositionType a, int columns, NutsFormatManager tf, NutsSession session) {
+        int length = tf.text().setSession(session).parse(sb.toString()).textLength();
+        switch (a) {
+            case FIRST: {
+//                if (sb.length() > length) {
+//                    sb.delete(length, sb.length());
+//                }
+                while (length < columns) {
+                    sb.append(' ');
+                    length++;
+                }
+                break;
+            }
+            case LAST: {
+//                if (sb.length() > length) {
+//                    sb.delete(length, sb.length());
+//                }
+                while (length < columns) {
+                    sb.insert(0, ' ');
+                    length++;
+                }
+                break;
+            }
+            case CENTER: {
+//                if (sb.length() > length) {
+//                    sb.delete(length, sb.length());
+//                }
+                boolean after = true;
+                while (length < columns) {
+                    if (after) {
+                        sb.append(' ');
+                    } else {
+                        sb.insert(0, ' ');
+                    }
+                    after = !after;
+                    length++;
+                }
+                break;
+            }
+            case HEADER: {
+                boolean after = true;
+                int maxBefore = 10;
+                while (length < columns) {
+                    if (after || maxBefore <= 0) {
+                        sb.append(' ');
+                    } else {
+                        sb.insert(0, ' ');
+                        maxBefore--;
+                    }
+                    after = !after;
+                    length++;
+                }
+                break;
+            }
+            default: {
+                throw new NutsUnsupportedArgumentException(session, String.valueOf(a));
+            }
+        }
     }
 
     @Override
@@ -155,6 +214,29 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         return this;
     }
 
+    public DefaultTableFormat setVisibleColumn(int col, Boolean visible) {
+        if (visible == null) {
+            if (col >= 0 && col < visibleColumns.size()) {
+                visibleColumns.set(col, null);
+            }
+        } else {
+            if (col >= 0) {
+                while (col < visibleColumns.size()) {
+                    visibleColumns.add(null);
+                }
+                visibleColumns.set(col, visible);
+            }
+        }
+        return this;
+    }
+
+    public Boolean getVisibleColumn(int col) {
+        if (col >= 0 && col < visibleColumns.size()) {
+            return visibleColumns.get(col);
+        }
+        return null;
+    }
+
     @Override
     public NutsTableFormat setBorder(String borderName) {
         NutsTableBordersFormat n = parseTableBorders(borderName);
@@ -165,25 +247,33 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         return this;
     }
 
+    public NutsTableFormat setCellFormat(NutsTableCellFormat formatter) {
+        defaultCellFormatter = formatter == null ? DefaultTableCellFormat.INSTANCE : formatter;
+        return this;
+    }
+
+    @Override
+    public NutsTableModel getModel() {
+        return createTableModel(model);
+    }
+
+    @Override
+    public NutsMutableTableModel createModel() {
+        return new DefaultNutsMutableTableModel();
+    }
+
+    @Override
+    public NutsTableFormat setModel(NutsTableModel model) {
+        this.model = model;
+        return this;
+    }
+
     private String getSeparator(Separator id) {
         String s = border.format(id);
         if (s == null) {
             return "";
         }
         return s;
-    }
-
-    @Override
-    public String toString() {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        OutputStreamWriter w = new OutputStreamWriter(out);
-        print(w);
-        try {
-            w.flush();
-        } catch (IOException ex) {
-            throw new NutsIOException(getSession(), ex);
-        }
-        return new String(out.toByteArray());
     }
 
     @Override
@@ -279,69 +369,359 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         line.clear();
     }
 
-    public static class Row {
-
-        List<DefaultCell> cells = new ArrayList<>();
+    @Override
+    public String toString() {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        OutputStreamWriter w = new OutputStreamWriter(out);
+        print(w);
+        try {
+            w.flush();
+        } catch (IOException ex) {
+            throw new NutsIOException(getSession(), ex);
+        }
+        return new String(out.toByteArray());
     }
 
-    public static void formatAndHorizontalAlign(StringBuilder sb, NutsPositionType a, int columns, NutsFormatManager tf, NutsSession session) {
-        int length = tf.text().setSession(session).parse(sb.toString()).textLength();
-        switch (a) {
-            case FIRST: {
-//                if (sb.length() > length) {
-//                    sb.delete(length, sb.length());
-//                }
-                while (length < columns) {
-                    sb.append(' ');
-                    length++;
+    private NutsTableCellFormat getTableCellFormat(DefaultCell dc) {
+        return dc.isHeader() ? defaultHeaderFormatter : defaultCellFormatter;
+    }
+
+    private List<Row> rebuild(NutsSession session) {
+        List<Row> rows1 = new ArrayList<>();
+        NutsTableModel model = getModel();
+        int columnsCount = model.getColumnsCount();
+        int rowsCount = model.getRowsCount();
+        for (int rowIndex = 0; rowIndex < rowsCount; rowIndex++) {
+            Row r = new Row();
+            rows1.add(r);
+            for (int columnIndex = 0; columnIndex < columnsCount; columnIndex++) {
+                DefaultCell c = new DefaultCell(false);
+                try {
+                    c.value = model.getCellValue(rowIndex, columnIndex);
+                    c.colspan = model.getCellColSpan(rowIndex, columnIndex);
+                    c.rowspan = model.getCellRowSpan(rowIndex, columnIndex);
+                    r.cells.add(c);
+                } catch (Exception ex) {
+                    //ignore
                 }
-                break;
             }
-            case LAST: {
-//                if (sb.length() > length) {
-//                    sb.delete(length, sb.length());
-//                }
-                while (length < columns) {
-                    sb.insert(0, ' ');
-                    length++;
+        }
+        List<Row> effectiveRows = new ArrayList<>();
+        Row header = new Row();
+        try {
+            for (int columnIndex = 0; columnIndex < columnsCount; columnIndex++) {
+                DefaultCell c = new DefaultCell(true);
+                try {
+                    c.value = model.getHeaderValue(columnIndex);
+                    header.cells.add(c);
+                    c.colspan = model.getHeaderColSpan(columnIndex);
+                    //header has no rowspan
+                    //c.rowspan = model.getHeaderRowSpan(columnIndex);
+                } catch (Exception ex) {
+                    //ignore
                 }
-                break;
             }
-            case CENTER: {
-//                if (sb.length() > length) {
-//                    sb.delete(length, sb.length());
+        } catch (NoSuchElementException ex) {
+            //ignore
+        }
+        if (header.cells.size() > 0 && isVisibleHeader()) {
+            effectiveRows.add(header);
+        }
+        boolean p = isVisibleColumnPositive();
+        boolean n = isVisibleColumnNegative();
+        for (int i = 0; i < rows1.size(); i++) {
+            Row row = rows1.get(i);
+            Row r2 = new Row();
+            List<DefaultCell> cells = row.cells;
+            for (int i1 = 0; i1 < cells.size(); i1++) {
+                DefaultCell cell = cells.get(i1);
+                if (isVisibleColumn(i1, p, n)) {
+                    r2.cells.add(cell);
+                }
+            }
+            if (r2.cells.size() > 0) {
+                effectiveRows.add(r2);
+            }
+        }
+
+        //first pass to eval renderedText and effective positions
+        Bounds b = new Bounds();
+        Bounds cb = new Bounds();
+        int r = 0;
+        int cr = 0;
+        for (Row row : effectiveRows) {
+            int c = 0;
+            int cc = 0;
+            for (DefaultCell cell : row.cells) {
+                int r0 = r;
+                int c0 = c;
+                int cr0 = cr;
+                int cc0 = cc;
+//                while(b.isReserved(r0,c0)){
+//                    r0++;
 //                }
-                boolean after = true;
-                while (length < columns) {
-                    if (after) {
-                        sb.append(' ');
-                    } else {
-                        sb.insert(0, ' ');
+                while (b.isReserved(c0, r0)) {
+                    c0++;
+                }
+                while (cb.isReserved(cc0, cr0)) {
+                    cc0++;
+                }
+                cell.cx = cc0;
+                cell.cy = cr0;
+                cell.x = c0;
+                cell.y = r0;
+                NutsTableCellFormat formatter = getTableCellFormat(cell);
+                Object cvalue = cell.getValue();
+                cell.setRendered(new RenderedCell(
+                        c0, r0, cvalue,
+                        formatter.format(r0, c0, cvalue, session),
+                        formatter,
+                        formatter.getVerticalAlign(r0, c0, cvalue, session),
+                        formatter.getHorizontalAlign(r0, c0, cvalue, session),
+                        session
+                ));
+                cell.cw = cell.getRendered().columns;
+                cell.ch = cell.getRendered().rows;
+                b.setColumnIntervalMinSize(cell.x, cell.x + cell.colspan, cell.cw);
+                b.setRowIntervalMinSize(cell.y, cell.y + cell.rowspan, cell.ch);
+                for (int i = 0; i < cell.rowspan; i++) {
+                    for (int j = 0; j < cell.colspan; j++) {
+                        b.addReservation(c0 + j, r0 + i);
                     }
-                    after = !after;
-                    length++;
+                }
+                c++;
+            }
+            b.discardRow(r);
+            r++;
+        }
+        // second pass to update sizes
+        for (Row row : effectiveRows) {
+            for (DefaultCell cell : row.cells) {
+                int rows = b.evalRowSize(cell.y, cell.rowspan);
+                int columns = b.evalColumnSize(cell.x, cell.rowspan);
+                cell.rendered = cell.rendered.resize(rows, columns);
+                cell.cw = cell.getRendered().columns;
+                cell.ch = cell.getRendered().rows;
+            }
+        }
+        return effectiveRows;
+    }
+
+    public NutsTableFormat setHeaderFormat(NutsTableCellFormat formatter) {
+        defaultHeaderFormatter = formatter == null ? DefaultTableHeaderFormat.INSTANCE : formatter;
+        return this;
+    }
+
+    private boolean isVisibleColumnPositive() {
+        for (Boolean visibleColumn : visibleColumns) {
+            if (visibleColumn != null && visibleColumn) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isVisibleColumnNegative() {
+        for (Boolean visibleColumn : visibleColumns) {
+            if (visibleColumn != null && !visibleColumn) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isVisibleColumn(int col, boolean p, boolean n) {
+        Boolean b = null;
+        if (col >= 0 && col < visibleColumns.size()) {
+            b = visibleColumns.get(col);
+        }
+        if (b == null) {
+            if (!p && !n) {
+                return true;
+            } else if (p && !n) {
+                return false;
+            } else if (!p && n) {
+                return true;
+            } else if (p && n) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private NutsTableModel createTableModel(Object o) {
+        if (o == null) {
+            return new DefaultNutsMutableTableModel();
+        }
+        if (o instanceof NutsTableModel) {
+            return (NutsTableModel) o;
+        }
+        if (!(o instanceof NutsElement)) {
+            return createTableModel(_elems().toElement(o));
+        }
+        NutsElement elem = (NutsElement) o;
+        switch (elem.type()) {
+            case BOOLEAN:
+            case INSTANT:
+            case STRING:
+//            case NUTS_STRING:
+            case INTEGER:
+            case FLOAT:
+            case NULL: {
+                List<NutsElement> a = new ArrayList<>();
+                a.add(elem);
+                return createTableModel(_elems().toElement(a));
+            }
+            case OBJECT: {
+                return createTableModel(_elems().toElement(elem.asObject().children()));
+            }
+            case ARRAY: {
+                NutsMutableTableModel model = createModel();
+                LinkedHashSet<String> columns = new LinkedHashSet<>();
+                resolveColumns(elem, columns);
+                for (String column : columns) {
+                    model.addHeaderCell(column);
+                }
+                for (NutsElement elem2 : elem.asArray().children()) {
+                    model.newRow();
+                    switch (elem2.type()) {
+                        case OBJECT: {
+                            Map<String, NutsElement> m = new HashMap<>();
+                            for (NutsElementEntry vv : elem2.asObject().children()) {
+                                NutsElement k = vv.getKey();
+                                if (!k.isString()) {
+                                    k = _elems().forString(
+                                            k.toString()
+                                    );
+                                }
+                                m.put(k.asPrimitive().getString(), vv.getValue());
+                            }
+                            for (String column : columns) {
+                                NutsElement vv = m.get(column);
+                                if (vv != null) {
+                                    model.addCell(formatObject(vv));
+                                } else {
+                                    model.addCell("");
+                                }
+                            }
+                            break;
+                        }
+                        default: {
+                            for (String column : columns) {
+                                if (column.equals("value")) {
+                                    model.addCell(formatObject(elem2/*.primitive().getValue()*/));
+                                } else {
+                                    model.addCell("");
+                                }
+                            }
+                        }
+                    }
+                }
+                return model;
+            }
+            default: {
+                throw new NutsUnsupportedArgumentException(getSession(), "Unsupported " + elem.type());
+            }
+        }
+    }
+
+    public void resolveColumns(NutsElement value, LinkedHashSet<String> columns) {
+        switch (value.type()) {
+            case OBJECT: {
+                for (NutsElementEntry nutsNamedValue : value.asObject().children()) {
+                    NutsElement k = nutsNamedValue.getKey();
+                    if (!k.isString()) {
+                        k = _elems().forString(
+                                k.toString()
+                        );
+                    }
+                    columns.add(k.asPrimitive().getString());
                 }
                 break;
             }
-            case HEADER: {
-                boolean after = true;
-                int maxBefore = 10;
-                while (length < columns) {
-                    if (after || maxBefore <= 0) {
-                        sb.append(' ');
-                    } else {
-                        sb.insert(0, ' ');
-                        maxBefore--;
-                    }
-                    after = !after;
-                    length++;
+            case ARRAY: {
+                for (NutsElement value2 : value.asArray().children()) {
+                    resolveColumns(value2, columns);
                 }
                 break;
             }
             default: {
-                throw new NutsUnsupportedArgumentException(session, String.valueOf(a));
+                columns.add("value");
             }
         }
+    }
+
+    private NutsElementFormat _elems() {
+        return getSession().getWorkspace().formats().element().setSession(getSession());
+    }
+
+    @Override
+    public Object getValue() {
+        return model;
+    }
+
+    @Override
+    public NutsObjectFormat setValue(Object value) {
+        this.model = value;
+        return this;
+    }
+
+    @Override
+    public boolean configureFirst(NutsCommandLine cmdLine) {
+        NutsArgument a;
+        if ((a = cmdLine.nextBoolean("--no-header")) != null) {
+            boolean val = a.getBooleanValue();
+            if (a.isEnabled()) {
+                setVisibleHeader(!val);
+            }
+            return true;
+        } else if ((a = cmdLine.nextBoolean("--header")) != null) {
+            boolean val = a.getBooleanValue();
+            if (a.isEnabled()) {
+                setVisibleHeader(val);
+            }
+            return true;
+        } else if ((a = cmdLine.nextString("--border")) != null) {
+            if (a.isEnabled()) {
+                setBorder(a.getArgumentValue().getStringKey());
+            }
+            return true;
+        } else if (cmdLine.hasNext() && cmdLine.peek().isOption()) {
+            int cc = getModel().getColumnsCount();
+
+            Map<String, Integer> columns = new HashMap<>();
+            for (int i = 0; i < cc; i++) {
+                Object v = getModel().getHeaderValue(cc);
+                if (v instanceof String) {
+                    columns.put(v.toString().toLowerCase(), i);
+                }
+            }
+            NutsArgument a2 = null;
+            for (Map.Entry<String, Integer> e : columns.entrySet()) {
+                if ((a2 = cmdLine.next("--" + e.getKey())) != null) {
+                    if (a2.isEnabled()) {
+                        setVisibleColumn(e.getValue(), true);
+                    }
+                    return true;
+                } else if ((a2 = cmdLine.next("--no-" + e.getKey())) != null) {
+                    if (a2.isEnabled()) {
+                        setVisibleColumn(e.getValue(), false);
+                    }
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private NutsString formatObject(Object any) {
+        checkSession();
+        return CoreCommonUtils.stringValueFormatted(any, false, getSession());
+    }
+
+    public static class Row {
+
+        List<DefaultCell> cells = new ArrayList<>();
     }
 
     public static class RenderedCell {
@@ -691,335 +1071,6 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         }
     }
 
-    private NutsTableCellFormat getTableCellFormat(DefaultCell dc) {
-        return dc.isHeader() ? defaultHeaderFormatter : defaultCellFormatter;
-    }
-
-    private List<Row> rebuild(NutsSession session) {
-        List<Row> rows1 = new ArrayList<>();
-        NutsTableModel model = getModel();
-        int columnsCount = model.getColumnsCount();
-        int rowsCount = model.getRowsCount();
-        for (int rowIndex = 0; rowIndex < rowsCount; rowIndex++) {
-            Row r = new Row();
-            rows1.add(r);
-            for (int columnIndex = 0; columnIndex < columnsCount; columnIndex++) {
-                DefaultCell c = new DefaultCell(false);
-                try {
-                    c.value = model.getCellValue(rowIndex, columnIndex);
-                    c.colspan = model.getCellColSpan(rowIndex, columnIndex);
-                    c.rowspan = model.getCellRowSpan(rowIndex, columnIndex);
-                    r.cells.add(c);
-                } catch (Exception ex) {
-                    //ignore
-                }
-            }
-        }
-        List<Row> effectiveRows = new ArrayList<>();
-        Row header = new Row();
-        try {
-            for (int columnIndex = 0; columnIndex < columnsCount; columnIndex++) {
-                DefaultCell c = new DefaultCell(true);
-                try {
-                    c.value = model.getHeaderValue(columnIndex);
-                    header.cells.add(c);
-                    c.colspan = model.getHeaderColSpan(columnIndex);
-                    //header has no rowspan
-                    //c.rowspan = model.getHeaderRowSpan(columnIndex);
-                } catch (Exception ex) {
-                    //ignore
-                }
-            }
-        } catch (NoSuchElementException ex) {
-            //ignore
-        }
-        if (header.cells.size() > 0 && isVisibleHeader()) {
-            effectiveRows.add(header);
-        }
-        boolean p = isVisibleColumnPositive();
-        boolean n = isVisibleColumnNegative();
-        for (int i = 0; i < rows1.size(); i++) {
-            Row row = rows1.get(i);
-            Row r2 = new Row();
-            List<DefaultCell> cells = row.cells;
-            for (int i1 = 0; i1 < cells.size(); i1++) {
-                DefaultCell cell = cells.get(i1);
-                if (isVisibleColumn(i1, p, n)) {
-                    r2.cells.add(cell);
-                }
-            }
-            if (r2.cells.size() > 0) {
-                effectiveRows.add(r2);
-            }
-        }
-
-        //first pass to eval renderedText and effective positions
-        Bounds b = new Bounds();
-        Bounds cb = new Bounds();
-        int r = 0;
-        int cr = 0;
-        for (Row row : effectiveRows) {
-            int c = 0;
-            int cc = 0;
-            for (DefaultCell cell : row.cells) {
-                int r0 = r;
-                int c0 = c;
-                int cr0 = cr;
-                int cc0 = cc;
-//                while(b.isReserved(r0,c0)){
-//                    r0++;
-//                }
-                while (b.isReserved(c0, r0)) {
-                    c0++;
-                }
-                while (cb.isReserved(cc0, cr0)) {
-                    cc0++;
-                }
-                cell.cx = cc0;
-                cell.cy = cr0;
-                cell.x = c0;
-                cell.y = r0;
-                NutsTableCellFormat formatter = getTableCellFormat(cell);
-                Object cvalue = cell.getValue();
-                cell.setRendered(new RenderedCell(
-                        c0, r0, cvalue,
-                        formatter.format(r0, c0, cvalue, session),
-                        formatter,
-                        formatter.getVerticalAlign(r0, c0, cvalue, session),
-                        formatter.getHorizontalAlign(r0, c0, cvalue, session),
-                        session
-                ));
-                cell.cw = cell.getRendered().columns;
-                cell.ch = cell.getRendered().rows;
-                b.setColumnIntervalMinSize(cell.x, cell.x + cell.colspan, cell.cw);
-                b.setRowIntervalMinSize(cell.y, cell.y + cell.rowspan, cell.ch);
-                for (int i = 0; i < cell.rowspan; i++) {
-                    for (int j = 0; j < cell.colspan; j++) {
-                        b.addReservation(c0 + j, r0 + i);
-                    }
-                }
-                c++;
-            }
-            b.discardRow(r);
-            r++;
-        }
-        // second pass to update sizes
-        for (Row row : effectiveRows) {
-            for (DefaultCell cell : row.cells) {
-                int rows = b.evalRowSize(cell.y, cell.rowspan);
-                int columns = b.evalColumnSize(cell.x, cell.rowspan);
-                cell.rendered = cell.rendered.resize(rows, columns);
-                cell.cw = cell.getRendered().columns;
-                cell.ch = cell.getRendered().rows;
-            }
-        }
-        return effectiveRows;
-    }
-
-    public NutsTableFormat setCellFormat(NutsTableCellFormat formatter) {
-        defaultCellFormatter = formatter == null ? DefaultTableCellFormat.INSTANCE : formatter;
-        return this;
-    }
-
-    public NutsTableFormat setHeaderFormat(NutsTableCellFormat formatter) {
-        defaultHeaderFormatter = formatter == null ? DefaultTableHeaderFormat.INSTANCE : formatter;
-        return this;
-    }
-
-    private boolean isVisibleColumnPositive() {
-        for (Boolean visibleColumn : visibleColumns) {
-            if (visibleColumn != null && visibleColumn) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean isVisibleColumnNegative() {
-        for (Boolean visibleColumn : visibleColumns) {
-            if (visibleColumn != null && !visibleColumn) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public DefaultTableFormat setVisibleColumn(int col, boolean visible) {
-        if (col >= 0) {
-            while (col < visibleColumns.size()) {
-                visibleColumns.add(null);
-            }
-            visibleColumns.set(col, visible);
-        }
-        return this;
-    }
-
-    public DefaultTableFormat unsetVisibleColumn(int col) {
-        if (col >= 0 && col < visibleColumns.size()) {
-            visibleColumns.set(col, null);
-        }
-        return this;
-    }
-
-    public Boolean getVisibleColumn(int col) {
-        if (col >= 0 && col < visibleColumns.size()) {
-            return visibleColumns.get(col);
-        }
-        return null;
-    }
-
-    private boolean isVisibleColumn(int col, boolean p, boolean n) {
-        Boolean b = null;
-        if (col >= 0 && col < visibleColumns.size()) {
-            b = visibleColumns.get(col);
-        }
-        if (b == null) {
-            if (!p && !n) {
-                return true;
-            } else if (p && !n) {
-                return false;
-            } else if (!p && n) {
-                return true;
-            } else if (p && n) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    @Override
-    public NutsMutableTableModel createModel() {
-        return new DefaultNutsMutableTableModel();
-    }
-
-    @Override
-    public NutsTableModel getModel() {
-        return createTableModel(model);
-    }
-
-    private NutsTableModel createTableModel(Object o) {
-        if (o == null) {
-            return new DefaultNutsMutableTableModel();
-        }
-        if (o instanceof NutsTableModel) {
-            return (NutsTableModel) o;
-        }
-        if (!(o instanceof NutsElement)) {
-            return createTableModel(_elems().convertToElement(o));
-        }
-        NutsElement elem = (NutsElement) o;
-        switch (elem.type()) {
-            case BOOLEAN:
-            case INSTANT:
-            case STRING:
-//            case NUTS_STRING:
-            case INTEGER:
-            case FLOAT:
-            case NULL: {
-                List<NutsElement> a = new ArrayList<>();
-                a.add(elem);
-                return createTableModel(_elems().convertToElement(a));
-            }
-            case OBJECT: {
-                return createTableModel(_elems().convertToElement(elem.asObject().children()));
-            }
-            case ARRAY: {
-                NutsMutableTableModel model = createModel();
-                LinkedHashSet<String> columns = new LinkedHashSet<>();
-                resolveColumns(elem, columns);
-                for (String column : columns) {
-                    model.addHeaderCell(column);
-                }
-                for (NutsElement elem2 : elem.asArray().children()) {
-                    model.newRow();
-                    switch (elem2.type()) {
-                        case OBJECT: {
-                            Map<String, NutsElement> m = new HashMap<>();
-                            for (NutsElementEntry vv : elem2.asObject().children()) {
-                                NutsElement k = vv.getKey();
-                                if (!k.isString()) {
-                                    k = _elems().forString(
-                                            k.toString()
-                                    );
-                                }
-                                m.put(k.asPrimitive().getString(), vv.getValue());
-                            }
-                            for (String column : columns) {
-                                NutsElement vv = m.get(column);
-                                if (vv != null) {
-                                    model.addCell(formatObject(vv));
-                                } else {
-                                    model.addCell("");
-                                }
-                            }
-                            break;
-                        }
-                        default: {
-                            for (String column : columns) {
-                                if (column.equals("value")) {
-                                    model.addCell(formatObject(elem2/*.primitive().getValue()*/));
-                                } else {
-                                    model.addCell("");
-                                }
-                            }
-                        }
-                    }
-                }
-                return model;
-            }
-            default: {
-                throw new NutsUnsupportedArgumentException(getSession(), "Unsupported " + elem.type());
-            }
-        }
-    }
-
-    public void resolveColumns(NutsElement value, LinkedHashSet<String> columns) {
-        switch (value.type()) {
-            case OBJECT: {
-                for (NutsElementEntry nutsNamedValue : value.asObject().children()) {
-                    NutsElement k = nutsNamedValue.getKey();
-                    if (!k.isString()) {
-                        k = _elems().forString(
-                                k.toString()
-                        );
-                    }
-                    columns.add(k.asPrimitive().getString());
-                }
-                break;
-            }
-            case ARRAY: {
-                for (NutsElement value2 : value.asArray().children()) {
-                    resolveColumns(value2, columns);
-                }
-                break;
-            }
-            default: {
-                columns.add("value");
-            }
-        }
-    }
-
-    private NutsElementFormat _elems() {
-        return getSession().getWorkspace().formats().element().setSession(getSession());
-    }
-
-    @Override
-    public NutsTableFormat setModel(NutsTableModel model) {
-        this.model = model;
-        return this;
-    }
-
-    @Override
-    public Object getValue() {
-        return model;
-    }
-
-    @Override
-    public NutsObjectFormat setValue(Object value) {
-        this.model = value;
-        return this;
-    }
-
     public static class Pos {
 
         int column;
@@ -1028,6 +1079,12 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         public Pos(int column, int row) {
             this.column = column;
             this.row = row;
+        }
+
+        @Override
+        public int hashCode() {
+
+            return Objects.hash(column, row);
         }
 
         @Override
@@ -1041,12 +1098,6 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
             Pos pos = (Pos) o;
             return column == pos.column
                     && row == pos.row;
-        }
-
-        @Override
-        public int hashCode() {
-
-            return Objects.hash(column, row);
         }
 
         @Override
@@ -1097,6 +1148,13 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         }
 
         @Override
+        public int hashCode() {
+            int result = from;
+            result = 31 * result + to;
+            return result;
+        }
+
+        @Override
         public boolean equals(Object o) {
             if (this == o) {
                 return true;
@@ -1112,13 +1170,6 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
             }
             return to == interval.to;
 
-        }
-
-        @Override
-        public int hashCode() {
-            int result = from;
-            result = 31 * result + to;
-            return result;
         }
 
         @Override
@@ -1140,7 +1191,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         Set<Pos> reserved = new HashSet<>();
 
         public void discardRow(int row) {
-            for (Iterator<Pos> iterator = reserved.iterator(); iterator.hasNext();) {
+            for (Iterator<Pos> iterator = reserved.iterator(); iterator.hasNext(); ) {
                 Pos pos = iterator.next();
                 if (pos.row == row) {
                     iterator.remove();
@@ -1273,58 +1324,5 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
             return best;
         }
 
-    }
-
-    @Override
-    public boolean configureFirst(NutsCommandLine cmdLine) {
-        NutsArgument a;
-        if ((a = cmdLine.nextBoolean("--no-header")) != null) {
-            boolean val = a.getBooleanValue();
-            if (a.isEnabled()) {
-                setVisibleHeader(!val);
-            }
-            return true;
-        } else if ((a = cmdLine.nextBoolean("--header")) != null) {
-            boolean val = a.getBooleanValue();
-            if (a.isEnabled()) {
-                setVisibleHeader(val);
-            }
-            return true;
-        } else if ((a = cmdLine.nextString("--border")) != null) {
-            if (a.isEnabled()) {
-                setBorder(a.getArgumentValue().getStringKey());
-            }
-            return true;
-        } else if (cmdLine.hasNext() && cmdLine.peek().isOption()) {
-            int cc = getModel().getColumnsCount();
-
-            Map<String, Integer> columns = new HashMap<>();
-            for (int i = 0; i < cc; i++) {
-                Object v = getModel().getHeaderValue(cc);
-                if (v instanceof String) {
-                    columns.put(v.toString().toLowerCase(), i);
-                }
-            }
-            NutsArgument a2 = null;
-            for (Map.Entry<String, Integer> e : columns.entrySet()) {
-                if ((a2 = cmdLine.next("--" + e.getKey())) != null) {
-                    if (a2.isEnabled()) {
-                        setVisibleColumn(e.getValue(), true);
-                    }
-                    return true;
-                } else if ((a2 = cmdLine.next("--no-" + e.getKey())) != null) {
-                    if (a2.isEnabled()) {
-                        setVisibleColumn(e.getValue(), false);
-                    }
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    private NutsString formatObject(Object any) {
-        checkSession();
-        return CoreCommonUtils.stringValueFormatted(any, false, getSession());
     }
 }

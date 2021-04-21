@@ -26,6 +26,7 @@ package net.thevpc.nuts;
 
 import java.io.File;
 import java.io.InputStream;
+import java.io.PrintStream;
 import java.io.Reader;
 import java.lang.reflect.Type;
 import java.net.URL;
@@ -227,7 +228,7 @@ public interface NutsElementFormat extends NutsObjectFormat {
      */
     Object destruct(Object any);
 
-    NutsElement convertToElement(Object any);
+    NutsElement toElement(Object any);
 
 //    NutsElementEntryBuilder forEntry();
     NutsElementEntry forEntry(NutsElement key, NutsElement value);
@@ -295,4 +296,6 @@ public interface NutsElementFormat extends NutsObjectFormat {
     Predicate<Type> getDestructTypeFilter();
 
     NutsElementFormat setDestructTypeFilter(Predicate<Type> destructTypeFilter);
+
+    NutsIterableFormat iter(PrintStream out);
 }
