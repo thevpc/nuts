@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.core.format.text.bloc;
 
-import net.thevpc.nuts.NutsTextNodeStyle;
+import net.thevpc.nuts.NutsTextStyle;
 import net.thevpc.nuts.runtime.bundles.parsers.StringReaderExt;
 
 import java.util.ArrayList;
@@ -47,7 +47,7 @@ public class StringReaderExtUtils {
             }
         }
         return new NutsText[]{
-            factory.forStyled(sb.toString(), NutsTextNodeStyle.comments())
+            factory.forStyled(sb.toString(), NutsTextStyle.comments())
         };
     }
 
@@ -76,7 +76,7 @@ public class StringReaderExtUtils {
             }
         }
         return new NutsText[]{
-            factory.forStyled(sb.toString(), NutsTextNodeStyle.comments(2))
+            factory.forStyled(sb.toString(), NutsTextStyle.comments(2))
         };
     }
 
@@ -91,7 +91,7 @@ public class StringReaderExtUtils {
                 switch (ar.peekChar()) {
                     case '\\': {
                         if (sb.length() > 0) {
-                            all.add(factory.forStyled(sb.toString(), NutsTextNodeStyle.string()));
+                            all.add(factory.forStyled(sb.toString(), NutsTextStyle.string()));
                             sb.setLength(0);
                         }
                         StringBuilder sb2 = new StringBuilder();
@@ -107,7 +107,7 @@ public class StringReaderExtUtils {
                                 }
                             }
                         }
-                        all.add(factory.forStyled(sb2.toString(), NutsTextNodeStyle.separator()));
+                        all.add(factory.forStyled(sb2.toString(), NutsTextStyle.separator()));
                         break;
                     }
                     case '\"': {
@@ -121,7 +121,7 @@ public class StringReaderExtUtils {
                 }
             }
             if (sb.length() > 0) {
-                all.add(factory.forStyled(sb.toString(), NutsTextNodeStyle.string()));
+                all.add(factory.forStyled(sb.toString(), NutsTextStyle.string()));
                 sb.setLength(0);
             }
             return all.toArray(new NutsText[0]);
@@ -141,7 +141,7 @@ public class StringReaderExtUtils {
                 switch (ar.peekChar()) {
                     case '\\': {
                         if (sb.length() > 0) {
-                            all.add(factory.forStyled(sb.toString(), NutsTextNodeStyle.string()));
+                            all.add(factory.forStyled(sb.toString(), NutsTextStyle.string()));
                             sb.setLength(0);
                         }
                         StringBuilder sb2 = new StringBuilder();
@@ -157,7 +157,7 @@ public class StringReaderExtUtils {
                                 }
                             }
                         }
-                        all.add(factory.forStyled(sb2.toString(), NutsTextNodeStyle.separator()));
+                        all.add(factory.forStyled(sb2.toString(), NutsTextStyle.separator()));
                         break;
                     }
                     case '\'': {
@@ -171,7 +171,7 @@ public class StringReaderExtUtils {
                 }
             }
             if (sb.length() > 0) {
-                all.add(factory.forStyled(sb.toString(), NutsTextNodeStyle.string(2)));
+                all.add(factory.forStyled(sb.toString(), NutsTextStyle.string(2)));
                 sb.setLength(0);
             }
             return all.toArray(new NutsText[0]);
@@ -260,7 +260,7 @@ public class StringReaderExtUtils {
         }
         if (lastOk >= 0) {
             return new NutsText[]{
-                factory.forStyled(ar.nextChars(lastOk + 1), NutsTextNodeStyle.number())
+                factory.forStyled(ar.nextChars(lastOk + 1), NutsTextStyle.number())
             };
         }
         return null;

@@ -376,33 +376,33 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
 
         NutsFormatManager text = ws.formats().setSession(session);
         if (getSession().isPlainTrace() || (!list.emptyCommand && getSession().getConfirm() == NutsConfirmationMode.ASK)) {
-            printList(out, text.text().builder().append("new", NutsTextNodeStyle.primary(2)),
-                    text.text().builder().append("installed", NutsTextNodeStyle.primary(1)),
+            printList(out, text.text().builder().append("new", NutsTextStyle.primary(2)),
+                    text.text().builder().append("installed", NutsTextStyle.primary(1)),
                     list.ids(x -> x.doInstall && !x.isAlreadyExists()));
 
-            printList(out, text.text().builder().append("new", NutsTextNodeStyle.primary(2)),
-                    text.text().builder().append("required", NutsTextNodeStyle.primary(1)),
+            printList(out, text.text().builder().append("new", NutsTextStyle.primary(2)),
+                    text.text().builder().append("required", NutsTextStyle.primary(1)),
                     list.ids(x -> x.doRequire && !x.doInstall && !x.isAlreadyExists()));
             printList(out,
-                    text.text().builder().append("required", NutsTextNodeStyle.primary(2)),
-                    text.text().builder().append("re-required", NutsTextNodeStyle.primary(1)),
+                    text.text().builder().append("required", NutsTextStyle.primary(2)),
+                    text.text().builder().append("re-required", NutsTextStyle.primary(1)),
                     list.ids(x -> (!x.doInstall && x.doRequire) && x.isAlreadyRequired()));
             printList(out,
-                    text.text().builder().append("required", NutsTextNodeStyle.primary(2)),
-                    text.text().builder().append("installed", NutsTextNodeStyle.primary(1)),
+                    text.text().builder().append("required", NutsTextStyle.primary(2)),
+                    text.text().builder().append("installed", NutsTextStyle.primary(1)),
                     list.ids(x -> x.doInstall && x.isAlreadyRequired() && !x.isAlreadyInstalled()));
 
             printList(out,
-                    text.text().builder().append("required", NutsTextNodeStyle.primary(2)),
-                    text.text().builder().append("re-reinstalled", NutsTextNodeStyle.primary(1)),
+                    text.text().builder().append("required", NutsTextStyle.primary(2)),
+                    text.text().builder().append("re-reinstalled", NutsTextStyle.primary(1)),
                     list.ids(x -> x.doInstall && x.isAlreadyInstalled()));
             printList(out,
-                    text.text().builder().append("installed", NutsTextNodeStyle.primary(2)),
-                    text.text().builder().append("set as default", NutsTextNodeStyle.primary(3)),
+                    text.text().builder().append("installed", NutsTextStyle.primary(2)),
+                    text.text().builder().append("set as default", NutsTextStyle.primary(3)),
                     list.ids(x -> x.doSwitchVersion && x.isAlreadyInstalled()));
             printList(out,
-                    text.text().builder().append("installed", NutsTextNodeStyle.primary(2)),
-                    text.text().builder().append("ignored", NutsTextNodeStyle.pale()),
+                    text.text().builder().append("installed", NutsTextStyle.primary(2)),
+                    text.text().builder().append("ignored", NutsTextStyle.pale()),
                     list.ids(x -> x.ignored));
         }
         List<NutsId> nonIgnored = list.ids(x -> !x.ignored);
@@ -463,7 +463,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
     private void printList(PrintStream out, NutsString kind, NutsString action, List<NutsId> all) {
         if (all.size() > 0) {
             NutsWorkspace ws = getSession().getWorkspace();
-            NutsTextNodeBuilder msg = ws.formats().text().builder();
+            NutsTextBuilder msg = ws.formats().text().builder();
             msg.append("the following ")
                     .append(kind).append(" ").append((all.size() > 1 ? "artifacts are" : "artifact is"))
                     .append(" going to be ").append(action).append(" : ")

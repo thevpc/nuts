@@ -161,4 +161,8 @@ public interface NutsTerminal extends NutsTerminalBase {
     NutsTerminal sendOutCommand(NutsTerminalCommand command);
     NutsTerminal sendErrCommand(NutsTerminalCommand command);
 
+    NutsTerminal printProgress(float progress, String prompt, Object... params);
+
+    NutsTerminal printProgress(String prompt, Object... params);
+
 }

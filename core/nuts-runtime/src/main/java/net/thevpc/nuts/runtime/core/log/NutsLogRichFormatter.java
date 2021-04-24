@@ -64,11 +64,11 @@ public class NutsLogRichFormatter extends Formatter {
             NutsTextFormatStyle style = wRecord.getFormatStyle();
             NutsFormatManager tf = wRecord.getWorkspace().formats().setSession(wRecord.getSession());
 
-            NutsTextNodeBuilder sb = tf.text().builder();
+            NutsTextBuilder sb = tf.text().builder();
             NutsTextManager ff = tf.text();
             String date = CoreNutsUtils.DEFAULT_DATE_TIME_FORMATTER.format(Instant.ofEpochMilli(wRecord.getMillis()));
 
-            sb.append(ff.forStyled(date,NutsTextNodeStyle.pale()));
+            sb.append(ff.forStyled(date,NutsTextStyle.pale()));
             boolean verboseLog = false;//read from session or workspace;
             if (verboseLog) {
                 sb.append(" ");
@@ -85,33 +85,33 @@ public class NutsLogRichFormatter extends Formatter {
             sb.append(" ");
             switch (wRecord.getLevel().intValue()) {
                 case 1000: {//Level.SEVERE
-                    sb.append(NutsLogFormatHelper.logLevel(wRecord.getLevel()),NutsTextNodeStyle.error());
+                    sb.append(NutsLogFormatHelper.logLevel(wRecord.getLevel()),NutsTextStyle.error());
                     break;
                 }
                 case 900: {//Level.WARNING
-                    sb.append(NutsLogFormatHelper.logLevel(wRecord.getLevel()),NutsTextNodeStyle.warn());
+                    sb.append(NutsLogFormatHelper.logLevel(wRecord.getLevel()),NutsTextStyle.warn());
                     break;
                 }
                 case 800: {//Level.INFO
-                    sb.append(NutsLogFormatHelper.logLevel(wRecord.getLevel()),NutsTextNodeStyle.info());
+                    sb.append(NutsLogFormatHelper.logLevel(wRecord.getLevel()),NutsTextStyle.info());
                     break;
                 }
                 case 700: {//Level.CONFIG
-                    sb.append(NutsLogFormatHelper.logLevel(wRecord.getLevel()),NutsTextNodeStyle.config());
+                    sb.append(NutsLogFormatHelper.logLevel(wRecord.getLevel()),NutsTextStyle.config());
                     break;
                 }
                 case 500: {//Level.FINE
-                    sb.append(NutsLogFormatHelper.logLevel(wRecord.getLevel()),NutsTextNodeStyle.primary(4));
+                    sb.append(NutsLogFormatHelper.logLevel(wRecord.getLevel()),NutsTextStyle.primary(4));
                     break;
                 }
                 case 400: {//Level.FINER
 //                    sb.append("[[");
-                    sb.append(NutsLogFormatHelper.logLevel(wRecord.getLevel()),NutsTextNodeStyle.pale());
+                    sb.append(NutsLogFormatHelper.logLevel(wRecord.getLevel()),NutsTextStyle.pale());
 //                    sb.append("]]");
                     break;
                 }
                 case 300: {//Level.FINEST
-                    sb.append(NutsLogFormatHelper.logLevel(wRecord.getLevel()),NutsTextNodeStyle.pale());
+                    sb.append(NutsLogFormatHelper.logLevel(wRecord.getLevel()),NutsTextStyle.pale());
                     break;
                 }
                 default: {
@@ -124,23 +124,23 @@ public class NutsLogRichFormatter extends Formatter {
             switch (wRecord.getVerb()==null?"":wRecord.getVerb().name()) {
                 case "FAIL":
                     {//Level.SEVERE
-                    sb.append(NutsLogFormatHelper.logVerb(wRecord.getVerb().name()),NutsTextNodeStyle.error());
+                    sb.append(NutsLogFormatHelper.logVerb(wRecord.getVerb().name()),NutsTextStyle.error());
                     break;
                 }
                 case "WARNING":
                 {//Level.WARNING
-                    sb.append(NutsLogFormatHelper.logVerb(wRecord.getVerb().name()),NutsTextNodeStyle.warn());
+                    sb.append(NutsLogFormatHelper.logVerb(wRecord.getVerb().name()),NutsTextStyle.warn());
                     break;
                 }
                 case "UPDATE":
                 case "START":
                     {//Level.WARNING
-                        sb.append(NutsLogFormatHelper.logVerb(wRecord.getVerb().name()),NutsTextNodeStyle.info());
+                        sb.append(NutsLogFormatHelper.logVerb(wRecord.getVerb().name()),NutsTextStyle.info());
                     break;
                 }
                 case "SUCCESS":
                     {//Level.INFO
-                        sb.append(NutsLogFormatHelper.logVerb(wRecord.getVerb().name()),NutsTextNodeStyle.success());
+                        sb.append(NutsLogFormatHelper.logVerb(wRecord.getVerb().name()),NutsTextStyle.success());
                     break;
                 }
 //                case NutsLogVerb.BIND:
@@ -153,13 +153,13 @@ public class NutsLogRichFormatter extends Formatter {
                 case "INFO":
                 case "READ":
                     {//Level.FINE
-                        sb.append(NutsLogFormatHelper.logVerb(wRecord.getVerb().name()),NutsTextNodeStyle.option());
+                        sb.append(NutsLogFormatHelper.logVerb(wRecord.getVerb().name()),NutsTextStyle.option());
                     break;
                 }
                 case "CACHE":
                 case "DEBUG":
                     {//Level.FINE
-                        sb.append(NutsLogFormatHelper.logVerb(wRecord.getVerb().name()),NutsTextNodeStyle.pale());
+                        sb.append(NutsLogFormatHelper.logVerb(wRecord.getVerb().name()),NutsTextStyle.pale());
                     break;
                 }
 //                case NutsLogVerb.INIT: {//Level.FINER
@@ -222,7 +222,7 @@ public class NutsLogRichFormatter extends Formatter {
             }
             if(wRecord.getTime()>0){
                 sb.append(" (");
-                sb.append(CoreTimeUtils.formatPeriodMilli(wRecord.getTime()),NutsTextNodeStyle.config());
+                sb.append(CoreTimeUtils.formatPeriodMilli(wRecord.getTime()),NutsTextStyle.config());
                 sb.append(")");
             }
             sb.append(NutsLogFormatHelper.LINE_SEPARATOR);

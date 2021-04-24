@@ -23,16 +23,16 @@ public abstract class AbstractNutsTextNodeParser implements NutsTextParser {
     }
 
     @Override
-    public long parseIncremental(char buf, NutsTextNodeVisitor visitor) {
+    public long parseIncremental(char buf, NutsTextVisitor visitor) {
         return parseIncremental(new char[]{buf}, visitor);
     }
 
     @Override
-    public long parse(InputStream in, NutsTextNodeVisitor visitor) {
+    public long parse(InputStream in, NutsTextVisitor visitor) {
         return parse(new BufferedReader(new InputStreamReader(in)),visitor);
     }
 
-    public long parse(Reader in, NutsTextNodeVisitor visitor) {
+    public long parse(Reader in, NutsTextVisitor visitor) {
         int count = 0;
         char[] buffer = new char[bufferSize];
         int r;
@@ -63,17 +63,17 @@ public abstract class AbstractNutsTextNodeParser implements NutsTextParser {
     }
 
     @Override
-    public long parseIncremental(byte[] buf, NutsTextNodeVisitor visitor) {
+    public long parseIncremental(byte[] buf, NutsTextVisitor visitor) {
         return parseIncremental(buf, 0, buf.length, visitor);
     }
 
     @Override
-    public long parseIncremental(char[] buf, NutsTextNodeVisitor visitor) {
+    public long parseIncremental(char[] buf, NutsTextVisitor visitor) {
         return parseIncremental(new String(buf), visitor);
     }
 
     @Override
-    public long parseIncremental(String buf, NutsTextNodeVisitor visitor) {
+    public long parseIncremental(String buf, NutsTextVisitor visitor) {
         return parseIncremental(buf.getBytes(), visitor);
     }
 

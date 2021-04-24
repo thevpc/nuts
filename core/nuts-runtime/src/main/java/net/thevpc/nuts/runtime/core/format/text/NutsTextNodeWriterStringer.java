@@ -16,7 +16,7 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
             return "";
         }
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        new NutsTextNodeWriterStringer(bos, ws).writeNode(n, new NutsTextNodeWriteConfiguration());
+        new NutsTextNodeWriterStringer(bos, ws).writeNode(n, new NutsTextWriteConfiguration());
         return bos.toString();
     }
 
@@ -45,12 +45,12 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
         return true;
     }
 
-    public void writeNode(NutsText node, NutsTextNodeWriteConfiguration ctx) {
+    public void writeNode(NutsText node, NutsTextWriteConfiguration ctx) {
         if (node == null) {
             return;
         }
         if (ctx == null) {
-            ctx = new NutsTextNodeWriteConfiguration();
+            ctx = new NutsTextWriteConfiguration();
         }
         switch (node.getType()) {
             case PLAIN:
@@ -73,8 +73,8 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
                 if (ctx.isFiltered()) {
                     writeNode(s.getChild(), ctx);
                 } else {
-                    if (s.getChild().getType() == NutsTextNodeType.PLAIN) {
-                        NutsTextNodeStyles styles = s.getStyles();
+                    if (s.getChild().getType() == NutsTextType.PLAIN) {
+                        NutsTextStyles styles = s.getStyles();
                         writeStyledStart(s.getStyles().get(0), false);
                         if (styles.size() <= 1) {
                             writeNode(s.getChild(), ctx);
@@ -86,7 +86,7 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
                         writeRaw(s.getEnd());
                         writeRaw("ø");
                     } else {
-                        NutsTextNodeStyles styles = s.getStyles();
+                        NutsTextStyles styles = s.getStyles();
                         writeStyledStart(s.getStyles().get(0), true);
                         if (styles.size() <= 1) {
                             writeNode(s.getChild(), ctx);
@@ -261,7 +261,7 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
         }
     }
 
-    private void writeStyledStart(NutsTextNodeStyle style, boolean complex) {
+    private void writeStyledStart(NutsTextStyle style, boolean complex) {
         String h = complex ? "##{" : "##:";
         switch (style.getType()) {
             case FORE_COLOR: {

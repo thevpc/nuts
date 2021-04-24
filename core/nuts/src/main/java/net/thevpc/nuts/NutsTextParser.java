@@ -14,27 +14,27 @@ public interface NutsTextParser {
 
     String filterText(String text);
 
-    long parseIncremental(char buf, NutsTextNodeVisitor visitor);
+    long parseIncremental(char buf, NutsTextVisitor visitor);
 
-    long parse(InputStream in, NutsTextNodeVisitor visitor);
+    long parse(InputStream in, NutsTextVisitor visitor);
 
-    long parse(Reader in, NutsTextNodeVisitor visitor);
+    long parse(Reader in, NutsTextVisitor visitor);
 
     NutsText parse(InputStream in);
 
     NutsText parse(Reader in);
 
-    long parseIncremental(byte[] buf, int off, int len, NutsTextNodeVisitor visitor);
+    long parseIncremental(byte[] buf, int off, int len, NutsTextVisitor visitor);
 
-    long parseIncremental(char[] buf, int off, int len, NutsTextNodeVisitor visitor);
+    long parseIncremental(char[] buf, int off, int len, NutsTextVisitor visitor);
 
-    long parseIncremental(byte[] buf, NutsTextNodeVisitor visitor);
+    long parseIncremental(byte[] buf, NutsTextVisitor visitor);
 
-    long parseIncremental(char[] buf, NutsTextNodeVisitor visitor);
+    long parseIncremental(char[] buf, NutsTextVisitor visitor);
 
-    long parseIncremental(String buf, NutsTextNodeVisitor visitor);
+    long parseIncremental(String buf, NutsTextVisitor visitor);
 
-    long parseRemaining(NutsTextNodeVisitor visitor);
+    long parseRemaining(NutsTextVisitor visitor);
 
     boolean isIncomplete();
 

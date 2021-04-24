@@ -28,7 +28,7 @@ package net.thevpc.nuts.runtime.core.format.text.parser;
 
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsTextLink;
-import net.thevpc.nuts.NutsTextNodeType;
+import net.thevpc.nuts.NutsTextType;
 import net.thevpc.nuts.NutsText;
 
 /**
@@ -48,8 +48,8 @@ public class DefaultNutsTextLink extends NutsTextSpecialBase implements NutsText
     }
 
     @Override
-    public NutsTextNodeType getType() {
-        return NutsTextNodeType.LINK;
+    public NutsTextType getType() {
+        return NutsTextType.LINK;
     }
 
 }

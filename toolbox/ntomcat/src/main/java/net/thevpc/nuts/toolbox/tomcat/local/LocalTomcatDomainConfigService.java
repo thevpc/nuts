@@ -2,7 +2,7 @@ package net.thevpc.nuts.toolbox.tomcat.local;
 
 import net.thevpc.nuts.NutsContentType;
 import net.thevpc.nuts.NutsString;
-import net.thevpc.nuts.NutsTextNodeStyle;
+import net.thevpc.nuts.NutsTextStyle;
 import net.thevpc.nuts.toolbox.tomcat.local.config.LocalTomcatDomainConfig;
 
 import java.io.PrintStream;
@@ -62,7 +62,7 @@ public class LocalTomcatDomainConfigService extends LocalTomcatServiceBase {
     public NutsString getBracketsPrefix(String str) {
         return context.getWorkspace().formats().text().builder()
                 .append("[")
-                .append(str, NutsTextNodeStyle.primary(5))
+                .append(str, NutsTextStyle.primary(5))
                 .append("]");
     }
 

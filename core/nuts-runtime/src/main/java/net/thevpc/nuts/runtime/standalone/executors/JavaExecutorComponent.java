@@ -339,7 +339,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
 
             getSession().out().printf("[dry] %s%n",
                     text.text().builder()
-                            .append("exec", NutsTextNodeStyle.pale())
+                            .append("exec", NutsTextStyle.pale())
                             .append(" ")
                             .append(getSession().getWorkspace().commandLine().create(cmdLine))
             );
@@ -509,7 +509,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
         private CoreIOUtils.ProcessExecHelper preExec() {
             if (joptions.isShowCommand() || CoreBooleanUtils.getSysBoolNutsProperty("show-command", false)) {
                 PrintStream out = execSession.out();
-                out.printf("%s %n", ws.formats().text().forStyled("nuts-exec", NutsTextNodeStyle.primary(1)));
+                out.printf("%s %n", ws.formats().text().forStyled("nuts-exec", NutsTextStyle.primary(1)));
                 for (int i = 0; i < xargs.size(); i++) {
                     String xarg = xargs.get(i);
                     if (i > 0 && xargs.get(i - 1).equals("--nuts-path")) {

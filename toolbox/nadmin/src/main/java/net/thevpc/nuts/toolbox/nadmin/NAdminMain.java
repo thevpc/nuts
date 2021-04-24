@@ -61,9 +61,9 @@ public class NAdminMain extends NutsApplication {
             if (someAdded == 0) {
                 applicationContext.getSession().out().print("```error no new``` java installation locations found...\n");
             } else if (someAdded == 1) {
-                applicationContext.getSession().out().printf("%s new java installation location added...\n",factory.forStyled("1",NutsTextNodeStyle.primary(2)));
+                applicationContext.getSession().out().printf("%s new java installation location added...\n",factory.forStyled("1",NutsTextStyle.primary(2)));
             } else {
-                applicationContext.getSession().out().printf("%s new java installation locations added...\n", factory.forStyled(""+someAdded,NutsTextNodeStyle.primary(2)));
+                applicationContext.getSession().out().printf("%s new java installation locations added...\n", factory.forStyled(""+someAdded,NutsTextStyle.primary(2)));
             }
             applicationContext.getSession().out().println("you can always add another installation manually using 'nadmin add java' command.");
         }

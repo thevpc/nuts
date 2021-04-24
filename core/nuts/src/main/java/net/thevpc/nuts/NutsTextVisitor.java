@@ -3,6 +3,6 @@ package net.thevpc.nuts;
 /**
  * @category Format
  */
-public interface NutsTextNodeVisitor {
+public interface NutsTextVisitor {
     void visit(NutsText node);
 }

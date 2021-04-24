@@ -185,7 +185,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
                 skipAll();
                 return this;
             }
-            NutsTextNodeBuilder m = getWorkspace().formats().text().builder();
+            NutsTextBuilder m = getWorkspace().formats().text().builder();
             m.append("unexpected argument ").append(highlightText(String.valueOf(peek())));
             if (errorMessage != null && errorMessage.textLength() > 0) {
                 m.append(" , ").append(errorMessage);
@@ -641,7 +641,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
 
     @Override
     public void throwError(NutsString message) {
-        NutsTextNodeBuilder m = getWorkspace().formats().text().builder();
+        NutsTextBuilder m = getWorkspace().formats().text().builder();
         if (!CoreStringUtils.isBlank(commandName)) {
             m.append(commandName).append(" : ");
         }
@@ -897,7 +897,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
     }
 
     private NutsString highlightText(String text) {
-        return getWorkspace().formats().text().forStyled(text, NutsTextNodeStyle.primary(3));
+        return getWorkspace().formats().text().forStyled(text, NutsTextStyle.primary(3));
     }
 
     private boolean _configureLast(NutsCommandLine commandLine, NutsCommandLineConfigurable configurable) {

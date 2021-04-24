@@ -19,13 +19,13 @@ public class PlainBlocTextFormatter implements NutsCodeFormat {
     }
 
     @Override
-    public NutsText tokenToNode(String text, String nodeType, NutsSession session) {
+    public NutsText tokenToText(String text, String nodeType, NutsSession session) {
         factory.setSession(session);
         return factory.forPlain(text);
     }
 
     @Override
-    public NutsText textToNode(String text, NutsSession session) {
+    public NutsText stringToText(String text, NutsSession session) {
         factory.setSession(session);
         return factory.forPlain(text);
     }

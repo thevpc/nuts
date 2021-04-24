@@ -198,21 +198,21 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             LOGCRF.log("   nuts-api-version               : {0}", Nuts.getVersion());
             LOGCRF.log("   nuts-boot-repositories         : {0}", CoreNutsUtils.desc(info.getBootRepositories()));
             LOGCRF.log("   nuts-runtime-dependencies      : {0}",
-                    formats.text().builder().appendJoined(formats.text().forStyled(";", NutsTextNodeStyle.separator()),
+                    formats.text().builder().appendJoined(formats.text().forStyled(";", NutsTextStyle.separator()),
                             Arrays.stream(info.getRuntimeBootDescriptor().getDependencies())
                                     .map(x -> formats.text().toText(x))
                                     .collect(Collectors.toList())
                     )
             );
             LOGCRF.log("   nuts-runtime-urls              : {0}",
-                    formats.text().builder().appendJoined(formats.text().forStyled(";", NutsTextNodeStyle.separator()),
+                    formats.text().builder().appendJoined(formats.text().forStyled(";", NutsTextStyle.separator()),
                             Arrays.stream(info.getClassWorldURLs())
                                     .map(x -> formats.text().toText(x))
                                     .collect(Collectors.toList())
                     )
             );
             LOGCRF.log("   nuts-extension-dependencies    : {0}",
-                    formats.text().builder().appendJoined(formats.text().forStyled(";", NutsTextNodeStyle.separator()),
+                    formats.text().builder().appendJoined(formats.text().forStyled(";", NutsTextStyle.separator()),
                             toIds(info.getExtensionBootDescriptors()).stream()
                                     .map(x -> formats.text().toText(
                                     id().parser().parse(x.toString())
@@ -425,17 +425,17 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                     out.println(n == null ? "no help found" : n.toString().trim());
                     out.println(
                             txt.builder()
-                                    .append("location", NutsTextNodeStyle.underlined())
+                                    .append("location", NutsTextStyle.underlined())
                                     .append(":")
-                                    .append(locations().getWorkspaceLocation(), NutsTextNodeStyle.path())
+                                    .append(locations().getWorkspaceLocation(), NutsTextStyle.path())
                     );
                     out.println(
                             txt.builder()
-                                    .append("╭────────────────────────────────────────────────────────────────────────╮\n", NutsTextNodeStyle.primary(2))
-                                    .append("│", NutsTextNodeStyle.primary(2)).append("  This is the very first time ")
+                                    .append("╭────────────────────────────────────────────────────────────────────────╮\n", NutsTextStyle.primary(2))
+                                    .append("│", NutsTextStyle.primary(2)).append("  This is the very first time ")
                                     .appendCode("sh", "nuts")
-                                    .append(" has been started for this workspace  ").append("│\n", NutsTextNodeStyle.primary(2))
-                                    .append("╰────────────────────────────────────────────────────────────────────────╯", NutsTextNodeStyle.primary(2))
+                                    .append(" has been started for this workspace  ").append("│\n", NutsTextStyle.primary(2))
+                                    .append("╰────────────────────────────────────────────────────────────────────────╯", NutsTextStyle.primary(2))
                     );
                     out.println();
                 }
@@ -536,7 +536,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             if (CoreBooleanUtils.getSysBoolNutsProperty("perf", false)) {
                 defaultSession().out().printf("```sh nuts``` workspace loaded in %s%n",
                         configModel.getWorkspace().formats().text().forStyled(CoreTimeUtils.formatPeriodMilli(_config.getCreationFinishTimeMillis() - _config.getCreationStartTimeMillis()),
-                                NutsTextNodeStyle.error()
+                                NutsTextStyle.error()
                         )
                 );
             }
@@ -590,7 +590,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                         ex,
                         formats.text().builder().appendJoined(formats.text().forPlain(", "),
                                 Arrays.stream(repos().setSession(session).getRepositories()).map(x
-                                        -> formats.text().builder().append(x.getName(), NutsTextNodeStyle.primary(3))
+                                        -> formats.text().builder().append(x.getName(), NutsTextStyle.primary(3))
                                 ).collect(Collectors.toList())
                         )
                 );
@@ -928,7 +928,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             String setAsDefaultString = "";
             NutsFormatManager formats = formats().setSession(session);
             if (updateDefaultVersion) {
-                setAsDefaultString = " set as " + formats.text().builder().append("default", NutsTextNodeStyle.primary(1)) + ".";
+                setAsDefaultString = " set as " + formats.text().builder().append("default", NutsTextStyle.primary(1)) + ".";
             }
             if (newNutsInstallInformation != null
                     && (newNutsInstallInformation.isJustInstalled()
@@ -953,7 +953,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                                 out.printf("%s %s %s from remote repository (%s) temporarily file %s.%s%n", installedString,
                                         def.getId().getLongNameId(),
                                         def.getRepositoryName(),
-                                        formats.text().forStyled("successfully", NutsTextNodeStyle.success()),
+                                        formats.text().forStyled("successfully", NutsTextStyle.success()),
                                         def.getPath(), formats.text().parse(setAsDefaultString));
                             }
                         } else {
@@ -961,7 +961,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                                 out.printf("%s %s %s from remote repository (%s).%s%n", installedString,
                                         def.getId().getLongNameId(),
                                         def.getRepositoryName(),
-                                        formats.text().forStyled("successfully", NutsTextNodeStyle.success()),
+                                        formats.text().forStyled("successfully", NutsTextStyle.success()),
                                         formats.text().parse(setAsDefaultString));
                             }
                         }
@@ -1002,7 +1002,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                         out.printf("%s  %s %s.%s%n",
                                 installedString,
                                 def.getId().getLongNameId(),
-                                formats.text().forStyled("successfully", NutsTextNodeStyle.success()),
+                                formats.text().forStyled("successfully", NutsTextStyle.success()),
                                 formats.text().parse(setAsDefaultString)
                         );
                     }

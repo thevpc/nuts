@@ -122,7 +122,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
     public NutsString getBracketsPrefix(String str) {
         return context.getWorkspace().formats().text().builder()
                 .append("[")
-                .append(str,NutsTextNodeStyle.primary(5))
+                .append(str,NutsTextStyle.primary(5))
                 .append("]");
     }
 

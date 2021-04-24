@@ -47,10 +47,10 @@ public class DefaultNutsTextFormatTheme implements NutsTextFormatTheme {
     }
 
     @Override
-    public NutsTextNodeStyles toBasicStyles(NutsTextNodeStyles styles, NutsSession session) {
-        NutsTextNodeStyles ret = NutsTextNodeStyles.NONE;
+    public NutsTextStyles toBasicStyles(NutsTextStyles styles, NutsSession session) {
+        NutsTextStyles ret = NutsTextStyles.NONE;
         if (styles != null) {
-            for (NutsTextNodeStyle style : styles) {
+            for (NutsTextStyle style : styles) {
                 ret = ret.append(toBasicStyles(style));
             }
         }
@@ -63,9 +63,9 @@ public class DefaultNutsTextFormatTheme implements NutsTextFormatTheme {
      * @param style textNodeStyle
      * @return NutsTextNode
      */
-    public NutsTextNodeStyles toBasicStyles(NutsTextNodeStyle style) {
+    public NutsTextStyles toBasicStyles(NutsTextStyle style) {
         if (style == null) {
-            return NutsTextNodeStyles.NONE;
+            return NutsTextStyles.NONE;
         }
         switch (style.getType()) {
             case FORE_COLOR: //will be called by recursion
@@ -78,22 +78,22 @@ public class DefaultNutsTextFormatTheme implements NutsTextFormatTheme {
             case REVERSED:
             case BOLD:
             case BLINK: {
-                return NutsTextNodeStyles.of(style);
+                return NutsTextStyles.of(style);
             }
             case PRIMARY: {
 
-                return toBasicStyles(NutsTextNodeStyle.foregroundColor(mapColor(style.getVariant())));
+                return toBasicStyles(NutsTextStyle.foregroundColor(mapColor(style.getVariant())));
             }
             case SECONDARY: {
-                return toBasicStyles(NutsTextNodeStyle.backgroundColor(mapColor(style.getVariant())));
+                return toBasicStyles(NutsTextStyle.backgroundColor(mapColor(style.getVariant())));
             }
             case TITLE: {
-                return toBasicStyles(NutsTextNodeStyle.primary(style.getVariant()))
-                        .append(NutsTextNodeStyle.underlined());
+                return toBasicStyles(NutsTextStyle.primary(style.getVariant()))
+                        .append(NutsTextStyle.underlined());
             }
             case KEYWORD: {
                 int x = mod4(style.getVariant());
-                return toBasicStyles(NutsTextNodeStyle.foregroundColor(
+                return toBasicStyles(NutsTextStyle.foregroundColor(
                         x == 0 ? DARK_BLUE
                                 : x == 1 ? DARK_SKY
                                         : x == 2 ? DARK_VIOLET
@@ -103,7 +103,7 @@ public class DefaultNutsTextFormatTheme implements NutsTextFormatTheme {
 
             case OPTION: {
                 int x = mod4(style.getVariant());
-                return toBasicStyles(NutsTextNodeStyle.foregroundColor(
+                return toBasicStyles(NutsTextStyle.foregroundColor(
                         x == 0 ? DARK_SKY
                                 : x == 1 ? 66
                                         : x == 2 ? 102
@@ -112,69 +112,69 @@ public class DefaultNutsTextFormatTheme implements NutsTextFormatTheme {
             }
 
             case ERROR: {
-                return NutsTextNodeStyles.of(NutsTextNodeStyle.foregroundColor(DARK_RED));
+                return NutsTextStyles.of(NutsTextStyle.foregroundColor(DARK_RED));
             }
             case SUCCESS: {
-                return NutsTextNodeStyles.of(NutsTextNodeStyle.foregroundColor(DARK_GREEN));
+                return NutsTextStyles.of(NutsTextStyle.foregroundColor(DARK_GREEN));
             }
             case WARN: {
-                return NutsTextNodeStyles.of(NutsTextNodeStyle.foregroundColor(DARK_YELLOW));
+                return NutsTextStyles.of(NutsTextStyle.foregroundColor(DARK_YELLOW));
             }
             case INFO: {
-                return NutsTextNodeStyles.of(NutsTextNodeStyle.foregroundColor(DARK_SKY));
+                return NutsTextStyles.of(NutsTextStyle.foregroundColor(DARK_SKY));
             }
 
             case CONFIG: {
-                return NutsTextNodeStyles.of(NutsTextNodeStyle.foregroundColor(DARK_VIOLET));
+                return NutsTextStyles.of(NutsTextStyle.foregroundColor(DARK_VIOLET));
             }
             case DATE:
             case NUMBER:
             case BOOLEAN: {
-                return toBasicStyles(NutsTextNodeStyle.foregroundColor(DARK_VIOLET));
+                return toBasicStyles(NutsTextStyle.foregroundColor(DARK_VIOLET));
             }
 
             case STRING: {
-                return toBasicStyles(NutsTextNodeStyle.foregroundColor(DARK_GREEN));
+                return toBasicStyles(NutsTextStyle.foregroundColor(DARK_GREEN));
             }
 
             case COMMENTS: {
-                return toBasicStyles(NutsTextNodeStyle.foregroundColor(DARK_GRAY));
+                return toBasicStyles(NutsTextStyle.foregroundColor(DARK_GRAY));
             }
 
             case SEPARATOR: {
-                return toBasicStyles(NutsTextNodeStyle.foregroundColor(208));
+                return toBasicStyles(NutsTextStyle.foregroundColor(208));
             }
 
             case OPERATOR: {
-                return toBasicStyles(NutsTextNodeStyle.foregroundColor(208));
+                return toBasicStyles(NutsTextStyle.foregroundColor(208));
             }
 
             case INPUT: {
-                return toBasicStyles(NutsTextNodeStyle.foregroundColor(BRIGHT_YELLOW));
+                return toBasicStyles(NutsTextStyle.foregroundColor(BRIGHT_YELLOW));
             }
 
             case FAIL: {
-                return toBasicStyles(NutsTextNodeStyle.foregroundColor(124));
+                return toBasicStyles(NutsTextStyle.foregroundColor(124));
             }
 
             case DANGER: {
-                return toBasicStyles(NutsTextNodeStyle.foregroundColor(124));
+                return toBasicStyles(NutsTextStyle.foregroundColor(124));
             }
 
             case VAR: {
-                return toBasicStyles(NutsTextNodeStyle.foregroundColor(190));
+                return toBasicStyles(NutsTextStyle.foregroundColor(190));
             }
 
             case PALE: {
-                return toBasicStyles(NutsTextNodeStyle.foregroundColor(250));
+                return toBasicStyles(NutsTextStyle.foregroundColor(250));
             }
 
             case VERSION: {
-                return toBasicStyles(NutsTextNodeStyle.foregroundColor(220));
+                return toBasicStyles(NutsTextStyle.foregroundColor(220));
             }
 
             case PATH: {
-                return toBasicStyles(NutsTextNodeStyle.foregroundColor(114));
+                return toBasicStyles(NutsTextStyle.foregroundColor(114));
             }
         }
         throw new IllegalArgumentException("invalid text node style " + style);

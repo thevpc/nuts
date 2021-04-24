@@ -59,9 +59,9 @@ public abstract class DefaultInternalNutsExecutableCommand extends AbstractNutsE
         NutsFormatManager text = getSession().getWorkspace().formats();
         getSession().out().printf("[dry] %s%n",
                 text.text().builder()
-                        .append("internal", NutsTextNodeStyle.pale())
+                        .append("internal", NutsTextStyle.pale())
                         .append(" ")
-                        .append(getName(),NutsTextNodeStyle.primary(5))
+                        .append(getName(),NutsTextStyle.primary(5))
                         .append(" ")
                         .append(getSession().getWorkspace().commandLine().create(args))
                 );

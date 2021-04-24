@@ -1,12 +1,12 @@
 package net.thevpc.nuts.runtime.core.format.text.parser.steps;
 
-import net.thevpc.nuts.NutsTextNodeStyle;
-import net.thevpc.nuts.NutsTextNodeStyleType;
+import net.thevpc.nuts.NutsTextStyle;
+import net.thevpc.nuts.NutsTextStyleType;
 import net.thevpc.nuts.runtime.bundles.parsers.StringReaderExt;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.thevpc.nuts.NutsTextNodeStyles;
+import net.thevpc.nuts.NutsTextStyles;
 
 public class StyledParserStepCommandParser {
 
@@ -25,16 +25,16 @@ public class StyledParserStepCommandParser {
                 ;
     }
 
-    public NutsTextNodeStyles parse(String atStr){
+    public NutsTextStyles parse(String atStr){
         StringReaderExt r = new StringReaderExt(atStr.toString());
-        List<NutsTextNodeStyle> parsedStyles=new ArrayList<>();
+        List<NutsTextStyle> parsedStyles=new ArrayList<>();
         if(r.hasNext() && r.peekChar()==':'){
             r.nextChar();//skip '!'
             while(true){
                 if(readEnd(r)){
                     break;
                 }
-                NutsTextNodeStyle s = readNext(r);
+                NutsTextStyle s = readNext(r);
                 if(s==null){
                     //this is an invalid style string hence add
                     return null;
@@ -45,7 +45,7 @@ public class StyledParserStepCommandParser {
         }else{
             return null;
         }
-        return NutsTextNodeStyles.NONE.append(parsedStyles.toArray(new NutsTextNodeStyle[0]));
+        return NutsTextStyles.NONE.append(parsedStyles.toArray(new NutsTextStyle[0]));
     }
 
     private boolean isHexaChar(char c) {
@@ -56,7 +56,7 @@ public class StyledParserStepCommandParser {
         return (c >= '0' && c <= '9');
     }
 
-    private NutsTextNodeStyle readWordNumber(StringReaderExt r) {
+    private NutsTextStyle readWordNumber(StringReaderExt r) {
         if(r.hasNext()) {
             char c=r.peekChar();
             if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')) {
@@ -77,13 +77,13 @@ public class StyledParserStepCommandParser {
                                 && isHexaChar(r.peekChar(x+6))) {
                             r.nextChars(sb.length());
                             String s = r.nextChars(7);
-                            return NutsTextNodeStyle.foregroundTrueColor(Integer.parseInt(s.substring(1), 16));
+                            return NutsTextStyle.foregroundTrueColor(Integer.parseInt(s.substring(1), 16));
                         } else {
                             String variant = peekInt(r, x, 3);
                             if (variant != null) {
                                 r.nextChars(sb.length());
                                 r.nextChars(variant.length());
-                                return NutsTextNodeStyle.foregroundColor(Integer.parseInt(variant));
+                                return NutsTextStyle.foregroundColor(Integer.parseInt(variant));
                             }
                         }
                     }else if(sb.toString().equals("background")){
@@ -97,13 +97,13 @@ public class StyledParserStepCommandParser {
                                 && isHexaChar(r.peekChar(x+6))) {
                             r.nextChars(sb.length());
                             String s = r.nextChars(7);
-                            return NutsTextNodeStyle.backgroundTrueColor(Integer.parseInt(s.substring(1), 16));
+                            return NutsTextStyle.backgroundTrueColor(Integer.parseInt(s.substring(1), 16));
                         } else {
                             String variant = peekInt(r, x, 3);
                             if (variant != null) {
                                 r.nextChars(sb.length());
                                 r.nextChars(variant.length());
-                                return NutsTextNodeStyle.backgroundColor(Integer.parseInt(variant));
+                                return NutsTextStyle.backgroundColor(Integer.parseInt(variant));
                             }
                         }
                     }
@@ -126,27 +126,27 @@ public class StyledParserStepCommandParser {
                 switch (sb.toString()) {
                     case "kw": {
                         r.nextChars(sb.toString().length()+variantString.length());
-                        return NutsTextNodeStyle.keyword(variant);
+                        return NutsTextStyle.keyword(variant);
                     }
                     case "p": {
                         r.nextChars(sb.toString().length()+variantString.length());
-                        return NutsTextNodeStyle.primary(variant);
+                        return NutsTextStyle.primary(variant);
                     }
                     case "s": {
                         r.nextChars(sb.toString().length()+variantString.length());
-                        return NutsTextNodeStyle.secondary(variant);
+                        return NutsTextStyle.secondary(variant);
                     }
                     case "bool": {
                         r.nextChars(sb.toString().length()+variantString.length());
-                        return NutsTextNodeStyle.bool(variant);
+                        return NutsTextStyle.bool(variant);
                     }
                     default: {
                         String sb2 = sb.toString().toUpperCase();
                         sb2=sb2.replace('-', '_');
                         try {
-                            NutsTextNodeStyleType st = NutsTextNodeStyleType.valueOf(sb2);
+                            NutsTextStyleType st = NutsTextStyleType.valueOf(sb2);
                             r.nextChars(sb.toString().length()+variantString.length());
-                            return NutsTextNodeStyle.of(st, variant);
+                            return NutsTextStyle.of(st, variant);
                         }catch (Exception ex){
                             return null;
                         }
@@ -198,7 +198,7 @@ public class StyledParserStepCommandParser {
         return false;
     }
 
-    private NutsTextNodeStyle readNext(StringReaderExt r) {
+    private NutsTextStyle readNext(StringReaderExt r) {
         if (r.hasNext()) {
             char c = r.peekChar();
             switch (c){
@@ -215,12 +215,12 @@ public class StyledParserStepCommandParser {
                             && isHexaChar(r.peekChar(7));
                     if (fx) {
                         String s = r.nextChars(8);
-                        return NutsTextNodeStyle.foregroundTrueColor(Integer.parseInt(s.substring(2), 16));
+                        return NutsTextStyle.foregroundTrueColor(Integer.parseInt(s.substring(2), 16));
                     } else {
                         String variant = peekInt(r, 1, 3);
                         if (variant != null) {
                             r.nextChars(1+variant.length());
-                            return NutsTextNodeStyle.foregroundColor(Integer.parseInt(variant));
+                            return NutsTextStyle.foregroundColor(Integer.parseInt(variant));
                         }
                     }
                     break;
@@ -238,39 +238,39 @@ public class StyledParserStepCommandParser {
                             && isHexaChar(r.peekChar(7));
                     if (fx) {
                         String s = r.nextChars(8);
-                        return NutsTextNodeStyle.backgroundTrueColor(Integer.parseInt(s.substring(2), 16));
+                        return NutsTextStyle.backgroundTrueColor(Integer.parseInt(s.substring(2), 16));
                     } else {
                         String variant = peekInt(r, 1, 3);
                         if (variant != null) {
                             r.nextChars(1+variant.length());
-                            return NutsTextNodeStyle.backgroundColor(Integer.parseInt(variant));
+                            return NutsTextStyle.backgroundColor(Integer.parseInt(variant));
                         }
                     }
                     break;
                 }
                 case '/':{
                     r.nextChar();//skip
-                    return NutsTextNodeStyle.italic();
+                    return NutsTextStyle.italic();
                 }
                 case '+':{
                     r.nextChar();//skip
-                    return NutsTextNodeStyle.bold();
+                    return NutsTextStyle.bold();
                 }
                 case '%':{
                     r.nextChar();//skip
-                    return NutsTextNodeStyle.blink();
+                    return NutsTextStyle.blink();
                 }
                 case '_':{
                     r.nextChar();//skip
-                    return NutsTextNodeStyle.underlined();
+                    return NutsTextStyle.underlined();
                 }
                 case '-':{
                     r.nextChar();//skip
-                    return NutsTextNodeStyle.striked();
+                    return NutsTextStyle.striked();
                 }
                 case '!':{
                     r.nextChar();//skip
-                    return NutsTextNodeStyle.reversed();
+                    return NutsTextStyle.reversed();
                 }
                 case '0':
                 case '1':
@@ -285,7 +285,7 @@ public class StyledParserStepCommandParser {
                     String s = peekInt(r, 0, 3);
                     if(s!=null){
                         r.nextChars(s.length());
-                        return NutsTextNodeStyle.primary(Integer.parseInt(s));
+                        return NutsTextStyle.primary(Integer.parseInt(s));
                     }
                     break;
                 }

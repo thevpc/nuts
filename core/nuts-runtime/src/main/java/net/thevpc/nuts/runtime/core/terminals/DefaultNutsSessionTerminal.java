@@ -195,9 +195,9 @@ public class DefaultNutsSessionTerminal extends AbstractNutsTerminal implements 
     }
 
     @Override
-    public NutsTerminalBase printProgress(float progress, String prompt, Object... params) {
-        if(getParent()!=null) {
-            getParent().printProgress(progress, prompt, params);
+    public NutsTerminal printProgress(float progress, String prompt, Object... params) {
+        if(getParent() instanceof NutsTerminal) {
+            ((NutsTerminal)getParent()).printProgress(progress, prompt, params);
         }else{
             getProgressBar().printProgress(
                     Float.isNaN(progress)?-1:
@@ -210,9 +210,9 @@ public class DefaultNutsSessionTerminal extends AbstractNutsTerminal implements 
     }
 
     @Override
-    public NutsTerminalBase printProgress(String prompt, Object... params) {
-        if(getParent()!=null) {
-            getParent().printProgress(prompt, params);
+    public NutsTerminal printProgress(String prompt, Object... params) {
+        if(getParent() instanceof NutsTerminal) {
+            ((NutsTerminal)getParent()).printProgress(prompt, params);
         }else{
             getProgressBar().printProgress(-1,
                     session.getWorkspace().formats().text().toText(NutsMessage.cstyle(prompt,params)).toString(),

@@ -95,11 +95,11 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
         return false;
     }
 
-    public void writeNode(NutsText node, NutsTextNodeWriteConfiguration ctx) {
+    public void writeNode(NutsText node, NutsTextWriteConfiguration ctx) {
         writeNode(new AnsiEscapeCommand[0], node, ctx);
     }
 
-    private void writeNode(AnsiEscapeCommand[] formats, NutsText node, NutsTextNodeWriteConfiguration ctx) {
+    private void writeNode(AnsiEscapeCommand[] formats, NutsText node, NutsTextWriteConfiguration ctx) {
         if (formats == null) {
             formats = new AnsiEscapeCommand[0];
         }
@@ -121,8 +121,8 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
             }
             case STYLED: {
                 DefaultNutsTextStyled s = (DefaultNutsTextStyled) node;
-                NutsTextNodeStyles styles = s.getStyles();
-                NutsTextNodeStyles format = ws.formats().text().getTheme().toBasicStyles(styles, session);
+                NutsTextStyles styles = s.getStyles();
+                NutsTextStyles format = ws.formats().text().getTheme().toBasicStyles(styles, session);
                 AnsiEscapeCommand[] s2 = _appendFormats(formats, format);
                 writeNode(s2, s.getChild(), ctx);
                 break;
@@ -130,7 +130,7 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
             case TITLE: {
                 DefaultNutsTextTitle s = (DefaultNutsTextTitle) node;
                 DefaultNutsTextManager factory0 = (DefaultNutsTextManager) ws.formats().text();
-                AnsiEscapeCommand[] s2 = _appendFormats(formats, ws.formats().text().getTheme().toBasicStyles(NutsTextNodeStyles.of(NutsTextNodeStyle.title(s.getLevel())), session
+                AnsiEscapeCommand[] s2 = _appendFormats(formats, ws.formats().text().getTheme().toBasicStyles(NutsTextStyles.of(NutsTextStyle.title(s.getLevel())), session
                 ));
                 if (ctx.isTitleNumberEnabled()) {
                     NutsTextNumbering seq = ctx.getTitleNumberSequence();
@@ -171,7 +171,7 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
                 writeNode(
                         formats,
                         factory0.createStyled(((NutsTextLink) node).getChild(),
-                                NutsTextNodeStyles.of(NutsTextNodeStyle.underlined()),
+                                NutsTextStyles.of(NutsTextStyle.underlined()),
                                 true
                         ),
                         ctx
@@ -282,12 +282,12 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
         return list.toArray(new AnsiEscapeCommand[0]);
     }
 
-    private AnsiEscapeCommand[] _appendFormats(AnsiEscapeCommand[] old, NutsTextNodeStyles v) {
+    private AnsiEscapeCommand[] _appendFormats(AnsiEscapeCommand[] old, NutsTextStyles v) {
         List<AnsiEscapeCommand> list = new ArrayList<AnsiEscapeCommand>((old == null ? 0 : old.length) + 1);
         if (old != null) {
             list.addAll(Arrays.asList(old));
         }
-        for (NutsTextNodeStyle textFormat : v) {
+        for (NutsTextStyle textFormat : v) {
             if (textFormat != null) {
                 list.add(AnsiEscapeCommandFromNodeStyle.of(textFormat));
             }

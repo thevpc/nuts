@@ -31,5 +31,5 @@ package net.thevpc.nuts;
  * @category Format
  */
 public interface NutsText extends NutsString{
-    NutsTextNodeType getType();
+    NutsTextType getType();
 }

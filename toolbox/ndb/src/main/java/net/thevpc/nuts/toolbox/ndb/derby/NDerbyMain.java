@@ -74,8 +74,8 @@ public class NDerbyMain implements NdbSupport {
                 if (cmdLine.isExecMode()) {
                     if (new DerbyService(appContext).isRunning()) {
                         appContext.getSession().out().printf("derby is %s on port %s%n",
-                                factory.forStyled("already running", NutsTextNodeStyle.warn()),
-                                factory.forStyled(""+ effectivePort, NutsTextNodeStyle.number())
+                                factory.forStyled("already running", NutsTextStyle.warn()),
+                                factory.forStyled(""+ effectivePort, NutsTextStyle.number())
                         );
                         throw new NutsExecutionException(appContext.getSession(),"derby is already running on port "+ effectivePort,3);
                     }
@@ -85,10 +85,10 @@ public class NDerbyMain implements NdbSupport {
                 if (cmdLine.isExecMode()) {
                     if (new DerbyService(appContext).isRunning()) {
                         appContext.getSession().out().printf("derby is %s on port %s%n",
-                                factory.forStyled("already stopped", NutsTextNodeStyle.warn()),
-                                factory.forStyled(""+ effectivePort, NutsTextNodeStyle.number())
+                                factory.forStyled("already stopped", NutsTextStyle.warn()),
+                                factory.forStyled(""+ effectivePort, NutsTextStyle.number())
                         );
-                        appContext.getSession().out().printf("derby is %s%n", factory.forStyled("already stopped", NutsTextNodeStyle.warn()));
+                        appContext.getSession().out().printf("derby is %s%n", factory.forStyled("already stopped", NutsTextStyle.warn()));
                         throw new NutsExecutionException(appContext.getSession(),"derby is already stopped"+ effectivePort,3);
                     }
                 }
@@ -111,9 +111,9 @@ public class NDerbyMain implements NdbSupport {
         NutsTextManager factory = appContext.getWorkspace().formats().text();
         if (cmdLine.isExecMode()) {
             if (new DerbyService(appContext).isRunning()) {
-                appContext.getSession().out().printf("derby is %s%n",factory.forStyled("running",NutsTextNodeStyle.primary(1)));
+                appContext.getSession().out().printf("derby is %s%n",factory.forStyled("running",NutsTextStyle.primary(1)));
             } else {
-                appContext.getSession().out().printf("derby is %s%n",factory.forStyled("stopped",NutsTextNodeStyle.error()));
+                appContext.getSession().out().printf("derby is %s%n",factory.forStyled("stopped",NutsTextStyle.error()));
             }
         }
     }
@@ -173,15 +173,15 @@ public class NDerbyMain implements NdbSupport {
                     switch (format) {
                         case "short": {
                             out.printf("%s\n",
-                                    factory.forStyled(jpsResult.getPid(),NutsTextNodeStyle.primary(1))
+                                    factory.forStyled(jpsResult.getPid(),NutsTextStyle.primary(1))
                             );
                             break;
                         }
                         case "long": {
                             out.printf("%s %s %s %s %s%n",
-                                    factory.forStyled(jpsResult.getPid(),NutsTextNodeStyle.primary(1)),
+                                    factory.forStyled(jpsResult.getPid(),NutsTextStyle.primary(1)),
                                     factory.forPlain("HOME:"),
-                                    factory.forStyled(jpsResult.getHome(),NutsTextNodeStyle.path()),
+                                    factory.forStyled(jpsResult.getHome(),NutsTextStyle.path()),
                                     factory.forPlain("CMD:"),
                                     appContext.getWorkspace().commandLine().formatter(
                                             appContext.getCommandLine().parseLine(jpsResult.getArgsLine())
@@ -191,7 +191,7 @@ public class NDerbyMain implements NdbSupport {
                         }
                         default: {
                             out.printf("%s %s\n",
-                                    factory.forStyled(jpsResult.getPid(),NutsTextNodeStyle.primary(1)),
+                                    factory.forStyled(jpsResult.getPid(),NutsTextStyle.primary(1)),
                                     jpsResult.getHome()
                             );
                             break;

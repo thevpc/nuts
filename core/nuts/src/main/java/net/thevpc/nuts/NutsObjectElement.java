@@ -112,5 +112,4 @@ public interface NutsObjectElement extends NutsElement, Iterable<NutsElementEntr
      */
     int size();
 
-    boolean isEmpty();
 }

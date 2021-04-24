@@ -9,12 +9,12 @@ import java.util.Collection;
 import java.util.List;
 import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextNodeParser;
 
-public class DefaultNutsTextNodeBuilder implements NutsTextNodeBuilder {
+public class DefaultNutsTextNodeBuilder implements NutsTextBuilder {
 
     NutsFormatManager text1;
     private List<NutsText> all = new ArrayList<>();
     private NutsSession session;
-    private NutsTextNodeWriteConfiguration writeConfiguration;
+    private NutsTextWriteConfiguration writeConfiguration;
     private NutsTextStyleGenerator styleGenerator;
 
     public DefaultNutsTextNodeBuilder(NutsSession session) {
@@ -37,40 +37,40 @@ public class DefaultNutsTextNodeBuilder implements NutsTextNodeBuilder {
     }
 
     @Override
-    public NutsTextNodeWriteConfiguration getConfiguration() {
+    public NutsTextWriteConfiguration getConfiguration() {
         return writeConfiguration;
     }
 
     @Override
-    public NutsTextNodeBuilder setConfiguration(NutsTextNodeWriteConfiguration writeConfiguration) {
+    public NutsTextBuilder setConfiguration(NutsTextWriteConfiguration writeConfiguration) {
         this.writeConfiguration = writeConfiguration;
         return this;
     }
 
     @Override
-    public NutsTextNodeBuilder appendCommand(NutsTerminalCommand command) {
+    public NutsTextBuilder appendCommand(NutsTerminalCommand command) {
         all.add(text1.text().forCommand(command));
         return this;
     }
 
     @Override
-    public NutsTextNodeBuilder appendCode(String lang, String text) {
+    public NutsTextBuilder appendCode(String lang, String text) {
         all.add(text1.text().forCode(lang, text));
         return this;
     }
 
 //
 //    @Override
-//    public NutsTextNodeBuilder append(String text, NutsTextNodeStyle... styles) {
+//    public NutsTextBuilder append(String text, NutsTextStyle... styles) {
 //        return append(text1.text().forPlain(text), styles);
 //    }
     @Override
-    public NutsTextNodeBuilder appendHash(Object text) {
+    public NutsTextBuilder appendHash(Object text) {
         return appendHash(text, text);
     }
 
     @Override
-    public NutsTextNodeBuilder appendHash(Object text, Object hash) {
+    public NutsTextBuilder appendHash(Object text, Object hash) {
         if (text == null) {
             return this;
         }
@@ -81,7 +81,7 @@ public class DefaultNutsTextNodeBuilder implements NutsTextNodeBuilder {
     }
 
     @Override
-    public NutsTextNodeBuilder appendRandom(Object text) {
+    public NutsTextBuilder appendRandom(Object text) {
         if (text == null) {
             return this;
         }
@@ -89,12 +89,12 @@ public class DefaultNutsTextNodeBuilder implements NutsTextNodeBuilder {
     }
 
     @Override
-    public NutsTextNodeBuilder append(Object text, NutsTextNodeStyle style) {
-        return append(text, NutsTextNodeStyles.of(style));
+    public NutsTextBuilder append(Object text, NutsTextStyle style) {
+        return append(text, NutsTextStyles.of(style));
     }
 
     @Override
-    public NutsTextNodeBuilder append(Object text, NutsTextNodeStyles styles) {
+    public NutsTextBuilder append(Object text, NutsTextStyles styles) {
         if (text != null) {
             if (styles.size() == 0) {
                 all.add(session.getWorkspace().formats().text().toText(text));
@@ -106,7 +106,7 @@ public class DefaultNutsTextNodeBuilder implements NutsTextNodeBuilder {
     }
 
     @Override
-    public NutsTextNodeBuilder append(Object node) {
+    public NutsTextBuilder append(Object node) {
         if (node != null) {
             return append(session.getWorkspace().formats().text().toText(node));
         }
@@ -114,7 +114,7 @@ public class DefaultNutsTextNodeBuilder implements NutsTextNodeBuilder {
     }
 
     @Override
-    public NutsTextNodeBuilder append(NutsText node) {
+    public NutsTextBuilder append(NutsText node) {
         if (node != null) {
             all.add(node);
         }
@@ -122,7 +122,7 @@ public class DefaultNutsTextNodeBuilder implements NutsTextNodeBuilder {
     }
 
     @Override
-    public NutsTextNodeBuilder appendAll(Collection<?> others) {
+    public NutsTextBuilder appendAll(Collection<?> others) {
         if (others != null) {
             for (Object node : others) {
                 if (node != null) {
@@ -133,7 +133,7 @@ public class DefaultNutsTextNodeBuilder implements NutsTextNodeBuilder {
         return this;
     }
     //    @Override
-//    public NutsTextNodeBuilder append(NutsString str) {
+//    public NutsTextBuilder append(NutsString str) {
 //        if (str != null) {
 //            NutsText n = ws.formats().text().parser().parse(new StringReader(str.toString()));
 //            if (n != null) {
@@ -144,7 +144,7 @@ public class DefaultNutsTextNodeBuilder implements NutsTextNodeBuilder {
 //    }
 //
 //    @Override
-//    public NutsTextNodeBuilder append(NutsFormattable str) {
+//    public NutsTextBuilder append(NutsFormattable str) {
 //        if (str != null) {
 //            append(ws.formats().text().toText(str));
 //        }
@@ -152,7 +152,7 @@ public class DefaultNutsTextNodeBuilder implements NutsTextNodeBuilder {
 //    }
 
     @Override
-    public NutsTextNodeBuilder appendJoined(Object separator, Collection<?> others) {
+    public NutsTextBuilder appendJoined(Object separator, Collection<?> others) {
         if (others != null) {
             boolean first = true;
             for (Object other : others) {

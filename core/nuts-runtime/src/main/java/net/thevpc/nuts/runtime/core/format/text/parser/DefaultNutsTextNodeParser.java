@@ -5,8 +5,7 @@
  */
 package net.thevpc.nuts.runtime.core.format.text.parser;
 
-import net.thevpc.nuts.NutsTextNodeVisitor;
-import net.thevpc.nuts.NutsTextNodeWriteConfiguration;
+import net.thevpc.nuts.NutsTextWriteConfiguration;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.core.format.text.AbstractNutsTextNodeParser;
 import net.thevpc.nuts.runtime.core.format.text.NutsTextNodeWriterStringer;
@@ -19,6 +18,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsText;
+import net.thevpc.nuts.NutsTextVisitor;
 
 /**
  * @author thevpc
@@ -261,7 +261,7 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
         try {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             NutsTextNodeWriterStringer s = new NutsTextNodeWriterStringer(out, getSession().getWorkspace());
-            s.writeNode(this.parse(new StringReader(text)), new NutsTextNodeWriteConfiguration().setFiltered(true));
+            s.writeNode(this.parse(new StringReader(text)), new NutsTextWriteConfiguration().setFiltered(true));
             s.flush();
             return out.toString();
         } catch (Exception ex) {
@@ -271,7 +271,7 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
     }
 
     @Override
-    public long parseIncremental(byte[] buf, int off, int len, NutsTextNodeVisitor visitor) {
+    public long parseIncremental(byte[] buf, int off, int len, NutsTextVisitor visitor) {
         if (len == 0) {
             return 0;
         }
@@ -281,7 +281,7 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
     }
 
     @Override
-    public long parseIncremental(char[] buf, int off, int len, NutsTextNodeVisitor visitor) {
+    public long parseIncremental(char[] buf, int off, int len, NutsTextVisitor visitor) {
         if (len == 0) {
             return 0;
         }
@@ -290,7 +290,7 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
     }
 
     @Override
-    public long parseRemaining(NutsTextNodeVisitor visitor) {
+    public long parseRemaining(NutsTextVisitor visitor) {
         return state().consumeNodes(true, visitor);
     }
 
@@ -339,7 +339,7 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
             return statusStack.pop();
         }
 
-        public long consumeNodes(boolean greedy, NutsTextNodeVisitor visitor) {
+        public long consumeNodes(boolean greedy, NutsTextVisitor visitor) {
             long count = 0;
             while ((consumeNode(visitor)) != null) {
                 count++;
@@ -464,7 +464,7 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
             return s.toNode();
         }
 
-        public NutsText consumeNode(NutsTextNodeVisitor visitor) {
+        public NutsText consumeNode(NutsTextVisitor visitor) {
             ParserStep s = root().poll();
             if (s == null) {
                 while (!statusStack.isEmpty()) {

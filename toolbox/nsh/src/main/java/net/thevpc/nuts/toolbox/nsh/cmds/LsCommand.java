@@ -210,9 +210,9 @@ public class LsCommand extends SimpleNshBuiltin {
             for (Map.Entry<String, String> e : s.result.entrySet()) {
                 NutsFormatManager text = session.getWorkspace().formats();
                 out.printf("%s%n",
-                        text.text().builder().append(e.getKey(),NutsTextNodeStyle.primary(5))
+                        text.text().builder().append(e.getKey(),NutsTextStyle.primary(5))
                         .append(" : ")
-                        .append(e.getValue(),NutsTextNodeStyle.error())
+                        .append(e.getValue(),NutsTextStyle.error())
                         );
             }
         } else {
@@ -243,15 +243,15 @@ public class LsCommand extends SimpleNshBuiltin {
         String name = new File(item.path).getName();
         NutsFormatManager text = session.getWorkspace().formats();
         if (item.hidden) {
-            out.println(text.text().forStyled(name,NutsTextNodeStyle.pale()));
+            out.println(text.text().forStyled(name,NutsTextStyle.pale()));
         } else if (item.type == 'd') {
-            out.println(text.text().forStyled(name,NutsTextNodeStyle.primary(3)));
+            out.println(text.text().forStyled(name,NutsTextStyle.primary(3)));
         } else if (item.exec2 || item.jperms.charAt(2) == 'x') {
-            out.println(text.text().forStyled(name,NutsTextNodeStyle.primary(4)));
+            out.println(text.text().forStyled(name,NutsTextStyle.primary(4)));
         } else if (item.config) {
-            out.println(text.text().forStyled(name,NutsTextNodeStyle.primary(5)));
+            out.println(text.text().forStyled(name,NutsTextStyle.primary(5)));
         } else if (item.archive) {
-            out.println(text.text().forStyled(name,NutsTextNodeStyle.primary(1)));
+            out.println(text.text().forStyled(name,NutsTextStyle.primary(1)));
         } else {
             out.println(text.text().forPlain(name));
         }

@@ -28,7 +28,7 @@ package net.thevpc.nuts.runtime.core.format.text.parser;
 
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsTextTitle;
-import net.thevpc.nuts.NutsTextNodeType;
+import net.thevpc.nuts.NutsTextType;
 import net.thevpc.nuts.NutsText;
 
 /**
@@ -52,8 +52,8 @@ public class DefaultNutsTextTitle extends AbstractNutsText implements NutsTextTi
     }
 
     @Override
-    public NutsTextNodeType getType() {
-        return NutsTextNodeType.TITLE;
+    public NutsTextType getType() {
+        return NutsTextType.TITLE;
     }
 
     public String getTextStyleCode() {

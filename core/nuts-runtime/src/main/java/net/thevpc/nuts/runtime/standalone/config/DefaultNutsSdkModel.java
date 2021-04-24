@@ -73,8 +73,8 @@ public class DefaultNutsSdkModel {
                             location.getId().getShortName(),
                             location.getPackaging(),
                             location.getProduct(),
-                            session.getWorkspace().formats().text().builder().append(location.getVersion(), NutsTextNodeStyle.version()),
-                            session.getWorkspace().formats().text().builder().append(location.getPath(), NutsTextNodeStyle.path())
+                            session.getWorkspace().formats().text().builder().append(location.getVersion(), NutsTextStyle.version()),
+                            session.getWorkspace().formats().text().builder().append(location.getPath(), NutsTextStyle.path())
                     );
                 }
                 NutsWorkspaceConfigManagerExt.of(workspace.config())

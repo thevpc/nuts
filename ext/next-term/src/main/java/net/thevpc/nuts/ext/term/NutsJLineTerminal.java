@@ -125,7 +125,7 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase, NutsSessionAwa
         return errMode;
     }
 
-    private AttributedString toAttributedString(NutsText n, NutsTextNodeStyles styles) {
+    private AttributedString toAttributedString(NutsText n, NutsTextStyles styles) {
         switch (n.getType()) {
             case PLAIN: {
                 styles=workspace.formats().text().getTheme().toBasicStyles(styles, session);
@@ -135,7 +135,7 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase, NutsSessionAwa
                 } else {
                     AttributedStyle s = AttributedStyle.DEFAULT;
                     for (int i = 0; i < styles.size(); i++) {
-                        NutsTextNodeStyle ii = styles.get(i);
+                        NutsTextStyle ii = styles.get(i);
                         switch (ii.getType()) {
                             case BACK_COLOR: {
                                 s = s.background(ii.getVariant());
@@ -189,17 +189,17 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase, NutsSessionAwa
             case CODE: {
                 NutsTextCode p = (NutsTextCode) n;
                 NutsText nn = p.parse(session);
-                return toAttributedString(nn, NutsTextNodeStyles.NONE);
+                return toAttributedString(nn, NutsTextStyles.NONE);
             }
             case TITLE: {
                 NutsTextTitle p = (NutsTextTitle) n;
-                return toAttributedString(p.getChild(), NutsTextNodeStyles.NONE);
+                return toAttributedString(p.getChild(), NutsTextStyles.NONE);
             }
             case LINK: {
                 NutsTextLink p = (NutsTextLink) n;
                 return toAttributedString(
                         p.getChild(),
-                        styles.append(NutsTextNodeStyle.underlined())
+                        styles.append(NutsTextStyle.underlined())
                 );
             }
             case LIST: {
@@ -250,7 +250,7 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase, NutsSessionAwa
                             NutsTextManager text = workspace.formats().text();
                             NutsCommandReadHighlighter h = getCommandReadHighlighter();
                             NutsText n=(h!=null)?h.highlight(buffer, session):text.forPlain(buffer);
-                            return toAttributedString(n, NutsTextNodeStyles.NONE);
+                            return toAttributedString(n, NutsTextStyles.NONE);
                         }
 
                         @Override

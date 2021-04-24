@@ -28,7 +28,7 @@ package net.thevpc.nuts.runtime.core.format.text.parser;
 
 
 import net.thevpc.nuts.NutsTextCode;
-import net.thevpc.nuts.NutsTextNodeType;
+import net.thevpc.nuts.NutsTextType;
 import net.thevpc.nuts.runtime.core.format.text.DefaultNutsTextManager;
 import net.thevpc.nuts.NutsCodeFormat;
 import net.thevpc.nuts.NutsSession;
@@ -56,12 +56,12 @@ public class DefaultNutsTextCode extends NutsTextSpecialBase implements NutsText
         NutsCodeFormat t = ((DefaultNutsTextManager) getWorkspace().formats().text())
                 .setSession(session)
                 .resolveBlocTextFormatter(getKind());
-        return t.textToNode(text, session);
+        return t.stringToText(text, session);
     }
 
     @Override
-    public NutsTextNodeType getType() {
-        return NutsTextNodeType.CODE;
+    public NutsTextType getType() {
+        return NutsTextType.CODE;
     }
 
     public String getText() {

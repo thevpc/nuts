@@ -11,7 +11,7 @@ public interface NutsTextManager {
 
     NutsSession getSession();
 
-    NutsTextNodeBuilder builder();
+    NutsTextBuilder builder();
 
     NutsText forBlank();
 
@@ -23,17 +23,17 @@ public interface NutsTextManager {
 
     NutsTextList forList(Collection<NutsText> nodes);
 
-    NutsTextStyled forStyled(String other, NutsTextNodeStyles decorations);
+    NutsTextStyled forStyled(String other, NutsTextStyles decorations);
 
-    NutsTextStyled forStyled(NutsString other, NutsTextNodeStyles decorations);
+    NutsTextStyled forStyled(NutsString other, NutsTextStyles decorations);
 
-    NutsTextStyled forStyled(NutsText other, NutsTextNodeStyles decorations);
+    NutsTextStyled forStyled(NutsText other, NutsTextStyles decorations);
 
-    NutsTextStyled forStyled(String other, NutsTextNodeStyle decorations);
+    NutsTextStyled forStyled(String other, NutsTextStyle decorations);
 
-    NutsTextStyled forStyled(NutsString other, NutsTextNodeStyle decorations);
+    NutsTextStyled forStyled(NutsString other, NutsTextStyle decorations);
 
-    NutsTextStyled forStyled(NutsText other, NutsTextNodeStyle decorations);
+    NutsTextStyled forStyled(NutsText other, NutsTextStyle decorations);
 
     NutsTextCommand forCommand(NutsTerminalCommand command);
 

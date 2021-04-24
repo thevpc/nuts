@@ -69,9 +69,9 @@ public class DefaultProjectTemplate implements ProjectTemplate {
                 }
                 return term.ask().forString(
                         getWorkspace().formats().text().builder()
-                                .append(propertyTitle, NutsTextNodeStyle.primary(4))
+                                .append(propertyTitle, NutsTextStyle.primary(4))
                                 .append(" (")
-                                .append(propName,NutsTextNodeStyle.pale())
+                                .append(propName,NutsTextStyle.pale())
                                 .append(")\n ?")
                         .toString())
                         .setDefaultValue(defaultValue)
@@ -440,7 +440,7 @@ public class DefaultProjectTemplate implements ProjectTemplate {
             p = resolveFirstPomFile(getProjectRootFolder());
             if (p != null) {
                 if (!getSession().getTerminal().ask().forBoolean("accept project location %s?",
-                        applicationContext.getWorkspace().formats().text().forStyled(p.getPath(),NutsTextNodeStyle.path()))
+                        applicationContext.getWorkspace().formats().text().forStyled(p.getPath(),NutsTextStyle.path()))
                         .setDefaultValue(false)
                         .getBooleanValue()) {
                     throw new NutsUserCancelException(getSession());

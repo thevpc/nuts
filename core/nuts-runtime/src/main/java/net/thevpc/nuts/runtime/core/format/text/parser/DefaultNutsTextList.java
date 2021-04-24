@@ -25,7 +25,7 @@
 package net.thevpc.nuts.runtime.core.format.text.parser;
 
 import net.thevpc.nuts.NutsTextList;
-import net.thevpc.nuts.NutsTextNodeType;
+import net.thevpc.nuts.NutsTextType;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -63,8 +63,8 @@ public class DefaultNutsTextList extends AbstractNutsText implements NutsTextLis
     }
 
     @Override
-    public NutsTextNodeType getType() {
-        return NutsTextNodeType.LIST;
+    public NutsTextType getType() {
+        return NutsTextType.LIST;
     }
 
     @Override

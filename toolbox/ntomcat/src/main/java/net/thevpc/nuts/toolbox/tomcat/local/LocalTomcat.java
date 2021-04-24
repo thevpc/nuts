@@ -198,13 +198,13 @@ public class LocalTomcat {
                     switch (format) {
                         case "short": {
                             out.printf("%s\n",
-                                    factory.forStyled(jpsResult.getPid(),NutsTextNodeStyle.primary(1))
+                                    factory.forStyled(jpsResult.getPid(),NutsTextStyle.primary(1))
                             );
                             break;
                         }
                         case "long": {
                             out.printf("%s v%s HOME: %s BASE: %s ==CMD:== %s\n",
-                                    factory.forStyled(jpsResult.getPid(),NutsTextNodeStyle.primary(1)),
+                                    factory.forStyled(jpsResult.getPid(),NutsTextStyle.primary(1)),
                                     jpsResult.getHome() == null ? null : TomcatUtils.getFolderCatalinaHomeVersion(Paths.get(jpsResult.getHome())),
                                     jpsResult.getHome(),
                                     jpsResult.getBase(),
@@ -214,7 +214,7 @@ public class LocalTomcat {
                         }
                         default: {
                             out.printf("%s ==v==%s ==BASE:== %s\n",
-                                    factory.forStyled(jpsResult.getPid(),NutsTextNodeStyle.primary(1)),
+                                    factory.forStyled(jpsResult.getPid(),NutsTextStyle.primary(1)),
                                     jpsResult.getHome() == null ? null : TomcatUtils.getFolderCatalinaHomeVersion(Paths.get(jpsResult.getHome())),
                                     jpsResult.getBase()
                             );
@@ -429,7 +429,7 @@ public class LocalTomcat {
     public NutsString getBracketsPrefix(String str) {
         return context.getWorkspace().formats().text().builder()
                 .append("[")
-                .append(str,NutsTextNodeStyle.primary(5))
+                .append(str,NutsTextStyle.primary(5))
                 .append("]");
     }
 
@@ -449,7 +449,7 @@ public class LocalTomcat {
         } else {
             if (context.getSession().isPlainOut()) {
                 context.getSession().out().printf("%s Tomcat %s.\n", getBracketsPrefix(name),
-                        context.getWorkspace().formats().text().forStyled("not found",NutsTextNodeStyle.error())
+                        context.getWorkspace().formats().text().forStyled("not found",NutsTextStyle.error())
                         );
             } else {
                 HashMap<String, String> r = new HashMap<>();

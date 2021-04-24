@@ -36,10 +36,10 @@ public class DefaultNutsTextStyled extends AbstractNutsText implements NutsTextS
     private final String start;
     private final String end;
     private NutsText child;
-    private NutsTextNodeStyles textStyles;
+    private NutsTextStyles textStyles;
     private boolean completed;
 
-    public DefaultNutsTextStyled(NutsSession ws, String start, String end, NutsText child, boolean completed, NutsTextNodeStyles textStyle) {
+    public DefaultNutsTextStyled(NutsSession ws, String start, String end, NutsText child, boolean completed, NutsTextStyles textStyle) {
         super(ws);
         this.start = start;
         this.end = end;
@@ -49,13 +49,13 @@ public class DefaultNutsTextStyled extends AbstractNutsText implements NutsTextS
     }
 
     @Override
-    public NutsTextNodeStyles getStyles() {
+    public NutsTextStyles getStyles() {
         return textStyles;
     }
 
     @Override
-    public NutsTextNodeType getType() {
-        return NutsTextNodeType.STYLED;
+    public NutsTextType getType() {
+        return NutsTextType.STYLED;
     }
 
 

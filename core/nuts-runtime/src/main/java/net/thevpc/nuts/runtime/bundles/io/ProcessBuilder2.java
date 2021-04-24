@@ -712,7 +712,7 @@ public class ProcessBuilder2 {
                     sb.append(" ");
                 }
                 sb.append(
-                        ws.formats().text().forStyled(CoreStringUtils.enforceDoubleQuote(k, ws),NutsTextNodeStyle.primary(4))
+                        ws.formats().text().forStyled(CoreStringUtils.enforceDoubleQuote(k, ws),NutsTextStyle.primary(4))
                 ).append("=").append(CoreStringUtils.enforceDoubleQuote(v, ws));
             }
         }
@@ -852,17 +852,17 @@ public class ProcessBuilder2 {
         NutsTextManager factory = ws.formats().text();
         if (a.isKeyValue()) {
             if (a.isOption()) {
-                sb.append(factory.forStyled(CoreStringUtils.enforceDoubleQuote(a.getStringKey(), ws),NutsTextNodeStyle.option()));
+                sb.append(factory.forStyled(CoreStringUtils.enforceDoubleQuote(a.getStringKey(), ws),NutsTextStyle.option()));
                 sb.append("=");
                 sb.append(CoreStringUtils.enforceDoubleQuote(a.getStringValue(), ws));
             } else {
-                sb.append(factory.forStyled(CoreStringUtils.enforceDoubleQuote(a.getStringKey(), ws),NutsTextNodeStyle.primary(4)));
+                sb.append(factory.forStyled(CoreStringUtils.enforceDoubleQuote(a.getStringKey(), ws),NutsTextStyle.primary(4)));
                 sb.append("=");
                 sb.append(CoreStringUtils.enforceDoubleQuote(a.getStringValue(), ws));
             }
         } else {
             if (a.isOption()) {
-                sb.append(factory.forStyled(CoreStringUtils.enforceDoubleQuote(a.getString(), ws),NutsTextNodeStyle.option()));
+                sb.append(factory.forStyled(CoreStringUtils.enforceDoubleQuote(a.getString(), ws),NutsTextStyle.option()));
             } else {
                 sb.append(CoreStringUtils.enforceDoubleQuote(a.getString(), ws));
             }

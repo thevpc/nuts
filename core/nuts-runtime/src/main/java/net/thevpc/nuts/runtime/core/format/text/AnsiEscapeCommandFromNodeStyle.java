@@ -26,7 +26,7 @@
 */
 package net.thevpc.nuts.runtime.core.format.text;
 
-import net.thevpc.nuts.NutsTextNodeStyle;
+import net.thevpc.nuts.NutsTextStyle;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.core.format.text.renderer.ansi.AnsiStyle;
 import net.thevpc.nuts.runtime.core.format.text.renderer.ansi.AnsiStyleStyleApplier;
@@ -41,7 +41,7 @@ import net.thevpc.nuts.runtime.core.format.text.renderer.AnsiStyleStyleApplierRe
  */
 public class AnsiEscapeCommandFromNodeStyle extends AnsiEscapeCommand implements AnsiStyleStyleApplier {
 
-    public static AnsiEscapeCommandFromNodeStyle of(NutsTextNodeStyle s){
+    public static AnsiEscapeCommandFromNodeStyle of(NutsTextStyle s){
         if(s.getType().basic()) {
             return new AnsiEscapeCommandFromNodeStyle(s);
         }else {
@@ -49,9 +49,9 @@ public class AnsiEscapeCommandFromNodeStyle extends AnsiEscapeCommand implements
         }
     }
 
-    private NutsTextNodeStyle style;
+    private NutsTextStyle style;
 
-    public AnsiEscapeCommandFromNodeStyle(NutsTextNodeStyle style) {
+    public AnsiEscapeCommandFromNodeStyle(NutsTextStyle style) {
         this.style = style;
     }
 
@@ -60,7 +60,7 @@ public class AnsiEscapeCommandFromNodeStyle extends AnsiEscapeCommand implements
         return style.toString();
     }
 
-    public NutsTextNodeStyle getStyle() {
+    public NutsTextStyle getStyle() {
         return style;
     }
 

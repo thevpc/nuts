@@ -32,7 +32,7 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
     }
 
     @Override
-    public NutsText tokenToNode(String text, String nodeType,NutsSession session) {
+    public NutsText tokenToText(String text, String nodeType,NutsSession session) {
         factory.setSession(session);
         return factory.forPlain(text);
     }
@@ -47,13 +47,13 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
                 StringBuilder sb2 = new StringBuilder();
                 sb2.append(ar.nextChar());
                 if (sb.length() > 0) {
-                    ret.add(factory.forStyled(sb.toString(), NutsTextNodeStyle.string(2)));
+                    ret.add(factory.forStyled(sb.toString(), NutsTextStyle.string(2)));
                     sb.setLength(0);
                 }
                 if (ar.hasNext()) {
                     sb2.append(ar.nextChar());
                 }
-                ret.add(factory.forStyled(sb2.toString(), NutsTextNodeStyle.separator()));
+                ret.add(factory.forStyled(sb2.toString(), NutsTextStyle.separator()));
                 break;
             } else if (c == '\'') {
                 sb.append(ar.nextChar());
@@ -63,7 +63,7 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
             }
         }
         if (sb.length() > 0) {
-            ret.add(factory.forStyled(sb.toString(), NutsTextNodeStyle.string(2)));
+            ret.add(factory.forStyled(sb.toString(), NutsTextStyle.string(2)));
             sb.setLength(0);
         }
         return ret.toArray(new NutsText[0]);
@@ -136,8 +136,8 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
         if (ret.isEmpty()) {
             throw new IllegalArgumentException("was not expecting " + ar.peekChar() + " as part of word");
         }
-        if (ret.get(0).getType() == NutsTextNodeType.PLAIN && isOption(((NutsTextPlain) ret.get(0)).getText())) {
-            ret.set(0, factory.forStyled(ret.get(0), NutsTextNodeStyle.option()));
+        if (ret.get(0).getType() == NutsTextType.PLAIN && isOption(((NutsTextPlain) ret.get(0)).getText())) {
+            ret.set(0, factory.forStyled(ret.get(0), NutsTextStyle.option()));
         }
         return ret.toArray(new NutsText[0]);
     }
@@ -149,7 +149,7 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
             sb2.append(ar.nextChar());
         }
         NutsTextManager factory = ws.formats().text();
-        return new NutsText[]{factory.forStyled(sb2.toString(), NutsTextNodeStyle.separator())};
+        return new NutsText[]{factory.forStyled(sb2.toString(), NutsTextStyle.separator())};
     }
 
     private NutsText[] parseCommandLine_readDollar(StringReaderExt ar, NutsSession session) {
@@ -180,7 +180,7 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
                 case '9': {
                     sb2.append(ar.nextChar());
                     sb2.append(ar.nextChar());
-                    return new NutsText[]{factory.forStyled(sb2.toString(), NutsTextNodeStyle.separator())};
+                    return new NutsText[]{factory.forStyled(sb2.toString(), NutsTextStyle.separator())};
                 }
             }
         }
@@ -195,11 +195,11 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
         }
         if (sb2.length() > 0) {
             return new NutsText[]{
-                factory.forStyled("$", NutsTextNodeStyle.separator()),
-                factory.forStyled(sb2.toString(), NutsTextNodeStyle.keyword(4)),};
+                factory.forStyled("$", NutsTextStyle.separator()),
+                factory.forStyled(sb2.toString(), NutsTextStyle.keyword(4)),};
         }
         return new NutsText[]{
-            factory.forStyled("$", NutsTextNodeStyle.separator()),};
+            factory.forStyled("$", NutsTextStyle.separator()),};
     }
 
     private NutsText[] parseCommandLine_readDoubleQuotes(StringReaderExt ar, NutsSession session) {
@@ -207,34 +207,34 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
         factory.setSession(session);
         StringBuilder sb = new StringBuilder();
 
-        ret.add(factory.forStyled(String.valueOf(ar.nextChar()), NutsTextNodeStyle.string()));
+        ret.add(factory.forStyled(String.valueOf(ar.nextChar()), NutsTextStyle.string()));
         while (ar.hasNext()) {
             char c = ar.peekChar();
             if (c == '\\') {
                 if (sb.length() > 0) {
-                    ret.add(factory.forStyled(sb.toString(), NutsTextNodeStyle.string()));
+                    ret.add(factory.forStyled(sb.toString(), NutsTextStyle.string()));
                     sb.setLength(0);
                 }
                 ret.addAll(Arrays.asList(parseCommandLine_readAntiSlash(ws, ar, session)));
             } else if (c == '$') {
                 if (sb.length() > 0) {
-                    ret.add(factory.forStyled(sb.toString(), NutsTextNodeStyle.string()));
+                    ret.add(factory.forStyled(sb.toString(), NutsTextStyle.string()));
                     sb.setLength(0);
                 }
                 ret.addAll(Arrays.asList(parseCommandLine_readDollar(ar, session)));
             } else if (c == '\"') {
                 if (sb.length() > 0) {
-                    ret.add(factory.forStyled(sb.toString(), NutsTextNodeStyle.string()));
+                    ret.add(factory.forStyled(sb.toString(), NutsTextStyle.string()));
                     sb.setLength(0);
                 }
-                ret.add(factory.forStyled(String.valueOf(ar.nextChar()), NutsTextNodeStyle.string()));
+                ret.add(factory.forStyled(String.valueOf(ar.nextChar()), NutsTextStyle.string()));
                 break;
             } else {
                 sb.append(ar.nextChar());
             }
         }
         if (sb.length() > 0) {
-            ret.add(factory.forStyled(sb.toString(), NutsTextNodeStyle.string()));
+            ret.add(factory.forStyled(sb.toString(), NutsTextStyle.string()));
             sb.setLength(0);
         }
         return ret.toArray(new NutsText[0]);
@@ -289,7 +289,7 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
     private NutsText[] parseCommandLine_readAntiQuotes(StringReaderExt ar, NutsSession session) {
         List<NutsText> all = new ArrayList<>();
         factory.setSession(session);
-        all.add(factory.forStyled(String.valueOf(ar.nextChar()), NutsTextNodeStyle.separator()));
+        all.add(factory.forStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
         boolean inLoop = true;
         boolean wasSpace = true;
         while (inLoop && ar.hasNext()) {
@@ -297,7 +297,7 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
             switch (c) {
                 case '`': {
                     wasSpace = false;
-                    all.add(factory.forStyled(String.valueOf(ar.nextChar()), NutsTextNodeStyle.separator()));
+                    all.add(factory.forStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
                     inLoop = false;
                     break;
                 }
@@ -312,14 +312,14 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
     private NutsText[] parseCommandLine_readDollarPar(NutsWorkspace ws, StringReaderExt ar, NutsSession session) {
         List<NutsText> all = new ArrayList<>();
         factory.setSession(session);
-        all.add(factory.forStyled(String.valueOf(ar.nextChar()) + ar.nextChar(), NutsTextNodeStyle.separator()));
+        all.add(factory.forStyled(String.valueOf(ar.nextChar()) + ar.nextChar(), NutsTextStyle.separator()));
         boolean inLoop = true;
         boolean wasSpace = false;
         while (inLoop && ar.hasNext()) {
             char c = ar.peekChar();
             switch (c) {
                 case ')': {
-                    all.add(factory.forStyled(String.valueOf(ar.nextChar()), NutsTextNodeStyle.separator()));
+                    all.add(factory.forStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
                     inLoop = false;
                     break;
                 }
@@ -334,7 +334,7 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
     private NutsText[] parseCommandLine_readDollarPar2(StringReaderExt ar, NutsSession session) {
         List<NutsText> all = new ArrayList<>();
         factory.setSession(session);
-        all.add(factory.forStyled(String.valueOf(ar.nextChar()) + ar.nextChar() + ar.nextChar(), NutsTextNodeStyle.separator()));
+        all.add(factory.forStyled(String.valueOf(ar.nextChar()) + ar.nextChar() + ar.nextChar(), NutsTextStyle.separator()));
         boolean inLoop = true;
         boolean wasSpace = true;
         while (inLoop && ar.hasNext()) {
@@ -346,13 +346,13 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
                 case '/':
                 case '%': {
                     wasSpace = false;
-                    all.add(factory.forStyled(String.valueOf(ar.nextChars(2)), NutsTextNodeStyle.operator()));
+                    all.add(factory.forStyled(String.valueOf(ar.nextChars(2)), NutsTextStyle.operator()));
                     break;
                 }
                 case ')': {
                     if (ar.peekChars(2).equals("))")) {
                         wasSpace = false;
-                        all.add(factory.forStyled(String.valueOf(ar.nextChars(2)), NutsTextNodeStyle.separator()));
+                        all.add(factory.forStyled(String.valueOf(ar.nextChars(2)), NutsTextStyle.separator()));
                         inLoop = false;
                     } else {
                         wasSpace = parseCommandLineStep(ar, all, 2, wasSpace, session);
@@ -370,7 +370,7 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
     private NutsText[] parseCommandLine_readDollarCurlyBrackets(StringReaderExt ar, NutsSession session) {
         List<NutsText> all = new ArrayList<>();
         factory.setSession(session);
-        all.add(factory.forStyled(String.valueOf(ar.nextChar()) + ar.nextChar(), NutsTextNodeStyle.separator()));
+        all.add(factory.forStyled(String.valueOf(ar.nextChar()) + ar.nextChar(), NutsTextStyle.separator()));
         boolean inLoop = true;
         int startIndex = 0;
         boolean expectedName = true;
@@ -379,7 +379,7 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
             char c = ar.peekChar();
             switch (c) {
                 case '}': {
-                    all.add(factory.forStyled(String.valueOf(ar.nextChar()), NutsTextNodeStyle.separator()));
+                    all.add(factory.forStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
                     inLoop = false;
                     break;
                 }
@@ -390,7 +390,7 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
                         expectedName = false;
                         if (all.size() > startIndex) {
                             if (isWord(all.get(startIndex))) {
-                                all.set(startIndex, factory.forStyled(all.get(startIndex), NutsTextNodeStyle.keyword(4)));
+                                all.set(startIndex, factory.forStyled(all.get(startIndex), NutsTextStyle.keyword(4)));
                                 wasSpace = false;
                             }
                         }
@@ -404,7 +404,7 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
     private NutsText[] parseCommandLine_readPar2(StringReaderExt ar, NutsSession session) {
         List<NutsText> all = new ArrayList<>();
         factory.setSession(session);
-        all.add(factory.forStyled(String.valueOf(ar.nextChar()) + ar.nextChar(), NutsTextNodeStyle.separator()));
+        all.add(factory.forStyled(String.valueOf(ar.nextChar()) + ar.nextChar(), NutsTextStyle.separator()));
         boolean inLoop = true;
         boolean wasSpace = true;
         while (inLoop && ar.hasNext()) {
@@ -412,7 +412,7 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
             switch (c) {
                 case ')': {
                     if (ar.peekChars(2).equals("))")) {
-                        all.add(factory.forStyled(String.valueOf(ar.nextChars(2)), NutsTextNodeStyle.separator()));
+                        all.add(factory.forStyled(String.valueOf(ar.nextChars(2)), NutsTextStyle.separator()));
                         inLoop = false;
                     } else {
                         wasSpace = parseCommandLineStep(ar, all, 2, wasSpace, session);
@@ -460,46 +460,46 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
                 break;
             }
             case ';': {
-                all.add(factory.forStyled(String.valueOf(ar.nextChar()), NutsTextNodeStyle.separator()));
+                all.add(factory.forStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
                 break;
             }
             case ':': {
-                all.add(factory.forStyled(String.valueOf(ar.nextChar()), NutsTextNodeStyle.separator(2)));
+                all.add(factory.forStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator(2)));
                 break;
             }
             case '|': {
                 if (ar.peekChars(2).equals("||")) {
-                    all.add(factory.forStyled(ar.nextChars(2), NutsTextNodeStyle.separator()));
+                    all.add(factory.forStyled(ar.nextChars(2), NutsTextStyle.separator()));
                 } else {
-                    all.add(factory.forStyled(String.valueOf(ar.nextChar()), NutsTextNodeStyle.separator()));
+                    all.add(factory.forStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
                 }
                 break;
             }
             case '&': {
                 if (ar.peekChars(2).equals("&&")) {
-                    all.add(factory.forStyled(ar.nextChars(2), NutsTextNodeStyle.separator()));
+                    all.add(factory.forStyled(ar.nextChars(2), NutsTextStyle.separator()));
                 } else if (ar.peekChars(3).equals("&>>")) {
-                    all.add(factory.forStyled(ar.nextChars(3), NutsTextNodeStyle.separator()));
+                    all.add(factory.forStyled(ar.nextChars(3), NutsTextStyle.separator()));
                 } else if (ar.peekChars(2).equals("&>")) {
-                    all.add(factory.forStyled(ar.nextChars(2), NutsTextNodeStyle.separator()));
+                    all.add(factory.forStyled(ar.nextChars(2), NutsTextStyle.separator()));
                 } else {
-                    all.add(factory.forStyled(String.valueOf(ar.nextChar()), NutsTextNodeStyle.separator()));
+                    all.add(factory.forStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
                 }
                 break;
             }
             case '>': {
                 if (ar.peekChars(2).equals(">>")) {
-                    all.add(factory.forStyled(ar.nextChars(2), NutsTextNodeStyle.separator()));
+                    all.add(factory.forStyled(ar.nextChars(2), NutsTextStyle.separator()));
                 } else if (ar.peekChars(2).equals(">&")) {
-                    all.add(factory.forStyled(ar.nextChars(2), NutsTextNodeStyle.separator()));
+                    all.add(factory.forStyled(ar.nextChars(2), NutsTextStyle.separator()));
                 } else {
-                    all.add(factory.forStyled(String.valueOf(ar.nextChar()), NutsTextNodeStyle.separator()));
+                    all.add(factory.forStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
                 }
                 break;
             }
             case '<': {
                 if (ar.peekChars(2).equals("<<")) {
-                    all.add(factory.forStyled(ar.nextChars(2), NutsTextNodeStyle.separator()));
+                    all.add(factory.forStyled(ar.nextChars(2), NutsTextStyle.separator()));
                 } else {
                     StringBuilder sb = new StringBuilder();
                     sb.append(ar.peekChar(0));
@@ -524,18 +524,18 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
                         String s = ar.nextChars(sb.length());
                         String s0 = s.substring(1, s.length() - 1);
                         if (isSynopsysOption(s0)) {
-                            all.add(factory.forStyled("<", NutsTextNodeStyle.input()));
-                            all.add(factory.forStyled(s0, NutsTextNodeStyle.option()));
-                            all.add(factory.forStyled(">", NutsTextNodeStyle.input()));
+                            all.add(factory.forStyled("<", NutsTextStyle.input()));
+                            all.add(factory.forStyled(s0, NutsTextStyle.option()));
+                            all.add(factory.forStyled(">", NutsTextStyle.input()));
                         } else if (isSynopsysWord(s0)) {
-                            all.add(factory.forStyled("<", NutsTextNodeStyle.input()));
-                            all.add(factory.forStyled(s0, NutsTextNodeStyle.input()));
-                            all.add(factory.forStyled(">", NutsTextNodeStyle.input()));
+                            all.add(factory.forStyled("<", NutsTextStyle.input()));
+                            all.add(factory.forStyled(s0, NutsTextStyle.input()));
+                            all.add(factory.forStyled(">", NutsTextStyle.input()));
                         } else {
-                            all.add(factory.forStyled(String.valueOf(ar.nextChar()), NutsTextNodeStyle.separator()));
+                            all.add(factory.forStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
                         }
                     } else {
-                        all.add(factory.forStyled(String.valueOf(ar.nextChar()), NutsTextNodeStyle.separator()));
+                        all.add(factory.forStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
                     }
                 }
                 break;
@@ -544,7 +544,7 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
                 if (ar.peekChars("((")) {
                     all.addAll(Arrays.asList(parseCommandLine_readPar2(ar, session)));
                 } else {
-                    all.add(factory.forStyled(String.valueOf(ar.nextChar()), NutsTextNodeStyle.separator()));
+                    all.add(factory.forStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
                 }
             }
             case ')':
@@ -553,7 +553,7 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
             case '~':
             case '!': 
             {
-                all.add(factory.forStyled(String.valueOf(ar.nextChar()), NutsTextNodeStyle.separator()));
+                all.add(factory.forStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
                 break;
             }
             case '*':
@@ -561,7 +561,7 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
             case '[':
             case ']':
             case '=': {
-                all.add(factory.forStyled(String.valueOf(ar.nextChar()), NutsTextNodeStyle.separator()));
+                all.add(factory.forStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
                 break;
             }
             case '#': {
@@ -577,9 +577,9 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
                             sb.append(ar.nextChar());
                         }
                     }
-                    all.add(factory.forStyled(sb.toString(), NutsTextNodeStyle.comments()));
+                    all.add(factory.forStyled(sb.toString(), NutsTextStyle.comments()));
                 } else {
-                    all.add(factory.forStyled(String.valueOf(ar.nextChar()), NutsTextNodeStyle.separator()));
+                    all.add(factory.forStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
                 }
                 break;
             }
@@ -590,7 +590,7 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
                     if (first) {
                         int i = indexOfFirstWord(all, startIndex);
                         if (i >= 0) {
-                            all.set(i, factory.forStyled(all.get(i), NutsTextNodeStyle.keyword()));
+                            all.set(i, factory.forStyled(all.get(i), NutsTextStyle.keyword()));
                         }
                     }
                 } else {
@@ -656,7 +656,7 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
     }
 
     @Override
-    public NutsText textToNode(String text, NutsSession session) {
+    public NutsText stringToText(String text, NutsSession session) {
         factory.setSession(session);
         List<NutsText> all = new ArrayList<>();
         BufferedReader reader = new BufferedReader(new StringReader(text));
@@ -693,7 +693,7 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
                         exit = true;
                     } else {
                         all.add(factory.forStyled(
-                                reader.nextChars(1), NutsTextNodeStyle.separator()
+                                reader.nextChars(1), NutsTextStyle.separator()
                         ));
                     }
                     break;
@@ -704,7 +704,7 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
                         exit = true;
                     } else {
                         all.add(factory.forStyled(
-                                reader.nextChars(1), NutsTextNodeStyle.separator()
+                                reader.nextChars(1), NutsTextStyle.separator()
                         ));
                     }
                     break;
@@ -713,11 +713,11 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
                     lineStart = false;
                     if (reader.isAvailable(2) && reader.peekChar() == '>') {
                         all.add(factory.forStyled(
-                                reader.nextChars(2), NutsTextNodeStyle.separator()
+                                reader.nextChars(2), NutsTextStyle.separator()
                         ));
                     } else {
                         all.add(factory.forStyled(
-                                reader.nextChars(1), NutsTextNodeStyle.separator()
+                                reader.nextChars(1), NutsTextStyle.separator()
                         ));
                     }
                     break;
@@ -726,19 +726,19 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
                     lineStart = false;
                     if (reader.isAvailable(2) && reader.peekChar() == '&') {
                         all.add(factory.forStyled(
-                                reader.nextChars(2), NutsTextNodeStyle.separator()
+                                reader.nextChars(2), NutsTextStyle.separator()
                         ));
                     } else if (reader.isAvailable(2) && reader.peekChar() == '>') {
                         all.add(factory.forStyled(
-                                reader.nextChars(2), NutsTextNodeStyle.separator()
+                                reader.nextChars(2), NutsTextStyle.separator()
                         ));
                     } else if (reader.isAvailable(2) && reader.peekChar() == '<') {
                         all.add(factory.forStyled(
-                                reader.nextChars(2), NutsTextNodeStyle.separator()
+                                reader.nextChars(2), NutsTextStyle.separator()
                         ));
                     } else {
                         all.add(factory.forStyled(
-                                reader.nextChars(1), NutsTextNodeStyle.separator()
+                                reader.nextChars(1), NutsTextStyle.separator()
                         ));
                     }
                     break;
@@ -747,18 +747,18 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
                     lineStart = false;
                     if (reader.isAvailable(2) && reader.peekChar() == '|') {
                         all.add(factory.forStyled(
-                                reader.nextChars(2), NutsTextNodeStyle.separator()
+                                reader.nextChars(2), NutsTextStyle.separator()
                         ));
                     } else {
                         all.add(factory.forStyled(
-                                reader.nextChars(1), NutsTextNodeStyle.separator()
+                                reader.nextChars(1), NutsTextStyle.separator()
                         ));
                     }
                     break;
                 }
                 case ';': {
                     all.add(factory.forStyled(
-                            reader.nextChars(1), NutsTextNodeStyle.separator()
+                            reader.nextChars(1), NutsTextStyle.separator()
                     ));
                     lineStart = true;
                     break;
@@ -766,11 +766,11 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
                 case '\n': {
                     if (reader.isAvailable(2) && reader.peekChar() == '\r') {
                         all.add(factory.forStyled(
-                                reader.nextChars(2), NutsTextNodeStyle.separator()
+                                reader.nextChars(2), NutsTextStyle.separator()
                         ));
                     } else {
                         all.add(factory.forStyled(
-                                reader.nextChars(1), NutsTextNodeStyle.separator()
+                                reader.nextChars(1), NutsTextStyle.separator()
                         ));
                     }
                     lineStart = true;
@@ -800,21 +800,21 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
                         if (ok) {
                             reader.nextChars(sb.length());
                             all.add(factory.forStyled(
-                                    sb.toString(), NutsTextNodeStyle.input()
+                                    sb.toString(), NutsTextStyle.input()
                             ));
                             break;
                         } else {
                             all.add(factory.forStyled(
-                                    reader.nextChars(1), NutsTextNodeStyle.separator()
+                                    reader.nextChars(1), NutsTextStyle.separator()
                             ));
                         }
                     } else if (reader.isAvailable(2) && reader.peekChar() == '<') {
                         all.add(factory.forStyled(
-                                reader.nextChars(2), NutsTextNodeStyle.separator()
+                                reader.nextChars(2), NutsTextStyle.separator()
                         ));
                     } else {
                         all.add(factory.forStyled(
-                                reader.nextChars(1), NutsTextNodeStyle.separator()
+                                reader.nextChars(1), NutsTextStyle.separator()
                         ));
                     }
                     break;
@@ -822,7 +822,7 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
                 case '\\': {
                     lineStart = false;
                     all.add(factory.forStyled(
-                            reader.nextChars(2), NutsTextNodeStyle.separator(2)
+                            reader.nextChars(2), NutsTextStyle.separator(2)
                     ));
                     break;
                 }
@@ -837,10 +837,10 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
                         exit = true;
                     } else {
                         List<NutsText> a = new ArrayList<>();
-                        a.add(factory.forStyled(reader.nextChars(1), NutsTextNodeStyle.string()));
+                        a.add(factory.forStyled(reader.nextChars(1), NutsTextStyle.string()));
                         a.add(next(reader, false, false, false, true));
                         if (reader.hasNext() && reader.peekChar() == '`') {
-                            a.add(factory.forStyled(reader.nextChars(1), NutsTextNodeStyle.string()));
+                            a.add(factory.forStyled(reader.nextChars(1), NutsTextStyle.string()));
                         } else {
                             exit = true;
                         }
@@ -870,7 +870,7 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
                             }
                         }
                     }
-                    all.add(factory.forStyled(sb.toString(), NutsTextNodeStyle.string()));
+                    all.add(factory.forStyled(sb.toString(), NutsTextStyle.string()));
                     break;
                 }
                 case '$': {
@@ -899,7 +899,7 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
                             case '7':
                             case '8':
                             case '9': {
-                                all.add(factory.forStyled(reader.nextChars(2), NutsTextNodeStyle.string()));
+                                all.add(factory.forStyled(reader.nextChars(2), NutsTextStyle.string()));
                                 break;
                             }
                             default: {
@@ -909,14 +909,14 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
                                     while (reader.hasNext() && (Character.isAlphabetic(reader.peekChar()) || reader.peekChar() == '_')) {
                                         sb.append(reader.nextChar());
                                     }
-                                    all.add(factory.forStyled(sb.toString(), NutsTextNodeStyle.variable()));
+                                    all.add(factory.forStyled(sb.toString(), NutsTextStyle.variable()));
                                 } else {
-                                    all.add(factory.forStyled(reader.nextChars(1), NutsTextNodeStyle.separator()));
+                                    all.add(factory.forStyled(reader.nextChars(1), NutsTextStyle.separator()));
                                 }
                             }
                         }
                     } else {
-                        all.add(factory.forStyled(reader.nextChars(1), NutsTextNodeStyle.string()));
+                        all.add(factory.forStyled(reader.nextChars(1), NutsTextStyle.string()));
                     }
                     break;
                 }
@@ -998,7 +998,7 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
                     }
                     if (lineStart && !reader.hasNext() || Character.isWhitespace(reader.peekChar())) {
                         //command name
-                        NutsTextNodeStyle keyword1 = NutsTextNodeStyle.keyword(2);
+                        NutsTextStyle keyword1 = NutsTextStyle.keyword(2);
                         switch (sb.toString()) {
                             case "if":
                             case "while":
@@ -1007,7 +1007,7 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
                             case "elif":
                             case "then":
                             case "else": {
-                                keyword1 = NutsTextNodeStyle.keyword();
+                                keyword1 = NutsTextStyle.keyword();
                                 break;
                             }
                             case "cp":
@@ -1016,7 +1016,7 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
                             case "rm":
                             case "pwd":
                             case "echo": {
-                                keyword1 = NutsTextNodeStyle.keyword(3);
+                                keyword1 = NutsTextStyle.keyword(3);
                                 break;
                             }
                         }
@@ -1039,19 +1039,19 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
             switch (c) {
                 case '(': {
                     List<NutsText> a = new ArrayList<>();
-                    a.add(factory.forStyled(reader.nextChars(1), NutsTextNodeStyle.separator()));
+                    a.add(factory.forStyled(reader.nextChars(1), NutsTextStyle.separator()));
                     a.add(next(reader, false, true, false, false));
                     if (reader.hasNext() && reader.peekChar() == ')') {
-                        a.add(factory.forStyled(reader.nextChars(1), NutsTextNodeStyle.separator()));
+                        a.add(factory.forStyled(reader.nextChars(1), NutsTextStyle.separator()));
                     }
                     return factory.forList(a);
                 }
                 case '{': {
                     List<NutsText> a = new ArrayList<>();
-                    a.add(factory.forStyled(reader.nextChars(1), NutsTextNodeStyle.separator()));
+                    a.add(factory.forStyled(reader.nextChars(1), NutsTextStyle.separator()));
                     a.add(next(reader, true, false, false, false));
                     if (reader.hasNext() && reader.peekChar() == ')') {
-                        a.add(factory.forStyled(reader.nextChars(1), NutsTextNodeStyle.separator()));
+                        a.add(factory.forStyled(reader.nextChars(1), NutsTextStyle.separator()));
                     }
                     return factory.forList(a);
                 }
@@ -1070,7 +1070,7 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
                 case '7':
                 case '8':
                 case '9': {
-                    return factory.forStyled(reader.nextChars(2), NutsTextNodeStyle.string());
+                    return factory.forStyled(reader.nextChars(2), NutsTextStyle.string());
                 }
                 default: {
                     if (Character.isAlphabetic(reader.peekChar(1))) {
@@ -1079,14 +1079,14 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
                         while (reader.hasNext() && (Character.isAlphabetic(reader.peekChar()) || reader.peekChar() == '_')) {
                             sb.append(reader.nextChar());
                         }
-                        return factory.forStyled(sb.toString(), NutsTextNodeStyle.variable());
+                        return factory.forStyled(sb.toString(), NutsTextStyle.variable());
                     } else {
-                        return factory.forStyled(reader.nextChars(1), NutsTextNodeStyle.separator());
+                        return factory.forStyled(reader.nextChars(1), NutsTextStyle.separator());
                     }
                 }
             }
         } else {
-            return factory.forStyled(reader.nextChars(1), NutsTextNodeStyle.string());
+            return factory.forStyled(reader.nextChars(1), NutsTextStyle.string());
         }
     }
 
@@ -1109,21 +1109,21 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
                 }
                 case '$': {
                     if (sb.length() > 0) {
-                        all.add(factory.forStyled(sb.toString(), NutsTextNodeStyle.string()));
+                        all.add(factory.forStyled(sb.toString(), NutsTextStyle.string()));
                         sb.setLength(0);
                     }
                     all.add(nextDollar(reader));
                 }
                 case '`': {
                     if (sb.length() > 0) {
-                        all.add(factory.forStyled(sb.toString(), NutsTextNodeStyle.string()));
+                        all.add(factory.forStyled(sb.toString(), NutsTextStyle.string()));
                         sb.setLength(0);
                     }
                     List<NutsText> a = new ArrayList<>();
-                    a.add(factory.forStyled(reader.nextChars(1), NutsTextNodeStyle.string()));
+                    a.add(factory.forStyled(reader.nextChars(1), NutsTextStyle.string()));
                     a.add(next(reader, false, false, false, true));
                     if (reader.hasNext() && reader.peekChar() == '`') {
-                        a.add(factory.forStyled(reader.nextChars(1), NutsTextNodeStyle.string()));
+                        a.add(factory.forStyled(reader.nextChars(1), NutsTextStyle.string()));
                     } else {
                         exit = true;
                     }
@@ -1136,7 +1136,7 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
             }
         }
         if (sb.length() > 0) {
-            all.add(factory.forStyled(sb.toString(), NutsTextNodeStyle.string()));
+            all.add(factory.forStyled(sb.toString(), NutsTextStyle.string()));
             sb.setLength(0);
         }
         return factory.forList(all);

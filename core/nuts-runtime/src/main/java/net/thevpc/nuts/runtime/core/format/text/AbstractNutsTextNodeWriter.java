@@ -1,17 +1,17 @@
 package net.thevpc.nuts.runtime.core.format.text;
 
-import net.thevpc.nuts.NutsTextNodeWriteConfiguration;
+import net.thevpc.nuts.NutsTextWriteConfiguration;
 
 public abstract class AbstractNutsTextNodeWriter implements NutsTextNodeWriter {
-    private NutsTextNodeWriteConfiguration config;
+    private NutsTextWriteConfiguration config;
 
     @Override
-    public NutsTextNodeWriteConfiguration getWriteConfiguration() {
+    public NutsTextWriteConfiguration getWriteConfiguration() {
         return config;
     }
 
     @Override
-    public NutsTextNodeWriter setWriteConfiguration(NutsTextNodeWriteConfiguration config) {
+    public NutsTextNodeWriter setWriteConfiguration(NutsTextWriteConfiguration config) {
         this.config = config;
         return this;
     }

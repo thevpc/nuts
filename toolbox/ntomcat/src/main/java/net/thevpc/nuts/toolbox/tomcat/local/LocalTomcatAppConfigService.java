@@ -81,17 +81,17 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
     }
     public NutsString getFormattedPath(String str) {
         return context.getWorkspace().formats()
-                .text().forStyled(str,NutsTextNodeStyle.path());
+                .text().forStyled(str,NutsTextStyle.path());
     }
     public NutsString getFormattedVersion(String str) {
         return context.getWorkspace().formats()
-                .text().forStyled(str,NutsTextNodeStyle.version());
+                .text().forStyled(str,NutsTextStyle.version());
     }
     public NutsString getFormattedPrefix(String str) {
         return context.getWorkspace().formats()
                 .text().builder()
                 .append("[")
-                .append(str,NutsTextNodeStyle.primary(5))
+                .append(str,NutsTextStyle.primary(5))
                 .append("]");
     }
 

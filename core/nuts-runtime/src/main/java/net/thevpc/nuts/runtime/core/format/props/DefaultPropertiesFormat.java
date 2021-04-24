@@ -281,7 +281,7 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
             if (prefix.isEmpty() || prefix.toString().endsWith("#")) {
                 out.print("ø");
             }
-            out.printf("%s", txt.text().forStyled(formattedKey, NutsTextNodeStyle.primary(3)));
+            out.printf("%s", txt.text().forStyled(formattedKey, NutsTextStyle.primary(3)));
             if (separator.isEmpty() || separator.startsWith("#")) {
                 out.print("ø");
             }

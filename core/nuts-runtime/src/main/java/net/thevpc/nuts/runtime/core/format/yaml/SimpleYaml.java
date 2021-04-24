@@ -38,11 +38,11 @@ import net.thevpc.nuts.runtime.core.format.elem.NutsElementFactoryContext;
 import net.thevpc.nuts.runtime.core.format.elem.NutsElementStreamFormat;
 import net.thevpc.nuts.runtime.core.format.json.ReaderLocation;
 
-public class MinimalYaml implements NutsElementStreamFormat {
+public class SimpleYaml implements NutsElementStreamFormat {
 
     private NutsWorkspace ws;
 
-    public MinimalYaml(NutsWorkspace ws) {
+    public SimpleYaml(NutsWorkspace ws) {
         this.ws = ws;
     }
 

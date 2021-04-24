@@ -5,7 +5,7 @@
  */
 package net.thevpc.common.nuts.template;
 
-import net.thevpc.nuts.NutsTextNodeStyle;
+import net.thevpc.nuts.NutsTextStyle;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -77,10 +77,10 @@ public class IOUtils {
         fileWriter.flush();
         fileWriter.close();
         if (isOverride) {
-            console.println("[OVERRIDE] %s%n",project.getWorkspace().formats().text().forStyled(file.getPath(), NutsTextNodeStyle.path()));
+            console.println("[OVERRIDE] %s%n",project.getWorkspace().formats().text().forStyled(file.getPath(), NutsTextStyle.path()));
         } else {
             project.setNewlyCreated(file.getPath());
-            console.println("[GENERATE] %s%n" + project.getWorkspace().formats().text().forStyled(file.getPath(),NutsTextNodeStyle.path()));
+            console.println("[GENERATE] %s%n" + project.getWorkspace().formats().text().forStyled(file.getPath(),NutsTextStyle.path()));
         }
     }
 

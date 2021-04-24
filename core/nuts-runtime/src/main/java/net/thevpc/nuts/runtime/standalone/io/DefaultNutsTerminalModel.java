@@ -87,11 +87,12 @@ public class DefaultNutsTerminalModel {
     }
 
     public void setTerminal(NutsSessionTerminal terminal, NutsSession session) {
+        NutsWorkspaceUtils.checkSession(ws, session);
         if (terminal == null) {
             terminal = createTerminal(session);
         }
         if (!(terminal instanceof UnmodifiableTerminal)) {
-            terminal = new UnmodifiableTerminal(terminal);
+            terminal = new UnmodifiableTerminal(terminal, session);
         }
         this.terminal = terminal;
     }

@@ -14,10 +14,10 @@ import net.thevpc.nuts.NutsCodeFormat;
 import net.thevpc.nuts.NutsCommandLine;
 import net.thevpc.nuts.NutsContentType;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsTextNodeBuilder;
 import net.thevpc.nuts.runtime.core.format.NutsFetchDisplayOptions;
 import net.thevpc.nuts.runtime.core.format.DefaultSearchFormatBase;
 import org.w3c.dom.Document;
+import net.thevpc.nuts.NutsTextBuilder;
 
 /**
  *
@@ -40,26 +40,26 @@ public class DefaultSearchFormatXml extends DefaultSearchFormatBase {
 
     @Override
     public void start() {
-        NutsTextNodeBuilder builder = getWorkspace().formats().text().builder();
+        NutsTextBuilder builder = getWorkspace().formats().text().builder();
         NutsSession session = getSession();
 
-        builder.append(codeFormat.tokenToNode("<?", "separator", session));
-        builder.append(codeFormat.tokenToNode("xml", "name", session));
+        builder.append(codeFormat.tokenToText("<?", "separator", session));
+        builder.append(codeFormat.tokenToText("xml", "name", session));
 
         builder.append(" ");
-        builder.append(codeFormat.tokenToNode("version", "attribute", session));
-        builder.append(codeFormat.tokenToNode("=", "separator", session));
-        builder.append(codeFormat.tokenToNode("\"1.0\"", "string", session));
+        builder.append(codeFormat.tokenToText("version", "attribute", session));
+        builder.append(codeFormat.tokenToText("=", "separator", session));
+        builder.append(codeFormat.tokenToText("\"1.0\"", "string", session));
 
         builder.append(" ");
-        builder.append(codeFormat.tokenToNode("encoding", "attribute", session));
-        builder.append(codeFormat.tokenToNode("=", "separator", session));
-        builder.append(codeFormat.tokenToNode("?>", "separator", session));
+        builder.append(codeFormat.tokenToText("encoding", "attribute", session));
+        builder.append(codeFormat.tokenToText("=", "separator", session));
+        builder.append(codeFormat.tokenToText("?>", "separator", session));
         builder.append("\n");
 
-        builder.append(codeFormat.tokenToNode("<", "separator", session));
-        builder.append(codeFormat.tokenToNode(rootName, "name", session));
-        builder.append(codeFormat.tokenToNode(">", "separator", session));
+        builder.append(codeFormat.tokenToText("<", "separator", session));
+        builder.append(codeFormat.tokenToText(rootName, "name", session));
+        builder.append(codeFormat.tokenToText(">", "separator", session));
 
         getWriter().println(builder.toString());
     }
@@ -77,17 +77,17 @@ public class DefaultSearchFormatXml extends DefaultSearchFormatBase {
         doc.appendChild(xmlElement);
         NutsXmlUtils.writeDocument(doc, new javax.xml.transform.stream.StreamResult(pw), compact, false, getSession());
         pw.flush();
-        getWriter().print(codeFormat.textToNode(bos.toString(), getSession()));
+        getWriter().print(codeFormat.stringToText(bos.toString(), getSession()));
     }
 
     @Override
     public void complete(long count) {
-        NutsTextNodeBuilder builder = getWorkspace().formats().text().builder();
+        NutsTextBuilder builder = getWorkspace().formats().text().builder();
 
         NutsSession session = getSession();
-        builder.append(codeFormat.tokenToNode("</", "separator", session));
-        builder.append(codeFormat.tokenToNode(rootName, "name", session));
-        builder.append(codeFormat.tokenToNode(">", "separator", session));
+        builder.append(codeFormat.tokenToText("</", "separator", session));
+        builder.append(codeFormat.tokenToText(rootName, "name", session));
+        builder.append(codeFormat.tokenToText(">", "separator", session));
 
         getWriter().println(builder.toString());
         getWriter().flush();

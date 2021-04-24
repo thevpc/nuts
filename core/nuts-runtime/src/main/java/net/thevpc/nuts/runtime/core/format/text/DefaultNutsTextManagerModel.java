@@ -34,7 +34,7 @@ import net.thevpc.nuts.NutsWorkspaceInitInformation;
 import net.thevpc.nuts.runtime.core.format.elem.DefaultNutsElementFactoryService;
 import net.thevpc.nuts.runtime.core.format.elem.NutsElementFactoryService;
 import net.thevpc.nuts.runtime.core.format.elem.NutsElementStreamFormat;
-import net.thevpc.nuts.runtime.core.format.json.MinimalJson;
+import net.thevpc.nuts.runtime.core.format.json.SimpleJson;
 import net.thevpc.nuts.runtime.core.format.text.bloc.HadraBlocTextFormatter;
 import net.thevpc.nuts.runtime.core.format.text.bloc.JavaBlocTextFormatter;
 import net.thevpc.nuts.runtime.core.format.text.bloc.JsonCodeFormatter;
@@ -45,7 +45,7 @@ import net.thevpc.nuts.runtime.core.format.text.stylethemes.DefaultNutsTextForma
 import net.thevpc.nuts.runtime.core.format.text.stylethemes.NutsTextFormatPropertiesTheme;
 import net.thevpc.nuts.runtime.core.format.text.stylethemes.NutsTextFormatThemeWrapper;
 import net.thevpc.nuts.runtime.core.format.xml.DefaultXmlNutsElementStreamFormat;
-import net.thevpc.nuts.runtime.core.format.yaml.MinimalYaml;
+import net.thevpc.nuts.runtime.core.format.yaml.SimpleYaml;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.spi.NutsComponent;
 
@@ -186,14 +186,14 @@ public class DefaultNutsTextManagerModel {
 
     public NutsElementStreamFormat getJsonMan(NutsSession session) {
         if (jsonMan == null) {
-            jsonMan = new MinimalJson(ws);
+            jsonMan = new SimpleJson(ws);
         }
         return jsonMan;
     }
 
     public NutsElementStreamFormat getYamlMan(NutsSession session) {
         if (yamlMan == null) {
-            yamlMan = new MinimalYaml(ws);
+            yamlMan = new SimpleYaml(ws);
         }
         return yamlMan;
     }

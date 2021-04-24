@@ -2,7 +2,7 @@ package net.thevpc.nuts.toolbox.nadmin.util;
 
 import net.thevpc.nuts.NutsApplicationContext;
 import net.thevpc.nuts.NutsRepository;
-import net.thevpc.nuts.NutsTextNodeStyle;
+import net.thevpc.nuts.NutsTextStyle;
 
 import java.io.PrintStream;
 import net.thevpc.nuts.NutsTextManager;
@@ -15,7 +15,7 @@ public class NAdminUtils {
         out.print(prefix);
         NutsTextManager factory = context.getWorkspace().formats().text();
         if (enabled) {
-            out.print(factory.forStyled(repository.getName() + disabledString, NutsTextNodeStyle.primary(2)));
+            out.print(factory.forStyled(repository.getName() + disabledString, NutsTextStyle.primary(2)));
         } else {
             out.print("```error " + repository.getName() + disabledString + "```");
         }

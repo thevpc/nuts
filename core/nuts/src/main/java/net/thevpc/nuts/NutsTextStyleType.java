@@ -3,7 +3,7 @@ package net.thevpc.nuts;
 /**
  * @category Format
  */
-public enum NutsTextNodeStyleType {
+public enum NutsTextStyleType {
     UNDERLINED(true),//_
     ITALIC(true),// /
     STRIKED(true),// -
@@ -42,7 +42,7 @@ public enum NutsTextNodeStyleType {
     ;
     private boolean basic;
 
-    NutsTextNodeStyleType(boolean basic) {
+    NutsTextStyleType(boolean basic) {
         this.basic = basic;
     }
 

@@ -99,7 +99,7 @@ public class DefaultNutsUninstallCommand extends AbstractNutsUninstallCommand {
             }
             if (getSession().isPlainTrace()) {
                 out.printf("%s uninstalled %s%n", id, ws.formats().text().forStyled(
-                        "successfully", NutsTextNodeStyle.success()
+                        "successfully", NutsTextStyle.success()
                 ));
             }
             NutsWorkspaceUtils.of(session).events().fireOnUninstall(new DefaultNutsInstallEvent(def, session, new NutsId[0], isErase()));

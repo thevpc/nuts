@@ -110,8 +110,8 @@ public class RemoteMysqlDatabaseConfigService {
         NutsFormatManager text = context.getWorkspace().formats();
         if (context.getSession().isPlainTrace()) {
             context.getSession().out().printf("%s copy '%s' to '%s'%n", getBracketsPrefix(name),
-                    text.text().forStyled(remoteFullFilePath.toString(),NutsTextNodeStyle.path()),
-                    text.text().forStyled(localPath,NutsTextNodeStyle.path())
+                    text.text().forStyled(remoteFullFilePath.toString(),NutsTextStyle.path()),
+                    text.text().forStyled(localPath,NutsTextStyle.path())
             );
         }
         if(lastRun.get("localPath")!=null){
@@ -150,7 +150,7 @@ public class RemoteMysqlDatabaseConfigService {
         if (deleteRemote) {
             if (context.getSession().isPlainTrace()) {
                 context.getSession().out().printf("%s delete %s%n", getBracketsPrefix(name),
-                        text.text().forStyled(remoteFullFilePath.toString(),NutsTextNodeStyle.path()));
+                        text.text().forStyled(remoteFullFilePath.toString(),NutsTextStyle.path()));
             }
             if(!lastRun.is("deleted")) {
                 execRemoteNuts(
@@ -197,8 +197,8 @@ public class RemoteMysqlDatabaseConfigService {
 
         if (context.getSession().isPlainTrace()) {
             context.getSession().out().printf("%s copy %s to %s%n", getBracketsPrefix(name),
-                    text.text().forStyled(localPath,NutsTextNodeStyle.path()),
-                    text.text().forStyled(remoteFullFilePath,NutsTextNodeStyle.path())
+                    text.text().forStyled(localPath,NutsTextStyle.path()),
+                    text.text().forStyled(remoteFullFilePath,NutsTextStyle.path())
             );
         }
         context.getWorkspace().exec()
@@ -216,7 +216,7 @@ public class RemoteMysqlDatabaseConfigService {
         if (context.getSession().isPlainTrace()) {
             context.getSession().out().printf("%s remote restore %s%n",
                     getBracketsPrefix(name),
-                    text.text().forStyled(remoteFullFilePath,NutsTextNodeStyle.path())
+                    text.text().forStyled(remoteFullFilePath,NutsTextStyle.path())
             );
         }
         execRemoteNuts(
@@ -294,7 +294,7 @@ public class RemoteMysqlDatabaseConfigService {
     public NutsString getBracketsPrefix(String str) {
         return context.getWorkspace().formats().text().builder()
                 .append("[")
-                .append(str,NutsTextNodeStyle.primary(5))
+                .append(str,NutsTextStyle.primary(5))
                 .append("]");
     }
 

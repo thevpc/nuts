@@ -40,7 +40,7 @@ public class LocalMysqlDatabaseConfigService {
     public NutsString getBracketsPrefix(String str) {
         return context.getWorkspace().formats().text().builder()
                 .append("[")
-                .append(str,NutsTextNodeStyle.primary(5))
+                .append(str,NutsTextStyle.primary(5))
                 .append("]");
     }
 
@@ -101,7 +101,7 @@ public class LocalMysqlDatabaseConfigService {
         } else {
             if (context.getSession().isPlainTrace()) {
                 context.getSession().out().printf("%s create archive %s%n", getBracketsPrefix(getDatabaseName()), context.getWorkspace().formats()
-                        .text().forStyled(path,NutsTextNodeStyle.path()));
+                        .text().forStyled(path,NutsTextStyle.path()));
             }
 //                ProcessBuilder2 p = new ProcessBuilder2().setCommand("sh", "-c",
 //                        "set -o pipefail && \"" + mysql.getMysqldumpCommand() + "\" -u \"$CMD_USER\" -p\"$CMD_PWD\" --databases \"$CMD_DB\" | gzip > \"$CMD_FILE\""

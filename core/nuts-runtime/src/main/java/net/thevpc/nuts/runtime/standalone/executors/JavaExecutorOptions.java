@@ -257,11 +257,11 @@ public final class JavaExecutorOptions {
                             throw new NutsExecutionException(session, "multiple runnable classes detected : " + possibleClasses, 102);
                         }
                         NutsFormatManager text = getWorkspace().formats();
-                        NutsTextNodeBuilder msgString = text.text().builder();
+                        NutsTextBuilder msgString = text.text().builder();
 
                         NutsTextManager tfactory = text.text();
                         msgString.append("multiple runnable classes detected  - actually ")
-                                .append(tfactory.forStyled("" + possibleClasses.size(), NutsTextNodeStyle.primary(5)))
+                                .append(tfactory.forStyled("" + possibleClasses.size(), NutsTextStyle.primary(5)))
                                 .append(" . Select one :\n");
                         int x = ((int) Math.log(possibleClasses.size())) + 2;
                         for (int i = 0; i < possibleClasses.size(); i++) {
@@ -270,13 +270,13 @@ public final class JavaExecutorOptions {
                             while (clsIndex.length() < x) {
                                 clsIndex.append(' ');
                             }
-                            msgString.append(clsIndex.toString(), NutsTextNodeStyle.primary(4));
-                            msgString.append(possibleClasses.get(i), NutsTextNodeStyle.primary(4));
+                            msgString.append(clsIndex.toString(), NutsTextStyle.primary(4));
+                            msgString.append(possibleClasses.get(i), NutsTextStyle.primary(4));
                             msgString.append("\n");
                         }
                         msgString.append("enter class ")
-                                .append("#", NutsTextNodeStyle.primary(5)).append(" or ").append("name", NutsTextNodeStyle.primary(5))
-                                .append(" to run it. type ").append("cancel!", NutsTextNodeStyle.error())
+                                .append("#", NutsTextStyle.primary(5)).append(" or ").append("name", NutsTextStyle.primary(5))
+                                .append(" to run it. type ").append("cancel!", NutsTextStyle.error())
                                 .append(" to cancel : ");
 
                         mainClass = session.getTerminal()

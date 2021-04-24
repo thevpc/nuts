@@ -71,7 +71,7 @@ public class CoreCommonUtils {
 
         } else if (o instanceof NutsElementEntry) {
             NutsElementEntry ne = (NutsElementEntry) o;
-            NutsTextNodeBuilder sb = ws.formats().text().builder();
+            NutsTextBuilder sb = ws.formats().text().builder();
             sb.append(stringValueFormatted(ne.getKey(), escapeString, session));
             sb.append("=");
             if (ne.getValue().type() == NutsElementType.STRING) {
@@ -87,7 +87,7 @@ public class CoreCommonUtils {
             o = sb.toString();
         } else if (o instanceof Map.Entry) {
             Map.Entry ne = (Map.Entry) o;
-            NutsTextNodeBuilder sb = ws.formats().text().builder();
+            NutsTextBuilder sb = ws.formats().text().builder();
             sb.append(stringValueFormatted(ne.getKey(), escapeString, session));
             sb.append("=");
             if (ne.getValue() instanceof String

@@ -29,7 +29,7 @@ package net.thevpc.nuts.runtime.core.format.text.parser;
 
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsTextAnchor;
-import net.thevpc.nuts.NutsTextNodeType;
+import net.thevpc.nuts.NutsTextType;
 
 /**
  * Created by vpc on 5/23/17.
@@ -47,8 +47,8 @@ public class DefaultNutsTextAnchor extends NutsTextSpecialBase implements NutsTe
     }
 
     @Override
-    public NutsTextNodeType getType() {
-        return NutsTextNodeType.ANCHOR;
+    public NutsTextType getType() {
+        return NutsTextType.ANCHOR;
     }
 
 }

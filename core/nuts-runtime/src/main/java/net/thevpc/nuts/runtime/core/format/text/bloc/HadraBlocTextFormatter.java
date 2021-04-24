@@ -47,21 +47,21 @@ public class HadraBlocTextFormatter implements NutsCodeFormat {
     }
 
     @Override
-    public NutsText tokenToNode(String text, String nodeType,NutsSession session) {
+    public NutsText tokenToText(String text, String nodeType,NutsSession session) {
         String str = String.valueOf(text);
         switch (nodeType.toLowerCase()) {
             case "separator": {
-                return factory.setSession(session).forStyled(str, NutsTextNodeStyle.separator());
+                return factory.setSession(session).forStyled(str, NutsTextStyle.separator());
             }
             case "keyword": {
-                return factory.setSession(session).forStyled(str, NutsTextNodeStyle.separator());
+                return factory.setSession(session).forStyled(str, NutsTextStyle.separator());
             }
         }
         return factory.forPlain(str);
     }
 
     @Override
-    public NutsText textToNode(String text, NutsSession session) {
+    public NutsText stringToText(String text, NutsSession session) {
         factory.setSession(session);
         List<NutsText> all = new ArrayList<>();
         StringReaderExt ar = new StringReaderExt(text);
@@ -84,7 +84,7 @@ public class HadraBlocTextFormatter implements NutsCodeFormat {
                 case '>':
                 case '!':
                 case ';': {
-                    all.add(factory.forStyled(String.valueOf(ar.nextChar()), NutsTextNodeStyle.separator()));
+                    all.add(factory.forStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
                     break;
                 }
                 case '\'': {
@@ -114,7 +114,7 @@ public class HadraBlocTextFormatter implements NutsCodeFormat {
                     if (d != null) {
                         all.addAll(Arrays.asList(d));
                     } else {
-                        all.add(factory.forStyled(String.valueOf(ar.nextChar()), NutsTextNodeStyle.separator()));
+                        all.add(factory.forStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
                     }
                     break;
                 }
@@ -124,7 +124,7 @@ public class HadraBlocTextFormatter implements NutsCodeFormat {
                     } else if (ar.peekChars("/*")) {
                         all.addAll(Arrays.asList(StringReaderExtUtils.readSlashStarComments(session, ar)));
                     } else {
-                        all.add(factory.forStyled(String.valueOf(ar.nextChar()), NutsTextNodeStyle.separator()));
+                        all.add(factory.forStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
                     }
                     break;
                 }
@@ -134,15 +134,15 @@ public class HadraBlocTextFormatter implements NutsCodeFormat {
                     } else {
                         NutsText[] d = StringReaderExtUtils.readJSIdentifier(session, ar);
                         if (d != null) {
-                            if (d.length == 1 && d[0].getType() == NutsTextNodeType.PLAIN) {
+                            if (d.length == 1 && d[0].getType() == NutsTextType.PLAIN) {
                                 String txt = ((NutsTextPlain) d[0]).getText();
                                 if (reservedWords.contains(txt)) {
-                                    d[0] = factory.forStyled(d[0], NutsTextNodeStyle.keyword());
+                                    d[0] = factory.forStyled(d[0], NutsTextStyle.keyword());
                                 }
                             }
                             all.addAll(Arrays.asList(d));
                         } else {
-                            all.add(factory.forStyled(String.valueOf(ar.nextChar()), NutsTextNodeStyle.separator()));
+                            all.add(factory.forStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
                         }
                     }
                     break;

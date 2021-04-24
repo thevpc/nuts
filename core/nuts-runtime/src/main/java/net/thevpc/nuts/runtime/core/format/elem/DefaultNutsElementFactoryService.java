@@ -901,9 +901,9 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         public NutsElement createElement(Path o, Type typeOfSrc, NutsElementFactoryContext context) {
             if (context.element().isNtf()) {
                 NutsWorkspace ws = context.getSession().getWorkspace();
-//                NutsText n = ws.formats().text().forStyled(o.toString(), NutsTextNodeStyle.path());
+//                NutsText n = ws.formats().text().forStyled(o.toString(), NutsTextStyle.path());
 //                return ws.formats().element().forPrimitive().buildNutsString(n);
-                NutsText n = ws.formats().text().forStyled(o.toString(), NutsTextNodeStyle.path());
+                NutsText n = ws.formats().text().forStyled(o.toString(), NutsTextStyle.path());
                 return ws.formats().element().forString(n.toString());
             } else {
                 return context.defaultObjectToElement(o.toString(), null);
@@ -927,9 +927,9 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         public NutsElement createElement(File o, Type typeOfSrc, NutsElementFactoryContext context) {
             if (context.element().isNtf()) {
                 NutsWorkspace ws = context.getSession().getWorkspace();
-//                NutsText n = ws.formats().text().forStyled(o.toString(), NutsTextNodeStyle.path());
+//                NutsText n = ws.formats().text().forStyled(o.toString(), NutsTextStyle.path());
 //                return ws.formats().element().forPrimitive().buildNutsString(n);
-                NutsText n = ws.formats().text().forStyled(o.toString(), NutsTextNodeStyle.path());
+                NutsText n = ws.formats().text().forStyled(o.toString(), NutsTextStyle.path());
                 return ws.formats().element().forString(n.toString());
             } else {
                 return context.defaultObjectToElement(o.toString(), null);

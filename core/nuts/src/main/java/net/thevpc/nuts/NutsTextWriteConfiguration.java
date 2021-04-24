@@ -3,7 +3,7 @@ package net.thevpc.nuts;
 /**
  * @category Format
  */
-public class NutsTextNodeWriteConfiguration {
+public class NutsTextWriteConfiguration {
     private boolean filtered;
     private boolean titleNumberEnabled;
     private boolean lineNumberEnabled;
@@ -13,7 +13,7 @@ public class NutsTextNodeWriteConfiguration {
         return lineNumberEnabled;
     }
 
-    public NutsTextNodeWriteConfiguration setLineNumberEnabled(boolean lineNumberEnabled) {
+    public NutsTextWriteConfiguration setLineNumberEnabled(boolean lineNumberEnabled) {
         this.lineNumberEnabled = lineNumberEnabled;
         return this;
     }
@@ -22,7 +22,7 @@ public class NutsTextNodeWriteConfiguration {
         return titleNumberEnabled;
     }
 
-    public NutsTextNodeWriteConfiguration setTitleNumberEnabled(boolean titleNumberEnabled) {
+    public NutsTextWriteConfiguration setTitleNumberEnabled(boolean titleNumberEnabled) {
         this.titleNumberEnabled = titleNumberEnabled;
         return this;
     }
@@ -31,7 +31,7 @@ public class NutsTextNodeWriteConfiguration {
         return titleNumberSequence;
     }
 
-    public NutsTextNodeWriteConfiguration setTitleNumberSequence(NutsTextNumbering titleNumberSequence) {
+    public NutsTextWriteConfiguration setTitleNumberSequence(NutsTextNumbering titleNumberSequence) {
         this.titleNumberSequence = titleNumberSequence;
         return this;
     }
@@ -40,7 +40,7 @@ public class NutsTextNodeWriteConfiguration {
         return filtered;
     }
 
-    public NutsTextNodeWriteConfiguration setFiltered(boolean filtered) {
+    public NutsTextWriteConfiguration setFiltered(boolean filtered) {
         this.filtered = filtered;
         return this;
     }

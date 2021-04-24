@@ -46,12 +46,12 @@ public class Test07_ColorfulStream {
             NutsSession session = ws.createSession();
             NutsText node = new DefaultNutsTextNodeParser(session).parse(new StringReader(s));
             NutsTextNodeWriter w = new NutsTextNodeWriterRenderer(System.out, AnsiUnixTermPrintRenderer.ANSI_RENDERER, session)
-                    .setWriteConfiguration(new NutsTextNodeWriteConfiguration().setTitleNumberEnabled(true));
+                    .setWriteConfiguration(new NutsTextWriteConfiguration().setTitleNumberEnabled(true));
             w.writeNode(node);
         }
         //            ByteArrayOutputStream bout=new ByteArrayOutputStream();
 //            w = new NutsTextNodeWriterRenderer(bout, AnsiUnixTermPrintRenderer.ANSI_RENDERER, ws)
-//                    .setWriteConfiguration(new NutsTextNodeWriteConfiguration().setTitleNumberEnabled(true));
+//                    .setWriteConfiguration(new NutsTextWriteConfiguration().setTitleNumberEnabled(true));
 //            w.writeNode(text);
 //            System.out.println(bout);
 
@@ -90,7 +90,7 @@ public class Test07_ColorfulStream {
 //        NutsWorkspace ws = Nuts.openWorkspace();
 ////        ByteArrayOutputStream bos = new ByteArrayOutputStream();
 //        NutsTextNodeWriter w = new NutsTextNodeWriterRenderer(System.out, AnsiUnixTermPrintRenderer.ANSI_RENDERER, ws)
-//                .setWriteConfiguration(new NutsTextNodeWriteConfiguration().setTitleNumberEnabled(true));
+//                .setWriteConfiguration(new NutsTextWriteConfiguration().setTitleNumberEnabled(true));
 //        NutsTextNodeWriterStringer w2 = new NutsTextNodeWriterStringer(System.out, ws);
 ////        String text = "[#tet] hello == \\= me\n";
 //        String text = "\n##) njob" +
@@ -112,7 +112,7 @@ public class Test07_ColorfulStream {
 //        System.out.println("\n--------------------------------");
 //        w.writeNode(node);
 //        System.out.println("\n--------------------------------");
-//        w2.writeNode(node, new NutsTextNodeWriteConfiguration().setTitleNumberEnabled(true));
+//        w2.writeNode(node, new NutsTextWriteConfiguration().setTitleNumberEnabled(true));
 //
 ////        ByteArrayOutputStream bos = new ByteArrayOutputStream();
 ////        PrintStream out = new PrintStream(new FormatOutputStream(bos));
@@ -127,7 +127,7 @@ public class Test07_ColorfulStream {
 ////        ByteArrayOutputStream bos = new ByteArrayOutputStream();
 //        NutsWorkspace ws = Nuts.openWorkspace();
 //        NutsTextNodeWriter w = new NutsTextNodeWriterRenderer(System.out, AnsiUnixTermPrintRenderer.ANSI_RENDERER, ws)
-//                .setWriteConfiguration(new NutsTextNodeWriteConfiguration().setTitleNumberEnabled(true));
+//                .setWriteConfiguration(new NutsTextWriteConfiguration().setTitleNumberEnabled(true));
 //        NutsTextNodeWriterStringer w2 = new NutsTextNodeWriterStringer(System.out, ws);
 ////        String text = "[#tet] hello == \\= me\n";
 //        String text =
@@ -167,7 +167,7 @@ public class Test07_ColorfulStream {
 //        System.out.println("\n--------------------------------");
 //        w.writeNode(node);
 //        System.out.println("\n--------------------------------");
-//        w2.writeNode(node, new NutsTextNodeWriteConfiguration().setTitleNumberEnabled(true));
+//        w2.writeNode(node, new NutsTextWriteConfiguration().setTitleNumberEnabled(true));
 //
 ////        ByteArrayOutputStream bos = new ByteArrayOutputStream();
 ////        PrintStream out = new PrintStream(new FormatOutputStream(bos));
@@ -182,7 +182,7 @@ public class Test07_ColorfulStream {
 ////        ByteArrayOutputStream bos = new ByteArrayOutputStream();
 //        NutsWorkspace ws = Nuts.openWorkspace();
 //        NutsTextNodeWriter w = new NutsTextNodeWriterRenderer(System.out, AnsiUnixTermPrintRenderer.ANSI_RENDERER, ws)
-//                .setWriteConfiguration(new NutsTextNodeWriteConfiguration().setTitleNumberEnabled(true));
+//                .setWriteConfiguration(new NutsTextWriteConfiguration().setTitleNumberEnabled(true));
 //        NutsTextNodeWriterStringer w2 = new NutsTextNodeWriterStringer(System.out, ws);
 ////        String text = "[#tet] hello == \\= me\n";
 //        String text = "unable to create system terminal : %s";
@@ -194,7 +194,7 @@ public class Test07_ColorfulStream {
 //        System.out.println("\n--------------------------------");
 //        w.writeNode(node);
 //        System.out.println("\n--------------------------------");
-//        w2.writeNode(node, new NutsTextNodeWriteConfiguration().setTitleNumberEnabled(true));
+//        w2.writeNode(node, new NutsTextWriteConfiguration().setTitleNumberEnabled(true));
 //
 ////        ByteArrayOutputStream bos = new ByteArrayOutputStream();
 ////        PrintStream out = new PrintStream(new FormatOutputStream(bos));
@@ -231,7 +231,7 @@ public class Test07_ColorfulStream {
 //            NutsText node = new DefaultNutsTextNodeParser(ws).parse(new StringReader(t_string));
 //            System.out.println();
 //            NutsTextNodeWriter w = new NutsTextNodeWriterStringer(System.out, ws)
-//                    .setWriteConfiguration(new NutsTextNodeWriteConfiguration().setTitleNumberEnabled(true));
+//                    .setWriteConfiguration(new NutsTextWriteConfiguration().setTitleNumberEnabled(true));
 //            Assertions.assertTrue(
 //                    node instanceof NutsTextStyled
 //            );
@@ -471,7 +471,7 @@ public class Test07_ColorfulStream {
 //            }
 ////            ByteArrayOutputStream bout=new ByteArrayOutputStream();
 ////            w = new NutsTextNodeWriterRenderer(bout, AnsiUnixTermPrintRenderer.ANSI_RENDERER, ws)
-////                    .setWriteConfiguration(new NutsTextNodeWriteConfiguration().setTitleNumberEnabled(true));
+////                    .setWriteConfiguration(new NutsTextWriteConfiguration().setTitleNumberEnabled(true));
 ////            w.writeNode(text);
 ////            System.out.println(bout);
 //        }
@@ -484,12 +484,12 @@ public class Test07_ColorfulStream {
 //        {
 //            NutsText command = ws.formats().text().command(NutsTerminalManager.CMD_LATER_RESET_LINE);
 //            NutsTextNodeWriter w = new NutsTextNodeWriterRenderer(System.out, AnsiUnixTermPrintRenderer.ANSI_RENDERER, ws)
-//                    .setWriteConfiguration(new NutsTextNodeWriteConfiguration().setTitleNumberEnabled(true));
+//                    .setWriteConfiguration(new NutsTextWriteConfiguration().setTitleNumberEnabled(true));
 //            w.writeNode(command);
 //
 //            //            ByteArrayOutputStream bout=new ByteArrayOutputStream();
 ////            w = new NutsTextNodeWriterRenderer(bout, AnsiUnixTermPrintRenderer.ANSI_RENDERER, ws)
-////                    .setWriteConfiguration(new NutsTextNodeWriteConfiguration().setTitleNumberEnabled(true));
+////                    .setWriteConfiguration(new NutsTextWriteConfiguration().setTitleNumberEnabled(true));
 ////            w.writeNode(text);
 ////            System.out.println(bout);
 //        }

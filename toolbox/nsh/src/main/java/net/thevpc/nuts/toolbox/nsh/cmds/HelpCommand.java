@@ -78,7 +78,7 @@ public class HelpCommand extends AbstractNshBuiltin {
                 );
                 String helpText = (n==null?"no help found":n.toString());
                 context.out().println(ss.apply(helpText));
-                context.out().println(context.workspace().formats().text().forStyled("AVAILABLE COMMANDS ARE:", NutsTextNodeStyle.primary(1)));
+                context.out().println(context.workspace().formats().text().forStyled("AVAILABLE COMMANDS ARE:", NutsTextStyle.primary(1)));
                 JShellBuiltin[] commands = context.getGlobalContext().builtins().getAll();
                 Arrays.sort(commands, new Comparator<JShellBuiltin>() {
                     @Override
@@ -94,17 +94,17 @@ public class HelpCommand extends AbstractNshBuiltin {
                     }
                 }
                 for (JShellBuiltin cmd : commands) {
-                    context.out().printf("%s : ", text.text().forStyled(StringUtils.alignLeft(cmd.getName(), max),NutsTextNodeStyle.primary(4)));
+                    context.out().printf("%s : ", text.text().forStyled(StringUtils.alignLeft(cmd.getName(), max),NutsTextStyle.primary(4)));
                     context.out().println(ss.apply(cmd.getHelpHeader())); //formatted
                 }
             } else {
                 for (String commandName : commandNames) {
                     JShellBuiltin command1 = context.getGlobalContext().builtins().find(commandName);
                     if (command1 == null) {
-                        context.err().printf("command not found : %s\n", text.text().forStyled(commandName,NutsTextNodeStyle.error()));
+                        context.err().printf("command not found : %s\n", text.text().forStyled(commandName,NutsTextStyle.error()));
                     } else {
                         String help = command1.getHelp();
-                        context.out().printf("%s : %s\f", text.text().forStyled("COMMAND",NutsTextNodeStyle.primary(4)),"commandName");
+                        context.out().printf("%s : %s\f", text.text().forStyled("COMMAND",NutsTextStyle.primary(4)),"commandName");
                         context.out().println(ss.apply(help));
                     }
                 }

@@ -1,12 +1,12 @@
 package net.thevpc.nuts.runtime.core.format.text.stylethemes;
 
 import net.thevpc.nuts.NutsTextFormatTheme;
-import net.thevpc.nuts.NutsTextNodeStyle;
+import net.thevpc.nuts.NutsTextStyle;
 
 import java.util.ArrayList;
 import java.util.List;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsTextNodeStyles;
+import net.thevpc.nuts.NutsTextStyles;
 
 public class NutsTextFormatThemeWrapper implements NutsTextFormatTheme {
 
@@ -21,35 +21,35 @@ public class NutsTextFormatThemeWrapper implements NutsTextFormatTheme {
     }
 
     @Override
-    public NutsTextNodeStyles toBasicStyles(NutsTextNodeStyles styles, NutsSession session) {
-        NutsTextNodeStyles ret = NutsTextNodeStyles.NONE;
+    public NutsTextStyles toBasicStyles(NutsTextStyles styles, NutsSession session) {
+        NutsTextStyles ret = NutsTextStyles.NONE;
         if (styles != null) {
-            for (NutsTextNodeStyle style : styles) {
+            for (NutsTextStyle style : styles) {
                 ret = ret.append(toBasicStyles(style,session));
             }
         }
         return ret;
     }
 
-    public NutsTextNodeStyles toBasicStyles(NutsTextNodeStyle style,NutsSession session) {
+    public NutsTextStyles toBasicStyles(NutsTextStyle style,NutsSession session) {
         if (style == null) {
-            return NutsTextNodeStyles.NONE;
+            return NutsTextStyles.NONE;
         }
         if (style.getType().basic()) {
-            return NutsTextNodeStyles.of(style);
+            return NutsTextStyles.of(style);
         }
-        NutsTextNodeStyles t = other.toBasicStyles(NutsTextNodeStyles.of(style), session);
+        NutsTextStyles t = other.toBasicStyles(NutsTextStyles.of(style), session);
         if (t == null) {
-            return NutsTextNodeStyles.NONE;
+            return NutsTextStyles.NONE;
         }
-        List<NutsTextNodeStyle> rr = new ArrayList<>();
-        for (NutsTextNodeStyle s : t) {
+        List<NutsTextStyle> rr = new ArrayList<>();
+        for (NutsTextStyle s : t) {
             if (s.getType().basic()) {
                 rr.add(s);
             } else {
                 //ignore...
             }
         }
-        return NutsTextNodeStyles.NONE.append(rr.toArray(new NutsTextNodeStyle[0]));
+        return NutsTextStyles.NONE.append(rr.toArray(new NutsTextStyle[0]));
     }
 }

@@ -203,7 +203,7 @@ public class NdedMain  {
         fillArgs(b);
         final PrintStream out = this.context.getSession().out();
         NutsTextManager factory = context.getWorkspace().formats().text();
-        out.print(factory.forStyled("creating new nuts descriptor...\n",NutsTextNodeStyle.primary(3)));
+        out.print(factory.forStyled("creating new nuts descriptor...\n",NutsTextStyle.primary(3)));
         while (true) {
             fillInteractive(b, true);
             if (check(b)) {
@@ -229,18 +229,18 @@ public class NdedMain  {
         out.printf("writing to : %s%n",
                 text.text().forStyled(
                         getFilePath(new File(home))+("/" + path).replace('/', File.separatorChar)
-                        ,NutsTextNodeStyle.path())
+                        ,NutsTextStyle.path())
                 );
         out.printf("id         : %s%n", desc.getId());
         out.printf("packaging  : %s%n",
                 factory.forStyled(
-                desc.getPackaging() == null ? "" : desc.getPackaging(),NutsTextNodeStyle.primary(3)));
+                desc.getPackaging() == null ? "" : desc.getPackaging(),NutsTextStyle.primary(3)));
         if (desc.getLocations().length > 0) {
             out.println("locations  : ");
             for (NutsIdLocation s : b.getLocations()) {
                 out.printf("             %s %s%n",
-                        factory.forStyled(s.getClassifier(),NutsTextNodeStyle.primary(3)),
-                        text.text().forStyled(s.getUrl(),NutsTextNodeStyle.path()));
+                        factory.forStyled(s.getClassifier(),NutsTextStyle.primary(3)),
+                        text.text().forStyled(s.getUrl(),NutsTextStyle.path()));
             }
         }
         if (!confirm("confirm ?")) {

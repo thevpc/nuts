@@ -25,8 +25,6 @@
  */
 package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.NutsSessionTerminal;
-import net.thevpc.nuts.NutsTerminalCommand;
 import net.thevpc.nuts.NutsTerminalMode;
 import net.thevpc.nuts.NutsTerminalSpec;
 
@@ -52,10 +50,6 @@ public interface NutsTerminalBase extends NutsComponent<NutsTerminalSpec> {
     String readLine(PrintStream out, String prompt, Object... params);
 
     char[] readPassword(PrintStream out, String prompt, Object... params);
-
-    NutsTerminalBase printProgress(float progress, String prompt, Object... params);
-
-    NutsTerminalBase printProgress(String prompt, Object... params);
 
     InputStream getIn();
 

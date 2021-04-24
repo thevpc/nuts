@@ -115,7 +115,7 @@ public class NutsTextFormatPropertiesTheme implements NutsTextFormatTheme {
         return themeName;
     }
 
-    private String getProp(NutsTextNodeStyleType t, int variant){
+    private String getProp(NutsTextStyleType t, int variant){
         String v = getProp(t, "" + variant);
         if(v!=null){
             return v;
@@ -158,7 +158,7 @@ public class NutsTextFormatPropertiesTheme implements NutsTextFormatTheme {
         }
         return 0;
     }
-    private String getProp(NutsTextNodeStyleType t, String variant){
+    private String getProp(NutsTextStyleType t, String variant){
         String name=t.name();
         String s = props.getProperty(name + "(" + variant + ")");
         if(s==null){
@@ -168,40 +168,40 @@ public class NutsTextFormatPropertiesTheme implements NutsTextFormatTheme {
     }
 
     @Override
-    public NutsTextNodeStyles toBasicStyles(NutsTextNodeStyles styles, NutsSession session) {
-        NutsTextNodeStyles ret = NutsTextNodeStyles.NONE;
+    public NutsTextStyles toBasicStyles(NutsTextStyles styles, NutsSession session) {
+        NutsTextStyles ret = NutsTextStyles.NONE;
         if (styles != null) {
-            for (NutsTextNodeStyle style : styles) {
+            for (NutsTextStyle style : styles) {
                 ret = ret.append(toBasicStyles(style,session));
             }
         }
         return ret;
     }
     
-    public NutsTextNodeStyles toBasicStyles(NutsTextNodeStyle style,NutsSession session) {
+    public NutsTextStyles toBasicStyles(NutsTextStyle style,NutsSession session) {
         return toBasicStyles(style,session,20);
     }
 
-    public NutsTextNodeStyles toBasicStyles(NutsTextNodeStyle style,NutsSession session,int maxLoop) {
+    public NutsTextStyles toBasicStyles(NutsTextStyle style,NutsSession session,int maxLoop) {
         if(maxLoop<=0){
             throw new NutsIllegalArgumentException(session,"invalid ntf theme for "+style.getType()+"("+style.getVariant()+"). infinite loop");
         }
         if(style.getType().basic()){
-            return NutsTextNodeStyles.of(style);
+            return NutsTextStyles.of(style);
         }
         String s = getProp(style.getType(),style.getVariant());
         if(s==null){
-            return NutsTextNodeStyles.NONE;
+            return NutsTextStyles.NONE;
         }
-        NutsTextNodeStyles ret=NutsTextNodeStyles.NONE;
+        NutsTextStyles ret=NutsTextStyles.NONE;
         for (String v : s.split(",")) {
-            NutsTextNodeStyles ss = toBasicStyles(v, style.getVariant(), session,maxLoop-1);
+            NutsTextStyles ss = toBasicStyles(v, style.getVariant(), session,maxLoop-1);
             ret=ret.append(ss);
         }
         return ret;
     }
 
-    public NutsTextNodeStyles toBasicStyles(String v, int defaultVariant, NutsSession session, int maxLoop) {
+    public NutsTextStyles toBasicStyles(String v, int defaultVariant, NutsSession session, int maxLoop) {
         v=v.trim();
         int a=v.indexOf('(');
         if(a>0){
@@ -220,20 +220,20 @@ public class NutsTextFormatPropertiesTheme implements NutsTextFormatTheme {
                         if(ii==null){
                             ii=getVarVal(n);
                         }
-                        return NutsTextNodeStyles.of(
-                                NutsTextNodeStyle.foregroundColor(ii)
+                        return NutsTextStyles.of(
+                                NutsTextStyle.foregroundColor(ii)
                         );
                     }
                     case "plain":{
-                        return NutsTextNodeStyles.NONE;
+                        return NutsTextStyles.NONE;
                     }
                     case "foregroundtruecolor":{
                         Integer ii=CoreNumberUtils.convertToInteger(n,null);
                         if(ii==null){
                             ii=getVarVal(n);
                         }
-                        return NutsTextNodeStyles.of(
-                                NutsTextNodeStyle.foregroundTrueColor(ii)
+                        return NutsTextStyles.of(
+                                NutsTextStyle.foregroundTrueColor(ii)
                         );
                     }
                     case "background":
@@ -242,8 +242,8 @@ public class NutsTextFormatPropertiesTheme implements NutsTextFormatTheme {
                         if(ii==null){
                             ii=getVarVal(n);
                         }
-                        return NutsTextNodeStyles.of(
-                                NutsTextNodeStyle.backgroundColor(ii)
+                        return NutsTextStyles.of(
+                                NutsTextStyle.backgroundColor(ii)
                         );
                     }
                     case "backgroundtruecolor":{
@@ -251,8 +251,8 @@ public class NutsTextFormatPropertiesTheme implements NutsTextFormatTheme {
                         if(ii==null){
                             ii=getVarVal(n);
                         }
-                        return NutsTextNodeStyles.of(
-                                NutsTextNodeStyle.backgroundTrueColor(ii)
+                        return NutsTextStyles.of(
+                                NutsTextStyle.backgroundTrueColor(ii)
                         );
                     }
 
@@ -261,214 +261,214 @@ public class NutsTextFormatPropertiesTheme implements NutsTextFormatTheme {
                         if(ii==null){
                             ii=getVarVal(n);
                         }
-                        return toBasicStyles(NutsTextNodeStyle.primary(ii),session,maxLoop);
+                        return toBasicStyles(NutsTextStyle.primary(ii),session,maxLoop);
                     }
                     case "secondary":{
                         Integer ii=CoreNumberUtils.convertToInteger(n,null);
                         if(ii==null){
                             ii=getVarVal(n);
                         }
-                        return toBasicStyles(NutsTextNodeStyle.secondary(ii),session,maxLoop);
+                        return toBasicStyles(NutsTextStyle.secondary(ii),session,maxLoop);
                     }
                     case "underlined":{
                         Integer ii=CoreNumberUtils.convertToInteger(n,null);
                         if(ii==null){
                             ii=getVarVal(n);
                         }
-                        return toBasicStyles(NutsTextNodeStyle.underlined(),session,maxLoop);
+                        return toBasicStyles(NutsTextStyle.underlined(),session,maxLoop);
                     }
                     case "bold":{
                         Integer ii=CoreNumberUtils.convertToInteger(n,null);
                         if(ii==null){
                             ii=getVarVal(n);
                         }
-                        return toBasicStyles(NutsTextNodeStyle.bold(),session,maxLoop);
+                        return toBasicStyles(NutsTextStyle.bold(),session,maxLoop);
                     }
                     case "bool":{
                         Integer ii=CoreNumberUtils.convertToInteger(n,null);
                         if(ii==null){
                             ii=getVarVal(n);
                         }
-                        return toBasicStyles(NutsTextNodeStyle.bool(ii),session,maxLoop);
+                        return toBasicStyles(NutsTextStyle.bool(ii),session,maxLoop);
                     }
                     case "blink":{
                         Integer ii=CoreNumberUtils.convertToInteger(n,null);
                         if(ii==null){
                             ii=getVarVal(n);
                         }
-                        return toBasicStyles(NutsTextNodeStyle.blink(),session,maxLoop);
+                        return toBasicStyles(NutsTextStyle.blink(),session,maxLoop);
                     }
                     case "comments":{
                         Integer ii=CoreNumberUtils.convertToInteger(n,null);
                         if(ii==null){
                             ii=getVarVal(n);
                         }
-                        return toBasicStyles(NutsTextNodeStyle.comments(ii),session,maxLoop);
+                        return toBasicStyles(NutsTextStyle.comments(ii),session,maxLoop);
                     }
                     case "config":{
                         Integer ii=CoreNumberUtils.convertToInteger(n,null);
                         if(ii==null){
                             ii=getVarVal(n);
                         }
-                        return toBasicStyles(NutsTextNodeStyle.config(ii),session,maxLoop);
+                        return toBasicStyles(NutsTextStyle.config(ii),session,maxLoop);
                     }
                     case "danger":{
                         Integer ii=CoreNumberUtils.convertToInteger(n,null);
                         if(ii==null){
                             ii=getVarVal(n);
                         }
-                        return toBasicStyles(NutsTextNodeStyle.danger(ii),session,maxLoop);
+                        return toBasicStyles(NutsTextStyle.danger(ii),session,maxLoop);
                     }
                     case "date":{
                         Integer ii=CoreNumberUtils.convertToInteger(n,null);
                         if(ii==null){
                             ii=getVarVal(n);
                         }
-                        return toBasicStyles(NutsTextNodeStyle.date(ii),session,maxLoop);
+                        return toBasicStyles(NutsTextStyle.date(ii),session,maxLoop);
                     }
                     case "number":{
                         Integer ii=CoreNumberUtils.convertToInteger(n,null);
                         if(ii==null){
                             ii=getVarVal(n);
                         }
-                        return toBasicStyles(NutsTextNodeStyle.number(ii),session,maxLoop);
+                        return toBasicStyles(NutsTextStyle.number(ii),session,maxLoop);
                     }
                     case "error":{
                         Integer ii=CoreNumberUtils.convertToInteger(n,null);
                         if(ii==null){
                             ii=getVarVal(n);
                         }
-                        return toBasicStyles(NutsTextNodeStyle.error(ii),session,maxLoop);
+                        return toBasicStyles(NutsTextStyle.error(ii),session,maxLoop);
                     }
                     case "warn":{
                         Integer ii=CoreNumberUtils.convertToInteger(n,null);
                         if(ii==null){
                             ii=getVarVal(n);
                         }
-                        return toBasicStyles(NutsTextNodeStyle.warn(ii),session,maxLoop);
+                        return toBasicStyles(NutsTextStyle.warn(ii),session,maxLoop);
                     }
                     case "version":{
                         Integer ii=CoreNumberUtils.convertToInteger(n,null);
                         if(ii==null){
                             ii=getVarVal(n);
                         }
-                        return toBasicStyles(NutsTextNodeStyle.version(ii),session,maxLoop);
+                        return toBasicStyles(NutsTextStyle.version(ii),session,maxLoop);
                     }
                     case "variable":{
                         Integer ii=CoreNumberUtils.convertToInteger(n,null);
                         if(ii==null){
                             ii=getVarVal(n);
                         }
-                        return toBasicStyles(NutsTextNodeStyle.variable(ii),session,maxLoop);
+                        return toBasicStyles(NutsTextStyle.variable(ii),session,maxLoop);
                     }
                     case "input":{
                         Integer ii=CoreNumberUtils.convertToInteger(n,null);
                         if(ii==null){
                             ii=getVarVal(n);
                         }
-                        return toBasicStyles(NutsTextNodeStyle.input(ii),session,maxLoop);
+                        return toBasicStyles(NutsTextStyle.input(ii),session,maxLoop);
                     }
                     case "title":{
                         Integer ii=CoreNumberUtils.convertToInteger(n,null);
                         if(ii==null){
                             ii=getVarVal(n);
                         }
-                        return toBasicStyles(NutsTextNodeStyle.title(ii),session,maxLoop);
+                        return toBasicStyles(NutsTextStyle.title(ii),session,maxLoop);
                     }
                     case "success":{
                         Integer ii=CoreNumberUtils.convertToInteger(n,null);
                         if(ii==null){
                             ii=getVarVal(n);
                         }
-                        return toBasicStyles(NutsTextNodeStyle.success(ii),session,maxLoop);
+                        return toBasicStyles(NutsTextStyle.success(ii),session,maxLoop);
                     }
                     case "string":{
                         Integer ii=CoreNumberUtils.convertToInteger(n,null);
                         if(ii==null){
                             ii=getVarVal(n);
                         }
-                        return toBasicStyles(NutsTextNodeStyle.string(ii),session,maxLoop);
+                        return toBasicStyles(NutsTextStyle.string(ii),session,maxLoop);
                     }
                     case "striked":{
                         Integer ii=CoreNumberUtils.convertToInteger(n,null);
                         if(ii==null){
                             ii=getVarVal(n);
                         }
-                        return toBasicStyles(NutsTextNodeStyle.striked(ii),session,maxLoop);
+                        return toBasicStyles(NutsTextStyle.striked(ii),session,maxLoop);
                     }
                     case "separator":{
                         Integer ii=CoreNumberUtils.convertToInteger(n,null);
                         if(ii==null){
                             ii=getVarVal(n);
                         }
-                        return toBasicStyles(NutsTextNodeStyle.separator(ii),session,maxLoop);
+                        return toBasicStyles(NutsTextStyle.separator(ii),session,maxLoop);
                     }
                     case "reversed":{
                         Integer ii=CoreNumberUtils.convertToInteger(n,null);
                         if(ii==null){
                             ii=getVarVal(n);
                         }
-                        return toBasicStyles(NutsTextNodeStyle.reversed(ii),session,maxLoop);
+                        return toBasicStyles(NutsTextStyle.reversed(ii),session,maxLoop);
                     }
                     case "path":{
                         Integer ii=CoreNumberUtils.convertToInteger(n,null);
                         if(ii==null){
                             ii=getVarVal(n);
                         }
-                        return toBasicStyles(NutsTextNodeStyle.path(ii),session,maxLoop);
+                        return toBasicStyles(NutsTextStyle.path(ii),session,maxLoop);
                     }
                     case "option":{
                         Integer ii=CoreNumberUtils.convertToInteger(n,null);
                         if(ii==null){
                             ii=getVarVal(n);
                         }
-                        return toBasicStyles(NutsTextNodeStyle.option(ii),session,maxLoop);
+                        return toBasicStyles(NutsTextStyle.option(ii),session,maxLoop);
                     }
                     case "pale":{
                         Integer ii=CoreNumberUtils.convertToInteger(n,null);
                         if(ii==null){
                             ii=getVarVal(n);
                         }
-                        return toBasicStyles(NutsTextNodeStyle.pale(ii),session,maxLoop);
+                        return toBasicStyles(NutsTextStyle.pale(ii),session,maxLoop);
                     }
                     case "operator":{
                         Integer ii=CoreNumberUtils.convertToInteger(n,null);
                         if(ii==null){
                             ii=getVarVal(n);
                         }
-                        return toBasicStyles(NutsTextNodeStyle.operator(ii),session,maxLoop);
+                        return toBasicStyles(NutsTextStyle.operator(ii),session,maxLoop);
                     }
                     case "keyword":{
                         Integer ii=CoreNumberUtils.convertToInteger(n,null);
                         if(ii==null){
                             ii=getVarVal(n);
                         }
-                        return toBasicStyles(NutsTextNodeStyle.keyword(ii),session,maxLoop);
+                        return toBasicStyles(NutsTextStyle.keyword(ii),session,maxLoop);
                     }
                     case "italic":{
                         Integer ii=CoreNumberUtils.convertToInteger(n,null);
                         if(ii==null){
                             ii=getVarVal(n);
                         }
-                        return toBasicStyles(NutsTextNodeStyle.italic(ii),session,maxLoop);
+                        return toBasicStyles(NutsTextStyle.italic(ii),session,maxLoop);
                     }
                     case "info":{
                         Integer ii=CoreNumberUtils.convertToInteger(n,null);
                         if(ii==null){
                             ii=getVarVal(n);
                         }
-                        return toBasicStyles(NutsTextNodeStyle.info(ii),session,maxLoop);
+                        return toBasicStyles(NutsTextStyle.info(ii),session,maxLoop);
                     }
                     case "fail":{
                         Integer ii=CoreNumberUtils.convertToInteger(n,null);
                         if(ii==null){
                             ii=getVarVal(n);
                         }
-                        return toBasicStyles(NutsTextNodeStyle.fail(ii),session,maxLoop);
+                        return toBasicStyles(NutsTextStyle.fail(ii),session,maxLoop);
                     }
                 }
             }
         }
-        return NutsTextNodeStyles.NONE;
+        return NutsTextStyles.NONE;
     }
 }

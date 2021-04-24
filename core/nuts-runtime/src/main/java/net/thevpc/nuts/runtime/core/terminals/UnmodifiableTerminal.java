@@ -5,13 +5,19 @@ import net.thevpc.nuts.spi.NutsTerminalBase;
 
 import java.io.InputStream;
 import java.io.PrintStream;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
+import net.thevpc.nuts.runtime.standalone.util.SearchTraceHelper;
+import net.thevpc.nuts.runtime.standalone.util.console.CProgressBar;
 
 public class UnmodifiableTerminal extends AbstractNutsTerminal implements NutsSessionTerminal {
 
     private final NutsSessionTerminal base;
+    protected CProgressBar progressBar;
+    protected NutsSession session;
 
-    public UnmodifiableTerminal(NutsSessionTerminal base) {
+    public UnmodifiableTerminal(NutsSessionTerminal base,NutsSession session) {
         this.base = base;
+        this.session = session;
     }
 
     @Override
@@ -80,16 +86,39 @@ public class UnmodifiableTerminal extends AbstractNutsTerminal implements NutsSe
         return getBase().readPassword(out, prompt, params);
     }
 
-    @Override
-    public NutsTerminalBase printProgress(float progress, String prompt, Object... params) {
-        getBase().printProgress(progress, prompt, params);
+ @Override
+    public NutsTerminal printProgress(float progress, String prompt, Object... params) {
+        if (getBase() instanceof NutsTerminal) {
+            ((NutsTerminal) getParent()).printProgress(progress, prompt, params);
+        } else {
+            getProgressBar().printProgress(
+                    Float.isNaN(progress) ? -1
+                    : (int) (progress * 100),
+                    session.getWorkspace().formats().text().toText(NutsMessage.cstyle(prompt, params)).toString(),
+                    err()
+            );
+        }
         return this;
     }
 
     @Override
-    public NutsTerminalBase printProgress(String prompt, Object... params) {
-        getBase().printProgress(prompt, params);
+    public NutsTerminal printProgress(String prompt, Object... params) {
+        if (getBase() instanceof NutsTerminal) {
+            ((NutsTerminal) getBase()).printProgress(prompt, params);
+        } else {
+            getProgressBar().printProgress(-1,
+                    session.getWorkspace().formats().text().toText(NutsMessage.cstyle(prompt, params)).toString(),
+                    err()
+            );
+        }
         return this;
+    }
+
+    private CProgressBar getProgressBar() {
+        if (progressBar == null) {
+            progressBar = SearchTraceHelper.createProgressBar(session);
+        }
+        return progressBar;
     }
 
     @Override

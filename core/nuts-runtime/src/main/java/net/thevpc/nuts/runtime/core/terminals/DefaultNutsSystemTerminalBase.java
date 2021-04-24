@@ -28,7 +28,7 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase, Nu
     private NutsWorkspace workspace;
     private NutsSession session;
     private boolean bootSession;
-    protected CProgressBar progressBar;
+//    protected CProgressBar progressBar;
 
     public DefaultNutsSystemTerminalBase() {
 
@@ -95,47 +95,47 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase, Nu
         }
         if (_LOG() != null) {
             _LOG().with().session(session).level(Level.CONFIG).verb(NutsLogVerb.UPDATE).formatted().log("change terminal Out mode : {0}",
-                    workspace.formats().text().forStyled(mode.id(), NutsTextNodeStyle.primary(1))
+                    workspace.formats().text().forStyled(mode.id(), NutsTextStyle.primary(1))
             );
         }
         FPrint.installStdOut(this.outMode = mode, session);
         return this;
     }
 
-    private CProgressBar getProgressBar() {
-        if(progressBar==null){
-            progressBar= SearchTraceHelper.createProgressBar(session);
-        }
-        return progressBar;
-    }
-
-    @Override
-    public NutsTerminalBase printProgress(float progress, String prompt, Object... params) {
-        if(getParent()!=null) {
-            getParent().printProgress(progress, prompt, params);
-        }else{
-            getProgressBar().printProgress(
-                    Float.isNaN(progress)?-1:
-                            (int)(progress*100),
-                    session.getWorkspace().formats().text().toText(NutsMessage.cstyle(prompt,params)).toString(),
-                    getErr()
-            );
-        }
-        return this;
-    }
-
-    @Override
-    public NutsTerminalBase printProgress(String prompt, Object... params) {
-        if(getParent()!=null) {
-            getParent().printProgress(prompt, params);
-        }else{
-            getProgressBar().printProgress(-1,
-                    session.getWorkspace().formats().text().toText(NutsMessage.cstyle(prompt,params)).toString(),
-                    getErr()
-            );
-        }
-        return this;
-    }
+//    private CProgressBar getProgressBar() {
+//        if(progressBar==null){
+//            progressBar= SearchTraceHelper.createProgressBar(session);
+//        }
+//        return progressBar;
+//    }
+//
+//    @Override
+//    public NutsTerminalBase printProgress(float progress, String prompt, Object... params) {
+//        if(getParent()!=null) {
+//            getParent().printProgress(progress, prompt, params);
+//        }else{
+//            getProgressBar().printProgress(
+//                    Float.isNaN(progress)?-1:
+//                            (int)(progress*100),
+//                    session.getWorkspace().formats().text().toText(NutsMessage.cstyle(prompt,params)).toString(),
+//                    getErr()
+//            );
+//        }
+//        return this;
+//    }
+//
+//    @Override
+//    public NutsTerminalBase printProgress(String prompt, Object... params) {
+//        if(getParent()!=null) {
+//            getParent().printProgress(prompt, params);
+//        }else{
+//            getProgressBar().printProgress(-1,
+//                    session.getWorkspace().formats().text().toText(NutsMessage.cstyle(prompt,params)).toString(),
+//                    getErr()
+//            );
+//        }
+//        return this;
+//    }
 
     @Override
     public NutsSystemTerminalBase setErrMode(NutsTerminalMode mode) {
@@ -144,7 +144,7 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase, Nu
         }
         if (_LOG() != null) {
             _LOG().with().session(session).level(Level.CONFIG).verb(NutsLogVerb.UPDATE).formatted().log("change terminal Err mode : {0}",
-                    workspace.formats().text().forStyled(mode.id(), NutsTextNodeStyle.primary(1))
+                    workspace.formats().text().forStyled(mode.id(), NutsTextStyle.primary(1))
             );
         }
         FPrint.installStdErr(this.errMode = mode, session);

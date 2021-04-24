@@ -212,10 +212,10 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
         }
         id = idBuilder.build();
 //        NutsTextFormatManager tf = getWorkspace().formats().text();
-        NutsTextNodeBuilder sb = getSession().getWorkspace().formats().text().builder();
+        NutsTextBuilder sb = getSession().getWorkspace().formats().text().builder();
         if (!isOmitNamespace()) {
             if (!CoreStringUtils.isBlank(id.getNamespace())) {
-                sb.append(id.getNamespace() + "://", NutsTextNodeStyle.pale());
+                sb.append(id.getNamespace() + "://", NutsTextStyle.pale());
             }
         }
         if (!isOmitGroupId()) {
@@ -224,65 +224,65 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
                 boolean importedGroup = getSession().getWorkspace().imports().getAll().contains(id.getGroupId());
                 if (!(importedGroup && isOmitImportedGroupId())) {
                     if (importedGroup || importedGroup2) {
-                        sb.append(id.getGroupId(), NutsTextNodeStyle.pale());
+                        sb.append(id.getGroupId(), NutsTextStyle.pale());
                     } else {
                         sb.append(id.getGroupId());
                     }
-                    sb.append(":", NutsTextNodeStyle.separator());
+                    sb.append(":", NutsTextStyle.separator());
                 }
             }
         }
-        sb.append(id.getArtifactId(), NutsTextNodeStyle.primary(1));
+        sb.append(id.getArtifactId(), NutsTextStyle.primary(1));
         if (!CoreStringUtils.isBlank(id.getVersion().getValue())) {
-            sb.append("#", NutsTextNodeStyle.separator());
-            sb.append(id.getVersion().toString(), NutsTextNodeStyle.version());
+            sb.append("#", NutsTextStyle.separator());
+            sb.append(id.getVersion().toString(), NutsTextStyle.version());
         }
         boolean firstQ = true;
 
         if (!CoreStringUtils.isBlank(classifier)) {
             if (firstQ) {
-                sb.append("?", NutsTextNodeStyle.separator());
+                sb.append("?", NutsTextStyle.separator());
                 firstQ = false;
             } else {
-                sb.append("&", NutsTextNodeStyle.separator());
+                sb.append("&", NutsTextStyle.separator());
             }
-            sb.append("classifier", NutsTextNodeStyle.keyword(2)).append("=", NutsTextNodeStyle.separator());
+            sb.append("classifier", NutsTextStyle.keyword(2)).append("=", NutsTextStyle.separator());
             sb.append(classifier);
         }
 
 //        if (highlightScope) {
         if (!NutsDependencyScopes.isDefaultScope(scope)) {
             if (firstQ) {
-                sb.append("?", NutsTextNodeStyle.separator());
+                sb.append("?", NutsTextStyle.separator());
                 firstQ = false;
             } else {
-                sb.append("&", NutsTextNodeStyle.separator());
+                sb.append("&", NutsTextStyle.separator());
             }
-            sb.append("scope", NutsTextNodeStyle.keyword(2)).append("=", NutsTextNodeStyle.separator());
+            sb.append("scope", NutsTextStyle.keyword(2)).append("=", NutsTextStyle.separator());
             sb.append(scope);
         }
 //        }
 //        if (highlightOptional) {
         if (!CoreStringUtils.isBlank(optional) && !"false".equalsIgnoreCase(optional)) {
             if (firstQ) {
-                sb.append("?", NutsTextNodeStyle.separator());
+                sb.append("?", NutsTextStyle.separator());
                 firstQ = false;
             } else {
-                sb.append("&", NutsTextNodeStyle.separator());
+                sb.append("&", NutsTextStyle.separator());
             }
-            sb.append("optional", NutsTextNodeStyle.keyword(2)).append("=", NutsTextNodeStyle.separator());
+            sb.append("optional", NutsTextStyle.keyword(2)).append("=", NutsTextStyle.separator());
             sb.append(optional);
         }
 //        }
         if (!CoreStringUtils.isBlank(exclusions)) {
             if (firstQ) {
-                sb.append("?", NutsTextNodeStyle.separator());
+                sb.append("?", NutsTextStyle.separator());
                 firstQ = false;
             } else {
-                sb.append("&", NutsTextNodeStyle.separator());
+                sb.append("&", NutsTextStyle.separator());
             }
-            sb.append("exclusions", NutsTextNodeStyle.keyword(2)).append("=", NutsTextNodeStyle.separator());
-            sb.append(exclusions, NutsTextNodeStyle.error());
+            sb.append("exclusions", NutsTextStyle.keyword(2)).append("=", NutsTextStyle.separator());
+            sb.append(exclusions, NutsTextStyle.error());
         }
         if (!CoreStringUtils.isBlank(id.getPropertiesQuery())) {
             Set<String> otherKeys = new TreeSet<>(queryMap.keySet());
@@ -290,13 +290,13 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
                 String v = queryMap.get(k);
                 if (v != null) {
                     if (firstQ) {
-                        sb.append("?", NutsTextNodeStyle.separator());
+                        sb.append("?", NutsTextStyle.separator());
                         firstQ = false;
                     } else {
-                        sb.append("&", NutsTextNodeStyle.separator());
+                        sb.append("&", NutsTextStyle.separator());
                     }
-                    sb.append(v, NutsTextNodeStyle.pale());
-                    sb.append("=", NutsTextNodeStyle.separator());
+                    sb.append(v, NutsTextStyle.pale());
+                    sb.append("=", NutsTextStyle.separator());
                     sb.append(v);
                 }
             }

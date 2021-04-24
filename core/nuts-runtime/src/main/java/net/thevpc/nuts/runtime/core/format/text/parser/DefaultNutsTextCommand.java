@@ -29,7 +29,7 @@ package net.thevpc.nuts.runtime.core.format.text.parser;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsTerminalCommand;
 import net.thevpc.nuts.NutsTextCommand;
-import net.thevpc.nuts.NutsTextNodeType;
+import net.thevpc.nuts.NutsTextType;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.core.format.text.AnsiEscapeCommand;
 import net.thevpc.nuts.runtime.core.format.text.DefaultAnsiEscapeCommand;
@@ -57,8 +57,8 @@ public class DefaultNutsTextCommand extends NutsTextSpecialBase implements NutsT
     }
 
     @Override
-    public NutsTextNodeType getType() {
-        return NutsTextNodeType.COMMAND;
+    public NutsTextType getType() {
+        return NutsTextType.COMMAND;
     }
 
     @Override

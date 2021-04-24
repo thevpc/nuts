@@ -32,28 +32,28 @@ import java.util.List;
  *
  * @author vpc
  */
-public final class NutsTextNodeStyles implements Iterable<NutsTextNodeStyle> {
+public final class NutsTextStyles implements Iterable<NutsTextStyle> {
 
-    public static NutsTextNodeStyles NONE = new NutsTextNodeStyles(new NutsTextNodeStyle[0]);
+    public static NutsTextStyles NONE = new NutsTextStyles(new NutsTextStyle[0]);
 
-    private NutsTextNodeStyle[] elements;
+    private NutsTextStyle[] elements;
 
-    private NutsTextNodeStyles(NutsTextNodeStyle[] elements) {
+    private NutsTextStyles(NutsTextStyle[] elements) {
         this.elements = Arrays.copyOf(elements, elements.length);
     }
 
-    public static NutsTextNodeStyles of(NutsTextNodeStyle... others) {
+    public static NutsTextStyles of(NutsTextStyle... others) {
         return NONE.append(others);
     }
 
-    public static NutsTextNodeStyles of(NutsTextNodeStyle other) {
+    public static NutsTextStyles of(NutsTextStyle other) {
         if (other == null) {
             return NONE;
         }
-        return new NutsTextNodeStyles(new NutsTextNodeStyle[]{other});
+        return new NutsTextStyles(new NutsTextStyle[]{other});
     }
 
-    public NutsTextNodeStyles append(NutsTextNodeStyles other) {
+    public NutsTextStyles append(NutsTextStyles other) {
         if (other == null || other.isNone()) {
             return this;
         }
@@ -63,15 +63,15 @@ public final class NutsTextNodeStyles implements Iterable<NutsTextNodeStyle> {
         return append(other.elements);
     }
 
-    public NutsTextNodeStyles append(NutsTextNodeStyle... others) {
+    public NutsTextStyles append(NutsTextStyle... others) {
         if (others.length == 0) {
             return this;
         }
-        List<NutsTextNodeStyle> all = new ArrayList<NutsTextNodeStyle>(size() + others.length + 1);
-        for (NutsTextNodeStyle i : elements) {
+        List<NutsTextStyle> all = new ArrayList<NutsTextStyle>(size() + others.length + 1);
+        for (NutsTextStyle i : elements) {
             all.add(i);
         }
-        for (NutsTextNodeStyle i : others) {
+        for (NutsTextStyle i : others) {
             if (i != null) {
                 all.add(i);
             }
@@ -79,34 +79,34 @@ public final class NutsTextNodeStyles implements Iterable<NutsTextNodeStyle> {
         if (all.isEmpty()) {
             return NONE;
         }
-        return new NutsTextNodeStyles(all.toArray(new NutsTextNodeStyle[0]));
+        return new NutsTextStyles(all.toArray(new NutsTextStyle[0]));
     }
 
-    public NutsTextNodeStyles append(NutsTextNodeStyle other) {
+    public NutsTextStyles append(NutsTextStyle other) {
         if (other == null) {
             return this;
         }
-        NutsTextNodeStyle[] elements2 = new NutsTextNodeStyle[elements.length + 1];
+        NutsTextStyle[] elements2 = new NutsTextStyle[elements.length + 1];
         System.arraycopy(elements, 0, elements2, 0, elements.length);
         elements2[elements.length] = other;
-        return new NutsTextNodeStyles(elements2);
+        return new NutsTextStyles(elements2);
     }
 
-    public NutsTextNodeStyles removeLast() {
+    public NutsTextStyles removeLast() {
         if (elements.length <= 0) {
             return this;
         }
-        return new NutsTextNodeStyles(Arrays.copyOf(elements, elements.length - 1));
+        return new NutsTextStyles(Arrays.copyOf(elements, elements.length - 1));
     }
 
-    public NutsTextNodeStyles removeFirst() {
+    public NutsTextStyles removeFirst() {
         if (elements.length <= 0) {
             return this;
         }
-        return new NutsTextNodeStyles(Arrays.copyOfRange(elements, 1,elements.length));
+        return new NutsTextStyles(Arrays.copyOfRange(elements, 1,elements.length));
     }
 
-    public NutsTextNodeStyle get(int index) {
+    public NutsTextStyle get(int index) {
         return elements[index];
     }
 
@@ -124,7 +124,7 @@ public final class NutsTextNodeStyles implements Iterable<NutsTextNodeStyle> {
     }
 
     @Override
-    public Iterator<NutsTextNodeStyle> iterator() {
+    public Iterator<NutsTextStyle> iterator() {
         return Arrays.asList(elements).iterator();
     }
 

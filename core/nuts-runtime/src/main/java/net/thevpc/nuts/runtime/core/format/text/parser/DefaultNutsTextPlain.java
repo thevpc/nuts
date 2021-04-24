@@ -28,7 +28,7 @@ package net.thevpc.nuts.runtime.core.format.text.parser;
 
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsTextPlain;
-import net.thevpc.nuts.NutsTextNodeType;
+import net.thevpc.nuts.NutsTextType;
 
 /**
  * Created by vpc on 5/23/17.
@@ -43,8 +43,8 @@ public class DefaultNutsTextPlain extends AbstractNutsText implements NutsTextPl
     }
 
     @Override
-    public NutsTextNodeType getType() {
-        return NutsTextNodeType.PLAIN;
+    public NutsTextType getType() {
+        return NutsTextType.PLAIN;
     }
 
     @Override

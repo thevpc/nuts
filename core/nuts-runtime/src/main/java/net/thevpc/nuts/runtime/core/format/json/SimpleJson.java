@@ -32,7 +32,6 @@ import java.io.UncheckedIOException;
 import net.thevpc.nuts.NutsArrayElementBuilder;
 import net.thevpc.nuts.NutsElement;
 import net.thevpc.nuts.NutsObjectElementBuilder;
-import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.core.format.elem.NutsElementStreamFormat;
 import net.thevpc.nuts.NutsElementEntry;
@@ -44,11 +43,11 @@ import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
  *
  * @author vpc
  */
-public class MinimalJson implements NutsElementStreamFormat {
+public class SimpleJson implements NutsElementStreamFormat {
 
     private NutsWorkspace ws;
 
-    public MinimalJson(NutsWorkspace ws) {
+    public SimpleJson(NutsWorkspace ws) {
         this.ws = ws;
     }
 

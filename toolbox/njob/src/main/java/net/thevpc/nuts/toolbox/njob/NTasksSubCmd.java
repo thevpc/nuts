@@ -158,7 +158,7 @@ public class NTasksSubCmd {
             service.tasks().addTask(t);
             if (context.getSession().isPlainTrace()) {
                 context.getSession().out().printf("task %s (%s) added.\n",
-                        context.getWorkspace().formats().text().forStyled(t.getId(), NutsTextNodeStyle.primary(5)),
+                        context.getWorkspace().formats().text().forStyled(t.getId(), NutsTextStyle.primary(5)),
                         t.getName()
                 );
             }
@@ -397,8 +397,8 @@ public class NTasksSubCmd {
                 service.tasks().updateTask(task);
                 if (context.getSession().isPlainTrace()) {
                     context.getSession().out().printf("task %s (%s) updated.\n",
-                            text.text().forStyled(task.getId(), NutsTextNodeStyle.primary(5)),
-                            text.text().forStyled(task.getName(), NutsTextNodeStyle.primary(1))
+                            text.text().forStyled(task.getId(), NutsTextStyle.primary(5)),
+                            text.text().forStyled(task.getName(), NutsTextStyle.primary(1))
                     );
                 }
             }
@@ -600,18 +600,18 @@ public class NTasksSubCmd {
         NProject p = project == null ? null : service.projects().getProject(project);
         NTaskStatus s = x.getStatus();
         String dte0 = parent.getFormattedDate(x.getDueTime());
-        NutsTextNodeBuilder dte = ws.formats().text().builder();
+        NutsTextBuilder dte = ws.formats().text().builder();
         if (s == NTaskStatus.CANCELLED || s == NTaskStatus.DONE) {
-            dte.append(dte0, NutsTextNodeStyle.pale());
+            dte.append(dte0, NutsTextStyle.pale());
         } else if (x.getDueTime() != null && x.getDueTime().compareTo(Instant.now()) < 0) {
-            dte.append(dte0, NutsTextNodeStyle.error());
+            dte.append(dte0, NutsTextStyle.error());
         } else {
-            dte.append(dte0, NutsTextNodeStyle.keyword(2));
+            dte.append(dte0, NutsTextStyle.keyword(2));
         }
         String projectName = p != null ? p.getName() : project != null ? project : "*";
         return new Object[]{
             index,
-            ws.formats().text().builder().append(x.getId(), NutsTextNodeStyle.pale()),
+            ws.formats().text().builder().append(x.getId(), NutsTextStyle.pale()),
             parent.getFlagString(x.getFlag()),
             parent.getStatusString(x.getStatus()),
             parent.getPriorityString(x.getPriority()),
@@ -630,13 +630,13 @@ public class NTasksSubCmd {
                 if (service.tasks().removeTask(t.getId())) {
                     if (context.getSession().isPlainTrace()) {
                         context.getSession().out().printf("task %s removed.\n",
-                                text.text().forStyled(a.toString(), NutsTextNodeStyle.primary(5))
+                                text.text().forStyled(a.toString(), NutsTextStyle.primary(5))
                         );
                     }
                 } else {
                     context.getSession().out().printf("task %s %s.\n",
-                            text.text().forStyled(a.toString(), NutsTextNodeStyle.primary(5)),
-                            text.text().forStyled("not found", NutsTextNodeStyle.error())
+                            text.text().forStyled(a.toString(), NutsTextStyle.primary(5)),
+                            text.text().forStyled("not found", NutsTextStyle.error())
                     );
                 }
             }

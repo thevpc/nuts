@@ -1,12 +1,12 @@
 package net.thevpc.nuts.runtime.core.format.text;
 
-import net.thevpc.nuts.NutsTextNodeWriteConfiguration;
+import net.thevpc.nuts.NutsTextWriteConfiguration;
 import net.thevpc.nuts.NutsText;
 
 public interface NutsTextNodeWriter {
-    NutsTextNodeWriteConfiguration getWriteConfiguration();
+    NutsTextWriteConfiguration getWriteConfiguration();
 
-    NutsTextNodeWriter setWriteConfiguration(NutsTextNodeWriteConfiguration config);
+    NutsTextNodeWriter setWriteConfiguration(NutsTextWriteConfiguration config);
 
     void writeNode(NutsText node);
 

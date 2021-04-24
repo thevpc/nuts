@@ -206,7 +206,7 @@ public class NutsJavaShell extends JShell {
         out.println(appContext.getWorkspace().formats().text().builder()
                 .appendCode("sh", "nuts")
                 .append(" shell ")
-                .append("v" + getWorkspace().getRuntimeId().getVersion().toString(), NutsTextNodeStyle.version())
+                .append("v" + getWorkspace().getRuntimeId().getVersion().toString(), NutsTextStyle.version())
                 .append(" (c) thevpc 2020"));
     }
 

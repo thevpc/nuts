@@ -3,7 +3,7 @@ package net.thevpc.nuts;
 /**
  * @category Format
  */
-public enum NutsTextNodeType {
+public enum NutsTextType {
     PLAIN,
     LIST,
     TITLE,

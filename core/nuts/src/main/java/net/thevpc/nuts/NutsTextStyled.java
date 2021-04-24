@@ -5,5 +5,5 @@ package net.thevpc.nuts;
  */
 public interface NutsTextStyled extends NutsText {
     NutsText getChild();
-    NutsTextNodeStyles getStyles();
+    NutsTextStyles getStyles();
 }

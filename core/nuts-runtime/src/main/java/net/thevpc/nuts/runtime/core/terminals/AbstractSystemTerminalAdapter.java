@@ -9,14 +9,16 @@ import java.io.PrintStream;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.DefaultNutsQuestion;
+import net.thevpc.nuts.runtime.standalone.util.SearchTraceHelper;
+import net.thevpc.nuts.runtime.standalone.util.console.CProgressBar;
 import net.thevpc.nuts.spi.NutsInputStreamTransparentAdapter;
 import net.thevpc.nuts.spi.NutsSystemTerminalBase;
-import net.thevpc.nuts.spi.NutsTerminalBase;
 
 public abstract class AbstractSystemTerminalAdapter extends AbstractNutsTerminal implements NutsSystemTerminal, NutsSessionAware {
 
     private NutsWorkspace ws;
     private NutsSession session;
+    protected CProgressBar progressBar;
 
     @Override
     public void setSession(NutsSession session) {
@@ -214,15 +216,38 @@ public abstract class AbstractSystemTerminalAdapter extends AbstractNutsTerminal
     }
 
     @Override
-    public NutsTerminalBase printProgress(float progress, String prompt, Object... params) {
-        getParent().printProgress(progress, prompt, params);
+    public NutsTerminal printProgress(float progress, String prompt, Object... params) {
+        if (getParent() instanceof NutsTerminal) {
+            ((NutsTerminal) getParent()).printProgress(progress, prompt, params);
+        } else {
+            getProgressBar().printProgress(
+                    Float.isNaN(progress) ? -1
+                    : (int) (progress * 100),
+                    session.getWorkspace().formats().text().toText(NutsMessage.cstyle(prompt, params)).toString(),
+                    err()
+            );
+        }
         return this;
     }
 
     @Override
-    public NutsTerminalBase printProgress(String prompt, Object... params) {
-        getParent().printProgress(prompt, params);
+    public NutsTerminal printProgress(String prompt, Object... params) {
+        if (getParent() instanceof NutsTerminal) {
+            ((NutsTerminal) getParent()).printProgress(prompt, params);
+        } else {
+            getProgressBar().printProgress(-1,
+                    session.getWorkspace().formats().text().toText(NutsMessage.cstyle(prompt, params)).toString(),
+                    err()
+            );
+        }
         return this;
+    }
+
+    private CProgressBar getProgressBar() {
+        if (progressBar == null) {
+            progressBar = SearchTraceHelper.createProgressBar(session);
+        }
+        return progressBar;
     }
 
     public boolean isAutoCompleteSupported() {
@@ -256,6 +281,7 @@ public abstract class AbstractSystemTerminalAdapter extends AbstractNutsTerminal
         session.getWorkspace().term().sendTerminalCommand(out(), command);
         return this;
     }
+
     @Override
     public NutsTerminal sendErrCommand(NutsTerminalCommand command) {
         session.getWorkspace().term().sendTerminalCommand(out(), command);

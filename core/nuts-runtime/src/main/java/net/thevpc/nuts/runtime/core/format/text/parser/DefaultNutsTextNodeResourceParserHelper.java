@@ -80,7 +80,7 @@ public class DefaultNutsTextNodeResourceParserHelper {
 //        if (resource == null) {
 //            if (err) {
 //                return builder().append(
-//                        "not found resource " + urlPath, NutsTextNodeStyle.error()
+//                        "not found resource " + urlPath, NutsTextStyle.error()
 //                ).toString();
 //            }
 //            if (defaultValue == null) {
@@ -118,7 +118,7 @@ public class DefaultNutsTextNodeResourceParserHelper {
                             other = parseResource(e, classLoader);
                         } catch (Throwable t) {
                             other = session.getWorkspace().formats().text().
-                                    builder().append("NOT FOUND", NutsTextNodeStyle.error())
+                                    builder().append("NOT FOUND", NutsTextStyle.error())
                                     .append(" <" + e + ">").toNode();
                         }
                         sb.append(other);
@@ -137,11 +137,11 @@ public class DefaultNutsTextNodeResourceParserHelper {
         if (anchor != null) {
             List<NutsText> ok = new ArrayList<>();
             boolean start = false;
-            if (node.getType() == NutsTextNodeType.LIST) {
+            if (node.getType() == NutsTextType.LIST) {
                 for (NutsText o : ((NutsTextList) node)) {
                     if (start) {
                         ok.add(o);
-                    } else if (o.getType() == NutsTextNodeType.ANCHOR) {
+                    } else if (o.getType() == NutsTextType.ANCHOR) {
                         if (anchor.equals(((DefaultNutsTextAnchor) o).getValue())) {
                             start = true;
                         }

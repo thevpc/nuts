@@ -92,15 +92,15 @@ public class JobServiceCmd {
             long allJobsCount = service.jobs().findLastJobs(null, -1, null, null, null, null, null).count();
             NutsFormatManager text = context.getWorkspace().formats();
             NutsTextManager factory = text.text();
-            context.getSession().out().printf("%s open task%s\n", factory.forStyled("" + tasksCount, NutsTextNodeStyle.primary(1)), tasksCount == 1 ? "" : "s");
-            context.getSession().out().printf("%s job%s %s\n", factory.forStyled("" + allJobsCount, NutsTextNodeStyle.primary(1)), allJobsCount == 1 ? "" : "s",
+            context.getSession().out().printf("%s open task%s\n", factory.forStyled("" + tasksCount, NutsTextStyle.primary(1)), tasksCount == 1 ? "" : "s");
+            context.getSession().out().printf("%s job%s %s\n", factory.forStyled("" + allJobsCount, NutsTextStyle.primary(1)), allJobsCount == 1 ? "" : "s",
                     allJobsCount == 0 ? ""
                             : text.text().builder()
                                     .append("(")
-                                    .append("" + jobsCount, NutsTextNodeStyle.primary(1))
+                                    .append("" + jobsCount, NutsTextStyle.primary(1))
                                     .append(" this month)")
             );
-            context.getSession().out().printf("%s project%s\n", factory.forStyled("" + projectsCount, NutsTextNodeStyle.primary(1)), projectsCount == 1 ? "" : "s");
+            context.getSession().out().printf("%s project%s\n", factory.forStyled("" + projectsCount, NutsTextStyle.primary(1)), projectsCount == 1 ? "" : "s");
         }
     }
 
@@ -113,7 +113,7 @@ public class JobServiceCmd {
     }
 
     protected NutsString getFormattedProject(String projectName) {
-        NutsTextNodeBuilder builder = ws.formats().text().builder();
+        NutsTextBuilder builder = ws.formats().text().builder();
         builder.getStyleGenerator()
                 .setIncludeForeground(true)
                 .setUsePaletteColors();
@@ -147,19 +147,19 @@ public class JobServiceCmd {
         }
         switch (x) {
             case NONE:
-                return ws.formats().text().forStyled("0", NutsTextNodeStyle.pale());
+                return ws.formats().text().forStyled("0", NutsTextStyle.pale());
             case LOW:
-                return ws.formats().text().forStyled("L", NutsTextNodeStyle.pale());
+                return ws.formats().text().forStyled("L", NutsTextStyle.pale());
             case NORMAL:
                 return ws.formats().text().forPlain("N");
             case MEDIUM:
-                return ws.formats().text().forStyled("M", NutsTextNodeStyle.primary(1));
+                return ws.formats().text().forStyled("M", NutsTextStyle.primary(1));
             case URGENT:
-                return ws.formats().text().forStyled("U", NutsTextNodeStyle.primary(2));
+                return ws.formats().text().forStyled("U", NutsTextStyle.primary(2));
             case HIGH:
-                return ws.formats().text().forStyled("H", NutsTextNodeStyle.primary(3));
+                return ws.formats().text().forStyled("H", NutsTextStyle.primary(3));
             case CRITICAL:
-                return ws.formats().text().forStyled("C", NutsTextNodeStyle.fail());
+                return ws.formats().text().forStyled("C", NutsTextStyle.fail());
         }
         return context.getWorkspace().formats().text().forPlain("?");
     }
@@ -173,11 +173,11 @@ public class JobServiceCmd {
             case TODO:
                 return text.text().forPlain("\u24c9");
             case DONE:
-                return text.text().forStyled("\u2611", NutsTextNodeStyle.success());
+                return text.text().forStyled("\u2611", NutsTextStyle.success());
             case WIP:
-                return text.text().forStyled("\u24CC", NutsTextNodeStyle.primary(1));
+                return text.text().forStyled("\u24CC", NutsTextStyle.primary(1));
             case CANCELLED:
-                return text.text().forStyled("\u2718", NutsTextNodeStyle.fail());
+                return text.text().forStyled("\u2718", NutsTextStyle.fail());
         }
         return context.getWorkspace().formats().text().forPlain("?");
     }
@@ -185,15 +185,15 @@ public class JobServiceCmd {
     private NutsString getFlagString(String x, int index) {
         switch (index) {
             case 1:
-                return ws.formats().text().forStyled(x, NutsTextNodeStyle.primary(1));
+                return ws.formats().text().forStyled(x, NutsTextStyle.primary(1));
             case 2:
-                return ws.formats().text().forStyled(x, NutsTextNodeStyle.primary(2));
+                return ws.formats().text().forStyled(x, NutsTextStyle.primary(2));
             case 3:
-                return ws.formats().text().forStyled(x, NutsTextNodeStyle.primary(3));
+                return ws.formats().text().forStyled(x, NutsTextStyle.primary(3));
             case 4:
-                return ws.formats().text().forStyled(x, NutsTextNodeStyle.primary(4));
+                return ws.formats().text().forStyled(x, NutsTextStyle.primary(4));
             case 5:
-                return ws.formats().text().forStyled(x, NutsTextNodeStyle.primary(5));
+                return ws.formats().text().forStyled(x, NutsTextStyle.primary(5));
         }
         throw new NutsIllegalArgumentException(context.getSession(), "Invalid index " + index);
     }
@@ -313,8 +313,8 @@ public class JobServiceCmd {
 
         session.out().printf(
                 "%s interactive mode. type %s to quit.%n",
-                factory.forStyled(context.getAppId().getArtifactId() + " " + context.getAppId().getVersion(), NutsTextNodeStyle.primary(1)),
-                factory.forStyled("q", NutsTextNodeStyle.error())
+                factory.forStyled(context.getAppId().getArtifactId() + " " + context.getAppId().getVersion(), NutsTextStyle.primary(1)),
+                factory.forStyled("q", NutsTextStyle.error())
         );
         InputStream in = session.getTerminal().in();
         Exception lastError = null;

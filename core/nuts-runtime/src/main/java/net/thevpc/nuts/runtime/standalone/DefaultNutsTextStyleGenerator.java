@@ -1,13 +1,13 @@
 package net.thevpc.nuts.runtime.standalone;
 
-import net.thevpc.nuts.NutsTextNodeStyle;
+import net.thevpc.nuts.NutsTextStyle;
 import net.thevpc.nuts.NutsTextStyleGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.function.Function;
-import net.thevpc.nuts.NutsTextNodeStyles;
+import net.thevpc.nuts.NutsTextStyles;
 
 public class DefaultNutsTextStyleGenerator implements NutsTextStyleGenerator {
     private boolean includeForeground;
@@ -28,8 +28,8 @@ public class DefaultNutsTextStyleGenerator implements NutsTextStyleGenerator {
     private boolean includeStriked;
     private Random rnd = new Random();
 
-    private List<NutsTextNodeStyle> decos;
-    private List<Function<Integer, NutsTextNodeStyles>> supps;
+    private List<NutsTextStyle> decos;
+    private List<Function<Integer, NutsTextStyles>> supps;
 
     private int resolveColorType() {
         switch (colors) {
@@ -46,13 +46,13 @@ public class DefaultNutsTextStyleGenerator implements NutsTextStyleGenerator {
         return 3;
     }
 
-    private NutsTextNodeStyle fg(int i) {
+    private NutsTextStyle fg(int i) {
         switch (resolveColorType()) {
             case 1: {
                 if (i < 0) {
                     i = rnd.nextInt(16);
                 }
-                return NutsTextNodeStyle.primary(
+                return NutsTextStyle.primary(
                         i % (16)
                 );
             }
@@ -60,7 +60,7 @@ public class DefaultNutsTextStyleGenerator implements NutsTextStyleGenerator {
                 if (i < 0) {
                     i = rnd.nextInt(256);
                 }
-                return NutsTextNodeStyle.foregroundColor(
+                return NutsTextStyle.foregroundColor(
                         i % (256)
                 );
             }
@@ -68,20 +68,20 @@ public class DefaultNutsTextStyleGenerator implements NutsTextStyleGenerator {
                 if (i < 0) {
                     i = rnd.nextInt(2 << 24);
                 }
-                return NutsTextNodeStyle.foregroundTrueColor(
+                return NutsTextStyle.foregroundTrueColor(
                         i % (2 << 24)
                 );
             }
         }
     }
 
-    private NutsTextNodeStyle bg(int i) {
+    private NutsTextStyle bg(int i) {
         switch (resolveColorType()) {
             case 1: {
                 if (i < 0) {
                     i = rnd.nextInt(16);
                 }
-                return NutsTextNodeStyle.secondary(
+                return NutsTextStyle.secondary(
                         i % (16)
                 );
             }
@@ -89,7 +89,7 @@ public class DefaultNutsTextStyleGenerator implements NutsTextStyleGenerator {
                 if (i < 0) {
                     i = rnd.nextInt(256);
                 }
-                return NutsTextNodeStyle.backgroundColor(
+                return NutsTextStyle.backgroundColor(
                         i % (256)
                 );
             }
@@ -97,44 +97,44 @@ public class DefaultNutsTextStyleGenerator implements NutsTextStyleGenerator {
                 if (i < 0) {
                     i = rnd.nextInt(2 << 24);
                 }
-                return NutsTextNodeStyle.backgroundTrueColor(
+                return NutsTextStyle.backgroundTrueColor(
                         i % (2 << 24)
                 );
             }
         }
     }
 
-    private List<Function<Integer, NutsTextNodeStyles>> supps() {
+    private List<Function<Integer, NutsTextStyles>> supps() {
         if (supps == null) {
             boolean includeAny = isIncludeAny();
             supps = new ArrayList<>();
             if (includePlain || includeAny) {
-                supps.add((i) -> NutsTextNodeStyles.NONE);
+                supps.add((i) -> NutsTextStyles.NONE);
             }
             if (includeForeground || includeAny) {
                 supps.add((i) -> {
-                    NutsTextNodeStyle s = fg(i);
+                    NutsTextStyle s = fg(i);
                     if (!decos().isEmpty() && rnd.nextBoolean()) {
-                        NutsTextNodeStyle s2 = decos().get(rnd.nextInt(decos().size()));
-                        return NutsTextNodeStyles.of(s,s2);
+                        NutsTextStyle s2 = decos().get(rnd.nextInt(decos().size()));
+                        return NutsTextStyles.of(s,s2);
                     }
-                    return NutsTextNodeStyles.of(s);
+                    return NutsTextStyles.of(s);
                 });
             }
             if (includeBackground || includeAny) {
                 supps.add((i) -> {
-                    NutsTextNodeStyle s = bg(-1);
+                    NutsTextStyle s = bg(-1);
                     if (!decos().isEmpty() && rnd.nextBoolean()) {
-                        NutsTextNodeStyle s2 = decos().get(rnd.nextInt(decos().size()));
-                        return NutsTextNodeStyles.of(s, s2);
+                        NutsTextStyle s2 = decos().get(rnd.nextInt(decos().size()));
+                        return NutsTextStyles.of(s, s2);
                     }
-                    return NutsTextNodeStyles.of(s);
+                    return NutsTextStyles.of(s);
                 });
             }
             if (!decos().isEmpty() && rnd.nextBoolean()) {
                 supps.add((i) -> {
-                    NutsTextNodeStyle s2 = decos().get(rnd.nextInt(decos().size()));
-                    return NutsTextNodeStyles.of(s2);
+                    NutsTextStyle s2 = decos().get(rnd.nextInt(decos().size()));
+                    return NutsTextStyles.of(s2);
                 });
             }
         }
@@ -142,12 +142,12 @@ public class DefaultNutsTextStyleGenerator implements NutsTextStyleGenerator {
     }
 
     @Override
-    public NutsTextNodeStyles hash(Object i) {
+    public NutsTextStyles hash(Object i) {
         return hash(i == null ? 0 : i.hashCode());
     }
 
     @Override
-    public NutsTextNodeStyles hash(int i) {
+    public NutsTextStyles hash(int i) {
         i = Math.abs(i);
         int a = (i & 3) % supps().size();
         i = i >> 2;
@@ -155,7 +155,7 @@ public class DefaultNutsTextStyleGenerator implements NutsTextStyleGenerator {
     }
 
     @Override
-    public NutsTextNodeStyles random() {
+    public NutsTextStyles random() {
         return supps().get(
                 rnd.nextInt(supps().size())
         ).apply(-1);
@@ -238,27 +238,27 @@ public class DefaultNutsTextStyleGenerator implements NutsTextStyleGenerator {
         return this;
     }
 
-    private List<NutsTextNodeStyle> decos() {
+    private List<NutsTextStyle> decos() {
         boolean includeAny = isIncludeAny();
         if (decos == null) {
             decos = new ArrayList<>();
             if ((includeStriked || includeAny)) {
-                decos.add(NutsTextNodeStyle.striked());
+                decos.add(NutsTextStyle.striked());
             }
             if ((includeBold || includeAny)) {
-                decos.add(NutsTextNodeStyle.bold());
+                decos.add(NutsTextStyle.bold());
             }
             if ((includeBlink || includeAny)) {
-                decos.add(NutsTextNodeStyle.blink());
+                decos.add(NutsTextStyle.blink());
             }
             if ((includeReversed || includeAny)) {
-                decos.add(NutsTextNodeStyle.reversed());
+                decos.add(NutsTextStyle.reversed());
             }
             if ((includeItalic || includeAny)) {
-                decos.add(NutsTextNodeStyle.italic());
+                decos.add(NutsTextStyle.italic());
             }
             if ((includeUnderlined || includeAny)) {
-                decos.add(NutsTextNodeStyle.underlined());
+                decos.add(NutsTextStyle.underlined());
             }
         }
         return decos;

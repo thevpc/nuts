@@ -1,8 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.util.console;
 
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsTextNodeBuilder;
-import net.thevpc.nuts.NutsTextNodeStyle;
+import net.thevpc.nuts.NutsTextStyle;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.core.format.text.FPrintCommands;
@@ -10,6 +9,7 @@ import net.thevpc.nuts.runtime.core.format.text.FPrintCommands;
 import java.io.PrintStream;
 import java.util.Calendar;
 import java.util.Set;
+import net.thevpc.nuts.NutsTextBuilder;
 
 /**
  *
@@ -330,7 +330,7 @@ public class CProgressBar {
         lastPrint = now;
         boolean indeterminate = percent < 0;
         if (indeterminate) {
-            NutsTextNodeBuilder formattedLine = session.getWorkspace().formats().text().builder();
+            NutsTextBuilder formattedLine = session.getWorkspace().formats().text().builder();
             formattedLine.append(getFormatter().getStart());
             int indeterminateSize = (int) (this.indeterminateSize * size);
             boolean forward = true;
@@ -366,7 +366,7 @@ public class CProgressBar {
             for (int i = 0; i < indeterminateSize; i++) {
                 sb.append(getFormatter().getIntermediateIndicator(i, indeterminateSize, x, forward));
             }
-            formattedLine.append(sb.toString(), NutsTextNodeStyle.primary(1));
+            formattedLine.append(sb.toString(), NutsTextStyle.primary(1));
             int r = size - x - indeterminateSize;
             sb.setLength(0);
             for (int i = 0; i < r; i++) {
@@ -382,14 +382,14 @@ public class CProgressBar {
             double d = (size / 100.0 * percent);
             int x = (int) d;
             float rest = (float) (d - x);
-            NutsTextNodeBuilder formattedLine = session.getWorkspace().formats().text().builder();
+            NutsTextBuilder formattedLine = session.getWorkspace().formats().text().builder();
             formattedLine.append(getFormatter().getStart());
             if (x > 0) {
                 StringBuilder sb = new StringBuilder();
                 for (int i = 0; i < x; i++) {
                     sb.append(getFormatter().getIndicator(1, i));
                 }
-                formattedLine.append(sb.toString(), NutsTextNodeStyle.primary(1));
+                formattedLine.append(sb.toString(), NutsTextStyle.primary(1));
             }
             StringBuilder sb = new StringBuilder();
             if (rest > 0 && (size - x) > 0) {
