@@ -2,9 +2,7 @@ package net.thevpc.nuts.toolbox.nwork;
 
 import java.awt.*;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class Colors255 {
     public static final NamedColor BLACK = new NamedColor("Black", new Color(0, 0, 0));
