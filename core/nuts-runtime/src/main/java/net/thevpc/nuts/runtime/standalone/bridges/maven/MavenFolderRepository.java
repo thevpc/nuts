@@ -37,7 +37,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
-import java.util.logging.Level;
 
 import net.thevpc.nuts.runtime.standalone.repos.NutsCachedRepository;
 import net.thevpc.nuts.runtime.bundles.iter.IteratorUtils;
@@ -57,6 +56,11 @@ public class MavenFolderRepository extends NutsCachedRepository {
         @Override
         protected NutsInput openStream(NutsId id, String path, Object source, String typeName, NutsSession session) {
             return session.getWorkspace().io().input().setTypeName(typeName).of(Paths.get(path));
+        }
+
+        @Override
+        protected boolean exists(NutsId id, String path, Object source, String typeName, NutsSession session) {
+            return Files.isRegularFile(Paths.get(path));
         }
 
         @Override
@@ -153,24 +157,24 @@ public class MavenFolderRepository extends NutsCachedRepository {
         if (fetchMode != NutsFetchMode.REMOTE) {
             if (id.getVersion().isSingleValue()) {
                 Path f = getIdFile(id.builder().setFaceDescriptor().build(), session);
-                if (f != null && Files.exists(f)) {
-                    NutsDescriptor d = null;
-                    try {
-                        d = MavenUtils.of(session).parsePomXml(f, fetchMode, this, session);
-                    } catch (Exception ex) {
-                        LOG.with().session(session).level(Level.SEVERE).error(ex)
-                                .log("failed to parse pom file {0} : {1}", f, ex);
-                        //
-                    }
-                    if (d != null) {
-                        return Collections.singletonList(id.builder().setNamespace(getName()).build()).iterator();
-                    }
+                if (f != null && Files.isRegularFile(f)) {
+//                    NutsDescriptor d = null;
+//                    try {
+//                        d = MavenUtils.of(session).parsePomXml(f, fetchMode, this, session);
+//                    } catch (Exception ex) {
+//                        LOG.with().session(session).level(Level.SEVERE).error(ex)
+//                                .log("failed to parse pom file {0} : {1}", f, ex);
+//                        //
+//                    }
+//                    if (d != null) {
+                    return Collections.singletonList(id.builder().setNamespace(getName()).build()).iterator();
+//                    }
                 }
 //                return IteratorUtils.emptyIterator();
                 return null;
             }
             try {
-                namedNutIdIterator = findInFolder(getLocalGroupAndArtifactFile(id, session),
+                namedNutIdIterator = findInFolder(getLocationAsPath(session),getLocalGroupAndArtifactFile(id, session),
                         session.getWorkspace().id().filter().nonnull(idFilter).and(
                                 session.getWorkspace().id().filter().byName(id.getShortName())
                         ),
@@ -211,28 +215,11 @@ public class MavenFolderRepository extends NutsCachedRepository {
         return super.searchLatestVersion(id, filter, fetchMode, session);
     }
 
-    protected Iterator<NutsId> findInFolder(Path folder, final NutsIdFilter filter, int maxDepth, NutsSession session) {
+    protected Iterator<NutsId> findInFolder(Path rootPath,Path folder, final NutsIdFilter filter, int maxDepth, NutsSession session) {
         if (folder == null || !Files.exists(folder) || !Files.isDirectory(folder)) {
             return null;//IteratorUtils.emptyIterator();
         }
-        return new FolderNutIdIterator(getName(), folder, filter, session, new FolderNutIdIterator.FolderNutIdIteratorModel() {
-            @Override
-            public void undeploy(NutsId id, NutsSession session) {
-                MavenFolderRepository.this.undeploy().setId(id).setSession(session)
-                        //.setFetchMode(NutsFetchMode.LOCAL)
-                        .run();
-            }
-
-            @Override
-            public boolean isDescFile(Path pathname) {
-                return pathname.getFileName().toString().endsWith(".pom");
-            }
-
-            @Override
-            public NutsDescriptor parseDescriptor(Path pathname, NutsSession session) throws IOException {
-                return MavenUtils.of(session).parsePomXml(pathname, NutsFetchMode.LOCAL, MavenFolderRepository.this, session);
-            }
-        }, maxDepth);
+        return new FolderNutIdIterator(getName(), folder,rootPath, filter, session, new MavenFolderRepositoryIteratorModel(), maxDepth);
     }
 
     @Override
@@ -244,9 +231,9 @@ public class MavenFolderRepository extends NutsCachedRepository {
             for (String root : roots) {
                 if (root.endsWith("/*")) {
                     String name = root.substring(0, root.length() - 2);
-                    list.add(findInFolder(locationFolder.resolve(name), filter, Integer.MAX_VALUE, session));
+                    list.add(findInFolder(locationFolder,locationFolder.resolve(name), filter, Integer.MAX_VALUE, session));
                 } else {
-                    list.add(findInFolder(locationFolder.resolve(root), filter, 2, session));
+                    list.add(findInFolder(locationFolder,locationFolder.resolve(root), filter, 2, session));
                 }
             }
 
@@ -308,5 +295,67 @@ public class MavenFolderRepository extends NutsCachedRepository {
     @Override
     public boolean isAcceptFetchMode(NutsFetchMode mode, NutsSession session) {
         return mode == NutsFetchMode.LOCAL;
+    }
+
+    class MavenFolderRepositoryIteratorModel extends FolderNutIdIterator.AbstractFolderNutIdIteratorModel {
+
+        public MavenFolderRepositoryIteratorModel() {
+        }
+
+        @Override
+        public void undeploy(NutsId id, NutsSession session) {
+            MavenFolderRepository.this.undeploy().setId(id).setSession(session)
+                    //.setFetchMode(NutsFetchMode.LOCAL)
+                    .run();
+        }
+
+        @Override
+        public boolean isDescFile(Path pathname) {
+            return pathname.getFileName().toString().endsWith(".pom");
+        }
+
+        @Override
+        public NutsDescriptor parseDescriptor(Path pathname, NutsSession session) throws IOException {
+            return MavenUtils.of(session).parsePomXml(pathname, NutsFetchMode.LOCAL, MavenFolderRepository.this, session);
+        }
+
+        @Override
+        public NutsId parseId(Path pomFile, Path rootPath, NutsIdFilter filter, String repository, NutsSession session) throws IOException {
+            if (Files.isRegularFile(pomFile)) {
+                String fn = pomFile.getFileName().toString();
+                if (fn.endsWith(".pom")) {
+                    Path versionFolder = pomFile.getParent();
+                    if (versionFolder != null) {
+                        String vn = versionFolder.getFileName().toString();
+                        Path artifactFolder = versionFolder.getParent();
+                        if (artifactFolder != null) {
+                            String an = artifactFolder.getFileName().toString();
+                            if (fn.equals(an + "-" + vn + ".pom")) {
+                                Path groupFolder = artifactFolder.getParent();
+                                if (groupFolder != null) {
+                                    Path gg = groupFolder.subpath(rootPath.getNameCount(), groupFolder.getNameCount());
+                                    StringBuilder gn = new StringBuilder();
+                                    for (int i = 0; i < gg.getNameCount(); i++) {
+                                        String ns = gg.getName(i).toString();
+                                        if(i>0){
+                                            gn.append('.');
+                                        }
+                                        gn.append(ns);
+                                    }
+                                    return validate(
+                                            session.getWorkspace().id().builder()
+                                                    .setGroupId(gn.toString())
+                                                    .setArtifactId(an)
+                                                    .setVersion(vn)
+                                                    .build()
+                                            , null, filter, repository, session);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return null;
+        }
     }
 }

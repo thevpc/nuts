@@ -74,13 +74,13 @@ public class DefaultNutsTextManager implements NutsTextManager {
             return (NutsText) t;
         }
         if (t instanceof NutsFormattable) {
-            return parse(((NutsFormattable) t).formatter().format());
+            return parse(((NutsFormattable) t).formatter().setNtf(true).format());
         }
         if (t instanceof NutsMessage) {
             return _NutsFormattedMessage_toString((NutsMessage) t);
         }
         if (t instanceof NutsString) {
-            return ((NutsString) t).toNode();
+            return ((NutsString) t).toText();
         }
         if (t instanceof Number) {
             return forStyled(t.toString(), NutsTextStyle.number());

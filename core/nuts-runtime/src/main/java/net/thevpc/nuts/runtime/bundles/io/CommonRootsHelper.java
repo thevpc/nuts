@@ -101,14 +101,14 @@ public class CommonRootsHelper {
         return new PathBase(sb.toString(), a.deep || b.deep);
     }
 
-    private static Set<PathBase> resolveRootId(String id) {
-        String g = id;
+    private static Set<PathBase> resolveRootId(String groupId, String artifactId, String version) {
+        String g = groupId;
         if (g == null) {
             g = "";
         }
         g = g.trim();
         if (g.isEmpty()) {
-            return new HashSet<PathBase>(Arrays.asList(new PathBase(g, true)));
+            return new HashSet<PathBase>(Arrays.asList(new PathBase(g.replace('.', '/'), true)));
         }
         int i = g.indexOf("*");
         boolean deep = false;
@@ -119,13 +119,23 @@ public class CommonRootsHelper {
             if (j >= 0) {
                 g = g.substring(0, j);
             }
+            return new HashSet<PathBase>(Arrays.asList(new PathBase(g.replace('.', '/'), deep)));
         }
-        return new HashSet<PathBase>(Arrays.asList(new PathBase(g, deep)));
+        if (artifactId.length() > 0) {
+            if (!artifactId.contains("*")) {
+                if (version.length() > 0 && !version.contains("*") && !version.contains("[") && !version.contains("]")) {
+                    return new HashSet<PathBase>(Arrays.asList(new PathBase(g.replace('.', '/')+"/"+artifactId+"/"+version, deep)));
+                }else{
+                    return new HashSet<PathBase>(Arrays.asList(new PathBase(g.replace('.', '/')+"/"+artifactId, deep)));
+                }
+            }
+        }
+        return new HashSet<PathBase>(Arrays.asList(new PathBase(g.replace('.', '/'), deep)));
     }
 
     public static List<PathBase> resolveRootPaths(NutsIdFilter filter) {
         return CommonRootsHelper.resolveRootIds(filter).stream().map(x -> (x == null || x.name.isEmpty()) ? new PathBase(".", x.deep) : new PathBase(
-                x.name.replace('.', File.separatorChar), x.deep
+                x.name, x.deep
         )).collect(Collectors.toList());
     }
 
@@ -166,7 +176,7 @@ public class CommonRootsHelper {
         }
         if (filter instanceof NutsPatternIdFilter) {
             NutsPatternIdFilter f = ((NutsPatternIdFilter) filter);
-            return resolveRootId(f.getId().getGroupId());
+            return resolveRootId(f.getId().getGroupId(), f.getId().getArtifactId(), f.getId().getVersion().toString());
         }
         return null;
     }

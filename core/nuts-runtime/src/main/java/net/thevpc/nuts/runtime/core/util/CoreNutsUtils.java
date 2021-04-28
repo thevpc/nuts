@@ -138,16 +138,52 @@ public class CoreNutsUtils {
 //                    }
 //            )
 //            .build();
+    public static final boolean SUPPORTS_UTF_ENCODING;
 
     static {
         _QUERY_EMPTY_ENV.put(NutsConstants.IdProperties.ARCH, null);
         _QUERY_EMPTY_ENV.put(NutsConstants.IdProperties.OS, null);
         _QUERY_EMPTY_ENV.put(NutsConstants.IdProperties.OSDIST, null);
         _QUERY_EMPTY_ENV.put(NutsConstants.IdProperties.PLATFORM, null);
+        SUPPORTS_UTF_ENCODING = new String("ø".getBytes()).equals("ø");
     }
 
     public static String randomColorName() {
         return COLOR_NAMES[(int) (Math.random() * COLOR_NAMES.length)];
+    }
+
+    public static String repeat(char txt, int count) {
+        StringBuilder sb = new StringBuilder(count);
+        for (int i = 0; i < count; i++) {
+            sb.append(txt);
+
+        }
+        return sb.toString();
+    }
+
+    public static NutsString createBox(NutsTextManager txt, NutsString text) {
+        int len = text.filteredText().length();
+        char c1l = SUPPORTS_UTF_ENCODING ? '╭' : '.';
+        char c1r = SUPPORTS_UTF_ENCODING ? '╮' : '.';
+        char c2l = SUPPORTS_UTF_ENCODING ? '╰' : '.';
+        char c2r = SUPPORTS_UTF_ENCODING ? '╯' : '.';
+        char h = SUPPORTS_UTF_ENCODING ? '─' : '-';
+        char v = SUPPORTS_UTF_ENCODING ? '│' : '|';
+        return txt.builder()
+                .append(String.valueOf(c1l)+repeat(h, len + 2)+String.valueOf(c1r), NutsTextStyle.primary(2))
+                .append("\n")
+
+                .append(String.valueOf(v), NutsTextStyle.primary(2))
+                .append(" ")
+                .append(text)
+                .append(" ")
+                .append(String.valueOf(v), NutsTextStyle.primary(2))
+                .append("\n")
+                .append(String.valueOf(c2l), NutsTextStyle.primary(2))
+                .append(repeat(h, len + 2), NutsTextStyle.primary(2))
+                .append(String.valueOf(c2r), NutsTextStyle.primary(2))
+                .append("\n")
+                ;
     }
 
     public static NutsId findNutsIdBySimpleName(NutsId id, Collection<NutsId> all) {
@@ -653,7 +689,6 @@ public class CoreNutsUtils {
 //        }
 //        return f;
 //    }
-
     public static void traceMessage(NutsLogger log, Level lvl, String name, NutsSession session, NutsFetchMode fetchMode, NutsId id, NutsLogVerb tracePhase, String title, long startTime, String extraMsg) {
         if (!log.isLoggable(lvl)) {
             return;
@@ -860,7 +895,6 @@ public class CoreNutsUtils {
 //        }
 //        return o;
 //    }
-
 //    public static NutsAddOptions validate(NutsAddOptions o, NutsWorkspace ws) {
 //        if (o == null) {
 //            o = new NutsAddOptions();
@@ -872,7 +906,6 @@ public class CoreNutsUtils {
 //        }
 //        return o;
 //    }
-
 //    public static NutsRemoveOptions validate(NutsRemoveOptions o, NutsWorkspace ws) {
 //        if (o == null) {
 //            o = new NutsRemoveOptions();
@@ -884,7 +917,6 @@ public class CoreNutsUtils {
 //        }
 //        return o;
 //    }
-
 //    public static NutsAddOptions toAddOptions(NutsUpdateOptions o) {
 //        return new NutsAddOptions().setSession(o.getSession());
 //    }
@@ -908,7 +940,6 @@ public class CoreNutsUtils {
 //    public static NutsRemoveOptions toRemoveOptions(NutsRemoveOptions o) {
 //        return new NutsRemoveOptions().setSession(o.getSession());
 //    }
-
     public static String idToPath(NutsId id) {
         return id.getGroupId().replace('.', '/') + "/"
                 + id.getArtifactId() + "/" + id.getVersion();

@@ -24,7 +24,7 @@ public class DispatchAction extends ParserStep {
     }
 
     @Override
-    public NutsText toNode() {
+    public NutsText toText() {
         throw new IllegalArgumentException();
     }
 

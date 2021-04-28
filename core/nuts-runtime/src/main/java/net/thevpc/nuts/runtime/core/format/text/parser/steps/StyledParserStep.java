@@ -10,6 +10,7 @@ import net.thevpc.nuts.runtime.bundles.string.StringBuilder2;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.IntPredicate;
+import net.thevpc.nuts.NutsConstants;
 import net.thevpc.nuts.NutsTextStyles;
 import net.thevpc.nuts.NutsText;
 
@@ -61,7 +62,7 @@ public class StyledParserStep extends ParserStep {
                 state.applyPush(new StyledParserStep(
                         e2, false, ws, state
                 ));
-            } else if (c == 'ø') {
+            } else if (c == NutsConstants.Ntf.SILENT) {
                 state.applyPop();
             } else {
                 state.applyPopReject(c);
@@ -72,7 +73,7 @@ public class StyledParserStep extends ParserStep {
 //            state.applyPopReject(c);
 //            return;
 //        }
-        if (c == 'ø') {
+        if (c == NutsConstants.Ntf.SILENT) {
             if (!started) {
                 started = true;
                 state.applyPush(new DispatchAction(false, false));
@@ -190,7 +191,7 @@ public class StyledParserStep extends ParserStep {
     }
 
     @Override
-    public NutsText toNode() {
+    public NutsText toText() {
         DefaultNutsTextManager factory0 = (DefaultNutsTextManager) ws.formats().text();
         String start = this.start.toString();
         String end = this.end.toString();
@@ -225,11 +226,11 @@ public class StyledParserStep extends ParserStep {
 
         NutsText child = null;
         if (children.size() == 1) {
-            child = children.get(0).toNode();
+            child = children.get(0).toText();
         } else {
             List<NutsText> allChildren = new ArrayList<>();
             for (ParserStep a : children) {
-                allChildren.add(a.toNode());
+                allChildren.add(a.toText());
             }
             child = ws.formats().text().forList(allChildren.toArray(new NutsText[0]));
         }

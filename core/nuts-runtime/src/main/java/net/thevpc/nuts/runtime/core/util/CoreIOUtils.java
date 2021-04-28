@@ -247,6 +247,62 @@ public class CoreIOUtils {
         }
     }
 
+    public static String urlTrimLastSlash(String url) {
+        int x = url.length() - 1;
+        if(x==0){
+            return "";
+        }
+        while (x > 0) {
+            char c = url.charAt(x);
+            if (c == '/') {
+                x--;
+            } else {
+                break;
+            }
+        }
+        return url.substring(0,x);
+    }
+    
+    public static String urlTrimFirstSlash(String url) {
+        int len=url.length();
+        if(len==0){
+            return "";
+        }
+        int x=0;
+        while (x < len) {
+            char c = url.charAt(x);
+            if (c == '/') {
+                x++;
+            } else {
+                break;
+            }
+        }
+        return url.substring(x);
+    }
+    
+    public static String getURLParent(String url) {
+        int x = url.length() - 1;
+        if(x==0){
+            return "";
+        }
+        while (x > 0) {
+            char c = url.charAt(x);
+            if (c == '/') {
+                x--;
+            } else {
+                break;
+            }
+        }
+        while (x > 0) {
+            char c = url.charAt(x);
+            if (c == '/') {
+                break;
+            }
+            x--;
+        }
+        return url.substring(0,x);
+    }
+
     public static File toFile(URL url) {
         if (url == null) {
             return null;

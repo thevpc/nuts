@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.core.format.text.parser.steps;
 
-import net.thevpc.nuts.NutsTextStyle;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.core.format.text.DefaultNutsTextManager;
 import net.thevpc.nuts.runtime.core.format.text.parser.*;
@@ -37,18 +36,18 @@ public class TitleParserStep extends ParserStep {
     }
 
     @Override
-    public NutsText toNode() {
+    public NutsText toText() {
         String s = start.toString();
 //        NutsTextManager text = ws.formats().text();
         DefaultNutsTextManager factory0 = (DefaultNutsTextManager) ws.formats().text();
         String s0=s.trim();
         NutsText child=null;
         if (children.size() == 1) {
-            child=children.get(0).toNode();
+            child=children.get(0).toText();
         }else{
             List<NutsText> all = new ArrayList<>();
             for (ParserStep a : children) {
-                all.add(a.toNode());
+                all.add(a.toText());
             }
             child= ws.formats().text().forList(all);
         }

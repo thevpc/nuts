@@ -125,7 +125,7 @@ public class AntiQuote3ParserStep extends ParserStep {
     }
 
     @Override
-    public NutsText toNode() {
+    public NutsText toText() {
         char[] dst = new char[value.length()];
         value.getChars(0,value.length(), dst,0 );
         DefaultNutsTextManager factory0 = (DefaultNutsTextManager) ws.formats().text();

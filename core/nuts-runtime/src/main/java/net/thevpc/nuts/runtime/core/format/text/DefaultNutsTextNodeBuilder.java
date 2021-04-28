@@ -210,7 +210,7 @@ public class DefaultNutsTextNodeBuilder implements NutsTextBuilder {
     }
 
     @Override
-    public NutsText toNode() {
+    public NutsText toText() {
         return build();
     }
 

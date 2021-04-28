@@ -5,12 +5,13 @@ import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextNodeParser
 import net.thevpc.nuts.runtime.bundles.string.StringBuilder2;
 
 import java.util.function.IntPredicate;
+import net.thevpc.nuts.NutsConstants;
 import net.thevpc.nuts.NutsText;
 
 public class PlainParserStep extends ParserStep {
 
     char last = '\0';
-    private boolean wasEscape;
+    private StringBuilder escape;
 //    private boolean spreadLines;
     private boolean lineStart;
     private StringBuilder2 value = new StringBuilder2();
@@ -23,27 +24,27 @@ public class PlainParserStep extends ParserStep {
         this.exitCondition = exitCondition;
 //        this.spreadLines = spreadLines;
         this.ws = ws;
-        this.lineStart = state.isLineStart() ;
+        this.lineStart = state.isLineStart();
         if (c == '\\') {
-            wasEscape = true;
+            escape = new StringBuilder("\\");
         } else {
             value.append(c);
         }
         last = c;
-        state.setLineStart(c=='\n');
+        state.setLineStart(c == '\n');
     }
 
     public PlainParserStep(String s, boolean spreadLines, boolean lineStart, NutsWorkspace ws, DefaultNutsTextNodeParser.State state, IntPredicate exitCondition) {
         this.state = state;
         this.exitCondition = exitCondition;
-        state.setLineStart(s.charAt(s.length()-1)=='\n');
+        state.setLineStart(s.charAt(s.length() - 1) == '\n');
         this.ws = ws;
 //        this.spreadLines = spreadLines;
         this.lineStart = lineStart;
-        value.append(s, 0, s.length()-1);
-        char c=s.charAt(s.length()-1);
+        value.append(s, 0, s.length() - 1);
+        char c = s.charAt(s.length() - 1);
         if (c == '\\') {
-            wasEscape = true;
+            escape = new StringBuilder("\\");
         } else {
             value.append(c);
         }
@@ -53,41 +54,31 @@ public class PlainParserStep extends ParserStep {
     @Override
     public void consume(char c, DefaultNutsTextNodeParser.State p) {
         char oldLast = last;
-        state.setLineStart(c=='\n');
+        state.setLineStart(c == '\n');
         last = c;
         switch (c) {
-            case '#':
-//            case '@':
-//            case '~':
-//                case '$':
-//                case '£':
-//                case '§':
-//                case '_':
-//                case '¤':
-//                case '^':
-//                case '¨':
-//                case '=':
-//                case '*':
-//                case '+':
-            {
-                if (wasEscape) {
-                    wasEscape = false;
+            case '#': {
+                if (escape != null) {
+                    if (!escape.toString().equals("\\")) {
+                        value.append(escape);
+                    }
+                    escape = null;
                     value.append(c);
                     last = '\0';
                     //p.applyContinue();
                     return;
                 } else {
-                    if(exitCondition!=null && exitCondition.test(c)){
+                    if (exitCondition != null && exitCondition.test(c)) {
                         p.applyPopReject(c);
                         return;
-                    }else {
+                    } else {
                         if (oldLast == c) {
                             value.readLast();
                             if (value.length() == 0) {
-                                p.applyDropReplace(new StyledParserStep(c + "" + c,  lineStart, ws,state));
+                                p.applyDropReplace(new StyledParserStep(c + "" + c, lineStart, ws, state));
                                 return;
                             } else {
-                                p.applyPopReplace(new StyledParserStep(c + "" + c, lineStart, ws,state));
+                                p.applyPopReplace(new StyledParserStep(c + "" + c, lineStart, ws, state));
                                 return;
                             }
                         }
@@ -96,45 +87,50 @@ public class PlainParserStep extends ParserStep {
                     }
                 }
             }
-            case 'ø': {
-                if (wasEscape) {
-                    wasEscape = false;
+            case NutsConstants.Ntf.SILENT: {
+                if (escape != null) {
+                    if (!escape.toString().equals("\\")) {
+                        value.append(escape);
+                    }
+                    escape = null;
                     value.append(c);
                     last = '\0';
                     //p.applyContinue();
                     return;
                 } else {
-                    if(exitCondition!=null && exitCondition.test(c)){
+                    if (exitCondition != null && exitCondition.test(c)) {
                         p.applyPopReject(c);
                         return;
-                    }else {
+                    } else {
                         p.applyPop();
                         return;
                     }
                 }
             }
-            case '`':
-//            case '"':
-//            case '\'':
-//                case '(':
-//                case '[':
-//                case '{':
-//                case '<':
-//                case ')':
-//                case ']':
-//                case '}':
-//                case '>':
+            case '`': //            case '"':
+            //            case '\'':
+            //                case '(':
+            //                case '[':
+            //                case '{':
+            //                case '<':
+            //                case ')':
+            //                case ']':
+            //                case '}':
+            //                case '>':
             {
-                if (wasEscape) {
-                    wasEscape = false;
+                if (escape != null) {
+                    if (!escape.toString().equals("\\")) {
+                        value.append(escape);
+                    }
+                    escape = null;
                     value.append(c);
 //                        p.applyContinue();
                     return;
                 } else {
-                    if(exitCondition!=null && exitCondition.test(c)){
+                    if (exitCondition != null && exitCondition.test(c)) {
                         p.applyPopReject(c);
                         return;
-                    }else {
+                    } else {
                         p.applyPopReject(c);
                         return;
                     }
@@ -152,36 +148,94 @@ public class PlainParserStep extends ParserStep {
 //                        p.forceEnding();
 //                    }
 //                } else {
-                    if (wasEscape) {
-                        wasEscape = false;
-                        value.append(c);
-                        p.applyPop();
-//                        if (!spreadLines) {
-                            p.forceEnding();
-//                        }
-                    } else {
-                        p.applyPopReject(c);
+                if (escape != null) {
+                    if (!escape.toString().equals("\\")) {
+                        value.append(escape);
                     }
+                    escape = null;
+                    value.append(c);
+                    p.applyPop();
+//                        if (!spreadLines) {
+                    p.forceEnding();
+//                        }
+                } else {
+                    p.applyPopReject(c);
+                }
 //                }
                 return;
             }
             case '\\': {
-                if (wasEscape) {
-                    wasEscape = false;
-                    value.append(c);
+                if (escape != null) {
+                    if (escape.toString().equals("\\") && (c == '\\' || c == '#' || c == '{' || c == '}')) {
+                        value.append(c);
+                    } else {
+                        value.append(escape);
+                        value.append(c);
+                    }
+                    escape = null;
                 } else {
-                    wasEscape = true;
+                    escape = new StringBuilder("\\");
                 }
-//                    p.appContinue();
                 return;
             }
             default: {
-                if (wasEscape) {
-                    wasEscape = false;
+                if (escape != null) {
+                    if ((escape.length() == 1 && c == 'u')
+                            || ((escape.length() >= 2 && escape.length() <= 5) && ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F')))) { // \
+                        escape.append(c);
+                        if (escape.length() == 6) {
+
+                            value.append(escape);
+
+                            int cval = 0;
+                            for (int i = 0; i < 4; i++) {
+                                char aChar = escape.charAt(i + 2);
+                                switch (aChar) {
+                                    case '0':
+                                    case '1':
+                                    case '2':
+                                    case '3':
+                                    case '4':
+                                    case '5':
+                                    case '6':
+                                    case '7':
+                                    case '8':
+                                    case '9':
+                                        cval = (cval << 4) + aChar - '0';
+                                        break;
+                                    case 'a':
+                                    case 'b':
+                                    case 'c':
+                                    case 'd':
+                                    case 'e':
+                                    case 'f':
+                                        cval = (cval << 4) + 10 + aChar - 'a';
+                                        break;
+                                    case 'A':
+                                    case 'B':
+                                    case 'C':
+                                    case 'D':
+                                    case 'E':
+                                    case 'F':
+                                        cval = (cval << 4) + 10 + aChar - 'A';
+                                        break;
+                                }
+                            }
+                            char cc = (char) cval;
+                            escape = null;
+                            consume(cc, p);
+                            return;
+                        }
+                    } else {
+                        value.append(escape);
+                        escape = null;
+                        value.append(c);
+                    }
+                    return;
                 }
-                if(exitCondition!=null && exitCondition.test(c)){
+                if (exitCondition != null && exitCondition.test(c)) {
                     p.applyPopReject(c);
-                }else {
+                } else {
                     value.append(c);
                 }
                 return;
@@ -196,7 +250,7 @@ public class PlainParserStep extends ParserStep {
     }
 
     @Override
-    public NutsText toNode() {
+    public NutsText toText() {
         return ws.formats().text().forPlain(value.toString());
     }
 

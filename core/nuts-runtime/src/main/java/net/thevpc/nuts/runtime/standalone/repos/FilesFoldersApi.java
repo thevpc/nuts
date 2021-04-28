@@ -8,7 +8,6 @@ package net.thevpc.nuts.runtime.standalone.repos;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.util.SearchTraceHelper;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.core.CoreNutsConstants;
 import net.thevpc.nuts.NutsLogVerb;
 
@@ -20,11 +19,16 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import net.thevpc.nuts.runtime.bundles.parsers.StringTokenizerUtils;
+import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
+import net.thevpc.nuts.runtime.core.filters.NutsSearchIdByDescriptor;
+import net.thevpc.nuts.runtime.core.filters.NutsSearchIdById;
+import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 
 /**
  * @author thevpc
  */
 public class FilesFoldersApi {
+
     private static Item[] getDirList(boolean folders, boolean files, String baseUrl, NutsSession session) {
         //
         List<Item> all = new ArrayList<>();
@@ -33,21 +37,20 @@ public class FilesFoldersApi {
 //        NutsVersion versionString = ws.version().parser().parse("0.5.5");
         try {
             SearchTraceHelper.progressIndeterminate("search " + CoreIOUtils.compressUrl(baseUrl), session);
-            List<String> splitted=null;
-            try(InputStream foldersFileStream=
-                        ws.io().monitor().setSource(dotFilesUrl).setSession(session).create()
-                    ){
-                splitted=new WebHtmlListParser().parse(foldersFileStream);
-            }catch (IOException ex){
+            List<String> splitted = null;
+            try (InputStream foldersFileStream
+                    = ws.io().monitor().setSource(dotFilesUrl).setSession(session).create()) {
+                splitted = new WebHtmlListParser().parse(foldersFileStream);
+            } catch (IOException ex) {
                 //
             }
-            if(splitted!=null) {
+            if (splitted != null) {
                 for (String s : splitted) {
                     if (s.endsWith("/")) {
                         s = s.substring(0, s.length() - 1);
                         int y = s.lastIndexOf('/');
-                        if(y>0){
-                            s=s.substring(y+1);
+                        if (y > 0) {
+                            s = s.substring(y + 1);
                         }
                         if (s.length() > 0 && !s.equals("..")) {
                             if (folders) {
@@ -57,8 +60,8 @@ public class FilesFoldersApi {
                     } else {
                         if (files) {
                             int y = s.lastIndexOf('/');
-                            if(y>0){
-                                s=s.substring(y+1);
+                            if (y > 0) {
+                                s = s.substring(y + 1);
                             }
                             all.add(new Item(false, s));
                         }
@@ -72,15 +75,15 @@ public class FilesFoldersApi {
     }
 
     public static Item[] getDirItems(boolean folders, boolean files, RemoteRepoApi strategy, String baseUrl, NutsSession session) {
-        switch (strategy){
-            case DIR_TEXT:{
-                return getDirText(folders, files, baseUrl,session);
+        switch (strategy) {
+            case DIR_TEXT: {
+                return getDirText(folders, files, baseUrl, session);
             }
-            case DIR_LIST:{
-                return getDirList(folders, files, baseUrl,session);
+            case DIR_LIST: {
+                return getDirList(folders, files, baseUrl, session);
             }
         }
-        throw new NutsUnexpectedException(session,"unexpected strategy "+strategy);
+        throw new NutsUnexpectedException(session, "unexpected strategy " + strategy);
     }
 
     private static Item[] getDirText(boolean folders, boolean files, String baseUrl, NutsSession session) {
@@ -116,8 +119,8 @@ public class FilesFoldersApi {
                             if (s.endsWith("/")) {
                                 s = s.substring(0, s.length() - 1);
                                 int y = s.lastIndexOf('/');
-                                if(y>0){
-                                    s=s.substring(y+1);
+                                if (y > 0) {
+                                    s = s.substring(y + 1);
                                 }
                                 if (s.length() > 0 && !s.equals("..")) {
                                     if (folders) {
@@ -127,8 +130,8 @@ public class FilesFoldersApi {
                             } else {
                                 if (files) {
                                     int y = s.lastIndexOf('/');
-                                    if(y>0){
-                                        s=s.substring(y+1);
+                                    if (y > 0) {
+                                        s = s.substring(y + 1);
                                     }
                                     all.add(new Item(false, s));
                                 }
@@ -162,11 +165,58 @@ public class FilesFoldersApi {
     }
 
     public static Iterator<NutsId> createIterator(
-            NutsWorkspace workspace, NutsRepository repository, String rootUrl, String basePath, NutsIdFilter filter, RemoteRepoApi strategy,NutsSession session, int maxDepth, IteratorModel model
+            NutsWorkspace workspace, NutsRepository repository, String rootUrl, String basePath, NutsIdFilter filter, RemoteRepoApi strategy, NutsSession session, int maxDepth, IteratorModel model
     ) {
-        return new FilesFoldersApiIdIterator(workspace, repository, rootUrl, basePath, filter, strategy,session, model, maxDepth);
+        return new FilesFoldersApiIdIterator(workspace, repository, rootUrl, basePath, filter, strategy, session, model, maxDepth);
     }
 
+    public static abstract class AbstractIteratorModel implements IteratorModel {
+
+        public NutsId validate(NutsId id, NutsDescriptor t, String pathname, String rootPath, NutsIdFilter filter, NutsRepository repository, NutsSession session) throws IOException {
+            if (t != null) {
+                if (!CoreNutsUtils.isEffectiveId(t.getId())) {
+                    NutsDescriptor nutsDescriptor = null;
+                    try {
+                        nutsDescriptor = NutsWorkspaceExt.of(session.getWorkspace()).resolveEffectiveDescriptor(t, session);
+                    } catch (Exception ex) {
+                        session.getWorkspace().log().of(FilesFoldersApi.class).with().session(session).level(Level.FINE).error(ex).log(
+                                "error resolving effective descriptor for {0} in url {1} : {2}", t.getId(),
+                                pathname,
+                                ex);//e.printStackTrace();
+                    }
+                    t = nutsDescriptor;
+                }
+                if ((filter == null || filter.acceptSearchId(new NutsSearchIdByDescriptor(t), session))) {
+                    NutsId nutsId = t.getId().builder().setNamespace(repository.getName()).build();
+//                        nutsId = nutsId.setAlternative(t.getAlternative());
+                    return nutsId;
+                }
+            }
+            if (id != null) {
+                if ((filter == null || filter.acceptSearchId(new NutsSearchIdById(id), session))) {
+                    return id;
+                }
+            }
+            return null;
+        }
+
+        @Override
+        public NutsId parseId(String pathname, String rootPath, NutsIdFilter filter, NutsRepository repository, NutsSession session) throws IOException {
+            NutsDescriptor t = null;
+            try {
+                t = parseDescriptor(pathname, session.getWorkspace().io()
+                        .monitor().setSource(pathname).setSession(session).create(),
+                        NutsFetchMode.LOCAL, repository, session, rootPath);
+            } catch (Exception ex) {
+                session.getWorkspace().log().of(FilesFoldersApi.class).with().session(session).level(Level.FINE).error(ex).log("error parsing url : {0} : {1}", pathname, toString());//e.printStackTrace();
+            }
+            if (t != null) {
+                return validate(null, t, pathname, rootPath, filter, repository, session);
+            }
+            return null;
+        }
+
+    }
 
     public interface IteratorModel {
 
@@ -174,11 +224,14 @@ public class FilesFoldersApi {
 
         boolean isDescFile(String pathname);
 
-        NutsDescriptor parseDescriptor(String pathname, InputStream in, NutsFetchMode fetchMode, NutsRepository repository, NutsSession session) throws IOException;
+        NutsDescriptor parseDescriptor(String pathname, InputStream in, NutsFetchMode fetchMode, NutsRepository repository, NutsSession session, String rootURL) throws IOException;
+
+        NutsId parseId(String pathname, String rootPath, NutsIdFilter filter, NutsRepository repository, NutsSession session) throws IOException;
     }
 
     //    private static final Logger LOG=Logger.getLogger(FilesFoldersApi.class.getName());
     public static class Item {
+
         boolean folder;
         String name;
 

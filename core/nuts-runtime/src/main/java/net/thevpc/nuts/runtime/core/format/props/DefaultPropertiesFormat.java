@@ -260,11 +260,11 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
                     if (i == 0) {
                         out.print(prefix);
                         if (prefix.isEmpty() || prefix.toString().endsWith("#")) {
-                            out.print("ø");
+                            out.print(NutsConstants.Ntf.SILENT);
                         }
                         out.printf("%s", formattedKey);
                         if (separator.isEmpty() || separator.startsWith("#")) {
-                            out.print("ø");
+                            out.print(NutsConstants.Ntf.SILENT);
                         }
                         out.print(separator);
                         out.print(s);
@@ -279,11 +279,11 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
         } else {
             out.print(prefix);
             if (prefix.isEmpty() || prefix.toString().endsWith("#")) {
-                out.print("ø");
+                out.print(NutsConstants.Ntf.SILENT);
             }
             out.printf("%s", txt.text().forStyled(formattedKey, NutsTextStyle.primary(3)));
             if (separator.isEmpty() || separator.startsWith("#")) {
-                out.print("ø");
+                out.print(NutsConstants.Ntf.SILENT);
             }
             out.print(separator);
             out.print(value);

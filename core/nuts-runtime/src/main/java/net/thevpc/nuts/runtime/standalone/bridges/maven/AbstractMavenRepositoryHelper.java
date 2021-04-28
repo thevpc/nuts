@@ -109,6 +109,7 @@ public abstract class AbstractMavenRepositoryHelper {
         return hash.split("[ \n\r]")[0];
     }
 
+    protected abstract boolean exists(NutsId id, String path, Object source, String typeName, NutsSession session);
     protected abstract NutsInput openStream(NutsId id, String path, Object source, String typeName, NutsSession session);
 
     private void checkSession(NutsSession session) {

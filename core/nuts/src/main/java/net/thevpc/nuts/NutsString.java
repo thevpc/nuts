@@ -53,7 +53,7 @@ public interface NutsString {
 
     int textLength() ;
 
-    NutsText toNode();
+    NutsText toText();
 
     boolean isEmpty();
 }

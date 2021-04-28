@@ -54,7 +54,7 @@ public class NutsImmutableString implements NutsString {
                 parser().filterText(value);
     }
 
-    public NutsText toNode() {
+    public NutsText toText() {
         return ws.formats().text().parser().parse(new StringReader(value));
     }
 

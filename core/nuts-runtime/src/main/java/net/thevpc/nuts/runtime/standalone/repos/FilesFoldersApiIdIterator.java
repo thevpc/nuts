@@ -3,26 +3,24 @@
  *            Nuts : Network Updatable Things Service
  *                  (universal package manager)
  * <br>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <br>
  *
- * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
- * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
- * <br>
- * ====================================================================
-*/
+ * <br> ====================================================================
+ */
 package net.thevpc.nuts.runtime.standalone.repos;
 
 import net.thevpc.nuts.*;
@@ -40,6 +38,7 @@ import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
  */
 class FilesFoldersApiIdIterator implements Iterator<NutsId> {
 //    private static final Logger LOG=Logger.getLogger(FilesFoldersApiIdIterator.class.getName());
+
     private final NutsRepository repository;
     private final Stack<PathAndDepth> stack = new Stack<>();
     private final NutsIdFilter filter;
@@ -54,12 +53,12 @@ class FilesFoldersApiIdIterator implements Iterator<NutsId> {
     private RemoteRepoApi strategy;
 
     public FilesFoldersApiIdIterator(NutsWorkspace workspace, NutsRepository repository, String rootUrl, String basePath, NutsIdFilter filter,
-                                     RemoteRepoApi strategy,
-                                     NutsSession session, FilesFoldersApi.IteratorModel model, int maxDepth) {
+            RemoteRepoApi strategy,
+            NutsSession session, FilesFoldersApi.IteratorModel model, int maxDepth) {
         this.repository = repository;
         this.strategy = strategy;
-        if(strategy!=RemoteRepoApi.DIR_LIST && strategy!=RemoteRepoApi.DIR_TEXT){
-            throw new NutsUnexpectedException(session,"unexpected strategy "+strategy);
+        if (strategy != RemoteRepoApi.DIR_LIST && strategy != RemoteRepoApi.DIR_TEXT) {
+            throw new NutsUnexpectedException(session, "unexpected strategy " + strategy);
         }
         this.session = session;
         this.filter = filter;
@@ -94,14 +93,14 @@ class FilesFoldersApiIdIterator implements Iterator<NutsId> {
                 visitedFoldersCount++;
                 boolean deep = file.depth < maxDepth;
                 for (FilesFoldersApi.Item child : children) {
-                    if(child.isFolder()){
+                    if (child.isFolder()) {
                         if (deep) {
                             //this is a folder
                             if (file.depth < maxDepth) {
                                 stack.push(new PathAndDepth(file.path + "/" + child.getName(), true, file.depth + 1));
                             }
                         }
-                    }else {
+                    } else {
                         if (model.isDescFile(child.getName())) {
                             stack.push(new PathAndDepth(file.path + "/" + child.getName(), false, file.depth));
                         }
@@ -109,32 +108,16 @@ class FilesFoldersApiIdIterator implements Iterator<NutsId> {
                 }
             } else {
                 visitedFilesCount++;
-                NutsDescriptor t = null;
+
+                NutsId t = null;
                 try {
-                    t = model.parseDescriptor(file.path, workspace.io()
-                            .monitor().setSource(file.path).setSession(session).create(),
-                            NutsFetchMode.LOCAL, repository, session);
+                    t = model.parseId(file.path, rootUrl, filter, repository, session);
                 } catch (Exception ex) {
-                    session.getWorkspace().log().of(FilesFoldersApi.class).with().session(session).level(Level.FINE).error(ex).log("error parsing url : {0} : {1}",file.path,toString());//e.printStackTrace();
+                    session.getWorkspace().log().of(FilesFoldersApi.class).with().session(session).level(Level.FINE).error(ex).log("error parsing url : {0} : {1}", file.path, toString());//e.printStackTrace();
                 }
                 if (t != null) {
-                    if (!CoreNutsUtils.isEffectiveId(t.getId())) {
-                        NutsDescriptor nutsDescriptor = null;
-                        try {
-                            nutsDescriptor = NutsWorkspaceExt.of(workspace).resolveEffectiveDescriptor(t, session);
-                        } catch (Exception ex) {
-                            session.getWorkspace().log().of(FilesFoldersApi.class).with().session(session).level(Level.FINE).error(ex).log(
-                                    "error resolving effective descriptor for {0} in url {1} : {2}",t.getId(),file.path,
-                                    ex);//e.printStackTrace();
-                        }
-                        t = nutsDescriptor;
-                    }
-                    if (t != null && (filter == null || filter.acceptSearchId(new NutsSearchIdByDescriptor(t), session))) {
-                        NutsId nutsId = t.getId().builder().setNamespace(repository.getName()).build();
-//                        nutsId = nutsId.setAlternative(t.getAlternative());
-                        last = nutsId;
-                        break;
-                    }
+                    last = t;
+                    break;
                 }
             }
         }

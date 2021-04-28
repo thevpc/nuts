@@ -37,7 +37,7 @@ public class NewLineParserStep extends ParserStep {
     }
 
     @Override
-    public NutsText toNode() {
+    public NutsText toText() {
         DefaultNutsTextManager factory0 = (DefaultNutsTextManager) session.getWorkspace().formats().text();
         return factory0.forPlain(start.toString());
     }

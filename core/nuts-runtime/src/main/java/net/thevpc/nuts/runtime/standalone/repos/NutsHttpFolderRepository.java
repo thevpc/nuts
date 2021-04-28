@@ -29,7 +29,6 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.CoreNutsConstants;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.bundles.iter.IteratorUtils;
 
 import java.io.IOException;
@@ -49,7 +48,7 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
     private RemoteRepoApi versionApi = RemoteRepoApi.DEFAULT;
     private RemoteRepoApi findApi = RemoteRepoApi.DEFAULT;
 
-    private FilesFoldersApi.IteratorModel findModel = new FilesFoldersApi.IteratorModel() {
+    private FilesFoldersApi.IteratorModel findModel = new FilesFoldersApi.AbstractIteratorModel() {
         @Override
         public void undeploy(NutsId id, NutsSession session) throws NutsExecutionException {
             throw new NutsUnsupportedOperationException(session, "Not supported undeploy.");
@@ -61,13 +60,14 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
         }
 
         @Override
-        public NutsDescriptor parseDescriptor(String pathname, InputStream in, NutsFetchMode fetchMode, NutsRepository repository, NutsSession session) throws IOException {
+        public NutsDescriptor parseDescriptor(String pathname, InputStream in, NutsFetchMode fetchMode, NutsRepository repository, NutsSession session, String rootURL) throws IOException {
             try {
                 return getWorkspace().descriptor().parser().setSession(session).parse(in);
             } finally {
                 in.close();
             }
         }
+        
     };
 
     public NutsHttpFolderRepository(NutsAddRepositoryOptions options, NutsSession session, NutsRepository parentRepository) {

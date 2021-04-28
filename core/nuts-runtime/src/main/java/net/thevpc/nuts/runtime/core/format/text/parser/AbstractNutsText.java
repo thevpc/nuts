@@ -42,7 +42,7 @@ public abstract class AbstractNutsText implements NutsText {
     }
 
     @Override
-    public NutsText toNode() {
+    public NutsText toText() {
         return this;
     }
 

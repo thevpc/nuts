@@ -84,7 +84,7 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
                                     ctx);
                         }
                         writeRaw(s.getEnd());
-                        writeRaw("ø");
+                        writeRaw(NutsConstants.Ntf.SILENT);
                     } else {
                         NutsTextStyles styles = s.getStyles();
                         writeStyledStart(s.getStyles().get(0), true);
@@ -96,7 +96,8 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
                                     ctx);
                         }
                         writeRaw(s.getEnd());
-                        writeRaw("}##ø");
+                        writeRaw("}##");
+                        writeRaw(NutsConstants.Ntf.SILENT);
                     }
                 }
                 break;
@@ -138,7 +139,7 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
                         writeEscapedSpecial(s.getCommand().getArgs());
                     }
                     writeRaw(s.getEnd());
-                    writeRaw("ø");
+                    writeRaw(NutsConstants.Ntf.SILENT);
                 }
                 break;
             }
@@ -150,7 +151,7 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
                     writeRaw(s.getSeparator());
                     writeEscapedSpecial(s.getValue());
                     writeRaw(s.getEnd());
-                    writeRaw("ø");
+                    writeRaw(NutsConstants.Ntf.SILENT);
                 }
                 break;
             }
@@ -162,7 +163,7 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
                     writeRaw(s.getSeparator());
                     writeNode(s.getChild());
                     writeRaw(s.getEnd());
-                    writeRaw("ø");
+                    writeRaw(NutsConstants.Ntf.SILENT);
                 } else {
                     writeNode(s.getChild());
                 }
@@ -176,7 +177,7 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
                     writeRaw(s.getSeparator());
                     writeEscapedSpecial(s.getText());
                     writeRaw(s.getEnd());
-                    writeRaw("ø");
+                    writeRaw(NutsConstants.Ntf.SILENT);
                 } else {
                     writeRaw(s.getText());
                 }
@@ -205,7 +206,7 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
         for (int i = 0; i < cc.length; i++) {
             switch (cc[i]) {
                 case '\\':
-                case 'ø': {
+                case NutsConstants.Ntf.SILENT: {
                     sb.append('\\');
                     sb.append(cc[i]);
                     break;
@@ -253,6 +254,10 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
 //    public final void writeEscaped(String rawString) {
 //        writeRaw(DefaultNutsTextNodeParser.escapeText0(rawString));
 //    }
+    public final void writeRaw(char rawChar) {
+        writeRaw(String.valueOf(rawChar));
+    }
+    
     public final void writeRaw(String rawString) {
         try {
             out.write(rawString.getBytes());

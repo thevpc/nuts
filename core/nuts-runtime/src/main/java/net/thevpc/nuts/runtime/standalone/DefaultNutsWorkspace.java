@@ -117,7 +117,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
     protected DefaultNutsFilterModel filtersModel;
     private DefaultNutsInstalledRepository installedRepository;
     private DefaultNutsLogModel logModel;
-    private DefaultWorkspaceEnvManagerModel envModel;
+    private DefaultNutsWorkspaceEnvManagerModel envModel;
     private DefaultNutsWorkspaceExtensionModel extensionModel;
     private DefaultAliasModel aliasesModel;
     private DefaultImportModel importModel;
@@ -139,6 +139,13 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
     protected NutsId runtimeId;
 
     public DefaultNutsWorkspace(NutsWorkspaceInitInformation info) {
+//        for (int i = 33; i < 256; i++) {
+////            if (i % 50 == 0) {
+////                System.out.println("\n");
+////            }
+//            System.out.println(i+" "+(char) i);
+//        }
+//        System.out.println("\n");
         initWorkspace(info);
     }
 
@@ -159,7 +166,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         ioModel = new DefaultNutsIOModel(this);
         repositoryModel = new DefaultNutsRepositoryModel(this);
         configModel = new DefaultNutsWorkspaceConfigModel(this, info);
-        envModel = new DefaultWorkspaceEnvManagerModel(this, info, defaultSession());
+        envModel = new DefaultNutsWorkspaceEnvManagerModel(this, info, defaultSession());
         aliasesModel = new DefaultAliasModel(this);
         importModel = new DefaultImportModel(this);
         locationsModel = new DefaultNutsWorkspaceLocationModel(this, info, Paths.get(info.getWorkspaceLocation()).toString());
@@ -430,12 +437,12 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                                     .append(locations().getWorkspaceLocation(), NutsTextStyle.path())
                     );
                     out.println(
-                            txt.builder()
-                                    .append("╭────────────────────────────────────────────────────────────────────────╮\n", NutsTextStyle.primary(2))
-                                    .append("│", NutsTextStyle.primary(2)).append("  This is the very first time ")
-                                    .appendCode("sh", "nuts")
-                                    .append(" has been started for this workspace  ").append("│\n", NutsTextStyle.primary(2))
-                                    .append("╰────────────────────────────────────────────────────────────────────────╯", NutsTextStyle.primary(2))
+                            CoreNutsUtils.createBox(txt,
+                                    txt.builder()
+                                            .append("This is the very first time ")
+                                            .appendCode("sh", "nuts")
+                                            .append(" has been started for this workspace")
+                            )
                     );
                     out.println();
                 }
@@ -1587,7 +1594,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
 
     @Override
     public NutsWorkspaceEnvManager env() {
-        return new DefaultWorkspaceEnvManager(envModel);
+        return new DefaultNutsWorkspaceEnvManager(envModel);
     }
 
     @Override
@@ -1615,7 +1622,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         return uuid;
     }
 
-    public DefaultWorkspaceEnvManagerModel getEnvModel() {
+    public DefaultNutsWorkspaceEnvManagerModel getEnvModel() {
         return envModel;
     }
 

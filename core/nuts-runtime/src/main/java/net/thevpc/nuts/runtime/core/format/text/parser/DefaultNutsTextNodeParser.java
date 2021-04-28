@@ -16,6 +16,7 @@ import java.io.StringReader;
 import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.thevpc.nuts.NutsConstants;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsText;
 import net.thevpc.nuts.NutsTextVisitor;
@@ -47,18 +48,17 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
         StringBuilder sb = new StringBuilder(str.length());
         for (char c : str.toCharArray()) {
             switch (c) {
-                case '\"':
-                case '\'':
+//                case '\"':
+//                case '\'':
                 case '`':
-                case '~':
-                case '@':
+//                case '~':
+//                case '@':
                 case '#':
-                case 'ø':
+                case NutsConstants.Ntf.SILENT:
 //                case '$':
 //                case '£':
 //                case '§':
 //                case '_':
-//                case '¤':
 //                case '^':
 //                case '¨':
 //                case '=':
@@ -405,7 +405,7 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
                     this.applyPush(new StyledParserStep(c, lineStart, getSession().getWorkspace(), state()));
                     break;
                 }
-                case 'ø': {
+                case NutsConstants.Ntf.SILENT: {
                     //ignore...
                     break;
                 }
@@ -461,7 +461,7 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
             if (s == null) {
                 return null;
             }
-            return s.toNode();
+            return s.toText();
         }
 
         public NutsText consumeNode(NutsTextVisitor visitor) {
@@ -489,7 +489,7 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
             if (s == null) {
                 return null;
             }
-            NutsText n = s.toNode();
+            NutsText n = s.toText();
             if (visitor != null) {
                 visitor.visit(n);
             }

@@ -11,18 +11,16 @@
  * large range of sub managers / repositories.
  * <br>
  *
- * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
- * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
- * <br>
- * ====================================================================
-*/
+ * <br> ====================================================================
+ */
 package net.thevpc.nuts.runtime.standalone.bridges.maven;
 
 import net.thevpc.nuts.*;
@@ -67,14 +65,28 @@ public class MavenRemoteRepository extends NutsCachedRepository {
         }
 
         @Override
+        protected boolean exists(NutsId id, String path, Object source, String typeName, NutsSession session) {
+            SearchTraceHelper.progressIndeterminate("search " + CoreIOUtils.compressUrl(path), session);
+            try {
+                try (InputStream s = session.getWorkspace().io().monitor().setSource(path).setOrigin(source).setSession(session)
+                        .setSourceTypeName(typeName).createSource().open()) {
+                    //
+                }
+                return true;
+            } catch (Exception ex) {
+                return false;
+            }
+        }
+
+        @Override
         protected NutsInput openStream(NutsId id, String path, Object source, String typeName, NutsSession session) {
-            SearchTraceHelper.progressIndeterminate("search "+CoreIOUtils.compressUrl(path),session);
+            SearchTraceHelper.progressIndeterminate("search " + CoreIOUtils.compressUrl(path), session);
             return session.getWorkspace().io().monitor().setSource(path).setOrigin(source).setSession(session).setSourceTypeName(typeName).createSource();
         }
 
     };
 
-    private final FilesFoldersApi.IteratorModel findModel = new FilesFoldersApi.IteratorModel() {
+    private final FilesFoldersApi.IteratorModel findModel = new FilesFoldersApi.AbstractIteratorModel() {
         @Override
         public void undeploy(NutsId id, NutsSession session) throws NutsExecutionException {
             throw new NutsUnsupportedOperationException(session, "Not supported undeploy.");
@@ -86,43 +98,80 @@ public class MavenRemoteRepository extends NutsCachedRepository {
         }
 
         @Override
-        public NutsDescriptor parseDescriptor(String pathname, InputStream in, NutsFetchMode fetchMode, NutsRepository repository, NutsSession session) throws IOException {
-            SearchTraceHelper.progressIndeterminate("parse "+CoreIOUtils.compressUrl(pathname),session);
+        public NutsDescriptor parseDescriptor(String pathname, InputStream in, NutsFetchMode fetchMode, NutsRepository repository, NutsSession session, String rootURL) throws IOException {
+            SearchTraceHelper.progressIndeterminate("parse " + CoreIOUtils.compressUrl(pathname), session);
             return MavenUtils.of(session).parsePomXml(in, fetchMode, pathname, repository, session);
         }
+
+        @Override
+        public NutsId parseId(String path, String rootPath, NutsIdFilter filter, NutsRepository repository, NutsSession session) throws IOException {
+            String fn=CoreIOUtils.getURLName(path);
+            if (fn.endsWith(".pom")) {
+                String versionFolder = CoreIOUtils.getURLParent(path);
+                if (versionFolder.length() > 0) {
+                    String vn = CoreIOUtils.getURLName(versionFolder);
+                    String artifactFolder = CoreIOUtils.getURLParent(versionFolder);
+                    if (artifactFolder.length() > 0) {
+                        String an = CoreIOUtils.getURLName(artifactFolder);
+                        if (fn.equals(an + "-" + vn + ".pom")) {
+                            String groupFolder = CoreIOUtils.getURLParent(artifactFolder);
+                            if (groupFolder.length() > 0) {
+                                String[] gg = CoreIOUtils.urlTrimFirstSlash(groupFolder.substring(rootPath.length())).split("/");
+                                StringBuilder gn = new StringBuilder();
+                                for (int i = 0; i < gg.length; i++) {
+                                    String ns = gg[i];
+                                    if (i > 0) {
+                                        gn.append('.');
+                                    }
+                                    gn.append(ns);
+                                }
+                                return validate(
+                                        session.getWorkspace().id().builder()
+                                                .setGroupId(gn.toString())
+                                                .setArtifactId(an)
+                                                .setVersion(vn)
+                                                .build(),
+                                        null, path, rootPath, filter, repository, session);
+                            }
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
     };
 
 //    public MavenRemoteRepository(NutsAddRepositoryOptions options, NutsWorkspace workspace, NutsRepository parentRepository,RemoteRepoApi api) {
 //        super(options, workspace, parentRepository, SPEED_SLOW, false, NutsConstants.RepoTypes.MAVEN);
 //        LOG=workspace.log().of(MavenRemoteRepository.class);
 //    }
-
     protected MavenRemoteRepository(NutsAddRepositoryOptions options, NutsSession session, NutsRepository parentRepository, String repoType) {
         super(options, session, parentRepository, SPEED_SLOW, false, repoType);
-        LOG=session.getWorkspace().log().of(MavenRemoteRepository.class);
-        switch (repoType){
-            case "maven":{
-                this.findApi=RemoteRepoApi.MAVEN;
-                this.versionApi=RemoteRepoApi.MAVEN;
+        LOG = session.getWorkspace().log().of(MavenRemoteRepository.class);
+        switch (repoType) {
+            case "maven": {
+                this.findApi = RemoteRepoApi.MAVEN;
+                this.versionApi = RemoteRepoApi.MAVEN;
                 break;
             }
-            case "maven+dirtext":{
-                this.findApi=RemoteRepoApi.DIR_TEXT;
-                this.versionApi=RemoteRepoApi.DIR_TEXT;
+            case "maven+dirtext": {
+                this.findApi = RemoteRepoApi.DIR_TEXT;
+                this.versionApi = RemoteRepoApi.DIR_TEXT;
                 break;
             }
-            case "maven+dirlist":{
-                this.findApi=RemoteRepoApi.DIR_LIST;
-                this.versionApi=RemoteRepoApi.DIR_LIST;
+            case "maven+dirlist": {
+                this.findApi = RemoteRepoApi.DIR_LIST;
+                this.versionApi = RemoteRepoApi.DIR_LIST;
                 break;
             }
-            case "maven+github":{
-                this.findApi=RemoteRepoApi.GITHUB;
-                this.versionApi=RemoteRepoApi.GITHUB;
+            case "maven+github": {
+                this.findApi = RemoteRepoApi.GITHUB;
+                this.versionApi = RemoteRepoApi.GITHUB;
                 break;
             }
-            default:{
-                throw new IllegalArgumentException("unsupported maven repo type: "+repoType);
+            default: {
+                throw new IllegalArgumentException("unsupported maven repo type: " + repoType);
             }
         }
     }
@@ -130,7 +179,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
     @Override
     public NutsDescriptor fetchDescriptorCore(NutsId id, NutsFetchMode fetchMode, NutsSession session) {
         if (fetchMode != NutsFetchMode.REMOTE) {
-            throw new NutsNotFoundException(session, id,new NutsFetchModeNotSupportedException(session,this,fetchMode,id.toString(),null));
+            throw new NutsNotFoundException(session, id, new NutsFetchModeNotSupportedException(session, this, fetchMode, id.toString(), null));
         }
         return helper.fetchDescriptorImpl(id, fetchMode, session);
     }
@@ -148,11 +197,9 @@ public class MavenRemoteRepository extends NutsCachedRepository {
                     + getIdFilename(id.builder().setFaceDescriptor().build(), session)
             );
 
-            try (InputStream metadataStream = helper.openStream(id, metadataURL, id.builder().setFace(CoreNutsConstants.QueryFaces.CATALOG).build(), "artifact catalog", session).open()) {
+            if (helper.exists(id, metadataURL, id.builder().setFace(CoreNutsConstants.QueryFaces.CATALOG).build(), "artifact catalog", session)) {
                 // ok found!!
                 ret.add(id);
-            } catch (UncheckedIOException | IOException | NutsIOException ex) {
-                //ko not found
             }
             return ret.iterator();
         }
@@ -203,7 +250,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
 
             try {
                 metadataStream = helper.openStream(id, metadataURL, id.builder().setFace(CoreNutsConstants.QueryFaces.CATALOG).build(), "artifact catalog", session).open();
-            } catch (UncheckedIOException|NutsIOException ex) {
+            } catch (UncheckedIOException | NutsIOException ex) {
                 throw new NutsNotFoundException(session, id, ex);
             }
             List<Map<String, Object>> info = session.getWorkspace().formats().element().setContentType(NutsContentType.JSON).parse(new InputStreamReader(metadataStream), List.class);
@@ -229,7 +276,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
                 try {
                     metadataStream.close();
                 } catch (IOException e) {
-                    throw new NutsIOException(session,e);
+                    throw new NutsIOException(session, e);
                 }
             }
         }
@@ -252,10 +299,10 @@ public class MavenRemoteRepository extends NutsCachedRepository {
 
             try {
                 metadataStream = helper.openStream(id, metadataURL, id.builder().setFace(CoreNutsConstants.QueryFaces.CATALOG).build(), "artifact catalog", session).open();
-            } catch (UncheckedIOException|NutsIOException ex) {
+            } catch (UncheckedIOException | NutsIOException ex) {
                 return null;
             }
-            MavenMetadata info = MavenUtils.of(session).parseMavenMetaData(metadataStream,session);
+            MavenMetadata info = MavenUtils.of(session).parseMavenMetaData(metadataStream, session);
             if (info != null) {
                 NutsIdManager idMan = session.getWorkspace().id();
                 for (String version : info.getVersions()) {
@@ -269,7 +316,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
                     );
                 }
             }
-        } catch (UncheckedIOException|NutsIOException ex) {
+        } catch (UncheckedIOException | NutsIOException ex) {
             //unable to access
             return null;
         } finally {
@@ -295,11 +342,9 @@ public class MavenRemoteRepository extends NutsCachedRepository {
                     + getIdFilename(id.builder().setFaceDescriptor().build(), session)
             );
 
-            try (InputStream metadataStream = helper.openStream(id, metadataURL, id.builder().setFace(CoreNutsConstants.QueryFaces.CATALOG).build(), "artifact catalog", session).open()) {
+            if (helper.exists(id, metadataURL, id.builder().setFace(CoreNutsConstants.QueryFaces.CATALOG).build(), "artifact catalog", session)) {
                 // ok found!!
                 ret.add(id);
-            } catch (UncheckedIOException | IOException ex) {
-                //ko not found
             }
             return ret.iterator();
         } else {
@@ -307,7 +352,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
         }
     }
 
-    public Iterator<NutsId> findVersionsImplFilesFolders(final NutsId id, NutsIdFilter idFilter, NutsFetchMode fetchMode, RemoteRepoApi versionApi,final NutsSession session) {
+    public Iterator<NutsId> findVersionsImplFilesFolders(final NutsId id, NutsIdFilter idFilter, NutsFetchMode fetchMode, RemoteRepoApi versionApi, final NutsSession session) {
         if (fetchMode != NutsFetchMode.REMOTE) {
             return IteratorUtils.emptyIterator();
         }
@@ -318,7 +363,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
         String artifactId = id.getArtifactId();
         List<NutsId> ret = new ArrayList<>();
         String foldersFileUrl = CoreIOUtils.buildUrl(config().setSession(session).getLocation(true), groupId.replace('.', '/') + "/" + artifactId);
-        FilesFoldersApi.Item[] all =FilesFoldersApi.getDirItems(true, false,versionApi, foldersFileUrl, session);
+        FilesFoldersApi.Item[] all = FilesFoldersApi.getDirItems(true, false, versionApi, foldersFileUrl, session);
 
         if (all != null) {
             NutsIdManager idMan = session.getWorkspace().id();
@@ -348,11 +393,11 @@ public class MavenRemoteRepository extends NutsCachedRepository {
             case GITHUB: {
                 List<Iterator<NutsId>> li = new ArrayList<>();
                 for (String root : roots) {
-                    SearchTraceHelper.progressIndeterminate("search "+CoreIOUtils.compressUrl(root),session);
-                    if(root.endsWith("/*")) {
+                    SearchTraceHelper.progressIndeterminate("search " + CoreIOUtils.compressUrl(root), session);
+                    if (root.endsWith("/*")) {
                         String name = root.substring(0, root.length() - 2);
                         li.add(FilesFoldersApi.createIterator(getWorkspace(), this, config.getLocation(true), name, filter, RemoteRepoApi.DIR_TEXT, session, Integer.MAX_VALUE, findModel));
-                    }else{
+                    } else {
                         li.add(FilesFoldersApi.createIterator(getWorkspace(), this, config.getLocation(true), root, filter, RemoteRepoApi.DIR_TEXT, session, 2, findModel));
                     }
                 }
@@ -361,11 +406,11 @@ public class MavenRemoteRepository extends NutsCachedRepository {
             case DIR_LIST: {
                 List<Iterator<NutsId>> li = new ArrayList<>();
                 for (String root : roots) {
-                    SearchTraceHelper.progressIndeterminate("search "+CoreIOUtils.compressUrl(root),session);
-                    if(root.endsWith("/*")) {
+                    SearchTraceHelper.progressIndeterminate("search " + CoreIOUtils.compressUrl(root), session);
+                    if (root.endsWith("/*")) {
                         String name = root.substring(0, root.length() - 2);
                         li.add(FilesFoldersApi.createIterator(getWorkspace(), this, config.getLocation(true), name, filter, RemoteRepoApi.DIR_LIST, session, Integer.MAX_VALUE, findModel));
-                    }else{
+                    } else {
                         li.add(FilesFoldersApi.createIterator(getWorkspace(), this, config.getLocation(true), root, filter, RemoteRepoApi.DIR_LIST, session, 2, findModel));
                     }
                 }
@@ -378,10 +423,10 @@ public class MavenRemoteRepository extends NutsCachedRepository {
                     NutsInput s = CoreIOUtils.getCachedUrlWithSHA1(getWorkspace(), url, "archetype-catalog.xml",
                             true,
                             session
-                            );
+                    );
                     final InputStream is = session.getWorkspace().io().monitor().setSource(s.open()).setSession(session).create();
                     return MavenUtils.of(session)
-                            .createArchetypeCatalogIterator(is, filter, true,session);
+                            .createArchetypeCatalogIterator(is, filter, true, session);
                 } catch (UncheckedIOException ex) {
                     return IteratorUtils.emptyIterator();
                 }
@@ -400,7 +445,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
             if (nutsRepository.getRepositoryType().equals(NutsConstants.RepoTypes.MAVEN)
                     && nutsRepository.config().getLocation(true) != null
                     && nutsRepository.config().getLocation(true).equals(
-                    Paths.get(session.getWorkspace().io().expandPath("~/.m2")).toString()
+                            Paths.get(session.getWorkspace().io().expandPath("~/.m2")).toString()
                     )) {
                 return nutsRepository;
             }
@@ -426,7 +471,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
     @Override
     public NutsContent fetchContentCore(NutsId id, NutsDescriptor descriptor, String localPath, NutsFetchMode fetchMode, NutsSession session) {
         if (fetchMode != NutsFetchMode.REMOTE) {
-            throw new NutsNotFoundException(session, id,new NutsFetchModeNotSupportedException(session,this,fetchMode,id.toString(),null));
+            throw new NutsNotFoundException(session, id, new NutsFetchModeNotSupportedException(session, this, fetchMode, id.toString(), null));
         }
         if (wrapper == null) {
             wrapper = getWrapper();
@@ -477,7 +522,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
                         helper.checkSHA1Hash(id.builder().setFace(NutsConstants.QueryFaces.CONTENT_HASH).build(), in, "artifact content", session);
                     }
                 }).run();
-            } catch (UncheckedIOException|NutsIOException ex) {
+            } catch (UncheckedIOException | NutsIOException ex) {
                 throw new NutsNotFoundException(session, id, null, ex);
             }
             return new NutsDefaultContent(tempFile, false, true);
@@ -491,8 +536,8 @@ public class MavenRemoteRepository extends NutsCachedRepository {
                         helper.checkSHA1Hash(id.builder().setFace(NutsConstants.QueryFaces.CONTENT_HASH).build(), in, "artifact content", session);
                     }
                 }).run();
-            } catch (UncheckedIOException|NutsIOException ex) {
-                LOG.with().session(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL).log("{0} : {1}",id ,ex);
+            } catch (UncheckedIOException | NutsIOException ex) {
+                LOG.with().session(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL).log("{0} : {1}", id, ex);
                 throw new NutsNotFoundException(session, id, null, ex);
             }
             return new NutsDefaultContent(localPath, false, false);
@@ -501,7 +546,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
 
     @Override
     protected String getIdExtension(NutsId id, NutsSession session) {
-        return helper.getIdExtension(id,session);
+        return helper.getIdExtension(id, session);
     }
 
     @Override

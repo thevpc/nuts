@@ -36,7 +36,7 @@ public class SearchTraceHelper {
 
     public static void progress(int percent, String msg, NutsSession s) {
         if (isProgress(s)) {
-            resolveCProgressBar(s).printProgress(percent, msg,s.out());
+            resolveCProgressBar(s).printProgress(percent, msg,s.err());
         }
     }
 
@@ -45,9 +45,9 @@ public class SearchTraceHelper {
     }
 
     public static boolean isProgress(NutsSession s) {
-        if (!s.isPlainOut()) {
-            return false;
-        }
+//        if (!s.isPlainOut()) {
+//            return false;
+//        }
         if (s.isBot() || NutsWorkspaceUtils.parseProgressOptions(s).contains("false")) {
             return false;
         }

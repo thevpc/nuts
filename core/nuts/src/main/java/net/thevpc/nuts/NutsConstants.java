@@ -561,6 +561,24 @@ public final class NutsConstants {
         private Versions() {
         }
     }
+    /**
+     * version special names
+     * @category Constants
+     */
+    public static final class Ntf {
+
+        /**
+         * latest version (inherited from maven)
+         */
+//        public static final char SILENT = '¤';//ø
+        public static final char SILENT = '\u001E';//record separator
+
+        /**
+         * private constructor
+         */
+        private Ntf() {
+        }
+    }
 
     /**
      * private constructor

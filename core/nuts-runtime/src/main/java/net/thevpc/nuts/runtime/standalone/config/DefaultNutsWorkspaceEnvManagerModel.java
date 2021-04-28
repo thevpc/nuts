@@ -38,7 +38,6 @@ import net.thevpc.nuts.runtime.core.app.DefaultNutsArgument;
 import net.thevpc.nuts.runtime.core.common.DefaultObservableMap;
 import net.thevpc.nuts.runtime.core.common.ObservableMap;
 import net.thevpc.nuts.runtime.core.config.NutsWorkspaceConfigManagerExt;
-import net.thevpc.nuts.runtime.core.model.DefaultNutsVersion;
 import net.thevpc.nuts.runtime.core.parser.DefaultNutsIdParser;
 import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
@@ -48,7 +47,7 @@ import net.thevpc.nuts.runtime.standalone.util.NutsJavaSdkUtils;
  *
  * @author vpc
  */
-public class DefaultWorkspaceEnvManagerModel {
+public class DefaultNutsWorkspaceEnvManagerModel {
 
     private NutsWorkspace workspace;
     private Map<String, String> options = new LinkedHashMap<>();
@@ -60,7 +59,7 @@ public class DefaultWorkspaceEnvManagerModel {
     private NutsId osdist;
     private NutsArchFamily archFamily = NutsArchFamily.getArchFamily();
 
-    public DefaultWorkspaceEnvManagerModel(NutsWorkspace ws, NutsWorkspaceInitInformation info, NutsSession session) {
+    public DefaultNutsWorkspaceEnvManagerModel(NutsWorkspace ws, NutsWorkspaceInitInformation info, NutsSession session) {
         this.workspace = ws;
         userProperties = new DefaultObservableMap<>();
         String[] properties = info.getOptions().getProperties();

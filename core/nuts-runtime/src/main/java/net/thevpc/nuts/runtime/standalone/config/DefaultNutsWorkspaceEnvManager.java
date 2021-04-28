@@ -5,12 +5,12 @@ import java.util.Map;
 import java.util.function.Supplier;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
-public class DefaultWorkspaceEnvManager implements NutsWorkspaceEnvManager {
+public class DefaultNutsWorkspaceEnvManager implements NutsWorkspaceEnvManager {
 
-    private DefaultWorkspaceEnvManagerModel model;
+    private DefaultNutsWorkspaceEnvManagerModel model;
     private NutsSession session;
 
-    public DefaultWorkspaceEnvManager(DefaultWorkspaceEnvManagerModel model) {
+    public DefaultNutsWorkspaceEnvManager(DefaultNutsWorkspaceEnvManagerModel model) {
         this.model = model;
     }
 
@@ -185,7 +185,7 @@ public class DefaultWorkspaceEnvManager implements NutsWorkspaceEnvManager {
         return this;
     }
 
-    public DefaultWorkspaceEnvManagerModel getModel() {
+    public DefaultNutsWorkspaceEnvManagerModel getModel() {
         return model;
     }
 

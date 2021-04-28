@@ -156,7 +156,7 @@ public class Test07_ColorfulStream {
 //                        "\n 3 ~~~~ text ~~~~" +
 //                        "\n 4 ~~~~~ text ~~~~~" +
 //                        "\n" +
-//                        "\n ##ø###hello###me##" +
+//                        "\n ##\u001E###hello###me##" +
 //                        "\n ## ###hello### me##" +
 //                        "";
 //        System.out.println(text);
@@ -215,7 +215,7 @@ public class Test07_ColorfulStream {
 //    public void test8() {
 //        NutsWorkspace ws = Nuts.openWorkspace();
 //        {
-//            String t_string = "###øaaø###";
+//            String t_string = "###\u001Eaa\u001E###";
 //            writeColors(t_string);
 //        }
 //        {
@@ -223,11 +223,11 @@ public class Test07_ColorfulStream {
 //            writeColors(t_string);
 //        }
 //        {
-//            String t_string = "###ø####aa####ø###";
+//            String t_string = "###\u001E####aa####\u001E###";
 //            writeColors(t_string);
 //        }
 //        {
-//            String t_string = "###ø####aa####ø###";
+//            String t_string = "###\u001E####aa####\u001E###";
 //            NutsText node = new DefaultNutsTextNodeParser(ws).parse(new StringReader(t_string));
 //            System.out.println();
 //            NutsTextNodeWriter w = new NutsTextNodeWriterStringer(System.out, ws)
@@ -277,7 +277,7 @@ public class Test07_ColorfulStream {
 //    @Test
 //    public void test11() {
 //        String t_string =
-//                "øøøøøøheeloøø";
+//                "\u001E\u001E\u001E\u001E\u001E\u001Eheelo\u001E\u001E";
 //        writeColors(t_string);
 //
 //    }
@@ -455,7 +455,7 @@ public class Test07_ColorfulStream {
 //    public void test22() {
 //        NutsWorkspace ws = Nuts.openWorkspace();
 //        {
-//            String sb = "##:p1:njob##ø";
+//            String sb = "##:p1:njob##\u001E";
 //            writeColors(sb);
 //        }
 //    }
@@ -514,7 +514,7 @@ public class Test07_ColorfulStream {
 //    @Test
 //    public void test27() {
 //        String s;
-//        s = "##{s12:AA##:12:BB##ø##:6:CC##DD}##";
+//        s = "##{s12:AA##:12:BB##\u001E##:6:CC##DD}##";
 //        writeColors(s);
 //        System.out.println();
 //        s = "##{s12:AA#}##";
@@ -549,10 +549,10 @@ public class Test07_ColorfulStream {
 //                "type (```sh nuts help --colors```) to display this help\n" +
 //                "\n" +
 //                "##) NTF special characters:\n" +
-//                "### \\# \\ø \\\\ \\' ### are special characters\n" +
+//                "### \\# \\\u001E \\\\ \\' ### are special characters\n" +
 //                "### : { and } ### are also spacial character inside \\# styles\n" +
 //                "###\\#### defines primary styles\n" +
-//                "###\\ø### is a 'nop' character. it is used as a separator when required. It is not displayed.\n" +
+//                "###\\\u001E### is a 'nop' character. it is used as a separator when required. It is not displayed.\n" +
 //                "###\\`\\`\\`Text\\`\\`\\`### defines verbatim text\n" +
 //                "###\\`\\`\\`lang code-bloc\\`\\`\\`### defines formatted code in the given language/format (such as sh, java, json, ...)\n" +
 //                "###\\\\### You can escape special characters using ###\\\\### character\n" +
@@ -592,7 +592,7 @@ public class Test07_ColorfulStream {
 //                "```##:!:Text##``` ```##:+:Text##```                  | ##:!:Text## ##:+:Text##                     | reversed, bold\n" +
 //                "```##:primary3:Text##```                       | ##:primary3:Text##                          | primary3\n" +
 //                "```##:secondary5:Text##```                     | ##:s4:Text##                          | secondary5\n" +
-//                "```##{s12:AA##:12:BB##ø##:6:CC##DD}##```       | ##{s12:AA##:12:BB##ø##:6:CC##DD}##                      | composed colors, note the \\ø separator\n" +
+//                "```##{s12:AA##:12:BB##\u001E##:6:CC##DD}##```       | ##{s12:AA##:12:BB##\u001E##:6:CC##DD}##                      | composed colors, note the \\\u001E separator\n" +
 //                "```##:f158:AA## ##:f58:BB## ##:f201:CC##```    | ##:f158:AA## ##:f58:BB## ##:f201:CC##                      | foreground 8bits colors\n" +
 //                "```##:foreground158:Text##```                  | ##:foreground158:Text##                          | foreground 158 (8bits)\n" +
 //                "```##:fxd787af:Text##```                       | ##:fxd787af:Text##                          | foreground Pink (d787af in 24bits)\n" +
@@ -604,7 +604,7 @@ public class Test07_ColorfulStream {
 //                "\n" +
 //                "##Format##                                   | ##Display##                       | ##Description##\n" +
 //                "----------------------------------------------------------------------------------------------------\n" +
-//                "\\\\`\\\\#\\\\ø                                    | \\`\\#\\ø                           | escaped characters\n" +
+//                "\\\\`\\\\#\\\\\u001E                                    | \\`\\#\\\u001E                           | escaped characters\n" +
 //                "\\`\\`\\` Text with # escaped\\`\\`\\`               | ``` Text with # escaped```           | escaped text (note the starting space)\n" +
 //                "\\`\\`\\`underlined underlined\\`\\`\\`              | ```underlined underlined```                    | underlined\n" +
 //                "\\`\\`\\`italic italic\\`\\`\\`                      | ```italic italic```                        | italic\n" +

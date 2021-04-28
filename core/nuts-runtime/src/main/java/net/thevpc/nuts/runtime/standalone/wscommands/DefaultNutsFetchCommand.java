@@ -172,7 +172,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
     }
 
     public NutsDefinition fetchDefinition(NutsId id, NutsFetchCommand options, boolean includeContent, boolean includeInstallInfo) {
-        NutsDefinition d = fetchDefinitionNoCache(id, options, true, true);
+        NutsDefinition d = fetchDefinitionNoCache(id, options, includeContent, includeInstallInfo);
         return d;
     }
     

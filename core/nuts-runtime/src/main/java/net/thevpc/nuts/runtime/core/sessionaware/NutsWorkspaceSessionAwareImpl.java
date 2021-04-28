@@ -29,7 +29,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.core.commands.ws.NutsExecutionContextBuilder;
 import net.thevpc.nuts.runtime.core.repos.NutsInstalledRepository;
-import net.thevpc.nuts.runtime.standalone.config.DefaultWorkspaceEnvManager;
+import net.thevpc.nuts.runtime.standalone.config.DefaultNutsWorkspaceEnvManager;
 
 /**
  *
@@ -232,8 +232,8 @@ public class NutsWorkspaceSessionAwareImpl implements NutsWorkspace, NutsWorkspa
 
     @Override
     public NutsWorkspaceEnvManager env() {
-        DefaultWorkspaceEnvManager e = (DefaultWorkspaceEnvManager) ws().env();
-        return new DefaultWorkspaceEnvManager(e.getModel()).setSession(getSession());
+        DefaultNutsWorkspaceEnvManager e = (DefaultNutsWorkspaceEnvManager) ws().env();
+        return new DefaultNutsWorkspaceEnvManager(e.getModel()).setSession(getSession());
     }
 
     @Override

@@ -74,11 +74,14 @@ public class GlobUtils {
                 case '$':
                 case '[':
                 case ']':
+                case '{':
+                case '}':
                 case '(':
                 case ')':
                 case '?':
                 case '^':
                 case '|':
+                case '+':
                 case '\\': {
                     sb.append('\\').append(c);
                     break;

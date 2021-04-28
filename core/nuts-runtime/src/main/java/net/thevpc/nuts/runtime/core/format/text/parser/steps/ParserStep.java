@@ -9,7 +9,7 @@ public abstract class ParserStep {
 
     public abstract void appendChild(ParserStep tt);
 
-    public abstract NutsText toNode();
+    public abstract NutsText toText();
 
     public abstract void end(DefaultNutsTextNodeParser.State p);
 

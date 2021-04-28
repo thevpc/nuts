@@ -249,7 +249,7 @@ public class NutsRepositoryFolderHelper {
         } else {
             folder = rootPath;
         }
-        return new FolderNutIdIterator(repo == null ? null : repo.getName(), folder, filter, session, new FolderNutIdIterator.FolderNutIdIteratorModel() {
+        return new FolderNutIdIterator(repo == null ? null : repo.getName(), folder, rootPath,filter, session, new FolderNutIdIterator.AbstractFolderNutIdIteratorModel() {
             @Override
             public void undeploy(NutsId id, NutsSession session) {
                 if (repo == null) {

@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.util.*;
+import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 
 /**
  * Created by vpc on 2/17/17.
@@ -46,12 +47,20 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
             "", "", "", "",
             "", "", "", ""
     );
-    public static NutsTableBordersFormat DEFAULT_BORDER = new DefaultTableFormatBorders(
+    
+    public static NutsTableBordersFormat UNICODE_BORDER = new DefaultTableFormatBorders(
             "╭", "─", "┬", "╮",
             "│", "│", "│",
             "├", "─", "┼", "┤",
             "╰", "─", "┴", "╯"
     );
+    
+//    public static NutsTableBordersFormat DEFAULT_BORDER = new DefaultTableFormatBorders(
+//            "╭", "─", "┬", "╮",
+//            "│", "│", "│",
+//            "├", "─", "┼", "┤",
+//            "╰", "─", "┴", "╯"
+//    );
     public static NutsTableBordersFormat SIMPLE_BORDER = new DefaultTableFormatBorders(
             ".", "-", "-", ".",
             "|", " | ", "|",
@@ -87,7 +96,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
      * LMMMMNMMMMO
      * </pre>
      */
-    private NutsTableBordersFormat border = DEFAULT_BORDER;
+    private NutsTableBordersFormat border = CoreNutsUtils.SUPPORTS_UTF_ENCODING?UNICODE_BORDER:SIMPLE_BORDER;
     private Object model;
     private List<Boolean> visibleColumns = new ArrayList<>();
     private boolean visibleHeader = true;
@@ -114,7 +123,10 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                 return (SPACE_BORDER);
             }
             case "default": {
-                return (DEFAULT_BORDER);
+                return CoreNutsUtils.SUPPORTS_UTF_ENCODING?UNICODE_BORDER:SIMPLE_BORDER;
+            }
+            case "unicode": {
+                return (UNICODE_BORDER);
             }
             case "simple": {
                 return (SIMPLE_BORDER);

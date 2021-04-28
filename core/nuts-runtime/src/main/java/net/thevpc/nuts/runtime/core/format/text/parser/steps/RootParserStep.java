@@ -44,9 +44,9 @@ public class RootParserStep extends ParserStep {
     }
 
     @Override
-    public NutsText toNode() {
+    public NutsText toText() {
         if (available.size() == 1) {
-            return available.get(0).toNode();
+            return available.get(0).toText();
         }
         List<NutsText> all = new ArrayList<>();
         boolean partial = false;
@@ -54,7 +54,7 @@ public class RootParserStep extends ParserStep {
             if (!partial && !a.isComplete()) {
                 partial = true;
             }
-            all.add(a.toNode());
+            all.add(a.toText());
         }
         return ws.formats().text().forList(all);
     }
