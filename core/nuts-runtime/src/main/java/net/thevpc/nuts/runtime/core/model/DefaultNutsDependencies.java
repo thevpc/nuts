@@ -77,6 +77,6 @@ public class DefaultNutsDependencies implements NutsDependencies {
 
     @Override
     public Iterator<NutsDependency> iterator() {
-        return Arrays.asList(nonMergedDependencies).iterator();
+        return all().iterator();
     }
 }

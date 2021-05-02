@@ -60,6 +60,7 @@ import java.util.logging.Level;
 import java.util.stream.Collectors;
 import net.thevpc.nuts.runtime.core.app.DefaultNutsWorkspaceLocationManager;
 import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
+import net.thevpc.nuts.runtime.core.util.CoreNutsDependencyUtils;
 
 /**
  * @author thevpc
@@ -1001,7 +1002,7 @@ public class DefaultNutsWorkspaceConfigModel {
 
     public void prepareBootRuntimeOrExtension(NutsId id, boolean force, boolean runtime, NutsSession session) {
         NutsWorkspaceUtils.checkSession(ws, session);
-        NutsWorkspace ws=session.getWorkspace();
+        NutsWorkspace ws = session.getWorkspace();
         Path configFile = Paths.get(ws.locations().getStoreLocation(NutsStoreLocation.CACHE))
                 .resolve(NutsConstants.Folders.ID).resolve(ws.locations().getDefaultIdBasedir(id)).resolve(runtime
                 ? NutsConstants.Files.WORKSPACE_RUNTIME_CACHE_FILE_NAME
@@ -1018,8 +1019,11 @@ public class DefaultNutsWorkspaceConfigModel {
         m.put("id", id.getLongName());
 
         NutsDefinition def = ws.fetch().setId(id).setDependencies(true)
+                //
                 .setOptional(false)
                 .addScope(NutsDependencyScopePattern.RUN)
+                .setDependencyFilter(CoreNutsDependencyUtils.createJavaRunDependencyFilter(session))
+                //
                 .setContent(true)
                 .setFailFast(false)
                 .setSession(CoreNutsUtils.silent(session))
@@ -1075,7 +1079,7 @@ public class DefaultNutsWorkspaceConfigModel {
 //    }
     private void downloadId(NutsId id, boolean force, Path path, boolean fetch, NutsSession session) {
         NutsWorkspaceUtils.checkSession(ws, session);
-        NutsWorkspace ws=session.getWorkspace();
+        NutsWorkspace ws = session.getWorkspace();
         String idFileName = ws.locations().getDefaultIdFilename(id.builder().setFaceContent().setPackaging("jar").build());
         Path jarFile = Paths.get(ws.locations().getStoreLocation(NutsStoreLocation.LIB))
                 .resolve(NutsConstants.Folders.ID).resolve(ws.locations().getDefaultIdBasedir(id))
@@ -1086,9 +1090,12 @@ public class DefaultNutsWorkspaceConfigModel {
             } else {
                 if (fetch) {
                     NutsDefinition def = ws.fetch().setId(id).setDependencies(true)
+                            //
                             .setOptional(false)
-                            .setSession(session.copy().setTrace(false))
                             .addScope(NutsDependencyScopePattern.RUN)
+                            .setDependencyFilter(CoreNutsDependencyUtils.createJavaRunDependencyFilter(session))
+                            //
+                            .setSession(session.copy().setTrace(false))
                             .setContent(true)
                             .setFailFast(false)
                             .getResultDefinition();

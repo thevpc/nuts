@@ -59,6 +59,16 @@
                 <jpda.listen>true</jpda.listen>
             </properties>
         </action>
+    <action>
+            <actionName>CUSTOM-deploy</actionName>
+            <displayName>deploy</displayName>
+            <goals>
+                <goal>deploy</goal>
+            </goals>
+            <activatedProfiles>
+                <activatedProfile>deploy</activatedProfile>
+            </activatedProfiles>
+        </action>
     
         
         

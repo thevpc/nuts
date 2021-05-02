@@ -97,7 +97,9 @@ public class DefaultWriteTypeProcessor {
                 throw getError().get();
             }
             case ASK: {
-                if (!session.getTerminal().ask().forBoolean(getAskMessage(), getAskMessageParams())
+                if (!session.getTerminal().ask()
+                        .setSession(session)
+                        .forBoolean(getAskMessage(), getAskMessageParams())
                         .setDefaultValue(false).getBooleanValue()) {
                     return false;
                 }

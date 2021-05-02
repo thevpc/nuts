@@ -436,6 +436,7 @@ public class NMysqlMain implements NdbSupport {
         NutsTextManager factory = service.getContext()
                 .getWorkspace().formats().text();
         if (commandLine.isExecMode()) {
+            NutsSession session = service.getContext().getSession();
             if(!expectedRemote) {
                 LocalMysqlConfigService c = service.loadLocalMysqlConfig(name.getConfigName(), add?NutsOpenMode.OPEN_OR_CREATE:NutsOpenMode.OPEN_OR_ERROR);
                 boolean overrideExisting = false;
@@ -443,32 +444,34 @@ public class NMysqlMain implements NdbSupport {
                     if (name.getDatabaseName().isEmpty()) {
                         if (c.getDatabase(name.getDatabaseName(), NutsOpenMode.OPEN_OR_NULL) != null) {
                             overrideExisting = true;
-                            if (!service.getContext().getSession().getTerminal().ask()
+                            if (!session.getTerminal().ask()
+                                    .setSession(session)
                                     .forBoolean("already exists %s. override?", factory.forStyled(name.toString(),
                                                     NutsTextStyle.primary(3))
                                     )
                                     .setDefaultValue(false).getBooleanValue()) {
-                                throw new NutsExecutionException(service.getContext().getSession(), "already exists " + name, 2);
+                                throw new NutsExecutionException(session, "already exists " + name, 2);
                             }
                         }
                     } else {
                         if (c.getDatabase(name.getDatabaseName(), NutsOpenMode.OPEN_OR_NULL) != null) {
                             overrideExisting = true;
-                            if (!service.getContext().getSession().getTerminal().ask()
+                            if (!session.getTerminal().ask()
+                                    .setSession(session)
                                     .forBoolean("already exists %s. override?",factory.forStyled(name.toString(),NutsTextStyle.primary(3)))
                                     .setDefaultValue(false).getBooleanValue()) {
-                                throw new NutsExecutionException(service.getContext().getSession(), "already exists " + name, 2);
+                                throw new NutsExecutionException(session, "already exists " + name, 2);
                             }
                         }
                     }
                 } else {
                     if (name.getDatabaseName().isEmpty()) {
                         if (c.getDatabase(name.getDatabaseName(), NutsOpenMode.OPEN_OR_NULL) == null) {
-                            throw new NutsExecutionException(service.getContext().getSession(), "not found " + name, 2);
+                            throw new NutsExecutionException(session, "not found " + name, 2);
                         }
                     } else {
                         if (c.getDatabase(name.getDatabaseName(), NutsOpenMode.OPEN_OR_NULL) == null) {
-                            throw new NutsExecutionException(service.getContext().getSession(), "not found  " + name, 2);
+                            throw new NutsExecutionException(session, "not found  " + name, 2);
                         }
                     }
                 }
@@ -506,24 +509,24 @@ public class NMysqlMain implements NdbSupport {
                         someUpdates = true;
                         c.getConfig().setKill(c_kill);
                     }
-                    if (someUpdates && service.getContext().getSession().isPlainTrace()) {
+                    if (someUpdates && session.isPlainTrace()) {
                         if (add) {
                             if (overrideExisting) {
-                                service.getContext().getSession().out().printf("adding local config (with override) %s%n",
+                                session.out().printf("adding local config (with override) %s%n",
                                         factory.forStyled(
                                         StringUtils.coalesce(name.getConfigName(), "default"),NutsTextStyle.primary(3))
                                 );
                             } else {
-                                service.getContext().getSession().out().printf("adding local config %s%n",
+                                session.out().printf("adding local config %s%n",
                                         factory.forStyled(
                                         StringUtils.coalesce(name.getConfigName(), "default"),NutsTextStyle.primary(3)));
                             }
                         } else {
                             if (overrideExisting) {
-                                service.getContext().getSession().out().printf("updating local config (with override) %s%n",
+                                session.out().printf("updating local config (with override) %s%n",
                                         factory.forStyled(StringUtils.coalesce(name.getConfigName(), "default"),NutsTextStyle.primary(3)));
                             } else {
-                                service.getContext().getSession().out().printf("updating local config %s%n",
+                                session.out().printf("updating local config %s%n",
                                         factory.forStyled(
                                         StringUtils.coalesce(name.getConfigName(), "default"),NutsTextStyle.primary(3)));
                             }
@@ -550,38 +553,37 @@ public class NMysqlMain implements NdbSupport {
                         r.getConfig().setDatabaseName(dbname);
                     }
                     if (askPassword || (!add && password == null)) {
-                        r.getConfig().setPassword(
-                                new String(service.getContext().getWorkspace().security()
-                                        .createCredentials(service.getContext().getSession().getTerminal().readPassword("Password"), true,
+                        r.getConfig().setPassword(new String(service.getContext().getWorkspace().security()
+                                        .createCredentials(session.getTerminal().readPassword("Password"), true,
                                                 null)
                                 )
                         );
                     }
                     if (r.getConfig().getUser() == null) {
-                        throw new NutsExecutionException(service.getContext().getSession(), "missing --user", 2);
+                        throw new NutsExecutionException(session, "missing --user", 2);
                     }
                     if (r.getConfig().getPassword() == null) {
-                        throw new NutsExecutionException(service.getContext().getSession(), "missing --password", 2);
+                        throw new NutsExecutionException(session, "missing --password", 2);
                     }
                     if (r.getConfig().getDatabaseName() == null) {
-                        throw new NutsExecutionException(service.getContext().getSession(), "missing --name", 2);
+                        throw new NutsExecutionException(session, "missing --name", 2);
                     }
-                    if (someUpdates && service.getContext().getSession().isPlainTrace()) {
+                    if (someUpdates && session.isPlainTrace()) {
                         if (add) {
                             if (overrideExisting) {
-                                service.getContext().getSession().out().printf("adding local instance (with override) %s%n",
+                                session.out().printf("adding local instance (with override) %s%n",
                                         factory.forStyled(r.getFullName(),NutsTextStyle.primary(3)));
                             } else {
-                                service.getContext().getSession().out().printf("adding local instance %s%n",
+                                session.out().printf("adding local instance %s%n",
                                         factory.forStyled(r.getFullName(),NutsTextStyle.primary(3)));
                             }
                         } else {
                             if (overrideExisting) {
-                                service.getContext().getSession().out().printf("updating local instance (with override) %s%n",
+                                session.out().printf("updating local instance (with override) %s%n",
                                         factory.forStyled(r.getFullName(),NutsTextStyle.primary(3))
                                 );
                             } else {
-                                service.getContext().getSession().out().printf("updating local instance %s%n",
+                                session.out().printf("updating local instance %s%n",
                                         factory.forStyled(r.getFullName(),NutsTextStyle.primary(3))
                                 );
                             }
@@ -589,7 +591,7 @@ public class NMysqlMain implements NdbSupport {
                     }
                 }
                 if (!someUpdates) {
-                    throw new NutsExecutionException(service.getContext().getSession(), "nothing to save", 2);
+                    throw new NutsExecutionException(session, "nothing to save", 2);
                 }
 
                 c.saveConfig();
@@ -611,30 +613,32 @@ public class NMysqlMain implements NdbSupport {
                     if (name.getDatabaseName().isEmpty()) {
                         if (c.getDatabase(name.getDatabaseName(),NutsOpenMode.OPEN_OR_NULL) != null) {
                             overrideExisting = true;
-                            if (!service.getContext().getSession().getTerminal().ask()
+                            if (!session.getTerminal().ask()
+                                    .setSession(session)
                                     .forBoolean("already exists %s. override?", factory.forStyled(name.toString(),NutsTextStyle.primary(3)))
                                     .setDefaultValue(false).getBooleanValue()) {
-                                throw new NutsExecutionException(service.getContext().getSession(), "already exists " + name, 2);
+                                throw new NutsExecutionException(session, "already exists " + name, 2);
                             }
                         }
                     } else {
                         if (c.getDatabase(name.getDatabaseName(),NutsOpenMode.OPEN_OR_NULL) != null) {
                             overrideExisting = true;
-                            if (!service.getContext().getSession().getTerminal().ask()
+                            if (!session.getTerminal().ask()
+                                    .setSession(session)
                                     .forBoolean("already exists %s. override?", factory.forStyled(name.toString(),NutsTextStyle.primary(3)))
                                     .setDefaultValue(false).getBooleanValue()) {
-                                throw new NutsExecutionException(service.getContext().getSession(), "already exists " + name, 2);
+                                throw new NutsExecutionException(session, "already exists " + name, 2);
                             }
                         }
                     }
                 } else {
                     if (name.getDatabaseName().isEmpty()) {
                         if (c.getDatabase(name.getDatabaseName(),NutsOpenMode.OPEN_OR_NULL) == null) {
-                            throw new NutsExecutionException(service.getContext().getSession(), "not found " + name, 2);
+                            throw new NutsExecutionException(session, "not found " + name, 2);
                         }
                     } else {
                         if (c.getDatabase(name.getDatabaseName(),NutsOpenMode.OPEN_OR_NULL) == null) {
-                            throw new NutsExecutionException(service.getContext().getSession(), "not found  " + name, 2);
+                            throw new NutsExecutionException(session, "not found  " + name, 2);
                         }
                     }
                 }
@@ -644,21 +648,21 @@ public class NMysqlMain implements NdbSupport {
 //                    someUpdates = true;
 //                    c.getConfig().setMysqldumpCommand(c_mysqldump_command);
 //                }
-                    if (someUpdates && service.getContext().getSession().isPlainTrace()) {
+                    if (someUpdates && session.isPlainTrace()) {
                         if (add) {
                             if (overrideExisting) {
-                                service.getContext().getSession().out().printf("adding remote config (with override) %s%n",
+                                session.out().printf("adding remote config (with override) %s%n",
                                         factory.forStyled(StringUtils.coalesce(name.getConfigName(), "default"),NutsTextStyle.primary(3)));
                             } else {
-                                service.getContext().getSession().out().printf("adding remote config %s%n",
+                                session.out().printf("adding remote config %s%n",
                                         factory.forStyled(StringUtils.coalesce(name.getConfigName(), "default"),NutsTextStyle.primary(3)));
                             }
                         } else {
                             if (overrideExisting) {
-                                service.getContext().getSession().out().printf("updating remote config (with override) %s%n",
+                                session.out().printf("updating remote config (with override) %s%n",
                                         factory.forStyled(StringUtils.coalesce(name.getConfigName(), "default"),NutsTextStyle.primary(3)));
                             } else {
-                                service.getContext().getSession().out().printf("updating remote config %s%n",
+                                session.out().printf("updating remote config %s%n",
                                         factory.forStyled(StringUtils.coalesce(name.getConfigName(), "default"),NutsTextStyle.primary(3)));
                             }
                         }
@@ -677,29 +681,29 @@ public class NMysqlMain implements NdbSupport {
                         someUpdates = true;
                         r.getConfig().setServer(forRemote_server);
                     }
-                    if (someUpdates && service.getContext().getSession().isPlainTrace()) {
+                    if (someUpdates && session.isPlainTrace()) {
                         if (add) {
                             if (overrideExisting) {
-                                service.getContext().getSession().out().printf("adding remote instance (with override) %s%n",
+                                session.out().printf("adding remote instance (with override) %s%n",
                                         factory.forStyled(r.getFullName(),NutsTextStyle.primary(3)));
                             } else {
-                                service.getContext().getSession().out().printf("adding remote instance %s%n",
+                                session.out().printf("adding remote instance %s%n",
                                         factory.forStyled(r.getFullName(),NutsTextStyle.primary(3)));
                             }
                         } else {
                             if (overrideExisting) {
-                                service.getContext().getSession().out().printf("updating remote instance (with override) %s%n",
+                                session.out().printf("updating remote instance (with override) %s%n",
                                         factory.forStyled(r.getFullName(),NutsTextStyle.primary(3))
                                 );
                             } else {
-                                service.getContext().getSession().out().printf("updating remote instance %s%n",
+                                session.out().printf("updating remote instance %s%n",
                                         factory.forStyled(r.getFullName(),NutsTextStyle.primary(3)));
                             }
                         }
                     }
                 }
                 if (!someUpdates) {
-                    throw new NutsExecutionException(service.getContext().getSession(), "nothing to save", 2);
+                    throw new NutsExecutionException(session, "nothing to save", 2);
                 }
 
                 c.saveConfig();

@@ -20,7 +20,7 @@ import java.io.StringReader;
 public class Test07_ColorfulStream {
 //    @Test
 //    public void test0(){
-//        String msg="[[-t]] or [[--trace]] : enable trace operation with a meaning message \\( or disable it with [[--!trace]] or [[--trace=false]] \\)";
+//        String msg="[[-t]] or [[--trace]] : enable trace operation with a meaning message ( or disable it with [[--!trace]] or [[--trace=false]] )";
 //        NutsPrintStreamFormattedUnixAnsi out=new NutsPrintStreamFormattedUnixAnsi(System.out);
 //        out.println(msg);
 //    }

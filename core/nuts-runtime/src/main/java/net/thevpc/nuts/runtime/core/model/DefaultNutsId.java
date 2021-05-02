@@ -383,7 +383,7 @@ public class DefaultNutsId implements NutsId {
             exc="";
         }
         List<NutsId> a=new ArrayList<>();
-        for (String s : exc.split(";")) {
+        for (String s : exc.split("[;,]")) {
             NutsId n = ws.id().parser().parse(s);
             if(n!=null){
                 a.add(n);

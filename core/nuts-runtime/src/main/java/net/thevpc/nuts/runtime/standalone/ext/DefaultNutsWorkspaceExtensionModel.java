@@ -36,12 +36,13 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import net.thevpc.nuts.runtime.bundles.parsers.StringTokenizerUtils;
+import net.thevpc.nuts.runtime.core.util.CoreNutsDependencyUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsClassLoaderNodeUtils;
 
 /**
  * @author thevpc
  */
-public class DefaultNutsWorkspaceExtensionModel  {
+public class DefaultNutsWorkspaceExtensionModel {
 
     private NutsLogger LOG;
     private final Set<Class> SUPPORTED_EXTENSION_TYPES = new HashSet<>(
@@ -89,6 +90,7 @@ public class DefaultNutsWorkspaceExtensionModel  {
         }
         return LOG;
     }
+
     public boolean isExcludedExtension(NutsId excluded) {
         return this.exclusions.contains(excluded.getShortName());
     }
@@ -136,7 +138,7 @@ public class DefaultNutsWorkspaceExtensionModel  {
         for (String r : getExtensionRepositoryLocations(id)) {
             String url = r + "/" + CoreIOUtils.getPath(id, "." + extensionType, '/');
             allUrls.add(url);
-            URL u = expandURL(url,session);
+            URL u = expandURL(url, session);
             if (u != null) {
                 NutsExtensionInformation[] s = new NutsExtensionInformation[0];
                 try (Reader rr = new InputStreamReader(NutsWorkspaceUtils.of(session).openURL(u))) {
@@ -198,7 +200,6 @@ public class DefaultNutsWorkspaceExtensionModel  {
 //            registerType(regInfo, session);
 //        }
 //    }
-
     public boolean installWorkspaceExtensionComponent(Class extensionPointType, Object extensionImpl, NutsSession session) {
         if (NutsComponent.class.isAssignableFrom(extensionPointType)) {
             if (extensionPointType.isInstance(extensionImpl)) {
@@ -235,7 +236,6 @@ public class DefaultNutsWorkspaceExtensionModel  {
 //            return old;
 //        }
 //    }
-
     public Set<Class> discoverTypes(NutsId id, ClassLoader classLoader, NutsSession session) {
         URL url = ws.fetch().setId(id).setSession(session).setContent(true).getResultContent().getURL();
         return objectFactory.discoverTypes(id, url, classLoader, session);
@@ -245,11 +245,9 @@ public class DefaultNutsWorkspaceExtensionModel  {
 //    public Set<Class> discoverTypes(ClassLoader classLoader, NutsSession session) {
 //        return objectFactory.discoverTypes(classLoader);
 //    }
-
     public <T extends NutsComponent<B>, B> NutsServiceLoader<T, B> createServiceLoader(Class<T> serviceType, Class<B> criteriaType, NutsSession session) {
         return createServiceLoader(serviceType, criteriaType, null);
     }
-
 
     public <T extends NutsComponent<B>, B> NutsServiceLoader<T, B> createServiceLoader(Class<T> serviceType, Class<B> criteriaType, ClassLoader classLoader, NutsSession session) {
         return new DefaultNutsServiceLoader<T, B>(session, serviceType, criteriaType, classLoader);
@@ -259,11 +257,9 @@ public class DefaultNutsWorkspaceExtensionModel  {
         return objectFactory.createSupported(type, supportCriteria, session);
     }
 
-
     public <T extends NutsComponent<V>, V> T createSupported(Class<T> type, V supportCriteria, Class[] constructorParameterTypes, Object[] constructorParameters, NutsSession session) {
         return objectFactory.createSupported(type, supportCriteria, constructorParameterTypes, constructorParameters, session);
     }
-
 
     public <T extends NutsComponent<V>, V> List<T> createAllSupported(Class<T> type, V supportCriteria, NutsSession session) {
         return objectFactory.createAllSupported(type, supportCriteria, session);
@@ -280,7 +276,6 @@ public class DefaultNutsWorkspaceExtensionModel  {
 //        return a;
 //    }
 
-
     public <T> List<T> createAll(Class<T> type, NutsSession session) {
         return objectFactory.createAll(type, session);
     }
@@ -289,26 +284,21 @@ public class DefaultNutsWorkspaceExtensionModel  {
 //    public Set<Class> getExtensionPoints(NutsSession session) {
 //        return objectFactory.getExtensionPoints();
 //    }
-
     public Set<Class> getExtensionTypes(Class extensionPoint, NutsSession session) {
         return objectFactory.getExtensionTypes(extensionPoint, session);
     }
-
 
     public List<Object> getExtensionObjects(Class extensionPoint, NutsSession session) {
         return objectFactory.getExtensionObjects(extensionPoint);
     }
 
-
     public boolean isRegisteredType(Class extensionPointType, String name, NutsSession session) {
         return objectFactory.isRegisteredType(extensionPointType, name, session);
     }
 
-
     public boolean isRegisteredInstance(Class extensionPointType, Object extensionImpl, NutsSession session) {
         return objectFactory.isRegisteredInstance(extensionPointType, extensionImpl, session);
     }
-
 
     public boolean registerInstance(Class extensionPointType, Object extensionImpl, NutsSession session) {
         if (!isRegisteredType(extensionPointType, extensionImpl.getClass().getName(), session) && !isRegisteredInstance(extensionPointType, extensionImpl, session)) {
@@ -318,7 +308,6 @@ public class DefaultNutsWorkspaceExtensionModel  {
         _LOGOP(session).level(Level.FINE).verb(NutsLogVerb.WARNING).log("Bootstrap Extension Point {0} => {1} ignored. Already registered", new Object[]{extensionPointType.getName(), extensionImpl.getClass().getName()});
         return false;
     }
-
 
     public boolean registerType(Class extensionPointType, Class extensionType, NutsId source, NutsSession session) {
         if (!isRegisteredType(extensionPointType, extensionType.getName(), session)
@@ -330,11 +319,9 @@ public class DefaultNutsWorkspaceExtensionModel  {
         return false;
     }
 
-
     public boolean isRegisteredType(Class extensionPointType, Class extensionType, NutsSession session) {
         return objectFactory.isRegisteredType(extensionPointType, extensionType, session);
     }
-
 
     public boolean isLoadedExtensions(NutsId id, NutsSession session) {
         return loadedExtensionIds.stream().anyMatch(
@@ -342,22 +329,18 @@ public class DefaultNutsWorkspaceExtensionModel  {
         );
     }
 
-
     public List<NutsId> getLoadedExtensions(NutsSession session) {
         return new ArrayList<>(loadedExtensionIds);
     }
-
 
     public void loadExtension(NutsId extension, NutsSession session) {
         loadExtensions(session, extension);
     }
 
-
     public void unloadExtension(NutsId extension, NutsSession session) {
         unloadExtensions(new NutsId[]{extension}, session);
 
     }
-
 
     public List<NutsId> getConfigExtensions(NutsSession session) {
         if (getStoredConfig().getExtensions() != null) {
@@ -386,9 +369,8 @@ public class DefaultNutsWorkspaceExtensionModel  {
                             .addId(extension).setTargetApiVersion(ws.getApiVersion())
                             .setContent(true)
                             .setDependencies(true)
-                            .setDependencyFilter(ws.dependency().filter().byScope(NutsDependencyScopePattern.RUN).and(
-                                    ws.dependency().filter().byOptional(false)
-                            ))
+                            .setDependencyFilter(CoreNutsDependencyUtils.createJavaRunDependencyFilter(session)
+                            )
                             .setLatest(true)
                             .getResultDefinitions().required();
                     if (def == null || def.getContent() == null) {
@@ -416,13 +398,13 @@ public class DefaultNutsWorkspaceExtensionModel  {
         }
     }
 
-     private void updateLoadedExtensionURLs(NutsSession session) {
+    private void updateLoadedExtensionURLs(NutsSession session) {
         loadedExtensionURLs.clear();
         for (NutsDefinition def : ws.search().addIds(loadedExtensionIds.toArray(new NutsId[0])).setTargetApiVersion(ws.getApiVersion())
-                .setDependencies(true)
-                .setDependencyFilter(ws.dependency().filter().byScope(NutsDependencyScopePattern.RUN))
-                .setLatest(true)
                 .setSession(session)
+                .setDependencies(true)
+                .setDependencyFilter(CoreNutsDependencyUtils.createJavaRunDependencyFilter(session))
+                .setLatest(true)
                 .getResultDefinitions().list()) {
             loadedExtensionURLs.add(def.getContent().getURL());
         }
@@ -470,8 +452,11 @@ public class DefaultNutsWorkspaceExtensionModel  {
                 .copyFrom(options)
                 .setSession(searchSession)
                 .addId(id).setSession(session)
-                .addScope(NutsDependencyScopePattern.RUN)
+                //
                 .setOptional(false)
+                .addScope(NutsDependencyScopePattern.RUN)
+                .setDependencyFilter(CoreNutsDependencyUtils.createJavaRunDependencyFilter(session))
+                //
                 .setDependencies(true)
                 .setLatest(true)
                 .getResultDefinitions().required();
@@ -494,7 +479,7 @@ public class DefaultNutsWorkspaceExtensionModel  {
         if (session.getTerminal() != null) {
             spec.put("ignoreClass", session.getTerminal().getClass());
         }
-        NutsSessionTerminal newTerminal = createTerminal(spec,session);
+        NutsSessionTerminal newTerminal = createTerminal(spec, session);
         if (newTerminal != null) {
             _LOGOP(session).level(Level.FINE).verb(NutsLogVerb.UPDATE).formatted().log("extension {0} changed Terminal configuration. Reloading Session Terminal", id);
             session.setTerminal(newTerminal);
@@ -581,7 +566,7 @@ public class DefaultNutsWorkspaceExtensionModel  {
 //        }
 //        throw new ClassCastException(NutsComponent.class.getName());
 //    }
-    public NutsSessionTerminal createTerminal(NutsTerminalSpec spec,NutsSession session) {
+    public NutsSessionTerminal createTerminal(NutsTerminalSpec spec, NutsSession session) {
         NutsSessionTerminalBase termb = createSupported(NutsSessionTerminalBase.class, spec, session);
         if (termb == null) {
             throw new NutsExtensionNotFoundException(session, NutsSessionTerminalBase.class, "TerminalBase");
@@ -597,11 +582,11 @@ public class DefaultNutsWorkspaceExtensionModel  {
     }
 
     //@Override
-    public URL[] getExtensionURLLocations(NutsId nutsId, String appId, String extensionType,NutsSession session) {
+    public URL[] getExtensionURLLocations(NutsId nutsId, String appId, String extensionType, NutsSession session) {
         List<URL> bootUrls = new ArrayList<>();
         for (String r : getExtensionRepositoryLocations(nutsId)) {
             String url = r + "/" + CoreIOUtils.getPath(nutsId, "." + extensionType, '/');
-            URL u = expandURL(url,session);
+            URL u = expandURL(url, session);
             bootUrls.add(u);
         }
         return bootUrls.toArray(new URL[0]);
@@ -623,7 +608,7 @@ public class DefaultNutsWorkspaceExtensionModel  {
         return urls.toArray(new String[0]);
     }
 
-    protected URL expandURL(String url,NutsSession session) {
+    protected URL expandURL(String url, NutsSession session) {
         try {
             url = ws.io().expandPath(url);
             if (CoreIOUtils.isPathHttp(url)) {
@@ -793,5 +778,5 @@ public class DefaultNutsWorkspaceExtensionModel  {
     public NutsWorkspace getWorkspace() {
         return ws;
     }
-    
+
 }

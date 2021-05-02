@@ -124,6 +124,8 @@ public interface NutsDependency extends Serializable, NutsFormattable{
     
     String getOs();
     
+    String getType();
+    
     String getArch();
 
 

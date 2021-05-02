@@ -104,6 +104,10 @@ public class NutsDependenciesResolver {
                             getEffDependencyFilter(), session);
                     immediates.addAll(Arrays.asList(immediate));
                     for (NutsDependency dependency : currentNode.def.getEffectiveDescriptor().getDependencies()) {
+                        dependency=dependency.builder().setProperty("provided-by", currentNode.id.toString()).build();
+//                        if(dependency.toId().contains("jai_imageio")){
+//                            System.out.print("");
+//                        }
                         NutsDependency effDependency = dependency.builder()
                                 .setScope(combineScopes(currentNode.effDependency.getScope(), dependency.getScope()))
                                 .build();
@@ -142,6 +146,10 @@ public class NutsDependenciesResolver {
                 NutsDescriptor effectiveDescriptor = currentNode.getEffectiveDescriptor();
                 if (effectiveDescriptor != null) {
                     for (NutsDependency dependency : effectiveDescriptor.getDependencies()) {
+                        dependency=dependency.builder().setProperty("provided-by", currentNode.id.toString()).build();
+//                        if(dependency.toId().contains("jai_imageio")){
+//                            System.out.print("");
+//                        }
                         NutsDependency effDependency = dependency.builder()
                                 .setScope(combineScopes(currentNode.effDependency.getScope(), dependency.getScope()))
                                 .build();

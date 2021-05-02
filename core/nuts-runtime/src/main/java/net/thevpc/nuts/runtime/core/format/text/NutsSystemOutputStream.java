@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import net.thevpc.nuts.NutsOsFamily;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.runtime.optional.jansi.OptionalJansi;
+//import net.thevpc.nuts.runtime.optional.jansi.OptionalJansi;
 
 public class NutsSystemOutputStream extends BaseTransparentFilterOutputStream implements ExtendedFormatAware {
 
@@ -29,7 +29,7 @@ public class NutsSystemOutputStream extends BaseTransparentFilterOutputStream im
         this.type = type;
         this.base = base;
         this.baseStripped = CoreIOUtils.convertOutputStream(base, NutsTerminalMode.FILTERED, session);
-        if (ws.env().getOptionAsBoolean("enableJansi",false) && OptionalJansi.isAvailable()) {
+        /*if (ws.env().getOptionAsBoolean("enableJansi",false) && OptionalJansi.isAvailable()) {
             OutputStream f = OptionalJansi.preparestream(base);
             if(f!=null){
                 this.formatted = CoreIOUtils.convertOutputStream(base, NutsTerminalMode.FORMATTED, session);
@@ -38,7 +38,8 @@ public class NutsSystemOutputStream extends BaseTransparentFilterOutputStream im
                 this.formatted = baseStripped;
                 setType(NutsTerminalMode.FILTERED);
             }
-        }else{
+        }else*/
+        {
             NutsOsFamily os = ws.env().getOsFamily();
             boolean IS_WINDOWS = os == NutsOsFamily.WINDOWS;
             boolean IS_CYGWIN = IS_WINDOWS

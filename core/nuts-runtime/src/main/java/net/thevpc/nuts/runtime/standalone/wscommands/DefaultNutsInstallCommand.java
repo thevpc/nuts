@@ -36,6 +36,7 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
+import net.thevpc.nuts.runtime.core.util.CoreNutsDependencyUtils;
 
 /**
  * type: Command Class
@@ -83,22 +84,28 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
         checkSession();
         NutsWorkspace ws = getSession().getWorkspace();
         def.definition = ws.fetch().setId(id).setSession(ss)
-                .setOptional(false)
                 .setContent(true)
                 .setEffective(true)
                 .setDependencies(true)
                 .setInstalled(null)
-                .addScope(NutsDependencyScopePattern.RUN)
                 .setFailFast(true)
+                //
+                .setOptional(false)
+                .addScope(NutsDependencyScopePattern.RUN)
+                .setDependencyFilter(CoreNutsDependencyUtils.createJavaRunDependencyFilter(session))
+                //
                 .getResultDefinition();
         if (def.definition.getInstallInformation() == null) {
             def.definition = ws.fetch().setId(id).setSession(ss)
-                    .setOptional(false)
                     .setContent(true)
                     .setEffective(true)
                     .setDependencies(true)
                     .setInstalled(null)
+                    //
+                    .setOptional(false)
                     .addScope(NutsDependencyScopePattern.RUN)
+                    .setDependencyFilter(CoreNutsDependencyUtils.createJavaRunDependencyFilter(session))
+                    //
                     .setFailFast(true)
                     .getResultDefinition();
         }
@@ -406,9 +413,10 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                     list.ids(x -> x.ignored));
         }
         List<NutsId> nonIgnored = list.ids(x -> !x.ignored);
-        if (!nonIgnored.isEmpty() && !ws.term().setSession(getSession()).getTerminal().ask().forBoolean("should we proceed?")
-                .setDefaultValue(true)
+        if (!nonIgnored.isEmpty() && !ws.term().setSession(getSession()).getTerminal().ask()
                 .setSession(session)
+                .forBoolean("should we proceed?")
+                .setDefaultValue(true)
                 .setCancelMessage("installation cancelled : %s ", nonIgnored.stream().map(NutsId::getFullName).collect(Collectors.joining(", ")))
                 .getBooleanValue()) {
             throw new NutsUserCancelException(getSession(), "installation cancelled: " + nonIgnored.stream().map(NutsId::getFullName).collect(Collectors.joining(", ")));
@@ -435,9 +443,10 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                         failedList.add(info.id);
                         if (session.isPlainTrace()) {
                             if (!ws.term().setSession(getSession()).getTerminal().ask()
+                                    .setSession(session)
                                     .forBoolean("```error failed to install``` %s and its dependencies... Continue installation?", info.id)
                                     .setDefaultValue(true)
-                                    .setSession(session).getBooleanValue()) {
+                                    .getBooleanValue()) {
                                 session.out().printf("%s ```error installation cancelled with error:``` %s%n", info.id, ex);
                                 result = new NutsDefinition[0];
                                 return this;

@@ -11,6 +11,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import net.thevpc.nuts.NutsDependency;
 
 import net.thevpc.nuts.NutsPredicates;
 import net.thevpc.nuts.runtime.bundles.io.FileDepthFirstIterator;
@@ -116,19 +117,27 @@ public class IteratorUtils {
         return new NamedIterator<>(from, name);
     }
 
-    public static <T> Iterator<T> flatten(Iterator<Collection<T>> from) {
+    public static <T> Iterator<T> flatCollection(Iterator<Collection<T>> from) {
+        return flatMap(from, (c->c.iterator()));
+    }
+
+    public static <T> Iterator<T> flatIterator(Iterator<Iterator<T>> from) {
+        return flatMap(from, (c->c));
+    }
+
+    public static <B, T> Iterator<T> flatMap(Iterator<B> from, Function<B, Iterator<T>> fun) {
         if (from == null) {
             return emptyIterator();
         }
-        return new FlattenCollectionIterator<>(from);
+        return new FlatMapIterator<>(from, fun);
     }
 
     public static <T> Iterator<T> supplier(Supplier<Iterator<T>> from) {
-        return new SupplierIterator<T>(from,null);
+        return new SupplierIterator<T>(from, null);
     }
 
-    public static <T> Iterator<T> supplier(Supplier<Iterator<T>> from,String name) {
-        return new SupplierIterator<T>(from,name);
+    public static <T> Iterator<T> supplier(Supplier<Iterator<T>> from, String name) {
+        return new SupplierIterator<T>(from, name);
     }
 
     public static <T> Iterator<T> onFinish(Iterator<T> from, Runnable r) {
@@ -208,6 +217,13 @@ public class IteratorUtils {
         return new FilteredIterator<>(it, filter);
     }
 
+    public static <T> CollectorIterator<T> collector(Iterator<T> it) {
+        if (it == null) {
+            return new CollectorIterator<>(null, emptyIterator());
+        }
+        return new CollectorIterator<>(null, it);
+    }
+
     public static <T> Iterator<T> nullifyIfEmpty(Iterator<T> other) {
         if (other == null) {
             return null;
@@ -256,10 +272,8 @@ public class IteratorUtils {
         }
     }
 
-
-
-
     private static class OnFinishIterator<T> implements Iterator<T> {
+
         private final Iterator<T> from;
         private final Runnable r;
 
@@ -284,11 +298,12 @@ public class IteratorUtils {
     }
 
     private static class SupplierIterator<T> implements Iterator<T> {
+
         private final Supplier<Iterator<T>> from;
         private Iterator<T> it;
         private String name;
 
-        public SupplierIterator(Supplier<Iterator<T>> from,String name) {
+        public SupplierIterator(Supplier<Iterator<T>> from, String name) {
             this.from = from;
             this.name = name;
         }
@@ -308,14 +323,15 @@ public class IteratorUtils {
 
         @Override
         public String toString() {
-            if(name==null){
-                return "supplier("+from+")";
+            if (name == null) {
+                return "supplier(" + from + ")";
             }
             return String.valueOf(name);
         }
     }
 
     private static class NamedIterator<T> implements Iterator<T> {
+
         private final Iterator<T> from;
         private final String name;
 
@@ -340,12 +356,51 @@ public class IteratorUtils {
         }
     }
 
-    private static class FlattenCollectionIterator<T> implements Iterator<T> {
-        private final Iterator<Collection<T>> from;
+    public static class CollectorIterator<T> implements Iterator<T> {
+
+        private String name;
+        private Iterator<T> base;
+        private List<T> collected = new ArrayList<>();
+
+        public CollectorIterator(String name, Iterator<T> base) {
+            this.name = name;
+            this.base = base;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return base.hasNext();
+        }
+
+        @Override
+        public T next() {
+            T x = base.next();
+            collected.add(x);
+            return x;
+        }
+
+        public List<T> getCollected() {
+            return collected;
+        }
+
+        @Override
+        public String toString() {
+            if (name == null) {
+                return "collector(" + base + ")";
+            }
+            return String.valueOf(name);
+        }
+    }
+
+    private static class FlatMapIterator<B, T> implements Iterator<T> {
+
+        private final Iterator<B> from;
+        private final Function<B, Iterator<T>> fun;
         Iterator<T> n;
 
-        public FlattenCollectionIterator(Iterator<Collection<T>> from) {
+        public FlatMapIterator(Iterator<B> from, Function<B, Iterator<T>> fun) {
             this.from = from;
+            this.fun = fun;
             n = null;
         }
 
@@ -354,11 +409,14 @@ public class IteratorUtils {
             while (true) {
                 if (n == null) {
                     if (from.hasNext()) {
-                        Collection<T> p = from.next();
+                        B p = from.next();
                         if (p == null) {
                             n = Collections.emptyIterator();
                         } else {
-                            n = p.iterator();
+                            n = fun.apply(p);
+                            if (n == null) {
+                                n = Collections.emptyIterator();
+                            }
                         }
                     } else {
                         return false;
@@ -366,8 +424,8 @@ public class IteratorUtils {
                 }
                 if (n.hasNext()) {
                     return true;
-                }else{
-                    n=null;
+                } else {
+                    n = null;
                 }
             }
         }
@@ -379,11 +437,12 @@ public class IteratorUtils {
 
         @Override
         public String toString() {
-            return "flattenCollection(" + from + ")";
+            return "flattenIterator(" + from + ")";
         }
     }
 
     private static class SortIterator<T> implements Iterator<T> {
+
         private final boolean removeDuplicates;
         private final Iterator<T> it;
         private final Comparator<T> c;
@@ -421,7 +480,7 @@ public class IteratorUtils {
 
         @Override
         public String toString() {
-            return "sort("+ it +")";
+            return "sort(" + it + ")";
         }
     }
 

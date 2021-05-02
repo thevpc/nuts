@@ -62,8 +62,10 @@ public class RemoteMysqlDatabaseConfigService {
 
     public String pull(String localPath, boolean restore, boolean deleteRemote) {
         CachedMapFile lastRun=new CachedMapFile(context,"pull-" + getName());
+        NutsSession session = context.getSession();
         if(lastRun.exists()){
-            if(!context.getSession().getTerminal().ask()
+            if(!session.getTerminal().ask()
+                    .setSession(session)
                     .forBoolean("a previous pull has failed. would you like to resume (yes) or ignore and re-run the pull (no).")
                     .getBooleanValue()
             ){
@@ -75,8 +77,8 @@ public class RemoteMysqlDatabaseConfigService {
         LocalMysqlDatabaseConfigService loc = ms.loadLocalMysqlConfig(locName.getConfigName(), NutsOpenMode.OPEN_OR_ERROR)
                 .getDatabase(locName.getDatabaseName(), NutsOpenMode.OPEN_OR_ERROR);
         RemoteMysqlDatabaseConfig cconfig = getConfig();
-        if (context.getSession().isPlainTrace()) {
-            context.getSession().out().printf("%s remote restore%n", getBracketsPrefix(name));
+        if (session.isPlainTrace()) {
+            session.out().printf("%s remote restore%n", getBracketsPrefix(name));
         }
         String remoteTempPath=null;
         if(lastRun.get("remoteTempPath")!=null){
@@ -108,8 +110,8 @@ public class RemoteMysqlDatabaseConfigService {
         }
         SshPath remoteFullFilePath = new SshAddress(prepareSshServer(cconfig.getServer())).getPath(ppath);
         NutsFormatManager text = context.getWorkspace().formats();
-        if (context.getSession().isPlainTrace()) {
-            context.getSession().out().printf("%s copy '%s' to '%s'%n", getBracketsPrefix(name),
+        if (session.isPlainTrace()) {
+            session.out().printf("%s copy '%s' to '%s'%n", getBracketsPrefix(name),
                     text.text().forStyled(remoteFullFilePath.toString(),NutsTextStyle.path()),
                     text.text().forStyled(localPath,NutsTextStyle.path())
             );
@@ -122,16 +124,16 @@ public class RemoteMysqlDatabaseConfigService {
                 try {
                     Files.createDirectories(Paths.get(localPath).getParent());
                 } catch (IOException e) {
-                    throw new NutsIOException(context.getSession(),e);
+                    throw new NutsIOException(session,e);
                 }
             }
             context.getWorkspace().exec().embedded()
-                    .setSession(context.getSession().copy().setTrace(false))
+                    .setSession(session.copy().setTrace(false))
                     .addCommand("nsh",
                             "--bot",
                             "-c",
                             "cp",
-                            remoteFullFilePath.toString(), localPath).setSession(context.getSession())
+                            remoteFullFilePath.toString(), localPath).setSession(session)
                     .setRedirectErrorStream(true)
                     .grabOutputString()
                     .setFailFast(true)
@@ -148,8 +150,8 @@ public class RemoteMysqlDatabaseConfigService {
         }
 
         if (deleteRemote) {
-            if (context.getSession().isPlainTrace()) {
-                context.getSession().out().printf("%s delete %s%n", getBracketsPrefix(name),
+            if (session.isPlainTrace()) {
+                session.out().printf("%s delete %s%n", getBracketsPrefix(name),
                         text.text().forStyled(remoteFullFilePath.toString(),NutsTextStyle.path()));
             }
             if(!lastRun.is("deleted")) {

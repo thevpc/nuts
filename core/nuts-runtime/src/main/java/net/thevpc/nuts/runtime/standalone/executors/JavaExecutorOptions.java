@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import net.thevpc.nuts.runtime.bundles.parsers.StringTokenizerUtils;
 import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
+import net.thevpc.nuts.runtime.core.util.CoreNutsDependencyUtils;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.core.util.CoreNumberUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsClassLoaderNodeUtils;
@@ -163,15 +164,17 @@ public final class JavaExecutorOptions {
             se.addId(id);
         }
         if (se.getIds().length > 0) {
-            nutsDefinitions.addAll(
-                    se
+            nutsDefinitions.addAll(se
                             .setSession(se.getSession().copy().setTransitive(true))
-                            .addScope(NutsDependencyScopePattern.RUN)
-                            .setOptional(false)
                             .setDistinct(true)
                             .setContent(true)
                             .setDependencies(true)
                             .setLatest(true)
+                            //
+                            .setOptional(false)
+                            .addScope(NutsDependencyScopePattern.RUN)
+                            .setDependencyFilter(CoreNutsDependencyUtils.createJavaRunDependencyFilter(session))
+                            //
                             .getResultDefinitions().list()
             );
         }
@@ -280,7 +283,8 @@ public final class JavaExecutorOptions {
                                 .append(" to cancel : ");
 
                         mainClass = session.getTerminal()
-                                .ask().forString(msgString.toString())
+                                .ask().setSession(session)
+                                .forString(msgString.toString())
                                 .setValidator((value, question) -> {
                                     Integer anyInt = CoreNumberUtils.convertToInteger(value, null);
                                     if (anyInt != null) {

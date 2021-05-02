@@ -286,6 +286,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                     factory.forStyled(NdiUtils.betterPath(f.toString()), NutsTextStyle.path())
             )
                     .setDefaultValue(true)
+                    .setSession(session)
                     .getBooleanValue()) {
                 try {
                     Files.delete(f);

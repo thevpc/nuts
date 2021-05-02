@@ -381,7 +381,7 @@ public final class NutsBootWorkspace {
             boolean loadedApiConfig = false;
 
             //This is not cache, but still, if recover or reset, config will be ignored!
-            if (isLoadFromCache() && Files.isRegularFile(apiPath)) {
+            if (isLoadFromCache() && PrivateNutsUtils.isFileAccessible(apiPath, options.getExpireTime(), LOG)) {
                 try {
                     Map<String, Object> obj = PrivateNutsJsonParser.parse(apiPath);
                     LOG.log(Level.CONFIG, NutsLogVerb.READ, "loaded {0} file : {1}", new String[]{NutsConstants.Files.WORKSPACE_API_CONFIG_FILE_NAME, apiPath.toString()});
@@ -510,7 +510,7 @@ public final class NutsBootWorkspace {
                                 Path extensionFile = Paths.get(workspaceInformation.getCacheBoot())
                                         .resolve(PrivateNutsUtils.idToPath(eid)).resolve(NutsConstants.Files.WORKSPACE_EXTENSION_CACHE_FILE_NAME);
                                 Set<NutsBootId> loadedDeps = null;
-                                if (isLoadFromCache() && Files.isRegularFile(extensionFile)) {
+                                if (isLoadFromCache() && PrivateNutsUtils.isFileAccessible(extensionFile, options.getExpireTime(), LOG)) {
                                     try {
                                         Map<String, Object> obj = PrivateNutsJsonParser.parse(apiPath);
                                         LOG.log(Level.CONFIG, NutsLogVerb.READ, "loaded {0} file : {1}", new String[]{NutsConstants.Files.WORKSPACE_EXTENSION_CACHE_FILE_NAME, extensionFile.toString()});
@@ -1269,16 +1269,20 @@ public final class NutsBootWorkspace {
         System.err.printf("  user-home                        : %s%n", System.getProperty("user.home"));
         System.err.printf("  user-dir                         : %s%n", System.getProperty("user.dir"));
         System.err.printf("%n");
-        System.err.printf("If the problem persists you may want to get more debug info by adding '--verbose' arguments.%n");
-        if (!options.isReset() && !options.isRecover()) {
-            System.err.printf("You may also enable recover mode to ignore existing cache info with '--recover' argument.%n");
+        if (options.getLogConfig()==null 
+                || options.getLogConfig().getLogTermLevel()==null  
+                || options.getLogConfig().getLogFileLevel().intValue()>Level.FINEST.intValue()){
+            System.err.printf("If the problem persists you may want to get more debug info by adding '--verbose' arguments.%n");
+        }
+        if (!options.isReset() && !options.isRecover() && options.getExpireTime() == null) {
+            System.err.printf("You may also enable recover mode to ignore existing cache info with '--recover' and '--expire' arguments.%n");
             System.err.printf("Here is the proper command : %n");
-            System.err.printf("  java -jar nuts.jar --verbose --recover [...]%n");
-        } else if (!options.isReset() && options.isRecover()) {
+            System.err.printf("  java -jar nuts.jar --verbose --recover --expire [...]%n");
+        } else if (!options.isReset() && options.isRecover() && options.getExpireTime() != null) {
             System.err.printf("You may also enable full reset mode to ignore existing configuration with '--reset' argument.%n");
             System.err.printf("ATTENTION: this will delete all your nuts configuration. Use it at your own risk.%n");
             System.err.printf("Here is the proper command : %n");
-            System.err.printf("  java -jar nuts.jar --debug --verbose --reset [...]%n");
+            System.err.printf("  java -jar nuts.jar --verbose --reset [...]%n");
         }
         System.err.printf("now exiting nuts, Bye!%n");
     }

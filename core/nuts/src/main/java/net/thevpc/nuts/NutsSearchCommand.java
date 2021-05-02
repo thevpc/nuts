@@ -684,7 +684,14 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      *
      * @return result as dependencies
      */
-    NutsResultList<NutsDependency> getResultDependencies();
+    NutsResultList<NutsDependencies> getResultDependencies();
+
+    /**
+     * execute query and return result as inlined dependencies
+     *
+     * @return result as dependencies
+     */
+    NutsResultList<NutsDependency> getResultInlineDependencies();
 
     /**
      * execute query and return result as definitions

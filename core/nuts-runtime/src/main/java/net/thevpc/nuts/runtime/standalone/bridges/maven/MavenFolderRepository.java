@@ -321,6 +321,8 @@ public class MavenFolderRepository extends NutsCachedRepository {
 
         @Override
         public NutsId parseId(Path pomFile, Path rootPath, NutsIdFilter filter, String repository, NutsSession session) throws IOException {
+            pomFile=pomFile.normalize();
+            rootPath=rootPath.normalize();
             if (Files.isRegularFile(pomFile)) {
                 String fn = pomFile.getFileName().toString();
                 if (fn.endsWith(".pom")) {

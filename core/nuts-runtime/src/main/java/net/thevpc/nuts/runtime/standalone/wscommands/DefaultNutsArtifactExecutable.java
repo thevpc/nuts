@@ -9,6 +9,7 @@ import net.thevpc.nuts.*;
 
 import java.io.PrintStream;
 import java.util.*;
+import net.thevpc.nuts.runtime.core.util.CoreNutsDependencyUtils;
 
 /**
  * @author thevpc
@@ -85,12 +86,9 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
             traceSession.getWorkspace().install().setSession(traceSession).id(def.getId()).run();
         }
         LinkedHashSet<NutsDependency> reinstall = new LinkedHashSet<>();
+        NutsDependencyFilter depFilter = CoreNutsDependencyUtils.createJavaRunDependencyFilter(traceSession);
         for (NutsDependency dependency : def.getDependencies()) {
-            NutsDependencyScope scope = execSession.getWorkspace().dependency().parser().parseScope(dependency.getScope());
-            boolean acceptedScope = scope != NutsDependencyScope.TEST_API
-                    && scope != NutsDependencyScope.TEST_PROVIDED
-                    && scope != NutsDependencyScope.TEST_RUNTIME;
-            if (acceptedScope) {
+            if (depFilter.acceptDependency(def.getId(), dependency, traceSession)) {
                 NutsInstallStatus st = traceSession.getWorkspace().fetch()
                         .setSession(traceSession.copy().setFetchStrategy(NutsFetchStrategy.OFFLINE))
                         .setId(dependency.toId()).getResultDefinition().getInstallInformation().getInstallStatus();

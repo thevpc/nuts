@@ -81,6 +81,7 @@ import net.thevpc.nuts.runtime.core.model.DefaultNutsId;
 import net.thevpc.nuts.runtime.core.model.DefaultNutsVersion;
 import net.thevpc.nuts.runtime.core.repos.DefaultNutsRepositoryModel;
 import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
+import net.thevpc.nuts.runtime.core.util.CoreNutsDependencyUtils;
 import net.thevpc.nuts.runtime.core.util.CoreTimeUtils;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNutsBootManager;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNutsBootModel;
@@ -721,7 +722,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         if (def == null) {
             return;
         }
-        NutsDependencyFilter ndf = dependency().setSession(session).filter().byScope(NutsDependencyScopePattern.RUN);
+        NutsDependencyFilter ndf = CoreNutsDependencyUtils.createJavaRunDependencyFilter(session);
         def.getContent();
         def.getEffectiveDescriptor();
         if (def.getInstallInformation() == null) {
@@ -1506,7 +1507,9 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             pr.put("project.dependencies.compile",
                     String.join(";",
                             def.getDependencies().stream()
-                                    .filter(x -> !x.isOptional() && NutsDependencyScopes.SCOPE_RUN(DefaultNutsWorkspace.this).acceptDependency(def.getId(), x, session))
+                                    .filter(x -> !x.isOptional() && 
+                                            CoreNutsDependencyUtils.createJavaRunDependencyFilter(session)
+                                                    .acceptDependency(def.getId(), x, session))
                                     .map(x -> x.toId().getLongName())
                                     .collect(Collectors.toList())
                     )

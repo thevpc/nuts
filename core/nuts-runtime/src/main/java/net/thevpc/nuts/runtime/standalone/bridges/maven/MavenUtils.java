@@ -160,6 +160,7 @@ public class MavenUtils {
                 .setScope(nds.id())
                 .setOs(d.getOs())
                 .setArch(d.getArch())
+                .setType(d.getType())
                 .setExclusions(toNutsId(d.getExclusions()))
                 .build();
     }

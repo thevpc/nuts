@@ -67,7 +67,9 @@ public class DefaultProjectTemplate implements ProjectTemplate {
                 if (session.getConfirm() == NutsConfirmationMode.YES) {
                     return defaultValue;
                 }
-                return term.ask().forString(
+                return term.ask()
+                        .setSession(session)
+                        .forString(
                         getWorkspace().formats().text().builder()
                                 .append(propertyTitle, NutsTextStyle.primary(4))
                                 .append(" (")
@@ -439,7 +441,9 @@ public class DefaultProjectTemplate implements ProjectTemplate {
         if (p == null) {
             p = resolveFirstPomFile(getProjectRootFolder());
             if (p != null) {
-                if (!getSession().getTerminal().ask().forBoolean("accept project location %s?",
+                if (!getSession().getTerminal().ask()
+                        .setSession(session)
+                        .forBoolean("accept project location %s?",
                         applicationContext.getWorkspace().formats().text().forStyled(p.getPath(),NutsTextStyle.path()))
                         .setDefaultValue(false)
                         .getBooleanValue()) {

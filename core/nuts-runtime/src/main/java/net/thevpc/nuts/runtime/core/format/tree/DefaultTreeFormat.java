@@ -10,11 +10,13 @@ import net.thevpc.nuts.runtime.core.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.core.format.props.DefaultPropertiesFormat;
 import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 
 public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> implements NutsTreeFormat {
 
     public static final NutsTreeLinkFormat LINK_ASCII_FORMATTER = new AsciiTreeLinkFormat();
     public static final NutsTreeLinkFormat LINK_SPACE_FORMATTER = new SpaceTreeLinkFormat();
+    public static final NutsTreeLinkFormat LINK_UNICODE_FORMATTER = new UnicodeTreeLinkFormat();
     private NutsString rootName;
     private Map<String, String> multilineProperties = new HashMap<>();
 
@@ -25,7 +27,7 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
         }
     };
     private NutsTreeNodeFormat formatter = TO_STRING_FORMATTER;
-    private NutsTreeLinkFormat linkFormatter = LINK_ASCII_FORMATTER;
+    private NutsTreeLinkFormat linkFormatter = CoreNutsUtils.SUPPORTS_UTF_ENCODING ? LINK_UNICODE_FORMATTER : LINK_ASCII_FORMATTER;
     private Object tree;
     private boolean omitRoot = false;
     private boolean infinite = false;
@@ -40,7 +42,7 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
         public NutsString stringValue(Object o, NutsSession session) {
             return getNodeFormat().format(o, -1, session);
         }
-        
+
     };
 
     public DefaultTreeFormat(NutsWorkspace ws) {
@@ -290,84 +292,6 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
     @Override
     public Object getValue() {
         return tree;
-    }
-
-    private static class AsciiTreeLinkFormat implements NutsTreeLinkFormat {
-
-        @Override
-        public String formatMain(NutsPositionType type) {
-            switch (type) {
-                case FIRST: {
-                    return ("");
-                }
-                case CENTER: {
-                    return ("├── ");
-                }
-                case LAST: {
-                    return ("└── ");
-                }
-            }
-            return "";
-        }
-
-        @Override
-        public String formatChild(NutsPositionType type) {
-            String p = "";
-            switch (type) {
-                case FIRST: {
-                    p = "";
-                    break;
-                }
-                case CENTER: {
-                    p = "│   ";
-                    break;
-                }
-                case LAST: {
-                    p = "    ";
-                    break;
-                }
-            }
-            return p;
-        }
-    }
-
-    private static class SpaceTreeLinkFormat implements NutsTreeLinkFormat {
-
-        @Override
-        public String formatMain(NutsPositionType type) {
-            switch (type) {
-                case FIRST: {
-                    return ("");
-                }
-                case CENTER: {
-                    return ("   ");
-                }
-                case LAST: {
-                    return ("   ");
-                }
-            }
-            return "";
-        }
-
-        @Override
-        public String formatChild(NutsPositionType type) {
-            String p = "";
-            switch (type) {
-                case FIRST: {
-                    p = "";
-                    break;
-                }
-                case CENTER: {
-                    p = "   ";
-                    break;
-                }
-                case LAST: {
-                    p = "   ";
-                    break;
-                }
-            }
-            return p;
-        }
     }
 
     public DefaultTreeFormat addMultilineProperty(String property, String separator) {

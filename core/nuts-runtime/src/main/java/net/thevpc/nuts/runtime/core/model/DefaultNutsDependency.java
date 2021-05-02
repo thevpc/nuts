@@ -44,6 +44,7 @@ public class DefaultNutsDependency implements NutsDependency {
     private final String scope;
     private final String classifier;
     private final String optional;
+    private final String type;
     private final String os;
     private final String arch;
     private final NutsId[] exclusions;
@@ -51,13 +52,13 @@ public class DefaultNutsDependency implements NutsDependency {
     private transient final NutsSession session;
 
     public DefaultNutsDependency(String namespace, String groupId, String artifactId, String classifier, NutsVersion version, String scope, String optional, NutsId[] exclusions,
-            String os, String arch,
+            String os, String arch, String type,
             Map<String, String> properties, NutsSession ws) {
-        this(namespace, groupId, artifactId, classifier, version, scope, optional, exclusions, os, arch, QueryStringParser.formatSortedPropertiesQuery(properties), ws);
+        this(namespace, groupId, artifactId, classifier, version, scope, optional, exclusions, os, arch, type, QueryStringParser.formatSortedPropertiesQuery(properties), ws);
     }
 
     public DefaultNutsDependency(String namespace, String groupId, String artifactId, String classifier, NutsVersion version, String scope, String optional, NutsId[] exclusions,
-            String os, String arch,
+            String os, String arch, String type,
             String properties, NutsSession session) {
         this.namespace = CoreStringUtils.trimToNull(namespace);
         this.groupId = CoreStringUtils.trimToNull(groupId);
@@ -65,19 +66,28 @@ public class DefaultNutsDependency implements NutsDependency {
         this.version = version == null ? session.getWorkspace().version().parser().parse("") : version;
         this.classifier = CoreStringUtils.trimToNull(classifier);
         this.scope = NutsDependencyScopes.normalizeScope(scope);
-        
+
         String o = CoreStringUtils.trimToNull(optional);
-        if ("false".equals(o)) {
+        if ("false".equalsIgnoreCase(o)) {
             o = null;
         } else if ("true".equalsIgnoreCase(o)) {
             o = "true";//remove case and formatting
         }
         this.optional = o;
         this.exclusions = exclusions == null ? new NutsId[0] : Arrays.copyOf(exclusions, exclusions.length);
+        for (NutsId exclusion : exclusions) {
+            if (exclusion == null) {
+                throw new NullPointerException();
+            }
+        }
         this.os = CoreStringUtils.trimToNull(os);
         this.arch = CoreStringUtils.trimToNull(arch);
+        this.type = CoreStringUtils.trimToNull(type);
         this.properties = QueryStringParser.formatSortedPropertiesQuery(properties);
         this.session = session;
+//        if (toString().contains("jai_imageio")) {
+//            System.out.print("");
+//        }
     }
 
     @Override
@@ -88,7 +98,7 @@ public class DefaultNutsDependency implements NutsDependency {
     @Override
     public boolean isOptional() {
         final String o = getOptional();
-        return o!=null && Boolean.parseBoolean(o);
+        return o != null && Boolean.parseBoolean(o);
     }
 
     @Override
@@ -102,6 +112,11 @@ public class DefaultNutsDependency implements NutsDependency {
     }
 
     @Override
+    public String getType() {
+        return type;
+    }
+
+    @Override
     public NutsId toId() {
         Map<String, String> m = new LinkedHashMap<>();
         if (!NutsDependencyScopes.isDefaultScope(scope)) {
@@ -112,6 +127,9 @@ public class DefaultNutsDependency implements NutsDependency {
         }
         if (!CoreStringUtils.isBlank(classifier)) {
             m.put(NutsConstants.IdProperties.CLASSIFIER, classifier);
+        }
+        if (!CoreStringUtils.isBlank(type)) {
+            m.put(NutsConstants.IdProperties.TYPE, type);
         }
         if (exclusions.length > 0) {
             TreeSet<String> ex = new TreeSet<>();
@@ -220,6 +238,9 @@ public class DefaultNutsDependency implements NutsDependency {
             if (!optional.equals("false")) {
                 p.put(NutsConstants.IdProperties.OPTIONAL, optional);
             }
+        }
+        if (!CoreStringUtils.isBlank(type)) {
+            p.put(NutsConstants.IdProperties.TYPE, type);
         }
         if (!CoreStringUtils.isBlank(os)) {
             p.put(NutsConstants.IdProperties.OS, os);

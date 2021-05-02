@@ -13,15 +13,16 @@ public class PomDependency {
     private String os;
     private String arch;
     private String optional;
+    private String type;
     private PomId[] exclusions;
 
     public PomDependency(String groupId, String artifactId, String version) {
-        this(groupId, artifactId, null, version, null, null, null, null, new PomId[0]);
+        this(groupId, artifactId, null, version, null, null, null, null, null, new PomId[0]);
     }
 
     public PomDependency(String groupId, String artifactId, String classifier, String version, String scope, String optional,
             String os,
-            String arch,
+            String arch, String type,
             PomId[] exclusions) {
         this.groupId = groupId;
         this.artifactId = artifactId;
@@ -30,8 +31,13 @@ public class PomDependency {
         this.scope = scope;
         this.os = os;
         this.arch = arch;
+        this.type = type;
         this.classifier = classifier;
         this.exclusions = exclusions;
+    }
+
+    public String getType() {
+        return type;
     }
 
     public String getClassifier() {
@@ -105,6 +111,10 @@ public class PomDependency {
         this.os = os;
     }
 
+    public void setType(String type) {
+        this.type = type;
+    }
+
     public String getArch() {
         return arch;
     }
@@ -166,6 +176,7 @@ public class PomDependency {
                 + ", os='" + os + '\''
                 + ", arch='" + arch + '\''
                 + ", optional='" + optional + '\''
+                + ", type='" + type + '\''
                 + ", exclusions=" + Arrays.toString(exclusions)
                 + '}';
     }

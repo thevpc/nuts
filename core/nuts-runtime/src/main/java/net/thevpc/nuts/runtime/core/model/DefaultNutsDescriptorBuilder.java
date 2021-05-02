@@ -780,6 +780,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
                 .setOptional(CoreNutsUtils.applyStringProperties(child.getOptional(), properties))
                 .setOs(CoreNutsUtils.applyStringProperties(child.getOs(), properties))
                 .setArch(CoreNutsUtils.applyStringProperties(child.getArch(), properties))
+                .setType(CoreNutsUtils.applyStringProperties(child.getType(), properties))
                 .setExclusions(exclusions)
                 .setProperties(CoreNutsUtils.applyStringProperties(child.getPropertiesQuery(), properties))
                 .build();

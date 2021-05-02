@@ -232,6 +232,11 @@ public final class NutsConstants {
          * </ul>
          */
         public static final String ARCH = "arch";
+        
+        /**
+         * dependency type
+         */
+        public static final String TYPE = "type";
 
         /**
          * private constructor

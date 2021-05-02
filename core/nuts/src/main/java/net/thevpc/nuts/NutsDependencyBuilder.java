@@ -110,6 +110,15 @@ public interface NutsDependencyBuilder {
      */
     NutsDependencyBuilder setOptional(String optional);
 
+
+    /**
+     * set type value
+     *
+     * @param type new value
+     * @return {@code this} instance
+     */
+    NutsDependencyBuilder setType(String type);
+
     /**
      * set classifier value
      *
@@ -191,6 +200,13 @@ public interface NutsDependencyBuilder {
     boolean isOptional();
 
     /**
+     * return dependency type
+     *
+     * @return dependency type
+     */
+    String getType();
+
+    /**
      * return optional
      *
      * @return optional
@@ -209,7 +225,7 @@ public interface NutsDependencyBuilder {
      *
      * @return id
      */
-    NutsId getId();
+    NutsId toId();
 
     /**
      * return namespace

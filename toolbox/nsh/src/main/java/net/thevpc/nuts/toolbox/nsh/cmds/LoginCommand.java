@@ -29,6 +29,7 @@ import net.thevpc.common.strings.StringUtils;
 import net.thevpc.nuts.NutsArgument;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 import net.thevpc.nuts.NutsCommandLine;
+import net.thevpc.nuts.NutsSession;
 
 /**
  * Created by vpc on 1/7/17.
@@ -73,7 +74,10 @@ public class LoginCommand extends SimpleNshBuiltin {
         if (!NutsConstants.Users.ANONYMOUS.equals(options.login)
                 && (options.password == null
                 || StringUtils.isBlank(new String(options.password)))) {
-            options.password = context.getSession().getTerminal().ask().forPassword("Password:").getValue();
+            NutsSession session = context.getSession();
+            options.password = session.getTerminal().ask()
+                    .setSession(session)
+                    .forPassword("Password:").getValue();
         }
     }
 

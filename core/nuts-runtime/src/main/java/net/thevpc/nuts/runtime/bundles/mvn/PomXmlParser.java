@@ -1,8 +1,6 @@
 package net.thevpc.nuts.runtime.bundles.mvn;
 
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.NutsLogVerb;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -424,6 +422,7 @@ public class PomXmlParser {
         String d_classifier = "";
         String d_scope = "";
         String d_optional = "";
+        String d_type = "";
         List<PomId> d_exclusions = new ArrayList<>();
         for (int k = 0; k < dependencyChildList.getLength(); k++) {
             Element c = toElement(dependencyChildList.item(k));
@@ -451,6 +450,10 @@ public class PomXmlParser {
                     }
                     case "optional": {
                         d_optional = elemToStr(c);
+                        break;
+                    }
+                    case "type": {
+                        d_type = elemToStr(c);
                         break;
                     }
                     case "exclusions": {
@@ -494,6 +497,7 @@ public class PomXmlParser {
                 d_groupId, d_artifactId, d_classifier, d_version, d_scope, d_optional, 
                 props==null?null:props.get("dependencies."+d_groupId+":"+d_artifactId+".os"),
                 props==null?null:props.get("dependencies."+d_groupId+":"+d_artifactId+".arch"),
+                d_type,
                 d_exclusions.toArray(new PomId[0])
         );
     }
@@ -588,12 +592,14 @@ public class PomXmlParser {
         Element dependency = doc.createElement("dependency");
         dependency.appendChild(createNameTextTag(doc, "groupId", dep.getGroupId()));
         dependency.appendChild(createNameTextTag(doc, "artifactId", dep.getArtifactId()));
-
         if (dep.getVersion() != null && dep.getVersion().trim().length() > 0) {
             dependency.appendChild(createNameTextTag(doc, "version", dep.getVersion()));
         }
         if (dep.getOptional() != null && dep.getOptional().trim().length() > 0) {
             dependency.appendChild(createNameTextTag(doc, "optional", dep.getOptional()));
+        }
+        if (dep.getType()!= null && dep.getType().trim().length() > 0) {
+            dependency.appendChild(createNameTextTag(doc, "type", dep.getType()));
         }
         PomId[] e = dep.getExclusions();
         if (e.length > 0) {

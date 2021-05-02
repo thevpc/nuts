@@ -53,13 +53,13 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
         if (contentType == null) {
             this.contentType = NutsContentType.JSON;
         } else {
-            switch (contentType) {
-                case TREE:
-                case TABLE:
-                case PLAIN: {
-                    throw new NutsIllegalArgumentException(getSession(), "invalid content type " + contentType + ". Only structured content types are allowed.");
-                }
-            }
+//            switch (contentType) {
+//                case TREE:
+//                case TABLE:
+//                case PLAIN: {
+//                    throw new NutsIllegalArgumentException(getSession(), "invalid content type " + contentType + ". Only structured content types are allowed.");
+//                }
+//            }
             this.contentType = contentType;
         }
         return this;

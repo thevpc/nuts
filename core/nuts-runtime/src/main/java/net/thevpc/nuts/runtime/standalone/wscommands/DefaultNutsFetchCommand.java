@@ -340,7 +340,9 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
     private NutsDependencyFilter buildActualDependencyFilter() {
         checkSession();
         NutsWorkspace ws = getSession().getWorkspace();
-        return ws.dependency().filter().byScope(getScope()).and(ws.dependency().filter().byOptional(getOptional())
+        NutsDependencyFilterManager ff = ws.dependency().filter();
+        return ff.byScope(getScope())
+                .and(ff.byOptional(getOptional())
         ).and(getDependencyFilter());
     }
 
@@ -348,15 +350,15 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
         return new InstalledVsNonInstalledSearch(installedOrNot == null || installedOrNot, true);
     }
 
-    private boolean shouldIncludeContent(NutsFetchCommand options) {
-        boolean includeContent = options.isContent();
-        if (options instanceof DefaultNutsQueryBaseOptions) {
-            if (((DefaultNutsQueryBaseOptions) options).getDisplayOptions().isRequireDefinition()) {
-                includeContent = true;
-            }
-        }
-        return includeContent;
-    }
+//    private boolean shouldIncludeContent(NutsFetchCommand options) {
+//        boolean includeContent = options.isContent();
+//        if (options instanceof DefaultNutsQueryBaseOptions) {
+//            if (((DefaultNutsQueryBaseOptions) options).getDisplayOptions().isRequireDefinition()) {
+//                includeContent = true;
+//            }
+//        }
+//        return includeContent;
+//    }
 
     protected boolean fetchContent(NutsId id1, DefaultNutsDefinition foundDefinition, NutsRepository repo0, NutsFetchStrategy nutsFetchModes, Path copyTo, List<Exception> reasons) {
         NutsRepositorySPI repoSPI = NutsWorkspaceUtils.of(session).repoSPI(repo0);

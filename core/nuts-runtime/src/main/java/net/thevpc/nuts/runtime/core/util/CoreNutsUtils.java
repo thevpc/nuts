@@ -325,7 +325,7 @@ public class CoreNutsUtils {
                 updates = true;
             }
         }
-        if (all2.size() == 0) {
+        if (all2.isEmpty()) {
             if (someFalse) {
                 return (T) ws.filters().never(cls);
             }
@@ -826,26 +826,26 @@ public class CoreNutsUtils {
         }
     }
 
-    public static void checkId_GN(NutsId id, NutsSession ws) {
-        if (id == null) {
-            throw new NutsElementNotFoundException(ws, "missing id");
-        }
-        if (CoreStringUtils.isBlank(id.getGroupId())) {
-            throw new NutsElementNotFoundException(ws, "missing group for " + id);
-        }
-    }
-
-    public static void checkId_GNV(NutsId id, NutsSession ws) {
-        if (id == null) {
-            throw new NutsElementNotFoundException(ws, "missing id");
-        }
-        if (CoreStringUtils.isBlank(id.getGroupId())) {
-            throw new NutsElementNotFoundException(ws, "missing group for " + id);
-        }
-        if (CoreStringUtils.isBlank(id.getArtifactId())) {
-            throw new NutsElementNotFoundException(ws, "missing name for " + id.toString());
-        }
-    }
+//    public static void checkId_GN(NutsId id, NutsSession ws) {
+//        if (id == null) {
+//            throw new NutsElementNotFoundException(ws, "missing id");
+//        }
+//        if (CoreStringUtils.isBlank(id.getGroupId())) {
+//            throw new NutsElementNotFoundException(ws, "missing group for " + id);
+//        }
+//    }
+//
+//    public static void checkId_GNV(NutsId id, NutsSession ws) {
+//        if (id == null) {
+//            throw new NutsElementNotFoundException(ws, "missing id");
+//        }
+//        if (CoreStringUtils.isBlank(id.getGroupId())) {
+//            throw new NutsElementNotFoundException(ws, "missing group for " + id);
+//        }
+//        if (CoreStringUtils.isBlank(id.getArtifactId())) {
+//            throw new NutsElementNotFoundException(ws, "missing name for " + id.toString());
+//        }
+//    }
 
     public static boolean isValidWorkspaceName(String workspace) {
         if (CoreStringUtils.isBlank(workspace)) {
@@ -1037,12 +1037,12 @@ public class CoreNutsUtils {
         return monitorable;
     }
 
-    public static NutsSession checkSession(NutsSession session) {
-        if (session == null) {
-            throw new IllegalArgumentException("missing Session");
-        }
-        return session;
-    }
+//    public static NutsSession checkSession(NutsSession session) {
+//        if (session == null) {
+//            throw new IllegalArgumentException("missing Session");
+//        }
+//        return session;
+//    }
 
     public static int getSupportSpeedLevel(NutsRepository repository, NutsRepositorySupportedAction supportedAction, NutsId id, NutsFetchMode mode, boolean transitive, NutsSession session) {
         if (repository instanceof NutsInstalledRepository) {

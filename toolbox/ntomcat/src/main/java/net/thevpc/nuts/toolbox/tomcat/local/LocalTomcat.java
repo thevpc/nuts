@@ -386,17 +386,18 @@ public class LocalTomcat {
     public void remove(NutsCommandLine args) {
         NutsArgument a = args.nextNonOption();
         if (a != null) {
+            NutsSession session = context.getSession();
             switch (a.getString()) {
                 case "instance": {
                     LocalTomcatConfigService s = nextLocalTomcatConfigService(args, NutsOpenMode.OPEN_OR_ERROR);
-                    if (context.getSession().getTerminal().ask().forBoolean("Confirm Deleting %s?", s.getName()).setDefaultValue(true).getBooleanValue()) {
+                    if (session.getTerminal().ask().setSession(session).forBoolean("Confirm Deleting %s?", s.getName()).setDefaultValue(true).getBooleanValue()) {
                         s.remove();
                     }
                     return;
                 }
                 case "domain": {
                     LocalTomcatDomainConfigService s = nextLocalTomcatDomainConfigService(args, NutsOpenMode.OPEN_OR_ERROR);
-                    if (context.getSession().getTerminal().ask().forBoolean("Confirm Deleting %s?", s.getName()).setDefaultValue(true).getBooleanValue()) {
+                    if (session.getTerminal().ask().setSession(session).forBoolean("Confirm Deleting %s?", s.getName()).setDefaultValue(true).getBooleanValue()) {
                         s.remove();
                         s.getTomcat().save();
                     }
@@ -404,7 +405,7 @@ public class LocalTomcat {
                 }
                 case "app": {
                     LocalTomcatAppConfigService s = nextLocalTomcatAppConfigService(args, NutsOpenMode.OPEN_OR_ERROR);
-                    if (context.getSession().getTerminal().ask().forBoolean("Confirm Deleting %s?", s.getName()).setDefaultValue(true).getBooleanValue()) {
+                    if (session.getTerminal().ask().setSession(session).forBoolean("Confirm Deleting %s?", s.getName()).setDefaultValue(true).getBooleanValue()) {
                         s.remove();
                         s.getTomcat().save();
                     }

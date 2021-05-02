@@ -11,18 +11,16 @@
  * large range of sub managers / repositories.
  * <br>
  *
- * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
- * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
- * <br>
- * ====================================================================
-*/
+ * <br> ====================================================================
+ */
 package net.thevpc.nuts.runtime.core.model;
 
 import net.thevpc.nuts.*;
@@ -32,8 +30,11 @@ import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeSet;
+import net.thevpc.nuts.runtime.core.util.CoreNutsDependencyUtils;
 
 /**
  * Created by vpc on 1/5/17.
@@ -46,10 +47,11 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
     private NutsVersion version;
     private String scope;
     private String optional;
+    private String type;
     private String os;
     private String arch;
     private String classifier;
-    private NutsId[] exclusions=new NutsId[0];
+    private NutsId[] exclusions = new NutsId[0];
     private transient NutsSession session;
     private transient QueryStringParser propertiesQuery = new QueryStringParser(true, (name, value) -> {
         if (name != null) {
@@ -86,6 +88,10 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
                     setArch(value);
                     return true;
                 }
+                case NutsConstants.IdProperties.TYPE: {
+                    setType(value);
+                    return true;
+                }
             }
         }
         return false;
@@ -94,8 +100,9 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
     public DefaultNutsDependencyBuilder() {
         //for serialization
     }
+
     public DefaultNutsDependencyBuilder(NutsSession session) {
-        this.session=session;
+        this.session = session;
     }
 
     @Override
@@ -147,7 +154,7 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
 
     @Override
     public NutsDependencyBuilder setScope(NutsDependencyScope scope) {
-        this.scope = scope==null?"":scope.toString();
+        this.scope = scope == null ? "" : scope.toString();
         return this;
     }
 
@@ -158,12 +165,22 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
     }
 
     @Override
+    public NutsDependencyBuilder setType(String type) {
+        this.type = CoreNutsDependencyUtils.normalizeDependencyType(type);
+        return this;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    @Override
     public NutsDependencyBuilder setOptional(String optional) {
-        String o=CoreStringUtils.trimToNull(optional);
-        if("false".equals(o)){
-            o=null;
-        }else if("true".equalsIgnoreCase(o)){
-            o="true";//remove case and formatting
+        String o = CoreStringUtils.trimToNull(optional);
+        if ("false".equals(o)) {
+            o = null;
+        } else if ("true".equalsIgnoreCase(o)) {
+            o = "true";//remove case and formatting
         }
         this.optional = o;
         return this;
@@ -208,7 +225,6 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
     public String getArch() {
         return arch;
     }
-    
 
     @Override
     public NutsDependencyBuilder set(NutsDependencyBuilder value) {
@@ -223,6 +239,7 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
             setClassifier(value.getClassifier());
             setOs(value.getOs());
             setArch(value.getArch());
+            setType(value.getType());
             setProperties(value.getProperties());
         } else {
             clear();
@@ -243,6 +260,7 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
             setClassifier(value.getClassifier());
             setOs(value.getOs());
             setArch(value.getArch());
+            setType(value.getType());
             setProperties(value.getProperties());
         } else {
             clear();
@@ -267,13 +285,14 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
         setClassifier(null);
         setOs(null);
         setArch(null);
+        setType(null);
         setProperties((Map<String, String>) null);
         return this;
     }
 
     @Override
     public boolean isOptional() {
-        return optional!=null && Boolean.parseBoolean(optional);
+        return optional != null && Boolean.parseBoolean(optional);
     }
 
     @Override
@@ -287,13 +306,35 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
     }
 
     @Override
-    public NutsId getId() {
+    public NutsId toId() {
+        Map<String, String> m = new LinkedHashMap<>();
+        if (!NutsDependencyScopes.isDefaultScope(scope)) {
+            m.put(NutsConstants.IdProperties.SCOPE, scope);
+        }
+        if (!CoreStringUtils.isBlank(optional) && !"false".equals(optional)) {
+            m.put(NutsConstants.IdProperties.OPTIONAL, optional);
+        }
+        if (!CoreStringUtils.isBlank(classifier)) {
+            m.put(NutsConstants.IdProperties.CLASSIFIER, classifier);
+        }
+        if (!CoreStringUtils.isBlank(type)) {
+            m.put(NutsConstants.IdProperties.TYPE, type);
+        }
+        if (exclusions.length > 0) {
+            TreeSet<String> ex = new TreeSet<>();
+            for (NutsId exclusion : exclusions) {
+                ex.add(exclusion.getShortName());
+            }
+            m.put(NutsConstants.IdProperties.EXCLUSIONS, String.join(",", ex));
+        }
         return session.getWorkspace().id().builder()
                 .setNamespace(getNamespace())
                 .setGroupId(getGroupId())
                 .setArtifactId(getArtifactId())
                 .setVersion(getVersion())
-                .build();
+                .setOs(getOs())
+                .setArch(getArch())
+                .setProperties(m).build();
     }
 
     @Override
@@ -344,7 +385,8 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
                 getExclusions(),
                 getOs(),
                 getArch(),
-                getPropertiesQuery(),session
+                getType(),
+                getPropertiesQuery(), session
         );
     }
 
@@ -395,8 +437,11 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
         }
         List<NutsId> ids = new ArrayList<>();
         NutsIdParser parser = session.getWorkspace().id().parser();
-        for (String s : exclusions.split(";")) {
-            ids.add(parser.parse(s.trim()));
+        for (String s : exclusions.split("[;,]")) {
+            NutsId ii = parser.parse(s.trim());
+            if (ii != null) {
+                ids.add(ii);
+            }
         }
         setExclusions(ids.toArray(new NutsId[0]));
         return this;

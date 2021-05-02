@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.core.commands.ws.NutsExecutionContextBuilder;
 import net.thevpc.nuts.runtime.core.model.DefaultNutsDefinition;
+import net.thevpc.nuts.runtime.core.util.CoreNutsDependencyUtils;
 
 /**
  * type: Command Class
@@ -357,11 +358,15 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
         NutsSession noProgressSession = traceSession.copy().setProgressOptions("none");
         NutsDefinition def = ws.fetch().setId(goodId)
                 .setSession(noProgressSession)
-                .setOptional(false).setDependencies(true)
+                .setDependencies(true)
                 .setFailFast(true)
                 .setEffective(true)
                 .setContent(true)
+                //
+                .setOptional(false)
                 .addScope(NutsDependencyScopePattern.RUN)
+                .setDependencyFilter(CoreNutsDependencyUtils.createJavaRunDependencyFilter(traceSession))
+                //
                 .getResultDefinition();
         return ws_execDef(def, commandName, appArgs, executorOptions, env, directory, failFast, executionType, traceSession, execSession);
     }

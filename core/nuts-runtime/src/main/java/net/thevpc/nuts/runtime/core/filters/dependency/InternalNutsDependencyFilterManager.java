@@ -118,6 +118,13 @@ public class InternalNutsDependencyFilterManager extends InternalNutsTypedFilter
     }
 
     @Override
+    public NutsDependencyFilter byType(String type) {
+        return new NutsDependencyTypeFilter(getSession(), type);
+    }
+    
+    
+
+    @Override
     public NutsDependencyFilter byOs(NutsOsFamily os) {
         checkSession();
         if (os == null) {

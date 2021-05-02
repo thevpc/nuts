@@ -205,7 +205,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         throw new IllegalArgumentException("Unable to find serialization factory for " + type);
     }
 
-    protected Object createObject(NutsElement o, Type to, NutsElementFactoryContext context,boolean defaultOnly) {
+    protected Object createObject(NutsElement o, Type to, NutsElementFactoryContext context, boolean defaultOnly) {
         if (o == null || o.type() == NutsElementType.NULL) {
             return F_NULL.createObject(o, to, context);
         }
@@ -215,40 +215,40 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
     @Override
     public Object createObject(NutsElement o, Type to, NutsElementFactoryContext context) {
-        return createObject(o, to, context,false);
+        return createObject(o, to, context, false);
     }
 
     @Override
     public Object defaultCreateObject(NutsElement o, Type to, NutsElementFactoryContext context) {
-        return createObject(o, to, context,true);
+        return createObject(o, to, context, true);
     }
 
-    protected Object destruct(Object o, Type expectedType, NutsElementFactoryContext context,boolean defaultOnly) {
+    protected Object destruct(Object o, Type expectedType, NutsElementFactoryContext context, boolean defaultOnly) {
         if (o == null) {
             return null;
         }
         if (expectedType == null) {
             expectedType = o.getClass();
         }
-        if(context.getDestructTypeFilter()!=null){
-            if(!context.getDestructTypeFilter().test(o.getClass())){
+        if (context.getDestructTypeFilter() != null) {
+            if (!context.getDestructTypeFilter().test(o.getClass())) {
                 return o;
             }
         }
         return getMapper(expectedType, defaultOnly).destruct(o, expectedType, context);
     }
-    
+
     @Override
     public Object destruct(Object o, Type expectedType, NutsElementFactoryContext context) {
-        return destruct(o, expectedType, context,false);
+        return destruct(o, expectedType, context, false);
     }
 
     @Override
     public Object defaultDestruct(Object o, Type expectedType, NutsElementFactoryContext context) {
-        return destruct(o, expectedType, context,true);
+        return destruct(o, expectedType, context, true);
     }
 
-    protected NutsElement createElement(Object o, Type expectedType, NutsElementFactoryContext context,boolean defaultOnly) {
+    protected NutsElement createElement(Object o, Type expectedType, NutsElementFactoryContext context, boolean defaultOnly) {
         if (o == null) {
             return context.element().forNull();
         }
@@ -260,12 +260,12 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
     @Override
     public NutsElement createElement(Object o, Type expectedType, NutsElementFactoryContext context) {
-        return createElement(o, expectedType, context,false);
+        return createElement(o, expectedType, context, false);
     }
 
     @Override
     public NutsElement defaultCreateElement(Object o, Type expectedType, NutsElementFactoryContext context) {
-        return createElement(o, expectedType, context,true);
+        return createElement(o, expectedType, context, true);
     }
 
     private static class NutsElementFactoryNamedElement implements NutsElementMapper<NutsElementEntry> {
@@ -1019,23 +1019,26 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
         @Override
         public NutsElement createElement(NutsDependency o, Type typeOfSrc, NutsElementFactoryContext context) {
-            if (o.getExclusions().length == 0) {
+//            if (o.toString().contains("jai_imageio")) {
+//                System.out.print("");
+//            }
+//            if (o.getExclusions().length == 0) {
                 //use compact form
-                if (context.element().isNtf()) {
-                    NutsWorkspace ws = context.getSession().getWorkspace();
-//                    NutsText n = ws.formats().text().parse(
-//                            ws.dependency().formatter().setNtf(true).setValue(o).format()
-//                    );
-//                    return ws.formats().element().forPrimitive().buildNutsString(n);
-                    return ws.formats().element().forString(ws.dependency().formatter().setNtf(true).setValue(o).format());
-                } else {
+//                if (context.element().isNtf()) {
+//                    NutsWorkspace ws = context.getSession().getWorkspace();
+////                    NutsText n = ws.formats().text().parse(
+////                            ws.dependency().formatter().setNtf(true).setValue(o).format()
+////                    );
+////                    return ws.formats().element().forPrimitive().buildNutsString(n);
+//                    return ws.formats().element().forString(ws.dependency().formatter().setNtf(true).setValue(o).format());
+//                } else {
 
                     return context.defaultObjectToElement(context.getSession().getWorkspace().dependency().formatter(o)
                             .setNtf(context.element().isNtf())
                             .format(), null);
-                }
-            }
-            return context.defaultObjectToElement(context.getSession().getWorkspace().dependency().builder().set(o), null);
+//                }
+//            }
+//            return context.defaultObjectToElement(context.getSession().getWorkspace().dependency().builder().set(o), null);
         }
 
         @Override

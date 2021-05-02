@@ -109,13 +109,14 @@ public class RemoteTomcat {
         String instanceName = null;
         NutsArgument a;
         args.setCommandName("tomcat --remote add");
+        NutsSession session = context.getSession();
         while (args.hasNext()) {
             if ((a = args.nextString("--name")) != null) {
                 if (c == null) {
                     instanceName = a.getStringValue();
                     c = loadOrCreateTomcatConfig(instanceName);
                 } else {
-                    throw new NutsExecutionException(context.getSession(), "instance already defined", 2);
+                    throw new NutsExecutionException(session, "instance already defined", 2);
                 }
             } else if ((a = args.nextString("--server")) != null) {
                 if (c == null) {
@@ -167,43 +168,46 @@ public class RemoteTomcat {
                 ok = true;
                 if (TomcatUtils.isBlank(c.getConfig().getServer())) {
                     ok = false;
-                    c.getConfig().setServer(
-                            context.getSession().getTerminal()
-                                    .ask().forString("[instance=%s] would you enter %s value ?"
+                    c.getConfig().setServer(session.getTerminal()
+                                    .ask()
+                                    .setSession(session)
+                                    .forString("[instance=%s] would you enter %s value ?"
                                     , text.text().forStyled(c.getName(), NutsTextStyle.primary(1))
                                     , text.text().forStyled("--server", NutsTextStyle.option())
                             )
-                                    .setDefaultValue("ssh://login@myserver/instanceName").setSession(context.getSession())
+                                    .setDefaultValue("ssh://login@myserver/instanceName").setSession(session)
                                     .getValue()
                     );
                 }
                 if (TomcatUtils.isBlank(c.getConfig().getRemoteTempPath())) {
                     ok = false;
                     c.getConfig()
-                            .setRemoteTempPath(context.getSession().getTerminal().ask()
+                            .setRemoteTempPath(session.getTerminal().ask()
+                                    .setSession(session)
                                     .forString("[instance=%s] would you enter %s value ?"
                                             , text.text().forStyled(c.getName(), NutsTextStyle.primary(1))
                                             , text.text().forStyled("--remote-temp-path", NutsTextStyle.option())
                                     ).setDefaultValue("/tmp")
-                                    .setSession(context.getSession())
+                                    .setSession(session)
                                     .getValue()
                             );
                 }
                 for (RemoteTomcatAppConfigService aa : c.getApps()) {
                     if (TomcatUtils.isBlank(aa.getConfig().getPath())) {
                         ok = false;
-                        aa.getConfig().setPath(context.getSession().getTerminal().ask()
+                        aa.getConfig().setPath(session.getTerminal().ask()
+                                    .setSession(session)
                                 .forString("[instance=%s] [app=%s] would you enter %s value ?"
                                         , text.text().forStyled(c.getName(), NutsTextStyle.primary(1))
                                         , text.text().forStyled(aa.getName(), NutsTextStyle.option())
                                         , text.text().forStyled("--app.path", NutsTextStyle.option())
                                 )
-                                .setSession(context.getSession())
+                                .setSession(session)
                                 .getValue());
                     }
                 }
             } catch (NutsUserCancelException ex) {
-                throw new NutsExecutionException(context.getSession(), "Cancelled", 1);
+                throw new NutsExecutionException(session, "Cancelled", 1);
             }
         }
         c.save();

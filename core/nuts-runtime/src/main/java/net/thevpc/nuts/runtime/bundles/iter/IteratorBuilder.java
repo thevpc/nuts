@@ -118,6 +118,10 @@ public class IteratorBuilder<T> {
         return new IteratorBuilder<>(new ConvertedToListIterator<>(it, t));
     }
 
+    public <V> IteratorBuilder<V> flatMap(Function<T, Iterator<V>> fun) {
+        return new IteratorBuilder<>(IteratorUtils.flatMap(it, fun));
+    }
+
     public <V> IteratorBuilder<V> convertMulti(Function<T, List<V>> t) {
         return new IteratorBuilder<>(new ConvertedToListIterator<>(it, t));
     }
@@ -126,6 +130,10 @@ public class IteratorBuilder<T> {
         return new IteratorBuilder<>(IteratorUtils.sort(it, t, true));
     }
 
+    public <V> IteratorBuilder<T> distinct() {
+        return distinct(null);
+    }
+    
     public <V> IteratorBuilder<T> distinct(Function<T, V> t) {
         if (t == null) {
             return new IteratorBuilder<>(IteratorUtils.distinct(it));
@@ -164,6 +172,10 @@ public class IteratorBuilder<T> {
 
     public Iterator<T> build() {
         return it;
+    }
+
+    public List<T> toList() {
+        return IteratorUtils.toList(it);
     }
 
 }

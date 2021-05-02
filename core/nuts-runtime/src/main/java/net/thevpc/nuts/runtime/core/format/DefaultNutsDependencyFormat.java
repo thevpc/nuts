@@ -125,9 +125,10 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
             switch (e.getKey()) {
                 case NutsConstants.IdProperties.SCOPE:
                 case NutsConstants.IdProperties.OPTIONAL:
-//                case NutsConstants.IdProperties.ALTERNATIVE:
                 case NutsConstants.IdProperties.CLASSIFIER:
-                case NutsConstants.IdProperties.EXCLUSIONS: {
+                case NutsConstants.IdProperties.EXCLUSIONS: 
+                case NutsConstants.IdProperties.TYPE: 
+                {
                     break;
                 }
                 default: {

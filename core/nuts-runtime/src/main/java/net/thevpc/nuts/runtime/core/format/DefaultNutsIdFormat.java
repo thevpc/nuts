@@ -295,7 +295,7 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
                     } else {
                         sb.append("&", NutsTextStyle.separator());
                     }
-                    sb.append(v, NutsTextStyle.pale());
+                    sb.append(k, NutsTextStyle.pale());
                     sb.append("=", NutsTextStyle.separator());
                     sb.append(v);
                 }

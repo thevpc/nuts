@@ -30,6 +30,7 @@ import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 import java.util.*;
 import net.thevpc.nuts.runtime.core.util.CoreArrayUtils;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 /**
  * Created by vpc on 1/5/17.
@@ -99,9 +100,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
                                  NutsDependency[] standardDependencies,
                                  NutsIdLocation[] locations, Map<String, String> properties, NutsClassifierMapping[] classifierMappings,NutsSession session) {
         super(session);
-        if (id == null) {
-            throw new NutsIllegalArgumentException(session, "missing id");
-        }
+        NutsWorkspaceUtils.of(session).checkSimpleNameNutsId(id);
         if (!id.getProperties().isEmpty()) {
             throw new NutsIllegalArgumentException(session, "id should not have query defined in descriptors");
         }

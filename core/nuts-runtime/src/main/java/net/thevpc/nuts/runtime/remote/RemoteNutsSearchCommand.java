@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.remote;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.NutsCollectionResult;
 import net.thevpc.nuts.runtime.standalone.wscommands.AbstractNutsSearchCommand;
 
 import java.util.Arrays;
@@ -27,11 +26,7 @@ public class RemoteNutsSearchCommand extends AbstractNutsSearchCommand {
     }
 
     @Override
-    protected NutsCollectionResult<NutsId> getResultIdsBase(boolean print, boolean sort) {
-        return buildNutsCollectionSearchResult(getResultIdsBaseIterator(sort), print);
-    }
-
-    protected Iterator<NutsId> getResultIdsBaseIterator(boolean sort) {
+    protected Iterator<NutsId> getResultIdIteratorBase(Boolean forceInlineDependencies) {
         RemoteNutsWorkspace ws = getWorkspace();
         NutsElementFormat e = ws.formats().element().setSession(getSession());
         NutsObjectElementBuilder eb = e.forObject()
@@ -62,42 +57,4 @@ public class RemoteNutsSearchCommand extends AbstractNutsSearchCommand {
                  List.class
         ).iterator();
     }
-    protected Iterator<NutsDependency> getResultIdsBaseIterator2(boolean sort) {
-        RemoteNutsWorkspace ws = getWorkspace();
-        NutsElementFormat e = ws.formats().element();
-        NutsObjectElementBuilder eb = e.forObject()
-                .set("execType", getExecType())
-                .set("defaultVersions", getDefaultVersions())
-                .set("targetApiVersion", getTargetApiVersion())
-                .set("optional", getOptional())
-                .set("arch", e.forArray().addAll(getArch()).build())
-                .set("packaging", e.forArray().addAll(getPackaging()).build())
-                .set("repositories", e.forArray().addAll(getRepositories()).build())
-                .set("ids", e.forArray().addAll(Arrays.stream(getIds())
-                        .map(Object::toString).toArray(String[]::new)).build());
-        if (getIdFilter() != null) {
-            eb.set("idFilter", ws.formats().element().toElement(getIdFilter()));
-        }
-        if (getDescriptorFilter() != null) {
-            eb.set("descriptorFilter", ws.formats().element().toElement(getDescriptorFilter()));
-        }
-        if (getInstallStatus() != null) {
-            eb.set("installStatus", e.forString(getInstallStatus().toString()));
-        }
-
-        return getWorkspace().remoteCall(
-                getWorkspace().createCall(
-                        "workspace.searchDependencies",
-                        eb.build(),getSession()
-                ),
-                 List.class
-        ).iterator();
-    }
-
-    @Override
-    protected NutsCollectionResult<NutsDependency> getResultDependenciesBase(boolean print, boolean sort) {
-        return buildNutsCollectionSearchResult(getResultIdsBaseIterator2(sort), print);
-
-    }
-
 }

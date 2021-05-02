@@ -73,7 +73,7 @@ public class NutsRepositoryFolderHelper {
     }
 
     public Path getLongNameIdLocalFolder(NutsId id, NutsSession session) {
-        CoreNutsUtils.checkId_GNV(id,session);
+        NutsWorkspaceUtils.of(session).checkNutsId(id);
         if (repo == null) {
             return getStoreLocation().resolve(getWorkspace().locations().setSession(session).getDefaultIdBasedir(id));
         }
@@ -88,7 +88,7 @@ public class NutsRepositoryFolderHelper {
     }
 
     public Path getShortNameIdLocalFolder(NutsId id, NutsSession session) {
-        CoreNutsUtils.checkId_GN(id,session);
+        NutsWorkspaceUtils.of(session).checkSimpleNameNutsId(id);
         if (repo == null) {
             return getStoreLocation().resolve(getWorkspace().locations().getDefaultIdBasedir(id.builder().setVersion("").build()));
         }

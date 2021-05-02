@@ -255,7 +255,7 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
             }
             fillOption(options.getExecutionType(), arguments, false);
             fillOption("--reset", "-Z", options.isReset(), false, arguments, false);
-            fillOption("--debug", "-z", options.isRecover(), false, arguments, false);
+            fillOption("--recover", "-z", options.isRecover(), false, arguments, false);
             fillOption("--dry", "-D", options.isDry(), false, arguments, false);
             if (PrivateNutsUtils.isBlank(apiVersion) || PrivateNutsUtils.compareRuntimeVersion(apiVersion, "0.8.1") >= 0) {
                 if (options.getProperties() != null) {

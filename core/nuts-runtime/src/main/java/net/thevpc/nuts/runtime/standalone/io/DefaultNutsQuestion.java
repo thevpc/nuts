@@ -6,7 +6,6 @@ import java.io.PrintStream;
 import java.util.Arrays;
 
 import net.thevpc.nuts.runtime.standalone.util.NutsConfigurableHelper;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.bundles.io.ByteArrayPrintStream;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
@@ -132,7 +131,7 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
             if (this.getDefaultValue() != null) {
                 if (first) {
                     first = false;
-                    out.print(" \\(");
+                    out.print(" (");
                 } else {
                     out.print(", ");
                 }
@@ -140,15 +139,15 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
             }
             if (getHintMessage() != null) {
                 if (getHintMessage().length() > 0) {
-                    out.print(" \\(");
+                    out.print(" (");
                     out.printf(getHintMessage(), getHintMessageParameters());
-                    out.print("\\)");
+                    out.print(")");
                 }
             } else {
                 if (_acceptedValues.length > 0) {
                     if (first) {
                         first = false;
-                        out.print(" \\(");
+                        out.print(" (");
                     } else {
                         out.print(", ");
                     }
@@ -163,7 +162,7 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
                     out.printf("accepts %s", ws.formats().text().forStyled(sb.toString(), NutsTextStyle.primary(4)));
                 }
                 if (!first) {
-                    out.print("\\)");
+                    out.print(")");
                 }
             }
 

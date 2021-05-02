@@ -35,6 +35,7 @@ import net.thevpc.nuts.NutsDependencyScope;
 import net.thevpc.nuts.NutsDependencyScopePattern;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.core.util.CoreEnumUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 /**
  *
@@ -44,11 +45,11 @@ public class NutsDependencyScopes {
 
     private static final Logger LOG = Logger.getLogger(NutsDependencyScopes.class.getName());
 
-    public static final NutsDependencyFilter SCOPE_RUN(NutsWorkspace ws) {
-        return (NutsDependencyFilter) ws.dependency().filter().byScope(NutsDependencyScopePattern.RUN).and(
-                ws.dependency().filter().byOptional(false)
-        );
-    }
+//    public static final NutsDependencyFilter SCOPE_RUN(NutsWorkspace ws) {
+//        return (NutsDependencyFilter) ws.dependency().filter().byScope(NutsDependencyScopePattern.RUN).and(
+//                ws.dependency().filter().byOptional(false)
+//        );
+//    }
 //    public static final NutsDependencyFilter SCOPE_TEST = CoreFilterUtils.And(new ScopeNutsDependencyFilter(NutsDependencyScopePattern.TEST), CoreNutsUtils.NON_OPTIONAL);
 
     public static int compareScopes(String s1, String s2) {
@@ -283,6 +284,8 @@ public class NutsDependencyScopes {
         return v;
     }
 
+   
+    
     public static String normalizeScope(String s1) {
         if (s1 == null) {
             s1 = "";

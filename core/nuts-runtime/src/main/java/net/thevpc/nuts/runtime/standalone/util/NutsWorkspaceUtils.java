@@ -246,10 +246,10 @@ public class NutsWorkspaceUtils {
             throw new NutsIllegalArgumentException(session, "missing id");
         }
         if (CoreStringUtils.isBlank(id.getGroupId())) {
-            throw new NutsIllegalArgumentException(session, "missing group for " + id);
+            throw new NutsIllegalArgumentException(session, "missing groupId for " + id);
         }
         if (CoreStringUtils.isBlank(id.getArtifactId())) {
-            throw new NutsIllegalArgumentException(session, "missing name for " + id);
+            throw new NutsIllegalArgumentException(session, "missing artifactId for " + id);
         }
     }
 
