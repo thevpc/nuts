@@ -195,7 +195,7 @@ public class RepoDefinitionResolver {
                         .setConfig(
                                 new NutsRepositoryConfig()
                                         .setLocation("http://thevpc.net/maven")
-                                        .setType("nuts+dirtext")
+                                        .setType("maven+dirlist")
                         );
             }
             default: {

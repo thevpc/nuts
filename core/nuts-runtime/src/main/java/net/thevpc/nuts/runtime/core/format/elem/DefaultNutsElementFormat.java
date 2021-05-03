@@ -49,7 +49,7 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
 
     @Override
     public NutsElementFormat setContentType(NutsContentType contentType) {
-        checkSession();
+//        checkSession();
         if (contentType == null) {
             this.contentType = NutsContentType.JSON;
         } else {
