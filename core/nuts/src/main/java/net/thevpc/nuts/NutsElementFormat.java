@@ -298,4 +298,6 @@ public interface NutsElementFormat extends NutsObjectFormat {
     NutsElementFormat setDestructTypeFilter(Predicate<Type> destructTypeFilter);
 
     NutsIterableFormat iter(PrintStream out);
+
+    void setMapper(Class type, NutsElementMapper mapper);
 }

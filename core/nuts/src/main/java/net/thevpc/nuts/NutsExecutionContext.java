@@ -117,10 +117,10 @@ public interface NutsExecutionContext {
     boolean isFailFast();
 
     /**
-     * when true, the component is temporary and is not registered withing the
+     * when true, the package is temporary and is not registered withing the
      * workspace
      *
-     * @return true if the component is temporary and is not registered withing
+     * @return true if the package is temporary and is not registered withing
      * the workspace
      */
     boolean isTemporary();

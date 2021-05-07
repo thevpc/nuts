@@ -26,7 +26,7 @@
 package net.thevpc.nuts;
 
 /**
- * component update result
+ * package update result
  *
  * @author thevpc
  * @since 0.5.4
@@ -37,7 +37,7 @@ public interface NutsUpdateResult {
     /**
      * artifact id
      *
-     * @return component id
+     * @return package id
      */
     NutsId getId();
 

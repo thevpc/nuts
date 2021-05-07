@@ -152,7 +152,7 @@ public final class NutsBootWorkspace {
         PrivateNutsRepositorySelector.SelectorList bootRepositories = PrivateNutsRepositorySelector.parse(options.getRepositories());
         return parsedBootRepositories
                 = Arrays.stream(bootRepositories.resolveSelectors(defaults))
-                        .map(x -> PrivateNutsRepositorySelector.resolvePath(x.getUrl()))
+                        .map(x -> x.getUrl())
                         .collect(Collectors.toSet());
     }
 
@@ -826,7 +826,7 @@ public final class NutsBootWorkspace {
             if (ex instanceof NutsException) {
                 throw (NutsException) ex;
             }
-            throw new NutsBootException("unable to locate valid nuts-runtime components", ex);
+            throw new NutsBootException("unable to locate valid nuts-runtime package", ex);
         }
     }
 
@@ -1119,7 +1119,7 @@ public final class NutsBootWorkspace {
                         session.out().println("[boot-internal-command] show-help");
                     } else {
                         session.out().println("nuts is a package manager mainly for java applications.");
-                        session.out().println("unluckily it was unable to locate nuts-runtime component which is essential for its execution.\n");
+                        session.out().println("unluckily it was unable to locate nuts-runtime package which is essential for its execution.\n");
                         session.out().println("nuts-version :" + Nuts.getVersion());
                         session.out().println("try to reinstall nuts (with internet access available) and type 'nuts help' to get a list of global options and commands");
                     }
@@ -1269,9 +1269,9 @@ public final class NutsBootWorkspace {
         System.err.printf("  user-home                        : %s%n", System.getProperty("user.home"));
         System.err.printf("  user-dir                         : %s%n", System.getProperty("user.dir"));
         System.err.printf("%n");
-        if (options.getLogConfig()==null 
-                || options.getLogConfig().getLogTermLevel()==null  
-                || options.getLogConfig().getLogFileLevel().intValue()>Level.FINEST.intValue()){
+        if (options.getLogConfig() == null
+                || options.getLogConfig().getLogTermLevel() == null
+                || options.getLogConfig().getLogFileLevel().intValue() > Level.FINEST.intValue()) {
             System.err.printf("If the problem persists you may want to get more debug info by adding '--verbose' arguments.%n");
         }
         if (!options.isReset() && !options.isRecover() && options.getExpireTime() == null) {

@@ -58,7 +58,7 @@ public interface NutsRepositoryManager {
      * </ul>
      * </li>
      * <li>uri-or-path : corresponds the given uri. will be named uri's last
-     * path component name. Here are some examples:
+     * path package name. Here are some examples:
      * <ul>
      * <li>http://192.168.6.3/folder : will be named 'folder'</li>
      * <li>myremote=/folder/subfolder : will be named 'folder'</li>

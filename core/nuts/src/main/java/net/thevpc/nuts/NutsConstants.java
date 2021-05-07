@@ -136,7 +136,7 @@ public final class NutsConstants {
         public static final String PACKAGING = "packaging";
 
         /**
-         * id platform. a platform is the runtime required to run the component on the operating system.
+         * id platform. a platform is the runtime required to run the package on the operating system.
          * standard platforms are
          * <ul>
          * <li>java</li>
@@ -252,7 +252,7 @@ public final class NutsConstants {
     public static final class QueryFaces {
 
         /**
-         * package/component content face (jar, war file)
+         * package content face (jar, war file)
          */
         public static final String CONTENT = "content";
 

@@ -54,7 +54,7 @@ public interface NutsComponent<CriteriaType> {
      */
     int DEFAULT_SUPPORT = 10;
     /**
-     * when getSupportLevel(...)==NO_SUPPORT the component is discarded.
+     * when getSupportLevel(...)==NO_SUPPORT the package is discarded.
      */
     int NO_SUPPORT = -1;
 

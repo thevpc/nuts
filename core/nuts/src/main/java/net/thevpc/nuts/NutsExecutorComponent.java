@@ -29,7 +29,7 @@ package net.thevpc.nuts;
 import net.thevpc.nuts.spi.NutsComponent;
 
 /**
- * An Executor Component is responsible of "executing" a nuts component
+ * An Executor Component is responsible of "executing" a nuts package
  * (package) Created by vpc on 1/7/17.
  *
  * @since 0.5.4

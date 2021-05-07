@@ -26,6 +26,7 @@ package net.thevpc.nuts;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -36,6 +37,67 @@ import java.util.regex.Pattern;
  * @author vpc
  */
 class PrivateNutsRepositorySelector {
+
+    private static final Map<String, String> defaultRepositoriesByName = new LinkedHashMap<>();
+
+    static {
+        defaultRepositoriesByName.put("system", PrivateNutsUtils.syspath(
+                Nuts.getPlatformHomeFolder(null,
+                        NutsStoreLocation.CONFIG, null,
+                        true,
+                        NutsConstants.Names.DEFAULT_WORKSPACE_NAME)
+                + "/" + NutsConstants.Folders.REPOSITORIES
+                + "/" + NutsConstants.Names.DEFAULT_REPOSITORY_NAME
+        ));
+        //
+        defaultRepositoriesByName.put("maven-local", System.getProperty("user.home") + PrivateNutsUtils.syspath("/.m2/repository"));
+        defaultRepositoriesByName.put(".m2", defaultRepositoriesByName.get("maven-local"));
+        defaultRepositoriesByName.put("m2", defaultRepositoriesByName.get("maven-local"));
+        //
+        defaultRepositoriesByName.put("maven-central", "https://repo.maven.apache.org/maven2");
+        defaultRepositoriesByName.put("m2", defaultRepositoriesByName.get("maven-central"));
+        defaultRepositoriesByName.put("central", defaultRepositoriesByName.get("maven-central"));
+        //
+        defaultRepositoriesByName.put("jcenter", "https://jcenter.bintray.com");
+        //
+        defaultRepositoriesByName.put("jboss", "https://repository.jboss.org/nexus/content/repositories/releases");
+        //
+        defaultRepositoriesByName.put("clojars", "https://repo.clojars.org");
+        //
+        defaultRepositoriesByName.put("atlassian", "https://packages.atlassian.com/maven/public");
+        //
+        defaultRepositoriesByName.put("atlassian-snapshot", "https://packages.atlassian.com/maven/public-snapshot");
+        //
+        defaultRepositoriesByName.put("oracle", "https://maven.oracle.com");
+        //
+        defaultRepositoriesByName.put("google", "https://maven.google.com");
+        //
+        defaultRepositoriesByName.put("spring", "https://repo.spring.io/release");
+        defaultRepositoriesByName.put("spring-framework", defaultRepositoriesByName.get("spring"));
+        //
+        defaultRepositoriesByName.put("maven-thevpc-git", "https://raw.githubusercontent.com/thevpc/vpc-public-maven/master");
+        defaultRepositoriesByName.put("vpc-public-maven", defaultRepositoriesByName.get("maven-thevpc-git"));
+        //
+        defaultRepositoriesByName.put("nuts-thevpc-git", "https://raw.githubusercontent.com/thevpc/vpc-public-nuts/master");
+        defaultRepositoriesByName.put("vpc-public-nuts", defaultRepositoriesByName.get("nuts-thevpc-git"));
+        //
+        defaultRepositoriesByName.put("thevpc", "http://thevpc.net/maven");
+        defaultRepositoriesByName.put("dev", defaultRepositoriesByName.get("thevpc"));
+
+    }
+
+    public static String getRepositoryNameByURL(String url) {
+        for (Map.Entry<String, String> entry : defaultRepositoriesByName.entrySet()) {
+            if (entry.getValue().equals(url)) {
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
+
+    public static String getRepositoryURLByName(String name) {
+        return defaultRepositoriesByName.get(name);
+    }
 
     public static enum Op {
         INCLUDE,
@@ -52,7 +114,7 @@ class PrivateNutsRepositorySelector {
         }
         SelectorList all = new SelectorList();
         for (String t : textes) {
-            all = all.join(parse(t));
+            all = all.join(parseList(t));
         }
         return all;
     }
@@ -61,39 +123,75 @@ class PrivateNutsRepositorySelector {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         if (op == Op.EXACT) {
-            sb.append("=");
+            sb.append(":=");
         } else if (op == Op.EXCLUDE) {
-            sb.append("-");
+            sb.append(":-");
+        } else if (op == Op.INCLUDE) {
+            sb.append(":+");
         }
         if (name != null && name.length() > 0) {
             sb.append(name);
-            sb.append("=");
         }
         if (url != null && url.length() > 0) {
+            sb.append("(");
             sb.append(url);
+            sb.append(")");
         }
         return sb.toString();
     }
 
-    public static PrivateNutsRepositorySelector parseOne(String text) {
-        SelectorList r = PrivateNutsRepositorySelector.parse(text);
-        PrivateNutsRepositorySelector[] i = r.resolveSelectors(null);
-        if (i.length != 1) {
-            throw new IllegalArgumentException("invalid repository " + text);
+    public static Selection parseSelection(String s) {
+        String name = null;
+        String url = null;
+        if (s == null) {
+            throw new IllegalArgumentException("invalid null selection");
         }
-        return i[0];
+        s = s.trim();
+        if (s.startsWith("-")
+                || s.startsWith("+")
+                || s.startsWith("=")
+                || s.indexOf(",") >= 0
+                || s.indexOf(";") >= 0) {
+            throw new IllegalArgumentException("invalid selection syntax");
+        }
+        Matcher matcher = Pattern.compile("(?<name>[a-zA-Z-_]+)=(?<value>.+)").matcher(s);
+        if (matcher.find()) {
+            name = matcher.group("name");
+            url = matcher.group("value");
+        } else {
+            if (s.matches("[a-zA-Z-_]+")) {
+                name = s;
+                String u = getRepositoryURLByName(name);
+                if (u == null) {
+                    url = name;
+                } else {
+                    url = u;
+                }
+            } else {
+                url = s;
+                String n = getRepositoryNameByURL(url);
+                if (n == null) {
+                    name = url;
+                } else {
+                    name = n;
+                }
+            }
+        }
+        if (url.length() > 0) {
+            return new Selection(name, url);
+        }
+        return null;
     }
 
-    public static SelectorList parse(String text) {
+    public static SelectorList parseList(String text) {
         if (text == null) {
             return new SelectorList();
         }
         Op op = Op.INCLUDE;
         List<PrivateNutsRepositorySelector> all = new ArrayList<>();
-        for (String s : text.split("[,; ]")) {
+        for (String s : text.split("[,;]")) {
+            s = s.trim();
             if (s.length() > 0) {
-                String name = null;
-                String url = null;
                 if (s.startsWith("+")) {
                     op = Op.INCLUDE;
                     s = s.substring(1);
@@ -103,21 +201,10 @@ class PrivateNutsRepositorySelector {
                 } else if (s.startsWith("=")) {
                     op = Op.EXACT;
                     s = s.substring(1);
-                } else {
-                    op = Op.INCLUDE;
                 }
-                Matcher matcher = Pattern.compile("(?<name>[a-zA-Z-_]+)=(?<value>.+)").matcher(s);
-                if (matcher.find()) {
-                    name = matcher.group("name");
-                    url = matcher.group("value");
-                } else {
-                    url = s;
-                    if (s.matches("[a-zA-Z-_]+")) {
-                        name = s;
-                    }
-                }
-                if (url.length() > 0) {
-                    all.add(new PrivateNutsRepositorySelector(op, name, url));
+                Selection z = parseSelection(s);
+                if (z != null) {
+                    all.add(new PrivateNutsRepositorySelector(op, z.getName(), z.getUrl()));
                 }
             }
         }
@@ -140,6 +227,41 @@ class PrivateNutsRepositorySelector {
 
     public String getUrl() {
         return url;
+    }
+
+    public boolean matches(String otherName, String otherURL) {
+        otherName = otherName == null ? "" : otherName.trim();
+        otherURL = otherURL == null ? "" : otherURL.trim();
+        String _name = this.name == null ? "" : this.name.trim();
+        String _url = this.url == null ? "" : this.url.trim();
+        otherURL = otherURL == null ? otherURL : otherURL.trim();
+        if (_name.length() > 0 && _name.equals(otherName)) {
+            return true;
+        }
+        if (_url.length() > 0 && _url.equals(otherURL)) {
+            return true;
+        }
+        return false;
+    }
+
+    public static class Selection {
+
+        private String name;
+        private String url;
+
+        public Selection(String name, String url) {
+            this.name = name;
+            this.url = url;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getUrl() {
+            return url;
+        }
+
     }
 
     public static class SelectorList {
@@ -167,69 +289,65 @@ class PrivateNutsRepositorySelector {
             return new SelectorList(all2.toArray(new PrivateNutsRepositorySelector[0]));
         }
 
-        public PrivateNutsRepositorySelector[] resolveSelectors(Map<String, String> existing) {
+        public Selection[] resolveSelectors(Map<String, String> existing) {
             Map<String, String> existing2 = new HashMap<>();
             if (existing != null) {
                 for (Map.Entry<String, String> entry : existing.entrySet()) {
                     String k = entry.getKey();
                     String v = entry.getValue();
-                    if (!PrivateNutsUtils.isBlank(k)) {
-                        if (PrivateNutsUtils.isBlank(v)) {
+                    if (isBlank(v) && !isBlank(k)) {
+                        String u2 = getRepositoryURLByName(k);
+                        if (u2 != null) {
+                            v = u2;
+                        }else{
                             v = k;
+                        }
+                    } else if (!isBlank(v) && isBlank(k)) {
+                        String u2 = getRepositoryNameByURL(k);
+                        if (u2 != null) {
+                            k=u2;
                         }
                     }
                     existing2.put(k, v);
                 }
             }
-
-            List<PrivateNutsRepositorySelector> all2 = new ArrayList<>();
-            HashSet<String> visitedNames = new HashSet<>();
-            HashSet<String> visitedUrls = new HashSet<>();
+            List<Selection> all2 = new ArrayList<>();
+//            HashSet<String> visitedNames = new HashSet<>();
+//            HashSet<String> visitedUrls = new HashSet<>();
             for (PrivateNutsRepositorySelector r : all) {
                 if (r.op != Op.EXCLUDE) {
-                    boolean accept = true;
+//                    boolean accept = true;
                     if (r.name != null) {
                         String u2 = r.getUrl();
-                        if (visitedNames.contains(r.name)) {
-                            accept = false;
-                        } else {
-                            visitedNames.add(r.name);
-                        }
+//                        if (visitedNames.contains(r.name)) {
+//                            accept = false;
+//                        } else {
+//                            visitedNames.add(r.name);
+//                        }
                         if (existing2.containsKey(r.name)) {
                             String ss = existing2.remove(r.name);
                             if (ss != null && u2 == null) {
                                 u2 = ss;
                             }
                         }
-                        r = new PrivateNutsRepositorySelector(Op.INCLUDE, r.name, u2);
+                        all2.add(new Selection(r.name, u2));
                     } else if (r.op == Op.EXACT) {
-                        r = new PrivateNutsRepositorySelector(Op.INCLUDE, r.name, r.getUrl());
+                        all2.add(new Selection(r.name, r.getUrl()));
                     }
-                    all2.add(r);
                 }
             }
             for (Map.Entry<String, String> e : existing2.entrySet()) {
                 if (acceptExisting(e.getKey(), e.getValue())) {
-                    all2.add(new PrivateNutsRepositorySelector(Op.INCLUDE, e.getKey(), e.getValue()));
+                    all2.add(new Selection(e.getKey(), e.getValue()));
                 }
             }
-            return all2.toArray(new PrivateNutsRepositorySelector[0]);
+            return all2.toArray(new Selection[0]);
         }
 
         public boolean acceptExisting(String n, String url) {
             boolean includeOthers = true;
             for (PrivateNutsRepositorySelector s : all) {
-                if (s.name != null && s.name.equals(n)) {
-                    switch (s.op) {
-                        case EXACT:
-                            return true;
-                        case INCLUDE:
-                            return true;
-                        case EXCLUDE:
-                            return false;
-                    }
-                }
-                if (s.url != null && s.url.equals(n)) {
+                if (s.matches(n, url)) {
                     switch (s.op) {
                         case EXACT:
                             return true;
@@ -246,58 +364,7 @@ class PrivateNutsRepositorySelector {
             return includeOthers;
         }
     }
-
-    public static String resolvePath(String path) {
-        switch (path) {
-            case ".m2":
-            case "m2":
-            case "maven-local": {
-                return System.getProperty("user.home") + PrivateNutsUtils.syspath("/.m2/repository");
-            }
-            case "maven":
-            case "central":
-            case "maven-central": {
-                return "https://repo.maven.apache.org/maven2";
-            }
-            case "jcenter": {
-                return "https://jcenter.bintray.com";
-            }
-            case "jboss": {
-                return "https://repository.jboss.org/nexus/content/repositories/releases";
-            }
-            case "clojars": {
-                return "https://repo.clojars.org";
-            }
-            case "atlassian": {
-                return "https://packages.atlassian.com/maven/public";
-            }
-            case "atlassian-snapshot": {
-                return "https://packages.atlassian.com/maven/public-snapshot";
-            }
-            case "oracle": {
-                return "https://maven.oracle.com";
-            }
-            case "google": {
-                return "https://maven.google.com";
-            }
-            case "spring":
-            case "spring-framework": {
-                return "https://repo.spring.io/release";
-            }
-            case "maven-thevpc-git":
-            case "vpc-public-maven": {
-                return "https://raw.githubusercontent.com/thevpc/vpc-public-maven/master";
-            }
-            case "nuts-thevpc-git":
-            case "vpc-public-nuts": {
-                return "https://raw.githubusercontent.com/thevpc/vpc-public-nuts/master";
-            }
-            case "dev": 
-            case "thevpc": {
-                return "http://thevpc.net/maven";
-            }
-        }
-        return path;
+    private static boolean isBlank(String s){
+        return PrivateNutsUtils.isBlank(s);
     }
-
 }
