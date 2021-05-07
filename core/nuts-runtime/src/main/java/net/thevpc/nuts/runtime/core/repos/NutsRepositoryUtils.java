@@ -1,4 +1,4 @@
-package net.thevpc.nuts.runtime.standalone.util;
+package net.thevpc.nuts.runtime.core.repos;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
@@ -6,6 +6,7 @@ import net.thevpc.nuts.NutsLogVerb;
 
 import java.util.Map;
 import java.util.logging.Level;
+import net.thevpc.nuts.runtime.core.commands.repo.NutsRepositorySupportedAction;
 
 public class NutsRepositoryUtils {
     private NutsLogger LOG;
@@ -37,6 +38,64 @@ public class NutsRepositoryUtils {
         }
         return LOG;
     }
+
+    public static int getSupportSpeedLevel(NutsRepository repository, NutsRepositorySupportedAction supportedAction, NutsId id, NutsFetchMode mode, boolean transitive, NutsSession session) {
+        if (repository instanceof NutsInstalledRepository) {
+            return 0;
+        }
+        NutsRepositoryExt xrepo = NutsRepositoryExt.of(repository);
+        double result = 0;
+        if (xrepo.acceptAction(id, supportedAction, mode, session)) {
+            int r = repository.config().getSpeed();
+            if (r > 0) {
+                result += 1.0 / r;
+            }
+        }
+        if (transitive) {
+            for (NutsRepository remote : repository.config()
+                    .setSession(session)
+                    .getMirrors()) {
+                int r = getSupportSpeedLevel(remote, supportedAction, id, mode, transitive, session);
+                if (r > 0) {
+                    result += 1.0 / r;
+                }
+            }
+        }
+        int intResult = 0;
+        if (result != 0) {
+            intResult = (int) (1.0 / result);
+            if (intResult < 0) {
+                intResult = Integer.MAX_VALUE;
+            }
+        }
+        return intResult;
+    }
+    public static int getSupportDeployLevel(NutsRepository repository, NutsRepositorySupportedAction supportedAction, NutsId id, NutsFetchMode mode, boolean transitive, NutsSession session) {
+        if (repository instanceof NutsInstalledRepository) {
+            return 0;
+        }
+        NutsRepositoryExt xrepo = NutsRepositoryExt.of(repository);
+        int result = 0;
+        if (xrepo.acceptAction(id, supportedAction, mode, session)) {
+            int r = repository.config().getDeployOrder();
+            if (r > 0) {
+                result += r;
+            }
+        }
+        if (transitive) {
+            for (NutsRepository remote : repository.config()
+                    .setSession(session)
+                    .getMirrors()) {
+                int r = getSupportSpeedLevel(remote, supportedAction, id, mode, transitive, session);
+                if (r > 0) {
+                    result += r;
+                }
+            }
+        }
+        return result;
+    }
+
+
 
     public Events events() {
         return new Events(this);

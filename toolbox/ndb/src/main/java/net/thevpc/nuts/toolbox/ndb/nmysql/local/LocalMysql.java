@@ -2,7 +2,7 @@ package net.thevpc.nuts.toolbox.ndb.nmysql.local;
 
 //package net.thevpc.nuts.toolbox.nmysql.local;
 //
-//import net.thevpc.common.strings.StringUtils;
+//import net.thevpc.common.strings.NdbUtils;
 //import net.thevpc.nuts.*;
 //import net.thevpc.nuts.toolbox.nmysql.NMySqlConfigVersions;
 //import net.thevpc.nuts.toolbox.nmysql.local.config.LocalMysqlConfig;
@@ -309,15 +309,15 @@ package net.thevpc.nuts.toolbox.ndb.nmysql.local;
 //                if (context.getSession().isPlainTrace()) {
 //                    if (add) {
 //                        if (overrideExisting) {
-//                            context.getSession().out().printf("adding config (with override) ####%s####%n", StringUtils.coalesce(name.getConfigName(), "default"));
+//                            context.getSession().out().printf("adding config (with override) ####%s####%n", NdbUtils.coalesce(name.getConfigName(), "default"));
 //                        } else {
-//                            context.getSession().out().printf("adding config ####%s####%n", StringUtils.coalesce(name.getConfigName(), "default"));
+//                            context.getSession().out().printf("adding config ####%s####%n", NdbUtils.coalesce(name.getConfigName(), "default"));
 //                        }
 //                    } else {
 //                        if (overrideExisting) {
-//                            context.getSession().out().printf("updating config (with override) ####%s####%n", StringUtils.coalesce(name.getConfigName(), "default"));
+//                            context.getSession().out().printf("updating config (with override) ####%s####%n", NdbUtils.coalesce(name.getConfigName(), "default"));
 //                        } else {
-//                            context.getSession().out().printf("updating config ####%s####%n", StringUtils.coalesce(name.getConfigName(), "default"));
+//                            context.getSession().out().printf("updating config ####%s####%n", NdbUtils.coalesce(name.getConfigName(), "default"));
 //                        }
 //                    }
 //                }

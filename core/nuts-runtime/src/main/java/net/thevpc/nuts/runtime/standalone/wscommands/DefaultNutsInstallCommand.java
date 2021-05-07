@@ -260,11 +260,11 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                         break;
                     }
                     case REPAIR: {
-                        info.doError = "cannot repair non installed artifact";
+                        info.doError = "cannot repair non installed package";
                         break;
                     }
                     case SWITCH_VERSION: {
-                        info.doError = "cannot switch version for non installed artifact";
+                        info.doError = "cannot switch version for non installed package";
                         break;
                     }
                     default: {
@@ -297,7 +297,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                         if (info.getOldInstallStatus().isInstalled()) {
                             info.doSwitchVersion = true;
                         } else {
-                            info.doError = "cannot switch version for non installed artifact";
+                            info.doError = "cannot switch version for non installed package";
                         }
                         break;
                     }
@@ -355,7 +355,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                         break;
                     }
                     case SWITCH_VERSION: {
-                        info.doError = "cannot switch version for non installed artifact";
+                        info.doError = "cannot switch version for non installed package";
                         break;
                     }
                     default: {
@@ -370,11 +370,11 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
         if (error.size() > 0) {
             StringBuilder sb = new StringBuilder();
             for (Map.Entry<String, List<InstallIdInfo>> stringListEntry : error.entrySet()) {
-                out.println("the following " + (stringListEntry.getValue().size() > 1 ? "artifacts are" : "artifact is") + " cannot be ```error installed``` (" + stringListEntry.getKey() + ") : "
+                out.println("the following " + (stringListEntry.getValue().size() > 1 ? "packages are" : "package is") + " cannot be ```error installed``` (" + stringListEntry.getKey() + ") : "
                         + stringListEntry.getValue().stream().map(x -> x.id)
                                 .map(x -> ws.id().formatter().omitImportedGroupId().value(x.getLongNameId()).format())
                                 .collect(Collectors.joining(", ")));
-                sb.append("\n" + "the following ").append(stringListEntry.getValue().size() > 1 ? "artifacts are" : "artifact is").append(" cannot be installed (").append(stringListEntry.getKey()).append(") : ").append(stringListEntry.getValue().stream().map(x -> x.id)
+                sb.append("\n" + "the following ").append(stringListEntry.getValue().size() > 1 ? "packages are" : "package is").append(" cannot be installed (").append(stringListEntry.getKey()).append(") : ").append(stringListEntry.getValue().stream().map(x -> x.id)
                         .map(x -> ws.id().formatter().omitImportedGroupId().value(x.getLongNameId()).format())
                         .collect(Collectors.joining(", ")));
             }
@@ -464,7 +464,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
             failed = failedList.toArray(new NutsId[0]);
         }
         if (list.emptyCommand) {
-            throw new NutsExecutionException(getSession(), "missing components to install", 1);
+            throw new NutsExecutionException(getSession(), "missing packages to install", 1);
         }
         return this;
     }
@@ -474,7 +474,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
             NutsWorkspace ws = getSession().getWorkspace();
             NutsTextBuilder msg = ws.formats().text().builder();
             msg.append("the following ")
-                    .append(kind).append(" ").append((all.size() > 1 ? "artifacts are" : "artifact is"))
+                    .append(kind).append(" ").append((all.size() > 1 ? "packages are" : "package is"))
                     .append(" going to be ").append(action).append(" : ")
                     .appendJoined(
                             ws.formats().text().forPlain(", "),

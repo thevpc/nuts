@@ -24,12 +24,23 @@ import java.util.logging.Level;
  * @author thevpc
  */
 public class DefaultSourceControlHelper {
-    private final NutsLogger LOG;
+
+    private NutsLogger LOG;
     private NutsWorkspace ws;
 
     public DefaultSourceControlHelper(NutsWorkspace ws) {
         this.ws = ws;
-        LOG = ws.log().of(DefaultSourceControlHelper.class);
+    }
+
+    protected NutsLoggerOp _LOGOP(NutsSession session) {
+        return _LOG(session).with().session(session);
+    }
+
+    protected NutsLogger _LOG(NutsSession session) {
+        if (LOG == null) {
+            LOG = session.getWorkspace().log().of(DefaultSourceControlHelper.class);
+        }
+        return LOG;
     }
 
     //    @Override
@@ -50,7 +61,7 @@ public class DefaultSourceControlHelper {
             try {
                 newVersionFound = ws.fetch().setId(d.getId().builder().setVersion(newVersion).build()).setSession(session).getResultDefinition();
             } catch (NutsNotFoundException ex) {
-                LOG.with().session(session).level(Level.FINE).error(ex).log("failed to fetch {0}", d.getId().builder().setVersion(newVersion).build());
+                _LOGOP(session).level(Level.FINE).error(ex).log("failed to fetch {0}", d.getId().builder().setVersion(newVersion).build());
                 //ignore
             }
             if (newVersionFound == null) {
@@ -103,7 +114,7 @@ public class DefaultSourceControlHelper {
                             false,
                             false),
                     null,
-                    idType, null,session
+                    idType, null, session
             );
         } else {
             throw new NutsUnsupportedOperationException(session, "Checkout not supported");

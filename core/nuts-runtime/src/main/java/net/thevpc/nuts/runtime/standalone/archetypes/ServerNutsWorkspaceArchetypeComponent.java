@@ -31,7 +31,7 @@ import net.thevpc.nuts.runtime.standalone.config.DefaultNutsWorkspaceConfigManag
 import net.thevpc.nuts.spi.NutsWorkspaceArchetypeComponent;
 
 import java.util.Map;
-import net.thevpc.nuts.runtime.standalone.NutsRepositorySelector;
+import net.thevpc.nuts.runtime.core.repos.NutsRepositorySelector;
 
 /**
  * Created by vpc on 1/23/17.
@@ -57,9 +57,9 @@ public class ServerNutsWorkspaceArchetypeComponent implements NutsWorkspaceArche
         defaults.put("maven-local", null);
         defaults.put("maven-central", null);
         defaults.put(NutsConstants.Names.DEFAULT_REPOSITORY_NAME, null);
-        NutsRepositorySelector[] br = rm.getModel().resolveBootRepositoriesList().resolveSelectors(defaults);
+        NutsRepositorySelector.Selection[] br = rm.getModel().resolveBootRepositoriesList().resolveSelectors(defaults);
             NutsRepositoryManager repos = ws.repos().setSession(session);
-        for (NutsRepositorySelector s : br) {
+        for (NutsRepositorySelector.Selection s : br) {
             repos.addRepository(s.toString());
         }
         NutsWorkspaceSecurityManager sec = session.getWorkspace().security().setSession(session);

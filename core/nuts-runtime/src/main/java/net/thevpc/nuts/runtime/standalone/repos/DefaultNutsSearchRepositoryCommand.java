@@ -18,29 +18,36 @@ import java.util.Iterator;
 import java.util.logging.Level;
 
 /**
- * @author thevpc
- * %category SPI Base
+ * @author thevpc %category SPI Base
  */
 public class DefaultNutsSearchRepositoryCommand extends AbstractNutsSearchRepositoryCommand {
 
-    private final NutsLogger LOG;
+    private NutsLogger LOG;
 
     public DefaultNutsSearchRepositoryCommand(NutsRepository repo) {
         super(repo);
-        LOG = repo.getWorkspace().log().of(DefaultNutsSearchRepositoryCommand.class);
+    }
+
+    protected NutsLoggerOp _LOGOP(NutsSession session) {
+        return _LOG(session).with().session(session);
+    }
+
+    protected NutsLogger _LOG(NutsSession session) {
+        if (LOG == null) {
+            LOG = session.getWorkspace().log().of(DefaultNutsSearchRepositoryCommand.class);
+        }
+        return LOG;
     }
 
     @Override
     public NutsSearchRepositoryCommand run() {
         NutsSession session = getSession();
-        NutsWorkspaceUtils.checkSession(getRepo().getWorkspace(),session);
+        NutsWorkspaceUtils.checkSession(getRepo().getWorkspace(), session);
         getRepo().security().setSession(session).checkAllowed(NutsConstants.Permissions.FETCH_DESC, "search");
         NutsRepositoryExt xrepo = NutsRepositoryExt.of(getRepo());
         xrepo.checkAllowedFetch(null, session);
         try {
-            if (LOG.isLoggable(Level.FINEST)) {
-                LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.START).log("{0} Search components", CoreStringUtils.alignLeft(getRepo().getName(), 20));
-            }
+            _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.START).log("{0} Search packages", CoreStringUtils.alignLeft(getRepo().getName(), 20));
             boolean processIndexFirst = session.isIndexed() && xrepo.getIndexStore() != null && xrepo.getIndexStore().isEnabled();
             if (processIndexFirst) {
                 Iterator<NutsId> o = null;
@@ -49,31 +56,23 @@ public class DefaultNutsSearchRepositoryCommand extends AbstractNutsSearchReposi
                 } catch (NutsIndexerNotAccessibleException ex) {
                     //just ignore
                 } catch (NutsException ex) {
-                    LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.FAIL).log("error search operation using Indexer for {0} : {1}", getRepo().getName(), ex);
+                    _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.FAIL).log("error search operation using Indexer for {0} : {1}", getRepo().getName(), ex);
                 }
                 if (o != null) {
                     result = new IndexFirstIterator<>(o,
                             xrepo.searchImpl(filter, getFetchMode(), session)
                     );
-                    if (LOG.isLoggable(Level.FINEST)) {
-                        LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.SUCCESS).log("{0} Search components (indexer)", CoreStringUtils.alignLeft(getRepo().getName(), 20));
-                    }
+                    _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.SUCCESS).log("{0} Search packages (indexer)", CoreStringUtils.alignLeft(getRepo().getName(), 20));
                     return this;
                 }
             }
             result = xrepo.searchImpl(filter, getFetchMode(), session);
-            if (LOG.isLoggable(Level.FINEST)) {
-                LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.SUCCESS).log("{0} Search components", CoreStringUtils.alignLeft(getRepo().getName(), 20));
-            }
+            _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.SUCCESS).log("{0} Search packages", CoreStringUtils.alignLeft(getRepo().getName(), 20));
         } catch (NutsNotFoundException | SecurityException ex) {
-            if (LOG.isLoggable(Level.FINEST)) {
-                LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.FAIL).log("{0} Search components", CoreStringUtils.alignLeft(getRepo().getName(), 20));
-            }
+            _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.FAIL).log("{0} Search packages", CoreStringUtils.alignLeft(getRepo().getName(), 20));
             throw ex;
         } catch (RuntimeException ex) {
-            if (LOG.isLoggable(Level.SEVERE)) {
-                LOG.with().session(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL).log("{0} Search components", CoreStringUtils.alignLeft(getRepo().getName(), 20));
-            }
+            _LOGOP(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL).log("{0} Search packages", CoreStringUtils.alignLeft(getRepo().getName(), 20));
             throw ex;
         }
         return this;

@@ -86,7 +86,7 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
                         }
                         out.printf("%s : %s %s%n",
                                 factory.forStyled(arg, NutsTextStyle.primary(4)),
-                                factory.forStyled("nuts component", NutsTextStyle.primary(6)),
+                                factory.forStyled("nuts package", NutsTextStyle.primary(6)),
                                 p.getId()/*, p.getDescription()*/
                         );
                         break;

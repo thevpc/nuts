@@ -11,30 +11,33 @@
  * large range of sub managers / repositories.
  * <br>
  * <p>
- * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may
- * not use this file except in compliance with the License. You may obtain a
- * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
- * either express or implied. See the License for the specific language
+ * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
- * <br>
- * ====================================================================
+ * <br> ====================================================================
  */
 package net.thevpc.nuts.runtime.standalone.repos;
 
+import java.io.File;
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.repos.RepoDefinitionResolver;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.spi.NutsRepositoryFactoryComponent;
 
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Map;
-import net.thevpc.nuts.runtime.standalone.NutsRepositorySelector;
+import net.thevpc.nuts.runtime.core.repos.NutsRepositorySelector;
+import net.thevpc.nuts.runtime.core.repos.NutsRepositoryType;
+import net.thevpc.nuts.runtime.core.repos.NutsRepositoryURL;
+import static net.thevpc.nuts.spi.NutsComponent.DEFAULT_SUPPORT;
 
 /**
  * Created by vpc on 1/15/17.
@@ -48,48 +51,55 @@ public class DefaultNutsRepoFactoryComponent implements NutsRepositoryFactoryCom
             return NO_SUPPORT;
         }
         String repositoryType = criteria.getConstraints().getType();
-        if(CoreStringUtils.isBlank(repositoryType)){
-                String location = criteria.getConstraints().getLocation();
-                if (!CoreStringUtils.isBlank(location)) {
-                    String prot = CoreNutsUtils.extractUrlProtocol(location);
-                    if(prot!=null){
-                        switch (prot){
-                            case "nuts":
-                            case "nuts+api":{
-                                criteria.getConstraints().setType(prot);
-                                return DEFAULT_SUPPORT;
-                            }
-                            case "nuts+http":
-                            case "nuts+api+http":
-                            case "nuts+https":
-                            case "nuts+api+https":{
-                                criteria.getConstraints().setType(prot);
-                                return DEFAULT_SUPPORT;
-                            }
-                        }
-                    }
+        if (CoreStringUtils.isBlank(repositoryType)) {
+            String location = criteria.getConstraints().getLocation();
+            if (!CoreStringUtils.isBlank(location)) {
+                NutsRepositoryURL nru = new NutsRepositoryURL(location);
+                if (nru.getRepositoryType().isNuts()) {
+                    criteria.getConstraints().setType(nru.getRepositoryType().toString());
+                    criteria.getConstraints().setLocation(nru.getLocation());
+                    return DEFAULT_SUPPORT;
+                }
+                if (nru.isHttp()) {
                     NutsInput in = criteria.getWorkspace().io().input().setTypeName("nuts-repository.json").of(
-                            location + "/nuts-repository.json"
+                            nru.getLocation() + "/nuts-repository.json"
                     );
                     try (InputStream s = in.open()) {
-                        Map<String,Object> m=criteria.getWorkspace().formats().element().setSession(criteria.getSession()).setContentType(NutsContentType.JSON)
-                                .parse(s,Map.class);
-                        if(m!=null){
+                        Map<String, Object> m = criteria.getWorkspace().formats().element().setSession(criteria.getSession()).setContentType(NutsContentType.JSON)
+                                .parse(s, Map.class);
+                        if (m != null) {
                             String type = (String) m.get("type");
-                            if(type!=null){
-                                switch (type){
-                                    case "nuts":
-                                    case "nuts:api":{
-                                        criteria.getConstraints().setType(type);
-                                        return DEFAULT_SUPPORT;
-                                    }
-                                }
+                            NutsRepositoryType nrt = new NutsRepositoryType(type);
+                            if (nrt.isNuts()) {
+                                criteria.getConstraints().setType(type);
+                                return DEFAULT_SUPPORT;
                             }
                         }
                     } catch (Exception ex) {
                         //ignore
                     }
+                } else if (nru.getPathProtocol().equals("file")) {
+                    File file = CoreIOUtils.toFile(nru.getLocation());
+                    if (file != null) {
+                        if (Files.exists(file.toPath().resolve("nuts-repository.json"))) {
+                            criteria.getConstraints().setType(NutsConstants.RepoTypes.NUTS);
+                            return DEFAULT_SUPPORT;
+                        }
+                        criteria.getConstraints().setType(NutsConstants.RepoTypes.NUTS);
+                        return DEFAULT_SUPPORT;
+                    }
+                } else if (nru.getProtocols().isEmpty()) {
+                    if (Files.exists(Paths.get(location).resolve("nuts-repository.json"))) {
+                        criteria.getConstraints().setType(NutsConstants.RepoTypes.NUTS);
+                        return DEFAULT_SUPPORT;
+                    }
+                    File file = CoreIOUtils.toFile(nru.getLocation());
+                    if (file != null) {
+                        criteria.getConstraints().setType(NutsConstants.RepoTypes.NUTS);
+                        return DEFAULT_SUPPORT;
+                    }
                 }
+            }
             return NO_SUPPORT;
         }
         String location = criteria.getConstraints().getLocation();
@@ -113,7 +123,7 @@ public class DefaultNutsRepoFactoryComponent implements NutsRepositoryFactoryCom
     public NutsAddRepositoryOptions[] getDefaultRepositories(NutsSession session) {
         if (!session.getWorkspace().config().isGlobal()) {
             return new NutsAddRepositoryOptions[]{
-                    RepoDefinitionResolver.createRepositoryOptions(NutsRepositorySelector.parseOne("system"),true,session)
+                NutsRepositorySelector.createRepositoryOptions(NutsRepositorySelector.parseSelection("system"), true, session)
             };
         }
         return new NutsAddRepositoryOptions[0];

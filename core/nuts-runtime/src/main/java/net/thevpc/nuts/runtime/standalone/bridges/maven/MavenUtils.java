@@ -26,7 +26,6 @@ package net.thevpc.nuts.runtime.standalone.bridges.maven;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.common.MapToFunction;
 import net.thevpc.nuts.runtime.bundles.mvn.*;
-import net.thevpc.nuts.runtime.core.repos.RepoDefinitionResolver;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.core.model.DefaultNutsVersion;
@@ -35,7 +34,6 @@ import net.thevpc.nuts.NutsLogVerb;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsDependencyScopes;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
-import net.thevpc.nuts.runtime.standalone.util.SearchTraceHelper;
 
 import java.io.*;
 import java.net.URL;
@@ -54,7 +52,7 @@ import org.w3c.dom.NodeList;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import net.thevpc.nuts.runtime.bundles.parsers.StringTokenizerUtils;
-import net.thevpc.nuts.runtime.standalone.NutsRepositorySelector;
+import net.thevpc.nuts.runtime.core.repos.NutsRepositorySelector;
 
 /**
  * Created by vpc on 2/20/17.
@@ -69,16 +67,16 @@ public class MavenUtils {
         NutsWorkspace ws = session.getWorkspace();
         MavenUtils wp = (MavenUtils) ws.env().getProperty(MavenUtils.class.getName());
         if (wp == null) {
-            wp = new MavenUtils(ws,session);
+            wp = new MavenUtils(ws, session);
             ws.env().setProperty(MavenUtils.class.getName(), wp);
         }
         return wp;
     }
 
-    private MavenUtils(NutsWorkspace ws,NutsSession session) {
+    private MavenUtils(NutsWorkspace ws, NutsSession session) {
         this.ws = ws;
         this.session = session;
-        LOG = ws.log().of(MavenUtils.class);
+        LOG = session.getWorkspace().log().of(MavenUtils.class);
     }
 
     public static PomIdResolver createPomIdResolver(NutsSession session) {
@@ -227,8 +225,8 @@ public class MavenUtils {
             String fetchString = "[" + CoreStringUtils.alignLeft(fetchMode.id(), 7) + "] ";
             LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.SUCCESS).time(time).formatted()
                     .log("{0}{1} parse pom    {2}", fetchString,
-                             CoreStringUtils.alignLeft(repository == null ? "<no-repo>" : repository.getName(), 20),
-                             urlDesc
+                            CoreStringUtils.alignLeft(repository == null ? "<no-repo>" : repository.getName(), 20),
+                            urlDesc
                     );
 
             return ws.descriptor().descriptorBuilder()
@@ -260,7 +258,7 @@ public class MavenUtils {
 
     public NutsDescriptor parsePomXml(Path path, NutsFetchMode fetchMode, NutsRepository repository, NutsSession session) throws IOException {
         try {
-            SearchTraceHelper.progressIndeterminate("parse " + CoreIOUtils.compressUrl(path.toString()), session);
+            session.getTerminal().printProgress("parse %s", CoreIOUtils.compressUrl(path.toString()));
             try (InputStream is = Files.newInputStream(path)) {
                 NutsDescriptor nutsDescriptor = parsePomXml(is, fetchMode, path.toString(), repository, session);
                 if (nutsDescriptor.getId().getArtifactId() == null) {
@@ -415,12 +413,12 @@ public class MavenUtils {
         return s;
     }
 
-    public DepsAndRepos loadDependenciesAndRepositoriesFromPomPath(NutsId rid, NutsRepositorySelector[] bootRepositories, NutsSession session) {
+    public DepsAndRepos loadDependenciesAndRepositoriesFromPomPath(NutsId rid, NutsRepositorySelector.Selection[] bootRepositories, NutsSession session) {
         String urlPath = CoreNutsUtils.idToPath(rid) + "/" + rid.getArtifactId() + "-" + rid.getVersion() + ".pom";
         return loadDependenciesAndRepositoriesFromPomPath(urlPath, bootRepositories, session);
     }
 
-    public DepsAndRepos loadDependenciesAndRepositoriesFromPomPath(String urlPath, NutsRepositorySelector[] bootRepositories, NutsSession session) {
+    public DepsAndRepos loadDependenciesAndRepositoriesFromPomPath(String urlPath, NutsRepositorySelector.Selection[] bootRepositories, NutsSession session) {
         NutsWorkspaceUtils.checkSession(ws, session);
         DepsAndRepos depsAndRepos = null;
 //        if (!NO_M2) {
@@ -430,8 +428,8 @@ public class MavenUtils {
         }
 //        }
         if (depsAndRepos == null || depsAndRepos.deps.isEmpty()) {
-            for (NutsRepositorySelector baseUrl : bootRepositories) {
-                NutsAddRepositoryOptions opt = RepoDefinitionResolver.createRepositoryOptions(baseUrl, false, session);
+            for (NutsRepositorySelector.Selection baseUrl : bootRepositories) {
+                NutsAddRepositoryOptions opt = NutsRepositorySelector.createRepositoryOptions(baseUrl, false, session);
                 String location = opt.getConfig() == null ? opt.getLocation() : opt.getConfig().getLocation();
                 depsAndRepos = loadDependenciesAndRepositoriesFromPomUrl(location + "/" + urlPath, session);
                 if (!depsAndRepos.deps.isEmpty()) {
@@ -443,7 +441,7 @@ public class MavenUtils {
     }
 
     public DepsAndRepos loadDependenciesAndRepositoriesFromPomUrl(String url, NutsSession session) {
-        SearchTraceHelper.progressIndeterminate("load " + CoreIOUtils.compressUrl(url), ws.createSession());
+        session.getTerminal().printProgress("load %s", CoreIOUtils.compressUrl(url));
         DepsAndRepos depsAndRepos = new DepsAndRepos();
 //        String repositories = null;
 //        String dependencies = null;
@@ -557,7 +555,7 @@ public class MavenUtils {
     }
 
     /**
-     * find latest maven component
+     * find latest maven package
      *
      * @param zId id
      * @param filter filter

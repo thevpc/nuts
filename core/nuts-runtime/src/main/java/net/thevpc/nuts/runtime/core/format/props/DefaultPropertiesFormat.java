@@ -66,8 +66,7 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
             return (Map) value;
         }
         LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
-        fillMap(getWorkspace().formats().element()
-                .setSession(getSession())
+        fillMap(getSession().getWorkspace().formats().element()
                 .toElement(value), map, rootName);
         return map;
     }
@@ -184,7 +183,7 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
         if (javaProps) {
             CoreIOUtils.storeProperties(ObjectOutputFormatWriterHelper.explodeMap(mm), w, sorted);
         } else {
-            printMap(out, getWorkspace().formats().text().forBlank(), mm);
+            printMap(out, getSession().getWorkspace().formats().text().forBlank(), mm);
         }
     }
 
@@ -241,7 +240,7 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
     }
 
     private void printKeyValue(PrintStream out, NutsString prefix, int len, String fancySep, NutsString key, NutsString value) {
-        NutsFormatManager txt = getWorkspace().formats();
+        NutsFormatManager txt = getSession().getWorkspace().formats();
         if (prefix == null) {
             prefix = txt.text().forBlank();
         }
@@ -294,7 +293,7 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
         if (escapeText) {
             return CoreCommonUtils.stringValueFormatted(o, escapeText, getSession());
         } else {
-            return getWorkspace().formats().text().forPlain(String.valueOf(o));
+            return getSession().getWorkspace().formats().text().forPlain(String.valueOf(o));
         }
     }
 

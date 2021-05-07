@@ -57,9 +57,10 @@ public class DefaultNutsTerminalModel {
         if (st.isAutoCompleteSupported()) {
             //that's ok
         } else {
-            NutsId extId = ws.id().parser().parse("net.thevpc.nuts.ext:next-term#" + getWorkspace().getApiVersion());
-            if (!getWorkspace().config().isExcludedExtension(extId.toString(), getWorkspace().config().options())) {
-                NutsWorkspaceExtensionManager extensions = getWorkspace().extensions();
+            NutsWorkspace ws = session.getWorkspace();
+            NutsId extId = ws.id().parser().parse("net.thevpc.nuts.ext:next-term#" + ws.getApiVersion());
+            if (!ws.config().isExcludedExtension(extId.toString(), ws.config().options())) {
+                NutsWorkspaceExtensionManager extensions = ws.extensions();
                 extensions.setSession(session).loadExtension(extId);
                 NutsSystemTerminal systemTerminal = createSystemTerminal(
                         new NutsDefaultTerminalSpec()
@@ -180,7 +181,7 @@ public class DefaultNutsTerminalModel {
         if (old != this.systemTerminal) {
             NutsWorkspaceEvent event = null;
             if (session != null) {
-                for (NutsWorkspaceListener workspaceListener : getWorkspace().events().getWorkspaceListeners()) {
+                for (NutsWorkspaceListener workspaceListener : session.getWorkspace().events().getWorkspaceListeners()) {
                     if (event == null) {
                         event = new DefaultNutsWorkspaceEvent(session, null, "systemTerminal", old, this.systemTerminal);
                     }

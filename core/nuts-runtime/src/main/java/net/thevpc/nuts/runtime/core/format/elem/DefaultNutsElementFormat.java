@@ -27,6 +27,7 @@ import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementFormat> implements NutsElementFormat {
+
     public static final NutsPrimitiveElement NULL = new DefaultNutsPrimitiveElement(NutsElementType.NULL, null);
     public static final NutsPrimitiveElement TRUE = new DefaultNutsPrimitiveElement(NutsElementType.BOOLEAN, true);
     public static final NutsPrimitiveElement FALSE = new DefaultNutsPrimitiveElement(NutsElementType.BOOLEAN, false);
@@ -211,11 +212,8 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
 
     @Override
     public NutsElementPath compilePath(String pathExpression) {
-        NutsSession session = getSession();
-        if (session == null) {
-            session = getWorkspace().createSession();
-        }
-        return NutsElementPathFilter.compile(pathExpression, session);
+        checkSession();
+        return NutsElementPathFilter.compile(pathExpression, getSession());
     }
 
 //    public String getDefaulTagName() {
@@ -286,7 +284,6 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
 //    public NutsElementEntryBuilder forEntry() {
 //        return new DefaultNutsElementEntryBuilder(getSession());
 //    }
-
     @Override
     public NutsElementEntry forEntry(NutsElement key, NutsElement value) {
         return new DefaultNutsElementEntry(
@@ -299,7 +296,6 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
 //    public NutsPrimitiveElementBuilder forPrimitive() {
 //        return new DefaultNutsPrimitiveElementBuilder(getSession());
 //    }
-
     @Override
     public NutsObjectElementBuilder forObject() {
         return new DefaultNutsObjectElementBuilder(getSession());
@@ -308,6 +304,13 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
     @Override
     public NutsArrayElementBuilder forArray() {
         return new DefaultNutsArrayElementBuilder(getSession());
+    }
+
+    @Override
+    public void setMapper(Class type, NutsElementMapper mapper) {
+        checkSession();
+        ((DefaultNutsElementFactoryService) getElementFactoryService())
+                .setMapper(type, mapper);
     }
 
     public NutsElementFactoryService getElementFactoryService() {
@@ -472,14 +475,20 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
 
     @Override
     public NutsIterableFormat iter(PrintStream writer) {
-        switch (getContentType()){
-            case JSON:return new DefaultSearchFormatJson(getSession(),writer,new NutsFetchDisplayOptions(getSession().getWorkspace()));
-            case XML:return new DefaultSearchFormatXml(getSession(),writer,new NutsFetchDisplayOptions(getSession().getWorkspace()));
-            case PLAIN:return new DefaultSearchFormatPlain(getSession(),writer,new NutsFetchDisplayOptions(getSession().getWorkspace()));
-            case TABLE:return new DefaultSearchFormatTable(getSession(),writer,new NutsFetchDisplayOptions(getSession().getWorkspace()));
-            case TREE:return new DefaultSearchFormatTree(getSession(),writer,new NutsFetchDisplayOptions(getSession().getWorkspace()));
-            case PROPS:return new DefaultSearchFormatProps(getSession(),writer,new NutsFetchDisplayOptions(getSession().getWorkspace()));
+        switch (getContentType()) {
+            case JSON:
+                return new DefaultSearchFormatJson(getSession(), writer, new NutsFetchDisplayOptions(getSession().getWorkspace()));
+            case XML:
+                return new DefaultSearchFormatXml(getSession(), writer, new NutsFetchDisplayOptions(getSession().getWorkspace()));
+            case PLAIN:
+                return new DefaultSearchFormatPlain(getSession(), writer, new NutsFetchDisplayOptions(getSession().getWorkspace()));
+            case TABLE:
+                return new DefaultSearchFormatTable(getSession(), writer, new NutsFetchDisplayOptions(getSession().getWorkspace()));
+            case TREE:
+                return new DefaultSearchFormatTree(getSession(), writer, new NutsFetchDisplayOptions(getSession().getWorkspace()));
+            case PROPS:
+                return new DefaultSearchFormatProps(getSession(), writer, new NutsFetchDisplayOptions(getSession().getWorkspace()));
         }
-        throw new NutsIllegalArgumentException(getSession(),"unsupported iterator for "+getContentType());
+        throw new NutsIllegalArgumentException(getSession(), "unsupported iterator for " + getContentType());
     }
 }

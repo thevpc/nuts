@@ -31,7 +31,6 @@ import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsUnsupportedOperationException;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.repos.DefaultNutsInstalledRepository;
-import net.thevpc.nuts.runtime.standalone.util.SearchTraceHelper;
 
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
@@ -97,7 +96,7 @@ public class FolderObjectIterator<T> implements Iterator<T> {
         while (!stack.isEmpty()) {
             PathAndDepth file = stack.pop();
             if (Files.isDirectory(file.path)) {
-                SearchTraceHelper.progressIndeterminate("search " + CoreIOUtils.compressUrl(file.path.toString()), session);
+                session.getTerminal().printProgress("search %s",CoreIOUtils.compressUrl(file.path.toString()));
                 visitedFoldersCount++;
                 boolean deep = maxDepth < 0 || file.depth < maxDepth;
                 if (Files.isDirectory(file.path)) {

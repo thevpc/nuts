@@ -1,6 +1,5 @@
 package net.thevpc.nuts.toolbox.ndb.nmysql;
 
-import net.thevpc.common.strings.StringUtils;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.ndb.nmysql.local.LocalMysqlConfigService;
 import net.thevpc.nuts.toolbox.ndb.nmysql.local.LocalMysqlDatabaseConfigService;
@@ -17,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import net.thevpc.nuts.toolbox.ndb.NdbSupport;
+import net.thevpc.nuts.toolbox.ndb.util.NdbUtils;
 
 public class NMysqlMain implements NdbSupport {
 
@@ -514,21 +514,21 @@ public class NMysqlMain implements NdbSupport {
                             if (overrideExisting) {
                                 session.out().printf("adding local config (with override) %s%n",
                                         factory.forStyled(
-                                        StringUtils.coalesce(name.getConfigName(), "default"),NutsTextStyle.primary(3))
+                                        NdbUtils.coalesce(name.getConfigName(), "default"),NutsTextStyle.primary(3))
                                 );
                             } else {
                                 session.out().printf("adding local config %s%n",
                                         factory.forStyled(
-                                        StringUtils.coalesce(name.getConfigName(), "default"),NutsTextStyle.primary(3)));
+                                        NdbUtils.coalesce(name.getConfigName(), "default"),NutsTextStyle.primary(3)));
                             }
                         } else {
                             if (overrideExisting) {
                                 session.out().printf("updating local config (with override) %s%n",
-                                        factory.forStyled(StringUtils.coalesce(name.getConfigName(), "default"),NutsTextStyle.primary(3)));
+                                        factory.forStyled(NdbUtils.coalesce(name.getConfigName(), "default"),NutsTextStyle.primary(3)));
                             } else {
                                 session.out().printf("updating local config %s%n",
                                         factory.forStyled(
-                                        StringUtils.coalesce(name.getConfigName(), "default"),NutsTextStyle.primary(3)));
+                                        NdbUtils.coalesce(name.getConfigName(), "default"),NutsTextStyle.primary(3)));
                             }
                         }
                     }
@@ -652,18 +652,18 @@ public class NMysqlMain implements NdbSupport {
                         if (add) {
                             if (overrideExisting) {
                                 session.out().printf("adding remote config (with override) %s%n",
-                                        factory.forStyled(StringUtils.coalesce(name.getConfigName(), "default"),NutsTextStyle.primary(3)));
+                                        factory.forStyled(NdbUtils.coalesce(name.getConfigName(), "default"),NutsTextStyle.primary(3)));
                             } else {
                                 session.out().printf("adding remote config %s%n",
-                                        factory.forStyled(StringUtils.coalesce(name.getConfigName(), "default"),NutsTextStyle.primary(3)));
+                                        factory.forStyled(NdbUtils.coalesce(name.getConfigName(), "default"),NutsTextStyle.primary(3)));
                             }
                         } else {
                             if (overrideExisting) {
                                 session.out().printf("updating remote config (with override) %s%n",
-                                        factory.forStyled(StringUtils.coalesce(name.getConfigName(), "default"),NutsTextStyle.primary(3)));
+                                        factory.forStyled(NdbUtils.coalesce(name.getConfigName(), "default"),NutsTextStyle.primary(3)));
                             } else {
                                 session.out().printf("updating remote config %s%n",
-                                        factory.forStyled(StringUtils.coalesce(name.getConfigName(), "default"),NutsTextStyle.primary(3)));
+                                        factory.forStyled(NdbUtils.coalesce(name.getConfigName(), "default"),NutsTextStyle.primary(3)));
                             }
                         }
                     }

@@ -7,7 +7,7 @@ package net.thevpc.nuts.runtime.standalone.repos;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.repos.NutsRepositoryExt0;
-import net.thevpc.nuts.runtime.standalone.util.NutsRepositoryUtils;
+import net.thevpc.nuts.runtime.core.repos.NutsRepositoryUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.core.terminals.DefaultWriteTypeProcessor;
@@ -323,7 +323,7 @@ public class NutsRepositoryFolderHelper {
             throw new NutsIllegalArgumentException(session,"invalid deployment; missing content for "+deployment.getId());
         }
         NutsDescriptor descriptor = deployment.getDescriptor();
-        NutsInput inputSource = ws.io().setSession(session).input().setTypeName("artifact content").setMultiRead(true).of(deployment.getContent());
+        NutsInput inputSource = ws.io().setSession(session).input().setTypeName("package content").setMultiRead(true).of(deployment.getContent());
         if (descriptor == null) {
             try (final DefaultNutsArtifactPathExecutable.CharacterizedExecFile c = DefaultNutsArtifactPathExecutable.characterizeForExec(inputSource, session, null)) {
                 if (c.descriptor == null) {

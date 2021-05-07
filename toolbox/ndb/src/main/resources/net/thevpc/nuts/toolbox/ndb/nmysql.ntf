@@ -1,0 +1,110 @@
+##) SYNOPSIS:
+```sh nmysql [ --local | --remote ] <command> <global-options> <command-options> ```
+
+manage local mysql database access configurations to help backup/restore data simply
+
+##MYSQL LOCAL:##
+```sh nmysql [--local] list```
+    list all databases
+
+```sh nmysql [--local] list --name <config-name>```
+    list all databases for the given config-name
+
+
+```sh nmysql [--local] add --name <db@config-name> <command-options>```
+
+    add database config
+
+    config options are :
+        --startup-wait-time   <VALUE>  : startup  wait time
+        --shutdown-wait-time  <VALUE>  : shutdown wait time
+        --archive-folder      <VALUE>  : archive folder
+        --running-folder      <VALUE>  : running folder
+        --log-file            <VALUE>  : log file path
+        --mysql-command       <VALUE>  : mysql command path
+        --mysqldump-command   <VALUE>  : mysqldump command path
+
+    command options are :
+        --db            <VALUE>  : db name
+        --user          <VALUE>  : db user
+        --password      <VALUE>  : db password
+        --ask-password           : if present password is read from standard input
+
+```sh nmysql [--local] set --name <db@config-name> <command-options>```
+
+    update database config
+
+    config options are :
+        --startup-wait-time   <VALUE>  : startup  wait time
+        --shutdown-wait-time  <VALUE>  : shutdown wait time
+        --archive-folder      <VALUE>  : archive folder
+        --running-folder      <VALUE>  : running folder
+        --log-file            <VALUE>  : log file path
+        --mysql-command       <VALUE>  : mysql command path
+        --mysqldump-command   <VALUE>  : mysqldump command path
+
+    command options are :
+        --db            <VALUE>  : database name
+        --user          <VALUE>  : app user
+        --password      <VALUE>  : app password
+        --ask-password           : if true password is read from standard input
+
+
+```sh nmysql [--local] remove [--name] <db@config-name>```
+
+    remove database config
+
+```sh nmysql [--local] backup [ [--name] <db@config-name>] [ --path <path>]```
+
+    backup db data file <path>
+
+```sh nmysql [--local] restore [ [--name] <db@config-name>] [ --path <path>]```
+
+    restore db data file from <path>
+
+##MYSQL REMOTE:##
+
+```sh nmysql --remote list```
+    list all databases
+
+```sh nmysql --remote list --name <config-name>```
+    list all databases for the given config-name
+
+
+```sh nmysql --remote add --name <db@config-name> <command-options>```
+
+    add database config
+
+    command options are :
+        --local-name   <VALUE>  : local config name
+        --remote-name  <VALUE>  : remote config name
+        --server       <VALUE>  : server ssh address
+
+```sh nmysql --remote set --name <db@config-name> <command-options>```
+
+    update database config
+
+    command options are :
+        --local-name   <VALUE>  : local config name
+        --remote-name  <VALUE>  : remote config name
+        --server       <VALUE>  : server ssh address
+
+```sh nmysql --remote remove --name <db@config-name>```
+
+    remove database config
+
+```sh nmysql --remote pull [--name <db@config-name>]```
+
+    restore local config database with remote database data
+
+```sh nmysql --remote push [--name <db@config-name>]```
+
+    restore remote config database with local database data
+
+
+##EXAMPLES:##
+```sh nmysql add --name enisoinfo --user myuser --password mypassword```
+    create configuration. Password will be encrypted and stored.
+
+```sh nmysql backup --name enisoinfo```
+    backup configuration named enisoinfo

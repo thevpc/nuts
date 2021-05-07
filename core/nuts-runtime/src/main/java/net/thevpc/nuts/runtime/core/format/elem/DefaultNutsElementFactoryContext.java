@@ -23,6 +23,7 @@
  */
 package net.thevpc.nuts.runtime.core.format.elem;
 
+import net.thevpc.nuts.NutsElementFactoryContext;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;

@@ -90,7 +90,7 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
 //                LOG.log(Level.FINEST, CoreStringUtils.alignLeft(config().getName(), 20) + " " + message + " url " + url);
 //            }
 //        }
-        return openStream(url, id, "artifact descriptor", session);
+        return openStream(url, id, "package descriptor", session);
     }
 
     protected String getPath(NutsId id, NutsSession session) {
@@ -128,7 +128,7 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
             String metadataURL = CoreIOUtils.buildUrl(apiUrlBase, groupId.replace('.', '/') + "/" + artifactId);
 
             try {
-                metadataStream = openStream(id, metadataURL, id.builder().setFace(CoreNutsConstants.QueryFaces.CATALOG).build(), "artifact catalog", session).open();
+                metadataStream = openStream(id, metadataURL, id.builder().setFace(CoreNutsConstants.QueryFaces.CATALOG).build(), "package catalog", session).open();
             } catch (UncheckedIOException | NutsIOException ex) {
                 throw new NutsNotFoundException(session, id, ex);
             }
@@ -214,7 +214,7 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
                     + getIdFilename(id.builder().setFaceDescriptor().build(), session)
             );
 
-            try (InputStream metadataStream = openStream(id, metadataURL, id.builder().setFace(CoreNutsConstants.QueryFaces.CATALOG).build(), "artifact catalog", session).open()) {
+            try (InputStream metadataStream = openStream(id, metadataURL, id.builder().setFace(CoreNutsConstants.QueryFaces.CATALOG).build(), "package catalog", session).open()) {
                 // ok found!!
                 ret.add(id);
             } catch (UncheckedIOException | IOException ex) {

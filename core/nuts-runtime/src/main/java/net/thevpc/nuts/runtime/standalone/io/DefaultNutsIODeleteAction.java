@@ -55,7 +55,7 @@ public class DefaultNutsIODeleteAction extends AbstractNutsIODeleteAction {
             return this;
         }
         final int[] deleted = new int[]{0, 0, 0};
-        NutsLogger LOG = getWs().log().of(CoreIOUtils.class);
+        NutsLogger LOG = getSession().getWorkspace().log().of(CoreIOUtils.class);
         try {
             Files.walkFileTree(t, new FileVisitor<Path>() {
                 @Override

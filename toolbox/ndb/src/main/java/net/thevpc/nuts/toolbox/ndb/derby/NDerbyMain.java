@@ -83,7 +83,7 @@ public class NDerbyMain implements NdbSupport {
             }else if(options.cmd==Command.shutdown){
                 NutsTextManager factory = appContext.getWorkspace().formats().text();
                 if (cmdLine.isExecMode()) {
-                    if (new DerbyService(appContext).isRunning()) {
+                    if (!new DerbyService(appContext).isRunning()) {
                         appContext.getSession().out().printf("derby is %s on port %s%n",
                                 factory.forStyled("already stopped", NutsTextStyle.warn()),
                                 factory.forStyled(""+ effectivePort, NutsTextStyle.number())

@@ -78,7 +78,7 @@ public class DefaultNutsCommandLineManager implements NutsCommandLineManager {
     @Override
     public NutsArgumentName createName(String type, String label) {
         checkSession();
-        return Factory.createName0(ws.createSession(), type, label);
+        return Factory.createName0(getSession(), type, label);
     }
 
     @Override

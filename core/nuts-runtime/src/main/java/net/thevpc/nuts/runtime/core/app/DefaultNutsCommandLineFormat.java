@@ -28,12 +28,13 @@ public class DefaultNutsCommandLineFormat extends DefaultFormatBase<NutsCommandL
 
     @Override
     public NutsCommandLineFormat setValue(String[] args) {
-        return setValue(args == null ? null : getWorkspace().commandLine().create(args));
+        checkSession();
+        return setValue(args == null ? null : getSession().getWorkspace().commandLine().create(args));
     }
 
     @Override
     public NutsCommandLineFormat setValue(String args) {
-        return setValue(args == null ? null : getWorkspace().commandLine().parse(args));
+        return setValue(args == null ? null : getSession().getWorkspace().commandLine().parse(args));
     }
 
     @Override

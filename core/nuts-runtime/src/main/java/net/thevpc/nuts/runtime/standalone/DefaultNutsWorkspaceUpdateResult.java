@@ -12,13 +12,13 @@ public class DefaultNutsWorkspaceUpdateResult implements NutsWorkspaceUpdateResu
     private final NutsUpdateResult api;
     private final NutsUpdateResult runtime;
     private final NutsUpdateResult[] extensions;
-    private final NutsUpdateResult[] components;
+    private final NutsUpdateResult[] artifacts;
 
     public DefaultNutsWorkspaceUpdateResult(NutsUpdateResult api, NutsUpdateResult runtime, NutsUpdateResult[] extensions, NutsUpdateResult[] components) {
         this.api = api;
         this.runtime = runtime;
         this.extensions = extensions;
-        this.components = components;
+        this.artifacts = components;
     }
 
     @Override
@@ -38,7 +38,7 @@ public class DefaultNutsWorkspaceUpdateResult implements NutsWorkspaceUpdateResu
 
     @Override
     public NutsUpdateResult[] getArtifacts() {
-        return Arrays.copyOf(components, components.length);
+        return Arrays.copyOf(artifacts, artifacts.length);
     }
 
     @Override
@@ -80,7 +80,7 @@ public class DefaultNutsWorkspaceUpdateResult implements NutsWorkspaceUpdateResu
                 all.add(r);
             }
         }
-        for (NutsUpdateResult r : components) {
+        for (NutsUpdateResult r : artifacts) {
             if (r.isUpdateAvailable()) {
                 all.add(r);
             }
@@ -98,7 +98,7 @@ public class DefaultNutsWorkspaceUpdateResult implements NutsWorkspaceUpdateResu
             all.add(runtime);
         }
         all.addAll(Arrays.asList(extensions));
-        all.addAll(Arrays.asList(components));
+        all.addAll(Arrays.asList(artifacts));
         return all.toArray(new NutsUpdateResult[0]);
     }
 
@@ -116,7 +116,7 @@ public class DefaultNutsWorkspaceUpdateResult implements NutsWorkspaceUpdateResu
                 c++;
             }
         }
-        for (NutsUpdateResult r : components) {
+        for (NutsUpdateResult r : artifacts) {
             if (r.isUpdateAvailable()) {
                 c++;
             }

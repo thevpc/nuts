@@ -11,12 +11,14 @@ import net.thevpc.nuts.NutsId;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.NutsLogger;
+import net.thevpc.nuts.NutsLoggerOp;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.NutsWorkspaceCommandAlias;
 import net.thevpc.nuts.runtime.core.util.CoreArrayUtils;
 
 public class DefaultNutsWorkspaceCommandAlias implements NutsWorkspaceCommandAlias {
-    private final NutsLogger LOG;
+
+    private NutsLogger LOG;
     private String name;
     private NutsId owner;
     private String factoryId;
@@ -28,7 +30,17 @@ public class DefaultNutsWorkspaceCommandAlias implements NutsWorkspaceCommandAli
 
     public DefaultNutsWorkspaceCommandAlias(NutsWorkspace ws) {
         this.ws = ws;
-        LOG=ws.log().of(DefaultNutsWorkspaceCommandAlias.class);
+    }
+
+    protected NutsLoggerOp _LOGOP(NutsSession session) {
+        return _LOG(session).with().session(session);
+    }
+
+    protected NutsLogger _LOG(NutsSession session) {
+        if (LOG == null) {
+            LOG = session.getWorkspace().log().setSession(session).of(DefaultNutsWorkspaceCommandAlias.class);
+        }
+        return LOG;
     }
 
     @Override
@@ -160,7 +172,7 @@ public class DefaultNutsWorkspaceCommandAlias implements NutsWorkspaceCommandAli
                         .run()
                         .getOutputString();
             } catch (Exception ex) {
-                LOG.with().session(session).level(Level.FINE).error(ex).log( "failed to retrieve help for {0}",getName());
+                _LOGOP(session).level(Level.FINE).error(ex).log("failed to retrieve help for {0}", getName());
                 return "failed to retrieve help for " + getName();
             }
         }

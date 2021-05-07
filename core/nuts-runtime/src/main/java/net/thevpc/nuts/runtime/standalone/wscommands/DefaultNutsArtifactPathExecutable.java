@@ -192,7 +192,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                         }
                     }
                     if (c.contentFile == null) {
-                        throw new NutsIllegalArgumentException(session, "unable to locale component for " + c.baseFile);
+                        throw new NutsIllegalArgumentException(session, "unable to locale package for " + c.baseFile);
                     }
                 } else {
                     c.descriptor = CoreIOUtils.resolveNutsDescriptorFromFileContent(c.contentFile, execOptions, session);

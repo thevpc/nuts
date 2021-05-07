@@ -20,7 +20,7 @@ public class LogNAdminSubCommand extends AbstractNAdminSubCommand {
     public boolean exec(NutsCommandLine cmdLine, Boolean autoSave, NutsApplicationContext context) {
         if (cmdLine.next("set loglevel", "sll") != null) {
 //            NutsWorkspaceConfigManager configManager = context.getWorkspace().config();
-            NutsLogManager lm=context.getWorkspace().log();
+            NutsLogManager lm=context.getSession().getWorkspace().log();
             if (cmdLine.next("verbose", "finest") != null) {
                 if (cmdLine.isExecMode()) {
                     lm.setTermLevel(Level.FINEST);

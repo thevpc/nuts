@@ -3,26 +3,24 @@
  *            Nuts : Network Updatable Things Service
  *                  (universal package manager)
  * <br>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <br>
  *
- * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
- * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
- * <br>
- * ====================================================================
-*/
+ * <br> ====================================================================
+ */
 package net.thevpc.nuts.runtime.standalone.bridges.maven;
 
 import java.io.File;
@@ -60,6 +58,7 @@ import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
  * @author thevpc
  */
 public class MavenRepositoryFolderHelper {
+
     private NutsLogger LOG;
     private NutsRepository repo;
     private NutsWorkspace ws;
@@ -68,11 +67,21 @@ public class MavenRepositoryFolderHelper {
     public MavenRepositoryFolderHelper(NutsRepository repo, NutsSession session, Path rootPath) {
         this.repo = repo;
         this.ws = session != null ? session.getWorkspace() : repo == null ? null : repo.getWorkspace();
-        if(repo==null && session==null){
-            throw new NutsIllegalArgumentException(session,"both workspace and repo are null");
+        if (repo == null && session == null) {
+            throw new NutsIllegalArgumentException(session, "both workspace and repo are null");
         }
         this.rootPath = rootPath;
-        LOG=this.ws.log().of(MavenRepositoryFolderHelper.class);
+    }
+
+    protected NutsLoggerOp _LOGOP(NutsSession session) {
+        return _LOG(session).with().session(session);
+    }
+
+    protected NutsLogger _LOG(NutsSession session) {
+        if (LOG == null) {
+            LOG = this.ws.log().setSession(session).of(MavenRepositoryFolderHelper.class);
+        }
+        return LOG;
     }
 
     public Path getIdLocalFile(NutsId id, NutsSession session) {
@@ -96,7 +105,7 @@ public class MavenRepositoryFolderHelper {
         if (repo == null) {
             return ws.locations().getDefaultIdFilename(id);
         }
-        return NutsRepositoryExt.of(repo).getIdFilename(id,session);
+        return NutsRepositoryExt.of(repo).getIdFilename(id, session);
     }
 
     public Path getLocalGroupAndArtifactFile(NutsId id, NutsSession session) {
@@ -125,7 +134,7 @@ public class MavenRepositoryFolderHelper {
             //            return IteratorUtils.emptyIterator();
             return null;
         }
-        return new FolderNutIdIterator(repo == null ? null : repo.getName(), folder,rootPath, filter, session, new FolderNutIdIterator.AbstractFolderNutIdIteratorModel() {
+        return new FolderNutIdIterator(repo == null ? null : repo.getName(), folder, rootPath, filter, session, new FolderNutIdIterator.AbstractFolderNutIdIteratorModel() {
             @Override
             public void undeploy(NutsId id, NutsSession session) {
                 throw new IllegalArgumentException("Unsupported");
@@ -170,10 +179,10 @@ public class MavenRepositoryFolderHelper {
     }
 
     public void reindexFolder(NutsSession session) {
-        reindexFolder(getStoreLocation(), true,session);
+        reindexFolder(getStoreLocation(), true, session);
     }
 
-    private void reindexFolder(Path path, boolean applyRawNavigation,NutsSession session) {
+    private void reindexFolder(Path path, boolean applyRawNavigation, NutsSession session) {
         try {
             Files.walkFileTree(path, new FileVisitor<Path>() {
                 @Override
@@ -226,7 +235,7 @@ public class MavenRepositoryFolderHelper {
                                     old = new MavenMetadataParser(session).parseMavenMetaData(metadataxml);
                                 }
                             } catch (Exception ex) {
-                                LOG.with().session(session).level(Level.SEVERE).error(ex)
+                                _LOGOP(session).level(Level.SEVERE).error(ex)
                                         .log("failed to parse metadata xml for {0} : {1}", metadataxml, ex);
                                 //ignore any error!
                             }
@@ -285,22 +294,22 @@ public class MavenRepositoryFolderHelper {
 //                            throw new NutsIOException(getWorkspace(),e);
 //                        }
                         try (PrintStream p = new PrintStream(new File(folder, CoreNutsConstants.Files.DOT_FILES))) {
-                            p.println("#version="+ws.getApiVersion());
+                            p.println("#version=" + ws.getApiVersion());
                             for (String file : folders) {
-                                p.println(file+"/");
+                                p.println(file + "/");
                             }
                             for (String file : files) {
                                 p.println(file);
                             }
                         } catch (FileNotFoundException e) {
-                            throw new NutsIOException(session,e);
+                            throw new NutsIOException(session, e);
                         }
                     }
                     return FileVisitResult.CONTINUE;
                 }
             });
         } catch (IOException ex) {
-            throw new NutsIOException(session,ex);
+            throw new NutsIOException(session, ex);
         }
 
     }

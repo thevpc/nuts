@@ -4,7 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.config.NutsRepositoryConfigManagerExt;
 import net.thevpc.nuts.runtime.core.repos.NutsRepositoryExt;
 import net.thevpc.nuts.runtime.core.repos.DefaultNutsRepositoryManager;
-import net.thevpc.nuts.runtime.standalone.util.NutsRepositoryUtils;
+import net.thevpc.nuts.runtime.core.repos.NutsRepositoryUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.NutsStoreLocationsMap;
 import net.thevpc.nuts.NutsLogVerb;
@@ -23,7 +23,7 @@ import net.thevpc.nuts.runtime.standalone.DefaultNutsWorkspace;
 
 public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigModel{
 
-    private final NutsLogger LOG;
+    private NutsLogger LOG;
 
     private final NutsRepository repository;
     private final int speed;
@@ -44,7 +44,6 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
     public DefaultNutsRepositoryConfigModel(NutsRepository repository, NutsAddRepositoryOptions options, NutsSession session,
             int speed,
             boolean supportedMirroring, String repositoryType) {
-        LOG = repository.getWorkspace().log().of(DefaultNutsRepositoryConfigModel.class);
         if (options == null) {
             throw new NutsIllegalArgumentException(session, "missing repository options");
         }
@@ -89,6 +88,17 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
         this.supportedMirroring = supportedMirroring;
         this.repositoryType = repositoryType;
         setConfig(config, session, false);
+    }
+
+    protected NutsLoggerOp _LOGOP(NutsSession session) {
+        return _LOG(session).with().session(session);
+    }
+
+    protected NutsLogger _LOG(NutsSession session) {
+        if (LOG == null) {
+            LOG = session.getWorkspace().log().of(DefaultNutsRepositoryConfigModel.class);
+        }
+        return LOG;
     }
 
     public NutsRepository getRepository() {
@@ -237,6 +247,10 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
 
     public String getUuid() {
         return config.getUuid();
+    }
+
+    public String getLocation() {
+        return config.getLocation();
     }
 
     public void setConfig(NutsRepositoryConfig newConfig, NutsSession session, boolean fireChange) {
@@ -398,11 +412,11 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
 //            }
             repository.getWorkspace().formats().element().setSession(session).setContentType(NutsContentType.JSON).setValue(config).print(file);
             configurationChanged = false;
-            if (LOG.isLoggable(Level.CONFIG)) {
+            if (_LOG(session).isLoggable(Level.CONFIG)) {
                 if (created) {
-                    LOG.with().session(session).level(Level.CONFIG).verb(NutsLogVerb.SUCCESS).log(CoreStringUtils.alignLeft(repository.getName(), 20) + " created repository " + repository.getName() + " at " + getStoreLocation());
+                    _LOGOP(session).level(Level.CONFIG).verb(NutsLogVerb.SUCCESS).log(CoreStringUtils.alignLeft(repository.getName(), 20) + " created repository " + repository.getName() + " at " + getStoreLocation());
                 } else {
-                    LOG.with().session(session).level(Level.CONFIG).verb(NutsLogVerb.SUCCESS).log(CoreStringUtils.alignLeft(repository.getName(), 20) + " updated repository " + repository.getName() + " at " + getStoreLocation());
+                    _LOGOP(session).level(Level.CONFIG).verb(NutsLogVerb.SUCCESS).log(CoreStringUtils.alignLeft(repository.getName(), 20) + " updated repository " + repository.getName() + " at " + getStoreLocation());
                 }
             }
             ok = true;

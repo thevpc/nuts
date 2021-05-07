@@ -87,36 +87,38 @@ public class DefaultNutsObjectFormat extends NutsObjectFormatBase {
 
     public NutsObjectFormat getBase() {
         checkSession();
+        NutsSession session = getSession();
         NutsContentType nextOutputFormat = getOutputFormat();
         if (base == null || this.outputFormat != nextOutputFormat) {
             this.outputFormat = nextOutputFormat;
             base = createObjectFormat();
             base.setValue(getValue());
-            base.setSession(getSession());
-            base.configure(true, getWorkspace().config().options().getOutputFormatOptions());
-            base.configure(true, getSession().getOutputFormatOptions());
+            base.setSession(session);
+            base.configure(true, session.getWorkspace().config().options().getOutputFormatOptions());
+            base.configure(true, session.getOutputFormatOptions());
         }
         return base;
     }
 
     public NutsObjectFormat createObjectFormat() {
         checkSession();
+        NutsWorkspace ws = getSession().getWorkspace();
         switch (getOutputFormat()) {
             case XML:
             case JSON:{
-                return getWorkspace().formats().element().setSession(getSession()).setContentType(getOutputFormat());
+                return ws.formats().element().setContentType(getOutputFormat());
             }
             case PROPS: {
-                return getWorkspace().formats().props().setSession(getSession());
+                return ws.formats().props();
             }
             case TREE: {
-                return getWorkspace().formats().tree().setSession(getSession());
+                return ws.formats().tree();
             }
             case PLAIN: {
-                return new NutsObjectFormatPlain(getWorkspace()).setSession(getSession());
+                return new NutsObjectFormatPlain(ws);
             }
             case TABLE: {
-                return getWorkspace().formats().table().setSession(getSession());
+                return ws.formats().table();
             }
         }
         throw new NutsException(getSession(), "Unsupported");

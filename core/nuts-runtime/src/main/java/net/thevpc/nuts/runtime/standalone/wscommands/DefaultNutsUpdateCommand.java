@@ -45,13 +45,23 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         return -x.getVersion().compareTo(y.getVersion());
     };
 
-    public final NutsLogger LOG;
+    public NutsLogger LOG;
     private boolean checkFixes = false;
     private List<FixAction> resultFixes = null;
 
     public DefaultNutsUpdateCommand(NutsWorkspace ws) {
         super(ws);
-        LOG = ws.log().of(DefaultNutsUpdateCommand.class);
+    }
+
+    protected NutsLoggerOp _LOGOP(NutsSession session) {
+        return _LOG(session).with().session(session);
+    }
+
+    protected NutsLogger _LOG(NutsSession session) {
+        if (LOG == null) {
+            LOG = this.getWorkspace().log().setSession(session).of(DefaultNutsUpdateCommand.class);
+        }
+        return LOG;
     }
 
     @Override
@@ -324,9 +334,11 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
             PrintStream out = CoreIOUtils.resolveOut(getSession());
             NutsUpdateResult[] updates = result.getAllUpdates();
             if (updates.length == 0) {
-                out.printf("All components are [[up-to-date]]. You are running latest version%s.%n", result.getAllResults().length > 1 ? "s" : "");
+                out.printf("All packages are %s. You are running latest version%s.%n",
+                        ws.formats().text().forStyled("up-to-date", NutsTextStyle.success()),
+                        result.getAllResults().length > 1 ? "s" : "");
             } else {
-                out.printf("Workspace has %s component%s to update.%n", ws.formats().text().forStyled("" + updates.length, NutsTextStyle.primary(1)),
+                out.printf("Workspace has %s package%s to update.%n", ws.formats().text().forStyled("" + updates.length, NutsTextStyle.primary(1)),
                         (updates.length > 1 ? "s" : ""));
                 int widthCol1 = 2;
                 int widthCol2 = 2;
@@ -534,12 +546,12 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         }
 
         if (ws.config().setSession(validWorkspaceSession).save(requireSave)) {
-            if (LOG.isLoggable(Level.INFO)) {
-                LOG.with().session(session).level(Level.INFO).verb(NutsLogVerb.WARNING).log("Workspace is updated. Nuts should be restarted for changes to take effect.");
+            if (_LOG(session).isLoggable(Level.INFO)) {
+                _LOGOP(session).level(Level.INFO).verb(NutsLogVerb.WARNING).log("workspace is updated. Nuts should be restarted for changes to take effect.");
             }
             if (apiUpdate != null && apiUpdate.isUpdateAvailable() && !apiUpdate.isUpdateApplied()) {
                 if (validWorkspaceSession.isPlainTrace()) {
-                    out.println("Workspace is updated. Nuts should be restarted for changes to take effect.");
+                    out.println("workspace is updated. Nuts should be restarted for changes to take effect.");
                 }
             }
         }
@@ -614,7 +626,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                             .addId(NutsConstants.Ids.NUTS_API + "#" + v).setLatest(true).getResultIds().first();
                     newFile = newId == null ? null : latestOnlineDependencies(fetch0()).setFailFast(false).setSession(session).setId(newId).getResultDefinition();
                 } catch (NutsNotFoundException ex) {
-                    LOG.with().session(session).level(Level.SEVERE).error(ex).log("error : {0}", ex);
+                    _LOGOP(session).level(Level.SEVERE).error(ex).log("error : {0}", ex);
                     //ignore
                 }
                 break;
@@ -629,7 +641,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                     try {
                         oldFile = fetch0().setId(oldId).setSession(session.copy().setFetchStrategy(NutsFetchStrategy.ONLINE)).getResultDefinition();
                     } catch (NutsNotFoundException ex) {
-                        LOG.with().session(session).level(Level.SEVERE).error(ex).log("error : {0}", ex);
+                        _LOGOP(session).level(Level.SEVERE).error(ex).log("error : {0}", ex);
                         //ignore
                     }
                 }
@@ -648,7 +660,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                             .setFailFast(false)
                             .getResultDefinition();
                 } catch (NutsNotFoundException ex) {
-                    LOG.with().session(session).level(Level.SEVERE).error(ex).log("error : {0}", ex);
+                    _LOGOP(session).level(Level.SEVERE).error(ex).log("error : {0}", ex);
                     //ignore
                 }
                 break;
@@ -663,7 +675,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                         oldFile = fetch0().setId(oldId).setSession(session).getResultDefinition();
                     }
                 } catch (Exception ex) {
-                    LOG.with().session(session).level(Level.SEVERE).error(ex).log("error : {0}", ex);
+                    _LOGOP(session).level(Level.SEVERE).error(ex).log("error : {0}", ex);
                     //ignore
                 }
                 try {
@@ -686,7 +698,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                             .setSession(session.copy().setFetchStrategy(NutsFetchStrategy.ONLINE))
                             .getResultDefinition();
                 } catch (Exception ex) {
-                    LOG.with().session(session).level(Level.SEVERE).error(ex).log("error : {0}", ex);
+                    _LOGOP(session).level(Level.SEVERE).error(ex).log("error : {0}", ex);
                     //ignore
                 }
                 break;

@@ -23,11 +23,11 @@
  */
 package net.thevpc.nuts.runtime.standalone.config;
 
+import net.thevpc.nuts.runtime.core.repos.NutsRepositorySelector;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.CoreNutsConstants;
 import net.thevpc.nuts.runtime.core.config.NutsRepositoryConfigManagerExt;
 import net.thevpc.nuts.runtime.core.events.DefaultNutsWorkspaceEvent;
-import net.thevpc.nuts.runtime.core.repos.RepoDefinitionResolver;
 import net.thevpc.nuts.runtime.standalone.*;
 import net.thevpc.nuts.runtime.standalone.bridges.maven.MavenUtils;
 import net.thevpc.nuts.runtime.core.model.CoreNutsWorkspaceOptions;
@@ -512,7 +512,7 @@ public class DefaultNutsWorkspaceConfigModel {
 //    public NutsId getApiId() {
 //        if (currentConfig == null) {
 //            NutsSession session=NutsWorkspaceUtils.defaultSession(ws);
-//            return session.getWorkspace().id().parser().parse(NutsConstants.Ids.NUTS_API + "#" + Nuts.getVersion());
+//            return session.getWorkspace().id().parser().parseList(NutsConstants.Ids.NUTS_API + "#" + Nuts.getVersion());
 //        }
 //        return current().getApiId();
 //    }
@@ -1030,7 +1030,7 @@ public class DefaultNutsWorkspaceConfigModel {
                 .getResultDefinition();
         if (def == null) {
             _LOGOP(session).level(Level.CONFIG)
-                    .verb(NutsLogVerb.WARNING).log("selected repositories ({0}) cannot reach runtime component. fallback to default.",
+                    .verb(NutsLogVerb.WARNING).log("selected repositories ({0}) cannot reach runtime package. fallback to default.",
                     Arrays.stream(ws.repos().setSession(session).getRepositories()).map(NutsRepository::getName).collect(Collectors.joining(", "))
             );
             HashMap<String, String> defaults = new HashMap<>();
@@ -1104,8 +1104,8 @@ public class DefaultNutsWorkspaceConfigModel {
                         return;
                     }
                 }
-                for (NutsRepositorySelector pp0 : resolveBootRepositoriesList().resolveSelectors(null)) {
-                    NutsAddRepositoryOptions opt = RepoDefinitionResolver.createRepositoryOptions(pp0, false, session);
+                for (NutsRepositorySelector.Selection pp0 : resolveBootRepositoriesList().resolveSelectors(null)) {
+                    NutsAddRepositoryOptions opt = NutsRepositorySelector.createRepositoryOptions(pp0, false, session);
                     String pp = opt.getConfig() == null ? opt.getLocation() : opt.getConfig().getLocation();
                     if (CoreIOUtils.isPathHttp(pp)) {
                         try {
@@ -1319,12 +1319,17 @@ public class DefaultNutsWorkspaceConfigModel {
         @Override
         public NutsId getApiId() {
             String v = getStoredConfigApi().getApiVersion();
-            return v == null ? null : ws.id().parser().parse(NutsConstants.Ids.NUTS_API + "#" + v);
+            NutsWorkspace ws = NutsWorkspaceUtils.defaultSession(DefaultNutsWorkspaceConfigModel.this.ws).getWorkspace();
+
+            return v == null ? null
+                    : ws
+                            .id().parser().parse(NutsConstants.Ids.NUTS_API + "#" + v);
         }
 
         @Override
         public NutsId getRuntimeId() {
             String v = getStoredConfigApi().getRuntimeId();
+            NutsWorkspace ws = NutsWorkspaceUtils.defaultSession(DefaultNutsWorkspaceConfigModel.this.ws).getWorkspace();
             return v == null ? null : v.contains("#")
                     ? ws.id().parser().parse(v)
                     : ws.id().parser().parse(NutsConstants.Ids.NUTS_RUNTIME + "#" + v);

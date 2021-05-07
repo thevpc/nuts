@@ -27,7 +27,6 @@ import java.time.Instant;
 import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
-import net.thevpc.nuts.runtime.standalone.NutsRepositorySelector;
 
 public class DefaultNutsRepositoryModel {
 
@@ -296,13 +295,13 @@ public class DefaultNutsRepositoryModel {
 
     public NutsRepository addRepository(String repositoryNamedUrl, NutsSession session) {
         NutsWorkspaceUtils.checkSession(getWorkspace(), session);
-        NutsRepositorySelector r = null;
+        NutsRepositorySelector.Selection r = null;
         try {
-            r = NutsRepositorySelector.parseOne(repositoryNamedUrl);
+            r = NutsRepositorySelector.parseSelection(repositoryNamedUrl);
         } catch (Exception ex) {
             throw new NutsInvalidRepositoryException(session, repositoryNamedUrl, "invalid repository definition");
         }
-        NutsAddRepositoryOptions options = RepoDefinitionResolver.createRepositoryOptions(r, true, session);
+        NutsAddRepositoryOptions options = NutsRepositorySelector.createRepositoryOptions(r, true, session);
         return addRepository(options, session);
     }
 

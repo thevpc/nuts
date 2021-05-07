@@ -23,6 +23,8 @@
  */
 package net.thevpc.nuts.runtime.core.format.elem;
 
+import net.thevpc.nuts.NutsElementFactoryContext;
+import net.thevpc.nuts.NutsElementMapper;
 import java.io.File;
 import net.thevpc.nuts.runtime.bundles.reflect.SimpleParametrizedType;
 import net.thevpc.nuts.*;
@@ -103,8 +105,9 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
     private static final NutsElementMapper F_ARTIFACT_CALL = new NutsElementFactoryNutsArtifactCall();
 //    public static final NutsElementFactory F_JSONELEMENT = new NutsElementFactoryJsonElement();
 
-    private final ClassMap<NutsElementMapper> defaultFactories = new ClassMap<>(null, NutsElementMapper.class);
-    private final ClassMap<NutsElementMapper> factories = new ClassMap<>(null, NutsElementMapper.class);
+    private final ClassMap<NutsElementMapper> defaultMappers = new ClassMap<>(null, NutsElementMapper.class);
+    private final Map<Class, NutsElementMapper> coreMappers = new HashMap<>();
+    private final ClassMap<NutsElementMapper> customMappers = new ClassMap<>(null, NutsElementMapper.class);
     private ReflectRepository typesRepository;
     private final NutsWorkspace ws;
     private final NutsElementMapper F_OBJ = new NutsElemenSerializationAdapterObjReflect();
@@ -160,24 +163,38 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         addDefaultFactory(NutsElementEntry.class, F_NAMED_ELEM);
 
 //        addHierarchyFactory(JsonElement.class, F_JSONELEMENT);
-        addCustomFactory(NutsDefinition.class, F_NUTS_DEF);
-        addCustomFactory(NutsId.class, F_NUTS_ID);
-        addCustomFactory(NutsVersion.class, F_NUTS_VERSION);
-        addCustomFactory(NutsDescriptor.class, F_NUTS_DESCRIPTOR);
-        addCustomFactory(NutsDependency.class, F_NUTS_DEPENDENCY);
-        addCustomFactory(NutsIdLocation.class, F_NUTS_ID_LOCATION);
-        addCustomFactory(NutsClassifierMapping.class, F_NUTS_CLASSIFIER_MAPPING);
-        addCustomFactory(NutsArtifactCall.class, F_ARTIFACT_CALL);
-        addCustomFactory(NutsSdkLocation.class, F_NUTS_SDK_LOCATION);
+        setCoreMapper(NutsDefinition.class, F_NUTS_DEF);
+        setCoreMapper(NutsId.class, F_NUTS_ID);
+        setCoreMapper(NutsVersion.class, F_NUTS_VERSION);
+        setCoreMapper(NutsDescriptor.class, F_NUTS_DESCRIPTOR);
+        setCoreMapper(NutsDependency.class, F_NUTS_DEPENDENCY);
+        setCoreMapper(NutsIdLocation.class, F_NUTS_ID_LOCATION);
+        setCoreMapper(NutsClassifierMapping.class, F_NUTS_CLASSIFIER_MAPPING);
+        setCoreMapper(NutsArtifactCall.class, F_ARTIFACT_CALL);
+        setCoreMapper(NutsSdkLocation.class, F_NUTS_SDK_LOCATION);
         this.ws = ws;
     }
 
     public final void addDefaultFactory(Class cls, NutsElementMapper instance) {
-        defaultFactories.put(cls, instance);
+        defaultMappers.put(cls, instance);
     }
 
-    public final void addCustomFactory(Class cls, NutsElementMapper instance) {
-        factories.put(cls, instance);
+    public final void setCoreMapper(Class cls, NutsElementMapper instance) {
+        coreMappers.put(cls, instance);
+        customMappers.put(cls, instance);
+    }
+
+    public final void setMapper(Class cls, NutsElementMapper instance) {
+        if (instance == null) {
+            NutsElementMapper cc = coreMappers.get(cls);
+            if (cc != null) {
+                customMappers.put(cls, cc);
+            } else {
+                customMappers.remove(cls);
+            }
+        } else {
+            customMappers.put(cls, instance);
+        }
     }
 
     public NutsElementMapper getMapper(Type type, boolean defaultOnly) {
@@ -186,19 +203,19 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         }
         Class cls = ReflectUtils.getRawClass(type);
         if (cls.isArray()) {
-            NutsElementMapper f = defaultFactories.getExact(cls);
+            NutsElementMapper f = defaultMappers.getExact(cls);
             if (f != null) {
                 return f;
             }
             return F_NUTS_ARR;
         }
         if (!defaultOnly) {
-            NutsElementMapper f = factories.get(cls);
+            NutsElementMapper f = customMappers.get(cls);
             if (f != null) {
                 return f;
             }
         }
-        final NutsElementMapper r = defaultFactories.get(cls);
+        final NutsElementMapper r = defaultMappers.get(cls);
         if (r != null) {
             return r;
         }
@@ -311,8 +328,8 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
             if (je != null) {
                 for (Object e0 : je.entrySet()) {
                     Map.Entry e = (Map.Entry) e0;
-                    Object k = context.defaultDestruct(e.getKey(), null);
-                    Object v = context.defaultDestruct(e.getValue(), null);
+                    Object k = context.destruct(e.getKey(), null);
+                    Object v = context.destruct(e.getValue(), null);
                     m.put(k, v);
                 }
             }
@@ -326,8 +343,8 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
             if (je != null) {
                 for (Object e0 : je.entrySet()) {
                     Map.Entry e = (Map.Entry) e0;
-                    NutsElement k = context.defaultObjectToElement(e.getKey(), null);
-                    NutsElement v = context.defaultObjectToElement(e.getValue(), null);
+                    NutsElement k = context.objectToElement(e.getKey(), null);
+                    NutsElement v = context.objectToElement(e.getValue(), null);
                     m.put(k, v);
                 }
             }
@@ -1023,7 +1040,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 //                System.out.print("");
 //            }
 //            if (o.getExclusions().length == 0) {
-                //use compact form
+            //use compact form
 //                if (context.element().isNtf()) {
 //                    NutsWorkspace ws = context.getSession().getWorkspace();
 ////                    NutsText n = ws.formats().text().parse(
@@ -1033,9 +1050,9 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 //                    return ws.formats().element().forString(ws.dependency().formatter().setNtf(true).setValue(o).format());
 //                } else {
 
-                    return context.defaultObjectToElement(context.getSession().getWorkspace().dependency().formatter(o)
-                            .setNtf(context.element().isNtf())
-                            .format(), null);
+            return context.defaultObjectToElement(context.getSession().getWorkspace().dependency().formatter(o)
+                    .setNtf(context.element().isNtf())
+                    .format(), null);
 //                }
 //            }
 //            return context.defaultObjectToElement(context.getSession().getWorkspace().dependency().builder().set(o), null);

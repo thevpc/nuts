@@ -43,7 +43,7 @@ import net.thevpc.nuts.runtime.bundles.reflect.ReflectConfigurationBuilder;
 import net.thevpc.nuts.runtime.bundles.reflect.ReflectPropertyAccessStrategy;
 import net.thevpc.nuts.runtime.bundles.reflect.ReflectPropertyDefaultValueStrategy;
 import net.thevpc.nuts.runtime.bundles.reflect.ReflectRepository;
-import net.thevpc.nuts.runtime.core.AbstractNutsWorkspace;
+import net.thevpc.nuts.runtime.core.repos.NutsRepositoryUtils;
 import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
 import net.thevpc.nuts.runtime.standalone.wscommands.NutsRepositoryAndFetchMode;
 import net.thevpc.nuts.spi.NutsRepositorySPI;
@@ -212,13 +212,13 @@ public class NutsWorkspaceUtils {
                     int d = 0;
                     if (fmode == NutsRepositorySupportedAction.DEPLOY) {
                         try {
-                            d = CoreNutsUtils.getSupportDeployLevel(repository, fmode, id, mode, session.isTransitive(), session);
+                            d = NutsRepositoryUtils.getSupportDeployLevel(repository, fmode, id, mode, session.isTransitive(), session);
                         } catch (Exception ex) {
                             _LOGOP(session).level(Level.FINE).error(ex).log("unable to resolve support deploy level for : {0}", repository.getName());
                         }
                     }
                     try {
-                        t = CoreNutsUtils.getSupportSpeedLevel(repository, fmode, id, mode, session.isTransitive(), session);
+                        t = NutsRepositoryUtils.getSupportSpeedLevel(repository, fmode, id, mode, session.isTransitive(), session);
                     } catch (Exception ex) {
                         _LOGOP(session).level(Level.FINE).error(ex).log("unable to resolve support speed level for : {0}", repository.getName());
                     }

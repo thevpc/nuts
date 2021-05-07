@@ -5,6 +5,7 @@ import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 import java.util.logging.Level;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 public class MvnClient {
     private final NutsLogger LOG;
@@ -21,7 +22,7 @@ public class MvnClient {
 
     public MvnClient(NutsWorkspace ws) {
         this.ws = ws;
-        LOG=ws.log().of(MvnClient.class);
+        LOG=NutsWorkspaceUtils.defaultSession(ws).getWorkspace().log().of(MvnClient.class);
     }
 
     public boolean get(NutsId id, String repoURL, NutsSession session) {

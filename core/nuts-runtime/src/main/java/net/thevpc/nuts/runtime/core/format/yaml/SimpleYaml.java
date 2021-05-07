@@ -34,7 +34,7 @@ import net.thevpc.nuts.NutsElementEntry;
 import net.thevpc.nuts.NutsElementFormat;
 import net.thevpc.nuts.NutsObjectElementBuilder;
 import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.runtime.core.format.elem.NutsElementFactoryContext;
+import net.thevpc.nuts.NutsElementFactoryContext;
 import net.thevpc.nuts.runtime.core.format.elem.NutsElementStreamFormat;
 import net.thevpc.nuts.runtime.core.format.json.ReaderLocation;
 

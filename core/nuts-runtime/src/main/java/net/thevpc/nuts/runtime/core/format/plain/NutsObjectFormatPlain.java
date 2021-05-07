@@ -72,10 +72,11 @@ public class NutsObjectFormatPlain extends NutsObjectFormatBase {
     public void print(PrintStream w) {
         checkSession();
         Object value = getValue();
+        NutsWorkspace ws = getSession().getWorkspace();
         if (value instanceof NutsTableModel) {
-            getWorkspace().formats().table().setModel(((NutsTableModel) value)).configure(true, extraConfig.toArray(new String[0])).print(w);
+            ws.formats().table().setModel(((NutsTableModel) value)).configure(true, extraConfig.toArray(new String[0])).print(w);
         } else if (value instanceof NutsTreeModel) {
-            getWorkspace().formats().tree().setValue(value).configure(true, extraConfig.toArray(new String[0])).print(w);
+            ws.formats().tree().setValue(value).configure(true, extraConfig.toArray(new String[0])).print(w);
 //        } else if (value instanceof Map) {
 //            ws.props().setModel(((Map) value)).configure(true, extraConfig.toArray(new String[0])).print(w);
         } else if (value instanceof org.w3c.dom.Document) {
@@ -86,7 +87,7 @@ public class NutsObjectFormatPlain extends NutsObjectFormatBase {
             doc.appendChild(doc.importNode(elem, true));
             NutsXmlUtils.writeDocument(doc, new StreamResult(w), false, false, getSession());
         } else {
-            printElement(w, getWorkspace().formats().element()
+            printElement(w, ws.formats().element()
                     .setSession(getSession())
                     .toElement(value));
         }
@@ -94,6 +95,7 @@ public class NutsObjectFormatPlain extends NutsObjectFormatBase {
 
     public void printElement(PrintStream w, NutsElement value) {
         PrintStream out = getValidPrintStream(w);
+        NutsWorkspace ws = getSession().getWorkspace();
         switch (value.type()) {
 //            case NUTS_STRING: 
             case STRING: 
@@ -114,7 +116,7 @@ public class NutsObjectFormatPlain extends NutsObjectFormatBase {
                 break;
             }
             case INSTANT: {
-                out.print(getWorkspace().formats().text().forPlain(value.asPrimitive().getInstant().toString()).toString());
+                out.print(ws.formats().text().forPlain(value.asPrimitive().getInstant().toString()).toString());
                 out.flush();
                 break;
             }
@@ -122,13 +124,13 @@ public class NutsObjectFormatPlain extends NutsObjectFormatBase {
                 break;
             }
             case ARRAY: {
-                NutsTableFormat table = getWorkspace().formats().table();
+                NutsTableFormat table = ws.formats().table();
                 table.configure(true, "--no-header", "--border=spaces");
                 table.setValue(value).print(w);
                 break;
             }
             case OBJECT: {
-                NutsTreeFormat tree = getWorkspace().formats().tree();
+                NutsTreeFormat tree = ws.formats().tree();
                 tree.configure(true, extraConfig.toArray(new String[0]));
                 tree.setValue(value).print(w);
                 break;

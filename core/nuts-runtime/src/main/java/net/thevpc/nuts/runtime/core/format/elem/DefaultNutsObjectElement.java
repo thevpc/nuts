@@ -54,12 +54,14 @@ public class DefaultNutsObjectElement extends AbstractNutsObjectElement {
 
     @Override
     public String getString(String key) {
-        return get(key).asPrimitive().getString();
+        NutsElement a = get(key);
+        return a==null?null:a.asPrimitive().getString();
     }
 
     @Override
     public String getString(NutsElement key) {
-        return get(key).asPrimitive().getString();
+        NutsElement a = get(key);
+        return a==null?null:a.asPrimitive().getString();
     }
 
     @Override

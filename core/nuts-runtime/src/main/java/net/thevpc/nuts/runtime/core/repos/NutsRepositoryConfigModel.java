@@ -87,6 +87,8 @@ public interface NutsRepositoryConfigModel {
     String getType(NutsSession session);
 
     String getUuid();
+    
+    String getLocation();
 
     boolean isEnabled(NutsSession session);
 

@@ -209,7 +209,7 @@ public class DerbyService {
         Path derbytools = download("org.apache.derby:derbytools#" + currentDerbyVersion, derbyLibHome, false);
         Path policy = derbyBinHome.resolve("derby.policy");
         if (!Files.exists(policy) || appContext.getSession().isYes()) {
-            try (InputStream is=NDerbyMain.class.getResourceAsStream("policy-file.policy")){
+            try (InputStream is=NDerbyMain.class.getResourceAsStream("/net/thevpc/nuts/toolbox/ndb/derby/policy-file.policy")){
                 String permissions = new String(DerbyUtils.loadByteArray(is))
                         .replace("${{DB_PATH}}", derbyDataHomeRoot.toString());
                 Files.write(policy, permissions.getBytes());

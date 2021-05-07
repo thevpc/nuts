@@ -8,7 +8,7 @@ public class NutsWorkspaceConfigApi extends NutsConfigItem {
 
     private String apiVersion = null;
     /**
-     * boot component Id in long format (as defined in
+     * boot package Id in long format (as defined in
      * {@link NutsId#getLongName()})
      *
      * @see NutsId#getLongNameId()

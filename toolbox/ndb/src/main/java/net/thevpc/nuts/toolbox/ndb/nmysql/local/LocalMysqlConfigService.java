@@ -2,7 +2,6 @@ package net.thevpc.nuts.toolbox.ndb.nmysql.local;
 
 import net.thevpc.common.io.FileUtils;
 import net.thevpc.nuts.*;
-import net.thevpc.common.strings.StringUtils;
 import net.thevpc.nuts.toolbox.ndb.nmysql.NMySqlConfigVersions;
 import net.thevpc.nuts.toolbox.ndb.nmysql.local.config.LocalMysqlDatabaseConfig;
 import net.thevpc.nuts.toolbox.ndb.nmysql.local.config.LocalMysqlConfig;
@@ -12,6 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import net.thevpc.nuts.toolbox.ndb.util.NdbUtils;
 
 public class LocalMysqlConfigService {
 
@@ -72,7 +72,7 @@ public class LocalMysqlConfigService {
         List<String> apps = new ArrayList<>();
         if (args != null) {
             for (String arg : args) {
-                if (!StringUtils.isBlank(arg)) {
+                if (!NdbUtils.isBlank(arg)) {
                     for (String s : arg.split("[, ]")) {
                         if (!s.isEmpty()) {
                             apps.add(s);
@@ -168,7 +168,7 @@ public class LocalMysqlConfigService {
 
     public String getMysqlCommand() {
         String s = getConfig().getMysqlCommand();
-        if (StringUtils.isBlank(s)) {
+        if (NdbUtils.isBlank(s)) {
             s = "mysql";
         }
         return s;
@@ -176,7 +176,7 @@ public class LocalMysqlConfigService {
 
     public String getMysqldumpCommand() {
         String s = getConfig().getMysqldumpCommand();
-        if (StringUtils.isBlank(s)) {
+        if (NdbUtils.isBlank(s)) {
             s = "mysqldump";
         }
         return s;

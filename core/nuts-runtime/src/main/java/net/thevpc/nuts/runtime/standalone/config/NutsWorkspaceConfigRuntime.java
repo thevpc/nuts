@@ -7,7 +7,7 @@ public class NutsWorkspaceConfigRuntime extends NutsConfigItem {
     private static final long serialVersionUID = 2;
 
     /**
-     * boot component Id in long format (as defined in
+     * boot package Id in long format (as defined in
      * {@link NutsId#getLongName()})
      *
      * @see NutsId#getLongNameId()
@@ -15,10 +15,10 @@ public class NutsWorkspaceConfigRuntime extends NutsConfigItem {
     private String id = null;
 
     /**
-     * ';' separated list of component Ids in long format (as defined in
+     * ';' separated list of package Ids in long format (as defined in
      * {@link NutsId#getLongName()}) that defines ALL dependencies needed (no
      * further dependency computation should be performed) to load and execute a
-     * valid implementation of nuts-api. These components should be accessible
+     * valid implementation of nuts-api. These packages should be accessible
      * from {@link NutsWorkspaceConfigBoot#getBootRepositories()}
      *
      * @see NutsId#getLongNameId()

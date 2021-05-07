@@ -21,22 +21,31 @@ import net.thevpc.nuts.runtime.bundles.iter.IteratorUtils;
 import net.thevpc.nuts.spi.NutsSearchVersionsRepositoryCommand;
 
 /**
- * @author thevpc
- * %category SPI Base
+ * @author thevpc %category SPI Base
  */
 public class DefaultNutsSearchVersionsRepositoryCommand extends AbstractNutsSearchVersionsRepositoryCommand {
 
-    private final NutsLogger LOG;
+    private NutsLogger LOG;
 
     public DefaultNutsSearchVersionsRepositoryCommand(NutsRepository repo) {
         super(repo);
-        LOG = repo.getWorkspace().log().of(DefaultNutsSearchVersionsRepositoryCommand.class);
+    }
+
+    protected NutsLoggerOp _LOGOP(NutsSession session) {
+        return _LOG(session).with().session(session);
+    }
+
+    protected NutsLogger _LOG(NutsSession session) {
+        if (LOG == null) {
+            LOG = session.getWorkspace().log().of(DefaultNutsSearchVersionsRepositoryCommand.class);
+        }
+        return LOG;
     }
 
     @Override
     public NutsSearchVersionsRepositoryCommand run() {
         NutsSession session = getSession();
-        NutsWorkspaceUtils.checkSession(getRepo().getWorkspace(),session);
+        NutsWorkspaceUtils.checkSession(getRepo().getWorkspace(), session);
         //id = id.builder().setFaceContent().build();
         getRepo().security().setSession(session).checkAllowed(NutsConstants.Permissions.FETCH_DESC, "find-versions");
         NutsRepositoryExt xrepo = NutsRepositoryExt.of(getRepo());
@@ -49,13 +58,13 @@ public class DefaultNutsSearchVersionsRepositoryCommand extends AbstractNutsSear
                 try {
                     d = xrepo.getIndexStore().searchVersions(id, session);
                 } catch (NutsException ex) {
-                    LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.FAIL).log("error finding version with Indexer for {0} : {1}", getRepo().getName(), ex);
+                    _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.FAIL).log("error finding version with Indexer for {0} : {1}", getRepo().getName(), ex);
                 }
                 if (d != null && filter != null) {
                     resultList.add(
                             IteratorUtils.safeIgnore(
                                     IteratorBuilder.of(d).filter(x -> filter.acceptId(x, session)).iterator())
-                            );
+                    );
                 }
             }
             Iterator<NutsId> rr = xrepo.searchVersionsImpl(id, getFilter(), getFetchMode(), session);
@@ -65,9 +74,7 @@ public class DefaultNutsSearchVersionsRepositoryCommand extends AbstractNutsSear
             result = IteratorUtils.coalesce(resultList);
             return this;
         } catch (RuntimeException ex) {
-            if (LOG.isLoggable(Level.FINEST)) {
-                LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.FAIL).log( "[{0}] {1} {2} {3}", CoreStringUtils.alignLeft(getFetchMode().toString(), 7), CoreStringUtils.alignLeft(getRepo().getName(), 20), CoreStringUtils.alignLeft("Fetch versions for", 24), id);
-            }
+            _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.FAIL).log("[{0}] {1} {2} {3}", CoreStringUtils.alignLeft(getFetchMode().toString(), 7), CoreStringUtils.alignLeft(getRepo().getName(), 20), CoreStringUtils.alignLeft("Fetch versions for", 24), id);
             throw ex;
         }
     }

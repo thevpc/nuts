@@ -31,7 +31,7 @@ import net.thevpc.nuts.NutsElement;
 import net.thevpc.nuts.NutsIOException;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.runtime.bundles.io.ByteArrayPrintStream;
-import net.thevpc.nuts.runtime.core.format.elem.NutsElementFactoryContext;
+import net.thevpc.nuts.NutsElementFactoryContext;
 import net.thevpc.nuts.runtime.core.format.elem.NutsElementStreamFormat;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;

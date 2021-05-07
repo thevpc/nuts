@@ -23,6 +23,7 @@
  */
 package net.thevpc.nuts.runtime.standalone;
 
+import net.thevpc.nuts.runtime.core.repos.NutsRepositorySelector;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.common.MapToFunction;
 import net.thevpc.nuts.runtime.core.*;
@@ -35,7 +36,6 @@ import net.thevpc.nuts.runtime.core.events.DefaultNutsWorkspaceEvent;
 import net.thevpc.nuts.runtime.core.format.text.DefaultNutsTextManager;
 import net.thevpc.nuts.runtime.core.repos.DefaultNutsRepositoryManager;
 import net.thevpc.nuts.runtime.core.repos.NutsInstalledRepository;
-import net.thevpc.nuts.runtime.core.repos.RepoDefinitionResolver;
 import net.thevpc.nuts.runtime.standalone.config.*;
 import net.thevpc.nuts.runtime.standalone.repos.DefaultNutsInstalledRepository;
 import net.thevpc.nuts.runtime.core.log.DefaultNutsLogManager;
@@ -493,8 +493,8 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 }
                 List<String> transientRepositoriesSet = uoptions.getRepositories() == null ? new ArrayList<>() : new ArrayList<>(Arrays.asList(uoptions.getRepositories()));
                 NutsRepositorySelector.SelectorList expected = NutsRepositorySelector.parse(transientRepositoriesSet.toArray(new String[0]));
-                for (NutsRepositorySelector loc : expected.resolveSelectors(null)) {
-                    NutsAddRepositoryOptions d = RepoDefinitionResolver.createRepositoryOptions(loc, false, defaultSession());
+                for (NutsRepositorySelector.Selection loc : expected.resolveSelectors(null)) {
+                    NutsAddRepositoryOptions d = NutsRepositorySelector.createRepositoryOptions(loc, false, defaultSession());
                     String n = d.getName();
                     String ruuid = (CoreStringUtils.isBlank(n) ? "temporary" : n) + "_" + UUID.randomUUID().toString().replace("-", "");
                     d.setName(ruuid);
@@ -884,7 +884,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 if (installerComponent != null) {
                     try {
                         installerComponent.install(executionContext);
-//                    out.print(getFormatManager().parse().print(def.getId()) + " installed ##successfully##.\n");
+//                    out.print(getFormatManager().parseList().print(def.getId()) + " installed ##successfully##.\n");
                     } catch (NutsReadOnlyException ex) {
                         throw ex;
                     } catch (Exception ex) {
@@ -1499,9 +1499,9 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             pr.put("project.name", def.getId().getShortNameId().toString());
             pr.put("project.version", def.getId().getVersion().toString());
             pr.put("repositories", "~/.m2/repository"
-                    + ";" + RepoDefinitionResolver.createRepositoryOptions(NutsRepositorySelector.parseOne("vpc-public-maven"), true, session).getConfig().getLocation()
-                    + ";" + RepoDefinitionResolver.createRepositoryOptions(NutsRepositorySelector.parseOne("maven-central"), true, session).getConfig().getLocation()
-                    + ";" + RepoDefinitionResolver.createRepositoryOptions(NutsRepositorySelector.parseOne("vpc-public-nuts"), true, session).getConfig().getLocation()
+                    + ";" + NutsRepositorySelector.createRepositoryOptions(NutsRepositorySelector.parseSelection("vpc-public-maven"), true, session).getConfig().getLocation()
+                    + ";" + NutsRepositorySelector.createRepositoryOptions(NutsRepositorySelector.parseSelection("maven-central"), true, session).getConfig().getLocation()
+                    + ";" + NutsRepositorySelector.createRepositoryOptions(NutsRepositorySelector.parseSelection("vpc-public-nuts"), true, session).getConfig().getLocation()
             );
 //            pr.put("bootRuntimeId", runtimeUpdate.getAvailable().getId().getLongName());
             pr.put("project.dependencies.compile",
@@ -1545,7 +1545,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
 //            NutsDescriptor descriptor = null;
 //            Path ext = contentFolder.resolve(NutsConstants.NUTS_DESC_FILE_NAME);
 //            if (Files.exists(ext)) {
-//                descriptor = parse().descriptor(ext);
+//                descriptor = parseList().descriptor(ext);
 //                if (descriptor != null) {
 //                    if ("zip".equals(descriptor.getPackaging())) {
 //                        if (destFile == null) {
@@ -1576,11 +1576,11 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
 //        }
 //    }
 //    @Override
-//    public boolean isFetched(NutsId parse, NutsSession session) {
+//    public boolean isFetched(NutsId parseList, NutsSession session) {
 //        session = CoreNutsUtils.validateSession(session, this);
 //        NutsSession offlineSession = session.copy();
 //        try {
-//            NutsDefinition found = fetch().parse(parse).offline().setSession(offlineSession).setIncludeInstallInformation(false).setIncludeFile(true).getResultDefinition();
+//            NutsDefinition found = fetch().parseList(parseList).offline().setSession(offlineSession).setIncludeInstallInformation(false).setIncludeFile(true).getResultDefinition();
 //            return found != null;
 //        } catch (Exception e) {
 //            return false;

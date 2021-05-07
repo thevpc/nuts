@@ -32,6 +32,7 @@ import net.thevpc.nuts.spi.NutsRepositorySPI;
 
 import java.nio.file.Paths;
 import java.util.*;
+import net.thevpc.nuts.runtime.core.config.NutsRepositoryConfigManagerExt;
 import net.thevpc.nuts.runtime.core.util.CachedValue;
 import net.thevpc.nuts.runtime.standalone.repos.DefaultNutsRepoConfigManager;
 import net.thevpc.nuts.runtime.standalone.repos.DefaultNutsRepositoryEnvModel;
@@ -172,13 +173,14 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
 
     @Override
     public String toString() {
+        NutsRepositoryConfigManagerExt cc = NutsRepositoryConfigManagerExt.of(config());
         NutsRepositoryConfigManager c = config();
         String name = getName();
         String storePath = null;
-        String loc = config().getLocation(false);
+        String loc = cc.getModel().getLocation();
         String impl = getClass().getSimpleName();
         if (c != null) {
-            String storeLocation = c.getStoreLocation();
+            String storeLocation = cc.getModel().getStoreLocation();
             storePath = storeLocation == null ? null : Paths.get(storeLocation).toAbsolutePath().toString();
         }
         LinkedHashMap<String, String> a = new LinkedHashMap<>();

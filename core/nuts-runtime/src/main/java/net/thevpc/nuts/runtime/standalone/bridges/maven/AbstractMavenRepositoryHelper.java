@@ -134,7 +134,7 @@ public abstract class AbstractMavenRepositoryHelper {
                     stream.close();
                 }
             }
-            checkSHA1Hash(id.builder().setFace(NutsConstants.QueryFaces.DESCRIPTOR_HASH).build(), new NamedByteArrayInputStream(bytes, name), "artifact descriptor", session);
+            checkSHA1Hash(id.builder().setFace(NutsConstants.QueryFaces.DESCRIPTOR_HASH).build(), new NamedByteArrayInputStream(bytes, name), "package descriptor", session);
             return nutsDescriptor;
         } catch (IOException | UncheckedIOException | NutsIOException ex) {
             throw new NutsNotFoundException(session, id, ex);

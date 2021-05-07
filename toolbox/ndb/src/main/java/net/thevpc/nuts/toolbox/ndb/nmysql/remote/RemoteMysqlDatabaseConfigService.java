@@ -7,7 +7,6 @@ import net.thevpc.nuts.*;
 import net.thevpc.common.io.FileUtils;
 import net.thevpc.common.io.IOUtils;
 import net.thevpc.common.ssh.SshAddress;
-import net.thevpc.common.strings.StringUtils;
 import net.thevpc.nuts.toolbox.ndb.nmysql.NMySqlService;
 import net.thevpc.nuts.toolbox.ndb.nmysql.remote.config.RemoteMysqlDatabaseConfig;
 import net.thevpc.nuts.toolbox.ndb.nmysql.local.LocalMysqlDatabaseConfigService;
@@ -22,6 +21,7 @@ import java.util.Map;
 
 import net.thevpc.nuts.toolbox.ndb.nmysql.util.AtName;
 import net.thevpc.nuts.toolbox.ndb.nmysql.util.MysqlUtils;
+import net.thevpc.nuts.toolbox.ndb.util.NdbUtils;
 
 public class RemoteMysqlDatabaseConfigService {
 
@@ -101,7 +101,7 @@ public class RemoteMysqlDatabaseConfigService {
         Map<String,Object> resMap=context.getWorkspace().formats().element().parse(remoteTempPath.getBytes(),Map.class);
         String ppath=(String)resMap.get("path");
 
-        if (StringUtils.isBlank(localPath)) {
+        if (NdbUtils.isBlank(localPath)) {
             localPath = Paths.get(context.getVarFolder())
                     .resolve("pull-backups")
                     .resolve(client.getName() + "-" + getName())
@@ -176,7 +176,7 @@ public class RemoteMysqlDatabaseConfigService {
         if (backup) {
             localPath = loc.backup(localPath).path;
         } else {
-            if (StringUtils.isBlank(localPath)) {
+            if (NdbUtils.isBlank(localPath)) {
                 throw new NutsExecutionException(context.getSession(), "missing local path", 2);
             }
         }
@@ -284,7 +284,7 @@ public class RemoteMysqlDatabaseConfigService {
     }
 
     private String prepareSshServer(String server) {
-        if (StringUtils.isBlank(server)) {
+        if (NdbUtils.isBlank(server)) {
             server = "ssh://localhost";
         }
         if (!server.startsWith("ssh://")) {

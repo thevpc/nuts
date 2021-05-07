@@ -55,7 +55,7 @@ import net.thevpc.nuts.spi.NutsUpdateRepositoryStatisticsCommand;
  *
  * @author vpc
  */
-public class NutsRepositorySessionAwareImpl implements NutsRepository , NutsRepositorySPI, NutsRepositoryExt{
+public class NutsRepositorySessionAwareImpl implements NutsRepository, NutsRepositorySPI, NutsRepositoryExt {
 
     private NutsRepository repo;
     private NutsWorkspace ws;
@@ -189,10 +189,10 @@ public class NutsRepositorySessionAwareImpl implements NutsRepository , NutsRepo
         return repo.setEnabled(enabled);
     }
 
-    private NutsRepositorySPI repoSPI(){
-        return (NutsRepositorySPI)repo;
-    } 
-    
+    private NutsRepositorySPI repoSPI() {
+        return (NutsRepositorySPI) repo;
+    }
+
     @Override
     public NutsDeployRepositoryCommand deploy() {
         return repoSPI().deploy().setSession(getSession());
@@ -235,12 +235,13 @@ public class NutsRepositorySessionAwareImpl implements NutsRepository , NutsRepo
 
     @Override
     public boolean isAcceptFetchMode(NutsFetchMode mode, NutsSession session) {
-        return repoSPI().isAcceptFetchMode(mode,session);
+        return repoSPI().isAcceptFetchMode(mode, session);
     }
 
-    private NutsRepositoryExt repoExt(){
-        return ((NutsRepositoryExt)repo);
+    private NutsRepositoryExt repoExt() {
+        return ((NutsRepositoryExt) repo);
     }
+
     @Override
     public NutsIndexStore getIndexStore() {
         return repoExt().getIndexStore();
@@ -316,6 +317,9 @@ public class NutsRepositorySessionAwareImpl implements NutsRepository , NutsRepo
         return repo.isAvailable(force);
     }
 
-    
-    
+    @Override
+    public String toString() {
+        return repo.toString();
+    }
+
 }

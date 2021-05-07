@@ -23,16 +23,14 @@
  */
 package net.thevpc.nuts.runtime.standalone.archetypes;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.repos.RepoDefinitionResolver;
 import net.thevpc.nuts.runtime.standalone.config.DefaultNutsWorkspaceConfigManager;
 import net.thevpc.nuts.spi.NutsWorkspaceArchetypeComponent;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import net.thevpc.nuts.runtime.standalone.NutsRepositorySelector;
+import net.thevpc.nuts.runtime.core.repos.NutsRepositorySelector;
 
 /**
  * Created by vpc on 1/23/17.
@@ -65,9 +63,9 @@ public class DefaultNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
             defaults.put(d.getName(), null);
         }
         defaults.put(NutsConstants.Names.DEFAULT_REPOSITORY_NAME, null);
-        NutsRepositorySelector[] br = rm.getModel().resolveBootRepositoriesList().resolveSelectors(defaults);
-        for (NutsRepositorySelector s : br) {
-            NutsAddRepositoryOptions oo = RepoDefinitionResolver.createRepositoryOptions(s, false, session);
+        NutsRepositorySelector.Selection[] br = rm.getModel().resolveBootRepositoriesList().resolveSelectors(defaults);
+        for (NutsRepositorySelector.Selection s : br) {
+            NutsAddRepositoryOptions oo = NutsRepositorySelector.createRepositoryOptions(s, false, session);
             String sloc = ws.io()
                     .setSession(session)
                     .expandPath(oo

@@ -935,6 +935,11 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
         }
 
         @Override
+        public String getLocation() {
+            return INSTALLED_REPO_UUID;
+        }
+
+        @Override
         public NutsRepositoryRef getRepositoryRef(NutsSession session) {
             return null;
         }

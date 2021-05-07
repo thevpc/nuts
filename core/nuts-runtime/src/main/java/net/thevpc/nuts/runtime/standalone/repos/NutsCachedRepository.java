@@ -48,7 +48,7 @@ import net.thevpc.nuts.runtime.bundles.string.GlobUtils;
  */
 public class NutsCachedRepository extends AbstractNutsRepositoryBase {
 
-    public final NutsLogger LOG;
+    public NutsLogger LOG;
 
     protected final NutsRepositoryFolderHelper lib;
     protected final NutsRepositoryFolderHelper cache;
@@ -56,12 +56,21 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
 
     public NutsCachedRepository(NutsAddRepositoryOptions options, NutsSession session, NutsRepository parent, int speed, boolean supportedMirroring, String repositoryType) {
         super(options, session, parent, speed, supportedMirroring, repositoryType);
-        LOG = workspace.log().of(DefaultNutsRepoConfigManager.class);
         cache = new NutsRepositoryFolderHelper(this, workspace, Paths.get(config().setSession(session).getStoreLocation(NutsStoreLocation.CACHE)), true);
         lib = new NutsRepositoryFolderHelper(this, workspace, Paths.get(config().setSession(session).getStoreLocation(NutsStoreLocation.LIB)), false);
         mirroring = new NutsRepositoryMirroringHelper(this, cache);
     }
-    
+
+    protected NutsLoggerOp _LOGOP(NutsSession session) {
+        return _LOG(session).with().session(session);
+    }
+
+    protected NutsLogger _LOG(NutsSession session) {
+        if (LOG == null) {
+            LOG = session.getWorkspace().log().of(NutsCachedRepository.class);
+        }
+        return LOG;
+    }
 
     @Override
     public NutsDescriptor fetchDescriptorImpl(NutsId id, NutsFetchMode fetchMode, NutsSession session) {
@@ -152,7 +161,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
             //ignore....
         } catch (Exception ex) {
             //ignore....
-            LOG.with().session(session).level(Level.SEVERE).error(ex).log("search latest versions error : {0}", ex);
+            _LOGOP(session).level(Level.SEVERE).error(ex).log("search latest versions error : {0}", ex);
         }
         if (p != null) {
             li.add(p);
@@ -282,7 +291,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
         } catch (NutsNotFoundException ex) {
             //ignore error
         } catch (Exception ex) {
-            LOG.with().session(session).level(Level.SEVERE).error(ex).log("search versions error : {0}", ex);
+            _LOGOP(session).level(Level.SEVERE).error(ex).log("search versions error : {0}", ex);
             //ignore....
         }
         Iterator<NutsId> namedNutIdIterator = IteratorBuilder.ofList(all).distinct(NutsId::getLongName).build();
@@ -313,7 +322,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
             } catch (NutsNotFoundException | NutsFetchModeNotSupportedException ex) {
                 //ignore
             } catch (Exception ex) {
-                LOG.with().session(session).level(Level.SEVERE).error(ex).log("search latest versions error : {0}", ex);
+                _LOGOP(session).level(Level.SEVERE).error(ex).log("search latest versions error : {0}", ex);
                 //ignore....
             }
             return mirroring.searchLatestVersion(bestId, id, filter, fetchMode, session);

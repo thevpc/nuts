@@ -51,7 +51,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
             }
         }
         if (result == null || result.isEmpty()) {
-            throw new NutsIllegalArgumentException(getSession(), "missing component to Deploy");
+            throw new NutsIllegalArgumentException(getSession(), "missing package to Deploy");
         }
         if (getSession().isTrace()) {
             getSession().formatObject(result).println();
@@ -72,7 +72,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
 
         Path tempFile = null;
         NutsInput contentSource;
-        contentSource = ws.io().input().setMultiRead(true).setTypeName("artifact content").of(content);
+        contentSource = ws.io().input().setMultiRead(true).setTypeName("package content").of(content);
         NutsDescriptor descriptor = buildDescriptor(descriptor0, descSHA1);
 
         CharacterizedDeployFile characterizedFile = null;
@@ -227,7 +227,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
             }
             return mdescriptor;
         } else if (CoreIOUtils.isValidInputStreamSource(descriptor.getClass())) {
-            NutsInput inputStreamSource = ws.io().input().setMultiRead(true).setTypeName("artifact descriptor").of(descriptor);
+            NutsInput inputStreamSource = ws.io().input().setMultiRead(true).setTypeName("package descriptor").of(descriptor);
             if (descSHA1 != null) {
                 inputStreamSource = ws.io().input().setMultiRead(true).of(inputStreamSource);
                 try (InputStream is = inputStreamSource.open()) {

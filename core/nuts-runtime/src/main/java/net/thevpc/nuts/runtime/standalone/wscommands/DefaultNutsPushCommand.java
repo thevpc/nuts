@@ -75,7 +75,7 @@ public class DefaultNutsPushCommand extends AbstractDefaultNutsPushCommand {
         }
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
         if (toProcess.isEmpty()) {
-            throw new NutsIllegalArgumentException(getSession(), "missing component to push");
+            throw new NutsIllegalArgumentException(getSession(), "missing package to push");
         }
         for (Map.Entry<NutsId, NutsDefinition> entry : toProcess.entrySet()) {
             NutsId id = entry.getKey();

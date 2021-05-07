@@ -225,7 +225,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                         foundDefinition.setEffectiveDescriptor(dws.resolveEffectiveDescriptor(foundDefinition.getDescriptor(), session));
                     } catch (NutsNotFoundException ex) {
                         //ignore
-                        _LOGOP(getSession()).level(Level.WARNING).verb(NutsLogVerb.WARNING).log("artifact descriptor found, but its parent is not: {0} with parent {1}", id.getLongName(), Arrays.toString(foundDefinition.getDescriptor().getParents()));
+                        _LOGOP(getSession()).level(Level.WARNING).verb(NutsLogVerb.WARNING).log("package descriptor found, but its parent is not: {0} with parent {1}", id.getLongName(), Arrays.toString(foundDefinition.getDescriptor().getParents()));
                         foundDefinition = null;
                     }
                 }
@@ -301,7 +301,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                         }
                         if (!contentSuccessful /*&& includedRemote*/) {
                             wu.traceMessage(nutsFetchModes, id.getLongNameId(), NutsLogVerb.FAIL,
-                                    "fetched descriptor but failed to fetch artifact binaries", startTime);
+                                    "fetched descriptor but failed to fetch package binaries", startTime);
                         }
                     }
                     if (foundDefinition != null && includeInstallInfo) {

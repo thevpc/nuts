@@ -295,6 +295,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         List<Row> rows = rebuild(getSession());
         if (rows.size() > 0) {
             List<DefaultCell> cells = rows.get(0).cells;
+            NutsWorkspace ws = getSession().getWorkspace();
             if ((getSeparator(Separator.FIRST_ROW_START)
                     + getSeparator(Separator.FIRST_ROW_SEP)
                     + getSeparator(Separator.FIRST_ROW_LINE)
@@ -307,7 +308,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                     DefaultCell cell = cells.get(i);
                     String B = getSeparator(Separator.FIRST_ROW_LINE);
                     String s = cell.rendered.toString();
-                    line.write(CoreStringUtils.fillString(B, getWorkspace().formats().text().setSession(getSession()).parse(s).textLength()));
+                    line.write(CoreStringUtils.fillString(B, ws.formats().text().setSession(getSession()).parse(s).textLength()));
                 }
                 line.write(getSeparator(Separator.FIRST_ROW_END));
 
@@ -329,7 +330,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                             DefaultCell cell = cells.get(i);
                             String B = getSeparator(Separator.MIDDLE_ROW_LINE);
                             String s = cell.rendered.toString();
-                            line.write(CoreStringUtils.fillString(B, getWorkspace().formats().text().setSession(getSession()).parse(s).textLength()));
+                            line.write(CoreStringUtils.fillString(B, ws.formats().text().setSession(getSession()).parse(s).textLength()));
                         }
                         line.write(getSeparator(Separator.MIDDLE_ROW_END));
 
@@ -371,7 +372,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                     DefaultCell cell = cells.get(i);
                     String B = getSeparator(Separator.LAST_ROW_LINE);
                     String s = cell.rendered.toString();
-                    line.write(CoreStringUtils.fillString(B, getWorkspace().formats().text().setSession(getSession()).parse(s).textLength()));
+                    line.write(CoreStringUtils.fillString(B, ws.formats().text().setSession(getSession()).parse(s).textLength()));
                 }
                 line.write(getSeparator(Separator.LAST_ROW_END));
             }

@@ -41,11 +41,21 @@ import net.thevpc.nuts.spi.NutsFetchDescriptorRepositoryCommand;
  */
 public class DefaultNutsFetchDescriptorRepositoryCommand extends AbstractNutsFetchDescriptorRepositoryCommand {
 
-    private final NutsLogger LOG;
+    private NutsLogger LOG;
 
     public DefaultNutsFetchDescriptorRepositoryCommand(NutsRepository repo) {
         super(repo);
-        LOG = repo.getWorkspace().log().of(DefaultNutsFetchDescriptorRepositoryCommand.class);
+    }
+
+    protected NutsLoggerOp _LOGOP(NutsSession session) {
+        return _LOG(session).with().session(session);
+    }
+
+    protected NutsLogger _LOG(NutsSession session) {
+        if (LOG == null) {
+            LOG = session.getWorkspace().log().of(DefaultNutsFetchDescriptorRepositoryCommand.class);
+        }
+        return LOG;
     }
 
     @Override
@@ -96,11 +106,11 @@ public class DefaultNutsFetchDescriptorRepositoryCommand extends AbstractNutsFet
             if (d == null) {
                 throw new NutsNotFoundException(getSession(), id.getLongNameId());
             }
-            CoreNutsUtils.traceMessage(LOG, Level.FINER, getRepo().getName(), session, getFetchMode(), id.getLongNameId(), NutsLogVerb.SUCCESS, "fetch descriptor", startTime, null);
+            CoreNutsUtils.traceMessage(_LOG(session), Level.FINER, getRepo().getName(), session, getFetchMode(), id.getLongNameId(), NutsLogVerb.SUCCESS, "fetch descriptor", startTime, null);
             result = d;
         } catch (Exception ex) {
             if (!CoreNutsUtils.isUnsupportedFetchModeException(ex)) {
-                CoreNutsUtils.traceMessage(LOG, Level.FINEST, getRepo().getName(), session, getFetchMode(), id.getLongNameId(), NutsLogVerb.FAIL, "fetch descriptor", startTime, CoreStringUtils.exceptionToString(ex));
+                CoreNutsUtils.traceMessage(_LOG(session), Level.FINEST, getRepo().getName(), session, getFetchMode(), id.getLongNameId(), NutsLogVerb.FAIL, "fetch descriptor", startTime, CoreStringUtils.exceptionToString(ex));
             }
             throw ex;
         }

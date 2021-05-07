@@ -61,7 +61,7 @@ public final class NutsBootConfig implements Cloneable, Serializable {
     private String runtimeId;
 
     /**
-     * runtime component dependencies id list (; separated)
+     * runtime package dependencies id list (; separated)
      */
     private NutsBootDescriptor runtimeBootDescriptor;
 

@@ -6,7 +6,6 @@ import net.thevpc.nuts.spi.NutsTerminalBase;
 import java.io.InputStream;
 import java.io.PrintStream;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
-import net.thevpc.nuts.runtime.standalone.util.SearchTraceHelper;
 import net.thevpc.nuts.runtime.standalone.util.console.CProgressBar;
 
 public class UnmodifiableTerminal extends AbstractNutsTerminal implements NutsSessionTerminal {
@@ -116,7 +115,7 @@ public class UnmodifiableTerminal extends AbstractNutsTerminal implements NutsSe
 
     private CProgressBar getProgressBar() {
         if (progressBar == null) {
-            progressBar = SearchTraceHelper.createProgressBar(session);
+            progressBar = CoreTerminalUtils.createProgressBar(session);
         }
         return progressBar;
     }

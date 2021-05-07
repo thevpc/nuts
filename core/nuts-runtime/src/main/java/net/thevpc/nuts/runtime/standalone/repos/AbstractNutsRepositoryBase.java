@@ -85,7 +85,7 @@ public abstract class AbstractNutsRepositoryBase extends AbstractNutsRepository 
         NutsRepositoryConfigManagerExt c = NutsRepositoryConfigManagerExt.of(config());
         String name = getName();
         String storePath = null;
-        String loc = config().getLocation(false);
+        String loc = c.getModel().getLocation();
         String impl = getClass().getSimpleName();
         if (c != null) {
             storePath = Paths.get(c.getModel().getStoreLocation()).toAbsolutePath().toString();

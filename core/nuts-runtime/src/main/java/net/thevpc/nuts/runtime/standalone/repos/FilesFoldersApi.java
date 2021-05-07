@@ -7,7 +7,6 @@ package net.thevpc.nuts.runtime.standalone.repos;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.standalone.util.SearchTraceHelper;
 import net.thevpc.nuts.runtime.core.CoreNutsConstants;
 import net.thevpc.nuts.NutsLogVerb;
 
@@ -36,7 +35,7 @@ public class FilesFoldersApi {
         String dotFilesUrl = baseUrl;
 //        NutsVersion versionString = ws.version().parser().parse("0.5.5");
         try {
-            SearchTraceHelper.progressIndeterminate("search " + CoreIOUtils.compressUrl(baseUrl), session);
+            session.getTerminal().printProgress("listing %s", CoreIOUtils.compressUrl(baseUrl));
             List<String> splitted = null;
             try (InputStream foldersFileStream
                     = ws.io().monitor().setSource(dotFilesUrl).setSession(session).create()) {
@@ -93,7 +92,7 @@ public class FilesFoldersApi {
         String dotFilesUrl = baseUrl + "/" + CoreNutsConstants.Files.DOT_FILES;
         NutsVersion versionString = ws.version().parser().parse("0.5.5");
         try {
-            SearchTraceHelper.progressIndeterminate("search " + CoreIOUtils.compressUrl(baseUrl), session);
+            session.getTerminal().printProgress("listing %s", CoreIOUtils.compressUrl(baseUrl));
             foldersFileStream = ws.io().monitor().setSource(dotFilesUrl).setSession(session).create();
             List<String> splitted = StringTokenizerUtils.split(CoreIOUtils.loadString(foldersFileStream, true), "\n\r");
             for (String s : splitted) {

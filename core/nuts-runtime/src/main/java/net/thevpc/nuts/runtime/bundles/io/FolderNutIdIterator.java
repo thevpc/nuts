@@ -38,7 +38,6 @@ import net.thevpc.nuts.runtime.core.filters.NutsSearchIdByDescriptor;
 import net.thevpc.nuts.runtime.core.filters.NutsSearchIdById;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
-import net.thevpc.nuts.runtime.standalone.util.SearchTraceHelper;
 
 /**
  * Created by vpc on 2/21/17.
@@ -94,7 +93,7 @@ public class FolderNutIdIterator implements Iterator<NutsId> {
         while (!stack.isEmpty()) {
             PathAndDepth file = stack.pop();
             if (Files.isDirectory(file.path)) {
-                SearchTraceHelper.progressIndeterminate("search " + CoreIOUtils.compressUrl(file.path.toString()), session);
+                session.getTerminal().printProgress("search %s", CoreIOUtils.compressUrl(file.path.toString()));
                 visitedFoldersCount++;
                 boolean deep = file.depth < maxDepth;
                 if (Files.isDirectory(file.path)) {

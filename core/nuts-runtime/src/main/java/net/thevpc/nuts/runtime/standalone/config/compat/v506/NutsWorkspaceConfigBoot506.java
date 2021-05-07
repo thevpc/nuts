@@ -44,7 +44,7 @@ public final class NutsWorkspaceConfigBoot506 extends NutsConfigItem {
     private String apiVersion = null;
 
     /**
-     * boot component Id in long format (as defined in
+     * boot package Id in long format (as defined in
      * {@link NutsId#getLongName()})
      *
      * @see NutsId#getLongNameId()
@@ -52,10 +52,10 @@ public final class NutsWorkspaceConfigBoot506 extends NutsConfigItem {
     private String runtimeId = null;
 
     /**
-     * ';' separated list of component Ids in long format (as defined in
+     * ';' separated list of package Ids in long format (as defined in
      * {@link NutsId#getLongName()}) that defines ALL dependencies needed (no
      * further dependency computation should be performed) to load and execute a
-     * valid implementation of nuts-api. These components should be accessible
+     * valid implementation of nuts-api. These packages should be accessible
      * from {@link NutsWorkspaceConfigBoot#getBootRepositories()}
      *
      * @see NutsId#getLongNameId()
@@ -78,10 +78,10 @@ public final class NutsWorkspaceConfigBoot506 extends NutsConfigItem {
     private List<NutsRepositoryRef> repositories;
     private List<NutsId> extensions;
     /**
-     * ';' separated list of component Ids in long format (as defined in
+     * ';' separated list of package Ids in long format (as defined in
      * {@link NutsId#getLongName()}) that defines ALL dependencies needed (no
      * further dependency computation should be performed) to load and execute a
-     * valid extensions. These components should be either cached in boot cache
+     * valid extensions. These packages should be either cached in boot cache
      * folder or accessible from
      * {@link NutsWorkspaceConfigBoot#getBootRepositories()}
      *

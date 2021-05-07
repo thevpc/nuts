@@ -358,4 +358,10 @@ public class NutsWorkspaceSessionAwareImpl implements NutsWorkspace, NutsWorkspa
     public NutsTextManager text() {
         return ws.text().setSession(getSession());
     }
+
+    @Override
+    public String toString() {
+        return ws.toString();
+    }
+    
 }

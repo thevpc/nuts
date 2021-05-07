@@ -21,22 +21,24 @@
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
-package net.thevpc.nuts.runtime.core.format.elem;
-
-import java.lang.reflect.Type;
-import net.thevpc.nuts.NutsElement;
+package net.thevpc.nuts.toolbox.ndb.util;
 
 /**
  *
- * @author thevpc
- * @since 0.8.1
+ * @author vpc
  */
-public interface NutsElementMapper<T> {
+public class NdbUtils {
 
-    Object destruct(T src, Type typeOfSrc, NutsElementFactoryContext context);
-    
-    NutsElement createElement(T src, Type typeOfSrc, NutsElementFactoryContext context);
+    public static boolean isBlank(String string) {
+        return string == null || string.trim().isEmpty();
+    }
 
-    T createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context);
-
+    public static String coalesce(String... cmd) {
+        for (String string : cmd) {
+            if (!isBlank(string)) {
+                return string;
+            }
+        }
+        return null;
+    }
 }

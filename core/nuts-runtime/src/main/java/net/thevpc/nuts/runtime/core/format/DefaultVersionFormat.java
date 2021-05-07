@@ -98,7 +98,7 @@ public class DefaultVersionFormat extends DefaultFormatBase<NutsVersionFormat> i
         NutsContentType outputFormat = getSession()==null?NutsContentType.PLAIN:getSession().getOutputFormat();
         if(outputFormat==NutsContentType.PLAIN) {
             if (isWorkspaceVersion()) {
-                out.printf("%s/%s", getWorkspace().getApiVersion(), getWorkspace().getRuntimeId().getVersion());
+                out.printf("%s/%s", getSession().getWorkspace().getApiVersion(), getSession().getWorkspace().getRuntimeId().getVersion());
             } else {
                 out.printf("%s", getVersion());
             }
@@ -117,11 +117,12 @@ public class DefaultVersionFormat extends DefaultFormatBase<NutsVersionFormat> i
         if (extraProperties != null) {
             extraKeys = new TreeSet(extraProperties.keySet());
         }
-        props.put("nuts-api-version", getWorkspace().getApiVersion());
-        props.put("nuts-runtime-version", getWorkspace().getRuntimeId().getVersion().toString());
+        NutsWorkspace ws = getSession().getWorkspace();
+        props.put("nuts-api-version", ws.getApiVersion());
+        props.put("nuts-runtime-version", ws.getRuntimeId().getVersion().toString());
         if (all) {
             props.put("java-version", System.getProperty("java.version"));
-            props.put("os-version", getWorkspace().env().getOs().getVersion().toString());
+            props.put("os-version", ws.env().getOs().getVersion().toString());
         }
         for (String extraKey : extraKeys) {
             props.put(extraKey, extraProperties.get(extraKey));

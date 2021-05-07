@@ -26,8 +26,8 @@
 package net.thevpc.nuts.toolbox.ndb.nmysql.util;
 
 import net.thevpc.nuts.NutsArgument;
-import net.thevpc.common.strings.StringUtils;
 import net.thevpc.nuts.NutsCommandLine;
+import net.thevpc.nuts.toolbox.ndb.util.NdbUtils;
 
 /**
  *
@@ -53,7 +53,7 @@ public class AtName {
 
     @Override
     public String toString() {
-        return StringUtils.coalesce(name, "default") + "@" + StringUtils.coalesce(config, "default");
+        return NdbUtils.coalesce(name, "default") + "@" + NdbUtils.coalesce(config, "default");
     }
 
     public static AtName nextAppOption(NutsCommandLine cmd) {

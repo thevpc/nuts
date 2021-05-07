@@ -3,7 +3,6 @@ package net.thevpc.nuts.runtime.core.terminals;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.DefaultNutsQuestion;
-import net.thevpc.nuts.runtime.standalone.util.SearchTraceHelper;
 import net.thevpc.nuts.runtime.standalone.util.console.CProgressBar;
 import net.thevpc.nuts.spi.NutsTerminalBase;
 
@@ -224,7 +223,7 @@ public class DefaultNutsSessionTerminal extends AbstractNutsTerminal implements 
 
     private CProgressBar getProgressBar() {
         if(progressBar==null){
-            progressBar=SearchTraceHelper.createProgressBar(session);
+            progressBar=CoreTerminalUtils.createProgressBar(session);
         }
         return progressBar;
     }

@@ -242,7 +242,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
     private Map<String, Object> buildWorkspaceMap(boolean deep) {
         String prefix = null;
         FilteredMap props = new FilteredMap(filter);
-        NutsWorkspace ws = getWorkspace();
+        NutsWorkspace ws = getSession().getWorkspace();
         NutsWorkspaceConfigManager rt = ws.config();
         NutsWorkspaceOptions options = ws.config().getOptions();
         Set<String> extraKeys = new TreeSet<>();
@@ -372,7 +372,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
     }
 
     private String stringValue(Object s) {
-        return getWorkspace().formats().text().builder().append(CoreCommonUtils.stringValue(s)).toString();
+        return getSession().getWorkspace().formats().text().builder().append(CoreCommonUtils.stringValue(s)).toString();
     }
 
     public boolean isLenient() {

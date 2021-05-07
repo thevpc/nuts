@@ -1,6 +1,5 @@
 package net.thevpc.nuts.toolbox.ndb.nmysql.local;
 
-import net.thevpc.common.strings.StringUtils;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.ndb.nmysql.local.config.LocalMysqlDatabaseConfig;
 
@@ -9,6 +8,7 @@ import java.io.PrintStream;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import net.thevpc.nuts.toolbox.ndb.util.NdbUtils;
 
 public class LocalMysqlDatabaseConfigService {
     private String name;
@@ -58,9 +58,9 @@ public class LocalMysqlDatabaseConfigService {
     }
 
     public ArchiveResult backup(String path) {
-        if (StringUtils.isBlank(path)) {
+        if (NdbUtils.isBlank(path)) {
             String databaseName = getConfig().getDatabaseName();
-            if (StringUtils.isBlank(databaseName)) {
+            if (NdbUtils.isBlank(databaseName)) {
                 databaseName = name;
             }
             path = databaseName + "-" + new SimpleDateFormat("yyyyMMddHHmm").format(new Date()) + ".sql.zip";
@@ -188,7 +188,7 @@ public class LocalMysqlDatabaseConfigService {
 
     public String getDatabaseName() {
         String s = getConfig().getDatabaseName();
-        if (StringUtils.isBlank(s)) {
+        if (NdbUtils.isBlank(s)) {
             s = name;
         }
         return s;

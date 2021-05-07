@@ -9,7 +9,6 @@ import java.io.PrintStream;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.DefaultNutsQuestion;
-import net.thevpc.nuts.runtime.standalone.util.SearchTraceHelper;
 import net.thevpc.nuts.runtime.standalone.util.console.CProgressBar;
 import net.thevpc.nuts.spi.NutsInputStreamTransparentAdapter;
 import net.thevpc.nuts.spi.NutsSystemTerminalBase;
@@ -245,7 +244,7 @@ public abstract class AbstractSystemTerminalAdapter extends AbstractNutsTerminal
 
     private CProgressBar getProgressBar() {
         if (progressBar == null) {
-            progressBar = SearchTraceHelper.createProgressBar(session);
+            progressBar = CoreTerminalUtils.createProgressBar(session);
         }
         return progressBar;
     }

@@ -17,7 +17,7 @@ import net.thevpc.nuts.runtime.core.commands.repo.NutsRepositorySupportedAction;
 import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.core.filters.NutsSearchIdByDescriptor;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
-import net.thevpc.nuts.runtime.standalone.util.NutsRepositoryUtils;
+import net.thevpc.nuts.runtime.core.repos.NutsRepositoryUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.bundles.iter.IteratorUtils;
@@ -51,7 +51,7 @@ public class NutsRepositoryMirroringHelper {
             for (NutsRepository repo : repo.config().setSession(session).getMirrors()) {
                 int sup = 0;
                 try {
-                    sup = CoreNutsUtils.getSupportSpeedLevel(repo, NutsRepositorySupportedAction.SEARCH, id, fetchMode, session.isTransitive(),session);
+                    sup = NutsRepositoryUtils.getSupportSpeedLevel(repo, NutsRepositorySupportedAction.SEARCH, id, fetchMode, session.isTransitive(),session);
                 } catch (Exception ex) {
                     //                errors.append(CoreStringUtils.exceptionToString(ex)).append("\n");
                 }
@@ -177,7 +177,7 @@ public class NutsRepositoryMirroringHelper {
         if (CoreStringUtils.isBlank(repository)) {
             List<NutsRepository> all = new ArrayList<>();
             for (NutsRepository remote : repo.config().setSession(session).getMirrors()) {
-                int lvl = CoreNutsUtils.getSupportSpeedLevel(remote,NutsRepositorySupportedAction.DEPLOY, id, NutsFetchMode.LOCAL, false,session);
+                int lvl = NutsRepositoryUtils.getSupportSpeedLevel(remote,NutsRepositorySupportedAction.DEPLOY, id, NutsFetchMode.LOCAL, false,session);
                 if (lvl > 0) {
                     all.add(remote);
                 }

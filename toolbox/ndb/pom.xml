@@ -67,11 +67,6 @@
         </dependency>
         <dependency>
             <groupId>net.thevpc.common</groupId>
-            <artifactId>thevpc-common-strings</artifactId>
-            <version>1.2.19</version>
-        </dependency>
-        <dependency>
-            <groupId>net.thevpc.common</groupId>
             <artifactId>thevpc-common-ssh</artifactId>
             <version>1.1.7</version>
         </dependency>
@@ -113,20 +108,21 @@
                     </execution>
                 </executions>
             </plugin>
-<plugin>
-      <groupId>org.apache.maven.plugins</groupId>
-      <artifactId>maven-gpg-plugin</artifactId>
-      <version>1.6</version>
-      <executions>
-        <execution>
-          <id>sign-artifacts</id>
-          <phase>verify</phase>
-          <goals>
-            <goal>sign</goal>
-          </goals>
-        </execution>
-      </executions>
-    </plugin><plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.6</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <version>3.0.2</version>
                 <executions>
@@ -139,7 +135,7 @@
 
                         <configuration>
 
-<outputDirectory>${targetdirectory}</outputDirectory>
+                            <outputDirectory>${targetdirectory}</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
