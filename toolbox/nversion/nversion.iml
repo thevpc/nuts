@@ -6,7 +6,6 @@
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/main/resources" type="java-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/test/java" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
     <orderEntry type="inheritedJdk" />
@@ -15,7 +14,7 @@
     <orderEntry type="module" module-name="thevpc-common-io" />
     <orderEntry type="library" name="Maven: net.thevpc.common:thevpc-common-ssh:1.1.6" level="project" />
     <orderEntry type="library" name="Maven: com.jcraft:jsch:0.1.55" level="project" />
-    <orderEntry type="module" module-name="thevpc-common-strings" />
+    <orderEntry type="library" name="Maven: net.thevpc.common:thevpc-common-strings:1.2.18" level="project" />
     <orderEntry type="module" module-name="thevpc-common-xfile" />
     <orderEntry type="module" module-name="thevpc-common-mvn" />
     <orderEntry type="library" name="Maven: org.whitesource:pecoff4j:0.0.2.1" level="project" />

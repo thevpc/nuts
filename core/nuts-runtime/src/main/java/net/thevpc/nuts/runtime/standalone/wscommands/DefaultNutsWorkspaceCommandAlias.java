@@ -142,7 +142,7 @@ public class DefaultNutsWorkspaceCommandAlias implements NutsWorkspaceCommandAli
         r.addAll(Arrays.asList(args));
         args = r.toArray(new String[0]);
 
-        ws.exec()
+        session.getWorkspace().exec()
                 .addCommand(args)
                 .addExecutorOptions(executorOptions)
                 .setDirectory(options.getDirectory())

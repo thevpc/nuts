@@ -172,7 +172,14 @@ public final class NutsApplications {
                 }
             }
         }
-        if (ex instanceof NutsExecutionException) {
+        if (ex instanceof NutsBootException) {
+            NutsBootException ex2 = (NutsBootException) ex;
+            if (ex2.getExitCode() == 0) {
+                return 0;
+            } else {
+                errorCode = ex2.getExitCode();
+            }
+        }else if (ex instanceof NutsExecutionException) {
             NutsExecutionException ex2 = (NutsExecutionException) ex;
             if (ex2.getExitCode() == 0) {
                 return 0;

@@ -79,7 +79,7 @@ public class DefaultAliasModel {
             oldCommandFactory.setParameters(commandFactoryConfig.getParameters() == null ? null : new LinkedHashMap<>(commandFactoryConfig.getParameters()));
             oldCommandFactory.setPriority(commandFactoryConfig.getPriority());
         }
-        NutsWorkspaceConfigManagerExt.of(workspace.config())
+        NutsWorkspaceConfigManagerExt.of(session.getWorkspace().config())
                 .getModel().fireConfigurationChanged("command", session, ConfigEventType.MAIN);
     }
 
@@ -95,7 +95,7 @@ public class DefaultAliasModel {
             if (factoryId.equals(factory.getFactoryId())) {
                 removeMe = factory;
                 iterator.remove();
-                NutsWorkspaceConfigManagerExt.of(workspace.config())
+                NutsWorkspaceConfigManagerExt.of(session.getWorkspace().config())
                         .getModel()
                         .fireConfigurationChanged("command", session, ConfigEventType.MAIN);
                 break;
@@ -108,7 +108,7 @@ public class DefaultAliasModel {
                 if (factoryId.equals(commandFactory.getFactoryId())) {
                     removeMeConfig = commandFactory;
                     iterator.remove();
-                    NutsWorkspaceConfigManagerExt.of(workspace.config()).getModel()
+                    NutsWorkspaceConfigManagerExt.of(session.getWorkspace().config()).getModel()
                             .fireConfigurationChanged("command", session, ConfigEventType.MAIN);
                     break;
                 }
@@ -143,10 +143,11 @@ public class DefaultAliasModel {
         defaultCommandFactory.installCommand(command, session);
         if (session.isPlainTrace()) {
             PrintStream out = CoreIOUtils.resolveOut(session);
+            NutsFormatManager formats = session.getWorkspace().formats();
             if (forced) {
-                out.printf("[%s] command alias %s%n", "re-install", workspace.formats().text().forStyled(command.getName(), NutsTextStyle.primary(3)));
+                out.printf("[%s] command alias %s%n", "re-install", formats.text().forStyled(command.getName(), NutsTextStyle.primary(3)));
             } else {
-                out.printf("[%s] command alias %s%n", "install", workspace.formats().text().forStyled(command.getName(), NutsTextStyle.primary(3)));
+                out.printf("[%s] command alias %s%n", "install", formats.text().forStyled(command.getName(), NutsTextStyle.primary(3)));
             }
         }
         return forced;
@@ -165,7 +166,7 @@ public class DefaultAliasModel {
         defaultCommandFactory.uninstallCommand(name, session);
         if (session.isPlainTrace()) {
             PrintStream out = CoreIOUtils.resolveOut(session);
-            out.printf("[%s] command alias %s%n", "uninstall", workspace.formats().text().forStyled(name, NutsTextStyle.primary(3)));
+            out.printf("[%s] command alias %s%n", "uninstall", session.getWorkspace().formats().text().forStyled(name, NutsTextStyle.primary(3)));
         }
         return true;
     }
@@ -243,7 +244,7 @@ public class DefaultAliasModel {
     public NutsWorkspaceCommandAlias find(String name, NutsId forId, NutsId forOwner, NutsSession session) {
         NutsWorkspaceCommandAlias a = find(name, session);
         if (a != null && a.getCommand() != null && a.getCommand().length > 0) {
-            NutsId i = workspace.id().parser().parse(a.getCommand()[0]);
+            NutsId i = session.getWorkspace().id().parser().parse(a.getCommand()[0]);
             if (i != null
                     && (forId == null
                     || i.getShortName().equals(forId.getArtifactId())

@@ -947,6 +947,7 @@ public final class NutsBootWorkspace {
             urlPath += path;
             long start = System.currentTimeMillis();
             try {
+                LOG.log(Level.CONFIG, NutsLogVerb.SUCCESS, "loading  {0}", new Object[]{urlPath});
                 PrivateNutsUtils.copy(new URL(urlPath), to, LOG);
                 long end = System.currentTimeMillis();
                 LOG.log(Level.CONFIG, NutsLogVerb.SUCCESS, "loaded   {0} ({1}ms)", new Object[]{urlPath, end - start});

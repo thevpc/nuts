@@ -773,7 +773,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 }
                 default: {
                     oldDef = search().setSession(CoreNutsUtils.silent(session)).addId(def.getId().getShortNameId())
-                            .setInstallStatus(this.filters().installStatus().byDeployed(true))
+                            .setInstallStatus(this.filters().setSession(session).installStatus().byDeployed(true))
                             .setFailFast(false).getResultDefinitions().first();
                     break;
                 }

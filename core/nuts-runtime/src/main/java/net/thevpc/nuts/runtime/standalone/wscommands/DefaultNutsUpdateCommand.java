@@ -300,7 +300,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         NutsId[] lockedIds = this.getLockedIds();
         if (lockedIds.length > 0) {
             for (NutsId d : new HashSet<>(Arrays.asList(lockedIds))) {
-                NutsDependency dd = getWorkspace().dependency().parser().parseDependency(d.toString());
+                NutsDependency dd = ws.dependency().parser().parseDependency(d.toString());
                 if (regularUpdates.containsKey(dd.getSimpleName())) {
                     NutsUpdateResult updated = regularUpdates.get(dd.getSimpleName());
                     //FIX ME
@@ -346,7 +346,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                     widthCol1 = Math.max(widthCol1, update.getAvailable().getId().getShortName().length());
                     widthCol2 = Math.max(widthCol2, update.getLocal().getId().getVersion().toString().length());
                 }
-                NutsTextManager factory = getWorkspace().formats().text();
+                NutsTextManager factory = ws.formats().text();
                 for (NutsUpdateResult update : updates) {
                     if (update.isUpdateVersionAvailable()) {
                         out.printf("%s  : %s => %s%n",

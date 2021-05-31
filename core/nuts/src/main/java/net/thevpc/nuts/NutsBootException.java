@@ -104,4 +104,8 @@ public class NutsBootException extends RuntimeException {
         super(message, cause);
         this.exitCode=exitCode;
     }
+
+    public int getExitCode() {
+        return exitCode;
+    }
 }

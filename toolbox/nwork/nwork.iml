@@ -11,10 +11,6 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="vpc-common-text-source" />
-    <orderEntry type="module" module-name="vpc-common-classpath" />
-    <orderEntry type="module" module-name="vpc-common-text-source-log" />
-    <orderEntry type="module" module-name="vpc-common-diff-jar" />
     <orderEntry type="module" module-name="nuts" />
     <orderEntry type="module" module-name="thevpc-common-mvn" />
     <orderEntry type="module" module-name="thevpc-common-diff-jar" />
