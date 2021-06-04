@@ -23,7 +23,7 @@ public class NutsIndexSubscriberListManager {
         this.name = name.trim();
         Path file = getConfigFile(session);
         if (Files.exists(file)) {
-            this.config = this.defaultWorkspace.formats().element().setContentType(NutsContentType.JSON).parse(file, NutsIndexSubscriberListConfig.class);
+            this.config = this.defaultWorkspace.elem().setContentType(NutsContentType.JSON).parse(file, NutsIndexSubscriberListConfig.class);
             if (this.config.getSubscribers() != null) {
                 for (NutsIndexSubscriber var : this.config.getSubscribers()) {
                     this.subscribers.put(var.getUuid(), var);
@@ -102,7 +102,7 @@ public class NutsIndexSubscriberListManager {
                 ? null
                 : new ArrayList<>(this.subscribers.values()));
         Path file = getConfigFile(session);
-        this.defaultWorkspace.formats().element().setContentType(NutsContentType.JSON).setValue(this.config).print(file);
+        this.defaultWorkspace.elem().setContentType(NutsContentType.JSON).setValue(this.config).print(file);
     }
 
     public boolean unsubscribe(String repositoryUuid, NutsWorkspaceLocation workspaceLocation, NutsSession session) {

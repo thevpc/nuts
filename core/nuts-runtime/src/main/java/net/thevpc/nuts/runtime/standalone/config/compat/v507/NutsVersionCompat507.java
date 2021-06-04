@@ -21,7 +21,7 @@ public class NutsVersionCompat507 extends AbstractNutsVersionCompat {
 
     public NutsWorkspaceConfigBoot parseConfig507(byte[] bytes, NutsSession session) {
         NutsWorkspace ws = session.getWorkspace();
-        return bytes==null?null:ws.formats().element().setSession(session).setContentType(NutsContentType.JSON).parse(bytes, NutsWorkspaceConfigBoot.class);
+        return bytes==null?null:ws.elem().setSession(session).setContentType(NutsContentType.JSON).parse(bytes, NutsWorkspaceConfigBoot.class);
     }
 
     @Override
@@ -30,7 +30,7 @@ public class NutsVersionCompat507 extends AbstractNutsVersionCompat {
         Path path = Paths.get(ws.locations().getStoreLocation(ws.getApiId(), NutsStoreLocation.CONFIG))
                 .resolve(NutsConstants.Files.WORKSPACE_API_CONFIG_FILE_NAME);
         byte[] bytes = CompatUtils.readAllBytes(path);
-        NutsWorkspaceConfigApi c = bytes==null?null:ws.formats().element()
+        NutsWorkspaceConfigApi c = bytes==null?null:ws.elem()
                 .setSession(session)
                 .setContentType(NutsContentType.JSON).parse(bytes, NutsWorkspaceConfigApi.class);
         if (c != null) {
@@ -45,7 +45,7 @@ public class NutsVersionCompat507 extends AbstractNutsVersionCompat {
         Path path = Paths.get(ws.locations().getStoreLocation(ws.getRuntimeId(), NutsStoreLocation.CONFIG))
                 .resolve(NutsConstants.Files.WORKSPACE_RUNTIME_CONFIG_FILE_NAME);
         byte[] bytes = CompatUtils.readAllBytes(path);
-        NutsWorkspaceConfigRuntime c = bytes==null?null:ws.formats().element()
+        NutsWorkspaceConfigRuntime c = bytes==null?null:ws.elem()
                 .setSession(session)
                 .setContentType(NutsContentType.JSON).parse(bytes, NutsWorkspaceConfigRuntime.class);
 //        if (c != null) {
@@ -61,7 +61,7 @@ public class NutsVersionCompat507 extends AbstractNutsVersionCompat {
                 .builder().setVersion(NutsConstants.Versions.RELEASE).build(), NutsStoreLocation.CONFIG))
                 .resolve(CoreNutsConstants.Files.WORKSPACE_SECURITY_CONFIG_FILE_NAME);
         byte[] bytes = CompatUtils.readAllBytes(path);
-        NutsWorkspaceConfigSecurity c = bytes==null?null:ws.formats().element()
+        NutsWorkspaceConfigSecurity c = bytes==null?null:ws.elem()
                 .setSession(session)
                 .setContentType(NutsContentType.JSON).parse(bytes, NutsWorkspaceConfigSecurity.class);
         return c;
@@ -76,7 +76,7 @@ public class NutsVersionCompat507 extends AbstractNutsVersionCompat {
                 , NutsStoreLocation.CONFIG))
                 .resolve(CoreNutsConstants.Files.WORKSPACE_MAIN_CONFIG_FILE_NAME);
         byte[] bytes = CompatUtils.readAllBytes(path);
-        NutsWorkspaceConfigMain c = bytes==null?null:ws.formats().element()
+        NutsWorkspaceConfigMain c = bytes==null?null:ws.elem()
                 .setSession(session)
                 .setContentType(NutsContentType.JSON).parse(bytes, NutsWorkspaceConfigMain.class);
         return c;

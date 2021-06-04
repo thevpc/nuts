@@ -142,7 +142,7 @@ public class DefaultNutsWorkspaceExtensionModel {
             if (u != null) {
                 NutsExtensionInformation[] s = new NutsExtensionInformation[0];
                 try (Reader rr = new InputStreamReader(NutsWorkspaceUtils.of(session).openURL(u))) {
-                    s = ws.formats().element().setContentType(NutsContentType.JSON).parse(rr, DefaultNutsExtensionInformation[].class);
+                    s = ws.elem().setContentType(NutsContentType.JSON).parse(rr, DefaultNutsExtensionInformation[].class);
                 } catch (IOException ex) {
                     _LOGOP(session).level(Level.SEVERE).error(ex)
                             .log("failed to parse NutsExtensionInformation from {0} : {1}", u, ex);

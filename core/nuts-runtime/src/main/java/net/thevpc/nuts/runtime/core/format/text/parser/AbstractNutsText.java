@@ -28,7 +28,7 @@ public abstract class AbstractNutsText implements NutsText {
 
     @Override
     public NutsString immutable() {
-        return session.getWorkspace().formats().text().builder().append(this).immutable();
+        return session.getWorkspace().text().builder().append(this).immutable();
     }
 
     @Override

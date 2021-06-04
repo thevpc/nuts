@@ -103,7 +103,7 @@ public class BackupNAdminSubCommand extends AbstractNAdminSubCommand {
                 NutsObjectElement[] nutsWorkspaceConfigRef = new NutsObjectElement[1];
                 ZipUtils.visitZipFile(new File(file), (PathFilter) "/nuts-workspace.json"::equals,
                         (path, inputStream) -> {
-                            NutsObjectElement e = context.getWorkspace().formats().element().setContentType(NutsContentType.JSON)
+                            NutsObjectElement e = context.getWorkspace().elem().setContentType(NutsContentType.JSON)
                                     .parse(inputStream, NutsObjectElement.class).asObject();
                             nutsWorkspaceConfigRef[0] = e;
                             return false;
@@ -113,7 +113,7 @@ public class BackupNAdminSubCommand extends AbstractNAdminSubCommand {
                     commandLine.required("not a valid file : " + file);
                 }
                 if (ws == null || ws.isEmpty()) {
-                    NutsElementFormat prv = context.getWorkspace().formats().element().setSession(context.getSession());
+                    NutsElementFormat prv = context.getWorkspace().elem().setSession(context.getSession());
                     ws = nutsWorkspaceConfigRef[0].get(prv.forString("name")).asString();
                 }
                 if (ws == null || ws.isEmpty()) {

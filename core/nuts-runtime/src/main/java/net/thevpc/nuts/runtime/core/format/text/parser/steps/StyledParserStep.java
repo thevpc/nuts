@@ -192,7 +192,7 @@ public class StyledParserStep extends ParserStep {
 
     @Override
     public NutsText toText() {
-        DefaultNutsTextManager factory0 = (DefaultNutsTextManager) ws.formats().text();
+        DefaultNutsTextManager factory0 = (DefaultNutsTextManager) ws.text();
         String start = this.start.toString();
         String end = this.end.toString();
         List<NutsTextStyle> all = new ArrayList<>();
@@ -205,7 +205,7 @@ public class StyledParserStep extends ParserStep {
                 parsedAt = true;
                 NutsTextStyles parsedStyles = parseHelper.parse(atStr.toString());
                 if (parsedStyles == null) {
-                    atInvalid = ws.formats().text().forPlain(atStr.toString());
+                    atInvalid = ws.text().forPlain(atStr.toString());
                 } else {
                     for (NutsTextStyle parsedStyle : parsedStyles) {
                         atVals.add(parsedStyle);
@@ -232,10 +232,10 @@ public class StyledParserStep extends ParserStep {
             for (ParserStep a : children) {
                 allChildren.add(a.toText());
             }
-            child = ws.formats().text().forList(allChildren.toArray(new NutsText[0]));
+            child = ws.text().forList(allChildren.toArray(new NutsText[0]));
         }
         if (atInvalid != null) {
-            child = ws.formats().text().forList(atInvalid, child);
+            child = ws.text().forList(atInvalid, child);
         }
         if (all.isEmpty()) {
             all.add(NutsTextStyle.primary(1));

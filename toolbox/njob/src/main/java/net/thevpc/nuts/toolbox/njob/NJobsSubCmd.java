@@ -91,7 +91,7 @@ public class NJobsSubCmd {
             service.jobs().addJob(t);
             if (context.getSession().isPlainTrace()) {
                 context.getSession().out().printf("job %s (%s) added.\n",
-                        context.getWorkspace().formats().text().forStyled(t.getId(), NutsTextStyle.primary(5)),
+                        context.getWorkspace().text().forStyled(t.getId(), NutsTextStyle.primary(5)),
                         t.getName()
                 );
             }
@@ -200,13 +200,13 @@ public class NJobsSubCmd {
                     c.accept(job);
                 }
             }
-            NutsFormatManager text = context.getWorkspace().formats();
+            NutsTextManager text = context.getWorkspace().text();
             for (NJob job : new LinkedHashSet<>(jobs)) {
                 service.jobs().updateJob(job);
                 if (context.getSession().isPlainTrace()) {
                     context.getSession().out().printf("job %s (%s) updated.\n",
-                            text.text().forStyled(job.getId(), NutsTextStyle.primary(5)),
-                            text.text().forStyled(job.getName(), NutsTextStyle.primary(1))
+                            text.forStyled(job.getId(), NutsTextStyle.primary(5)),
+                            text.forStyled(job.getName(), NutsTextStyle.primary(1))
                     );
                 }
             }
@@ -250,7 +250,7 @@ public class NJobsSubCmd {
     }
 
     private void runJobRemove(NutsCommandLine cmd) {
-        NutsFormatManager text = context.getWorkspace().formats();
+        NutsTextManager text = context.getWorkspace().text();
         while (cmd.hasNext()) {
             NutsArgument a = cmd.next();
             NJob t = findJob(a.toString(), cmd);
@@ -258,13 +258,13 @@ public class NJobsSubCmd {
                 if (service.jobs().removeJob(t.getId())) {
                     if (context.getSession().isPlainTrace()) {
                         context.getSession().out().printf("job %s removed.\n",
-                                text.text().forStyled(a.toString(), NutsTextStyle.primary(5))
+                                text.forStyled(a.toString(), NutsTextStyle.primary(5))
                         );
                     }
                 } else {
                     context.getSession().out().printf("job %s %s.\n",
-                            text.text().forStyled(a.toString(), NutsTextStyle.primary(5)),
-                            text.text().forStyled("not found", NutsTextStyle.error())
+                            text.forStyled(a.toString(), NutsTextStyle.primary(5)),
+                            text.forStyled("not found", NutsTextStyle.error())
                     );
                 }
             }
@@ -431,7 +431,7 @@ public class NJobsSubCmd {
                 List<NJob> lastResults = new ArrayList<>();
                 int[] index = new int[1];
                 r.forEach(x -> {
-                    NutsString durationString = ws.formats().text().forStyled(String.valueOf(timeUnit0 == null ? x.getDuration() : x.getDuration().toUnit(timeUnit0, hoursPerDay)), NutsTextStyle.keyword());
+                    NutsString durationString = ws.text().forStyled(String.valueOf(timeUnit0 == null ? x.getDuration() : x.getDuration().toUnit(timeUnit0, hoursPerDay)), NutsTextStyle.keyword());
                     index[0]++;
                     lastResults.add(x);
                     m.newRow().addCells(
@@ -445,7 +445,7 @@ public class NJobsSubCmd {
 
                             } : new Object[]{
                                 parent.createHashId(index[0], -1),
-                                ws.formats().text().forStyled(x.getId(), NutsTextStyle.pale()),
+                                ws.text().forStyled(x.getId(), NutsTextStyle.pale()),
                                 parent.getFormattedDate(x.getStartTime()),
                                 durationString,
                                 parent.getFormattedProject(x.getProject() == null ? "*" : x.getProject()),

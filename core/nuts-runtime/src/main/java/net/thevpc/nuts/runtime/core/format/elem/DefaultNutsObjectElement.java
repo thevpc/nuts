@@ -1,7 +1,8 @@
 package net.thevpc.nuts.runtime.core.format.elem;
 
 import java.time.Instant;
-import net.thevpc.nuts.NutsElement;
+
+import net.thevpc.nuts.*;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -10,18 +11,14 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import net.thevpc.nuts.NutsArrayElement;
-import net.thevpc.nuts.NutsElementEntry;
-import net.thevpc.nuts.NutsObjectElement;
-import net.thevpc.nuts.NutsWorkspace;
 
 public class DefaultNutsObjectElement extends AbstractNutsObjectElement {
 
     private Map<NutsElement, NutsElement> values = new LinkedHashMap<>();
-    private NutsWorkspace ws;
+    private NutsSession session;
 
-    public DefaultNutsObjectElement(Map<NutsElement, NutsElement> values, NutsWorkspace ws) {
-        this.ws = ws;
+    public DefaultNutsObjectElement(Map<NutsElement, NutsElement> values, NutsSession session) {
+        this.session = session;
         if (values != null) {
             for (Map.Entry<NutsElement, NutsElement> e : values.entrySet()) {
                 if (e.getKey() != null && e.getValue() != null) {
@@ -195,7 +192,7 @@ public class DefaultNutsObjectElement extends AbstractNutsObjectElement {
 
     @Override
     public NutsElement get(String s) {
-        DefaultNutsElementFormat element = (DefaultNutsElementFormat)this.ws.formats().element();
+        DefaultNutsElementFormat element = (DefaultNutsElementFormat)this.session.getWorkspace().elem();
         return values.get(element.forString(s));//no need for session
     }
 

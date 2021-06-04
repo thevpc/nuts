@@ -90,6 +90,49 @@ public final class NutsTerminalCommand {
         this(name, "");
     }
 
+    public static NutsTerminalCommand of(String name) {
+        return of(name,"");
+    }
+
+    public static NutsTerminalCommand of(String name, String args) {
+        if(args.trim().isEmpty()){
+            switch (name){
+                case Ids.LATER_RESET_LINE: return LATER_RESET_LINE;
+                case Ids.MOVE_LINE_START: return MOVE_LINE_START;
+                case Ids.CLEAR_SCREEN: return CLEAR_SCREEN;
+                case Ids.CLEAR_SCREEN_TO_CURSOR: return CLEAR_SCREEN_TO_CURSOR;
+                case Ids.CLEAR_SCREEN_FROM_CURSOR: return CLEAR_SCREEN_FROM_CURSOR;
+                case Ids.CLEAR_LINE: return CLEAR_LINE;
+                case Ids.CLEAR_LINE_TO_CURSOR: return CLEAR_LINE_TO_CURSOR;
+                case Ids.CLEAR_LINE_FROM_CURSOR: return CLEAR_LINE_FROM_CURSOR;
+                case Ids.MOVE_UP: return MOVE_UP;
+                case Ids.MOVE_DOWN: return MOVE_DOWN;
+                case Ids.MOVE_LEFT: return MOVE_LEFT;
+                case Ids.MOVE_RIGHT: return MOVE_RIGHT;
+            }
+        }
+        // if no arg command still return default!
+        switch (name){
+            case Ids.LATER_RESET_LINE:
+                return LATER_RESET_LINE;
+            case Ids.MOVE_LINE_START:
+                return MOVE_LINE_START;
+            case Ids.CLEAR_SCREEN:
+                return CLEAR_SCREEN;
+            case Ids.CLEAR_SCREEN_TO_CURSOR:
+                return CLEAR_SCREEN_TO_CURSOR;
+            case Ids.CLEAR_SCREEN_FROM_CURSOR:
+                return CLEAR_SCREEN_FROM_CURSOR;
+            case Ids.CLEAR_LINE:
+                return CLEAR_LINE;
+            case Ids.CLEAR_LINE_TO_CURSOR:
+                return CLEAR_LINE_TO_CURSOR;
+            case Ids.CLEAR_LINE_FROM_CURSOR:
+                return CLEAR_LINE_FROM_CURSOR;
+        }
+
+        return new NutsTerminalCommand(name,args);
+    }
     public NutsTerminalCommand(String name, String args) {
         this.name = name;
         this.args = args;

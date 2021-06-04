@@ -199,7 +199,7 @@ public class Test06_UpateTest {
         String ss = uws.exec().userCmd().addCommand(b.createProcessCommandLine()).grabOutputString().run().getOutputString();
         TestUtils.println("================");
         TestUtils.println(ss);
-        Map m = uws.formats().element().setContentType(NutsContentType.JSON).parse(ss, Map.class);
+        Map m = uws.elem().setContentType(NutsContentType.JSON).parse(ss, Map.class);
         Assertions.assertEquals(newApiVersion, m.get("nuts-api-version"));
         Assertions.assertEquals(newRuntimeVersion, m.get("nuts-runtime-version"));
     }

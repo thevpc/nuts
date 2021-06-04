@@ -12,7 +12,7 @@ import net.thevpc.nuts.NutsText;
 public class StringReaderExtUtils {
 
     public static NutsText[] readSpaces(NutsSession session, StringReaderExt ar) {
-        NutsTextManager factory = session.getWorkspace().formats().text();
+        NutsTextManager factory = session.getWorkspace().text();
         StringBuilder sb = new StringBuilder();
         while (ar.hasNext() && ar.peekChar() <= 32) {
             sb.append(ar.nextChar());
@@ -23,7 +23,7 @@ public class StringReaderExtUtils {
     }
 
     public static NutsText[] readSlashSlashComments(NutsSession ws, StringReaderExt ar) {
-        NutsTextManager factory = ws.getWorkspace().formats().text();
+        NutsTextManager factory = ws.getWorkspace().text();
         StringBuilder sb = new StringBuilder();
         if (!ar.peekChars("//")) {
             return null;
@@ -52,7 +52,7 @@ public class StringReaderExtUtils {
     }
 
     public static NutsText[] readSlashStarComments(NutsSession ws, StringReaderExt ar) {
-        NutsTextManager factory = ws.getWorkspace().formats().text();
+        NutsTextManager factory = ws.getWorkspace().text();
         StringBuilder sb = new StringBuilder();
         if (!ar.peekChars("/*")) {
             return null;
@@ -81,7 +81,7 @@ public class StringReaderExtUtils {
     }
 
     public static NutsText[] readJSDoubleQuotesString(NutsSession ws, StringReaderExt ar) {
-        NutsTextManager factory = ws.getWorkspace().formats().text();
+        NutsTextManager factory = ws.getWorkspace().text();
         List<NutsText> all = new ArrayList<>();
         boolean inLoop = true;
         StringBuilder sb = new StringBuilder();
@@ -131,7 +131,7 @@ public class StringReaderExtUtils {
     }
 
     public static NutsText[] readJSSimpleQuotes(NutsSession ws, StringReaderExt ar) {
-        NutsTextManager factory = ws.getWorkspace().formats().text();
+        NutsTextManager factory = ws.getWorkspace().text();
         List<NutsText> all = new ArrayList<>();
         boolean inLoop = true;
         StringBuilder sb = new StringBuilder();
@@ -181,7 +181,7 @@ public class StringReaderExtUtils {
     }
 
     public static NutsText[] readJSIdentifier(NutsSession ws, StringReaderExt ar) {
-        NutsTextManager factory = ws.getWorkspace().formats().text();
+        NutsTextManager factory = ws.getWorkspace().text();
         List<NutsText> all = new ArrayList<>();
         StringBuilder sb = new StringBuilder();
         if (!ar.hasNext() || !Character.isJavaIdentifierStart(ar.peekChar())) {
@@ -201,7 +201,7 @@ public class StringReaderExtUtils {
     }
 
     public static NutsText[] readNumber(NutsSession ws, StringReaderExt ar) {
-        NutsTextManager factory = ws.getWorkspace().formats().text();
+        NutsTextManager factory = ws.getWorkspace().text();
         boolean nbrVisited = false;
         boolean minusVisited = false;
         boolean EminusVisited = false;

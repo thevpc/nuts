@@ -98,7 +98,7 @@ public class DefaultNutsUninstallCommand extends AbstractNutsUninstallCommand {
                 wcfg.getModel().fireConfigurationChanged("extensions", session, ConfigEventType.BOOT);
             }
             if (getSession().isPlainTrace()) {
-                out.printf("%s uninstalled %s%n", id, ws.formats().text().forStyled(
+                out.printf("%s uninstalled %s%n", id, ws.text().forStyled(
                         "successfully", NutsTextStyle.success()
                 ));
             }

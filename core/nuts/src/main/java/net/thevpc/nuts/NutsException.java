@@ -60,9 +60,9 @@ public class NutsException extends RuntimeException {
      * retrieval by the {@link #getMessage()} method.
      */
     public NutsException(NutsSession session, NutsString message) {
-        super(message == null ? null : session.getWorkspace().formats().text().toText(message).filteredText());
+        super(message == null ? null : session.getWorkspace().text().toText(message).filteredText());
         this.session = session;
-        this.formattedMessage = message == null ? session.getWorkspace().formats().text().forBlank() : message;
+        this.formattedMessage = message == null ? session.getWorkspace().text().forBlank() : message;
     }
 
     /**
@@ -75,9 +75,9 @@ public class NutsException extends RuntimeException {
      * retrieval by the {@link #getMessage()} method.
      */
     public NutsException(NutsSession session, NutsMessage message) {
-        super(message == null ? null : session.getWorkspace().formats().text().toText(message).filteredText());
+        super(message == null ? null : session.getWorkspace().text().toText(message).filteredText());
         this.session = session;
-        this.formattedMessage = session.getWorkspace().formats().text().toText(message);
+        this.formattedMessage = session.getWorkspace().text().toText(message);
     }
 
     /**
@@ -92,7 +92,7 @@ public class NutsException extends RuntimeException {
     public NutsException(NutsSession session, String message) {
         super(message);
         this.session = session;
-        this.formattedMessage = session.getWorkspace().formats().text().toText(message);
+        this.formattedMessage = session.getWorkspace().text().toText(message);
     }
 
     /**
@@ -112,7 +112,7 @@ public class NutsException extends RuntimeException {
     public NutsException(NutsSession session, NutsString message, Throwable cause) {
         super(message == null ? null : message.filteredText(), cause);
         this.session = session;
-        this.formattedMessage = message == null ? session.getWorkspace().formats().text().forBlank() : message;
+        this.formattedMessage = message == null ? session.getWorkspace().text().forBlank() : message;
     }
 
     /**
@@ -130,9 +130,9 @@ public class NutsException extends RuntimeException {
      * @param session the workspace of this Nuts Exception
      */
     public NutsException(NutsSession session, NutsMessage message, Throwable cause) {
-        super(message == null ? null : session.getWorkspace().formats().text().toText(message).filteredText(), cause);
+        super(message == null ? null : session.getWorkspace().text().toText(message).filteredText(), cause);
         this.session = session;
-        this.formattedMessage = session.getWorkspace().formats().text().toText(message);
+        this.formattedMessage = session.getWorkspace().text().toText(message);
     }
 
     /**
@@ -152,7 +152,7 @@ public class NutsException extends RuntimeException {
     public NutsException(NutsSession session, String message, Throwable cause) {
         super(message, cause);
         this.session = session;
-        this.formattedMessage = session.getWorkspace().formats().text().toText(message);
+        this.formattedMessage = session.getWorkspace().text().toText(message);
     }
 
     /**
@@ -170,7 +170,7 @@ public class NutsException extends RuntimeException {
     public NutsException(NutsSession session, Throwable cause) {
         super(cause);
         this.session = session;
-        this.formattedMessage = session.getWorkspace().formats().text().forBlank();
+        this.formattedMessage = session.getWorkspace().text().forBlank();
     }
 
     /**
@@ -188,7 +188,7 @@ public class NutsException extends RuntimeException {
     public NutsException(NutsSession session, IOException cause) {
         super(cause);
         this.session = session;
-        this.formattedMessage = session.getWorkspace().formats().text().forBlank();
+        this.formattedMessage = session.getWorkspace().text().forBlank();
     }
 
     /**
@@ -209,7 +209,7 @@ public class NutsException extends RuntimeException {
         super(message == null ? null : message.filteredText(),
                 cause, enableSuppression, writableStackTrace);
         this.session = session;
-        this.formattedMessage = message == null ? session.getWorkspace().formats().text().forBlank() : message;
+        this.formattedMessage = message == null ? session.getWorkspace().text().forBlank() : message;
     }
 
     /**
@@ -227,10 +227,10 @@ public class NutsException extends RuntimeException {
      * @param session the workspace session of this Nuts Exception
      */
     public NutsException(NutsSession session, NutsMessage message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message == null ? null : session.getWorkspace().formats().text().toText(message).filteredText(),
+        super(message == null ? null : session.getWorkspace().text().toText(message).filteredText(),
                 cause, enableSuppression, writableStackTrace);
         this.session = session;
-        this.formattedMessage = session.getWorkspace().formats().text().toText(message);
+        this.formattedMessage = session.getWorkspace().text().toText(message);
     }
 
     /**
@@ -250,7 +250,7 @@ public class NutsException extends RuntimeException {
     public NutsException(NutsSession session, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
         this.session = session;
-        this.formattedMessage = session.getWorkspace().formats().text().toText(message);
+        this.formattedMessage = session.getWorkspace().text().toText(message);
     }
 
     /**

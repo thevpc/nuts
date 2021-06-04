@@ -106,7 +106,7 @@ public class DefaultNutsObjectFormat extends NutsObjectFormatBase {
         switch (getOutputFormat()) {
             case XML:
             case JSON:{
-                return ws.formats().element().setContentType(getOutputFormat());
+                return ws.elem().setContentType(getOutputFormat());
             }
             case PROPS: {
                 return ws.formats().props();
@@ -130,7 +130,7 @@ public class DefaultNutsObjectFormat extends NutsObjectFormatBase {
     }
 
     @Override
-    public String format() {
+    public NutsString format() {
         return getBase().format();
     }
 

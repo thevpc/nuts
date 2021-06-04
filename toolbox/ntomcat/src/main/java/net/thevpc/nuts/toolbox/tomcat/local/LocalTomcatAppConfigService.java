@@ -80,15 +80,15 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
         return null;
     }
     public NutsString getFormattedPath(String str) {
-        return context.getWorkspace().formats()
+        return context.getWorkspace()
                 .text().forStyled(str,NutsTextStyle.path());
     }
     public NutsString getFormattedVersion(String str) {
-        return context.getWorkspace().formats()
+        return context.getWorkspace()
                 .text().forStyled(str,NutsTextStyle.version());
     }
     public NutsString getFormattedPrefix(String str) {
-        return context.getWorkspace().formats()
+        return context.getWorkspace()
                 .text().builder()
                 .append("[")
                 .append(str,NutsTextStyle.primary(5))
@@ -223,7 +223,7 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
         result.put("deployfolder", getDeployFolder());
         result.put("runningfolder", getRunningFile());
         result.put("versionFolder", getVersionFile());
-        context.getWorkspace().formats().element().setContentType(NutsContentType.JSON).setValue(result).print(out);
+        context.getWorkspace().elem().setContentType(NutsContentType.JSON).setValue(result).print(out);
         return this;
     }
 

@@ -5,16 +5,13 @@
  */
 package net.thevpc.nuts.runtime.standalone.io;
 
-import net.thevpc.nuts.NutsProgressEvent;
-import net.thevpc.nuts.NutsProgressMonitor;
-import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.common.BytesSizeFormat;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.core.format.text.FPrintCommands;
 
 import java.io.PrintStream;
 import java.text.DecimalFormat;
-import net.thevpc.nuts.NutsFormatManager;
 
 /**
  * @author thevpc
@@ -65,14 +62,14 @@ public class DefaultNutsCountProgressMonitor implements NutsProgressMonitor/*, N
         return true;
     }
 
-    private String escapeText(NutsFormatManager formats ,String str) {
-        return formats.text().builder().append(str).toString();
+    private String escapeText(NutsTextManager text , String str) {
+        return text.builder().append(str).toString();
     }
 
     public boolean onProgress0(NutsProgressEvent event, boolean end) {
         double partialSeconds = event.getPartialMillis() / 1000.0;
         if (event.getCurrentValue() == 0 || partialSeconds > 0.5 || event.getCurrentValue() == event.getMaxValue()) {
-            NutsFormatManager terminalFormat = event.getSession().getWorkspace().formats();
+            NutsTextManager text = event.getSession().getWorkspace().text();
             FPrintCommands.runMoveLineStart(out);
             double globalSeconds = event.getTimeMillis() / 1000.0;
             long globalSpeed = globalSeconds == 0 ? 0 : (long) (event.getCurrentValue() / globalSeconds);
@@ -94,23 +91,23 @@ public class DefaultNutsCountProgressMonitor implements NutsProgressMonitor/*, N
             formattedLine.append("]");
             BytesSizeFormat mf = mf(event);
             DecimalFormat df = df(event);
-            formattedLine.append(" ").append(escapeText(terminalFormat,String.format("%6s", df.format(percent)))).append("% ");
-            formattedLine.append(" ##:config:").append(escapeText(terminalFormat,mf.format(partialSpeed))).append("/s]]");
+            formattedLine.append(" ").append(escapeText(text,String.format("%6s", df.format(percent)))).append("% ");
+            formattedLine.append(" ##:config:").append(escapeText(text,mf.format(partialSpeed))).append("/s]]");
             if (event.getMaxValue() < 0) {
                 if (globalSpeed == 0) {
-                    formattedLine.append(escapeText(terminalFormat," ( -- )"));
+                    formattedLine.append(escapeText(text," ( -- )"));
                 } else {
-                    formattedLine.append(" (##:info:").append(escapeText(terminalFormat,mf.format(globalSpeed))).append("##)");
+                    formattedLine.append(" (##:info:").append(escapeText(text,mf.format(globalSpeed))).append("##)");
                 }
             } else {
-                formattedLine.append(" (##:warn:").append(escapeText(terminalFormat,mf.format(event.getMaxValue()))).append("##)");
+                formattedLine.append(" (##:warn:").append(escapeText(text,mf.format(event.getMaxValue()))).append("##)");
             }
             if (event.getError() != null) {
                 formattedLine.append(" ```error ERROR``` ");
             }
-            formattedLine.append(" ").append(escapeText(terminalFormat,event.getMessage())).append(" ");
+            formattedLine.append(" ").append(escapeText(text,event.getMessage())).append(" ");
             String ff = formattedLine.toString();
-            int length = terminalFormat.text().builder().append(ff).textLength();
+            int length = text.builder().append(ff).textLength();
             if (length < minLength) {
                 CoreStringUtils.fillString(' ', minLength - length, formattedLine);
             } else {

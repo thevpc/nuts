@@ -24,25 +24,25 @@
 package net.thevpc.nuts.runtime.standalone.wscommands;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.bundles.iter.IteratorBuilder;
+import net.thevpc.nuts.runtime.bundles.iter.IteratorUtils;
+import net.thevpc.nuts.runtime.core.DefaultNutsClassLoader;
 import net.thevpc.nuts.runtime.core.commands.ws.DefaultNutsQueryBaseOptions;
-import net.thevpc.nuts.runtime.standalone.ext.DefaultNutsWorkspaceExtensionManager;
 import net.thevpc.nuts.runtime.core.format.NutsDisplayProperty;
 import net.thevpc.nuts.runtime.core.format.NutsFetchDisplayOptions;
 import net.thevpc.nuts.runtime.core.format.NutsIdFormatHelper;
+import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+import net.thevpc.nuts.runtime.standalone.ext.DefaultNutsWorkspaceExtensionManager;
+import net.thevpc.nuts.runtime.standalone.util.NutsClassLoaderNodeUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsCollectionResult;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.bundles.iter.IteratorBuilder;
 
 import java.io.File;
 import java.net.URL;
 import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
-import net.thevpc.nuts.runtime.bundles.iter.IteratorUtils;
-import net.thevpc.nuts.runtime.core.DefaultNutsClassLoader;
-import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
-import net.thevpc.nuts.runtime.standalone.util.NutsClassLoaderNodeUtils;
 
 /**
  * @author thevpc
@@ -57,7 +57,6 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     protected Comparator comparator;
     protected NutsDescriptorFilter descriptorFilter;
     protected NutsIdFilter idFilter;
-    protected NutsRepositoryFilter repositoryFilter;
     protected boolean latest = false;
     protected boolean distinct = false;
     protected boolean includeBasePackage = true;
@@ -383,12 +382,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
         return this.lockedIds.toArray(new NutsId[0]);
     }
 
-    @Override
-    public NutsSearchCommand setRepository(String filter) {
-        checkSession();
-        this.repositoryFilter = getSession().getWorkspace().repos().filter().byName(filter);
-        return this;
-    }
+
 
     @Override
     public NutsSearchCommand sort(Comparator comparator) {
@@ -417,7 +411,6 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
             this.scripts.addAll(Arrays.asList(o.getScripts()));
             this.packaging.clear();
             this.packaging.addAll(Arrays.asList(o.getPackaging()));
-            this.repositoryFilter = o.getRepositoryFilter();
             this.printResult = o.isPrintResult();
             this.installStatus = other.getInstallStatus();
         }
@@ -446,16 +439,6 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
         return this;
     }
 
-    @Override
-    public NutsRepositoryFilter getRepositoryFilter() {
-        return repositoryFilter;
-    }
-
-    @Override
-    public NutsSearchCommand setRepositoryFilter(NutsRepositoryFilter filter) {
-        this.repositoryFilter = filter;
-        return this;
-    }
 
     //    public NutsQuery setDependencyFilter(TypedObject filter) {
 //        if (filter == null) {
@@ -519,7 +502,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
         return comparator;
     }
 
-//    @Override
+    //    @Override
 //    public String toString() {
 //        StringBuilder sb = new StringBuilder("NutsSearch{");
 //        sb.append(getScope());
@@ -588,15 +571,31 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
         return this;
     }
 
+
     @Override
-    public NutsFetchCommand toFetch() {
-        checkSession();
-        NutsFetchCommand t = new DefaultNutsFetchCommand(ws).copyFromDefaultNutsQueryBaseOptions(this)
-                .setSession(getSession());
-        if (getDisplayOptions().isRequireDefinition()) {
-            t.setContent(true);
-        }
-        return t;
+    public NutsResultList<NutsId> getResultIds() {
+        return buildCollectionResult(getResultIdIteratorBase(null));
+    }
+
+    @Override
+    public NutsResultList<NutsDependencies> getResultDependencies() {
+        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(true, isEffective()))
+                .map(x -> x.getDependencies())
+        );
+    }
+
+    @Override
+    public NutsResultList<NutsDependency> getResultInlineDependencies() {
+        return buildCollectionResult(
+                IteratorBuilder.of(getResultIdIteratorBase(true)).map(
+                                x -> x.toDependency(), "Id->Dependency")
+                        .build()
+        );
+    }
+
+    @Override
+    public NutsResultList<NutsDefinition> getResultDefinitions() {
+        return buildCollectionResult(getResultDefinitionIteratorBase(isContent(), isEffective()));
     }
 
     @Override
@@ -622,6 +621,27 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
         return cl;
     }
 
+    @Override
+    public String getResultNutsPath() {
+        return getResultIds().list().stream().map(NutsId::getLongName).collect(Collectors.joining(";"));
+    }
+
+    @Override
+    public String getResultClassPath() {
+        StringBuilder sb = new StringBuilder();
+        Iterator<NutsDefinition> it = getResultDefinitionIteratorBase(true, isEffective());
+        while (it.hasNext()) {
+            NutsDefinition nutsDefinition = it.next();
+            if (nutsDefinition.getPath() != null) {
+                if (sb.length() > 0) {
+                    sb.append(File.pathSeparator);
+                }
+                sb.append(nutsDefinition.getPath());
+            }
+        }
+        return sb.toString();
+    }
+
     /**
      * @return default version or null
      * @since 0.5.5
@@ -640,6 +660,121 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     public NutsSearchCommand setDefaultVersions(Boolean acceptDefaultVersion) {
         this.defaultVersions = acceptDefaultVersion;
         return this;
+    }
+
+    @Override
+    public NutsResultList<String> getResultPaths() {
+        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(true, isEffective()))
+                .map(x -> (x.getContent() == null || x.getContent().getPath() == null) ? null : x.getContent().getPath().toString())
+                .notBlank()
+        );
+    }
+
+    @Override
+    public NutsResultList<String> getResultPathNames() {
+        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(true, isEffective()))
+                .map(x -> (x.getContent() == null || x.getContent().getPath() == null) ? null : x.getContent().getPath().getFileName().toString())
+                .notBlank());
+    }
+
+    @Override
+    public NutsResultList<Instant> getResultInstallDates() {
+        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
+                .map(x -> (x.getInstallInformation() == null) ? null : x.getInstallInformation().getCreatedDate())
+                .notNull());
+    }
+
+    @Override
+    public NutsResultList<String> getResultInstallUsers() {
+        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
+                .map(x -> (x.getInstallInformation() == null) ? null : x.getInstallInformation().getInstallUser())
+                .notBlank());
+    }
+
+    @Override
+    public NutsResultList<String> getResultInstallFolders() {
+        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
+                .map(x -> (x.getInstallInformation() == null) ? null : x.getInstallInformation().getInstallFolder())
+                .notNull());
+    }
+
+    @Override
+    public NutsResultList<String> getResultStoreLocations(NutsStoreLocation location) {
+        checkSession();
+        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
+                .map(x -> getSession().getWorkspace().locations().getStoreLocation(x.getId(), location))
+                .notNull());
+    }
+
+    @Override
+    public NutsResultList<String[]> getResultStrings(String[] columns) {
+        NutsFetchDisplayOptions oo = new NutsFetchDisplayOptions(ws);
+        oo.addDisplay(columns);
+        oo.setIdFormat(getDisplayOptions().getIdFormat());
+        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
+                .map(x
+                        -> NutsIdFormatHelper.of(x, getSearchSession())
+                        .buildLong().getMultiColumnRowStrings(oo)
+                ));
+    }
+
+    @Override
+    public NutsResultList<String> getResultNames() {
+        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
+                .mapMulti(x -> Arrays.asList(x.getDescriptor().getName()))
+                .notBlank());
+    }
+
+    @Override
+    public NutsResultList<String> getResultOses() {
+        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
+                .mapMulti(x -> Arrays.asList(x.getDescriptor().getOs()))
+                .notBlank()
+                .distinct()
+        );
+    }
+
+    @Override
+    public NutsResultList<NutsExecutionEntry> getResultExecutionEntries() {
+        checkSession();
+        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
+                .mapMulti(x
+                        -> (x.getContent() == null || x.getContent().getPath() == null) ? Collections.emptyList()
+                        : Arrays.asList(getSession().getWorkspace().apps().execEntries().setSession(getSession()).parse(x.getContent().getPath()))));
+    }
+
+    @Override
+    public NutsResultList<String> getResultOsdists() {
+        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
+                .mapMulti(x -> Arrays.asList(x.getDescriptor().getOsdist()))
+                .notBlank()
+                .distinct()
+        );
+    }
+
+    @Override
+    public NutsResultList<String> getResultPackagings() {
+        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
+                .mapMulti(x -> Arrays.asList(x.getDescriptor().getPackaging()))
+                .notBlank()
+                .distinct()
+        );
+    }
+
+    @Override
+    public NutsResultList<String> getResultPlatforms() {
+        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
+                .mapMulti(x -> Arrays.asList(x.getDescriptor().getPlatform()))
+                .notBlank()
+                .distinct()
+        );
+    }
+
+    @Override
+    public NutsResultList<String> getResultArchs() {
+        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
+                .mapMulti(x -> Arrays.asList(x.getDescriptor().getArch()))
+                .notBlank());
     }
 
     @Override
@@ -910,7 +1045,6 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
                 + ", dependencies=" + isDependencies()
                 + ", effective=" + isEffective()
                 + ", location=" + getLocation()
-                + ", repos=" + Arrays.toString(getRepositories())
                 + ", displayOptions=" + getDisplayOptions()
                 + ", comparator=" + getComparator()
                 + ", dependencyFilter=" + getDependencyFilter()
@@ -934,7 +1068,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
 
     private Object dependenciesToElement(NutsDependencyTreeNode d) {
         NutsId id
-                = //                getSearchSession().getWorkspace().formats().text().parse(d.getDependency().formatter().setSession(getSearchSession()).setNtf(false).format())
+                = //                getSearchSession().getWorkspace().text().parse(d.getDependency().formatter().setSession(getSearchSession()).setNtf(false).format())
                 d.getDependency().toId();
         if (d.isPartial()) {
             id = id.builder().setProperty("partial", "true").build();
@@ -1122,20 +1256,6 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
         return this;
     }
 
-    @Override
-    public NutsResultList<NutsId> getResultIds() {
-        return buildCollectionResult(getResultIdIteratorBase(null));
-    }
-
-    @Override
-    public NutsResultList<NutsDependency> getResultInlineDependencies() {
-        return buildCollectionResult(
-                IteratorBuilder.of(getResultIdIteratorBase(true)).map(
-                        x -> x.toDependency(), "Id->Dependency")
-                        .build()
-        );
-    }
-
     public Iterator<NutsDefinition> getResultDefinitionIteratorBase(boolean content, boolean effective) {
         NutsFetchCommand fetch = toFetch().setContent(content).setEffective(effective);
         NutsFetchCommand ofetch = toFetch().setContent(content).setEffective(effective).setSession(getSession().copy().setFetchStrategy(NutsFetchStrategy.OFFLINE));
@@ -1157,154 +1277,6 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
                 }, "Id->Definition"));
     }
 
-    @Override
-    public NutsResultList<NutsDefinition> getResultDefinitions() {
-        return buildCollectionResult(getResultDefinitionIteratorBase(isContent(), isEffective()));
-    }
-
-    @Override
-    public String getResultNutsPath() {
-        return getResultIds().list().stream().map(NutsId::getLongName).collect(Collectors.joining(";"));
-    }
-
-    @Override
-    public String getResultClassPath() {
-        StringBuilder sb = new StringBuilder();
-        Iterator<NutsDefinition> it = getResultDefinitionIteratorBase(true, isEffective());
-        while (it.hasNext()) {
-            NutsDefinition nutsDefinition = it.next();
-            if (nutsDefinition.getPath() != null) {
-                if (sb.length() > 0) {
-                    sb.append(File.pathSeparator);
-                }
-                sb.append(nutsDefinition.getPath());
-            }
-        }
-        return sb.toString();
-    }
-
-    @Override
-    public NutsResultList<String> getResultPaths() {
-        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(true, isEffective()))
-                .map(x -> (x.getContent() == null || x.getContent().getPath() == null) ? null : x.getContent().getPath().toString())
-                .notBlank()
-        );
-    }
-
-    @Override
-    public NutsResultList<NutsDependencies> getResultDependencies() {
-        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(true, isEffective()))
-                .map(x -> x.getDependencies())
-        );
-    }
-
-    @Override
-    public NutsResultList<String> getResultPathNames() {
-        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(true, isEffective()))
-                .map(x -> (x.getContent() == null || x.getContent().getPath() == null) ? null : x.getContent().getPath().getFileName().toString())
-                .notBlank());
-    }
-
-    @Override
-    public NutsResultList<Instant> getResultInstallDates() {
-        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
-                .map(x -> (x.getInstallInformation() == null) ? null : x.getInstallInformation().getCreatedDate())
-                .notNull());
-    }
-
-    @Override
-    public NutsResultList<String> getResultInstallUsers() {
-        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
-                .map(x -> (x.getInstallInformation() == null) ? null : x.getInstallInformation().getInstallUser())
-                .notBlank());
-    }
-
-    @Override
-    public NutsResultList<String> getResultInstallFolders() {
-        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
-                .map(x -> (x.getInstallInformation() == null) ? null : x.getInstallInformation().getInstallFolder())
-                .notNull());
-    }
-
-    @Override
-    public NutsResultList<String> getResultStoreLocations(NutsStoreLocation location) {
-        checkSession();
-        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
-                .map(x -> getSession().getWorkspace().locations().getStoreLocation(x.getId(), location))
-                .notNull());
-    }
-
-    @Override
-    public NutsResultList<String[]> getResultStrings(String[] columns) {
-        NutsFetchDisplayOptions oo = new NutsFetchDisplayOptions(ws);
-        oo.addDisplay(columns);
-        oo.setIdFormat(getDisplayOptions().getIdFormat());
-        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
-                .map(x
-                        -> NutsIdFormatHelper.of(x, getSearchSession())
-                        .buildLong().getMultiColumnRowStrings(oo)
-                ));
-    }
-
-    @Override
-    public NutsResultList<String> getResultNames() {
-        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
-                .mapMulti(x -> Arrays.asList(x.getDescriptor().getName()))
-                .notBlank());
-    }
-
-    @Override
-    public NutsResultList<String> getResultOses() {
-        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
-                .mapMulti(x -> Arrays.asList(x.getDescriptor().getOs()))
-                .notBlank()
-                .distinct()
-        );
-    }
-
-    @Override
-    public NutsResultList<NutsExecutionEntry> getResultExecutionEntries() {
-        checkSession();
-        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
-                .mapMulti(x
-                        -> (x.getContent() == null || x.getContent().getPath() == null) ? Collections.emptyList()
-                : Arrays.asList(getSession().getWorkspace().apps().execEntries().setSession(getSession()).parse(x.getContent().getPath()))));
-    }
-
-    @Override
-    public NutsResultList<String> getResultOsdists() {
-        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
-                .mapMulti(x -> Arrays.asList(x.getDescriptor().getOsdist()))
-                .notBlank()
-                .distinct()
-        );
-    }
-
-    @Override
-    public NutsResultList<String> getResultPackagings() {
-        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
-                .mapMulti(x -> Arrays.asList(x.getDescriptor().getPackaging()))
-                .notBlank()
-                .distinct()
-        );
-    }
-
-    @Override
-    public NutsResultList<String> getResultPlatforms() {
-        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
-                .mapMulti(x -> Arrays.asList(x.getDescriptor().getPlatform()))
-                .notBlank()
-                .distinct()
-        );
-    }
-
-    @Override
-    public NutsResultList<String> getResultArchs() {
-        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
-                .mapMulti(x -> Arrays.asList(x.getDescriptor().getArch()))
-                .notBlank());
-    }
-
     protected <T> NutsCollectionResult<T> buildCollectionResult(Iterator<T> o) {
         NutsSession ss = getSearchSession();
         return new NutsCollectionResult(ss, resolveFindIdBase(), o);
@@ -1323,7 +1295,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
                 .notBlank());
     }
 
-//    protected NutsResultList<NutsDefinition> getResultDefinitionsBase(boolean print, boolean sort, boolean content, boolean effective) {
+    //    protected NutsResultList<NutsDefinition> getResultDefinitionsBase(boolean print, boolean sort, boolean content, boolean effective) {
 //        checkSession();
 //        return new NutsDefinitionNutsResult(getSession(), resolveFindIdBase(), print, sort, content, effective);
 //    }

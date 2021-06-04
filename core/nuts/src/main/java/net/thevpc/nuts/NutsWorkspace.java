@@ -168,4 +168,12 @@ public interface NutsWorkspace extends NutsComponent<NutsWorkspaceOptions> {
     NutsTerminalManager term();
 
     NutsTextManager text();
+
+    /**
+     * create element format instance
+     *
+     * @return element format
+     * @since 0.5.5
+     */
+    NutsElementFormat elem();
 }

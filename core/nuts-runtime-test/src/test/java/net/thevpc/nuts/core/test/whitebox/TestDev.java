@@ -10,7 +10,7 @@ public class TestDev {
         NutsSession session = ws.createSession();
 
 
-        NutsString s=session.getWorkspace().formats().text().setSession(session).toText(
+        NutsString s=session.getWorkspace().text().setSession(session).toText(
                 NutsMessage.cstyle("%s", "Hello")
         );
 

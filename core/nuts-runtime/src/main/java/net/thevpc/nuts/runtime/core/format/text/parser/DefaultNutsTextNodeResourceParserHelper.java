@@ -117,7 +117,7 @@ public class DefaultNutsTextNodeResourceParserHelper {
                         try {
                             other = parseResource(e, classLoader);
                         } catch (Throwable t) {
-                            other = session.getWorkspace().formats().text().
+                            other = session.getWorkspace().text().
                                     builder().append("NOT FOUND", NutsTextStyle.error())
                                     .append(" <" + e + ">").toText();
                         }
@@ -149,7 +149,7 @@ public class DefaultNutsTextNodeResourceParserHelper {
                 }
             }
             if (start) {
-                node = session.getWorkspace().formats().text().forList(ok);
+                node = session.getWorkspace().text().forList(ok);
             }
             return node;
         }

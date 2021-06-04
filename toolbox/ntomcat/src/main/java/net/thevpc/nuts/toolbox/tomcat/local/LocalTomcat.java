@@ -191,7 +191,7 @@ public class LocalTomcat {
         }
         if (args.isExecMode()) {
             NutsSession session = context.getSession();
-            NutsTextManager factory = session.getWorkspace().formats().text();
+            NutsTextManager factory = session.getWorkspace().text();
             if (session.isPlainOut()) {
                 PrintStream out = session.out();
                 for (RunningTomcat jpsResult : TomcatUtils.getRunningInstances(context)) {
@@ -433,7 +433,7 @@ public class LocalTomcat {
         }
     }
     public NutsString getBracketsPrefix(String str) {
-        return context.getWorkspace().formats().text().builder()
+        return context.getWorkspace().text().builder()
                 .append("[")
                 .append(str,NutsTextStyle.primary(5))
                 .append("]");
@@ -455,7 +455,7 @@ public class LocalTomcat {
         } else {
             if (context.getSession().isPlainOut()) {
                 context.getSession().out().printf("%s Tomcat %s.\n", getBracketsPrefix(name),
-                        context.getWorkspace().formats().text().forStyled("not found",NutsTextStyle.error())
+                        context.getWorkspace().text().forStyled("not found",NutsTextStyle.error())
                         );
             } else {
                 HashMap<String, String> r = new HashMap<>();

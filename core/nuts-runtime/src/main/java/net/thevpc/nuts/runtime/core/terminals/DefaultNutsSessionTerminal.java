@@ -201,7 +201,7 @@ public class DefaultNutsSessionTerminal extends AbstractNutsTerminal implements 
             getProgressBar().printProgress(
                     Float.isNaN(progress)?-1:
                     (int)(progress*100),
-                    session.getWorkspace().formats().text().toText(NutsMessage.cstyle(prompt,params)).toString(),
+                    session.getWorkspace().text().toText(NutsMessage.cstyle(prompt,params)).toString(),
                     err()
             );
         }
@@ -214,7 +214,7 @@ public class DefaultNutsSessionTerminal extends AbstractNutsTerminal implements 
             ((NutsTerminal)getParent()).printProgress(prompt, params);
         }else{
             getProgressBar().printProgress(-1,
-                    session.getWorkspace().formats().text().toText(NutsMessage.cstyle(prompt,params)).toString(),
+                    session.getWorkspace().text().toText(NutsMessage.cstyle(prompt,params)).toString(),
                     err()
                     );
         }
@@ -278,7 +278,10 @@ public class DefaultNutsSessionTerminal extends AbstractNutsTerminal implements 
 
     @Override
     public <T> NutsQuestion<T> ask() {
-        return new DefaultNutsQuestion<T>(ws, this, out());
+        return
+                new DefaultNutsQuestion<T>(ws, this, out())
+                        .setSession(session)
+                ;
     }
 
     @Override

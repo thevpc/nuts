@@ -3,7 +3,7 @@ package net.thevpc.nuts;
 /**
  * @category Format
  */
-public enum NutsTextType {
+public enum NutsTextType implements NutsEnum{
     PLAIN,
     LIST,
     TITLE,
@@ -11,5 +11,16 @@ public enum NutsTextType {
     LINK,
     STYLED,
     ANCHOR,
-    CODE,
+    CODE;
+    private String id;
+
+    NutsTextType() {
+        this.id = name().toLowerCase().replace('_', '-');
+    }
+
+    @Override
+    public String id() {
+        return id;
+    }
+
 }

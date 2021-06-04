@@ -32,7 +32,7 @@ package net.thevpc.nuts;
  * @since 0.5.4
  * @category Base
  */
-public enum NutsTerminalMode {
+public enum NutsTerminalMode implements NutsEnum{
     /**
      * streams in inherited mode will <strong>not process</strong> the content but delegate processing to it parents
      */

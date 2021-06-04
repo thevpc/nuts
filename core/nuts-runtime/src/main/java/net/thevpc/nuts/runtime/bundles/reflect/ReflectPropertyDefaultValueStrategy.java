@@ -23,12 +23,25 @@
  */
 package net.thevpc.nuts.runtime.bundles.reflect;
 
+import net.thevpc.nuts.NutsEnum;
+
 /**
  *
  * @author vpc
  */
-public enum ReflectPropertyDefaultValueStrategy {
+public enum ReflectPropertyDefaultValueStrategy  implements NutsEnum {
     TYPE_DEFAULT,
     PROPERTY_DEFAULT,
-    NO_DEFAULT,
+    NO_DEFAULT;
+    private String id;
+
+    ReflectPropertyDefaultValueStrategy() {
+        this.id = name().toLowerCase().replace('_', '-');
+    }
+
+    @Override
+    public String id() {
+        return id;
+    }
+
 }

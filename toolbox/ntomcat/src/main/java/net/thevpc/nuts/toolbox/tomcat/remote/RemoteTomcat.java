@@ -162,7 +162,7 @@ public class RemoteTomcat {
             c = loadOrCreateTomcatConfig(null);
         }
         boolean ok = false;
-        NutsFormatManager text = getContext().getWorkspace().formats();
+        NutsTextManager text = getContext().getWorkspace().text();
         while (!ok) {
             try {
                 ok = true;
@@ -172,8 +172,8 @@ public class RemoteTomcat {
                                     .ask()
                                     .setSession(session)
                                     .forString("[instance=%s] would you enter %s value ?"
-                                    , text.text().forStyled(c.getName(), NutsTextStyle.primary(1))
-                                    , text.text().forStyled("--server", NutsTextStyle.option())
+                                    , text.forStyled(c.getName(), NutsTextStyle.primary(1))
+                                    , text.forStyled("--server", NutsTextStyle.option())
                             )
                                     .setDefaultValue("ssh://login@myserver/instanceName").setSession(session)
                                     .getValue()
@@ -185,8 +185,8 @@ public class RemoteTomcat {
                             .setRemoteTempPath(session.getTerminal().ask()
                                     .setSession(session)
                                     .forString("[instance=%s] would you enter %s value ?"
-                                            , text.text().forStyled(c.getName(), NutsTextStyle.primary(1))
-                                            , text.text().forStyled("--remote-temp-path", NutsTextStyle.option())
+                                            , text.forStyled(c.getName(), NutsTextStyle.primary(1))
+                                            , text.forStyled("--remote-temp-path", NutsTextStyle.option())
                                     ).setDefaultValue("/tmp")
                                     .setSession(session)
                                     .getValue()
@@ -198,9 +198,9 @@ public class RemoteTomcat {
                         aa.getConfig().setPath(session.getTerminal().ask()
                                     .setSession(session)
                                 .forString("[instance=%s] [app=%s] would you enter %s value ?"
-                                        , text.text().forStyled(c.getName(), NutsTextStyle.primary(1))
-                                        , text.text().forStyled(aa.getName(), NutsTextStyle.option())
-                                        , text.text().forStyled("--app.path", NutsTextStyle.option())
+                                        , text.forStyled(c.getName(), NutsTextStyle.primary(1))
+                                        , text.forStyled(aa.getName(), NutsTextStyle.option())
+                                        , text.forStyled("--app.path", NutsTextStyle.option())
                                 )
                                 .setSession(session)
                                 .getValue());
@@ -372,10 +372,10 @@ public class RemoteTomcat {
 
             public void show(RemoteTomcatServiceBase aa) {
                 if (json) {
-                    getContext().getSession().out().printf("%s :\n", getContext().getWorkspace().formats().text().forStyled(aa.getName(), NutsTextStyle.primary(4)));
+                    getContext().getSession().out().printf("%s :\n", getContext().getWorkspace().text().forStyled(aa.getName(), NutsTextStyle.primary(4)));
                     aa.println(getContext().getSession().out());
                 } else {
-                    getContext().getSession().out().printf("%s :\n", getContext().getWorkspace().formats().text().forStyled(aa.getName(), NutsTextStyle.primary(4)));
+                    getContext().getSession().out().printf("%s :\n", getContext().getWorkspace().text().forStyled(aa.getName(), NutsTextStyle.primary(4)));
                     aa.println(getContext().getSession().out());
                 }
             }

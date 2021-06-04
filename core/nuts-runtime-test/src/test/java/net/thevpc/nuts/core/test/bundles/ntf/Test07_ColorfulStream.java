@@ -71,7 +71,7 @@ public class Test07_ColorfulStream {
 //                out.print(c);
 //            }
 //            out.println();
-//            TestUtils.println(ws.formats().text().builder().append(msg).filteredText());
+//            TestUtils.println(ws.text().builder().append(msg).filteredText());
 //        }
 //    }
 //
@@ -482,7 +482,7 @@ public class Test07_ColorfulStream {
 //
 //        NutsWorkspace ws = Nuts.openWorkspace();
 //        {
-//            NutsText command = ws.formats().text().command(NutsTerminalManager.CMD_LATER_RESET_LINE);
+//            NutsText command = ws.text().command(NutsTerminalManager.CMD_LATER_RESET_LINE);
 //            NutsTextNodeWriter w = new NutsTextNodeWriterRenderer(System.out, AnsiUnixTermPrintRenderer.ANSI_RENDERER, ws)
 //                    .setWriteConfiguration(new NutsTextWriteConfiguration().setTitleNumberEnabled(true));
 //            w.writeNode(command);

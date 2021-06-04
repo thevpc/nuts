@@ -339,44 +339,44 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      */
     NutsSearchCommand removePackaging(String value);
 
-    /**
-     * reset repositories to search into
-     *
-     * @return {@code this} instance
-     */
-    NutsSearchCommand clearRepositories();
-
-    /**
-     * add repositories to search into
-     *
-     * @param values repositories to search into
-     * @return {@code this} instance
-     */
-    NutsSearchCommand addRepositories(Collection<String> values);
-
-    /**
-     * add repositories to search into
-     *
-     * @param values repositories to search into
-     * @return {@code this} instance
-     */
-    NutsSearchCommand addRepositories(String... values);
-
-    /**
-     * add repository to search into
-     *
-     * @param value repository to search into
-     * @return {@code this} instance
-     */
-    NutsSearchCommand addRepository(String value);
-
-    /**
-     * add repository to search into
-     *
-     * @param value repository to search into
-     * @return {@code this} instance
-     */
-    NutsSearchCommand removeRepository(String value);
+//    /**
+//     * reset repositories to search into
+//     *
+//     * @return {@code this} instance
+//     */
+//    NutsSearchCommand clearRepositories();
+//
+//    /**
+//     * add repositories to search into
+//     *
+//     * @param values repositories to search into
+//     * @return {@code this} instance
+//     */
+//    NutsSearchCommand addRepositories(Collection<String> values);
+//
+//    /**
+//     * add repositories to search into
+//     *
+//     * @param values repositories to search into
+//     * @return {@code this} instance
+//     */
+//    NutsSearchCommand addRepositories(String... values);
+//
+//    /**
+//     * add repository to search into
+//     *
+//     * @param value repository to search into
+//     * @return {@code this} instance
+//     */
+//    NutsSearchCommand addRepository(String value);
+//
+//    /**
+//     * add repository to search into
+//     *
+//     * @param value repository to search into
+//     * @return {@code this} instance
+//     */
+//    NutsSearchCommand removeRepository(String value);
 
     /**
      * add locked ids to prevent them to be updated or the force other ids to
@@ -523,6 +523,8 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      */
     NutsSearchCommand setRepositoryFilter(NutsRepositoryFilter filter);
 
+    NutsSearchCommand addRepositoryFilter(NutsRepositoryFilter filter);
+
     /**
      * return descriptor filter
      *
@@ -576,7 +578,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
 
     String[] getPackaging();
 
-    String[] getRepositories();
+//    String[] getRepositories();
 
     /**
      * when true, NutsNotFoundException instances are ignored

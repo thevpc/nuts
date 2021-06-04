@@ -32,7 +32,7 @@ package net.thevpc.nuts;
  * This information is available in {@link NutsDefinition}
  * @category Base
  */
-public enum NutsIdType {
+public enum NutsIdType implements NutsEnum{
     /**
      * the id denotes a nuts api id artifact.
      * an artifact is a valid nuts api if it corresponds to {@link NutsConstants.Ids#NUTS_API}

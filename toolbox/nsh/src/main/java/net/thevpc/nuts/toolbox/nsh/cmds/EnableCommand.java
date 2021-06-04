@@ -139,10 +139,10 @@ public class EnableCommand extends SimpleNshBuiltin {
                 context.out().println(entry.getValue() + " " + entry.getKey());
             }
         } else if (context.getResult() instanceof List) {
-            NutsFormatManager text = session.getWorkspace().formats();
+            NutsTextManager text = session.getWorkspace().text();
             for (String s : ((List<String>) context.getResult())) {
                 context.out().printf("%s%n",
-                        text.text().builder().append("enable: ",NutsTextStyle.error())
+                        text.builder().append("enable: ",NutsTextStyle.error())
                         .append(s,NutsTextStyle.primary(5))
                         .append(" ")
                         .append("not a shell builtin",NutsTextStyle.error())

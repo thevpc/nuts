@@ -128,7 +128,7 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase, NutsSessionAwa
     private AttributedString toAttributedString(NutsText n, NutsTextStyles styles) {
         switch (n.getType()) {
             case PLAIN: {
-                styles=workspace.formats().text().getTheme().toBasicStyles(styles, session);
+                styles=workspace.text().getTheme().toBasicStyles(styles, session);
                 NutsTextPlain p = (NutsTextPlain) n;
                 if (styles.isNone()) {
                     return new AttributedString(p.getText());
@@ -247,7 +247,7 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase, NutsSessionAwa
                     .highlighter(new Highlighter() {
                         @Override
                         public AttributedString highlight(LineReader reader, String buffer) {
-                            NutsTextManager text = workspace.formats().text();
+                            NutsTextManager text = workspace.text();
                             NutsCommandReadHighlighter h = getCommandReadHighlighter();
                             NutsText n=(h!=null)?h.highlight(buffer, session):text.forPlain(buffer);
                             return toAttributedString(n, NutsTextStyles.NONE);

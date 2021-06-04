@@ -187,7 +187,7 @@ public class DefaultNutsObjectElementBuilder implements NutsObjectElementBuilder
 
     @Override
     public NutsObjectElement build() {
-        return new DefaultNutsObjectElement(values, session.getWorkspace());
+        return new DefaultNutsObjectElement(values, session);
     }
 
     @Override
@@ -207,6 +207,6 @@ public class DefaultNutsObjectElementBuilder implements NutsObjectElementBuilder
     }
 
     private NutsElementFormat _elements() {
-        return session.getWorkspace().formats().element().setSession(session);
+        return session.getWorkspace().elem().setSession(session);
     }
 }

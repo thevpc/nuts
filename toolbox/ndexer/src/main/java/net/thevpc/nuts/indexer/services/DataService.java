@@ -145,10 +145,16 @@ public class DataService {
                     .setContent(false)
                     .getResultIds().list();
             Map<String, String> oldRow = new HashMap<>(row);
-            row.put("allDependencies", ws.formats().element().setContentType(NutsContentType.JSON).setValue(allDependencies.stream().map(Object::toString).collect(Collectors.toList())).format());
+            row.put("allDependencies", ws.elem().setContentType(NutsContentType.JSON)
+                    .setValue(allDependencies.stream().map(Object::toString)
+                            .collect(Collectors.toList()))
+                            .setNtf(false)
+                    .format()
+                    .toString()
+            );
             updateData(dirPath, oldRow, row);
         }
-        String[] array = ws.formats().element().setContentType(NutsContentType.JSON).parse(new StringReader(row.get("allDependencies")), String[].class);
+        String[] array = ws.elem().setContentType(NutsContentType.JSON).parse(new StringReader(row.get("allDependencies")), String[].class);
         List<Map<String, String>> allDependencies = Arrays.stream(array)
                 .map(s -> NutsIndexerUtils.nutsIdToMap(ws.id().parser().parse(s)))
                 .collect(Collectors.toList());
@@ -161,7 +167,7 @@ public class DataService {
             return null;
         }
         Map<String, String> row = rows.get(0);
-        String[] array = ws.formats().element().setContentType(NutsContentType.JSON).parse(new StringReader(row.get("dependencies")), String[].class);
+        String[] array = ws.elem().setContentType(NutsContentType.JSON).parse(new StringReader(row.get("dependencies")), String[].class);
         List<Map<String, String>> dependencies = Arrays.stream(array)
                 .map(s -> NutsIndexerUtils.nutsIdToMap(ws.id().parser().parse(s)))
                 .collect(Collectors.toList());

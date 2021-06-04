@@ -31,7 +31,7 @@
 //
 //    @Override
 //    public NutsObjectFormat setValue(Object value) {
-//        return super.setValue(getWorkspace().formats().element().convert(value,NutsElement.class));
+//        return super.setValue(getWorkspace().elem().convert(value,NutsElement.class));
 //    }
 //
 //    @Override
@@ -96,11 +96,11 @@
 //            case NULL:{
 //                List<NutsElement> a = new ArrayList<>();
 //                a.add(value);
-//                print(w, getWorkspace().formats().element().convert(a,NutsElement.class));
+//                print(w, getWorkspace().elem().convert(a,NutsElement.class));
 //                break;
 //            }
 //            case OBJECT: {
-//                print(w, getWorkspace().formats().element().convert(value.object().children(),NutsElement.class));
+//                print(w, getWorkspace().elem().convert(value.object().children(),NutsElement.class));
 //                break;
 //            }
 //            case ARRAY: {

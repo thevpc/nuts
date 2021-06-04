@@ -125,8 +125,7 @@ public class NVersionMain extends NutsApplication {
 
             PrintStream out = context.getSession().out();
             PrintStream err = context.getSession().out();
-            NutsFormatManager text = context.getWorkspace().formats();
-            NutsTextManager tfactory = text.text();
+            NutsTextManager text = context.getWorkspace().text();
             if (table) {
                 NutsPropertiesFormat tt = context.getWorkspace().formats().props().setSorted(sort);
                 Properties pp = new Properties();
@@ -146,12 +145,12 @@ public class NVersionMain extends NutsApplication {
                     for (String t : unsupportedFileTypes) {
                         File f = new File(context.getWorkspace().io().expandPath(t));
                         if (f.isFile()) {
-                            pp.setProperty(t, text.text().builder().append("<<ERROR>>", NutsTextStyle.error()).append(" unsupported file type").toString());
+                            pp.setProperty(t, text.builder().append("<<ERROR>>", NutsTextStyle.error()).append(" unsupported file type").toString());
                         } else if (f.isDirectory()) {
-                            pp.setProperty(t, text.text().builder().append("<<ERROR>>", NutsTextStyle.error()).append(" ignored folder").toString()
+                            pp.setProperty(t, text.builder().append("<<ERROR>>", NutsTextStyle.error()).append(" ignored folder").toString()
                             );
                         } else {
-                            pp.setProperty(t, text.text().builder().append("<<ERROR>>", NutsTextStyle.error()).append(" file not found").toString()
+                            pp.setProperty(t, text.builder().append("<<ERROR>>", NutsTextStyle.error()).append(" file not found").toString()
                             );
                         }
                     }
@@ -162,24 +161,24 @@ public class NVersionMain extends NutsApplication {
                 for (String k : keys) {
                     if (results.size() > 1) {
                         if (longFormat || all) {
-                            out.printf("%s:%n", tfactory.forStyled(k, NutsTextStyle.primary(3)));
+                            out.printf("%s:%n", text.forStyled(k, NutsTextStyle.primary(3)));
                         } else {
-                            out.printf("%s: ", tfactory.forStyled(k, NutsTextStyle.primary(3)));
+                            out.printf("%s: ", text.forStyled(k, NutsTextStyle.primary(3)));
                         }
                     }
                     Set<VersionDescriptor> v = results.get(k);
                     for (VersionDescriptor descriptor : v) {
                         if (nameFormat) {
-                            out.printf("%s%n", tfactory.forStyled(descriptor.getId().getShortName(), NutsTextStyle.primary(4)));
+                            out.printf("%s%n", text.forStyled(descriptor.getId().getShortName(), NutsTextStyle.primary(4)));
                         } else if (idFormat) {
-                            out.printf("%s%n", tfactory.toText(descriptor.getId()));
+                            out.printf("%s%n", text.toText(descriptor.getId()));
                         } else if (longFormat) {
-                            out.printf("%s%n", tfactory.toText(descriptor.getId()));
+                            out.printf("%s%n", text.toText(descriptor.getId()));
                             NutsPropertiesFormat f = context.getWorkspace().formats().props()
                                     .setSorted(true);
                             f.setValue(descriptor.getProperties()).print(out);
                         } else {
-                            out.printf("%s%n", tfactory.toText(descriptor.getId().getVersion()));
+                            out.printf("%s%n", text.toText(descriptor.getId().getVersion()));
                         }
                         if (!all) {
                             break;

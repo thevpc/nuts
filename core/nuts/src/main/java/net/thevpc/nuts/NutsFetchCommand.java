@@ -331,38 +331,55 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
     boolean isDependencies();
 
     /**
-     * add repository filter
-     * @param value repository filter
-     * @return {@code this} instance
+     * return repository filter
+     *
+     * @return repository filter
      */
-    NutsFetchCommand addRepositories(Collection<String> value);
+    NutsRepositoryFilter getRepositoryFilter();
 
     /**
-     * remove repository filter
-     * @param value repository filter
+     * define repository filter.
+     *
+     * @param filter repository filter
      * @return {@code this} instance
      */
-    NutsFetchCommand removeRepository(String value);
+    NutsFetchCommand setRepositoryFilter(NutsRepositoryFilter filter);
 
-    /**
-     * add repository filter
-     * @param values repository filter
-     * @return {@code this} instance
-     */
-    NutsFetchCommand addRepositories(String... values);
+    NutsFetchCommand addRepositoryFilter(NutsRepositoryFilter filter);
 
-    /**
-     * remove all repository filters
-     * @return {@code this} instance
-     */
-    NutsFetchCommand clearRepositories();
-
-    /**
-     * add repository filter
-     * @param value repository filter
-     * @return {@code this} instance
-     */
-    NutsFetchCommand addRepository(String value);
+//    /**
+//     * add repository filter
+//     * @param value repository filter
+//     * @return {@code this} instance
+//     */
+//    NutsFetchCommand addRepositories(Collection<String> value);
+//
+//    /**
+//     * remove repository filter
+//     * @param value repository filter
+//     * @return {@code this} instance
+//     */
+//    NutsFetchCommand removeRepository(String value);
+//
+//    /**
+//     * add repository filter
+//     * @param values repository filter
+//     * @return {@code this} instance
+//     */
+//    NutsFetchCommand addRepositories(String... values);
+//
+//    /**
+//     * remove all repository filters
+//     * @return {@code this} instance
+//     */
+//    NutsFetchCommand clearRepositories();
+//
+//    /**
+//     * add repository filter
+//     * @param value repository filter
+//     * @return {@code this} instance
+//     */
+//    NutsFetchCommand addRepository(String value);
 
     /**
      * copy session
@@ -402,37 +419,37 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
     @Override
     NutsFetchCommand run();
 
-    /**
-     * search for non installed packages
-     * @return {@code this} instance
-     */
-    NutsFetchCommand installed();
-
-    /**
-     * search for non installed packages
-     * @return {@code this} instance
-     */
-    NutsFetchCommand notInstalled();
-
-    /**
-     * search for installed/non installed packages
-     * @param value new value
-     * @return {@code this} instance
-     */
-    NutsFetchCommand installed(Boolean value);
-
-    /**
-     * search for installed/non installed packages
-     * @param value new value
-     * @return {@code this} instance
-     */
-    NutsFetchCommand setInstalled(Boolean value);
-
-    /**
-     * return installed/non installed packages flag
-     * @return {@code this} instance
-     */
-    Boolean getInstalled();
+//    /**
+//     * search for installed packages
+//     * @return {@code this} instance
+//     */
+//    NutsFetchCommand installed();
+//
+//    /**
+//     * search for non installed packages
+//     * @return {@code this} instance
+//     */
+//    NutsFetchCommand notInstalled();
+//
+//    /**
+//     * search for installed/non installed packages
+//     * @param value new value
+//     * @return {@code this} instance
+//     */
+//    NutsFetchCommand installed(Boolean value);
+//
+//    /**
+//     * search for installed/non installed packages
+//     * @param value new value
+//     * @return {@code this} instance
+//     */
+//    NutsFetchCommand setInstalled(Boolean value);
+//
+//    /**
+//     * return installed/non installed packages flag
+//     * @return {@code this} instance
+//     */
+//    Boolean getInstalled();
 
     /**
      * return dependency filter

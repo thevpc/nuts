@@ -64,7 +64,7 @@ public class NOpenAPIService {
             );
             if (appContext.getSession().isPlainTrace()) {
                 appContext.getSession().out().printf("generated pdf %s\n",
-                        appContext.getWorkspace().formats().text().forStyled(
+                        appContext.getWorkspace().text().forStyled(
                                 target, NutsTextStyle.primary(4)
                         )
                 );
@@ -85,7 +85,7 @@ public class NOpenAPIService {
         }
         if (trace) {
             appContext.getSession().out().printf("generated src %s\n",
-                    appContext.getWorkspace().formats().text().forStyled(
+                    appContext.getWorkspace().text().forStyled(
                             target, NutsTextStyle.primary(4)
                     )
             );
@@ -132,15 +132,15 @@ public class NOpenAPIService {
 
     private NutsElement loadElement(InputStream inputStream, boolean json) {
         if (json) {
-            return appContext.getWorkspace().formats().element().setContentType(NutsContentType.JSON).parse(inputStream, NutsElement.class);
+            return appContext.getWorkspace().elem().setContentType(NutsContentType.JSON).parse(inputStream, NutsElement.class);
         } else {
             final Object o = new Yaml().load(inputStream);
-            return appContext.getWorkspace().formats().element().toElement(o);
+            return appContext.getWorkspace().elem().toElement(o);
         }
     }
 
     private MdDocument toMarkdown(InputStream inputStream, boolean json) {
-        NutsElementFormat prv = appContext.getWorkspace().formats().element().setSession(appContext.getSession());
+        NutsElementFormat prv = appContext.getWorkspace().elem().setSession(appContext.getSession());
         MdDocumentBuilder doc = new MdDocumentBuilder();
         doc.setProperty("headers", new String[]{
             ":source-highlighter: coderay",
@@ -396,7 +396,7 @@ public class NOpenAPIService {
     }
 
     private String toCode(NutsElement o, String indent) {
-        NutsElementFormat prv = appContext.getWorkspace().formats().element().setSession(appContext.getSession());
+        NutsElementFormat prv = appContext.getWorkspace().elem().setSession(appContext.getSession());
         String descSep = " // ";
         if (o.isObject()) {
             NutsElement a = o.asObject().get(prv.forString("schema"));

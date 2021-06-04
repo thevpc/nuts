@@ -131,7 +131,9 @@ public class JarPathVersionResolver implements PathVersionResolver{
                             if (d.getDescription() != null) {
                                 properties.setProperty("description", d.getDescription());
                             }
-                            properties.setProperty("locations", context.getWorkspace().formats().element().setContentType(NutsContentType.JSON).setValue(d.getLocations()).format());
+                            properties.setProperty("locations", context.getWorkspace().elem().setContentType(NutsContentType.JSON)
+                                    .setValue(d.getLocations()).setNtf(false).format().toString()
+                            );
                             properties.setProperty("platform", StringUtils.join(";", d.getPlatform()));
                             properties.setProperty("os", StringUtils.join(";", d.getOs()));
                             properties.setProperty("arch", StringUtils.join(";", d.getArch()));

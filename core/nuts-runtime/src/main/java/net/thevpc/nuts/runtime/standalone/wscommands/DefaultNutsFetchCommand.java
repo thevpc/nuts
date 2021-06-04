@@ -40,6 +40,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
         return LOG;
     }
 
+
     @Override
     public NutsContent getResultContent() {
         try {
@@ -186,11 +187,11 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
         NutsWorkspaceUtils.checkSession(_ws, options.getSession());
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(_ws);
         NutsFetchStrategy nutsFetchModes = NutsWorkspaceHelper.validate(session.getFetchStrategy());
-        NutsRepositoryFilter repositoryFilter = _ws.repos().setSession(session).filter().byName(getRepositories());
+        NutsRepositoryFilter repositoryFilter =this.getRepositoryFilter();
 
         NutsRepositoryAndFetchModeTracker descTracker = new NutsRepositoryAndFetchModeTracker(
                 wu.filterRepositoryAndFetchModes(NutsRepositorySupportedAction.SEARCH, id, repositoryFilter,
-                        nutsFetchModes, session, getInstalledVsNonInstalledSearch())
+                        nutsFetchModes, session)
         );
 
         DefaultNutsDefinition foundDefinition = null;
@@ -346,10 +347,6 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
         ).and(getDependencyFilter());
     }
 
-    private InstalledVsNonInstalledSearch getInstalledVsNonInstalledSearch() {
-        return new InstalledVsNonInstalledSearch(installedOrNot == null || installedOrNot, true);
-    }
-
 //    private boolean shouldIncludeContent(NutsFetchCommand options) {
 //        boolean includeContent = options.isContent();
 //        if (options instanceof DefaultNutsQueryBaseOptions) {
@@ -436,7 +433,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
             Map<String, String> map = null;
             try {
                 if (Files.isRegularFile(cachePath)) {
-                    map = ws.formats().element().setSession(session)
+                    map = ws.elem().setSession(session)
                             .setContentType(NutsContentType.JSON).parse(cachePath, Map.class);
                 }
             } catch (Exception ex) {
@@ -458,7 +455,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                         map = new LinkedHashMap<>();
                         map.put("executable", String.valueOf(executable));
                         map.put("nutsApplication", String.valueOf(nutsApp));
-                        ws.formats().element().setContentType(NutsContentType.JSON).setSession(getSession()).setValue(map).print(cachePath);
+                        ws.elem().setContentType(NutsContentType.JSON).setSession(getSession()).setValue(map).print(cachePath);
                     } catch (Exception ex) {
                         //
                     }
@@ -490,7 +487,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                         //this is invalid cache!
                         Files.delete(cachePath);
                     } else {
-                        DefaultNutsDefinition d = ws.formats().element().setSession(session).setContentType(NutsContentType.JSON).parse(cachePath, DefaultNutsDefinition.class);
+                        DefaultNutsDefinition d = ws.elem().setSession(session).setContentType(NutsContentType.JSON).parse(cachePath, DefaultNutsDefinition.class);
                         if (d != null) {
                             NutsRepositoryManager rr = ws.repos().setSession(session.copy().setTransitive(true));
                             NutsRepository repositoryById = rr.findRepositoryById(d.getRepositoryUuid());
@@ -582,7 +579,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
             );
             if (withCache) {
                 try {
-                    ws.formats().element().setContentType(NutsContentType.JSON).setSession(session).setValue(result).setNtf(false).print(cachePath);
+                    ws.elem().setContentType(NutsContentType.JSON).setSession(session).setValue(result).setNtf(false).print(cachePath);
                 } catch (Exception ex) {
                     //
                 }

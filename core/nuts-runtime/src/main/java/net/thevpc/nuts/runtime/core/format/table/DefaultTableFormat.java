@@ -144,8 +144,8 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         return null;
     }
 
-    public static void formatAndHorizontalAlign(StringBuilder sb, NutsPositionType a, int columns, NutsFormatManager tf, NutsSession session) {
-        int length = tf.text().setSession(session).parse(sb.toString()).textLength();
+    public static void formatAndHorizontalAlign(StringBuilder sb, NutsPositionType a, int columns, NutsTextManager tf, NutsSession session) {
+        int length = tf.setSession(session).parse(sb.toString()).textLength();
         switch (a) {
             case FIRST: {
 //                if (sb.length() > length) {
@@ -308,7 +308,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                     DefaultCell cell = cells.get(i);
                     String B = getSeparator(Separator.FIRST_ROW_LINE);
                     String s = cell.rendered.toString();
-                    line.write(CoreStringUtils.fillString(B, ws.formats().text().setSession(getSession()).parse(s).textLength()));
+                    line.write(CoreStringUtils.fillString(B, ws.text().setSession(getSession()).parse(s).textLength()));
                 }
                 line.write(getSeparator(Separator.FIRST_ROW_END));
 
@@ -330,7 +330,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                             DefaultCell cell = cells.get(i);
                             String B = getSeparator(Separator.MIDDLE_ROW_LINE);
                             String s = cell.rendered.toString();
-                            line.write(CoreStringUtils.fillString(B, ws.formats().text().setSession(getSession()).parse(s).textLength()));
+                            line.write(CoreStringUtils.fillString(B, ws.text().setSession(getSession()).parse(s).textLength()));
                         }
                         line.write(getSeparator(Separator.MIDDLE_ROW_END));
 
@@ -372,7 +372,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                     DefaultCell cell = cells.get(i);
                     String B = getSeparator(Separator.LAST_ROW_LINE);
                     String s = cell.rendered.toString();
-                    line.write(CoreStringUtils.fillString(B, ws.formats().text().setSession(getSession()).parse(s).textLength()));
+                    line.write(CoreStringUtils.fillString(B, ws.text().setSession(getSession()).parse(s).textLength()));
                 }
                 line.write(getSeparator(Separator.LAST_ROW_END));
             }
@@ -665,7 +665,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
     }
 
     private NutsElementFormat _elems() {
-        return getSession().getWorkspace().formats().element().setSession(getSession());
+        return getSession().getWorkspace().elem().setSession(getSession());
     }
 
     @Override
@@ -743,7 +743,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         int rows;
         int columns;
         NutsTableCellFormat formatter;
-        NutsFormatManager metrics;
+        NutsTextManager metrics;
         NutsPositionType valign;
         NutsPositionType halign;
         NutsWorkspace ws;
@@ -758,7 +758,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
             this.session = session;
             this.ws = session.getWorkspace();
             this.formatter = formatter;
-            this.metrics = session.getWorkspace().formats().setSession(session);
+            this.metrics = session.getWorkspace().text().setSession(session);
             this.valign = valign;
             this.halign = halign;
             if (str == null) {
@@ -789,7 +789,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         }
 
         public int len(String other) {
-            return metrics.text().setSession(session).parse(other).textLength();
+            return metrics.setSession(session).parse(other).textLength();
         }
 
         public RenderedCell appendHorizontally(RenderedCell other) {

@@ -53,7 +53,7 @@ public class DerbyService {
     public boolean isRunning() {
         DerbyOptions options=new DerbyOptions();
         options.cmd=Command.ping;
-        NutsTextManager factory = appContext.getWorkspace().formats().text();
+        NutsTextManager factory = appContext.getWorkspace().text();
         try {
             String s= command(options).setFailFast(true).grabOutputString().getOutputString();
             if(s!=null){

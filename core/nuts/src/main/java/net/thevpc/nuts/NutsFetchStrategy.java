@@ -35,7 +35,7 @@ import java.util.Iterator;
  * @since 0.5.4
  * @category Commands
  */
-public enum NutsFetchStrategy implements Iterable<NutsFetchMode> {
+public enum NutsFetchStrategy implements Iterable<NutsFetchMode>, NutsEnum{
     /**
      * enables search within local only artifacts (where installed or not).
      * Local artifacts include local folder based repositories and cached (fetched) repositories (whether or

@@ -5,6 +5,8 @@
  */
 package net.thevpc.nuts.runtime.bundles.iter;
 
+import net.thevpc.nuts.NutsEnum;
+
 /**
  *
  * @author thevpc

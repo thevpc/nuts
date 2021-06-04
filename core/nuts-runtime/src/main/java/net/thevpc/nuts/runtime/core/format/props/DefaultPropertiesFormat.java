@@ -66,7 +66,7 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
             return (Map) value;
         }
         LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
-        fillMap(getSession().getWorkspace().formats().element()
+        fillMap(getSession().getWorkspace().elem()
                 .toElement(value), map, rootName);
         return map;
     }
@@ -104,7 +104,7 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
                 for (NutsElementEntry datum : e.asObject().children()) {
                     NutsElement k = datum.getKey();
                     if (!k.isString()) {
-                        k = getSession().getWorkspace().formats().element()
+                        k = getSession().getWorkspace().elem()
                                 .setSession(getSession())
                                 .forString(
                                 k.toString()
@@ -183,7 +183,7 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
         if (javaProps) {
             CoreIOUtils.storeProperties(ObjectOutputFormatWriterHelper.explodeMap(mm), w, sorted);
         } else {
-            printMap(out, getSession().getWorkspace().formats().text().forBlank(), mm);
+            printMap(out, getSession().getWorkspace().text().forBlank(), mm);
         }
     }
 
@@ -240,14 +240,14 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
     }
 
     private void printKeyValue(PrintStream out, NutsString prefix, int len, String fancySep, NutsString key, NutsString value) {
-        NutsFormatManager txt = getSession().getWorkspace().formats();
+        NutsTextManager txt = getSession().getWorkspace().text();
         if (prefix == null) {
-            prefix = txt.text().forBlank();
+            prefix = txt.forBlank();
         }
         NutsString formattedKey = compact ? key
-                : txt.text().builder().append(key).append(CoreStringUtils.fillString(' ', len - key.textLength()));
+                : txt.builder().append(key).append(CoreStringUtils.fillString(' ', len - key.textLength()));
         if (fancySep != null) {
-            NutsString cc = compact ? key : txt.text().forPlain(CoreStringUtils.alignLeft("", len + 3));
+            NutsString cc = compact ? key : txt.forPlain(CoreStringUtils.alignLeft("", len + 3));
             String[] split = value.toString().split(fancySep);
             if (split.length == 0) {
                 out.print(prefix);
@@ -280,7 +280,7 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
             if (prefix.isEmpty() || prefix.toString().endsWith("#")) {
                 out.print(NutsConstants.Ntf.SILENT);
             }
-            out.printf("%s", txt.text().forStyled(formattedKey, NutsTextStyle.primary(3)));
+            out.printf("%s", txt.forStyled(formattedKey, NutsTextStyle.primary(3)));
             if (separator.isEmpty() || separator.startsWith("#")) {
                 out.print(NutsConstants.Ntf.SILENT);
             }
@@ -293,7 +293,7 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
         if (escapeText) {
             return CoreCommonUtils.stringValueFormatted(o, escapeText, getSession());
         } else {
-            return getSession().getWorkspace().formats().text().forPlain(String.valueOf(o));
+            return getSession().getWorkspace().text().forPlain(String.valueOf(o));
         }
     }
 

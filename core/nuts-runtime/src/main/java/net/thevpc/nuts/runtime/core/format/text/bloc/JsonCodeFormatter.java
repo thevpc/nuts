@@ -15,7 +15,7 @@ public class JsonCodeFormatter implements NutsCodeFormat {
 
     public JsonCodeFormatter(NutsWorkspace ws) {
         this.ws = ws;
-        factory = ws.formats().text();
+        factory = ws.text();
     }
 
 

@@ -32,7 +32,7 @@ package net.thevpc.nuts;
  * @since 0.5.4 (renamed from NutsWorkspaceOpenMode to NutsOpenMode in 0.8.1)
  * @category Config
  */
-public enum NutsOpenMode {
+public enum NutsOpenMode implements NutsEnum{
     /**
      * Open or Create. Default Mode. If the workspace is found, it will be
      * created otherwise it will be opened

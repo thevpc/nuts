@@ -33,6 +33,15 @@ public class DefaultNutsIOManager implements NutsIOManager {
     }
 
     @Override
+    public NutsPath path(String path) {
+        checkSession();
+        if(path==null||path.trim().isEmpty()){
+            return null;
+        }
+        return new DefaultNutsPath(path, getSession());
+    }
+
+    @Override
     public String expandPath(String path) {
         checkSession();
         return model.expandPath(path);

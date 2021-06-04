@@ -100,7 +100,7 @@ public final class DefaultNutsUpdateResult implements NutsUpdateResult {
 
     @Override
     public boolean isUpdateAvailable() {
-        return isUpdateVersionAvailable() || isUpdateStatusAvailable();
+        return isUpdateVersionAvailable() || isUpdateStatusAvailable() || isUpdateForced();
     }
 
     @Override

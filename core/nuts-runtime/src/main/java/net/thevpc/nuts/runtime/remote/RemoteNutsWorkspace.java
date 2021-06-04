@@ -12,15 +12,15 @@ public abstract class RemoteNutsWorkspace extends AbstractNutsWorkspace {
 
     public NutsElement createCall(String commandName, NutsElement body,NutsSession session) {
         try (NTalkClient cli = new NTalkClient()) {
-            NutsElementFormat e = formats().element().setContentType(NutsContentType.JSON);
+            NutsElementFormat e = elem().setContentType(NutsContentType.JSON);
             NutsObjectElement q = e.forObject()
                     .set("cmd", commandName)
                     .set("body", body).build();
-            String json = e.setValue(q).format();
+            NutsString json = e.setValue(q).format();
             String wsURL = config().options().getWorkspace();
-            byte[] result = cli.request("nuts/ws:"+wsURL, json.getBytes());
+            byte[] result = cli.request("nuts/ws:"+wsURL, json.toString().getBytes());
             NutsObjectElement resultObject = e.parse(result, NutsObjectElement.class);
-            NutsElementFormat prv = formats().element().setSession(session);
+            NutsElementFormat prv = elem().setSession(session);
             boolean success = resultObject.get(prv.forString("success")
                     ).asPrimitive().getBoolean();
             if (success) {
@@ -33,7 +33,7 @@ public abstract class RemoteNutsWorkspace extends AbstractNutsWorkspace {
     }
 
     public NutsElement createCall(String commandName, String callId, NutsElement body) {
-        NutsElementFormat e = formats().element();
+        NutsElementFormat e = elem();
         return e.forObject()
                 .set(
                         "cmd",

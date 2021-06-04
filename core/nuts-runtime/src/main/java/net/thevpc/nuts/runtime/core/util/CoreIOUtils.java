@@ -2015,7 +2015,7 @@ public class CoreIOUtils {
         public void dryExec() {
             if (session.getWorkspace().term().isFormatted(out)) {
                 out.print("[dry] ==[exec]== ");
-                out.println(pb.getFormattedCommandString(session.getWorkspace()));
+                out.println(pb.getFormattedCommandString(session));
             } else {
                 out.print("[dry] exec ");
                 out.printf("%s%n", pb.getCommandString());

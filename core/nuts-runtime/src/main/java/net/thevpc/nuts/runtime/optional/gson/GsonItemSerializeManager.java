@@ -70,7 +70,7 @@
 //    public NutsElement gsonToElement(JsonElement o,NutsElementFactoryContext context) {
 //        JsonElement je = (JsonElement) o;
 //        NutsWorkspace ws = context.getWorkspace();
-//        NutsElementFormat element = ws.formats().element().setSession(context.getSession());
+//        NutsElementFormat element = ws.elem().setSession(context.getSession());
 //        if (je.isJsonNull()) {
 //            return element.forNull();
 //        } else if (je.isJsonPrimitive()) {

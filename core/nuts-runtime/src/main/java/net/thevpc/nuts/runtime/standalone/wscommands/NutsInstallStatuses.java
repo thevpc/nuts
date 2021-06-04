@@ -14,6 +14,6 @@ public class NutsInstallStatuses {
     public static NutsInstallStatus SDIR_=NutsInstallStatus.of(true,true,true,false);
     public static NutsInstallStatus SDIRO=NutsInstallStatus.of(true,true,true,true);
     public static NutsInstallStatus[] ALL_DEPLOYED={SDIR_, SDIRO, SDI__, SDI_O, SD_R_, SD_RO, S__R_, S__RO, SD___};
-    public static NutsInstallStatus ALL_UNDEPLOYED=S____;
+    public static NutsInstallStatus[] ALL_UNDEPLOYED={S____};
 
 }

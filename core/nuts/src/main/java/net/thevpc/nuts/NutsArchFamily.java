@@ -31,7 +31,7 @@ package net.thevpc.nuts;
  * @since 0.8.1
  * @category Base
  */
-public enum NutsArchFamily {
+public enum NutsArchFamily implements NutsEnum{
     X86_32,
     X86_64,
     ITANIUM_32,

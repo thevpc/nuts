@@ -109,7 +109,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             }
         }
         Path f = getConfigPath();
-        context.getWorkspace().formats().element().setContentType(NutsContentType.JSON).setValue(config).print(f);
+        context.getWorkspace().elem().setContentType(NutsContentType.JSON).setValue(config).print(f);
         return this;
     }
 
@@ -197,26 +197,26 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
     }
 
     public NutsString getFormattedError(String str) {
-        return context.getWorkspace().formats()
+        return context.getWorkspace()
                 .text().forStyled(str,NutsTextStyle.error())
                 ;
     }
     public NutsString getFormattedSuccess(String str) {
-        return context.getWorkspace().formats()
+        return context.getWorkspace()
                 .text().forStyled(str,NutsTextStyle.success())
                 ;
     }
     public NutsString getFormattedPath(Path str) {
-        return context.getWorkspace().formats()
+        return context.getWorkspace()
                 .text().forStyled(str==null?"":str.toString(),NutsTextStyle.path())
                 ;
     }
     public NutsString getFormattedPath(String str) {
-        return context.getWorkspace().formats().text().forStyled(str==null?"":str.toString(),NutsTextStyle.path())
+        return context.getWorkspace().text().forStyled(str==null?"":str.toString(),NutsTextStyle.path())
                 ;
     }
     public NutsString getFormattedPrefix(String str) {
-        return context.getWorkspace().formats().text().builder()
+        return context.getWorkspace().text().builder()
                 .append("[")
                 .append(str,NutsTextStyle.primary(5))
                 .append("]");
@@ -717,7 +717,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         String name = getName();
         Path f = sharedConfigFolder.resolve(name + LOCAL_CONFIG_EXT);
         if (Files.exists(f)) {
-            config = context.getWorkspace().formats().element().setContentType(NutsContentType.JSON).parse(f, LocalTomcatConfig.class);
+            config = context.getWorkspace().elem().setContentType(NutsContentType.JSON).parse(f, LocalTomcatConfig.class);
             return this;
 //        } else if ("default".equals(name)) {
 //            //auto create default config

@@ -60,14 +60,14 @@ public class LocalTomcatDomainConfigService extends LocalTomcatServiceBase {
         return this;
     }
     public NutsString getBracketsPrefix(String str) {
-        return context.getWorkspace().formats().text().builder()
+        return context.getWorkspace().text().builder()
                 .append("[")
                 .append(str, NutsTextStyle.primary(5))
                 .append("]");
     }
 
     public LocalTomcatDomainConfigService print(PrintStream out) {
-        context.getWorkspace().formats().element().setContentType(NutsContentType.JSON).setValue(getConfig()).print(out);
+        context.getWorkspace().elem().setContentType(NutsContentType.JSON).setValue(getConfig()).print(out);
         return this;
     }
 

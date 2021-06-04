@@ -315,7 +315,7 @@ public class DefaultNutsRepositoryModel {
                 throw new UncheckedIOException(ex);
             }
             try {
-                Map<String, Object> a_config0 = ws.formats().element().setSession(session).setContentType(NutsContentType.JSON).parse(bytes, Map.class);
+                Map<String, Object> a_config0 = ws.elem().setSession(session).setContentType(NutsContentType.JSON).parse(bytes, Map.class);
                 String version = (String) a_config0.get("configVersion");
                 if (version == null) {
                     version = ws.getApiVersion();
@@ -324,7 +324,7 @@ public class DefaultNutsRepositoryModel {
                 if (buildNumber < 506) {
 
                 }
-                conf = ws.formats().element().setSession(session).setContentType(NutsContentType.JSON).parse(file, NutsRepositoryConfig.class);
+                conf = ws.elem().setSession(session).setContentType(NutsContentType.JSON).parse(file, NutsRepositoryConfig.class);
             } catch (RuntimeException ex) {
                 if (session.getWorkspace().config().options().isRecover()) {
                     onLoadRepositoryError(file, name, null, ex, session);

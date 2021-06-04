@@ -15,7 +15,7 @@ public class PlainBlocTextFormatter implements NutsCodeFormat {
 
     public PlainBlocTextFormatter(NutsWorkspace ws) {
         this.ws = ws;
-        factory = ws.formats().text();
+        factory = ws.text();
     }
 
     @Override

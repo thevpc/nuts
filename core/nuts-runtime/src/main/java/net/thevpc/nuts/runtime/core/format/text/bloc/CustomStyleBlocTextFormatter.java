@@ -11,14 +11,14 @@ import net.thevpc.nuts.NutsText;
 
 public class CustomStyleBlocTextFormatter implements NutsCodeFormat {
 
-    private NutsWorkspace ws;
+    private NutsSession session;
     private NutsTextStyle style;
     private NutsTextManager factory;
 
-    public CustomStyleBlocTextFormatter(NutsTextStyle style, NutsWorkspace ws) {
-        this.ws = ws;
+    public CustomStyleBlocTextFormatter(NutsTextStyle style, NutsSession session) {
+        this.session = session;
         this.style = style;
-        factory = ws.formats().text();
+        factory = session.getWorkspace().text();
     }
 
     @Override

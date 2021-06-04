@@ -56,7 +56,7 @@ public class NAdminMain extends NutsApplication {
                 someAdded++;
             }
         }
-        NutsTextManager factory = applicationContext.getWorkspace().formats().text();
+        NutsTextManager factory = applicationContext.getWorkspace().text();
         if (applicationContext.getSession().isPlainTrace()) {
             if (someAdded == 0) {
                 applicationContext.getSession().out().print("```error no new``` java installation locations found...\n");

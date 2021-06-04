@@ -6,10 +6,10 @@
 package net.thevpc.nuts.toolbox.ndb.derby;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.toolbox.ndb.NdbSupport;
 
 import java.io.File;
 import java.io.PrintStream;
-import net.thevpc.nuts.toolbox.ndb.NdbSupport;
 
 /**
  * @author thevpc
@@ -19,7 +19,7 @@ public class NDerbyMain implements NdbSupport {
     private NutsApplicationContext appContext;
 
     @Override
-    public void run(NutsApplicationContext appContext,NutsCommandLine cmdLine) {
+    public void run(NutsApplicationContext appContext, NutsCommandLine cmdLine) {
         this.appContext = appContext;
         NutsWorkspace ws = appContext.getWorkspace();
         NutsArgument a;
@@ -35,21 +35,21 @@ public class NDerbyMain implements NdbSupport {
             } else if ((a = cmdLine.next("status")) != null) {
                 status(cmdLine, options);
                 return;
-            } else if ((a = cmdLine.next("rt", "runtime","runtimeinfo","runtime-info")) != null) {
+            } else if ((a = cmdLine.next("rt", "runtime", "runtimeinfo", "runtime-info")) != null) {
                 options.cmd = Command.runtimeinfo;
             } else if ((a = cmdLine.nextString("trace")) != null) {
                 options.cmd = Command.trace;
                 options.extraArg = a.getStringValue();
-            } else if ((a = cmdLine.nextString("trace-directory","tracedirectory")) != null) {
+            } else if ((a = cmdLine.nextString("trace-directory", "tracedirectory")) != null) {
                 options.cmd = Command.tracedirectory;
                 options.extraArg = a.getStringValue();
-            } else if ((a = cmdLine.nextString("max-threads","maxthreads")) != null) {
+            } else if ((a = cmdLine.nextString("max-threads", "maxthreads")) != null) {
                 options.cmd = Command.maxthreads;
                 options.extraArg = a.getStringValue();
-            } else if ((a = cmdLine.nextString("time-slice","timeslice")) != null) {
+            } else if ((a = cmdLine.nextString("time-slice", "timeslice")) != null) {
                 options.cmd = Command.timeslice;
                 options.extraArg = a.getStringValue();
-            } else if ((a = cmdLine.nextString("log-connections","logconnections")) != null) {
+            } else if ((a = cmdLine.nextString("log-connections", "logconnections")) != null) {
                 options.cmd = Command.logconnections;
                 options.extraArg = a.getStringValue();
             } else if ((a = cmdLine.next("stop", "shutdown")) != null) {
@@ -69,27 +69,27 @@ public class NDerbyMain implements NdbSupport {
         if (cmdLine.isExecMode()) {
             DerbyService srv = new DerbyService(appContext);
             int effectivePort = options.port < 0 ? 1527 : options.port;
-            if(options.cmd==Command.start) {
-                NutsTextManager factory = appContext.getWorkspace().formats().text();
+            if (options.cmd == Command.start) {
+                NutsTextManager factory = appContext.getWorkspace().text();
                 if (cmdLine.isExecMode()) {
                     if (new DerbyService(appContext).isRunning()) {
                         appContext.getSession().out().printf("derby is %s on port %s%n",
                                 factory.forStyled("already running", NutsTextStyle.warn()),
-                                factory.forStyled(""+ effectivePort, NutsTextStyle.number())
+                                factory.forStyled("" + effectivePort, NutsTextStyle.number())
                         );
-                        throw new NutsExecutionException(appContext.getSession(),"derby is already running on port "+ effectivePort,3);
+                        throw new NutsExecutionException(appContext.getSession(), "derby is already running on port " + effectivePort, 3);
                     }
                 }
-            }else if(options.cmd==Command.shutdown){
-                NutsTextManager factory = appContext.getWorkspace().formats().text();
+            } else if (options.cmd == Command.shutdown) {
+                NutsTextManager factory = appContext.getWorkspace().text();
                 if (cmdLine.isExecMode()) {
                     if (!new DerbyService(appContext).isRunning()) {
                         appContext.getSession().out().printf("derby is %s on port %s%n",
                                 factory.forStyled("already stopped", NutsTextStyle.warn()),
-                                factory.forStyled(""+ effectivePort, NutsTextStyle.number())
+                                factory.forStyled("" + effectivePort, NutsTextStyle.number())
                         );
                         appContext.getSession().out().printf("derby is %s%n", factory.forStyled("already stopped", NutsTextStyle.warn()));
-                        throw new NutsExecutionException(appContext.getSession(),"derby is already stopped"+ effectivePort,3);
+                        throw new NutsExecutionException(appContext.getSession(), "derby is already stopped" + effectivePort, 3);
                     }
                 }
             }
@@ -108,12 +108,12 @@ public class NDerbyMain implements NdbSupport {
             }
         }
         options.cmd = Command.ping;
-        NutsTextManager factory = appContext.getWorkspace().formats().text();
+        NutsTextManager factory = appContext.getWorkspace().text();
         if (cmdLine.isExecMode()) {
             if (new DerbyService(appContext).isRunning()) {
-                appContext.getSession().out().printf("derby is %s%n",factory.forStyled("running",NutsTextStyle.primary(1)));
+                appContext.getSession().out().printf("derby is %s%n", factory.forStyled("running", NutsTextStyle.primary(1)));
             } else {
-                appContext.getSession().out().printf("derby is %s%n",factory.forStyled("stopped",NutsTextStyle.error()));
+                appContext.getSession().out().printf("derby is %s%n", factory.forStyled("stopped", NutsTextStyle.error()));
             }
         }
     }
@@ -164,7 +164,7 @@ public class NDerbyMain implements NdbSupport {
                 args.unexpectedArgument();
             }
         }
-        NutsTextManager factory = appContext.getWorkspace().formats().text();
+        NutsTextManager factory = appContext.getWorkspace().text();
         if (args.isExecMode()) {
             NutsSession session = appContext.getSession();
             if (session.isPlainOut()) {
@@ -173,25 +173,25 @@ public class NDerbyMain implements NdbSupport {
                     switch (format) {
                         case "short": {
                             out.printf("%s\n",
-                                    factory.forStyled(jpsResult.getPid(),NutsTextStyle.primary(1))
+                                    factory.forStyled(jpsResult.getPid(), NutsTextStyle.primary(1))
                             );
                             break;
                         }
                         case "long": {
                             out.printf("%s %s %s %s %s%n",
-                                    factory.forStyled(jpsResult.getPid(),NutsTextStyle.primary(1)),
+                                    factory.forStyled(jpsResult.getPid(), NutsTextStyle.primary(1)),
                                     factory.forPlain("HOME:"),
-                                    factory.forStyled(jpsResult.getHome(),NutsTextStyle.path()),
+                                    factory.forStyled(jpsResult.getHome(), NutsTextStyle.path()),
                                     factory.forPlain("CMD:"),
-                                    appContext.getWorkspace().commandLine().formatter(
-                                            appContext.getCommandLine().parseLine(jpsResult.getArgsLine())
-                                    ).format()
+
+                                    appContext.getCommandLine().parseLine(jpsResult.getArgsLine())
+                                            .format()
                             );
                             break;
                         }
                         default: {
                             out.printf("%s %s\n",
-                                    factory.forStyled(jpsResult.getPid(),NutsTextStyle.primary(1)),
+                                    factory.forStyled(jpsResult.getPid(), NutsTextStyle.primary(1)),
                                     jpsResult.getHome()
                             );
                             break;

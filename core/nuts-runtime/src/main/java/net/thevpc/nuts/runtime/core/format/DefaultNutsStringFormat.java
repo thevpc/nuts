@@ -117,7 +117,7 @@
 //
 //    @Override
 //    public String format() {
-//        return getSession().getWorkspace().formats().text().toString(
+//        return getSession().getWorkspace().text().toString(
 //                build(), getSession()
 //        ).toString();
 //    }

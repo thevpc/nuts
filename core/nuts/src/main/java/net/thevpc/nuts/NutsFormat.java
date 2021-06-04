@@ -53,7 +53,7 @@ public interface NutsFormat extends NutsCommandLineConfigurable {
      *
      * @return formatted current value
      */
-    String format();
+    NutsString format();
 
     /**
      * format current value and write result to {@code getSession().out()}.

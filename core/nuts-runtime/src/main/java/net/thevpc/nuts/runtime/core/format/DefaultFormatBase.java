@@ -51,10 +51,15 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
     }
 
     @Override
-    public String format() {
+    public NutsString format() {
+        checkSession();
         ByteArrayPrintStream out = new ByteArrayPrintStream();
         print(out);
-        return out.toString();
+        return isNtf()?
+                getSession().getWorkspace().text().parse(out.toString())
+                :
+                getSession().getWorkspace().text().forPlain(out.toString())
+                ;
     }
 
     @Override

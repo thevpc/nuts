@@ -128,7 +128,7 @@ public class AntiQuote3ParserStep extends ParserStep {
     public NutsText toText() {
         char[] dst = new char[value.length()];
         value.getChars(0,value.length(), dst,0 );
-        DefaultNutsTextManager factory0 = (DefaultNutsTextManager) ws.formats().text();
+        DefaultNutsTextManager factory0 = (DefaultNutsTextManager) ws.text();
         int i=0;
         int endOffset=-1;
         if(dst.length>0 && dst[i]=='!') {
@@ -178,24 +178,7 @@ public class AntiQuote3ParserStep extends ParserStep {
                     );
                 }
             }
-            NutsTerminalCommand ntc=null;
-            switch(cmd0){
-                case NutsTerminalCommand.Ids.LATER_RESET_LINE:{
-                    ntc=NutsTerminalCommand.LATER_RESET_LINE;
-                    break;
-                }
-                case NutsTerminalCommand.Ids.MOVE_LINE_START:{
-                    ntc=NutsTerminalCommand.MOVE_LINE_START;
-                    break;
-                }
-                case NutsTerminalCommand.Ids.MOVE_UP:{
-                    ntc=NutsTerminalCommand.MOVE_UP;
-                    break;
-                }
-                default:{
-                    ntc=new NutsTerminalCommand(cmd0,value);
-                }
-            }
+            NutsTerminalCommand ntc=NutsTerminalCommand.of(cmd0,value);
             return factory0.createCommand(
                     start2,
                     ntc,

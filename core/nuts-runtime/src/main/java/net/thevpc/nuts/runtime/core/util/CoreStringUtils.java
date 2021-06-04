@@ -24,6 +24,7 @@
 package net.thevpc.nuts.runtime.core.util;
 
 import net.thevpc.nuts.NutsNotFoundException;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsWorkspace;
 
 import java.io.IOException;
@@ -305,8 +306,8 @@ public final class CoreStringUtils {
         return s;
     }
 
-    public static String enforceDoubleQuote(String s, NutsWorkspace ws) {
-        s = ws.formats().text().builder().append(s).toString();
+    public static String enforceDoubleQuote(String s, NutsSession ws) {
+        s = ws.getWorkspace().text().builder().append(s).toString();
         if (s.isEmpty() || s.contains(" ") || s.contains("\"") || s.contains("'")) {
             s = "\"" + s + "\"";
         }

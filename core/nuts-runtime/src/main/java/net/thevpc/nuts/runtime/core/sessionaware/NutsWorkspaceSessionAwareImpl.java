@@ -360,6 +360,11 @@ public class NutsWorkspaceSessionAwareImpl implements NutsWorkspace, NutsWorkspa
     }
 
     @Override
+    public NutsElementFormat elem() {
+        return ws.elem().setSession(getSession());
+    }
+
+    @Override
     public String toString() {
         return ws.toString();
     }

@@ -434,7 +434,7 @@ public class NMysqlMain implements NdbSupport {
             commandLine.required("required --server option");
         }
         NutsTextManager factory = service.getContext()
-                .getWorkspace().formats().text();
+                .getWorkspace().text();
         if (commandLine.isExecMode()) {
             NutsSession session = service.getContext().getSession();
             if(!expectedRemote) {
@@ -788,10 +788,10 @@ public class NMysqlMain implements NdbSupport {
     }
 
     public Object toObject(String dbName, String confName, LocalMysqlDatabaseConfig config,boolean describe,boolean plain,NutsApplicationContext context) {
-        NutsFormatManager text = context.getSession().getWorkspace().formats();
+        NutsTextManager text = context.getSession().getWorkspace().text();
         if(!describe){
             if(plain){
-                return text.text().builder()
+                return text.builder()
                         .append(" [local ] ",NutsTextStyle.primary(4))
                         .append(dbName).append("@").append(confName,NutsTextStyle.primary(4))
                         ;
@@ -800,7 +800,7 @@ public class NMysqlMain implements NdbSupport {
             }
         }else{
             if(plain){
-                return text.text().builder()
+                return text.builder()
                         .append(" [local ] ",NutsTextStyle.primary(4))
                         .append(dbName).append("@").append(confName,NutsTextStyle.primary(4))
                         .append(" db=").append(config.getDatabaseName())
@@ -812,10 +812,10 @@ public class NMysqlMain implements NdbSupport {
     }
 
     public Object toObject(String dbName, String confName, RemoteMysqlDatabaseConfig config,boolean describe,boolean plain,NutsApplicationContext context) {
-        NutsFormatManager text = context.getSession().getWorkspace().formats();
+        NutsTextManager text = context.getSession().getWorkspace().text();
         if(!describe){
             if(plain){
-                return text.text().builder()
+                return text.builder()
                         .append(" [remote] ",NutsTextStyle.primary(4))
                         .append(dbName).append("@").append(confName,NutsTextStyle.primary(4))
                         ;
@@ -824,7 +824,7 @@ public class NMysqlMain implements NdbSupport {
             }
         }else{
             if(plain){
-                return text.text().builder()
+                return text.builder()
                         .append(" [remote] ",NutsTextStyle.primary(4))
                         .append(dbName).append("@").append(confName,NutsTextStyle.primary(4))
                         .append(" local=").append(config.getLocalName())

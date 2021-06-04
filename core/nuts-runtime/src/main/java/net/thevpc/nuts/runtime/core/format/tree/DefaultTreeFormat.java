@@ -23,11 +23,11 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
     public final NutsTreeNodeFormat TO_STRING_FORMATTER = new NutsTreeNodeFormat() {
         @Override
         public NutsString format(Object o, int depth, NutsSession session) {
-            return session.getWorkspace().formats().text().builder().append(o).immutable();
+            return session.getWorkspace().text().builder().append(o).immutable();
         }
     };
-    private NutsTreeNodeFormat formatter = TO_STRING_FORMATTER;
-    private NutsTreeLinkFormat linkFormatter = CoreNutsUtils.SUPPORTS_UTF_ENCODING ? LINK_UNICODE_FORMATTER : LINK_ASCII_FORMATTER;
+    private NutsTreeNodeFormat formatter;
+    private NutsTreeLinkFormat linkFormatter ;
     private Object tree;
     private boolean omitRoot = false;
     private boolean infinite = false;
@@ -48,7 +48,7 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
     public DefaultTreeFormat(NutsWorkspace ws) {
         super(ws, "tree-format");
         formatter = TO_STRING_FORMATTER;
-        linkFormatter = LINK_ASCII_FORMATTER;
+        linkFormatter = CoreNutsUtils.SUPPORTS_UTF_ENCODING ? LINK_UNICODE_FORMATTER : LINK_ASCII_FORMATTER;
     }
 
     public DefaultTreeFormat(NutsWorkspace ws, NutsTreeModel tree) {
@@ -106,18 +106,9 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
 //        if(tree instanceof NutsTreeModel){
             return (NutsTreeModel) tree;
         }
-        Object destructredObject = getSession().getWorkspace().formats().element()
+        Object destructredObject = getSession().getWorkspace().elem()
                 .setNtf(true)
-                .setDestructTypeFilter(x -> {
-                    if (x instanceof Class) {
-                        Class c = (Class) x;
-                        return !(NutsId.class.isAssignableFrom(c)
-                                || NutsDependency.class.isAssignableFrom(c)
-                                || NutsString.class.isAssignableFrom(c) //                                || NutsFormattable.class.isAssignableFrom(c)
-                                );
-                    }
-                    return false;
-                })
+                .setDestructTypeFilter(DefaultNutsFormatDestructTypePredicate.INSTANCE)
                 .destruct(tree);
         return new NutsElementTreeModel(
                 XNode.root(destructredObject, rootName, getSession(), xNodeFormatter)
@@ -170,13 +161,17 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
 
     private boolean print(NutsTreeModel tree, String prefix, NutsPositionType type, Object o, PrintStream out, boolean hideRoot, int depth, boolean prefixNewLine) {
         checkSession();
+        Object oValue=o;
+        if(oValue instanceof XNode){
+            oValue=((XNode) oValue).toNutsString();
+        }
         if (!hideRoot) {
             if (prefixNewLine) {
                 out.println();
             }
             out.print(prefix);
             out.print(linkFormatter.formatMain(type));
-            out.print(formatter.format(o, depth, getSession()));
+            out.print(formatter.format(oValue, depth, getSession()));
             out.flush();
             prefixNewLine = true;
         }
@@ -308,7 +303,7 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
         if (vv.length == 0 || vv.length == 1) {
             return null;
         }
-        return Arrays.stream(vv).map(x -> getSession().getWorkspace().formats().text().toText(x)).toArray(NutsString[]::new);
+        return Arrays.stream(vv).map(x -> getSession().getWorkspace().text().toText(x)).toArray(NutsString[]::new);
     }
 
     private String getMultilineSeparator(NutsString key) {

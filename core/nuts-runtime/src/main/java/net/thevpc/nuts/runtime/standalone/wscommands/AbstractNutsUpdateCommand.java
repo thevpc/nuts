@@ -8,6 +8,7 @@ package net.thevpc.nuts.runtime.standalone.wscommands;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
+import java.time.Instant;
 import java.util.*;
 
 /**
@@ -25,6 +26,7 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
     protected boolean updateCompanions = false;
     protected boolean includeOptional = false;
     protected String forceBootAPIVersion;
+    protected Instant expireTime;
     protected List<String> args;
     protected final List<NutsDependencyScope> scopes = new ArrayList<>();
     protected final List<NutsId> lockedIds = new ArrayList<>();
@@ -474,15 +476,15 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
                 }
                 return true;
             }
-            case "-w":
-            case "--ws":
-            case "--workspace": {
-                cmdLine.skip();
-                if (enabled) {
-                    this.getWorkspace();
-                }
-                return true;
-            }
+//            case "-w":
+//            case "--ws":
+//            case "--workspace": {
+//                cmdLine.skip();
+//                if (enabled) {
+//                    this.getWorkspace();
+//                }
+//                return true;
+//            }
             case "-i":
             case "--installed": {
                 boolean val = cmdLine.nextBoolean().getBooleanValue();
@@ -540,6 +542,18 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
                     this.addArgs(cmdLine.toStringArray());
                 }
                 cmdLine.skipAll();
+                return true;
+            }
+            case "-N":
+            case "--expire": {
+                a = cmdLine.next();
+                if (enabled) {
+                    if (a.getStringValue() != null) {
+                        expireTime=Instant.parse(a.getStringValue());
+                    } else {
+                        expireTime=Instant.now();
+                    }
+                }
                 return true;
             }
 

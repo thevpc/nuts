@@ -26,12 +26,14 @@
 */
 package net.thevpc.nuts.runtime.core.commands.repo;
 
+import net.thevpc.nuts.NutsEnum;
+
 /**
  *
  * @author thevpc
  * @since 0.5.4
  */
-public enum NutsRepositorySupportedAction {
+public enum NutsRepositorySupportedAction  implements NutsEnum {
     SEARCH,
     DEPLOY;
 

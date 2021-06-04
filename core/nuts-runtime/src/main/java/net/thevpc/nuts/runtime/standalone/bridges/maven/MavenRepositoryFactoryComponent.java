@@ -92,7 +92,7 @@ public class MavenRepositoryFactoryComponent implements NutsRepositoryFactoryCom
                             nru.getLocation() + "/nuts-repository.json"
                     );
                     try (InputStream s = in.open()) {
-                        Map<String, Object> m = criteria.getWorkspace().formats().element().setContentType(NutsContentType.JSON)
+                        Map<String, Object> m = criteria.getWorkspace().elem().setContentType(NutsContentType.JSON)
                                 .parse(s, Map.class);
                         if (m != null) {
                             String type = (String) m.get("type");

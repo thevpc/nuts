@@ -96,7 +96,7 @@ public class NutsXmlUtils {
 //        if(elemIndex>=0){
 //            elem.setAttribute("index",CoreCommonUtils.stringValue(elemIndex));
 //        }
-//        NutsElement elem2 = session.getWorkspace().formats().element().convert(o,NutsElement.class);
+//        NutsElement elem2 = session.getWorkspace().elem().convert(o,NutsElement.class);
 //        switch (elem2.type()){
 //            case STRING:{
 //                elem.setAttribute("type", "string");

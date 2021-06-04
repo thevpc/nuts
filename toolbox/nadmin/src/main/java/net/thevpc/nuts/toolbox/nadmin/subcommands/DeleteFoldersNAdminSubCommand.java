@@ -58,7 +58,7 @@ public class DeleteFoldersNAdminSubCommand extends AbstractNAdminSubCommand {
     private void deleteWorkspaceFolder(NutsApplicationContext context, NutsStoreLocation folder, boolean force) {
         String sstoreLocation = context.getWorkspace().locations().getStoreLocation(folder);
         if (sstoreLocation != null) {
-            NutsTextManager factory = context.getWorkspace().formats().text();
+            NutsTextManager factory = context.getWorkspace().text();
             Path storeLocation = Paths.get(sstoreLocation);
             if (Files.exists(storeLocation)) {
                 context.getSession().out().printf("```error deleting``` %s for workspace %s folder %s ...%n",
@@ -86,7 +86,7 @@ public class DeleteFoldersNAdminSubCommand extends AbstractNAdminSubCommand {
         String sstoreLocation = context.getWorkspace().locations().getStoreLocation(folder);
         if (sstoreLocation != null) {
             Path storeLocation=Paths.get(sstoreLocation);
-            NutsTextManager factory = context.getWorkspace().formats().text();
+            NutsTextManager factory = context.getWorkspace().text();
             if (Files.exists(storeLocation)) {
                 context.getSession().out().printf("```error deleting``` %s for repository %s folder %s ...%n",
                         factory.forStyled(folder.id(),NutsTextStyle.primary(1)),
@@ -134,7 +134,7 @@ public class DeleteFoldersNAdminSubCommand extends AbstractNAdminSubCommand {
         if (s != null) {
             if (Files.exists(s)) {
                 context.getSession().out().printf("```error deleting``` %s folder %s ...%n",
-                        context.getWorkspace().formats().text().forStyled("cache",NutsTextStyle.primary(1))
+                        context.getWorkspace().text().forStyled("cache",NutsTextStyle.primary(1))
                         ,s);
                 if (force
                         || context.getSession().getTerminal().ask()

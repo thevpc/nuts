@@ -33,7 +33,7 @@ public class WorkspaceService {
         Path c = getConfigFile();
         if (Files.isRegularFile(c)) {
             try {
-                config = appContext.getWorkspace().formats().element().setSession(appContext.getSession()).setContentType(NutsContentType.JSON).parse(c, WorkspaceConfig.class);
+                config = appContext.getWorkspace().elem().setSession(appContext.getSession()).setContentType(NutsContentType.JSON).parse(c, WorkspaceConfig.class);
             } catch (Exception ex) {
                 //
             }
@@ -101,7 +101,7 @@ public class WorkspaceService {
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
-        appContext.getWorkspace().formats().element().setSession(appContext.getSession()).setContentType(NutsContentType.JSON).setValue(c).print(configFile);
+        appContext.getWorkspace().elem().setSession(appContext.getSession()).setContentType(NutsContentType.JSON).setValue(c).print(configFile);
     }
 
     private void updateBools(Boolean[] all, boolean ok) {
@@ -186,14 +186,14 @@ public class WorkspaceService {
     }
 
     private NutsTextBuilder formatProjectConfig(NutsApplicationContext appContext, ProjectConfig p2) {
-        NutsFormatManager text = appContext.getWorkspace().formats();
-        return text.text().builder()
+        NutsTextManager text = appContext.getWorkspace().text();
+        return text.builder()
                 .append(p2.getId(), NutsTextStyle.primary(4))
                 .append(" ")
                 .appendJoined(
-                        text.text().forPlain(", "),
+                        text.forPlain(", "),
                         p2.getTechnologies().stream().map(
-                                x -> text.text().forStyled(x, NutsTextStyle.primary(5))
+                                x -> text.forStyled(x, NutsTextStyle.primary(5))
                         ).collect(Collectors.toList())
                 )
                 .append(" : ")
@@ -428,17 +428,17 @@ public class WorkspaceService {
 //            tf.addRow(d.id, d.local, d.remote, d.status);
         }
         if (!ddd.isEmpty() || !appContext.getSession().isPlainOut()) {
-            NutsTextManager tfactory = appContext.getWorkspace().formats().text();
+            NutsTextManager tfactory = appContext.getWorkspace().text();
             if (appContext.getSession().isPlainOut()) {
                 for (DataRow p2 : ddd) {
                     String status = p2.status;
-                    NutsFormatManager tf = appContext.getWorkspace().formats();
-                    int len = tf.text().parse(status).textLength();
+                    NutsTextManager tf = appContext.getWorkspace().text();
+                    int len = tf.parse(status).textLength();
                     while (len < 10) {
                         status += " ";
                         len++;
                     }
-                    switch (tf.text().forPlain(p2.status).filteredText()) {
+                    switch (tf.forPlain(p2.status).filteredText()) {
                         case "new": {
                             appContext.getSession().out().printf("[%s] %s : %s",
                                     tfactory.forStyled("new", NutsTextStyle.primary(3)),
@@ -596,8 +596,7 @@ public class WorkspaceService {
             File folder = stack.pop();
             if (folder.isDirectory()) {
                 if (isScanEnabled(folder)) {
-                    NutsFormatManager text = appContext.getWorkspace().formats();
-                    NutsTextManager tfactory = text.text();
+                    NutsTextManager text = appContext.getWorkspace().text();
                     ProjectConfig p2 = new ProjectService(appContext, config.getDefaultRepositoryAddress(), new ProjectConfig().setPath(folder.getPath())
                     ).rebuildProjectMetadata();
                     if (p2.getTechnologies().size() > 0) {
@@ -622,9 +621,9 @@ public class WorkspaceService {
                                 if (appContext.getSession().isPlainOut()) {
                                     appContext.getSession().out().printf("```error [CONFLICT]``` multiple paths for the same id %s. "
                                             + "please consider adding .nuts-info file with " + SCAN + "=false  :  %s -- %s%n",
-                                            tfactory.forStyled(p2.getId(), NutsTextStyle.primary(2)),
-                                            tfactory.forStyled(p2.getPath(), NutsTextStyle.path()),
-                                            tfactory.forStyled(p3.getPath(), NutsTextStyle.path())
+                                            text.forStyled(p2.getId(), NutsTextStyle.primary(2)),
+                                            text.forStyled(p2.getPath(), NutsTextStyle.path()),
+                                            text.forStyled(p3.getPath(), NutsTextStyle.path())
                                     );
                                 }
                                 if (structuredOutContentType) {
@@ -668,7 +667,7 @@ public class WorkspaceService {
                             }
                             if (interactive) {
                                 String id = appContext.getSession().getTerminal().readLine("enter Id %s: ",
-                                        (p2.getId() == null ? "" : ("(" + text.text().forPlain(p2.getId()) + ")")));
+                                        (p2.getId() == null ? "" : ("(" + text.forPlain(p2.getId()) + ")")));
                                 if (!_StringUtils.isBlank(id)) {
                                     p2.setId(id);
                                 }
@@ -712,7 +711,7 @@ public class WorkspaceService {
         boolean scan = true;
         if (Files.isRegularFile(ni)) {
             try {
-                p = appContext.getWorkspace().formats().element().setSession(appContext.getSession()).setContentType(NutsContentType.JSON).parse(ni, Map.class);
+                p = appContext.getWorkspace().elem().setSession(appContext.getSession()).setContentType(NutsContentType.JSON).parse(ni, Map.class);
                 String v = p.get(SCAN) == null ? null : String.valueOf(p.get(SCAN));
                 if (v == null || "false".equals(v.trim())) {
                     scan = false;
@@ -727,7 +726,7 @@ public class WorkspaceService {
                 p = new Properties();
             }
             p.put(SCAN, enable);
-            appContext.getWorkspace().formats().element().setSession(appContext.getSession()).setContentType(NutsContentType.JSON).setValue(p).print(ni);
+            appContext.getWorkspace().elem().setSession(appContext.getSession()).setContentType(NutsContentType.JSON).setValue(p).print(ni);
         }
     }
 
@@ -737,7 +736,7 @@ public class WorkspaceService {
         Map p = null;
         if (ni.isFile()) {
             try {
-                p = appContext.getWorkspace().formats().element().setSession(appContext.getSession()).setContentType(NutsContentType.JSON).parse(ni, Map.class);
+                p = appContext.getWorkspace().elem().setSession(appContext.getSession()).setContentType(NutsContentType.JSON).parse(ni, Map.class);
                 String v = p.get(SCAN) == null ? null : String.valueOf(p.get(SCAN));
                 if (v == null || "false".equals(v.trim())) {
                     scan = false;

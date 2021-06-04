@@ -23,12 +23,24 @@
  */
 package net.thevpc.nuts.runtime.bundles.reflect;
 
+import net.thevpc.nuts.NutsEnum;
+
 /**
  *
  * @author vpc
  */
-public enum ReflectPropertyAccessStrategy {
+public enum ReflectPropertyAccessStrategy  implements NutsEnum {
     FIELD,
     METHOD,
-    BOTH,
+    BOTH;
+    private String id;
+
+    ReflectPropertyAccessStrategy() {
+        this.id = name().toLowerCase().replace('_', '-');
+    }
+
+    @Override
+    public String id() {
+        return id;
+    }
 }

@@ -22,7 +22,7 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
 
     public ShellBlocTextFormatter(NutsWorkspace ws) {
         this.ws = ws;
-        factory = ws.formats().text();
+        factory = ws.text();
     }
 
     @Override
@@ -148,7 +148,7 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
         if (ar.hasNext()) {
             sb2.append(ar.nextChar());
         }
-        NutsTextManager factory = ws.formats().text();
+        NutsTextManager factory = ws.text();
         return new NutsText[]{factory.forStyled(sb2.toString(), NutsTextStyle.separator())};
     }
 
@@ -683,7 +683,7 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
     public NutsText next(StringReaderExt reader, boolean exitOnClosedCurlBrace, boolean exitOnClosedPar, boolean exitOnDblQuote, boolean exitOnAntiQuote) {
         boolean lineStart = true;
         List<NutsText> all = new ArrayList<>();
-        NutsTextManager factory = ws.formats().text();
+        NutsTextManager factory = ws.text();
         boolean exit = false;
         while (!exit && reader.hasNext()) {
             switch (reader.peekChar()) {
@@ -1033,7 +1033,7 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
     }
 
     private NutsText nextDollar(StringReaderExt reader) {
-        NutsTextManager factory = ws.formats().text();
+        NutsTextManager factory = ws.text();
         if (reader.isAvailable(2)) {
             char c = reader.peekChar(1);
             switch (c) {
@@ -1092,7 +1092,7 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
 
     public NutsText nextDoubleQuotes(StringReaderExt reader) {
         List<NutsText> all = new ArrayList<>();
-        NutsTextManager factory = ws.formats().text();
+        NutsTextManager factory = ws.text();
         boolean exit = false;
         StringBuilder sb = new StringBuilder();
         sb.append(reader.nextChar());

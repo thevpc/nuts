@@ -30,7 +30,7 @@ public class RootParserStep extends ParserStep {
         return available.poll();
     }
     public ParserStep peek() {
-        return available.pop();
+        return available.peek();
     }
     public boolean isEmpty() {
         return available.isEmpty();
@@ -56,7 +56,7 @@ public class RootParserStep extends ParserStep {
             }
             all.add(a.toText());
         }
-        return ws.formats().text().forList(all);
+        return ws.text().forList(all);
     }
 
     @Override

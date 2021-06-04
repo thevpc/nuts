@@ -249,7 +249,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
             } catch (UncheckedIOException | NutsIOException ex) {
                 throw new NutsNotFoundException(session, id, ex);
             }
-            List<Map<String, Object>> info = session.getWorkspace().formats().element().setContentType(NutsContentType.JSON).parse(new InputStreamReader(metadataStream), List.class);
+            List<Map<String, Object>> info = session.getWorkspace().elem().setContentType(NutsContentType.JSON).parse(new InputStreamReader(metadataStream), List.class);
             if (info != null) {
                 NutsIdManager idMan = session.getWorkspace().id();
                 for (Map<String, Object> version : info) {

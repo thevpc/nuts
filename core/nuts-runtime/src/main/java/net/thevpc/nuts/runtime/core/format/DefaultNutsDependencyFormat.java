@@ -118,7 +118,7 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
     }
 
     @Override
-    public String format() {
+    public NutsString format() {
         NutsIdBuilder id = value.toId().builder();
         Map<String, String> q = id.getProperties();
         for (Map.Entry<String, String> e : q.entrySet()) {

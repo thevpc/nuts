@@ -11,7 +11,7 @@ import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextNodeParser
 
 public class DefaultNutsTextNodeBuilder implements NutsTextBuilder {
 
-    NutsFormatManager text1;
+    NutsTextManager text1;
     private List<NutsText> all = new ArrayList<>();
     private NutsSession session;
     private NutsTextWriteConfiguration writeConfiguration;
@@ -19,7 +19,7 @@ public class DefaultNutsTextNodeBuilder implements NutsTextBuilder {
 
     public DefaultNutsTextNodeBuilder(NutsSession session) {
         this.session = session;
-        text1 = session.getWorkspace().formats();
+        text1 = session.getWorkspace().text();
     }
 
     @Override
@@ -49,13 +49,13 @@ public class DefaultNutsTextNodeBuilder implements NutsTextBuilder {
 
     @Override
     public NutsTextBuilder appendCommand(NutsTerminalCommand command) {
-        all.add(text1.text().forCommand(command));
+        all.add(text1.forCommand(command));
         return this;
     }
 
     @Override
     public NutsTextBuilder appendCode(String lang, String text) {
-        all.add(text1.text().forCode(lang, text));
+        all.add(text1.forCode(lang, text));
         return this;
     }
 
@@ -97,9 +97,9 @@ public class DefaultNutsTextNodeBuilder implements NutsTextBuilder {
     public NutsTextBuilder append(Object text, NutsTextStyles styles) {
         if (text != null) {
             if (styles.size() == 0) {
-                all.add(session.getWorkspace().formats().text().toText(text));
+                all.add(session.getWorkspace().text().toText(text));
             } else {
-                all.add(text1.text().forStyled(session.getWorkspace().formats().text().toText(text), styles));
+                all.add(text1.forStyled(session.getWorkspace().text().toText(text), styles));
             }
         }
         return this;
@@ -108,7 +108,7 @@ public class DefaultNutsTextNodeBuilder implements NutsTextBuilder {
     @Override
     public NutsTextBuilder append(Object node) {
         if (node != null) {
-            return append(session.getWorkspace().formats().text().toText(node));
+            return append(session.getWorkspace().text().toText(node));
         }
         return this;
     }
@@ -135,7 +135,7 @@ public class DefaultNutsTextNodeBuilder implements NutsTextBuilder {
     //    @Override
 //    public NutsTextBuilder append(NutsString str) {
 //        if (str != null) {
-//            NutsText n = ws.formats().text().parser().parse(new StringReader(str.toString()));
+//            NutsText n = ws.text().parser().parse(new StringReader(str.toString()));
 //            if (n != null) {
 //                append(n);
 //            }
@@ -146,7 +146,7 @@ public class DefaultNutsTextNodeBuilder implements NutsTextBuilder {
 //    @Override
 //    public NutsTextBuilder append(NutsFormattable str) {
 //        if (str != null) {
-//            append(ws.formats().text().toText(str));
+//            append(ws.text().toText(str));
 //        }
 //        return this;
 //    }
@@ -173,7 +173,7 @@ public class DefaultNutsTextNodeBuilder implements NutsTextBuilder {
 
     @Override
     public NutsText build() {
-        return text1.text().forList(all);
+        return text1.forList(all);
     }
 
     @Override

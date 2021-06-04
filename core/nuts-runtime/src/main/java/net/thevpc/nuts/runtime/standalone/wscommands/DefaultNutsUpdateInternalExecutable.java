@@ -26,8 +26,9 @@ public class DefaultNutsUpdateInternalExecutable extends DefaultInternalNutsExec
             return;
         }
         getSession().getWorkspace().update().setSession(getSession()
-                .setConfirm(NutsConfirmationMode.ASK)
-                .setTrace(true)).configure(false, args).update();
+//                .setConfirm(NutsConfirmationMode.ASK)
+//                .setTrace(true)
+        ).configure(false, args).update();
 
     }
 

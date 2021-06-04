@@ -148,12 +148,14 @@ public abstract class AbstractSystemTerminalAdapter extends AbstractNutsTerminal
     public <T> NutsQuestion<T> ask() {
         NutsSystemTerminalBase p = getParent();
         if (p instanceof NutsTerminal) {
-            return ((NutsTerminal) p).ask();
+            return ((NutsTerminal) p).<T>ask()
+                    .setSession(session)
+                    ;
         } else {
             return new DefaultNutsQuestion<T>(
                     ws,
                     this, out()
-            );
+            ).setSession(session);
         }
     }
 
@@ -222,7 +224,7 @@ public abstract class AbstractSystemTerminalAdapter extends AbstractNutsTerminal
             getProgressBar().printProgress(
                     Float.isNaN(progress) ? -1
                     : (int) (progress * 100),
-                    session.getWorkspace().formats().text().toText(NutsMessage.cstyle(prompt, params)).toString(),
+                    session.getWorkspace().text().toText(NutsMessage.cstyle(prompt, params)).toString(),
                     err()
             );
         }
@@ -235,7 +237,7 @@ public abstract class AbstractSystemTerminalAdapter extends AbstractNutsTerminal
             ((NutsTerminal) getParent()).printProgress(prompt, params);
         } else {
             getProgressBar().printProgress(-1,
-                    session.getWorkspace().formats().text().toText(NutsMessage.cstyle(prompt, params)).toString(),
+                    session.getWorkspace().text().toText(NutsMessage.cstyle(prompt, params)).toString(),
                     err()
             );
         }

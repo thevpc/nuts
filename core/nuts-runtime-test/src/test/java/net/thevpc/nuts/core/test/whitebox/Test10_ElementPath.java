@@ -49,7 +49,7 @@ public class Test10_ElementPath {
     @Test
     public void test1() {
         NutsWorkspace ws = Nuts.openWorkspace("-y","--workspace", baseFolder + "/" + TestUtils.getCallerMethodName());
-        NutsElementFormat e = ws.formats().element();
+        NutsElementFormat e = ws.elem();
         NutsElement p
                 = e.forArray()
                         .add(
@@ -96,7 +96,7 @@ public class Test10_ElementPath {
                 .build();
         NutsObjectFormat ss = ws.createSession().json().formatObject(p);
         ss.println();
-        String json = ss.format();
+        String json = ss.format().toString();
         Assertions.assertEquals("[\n"
                 + "  {\n"
                 + "    \"first\": {\n"

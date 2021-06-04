@@ -38,8 +38,8 @@ public class TitleParserStep extends ParserStep {
     @Override
     public NutsText toText() {
         String s = start.toString();
-//        NutsTextManager text = ws.formats().text();
-        DefaultNutsTextManager factory0 = (DefaultNutsTextManager) ws.formats().text();
+//        NutsTextManager text = ws.text();
+        DefaultNutsTextManager factory0 = (DefaultNutsTextManager) ws.text();
         String s0=s.trim();
         NutsText child=null;
         if (children.size() == 1) {
@@ -49,7 +49,7 @@ public class TitleParserStep extends ParserStep {
             for (ParserStep a : children) {
                 all.add(a.toText());
             }
-            child= ws.formats().text().forList(all);
+            child= ws.text().forList(all);
         }
         return factory0.createTitle(s,s0.length()-1 ,child,isComplete());
     }

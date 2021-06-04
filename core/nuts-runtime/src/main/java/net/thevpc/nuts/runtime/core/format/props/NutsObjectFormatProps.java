@@ -31,7 +31,7 @@
 //
 //    @Override
 //    public NutsObjectFormat setValue(Object value) {
-//        return super.setValue(getWorkspace().formats().element().convert(value,NutsElement.class));
+//        return super.setValue(getWorkspace().elem().convert(value,NutsElement.class));
 //    }
 //
 //    @Override

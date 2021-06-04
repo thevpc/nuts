@@ -31,7 +31,7 @@ package net.thevpc.nuts;
 
  * @category Base
  */
-public enum NutsInstallStrategy {
+public enum NutsInstallStrategy implements NutsEnum{
     /**
      * the default strategy points to 'INSTALL' but this can be configured.
      */
@@ -67,5 +67,17 @@ public enum NutsInstallStrategy {
      * switch default version. This is applicable only if the artifact is already installed.
      * No dependency will be fetched.
      */
-    SWITCH_VERSION
+    SWITCH_VERSION;
+
+    private String id;
+
+    NutsInstallStrategy() {
+        this.id = name().toLowerCase().replace('_', '-');
+    }
+
+    @Override
+    public String id() {
+        return id;
+    }
+
 }

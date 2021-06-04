@@ -32,7 +32,7 @@ package net.thevpc.nuts;
  * @since 0.5.6
  * @category Descriptor
  */
-public enum NutsDependencyScopePattern {
+public enum NutsDependencyScopePattern implements NutsEnum{
     /**
      * api (gradle) / compile (maven)
      */

@@ -13,7 +13,7 @@ public class NAdminUtils {
         String disabledString = enabled ? "" : " <DISABLED>";
         PrintStream out = context.getSession().out();
         out.print(prefix);
-        NutsTextManager factory = context.getWorkspace().formats().text();
+        NutsTextManager factory = context.getWorkspace().text();
         if (enabled) {
             out.print(factory.forStyled(repository.getName() + disabledString, NutsTextStyle.primary(2)));
         } else {

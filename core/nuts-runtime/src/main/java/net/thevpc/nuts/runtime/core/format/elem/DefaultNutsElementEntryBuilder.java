@@ -81,7 +81,7 @@
 //    }
 //
 //    private NutsElementFormat _element() {
-//        return session.getWorkspace().formats().element();
+//        return session.getWorkspace().elem();
 //    }
 //
 //}

@@ -192,10 +192,13 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
     }
 
     @Override
-    public String format() {
+    public NutsString format() {
         checkSession();
         if (id == null) {
-            return "<null>";
+            return isNtf()?
+                    getSession().getWorkspace().text().forStyled("<null>",NutsTextStyle.of(NutsTextStyleType.BOOLEAN))
+                    :getSession().getWorkspace().text().forPlain("<null>")
+                    ;
         }
         Map<String, String> queryMap = id.getProperties();
         String scope = queryMap.remove(NutsConstants.IdProperties.SCOPE);
@@ -211,8 +214,8 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
             idBuilder.setProperty(NutsConstants.IdProperties.FACE, null);
         }
         id = idBuilder.build();
-//        NutsTextFormatManager tf = getWorkspace().formats().text();
-        NutsTextBuilder sb = getSession().getWorkspace().formats().text().builder();
+//        NutsTextFormatManager tf = getWorkspace().text();
+        NutsTextBuilder sb = getSession().getWorkspace().text().builder();
         if (!isOmitNamespace()) {
             if (!CoreStringUtils.isBlank(id.getNamespace())) {
                 sb.append(id.getNamespace() + "://", NutsTextStyle.pale());
@@ -235,7 +238,7 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
         sb.append(id.getArtifactId(), NutsTextStyle.primary(1));
         if (!CoreStringUtils.isBlank(id.getVersion().getValue())) {
             sb.append("#", NutsTextStyle.separator());
-            sb.append(id.getVersion().toString(), NutsTextStyle.version());
+            sb.append(id.getVersion());
         }
         boolean firstQ = true;
 
@@ -302,9 +305,9 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
             }
         }
         if (isNtf()) {
-            return sb.toString();
+            return sb.immutable();
         } else {
-            return sb.filteredText();
+            return getSession().getWorkspace().text().forPlain(sb.filteredText());
         }
     }
 

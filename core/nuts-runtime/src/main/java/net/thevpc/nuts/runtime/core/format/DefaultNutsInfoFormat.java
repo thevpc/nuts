@@ -11,6 +11,7 @@ import java.time.Instant;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsJavaSdkUtils;
@@ -245,16 +246,15 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
         NutsWorkspace ws = getSession().getWorkspace();
         NutsWorkspaceConfigManager rt = ws.config();
         NutsWorkspaceOptions options = ws.config().getOptions();
-        Set<String> extraKeys = new TreeSet<>();
-        extraKeys = new TreeSet(extraProperties.keySet());
+        Set<String> extraKeys = new TreeSet<>(extraProperties.keySet());
 
         props.put("name", stringValue(ws.getName()));
-        props.put("nuts-api-version", stringValue(ws.getApiVersion()));
-        NutsIdFormat idFormat = ws.id().formatter();
-        props.put("nuts-api-id", idFormat.value(ws.getApiId()).format());
-        props.put("nuts-runtime-id", idFormat.value(ws.getRuntimeId()).format());
+        props.put("nuts-api-version", ws.version().parser().parse(ws.getApiVersion()));
+//        NutsIdFormat idFormat = ws.id().formatter();
+        props.put("nuts-api-id", ws.getApiId());
+        props.put("nuts-runtime-id", ws.getRuntimeId());
         URL[] cl = rt.getBootClassWorldURLs();
-        List<String> runtimeClassPath = new ArrayList<>();
+        List<NutsPath> runtimeClassPath = new ArrayList<>();
         if (cl != null) {
             for (URL url : cl) {
                 if (url != null) {
@@ -264,23 +264,25 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
                     } catch (URISyntaxException ex) {
                         s = s.replace(":", "\\:");
                     }
-                    runtimeClassPath.add(s);
+                    runtimeClassPath.add(ws.io().path(s));
                 }
             }
         }
 
-        props.put("nuts-runtime-path", stringValue(String.join(";", runtimeClassPath)));
+        props.put("nuts-runtime-classpath",
+                ws.text().builder().appendJoined(";",runtimeClassPath)
+        );
         props.put("nuts-workspace-id", stringValue(ws.getUuid()));
-        props.put("nuts-store-layout", stringValue(ws.locations().getStoreLocationLayout()));
-        props.put("nuts-store-strategy", stringValue(ws.locations().getStoreLocationStrategy()));
-        props.put("nuts-repo-store-strategy", stringValue(ws.locations().getRepositoryStoreLocationStrategy()));
+        props.put("nuts-store-layout", ws.locations().getStoreLocationLayout());
+        props.put("nuts-store-strategy", ws.locations().getStoreLocationStrategy());
+        props.put("nuts-repo-store-strategy", ws.locations().getRepositoryStoreLocationStrategy());
         props.put("nuts-global", options.isGlobal());
-        props.put("nuts-workspace", stringValue(ws.locations().getWorkspaceLocation().toString()));
+        props.put("nuts-workspace", ws.io().path(ws.locations().getWorkspaceLocation()));
         for (NutsStoreLocation folderType : NutsStoreLocation.values()) {
-            props.put("nuts-workspace-" + folderType.id(), stringValue(ws.locations().getStoreLocation(folderType).toString()));
+            props.put("nuts-workspace-" + folderType.id(), ws.io().path(ws.locations().getStoreLocation(folderType)));
         }
-        props.put("nuts-open-mode", stringValue(options.getOpenMode() == null ? NutsOpenMode.OPEN_OR_CREATE : options.getOpenMode()));
-        props.put("nuts-secure", (ws.security().setSession(getSession()).isSecure()));
+        props.put("nuts-open-mode", (options.getOpenMode() == null ? NutsOpenMode.OPEN_OR_CREATE : options.getOpenMode()));
+        props.put("nuts-secure", (ws.security().isSecure()));
         props.put("nuts-gui", options.isGui());
         props.put("nuts-inherited", options.isInherited());
         props.put("nuts-recover", options.isRecover());
@@ -291,28 +293,47 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
         props.put("nuts-skip-companions", options.isSkipCompanions());
         props.put("nuts-skip-welcome", options.isSkipWelcome());
         props.put("nuts-skip-boot", options.isSkipBoot());
-        props.put("java-version", stringValue(System.getProperty("java.version")));
-        props.put("platform", idFormat.value(ws.env().getPlatform()).format());
-        props.put("java-home", stringValue(System.getProperty("java.home")));
-        props.put("java-executable", stringValue(NutsJavaSdkUtils.of(ws).resolveJavaCommandByHome(null, getSession())));
-        props.put("java-classpath", stringValue(System.getProperty("java.class.path")));
-        props.put("java-library-path", stringValue(System.getProperty("java.library.path")));
-        props.put("os-name", ws.env().getOs().toString());
-        props.put("os-family", stringValue(ws.env().getOsFamily()));
+        props.put("java-version", ws.version().parser().parse(System.getProperty("java.version")));
+        props.put("platform", ws.env().getPlatform());
+        props.put("java-home", ws.io().path(System.getProperty("java.home")));
+        props.put("java-executable", ws.io().path(NutsJavaSdkUtils.of(ws).resolveJavaCommandByHome(null, getSession())));
+        props.put("java-classpath",
+                ws.text().builder().appendJoined(";",
+                        Arrays.stream(System.getProperty("java.class.path").split(File.pathSeparator))
+                                .map(x->ws.io().path(x))
+                                .collect(Collectors.toList())
+                        )
+        );
+        props.put("java-library-path",
+                ws.text().builder().appendJoined(";",
+                        Arrays.stream(System.getProperty("java.library.path").split(File.pathSeparator))
+                                .map(x->ws.io().path(x))
+                                .collect(Collectors.toList())
+                )
+        );
+        props.put("os-name", ws.env().getOs());
+        props.put("os-family", (ws.env().getOsFamily()));
         if (ws.env().getOsDist() != null) {
-            props.put("os-dist", stringValue(ws.env().getOsDist().toString()));
+            props.put("os-dist", (ws.env().getOsDist()));
         }
-        props.put("os-arch", stringValue(ws.env().getArchFamily().id()));
+        props.put("os-arch", ws.env().getArchFamily());
         props.put("user-name", stringValue(System.getProperty("user.name")));
-        props.put("user-home", stringValue(System.getProperty("user.home")));
-        props.put("user-dir", stringValue(System.getProperty("user.dir")));
-        props.put("command-line-long", ws.commandLine().formatter(ws.commandLine().create(ws.config().options().format().compact(false).getBootCommand())).format());
-        props.put("command-line-short", ws.commandLine().formatter(ws.commandLine().create(ws.config().options().format().compact(true).getBootCommand())).format());
+        props.put("user-home", ws.io().path(System.getProperty("user.home")));
+        props.put("user-dir", ws.io().path(System.getProperty("user.dir")));
+        props.put("command-line-long",
+                ws.commandLine().create(ws.config().options().format().compact(false).getBootCommand())
+                        .format()
+        );
+        props.put("command-line-short", ws.commandLine().create(ws.config().options().format().compact(true).getBootCommand())
+                .format()
+        );
         props.put("inherited", ws.config().options().isInherited());
-        props.put("inherited-nuts-boot-args", ws.commandLine().formatter(ws.commandLine().parse(System.getProperty("nuts.boot.args"))).format());
-        props.put("inherited-nuts-args", ws.commandLine().formatter(ws.commandLine().parse(System.getProperty("nuts.args"))).format());
-        props.put("creation-started", stringValue(Instant.ofEpochMilli(ws.config().getCreationStartTimeMillis())));
-        props.put("creation-finished", stringValue(Instant.ofEpochMilli(ws.config().getCreationFinishTimeMillis())));
+        props.put("inherited-nuts-boot-args", ws.commandLine().parse(System.getProperty("nuts.boot.args")).format());
+        props.put("inherited-nuts-args", ws.commandLine().parse(System.getProperty("nuts.args"))
+                .format()
+        );
+        props.put("creation-started", Instant.ofEpochMilli(ws.config().getCreationStartTimeMillis()));
+        props.put("creation-finished", Instant.ofEpochMilli(ws.config().getCreationFinishTimeMillis()));
         props.put("creation-within", CoreTimeUtils.formatPeriodMilli(ws.config().getCreationTimeMillis()).trim());
         props.put("repositories-count", (ws.repos().setSession(getSession()).getRepositories().length));
         for (String extraKey : extraKeys) {
@@ -330,11 +351,15 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
     }
 
     private Map<String, Object> buildRepoRepoMap(NutsRepository repo, boolean deep, String prefix) {
+        NutsWorkspace ws = getSession().getWorkspace();
         FilteredMap props = new FilteredMap(filter);
         props.put(key(prefix, "name"), stringValue(repo.getName()));
         props.put(key(prefix, "global-name"), repo.config().getGlobalName());
         props.put(key(prefix, "uuid"), stringValue(repo.getUuid()));
-        props.put(key(prefix, "type"), repo.config().getType());
+        props.put(key(prefix, "type"),
+                //display as enum
+                ws.text().forStyled(repo.config().getType(),NutsTextStyle.option())
+                );
         props.put(key(prefix, "speed"), (repo.config().getSpeed()));
         props.put(key(prefix, "enabled"), (repo.config().isEnabled()));
         props.put(key(prefix, "index-enabled"), (repo.config().isIndexEnabled()));
@@ -343,11 +368,11 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
         if (repo.config().getLocation(false) != null) {
             props.put(key(prefix, "location-expanded"), repo.config().getLocation(true));
         }
-        props.put(key(prefix, "deploy-order"), stringValue(repo.config().getDeployOrder()));
-        props.put(key(prefix, "store-location-strategy"), stringValue(repo.config().getStoreLocationStrategy()));
-        props.put(key(prefix, "store-location"), stringValue(repo.config().getStoreLocation()));
+        props.put(key(prefix, "deploy-order"), (repo.config().getDeployOrder()));
+        props.put(key(prefix, "store-location-strategy"), (repo.config().getStoreLocationStrategy()));
+        props.put(key(prefix, "store-location"), ws.io().path(repo.config().getStoreLocation()));
         for (NutsStoreLocation value : NutsStoreLocation.values()) {
-            props.put(key(prefix, "store-location-" + value.id()), stringValue(repo.config().getStoreLocation(value)));
+            props.put(key(prefix, "store-location-" + value.id()), ws.io().path(repo.config().getStoreLocation(value)));
         }
         props.put(key(prefix, "supported-mirroring"), (repo.config().isSupportedMirroring()));
         if (repo.config().isSupportedMirroring()) {
@@ -372,7 +397,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
     }
 
     private String stringValue(Object s) {
-        return getSession().getWorkspace().formats().text().builder().append(CoreCommonUtils.stringValue(s)).toString();
+        return getSession().getWorkspace().text().builder().append(CoreCommonUtils.stringValue(s)).toString();
     }
 
     public boolean isLenient() {

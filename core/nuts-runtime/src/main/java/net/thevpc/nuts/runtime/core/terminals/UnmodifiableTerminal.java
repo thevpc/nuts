@@ -57,7 +57,9 @@ public class UnmodifiableTerminal extends AbstractNutsTerminal implements NutsSe
 
     @Override
     public <T> NutsQuestion<T> ask() {
-        return getBase().ask();
+        return getBase()
+                .<T>ask()
+                .setSession(session);
     }
 
     @Override
@@ -93,7 +95,7 @@ public class UnmodifiableTerminal extends AbstractNutsTerminal implements NutsSe
             getProgressBar().printProgress(
                     Float.isNaN(progress) ? -1
                     : (int) (progress * 100),
-                    session.getWorkspace().formats().text().toText(NutsMessage.cstyle(prompt, params)).toString(),
+                    session.getWorkspace().text().toText(NutsMessage.cstyle(prompt, params)).toString(),
                     err()
             );
         }
@@ -106,7 +108,7 @@ public class UnmodifiableTerminal extends AbstractNutsTerminal implements NutsSe
             ((NutsTerminal) getBase()).printProgress(prompt, params);
         } else {
             getProgressBar().printProgress(-1,
-                    session.getWorkspace().formats().text().toText(NutsMessage.cstyle(prompt, params)).toString(),
+                    session.getWorkspace().text().toText(NutsMessage.cstyle(prompt, params)).toString(),
                     err()
             );
         }

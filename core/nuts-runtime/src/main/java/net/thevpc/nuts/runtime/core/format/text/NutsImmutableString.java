@@ -50,12 +50,12 @@ public class NutsImmutableString implements NutsString {
 
     @Override
     public String filteredText() {
-        return ws.formats().text().
+        return ws.text().
                 parser().filterText(value);
     }
 
     public NutsText toText() {
-        return ws.formats().text().parser().parse(new StringReader(value));
+        return ws.text().parser().parse(new StringReader(value));
     }
 
     public String getValue() {

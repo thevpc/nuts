@@ -161,6 +161,10 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         addDefaultFactory(NutsObjectElement.class, new NutsElementFactoryNutsObjectElement());
         addDefaultFactory(NutsElement.class, new NutsElementFactoryNutsElement());
         addDefaultFactory(NutsElementEntry.class, F_NAMED_ELEM);
+        addDefaultFactory(NutsCommandLine.class, new NutsElementFactoryCommandLine());
+        addDefaultFactory(NutsString.class, new NutsElementFactoryNutsString());
+        addDefaultFactory(NutsText.class, new NutsElementFactoryNutsText());
+        addDefaultFactory(NutsPath.class, new NutsElementFactoryNutsPath());
 
 //        addHierarchyFactory(JsonElement.class, F_JSONELEMENT);
         setCoreMapper(NutsDefinition.class, F_NUTS_DEF);
@@ -348,7 +352,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
                     m.put(k, v);
                 }
             }
-            return new DefaultNutsObjectElement(m, context.getSession().getWorkspace());
+            return new DefaultNutsObjectElement(m, context.getSession());
         }
 
         public Map fillObject(NutsElement o, Map all, Type elemType1, Type elemType2, Type to, NutsElementFactoryContext context) {
@@ -596,6 +600,78 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         public java.util.Date createObject(NutsElement o, Type to, NutsElementFactoryContext context) {
             Instant i = (Instant) context.defaultElementToObject(o, Instant.class);
             return new Date(i.toEpochMilli());
+        }
+    }
+    private static class NutsElementFactoryCommandLine implements NutsElementMapper<NutsCommandLine> {
+
+        @Override
+        public Object destruct(NutsCommandLine src, Type typeOfSrc, NutsElementFactoryContext context) {
+            return src.toStringArray();
+        }
+
+        @Override
+        public NutsElement createElement(NutsCommandLine o, Type typeOfSrc, NutsElementFactoryContext context) {
+            return context.defaultObjectToElement(destruct(o,null,context),null);
+        }
+
+        @Override
+        public NutsCommandLine createObject(NutsElement o, Type to, NutsElementFactoryContext context) {
+            String[] i = context.defaultElementToObject(o, String[].class);
+            return context.getSession().getWorkspace().commandLine().create(i);
+        }
+    }
+    private static class NutsElementFactoryNutsString implements NutsElementMapper<NutsString> {
+
+        @Override
+        public Object destruct(NutsString src, Type typeOfSrc, NutsElementFactoryContext context) {
+            return src.toString();
+        }
+
+        @Override
+        public NutsElement createElement(NutsString o, Type typeOfSrc, NutsElementFactoryContext context) {
+            return context.defaultObjectToElement(destruct(o,null,context),null);
+        }
+
+        @Override
+        public NutsString createObject(NutsElement o, Type to, NutsElementFactoryContext context) {
+            String i = context.defaultElementToObject(o, String.class);
+            return context.getSession().getWorkspace().text().parse(i);
+        }
+    }
+    private static class NutsElementFactoryNutsText implements NutsElementMapper<NutsText> {
+
+        @Override
+        public Object destruct(NutsText src, Type typeOfSrc, NutsElementFactoryContext context) {
+            return src.toString();
+        }
+
+        @Override
+        public NutsElement createElement(NutsText o, Type typeOfSrc, NutsElementFactoryContext context) {
+            return context.defaultObjectToElement(destruct(o,null,context),null);
+        }
+
+        @Override
+        public NutsText createObject(NutsElement o, Type to, NutsElementFactoryContext context) {
+            String i = context.defaultElementToObject(o, String.class);
+            return context.getSession().getWorkspace().text().parse(i).toText();
+        }
+    }
+    private static class NutsElementFactoryNutsPath implements NutsElementMapper<NutsPath> {
+
+        @Override
+        public Object destruct(NutsPath src, Type typeOfSrc, NutsElementFactoryContext context) {
+            return src.toString();
+        }
+
+        @Override
+        public NutsElement createElement(NutsPath o, Type typeOfSrc, NutsElementFactoryContext context) {
+            return context.defaultObjectToElement(destruct(o,null,context),null);
+        }
+
+        @Override
+        public NutsPath createObject(NutsElement o, Type to, NutsElementFactoryContext context) {
+            String i = context.defaultElementToObject(o, String.class);
+            return context.getSession().getWorkspace().io().path(i);
         }
     }
 
@@ -860,10 +936,10 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         public NutsElement createElement(NutsId o, Type typeOfSrc, NutsElementFactoryContext context) {
             if (context.element().isNtf()) {
 //                NutsWorkspace ws = context.getSession().getWorkspace();
-//                NutsText n = ws.formats().text().toText(ws.id().formatter(o).setNtf(true).format());
-//                return ws.formats().element().forPrimitive().buildNutsString(n);
+//                NutsText n = ws.text().toText(ws.id().formatter(o).setNtf(true).format());
+//                return ws.elem().forPrimitive().buildNutsString(n);
                 NutsWorkspace ws = context.getSession().getWorkspace();
-                return ws.formats().element().forString(ws.id().formatter(o).setNtf(true).format());
+                return ws.elem().forString(ws.id().formatter(o).setNtf(true).format().toString());
             } else {
                 return context.defaultObjectToElement(o.toString(), null);
             }
@@ -892,9 +968,9 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         public NutsElement createElement(NutsVersion o, Type typeOfSrc, NutsElementFactoryContext context) {
             if (context.element().isNtf()) {
                 NutsWorkspace ws = context.getSession().getWorkspace();
-//                NutsText n = ws.formats().text().toText(ws.version().formatter(o).setNtf(true).format());
-//                return ws.formats().element().forPrimitive().buildNutsString(n);
-                return ws.formats().element().forString(ws.version().formatter(o).setNtf(true).format());
+//                NutsText n = ws.text().toText(ws.version().formatter(o).setNtf(true).format());
+//                return ws.elem().forPrimitive().buildNutsString(n);
+                return ws.elem().forString(ws.version().formatter(o).setNtf(true).format().toString());
             } else {
                 return context.defaultObjectToElement(o.toString(), null);
             }
@@ -918,10 +994,10 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         public NutsElement createElement(Path o, Type typeOfSrc, NutsElementFactoryContext context) {
             if (context.element().isNtf()) {
                 NutsWorkspace ws = context.getSession().getWorkspace();
-//                NutsText n = ws.formats().text().forStyled(o.toString(), NutsTextStyle.path());
-//                return ws.formats().element().forPrimitive().buildNutsString(n);
-                NutsText n = ws.formats().text().forStyled(o.toString(), NutsTextStyle.path());
-                return ws.formats().element().forString(n.toString());
+//                NutsText n = ws.text().forStyled(o.toString(), NutsTextStyle.path());
+//                return ws.elem().forPrimitive().buildNutsString(n);
+                NutsText n = ws.text().forStyled(o.toString(), NutsTextStyle.path());
+                return ws.elem().forString(n.toString());
             } else {
                 return context.defaultObjectToElement(o.toString(), null);
             }
@@ -944,10 +1020,10 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         public NutsElement createElement(File o, Type typeOfSrc, NutsElementFactoryContext context) {
             if (context.element().isNtf()) {
                 NutsWorkspace ws = context.getSession().getWorkspace();
-//                NutsText n = ws.formats().text().forStyled(o.toString(), NutsTextStyle.path());
-//                return ws.formats().element().forPrimitive().buildNutsString(n);
-                NutsText n = ws.formats().text().forStyled(o.toString(), NutsTextStyle.path());
-                return ws.formats().element().forString(n.toString());
+//                NutsText n = ws.text().forStyled(o.toString(), NutsTextStyle.path());
+//                return ws.elem().forPrimitive().buildNutsString(n);
+                NutsText n = ws.text().forStyled(o.toString(), NutsTextStyle.path());
+                return ws.elem().forString(n.toString());
             } else {
                 return context.defaultObjectToElement(o.toString(), null);
             }
@@ -1019,10 +1095,10 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
                 //use compact form
                 if (context.element().isNtf()) {
                     NutsWorkspace ws = context.getSession().getWorkspace();
-//                    NutsText n = ws.formats().text().parse(
+//                    NutsText n = ws.text().parse(
 //                            ws.dependency().formatter().setNtf(true).setValue(o).format()
 //                    );
-//                    return ws.formats().element().forPrimitive().buildNutsString(n);
+//                    return ws.elem().forPrimitive().buildNutsString(n);
                     return ws.dependency().formatter().setNtf(true).setValue(o).format();
                 } else {
 
@@ -1043,11 +1119,11 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
             //use compact form
 //                if (context.element().isNtf()) {
 //                    NutsWorkspace ws = context.getSession().getWorkspace();
-////                    NutsText n = ws.formats().text().parse(
+////                    NutsText n = ws.text().parse(
 ////                            ws.dependency().formatter().setNtf(true).setValue(o).format()
 ////                    );
-////                    return ws.formats().element().forPrimitive().buildNutsString(n);
-//                    return ws.formats().element().forString(ws.dependency().formatter().setNtf(true).setValue(o).format());
+////                    return ws.elem().forPrimitive().buildNutsString(n);
+//                    return ws.elem().forString(ws.dependency().formatter().setNtf(true).setValue(o).format());
 //                } else {
 
             return context.defaultObjectToElement(context.getSession().getWorkspace().dependency().formatter(o)

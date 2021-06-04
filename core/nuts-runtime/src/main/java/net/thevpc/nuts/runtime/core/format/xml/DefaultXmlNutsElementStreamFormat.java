@@ -67,7 +67,7 @@ public class DefaultXmlNutsElementStreamFormat implements NutsElementStreamForma
         if (context.getWorkspace().term().setSession(session).isFormatted(out)) {
             ByteArrayPrintStream bos = new ByteArrayPrintStream();
             NutsXmlUtils.writeDocument(doc, new StreamResult(bos), compact, true, session);
-            out.print(context.getWorkspace().formats().text().forCode("xml", bos.toString()));
+            out.print(context.getWorkspace().text().forCode("xml", bos.toString()));
         } else {
             NutsXmlUtils.writeDocument(doc, new StreamResult(out), compact, true, session);
         }

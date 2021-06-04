@@ -208,9 +208,9 @@ public class LsCommand extends SimpleNshBuiltin {
         } else if (context.getResult() instanceof ResultError) {
             ResultError s = context.getResult();
             for (Map.Entry<String, String> e : s.result.entrySet()) {
-                NutsFormatManager text = session.getWorkspace().formats();
+                NutsTextManager text = session.getWorkspace().text();
                 out.printf("%s%n",
-                        text.text().builder().append(e.getKey(),NutsTextStyle.primary(5))
+                        text.builder().append(e.getKey(),NutsTextStyle.primary(5))
                         .append(" : ")
                         .append(e.getValue(),NutsTextStyle.error())
                         );
@@ -241,19 +241,19 @@ public class LsCommand extends SimpleNshBuiltin {
             out.print(" ");
         }
         String name = new File(item.path).getName();
-        NutsFormatManager text = session.getWorkspace().formats();
+        NutsTextManager text = session.getWorkspace().text();
         if (item.hidden) {
-            out.println(text.text().forStyled(name,NutsTextStyle.pale()));
+            out.println(text.forStyled(name,NutsTextStyle.pale()));
         } else if (item.type == 'd') {
-            out.println(text.text().forStyled(name,NutsTextStyle.primary(3)));
+            out.println(text.forStyled(name,NutsTextStyle.primary(3)));
         } else if (item.exec2 || item.jperms.charAt(2) == 'x') {
-            out.println(text.text().forStyled(name,NutsTextStyle.primary(4)));
+            out.println(text.forStyled(name,NutsTextStyle.primary(4)));
         } else if (item.config) {
-            out.println(text.text().forStyled(name,NutsTextStyle.primary(5)));
+            out.println(text.forStyled(name,NutsTextStyle.primary(5)));
         } else if (item.archive) {
-            out.println(text.text().forStyled(name,NutsTextStyle.primary(1)));
+            out.println(text.forStyled(name,NutsTextStyle.primary(1)));
         } else {
-            out.println(text.text().forPlain(name));
+            out.println(text.forPlain(name));
         }
     }
 

@@ -78,7 +78,7 @@ public class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFa
     public void installCommand(NutsCommandAliasConfig command, NutsSession session) {
         checkSession(session);
         Path path = getStoreLocation(session).resolve(command.getName() + NutsConstants.Files.NUTS_COMMAND_FILE_EXTENSION);
-        session.getWorkspace().formats().element().setContentType(NutsContentType.JSON).setValue(command).print(path);
+        session.getWorkspace().elem().setContentType(NutsContentType.JSON).setValue(command).print(path);
         NutsWorkspaceConfigManagerExt.of(session.getWorkspace().config()).getModel().fireConfigurationChanged("command", session, ConfigEventType.MAIN);
     }
 
@@ -87,7 +87,7 @@ public class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFa
         checkSession(session);
         Path file = getStoreLocation(session).resolve(name + NutsConstants.Files.NUTS_COMMAND_FILE_EXTENSION);
         if (Files.exists(file)) {
-            NutsCommandAliasConfig c = session.getWorkspace().formats().element().setContentType(NutsContentType.JSON).parse(file, NutsCommandAliasConfig.class);
+            NutsCommandAliasConfig c = session.getWorkspace().elem().setContentType(NutsContentType.JSON).parse(file, NutsCommandAliasConfig.class);
             if (c != null) {
                 c.setName(name);
                 return c;
@@ -119,7 +119,7 @@ public class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFa
                 if (file.getFileName().toString().endsWith(NutsConstants.Files.NUTS_COMMAND_FILE_EXTENSION)) {
                     NutsCommandAliasConfig c = null;
                     try {
-                        c = session.getWorkspace().formats().element().setContentType(NutsContentType.JSON).parse(file, NutsCommandAliasConfig.class);
+                        c = session.getWorkspace().elem().setContentType(NutsContentType.JSON).parse(file, NutsCommandAliasConfig.class);
                     } catch (Exception ex) {
                         _LOGOP(session).level(Level.FINE).error(ex).log("unable to parse {0}", file);
                         //

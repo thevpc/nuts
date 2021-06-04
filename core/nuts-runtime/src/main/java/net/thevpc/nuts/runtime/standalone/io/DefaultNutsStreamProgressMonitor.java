@@ -9,6 +9,7 @@ import java.io.PrintStream;
 import java.text.DecimalFormat;
 import net.thevpc.nuts.NutsFormatManager;
 
+import net.thevpc.nuts.NutsTextManager;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.NutsProgressEvent;
@@ -63,8 +64,8 @@ public class DefaultNutsStreamProgressMonitor implements NutsProgressMonitor/*, 
         return true;
     }
 
-    private String escapeText(NutsFormatManager terminalFormat ,String str) {
-        return terminalFormat.text().builder().append(str).toString();
+    private String escapeText(NutsTextManager text , String str) {
+        return text.builder().append(str).toString();
     }
 
     public boolean onProgress0(NutsProgressEvent event, boolean end) {
@@ -74,7 +75,7 @@ public class DefaultNutsStreamProgressMonitor implements NutsProgressMonitor/*, 
         }
         double partialSeconds = event.getPartialMillis() / 1000.0;
         if (event.getCurrentValue() == 0 || partialSeconds > 0.5 || event.getCurrentValue() == event.getMaxValue()) {
-            NutsFormatManager terminalFormat = event.getSession().getWorkspace().formats();
+            NutsTextManager text = event.getSession().getWorkspace().text();
             if(!optionNewline) {
                 FPrintCommands.runMoveLineStart(out);
             }else{
@@ -93,23 +94,23 @@ public class DefaultNutsStreamProgressMonitor implements NutsProgressMonitor/*, 
             formattedLine.append(p);
             BytesSizeFormat mf = new BytesSizeFormat("BTD1F", event.getSession());
 
-            formattedLine.append(" ").append(escapeText(terminalFormat,String.format("%6s", df.format(percent)))).append("% ");
-            formattedLine.append(" ##:config:").append(escapeText(terminalFormat,mf.format(partialSpeed))).append("/s##");
+            formattedLine.append(" ").append(escapeText(text,String.format("%6s", df.format(percent)))).append("% ");
+            formattedLine.append(" ##:config:").append(escapeText(text,mf.format(partialSpeed))).append("/s##");
             if (event.getMaxValue() < 0) {
                 if (globalSpeed == 0) {
-                    formattedLine.append(escapeText(terminalFormat," ( -- )"));
+                    formattedLine.append(escapeText(text," ( -- )"));
                 } else {
-                    formattedLine.append(" (##:info:").append(escapeText(terminalFormat,mf.format(globalSpeed))).append("##)");
+                    formattedLine.append(" (##:info:").append(escapeText(text,mf.format(globalSpeed))).append("##)");
                 }
             } else {
-                formattedLine.append(" (##:warn:").append(escapeText(terminalFormat,mf.format(event.getMaxValue()))).append("##)");
+                formattedLine.append(" (##:warn:").append(escapeText(text,mf.format(event.getMaxValue()))).append("##)");
             }
             if (event.getError() != null) {
                 formattedLine.append(" ```error ERROR``` ");
             }
-            formattedLine.append(" ").append(escapeText(terminalFormat,event.getMessage())).append(" ");
+            formattedLine.append(" ").append(escapeText(text,event.getMessage())).append(" ");
             String ff = formattedLine.toString();
-            int length = terminalFormat.text().builder().append(ff).textLength();
+            int length = text.builder().append(ff).textLength();
             if (length < minLength) {
                 CoreStringUtils.fillString(' ', minLength - length, formattedLine);
             } else {

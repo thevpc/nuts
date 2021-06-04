@@ -3,7 +3,7 @@ package net.thevpc.nuts;
 /**
  * @category Format
  */
-public enum NutsTextStyleType {
+public enum NutsTextStyleType implements NutsEnum{
     UNDERLINED(true),//_
     ITALIC(true),// /
     STRIKED(true),// -
@@ -41,10 +41,18 @@ public enum NutsTextStyleType {
     TITLE(false)
     ;
     private boolean basic;
+    private String id;
 
     NutsTextStyleType(boolean basic) {
         this.basic = basic;
+        this.id = name().toLowerCase().replace('_', '-');
     }
+
+    @Override
+    public String id() {
+        return id;
+    }
+
 
     public boolean basic() {
         return basic;

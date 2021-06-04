@@ -25,11 +25,13 @@
 */
 package net.thevpc.nuts.runtime.core.format;
 
+import net.thevpc.nuts.NutsEnum;
+
 /**
  *
  * @author thevpc
  */
-public enum NutsDisplayProperty {
+public enum NutsDisplayProperty  implements NutsEnum {
     STATUS,
     INSTALL_DATE,
     INSTALL_USER,
@@ -53,5 +55,16 @@ public enum NutsDisplayProperty {
     LOG_FOLDER,
     CACHE_FOLDER,
     APPS_FOLDER,
-    LONG_STATUS,
+    LONG_STATUS;
+    private String id;
+
+    NutsDisplayProperty() {
+        this.id = name().toLowerCase().replace('_', '-');
+    }
+
+    @Override
+    public String id() {
+        return id;
+    }
+
 }

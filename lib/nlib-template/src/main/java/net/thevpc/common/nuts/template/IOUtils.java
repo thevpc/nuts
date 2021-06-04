@@ -77,10 +77,10 @@ public class IOUtils {
         fileWriter.flush();
         fileWriter.close();
         if (isOverride) {
-            console.println("[OVERRIDE] %s%n",project.getWorkspace().formats().text().forStyled(file.getPath(), NutsTextStyle.path()));
+            console.println("[OVERRIDE] %s%n",project.getWorkspace().text().forStyled(file.getPath(), NutsTextStyle.path()));
         } else {
             project.setNewlyCreated(file.getPath());
-            console.println("[GENERATE] %s%n" + project.getWorkspace().formats().text().forStyled(file.getPath(),NutsTextStyle.path()));
+            console.println("[GENERATE] %s%n" + project.getWorkspace().text().forStyled(file.getPath(),NutsTextStyle.path()));
         }
     }
 

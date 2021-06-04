@@ -122,25 +122,25 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
             case STYLED: {
                 DefaultNutsTextStyled s = (DefaultNutsTextStyled) node;
                 NutsTextStyles styles = s.getStyles();
-                NutsTextStyles format = ws.formats().text().getTheme().toBasicStyles(styles, session);
+                NutsTextStyles format = ws.text().getTheme().toBasicStyles(styles, session);
                 AnsiEscapeCommand[] s2 = _appendFormats(formats, format);
                 writeNode(s2, s.getChild(), ctx);
                 break;
             }
             case TITLE: {
                 DefaultNutsTextTitle s = (DefaultNutsTextTitle) node;
-                DefaultNutsTextManager factory0 = (DefaultNutsTextManager) ws.formats().text();
-                AnsiEscapeCommand[] s2 = _appendFormats(formats, ws.formats().text().getTheme().toBasicStyles(NutsTextStyles.of(NutsTextStyle.title(s.getLevel())), session
+                DefaultNutsTextManager factory0 = (DefaultNutsTextManager) ws.text();
+                AnsiEscapeCommand[] s2 = _appendFormats(formats, ws.text().getTheme().toBasicStyles(NutsTextStyles.of(NutsTextStyle.title(s.getLevel())), session
                 ));
                 if (ctx.isTitleNumberEnabled()) {
                     NutsTextNumbering seq = ctx.getTitleNumberSequence();
                     if (seq == null) {
-                        seq = ws.formats().text().forNumbering();
+                        seq = ws.text().forNumbering();
                         ctx.setTitleNumberSequence(seq);
                     }
                     NutsTextNumbering a = seq.newLevel(s.getLevel());
                     NutsText sWithTitle = factory0.forList(
-                            ws.formats().text().forPlain(a.toString() + " "),
+                            ws.text().forPlain(a.toString() + " "),
                             s.getChild()
                     );
                     writeNode(s2, sWithTitle, ctx);
@@ -167,7 +167,7 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
             }
             case LINK: {
                 //ignore!!
-                DefaultNutsTextManager factory0 = (DefaultNutsTextManager) ws.formats().text();
+                DefaultNutsTextManager factory0 = (DefaultNutsTextManager) ws.text();
                 writeNode(
                         formats,
                         factory0.createStyled(((NutsTextLink) node).getChild(),

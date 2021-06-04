@@ -341,7 +341,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
             printJson(from, NUTS_INSTALL_FILE, fi, session);
         }
         Set<NutsId> list = findDependenciesFrom(from, scope, session);
-        NutsElementFormat element = session.getWorkspace().formats().element().setSession(session);
+        NutsElementFormat element = session.getWorkspace().elem().setSession(session);
         if (!list.contains(to)) {
             list.add(to);
             element.setContentType(NutsContentType.JSON).setValue(list.toArray(new NutsId[0]))
@@ -374,12 +374,12 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
         if (list.contains(to)) {
             list.remove(to);
             stillRequired = list.size() > 0;
-            session.getWorkspace().formats().element().setContentType(NutsContentType.JSON).setValue(list.toArray(new NutsId[0])).print(getDepsPath(from, true, scope, session));
+            session.getWorkspace().elem().setContentType(NutsContentType.JSON).setValue(list.toArray(new NutsId[0])).print(getDepsPath(from, true, scope, session));
         }
         list = findDependenciesTo(to, scope, session);
         if (list.contains(from)) {
             list.remove(from);
-            session.getWorkspace().formats().element().setContentType(NutsContentType.JSON).setValue(list.toArray(new NutsId[0])).print(getDepsPath(to, false, scope, session));
+            session.getWorkspace().elem().setContentType(NutsContentType.JSON).setValue(list.toArray(new NutsId[0])).print(getDepsPath(to, false, scope, session));
         }
         if (fi.required != stillRequired) {
             fi.required = true;
@@ -390,7 +390,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
     public synchronized Set<NutsId> findDependenciesFrom(NutsId from, NutsDependencyScope scope, NutsSession session) {
         Path path = getDepsPath(from, true, scope, session);
         if (Files.isRegularFile(path)) {
-            NutsId[] old = session.getWorkspace().formats().element().setSession(session).setContentType(NutsContentType.JSON).parse(path, NutsId[].class);
+            NutsId[] old = session.getWorkspace().elem().setSession(session).setContentType(NutsContentType.JSON).parse(path, NutsId[].class);
             return new HashSet<NutsId>(Arrays.asList(old));
         }
         return new HashSet<>();
@@ -399,7 +399,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
     public synchronized Set<NutsId> findDependenciesTo(NutsId from, NutsDependencyScope scope, NutsSession session) {
         Path path = getDepsPath(from, false, scope, session);
         if (Files.isRegularFile(path)) {
-            NutsId[] old = session.getWorkspace().formats().element().setSession(session).setContentType(NutsContentType.JSON).parse(path, NutsId[].class);
+            NutsId[] old = session.getWorkspace().elem().setSession(session).setContentType(NutsContentType.JSON).parse(path, NutsId[].class);
             return new HashSet<NutsId>(Arrays.asList(old));
         }
         return new HashSet<>();
@@ -419,7 +419,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
         NutsWorkspace workspace = session.getWorkspace();
         if (Files.isRegularFile(path)) {
             InstallInfoConfig c = workspace.concurrent().lock().source(path).setSession(session).call(
-                    () -> workspace.formats().element().setSession(session).setContentType(NutsContentType.JSON).parse(finalPath, InstallInfoConfig.class),
+                    () -> workspace.elem().setSession(session).setContentType(NutsContentType.JSON).parse(finalPath, InstallInfoConfig.class),
                     CoreNutsUtils.LOCK_TIME, CoreNutsUtils.LOCK_TIME_UNIT
             );
             if (c != null) {
@@ -449,7 +449,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
                     workspace.concurrent().lock().source(path).setSession(session).call(() -> {
                         _LOGOP(session).level(Level.CONFIG).log("install-info upgraded {0}", finalPath.toString());
                         c.setConfigVersion(workspace.getApiVersion());
-                        workspace.formats().element().setSession(session).setContentType(NutsContentType.JSON).setValue(c).print(finalPath);
+                        workspace.elem().setSession(session).setContentType(NutsContentType.JSON).setValue(c).print(finalPath);
                         return null;
                     },
                             CoreNutsUtils.LOCK_TIME, CoreNutsUtils.LOCK_TIME_UNIT
@@ -612,14 +612,14 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
     }
 
     public <T> T readJson(NutsId id, String name, Class<T> clazz, NutsSession session) {
-        return session.getWorkspace().formats().element()
+        return session.getWorkspace().elem()
                 .setSession(session).setContentType(NutsContentType.JSON)
                 .parse(getPath(id, name, session), clazz);
     }
 
     public void printJson(NutsId id, String name, InstallInfoConfig value, NutsSession session) {
         value.setConfigVersion(workspace.getApiVersion());
-        session.getWorkspace().formats().element()
+        session.getWorkspace().elem()
                 .setSession(session).setContentType(NutsContentType.JSON).setValue(value)
                 .print(getPath(id, name, session));
     }

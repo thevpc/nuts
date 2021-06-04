@@ -6,6 +6,7 @@ import net.thevpc.nuts.runtime.core.filters.InternalNutsTypedFilters;
 import java.util.Arrays;
 import java.util.List;
 import net.thevpc.nuts.runtime.core.filters.DefaultNutsFilterModel;
+import net.thevpc.nuts.runtime.standalone.repos.DefaultNutsInstalledRepository;
 
 public class InternalNutsRepositoryFilterManager extends InternalNutsTypedFilters<NutsRepositoryFilter> implements NutsRepositoryFilterManager {
 
@@ -35,6 +36,12 @@ public class InternalNutsRepositoryFilterManager extends InternalNutsTypedFilter
     public NutsRepositoryFilter not(NutsFilter other) {
         checkSession();
         return new NutsRepositoryFilterNone(getSession(), (NutsRepositoryFilter) other);
+    }
+
+    @Override
+    public NutsRepositoryFilter installedRepo() {
+        checkSession();
+        return new DefaultNutsRepositoryFilter(getSession(), Arrays.asList(DefaultNutsInstalledRepository.INSTALLED_REPO_UUID));
     }
 
     @Override

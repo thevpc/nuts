@@ -87,7 +87,6 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                 .setContent(true)
                 .setEffective(true)
                 .setDependencies(true)
-                .setInstalled(null)
                 .setFailFast(true)
                 //
                 .setOptional(false)
@@ -100,7 +99,6 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                     .setContent(true)
                     .setEffective(true)
                     .setDependencies(true)
-                    .setInstalled(null)
                     //
                     .setOptional(false)
                     .addScope(NutsDependencyScopePattern.RUN)
@@ -372,44 +370,44 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
             for (Map.Entry<String, List<InstallIdInfo>> stringListEntry : error.entrySet()) {
                 out.println("the following " + (stringListEntry.getValue().size() > 1 ? "packages are" : "package is") + " cannot be ```error installed``` (" + stringListEntry.getKey() + ") : "
                         + stringListEntry.getValue().stream().map(x -> x.id)
-                                .map(x -> ws.id().formatter().omitImportedGroupId().value(x.getLongNameId()).format())
+                                .map(x -> ws.id().formatter().omitImportedGroupId().value(x.getLongNameId()).format().toString())
                                 .collect(Collectors.joining(", ")));
                 sb.append("\n" + "the following ").append(stringListEntry.getValue().size() > 1 ? "packages are" : "package is").append(" cannot be installed (").append(stringListEntry.getKey()).append(") : ").append(stringListEntry.getValue().stream().map(x -> x.id)
-                        .map(x -> ws.id().formatter().omitImportedGroupId().value(x.getLongNameId()).format())
+                        .map(x -> ws.id().formatter().omitImportedGroupId().value(x.getLongNameId()).format().toString())
                         .collect(Collectors.joining(", ")));
             }
             throw new NutsInstallException(getSession(), "", sb.toString().trim(), null);
         }
 
-        NutsFormatManager text = ws.formats().setSession(session);
+        NutsTextManager text = ws.text().setSession(session);
         if (getSession().isPlainTrace() || (!list.emptyCommand && getSession().getConfirm() == NutsConfirmationMode.ASK)) {
-            printList(out, text.text().builder().append("new", NutsTextStyle.primary(2)),
-                    text.text().builder().append("installed", NutsTextStyle.primary(1)),
+            printList(out, text.builder().append("new", NutsTextStyle.primary(2)),
+                    text.builder().append("installed", NutsTextStyle.primary(1)),
                     list.ids(x -> x.doInstall && !x.isAlreadyExists()));
 
-            printList(out, text.text().builder().append("new", NutsTextStyle.primary(2)),
-                    text.text().builder().append("required", NutsTextStyle.primary(1)),
+            printList(out, text.builder().append("new", NutsTextStyle.primary(2)),
+                    text.builder().append("required", NutsTextStyle.primary(1)),
                     list.ids(x -> x.doRequire && !x.doInstall && !x.isAlreadyExists()));
             printList(out,
-                    text.text().builder().append("required", NutsTextStyle.primary(2)),
-                    text.text().builder().append("re-required", NutsTextStyle.primary(1)),
+                    text.builder().append("required", NutsTextStyle.primary(2)),
+                    text.builder().append("re-required", NutsTextStyle.primary(1)),
                     list.ids(x -> (!x.doInstall && x.doRequire) && x.isAlreadyRequired()));
             printList(out,
-                    text.text().builder().append("required", NutsTextStyle.primary(2)),
-                    text.text().builder().append("installed", NutsTextStyle.primary(1)),
+                    text.builder().append("required", NutsTextStyle.primary(2)),
+                    text.builder().append("installed", NutsTextStyle.primary(1)),
                     list.ids(x -> x.doInstall && x.isAlreadyRequired() && !x.isAlreadyInstalled()));
 
             printList(out,
-                    text.text().builder().append("required", NutsTextStyle.primary(2)),
-                    text.text().builder().append("re-reinstalled", NutsTextStyle.primary(1)),
+                    text.builder().append("required", NutsTextStyle.primary(2)),
+                    text.builder().append("re-reinstalled", NutsTextStyle.primary(1)),
                     list.ids(x -> x.doInstall && x.isAlreadyInstalled()));
             printList(out,
-                    text.text().builder().append("installed", NutsTextStyle.primary(2)),
-                    text.text().builder().append("set as default", NutsTextStyle.primary(3)),
+                    text.builder().append("installed", NutsTextStyle.primary(2)),
+                    text.builder().append("set as default", NutsTextStyle.primary(3)),
                     list.ids(x -> x.doSwitchVersion && x.isAlreadyInstalled()));
             printList(out,
-                    text.text().builder().append("installed", NutsTextStyle.primary(2)),
-                    text.text().builder().append("ignored", NutsTextStyle.pale()),
+                    text.builder().append("installed", NutsTextStyle.primary(2)),
+                    text.builder().append("ignored", NutsTextStyle.pale()),
                     list.ids(x -> x.ignored));
         }
         List<NutsId> nonIgnored = list.ids(x -> !x.ignored);
@@ -472,14 +470,14 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
     private void printList(PrintStream out, NutsString kind, NutsString action, List<NutsId> all) {
         if (all.size() > 0) {
             NutsWorkspace ws = getSession().getWorkspace();
-            NutsTextBuilder msg = ws.formats().text().builder();
+            NutsTextBuilder msg = ws.text().builder();
             msg.append("the following ")
                     .append(kind).append(" ").append((all.size() > 1 ? "packages are" : "package is"))
                     .append(" going to be ").append(action).append(" : ")
                     .appendJoined(
-                            ws.formats().text().forPlain(", "),
+                            ws.text().forPlain(", "),
                             all.stream().map(x
-                                    -> ws.formats().text().toText(
+                                    -> ws.text().toText(
                                     x.builder().omitImportedGroupId().build()
                             )
                             ).collect(Collectors.toList())

@@ -31,7 +31,7 @@ package net.thevpc.nuts;
  * @since 0.5.4
  * @category Base
  */
-public enum NutsOsFamily {
+public enum NutsOsFamily implements NutsEnum{
     /**
      * Microsoft Window Operating system Family
      */

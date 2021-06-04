@@ -203,7 +203,7 @@ public class NutsJavaShell extends JShell {
 
     @Override
     protected void printHeader(PrintStream out) {
-        out.println(appContext.getWorkspace().formats().text().builder()
+        out.println(appContext.getWorkspace().text().builder()
                 .appendCode("sh", "nuts")
                 .append(" shell ")
                 .append("v" + getWorkspace().getRuntimeId().getVersion().toString(), NutsTextStyle.version())
@@ -223,7 +223,7 @@ public class NutsJavaShell extends JShell {
                 .setCommandReadHighlighter(new NutsCommandReadHighlighter() {
                     @Override
                     public NutsText highlight(String buffer, NutsSession session) {
-                        return session.getWorkspace().formats().text().forCode("sh", buffer).parse(session);
+                        return session.getWorkspace().text().forCode("sh", buffer).parse(session);
                     }
                 });
         super.executeInteractive(context);

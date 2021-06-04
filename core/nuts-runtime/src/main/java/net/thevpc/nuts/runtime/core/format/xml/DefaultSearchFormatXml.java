@@ -31,7 +31,7 @@ public class DefaultSearchFormatXml extends DefaultSearchFormatBase {
 
     public DefaultSearchFormatXml(NutsSession session, PrintStream writer, NutsFetchDisplayOptions options) {
         super(session, writer, NutsContentType.XML, options);
-        codeFormat = session.getWorkspace().formats().text().setSession(session).getCodeFormat("xml");
+        codeFormat = session.getWorkspace().text().setSession(session).getCodeFormat("xml");
     }
 
     public String getRootName() {
@@ -40,7 +40,7 @@ public class DefaultSearchFormatXml extends DefaultSearchFormatBase {
 
     @Override
     public void start() {
-        NutsTextBuilder builder = getWorkspace().formats().text().builder();
+        NutsTextBuilder builder = getWorkspace().text().builder();
         NutsSession session = getSession();
 
         builder.append(codeFormat.tokenToText("<?", "separator", session));
@@ -69,7 +69,7 @@ public class DefaultSearchFormatXml extends DefaultSearchFormatBase {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
 //        NutsXmlUtils.print(String.valueOf(index), object, getWriter(), compact, false, getWorkspace());
         PrintWriter pw = new PrintWriter(bos);
-        org.w3c.dom.Element xmlElement = getWorkspace().formats().element()
+        org.w3c.dom.Element xmlElement = getWorkspace().elem()
                 .setSession(getSession())
                 .convert(object, org.w3c.dom.Element.class);
         Document doc = NutsXmlUtils.createDocument(getSession());
@@ -82,7 +82,7 @@ public class DefaultSearchFormatXml extends DefaultSearchFormatBase {
 
     @Override
     public void complete(long count) {
-        NutsTextBuilder builder = getWorkspace().formats().text().builder();
+        NutsTextBuilder builder = getWorkspace().text().builder();
 
         NutsSession session = getSession();
         builder.append(codeFormat.tokenToText("</", "separator", session));

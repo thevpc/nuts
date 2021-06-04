@@ -23,35 +23,19 @@
  */
 package net.thevpc.nuts.core.test.blackbox;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-import net.thevpc.nuts.Nuts;
-import net.thevpc.nuts.NutsArgument;
-import net.thevpc.nuts.NutsContentType;
-import net.thevpc.nuts.NutsElement;
-import net.thevpc.nuts.NutsOsFamily;
-import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Assumptions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  *
  * @author vpc
  */
-public class Test15Yaml {
+public class Test16_TermLayout {
 
     private static String baseFolder;
 
@@ -67,12 +51,12 @@ public class Test15Yaml {
         NutsWorkspace ws = Nuts.openWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
                 "-byZSKk"
         );
-        String path = "net/thevpc/nuts/core/test/blackbox/yaml1.yml";
-        NutsElement e = ws.formats().element().setContentType(NutsContentType.YAML)
-                .parse(getClass().getClassLoader().getResource(path), NutsElement.class);
-        ws.formats().element().setContentType(NutsContentType.JSON).setValue(e)
-                .setCompact(false)
-                .println();
+
+        NutsSession session = ws.createSession();
+        for (int i = 0; i < 100; i++) {
+            Thread.sleep(100);
+            session.getTerminal().printProgress((i/100f),"message %s",i);
+        }
     }
 
     @AfterAll

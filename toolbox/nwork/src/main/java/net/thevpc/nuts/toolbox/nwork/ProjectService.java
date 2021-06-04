@@ -24,7 +24,7 @@ public class ProjectService {
     public ProjectService(NutsApplicationContext context, RepositoryAddress defaultRepositoryAddress, Path file) throws IOException {
         this.appContext = context;
         this.defaultRepositoryAddress = defaultRepositoryAddress == null ? new RepositoryAddress() : defaultRepositoryAddress;
-        config = context.getWorkspace().formats().element().setSession(appContext.getSession()).setContentType(NutsContentType.JSON).parse(file, ProjectConfig.class);
+        config = context.getWorkspace().elem().setSession(appContext.getSession()).setContentType(NutsContentType.JSON).parse(file, ProjectConfig.class);
         sharedConfigFolder = Paths.get(context.getVersionFolderFolder(NutsStoreLocation.CONFIG, NWorkConfigVersions.CURRENT));
     }
 
@@ -56,13 +56,13 @@ public class ProjectService {
     public void save() throws IOException {
         Path configFile = getConfigFile();
         Files.createDirectories(configFile.getParent());
-        appContext.getWorkspace().formats().element().setSession(appContext.getSession()).setContentType(NutsContentType.JSON).setValue(config).print(configFile);
+        appContext.getWorkspace().elem().setSession(appContext.getSession()).setContentType(NutsContentType.JSON).setValue(config).print(configFile);
     }
 
     public boolean load() {
         Path configFile = getConfigFile();
         if (Files.isRegularFile(configFile)) {
-            ProjectConfig u = appContext.getWorkspace().formats().element().setSession(appContext.getSession()).setContentType(NutsContentType.JSON).parse(configFile, ProjectConfig.class);
+            ProjectConfig u = appContext.getWorkspace().elem().setSession(appContext.getSession()).setContentType(NutsContentType.JSON).parse(configFile, ProjectConfig.class);
             if (u != null) {
                 config = u;
                 return true;
@@ -226,7 +226,7 @@ public class ProjectService {
                 }
                 List<NutsDefinition> found = ws2.search()
                         .addId(sid)
-                        .addRepository(nutsRepository)
+                        .addRepositoryFilter(ws2.filters().repository().byName(nutsRepository))
                         .setLatest(true).setSession(s).setContent(true).getResultDefinitions().list();
                 if (found.size() > 0) {
                     Path p = found.get(0).getContent().getPath();
@@ -278,7 +278,7 @@ public class ProjectService {
                         s.setTrace(false);
                         List<NutsId> found = ws2.search()
                                 .addId(g.getGroupId() + ":" + g.getArtifactId())
-                                .addRepository(nutsRepository)
+                                .addRepositoryFilter(ws2.filters().repository().byName(nutsRepository))
                                 .setLatest(true).setSession(s).getResultIds().list();
                         if (found.size() > 0) {
                             return found.get(0).getVersion().toString();

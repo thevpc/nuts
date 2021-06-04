@@ -37,7 +37,7 @@ package net.thevpc.nuts;
  * @since 0.5.5
  * @category Base
  */
-public enum NutsConfirmationMode {
+public enum NutsConfirmationMode implements NutsEnum{
     /**
      * force interactive mode
      */

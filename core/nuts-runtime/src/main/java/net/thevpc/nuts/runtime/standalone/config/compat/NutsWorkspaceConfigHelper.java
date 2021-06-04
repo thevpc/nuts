@@ -14,7 +14,7 @@ public class NutsWorkspaceConfigHelper {
 
 
     private Map parseConfigMap(byte[] bytes) {
-        return ws.formats().element().setContentType(NutsContentType.JSON).parse(bytes, Map.class);
+        return ws.elem().setContentType(NutsContentType.JSON).parse(bytes, Map.class);
     }
 
 

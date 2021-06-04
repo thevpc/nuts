@@ -8,6 +8,7 @@ package net.thevpc.nuts.runtime.core.format.plain;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.format.NutsObjectFormatBase;
 import net.thevpc.nuts.runtime.core.format.props.DefaultPropertiesFormat;
+import net.thevpc.nuts.runtime.core.format.tree.DefaultNutsFormatDestructTypePredicate;
 import net.thevpc.nuts.runtime.core.format.xml.NutsXmlUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -87,58 +88,73 @@ public class NutsObjectFormatPlain extends NutsObjectFormatBase {
             doc.appendChild(doc.importNode(elem, true));
             NutsXmlUtils.writeDocument(doc, new StreamResult(w), false, false, getSession());
         } else {
-            printElement(w, ws.formats().element()
-                    .setSession(getSession())
-                    .toElement(value));
+            NutsElementFormat element = ws.elem();
+            element
+                    .setNtf(true)
+                    .setDestructTypeFilter(DefaultNutsFormatDestructTypePredicate.INSTANCE);
+            printElement(w, element
+                    .destruct(value));
         }
     }
 
-    public void printElement(PrintStream w, NutsElement value) {
+    public void printElement(PrintStream w, Object value) {
         PrintStream out = getValidPrintStream(w);
         NutsWorkspace ws = getSession().getWorkspace();
-        switch (value.type()) {
-//            case NUTS_STRING: 
-            case STRING: 
-            {
-                out.print(value.asPrimitive().getString());
-                out.flush();
-                break;
-            }
-            case BOOLEAN: {
-                out.print(value.asPrimitive().getBoolean());
-                out.flush();
-                break;
-            }
-            case INTEGER:
-            case FLOAT: {
-                out.print(value.asPrimitive().getNumber());
-                out.flush();
-                break;
-            }
-            case INSTANT: {
-                out.print(ws.formats().text().forPlain(value.asPrimitive().getInstant().toString()).toString());
-                out.flush();
-                break;
-            }
-            case NULL: {
-                break;
-            }
-            case ARRAY: {
-                NutsTableFormat table = ws.formats().table();
-                table.configure(true, "--no-header", "--border=spaces");
-                table.setValue(value).print(w);
-                break;
-            }
-            case OBJECT: {
-                NutsTreeFormat tree = ws.formats().tree();
-                tree.configure(true, extraConfig.toArray(new String[0]));
-                tree.setValue(value).print(w);
-                break;
-            }
-            default: {
-                throw new NutsUnsupportedArgumentException(getSession(), value.type().toString());
-            }
+        if(value instanceof Map){
+            NutsTreeFormat tree = ws.formats().tree();
+            tree.configure(true, extraConfig.toArray(new String[0]));
+            tree.setValue(value).print(w);
+        }else if(value instanceof List){
+            NutsTableFormat table = ws.formats().table();
+            table.configure(true, "--no-header", "--border=spaces");
+            table.setValue(value).print(w);
+        }else{
+            out.printf("%s",value);
+            out.flush();
         }
+//        switch (value.type()) {
+////            case NUTS_STRING:
+//            case STRING:
+//            {
+//                out.print(value.asPrimitive().getString());
+//                out.flush();
+//                break;
+//            }
+//            case BOOLEAN: {
+//                out.print(value.asPrimitive().getBoolean());
+//                out.flush();
+//                break;
+//            }
+//            case INTEGER:
+//            case FLOAT: {
+//                out.print(value.asPrimitive().getNumber());
+//                out.flush();
+//                break;
+//            }
+//            case INSTANT: {
+//                out.print(ws.text().forPlain(value.asPrimitive().getInstant().toString()).toString());
+//                out.flush();
+//                break;
+//            }
+//            case NULL: {
+//                break;
+//            }
+//            case ARRAY: {
+//                NutsTableFormat table = ws.formats().table();
+//                table.configure(true, "--no-header", "--border=spaces");
+//                table.setValue(value).print(w);
+//                break;
+//            }
+//            case OBJECT: {
+//                NutsTreeFormat tree = ws.formats().tree();
+//                tree.configure(true, extraConfig.toArray(new String[0]));
+//                tree.setValue(value).print(w);
+//                break;
+//            }
+//            default: {
+//                throw new NutsUnsupportedArgumentException(getSession(), value.type().toString());
+//            }
+//        }
     }
 
 //    private String formatObject(Object any) {

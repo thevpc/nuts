@@ -80,7 +80,7 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
                             writeNode(s.getChild(), ctx);
                         } else {
                             writeNode(
-                                    ws.formats().text().forStyled(s.getChild(), s.getStyles().removeFirst()),
+                                    ws.text().forStyled(s.getChild(), s.getStyles().removeFirst()),
                                     ctx);
                         }
                         writeRaw(s.getEnd());
@@ -92,7 +92,7 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
                             writeNode(s.getChild(), ctx);
                         } else {
                             writeNode(
-                                    ws.formats().text().forStyled(s.getChild(), s.getStyles().removeFirst()),
+                                    ws.text().forStyled(s.getChild(), s.getStyles().removeFirst()),
                                     ctx);
                         }
                         writeRaw(s.getEnd());
@@ -110,7 +110,7 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
                 if (ctx.isTitleNumberEnabled()) {
                     NutsTextNumbering seq = ctx.getTitleNumberSequence();
                     if (seq == null) {
-                        seq = ws.formats().text().forNumbering();
+                        seq = ws.text().forNumbering();
                         ctx.setTitleNumberSequence(seq);
                     }
                     NutsTextNumbering a = seq.newLevel(s.getTextStyleCode().length());
@@ -132,7 +132,7 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
                 DefaultNutsTextCommand s = (DefaultNutsTextCommand) node;
                 if (!ctx.isFiltered()) {
                     writeRaw(s.getStart());
-                    writeRaw(s.getKind());
+//                    writeRaw(s.getKind());
                     writeEscapedSpecial(s.getCommand().getName());
                     if (!CoreStringUtils.isBlank(s.getCommand().getArgs())) {
                         writeEscapedSpecial(" ");

@@ -20,7 +20,7 @@ public class RemoteNutsExecCommand extends AbstractNutsExecCommand {
     @Override
     public NutsExecutableInformation which() {
         RemoteNutsWorkspace ws = getWorkspace();
-        NutsElementFormat e = ws.formats().element().setSession(getSession());
+        NutsElementFormat e = ws.elem().setSession(getSession());
         return getWorkspace().remoteCall(
                 getWorkspace().createCall("workspace.which",
                         e.forObject()
@@ -33,7 +33,7 @@ public class RemoteNutsExecCommand extends AbstractNutsExecCommand {
     @Override
     public NutsExecCommand run() {
         RemoteNutsWorkspace ws = getWorkspace();
-        NutsElementFormat e = ws.formats().element().setSession(getSession());
+        NutsElementFormat e = ws.elem().setSession(getSession());
         try {
             int r = getWorkspace().remoteCall(
                     getWorkspace().createCall("workspace.exec",

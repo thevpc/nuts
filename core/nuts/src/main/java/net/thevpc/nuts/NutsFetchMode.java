@@ -51,7 +51,7 @@ package net.thevpc.nuts;
  * @since 0.5.4
  * @category Commands
  */
-public enum NutsFetchMode {
+public enum NutsFetchMode implements NutsEnum{
     /**
      * artifacts fetched (locally)
      */

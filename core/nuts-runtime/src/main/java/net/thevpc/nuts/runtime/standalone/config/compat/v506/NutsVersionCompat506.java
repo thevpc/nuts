@@ -88,7 +88,7 @@ public class NutsVersionCompat506 extends AbstractNutsVersionCompat {
     }
 
     private NutsWorkspaceConfigBoot506 parseConfig506(byte[] bytes) {
-        return getWorkspace().formats().element().setContentType(NutsContentType.JSON).parse(bytes, NutsWorkspaceConfigBoot506.class);
+        return getWorkspace().elem().setContentType(NutsContentType.JSON).parse(bytes, NutsWorkspaceConfigBoot506.class);
     }
 
 }

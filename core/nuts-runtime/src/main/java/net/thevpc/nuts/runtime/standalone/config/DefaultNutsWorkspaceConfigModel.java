@@ -155,7 +155,7 @@ public class DefaultNutsWorkspaceConfigModel {
                     extension.setConfigVersion(null);
                 }
             }
-            ws.formats().element().setContentType(NutsContentType.JSON).setValue(storeModelBoot).print(file);
+            ws.elem().setContentType(NutsContentType.JSON).setValue(storeModelBoot).print(file);
             storeModelBootChanged = false;
             ok = true;
         }
@@ -172,7 +172,7 @@ public class DefaultNutsWorkspaceConfigModel {
                     extension.setConfigVersion(null);
                 }
             }
-            ws.formats().element().setSession(session).setContentType(NutsContentType.JSON).setValue(storeModelSecurity).print(file);
+            ws.elem().setSession(session).setContentType(NutsContentType.JSON).setValue(storeModelSecurity).print(file);
             storeModelSecurityChanged = false;
             ok = true;
         }
@@ -206,7 +206,7 @@ public class DefaultNutsWorkspaceConfigModel {
                     item.setConfigVersion(null);
                 }
             }
-            ws.formats().element().setSession(session).setContentType(NutsContentType.JSON).setValue(storeModelMain).print(file);
+            ws.elem().setSession(session).setContentType(NutsContentType.JSON).setValue(storeModelMain).print(file);
             storeModelMainChanged = false;
             ok = true;
         }
@@ -220,7 +220,7 @@ public class DefaultNutsWorkspaceConfigModel {
                     item.setConfigVersion(null);
                 }
             }
-            ws.formats().element().setSession(session).setContentType(NutsContentType.JSON).setValue(storeModelApi).print(afile);
+            ws.elem().setSession(session).setContentType(NutsContentType.JSON).setValue(storeModelApi).print(afile);
             storeModelApiChanged = false;
             ok = true;
         }
@@ -229,7 +229,7 @@ public class DefaultNutsWorkspaceConfigModel {
                     .resolve(NutsConstants.Folders.ID).resolve(ws.locations().getDefaultIdBasedir(ws.getRuntimeId()));
             Path afile = runtimeVersionSpecificLocation.resolve(NutsConstants.Files.WORKSPACE_RUNTIME_CONFIG_FILE_NAME);
             storeModelRuntime.setConfigVersion(current().getApiVersion());
-            ws.formats().element().setSession(session).setContentType(NutsContentType.JSON).setValue(storeModelRuntime).print(afile);
+            ws.elem().setSession(session).setContentType(NutsContentType.JSON).setValue(storeModelRuntime).print(afile);
             storeModelRuntimeChanged = false;
             ok = true;
         }
@@ -588,7 +588,7 @@ public class DefaultNutsWorkspaceConfigModel {
             String javaOptions = getStoredConfigApi().getJavaOptions();
             m.put("javaCommand", javaCommand);
             m.put("javaOptions", javaOptions);
-            session.getWorkspace().formats().element().setContentType(NutsContentType.JSON).setValue(m).print(apiConfigFile);
+            session.getWorkspace().elem().setContentType(NutsContentType.JSON).setValue(m).print(apiConfigFile);
         }
         downloadId(apiId, force, null, true, session);
     }
@@ -1060,7 +1060,7 @@ public class DefaultNutsWorkspaceConfigModel {
         }
 
         if (force || !Files.isRegularFile(configFile)) {
-            ws.formats().element().setContentType(NutsContentType.JSON).setValue(m).print(configFile);
+            ws.elem().setContentType(NutsContentType.JSON).setValue(m).print(configFile);
         }
         downloadId(id, force, (def != null && def.getContent().getPath() != null) ? def.getContent().getPath() : null, false, session);
         for (NutsId dep : deps) {
@@ -1219,7 +1219,7 @@ public class DefaultNutsWorkspaceConfigModel {
             return null;
         }
         try {
-            Map<String, Object> a_config0 = ws.formats().element().setSession(session).setContentType(NutsContentType.JSON).parse(bytes, Map.class);
+            Map<String, Object> a_config0 = ws.elem().setSession(session).setContentType(NutsContentType.JSON).parse(bytes, Map.class);
             String version = (String) a_config0.get("configVersion");
             if (version == null) {
                 version = (String) a_config0.get("createApiVersion");

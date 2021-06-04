@@ -29,7 +29,7 @@ public class DefaultNutsUndeployCommand extends AbstractNutsUndeployCommand {
                             .setFetchStrategy(isOffline() ? NutsFetchStrategy.OFFLINE : NutsFetchStrategy.ONLINE)
                     )
                     .addIds(id)
-                    .addRepositories(getRepository())
+                    .addRepositoryFilter(ws.filters().repository().byName(getRepository()))
                     //skip 'installed' repository
                     .setRepositoryFilter(
                             ws.repos().filter().byName(DefaultNutsInstalledRepository.INSTALLED_REPO_UUID).neg()

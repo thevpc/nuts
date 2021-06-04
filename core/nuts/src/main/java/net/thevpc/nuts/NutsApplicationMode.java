@@ -32,7 +32,7 @@ package net.thevpc.nuts;
  * @since 0.5.5
  * @category Application
  */
-public enum NutsApplicationMode {
+public enum NutsApplicationMode implements NutsEnum{
     /**
      * Default application execution Mode. This mode is considered if the
      * --nuts-exec-mode=... is not present (or is not the very first argument).

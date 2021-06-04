@@ -247,7 +247,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             if (exists) {
                 if (!context.getSession().getTerminal().ask().setDefaultValue(false).setSession(context.getSession())
                         .forBoolean("override existing script %s ?",
-                                context.getWorkspace().formats().text().forStyled(
+                                context.getWorkspace().text().forStyled(
                                         NdiUtils.betterPath(ff.toString()), NutsTextStyle.path()
                                 )
                         ).getBooleanValue()) {
@@ -280,7 +280,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     public void removeNutsScript(String id, NutsSession session) {
         NutsId nid = context.getWorkspace().id().parser().parse(id);
         Path f = getScriptFile(nid.getArtifactId());
-        NutsTextManager factory = context.getWorkspace().formats().text();
+        NutsTextManager factory = context.getWorkspace().text();
         if (Files.isRegularFile(f)) {
             if (session.getTerminal().ask().forBoolean("tool %s will be removed. Confirm?",
                     factory.forStyled(NdiUtils.betterPath(f.toString()), NutsTextStyle.path())
@@ -487,7 +487,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         if (!force && Files.exists(script)) {
             if (context.getSession().getTerminal().ask().setDefaultValue(true).setSession(context.getSession())
                     .forBoolean("override existing script %s ?",
-                            context.getWorkspace().formats().text().forStyled(
+                            context.getWorkspace().text().forStyled(
                                     NdiUtils.betterPath(script.toString()), NutsTextStyle.path()
                             )
                     ).getBooleanValue()) {
@@ -521,7 +521,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             if (!force && Files.exists(ff2)) {
                 if (!context.getSession().getTerminal().ask().setSession(context.getSession())
                         .forBoolean("override existing script %s ?",
-                                context.getWorkspace().formats().text().forStyled(NdiUtils.betterPath(ff2.toString()), NutsTextStyle.path()))
+                                context.getWorkspace().text().forStyled(NdiUtils.betterPath(ff2.toString()), NutsTextStyle.path()))
                         .setDefaultValue(false)
                         .getBooleanValue()) {
                     gen = false;
@@ -532,7 +532,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                 if (trace && context.getSession().isPlainTrace()) {
                     context.getSession().out().printf((Files.exists(ff2) ? "re-installing" : "installing")
                             + " script %s %n",
-                            context.getWorkspace().formats().text().forStyled(NdiUtils.betterPath(ff2.toString()), NutsTextStyle.path())
+                            context.getWorkspace().text().forStyled(NdiUtils.betterPath(ff2.toString()), NutsTextStyle.path())
                     );
                 }
                 try {
@@ -601,7 +601,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         Path t = Paths.get(context.getWorkspace().locations().getStoreLocation(context.getAppId(), NutsStoreLocation.CONFIG))
                 .resolve("nadmin-config.json");
         if (Files.isRegularFile(t)) {
-            return context.getWorkspace().formats().element().setContentType(NutsContentType.JSON).parse(t, NdiConfig.class);
+            return context.getWorkspace().elem().setContentType(NutsContentType.JSON).parse(t, NdiConfig.class);
         }
         return null;
     }
@@ -609,7 +609,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     protected void saveNdiConfig(NdiConfig config) {
         Path t = Paths.get(context.getWorkspace().locations().getStoreLocation(context.getAppId(), NutsStoreLocation.CONFIG))
                 .resolve("nadmin-config.json");
-        context.getWorkspace().formats().element().setContentType(NutsContentType.JSON).setCompact(false).setValue(config)
+        context.getWorkspace().elem().setContentType(NutsContentType.JSON).setCompact(false).setValue(config)
                 .print(t);
     }
 

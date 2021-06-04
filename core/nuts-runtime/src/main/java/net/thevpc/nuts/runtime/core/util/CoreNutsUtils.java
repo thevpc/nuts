@@ -553,19 +553,9 @@ public class CoreNutsUtils {
         return session.isTrace() ? session.copy().setTrace(false) : session;
     }
 
-    public static String tracePlainNutsDefinition(NutsSession session, NutsDefinition id) {
-        NutsIdFormat idFormat = session.getWorkspace().id().formatter();
-        return idFormat.value(id.getId()).format();
-    }
-
-    public static Object tracePropsNutsDefinition(NutsWorkspace ws, NutsDefinition id) {
-        NutsIdFormat idFormat = ws.id().formatter();
-        return idFormat.value(id.getId()).toString();
-    }
-
     public static Map<String, Object> traceJsonNutsDefinition(NutsSession session, NutsDefinition def) {
         Map<String, Object> x = new LinkedHashMap<>();
-        x.put("id", tracePlainNutsDefinition(session, def));
+        x.put("id", def.getId());
         if (def.getContent() != null) {
             if (def.getContent().getPath() != null) {
                 x.put("path", def.getContent().getPath().toString());
@@ -613,7 +603,7 @@ public class CoreNutsUtils {
 //    public static NutsIterableFormat getValidOutputFormat(NutsSession session) {
 //        NutsIterableFormat f = session.getIterableOutput();
 //        if (f == null) {
-//            return session.getWorkspace().formats().element().setContentType(session.getOutputFormat()).iter(session.out());
+//            return session.getWorkspace().elem().setContentType(session.getOutputFormat()).iter(session.out());
 //        }
 //        return f;
 //    }
@@ -972,10 +962,6 @@ public class CoreNutsUtils {
 //        return session;
 //    }
 
-    public String tracePlainNutsId(NutsWorkspace ws, NutsId id) {
-        NutsIdFormat idFormat = ws.id().formatter();
-        return idFormat.value(id).format();
-    }
 
     public static class NutsDefaultThreadFactory implements ThreadFactory {
 

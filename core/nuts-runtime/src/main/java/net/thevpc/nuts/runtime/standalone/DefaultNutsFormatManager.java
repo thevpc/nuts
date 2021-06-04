@@ -68,9 +68,4 @@ public class DefaultNutsFormatManager implements NutsFormatManager {
         return new DefaultNutsObjectFormat(ws).setSession(getSession());
     }
 
-    @Override
-    public NutsTextManager text() {
-        return new DefaultNutsTextManager(ws, model).setSession(getSession());
-    }
-
 }

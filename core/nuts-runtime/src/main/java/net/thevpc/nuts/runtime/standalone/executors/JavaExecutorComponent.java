@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,13 +24,15 @@
 package net.thevpc.nuts.runtime.standalone.executors;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.standalone.ext.DefaultNutsWorkspaceExtensionManager;
 import net.thevpc.nuts.runtime.bundles.collections.StringKeyValueList;
 import net.thevpc.nuts.runtime.bundles.io.IProcessExecHelper;
-import net.thevpc.nuts.NutsExecutorComponent;
+import net.thevpc.nuts.runtime.core.DefaultNutsClassLoader;
+import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
+import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.core.util.CoreNumberUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+import net.thevpc.nuts.runtime.standalone.ext.DefaultNutsWorkspaceExtensionManager;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 import java.io.File;
 import java.io.PrintStream;
@@ -44,9 +46,7 @@ import java.util.logging.Filter;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import net.thevpc.nuts.runtime.core.DefaultNutsClassLoader;
-import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
-import net.thevpc.nuts.runtime.core.util.CoreNumberUtils;
+import java.util.stream.Collectors;
 
 /**
  * Created by vpc on 1/7/17.
@@ -244,11 +244,16 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                     System.exit(233);
                 }
 
-                List<String> xargs = new ArrayList<>();
+                List<NutsString> xargs = new ArrayList<>();
                 List<String> args = new ArrayList<>();
 
-                xargs.add(joptions.getJavaHome());
-                xargs.addAll(joptions.getJvmArgs());
+                NutsTextManager txt = execSession.getWorkspace().text();
+                xargs.add(txt.forPlain(joptions.getJavaHome()));
+                xargs.addAll(
+                        joptions.getJvmArgs().stream()
+                                .map(txt::forPlain)
+                                .collect(Collectors.toList())
+                );
 
                 args.add(joptions.getJavaHome());
                 args.addAll(joptions.getJvmArgs());
@@ -286,26 +291,37 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                         }
                     }
                     String ds = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=" + (suspend ? 'y' : 'n') + ",address=" + port;
-                    xargs.add(ds);
+                    xargs.add(txt.forPlain(ds));
                     args.add(ds);
                 }
 
                 if (joptions.isJar()) {
-                    xargs.add("-jar");
+                    xargs.add(txt.forPlain("-jar"));
                     xargs.add(ws.id().formatter(def.getId()).format());
 
                     args.add("-jar");
                     args.add(contentFile.toString());
                 } else {
-                    xargs.add("--nuts-path");
-                    xargs.add(String.join(";", joptions.getClassPathNidStrings()));
-                    xargs.add(joptions.getMainClass());
+                    xargs.add(txt.forPlain("--nuts-path"));
+                    xargs.add(
+                            txt.builder().appendJoined(
+                                    ";", joptions.getClassPathNidStrings()
+                            ).immutable()
+                    );
+                    xargs.add(txt.forPlain(
+                                    joptions.getMainClass()
+                            )
+                    );
 
                     args.add("-classpath");
                     args.add(String.join(File.pathSeparator, joptions.getClassPathStrings()));
                     args.add(joptions.getMainClass());
                 }
-                xargs.addAll(joptions.getApp());
+                xargs.addAll(
+                        joptions.getApp().stream()
+                                .map(txt::forPlain)
+                                .collect(Collectors.toList())
+                );
                 args.addAll(joptions.getApp());
                 return new JavaProcessExecHelper(execSession, execSession, xargs, joptions, ws, executionContext, def, args, osEnv);
 
@@ -329,7 +345,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
 
         @Override
         public void dryExec() {
-            NutsFormatManager text = getSession().getWorkspace().formats();
+            NutsTextManager text = getSession().getWorkspace().text();
             List<String> cmdLine = new ArrayList<>();
             cmdLine.add("embedded-java");
             cmdLine.add("-cp");
@@ -338,7 +354,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
             cmdLine.addAll(joptions.getApp());
 
             getSession().out().printf("[dry] %s%n",
-                    text.text().builder()
+                    text.builder()
                             .append("exec", NutsTextStyle.pale())
                             .append(" ")
                             .append(getSession().getWorkspace().commandLine().create(cmdLine))
@@ -354,7 +370,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                 classLoader = ((DefaultNutsWorkspaceExtensionManager) getSession().getWorkspace().extensions()).getModel().getNutsURLClassLoader(
                         def.getId().toString(),
                         null//getSession().getWorkspace().config().getBootClassLoader()
-                        ,getSession()
+                        , getSession()
                 );
                 for (NutsClassLoaderNode n : joptions.getClassPath()) {
                     classLoader.add(n);
@@ -453,7 +469,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
     private static class JavaProcessExecHelper extends AbstractSyncIProcessExecHelper {
 
         private final NutsSession execSession;
-        private final List<String> xargs;
+        private final List<NutsString> xargs;
         private final JavaExecutorOptions joptions;
         private final NutsWorkspace ws;
         private final NutsExecutionContext executionContext;
@@ -461,7 +477,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
         private final List<String> args;
         private final HashMap<String, String> osEnv;
 
-        public JavaProcessExecHelper(NutsSession ns, NutsSession execSession, List<String> xargs, JavaExecutorOptions joptions, NutsWorkspace ws, NutsExecutionContext executionContext, NutsDefinition def, List<String> args, HashMap<String, String> osEnv) {
+        public JavaProcessExecHelper(NutsSession ns, NutsSession execSession, List<NutsString> xargs, JavaExecutorOptions joptions, NutsWorkspace ws, NutsExecutionContext executionContext, NutsDefinition def, List<String> args, HashMap<String, String> osEnv) {
             super(ns);
             this.execSession = execSession;
             this.xargs = xargs;
@@ -478,14 +494,14 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
             PrintStream out = execSession.out();
             out.println("[dry] ==[nuts-exec]== ");
             for (int i = 0; i < xargs.size(); i++) {
-                String xarg = xargs.get(i);
-                if (i > 0 && xargs.get(i - 1).equals("--nuts-path")) {
-                    for (String s : xarg.split(";")) {
-                        out.println("\t\t\t " + s);
-                    }
-                } else {
-                    out.println("\t\t " + xarg);
-                }
+                NutsString xarg = xargs.get(i);
+//                if (i > 0 && xargs.get(i - 1).equals("--nuts-path")) {
+//                    for (String s : xarg.split(";")) {
+//                        out.println("\t\t\t " + s);
+//                    }
+//                } else {
+                out.println("\t\t " + xarg);
+//                }
             }
             String directory = CoreStringUtils.isBlank(joptions.getDir()) ? null : ws.io().expandPath(joptions.getDir());
             NutsWorkspaceUtils.of(executionContext.getTraceSession()).execAndWait(def,
@@ -509,16 +525,16 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
         private CoreIOUtils.ProcessExecHelper preExec() {
             if (joptions.isShowCommand() || CoreBooleanUtils.getSysBoolNutsProperty("show-command", false)) {
                 PrintStream out = execSession.out();
-                out.printf("%s %n", ws.formats().text().forStyled("nuts-exec", NutsTextStyle.primary(1)));
+                out.printf("%s %n", ws.text().forStyled("nuts-exec", NutsTextStyle.primary(1)));
                 for (int i = 0; i < xargs.size(); i++) {
-                    String xarg = xargs.get(i);
-                    if (i > 0 && xargs.get(i - 1).equals("--nuts-path")) {
-                        for (String s : xarg.split(";")) {
-                            out.println("\t\t\t " + s);
-                        }
-                    } else {
-                        out.println("\t\t " + xarg);
-                    }
+                    NutsString xarg = xargs.get(i);
+//                    if (i > 0 && xargs.get(i - 1).equals("--nuts-path")) {
+//                        for (String s : xarg.split(";")) {
+//                            out.println("\t\t\t " + s);
+//                        }
+//                    } else {
+                    out.println("\t\t " + xarg);
+//                    }
                 }
             }
             String directory = CoreStringUtils.isBlank(joptions.getDir()) ? null : ws.io().expandPath(joptions.getDir());

@@ -8,7 +8,7 @@ import java.util.*;
 public abstract class AbstractNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFetchCommand> implements NutsFetchCommand {
 
     private NutsId id;
-    protected Boolean installedOrNot;
+//    protected Boolean installedOrNot;
 
     public AbstractNutsFetchCommand(NutsWorkspace ws) {
         super(ws, "fetch");
@@ -54,42 +54,42 @@ public abstract class AbstractNutsFetchCommand extends DefaultNutsQueryBaseOptio
         if (other != null) {
             NutsFetchCommand o = other;
             this.id = o.getId();
-            this.installedOrNot = o.getInstalled();
+//            this.installedOrNot = o.getInstalled();
         }
         return this;
     }
+//
+//    @Override
+//    public NutsFetchCommand addRepositories(Collection<String> value) {
+//        if (value != null) {
+//            addRepositories(value.toArray(new String[0]));
+//        }
+//        return this;
+//    }
 
-    @Override
-    public NutsFetchCommand addRepositories(Collection<String> value) {
-        if (value != null) {
-            addRepositories(value.toArray(new String[0]));
-        }
-        return this;
-    }
-
-    @Override
-    public NutsFetchCommand installed() {
-        return setInstalled(true);
-    }
-
-    @Override
-    public Boolean getInstalled() {
-        return installedOrNot;
-    }
-
-    public NutsFetchCommand setInstalled(Boolean enable) {
-        installedOrNot = enable;
-        return this;
-    }
-
-    public NutsFetchCommand installed(Boolean enable) {
-        return setInstalled(enable);
-    }
-
-    @Override
-    public NutsFetchCommand notInstalled() {
-        return setInstalled(false);
-    }
+//    @Override
+//    public NutsFetchCommand installed() {
+//        return setInstalled(true);
+//    }
+//
+//    @Override
+//    public Boolean getInstalled() {
+//        return installedOrNot;
+//    }
+//
+//    public NutsFetchCommand setInstalled(Boolean enable) {
+//        installedOrNot = enable;
+//        return this;
+//    }
+//
+//    public NutsFetchCommand installed(Boolean enable) {
+//        return setInstalled(enable);
+//    }
+//
+//    @Override
+//    public NutsFetchCommand notInstalled() {
+//        return setInstalled(false);
+//    }
 
     @Override
     public boolean configureFirst(NutsCommandLine cmdLine) {
@@ -102,7 +102,10 @@ public abstract class AbstractNutsFetchCommand extends DefaultNutsQueryBaseOptio
             case "--not-installed": {
                 cmdLine.skip();
                 if (enabled) {
-                    this.notInstalled();
+                    setRepositoryFilter(
+                            getSession().getWorkspace().filters().repository().installedRepo().neg()
+                                    .and(this.getRepositoryFilter())
+                    );
                 }
                 return true;
             }
@@ -110,7 +113,10 @@ public abstract class AbstractNutsFetchCommand extends DefaultNutsQueryBaseOptio
             case "--installed": {
                 cmdLine.skip();
                 if (enabled) {
-                    this.installed();
+                    setRepositoryFilter(
+                            getSession().getWorkspace().filters().repository().installedRepo()
+                                    .and(this.getRepositoryFilter())
+                    );
                 }
                 return true;
             }
@@ -134,7 +140,7 @@ public abstract class AbstractNutsFetchCommand extends DefaultNutsQueryBaseOptio
                 + ", dependencies=" + isDependencies()
                 + ", effective=" + isEffective()
                 + ", location=" + getLocation()
-                + ", repos=" + Arrays.toString(getRepositories())
+                + ", repos=" + getRepositoryFilter()
                 + ", displayOptions=" + getDisplayOptions()
                 + ", id=" + getId()
                 + ", session=" + getSession()

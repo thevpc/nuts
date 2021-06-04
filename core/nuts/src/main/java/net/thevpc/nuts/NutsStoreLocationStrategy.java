@@ -31,7 +31,7 @@ package net.thevpc.nuts;
  * @since 0.5.4
  * @category Base
  */
-public enum NutsStoreLocationStrategy {
+public enum NutsStoreLocationStrategy implements NutsEnum{
     /**
      * Default location strategy. locations will be exploded to distinct roots
      */

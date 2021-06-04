@@ -357,7 +357,7 @@
 //            }
 //        }
 //
-//        NutsElement elem = getWorkspace().formats().element().toElement(obj);
+//        NutsElement elem = getWorkspace().elem().toElement(obj);
 //
 //        if (doc == null) {
 //            if (defaulDocument == null) {

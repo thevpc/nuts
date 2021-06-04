@@ -33,7 +33,7 @@ import java.util.Locale;
  * @author thevpc
  * @category Format
  */
-public enum NutsTextFormatStyle {
+public enum NutsTextFormatStyle implements NutsEnum{
     /**
      * @see java.util.Formatter
      * @see String#format(Locale, String, Object...)
@@ -42,5 +42,16 @@ public enum NutsTextFormatStyle {
     /**
      * @see java.text.MessageFormat
      */
-    JSTYLE,
+    JSTYLE;
+    private String id;
+
+    NutsTextFormatStyle() {
+        this.id = name().toLowerCase().replace('_', '-');
+    }
+
+    @Override
+    public String id() {
+        return id;
+    }
+
 }

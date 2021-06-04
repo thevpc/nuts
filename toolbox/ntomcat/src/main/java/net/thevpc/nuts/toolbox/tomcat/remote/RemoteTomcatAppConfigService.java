@@ -120,7 +120,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
         return config;
     }
     public NutsString getBracketsPrefix(String str) {
-        return context.getWorkspace().formats().text().builder()
+        return context.getWorkspace().text().builder()
                 .append("[")
                 .append(str,NutsTextStyle.primary(5))
                 .append("]");
@@ -141,7 +141,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
         NutsWorkspace ws = context.getWorkspace();
         Map<String, Object> m = new LinkedHashMap<>();
         m.put("name", getName());
-        m.putAll(ws.formats().element().convert(getConfig(), Map.class));
+        m.putAll(ws.elem().convert(getConfig(), Map.class));
         ws.formats().object().setSession(context.getSession()).setValue(m).print(out);
         return this;
     }

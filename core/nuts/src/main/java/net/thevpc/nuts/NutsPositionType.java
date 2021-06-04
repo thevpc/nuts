@@ -33,7 +33,7 @@ package net.thevpc.nuts;
  * @since 0.5.5
  * @category Format
  */
-public enum NutsPositionType {
+public enum NutsPositionType implements NutsEnum{
     /**
      * LEFT, TOP
      */

@@ -5,7 +5,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.util;
 
-import net.thevpc.nuts.runtime.standalone.wscommands.InstalledVsNonInstalledSearch;
+import net.thevpc.nuts.runtime.core.repos.NutsInstalledRepository;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.http.SimpleHttpClient;
 import net.thevpc.nuts.runtime.bundles.parsers.StringPlaceHolderParser;
@@ -176,33 +176,30 @@ public class NutsWorkspaceUtils {
     }
 
     public List<NutsRepository> filterRepositoriesDeploy(NutsId id, NutsRepositoryFilter repositoryFilter) {
-        return filterRepositories(NutsRepositorySupportedAction.DEPLOY, id, repositoryFilter, NutsFetchMode.LOCAL, new InstalledVsNonInstalledSearch(
-                false,
-                true
-        ));
+        NutsRepositoryFilter f = ws.filters().repository().installedRepo().neg().and(repositoryFilter);
+        return filterRepositories(NutsRepositorySupportedAction.DEPLOY, id, f, NutsFetchMode.LOCAL);
     }
 
     public List<NutsRepositoryAndFetchMode> filterRepositoryAndFetchModes(
             NutsRepositorySupportedAction fmode, NutsId id, NutsRepositoryFilter repositoryFilter, NutsFetchStrategy fetchStrategy,
-            NutsSession session, InstalledVsNonInstalledSearch installedVsNonInstalledSearch) {
+            NutsSession session) {
         List<NutsRepositoryAndFetchMode> ok = new ArrayList<>();
         for (NutsFetchMode nutsFetchMode : fetchStrategy) {
-            for (NutsRepository nutsRepositoryAndFetchMode : filterRepositories(fmode, id, repositoryFilter, nutsFetchMode, installedVsNonInstalledSearch
-            )) {
+            for (NutsRepository nutsRepositoryAndFetchMode : filterRepositories(fmode, id, repositoryFilter, nutsFetchMode)) {
                 ok.add(new NutsRepositoryAndFetchMode(nutsRepositoryAndFetchMode, nutsFetchMode));
             }
         }
         return ok;
     }
 
-    private List<NutsRepository> filterRepositories(NutsRepositorySupportedAction fmode, NutsId id, NutsRepositoryFilter repositoryFilter, NutsFetchMode mode, InstalledVsNonInstalledSearch installedVsNonInstalledSearch) {
-        return filterRepositories(fmode, id, repositoryFilter, true, null, mode, installedVsNonInstalledSearch);
+    private List<NutsRepository> filterRepositories(NutsRepositorySupportedAction fmode, NutsId id, NutsRepositoryFilter repositoryFilter, NutsFetchMode mode) {
+        return filterRepositories(fmode, id, repositoryFilter, true, null, mode);
     }
 
-    private List<NutsRepository> filterRepositories(NutsRepositorySupportedAction fmode, NutsId id, NutsRepositoryFilter repositoryFilter, boolean sortByLevelDesc, final Comparator<NutsRepository> postComp, NutsFetchMode mode, InstalledVsNonInstalledSearch installedVsNonInstalledSearch) {
+    private List<NutsRepository> filterRepositories(NutsRepositorySupportedAction fmode, NutsId id, NutsRepositoryFilter repositoryFilter, boolean sortByLevelDesc, final Comparator<NutsRepository> postComp, NutsFetchMode mode) {
         List<RepoAndLevel> repos2 = new ArrayList<>();
         //        List<Integer> reposLevels = new ArrayList<>();
-        if (installedVsNonInstalledSearch.isSearchInOtherRepositories()) {
+
             for (NutsRepository repository : ws.repos().setSession(session).getRepositories()) {
                 if (repository.isEnabled()
                         && repository.isAvailable()
@@ -230,10 +227,13 @@ public class NutsWorkspaceUtils {
             if (sortByLevelDesc || postComp != null) {
                 Collections.sort(repos2);
             }
-        }
+
         List<NutsRepository> ret = new ArrayList<>();
-        if (mode == NutsFetchMode.LOCAL && fmode == NutsRepositorySupportedAction.SEARCH && installedVsNonInstalledSearch.isSearchInInstalled()) {
-            ret.add(NutsWorkspaceExt.of(ws).getInstalledRepository());
+        NutsInstalledRepository installedRepository = NutsWorkspaceExt.of(ws).getInstalledRepository();
+        if (mode == NutsFetchMode.LOCAL && fmode == NutsRepositorySupportedAction.SEARCH
+                &&
+                (repositoryFilter==null || repositoryFilter.acceptRepository(installedRepository))) {
+            ret.add(installedRepository);
         }
         for (RepoAndLevel repoAndLevel : repos2) {
             ret.add(repoAndLevel.r);
@@ -578,14 +578,14 @@ public class NutsWorkspaceUtils {
 
         if (_LOG(session).isLoggable(Level.FINEST)) {
             _LOGOP(session).level(Level.FINE).verb(NutsLogVerb.START).formatted().log("[exec] {0}",
-                    ws.formats().text().forCode("sh",
+                    ws.text().forCode("sh",
                             pb.getCommandString()
                     ));
         }
         if (showCommand || CoreBooleanUtils.getSysBoolNutsProperty("show-command", false)) {
             if (ws.term().setSession(session).isFormatted(prepareTerminal.out())) {
-                prepareTerminal.out().printf("%s ", ws.formats().text().forStyled("[exec]", NutsTextStyle.primary(4)));
-                prepareTerminal.out().println(ws.formats().text().forCode("sh", pb.getCommandString()));
+                prepareTerminal.out().printf("%s ", ws.text().forStyled("[exec]", NutsTextStyle.primary(4)));
+                prepareTerminal.out().println(ws.text().forCode("sh", pb.getCommandString()));
             } else {
                 prepareTerminal.out().print("exec ");
                 prepareTerminal.out().printf("%s%n", pb.getCommandString());

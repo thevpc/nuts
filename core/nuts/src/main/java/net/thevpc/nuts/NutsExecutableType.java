@@ -30,7 +30,7 @@ package net.thevpc.nuts;
  * @author thevpc
  * @since 0.5.4
  */
-public enum NutsExecutableType {
+public enum NutsExecutableType implements NutsEnum{
     /**
      * internal command is one of : version, info, install,
      * uninstall,check-updates,license, help, exec, welcome

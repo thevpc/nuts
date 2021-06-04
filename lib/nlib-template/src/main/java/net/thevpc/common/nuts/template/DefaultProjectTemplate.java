@@ -70,7 +70,7 @@ public class DefaultProjectTemplate implements ProjectTemplate {
                 return term.ask()
                         .setSession(session)
                         .forString(
-                        getWorkspace().formats().text().builder()
+                        getWorkspace().text().builder()
                                 .append(propertyTitle, NutsTextStyle.primary(4))
                                 .append(" (")
                                 .append(propName,NutsTextStyle.pale())
@@ -444,7 +444,7 @@ public class DefaultProjectTemplate implements ProjectTemplate {
                 if (!getSession().getTerminal().ask()
                         .setSession(session)
                         .forBoolean("accept project location %s?",
-                        applicationContext.getWorkspace().formats().text().forStyled(p.getPath(),NutsTextStyle.path()))
+                        applicationContext.getWorkspace().text().forStyled(p.getPath(),NutsTextStyle.path()))
                         .setDefaultValue(false)
                         .getBooleanValue()) {
                     throw new NutsUserCancelException(getSession());

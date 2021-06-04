@@ -33,4 +33,5 @@ public interface NutsRepositoryFilterManager extends NutsTypedFilters<NutsReposi
     NutsRepositoryFilterManager setSession(NutsSession session);
     NutsRepositoryFilter byName(String... names);
     NutsRepositoryFilter byUuid(String... uuids);
+    NutsRepositoryFilter installedRepo();
 }

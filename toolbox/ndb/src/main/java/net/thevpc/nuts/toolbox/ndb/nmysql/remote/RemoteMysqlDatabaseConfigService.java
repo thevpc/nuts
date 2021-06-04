@@ -57,7 +57,7 @@ public class RemoteMysqlDatabaseConfigService {
     }
 
     public void write(PrintStream out) {
-        context.getWorkspace().formats().element().setContentType(NutsContentType.JSON).setValue(getConfig()).print(out);
+        context.getWorkspace().elem().setContentType(NutsContentType.JSON).setValue(getConfig()).print(out);
     }
 
     public String pull(String localPath, boolean restore, boolean deleteRemote) {
@@ -98,7 +98,7 @@ public class RemoteMysqlDatabaseConfigService {
         if(t>0){
             remoteTempPath=remoteTempPath.substring(t);
         }
-        Map<String,Object> resMap=context.getWorkspace().formats().element().parse(remoteTempPath.getBytes(),Map.class);
+        Map<String,Object> resMap=context.getWorkspace().elem().parse(remoteTempPath.getBytes(),Map.class);
         String ppath=(String)resMap.get("path");
 
         if (NdbUtils.isBlank(localPath)) {
@@ -109,11 +109,11 @@ public class RemoteMysqlDatabaseConfigService {
                     .toString();
         }
         SshPath remoteFullFilePath = new SshAddress(prepareSshServer(cconfig.getServer())).getPath(ppath);
-        NutsFormatManager text = context.getWorkspace().formats();
+        NutsTextManager text = context.getWorkspace().text();
         if (session.isPlainTrace()) {
             session.out().printf("%s copy '%s' to '%s'%n", getBracketsPrefix(name),
-                    text.text().forStyled(remoteFullFilePath.toString(),NutsTextStyle.path()),
-                    text.text().forStyled(localPath,NutsTextStyle.path())
+                    text.forStyled(remoteFullFilePath.toString(),NutsTextStyle.path()),
+                    text.forStyled(localPath,NutsTextStyle.path())
             );
         }
         if(lastRun.get("localPath")!=null){
@@ -152,7 +152,7 @@ public class RemoteMysqlDatabaseConfigService {
         if (deleteRemote) {
             if (session.isPlainTrace()) {
                 session.out().printf("%s delete %s%n", getBracketsPrefix(name),
-                        text.text().forStyled(remoteFullFilePath.toString(),NutsTextStyle.path()));
+                        text.forStyled(remoteFullFilePath.toString(),NutsTextStyle.path()));
             }
             if(!lastRun.is("deleted")) {
                 execRemoteNuts(
@@ -187,7 +187,7 @@ public class RemoteMysqlDatabaseConfigService {
         String remoteTempPath = null;
         final SshAddress sshAddress = new SshAddress(prepareSshServer(cconfig.getServer()));
         final String searchResultString = execRemoteNuts("search --no-color --json net.thevpc.nuts.toolbox:nmysql --display temp-folder --installed --first");
-        List<Map> result = this.context.getWorkspace().formats().element().setContentType(NutsContentType.JSON).parse(new StringReader(searchResultString), List.class);
+        List<Map> result = this.context.getWorkspace().elem().setContentType(NutsContentType.JSON).parse(new StringReader(searchResultString), List.class);
         if (result.isEmpty()) {
             throw new NutsIllegalArgumentException(context.getSession(),"Mysql is not installed on the remote machine");
         }
@@ -195,12 +195,11 @@ public class RemoteMysqlDatabaseConfigService {
 
         String remoteFilePath = IOUtils.concatPath('/', remoteTempPath, "-" + MysqlUtils.newDateString() + "-" + FileUtils.getFileName(localPath));
         String remoteFullFilePath = sshAddress.getPath(remoteFilePath).getPath();
-        NutsFormatManager text = context.getWorkspace().formats();
-
+        NutsTextManager text = context.getWorkspace().text();
         if (context.getSession().isPlainTrace()) {
             context.getSession().out().printf("%s copy %s to %s%n", getBracketsPrefix(name),
-                    text.text().forStyled(localPath,NutsTextStyle.path()),
-                    text.text().forStyled(remoteFullFilePath,NutsTextStyle.path())
+                    text.forStyled(localPath,NutsTextStyle.path()),
+                    text.forStyled(remoteFullFilePath,NutsTextStyle.path())
             );
         }
         context.getWorkspace().exec()
@@ -218,7 +217,7 @@ public class RemoteMysqlDatabaseConfigService {
         if (context.getSession().isPlainTrace()) {
             context.getSession().out().printf("%s remote restore %s%n",
                     getBracketsPrefix(name),
-                    text.text().forStyled(remoteFullFilePath,NutsTextStyle.path())
+                    text.forStyled(remoteFullFilePath,NutsTextStyle.path())
             );
         }
         execRemoteNuts(
@@ -257,7 +256,7 @@ public class RemoteMysqlDatabaseConfigService {
         } else {
             b.addCommand("nsh", "-c", "ssh");
             b.addCommand(this.config.getServer());
-            b.addCommand("/home/vpc/bin/nuts");
+            b.addCommand("/home/"+System.getProperty("user.name")+"/bin/nuts");
             b.addCommand("-b");
             b.addCommand("-y");
             b.addCommand("--trace=false");
@@ -266,7 +265,7 @@ public class RemoteMysqlDatabaseConfigService {
             b.addCommand(cmd);
         }
         if (context.getSession().isPlainTrace()) {
-            String ff = b.format()
+            NutsString ff = b.format()
                     .setEnvReplacer(envEntry -> {
                         if (envEntry.getName().toLowerCase().contains("password")
                                 || envEntry.getName().toLowerCase().contains("pwd")) {
@@ -275,7 +274,7 @@ public class RemoteMysqlDatabaseConfigService {
                         return null;
                     })
                     .format();
-            context.getSession().out().printf("[[EXEC]] %s%n", ff);
+            context.getSession().out().printf("[EXEC] %s%n", ff);
         }
         b.setRedirectErrorStream(true)
                 .grabOutputString()
@@ -294,7 +293,7 @@ public class RemoteMysqlDatabaseConfigService {
     }
 
     public NutsString getBracketsPrefix(String str) {
-        return context.getWorkspace().formats().text().builder()
+        return context.getWorkspace().text().builder()
                 .append("[")
                 .append(str,NutsTextStyle.primary(5))
                 .append("]");

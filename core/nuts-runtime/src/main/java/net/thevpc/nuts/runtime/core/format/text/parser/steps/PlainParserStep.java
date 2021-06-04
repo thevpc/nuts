@@ -251,7 +251,7 @@ public class PlainParserStep extends ParserStep {
 
     @Override
     public NutsText toText() {
-        return ws.formats().text().forPlain(value.toString());
+        return ws.text().forPlain(value.toString());
     }
 
     @Override

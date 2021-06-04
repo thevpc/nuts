@@ -27,7 +27,7 @@ public class JavaBlocTextFormatter implements NutsCodeFormat {
 
     public JavaBlocTextFormatter(NutsWorkspace ws) {
         this.ws = ws;
-        factory = ws.formats().text();
+        factory = ws.text();
     }
 
     @Override

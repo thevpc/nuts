@@ -251,7 +251,7 @@ public class NutsElementFactoryXmlElement implements NutsElementMapper<Node> {
     }
 
     public NutsElement createElement(String type, String value, NutsElementFactoryContext context) {
-        NutsElementFormat f = context.getWorkspace().formats().element()
+        NutsElementFormat f = context.getWorkspace().elem()
                 .setSession(context.getSession());
         switch (type) {
             case "null": {
@@ -456,7 +456,7 @@ public class NutsElementFactoryXmlElement implements NutsElementMapper<Node> {
 
     @Override
     public NutsElement createElement(Node node, Type typeOfSrc, NutsElementFactoryContext context) {
-        NutsElementFormat elements = context.getWorkspace().formats().element().setSession(context.getSession());
+        NutsElementFormat elements = context.getWorkspace().elem().setSession(context.getSession());
         if (node instanceof Attr) {
             Attr at = (Attr) node;
             return elements.forObject().set(at.getName(), context.objectToElement(at.getValue(), String.class)).build();

@@ -55,7 +55,7 @@
 //    public void print(PrintStream w) {
 //        try {
 //            Document document = NutsXmlUtils.createDocument(getWorkspace());
-//            document.appendChild(getWorkspace().formats().element().toXmlElement(getValue(), document));
+//            document.appendChild(getWorkspace().elem().toXmlElement(getValue(), document));
 //            NutsXmlUtils.writeDocument(document, new StreamResult(w), false,true);
 //        } catch (TransformerException | ParserConfigurationException ex) {
 //            throw new NutsException(getWorkspace(), ex);

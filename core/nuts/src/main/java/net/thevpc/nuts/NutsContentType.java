@@ -32,7 +32,7 @@ package net.thevpc.nuts;
  * @since 0.5.4
  * @category Format
  */
-public enum NutsContentType {
+public enum NutsContentType implements NutsEnum{
     /**
      * json format
      */

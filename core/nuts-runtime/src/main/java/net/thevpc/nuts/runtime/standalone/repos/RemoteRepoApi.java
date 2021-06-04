@@ -5,17 +5,29 @@
  */
 package net.thevpc.nuts.runtime.standalone.repos;
 
+import net.thevpc.nuts.NutsEnum;
+
 /**
  *
  * @author thevpc
  */
-public enum RemoteRepoApi {
+public enum RemoteRepoApi  implements NutsEnum {
 
     DEFAULT,
     MAVEN,
     GITHUB,
     DIR_TEXT,
     DIR_LIST,
-    UNSUPPORTED,
+    UNSUPPORTED;
+    private String id;
+
+    RemoteRepoApi() {
+        this.id = name().toLowerCase().replace('_', '-');
+    }
+
+    @Override
+    public String id() {
+        return id;
+    }
 
 }

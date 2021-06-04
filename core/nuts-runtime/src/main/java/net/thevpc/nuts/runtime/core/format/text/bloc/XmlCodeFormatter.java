@@ -23,7 +23,7 @@ public class XmlCodeFormatter implements NutsCodeFormat {
 
     public XmlCodeFormatter(NutsWorkspace ws) {
         this.ws = ws;
-        factory = ws.formats().text();
+        factory = ws.text();
     }
 
     @Override

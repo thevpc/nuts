@@ -33,7 +33,7 @@ package net.thevpc.nuts;
  * @since 0.5.5
  * @category Command Line
  */
-public enum NutsArgumentType {
+public enum NutsArgumentType implements NutsEnum{
     /**
      * argument that may or may not accept value.
      */

@@ -342,7 +342,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         if(!iterableOut){
             return null;
         }
-        return getWorkspace().formats().element().setContentType(getOutputFormat()).iter(out());
+        return getWorkspace().elem().setContentType(getOutputFormat()).iter(out());
 //        if (iterFormatHandler == null) {
 //            return null;
 //        }

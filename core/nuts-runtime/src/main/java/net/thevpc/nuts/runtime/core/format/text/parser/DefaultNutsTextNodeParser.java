@@ -21,6 +21,8 @@ import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsText;
 import net.thevpc.nuts.NutsTextVisitor;
 
+import javax.swing.*;
+
 /**
  * @author thevpc
  */
@@ -465,6 +467,7 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
         }
 
         public NutsText consumeNode(NutsTextVisitor visitor) {
+//            JOptionPane.showMessageDialog(null,"consumeNode "+this);
             ParserStep s = root().poll();
             if (s == null) {
                 while (!statusStack.isEmpty()) {

@@ -664,16 +664,16 @@ public class ProcessBuilder2 {
         return sb.toString();
     }
 
-    public String getFormattedCommandString(NutsWorkspace ws) {
-        return getFormattedCommandString(ws, null);
+    public String getFormattedCommandString(NutsSession session) {
+        return getFormattedCommandString(session, null);
     }
 
-    private String escape(NutsWorkspace ws, String f) {
-        return ws.formats().text().forPlain(f).toString();
+    private String escape(NutsSession session, String f) {
+        return session.getWorkspace().text().forPlain(f).toString();
     }
 
-    public String getFormattedCommandString(NutsWorkspace ws, CommandStringFormat f) {
-//        NutsFormatManager tf = ws.formats();
+    public String getFormattedCommandString(NutsSession session, CommandStringFormat f) {
+//        NutsFormatManager tf = session.formats();
         StringBuilder sb = new StringBuilder();
         File ff = getDirectory();
         if (ff == null) {
@@ -684,7 +684,7 @@ public class ProcessBuilder2 {
         } catch (Exception ex) {
             ff = ff.getAbsoluteFile();
         }
-        sb.append("cwd=```error ").append(CoreStringUtils.enforceDoubleQuote(ff.getPath(), ws)).append("```");
+        sb.append("cwd=```error ").append(CoreStringUtils.enforceDoubleQuote(ff.getPath(), session)).append("```");
         if (env != null) {
             for (Map.Entry<String, String> e : env.entrySet()) {
                 String k = e.getKey();
@@ -712,8 +712,8 @@ public class ProcessBuilder2 {
                     sb.append(" ");
                 }
                 sb.append(
-                        ws.formats().text().forStyled(CoreStringUtils.enforceDoubleQuote(k, ws),NutsTextStyle.primary(4))
-                ).append("=").append(CoreStringUtils.enforceDoubleQuote(v, ws));
+                        session.getWorkspace().text().forStyled(CoreStringUtils.enforceDoubleQuote(k, session),NutsTextStyle.primary(4))
+                ).append("=").append(CoreStringUtils.enforceDoubleQuote(v, session));
             }
         }
         boolean commandFirstTokenVisited = false;
@@ -733,9 +733,9 @@ public class ProcessBuilder2 {
             }
             if (!commandFirstTokenVisited) {
                 commandFirstTokenVisited = true;
-                sb.append("```error ").append(CoreStringUtils.enforceDoubleQuote(s, ws)).append("```");
+                sb.append("```error ").append(CoreStringUtils.enforceDoubleQuote(s, session)).append("```");
             } else {
-                sb.append(formatArg(s, ws));
+                sb.append(formatArg(s, session));
             }
         }
         if (baseIO) {
@@ -743,7 +743,7 @@ public class ProcessBuilder2 {
             if (f == null || f.acceptRedirectOutput()) {
                 r = base.redirectOutput();
                 if (null == r.type()) {
-                    sb.append("##:separator:").append(escape(ws," > ")).append("## ").append("##:pale:{?}##");
+                    sb.append("##:separator:").append(escape(session," > ")).append("## ").append("##:pale:{?}##");
                 } else {
                     switch (r.type()) {
                         //sb.append(" > ").append("{inherited}");
@@ -752,25 +752,25 @@ public class ProcessBuilder2 {
                         case PIPE:
                             break;
                         case WRITE:
-                            sb.append("##:separator:").append(escape(ws," >")).append("## ").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
+                            sb.append("##:separator:").append(escape(session," >")).append("## ").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
                             break;
                         case APPEND:
-                            sb.append("##:separator:").append(escape(ws," >>")).append("## ").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
+                            sb.append("##:separator:").append(escape(session," >>")).append("## ").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
                             break;
                         default:
-                            sb.append("##:separator:").append(escape(ws," >")).append("## ").append("##:pale:{?}##");
+                            sb.append("##:separator:").append(escape(session," >")).append("## ").append("##:pale:{?}##");
                             break;
                     }
                 }
             }
             if (f == null || f.acceptRedirectError()) {
                 if (base.redirectErrorStream()) {
-                    sb.append("##:separator:").append(escape(ws," 2>&1")).append("##");
+                    sb.append("##:separator:").append(escape(session," 2>&1")).append("##");
                 } else {
                     if (f == null || f.acceptRedirectError()) {
                         r = base.redirectError();
                         if (null == r.type()) {
-                            sb.append("##:separator:").append(escape(ws," 2>")).append("## ").append("##:pale:{?}##");
+                            sb.append("##:separator:").append(escape(session," 2>")).append("## ").append("##:pale:{?}##");
                         } else {
                             switch (r.type()) {
                                 //sb.append(" 2> ").append("{inherited}");
@@ -779,13 +779,13 @@ public class ProcessBuilder2 {
                                 case PIPE:
                                     break;
                                 case WRITE:
-                                    sb.append("##:separator:").append(escape(ws," 2>")).append("## ").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
+                                    sb.append("##:separator:").append(escape(session," 2>")).append("## ").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
                                     break;
                                 case APPEND:
-                                    sb.append("##:separator:").append(escape(ws," 2>>")).append("## ").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
+                                    sb.append("##:separator:").append(escape(session," 2>>")).append("## ").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
                                     break;
                                 default:
-                                    sb.append("##:separator:").append(escape(ws," 2>")).append("## ").append("##:pale:{?}##");
+                                    sb.append("##:separator:").append(escape(session," 2>")).append("## ").append("##:pale:{?}##");
                                     break;
                             }
                         }
@@ -795,7 +795,7 @@ public class ProcessBuilder2 {
             if (f == null || f.acceptRedirectInput()) {
                 r = base.redirectInput();
                 if (null == r.type()) {
-                    sb.append("##:separator:").append(escape(ws," <")).append("## ").append("##:pale:{?}##");
+                    sb.append("##:separator:").append(escape(session," <")).append("## ").append("##:pale:{?}##");
                 } else {
                     switch (r.type()) {
                         //sb.append(" < ").append("{inherited}");
@@ -804,10 +804,10 @@ public class ProcessBuilder2 {
                         case PIPE:
                             break;
                         case READ:
-                            sb.append("##:separator:").append(escape(ws," <")).append("## ").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
+                            sb.append("##:separator:").append(escape(session," <")).append("## ").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
                             break;
                         default:
-                            sb.append("##:separator:").append(escape(ws," <")).append("## ").append("##:pale:{?}##");
+                            sb.append("##:separator:").append(escape(session," <")).append("## ").append("##:pale:{?}##");
                             break;
                     }
                 }
@@ -815,56 +815,56 @@ public class ProcessBuilder2 {
         } else if (base.redirectErrorStream()) {
             if (out != null) {
                 if (f == null || f.acceptRedirectOutput()) {
-                    sb.append("##:separator:").append(escape(ws," > ")).append("## ").append("##:pale:{stream}##");
+                    sb.append("##:separator:").append(escape(session," > ")).append("## ").append("##:pale:{stream}##");
                 }
                 if (f == null || f.acceptRedirectError()) {
-                    sb.append("##:separator:").append(escape(ws," 2>&1")).append("##");
+                    sb.append("##:separator:").append(escape(session," 2>&1")).append("##");
                 }
             }
             if (in != null) {
                 if (f == null || f.acceptRedirectInput()) {
-                    sb.append("##:separator:").append(escape(ws," <")).append("## ").append("##:pale:{stream}##");
+                    sb.append("##:separator:").append(escape(session," <")).append("## ").append("##:pale:{stream}##");
                 }
             }
         } else {
             if (out != null) {
                 if (f == null || f.acceptRedirectOutput()) {
-                    sb.append("##:separator:").append(escape(ws," >")).append("## ").append("##:pale:{stream}##");
+                    sb.append("##:separator:").append(escape(session," >")).append("## ").append("##:pale:{stream}##");
                 }
             }
             if (err != null) {
                 if (f == null || f.acceptRedirectError()) {
-                    sb.append("##:separator:").append(escape(ws," 2>")).append("## ").append("##:pale:{stream}##");
+                    sb.append("##:separator:").append(escape(session," 2>")).append("## ").append("##:pale:{stream}##");
                 }
             }
             if (in != null) {
                 if (f == null || f.acceptRedirectInput()) {
-                    sb.append("##:separator:").append(escape(ws," <")).append("## ").append("##:pale:{stream}##");
+                    sb.append("##:separator:").append(escape(session," <")).append("## ").append("##:pale:{stream}##");
                 }
             }
         }
         return sb.toString();
     }
 
-    private static String formatArg(String s, NutsWorkspace ws) {
+    private static String formatArg(String s, NutsSession session) {
         DefaultNutsArgument a = new DefaultNutsArgument(s);
         StringBuilder sb = new StringBuilder();
-        NutsTextManager factory = ws.formats().text();
+        NutsTextManager factory = session.getWorkspace().text();
         if (a.isKeyValue()) {
             if (a.isOption()) {
-                sb.append(factory.forStyled(CoreStringUtils.enforceDoubleQuote(a.getStringKey(), ws),NutsTextStyle.option()));
+                sb.append(factory.forStyled(CoreStringUtils.enforceDoubleQuote(a.getStringKey(), session),NutsTextStyle.option()));
                 sb.append("=");
-                sb.append(CoreStringUtils.enforceDoubleQuote(a.getStringValue(), ws));
+                sb.append(CoreStringUtils.enforceDoubleQuote(a.getStringValue(), session));
             } else {
-                sb.append(factory.forStyled(CoreStringUtils.enforceDoubleQuote(a.getStringKey(), ws),NutsTextStyle.primary(4)));
+                sb.append(factory.forStyled(CoreStringUtils.enforceDoubleQuote(a.getStringKey(), session),NutsTextStyle.primary(4)));
                 sb.append("=");
-                sb.append(CoreStringUtils.enforceDoubleQuote(a.getStringValue(), ws));
+                sb.append(CoreStringUtils.enforceDoubleQuote(a.getStringValue(), session));
             }
         } else {
             if (a.isOption()) {
-                sb.append(factory.forStyled(CoreStringUtils.enforceDoubleQuote(a.getString(), ws),NutsTextStyle.option()));
+                sb.append(factory.forStyled(CoreStringUtils.enforceDoubleQuote(a.getString(), session),NutsTextStyle.option()));
             } else {
-                sb.append(CoreStringUtils.enforceDoubleQuote(a.getString(), ws));
+                sb.append(CoreStringUtils.enforceDoubleQuote(a.getString(), session));
             }
         }
         return sb.toString();

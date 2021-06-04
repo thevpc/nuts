@@ -1,14 +1,11 @@
 package net.thevpc.nuts.runtime.core.format.text;
 
-import net.thevpc.nuts.NutsTextWriteConfiguration;
-import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextNodeParser;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.io.OutputStream;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsTextParser;
-import net.thevpc.nuts.NutsTextVisitor;
 
 public class FormatOutputStreamSupport {
     private NutsTextNodeWriter nodeWriter;
@@ -60,7 +57,13 @@ public class FormatOutputStreamSupport {
         if (!isFormatEnabled()) {
             nodeWriter.writeRaw(buf, off, len);
         } else {
-            parser.parseIncremental(buf, off, len, nutsTextNodeVisitor);
+            parser.parseIncremental(buf, off, len, new NutsTextVisitor() {
+                @Override
+                public void visit(NutsText node) {
+//                    JOptionPane.showMessageDialog(null,node.getType()+":"+node);
+                    nutsTextNodeVisitor.visit(node);
+                }
+            });
         }
     }
 

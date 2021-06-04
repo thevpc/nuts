@@ -37,7 +37,7 @@ public class HadraBlocTextFormatter implements NutsCodeFormat {
 
     public HadraBlocTextFormatter(NutsWorkspace ws) {
         this.ws = ws;
-        factory = ws.formats().text();
+        factory = ws.text();
     }
 
     @Override

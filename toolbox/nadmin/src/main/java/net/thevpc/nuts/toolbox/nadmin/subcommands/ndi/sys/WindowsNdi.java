@@ -177,7 +177,7 @@ public class WindowsNdi extends BaseSystemNdi {
             String menuGlobalShortcutPath = configurePathShortcut(Target.MENU, true, apiVersion, bootConfig, null, session);
             String menuSpecificVersionShortcutPath = configurePathShortcut(Target.MENU, false, apiVersion, bootConfig, null, session);
             PrintStream out = context.getSession().out();
-            NutsTextManager factory = context.getWorkspace().formats().text();
+            NutsTextManager factory = context.getWorkspace().text();
             if (session.isTrace()) {
                 out.printf("```error ATTENTION``` To run any nuts command you should use the pre-configured shell at \"%s\".%n",
                         factory.forStyled(desktopSpecificVersionShortcutPath, NutsTextStyle.path()));
@@ -244,7 +244,7 @@ public class WindowsNdi extends BaseSystemNdi {
         }
         if (!updatedNames.isEmpty()) {
             if (context.getSession().isPlainTrace()) {
-                NutsTextBuilder formattedUpdatedNames = context.getWorkspace().formats().text().builder();
+                NutsTextBuilder formattedUpdatedNames = context.getWorkspace().text().builder();
                 for (String updatedName : updatedNames) {
                     if (formattedUpdatedNames.size() > 0) {
                         formattedUpdatedNames.append(", ");
@@ -253,7 +253,7 @@ public class WindowsNdi extends BaseSystemNdi {
                 }
                 context.getSession().out().printf((context.getSession().isPlainTrace() ? "force " : "") + "updating %s to point to workspace %s%n",
                         formattedUpdatedNames,
-                        ws.formats().text().forStyled(ws.locations().getWorkspaceLocation(), NutsTextStyle.path())
+                        ws.text().forStyled(ws.locations().getWorkspaceLocation(), NutsTextStyle.path())
                 );
             }
             if (persistentConfig) {

@@ -32,7 +32,7 @@ package net.thevpc.nuts;
  * @since 0.5.4
  * @category Base
  */
-public enum NutsStoreLocation {
+public enum NutsStoreLocation implements NutsEnum{
 
     /**
      * defines the base directory relative to which user specific executable

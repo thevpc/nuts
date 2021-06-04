@@ -29,7 +29,7 @@ package net.thevpc.nuts;
  * @author thevpc
  * @category Elements
  */
-public enum NutsElementType {
+public enum NutsElementType implements NutsEnum{
     /**
      * null element
      */

@@ -288,13 +288,12 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
                     }
                 }
                 for (NutsRepository repository : linkRepositories) {
-                    NutsFormatManager text = ws.formats();
                     m.addRow(
-                            text.text().forStyled(repository.getName(), NutsTextStyle.primary(4)),
+                            ws.text().forStyled(repository.getName(), NutsTextStyle.primary(4)),
                             repository.config().isEnabled()
-                            ? repository.isEnabled() ? text.text().forStyled("ENABLED", NutsTextStyle.success())
-                            : text.text().forStyled("<RT-DISABLED>", NutsTextStyle.error())
-                            : text.text().forStyled("<DISABLED>", NutsTextStyle.error()),
+                            ? repository.isEnabled() ? ws.text().forStyled("ENABLED", NutsTextStyle.success())
+                            : ws.text().forStyled("<RT-DISABLED>", NutsTextStyle.error())
+                            : ws.text().forStyled("<DISABLED>", NutsTextStyle.error()),
                             repository.getRepositoryType(),
                             repository.config().getLocation(false)
                     );

@@ -250,7 +250,7 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
         if (getSession().getWorkspace().term().setSession(getSession()).isFormatted(out)) {
             ByteArrayPrintStream bos = new ByteArrayPrintStream();
             format.printElement(elem, bos, compact, createFactoryContext());
-            out.print(getSession().getWorkspace().formats().text().forCode(getContentType().id(), bos.toString()));
+            out.print(getSession().getWorkspace().text().forCode(getContentType().id(), bos.toString()));
         } else {
             format.printElement(elem, out, compact, createFactoryContext());
         }

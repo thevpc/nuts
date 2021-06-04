@@ -163,8 +163,21 @@ public interface NutsTerminal extends NutsTerminalBase {
 
     NutsTerminal sendErrCommand(NutsTerminalCommand command);
 
+    /**
+     * print progress with a message
+     * @param progress 0.0f-1.0f value
+     * @param prompt message
+     * @param params message prams
+     * @return {@code this} instance
+     */
     NutsTerminal printProgress(float progress, String prompt, Object... params);
 
+    /**
+     * print indefinite progress with a message
+     * @param prompt message
+     * @param params message prams
+     * @return {@code this} instance
+     */
     NutsTerminal printProgress(String prompt, Object... params);
 
 }

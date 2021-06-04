@@ -31,7 +31,7 @@ package net.thevpc.nuts;
  * @since 0.5.4
  * @category Commands
  */
-public enum NutsExecutionType {
+public enum NutsExecutionType implements NutsEnum{
     /**
      * command will be resolved as an external command/artifact. Nuts will resolve
      * relevant executor to run it

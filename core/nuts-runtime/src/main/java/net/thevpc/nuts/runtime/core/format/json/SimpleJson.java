@@ -521,8 +521,7 @@ public class SimpleJson implements NutsElementStreamFormat {
 
         public NutsElementFormat builder() {
             if (ebuilder == null) {
-                ebuilder = context.getWorkspace().formats().element()
-                        .setSession(context.getSession());
+                ebuilder = context.getSession().getWorkspace().elem();
             }
             return ebuilder;
         }

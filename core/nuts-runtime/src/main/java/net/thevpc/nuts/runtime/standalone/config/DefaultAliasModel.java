@@ -143,11 +143,11 @@ public class DefaultAliasModel {
         defaultCommandFactory.installCommand(command, session);
         if (session.isPlainTrace()) {
             PrintStream out = CoreIOUtils.resolveOut(session);
-            NutsFormatManager formats = session.getWorkspace().formats();
+            NutsTextManager text = session.getWorkspace().text();
             if (forced) {
-                out.printf("[%s] command alias %s%n", "re-install", formats.text().forStyled(command.getName(), NutsTextStyle.primary(3)));
+                out.printf("[%s] command alias %s%n", "re-install", text.forStyled(command.getName(), NutsTextStyle.primary(3)));
             } else {
-                out.printf("[%s] command alias %s%n", "install", formats.text().forStyled(command.getName(), NutsTextStyle.primary(3)));
+                out.printf("[%s] command alias %s%n", "install", text.forStyled(command.getName(), NutsTextStyle.primary(3)));
             }
         }
         return forced;
@@ -166,7 +166,7 @@ public class DefaultAliasModel {
         defaultCommandFactory.uninstallCommand(name, session);
         if (session.isPlainTrace()) {
             PrintStream out = CoreIOUtils.resolveOut(session);
-            out.printf("[%s] command alias %s%n", "uninstall", session.getWorkspace().formats().text().forStyled(name, NutsTextStyle.primary(3)));
+            out.printf("[%s] command alias %s%n", "uninstall", session.getWorkspace().text().forStyled(name, NutsTextStyle.primary(3)));
         }
         return true;
     }

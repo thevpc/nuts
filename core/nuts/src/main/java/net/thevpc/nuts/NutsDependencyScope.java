@@ -31,7 +31,7 @@ package net.thevpc.nuts;
  * @since 0.5.4
  * @category Descriptor
  */
-public enum NutsDependencyScope {
+public enum NutsDependencyScope implements NutsEnum{
     /**
      * equivalent to maven's compile and to gradle's api
      */

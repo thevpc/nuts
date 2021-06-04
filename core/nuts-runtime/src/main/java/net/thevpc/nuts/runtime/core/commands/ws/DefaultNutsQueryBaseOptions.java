@@ -7,21 +7,14 @@ package net.thevpc.nuts.runtime.core.commands.ws;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.format.NutsFetchDisplayOptions;
-import net.thevpc.nuts.runtime.standalone.util.NutsDependencyScopes;
-import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
+import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+import net.thevpc.nuts.runtime.standalone.util.NutsDependencyScopes;
 import net.thevpc.nuts.runtime.standalone.wscommands.NutsWorkspaceCommandBase;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Set;
-import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
-import net.thevpc.nuts.runtime.core.util.CoreEnumUtils;
+import java.util.*;
 
 /**
  * @param <T> Type
@@ -29,6 +22,8 @@ import net.thevpc.nuts.runtime.core.util.CoreEnumUtils;
  */
 public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand> extends NutsWorkspaceCommandBase<T> {
 
+//    private final List<String> repos = new ArrayList<>();
+    protected NutsDependencyFilter dependencyFilter;
     private boolean failFast = false;
     private Boolean optional = null;
     private Set<NutsDependencyScope> scope = EnumSet.noneOf(NutsDependencyScope.class);
@@ -37,11 +32,10 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
     private boolean dependencies = false;
     private boolean effective = false;
     private Path location = null;
-    private final List<String> repos = new ArrayList<>();
     private NutsFetchDisplayOptions displayOptions;
-    protected NutsDependencyFilter dependencyFilter;
+    private NutsRepositoryFilter repositoryFilter;
 
-//    private Boolean transitive = true;
+    //    private Boolean transitive = true;
 //    private Boolean cached = true;
 //    private Boolean indexed = null;
 //    private NutsFetchStrategy fetchStrategy = null;
@@ -67,9 +61,10 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
             this.effective = other.isEffective();
             this.scope = EnumSet.copyOf(other.getScope());
             this.location = other.getLocation();
-            this.repos.clear();
-            this.repos.addAll(Arrays.asList(other.getRepositories()));
+//            this.repos.clear();
+//            this.repos.addAll(Arrays.asList(other.getRepositories()));
             this.dependencyFilter = other.getDependencyFilter();
+            this.repositoryFilter = other.getRepositoryFilter();
 
         }
         return (T) this;
@@ -230,38 +225,38 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
         return (T) this;
     }
 
-    public T addRepositories(Collection<String> values) {
-        if (values != null) {
-            addRepositories(values.toArray(new String[0]));
-        }
-        return (T) this;
-    }
+//    public T addRepositories(Collection<String> values) {
+//        if (values != null) {
+//            addRepositories(values.toArray(new String[0]));
+//        }
+//        return (T) this;
+//    }
 
-    public T removeRepository(String value) {
-        repos.remove(value);
-        return (T) this;
-    }
-
-    public T addRepositories(String... values) {
-        if (values != null) {
-            repos.addAll(Arrays.asList(values));
-        }
-        return (T) this;
-    }
-
-    public T clearRepositories() {
-        repos.clear();
-        return (T) this;
-    }
-
-    public T addRepository(String value) {
-        repos.add(value);
-        return (T) this;
-    }
-
-    public String[] getRepositories() {
-        return repos.toArray(new String[0]);
-    }
+//    public T removeRepository(String value) {
+//        repos.remove(value);
+//        return (T) this;
+//    }
+//
+//    public T addRepositories(String... values) {
+//        if (values != null) {
+//            repos.addAll(Arrays.asList(values));
+//        }
+//        return (T) this;
+//    }
+//
+//    public T clearRepositories() {
+//        repos.clear();
+//        return (T) this;
+//    }
+//
+//    public T addRepository(String value) {
+//        repos.add(value);
+//        return (T) this;
+//    }
+//
+//    public String[] getRepositories() {
+//        return repos.toArray(new String[0]);
+//    }
 
     public NutsFetchDisplayOptions getDisplayOptions() {
         return displayOptions;
@@ -292,7 +287,7 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
             case "--repository": {
                 String val = cmdLine.nextString().getStringValue();
                 if (enabled) {
-                    this.addRepository(val);
+                    addRepositoryFilter(getSession().getWorkspace().filters().repository().byName(val));
                 }
                 return true;
             }
@@ -351,6 +346,35 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
         return false;
     }
 
+    //    @Override
+    public NutsRepositoryFilter getRepositoryFilter() {
+        return repositoryFilter;
+    }
+
+//    @Override
+    public T setRepository(String filter) {
+        checkSession();
+        this.repositoryFilter = getSession().getWorkspace().repos().filter().byName(filter);
+        return (T) this;
+    }
+//    @Override
+    public T setRepositoryFilter(NutsRepositoryFilter filter) {
+        this.repositoryFilter = filter;
+        return (T) this;
+    }
+
+//    @Override
+    public T addRepositoryFilter(NutsRepositoryFilter filter) {
+        if (filter != null) {
+            if (this.repositoryFilter == null) {
+                this.repositoryFilter = filter;
+            } else {
+                this.repositoryFilter = this.repositoryFilter.and(filter);
+            }
+        }
+        return (T) this;
+    }
+
     @Override
     public String toString() {
         return getClass().getSimpleName() + "("
@@ -363,24 +387,24 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
                 + ", dependencies=" + dependencies
                 + ", effective=" + effective
                 + ", location=" + location
-                + ", repos=" + repos
+//                + ", repos=" + repos
                 + ", displayOptions=" + displayOptions
                 + ", session=" + getSession()
                 + ')';
     }
 
-//    @Override
+    //    @Override
     public T setDependencyFilter(NutsDependencyFilter filter) {
         this.dependencyFilter = filter;
         return (T) this;
     }
 
-//    @Override
+    //    @Override
     public NutsDependencyFilter getDependencyFilter() {
         return dependencyFilter;
     }
 
-//    @Override
+    //    @Override
     public T setDependencyFilter(String filter) {
         checkSession();
         NutsWorkspace ws = getSession().getWorkspace();
