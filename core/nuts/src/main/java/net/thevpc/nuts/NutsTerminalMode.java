@@ -39,6 +39,11 @@ public enum NutsTerminalMode implements NutsEnum{
     INHERITED,
 
     /**
+     * stream supporting ansi escapes!
+     */
+    ANSI,
+
+    /**
      * streams in formatted mode will process Nuts Stream Format
      * and render in a <strong>colorful</strong> way the its content.
      */

@@ -1,9 +1,6 @@
 package net.thevpc.nuts.runtime.core.format;
 
-import net.thevpc.nuts.NutsCommandLine;
-import net.thevpc.nuts.NutsExecCommand;
-import net.thevpc.nuts.NutsExecCommandFormat;
-import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.*;
 
 import java.io.*;
 import java.util.Map;
@@ -121,11 +118,11 @@ public class DefaultNutsExecCommandFormat extends DefaultFormatBase<NutsExecComm
     }
 
     @Override
-    public void print(PrintStream out) {
+    public void print(NutsPrintStream out) {
         StringBuilder sb = new StringBuilder();
         NutsExecCommand ec = getValue();
-        PrintStream _out = ec.getOut();
-        PrintStream err = ec.getErr();
+        NutsPrintStream _out = ec.getOut();
+        NutsPrintStream err = ec.getErr();
         InputStream in = ec.getIn();
         Map<String, String> env = ec.getEnv();
         String[] command = ec.getCommand();

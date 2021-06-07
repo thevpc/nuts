@@ -273,6 +273,19 @@ public class NutsRepositorySelector {
             return url;
         }
 
+        @Override
+        public String toString() {
+            if(name==null){
+                return url;
+            }
+            if(url==null){
+                return name;
+            }
+            if(name.equals(url)){
+                return url;
+            }
+            return name+"="+url;
+        }
     }
 
     public static class SelectorList {

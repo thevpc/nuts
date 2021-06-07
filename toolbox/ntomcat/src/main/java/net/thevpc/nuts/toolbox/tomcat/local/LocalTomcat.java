@@ -193,7 +193,7 @@ public class LocalTomcat {
             NutsSession session = context.getSession();
             NutsTextManager factory = session.getWorkspace().text();
             if (session.isPlainOut()) {
-                PrintStream out = session.out();
+                NutsPrintStream out = session.out();
                 for (RunningTomcat jpsResult : TomcatUtils.getRunningInstances(context)) {
                     switch (format) {
                         case "short": {

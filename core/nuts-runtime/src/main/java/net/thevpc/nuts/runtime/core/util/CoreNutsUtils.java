@@ -890,24 +890,26 @@ public class CoreNutsUtils {
         return c0.equals(c1);
     }
 
-    public static String formatLogValue(Object unresolved, Object resolved) {
-        String a = desc(unresolved);
-        String b = desc(resolved);
+    public static NutsString formatLogValue(NutsTextManager text,Object unresolved, Object resolved) {
+        NutsString a = desc(unresolved,text);
+        NutsString b = desc(resolved,text);
         if (a.equals(b)) {
             return a;
         } else {
-            return a + " => " + b;
+            return
+                    text.builder()
+                            .append(a)
+                            .append(" => ")
+                            .append(b)
+                    ;
         }
     }
 
-    public static String desc(Object s) {
-        if (s == null) {
-            return "<EMPTY>";
+    public static NutsString desc(Object s,NutsTextManager text) {
+        if (s == null || (s instanceof String && ((String) s).isEmpty())) {
+            return text.forStyled("<EMPTY>",NutsTextStyle.option());
         }
-        String ss
-                = (s instanceof Enum) ? ((Enum) s).name().toLowerCase().replace('_', '-')
-                        : s.toString().trim();
-        return ss.isEmpty() ? "<EMPTY>" : ss;
+        return text.toText(s);
     }
 
     public static boolean isUnsupportedFetchModeException(Throwable ex) {

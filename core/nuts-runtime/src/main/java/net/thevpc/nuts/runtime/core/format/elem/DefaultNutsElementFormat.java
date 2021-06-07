@@ -24,6 +24,7 @@ import net.thevpc.nuts.runtime.core.format.text.DefaultNutsTextManagerModel;
 import net.thevpc.nuts.runtime.core.format.tree.DefaultSearchFormatTree;
 import net.thevpc.nuts.runtime.core.format.xml.DefaultSearchFormatXml;
 import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
+import net.thevpc.nuts.runtime.standalone.io.NutsByteArrayPrintStream;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementFormat> implements NutsElementFormat {
@@ -244,11 +245,11 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
         return (T) elementToObject(e, to);
     }
 
-    private void print(PrintStream out, NutsElementStreamFormat format) {
+    private void print(NutsPrintStream out, NutsElementStreamFormat format) {
         checkSession();
         NutsElement elem = toElement(value);
-        if (getSession().getWorkspace().term().setSession(getSession()).isFormatted(out)) {
-            ByteArrayPrintStream bos = new ByteArrayPrintStream();
+        if (out.isNtf()) {
+            NutsPrintStream bos = getSession().getWorkspace().io().createMemoryPrintStream();
             format.printElement(elem, bos, compact, createFactoryContext());
             out.print(getSession().getWorkspace().text().forCode(getContentType().id(), bos.toString()));
         } else {
@@ -258,7 +259,7 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
     }
 
     @Override
-    public void print(PrintStream out) {
+    public void print(NutsPrintStream out) {
         print(out, resolveStucturedFormat());
     }
 
@@ -474,7 +475,7 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
     }
 
     @Override
-    public NutsIterableFormat iter(PrintStream writer) {
+    public NutsIterableFormat iter(NutsPrintStream writer) {
         switch (getContentType()) {
             case JSON:
                 return new DefaultSearchFormatJson(getSession(), writer, new NutsFetchDisplayOptions(getSession().getWorkspace()));

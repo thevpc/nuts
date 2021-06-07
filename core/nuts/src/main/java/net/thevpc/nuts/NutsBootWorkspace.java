@@ -1371,7 +1371,7 @@ public final class NutsBootWorkspace {
         String os = s.getOs();
         String arch = s.getArch();
         if (os.isEmpty() && arch.isEmpty()) {
-            return false;
+            return true;
         }
         if (!os.isEmpty()) {
             NutsOsFamily eos = PrivateNutsPlatformUtils.getPlatformOsFamily();

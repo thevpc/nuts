@@ -22,7 +22,7 @@ public class DefaultSearchFormatJson extends DefaultSearchFormatBase {
     NutsTextManager factory;
     private NutsCodeFormat codeFormat;
 
-    public DefaultSearchFormatJson(NutsSession session, PrintStream writer, NutsFetchDisplayOptions options) {
+    public DefaultSearchFormatJson(NutsSession session, NutsPrintStream writer, NutsFetchDisplayOptions options) {
         super(session, writer, NutsContentType.JSON, options);
         factory = getWorkspace().text();
         codeFormat = session.getWorkspace().text().setSession(session).getCodeFormat("json");

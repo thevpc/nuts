@@ -9,6 +9,7 @@ import java.io.PrintStream;
 import java.util.Iterator;
 
 import net.thevpc.nuts.NutsIterableFormat;
+import net.thevpc.nuts.NutsPrintStream;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsWorkspace;
 //import net.thevpc.nuts.NutsIterableOutput;
@@ -22,11 +23,11 @@ public class NutsPrintIterator<T> implements Iterator<T> {
     Iterator<T> curr;
     NutsWorkspace ws;
     NutsIterableFormat listFormat;
-    PrintStream out;
+    NutsPrintStream out;
     NutsFetchDisplayOptions displayOptions;
     long count = 0;
 
-    public NutsPrintIterator(Iterator<T> curr, NutsWorkspace ws, PrintStream out, NutsFetchDisplayOptions displayOptions, NutsSession session) {
+    public NutsPrintIterator(Iterator<T> curr, NutsWorkspace ws, NutsPrintStream out, NutsFetchDisplayOptions displayOptions, NutsSession session) {
         this.curr = curr;
         this.ws = ws;
         this.out = out;

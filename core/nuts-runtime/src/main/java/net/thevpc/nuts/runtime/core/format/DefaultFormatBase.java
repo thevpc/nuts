@@ -22,38 +22,41 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
         super(ws, name);
     }
 
-    @Override
-    public PrintWriter getValidPrintWriter(Writer out) {
-        checkSession();
-        return (out == null) ?
-                CoreIOUtils.toPrintWriter(getSession().getTerminal().getOut(), getSession())
-                :
-                CoreIOUtils.toPrintWriter(out, getSession());
-    }
+//    @Override
+//    public PrintWriter getValidPrintWriter(Writer out) {
+//        checkSession();
+//        if(out == null){
+//            return
+//        }
+//        return (out == null) ?
+//                CoreIOUtils.toPrintWriter(getSession().getTerminal().getOut(), getSession())
+//                :
+//                CoreIOUtils.toPrintWriter(out, getSession());
+//    }
+
+//    @Override
+//    public PrintWriter getValidPrintWriter() {
+//        return getValidPrintWriter(null);
+//    }
 
     @Override
-    public PrintWriter getValidPrintWriter() {
-        return getValidPrintWriter(null);
-    }
-
-    @Override
-    public PrintStream getValidPrintStream(PrintStream out) {
+    public NutsPrintStream getValidPrintStream(NutsPrintStream out) {
         checkSession();
         if (out == null) {
             out = getSession().getTerminal().getOut();
         }
-        return getSession().getWorkspace().term().setSession(getSession()).prepare(out);
+        return out;
     }
 
     @Override
-    public PrintStream getValidPrintStream() {
+    public NutsPrintStream getValidPrintStream() {
         return getValidPrintStream(null);
     }
 
     @Override
     public NutsString format() {
         checkSession();
-        ByteArrayPrintStream out = new ByteArrayPrintStream();
+        NutsPrintStream out = getSession().getWorkspace().io().createMemoryPrintStream();
         print(out);
         return isNtf()?
                 getSession().getWorkspace().text().parse(out.toString())
@@ -75,7 +78,7 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
     }
 
     @Override
-    public abstract void print(PrintStream out);
+    public abstract void print(NutsPrintStream out);
 
     //    @Override
 //    public void print(PrintStream out) {
@@ -89,11 +92,11 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
     public void print(Writer out) {
         checkSession();
         if (out == null) {
-            PrintStream pout = getValidPrintStream();
+            NutsPrintStream pout = getValidPrintStream();
             print(pout);
             pout.flush();
         } else {
-            PrintStream pout = CoreIOUtils.toPrintStream(out, getSession());
+            NutsPrintStream pout = getSession().getWorkspace().io().createPrintStream(out);
             print(pout);
             pout.flush();
         }
@@ -102,10 +105,10 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
     @Override
     public void print(OutputStream out) {
         checkSession();
-        PrintStream p = CoreIOUtils.toPrintStream(out, getSession());
-        if (p == null) {
-            p = getValidPrintStream();
-        }
+        NutsPrintStream p =
+                out==null?getValidPrintStream():
+                getSession().getWorkspace().io().createPrintStream(out)
+                ;
         print(p);
         p.flush();
     }
@@ -136,19 +139,34 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
     public void println(Writer w) {
         checkSession();
         if (w == null) {
-            PrintStream pout = getValidPrintStream();
+            NutsPrintStream pout = getValidPrintStream();
             println(pout);
             pout.flush();
         } else {
-            PrintStream pout = CoreIOUtils.toPrintStream(w, getSession());
+            NutsPrintStream pout = getSession().getWorkspace().io().createPrintStream(w);
             println(pout);
             pout.flush();
         }
     }
 
     @Override
-    public void println(PrintStream out) {
-        PrintStream p = getValidPrintStream(out);
+    public void println(OutputStream out) {
+        checkSession();
+        if (out == null) {
+            NutsPrintStream pout = getValidPrintStream();
+            println(pout);
+            pout.flush();
+        } else {
+            NutsPrintStream pout = getSession().getWorkspace().io().createPrintStream(out);
+            println(pout);
+            pout.flush();
+        }
+    }
+
+    @Override
+    public void println(NutsPrintStream out) {
+        checkSession();
+        NutsPrintStream p = getValidPrintStream(out);
         print(out);
         p.println();
         p.flush();

@@ -9,15 +9,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 
-import net.thevpc.nuts.NutsArgument;
-import net.thevpc.nuts.NutsCodeFormat;
-import net.thevpc.nuts.NutsCommandLine;
-import net.thevpc.nuts.NutsContentType;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.format.NutsFetchDisplayOptions;
 import net.thevpc.nuts.runtime.core.format.DefaultSearchFormatBase;
 import org.w3c.dom.Document;
-import net.thevpc.nuts.NutsTextBuilder;
 
 /**
  *
@@ -29,7 +24,7 @@ public class DefaultSearchFormatXml extends DefaultSearchFormatBase {
     private String rootName = "root";
     private NutsCodeFormat codeFormat;
 
-    public DefaultSearchFormatXml(NutsSession session, PrintStream writer, NutsFetchDisplayOptions options) {
+    public DefaultSearchFormatXml(NutsSession session, NutsPrintStream writer, NutsFetchDisplayOptions options) {
         super(session, writer, NutsContentType.XML, options);
         codeFormat = session.getWorkspace().text().setSession(session).getCodeFormat("xml");
     }

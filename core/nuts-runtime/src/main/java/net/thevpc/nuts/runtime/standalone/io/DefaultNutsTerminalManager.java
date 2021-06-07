@@ -74,7 +74,7 @@ public class DefaultNutsTerminalManager implements NutsTerminalManager {
     }
 
     @Override
-    public NutsSessionTerminal createTerminal(InputStream in, PrintStream out, PrintStream err) {
+    public NutsSessionTerminal createTerminal(InputStream in, NutsPrintStream out, NutsPrintStream err) {
         checkSession();
         return model.createTerminal(in, out, err, session);
     }
@@ -91,35 +91,35 @@ public class DefaultNutsTerminalManager implements NutsTerminalManager {
         return model.createTerminal(parent, session);
     }
 
-    @Override
-    public PrintStream prepare(PrintStream out) {
-        checkSession();
-        return model.prepare(out, session);
-    }
+//    @Override
+//    public PrintStream prepare(PrintStream out) {
+//        checkSession();
+//        return model.prepare(out, session);
+//    }
+//
+//    @Override
+//    public PrintWriter prepare(PrintWriter out) {
+//        checkSession();
+//        return model.prepare(out, session);
+//    }
 
-    @Override
-    public PrintWriter prepare(PrintWriter out) {
-        checkSession();
-        return model.prepare(out, session);
-    }
+//    @Override
+//    public boolean isFormatted(OutputStream out) {
+//        checkSession();
+//        return model.isFormatted(out);
+//    }
+//
+//    @Override
+//    public boolean isFormatted(Writer out) {
+//        checkSession();
+//        return model.isFormatted(out);
+//    }
 
-    @Override
-    public boolean isFormatted(OutputStream out) {
-        checkSession();
-        return model.isFormatted(out);
-    }
-
-    @Override
-    public boolean isFormatted(Writer out) {
-        checkSession();
-        return model.isFormatted(out);
-    }
-
-    @Override
-    public NutsTerminalManager sendTerminalCommand(OutputStream out, NutsTerminalCommand command) {
-        checkSession();
-        model.sendTerminalCommand(out, command,session);
-        return this;
-    }
+//    @Override
+//    public NutsTerminalManager sendTerminalCommand(NutsPrintStream out, NutsTerminalCommand command) {
+//        checkSession();
+//        model.sendTerminalCommand(out, command,session);
+//        return this;
+//    }
 
 }

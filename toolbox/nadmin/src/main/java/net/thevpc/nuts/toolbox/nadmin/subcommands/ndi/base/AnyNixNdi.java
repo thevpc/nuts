@@ -198,7 +198,7 @@ public class AnyNixNdi extends BaseSystemNdi {
                                     return true;
                                 }
                                 if ("why".equalsIgnoreCase(r)) {
-                                    PrintStream out = context.getSession().out();
+                                    NutsPrintStream out = context.getSession().out();
                                     out.printf("\\\"%s\\\" is a special file in your home that is invoked upon each interactive terminal launch.%n", factory.forStyled(getBashrcName(),NutsTextStyle.path()));
                                     out.print("It helps configuring environment variables. ```sh nuts``` make usage of such facility to update your **PATH** env variable\n");
                                     out.print("to point to current ```sh nuts``` workspace, so that when you call a ```sh nuts``` command it will be resolved correctly...\n");

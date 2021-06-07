@@ -35,6 +35,7 @@ import net.thevpc.nuts.runtime.core.format.text.renderer.ansi.AnsiStyleStyleAppl
 import net.thevpc.nuts.runtime.core.util.CachedValue;
 import net.thevpc.nuts.runtime.core.util.CoreNumberUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+import net.thevpc.nuts.runtime.standalone.io.NutsPrintStreamHelper;
 
 /**
  *
@@ -141,7 +142,8 @@ public class DefaultAnsiEscapeCommand extends AnsiEscapeCommand implements AnsiS
                         tput_cols = new CachedValue<>(new TputEvaluator(session), tputCallTimeout);
                         ws.env().setProperty("nuts.term.tput.call.instance", tput_cols);
                     }
-                    if (out.baseOutput() == System.out) {
+                    if (out.baseOutput() instanceof NutsPrintStreamHelper) {
+                        w=((NutsPrintStreamHelper) out.baseOutput()).out().getColumns();
                         w = tput_cols.getValue();
                     }
                 }
@@ -182,7 +184,7 @@ public class DefaultAnsiEscapeCommand extends AnsiEscapeCommand implements AnsiS
         return true;
     }
 
-    static class TputEvaluator implements Supplier<Integer> {
+    public static class TputEvaluator implements Supplier<Integer> {
 
         private final NutsSession session;
 

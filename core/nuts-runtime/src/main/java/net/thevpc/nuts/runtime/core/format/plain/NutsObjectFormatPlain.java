@@ -70,7 +70,7 @@ public class NutsObjectFormatPlain extends NutsObjectFormatBase {
     }
 
     @Override
-    public void print(PrintStream w) {
+    public void print(NutsPrintStream w) {
         checkSession();
         Object value = getValue();
         NutsWorkspace ws = getSession().getWorkspace();
@@ -81,12 +81,12 @@ public class NutsObjectFormatPlain extends NutsObjectFormatBase {
 //        } else if (value instanceof Map) {
 //            ws.props().setModel(((Map) value)).configure(true, extraConfig.toArray(new String[0])).print(w);
         } else if (value instanceof org.w3c.dom.Document) {
-            NutsXmlUtils.writeDocument((org.w3c.dom.Document) value, new StreamResult(w), false, true, getSession());
+            NutsXmlUtils.writeDocument((org.w3c.dom.Document) value, new StreamResult(w.asOutputStream()), false, true, getSession());
         } else if (value instanceof org.w3c.dom.Element) {
             Element elem = (org.w3c.dom.Element) value;
             Document doc = NutsXmlUtils.createDocument(getSession());
             doc.appendChild(doc.importNode(elem, true));
-            NutsXmlUtils.writeDocument(doc, new StreamResult(w), false, false, getSession());
+            NutsXmlUtils.writeDocument(doc, new StreamResult(w.asOutputStream()), false, false, getSession());
         } else {
             NutsElementFormat element = ws.elem();
             element
@@ -97,8 +97,8 @@ public class NutsObjectFormatPlain extends NutsObjectFormatBase {
         }
     }
 
-    public void printElement(PrintStream w, Object value) {
-        PrintStream out = getValidPrintStream(w);
+    public void printElement(NutsPrintStream w, Object value) {
+        NutsPrintStream out = getValidPrintStream(w);
         NutsWorkspace ws = getSession().getWorkspace();
         if(value instanceof Map){
             NutsTreeFormat tree = ws.formats().tree();

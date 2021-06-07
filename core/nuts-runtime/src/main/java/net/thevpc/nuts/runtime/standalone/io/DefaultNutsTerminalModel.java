@@ -98,7 +98,7 @@ public class DefaultNutsTerminalModel {
         this.terminal = terminal;
     }
 
-    public NutsSessionTerminal createTerminal(InputStream in, PrintStream out, PrintStream err, NutsSession session) {
+    public NutsSessionTerminal createTerminal(InputStream in, NutsPrintStream out, NutsPrintStream err, NutsSession session) {
         NutsSessionTerminal t = createTerminal(session);
         if (in != null) {
             t.setIn(in);
@@ -191,51 +191,38 @@ public class DefaultNutsTerminalModel {
         }
     }
 
-    public PrintStream prepare(PrintStream out, NutsSession session) {
-        NutsWorkspaceUtils.checkSession(ws, session);
-        return CoreIOUtils.toPrintStream(out, session);
-    }
+//    public PrintStream prepare(PrintStream out, NutsSession session) {
+//        NutsWorkspaceUtils.checkSession(ws, session);
+//        return CoreIOUtils.toPrintStream(out, session);
+//    }
+//
+//    public PrintWriter prepare(PrintWriter out, NutsSession session) {
+//        NutsWorkspaceUtils.checkSession(ws, session);
+//        return CoreIOUtils.toPrintWriter(out, session);
+//    }
 
-    public PrintWriter prepare(PrintWriter out, NutsSession session) {
-        NutsWorkspaceUtils.checkSession(ws, session);
-        return CoreIOUtils.toPrintWriter(out, session);
-    }
+//    public boolean isFormatted(NutsPrintStream out) {
+//        if (out instanceof ExtendedFormatAware) {
+//            NutsTerminalModeOp op = ((ExtendedFormatAware) out).getModeOp();
+//            return op != NutsTerminalModeOp.NOP;
+//        }
+//        return false;
+//    }
+//
+//    public boolean isFormatted(Writer out) {
+//        if (out instanceof ExtendedFormatAware) {
+//            NutsTerminalModeOp op = ((ExtendedFormatAware) out).getModeOp();
+//            return op != NutsTerminalModeOp.NOP;
+//        }
+//        return false;
+//    }
 
-    public boolean isFormatted(OutputStream out) {
-        if (out instanceof ExtendedFormatAware) {
-            NutsTerminalModeOp op = ((ExtendedFormatAware) out).getModeOp();
-            return op != NutsTerminalModeOp.NOP;
-        }
-        return false;
-    }
-
-    public boolean isFormatted(Writer out) {
-        if (out instanceof ExtendedFormatAware) {
-            NutsTerminalModeOp op = ((ExtendedFormatAware) out).getModeOp();
-            return op != NutsTerminalModeOp.NOP;
-        }
-        return false;
-    }
-
-    public void sendTerminalCommand(OutputStream out, NutsTerminalCommand command, NutsSession session) {
-        if (isFormatted(out)) {
-            if (out instanceof PrintStream) {
-                try {
-                    ((PrintStream) out).printf("%s", session.getWorkspace().text().forCommand(command));
-                    out.flush();
-                } catch (IOException ex) {
-                    throw new UncheckedIOException(ex);
-                }
-            } else {
-                try {
-                    ((PrintStream) out).write(session.getWorkspace().text().forCommand(command).toString().getBytes());
-                    out.flush();
-                } catch (IOException ex) {
-                    throw new UncheckedIOException(ex);
-                }
-            }
-        }
-    }
+//    public void sendTerminalCommand(NutsPrintStream out, NutsTerminalCommand command, NutsSession session) {
+//        if (isFormatted(out)) {
+//            ((PrintStream) out).printf("%s", session.getWorkspace().text().forCommand(command));
+//            out.flush();
+//        }
+//    }
 
     private static class WorkspaceSystemTerminalAdapter extends AbstractSystemTerminalAdapter {
 

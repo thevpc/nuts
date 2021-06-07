@@ -46,15 +46,15 @@ public class Test13_Color {
     public static void testMode(NutsWorkspace ws,NutsTerminalMode systemMode,NutsTerminalMode sessionMode) {
         TestUtils.println((systemMode==null?"default":systemMode==NutsTerminalMode.INHERITED?"raw":systemMode.id())
                 +"->"+(sessionMode==null?"default":sessionMode==NutsTerminalMode.INHERITED?"raw":sessionMode.id()));
-        if(systemMode!=null) {
-            ws.term().getSystemTerminal().setMode(systemMode);
-        }
+//        if(systemMode!=null) {
+//            ws.term().getSystemTerminal().setMode(systemMode);
+//        }
         NutsSession session = ws.createSession();
         if(sessionMode!=null) {
-            session.getTerminal().setOutMode(sessionMode);
+            session.getTerminal().setOut(session.getTerminal().out().convert(sessionMode));
         }
         TestUtils.print("      ");
-        PrintStream out = session.getTerminal().out();
+        NutsPrintStream out = session.getTerminal().out();
         out.print("{**aa");
         out.print("aa**}");
         out.println();

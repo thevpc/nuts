@@ -62,7 +62,7 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
 //            return true;
 //
 //        } else {
-        PrintStream out = context.getSession().out();
+        NutsPrintStream out = context.getSession().out();
         if (cmdLine.next("add repo", "ar") != null) {
             String location = null;
             String repositoryName = null;

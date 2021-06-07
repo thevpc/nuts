@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.core.format;
 
-import java.io.PrintStream;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -249,7 +248,7 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
     }
 
     @Override
-    public void print(PrintStream out) {
+    public void print(NutsPrintStream out) {
         out.print(format());
     }
 

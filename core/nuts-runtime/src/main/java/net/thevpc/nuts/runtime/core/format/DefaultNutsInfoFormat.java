@@ -3,7 +3,6 @@ package net.thevpc.nuts.runtime.core.format;
 import net.thevpc.nuts.*;
 
 import java.io.File;
-import java.io.PrintStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
@@ -79,7 +78,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
     }
 
     @Override
-    public void print(PrintStream w) {
+    public void print(NutsPrintStream w) {
         checkSession();
         List<String> args = new ArrayList<>();
         args.add("--escape-text=false");

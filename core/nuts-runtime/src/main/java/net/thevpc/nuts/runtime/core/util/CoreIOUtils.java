@@ -65,6 +65,8 @@ import java.util.logging.Level;
 public class CoreIOUtils {
 
     public static final int DEFAULT_BUFFER_SIZE = 1024;
+//    public static final NutsPrintStream out=new NutsPrintStreamRaw(System.out,null,null,null,);
+//    public static final NutsPrintStream err=new NutsPrintStreamRaw(System.err);
     //    private static final Logger LOG = Logger.getLogger(CoreIOUtils.class.getName());
     public static final DirectoryStream.Filter<Path> DIR_FILTER = new DirectoryStream.Filter<Path>() {
         @Override
@@ -103,28 +105,28 @@ public class CoreIOUtils {
         return s;
     }
 
-    public static PrintStream toPrintStream(Writer writer, NutsSession session) {
-        if (writer == null) {
-            return null;
-        }
-        SimpleWriterOutputStream s = new SimpleWriterOutputStream(writer, session);
-        NutsWorkspaceUtils.setSession(s, session);
-        return toPrintStream(s, session);
-    }
-
-    public static PrintStream toPrintStream(OutputStream os, NutsSession session) {
-        if (os == null) {
-            return null;
-        }
-        if (os instanceof PrintStream) {
-            PrintStream y = (PrintStream) os;
-            NutsWorkspaceUtils.setSession(y, session);
-            return y;
-        }
-        PrintStreamExt s = new PrintStreamExt(os, false);
-        NutsWorkspaceUtils.setSession(s, session);
-        return s;
-    }
+//    public static NutsPrintStream toPrintStream(Writer writer, NutsSession session) {
+//        if (writer == null) {
+//            return null;
+//        }
+//        SimpleWriterOutputStream s = new SimpleWriterOutputStream(writer, session);
+//        NutsWorkspaceUtils.setSession(s, session);
+//        return toPrintStream(s, session);
+//    }
+//
+//    public static NutsPrintStream toPrintStream(OutputStream os, NutsSession session) {
+//        if (os == null) {
+//            return null;
+//        }
+//        if (os instanceof NutsPrintStream) {
+//            NutsPrintStream y = (NutsPrintStream) os;
+//            NutsWorkspaceUtils.setSession(y, session);
+//            return y;
+//        }
+//        PrintStreamExt s = new PrintStreamExt(os, false);
+//        NutsWorkspaceUtils.setSession(s, session);
+//        return s;
+//    }
 
     public static OutputStream convertOutputStream(OutputStream out, NutsTerminalMode expected, NutsSession session) {
         ExtendedFormatAware a = convertOutputStreamToExtendedFormatAware(out, expected, session);
@@ -157,19 +159,16 @@ public class CoreIOUtils {
         }
     }
 
-    public static void clearMonitor(PrintStream out, NutsWorkspace ws) {
-        NutsTerminalMode terminalMode = ws.config().options().getTerminalMode();
-        boolean bot = ws.config().options().isBot();
-        if (terminalMode == null) {
-            terminalMode = bot ? NutsTerminalMode.FILTERED : NutsTerminalMode.FORMATTED;
-        }
-        if (ws.term().isFormatted(out) && (terminalMode == NutsTerminalMode.FORMATTED)) {
-            FPrintCommands.runMoveLineStart(out);
-//                    out.print("                                                                      ");
-//                    out.print("`move-line-start`");
-            out.flush();
-        }
-    }
+//    public static void clearMonitor(NutsPrintStream out, NutsWorkspace ws) {
+//        NutsTerminalMode terminalMode = ws.config().options().getTerminalMode();
+//        boolean bot = ws.config().options().isBot();
+//        if (terminalMode == null) {
+//            terminalMode = bot ? NutsTerminalMode.FILTERED : NutsTerminalMode.FORMATTED;
+//        }
+//        if (terminalMode == NutsTerminalMode.FORMATTED) {
+//            out.run(NutsTerminalCommand.MOVE_LINE_START);
+//        }
+//    }
 
     public static NutsURLHeader getURLHeader(URL url) {
         return new DefaultNutsURLHeader(new SimpleHttpClient(url));
@@ -538,8 +537,9 @@ public class CoreIOUtils {
         return sb.toString();
     }
 
-    public static PrintStream resolveOut(NutsSession session) {
-        return (session.getTerminal() == null) ? session.getWorkspace().io().nullPrintStream() : session.getTerminal().out();
+    public static NutsPrintStream resolveOut(NutsSession session) {
+        return (session.getTerminal() == null) ? session.getWorkspace().io().nullPrintStream() :
+                session.getTerminal().out();
     }
 
     /**
@@ -1960,23 +1960,23 @@ public class CoreIOUtils {
 //        }
 //        return CoreIOUtils.toPrintStream(out);
 //    }
-    public static PrintStream out(NutsWorkspace ws) {
-        DefaultNutsIOManager io = (DefaultNutsIOManager) ws.io();
-        PrintStream out = io.getModel().getCurrentStdout();
-        return out == null ? System.out : out;
-    }
+//    public static NutsPrintStream out(NutsWorkspace ws) {
+//        DefaultNutsIOManager io = (DefaultNutsIOManager) ws.io();
+//        NutsPrintStream out = io.getModel().getCurrentStdout();
+//        return out == null ? CoreIOUtils.out : out;
+//    }
+//
+//    public static NutsPrintStream err(NutsWorkspace ws) {
+//        DefaultNutsIOManager io = (DefaultNutsIOManager) ws.io();
+//        NutsPrintStream err = io.getModel().getCurrentStderr();
+//        return err == null ? CoreIOUtils.err : err;
+//    }
 
-    public static PrintStream err(NutsWorkspace ws) {
-        DefaultNutsIOManager io = (DefaultNutsIOManager) ws.io();
-        PrintStream err = io.getModel().getCurrentStderr();
-        return err == null ? System.err : err;
-    }
-
-    public static java.io.InputStream in(NutsWorkspace ws) {
-        DefaultNutsIOManager io = (DefaultNutsIOManager) ws.io();
-        java.io.InputStream in = io.getModel().getCurrentStdin();
-        return in == null ? System.in : in;
-    }
+//    public static java.io.InputStream in(NutsWorkspace ws) {
+//        DefaultNutsIOManager io = (DefaultNutsIOManager) ws.io();
+//        java.io.InputStream in = io.getModel().stdin();
+//        return in == null ? System.in : in;
+//    }
 
     public static boolean isObsoletePath(NutsSession session, Path path) {
         try {
@@ -2004,16 +2004,16 @@ public class CoreIOUtils {
 
         ProcessBuilder2 pb;
         NutsSession session;
-        PrintStream out;
+        NutsPrintStream out;
 
-        public ProcessExecHelper(ProcessBuilder2 pb, NutsSession session, PrintStream out) {
+        public ProcessExecHelper(ProcessBuilder2 pb, NutsSession session, NutsPrintStream out) {
             this.pb = pb;
             this.session = session;
             this.out = out;
         }
 
         public void dryExec() {
-            if (session.getWorkspace().term().isFormatted(out)) {
+            if (out.mode()==NutsTerminalMode.FORMATTED) {
                 out.print("[dry] ==[exec]== ");
                 out.println(pb.getFormattedCommandString(session));
             } else {
@@ -2024,7 +2024,9 @@ public class CoreIOUtils {
 
         public int exec() {
             try {
-                clearMonitor(out, session.getWorkspace());
+                if(out!=null){
+                    out.run(NutsTerminalCommand.MOVE_LINE_START);
+                }
                 ProcessBuilder2 p = pb.start();
                 return p.waitFor().getResult();
             } catch (IOException ex) {
@@ -2034,7 +2036,9 @@ public class CoreIOUtils {
 
         public Future<Integer> execAsync() {
             try {
-                clearMonitor(out, session.getWorkspace());
+                if(out!=null){
+                    out.run(NutsTerminalCommand.MOVE_LINE_START);
+                }
                 ProcessBuilder2 p = pb.start();
                 return new FutureTask<Integer>(() -> p.waitFor().getResult());
             } catch (IOException ex) {

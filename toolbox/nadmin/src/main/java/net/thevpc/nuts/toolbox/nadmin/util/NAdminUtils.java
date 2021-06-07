@@ -1,17 +1,14 @@
 package net.thevpc.nuts.toolbox.nadmin.util;
 
-import net.thevpc.nuts.NutsApplicationContext;
-import net.thevpc.nuts.NutsRepository;
-import net.thevpc.nuts.NutsTextStyle;
+import net.thevpc.nuts.*;
 
 import java.io.PrintStream;
-import net.thevpc.nuts.NutsTextManager;
 
 public class NAdminUtils {
     public static void showRepo(NutsApplicationContext context, NutsRepository repository, String prefix) {
         boolean enabled = repository.config().isEnabled();
         String disabledString = enabled ? "" : " <DISABLED>";
-        PrintStream out = context.getSession().out();
+        NutsPrintStream out = context.getSession().out();
         out.print(prefix);
         NutsTextManager factory = context.getWorkspace().text();
         if (enabled) {

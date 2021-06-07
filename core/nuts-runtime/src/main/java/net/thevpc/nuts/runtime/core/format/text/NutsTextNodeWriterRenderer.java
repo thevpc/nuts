@@ -6,10 +6,11 @@ import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextStyled;
 import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextTitle;
 import net.thevpc.nuts.runtime.core.format.text.renderer.AnsiUnixTermPrintRenderer;
 import net.thevpc.nuts.runtime.core.format.text.renderer.StyleRenderer;
+import net.thevpc.nuts.runtime.standalone.io.NutsPrintStreamHelper;
+import net.thevpc.nuts.runtime.standalone.io.OutputHelper;
+import net.thevpc.nuts.runtime.standalone.io.OutputStreamHelper;
 
-import java.io.IOException;
 import java.io.OutputStream;
-import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -21,12 +22,11 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
     private boolean enableBuffering = false;
     private byte[] later = null;
     private FormattedPrintStreamRenderer renderer;
-    private OutputStream rawOutput;
-    private OutputStream rawOutput0;
+    private OutputHelper rawOutput;
     private RenderedRawStream renderedRawStream = new RenderedRawStream() {
 
-        public OutputStream baseOutput() {
-            return rawOutput0;
+        public OutputHelper baseOutput() {
+            return rawOutput;
         }
 
         @Override
@@ -42,24 +42,19 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
     private NutsSession session;
     private NutsWorkspace ws;
 
+    public NutsTextNodeWriterRenderer(NutsPrintStream rawOutput, FormattedPrintStreamRenderer renderer, NutsSession session) {
+        this(new NutsPrintStreamHelper(rawOutput), renderer, session);
+    }
+
     public NutsTextNodeWriterRenderer(OutputStream rawOutput, FormattedPrintStreamRenderer renderer, NutsSession session) {
+        this(new OutputStreamHelper(rawOutput, session), renderer, session);
+    }
+
+    public NutsTextNodeWriterRenderer(OutputHelper rawOutput, FormattedPrintStreamRenderer renderer, NutsSession session) {
         this.renderer = renderer == null ? AnsiUnixTermPrintRenderer.ANSI_RENDERER : renderer;
         this.rawOutput = rawOutput;
-        this.rawOutput0 = rawOutput;
         this.session = session;
         this.ws = session.getWorkspace();
-        int loopGard = 100;
-        while (loopGard > 0) {
-            if (rawOutput0 instanceof NutsOutputStreamTransparentAdapter) {
-                rawOutput0 = ((NutsOutputStreamTransparentAdapter) rawOutput0).baseOutputStream();
-            } else {
-                break;
-            }
-            loopGard--;
-        }
-        if (rawOutput0 instanceof NutsOutputStreamTransparentAdapter) {
-            throw new NutsIllegalArgumentException(session, "invalid rawOutput");
-        }
     }
 
     @Override
@@ -69,29 +64,22 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
 
     @Override
     public final void writeRaw(byte[] buf, int off, int len) {
-        try {
-            rawOutput.write(buf, off, len);
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
-        }
+        rawOutput.write(buf, off, len);
+    }
+
+    @Override
+    public void writeRaw(char[] buf, int off, int len) {
+        writeRaw(new String(buffer,off,len));
     }
 
     @Override
     public final boolean flush() {
         if (bufferSize > 0) {
-            try {
-                rawOutput.write(buffer, 0, bufferSize);
-            } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
-            }
+            rawOutput.write(buffer, 0, bufferSize);
             bufferSize = 0;
             return true;
         }
-        try {
-            rawOutput.flush();
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
-        }
+        rawOutput.flush();
         return false;
     }
 
@@ -212,26 +200,22 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
 
     public final void writeRaw(String rawString) {
         flushLater();
-        try {
-            byte[] b = rawString.getBytes();
-            if (enableBuffering) {
-                if (b.length + bufferSize < buffer.length) {
+        byte[] b = rawString.getBytes();
+        if (enableBuffering) {
+            if (b.length + bufferSize < buffer.length) {
+                System.arraycopy(b, 0, buffer, bufferSize, b.length);
+                bufferSize += b.length;
+            } else {
+                flush();
+                if (b.length >= buffer.length) {
+                    rawOutput.write(b, 0, b.length);
+                } else {
                     System.arraycopy(b, 0, buffer, bufferSize, b.length);
                     bufferSize += b.length;
-                } else {
-                    flush();
-                    if (b.length >= buffer.length) {
-                        rawOutput.write(b, 0, b.length);
-                    } else {
-                        System.arraycopy(b, 0, buffer, bufferSize, b.length);
-                        bufferSize += b.length;
-                    }
                 }
-            } else {
-                rawOutput.write(b, 0, b.length);
             }
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+        } else {
+            rawOutput.write(b, 0, b.length);
         }
     }
 
@@ -303,45 +287,37 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
 //                .verb(NutsLogVerb.DEBUG)
 //                .log("store Later on "+System.identityHashCode(this));
         this.later = later;
-        try {
-            rawOutput.flush();
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
-        }
+        rawOutput.flush();
     }
 
     public final void flushLater() {
-        try {
-            byte[] b = later;
-            if (b != null) {
+        byte[] b = later;
+        if (b != null) {
 //                ws.log().of(NutsTextNodeWriterRenderer.class)
 //                        .with()
 //                        .session(ws.createSession())
 //                        .level(Level.FINEST)
 //                        .verb(NutsLogVerb.DEBUG)
 //                        .log("process Later on "+System.identityHashCode(this));
-                later = null;
-                if (enableBuffering) {
-                    if (b.length + bufferSize < buffer.length) {
+            later = null;
+            if (enableBuffering) {
+                if (b.length + bufferSize < buffer.length) {
+                    System.arraycopy(b, 0, buffer, bufferSize, b.length);
+                    bufferSize += b.length;
+                } else {
+                    flush();
+                    if (b.length >= buffer.length) {
+                        rawOutput.write(b, 0, b.length);
+                    } else {
                         System.arraycopy(b, 0, buffer, bufferSize, b.length);
                         bufferSize += b.length;
-                    } else {
-                        flush();
-                        if (b.length >= buffer.length) {
-                            rawOutput.write(b, 0, b.length);
-                        } else {
-                            System.arraycopy(b, 0, buffer, bufferSize, b.length);
-                            bufferSize += b.length;
-                        }
                     }
-                } else {
-                    rawOutput.write(b, 0, b.length);
-                    rawOutput.flush();
                 }
-                //flush();
+            } else {
+                rawOutput.write(b, 0, b.length);
+                rawOutput.flush();
             }
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
+            //flush();
         }
     }
 

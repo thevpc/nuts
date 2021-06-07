@@ -52,13 +52,13 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase, NutsSessionAwa
     private static final Logger LOG = Logger.getLogger(NutsJLineTerminal.class.getName());
     private Terminal terminal;
     private LineReader reader;
-    private PrintStream out;
-    private PrintStream err;
+    private NutsPrintStream out;
+    private NutsPrintStream err;
     private InputStream in;
     private NutsWorkspace workspace;
     private NutsSession session;
-    private NutsTerminalMode outMode;
-    private NutsTerminalMode errMode;
+//    private NutsTerminalMode outMode;
+//    private NutsTerminalMode errMode;
     private NutsCommandAutoCompleteResolver autoCompleteResolver;
     private NutsCommandHistory commandHistory;
     private NutsCommandReadHighlighter commandReadHighlighter;
@@ -103,27 +103,27 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase, NutsSessionAwa
         return this;
     }
 
-    @Override
-    public NutsTerminalBase setOutMode(NutsTerminalMode mode) {
-        this.outMode = mode;
-        return this;
-    }
-
-    @Override
-    public NutsTerminalMode getOutMode() {
-        return outMode;
-    }
-
-    @Override
-    public NutsTerminalBase setErrMode(NutsTerminalMode mode) {
-        this.errMode = mode;
-        return this;
-    }
-
-    @Override
-    public NutsTerminalMode getErrMode() {
-        return errMode;
-    }
+//    @Override
+//    public NutsTerminalBase setOutMode(NutsTerminalMode mode) {
+//        this.outMode = mode;
+//        return this;
+//    }
+//
+//    @Override
+//    public NutsTerminalMode getOutMode() {
+//        return outMode;
+//    }
+//
+//    @Override
+//    public NutsTerminalBase setErrMode(NutsTerminalMode mode) {
+//        this.errMode = mode;
+//        return this;
+//    }
+//
+//    @Override
+//    public NutsTerminalMode getErrMode() {
+//        return errMode;
+//    }
 
     private AttributedString toAttributedString(NutsText n, NutsTextStyles styles) {
         switch (n.getType()) {
@@ -301,12 +301,12 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase, NutsSessionAwa
     }
 
     @Override
-    public String readLine(PrintStream out, String prompt, Object... params) {
+    public String readLine(NutsPrintStream out, String prompt, Object... params) {
         if (out == null) {
             out = getOut();
         }
         if (out == null) {
-            out = System.out;
+            out = session.getWorkspace().io().stdout();
         }
         String readLine = null;
         try {
@@ -329,12 +329,12 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase, NutsSessionAwa
     }
 
     @Override
-    public char[] readPassword(PrintStream out, String prompt, Object... params) {
+    public char[] readPassword(NutsPrintStream out, String prompt, Object... params) {
         if (out == null) {
             out = getOut();
         }
         if (out == null) {
-            out = System.out;
+            out = session.getWorkspace().io().stdout();
         }
 //        out.printf(prompt, params);
 //        out.flush();
@@ -350,12 +350,12 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase, NutsSessionAwa
     }
 
     @Override
-    public PrintStream getOut() {
+    public NutsPrintStream getOut() {
         return out;
     }
 
     @Override
-    public PrintStream getErr() {
+    public NutsPrintStream getErr() {
         return err;
     }
 

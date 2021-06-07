@@ -39,9 +39,9 @@ import java.io.OutputStream;
  */
 public interface NutsSystemTerminal extends NutsSystemTerminalBase, NutsTerminal {
 
-    boolean isStandardOutputStream(OutputStream out);
-
-    boolean isStandardErrorStream(OutputStream out);
-
-    boolean isStandardInputStream(InputStream in);
+//    boolean isStandardOutputStream(OutputStream out);
+//
+//    boolean isStandardErrorStream(OutputStream out);
+//
+//    boolean isStandardInputStream(InputStream in);
 }

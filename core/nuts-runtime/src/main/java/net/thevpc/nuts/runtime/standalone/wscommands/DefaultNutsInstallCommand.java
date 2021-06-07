@@ -173,7 +173,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
         NutsSession session = getSession();
         NutsSession searchSession = CoreNutsUtils.silent(session);
-        PrintStream out = CoreIOUtils.resolveOut(session);
+        NutsPrintStream out = session.out();
         ws.security().setSession(getSession()).checkAllowed(NutsConstants.Permissions.INSTALL, "install");
 //        LinkedHashMap<NutsId, Boolean> allToInstall = new LinkedHashMap<>();
         InstallIdList list = new InstallIdList(NutsInstallStrategy.INSTALL);
@@ -467,7 +467,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
         return this;
     }
 
-    private void printList(PrintStream out, NutsString kind, NutsString action, List<NutsId> all) {
+    private void printList(NutsPrintStream out, NutsString kind, NutsString action, List<NutsId> all) {
         if (all.size() > 0) {
             NutsWorkspace ws = getSession().getWorkspace();
             NutsTextBuilder msg = ws.text().builder();

@@ -220,7 +220,7 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
      *
      * @return new command output stream (standard output destination)
      */
-    PrintStream getOut();
+    NutsPrintStream getOut();
 
     /**
      * grab to memory standard output
@@ -256,7 +256,7 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
      * @param out standard output destination
      * @return {@code this} instance
      */
-    NutsExecCommand setOut(PrintStream out);
+    NutsExecCommand setOut(NutsPrintStream out);
 
     /**
      * set new command error stream (standard error destination)
@@ -264,14 +264,14 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
      * @param err standard error destination
      * @return {@code this} instance
      */
-    NutsExecCommand setErr(PrintStream err);
+    NutsExecCommand setErr(NutsPrintStream err);
 
     /**
      * return new command error stream (standard error destination)
      *
      * @return new command error stream (standard error destination)
      */
-    PrintStream getErr();
+    NutsPrintStream getErr();
 
     /**
      * return execution type

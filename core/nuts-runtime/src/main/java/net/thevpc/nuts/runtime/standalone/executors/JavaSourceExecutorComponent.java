@@ -69,7 +69,7 @@ public class JavaSourceExecutorComponent implements NutsExecutorComponent {
 //        JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         NutsWorkspace ws = executionContext.getWorkspace();
         String folder = "__temp_folder";
-        PrintStream out = executionContext.getTraceSession().out();
+        NutsPrintStream out = executionContext.getTraceSession().out();
         out.println(executionContext.getWorkspace().text().forStyled("compile", NutsTextStyle.primary(4)));
         out.printf("%s%n",
                 executionContext.getWorkspace().commandLine().create(

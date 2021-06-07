@@ -24,6 +24,7 @@
 package net.thevpc.nuts.runtime.core;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.boot.DefaultNutsBootModel;
 
 /**
  * Created by vpc on 1/6/17.
@@ -31,21 +32,17 @@ import net.thevpc.nuts.*;
 public abstract class AbstractNutsWorkspace implements NutsWorkspace {
 
     protected boolean initializing;
-    protected NutsSession bootSession;
     protected NutsSession initSession;
+    protected DefaultNutsBootModel bootModel;
 
     public AbstractNutsWorkspace() {
-    }
-
-    protected NutsSession bootSession() {
-        return bootSession;
     }
 
     public NutsSession defaultSession() {
         if (initSession != null) {
             return initSession;
         }
-        return bootSession();
+        return bootModel.bootSession();
     }
 
     @Override

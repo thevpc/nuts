@@ -147,7 +147,7 @@ public class NAdminMain extends NutsApplication {
                     return;
                 }
                 if (cmdLine.hasNext()) {
-                    PrintStream out = applicationContext.getSession().err();
+                    NutsPrintStream out = applicationContext.getSession().err();
                     out.printf("Unexpected %s%n", cmdLine.peek());
                     out.printf("type for more help : nadmin -h%n");
                     throw new NutsExecutionException(applicationContext.getSession(), "Unexpected " + cmdLine.peek(), 1);
@@ -156,7 +156,7 @@ public class NAdminMain extends NutsApplication {
             }
         } while (cmdLine.hasNext());
         if (empty) {
-            PrintStream out = applicationContext.getSession().err();
+            NutsPrintStream out = applicationContext.getSession().err();
             out.printf("missing nadmin command%n");
             out.printf("type for more help : nadmin -h%n");
             throw new NutsExecutionException(applicationContext.getSession(), "missing nadmin command", 1);

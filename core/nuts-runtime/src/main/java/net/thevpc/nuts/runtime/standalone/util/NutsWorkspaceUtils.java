@@ -362,7 +362,7 @@ public class NutsWorkspaceUtils {
     }
 
     public <T> Iterator<T> decoratePrint(Iterator<T> it, NutsSession session, NutsFetchDisplayOptions displayOptions) {
-        final PrintStream out = validateSession(session).getTerminal().getOut();
+        final NutsPrintStream out = validateSession(session).getTerminal().getOut();
         return new NutsPrintIterator<>(it, ws, out, displayOptions, session);
     }
 
@@ -525,8 +525,8 @@ public class NutsWorkspaceUtils {
             NutsSessionTerminal execTerminal, boolean showCommand, boolean failFast, long sleep,
             boolean inheritSystemIO, boolean redirectErr, File outputFile, File inputFile,
             NutsSession session) {
-        PrintStream out = null;
-        PrintStream err = null;
+        NutsPrintStream out = null;
+        NutsPrintStream err = null;
         InputStream in = null;
         ProcessBuilder2 pb = new ProcessBuilder2(session);
         pb.setCommand(args)
@@ -537,21 +537,23 @@ public class NutsWorkspaceUtils {
         if (!inheritSystemIO) {
             if (inputFile == null) {
                 in = execTerminal.in();
-                if (ws.term().setSession(session).getSystemTerminal().isStandardInputStream(in)) {
+                if (ws.io().setSession(session).isStandardInputStream(in)) {
                     in = null;
                 }
             }
             if (outputFile == null) {
                 out = execTerminal.out();
-                if (ws.term().setSession(session).getSystemTerminal().isStandardOutputStream(out)) {
+                if (ws.io().setSession(session).isStandardOutputStream(out)) {
                     out = null;
                 }
             }
             err = execTerminal.err();
-            if (ws.term().setSession(session).getSystemTerminal().isStandardErrorStream(err)) {
+            if (ws.io().setSession(session).isStandardErrorStream(err)) {
                 err = null;
             }
-            CoreIOUtils.clearMonitor(out, ws);
+            if(out!=null){
+                out.run(NutsTerminalCommand.MOVE_LINE_START);
+            }
         }
         if (out == null && err == null && in == null && inputFile == null && outputFile == null) {
             pb.inheritIO();
@@ -565,14 +567,14 @@ public class NutsWorkspaceUtils {
                 pb.setRedirectFileInput(inputFile);
             }
             if (outputFile == null) {
-                pb.setOutput(out);
+                pb.setOutput(out==null?null:out.asOutputStream());
             } else {
                 pb.setRedirectFileOutput(outputFile);
             }
             if (redirectErr) {
                 pb.setRedirectErrorStream();
             } else {
-                pb.setErr(err);
+                pb.setErr(err==null?null:err.asOutputStream());
             }
         }
 
@@ -583,7 +585,7 @@ public class NutsWorkspaceUtils {
                     ));
         }
         if (showCommand || CoreBooleanUtils.getSysBoolNutsProperty("show-command", false)) {
-            if (ws.term().setSession(session).isFormatted(prepareTerminal.out())) {
+            if (prepareTerminal.out().mode()==NutsTerminalMode.FORMATTED) {
                 prepareTerminal.out().printf("%s ", ws.text().forStyled("[exec]", NutsTextStyle.primary(4)));
                 prepareTerminal.out().println(ws.text().forCode("sh", pb.getCommandString()));
             } else {

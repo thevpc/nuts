@@ -2,14 +2,22 @@ package net.thevpc.nuts.runtime.core.format.text;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.format.text.parser.*;
-
-import java.io.*;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.UncheckedIOException;
 
 public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
 
     private OutputStream out;
     private NutsWorkspace ws;
+
+    public NutsTextNodeWriterStringer(OutputStream out, NutsWorkspace ws) {
+        this.out = out;
+        this.ws = ws;
+    }
 
     public static String toString(NutsText n, NutsWorkspace ws) {
         if (n == null) {
@@ -18,11 +26,6 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         new NutsTextNodeWriterStringer(bos, ws).writeNode(n, new NutsTextWriteConfiguration());
         return bos.toString();
-    }
-
-    public NutsTextNodeWriterStringer(OutputStream out, NutsWorkspace ws) {
-        this.out = out;
-        this.ws = ws;
     }
 
     @Override
@@ -34,6 +37,12 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
     public void writeRaw(byte[] buf, int off, int len) {
         writeRaw(new String(buf, off, len));
     }
+
+    @Override
+    public void writeRaw(char[] buf, int off, int len) {
+        writeRaw(new String(buf, off, len));
+    }
+
 
     @Override
     public boolean flush() {
@@ -57,6 +66,7 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
                 NutsTextPlain p = (NutsTextPlain) node;
                 if (ctx.isFiltered()) {
                     writeRaw(p.getText());
+//                    writeEscaped(p.getText());
                 } else {
                     writeEscaped(p.getText());
                 }
@@ -71,6 +81,7 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
             case STYLED: {
                 DefaultNutsTextStyled s = (DefaultNutsTextStyled) node;
                 if (ctx.isFiltered()) {
+//                    writeNode(s.getChild(), ctx.copy().setFiltered(false));
                     writeNode(s.getChild(), ctx);
                 } else {
                     if (s.getChild().getType() == NutsTextType.PLAIN) {
@@ -232,9 +243,7 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
                     }
                     break;
                 }
-                case '#':
-                case '@':
-                case '~': {
+                case '#': {
                     if (i < cc.length - 1 && cc[i + 1] != cc[i]) {
                         sb.append(cc[i]);
                     } else {
@@ -251,13 +260,13 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
         writeRaw(sb.toString());
     }
 
-//    public final void writeEscaped(String rawString) {
+    //    public final void writeEscaped(String rawString) {
 //        writeRaw(DefaultNutsTextNodeParser.escapeText0(rawString));
 //    }
     public final void writeRaw(char rawChar) {
         writeRaw(String.valueOf(rawChar));
     }
-    
+
     public final void writeRaw(String rawString) {
         try {
             out.write(rawString.getBytes());

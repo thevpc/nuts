@@ -138,7 +138,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                 options.setTransitive(execSession.isTransitive());
                 options.setOutputFormat(execSession.getOutputFormat());
                 if (null == options.getTerminalMode()) {
-                    options.setTerminalMode(execSession.getTerminal().getOutMode());
+                    options.setTerminalMode(execSession.getTerminal().out().mode());
                 } else {
                     switch (options.getTerminalMode()) {
                         //retain filtered
@@ -148,7 +148,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                         case INHERITED:
                             break;
                         default:
-                            options.setTerminalMode(execSession.getTerminal().getOutMode());
+                            options.setTerminalMode(execSession.getTerminal().out().mode());
                             break;
                     }
                 }
@@ -334,9 +334,9 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
 
         private NutsDefinition def;
         private JavaExecutorOptions joptions;
-        private PrintStream out;
+        private NutsPrintStream out;
 
-        public EmbeddedProcessExecHelper(NutsDefinition def, NutsSession session, JavaExecutorOptions joptions, PrintStream out) {
+        public EmbeddedProcessExecHelper(NutsDefinition def, NutsSession session, JavaExecutorOptions joptions, NutsPrintStream out) {
             super(session);
             this.def = def;
             this.joptions = joptions;
@@ -363,7 +363,9 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
 
         @Override
         public int exec() {
-            CoreIOUtils.clearMonitor(getSession().out(), getSession().getWorkspace());
+            if(getSession().out()!=null){
+                getSession().out().run(NutsTerminalCommand.MOVE_LINE_START);
+            }
             DefaultNutsClassLoader classLoader = null;
             Throwable th = null;
             try {
@@ -491,7 +493,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
 
         @Override
         public void dryExec() {
-            PrintStream out = execSession.out();
+            NutsPrintStream out = execSession.out();
             out.println("[dry] ==[nuts-exec]== ");
             for (int i = 0; i < xargs.size(); i++) {
                 NutsString xarg = xargs.get(i);
@@ -524,7 +526,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
 
         private CoreIOUtils.ProcessExecHelper preExec() {
             if (joptions.isShowCommand() || CoreBooleanUtils.getSysBoolNutsProperty("show-command", false)) {
-                PrintStream out = execSession.out();
+                NutsPrintStream out = execSession.out();
                 out.printf("%s %n", ws.text().forStyled("nuts-exec", NutsTextStyle.primary(1)));
                 for (int i = 0; i < xargs.size(); i++) {
                     NutsString xarg = xargs.get(i);

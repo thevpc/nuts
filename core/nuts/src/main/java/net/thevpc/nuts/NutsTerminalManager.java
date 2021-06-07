@@ -29,7 +29,7 @@ package net.thevpc.nuts;
 import net.thevpc.nuts.spi.NutsSystemTerminalBase;
 import net.thevpc.nuts.spi.NutsTerminalBase;
 
-import java.io.*;
+import java.io.InputStream;
 
 /**
  * @category Input Output
@@ -44,10 +44,6 @@ public interface NutsTerminalManager {
      */
     NutsSystemTerminal getSystemTerminal();
 
-    NutsTerminalManager enableRichTerm();
-
-    NutsSystemTerminal createSystemTerminal(NutsTerminalSpec spec);
-
     /**
      * update workspace wide system terminal
      *
@@ -55,6 +51,10 @@ public interface NutsTerminalManager {
      * @return {@code this} instance
      */
     NutsTerminalManager setSystemTerminal(NutsSystemTerminalBase terminal);
+
+    NutsTerminalManager enableRichTerm();
+
+    NutsSystemTerminal createSystemTerminal(NutsTerminalSpec spec);
 
     /**
      * return workspace default terminal
@@ -80,12 +80,13 @@ public interface NutsTerminalManager {
 
     /**
      * return new terminal
-     * @param in in
+     *
+     * @param in  in
      * @param out out
      * @param err err
      * @return new terminal
      */
-    NutsSessionTerminal createTerminal(InputStream in, PrintStream out, PrintStream err);
+    NutsSessionTerminal createTerminal(InputStream in, NutsPrintStream out, NutsPrintStream err);
 
 
     /**
@@ -96,56 +97,48 @@ public interface NutsTerminalManager {
      */
     NutsSessionTerminal createTerminal(NutsTerminalBase parent);
 
-    /**
-     * prepare PrintStream to handle NutsImmutableString aware format pattern. If the instance
-     * already supports Nuts specific pattern it will be returned unmodified.
-     *
-     * @param out PrintStream to check
-     * @return NutsImmutableString pattern format capable PrintStream
-     */
-    PrintStream prepare(PrintStream out);
+//    /**
+//     * prepare PrintStream to handle NutsImmutableString aware format pattern. If the instance
+//     * already supports Nuts specific pattern it will be returned unmodified.
+//     *
+//     * @param out PrintStream to check
+//     * @return NutsImmutableString pattern format capable PrintStream
+//     */
+//    PrintStream prepare(PrintStream out);
+//
+//    /**
+//     * prepare PrintWriter to handle %N (escape) format pattern. If the instance
+//     * already supports Nuts specific pattern it will be returned unmodified.
+//     *
+//     * @param out PrintWriter to check
+//     * @return %N pattern format capable PrintWriter
+//     */
+//    PrintWriter prepare(PrintWriter out);
 
-    /**
-     * prepare PrintWriter to handle %N (escape) format pattern. If the instance
-     * already supports Nuts specific pattern it will be returned unmodified.
-     *
-     * @param out PrintWriter to check
-     * @return %N pattern format capable PrintWriter
-     */
-    PrintWriter prepare(PrintWriter out);
+//    /**
+//     * true if the stream is not null and could be resolved as Formatted Output
+//     * Stream. If False is returned this does no mean necessarily that the
+//     * stream is not formatted.
+//     *
+//     * @param out stream to check
+//     * @return true if formatted
+//     */
+//    boolean isFormatted(OutputStream out);
+//
+//    /**
+//     * true if the stream is not null and could be resolved as Formatted Output
+//     * Stream. If False is returned this does no mean necessarily that the
+//     * stream is not formatted.
+//     *
+//     * @param out stream to check
+//     * @return true if formatted
+//     */
+//    boolean isFormatted(Writer out);
 
-    /**
-     * true if the stream is not null and could be resolved as Formatted Output
-     * Stream. If False is returned this does no mean necessarily that the
-     * stream is not formatted.
-     *
-     * @param out stream to check
-     * @return true if formatted
-     */
-    boolean isFormatted(OutputStream out);
+//    NutsTerminalManager sendTerminalCommand(NutsPrintStream out, NutsTerminalCommand command);
 
-    /**
-     * true if the stream is not null and could be resolved as Formatted Output
-     * Stream. If False is returned this does no mean necessarily that the
-     * stream is not formatted.
-     *
-     * @param out stream to check
-     * @return true if formatted
-     */
-    boolean isFormatted(Writer out);
+    NutsSession getSession();
 
-    /**
-     *
-     * @param out out
-     * @param command command
-     * @return this instance
-     */
-    NutsTerminalManager sendTerminalCommand(OutputStream out, NutsTerminalCommand command);
-    
-    
-    
     NutsTerminalManager setSession(NutsSession session);
 
-    NutsSession getSession() ;
-    
 }

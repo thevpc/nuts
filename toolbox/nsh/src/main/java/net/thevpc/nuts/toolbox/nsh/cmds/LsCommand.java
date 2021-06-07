@@ -189,7 +189,7 @@ public class LsCommand extends SimpleNshBuiltin {
         if(session==null){
             session=context.getSession();
         }
-        PrintStream out = context.isErr()?session.err():session.out();
+        NutsPrintStream out = context.isErr()?session.err():session.out();
         Options options = context.getOptions();
         if (context.getResult() instanceof ResultSuccess) {
             ResultSuccess s = context.getResult();
@@ -220,7 +220,7 @@ public class LsCommand extends SimpleNshBuiltin {
         }
     }
 
-    private void printPlain(ResultItem item, Options options, PrintStream out, NutsSession session) {
+    private void printPlain(ResultItem item, Options options, NutsPrintStream out, NutsSession session) {
         if (options.l) {
             out.print(item.type);
             out.print(item.uperms != null ? item.uperms : item.jperms);

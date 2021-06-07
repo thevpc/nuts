@@ -8,23 +8,26 @@ import java.util.logging.Filter;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.StreamHandler;
+
+import net.thevpc.nuts.runtime.standalone.io.OutputStreamFromNutsPrintStream;
+import net.thevpc.nuts.runtime.standalone.io.PrintStreamFromNutsPrintStream;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 public class NutsLogConsoleHandler extends StreamHandler {
 
-    private OutputStream out;
+    private NutsPrintStream out;
 
-    public NutsLogConsoleHandler(PrintStream out, boolean closeable) {
+    public NutsLogConsoleHandler(NutsPrintStream out, boolean closeable) {
         setOutputStream(out, closeable);
     }
 
-    public synchronized void setOutputStream(OutputStream out, boolean closable) throws SecurityException {
+    public synchronized void setOutputStream(NutsPrintStream out, boolean closable) throws SecurityException {
         flush();
         this.out = out;
         if (closable) {
-            super.setOutputStream(out);
+            super.setOutputStream(out.asOutputStream());
         } else {
-            super.setOutputStream(new PrintStream(out) {
+            super.setOutputStream(new PrintStream(out.asOutputStream()) {
                 @Override
                 public void close() {
                     //
@@ -43,18 +46,10 @@ public class NutsLogConsoleHandler extends StreamHandler {
             NutsTerminalManager tf = ws.term().setSession(
                     rr.getSession() == null ? NutsWorkspaceUtils.defaultSession(ws) : rr.getSession()
             );
-            
-            if (tf != null && tf.isFormatted(out)) {
-                if (!rr.isFormatted()) {
-                    record = ((NutsLogRecord) record).escape();
-                }
-                setFormatter(NutsLogRichFormatter.RICH);
-            } else {
-                if (rr.isFormatted()) {
-                    record = ((NutsLogRecord) record).filter();
-                }
-                setFormatter(NutsLogPlainFormatter.PLAIN);
-            }
+//            if (!rr.isFormatted()) {
+//                record = ((NutsLogRecord) record).escape();
+//            }
+            setFormatter(NutsLogRichFormatter.RICH);
         } else {
             setFormatter(NutsLogPlainFormatter.PLAIN);
             setOutputStream(System.err);

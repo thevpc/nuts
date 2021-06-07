@@ -78,7 +78,7 @@ public class DefaultNutsHelpInternalExecutable extends DefaultInternalNutsExecut
         }
         switch (outputFormat) {
             case PLAIN: {
-                PrintStream fout = getSession().out();
+                NutsPrintStream fout = getSession().out();
                 if (!helpColors && helpFor.isEmpty()) {
                     fout.println(NutsWorkspaceExt.of(getSession().getWorkspace()).getHelpText(getSession()));
                     fout.flush();

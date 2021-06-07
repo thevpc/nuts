@@ -123,8 +123,8 @@ public class NVersionMain extends NutsApplication {
                 throw new NutsExecutionException(context.getSession(), "nversion: Options conflict --table --long", 1);
             }
 
-            PrintStream out = context.getSession().out();
-            PrintStream err = context.getSession().out();
+            NutsPrintStream out = context.getSession().out();
+            NutsPrintStream err = context.getSession().out();
             NutsTextManager text = context.getWorkspace().text();
             if (table) {
                 NutsPropertiesFormat tt = context.getWorkspace().formats().props().setSorted(sort);

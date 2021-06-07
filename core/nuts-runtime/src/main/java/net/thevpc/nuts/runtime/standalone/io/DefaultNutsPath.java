@@ -3,7 +3,6 @@ package net.thevpc.nuts.runtime.standalone.io;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.format.DefaultFormatBase;
 
-import java.io.PrintStream;
 import java.util.Objects;
 
 public class DefaultNutsPath implements NutsPath {
@@ -42,7 +41,9 @@ public class DefaultNutsPath implements NutsPath {
 
     @Override
     public NutsFormat formatter() {
-        return new PathFormat(this);
+        return new PathFormat(this)
+                .setSession(session)
+                ;
     }
 
     private static class PathFormat extends DefaultFormatBase<NutsFormat> {
@@ -54,7 +55,7 @@ public class DefaultNutsPath implements NutsPath {
         }
 
         @Override
-        public void print(PrintStream out) {
+        public void print(NutsPrintStream out) {
             out.print(p.session.getWorkspace().text().forStyled(p.value, NutsTextStyle.path()));
         }
 

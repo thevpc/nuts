@@ -64,7 +64,7 @@ public class DefaultNutsUninstallCommand extends AbstractNutsUninstallCommand {
 //            NutsId id = dws.resolveEffectiveId(def.getDescriptor(), searchSession);
 
             NutsInstallerComponent ii = dws.getInstaller(def, session);
-            PrintStream out = CoreIOUtils.resolveOut(session);
+            NutsPrintStream out = CoreIOUtils.resolveOut(session);
             if (ii != null) {
                 NutsExecutionContext executionContext = dws.createExecutionContext()
                         .setDefinition(def)

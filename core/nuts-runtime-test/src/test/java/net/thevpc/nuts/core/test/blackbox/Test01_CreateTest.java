@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import org.junit.jupiter.api.*;
@@ -44,6 +45,24 @@ public class Test01_CreateTest {
                         ws.repos().getRepositories()[0].getName()+
                         "/"+ws.repos().getRepositories()[0].getUuid(),
                 ws.repos().getRepositories()[0].config().getStoreLocation(NutsStoreLocation.CACHE).toString());
+
+//        String str="     __        __    \n" +
+//                "  /\\ \\ \\ _  __/ /______\n" +
+//                " /  \\/ / / / / __/ ___/\n" +
+//                "/ /\\  / /_/ / /_(__  )\n" +
+//                "\\_\\ \\/\\__,_/\\__/____/\n";
+//
+//        String str="  /\\ _";
+        String str=" ```underlined prototype``` ";
+
+        System.out.println("---------------------------------");
+//        System.out.println(str);
+//        System.out.println("---------------------------------");
+//        session.out().println(str);
+        NutsLogger _log = session.getWorkspace().log().of("example");
+        _log.with()
+                .level(Level.INFO)
+                .log(str);
     }
 
     @Test

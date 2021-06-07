@@ -8,14 +8,12 @@ package net.thevpc.nuts.runtime.core.format.props;
 import java.io.PrintStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import net.thevpc.nuts.NutsCommandLine;
-import net.thevpc.nuts.NutsContentType;
-import net.thevpc.nuts.NutsElement;
+
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.format.DefaultSearchFormatBase;
 import net.thevpc.nuts.runtime.core.format.NutsFetchDisplayOptions;
 import net.thevpc.nuts.runtime.core.format.NutsFormatUtils;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
-import net.thevpc.nuts.NutsSession;
 
 /**
  *
@@ -23,7 +21,7 @@ import net.thevpc.nuts.NutsSession;
  */
 public class DefaultSearchFormatProps extends DefaultSearchFormatBase {
 
-    public DefaultSearchFormatProps(NutsSession session, PrintStream writer, NutsFetchDisplayOptions options) {
+    public DefaultSearchFormatProps(NutsSession session, NutsPrintStream writer, NutsFetchDisplayOptions options) {
         super(session, writer, NutsContentType.PROPS,options);
     }
 
@@ -52,7 +50,7 @@ public class DefaultSearchFormatProps extends DefaultSearchFormatBase {
                         .setSession(getSession())
                         .toElement(object)
         );
-        CoreIOUtils.storeProperties(p, getWriter(), false);
+        CoreIOUtils.storeProperties(p, getWriter().asOutputStream(), false);
         getWriter().flush();
     }
 

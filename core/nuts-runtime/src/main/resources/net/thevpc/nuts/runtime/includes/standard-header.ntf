@@ -3,4 +3,4 @@
 ##:099: /  \/ / / / / __/ ___/ ##  The Free and Open Source Package Manager
 ##:135:/ /\  / /_/ / /_(__  )  ##  for ##:_:Java## and other ##:_:Things## ... by ##thevpc##
 ##:171:\_\ \/\__,_/\__/____/   ##  ##:_:http://github.com/thevpc/nuts##
-    version ##${nuts.workspace-runtime.version}##
+    version ##:version:${nuts.workspace-runtime.version}##

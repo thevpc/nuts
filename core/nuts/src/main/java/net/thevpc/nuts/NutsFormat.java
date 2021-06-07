@@ -72,7 +72,7 @@ public interface NutsFormat extends NutsCommandLineConfigurable {
      *
      * @param out recipient print stream
      */
-    void print(PrintStream out);
+    void print(NutsPrintStream out);
 
     /**
      * format current value and write result to {@code out}
@@ -123,7 +123,15 @@ public interface NutsFormat extends NutsCommandLineConfigurable {
      *
      * @param out recipient print stream
      */
-    void println(PrintStream out);
+    void println(NutsPrintStream out);
+
+    /**
+     * format current value and write result to {@code out} and finally appends
+     * a new line.
+     *
+     * @param out recipient print stream
+     */
+    void println(OutputStream out);
 
     /**
      * format current value and write result to {@code out} and finally appends

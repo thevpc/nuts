@@ -23,15 +23,20 @@
  * <br>
  * ====================================================================
 */
-package net.thevpc.nuts.runtime.core.format.text;
+package net.thevpc.nuts.runtime.standalone.io;
 
 import java.io.PrintStream;
 import net.thevpc.nuts.NutsOutputStreamTransparentAdapter;
+import net.thevpc.nuts.NutsPrintStream;
+import net.thevpc.nuts.runtime.core.format.text.ExtendedFormatAware;
 
 /**
  *
  * @author thevpc
  */
-public interface NutsPrintStreamExt extends NutsOutputStreamTransparentAdapter, ExtendedFormatAware {
+public interface NutsPrintStreamExt extends
+        NutsPrintStream,
+        NutsOutputStreamTransparentAdapter,
+        ExtendedFormatAware {
     PrintStream basePrintStream();
 }

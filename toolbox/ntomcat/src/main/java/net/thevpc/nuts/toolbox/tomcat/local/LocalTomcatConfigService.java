@@ -739,7 +739,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
     }
 
     @Override
-    public LocalTomcatConfigService print(PrintStream out) {
+    public LocalTomcatConfigService print(NutsPrintStream out) {
         Map<String, Object> result = new LinkedHashMap<>();
         result.put("name", getName());
         result.put("version", getValidCatalinaVersion());
@@ -904,11 +904,11 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         try {
             Path file = getOutLogFile();
             if (tail <= 0) {
-                Files.copy(file, context.getSession().out());
+                context.getWorkspace().io().copy().from(file).to(context.getSession().out()).run();
                 return;
             }
             if (Files.isRegularFile(file)) {
-                TextFiles.tail(file.toString(), tail, context.getSession().out());
+                TextFiles.tail(file.toString(), tail, context.getSession().out().asOutputStream());
             }
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);

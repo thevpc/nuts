@@ -24,14 +24,11 @@
 package net.thevpc.nuts.runtime.core.format.xml;
 
 import java.io.IOException;
-import java.io.PrintStream;
 import java.io.Reader;
 import javax.xml.transform.stream.StreamResult;
-import net.thevpc.nuts.NutsElement;
-import net.thevpc.nuts.NutsIOException;
-import net.thevpc.nuts.NutsSession;
+
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.io.ByteArrayPrintStream;
-import net.thevpc.nuts.NutsElementFactoryContext;
 import net.thevpc.nuts.runtime.core.format.elem.NutsElementStreamFormat;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
@@ -61,15 +58,15 @@ public class DefaultXmlNutsElementStreamFormat implements NutsElementStreamForma
     }
 
     @Override
-    public void printElement(NutsElement value, PrintStream out, boolean compact, NutsElementFactoryContext context) {
+    public void printElement(NutsElement value, NutsPrintStream out, boolean compact, NutsElementFactoryContext context) {
         NutsSession session = context.getSession();
         Document doc = (Document) context.elementToObject(value, Document.class);
-        if (context.getWorkspace().term().setSession(session).isFormatted(out)) {
-            ByteArrayPrintStream bos = new ByteArrayPrintStream();
-            NutsXmlUtils.writeDocument(doc, new StreamResult(bos), compact, true, session);
+        if (out.isNtf()) {
+            NutsPrintStream bos = context.getWorkspace().io().createMemoryPrintStream();
+            NutsXmlUtils.writeDocument(doc, new StreamResult(bos.asOutputStream()), compact, true, session);
             out.print(context.getWorkspace().text().forCode("xml", bos.toString()));
         } else {
-            NutsXmlUtils.writeDocument(doc, new StreamResult(out), compact, true, session);
+            NutsXmlUtils.writeDocument(doc, new StreamResult(out.asOutputStream()), compact, true, session);
         }
     }
 

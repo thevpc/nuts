@@ -1,18 +1,12 @@
 package net.thevpc.nuts.runtime.core.terminals;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.DefaultNutsWorkspace;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
-import net.thevpc.nuts.NutsLogVerb;
-import net.thevpc.nuts.runtime.core.format.text.FPrint;
-import net.thevpc.nuts.runtime.standalone.util.console.CProgressBar;
 import net.thevpc.nuts.spi.NutsSystemTerminalBase;
 import net.thevpc.nuts.spi.NutsTerminalBase;
 
 import java.io.InputStream;
-import java.io.PrintStream;
 import java.util.Scanner;
-import java.util.logging.Level;
 
 @NutsPrototype
 public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase, NutsSessionAware {
@@ -21,32 +15,21 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase, Nu
     private Scanner scanner;
     private NutsTerminalMode outMode = NutsTerminalMode.FORMATTED;
     private NutsTerminalMode errMode = NutsTerminalMode.FORMATTED;
-    private PrintStream out;
-    private PrintStream err;
+    private NutsPrintStream out;
+    private NutsPrintStream err;
     private InputStream in;
     private NutsWorkspace workspace;
     private NutsSession session;
-    private boolean bootSession;
-//    protected CProgressBar progressBar;
 
     public DefaultNutsSystemTerminalBase() {
 
     }
 
-    public DefaultNutsSystemTerminalBase(boolean bootSession) {
-        this.bootSession = bootSession;
-    }
-
-    @Override
     public void setSession(NutsSession session) {
-        setSession(session, bootSession, session.getWorkspace().config().options());
-    }
-
-    public void setSession(NutsSession session, boolean bootSession, NutsWorkspaceOptions options) {
         this.session = session;
         this.workspace = session == null ? null : session.getWorkspace();
         if (workspace != null) {
-//        LOG=workspace.log().of(DefaultNutsSystemTerminalBase.class);
+            NutsWorkspaceOptions options=session.getWorkspace().config().options();
             NutsTerminalMode terminalMode = options.getTerminalMode();
             if (terminalMode == null) {
                 if (options.isBot()) {
@@ -55,20 +38,9 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase, Nu
                     terminalMode = NutsTerminalMode.FORMATTED;
                 }
             }
-            if (bootSession) {
-                this.outMode = terminalMode;
-                this.errMode = terminalMode;
-                this.out = CoreIOUtils.toPrintStream(CoreIOUtils.convertOutputStream(System.out, terminalMode, session), session);
-                this.err = CoreIOUtils.toPrintStream(CoreIOUtils.convertOutputStream(System.err, terminalMode, session), session);
-                this.in = System.in;
-            } else {
-                setOutMode(terminalMode);
-                setErrMode(terminalMode);
-                NutsIOManager ioManager = workspace.io().setSession(session);
-                this.out = ioManager.createPrintStream(CoreIOUtils.out(workspace), terminalMode);
-                this.err = ioManager.createPrintStream(CoreIOUtils.err(workspace), terminalMode);//.setColor(NutsPrintStream.RED);
-                this.in = CoreIOUtils.in(workspace);
-            }
+            this.out = workspace.io().stdout().convert(terminalMode);
+            this.err = workspace.io().stderr().convert(terminalMode);
+            this.in = workspace.io().stdin();
             this.scanner = new Scanner(this.in);
         } else {
             //on uninstall do nothing
@@ -82,24 +54,24 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase, Nu
         return LOG;
     }
 
-    @Override
-    public NutsTerminalMode getOutMode() {
-        return outMode;
-    }
-
-    @Override
-    public NutsSystemTerminalBase setOutMode(NutsTerminalMode mode) {
-        if (mode == null) {
-            mode = NutsTerminalMode.FORMATTED;
-        }
-        if (_LOG() != null) {
-            _LOG().with().session(session).level(Level.CONFIG).verb(NutsLogVerb.UPDATE).formatted().log("change terminal Out mode : {0}",
-                    workspace.text().forStyled(mode.id(), NutsTextStyle.primary(1))
-            );
-        }
-        FPrint.installStdOut(this.outMode = mode, session);
-        return this;
-    }
+//    @Override
+//    public NutsTerminalMode getOutMode() {
+//        return outMode;
+//    }
+//
+//    @Override
+//    public NutsSystemTerminalBase setOutMode(NutsTerminalMode mode) {
+//        if (mode == null) {
+//            mode = NutsTerminalMode.FORMATTED;
+//        }
+//        if (_LOG() != null) {
+//            _LOG().with().session(session).level(Level.CONFIG).verb(NutsLogVerb.UPDATE).formatted().log("change terminal Out mode : {0}",
+//                    workspace.text().forStyled(mode.id(), NutsTextStyle.primary(1))
+//            );
+//        }
+//        FPrint.installStdOut(this.outMode = mode, session);
+//        return this;
+//    }
 
 //    private CProgressBar getProgressBar() {
 //        if(progressBar==null){
@@ -136,24 +108,24 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase, Nu
 //        return this;
 //    }
 
-    @Override
-    public NutsSystemTerminalBase setErrMode(NutsTerminalMode mode) {
-        if (mode == null) {
-            mode = NutsTerminalMode.FORMATTED;
-        }
-        if (_LOG() != null) {
-            _LOG().with().session(session).level(Level.CONFIG).verb(NutsLogVerb.UPDATE).formatted().log("change terminal Err mode : {0}",
-                    workspace.text().forStyled(mode.id(), NutsTextStyle.primary(1))
-            );
-        }
-        FPrint.installStdErr(this.errMode = mode, session);
-        return this;
-    }
-
-    @Override
-    public NutsTerminalMode getErrMode() {
-        return errMode;
-    }
+//    @Override
+//    public NutsSystemTerminalBase setErrMode(NutsTerminalMode mode) {
+//        if (mode == null) {
+//            mode = NutsTerminalMode.FORMATTED;
+//        }
+//        if (_LOG() != null) {
+//            _LOG().with().session(session).level(Level.CONFIG).verb(NutsLogVerb.UPDATE).formatted().log("change terminal Err mode : {0}",
+//                    workspace.text().forStyled(mode.id(), NutsTextStyle.primary(1))
+//            );
+//        }
+//        FPrint.installStdErr(this.errMode = mode, session);
+//        return this;
+//    }
+//
+//    @Override
+//    public NutsTerminalMode getErrMode() {
+//        return errMode;
+//    }
 
     @Override
     public int getSupportLevel(NutsSupportLevelContext<NutsTerminalSpec> criteria) {
@@ -171,12 +143,12 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase, Nu
     }
 
     @Override
-    public String readLine(PrintStream out, String prompt, Object... params) {
+    public String readLine(NutsPrintStream out, String prompt, Object... params) {
         if (out == null) {
             out = getOut();
         }
         if (out == null) {
-            out = CoreIOUtils.out(workspace);
+            out = workspace.io().stdout();
         }
         out.printf(prompt, params);
         out.flush();
@@ -184,12 +156,12 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase, Nu
     }
 
     @Override
-    public char[] readPassword(PrintStream out, String prompt, Object... params) {
+    public char[] readPassword(NutsPrintStream out, String prompt, Object... params) {
         if (out == null) {
             out = getOut();
         }
         if (out == null) {
-            out = CoreIOUtils.out(workspace);
+            out = workspace.io().stdout();
         }
         out.printf(prompt, params);
         return scanner.nextLine().toCharArray();
@@ -201,12 +173,12 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase, Nu
     }
 
     @Override
-    public PrintStream getOut() {
+    public NutsPrintStream getOut() {
         return this.out;
     }
 
     @Override
-    public PrintStream getErr() {
+    public NutsPrintStream getErr() {
         return this.err;
     }
 

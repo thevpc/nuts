@@ -448,7 +448,7 @@ public class NutsRepositoryFolderHelper {
         }
         Path localFolder = getLongNameIdLocalFile(command.getId().builder().setFaceContent().build(), command.getSession());
         if (localFolder != null && Files.exists(localFolder)) {
-            if (ws.concurrent().lock().source(localFolder).call(() -> {
+            if (command.getSession().getWorkspace().concurrent().lock().source(localFolder).call(() -> {
                 CoreIOUtils.delete(command.getSession(), localFolder);
                 return false;
             })) {

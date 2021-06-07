@@ -7,13 +7,11 @@ package net.thevpc.nuts.runtime.standalone.io;
 
 import java.io.PrintStream;
 import java.text.DecimalFormat;
-import net.thevpc.nuts.NutsFormatManager;
 
-import net.thevpc.nuts.NutsTextManager;
+import net.thevpc.nuts.*;
+
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
-import net.thevpc.nuts.NutsProgressEvent;
-import net.thevpc.nuts.NutsProgressMonitor;
 import net.thevpc.nuts.runtime.bundles.common.BytesSizeFormat;
 import net.thevpc.nuts.runtime.standalone.util.console.CProgressBar;
 import net.thevpc.nuts.runtime.core.format.text.FPrintCommands;
@@ -24,7 +22,7 @@ import net.thevpc.nuts.runtime.core.format.text.FPrintCommands;
 public class DefaultNutsStreamProgressMonitor implements NutsProgressMonitor/*, NutsOutputStreamTransparentAdapter*/ {
     private static DecimalFormat df = new DecimalFormat("##0.00");
 
-    private PrintStream out;
+    private NutsPrintStream out;
     private int minLength;
     private CProgressBar bar;
     private boolean optionsProcessed=false;
@@ -77,7 +75,7 @@ public class DefaultNutsStreamProgressMonitor implements NutsProgressMonitor/*, 
         if (event.getCurrentValue() == 0 || partialSeconds > 0.5 || event.getCurrentValue() == event.getMaxValue()) {
             NutsTextManager text = event.getSession().getWorkspace().text();
             if(!optionNewline) {
-                FPrintCommands.runMoveLineStart(out);
+                out.run(NutsTerminalCommand.MOVE_LINE_START);
             }else{
                 out.print("\n");
             }

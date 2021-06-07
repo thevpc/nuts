@@ -249,8 +249,7 @@ public abstract class SimpleNshBuiltin extends AbstractNshBuiltin {
             }
         }else{
             NutsSession session = context.getSession().copy();
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            PrintStream printStream = new PrintStream(bos);
+            NutsPrintStream printStream = session.getWorkspace().io().createMemoryPrintStream();
             session.setTerminal(session.getWorkspace().term().createTerminal(
                     new ByteArrayInputStream(new byte[0]),
                     printStream,
@@ -262,8 +261,7 @@ public abstract class SimpleNshBuiltin extends AbstractNshBuiltin {
                     printObject(context2.setErr(true), session);
                 }
             }
-            printStream.flush();
-            throw new NutsExecutionException(context.getSession(),bos.toString(), context2.getExitCode());
+            throw new NutsExecutionException(context.getSession(),printStream.toString(), context2.getExitCode());
         }
     }
 

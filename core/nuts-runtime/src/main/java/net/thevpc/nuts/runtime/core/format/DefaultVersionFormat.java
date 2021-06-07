@@ -1,7 +1,5 @@
 package net.thevpc.nuts.runtime.core.format;
 
-import java.io.PrintStream;
-
 import net.thevpc.nuts.*;
 
 import java.util.*;
@@ -93,7 +91,7 @@ public class DefaultVersionFormat extends DefaultFormatBase<NutsVersionFormat> i
     }
 
     @Override
-    public void print(PrintStream out) {
+    public void print(NutsPrintStream out) {
         checkSession();
         if(!isNtf()) {
             if (isWorkspaceVersion()) {

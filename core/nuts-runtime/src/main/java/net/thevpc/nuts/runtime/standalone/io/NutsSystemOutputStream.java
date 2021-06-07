@@ -1,7 +1,10 @@
-package net.thevpc.nuts.runtime.core.format.text;
+package net.thevpc.nuts.runtime.standalone.io;
 
 import net.thevpc.nuts.NutsTerminalMode;
 import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.runtime.core.format.text.EscapeOutputStream;
+import net.thevpc.nuts.runtime.core.format.text.ExtendedFormatAware;
+import net.thevpc.nuts.runtime.core.format.text.UnescapeOutputStream;
 import net.thevpc.nuts.runtime.core.io.BaseTransparentFilterOutputStream;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.core.terminals.NutsTerminalModeOp;

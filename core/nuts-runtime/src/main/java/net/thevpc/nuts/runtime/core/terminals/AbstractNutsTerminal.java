@@ -33,15 +33,4 @@ import net.thevpc.nuts.NutsTerminalMode;
  * @author thevpc
  */
 public abstract class AbstractNutsTerminal implements NutsTerminal {
-    public NutsTerminal mode(NutsTerminalMode mode) {
-        return setMode(mode);
-    }
-
-    public NutsTerminal outMode(NutsTerminalMode mode) {
-        return setOutMode(mode);
-    }
-
-    public NutsTerminal errMode(NutsTerminalMode mode) {
-        return setErrMode(mode);
-    }
 }

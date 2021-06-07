@@ -217,7 +217,7 @@ public final class NutsApplications {
 //        }
         if (out == null && session != null) {
             try {
-                out = session.getWorkspace().term().getSystemTerminal().getOut();
+                out = session.getWorkspace().term().getSystemTerminal().getOut().asOutputStream();
                 m = "```error " + m + "```";
             } catch (Exception ex2) {
                 session.getWorkspace().log().of(NutsApplications.class).with().level(Level.FINE).error(ex2).log("unable to get system terminal");

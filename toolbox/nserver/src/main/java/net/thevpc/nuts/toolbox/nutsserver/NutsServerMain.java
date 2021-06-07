@@ -54,7 +54,7 @@ public class NutsServerMain extends NutsApplication {
         cmdLine.setCommandName("nuts-server list").unexpectedArgument();
         if (cmdLine.isExecMode()) {
             List<NutsServer> servers = serverManager.getServers();
-            PrintStream out = context.getSession().out();
+            NutsPrintStream out = context.getSession().out();
             if (servers.isEmpty()) {
                 out.print("No Server is Running by current instance\n");
             }

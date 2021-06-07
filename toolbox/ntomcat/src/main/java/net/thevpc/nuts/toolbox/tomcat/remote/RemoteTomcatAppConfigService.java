@@ -9,7 +9,6 @@ import net.thevpc.nuts.toolbox.tomcat.remote.config.RemoteTomcatAppConfig;
 import net.thevpc.nuts.toolbox.tomcat.remote.config.RemoteTomcatConfig;
 
 import java.io.File;
-import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -137,7 +136,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
         return name;
     }
 
-    public RemoteTomcatAppConfigService print(PrintStream out) {
+    public RemoteTomcatAppConfigService print(NutsPrintStream out) {
         NutsWorkspace ws = context.getWorkspace();
         Map<String, Object> m = new LinkedHashMap<>();
         m.put("name", getName());

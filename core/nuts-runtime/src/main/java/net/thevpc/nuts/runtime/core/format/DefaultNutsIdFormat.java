@@ -1,7 +1,5 @@
 package net.thevpc.nuts.runtime.core.format;
 
-import java.io.PrintStream;
-
 import net.thevpc.nuts.*;
 
 import java.util.*;
@@ -328,7 +326,7 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
     }
 
     @Override
-    public void print(PrintStream out) {
+    public void print(NutsPrintStream out) {
         out.print(format());
     }
 

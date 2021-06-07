@@ -29,14 +29,9 @@ import java.io.PrintStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.UncheckedIOException;
-import net.thevpc.nuts.NutsArrayElementBuilder;
-import net.thevpc.nuts.NutsElement;
-import net.thevpc.nuts.NutsObjectElementBuilder;
-import net.thevpc.nuts.NutsWorkspace;
+
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.format.elem.NutsElementStreamFormat;
-import net.thevpc.nuts.NutsElementEntry;
-import net.thevpc.nuts.NutsElementFormat;
-import net.thevpc.nuts.NutsElementFactoryContext;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 
 /**
@@ -52,7 +47,7 @@ public class SimpleJson implements NutsElementStreamFormat {
     }
 
     @Override
-    public void printElement(NutsElement value, PrintStream out, boolean compact, NutsElementFactoryContext context) {
+    public void printElement(NutsElement value, NutsPrintStream out, boolean compact, NutsElementFactoryContext context) {
         write(out, value, compact);
     }
 
@@ -63,11 +58,11 @@ public class SimpleJson implements NutsElementStreamFormat {
         return parseElement(new StringReader(string), context);
     }
 
-    public void write(PrintStream out, NutsElement data, boolean compact) {
+    public void write(NutsPrintStream out, NutsElement data, boolean compact) {
         write(out, data, compact ? null : "");
     }
 
-    private void write(PrintStream out, NutsElement data, String indent) {
+    private void write(NutsPrintStream out, NutsElement data, String indent) {
         switch (data.type()) {
             case NULL: {
                 out.print("null");

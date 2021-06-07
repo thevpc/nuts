@@ -5,6 +5,7 @@ import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.bundles.io.ByteArrayPrintStream;
 import net.thevpc.nuts.runtime.bundles.io.ProcessBuilder2;
 import net.thevpc.nuts.runtime.core.format.DefaultNutsExecCommandFormat;
+import net.thevpc.nuts.runtime.standalone.io.NutsByteArrayPrintStream;
 
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -24,8 +25,8 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
     protected NutsExecutionException result;
     protected boolean executed;
     protected String directory;
-    protected PrintStream out;
-    protected PrintStream err;
+    protected NutsPrintStream out;
+    protected NutsPrintStream err;
     protected InputStream in;
     protected NutsExecutionType executionType = NutsExecutionType.SPAWN;
     protected boolean redirectErrorStream;
@@ -231,7 +232,7 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
     }
 
     @Override
-    public PrintStream getOut() {
+    public NutsPrintStream getOut() {
         return out;
     }
 //
@@ -242,15 +243,17 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
 
     @Override
     public NutsExecCommand grabOutputString() {
+        checkSession();
         // DO NOT CALL setOut :: setOut(new SPrintStream());
-        this.out = new SPrintStream();
+        this.out = new SPrintStream(getSession());
         return this;
     }
 
     @Override
     public NutsExecCommand grabErrorString() {
+        checkSession();
         // DO NOT CALL setErr :: setErr(new SPrintStream());
-        this.err = new SPrintStream();
+        this.err = new SPrintStream(getSession());
         return this;
     }
 
@@ -260,7 +263,7 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
         if (!executed) {
             run();
         }
-        PrintStream o = getOut();
+        NutsPrintStream o = getOut();
         if (o instanceof SPrintStream) {
             return o.toString();
         }
@@ -269,7 +272,7 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
 
     public String getOutputString0() {
         checkSession();
-        PrintStream o = getOut();
+        NutsPrintStream o = getOut();
         if (o instanceof SPrintStream) {
             return o.toString();
         }
@@ -285,7 +288,7 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
         if (isRedirectErrorStream()) {
             return getOutputString();
         }
-        PrintStream o = getErr();
+        NutsPrintStream o = getErr();
         if (o instanceof SPrintStream) {
             return o.toString();
         }
@@ -297,10 +300,10 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
 //        return setOut(out);
 //    }
     @Override
-    public NutsExecCommand setOut(PrintStream out) {
+    public NutsExecCommand setOut(NutsPrintStream out) {
         checkSession();
         NutsWorkspace ws = getSession().getWorkspace();
-        this.out = (out == null ? null : ws.io().createPrintStream(out, NutsTerminalMode.FORMATTED));
+        this.out = out;
         return this;
     }
 
@@ -309,15 +312,15 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
 //        return setErr(err);
 //    }
     @Override
-    public NutsExecCommand setErr(PrintStream err) {
+    public NutsExecCommand setErr(NutsPrintStream err) {
         checkSession();
         NutsWorkspace ws = getSession().getWorkspace();
-        this.err = (err == null ? null : ws.io().createPrintStream(err, NutsTerminalMode.FORMATTED));
+        this.err = err;
         return this;
     }
 
     @Override
-    public PrintStream getErr() {
+    public NutsPrintStream getErr() {
         return err;
     }
 //
@@ -530,10 +533,10 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
         return err instanceof SPrintStream;
     }
 
-    protected static class SPrintStream extends ByteArrayPrintStream {
+    protected static class SPrintStream extends NutsByteArrayPrintStream {
 
-        public SPrintStream() {
-
+        public SPrintStream(NutsSession session) {
+            super(session);
         }
     }
 

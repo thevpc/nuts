@@ -33,7 +33,6 @@ import java.nio.file.Path;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NutsContentType;
 import net.thevpc.nuts.runtime.core.format.plain.NutsObjectFormatPlain;
-import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 /**
  *
@@ -135,7 +134,7 @@ public class DefaultNutsObjectFormat extends NutsObjectFormatBase {
     }
 
     @Override
-    public void print(PrintStream out) {
+    public void print(NutsPrintStream out) {
         getBase().print(out);
     }
 
@@ -170,7 +169,7 @@ public class DefaultNutsObjectFormat extends NutsObjectFormatBase {
     }
 
     @Override
-    public void println(PrintStream out) {
+    public void println(NutsPrintStream out) {
         getBase().println(out);
     }
 

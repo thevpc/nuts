@@ -58,43 +58,6 @@ public abstract class AbstractSystemTerminalAdapter extends AbstractNutsTerminal
     public abstract NutsSystemTerminalBase getParent();
 
     @Override
-    public NutsSystemTerminal setMode(NutsTerminalMode mode) {
-        if (mode == null) {
-//            throw new NullPointerException();
-        }
-        NutsSystemTerminalBase p = getParent();
-        if (p instanceof NutsSystemTerminal) {
-            ((NutsSystemTerminal) p).setMode(mode);
-        } else {
-            p.setOutMode(mode);
-            p.setErrMode(mode);
-        }
-        return this;
-    }
-
-    @Override
-    public NutsSystemTerminal setOutMode(NutsTerminalMode mode) {
-        getParent().setOutMode(mode);
-        return this;
-    }
-
-    @Override
-    public NutsTerminalMode getOutMode() {
-        return getParent().getOutMode();
-    }
-
-    @Override
-    public NutsSystemTerminal setErrMode(NutsTerminalMode mode) {
-        getParent().setErrMode(mode);
-        return this;
-    }
-
-    @Override
-    public NutsTerminalMode getErrMode() {
-        return getParent().getErrMode();
-    }
-
-    @Override
     public String readLine(String promptFormat, Object... params) {
         NutsSystemTerminalBase p = getParent();
         if (p instanceof NutsTerminal) {
@@ -120,12 +83,12 @@ public abstract class AbstractSystemTerminalAdapter extends AbstractNutsTerminal
     }
 
     @Override
-    public PrintStream getOut() {
+    public NutsPrintStream getOut() {
         return getParent().getOut();
     }
 
     @Override
-    public PrintStream getErr() {
+    public NutsPrintStream getErr() {
         return getParent().getErr();
     }
 
@@ -135,12 +98,12 @@ public abstract class AbstractSystemTerminalAdapter extends AbstractNutsTerminal
     }
 
     @Override
-    public PrintStream out() {
+    public NutsPrintStream out() {
         return getOut();
     }
 
     @Override
-    public PrintStream err() {
+    public NutsPrintStream err() {
         return getErr();
     }
 
@@ -164,55 +127,55 @@ public abstract class AbstractSystemTerminalAdapter extends AbstractNutsTerminal
         return DEFAULT_SUPPORT;
     }
 
-    @Override
-    public boolean isStandardOutputStream(OutputStream out) {
-        if (out == null) {
-            return true;
-        }
-        if (out == System.out || out == CoreIOUtils.out(ws)) {
-            return true;
-        }
-        if (out instanceof NutsOutputStreamTransparentAdapter) {
-            return isStandardOutputStream(((NutsOutputStreamTransparentAdapter) out).baseOutputStream());
-        }
-        return false;
-    }
+//    @Override
+//    public boolean isStandardOutputStream(OutputStream out) {
+//        if (out == null) {
+//            return true;
+//        }
+//        if (out == System.out || out == CoreIOUtils.out(ws)) {
+//            return true;
+//        }
+//        if (out instanceof NutsOutputStreamTransparentAdapter) {
+//            return isStandardOutputStream(((NutsOutputStreamTransparentAdapter) out).baseOutputStream());
+//        }
+//        return false;
+//    }
+
+//    @Override
+//    public boolean isStandardErrorStream(OutputStream out) {
+//        if (out == null) {
+//            return true;
+//        }
+//        if (out == System.err || out == CoreIOUtils.err(ws)) {
+//            return true;
+//        }
+//        if (out instanceof NutsOutputStreamTransparentAdapter) {
+//            return isStandardErrorStream(((NutsOutputStreamTransparentAdapter) out).baseOutputStream());
+//        }
+//        return false;
+//    }
+//
+//    @Override
+//    public boolean isStandardInputStream(InputStream in) {
+//        if (in == null) {
+//            return true;
+//        }
+//        if (in == System.in || in == CoreIOUtils.in(ws)) {
+//            return true;
+//        }
+//        if (in instanceof NutsInputStreamTransparentAdapter) {
+//            return isStandardInputStream(((NutsInputStreamTransparentAdapter) in).baseInputStream());
+//        }
+//        return false;
+//    }
 
     @Override
-    public boolean isStandardErrorStream(OutputStream out) {
-        if (out == null) {
-            return true;
-        }
-        if (out == System.err || out == CoreIOUtils.err(ws)) {
-            return true;
-        }
-        if (out instanceof NutsOutputStreamTransparentAdapter) {
-            return isStandardErrorStream(((NutsOutputStreamTransparentAdapter) out).baseOutputStream());
-        }
-        return false;
-    }
-
-    @Override
-    public boolean isStandardInputStream(InputStream in) {
-        if (in == null) {
-            return true;
-        }
-        if (in == System.in || in == CoreIOUtils.in(ws)) {
-            return true;
-        }
-        if (in instanceof NutsInputStreamTransparentAdapter) {
-            return isStandardInputStream(((NutsInputStreamTransparentAdapter) in).baseInputStream());
-        }
-        return false;
-    }
-
-    @Override
-    public String readLine(PrintStream out, String prompt, Object... params) {
+    public String readLine(NutsPrintStream out, String prompt, Object... params) {
         return getParent().readLine(out, prompt, params);
     }
 
     @Override
-    public char[] readPassword(PrintStream out, String prompt, Object... params) {
+    public char[] readPassword(NutsPrintStream out, String prompt, Object... params) {
         return getParent().readPassword(out, prompt, params);
     }
 
@@ -277,15 +240,15 @@ public abstract class AbstractSystemTerminalAdapter extends AbstractNutsTerminal
         return this;
     }
 
-    @Override
-    public NutsTerminal sendOutCommand(NutsTerminalCommand command) {
-        session.getWorkspace().term().sendTerminalCommand(out(), command);
-        return this;
-    }
+//    @Override
+//    public NutsTerminal sendOutCommand(NutsTerminalCommand command) {
+//        session.getWorkspace().term().sendTerminalCommand(out(), command);
+//        return this;
+//    }
 
-    @Override
-    public NutsTerminal sendErrCommand(NutsTerminalCommand command) {
-        session.getWorkspace().term().sendTerminalCommand(out(), command);
-        return this;
-    }
+//    @Override
+//    public NutsTerminal sendErrCommand(NutsTerminalCommand command) {
+//        session.getWorkspace().term().sendTerminalCommand(out(), command);
+//        return this;
+//    }
 }

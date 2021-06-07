@@ -37,71 +37,6 @@ import java.io.PrintStream;
  */
 public interface NutsTerminal extends NutsTerminalBase {
 
-    /**
-     * change terminal mode for both out and err
-     *
-     * @param mode mode
-     * @return {@code this} instance
-     */
-    NutsTerminal setMode(NutsTerminalMode mode);
-
-    /**
-     * change terminal mode for both out and err
-     *
-     * @param mode mode
-     * @return {@code this} instance
-     */
-    NutsTerminal mode(NutsTerminalMode mode);
-
-    /**
-     * change terminal mode for out
-     *
-     * @param mode mode
-     * @return {@code this} instance
-     */
-    @Override
-    NutsTerminal setOutMode(NutsTerminalMode mode);
-
-    /**
-     * change terminal mode for out
-     *
-     * @param mode mode
-     * @return {@code this} instance
-     */
-    NutsTerminal outMode(NutsTerminalMode mode);
-
-    /**
-     * change terminal mode for err
-     *
-     * @param mode mode
-     * @return {@code this} instance
-     */
-    @Override
-    NutsTerminal setErrMode(NutsTerminalMode mode);
-
-    /**
-     * change terminal mode for out
-     *
-     * @param mode mode
-     * @return {@code this} instance
-     */
-    NutsTerminal errMode(NutsTerminalMode mode);
-
-    /**
-     * return err mode
-     *
-     * @return err mode
-     */
-    @Override
-    NutsTerminalMode getErrMode();
-
-    /**
-     * return out mode
-     *
-     * @return out mode
-     */
-    @Override
-    NutsTerminalMode getOutMode();
 
     /**
      * Reads a single line of text from the terminal's input stream.
@@ -150,18 +85,14 @@ public interface NutsTerminal extends NutsTerminalBase {
      *
      * @return terminal's output stream
      */
-    PrintStream out();
+    NutsPrintStream out();
 
     /**
      * return terminal's error stream
      *
      * @return terminal's error stream
      */
-    PrintStream err();
-
-    NutsTerminal sendOutCommand(NutsTerminalCommand command);
-
-    NutsTerminal sendErrCommand(NutsTerminalCommand command);
+    NutsPrintStream err();
 
     /**
      * print progress with a message

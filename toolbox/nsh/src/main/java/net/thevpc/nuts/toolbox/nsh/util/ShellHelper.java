@@ -1,5 +1,6 @@
 package net.thevpc.nuts.toolbox.nsh.util;
 
+import net.thevpc.nuts.NutsPrintStream;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.common.io.FileUtils;
 import net.thevpc.common.ssh.SshListener;
@@ -52,7 +53,7 @@ public class ShellHelper {
 
     public static class WsSshListener implements SshListener {
 
-        PrintStream out;
+        NutsPrintStream out;
         NutsSession session;
 
         public WsSshListener(NutsSession session) {

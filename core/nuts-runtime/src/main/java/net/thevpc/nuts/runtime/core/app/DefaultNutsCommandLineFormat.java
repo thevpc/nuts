@@ -2,10 +2,9 @@ package net.thevpc.nuts.runtime.core.app;
 
 import net.thevpc.nuts.NutsCommandLine;
 import net.thevpc.nuts.NutsCommandLineFormat;
+import net.thevpc.nuts.NutsPrintStream;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.core.format.DefaultFormatBase;
-
-import java.io.PrintStream;
 
 public class DefaultNutsCommandLineFormat extends DefaultFormatBase<NutsCommandLineFormat> implements NutsCommandLineFormat {
 
@@ -48,7 +47,7 @@ public class DefaultNutsCommandLineFormat extends DefaultFormatBase<NutsCommandL
     }
 
     @Override
-    public void print(PrintStream out) {
+    public void print(NutsPrintStream out) {
         if (value != null) {
             String cmd = NutsCommandLineUtils.escapeArguments(value.toStringArray());
             if (isNtf()) {

@@ -59,7 +59,7 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
         }
         NutsTextManager factory = ws.text();
         for (String arg : this.args) {
-            PrintStream out = getSession().out();
+            NutsPrintStream out = getSession().out();
             try {
                 NutsExecutableInformation p = execCommand.copy().setSession(getSession()).clearCommand().configure(false, arg).which();
                 boolean showDesc = false;

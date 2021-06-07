@@ -76,7 +76,7 @@ public interface NutsIOManager extends NutsComponent<Object/* any object or null
      *
      * @return null print stream instance
      */
-    PrintStream nullPrintStream();
+    NutsPrintStream nullPrintStream();
 
     /**
      * create print stream that supports the given {@code mode}. If the given
@@ -87,7 +87,13 @@ public interface NutsIOManager extends NutsComponent<Object/* any object or null
      * @param mode mode to support
      * @return {@code mode} supporting PrintStream
      */
-    PrintStream createPrintStream(OutputStream out, NutsTerminalMode mode);
+    NutsPrintStream createPrintStream(OutputStream out, NutsTerminalMode mode);
+
+    NutsPrintStream createPrintStream(OutputStream out);
+
+    NutsPrintStream createPrintStream(Writer out);
+
+    NutsMemoryPrintStream createMemoryPrintStream();
 
     NutsTempAction tmp();
 
@@ -150,4 +156,15 @@ public interface NutsIOManager extends NutsComponent<Object/* any object or null
 
     NutsIOManager setSession(NutsSession session);
 
+    NutsPrintStream stdout();
+
+    NutsPrintStream stderr();
+
+    InputStream stdin();
+
+    boolean isStandardOutputStream(NutsPrintStream out);
+
+    boolean isStandardErrorStream(NutsPrintStream out);
+
+    boolean isStandardInputStream(InputStream in);
 }

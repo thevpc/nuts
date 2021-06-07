@@ -18,7 +18,7 @@ import java.text.DecimalFormat;
  */
 public class DefaultNutsCountProgressMonitor implements NutsProgressMonitor/*, NutsOutputStreamTransparentAdapter*/ {
 
-    private PrintStream out;
+    private NutsPrintStream out;
     private int minLength;
     private NutsWorkspace ws;
 
@@ -70,7 +70,7 @@ public class DefaultNutsCountProgressMonitor implements NutsProgressMonitor/*, N
         double partialSeconds = event.getPartialMillis() / 1000.0;
         if (event.getCurrentValue() == 0 || partialSeconds > 0.5 || event.getCurrentValue() == event.getMaxValue()) {
             NutsTextManager text = event.getSession().getWorkspace().text();
-            FPrintCommands.runMoveLineStart(out);
+            out.run(NutsTerminalCommand.MOVE_LINE_START);
             double globalSeconds = event.getTimeMillis() / 1000.0;
             long globalSpeed = globalSeconds == 0 ? 0 : (long) (event.getCurrentValue() / globalSeconds);
             long partialSpeed = partialSeconds == 0 ? 0 : (long) (event.getPartialValue() / partialSeconds);

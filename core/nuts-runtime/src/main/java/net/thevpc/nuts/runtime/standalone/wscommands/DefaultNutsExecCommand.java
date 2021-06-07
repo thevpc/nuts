@@ -36,14 +36,12 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
         NutsWorkspaceUtils.setSession(terminal, getSession());
         NutsSession traceSession = getSession();
         terminal.setParent(traceSession.getTerminal());
-        terminal.setOutMode(traceSession.getTerminal().getOutMode());
-        terminal.setErrMode(traceSession.getTerminal().getErrMode());
-        if (isGrabOutputString()) {
-            terminal.setOutMode(NutsTerminalMode.INHERITED);
-        }
-        if (isGrabErrorString()) {
-            terminal.setErrMode(NutsTerminalMode.INHERITED);
-        }
+//        if (isGrabOutputString()) {
+//            terminal.setOutMode(NutsTerminalMode.INHERITED);
+//        }
+//        if (isGrabErrorString()) {
+//            terminal.setErrMode(NutsTerminalMode.INHERITED);
+//        }
         if (this.in != null) {
             terminal.setIn(this.in);
         }
@@ -56,7 +54,6 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
             } else {
                 terminal.setErr(traceSession.getTerminal().out());
             }
-            terminal.setErrMode(terminal.getOutMode());
         }
         terminal.out().flush();
         terminal.err().flush();

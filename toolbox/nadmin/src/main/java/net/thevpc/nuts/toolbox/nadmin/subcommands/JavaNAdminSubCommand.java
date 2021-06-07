@@ -25,7 +25,7 @@ public class JavaNAdminSubCommand extends AbstractNAdminSubCommand {
             autoSave = false;
         }
         NutsWorkspace ws = context.getWorkspace();
-        PrintStream out = context.getSession().out();
+        NutsPrintStream out = context.getSession().out();
         NutsWorkspaceConfigManager conf = ws.config();
         if (cmdLine.next("add java") != null) {
             if (cmdLine.next("--search") != null) {

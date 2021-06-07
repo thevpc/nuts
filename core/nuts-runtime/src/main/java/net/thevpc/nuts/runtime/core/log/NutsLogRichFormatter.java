@@ -187,21 +187,24 @@ public class NutsLogRichFormatter extends Formatter {
                 parameters2=new Object[0];
             }
             String message = wRecord.getMessage();
+            if(!wRecord.isFormatted()){
+                message=wRecord.getSession().getWorkspace().text().forPlain(message).toString();
+            }
             // \\{[0-9]+\\}
 //            message=message.replaceAll("\\\\\\{([0-9]+)\\\\}","{$1}");
-            NutsTextManager text = wRecord.getSession().getWorkspace().text();
-            if(!wRecord.isFormatted()){
-                parameters2= Arrays.copyOf(parameters2,parameters2.length);
-                for (int i = 0; i < parameters2.length; i++) {
-                    if (parameters2[i] instanceof NutsString) {
-                        parameters2[i] = text.builder().append(parameters2[i].toString()).filteredText();
-                    } else if (parameters2[i] instanceof NutsFormattable) {
-                        parameters2[i] = text.builder().append(
-                                ((NutsFormattable) parameters2[i]).format()
-                        ).filteredText();
-                    }
-                }
-            }
+//            NutsTextManager text = wRecord.getSession().getWorkspace().text();
+//            if(!wRecord.isFormatted()){
+//                parameters2= Arrays.copyOf(parameters2,parameters2.length);
+//                for (int i = 0; i < parameters2.length; i++) {
+//                    if (parameters2[i] instanceof NutsString) {
+//                        parameters2[i] = text.builder().append(parameters2[i].toString()).filteredText();
+//                    } else if (parameters2[i] instanceof NutsFormattable) {
+//                        parameters2[i] = text.builder().append(
+//                                ((NutsFormattable) parameters2[i]).format()
+//                        ).filteredText();
+//                    }
+//                }
+//            }
             NutsString msgStr =
                     wRecord.getWorkspace().text()
                             .setSession(wRecord.getSession())
@@ -213,11 +216,11 @@ public class NutsLogRichFormatter extends Formatter {
 
             );
 //                    formatMessage(wRecord);
-            if(wRecord.isFormatted()) {
+//            if(wRecord.isFormatted()) {
                 sb.append(msgStr);
-            }else{
-                sb.append(msgStr.toString());
-            }
+//            }else{
+//                sb.append(msgStr.filteredText());
+//            }
             if(wRecord.getTime()>0){
                 sb.append(" (");
                 sb.append(CoreTimeUtils.formatPeriodMilli(wRecord.getTime()),NutsTextStyle.config());

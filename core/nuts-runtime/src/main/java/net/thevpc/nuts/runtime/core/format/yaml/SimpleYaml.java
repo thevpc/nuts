@@ -28,13 +28,8 @@ package net.thevpc.nuts.runtime.core.format.yaml;
  * @author vpc
  */
 import java.io.*;
-import net.thevpc.nuts.NutsArrayElementBuilder;
-import net.thevpc.nuts.NutsElement;
-import net.thevpc.nuts.NutsElementEntry;
-import net.thevpc.nuts.NutsElementFormat;
-import net.thevpc.nuts.NutsObjectElementBuilder;
-import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.NutsElementFactoryContext;
+
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.format.elem.NutsElementStreamFormat;
 import net.thevpc.nuts.runtime.core.format.json.ReaderLocation;
 
@@ -52,7 +47,7 @@ public class SimpleYaml implements NutsElementStreamFormat {
     }
 
     @Override
-    public void printElement(NutsElement value, PrintStream out, boolean compact, NutsElementFactoryContext context) {
+    public void printElement(NutsElement value, NutsPrintStream out, boolean compact, NutsElementFactoryContext context) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

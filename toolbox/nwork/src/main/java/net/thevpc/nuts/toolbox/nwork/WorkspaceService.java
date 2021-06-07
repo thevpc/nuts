@@ -340,8 +340,7 @@ public class WorkspaceService {
             }
             if (progress && appContext.getSession().isPlainOut()) {
                 maxSize = Math.max(maxSize, projectService.getConfig().getId().length());
-                appContext.getSession().out().printf("(%s / %s) %s", (i + 1), all.size(), _StringUtils.alignLeft(projectService.getConfig().getId(), maxSize));
-                appContext.getSession().getTerminal().sendOutCommand(NutsTerminalCommand.LATER_RESET_LINE);
+                appContext.getSession().out().printfln("(%s / %s) %s", (i + 1), all.size(), _StringUtils.alignLeft(projectService.getConfig().getId(), maxSize));
             }
             d.local = projectService.detectLocalVersion();
             d.remote = d.local == null ? null : projectService.detectRemoteVersion();
@@ -499,7 +498,7 @@ public class WorkspaceService {
         }
     }
 
-    private void printDiffResults(String prefix, PrintStream out, List<DiffItem> result) {
+    private void printDiffResults(String prefix, NutsPrintStream out, List<DiffItem> result) {
         if (result != null) {
             for (DiffItem diffItem : result) {
                 out.printf("%s%s%n", prefix, diffItem);

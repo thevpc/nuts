@@ -289,8 +289,8 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
     }
 
     @Override
-    public void print(PrintStream w) {
-        PrintStream out = getValidPrintStream(w);
+    public void print(NutsPrintStream w) {
+        NutsPrintStream out = getValidPrintStream(w);
         StringBuilder2 line = new StringBuilder2();
         List<Row> rows = rebuild(getSession());
         if (rows.size() > 0) {

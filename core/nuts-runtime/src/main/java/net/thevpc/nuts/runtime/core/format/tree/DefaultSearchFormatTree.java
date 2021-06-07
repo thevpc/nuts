@@ -37,7 +37,7 @@ public class DefaultSearchFormatTree extends DefaultSearchFormatBase {
         }
     };
 
-    public DefaultSearchFormatTree(NutsSession session, PrintStream writer, NutsFetchDisplayOptions options) {
+    public DefaultSearchFormatTree(NutsSession session, NutsPrintStream writer, NutsFetchDisplayOptions options) {
         super(session, writer, NutsContentType.TREE, options);
     }
 

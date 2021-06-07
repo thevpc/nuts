@@ -508,7 +508,7 @@ public interface NutsSession extends NutsCommandLineConfigurable {
      *
      * @return current output stream
      */
-    PrintStream out();
+    NutsPrintStream out();
 
     InputStream in();
 
@@ -517,7 +517,7 @@ public interface NutsSession extends NutsCommandLineConfigurable {
      *
      * @return current error stream
      */
-    PrintStream err();
+    NutsPrintStream err();
 
     /**
      * return new instance of iterable output

@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.core.format.text.parser.steps;
 
 import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.runtime.core.format.text.NutsTextNodeWriterStringer;
 import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextNodeParser;
 import net.thevpc.nuts.runtime.bundles.string.StringBuilder2;
 
@@ -35,20 +36,11 @@ public class PlainParserStep extends ParserStep {
     }
 
     public PlainParserStep(String s, boolean spreadLines, boolean lineStart, NutsWorkspace ws, DefaultNutsTextNodeParser.State state, IntPredicate exitCondition) {
-        this.state = state;
-        this.exitCondition = exitCondition;
-        state.setLineStart(s.charAt(s.length() - 1) == '\n');
-        this.ws = ws;
-//        this.spreadLines = spreadLines;
-        this.lineStart = lineStart;
-        value.append(s, 0, s.length() - 1);
-        char c = s.charAt(s.length() - 1);
-        if (c == '\\') {
-            escape = new StringBuilder("\\");
-        } else {
-            value.append(c);
+        this(s.charAt(0),lineStart, ws,state,exitCondition);
+        for (int i = 1; i < s.length(); i++) {
+            char c=s.charAt(i);
+            consume(c,state);
         }
-        last = c;
     }
 
     @Override
@@ -166,7 +158,7 @@ public class PlainParserStep extends ParserStep {
             }
             case '\\': {
                 if (escape != null) {
-                    if (escape.toString().equals("\\") && (c == '\\' || c == '#' || c == '{' || c == '}')) {
+                    if (escape.toString().equals("\\")) {
                         value.append(c);
                     } else {
                         value.append(escape);
@@ -227,9 +219,15 @@ public class PlainParserStep extends ParserStep {
                             return;
                         }
                     } else {
-                        value.append(escape);
+//                        if (escape.toString().equals("\\") && (c == '{' || c == '}')) {
+//                            value.append(c);
+//                        } else {
+                            value.append(escape);
+                            value.append(c);
+//                        }
+//                        value.append(escape);
                         escape = null;
-                        value.append(c);
+//                        value.append(c);
                     }
                     return;
                 }
@@ -251,7 +249,9 @@ public class PlainParserStep extends ParserStep {
 
     @Override
     public NutsText toText() {
-        return ws.text().forPlain(value.toString());
+        String t = value.toString();
+//        String q = NutsTextNodeWriterStringer.removeEscapes(t);
+        return ws.text().forPlain(t);
     }
 
     @Override

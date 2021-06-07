@@ -168,7 +168,7 @@ public class NDerbyMain implements NdbSupport {
         if (args.isExecMode()) {
             NutsSession session = appContext.getSession();
             if (session.isPlainOut()) {
-                PrintStream out = session.out();
+                NutsPrintStream out = session.out();
                 for (RunningDerby jpsResult : DerbyUtils.getRunningInstances(appContext)) {
                     switch (format) {
                         case "short": {

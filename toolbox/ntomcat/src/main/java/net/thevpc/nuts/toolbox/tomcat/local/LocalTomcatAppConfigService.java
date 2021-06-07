@@ -7,7 +7,6 @@ import net.thevpc.nuts.toolbox.tomcat.local.config.LocalTomcatAppConfig;
 import net.thevpc.nuts.toolbox.tomcat.util.TomcatUtils;
 
 import java.io.IOException;
-import java.io.PrintStream;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -214,7 +213,7 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
     }
 
     @Override
-    public LocalTomcatAppConfigService print(PrintStream out) {
+    public LocalTomcatAppConfigService print(NutsPrintStream out) {
         Map<String, Object> result = new HashMap<>();
         result.put("name", getFullName());
         result.put("config", getConfig());

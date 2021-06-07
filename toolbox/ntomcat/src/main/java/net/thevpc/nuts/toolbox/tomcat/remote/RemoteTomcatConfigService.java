@@ -1,8 +1,6 @@
 package net.thevpc.nuts.toolbox.tomcat.remote;
 
-import net.thevpc.nuts.NutsContentType;
-import net.thevpc.nuts.NutsExecutionException;
-import net.thevpc.nuts.NutsStoreLocation;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.tomcat.NTomcatConfigVersions;
 import net.thevpc.nuts.toolbox.tomcat.local.LocalTomcatConfigService;
 import net.thevpc.common.strings.StringUtils;
@@ -18,7 +16,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import net.thevpc.nuts.NutsApplicationContext;
 
 public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
     private static final String NTOMCAT = "net.thevpc.nuts.toolbox:ntomcat";
@@ -169,10 +166,9 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
     }
 
     @Override
-    public RemoteTomcatConfigService print(PrintStream out) {
-        PrintWriter w = new PrintWriter(out);
-        context.getWorkspace().elem().setContentType(NutsContentType.JSON).setValue(getConfig()).print(new PrintWriter(out));
-        w.flush();
+    public RemoteTomcatConfigService print(NutsPrintStream out) {
+        context.getWorkspace().elem().setContentType(NutsContentType.JSON).setValue(getConfig()).print(out);
+        out.flush();
         return this;
     }
 

@@ -6,6 +6,7 @@ import net.thevpc.nuts.NutsWorkspace;
 import java.io.IOException;
 import java.io.OutputStream;
 import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.runtime.standalone.io.OutputStreamHelper;
 
 public class RenderedOutputStream extends OutputStream implements NutsOutputStreamTransparentAdapter {
 
@@ -18,7 +19,9 @@ public class RenderedOutputStream extends OutputStream implements NutsOutputStre
         this.out = out;
         this.session = session;
         this.ws = session.getWorkspace();
-        h = new FormatOutputStreamSupport(out, renderer, session);
+        h = new FormatOutputStreamSupport(
+                new OutputStreamHelper(out,session)
+                , renderer, session);
     }
 
     @Override

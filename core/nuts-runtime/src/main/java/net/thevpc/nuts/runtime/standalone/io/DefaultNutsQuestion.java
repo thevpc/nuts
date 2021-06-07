@@ -25,7 +25,7 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
     private NutsQuestionValidator<T> validator;
 
     private final NutsTerminal terminal;
-    private final PrintStream out;
+    private final NutsPrintStream out;
     private final NutsWorkspace ws;
     private NutsSession session;
     private boolean traceConfirmation = false;
@@ -33,7 +33,7 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
     private boolean password = false;
     private Object lastResult = null;
 
-    public DefaultNutsQuestion(NutsWorkspace ws, NutsTerminal terminal, PrintStream out) {
+    public DefaultNutsQuestion(NutsWorkspace ws, NutsTerminal terminal, NutsPrintStream out) {
         this.ws = ws;
         this.terminal = terminal;
         this.out = out;
@@ -82,26 +82,23 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
                 }
                 case ERROR: {
                     if (cancelMessage != null) {
-                        ByteArrayPrintStream os = new ByteArrayPrintStream();
-                        PrintStream os2 = ws.term().setSession(getSession()).prepare(os);
-                        os2.printf(message, this.getCancelMessage());
-                        os2.flush();
+                        NutsByteArrayPrintStream os = new NutsByteArrayPrintStream(getSession());
+                        os.printf(message, this.getCancelMessage());
+                        os.flush();
                         throw new NutsUserCancelException(getSession(), os.toString());
                     } else {
-                        ByteArrayPrintStream os = new ByteArrayPrintStream();
-                        PrintStream os2 = ws.term().setSession(getSession()).prepare(os);
-                        os2.printf(message, this.getCancelMessageParameters());
-                        os2.flush();
+                        NutsByteArrayPrintStream os = new NutsByteArrayPrintStream(getSession());
+                        os.printf(message, this.getCancelMessageParameters());
+                        os.flush();
                         throw new NutsUserCancelException(getSession(), "cancelled : " + os.toString());
                     }
                 }
             }
         }
         if (!getSession().isPlainOut()) {
-            ByteArrayPrintStream os = new ByteArrayPrintStream();
-            PrintStream os2 = ws.term().setSession(getSession()).prepare(os);
-            os2.printf(message, this.getMessageParameters());
-            os2.flush();
+            NutsByteArrayPrintStream os = new NutsByteArrayPrintStream(getSession());
+            os.printf(message, this.getMessageParameters());
+            os.flush();
             throw new NutsExecutionException(getSession(), "unable to switch to interactive mode for non plain text output format. "
                     + "You need to provide default response (-y|-n) for question : " + os.toString(), 243);
         }

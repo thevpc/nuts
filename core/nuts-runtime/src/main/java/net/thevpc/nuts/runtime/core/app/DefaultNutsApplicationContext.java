@@ -126,7 +126,9 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
             setSharedFolder(folder, locations.getStoreLocation(this.appId.builder().setVersion("SHARED").build(), folder));
         }
         if (mode == NutsApplicationMode.AUTO_COMPLETE) {
-            this.workspace.term().setSession(session).getSystemTerminal().setMode(NutsTerminalMode.FILTERED);
+            //TODO fix me
+//            this.workspace.term().setSession(session).getSystemTerminal()
+//                    .setMode(NutsTerminalMode.FILTERED);
             if (wordIndex < 0) {
                 wordIndex = args.length;
             }
@@ -471,10 +473,10 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
 
         private final ArrayList<String> words;
         private int wordIndex;
-        private final PrintStream out0;
+        private final NutsPrintStream out0;
         private final NutsSession session;
 
-        public AppCommandAutoComplete(NutsSession session, String[] args, int wordIndex, PrintStream out0) {
+        public AppCommandAutoComplete(NutsSession session, String[] args, int wordIndex, NutsPrintStream out0) {
             this.session = session;
             words = new ArrayList<>(Arrays.asList(args));
             this.wordIndex = wordIndex;

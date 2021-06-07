@@ -3,7 +3,7 @@ package net.thevpc.nuts;
 /**
  * @category Format
  */
-public class NutsTextWriteConfiguration {
+public class NutsTextWriteConfiguration implements Cloneable{
     private boolean filtered;
     private boolean titleNumberEnabled;
     private boolean lineNumberEnabled;
@@ -45,4 +45,16 @@ public class NutsTextWriteConfiguration {
         return this;
     }
 
+    public NutsTextWriteConfiguration copy(){
+        return clone();
+    }
+
+    @Override
+    protected NutsTextWriteConfiguration clone(){
+        try {
+            return (NutsTextWriteConfiguration) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
 }

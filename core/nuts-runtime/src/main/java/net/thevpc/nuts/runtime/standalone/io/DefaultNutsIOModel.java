@@ -1,36 +1,40 @@
 package net.thevpc.nuts.runtime.standalone.io;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.parsers.StringPlaceHolderParser;
-import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.bundles.io.NullInputStream;
-import net.thevpc.nuts.runtime.bundles.io.NullOutputStream;
+import net.thevpc.nuts.runtime.bundles.parsers.StringPlaceHolderParser;
+import net.thevpc.nuts.runtime.core.format.text.SimpleWriterOutputStream;
+import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.boot.DefaultNutsBootModel;
 
-import java.io.*;
+import java.io.File;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Writer;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.function.Function;
 import java.util.regex.Pattern;
-import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 public class DefaultNutsIOModel {
 
-    public static final Pattern ANCHOR_PATTERN = Pattern.compile("[#]+(?<n>.+)[:]?[#]+");
+    public final NutsPrintStream nullOut;
+    private final Function<String, String> pathExpansionConverter;
+    public DefaultNutsBootModel bootModel;
     //    private final NutsLogger LOG;
     private NutsWorkspace ws;
-    private final Function<String, String> pathExpansionConverter;
-    private InputStream bootStdin = null;
-    private PrintStream bootStdout = null;
-    private PrintStream bootStderr = null;
+    private InputStream stdin = null;
+    private NutsPrintStream stdout;
+    private NutsPrintStream stderr;
 
-    private InputStream currentStdin = null;
-    private PrintStream currentStdout = null;
-    private PrintStream currentStderr = null;
-
-    public DefaultNutsIOModel(NutsWorkspace workspace) {
+    public DefaultNutsIOModel(NutsWorkspace workspace, DefaultNutsBootModel bootModel) {
         this.ws = workspace;
-        pathExpansionConverter = new NutsWorkspaceVarExpansionFunction(ws);
-//        LOG = ws.log().of(DefaultNutsIOManager.class);
+        this.pathExpansionConverter = new NutsWorkspaceVarExpansionFunction(ws);
+        this.bootModel = bootModel;
+        this.stdout = bootModel.stdout();
+        this.stderr = bootModel.stderr();
+        this.stdin = bootModel.stdin();
+        this.nullOut = new NutsPrintStreamNull(bootModel.bootSession());
     }
 
     public NutsWorkspace getWorkspace() {
@@ -98,12 +102,23 @@ public class DefaultNutsIOModel {
         return NullInputStream.INSTANCE;
     }
 
-    public PrintStream nullPrintStream() {
-        return new PrintStream(NullOutputStream.INSTANCE);
+    public NutsPrintStream nullPrintStream() {
+        return nullOut;
         //return createPrintStream(NullOutputStream.INSTANCE, NutsTerminalMode.FILTERED, session);
     }
 
-    public PrintStream createPrintStream(OutputStream out, NutsTerminalMode expectedMode, NutsSession session) {
+    public NutsPrintStream createPrintStream(Writer out, NutsTerminalMode expectedMode, NutsSession session) {
+        if (out == null) {
+            return null;
+        }
+        if (out instanceof WriterFromNutsPrintStream) {
+            return ((WriterFromNutsPrintStream) out).getBase().convert(expectedMode);
+        }
+        SimpleWriterOutputStream w = new SimpleWriterOutputStream(out, session);
+        return createPrintStream(w, expectedMode, session);
+    }
+
+    public NutsPrintStream createPrintStream(OutputStream out, NutsTerminalMode expectedMode, NutsSession session) {
         if (out == null) {
             return null;
         }
@@ -125,14 +140,24 @@ public class DefaultNutsIOModel {
                 expectedMode = NutsTerminalMode.FILTERED;
             }
         }
-        return CoreIOUtils.toPrintStream(CoreIOUtils.convertOutputStream(out, expectedMode, session), session);
+        if (out instanceof PrintStreamFromNutsPrintStream) {
+            return ((PrintStreamFromNutsPrintStream) out).getBase().convert(expectedMode);
+        }
+        if (out instanceof OutputStreamFromNutsPrintStream) {
+            return ((OutputStreamFromNutsPrintStream) out).getBase().convert(expectedMode);
+        }
+        return
+                new NutsPrintStreamRaw(out, null, null, session, new NutsPrintStreamBase.Bindings())
+                        .convert(expectedMode)
+                ;
     }
+
 
     public NutsTempAction tmp() {
         return new DefaultTempAction(ws);
     }
 
-//    
+    //
 //    public PrintStream createPrintStream(Path out) {
 //        if (out == null) {
 //            return null;
@@ -215,48 +240,31 @@ public class DefaultNutsIOModel {
 //        }
 //        return this;
 //    }
-    public InputStream getBootStdin(boolean nonnull) {
-        if (bootStdin != null) {
-            return bootStdin;
-        }
-        return nonnull ? System.in : null;
+
+    public InputStream stdin() {
+        return stdin == null ? bootModel.stdin() : stdin;
     }
 
-    public PrintStream getBootStdout(boolean nonnull) {
-        if (bootStdout != null) {
-            return bootStdout;
-        }
-        return nonnull ? System.out : null;
+    public void setStdin(InputStream stdin) {
+        this.stdin = stdin;
     }
 
-    public PrintStream getBootStderr(boolean nonnull) {
-        if (bootStderr != null) {
-            return bootStderr;
-        }
-        return nonnull ? System.err : null;
+    public NutsPrintStream stdout() {
+        return stdout;
     }
 
-    public InputStream getCurrentStdin() {
-        return currentStdin;
+    public void setStdout(NutsPrintStream stdout) {
+        this.stdout = stdout == null ?
+
+                bootModel.stdout() : stdout;
     }
 
-    public void setCurrentStdin(InputStream currentStdin) {
-        this.currentStdin = currentStdin;
+    public NutsPrintStream stderr() {
+        return stderr;
     }
 
-    public PrintStream getCurrentStdout() {
-        return currentStdout;
+    public void setStderr(NutsPrintStream stderr) {
+        this.stderr = stderr == null ? bootModel.stderr() : stderr;
     }
 
-    public void setCurrentStdout(PrintStream currentStdout) {
-        this.currentStdout = currentStdout;
-    }
-
-    public PrintStream getCurrentStderr() {
-        return currentStderr;
-    }
-
-    public void setCurrentStderr(PrintStream currentStderr) {
-        this.currentStderr = currentStderr;
-    }
 }

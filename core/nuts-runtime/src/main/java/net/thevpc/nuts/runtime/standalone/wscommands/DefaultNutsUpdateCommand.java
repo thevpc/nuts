@@ -292,7 +292,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
 
     protected void traceFixes() {
         if (resultFixes != null) {
-            PrintStream out = CoreIOUtils.resolveOut(getSession());
+            NutsPrintStream out = getSession().out();
             for (FixAction n : resultFixes) {
                 out.printf("[```error FIX```] %s %s %n", n.getId(), n.getProblemKey());
             }
@@ -303,7 +303,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         checkSession();
         NutsWorkspace ws = getSession().getWorkspace();
         if (getSession().isPlainTrace()) {
-            PrintStream out = CoreIOUtils.resolveOut(getSession());
+            NutsPrintStream out = getSession().out();
             NutsUpdateResult[] updates = result.getAllUpdates();
             if (updates.length == 0) {
                 out.printf("All packages are %s. You are running latest version%s.%n",
@@ -455,7 +455,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
     private void applyFixes() {
         if (resultFixes != null) {
             NutsSession session = getSession();
-            PrintStream out = CoreIOUtils.resolveOut(session);
+            NutsPrintStream out = session.out();
             for (FixAction n : resultFixes) {
                 n.fix(session);
                 out.printf("[```error FIX```] unable to %s %s %n", n.getId(), n.getProblemKey());
@@ -475,7 +475,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         NutsWorkspaceUtils.of(getSession()).checkReadOnly();
         boolean requireSave = false;
         NutsSession validWorkspaceSession = getSession();
-        final PrintStream out = CoreIOUtils.resolveOut(validWorkspaceSession);
+        final NutsPrintStream out = validWorkspaceSession.out();
         boolean accept = getSession().getWorkspace().term().getTerminal().ask()
                 .forBoolean("Would you like to apply updates?").setDefaultValue(true)
                 .setSession(validWorkspaceSession).getValue();
@@ -544,7 +544,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         NutsDefinition d0 = r.getLocal();
         NutsDefinition d1 = r.getAvailable();
         final String simpleName = d0 != null ? d0.getId().getShortName() : d1 != null ? d1.getId().getShortName() : id.getShortName();
-        final PrintStream out = CoreIOUtils.resolveOut(getSession());
+        final NutsPrintStream out = getSession().out();
         NutsTextManager factory = ws.text();
         if (r.isUpdateApplied()) {
             if (r.isUpdateForced()) {
@@ -715,7 +715,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         }
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
         NutsSession session = getSession();
-        final PrintStream out = CoreIOUtils.resolveOut(session);
+        final NutsPrintStream out = session.out();
         NutsId id = r.getId();
         NutsDefinition d0 = r.getLocal();
         NutsDefinition d1 = r.getAvailable();

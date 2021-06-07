@@ -25,16 +25,14 @@
 */
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
-import net.thevpc.nuts.NutsSingleton;
+import net.thevpc.nuts.*;
 import net.thevpc.common.io.IOUtils;
 import net.thevpc.common.strings.StringUtils;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import net.thevpc.nuts.NutsArgument;
-import net.thevpc.nuts.NutsExecutionException;
-import net.thevpc.nuts.NutsCommandLine;
+
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 
 /**
@@ -130,13 +128,7 @@ public class CatCommand extends SimpleNshBuiltin {
     }
 
     private void catText(InputStream in, OutputStream os, Options options, SimpleNshCommandContext context) throws IOException {
-        PrintStream out = null;
-        if (os instanceof PrintStream) {
-            out = (PrintStream) os;
-        } else {
-            out = new PrintStream(os);
-        }
-        out = context.getWorkspace().term().prepare(out);
+        NutsPrintStream out = context.getWorkspace().io().createPrintStream(os);
         try {
             //do not close!!
             BufferedReader reader = new BufferedReader(new InputStreamReader(in));

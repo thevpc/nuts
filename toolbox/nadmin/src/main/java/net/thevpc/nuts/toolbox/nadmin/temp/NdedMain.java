@@ -201,7 +201,7 @@ public class NdedMain  {
 //        f = this.appContext.getWorkspace().getExtensionManager();
         NutsDescriptorBuilder b = this.context.getWorkspace().descriptor().descriptorBuilder();
         fillArgs(b);
-        final PrintStream out = this.context.getSession().out();
+        final NutsPrintStream out = this.context.getSession().out();
         NutsTextManager text = context.getWorkspace().text();
         NutsTextManager factory = text;
         out.print(factory.forStyled("creating new nuts descriptor...\n",NutsTextStyle.primary(3)));

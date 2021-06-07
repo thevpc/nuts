@@ -203,7 +203,7 @@ public class NutsHttpServerComponent implements NutsServerComponent {
             }
         });
         server.start();
-        PrintStream out = session.out();
+        NutsPrintStream out = session.out();
         NutsTextManager factory = session.getWorkspace().text();
         out.printf("Nuts Http Service '%s' running %s at %s\n", serverId,
                 factory.forStyled(

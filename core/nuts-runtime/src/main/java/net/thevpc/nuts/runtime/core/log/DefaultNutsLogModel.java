@@ -34,14 +34,8 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
-import net.thevpc.nuts.NutsIOManager;
-import net.thevpc.nuts.NutsLogConfig;
-import net.thevpc.nuts.NutsLogger;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsSessionTerminal;
-import net.thevpc.nuts.NutsStoreLocation;
-import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.NutsWorkspaceInitInformation;
+
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 /**
@@ -51,7 +45,7 @@ import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 public class DefaultNutsLogModel {
      private NutsWorkspace workspace;
 
-    private PrintStream out=System.err;
+    private NutsPrintStream out;
     private Handler consoleHandler;
     private Handler fileHandler;
     private NutsLogConfig logConfig=new NutsLogConfig();
@@ -78,6 +72,7 @@ public class DefaultNutsLogModel {
             logConfig.setLogFileSize(lc.getLogFileSize());
             logConfig.setLogInherited(lc.isLogInherited());
         }
+        out=workspace.io().stderr();
     }
 
     public NutsSession getDefaultSession() {
@@ -155,7 +150,6 @@ public class DefaultNutsLogModel {
             level = Level.INFO;
         }
         this.logConfig.setLogFileLevel(level);
-//        session = CoreNutsUtils.validate(session, workspace);
         if (consoleHandler != null) {
             consoleHandler.setLevel(level);
         }
@@ -200,10 +194,13 @@ public class DefaultNutsLogModel {
     }
 
     public void updateTermHandler(LogRecord record) {
-        PrintStream out=null;
+        NutsPrintStream out=null;
+        NutsSession session=null;
         if (record instanceof NutsLogRecord) {
             NutsLogRecord rr = (NutsLogRecord) record;
-            NutsSession session = rr.getSession();
+            if(rr.getSession()!=null){
+                session=rr.getSession();
+            }
             NutsWorkspace ws = rr.getWorkspace();
             if (session != null) {
                 out = session.out();
@@ -220,7 +217,7 @@ public class DefaultNutsLogModel {
             }
         }
         if(out==null){
-            out=System.err;
+            out= defaultSession.getWorkspace().io().stderr();
         }
         if(out!=this.out || consoleHandler==null){
             this.out=out;

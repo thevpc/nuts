@@ -120,7 +120,7 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
     public void dryExecute() {
         if (autoInstall && !def.getInstallInformation().getInstallStatus().isInstalled()) {
             execSession.getWorkspace().security().checkAllowed(NutsConstants.Permissions.AUTO_INSTALL, commandName);
-            PrintStream out = execSession.out();
+            NutsPrintStream out = execSession.out();
             out.printf("[dry] ==install== %s%n", def.getId().getLongName());
         }
         execCommand.ws_execId(def, commandName, appArgs, executorOptions, env, dir, failFast, false, traceSession, execSession, executionType, true);

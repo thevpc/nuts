@@ -116,7 +116,7 @@ public class AdminServerRunnable implements NutsServer, Runnable {
                             try {
                                 try {
                                     PrintStream out = new PrintStream(finalAccept.getOutputStream());
-                                    PrintStream eout = invokerWorkspace.io().createPrintStream(out, NutsTerminalMode.FORMATTED);
+                                    NutsPrintStream eout = invokerWorkspace.io().createPrintStream(out, NutsTerminalMode.FORMATTED);
                                     NutsSession session = invokerWorkspace.createSession();
                                     session.setTerminal(
                                             invokerWorkspace.term().createTerminal(

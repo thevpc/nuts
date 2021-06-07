@@ -391,21 +391,19 @@ public class DocusaurusCtrl {
 
         @Override
         public Object eval(String content, FileTemplater context) {
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            PrintStream out1 = new PrintStream(out);
+            NutsPrintStream out = shell.getWorkspace().io().createMemoryPrintStream();
             shell.getSession().setTerminal(
                     shell.getWorkspace().term()
                             .createTerminal(
                                     new ByteArrayInputStream(new byte[0]),
-                                    out1,
-                                    out1)
+                                    out,
+                                    out)
             );
             JShellFileContext ctx = shell.createSourceFileContext(
                     shell.getRootContext(),
                     context.getSourcePath().orElseGet(()->"nsh"),new String[0]
             );
             shell.executeString(content,ctx);
-            out1.flush();
             return out.toString();
         }
 

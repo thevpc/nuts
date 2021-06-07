@@ -34,7 +34,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- *
+ * This class holds information gathered by nuts Boot and passed to Runtime on BootTime
  * @author thevpc
  * @category Internal
  */
@@ -46,7 +46,7 @@ final class PrivateNutsWorkspaceInitInformation implements NutsWorkspaceInitInfo
      */
     private String apiVersion;
     /**
-     * workspace runtime id (group, name avec version)
+     * workspace runtime id (group, name with version)
      */
     private NutsBootId runtimeId;
     private NutsBootDescriptor runtimeBootDescriptor;

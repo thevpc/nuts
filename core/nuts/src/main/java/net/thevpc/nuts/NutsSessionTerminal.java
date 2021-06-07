@@ -41,9 +41,9 @@ public interface NutsSessionTerminal extends NutsSessionTerminalBase, NutsTermin
 
     void setIn(InputStream in);
 
-    void setOut(PrintStream out);
+    void setOut(NutsPrintStream out);
 
-    void setErr(PrintStream out);
+    void setErr(NutsPrintStream out);
 
     NutsSessionTerminal copy();
 

@@ -162,9 +162,9 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
     }
 
     @Override
-    public void print(PrintStream w) {
+    public void print(NutsPrintStream w) {
         checkSession();
-        PrintStream out = getValidPrintStream(w);
+        NutsPrintStream out = getValidPrintStream(w);
         Map<Object, Object> mm;
         Map model = buildModel();
         if (sorted) {
@@ -181,7 +181,7 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
             mm = model;
         }
         if (javaProps) {
-            CoreIOUtils.storeProperties(ObjectOutputFormatWriterHelper.explodeMap(mm), w, sorted);
+            CoreIOUtils.storeProperties(ObjectOutputFormatWriterHelper.explodeMap(mm), w.asOutputStream(), sorted);
         } else {
             printMap(out, getSession().getWorkspace().text().forBlank(), mm);
         }
@@ -207,7 +207,7 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
 //        }
 //        return sb.toString();
 //    }
-    private void printMap(PrintStream out, NutsString prefix, Map<Object, Object> props) {
+    private void printMap(NutsPrintStream out, NutsString prefix, Map<Object, Object> props) {
         int len = 1;
         for (Object extraKey : props.keySet()) {
             int x = stringValue(extraKey).textLength();
@@ -235,11 +235,11 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
         return sep;
     }
 
-    private void printKeyValue(PrintStream out, NutsString prefix, int len, NutsString key, NutsString value) {
+    private void printKeyValue(NutsPrintStream out, NutsString prefix, int len, NutsString key, NutsString value) {
         printKeyValue(out, prefix, len, getMultilineSeparator(key), key, value);
     }
 
-    private void printKeyValue(PrintStream out, NutsString prefix, int len, String fancySep, NutsString key, NutsString value) {
+    private void printKeyValue(NutsPrintStream out, NutsString prefix, int len, String fancySep, NutsString key, NutsString value) {
         NutsTextManager txt = getSession().getWorkspace().text();
         if (prefix == null) {
             prefix = txt.forBlank();

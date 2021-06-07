@@ -58,7 +58,7 @@ public class DefaultNutsDescriptorFormat extends DefaultFormatBase<NutsDescripto
     }
 
     @Override
-    public void print(PrintStream out) {
+    public void print(NutsPrintStream out) {
         checkSession();
         if (isNtf()) {
             ByteArrayOutputStream os=new ByteArrayOutputStream();

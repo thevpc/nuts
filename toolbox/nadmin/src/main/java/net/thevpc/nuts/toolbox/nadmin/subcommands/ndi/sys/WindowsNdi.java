@@ -176,7 +176,7 @@ public class WindowsNdi extends BaseSystemNdi {
             String desktopSpecificVersionShortcutPath = configurePathShortcut(Target.DESKTOP, false, apiVersion, bootConfig, null, session);
             String menuGlobalShortcutPath = configurePathShortcut(Target.MENU, true, apiVersion, bootConfig, null, session);
             String menuSpecificVersionShortcutPath = configurePathShortcut(Target.MENU, false, apiVersion, bootConfig, null, session);
-            PrintStream out = context.getSession().out();
+            NutsPrintStream out = context.getSession().out();
             NutsTextManager factory = context.getWorkspace().text();
             if (session.isTrace()) {
                 out.printf("```error ATTENTION``` To run any nuts command you should use the pre-configured shell at \"%s\".%n",

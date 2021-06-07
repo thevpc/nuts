@@ -225,7 +225,7 @@ public class DefaultNutsWorkspaceEnvManagerModel {
 //    public NutsId getArch() {
 //        return current().getArch();
 //    }
-    private static NutsOsFamily getPlatformOsFamily0() {
+    public static NutsOsFamily getPlatformOsFamily0() {
         String property = System.getProperty("os.name").toLowerCase(Locale.ENGLISH);
         if (property.startsWith("linux")) {
             return NutsOsFamily.LINUX;

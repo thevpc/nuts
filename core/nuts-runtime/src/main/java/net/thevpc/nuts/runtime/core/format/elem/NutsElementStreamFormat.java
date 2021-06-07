@@ -24,9 +24,10 @@
 package net.thevpc.nuts.runtime.core.format.elem;
 
 import net.thevpc.nuts.NutsElementFactoryContext;
-import java.io.PrintStream;
+
 import java.io.Reader;
 import net.thevpc.nuts.NutsElement;
+import net.thevpc.nuts.NutsPrintStream;
 
 /**
  *
@@ -36,5 +37,5 @@ public interface NutsElementStreamFormat {
 
     public NutsElement parseElement(Reader reader,NutsElementFactoryContext context);
 
-    public void printElement(NutsElement value, PrintStream out, boolean compact,NutsElementFactoryContext context);
+    public void printElement(NutsElement value, NutsPrintStream out, boolean compact, NutsElementFactoryContext context);
 }

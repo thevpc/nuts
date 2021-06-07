@@ -9,11 +9,8 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.Writer;
 
-import net.thevpc.nuts.NutsCommandLineConfigurable;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.NutsConfigurableHelper;
-import net.thevpc.nuts.NutsCommandLine;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
@@ -41,26 +38,26 @@ public abstract class DefaultFormatBase0<T> implements NutsCommandLineConfigurab
         return workspace;
     }
 
-    public PrintWriter getValidPrintWriter(Writer out) {
-        checkSession();
-        return (out == null)
-                ? CoreIOUtils.toPrintWriter(getSession().getTerminal().getOut(), getSession())
-                : CoreIOUtils.toPrintWriter(out, getSession());
-    }
+//    public PrintWriter getValidPrintWriter(Writer out) {
+//        checkSession();
+//        return (out == null)
+//                ? CoreIOUtils.toPrintWriter(getSession().getTerminal().getOut(), getSession())
+//                : CoreIOUtils.toPrintWriter(out, getSession());
+//    }
 
-    public PrintWriter getValidPrintWriter() {
-        return getValidPrintWriter(null);
-    }
+//    public PrintWriter getValidPrintWriter() {
+//        return getValidPrintWriter(null);
+//    }
 
-    public PrintStream getValidPrintStream(PrintStream out) {
+    public NutsPrintStream getValidPrintStream(NutsPrintStream out) {
         checkSession();
         if (out == null) {
             out = getSession().getTerminal().getOut();
         }
-        return getSession().getWorkspace().term().setSession(getSession()).prepare(out);
+        return out;
     }
 
-    public PrintStream getValidPrintStream() {
+    public NutsPrintStream getValidPrintStream() {
         return getValidPrintStream(null);
     }
 

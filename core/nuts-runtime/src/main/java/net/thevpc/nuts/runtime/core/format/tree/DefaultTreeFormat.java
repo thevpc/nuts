@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.core.format.tree;
 
 import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.*;
 
@@ -9,7 +8,6 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.core.format.props.DefaultPropertiesFormat;
 import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
-import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 
 public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> implements NutsTreeFormat {
@@ -145,7 +143,7 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
     @Override
     public String toString() {
         ByteArrayOutputStream b = new ByteArrayOutputStream();
-        PrintStream out = CoreIOUtils.toPrintStream(b, getSession());
+        NutsPrintStream out = getSession().getWorkspace().io().createPrintStream(b);
         NutsTreeModel tree = getModel();
         print(tree, "", NutsPositionType.FIRST, tree.getRoot(), out, isEffectiveOmitRoot(), 0, false);
         out.flush();
@@ -153,13 +151,13 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
     }
 
     @Override
-    public void print(PrintStream out) {
+    public void print(NutsPrintStream out) {
         NutsTreeModel tree = getModel();
         print(tree, "", NutsPositionType.FIRST, tree.getRoot(), out, isEffectiveOmitRoot(), 0, false);
         out.flush();
     }
 
-    private boolean print(NutsTreeModel tree, String prefix, NutsPositionType type, Object o, PrintStream out, boolean hideRoot, int depth, boolean prefixNewLine) {
+    private boolean print(NutsTreeModel tree, String prefix, NutsPositionType type, Object o, NutsPrintStream out, boolean hideRoot, int depth, boolean prefixNewLine) {
         checkSession();
         Object oValue=o;
         if(oValue instanceof XNode){
