@@ -5,7 +5,7 @@ import net.thevpc.nuts.NutsText;
 
 public abstract class ParserStep {
 
-    public abstract void consume(char c, DefaultNutsTextNodeParser.State p);
+    public abstract void consume(char c, DefaultNutsTextNodeParser.State p, boolean wasNewLine);
 
     public abstract void appendChild(ParserStep tt);
 

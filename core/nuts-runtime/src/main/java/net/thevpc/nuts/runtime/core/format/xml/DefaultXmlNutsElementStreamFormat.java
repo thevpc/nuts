@@ -28,7 +28,6 @@ import java.io.Reader;
 import javax.xml.transform.stream.StreamResult;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.io.ByteArrayPrintStream;
 import net.thevpc.nuts.runtime.core.format.elem.NutsElementStreamFormat;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
@@ -63,10 +62,10 @@ public class DefaultXmlNutsElementStreamFormat implements NutsElementStreamForma
         Document doc = (Document) context.elementToObject(value, Document.class);
         if (out.isNtf()) {
             NutsPrintStream bos = context.getWorkspace().io().createMemoryPrintStream();
-            NutsXmlUtils.writeDocument(doc, new StreamResult(bos.asOutputStream()), compact, true, session);
+            NutsXmlUtils.writeDocument(doc, new StreamResult(bos.asPrintStream()), compact, true, session);
             out.print(context.getWorkspace().text().forCode("xml", bos.toString()));
         } else {
-            NutsXmlUtils.writeDocument(doc, new StreamResult(out.asOutputStream()), compact, true, session);
+            NutsXmlUtils.writeDocument(doc, new StreamResult(out.asPrintStream()), compact, true, session);
         }
     }
 

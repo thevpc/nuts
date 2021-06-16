@@ -445,6 +445,7 @@ public class NMysqlMain implements NdbSupport {
                         if (c.getDatabase(name.getDatabaseName(), NutsOpenMode.OPEN_OR_NULL) != null) {
                             overrideExisting = true;
                             if (!session.getTerminal().ask()
+                                    .resetLine()
                                     .setSession(session)
                                     .forBoolean("already exists %s. override?", factory.forStyled(name.toString(),
                                                     NutsTextStyle.primary(3))
@@ -457,6 +458,7 @@ public class NMysqlMain implements NdbSupport {
                         if (c.getDatabase(name.getDatabaseName(), NutsOpenMode.OPEN_OR_NULL) != null) {
                             overrideExisting = true;
                             if (!session.getTerminal().ask()
+                                    .resetLine()
                                     .setSession(session)
                                     .forBoolean("already exists %s. override?",factory.forStyled(name.toString(),NutsTextStyle.primary(3)))
                                     .setDefaultValue(false).getBooleanValue()) {
@@ -614,6 +616,7 @@ public class NMysqlMain implements NdbSupport {
                         if (c.getDatabase(name.getDatabaseName(),NutsOpenMode.OPEN_OR_NULL) != null) {
                             overrideExisting = true;
                             if (!session.getTerminal().ask()
+                                    .resetLine()
                                     .setSession(session)
                                     .forBoolean("already exists %s. override?", factory.forStyled(name.toString(),NutsTextStyle.primary(3)))
                                     .setDefaultValue(false).getBooleanValue()) {
@@ -624,6 +627,7 @@ public class NMysqlMain implements NdbSupport {
                         if (c.getDatabase(name.getDatabaseName(),NutsOpenMode.OPEN_OR_NULL) != null) {
                             overrideExisting = true;
                             if (!session.getTerminal().ask()
+                                    .resetLine()
                                     .setSession(session)
                                     .forBoolean("already exists %s. override?", factory.forStyled(name.toString(),NutsTextStyle.primary(3)))
                                     .setDefaultValue(false).getBooleanValue()) {

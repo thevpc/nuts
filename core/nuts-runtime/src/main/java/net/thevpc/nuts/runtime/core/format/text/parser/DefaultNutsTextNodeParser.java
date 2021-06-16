@@ -6,7 +6,6 @@
 package net.thevpc.nuts.runtime.core.format.text.parser;
 
 import net.thevpc.nuts.NutsTextWriteConfiguration;
-import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.core.format.text.AbstractNutsTextNodeParser;
 import net.thevpc.nuts.runtime.core.format.text.NutsTextNodeWriterStringer;
 import net.thevpc.nuts.runtime.core.format.text.parser.steps.*;
@@ -20,8 +19,6 @@ import net.thevpc.nuts.NutsConstants;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsText;
 import net.thevpc.nuts.NutsTextVisitor;
-
-import javax.swing.*;
 
 /**
  * @author thevpc
@@ -334,7 +331,11 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
 
         private void onNewChar(char c) {
             ParserStep st = statusStack.peek();
-            st.consume(c, this);
+            boolean wasNewLine=false;
+            if(st instanceof RootParserStep){
+                wasNewLine=((RootParserStep) st).isEmpty();
+            }
+            st.consume(c, this, wasNewLine);
         }
 
         public ParserStep applyDrop() {
@@ -385,7 +386,12 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
         }
 
         public void applyPopReject(char rejected) {
-            applyPop().consume(rejected, this);
+            ParserStep tt = statusStack.peek();
+            ParserStep p = applyPop();
+            boolean wasNewLine=
+                    (tt instanceof NewLineParserStep)
+                    ;
+            p.consume(rejected, this, wasNewLine);
         }
 
         public void applyStart(String c, boolean spreadLines, boolean lineStart) {

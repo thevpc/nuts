@@ -331,7 +331,7 @@ public class JobServiceCmd {
                 break;
             } else if (line.trim().equals("err") || line.trim().equals("show-error") || line.trim().equals("show error")) {
                 if (lastError != null) {
-                    lastError.printStackTrace(session.out().asOutputStream());
+                    lastError.printStackTrace(session.out().asPrintStream());
                 }
             } else {
                 NutsCommandLine cmd = ws.commandLine().parse(line);

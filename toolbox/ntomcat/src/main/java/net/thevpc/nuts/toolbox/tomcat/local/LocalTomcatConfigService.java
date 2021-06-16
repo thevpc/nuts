@@ -908,7 +908,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                 return;
             }
             if (Files.isRegularFile(file)) {
-                TextFiles.tail(file.toString(), tail, context.getSession().out().asOutputStream());
+                TextFiles.tail(file.toString(), tail, context.getSession().out().asPrintStream());
             }
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);

@@ -283,7 +283,7 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
                 sb.append("&", NutsTextStyle.separator());
             }
             sb.append("exclusions", NutsTextStyle.keyword(2)).append("=", NutsTextStyle.separator());
-            sb.append(exclusions, NutsTextStyle.error());
+            sb.append(exclusions, NutsTextStyle.warn());
         }
         if (!CoreStringUtils.isBlank(id.getPropertiesQuery())) {
             Set<String> otherKeys = new TreeSet<>(queryMap.keySet());

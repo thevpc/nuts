@@ -1,23 +1,23 @@
 package net.thevpc.nuts.runtime.core.log;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.NutsLogConfig;
+import net.thevpc.nuts.NutsPrintStream;
+import net.thevpc.nuts.NutsSession;
 
-import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.logging.Filter;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.StreamHandler;
 
-import net.thevpc.nuts.runtime.standalone.io.OutputStreamFromNutsPrintStream;
-import net.thevpc.nuts.runtime.standalone.io.PrintStreamFromNutsPrintStream;
-import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
-
 public class NutsLogConsoleHandler extends StreamHandler {
 
     private NutsPrintStream out;
+    private NutsSession session;
 
-    public NutsLogConsoleHandler(NutsPrintStream out, boolean closeable) {
+    public NutsLogConsoleHandler(NutsPrintStream out, boolean closeable, NutsSession session) {
+        this.session = session;
+        setFormatter(new NutsLogRichFormatter(session, false));
         setOutputStream(out, closeable);
     }
 
@@ -25,9 +25,9 @@ public class NutsLogConsoleHandler extends StreamHandler {
         flush();
         this.out = out;
         if (closable) {
-            super.setOutputStream(out.asOutputStream());
+            super.setOutputStream(out.asPrintStream());
         } else {
-            super.setOutputStream(new PrintStream(out.asOutputStream()) {
+            super.setOutputStream(new PrintStream(out.asPrintStream()) {
                 @Override
                 public void close() {
                     //
@@ -36,63 +36,37 @@ public class NutsLogConsoleHandler extends StreamHandler {
         }
     }
 
-    public synchronized void publish(LogRecord record) {
-        if (!isLoggable(record)) {
-            return;
-        }
-        if (record instanceof NutsLogRecord) {
-            NutsLogRecord rr = (NutsLogRecord) record;
-            NutsWorkspace ws = rr.getWorkspace();
-            NutsTerminalManager tf = ws.term().setSession(
-                    rr.getSession() == null ? NutsWorkspaceUtils.defaultSession(ws) : rr.getSession()
-            );
-//            if (!rr.isFormatted()) {
-//                record = ((NutsLogRecord) record).escape();
-//            }
-            setFormatter(NutsLogRichFormatter.RICH);
-        } else {
-            setFormatter(NutsLogPlainFormatter.PLAIN);
-            setOutputStream(System.err);
-        }
-        super.publish(record);
-//        flush();
-    }
-
     @Override
     public boolean isLoggable(LogRecord record) {
         if (!super.isLoggable(record)) {
             return false;
         }
-        if (record instanceof NutsLogRecord) {
-            NutsSession session = ((NutsLogRecord) record).getSession();
-            if (session != null) {
-                if (session.isBot()) {
-                    return false;
-                }
-                NutsLogConfig logConfig = session.getWorkspace().config().options().getLogConfig();
-                Level sessionLogLevel = session.getLogTermLevel();
-                if (sessionLogLevel == null) {
-                    if (logConfig != null) {
-                        sessionLogLevel = logConfig.getLogTermLevel();
-                    }
-                    if (sessionLogLevel == null) {
-                        sessionLogLevel = Level.OFF;
-                    }
-                }
-                final int sessionLogLevelValue = sessionLogLevel.intValue();
-                Level recLogLevel = record.getLevel();
-                if (recLogLevel.intValue() < sessionLogLevelValue || sessionLogLevelValue == Level.OFF.intValue()) {
-                    return false;
-                }
-                Filter sessionLogFilter = session.getLogTermFilter();
-                if (sessionLogFilter == null && logConfig != null) {
-                    sessionLogFilter = logConfig.getLogTermFilter();
-                }
-                if (sessionLogFilter != null) {
-                    if (!sessionLogFilter.isLoggable(record)) {
-                        return false;
-                    }
-                }
+        NutsSession session = NutsLogUtils.resolveSession(record,this.session);
+        if (session.isBot()) {
+            return false;
+        }
+        NutsLogConfig logConfig = session.getWorkspace().config().options().getLogConfig();
+        Level sessionLogLevel = session.getLogTermLevel();
+        if (sessionLogLevel == null) {
+            if (logConfig != null) {
+                sessionLogLevel = logConfig.getLogTermLevel();
+            }
+            if (sessionLogLevel == null) {
+                sessionLogLevel = Level.OFF;
+            }
+        }
+        final int sessionLogLevelValue = sessionLogLevel.intValue();
+        Level recLogLevel = record.getLevel();
+        if (recLogLevel.intValue() < sessionLogLevelValue || sessionLogLevelValue == Level.OFF.intValue()) {
+            return false;
+        }
+        Filter sessionLogFilter = session.getLogTermFilter();
+        if (sessionLogFilter == null && logConfig != null) {
+            sessionLogFilter = logConfig.getLogTermFilter();
+        }
+        if (sessionLogFilter != null) {
+            if (!sessionLogFilter.isLoggable(record)) {
+                return false;
             }
         }
         return true;

@@ -55,7 +55,7 @@ public class NshEvaluator extends DefaultJShellEvaluator implements JShellEvalua
         } catch (IOException ex) {
             throw new JShellException(1, ex);
         }
-        final JShellFileContext leftContext = context.getShell().createNewContext(context).setOut(nout.asOutputStream());
+        final JShellFileContext leftContext = context.getShell().createNewContext(context).setOut(nout.asPrintStream());
         final JShellUniformException[] a = new JShellUniformException[2];
         Thread j1 = new Thread() {
             @Override

@@ -1,5 +1,6 @@
 package net.thevpc.nuts;
 
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.Writer;
 import java.util.Locale;
@@ -57,13 +58,7 @@ public interface NutsPrintStream {
 
     NutsPrintStream println(Object x);
 
-    /**
-     * return to the start of the line, print formatted string then print a newline
-     * @param format formatted string
-     * @param args args
-     * @return {@code this} instance
-     */
-    NutsPrintStream printfln(String format, Object... args);
+    NutsPrintStream resetLine();
 
     NutsPrintStream printf(String format, Object... args);
 
@@ -89,7 +84,9 @@ public interface NutsPrintStream {
 
     int getColumns();
 
-    PrintStream asOutputStream();
+    OutputStream asOutputStream();
+
+    PrintStream asPrintStream();
 
     Writer asWriter();
 

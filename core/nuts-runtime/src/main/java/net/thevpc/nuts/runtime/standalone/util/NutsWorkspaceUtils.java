@@ -567,14 +567,14 @@ public class NutsWorkspaceUtils {
                 pb.setRedirectFileInput(inputFile);
             }
             if (outputFile == null) {
-                pb.setOutput(out==null?null:out.asOutputStream());
+                pb.setOutput(out==null?null:out.asPrintStream());
             } else {
                 pb.setRedirectFileOutput(outputFile);
             }
             if (redirectErr) {
                 pb.setRedirectErrorStream();
             } else {
-                pb.setErr(err==null?null:err.asOutputStream());
+                pb.setErr(err==null?null:err.asPrintStream());
             }
         }
 

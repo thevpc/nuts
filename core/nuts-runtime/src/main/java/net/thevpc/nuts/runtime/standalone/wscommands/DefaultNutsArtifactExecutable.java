@@ -76,43 +76,47 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
     @Override
     public void execute() {
         NutsInstallStatus installStatus = def.getInstallInformation().getInstallStatus();
-        if (autoInstall && !installStatus.isInstalled()) {
-            traceSession.getWorkspace().install().setSession(traceSession).id(def.getId()).run();
-            NutsInstallStatus st = traceSession.getWorkspace().fetch().setSession(traceSession).setId(def.getId()).getResultDefinition().getInstallInformation().getInstallStatus();
-            if (!st.isInstalled()) {
-                return;
-            }
-        } else if (installStatus.isInstalled() && installStatus.isObsolete()) {
-            traceSession.getWorkspace().install().setSession(traceSession).id(def.getId()).run();
-        }
-        LinkedHashSet<NutsDependency> reinstall = new LinkedHashSet<>();
-        NutsDependencyFilter depFilter = CoreNutsDependencyUtils.createJavaRunDependencyFilter(traceSession);
-        for (NutsDependency dependency : def.getDependencies()) {
-            if (depFilter.acceptDependency(def.getId(), dependency, traceSession)) {
-                NutsInstallStatus st = traceSession.getWorkspace().fetch()
-                        .setSession(traceSession.copy().setFetchStrategy(NutsFetchStrategy.OFFLINE))
-                        .setId(dependency.toId()).getResultDefinition().getInstallInformation().getInstallStatus();
-                if (st.isObsolete() || st.isNonDeployed()) {
-                    reinstall.add(dependency);
+        if (!installStatus.isInstalled()) {
+            if(autoInstall) {
+                traceSession.getWorkspace().install().setSession(traceSession).id(def.getId()).run();
+                NutsInstallStatus st = traceSession.getWorkspace().fetch().setSession(traceSession).setId(def.getId()).getResultDefinition().getInstallInformation().getInstallStatus();
+                if (!st.isInstalled()) {
+                    throw new NutsUnexpectedException(execSession, "auto installation of " + def.getId() + " failed");
                 }
+            }else{
+                throw new NutsUnexpectedException(execSession, "you must install " + def.getId() + " to be able to run it");
             }
+        } else if (installStatus.isObsolete()) {
+            traceSession.getWorkspace().install().setSession(traceSession).id(def.getId()).run();
         }
-        if (!reinstall.isEmpty()) {
-            NutsInstallCommand iii = traceSession.getWorkspace().install().setSession(traceSession).setStrategy(NutsInstallStrategy.REINSTALL);
-            for (NutsDependency nutsId : reinstall) {
-                iii.id(nutsId.toId());
-            }
-            iii.run();
-            for (NutsDependency dependency : reinstall) {
-                boolean optional = execSession.getWorkspace().dependency().parser().parseOptional(dependency.getOptional());
-
-                NutsInstallStatus st = traceSession.getWorkspace().fetch().setSession(traceSession.copy().setFetchStrategy(NutsFetchStrategy.OFFLINE))
-                        .setId(dependency.toId()).getResultDefinition().getInstallInformation().getInstallStatus();
-                if ((st.isObsolete() || st.isNonDeployed()) && !optional) {
-                    throw new NutsUnexpectedException(execSession, "unresolved dependency " + dependency + " has status " + st);
-                }
-            }
-        }
+//        LinkedHashSet<NutsDependency> reinstall = new LinkedHashSet<>();
+//        NutsDependencyFilter depFilter = CoreNutsDependencyUtils.createJavaRunDependencyFilter(traceSession);
+//        for (NutsDependency dependency : def.getDependencies()) {
+//            if (depFilter.acceptDependency(def.getId(), dependency, traceSession)) {
+//                NutsInstallStatus st = traceSession.getWorkspace().fetch()
+//                        .setSession(traceSession.copy().setFetchStrategy(NutsFetchStrategy.OFFLINE))
+//                        .setId(dependency.toId()).getResultDefinition().getInstallInformation().getInstallStatus();
+//                if (st.isObsolete() || st.isNonDeployed()) {
+//                    reinstall.add(dependency);
+//                }
+//            }
+//        }
+//        if (!reinstall.isEmpty()) {
+//            NutsInstallCommand iii = traceSession.getWorkspace().install().setSession(traceSession).setStrategy(NutsInstallStrategy.REINSTALL);
+//            for (NutsDependency nutsId : reinstall) {
+//                iii.id(nutsId.toId());
+//            }
+//            iii.run();
+//            for (NutsDependency dependency : reinstall) {
+//                boolean optional = execSession.getWorkspace().dependency().parser().parseOptional(dependency.getOptional());
+//
+//                NutsInstallStatus st = traceSession.getWorkspace().fetch().setSession(traceSession.copy().setFetchStrategy(NutsFetchStrategy.OFFLINE))
+//                        .setId(dependency.toId()).getResultDefinition().getInstallInformation().getInstallStatus();
+//                if ((st.isObsolete() || st.isNonDeployed()) && !optional) {
+//                    throw new NutsUnexpectedException(execSession, "unresolved dependency " + dependency + " has status " + st);
+//                }
+//            }
+//        }
         execCommand.ws_execId(def, commandName, appArgs, executorOptions, env, dir, failFast, false, traceSession, execSession, executionType, false);
     }
 

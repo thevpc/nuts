@@ -183,6 +183,7 @@ public class RemoteTomcat {
                     ok = false;
                     c.getConfig()
                             .setRemoteTempPath(session.getTerminal().ask()
+                                    .resetLine()
                                     .setSession(session)
                                     .forString("[instance=%s] would you enter %s value ?"
                                             , text.forStyled(c.getName(), NutsTextStyle.primary(1))
@@ -196,6 +197,7 @@ public class RemoteTomcat {
                     if (TomcatUtils.isBlank(aa.getConfig().getPath())) {
                         ok = false;
                         aa.getConfig().setPath(session.getTerminal().ask()
+                                .resetLine()
                                     .setSession(session)
                                 .forString("[instance=%s] [app=%s] would you enter %s value ?"
                                         , text.forStyled(c.getName(), NutsTextStyle.primary(1))

@@ -29,7 +29,7 @@ public class DefaultNutsWelcomeInternalExecutable extends DefaultInternalNutsExe
             return;
         }
         if (!getSession().isBot() && getSession().isPlainOut()) {
-            getSession().out().println(NutsWorkspaceExt.of(getSession().getWorkspace()).getWelcomeText(getSession()));
+            getSession().out().resetLine().println(NutsWorkspaceExt.of(getSession().getWorkspace()).getWelcomeText(getSession()));
         } else {
             Map<String, String> welcome = new LinkedHashMap<>();
             welcome.put("message", "Welcome to nuts. Yeah, it is working...");
@@ -47,6 +47,7 @@ public class DefaultNutsWelcomeInternalExecutable extends DefaultInternalNutsExe
             if(session.isPlainOut()){
                session=session.copy().setOutputFormat(NutsContentType.PROPS);
             }
+            getSession().out().resetLine();
             session.formatObject(welcome).println();
         }
     }

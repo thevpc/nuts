@@ -76,6 +76,7 @@ public class LoginCommand extends SimpleNshBuiltin {
                 || StringUtils.isBlank(new String(options.password)))) {
             NutsSession session = context.getSession();
             options.password = session.getTerminal().ask()
+                    .resetLine()
                     .setSession(session)
                     .forPassword("Password:").getValue();
         }

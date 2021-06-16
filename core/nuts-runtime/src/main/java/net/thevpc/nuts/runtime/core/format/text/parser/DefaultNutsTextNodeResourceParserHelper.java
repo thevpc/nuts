@@ -121,7 +121,7 @@ public class DefaultNutsTextNodeResourceParserHelper {
                                     builder().append("NOT FOUND", NutsTextStyle.error())
                                     .append(" <" + e + ">").toText();
                         }
-                        sb.append(other);
+                        sb.append(other);//if(!other.toText().toString().endsWith("\n")){sb.append("\n");}
                     } else {
                         sb.append(e);
                     }
@@ -132,8 +132,8 @@ public class DefaultNutsTextNodeResourceParserHelper {
         if (vars) {
             help = StringPlaceHolderParser.replaceDollarPlaceHolders(help, pathExpansionConverter);
         }
-        NutsTextParser p = new DefaultNutsTextNodeParser(session);
-        NutsText node = p.parse(new StringReader(help));
+//        NutsTextParser p = session.getWorkspace().text().parser().parse()new DefaultNutsTextNodeParser(session);
+        NutsText node = session.getWorkspace().text().parser().parse(new StringReader(help));
         if (anchor != null) {
             List<NutsText> ok = new ArrayList<>();
             boolean start = false;

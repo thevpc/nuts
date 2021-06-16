@@ -20,7 +20,7 @@ public class TitleParserStep extends ParserStep {
     }
 
     @Override
-    public void consume(char c, DefaultNutsTextNodeParser.State p) {
+    public void consume(char c, DefaultNutsTextNodeParser.State p, boolean wasNewLine) {
         if (c == ' ' && children.isEmpty()) {
             start.append(c);
         } else if (c == '\n' || c == '\r') {

@@ -70,7 +70,10 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
 
     public DefaultNutsInstalledRepository(NutsWorkspace ws, NutsWorkspaceInitInformation info) {
         this.workspace = ws;
-        deployments = new NutsRepositoryFolderHelper(this, ws, Paths.get(info.getStoreLocation(NutsStoreLocation.LIB)).resolve(NutsConstants.Folders.ID), true);
+        deployments = new NutsRepositoryFolderHelper(this, ws,
+                Paths.get(info.getStoreLocation(NutsStoreLocation.LIB)).resolve(NutsConstants.Folders.ID)
+                , false
+        );
         configModel = new InstalledRepositoryConfigModel(workspace, this);
     }
 
@@ -324,6 +327,13 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
         }
     }
 
+    /**
+     *
+     * @param from the reference id
+     * @param to the id for which (the reason) 'from' has been required/installed
+     * @param scope dependency scope
+     * @param session session
+     */
     public synchronized void addDependency(NutsId from, NutsId to, NutsDependencyScope scope, NutsSession session) {
         if (scope == null) {
             scope = NutsDependencyScope.API;
@@ -332,10 +342,11 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
         if (fi == null) {
             throw new NutsInstallException(session, from);
         }
-        InstallInfoConfig ft = getInstallInfoConfig(to, null, session);
-        if (ft == null) {
-            throw new NutsInstallException(session, to);
-        }
+        //there is no need to check for the target dependency (the reason why the 'from' needs to be installed)
+//        InstallInfoConfig ft = getInstallInfoConfig(to, null, session);
+//        if (ft == null) {
+//            throw new NutsInstallException(session, to);
+//        }
         if (!fi.required) {
             fi.required = true;
             printJson(from, NUTS_INSTALL_FILE, fi, session);
@@ -490,6 +501,9 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
     public NutsInstallInformation getInstallInformation(InstallInfoConfig ii, NutsSession session) {
         boolean obsolete = false;
         boolean defaultVersion = false;
+        if (ii.isInstalled()) {
+            defaultVersion = isDefaultVersion(ii.id, session);
+        }
         if (session.getExpireTime() != null && (ii.isInstalled() || ii.isRequired())) {
             if (ii.isInstalled() || ii.isRequired()) {
                 Instant lastModifiedDate = ii.getLastModifiedDate();
@@ -499,9 +513,6 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
                 if (lastModifiedDate == null || lastModifiedDate.isBefore(session.getExpireTime())) {
                     obsolete = true;
                 }
-            }
-            if (ii.isInstalled()) {
-                defaultVersion = isDefaultVersion(ii.id, session);
             }
         }
         NutsInstallStatus s = NutsInstallStatus.of(ii.isInstalled(), ii.isRequired(), obsolete, defaultVersion);

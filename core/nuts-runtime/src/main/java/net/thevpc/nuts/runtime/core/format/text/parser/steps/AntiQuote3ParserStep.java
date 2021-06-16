@@ -34,7 +34,7 @@ public class AntiQuote3ParserStep extends ParserStep {
 //    }
 
     @Override
-    public void consume(char c, DefaultNutsTextNodeParser.State p) {
+    public void consume(char c, DefaultNutsTextNodeParser.State p, boolean wasNewLine) {
         switch (status) {
             case START_QUOTES: {
                 if (c == c0) {

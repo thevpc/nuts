@@ -13,7 +13,7 @@ public class DispatchAction extends ParserStep {
     }
 
     @Override
-    public void consume(char c, DefaultNutsTextNodeParser.State p) {
+    public void consume(char c, DefaultNutsTextNodeParser.State p, boolean wasNewLine) {
         p.applyDrop();
         p.applyStart(c, spreadLines, lineStart);
     }

@@ -18,16 +18,18 @@ public class NewLineParserStep extends ParserStep {
     }
 
     @Override
-    public void consume(char c, DefaultNutsTextNodeParser.State state) {
+    public void consume(char c, DefaultNutsTextNodeParser.State state, boolean wasNewLine) {
         if(c=='\n') {
             start.append(c);
-        }else if(c=='#'){
-            state.applyAppendSibling(new PlainParserStep(start.toString(),state.isSpreadLine(),false,session.getWorkspace(),state,null));
-            state.applyDropReplace(new StyledParserStep(c,true,session.getWorkspace(),state));
-        }else{
-            state.applyAppendSibling(new PlainParserStep('\n',false,session.getWorkspace(),state,null));
-            state.applyDrop();
-            state.applyStart(c,state.isSpreadLine(),true);
+        }else /*if(c=='#')*/{
+            state.applyPopReject(c);
+//        }else if(c=='#'){
+//            state.applyAppendSibling(new PlainParserStep(start.toString(),state.isSpreadLine(),false,session.getWorkspace(),state,null));
+//            state.applyDropReplace(new StyledParserStep(c,true,session.getWorkspace(),state));
+//        }else{
+//            state.applyAppendSibling(new PlainParserStep(start.toString(),false,true,session.getWorkspace(),state,null));
+//            state.applyDrop();
+//            state.applyStart(c,state.isSpreadLine(),true);
         }
     }
 

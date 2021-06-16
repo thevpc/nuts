@@ -23,23 +23,10 @@ import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
 
 public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
 
-    private NutsLogger LOG;
 
     public DefaultNutsFetchCommand(NutsWorkspace ws) {
         super(ws);
     }
-
-    protected NutsLoggerOp _LOGOP(NutsSession session) {
-        return _LOG(session).with().session(session);
-    }
-
-    protected NutsLogger _LOG(NutsSession session) {
-        if (LOG == null) {
-            LOG = this.getWorkspace().log().setSession(session).of(DefaultNutsFetchCommand.class);
-        }
-        return LOG;
-    }
-
 
     @Override
     public NutsContent getResultContent() {

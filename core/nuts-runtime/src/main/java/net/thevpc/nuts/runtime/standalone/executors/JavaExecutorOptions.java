@@ -282,7 +282,9 @@ public final class JavaExecutorOptions {
                                 .append(" to cancel : ");
 
                         mainClass = session.getTerminal()
-                                .ask().setSession(session)
+                                .ask()
+                                .resetLine()
+                                .setSession(session)
                                 .forString(msgString.toString())
                                 .setValidator((value, question) -> {
                                     Integer anyInt = CoreNumberUtils.convertToInteger(value, null);

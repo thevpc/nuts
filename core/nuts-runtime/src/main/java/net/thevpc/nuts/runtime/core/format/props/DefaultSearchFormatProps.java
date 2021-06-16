@@ -5,7 +5,6 @@
  */
 package net.thevpc.nuts.runtime.core.format.props;
 
-import java.io.PrintStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -50,7 +49,7 @@ public class DefaultSearchFormatProps extends DefaultSearchFormatBase {
                         .setSession(getSession())
                         .toElement(object)
         );
-        CoreIOUtils.storeProperties(p, getWriter().asOutputStream(), false);
+        CoreIOUtils.storeProperties(p, getWriter().asPrintStream(), false);
         getWriter().flush();
     }
 

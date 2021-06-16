@@ -67,6 +67,7 @@ public class DeleteFoldersNAdminSubCommand extends AbstractNAdminSubCommand {
                         factory.forStyled(storeLocation.toString(),NutsTextStyle.path()));
                 if (force
                         || context.getSession().getTerminal().ask()
+                        .resetLine()
                         .forBoolean("force delete?").setDefaultValue(false).setSession(context.getSession())
                         .getBooleanValue()) {
                     try {
@@ -94,6 +95,7 @@ public class DeleteFoldersNAdminSubCommand extends AbstractNAdminSubCommand {
                         factory.forStyled(storeLocation.toString(),NutsTextStyle.path()));
                 if (force
                         || context.getSession().getTerminal().ask()
+                        .resetLine()
                         .forBoolean("Force Delete?").setDefaultValue(false).setSession(context.getSession())
                         .getBooleanValue()) {
                     try {
@@ -138,6 +140,7 @@ public class DeleteFoldersNAdminSubCommand extends AbstractNAdminSubCommand {
                         ,s);
                 if (force
                         || context.getSession().getTerminal().ask()
+                        .resetLine()
                         .forBoolean("force delete?").setDefaultValue(false)
                         .setSession(context.getSession()).getBooleanValue()) {
                     try {

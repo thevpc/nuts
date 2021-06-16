@@ -19,6 +19,7 @@ public abstract class NutsWorkspaceCommandBase<T extends NutsWorkspaceCommand> i
     protected NutsWorkspace ws;
     protected NutsSession session;
     private final String commandName;
+    private NutsLogger LOG;
 //    protected final NutsLogger LOG;
 
     public NutsWorkspaceCommandBase(NutsWorkspace ws, String commandName) {
@@ -26,7 +27,18 @@ public abstract class NutsWorkspaceCommandBase<T extends NutsWorkspaceCommand> i
         this.commandName = commandName;
 //        LOG = ws.log().of(getClass());
     }
-    
+
+    protected NutsLoggerOp _LOGOP(NutsSession session) {
+        return _LOG(session).with().session(session);
+    }
+
+    protected NutsLogger _LOG(NutsSession session) {
+        if (LOG == null) {
+            LOG = this.getWorkspace().log().setSession(session).of(getClass());
+        }
+        return LOG;
+    }
+
     protected void checkSession(){
         NutsWorkspaceUtils.checkSession(ws, getSession());
     }

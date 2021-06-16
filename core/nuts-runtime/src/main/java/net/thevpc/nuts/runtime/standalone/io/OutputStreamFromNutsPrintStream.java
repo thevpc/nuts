@@ -1,10 +1,11 @@
 package net.thevpc.nuts.runtime.standalone.io;
 
 import net.thevpc.nuts.NutsPrintStream;
+import net.thevpc.nuts.NutsPrintStreamAdapter;
 
 import java.io.OutputStream;
 
-public class OutputStreamFromNutsPrintStream extends OutputStream {
+public class OutputStreamFromNutsPrintStream extends OutputStream implements NutsPrintStreamAdapter {
 
     private NutsPrintStream base;
 
@@ -12,7 +13,7 @@ public class OutputStreamFromNutsPrintStream extends OutputStream {
         this.base = base;
     }
 
-    public NutsPrintStream getBase() {
+    public NutsPrintStream getBaseNutsPrintStream() {
         return base;
     }
 

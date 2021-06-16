@@ -18,9 +18,8 @@ public class RootParserStep extends ParserStep {
     }
 
     @Override
-    public void consume(char c, DefaultNutsTextNodeParser.State p) {
-        boolean lineStart = available.isEmpty();
-        p.applyStart(c, spreadLines, lineStart);
+    public void consume(char c, DefaultNutsTextNodeParser.State p, boolean wasNewLine) {
+        p.applyStart(c, spreadLines, wasNewLine);
     }
 
     public ParserStep pop() {

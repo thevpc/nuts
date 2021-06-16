@@ -870,7 +870,9 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
         @Override
         public NutsDefinition createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
-            return (NutsDefinition) context.defaultElementToObject(o, DefaultNutsDefinition.class);
+            NutsDefinition d = context.defaultElementToObject(o, DefaultNutsDefinition.class);
+            //pass the session the the instance
+            return new DefaultNutsDefinition(d,context.getSession());
         }
     }
 

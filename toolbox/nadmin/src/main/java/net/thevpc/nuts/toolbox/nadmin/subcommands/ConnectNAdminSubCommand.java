@@ -62,7 +62,7 @@ public class ConnectNAdminSubCommand extends AbstractNAdminSubCommand {
                 try {
                     int validPort = port <= 0 ? DEFAULT_ADMIN_SERVER_PORT : port;
                     socket = new Socket(InetAddress.getByName(server), validPort);
-                    IOUtils.pipe("pipe-out-socket-" + server + ":" + validPort, new NonBlockingInputStreamAdapter("pipe-out-socket-" + server + ":" + validPort, socket.getInputStream()), context.getSession().out().asOutputStream());
+                    IOUtils.pipe("pipe-out-socket-" + server + ":" + validPort, new NonBlockingInputStreamAdapter("pipe-out-socket-" + server + ":" + validPort, socket.getInputStream()), context.getSession().out().asPrintStream());
                     PrintStream out = new PrintStream(socket.getOutputStream());
                     if (!StringUtils.isBlank(login)) {
                         out.printf("connect ==%s %s== %n", login, new String(password));

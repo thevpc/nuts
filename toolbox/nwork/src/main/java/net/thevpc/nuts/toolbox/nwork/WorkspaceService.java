@@ -340,7 +340,7 @@ public class WorkspaceService {
             }
             if (progress && appContext.getSession().isPlainOut()) {
                 maxSize = Math.max(maxSize, projectService.getConfig().getId().length());
-                appContext.getSession().out().printfln("(%s / %s) %s", (i + 1), all.size(), _StringUtils.alignLeft(projectService.getConfig().getId(), maxSize));
+                appContext.getSession().out().resetLine().printf("(%s / %s) %s", (i + 1), all.size(), _StringUtils.alignLeft(projectService.getConfig().getId(), maxSize));
             }
             d.local = projectService.detectLocalVersion();
             d.remote = d.local == null ? null : projectService.detectRemoteVersion();

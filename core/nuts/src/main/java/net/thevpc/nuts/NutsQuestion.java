@@ -35,6 +35,12 @@ package net.thevpc.nuts;
  */
 public interface NutsQuestion<T> extends NutsCommandLineConfigurable {
 
+    boolean isResetLine();
+
+    NutsQuestion<T> resetLine();
+
+    NutsQuestion<T> resetLine(boolean resetLine);
+
     NutsQuestion<Boolean> forBoolean(String msg, Object... params);
 
     NutsQuestion<char[]> forPassword(String msg, Object... params);

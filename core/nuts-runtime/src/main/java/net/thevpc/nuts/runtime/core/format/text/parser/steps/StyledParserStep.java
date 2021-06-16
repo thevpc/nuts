@@ -53,7 +53,7 @@ public class StyledParserStep extends ParserStep {
     }
 
     @Override
-    public void consume(char c, DefaultNutsTextNodeParser.State state) {
+    public void consume(char c, DefaultNutsTextNodeParser.State state, boolean wasNewLine) {
         charQueue.add(c);
         if (complete) {
             if (c == start.charAt(0)) {

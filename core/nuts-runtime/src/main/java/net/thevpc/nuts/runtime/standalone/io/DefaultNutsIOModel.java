@@ -14,7 +14,6 @@ import java.io.Writer;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.function.Function;
-import java.util.regex.Pattern;
 
 public class DefaultNutsIOModel {
 
@@ -111,8 +110,8 @@ public class DefaultNutsIOModel {
         if (out == null) {
             return null;
         }
-        if (out instanceof WriterFromNutsPrintStream) {
-            return ((WriterFromNutsPrintStream) out).getBase().convert(expectedMode);
+        if (out instanceof NutsPrintStreamAdapter) {
+            return ((NutsPrintStreamAdapter) out).getBaseNutsPrintStream().convert(expectedMode);
         }
         SimpleWriterOutputStream w = new SimpleWriterOutputStream(out, session);
         return createPrintStream(w, expectedMode, session);
@@ -140,11 +139,8 @@ public class DefaultNutsIOModel {
                 expectedMode = NutsTerminalMode.FILTERED;
             }
         }
-        if (out instanceof PrintStreamFromNutsPrintStream) {
-            return ((PrintStreamFromNutsPrintStream) out).getBase().convert(expectedMode);
-        }
-        if (out instanceof OutputStreamFromNutsPrintStream) {
-            return ((OutputStreamFromNutsPrintStream) out).getBase().convert(expectedMode);
+        if (out instanceof NutsPrintStreamAdapter) {
+            return ((NutsPrintStreamAdapter) out).getBaseNutsPrintStream().convert(expectedMode);
         }
         return
                 new NutsPrintStreamRaw(out, null, null, session, new NutsPrintStreamBase.Bindings())

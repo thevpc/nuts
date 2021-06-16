@@ -1,18 +1,20 @@
 package net.thevpc.nuts.runtime.standalone.io;
 
 import net.thevpc.nuts.NutsPrintStream;
+import net.thevpc.nuts.NutsPrintStreamAdapter;
 
 import java.io.IOException;
 import java.io.Writer;
 
-public class WriterFromNutsPrintStream extends Writer {
+public class WriterFromNutsPrintStream extends Writer implements NutsPrintStreamAdapter {
     private NutsPrintStream base;
 
     public WriterFromNutsPrintStream(NutsPrintStream base) {
         this.base = base;
     }
 
-    public NutsPrintStream getBase() {
+    @Override
+    public NutsPrintStream getBaseNutsPrintStream() {
         return base;
     }
 

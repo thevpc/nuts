@@ -53,16 +53,24 @@ public class Test01_CreateTest {
 //                "\\_\\ \\/\\__,_/\\__/____/\n";
 //
 //        String str="  /\\ _";
-        String str=" ```underlined prototype``` ";
+//        String str=" ```underlined prototype``` ";
 
-        System.out.println("---------------------------------");
+//        System.out.println("---------------------------------");
 //        System.out.println(str);
 //        System.out.println("---------------------------------");
 //        session.out().println(str);
-        NutsLogger _log = session.getWorkspace().log().of("example");
-        _log.with()
-                .level(Level.INFO)
-                .log(str);
+//        NutsLogger _log = session.getWorkspace().log().of("example");
+//        _log.with()
+//                .level(Level.INFO)
+//                .log(str);
+        String str=
+                "a\n\nb"
+                ;
+        System.out.println("-----------------------");
+        System.out.println(str);
+        NutsText txt = session.getWorkspace().text().parse(str);
+        System.out.println("-----------------------");
+        System.out.println(txt);
     }
 
     @Test

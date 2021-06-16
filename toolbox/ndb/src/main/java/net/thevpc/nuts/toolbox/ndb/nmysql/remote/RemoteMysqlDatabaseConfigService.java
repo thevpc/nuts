@@ -65,6 +65,7 @@ public class RemoteMysqlDatabaseConfigService {
         NutsSession session = context.getSession();
         if(lastRun.exists()){
             if(!session.getTerminal().ask()
+                    .resetLine()
                     .setSession(session)
                     .forBoolean("a previous pull has failed. would you like to resume (yes) or ignore and re-run the pull (no).")
                     .getBooleanValue()

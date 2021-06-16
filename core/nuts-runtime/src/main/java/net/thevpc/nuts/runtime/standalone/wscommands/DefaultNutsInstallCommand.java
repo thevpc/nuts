@@ -45,21 +45,8 @@ import net.thevpc.nuts.runtime.core.util.CoreNutsDependencyUtils;
  */
 public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
 
-    private NutsLogger LOG;
-
     public DefaultNutsInstallCommand(NutsWorkspace ws) {
         super(ws);
-    }
-
-    protected NutsLoggerOp _LOGOP(NutsSession session) {
-        return _LOG(session).with().session(session);
-    }
-
-    protected NutsLogger _LOG(NutsSession session) {
-        if (LOG == null) {
-            LOG = this.ws.log().setSession(session).of(DefaultNutsInstallCommand.class);
-        }
-        return LOG;
     }
 
     private NutsDefinition _loadIdContent(NutsId id, NutsId forId, NutsSession session, boolean includeDeps, InstallIdList loaded, NutsInstallStrategy installStrategy) {
@@ -368,7 +355,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
         if (error.size() > 0) {
             StringBuilder sb = new StringBuilder();
             for (Map.Entry<String, List<InstallIdInfo>> stringListEntry : error.entrySet()) {
-                out.println("the following " + (stringListEntry.getValue().size() > 1 ? "packages are" : "package is") + " cannot be ```error installed``` (" + stringListEntry.getKey() + ") : "
+                out.resetLine().println("the following " + (stringListEntry.getValue().size() > 1 ? "packages are" : "package is") + " cannot be ```error installed``` (" + stringListEntry.getKey() + ") : "
                         + stringListEntry.getValue().stream().map(x -> x.id)
                                 .map(x -> ws.id().formatter().omitImportedGroupId().value(x.getLongNameId()).format().toString())
                                 .collect(Collectors.joining(", ")));
@@ -412,6 +399,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
         }
         List<NutsId> nonIgnored = list.ids(x -> !x.ignored);
         if (!nonIgnored.isEmpty() && !ws.term().setSession(getSession()).getTerminal().ask()
+                .resetLine()
                 .setSession(session)
                 .forBoolean("should we proceed?")
                 .setDefaultValue(true)
@@ -441,15 +429,16 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                         failedList.add(info.id);
                         if (session.isPlainTrace()) {
                             if (!ws.term().setSession(getSession()).getTerminal().ask()
+                                    .resetLine()
                                     .setSession(session)
                                     .forBoolean("```error failed to install``` %s and its dependencies... Continue installation?", info.id)
                                     .setDefaultValue(true)
                                     .getBooleanValue()) {
-                                session.out().printf("%s ```error installation cancelled with error:``` %s%n", info.id, ex);
+                                session.out().resetLine().printf("%s ```error installation cancelled with error:``` %s%n", info.id, ex);
                                 result = new NutsDefinition[0];
                                 return this;
                             } else {
-                                session.out().printf("%s ```error installation cancelled with error:``` %s%n", info.id, ex);
+                                session.out().resetLine().printf("%s ```error installation cancelled with error:``` %s%n", info.id, ex);
                             }
                         } else {
                             throw ex;
@@ -482,7 +471,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                             )
                             ).collect(Collectors.toList())
                     );
-            out.println(msg);
+            out.resetLine().println(msg);
         }
     }
 

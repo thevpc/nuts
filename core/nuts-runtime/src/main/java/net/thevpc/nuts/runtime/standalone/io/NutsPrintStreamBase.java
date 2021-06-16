@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.io;
 
 import net.thevpc.nuts.*;
 
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.Writer;
 import java.util.Locale;
@@ -11,6 +12,7 @@ public abstract class NutsPrintStreamBase implements NutsPrintStream {
     //    private NutsWorkspace ws;
     protected NutsSession session;
     protected Bindings bindings;
+    protected OutputStream osWrapper;
     protected PrintStream psWrapper;
     protected Writer writerWrapper;
     private boolean autoFlash;
@@ -159,10 +161,9 @@ public abstract class NutsPrintStreamBase implements NutsPrintStream {
     }
 
     @Override
-    public NutsPrintStream printfln(String format, Object... args) {
+    public NutsPrintStream resetLine() {
+        run(NutsTerminalCommand.CLEAR_LINE);
         run(NutsTerminalCommand.MOVE_LINE_START);
-        printf(format, args);
-        println();
         return this;
     }
 
@@ -283,9 +284,17 @@ public abstract class NutsPrintStreamBase implements NutsPrintStream {
     }
 
     @Override
-    public PrintStream asOutputStream() {
+    public OutputStream asOutputStream() {
+        if (osWrapper == null) {
+            osWrapper = new OutputStreamFromNutsPrintStream(this);
+        }
+        return osWrapper;
+    }
+
+    @Override
+    public PrintStream asPrintStream() {
         if (psWrapper == null) {
-            psWrapper = new PrintStreamFromNutsPrintStream(this);
+            psWrapper = new PrintStreamFromNutsPrintStream((OutputStreamFromNutsPrintStream) asOutputStream());
         }
         return psWrapper;
     }

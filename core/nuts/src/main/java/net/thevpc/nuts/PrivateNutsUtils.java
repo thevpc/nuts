@@ -542,7 +542,9 @@ final class PrivateNutsUtils {
             if (!force && !refForceAll.isForce() && refForceAll.accept(directory)) {
                 String line;
                 if (term != null) {
-                    line = term.ask().forString("do you confirm deleting %s [y/n/c/a] (default 'n') ?", directory).setSession(session).getValue();
+                    line = term.ask()
+                            .resetLine()
+                            .forString("do you confirm deleting %s [y/n/c/a] (default 'n') ?", directory).setSession(session).getValue();
                 } else {
                     Scanner s = new Scanner(System.in);
                     System.out.printf("do you confirm deleting %s [y/n/c/a] (default 'n') ?", directory);

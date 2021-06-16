@@ -168,12 +168,13 @@ public class AnyNixNdi extends BaseSystemNdi {
         if (!updatedNames.isEmpty() && session.isTrace()) {
             if (!updatedNames.isEmpty()) {
                 if (context.getSession().isPlainTrace()) {
-                    context.getSession().out().printf((context.getSession().isPlainTrace() ? "force " : "") + "updating %s to point to workspace %s%n",
+                    context.getSession().out().resetLine().printf((context.getSession().isPlainTrace() ? "force " : "") + "updating %s to point to workspace %s%n",
                             factory.forStyled(String.join(", ", updatedNames),NutsTextStyle.primary(3)),
                             factory.forStyled(ws.locations().getWorkspaceLocation(),NutsTextStyle.path())
                             );
                 }
                 context.getSession().getTerminal().ask()
+                        .resetLine()
                         .forBoolean(
                                 "```error ATTENTION``` You may need to re-run terminal or issue \"%s\" in your current terminal for new environment to take effect.%n"
                                         + "Please type 'ok' if you agree, 'why' if you need more explanation or 'cancel' to cancel updates.",
@@ -199,6 +200,7 @@ public class AnyNixNdi extends BaseSystemNdi {
                                 }
                                 if ("why".equalsIgnoreCase(r)) {
                                     NutsPrintStream out = context.getSession().out();
+                                    out.resetLine();
                                     out.printf("\\\"%s\\\" is a special file in your home that is invoked upon each interactive terminal launch.%n", factory.forStyled(getBashrcName(),NutsTextStyle.path()));
                                     out.print("It helps configuring environment variables. ```sh nuts``` make usage of such facility to update your **PATH** env variable\n");
                                     out.print("to point to current ```sh nuts``` workspace, so that when you call a ```sh nuts``` command it will be resolved correctly...\n");

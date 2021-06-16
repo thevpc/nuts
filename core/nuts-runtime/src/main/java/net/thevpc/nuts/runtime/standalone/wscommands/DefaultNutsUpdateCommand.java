@@ -32,7 +32,6 @@ import java.util.stream.Collectors;
  */
 public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
 
-    public NutsLogger LOG;
     private Comparator<NutsId> LATEST_VERSION_FIRST = (x, y) -> -x.getVersion().compareTo(y.getVersion());
     private Comparator<NutsId> DEFAULT_THEN_LATEST_VERSION_FIRST = (x, y) -> {
         NutsInstalledRepository rr = NutsWorkspaceExt.of(ws).getInstalledRepository();
@@ -49,17 +48,6 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
 
     public DefaultNutsUpdateCommand(NutsWorkspace ws) {
         super(ws);
-    }
-
-    protected NutsLoggerOp _LOGOP(NutsSession session) {
-        return _LOG(session).with().session(session);
-    }
-
-    protected NutsLogger _LOG(NutsSession session) {
-        if (LOG == null) {
-            LOG = this.getWorkspace().log().setSession(session).of(DefaultNutsUpdateCommand.class);
-        }
-        return LOG;
     }
 
     @Override
@@ -364,7 +352,9 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         NutsSession session = getSession();
         NutsVersion version = id.getVersion();
         if(!updateEvenIfExisting && version.isSingleValue()){
-            updateEvenIfExisting = session.getTerminal().ask().setDefaultValue(true).setSession(session)
+            updateEvenIfExisting = session.getTerminal().ask()
+                    .resetLine()
+                    .setDefaultValue(true).setSession(session)
                     .forBoolean("version is too restrictive. Do you intend to force update of %s ?", id).getBooleanValue();
         }
         DefaultNutsUpdateResult r = new DefaultNutsUpdateResult();
@@ -477,7 +467,8 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         NutsSession validWorkspaceSession = getSession();
         final NutsPrintStream out = validWorkspaceSession.out();
         boolean accept = getSession().getWorkspace().term().getTerminal().ask()
-                .forBoolean("Would you like to apply updates?").setDefaultValue(true)
+                .resetLine()
+                .forBoolean("would you like to apply updates?").setDefaultValue(true)
                 .setSession(validWorkspaceSession).getValue();
         if (validWorkspaceSession.isAsk() && !accept) {
             throw new NutsUserCancelException(getSession());
@@ -543,14 +534,16 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         NutsId id = r.getId();
         NutsDefinition d0 = r.getLocal();
         NutsDefinition d1 = r.getAvailable();
-        final String simpleName = d0 != null ? d0.getId().getShortName() : d1 != null ? d1.getId().getShortName() : id.getShortName();
+//        final String simpleName = d0 != null ? d0.getId().getShortName() : d1 != null ? d1.getId().getShortName() : id.getShortName();
+        final NutsId simpleId = d0 != null ? d0.getId().getShortNameId() : d1 != null ? d1.getId().getShortNameId() : id.getShortNameId();
         final NutsPrintStream out = getSession().out();
         NutsTextManager factory = ws.text();
         if (r.isUpdateApplied()) {
             if (r.isUpdateForced()) {
                 if (d0 == null) {
-                    out.printf("%s is [updated] to latest version %s%n",
-                            factory.forStyled(simpleName, NutsTextStyle.primary(3)),
+                    out.resetLine().printf("%s is %s to latest version %s%n",
+                            simpleId,
+                            factory.forStyled("updated", NutsTextStyle.primary(3)),
                             d1 == null ? null : d1.getId().getVersion()
                     );
                 } else if (d1 == null) {
@@ -560,13 +553,20 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                     NutsVersion v1 = d1.getId().getVersion();
                     if (v1.compareTo(v0) <= 0) {
                         if (v1.compareTo(v0) == 0) {
-                            out.printf("%s is [forced] to %s %n", factory.forStyled(simpleName, NutsTextStyle.primary(3)), d0.getId().getVersion());
+                            out.resetLine().printf("%s is %s to %s %n",
+                                    simpleId,
+                                    factory.forStyled("forced", NutsTextStyle.primary(3)),
+                                    d0.getId().getVersion());
                         } else {
-                            out.printf("%s is [forced] from %s to older version %s%n",
-                                    factory.forStyled(simpleName, NutsTextStyle.primary(3)), d0.getId().getVersion(), d1.getId().getVersion());
+                            out.resetLine().printf("%s is %s from %s to older version %s%n",
+                                    simpleId,
+                                    factory.forStyled("forced", NutsTextStyle.primary(3)),
+                                    d0.getId().getVersion(), d1.getId().getVersion());
                         }
                     } else {
-                        out.printf("%s is [updated] from %s to latest version %s%n", factory.forStyled(simpleName, NutsTextStyle.primary(3)),
+                        out.resetLine().printf("%s is %s from %s to latest version %s%n",
+                                simpleId,
+                                factory.forStyled("updated", NutsTextStyle.primary(3)),
                                 d0.getId().getVersion(), d1.getId().getVersion());
                     }
                 }
@@ -716,7 +716,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
         NutsSession session = getSession();
         final NutsPrintStream out = session.out();
-        NutsId id = r.getId();
+//        NutsId id = r.getId();
         NutsDefinition d0 = r.getLocal();
         NutsDefinition d1 = r.getAvailable();
         if (d0 == null) {
@@ -730,7 +730,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
             NutsVersion v1 = d1.getId().getVersion();
             if (v1.compareTo(v0) <= 0) {
                 //no update needed!
-                if (session.isYes()) {
+                if (/*session.isYes() || */r.isUpdateForced()) {
                     getSession().getWorkspace().security().checkAllowed(NutsConstants.Permissions.UPDATE, "update");
                     dws.updateImpl(d1, new String[0], null, session, true);
                     r.setUpdateApplied(true);

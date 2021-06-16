@@ -19,6 +19,7 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
     private String hintMessage;
     private Object[] hintMessageParameters;
     private T defaultValue;
+    private boolean resetLine;
     private Class<T> valueType;
     private NutsQuestionFormat<T> format;
     private NutsQuestionParser<T> parser;
@@ -123,6 +124,9 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
             _acceptedValues = new Object[0];
         }
         while (true) {
+            if(resetLine){
+                out.resetLine();
+            }
             out.printf(message, this.getMessageParameters());
             boolean first = true;
             if (this.getDefaultValue() != null) {
@@ -232,6 +236,21 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
             }
             extraInfo = true;
         }
+    }
+
+    @Override
+    public boolean isResetLine() {
+        return resetLine;
+    }
+
+    @Override
+    public NutsQuestion<T> resetLine() {
+        return resetLine(true);
+    }
+    @Override
+    public NutsQuestion<T> resetLine(boolean resetLine) {
+        this.resetLine = resetLine;
+        return this;
     }
 
     @Override

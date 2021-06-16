@@ -68,6 +68,7 @@ public class DefaultProjectTemplate implements ProjectTemplate {
                     return defaultValue;
                 }
                 return term.ask()
+                        .resetLine()
                         .setSession(session)
                         .forString(
                         getWorkspace().text().builder()
@@ -442,6 +443,7 @@ public class DefaultProjectTemplate implements ProjectTemplate {
             p = resolveFirstPomFile(getProjectRootFolder());
             if (p != null) {
                 if (!getSession().getTerminal().ask()
+                        .resetLine()
                         .setSession(session)
                         .forBoolean("accept project location %s?",
                         applicationContext.getWorkspace().text().forStyled(p.getPath(),NutsTextStyle.path()))

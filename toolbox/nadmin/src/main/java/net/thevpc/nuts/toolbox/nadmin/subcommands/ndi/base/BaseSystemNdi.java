@@ -245,7 +245,9 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             boolean exists = Files.exists(ff);
             boolean gen = true;
             if (exists) {
-                if (!context.getSession().getTerminal().ask().setDefaultValue(false).setSession(context.getSession())
+                if (!context.getSession().getTerminal().ask()
+                        .resetLine()
+                        .setDefaultValue(false).setSession(context.getSession())
                         .forBoolean("override existing script %s ?",
                                 context.getWorkspace().text().forStyled(
                                         NdiUtils.betterPath(ff.toString()), NutsTextStyle.path()
@@ -282,7 +284,9 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         Path f = getScriptFile(nid.getArtifactId());
         NutsTextManager factory = context.getWorkspace().text();
         if (Files.isRegularFile(f)) {
-            if (session.getTerminal().ask().forBoolean("tool %s will be removed. Confirm?",
+            if (session.getTerminal().ask()
+                    .resetLine()
+                    .forBoolean("tool %s will be removed. Confirm?",
                     factory.forStyled(NdiUtils.betterPath(f.toString()), NutsTextStyle.path())
             )
                     .setDefaultValue(true)
@@ -485,7 +489,9 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         List<NdiScriptnfo> all = new ArrayList<>();
         boolean createPath = false;
         if (!force && Files.exists(script)) {
-            if (context.getSession().getTerminal().ask().setDefaultValue(true).setSession(context.getSession())
+            if (context.getSession().getTerminal().ask()
+                    .resetLine()
+                    .setDefaultValue(true).setSession(context.getSession())
                     .forBoolean("override existing script %s ?",
                             context.getWorkspace().text().forStyled(
                                     NdiUtils.betterPath(script.toString()), NutsTextStyle.path()
@@ -519,7 +525,9 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             boolean gen = true;
 
             if (!force && Files.exists(ff2)) {
-                if (!context.getSession().getTerminal().ask().setSession(context.getSession())
+                if (!context.getSession().getTerminal().ask()
+                        .resetLine()
+                        .setSession(context.getSession())
                         .forBoolean("override existing script %s ?",
                                 context.getWorkspace().text().forStyled(NdiUtils.betterPath(ff2.toString()), NutsTextStyle.path()))
                         .setDefaultValue(false)

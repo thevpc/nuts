@@ -1260,7 +1260,9 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
         NutsFetchCommand fetch = toFetch().setContent(content).setEffective(effective);
         NutsFetchCommand ofetch = toFetch().setContent(content).setEffective(effective).setSession(getSession().copy().setFetchStrategy(NutsFetchStrategy.OFFLINE));
         //fetch.getSession().setTrace(false);
-        final boolean hasRemote = getSession().getFetchStrategy() == null || Arrays.stream(getSession().getFetchStrategy().modes()).anyMatch(x -> x == NutsFetchMode.REMOTE);
+        final boolean hasRemote = getSession().getFetchStrategy() == null
+                || Arrays.stream(getSession().getFetchStrategy().modes())
+                .anyMatch(x -> x == NutsFetchMode.REMOTE);
         return (IteratorUtils.convert(getResultIdIteratorBase(null),
                 next -> {
                     NutsDefinition d = null;
@@ -1271,7 +1273,11 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
                             fetch.setId(next).getResultDescriptor();
                         }
                         d = ofetch.setId(next).getResultDefinition();
-
+                        if(d==null){
+                            _LOGOP(getSession())
+                                    .verb(NutsLogVerb.FAIL)
+                                    .log("inconsistent repository. id %s was found but its definition could not be resolved!",next);
+                        }
                     }
                     return d;
                 }, "Id->Definition"));
@@ -1279,7 +1285,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
 
     protected <T> NutsCollectionResult<T> buildCollectionResult(Iterator<T> o) {
         NutsSession ss = getSearchSession();
-        return new NutsCollectionResult(ss, resolveFindIdBase(), o);
+        return new NutsCollectionResult<>(ss, resolveFindIdBase(), o);
     }
 
     protected String resolveFindIdBase() {

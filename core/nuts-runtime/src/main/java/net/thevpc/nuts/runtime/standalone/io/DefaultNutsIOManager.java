@@ -6,6 +6,9 @@ import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Writer;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.file.Paths;
 
 public class DefaultNutsIOManager implements NutsIOManager {
 
@@ -31,7 +34,31 @@ public class DefaultNutsIOManager implements NutsIOManager {
         if (path == null || path.trim().isEmpty()) {
             return null;
         }
-        return new DefaultNutsPath(path, getSession());
+        if (path.startsWith("/") || path.startsWith("\\")) {
+            return new FilePath(Paths.get(path), getSession());
+        }
+        if (path.matches("[A-Z]:.*")) {
+            return new FilePath(Paths.get(path), getSession());
+        }
+        if (path.startsWith("classpath:")) {
+            return path(
+                    path.substring("classpath:".length()),
+                    Thread.currentThread().getContextClassLoader()
+            );
+        }
+        //nwo all the remaining are considered URL,
+        //perhaps we can add handlers here (such as ssh handler
+        try {
+            return new URLPath(new URL(path), getSession());
+        } catch (MalformedURLException e) {
+            throw new NutsIOException(getSession(), e);
+        }
+    }
+
+    @Override
+    public NutsPath path(String path, ClassLoader classLoader) {
+        checkSession();
+        return new ClassLoaderPath(path, classLoader, getSession());
     }
 
     @Override
@@ -71,15 +98,15 @@ public class DefaultNutsIOManager implements NutsIOManager {
     }
 
     @Override
-    public NutsMemoryPrintStream createMemoryPrintStream() {
-        checkSession();
-        return new NutsByteArrayPrintStream(getSession());
-    }
-
-    @Override
     public NutsPrintStream createPrintStream(Writer out) {
         checkSession();
         return model.createPrintStream(out, NutsTerminalMode.INHERITED, session);
+    }
+
+    @Override
+    public NutsMemoryPrintStream createMemoryPrintStream() {
+        checkSession();
+        return new NutsByteArrayPrintStream(getSession());
     }
 
     @Override

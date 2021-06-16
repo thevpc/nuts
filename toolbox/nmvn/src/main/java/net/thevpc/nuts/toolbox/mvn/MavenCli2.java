@@ -92,7 +92,7 @@ public class MavenCli2 {
             out.flush();
             return t;
         } else {
-            return cli.doMain(args, wd, appContext.getSession().out().asOutputStream(), appContext.getSession().err().asOutputStream());
+            return cli.doMain(args, wd, appContext.getSession().out().asPrintStream(), appContext.getSession().err().asPrintStream());
         }
     }
 

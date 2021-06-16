@@ -253,7 +253,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
         }
 
         String passphrase = env().get(CoreSecurityUtils.ENV_KEY_PASSPHRASE, CoreSecurityUtils.DEFAULT_PASSPHRASE);
-        newLogin = new String(CoreSecurityUtils.httpEncrypt(CoreStringUtils.trim(newLogin).getBytes(), passphrase));
+        newLogin = new String(CoreSecurityUtils.defaultEncryptChars(CoreStringUtils.trim(newLogin).toCharArray(), passphrase));
         credentials = CoreSecurityUtils.defaultEncryptChars(credentials, passphrase);
         return new String[]{newLogin, new String(credentials)};
     }

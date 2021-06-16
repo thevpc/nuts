@@ -102,7 +102,6 @@ public class DefaultNutsLoggerOp implements NutsLoggerOp {
                 s=logger.getSession();
             }
             NutsLogRecord record = new NutsLogRecord(
-                    logger.getWorkspace(),
                     s,
                     level,
                     verb,

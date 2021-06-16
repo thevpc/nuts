@@ -166,12 +166,12 @@ public class DefaultNutsShellContext extends DefaultJShellContext implements Nut
 
     @Override
     public PrintStream out() {
-        return getSession().getTerminal().getOut().asOutputStream();
+        return getSession().getTerminal().getOut().asPrintStream();
     }
 
     @Override
     public PrintStream err() {
-        return getSession().getTerminal().getErr().asOutputStream();
+        return getSession().getTerminal().getErr().asPrintStream();
     }
 
     @Override

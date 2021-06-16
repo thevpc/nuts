@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages and libraries
  * for runtime execution. Nuts is the ultimate companion for maven (and other
@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,7 +23,10 @@
  */
 package net.thevpc.nuts.runtime.core.log;
 
-import java.io.PrintStream;
+import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.core.AbstractNutsWorkspace;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -35,35 +38,30 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
-
 /**
- *
  * @author vpc
  */
 public class DefaultNutsLogModel {
-     private NutsWorkspace workspace;
-
+    private static Handler[] EMPTY = new Handler[0];
+    private NutsWorkspace workspace;
     private NutsPrintStream out;
     private Handler consoleHandler;
     private Handler fileHandler;
-    private NutsLogConfig logConfig=new NutsLogConfig();
+    private NutsLogConfig logConfig = new NutsLogConfig();
     private List<Handler> extraHandlers = new ArrayList<>();
-    private static Handler[] EMPTY = new Handler[0];
     private Path logFolder;
     private NutsSession defaultSession;
-    private Map<String,NutsLogger> loaded=new LinkedHashMap<>();
+    private Map<String, NutsLogger> loaded = new LinkedHashMap<>();
 
     public DefaultNutsLogModel(NutsWorkspace ws, NutsWorkspaceInitInformation options) {
         this.workspace = ws;
-        logFolder= Paths.get(options.getStoreLocation(NutsStoreLocation.LOG));
+        logFolder = Paths.get(options.getStoreLocation(NutsStoreLocation.LOG));
         NutsLogConfig lc = options.getOptions().getLogConfig();
-        if(lc!=null){
-            if(lc.getLogFileLevel()!=null){
+        if (lc != null) {
+            if (lc.getLogFileLevel() != null) {
                 logConfig.setLogFileLevel(lc.getLogFileLevel());
             }
-            if(lc.getLogTermLevel()!=null){
+            if (lc.getLogTermLevel() != null) {
                 logConfig.setLogTermLevel(lc.getLogTermLevel());
             }
             logConfig.setLogFileName(lc.getLogFileName());
@@ -72,7 +70,7 @@ public class DefaultNutsLogModel {
             logConfig.setLogFileSize(lc.getLogFileSize());
             logConfig.setLogInherited(lc.isLogInherited());
         }
-        out=workspace.io().stderr();
+        out = workspace.io().stderr();
     }
 
     public NutsSession getDefaultSession() {
@@ -83,7 +81,7 @@ public class DefaultNutsLogModel {
         this.defaultSession = defaultSession;
     }
 
-    
+
     public Handler[] getHandlers() {
         if (extraHandlers.isEmpty()) {
             return EMPTY;
@@ -91,60 +89,60 @@ public class DefaultNutsLogModel {
         return extraHandlers.toArray(EMPTY);
     }
 
-    
+
     public void removeHandler(Handler handler) {
         extraHandlers.remove(handler);
     }
 
-    
+
     public void addHandler(Handler handler) {
         if (handler != null) {
             extraHandlers.add(handler);
         }
     }
 
-    
+
     public Handler getTermHandler() {
         return consoleHandler;
     }
 
-    
+
     public Handler getFileHandler() {
         return fileHandler;
     }
 
-    
-    public NutsLogger of(String name,NutsSession session) {
+
+    public NutsLogger of(String name, NutsSession session) {
         NutsLogger y = loaded.get(name);
-        if(y==null) {
-            if(session==null){
-                session=defaultSession;
+        if (y == null) {
+            if (session == null) {
+                session = defaultSession;
             }
-            y= new DefaultNutsLogger(workspace, session, name);
-            loaded.put(name,y);
+            y = new DefaultNutsLogger(workspace, session, name);
+            loaded.put(name, y);
         }
         return y;
     }
 
-    
-    public NutsLogger of(Class clazz,NutsSession session) {
+
+    public NutsLogger of(Class clazz, NutsSession session) {
         NutsLogger y = loaded.get(clazz.getName());
-        if(y==null) {
-            if(session==null){
-                session=defaultSession;
+        if (y == null) {
+            if (session == null) {
+                session = defaultSession;
             }
-            y= new DefaultNutsLogger(workspace, session, clazz);
-            loaded.put(clazz.getName(),y);
+            y = new DefaultNutsLogger(workspace, session, clazz);
+            loaded.put(clazz.getName(), y);
         }
         return y;
     }
 
-    
+
     public Level getTermLevel() {
         return this.logConfig.getLogTermLevel();
     }
 
-    
+
     public void setTermLevel(Level level, NutsSession session) {
         if (level == null) {
             level = Level.INFO;
@@ -155,12 +153,12 @@ public class DefaultNutsLogModel {
         }
     }
 
-    
+
     public Level getFileLevel() {
         return this.logConfig.getLogFileLevel();
     }
 
-    
+
     public void setFileLevel(Level level, NutsSession session) {
         if (level == null) {
             level = Level.INFO;
@@ -179,14 +177,16 @@ public class DefaultNutsLogModel {
     }
 
     public void updateFileHandler(LogRecord record) {
-        if(fileHandler==null){
-            if(logConfig.getLogFileLevel()!=Level.OFF){
-                if(fileHandler==null){
+        if (fileHandler == null) {
+            if (logConfig.getLogFileLevel() != Level.OFF) {
+                if (fileHandler == null) {
+                    NutsSession session = NutsLogUtils.resolveSession(record, workspace);
                     try {
-                        fileHandler = NutsLogFileHandler.create(workspace, logConfig, true,logFolder);
+                        fileHandler = NutsLogFileHandler.create(
+                                session, logConfig, true, logFolder);
                         fileHandler.setLevel(logConfig.getLogFileLevel());
                     } catch (Exception ex) {
-                        Logger.getLogger(DefaultNutsLogManager.class.getName()).log(Level.FINE, "Unable to create file handler", ex);
+                        Logger.getLogger(DefaultNutsLogManager.class.getName()).log(Level.FINE, "unable to create file handler", ex);
                     }
                 }
             }
@@ -194,43 +194,22 @@ public class DefaultNutsLogModel {
     }
 
     public void updateTermHandler(LogRecord record) {
-        NutsPrintStream out=null;
-        NutsSession session=null;
-        if (record instanceof NutsLogRecord) {
-            NutsLogRecord rr = (NutsLogRecord) record;
-            if(rr.getSession()!=null){
-                session=rr.getSession();
-            }
-            NutsWorkspace ws = rr.getWorkspace();
-            if (session != null) {
-                out = session.out();
-            } else {
-                NutsIOManager io = ws.io();
-                if(io!=null){
-                    NutsSessionTerminal term = ws.term().setSession(
-                            NutsWorkspaceUtils.defaultSession(ws)
-                    ).getTerminal();
-                    if(term!=null){
-                        out = term.out();
-                    }
-                }
-            }
-        }
-        if(out==null){
-            out= defaultSession.getWorkspace().io().stderr();
-        }
-        if(out!=this.out || consoleHandler==null){
-            this.out=out;
-            if(consoleHandler!=null){
-                if(consoleHandler instanceof NutsLogConsoleHandler){
-                    ((NutsLogConsoleHandler) consoleHandler).setOutputStream(out,false);
+        NutsSession session = NutsLogUtils.resolveSession(record, workspace);
+        NutsPrintStream out = session.err();
+        if (out != this.out || consoleHandler == null) {
+            this.out = out;
+            if (consoleHandler != null) {
+                if (consoleHandler instanceof NutsLogConsoleHandler) {
+                    ((NutsLogConsoleHandler) consoleHandler).setOutputStream(out, false);
                     consoleHandler.setLevel(logConfig.getLogTermLevel());
-                }else {
+                } else {
                     consoleHandler.flush(); // do not close!!
                     consoleHandler.setLevel(logConfig.getLogTermLevel());
                 }
-            }else {
-                consoleHandler = new NutsLogConsoleHandler(out, false);
+            } else {
+                consoleHandler = new NutsLogConsoleHandler(out, false,
+                        ((AbstractNutsWorkspace) workspace).defaultSession()
+                );
                 consoleHandler.setLevel(logConfig.getLogTermLevel());
             }
         }
@@ -239,5 +218,5 @@ public class DefaultNutsLogModel {
     public NutsWorkspace getWorkspace() {
         return workspace;
     }
-    
+
 }

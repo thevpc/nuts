@@ -45,6 +45,8 @@ public interface NutsIOManager extends NutsComponent<Object/* any object or null
      */
     NutsPath path(String path);
 
+    NutsPath path(String path,ClassLoader classLoader);
+
     /**
      * expand path to Workspace Location
      *

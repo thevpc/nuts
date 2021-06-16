@@ -9,17 +9,15 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
 public class NutsLogRecord extends LogRecord {
-    private NutsWorkspace workspace;
     private NutsSession session;
     private NutsLogVerb verb;
     private boolean formatted;
     private long time;
     private NutsTextFormatStyle formatStyle = NutsTextFormatStyle.JSTYLE;
 
-    public NutsLogRecord(NutsWorkspace ws, NutsSession session, Level level, NutsLogVerb verb, String msg, Object[] objects, boolean formatted, long time, NutsTextFormatStyle style) {
+    public NutsLogRecord(NutsSession session, Level level, NutsLogVerb verb, String msg, Object[] objects, boolean formatted, long time, NutsTextFormatStyle style) {
         super(level, msg);
         this.verb = verb;
-        this.workspace = ws;
         this.session = session;
         this.formatted = formatted;
         this.time = time;
@@ -44,11 +42,7 @@ public class NutsLogRecord extends LogRecord {
     }
 
     public NutsWorkspace getWorkspace() {
-        return workspace;
-    }
-
-    public void setWorkspace(NutsWorkspace workspace) {
-        this.workspace = workspace;
+        return session==null?null: session.getWorkspace();
     }
 
     public NutsSession getSession() {
@@ -59,32 +53,32 @@ public class NutsLogRecord extends LogRecord {
         this.session = session;
     }
 
-    public NutsLogRecord filter(){
-        if(isFormatted()) {
-            NutsLogRecord r = new NutsLogRecord(workspace, session,getLevel(), verb,
-                    session.getWorkspace().text().builder().append(getMessage()).filteredText()
-                    ,getParameters(),false,time,formatStyle);
-            r.setSequenceNumber(this.getSequenceNumber());
-            r.setThreadID(this.getThreadID());
-            r.setMillis(this.getMillis());
-            r.setThrown(this.getThrown());
-            return r;
-        }else{
-            return this;
-        }
-    }
-    public NutsLogRecord escape(){
-        if(isFormatted()) {
-            return this;
-        }else{
-            NutsLogRecord r = new NutsLogRecord(workspace, session,getLevel(), verb,
-                    workspace.text().builder().append(getMessage()).toString(),
-                    getParameters(),false,time,formatStyle);
-            r.setSequenceNumber(this.getSequenceNumber());
-            r.setThreadID(this.getThreadID());
-            r.setMillis(this.getMillis());
-            r.setThrown(this.getThrown());
-            return r;
-        }
-    }
+//    public NutsLogRecord filter(){
+//        if(isFormatted()) {
+//            NutsLogRecord r = new NutsLogRecord(session,getLevel(), verb,
+//                    session.getWorkspace().text().builder().append(getMessage()).filteredText()
+//                    ,getParameters(),false,time,formatStyle);
+//            r.setSequenceNumber(this.getSequenceNumber());
+//            r.setThreadID(this.getThreadID());
+//            r.setMillis(this.getMillis());
+//            r.setThrown(this.getThrown());
+//            return r;
+//        }else{
+//            return this;
+//        }
+//    }
+//    public NutsLogRecord escape(){
+//        if(isFormatted()) {
+//            return this;
+//        }else{
+//            NutsLogRecord r = new NutsLogRecord(session,getLevel(), verb,
+//                    getWorkspace().text().builder().append(getMessage()).toString(),
+//                    getParameters(),false,time,formatStyle);
+//            r.setSequenceNumber(this.getSequenceNumber());
+//            r.setThreadID(this.getThreadID());
+//            r.setMillis(this.getMillis());
+//            r.setThrown(this.getThrown());
+//            return r;
+//        }
+//    }
 }

@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.core.format.text.parser.steps;
 
 import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.runtime.core.format.text.NutsTextNodeWriterStringer;
 import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextNodeParser;
 import net.thevpc.nuts.runtime.bundles.string.StringBuilder2;
 
@@ -39,12 +38,12 @@ public class PlainParserStep extends ParserStep {
         this(s.charAt(0),lineStart, ws,state,exitCondition);
         for (int i = 1; i < s.length(); i++) {
             char c=s.charAt(i);
-            consume(c,state);
+            consume(c,state, false);
         }
     }
 
     @Override
-    public void consume(char c, DefaultNutsTextNodeParser.State p) {
+    public void consume(char c, DefaultNutsTextNodeParser.State p, boolean wasNewLine) {
         char oldLast = last;
         state.setLineStart(c == '\n');
         last = c;
@@ -215,7 +214,7 @@ public class PlainParserStep extends ParserStep {
                             }
                             char cc = (char) cval;
                             escape = null;
-                            consume(cc, p);
+                            consume(cc, p, false);
                             return;
                         }
                     } else {

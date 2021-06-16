@@ -1,5 +1,6 @@
 # Project exclude paths
 /.idea/
+/core/nuts-runtime-test/runtime
 /core/nuts-runtime/nbproject/
 /core/nuts-runtime/nuts-runtime.iml
 /core/nuts-runtime/target/

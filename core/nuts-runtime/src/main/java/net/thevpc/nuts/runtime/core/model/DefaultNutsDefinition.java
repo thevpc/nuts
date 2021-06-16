@@ -50,6 +50,7 @@ public class DefaultNutsDefinition implements NutsDefinition {
     private transient NutsSession session;
 
     public DefaultNutsDefinition() {
+//        System.out.println("");
     }
 
     public DefaultNutsDefinition(String repoUuid, String repoName, NutsId id, NutsDescriptor descriptor, NutsContent content, NutsInstallInformation install, NutsIdType type, NutsId apiId, NutsSession session) {

@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.core.format.props;
 
-import java.io.PrintStream;
 import java.util.*;
 
 import net.thevpc.nuts.*;
@@ -181,7 +180,7 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
             mm = model;
         }
         if (javaProps) {
-            CoreIOUtils.storeProperties(ObjectOutputFormatWriterHelper.explodeMap(mm), w.asOutputStream(), sorted);
+            CoreIOUtils.storeProperties(ObjectOutputFormatWriterHelper.explodeMap(mm), w.asPrintStream(), sorted);
         } else {
             printMap(out, getSession().getWorkspace().text().forBlank(), mm);
         }

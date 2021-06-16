@@ -82,7 +82,10 @@ public class DefaultNutsLogger implements NutsLogger {
         if (!isLoggable(level)) {
             return;
         }
-        LogRecord lr = new NutsLogRecord(workspace, session, level, NutsLogVerb.FAIL, msg, DefaultNutsLoggerOp.OBJECTS0, defaultFormatted, defaultTime,defaultStyle);
+        if(session==null){
+            session=this.session;
+        }
+        LogRecord lr = new NutsLogRecord(session, level, NutsLogVerb.FAIL, msg, DefaultNutsLoggerOp.OBJECTS0, defaultFormatted, defaultTime,defaultStyle);
         lr.setThrown(thrown);
         doLog(lr);
     }
@@ -95,7 +98,10 @@ public class DefaultNutsLogger implements NutsLogger {
         if (!isLoggable(level)) {
             return;
         }
-        LogRecord lr = new NutsLogRecord(workspace, session, level, verb, msg, DefaultNutsLoggerOp.OBJECTS0, defaultFormatted, defaultTime,defaultStyle);
+        if(session==null){
+            session=this.session;
+        }
+        LogRecord lr = new NutsLogRecord(session, level, verb, msg, DefaultNutsLoggerOp.OBJECTS0, defaultFormatted, defaultTime,defaultStyle);
         doLog(lr);
     }
 
@@ -106,7 +112,10 @@ public class DefaultNutsLogger implements NutsLogger {
         if (!isLoggable(level)) {
             return;
         }
-        LogRecord lr = new NutsLogRecord(workspace, session, level, verb, msgSupplier.get(), DefaultNutsLoggerOp.OBJECTS0, defaultFormatted, defaultTime,defaultStyle);
+        if(session==null){
+            session=this.session;
+        }
+        LogRecord lr = new NutsLogRecord(session, level, verb, msgSupplier.get(), DefaultNutsLoggerOp.OBJECTS0, defaultFormatted, defaultTime,defaultStyle);
         doLog(lr);
     }
 
@@ -118,7 +127,10 @@ public class DefaultNutsLogger implements NutsLogger {
         if (!isLoggable(level)) {
             return;
         }
-        LogRecord lr = new NutsLogRecord(workspace, null, level, verb, msg, params, defaultFormatted, defaultTime,defaultStyle);
+        if(session==null){
+            session=this.session;
+        }
+        LogRecord lr = new NutsLogRecord(session,  level, verb, msg, params, defaultFormatted, defaultTime,defaultStyle);
         lr.setParameters(params);
         doLog(lr);
     }
