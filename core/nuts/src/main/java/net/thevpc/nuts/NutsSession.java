@@ -24,7 +24,6 @@
 package net.thevpc.nuts;
 
 import java.io.InputStream;
-import java.io.PrintStream;
 import java.time.Instant;
 import java.util.Map;
 import java.util.logging.Filter;

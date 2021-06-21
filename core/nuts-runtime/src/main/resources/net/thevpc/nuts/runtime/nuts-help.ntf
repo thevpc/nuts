@@ -70,7 +70,7 @@ Boot Runtime Version: ###${nuts.workspace-runtime.version}###
  ```sh --workspace <workspace-location> ```
  ```sh -w <workspace-location> ```
       workspace location to open (or create).
-      this defaults to default-workspace. Typically this refers to ~/.config/nuts/default-workspace on *NIX Platforms
+      this defaults to default-workspace. Typically this refers to ~/.config/nuts/default-workspace on *NIX Platforms*
       (when ```sh --system-config-home``` is not specified). workspace location contains mainly config information.
 
  ```sh --user      <username> ```

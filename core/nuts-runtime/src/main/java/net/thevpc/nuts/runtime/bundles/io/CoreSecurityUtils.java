@@ -122,10 +122,10 @@ public class CoreSecurityUtils {
             byte[] bytes = cipher.doFinal(Base64.getDecoder().decode(strToDecrypt));
 
             //bytes is padded to be multiple of 16 (bug in jdk11)
-            int ch1 = bytes[0];
-            int ch2 = bytes[1];
-            int ch3 = bytes[2];
-            int ch4 = bytes[3];
+            int ch1 = bytes[0] & 0xff;
+            int ch2 = bytes[1] & 0xff;
+            int ch3 = bytes[2] & 0xff;
+            int ch4 = bytes[3] & 0xff;
             if ((ch1 | ch2 | ch3 | ch4) < 0)
                 throw new EOFException();
             int v= ((ch1 << 24) + (ch2 << 16) + (ch3 << 8) + (ch4 << 0));
