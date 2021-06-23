@@ -25,6 +25,7 @@ package net.thevpc.nuts.runtime.core.util;
 
 import net.thevpc.nuts.NutsNotFoundException;
 import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NutsTextBuilder;
 import net.thevpc.nuts.NutsWorkspace;
 
 import java.io.IOException;
@@ -437,12 +438,30 @@ public final class CoreStringUtils {
             sb.append(x);
         }
     }
+    public static void fillString(char x, int width, NutsTextBuilder sb) {
+        if (width <= 0) {
+            return;
+        }
+//        sb.ensureCapacity(sb.length() + width);
+        for (int i = 0; i < width; i++) {
+            sb.append(x);
+        }
+    }
 
     public static void fillString(String x, int width, StringBuilder sb) {
         if (width <= 0) {
             return;
         }
         sb.ensureCapacity(sb.length() + (width * x.length()));
+        for (int i = 0; i < width; i++) {
+            sb.append(x);
+        }
+    }
+    public static void fillString(String x, int width, NutsTextBuilder sb) {
+        if (width <= 0) {
+            return;
+        }
+        //sb.ensureCapacity(sb.length() + (width * x.length()));
         for (int i = 0; i < width; i++) {
             sb.append(x);
         }

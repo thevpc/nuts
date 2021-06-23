@@ -83,7 +83,7 @@ public class JavaSourceExecutorComponent implements NutsExecutorComponent {
         NutsDefinition d = executionContext.getDefinition();
         d = new DefaultNutsDefinition(d, executionContext.getTraceSession());
         ((DefaultNutsDefinition) d).setContent(new NutsDefaultContent(
-                folder,
+                executionContext.getTraceSession().getWorkspace().io().path(folder),
                 false,
                 true
         ));
@@ -124,7 +124,7 @@ public class JavaSourceExecutorComponent implements NutsExecutorComponent {
         NutsDefinition d = executionContext.getDefinition();
         d = new DefaultNutsDefinition(d, executionContext.getTraceSession());
         ((DefaultNutsDefinition) d).setContent(new NutsDefaultContent(
-                folder.toString(),
+                executionContext.getTraceSession().getWorkspace().io().path(folder.toString()),
                 false,
                 true
         ));

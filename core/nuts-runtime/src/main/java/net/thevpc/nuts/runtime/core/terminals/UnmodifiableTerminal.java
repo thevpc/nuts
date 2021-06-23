@@ -1,11 +1,10 @@
 package net.thevpc.nuts.runtime.core.terminals;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.console.CProgressBar;
+import net.thevpc.nuts.runtime.standalone.io.progress.CProgressBar;
 import net.thevpc.nuts.spi.NutsTerminalBase;
 
 import java.io.InputStream;
-import java.io.PrintStream;
 
 public class UnmodifiableTerminal extends AbstractNutsTerminal implements NutsSessionTerminal {
 

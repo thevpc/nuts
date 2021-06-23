@@ -72,7 +72,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
 
         Path tempFile = null;
         NutsInput contentSource;
-        contentSource = ws.io().input().setMultiRead(true).setTypeName("package content").of(content);
+        contentSource = ws.io().input().setMultiRead(true).setTypeName("artifact binaries").of(content);
         NutsDescriptor descriptor = buildDescriptor(descriptor0, descSHA1);
 
         CharacterizedDeployFile characterizedFile = null;
@@ -223,16 +223,16 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
         if (descriptor instanceof NutsDescriptor) {
             mdescriptor = (NutsDescriptor) descriptor;
             if (descSHA1 != null && !ws.io().hash().sha1().source(mdescriptor).computeString().equalsIgnoreCase(descSHA1)) {
-                throw new NutsIllegalArgumentException(getSession(), "invalid Content Hash");
+                throw new NutsIllegalArgumentException(getSession(), "invalid content Hash");
             }
             return mdescriptor;
         } else if (CoreIOUtils.isValidInputStreamSource(descriptor.getClass())) {
-            NutsInput inputStreamSource = ws.io().input().setMultiRead(true).setTypeName("package descriptor").of(descriptor);
+            NutsInput inputStreamSource = ws.io().input().setMultiRead(true).setTypeName("artifact descriptor").of(descriptor);
             if (descSHA1 != null) {
                 inputStreamSource = ws.io().input().setMultiRead(true).of(inputStreamSource);
                 try (InputStream is = inputStreamSource.open()) {
                     if (!ws.io().hash().sha1().source(is).computeString().equalsIgnoreCase(descSHA1)) {
-                        throw new NutsIllegalArgumentException(getSession(), "invalid Content Hash");
+                        throw new NutsIllegalArgumentException(getSession(), "invalid content Hash");
                     }
                 } catch (IOException ex) {
                     throw new UncheckedIOException(ex);

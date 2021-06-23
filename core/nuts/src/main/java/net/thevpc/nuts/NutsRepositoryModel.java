@@ -110,4 +110,8 @@ public interface NutsRepositoryModel {
     default boolean isAcceptFetchMode(NutsFetchMode mode){
         return true;
     }
+
+    default boolean isRemote(){
+        return true;
+    }
 }

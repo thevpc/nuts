@@ -190,6 +190,8 @@ public interface NutsRepository {
      */
     boolean isEnabled() ;
 
+    boolean isRemote() ;
+
     /**
      * set runtime enabled
      * @param enabled runtime enabled value

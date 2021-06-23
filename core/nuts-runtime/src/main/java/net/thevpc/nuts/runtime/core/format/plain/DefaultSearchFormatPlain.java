@@ -48,6 +48,7 @@ public class DefaultSearchFormatPlain extends DefaultSearchFormatBase {
         if (fid != null) {
             formatElement(fid, index);
         } else {
+            getWriter().resetLine();
             getWriter().print(object);
             getWriter().println();
             getWriter().flush();
@@ -55,6 +56,7 @@ public class DefaultSearchFormatPlain extends DefaultSearchFormatBase {
     }
 
     private void formatElement(NutsIdFormatHelper id, long index) {
+        getWriter().resetLine();
         getWriter().printf("%s",id.getSingleColumnRow(getDisplayOptions()));
         getWriter().println();
         getWriter().flush();

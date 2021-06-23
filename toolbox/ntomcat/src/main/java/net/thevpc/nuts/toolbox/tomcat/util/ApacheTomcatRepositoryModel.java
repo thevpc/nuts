@@ -153,7 +153,8 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
                 localPath = getIdLocalFile(id.builder().setFaceContent().build(), fetchMode, repository, session);
             }
             ws.io().copy().from(r).to(localPath).setSafe(true).setSession(session).setLogProgress(true).run();
-            return new NutsDefaultContent(localPath, false, false);
+            return new NutsDefaultContent(
+                    session.getWorkspace().io().path(localPath), false, false);
         }
         return null;
     }

@@ -26,8 +26,6 @@
 */
 package net.thevpc.nuts;
 
-import java.io.UncheckedIOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -42,7 +40,7 @@ import java.util.Objects;
  */
 public class NutsDefaultContent implements NutsContent {
 
-    private final String location;
+    private final NutsPath location;
     private final boolean cached;
     private final boolean temporary;
 
@@ -52,7 +50,7 @@ public class NutsDefaultContent implements NutsContent {
      * @param cached true if the file is cached (may be not up to date)
      * @param temporary true if file is temporary (should be deleted later)
      */
-    public NutsDefaultContent(String location, boolean cached, boolean temporary) {
+    public NutsDefaultContent(NutsPath location, boolean cached, boolean temporary) {
         this.location = location;
         this.cached = cached;
         this.temporary = temporary;
@@ -63,22 +61,23 @@ public class NutsDefaultContent implements NutsContent {
      * @return content path location
      */
     @Override
-    public Path getPath() {
-        return location==null?null:Paths.get(location);
+    public Path getFilePath() {
+        return location==null?null:Paths.get(location.location());
     }
 
     @Override
-    public String getLocation() {
+    public NutsPath getPath() {
+        return location;
+    }
+
+    @Override
+    public NutsPath getLocation() {
         return location;
     }
 
     @Override
     public URL getURL() {
-        try {
-            return location ==null?null: getPath().toUri().toURL();
-        } catch (MalformedURLException e) {
-            throw new UncheckedIOException(e);
-        }
+        return location ==null?null: getPath().toURL();
     }
 
     /**

@@ -169,4 +169,6 @@ public interface NutsIOManager extends NutsComponent<Object/* any object or null
     boolean isStandardErrorStream(NutsPrintStream out);
 
     boolean isStandardInputStream(InputStream in);
+    NutsIOManager addPathFactory(NutsPathFactory pathFactory);
+    NutsIOManager removePathFactory(NutsPathFactory pathFactory);
 }

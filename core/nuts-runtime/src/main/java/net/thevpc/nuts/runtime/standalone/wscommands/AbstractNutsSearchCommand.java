@@ -673,7 +673,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     @Override
     public NutsResultList<String> getResultPathNames() {
         return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(true, isEffective()))
-                .map(x -> (x.getContent() == null || x.getContent().getPath() == null) ? null : x.getContent().getPath().getFileName().toString())
+                .map(x -> (x.getContent() == null || x.getContent().getPath() == null) ? null : x.getContent().getPath().name())
                 .notBlank());
     }
 
@@ -739,8 +739,8 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
         checkSession();
         return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
                 .mapMulti(x
-                        -> (x.getContent() == null || x.getContent().getPath() == null) ? Collections.emptyList()
-                        : Arrays.asList(getSession().getWorkspace().apps().execEntries().setSession(getSession()).parse(x.getContent().getPath()))));
+                        -> (x.getContent() == null || x.getContent().getFilePath() == null) ? Collections.emptyList()
+                        : Arrays.asList(getSession().getWorkspace().apps().execEntries().setSession(getSession()).parse(x.getContent().getFilePath()))));
     }
 
     @Override
@@ -1263,24 +1263,32 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
         final boolean hasRemote = getSession().getFetchStrategy() == null
                 || Arrays.stream(getSession().getFetchStrategy().modes())
                 .anyMatch(x -> x == NutsFetchMode.REMOTE);
-        return (IteratorUtils.convert(getResultIdIteratorBase(null),
-                next -> {
-                    NutsDefinition d = null;
-                    if (isContent()) {
-                        return fetch.setId(next).getResultDefinition();
-                    } else {
-                        if (hasRemote) {
-                            fetch.setId(next).getResultDescriptor();
+        return IteratorBuilder.of(getResultIdIteratorBase(null))
+                .convert(next -> {
+//                    NutsDefinition d = null;
+//                    if (isContent()) {
+                    NutsDefinition d = fetch.setId(next).getResultDefinition();
+                    if(d==null){
+                        if(isFailFast()){
+                            throw new NutsNotFoundException(getSession(),next);
                         }
-                        d = ofetch.setId(next).getResultDefinition();
-                        if(d==null){
-                            _LOGOP(getSession())
-                                    .verb(NutsLogVerb.FAIL)
-                                    .log("inconsistent repository. id %s was found but its definition could not be resolved!",next);
-                        }
+                        return d;
                     }
                     return d;
-                }, "Id->Definition"));
+//                    } else {
+//                        if (hasRemote) {
+//                            fetch.setId(next).getResultDescriptor();
+//                        }
+//                        d = ofetch.setId(next).getResultDefinition();
+//                        if(d==null){
+//                            _LOGOP(getSession())
+//                                    .verb(NutsLogVerb.FAIL)
+//                                    .log("inconsistent repository. id %s was found but its definition could not be resolved!",next);
+//                        }
+//                    }
+//                    return d;
+                }, "Id->Definition")
+                .notNull().build();
     }
 
     protected <T> NutsCollectionResult<T> buildCollectionResult(Iterator<T> o) {

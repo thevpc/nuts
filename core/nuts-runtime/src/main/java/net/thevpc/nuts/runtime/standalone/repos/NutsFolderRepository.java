@@ -108,4 +108,9 @@ public class NutsFolderRepository extends NutsCachedRepository {
     public boolean isAcceptFetchMode(NutsFetchMode mode, NutsSession session) {
         return mode == NutsFetchMode.LOCAL;
     }
+    @Override
+    public boolean isRemote() {
+        return false;
+    }
+
 }

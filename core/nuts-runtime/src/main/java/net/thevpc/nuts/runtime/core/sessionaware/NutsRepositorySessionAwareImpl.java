@@ -322,4 +322,8 @@ public class NutsRepositorySessionAwareImpl implements NutsRepository, NutsRepos
         return repo.toString();
     }
 
+    @Override
+    public boolean isRemote() {
+        return repo.isRemote();
+    }
 }

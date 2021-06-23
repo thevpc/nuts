@@ -87,9 +87,9 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
                 command.getSession(),
                 new NutsTransportParamBinaryStreamPart("descriptor", "Project.nuts",
                         new ByteArrayInputStream(descStream.toByteArray())),
-                new NutsTransportParamBinaryFilePart("content", content.getPath().getFileName().toString(), content.getPath()),
+                new NutsTransportParamBinaryFilePart("content", content.getPath().name(), content.getFilePath()),
                 new NutsTransportParamParamPart("descriptor-hash", getWorkspace().io().hash().sha1().source(desc).computeString()),
-                new NutsTransportParamParamPart("content-hash", CoreIOUtils.evalSHA1Hex(content.getPath())),
+                new NutsTransportParamParamPart("content-hash", CoreIOUtils.evalSHA1Hex(content.getFilePath())),
                 new NutsTransportParamParamPart("force", String.valueOf(command.getSession().isYes()))
         );
     }
@@ -197,7 +197,9 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
             String rhash = httpGetString(getUrl("/fetch-hash?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart(session)), session);
             String lhash = CoreIOUtils.evalSHA1Hex(Paths.get(localPath));
             if (rhash.equalsIgnoreCase(lhash)) {
-                return new NutsDefaultContent(localPath, false, temp);
+                return new NutsDefaultContent(
+                        session.getWorkspace().io().path(localPath)
+                        , false, temp);
             }
         } catch (UncheckedIOException | NutsIOException ex) {
             throw new NutsNotFoundException(session, id, ex);
@@ -327,4 +329,9 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
 //    public Path getComponentsLocation() {
 //        return null;
 //    }
+    @Override
+    public boolean isRemote() {
+        return true;
+    }
+
 }

@@ -144,6 +144,12 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
             HashMap<String, String> p = new HashMap<>(properties);
             this.properties = Collections.unmodifiableMap(p);
         }
+        if(this.properties!=null
+            && "true".equals(this.properties.get("nuts.application"))
+            && !application
+        ){
+            System.out.println("why");
+        }
     }
 
 //    @Override

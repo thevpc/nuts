@@ -54,7 +54,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
         }
 
         @Override
-        protected NutsInput openStream(NutsId id, String path, Object source, String typeName, NutsSession session) {
+        protected NutsInput openStream(NutsId id, String path, Object source, String typeName, String action, NutsSession session) {
             return session.getWorkspace().io().input().setTypeName(typeName).of(Paths.get(path));
         }
 
@@ -65,7 +65,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
 
         @Override
         protected String getStreamSHA1(NutsId id, NutsSession session, String typeName) {
-            return CoreIOUtils.evalSHA1Hex(getStream(id.builder().setFace(NutsConstants.QueryFaces.CONTENT_HASH).build(), typeName, session).open(), true);
+            return CoreIOUtils.evalSHA1Hex(getStream(id.builder().setFace(NutsConstants.QueryFaces.CONTENT_HASH).build(), typeName, "verify", session).open(), true);
         }
 
         @Override
@@ -95,6 +95,10 @@ public class MavenFolderRepository extends NutsCachedRepository {
         } catch (Exception e) {
             return false;
         }
+    }
+    @Override
+    public boolean isRemote() {
+        return false;
     }
 
     private Path getLocationAsPath(NutsSession session) {
@@ -134,12 +138,14 @@ public class MavenFolderRepository extends NutsCachedRepository {
             throw new NutsNotFoundException(session, id, new IOException("File not found : " + f));
         }
         if (localPath == null) {
-            return new NutsDefaultContent(f.toString(), true, false);
+            return new NutsDefaultContent(
+                    session.getWorkspace().io().path(f.toString()), true, false);
         } else {
             getWorkspace().io().copy()
                     .setSession(session)
                     .from(f).to(localPath).setSafe(true).run();
-            return new NutsDefaultContent(localPath, true, false);
+            return new NutsDefaultContent(
+                    session.getWorkspace().io().path(localPath), true, false);
         }
     }
 

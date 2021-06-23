@@ -90,7 +90,7 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
 //                LOG.log(Level.FINEST, CoreStringUtils.alignLeft(config().getName(), 20) + " " + message + " url " + url);
 //            }
 //        }
-        return openStream(url, id, "package descriptor", session);
+        return openStream(url, id, "artifact descriptor", session);
     }
 
     protected String getPath(NutsId id, NutsSession session) {
@@ -128,7 +128,7 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
             String metadataURL = CoreIOUtils.buildUrl(apiUrlBase, groupId.replace('.', '/') + "/" + artifactId);
 
             try {
-                metadataStream = openStream(id, metadataURL, id.builder().setFace(CoreNutsConstants.QueryFaces.CATALOG).build(), "package catalog", session).open();
+                metadataStream = openStream(id, metadataURL, id.builder().setFace(CoreNutsConstants.QueryFaces.CATALOG).build(), "artifact catalog", session).open();
             } catch (UncheckedIOException | NutsIOException ex) {
                 throw new NutsNotFoundException(session, id, ex);
             }
@@ -214,7 +214,7 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
                     + getIdFilename(id.builder().setFaceDescriptor().build(), session)
             );
 
-            try (InputStream metadataStream = openStream(id, metadataURL, id.builder().setFace(CoreNutsConstants.QueryFaces.CATALOG).build(), "package catalog", session).open()) {
+            try (InputStream metadataStream = openStream(id, metadataURL, id.builder().setFace(CoreNutsConstants.QueryFaces.CATALOG).build(), "artifact catalog", session).open()) {
                 // ok found!!
                 ret.add(id);
             } catch (UncheckedIOException | IOException ex) {
@@ -283,13 +283,15 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
         if (descriptor.getLocations().length == 0) {
             String path = getPath(id, session);
             getWorkspace().io().copy().setSession(session).from(path).to(localFile).setSafe(true).setLogProgress(true).run();
-            return new NutsDefaultContent(localFile, false, false);
+            return new NutsDefaultContent(
+                    session.getWorkspace().io().path(localFile), false, false);
         } else {
             for (NutsIdLocation location : descriptor.getLocations()) {
                 if (CoreNutsUtils.acceptClassifier(location, id.getClassifier())) {
                     try {
                         getWorkspace().io().copy().setSession(session).from(location.getUrl()).to(localFile).setSafe(true).setLogProgress(true).run();
-                        return new NutsDefaultContent(localFile, false, false);
+                        return new NutsDefaultContent(
+                                session.getWorkspace().io().path(localFile), false, false);
                     } catch (Exception ex) {
                         LOG.with().session(session).level(Level.SEVERE).error(ex).log("unable to download location for id {0} in location {1} : {2}", id, location.getUrl(), ex);
                     }
@@ -342,6 +344,11 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
     }
     @Override
     public boolean isAcceptFetchMode(NutsFetchMode mode, NutsSession session) {
+        return true;
+    }
+
+    @Override
+    public boolean isRemote() {
         return true;
     }
 

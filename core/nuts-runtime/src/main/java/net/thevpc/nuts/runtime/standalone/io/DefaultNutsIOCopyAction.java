@@ -13,7 +13,7 @@ import java.util.Objects;
 import java.util.logging.Level;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.io.DefaultNutsProgressEvent;
+import net.thevpc.nuts.runtime.standalone.io.progress.DefaultNutsProgressEvent;
 import net.thevpc.nuts.runtime.bundles.io.InterruptException;
 import net.thevpc.nuts.runtime.bundles.io.Interruptible;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
@@ -676,7 +676,7 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
     }
 
     /**
-     * set progress monitor. Will create a singeleton progress monitor factory
+     * set progress monitor. Will create a singleton progress monitor factory
      *
      * @param value new value
      * @return {@code this} instance

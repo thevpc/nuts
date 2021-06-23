@@ -3,13 +3,14 @@ package net.thevpc.nuts.runtime.standalone.io;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.format.DefaultFormatBase;
 
-import java.util.Objects;
+import java.net.URL;
+import java.nio.file.Path;
 
 public abstract class NutsPathBase implements NutsPath {
     private NutsSession session;
 
     public NutsPathBase(NutsSession session) {
-        if(session==null){
+        if (session == null) {
             throw new IllegalArgumentException("invalid session");
         }
         //session will be used later
@@ -20,6 +21,23 @@ public abstract class NutsPathBase implements NutsPath {
         return session;
     }
 
+    public URL asURL() {
+        try {
+            return toURL();
+        } catch (Exception ex) {
+            return null;
+        }
+    }
+
+    @Override
+    public Path asFilePath() {
+        try {
+            return toFilePath();
+        } catch (Exception ex) {
+            return null;
+        }
+    }
+
     @Override
     public NutsFormat formatter() {
         return new PathFormat(this)
@@ -27,7 +45,7 @@ public abstract class NutsPathBase implements NutsPath {
                 ;
     }
 
-    public NutsString toNutsString(){
+    public NutsString toNutsString() {
         return session.getWorkspace().text().forPlain(toString());
     }
 
@@ -36,7 +54,7 @@ public abstract class NutsPathBase implements NutsPath {
 
         public PathFormat(NutsPathBase p) {
             super(p.session.getWorkspace(), "path");
-            this.p=p;
+            this.p = p;
         }
 
         @Override

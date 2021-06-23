@@ -1,4 +1,4 @@
-package net.thevpc.nuts.runtime.bundles.io;
+package net.thevpc.nuts.runtime.standalone.io.progress;
 
 import net.thevpc.nuts.NutsProgressEvent;
 import net.thevpc.nuts.NutsProgressMonitor;

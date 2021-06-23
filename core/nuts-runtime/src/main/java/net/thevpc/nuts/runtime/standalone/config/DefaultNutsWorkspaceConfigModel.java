@@ -1062,7 +1062,7 @@ public class DefaultNutsWorkspaceConfigModel {
         if (force || !Files.isRegularFile(configFile)) {
             ws.elem().setContentType(NutsContentType.JSON).setValue(m).print(configFile);
         }
-        downloadId(id, force, (def != null && def.getContent().getPath() != null) ? def.getContent().getPath() : null, false, session);
+        downloadId(id, force, (def != null && def.getContent().getPath() != null) ? def.getContent().getFilePath() : null, false, session);
         for (NutsId dep : deps) {
             downloadId(dep, force, null, true, session);
         }

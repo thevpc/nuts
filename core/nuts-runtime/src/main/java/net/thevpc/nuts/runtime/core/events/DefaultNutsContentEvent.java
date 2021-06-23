@@ -40,11 +40,11 @@ public class DefaultNutsContentEvent implements NutsContentEvent {
     /**
      * stored deployment Path, this is Repository dependent
      */
-    private final String location;
+    private final NutsPath location;
     private final NutsSession session;
     private final NutsRepository repository;
 
-    public DefaultNutsContentEvent(String location, NutsRepositoryCommand command, NutsSession session, NutsRepository repository) {
+    public DefaultNutsContentEvent(NutsPath location, NutsRepositoryCommand command, NutsSession session, NutsRepository repository) {
         this.location = location;
         this.command = command;
         this.session = session;
@@ -57,7 +57,7 @@ public class DefaultNutsContentEvent implements NutsContentEvent {
     }
 
     @Override
-    public String getLocation() {
+    public NutsPath getLocation() {
         return location;
     }
 

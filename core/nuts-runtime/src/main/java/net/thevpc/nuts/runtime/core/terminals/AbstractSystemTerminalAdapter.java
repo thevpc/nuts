@@ -3,14 +3,10 @@ package net.thevpc.nuts.runtime.core.terminals;
 import net.thevpc.nuts.*;
 
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintStream;
 
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
-import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.DefaultNutsQuestion;
-import net.thevpc.nuts.runtime.standalone.util.console.CProgressBar;
-import net.thevpc.nuts.spi.NutsInputStreamTransparentAdapter;
+import net.thevpc.nuts.runtime.standalone.io.progress.CProgressBar;
 import net.thevpc.nuts.spi.NutsSystemTerminalBase;
 
 public abstract class AbstractSystemTerminalAdapter extends AbstractNutsTerminal implements NutsSystemTerminal, NutsSessionAware {

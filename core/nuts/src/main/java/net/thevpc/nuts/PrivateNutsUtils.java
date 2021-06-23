@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -54,8 +54,8 @@ import java.util.stream.Collectors;
  */
 final class PrivateNutsUtils {
 
-    private static final Pattern DOLLAR_PLACE_HOLDER_PATTERN = Pattern.compile("[$][{](?<name>([a-zA-Z]+))[}]");
     public static final boolean NO_M2 = PrivateNutsUtils.getSysBoolNutsProperty("no-m2", false);
+    private static final Pattern DOLLAR_PLACE_HOLDER_PATTERN = Pattern.compile("[$][{](?<name>([a-zA-Z]+))[}]");
 
     public static boolean isPreferConsole(String[] args) {
         try {
@@ -125,7 +125,7 @@ final class PrivateNutsUtils {
                 + id.getArtifactId() + "/" + id.getVersion();
     }
 
-//    public static String idToPath(String str) {
+    //    public static String idToPath(String str) {
 //        int status = 0;
 //
 //        char[] chars = str.toCharArray();
@@ -221,7 +221,7 @@ final class PrivateNutsUtils {
         return new File(location).isAbsolute();
     }
 
-//    public static boolean storeProperties(Properties p, File file) {
+    //    public static boolean storeProperties(Properties p, File file) {
 //        Writer writer = null;
 //        try {
 //            File parentFile = file.getParentFile();
@@ -334,8 +334,8 @@ final class PrivateNutsUtils {
         } catch (Exception e) {
             long time = System.currentTimeMillis() - startTime;
             LOG.log(Level.CONFIG, NutsLogVerb.FAIL, "loading props file from  {0}" + ((time > 0) ? " (time {1})" : ""), new Object[]{
-                String.valueOf(url),
-                formatPeriodMilli(time)});
+                    String.valueOf(url),
+                    formatPeriodMilli(time)});
         }
         return props;
     }
@@ -458,54 +458,6 @@ final class PrivateNutsUtils {
             }
         }
         return javaHome + File.separator + "bin" + File.separator + exe;
-    }
-
-    /**
-     * @category Internal
-     */
-    private static class SimpleConfirmDelete implements ConfirmDelete {
-
-        private boolean force;
-        private List<File> ignoreDeletion = new ArrayList<>();
-
-        @Override
-        public boolean isForce() {
-            return force;
-        }
-
-        @Override
-        public void setForce(boolean value) {
-            this.force = value;
-        }
-
-        public void ignore(File directory) {
-            ignoreDeletion.add(directory);
-        }
-
-        @Override
-        public boolean accept(File directory) {
-            for (File ignored : ignoreDeletion) {
-                String s = ignored.getPath() + File.separatorChar;
-                if (s.startsWith(directory.getPath() + "/")) {
-                    return false;
-                }
-            }
-            return true;
-        }
-    }
-
-    /**
-     * @category Internal
-     */
-    private interface ConfirmDelete {
-
-        boolean isForce();
-
-        void setForce(boolean value);
-
-        boolean accept(File directory);
-
-        void ignore(File directory);
     }
 
     public static long deleteAndConfirmAll(File[] folders, boolean force, String header, NutsTerminal term, NutsSession session, PrivateNutsLog LOG) {
@@ -633,7 +585,7 @@ final class PrivateNutsUtils {
         }
         String ss
                 = (s instanceof Enum) ? ((Enum) s).name().toLowerCase().replace('_', '-')
-                        : s.toString().trim();
+                : s.toString().trim();
         return ss.isEmpty() ? "<EMPTY>" : ss;
     }
 
@@ -823,6 +775,130 @@ final class PrivateNutsUtils {
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
+    public static boolean isFileAccessible(Path path, Instant expireTime, PrivateNutsLog LOG) {
+        boolean proceed = Files.isRegularFile(path);
+        if (proceed) {
+            try {
+                if (expireTime != null) {
+                    FileTime lastModifiedTime = Files.getLastModifiedTime(path);
+                    if (lastModifiedTime.toInstant().compareTo(expireTime) < 0) {
+                        return false;
+                    }
+                }
+            } catch (Exception ex0) {
+                LOG.log(Level.FINEST, NutsLogVerb.FAIL, "unable to get LastModifiedTime for file : {0}", new String[]{path.toString(), ex0.toString()});
+            }
+        }
+        return proceed;
+    }
+
+    public static int firstIndexOf(String string, char[] chars) {
+        char[] value = string.toCharArray();
+        for (int i = 0; i < value.length; i++) {
+            for (int j = 0; j < chars.length; j++) {
+                if (value[i] == chars[j]) {
+                    return i;
+                }
+            }
+        }
+        return -1;
+    }
+
+    public static String resolveNutsVersionFromClassPath() {
+//        boolean devMode = false;
+        String version = null;
+        try {
+            version = PrivateNutsUtils.loadURLProperties(
+                    Nuts.class.getResource("/META-INF/maven/net.thevpc.nuts/nuts/pom.properties"),
+                    null, false, new PrivateNutsLog()).getProperty("version");
+        } catch (Exception ex) {
+            //
+        }
+        if (version == null || version.trim().isEmpty() || version.equals("0.0.0")) {
+            //check if we are in dev mode
+            String cp = System.getProperty("java.class.path");
+            for (String p : cp.split(File.pathSeparator)) {
+                File f = new File(p);
+                if (f.isDirectory()) {
+                    Matcher m = Pattern.compile("(?<src>.*)[/\\\\]+target[/\\\\]+classes[/\\\\]*")
+                            .matcher(f.getPath().replace('/', File.separatorChar));
+                    if (m.find()) {
+                        String src = m.group("src");
+                        if (new File(src, "pom.xml").exists() && new File(src,
+                                "src/main/java/net/thevpc/nuts/Nuts.java".replace('/', File.separatorChar)
+                        ).exists()) {
+//                            devMode = true;
+                            String xml = null;
+                            try {
+                                byte[] bytes = Files.readAllBytes(new File(src, "pom.xml").toPath());
+                                xml = new String(bytes);
+                            } catch (IOException ex) {
+                                throw new NutsBootException("unable to detect nuts version in dev mode.");
+                            }
+                            m = Pattern.compile("<version>(?<v>([0-9. ]+))</version>").matcher(xml);
+                            if (m.find()) {
+                                version = m.group("v").trim();
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if (version == null || version.trim().isEmpty()) {
+            return null;
+        } else {
+            return version;
+        }
+    }
+
+    /**
+     * @category Internal
+     */
+    private interface ConfirmDelete {
+
+        boolean isForce();
+
+        void setForce(boolean value);
+
+        boolean accept(File directory);
+
+        void ignore(File directory);
+    }
+
+    /**
+     * @category Internal
+     */
+    private static class SimpleConfirmDelete implements ConfirmDelete {
+
+        private boolean force;
+        private List<File> ignoreDeletion = new ArrayList<>();
+
+        @Override
+        public boolean isForce() {
+            return force;
+        }
+
+        @Override
+        public void setForce(boolean value) {
+            this.force = value;
+        }
+
+        @Override
+        public boolean accept(File directory) {
+            for (File ignored : ignoreDeletion) {
+                String s = ignored.getPath() + File.separatorChar;
+                if (s.startsWith(directory.getPath() + "/")) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        public void ignore(File directory) {
+            ignoreDeletion.add(directory);
+        }
+    }
+
     public static class StringMapParser {
 
         private String eqSeparators;
@@ -836,50 +912,6 @@ final class PrivateNutsUtils {
         public StringMapParser(String eqSeparators, String entrySeparators) {
             this.eqSeparators = eqSeparators;
             this.entrySeparators = entrySeparators;
-        }
-
-        /**
-         * copied from StringUtils (in order to remove dependency)
-         *
-         * @param text text to parse
-         * @return parsed map
-         */
-        public Map<String, String> parseMap(String text) {
-            Map<String, String> m = new LinkedHashMap<>();
-            StringReader reader = new StringReader(text == null ? "" : text);
-            while (true) {
-                StringBuilder key = new StringBuilder();
-                int r = 0;
-                try {
-                    r = readToken(reader, eqSeparators + entrySeparators, key);
-                } catch (IOException e) {
-                    throw new UncheckedIOException(e);
-                }
-                String t = key.toString();
-                if (r == -1) {
-                    if (!t.isEmpty()) {
-                        m.put(t, null);
-                    }
-                    break;
-                } else {
-                    char c = (char) r;
-                    if (eqSeparators.indexOf(c) >= 0) {
-                        StringBuilder value = new StringBuilder();
-                        try {
-                            r = readToken(reader, entrySeparators, value);
-                        } catch (IOException e) {
-                            throw new UncheckedIOException(e);
-                        }
-                        m.put(t, value.toString());
-                        if (r == -1) {
-                            break;
-                        }
-                    } else {
-                        //
-                    }
-                }
-            }
-            return m;
         }
 
         /**
@@ -944,6 +976,50 @@ final class PrivateNutsUtils {
             }
         }
 
+        /**
+         * copied from StringUtils (in order to remove dependency)
+         *
+         * @param text text to parse
+         * @return parsed map
+         */
+        public Map<String, String> parseMap(String text) {
+            Map<String, String> m = new LinkedHashMap<>();
+            StringReader reader = new StringReader(text == null ? "" : text);
+            while (true) {
+                StringBuilder key = new StringBuilder();
+                int r = 0;
+                try {
+                    r = readToken(reader, eqSeparators + entrySeparators, key);
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
+                }
+                String t = key.toString();
+                if (r == -1) {
+                    if (!t.isEmpty()) {
+                        m.put(t, null);
+                    }
+                    break;
+                } else {
+                    char c = (char) r;
+                    if (eqSeparators.indexOf(c) >= 0) {
+                        StringBuilder value = new StringBuilder();
+                        try {
+                            r = readToken(reader, entrySeparators, value);
+                        } catch (IOException e) {
+                            throw new UncheckedIOException(e);
+                        }
+                        m.put(t, value.toString());
+                        if (r == -1) {
+                            break;
+                        }
+                    } else {
+                        //
+                    }
+                }
+            }
+            return m;
+        }
+
     }
 
     /**
@@ -951,7 +1027,7 @@ final class PrivateNutsUtils {
      */
     public static class Mvn {
 
-//        public static String resolveMavenReleaseVersion(String mavenURLBase, String nutsId) {
+        //        public static String resolveMavenReleaseVersion(String mavenURLBase, String nutsId) {
 //            String mvnUrl = (mavenURLBase + toMavenPath(nutsId) + "/maven-metadata.xml");
 //            String str = null;
 //            try {
@@ -982,7 +1058,7 @@ final class PrivateNutsUtils {
             return mvnUrl + jarPath;
         }
 
-        public static File resolveOrDownloadJar(String nutsId, String[] repositories, String cacheFolder, PrivateNutsLog LOG, boolean includeDesc, Instant expire) {
+        public static File resolveOrDownloadJar(String nutsId, String[] repositories, String cacheFolder, PrivateNutsLog LOG, boolean includeDesc, Instant expire, ErrorInfoList errors) {
             includeDesc = false;
             String descPath = toMavenPath(nutsId) + "/" + toMavenFileName(nutsId, "pom");
             String jarPath = toMavenPath(nutsId) + "/" + toMavenFileName(nutsId, "jar");
@@ -1009,7 +1085,8 @@ final class PrivateNutsUtils {
                     try {
                         copy(new URL(path), cachedPomFile, LOG);
                     } catch (Exception ex) {
-                        LOG.log(Level.SEVERE, NutsLogVerb.FAIL, "unable to load {0} from {1}.\n", new Object[]{nutsId, r});
+                        errors.add(new ErrorInfo(nutsId, r, path, "unable to load descriptor", ex.toString()));
+                        LOG.log(Level.SEVERE, NutsLogVerb.FAIL, "unable to load descriptor {0} from {1}.\n", new Object[]{nutsId, r});
                         continue;
                         //ex.printStackTrace();
                         //throw new NutsIllegalArgumentException("Unable to load nuts from " + mvnUrl);
@@ -1029,9 +1106,11 @@ final class PrivateNutsUtils {
                 try {
                     copy(new URL(path), cachedJarFile, LOG);
                     LOG.log(Level.CONFIG, NutsLogVerb.CACHE, "cache jar file {0}", new Object[]{cachedJarFile.getPath()});
+                    errors.removeErrorsFor(nutsId);
                     return cachedJarFile;
                 } catch (Exception ex) {
-                    LOG.log(Level.SEVERE, NutsLogVerb.FAIL, "unable to load {0} from {1}.\n", new Object[]{nutsId, r});
+                    errors.add(new ErrorInfo(nutsId, r, path, "unable to load binaries", ex.toString()));
+                    LOG.log(Level.SEVERE, NutsLogVerb.FAIL, "unable to load binaries {0} from {1}.\n", new Object[]{nutsId, r});
                     //ex.printStackTrace();
                     //throw new NutsIllegalArgumentException("Unable to load nuts from " + mvnUrl);
                 }
@@ -1279,7 +1358,7 @@ final class PrivateNutsUtils {
                                             found = true;
                                             if (bestVersion == null || compareRuntimeVersion(bestVersion, p) < 0) {
                                                 bestVersion = p;
-                                                bestPath = "Local location : " + file.getPath();
+                                                bestPath = "local location : " + file.getPath();
                                             }
                                         }
                                     }
@@ -1346,7 +1425,7 @@ final class PrivateNutsUtils {
             if (bestVersion == null) {
                 return null;
             }
-            NutsBootId iid = new NutsBootId(zId.getGroupId(), zId.getArtifactId(), bestVersion, false,null, null);
+            NutsBootId iid = new NutsBootId(zId.getGroupId(), zId.getArtifactId(), bestVersion, false, null, null);
             LOG.log(Level.FINEST, NutsLogVerb.SUCCESS, "resolved " + iid + " from " + bestPath);
             return iid;
         }
@@ -1389,23 +1468,6 @@ final class PrivateNutsUtils {
         }
     }
 
-    public static boolean isFileAccessible(Path path, Instant expireTime, PrivateNutsLog LOG) {
-        boolean proceed = Files.isRegularFile(path);
-        if (proceed) {
-            try {
-                if (expireTime != null) {
-                    FileTime lastModifiedTime = Files.getLastModifiedTime(path);
-                    if (lastModifiedTime.toInstant().compareTo(expireTime) < 0) {
-                        return false;
-                    }
-                }
-            } catch (Exception ex0) {
-                LOG.log(Level.FINEST, NutsLogVerb.FAIL, "unable to get LastModifiedTime for file : {0}", new String[]{path.toString(), ex0.toString()});
-            }
-        }
-        return proceed;
-    }
-
     /**
      * @category Internal
      */
@@ -1415,62 +1477,60 @@ final class PrivateNutsUtils {
         LinkedHashSet<String> repos = new LinkedHashSet<>();
     }
 
-    public static int firstIndexOf(String string, char[] chars) {
-        char[] value = string.toCharArray();
-        for (int i = 0; i < value.length; i++) {
-            for (int j = 0; j < chars.length; j++) {
-                if (value[i] == chars[j]) {
-                    return i;
-                }
-            }
+    public static class ErrorInfoList {
+        private List<ErrorInfo> all = new ArrayList<>();
+
+        public void removeErrorsFor(String nutsId) {
+            all.removeIf(x->x.getNutsId().equals(nutsId));
         }
-        return -1;
+
+        public void add(ErrorInfo e) {
+            all.add(e);
+        }
+
+        public List<ErrorInfo> list() {
+            return all;
+        }
     }
 
-    public static String resolveNutsVersionFromClassPath() {
-//        boolean devMode = false;
-        String version = null;
-        try {
-            version = PrivateNutsUtils.loadURLProperties(
-                    Nuts.class.getResource("/META-INF/maven/net.thevpc.nuts/nuts/pom.properties"),
-                    null, false, new PrivateNutsLog()).getProperty("version");
-        } catch (Exception ex) {
-            //
+    public static class ErrorInfo {
+        private String nutsId;
+        private String repository;
+        private String url;
+        private String message;
+        private String error;
+
+        public ErrorInfo(String nutsId, String repository, String url, String message, String error) {
+            this.nutsId = nutsId;
+            this.repository = repository;
+            this.url = url;
+            this.message = message;
+            this.error = error;
         }
-        if (version == null || version.trim().isEmpty() || version.equals("0.0.0")) {
-            //check if we are in dev mode
-            String cp = System.getProperty("java.class.path");
-            for (String p : cp.split(File.pathSeparator)) {
-                File f = new File(p);
-                if (f.isDirectory()) {
-                    Matcher m = Pattern.compile("(?<src>.*)[/\\\\]+target[/\\\\]+classes[/\\\\]*")
-                            .matcher(f.getPath().replace('/', File.separatorChar));
-                    if (m.find()) {
-                        String src = m.group("src");
-                        if (new File(src, "pom.xml").exists() && new File(src,
-                                "src/main/java/net/thevpc/nuts/Nuts.java".replace('/', File.separatorChar)
-                        ).exists()) {
-//                            devMode = true;
-                            String xml = null;
-                            try {
-                                byte[] bytes = Files.readAllBytes(new File(src, "pom.xml").toPath());
-                                xml = new String(bytes);
-                            } catch (IOException ex) {
-                                throw new NutsBootException("unable to detect nuts version in dev mode.");
-                            }
-                            m = Pattern.compile("<version>(?<v>([0-9. ]+))</version>").matcher(xml);
-                            if (m.find()) {
-                                version = m.group("v").trim();
-                            }
-                        }
-                    }
-                }
-            }
+
+        public String getNutsId() {
+            return nutsId;
         }
-        if (version == null || version.trim().isEmpty()) {
-            return null;
-        } else {
-            return version;
+
+        public String getRepository() {
+            return repository;
+        }
+
+        public String getUrl() {
+            return url;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public String getError() {
+            return error;
+        }
+
+        @Override
+        public String toString() {
+            return getMessage()+" "+getNutsId()+" from "+getUrl()+" (repository "+getRepository()+") : "+getError();
         }
     }
 }

@@ -1,4 +1,4 @@
-package net.thevpc.nuts.core.test.whitebox.utilities;
+package net.thevpc.nuts.core.test.whitebox;
 
 import net.thevpc.nuts.runtime.bundles.io.CoreSecurityUtils;
 import org.junit.jupiter.api.Test;

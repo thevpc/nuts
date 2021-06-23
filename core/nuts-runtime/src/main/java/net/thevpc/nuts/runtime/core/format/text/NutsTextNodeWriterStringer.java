@@ -106,8 +106,7 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
                                     ws.text().forStyled(s.getChild(), s.getStyles().removeFirst()),
                                     ctx);
                         }
-                        writeRaw(s.getEnd());
-                        writeRaw("}##");
+                        writeRaw("}##");//complex format always uses ##
                         writeRaw(NutsConstants.Ntf.SILENT);
                     }
                 }

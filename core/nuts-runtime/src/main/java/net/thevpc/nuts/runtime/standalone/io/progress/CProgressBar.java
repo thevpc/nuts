@@ -1,4 +1,4 @@
-package net.thevpc.nuts.runtime.standalone.util.console;
+package net.thevpc.nuts.runtime.standalone.io.progress;
 
 import net.thevpc.nuts.NutsPrintStream;
 import net.thevpc.nuts.NutsSession;
@@ -7,11 +7,9 @@ import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.core.format.text.FPrintCommands;
 
-import java.io.PrintStream;
 import java.util.Calendar;
 import java.util.Set;
 import net.thevpc.nuts.NutsTextBuilder;
-import net.thevpc.nuts.runtime.core.util.CoreNumberUtils;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 
 /**

@@ -28,6 +28,7 @@ import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.bundles.parsers.QueryStringParser;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import net.thevpc.nuts.runtime.standalone.util.NutsDependencyScopes;
 
@@ -247,6 +248,12 @@ public class DefaultNutsDependency implements NutsDependency {
         }
         if (!CoreStringUtils.isBlank(arch)) {
             p.put(NutsConstants.IdProperties.ARCH, arch);
+        }
+        if (exclusions.length>0) {
+            p.put(NutsConstants.IdProperties.EXCLUSIONS, Arrays.stream(exclusions)
+                            .map(Object::toString)
+                    .collect(Collectors.joining(","))
+            );
         }
         if (!p.isEmpty()) {
             sb.append("?");

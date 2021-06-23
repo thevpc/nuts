@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,25 +25,17 @@ package net.thevpc.nuts.runtime.standalone.bridges.maven;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.common.MapToFunction;
+import net.thevpc.nuts.runtime.bundles.iter.IteratorBuilder;
 import net.thevpc.nuts.runtime.bundles.mvn.*;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.bundles.parsers.StringTokenizerUtils;
 import net.thevpc.nuts.runtime.core.model.DefaultNutsVersion;
-import net.thevpc.nuts.runtime.standalone.io.NamedByteArrayInputStream;
-import net.thevpc.nuts.NutsLogVerb;
+import net.thevpc.nuts.runtime.core.repos.NutsRepositorySelector;
+import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+import net.thevpc.nuts.runtime.standalone.io.NamedByteArrayInputStream;
 import net.thevpc.nuts.runtime.standalone.util.NutsDependencyScopes;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
-
-import java.io.*;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.*;
-import java.util.function.Predicate;
-import java.util.logging.Level;
-
-import net.thevpc.nuts.runtime.bundles.iter.IteratorBuilder;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -51,8 +43,16 @@ import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import net.thevpc.nuts.runtime.bundles.parsers.StringTokenizerUtils;
-import net.thevpc.nuts.runtime.core.repos.NutsRepositorySelector;
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.logging.Level;
 
 /**
  * Created by vpc on 2/20/17.
@@ -63,6 +63,12 @@ public class MavenUtils {
     private NutsWorkspace ws;
     private NutsSession session;
 
+    private MavenUtils(NutsWorkspace ws, NutsSession session) {
+        this.ws = ws;
+        this.session = session;
+        LOG = session.getWorkspace().log().of(MavenUtils.class);
+    }
+
     public static MavenUtils of(NutsSession session) {
         NutsWorkspace ws = session.getWorkspace();
         MavenUtils wp = (MavenUtils) ws.env().getProperty(MavenUtils.class.getName());
@@ -71,12 +77,6 @@ public class MavenUtils {
             ws.env().setProperty(MavenUtils.class.getName(), wp);
         }
         return wp;
-    }
-
-    private MavenUtils(NutsWorkspace ws, NutsSession session) {
-        this.ws = ws;
-        this.session = session;
-        LOG = session.getWorkspace().log().of(MavenUtils.class);
     }
 
     public static PomIdResolver createPomIdResolver(NutsSession session) {
@@ -258,7 +258,7 @@ public class MavenUtils {
 
     public NutsDescriptor parsePomXml(Path path, NutsFetchMode fetchMode, NutsRepository repository, NutsSession session) throws IOException {
         try {
-            session.getTerminal().printProgress("parse %s", CoreIOUtils.compressUrl(path.toString()));
+            session.getTerminal().printProgress("%-8s %s", "parse", session.getWorkspace().io().path(path.toString()).compressedForm());
             try (InputStream is = Files.newInputStream(path)) {
                 NutsDescriptor nutsDescriptor = parsePomXml(is, fetchMode, path.toString(), repository, session);
                 if (nutsDescriptor.getId().getArtifactId() == null) {
@@ -404,7 +404,7 @@ public class MavenUtils {
         if (s == null) {
             return s;
         }
-        for (Iterator<String> iterator = s.getVersions().iterator(); iterator.hasNext();) {
+        for (Iterator<String> iterator = s.getVersions().iterator(); iterator.hasNext(); ) {
             String version = iterator.next();
             if (s.getLatest().length() > 0 && DefaultNutsVersion.compareVersions(version, s.getLatest()) > 0) {
                 iterator.remove();
@@ -441,7 +441,7 @@ public class MavenUtils {
     }
 
     public DepsAndRepos loadDependenciesAndRepositoriesFromPomUrl(String url, NutsSession session) {
-        session.getTerminal().printProgress("load %s", CoreIOUtils.compressUrl(url));
+        session.getTerminal().printProgress("%-8s %s", "load", session.getWorkspace().io().path(url).compressedForm());
         DepsAndRepos depsAndRepos = new DepsAndRepos();
 //        String repositories = null;
 //        String dependencies = null;
@@ -557,8 +557,8 @@ public class MavenUtils {
     /**
      * find latest maven package
      *
-     * @param zId id
-     * @param filter filter
+     * @param zId     id
+     * @param filter  filter
      * @param session session
      * @return latest runtime version
      */
@@ -592,8 +592,8 @@ public class MavenUtils {
         }
 //        }
         for (String repoUrl : new String[]{
-            //                NutsConstants.BootstrapURLs.REMOTE_MAVEN_GIT,
-            NutsConstants.BootstrapURLs.REMOTE_MAVEN_CENTRAL
+                //                NutsConstants.BootstrapURLs.REMOTE_MAVEN_GIT,
+                NutsConstants.BootstrapURLs.REMOTE_MAVEN_CENTRAL
         }) {
             if (!repoUrl.endsWith("/")) {
                 repoUrl = repoUrl + "/";

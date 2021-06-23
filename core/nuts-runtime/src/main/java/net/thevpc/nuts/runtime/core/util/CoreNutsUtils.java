@@ -24,10 +24,8 @@
 package net.thevpc.nuts.runtime.core.util;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.bundles.iter.IteratorBuilder;
 import net.thevpc.nuts.runtime.bundles.parsers.StringPlaceHolderParser;
-import net.thevpc.nuts.runtime.core.commands.repo.NutsRepositorySupportedAction;
-import net.thevpc.nuts.runtime.core.repos.NutsInstalledRepository;
-import net.thevpc.nuts.runtime.core.repos.NutsRepositoryExt;
 import net.thevpc.nuts.runtime.standalone.DefaultNutsWorkspace;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
@@ -43,8 +41,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.logging.Level;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
 import net.thevpc.nuts.runtime.bundles.iter.IteratorUtils;
 
 /**
@@ -1154,13 +1151,13 @@ public class CoreNutsUtils {
     }
 
     public static Iterator<NutsDependency> itIdToDep(Iterator<NutsId> id) {
-        return IteratorUtils.convert(id, x -> x.toDependency(), "IdToDependency");
+        return IteratorBuilder.of(id).convert(x -> x.toDependency(), "IdToDependency").build();
     }
 
     public static Iterator<NutsDependency> itIdToDep(Iterator<NutsId> id, NutsDependency copyFrom) {
         String _optional = copyFrom.getOptional();
         String _scope = copyFrom.getScope();
-        return IteratorUtils.convert(id, x -> x.toDependency().builder().setOptional(_optional).setScope(_scope).build(), "IdToDependency");
+        return IteratorBuilder.of(id).convert(x -> x.toDependency().builder().setOptional(_optional).setScope(_scope).build(), "IdToDependency").build();
     }
 
 }

@@ -61,14 +61,14 @@ public abstract class AbstractMavenRepositoryHelper {
 
     protected abstract String getIdPath(NutsId id, NutsSession session);
 
-    protected NutsInput getStream(NutsId id, String typeName, NutsSession session) {
+    protected NutsInput getStream(NutsId id, String typeName, String action, NutsSession session) {
         String url = getIdPath(id, session);
-        return openStream(id, url, id, typeName, session);
+        return openStream(id, url, id, typeName, action, session);
     }
 
-    protected String getStreamAsString(NutsId id, String typeName, NutsSession session) {
+    protected String getStreamAsString(NutsId id, String typeName, String action, NutsSession session) {
         String url = getIdPath(id, session);
-        return CoreIOUtils.loadString(openStream(id, url, id, typeName, session).open(), true);
+        return CoreIOUtils.loadString(openStream(id, url, id, typeName, action, session).open(), true);
     }
 
     protected void checkSHA1Hash(NutsId id, InputStream stream, String typeName, NutsSession session) throws IOException {
@@ -100,7 +100,7 @@ public abstract class AbstractMavenRepositoryHelper {
     }
 
     protected String getStreamSHA1(NutsId id, NutsSession session, String typeName) {
-        String hash = getStreamAsString(id, typeName + " SHA1", session).toUpperCase();
+        String hash = getStreamAsString(id, typeName + " SHA1", "verify", session).toUpperCase();
         for (String s : hash.split("[ \n\r]")) {
             if (s.length() > 0) {
                 return s;
@@ -110,7 +110,7 @@ public abstract class AbstractMavenRepositoryHelper {
     }
 
     protected abstract boolean exists(NutsId id, String path, Object source, String typeName, NutsSession session);
-    protected abstract NutsInput openStream(NutsId id, String path, Object source, String typeName, NutsSession session);
+    protected abstract NutsInput openStream(NutsId id, String path, Object source, String typeName, String action, NutsSession session);
 
     private void checkSession(NutsSession session) {
         NutsWorkspaceUtils.checkSession(repository.getWorkspace(), session);
@@ -125,7 +125,7 @@ public abstract class AbstractMavenRepositoryHelper {
             String name = null;
             NutsId idDesc = id.builder().setFaceDescriptor().build();
             try {
-                stream = getStream(idDesc, "artifact descriptor", session);
+                stream = getStream(idDesc, "artifact descriptor", "retrieve", session);
                 bytes = CoreIOUtils.loadByteArray(stream.open(), true);
                 name = stream.getName();
                 nutsDescriptor = MavenUtils.of(session).parsePomXml(new NamedByteArrayInputStream(bytes, name), fetchMode, getIdPath(id, session), repository, session);
@@ -134,7 +134,7 @@ public abstract class AbstractMavenRepositoryHelper {
                     stream.close();
                 }
             }
-            checkSHA1Hash(id.builder().setFace(NutsConstants.QueryFaces.DESCRIPTOR_HASH).build(), new NamedByteArrayInputStream(bytes, name), "package descriptor", session);
+            checkSHA1Hash(id.builder().setFace(NutsConstants.QueryFaces.DESCRIPTOR_HASH).build(), new NamedByteArrayInputStream(bytes, name), "artifact descriptor", session);
             return nutsDescriptor;
         } catch (IOException | UncheckedIOException | NutsIOException ex) {
             throw new NutsNotFoundException(session, id, ex);

@@ -31,34 +31,20 @@ public class DefaultNutsIOManager implements NutsIOManager {
     @Override
     public NutsPath path(String path) {
         checkSession();
-        if (path == null || path.trim().isEmpty()) {
-            return null;
-        }
-        if (path.startsWith("/") || path.startsWith("\\")) {
-            return new FilePath(Paths.get(path), getSession());
-        }
-        if (path.matches("[A-Z]:.*")) {
-            return new FilePath(Paths.get(path), getSession());
-        }
-        if (path.startsWith("classpath:")) {
-            return path(
-                    path.substring("classpath:".length()),
-                    Thread.currentThread().getContextClassLoader()
-            );
-        }
-        //nwo all the remaining are considered URL,
-        //perhaps we can add handlers here (such as ssh handler
-        try {
-            return new URLPath(new URL(path), getSession());
-        } catch (MalformedURLException e) {
-            throw new NutsIOException(getSession(), e);
-        }
+        return path(path,null);
     }
 
     @Override
     public NutsPath path(String path, ClassLoader classLoader) {
         checkSession();
-        return new ClassLoaderPath(path, classLoader, getSession());
+        if (path == null || path.trim().isEmpty()) {
+            return null;
+        }
+        NutsPath p = model.resolve(path, getSession(), classLoader);
+        if (p == null) {
+            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("unable to resolve path from %s", path));
+        }
+        return p;
     }
 
     @Override
@@ -244,6 +230,18 @@ public class DefaultNutsIOManager implements NutsIOManager {
     @Override
     public boolean isStandardInputStream(InputStream in) {
         return in == model.stdin();
+    }
+
+    @Override
+    public NutsIOManager addPathFactory(NutsPathFactory pathFactory) {
+        model.addPathFactory(pathFactory);
+        return this;
+    }
+
+    @Override
+    public NutsIOManager removePathFactory(NutsPathFactory pathFactory) {
+        model.removePathFactory(pathFactory);
+        return this;
     }
 
     private void checkSession() {

@@ -68,4 +68,8 @@ public class NutsSimpleRepositoryWrapper extends NutsCachedRepository {
         return base.isAcceptFetchMode(mode);
     }
 
+    @Override
+    public boolean isRemote() {
+        return base.isRemote();
+    }
 }

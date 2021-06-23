@@ -201,7 +201,8 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
                     } else {
                         localPath2 = cachePath.toString();
                     }
-                    return SuccessFailResult.success(new NutsDefaultContent(localPath2.toString(), true, false));
+                    return SuccessFailResult.success(new NutsDefaultContent(
+                            session.getWorkspace().io().path(localPath2), true, false));
                 } else {
                     return SuccessFailResult.fail(new NutsNotFoundException(session, id));
                 }
@@ -379,6 +380,11 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
 
     @Override
     public boolean isAcceptFetchMode(NutsFetchMode mode, NutsSession session) {
+        return true;
+    }
+
+    @Override
+    public boolean isRemote() {
         return true;
     }
 }

@@ -16,7 +16,6 @@ import net.thevpc.nuts.runtime.core.repos.NutsRepositoryExt;
 import net.thevpc.nuts.runtime.core.commands.repo.NutsRepositorySupportedAction;
 import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.core.filters.NutsSearchIdByDescriptor;
-import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.core.repos.NutsRepositoryUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
@@ -84,7 +83,7 @@ public class NutsRepositoryMirroringHelper {
                     if (c != null) {
                         if (localPath != null) {
                             getWorkspace().io().copy().setSession(session)
-                                    .from(c.getPath()).to(localPath).setSafe(true).run();
+                                    .from(c.getFilePath()).to(localPath).setSafe(true).run();
                         } else {
                             return c;
                         }
@@ -201,13 +200,14 @@ public class NutsRepositoryMirroringHelper {
                     ;
             NutsDeployRepositoryCommand dep = repoSPI.deploy()
                     .setId(effId)
-                    .setContent(local.getPath())
+                    .setContent(local.getFilePath())
                     .setDescriptor(desc)
 //                    .setOffline(cmd.isOffline())
                     //.setFetchMode(NutsFetchMode.LOCAL)
                     .setSession(session)
                     .run();
-            NutsRepositoryUtils.of(repo).events().fireOnPush(new DefaultNutsContentEvent(local.getLocation(), dep, session, repo));
+            NutsRepositoryUtils.of(repo).events().fireOnPush(new DefaultNutsContentEvent(
+                    local.getLocation(), dep, session, repo));
         } else {
             throw new NutsRepositoryNotFoundException(session, repository);
         }

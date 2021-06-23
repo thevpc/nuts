@@ -175,9 +175,9 @@ public class StyledParserStep extends ParserStep {
             } else {
                 String y = end.readAll();
                 if (y.length() > 1) {
-                    state.applyPush(new StyledParserStep(y, lineStart, ws, state));
+                    state.applyPush(new StyledParserStep(y+c, lineStart, ws, state));
                 } else {
-                    state.applyPush(new PlainParserStep(y, /*spreadLines*/ true, lineStart, ws, state,
+                    state.applyPush(new PlainParserStep(y+c, /*spreadLines*/ true, lineStart, ws, state,
                             styleMode == StyleMode.EMBEDDED ? EXIT_ON_CLOSE_ACCOLADES : null
                     ));
                 }

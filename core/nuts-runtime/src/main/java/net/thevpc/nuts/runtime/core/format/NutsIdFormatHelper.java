@@ -361,7 +361,7 @@ public class NutsIdFormatHelper {
             }
             case FILE_NAME: {
                 if (def != null && def.getContent() != null && def.getContent().getPath() != null) {
-                    return text.forPlain(def.getContent().getPath().getFileName().toString());
+                    return text.forPlain(def.getContent().getPath().name());
                 }
                 return text.forStyled("missing-file-name", NutsTextStyle.error());
             }
@@ -496,7 +496,7 @@ public class NutsIdFormatHelper {
             case EXEC_ENTRY: {
                 if (def != null && def.getContent() != null && def.getContent().getPath() != null) {
                     List<NutsString> results = new ArrayList<NutsString>();
-                    for (NutsExecutionEntry entry : ws.apps().execEntries().parse(def.getContent().getPath())) {
+                    for (NutsExecutionEntry entry : ws.apps().execEntries().parse(def.getContent().getFilePath())) {
                         if (entry.isDefaultEntry()) {
                             //should all mark?
                             results.add(text.forPlain(entry.getName()));

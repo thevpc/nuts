@@ -96,7 +96,7 @@ public class FolderObjectIterator<T> implements Iterator<T> {
         while (!stack.isEmpty()) {
             PathAndDepth file = stack.pop();
             if (Files.isDirectory(file.path)) {
-                session.getTerminal().printProgress("search %s",CoreIOUtils.compressUrl(file.path.toString()));
+                session.getTerminal().printProgress("%-8s %s","browse",session.getWorkspace().io().path(file.path.toString()).compressedForm());
                 visitedFoldersCount++;
                 boolean deep = maxDepth < 0 || file.depth < maxDepth;
                 if (Files.isDirectory(file.path)) {

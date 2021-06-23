@@ -140,11 +140,11 @@ public class DefaultNutsDefinition implements NutsDefinition {
     @Override
     public Path getPath() {
         NutsContent c = getContent();
-        return c == null ? null : c.getPath();
+        return c == null ? null : c.getFilePath();
     }
 
     @Override
-    public String getLocation() {
+    public NutsPath getLocation() {
         NutsContent c = getContent();
         return c == null ? null : c.getLocation();
     }

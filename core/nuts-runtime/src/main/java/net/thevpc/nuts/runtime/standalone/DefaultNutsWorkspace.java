@@ -734,7 +734,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             }
         }
         NutsRepositorySPI installedRepositorySPI = wu.repoSPI(installedRepository);
-
+        boolean remoteRepo=true;
         if (resolveInstaller) {
             if (installerComponent == null) {
                 if (def.getPath() != null) {
@@ -854,7 +854,10 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             }
 
             //now should reload definition
-            NutsFetchCommand fetch2 = fetch().setSession(session).setId(executionContext.getDefinition().getId())
+            NutsFetchCommand fetch2 = fetch()
+                    .setSession(session)
+                    .setId(executionContext.getDefinition().getId())
+                    .setContent(true)
                     .setRepositoryFilter(repos().filter().setSession(session).installedRepo())
                     .setFailFast(true);
             if(def.isSetDependencies()){
@@ -867,7 +870,8 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             //update definition in the execution context
             cc.setDefinition(def2);
             executionContext=cc.build();
-
+            NutsRepository rep = repos().setSession(session).findRepository(def.getRepositoryUuid());
+            remoteRepo=rep==null || rep.isRemote();
             if (strategy0 == InstallStrategy0.REQUIRE) {
                 //
             } else if (strategy0 == InstallStrategy0.UPDATE) {
@@ -958,33 +962,41 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                     if (!def.getContent().isCached()) {
                         if (def.getContent().isTemporary()) {
                             if (session.isPlainTrace()) {
-                                out.resetLine().printf("%s %s %s from remote repository (%s) temporarily file %s.%s%n", installedString,
+                                out.resetLine().printf("%s %s from %s repository (%s) temporarily file %s.%s%n",
+                                        installedString,
                                         def.getId().getLongNameId(),
+                                        remoteRepo?"remote":"local",
                                         def.getRepositoryName(),
-                                        text.forStyled("successfully", NutsTextStyle.success()),
-                                        def.getPath(), text.parse(setAsDefaultString));
+                                        def.getLocation(),
+                                        text.parse(setAsDefaultString)
+                                );
                             }
                         } else {
                             if (session.isPlainTrace()) {
-                                out.resetLine().printf("%s %s %s from remote repository (%s).%s%n", installedString,
+                                out.resetLine().printf("%s %s from %s repository (%s).%s%n", installedString,
                                         def.getId().getLongNameId(),
+                                        remoteRepo?"remote":"local",
                                         def.getRepositoryName(),
-                                        text.forStyled("successfully", NutsTextStyle.success()),
                                         text.parse(setAsDefaultString));
                             }
                         }
                     } else {
                         if (def.getContent().isTemporary()) {
                             if (session.isPlainTrace()) {
-                                out.resetLine().printf("%s %s from local repository (%s) temporarily file %s.%s%n", installedString,
+                                out.resetLine().printf("%s %s from %s repository (%s) temporarily file %s.%s%n",
+                                        installedString,
                                         def.getId().getLongNameId(),
+                                        remoteRepo?"remote":"local",
                                         def.getRepositoryName(),
-                                        def.getPath(), text.parse(setAsDefaultString));
+                                        def.getLocation(),
+                                        text.parse(setAsDefaultString));
                             }
                         } else {
                             if (session.isPlainTrace()) {
-                                out.resetLine().printf("%s %s from local repository (%s).%s%n", installedString,
+                                out.resetLine().printf("%s %s from %s repository (%s).%s%n",
+                                        installedString,
                                         def.getId().getLongNameId(),
+                                        remoteRepo?"remote":"local",
                                         def.getRepositoryName(),
                                         text.parse(setAsDefaultString)
                                 );

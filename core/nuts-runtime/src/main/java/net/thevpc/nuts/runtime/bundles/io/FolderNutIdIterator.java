@@ -93,7 +93,7 @@ public class FolderNutIdIterator implements Iterator<NutsId> {
         while (!stack.isEmpty()) {
             PathAndDepth file = stack.pop();
             if (Files.isDirectory(file.path)) {
-                session.getTerminal().printProgress("search %s", CoreIOUtils.compressUrl(file.path.toString()));
+                session.getTerminal().printProgress("%-8s %s", "search",session.getWorkspace().io().path(file.path.toString()).compressedForm());
                 visitedFoldersCount++;
                 boolean deep = file.depth < maxDepth;
                 if (Files.isDirectory(file.path)) {
@@ -103,7 +103,7 @@ public class FolderNutIdIterator implements Iterator<NutsId> {
                             try {
                                 return (deep && Files.isDirectory(pathname)) || model.isDescFile(pathname);
                             } catch (Exception ex) {
-                                session.getWorkspace().log().of(FolderNutIdIterator.class).with().session(session).level(Level.FINE).error(ex).log("Unable to test desk file {0}", pathname);
+                                session.getWorkspace().log().of(FolderNutIdIterator.class).with().session(session).level(Level.FINE).error(ex).log("unable to test desc file {0}", pathname);
                                 return false;
                             }
                         }

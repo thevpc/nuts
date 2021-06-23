@@ -23,10 +23,12 @@
  * <br>
  * ====================================================================
 */
-package net.thevpc.nuts.runtime.bundles.io;
+package net.thevpc.nuts.runtime.standalone.io.progress;
 
 import net.thevpc.nuts.NutsProgressMonitor;
 import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.runtime.bundles.io.*;
+import net.thevpc.nuts.runtime.standalone.io.progress.DefaultNutsProgressEvent;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,7 +36,7 @@ import java.io.InputStream;
 /**
  * @author thevpc
  */
-public class MonitoredInputStream extends InputStream implements InputStreamMetadataAware ,Interruptible{
+public class MonitoredInputStream extends InputStream implements InputStreamMetadataAware, Interruptible {
 
     private final InputStream base;
     private long count;

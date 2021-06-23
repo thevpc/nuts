@@ -23,16 +23,7 @@ public class NutsDependenciesResolver {
     }
 
     public NutsDependenciesResolver addRootId(NutsId id) {
-        NutsDefinition idDef = session.getWorkspace().search()
-                .addId(id).setSession(session//.copy().setTrace(false)
-        //                        .setProperty("monitor-allowed", false)
-        ).setEffective(true)
-                .setContent(false)
-                .setEffective(true)
-                .setLatest(true).getResultDefinitions().first();
-        if (idDef != null) {
-            addRootDefinition(idDef);
-        }
+        addRootDefinition(id.toDependency());
         return this;
     }
 
@@ -62,7 +53,11 @@ public class NutsDependenciesResolver {
         if (!def.isSetEffectiveDescriptor()) {
             throw new NutsIllegalArgumentException(session, "expected an effective definition for " + def.getId());
         }
-        defs.add(new NutsDependencyTreeNodeBuild(null, def, dependency, dependency, 0));
+        NutsDependencyTreeNodeBuild info = new NutsDependencyTreeNodeBuild(null, def, dependency, dependency, 0);
+        for (NutsId exclusion : dependency.getExclusions()) {
+            info.exclusions.add(exclusion.getShortNameId());
+        }
+        defs.add(info);
         return this;
     }
 

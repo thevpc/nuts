@@ -72,7 +72,7 @@ public interface NutsDefinition extends Serializable, Comparable<NutsDefinition>
      * @return artifact content file path
      * @throws NutsElementNotFoundException if the property is not requested
      */
-    String getLocation();
+    NutsPath getLocation();
 
     /**
      * return artifact content file path.
@@ -82,7 +82,6 @@ public interface NutsDefinition extends Serializable, Comparable<NutsDefinition>
      * @throws NutsElementNotFoundException if the property is not requested
      */
     Path getPath();
-
 
     /**
      * return artifact content file URL.

@@ -23,7 +23,7 @@
  */
 package net.thevpc.nuts.core.test.bundles.ntf;
 
-import net.thevpc.nuts.runtime.standalone.util.console.CProgressBar;
+import net.thevpc.nuts.runtime.standalone.io.progress.CProgressBar;
 import org.junit.jupiter.api.Test;
 
 /**

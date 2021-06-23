@@ -24,19 +24,17 @@
 package net.thevpc.nuts.runtime.standalone.wscommands;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.bundles.iter.IteratorUtils;
 import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.core.repos.NutsInstalledRepository;
+import net.thevpc.nuts.runtime.core.util.CoreNutsDependencyUtils;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsCollectionResult;
-import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.bundles.iter.IteratorUtils;
 
-import java.io.PrintStream;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
-import net.thevpc.nuts.runtime.core.util.CoreNutsDependencyUtils;
 
 /**
  * type: Command Class
@@ -50,14 +48,23 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
     }
 
     private NutsDefinition _loadIdContent(NutsId id, NutsId forId, NutsSession session, boolean includeDeps, InstallIdList loaded, NutsInstallStrategy installStrategy) {
+        installStrategy = loaded.validateStrategy(installStrategy);
         NutsId longNameId = id.getLongNameId();
         InstallIdInfo def = loaded.get(longNameId);
         if (def != null) {
+
             if (forId != null) {
                 def.forIds.add(forId);
             }
+
             if (def.definition != null) {
-                return def.definition;
+                if (
+                        (def.strategy != NutsInstallStrategy.REQUIRE)
+                                || (def.strategy == NutsInstallStrategy.REQUIRE && installStrategy == NutsInstallStrategy.REQUIRE)
+
+                ) {
+                    return def.definition;
+                }
             }
         } else {
             def = loaded.addForInstall(id, installStrategy, false);
@@ -73,7 +80,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
         def.definition = ws.fetch().setId(id).setSession(ss)
                 .setContent(true)
                 .setEffective(true)
-                .setDependencies(true)
+                .setDependencies(includeDeps)
                 .setFailFast(true)
                 //
                 .setOptional(false)
@@ -81,23 +88,10 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                 .setDependencyFilter(CoreNutsDependencyUtils.createJavaRunDependencyFilter(session))
                 //
                 .getResultDefinition();
-        if (def.definition.getInstallInformation() == null) {
-            def.definition = ws.fetch().setId(id).setSession(ss)
-                    .setContent(true)
-                    .setEffective(true)
-                    .setDependencies(true)
-                    //
-                    .setOptional(false)
-                    .addScope(NutsDependencyScopePattern.RUN)
-                    .setDependencyFilter(CoreNutsDependencyUtils.createJavaRunDependencyFilter(session))
-                    //
-                    .setFailFast(true)
-                    .getResultDefinition();
-        }
         def.doRequire = true;
         if (includeDeps) {
             for (NutsDependency dependency : def.definition.getDependencies()) {
-                _loadIdContent(dependency.toId(), id, session, includeDeps, loaded, NutsInstallStrategy.REQUIRE);
+                _loadIdContent(dependency.toId(), id, session, false, loaded, NutsInstallStrategy.REQUIRE);
             }
         }
         return def.definition;
@@ -355,11 +349,11 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
         if (error.size() > 0) {
             StringBuilder sb = new StringBuilder();
             for (Map.Entry<String, List<InstallIdInfo>> stringListEntry : error.entrySet()) {
-                out.resetLine().println("the following " + (stringListEntry.getValue().size() > 1 ? "packages are" : "package is") + " cannot be ```error installed``` (" + stringListEntry.getKey() + ") : "
+                out.resetLine().println("the following " + (stringListEntry.getValue().size() > 1 ? "artifacts are" : "artifact is") + " cannot be ```error installed``` (" + stringListEntry.getKey() + ") : "
                         + stringListEntry.getValue().stream().map(x -> x.id)
-                                .map(x -> ws.id().formatter().omitImportedGroupId().value(x.getLongNameId()).format().toString())
-                                .collect(Collectors.joining(", ")));
-                sb.append("\n" + "the following ").append(stringListEntry.getValue().size() > 1 ? "packages are" : "package is").append(" cannot be installed (").append(stringListEntry.getKey()).append(") : ").append(stringListEntry.getValue().stream().map(x -> x.id)
+                        .map(x -> ws.id().formatter().omitImportedGroupId().value(x.getLongNameId()).format().toString())
+                        .collect(Collectors.joining(", ")));
+                sb.append("\n" + "the following ").append(stringListEntry.getValue().size() > 1 ? "artifacts are" : "artifact is").append(" cannot be installed (").append(stringListEntry.getKey()).append(") : ").append(stringListEntry.getValue().stream().map(x -> x.id)
                         .map(x -> ws.id().formatter().omitImportedGroupId().value(x.getLongNameId()).format().toString())
                         .collect(Collectors.joining(", ")));
             }
@@ -461,14 +455,14 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
             NutsWorkspace ws = getSession().getWorkspace();
             NutsTextBuilder msg = ws.text().builder();
             msg.append("the following ")
-                    .append(kind).append(" ").append((all.size() > 1 ? "packages are" : "package is"))
+                    .append(kind).append(" ").append((all.size() > 1 ? "artifacts are" : "artifact is"))
                     .append(" going to be ").append(action).append(" : ")
                     .appendJoined(
                             ws.text().forPlain(", "),
                             all.stream().map(x
-                                    -> ws.text().toText(
-                                    x.builder().omitImportedGroupId().build()
-                            )
+                                            -> ws.text().toText(
+                                            x.builder().omitImportedGroupId().build()
+                                    )
                             ).collect(Collectors.toList())
                     );
             out.resetLine().println(msg);
@@ -492,7 +486,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
         Set<NutsId> forIds = new HashSet<>();
         NutsDefinition definition;
 
-//        public boolean isOldInstallStatus(NutsInstallStatus o0, NutsInstallStatus... o) {
+        //        public boolean isOldInstallStatus(NutsInstallStatus o0, NutsInstallStatus... o) {
 //            if (!oldInstallStatus.contains(o0)) {
 //                return false;
 //            }
@@ -554,19 +548,24 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
             return new ArrayList<>(visited.values());
         }
 
-        public InstallIdInfo addForInstall(NutsId id, NutsInstallStrategy strategy, boolean forced) {
-            emptyCommand = false;
-            InstallIdInfo ii = new InstallIdInfo();
-            ii.forced = forced;
-            ii.id = id;
-            ii.sid = normalizeId(id);
+        public NutsInstallStrategy validateStrategy(NutsInstallStrategy strategy) {
             if (strategy == null) {
                 strategy = NutsInstallStrategy.DEFAULT;
             }
             if (strategy == NutsInstallStrategy.DEFAULT) {
                 strategy = defaultStrategy;
             }
-            ii.strategy = strategy;
+            return strategy;
+        }
+
+        public InstallIdInfo addForInstall(NutsId id, NutsInstallStrategy strategy, boolean forced) {
+            emptyCommand = false;
+            InstallIdInfo ii = new InstallIdInfo();
+            ii.forced = forced;
+            ii.id = id;
+            ii.sid = normalizeId(id);
+
+            ii.strategy = validateStrategy(strategy);
             visited.put(normalizeId(id), ii);
             return ii;
         }

@@ -229,7 +229,7 @@ public class ProjectService {
                         .addRepositoryFilter(ws2.filters().repository().byName(nutsRepository))
                         .setLatest(true).setSession(s).setContent(true).getResultDefinitions().list();
                 if (found.size() > 0) {
-                    Path p = found.get(0).getContent().getPath();
+                    Path p = found.get(0).getContent().getFilePath();
                     if (p == null) {
                         return null;
                     }
