@@ -1,17 +1,11 @@
 package net.thevpc.nuts.toolbox.nsh;
 
 import net.thevpc.jshell.JShellFileContext;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsTerminalMode;
-import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.*;
 import net.thevpc.jshell.JShellVariables;
 
 import java.io.InputStream;
 import java.io.PrintStream;
-
-import net.thevpc.nuts.NutsArgument;
-import net.thevpc.nuts.NutsExecutionException;
-import net.thevpc.nuts.NutsCommandLine;
 
 public class DefaultNshExecutionContext implements NshExecutionContext {
 
@@ -24,6 +18,11 @@ public class DefaultNshExecutionContext implements NshExecutionContext {
         this.shellContext = shellContext;
         this.builtin = command;
         this.fileContext = fileContext;
+    }
+
+    @Override
+    public NutsApplicationContext getAppContext(){
+        return getShell().getAppContext();
     }
 
     @Override

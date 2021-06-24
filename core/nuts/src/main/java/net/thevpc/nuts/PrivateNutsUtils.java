@@ -49,8 +49,8 @@ import java.util.stream.Collectors;
 /**
  * Created by vpc on 1/15/17.
  *
- * @since 0.5.4
  * @category Internal
+ * @since 0.5.4
  */
 final class PrivateNutsUtils {
 
@@ -905,8 +905,7 @@ final class PrivateNutsUtils {
         private String entrySeparators;
 
         /**
-         *
-         * @param eqSeparators equality separators, example '='
+         * @param eqSeparators    equality separators, example '='
          * @param entrySeparators entry separators, example ','
          */
         public StringMapParser(String eqSeparators, String entrySeparators) {
@@ -917,9 +916,9 @@ final class PrivateNutsUtils {
         /**
          * copied from StringUtils (in order to remove dependency)
          *
-         * @param reader reader
+         * @param reader     reader
          * @param stopTokens stopTokens
-         * @param result result
+         * @param result     result
          * @return next token
          * @throws IOException IOException
          */
@@ -1058,21 +1057,18 @@ final class PrivateNutsUtils {
             return mvnUrl + jarPath;
         }
 
+        public static String getFileName(NutsBootId id, String ext) {
+            return id.getArtifactId() + "-" + id.getVersion() + "." + ext;
+        }
+
+        public static String getPathFile(NutsBootId id, String name) {
+            return id.getGroupId().replace('.', '/') + '/' + id.getArtifactId() + '/' + id.getVersion() + "/" + name;
+        }
+
         public static File resolveOrDownloadJar(String nutsId, String[] repositories, String cacheFolder, PrivateNutsLog LOG, boolean includeDesc, Instant expire, ErrorInfoList errors) {
-            includeDesc = false;
-            String descPath = toMavenPath(nutsId) + "/" + toMavenFileName(nutsId, "pom");
-            String jarPath = toMavenPath(nutsId) + "/" + toMavenFileName(nutsId, "jar");
             File cachedJarFile = new File(resolveMavenFullPath(cacheFolder, nutsId, "jar"));
-            File cachedPomFile = new File(resolveMavenFullPath(cacheFolder, nutsId, "pom"));
             if (cachedJarFile.isFile()) {
-                try {
-                    if (expire != null && Files.getLastModifiedTime(cachedJarFile.toPath()).toInstant().compareTo(expire) < 0) {
-                        //ignore
-                    } else {
-                        return cachedJarFile;
-                    }
-                } catch (IOException e) {
-                    //suppose update, if not it will be re-downloaded every time
+                if(isFileAccessible(cachedJarFile.toPath(),expire,LOG)){
                     return cachedJarFile;
                 }
             }
@@ -1081,28 +1077,16 @@ final class PrivateNutsUtils {
 //                File file = toFile(r);
                 if (includeDesc) {
                     String path = resolveMavenFullPath(r, nutsId, "pom");
-//                    if (file == null) {
+                    File cachedPomFile = new File(resolveMavenFullPath(cacheFolder, nutsId, "pom"));
                     try {
                         copy(new URL(path), cachedPomFile, LOG);
                     } catch (Exception ex) {
                         errors.add(new ErrorInfo(nutsId, r, path, "unable to load descriptor", ex.toString()));
                         LOG.log(Level.SEVERE, NutsLogVerb.FAIL, "unable to load descriptor {0} from {1}.\n", new Object[]{nutsId, r});
                         continue;
-                        //ex.printStackTrace();
-                        //throw new NutsIllegalArgumentException("Unable to load nuts from " + mvnUrl);
                     }
-//                    } else {
-//                        //file
-//                        File f = new File(r, descPath);
-//                        if (f.isFile()) {
-//                            return f;
-//                        } else {
-//                            LOG.log(Level.SEVERE, NutsLogVerb.FAIL, "unable to load {0} from {1}.\n", new Object[]{nutsId, r});
-//                        }
-//                    }
                 }
                 String path = resolveMavenFullPath(r, nutsId, "jar");
-//                if (file == null) {
                 try {
                     copy(new URL(path), cachedJarFile, LOG);
                     LOG.log(Level.CONFIG, NutsLogVerb.CACHE, "cache jar file {0}", new Object[]{cachedJarFile.getPath()});
@@ -1111,18 +1095,7 @@ final class PrivateNutsUtils {
                 } catch (Exception ex) {
                     errors.add(new ErrorInfo(nutsId, r, path, "unable to load binaries", ex.toString()));
                     LOG.log(Level.SEVERE, NutsLogVerb.FAIL, "unable to load binaries {0} from {1}.\n", new Object[]{nutsId, r});
-                    //ex.printStackTrace();
-                    //throw new NutsIllegalArgumentException("Unable to load nuts from " + mvnUrl);
                 }
-//                } else {
-//                    //file
-//                    File f = new File(r, jarPath);
-//                    if (f.isFile()) {
-//                        return f;
-//                    } else {
-//                        LOG.log(Level.SEVERE, NutsLogVerb.FAIL, "unable to load {0} from {1}.\n", new Object[]{nutsId, r});
-//                    }
-//                }
             }
             return null;
         }
@@ -1430,42 +1403,6 @@ final class PrivateNutsUtils {
             return iid;
         }
 
-        static File createFile(String parent, String child) {
-            String userHome = System.getProperty("user.home");
-            if (child.startsWith("~/")) {
-                child = new File(userHome, child.substring(2)).getPath();
-            }
-            if ((child.startsWith("/") || child.startsWith("\\") || new File(child).isAbsolute())) {
-                return new File(child);
-            }
-            if (parent != null) {
-                if (parent.startsWith("~/")) {
-                    parent = new File(userHome, parent.substring(2)).getPath();
-                }
-            } else {
-                parent = ".";
-            }
-            return new File(parent, child);
-        }
-
-        static boolean isInfiniteLoopThread(String className, String methodName) {
-            Thread thread = Thread.currentThread();
-            StackTraceElement[] elements = thread.getStackTrace();
-
-            if (elements == null || elements.length == 0) {
-                return false;
-            }
-
-            for (int i = 0; i < elements.length; i++) {
-                StackTraceElement element = elements[elements.length - (i + 1)];
-                if (className.equals(element.getClassName())) {
-                    if (methodName.equals(element.getMethodName())) {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
     }
 
     /**
@@ -1481,7 +1418,7 @@ final class PrivateNutsUtils {
         private List<ErrorInfo> all = new ArrayList<>();
 
         public void removeErrorsFor(String nutsId) {
-            all.removeIf(x->x.getNutsId().equals(nutsId));
+            all.removeIf(x -> x.getNutsId().equals(nutsId));
         }
 
         public void add(ErrorInfo e) {
@@ -1530,7 +1467,43 @@ final class PrivateNutsUtils {
 
         @Override
         public String toString() {
-            return getMessage()+" "+getNutsId()+" from "+getUrl()+" (repository "+getRepository()+") : "+getError();
+            return getMessage() + " " + getNutsId() + " from " + getUrl() + " (repository " + getRepository() + ") : " + getError();
         }
+    }
+    static File createFile(String parent, String child) {
+        String userHome = System.getProperty("user.home");
+        if (child.startsWith("~/")) {
+            child = new File(userHome, child.substring(2)).getPath();
+        }
+        if ((child.startsWith("/") || child.startsWith("\\") || new File(child).isAbsolute())) {
+            return new File(child);
+        }
+        if (parent != null) {
+            if (parent.startsWith("~/")) {
+                parent = new File(userHome, parent.substring(2)).getPath();
+            }
+        } else {
+            parent = ".";
+        }
+        return new File(parent, child);
+    }
+
+    public static boolean isInfiniteLoopThread(String className, String methodName) {
+        Thread thread = Thread.currentThread();
+        StackTraceElement[] elements = thread.getStackTrace();
+
+        if (elements == null || elements.length == 0) {
+            return false;
+        }
+
+        for (int i = 0; i < elements.length; i++) {
+            StackTraceElement element = elements[elements.length - (i + 1)];
+            if (className.equals(element.getClassName())) {
+                if (methodName.equals(element.getMethodName())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

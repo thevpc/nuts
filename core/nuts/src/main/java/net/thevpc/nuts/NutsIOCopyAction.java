@@ -180,6 +180,13 @@ public interface NutsIOCopyAction {
      * @param target target to copy to
      * @return {@code this} instance
      */
+    NutsIOCopyAction setTarget(NutsPath target);
+
+    /**
+     * update target to copy from
+     * @param target target to copy to
+     * @return {@code this} instance
+     */
     NutsIOCopyAction setTarget(Path target);
 
     /**
@@ -250,6 +257,14 @@ public interface NutsIOCopyAction {
      * @return {@code this} instance
      */
     NutsIOCopyAction setValidator(NutsIOCopyValidator validator);
+
+    boolean isRecursive();
+
+    NutsIOCopyAction setRecursive(boolean recursive);
+
+    boolean isMkdirs();
+
+    NutsIOCopyAction setMkdirs(boolean mkdirs);
 
     /**
      * return true if safe copy flag is armed

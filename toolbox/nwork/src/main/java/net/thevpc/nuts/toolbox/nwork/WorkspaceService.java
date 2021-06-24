@@ -17,8 +17,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
-import net.thevpc.common.mvn.Pom;
-import net.thevpc.common.mvn.PomDependency;
 
 public class WorkspaceService {
 
@@ -285,7 +283,7 @@ public class WorkspaceService {
         invalid = b[4];
         dirty = b[5];
 
-        Map<String, Pom> dependencies = new HashMap<>();
+        Map<String, NutsDescriptor> dependencies = new HashMap<>();
 
         List<DataRow> ddd = new ArrayList<>();
 
@@ -296,7 +294,7 @@ public class WorkspaceService {
         for (Iterator<ProjectService> iterator = all.iterator(); iterator.hasNext();) {
             ProjectService projectService = iterator.next();
             String id = projectService.getConfig().getId();
-            Pom pom = projectService.getPom();
+            NutsDescriptor pom = projectService.getPom();
             if (pom != null) {
                 dependencies.put(idparser.parse(id).getShortName(), pom);
             }
@@ -314,14 +312,14 @@ public class WorkspaceService {
             ProjectService projectService = all.get(i);
             DataRow d = new DataRow();
             d.id = projectService.getConfig().getId();
-            Pom pom = dependencies.get(idparser.parse(d.id).getShortName());
+            NutsDescriptor pom = dependencies.get(idparser.parse(d.id).getShortName());
             if (pom != null) {
-                for (PomDependency dependency : pom.getDependencies()) {
+                for (NutsDependency dependency : pom.getDependencies()) {
                     String did = dependency.getGroupId() + ":" + dependency.getArtifactId();
-                    Pom expectedPom = dependencies.get(idparser.parse(did).getShortName());
+                    NutsDescriptor expectedPom = dependencies.get(idparser.parse(did).getShortName());
                     if (expectedPom != null) {
-                        String expectedVersion = expectedPom.getVersion();
-                        String currentVersion = dependency.getVersion();
+                        String expectedVersion = expectedPom.getId().getVersion().toString();
+                        String currentVersion = dependency.getVersion().toString();
                         currentVersion = currentVersion.trim();
                         if (currentVersion.contains("$")) {
                             for (Map.Entry<String, String> entry : pom.getProperties().entrySet()) {

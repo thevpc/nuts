@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -22,23 +22,19 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.NutsArgument;
 import net.thevpc.nuts.NutsCommandLine;
 import net.thevpc.nuts.NutsCommandLineManager;
-import net.thevpc.nuts.NutsExecutionException;
+import net.thevpc.nuts.NutsIOCompressAction;
 import net.thevpc.nuts.toolbox.nsh.AbstractNshBuiltin;
-import net.thevpc.common.io.ZipOptions;
-import net.thevpc.common.io.ZipUtils;
+import net.thevpc.nuts.toolbox.nsh.NshExecutionContext;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import net.thevpc.nuts.toolbox.nsh.NshExecutionContext;
 
 /**
  * Created by vpc on 1/7/17.
@@ -47,11 +43,6 @@ public class ZipCommand extends AbstractNshBuiltin {
 
     public ZipCommand() {
         super("zip", DEFAULT_SUPPORT);
-    }
-
-    private static class Options {
-
-        boolean r = false;
     }
 
     @Override
@@ -68,7 +59,7 @@ public class ZipCommand extends AbstractNshBuiltin {
                 options.r = true;
             } else if (commandLine.peek().isOption()) {
                 commandLine.unexpectedArgument();
-            } else if(commandLine.peek().isNonOption()){
+            } else if (commandLine.peek().isNonOption()) {
                 String path = commandLine.required().nextNonOption(nutsCommandLineFormat.createName("file")).getString();
                 File file = new File(context.getGlobalContext().getAbsolutePath(path));
                 if (outZip == null) {
@@ -76,7 +67,7 @@ public class ZipCommand extends AbstractNshBuiltin {
                 } else {
                     files.add(file.getPath());
                 }
-            }else{
+            } else {
                 context.configureLast(commandLine);
             }
         }
@@ -86,10 +77,16 @@ public class ZipCommand extends AbstractNshBuiltin {
         if (outZip == null) {
             commandLine.required("missing out-zip");
         }
-        try {
-            ZipUtils.zip(outZip.getPath(), new ZipOptions(), files.toArray(new String[0]));
-        } catch (IOException ex) {
-            throw new NutsExecutionException(context.getSession(), ex.getMessage(), ex, 100);
+        NutsIOCompressAction aa = context.getSession().getWorkspace().io().compress()
+                .setTarget(outZip.getPath());
+        for (String file : files) {
+            aa.addSource(file);
         }
+        aa.run();
+    }
+
+    private static class Options {
+
+        boolean r = false;
     }
 }

@@ -231,7 +231,7 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
                             .setSession(session)
                             .createTempFile("zip"));
                 }
-                Path path = this.target.getPath();
+                Path path = this.target.getFilePath();
                 CoreIOUtils.mkdirs(path.getParent());
                 if (tempPath == null) {
                     fW = target.open();

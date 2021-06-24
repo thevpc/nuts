@@ -6,9 +6,8 @@
 package net.thevpc.nuts.toolbox.nadmin.subcommands;
 
 import net.thevpc.nuts.*;
-import net.thevpc.common.strings.StringUtils;
+import net.thevpc.nuts.toolbox.nadmin.util._StringUtils;
 
-import java.io.PrintStream;
 import java.util.Arrays;
 
 /**
@@ -78,7 +77,7 @@ public class UserNAdminSubCommand extends AbstractNAdminSubCommand {
                     }
                     for (NutsUser u : security) {
                         out.printf("User: %s%n", u.getUser());
-                        if (!StringUtils.isBlank(u.getRemoteIdentity())) {
+                        if (!_StringUtils.isBlank(u.getRemoteIdentity())) {
                             out.printf("   Mapper to  : %s%n", u.getRemoteIdentity());
                         }
                         out.printf("   Password   : %s%n", (u.hasCredentials() ? "Set" : "None"));

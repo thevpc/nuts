@@ -97,6 +97,10 @@ public interface NutsIOProcessAction {
      */
     NutsIOProcessAction setFailFast(boolean failFast);
 
+    boolean isSupportedKillProcess();
+
+    boolean killProcess(String processId);
+
     /**
      * update fail fast flag
      *

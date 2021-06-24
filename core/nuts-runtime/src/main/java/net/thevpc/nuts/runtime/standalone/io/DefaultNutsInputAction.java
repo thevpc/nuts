@@ -1,9 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.io;
 
-import net.thevpc.nuts.NutsInput;
-import net.thevpc.nuts.NutsInputAction;
-import net.thevpc.nuts.NutsUnsupportedArgumentException;
-import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.core.io.FilePath;
+import net.thevpc.nuts.runtime.core.io.URLPath;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.bundles.io.CoreInput;
 
@@ -12,7 +11,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Path;
-import net.thevpc.nuts.NutsSession;
+
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 public class DefaultNutsInputAction implements NutsInputAction {
@@ -50,19 +49,22 @@ public class DefaultNutsInputAction implements NutsInputAction {
             return of(new ByteArrayInputStream((byte[]) source));
         } else if (source instanceof String) {
             return of((String) source);
+        } else if (source instanceof NutsPath) {
+            return of((NutsPath) source);
         } else {
-            throw new NutsUnsupportedArgumentException(getSession(), "Unsupported type " + source.getClass().getName());
+            throw new NutsUnsupportedArgumentException(getSession(), "unsupported type " + source.getClass().getName());
         }
     }
 
     @Override
     public NutsInput of(String resource) {
-        NutsInput v = CoreIOUtils.createInputSource(resource, getName(), getTypeName(), getSession());
-        v = toMulti(v);
-        return v;
+        return resource==null?null:session.getWorkspace().io().path(resource).input();
     }
 
     private NutsInput toMulti(NutsInput v) {
+        if(v==null){
+            return v;
+        }
         if (isMultiRead()) {
             v = ((CoreInput) v).multi();
         }
@@ -78,44 +80,40 @@ public class DefaultNutsInputAction implements NutsInputAction {
     }
 
     @Override
-    public NutsInput of(InputStream stream) {
+    public NutsInput of(InputStream source) {
+        if(source==null){
+            return null;
+        }
         checkSession();
-        NutsInput v = CoreIOUtils.createInputSource(stream, getName(), getTypeName(), getSession());
-        v = toMulti(v);
-        return v;
+        String name=getName();
+        if (name == null) {
+            name = String.valueOf(source);
+        }
+        return toMulti(new CoreIOUtils.InputStream(name, source, "inputStream", getSession()));
     }
 
     @Override
     public NutsInput of(URL source) {
         checkSession();
-        String name = getName();
-        String typeName = getTypeName();
-        if (source == null) {
-            return null;
-        } else if (CoreIOUtils.isPathFile(source.toString())) {
-            return toMulti(CoreIOUtils.createInputSource(CoreIOUtils.toPathFile(source.toString(), getSession()), name, typeName, getSession()));
-        } else {
-            if (name == null) {
-                name = source.toString();
-            }
-            return toMulti(new CoreIOUtils.URLInput(name, source, typeName, getSession()));
-        }
+        return getSession().getWorkspace().io().path(source).input();
     }
 
     @Override
-    public NutsInput of(File stream) {
+    public NutsInput of(File source) {
         checkSession();
-        NutsInput v = CoreIOUtils.createInputSource(stream, getName(), getTypeName(), getSession());
-        v = toMulti(v);
-        return v;
+        return getSession().getWorkspace().io().path(source).input();
     }
 
     @Override
-    public NutsInput of(Path stream) {
+    public NutsInput of(Path source) {
         checkSession();
-        NutsInput v = CoreIOUtils.createInputSource(stream, getName(), getTypeName(), getSession());
-        v = toMulti(v);
-        return v;
+        return getSession().getWorkspace().io().path(source).input();
+    }
+
+    @Override
+    public NutsInput of(NutsPath stream) {
+        checkSession();
+        return stream==null?null:stream.input();
     }
 
     @Override

@@ -180,7 +180,7 @@ public class MavenUtils {
         return false;
     }
 
-    public NutsDescriptor parsePomXml0(InputStream stream, NutsFetchMode fetchMode, String urlDesc, NutsRepository repository, NutsSession session) {
+    public NutsDescriptor parsePomXml0(InputStream stream, NutsFetchMode fetchMode, String urlDesc, NutsRepository repository) {
         long startTime = System.currentTimeMillis();
         try {
             if (stream == null) {
@@ -256,11 +256,11 @@ public class MavenUtils {
         return version == null ? null : version.replace("(", "]").replace(")", "[");
     }
 
-    public NutsDescriptor parsePomXml(Path path, NutsFetchMode fetchMode, NutsRepository repository, NutsSession session) throws IOException {
+    public NutsDescriptor parsePomXml(Path path, NutsFetchMode fetchMode, NutsRepository repository) throws IOException {
         try {
             session.getTerminal().printProgress("%-8s %s", "parse", session.getWorkspace().io().path(path.toString()).compressedForm());
             try (InputStream is = Files.newInputStream(path)) {
-                NutsDescriptor nutsDescriptor = parsePomXml(is, fetchMode, path.toString(), repository, session);
+                NutsDescriptor nutsDescriptor = parsePomXml(is, fetchMode, path.toString(), repository);
                 if (nutsDescriptor.getId().getArtifactId() == null) {
                     //why name is null ? should checkout!
                     if (LOG.isLoggable(Level.FINE)) {
@@ -275,7 +275,7 @@ public class MavenUtils {
         }
     }
 
-    public NutsDescriptor parsePomXml(InputStream stream, NutsFetchMode fetchMode, String urlDesc, NutsRepository repository, NutsSession session) {
+    public NutsDescriptor parsePomXml(InputStream stream, NutsFetchMode fetchMode, String urlDesc, NutsRepository repository) {
         NutsDescriptor nutsDescriptor = null;
 //        if (session == null) {
 //            session = ws.createSession();
@@ -283,7 +283,7 @@ public class MavenUtils {
         try {
             try {
 //            bytes = IOUtils.loadByteArray(stream, true);
-                nutsDescriptor = parsePomXml0(stream, fetchMode, urlDesc, repository, session);
+                nutsDescriptor = parsePomXml0(stream, fetchMode, urlDesc, repository);
                 HashMap<String, String> properties = new HashMap<>();
                 NutsId parentId = null;
                 for (NutsId nutsId : nutsDescriptor.getParents()) {

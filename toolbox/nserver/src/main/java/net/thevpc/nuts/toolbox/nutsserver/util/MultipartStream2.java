@@ -43,11 +43,11 @@ package net.thevpc.nuts.toolbox.nutsserver.util;
  * limitations under the License.
  */
 import net.thevpc.nuts.NutsIllegalArgumentException;
-import net.thevpc.common.io.IOUtils;
-import net.thevpc.nuts.NutsWorkspace;
 
 import java.io.*;
 import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.toolbox.nutsserver.bundled._IOUtils;
+import sun.misc.IOUtils;
 
 //        import org.apache.tomcat.util.http.fileupload.FileUploadBase.FileUploadIOException;
 //        import org.apache.tomcat.util.http.fileupload.util.Closeable;
@@ -345,7 +345,6 @@ public class MultipartStream2 {
      * @param boundary The token used for dividing the stream into
      * <code>encapsulations</code>.
      * @param pNotifier An object for calling the progress listener, if any.
-     * @see #MultipartStream2(InputStream, byte[], int, ProgressNotifier,NutsWorkspace)
      */
     MultipartStream2(InputStream input,
             byte[] boundary,
@@ -1018,7 +1017,7 @@ public class MultipartStream2 {
 
     private long Streamscopy(ItemInputStream itemInputStream, OutputStream output, boolean b) throws IOException {
         try {
-            return IOUtils.copy(itemInputStream, output, b, false);
+            return _IOUtils.copy(itemInputStream, output, b, false);
         } finally {
             itemInputStream.close();
         }

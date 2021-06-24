@@ -217,6 +217,8 @@ public interface NutsIOUncompressAction {
      */
     NutsIOUncompressAction run();
 
+    NutsIOUncompressAction visit(NutsIOUncompressVisitor visitor);
+
     NutsIOUncompressAction setTarget(NutsOutput target);
 
     /**

@@ -26,14 +26,14 @@
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.*;
-import net.thevpc.common.io.IOUtils;
-import net.thevpc.common.strings.StringUtils;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
+import net.thevpc.nuts.toolbox.nsh.bundles._IOUtils;
+import net.thevpc.nuts.toolbox.nsh.bundles._StringUtils;
 
 /**
  * Created by vpc on 1/7/17.
@@ -116,9 +116,9 @@ public class CatCommand extends SimpleNshBuiltin {
             } else {
                 for (File f : options.files) {
                     if (f == null) {
-                        IOUtils.copy(context.in(), out, 4096 * 2);
+                        _IOUtils.copy(context.in(), out, 4096 * 2);
                     } else {
-                        IOUtils.copy(f, out, 4096 * 2);
+                        _IOUtils.copy(f, out, 4096 * 2);
                     }
                 }
             }
@@ -135,7 +135,7 @@ public class CatCommand extends SimpleNshBuiltin {
             String line = null;
             while ((line = reader.readLine()) != null) {
                 if (options.n) {
-                    out.print(StringUtils.alignRight(String.valueOf(options.currentNumber), 6));
+                    out.print(_StringUtils.formatRight(String.valueOf(options.currentNumber), 6));
                     out.print("  ");
                 }
                 if (options.T) {

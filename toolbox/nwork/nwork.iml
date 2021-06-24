@@ -12,7 +12,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="nuts" />
-    <orderEntry type="module" module-name="thevpc-common-mvn" />
     <orderEntry type="module" module-name="thevpc-common-diff-jar" />
   </component>
 </module>

@@ -25,18 +25,12 @@
 */
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
-import java.io.IOException;
-import net.thevpc.nuts.NutsExecutionException;
-import net.thevpc.nuts.NutsSingleton;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.nsh.util.ShellHelper;
-import net.thevpc.common.ssh.SshXFile;
-import net.thevpc.common.xfile.XFile;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import net.thevpc.nuts.NutsArgument;
-import net.thevpc.nuts.NutsCommandLine;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 
 /**
@@ -54,7 +48,7 @@ public class RmCommand extends SimpleNshBuiltin {
 
         boolean R = false;
         boolean verbose = false;
-        List<XFile> files = new ArrayList<>();
+        List<NutsPath> files = new ArrayList<>();
     }
 
     @Override
@@ -70,7 +64,7 @@ public class RmCommand extends SimpleNshBuiltin {
             options.R = a.getBooleanValue();
             return true;
         } else if (commandLine.peek().isNonOption()) {
-            options.files.add(ShellHelper.xfileOf(commandLine.next().getString(), context.getRootContext().getCwd()));
+            options.files.add(ShellHelper.xfileOf(commandLine.next().getString(), context.getRootContext().getCwd(),context.getSession()));
             return true;
         }
         return false;
@@ -82,16 +76,12 @@ public class RmCommand extends SimpleNshBuiltin {
         if (options.files.size() < 1) {
             throw new NutsExecutionException(context.getSession(), "missing parameters", 2);
         }
-        ShellHelper.WsSshListener listener = options.verbose ? new ShellHelper.WsSshListener(context.getSession()) : null;
-        for (XFile p : options.files) {
-            if (p instanceof SshXFile) {
-                ((SshXFile) p).setListener(listener);
-            }
-            try {
-                p.rm(options.R);
-            } catch (IOException ex) {
-                throw new NutsExecutionException(context.getSession(), ex.getMessage(), ex, 100);
-            }
+//        ShellHelper.WsSshListener listener = options.verbose ? new ShellHelper.WsSshListener(context.getSession()) : null;
+        for (NutsPath p : options.files) {
+//            if (p instanceof SshXFile) {
+//                ((SshXFile) p).setListener(listener);
+//            }
+            p.delete(options.R);
         }
     }
 

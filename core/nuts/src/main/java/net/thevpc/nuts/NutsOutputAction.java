@@ -47,6 +47,8 @@ public interface NutsOutputAction {
 
     NutsOutput of(Path stream);
 
+    NutsOutput of(NutsPath stream);
+
     String getName();
 
     String getTypeName();

@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.core.parser;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+import net.thevpc.nuts.runtime.standalone.bridges.maven.MavenUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 import java.io.*;
@@ -14,31 +15,11 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
     private NutsWorkspace ws;
     private NutsSession session;
     private boolean lenient = true;
+    private DescriptorFormat descriptorFormat;
+    private String format;
 
     public DefaultNutsDescriptorParser(NutsWorkspace ws) {
         this.ws = ws;
-    }
-
-    @Override
-    public NutsSession getSession() {
-        return session;
-    }
-
-    @Override
-    public NutsDescriptorParser setSession(NutsSession session) {
-        this.session = session;
-        return this;
-    }
-
-    @Override
-    public NutsDescriptorParser setLenient(boolean lenient) {
-        this.lenient = lenient;
-        return this;
-    }
-
-    @Override
-    public boolean isLenient() {
-        return lenient;
     }
 
     @Override
@@ -55,10 +36,6 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
         } catch (IOException ex) {
             throw new NutsParseException(getSession(), "unable to parse url " + url, ex);
         }
-    }
-
-    private void checkSession() {
-        NutsWorkspaceUtils.checkSession(getWorkspace(), getSession());
     }
 
     @Override
@@ -84,6 +61,14 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
     @Override
     public NutsDescriptor parse(File file) {
         return parse(file.toPath());
+    }    @Override
+    public NutsSession getSession() {
+        return session;
+    }
+
+    @Override
+    public NutsDescriptor parse(InputStream stream) {
+        return parse(stream, false);
     }
 
     @Override
@@ -94,22 +79,83 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
         return parse(new ByteArrayInputStream(str.getBytes()), true);
     }
 
-    private NutsDescriptor parse(InputStream in, boolean closeStream) {
-        try (Reader rr = new InputStreamReader(in)) {
-            return getWorkspace().elem()
-                    .setSession(session)
-                    .setContentType(NutsContentType.JSON).parse(rr, NutsDescriptor.class);
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
-        }
+    @Override
+    public NutsDescriptorParser setLenient(boolean lenient) {
+        this.lenient = lenient;
+        return this;
     }
 
-    @Override
-    public NutsDescriptor parse(InputStream stream) {
-        return parse(stream, false);
+    private void checkSession() {
+        NutsWorkspaceUtils.checkSession(getWorkspace(), getSession());
+    }    @Override
+    public NutsDescriptorParser setSession(NutsSession session) {
+        this.session = session;
+        return this;
+    }
+
+    private NutsDescriptor parse(InputStream in, boolean closeStream) {
+        DescriptorFormat f = getDescriptorFormat();
+        if (f == null) {
+            f = DescriptorFormat.NUTS;
+        }
+        switch (f) {
+            case MAVEN: {
+                try {
+                    return MavenUtils.of(session).parsePomXml0(in, NutsFetchMode.LOCAL, "descriptor", null);
+                } finally {
+                    if (closeStream) {
+                        try {
+                            in.close();
+                        } catch (IOException ex) {
+                            throw new UncheckedIOException(ex);
+                        }
+                    }
+                }
+            }
+            case NUTS: {
+                try {
+                    Reader rr = new InputStreamReader(in);
+                    return getWorkspace().elem()
+                            .setSession(session)
+                            .setContentType(NutsContentType.JSON).parse(rr, NutsDescriptor.class);
+                } finally {
+                    if (closeStream) {
+                        try {
+                            in.close();
+                        } catch (IOException ex) {
+                            throw new UncheckedIOException(ex);
+                        }
+                    }
+                }
+            }
+            default: {
+                throw new NutsUnsupportedEnumException(getSession(), f);
+            }
+        }
     }
 
     public NutsWorkspace getWorkspace() {
         return ws;
+    }
+
+
+
+
+
+    @Override
+    public boolean isLenient() {
+        return lenient;
+    }
+
+
+    @Override
+    public DescriptorFormat getDescriptorFormat() {
+        return descriptorFormat;
+    }
+
+    @Override
+    public DefaultNutsDescriptorParser setDescriptorFormat(DescriptorFormat descriptorFormat) {
+        this.descriptorFormat = descriptorFormat;
+        return this;
     }
 }

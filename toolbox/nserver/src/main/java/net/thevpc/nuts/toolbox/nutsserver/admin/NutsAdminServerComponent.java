@@ -27,9 +27,8 @@ package net.thevpc.nuts.toolbox.nutsserver.admin;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.nutsserver.*;
-import net.thevpc.common.strings.StringUtils;
+import net.thevpc.nuts.toolbox.nutsserver.bundled._StringUtils;
 
-import java.io.PrintStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -65,7 +64,7 @@ public class NutsAdminServerComponent implements NutsServerComponent {
         if (executor == null) {
             executor = new ThreadPoolExecutor(2, 10, 30, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(10));
         }
-        if (StringUtils.isBlank(serverId)) {
+        if (_StringUtils.isBlank(serverId)) {
             String serverName = NutsServerConstants.DEFAULT_ADMIN_SERVER;
             try {
                 serverName = InetAddress.getLocalHost().getHostName();

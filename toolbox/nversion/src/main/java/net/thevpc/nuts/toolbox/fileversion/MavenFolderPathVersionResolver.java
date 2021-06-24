@@ -33,8 +33,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import net.thevpc.nuts.NutsApplicationContext;
-import net.thevpc.common.mvn.Pom;
-import net.thevpc.common.mvn.PomXmlParser;
+import net.thevpc.nuts.NutsDescriptor;
+import net.thevpc.nuts.NutsDescriptorParser;
 
 /**
  *
@@ -47,10 +47,13 @@ public class MavenFolderPathVersionResolver implements PathVersionResolver {
             Properties properties = new Properties();
             Set<VersionDescriptor> all = new HashSet<>();
             try (InputStream inputStream = Files.newInputStream(Paths.get(filePath).resolve("pom.xml"))) {
-                Pom d = new PomXmlParser().parse(inputStream);
-                properties.put("groupId", d.getGroupId());
-                properties.put("artifactId", d.getArtifactId());
-                properties.put("version", d.getVersion());
+                NutsDescriptor d = context.getWorkspace().descriptor()
+                        .parser().setDescriptorFormat(NutsDescriptorParser.DescriptorFormat.MAVEN)
+                        .parse(inputStream);
+
+                properties.put("groupId", d.getId().getGroupId());
+                properties.put("artifactId", d.getId().getArtifactId());
+                properties.put("version", d.getId().getVersion());
                 properties.put("name", d.getName());
                 properties.setProperty("nuts.version-provider", "maven");
                 if (d.getProperties() != null) {
@@ -59,9 +62,9 @@ public class MavenFolderPathVersionResolver implements PathVersionResolver {
                     }
                 }
                 all.add(new VersionDescriptor(
-                        context.getWorkspace().id().builder().setGroupId(d.getPomId().getGroupId())
-                                .setNamespace(d.getPomId().getArtifactId())
-                                .setVersion(d.getPomId().getVersion())
+                        context.getWorkspace().id().builder().setGroupId(d.getId().getGroupId())
+                                .setNamespace(d.getId().getArtifactId())
+                                .setVersion(d.getId().getVersion())
                                 .build(),
                         properties));
             } catch (Exception e) {

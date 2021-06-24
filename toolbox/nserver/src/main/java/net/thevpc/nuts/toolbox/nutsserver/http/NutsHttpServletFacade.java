@@ -30,8 +30,6 @@ import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.toolbox.nutsserver.AbstractFacadeCommand;
 import net.thevpc.nuts.toolbox.nutsserver.FacadeCommand;
 import net.thevpc.nuts.toolbox.nutsserver.FacadeCommandContext;
-import net.thevpc.nuts.toolbox.nutsserver.http.commands.*;
-import net.thevpc.common.collections.ListValueMap;
 
 import java.io.*;
 import java.util.*;
@@ -183,8 +181,9 @@ public class NutsHttpServletFacade {
 
         @Override
         public void executeImpl(FacadeCommandContext context) throws IOException {
-            ListValueMap<String, String> parameters = context.getParameters();
-            String id = parameters.getFirst("id");
+            Map<String, List<String>> parameters = context.getParameters();
+            List<String> idList = parameters.get("id");
+            String id = (idList==null || idList.isEmpty())?null: idList.get(0);
             boolean transitive = parameters.containsKey("transitive");
             List<NutsId> fetch = null;
             try {

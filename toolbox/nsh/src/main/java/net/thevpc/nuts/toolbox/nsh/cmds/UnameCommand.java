@@ -25,7 +25,6 @@ package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
-import net.thevpc.common.strings.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -127,7 +126,7 @@ public class UnameCommand extends SimpleNshBuiltin {
         if (sb.isEmpty()) {
             sb.add("UNKNOWN");
         }
-        context.out().println(StringUtils.join(" ", sb));
+        context.out().println(String.join(" ", sb));
     }
 
 }

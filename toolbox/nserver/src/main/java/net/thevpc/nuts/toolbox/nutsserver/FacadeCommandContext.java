@@ -28,7 +28,6 @@ package net.thevpc.nuts.toolbox.nutsserver;
 import net.thevpc.nuts.toolbox.nutsserver.http.NutsHttpServletFacadeContext;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.common.collections.ListValueMap;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,6 +36,7 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -140,7 +140,7 @@ public class FacadeCommandContext implements NutsHttpServletFacadeContext {
     }
 
     @Override
-    public ListValueMap<String, String> getParameters() throws IOException {
+    public Map<String, List<String>> getParameters() throws IOException {
         return base.getParameters();
     }
 

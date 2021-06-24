@@ -1,12 +1,10 @@
 package net.thevpc.nuts.toolbox.tomcat.remote;
 
 import net.thevpc.nuts.*;
-import net.thevpc.common.io.FileUtils;
-import net.thevpc.common.io.IOUtils;
-import net.thevpc.common.ssh.SshPath;
-import net.thevpc.common.strings.StringUtils;
 import net.thevpc.nuts.toolbox.tomcat.remote.config.RemoteTomcatAppConfig;
 import net.thevpc.nuts.toolbox.tomcat.remote.config.RemoteTomcatConfig;
+import net.thevpc.nuts.toolbox.tomcat.util._FileUtils;
+import net.thevpc.nuts.toolbox.tomcat.util._StringUtils;
 
 import java.io.File;
 import java.util.Arrays;
@@ -35,18 +33,17 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
             throw new NutsExecutionException(context.getSession(), "missing source war file " + localWarPath, 2);
         }
         String remoteTempPath = cconfig.getRemoteTempPath();
-        if (StringUtils.isBlank(remoteTempPath)) {
+        if (_StringUtils.isBlank(remoteTempPath)) {
             remoteTempPath = "/tmp";
         }
-        String remoteFilePath = IOUtils.concatPath('/', remoteTempPath + "/" + FileUtils.getFileName(localWarPath));
+        String remoteFilePath = ("/"+ remoteTempPath + "/" + _FileUtils.getFileName(localWarPath));
         String server = cconfig.getServer();
-        if (StringUtils.isBlank(server)) {
+        if (_StringUtils.isBlank(server)) {
             server = "localhost";
         }
         if (!server.startsWith("ssh://")) {
             server = "ssh://" + server;
         }
-        SshPath srvp = new SshPath(server);
         context.getWorkspace().exec()
                 .addCommand(
                         "nsh",
@@ -55,14 +52,16 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
                         "--verbose",
                         "--mkdir",
                         localWarPath,
-                        srvp.setPath(remoteFilePath).toString()
+                        server+"/"+remoteFilePath
                 ).setSession(context.getSession())
                 .run();
         String v = config.getVersionCommand();
-        if (StringUtils.isBlank(v)) {
+        if (_StringUtils.isBlank(v)) {
             v = "nsh nversion --color=never %file";
         }
-        List<String> cmd = Arrays.asList(StringUtils.parseCommandline(v));
+        List<String> cmd = Arrays.asList(
+                context.getWorkspace().commandLine().parse(v).toStringArray()
+        );
         boolean fileAdded = false;
         for (int i = 0; i < cmd.size(); i++) {
             if ("%file".equals(cmd.get(i))) {
@@ -111,7 +110,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
                 "--app",
                 name,
                 "--version",
-                StringUtils.trim(version)
+                _StringUtils.trim(version)
         );
     }
 

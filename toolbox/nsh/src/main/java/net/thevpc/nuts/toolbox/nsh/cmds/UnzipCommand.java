@@ -26,19 +26,15 @@
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.*;
-import net.thevpc.common.io.InputStreamVisitor;
-import net.thevpc.common.io.UnzipOptions;
-import net.thevpc.common.io.ZipUtils;
-import net.thevpc.common.strings.StringUtils;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
+import net.thevpc.nuts.toolbox.nsh.bundles._StringUtils;
 
 /**
  * Created by vpc on 1/7/17.
@@ -92,20 +88,31 @@ public class UnzipCommand extends SimpleNshBuiltin {
             File file = new File(context.getRootContext().getAbsolutePath(path));
             try {
                 if (options.l) {
-                    ZipUtils.visitZipFile(file, null, new InputStreamVisitor() {
-                        @Override
-                        public boolean visit(String path, InputStream inputStream) throws IOException {
-                            context.out().printf("%s\n", path);
-                            return true;
-                        }
-                    });
+                    context.getSession().getWorkspace().io().uncompress()
+                            .from(file.getPath())
+                                    .visit(new NutsIOUncompressVisitor() {
+                                        @Override
+                                        public boolean visitFolder(String path) {
+                                            return true;
+                                        }
+
+                                        @Override
+                                        public boolean visitFile(String path, InputStream inputStream) {
+                                            context.out().printf("%s\n", path);
+                                            return true;
+                                        }
+                                    });
                 } else {
                     String dir = options.dir;
-                    if (StringUtils.isBlank(dir)) {
+                    if (_StringUtils.isBlank(dir)) {
                         dir = context.getRootContext().getCwd();
                     }
                     dir = context.getRootContext().getAbsolutePath(dir);
-                    ZipUtils.unzip(file.getPath(), dir, new UnzipOptions().setSkipRoot(options.skipRoot));
+                    context.getSession().getWorkspace().io().uncompress()
+                                    .from(file.getPath())
+                                    .to(dir)
+                                            .setSkipRoot(options.skipRoot)
+                                                    .run();
                 }
             } catch (UncheckedIOException| NutsIOException ex) {
                 throw new NutsExecutionException(context.getSession(), ex.getMessage(), ex, 1);

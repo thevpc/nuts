@@ -26,14 +26,13 @@
 */
 package net.thevpc.nuts.toolbox.nutsserver;
 
-import net.thevpc.common.strings.StringUtils;
-
 import javax.security.auth.login.LoginException;
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
-import net.thevpc.common.collections.ListValueMap;
-import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsWorkspaceSecurityManager;
+import net.thevpc.nuts.toolbox.nutsserver.bundled._StringUtils;
 
 /**
  * Created by vpc on 1/24/17.
@@ -53,14 +52,17 @@ public abstract class AbstractFacadeCommand implements FacadeCommand {
 
     @Override
     public void execute(FacadeCommandContext context) throws IOException, LoginException {
-        ListValueMap<String, String> parameters = context.getParameters();
-        String userLogin = parameters.getFirst("ul");
-        String userPasswordS = parameters.getFirst("up");
+        Map<String, List<String>> parameters = context.getParameters();
+        List<String> ulList = parameters.get("ul");
+        String userLogin = (ulList==null || ulList.isEmpty())?null: ulList.get(0);
+        List<String> upList = parameters.get("ul");
+        String userPasswordS = (upList==null || upList.isEmpty())?null: upList.get(0);
+
         char[] userPassword = userPasswordS == null ? null : userPasswordS.toCharArray();
         NutsWorkspaceSecurityManager secu = context.getWorkspace().security();
         userLogin = userLogin == null ? null :new String(secu.getCredentials(userLogin.toCharArray()));
         userPassword = userPassword==null?null:secu.getCredentials(userPassword);
-        if (!StringUtils.isBlank(userLogin)) {
+        if (!_StringUtils.isBlank(userLogin)) {
             boolean loggedId = false;
             try {
                 context.getWorkspace().security().login(userLogin, userPassword);

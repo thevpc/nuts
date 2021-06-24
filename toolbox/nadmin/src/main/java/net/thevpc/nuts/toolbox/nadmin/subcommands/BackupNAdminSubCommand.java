@@ -5,13 +5,10 @@
  */
 package net.thevpc.nuts.toolbox.nadmin.subcommands;
 
-import net.thevpc.common.io.PathFilter;
-import net.thevpc.common.io.UnzipOptions;
-import net.thevpc.common.io.ZipOptions;
-import net.thevpc.common.io.ZipUtils;
 import net.thevpc.nuts.*;
 
 import java.io.File;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -39,22 +36,14 @@ public class BackupNAdminSubCommand extends AbstractNAdminSubCommand {
                 }
             }
             if (commandLine.isExecMode()) {
-                List<ZipUtils.Folder> all = new ArrayList<>();
-                all.add(new ZipUtils.Folder(
-                        "",
-                        Paths.get(context.getWorkspace().locations().getWorkspaceLocation())
-                                .resolve("nuts-workspace.json").toString(),
-                        null
-                ));
+                List<String> all = new ArrayList<>();
+                all.add(Paths.get(context.getWorkspace().locations().getWorkspaceLocation())
+                        .resolve("nuts-workspace.json").toString()
+                );
                 for (NutsStoreLocation value : NutsStoreLocation.values()) {
                     Path r = Paths.get(context.getWorkspace().locations().getStoreLocation(value));
                     if (Files.isDirectory(r)) {
-                        ZipUtils.Folder folder = new ZipUtils.Folder(
-                                value.id(),
-                                r.toString(),
-                                null
-                        );
-                        all.add(folder);
+                        all.add(r.toString());
                     }
                 }
                 if (file == null || file.isEmpty()) {
@@ -67,7 +56,13 @@ public class BackupNAdminSubCommand extends AbstractNAdminSubCommand {
                 if (Paths.get(file).getFileName().toString().indexOf('.') < 0) {
                     file += ".zip";
                 }
-                ZipUtils.zip(file, new ZipOptions(), all.toArray(new ZipUtils.Folder[0]));
+                NutsIOCompressAction cmp = context.getSession()
+                        .getWorkspace().io()
+                        .compress();
+                for (String s : all) {
+                    cmp.addSource(s);
+                }
+                cmp.to(file).run();
             }
             return true;
         } else if (commandLine.next("restore") != null) {
@@ -101,14 +96,27 @@ public class BackupNAdminSubCommand extends AbstractNAdminSubCommand {
             }
             if (commandLine.isExecMode()) {
                 NutsObjectElement[] nutsWorkspaceConfigRef = new NutsObjectElement[1];
-                ZipUtils.visitZipFile(new File(file), (PathFilter) "/nuts-workspace.json"::equals,
-                        (path, inputStream) -> {
-                            NutsObjectElement e = context.getWorkspace().elem().setContentType(NutsContentType.JSON)
-                                    .parse(inputStream, NutsObjectElement.class).asObject();
-                            nutsWorkspaceConfigRef[0] = e;
-                            return false;
-                        }
-                );
+                context.getSession()
+                        .getWorkspace().io()
+                        .uncompress()
+                        .from(file)
+                        .visit(new NutsIOUncompressVisitor() {
+                            @Override
+                            public boolean visitFolder(String path) {
+                                return true;
+                            }
+
+                            @Override
+                            public boolean visitFile(String path, InputStream inputStream) {
+                                if ("/nuts-workspace.json".equals(path)) {
+                                    NutsObjectElement e = context.getWorkspace().elem().setContentType(NutsContentType.JSON)
+                                            .parse(inputStream, NutsObjectElement.class).asObject();
+                                    nutsWorkspaceConfigRef[0] = e;
+                                    return false;
+                                }
+                                return true;
+                            }
+                        });
                 if (nutsWorkspaceConfigRef[0] == null) {
                     commandLine.required("not a valid file : " + file);
                 }
@@ -120,7 +128,12 @@ public class BackupNAdminSubCommand extends AbstractNAdminSubCommand {
                     commandLine.required("not a valid file : " + file);
                 }
                 String platformHomeFolder = Nuts.getPlatformHomeFolder(null, NutsStoreLocation.CONFIG, null, false, ws);
-                ZipUtils.unzip(file, platformHomeFolder, new UnzipOptions().setSkipRoot(true));
+                context.getSession()
+                        .getWorkspace().io()
+                        .uncompress()
+                        .from(file)
+                        .to(platformHomeFolder)
+                        .setSkipRoot(true).run();
                 if (context.getSession().isPlainTrace()) {
                     context.getSession().out().printf("restore %s to %s %n", file, platformHomeFolder);
                 }

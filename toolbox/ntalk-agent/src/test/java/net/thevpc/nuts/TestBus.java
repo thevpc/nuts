@@ -1,8 +1,8 @@
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.ntalk.NTalkAgent;
-import net.thevpc.nuts.ntalk.NTalkClient;
-import net.thevpc.nuts.ntalk.NTalkServer;
+import net.thevpc.nuts.lib.ntalk.NTalkAgent;
+import net.thevpc.nuts.lib.ntalk.NTalkClient;
+import net.thevpc.nuts.lib.ntalk.NTalkServer;
 
 public class TestBus {
     public static void main(String[] args) {

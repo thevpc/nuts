@@ -25,9 +25,9 @@
 */
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
+import net.thevpc.nuts.NutsId;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.toolbox.nsh.AbstractNshBuiltin;
-import net.thevpc.common.mvn.PomIdResolver;
 import net.thevpc.nuts.toolbox.nsh.NshExecutionContext;
 import net.thevpc.nuts.NutsCommandLine;
 import net.thevpc.nuts.NutsVersionFormat;
@@ -49,7 +49,7 @@ public class VersionCommand extends AbstractNshBuiltin {
         version.configure(true, cmdLine);
         version
                 .setSession(context.getSession())
-                .addProperty("nsh-version", PomIdResolver.resolvePomId(getClass()).toString())
+                .addProperty("nsh-version", context.getAppContext().getAppId().getVersion().getValue())
                 .println(context.out());
     }
 }

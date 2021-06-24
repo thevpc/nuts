@@ -1,7 +1,6 @@
 package net.thevpc.nuts.indexer;
 
 import net.thevpc.nuts.*;
-import net.thevpc.common.strings.StringUtils;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -17,7 +16,7 @@ public class NutsIndexSubscriberListManager {
 
     public NutsIndexSubscriberListManager(NutsWorkspace ws, NutsSession session,String name) {
         this.defaultWorkspace = ws;
-        if (StringUtils.isBlank(name)) {
+        if (name==null || name.trim().isEmpty()) {
             name = "default";
         }
         this.name = name.trim();

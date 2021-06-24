@@ -28,12 +28,10 @@ package net.thevpc.nuts.toolbox.nsh.cmds;
 import net.thevpc.nuts.NutsExecutionException;
 import net.thevpc.nuts.toolbox.nsh.AbstractNshBuiltin;
 import net.thevpc.nuts.toolbox.nsh.util.ShellHelper;
-import net.thevpc.common.io.TextFiles;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintStream;
+import java.io.*;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import net.thevpc.nuts.NutsArgument;
@@ -77,11 +75,36 @@ public class TailCommand extends AbstractNshBuiltin {
             throw new NutsExecutionException(context.getSession(), "Not yet supported", 2);
         }
         for (String file : files) {
+            tail(file, options.max, context);
+        }
+    }
+
+    private void tail(String file, int max, NshExecutionContext context) {
+        BufferedReader r = null;
+        try {
             try {
-                TextFiles.tail(TextFiles.create(file), options.max, out);
-            } catch (IOException ex) {
-                throw new NutsExecutionException(context.getSession(), ex.getMessage(), ex, 100);
+                r = new BufferedReader(new InputStreamReader(context.getSession().getWorkspace().io().path(file)
+                        .input().open()));
+                String line = null;
+                int count = 0;
+                LinkedList<String> lines=new LinkedList<>();
+                while ((line = r.readLine()) != null) {
+                    lines.add(line);
+                    count++;
+                    if(count> max) {
+                        lines.remove();
+                    }
+                }
+                for (String s : lines) {
+                    context.out().println(s);
+                }
+            } finally {
+                if (r != null) {
+                    r.close();
+                }
             }
+        } catch (IOException ex) {
+            throw new NutsExecutionException(context.getSession(), ex.getMessage(), ex, 100);
         }
     }
 }

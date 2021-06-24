@@ -322,7 +322,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
 
         @Override
         public NutsDescriptor parseDescriptor(Path pathname, NutsSession session) throws IOException {
-            return MavenUtils.of(session).parsePomXml(pathname, NutsFetchMode.LOCAL, MavenFolderRepository.this, session);
+            return MavenUtils.of(session).parsePomXml(pathname, NutsFetchMode.LOCAL, MavenFolderRepository.this);
         }
 
         @Override

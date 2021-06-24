@@ -25,11 +25,11 @@ package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.NutsConstants;
 import net.thevpc.nuts.NutsSingleton;
-import net.thevpc.common.strings.StringUtils;
 import net.thevpc.nuts.NutsArgument;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 import net.thevpc.nuts.NutsCommandLine;
 import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.toolbox.nsh.bundles._StringUtils;
 
 /**
  * Created by vpc on 1/7/17.
@@ -73,7 +73,7 @@ public class LoginCommand extends SimpleNshBuiltin {
         Options options = context.getOptions();
         if (!NutsConstants.Users.ANONYMOUS.equals(options.login)
                 && (options.password == null
-                || StringUtils.isBlank(new String(options.password)))) {
+                || _StringUtils.isBlank(new String(options.password)))) {
             NutsSession session = context.getSession();
             options.password = session.getTerminal().ask()
                     .resetLine()

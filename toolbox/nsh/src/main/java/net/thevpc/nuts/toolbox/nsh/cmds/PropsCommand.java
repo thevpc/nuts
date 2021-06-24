@@ -28,7 +28,6 @@ package net.thevpc.nuts.toolbox.nsh.cmds;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.nsh.AbstractNshBuiltin;
 import net.thevpc.nuts.toolbox.nsh.util.ShellHelper;
-import net.thevpc.common.xfile.XFile;
 
 import java.io.*;
 import java.util.*;
@@ -279,12 +278,12 @@ public class PropsCommand extends AbstractNshBuiltin {
     private Map<String,String> readProperties(Options o, NshExecutionContext context) {
         Map<String,String> p = new LinkedHashMap<>();
         String sourceFile = o.sourceFile;
-        XFile filePath = ShellHelper.xfileOf(sourceFile, context.getGlobalContext().getCwd());
-        try (InputStream is = filePath.getInputStream()) {
+        NutsPath filePath = ShellHelper.xfileOf(sourceFile, context.getGlobalContext().getCwd(),context.getSession());
+        try (InputStream is = filePath.input().open()) {
 
             Format sourceFormat = o.sourceFormat;
             if (sourceFormat == Format.AUTO) {
-                sourceFormat = detectFileFormat(filePath.getPath(), context);
+                sourceFormat = detectFileFormat(filePath.name(), context);
             }
             switch (sourceFormat) {
                 case PROPS: {
@@ -347,11 +346,11 @@ public class PropsCommand extends AbstractNshBuiltin {
                 }
             }
         } else {
-            XFile filePath = ShellHelper.xfileOf(targetFile, context.getGlobalContext().getCwd());
-            try (OutputStream os = filePath.getOutputStream()) {
+            NutsPath filePath = ShellHelper.xfileOf(targetFile, context.getGlobalContext().getCwd(),context.getSession());
+            try (OutputStream os = filePath.output().open()) {
                 Format format = o.targetFormat;
                 if (format == Format.AUTO) {
-                    format = detectFileFormat(filePath.getPath(), null);
+                    format = detectFileFormat(filePath.name(), null);
                 }
                 switch (format) {
                     case PROPS: {

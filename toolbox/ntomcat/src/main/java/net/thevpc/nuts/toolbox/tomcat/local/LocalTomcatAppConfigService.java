@@ -1,10 +1,10 @@
 package net.thevpc.nuts.toolbox.tomcat.local;
 
 import net.thevpc.nuts.*;
-import net.thevpc.common.strings.StringUtils;
 import net.thevpc.nuts.toolbox.tomcat.NTomcatConfigVersions;
 import net.thevpc.nuts.toolbox.tomcat.local.config.LocalTomcatAppConfig;
 import net.thevpc.nuts.toolbox.tomcat.util.TomcatUtils;
+import net.thevpc.nuts.toolbox.tomcat.util._StringUtils;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -104,7 +104,7 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
                 context.getSession().out().printf("%s [LOG] delete running file %s.\n", getFormattedPrefix(getFullName()), getFormattedPath(getRunningFile().toString()));
             } else {
                 context.getSession().out().printf("%s set version %s.\n", getFullName(), getFormattedVersion(version));
-                context.getSession().out().printf("%s [LOG] updating version file %s to %s.\n", getFormattedPrefix(getFullName()), getFormattedVersion(StringUtils.coalesce(version, "<DEFAULT>")), getFormattedPath(getVersionFile().toString()));
+                context.getSession().out().printf("%s [LOG] updating version file %s to %s.\n", getFormattedPrefix(getFullName()), getFormattedVersion(_StringUtils.coalesce(version, "<DEFAULT>")), getFormattedPath(getVersionFile().toString()));
                 Files.write(getVersionFile(), version.getBytes());
                 context.getSession().out().printf("%s [LOG] updating archive file %s -> %s.\n", getFormattedPrefix(getFullName()), getFormattedPath(getArchiveFile(version).toString()), getFormattedPath(getRunningFile().toString()));
                 Files.copy(getArchiveFile(version), getRunningFile());
@@ -153,7 +153,7 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
         Path runningFile = getRunningFile();
         Path deployFile = getDeployFile();
         context.getSession().out().printf("%s deploy %s as file %s to %s.\n",
-                getFormattedPrefix(getFullName()), getFormattedVersion(StringUtils.coalesce(version, "<DEFAULT>")),
+                getFormattedPrefix(getFullName()), getFormattedVersion(_StringUtils.coalesce(version, "<DEFAULT>")),
                 getFormattedPath(runningFile.toString()), getFormattedPath(deployFile.toString()));
         try {
             Files.copy(runningFile, deployFile, StandardCopyOption.REPLACE_EXISTING);
@@ -169,7 +169,7 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
             if (!Files.isRegularFile(f)) {
                 throw new UncheckedIOException(new IOException("File not found " + f));
             }
-            if (StringUtils.isBlank(version)) {
+            if (_StringUtils.isBlank(version)) {
                 version = getCurrentVersion();
             }
             Path domainDeployPath = getArchiveFile(version);

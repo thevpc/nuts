@@ -1,10 +1,10 @@
 package net.thevpc.nuts.toolbox.ndb.nmysql.remote;
 
-import net.thevpc.common.io.FileUtils;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.ndb.nmysql.NMySqlConfigVersions;
 import net.thevpc.nuts.toolbox.ndb.nmysql.remote.config.RemoteMysqlConfig;
 import net.thevpc.nuts.toolbox.ndb.nmysql.remote.config.RemoteMysqlDatabaseConfig;
+import net.thevpc.nuts.toolbox.ndb.nmysql.util.MysqlUtils;
 
 import java.io.IOException;
 import java.io.PrintStream;
@@ -35,7 +35,7 @@ public class RemoteMysqlConfigService {
     }
 
     public RemoteMysqlConfigService setName(String name) {
-        this.name = FileUtils.toValidFileName(name, "default");
+        this.name = MysqlUtils.toValidFileName(name, "default");
         return this;
     }
 
@@ -104,7 +104,7 @@ public class RemoteMysqlConfigService {
     }
 
     public RemoteMysqlDatabaseConfigService getDatabase(String dbName, NutsOpenMode action) {
-        dbName = FileUtils.toValidFileName(dbName, "default");
+        dbName = MysqlUtils.toValidFileName(dbName, "default");
         RemoteMysqlDatabaseConfig a = getConfig().getDatabases().get(dbName);
         if (a == null) {
             switch (action) {

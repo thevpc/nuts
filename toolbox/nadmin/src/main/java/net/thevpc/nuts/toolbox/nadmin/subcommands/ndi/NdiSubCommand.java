@@ -186,7 +186,7 @@ public class NdiSubCommand extends AbstractNAdminSubCommand {
                                 context.getSession().copy().setTrace(subTrace)
                         );
                     } catch (UncheckedIOException e) {
-                        throw new NutsExecutionException(context.getSession(), "Unable to run script " + id + " : " + e.toString(), e);
+                        throw new NutsExecutionException(context.getSession(), "unable to run script " + id + " : " + e.toString(), e);
                     }
                 }
             }
@@ -245,12 +245,13 @@ public class NdiSubCommand extends AbstractNAdminSubCommand {
             if (context.getSession().isPlainTrace()) {
                 int namesSize = result.stream().mapToInt(x -> x.getName().length()).max().orElse(1);
                 for (NdiScriptnfo ndiScriptnfo : result) {
-                    context.getSession().out().printf("%s script %-" + namesSize + "s for "
-                            + ws.id().formatter(ndiScriptnfo.getId().getLongNameId()).format()
-                            + " at %s%n", ndiScriptnfo.isOverride()
+                    context.getSession().out().printf("%s script %-" + namesSize + "s for %s"
+                            + " at %s%n",
+                            ndiScriptnfo.isOverride()
                             ? ws.text().forStyled("re-installing", NutsTextStyle.success())
                             : ws.text().forStyled("installing", NutsTextStyle.success()),
                             ndiScriptnfo.getName(),
+                            ndiScriptnfo.getId(),
                             ws.text().forStyled(NdiUtils.betterPath(ndiScriptnfo.getPath().toString()), NutsTextStyle.path())
                     );
                 }

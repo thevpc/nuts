@@ -1,6 +1,5 @@
 package net.thevpc.nuts.toolbox.ndb.nmysql.local;
 
-import net.thevpc.common.io.FileUtils;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.ndb.nmysql.NMySqlConfigVersions;
 import net.thevpc.nuts.toolbox.ndb.nmysql.local.config.LocalMysqlDatabaseConfig;
@@ -11,6 +10,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+
+import net.thevpc.nuts.toolbox.ndb.nmysql.util.MysqlUtils;
 import net.thevpc.nuts.toolbox.ndb.util.NdbUtils;
 
 public class LocalMysqlConfigService {
@@ -38,7 +39,7 @@ public class LocalMysqlConfigService {
     }
 
     public LocalMysqlConfigService setName(String name) {
-        this.name = FileUtils.toValidFileName(name, "default");
+        this.name = MysqlUtils.toValidFileName(name, "default");
         return this;
     }
 
@@ -119,7 +120,7 @@ public class LocalMysqlConfigService {
     }
 
     public LocalMysqlDatabaseConfigService getDatabase(String dbName, NutsOpenMode action) {
-        dbName = FileUtils.toValidFileName(dbName, "default");
+        dbName = MysqlUtils.toValidFileName(dbName, "default");
         LocalMysqlDatabaseConfig a = getConfig().getDatabases().get(dbName);
         if (a == null) {
             switch (action) {

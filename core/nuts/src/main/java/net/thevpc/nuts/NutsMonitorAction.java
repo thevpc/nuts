@@ -107,6 +107,8 @@ public interface NutsMonitorAction {
 
     NutsMonitorAction setSource(NutsInput inputSource);
 
+    NutsMonitorAction setSource(NutsPath inputSource);
+
     /**
      * update operation source
      *

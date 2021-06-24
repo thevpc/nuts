@@ -47,7 +47,7 @@ public interface NutsOutput extends AutoCloseable {
 
     boolean isPath();
 
-    Path getPath();
+    Path getFilePath();
 
     boolean isURL();
 

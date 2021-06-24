@@ -703,11 +703,21 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             return;
         }
         NutsDependencyFilter ndf = CoreNutsDependencyUtils.createJavaRunDependencyFilter(session);
-        def.getContent();
-        def.getEffectiveDescriptor();
-        if (def.getInstallInformation() == null) {
-            throw new NutsIllegalArgumentException(session, "missing Install Information");
+        if(!def.isSetEffectiveDescriptor() || def.getContent()==null){
+            // reload def
+            NutsFetchCommand fetch2 = fetch()
+                    .setSession(session)
+                    .setId(def.getId())
+                    .setContent(true)
+                    .setRepositoryFilter(repos().filter().setSession(session).installedRepo())
+                    .setFailFast(true);
+            if(def.isSetDependencies()){
+                fetch2.setDependencyFilter(def.getDependencies().filter());
+                fetch2.setDependencies(true);
+            }
+            def = fetch2.getResultDefinition();
         }
+
 
         boolean reinstall = false;
         NutsInstalledRepository installedRepository = getInstalledRepository();

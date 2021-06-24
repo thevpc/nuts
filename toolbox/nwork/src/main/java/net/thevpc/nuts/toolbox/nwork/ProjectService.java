@@ -1,8 +1,6 @@
 package net.thevpc.nuts.toolbox.nwork;
 
 import net.thevpc.nuts.*;
-import net.thevpc.common.mvn.Pom;
-import net.thevpc.common.mvn.PomXmlParser;
 import net.thevpc.nuts.toolbox.nwork.config.ProjectConfig;
 import net.thevpc.nuts.toolbox.nwork.config.RepositoryAddress;
 
@@ -11,8 +9,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.logging.Level;
-import net.thevpc.common.mvn.PomErrorHandler;
 
 public class ProjectService {
 
@@ -71,12 +67,15 @@ public class ProjectService {
         return false;
     }
 
-    public Pom getPom() {
+    public NutsDescriptor getPom() {
         File f = new File(config.getPath());
         if (f.isDirectory()) {
             if (new File(f, "pom.xml").isFile()) {
                 try {
-                    return new PomXmlParser().parse(new File(f, "pom.xml"));
+                    return appContext.getWorkspace().descriptor()
+                            .parser()
+                            .setDescriptorFormat(NutsDescriptorParser.DescriptorFormat.MAVEN)
+                            .parse(new File(f, "pom.xml"));
                 } catch (Exception ex) {
                     //
                 }
@@ -94,24 +93,16 @@ public class ProjectService {
         if (f.isDirectory()) {
             if (new File(f, "pom.xml").isFile()) {
                 try {
-                    Pom g = new PomXmlParser()
-                            .setErrorHandler(new PomErrorHandler() {
-                                @Override
-                                public void log(Level level, String message, Exception error) {
-                                    appContext.getWorkspace().log().of(ProjectService.class)
-                                            .with()
-                                            .level(Level.FINE)
-                                            .verb(NutsLogVerb.FAIL)
-                                            .error(error);
-                                }
-                            })
+                    NutsDescriptor g= appContext.getWorkspace().descriptor()
+                            .parser()
+                            .setDescriptorFormat(NutsDescriptorParser.DescriptorFormat.MAVEN)
                             .parse(new File(f, "pom.xml"));
-                    if (g.getGroupId() != null
-                            && g.getArtifactId() != null
-                            && g.getVersion() != null
-                            && !g.getGroupId().contains("$")
-                            && !g.getArtifactId().contains("$")
-                            && !g.getVersion().contains("$")) {
+                    if (g.getId().getGroupId() != null
+                            && g.getId().getArtifactId() != null
+                            && g.getId().getVersion() != null
+                            && !g.getId().getGroupId().contains("$")
+                            && !g.getId().getArtifactId().contains("$")
+                            && !g.getId().getVersion().toString().contains("$")) {
 
                         String s = new String(Files.readAllBytes(new File(f, "pom.xml").toPath()));
                         //check if the s
@@ -130,7 +121,7 @@ public class ProjectService {
                         if (ok > 0) {
 
                             if (p2.getId() == null) {
-                                p2.setId(g.getGroupId() + ":" + g.getArtifactId());
+                                p2.setId(g.getId().getGroupId() + ":" + g.getId().getArtifactId());
                             }
                             if (new File(f, "src/main").isDirectory()) {
                                 p2.getTechnologies().add("maven");
@@ -183,8 +174,10 @@ public class ProjectService {
             if (f.isDirectory()) {
                 if (new File(f, "pom.xml").isFile()) {
                     try {
-                        return new PomXmlParser().parse(new File(f, "pom.xml"))
-                                .getVersion();
+                        return appContext.getWorkspace().descriptor()
+                                .parser()
+                                .setDescriptorFormat(NutsDescriptorParser.DescriptorFormat.MAVEN)
+                                .parse(new File(f, "pom.xml")).getId().getVersion().toString();
                     } catch (Exception e) {
                         throw new IllegalArgumentException(e);
                     }
@@ -259,7 +252,10 @@ public class ProjectService {
                         throw new NutsExecutionException(appContext.getSession(), "missing repository. try 'nwork set -r vpc-public-maven' or something like that", 2);
                     }
                     try {
-                        Pom g = new PomXmlParser().parse(new File(f, "pom.xml"));
+                        NutsDescriptor g= appContext.getWorkspace().descriptor()
+                                .parser()
+                                .setDescriptorFormat(NutsDescriptorParser.DescriptorFormat.MAVEN)
+                                .parse(new File(f, "pom.xml"));
                         NutsWorkspace ws2 = null;
                         NutsSession s = null;
                         if (a.getNutsWorkspace() != null && a.getNutsWorkspace().trim().length() > 0 && !a.getNutsWorkspace().equals(appContext.getWorkspace().locations().getWorkspaceLocation().toString())) {
@@ -277,7 +273,7 @@ public class ProjectService {
                         }
                         s.setTrace(false);
                         List<NutsId> found = ws2.search()
-                                .addId(g.getGroupId() + ":" + g.getArtifactId())
+                                .addId(g.getId().getGroupId() + ":" + g.getId().getArtifactId())
                                 .addRepositoryFilter(ws2.filters().repository().byName(nutsRepository))
                                 .setLatest(true).setSession(s).getResultIds().list();
                         if (found.size() > 0) {

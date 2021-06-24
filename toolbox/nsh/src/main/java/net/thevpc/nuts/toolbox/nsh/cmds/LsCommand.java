@@ -35,7 +35,7 @@ import java.util.*;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
-import net.thevpc.common.util.BytesSizeFormat;
+import net.thevpc.nuts.toolbox.nsh.bundles.BytesSizeFormat;
 
 /**
  * Created by vpc on 1/7/17.

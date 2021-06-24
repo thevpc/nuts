@@ -16,7 +16,6 @@
     <orderEntry type="module" module-name="thevpc-common-md-asciidoctor" />
     <orderEntry type="module" module-name="thevpc-common-md" />
     <orderEntry type="library" name="Maven: org.hjson:hjson:3.0.0" level="project" />
-    <orderEntry type="module" module-name="thevpc-common-strings" />
     <orderEntry type="library" name="Maven: org.asciidoctor:asciidoctorj:1.5.5" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.jruby:jruby-complete:1.7.26" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: com.beust:jcommander:1.35" level="project" />

@@ -25,19 +25,13 @@
 */
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
-import java.io.IOException;
-import net.thevpc.nuts.NutsExecutionException;
-import net.thevpc.nuts.NutsSingleton;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.nsh.util.ShellHelper;
-import net.thevpc.common.ssh.SshXFile;
-import net.thevpc.common.xfile.XFile;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import net.thevpc.nuts.NutsArgument;
-import net.thevpc.nuts.NutsCommandLine;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 
 /**
@@ -54,7 +48,7 @@ public class MkdirCommand extends SimpleNshBuiltin {
     public static class Options {
 
         List<String> files = new ArrayList<>();
-        List<XFile> xfiles = new ArrayList<>();
+        List<NutsPath> xfiles = new ArrayList<>();
 
         boolean p;
     }
@@ -82,20 +76,16 @@ public class MkdirCommand extends SimpleNshBuiltin {
     @Override
     protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
-        options.xfiles = ShellHelper.xfilesOf(options.files, context.getCwd());
+        options.xfiles = ShellHelper.xfilesOf(options.files, context.getCwd(),context.getSession());
         if (options.xfiles.size() < 1) {
             commandLine.required();
         }
-        ShellHelper.WsSshListener listener = new ShellHelper.WsSshListener(context.getSession());
-        for (XFile v : options.xfiles) {
-            if (v instanceof SshXFile) {
-                ((SshXFile) v).setListener(listener);
-            }
-            try {
-                v.mkdir(options.p);
-            } catch (IOException ex) {
-                throw new NutsExecutionException(context.getSession(), ex.getMessage(), ex, 100);
-            }
+//        ShellHelper.WsSshListener listener = new ShellHelper.WsSshListener(context.getSession());
+        for (NutsPath v : options.xfiles) {
+//            if (v instanceof SshXFile) {
+//                ((SshXFile) v).setListener(listener);
+//            }
+            v.mkdir(options.p);
         }
     }
 }

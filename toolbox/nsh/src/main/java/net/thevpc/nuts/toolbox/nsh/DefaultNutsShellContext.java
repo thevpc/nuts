@@ -23,10 +23,10 @@
  */
 package net.thevpc.nuts.toolbox.nsh;
 
-import net.thevpc.common.strings.StringUtils;
 import net.thevpc.jshell.*;
 import net.thevpc.jshell.JShellNode;
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.toolbox.nsh.bundles._StringUtils;
 
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -220,7 +220,7 @@ public class DefaultNutsShellContext extends DefaultJShellContext implements Nut
                 NutsDefinition def = ws.search().addId(selectedId).setEffective(true).setSession(this.getSession()
                         .copy().setTrace(false).setFetchStrategy(NutsFetchStrategy.OFFLINE)).getResultDefinitions().required();
                 NutsDescriptor d = def.getDescriptor();
-                String nuts_autocomplete_support = StringUtils.trim(d.getProperties().get("nuts.autocomplete"));
+                String nuts_autocomplete_support = _StringUtils.trim(d.getProperties().get("nuts.autocomplete"));
                 if (d.isApplication()
                         || "true".equalsIgnoreCase(nuts_autocomplete_support)
                         || "supported".equalsIgnoreCase(nuts_autocomplete_support)) {

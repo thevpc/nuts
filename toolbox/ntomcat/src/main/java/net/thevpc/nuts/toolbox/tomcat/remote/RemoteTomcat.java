@@ -1,10 +1,10 @@
 package net.thevpc.nuts.toolbox.tomcat.remote;
 
-import net.thevpc.common.strings.StringUtils;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.tomcat.NTomcatConfigVersions;
 import net.thevpc.nuts.toolbox.tomcat.remote.config.RemoteTomcatConfig;
 import net.thevpc.nuts.toolbox.tomcat.util.TomcatUtils;
+import net.thevpc.nuts.toolbox.tomcat.util._StringUtils;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -302,7 +302,7 @@ public class RemoteTomcat {
             } else if ((a = args.nextString("--deploy")) != null) {
                 for (String s : a.getStringValue().split(",")) {
                     s = s.trim();
-                    if (!StringUtils.isBlank(s)) {
+                    if (!_StringUtils.isBlank(s)) {
                         apps.add(s);
                     }
                 }

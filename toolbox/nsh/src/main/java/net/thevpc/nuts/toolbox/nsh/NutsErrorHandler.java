@@ -28,8 +28,8 @@ package net.thevpc.nuts.toolbox.nsh;
 
 import net.thevpc.jshell.*;
 import net.thevpc.nuts.NutsExecutionException;
-import net.thevpc.common.strings.StringUtils;
 import net.thevpc.nuts.NutsTextStyle;
+import net.thevpc.nuts.toolbox.nsh.bundles._StringUtils;
 
 /**
  *
@@ -55,7 +55,7 @@ public class NutsErrorHandler implements JShellErrorHandler {
 
     @Override
     public String errorToMessage(Throwable th) {
-        return StringUtils.exceptionToString(th);
+        return _StringUtils.exceptionToString(th);
     }
 
     @Override

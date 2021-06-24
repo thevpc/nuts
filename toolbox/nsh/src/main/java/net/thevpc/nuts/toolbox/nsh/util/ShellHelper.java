@@ -1,32 +1,30 @@
 package net.thevpc.nuts.toolbox.nsh.util;
 
-import net.thevpc.nuts.NutsPrintStream;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.common.io.FileUtils;
-import net.thevpc.common.ssh.SshListener;
-import net.thevpc.common.xfile.XFile;
+import net.thevpc.nuts.*;
 
 import java.io.InputStream;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
-import net.thevpc.nuts.NutsSessionTerminal;
+
+import net.thevpc.nuts.lib.ssh.SshListener;
+import net.thevpc.nuts.toolbox.nsh.bundles._IOUtils;
 
 public class ShellHelper {
 
-    public static List<XFile> xfilesOf(List<String> all, String cwd) {
-        List<XFile> xall = new ArrayList<>();
+    public static List<NutsPath> xfilesOf(List<String> all, String cwd, NutsSession session) {
+        List<NutsPath> xall = new ArrayList<>();
         for (String v : all) {
-            xall.add(xfileOf(v, cwd));
+            xall.add(xfileOf(v, cwd,session));
         }
         return xall;
     }
 
-    public static XFile xfileOf(String expression, String cwd) {
+    public static NutsPath xfileOf(String expression, String cwd, NutsSession session) {
+        NutsIOManager io = session.getWorkspace().io();
         if (expression.startsWith("file:") || expression.contains("://")) {
-            return XFile.of(expression);
+            return io.path(expression);
         }
-        return XFile.of(FileUtils.getAbsoluteFile2(expression, cwd));
+        return io.path(_IOUtils.getAbsoluteFile2(expression, cwd));
     }
 
     public static String[] splitNameAndValue(String arg) {

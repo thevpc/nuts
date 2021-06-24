@@ -1,5 +1,7 @@
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.spi.NutsPathSPI;
+
 public interface NutsPathFactory{
-    NutsSupplier<NutsPath> create(String path, NutsSession session, ClassLoader classLoader);
+    NutsSupplier<NutsPathSPI> createPath(String path, NutsSession session, ClassLoader classLoader);
 }

@@ -1,10 +1,11 @@
 package net.thevpc.nuts.toolbox.nutsserver.http.commands;
 
-import net.thevpc.common.collections.ListValueMap;
 import net.thevpc.nuts.toolbox.nutsserver.AbstractFacadeCommand;
 import net.thevpc.nuts.toolbox.nutsserver.FacadeCommandContext;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 public class FetchDescriptorHashFacadeCommand extends AbstractFacadeCommand {
     public FetchDescriptorHashFacadeCommand() {
@@ -13,8 +14,9 @@ public class FetchDescriptorHashFacadeCommand extends AbstractFacadeCommand {
 
     @Override
     public void executeImpl(FacadeCommandContext context) throws IOException {
-        ListValueMap<String, String> parameters = context.getParameters();
-        String id = parameters.getFirst("id");
+        Map<String, List<String>> parameters = context.getParameters();
+        List<String> idList = parameters.get("id");
+        String id = (idList==null || idList.isEmpty())?null: idList.get(0);
         boolean transitive = parameters.containsKey("transitive");
         String hash = null;
         try {

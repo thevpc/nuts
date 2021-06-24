@@ -23,11 +23,9 @@
  */
 package net.thevpc.nuts.toolbox.nsh;
 
-import net.thevpc.common.mvn.PomId;
-import net.thevpc.common.mvn.PomIdResolver;
-import net.thevpc.common.strings.StringUtils;
 import net.thevpc.jshell.*;
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.toolbox.nsh.bundles._StringUtils;
 
 import java.io.File;
 import java.io.PrintStream;
@@ -243,7 +241,7 @@ public class NutsJavaShell extends JShell {
             login = ws.security().getCurrentUsername();
         }
         String prompt = ((login != null && login.length() > 0 && !"anonymous".equals(login)) ? (login + "@") : "");//+ wss;
-        if (!StringUtils.isBlank(getRootContext().getServiceName())) {
+        if (!_StringUtils.isBlank(getRootContext().getServiceName())) {
             prompt = prompt + "@" + getRootContext().getServiceName();
         }
         prompt += "> ";
@@ -254,10 +252,18 @@ public class NutsJavaShell extends JShell {
         return (NshOptions) super.getOptions();
     }
 
+    public NutsApplicationContext getAppContext() {
+        return appContext;
+    }
+
     //    @Override
     @Override
     public String getVersion() {
-        return PomIdResolver.resolvePomId(getClass(), new PomId("", "", "dev")).getVersion();
+        NutsId nutsId = appContext.getWorkspace().id().resolveId(getClass());
+        if(nutsId==null){
+            return "dev";
+        }
+        return nutsId.getVersion().getValue();
     }
 
     public NutsShellContext getRootNutsShellContext() {
@@ -287,9 +293,9 @@ public class NutsJavaShell extends JShell {
                     JShellAutoCompleteCandidate cmdCandidate = (JShellAutoCompleteCandidate) cmdCandidate0;
                     if (cmdCandidate != null) {
                         String value = cmdCandidate.getValue();
-                        if (!StringUtils.isBlank(value)) {
+                        if (!_StringUtils.isBlank(value)) {
                             String display = cmdCandidate.getDisplay();
-                            if (StringUtils.isBlank(display)) {
+                            if (_StringUtils.isBlank(display)) {
                                 display = value;
                             }
                             candidates.add(workspace.commandLine().createCandidate(value).setDisplay(display).build());

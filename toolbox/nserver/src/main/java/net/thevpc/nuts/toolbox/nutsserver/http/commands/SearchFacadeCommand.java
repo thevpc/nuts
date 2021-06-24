@@ -2,13 +2,13 @@ package net.thevpc.nuts.toolbox.nutsserver.http.commands;
 
 import net.thevpc.nuts.toolbox.nutsserver.AbstractFacadeCommand;
 import net.thevpc.nuts.toolbox.nutsserver.FacadeCommandContext;
+import net.thevpc.nuts.toolbox.nutsserver.bundled._IOUtils;
+import net.thevpc.nuts.toolbox.nutsserver.bundled._StringUtils;
 import net.thevpc.nuts.toolbox.nutsserver.util.ItemStreamInfo;
 import net.thevpc.nuts.toolbox.nutsserver.util.MultipartStreamHelper;
 import net.thevpc.nuts.toolbox.nutsserver.util.NutsServerUtils;
 import net.thevpc.nuts.NutsId;
 import net.thevpc.nuts.toolbox.nutsserver.http.NutsHttpServletFacade;
-import net.thevpc.common.io.IOUtils;
-import net.thevpc.common.strings.StringUtils;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -26,7 +26,7 @@ public class SearchFacadeCommand extends AbstractFacadeCommand {
     public void executeImpl(FacadeCommandContext context) throws IOException {
         //Content-type
         String boundary = context.getRequestHeaderFirstValue("Content-type");
-        if (StringUtils.isBlank(boundary)) {
+        if (_StringUtils.isBlank(boundary)) {
             context.sendError(400, "Invalid JShellCommandNode Arguments : " + getName() + " . Invalid format.");
             return;
         }
@@ -39,16 +39,16 @@ public class SearchFacadeCommand extends AbstractFacadeCommand {
             String name = info.resolveVarInHeader("Content-Disposition", "name");
             switch (name) {
                 case "root":
-                    root = IOUtils.loadString(info.getContent(), true).trim();
+                    root = _IOUtils.loadString(info.getContent(), true).trim();
                     break;
                 case "transitive":
-                    transitive = Boolean.parseBoolean(IOUtils.loadString(info.getContent(), true).trim());
+                    transitive = Boolean.parseBoolean(_IOUtils.loadString(info.getContent(), true).trim());
                     break;
                 case "pattern":
-                    pattern = IOUtils.loadString(info.getContent(), true).trim();
+                    pattern = _IOUtils.loadString(info.getContent(), true).trim();
                     break;
                 case "js":
-                    js = IOUtils.loadString(info.getContent(), true).trim();
+                    js = _IOUtils.loadString(info.getContent(), true).trim();
                     break;
             }
         }

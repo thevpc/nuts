@@ -1,8 +1,6 @@
 package net.thevpc.nuts.toolbox.fileversion;
 
 import net.thevpc.nuts.*;
-import net.thevpc.common.io.FileUtils;
-import net.thevpc.common.xfile.XFile;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -205,11 +203,12 @@ public class NVersionMain extends NutsApplication {
             }
         }
     }
-
-    public static XFile xfileOf(String expression, String cwd) {
+    public static NutsPath xfileOf(String expression, String cwd, NutsSession session) {
+        NutsIOManager io = session.getWorkspace().io();
         if (expression.startsWith("file:") || expression.contains("://")) {
-            return XFile.of(expression);
+            return io.path(expression);
         }
-        return XFile.of(FileUtils.getAbsoluteFile2(expression, cwd));
+        return io.path(_IOUtils.getAbsoluteFile2(expression, cwd));
     }
+
 }

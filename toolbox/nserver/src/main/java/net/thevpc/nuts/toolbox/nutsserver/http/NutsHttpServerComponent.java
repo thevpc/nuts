@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -11,7 +11,7 @@
  * architecture to help supporting a large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -23,18 +23,16 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.toolbox.nutsserver.http;
 
 import com.sun.net.httpserver.*;
-import net.thevpc.common.collections.Collections2;
-import net.thevpc.common.collections.ListValueMap;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.nutsserver.NutsServer;
 import net.thevpc.nuts.toolbox.nutsserver.NutsServerComponent;
 import net.thevpc.nuts.toolbox.nutsserver.NutsServerConstants;
 import net.thevpc.nuts.toolbox.nutsserver.ServerConfig;
-import net.thevpc.common.strings.StringUtils;
+import net.thevpc.nuts.toolbox.nutsserver.bundled._StringUtils;
 
 import javax.net.ssl.*;
 import java.io.*;
@@ -44,9 +42,7 @@ import java.net.URI;
 import java.net.URLDecoder;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -61,6 +57,39 @@ public class NutsHttpServerComponent implements NutsServerComponent {
 
     private static final Logger LOG = Logger.getLogger(NutsHttpServerComponent.class.getName());
     private NutsHttpServletFacade facade;
+
+    /**
+     * returns the url parameters in a map
+     *
+     * @param query user query string
+     * @return map
+     */
+    public static Map<String, List<String>> queryToMap(String query) {
+        Map<String, List<String>> result = new LinkedHashMap<>();
+        if (query != null) {
+            for (String param : query.split("&")) {
+                String pair[] = param.split("=");
+                List<String> li = result.computeIfAbsent(urlDecodeString(pair[0]), d -> new ArrayList<>());
+                if (pair.length > 1) {
+                    li.add(urlDecodeString(pair[1]));
+                } else {
+                    li.add("");
+                }
+            }
+        }
+        return result;
+    }
+
+    public static String urlDecodeString(String s) {
+        if (s == null || s.trim().length() == 0) {
+            return s;
+        }
+        try {
+            return URLDecoder.decode(s, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
 
     @Override
     public int getSupportLevel(NutsSupportLevelContext<ServerConfig> config) {
@@ -83,7 +112,7 @@ public class NutsHttpServerComponent implements NutsServerComponent {
         int port = httpConfig.getPort();
         int backlog = httpConfig.getBacklog();
         Executor executor = httpConfig.getExecutor();
-        if (StringUtils.isBlank(serverId)) {
+        if (_StringUtils.isBlank(serverId)) {
             String serverName = NutsServerConstants.DEFAULT_HTTP_SERVER;
             try {
                 serverName = InetAddress.getLocalHost().getHostName();
@@ -99,7 +128,7 @@ public class NutsHttpServerComponent implements NutsServerComponent {
 
             serverId = serverName;//+ "-" + new File(workspace.getWorkspaceLocation()).getName();
         }
-        NutsSession session=invokerWorkspace;
+        NutsSession session = invokerWorkspace;
         this.facade = new NutsHttpServletFacade(serverId, workspaces);
         if (port <= 0) {
             port = NutsServerConstants.DEFAULT_HTTP_SERVER_PORT;
@@ -115,27 +144,27 @@ public class NutsHttpServerComponent implements NutsServerComponent {
             throw new UncheckedIOException(e);
         }
         if (executor == null) {
-            int corePoolSize=httpConfig.getExecutorCorePoolSize();
-            if(corePoolSize<=0){
-                corePoolSize=4;
+            int corePoolSize = httpConfig.getExecutorCorePoolSize();
+            if (corePoolSize <= 0) {
+                corePoolSize = 4;
             }
-            int maxPoolSize=httpConfig.getExecutorMaximumPoolSize();
-            if(maxPoolSize<=0){
-                maxPoolSize=100;
+            int maxPoolSize = httpConfig.getExecutorMaximumPoolSize();
+            if (maxPoolSize <= 0) {
+                maxPoolSize = 100;
             }
-            if(maxPoolSize<=corePoolSize){
-                maxPoolSize=corePoolSize;
+            if (maxPoolSize <= corePoolSize) {
+                maxPoolSize = corePoolSize;
             }
-            int idleSeconds=httpConfig.getExecutorIdleTimeSeconds();
-            if(idleSeconds<=0){
-                idleSeconds=30;
+            int idleSeconds = httpConfig.getExecutorIdleTimeSeconds();
+            if (idleSeconds <= 0) {
+                idleSeconds = 30;
             }
-            int queueSize=httpConfig.getExecutorQueueSize();
-            if(queueSize<=0){
-                queueSize=maxPoolSize;
+            int queueSize = httpConfig.getExecutorQueueSize();
+            if (queueSize <= 0) {
+                queueSize = maxPoolSize;
             }
-            if(queueSize>1000){
-                queueSize=1000;
+            if (queueSize > 1000) {
+                queueSize = 1000;
             }
             executor = new ThreadPoolExecutor(corePoolSize, maxPoolSize, idleSeconds, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(queueSize));
         }
@@ -207,25 +236,25 @@ public class NutsHttpServerComponent implements NutsServerComponent {
         NutsTextManager factory = session.getWorkspace().text();
         out.printf("Nuts Http Service '%s' running %s at %s\n", serverId,
                 factory.forStyled(
-                        (httpConfig.isTls()?"https":"http"),NutsTextStyle.primary(1)
+                        (httpConfig.isTls() ? "https" : "http"), NutsTextStyle.primary(1)
                 ),
                 inetSocketAddress);
-        if(workspaces.size()==1){
+        if (workspaces.size() == 1) {
             out.print("Serving workspace : ");
             for (Map.Entry<String, NutsWorkspace> entry : workspaces.entrySet()) {
                 String k = entry.getKey();
-                if(k.equals("")){
+                if (k.equals("")) {
                     out.printf("%s\n", entry.getValue().locations().getWorkspaceLocation());
-                }else{
+                } else {
                     out.printf("%s : %s\n", k, entry.getValue().locations().getWorkspaceLocation());
                 }
             }
-        }else {
+        } else {
             out.println("Serving workspaces:");
             for (Map.Entry<String, NutsWorkspace> entry : workspaces.entrySet()) {
                 String k = entry.getKey();
-                if(k.equals("")){
-                    k="<default>";
+                if (k.equals("")) {
+                    k = "<default>";
                 }
                 out.printf("\t%s : %s\n", k, entry.getValue().locations().getWorkspaceLocation());
             }
@@ -265,43 +294,21 @@ public class NutsHttpServerComponent implements NutsServerComponent {
 //        System.out.println("Type [CTRL]+[C] to quit!");
     }
 
-    /**
-     * returns the url parameters in a map
-     *
-     * @param query user query string
-     * @return map
-     */
-    public static ListValueMap<String, String> queryToMap(String query) {
-        ListValueMap<String, String> result = Collections2.arrayListValueHashMap();
-        if (query != null) {
-            for (String param : query.split("&")) {
-                String pair[] = param.split("=");
-                if (pair.length > 1) {
-                    result.add(urlDecodeString(pair[0]), urlDecodeString(pair[1]));
-                } else {
-                    result.add(urlDecodeString(pair[0]), "");
-                }
-            }
-        }
-        return result;
-    }
-
-    public static String urlDecodeString(String s) {
-        if (s == null || s.trim().length() == 0) {
-            return s;
-        }
-        try {
-            return URLDecoder.decode(s, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new UncheckedIOException(e);
-        }
-    }
-
     private static class EmbeddedNutsHttpServletFacadeContext extends AbstractNutsHttpServletFacadeContext {
         private final HttpExchange httpExchange;
 
         public EmbeddedNutsHttpServletFacadeContext(HttpExchange httpExchange) {
             this.httpExchange = httpExchange;
+        }
+
+        @Override
+        public void sendResponseBytes(int code, byte[] bytes) throws IOException {
+            super.sendResponseBytes(code, bytes);
+        }
+
+        @Override
+        public String getRequestMethod() throws IOException {
+            return httpExchange.getRequestMethod();
         }
 
         @Override
@@ -312,16 +319,6 @@ public class NutsHttpServerComponent implements NutsServerComponent {
         @Override
         public OutputStream getResponseBody() {
             return httpExchange.getResponseBody();
-        }
-
-        @Override
-        public void addResponseHeader(String name, String value) throws IOException {
-            httpExchange.getResponseHeaders().add(name,value);
-        }
-
-        @Override
-        public void sendResponseBytes(int code, byte[] bytes) throws IOException {
-            super.sendResponseBytes(code, bytes);
         }
 
         @Override
@@ -340,13 +337,13 @@ public class NutsHttpServerComponent implements NutsServerComponent {
         }
 
         @Override
-        public String getRequestHeaderFirstValue(String header) throws IOException {
-            return httpExchange.getRequestHeaders().getFirst(header);
+        public Set<String> getRequestHeaderKeys(String header) throws IOException {
+            return httpExchange.getRequestHeaders().keySet();
         }
 
         @Override
-        public Set<String> getRequestHeaderKeys(String header) throws IOException {
-            return httpExchange.getRequestHeaders().keySet();
+        public String getRequestHeaderFirstValue(String header) throws IOException {
+            return httpExchange.getRequestHeaders().getFirst(header);
         }
 
         @Override
@@ -359,13 +356,13 @@ public class NutsHttpServerComponent implements NutsServerComponent {
             return httpExchange.getRequestBody();
         }
 
-        public ListValueMap<String, String> getParameters() {
+        public Map<String, List<String>> getParameters() {
             return queryToMap(httpExchange.getRequestURI().getQuery());
         }
 
         @Override
-        public String getRequestMethod() throws IOException {
-            return httpExchange.getRequestMethod();
+        public void addResponseHeader(String name, String value) throws IOException {
+            httpExchange.getResponseHeaders().add(name, value);
         }
     }
 }

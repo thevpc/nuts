@@ -25,8 +25,6 @@
 */
 package net.thevpc.nuts.toolbox.nutsserver.http;
 
-import net.thevpc.common.collections.ListValueMap;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,6 +32,7 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -73,7 +72,7 @@ public interface NutsHttpServletFacadeContext {
 
     InputStream getRequestBody() throws IOException;
 
-    ListValueMap<String, String> getParameters() throws IOException;
+    Map<String, List<String>> getParameters() throws IOException;
 
     void addResponseHeader(String name, String value) throws IOException;
 

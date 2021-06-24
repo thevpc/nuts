@@ -66,11 +66,6 @@
         </dependency>
         <dependency>
             <groupId>net.thevpc.common</groupId>
-            <artifactId>thevpc-common-mvn</artifactId>
-            <version>1.1.2</version>
-        </dependency>
-        <dependency>
-            <groupId>net.thevpc.common</groupId>
             <artifactId>thevpc-common-diff-jar</artifactId>
             <version>1.1.0</version>
         </dependency>

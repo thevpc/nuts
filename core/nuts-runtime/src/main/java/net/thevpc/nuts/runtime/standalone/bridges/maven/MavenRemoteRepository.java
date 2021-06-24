@@ -63,7 +63,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
         @Override
         public NutsDescriptor parseDescriptor(String pathname, InputStream in, NutsFetchMode fetchMode, NutsRepository repository, NutsSession session, String rootURL) throws IOException {
             session.getTerminal().printProgress("%-8s %s", "parse", session.getWorkspace().io().path(pathname).compressedForm());
-            return MavenUtils.of(session).parsePomXml(in, fetchMode, pathname, repository, session);
+            return MavenUtils.of(session).parsePomXml(in, fetchMode, pathname, repository);
         }
 
         @Override

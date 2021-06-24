@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,7 +25,12 @@ package net.thevpc.nuts;
 
 import net.thevpc.nuts.spi.NutsComponent;
 
-import java.io.*;
+import java.io.File;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Writer;
+import java.net.URL;
+import java.nio.file.Path;
 
 /**
  * I/O Manager supports a set of operations to manipulate terminals and files in
@@ -45,7 +50,13 @@ public interface NutsIOManager extends NutsComponent<Object/* any object or null
      */
     NutsPath path(String path);
 
-    NutsPath path(String path,ClassLoader classLoader);
+    NutsPath path(File path);
+
+    NutsPath path(Path path);
+
+    NutsPath path(URL path);
+
+    NutsPath path(String path, ClassLoader classLoader);
 
     /**
      * expand path to Workspace Location
@@ -169,6 +180,8 @@ public interface NutsIOManager extends NutsComponent<Object/* any object or null
     boolean isStandardErrorStream(NutsPrintStream out);
 
     boolean isStandardInputStream(InputStream in);
+
     NutsIOManager addPathFactory(NutsPathFactory pathFactory);
+
     NutsIOManager removePathFactory(NutsPathFactory pathFactory);
 }

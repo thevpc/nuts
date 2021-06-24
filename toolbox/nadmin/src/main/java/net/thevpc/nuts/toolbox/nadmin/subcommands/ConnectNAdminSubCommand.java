@@ -6,9 +6,9 @@
 package net.thevpc.nuts.toolbox.nadmin.subcommands;
 
 import net.thevpc.nuts.*;
-import net.thevpc.common.io.IOUtils;
-import net.thevpc.common.io.NonBlockingInputStreamAdapter;
-import net.thevpc.common.strings.StringUtils;
+import net.thevpc.nuts.toolbox.nadmin.util.NonBlockingInputStreamAdapter;
+import net.thevpc.nuts.toolbox.nadmin.util._IOUtils;
+import net.thevpc.nuts.toolbox.nadmin.util._StringUtils;
 
 import java.io.PrintStream;
 import java.net.InetAddress;
@@ -54,7 +54,7 @@ public class ConnectNAdminSubCommand extends AbstractNAdminSubCommand {
                 port = Integer.parseInt(server.substring(server.indexOf(":") + 1));
                 server = server.substring(0, server.indexOf(":"));
             }
-            if (!StringUtils.isBlank(login) && isBlank(password)) {
+            if (!_StringUtils.isBlank(login) && isBlank(password)) {
                 password = context.getSession().getTerminal().readPassword("Password:");
             }
             Socket socket = null;
@@ -62,9 +62,9 @@ public class ConnectNAdminSubCommand extends AbstractNAdminSubCommand {
                 try {
                     int validPort = port <= 0 ? DEFAULT_ADMIN_SERVER_PORT : port;
                     socket = new Socket(InetAddress.getByName(server), validPort);
-                    IOUtils.pipe("pipe-out-socket-" + server + ":" + validPort, new NonBlockingInputStreamAdapter("pipe-out-socket-" + server + ":" + validPort, socket.getInputStream()), context.getSession().out().asPrintStream());
+                    _IOUtils.pipe("pipe-out-socket-" + server + ":" + validPort, new NonBlockingInputStreamAdapter("pipe-out-socket-" + server + ":" + validPort, socket.getInputStream()), context.getSession().out().asPrintStream());
                     PrintStream out = new PrintStream(socket.getOutputStream());
-                    if (!StringUtils.isBlank(login)) {
+                    if (!_StringUtils.isBlank(login)) {
                         out.printf("connect ==%s %s== %n", login, new String(password));
                     }
                     while (true) {

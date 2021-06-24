@@ -8,6 +8,7 @@ import net.thevpc.nuts.runtime.bundles.iter.IteratorBuilder;
 import net.thevpc.nuts.runtime.bundles.iter.IteratorUtils;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
@@ -35,6 +36,22 @@ public class DefaultNutsIOProcessAction implements NutsIOProcessAction {
     public NutsIOProcessAction setFailFast(boolean failFast) {
         this.failFast = failFast;
         return this;
+    }
+
+    @Override
+    public boolean isSupportedKillProcess(){
+        checkSession();
+        NutsOsFamily f = getSession().getWorkspace().env().getOsFamily();
+        return f ==NutsOsFamily.LINUX || f ==NutsOsFamily.MACOS || f ==NutsOsFamily.UNIX;
+    }
+
+
+    @Override
+    public boolean killProcess(String processId) {
+        checkSession();
+        return getSession().getWorkspace().exec()
+                .addCommand("kill", "-9", processId)
+                .getResult()==0;
     }
 
     @Override

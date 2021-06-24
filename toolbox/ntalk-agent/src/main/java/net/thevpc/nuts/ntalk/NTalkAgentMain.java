@@ -1,5 +1,8 @@
 package net.thevpc.nuts.ntalk;
 
+import net.thevpc.nuts.lib.ntalk.NTalkAgent;
+import net.thevpc.nuts.lib.ntalk.NTalkConstants;
+
 import java.io.UncheckedIOException;
 
 public class NTalkAgentMain {
@@ -24,7 +27,7 @@ public class NTalkAgentMain {
                     System.out.println("  ntalk agent is a client to client communication agent.");
                     System.out.println("OPTIONS:");
                     System.out.println("  --port <port>");
-                    System.out.println("      bind port for the agent. default is "+NTalkConstants.DEFAULT_PORT);
+                    System.out.println("      bind port for the agent. default is "+ NTalkConstants.DEFAULT_PORT);
                     System.out.println("  --backlog <backlog>");
                     System.out.println("      bind backlog for the agent. default is "+NTalkConstants.DEFAULT_BACKLOG);
                     System.out.println("  --bind <address>");

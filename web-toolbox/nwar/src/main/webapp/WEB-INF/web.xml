@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
     <servlet>
         <servlet-name>NutsHttpServlet</servlet-name>
-        <servlet-class>net.thevpc.nuts.extensions.servers.NutsHttpServlet</servlet-class>
+        <servlet-class>net.thevpc.nuts.lib.servlet.NutsHttpServlet</servlet-class>
         <init-param>
             <param-name>workspace</param-name>
             <param-value>~~/http-workspace</param-value>

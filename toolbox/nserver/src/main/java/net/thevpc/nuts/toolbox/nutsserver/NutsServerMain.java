@@ -1,9 +1,9 @@
 package net.thevpc.nuts.toolbox.nutsserver;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.toolbox.nutsserver.bundled._IOUtils;
+import net.thevpc.nuts.toolbox.nutsserver.bundled._StringUtils;
 import net.thevpc.nuts.toolbox.nutsserver.http.NutsHttpServerConfig;
-import net.thevpc.common.io.IOUtils;
-import net.thevpc.common.strings.StringUtils;
 
 import java.io.*;
 import java.net.InetAddress;
@@ -156,10 +156,10 @@ public class NutsServerMain extends NutsApplication {
                     NutsWorkspace nutsWorkspace = null;
                     String wsContext = entry.getKey();
                     String wsLocation = entry.getValue();
-                    if (StringUtils.isBlank(wsContext) || wsContext.equals(".")) {
+                    if (_StringUtils.isBlank(wsContext) || wsContext.equals(".")) {
                         wsContext = "";
                     }
-                    if (StringUtils.isBlank(wsContext)) {
+                    if (_StringUtils.isBlank(wsContext)) {
                         if (context.getWorkspace() == null) {
                             throw new NutsIllegalArgumentException(context.getSession(), "nuts-server: missing workspace");
                         }
@@ -201,7 +201,7 @@ public class NutsServerMain extends NutsApplication {
                                 throw new NutsIllegalArgumentException(context.getSession(), "nuts-server: missing SSL certificate");
                             }
                             try {
-                                config.setSslKeystoreCertificate(IOUtils.loadByteArray(new File(server.sslCertificate)));
+                                config.setSslKeystoreCertificate(_IOUtils.loadByteArray(new File(server.sslCertificate)));
                             } catch (IOException e) {
                                 throw new UncheckedIOException(e);
                             }

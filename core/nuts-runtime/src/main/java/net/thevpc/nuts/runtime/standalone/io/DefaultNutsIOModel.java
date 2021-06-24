@@ -5,9 +5,14 @@ import net.thevpc.nuts.runtime.bundles.io.NullInputStream;
 import net.thevpc.nuts.runtime.bundles.parsers.StringPlaceHolderParser;
 import net.thevpc.nuts.runtime.core.NutsSupplierBase;
 import net.thevpc.nuts.runtime.core.format.text.SimpleWriterOutputStream;
+import net.thevpc.nuts.runtime.core.io.ClassLoaderPath;
+import net.thevpc.nuts.runtime.core.io.FilePath;
+import net.thevpc.nuts.runtime.core.io.NutsPathFromSPI;
+import net.thevpc.nuts.runtime.core.io.URLPath;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNutsBootModel;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
+import net.thevpc.nuts.spi.NutsPathSPI;
 
 import java.io.File;
 import java.io.InputStream;
@@ -290,10 +295,10 @@ public class DefaultNutsIOModel {
         }
         //
         ClassLoader finalClassLoader = classLoader;
-        NutsSupplier<NutsPath> z = Arrays.stream(getPathFactories())
+        NutsSupplier<NutsPathSPI> z = Arrays.stream(getPathFactories())
                 .map(x -> {
                     try {
-                        return x.create(path, session, finalClassLoader);
+                        return x.createPath(path, session, finalClassLoader);
                     } catch (Exception ex) {
                         //
                     }
@@ -302,7 +307,14 @@ public class DefaultNutsIOModel {
                 .filter(x -> x != null && x.level() > 0)
                 .max(Comparator.comparingInt(NutsSupplier::level))
                 .orElse(null);
-        return z == null ? null : z.create();
+        NutsPathSPI s= z == null ? null : z.create();
+        if(s!=null){
+            if( s instanceof NutsPath){
+                return (NutsPath) s;
+            }
+            return new NutsPathFromSPI(s);
+        }
+        return null;
     }
 
     public NutsPathFactory[] getPathFactories() {
@@ -311,13 +323,13 @@ public class DefaultNutsIOModel {
 
     private class URLPathFactory implements NutsPathFactory {
         @Override
-        public NutsSupplier<NutsPath> create(String path, NutsSession session, ClassLoader classLoader) {
+        public NutsSupplier<NutsPathSPI> createPath(String path, NutsSession session, ClassLoader classLoader) {
             NutsWorkspaceUtils.checkSession(getWorkspace(), session);
             try {
                 URL url=new URL(path);
-                return new NutsSupplierBase<NutsPath>(2) {
+                return new NutsSupplierBase<NutsPathSPI>(2) {
                     @Override
-                    public NutsPath create() {
+                    public NutsPathSPI create() {
                         return new URLPath(url, session);
                     }
                 };
@@ -330,13 +342,13 @@ public class DefaultNutsIOModel {
 
     private class ClasspathNutsPathFactory implements NutsPathFactory {
         @Override
-        public NutsSupplier<NutsPath> create(String path, NutsSession session, ClassLoader classLoader) {
+        public NutsSupplier<NutsPathSPI> createPath(String path, NutsSession session, ClassLoader classLoader) {
             NutsWorkspaceUtils.checkSession(getWorkspace(), session);
             try {
                 if(path.startsWith("classpath:")) {
-                    return new NutsSupplierBase<NutsPath>(2) {
+                    return new NutsSupplierBase<NutsPathSPI>(2) {
                         @Override
-                        public NutsPath create() {
+                        public NutsPathSPI create() {
                             return new ClassLoaderPath(path, classLoader, session);
                         }
                     };
@@ -350,13 +362,13 @@ public class DefaultNutsIOModel {
 
     private class FilePathFactory implements NutsPathFactory {
         @Override
-        public NutsSupplier<NutsPath> create(String path, NutsSession session, ClassLoader classLoader) {
+        public NutsSupplier<NutsPathSPI> createPath(String path, NutsSession session, ClassLoader classLoader) {
             NutsWorkspaceUtils.checkSession(getWorkspace(), session);
             try {
                 Path value = Paths.get(path);
-                return new NutsSupplierBase<NutsPath>(1) {
+                return new NutsSupplierBase<NutsPathSPI>(1) {
                     @Override
-                    public NutsPath create() {
+                    public NutsPathSPI create() {
                         return new FilePath(value, session);
                     }
                 };

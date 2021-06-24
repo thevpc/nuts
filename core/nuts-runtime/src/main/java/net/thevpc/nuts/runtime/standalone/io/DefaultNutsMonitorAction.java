@@ -6,6 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.io;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.core.io.NutsCompressedPath;
 import net.thevpc.nuts.runtime.standalone.io.progress.DefaultNutsProgressEvent;
 import net.thevpc.nuts.runtime.bundles.io.InputStreamMetadataAware;
 import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
@@ -96,6 +97,13 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
     }
 
     @Override
+    public NutsMonitorAction setSource(NutsPath inputSource) {
+        this.source = inputSource;
+        this.sourceKind = "nutsPath";
+        return this;
+    }
+
+    @Override
     public NutsMonitorAction setSource(NutsInput inputSource) {
         this.source = inputSource;
         this.sourceKind = "inputSource";
@@ -105,7 +113,7 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
     @Override
     public NutsMonitorAction setSource(Path path) {
         this.source = path;
-        this.sourceKind = "path";
+        this.sourceKind = "filePath";
         return this;
     }
 
@@ -139,8 +147,11 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
             case "string": {
                 return monitorInputStream((String) source, sourceOrigin, sourceName);
             }
-            case "path": {
+            case "filePath": {
                 return monitorInputStream(((Path) source).toString(), sourceOrigin, sourceName);
+            }
+            case "nutsPath": {
+                return monitorInputStream(((NutsPath) source), sourceOrigin, sourceName).open();
             }
             case "file": {
                 return monitorInputStream(((File) source).getPath(), sourceOrigin, sourceName);
@@ -192,8 +203,11 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
             case "string": {
                 return new InputFromString(sourceName0, base, isPath, isUrl, sourceTypeName0, getSession(), base);
             }
-            case "path": {
+            case "filePath": {
                 return new InputFromPath(sourceName0, base, isPath, isUrl, sourceTypeName0, getSession(), base);
+            }
+            case "nutsPath": {
+                return new InputFromNutsPath(sourceName0, base, isPath, isUrl, sourceTypeName0, getSession(), base);
             }
             case "file": {
                 return new InputFromFile(sourceName0, base, isPath, isUrl, sourceTypeName0, getSession(), base);
@@ -311,7 +325,6 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
         return CoreIOUtils.monitor(openedStream, source, sourceName, size, new SilentStartNutsInputStreamProgressMonitorAdapter(ws, monitor, path), session);
 
     }
-
     public NutsInput monitorInputStream(NutsInput inputSource, Object source, String sourceName) {
         checkSession();
         if (inputSource == null) {
@@ -354,6 +367,55 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
         String sourceTypeName = getSourceTypeName();
         if (sourceTypeName == null) {
             sourceTypeName = inputSource.getTypeName();
+        }
+        return getSession().getWorkspace().io().input()
+                .setTypeName(sourceTypeName)
+                .of(CoreIOUtils.monitor(openedStream, source, sourceName, size, new SilentStartNutsInputStreamProgressMonitorAdapter(ws, monitor, inputSource.toString()), session))
+                ;
+
+    }
+    public NutsInput monitorInputStream(NutsPath inputSource, Object source, String sourceName) {
+        checkSession();
+        if (inputSource == null) {
+            throw new UncheckedIOException(new IOException("missing inputSource"));
+        }
+        if (CoreStringUtils.isBlank(sourceName)) {
+            sourceName = inputSource.name();
+        }
+        NutsProgressMonitor monitor = CoreIOUtils.createProgressMonitor(CoreIOUtils.MonitorType.STREAM, inputSource, source, session, isLogProgress(), getProgressFactory());
+        boolean verboseMode
+                = CoreBooleanUtils.getSysBoolNutsProperty("monitor.start", false);
+        long size = -1;
+        try {
+            if (verboseMode && monitor != null) {
+                monitor.onStart(new DefaultNutsProgressEvent(source, sourceName, 0, 0, 0, 0, size, null, session, true));
+            }
+            size = inputSource.length();
+        } catch (UncheckedIOException | NutsIOException e) {
+            if (verboseMode && monitor != null) {
+                monitor.onComplete(new DefaultNutsProgressEvent(source, sourceName, 0, 0, 0, 0, size, e, session, true));
+            }
+            throw e;
+        }
+        if (size < 0) {
+            size = getLength();
+        }
+//        if (path.toLowerCase().startsWith("file://")) {
+//            LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.START).log( "Downloading file {0}", new Object[]{path});
+//        } else {
+//            LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.START).log( "Download url {0}", new Object[]{path});
+//        }
+
+        if (monitor == null) {
+            return getSession().getWorkspace().io().input().setSession(getSession()).of(inputSource);
+        }
+        InputStream openedStream = getSession().getWorkspace().io().input().setSession(getSession()).of(inputSource).open();
+        if (!verboseMode) {
+            monitor.onStart(new DefaultNutsProgressEvent(source, sourceName, 0, 0, 0, 0, size, null, session, size < 0));
+        }
+        String sourceTypeName = getSourceTypeName();
+        if (sourceTypeName == null) {
+            sourceTypeName = "nuts-Path";//inputSource.getTypeName();
         }
         return getSession().getWorkspace().io().input()
                 .setTypeName(sourceTypeName)
@@ -493,6 +555,56 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
         @Override
         public InputStream open() {
             return monitorInputStream(((Path) source).toString(), sourceOrigin, sourceName);
+        }
+
+        @Override
+        public String toString() {
+            return ((Path) source).toString();
+        }
+
+        @Override
+        public long length() {
+            return base.length();
+        }
+
+        @Override
+        public String getContentType() {
+            return null;
+        }
+
+        @Override
+        public String getContentEncoding() {
+            return null;
+        }
+
+        @Override
+        public Instant getLastModified() {
+            FileTime r = null;
+            try {
+                r = Files.getLastModifiedTime(getPath());
+                if (r != null) {
+                    return r.toInstant();
+                }
+            } catch (IOException e) {
+                //
+            }
+            return null;
+        }
+    }
+    private class InputFromNutsPath extends CoreIOUtils.AbstractItem {
+
+        private final NutsInput base;
+
+        public InputFromNutsPath(String string, Object o, boolean bln, boolean bln1, String string1, NutsSession ns, NutsInput base) {
+            super(string, o, bln, bln1, string1, ns);
+            this.base = base;
+        }
+        NutsPath np(){
+            return (NutsPath) source;
+        }
+        @Override
+        public InputStream open() {
+            return monitorInputStream(np().asString(), sourceOrigin, sourceName);
         }
 
         @Override

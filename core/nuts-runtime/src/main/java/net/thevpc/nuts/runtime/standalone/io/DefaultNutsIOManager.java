@@ -1,13 +1,17 @@
 package net.thevpc.nuts.runtime.standalone.io;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.core.io.FilePath;
+import net.thevpc.nuts.runtime.core.io.URLPath;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
+import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class DefaultNutsIOManager implements NutsIOManager {
@@ -32,6 +36,33 @@ public class DefaultNutsIOManager implements NutsIOManager {
     public NutsPath path(String path) {
         checkSession();
         return path(path,null);
+    }
+
+    @Override
+    public NutsPath path(File path) {
+        checkSession();
+        if (path == null) {
+            return null;
+        }
+        return new FilePath(path.toPath(),getSession());
+    }
+
+    @Override
+    public NutsPath path(Path path) {
+        checkSession();
+        if (path == null) {
+            return null;
+        }
+        return new FilePath(path,getSession());
+    }
+
+    @Override
+    public NutsPath path(URL path) {
+        checkSession();
+        if (path == null) {
+            return null;
+        }
+        return new URLPath(path,getSession());
     }
 
     @Override

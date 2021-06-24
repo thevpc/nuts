@@ -58,16 +58,6 @@
             <artifactId>nuts</artifactId>
             <version>0.8.1</version>
         </dependency>
-        <dependency>
-            <groupId>net.thevpc.common</groupId>
-            <artifactId>thevpc-common-strings</artifactId>
-            <version>1.2.19</version>
-        </dependency>
-        <dependency>
-            <groupId>net.thevpc.common</groupId>
-            <artifactId>thevpc-common-mvn</artifactId>
-            <version>1.1.2</version>
-        </dependency>
     </dependencies>
 
     <build>

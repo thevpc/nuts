@@ -68,7 +68,7 @@ public abstract class AbstractNutsOutput implements NutsOutput {
         throw new NutsUnsupportedOperationException(ws);
     }
 
-    public Path getPath() {
+    public Path getFilePath() {
         throw new NutsUnsupportedOperationException(ws);
     }
 

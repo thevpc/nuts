@@ -12,6 +12,7 @@
         <module>core/nuts</module>
 
         <module>lib/nlib-talk-agent</module>
+        <module>lib/nlib-ssh</module>
         <module>toolbox/ntalk-agent</module>
 
         <module>core/nuts-runtime</module>

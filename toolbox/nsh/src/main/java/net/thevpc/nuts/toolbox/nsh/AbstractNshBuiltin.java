@@ -26,8 +26,6 @@
 package net.thevpc.nuts.toolbox.nsh;
 
 import net.thevpc.nuts.NutsIllegalArgumentException;
-import net.thevpc.common.io.IOUtils;
-import net.thevpc.common.strings.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -38,6 +36,8 @@ import java.util.logging.Logger;
 import net.thevpc.nuts.NutsCommandAutoComplete;
 import net.thevpc.nuts.NutsCommandLine;
 import net.thevpc.nuts.NutsSupportLevelContext;
+import net.thevpc.nuts.toolbox.nsh.bundles._IOUtils;
+import net.thevpc.nuts.toolbox.nsh.bundles._StringUtils;
 
 /**
  * Created by vpc on 1/7/17.
@@ -93,7 +93,7 @@ public abstract class AbstractNshBuiltin implements NshBuiltin {
             if (line == null) {
                 break;
             }
-            if (!StringUtils.isBlank(line)) {
+            if (!_StringUtils.isBlank(line)) {
                 return line;
             }
         }
@@ -106,7 +106,7 @@ public abstract class AbstractNshBuiltin implements NshBuiltin {
             try {
                 URL resource = getClass().getResource("/net/thevpc/nuts/toolbox/nsh/cmd/" + getName() + ".ntf");
                 if (resource != null) {
-                    help = IOUtils.loadString(resource);
+                    help = _IOUtils.loadString(resource);
                 }
             } catch (Exception e) {
                 LOG.log(Level.CONFIG, "Unable to load help for " + getName(), e);

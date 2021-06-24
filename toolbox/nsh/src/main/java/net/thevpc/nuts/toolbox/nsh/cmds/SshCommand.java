@@ -25,13 +25,12 @@
 */
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
+import net.thevpc.nuts.lib.ssh.SShConnection;
 import net.thevpc.nuts.toolbox.nsh.AbstractNshBuiltin;
 import net.thevpc.nuts.toolbox.nsh.NshExecutionContext;
+import net.thevpc.nuts.toolbox.nsh.bundles._StringUtils;
 import net.thevpc.nuts.toolbox.nsh.util.ShellHelper;
 import net.thevpc.nuts.*;
-import net.thevpc.common.io.FileUtils;
-import net.thevpc.common.ssh.SShConnection;
-import net.thevpc.common.strings.StringUtils;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -114,7 +113,7 @@ public class SshCommand extends AbstractNshBuiltin {
                         c.skip();
                     }
                 }
-                if (!StringUtils.isBlank(o.nutsCommand)) {
+                if (!_StringUtils.isBlank(o.nutsCommand)) {
                     cmd.add(o.nutsCommand);
                 } else {
                     String userHome = null;
@@ -122,7 +121,7 @@ public class SshCommand extends AbstractNshBuiltin {
                             .setRedirectErrorStream(true)
                             .grabOutputString().exec("echo", "$HOME");
                     userHome = sshSession.getOutputString().trim();
-                    if (StringUtils.isBlank(workspace)) {
+                    if (_StringUtils.isBlank(workspace)) {
                         workspace = userHome + "/.config/nuts/" + NutsConstants.Names.DEFAULT_WORKSPACE_NAME;
                     }
                     boolean nutsCommandFound = false;
@@ -143,7 +142,7 @@ public class SshCommand extends AbstractNshBuiltin {
                             sshSession.setFailFast(true).copyLocalToRemote(from.toString(), workspace + "/" + bootApiFileName, true);
                             String javaCmd = null;
                             if (o.nutsJre != null) {
-                                javaCmd = (o.nutsJre + FileUtils.getNativePath("/bin/java"));
+                                javaCmd = (o.nutsJre + "/bin/java");
                             } else {
                                 javaCmd = ("java");
                             }

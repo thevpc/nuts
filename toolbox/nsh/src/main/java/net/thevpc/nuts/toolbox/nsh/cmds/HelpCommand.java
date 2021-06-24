@@ -28,8 +28,8 @@ package net.thevpc.nuts.toolbox.nsh.cmds;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.nsh.AbstractNshBuiltin;
 import net.thevpc.nuts.toolbox.nsh.NshExecutionContext;
+import net.thevpc.nuts.toolbox.nsh.bundles._StringUtils;
 import net.thevpc.nuts.toolbox.nsh.options.CommandNonOption;
-import net.thevpc.common.strings.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -96,7 +96,7 @@ public class HelpCommand extends AbstractNshBuiltin {
                     }
                 }
                 for (JShellBuiltin cmd : commands) {
-                    context.out().printf("%s : ", text.forStyled(StringUtils.alignLeft(cmd.getName(), max),NutsTextStyle.primary(4)));
+                    context.out().printf("%s : ", text.forStyled(_StringUtils.formatLeft(cmd.getName(), max),NutsTextStyle.primary(4)));
                     context.out().println(ss.apply(cmd.getHelpHeader())); //formatted
                 }
             } else {

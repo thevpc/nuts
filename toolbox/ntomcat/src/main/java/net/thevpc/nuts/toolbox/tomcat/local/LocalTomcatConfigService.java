@@ -1,18 +1,15 @@
 package net.thevpc.nuts.toolbox.tomcat.local;
 
-import net.thevpc.common.io.LineSource;
-import net.thevpc.common.io.TextFiles;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.tomcat.NTomcatConfigVersions;
-import net.thevpc.nuts.toolbox.tomcat.util.*;
-import net.thevpc.common.io.PosApis;
 import net.thevpc.nuts.toolbox.tomcat.local.config.LocalTomcatAppConfig;
 import net.thevpc.nuts.toolbox.tomcat.local.config.LocalTomcatConfig;
 import net.thevpc.nuts.toolbox.tomcat.local.config.LocalTomcatDomainConfig;
+import net.thevpc.nuts.toolbox.tomcat.util.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
 
-import java.io.*;
-import java.nio.file.*;
-import java.util.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -21,10 +18,14 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.xml.sax.SAXException;
+import java.io.File;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
 
 public class LocalTomcatConfigService extends LocalTomcatServiceBase {
 
@@ -50,14 +51,6 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         setName(name);
         this.context = app.getContext();
         sharedConfigFolder = Paths.get(app.getContext().getVersionFolderFolder(NutsStoreLocation.CONFIG, NTomcatConfigVersions.CURRENT));
-    }
-
-    public LocalTomcatConfigService setName(String name) {
-        if (".".equals(name)) {
-            name = "default";
-        }
-        this.name = TomcatUtils.toValidFileName(name, "default");
-        return this;
     }
 
     public void open(NutsOpenMode autoCreate) {
@@ -89,15 +82,57 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         }
     }
 
-    public String getName() {
-        return name;
-    }
-
     public LocalTomcatConfig getConfig() {
         if (config == null) {
             loadConfig();
         }
         return config;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public LocalTomcatConfigService setName(String name) {
+        if (".".equals(name)) {
+            name = "default";
+        }
+        this.name = TomcatUtils.toValidFileName(name, "default");
+        return this;
+    }
+
+    @Override
+    public LocalTomcatConfigService print(NutsPrintStream out) {
+        Map<String, Object> result = new LinkedHashMap<>();
+        result.put("name", getName());
+        result.put("version", getValidCatalinaVersion());
+        result.put("status", getStatus());
+        result.put("home", getCatalinaHome());
+        result.put("base", getCatalinaBase());
+        result.put("out", getOutLogFile());
+        result.put("http-port", getHttpConnectorPort());
+        result.put("http-redirect-port", getHttpConnectorRedirectPort());
+        result.put("ajp-port", getAjpConnectorPort());
+        result.put("ajp-redirect-port", getAjpConnectorRedirectPort());
+        result.put("shutdown-port", getShutdownPort());
+        result.put("config", getConfig());
+        context.getWorkspace().formats().object().setSession(context.getSession()).setValue(result).print(out);
+        return this;
+    }
+
+    @Override
+    public LocalTomcatConfigService remove() {
+        try {
+            Files.delete(sharedConfigFolder.resolve(getName() + LOCAL_CONFIG_EXT));
+            return this;
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
+    }
+
+    public LocalTomcatConfigService setConfig(LocalTomcatConfig config) {
+        this.config = config;
+        return this;
     }
 
     public LocalTomcatConfigService save() {
@@ -198,27 +233,31 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
 
     public NutsString getFormattedError(String str) {
         return context.getWorkspace()
-                .text().forStyled(str,NutsTextStyle.error())
+                .text().forStyled(str, NutsTextStyle.error())
                 ;
     }
+
     public NutsString getFormattedSuccess(String str) {
         return context.getWorkspace()
-                .text().forStyled(str,NutsTextStyle.success())
+                .text().forStyled(str, NutsTextStyle.success())
                 ;
     }
+
     public NutsString getFormattedPath(Path str) {
         return context.getWorkspace()
-                .text().forStyled(str==null?"":str.toString(),NutsTextStyle.path())
+                .text().forStyled(str == null ? "" : str.toString(), NutsTextStyle.path())
                 ;
     }
+
     public NutsString getFormattedPath(String str) {
-        return context.getWorkspace().text().forStyled(str==null?"":str.toString(),NutsTextStyle.path())
+        return context.getWorkspace().text().forStyled(str == null ? "" : str.toString(), NutsTextStyle.path())
                 ;
     }
+
     public NutsString getFormattedPrefix(String str) {
         return context.getWorkspace().text().builder()
                 .append("[")
-                .append(str,NutsTextStyle.primary(5))
+                .append(str, NutsTextStyle.primary(5))
                 .append("]");
     }
 
@@ -226,15 +265,15 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         if (context.getSession().isPlainOut()) {
             switch (getStatus()) {
                 case RUNNING: {
-                    context.getSession().out().printf("%s Tomcat %s.\n", getFormattedPrefix(getName()),getFormattedSuccess("running"));
+                    context.getSession().out().printf("%s Tomcat %s.\n", getFormattedPrefix(getName()), getFormattedSuccess("running"));
                     break;
                 }
                 case STOPPED: {
-                    context.getSession().out().printf("%s Tomcat %s.\n", getFormattedPrefix(getName()),getFormattedError("stopped"));
+                    context.getSession().out().printf("%s Tomcat %s.\n", getFormattedPrefix(getName()), getFormattedError("stopped"));
                     break;
                 }
                 case OUT_OF_MEMORY: {
-                    context.getSession().out().printf("%s Tomcat %s.\n", getFormattedPrefix(getName()),getFormattedError("out-of-memory"));
+                    context.getSession().out().printf("%s Tomcat %s.\n", getFormattedPrefix(getName()), getFormattedError("out-of-memory"));
                     break;
                 }
             }
@@ -530,7 +569,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         Path catalinaBase = getCatalinaBase();
         return Arrays.stream(TomcatUtils.getRunningInstances(context))
                 .filter(p -> (catalinaBase == null
-                || catalinaBase.toString().equals(p.getBase())))
+                        || catalinaBase.toString().equals(p.getBase())))
                 .findFirst().orElse(null);
     }
 
@@ -613,20 +652,19 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                 return true;
             }
         }
-        if (kill && PosApis.get().isSupportedKillProcess()) {
+        if (kill && context.getWorkspace().io().ps().isSupportedKillProcess()) {
+
             ps = getRunningTomcat();
             if (ps != null) {
-                try {
-                    if (PosApis.get().killProcess(ps.getPid())) {
-                        context.getSession().out().printf("%s Tomcat process killed (%s).\n", getFormattedPrefix(getName()), ps.getPid());
-                        return true;
-                    } else {
-                        context.getSession().out().printf("%s Tomcat process could not be killed ( %s).\n", getFormattedPrefix(getName()), ps.getPid());
-                        return false;
-                    }
-                } catch (IOException ex) {
-                    throw new UncheckedIOException(ex);
+
+                if (context.getWorkspace().io().ps().killProcess(ps.getPid())) {
+                    context.getSession().out().printf("%s Tomcat process killed (%s).\n", getFormattedPrefix(getName()), ps.getPid());
+                    return true;
+                } else {
+                    context.getSession().out().printf("%s Tomcat process could not be killed ( %s).\n", getFormattedPrefix(getName()), ps.getPid());
+                    return false;
                 }
+
             }
         }
         ps = getRunningTomcat();
@@ -634,7 +672,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             context.getSession().out().printf("%s Tomcat process could not be terminated (%s).\n", getFormattedPrefix(getName()), ps.getPid());
             return true;
         }
-        context.getSession().out().printf("%s\n",getFormattedError("Tomcat stopped"));
+        context.getSession().out().printf("%s\n", getFormattedError("Tomcat stopped"));
         return true;
     }
 
@@ -688,13 +726,8 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             if (!Files.exists(log)) {
                 return AppStatus.STOPPED;
             }
-            LineSource lineSource = TextFiles.create(log);
-            LocalTomcatLogLineVisitor visitor = new LocalTomcatLogLineVisitor(startupMessage, shutdownMessage);
-            try {
-                TextFiles.visit(lineSource, visitor);
-            } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
-            }
+            LocalTomcatLogLineVisitor visitor = new LocalTomcatLogLineVisitor(log.toString(),startupMessage, shutdownMessage,context.getSession());
+            visitor.visit();
             if (visitor.outOfMemoryError) {
                 return AppStatus.OUT_OF_MEMORY;
             } else if (visitor.started != null && visitor.started) {
@@ -726,40 +759,6 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
 //            return this;
         }
         throw new NamedItemNotFoundException("Instance not found : " + getName(), getName());
-    }
-
-    @Override
-    public LocalTomcatConfigService remove() {
-        try {
-            Files.delete(sharedConfigFolder.resolve(getName() + LOCAL_CONFIG_EXT));
-            return this;
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
-        }
-    }
-
-    @Override
-    public LocalTomcatConfigService print(NutsPrintStream out) {
-        Map<String, Object> result = new LinkedHashMap<>();
-        result.put("name", getName());
-        result.put("version", getValidCatalinaVersion());
-        result.put("status", getStatus());
-        result.put("home", getCatalinaHome());
-        result.put("base", getCatalinaBase());
-        result.put("out", getOutLogFile());
-        result.put("http-port", getHttpConnectorPort());
-        result.put("http-redirect-port", getHttpConnectorRedirectPort());
-        result.put("ajp-port", getAjpConnectorPort());
-        result.put("ajp-redirect-port", getAjpConnectorRedirectPort());
-        result.put("shutdown-port", getShutdownPort());
-        result.put("config", getConfig());
-        context.getWorkspace().formats().object().setSession(context.getSession()).setValue(result).print(out);
-        return this;
-    }
-
-    public LocalTomcatConfigService setConfig(LocalTomcatConfig config) {
-        this.config = config;
-        return this;
     }
 
     public LocalTomcatAppConfigService getApp(String appName, NutsOpenMode mode) {
@@ -851,7 +850,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         Path file = getLogFolder().resolve("catalina.out");
         if (Files.isRegularFile(file)) {
             if (context.getSession().isPlainOut()) {
-                context.getSession().out().printf("%s delete log file %s.\n", getFormattedPrefix(getName()),getFormattedPath(file));
+                context.getSession().out().printf("%s delete log file %s.\n", getFormattedPrefix(getName()), getFormattedPath(file));
             }
             try {
                 Files.delete(file);
@@ -867,7 +866,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             try (DirectoryStream<Path> files = Files.newDirectoryStream(tempFolder)) {
                 for (Path file : files) {
                     if (context.getSession().isPlainOut()) {
-                        context.getSession().out().printf("%s delete temp file %s.\n", getFormattedPrefix(getName()),getFormattedPath(file));
+                        context.getSession().out().printf("%s delete temp file %s.\n", getFormattedPrefix(getName()), getFormattedPath(file));
                     }
                     Files.delete(file);
                 }
@@ -883,7 +882,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             try (DirectoryStream<Path> files = Files.newDirectoryStream(workFolder)) {
                 for (Path file : files) {
                     if (context.getSession().isPlainOut()) {
-                        context.getSession().out().printf("%s delete work file %s.\n", getFormattedPrefix(getName()),getFormattedPath(file));
+                        context.getSession().out().printf("%s delete work file %s.\n", getFormattedPrefix(getName()), getFormattedPath(file));
                     }
                     Files.delete(file);
 
@@ -901,17 +900,16 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
 
     public void showOutLog(int tail) {
         //get it from config?
-        try {
-            Path file = getOutLogFile();
-            if (tail <= 0) {
-                context.getWorkspace().io().copy().from(file).to(context.getSession().out()).run();
-                return;
+        Path file = getOutLogFile();
+        if (tail <= 0) {
+            context.getWorkspace().io().copy().from(file).to(context.getSession().out()).run();
+            return;
+        }
+        if (Files.isRegularFile(file)) {
+            for (String line : context.getSession().getWorkspace().io().path(file.toString())
+                    .input().tail(tail)) {
+                context.getSession().out().println(line);
             }
-            if (Files.isRegularFile(file)) {
-                TextFiles.tail(file.toString(), tail, context.getSession().out().asPrintStream());
-            }
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
         }
     }
 
@@ -927,7 +925,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                                 || n.endsWith(".log")) {
                             //this is a log file, will delete it
                             if (context.getSession().isPlainOut()) {
-                                context.getSession().out().printf("%s delete log file %s.\n", getFormattedPrefix(getName()),getFormattedPath(file));
+                                context.getSession().out().printf("%s delete log file %s.\n", getFormattedPrefix(getName()), getFormattedPath(file));
                             }
                             Files.delete(file);
                         }
@@ -993,6 +991,36 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         }
         //
         return null;
+    }
+
+    public void setShutdownPort(int port) {
+        try {
+            if (port <= 0) {
+                port = 8005;
+            }
+            DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+            Path serverXml = getCatalinaBase().resolve("conf").resolve("server.xml");
+            if (Files.exists(serverXml)) {
+                Document doc = docBuilder.parse(serverXml.toFile());
+                Element root = doc.getDocumentElement();
+                String p = root.getAttribute("port");
+                if (String.valueOf(port).equals(p)) {
+                    return;
+                }
+                root.setAttribute("port", String.valueOf(port));
+                TransformerFactory transformerFactory = TransformerFactory.newInstance();
+                Transformer transformer = transformerFactory.newTransformer();
+                DOMSource domSource = new DOMSource(doc);
+                StreamResult streamResult = new StreamResult(serverXml.toFile());
+                transformer.transform(domSource, streamResult);
+            }
+        } catch (SAXException | IOException | ParserConfigurationException | TransformerException ex) {
+            if (context.getSession().isPlainOut()) {
+                context.getSession().err().println("```error ERROR:``` : " + ex);
+            }
+            //
+        }
     }
 
     public Integer getHttpConnectorPort(boolean redirect) {
@@ -1093,41 +1121,11 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                     transformer.transform(domSource, streamResult);
                     return;
                 }
-                throw new NutsIllegalArgumentException(context.getSession(),"not found connector");
+                throw new NutsIllegalArgumentException(context.getSession(), "not found connector");
             }
         } catch (SAXException | IOException | ParserConfigurationException | TransformerException ex) {
             if (context.getSession().isPlainOut()) {
-                context.getSession().err().printf("```error ERROR:``` : %s%n",ex);
-            }
-            //
-        }
-    }
-
-    public void setShutdownPort(int port) {
-        try {
-            if (port <= 0) {
-                port = 8005;
-            }
-            DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-            Path serverXml = getCatalinaBase().resolve("conf").resolve("server.xml");
-            if (Files.exists(serverXml)) {
-                Document doc = docBuilder.parse(serverXml.toFile());
-                Element root = doc.getDocumentElement();
-                String p = root.getAttribute("port");
-                if (String.valueOf(port).equals(p)) {
-                    return;
-                }
-                root.setAttribute("port", String.valueOf(port));
-                TransformerFactory transformerFactory = TransformerFactory.newInstance();
-                Transformer transformer = transformerFactory.newTransformer();
-                DOMSource domSource = new DOMSource(doc);
-                StreamResult streamResult = new StreamResult(serverXml.toFile());
-                transformer.transform(domSource, streamResult);
-            }
-        } catch (SAXException | IOException | ParserConfigurationException | TransformerException ex) {
-            if (context.getSession().isPlainOut()) {
-                context.getSession().err().println("```error ERROR:``` : " + ex);
+                context.getSession().err().printf("```error ERROR:``` : %s%n", ex);
             }
             //
         }

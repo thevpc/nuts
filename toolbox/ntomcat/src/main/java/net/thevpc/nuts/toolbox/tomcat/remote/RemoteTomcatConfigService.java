@@ -3,11 +3,11 @@ package net.thevpc.nuts.toolbox.tomcat.remote;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.tomcat.NTomcatConfigVersions;
 import net.thevpc.nuts.toolbox.tomcat.local.LocalTomcatConfigService;
-import net.thevpc.common.strings.StringUtils;
 import net.thevpc.nuts.toolbox.tomcat.remote.config.RemoteTomcatAppConfig;
 import net.thevpc.nuts.toolbox.tomcat.remote.config.RemoteTomcatConfig;
 import net.thevpc.nuts.toolbox.tomcat.util.NamedItemNotFoundException;
 import net.thevpc.nuts.toolbox.tomcat.util.TomcatUtils;
+import net.thevpc.nuts.toolbox.tomcat.util._StringUtils;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -116,7 +116,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
 
     public String getRemoteInstanceName() {
         String n = getConfig().getRemoteName();
-        return StringUtils.isBlank(n) ? "default" : n;
+        return _StringUtils.isBlank(n) ? "default" : n;
     }
 
     public void restart(String[] redeploy, boolean deleteOutLog) {

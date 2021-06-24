@@ -92,10 +92,18 @@ public interface NutsDescriptorParser {
 
     NutsDescriptorParser setLenient(boolean lenient);
 
+    NutsDescriptorParser setDescriptorFormat(DescriptorFormat descriptorFormat);
+
+    DescriptorFormat getDescriptorFormat();
+
     boolean isLenient();
     
     NutsSession getSession();
 
     NutsDescriptorParser setSession(NutsSession session);
-    
+
+    enum DescriptorFormat{
+        MAVEN,
+        NUTS
+    }
 }

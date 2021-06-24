@@ -148,7 +148,7 @@ public class MavenRepositoryFolderHelper {
 
             @Override
             public NutsDescriptor parseDescriptor(Path pathname, NutsSession session) throws IOException {
-                return MavenUtils.of(session).parsePomXml(pathname, NutsFetchMode.LOCAL, repo, session);
+                return MavenUtils.of(session).parsePomXml(pathname, NutsFetchMode.LOCAL, repo);
             }
         }, maxDepth);
     }

@@ -30,6 +30,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Path;
 import java.time.Instant;
+import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * @category Input Output
@@ -58,19 +60,28 @@ public interface NutsInput extends AutoCloseable {
 
     /**
      * url content type (file type)
+     *
      * @return url content type (file type)
      */
     String getContentType();
 
     /**
      * url content encoding
+     *
      * @return url content encoding
      */
     String getContentEncoding();
 
     /**
      * url content last modified
+     *
      * @return url content last modified
      */
     Instant getLastModified();
+
+    Stream<String> lines();
+
+    List<String> head(int count);
+
+    List<String> tail(int count);
 }

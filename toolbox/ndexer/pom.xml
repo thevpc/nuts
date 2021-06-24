@@ -55,11 +55,6 @@
             <artifactId>lucene-analyzers-common</artifactId>
             <version>7.7.0</version>
         </dependency>
-        <dependency>
-            <groupId>net.thevpc.common</groupId>
-            <artifactId>thevpc-common-strings</artifactId>
-            <version>1.2.19</version>
-        </dependency>
     </dependencies>
 
     <repositories>

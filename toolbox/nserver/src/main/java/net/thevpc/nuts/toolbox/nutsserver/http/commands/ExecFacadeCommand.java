@@ -1,6 +1,5 @@
 package net.thevpc.nuts.toolbox.nutsserver.http.commands;
 
-import net.thevpc.common.collections.ListValueMap;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsTerminalMode;
 import net.thevpc.nuts.NutsWorkspace;
@@ -10,7 +9,10 @@ import net.thevpc.nuts.toolbox.nutsserver.FacadeCommandContext;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public class ExecFacadeCommand extends AbstractFacadeCommand {
     public ExecFacadeCommand() {
@@ -48,8 +50,11 @@ public class ExecFacadeCommand extends AbstractFacadeCommand {
 //                if (contentFile == null) {
 //                    context.sendError(400, "Invalid JShellCommandNode Arguments : " + getName() + " : Missing File");
 //                }
-        ListValueMap<String, String> parameters = context.getParameters();
-        List<String> cmd = parameters.getValues("cmd");
+        Map<String, List<String>> parameters = context.getParameters();
+        List<String> cmd = parameters.get("cmd");
+        if(cmd==null){
+            cmd=new ArrayList<>();
+        }
         NutsWorkspace ws = context.getWorkspace();
 
         NutsSession session = ws.createSession();
