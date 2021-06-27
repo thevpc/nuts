@@ -88,7 +88,7 @@ public class DefaultNutsCountProgressMonitor implements NutsProgressMonitor/*, N
 //            if (x > 0) {
 //                formattedLine.append(text.forStyled(
 //                        CoreStringUtils.fillString("*", x),
-//                        NutsTextStyle.primary(1)
+//                        NutsTextStyle.primary1()
 //                ));
 //            }
 //            CoreStringUtils.fillString(' ', 20 - x, formattedLine);

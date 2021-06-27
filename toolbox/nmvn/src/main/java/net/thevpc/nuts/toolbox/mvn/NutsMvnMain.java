@@ -11,11 +11,11 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class NutsMvnMain extends NutsApplication {
+public class NutsMvnMain implements NutsApplication {
     private static final Logger LOG= Logger.getLogger(NutsMvnMain.class.getName());
 //    public static void main(String[] args) {
 //        main0(new String[]{
-//                "--json", "--get", "net.thevpc.common:vpc-common-classpath:1.3", "vpc-public-maven"
+//                "--json", "--get", "test:classpath:1.3", "vpc-public-maven"
 //        });
 //    }
 

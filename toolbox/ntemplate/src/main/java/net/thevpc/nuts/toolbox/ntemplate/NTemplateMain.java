@@ -15,7 +15,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.logging.Level;
 
-public class NTemplateMain extends NutsApplication {
+public class NTemplateMain implements NutsApplication {
 
     public static void main(String[] args) {
         NutsApplication.main(NTemplateMain.class, args);
@@ -29,7 +29,7 @@ public class NTemplateMain extends NutsApplication {
 //            private String mimeType = null;
 
             @Override
-            public boolean nextOption(NutsArgument option, NutsCommandLine commandline) {
+            public boolean onNextOption(NutsArgument option, NutsCommandLine commandline) {
                 switch (option.getStringKey()) {
                     case "-i":
                     case "--init": {
@@ -57,18 +57,18 @@ public class NTemplateMain extends NutsApplication {
             }
 
             @Override
-            public boolean nextNonOption(NutsArgument nonOption, NutsCommandLine commandline) {
+            public boolean onNextNonOption(NutsArgument nonOption, NutsCommandLine commandline) {
                 config.addSource(commandline.next().getString());
                 return false;
             }
 
             @Override
-            public void prepare(NutsCommandLine commandline) {
+            public void onPrepare(NutsCommandLine commandline) {
                 fileTemplater= new NFileTemplater(appContext);
             }
 
             @Override
-            public void exec() {
+            public void onExec() {
                 fileTemplater.processProject(config);
             }
         });

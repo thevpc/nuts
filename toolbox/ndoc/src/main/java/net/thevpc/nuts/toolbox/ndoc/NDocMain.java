@@ -7,7 +7,7 @@ import net.thevpc.commons.md.doc.MdDocletConfig;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NDocMain extends NutsApplication {
+public class NDocMain implements NutsApplication {
 
     public static void main(String[] args) {
         NutsApplication.main(NDocMain.class, args);
@@ -23,7 +23,7 @@ public class NDocMain extends NutsApplication {
             String backend;
 
             @Override
-            public boolean nextOption(NutsArgument option, NutsCommandLine commandline) {
+            public boolean onNextOption(NutsArgument option, NutsCommandLine commandline) {
                 switch (option.getStringKey()) {
                     case "-s":
                     case "--source": {
@@ -50,12 +50,12 @@ public class NDocMain extends NutsApplication {
             }
 
             @Override
-            public boolean nextNonOption(NutsArgument nonOption, NutsCommandLine commandline) {
+            public boolean onNextNonOption(NutsArgument nonOption, NutsCommandLine commandline) {
                 return false;
             }
 
             @Override
-            public void exec() {
+            public void onExec() {
                 if (src.isEmpty()) {
                     src.add(".");
                 }

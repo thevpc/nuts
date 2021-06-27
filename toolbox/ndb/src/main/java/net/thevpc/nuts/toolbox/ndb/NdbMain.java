@@ -4,7 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.ndb.derby.NDerbyMain;
 import net.thevpc.nuts.toolbox.ndb.nmysql.NMysqlMain;
 
-public class NdbMain extends NutsApplication {
+public class NdbMain implements NutsApplication {
 
     public static void main(String[] args) {
         new NdbMain().runAndExit(args);

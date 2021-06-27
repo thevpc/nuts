@@ -555,10 +555,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             out.resetLine();
             out.printf("looking for recommended companion tools to install... detected : %s%n",
                     text.builder().appendJoined(text.forPlain(","),
-                            companionIds.stream()
-                                    .map(x
-                                            -> id().setSession(session).formatter(x).format()
-                                    ).collect(Collectors.toList())
+                            companionIds
                     )
             );
         }
@@ -578,7 +575,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                         ex,
                         text.builder().appendJoined(text.forPlain(", "),
                                 Arrays.stream(repos().setSession(session).getRepositories()).map(x
-                                        -> text.builder().append(x.getName(), NutsTextStyle.primary(3))
+                                        -> text.builder().append(x.getName(), NutsTextStyle.primary3())
                                 ).collect(Collectors.toList())
                         )
                 );
@@ -725,8 +722,12 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
 
         if (session.isPlainTrace()) {
             NutsIdManager vid = id().setSession(session);
+            NutsTextManager text = session.getWorkspace().text();
             if (strategy0 == InstallStrategy0.UPDATE) {
-                session.out().resetLine().println("update " + vid.formatter(def.getId().getLongNameId()).format() + " ...");
+                session.out().resetLine().printf("%s %s ...%n",
+                        text.forStyled("update", NutsTextStyle.warn()),
+                        def.getId().getLongNameId()
+                );
             } else if (strategy0 == InstallStrategy0.REQUIRE) {
                 reinstall = def.getInstallInformation().getInstallStatus().isRequired();
                 if (reinstall) {
@@ -737,9 +738,16 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             } else {
                 reinstall = def.getInstallInformation().getInstallStatus().isInstalled();
                 if (reinstall) {
-                    session.out().resetLine().println("re-install " + vid.formatter(def.getId().getLongNameId()).format() + " ...");
+                    session.out().resetLine().printf(
+                            "%s %s ...%n",
+                            text.forStyled("re-install", NutsTextStyles.of(NutsTextStyle.success(),NutsTextStyle.underlined())),
+                            def.getId().getLongNameId()
+                    );
                 } else {
-                    session.out().resetLine().println("install " + vid.formatter(def.getId().getLongNameId()).format() + " ...");
+                    session.out().resetLine().printf("%s %s ...%n",
+                            text.forStyled("install", NutsTextStyle.success()),
+                            def.getId().getLongNameId()
+                            );
                 }
             }
         }
@@ -950,21 +958,21 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             String setAsDefaultString = "";
             NutsTextManager text = text().setSession(session);
             if (updateDefaultVersion) {
-                setAsDefaultString = " set as " + text.builder().append("default", NutsTextStyle.primary(1)) + ".";
+                setAsDefaultString = " set as " + text.builder().append("default", NutsTextStyle.primary1()) + ".";
             }
             if (newNutsInstallInformation != null
                     && (newNutsInstallInformation.isJustInstalled()
                     || newNutsInstallInformation.isJustRequired())) {
-                String installedString = null;
+                NutsText installedString = null;
                 if (newNutsInstallInformation != null) {
                     if (newNutsInstallInformation.isJustReInstalled()) {
-                        installedString = "re-install";
+                        installedString = text.forStyled("re-install", NutsTextStyles.of(NutsTextStyle.success(),NutsTextStyle.underlined()));
                     } else if (newNutsInstallInformation.isJustInstalled()) {
-                        installedString = "install";
+                        installedString = text.forStyled("install", NutsTextStyle.success());
                     } else if (newNutsInstallInformation.isJustReRequired()) {
-                        installedString = "re-require";
+                        installedString = text.forStyled("re-require", NutsTextStyles.of(NutsTextStyle.info(),NutsTextStyle.underlined()));
                     } else if (newNutsInstallInformation.isJustRequired()) {
-                        installedString = "require";
+                        installedString = text.forStyled("require", NutsTextStyle.info());
                     }
                 }
                 if (installedString != null) {

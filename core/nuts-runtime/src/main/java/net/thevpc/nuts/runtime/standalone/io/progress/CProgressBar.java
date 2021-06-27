@@ -367,7 +367,7 @@ public class CProgressBar {
             for (int i = 0; i < indeterminateSize; i++) {
                 sb.append(getFormatter().getIntermediateIndicator(i, indeterminateSize, x, forward));
             }
-            formattedLine.append(sb.toString(), NutsTextStyle.primary(1));
+            formattedLine.append(sb.toString(), NutsTextStyle.primary1());
             int r = size - x - indeterminateSize;
             sb.setLength(0);
             for (int i = 0; i < r; i++) {
@@ -390,7 +390,7 @@ public class CProgressBar {
                 for (int i = 0; i < x; i++) {
                     sb.append(getFormatter().getIndicator(1, i));
                 }
-                formattedLine.append(sb.toString(), NutsTextStyle.primary(1));
+                formattedLine.append(sb.toString(), NutsTextStyle.primary1());
             }
             StringBuilder sb = new StringBuilder();
             if (rest > 0 && (size - x) > 0) {

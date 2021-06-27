@@ -15,7 +15,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class NutsServerMain extends NutsApplication {
+public class NutsServerMain implements NutsApplication {
 
     public static final Pattern HOST_PATTERN = Pattern.compile("((<?protocol>(http|https|admin))://)?(<host>[a-zA-Z0-9_-]+)(<port>:[0-9]+)?");
 
@@ -62,12 +62,12 @@ public class NutsServerMain extends NutsApplication {
             for (NutsServer o : servers) {
                 if (o.isRunning()) {
                     out.printf("%s %s\n",
-                            text.forStyled("running",NutsTextStyle.primary(4)),
+                            text.forStyled("running",NutsTextStyle.primary4()),
                             o.getServerId()
                     );
                 } else {
                     out.printf("%s %s\n",
-                            text.forStyled("stopped",NutsTextStyle.primary(4)),
+                            text.forStyled("stopped",NutsTextStyle.primary4()),
                             o.getServerId());
                 }
             }
@@ -386,7 +386,7 @@ public class NutsServerMain extends NutsApplication {
                 for (StatusResult result : results) {
                     context.getSession().out().printf(
                             "%s server at %s is %s%n",
-                            text.forStyled(result.type,NutsTextStyle.primary(4)),
+                            text.forStyled(result.type,NutsTextStyle.primary4()),
                             result.host,
                             result.status.equals("stopped")?
                             text.forStyled("stopped",NutsTextStyle.error()):

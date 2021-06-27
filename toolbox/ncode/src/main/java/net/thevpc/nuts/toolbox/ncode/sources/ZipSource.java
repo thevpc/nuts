@@ -64,6 +64,11 @@ public class ZipSource extends SourceAdapter {
 
     }
 
+    @Override
+    public String toString() {
+        return "ZipSource{"+super.toString()+"}";
+    }
+
     private class ZipIterator implements Iterator<Source>, Closeable {
 
         InputStream in;

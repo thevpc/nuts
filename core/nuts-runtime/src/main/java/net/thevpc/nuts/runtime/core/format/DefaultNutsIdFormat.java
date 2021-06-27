@@ -233,7 +233,7 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
                 }
             }
         }
-        sb.append(id.getArtifactId(), NutsTextStyle.primary(1));
+        sb.append(id.getArtifactId(), NutsTextStyle.primary1());
         if (!CoreStringUtils.isBlank(id.getVersion().getValue())) {
             sb.append("#", NutsTextStyle.separator());
             sb.append(id.getVersion());

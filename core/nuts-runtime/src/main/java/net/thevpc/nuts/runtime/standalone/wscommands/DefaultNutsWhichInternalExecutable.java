@@ -66,15 +66,15 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
                 switch (p.getType()) {
                     case SYSTEM: {
                         out.printf("%s : %s %s%n",
-                                factory.forStyled(arg, NutsTextStyle.primary(4)),
-                                factory.forStyled("system command", NutsTextStyle.primary(6))
+                                factory.forStyled(arg, NutsTextStyle.primary4()),
+                                factory.forStyled("system command", NutsTextStyle.primary6())
                                 , p.getDescription());
                         break;
                     }
                     case ALIAS: {
                         out.printf("%s : %s (owner %s ) : %s%n",
-                                factory.forStyled(arg, NutsTextStyle.primary(4)),
-                                factory.forStyled("nuts alias", NutsTextStyle.primary(6)),
+                                factory.forStyled(arg, NutsTextStyle.primary4()),
+                                factory.forStyled("nuts alias", NutsTextStyle.primary6()),
                                 p.getId(),
                                 ws.commandLine().create(ws.aliases().find(p.getName()).getCommand())
                         );
@@ -85,16 +85,16 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
                             throw new NutsNotFoundException( getSession(), arg);
                         }
                         out.printf("%s : %s %s%n",
-                                factory.forStyled(arg, NutsTextStyle.primary(4)),
-                                factory.forStyled("nuts package", NutsTextStyle.primary(6)),
+                                factory.forStyled(arg, NutsTextStyle.primary4()),
+                                factory.forStyled("nuts package", NutsTextStyle.primary6()),
                                 p.getId()/*, p.getDescription()*/
                         );
                         break;
                     }
                     case INTERNAL: {
                         out.printf("%s : %s %n",
-                                factory.forStyled("internal command", NutsTextStyle.primary(6)),
-                                factory.forStyled(arg, NutsTextStyle.primary(4))
+                                factory.forStyled("internal command", NutsTextStyle.primary6()),
+                                factory.forStyled(arg, NutsTextStyle.primary4())
                         );
                         break;
                     }
@@ -103,7 +103,7 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
                     out.printf("\t %s%n", arg/*, p.getDescription()*/);
                 }
             } catch (NutsNotFoundException ex) {
-                out.printf("%s : %s%n", factory.forStyled(arg,NutsTextStyle.primary(4)),factory.forStyled("not found",NutsTextStyle.error()));
+                out.printf("%s : %s%n", factory.forStyled(arg,NutsTextStyle.primary4()),factory.forStyled("not found",NutsTextStyle.error()));
             }
         }
     }

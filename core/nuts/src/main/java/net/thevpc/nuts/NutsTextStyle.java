@@ -20,6 +20,33 @@ public class NutsTextStyle {
         return new NutsTextStyle(style, variant);
     }
 
+    public static NutsTextStyle primary1() {
+        return primary(1);
+    }
+    public static NutsTextStyle primary2() {
+        return primary(2);
+    }
+    public static NutsTextStyle primary3() {
+        return primary(3);
+    }
+    public static NutsTextStyle primary4() {
+        return primary(4);
+    }
+    public static NutsTextStyle primary5() {
+        return primary(5);
+    }
+    public static NutsTextStyle primary6() {
+        return primary(6);
+    }
+    public static NutsTextStyle primary7() {
+        return primary(7);
+    }
+    public static NutsTextStyle primary8() {
+        return primary(8);
+    }
+    public static NutsTextStyle primary9() {
+        return primary(9);
+    }
     public static NutsTextStyle primary(int variant) {
         return of(NutsTextStyleType.PRIMARY, variant);
     }
@@ -248,6 +275,14 @@ public class NutsTextStyle {
 
     public static NutsTextStyle backgroundTrueColor(int variant) {
         return of(NutsTextStyleType.BACK_TRUE_COLOR, variant);
+    }
+
+    public NutsTextStyles append(NutsTextStyle other) {
+        return NutsTextStyles.of(this,other);
+    }
+
+    public NutsTextStyles append(NutsTextStyles other) {
+        return NutsTextStyles.of(this).append(other);
     }
 
     public NutsTextStyleType getType() {

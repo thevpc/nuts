@@ -198,13 +198,13 @@ public class LocalTomcat {
                     switch (format) {
                         case "short": {
                             out.printf("%s\n",
-                                    factory.forStyled(jpsResult.getPid(),NutsTextStyle.primary(1))
+                                    factory.forStyled(jpsResult.getPid(),NutsTextStyle.primary1())
                             );
                             break;
                         }
                         case "long": {
                             out.printf("%s v%s HOME: %s BASE: %s ==CMD:== %s\n",
-                                    factory.forStyled(jpsResult.getPid(),NutsTextStyle.primary(1)),
+                                    factory.forStyled(jpsResult.getPid(),NutsTextStyle.primary1()),
                                     jpsResult.getHome() == null ? null : TomcatUtils.getFolderCatalinaHomeVersion(Paths.get(jpsResult.getHome())),
                                     jpsResult.getHome(),
                                     jpsResult.getBase(),
@@ -214,7 +214,7 @@ public class LocalTomcat {
                         }
                         default: {
                             out.printf("%s ==v==%s ==BASE:== %s\n",
-                                    factory.forStyled(jpsResult.getPid(),NutsTextStyle.primary(1)),
+                                    factory.forStyled(jpsResult.getPid(),NutsTextStyle.primary1()),
                                     jpsResult.getHome() == null ? null : TomcatUtils.getFolderCatalinaHomeVersion(Paths.get(jpsResult.getHome())),
                                     jpsResult.getBase()
                             );
@@ -441,7 +441,7 @@ public class LocalTomcat {
     public NutsString getBracketsPrefix(String str) {
         return context.getWorkspace().text().builder()
                 .append("[")
-                .append(str,NutsTextStyle.primary(5))
+                .append(str,NutsTextStyle.primary5())
                 .append("]");
     }
 

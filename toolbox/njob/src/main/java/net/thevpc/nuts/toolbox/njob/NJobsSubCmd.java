@@ -91,7 +91,7 @@ public class NJobsSubCmd {
             service.jobs().addJob(t);
             if (context.getSession().isPlainTrace()) {
                 context.getSession().out().printf("job %s (%s) added.\n",
-                        context.getWorkspace().text().forStyled(t.getId(), NutsTextStyle.primary(5)),
+                        context.getWorkspace().text().forStyled(t.getId(), NutsTextStyle.primary5()),
                         t.getName()
                 );
             }
@@ -205,8 +205,8 @@ public class NJobsSubCmd {
                 service.jobs().updateJob(job);
                 if (context.getSession().isPlainTrace()) {
                     context.getSession().out().printf("job %s (%s) updated.\n",
-                            text.forStyled(job.getId(), NutsTextStyle.primary(5)),
-                            text.forStyled(job.getName(), NutsTextStyle.primary(1))
+                            text.forStyled(job.getId(), NutsTextStyle.primary5()),
+                            text.forStyled(job.getName(), NutsTextStyle.primary1())
                     );
                 }
             }
@@ -258,12 +258,12 @@ public class NJobsSubCmd {
                 if (service.jobs().removeJob(t.getId())) {
                     if (context.getSession().isPlainTrace()) {
                         context.getSession().out().printf("job %s removed.\n",
-                                text.forStyled(a.toString(), NutsTextStyle.primary(5))
+                                text.forStyled(a.toString(), NutsTextStyle.primary5())
                         );
                     }
                 } else {
                     context.getSession().out().printf("job %s %s.\n",
-                            text.forStyled(a.toString(), NutsTextStyle.primary(5)),
+                            text.forStyled(a.toString(), NutsTextStyle.primary5()),
                             text.forStyled("not found", NutsTextStyle.error())
                     );
                 }

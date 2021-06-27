@@ -16,6 +16,11 @@ public class DefaultNutsVersionManager implements NutsVersionManager {
     }
 
     @Override
+    public NutsVersion parse(String version) {
+        return parser().parse(version);
+    }
+
+    @Override
     public NutsSession getSession() {
         return session;
     }

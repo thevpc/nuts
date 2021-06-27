@@ -26,6 +26,13 @@ public class FileSource implements Source {
         this.file = file;
     }
 
+    @Override
+    public String toString() {
+        return "FileSource{" +
+                file +
+                '}';
+    }
+
     public File getFile() {
         return file;
     }

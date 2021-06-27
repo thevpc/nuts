@@ -712,7 +712,7 @@ public class ProcessBuilder2 {
                     sb.append(" ");
                 }
                 sb.append(
-                        session.getWorkspace().text().forStyled(CoreStringUtils.enforceDoubleQuote(k, session),NutsTextStyle.primary(4))
+                        session.getWorkspace().text().forStyled(CoreStringUtils.enforceDoubleQuote(k, session),NutsTextStyle.primary4())
                 ).append("=").append(CoreStringUtils.enforceDoubleQuote(v, session));
             }
         }
@@ -856,7 +856,7 @@ public class ProcessBuilder2 {
                 sb.append("=");
                 sb.append(CoreStringUtils.enforceDoubleQuote(a.getStringValue(), session));
             } else {
-                sb.append(factory.forStyled(CoreStringUtils.enforceDoubleQuote(a.getStringKey(), session),NutsTextStyle.primary(4)));
+                sb.append(factory.forStyled(CoreStringUtils.enforceDoubleQuote(a.getStringKey(), session),NutsTextStyle.primary4()));
                 sb.append("=");
                 sb.append(CoreStringUtils.enforceDoubleQuote(a.getStringValue(), session));
             }

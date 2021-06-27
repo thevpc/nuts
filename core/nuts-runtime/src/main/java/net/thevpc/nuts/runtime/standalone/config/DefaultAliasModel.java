@@ -145,9 +145,13 @@ public class DefaultAliasModel {
             NutsPrintStream out = session.getTerminal().out();
             NutsTextManager text = session.getWorkspace().text();
             if (forced) {
-                out.printf("%s command alias %s%n", "re-install", text.forStyled(command.getName(), NutsTextStyle.primary(3)));
+                out.printf("%s command alias %s%n",
+                        text.forStyled("re-install", NutsTextStyles.of(NutsTextStyle.success(),NutsTextStyle.underlined())),
+                        text.forStyled(command.getName(), NutsTextStyle.primary3()));
             } else {
-                out.printf("%s command alias %s%n", "install", text.forStyled(command.getName(), NutsTextStyle.primary(3)));
+                out.printf("%s command alias %s%n",
+                        text.forStyled("install", NutsTextStyle.success()),
+                        text.forStyled(command.getName(), NutsTextStyle.primary3()));
             }
         }
         return forced;
@@ -166,7 +170,7 @@ public class DefaultAliasModel {
         defaultCommandFactory.uninstallCommand(name, session);
         if (session.isPlainTrace()) {
             NutsPrintStream out = session.getTerminal().out();
-            out.printf("%s command alias %s%n", "uninstall", session.getWorkspace().text().forStyled(name, NutsTextStyle.primary(3)));
+            out.printf("%s command alias %s%n", "uninstall", session.getWorkspace().text().forStyled(name, NutsTextStyle.primary3()));
         }
         return true;
     }

@@ -465,16 +465,30 @@ public class CorePlatformUtils {
     public static MainClassType getMainClassType(InputStream stream) {
         final Ref<Boolean> mainClass = new Ref<>();
         final Ref<Boolean> nutsApp = new Ref<>();
+        final Ref<String> nutsAppVer = new Ref<>();
         final Ref<String> className = new Ref<>();
         SimpleClassStream.Visitor cl = new SimpleClassStream.Visitor() {
             @Override
             public void visitClassDeclaration(int access, String name, String superName, String[] interfaces) {
+                //v0.8.0
+                //TODO remove me
                 if (superName != null && superName.equals("net/thevpc/nuts/NutsApplication")) {
                     nutsApp.set(true);
-
+                    nutsAppVer.set("0.8.0");
+                //TODO remove me
                 } else if (superName != null && superName.equals("net/vpc/app/nuts/NutsApplication")) {
                     //this is nut version < 0.8.0
                     nutsApp.set(true);
+                    nutsAppVer.set("0.7.0");
+                }
+                if(interfaces!=null){
+                    for (String anInterface : interfaces) {
+                        //v0.8.1
+                        if (anInterface != null && anInterface.equals("net/thevpc/nuts/NutsApplication")) {
+                            nutsApp.set(true);
+                            nutsAppVer.set("0.8.1");
+                        }
+                    }
                 }
                 className.set(name.replace('/', '.'));
             }

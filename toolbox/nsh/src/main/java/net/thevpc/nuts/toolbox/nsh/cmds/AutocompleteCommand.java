@@ -108,9 +108,9 @@ public class AutocompleteCommand extends SimpleNshBuiltin {
         for (String o : new TreeSet<String>((Set) p.keySet())) {
             if (o.startsWith("-")) {
                 // option
-                context.out().printf("%s\n", text.forStyled(o,NutsTextStyle.primary(4)));
+                context.out().printf("%s\n", text.forStyled(o,NutsTextStyle.primary4()));
             } else if (o.startsWith("<")) {
-                context.out().printf("%s\n", text.forStyled(o,NutsTextStyle.primary(1)));
+                context.out().printf("%s\n", text.forStyled(o,NutsTextStyle.primary1()));
             } else {
                 context.out().printf("%s\n",
                         text.forStyled(o,NutsTextStyle.pale())

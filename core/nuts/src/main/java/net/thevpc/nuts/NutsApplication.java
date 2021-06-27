@@ -10,7 +10,7 @@
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -22,30 +22,25 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts;
 
 /**
- * Nuts Application is the Top Level class to be handled by nuts as rich console
+ * Nuts Application is the Top Level interface to be handled by nuts as rich console
  * application. By default NutsApplication classes :
  * <ul>
- * <li>have a nutsApplication=true in their descriptor file</li>
- * <li>support inheritance of all workspace options (from caller nuts
- * process)</li>
- * <li>enables auto-complete mode to help forecasting the next token in the
- * command line</li>
- * <li>enables install mode to be executed when the jar is installed in nuts
- * repos</li>
- * <li>enables uninstall mode to be executed when the jar is uninstaleld from
- * nuts repos</li>
- * <li>enables update mode to be executed when the a new version of the same jar
- * has been installed</li>
- * <li>have many default options enabled (such as --help, --version, --json,
- * --table, etc.) and thus support natively multi output channels</li>
+ * <li>have a nutsApplication=true in their descriptor file (in maven descriptor you should add a property nuts.application=true)</li>
+ * <li>support inheritance of all workspace options (from caller nuts process)</li>
+ * <li>enables auto-complete mode to help forecasting the next token in the command line</li>
+ * <li>enables install mode to be executed when the jar is installed in nuts repos</li>
+ * <li>enables uninstall mode to be executed when the jar is uninstalled from nuts repos</li>
+ * <li>enables update mode to be executed when the a new version of the same jar has been installed</li>
+ * <li>have many default options enabled (such as --help, --version, --json,--table, etc.) and thus supports natively multi output channels</li>
+ * <li>have a well defined storage layout (with temp, lib, config folders, etc...)</li>
  * </ul>
  * Typically a Nuts Application follows this code pattern :
  * <pre>
- *   public class MyApplication extends NutsApplication{
+ *   public class MyApplication implements NutsApplication{
  *     public static void main(String[] args) {
  *         // just create an instance and call runAndExit in the main method
  *         new MyApplication().runAndExit(args);
@@ -87,7 +82,7 @@ package net.thevpc.nuts;
  * </pre>
  * another example of using this class is :
  * <pre>
- *     public class HLMain extends NutsApplication {
+ *     public class HLMain implements NutsApplication {
  *         public static void main(String[] args) {
  *            // just create an instance and call runAndExit in the main method
  *            new HLMain().runAndExit(args);
@@ -99,7 +94,7 @@ package net.thevpc.nuts;
  *                 HLCWithOptions hl = new HL().withOptions();
  *                 boolean noMoreOptions=false;
  *                 &#64;Override
- *                 public boolean processOption(NutsArgument argument, NutsCommandLine cmdLine) {
+ *                 public boolean onNextOption(NutsArgument argument, NutsCommandLine cmdLine) {
  *                     if(!noMoreOptions){
  *                         return false;
  *                     }
@@ -123,7 +118,7 @@ package net.thevpc.nuts;
  *                 }
  *
  *                 &#64;Override
- *                 public boolean processNonOption(NutsArgument argument, NutsCommandLine cmdLine) {
+ *                 public boolean onNextNonOption(NutsArgument argument, NutsCommandLine cmdLine) {
  *                     String s = argument.getString();
  *                     if(isURL(s)){
  *                         hl.includeFileURL(s);
@@ -143,7 +138,7 @@ package net.thevpc.nuts;
  *                 }
  *
  *                 &#64;Override
- *                 public void exec() {
+ *                 public void onExec() {
  *                     hl.compile();
  *                 }
  *             });
@@ -151,54 +146,33 @@ package net.thevpc.nuts;
  *     }
  * </pre>
  *
- * @since 0.5.5
  * @category Application
+ * @since 0.5.5
  */
-public abstract class NutsApplication {
+public interface NutsApplication {
 
     /**
      * creates an instance of {@code appType} and calls runAndExit.
-     * 
+     * <p>
      * This method is intended be called in main methods of NutsApplication
      * classes.
-     * 
-     * @param <T> application type
+     *
+     * @param <T>     application type
      * @param appType application type
-     * @param args main arguments
+     * @param args    main arguments
      * @since 0.7.1
      */
-    public static <T extends NutsApplication> void main(Class<T> appType,String[] args) {
-        T newInstance;
-        try {
-            newInstance = appType.newInstance();
-        } catch (InstantiationException ex) {
-            Throwable c = ex.getCause();
-            if(c instanceof RuntimeException){
-                throw (RuntimeException)c;
-            }
-            if(c instanceof Error){
-                throw (Error)c;
-            }
-            throw new NutsBootException("Unable to instantiate "+appType.getName(),ex);
-        } catch (IllegalAccessException ex) {
-            throw new NutsBootException("Illegal access to default constructor for "+appType.getName(),ex);
-        }
-        newInstance.runAndExit(args);
+    static <T extends NutsApplication> void main(Class<T> appType, String[] args) {
+        NutsApplications.createApplicationInstance(appType).runAndExit(args);
     }
-    
+
     /**
      * run the application and <strong>EXIT</strong> process
      *
      * @param args arguments
      */
-    public void runAndExit(String[] args) {
-        try {
-            run(args);
-        } catch (Exception ex) {
-            System.exit(NutsApplications.processThrowable(ex, args, null));
-            return;
-        }
-        System.exit(0);
+    default void runAndExit(String[] args) {
+        NutsApplications.runApplicationAndExit(this, args);
     }
 
     /**
@@ -208,7 +182,7 @@ public abstract class NutsApplication {
      *
      * @param args application arguments. should not be null or contain nulls
      */
-    public void run(String[] args) {
+    default void run(String[] args) {
         run((NutsSession) null, args);
     }
 
@@ -218,11 +192,11 @@ public abstract class NutsApplication {
      * argument will be removed and the corresponding mode is activated.
      *
      * @param session session (can be null)
-     * @param args application arguments. should not be null or contain nulls
+     * @param args    application arguments. should not be null or contain nulls
      * @since 0.6.0, first parameter changed from NutsWorkspace to NutsSession to enable passing session options
      */
-    public void run(NutsSession session, String[] args) {
-        NutsApplications.runApplication(args, session, getClass(), new NutsApplicationLifeCycleImpl(this));
+    default void run(NutsSession session, String[] args) {
+        NutsApplications.runApplication(args, session, this);
     }
 
     /**
@@ -231,7 +205,7 @@ public abstract class NutsApplication {
      *
      * @param applicationContext context
      */
-    protected void onInstallApplication(NutsApplicationContext applicationContext) {
+    default void onInstallApplication(NutsApplicationContext applicationContext) {
     }
 
     /**
@@ -240,7 +214,7 @@ public abstract class NutsApplication {
      *
      * @param applicationContext context
      */
-    protected void onUpdateApplication(NutsApplicationContext applicationContext) {
+    default void onUpdateApplication(NutsApplicationContext applicationContext) {
     }
 
     /**
@@ -249,78 +223,26 @@ public abstract class NutsApplication {
      *
      * @param applicationContext context
      */
-    protected void onUninstallApplication(NutsApplicationContext applicationContext) {
+    default void onUninstallApplication(NutsApplicationContext applicationContext) {
     }
 
     /**
      * create application context or return null for default
-     * @param ws workspace
-     * @param args arguments
+     *
+     * @param ws              workspace
+     * @param args            arguments
      * @param startTimeMillis start time
      * @return new instance of NutsApplicationContext or null
      */
-    protected NutsApplicationContext createApplicationContext(NutsWorkspace ws, String[] args, long startTimeMillis) {
+    default NutsApplicationContext createApplicationContext(NutsWorkspace ws, String[] args, long startTimeMillis) {
         return null;
     }
 
     /**
      * run application within the given context
+     *
      * @param applicationContext app context
      */
-    public abstract void run(NutsApplicationContext applicationContext);
-
-    @Override
-    public String toString() {
-        return getClass().getName();
-    }
-
-    /**
-     * Default NutsApplicationLifeCycle implementation based on NutsApplication class.
-     * @category Application
-     */
-    private static class NutsApplicationLifeCycleImpl implements NutsApplicationLifeCycle {
-        /**
-         * application
-         */
-        private final NutsApplication app;
-
-        /**
-         * application
-         * @param app application
-         */
-        NutsApplicationLifeCycleImpl(NutsApplication app) {
-            this.app = app;
-        }
-
-        @Override
-        public void onRunApplication(NutsApplicationContext applicationContext) {
-            app.run(applicationContext);
-        }
-
-        @Override
-        public void onInstallApplication(NutsApplicationContext applicationContext) {
-            app.onInstallApplication(applicationContext);
-        }
-
-        @Override
-        public void onUpdateApplication(NutsApplicationContext applicationContext) {
-            app.onUpdateApplication(applicationContext);
-        }
-
-        @Override
-        public void onUninstallApplication(NutsApplicationContext applicationContext) {
-            app.onUninstallApplication(applicationContext);
-        }
-
-        @Override
-        public NutsApplicationContext createApplicationContext(NutsWorkspace ws, String[] args, long startTimeMillis) {
-            return app.createApplicationContext(ws, args, startTimeMillis);
-        }
-
-        @Override
-        public String toString() {
-            return app.toString();
-        }
-    }
+    void run(NutsApplicationContext applicationContext);
 
 }

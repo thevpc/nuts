@@ -167,18 +167,18 @@ public class CoreNutsUtils {
         char h = SUPPORTS_UTF_ENCODING ? '─' : '-';
         char v = SUPPORTS_UTF_ENCODING ? '│' : '|';
         return txt.builder()
-                .append(String.valueOf(c1l)+repeat(h, len + 2)+String.valueOf(c1r), NutsTextStyle.primary(2))
+                .append(String.valueOf(c1l)+repeat(h, len + 2)+String.valueOf(c1r), NutsTextStyle.primary2())
                 .append("\n")
 
-                .append(String.valueOf(v), NutsTextStyle.primary(2))
+                .append(String.valueOf(v), NutsTextStyle.primary2())
                 .append(" ")
                 .append(text)
                 .append(" ")
-                .append(String.valueOf(v), NutsTextStyle.primary(2))
+                .append(String.valueOf(v), NutsTextStyle.primary2())
                 .append("\n")
-                .append(String.valueOf(c2l), NutsTextStyle.primary(2))
-                .append(repeat(h, len + 2), NutsTextStyle.primary(2))
-                .append(String.valueOf(c2r), NutsTextStyle.primary(2))
+                .append(String.valueOf(c2l), NutsTextStyle.primary2())
+                .append(repeat(h, len + 2), NutsTextStyle.primary2())
+                .append(String.valueOf(c2r), NutsTextStyle.primary2())
                 .append("\n")
                 ;
     }

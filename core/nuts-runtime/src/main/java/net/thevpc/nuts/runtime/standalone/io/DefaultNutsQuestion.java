@@ -136,7 +136,7 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
                 } else {
                     out.print(", ");
                 }
-                out.printf("default is %s", ws.text().forStyled(ff.format(this.getDefaultValue(), this), NutsTextStyle.primary(1)));
+                out.printf("default is %s", ws.text().forStyled(ff.format(this.getDefaultValue(), this), NutsTextStyle.primary1()));
             }
             if (getHintMessage() != null) {
                 if (getHintMessage().length() > 0) {
@@ -160,7 +160,7 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
                         }
                         sb.append(ff.format(acceptedValue, this));
                     }
-                    out.printf("accepts %s", ws.text().forStyled(sb.toString(), NutsTextStyle.primary(4)));
+                    out.printf("accepts %s", ws.text().forStyled(sb.toString(), NutsTextStyle.primary4()));
                 }
                 if (!first) {
                     out.print(")");

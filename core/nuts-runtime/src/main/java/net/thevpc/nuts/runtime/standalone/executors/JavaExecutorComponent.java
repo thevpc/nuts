@@ -430,13 +430,27 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
             try {
                 mainMethod = cls.getMethod("run", NutsSession.class, String[].class);
                 mainMethod.setAccessible(true);
+                for (Class<?> pi : cls.getInterfaces()) {
+                    //this is the old nuts apps (version >= 0.8.1)
+                    if (pi.getName().equals("net.thevpc.nuts.NutsApplication")) {
+                        isNutsApp = true;
+                        break;
+                    }
+                }
                 Class p = cls.getSuperclass();
-                while (p != null) {
+                while (!isNutsApp && p != null) {
                     if (p.getName().equals("net.thevpc.nuts.NutsApplication")
                             //this is the old nuts apps (version < 0.8.0)
                             || p.getName().equals("net.vpc.app.nuts.NutsApplication")) {
                         isNutsApp = true;
                         break;
+                    }
+                    for (Class<?> pi : cls.getInterfaces()) {
+                        //this is the old nuts apps (version >= 0.8.1)
+                        if (pi.getName().equals("net.thevpc.nuts.NutsApplication")) {
+                            isNutsApp = true;
+                            break;
+                        }
                     }
                     p = p.getSuperclass();
                 }
@@ -527,7 +541,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
         private CoreIOUtils.ProcessExecHelper preExec() {
             if (joptions.isShowCommand() || CoreBooleanUtils.getSysBoolNutsProperty("show-command", false)) {
                 NutsPrintStream out = execSession.out();
-                out.printf("%s %n", ws.text().forStyled("nuts-exec", NutsTextStyle.primary(1)));
+                out.printf("%s %n", ws.text().forStyled("nuts-exec", NutsTextStyle.primary1()));
                 for (int i = 0; i < xargs.size(); i++) {
                     NutsString xarg = xargs.get(i);
 //                    if (i > 0 && xargs.get(i - 1).equals("--nuts-path")) {

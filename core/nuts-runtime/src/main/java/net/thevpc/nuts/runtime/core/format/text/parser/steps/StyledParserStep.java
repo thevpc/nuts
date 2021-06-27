@@ -238,7 +238,7 @@ public class StyledParserStep extends ParserStep {
             child = ws.text().forList(atInvalid, child);
         }
         if (all.isEmpty()) {
-            all.add(NutsTextStyle.primary(1));
+            all.add(NutsTextStyle.primary1());
         }
         NutsTextStyles styles = NutsTextStyles.of(all.toArray(new NutsTextStyle[0]));
         child = factory0.createStyled(

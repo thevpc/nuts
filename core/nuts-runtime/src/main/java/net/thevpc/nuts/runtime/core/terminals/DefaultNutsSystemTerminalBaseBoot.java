@@ -67,7 +67,7 @@ public class DefaultNutsSystemTerminalBaseBoot implements NutsSystemTerminalBase
 //        }
 //        if (_LOG() != null) {
 //            _LOG().with().session(session).level(Level.CONFIG).verb(NutsLogVerb.UPDATE).formatted().log("change terminal Out mode : {0}",
-//                    workspace.text().forStyled(mode.id(), NutsTextStyle.primary(1))
+//                    workspace.text().forStyled(mode.id(), NutsTextStyle.primary1())
 //            );
 //        }
 //        FPrint.installStdOut(this.outMode = mode, session);
@@ -116,7 +116,7 @@ public class DefaultNutsSystemTerminalBaseBoot implements NutsSystemTerminalBase
 //        }
 //        if (_LOG() != null) {
 //            _LOG().with().session(session).level(Level.CONFIG).verb(NutsLogVerb.UPDATE).formatted().log("change terminal Err mode : {0}",
-//                    workspace.text().forStyled(mode.id(), NutsTextStyle.primary(1))
+//                    workspace.text().forStyled(mode.id(), NutsTextStyle.primary1())
 //            );
 //        }
 //        FPrint.installStdErr(this.errMode = mode, session);

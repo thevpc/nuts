@@ -661,14 +661,14 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
 
     public void process(NutsCommandLineConfigurable defaultConfigurable, NutsCommandLineProcessor commandLineProcessor) {
         NutsArgument a;
-        commandLineProcessor.init(this);
+        commandLineProcessor.onInit(this);
         while (this.hasNext()) {
             a = this.peek();
             boolean consumed;
             if (a.isOption()) {
-                consumed = commandLineProcessor.nextOption(a, this);
+                consumed = commandLineProcessor.onNextOption(a, this);
             } else {
-                consumed = commandLineProcessor.nextNonOption(a, this);
+                consumed = commandLineProcessor.onNextNonOption(a, this);
             }
             if (consumed) {
                 NutsArgument next = this.peek();
@@ -685,15 +685,15 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
                 }
             }
         }
-        commandLineProcessor.prepare(this);
+        commandLineProcessor.onPrepare(this);
 
         // test if application is running in exec mode
         // (and not in autoComplete mode)
         if (this.isExecMode()) {
             //do the good staff here
-            commandLineProcessor.exec();
+            commandLineProcessor.onExec();
         } else if (this.getAutoComplete() != null) {
-            commandLineProcessor.autoComplete(this.getAutoComplete());
+            commandLineProcessor.onAutoComplete(this.getAutoComplete());
         }
     }
 
@@ -897,7 +897,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
     }
 
     private NutsString highlightText(String text) {
-        return getWorkspace().text().forStyled(text, NutsTextStyle.primary(3));
+        return getWorkspace().text().forStyled(text, NutsTextStyle.primary3());
     }
 
     private boolean _configureLast(NutsCommandLine commandLine, NutsCommandLineConfigurable configurable) {

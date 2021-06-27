@@ -204,7 +204,7 @@ public class NdedMain  {
         final NutsPrintStream out = this.context.getSession().out();
         NutsTextManager text = context.getWorkspace().text();
         NutsTextManager factory = text;
-        out.print(factory.forStyled("creating new nuts descriptor...\n",NutsTextStyle.primary(3)));
+        out.print(factory.forStyled("creating new nuts descriptor...\n",NutsTextStyle.primary3()));
         while (true) {
             fillInteractive(b, true);
             if (check(b)) {
@@ -234,12 +234,12 @@ public class NdedMain  {
         out.printf("id         : %s%n", desc.getId());
         out.printf("packaging  : %s%n",
                 factory.forStyled(
-                desc.getPackaging() == null ? "" : desc.getPackaging(),NutsTextStyle.primary(3)));
+                desc.getPackaging() == null ? "" : desc.getPackaging(),NutsTextStyle.primary3()));
         if (desc.getLocations().length > 0) {
             out.println("locations  : ");
             for (NutsIdLocation s : b.getLocations()) {
                 out.printf("             %s %s%n",
-                        factory.forStyled(s.getClassifier(),NutsTextStyle.primary(3)),
+                        factory.forStyled(s.getClassifier(),NutsTextStyle.primary3()),
                         text.forStyled(s.getUrl(),NutsTextStyle.path()));
             }
         }

@@ -109,12 +109,6 @@ public class CoreCommonUtils {
         if (o == null) {
             return txt.forBlank();
         }
-        if (o instanceof Boolean) {
-            txt.forPlain(String.valueOf(o));
-        }
-        if (o.getClass().isEnum()) {
-            return txt.forPlain(CoreEnumUtils.getEnumString((Enum) o));
-        }
         if (o instanceof Instant) {
             return txt.forPlain(
                     CoreNutsUtils.DEFAULT_DATE_TIME_FORMATTER.format(((Instant) o))
@@ -199,7 +193,7 @@ public class CoreCommonUtils {
             }
             return stringValueFormatted(all, escapeString, session);
         }
-        return txt.forPlain(o.toString());
+        return txt.toText(o);
     }
 
     public static String stringValue(Object o) {

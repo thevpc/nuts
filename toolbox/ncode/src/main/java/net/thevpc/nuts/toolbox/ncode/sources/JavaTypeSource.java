@@ -36,6 +36,11 @@ public class JavaTypeSource extends SourceAdapter {
         super(source);
     }
 
+    @Override
+    public String toString() {
+        return "JavaTypeSource{"+super.toString()+"}";
+    }
+
     public String getClassVersion(boolean convert) {
         String v = "?";
         try (InputStream m = openStream()) {

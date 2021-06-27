@@ -12,7 +12,7 @@ public class NAdminUtils {
         out.print(prefix);
         NutsTextManager factory = context.getWorkspace().text();
         if (enabled) {
-            out.print(factory.forStyled(repository.getName() + disabledString, NutsTextStyle.primary(2)));
+            out.print(factory.forStyled(repository.getName() + disabledString, NutsTextStyle.primary2()));
         } else {
             out.print("```error " + repository.getName() + disabledString + "```");
         }

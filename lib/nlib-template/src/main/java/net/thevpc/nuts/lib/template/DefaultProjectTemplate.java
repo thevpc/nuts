@@ -65,7 +65,7 @@ public class DefaultProjectTemplate implements ProjectTemplate {
                         .setSession(session)
                         .forString(
                         getWorkspace().text().builder()
-                                .append(propertyTitle, NutsTextStyle.primary(4))
+                                .append(propertyTitle, NutsTextStyle.primary4())
                                 .append(" (")
                                 .append(propName,NutsTextStyle.pale())
                                 .append(")\n ?")

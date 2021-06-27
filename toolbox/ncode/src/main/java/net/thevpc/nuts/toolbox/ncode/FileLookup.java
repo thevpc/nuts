@@ -5,6 +5,9 @@
  */
 package net.thevpc.nuts.toolbox.ncode;
 
+import net.thevpc.nuts.NutsApplicationContext;
+import net.thevpc.nuts.NutsSession;
+
 /**
  * @author thevpc
  */
@@ -14,8 +17,8 @@ public class FileLookup implements SourceProcessor {
     }
 
     @Override
-    public void process(Source source) {
-        System.out.println(source.getExternalPath());
+    public Object process(Source source, NutsSession session) {
+        return session.getWorkspace().io().path(source.getExternalPath());
     }
 
 }

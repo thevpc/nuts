@@ -9,7 +9,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class NAdminMain extends NutsApplication {
+public class NAdminMain implements NutsApplication {
 
     private List<NAdminSubCommand> subCommands;
     private NutsApplicationContext applicationContext;
@@ -28,7 +28,7 @@ public class NAdminMain extends NutsApplication {
     }
 
     @Override
-    protected void onInstallApplication(NutsApplicationContext applicationContext) {
+    public void onInstallApplication(NutsApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
         NutsCommandLine cmd = applicationContext.getCommandLine();
         NutsArgument a;
@@ -61,9 +61,9 @@ public class NAdminMain extends NutsApplication {
             if (someAdded == 0) {
                 applicationContext.getSession().out().print("```error no new``` java installation locations found...\n");
             } else if (someAdded == 1) {
-                applicationContext.getSession().out().printf("%s new java installation location added...\n",factory.forStyled("1",NutsTextStyle.primary(2)));
+                applicationContext.getSession().out().printf("%s new java installation location added...\n",factory.forStyled("1",NutsTextStyle.primary2()));
             } else {
-                applicationContext.getSession().out().printf("%s new java installation locations added...\n", factory.forStyled(""+someAdded,NutsTextStyle.primary(2)));
+                applicationContext.getSession().out().printf("%s new java installation locations added...\n", factory.forStyled(""+someAdded,NutsTextStyle.primary2()));
             }
             applicationContext.getSession().out().println("you can always add another installation manually using 'nadmin add java' command.");
         }
@@ -84,7 +84,7 @@ public class NAdminMain extends NutsApplication {
     }
 
     @Override
-    protected void onUpdateApplication(NutsApplicationContext applicationContext) {
+    public void onUpdateApplication(NutsApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
         NutsCommandLine cmd = applicationContext.getCommandLine();
         NutsArgument a;

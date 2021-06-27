@@ -8,7 +8,7 @@ ${include($"${resources}/header.md")}
 View Official releases [here](https://github.com/thevpc/nuts/releases) :
 Starred releases are most stable ones.
 
-### nuts 0.8.2.0
+### nuts 0.8.2.0 (NEXT VERSION)
 - ```2021/XX/XX 	nuts 0.8.2.0 (*)``` released [download nuts-0.8.2.jar](https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/0.8.2/nuts-0.8.2.jar)
 - WARNING: API has evolved with multiple incompatibilities with previous versions  
 - TODO  : {api}   add comments support in 'element' and and propagate support for xml,json and so on
@@ -16,12 +16,13 @@ Starred releases are most stable ones.
 - TODO  : {impl}  implement yaml formatter (both print as raw and as colorized)
 - TODO  : {impl}  bundle tson parser
 
-### nuts 0.8.1.0
+### nuts 0.8.1.0 (DEV VERSION)
 - ```2020/11/22 	nuts 0.8.1.0 (*)``` released [download nuts-0.8.1.jar](https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/0.8.1/nuts-0.8.1.jar)
 - WARNING: API has evolved with multiple incompatibilities with previous versions  
+- CHANGED: {api}   removed NutsApplicationLifeCycle and replaced with NutsApplication (an interface instead of a class)
 - ADDED  : {api}   added support for parsing pom.xml (MAVEN) along with *.nuts (nuts descriptors)
 - ADDED  : {api}   added io killProcess support
-- CHANGED: {api}   added path AP, implemented via nlib-ssh to add ssh support for paths
+- CHANGED: {api}   added path API, implemented via nlib-ssh to add ssh support for paths
 - CHANGED: {all}   minimized dependencies, runtime has no dependencies, and others have minimum ones, and perhaps still shrinking
 - CHANGED: {api}   session is from now on mandatory to perform any operation. A simple way to make it simple to use is to get a "session aware" workspace with session.getWorkspace()
 - ADDED  : {api}  added support for Yaml with minimal implementation
@@ -38,8 +39,8 @@ Starred releases are most stable ones.
   - nuts nadmin add repository jcenter // add permanently the repository
   - nuts -r jcenter my-command // use temporarily the repository top run my-command 
 - FIXED  : {runtime} extension support (for JLine)
-- REMOVED: {runtime} added minimal implementation for YAM
-- REMOVED: {runtime} added fast implementation for JSON and removed gson dependency
+- ADDED  : {runtime} added minimal implementation for YAM
+- ADDED  : {runtime} added fast implementation for JSON and removed gson dependency
 - CHANGED: {runtime} revamped Nuts Text Format to support simplified syntax but more verbose styles.
   Now supports #), ##), ###) and so on as Title Nodes.
   It supports as well the common markdown 'code' format with anti-quotes such as
@@ -59,7 +60,7 @@ Starred releases are most stable ones.
   nlib-talk-agent enables one workspace to talk with any other workspace without having to create one server socket for each workspace.
   It also enables singleton per location implementation
 
-### nuts 0.8.0.0
+### nuts 0.8.0.0 (PUBLISHED VERSION)
 - ```2020/11/8? 	nuts 0.8.0.0 (*)``` released [download nuts-0.8.0.jar](https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/0.8.0/nuts-0.8.0.jar)
 - WARNING: this is the first version to be deployed to maven central. previous versions will no longer be supported
 - WARNING: this is a **major version**, API has evolved with multiple incompatibilities with previous versions  

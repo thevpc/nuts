@@ -5,6 +5,10 @@
  */
 package net.thevpc.nuts.toolbox.ncode.processors;
 
+import net.thevpc.nuts.NutsApplicationContext;
+import net.thevpc.nuts.NutsMessage;
+import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NutsTextStyle;
 import net.thevpc.nuts.toolbox.ncode.SourceProcessor;
 import net.thevpc.nuts.toolbox.ncode.Source;
 import net.thevpc.nuts.toolbox.ncode.sources.JavaTypeSource;
@@ -20,7 +24,7 @@ public class JavaSourceFormatter implements SourceProcessor {
     }
 
     @Override
-    public void process(Source source) {
+    public Object process(Source source, NutsSession session) {
         if (source instanceof JavaTypeSource) {
             JavaTypeSource s = (JavaTypeSource) source;
             String v1 = s.getClassVersion(false);
@@ -29,9 +33,20 @@ public class JavaSourceFormatter implements SourceProcessor {
             if (n.length() > clsNameSize) {
                 clsNameSize = n.length();
             }
-            System.out.println(leftAlign(v1, 4) + " " + leftAlign(v2, 4) + " " + leftAlign(n, clsNameSize) + " " + source.getExternalPath());
+            return NutsMessage.cstyle(
+                    "%s %s %s %s",
+                    session.getWorkspace().text().forStyled(leftAlign(v1, 4), NutsTextStyle.config()),
+                    session.getWorkspace().text().forStyled(leftAlign(v2, 4), NutsTextStyle.info()),
+                    session.getWorkspace().text().forStyled(leftAlign(n, clsNameSize), NutsTextStyle.primary1()),
+                    session.getWorkspace().text().forStyled(source.getExternalPath(), NutsTextStyle.path()),
+                    source.toString()
+            );
         } else {
-            System.out.println("Invalid source : " + source);
+            return NutsMessage.cstyle(
+                    "%s : %s",
+                    session.getWorkspace().text().forStyled("invalid source", NutsTextStyle.error()),
+                    source.toString()
+            );
         }
     }
 

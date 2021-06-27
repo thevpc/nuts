@@ -279,7 +279,7 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
             if (prefix.isEmpty() || prefix.toString().endsWith("#")) {
                 out.print(NutsConstants.Ntf.SILENT);
             }
-            out.printf("%s", txt.forStyled(formattedKey, NutsTextStyle.primary(3)));
+            out.printf("%s", txt.forStyled(formattedKey, NutsTextStyle.primary3()));
             if (separator.isEmpty() || separator.startsWith("#")) {
                 out.print(NutsConstants.Ntf.SILENT);
             }

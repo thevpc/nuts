@@ -210,7 +210,7 @@ public class LsCommand extends SimpleNshBuiltin {
             for (Map.Entry<String, String> e : s.result.entrySet()) {
                 NutsTextManager text = session.getWorkspace().text();
                 out.printf("%s%n",
-                        text.builder().append(e.getKey(),NutsTextStyle.primary(5))
+                        text.builder().append(e.getKey(),NutsTextStyle.primary5())
                         .append(" : ")
                         .append(e.getValue(),NutsTextStyle.error())
                         );
@@ -245,13 +245,13 @@ public class LsCommand extends SimpleNshBuiltin {
         if (item.hidden) {
             out.println(text.forStyled(name,NutsTextStyle.pale()));
         } else if (item.type == 'd') {
-            out.println(text.forStyled(name,NutsTextStyle.primary(3)));
+            out.println(text.forStyled(name,NutsTextStyle.primary3()));
         } else if (item.exec2 || item.jperms.charAt(2) == 'x') {
-            out.println(text.forStyled(name,NutsTextStyle.primary(4)));
+            out.println(text.forStyled(name,NutsTextStyle.primary4()));
         } else if (item.config) {
-            out.println(text.forStyled(name,NutsTextStyle.primary(5)));
+            out.println(text.forStyled(name,NutsTextStyle.primary5()));
         } else if (item.archive) {
-            out.println(text.forStyled(name,NutsTextStyle.primary(1)));
+            out.println(text.forStyled(name,NutsTextStyle.primary1()));
         } else {
             out.println(text.forPlain(name));
         }

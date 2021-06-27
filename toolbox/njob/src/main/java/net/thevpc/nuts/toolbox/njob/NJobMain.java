@@ -5,7 +5,7 @@ import net.thevpc.nuts.NutsApplicationContext;
 import net.thevpc.nuts.NutsArgument;
 import net.thevpc.nuts.NutsCommandLine;
 
-public class NJobMain extends NutsApplication {
+public class NJobMain implements NutsApplication {
 
 
     public static void main(String[] args) {

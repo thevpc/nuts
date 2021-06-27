@@ -62,7 +62,7 @@ public class NutsLogRichFormatter extends Formatter {
                 break;
             }
             case 500: {//Level.FINE
-                sb.append(NutsLogUtils.logLevel(wRecord.getLevel()), NutsTextStyle.primary(4));
+                sb.append(NutsLogUtils.logLevel(wRecord.getLevel()), NutsTextStyle.primary4());
                 break;
             }
             case 400: {//Level.FINER

@@ -186,12 +186,12 @@ public class WorkspaceService {
     private NutsTextBuilder formatProjectConfig(NutsApplicationContext appContext, ProjectConfig p2) {
         NutsTextManager text = appContext.getWorkspace().text();
         return text.builder()
-                .append(p2.getId(), NutsTextStyle.primary(4))
+                .append(p2.getId(), NutsTextStyle.primary4())
                 .append(" ")
                 .appendJoined(
                         text.forPlain(", "),
                         p2.getTechnologies().stream().map(
-                                x -> text.forStyled(x, NutsTextStyle.primary(5))
+                                x -> text.forStyled(x, NutsTextStyle.primary5())
                         ).collect(Collectors.toList())
                 )
                 .append(" : ")
@@ -438,17 +438,17 @@ public class WorkspaceService {
                     switch (tf.forPlain(p2.status).filteredText()) {
                         case "new": {
                             appContext.getSession().out().printf("[%s] %s : %s",
-                                    tfactory.forStyled("new", NutsTextStyle.primary(3)),
+                                    tfactory.forStyled("new", NutsTextStyle.primary3()),
                                     p2.id,
-                                    tfactory.forStyled(p2.local, NutsTextStyle.primary(2))
+                                    tfactory.forStyled(p2.local, NutsTextStyle.primary2())
                             );
                             break;
                         }
                         case "commitable": {
                             appContext.getSession().out().printf("[%s] %s : %s - %s",
-                                    tfactory.forStyled("commitable", NutsTextStyle.primary(4)),
+                                    tfactory.forStyled("commitable", NutsTextStyle.primary4()),
                                     p2.id,
-                                    tfactory.forStyled(p2.local, NutsTextStyle.primary(2)),
+                                    tfactory.forStyled(p2.local, NutsTextStyle.primary2()),
                                     p2.remote
                             );
                             break;
@@ -460,7 +460,7 @@ public class WorkspaceService {
                         }
                         case "old": {
                             appContext.getSession().out().printf("[%s] %s : ```error %s``` - %s",
-                                    tfactory.forStyled("old", NutsTextStyle.primary(2)),
+                                    tfactory.forStyled("old", NutsTextStyle.primary2()),
                                     p2.id, p2.local, p2.remote);
                             break;
                         }
@@ -618,7 +618,7 @@ public class WorkspaceService {
                                 if (appContext.getSession().isPlainOut()) {
                                     appContext.getSession().out().printf("```error [CONFLICT]``` multiple paths for the same id %s. "
                                             + "please consider adding .nuts-info file with " + SCAN + "=false  :  %s -- %s%n",
-                                            text.forStyled(p2.getId(), NutsTextStyle.primary(2)),
+                                            text.forStyled(p2.getId(), NutsTextStyle.primary2()),
                                             text.forStyled(p2.getPath(), NutsTextStyle.path()),
                                             text.forStyled(p3.getPath(), NutsTextStyle.path())
                                     );

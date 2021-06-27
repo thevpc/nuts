@@ -62,8 +62,8 @@ public class DeleteFoldersNAdminSubCommand extends AbstractNAdminSubCommand {
             Path storeLocation = Paths.get(sstoreLocation);
             if (Files.exists(storeLocation)) {
                 context.getSession().out().printf("```error deleting``` %s for workspace %s folder %s ...%n",
-                        factory.forStyled(folder.id(),NutsTextStyle.primary(1)),
-                        factory.forStyled(context.getWorkspace().getName(),NutsTextStyle.primary(1)),
+                        factory.forStyled(folder.id(),NutsTextStyle.primary1()),
+                        factory.forStyled(context.getWorkspace().getName(),NutsTextStyle.primary1()),
                         factory.forStyled(storeLocation.toString(),NutsTextStyle.path()));
                 if (force
                         || context.getSession().getTerminal().ask()
@@ -90,8 +90,8 @@ public class DeleteFoldersNAdminSubCommand extends AbstractNAdminSubCommand {
             NutsTextManager factory = context.getWorkspace().text();
             if (Files.exists(storeLocation)) {
                 context.getSession().out().printf("```error deleting``` %s for repository %s folder %s ...%n",
-                        factory.forStyled(folder.id(),NutsTextStyle.primary(1)),
-                        factory.forStyled(repository.getName(),NutsTextStyle.primary(1)),
+                        factory.forStyled(folder.id(),NutsTextStyle.primary1()),
+                        factory.forStyled(repository.getName(),NutsTextStyle.primary1()),
                         factory.forStyled(storeLocation.toString(),NutsTextStyle.path()));
                 if (force
                         || context.getSession().getTerminal().ask()
@@ -136,7 +136,7 @@ public class DeleteFoldersNAdminSubCommand extends AbstractNAdminSubCommand {
         if (s != null) {
             if (Files.exists(s)) {
                 context.getSession().out().printf("```error deleting``` %s folder %s ...%n",
-                        context.getWorkspace().text().forStyled("cache",NutsTextStyle.primary(1))
+                        context.getWorkspace().text().forStyled("cache",NutsTextStyle.primary1())
                         ,s);
                 if (force
                         || context.getSession().getTerminal().ask()

@@ -20,7 +20,7 @@ public class DefaultTableHeaderFormat implements NutsTableCellFormat {
     @Override
     public String format(int row, int col, Object value, NutsSession session) {
         return session.getWorkspace().text().builder().append(String.valueOf(value),
-                NutsTextStyle.primary(1)
+                NutsTextStyle.primary1()
                 ).toString();
     }
 

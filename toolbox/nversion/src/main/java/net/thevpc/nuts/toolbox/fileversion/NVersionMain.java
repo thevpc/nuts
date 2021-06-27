@@ -8,7 +8,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
-public class NVersionMain extends NutsApplication {
+public class NVersionMain implements NutsApplication {
 
     private final List<PathVersionResolver> resolvers = new ArrayList<>();
 
@@ -159,15 +159,15 @@ public class NVersionMain extends NutsApplication {
                 for (String k : keys) {
                     if (results.size() > 1) {
                         if (longFormat || all) {
-                            out.printf("%s:%n", text.forStyled(k, NutsTextStyle.primary(3)));
+                            out.printf("%s:%n", text.forStyled(k, NutsTextStyle.primary3()));
                         } else {
-                            out.printf("%s: ", text.forStyled(k, NutsTextStyle.primary(3)));
+                            out.printf("%s: ", text.forStyled(k, NutsTextStyle.primary3()));
                         }
                     }
                     Set<VersionDescriptor> v = results.get(k);
                     for (VersionDescriptor descriptor : v) {
                         if (nameFormat) {
-                            out.printf("%s%n", text.forStyled(descriptor.getId().getShortName(), NutsTextStyle.primary(4)));
+                            out.printf("%s%n", text.forStyled(descriptor.getId().getShortName(), NutsTextStyle.primary4()));
                         } else if (idFormat) {
                             out.printf("%s%n", text.toText(descriptor.getId()));
                         } else if (longFormat) {

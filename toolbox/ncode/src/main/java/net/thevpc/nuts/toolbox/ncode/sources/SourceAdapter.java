@@ -61,4 +61,8 @@ public class SourceAdapter implements Source {
         return source;
     }
 
+    @Override
+    public String toString() {
+        return source.toString();
+    }
 }

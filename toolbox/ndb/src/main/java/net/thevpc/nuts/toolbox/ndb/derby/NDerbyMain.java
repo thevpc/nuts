@@ -111,7 +111,7 @@ public class NDerbyMain implements NdbSupport {
         NutsTextManager factory = appContext.getWorkspace().text();
         if (cmdLine.isExecMode()) {
             if (new DerbyService(appContext).isRunning()) {
-                appContext.getSession().out().printf("derby is %s%n", factory.forStyled("running", NutsTextStyle.primary(1)));
+                appContext.getSession().out().printf("derby is %s%n", factory.forStyled("running", NutsTextStyle.primary1()));
             } else {
                 appContext.getSession().out().printf("derby is %s%n", factory.forStyled("stopped", NutsTextStyle.error()));
             }
@@ -173,13 +173,13 @@ public class NDerbyMain implements NdbSupport {
                     switch (format) {
                         case "short": {
                             out.printf("%s\n",
-                                    factory.forStyled(jpsResult.getPid(), NutsTextStyle.primary(1))
+                                    factory.forStyled(jpsResult.getPid(), NutsTextStyle.primary1())
                             );
                             break;
                         }
                         case "long": {
                             out.printf("%s %s %s %s %s%n",
-                                    factory.forStyled(jpsResult.getPid(), NutsTextStyle.primary(1)),
+                                    factory.forStyled(jpsResult.getPid(), NutsTextStyle.primary1()),
                                     factory.forPlain("HOME:"),
                                     factory.forStyled(jpsResult.getHome(), NutsTextStyle.path()),
                                     factory.forPlain("CMD:"),
@@ -191,7 +191,7 @@ public class NDerbyMain implements NdbSupport {
                         }
                         default: {
                             out.printf("%s %s\n",
-                                    factory.forStyled(jpsResult.getPid(), NutsTextStyle.primary(1)),
+                                    factory.forStyled(jpsResult.getPid(), NutsTextStyle.primary1()),
                                     jpsResult.getHome()
                             );
                             break;

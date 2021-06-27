@@ -1,6 +1,6 @@
 package net.thevpc.nuts.toolbox.ncode.sources;
 
-import net.thevpc.nuts.toolbox.ncode._Utils;
+import net.thevpc.nuts.toolbox.ncode.bundles._Utils;
 import net.thevpc.nuts.toolbox.ncode.Source;
 
 import java.io.ByteArrayInputStream;
@@ -33,6 +33,10 @@ public class ZipEntrySource implements Source {
         this.internalPath = entry.getName();
         this.prefixPath = prefixPath;
         this.zip = zip;
+    }
+    @Override
+    public String toString() {
+        return "ZipEntrySource{"+entry.getName()+"}";
     }
 
     @Override

@@ -3,10 +3,10 @@ package net.thevpc.nuts.toolbox.docusaurus;
 import net.thevpc.nuts.*;
 import net.thevpc.commons.md.docusaurus.DocusaurusProject;
 
-public class NDocusaurusMain extends NutsApplication {
+public class NDocusaurusMain implements NutsApplication {
 
     public static void main(String[] args) {
-        main(NDocusaurusMain.class, args);
+        NutsApplication.main(NDocusaurusMain.class, args);
     }
 
     @Override
@@ -18,7 +18,7 @@ public class NDocusaurusMain extends NutsApplication {
             boolean buildPdf=false;
 
             @Override
-            public boolean nextOption(NutsArgument option, NutsCommandLine commandline) {
+            public boolean onNextOption(NutsArgument option, NutsCommandLine commandline) {
                 switch (option.getStringKey()) {
                     case "-d":
                     case "--dir": {
@@ -32,7 +32,7 @@ public class NDocusaurusMain extends NutsApplication {
             }
 
             @Override
-            public boolean nextNonOption(NutsArgument nonOption, NutsCommandLine commandline) {
+            public boolean onNextNonOption(NutsArgument nonOption, NutsCommandLine commandline) {
                 switch (nonOption.getString()) {
                     case "start": {
                         start = commandline.nextBoolean().getBooleanValue();
@@ -51,14 +51,14 @@ public class NDocusaurusMain extends NutsApplication {
             }
 
             @Override
-            public void prepare(NutsCommandLine commandline) {
+            public void onPrepare(NutsCommandLine commandline) {
                 if(!start && !build && !buildPdf){
                     commandline.required("missing command. try ```sh ndocusaurus pdf | start | build```");
                 }
             }
 
             @Override
-            public void exec() {
+            public void onExec() {
                 if (workdir == null) {
                     workdir = ".";
                 }

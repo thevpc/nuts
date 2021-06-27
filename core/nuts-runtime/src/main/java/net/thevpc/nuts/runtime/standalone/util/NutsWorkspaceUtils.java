@@ -586,7 +586,7 @@ public class NutsWorkspaceUtils {
         }
         if (showCommand || CoreBooleanUtils.getSysBoolNutsProperty("show-command", false)) {
             if (prepareTerminal.out().mode()==NutsTerminalMode.FORMATTED) {
-                prepareTerminal.out().printf("%s ", ws.text().forStyled("[exec]", NutsTextStyle.primary(4)));
+                prepareTerminal.out().printf("%s ", ws.text().forStyled("[exec]", NutsTextStyle.primary4()));
                 prepareTerminal.out().println(ws.text().forCode("sh", pb.getCommandString()));
             } else {
                 prepareTerminal.out().print("exec ");

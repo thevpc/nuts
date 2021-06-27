@@ -391,7 +391,7 @@ public class NutsIdFormatHelper {
             }
             case PACKAGING: {
                 if (desc != null) {
-                    return text.forStyled(stringValue(desc.getPackaging()), NutsTextStyle.primary(3));
+                    return text.forStyled(stringValue(desc.getPackaging()), NutsTextStyle.primary3());
                 }
                 return text.forStyled("missing-packaging", NutsTextStyle.error());
             }
@@ -529,25 +529,25 @@ public class NutsIdFormatHelper {
                             break;
                         }
                         default: {
-                            all.add(text.forStyled(def.getType().id(), NutsTextStyle.primary(1)));
+                            all.add(text.forStyled(def.getType().id(), NutsTextStyle.primary1()));
                             break;
                         }
                     }
                 }
                 if (executableApp) {
-                    all.add(text.forStyled("application", NutsTextStyle.primary(5)));
+                    all.add(text.forStyled("application", NutsTextStyle.primary5()));
                 } else if (executable) {
-                    all.add(text.forStyled("executable", NutsTextStyle.primary(3)));
+                    all.add(text.forStyled("executable", NutsTextStyle.primary3()));
                 } else {
-                    all.add(text.forStyled("library", NutsTextStyle.primary(4)));
+                    all.add(text.forStyled("library", NutsTextStyle.primary4()));
                 }
                 if (dep != null) {
                     NutsDependencyScope ss = CoreEnumUtils.parseEnumString(dep.getScope(), NutsDependencyScope.class, true);
                     if (dep.isOptional()) {
-                        all.add(text.forStyled("optional", NutsTextStyle.primary(5)));
+                        all.add(text.forStyled("optional", NutsTextStyle.primary5()));
                     }
                     if (ss != null) {
-                        all.add(text.forStyled(NutsDependencyScope.API.id(), NutsTextStyle.primary(5)));
+                        all.add(text.forStyled(NutsDependencyScope.API.id(), NutsTextStyle.primary5()));
                     }
                 }
                 return text.builder().appendJoined(text.forStyled(",", NutsTextStyle.pale()),
@@ -717,11 +717,11 @@ public class NutsIdFormatHelper {
         if (dep != null) {
             return text.forStyled("" + status_f
                     //                    + status_obs
-                    + status_e + status_i + status_s, NutsTextStyle.primary(3));
+                    + status_e + status_i + status_s, NutsTextStyle.primary3());
         }
         return text.forStyled("" + status_f
                 //                + status_obs
-                + status_e + status_i, NutsTextStyle.primary(3));
+                + status_e + status_i, NutsTextStyle.primary3());
     }
 
     public String getStatusString() {
@@ -736,11 +736,11 @@ public class NutsIdFormatHelper {
     }
 
     private NutsString keywordArr1(String[] any) {
-        return keywordArr0(any, NutsTextStyle.primary(1));
+        return keywordArr0(any, NutsTextStyle.primary1());
     }
 
     private NutsString keywordArr2(String[] any) {
-        return keywordArr0(any, NutsTextStyle.primary(3));
+        return keywordArr0(any, NutsTextStyle.primary3());
     }
 
     private NutsString keywordArr0(String[] any, NutsTextStyle style) {

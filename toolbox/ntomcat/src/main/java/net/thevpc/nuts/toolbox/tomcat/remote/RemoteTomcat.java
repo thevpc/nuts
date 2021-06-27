@@ -172,7 +172,7 @@ public class RemoteTomcat {
                                     .ask()
                                     .setSession(session)
                                     .forString("[instance=%s] would you enter %s value ?"
-                                    , text.forStyled(c.getName(), NutsTextStyle.primary(1))
+                                    , text.forStyled(c.getName(), NutsTextStyle.primary1())
                                     , text.forStyled("--server", NutsTextStyle.option())
                             )
                                     .setDefaultValue("ssh://login@myserver/instanceName").setSession(session)
@@ -186,7 +186,7 @@ public class RemoteTomcat {
                                     .resetLine()
                                     .setSession(session)
                                     .forString("[instance=%s] would you enter %s value ?"
-                                            , text.forStyled(c.getName(), NutsTextStyle.primary(1))
+                                            , text.forStyled(c.getName(), NutsTextStyle.primary1())
                                             , text.forStyled("--remote-temp-path", NutsTextStyle.option())
                                     ).setDefaultValue("/tmp")
                                     .setSession(session)
@@ -200,7 +200,7 @@ public class RemoteTomcat {
                                 .resetLine()
                                     .setSession(session)
                                 .forString("[instance=%s] [app=%s] would you enter %s value ?"
-                                        , text.forStyled(c.getName(), NutsTextStyle.primary(1))
+                                        , text.forStyled(c.getName(), NutsTextStyle.primary1())
                                         , text.forStyled(aa.getName(), NutsTextStyle.option())
                                         , text.forStyled("--app.path", NutsTextStyle.option())
                                 )
@@ -374,10 +374,10 @@ public class RemoteTomcat {
 
             public void show(RemoteTomcatServiceBase aa) {
                 if (json) {
-                    getContext().getSession().out().printf("%s :\n", getContext().getWorkspace().text().forStyled(aa.getName(), NutsTextStyle.primary(4)));
+                    getContext().getSession().out().printf("%s :\n", getContext().getWorkspace().text().forStyled(aa.getName(), NutsTextStyle.primary4()));
                     aa.println(getContext().getSession().out());
                 } else {
-                    getContext().getSession().out().printf("%s :\n", getContext().getWorkspace().text().forStyled(aa.getName(), NutsTextStyle.primary(4)));
+                    getContext().getSession().out().printf("%s :\n", getContext().getWorkspace().text().forStyled(aa.getName(), NutsTextStyle.primary4()));
                     aa.println(getContext().getSession().out());
                 }
             }

@@ -298,7 +298,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                         ws.text().forStyled("up-to-date", NutsTextStyle.success()),
                         result.getAllResults().length > 1 ? "s" : "");
             } else {
-                out.printf("Workspace has %s package%s to update.%n", ws.text().forStyled("" + updates.length, NutsTextStyle.primary(1)),
+                out.printf("Workspace has %s package%s to update.%n", ws.text().forStyled("" + updates.length, NutsTextStyle.primary1()),
                         (updates.length > 1 ? "s" : ""));
                 int widthCol1 = 2;
                 int widthCol2 = 2;
@@ -310,14 +310,14 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                 for (NutsUpdateResult update : updates) {
                     if (update.isUpdateVersionAvailable()) {
                         out.printf("%s  : %s => %s%n",
-                                factory.forStyled(CoreStringUtils.alignLeft(update.getLocal().getId().getVersion().toString(), widthCol2), NutsTextStyle.primary(6)),
+                                factory.forStyled(CoreStringUtils.alignLeft(update.getLocal().getId().getVersion().toString(), widthCol2), NutsTextStyle.primary6()),
                                 CoreStringUtils.alignLeft(update.getAvailable().getId().getShortName(), widthCol1),
                                 factory.forPlain(update.getAvailable().getId().getVersion().toString()));
                     } else if (update.isUpdateStatusAvailable()) {
                         out.printf("%s  : %s => %s%n",
-                                factory.forStyled(CoreStringUtils.alignLeft(update.getLocal().getId().getVersion().toString(), widthCol2), NutsTextStyle.primary(6)),
+                                factory.forStyled(CoreStringUtils.alignLeft(update.getLocal().getId().getVersion().toString(), widthCol2), NutsTextStyle.primary6()),
                                 CoreStringUtils.alignLeft(update.getAvailable().getId().getShortName(), widthCol1),
-                                factory.forStyled("set as default", NutsTextStyle.primary(4)));
+                                factory.forStyled("set as default", NutsTextStyle.primary4()));
                     }
                 }
             }
@@ -543,7 +543,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                 if (d0 == null) {
                     out.resetLine().printf("%s is %s to latest version %s%n",
                             simpleId,
-                            factory.forStyled("updated", NutsTextStyle.primary(3)),
+                            factory.forStyled("updated", NutsTextStyle.primary3()),
                             d1 == null ? null : d1.getId().getVersion()
                     );
                 } else if (d1 == null) {
@@ -555,18 +555,18 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                         if (v1.compareTo(v0) == 0) {
                             out.resetLine().printf("%s is %s to %s %n",
                                     simpleId,
-                                    factory.forStyled("forced", NutsTextStyle.primary(3)),
+                                    factory.forStyled("forced", NutsTextStyle.primary3()),
                                     d0.getId().getVersion());
                         } else {
                             out.resetLine().printf("%s is %s from %s to older version %s%n",
                                     simpleId,
-                                    factory.forStyled("forced", NutsTextStyle.primary(3)),
+                                    factory.forStyled("forced", NutsTextStyle.primary3()),
                                     d0.getId().getVersion(), d1.getId().getVersion());
                         }
                     } else {
                         out.resetLine().printf("%s is %s from %s to latest version %s%n",
                                 simpleId,
-                                factory.forStyled("updated", NutsTextStyle.primary(3)),
+                                factory.forStyled("updated", NutsTextStyle.primary3()),
                                 d0.getId().getVersion(), d1.getId().getVersion());
                     }
                 }

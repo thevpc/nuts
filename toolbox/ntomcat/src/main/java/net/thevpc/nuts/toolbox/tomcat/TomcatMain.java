@@ -5,7 +5,7 @@ import net.thevpc.nuts.toolbox.tomcat.remote.RemoteTomcat;
 import net.thevpc.nuts.toolbox.tomcat.local.LocalTomcat;
 import net.thevpc.nuts.toolbox.tomcat.util.ApacheTomcatRepositoryModel;
 
-public class TomcatMain extends NutsApplication {
+public class TomcatMain implements NutsApplication {
 
     public static void main(String[] args) {
         new TomcatMain().runAndExit(args);

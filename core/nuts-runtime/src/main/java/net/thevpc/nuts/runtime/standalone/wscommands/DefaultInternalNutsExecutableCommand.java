@@ -61,7 +61,7 @@ public abstract class DefaultInternalNutsExecutableCommand extends AbstractNutsE
                 text.builder()
                         .append("internal", NutsTextStyle.pale())
                         .append(" ")
-                        .append(getName(),NutsTextStyle.primary(5))
+                        .append(getName(),NutsTextStyle.primary5())
                         .append(" ")
                         .append(getSession().getWorkspace().commandLine().create(args))
                 );

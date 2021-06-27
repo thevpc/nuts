@@ -60,17 +60,44 @@ public final class NutsApplications {
     private NutsApplications() {
     }
 
+    public static void runApplicationAndExit(NutsApplication application, String[] args) {
+        try {
+            application.run(args);
+        } catch (Exception ex) {
+            System.exit(NutsApplications.processThrowable(ex, args, null));
+            return;
+        }
+        System.exit(0);
+    }
+
+    public static <T extends NutsApplication> T createApplicationInstance(Class<T> appType){
+        T newInstance;
+        try {
+            newInstance = appType.newInstance();
+            return newInstance;
+        } catch (InstantiationException ex) {
+            Throwable c = ex.getCause();
+            if(c instanceof RuntimeException){
+                throw (RuntimeException)c;
+            }
+            if(c instanceof Error){
+                throw (Error)c;
+            }
+            throw new NutsBootException("unable to instantiate "+appType.getName(),ex);
+        } catch (IllegalAccessException ex) {
+            throw new NutsBootException("illegal access to default constructor for "+appType.getName(),ex);
+        }
+    }
     /**
      * run application with given life cycle.
      *
      * @param args application arguments
      * @param session session
-     * @param appClass application class
-     * @param lifeCycle application life cycle
+     * @param applicationInstance application
      */
-    public static void runApplication(String[] args, NutsSession session, Class appClass, NutsApplicationLifeCycle lifeCycle) {
+    public static void runApplication(String[] args, NutsSession session, NutsApplication applicationInstance) {
         long startTimeMillis = System.currentTimeMillis();
-        if (lifeCycle == null) {
+        if (applicationInstance == null) {
             throw new NullPointerException("null application");
         }
         boolean inherited = false;
@@ -82,17 +109,14 @@ public final class NutsApplications {
         if (session == null) {
             session = ws.createSession();
         }
-        if (appClass == null) {
-            appClass = lifeCycle.getClass();
-        }
         ws.log().setSession(session).of(NutsApplications.class).with().session(session).level(Level.FINE).verb(NutsLogVerb.START).formatted()
                 .log("running application {0}: {1} {2}", inherited ? "(inherited)" : "",
-                        lifeCycle, ws.commandLine().setSession(session).create(args)
+                        applicationInstance, ws.commandLine().setSession(session).create(args)
                 );
         NutsApplicationContext applicationContext = null;
-        applicationContext = lifeCycle.createApplicationContext(ws, args, startTimeMillis);
+        applicationContext = applicationInstance.createApplicationContext(ws, args, startTimeMillis);
         if (applicationContext == null) {
-            applicationContext = ws.apps().createApplicationContext(args, appClass, null, startTimeMillis, session);
+            applicationContext = ws.apps().createApplicationContext(args, applicationInstance.getClass(), null, startTimeMillis, session);
         }
         if (session != null) {
             //copy inter-process parameters only
@@ -113,19 +137,19 @@ public final class NutsApplications {
              */
             case RUN:
             case AUTO_COMPLETE: {
-                lifeCycle.onRunApplication(applicationContext);
+                applicationInstance.run(applicationContext);
                 return;
             }
             case INSTALL: {
-                lifeCycle.onInstallApplication(applicationContext);
+                applicationInstance.onInstallApplication(applicationContext);
                 return;
             }
             case UPDATE: {
-                lifeCycle.onUpdateApplication(applicationContext);
+                applicationInstance.onUpdateApplication(applicationContext);
                 return;
             }
             case UNINSTALL: {
-                lifeCycle.onUninstallApplication(applicationContext);
+                applicationInstance.onUninstallApplication(applicationContext);
                 return;
             }
         }

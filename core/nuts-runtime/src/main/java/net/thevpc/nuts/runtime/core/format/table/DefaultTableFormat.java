@@ -27,14 +27,16 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.string.StringBuilder2;
 import net.thevpc.nuts.runtime.core.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
+import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.io.PrintStream;
+import java.nio.file.Path;
+import java.time.temporal.Temporal;
 import java.util.*;
-import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 
 /**
  * Created by vpc on 2/17/17.
@@ -47,15 +49,15 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
             "", "", "", "",
             "", "", "", ""
     );
-    
+
     public static NutsTableBordersFormat UNICODE_BORDER = new DefaultTableFormatBorders(
             "╭", "─", "┬", "╮",
             "│", "│", "│",
             "├", "─", "┼", "┤",
             "╰", "─", "┴", "╯"
     );
-    
-//    public static NutsTableBordersFormat DEFAULT_BORDER = new DefaultTableFormatBorders(
+
+    //    public static NutsTableBordersFormat DEFAULT_BORDER = new DefaultTableFormatBorders(
 //            "╭", "─", "┬", "╮",
 //            "│", "│", "│",
 //            "├", "─", "┼", "┤",
@@ -96,7 +98,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
      * LMMMMNMMMMO
      * </pre>
      */
-    private NutsTableBordersFormat border = CoreNutsUtils.SUPPORTS_UTF_ENCODING?UNICODE_BORDER:SIMPLE_BORDER;
+    private NutsTableBordersFormat border = CoreNutsUtils.SUPPORTS_UTF_ENCODING ? UNICODE_BORDER : SIMPLE_BORDER;
     private Object model;
     private List<Boolean> visibleColumns = new ArrayList<>();
     private boolean visibleHeader = true;
@@ -123,7 +125,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                 return (SPACE_BORDER);
             }
             case "default": {
-                return CoreNutsUtils.SUPPORTS_UTF_ENCODING?UNICODE_BORDER:SIMPLE_BORDER;
+                return CoreNutsUtils.SUPPORTS_UTF_ENCODING ? UNICODE_BORDER : SIMPLE_BORDER;
             }
             case "unicode": {
                 return (UNICODE_BORDER);
@@ -569,6 +571,83 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         if (o instanceof NutsTableModel) {
             return (NutsTableModel) o;
         }
+        if (o instanceof String || o instanceof Number || o instanceof Date || o instanceof Temporal || o instanceof Path || o instanceof File) {
+            List<NutsElement> a = new ArrayList<>();
+            a.add(_elems().toElement(o));
+            return createTableModel(_elems().toElement(a));
+        }
+        if (o instanceof List) {
+            NutsMutableTableModel model = createModel();
+            LinkedHashSet<String> columns = new LinkedHashSet<>();
+            resolveColumns((List) o, columns);
+            for (String column : columns) {
+                model.addHeaderCell(column);
+            }
+            for (Object oelem2 : ((List) o)) {
+                model.newRow();
+                if (oelem2 instanceof NutsElement) {
+                    NutsElement elem2 = (NutsElement) oelem2;
+                    switch (elem2.type()) {
+                        case OBJECT: {
+                            Map<String, NutsElement> m = new HashMap<>();
+                            for (NutsElementEntry vv : elem2.asObject().children()) {
+                                NutsElement k = vv.getKey();
+                                if (!k.isString()) {
+                                    k = _elems().forString(
+                                            k.toString()
+                                    );
+                                }
+                                m.put(k.asPrimitive().getString(), vv.getValue());
+                            }
+                            for (String column : columns) {
+                                NutsElement vv = m.get(column);
+                                if (vv != null) {
+                                    model.addCell(formatObject(vv));
+                                } else {
+                                    model.addCell("");
+                                }
+                            }
+                            break;
+                        }
+                        default: {
+                            for (String column : columns) {
+                                if (column.equals("value")) {
+                                    model.addCell(formatObject(elem2/*.primitive().getValue()*/));
+                                } else {
+                                    model.addCell("");
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    if (oelem2 instanceof Map) {
+                        Map<String, Object> m = new HashMap<>();
+                        Map<Object,Object> omap=(Map<Object, Object>) oelem2;
+                        for (Map.Entry<Object,Object> vv : omap.entrySet()) {
+                            String k = String.valueOf(vv.getKey());
+                            m.put(k, vv.getValue());
+                        }
+                        for (String column : columns) {
+                            Object vv = m.get(column);
+                            if (vv != null) {
+                                model.addCell(formatObject(vv));
+                            } else {
+                                model.addCell("");
+                            }
+                        }
+                    } else {
+                        for (String column : columns) {
+                            if (column.equals("value")) {
+                                model.addCell(formatObject(oelem2/*.primitive().getValue()*/));
+                            } else {
+                                model.addCell("");
+                            }
+                        }
+                    }
+                }
+            }
+            return model;
+        }
         if (!(o instanceof NutsElement)) {
             return createTableModel(_elems().toElement(o));
         }
@@ -638,29 +717,45 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         }
     }
 
-    public void resolveColumns(NutsElement value, LinkedHashSet<String> columns) {
-        switch (value.type()) {
-            case OBJECT: {
-                for (NutsElementEntry nutsNamedValue : value.asObject().children()) {
-                    NutsElement k = nutsNamedValue.getKey();
-                    if (!k.isString()) {
-                        k = _elems().forString(
-                                k.toString()
-                        );
+    public void resolveColumns(Object obj, LinkedHashSet<String> columns) {
+        if (obj instanceof NutsElement) {
+            NutsElement value = (NutsElement) obj;
+            switch (value.type()) {
+                case OBJECT: {
+                    for (NutsElementEntry nutsNamedValue : value.asObject().children()) {
+                        NutsElement k = nutsNamedValue.getKey();
+                        if (!k.isString()) {
+                            k = _elems().forString(
+                                    k.toString()
+                            );
+                        }
+                        columns.add(k.asPrimitive().getString());
                     }
-                    columns.add(k.asPrimitive().getString());
+                    break;
                 }
-                break;
-            }
-            case ARRAY: {
-                for (NutsElement value2 : value.asArray().children()) {
-                    resolveColumns(value2, columns);
+                case ARRAY: {
+                    for (NutsElement value2 : value.asArray().children()) {
+                        resolveColumns(value2, columns);
+                    }
+                    break;
                 }
-                break;
+                default: {
+                    columns.add("value");
+                }
             }
-            default: {
-                columns.add("value");
+        } else if (obj instanceof List) {
+            for (Object value2 : ((List) obj)) {
+                resolveColumns(value2, columns);
             }
+        } else if (obj instanceof Map) {
+            Map<Object, Object> map = (Map) obj;
+            for (Map.Entry<Object, Object> nutsNamedValue : map.entrySet()) {
+                Object k = nutsNamedValue.getKey();
+                String ks = String.valueOf(k);
+                columns.add(ks);
+            }
+        } else {
+            columns.add("value");
         }
     }
 

@@ -362,32 +362,32 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
 
         NutsTextManager text = ws.text().setSession(session);
         if (getSession().isPlainTrace() || (!list.emptyCommand && getSession().getConfirm() == NutsConfirmationMode.ASK)) {
-            printList(out, text.builder().append("new", NutsTextStyle.primary(2)),
-                    text.builder().append("installed", NutsTextStyle.primary(1)),
+            printList(out, text.builder().append("new", NutsTextStyle.primary2()),
+                    text.builder().append("installed", NutsTextStyle.primary1()),
                     list.ids(x -> x.doInstall && !x.isAlreadyExists()));
 
-            printList(out, text.builder().append("new", NutsTextStyle.primary(2)),
-                    text.builder().append("required", NutsTextStyle.primary(1)),
+            printList(out, text.builder().append("new", NutsTextStyle.primary2()),
+                    text.builder().append("required", NutsTextStyle.primary1()),
                     list.ids(x -> x.doRequire && !x.doInstall && !x.isAlreadyExists()));
             printList(out,
-                    text.builder().append("required", NutsTextStyle.primary(2)),
-                    text.builder().append("re-required", NutsTextStyle.primary(1)),
+                    text.builder().append("required", NutsTextStyle.primary2()),
+                    text.builder().append("re-required", NutsTextStyle.primary1()),
                     list.ids(x -> (!x.doInstall && x.doRequire) && x.isAlreadyRequired()));
             printList(out,
-                    text.builder().append("required", NutsTextStyle.primary(2)),
-                    text.builder().append("installed", NutsTextStyle.primary(1)),
+                    text.builder().append("required", NutsTextStyle.primary2()),
+                    text.builder().append("installed", NutsTextStyle.primary1()),
                     list.ids(x -> x.doInstall && x.isAlreadyRequired() && !x.isAlreadyInstalled()));
 
             printList(out,
-                    text.builder().append("required", NutsTextStyle.primary(2)),
-                    text.builder().append("re-reinstalled", NutsTextStyle.primary(1)),
+                    text.builder().append("required", NutsTextStyle.primary2()),
+                    text.builder().append("re-reinstalled", NutsTextStyle.primary1()),
                     list.ids(x -> x.doInstall && x.isAlreadyInstalled()));
             printList(out,
-                    text.builder().append("installed", NutsTextStyle.primary(2)),
-                    text.builder().append("set as default", NutsTextStyle.primary(3)),
+                    text.builder().append("installed", NutsTextStyle.primary2()),
+                    text.builder().append("set as default", NutsTextStyle.primary3()),
                     list.ids(x -> x.doSwitchVersion && x.isAlreadyInstalled()));
             printList(out,
-                    text.builder().append("installed", NutsTextStyle.primary(2)),
+                    text.builder().append("installed", NutsTextStyle.primary2()),
                     text.builder().append("ignored", NutsTextStyle.pale()),
                     list.ids(x -> x.ignored));
         }

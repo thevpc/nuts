@@ -5,6 +5,9 @@
  */
 package net.thevpc.nuts.toolbox.ncode;
 
+import net.thevpc.nuts.NutsApplicationContext;
+import net.thevpc.nuts.NutsSession;
+
 /**
  *
  * @author thevpc
@@ -14,6 +17,7 @@ public interface SourceProcessor {
     /**
      *
      * @param source source
+     * @param session session
      */
-    void process(Source source);
+    Object process(Source source, NutsSession session);
 }

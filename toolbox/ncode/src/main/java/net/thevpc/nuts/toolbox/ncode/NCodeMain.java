@@ -5,13 +5,16 @@
  */
 package net.thevpc.nuts.toolbox.ncode;
 
+import net.thevpc.nuts.NutsApplication;
+import net.thevpc.nuts.NutsApplicationContext;
+import net.thevpc.nuts.NutsCommandLine;
+import net.thevpc.nuts.toolbox.ncode.bundles.strings.StringComparator;
+import net.thevpc.nuts.toolbox.ncode.bundles.strings.StringComparators;
 import net.thevpc.nuts.toolbox.ncode.filters.JavaSourceFilter;
 import net.thevpc.nuts.toolbox.ncode.filters.PathSourceFilter;
 import net.thevpc.nuts.toolbox.ncode.processors.JavaSourceFormatter;
 import net.thevpc.nuts.toolbox.ncode.processors.PathSourceFormatter;
 import net.thevpc.nuts.toolbox.ncode.sources.SourceFactory;
-import net.thevpc.common.strings.StringComparator;
-import net.thevpc.common.strings.StringComparators;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -22,9 +25,41 @@ import static net.thevpc.nuts.toolbox.ncode.SourceNavigator.navigate;
 /**
  * @author thevpc
  */
-public class NCodeMain {
-
+public class NCodeMain implements NutsApplication {
     public static void main(String[] args) {
+        new NCodeMain().runAndExit(args);
+    }
+
+    private static void version() {
+        System.out.println("ncode 1.0 (c) Taha Ben Salah");
+    }
+
+    private static void help0() {
+        version();
+        System.out.println("simple file/java class finder");
+        System.out.println("type --help for more help");
+    }
+
+    private static void help() {
+        version();
+        System.out.println("simple file/java class finder");
+        System.out.println("[Syntax] ncode -[!][i]t name [folder/file-list]");
+        System.out.println("   find java type with name 'name' in folder/file list");
+        System.out.println("[Syntax] ncode -[!][i]f name [folder/file-list]");
+        System.out.println("   find file with path 'name' in folder/file list");
+        System.out.println("[Examples] ");
+        System.out.println("ncode -t String . foo.zip");
+        System.out.println("   search for type which name contains 'String' (case sensitive) in folders . and foo.zip");
+        System.out.println("ncode -it String . foo.zip");
+        System.out.println("   search for type which name contains 'String' or 'STRING' (case insensitive) in both folder . and foo.zip");
+        System.out.println("ncode -t ^java.lang.String$ . foo.zip");
+        System.out.println("   search for type which exact name 'java.lang.String' in folders . and foo.zip");
+    }
+
+    @Override
+    public void run(NutsApplicationContext applicationContext) {
+        NutsCommandLine cmdLine = applicationContext.getCommandLine();
+        String[] args = cmdLine.toStringArray();
         StringComparator type = null;
         StringComparator file = null;
         List<String> paths = new ArrayList<>();
@@ -110,49 +145,23 @@ public class NCodeMain {
                 System.exit(1);
                 return;
             }
+            List<Object> results=new ArrayList<>();
             for (String path : paths) {
-                navigate(SourceFactory.create(new File(path)), new JavaSourceFilter(type, file), new JavaSourceFormatter());
+                navigate(SourceFactory.create(new File(path)), new JavaSourceFilter(type, file), new JavaSourceFormatter(),applicationContext.getSession(),results);
             }
+            applicationContext.getSession().formatObject(results).println();
         } else if (file != null) {
             if (paths.isEmpty()) {
-                System.err.println("missing location");
-                help();
-                System.exit(1);
+                cmdLine.throwError("missing location");
                 return;
             }
+            List<Object> results=new ArrayList<>();
             for (String path : paths) {
-                navigate(SourceFactory.create(new File(path)), new PathSourceFilter(file), new PathSourceFormatter());
+                navigate(SourceFactory.create(new File(path)), new PathSourceFilter(file), new PathSourceFormatter(),applicationContext.getSession(),results);
             }
+            applicationContext.getSession().formatObject(results).println();
         } else {
-            System.err.println("missing arguments");
-            System.exit(1);
-            help();
+            cmdLine.throwError("missing arguments");
         }
-    }
-
-    private static void version() {
-        System.out.println("ncode 1.0 (c) Taha Ben Salah");
-    }
-
-    private static void help0() {
-        version();
-        System.out.println("simple file/java class finder");
-        System.out.println("type --help for more help");
-    }
-
-    private static void help() {
-        version();
-        System.out.println("simple file/java class finder");
-        System.out.println("[Syntax] feenoo -[!][i]t name [folder/file-list]");
-        System.out.println("   find java type with name 'name' in folder/file list");
-        System.out.println("[Syntax] feenoo -[!][i]f name [folder/file-list]");
-        System.out.println("   find file with path 'name' in folder/file list");
-        System.out.println("[Examples] ");
-        System.out.println("feenoo -t String . foo.zip");
-        System.out.println("   search for type which name contains 'String' (case sensitive) in folders . and foo.zip");
-        System.out.println("feenoo -it String . foo.zip");
-        System.out.println("   search for type which name contains 'String' or 'STRING' (case insensitive) in both folder . and foo.zip");
-        System.out.println("feenoo -t ^java.lang.String$ . foo.zip");
-        System.out.println("   search for type which exact name 'java.lang.String' in folders . and foo.zip");
     }
 }

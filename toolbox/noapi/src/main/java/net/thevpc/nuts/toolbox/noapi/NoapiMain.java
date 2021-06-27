@@ -2,7 +2,7 @@ package net.thevpc.nuts.toolbox.noapi;
 
 import net.thevpc.nuts.*;
 
-public class NoapiMain extends NutsApplication {
+public class NoapiMain implements NutsApplication {
 
     private NOpenAPIService service;
 
@@ -24,7 +24,7 @@ public class NoapiMain extends NutsApplication {
             String openAPIFormat;
 
             @Override
-            public boolean nextOption(NutsArgument option, NutsCommandLine commandline) {
+            public boolean onNextOption(NutsArgument option, NutsCommandLine commandline) {
                 switch (option.getString()) {
                     case "--yaml": {
                         commandline.nextBoolean();
@@ -56,7 +56,7 @@ public class NoapiMain extends NutsApplication {
             }
 
             @Override
-            public boolean nextNonOption(NutsArgument nonOption, NutsCommandLine commandline) {
+            public boolean onNextNonOption(NutsArgument nonOption, NutsCommandLine commandline) {
                 if (path == null) {
                     path = commandline.nextString().getStringKey();
                     return true;
@@ -68,7 +68,7 @@ public class NoapiMain extends NutsApplication {
             }
 
             @Override
-            public void prepare(NutsCommandLine commandline) {
+            public void onPrepare(NutsCommandLine commandline) {
                 if (path == null) {
                     commandline.required("missing path");
                 }
@@ -78,7 +78,7 @@ public class NoapiMain extends NutsApplication {
             }
 
             @Override
-            public void exec() {
+            public void onExec() {
                 switch (command) {
                     case "pdf": {
                         NOpenAPIService service = new NOpenAPIService(appContext);

@@ -263,7 +263,7 @@ public final class JavaExecutorOptions {
                         NutsTextBuilder msgString = text.builder();
 
                         msgString.append("multiple runnable classes detected  - actually ")
-                                .append(text.forStyled("" + possibleClasses.size(), NutsTextStyle.primary(5)))
+                                .append(text.forStyled("" + possibleClasses.size(), NutsTextStyle.primary5()))
                                 .append(" . Select one :\n");
                         int x = ((int) Math.log(possibleClasses.size())) + 2;
                         for (int i = 0; i < possibleClasses.size(); i++) {
@@ -272,12 +272,12 @@ public final class JavaExecutorOptions {
                             while (clsIndex.length() < x) {
                                 clsIndex.append(' ');
                             }
-                            msgString.append(clsIndex.toString(), NutsTextStyle.primary(4));
-                            msgString.append(possibleClasses.get(i), NutsTextStyle.primary(4));
+                            msgString.append(clsIndex.toString(), NutsTextStyle.primary4());
+                            msgString.append(possibleClasses.get(i), NutsTextStyle.primary4());
                             msgString.append("\n");
                         }
                         msgString.append("enter class ")
-                                .append("#", NutsTextStyle.primary(5)).append(" or ").append("name", NutsTextStyle.primary(5))
+                                .append("#", NutsTextStyle.primary5()).append(" or ").append("name", NutsTextStyle.primary5())
                                 .append(" to run it. type ").append("cancel!", NutsTextStyle.error())
                                 .append(" to cancel : ");
 

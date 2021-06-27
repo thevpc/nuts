@@ -70,10 +70,10 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                                     .getParent())
                             .filter(
                                     f
-                                    -> ws.version().parser().parse(f.getFileName().toString()).getNumber(0, -1) != -1
+                                    -> ws.version().parse(f.getFileName().toString()).getNumber(0, -1) != -1
                                     && Files.exists(f.resolve("nuts-api-config.json"))
                             ).map(
-                                    f -> ws.version().parser().parse(f.getFileName().toString())
+                                    f -> ws.version().parse(f.getFileName().toString())
                             ).sorted(Comparator.reverseOrder()).findFirst().orElse(null);
                 } catch (IOException e) {
                     throw new UncheckedIOException(e);
@@ -89,7 +89,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         String wsEff = bootConfig != null ? bootConfig.getEffectiveWorkspace()
                 : ws.locations().getWorkspaceLocation().toString();
         UpdatedPaths t = persistConfig2(bootConfig, apiId, preferredName, session);
-        return new WorkspaceAndApiVersion(wsEff, ws.version().parser().parse(apiVersion), t.getUpdated(), t.getDiscarded());
+        return new WorkspaceAndApiVersion(wsEff, ws.version().parse(apiVersion), t.getUpdated(), t.getDiscarded());
     }
 
     @Override
@@ -538,7 +538,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             if (gen) {
 
                 if (trace && context.getSession().isPlainTrace()) {
-                    context.getSession().out().printf((Files.exists(ff2) ? "re-installing" : "installing")
+                    context.getSession().out().printf((Files.exists(ff2) ? "re-install" : "install")
                             + " script %s %n",
                             context.getWorkspace().text().forStyled(NdiUtils.betterPath(ff2.toString()), NutsTextStyle.path())
                     );

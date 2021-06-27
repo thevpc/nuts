@@ -45,7 +45,7 @@ public interface NutsCommandLineProcessor {
      * @param commandline associated commandline
      * @return true if the argument can be processed, false otherwise.
      */
-    boolean nextOption(NutsArgument option, NutsCommandLine commandline);
+    boolean onNextOption(NutsArgument option, NutsCommandLine commandline);
 
     /**
      * process the given non option argument that was peeked from the command line.
@@ -55,7 +55,7 @@ public interface NutsCommandLineProcessor {
      * @param commandline associated commandline
      * @return true if the argument can be processed, false otherwise.
      */
-    boolean nextNonOption(NutsArgument nonOption, NutsCommandLine commandline);
+    boolean onNextNonOption(NutsArgument nonOption, NutsCommandLine commandline);
 
 
     /**
@@ -63,7 +63,7 @@ public interface NutsCommandLineProcessor {
      * Called before any other method.
      * @param commandline associated commandline
      */
-    default void init(NutsCommandLine commandline){
+    default void onInit(NutsCommandLine commandline){
         
     }
 
@@ -72,7 +72,7 @@ public interface NutsCommandLineProcessor {
      * Called after all next methods and before exec and autoComplete methods
      * @param commandline associated commandline
      */
-    default void prepare(NutsCommandLine commandline){
+    default void onPrepare(NutsCommandLine commandline){
         
     }
 
@@ -80,28 +80,28 @@ public interface NutsCommandLineProcessor {
      * execute options, called after all options was processed and
      * cmdLine.isExecMode() return true.
      */
-    void exec();
+    void onExec();
 
     /**
      * called when auto-complete ({@code autoComplete} is not null)
      * @param autoComplete autoComplete instance
      */
-    default void autoComplete(NutsCommandAutoComplete autoComplete){
+    default void onAutoComplete(NutsCommandAutoComplete autoComplete){
         
     }
     NutsCommandLineProcessor NOP =new NutsCommandLineProcessor() {
         @Override
-        public boolean nextOption(NutsArgument option, NutsCommandLine commandline) {
+        public boolean onNextOption(NutsArgument option, NutsCommandLine commandline) {
             return false;
         }
 
         @Override
-        public boolean nextNonOption(NutsArgument nonOption, NutsCommandLine commandline) {
+        public boolean onNextNonOption(NutsArgument nonOption, NutsCommandLine commandline) {
             return false;
         }
 
         @Override
-        public void exec() {
+        public void onExec() {
 
         }
     };

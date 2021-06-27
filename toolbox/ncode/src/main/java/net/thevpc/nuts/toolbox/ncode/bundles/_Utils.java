@@ -1,4 +1,4 @@
-package net.thevpc.nuts.toolbox.ncode;
+package net.thevpc.nuts.toolbox.ncode.bundles;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

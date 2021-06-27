@@ -11,7 +11,7 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Nsh extends NutsApplication {
+public class Nsh implements NutsApplication {
 
     public static final Logger LOG = Logger.getLogger(Nsh.class.getName());
     private static final HashSet<String> CONTEXTUAL_BUILTINS = new HashSet<>(Arrays.asList(
@@ -25,7 +25,7 @@ public class Nsh extends NutsApplication {
     }
 
     @Override
-    protected void onInstallApplication(NutsApplicationContext applicationContext) {
+    public void onInstallApplication(NutsApplicationContext applicationContext) {
         LOG.log(Level.FINER, "[nsh] Installation...");
         NutsCommandLine cmd = applicationContext.getCommandLine()
                 .setCommandName("nsh --nuts-exec-mode=install");
@@ -90,14 +90,14 @@ public class Nsh extends NutsApplication {
             NutsTextManager factory = session.getWorkspace().text();
             if (firstInstalled.size() > 0) {
                 session.out().printf("registered %s nsh commands : %s \n",
-                        factory.forStyled(""+firstInstalled.size(),NutsTextStyle.primary(3))
-                        ,factory.forStyled(String.join(", ", firstInstalled),NutsTextStyle.primary(3))
+                        factory.forStyled(""+firstInstalled.size(),NutsTextStyle.primary3())
+                        ,factory.forStyled(String.join(", ", firstInstalled),NutsTextStyle.primary3())
                 );
             }
             if (reinstalled.size() > 0) {
                 session.out().printf("re-registered %s nsh commands : %s \n",
-                        factory.forStyled(""+reinstalled.size(),NutsTextStyle.primary(3))
-                        ,factory.forStyled(String.join(", ", reinstalled),NutsTextStyle.primary(3))
+                        factory.forStyled(""+reinstalled.size(),NutsTextStyle.primary3())
+                        ,factory.forStyled(String.join(", ", reinstalled),NutsTextStyle.primary3())
                 );
             }
         }
@@ -105,7 +105,7 @@ public class Nsh extends NutsApplication {
     }
 
     @Override
-    protected void onUpdateApplication(NutsApplicationContext applicationContext) {
+    public void onUpdateApplication(NutsApplicationContext applicationContext) {
         LOG.log(Level.FINER, "[nsh] update...");
         NutsVersion currentVersion = applicationContext.getAppVersion();
         NutsVersion previousVersion = applicationContext.getAppPreviousVersion();
@@ -113,7 +113,7 @@ public class Nsh extends NutsApplication {
     }
 
     @Override
-    protected void onUninstallApplication(NutsApplicationContext applicationContext) {
+    public void onUninstallApplication(NutsApplicationContext applicationContext) {
         LOG.log(Level.FINER, "[nsh] uninstallation...");
         try {
             NutsWorkspace ws = applicationContext.getWorkspace();
@@ -129,7 +129,7 @@ public class Nsh extends NutsApplication {
                     if (applicationContext.getSession().isPlainTrace()) {
                         NutsTextManager factory = ws.text();
                         applicationContext.getSession().err().printf("unable to uninstall %s.\n",
-                                factory.forStyled(command.getName(),NutsTextStyle.primary(3))
+                                factory.forStyled(command.getName(),NutsTextStyle.primary3())
                         );
                     }
                 }

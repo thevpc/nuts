@@ -168,8 +168,12 @@ public class AnyNixNdi extends BaseSystemNdi {
         if (!updatedNames.isEmpty() && session.isTrace()) {
             if (!updatedNames.isEmpty()) {
                 if (context.getSession().isPlainTrace()) {
-                    context.getSession().out().resetLine().printf((context.getSession().isPlainTrace() ? "force " : "") + "updating %s to point to workspace %s%n",
-                            factory.forStyled(String.join(", ", updatedNames),NutsTextStyle.primary(3)),
+                    context.getSession().out().resetLine().printf("%s %s to point to workspace %s%n",
+                            context.getSession().isYes() ?
+                                    factory.forStyled("force updating",NutsTextStyle.warn().append(NutsTextStyle.underlined())):
+                                    factory.forStyled("force updating",NutsTextStyle.warn())
+                            ,
+                            factory.forStyled(String.join(", ", updatedNames),NutsTextStyle.primary3()),
                             factory.forStyled(ws.locations().getWorkspaceLocation(),NutsTextStyle.path())
                             );
                 }

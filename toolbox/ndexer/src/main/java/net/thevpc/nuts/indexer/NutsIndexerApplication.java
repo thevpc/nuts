@@ -9,7 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-public class NutsIndexerApplication extends NutsApplication {
+public class NutsIndexerApplication implements NutsApplication {
     private static NutsApplicationContext __bootApplicationContext;
 
     public static void main(String[] args) {

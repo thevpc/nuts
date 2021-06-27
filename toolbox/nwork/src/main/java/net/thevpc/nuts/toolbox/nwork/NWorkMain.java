@@ -5,7 +5,7 @@ import net.thevpc.nuts.NutsApplicationContext;
 import net.thevpc.nuts.NutsArgument;
 import net.thevpc.nuts.NutsCommandLine;
 
-public class NWorkMain extends NutsApplication {
+public class NWorkMain implements NutsApplication {
 
     private WorkspaceService service;
 

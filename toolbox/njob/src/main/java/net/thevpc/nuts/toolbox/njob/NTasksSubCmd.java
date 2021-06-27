@@ -158,7 +158,7 @@ public class NTasksSubCmd {
             service.tasks().addTask(t);
             if (context.getSession().isPlainTrace()) {
                 context.getSession().out().printf("task %s (%s) added.\n",
-                        context.getWorkspace().text().forStyled(t.getId(), NutsTextStyle.primary(5)),
+                        context.getWorkspace().text().forStyled(t.getId(), NutsTextStyle.primary5()),
                         t.getName()
                 );
             }
@@ -397,8 +397,8 @@ public class NTasksSubCmd {
                 service.tasks().updateTask(task);
                 if (context.getSession().isPlainTrace()) {
                     context.getSession().out().printf("task %s (%s) updated.\n",
-                            text.forStyled(task.getId(), NutsTextStyle.primary(5)),
-                            text.forStyled(task.getName(), NutsTextStyle.primary(1))
+                            text.forStyled(task.getId(), NutsTextStyle.primary5()),
+                            text.forStyled(task.getName(), NutsTextStyle.primary1())
                     );
                 }
             }
@@ -630,12 +630,12 @@ public class NTasksSubCmd {
                 if (service.tasks().removeTask(t.getId())) {
                     if (context.getSession().isPlainTrace()) {
                         context.getSession().out().printf("task %s removed.\n",
-                                text.forStyled(a.toString(), NutsTextStyle.primary(5))
+                                text.forStyled(a.toString(), NutsTextStyle.primary5())
                         );
                     }
                 } else {
                     context.getSession().out().printf("task %s %s.\n",
-                            text.forStyled(a.toString(), NutsTextStyle.primary(5)),
+                            text.forStyled(a.toString(), NutsTextStyle.primary5()),
                             text.forStyled("not found", NutsTextStyle.error())
                     );
                 }

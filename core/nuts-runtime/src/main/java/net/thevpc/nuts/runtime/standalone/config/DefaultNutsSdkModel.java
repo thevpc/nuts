@@ -69,12 +69,13 @@ public class DefaultNutsSdkModel {
             list.add(location);
             if (notify) {
                 if (session.isPlainTrace()) {
-                    session.out().resetLine().printf("install %s %s (%s) %s at %s%n",
+                    session.out().resetLine().printf("%s %s %s (%s) %s at %s%n",
+                            session.getWorkspace().text().forStyled("install",NutsTextStyles.of(NutsTextStyle.success())),
                             location.getId().getShortName(),
                             location.getPackaging(),
                             location.getProduct(),
-                            session.getWorkspace().text().builder().append(location.getVersion(), NutsTextStyle.version()),
-                            session.getWorkspace().text().builder().append(location.getPath(), NutsTextStyle.path())
+                            session.getWorkspace().version().parser().parse(location.getVersion()),
+                            session.getWorkspace().io().path(location.getPath())
                     );
                 }
                 NutsWorkspaceConfigManagerExt.of(workspace.config())
