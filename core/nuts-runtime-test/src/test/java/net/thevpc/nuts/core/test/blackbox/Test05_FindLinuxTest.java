@@ -99,6 +99,7 @@ public class Test05_FindLinuxTest {
                 "--yes",
                 "--skip-companions");
 
+        ws = ws.createSession().getWorkspace();
         List<NutsId> result1 = ws.search().setLatest(true).addId("nuts-runtime").getResultIds().list();
         List<NutsId> result2 = ws.search().setLatest(false).addId("nuts-runtime").getResultIds().list();
         TestUtils.println(result1);
@@ -118,6 +119,7 @@ public class Test05_FindLinuxTest {
                 "--archetype", "default",
                 "--yes",
                 "--skip-companions");
+        ws = ws.createSession().getWorkspace();
 
         List<NutsId> result1 = ws.search().configure(false, "nuts-runtime").getResultIds().list();
         List<NutsId> result2 = ws.search().configure(false, "--latest", "nuts-runtime").getResultIds().list();

@@ -32,7 +32,7 @@
     <orderEntry type="module" module-name="thevpc-common-md-asciidoctor" />
     <orderEntry type="library" name="Maven: org.yaml:snakeyaml:1.21" level="project" />
     <orderEntry type="module" module-name="nsh" />
-    <orderEntry type="library" name="Maven: net.thevpc:jshell:0.8.1" level="project" />
+    <orderEntry type="module" module-name="jshell" />
     <orderEntry type="module" module-name="nlib-ssh" />
     <orderEntry type="library" name="Maven: com.jcraft:jsch:0.1.55" level="project" />
     <orderEntry type="library" name="Maven: org.jline:jline:3.5.2" level="project" />

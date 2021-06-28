@@ -100,7 +100,14 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
                                  NutsDependency[] standardDependencies,
                                  NutsIdLocation[] locations, Map<String, String> properties, NutsClassifierMapping[] classifierMappings,NutsSession session) {
         super(session);
-        NutsWorkspaceUtils.of(session).checkSimpleNameNutsId(id);
+        //id can have empty groupId (namely for executors like 'java')
+        if (id == null) {
+            throw new NutsIllegalArgumentException(session, "missing id");
+        }
+        if (CoreStringUtils.isBlank(id.getArtifactId())) {
+            throw new NutsIllegalArgumentException(session, "missing artifactId for " + id);
+        }
+        //NutsWorkspaceUtils.of(session).checkSimpleNameNutsId(id);
         if (!id.getProperties().isEmpty()) {
             throw new NutsIllegalArgumentException(session, "id should not have query defined in descriptors");
         }

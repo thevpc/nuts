@@ -40,6 +40,7 @@ public class Test12_CopyTest {
                 "--log-info",
                 "--skip-companions");
         NutsSession session = ws.createSession();
+        ws = ws.createSession().getWorkspace();
         Path from = Paths.get(ws.io().tmp()
                 .setSession(session)
                 .createTempFolder("source"));

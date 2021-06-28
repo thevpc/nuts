@@ -21,7 +21,7 @@ import org.junit.jupiter.api.*;
  */
 public class Test03_CreateLayoutLinuxTest {
 
-    private static final int NSH_BUILTINS = 33;
+    private static final int NSH_BUILTINS = 34;
     private static final int NDI_COMPANIONS = 2;
 
     @Test
@@ -51,6 +51,7 @@ public class Test03_CreateLayoutLinuxTest {
                         "info"
                 ));
 
+        ws = ws.createSession().getWorkspace();
         NutsId ndiId = ws.search().setInstallStatus(ws.filters().installStatus().byInstalled(true)).addId("nadmin").getResultIds().singleton();
         Assertions.assertTrue(ndiId.getVersion().getValue().startsWith(TestUtils.NUTS_VERSION + "."));
 
@@ -101,6 +102,7 @@ public class Test03_CreateLayoutLinuxTest {
                 //            "--verbose",
                 "--yes", "--trace",
                 "info"));
+        ws2 = ws2.createSession().getWorkspace();
         NutsId ndiId = ws2.search().setInstallStatus(ws2.filters().installStatus().byInstalled(true)).addId("nadmin").getResultIds().singleton();
         Assertions.assertTrue(ndiId.getVersion().getValue().startsWith(TestUtils.NUTS_VERSION + "."));
 
@@ -138,6 +140,7 @@ public class Test03_CreateLayoutLinuxTest {
         CoreIOUtils.delete(null, base);
 //        Nuts.runWorkspace(new String[]{"--verbose", "--workspace", base.getPath(), "--standalone", "--yes", "--info"});
         NutsWorkspace ws = Nuts.openWorkspace("--reset", "-b", "--debug", "--workspace", base.getPath(), "--standalone", "--yes", "info");
+        ws = ws.createSession().getWorkspace();
         NutsId nadminId=null;
         try {
             nadminId = ws.search().setInstallStatus(ws.filters().installStatus().byInstalled(true)).addId("nadmin").getResultIds().singleton();

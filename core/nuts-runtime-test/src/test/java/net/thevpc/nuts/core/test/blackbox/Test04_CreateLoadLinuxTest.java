@@ -5,15 +5,13 @@
  */
 package net.thevpc.nuts.core.test.blackbox;
 
-import net.thevpc.nuts.NutsOsFamily;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import net.thevpc.nuts.Nuts;
-import net.thevpc.nuts.NutsStoreLocation;
-import net.thevpc.nuts.NutsWorkspace;
+
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import org.junit.jupiter.api.*;
 
@@ -57,6 +55,7 @@ public class Test04_CreateLoadLinuxTest {
         NutsWorkspace w = Nuts.openWorkspace("--system-config-home", new File(base, "system.config").getPath(),
                 "-y","info");
         TestUtils.println("==========================");
+        w = w.createSession().getWorkspace();
         w.info().println();
         TestUtils.println("==========================");
         TestUtils.println(new File(base, "system.apps").getPath());
@@ -97,6 +96,7 @@ public class Test04_CreateLoadLinuxTest {
         w = Nuts.openWorkspace(//            "--workspace", "default-workspace",
 //            "--workspace", new File(base, "system.config/default-workspace").getPath(),
                 "info");
+        w = w.createSession().getWorkspace();
         TestUtils.println(w.locations().getStoreLocation(NutsStoreLocation.APPS));
         Assertions.assertEquals(
                 new File(base, "system.apps/default-workspace").getPath(),

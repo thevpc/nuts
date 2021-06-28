@@ -36,9 +36,11 @@ public class Test11_LogTest {
                 "--yes",
                 "--skip-companions");
 
+        ws = ws.createSession().getWorkspace();
         TestUtils.println(ws.version().formatter());
         String result = ws.exec().addCommand(
-                "https://github.com/thevpc/vpc-public-maven/raw/master/net/thevpc/netbeans-launcher/1.2.2/netbeans-launcher-1.2.2.jar",
+                //this is an old link, do not change to 'thevpc'
+                "https://raw.githubusercontent.com/thevpc/vpc-public-maven/master/net/vpc/app/netbeans-launcher/1.2.2/netbeans-launcher-1.2.2.jar",
                 "--version"
         ).setRedirectErrorStream(true).grabOutputString().setFailFast(true).getOutputString();
         TestUtils.println("Result:");

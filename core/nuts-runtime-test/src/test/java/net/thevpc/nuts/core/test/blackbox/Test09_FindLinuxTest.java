@@ -38,8 +38,9 @@ public class Test09_FindLinuxTest {
                 "--archetype", "default",
                 "--yes",
                 "--skip-companions");
-
-        List<NutsId> def = ws.search().addId("nuts").setOptional(false).setLatest(true).setFailFast(false)
+        ws=ws.createSession().getWorkspace();
+        NutsSession session = ws.createSession();
+        List<NutsId> def = session.getWorkspace().search().addId("nuts").setOptional(false).setLatest(true).setFailFast(false)
 //                .repository("maven-local")
                 .setDefaultVersions(true)
                 .setInstallStatus(ws.filters().installStatus().byDeployed(true))

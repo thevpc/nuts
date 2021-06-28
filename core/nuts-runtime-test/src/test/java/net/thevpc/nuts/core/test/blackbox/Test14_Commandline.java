@@ -5,11 +5,8 @@
  */
 package net.thevpc.nuts.core.test.blackbox;
 
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.Nuts;
-import net.thevpc.nuts.NutsArgument;
-import net.thevpc.nuts.NutsOsFamily;
-import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import org.junit.jupiter.api.*;
 
@@ -39,8 +36,9 @@ public class Test14_Commandline {
                 "--skip-companions",
                 "--skip-welcome"
         );
+        NutsSession session = ws.createSession();
 
-        NutsArgument[] cmd = ws.commandLine().parse("-ad+ +ad--").toArgumentArray();
+        NutsArgument[] cmd = session.getWorkspace().commandLine().parse("-ad+ +ad--").toArgumentArray();
         Set<String> set = Arrays.stream(cmd).map(x -> x.toString()).collect(Collectors.toSet());
         Set<String> expectedSet = new HashSet<>(Arrays.asList(
                 "-a", "-d+", "+a","+d--"

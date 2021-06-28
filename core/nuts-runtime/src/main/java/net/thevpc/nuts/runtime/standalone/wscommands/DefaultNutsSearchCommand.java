@@ -698,7 +698,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
             baseIterator = IteratorUtils.flatMap(curr,
                     x -> {
                         return IteratorUtils.convert(
-                                toFetch().setId(x).setContent(false).getResultDefinition().getDependencies().mergedDependencies().iterator(),
+                                toFetch().setId(x).setContent(false).setDependencies(true).getResultDefinition().getDependencies().mergedDependencies().iterator(),
                                 y -> y.toId(), "dependencyToId");
                     });
         }

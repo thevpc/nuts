@@ -39,6 +39,7 @@ public class Test07_AppTypeTest {
                 "--yes",
                 "--skip-companions"
         );
+        uws = uws.createSession().getWorkspace();
         NutsDefinition u = uws.search().addId("nsh").getResultDefinitions().required();
         System.out.println(u.getDescriptor());
         TestUtils.println(u.getId()+":"+(u.getDescriptor().isExecutable() ? "executable" : "non-executable"));

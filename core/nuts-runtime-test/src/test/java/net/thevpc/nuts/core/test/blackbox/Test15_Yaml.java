@@ -68,6 +68,7 @@ public class Test15_Yaml {
                 "-byZSKk"
         );
         String path = "net/thevpc/nuts/core/test/blackbox/yaml1.yml";
+        ws = ws.createSession().getWorkspace();
         NutsElement e = ws.elem().setContentType(NutsContentType.YAML)
                 .parse(getClass().getClassLoader().getResource(path), NutsElement.class);
         ws.elem().setContentType(NutsContentType.JSON).setValue(e)

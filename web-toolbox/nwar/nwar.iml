@@ -13,7 +13,7 @@
     <orderEntry type="library" name="Maven: javax.servlet:javax.servlet-api:3.1.0" level="project" />
     <orderEntry type="module" module-name="nserver" />
     <orderEntry type="module" module-name="nsh" />
-    <orderEntry type="library" name="Maven: net.thevpc:jshell:0.8.1" level="project" />
+    <orderEntry type="module" module-name="jshell" />
     <orderEntry type="module" module-name="nlib-ssh" />
     <orderEntry type="library" name="Maven: com.jcraft:jsch:0.1.55" level="project" />
     <orderEntry type="library" name="Maven: org.jline:jline:3.5.2" level="project" />

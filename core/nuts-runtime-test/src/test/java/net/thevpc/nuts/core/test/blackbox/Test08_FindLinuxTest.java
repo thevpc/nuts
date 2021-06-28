@@ -36,7 +36,11 @@ public class Test08_FindLinuxTest {
                 "--yes",
                 "--skip-companions");
 
-        NutsDefinition def = ws.search().addId("netbeans-launcher#1.1.0")
+        NutsSession session = ws.createSession();
+        NutsDefinition def = session.getWorkspace().search().addId(
+                "net.thevpc.common:thevpc-common-io#1.3.12"
+//                "netbeans-launcher#1.1.0"
+                )
                 .setOptional(false).setInlineDependencies(true).setFailFast(true)
                 .setSession(ws.createSession().setFetchStrategy(NutsFetchStrategy.ONLINE))
                 .setLatest(true).getResultDefinitions().required();
