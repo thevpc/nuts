@@ -38,10 +38,10 @@ import java.util.logging.Level;
 /**
  * @author thevpc
  */
-public class NshEvaluator extends DefaultJShellEvaluator implements JShellEvaluator {
+public class NshEvaluator extends DefaultJShellEvaluator {
 
     @Override
-    public void evalBinaryPipeOperation(JShellCommandNode left, JShellCommandNode right, JShellFileContext context) {
+    public int evalBinaryPipeOperation(JShellCommandNode left, JShellCommandNode right, JShellFileContext context) {
         final NutsPrintStream nout;
         final PipedOutputStream out;
         final PipedInputStream in;
@@ -80,7 +80,7 @@ public class NshEvaluator extends DefaultJShellEvaluator implements JShellEvalua
         } catch (JShellUniformException e) {
             if (e.isQuit()) {
                 e.throwQuit();
-                return;
+                return 0;
             }
             a[1] = e;
         }
@@ -92,6 +92,7 @@ public class NshEvaluator extends DefaultJShellEvaluator implements JShellEvalua
         if (a[1] != null) {
             a[1].throwAny();
         }
+        return 0;
     }
 
     @Override

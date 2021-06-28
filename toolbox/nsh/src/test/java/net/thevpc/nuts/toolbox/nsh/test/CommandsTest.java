@@ -28,6 +28,7 @@ package net.thevpc.nuts.toolbox.nsh.test;
 
 import net.thevpc.nuts.toolbox.nsh.NutsJavaShell;
 import net.thevpc.nuts.Nuts;
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShell;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -45,49 +46,41 @@ public class CommandsTest {
     @Test
     public void testDirname() {
         NutsJavaShell c = new NutsJavaShell(Nuts.openWorkspace("-y","--workspace", baseFolder + "/" + TestUtils.getCallerMethodName()),new String[0]);
-        StringBuilder out = new StringBuilder();
-        StringBuilder err = new StringBuilder();
-        c.executeCommand(new String[]{"dirname", "/", "a", "/a", "/a/"}, null, out, err);
+        JShell.MemResult r = c.executeCommand(new String[]{"dirname", "/", "a", "/a", "/a/"});
         Assertions.assertEquals(
                 "/\n"
                 + ".\n"
                 + "/\n"
                 + "/\n"
-                + "", out.toString());
-        Assertions.assertEquals("", err.toString());
+                + "", r.out());
+        Assertions.assertEquals("", r.err());
     }
 
     @Test
     public void testBasename() {
         NutsJavaShell c = new NutsJavaShell(Nuts.openWorkspace("-y","--workspace", baseFolder + "/" + TestUtils.getCallerMethodName()),new String[0]);
-        StringBuilder out = new StringBuilder();
-        StringBuilder err = new StringBuilder();
-        c.executeCommand(new String[]{"basename", "-a", "/", "a", "/a", "/a/"}, null, out, err);
+        JShell.MemResult r = c.executeCommand(new String[]{"basename", "-a", "/", "a", "/a", "/a/"});
         Assertions.assertEquals(
                 "/\n"
                 + "a\n"
                 + "a\n"
                 + "a\n"
-                + "", out.toString());
-        Assertions.assertEquals("", err.toString());
+                + "", r.out());
+        Assertions.assertEquals("", r.err());
     }
 
     @Test
     public void testEnv() {
         NutsJavaShell c = new NutsJavaShell(Nuts.openWorkspace("-y","--workspace", baseFolder + "/" + TestUtils.getCallerMethodName()),new String[0]);
         {
-            StringBuilder out = new StringBuilder();
-            StringBuilder err = new StringBuilder();
-            c.executeCommand(new String[]{"env"}, null, out, err);
-            Assertions.assertTrue(out.toString().contains("PWD="));
-            Assertions.assertEquals("", err.toString());
+            JShell.MemResult r = c.executeCommand(new String[]{"env"});
+            Assertions.assertTrue(r.out().contains("PWD="));
+            Assertions.assertEquals("", r.err());
         }
         {
-            StringBuilder out = new StringBuilder();
-            StringBuilder err = new StringBuilder();
-            c.executeCommand(new String[]{"env", "--json"}, null, out, err);
-            Assertions.assertTrue(out.toString().contains("\"PWD\""));
-            Assertions.assertEquals("", err.toString());
+            JShell.MemResult r = c.executeCommand(new String[]{"env", "--json"});
+            Assertions.assertTrue(r.out().contains("\"PWD\""));
+            Assertions.assertEquals("", r.err());
         }
     }
 
@@ -95,18 +88,14 @@ public class CommandsTest {
     public void testCheck() {
         NutsJavaShell c = new NutsJavaShell(Nuts.openWorkspace("-y","--workspace", baseFolder + "/" + TestUtils.getCallerMethodName()),new String[0]);
         {
-            StringBuilder out = new StringBuilder();
-            StringBuilder err = new StringBuilder();
-            c.executeCommand(new String[]{"test", "1", "-lt", "2"}, null, out, err);
-            Assertions.assertEquals("", out.toString());
-            Assertions.assertEquals("", err.toString());
+            JShell.MemResult r = c.executeCommand(new String[]{"test", "1", "-lt", "2"});
+            Assertions.assertEquals("", r.out());
+            Assertions.assertEquals("", r.err());
         }
         {
-            StringBuilder out = new StringBuilder();
-            StringBuilder err = new StringBuilder();
-            c.executeCommand(new String[]{"test", "2", "-lt", "1"}, null, out, err);
-            Assertions.assertEquals("", out.toString());
-            Assertions.assertEquals("", err.toString());
+            JShell.MemResult r = c.executeCommand(new String[]{"test", "2", "-lt", "1"});
+            Assertions.assertEquals("", r.out());
+            Assertions.assertEquals("", r.err());
         }
     }
     @BeforeAll

@@ -200,7 +200,7 @@ public abstract class SimpleNshBuiltin extends AbstractNshBuiltin {
     protected abstract void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context);
 
     @Override
-    public final void exec(String[] args, NshExecutionContext context) {
+    public int execImpl(String[] args, NshExecutionContext context) {
         boolean conf = false;
         int maxLoops = 1000;
         boolean robustMode = false;
@@ -234,7 +234,7 @@ public abstract class SimpleNshBuiltin extends AbstractNshBuiltin {
             }
         }
         if (commandLine.isAutoCompleteMode()) {
-            return;
+            return 0;
         }
         prepareOptions(commandLine, context2);
         createResult(commandLine, context2);
@@ -263,6 +263,7 @@ public abstract class SimpleNshBuiltin extends AbstractNshBuiltin {
             }
             throw new NutsExecutionException(context.getSession(),printStream.toString(), context2.getExitCode());
         }
+        return 0;
     }
 
     protected void initCommandLine(NutsCommandLine commandLine) {

@@ -20,8 +20,8 @@ public class JShellNodeUnsafeRunnable implements UnsafeRunnable {
     }
 
     @Override
-    public void run() throws Exception {
-        left.eval(context);
+    public int run() throws Exception {
+        return left.eval(context);
     }
     
 }

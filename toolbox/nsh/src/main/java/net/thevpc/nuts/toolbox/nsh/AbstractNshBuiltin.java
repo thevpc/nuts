@@ -10,22 +10,25 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
  * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.toolbox.nsh;
 
-import net.thevpc.nuts.NutsIllegalArgumentException;
+import net.thevpc.nuts.*;
+import net.thevpc.nuts.toolbox.nsh.bundles._IOUtils;
+import net.thevpc.nuts.toolbox.nsh.bundles._StringUtils;
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -33,11 +36,6 @@ import java.io.StringReader;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.thevpc.nuts.NutsCommandAutoComplete;
-import net.thevpc.nuts.NutsCommandLine;
-import net.thevpc.nuts.NutsSupportLevelContext;
-import net.thevpc.nuts.toolbox.nsh.bundles._IOUtils;
-import net.thevpc.nuts.toolbox.nsh.bundles._StringUtils;
 
 /**
  * Created by vpc on 1/7/17.
@@ -61,61 +59,9 @@ public abstract class AbstractNshBuiltin implements NshBuiltin {
                 .setCommandName(getName());
     }
 
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
     @Override
     public int getSupportLevel(NutsSupportLevelContext<NutsJavaShell> param) {
         return supportLevel;
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public String getHelpHeader() {
-        String h = getHelp();
-        BufferedReader r = new BufferedReader(new StringReader(h));
-        while (true) {
-            String line = null;
-            try {
-                line = r.readLine();
-            } catch (IOException e) {
-                //
-            }
-            if (line == null) {
-                break;
-            }
-            if (!_StringUtils.isBlank(line)) {
-                return line;
-            }
-        }
-        return "No help";
-    }
-
-    @Override
-    public String getHelp() {
-        if (help == null) {
-            try {
-                URL resource = getClass().getResource("/net/thevpc/nuts/toolbox/nsh/cmd/" + getName() + ".ntf");
-                if (resource != null) {
-                    help = _IOUtils.loadString(resource);
-                }
-            } catch (Exception e) {
-                LOG.log(Level.CONFIG, "Unable to load help for " + getName(), e);
-            }
-            if (help == null) {
-                help = "```error no help found for command " + getName()+"```";
-            }
-        }
-        return help;
     }
 
     @Override
@@ -143,7 +89,74 @@ public abstract class AbstractNshBuiltin implements NshBuiltin {
         }
     }
 
+    protected abstract int execImpl(String[] args, NshExecutionContext context);
+
+    public final int exec(String[] args, NshExecutionContext context) {
+        try {
+            return execImpl(args, context);
+        } catch (JShellException ex) {
+            context.err().println(ex.toString());
+            return ex.getResult();
+        } catch (NutsExecutionException ex) {
+            context.err().println(ex.toString());
+            return ex.getExitCode();
+        } catch (Exception ex) {
+            context.err().println(ex.toString());
+            return 1;
+        }
+    }
+
     @Override
-    public abstract void exec(String[] args, NshExecutionContext context);
+    public String getHelp() {
+        if (help == null) {
+            try {
+                URL resource = getClass().getResource("/net/thevpc/nuts/toolbox/nsh/cmd/" + getName() + ".ntf");
+                if (resource != null) {
+                    help = _IOUtils.loadString(resource);
+                }
+            } catch (Exception e) {
+                LOG.log(Level.CONFIG, "Unable to load help for " + getName(), e);
+            }
+            if (help == null) {
+                help = "```error no help found for command " + getName() + "```";
+            }
+        }
+        return help;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    @Override
+    public String getHelpHeader() {
+        String h = getHelp();
+        BufferedReader r = new BufferedReader(new StringReader(h));
+        while (true) {
+            String line = null;
+            try {
+                line = r.readLine();
+            } catch (IOException e) {
+                //
+            }
+            if (line == null) {
+                break;
+            }
+            if (!_StringUtils.isBlank(line)) {
+                return line;
+            }
+        }
+        return "No help";
+    }
+
 
 }

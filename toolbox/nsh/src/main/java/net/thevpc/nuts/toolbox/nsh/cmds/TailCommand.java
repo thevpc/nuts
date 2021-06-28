@@ -52,7 +52,7 @@ public class TailCommand extends AbstractNshBuiltin {
         int max = 0;
     }
 
-    public void exec(String[] args, NshExecutionContext context) {
+    public int execImpl(String[] args, NshExecutionContext context) {
         NutsCommandLine commandLine = cmdLine(args, context);
         Options options = new Options();
         List<String> files = new ArrayList<>();
@@ -77,6 +77,7 @@ public class TailCommand extends AbstractNshBuiltin {
         for (String file : files) {
             tail(file, options.max, context);
         }
+        return 0;
     }
 
     private void tail(String file, int max, NshExecutionContext context) {

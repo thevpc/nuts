@@ -49,7 +49,7 @@ public class HelpCommand extends AbstractNshBuiltin {
     }
 
     @Override
-    public void exec(String[] args, NshExecutionContext context) {
+    public int execImpl(String[] args, NshExecutionContext context) {
         NutsCommandLine commandLine = cmdLine(args, context);
         List<String> commandNames = new ArrayList<>();
         NutsArgument a;
@@ -100,17 +100,21 @@ public class HelpCommand extends AbstractNshBuiltin {
                     context.out().println(ss.apply(cmd.getHelpHeader())); //formatted
                 }
             } else {
+                int x=0;
                 for (String commandName : commandNames) {
                     JShellBuiltin command1 = context.getGlobalContext().builtins().find(commandName);
                     if (command1 == null) {
                         context.err().printf("command not found : %s\n", text.forStyled(commandName,NutsTextStyle.error()));
+                        x=1;
                     } else {
                         String help = command1.getHelp();
                         context.out().printf("%s : %s\f", text.forStyled("COMMAND",NutsTextStyle.primary4()),"commandName");
                         context.out().println(ss.apply(help));
                     }
                 }
+                return x;
             }
         }
+        return 0;
     }
 }

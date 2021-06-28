@@ -171,13 +171,13 @@ public class TestCommand extends AbstractNshBuiltin {
     }
 
     @Override
-    public void exec(String[] args, NshExecutionContext context) {
+    public int execImpl(String[] args, NshExecutionContext context) {
         NutsCommandLine commandLine = context.getWorkspace().commandLine().create(args)
                 .setCommandName("test")
                 .setExpandSimpleOptions(false)
                 ;
         if (commandLine.isEmpty()) {
-            throw new NutsExecutionException(context.getSession(),"result=" + 1, 1);
+            return 1;
         }
         if (args.length > 0) {
             Stack<String> operators = new Stack<>();
@@ -192,7 +192,7 @@ public class TestCommand extends AbstractNshBuiltin {
                     case ")": {
                         reduce(operators, operands, 0);
                         if (operators.size() < 1 || !operators.peek().equals("(")) {
-                            throw new IllegalArgumentException("')' has no euivalent '('");
+                            throw new IllegalArgumentException("')' has no equivalent '('");
                         }
                         operators.pop();
                         break;
@@ -200,7 +200,7 @@ public class TestCommand extends AbstractNshBuiltin {
                     case "]": {
                         reduce(operators, operands, 0);
                         if (operators.size() > 0 && !operators.peek().equals("[")) {
-                            throw new IllegalArgumentException("']' has no euivalent '['");
+                            throw new IllegalArgumentException("']' has no equivalent '['");
                         }
                         if (operators.size() == 1 && operators.peek().equals("[")) {
                             operators.pop();
@@ -227,9 +227,10 @@ public class TestCommand extends AbstractNshBuiltin {
             }
             int result = operands.pop().eval(context);
             if (result != 0) {
-                throw new NutsExecutionException(context.getSession(), "result=" + result, result);
+                return result;
             }
         }
+        return 0;
     }
 
     public static interface Eval {

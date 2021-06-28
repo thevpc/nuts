@@ -381,13 +381,15 @@ public class DocusaurusCtrl {
                     .set(
                             new AbstractNshBuiltin("process", 10) {
                                 @Override
-                                public void exec(String[] args, NshExecutionContext context) {
+                                public int execImpl(String[] args, NshExecutionContext context) {
                                     if (args.length != 1) {
-                                        throw new IllegalStateException(getName() + " : invalid arguments count");
+                                        context.err().println(getName() + " : invalid arguments count");
+                                        return 1;
                                     }
                                     String pathString = args[0];
                                     fileTemplater.getLog().debug("eval", getName() + "(" + StringUtils.toLiteralString(pathString) + ")");
                                     fileTemplater.executeRegularFile(Paths.get(pathString), null);
+                                    return 0;
                                 }
                             }
                     );

@@ -46,7 +46,7 @@ public class ZipCommand extends AbstractNshBuiltin {
     }
 
     @Override
-    public void exec(String[] args, NshExecutionContext context) {
+    public int execImpl(String[] args, NshExecutionContext context) {
         NutsCommandLine commandLine = cmdLine(args, context);
         Options options = new Options();
         List<String> files = new ArrayList<>();
@@ -83,6 +83,7 @@ public class ZipCommand extends AbstractNshBuiltin {
             aa.addSource(file);
         }
         aa.run();
+        return 0;
     }
 
     private static class Options {

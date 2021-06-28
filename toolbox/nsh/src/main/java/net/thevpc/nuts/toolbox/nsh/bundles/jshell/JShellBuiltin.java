@@ -43,7 +43,7 @@ public interface JShellBuiltin<T extends JShellExecutionContext> {
      * @param command command
      * @param context context
      */
-    void exec(String[] command, T context);
+    int exec(String[] command, T context);
 
     String getHelp();
 

@@ -73,59 +73,58 @@ public class DefaultJShellEvaluator implements JShellEvaluator {
     }
 
     @Override
-    public void evalSuffixOperation(String opString, JShellCommandNode node, JShellFileContext context) {
+    public int evalSuffixOperation(String opString, JShellCommandNode node, JShellFileContext context) {
         switch (opString) {
             case "&": {
-                evalSuffixAndOperation(node, context);
-                return;
+                return evalSuffixAndOperation(node, context);
             }
         }
         throw new JShellException(1, "unsupported suffix operator " + opString);
     }
 
     @Override
-    public void evalSuffixAndOperation(JShellCommandNode node, JShellFileContext context) {
-        node.eval(context);
+    public int evalSuffixAndOperation(JShellCommandNode node, JShellFileContext context) {
+        return node.eval(context);
     }
 
     @Override
-    public void evalBinaryAndOperation(JShellCommandNode left, JShellCommandNode right, JShellFileContext context) {
+    public int evalBinaryAndOperation(JShellCommandNode left, JShellCommandNode right, JShellFileContext context) {
         right.eval(context);
-        left.eval(context);
+        return left.eval(context);
     }
 
     @Override
-    public void evalBinaryOperation(String opString, JShellCommandNode left, JShellCommandNode right, JShellFileContext context) {
+    public int evalBinaryOperation(String opString, JShellCommandNode left, JShellCommandNode right, JShellFileContext context) {
         context.getShell().traceExecution("(" + left + ") " + opString + "(" + right + ")", context);
         if (";".equals(opString)) {
-            evalBinarySuiteOperation(left, right, context);
+            return evalBinarySuiteOperation(left, right, context);
         } else if ("&&".equals(opString)) {
-            evalBinaryAndOperation(left, right, context);
+            return evalBinaryAndOperation(left, right, context);
         } else if ("||".equals(opString)) {
-            evalBinaryOrOperation(left, right, context);
+            return evalBinaryOrOperation(left, right, context);
         } else if ("|".equals(opString)) {
-            evalBinaryPipeOperation(left, right, context);
+            return evalBinaryPipeOperation(left, right, context);
         } else {
-            throw new JShellException(1, "Unsupported operator " + opString);
+            throw new JShellException(1, "unsupported operator " + opString);
         }
     }
 
     @Override
-    public void evalBinaryOrOperation(final JShellCommandNode left, JShellCommandNode right, final JShellFileContext context) {
+    public int evalBinaryOrOperation(final JShellCommandNode left, JShellCommandNode right, final JShellFileContext context) {
         try {
             context.getShell().uniformException(new JShellNodeUnsafeRunnable(left, context));
-            return;
+            return 0;
         } catch (JShellUniformException e) {
             if (e.isQuit()) {
                 e.throwQuit();
-                return;
+                return 0;
             }
         }
-        right.eval(context);
+        return right.eval(context);
     }
 
     @Override
-    public void evalBinaryPipeOperation(final JShellCommandNode left, JShellCommandNode right, final JShellFileContext context) {
+    public int evalBinaryPipeOperation(final JShellCommandNode left, JShellCommandNode right, final JShellFileContext context) {
         final PipedOutputStream out;
         final PipedInputStream in;
         final JavaShellNonBlockingInputStream in2;
@@ -163,7 +162,7 @@ public class DefaultJShellEvaluator implements JShellEvaluator {
         } catch (JShellUniformException e) {
             if (e.isQuit()) {
                 e.throwQuit();
-                return;
+                return 0;
             }
             a[1] = e;
         }
@@ -176,19 +175,20 @@ public class DefaultJShellEvaluator implements JShellEvaluator {
         if (a[1] != null) {
             a[1].throwAny();
         }
+        return 0;
     }
 
     @Override
-    public void evalBinarySuiteOperation(JShellCommandNode left, JShellCommandNode right, JShellFileContext context) {
+    public int evalBinarySuiteOperation(JShellCommandNode left, JShellCommandNode right, JShellFileContext context) {
         try {
-            context.getShell().uniformException(new JShellNodeUnsafeRunnable(left, context));
+            return context.getShell().uniformException(new JShellNodeUnsafeRunnable(left, context));
         } catch (JShellUniformException e) {
             if (e.isQuit()) {
                 e.throwQuit();
-                return;
+                return 0;
             }
         }
-        right.eval(context);
+        return right.eval(context);
     }
 
     @Override

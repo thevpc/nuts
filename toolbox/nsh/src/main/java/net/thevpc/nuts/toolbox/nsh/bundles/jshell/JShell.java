@@ -323,10 +323,10 @@ public class JShell {
         return errorCode;
     }
 
-    public void executeCommand(String[] command, JShellFileContext context) {
+    public int executeCommand(String[] command, JShellFileContext context) {
         context.setServiceName(command[0]);
         context.setArgs(Arrays.copyOfRange(command, 1, command.length));
-        createCommandNode(command).eval(context);
+        return createCommandNode(command).eval(context);
     }
 
     public void addToHistory(String[] command) {
@@ -345,7 +345,7 @@ public class JShell {
         getHistory().add(sb.toString());
     }
 
-    public void executePreparedCommand(String[] command,
+    public int executePreparedCommand(String[] command,
                                        boolean considerAliases, boolean considerBuiltins, boolean considerExternal,
                                        JShellFileContext context
     ) {
@@ -355,7 +355,7 @@ public class JShell {
             if (externalExec == null) {
                 throw new JShellException(101, "not found " + cmdToken);
             }
-            externalExec.execExternalCommand(command, context);
+            return externalExec.execExternalCommand(command, context);
             //this is a path!
         } else {
             List<String> cmds = new ArrayList<>(Arrays.asList(command));
@@ -405,6 +405,7 @@ public class JShell {
                 }
             }
         }
+        return 0;
     }
 
 
@@ -613,9 +614,9 @@ public class JShell {
         }
     }
 
-    public void uniformException(UnsafeRunnable r) throws JShellUniformException {
+    public int uniformException(UnsafeRunnable r) throws JShellUniformException {
         try {
-            r.run();
+            return r.run();
         } catch (JShellUniformException th) {
             throw th;
         } catch (Exception th) {
@@ -951,15 +952,46 @@ public class JShell {
         this.version = version;
     }
 
-    public void executeCommand(String[] command, StringBuilder in, StringBuilder out, StringBuilder err) {
+    public MemResult executeCommand(String[] command) {
+        return executeCommand(command,(String)null);
+    }
+
+    public MemResult executeCommand(String[] command, String in) {
+        StringBuilder out=new StringBuilder();
+        StringBuilder err=new StringBuilder();
         ByteArrayPrintStream oout = new ByteArrayPrintStream();
         ByteArrayPrintStream oerr = new ByteArrayPrintStream();
         JShellFileContext newContext = createNewContext(getRootContext(), command[0], Arrays.copyOfRange(command, 1, command.length));
         newContext.setIn(new ByteArrayInputStream(in == null ? new byte[0] : in.toString().getBytes()));
         newContext.setOut(oout);
-        newContext.setOut(oerr);
-        executeCommand(command, newContext);
+        newContext.setErr(oerr);
+        int r=executeCommand(command, newContext);
         out.append(oout.toString());
         err.append(oerr.toString());
+        return new MemResult(out.toString(),err.toString(),r);
+    }
+
+    public static class MemResult{
+        private String out;
+        private String err;
+        private int exitCode;
+
+        public MemResult(String out, String err, int exitCode) {
+            this.out = out;
+            this.err = err;
+            this.exitCode = exitCode;
+        }
+
+        public String out() {
+            return out;
+        }
+
+        public String err() {
+            return err;
+        }
+
+        public int exitCode() {
+            return exitCode;
+        }
     }
 }

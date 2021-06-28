@@ -11,19 +11,19 @@ package net.thevpc.nuts.toolbox.nsh.bundles.jshell;
  */
 public interface JShellEvaluator {
 
-    void evalSuffixOperation(String opString, JShellCommandNode node, JShellFileContext context);
+    int evalSuffixOperation(String opString, JShellCommandNode node, JShellFileContext context);
 
-    void evalSuffixAndOperation(JShellCommandNode node, JShellFileContext context);
+    int evalSuffixAndOperation(JShellCommandNode node, JShellFileContext context);
 
-    void evalBinaryAndOperation(JShellCommandNode left, JShellCommandNode right, JShellFileContext context);
+    int evalBinaryAndOperation(JShellCommandNode left, JShellCommandNode right, JShellFileContext context);
 
-    void evalBinaryOperation(String opString, JShellCommandNode left, JShellCommandNode right, JShellFileContext context);
+    int evalBinaryOperation(String opString, JShellCommandNode left, JShellCommandNode right, JShellFileContext context);
 
-    void evalBinaryOrOperation(JShellCommandNode left, JShellCommandNode right, JShellFileContext context);
+    int evalBinaryOrOperation(JShellCommandNode left, JShellCommandNode right, JShellFileContext context);
 
-    void evalBinaryPipeOperation(JShellCommandNode left, JShellCommandNode right, final JShellFileContext context);
+    int evalBinaryPipeOperation(JShellCommandNode left, JShellCommandNode right, final JShellFileContext context);
 
-    void evalBinarySuiteOperation(JShellCommandNode left, JShellCommandNode right, JShellFileContext context);
+    int evalBinarySuiteOperation(JShellCommandNode left, JShellCommandNode right, JShellFileContext context);
 
     String evalCommandAndReturnString(JShellCommandNode left, JShellFileContext context);
 

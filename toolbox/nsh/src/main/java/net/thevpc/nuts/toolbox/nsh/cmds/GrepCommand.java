@@ -56,7 +56,7 @@ public class GrepCommand extends AbstractNshBuiltin {
         boolean n = false;
     }
 
-    public void exec(String[] args, NshExecutionContext context) {
+    public int execImpl(String[] args, NshExecutionContext context) {
         NutsCommandLine commandLine = cmdLine(args, context);
         Options options = new Options();
         List<File> files = new ArrayList<>();
@@ -78,12 +78,12 @@ public class GrepCommand extends AbstractNshBuiltin {
                 options.ignoreCase = true;
             } else if (commandLine.next("--version") != null) {
                 out.printf("%s\n", "1.0");
-                return;
+                return 0;
             } else if (commandLine.next("-n") != null) {
                 options.n = true;
             } else if (commandLine.next("--help") != null) {
                 out.printf("%s\n", getHelp());
-                return;
+                return 0;
             }else if (commandLine.peek().isNonOption()){
                 if (expression == null) {
                     expression = commandLine.next().getString();
@@ -115,12 +115,14 @@ public class GrepCommand extends AbstractNshBuiltin {
         Pattern p = Pattern.compile(baseExpr);
         //text mode
         boolean prefixFileName = files.size() > 1;
+        int x=0;
         for (File f : files) {
-            grepFile(f, p, options, context, prefixFileName);
+            x=grepFile(f, p, options, context, prefixFileName);
         }
+        return x;
     }
 
-    protected void grepFile(File f, Pattern p, Options options, NshExecutionContext context, boolean prefixFileName) {
+    protected int grepFile(File f, Pattern p, Options options, NshExecutionContext context, boolean prefixFileName) {
 
         Reader reader = null;
         try {
@@ -135,7 +137,7 @@ public class GrepCommand extends AbstractNshBuiltin {
                             grepFile(ff, p, options, context, true);
                         }
                     }
-                    return;
+                    return 0;
                 } else {
                     fileName = f.getPath();
                     reader = new FileReader(f);
@@ -168,6 +170,7 @@ public class GrepCommand extends AbstractNshBuiltin {
         } catch (IOException ex) {
             throw new NutsExecutionException(context.getSession(), ex.getMessage(), ex, 100);
         }
+        return  0;
     }
 
     public static String simpexpToRegexp(String pattern, boolean contains) {

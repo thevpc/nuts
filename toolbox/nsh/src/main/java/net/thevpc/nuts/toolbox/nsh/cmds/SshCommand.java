@@ -55,7 +55,7 @@ public class SshCommand extends AbstractNshBuiltin {
         List<String> cmd = new ArrayList<>();
     }
 
-    public void exec(String[] args, NshExecutionContext context) {
+    public int execImpl(String[] args, NshExecutionContext context) {
         NutsCommandLine commandLine = cmdLine(args, context);
         Options o = new Options();
         NutsArgument a;
@@ -157,6 +157,7 @@ public class SshCommand extends AbstractNshBuiltin {
             cmd.addAll(o.cmd);
             sshSession.grabOutputString(false).setFailFast(true).exec(cmd);
         }
+        return 0;
     }
 
 }

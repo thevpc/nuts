@@ -36,13 +36,13 @@ import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellExternalExecutor;
 public class NutsExternalExecutor implements JShellExternalExecutor {
     
     @Override
-    public void execExternalCommand(String[] command, JShellFileContext context) {
+    public int execExternalCommand(String[] command, JShellFileContext context) {
         NutsShellContext jc = (NutsShellContext) context.getShellContext();
-        jc.getWorkspace().exec().addCommand(command).setFailFast(true)
+        return jc.getWorkspace().exec().addCommand(command).setFailFast(true)
                 .setExecutionType(jc.getSession().getExecutionType())
                 .setDirectory(context.getCwd())
                 .setSession(jc.getSession())
-                .run();
+                .run().getResult();
     }
     
 }

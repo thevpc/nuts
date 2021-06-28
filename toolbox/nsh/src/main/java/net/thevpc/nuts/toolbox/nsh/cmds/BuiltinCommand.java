@@ -41,11 +41,12 @@ public class BuiltinCommand extends AbstractNshBuiltin {
     }
 
     @Override
-    public void exec(String[] args, NshExecutionContext context) {
+    public int execImpl(String[] args, NshExecutionContext context) {
         if (args.length > 0) {
             JShellBuiltin a = context.getGlobalContext().builtins().get(args[0]);
-            a.exec(Arrays.copyOfRange(args, 1, args.length), context);
+            return a.exec(Arrays.copyOfRange(args, 1, args.length), context);
         }
+        return 1;
     }
 
 }

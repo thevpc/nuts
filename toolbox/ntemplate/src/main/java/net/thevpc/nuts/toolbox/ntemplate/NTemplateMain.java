@@ -65,7 +65,7 @@ public class NTemplateMain implements NutsApplication {
 
             @Override
             public void onPrepare(NutsCommandLine commandline) {
-                fileTemplater= new NFileTemplater(appContext);
+                fileTemplater = new NFileTemplater(appContext);
             }
 
             @Override
@@ -84,7 +84,7 @@ public class NTemplateMain implements NutsApplication {
         public NshEvaluator(NutsApplicationContext appContext, FileTemplater fileTemplater) {
             this.appContext = appContext;
             this.fileTemplater = fileTemplater;
-            shell = new NutsJavaShell(appContext,new String[0]);
+            shell = new NutsJavaShell(appContext, new String[0]);
             shell.setSession(shell.getSession().copy());
             shell.getRootContext().vars().addVarListener(
                     new JShellVarListener() {
@@ -109,13 +109,15 @@ public class NTemplateMain implements NutsApplication {
                     .set(
                             new AbstractNshBuiltin("process", 10) {
                                 @Override
-                                public void exec(String[] args, NshExecutionContext context) {
+                                public int execImpl(String[] args, NshExecutionContext context) {
                                     if (args.length != 1) {
-                                        throw new IllegalStateException(getName() + " : invalid arguments count");
+                                        context.err().println(getName() + " : invalid arguments count");
+                                        return 1;
                                     }
                                     String pathString = args[0];
                                     fileTemplater.getLog().debug("eval", getName() + "(" + StringUtils.toLiteralString(pathString) + ")");
                                     fileTemplater.executeRegularFile(Paths.get(pathString), null);
+                                    return 0;
                                 }
                             }
                     );
@@ -139,9 +141,9 @@ public class NTemplateMain implements NutsApplication {
             );
             JShellFileContext ctx = shell.createSourceFileContext(
                     shell.getRootContext(),
-                    context.getSourcePath().orElseGet(()->"nsh"),new String[0]
+                    context.getSourcePath().orElseGet(() -> "nsh"), new String[0]
             );
-            shell.executeString(content,ctx);
+            shell.executeString(content, ctx);
             return out.toString();
         }
 
@@ -157,29 +159,30 @@ public class NTemplateMain implements NutsApplication {
             setProjectFileName("project.nsh");
             this.setLog(new TemplateLog() {
                 NutsLoggerOp logOp;
+
                 @Override
                 public void info(String title, String message) {
                     log().verb(NutsLogVerb.INFO).level(Level.FINER)
-                            .log( "{0} : {1}",title,message);
+                            .log("{0} : {1}", title, message);
                 }
 
                 @Override
                 public void debug(String title, String message) {
                     log().verb(NutsLogVerb.DEBUG).level(Level.FINER)
-                            .log( "{0} : {1}",title,message);
+                            .log("{0} : {1}", title, message);
                 }
 
                 @Override
                 public void error(String title, String message) {
-                    log().verb(NutsLogVerb.FAIL).level(Level.FINER).log( "{0} : {1}",title,message);
+                    log().verb(NutsLogVerb.FAIL).level(Level.FINER).log("{0} : {1}", title, message);
                 }
 
                 private NutsLoggerOp log() {
-                    if(logOp==null) {
-                         logOp = appContext.getWorkspace().log().of(NTemplateMain.class)
-                                 .with().session(appContext.getSession())
-                                 .style(NutsTextFormatStyle.JSTYLE)
-                                ;
+                    if (logOp == null) {
+                        logOp = appContext.getWorkspace().log().of(NTemplateMain.class)
+                                .with().session(appContext.getSession())
+                                .style(NutsTextFormatStyle.JSTYLE)
+                        ;
                     }
                     return logOp;
                 }
@@ -187,7 +190,7 @@ public class NTemplateMain implements NutsApplication {
         }
 
         public void executeProjectFile(Path path, String mimeTypesString) {
-            executeRegularFile(path,"text/ntemplate-nsh-project");
+            executeRegularFile(path, "text/ntemplate-nsh-project");
         }
     }
 }

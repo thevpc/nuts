@@ -10,5 +10,5 @@ package net.thevpc.nuts.toolbox.nsh.bundles.jshell;
  * @author thevpc
  */
 public interface UnsafeRunnable {
-    void run() throws Exception;
+    int run() throws Exception;
 }

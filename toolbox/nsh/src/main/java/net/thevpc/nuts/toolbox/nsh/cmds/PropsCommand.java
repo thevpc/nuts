@@ -75,7 +75,7 @@ public class PropsCommand extends AbstractNshBuiltin {
         String comments;
     }
 
-    public void exec(String[] args, NshExecutionContext context) {
+    public int execImpl(String[] args, NshExecutionContext context) {
         NutsCommandLine commandLine = cmdLine(args, context);
         Options o = new Options();
         NutsArgument a;
@@ -215,8 +215,7 @@ public class PropsCommand extends AbstractNshBuiltin {
         }
         switch (o.action) {
             case "get": {
-                action_get(context, o);
-                return;
+                return action_get(context, o);
             }
             case "set": {
                 Map<String, String> p = getProperties(o, context);
@@ -224,15 +223,13 @@ public class PropsCommand extends AbstractNshBuiltin {
                     for (Map.Entry<String, String> e : o.updates.entrySet()) {
                         p.put(e.getKey(),e.getValue());
                     }
-                    storeProperties(p,o,context);
+                    return storeProperties(p,o,context);
                 } catch (Exception ex) {
                     throw new NutsExecutionException(context.getSession(), ex.getMessage(), ex, 100);
                 }
-                return;
             }
             case "list": {
-                action_list(context, o);
-                return;
+                return action_list(context, o);
             }
             default: {
                 throw new NutsExecutionException(context.getSession(), "props: Unsupported action " + o.action, 2);
@@ -240,14 +237,16 @@ public class PropsCommand extends AbstractNshBuiltin {
         }
     }
 
-    private void action_list(NshExecutionContext context, Options o) {
+    private int action_list(NshExecutionContext context, Options o) {
         context.getWorkspace().formats().object().setSession(context.getSession()).setValue(getProperties(o, context)).print();
+        return 0;
     }
 
-    private void action_get(NshExecutionContext context, Options o) {
+    private int action_get(NshExecutionContext context, Options o) {
         Map<String,String> p = getProperties(o, context);
         String v = p.get(o.property);
         context.getWorkspace().formats().object().setSession(context.getSession()).setValue(v == null ? "" : v).print();
+        return 0;
     }
 
     private Map<String,String> getProperties(Options o, NshExecutionContext context) {
@@ -305,7 +304,7 @@ public class PropsCommand extends AbstractNshBuiltin {
         return p;
     }
 
-    private void storeProperties(Map<String,String> p, Options o, NshExecutionContext context) throws IOException {
+    private int storeProperties(Map<String,String> p, Options o, NshExecutionContext context) throws IOException {
         String targetFile = o.targetFile;
         boolean console = false;
         switch (o.targetType) {
@@ -370,6 +369,7 @@ public class PropsCommand extends AbstractNshBuiltin {
                 }
             }
         }
+        return 0;
     }
 
     @Override
