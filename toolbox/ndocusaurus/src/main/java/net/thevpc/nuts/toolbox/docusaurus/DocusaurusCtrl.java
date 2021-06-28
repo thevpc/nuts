@@ -5,18 +5,17 @@
  */
 package net.thevpc.nuts.toolbox.docusaurus;
 
-import net.thevpc.commons.filetemplate.*;
-import net.thevpc.commons.filetemplate.util.FileProcessorUtils;
-import net.thevpc.commons.filetemplate.util.StringUtils;
-import net.thevpc.commons.ljson.LJSON;
-import net.thevpc.commons.md.convert.Docusaurus2Asciidoctor;
-import net.thevpc.commons.md.docusaurus.DocusaurusFolder;
-import net.thevpc.commons.md.docusaurus.DocusaurusProject;
-import net.thevpc.jshell.*;
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.lib.md.convert.Docusaurus2Asciidoctor;
+import net.thevpc.nuts.lib.md.docusaurus.DocusaurusFolder;
+import net.thevpc.nuts.lib.md.docusaurus.DocusaurusProject;
 import net.thevpc.nuts.toolbox.nsh.AbstractNshBuiltin;
 import net.thevpc.nuts.toolbox.nsh.NshExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.NutsJavaShell;
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.*;
+import net.thevpc.nuts.toolbox.ntemplate.filetemplate.*;
+import net.thevpc.nuts.toolbox.ntemplate.filetemplate.util.FileProcessorUtils;
+import net.thevpc.nuts.toolbox.ntemplate.filetemplate.util.StringUtils;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -80,7 +79,11 @@ public class DocusaurusCtrl {
         } catch (IOException e) {
             throw new UncheckedIOException("Invalid Docusaurus Base Folder: " + project.getDocusaurusBaseFolder(), e);
         }
-        String genSidebarMenuString = project.getConfig().get("customFields.docusaurus.generateSidebarMenu").toString();
+        String genSidebarMenuString = project.getConfig()
+                .getSafeObject("customFields")
+                .getSafeObject("docusaurus")
+                .getSafe("generateSidebarMenu")
+                .toString();
         boolean genSidebarMenu=Boolean.parseBoolean(genSidebarMenuString);
         Path basePath = base;
         Path preProcessor = getPreProcessorBaseDir();
@@ -115,7 +118,7 @@ public class DocusaurusCtrl {
         if (genSidebarMenu) {
             DocusaurusFolder root = project.getPhysicalDocsFolder();
             root = new DocusaurusFolder(
-                    "someSidebar", "someSidebar", 0, LJSON.NULL, root.getChildren()
+                    "someSidebar", "someSidebar", 0, appContext.getWorkspace().elem().forNull(), root.getChildren()
             );
             String s = "module.exports = {\n" +
                     root.toJSON(1)
@@ -127,13 +130,18 @@ public class DocusaurusCtrl {
             }
 //            System.out.println(s);
         }
-        if (isBuildPdf() && !project.getConfig().get("customFields.asciidoctor.path").isUndefined()) {
+        if (isBuildPdf() && !project.getConfig().getSafeObject("customFields")
+                .getSafeObject("asciidoctor")
+                .getSafe("path")
+                .isNull()) {
             Docusaurus2Asciidoctor d2a = new Docusaurus2Asciidoctor(project);
             d2a.run();
         }
         if (isBuildWebSite()) {
             runNativeCommand(base, getEffectiveNpmCommandPath(), "run-script", "build");
-            String copyBuildPath = project.getConfig().get("customFields.copyBuildPath").asString();
+            String copyBuildPath = project.getConfig().getSafeObject("customFields")
+                    .getSafe("copyBuildPath")
+                    .asString();
             if (copyBuildPath != null && copyBuildPath.length() > 0) {
                 String fromPath = null;
                 try {
@@ -266,15 +274,15 @@ public class DocusaurusCtrl {
                     return project.getTitle();
                 }
                 default: {
-                    LJSON t = project.getConfig().get(varName.replace('.', '/'));
-                    if (t.isUndefined()) {
+                    NutsElement t = project.getConfig().get(varName.replace('.', '/'));
+                    if (t.isNull()) {
                         return null;
                     }
                     if (t.isString()) {
                         return t.asString();
                     }
                     if (t.isArray()) {
-                        return t.asStringArray();
+                        return t.asArray().stream().map(x->x.toString()).toArray(String[]::new);
                     }
                     return t.asString();
                 }
@@ -293,17 +301,18 @@ public class DocusaurusCtrl {
 
         @Override
         public void processPath(Path source, String mimeType, FileTemplater context) {
-            LJSON config = DocusaurusFolder.ofFolder(source.getParent(), Paths.get(context.getRootDirRequired()).resolve("docs"), 0)
-                    .getConfig().get("type");
+            NutsElement config = DocusaurusFolder.ofFolder(appContext.getSession(), source.getParent(), Paths.get(context.getRootDirRequired()).resolve("docs"), 0)
+                    .getConfig().asObject().getSafe("type");
             if (
-                    "javadoc".equals(config.get("name").asString())
-                            || "doc".equals(config.get("name").asString())
+                    "javadoc".equals(config.asObject().get("name").asString())
+                            || "doc".equals(config.asObject().get("name").asString())
             ) {
-                String[] sources = config.get("sources").asStringArray();
-                if (sources == null || sources.length == 0) {
+                String[] sources = config.asSafeObject().getSafeArray("sources")
+                        .stream().map(x->x.toString()).toArray(String[]::new);
+                if (sources.length == 0) {
                     throw new IllegalArgumentException("missing doc sources in " + source);
                 }
-                String[] packages = config.get("packages").asStringArray();
+                String[] packages = config.asSafeObject().getSafeArray("packages").stream().map(x->x.toString()).toArray(String[]::new);
                 String target = context.getPathTranslator().translatePath(source.getParent().toString());
                 if (target == null) {
                     throw new IllegalArgumentException("Invalid source " + source.getParent());

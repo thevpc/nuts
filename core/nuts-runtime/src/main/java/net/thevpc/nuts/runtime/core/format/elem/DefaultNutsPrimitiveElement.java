@@ -30,6 +30,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Objects;
 import net.thevpc.nuts.NutsPrimitiveElement;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsString;
 import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
@@ -48,8 +49,8 @@ class DefaultNutsPrimitiveElement extends AbstractNutsElement implements NutsPri
 
     private final Object value;
 
-    DefaultNutsPrimitiveElement(NutsElementType type, Object value) {
-        super(type);
+    DefaultNutsPrimitiveElement(NutsElementType type, Object value, NutsSession session) {
+        super(type,session);
         this.value = value;
     }
 

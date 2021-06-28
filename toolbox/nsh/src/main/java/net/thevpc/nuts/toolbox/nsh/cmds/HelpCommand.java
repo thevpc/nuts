@@ -37,7 +37,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
 
-import net.thevpc.jshell.JShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellBuiltin;
 
 /**
  * Created by vpc on 1/7/17.

@@ -32,7 +32,7 @@ import java.util.Map;
 import net.thevpc.nuts.NutsArgument;
 import net.thevpc.nuts.NutsSingleton;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
-import net.thevpc.jshell.JShellFunction;
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellFunction;
 import net.thevpc.nuts.NutsCommandLine;
 
 /**

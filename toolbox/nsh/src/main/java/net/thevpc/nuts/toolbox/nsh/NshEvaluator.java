@@ -25,9 +25,9 @@
  */
 package net.thevpc.nuts.toolbox.nsh;
 
-import net.thevpc.jshell.*;
-import net.thevpc.jshell.util.JavaShellNonBlockingInputStream;
-import net.thevpc.jshell.util.JavaShellNonBlockingInputStreamAdapter;
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.*;
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.util.JavaShellNonBlockingInputStream;
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.util.JavaShellNonBlockingInputStreamAdapter;
 import net.thevpc.nuts.NutsPrintStream;
 import net.thevpc.nuts.NutsSessionTerminal;
 import net.thevpc.nuts.NutsTerminalMode;

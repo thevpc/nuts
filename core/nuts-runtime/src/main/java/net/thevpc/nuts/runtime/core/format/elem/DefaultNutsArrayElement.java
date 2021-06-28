@@ -33,6 +33,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import net.thevpc.nuts.NutsArrayElement;
 import net.thevpc.nuts.NutsObjectElement;
+import net.thevpc.nuts.NutsSession;
 
 /**
  *
@@ -42,11 +43,13 @@ public class DefaultNutsArrayElement extends AbstractNutsArrayElement {
 
     private final NutsElement[] values;
 
-    public DefaultNutsArrayElement(Collection<NutsElement> values) {
+    public DefaultNutsArrayElement(Collection<NutsElement> values, NutsSession session) {
+        super(session);
         this.values = values.toArray(new NutsElement[0]);
     }
 
-    public DefaultNutsArrayElement(NutsElement[] values) {
+    public DefaultNutsArrayElement(NutsElement[] values,NutsSession session) {
+        super(session);
         this.values = Arrays.copyOf(values, values.length);
     }
 

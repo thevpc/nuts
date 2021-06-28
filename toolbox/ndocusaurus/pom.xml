@@ -59,24 +59,19 @@
             <version>0.8.1</version>
         </dependency>
         <dependency>
-            <groupId>net.thevpc.common</groupId>
-            <artifactId>thevpc-common-md-docusaurus</artifactId>
-            <version>1.2.0</version>
+            <groupId>net.thevpc.nuts.lib</groupId>
+            <artifactId>nlib-md</artifactId>
+            <version>0.8.1.0</version>
         </dependency>
         <dependency>
-            <groupId>net.thevpc.common</groupId>
-            <artifactId>thevpc-common-md-doc</artifactId>
-            <version>1.2.0</version>
+            <groupId>net.thevpc.nuts.toolbox</groupId>
+            <artifactId>ndoc</artifactId>
+            <version>0.8.1.0</version>
         </dependency>
         <dependency>
-            <groupId>net.thevpc.common</groupId>
-            <artifactId>thevpc-common-file-template</artifactId>
-            <version>1.1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>net.thevpc.common</groupId>
-            <artifactId>thevpc-common-md-docusaurus-to-asciidoctor</artifactId>
-            <version>1.2.0</version>
+            <groupId>net.thevpc.nuts.toolbox</groupId>
+            <artifactId>ntemplate</artifactId>
+            <version>0.8.1.0</version>
         </dependency>
         <dependency>
             <groupId>net.thevpc.nuts.toolbox</groupId>

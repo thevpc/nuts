@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages and libraries
  * for runtime execution. Nuts is the ultimate companion for maven (and other
@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -32,8 +32,8 @@ import java.util.stream.Stream;
  * JSON like parsable objects.
  *
  * @author thevpc
- * @since 0.5.6
  * @category Elements
+ * @since 0.5.6
  */
 public interface NutsObjectElement extends NutsElement, Iterable<NutsElementEntry> {
 
@@ -47,6 +47,26 @@ public interface NutsObjectElement extends NutsElement, Iterable<NutsElementEntr
     NutsElement get(String key);
 
     NutsElement get(NutsElement key);
+
+    NutsElement getSafe(String key);
+
+    Integer getSafeInt(String key);
+
+    Integer getSafeInt(String key, int def);
+
+    String getSafeString(String key);
+
+    String getSafeString(String key, String def);
+
+    NutsElement getSafe(NutsElement key);
+
+    NutsArrayElement getSafeArray(String key);
+
+    NutsArrayElement getSafeArray(NutsElement key);
+
+    NutsObjectElement getSafeObject(String key);
+
+    NutsObjectElement getSafeObject(NutsElement key);
 
     NutsArrayElement getArray(String key);
 

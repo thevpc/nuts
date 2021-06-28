@@ -53,19 +53,19 @@
             <version>0.8.1</version>
         </dependency>
         <dependency>
-            <groupId>net.thevpc.common</groupId>
-            <artifactId>thevpc-common-md-doc</artifactId>
-            <version>1.2.0</version>
+            <groupId>net.thevpc.nuts.lib</groupId>
+            <artifactId>nlib-md</artifactId>
+            <version>0.8.1.0</version>
         </dependency>
         <dependency>
-            <groupId>net.thevpc.common</groupId>
-            <artifactId>thevpc-common-md-docusaurus</artifactId>
-            <version>1.2.0</version>
+            <groupId>com.github.javaparser</groupId>
+            <artifactId>javaparser-symbol-solver-core</artifactId>
+            <version>3.16.1</version>
         </dependency>
         <dependency>
-            <groupId>net.thevpc.common</groupId>
-            <artifactId>thevpc-common-md-asciidoctor</artifactId>
-            <version>1.2.0</version>
+            <groupId>com.github.javaparser</groupId>
+            <artifactId>javaparser-core</artifactId>
+            <version>3.16.1</version>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>

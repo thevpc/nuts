@@ -23,7 +23,7 @@ Starred releases are most stable ones.
 - ADDED  : {api}   added support for parsing pom.xml (MAVEN) along with *.nuts (nuts descriptors)
 - ADDED  : {api}   added io killProcess support
 - CHANGED: {api}   added path API, implemented via nlib-ssh to add ssh support for paths
-- CHANGED: {all}   minimized dependencies, runtime has no dependencies, and others have minimum ones, and perhaps still shrinking
+- CHANGED: {all}   remove dependencies, runtime has no dependencies, and others have the bare minimum
 - CHANGED: {api}   session is from now on mandatory to perform any operation. A simple way to make it simple to use is to get a "session aware" workspace with session.getWorkspace()
 - ADDED  : {api}  added support for Yaml with minimal implementation
 - ADDED  : {api}  element now supports complex keys in Map Entries (Objects)

@@ -26,7 +26,7 @@
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.*;
-import net.thevpc.jshell.JShellAutoCompleteCandidate;
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellAutoCompleteCandidate;
 
 import java.util.*;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;

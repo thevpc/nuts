@@ -12,11 +12,8 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="nuts" />
-    <orderEntry type="module" module-name="thevpc-common-md-docusaurus" />
-    <orderEntry type="module" module-name="thevpc-common-ljson" />
-    <orderEntry type="library" name="Maven: org.hjson:hjson:3.0.0" level="project" />
-    <orderEntry type="module" module-name="thevpc-common-md" />
-    <orderEntry type="module" module-name="thevpc-common-md-doc" />
+    <orderEntry type="module" module-name="nlib-md" />
+    <orderEntry type="module" module-name="ndoc" />
     <orderEntry type="library" name="Maven: com.github.javaparser:javaparser-symbol-solver-core:3.16.1" level="project" />
     <orderEntry type="library" name="Maven: org.javassist:javassist:3.27.0-GA" level="project" />
     <orderEntry type="library" name="Maven: com.google.guava:guava:29.0-jre" level="project" />
@@ -27,12 +24,8 @@
     <orderEntry type="library" name="Maven: com.google.errorprone:error_prone_annotations:2.3.4" level="project" />
     <orderEntry type="library" name="Maven: com.google.j2objc:j2objc-annotations:1.3" level="project" />
     <orderEntry type="library" name="Maven: com.github.javaparser:javaparser-core:3.16.1" level="project" />
-    <orderEntry type="module" module-name="thevpc-common-file-template" />
-    <orderEntry type="module" module-name="thevpc-common-md-docusaurus-to-asciidoctor" />
-    <orderEntry type="module" module-name="thevpc-common-md-asciidoctor" />
-    <orderEntry type="library" name="Maven: org.yaml:snakeyaml:1.21" level="project" />
+    <orderEntry type="module" module-name="ntemplate" />
     <orderEntry type="module" module-name="nsh" />
-    <orderEntry type="module" module-name="jshell" />
     <orderEntry type="module" module-name="nlib-ssh" />
     <orderEntry type="library" name="Maven: com.jcraft:jsch:0.1.55" level="project" />
     <orderEntry type="library" name="Maven: org.jline:jline:3.5.2" level="project" />

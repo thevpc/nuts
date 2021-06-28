@@ -1,0 +1,8 @@
+##) ndiff:
+diff folders/files/jars (incubating)
+
+###) SYNOPSIS:
+```sh
+ndiff <path1> <path2>
+ ```
+generate code documentation

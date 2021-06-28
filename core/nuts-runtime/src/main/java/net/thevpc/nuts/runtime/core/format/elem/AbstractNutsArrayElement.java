@@ -26,6 +26,7 @@ package net.thevpc.nuts.runtime.core.format.elem;
 import java.util.stream.Collectors;
 import net.thevpc.nuts.NutsArrayElement;
 import net.thevpc.nuts.NutsElementType;
+import net.thevpc.nuts.NutsSession;
 
 /**
  *
@@ -35,8 +36,8 @@ public abstract class AbstractNutsArrayElement
         extends AbstractNutsElement
         implements NutsArrayElement{
 
-    public AbstractNutsArrayElement() {
-        super(NutsElementType.ARRAY);
+    public AbstractNutsArrayElement(NutsSession session) {
+        super(NutsElementType.ARRAY,session);
     }
     
     @Override

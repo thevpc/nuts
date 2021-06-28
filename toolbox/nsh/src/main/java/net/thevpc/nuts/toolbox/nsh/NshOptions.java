@@ -1,6 +1,6 @@
 package net.thevpc.nuts.toolbox.nsh;
 
-import net.thevpc.jshell.JShellOptions;
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellOptions;
 
 public class NshOptions extends JShellOptions {
 

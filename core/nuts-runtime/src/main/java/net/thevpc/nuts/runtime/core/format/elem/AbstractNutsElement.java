@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages and libraries
  * for runtime execution. Nuts is the ultimate companion for maven (and other
@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,24 +23,22 @@
  */
 package net.thevpc.nuts.runtime.core.format.elem;
 
+import net.thevpc.nuts.*;
+
 import java.time.Instant;
-import net.thevpc.nuts.NutsElementType;
-import net.thevpc.nuts.NutsElement;
-import net.thevpc.nuts.NutsArrayElement;
-import net.thevpc.nuts.NutsObjectElement;
-import net.thevpc.nuts.NutsPrimitiveElement;
-import net.thevpc.nuts.NutsString;
+import java.util.LinkedHashMap;
 
 /**
- *
  * @author thevpc
  */
 public abstract class AbstractNutsElement implements NutsElement {
 
+    protected transient NutsSession session;
     private NutsElementType type;
 
-    public AbstractNutsElement(NutsElementType type) {
+    public AbstractNutsElement(NutsElementType type, NutsSession session) {
         this.type = type;
+        this.session = session;
     }
 
     @Override
@@ -73,6 +71,22 @@ public abstract class AbstractNutsElement implements NutsElement {
     }
 
     @Override
+    public NutsObjectElement asSafeObject() {
+        if (this instanceof NutsObjectElement) {
+            return (NutsObjectElement) this;
+        }
+        return new DefaultNutsObjectElement(new LinkedHashMap<>(), session);
+    }
+
+    @Override
+    public NutsArrayElement asSafeArray() {
+        if (this instanceof NutsArrayElement) {
+            return (NutsArrayElement) this;
+        }
+        return new DefaultNutsArrayElement(new NutsElement[0], session);
+    }
+
+    @Override
     public boolean isPrimitive() {
         NutsElementType t = type();
         return t != NutsElementType.ARRAY && t != NutsElementType.OBJECT;
@@ -99,52 +113,6 @@ public abstract class AbstractNutsElement implements NutsElement {
 //    }
 
     @Override
-    public String asString() {
-        return asPrimitive().getString();
-    }
-
-    @Override
-    public boolean asBoolean() {
-        return asPrimitive().getBoolean();
-    }
-
-    @Override
-    public byte asByte() {
-        return asPrimitive().getByte();
-    }
-
-    @Override
-    public short asShort() {
-        return asPrimitive().getShort();
-    }
-
-    @Override
-    public int asInt() {
-        return asPrimitive().getInt();
-    }
-
-    @Override
-    public long asLong() {
-        return asPrimitive().getLong();
-    }
-
-
-    @Override
-    public float asFloat() {
-        return asPrimitive().getFloat();
-    }
-
-    @Override
-    public double asDouble() {
-        return asPrimitive().getDouble();
-    }
-
-    @Override
-    public Instant asInstant() {
-        return asPrimitive().getInstant();
-    }
-
-    @Override
     public boolean isNull() {
         NutsElementType t = type();
         return t == NutsElementType.NULL;
@@ -156,33 +124,15 @@ public abstract class AbstractNutsElement implements NutsElement {
         return t == NutsElementType.STRING;
     }
 
-//    @Override
-//    public boolean isNutsString() {
-//        NutsElementType t = type();
-//        return t == NutsElementType.NUTS_STRING;
-//    }
+    @Override
+    public boolean isByte() {
+        return type() == NutsElementType.BYTE;
+    }
 
     @Override
     public boolean isInt() {
         NutsElementType t = type();
         return t == NutsElementType.INTEGER;
-    }
-
-    @Override
-    public boolean isObject() {
-        NutsElementType t = type();
-        return t == NutsElementType.OBJECT;
-    }
-
-    @Override
-    public boolean isArray() {
-        NutsElementType t = type();
-        return t == NutsElementType.ARRAY;
-    }
-
-    @Override
-    public boolean isByte() {
-        return type() == NutsElementType.BYTE;
     }
 
     @Override
@@ -206,8 +156,85 @@ public abstract class AbstractNutsElement implements NutsElement {
     }
 
     @Override
+    public boolean isObject() {
+        NutsElementType t = type();
+        return t == NutsElementType.OBJECT;
+    }
+
+    @Override
+    public boolean isArray() {
+        NutsElementType t = type();
+        return t == NutsElementType.ARRAY;
+    }
+
+    @Override
     public boolean isInstant() {
         return type() == NutsElementType.INSTANT;
+    }
+
+    @Override
+    public String asString() {
+        return asPrimitive().getString();
+    }
+
+    @Override
+    public boolean asBoolean() {
+        return asPrimitive().getBoolean();
+    }
+
+//    @Override
+//    public boolean isNutsString() {
+//        NutsElementType t = type();
+//        return t == NutsElementType.NUTS_STRING;
+//    }
+
+    @Override
+    public byte asByte() {
+        return asPrimitive().getByte();
+    }
+
+    @Override
+    public double asDouble() {
+        return asPrimitive().getDouble();
+    }
+
+    @Override
+    public float asFloat() {
+        return asPrimitive().getFloat();
+    }
+
+    @Override
+    public Instant asInstant() {
+        return asPrimitive().getInstant();
+    }
+
+    @Override
+    public Integer asSafeInt() {
+        if (isInt()) {
+            return asInt();
+        }
+        return null;
+    }
+
+    @Override
+    public int asSafeInt(int def) {
+        Integer i = asSafeInt();
+        return i == null ? def : i;
+    }
+
+    @Override
+    public int asInt() {
+        return asPrimitive().getInt();
+    }
+
+    @Override
+    public long asLong() {
+        return asPrimitive().getLong();
+    }
+
+    @Override
+    public short asShort() {
+        return asPrimitive().getShort();
     }
 
 }

@@ -25,7 +25,7 @@
 */
 package net.thevpc.nuts.toolbox.nsh;
 
-import net.thevpc.jshell.JShellContext;
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellContext;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsWorkspace;
 

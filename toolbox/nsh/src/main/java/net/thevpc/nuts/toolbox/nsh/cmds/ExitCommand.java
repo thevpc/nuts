@@ -29,7 +29,7 @@ package net.thevpc.nuts.toolbox.nsh.cmds;
 import net.thevpc.nuts.NutsArgument;
 import net.thevpc.nuts.NutsSingleton;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
-import net.thevpc.jshell.JShellQuitException;
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellQuitException;
 import net.thevpc.nuts.NutsCommandLine;
 
 /**

@@ -1,7 +1,7 @@
 package net.thevpc.nuts.toolbox.nsh;
 
-import net.thevpc.jshell.JShellFileContext;
-import net.thevpc.jshell.JShellExecutionContext;
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellFileContext;
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellExecutionContext;
 import net.thevpc.nuts.NutsApplicationContext;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsWorkspace;

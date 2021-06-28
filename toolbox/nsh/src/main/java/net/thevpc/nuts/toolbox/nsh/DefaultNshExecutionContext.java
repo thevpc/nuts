@@ -1,8 +1,8 @@
 package net.thevpc.nuts.toolbox.nsh;
 
-import net.thevpc.jshell.JShellFileContext;
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellFileContext;
 import net.thevpc.nuts.*;
-import net.thevpc.jshell.JShellVariables;
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellVariables;
 
 import java.io.InputStream;
 import java.io.PrintStream;

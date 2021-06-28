@@ -35,7 +35,7 @@ import java.util.Set;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
-import net.thevpc.jshell.JShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellBuiltin;
 
 /**
  * Created by vpc on 1/7/17.

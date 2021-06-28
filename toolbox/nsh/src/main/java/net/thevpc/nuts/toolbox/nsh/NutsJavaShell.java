@@ -23,7 +23,7 @@
  */
 package net.thevpc.nuts.toolbox.nsh;
 
-import net.thevpc.jshell.*;
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.*;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.nsh.bundles._StringUtils;
 
@@ -44,25 +44,23 @@ public class NutsJavaShell extends JShell {
     private NutsApplicationContext appContext;
     private File histFile = null;
     private NutsId appId = null;
-    private NutsWorkspace workspace = null;
-
     public NutsJavaShell(NutsApplicationContext appContext, String[] args) {
-        this(appContext, null, appContext.getSession(), null, null, args);
+        this(appContext, null, null, args);
     }
 
     public NutsJavaShell(NutsWorkspace workspace, String[] args) {
-        this(workspace.apps().createApplicationContext(new String[]{}, Nsh.class, null, 0, null), workspace, null, null, null, args);
+        this(workspace.apps().createApplicationContext(new String[]{}, Nsh.class, null, 0, null), null, null, args);
     }
 
     public NutsJavaShell(NutsWorkspace workspace, NutsSession session, NutsId appId, String[] args) {
-        this(workspace.apps().createApplicationContext(new String[]{}, Nsh.class, null, 0, session), workspace, session, appId, null, args);
+        this(workspace.apps().createApplicationContext(new String[]{}, Nsh.class, null, 0, session), appId, null, args);
     }
 
     public NutsJavaShell(NutsWorkspace workspace, NutsSession session, NutsId appId, String serviceName, String[] args) {
-        this(workspace.apps().createApplicationContext(new String[]{}, Nsh.class, null, 0, session), workspace, session, appId, serviceName, args);
+        this(workspace.apps().createApplicationContext(new String[]{}, Nsh.class, null, 0, session), appId, serviceName, args);
     }
 
-    private NutsJavaShell(NutsApplicationContext appContext, NutsWorkspace workspace, NutsSession session, NutsId appId, String serviceName, String[] args) {
+    private NutsJavaShell(NutsApplicationContext appContext, NutsId appId, String serviceName, String[] args) {
         super(resolveServiceName(appContext, serviceName, appId), resolveArgs(appContext, args), new NshOptionsParser(appContext),
                 new NshEvaluator(), new NutsCommandTypeResolver(), new NutsErrorHandler(), new NutsExternalExecutor(),
                 null
@@ -71,17 +69,8 @@ public class NutsJavaShell extends JShell {
         this.appContext = appContext;
         this.appId = appId;
         //super.setCwd(workspace.getConfigManager().getCwd());
-        if (session == null) {
-            session = this.appContext.getWorkspace().createSession();
-        }
-        if (workspace != null) {
-            this.workspace = workspace;
-        } else {
-            this.workspace = appContext.getWorkspace();
-        }
-
         if (this.appId == null) {
-            this.appId = getWorkspace().id().setSession(session).resolveId(NutsJavaShell.class);
+            this.appId = appContext.getWorkspace().id().resolveId(NutsJavaShell.class);
         }
         if (this.appId == null) {
             throw new IllegalArgumentException("unable to resolve application id");
@@ -93,10 +82,10 @@ public class NutsJavaShell extends JShell {
 
         this.appContext.getWorkspace().env().setProperty(JShellFileContext.class.getName(), _rootContext
         );
-        _nrootContext.setSession(session);
+        _nrootContext.setSession(appContext.getSession());
         //add default commands
         List<NshBuiltin> allCommand = new ArrayList<>();
-        NutsSupportLevelContext<NutsJavaShell> constraints = new NutsDefaultSupportLevelContext<>(session, this);
+        NutsSupportLevelContext<NutsJavaShell> constraints = new NutsDefaultSupportLevelContext<>(appContext.getSession(), this);
 
         for (NshBuiltin command : this.appContext.getWorkspace().extensions().
                 createServiceLoader(NshBuiltin.class, NutsJavaShell.class, NshBuiltin.class.getClassLoader())
@@ -141,7 +130,7 @@ public class NutsJavaShell extends JShell {
     }
 
     public NutsShellContext getNutsShellContext() {
-        JShellFileContext f = (JShellFileContext) workspace.env().getProperty(JShellFileContext.class.getName());
+        JShellFileContext f = (JShellFileContext) getWorkspace().env().getProperty(JShellFileContext.class.getName());
         return (NutsShellContext) f.getShellContext();
 
     }
@@ -155,7 +144,7 @@ public class NutsJavaShell extends JShell {
     }
 
     public NutsWorkspace getWorkspace() {
-        return this.workspace;
+        return this.appContext.getWorkspace();
     }
 
     public void setWorkspace(NutsWorkspace workspace) {

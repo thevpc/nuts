@@ -28,10 +28,10 @@ package net.thevpc.nuts.toolbox.nsh;
 
 import java.io.File;
 
-import net.thevpc.jshell.JShellFileContext;
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellFileContext;
 import net.thevpc.nuts.NutsExecutableInformation;
-import net.thevpc.jshell.JShellCommandType;
-import net.thevpc.jshell.JShellCommandTypeResolver;
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellCommandType;
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellCommandTypeResolver;
 
 /**
  *

@@ -23,8 +23,8 @@
  */
 package net.thevpc.nuts.toolbox.nsh;
 
-import net.thevpc.jshell.*;
-import net.thevpc.jshell.JShellNode;
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.*;
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellNode;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.nsh.bundles._StringUtils;
 

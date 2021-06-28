@@ -13,6 +13,8 @@
 
         <module>lib/nlib-talk-agent</module>
         <module>lib/nlib-ssh</module>
+        <module>lib/nlib-md</module>
+
         <module>toolbox/ntalk-agent</module>
 
         <module>core/nuts-runtime</module>
@@ -24,6 +26,7 @@
         <module>toolbox/nadmin</module>
         <module>toolbox/nsh</module>
         <module>toolbox/nserver</module>
+        <module>toolbox/ndiff</module>
         <module>toolbox/ncode</module>
         <module>toolbox/ntemplate</module>
         <module>toolbox/nwork</module>

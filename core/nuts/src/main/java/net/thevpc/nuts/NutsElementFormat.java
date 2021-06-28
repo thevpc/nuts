@@ -203,6 +203,63 @@ public interface NutsElementFormat extends NutsObjectFormat {
     <T> T parse(File file, Class<T> clazz);
 
     /**
+     * parse url as a valid object of the given type
+     *
+     * @param url source url
+     * @return element
+     */
+    NutsElement parse(URL url);
+
+    /**
+     * parse inputStream as a valid object of the given type
+     *
+     * @param inputStream source inputStream
+     * @return element
+     */
+    NutsElement parse(InputStream inputStream);
+
+    /**
+     * parse string as a valid NutsElement.
+     * If the string is null, NutsElement.NULL is returned
+     *
+     * @param string source as json string
+     * @return element
+     */
+    NutsElement parse(String string);
+
+    /**
+     * parse bytes as a valid object of the given type
+     *
+     * @param bytes source bytes
+     * @return element
+     */
+    NutsElement parse(byte[] bytes);
+
+    /**
+     * parse reader as a valid object of the given type
+     *
+     * @param reader source reader
+     * @return element
+     */
+    NutsElement parse(Reader reader);
+
+    /**
+     * parse file as a valid object of the given type
+     *
+     * @param file source url
+     * @return element
+     */
+    NutsElement parse(Path file);
+
+    /**
+     * parse file as a valid object of the given type
+     *
+     * @param file source URL
+     * @return element
+     */
+    NutsElement parse(File file);
+
+    /**
      * convert element to the specified object if applicable or throw an
      * exception.
      *

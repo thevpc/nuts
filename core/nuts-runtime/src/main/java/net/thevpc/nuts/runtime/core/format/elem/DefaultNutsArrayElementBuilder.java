@@ -256,7 +256,7 @@ public class DefaultNutsArrayElementBuilder implements NutsArrayElementBuilder {
 
     @Override
     public NutsArrayElement build() {
-        return new DefaultNutsArrayElement(values);
+        return new DefaultNutsArrayElement(values,session);
     }
 
     @Override

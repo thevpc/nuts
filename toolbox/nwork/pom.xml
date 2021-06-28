@@ -65,9 +65,9 @@
             <version>0.8.1</version>
         </dependency>
         <dependency>
-            <groupId>net.thevpc.common</groupId>
-            <artifactId>thevpc-common-diff-jar</artifactId>
-            <version>1.1.0</version>
+            <groupId>net.thevpc.nuts.toolbox</groupId>
+            <artifactId>ndiff</artifactId>
+            <version>0.8.1.0</version>
         </dependency>
     </dependencies>
     <build>

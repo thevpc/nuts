@@ -1,8 +1,8 @@
 package net.thevpc.nuts.toolbox.ndoc;
 
 import net.thevpc.nuts.*;
-import net.thevpc.commons.md.doc.MdDoclet;
-import net.thevpc.commons.md.doc.MdDocletConfig;
+import net.thevpc.nuts.toolbox.ndoc.doc.MdDoclet;
+import net.thevpc.nuts.toolbox.ndoc.doc.MdDocletConfig;
 
 import java.util.ArrayList;
 import java.util.List;

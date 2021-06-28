@@ -32,7 +32,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import net.thevpc.nuts.*;
-import net.thevpc.jshell.JShellHistory;
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellHistory;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 
 /**

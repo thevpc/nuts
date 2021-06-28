@@ -12,6 +12,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="nuts" />
-    <orderEntry type="module" module-name="thevpc-common-diff-jar" />
+    <orderEntry type="module" module-name="ndiff" />
   </component>
 </module>

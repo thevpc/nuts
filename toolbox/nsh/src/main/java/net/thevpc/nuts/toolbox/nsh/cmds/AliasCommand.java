@@ -35,7 +35,7 @@ import net.thevpc.nuts.NutsArgument;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsSingleton;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
-import net.thevpc.jshell.JShell;
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShell;
 import net.thevpc.nuts.NutsCommandLine;
 
 /**

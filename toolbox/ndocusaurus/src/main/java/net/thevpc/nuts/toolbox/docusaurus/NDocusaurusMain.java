@@ -1,7 +1,7 @@
 package net.thevpc.nuts.toolbox.docusaurus;
 
 import net.thevpc.nuts.*;
-import net.thevpc.commons.md.docusaurus.DocusaurusProject;
+import net.thevpc.nuts.lib.md.docusaurus.DocusaurusProject;
 
 public class NDocusaurusMain implements NutsApplication {
 
@@ -62,7 +62,7 @@ public class NDocusaurusMain implements NutsApplication {
                 if (workdir == null) {
                     workdir = ".";
                 }
-                DocusaurusProject docusaurusProject = new DocusaurusProject(workdir);
+                DocusaurusProject docusaurusProject = new DocusaurusProject(workdir,appContext.getSession());
                 new DocusaurusCtrl(docusaurusProject,appContext)
                         .setBuildWebSite(build)
                         .setStartWebSite(start)

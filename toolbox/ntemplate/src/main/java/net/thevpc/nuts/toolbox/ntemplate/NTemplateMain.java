@@ -1,16 +1,17 @@
 package net.thevpc.nuts.toolbox.ntemplate;
 
-import net.thevpc.commons.filetemplate.*;
-import net.thevpc.commons.filetemplate.util.StringUtils;
-import net.thevpc.jshell.*;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.nsh.AbstractNshBuiltin;
 import net.thevpc.nuts.toolbox.nsh.NshExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.NutsJavaShell;
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.*;
+import net.thevpc.nuts.toolbox.ntemplate.filetemplate.ExprEvaluator;
+import net.thevpc.nuts.toolbox.ntemplate.filetemplate.FileTemplater;
+import net.thevpc.nuts.toolbox.ntemplate.filetemplate.TemplateConfig;
+import net.thevpc.nuts.toolbox.ntemplate.filetemplate.TemplateLog;
+import net.thevpc.nuts.toolbox.ntemplate.filetemplate.util.StringUtils;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.logging.Level;

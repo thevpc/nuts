@@ -28,7 +28,7 @@ package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import java.util.Arrays;
 import net.thevpc.nuts.toolbox.nsh.AbstractNshBuiltin;
-import net.thevpc.jshell.JShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.NshExecutionContext;
 
 /**

@@ -26,7 +26,7 @@
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.*;
-import net.thevpc.jshell.JShellResult;
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellResult;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 
 /**

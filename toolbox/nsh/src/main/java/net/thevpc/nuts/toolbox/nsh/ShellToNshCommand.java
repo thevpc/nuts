@@ -1,6 +1,6 @@
 package net.thevpc.nuts.toolbox.nsh;
 
-import net.thevpc.jshell.JShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellBuiltin;
 
 public class ShellToNshCommand extends AbstractNshBuiltin {
 

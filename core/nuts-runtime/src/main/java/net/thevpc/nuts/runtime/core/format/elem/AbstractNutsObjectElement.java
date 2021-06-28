@@ -25,14 +25,15 @@ package net.thevpc.nuts.runtime.core.format.elem;
 
 import net.thevpc.nuts.NutsElementType;
 import net.thevpc.nuts.NutsObjectElement;
+import net.thevpc.nuts.NutsSession;
 
 /**
  *
  * @author vpc
  */
 public abstract class AbstractNutsObjectElement extends AbstractNutsElement implements NutsObjectElement{
-    public AbstractNutsObjectElement() {
-        super(NutsElementType.OBJECT);
+    public AbstractNutsObjectElement(NutsSession session) {
+        super(NutsElementType.OBJECT,session);
     }
     
 }

@@ -1,7 +1,7 @@
 package net.thevpc.nuts.toolbox.nsh;
 
-import net.thevpc.jshell.DefaultJShellOptionsParser;
-import net.thevpc.jshell.JShellOptions;
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.DefaultJShellOptionsParser;
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellOptions;
 import net.thevpc.nuts.NutsApplicationContext;
 import net.thevpc.nuts.NutsCommandLine;
 

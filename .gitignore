@@ -1,5 +1,7 @@
 # Project exclude paths
 /.idea/
+/toolbox/ndoc/target
+/toolbox/ndiff/target
 /core/nuts-runtime-test/runtime
 /core/nuts-runtime/nbproject/
 /core/nuts-runtime/nuts-runtime.iml
@@ -23,6 +25,7 @@
 /lib/nlib-template/target/
 /lib/nlib-tomcat-classloader/target/
 /lib/nlib-ssh/target/
+/lib/nlib-md/target/
 /lsp/conf/
 /lsp/log/
 /lsp/log/*.log
@@ -46,6 +49,7 @@
 /toolbox/nserver/target/
 /toolbox/nsh/nsh.iml
 /toolbox/nsh/target/
+/toolbox/nsh/runtime
 /toolbox/ntalk-agent/target/
 /toolbox/ntasks/target/
 /toolbox/ntemplate/target/
@@ -56,7 +60,6 @@
 /toolbox/nversion/target/
 /toolbox/nwar/target/
 /toolbox/nwork/target/
-/toolbox/worky/worky.iml
 /website/nuts/nbproject/private/
 /web-toolbox/nwar/target/
 /toolbox/nnote/target/

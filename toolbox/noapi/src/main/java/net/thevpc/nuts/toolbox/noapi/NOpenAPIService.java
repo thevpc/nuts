@@ -1,12 +1,12 @@
 package net.thevpc.nuts.toolbox.noapi;
 
-import net.thevpc.commons.md.*;
-import net.thevpc.commons.md.asciidoctor.AsciiDoctorWriter;
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.lib.md.*;
+import net.thevpc.nuts.lib.md.asciidoctor.AsciiDoctorWriter;
 import org.asciidoctor.Asciidoctor;
 import org.asciidoctor.OptionsBuilder;
 import org.asciidoctor.SafeMode;
-import org.yaml.snakeyaml.Yaml;
+//import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -134,8 +134,9 @@ public class NOpenAPIService {
         if (json) {
             return appContext.getWorkspace().elem().setContentType(NutsContentType.JSON).parse(inputStream, NutsElement.class);
         } else {
-            final Object o = new Yaml().load(inputStream);
-            return appContext.getWorkspace().elem().toElement(o);
+            return appContext.getWorkspace().elem().setContentType(NutsContentType.YAML).parse(inputStream, NutsElement.class);
+//            final Object o = new Yaml().load(inputStream);
+//            return appContext.getWorkspace().elem().toElement(o);
         }
     }
 

@@ -23,7 +23,7 @@
         </dependency>
         <dependency>
             <groupId>net.thevpc.nuts.lib</groupId>
-            <artifactId>nuts-servlet</artifactId>
+            <artifactId>nlib-servlet</artifactId>
             <version>0.8.1.0</version>
         </dependency>
     </dependencies>

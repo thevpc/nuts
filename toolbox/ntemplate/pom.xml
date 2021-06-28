@@ -65,11 +65,6 @@
             <version>0.8.1</version>
         </dependency>
         <dependency>
-            <groupId>net.thevpc.common</groupId>
-            <artifactId>thevpc-common-file-template</artifactId>
-            <version>1.1.0</version>
-        </dependency>
-        <dependency>
             <groupId>net.thevpc.nuts.toolbox</groupId>
             <artifactId>nsh</artifactId>
             <version>0.8.1.0</version>

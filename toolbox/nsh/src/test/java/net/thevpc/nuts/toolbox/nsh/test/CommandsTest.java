@@ -79,7 +79,7 @@ public class CommandsTest {
             StringBuilder out = new StringBuilder();
             StringBuilder err = new StringBuilder();
             c.executeCommand(new String[]{"env"}, null, out, err);
-            Assertions.assertTrue(out.toString().contains("#####PWD "));
+            Assertions.assertTrue(out.toString().contains("PWD="));
             Assertions.assertEquals("", err.toString());
         }
         {

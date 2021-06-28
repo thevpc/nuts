@@ -33,7 +33,7 @@ import net.thevpc.nuts.NutsArgumentName;
 import net.thevpc.nuts.NutsCommandAutoComplete;
 import net.thevpc.nuts.NutsCommandLineManager;
 import net.thevpc.nuts.toolbox.nsh.NutsShellContext;
-import net.thevpc.jshell.JShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellBuiltin;
 
 /**
  *

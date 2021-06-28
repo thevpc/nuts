@@ -31,8 +31,8 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.thevpc.jshell.JShellBuiltin;
-import net.thevpc.jshell.JShellBuiltinManager;
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellBuiltinManager;
 
 /**
  *

@@ -65,23 +65,27 @@ public interface NutsElement {
      */
     NutsArrayElement asArray();
 
-    public boolean isPrimitive();
+    NutsObjectElement asSafeObject();
 
-    public boolean isNumber();
+    NutsArrayElement asSafeArray();
 
-    public boolean isNull();
+    boolean isPrimitive();
 
-    public boolean isString();
+    boolean isNumber();
+
+    boolean isNull();
+
+    boolean isString();
 
 //    public boolean isNutsString();
 
-    public boolean isByte();
+    boolean isByte();
 
-    public boolean isInt();
+    boolean isInt();
 
-    public boolean isLong();
+    boolean isLong();
 
-    public boolean isShort();
+    boolean isShort();
 
     public boolean isFloat();
 
@@ -108,6 +112,10 @@ public interface NutsElement {
     float asFloat();
 
     Instant asInstant();
+
+    Integer asSafeInt();
+
+    int asSafeInt(int def);
 
     int asInt();
 

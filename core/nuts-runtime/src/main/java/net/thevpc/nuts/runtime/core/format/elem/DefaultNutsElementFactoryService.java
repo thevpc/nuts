@@ -524,7 +524,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         public NutsElement createElement(Object o, Type typeOfSrc, NutsElementFactoryContext context) {
             Collection<Object> coll = (Collection) o;
             List<NutsElement> collect = coll.stream().map(x -> context.objectToElement(x, null)).collect(Collectors.toList());
-            return new DefaultNutsArrayElement(collect);
+            return new DefaultNutsArrayElement(collect,context.getSession());
         }
 
         public Collection fillObject(NutsElement o, Collection coll, Type elemType, Type to, NutsElementFactoryContext context) {
@@ -603,7 +603,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
             while (nl.hasNext()) {
                 values.add(context.objectToElement(nl.next(), null));
             }
-            return new DefaultNutsArrayElement(values);
+            return new DefaultNutsArrayElement(values,context.getSession());
         }
 
         @Override
@@ -1735,10 +1735,11 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
             for (int i = 0; i < length; i++) {
                 preloaded.add(context.objectToElement(Array.get(array, i), null));
             }
-            return new DefaultNutsArrayElement(preloaded);
+            return new DefaultNutsArrayElement(preloaded,context.getSession());
         } else {
             return new DefaultNutsArrayElement(
                     Arrays.stream((Object[]) array).map(x -> context.objectToElement(x, null)).collect(Collectors.toList())
+                    ,context.getSession()
             );
         }
     }
