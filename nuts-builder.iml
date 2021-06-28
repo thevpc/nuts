@@ -5,6 +5,18 @@
     <output-test url="file://$MODULE_DIR$/target/test-classes" />
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/target" />
+      <excludeFolder url="file://$MODULE_DIR$/core/nutsc/build" />
+      <excludeFolder url="file://$MODULE_DIR$/core/nutsc/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/lsp/conf" />
+      <excludeFolder url="file://$MODULE_DIR$/lsp/log" />
+      <excludeFolder url="file://$MODULE_DIR$/toolbox/nclown/src/main/webapp/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/toolbox/nclown/node" />
+      <excludeFolder url="file://$MODULE_DIR$/toolbox/nclown/node_modules" />
+      <excludeFolder url="file://$MODULE_DIR$/toolbox/nclown/target" />
+      <excludeFolder url="file://$MODULE_DIR$/website/.docusaurus" />
+      <excludeFolder url="file://$MODULE_DIR$/website/build" />
+      <excludeFolder url="file://$MODULE_DIR$/website/docs" />
+      <excludeFolder url="file://$MODULE_DIR$/website/node_modules" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

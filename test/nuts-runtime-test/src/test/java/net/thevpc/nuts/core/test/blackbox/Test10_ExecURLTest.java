@@ -5,7 +5,6 @@
  */
 package net.thevpc.nuts.core.test.blackbox;
 
-import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.Nuts;
 import net.thevpc.nuts.NutsOsFamily;

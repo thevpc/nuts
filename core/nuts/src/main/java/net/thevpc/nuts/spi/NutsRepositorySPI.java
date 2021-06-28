@@ -196,6 +196,7 @@ public interface NutsRepositorySPI {
     /**
      * true if fetch mode is accepted
      * @param mode fetch mode
+     * @param session session
      * @return true if fetch mode is accepted
      */
     boolean isAcceptFetchMode(NutsFetchMode mode, NutsSession session);

@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.thevpc.nuts.runtime.core.filters.installstatus.NutsInstallStatusFilter2;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import org.junit.jupiter.api.*;
 

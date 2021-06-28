@@ -1,4 +1,4 @@
-package net.thevpc.nuts.core.test.whitebox.utilities;
+package net.thevpc.nuts.core.test.deprecated;
 
 ///*
 // * To change this license header, choose License Headers in Project Properties.

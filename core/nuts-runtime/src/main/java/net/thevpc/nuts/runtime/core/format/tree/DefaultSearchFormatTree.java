@@ -5,7 +5,6 @@
  */
 package net.thevpc.nuts.runtime.core.format.tree;
 
-import java.io.PrintStream;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +13,6 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.format.NutsIdFormatHelper;
 import net.thevpc.nuts.runtime.core.format.DefaultSearchFormatBase;
 import net.thevpc.nuts.runtime.core.format.NutsFetchDisplayOptions;
-import sun.java2d.pipe.SpanShapeRenderer.Simple;
 
 /**
  * @author thevpc

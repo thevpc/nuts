@@ -55,8 +55,6 @@
 /toolbox/ntemplate/target/
 /toolbox/ntemplater/target/
 /toolbox/ntomcat/target/
-/toolbox/nuts-server/nuts-server.iml
-/toolbox/nuts-server/target
 /toolbox/nversion/target/
 /toolbox/nwar/target/
 /toolbox/nwork/target/
@@ -64,4 +62,4 @@
 /web-toolbox/nwar/target/
 /toolbox/nnote/target/
 /toolbox/ndb/target/
-/core/nuts-runtime-test/target/
+/test/nuts-runtime-test/target/

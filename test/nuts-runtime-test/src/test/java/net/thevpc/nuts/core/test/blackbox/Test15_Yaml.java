@@ -25,14 +25,8 @@ package net.thevpc.nuts.core.test.blackbox;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
+
 import net.thevpc.nuts.Nuts;
-import net.thevpc.nuts.NutsArgument;
 import net.thevpc.nuts.NutsContentType;
 import net.thevpc.nuts.NutsElement;
 import net.thevpc.nuts.NutsOsFamily;
@@ -41,7 +35,6 @@ import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
