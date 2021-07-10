@@ -34,6 +34,6 @@ public class SimpleQuotedContext extends AbstractContext {
             }
         }
         processed=true;
-        return new Token("'",sb.toString());
+        return new Token("'",sb.toString(),"'"+sb.toString()+"'");
     }
 }

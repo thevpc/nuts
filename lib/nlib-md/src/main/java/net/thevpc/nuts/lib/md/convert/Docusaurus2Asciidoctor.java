@@ -21,7 +21,7 @@ import java.nio.file.Paths;
  */
 public class Docusaurus2Asciidoctor {
 
-    protected Path adocFile;
+//    protected Path adocFile;
     protected Path pdfFile;
     protected boolean generatePdf;
     protected DocusaurusProject project;
@@ -31,19 +31,34 @@ public class Docusaurus2Asciidoctor {
     }
 
     public Docusaurus2Asciidoctor(File project, NutsSession session) {
-        this.project = new DocusaurusProject(project.getPath(),session);
+        this.project = new DocusaurusProject(project.getPath(),null,session);
     }
 
-    public void run() {
-        Docusaurus2Adoc d2a = new Docusaurus2Adoc(project);
+    public Path getPdfFile() {
+        return new Adoc2Pdf().getPdfFile(getAdoc2PdfConfig());
+    }
+
+    public Path getAdocFile() {
         String asciiDoctorBaseFolder = getAsciiDoctorBaseFolder();
         String pn = project.getProjectName();
         if (pn == null || pn.isEmpty()) {
             pn = "docusaurus";
         }
-        adocFile = toCanonicalFile(Paths.get(asciiDoctorBaseFolder).resolve(pn + ".adoc"));
-        d2a.run(adocFile);
+        return toCanonicalFile(Paths.get(asciiDoctorBaseFolder).resolve(pn + ".adoc"));
+    }
+
+    public void createAdocFile() {
+        Docusaurus2Adoc d2a = new Docusaurus2Adoc(project);
+        d2a.run(getAdocFile());
+    }
+
+    public void createPdfFile() {
         pdfFile = new Adoc2Pdf().generatePdf(getAdoc2PdfConfig());
+    }
+
+    public void run() {
+        createAdocFile();
+        createPdfFile();
     }
 
     private Path toCanonicalFile(Path path) {
@@ -58,7 +73,7 @@ public class Docusaurus2Asciidoctor {
                 .stream().map(x->x.asString()).toArray(String[]::new));
         config.setWorkDir(toCanonicalFile(Paths.get(project.getDocusaurusBaseFolder())).toString());
         config.setBaseDir(toCanonicalFile(Paths.get(getAsciiDoctorBaseFolder())).toString());
-        config.setInputAdoc(adocFile.toString());
+        config.setInputAdoc(getAdocFile().toString());
         NutsElement output = asciiDoctorConfig.getSafeObject("pdf").getSafe("output");
         String pdfFile=project.getProjectName();
         if(output.isString()){

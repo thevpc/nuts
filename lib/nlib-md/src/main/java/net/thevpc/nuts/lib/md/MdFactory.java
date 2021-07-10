@@ -79,7 +79,7 @@ public class MdFactory {
     }
 
     public static MdElement title(int depth, String e) {
-        return new MdTitle("", e, depth);
+        return new MdTitle("", new MdText(e), depth);
     }
 
     public static MdElement seq(MdElement... arr) {
@@ -155,7 +155,7 @@ public class MdFactory {
     public static MdProvider getProvider(String mimeType) {
         MdProvider provider = findProvider(mimeType);
         if (provider == null) {
-            throw new NoSuchElementException("No markdown provider for : " + mimeType);
+            throw new NoSuchElementException("no markdown provider for : " + mimeType);
         }
         return provider;
     }

@@ -34,7 +34,7 @@ public DefaultNutsDescriptorManager(NutsWorkspace workspace) {
 
     @Override
     public NutsDescriptorParser parser() {
-        return new DefaultNutsDescriptorParser(workspace);
+        return new DefaultNutsDescriptorParser(workspace).setSession(getSession());
     }
 
 

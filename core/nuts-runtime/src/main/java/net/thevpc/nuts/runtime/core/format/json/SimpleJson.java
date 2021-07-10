@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages and libraries
  * for runtime execution. Nuts is the ultimate companion for maven (and other
@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,19 +23,13 @@
  */
 package net.thevpc.nuts.runtime.core.format.json;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.UncheckedIOException;
-
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.format.elem.NutsElementStreamFormat;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 
+import java.io.*;
+
 /**
- *
  * @author vpc
  */
 public class SimpleJson implements NutsElementStreamFormat {
@@ -44,11 +38,6 @@ public class SimpleJson implements NutsElementStreamFormat {
 
     public SimpleJson(NutsWorkspace ws) {
         this.ws = ws;
-    }
-
-    @Override
-    public void printElement(NutsElement value, NutsPrintStream out, boolean compact, NutsElementFactoryContext context) {
-        write(out, value, compact);
     }
 
     public NutsElement parseElement(String string, NutsElementFactoryContext context) {
@@ -82,8 +71,8 @@ public class SimpleJson implements NutsElementStreamFormat {
                 break;
             }
             case INSTANT:
-            case STRING: 
-//            case NUTS_STRING: 
+            case STRING:
+//            case NUTS_STRING:
             {
                 StringBuilder sb = new StringBuilder("\"");
                 final String str = data.asPrimitive().getString();
@@ -226,6 +215,11 @@ public class SimpleJson implements NutsElementStreamFormat {
         return new ElementParser(context).parseElement(reader);
     }
 
+    @Override
+    public void printElement(NutsElement value, NutsPrintStream out, boolean compact, NutsElementFactoryContext context) {
+        write(out, value, compact);
+    }
+
     private static class ElementParser {
 
         private BufferedReader reader;
@@ -251,9 +245,9 @@ public class SimpleJson implements NutsElementStreamFormat {
             lineOffset = 0;
             current = 0;
             readNext();
-            skipWhiteSpace();
+            skipWhiteSpaceAndComments();
             NutsElement e = readValue();
-            skipWhiteSpace();
+            skipWhiteSpaceAndComments();
             if (current != -1) {
                 throw error("unexpected character");
             }
@@ -263,16 +257,25 @@ public class SimpleJson implements NutsElementStreamFormat {
         private NutsElement readValue() {
             switch (current) {
                 case 'n': {
-                    readTerminal("null");
-                    return builder().forNull();
+                    String n = readStringLiteralUnQuoted();
+                    if ("null".equals(n)) {
+                        return builder().forNull();
+                    }
+                    return builder().forString(n);
                 }
                 case 't': {
-                    readTerminal("true");
-                    return builder().forTrue();
+                    String n = readStringLiteralUnQuoted();
+                    if ("true".equals(n)) {
+                        return builder().forTrue();
+                    }
+                    return builder().forString(n);
                 }
                 case 'f': {
-                    readTerminal("false");
-                    return builder().forFalse();
+                    String n = readStringLiteralUnQuoted();
+                    if ("false".equals(n)) {
+                        return builder().forFalse();
+                    }
+                    return builder().forString(n);
                 }
                 case '0':
                 case '1':
@@ -288,7 +291,9 @@ public class SimpleJson implements NutsElementStreamFormat {
                 case '-': {
                     return readNumber();
                 }
-                case '"': {
+                case '"':
+                case '\'':
+                case '`': {
                     return readJsonString();
                 }
                 case '[': {
@@ -297,22 +302,30 @@ public class SimpleJson implements NutsElementStreamFormat {
                 case '{': {
                     return readJsonObject();
                 }
-                default:
+                default: {
+                    if (Character.isAlphabetic(current)) {
+                        return readJsonString();
+                    }
                     throw expected("value");
+                }
             }
         }
 
         private NutsElement readJsonArray() {
             NutsArrayElementBuilder array = builder().forArray();
             readNext();
-            skipWhiteSpace();
+            skipWhiteSpaceAndComments();
             if (readChar(']')) {
                 return array.build();
             }
             do {
-                skipWhiteSpace();
+                skipWhiteSpaceAndComments();
+                //this happens with trailing ',]'
+                if (current == ']') {
+                    break;
+                }
                 array.add(readValue());
-                skipWhiteSpace();
+                skipWhiteSpaceAndComments();
             } while (readChar(','));
             if (!readChar(']')) {
                 throw expected("',' or ']'");
@@ -323,24 +336,39 @@ public class SimpleJson implements NutsElementStreamFormat {
         private NutsElement readJsonObject() {
             NutsObjectElementBuilder object = builder().forObject();
             readNext();
-            skipWhiteSpace();
+            skipWhiteSpaceAndComments();
             if (readChar('}')) {
                 return object.build();
             }
             do {
-                skipWhiteSpace();
-                if (current != '"') {
-                    throw expected("name");
+                skipWhiteSpaceAndComments();
+                //this happens with trailing ',}'
+                if (current == '}') {
+                    break;
                 }
-                String name = readStringLiteral();
-                skipWhiteSpace();
+                NutsElement k = readValue();
+                String name;
+                switch (k.type()) {
+                    case ARRAY:
+                    case OBJECT: {
+                        throw expected("name");
+                    }
+                    case NULL: {
+                        name = "null";
+                        break;
+                    }
+                    default: {
+                        name = k.asString();
+                    }
+                }
+                skipWhiteSpaceAndComments();
                 if (!readChar(':')) {
                     throw expected("':'");
                 }
-                skipWhiteSpace();
+                skipWhiteSpaceAndComments();
                 NutsElement v = readValue();
                 object.set(name, v);
-                skipWhiteSpace();
+                skipWhiteSpaceAndComments();
             } while (readChar(','));
             if (!readChar('}')) {
                 throw expected("',' or '}'");
@@ -363,12 +391,26 @@ public class SimpleJson implements NutsElementStreamFormat {
         }
 
         private String readStringLiteral() {
+            if (current == '"') {
+                return readStringLiteralDblQuoted();
+            }
+            if (current == '\'') {
+                return readStringLiteralSimpleQuoted();
+            }
+            if (current == '`') {
+                return readStringLiteralAntiQuoted();
+            }
+            return readStringLiteralUnQuoted();
+        }
+
+        private String readStringLiteralDblQuoted() {
             readNext();
             StringBuilder sb = new StringBuilder();
             while (current != '"') {
                 if (current == '\\') {
                     readNext();
                     switch (current) {
+                        case '\'':
                         case '"':
                         case '/':
                         case '\\':
@@ -415,6 +457,190 @@ public class SimpleJson implements NutsElementStreamFormat {
             return sb.toString();
         }
 
+        private String readStringLiteralSimpleQuoted() {
+            readNext();
+            StringBuilder sb = new StringBuilder();
+            while (current != '\'') {
+                if (current == '\\') {
+                    readNext();
+                    switch (current) {
+                        case '\'':
+                        case '"':
+                        case '/':
+                        case '\\':
+                            sb.append((char) current);
+                            break;
+                        case 'b':
+                            sb.append('\b');
+                            break;
+                        case 'f':
+                            sb.append('\f');
+                            break;
+                        case 'n':
+                            sb.append('\n');
+                            break;
+                        case 'r':
+                            sb.append('\r');
+                            break;
+                        case 't':
+                            sb.append('\t');
+                            break;
+                        case 'u':
+                            char[] hexChars = new char[4];
+                            for (int i = 0; i < 4; i++) {
+                                readNext();
+                                if (!isHexDigit()) {
+                                    throw expected("hexadecimal digit");
+                                }
+                                hexChars[i] = (char) current;
+                            }
+                            sb.append((char) Integer.parseInt(new String(hexChars), 16));
+                            break;
+                        default:
+                            throw expected("valid escape sequence");
+                    }
+                    readNext();
+                } else if (current < 0x20) {
+                    throw expected("valid string character");
+                } else {
+                    sb.append((char) current);
+                    readNext();
+                }
+            }
+            readNext();
+            return sb.toString();
+        }
+
+        private String readStringLiteralAntiQuoted() {
+            readNext();
+            StringBuilder sb = new StringBuilder();
+            while (current != '`') {
+                if (current == '\\') {
+                    readNext();
+                    switch (current) {
+                        case '\'':
+                        case '`':
+                        case '"':
+                        case '/':
+                        case '\\':
+                            sb.append((char) current);
+                            break;
+                        case 'b':
+                            sb.append('\b');
+                            break;
+                        case 'f':
+                            sb.append('\f');
+                            break;
+                        case 'n':
+                            sb.append('\n');
+                            break;
+                        case 'r':
+                            sb.append('\r');
+                            break;
+                        case 't':
+                            sb.append('\t');
+                            break;
+                        case 'u':
+                            char[] hexChars = new char[4];
+                            for (int i = 0; i < 4; i++) {
+                                readNext();
+                                if (!isHexDigit()) {
+                                    throw expected("hexadecimal digit");
+                                }
+                                hexChars[i] = (char) current;
+                            }
+                            sb.append((char) Integer.parseInt(new String(hexChars), 16));
+                            break;
+                        default:
+                            throw expected("valid escape sequence");
+                    }
+                    readNext();
+                } else if (current < 0x20) {
+                    throw expected("valid string character");
+                } else {
+                    sb.append((char) current);
+                    readNext();
+                }
+            }
+            readNext();
+            return sb.toString();
+        }
+
+        private String readStringLiteralUnQuotedPar(char end) {
+            readNext();
+            StringBuilder sb = new StringBuilder();
+            while (current != -1 && current != end) {
+                sb.append(skipWhiteSpaceAndComments());
+                sb.append(readStringLiteralUnQuoted());
+            }
+            if(current!=-1){
+                readNext();
+            }
+            return sb.toString();
+        }
+
+        private String readStringLiteralUnQuoted() {
+            StringBuilder sb = new StringBuilder();
+            while (current > 0x20) {
+                if (current == '\\') {
+                    readNext();
+                    switch (current) {
+                        case '\'':
+                        case '"':
+                        case '/':
+                        case '\\':
+                            sb.append((char) current);
+                            break;
+                        case 'b':
+                            sb.append('\b');
+                            break;
+                        case 'f':
+                            sb.append('\f');
+                            break;
+                        case 'n':
+                            sb.append('\n');
+                            break;
+                        case 'r':
+                            sb.append('\r');
+                            break;
+                        case 't':
+                            sb.append('\t');
+                            break;
+                        case 'u':
+                            char[] hexChars = new char[4];
+                            for (int i = 0; i < 4; i++) {
+                                readNext();
+                                if (!isHexDigit()) {
+                                    throw expected("hexadecimal digit");
+                                }
+                                hexChars[i] = (char) current;
+                            }
+                            sb.append((char) Integer.parseInt(new String(hexChars), 16));
+                            break;
+                        default:
+                            throw expected("valid escape sequence");
+                    }
+                    readNext();
+                } else if (current == '(') {
+                    sb.append(readStringLiteralUnQuotedPar(')'));
+                } else if (current == '{') {
+                    sb.append(readStringLiteralUnQuotedPar('}'));
+                } else if (current == '[') {
+                    sb.append(readStringLiteralUnQuotedPar(']'));
+                } else if (current == '\"' || current == '\'' || current == '`') {
+                    sb.append(readStringLiteral());
+                } else if (current != ':' && current != ','
+                        && current != ')' && current != '}' && current != ']'
+                ) {
+                    sb.append((char) current);
+                    readNext();
+                } else {
+                    break;
+                }
+            }
+            return sb.toString();
+        }
+
         private NutsElement readNumber() {
             StringBuilder sb = new StringBuilder();
             boolean inWhile = true;
@@ -458,10 +684,74 @@ public class SimpleJson implements NutsElementStreamFormat {
             return true;
         }
 
-        private void skipWhiteSpace() {
-            while (current == ' ' || current == '\t' || current == '\n' || current == '\r') {
-                readNext();
+        private String skipWhiteSpaceAndComments() {
+            StringBuilder sb = new StringBuilder();
+            while (true) {
+                if (current == ' ' || current == '\t' || current == '\n' || current == '\r') {
+                    sb.append((char) current);
+                    readNext();
+                } else if (current == '/') {
+                    String s = foreSeek(2);
+                    if ("//".equals(s)) {
+                        sb.append((char) current);
+                        readNext();
+                        sb.append((char) current);
+                        readNext();//skip //
+                        while (current > 0 && current != '\r' && current != '\n') {
+                            sb.append((char) current);
+                            readNext();
+                        }
+                    } else if ("/*".equals(s)) {
+                        sb.append((char) current);
+                        readNext();
+                        sb.append((char) current);
+                        readNext();//skip /*
+                        while (current > 0) {
+                            if (current == '/' && "*/".equals(foreSeek(2))) {
+                                sb.append((char) current);
+                                readNext();
+                                sb.append((char) current);
+                                readNext();//skip /*
+                                break;
+                            }
+                            sb.append((char) current);
+                            readNext();
+                        }
+                    } else {
+                        break;
+                    }
+                } else {
+                    break;
+                }
             }
+            return sb.toString();
+        }
+
+        private String foreSeek(int count) {
+            StringBuilder sb = new StringBuilder();
+            if (current > 0) {
+                sb.append((char) current);
+                count--;
+            }
+            if (count > 0) {
+                try {
+                    reader.mark(count);
+                    for (int i = 0; i < count; i++) {
+                        int r = reader.read();
+                        if (r >= 0) {
+                            sb.append((char) r);
+                        } else {
+                            break;
+                        }
+                    }
+                    if (sb.length() > 0) {
+                        reader.reset();
+                    }
+                } catch (IOException ex) {
+                    throw new UncheckedIOException(ex);
+                }
+            }
+            return sb.toString();
         }
 
         private void readNext() {

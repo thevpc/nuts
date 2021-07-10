@@ -37,11 +37,59 @@ import java.io.OutputStream;
  * @since 0.5.4
  * @category Input Output
  */
-public interface NutsSystemTerminal extends NutsSystemTerminalBase, NutsTerminal {
+public interface NutsSystemTerminal extends NutsSystemTerminalBase {
+    /**
+     * Reads a single line of text from the terminal's input stream.
+     *
+     * @param message       message
+     * @param session       session
+     * @return A string containing the line read from the terminal's input
+     * stream, not including any line-termination characters, or <tt>null</tt>
+     * if an end of stream has been reached.
+     * @throws java.io.UncheckedIOException If an I/O error occurs.
+     */
+    String readLine(NutsMessage message,NutsSession session);
 
-//    boolean isStandardOutputStream(OutputStream out);
-//
-//    boolean isStandardErrorStream(OutputStream out);
-//
-//    boolean isStandardInputStream(InputStream in);
+    /**
+     * Reads password as a single line of text from the terminal's input stream.
+     *
+     * @param message       message
+     * @param session       session
+     * @return A string containing the line read from the terminal's input
+     * stream, not including any line-termination characters, or <tt>null</tt>
+     * if an end of stream has been reached.
+     * @throws java.io.UncheckedIOException If an I/O error occurs.
+     */
+    char[] readPassword(NutsMessage message, NutsSession session);
+
+    /**
+     * return terminal's input stream
+     *
+     * @return terminal's input stream
+     */
+    InputStream in();
+
+    /**
+     * return terminal's output stream
+     *
+     * @return terminal's output stream
+     */
+    NutsPrintStream out();
+
+    /**
+     * return terminal's error stream
+     *
+     * @return terminal's error stream
+     */
+    NutsPrintStream err();
+
+    /**
+     * print progress with a message
+     *
+     * @param progress 0.0f-1.0f value
+     * @param message  message
+     * @param session session
+     * @return {@code this} instance
+     */
+    NutsSystemTerminal printProgress(float progress, NutsMessage message, NutsSession session);
 }

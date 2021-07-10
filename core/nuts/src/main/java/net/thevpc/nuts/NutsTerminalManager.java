@@ -27,7 +27,6 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.spi.NutsSystemTerminalBase;
-import net.thevpc.nuts.spi.NutsTerminalBase;
 
 import java.io.InputStream;
 
@@ -88,14 +87,16 @@ public interface NutsTerminalManager {
      */
     NutsSessionTerminal createTerminal(InputStream in, NutsPrintStream out, NutsPrintStream err);
 
+    NutsSessionTerminal createTerminal(NutsSessionTerminal terminal);
 
-    /**
-     * return new terminal bound to the given {@code parent}
-     *
-     * @param parent parent terminal or null
-     * @return new terminal
-     */
-    NutsSessionTerminal createTerminal(NutsTerminalBase parent);
+
+//    /**
+//     * return new terminal bound to the given {@code parent}
+//     *
+//     * @param parent parent terminal or null
+//     * @return new terminal
+//     */
+//    NutsSessionTerminal createTerminal(NutsSystemTerminalBase parent);
 
 //    /**
 //     * prepare PrintStream to handle NutsImmutableString aware format pattern. If the instance

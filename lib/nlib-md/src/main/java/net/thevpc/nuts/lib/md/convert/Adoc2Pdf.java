@@ -20,6 +20,18 @@ import java.util.stream.Collectors;
  */
 public class Adoc2Pdf {
 
+    public Path getPdfFile(Adoc2PdfConfig config) {
+        File baseDir = toCanonicalFile(new File(config.getBaseDir()));
+        String pdfFileName = config.getOutputPdf();
+        if (!pdfFileName.endsWith(".pdf")) {
+            pdfFileName += ".pdf";
+        }
+        if (!isAbsolutePath(pdfFileName)) {
+            pdfFileName = new File(baseDir, pdfFileName).getPath();
+        }
+        return Paths.get(pdfFileName);
+    }
+
     public Path generatePdf(Adoc2PdfConfig config) {
         String bin = config.getBin();
         String[] args = config.getArgs();

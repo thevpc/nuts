@@ -82,7 +82,7 @@ public class DollarPar2Context extends AbstractContext {
                 "label",
         }) {
             if (reader.readString(s)) {
-                return new Token(s, s);
+                return new Token(s, s,s);
             }
         }
         if (reader.isWordChar(rc)) {
@@ -101,6 +101,6 @@ public class DollarPar2Context extends AbstractContext {
             return this.reader.lexer().processContext(String.valueOf(rc),new SimpleQuotedContext(this.reader));
         }
         reader.read();
-        return new Token(String.valueOf(rc), String.valueOf(rc));
+        return new Token(String.valueOf(rc), String.valueOf(rc), String.valueOf(rc));
     }
 }

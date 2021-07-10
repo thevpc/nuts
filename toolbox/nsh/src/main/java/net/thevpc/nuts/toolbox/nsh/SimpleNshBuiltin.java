@@ -241,11 +241,11 @@ public abstract class SimpleNshBuiltin extends AbstractNshBuiltin {
         if(context2.getExitCode()==0){
             final Object outObject = context2.getOutObject();
             if (outObject != null) {
-                printObject(context2.setErr(false), null,context2.outObjectNewLine);
+                printObject(context2.setErr(false), null);
             }
             final Object errObject = context2.getErrObject();
             if (errObject != null) {
-                printObject(context2.setErr(true), null,context2.errObjectNewLine);
+                printObject(context2.setErr(true), null);
             }
         }else{
             NutsSession session = context.getSession().copy();
@@ -258,7 +258,7 @@ public abstract class SimpleNshBuiltin extends AbstractNshBuiltin {
             final Object errObject = context2.getErrObject();
             if (errObject != null) {
                 if(context.getSession().isPlainOut()){
-                    printObject(context2.setErr(true), session,context2.errObjectNewLine);
+                    printObject(context2.setErr(true), session);
                 }
             }
             throw new NutsExecutionException(context.getSession(),printStream.toString(), context2.getExitCode());
@@ -270,41 +270,20 @@ public abstract class SimpleNshBuiltin extends AbstractNshBuiltin {
 
     }
 
-    protected void printObject(SimpleNshCommandContext context, NutsSession session,boolean newLine) {
+    protected void printObject(SimpleNshCommandContext context, NutsSession session) {
         if(session==null) {
             session = context.getExecutionContext().getSession();
         }
         if (session.isIterableTrace()) {
             //already processed
-            if(newLine){
-                if(context.isErr()){
-                    session.err().println();
-                }else {
-                    session.out().println();
-                }
-            }
         } else {
             switch (session.getOutputFormat()) {
                 case PLAIN: {
                     printPlainObject(context, session);
-                    if(newLine){
-                        if(context.isErr()){
-                            session.err().println();
-                        }else {
-                            session.out().println();
-                        }
-                    }
                     break;
                 }
                 default: {
                     context.printObject(context.getResult(),session);
-                    if(newLine){
-                        if(context.isErr()){
-                            session.err().println();
-                        }else {
-                            session.out().println();
-                        }
-                    }
                 }
             }
         }

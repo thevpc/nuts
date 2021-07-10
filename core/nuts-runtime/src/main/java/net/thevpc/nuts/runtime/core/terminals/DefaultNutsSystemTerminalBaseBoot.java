@@ -1,18 +1,14 @@
 package net.thevpc.nuts.runtime.core.terminals;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.standalone.DefaultNutsWorkspace;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNutsBootModel;
 import net.thevpc.nuts.spi.NutsSystemTerminalBase;
-import net.thevpc.nuts.spi.NutsTerminalBase;
 
 import java.io.InputStream;
-import java.util.Objects;
 import java.util.Scanner;
 
 @NutsPrototype
-public class DefaultNutsSystemTerminalBaseBoot implements NutsSystemTerminalBase{
+public class DefaultNutsSystemTerminalBaseBoot implements NutsSystemTerminalBase {
 
     private NutsLogger LOG;
     private Scanner scanner;
@@ -40,12 +36,11 @@ public class DefaultNutsSystemTerminalBaseBoot implements NutsSystemTerminalBase
         }
         this.outMode = terminalMode;
         this.errMode = terminalMode;
-        this.out = bootModel.stdout().convert(terminalMode);
-        this.err = bootModel.stderr().convert(terminalMode);
+        this.out = bootModel.stdout().convertMode(terminalMode);
+        this.err = bootModel.stderr().convertMode(terminalMode);
         this.in = bootModel.stdin();
         this.scanner = new Scanner(this.in);
     }
-
 
 
     private NutsLogger _LOG() {
@@ -133,61 +128,6 @@ public class DefaultNutsSystemTerminalBaseBoot implements NutsSystemTerminalBase
         return DEFAULT_SUPPORT;
     }
 
-    //    @Override
-    public String readLine(String prompt, Object... params) {
-        return readLine(getOut(), prompt, params);
-    }
-
-    //    @Override
-    public char[] readPassword(String prompt, Object... params) {
-        return readPassword(getOut(), prompt, params);
-    }
-
-    @Override
-    public String readLine(NutsPrintStream out, String prompt, Object... params) {
-        if (out == null) {
-            out = getOut();
-        }
-        if (out == null) {
-            out = workspace.io().stdout();
-        }
-        out.printf(prompt, params);
-        out.flush();
-        return scanner.nextLine();
-    }
-
-    @Override
-    public char[] readPassword(NutsPrintStream out, String prompt, Object... params) {
-        if (out == null) {
-            out = getOut();
-        }
-        if (out == null) {
-            out = workspace.io().stdout();
-        }
-        out.printf(prompt, params);
-        return scanner.nextLine().toCharArray();
-    }
-
-    @Override
-    public InputStream getIn() {
-        return this.in;
-    }
-
-    @Override
-    public NutsPrintStream getOut() {
-        return this.out;
-    }
-
-    @Override
-    public NutsPrintStream getErr() {
-        return this.err;
-    }
-
-    @Override
-    public NutsTerminalBase getParent() {
-        return null;
-    }
-
     @Override
     public NutsCommandAutoCompleteResolver getAutoCompleteResolver() {
         return null;
@@ -221,6 +161,50 @@ public class DefaultNutsSystemTerminalBaseBoot implements NutsSystemTerminalBase
     @Override
     public NutsSystemTerminalBase setCommandReadHighlighter(NutsCommandReadHighlighter commandReadHighlighter) {
         return this;
+    }
+
+    public String readLine(NutsPrintStream out, NutsMessage message, NutsSession session) {
+        if (out == null) {
+            out = getOut();
+        }
+        if (out == null) {
+            out = workspace.io().stdout();
+        }
+        if (message != null) {
+            out.printf("%s", message);
+            out.flush();
+        }
+        return scanner.nextLine();
+    }
+
+    @Override
+    public char[] readPassword(NutsPrintStream out, NutsMessage message, NutsSession session) {
+        if (out == null) {
+            out = getOut();
+        }
+        if (out == null) {
+            out = workspace.io().stdout();
+        }
+        if (message != null) {
+            out.printf("%s", message);
+            out.flush();
+        }
+        return scanner.nextLine().toCharArray();
+    }
+
+    @Override
+    public InputStream getIn() {
+        return this.in;
+    }
+
+    @Override
+    public NutsPrintStream getOut() {
+        return this.out;
+    }
+
+    @Override
+    public NutsPrintStream getErr() {
+        return this.err;
     }
 
 }

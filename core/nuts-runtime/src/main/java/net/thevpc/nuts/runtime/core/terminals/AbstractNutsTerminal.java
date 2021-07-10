@@ -25,12 +25,11 @@
 */
 package net.thevpc.nuts.runtime.core.terminals;
 
-import net.thevpc.nuts.NutsTerminal;
-import net.thevpc.nuts.NutsTerminalMode;
+import net.thevpc.nuts.NutsSystemTerminal;
 
 /**
  *
  * @author thevpc
  */
-public abstract class AbstractNutsTerminal implements NutsTerminal {
+public abstract class AbstractNutsTerminal implements NutsSystemTerminal {
 }

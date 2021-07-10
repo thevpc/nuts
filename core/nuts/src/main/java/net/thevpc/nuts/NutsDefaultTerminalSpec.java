@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.spi.NutsTerminalBase;
+import net.thevpc.nuts.spi.NutsSystemTerminalBase;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,16 +37,16 @@ import java.util.Objects;
  */
 public class NutsDefaultTerminalSpec implements NutsTerminalSpec {
     private Boolean autoComplete;
-    private NutsTerminalBase parent;
+    private NutsSystemTerminalBase parent;
     private final Map<String,Object> other=new HashMap<>();
 
     @Override
-    public NutsTerminalBase getParent() {
+    public NutsSystemTerminalBase getParent() {
         return parent;
     }
 
     @Override
-    public NutsTerminalSpec setParent(NutsTerminalBase parent) {
+    public NutsTerminalSpec setParent(NutsSystemTerminalBase parent) {
         this.parent = parent;
         return this;
     }

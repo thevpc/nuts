@@ -131,12 +131,13 @@ public class NTemplateMain implements NutsApplication {
         @Override
         public Object eval(String content, FileTemplater context) {
             NutsPrintStream out = shell.getSession().getWorkspace().io().createMemoryPrintStream();
+            NutsPrintStream err = shell.getSession().getWorkspace().io().createMemoryPrintStream();
             shell.getSession().setTerminal(
-                    shell.getWorkspace().term()
+                    shell.getSession().getWorkspace().term()
                             .createTerminal(
                                     new ByteArrayInputStream(new byte[0]),
                                     out,
-                                    out
+                                    err
                             )
             );
             JShellFileContext ctx = shell.createSourceFileContext(

@@ -38,6 +38,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -244,7 +245,7 @@ public class JShell {
             try {
                 getHistory().add(line);
                 JShellCommandNode nn = parseCommandLine(line);
-                nn.eval(context);
+                context.getShell().evalNode(nn,context);
                 success = true;
             } catch (Throwable e) {
                 if (storeResult) {
@@ -270,6 +271,11 @@ public class JShell {
                 }
             }
         }
+    }
+
+    public int onResult(int r, JShellFileContext context) {
+        context.setLastResult(new JShellResult(r, null, null));
+            return r;
     }
 
     public int onResult(Throwable th, JShellFileContext context) {
@@ -326,7 +332,7 @@ public class JShell {
     public int executeCommand(String[] command, JShellFileContext context) {
         context.setServiceName(command[0]);
         context.setArgs(Arrays.copyOfRange(command, 1, command.length));
-        return createCommandNode(command).eval(context);
+        return context.getShell().evalNode(createCommandNode(command),context);
     }
 
     public void addToHistory(String[] command) {
@@ -349,6 +355,7 @@ public class JShell {
                                        boolean considerAliases, boolean considerBuiltins, boolean considerExternal,
                                        JShellFileContext context
     ) {
+        context.getShell().traceExecution(()->String.join(" ",command), context);
         String cmdToken = command[0];
         if (cmdToken.indexOf('/') >= 0 || cmdToken.indexOf('\\') >= 0) {
             final JShellExternalExecutor externalExec = getExternalExecutor();
@@ -559,14 +566,14 @@ public class JShell {
         throw quitExcepion;
     }
 
-    public void executeFile(JShellFileContext context, boolean ignoreIfNotFound) {
+    public int executeFile(JShellFileContext context, boolean ignoreIfNotFound) {
         String file = context.getServiceName();
         if (file != null) {
             file = ShellUtils.getAbsolutePath(new File(context.getCwd()), file);
         }
         if (file == null || !new File(file).isFile()) {
             if (ignoreIfNotFound) {
-                return;
+                return 0;
             }
             throw new JShellException(1, "shell file not found : " + file);
         }
@@ -577,10 +584,10 @@ public class JShell {
                 stream = new FileInputStream(file);
                 JShellCommandNode ii = parseCommand(stream);
                 if (ii == null) {
-                    return;
+                    return 0;
                 }
                 JShellFileContext c = context.setRoot(ii);//.setParent(null);
-                ii.eval(c);
+                return context.getShell().evalNode(ii,c);
             } catch (IOException ex) {
                 throw new JShellException(1, ex);
             }
@@ -595,35 +602,47 @@ public class JShell {
         }
     }
 
-    public void executeString(String text, JShellFileContext context) {
+    public int executeString(String text, JShellFileContext context) {
         if (context == null) {
             context = getRootContext();
         }
         if (text == null || text.trim().isEmpty()) {
-            return;
+            return 0;
         }
         try (InputStream stream = new ByteArrayInputStream(text.getBytes())) {
             JShellCommandNode ii = parseCommand(stream);
             if (ii == null) {
-                return;
+                return 0;
             }
             JShellFileContext c = context.setRoot(ii);//.setParent(null);
-            ii.eval(c);
+            return evalNode(ii,c);
         } catch (IOException ex) {
             throw new JShellException(1, ex);
         }
     }
 
-    public int uniformException(UnsafeRunnable r) throws JShellUniformException {
+    public int evalNode(JShellCommandNode node,JShellFileContext context){
         try {
-            return r.run();
+            int r = node.eval(context);
+            onResult(r, context);
+            return r;
         } catch (JShellUniformException th) {
-            throw th;
+            if(th.isQuit()){
+                onResult(null, context);
+                th.throwQuit();
+                return 0;
+            }else {
+                onResult(th, context);
+                throw th;
+            }
         } catch (Exception th) {
             if (getErrorHandler().isRequireExit(th)) {
+                onResult(null, context);
                 throw new JShellUniformException(getErrorHandler().errorToCode(th), true, th);
             }
-            throw new JShellUniformException(getErrorHandler().errorToCode(th), true, th);
+            onResult(th, context);
+            context.err().printf("error: %s%n",th);
+            return getErrorHandler().errorToCode(th);
         }
     }
 
@@ -930,9 +949,10 @@ public class JShell {
 //        return sb.toString();
 //    }
 
-    public void traceExecution(String msg, JShellFileContext context) {
+    public void traceExecution(Supplier<String> msg, JShellFileContext context) {
         if (getOptions().isXtrace()) {
-            context.out().println("+ " + msg);
+            String txt = msg.get();
+            context.err().println("+ " + txt);
         }
     }
 

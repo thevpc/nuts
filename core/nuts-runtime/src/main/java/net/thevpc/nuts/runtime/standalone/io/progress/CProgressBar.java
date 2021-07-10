@@ -52,7 +52,7 @@ public class CProgressBar {
         this.session = session;
         formatted = session != null;
         if (session != null) {
-            Set<String> options = NutsWorkspaceUtils.parseProgressOptions(session);
+            Set<String> options = CoreNutsUtils.parseProgressOptions(session);
             optionNewline = options.contains("newline") || options.contains("%n");
         }
     }

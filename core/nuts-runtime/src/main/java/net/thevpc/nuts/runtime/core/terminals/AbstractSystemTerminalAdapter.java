@@ -1,37 +1,18 @@
 package net.thevpc.nuts.runtime.core.terminals;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.standalone.io.DefaultNutsQuestion;
+import net.thevpc.nuts.runtime.standalone.io.progress.CProgressBar;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
+import net.thevpc.nuts.spi.NutsSystemTerminalBase;
 
 import java.io.InputStream;
 
-import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
-import net.thevpc.nuts.runtime.standalone.io.DefaultNutsQuestion;
-import net.thevpc.nuts.runtime.standalone.io.progress.CProgressBar;
-import net.thevpc.nuts.spi.NutsSystemTerminalBase;
+public abstract class AbstractSystemTerminalAdapter extends AbstractNutsTerminal implements NutsSystemTerminal{
 
-public abstract class AbstractSystemTerminalAdapter extends AbstractNutsTerminal implements NutsSystemTerminal, NutsSessionAware {
-
-    private NutsWorkspace ws;
-    private NutsSession session;
     protected CProgressBar progressBar;
-
-    @Override
-    public void setSession(NutsSession session) {
-        setSession(session, false);
-    }
-
-    public void setSession(NutsSession session, boolean boot) {
-        if (session != null && this.session != null) {
-            //ignore
-        } else {
-            this.session = session;
-            this.ws = session == null ? null : session.getWorkspace();
-        }
-        if (!boot) {
-            NutsSystemTerminalBase parent = getParent();
-            NutsWorkspaceUtils.setSession(parent, session);
-        }
-    }
+    private NutsWorkspace ws;
 
     @Override
     public NutsCommandAutoCompleteResolver getAutoCompleteResolver() {
@@ -40,6 +21,10 @@ public abstract class AbstractSystemTerminalAdapter extends AbstractNutsTerminal
             return p.getAutoCompleteResolver();
         }
         return null;
+    }
+
+    public boolean isAutoCompleteSupported() {
+        return getParent().isAutoCompleteSupported();
     }
 
     @Override
@@ -51,42 +36,49 @@ public abstract class AbstractSystemTerminalAdapter extends AbstractNutsTerminal
         return this;
     }
 
-    public abstract NutsSystemTerminalBase getParent();
+    @Override
+    public NutsSystemTerminalBase setCommandHistory(NutsCommandHistory history) {
+        getParent().setCommandHistory(history);
+        return this;
+    }
 
     @Override
-    public String readLine(String promptFormat, Object... params) {
+    public NutsCommandHistory getCommandHistory() {
+        return getParent().getCommandHistory();
+    }
+
+    @Override
+    public NutsCommandReadHighlighter getCommandReadHighlighter() {
+        return getParent().getCommandReadHighlighter();
+    }
+
+    @Override
+    public NutsSystemTerminalBase setCommandReadHighlighter(NutsCommandReadHighlighter commandReadHighlighter) {
+        getParent().setCommandReadHighlighter(commandReadHighlighter);
+        return this;
+    }
+
+    @Override
+    public String readLine(NutsMessage message,NutsSession session) {
         NutsSystemTerminalBase p = getParent();
-        if (p instanceof NutsTerminal) {
-            return ((NutsTerminal) p).readLine(promptFormat, params);
+        if (p instanceof NutsSystemTerminal) {
+            return ((NutsSystemTerminal) p).readLine(message,session);
         } else {
-            return getParent().readLine(out(), promptFormat, params);
+            return getParent().readLine(out(), message,session);
         }
     }
 
     @Override
-    public char[] readPassword(String prompt, Object... params) {
+    public char[] readPassword(NutsMessage message,NutsSession session) {
         NutsSystemTerminalBase p = getParent();
-        if (p instanceof NutsTerminal) {
-            return ((NutsTerminal) p).readPassword(prompt, params);
+        if (p instanceof NutsSystemTerminal) {
+            return ((NutsSystemTerminal) p).readPassword(message,session);
         } else {
-            return p.readPassword(out(), prompt, params);
+            return p.readPassword(out(), message,session);
         }
     }
 
-    @Override
-    public InputStream getIn() {
-        return getParent().getIn();
-    }
 
-    @Override
-    public NutsPrintStream getOut() {
-        return getParent().getOut();
-    }
-
-    @Override
-    public NutsPrintStream getErr() {
-        return getParent().getErr();
-    }
 
     @Override
     public InputStream in() {
@@ -101,26 +93,6 @@ public abstract class AbstractSystemTerminalAdapter extends AbstractNutsTerminal
     @Override
     public NutsPrintStream err() {
         return getErr();
-    }
-
-    @Override
-    public <T> NutsQuestion<T> ask() {
-        NutsSystemTerminalBase p = getParent();
-        if (p instanceof NutsTerminal) {
-            return ((NutsTerminal) p).<T>ask()
-                    .setSession(session)
-                    ;
-        } else {
-            return new DefaultNutsQuestion<T>(
-                    ws,
-                    this, out()
-            ).setSession(session);
-        }
-    }
-
-    @Override
-    public int getSupportLevel(NutsSupportLevelContext<NutsTerminalSpec> criteria) {
-        return DEFAULT_SUPPORT;
     }
 
 //    @Override
@@ -166,75 +138,61 @@ public abstract class AbstractSystemTerminalAdapter extends AbstractNutsTerminal
 //    }
 
     @Override
-    public String readLine(NutsPrintStream out, String prompt, Object... params) {
-        return getParent().readLine(out, prompt, params);
-    }
-
-    @Override
-    public char[] readPassword(NutsPrintStream out, String prompt, Object... params) {
-        return getParent().readPassword(out, prompt, params);
-    }
-
-    @Override
-    public NutsTerminal printProgress(float progress, String prompt, Object... params) {
-        if (getParent() instanceof NutsTerminal) {
-            ((NutsTerminal) getParent()).printProgress(progress, prompt, params);
-        } else {
-            getProgressBar().printProgress(
-                    Float.isNaN(progress) ? -1
-                    : (int) (progress * 100),
-                    session.getWorkspace().text().toText(NutsMessage.cstyle(prompt, params)).toString(),
-                    err()
-            );
+    public NutsSystemTerminal printProgress(float progress, NutsMessage message,NutsSession session) {
+        if (CoreNutsUtils.acceptProgress(session)) {
+            if (getParent() instanceof NutsSystemTerminal) {
+                ((NutsSystemTerminal) getParent()).printProgress(progress, message,session);
+            } else {
+                getProgressBar(session).printProgress(
+                        Float.isNaN(progress) ? -1
+                                : (int) (progress * 100),
+                        session.getWorkspace().text().toText(message).toString(),
+                        err()
+                );
+            }
         }
         return this;
     }
-
-    @Override
-    public NutsTerminal printProgress(String prompt, Object... params) {
-        if (getParent() instanceof NutsTerminal) {
-            ((NutsTerminal) getParent()).printProgress(prompt, params);
-        } else {
-            getProgressBar().printProgress(-1,
-                    session.getWorkspace().text().toText(NutsMessage.cstyle(prompt, params)).toString(),
-                    err()
-            );
-        }
-        return this;
-    }
-
-    private CProgressBar getProgressBar() {
+    private CProgressBar getProgressBar(NutsSession session) {
         if (progressBar == null) {
             progressBar = CoreTerminalUtils.createProgressBar(session);
         }
         return progressBar;
     }
 
-    public boolean isAutoCompleteSupported() {
-        return getParent().isAutoCompleteSupported();
+    @Override
+    public int getSupportLevel(NutsSupportLevelContext<NutsTerminalSpec> criteria) {
+        return DEFAULT_SUPPORT;
     }
 
     @Override
-    public NutsSystemTerminalBase setCommandHistory(NutsCommandHistory history) {
-        getParent().setCommandHistory(history);
-        return this;
+    public String readLine(NutsPrintStream out, NutsMessage message, NutsSession session) {
+        return getParent().readLine(out, message,session);
     }
 
     @Override
-    public NutsCommandHistory getCommandHistory() {
-        return getParent().getCommandHistory();
+    public char[] readPassword(NutsPrintStream out, NutsMessage message, NutsSession session) {
+        return getParent().readPassword(out, message, session);
     }
 
     @Override
-    public NutsCommandReadHighlighter getCommandReadHighlighter() {
-        return getParent().getCommandReadHighlighter();
+    public InputStream getIn() {
+        return getParent().getIn();
     }
 
     @Override
-    public NutsSystemTerminalBase setCommandReadHighlighter(NutsCommandReadHighlighter commandReadHighlighter) {
-        getParent().setCommandReadHighlighter(commandReadHighlighter);
-        return this;
+    public NutsPrintStream getOut() {
+        return getParent().getOut();
     }
+
+    @Override
+    public NutsPrintStream getErr() {
+        return getParent().getErr();
+    }
+
+    public abstract NutsSystemTerminalBase getParent();
+
+
 
 //    @Override
 //    public NutsTerminal sendOutCommand(NutsTerminalCommand command) {

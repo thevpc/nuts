@@ -6,6 +6,8 @@ sidebar_label: Introduction
 
 ${include($"${resources}/header.md")}
 
+## Introduction
+
 **```nuts```** stands for **Network Updatable Things Services** tool. It is a simple tool  for managing remote
 artifacts, installing these  artifacts to the current machine and executing such  artifacts on need.
 Each managed package  is also called a **```nuts```** which  is a **Network Updatable Thing Service** .
@@ -13,6 +15,7 @@ Each managed package  is also called a **```nuts```** which  is a **Network Upda
 or remote for accessing  remote artifacts (good examples  are  remote maven  repositories). It may
 also be a proxy repository so that remote artifacts are fetched and cached locally to save network
 resources.
+
 One manages a set of repositories called a  workspace. Managed **```nuts```**  (artifacts)  have descriptors
 that depicts dependencies between them. This dependency is seamlessly handled by  **```nuts```**  (tool) to
 resolve and download on-need dependencies over the wire.

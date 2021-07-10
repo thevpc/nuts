@@ -74,7 +74,7 @@ public class MdElementPath<T extends MdElement>{
         if(parent!=null){
             prefix=parent.toString()+"/";
         }
-        switch(element.getElementType()){
+        switch(element.getElementType().type()){
             case XML:{
                 return prefix+"<"+element.asXml().getTag()+">";
             }

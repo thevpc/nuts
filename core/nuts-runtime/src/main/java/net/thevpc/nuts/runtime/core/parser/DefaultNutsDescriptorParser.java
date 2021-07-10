@@ -60,19 +60,19 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
 
     @Override
     public NutsDescriptor parse(File file) {
+        checkSession();
         return parse(file.toPath());
-    }    @Override
-    public NutsSession getSession() {
-        return session;
     }
 
     @Override
     public NutsDescriptor parse(InputStream stream) {
+        checkSession();
         return parse(stream, false);
     }
 
     @Override
     public NutsDescriptor parse(String str) {
+        checkSession();
         if (CoreStringUtils.isBlank(str)) {
             return null;
         }
@@ -84,16 +84,11 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
         this.lenient = lenient;
         return this;
     }
-
     private void checkSession() {
         NutsWorkspaceUtils.checkSession(getWorkspace(), getSession());
-    }    @Override
-    public NutsDescriptorParser setSession(NutsSession session) {
-        this.session = session;
-        return this;
     }
-
     private NutsDescriptor parse(InputStream in, boolean closeStream) {
+        checkSession();
         DescriptorFormat f = getDescriptorFormat();
         if (f == null) {
             f = DescriptorFormat.NUTS;
@@ -133,13 +128,26 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
             }
         }
     }
-
     public NutsWorkspace getWorkspace() {
         return ws;
+    }@Override
+    public NutsSession getSession() {
+        return session;
     }
 
 
 
+
+
+
+
+
+
+    @Override
+    public NutsDescriptorParser setSession(NutsSession session) {
+        this.session = session;
+        return this;
+    }
 
 
     @Override

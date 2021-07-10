@@ -25,12 +25,12 @@
  */
 package net.thevpc.nuts.spi;
 
+
+import net.thevpc.nuts.NutsMessage;
 import net.thevpc.nuts.NutsPrintStream;
-import net.thevpc.nuts.NutsTerminalMode;
-import net.thevpc.nuts.NutsTerminalSpec;
+import net.thevpc.nuts.NutsSession;
 
 import java.io.InputStream;
-import java.io.PrintStream;
 
 /**
  * Created by vpc on 2/20/17.
@@ -38,26 +38,8 @@ import java.io.PrintStream;
  * @since 0.5.4
  * @category SPI Base
  */
-public interface NutsTerminalBase extends NutsComponent<NutsTerminalSpec> {
+public interface NutsTerminalBase {
 
-//    NutsTerminalMode getOutMode();
-//
-//    NutsTerminalBase setOutMode(NutsTerminalMode mode);
-//
-//    NutsTerminalMode getErrMode();
-//
-//    NutsTerminalBase setErrMode(NutsTerminalMode mode);
 
-    String readLine(NutsPrintStream out, String prompt, Object... params);
-
-    char[] readPassword(NutsPrintStream out, String prompt, Object... params);
-
-    InputStream getIn();
-
-    NutsPrintStream getOut();
-
-    NutsPrintStream getErr();
-
-    NutsTerminalBase getParent();
 
 }

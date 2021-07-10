@@ -10,6 +10,7 @@ import java.text.DecimalFormat;
 import net.thevpc.nuts.*;
 
 import net.thevpc.nuts.runtime.core.terminals.CoreTerminalUtils;
+import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.bundles.common.BytesSizeFormat;
@@ -68,7 +69,7 @@ public class DefaultNutsStreamProgressMonitor implements NutsProgressMonitor/*, 
     public boolean onProgress0(NutsProgressEvent event, boolean end) {
         if(!optionsProcessed) {
             optionsProcessed=true;
-            optionNewline= NutsWorkspaceUtils.parseProgressOptions(event.getSession()).contains("newline");
+            optionNewline= CoreNutsUtils.parseProgressOptions(event.getSession()).contains("newline");
         }
         double partialSeconds = event.getPartialMillis() / 1000.0;
         if (event.getCurrentValue() == 0 || partialSeconds > 0.5 || event.getCurrentValue() == event.getMaxValue()) {

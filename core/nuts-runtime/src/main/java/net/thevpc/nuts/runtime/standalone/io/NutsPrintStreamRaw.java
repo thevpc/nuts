@@ -1,8 +1,13 @@
 package net.thevpc.nuts.runtime.standalone.io;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.NutsPrintStream;
+import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NutsTerminalCommand;
+import net.thevpc.nuts.NutsTerminalMode;
 
-import java.io.*;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
 
 /**
  * Print stream from custom output streams like ByteArrayOutputStream
@@ -11,8 +16,14 @@ public class NutsPrintStreamRaw extends NutsPrintStreamBase {
     protected OutputStream out;
     private PrintStream base;
 
+    protected NutsPrintStreamRaw(OutputStream out, PrintStream base, Boolean autoFlush, NutsTerminalMode mode, NutsSession session, Bindings bindings) {
+        super(autoFlush == null ? true : autoFlush, mode, session, bindings);
+        this.out = out;
+        this.base = base;
+    }
+
     public NutsPrintStreamRaw(OutputStream out, Boolean autoFlush, String encoding, NutsSession session, Bindings bindings) {
-        super(true, NutsTerminalMode.INHERITED, session,bindings);
+        super(true, NutsTerminalMode.INHERITED, session, bindings);
         this.out = out;
         if (out instanceof PrintStream) {
             PrintStream ps = (PrintStream) out;
@@ -30,22 +41,22 @@ public class NutsPrintStreamRaw extends NutsPrintStreamBase {
                 throw new IllegalArgumentException(e);
             }
         }
-        switch (mode()){
-            case ANSI:{
-                if(bindings.ansi!=null){
+        switch (mode()) {
+            case ANSI: {
+                if (bindings.ansi != null) {
                     throw new IllegalArgumentException("already bound ansi");
                 }
-                bindings.ansi= this;
-                if(bindings.inherited==null){
-                    bindings.inherited= this;
+                bindings.ansi = this;
+                if (bindings.inherited == null) {
+                    bindings.inherited = this;
                 }
                 break;
             }
-            case INHERITED:{
-                if(bindings.inherited!=null){
+            case INHERITED: {
+                if (bindings.inherited != null) {
                     throw new IllegalArgumentException("already bound ansi");
                 }
-                bindings.inherited= this;
+                bindings.inherited = this;
                 break;
             }
         }
@@ -56,11 +67,6 @@ public class NutsPrintStreamRaw extends NutsPrintStreamBase {
     }
 
     @Override
-    public int getColumns() {
-        return -1;
-    }
-
-    @Override
     public NutsPrintStream flush() {
         base.flush();
         return this;
@@ -68,7 +74,7 @@ public class NutsPrintStreamRaw extends NutsPrintStreamBase {
 
     @Override
     public NutsPrintStream close() {
-        if(mode()==NutsTerminalMode.ANSI){
+        if (mode() == NutsTerminalMode.ANSI) {
             write("\033[0m".getBytes());
             flush();
         }
@@ -89,18 +95,12 @@ public class NutsPrintStreamRaw extends NutsPrintStreamBase {
     }
 
     @Override
-    public NutsPrintStream write(char[] s,int off,int len) {
-        if(s==null){
+    public NutsPrintStream write(char[] s, int off, int len) {
+        if (s == null) {
             base.print("null");
-        }else {
-            base.print(new String(s,off,len));
+        } else {
+            base.print(new String(s, off, len));
         }
-        return this;
-    }
-
-    @Override
-    public NutsPrintStream print(char[] s) {
-        base.print(s);
         return this;
     }
 
@@ -111,20 +111,39 @@ public class NutsPrintStreamRaw extends NutsPrintStreamBase {
     }
 
     @Override
-    protected NutsPrintStream convertImpl(NutsTerminalMode other) {
-        switch (other){
-            case FORMATTED:{
-                return new NutsPrintStreamFormatted(this,bindings);
-            }
-            case FILTERED:{
-                return new NutsPrintStreamFiltered(this,bindings);
-            }
+    public NutsPrintStream convertSession(NutsSession session) {
+        if (session == null || session == this.session) {
+            return this;
         }
-        throw new IllegalArgumentException("unsupported "+mode()+"->"+other);
+        return new NutsPrintStreamRaw(out, base, autoFlash, mode(), session, new Bindings());
     }
 
     @Override
     public NutsPrintStream run(NutsTerminalCommand command) {
         return this;
+    }
+
+    @Override
+    public int getColumns() {
+        return -1;
+    }
+
+    @Override
+    public NutsPrintStream print(char[] s) {
+        base.print(s);
+        return this;
+    }
+
+    @Override
+    protected NutsPrintStream convertImpl(NutsTerminalMode other) {
+        switch (other) {
+            case FORMATTED: {
+                return new NutsPrintStreamFormatted(this, bindings);
+            }
+            case FILTERED: {
+                return new NutsPrintStreamFiltered(this, bindings);
+            }
+        }
+        throw new IllegalArgumentException("unsupported " + mode() + "->" + other);
     }
 }

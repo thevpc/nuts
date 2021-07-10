@@ -3,10 +3,16 @@ package net.thevpc.nuts.toolbox.nsh.bundles.jshell.parser;
 public class Token {
     public String type;
     public Object value;
+    public String image;
 
-    public Token(String type, Object value) {
+    public Token(String type, Object value,String image) {
         this.type = type;
         this.value = value;
+        this.image = image;
+    }
+
+    public String getImage() {
+        return image;
     }
 
     public boolean isWord(String n) {

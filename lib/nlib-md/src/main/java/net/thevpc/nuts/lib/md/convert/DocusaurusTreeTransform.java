@@ -123,7 +123,7 @@ public class DocusaurusTreeTransform extends MdElementTransformBase {
                 if (tt.equals("C#")) {
                     tt = "C Sharp";
                 }
-                return new MdSequence("", new MdElement[]{new MdTitle("#####", tt, 5), transformElement(path.append(e.getContent()))}, false);
+                return new MdSequence("", new MdElement[]{new MdTitle("#####", new MdText(tt), 5), transformElement(path.append(e.getContent()))}, false);
             }
 
         }

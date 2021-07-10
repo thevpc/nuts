@@ -15,7 +15,7 @@ public abstract class NutsPrintStreamBase implements NutsPrintStream {
     protected OutputStream osWrapper;
     protected PrintStream psWrapper;
     protected Writer writerWrapper;
-    private boolean autoFlash;
+    protected boolean autoFlash;
     private NutsTerminalMode mode;
     private boolean trouble = false;
 
@@ -32,9 +32,21 @@ public abstract class NutsPrintStreamBase implements NutsPrintStream {
         this.session = session;
     }
 
+    public NutsSession getSession() {
+        return session;
+    }
+
     @Override
     public NutsPrintStream write(byte[] b) {
         return write(b, 0, b.length);
+    }
+
+    @Override
+    public NutsPrintStream write(char[] buf) {
+        if (buf == null) {
+            buf = "null".toCharArray();
+        }
+        return write(buf, 0, buf.length);
     }
 
     @Override
@@ -195,7 +207,7 @@ public abstract class NutsPrintStreamBase implements NutsPrintStream {
             print(s);
         } else {
             NutsSession sess = this.session.copy().setLocale(l.toString());
-            NutsText s = sess.getWorkspace().text().setSession(sess).toText(
+            NutsText s = sess.getWorkspace().text().toText(
                     NutsMessage.cstyle(
                             format, args
                     )
@@ -203,14 +215,6 @@ public abstract class NutsPrintStreamBase implements NutsPrintStream {
             print(s);
         }
         return this;
-    }
-
-    @Override
-    public NutsPrintStream write(char[] buf) {
-        if(buf==null){
-            buf="null".toCharArray();
-        }
-        return write(buf,0,buf.length);
     }
 
     @Override
@@ -250,7 +254,7 @@ public abstract class NutsPrintStreamBase implements NutsPrintStream {
     }
 
     @Override
-    public NutsPrintStream convert(NutsTerminalMode other) {
+    public NutsPrintStream convertMode(NutsTerminalMode other) {
         if (other == null || other == this.mode()) {
             return this;
         }
@@ -307,7 +311,23 @@ public abstract class NutsPrintStreamBase implements NutsPrintStream {
         return writerWrapper;
     }
 
+    @Override
+    public boolean isNtf() {
+        switch (mode()) {
+            case FORMATTED:
+            case FILTERED: {
+                return true;
+            }
+        }
+        return false;
+    }
+
     protected abstract NutsPrintStream convertImpl(NutsTerminalMode other);
+
+    @Override
+    public String toString() {
+        return super.toString();
+    }
 
     public static class Bindings {
         protected NutsPrintStreamBase raw;
@@ -315,21 +335,5 @@ public abstract class NutsPrintStreamBase implements NutsPrintStream {
         protected NutsPrintStreamBase ansi;
         protected NutsPrintStreamBase inherited;
         protected NutsPrintStreamBase formatted;
-    }
-
-    @Override
-    public boolean isNtf() {
-        switch (mode()){
-            case FORMATTED:
-            case FILTERED:{
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public String toString() {
-        return super.toString();
     }
 }

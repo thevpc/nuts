@@ -52,6 +52,10 @@ public class MdCode extends MdAbstractElement {
 
     @Override
     public String toString() {
+        if(inline){
+            String lang=language+((language.length()>0)?" ":"");
+            return "```" + lang + value + "```";
+        }
         return "```" + language + "\n"
                 + value + "\n"
                 + "```";

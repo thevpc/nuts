@@ -86,7 +86,7 @@ public class AsciiDoctorWriter extends AbstractMdWriter {
     }
 
     public void writeInline(MdElement element) {
-        switch (element.getElementType()) {
+        switch (element.getElementType().type()) {
             case TEXT: {
                 write(element.asText().getText());
                 return;
@@ -160,135 +160,37 @@ public class AsciiDoctorWriter extends AbstractMdWriter {
     }
 
     public void writeImpl(MdElement node) {
-        switch (node.getElementType()) {
-            case TITLE1: {
+        switch (node.getElementType().type()) {
+            case TITLE: {
                 MdTitle t = (MdTitle) node;
                 writeln();
-                writeln("= " + t.getValue());
+                StringBuilder sb=new StringBuilder();
+                for (int i = 0; i < node.getElementType().depth(); i++) {
+                    sb.append('=');
+                }
+                writeln(sb+" " + t.getValue());
                 break;
             }
-            case TITLE2: {
-                MdTitle t = (MdTitle) node;
-                writeln();
-                writeln("== " + t.getValue());
-                break;
-            }
-            case TITLE3: {
-                MdTitle t = (MdTitle) node;
-                writeln();
-                writeln("=== " + t.getValue());
-                break;
-            }
-            case TITLE4: {
-                MdTitle t = (MdTitle) node;
-                writeln();
-                writeln("==== " + t.getValue());
-                break;
-            }
-            case TITLE5: {
-                MdTitle t = (MdTitle) node;
-                writeln();
-                writeln("===== " + t.getValue());
-                break;
-            }
-            case TITLE6: {
-                MdTitle t = (MdTitle) node;
-                writeln();
-                writeln("====== " + t.getValue());
-                break;
-            }
-            case UNNUMBRED_ITEM1: {
+            case UNNUMBRED_ITEM: {
                 MdUnNumberedItem t = (MdUnNumberedItem) node;
                 writeln();
-                write("* ");
+                StringBuilder sb=new StringBuilder();
+                for (int i = 0; i < node.getElementType().depth(); i++) {
+                    sb.append('*');
+                }
+                write(sb+" ");
                 writeInline(t.getValue());
                 writeln();
                 break;
             }
-            case UNNUMBRED_ITEM2: {
+            case NUMBRED_ITEM: {
                 MdUnNumberedItem t = (MdUnNumberedItem) node;
                 writeln();
-                write("** ");
-                writeInline(t.getValue());
-                writeln();
-                break;
-            }
-            case UNNUMBRED_ITEM3: {
-                MdUnNumberedItem t = (MdUnNumberedItem) node;
-                writeln();
-                write("*** ");
-                writeInline(t.getValue());
-                writeln();
-                break;
-            }
-            case UNNUMBRED_ITEM4: {
-                MdUnNumberedItem t = (MdUnNumberedItem) node;
-                writeln();
-                write("**** ");
-                writeInline(t.getValue());
-                writeln();
-                break;
-            }
-            case UNNUMBRED_ITEM5: {
-                MdUnNumberedItem t = (MdUnNumberedItem) node;
-                writeln();
-                write("***** ");
-                writeInline(t.getValue());
-                writeln();
-                break;
-            }
-            case UNNUMBRED_ITEM6: {
-                MdUnNumberedItem t = (MdUnNumberedItem) node;
-                writeln();
-                write("****** ");
-                writeInline(t.getValue());
-                writeln();
-                break;
-            }
-            case NUMBRED_ITEM1: {
-                MdNumberedItem t = (MdNumberedItem) node;
-                writeln();
-                write(". ");
-                writeInline(t.getValue());
-                writeln();
-                break;
-            }
-            case NUMBRED_ITEM2: {
-                MdNumberedItem t = (MdNumberedItem) node;
-                writeln();
-                write(".. ");
-                writeInline(t.getValue());
-                writeln();
-                break;
-            }
-            case NUMBRED_ITEM3: {
-                MdNumberedItem t = (MdNumberedItem) node;
-                writeln();
-                write("... ");
-                writeInline(t.getValue());
-                writeln();
-                break;
-            }
-            case NUMBRED_ITEM4: {
-                MdNumberedItem t = (MdNumberedItem) node;
-                writeln();
-                write(".... ");
-                writeInline(t.getValue());
-                writeln();
-                break;
-            }
-            case NUMBRED_ITEM5: {
-                MdNumberedItem t = (MdNumberedItem) node;
-                writeln();
-                write("..... ");
-                writeInline(t.getValue());
-                writeln();
-                break;
-            }
-            case NUMBRED_ITEM6: {
-                MdNumberedItem t = (MdNumberedItem) node;
-                writeln();
-                write("...... ");
+                StringBuilder sb=new StringBuilder();
+                for (int i = 0; i < node.getElementType().depth(); i++) {
+                    sb.append('.');
+                }
+                write(sb+" ");
                 writeInline(t.getValue());
                 writeln();
                 break;

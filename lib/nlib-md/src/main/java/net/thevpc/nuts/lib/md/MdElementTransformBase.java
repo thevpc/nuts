@@ -1,8 +1,8 @@
 /**
  * ====================================================================
- *            thevpc-common-md : Simple Markdown Manipulation Library
+ * thevpc-common-md : Simple Markdown Manipulation Library
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * @author thevpc
  */
 public class MdElementTransformBase {
@@ -93,35 +92,20 @@ public class MdElementTransformBase {
         if (e == null) {
             return null;
         }
-        switch (e.getElementType()) {
+        switch (e.getElementType().type()) {
             case SEQ: {
                 return transformSequence((MdElementPath<MdSequence>) path);
             }
             case XML: {
                 return transformXml((MdElementPath<MdXml>) path);
             }
-            case TITLE1:
-            case TITLE2:
-            case TITLE3:
-            case TITLE4:
-            case TITLE5:
-            case TITLE6: {
+            case TITLE: {
                 return transformTitle((MdElementPath<MdTitle>) path);
             }
-            case NUMBRED_ITEM1:
-            case NUMBRED_ITEM2:
-            case NUMBRED_ITEM3:
-            case NUMBRED_ITEM4:
-            case NUMBRED_ITEM5:
-            case NUMBRED_ITEM6: {
+            case NUMBRED_ITEM: {
                 return transformNumberedItem((MdElementPath<MdNumberedItem>) path);
             }
-            case UNNUMBRED_ITEM1:
-            case UNNUMBRED_ITEM2:
-            case UNNUMBRED_ITEM3:
-            case UNNUMBRED_ITEM4:
-            case UNNUMBRED_ITEM5:
-            case UNNUMBRED_ITEM6: {
+            case UNNUMBRED_ITEM: {
                 return transformUnNumberedItem((MdElementPath<MdUnNumberedItem>) path);
             }
             case ADMONITION: {
@@ -185,12 +169,12 @@ public class MdElementTransformBase {
 
     protected MdElement transformNumberedItem(MdElementPath<MdNumberedItem> path) {
         MdNumberedItem e = path.getElement();
-        return new MdNumberedItem(e.getNumber(), e.getDepth(), e.getSep(), transformElement(path.append(e.getValue())),new MdElement[0]);
+        return new MdNumberedItem(e.getNumber(), e.getDepth(), e.getSep(), transformElement(path.append(e.getValue())), new MdElement[0]);
     }
 
     protected MdElement transformUnNumberedItem(MdElementPath<MdUnNumberedItem> path) {
         MdUnNumberedItem e = path.getElement();
-        return new MdUnNumberedItem(e.getType(), e.getDepth(), transformElement(path.append(e.getValue())),new MdElement[0]);
+        return new MdUnNumberedItem(e.getType(), e.getDepth(), transformElement(path.append(e.getValue())), new MdElement[0]);
     }
 
     protected MdElement transformTitle(MdElementPath<MdTitle> path) {
@@ -199,7 +183,7 @@ public class MdElementTransformBase {
 
     protected MdElement transformXml(MdElementPath<MdXml> path) {
         MdElement r = transformElement(path.append(path.getElement().getContent()));
-        return new MdXml(path.getElement().getTag(), path.getElement().getPropertiesString(), r);
+        return new MdXml(MdXml.XmlTagType.OPEN, path.getElement().getTag(), path.getElement().getProperties(), r);
     }
 
     protected MdElement transformSequence(MdElementPath<MdSequence> path) {

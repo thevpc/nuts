@@ -7,6 +7,7 @@ import net.thevpc.nuts.runtime.bundles.io.ProcessBuilder2;
 import net.thevpc.nuts.runtime.core.format.DefaultNutsExecCommandFormat;
 import net.thevpc.nuts.runtime.standalone.io.NutsByteArrayPrintStream;
 
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.*;
@@ -537,6 +538,18 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
 
         public SPrintStream(NutsSession session) {
             super(session);
+        }
+
+        protected SPrintStream(ByteArrayOutputStream bos, NutsSession session) {
+            super(bos, session);
+        }
+
+        @Override
+        public NutsPrintStream convertSession(NutsSession session) {
+            if(session==null || session==this.session){
+                return this;
+            }
+            return new SPrintStream((ByteArrayOutputStream) out,session);
         }
     }
 

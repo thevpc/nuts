@@ -254,7 +254,7 @@ public class Yaccer {
                         a = b;
                     } else {
                         if (sep == null) {
-                            sep = new Token("NEWLINE", "\n");
+                            sep = new Token("NEWLINE", "\n", "\n");
                         }
                         a = new BinOpCommand(a, sep, b);
                     }
@@ -757,7 +757,7 @@ public class Yaccer {
 
         @Override
         public String toString() {
-            return String.valueOf(token);
+            return String.valueOf(token.getImage());
         }
     }
 
@@ -770,7 +770,7 @@ public class Yaccer {
 
         @Override
         public String toString() {
-            return String.valueOf(token);
+            return String.valueOf(token.getImage());
         }
     }
 
@@ -787,7 +787,7 @@ public class Yaccer {
 
         @Override
         public String toString() {
-            return String.valueOf(token);
+            return String.valueOf(token.getImage());
         }
     }
 
@@ -852,7 +852,7 @@ public class Yaccer {
             boolean trueCond = false;
             if (cond != null) {
                 try {
-                    context.getShell().uniformException(new JShellNodeUnsafeRunnable(cond, context));
+                    context.getShell().evalNode(cond, context);
                     trueCond = true;
                 } catch (JShellUniformException ex) {
                     if (ex.isQuit()) {
@@ -862,7 +862,7 @@ public class Yaccer {
                 }
                 if (trueCond) {
                     if (block != null) {
-                        block.eval(context);
+                        context.getShell().evalNode(block,context);
                     }
                     return true;
                 }
@@ -889,7 +889,7 @@ public class Yaccer {
                 }
             }
             if (_else != null) {
-                return _else.eval(context);
+                return context.getShell().evalNode(_else,context);
             }
             return 1;
         }
@@ -986,9 +986,15 @@ public class Yaccer {
 
         @Override
         public String toString() {
-            return "ArgumentsLine{" +
-                    args +
-                    '}';
+            StringBuilder sb=new StringBuilder();
+            for (int i = 0; i < args.size(); i++) {
+                Argument arg = args.get(i);
+                if(i>0){
+                    sb.append(" ");
+                }
+                sb.append(arg);
+            }
+            return sb.toString();
         }
     }
 
@@ -1001,7 +1007,15 @@ public class Yaccer {
 
         @Override
         public int eval(JShellFileContext context) {
-            return ((JShellCommandNode) element).eval(context);
+            return context.getShell().evalNode(
+                    ((JShellCommandNode) element),
+                    context
+            );
+        }
+
+        @Override
+        public String toString() {
+            return "(" +element +')';
         }
     }
 
@@ -1044,9 +1058,15 @@ public class Yaccer {
         @Override
         public int eval(JShellFileContext context) {
             if (a != null) {
-                return ((JShellCommandNode) a).eval(context);
+                return context.getShell().evalNode(
+                        ((JShellCommandNode) a),context
+                );
             }
             return 0;
+        }
+        @Override
+        public String toString() {
+            return a.toString();
         }
     }
 
@@ -1103,10 +1123,11 @@ public class Yaccer {
 
         @Override
         public String toString() {
-            if (nodes.size() == 1) {
-                return nodes.get(0).toString();
+            StringBuilder sb=new StringBuilder();
+            for (JShellNode node : nodes) {
+                sb.append(node);
             }
-            return nodes.toString();
+            return sb.toString();
         }
 
         public String[] evalString(JShellFileContext context) {
@@ -1164,10 +1185,13 @@ public class Yaccer {
 
         @Override
         public String toString() {
-            return "Comments{" +
-                    tokens +
-                    '}';
+            StringBuilder sb=new StringBuilder();
+            for (Token token : tokens) {
+                sb.append(token.getImage());
+            }
+            return sb.toString();
         }
+
     }
 
 //    public void pushBack(JShellNode n){

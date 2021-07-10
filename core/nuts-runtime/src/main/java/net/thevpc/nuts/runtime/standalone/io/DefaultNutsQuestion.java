@@ -25,7 +25,7 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
     private NutsQuestionParser<T> parser;
     private NutsQuestionValidator<T> validator;
 
-    private final NutsTerminal terminal;
+    private final NutsSessionTerminal terminal;
     private final NutsPrintStream out;
     private final NutsWorkspace ws;
     private NutsSession session;
@@ -34,7 +34,7 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
     private boolean password = false;
     private Object lastResult = null;
 
-    public DefaultNutsQuestion(NutsWorkspace ws, NutsTerminal terminal, NutsPrintStream out) {
+    public DefaultNutsQuestion(NutsWorkspace ws, NutsSessionTerminal terminal, NutsPrintStream out) {
         this.ws = ws;
         this.terminal = terminal;
         this.out = out;

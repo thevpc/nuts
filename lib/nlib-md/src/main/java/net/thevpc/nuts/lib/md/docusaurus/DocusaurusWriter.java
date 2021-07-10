@@ -66,7 +66,7 @@ public class DocusaurusWriter extends AbstractMdWriter {
     }
 
     public void writeInline(MdElement element) {
-        switch (element.getElementType()) {
+        switch (element.getElementType().type()) {
             case TEXT: {
                 write(element.asText().getText());
                 return;
@@ -154,135 +154,37 @@ public class DocusaurusWriter extends AbstractMdWriter {
     }
 
     public void writeImpl(MdElement element) {
-        switch (element.getElementType()) {
-            case TITLE1: {
+        switch (element.getElementType().type()) {
+            case TITLE: {
                 MdTitle t = (MdTitle) element;
                 writeln();
-                writeln("# " + t.getValue());
+                StringBuilder sb=new StringBuilder();
+                for (int i = 0; i < element.getElementType().depth(); i++) {
+                    sb.append('#');
+                }
+                writeln(sb+" " + t.getValue());
                 break;
             }
-            case TITLE2: {
-                MdTitle t = (MdTitle) element;
-                writeln();
-                writeln("## " + t.getValue());
-                break;
-            }
-            case TITLE3: {
-                MdTitle t = (MdTitle) element;
-                writeln();
-                writeln("### " + t.getValue());
-                break;
-            }
-            case TITLE4: {
-                MdTitle t = (MdTitle) element;
-                writeln();
-                writeln("#### " + t.getValue());
-                break;
-            }
-            case TITLE5: {
-                MdTitle t = (MdTitle) element;
-                writeln();
-                writeln("##### " + t.getValue());
-                break;
-            }
-            case TITLE6: {
-                MdTitle t = (MdTitle) element;
-                writeln();
-                writeln("###### " + t.getValue());
-                break;
-            }
-            case UNNUMBRED_ITEM1: {
+            case UNNUMBRED_ITEM: {
                 MdUnNumberedItem t = (MdUnNumberedItem) element;
                 writeln();
-                write("* ");
+                StringBuilder sb=new StringBuilder();
+                for (int i = 0; i < element.getElementType().depth(); i++) {
+                    sb.append('*');
+                }
+                write(sb+" ");
                 writeInline(t.getValue());
                 writeln();
                 break;
             }
-            case UNNUMBRED_ITEM2: {
-                MdUnNumberedItem t = (MdUnNumberedItem) element;
-                writeln();
-                write("** ");
-                writeInline(t.getValue());
-                writeln();
-                break;
-            }
-            case UNNUMBRED_ITEM3: {
-                MdUnNumberedItem t = (MdUnNumberedItem) element;
-                writeln();
-                write("*** ");
-                writeInline(t.getValue());
-                writeln();
-                break;
-            }
-            case UNNUMBRED_ITEM4: {
-                MdUnNumberedItem t = (MdUnNumberedItem) element;
-                writeln();
-                write("**** ");
-                writeInline(t.getValue());
-                writeln();
-                break;
-            }
-            case UNNUMBRED_ITEM5: {
-                MdUnNumberedItem t = (MdUnNumberedItem) element;
-                writeln();
-                write("***** ");
-                writeInline(t.getValue());
-                writeln();
-                break;
-            }
-            case UNNUMBRED_ITEM6: {
-                MdUnNumberedItem t = (MdUnNumberedItem) element;
-                writeln();
-                write("****** ");
-                writeInline(t.getValue());
-                writeln();
-                break;
-            }
-            case NUMBRED_ITEM1: {
+            case NUMBRED_ITEM: {
                 MdNumberedItem t = (MdNumberedItem) element;
                 writeln();
-                write("1. ");
-                writeInline(t.getValue());
-                writeln();
-                break;
-            }
-            case NUMBRED_ITEM2: {
-                MdNumberedItem t = (MdNumberedItem) element;
-                writeln();
-                write("\t1. ");
-                writeInline(t.getValue());
-                writeln();
-                break;
-            }
-            case NUMBRED_ITEM3: {
-                MdNumberedItem t = (MdNumberedItem) element;
-                writeln();
-                write("\t\t1. ");
-                writeInline(t.getValue());
-                writeln();
-                break;
-            }
-            case NUMBRED_ITEM4: {
-                MdNumberedItem t = (MdNumberedItem) element;
-                writeln();
-                write("\t\t\t1. ");
-                writeInline(t.getValue());
-                writeln();
-                break;
-            }
-            case NUMBRED_ITEM5: {
-                MdNumberedItem t = (MdNumberedItem) element;
-                writeln();
-                write("\t\t\t\t1. ");
-                writeInline(t.getValue());
-                writeln();
-                break;
-            }
-            case NUMBRED_ITEM6: {
-                MdNumberedItem t = (MdNumberedItem) element;
-                writeln();
-                write("\t\t\t\t\t1. ");
+                StringBuilder sb=new StringBuilder();
+                for (int i = 0; i < element.getElementType().depth()-1; i++) {
+                    sb.append('\t');
+                }
+                write(sb+"1. ");
                 writeInline(t.getValue());
                 writeln();
                 break;

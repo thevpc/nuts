@@ -32,16 +32,9 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
     @Override
     public NutsExecutableInformation which() {
         checkSession();
-        DefaultNutsSessionTerminal terminal = new DefaultNutsSessionTerminal();
-        NutsWorkspaceUtils.setSession(terminal, getSession());
         NutsSession traceSession = getSession();
-        terminal.setParent(traceSession.getTerminal());
-//        if (isGrabOutputString()) {
-//            terminal.setOutMode(NutsTerminalMode.INHERITED);
-//        }
-//        if (isGrabErrorString()) {
-//            terminal.setErrMode(NutsTerminalMode.INHERITED);
-//        }
+        NutsSession execSession = traceSession.copy();
+        NutsSessionTerminal terminal=execSession.getWorkspace().term().createTerminal(traceSession.getTerminal());
         if (this.in != null) {
             terminal.setIn(this.in);
         }
@@ -59,7 +52,6 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
         terminal.err().flush();
         String[] ts = command.toArray(new String[0]);
         NutsExecutableInformationExt exec = null;
-        NutsSession execSession = traceSession.copy();
         execSession.setTerminal(terminal);
         NutsExecutionType executionType = this.getExecutionType();
         if (executionType == null) {
@@ -270,18 +262,18 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
         }
         NutsSession noProgressSession = traceSession.copy().setProgressOptions("none");
         List<NutsId> ff = ws.search().addId(nid).setSession(noProgressSession).setOptional(false).setLatest(true).setFailFast(false)
-                .setDefaultVersions(true)
-                //                .configure(true,"--trace-monitor")
                 .setInstallStatus(ws.filters().installStatus().byDeployed(true))
-                .getResultIds().list();
-        if (ff.isEmpty()) {
-            //retest without checking if the parseVersion is default or not
-            // this help recovering from "invalid default parseVersion" issue
-            ff = ws.search().addId(nid).setSession(noProgressSession).setOptional(false).setLatest(true).setFailFast(false)
-                    .setInstallStatus(ws.filters().installStatus().byDeployed(true))
-                    .setSession(noProgressSession)
-                    .getResultIds().list();
-        }
+                .getResultDefinitions().stream()
+                .sorted(Comparator.comparing(x->!x.getInstallInformation().isDefaultVersion())) // default first
+                .map(NutsDefinition::getId).collect(Collectors.toList());
+//        if (ff.isEmpty()) {
+//            //retest without checking if the parseVersion is default or not
+//            // this help recovering from "invalid default parseVersion" issue
+//            ff = ws.search().addId(nid).setSession(noProgressSession).setOptional(false).setLatest(true).setFailFast(false)
+//                    .setInstallStatus(ws.filters().installStatus().byDeployed(true))
+//                    .setSession(noProgressSession)
+//                    .getResultIds().list();
+//        }
         if (ff.isEmpty()) {
             if (!forceInstalled) {
                 if (ignoreIfUserCommand && isUserCommand(commandName)) {

@@ -22,7 +22,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.logging.Level;
 
@@ -77,7 +79,7 @@ public class DocusaurusCtrl {
         try {
             base = Paths.get(project.getDocusaurusBaseFolder()).normalize().toRealPath();
         } catch (IOException e) {
-            throw new UncheckedIOException("Invalid Docusaurus Base Folder: " + project.getDocusaurusBaseFolder(), e);
+            throw new UncheckedIOException("invalid Docusaurus Base Folder: " + project.getDocusaurusBaseFolder(), e);
         }
         String genSidebarMenuString = project.getConfig()
                 .getSafeObject("customFields")
@@ -118,11 +120,14 @@ public class DocusaurusCtrl {
         if (genSidebarMenu) {
             DocusaurusFolder root = project.getPhysicalDocsFolder();
             root = new DocusaurusFolder(
-                    "someSidebar", "someSidebar", 0, appContext.getWorkspace().elem().forNull(), root.getChildren()
+                    "someSidebar", "someSidebar", 0, appContext.getWorkspace().elem().forObject().build(), root.getChildren()
             );
             String s = "module.exports = {\n" +
                     root.toJSON(1)
                     + "\n};";
+            if(appContext.getSession().isPlainOut()){
+                appContext.getSession().out().printf("generate %s%n",base.resolve("sidebars.js"));
+            }
             try {
                 Files.write(base.resolve("sidebars.js"),s.getBytes());
             } catch (IOException e) {
@@ -135,9 +140,13 @@ public class DocusaurusCtrl {
                 .getSafe("path")
                 .isNull()) {
             Docusaurus2Asciidoctor d2a = new Docusaurus2Asciidoctor(project);
-            d2a.run();
+            appContext.getSession().out().printf("build adoc file : %s%n",d2a.getAdocFile());
+            d2a.createAdocFile();
+            appContext.getSession().out().printf("build pdf  file : %s%n",d2a.getPdfFile());
+            d2a.createPdfFile();
         }
         if (isBuildWebSite()) {
+            appContext.getSession().out().printf("build website%n");
             runNativeCommand(base, getEffectiveNpmCommandPath(), "run-script", "build");
             String copyBuildPath = project.getConfig().getSafeObject("customFields")
                     .getSafe("copyBuildPath")
@@ -274,7 +283,12 @@ public class DocusaurusCtrl {
                     return project.getTitle();
                 }
                 default: {
-                    NutsElement t = project.getConfig().get(varName.replace('.', '/'));
+                    String[] a = Arrays.stream(varName.split("[./]")).map(String::trim).filter(x->!x.isEmpty())
+                            .toArray(String[]::new);
+                    NutsElement t=project.getConfig();
+                    for (String s : a) {
+                        t = t.asSafeObject().getSafe(s);
+                    }
                     if (t.isNull()) {
                         return null;
                     }
@@ -301,21 +315,25 @@ public class DocusaurusCtrl {
 
         @Override
         public void processPath(Path source, String mimeType, FileTemplater context) {
-            NutsElement config = DocusaurusFolder.ofFolder(appContext.getSession(), source.getParent(), Paths.get(context.getRootDirRequired()).resolve("docs"), 0)
-                    .getConfig().asObject().getSafe("type");
+            NutsObjectElement config = DocusaurusFolder.ofFolder(appContext.getSession(), source.getParent(),
+                            Paths.get(context.getRootDirRequired()).resolve("docs"),
+                            getPreProcessorBaseDir().resolve("src"),
+                            0)
+                    .getConfig().getSafeObject("type");
             if (
-                    "javadoc".equals(config.asObject().get("name").asString())
-                            || "doc".equals(config.asObject().get("name").asString())
+                    "javadoc".equals(config.getSafeString("name"))
+                            || "doc".equals(config.getSafeString("name"))
             ) {
                 String[] sources = config.asSafeObject().getSafeArray("sources")
-                        .stream().map(x->x.toString()).toArray(String[]::new);
+                        .stream().map(NutsElement::asSafeString).filter(Objects::nonNull).toArray(String[]::new);
                 if (sources.length == 0) {
                     throw new IllegalArgumentException("missing doc sources in " + source);
                 }
-                String[] packages = config.asSafeObject().getSafeArray("packages").stream().map(x->x.toString()).toArray(String[]::new);
+                String[] packages = config.asSafeObject().getSafeArray("packages").stream().
+                        map(NutsElement::asSafeString).filter(Objects::nonNull).toArray(String[]::new);
                 String target = context.getPathTranslator().translatePath(source.getParent().toString());
                 if (target == null) {
-                    throw new IllegalArgumentException("Invalid source " + source.getParent());
+                    throw new IllegalArgumentException("invalid source " + source.getParent());
                 }
                 ArrayList<String> cmd = new ArrayList<>();
 //                cmd.add("--bot");
@@ -326,12 +344,10 @@ public class DocusaurusCtrl {
                     cmd.add("--source");
                     cmd.add(FileProcessorUtils.toAbsolutePath(Paths.get(s),source.getParent()).toString());
                 }
-                if(packages!=null) {
-                    for (String s : packages) {
-                        s=context.processString(s, MimeTypeConstants.PLACEHOLDER_DOLLARS);
-                        cmd.add("--package");
-                        cmd.add(s);
-                    }
+                for (String s : packages) {
+                    s=context.processString(s, MimeTypeConstants.PLACEHOLDER_DOLLARS);
+                    cmd.add("--package");
+                    cmd.add(s);
                 }
                 cmd.add("--target");
                 cmd.add(target);
@@ -402,9 +418,10 @@ public class DocusaurusCtrl {
 
         @Override
         public Object eval(String content, FileTemplater context) {
-            NutsPrintStream out = shell.getWorkspace().io().createMemoryPrintStream();
-            shell.getSession().setTerminal(
-                    shell.getWorkspace().term()
+            NutsSession session = shell.getSession();
+            NutsPrintStream out = session.getWorkspace().io().createMemoryPrintStream();
+            session.setTerminal(
+                    session.getWorkspace().term()
                             .createTerminal(
                                     new ByteArrayInputStream(new byte[0]),
                                     out,

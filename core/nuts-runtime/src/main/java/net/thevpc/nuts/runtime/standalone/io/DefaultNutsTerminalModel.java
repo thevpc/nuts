@@ -2,14 +2,10 @@ package net.thevpc.nuts.runtime.standalone.io;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.events.DefaultNutsWorkspaceEvent;
-import net.thevpc.nuts.runtime.core.format.text.ExtendedFormatAware;
 import net.thevpc.nuts.NutsLogVerb;
 import net.thevpc.nuts.runtime.core.terminals.*;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
-import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
-import net.thevpc.nuts.spi.NutsSessionTerminalBase;
 import net.thevpc.nuts.spi.NutsSystemTerminalBase;
-import net.thevpc.nuts.spi.NutsTerminalBase;
 
 import java.io.*;
 import java.util.logging.Level;
@@ -92,8 +88,8 @@ public class DefaultNutsTerminalModel {
         if (terminal == null) {
             terminal = createTerminal(session);
         }
-        if (!(terminal instanceof UnmodifiableTerminal)) {
-            terminal = new UnmodifiableTerminal(terminal, session);
+        if (!(terminal instanceof UnmodifiableSessionTerminal)) {
+            terminal = new UnmodifiableSessionTerminal(terminal, session);
         }
         this.terminal = terminal;
     }
@@ -113,39 +109,42 @@ public class DefaultNutsTerminalModel {
     }
 
     public NutsSessionTerminal createTerminal(NutsSession session) {
-        return createTerminal(null, session);
+        return new DefaultNutsSessionTerminal(
+                session,workspaceSystemTerminalAdapter
+        );
+//        return createTerminal(null, session);
     }
 
-    public NutsSessionTerminal createTerminal(NutsTerminalBase parent, NutsSession session) {
-        if (parent == null) {
-            parent = workspaceSystemTerminalAdapter;
-        }
-        NutsSessionTerminalBase termb = ws.extensions()
-                .setSession(session)
-                .createSupported(NutsSessionTerminalBase.class, null);
-        if (termb == null) {
-            throw new NutsExtensionNotFoundException(session, NutsSessionTerminal.class, "SessionTerminalBase");
-        }
-        NutsWorkspaceUtils.setSession(termb, session);
-        try {
-            NutsSessionTerminal term = null;
-            if (termb instanceof NutsSessionTerminal) {
-                term = (NutsSessionTerminal) termb;
-                NutsWorkspaceUtils.setSession(term, session);
-                term.setParent(parent);
-            } else {
-                term = new DefaultNutsSessionTerminal();
-                NutsWorkspaceUtils.setSession(term, session);
-                term.setParent(termb);
-            }
-            return term;
-        } catch (Exception anyException) {
-            final NutsSessionTerminal c = new DefaultNutsSessionTerminal();
-            NutsWorkspaceUtils.setSession(c, session);
-            c.setParent(parent);
-            return c;
-        }
-    }
+//    public NutsSessionTerminal createTerminal(NutsSystemTerminalBase parent, NutsSession session) {
+//        if (parent == null) {
+//            parent = workspaceSystemTerminalAdapter;
+//        }
+//        NutsSystemTerminalBase termb = ws.extensions()
+//                .setSession(session)
+//                .createSupported(NutsSessionTerminalBase.class, null);
+//        if (termb == null) {
+//            throw new NutsExtensionNotFoundException(session, NutsSessionTerminal.class, "SessionTerminalBase");
+//        }
+//        NutsWorkspaceUtils.setSession(termb, session);
+//        try {
+//            NutsSessionTerminal term = null;
+//            if (termb instanceof NutsSessionTerminal) {
+//                term = (NutsSessionTerminal) termb;
+//                NutsWorkspaceUtils.setSession(term, session);
+//                term.setParent(parent);
+//            } else {
+//                term = new DefaultNutsSessionTerminal();
+//                NutsWorkspaceUtils.setSession(term, session);
+//                term.setParent(termb);
+//            }
+//            return term;
+//        } catch (Exception anyException) {
+//            final NutsSessionTerminal c = new DefaultNutsSessionTerminal();
+//            NutsWorkspaceUtils.setSession(c, session);
+//            c.setParent(parent);
+//            return c;
+//        }
+//    }
 
     private NutsSystemTerminal NutsSystemTerminal_of_NutsSystemTerminalBase(NutsSystemTerminalBase terminal, NutsSession session) {
         if (terminal == null) {
@@ -160,7 +159,9 @@ public class DefaultNutsTerminalModel {
                 NutsWorkspaceUtils.setSession(syst, session);
             } catch (Exception ex) {
                 _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).log("unable to create system terminal : {0}", ex.getMessage());
-                syst = new DefaultSystemTerminal(new DefaultNutsSystemTerminalBase());
+                DefaultNutsSystemTerminalBase b = new DefaultNutsSystemTerminalBase();
+                NutsWorkspaceUtils.setSession(b, session);
+                syst = new DefaultSystemTerminal(b);
                 NutsWorkspaceUtils.setSession(syst, session);
             }
         }

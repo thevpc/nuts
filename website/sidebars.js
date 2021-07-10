@@ -1,37 +1,36 @@
 module.exports = {
    'someSidebar': {
-      'advanced': [
-         'advanced/aliases',
-         'advanced/automation',
-         'advanced/filesystem',
-         'advanced/portableWorkspaces',
-         'advanced/doc1',
+      'Introduction': [
+         'intro/installation',
+         'intro/introduction',
+         'intro/nutsAndMaven',
       ],
-      'cmd': [
-         'cmd/install-cmd',
-      ],
-      'concepts': [
-         'concepts/commandline',
-         'concepts/projects',
-      ],
-      'dev': [
-         'dev/building',
-         'dev/nutsApp',
-         'dev/firstNutsApp',
-      ],
-      'info': [
+      'Getting Started': [
          'info/changelog',
          'info/faq',
          'info/license',
          'info/running',
          'info/troubleshouting',
       ],
-      'intro': [
-         'intro/installation',
-         'intro/introduction',
-         'intro/nutsAndMaven',
+      'Nuts Concepts': [
+         'concepts/commandline',
       ],
-      'javadocs': [
+      'Advanced Features': [
+         'advanced/aliases',
+         'advanced/automation',
+         'advanced/filesystem',
+         'advanced/portableWorkspaces',
+         'advanced/doc1',
+      ],
+      'Commands': [
+         'cmd/install-cmd',
+      ],
+      'Application Framework': [
+         'dev/building',
+         'dev/nutsApp',
+         'dev/firstNutsApp',
+      ],
+      'API Documentation': [
          'javadocs/javadoc_Application',
          'javadocs/javadoc_Base',
          'javadocs/javadoc_Command_Line',
@@ -47,6 +46,7 @@ module.exports = {
          'javadocs/javadoc_Input_Output',
          'javadocs/javadoc_Internal',
          'javadocs/javadoc_Logging',
+         'javadocs/javadoc_Other',
          'javadocs/javadoc_Security',
          'javadocs/javadoc_SPI_Base',
          'javadocs/javadoc_Toolkit',

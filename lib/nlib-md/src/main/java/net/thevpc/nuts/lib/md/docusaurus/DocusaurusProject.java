@@ -27,6 +27,7 @@ public class DocusaurusProject {
     };
 
 
+    private String docusaurusConfigBaseFolder;
     private String docusaurusBaseFolder;
 
     private NutsObjectElement config;
@@ -34,11 +35,16 @@ public class DocusaurusProject {
     private NutsObjectElement sidebars;
     private NutsSession session;
 
-    public DocusaurusProject(String docusaurusBaseFolder, NutsSession session) {
-        this.docusaurusBaseFolder = docusaurusBaseFolder;
+    public DocusaurusProject(String docusaurusBaseFolder, String docusaurusConfigBaseFolder,NutsSession session) {
+        this.docusaurusBaseFolder = Paths.get(docusaurusBaseFolder).toAbsolutePath().toString();
+        if(docusaurusConfigBaseFolder==null){
+            this.docusaurusConfigBaseFolder=docusaurusBaseFolder;
+        }else{
+            this.docusaurusConfigBaseFolder=docusaurusConfigBaseFolder;
+        }
         this.session = session;
         if (!Files.exists(Paths.get(resolvePath("docusaurus.config.js")))) {
-            throw new IllegalArgumentException("Invalid docusaurus v2 folder : " + toCanonicalPath(docusaurusBaseFolder));
+            throw new IllegalArgumentException("Invalid docusaurus v2 folder : " + toCanonicalPath(this.docusaurusBaseFolder));
         }
         this.sidebars = loadModuleExportsFile("sidebars.js").asSafeObject();
         this.config = loadModuleExportsFile("docusaurus.config.js").asSafeObject();
@@ -147,11 +153,11 @@ public class DocusaurusProject {
         }
     }
 
-    public DocusaurusFileOrFolder extractFileOrFolder(Path path, Path root) {
+    public DocusaurusFileOrFolder extractFileOrFolder(Path path, Path root,Path configRoot) {
         if (Files.isDirectory(path) && path.equals(root)) {
             try {
                 return DocusaurusFolder.ofRoot(
-                        session, Files.list(path).map(p -> DocusaurusFolder.ofFileOrFolder(session, p, root))
+                        session, Files.list(path).map(p -> DocusaurusFolder.ofFileOrFolder(session, p, root,configRoot))
                                 .filter(Objects::nonNull)
                                 .toArray(DocusaurusFileOrFolder[]::new)
                 );
@@ -180,7 +186,7 @@ public class DocusaurusProject {
                         title,
                         order,
                         config,
-                        Files.list(path).map(p -> DocusaurusFolder.ofFileOrFolder(session, p, root))
+                        Files.list(path).map(p -> DocusaurusFolder.ofFileOrFolder(session, p, root,configRoot))
                                 .filter(Objects::nonNull)
                                 .toArray(DocusaurusFileOrFolder[]::new)
                 );
@@ -198,6 +204,7 @@ public class DocusaurusProject {
     public DocusaurusFileOrFolder[] LJSON_to_DocusaurusFileOrFolder_list(NutsElement a, String path, DocusaurusFolder root) {
         if (a.isString()) {
             return new DocusaurusFileOrFolder[]{
+                    //DocusaurusUtils.concatPath(path, member.getValue().asString())
                     root.getPage(a.asString(), true, null)
             };
         } else if (a.isArray()) {
@@ -210,18 +217,18 @@ public class DocusaurusProject {
             List<DocusaurusFileOrFolder> aa = new ArrayList<>();
             int order = 0;
             for (NutsElementEntry member : a.asObject()) {
-                DocusaurusFileOrFolder[] cc = LJSON_to_DocusaurusFileOrFolder_list(member.getValue(), DocusaurusUtils.concatPath(path, member.getValue().asString()), root);
+                DocusaurusFileOrFolder[] cc = LJSON_to_DocusaurusFileOrFolder_list(member.getValue(), path, root);
                 aa.add(new DocusaurusFolder(
                         path,
                         member.getKey().asString(),
                         ++order,
-                        session.getWorkspace().elem().forNull(),
+                        session.getWorkspace().elem().forObject().build(),
                         cc
                 ));
             }
             return aa.toArray(new DocusaurusFileOrFolder[0]);
         } else {
-            throw new IllegalArgumentException("Invalid");
+            throw new IllegalArgumentException("invalid");
         }
     }
 
@@ -231,8 +238,9 @@ public class DocusaurusProject {
     }
 
     public DocusaurusFolder getPhysicalDocsFolder() {
-        Path docs = Paths.get(this.docusaurusBaseFolder).resolve("docs");
-        DocusaurusFolder root = (DocusaurusFolder) DocusaurusFolder.ofFileOrFolder(session, docs, docs);
+        Path docs = Paths.get(this.docusaurusBaseFolder).resolve("docs").toAbsolutePath();
+        DocusaurusFolder root = (DocusaurusFolder) DocusaurusFolder.ofFileOrFolder(session, docs, docs,
+                Paths.get(docusaurusConfigBaseFolder).resolve("docs").toAbsolutePath());
         return root;
     }
 

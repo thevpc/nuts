@@ -58,7 +58,7 @@ public class DoubleQuotedContext extends AbstractContext {
         if(sb.length()==0){
             return null;
         }
-        return new Token("STR", sb.toString());
+        return new Token("STR", sb.toString(),sb.toString());
     }
 
     boolean isDblQChar(char c) {

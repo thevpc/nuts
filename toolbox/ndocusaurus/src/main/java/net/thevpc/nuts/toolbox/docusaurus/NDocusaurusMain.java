@@ -3,6 +3,8 @@ package net.thevpc.nuts.toolbox.docusaurus;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.lib.md.docusaurus.DocusaurusProject;
 
+import java.nio.file.Paths;
+
 public class NDocusaurusMain implements NutsApplication {
 
     public static void main(String[] args) {
@@ -62,7 +64,9 @@ public class NDocusaurusMain implements NutsApplication {
                 if (workdir == null) {
                     workdir = ".";
                 }
-                DocusaurusProject docusaurusProject = new DocusaurusProject(workdir,appContext.getSession());
+                DocusaurusProject docusaurusProject = new DocusaurusProject(workdir,
+                        Paths.get(workdir).resolve(".dir-template").resolve("src").toString(),
+                        appContext.getSession());
                 new DocusaurusCtrl(docusaurusProject,appContext)
                         .setBuildWebSite(build)
                         .setStartWebSite(start)

@@ -12,7 +12,9 @@ public interface JShellFileContext {
     String getServiceName();
 
     void setServiceName(String serviceName);
+
     void setArgs(String[] args);
+
     String getArg(int index);
 
     int getArgsCount();
@@ -56,15 +58,15 @@ public interface JShellFileContext {
 
     List<JShellAutoCompleteCandidate> resolveAutoCompleteCandidates(String commandName, List<String> autoCompleteWords, int wordIndex, String autoCompleteLine);
 
-    JShellFileContext setEnv(Map<String,String> env);
+    JShellFileContext setEnv(Map<String, String> env);
 
     Map<String, Object> getUserProperties();
 
     String getCwd();
 
-    JShellFileSystem getFileSystem();
-
     void setCwd(String cwd);
+
+    JShellFileSystem getFileSystem();
 
     void setFileSystem(JShellFileSystem fileSystem);
 

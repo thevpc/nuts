@@ -9,6 +9,10 @@ public class NutsPrintStreamNull extends NutsPrintStreamBase {
     public NutsPrintStreamNull(NutsSession session) {
         super(false, NutsTerminalMode.INHERITED, session, new Bindings());
     }
+    @Override
+    public NutsPrintStream convertSession(NutsSession session) {
+        return this;
+    }
 
     @Override
     protected NutsPrintStream convertImpl(NutsTerminalMode other) {

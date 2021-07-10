@@ -269,18 +269,7 @@ public class NutsWorkspaceUtils {
         }
     }
 
-    public static Set<String> parseProgressOptions(NutsSession session) {
-        LinkedHashSet<String> set = new LinkedHashSet<>();
-        for (String s : StringTokenizerUtils.split(session.getProgressOptions(), ",; ")) {
-            Boolean n = CoreBooleanUtils.parseBoolean(s, null, null);
-            if (n == null) {
-                set.add(s);
-            } else {
-                set.add(n.toString());
-            }
-        }
-        return set;
-    }
+
 
 //    public static NutsId parseRequiredNutsId0(String nutFormat) {
 //        NutsId id = CoreNutsUtils.parseNutsId(nutFormat);

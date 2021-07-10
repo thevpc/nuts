@@ -32,6 +32,6 @@ public class SharpContext extends AbstractContext {
                 sb.append(rc);
             }
         }
-        return new Token("#",sb.toString());
+        return new Token("#",sb.toString(),"#"+sb.toString());
     }
 }

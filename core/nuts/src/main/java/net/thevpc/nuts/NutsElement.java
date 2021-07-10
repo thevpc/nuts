@@ -117,6 +117,30 @@ public interface NutsElement {
 
     int asSafeInt(int def);
 
+    Long asSafeLong();
+
+    long asSafeLong(long def);
+
+    Double asSafeDouble();
+
+    short asSafeShort(short def);
+
+    Short asSafeShort();
+
+    byte asSafeByte(byte def);
+
+    Byte asSafeByte();
+
+    double asSafeDouble(double def);
+
+    Float asSafeFloat();
+
+    float asSafeFloat(float def);
+
+    String asSafeString(String def);
+
+    String asSafeString();
+
     int asInt();
 
     long asLong();

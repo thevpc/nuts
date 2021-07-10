@@ -30,7 +30,7 @@ Starred releases are most stable ones.
 - ADDED  : {api}{cmdline} added support for History and implemented in JLine extension
 - ADDED  : {api}{cmdline} added support for readline syntax coloring (using jline)
 - ADDED  : {api}{cmdline} added --locale option to support multi languages. The option is reflected to Session as well 
-- ADDED  : {api}{cmdline} added ---<key>=<value> options to support extra properties 
+- ADDED  : {api}{cmdline} added ---key=value options to support extra properties 
 - ADDED  : {api}{cmdline} added -S short option, equivalent to --standalone 
 - ADDED  : {api}{cmdline} added NutsFormattedMessage to support formatted messages in a uniform manner (C-style, {} positional) 
 - CHANGED: {api}{cmdline} both list and tree dependencies are now accessible as NutsDependencies  

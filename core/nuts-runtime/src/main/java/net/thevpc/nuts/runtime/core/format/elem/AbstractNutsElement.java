@@ -210,7 +210,7 @@ public abstract class AbstractNutsElement implements NutsElement {
 
     @Override
     public Integer asSafeInt() {
-        if (isInt()) {
+        if (isNumber()) {
             return asInt();
         }
         return null;
@@ -220,6 +220,92 @@ public abstract class AbstractNutsElement implements NutsElement {
     public int asSafeInt(int def) {
         Integer i = asSafeInt();
         return i == null ? def : i;
+    }
+
+    @Override
+    public Long asSafeLong() {
+        if (isNumber()) {
+            return asLong();
+        }
+        return null;
+    }
+
+    @Override
+    public long asSafeLong(long def) {
+        Long i = asSafeLong();
+        return i == null ? def : i;
+    }
+
+    @Override
+    public Double asSafeDouble() {
+        if (isNumber()) {
+            return asDouble();
+        }
+        return null;
+    }
+
+    @Override
+    public short asSafeShort(short def) {
+        Short i = asSafeShort();
+        return i == null ? def : i;
+    }
+
+    @Override
+    public Short asSafeShort() {
+        if (isNumber()) {
+            return asShort();
+        }
+        return null;
+    }
+
+    @Override
+    public byte asSafeByte(byte def) {
+        Byte i = asSafeByte();
+        return i == null ? def : i;
+    }
+
+    @Override
+    public Byte asSafeByte() {
+        if (isNumber()) {
+            return asByte();
+        }
+        return null;
+    }
+
+    @Override
+    public double asSafeDouble(double def) {
+        Double i = asSafeDouble();
+        return i == null ? def : i;
+    }
+
+    @Override
+    public Float asSafeFloat() {
+        if (isNumber()) {
+            return asFloat();
+        }
+        return null;
+    }
+
+    @Override
+    public float asSafeFloat(float def) {
+        Float i = asSafeFloat();
+        return i == null ? def : i;
+    }
+
+    @Override
+    public String asSafeString(String def) {
+        if(isString()){
+            return asPrimitive().getString();
+        }
+        return def;
+    }
+
+    @Override
+    public String asSafeString() {
+        if(isPrimitive()){
+            return asPrimitive().getString();
+        }
+        return null;
     }
 
     @Override

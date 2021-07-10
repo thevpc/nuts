@@ -127,7 +127,7 @@ public class DefaultNutsIOModel {
             return null;
         }
         if (out instanceof NutsPrintStreamAdapter) {
-            return ((NutsPrintStreamAdapter) out).getBaseNutsPrintStream().convert(expectedMode);
+            return ((NutsPrintStreamAdapter) out).getBaseNutsPrintStream().convertMode(expectedMode);
         }
         SimpleWriterOutputStream w = new SimpleWriterOutputStream(out, session);
         return createPrintStream(w, expectedMode, session);
@@ -156,11 +156,11 @@ public class DefaultNutsIOModel {
             }
         }
         if (out instanceof NutsPrintStreamAdapter) {
-            return ((NutsPrintStreamAdapter) out).getBaseNutsPrintStream().convert(expectedMode);
+            return ((NutsPrintStreamAdapter) out).getBaseNutsPrintStream().convertMode(expectedMode);
         }
         return
                 new NutsPrintStreamRaw(out, null, null, session, new NutsPrintStreamBase.Bindings())
-                        .convert(expectedMode)
+                        .convertMode(expectedMode)
                 ;
     }
 

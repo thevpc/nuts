@@ -46,10 +46,10 @@ public class DocusaurusFolder implements DocusaurusFileOrFolder {
     private String shortId;
     private String title;
     private int order;
-    private NutsElement config;
+    private NutsObjectElement config;
     private DocusaurusFileOrFolder[] children;
 
-    public DocusaurusFolder(String longId, String title, int order, NutsElement config, DocusaurusFileOrFolder[] children) {
+    public DocusaurusFolder(String longId, String title, int order, NutsObjectElement config, DocusaurusFileOrFolder[] children) {
         this.longId = longId;
         String[] r = DocusaurusUtils.getPathArray(longId);
         this.shortId = r.length == 0 ? "/" : r[r.length - 1];
@@ -60,19 +60,19 @@ public class DocusaurusFolder implements DocusaurusFileOrFolder {
         Arrays.sort(children, DFOF_COMPARATOR);
     }
 
-    public static DocusaurusFileOrFolder ofFileOrFolder(NutsSession session, Path path, Path root) {
-        return ofFileOrFolder(session, path,root,-1);
+    public static DocusaurusFileOrFolder ofFileOrFolder(NutsSession session, Path path, Path root, Path configRoot) {
+        return ofFileOrFolder(session, path,root,configRoot,-1);
     }
 
-    public static DocusaurusFileOrFolder ofFileOrFolder(NutsSession session, Path path, Path root, int maxDepth) {
-        return Files.isDirectory(path) ? DocusaurusFolder.ofFolder(session, path, root, maxDepth) : DocusaurusFile.ofFile(path, root);
+    public static DocusaurusFileOrFolder ofFileOrFolder(NutsSession session, Path path, Path root, Path configRoot, int maxDepth) {
+        return Files.isDirectory(path) ? DocusaurusFolder.ofFolder(session, path, root, configRoot,maxDepth) : DocusaurusFile.ofFile(path, root);
     }
 
-    public static DocusaurusFolder ofFolder(NutsSession session, Path path, Path root, int maxDepth) {
+    public static DocusaurusFolder ofFolder(NutsSession session, Path path, Path root, Path configRoot, int maxDepth) {
         if (Files.isDirectory(path) && path.equals(root)) {
             try {
                 return DocusaurusFolder.ofRoot(
-                        session, (maxDepth == 0) ? new DocusaurusFileOrFolder[0] : Files.list(path).map(p -> DocusaurusFolder.ofFileOrFolder(session, p, root, maxDepth < 0 ? -1 : maxDepth - 1))
+                        session, (maxDepth == 0) ? new DocusaurusFileOrFolder[0] : Files.list(path).map(p -> DocusaurusFolder.ofFileOrFolder(session, p, root,configRoot, maxDepth < 0 ? -1 : maxDepth - 1))
                                 .filter(Objects::nonNull)
                                 .toArray(DocusaurusFileOrFolder[]::new)
 
@@ -83,6 +83,7 @@ public class DocusaurusFolder implements DocusaurusFileOrFolder {
         } else if (Files.isDirectory(path)) {
             String longId = path.subpath(root.getNameCount(), path.getNameCount()).toString();
             Path dfi = path.resolve(".docusaurus-folder-config.json");
+            Path cfi = configRoot.resolve(longId).resolve(".docusaurus-folder-config.json");
             NutsObjectElement config = session.getWorkspace().elem().forObject().build();
             if (Files.isRegularFile(dfi)) {
                 try {
@@ -90,11 +91,17 @@ public class DocusaurusFolder implements DocusaurusFileOrFolder {
                 } catch (IOException e) {
                     //ignore...
                 }
+            }else if(Files.isRegularFile(cfi)){
+                try {
+                    config = session.getWorkspace().elem().parse(new String(Files.readAllBytes(cfi))).asSafeObject();
+                } catch (IOException e) {
+                    //ignore...
+                }
             }
             try {
                 int order = config.getSafeInt("order",0);
                 if (order <= 0) {
-                    throw new IllegalArgumentException("");
+                    throw new IllegalArgumentException("invalid order "+order+" in "+dfi);
                 }
                 String title = config.getSafeString("title",path.getFileName().toString());
                 return new DocusaurusFolder(
@@ -102,7 +109,7 @@ public class DocusaurusFolder implements DocusaurusFileOrFolder {
                         title,
                         order,
                         config,
-                        (maxDepth == 0) ? new DocusaurusFileOrFolder[0] : Files.list(path).map(p -> DocusaurusFolder.ofFileOrFolder(session, p, root, maxDepth < 0 ? -1 : maxDepth - 1))
+                        (maxDepth == 0) ? new DocusaurusFileOrFolder[0] : Files.list(path).map(p -> DocusaurusFolder.ofFileOrFolder(session, p, root, configRoot,maxDepth < 0 ? -1 : maxDepth - 1))
                                 .filter(Objects::nonNull)
                                 .toArray(DocusaurusFileOrFolder[]::new)
                 );
@@ -115,10 +122,10 @@ public class DocusaurusFolder implements DocusaurusFileOrFolder {
     }
 
     public static DocusaurusFolder ofRoot(NutsSession session, DocusaurusFileOrFolder... children) {
-        return new DocusaurusFolder("/", "/", 0, session.getWorkspace().elem().forNull(), children);
+        return new DocusaurusFolder("/", "/", 0, session.getWorkspace().elem().forObject().build(), children);
     }
 
-    public static DocusaurusFolder of(String longId, String title, int order, NutsElement config, DocusaurusFileOrFolder... children) {
+    public static DocusaurusFolder of(String longId, String title, int order, NutsObjectElement config, DocusaurusFileOrFolder... children) {
         return new DocusaurusFolder(longId, title, order, config, children);
     }
 
@@ -291,7 +298,7 @@ public class DocusaurusFolder implements DocusaurusFileOrFolder {
         return children;
     }
 
-    public NutsElement getConfig() {
+    public NutsObjectElement getConfig() {
         return config;
     }
 

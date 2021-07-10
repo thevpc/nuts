@@ -64,7 +64,7 @@ public abstract class NutsPrintStreamRendered extends NutsPrintStreamBase {
 
     @Override
     public int getColumns() {
-        return convert(NutsTerminalMode.INHERITED).getColumns();
+        return convertMode(NutsTerminalMode.INHERITED).getColumns();
     }
 
     @Override

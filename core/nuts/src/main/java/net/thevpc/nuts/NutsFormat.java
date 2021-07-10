@@ -28,7 +28,6 @@ package net.thevpc.nuts;
 
 import java.io.File;
 import java.io.OutputStream;
-import java.io.PrintStream;
 import java.io.Writer;
 import java.nio.file.Path;
 
@@ -107,7 +106,7 @@ public interface NutsFormat extends NutsCommandLineConfigurable {
      *
      * @param terminal recipient terminal
      */
-    void print(NutsTerminal terminal);
+    void print(NutsSessionTerminal terminal);
 
     /**
      * format current value and write result to {@code out} and finally appends
@@ -147,7 +146,7 @@ public interface NutsFormat extends NutsCommandLineConfigurable {
      *
      * @param terminal recipient terminal
      */
-    void println(NutsTerminal terminal);
+    void println(NutsSessionTerminal terminal);
 
     /**
      * format current value and write result to {@code out} and finally appends

@@ -1,8 +1,8 @@
 /**
  * ====================================================================
- *            thevpc-common-md : Simple Markdown Manipulation Library
+ * thevpc-common-md : Simple Markdown Manipulation Library
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -17,6 +17,9 @@
  */
 package net.thevpc.nuts.lib.md;
 
+import net.thevpc.nuts.lib.md.docusaurus.DocusaurusUtils;
+
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -26,13 +29,26 @@ import java.util.Map;
 public class MdXml extends MdAbstractElement {
 
     private String tag;
-    private String propertiesString;
+    private Map<String, String> properties = new HashMap<>();
     private MdElement content;
+    private XmlTagType tagType;
 
-    public MdXml(String tag, String properties, MdElement content) {
+    public MdXml(XmlTagType tagType,String tag, String properties, MdElement content) {
+        this.tagType = tagType;
         this.tag = tag;
-        this.propertiesString = properties;
+        this.properties = new PropertiesParser(properties).parseMap();
         this.content = content;
+    }
+
+    public MdXml(XmlTagType tagType,String tag, Map<String, String> properties, MdElement content) {
+        this.tagType = tagType;
+        this.tag = tag;
+        this.properties = properties;
+        this.content = content;
+    }
+
+    public XmlTagType getTagType() {
+        return tagType;
     }
 
     @Override
@@ -44,11 +60,8 @@ public class MdXml extends MdAbstractElement {
         return tag;
     }
 
-    public Map<String,String> getProperties() {
-        return new PropertiesParser(propertiesString).parseMap();
-    }
-    public String getPropertiesString() {
-        return propertiesString;
+    public Map<String, String> getProperties() {
+        return properties;
     }
 
     public MdElement getContent() {
@@ -59,8 +72,13 @@ public class MdXml extends MdAbstractElement {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("<").append(tag);
-        if (propertiesString != null) {
-            sb.append(" ").append(propertiesString);
+        if (properties != null && properties.size() > 0) {
+            for (Map.Entry<String, String> e : properties.entrySet()) {
+                sb.append(" ").append(e.getKey());
+                if (e.getValue() != null) {
+                    sb.append("=").append('"').append(DocusaurusUtils.escapeString(e.getValue())).append('"');
+                }
+            }
         }
         sb.append(">");
         sb.append(content);
@@ -68,5 +86,9 @@ public class MdXml extends MdAbstractElement {
         sb.append(">");
         return sb.toString();
     }
-
+    public enum XmlTagType{
+        OPEN,
+        CLOSE,
+        AUTO_CLOSE,
+    }
 }

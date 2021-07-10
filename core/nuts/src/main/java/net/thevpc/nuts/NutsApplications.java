@@ -128,7 +128,7 @@ public final class NutsApplications {
             ctxSession.setIndexed(session.isIndexed());
             ctxSession.setCached(session.isCached());
             ctxSession.setTransitive(session.isTransitive());
-            ctxSession.setTerminal(session.getTerminal());
+            ctxSession.setTerminal(ctxSession.getWorkspace().term().createTerminal(session.getTerminal()));
         }
         switch (applicationContext.getMode()) {
             /**

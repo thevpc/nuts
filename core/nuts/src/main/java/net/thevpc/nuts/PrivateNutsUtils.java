@@ -460,11 +460,11 @@ final class PrivateNutsUtils {
         return javaHome + File.separator + "bin" + File.separator + exe;
     }
 
-    public static long deleteAndConfirmAll(File[] folders, boolean force, String header, NutsTerminal term, NutsSession session, PrivateNutsLog LOG) {
+    public static long deleteAndConfirmAll(File[] folders, boolean force, String header, NutsSessionTerminal term, NutsSession session, PrivateNutsLog LOG) {
         return deleteAndConfirmAll(folders, force, new SimpleConfirmDelete(), header, term, session, LOG);
     }
 
-    private static long deleteAndConfirmAll(File[] folders, boolean force, ConfirmDelete refForceAll, String header, NutsTerminal term, NutsSession session, PrivateNutsLog LOG) {
+    private static long deleteAndConfirmAll(File[] folders, boolean force, ConfirmDelete refForceAll, String header, NutsSessionTerminal term, NutsSession session, PrivateNutsLog LOG) {
         long count = 0;
         boolean headerWritten = false;
         if (folders != null) {
@@ -489,7 +489,7 @@ final class PrivateNutsUtils {
         return count;
     }
 
-    private static long deleteAndConfirm(File directory, boolean force, ConfirmDelete refForceAll, NutsTerminal term, NutsSession session, PrivateNutsLog LOG) {
+    private static long deleteAndConfirm(File directory, boolean force, ConfirmDelete refForceAll, NutsSessionTerminal term, NutsSession session, PrivateNutsLog LOG) {
         if (directory.exists()) {
             if (!force && !refForceAll.isForce() && refForceAll.accept(directory)) {
                 String line;

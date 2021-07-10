@@ -78,7 +78,9 @@ public interface NutsPrintStream {
 
     boolean isAutoFlash();
 
-    NutsPrintStream convert(NutsTerminalMode other);
+    NutsPrintStream convertMode(NutsTerminalMode other);
+
+    NutsPrintStream convertSession(NutsSession session);
 
     NutsPrintStream run(NutsTerminalCommand command);
 

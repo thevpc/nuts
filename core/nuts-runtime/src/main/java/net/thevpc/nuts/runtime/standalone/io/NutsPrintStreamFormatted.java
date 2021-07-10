@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io;
 
 import net.thevpc.nuts.NutsPrintStream;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsTerminalCommand;
 import net.thevpc.nuts.NutsTerminalMode;
 import net.thevpc.nuts.runtime.core.format.text.renderer.AnsiUnixTermPrintRenderer;
@@ -14,6 +15,14 @@ public class NutsPrintStreamFormatted extends NutsPrintStreamRendered {
             throw new IllegalArgumentException("formatted already bound");
         }
         bindings.formatted=this;
+    }
+
+    @Override
+    public NutsPrintStream convertSession(NutsSession session) {
+        if(session==null || session==this.session){
+            return this;
+        }
+        return new NutsPrintStreamFormatted(base,new Bindings());
     }
 
     @Override

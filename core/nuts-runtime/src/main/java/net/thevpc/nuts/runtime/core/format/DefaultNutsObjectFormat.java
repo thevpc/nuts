@@ -26,7 +26,6 @@
 package net.thevpc.nuts.runtime.core.format;
 
 import java.io.File;
-import java.io.PrintStream;
 import java.io.Writer;
 import java.nio.file.Path;
 
@@ -159,7 +158,7 @@ public class DefaultNutsObjectFormat extends NutsObjectFormatBase {
     }
 
     @Override
-    public void print(NutsTerminal terminal) {
+    public void print(NutsSessionTerminal terminal) {
         getBase().print(terminal);
     }
 
@@ -184,7 +183,7 @@ public class DefaultNutsObjectFormat extends NutsObjectFormatBase {
     }
 
     @Override
-    public void println(NutsTerminal terminal) {
+    public void println(NutsSessionTerminal terminal) {
         getBase().println(terminal);
     }
 

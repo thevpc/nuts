@@ -34,35 +34,7 @@ public class MdUnNumberedItem extends MdAbstractElement {
         this.value = value;
         this.depth = depth;
         this.children = children;
-        switch (depth) {
-            case 1: {
-                id = MdElementType.UNNUMBRED_ITEM1;
-                break;
-            }
-            case 2: {
-                id = MdElementType.UNNUMBRED_ITEM2;
-                break;
-            }
-            case 3: {
-                id = MdElementType.UNNUMBRED_ITEM3;
-                break;
-            }
-            case 4: {
-                id = MdElementType.UNNUMBRED_ITEM4;
-                break;
-            }
-            case 5: {
-                id = MdElementType.UNNUMBRED_ITEM5;
-                break;
-            }
-            case 6: {
-                id = MdElementType.UNNUMBRED_ITEM6;
-                break;
-            }
-            default: {
-                throw new IllegalArgumentException("Unsupported");
-            }
-        }
+        id=new MdElementType(MdElementType0.UNNUMBRED_ITEM,depth);
     }
 
     public MdElement[] getChildren() {

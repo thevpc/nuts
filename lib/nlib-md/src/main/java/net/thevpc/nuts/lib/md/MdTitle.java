@@ -25,49 +25,21 @@ public class MdTitle extends MdAbstractElement {
 
     private String code;
     private MdElementType id;
-    private String value;
+    private MdElement value;
     private int depth;
 
-    public MdTitle(String code, String value, int depth) {
+    public MdTitle(String code, MdElement value, int depth) {
         this.code = code;
         this.value = value;
         this.depth = depth;
-        switch (depth) {
-            case 1: {
-                id = MdElementType.TITLE1;
-                break;
-            }
-            case 2: {
-                id = MdElementType.TITLE2;
-                break;
-            }
-            case 3: {
-                id = MdElementType.TITLE3;
-                break;
-            }
-            case 4: {
-                id = MdElementType.TITLE4;
-                break;
-            }
-            case 5: {
-                id = MdElementType.TITLE5;
-                break;
-            }
-            case 6: {
-                id = MdElementType.TITLE6;
-                break;
-            }
-            default: {
-                throw new IllegalArgumentException("Unsupported");
-            }
-        }
+        id = new MdElementType(MdElementType0.TITLE,depth);
     }
 
     public int getDepth() {
         return depth;
     }
 
-    public String getValue() {
+    public MdElement getValue() {
         return value;
     }
 

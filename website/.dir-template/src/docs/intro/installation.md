@@ -183,7 +183,7 @@ Actually they are recommended helpful tools :
 
 :::important
 
-After installation, you need to restart the terminal application for the configuration to take effet.
+After installation, you need to restart the terminal application for the configuration to take effect.
 
 :::
 

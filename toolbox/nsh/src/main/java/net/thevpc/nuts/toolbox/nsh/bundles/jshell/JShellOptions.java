@@ -6,6 +6,7 @@ import java.util.List;
 public class JShellOptions {
     public boolean verbose = false;
     public boolean xtrace = false;
+    public boolean errExit = false;
     public boolean restricted = false;
     public boolean interactive = false;
     public boolean effectiveInteractive = false;
@@ -259,6 +260,15 @@ public class JShellOptions {
 
     public JShellOptions setEffectiveInteractive(boolean effectiveInteractive) {
         this.effectiveInteractive = effectiveInteractive;
+        return this;
+    }
+
+    public boolean isErrExit() {
+        return errExit;
+    }
+
+    public JShellOptions setErrExit(boolean errExit) {
+        this.errExit = errExit;
         return this;
     }
 }

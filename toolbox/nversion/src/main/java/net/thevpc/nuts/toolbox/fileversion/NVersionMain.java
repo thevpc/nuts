@@ -112,13 +112,13 @@ public class NVersionMain implements NutsApplication {
                 }
             }
             if (processed == 0) {
-                throw new NutsExecutionException(context.getSession(), "nversion: Missing file", 2);
+                throw new NutsExecutionException(context.getSession(), "nversion: missing file", 2);
             }
             if (table && all) {
-                throw new NutsExecutionException(context.getSession(), "nversion: Options conflict --table --all", 1);
+                throw new NutsExecutionException(context.getSession(), "nversion: options conflict --table --all", 1);
             }
             if (table && longFormat) {
-                throw new NutsExecutionException(context.getSession(), "nversion: Options conflict --table --long", 1);
+                throw new NutsExecutionException(context.getSession(), "nversion: options conflict --table --long", 1);
             }
 
             NutsPrintStream out = context.getSession().out();

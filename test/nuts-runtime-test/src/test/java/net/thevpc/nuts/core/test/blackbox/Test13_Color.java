@@ -50,7 +50,7 @@ public class Test13_Color {
 //        }
         NutsSession session = ws.createSession();
         if(sessionMode!=null) {
-            session.getTerminal().setOut(session.getTerminal().out().convert(sessionMode));
+            session.getTerminal().setOut(session.getTerminal().out().convertMode(sessionMode));
         }
         TestUtils.print("      ");
         NutsPrintStream out = session.getTerminal().out();

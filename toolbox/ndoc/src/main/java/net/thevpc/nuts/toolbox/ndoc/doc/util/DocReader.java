@@ -132,7 +132,7 @@ public class DocReader {
                     } else if (in.peek("<")) {
                         String[] na = readHtmlTagStart();
                         if (na[1].endsWith("/>") || isNoClosingTag(na[0])) {
-                            result.add(prepareXml(new MdXml(na[0], null, null)));
+                            result.add(prepareXml(new MdXml(MdXml.XmlTagType.OPEN, na[0], (Map)null, null)));
                         } else {
                             MdElement content = readAny();
                             if (!isCurrText() || !currText().read("</" + na[0] + ">")) {
@@ -141,7 +141,7 @@ public class DocReader {
                                 }
                                 //ignore.
                             } else {
-                                result.add(prepareXml(new MdXml(na[0], null, content)));
+                                result.add(prepareXml(new MdXml(MdXml.XmlTagType.OPEN,na[0], (Map)null, content)));
                             }
                         }
                     } else {

@@ -27,14 +27,12 @@ import java.awt.Color;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.NutsInputStreamTransparentAdapter;
 import net.thevpc.nuts.spi.NutsSystemTerminalBase;
-import net.thevpc.nuts.spi.NutsTerminalBase;
 import org.jline.reader.*;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 
 import java.io.*;
 import java.nio.file.Paths;
-import java.util.Formatter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -47,7 +45,7 @@ import org.jline.utils.AttributedStyle;
  * Created by vpc on 2/20/17.
  */
 @NutsPrototype
-public class NutsJLineTerminal implements NutsSystemTerminalBase, NutsSessionAware {
+public class NutsJLineTerminal implements NutsSystemTerminalBase {
 
     private static final Logger LOG = Logger.getLogger(NutsJLineTerminal.class.getName());
     private Terminal terminal;
@@ -55,10 +53,6 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase, NutsSessionAwa
     private NutsPrintStream out;
     private NutsPrintStream err;
     private InputStream in;
-    private NutsWorkspace workspace;
-    private NutsSession session;
-//    private NutsTerminalMode outMode;
-//    private NutsTerminalMode errMode;
     private NutsCommandAutoCompleteResolver autoCompleteResolver;
     private NutsCommandHistory commandHistory;
     private NutsCommandReadHighlighter commandReadHighlighter;
@@ -125,10 +119,10 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase, NutsSessionAwa
 //        return errMode;
 //    }
 
-    private AttributedString toAttributedString(NutsText n, NutsTextStyles styles) {
+    private AttributedString toAttributedString(NutsText n, NutsTextStyles styles, NutsSession session) {
         switch (n.getType()) {
             case PLAIN: {
-                styles=workspace.text().getTheme().toBasicStyles(styles, session);
+                styles=session.getWorkspace().text().getTheme().toBasicStyles(styles, session);
                 NutsTextPlain p = (NutsTextPlain) n;
                 if (styles.isNone()) {
                     return new AttributedString(p.getText());
@@ -189,104 +183,106 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase, NutsSessionAwa
             case CODE: {
                 NutsTextCode p = (NutsTextCode) n;
                 NutsText nn = p.parse(session);
-                return toAttributedString(nn, NutsTextStyles.NONE);
+                return toAttributedString(nn, NutsTextStyles.NONE, session);
             }
             case TITLE: {
                 NutsTextTitle p = (NutsTextTitle) n;
-                return toAttributedString(p.getChild(), NutsTextStyles.NONE);
+                return toAttributedString(p.getChild(), NutsTextStyles.NONE, session);
             }
             case LINK: {
                 NutsTextLink p = (NutsTextLink) n;
                 return toAttributedString(
                         p.getChild(),
-                        styles.append(NutsTextStyle.underlined())
-                );
+                        styles.append(NutsTextStyle.underlined()),
+                        session);
             }
             case LIST: {
                 NutsTextList p = (NutsTextList) n;
                 AttributedStringBuilder b = new AttributedStringBuilder();
                 for (NutsText a : p) {
-                    b.append(toAttributedString(a, styles));
+                    b.append(toAttributedString(a, styles, session));
                 }
                 return b.toAttributedString();
             }
             case STYLED: {
                 NutsTextStyled p = (NutsTextStyled) n;
                 if (styles.isNone()) {
-                    return toAttributedString(p.getChild(), p.getStyles());
+                    return toAttributedString(p.getChild(), p.getStyles(), session);
                 } else {
                     return toAttributedString(
                             p.getChild(),
-                            styles.append(p.getStyles())
-                    );
+                            styles.append(p.getStyles()),
+                            session);
                 }
             }
         }
         return new AttributedString(n.toString());
     }
 
-    @Override
-    public void setSession(NutsSession session) {
-        this.session = session;
-        this.workspace = session == null ? null : session.getWorkspace();
-        if (workspace != null) {
-            TerminalBuilder builder = TerminalBuilder.builder();
-            builder.streams(System.in, System.out);
-            builder.system(true);
-            builder.dumb(false);
+    public void prepare(NutsSession session) {
+        if(terminal!=null){
+            return;
+        }
+        TerminalBuilder builder = TerminalBuilder.builder();
+        builder.streams(System.in, System.out);
+        builder.system(true);
+        builder.dumb(false);
 
-            try {
-                terminal = builder.build();
-            } catch (Throwable ex) {
-                //unable to create system terminal
-                //Logger.getLogger(NutsJLineTerminal.class.getName()).log(Level.SEVERE, null, ex);
-                throw new UncheckedIOException(new IOException("unable to create JLine system terminal: " + ex.getMessage(), ex));
-            }
-            reader = LineReaderBuilder.builder()
-                    .completer(new NutsJLineCompleter(workspace, this))
-                    .highlighter(new Highlighter() {
-                        @Override
-                        public AttributedString highlight(LineReader reader, String buffer) {
-                            NutsTextManager text = workspace.text();
-                            NutsCommandReadHighlighter h = getCommandReadHighlighter();
-                            NutsText n=(h!=null)?h.highlight(buffer, session):text.forPlain(buffer);
-                            return toAttributedString(n, NutsTextStyles.NONE);
-                        }
+        try {
+            terminal = builder.build();
+        } catch (Throwable ex) {
+            //unable to create system terminal
+            //Logger.getLogger(NutsJLineTerminal.class.getName()).log(Level.SEVERE, null, ex);
+            throw new UncheckedIOException(new IOException("unable to create JLine system terminal: " + ex.getMessage(), ex));
+        }
+        reader = LineReaderBuilder.builder()
+                .completer(new NutsJLineCompleter(session.getWorkspace(), this))
+                .highlighter(new Highlighter() {
+                    @Override
+                    public AttributedString highlight(LineReader reader, String buffer) {
+                        NutsTextManager text = session.getWorkspace().text();
+                        NutsCommandReadHighlighter h = getCommandReadHighlighter();
+                        NutsText n=(h!=null)?h.highlight(buffer, session):text.forPlain(buffer);
+                        return toAttributedString(n, NutsTextStyles.NONE, session);
+                    }
 
-                        @Override
-                        public void setErrorPattern(Pattern ptrn) {
+                    @Override
+                    public void setErrorPattern(Pattern ptrn) {
 
-                        }
+                    }
 
-                        @Override
-                        public void setErrorIndex(int i) {
+                    @Override
+                    public void setErrorIndex(int i) {
 
-                        }
+                    }
 
-                    })
-                    .terminal(terminal)
-                    //                .completer(completer)
-                    //                .parse(parse)
-                    .build();
-            reader.unsetOpt(LineReader.Option.INSERT_TAB);
-            reader.setVariable(LineReader.HISTORY_FILE, Paths.get(workspace.locations().getWorkspaceLocation()).resolve("history").normalize().toFile());
-            if (reader instanceof LineReaderImpl) {
-                ((LineReaderImpl) reader).setHistory(new NutsJLineHistory(reader, session, this));
-            }
-            this.out = workspace.io().setSession(session).createPrintStream(
-                    new TransparentPrintStream(
-                            new PrintStream(reader.getTerminal().output(), true),
-                            System.out
-                    ),
-                    NutsTerminalMode.FORMATTED);
-            this.err = workspace.io().setSession(session).createPrintStream(
-                    new TransparentPrintStream(
-                            new PrintStream(reader.getTerminal().output(), true),
-                            System.err
-                    ),
-                    NutsTerminalMode.FORMATTED);//.setColor(NutsPrintStream.RED);
-            this.in = new TransparentInputStream(reader.getTerminal().input(), System.in);
-        } else {
+                })
+                .terminal(terminal)
+                //                .completer(completer)
+                //                .parse(parse)
+                .build();
+        reader.unsetOpt(LineReader.Option.INSERT_TAB);
+        reader.setVariable(LineReader.HISTORY_FILE, Paths.get(session.getWorkspace().locations().getWorkspaceLocation()).resolve("history").normalize().toFile());
+        if (reader instanceof LineReaderImpl) {
+            ((LineReaderImpl) reader).setHistory(new NutsJLineHistory(reader, session, this));
+        }
+        this.out = session.getWorkspace().io().setSession(session).createPrintStream(
+                new TransparentPrintStream(
+                        new PrintStream(reader.getTerminal().output(), true),
+                        System.out
+                ),
+                NutsTerminalMode.FORMATTED);
+        this.err = session.getWorkspace().io().setSession(session).createPrintStream(
+                new TransparentPrintStream(
+                        new PrintStream(reader.getTerminal().output(), true),
+                        System.err
+                ),
+                NutsTerminalMode.FORMATTED);//.setColor(NutsPrintStream.RED);
+        this.in = new TransparentInputStream(reader.getTerminal().input(), System.in);
+    }
+
+    protected void close(){
+        if(reader!=null) {
             try {
                 reader.getTerminal().close();
             } catch (IOException ex) {
@@ -301,7 +297,8 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase, NutsSessionAwa
     }
 
     @Override
-    public String readLine(NutsPrintStream out, String prompt, Object... params) {
+    public String readLine(NutsPrintStream out, NutsMessage message,NutsSession session) {
+        prepare(session);
         if (out == null) {
             out = getOut();
         }
@@ -310,13 +307,7 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase, NutsSessionAwa
         }
         String readLine = null;
         try {
-//            out.printf(prompt, params);
-//            out.flush();
-//            readLine = reader.readLine("");
-            StringBuilder sb = new StringBuilder();
-            Formatter f = new Formatter(sb);
-            f.format(prompt, params);
-            readLine = reader.readLine(sb.toString());
+            readLine = reader.readLine(session.getWorkspace().text().toText(message).toString());
         } catch (UserInterruptException e) {
             throw new NutsJLineInterruptException();
         }
@@ -329,19 +320,14 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase, NutsSessionAwa
     }
 
     @Override
-    public char[] readPassword(NutsPrintStream out, String prompt, Object... params) {
+    public char[] readPassword(NutsPrintStream out, NutsMessage message,NutsSession session) {
+        prepare(session);
         if (out == null) {
-            out = getOut();
+            return reader.readLine(session.getWorkspace().text().toText(message).toString(), '*').toCharArray();
+        }else{
+            //should I use some out??
         }
-        if (out == null) {
-            out = session.getWorkspace().io().stdout();
-        }
-//        out.printf(prompt, params);
-//        out.flush();
-        StringBuilder sb = new StringBuilder();
-        Formatter f = new Formatter(sb);
-        f.format(prompt, params);
-        return reader.readLine(sb.toString(), '*').toCharArray();
+        return reader.readLine(session.getWorkspace().text().toText(message).toString(), '*').toCharArray();
     }
 
     @Override
@@ -390,9 +376,9 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase, NutsSessionAwa
 
     }
 
-    @Override
-    public NutsTerminalBase getParent() {
-        return null;
-    }
+//    @Override
+//    public NutsSystemTerminalBase getParent() {
+//        return null;
+//    }
 
 }

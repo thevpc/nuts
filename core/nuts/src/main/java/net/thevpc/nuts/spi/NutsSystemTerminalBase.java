@@ -23,10 +23,9 @@
  */
 package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.NutsCommandHistory;
-import net.thevpc.nuts.NutsTerminalSpec;
-import net.thevpc.nuts.NutsCommandAutoCompleteResolver;
-import net.thevpc.nuts.NutsCommandReadHighlighter;
+import net.thevpc.nuts.*;
+
+import java.io.InputStream;
 
 /**
  * Created by vpc on 2/20/17.
@@ -34,7 +33,16 @@ import net.thevpc.nuts.NutsCommandReadHighlighter;
  * @since 0.5.4
  * @category SPI Base
  */
-public interface NutsSystemTerminalBase extends NutsComponent<NutsTerminalSpec>, NutsTerminalBase {
+public interface NutsSystemTerminalBase extends NutsComponent<NutsTerminalSpec> {
+    String readLine(NutsPrintStream out, NutsMessage message, NutsSession session);
+
+    char[] readPassword(NutsPrintStream out, NutsMessage message, NutsSession session);
+
+    InputStream getIn();
+
+    NutsPrintStream getOut();
+
+    NutsPrintStream getErr();
 
     default NutsCommandAutoCompleteResolver getAutoCompleteResolver() {
         return null;
@@ -44,7 +52,7 @@ public interface NutsSystemTerminalBase extends NutsComponent<NutsTerminalSpec>,
         return false;
     }
 
-//    default NutsSystemTerminalBase setCommandAutoCompleteResolver(NutsCommandAutoCompleteResolver autoCompleteResolver){
+    //    default NutsSystemTerminalBase setCommandAutoCompleteResolver(NutsCommandAutoCompleteResolver autoCompleteResolver){
 //        return this;
 //    }
     NutsSystemTerminalBase setCommandAutoCompleteResolver(NutsCommandAutoCompleteResolver autoCompleteResolver);
@@ -56,5 +64,8 @@ public interface NutsSystemTerminalBase extends NutsComponent<NutsTerminalSpec>,
     NutsCommandReadHighlighter getCommandReadHighlighter();
 
     NutsSystemTerminalBase setCommandReadHighlighter(NutsCommandReadHighlighter commandReadHighlighter);
+
+
+//    NutsSystemTerminalBase getParent();
 
 }

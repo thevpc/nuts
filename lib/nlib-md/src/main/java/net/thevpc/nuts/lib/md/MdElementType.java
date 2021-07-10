@@ -21,51 +21,40 @@ package net.thevpc.nuts.lib.md;
  *
  * @author thevpc
  */
-public enum MdElementType {
-    TITLE1,
-    TITLE2,
-    TITLE3,
-    TITLE4,
-    TITLE5,
-    TITLE6,
-    TABLE,
-    COLUMN,
-    ROW,
-    XML,
-    SEQ,
-    TEXT,
-    BOLD,
-    ITALIC,
-    UNNUMBRED_ITEM1,
-    UNNUMBRED_ITEM2,
-    UNNUMBRED_ITEM3,
-    UNNUMBRED_ITEM4,
-    UNNUMBRED_ITEM5,
-    UNNUMBRED_ITEM6,
-    NUMBRED_ITEM1,
-    NUMBRED_ITEM2,
-    NUMBRED_ITEM3,
-    NUMBRED_ITEM4,
-    NUMBRED_ITEM5,
-    NUMBRED_ITEM6,
-    CODE,
-    ADMONITION,
-    LINE_SEPARATOR,
-    LINK,
-    CODE_LINK,
-    LINE_BREAK,
-    HORIZONTAL_RULE,
-    IMAGE;
+public class MdElementType {
+    public static final MdElementType LINE_SEPARATOR = new MdElementType(MdElementType0.LINE_SEPARATOR);
+    public static final MdElementType ADMONITION = new MdElementType(MdElementType0.ADMONITION);
+    public static final MdElementType BOLD = new MdElementType(MdElementType0.BOLD);
+    public static final MdElementType ITALIC = new MdElementType(MdElementType0.ITALIC);
+    public static final MdElementType CODE = new MdElementType(MdElementType0.CODE);
+    public static final MdElementType IMAGE = new MdElementType(MdElementType0.IMAGE);
+    public static final MdElementType COLUMN = new MdElementType(MdElementType0.COLUMN);
+    public static final MdElementType LINE_BREAK = new MdElementType(MdElementType0.LINE_BREAK);
+    public static final MdElementType HORIZONTAL_RULE = new MdElementType(MdElementType0.HORIZONTAL_RULE);
+    public static final MdElementType XML = new MdElementType(MdElementType0.XML);
+    public static final MdElementType CODE_LINK = new MdElementType(MdElementType0.CODE_LINK);
+    public static final MdElementType LINK = new MdElementType(MdElementType0.LINK);
+    public static final MdElementType TEXT = new MdElementType(MdElementType0.TEXT);
+    public static final MdElementType TABLE = new MdElementType(MdElementType0.TABLE);
+    public static final MdElementType ROW = new MdElementType(MdElementType0.ROW);
+    public static final MdElementType SEQ = new MdElementType(MdElementType0.SEQ);
+    private MdElementType0 type;
+    private int depth;
 
-    public static MdElementType title(int depth) {
-        return values()[depth - 1 + TITLE1.ordinal()];
+    public MdElementType(MdElementType0 type) {
+        this(type,0);
     }
 
-    public static MdElementType unnumberedItem(int depth) {
-        return values()[depth - 1 + UNNUMBRED_ITEM1.ordinal()];
+    public MdElementType(MdElementType0 type, int depth) {
+        this.type = type;
+        this.depth = depth;
     }
 
-    public static MdElementType numberedItem(int depth) {
-        return values()[depth - 1 + NUMBRED_ITEM1.ordinal()];
+    public MdElementType0 type() {
+        return type;
+    }
+
+    public int depth() {
+        return depth;
     }
 }

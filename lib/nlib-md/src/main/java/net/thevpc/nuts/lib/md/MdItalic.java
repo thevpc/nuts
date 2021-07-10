@@ -50,7 +50,7 @@ public class MdItalic extends MdAbstractElement {
 
     @Override
     public String toString() {
-        return "**" + content + "**";
+        return "__" + content + "__";
     }
 
 }

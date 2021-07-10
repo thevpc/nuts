@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.spi.NutsTerminalBase;
+import net.thevpc.nuts.spi.NutsSystemTerminalBase;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -35,9 +35,9 @@ import java.util.Map;
  * @category Input Output
  */
 public interface NutsTerminalSpec extends Serializable {
-    NutsTerminalBase getParent();
+    NutsSystemTerminalBase getParent();
 
-    NutsTerminalSpec setParent(NutsTerminalBase parent);
+    NutsTerminalSpec setParent(NutsSystemTerminalBase parent);
 
     Boolean getAutoComplete();
 

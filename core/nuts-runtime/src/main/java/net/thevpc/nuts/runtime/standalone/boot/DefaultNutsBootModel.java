@@ -26,11 +26,9 @@ package net.thevpc.nuts.runtime.standalone.boot;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.DefaultNutsSession;
 import net.thevpc.nuts.runtime.core.terminals.DefaultNutsSessionTerminal;
-import net.thevpc.nuts.runtime.core.terminals.DefaultNutsSystemTerminalBase;
 import net.thevpc.nuts.runtime.core.terminals.DefaultNutsSystemTerminalBaseBoot;
 import net.thevpc.nuts.runtime.core.terminals.DefaultSystemTerminal;
 import net.thevpc.nuts.runtime.standalone.config.DefaultNutsWorkspaceEnvManagerModel;
-import net.thevpc.nuts.runtime.standalone.io.NutsPrintStreamBase;
 import net.thevpc.nuts.runtime.standalone.io.NutsPrintStreamSystem;
 
 import java.io.InputStream;
@@ -64,20 +62,13 @@ public class DefaultNutsBootModel implements NutsBootModel {
 
         stdout =new NutsPrintStreamSystem(System.out,null,null,ansiSupport,
                 this.bootSession
-        ).convert(terminalMode);
+        ).convertMode(terminalMode);
         stderr =new NutsPrintStreamSystem(System.err,null,null,ansiSupport,
                 this.bootSession
-        ).convert(terminalMode);
+        ).convertMode(terminalMode);
         stdin=System.in;
-        DefaultNutsSystemTerminalBaseBoot base = new DefaultNutsSystemTerminalBaseBoot(this);
-
-        DefaultSystemTerminal sys = new DefaultSystemTerminal(base);
-        sys.setSession(bootSession, true);
-
-        DefaultNutsSessionTerminal t = new DefaultNutsSessionTerminal();
-        t.setParent(sys);
-        t.setSession(bootSession);
-        bootSession.setTerminal(t);
+        DefaultSystemTerminal sys = new DefaultSystemTerminal(new DefaultNutsSystemTerminalBaseBoot(this));
+        bootSession.setTerminal(new DefaultNutsSessionTerminal(bootSession,sys));
     }
 
     public NutsPrintStream stdout() {

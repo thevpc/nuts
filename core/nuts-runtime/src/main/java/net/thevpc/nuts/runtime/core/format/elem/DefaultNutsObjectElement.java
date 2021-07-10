@@ -282,11 +282,11 @@ public class DefaultNutsObjectElement extends AbstractNutsObjectElement {
 
     @Override
     public String toString() {
-        return "[" + children().stream().map(x -> "{"
-                + x.getKey()
+        return "{" + children().stream().map(x ->
+                x.getKey()
                 + ":"
                 + x.getValue().toString()
-                + "}").collect(Collectors.joining(", ")) + "]";
+                ).collect(Collectors.joining(", ")) + "}";
     }
 
 }

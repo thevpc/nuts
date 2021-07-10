@@ -84,18 +84,25 @@ public class DefaultJShellEvaluator implements JShellEvaluator {
 
     @Override
     public int evalSuffixAndOperation(JShellCommandNode node, JShellFileContext context) {
-        return node.eval(context);
+        return context.getShell().evalNode(node,context);
     }
 
     @Override
     public int evalBinaryAndOperation(JShellCommandNode left, JShellCommandNode right, JShellFileContext context) {
-        right.eval(context);
-        return left.eval(context);
+        int r = context.getShell().evalNode(left, context);
+        if(r !=0){
+            return r;
+        }
+        return context.getShell().evalNode(right,context);
     }
 
     @Override
     public int evalBinaryOperation(String opString, JShellCommandNode left, JShellCommandNode right, JShellFileContext context) {
-        context.getShell().traceExecution("(" + left + ") " + opString + "(" + right + ")", context);
+        if (";".equals(opString)) {
+            //no trace
+        } else {
+            context.getShell().traceExecution(() -> ("(" + left + ") " + opString + "(" + right + ")"), context);
+        }
         if (";".equals(opString)) {
             return evalBinarySuiteOperation(left, right, context);
         } else if ("&&".equals(opString)) {
@@ -112,15 +119,16 @@ public class DefaultJShellEvaluator implements JShellEvaluator {
     @Override
     public int evalBinaryOrOperation(final JShellCommandNode left, JShellCommandNode right, final JShellFileContext context) {
         try {
-            context.getShell().uniformException(new JShellNodeUnsafeRunnable(left, context));
-            return 0;
+            if(context.getShell().evalNode(left, context)==0) {
+                return 0;
+            }
         } catch (JShellUniformException e) {
             if (e.isQuit()) {
                 e.throwQuit();
                 return 0;
             }
         }
-        return right.eval(context);
+        return context.getShell().evalNode(right,context);
     }
 
     @Override
@@ -143,7 +151,7 @@ public class DefaultJShellEvaluator implements JShellEvaluator {
             @Override
             public void run() {
                 try {
-                    context.getShell().uniformException(new JShellNodeUnsafeRunnable(left, leftContext));
+                    context.getShell().evalNode(left, leftContext);
                 } catch (JShellUniformException e) {
                     if (e.isQuit()) {
                         e.throwQuit();
@@ -158,7 +166,7 @@ public class DefaultJShellEvaluator implements JShellEvaluator {
         j1.start();
         JShellFileContext rightContext = context.getShell().createNewContext(context).setIn((InputStream) in2);
         try {
-            context.getShell().uniformException(new JShellNodeUnsafeRunnable(right, rightContext));
+            context.getShell().evalNode(right, rightContext);
         } catch (JShellUniformException e) {
             if (e.isQuit()) {
                 e.throwQuit();
@@ -180,15 +188,19 @@ public class DefaultJShellEvaluator implements JShellEvaluator {
 
     @Override
     public int evalBinarySuiteOperation(JShellCommandNode left, JShellCommandNode right, JShellFileContext context) {
+        int r = 0;
         try {
-            return context.getShell().uniformException(new JShellNodeUnsafeRunnable(left, context));
+            r = context.getShell().evalNode(left, context);
         } catch (JShellUniformException e) {
             if (e.isQuit()) {
                 e.throwQuit();
                 return 0;
             }
         }
-        return right.eval(context);
+        if(r!=0 && context.getShell().getOptions().isErrExit()){
+            return r;
+        }
+        return context.getShell().evalNode(right,context);
     }
 
     @Override
@@ -197,7 +209,7 @@ public class DefaultJShellEvaluator implements JShellEvaluator {
         JShellFileContext c2 = context.getShell().createNewContext(context, context.getServiceName(), context.getArgsArray());
         PrintStream p = new PrintStream(out);
         c2.setOut(p);
-        command.eval(c2);
+        context.getShell().evalNode(command,c2);
         p.flush();
         String cc = evalFieldSubstitutionAfterCommandSubstitution(out.toString(), context);
         return (context.getShell().escapeString(cc));
@@ -302,11 +314,12 @@ public class DefaultJShellEvaluator implements JShellEvaluator {
 
     @Override
     public String evalAntiQuotesExpression(String stringExpression, JShellFileContext context) {
+        context.getShell().traceExecution(() -> ("`" + stringExpression + "`"), context);
         JShellCommandNode t = context.getShell().parseCommandLine(stringExpression);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         JShellFileContext c2 = context.getShell().createNewContext(context);
         c2.setOut(new PrintStream(out));
-        t.eval(c2);
+        context.getShell().evalNode(t,c2);
         c2.out().flush();
         return out.toString();
     }
@@ -366,7 +379,7 @@ public class DefaultJShellEvaluator implements JShellEvaluator {
 
     public String evalFieldSubstitutionAfterCommandSubstitution(String commandResult, JShellFileContext context) {
 
-        String IFS = context.vars().get("IFS"," \t\n");
+        String IFS = context.vars().get("IFS", " \t\n");
         if (!IFS.isEmpty()) {
             //https://pubs.opengroup.org/onlinepubs/9699919799/utilities/V3_chap02.html#tag_18_06_03
             //https://unix.stackexchange.com/questions/164508/why-do-newline-characters-get-lost-when-using-command-substitution

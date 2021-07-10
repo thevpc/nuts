@@ -622,7 +622,7 @@ public interface NutsSession extends NutsCommandLineConfigurable {
      * This is a helper method to create and Object format initialized with this
      * session instance and the given object to print.
      *
-     * {@code thisSession.getWorkspace().object().setSession(thisSession).value(any)}
+     * {@code thisSession.getWorkspace().formats().object().setSession(thisSession).setValue(any)}
      * <br>
      * Using this method is recommended to print objects to default format
      * (json, xml,...)

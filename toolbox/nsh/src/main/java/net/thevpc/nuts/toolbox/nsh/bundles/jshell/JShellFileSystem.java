@@ -6,7 +6,6 @@
 package net.thevpc.nuts.toolbox.nsh.bundles.jshell;
 
 /**
- *
  * @author thevpc
  */
 public interface JShellFileSystem {
@@ -20,6 +19,7 @@ public interface JShellFileSystem {
     String getAbsolutePath(String path);
 
     boolean isDirectory(String path);
+
     boolean exists(String path);
 
 }

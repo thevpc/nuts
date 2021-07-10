@@ -32,13 +32,13 @@ public class Docusaurus2Adoc {
     protected DocusaurusFolder rootFolder;
     protected NutsSession session;
 
-    public Docusaurus2Adoc(String projectName, String projectTitle, String[] headers, DocusaurusFolder docs,NutsSession session) {
-        this.projectName = projectName;
-        this.projectTitle = projectTitle;
-        this.headers = headers;
-        this.rootFolder = docs;
-        this.session = session;
-    }
+//    public Docusaurus2Adoc(String projectName, String projectTitle, String[] headers, DocusaurusFolder docs,NutsSession session) {
+//        this.projectName = projectName;
+//        this.projectTitle = projectTitle;
+//        this.headers = headers;
+//        this.rootFolder = docs;
+//        this.session = session;
+//    }
 
     public Docusaurus2Adoc(DocusaurusProject project) {
         NutsObjectElement asciidoctorConfig = project.getConfig().getSafeObject("customFields").getSafeObject("asciidoctor");
@@ -54,10 +54,11 @@ public class Docusaurus2Adoc {
         this.projectTitle = project.getTitle();
         this.headers = headersList.toArray(new String[0]);
         this.rootFolder = project.getSidebarsDocsFolder();
+        this.session = project.getSession();
     }
 
     public Docusaurus2Adoc(File project, NutsSession session) {
-        this(new DocusaurusProject(project.getPath(),session));
+        this(new DocusaurusProject(project.getPath(),null,session));
     }
 
     public String runToString() {

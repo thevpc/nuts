@@ -61,7 +61,7 @@ public class NshEvaluator extends DefaultJShellEvaluator {
             @Override
             public void run() {
                 try {
-                    context.getShell().uniformException(new JShellNodeUnsafeRunnable(left, leftContext));
+                    context.getShell().evalNode(left, leftContext);
                 } catch (JShellUniformException e) {
                     if (e.isQuit()) {
                         e.throwQuit();
@@ -76,7 +76,7 @@ public class NshEvaluator extends DefaultJShellEvaluator {
         j1.start();
         JShellFileContext rightContext = context.getShell().createNewContext(context).setIn((InputStream) in2);
         try {
-            context.getShell().uniformException(new JShellNodeUnsafeRunnable(right, rightContext));
+            context.getShell().evalNode(right, rightContext);
         } catch (JShellUniformException e) {
             if (e.isQuit()) {
                 e.throwQuit();
@@ -104,15 +104,16 @@ public class NshEvaluator extends DefaultJShellEvaluator {
         c2.getSession().setTrace(false);
 
         NutsPrintStream out = c2.getWorkspace().io().createMemoryPrintStream();
+        NutsPrintStream err = c2.getWorkspace().io().createMemoryPrintStream();
 
-        NutsSessionTerminal terminal = c2.getWorkspace().term().createTerminal(new ByteArrayInputStream(new byte[0]), out, out);
+        NutsSessionTerminal terminal = c2.getSession().getWorkspace().term().createTerminal(
+                new ByteArrayInputStream(new byte[0]), out, err
+        );
         c2.getSession().setTerminal(terminal);
-        try {
-            command.eval(c1);
-        } catch (Exception ex) {
-            terminal.getErr().println(ex);
-        }
+        context.getShell().evalNode(command,c1);
         String str = evalFieldSubstitutionAfterCommandSubstitution(out.toString(), context);
-        return (context.getShell().escapeString(str));
+        String s = context.getShell().escapeString(str);
+        context.err().print(err.toString());
+        return s;
     }
 }

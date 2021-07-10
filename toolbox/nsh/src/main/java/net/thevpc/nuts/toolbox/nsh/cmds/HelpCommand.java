@@ -58,7 +58,7 @@ public class HelpCommand extends AbstractNshBuiltin {
             if (commandLine.next("--ntf") != null) {
                 code = true;
                 context.getSession().getTerminal().setOut(
-                        context.getSession().getTerminal().out().convert(NutsTerminalMode.INHERITED)
+                        context.getSession().getTerminal().out().convertMode(NutsTerminalMode.INHERITED)
                 );
             }else if (commandLine.peek().isNonOption()){
                 commandNames.add(commandLine.nextNonOption(new CommandNonOption("command", context.getNutsShellContext())).required().getString());
@@ -80,7 +80,7 @@ public class HelpCommand extends AbstractNshBuiltin {
                 );
                 String helpText = (n==null?"no help found":n.toString());
                 context.out().println(ss.apply(helpText));
-                context.out().println(context.workspace().text().forStyled("AVAILABLE COMMANDS ARE:", NutsTextStyle.primary1()));
+                context.out().println(context.getWorkspace().text().forStyled("AVAILABLE COMMANDS ARE:", NutsTextStyle.primary1()));
                 JShellBuiltin[] commands = context.getGlobalContext().builtins().getAll();
                 Arrays.sort(commands, new Comparator<JShellBuiltin>() {
                     @Override

@@ -363,22 +363,26 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
 
         @Override
         public int exec() {
-            if(getSession().out()!=null){
-                getSession().out().run(NutsTerminalCommand.MOVE_LINE_START);
+            NutsSession session = getSession();
+            //we must make a copy not to alter caller session
+            session=session.copy();
+
+            if(session.out()!=null){
+                session.out().resetLine();
             }
             DefaultNutsClassLoader classLoader = null;
             Throwable th = null;
             try {
-                classLoader = ((DefaultNutsWorkspaceExtensionManager) getSession().getWorkspace().extensions()).getModel().getNutsURLClassLoader(
+                classLoader = ((DefaultNutsWorkspaceExtensionManager) session.getWorkspace().extensions()).getModel().getNutsURLClassLoader(
                         def.getId().toString(),
                         null//getSession().getWorkspace().config().getBootClassLoader()
-                        , getSession()
+                        , session
                 );
                 for (NutsClassLoaderNode n : joptions.getClassPath()) {
                     classLoader.add(n);
                 }
                 Class<?> cls = Class.forName(joptions.getMainClass(), true, classLoader);
-                new ClassloaderAwareRunnableImpl2(def.getId(), classLoader, cls, getSession(), joptions).runAndWaitFor();
+                new ClassloaderAwareRunnableImpl2(def.getId(), classLoader, cls, session, joptions).runAndWaitFor();
                 return 0;
             } catch (InvocationTargetException e) {
                 th = e.getTargetException();
@@ -391,11 +395,11 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
             }
             if (th != null) {
                 if (!(th instanceof NutsExecutionException)) {
-                    throw new NutsExecutionException(getSession(), "error executing " + def.getId().getLongName() + " : " + CoreStringUtils.exceptionToString(th), th);
+                    throw new NutsExecutionException(session, "error executing " + def.getId().getLongName() + " : " + CoreStringUtils.exceptionToString(th), th);
                 }
                 NutsExecutionException nex = (NutsExecutionException) th;
                 if (nex.getExitCode() != 0) {
-                    throw new NutsExecutionException(getSession(), "error executing " + def.getId().getLongName() + " : " + CoreStringUtils.exceptionToString(th), th);
+                    throw new NutsExecutionException(session, "error executing " + def.getId().getLongName() + " : " + CoreStringUtils.exceptionToString(th), th);
                 }
             }
             return 0;

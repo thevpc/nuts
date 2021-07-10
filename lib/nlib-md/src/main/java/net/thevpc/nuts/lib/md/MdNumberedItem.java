@@ -36,35 +36,7 @@ public class MdNumberedItem extends MdAbstractElement {
         this.value = value;
         this.depth = depth;
         this.children = children;
-        switch (depth) {
-            case 1: {
-                id = MdElementType.NUMBRED_ITEM1;
-                break;
-            }
-            case 2: {
-                id = MdElementType.NUMBRED_ITEM2;
-                break;
-            }
-            case 3: {
-                id = MdElementType.NUMBRED_ITEM3;
-                break;
-            }
-            case 4: {
-                id = MdElementType.NUMBRED_ITEM4;
-                break;
-            }
-            case 5: {
-                id = MdElementType.NUMBRED_ITEM5;
-                break;
-            }
-            case 6: {
-                id = MdElementType.NUMBRED_ITEM6;
-                break;
-            }
-            default: {
-                throw new IllegalArgumentException("Unsupported");
-            }
-        }
+        id = new MdElementType(MdElementType0.NUMBRED_ITEM,depth);
     }
 
     public MdElement[] getChildren() {

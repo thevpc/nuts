@@ -1,11 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.io;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.core.terminals.DefaultNutsSessionTerminal;
+import net.thevpc.nuts.runtime.core.terminals.DefaultNutsSessionTerminal2;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
-import net.thevpc.nuts.spi.NutsTerminalBase;
-
-import java.io.*;
 import net.thevpc.nuts.spi.NutsSystemTerminalBase;
+
+import java.io.InputStream;
 
 public class DefaultNutsTerminalManager implements NutsTerminalManager {
 
@@ -20,13 +21,14 @@ public class DefaultNutsTerminalManager implements NutsTerminalManager {
         return model;
     }
 
-    public NutsTerminalManager setSession(NutsSession session) {
-        this.session = session;
-        return this;
+    private void checkSession() {
+        NutsWorkspaceUtils.checkSession(model.getWorkspace(), session);
     }
 
-    public NutsSession getSession() {
-        return session;
+    @Override
+    public NutsSystemTerminal getSystemTerminal() {
+        checkSession();
+        return model.getSystemTerminal();
     }
 
     @Override
@@ -34,17 +36,6 @@ public class DefaultNutsTerminalManager implements NutsTerminalManager {
         checkSession();
         model.setSystemTerminal(terminal, session);
         return this;
-    }
-    
-
-    @Override
-    public NutsSystemTerminal createSystemTerminal(NutsTerminalSpec spec) {
-        checkSession();
-        return model.createSystemTerminal(spec, session);
-    }
-
-    private void checkSession() {
-        NutsWorkspaceUtils.checkSession(model.getWorkspace(), session);
     }
 
     @Override
@@ -55,9 +46,9 @@ public class DefaultNutsTerminalManager implements NutsTerminalManager {
     }
 
     @Override
-    public NutsSystemTerminal getSystemTerminal() {
+    public NutsSystemTerminal createSystemTerminal(NutsTerminalSpec spec) {
         checkSession();
-        return model.getSystemTerminal();
+        return model.createSystemTerminal(spec, session);
     }
 
     @Override
@@ -74,22 +65,48 @@ public class DefaultNutsTerminalManager implements NutsTerminalManager {
     }
 
     @Override
-    public NutsSessionTerminal createTerminal(InputStream in, NutsPrintStream out, NutsPrintStream err) {
-        checkSession();
-        return model.createTerminal(in, out, err, session);
-    }
-
-    @Override
     public NutsSessionTerminal createTerminal() {
         checkSession();
         return model.createTerminal(session);
     }
 
     @Override
-    public NutsSessionTerminal createTerminal(NutsTerminalBase parent) {
+    public NutsSessionTerminal createTerminal(InputStream in, NutsPrintStream out, NutsPrintStream err) {
         checkSession();
-        return model.createTerminal(parent, session);
+        return model.createTerminal(in, out, err, session);
     }
+
+    @Override
+    public NutsSessionTerminal createTerminal(NutsSessionTerminal terminal) {
+        checkSession();
+        if (terminal == null) {
+            return createTerminal();
+        }
+        if(terminal instanceof DefaultNutsSessionTerminal){
+            DefaultNutsSessionTerminal t = (DefaultNutsSessionTerminal) terminal;
+            return new DefaultNutsSessionTerminal(session, t);
+        }
+        if(terminal instanceof DefaultNutsSessionTerminal2){
+            DefaultNutsSessionTerminal2 t = (DefaultNutsSessionTerminal2) terminal;
+            return new DefaultNutsSessionTerminal2(session, t);
+        }
+        return new DefaultNutsSessionTerminal2(session, terminal);
+    }
+
+    public NutsSession getSession() {
+        return session;
+    }
+
+    public NutsTerminalManager setSession(NutsSession session) {
+        this.session = session;
+        return this;
+    }
+
+//    @Override
+//    public NutsSessionTerminal createTerminal(NutsSystemTerminalBase parent) {
+//        checkSession();
+//        return model.createTerminal(parent, session);
+//    }
 
 //    @Override
 //    public PrintStream prepare(PrintStream out) {

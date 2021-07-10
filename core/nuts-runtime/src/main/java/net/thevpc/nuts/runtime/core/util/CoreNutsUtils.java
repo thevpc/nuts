@@ -26,6 +26,7 @@ package net.thevpc.nuts.runtime.core.util;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.iter.IteratorBuilder;
 import net.thevpc.nuts.runtime.bundles.parsers.StringPlaceHolderParser;
+import net.thevpc.nuts.runtime.bundles.parsers.StringTokenizerUtils;
 import net.thevpc.nuts.runtime.standalone.DefaultNutsWorkspace;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
@@ -924,6 +925,27 @@ public class CoreNutsUtils {
         }
         return false;
     }
+    public static Set<String> parseProgressOptions(NutsSession session) {
+        LinkedHashSet<String> set = new LinkedHashSet<>();
+        for (String s : StringTokenizerUtils.split(session.getProgressOptions(), ",; ")) {
+            Boolean n = CoreBooleanUtils.parseBoolean(s, null, null);
+            if (n == null) {
+                set.add(s);
+            } else {
+                set.add(n.toString());
+            }
+        }
+        return set;
+    }
+    public static boolean acceptProgress(NutsSession session) {
+        if (!session.isPlainOut()) {
+            return false;
+        }
+        if (session.isBot() || parseProgressOptions(session).contains("false")) {
+            return false;
+        }
+        return true;
+    }
 
     public static boolean acceptMonitoring(NutsSession session) {
         // DefaultNutsStreamProgressMonitor is enable only if plain output
@@ -931,7 +953,7 @@ public class CoreNutsUtils {
         if (!session.isPlainOut()) {
             return false;
         }
-        if (session.isBot() || NutsWorkspaceUtils.parseProgressOptions(session).contains("false")) {
+        if (acceptProgress(session)) {
             return false;
         }
         Object o = session.getProperty("monitor-allowed");

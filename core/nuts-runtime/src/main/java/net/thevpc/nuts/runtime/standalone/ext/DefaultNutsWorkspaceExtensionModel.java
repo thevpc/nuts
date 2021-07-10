@@ -50,7 +50,6 @@ public class DefaultNutsWorkspaceExtensionModel {
                     //                    NutsPrintStreamFormattedNull.class,
                     NutsFormattedPrintStream.class,
                     NutsSystemTerminalBase.class,
-                    NutsSessionTerminalBase.class,
                     NutsSessionTerminal.class,
                     NutsDescriptorContentParserComponent.class,
                     NutsExecutorComponent.class,
@@ -567,18 +566,14 @@ public class DefaultNutsWorkspaceExtensionModel {
 //        throw new ClassCastException(NutsComponent.class.getName());
 //    }
     public NutsSessionTerminal createTerminal(NutsTerminalSpec spec, NutsSession session) {
-        NutsSessionTerminalBase termb = createSupported(NutsSessionTerminalBase.class, spec, session);
+        NutsSystemTerminalBase termb= createSupported(NutsSystemTerminalBase.class, spec, session);
         if (termb == null) {
-            throw new NutsExtensionNotFoundException(session, NutsSessionTerminalBase.class, "TerminalBase");
+            throw new NutsExtensionNotFoundException(session, NutsSystemTerminalBase.class, "TerminalBase");
         }
         if (spec != null && spec.get("ignoreClass") != null && spec.get("ignoreClass").equals(termb.getClass())) {
             return null;
         }
-        NutsSessionTerminal term = new DefaultNutsSessionTerminal();
-        NutsWorkspaceUtils.setSession(term, session);
-        term.setParent(termb);
-        return term;
-
+        return new DefaultNutsSessionTerminal(session,termb);
     }
 
     //@Override

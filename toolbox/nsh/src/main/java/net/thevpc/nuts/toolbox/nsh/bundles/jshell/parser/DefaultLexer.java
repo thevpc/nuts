@@ -46,7 +46,7 @@ public class DefaultLexer extends AbstractLexer {
                     break;
                 }
             }
-            return new Token("$WORD", sb.toString());
+            return new Token("$WORD", sb.toString(), "$"+ sb);
         }
         throw new IllegalArgumentException("unsupported");
     }
@@ -89,7 +89,7 @@ public class DefaultLexer extends AbstractLexer {
                     break;
                 }
             }
-            return new Token("WORD", sb.toString());
+            return new Token("WORD", sb.toString(), sb.toString());
         }
         throw new IllegalArgumentException("unsupported");
     }
@@ -102,7 +102,7 @@ public class DefaultLexer extends AbstractLexer {
             StringBuilder sb = new StringBuilder();
             reader.read();
             sb.append((char) r);
-            return new Token("NEWLINE", sb.toString());
+            return new Token("NEWLINE", sb.toString(), sb.toString());
         }
         if (r == '\r') {
             StringBuilder sb = new StringBuilder();
@@ -111,7 +111,7 @@ public class DefaultLexer extends AbstractLexer {
             if (r == '\n') {
                 sb.append((char) reader.read());
             }
-            return new Token("NEWLINE", sb.toString());
+            return new Token("NEWLINE", sb.toString(), sb.toString());
         }
         if (r <= 32) {
             StringBuilder sb = new StringBuilder();
@@ -128,7 +128,7 @@ public class DefaultLexer extends AbstractLexer {
                     break;
                 }
             }
-            return new Token("WHITE", sb.toString());
+            return new Token("WHITE", sb.toString(), sb.toString());
         }
         throw new IllegalArgumentException("Unsupported");
 
@@ -140,15 +140,17 @@ public class DefaultLexer extends AbstractLexer {
         Context c = ctx.peek();
         int before = ctx.size();
         ctx.push(t);
+        StringBuilder sb=new StringBuilder();
         while (jShellParser.lexer().ctx.peek() != c) {
             Token tt = jShellParser.lexer().nextToken(before);
             if (tt != null) {
                 all.add(tt);
+                sb.append(tt.getImage());
             } else {
                 break;
             }
         }
-        return new Token(prefix, all);
+        return new Token(prefix, all,sb.toString());
     }
 
     public void popContext() {
@@ -217,7 +219,7 @@ public class DefaultLexer extends AbstractLexer {
     public Token peedTokenSafe() {
         Token t = peekToken();
         if (t == null) {
-            return new Token("", "");
+            return new Token("", "", "");
         }
         return t;
     }

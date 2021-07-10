@@ -1,7 +1,7 @@
 package net.thevpc.nuts.toolbox.nsh;
 
-import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellFileContext;
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellFileContext;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellVariables;
 
 import java.io.InputStream;
@@ -21,16 +21,6 @@ public class DefaultNshExecutionContext implements NshExecutionContext {
     }
 
     @Override
-    public NutsApplicationContext getAppContext(){
-        return getShell().getAppContext();
-    }
-
-    @Override
-    public NutsJavaShell getShell() {
-        return (NutsJavaShell) shellContext.getShell();
-    }
-
-    @Override
     public JShellFileContext getGlobalContext() {
         return fileContext;
     }
@@ -38,6 +28,16 @@ public class DefaultNshExecutionContext implements NshExecutionContext {
     @Override
     public NutsShellContext getNutsShellContext() {
         return shellContext;
+    }
+
+    @Override
+    public NutsWorkspace getWorkspace() {
+        return shellContext.getWorkspace();
+    }
+
+    @Override
+    public NutsSession getSession() {
+        return shellContext.getSession();
     }
 
     @Override
@@ -74,13 +74,32 @@ public class DefaultNshExecutionContext implements NshExecutionContext {
 
     @Override
     public void configureLast(NutsCommandLine cmd) {
-        if(!configureFirst(cmd)){
+        if (!configureFirst(cmd)) {
             cmd.unexpectedArgument();
         }
     }
 
+    @Override
+    public NutsApplicationContext getAppContext() {
+        return getShell().getAppContext();
+    }
+
+    @Override
+    public NutsJavaShell getShell() {
+        return (NutsJavaShell) shellContext.getShell();
+    }
+
     private void showHelp() {
         out().println(builtin.getHelp());
+    }
+
+    public NutsTerminalMode geTerminalMode() {
+        return terminalMode;
+    }
+
+    @Override
+    public InputStream in() {
+        return shellContext.in();
     }
 
     @Override
@@ -91,35 +110,6 @@ public class DefaultNshExecutionContext implements NshExecutionContext {
     @Override
     public PrintStream err() {
         return shellContext.err();
-    }
-
-    public NutsTerminalMode geTerminalMode() {
-        return terminalMode;
-    }
-
-    @Override
-    public NutsWorkspace getWorkspace() {
-        return shellContext.getWorkspace();
-    }
-
-    @Override
-    public NutsWorkspace workspace() {
-        return getWorkspace();
-    }
-
-    @Override
-    public InputStream in() {
-        return shellContext.in();
-    }
-
-    @Override
-    public NutsSession session() {
-        return shellContext.getSession();
-    }
-
-    @Override
-    public NutsSession getSession() {
-        return shellContext.getSession();
     }
 
     @Override

@@ -14,11 +14,18 @@ public class NutsPrintStreamSystem extends NutsPrintStreamBase {
     private CachedValue<Integer> tput_cols;
 
     public NutsPrintStreamSystem(OutputStream out, Boolean autoFlush, String encoding, Boolean ansi, NutsSession session) {
-        this(out,autoFlush,encoding,ansi,session,new Bindings());
+        this(out, autoFlush, encoding, ansi, session, new Bindings());
+    }
+
+    protected NutsPrintStreamSystem(OutputStream out, PrintStream base, CachedValue<Integer> tput_cols, Boolean autoFlush,
+                                    NutsTerminalMode mode, NutsSession session, Bindings bindings) {
+        super(autoFlush == null ? true : autoFlush.booleanValue(), mode/*resolveMode(out,ansi, session)*/, session, bindings);
+        this.out = out;
+        this.base = base;
     }
 
     public NutsPrintStreamSystem(OutputStream out, Boolean autoFlush, String encoding, Boolean ansi, NutsSession session, Bindings bindings) {
-        super(true, resolveMode(out,ansi, session), session,bindings);
+        super(true, resolveMode(out, ansi, session), session, bindings);
         this.out = out;
         if (out instanceof PrintStream) {
             PrintStream ps = (PrintStream) out;
@@ -36,26 +43,53 @@ public class NutsPrintStreamSystem extends NutsPrintStreamBase {
                 throw new IllegalArgumentException(e);
             }
         }
-        switch (mode()){
-            case ANSI:{
-                if(bindings.ansi!=null){
+        switch (mode()) {
+            case ANSI: {
+                if (bindings.ansi != null) {
                     throw new IllegalArgumentException("already bound ansi");
                 }
-                bindings.ansi= this;
-                if(bindings.inherited==null){
-                    bindings.inherited= this;
+                bindings.ansi = this;
+                if (bindings.inherited == null) {
+                    bindings.inherited = this;
                 }
                 break;
             }
-            case INHERITED:{
-                if(bindings.inherited!=null){
+            case INHERITED: {
+                if (bindings.inherited != null) {
                     throw new IllegalArgumentException("already bound ansi");
                 }
-                bindings.inherited= this;
+                bindings.inherited = this;
                 break;
             }
         }
     }
+
+    private static NutsTerminalMode resolveMode(OutputStream out, Boolean ansi, NutsSession session) {
+        if (ansi != null) {
+            return ansi ? NutsTerminalMode.ANSI : NutsTerminalMode.INHERITED;
+        }
+        NutsWorkspace ws = session.getWorkspace();
+        //if(out==System.out || out==System.err){
+        NutsOsFamily os = ws.env().getOsFamily();
+        boolean IS_WINDOWS = os == NutsOsFamily.WINDOWS;
+        boolean IS_CYGWIN = IS_WINDOWS
+                && System.getenv("PWD") != null
+                && System.getenv("PWD").startsWith("/")
+                && !"cygwin".equals(System.getenv("TERM"));
+
+        boolean IS_MINGW_XTERM = IS_WINDOWS
+                && System.getenv("MSYSTEM") != null
+                && System.getenv("MSYSTEM").startsWith("MINGW")
+                && "xterm".equals(System.getenv("TERM"));
+        if ((IS_WINDOWS && (IS_CYGWIN || IS_MINGW_XTERM)) || os == NutsOsFamily.LINUX || os == NutsOsFamily.UNIX || os == NutsOsFamily.MACOS) {
+            return NutsTerminalMode.ANSI;
+        } else {
+            return NutsTerminalMode.INHERITED;
+        }
+        //}
+//        return NutsTerminalMode.INHERITED;
+    }
+
 
 //    public PrintStreamExtRaw(OutputStream out, NutsTerminalMode mode, NutsSession session) {
 //        this(out, true, null, mode, session);
@@ -77,30 +111,16 @@ public class NutsPrintStreamSystem extends NutsPrintStreamBase {
 //        this(new FileOutputStream(file), null, csn, mode, session);
 //    }
 
-    private static NutsTerminalMode resolveMode(OutputStream out,Boolean ansi,NutsSession session) {
-        if(ansi!=null){
-            return ansi?NutsTerminalMode.ANSI:NutsTerminalMode.INHERITED;
-        }
-        NutsWorkspace ws = session.getWorkspace();
-        //if(out==System.out || out==System.err){
-            NutsOsFamily os = ws.env().getOsFamily();
-            boolean IS_WINDOWS = os == NutsOsFamily.WINDOWS;
-            boolean IS_CYGWIN = IS_WINDOWS
-                    && System.getenv("PWD") != null
-                    && System.getenv("PWD").startsWith("/")
-                    && !"cygwin".equals(System.getenv("TERM"));
-
-            boolean IS_MINGW_XTERM = IS_WINDOWS
-                    && System.getenv("MSYSTEM") != null
-                    && System.getenv("MSYSTEM").startsWith("MINGW")
-                    && "xterm".equals(System.getenv("TERM"));
-            if ((IS_WINDOWS && (IS_CYGWIN || IS_MINGW_XTERM)) || os == NutsOsFamily.LINUX || os == NutsOsFamily.UNIX || os == NutsOsFamily.MACOS) {
-                return NutsTerminalMode.ANSI;
-            } else {
-                return NutsTerminalMode.INHERITED;
-            }
-        //}
-//        return NutsTerminalMode.INHERITED;
+    //    @Override
+//    public void setSession(NutsSession session) {
+//        this.session = session;
+////        this.ws=session==null?null:session.getWorkspace();
+//    }
+//
+    @Override
+    public NutsPrintStream flush() {
+        base.flush();
+        return this;
     }
 
 
@@ -115,21 +135,9 @@ public class NutsPrintStreamSystem extends NutsPrintStreamBase {
 //        return new RawOutputStream(out, session).convert(other);
 //    }
 
-    //    @Override
-//    public void setSession(NutsSession session) {
-//        this.session = session;
-////        this.ws=session==null?null:session.getWorkspace();
-//    }
-//
-    @Override
-    public NutsPrintStream flush() {
-        base.flush();
-        return this;
-    }
-
     @Override
     public NutsPrintStream close() {
-        if(mode()==NutsTerminalMode.ANSI){
+        if (mode() == NutsTerminalMode.ANSI) {
             write("\033[0m".getBytes());
             flush();
         }
@@ -150,8 +158,12 @@ public class NutsPrintStreamSystem extends NutsPrintStreamBase {
     }
 
     @Override
-    public NutsPrintStream print(char[] s) {
-        base.print(s);
+    public NutsPrintStream write(char[] buf, int off, int len) {
+        if (buf == null) {
+            base.print("null");
+        } else {
+            base.print(new String(buf, off, len));
+        }
         return this;
     }
 
@@ -162,56 +174,26 @@ public class NutsPrintStreamSystem extends NutsPrintStreamBase {
     }
 
     @Override
-    public NutsPrintStream write(char[] buf, int off, int len) {
-        if(buf==null){
-            base.print("null");
-        }else {
-            base.print(new String(buf,off,len));
+    public NutsPrintStream convertSession(NutsSession session) {
+        if (session == null || session == this.session) {
+            return this;
         }
-        return this;
-    }
-
-    @Override
-    public int getColumns() {
-        NutsWorkspace ws=session.getWorkspace();
-        int tputCallTimeout = ws.env().getOptionAsInt("nuts.term.tput.call.timeout", 60);
-        Integer w = ws.env().getOptionAsInt("nuts.term.width", null);
-        if (w == null) {
-            if (tput_cols == null) {
-                tput_cols = new CachedValue<>(new DefaultAnsiEscapeCommand.TputEvaluator(session), tputCallTimeout);
-            }
-            Integer v = tput_cols.getValue();
-            return v==null?-1:v;
-        }
-        return -1;
-    }
-
-    @Override
-    protected NutsPrintStream convertImpl(NutsTerminalMode other) {
-        switch (other){
-            case FORMATTED:{
-                return new NutsPrintStreamFormatted(this,bindings);
-            }
-            case FILTERED:{
-                return new NutsPrintStreamFiltered(this,bindings);
-            }
-        }
-        throw new IllegalArgumentException("unsupported "+mode()+"->"+other);
+        return new NutsPrintStreamSystem(out, base, tput_cols, autoFlash, mode(), session, new Bindings());
     }
 
     @Override
     public NutsPrintStream run(NutsTerminalCommand command) {
-        if(mode()==NutsTerminalMode.ANSI) {
+        if (mode() == NutsTerminalMode.ANSI) {
             // TODO!!
             //should re-implement this!!
-            switch (command.getName()){
+            switch (command.getName()) {
                 case NutsTerminalCommand.Ids
-                        .CLEAR_LINE:{
+                        .CLEAR_LINE: {
                     //printf("%s", session.getWorkspace().text().forCommand(command));
                     break;
                 }
                 case NutsTerminalCommand.Ids
-                        .CLEAR_LINE_FROM_CURSOR:{
+                        .CLEAR_LINE_FROM_CURSOR: {
                     //printf("%s", session.getWorkspace().text().forCommand(command));
                     break;
                 }
@@ -219,6 +201,40 @@ public class NutsPrintStreamSystem extends NutsPrintStreamBase {
             flush();
         }
         return this;
+    }
+
+    @Override
+    public int getColumns() {
+        NutsWorkspace ws = session.getWorkspace();
+        int tputCallTimeout = ws.env().getOptionAsInt("nuts.term.tput.call.timeout", 60);
+        Integer w = ws.env().getOptionAsInt("nuts.term.width", null);
+        if (w == null) {
+            if (tput_cols == null) {
+                tput_cols = new CachedValue<>(new DefaultAnsiEscapeCommand.TputEvaluator(session), tputCallTimeout);
+            }
+            Integer v = tput_cols.getValue();
+            return v == null ? -1 : v;
+        }
+        return -1;
+    }
+
+    @Override
+    public NutsPrintStream print(char[] s) {
+        base.print(s);
+        return this;
+    }
+
+    @Override
+    protected NutsPrintStream convertImpl(NutsTerminalMode other) {
+        switch (other) {
+            case FORMATTED: {
+                return new NutsPrintStreamFormatted(this, bindings);
+            }
+            case FILTERED: {
+                return new NutsPrintStreamFiltered(this, bindings);
+            }
+        }
+        throw new IllegalArgumentException("unsupported " + mode() + "->" + other);
     }
 
 //

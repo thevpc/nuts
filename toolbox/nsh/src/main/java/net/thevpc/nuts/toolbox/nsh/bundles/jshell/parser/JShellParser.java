@@ -55,6 +55,7 @@ public class JShellParser {
                             new Yaccer.TokenNode(
                                     new Token(
                                             "WORD",
+                                            arg,
                                             arg
                                     )
                             )

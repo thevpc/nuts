@@ -1,15 +1,13 @@
 package net.thevpc.nuts.runtime.core.terminals;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.spi.NutsSystemTerminalBase;
-import net.thevpc.nuts.spi.NutsTerminalBase;
 
 import java.io.InputStream;
 import java.util.Scanner;
 
 @NutsPrototype
-public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase, NutsSessionAware {
+public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase {
 
     private NutsLogger LOG;
     private Scanner scanner;
@@ -23,28 +21,6 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase, Nu
 
     public DefaultNutsSystemTerminalBase() {
 
-    }
-
-    public void setSession(NutsSession session) {
-        this.session = session;
-        this.workspace = session == null ? null : session.getWorkspace();
-        if (workspace != null) {
-            NutsWorkspaceOptions options=session.getWorkspace().config().options();
-            NutsTerminalMode terminalMode = options.getTerminalMode();
-            if (terminalMode == null) {
-                if (options.isBot()) {
-                    terminalMode = NutsTerminalMode.FILTERED;
-                } else {
-                    terminalMode = NutsTerminalMode.FORMATTED;
-                }
-            }
-            this.out = workspace.io().stdout().convert(terminalMode);
-            this.err = workspace.io().stderr().convert(terminalMode);
-            this.in = workspace.io().stdin();
-            this.scanner = new Scanner(this.in);
-        } else {
-            //on uninstall do nothing
-        }
     }
 
     private NutsLogger _LOG() {
@@ -129,41 +105,56 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase, Nu
 
     @Override
     public int getSupportLevel(NutsSupportLevelContext<NutsTerminalSpec> criteria) {
+        this.session = criteria.getSession();
+        this.workspace = session.getWorkspace();
+        if (workspace != null) {
+            NutsWorkspaceOptions options=session.getWorkspace().config().options();
+            NutsTerminalMode terminalMode = options.getTerminalMode();
+            if (terminalMode == null) {
+                if (options.isBot()) {
+                    terminalMode = NutsTerminalMode.FILTERED;
+                } else {
+                    terminalMode = NutsTerminalMode.FORMATTED;
+                }
+            }
+            this.out = workspace.io().stdout().convertMode(terminalMode);
+            this.err = workspace.io().stderr().convertMode(terminalMode);
+            this.in = workspace.io().stdin();
+            this.scanner = new Scanner(this.in);
+        } else {
+            //on uninstall do nothing
+        }
+
         return DEFAULT_SUPPORT;
     }
 
-//    @Override
-    public String readLine(String prompt, Object... params) {
-        return readLine(getOut(), prompt, params);
-    }
-
-//    @Override
-    public char[] readPassword(String prompt, Object... params) {
-        return readPassword(getOut(), prompt, params);
-    }
-
     @Override
-    public String readLine(NutsPrintStream out, String prompt, Object... params) {
+    public String readLine(NutsPrintStream out, NutsMessage message,NutsSession session) {
         if (out == null) {
             out = getOut();
         }
         if (out == null) {
             out = workspace.io().stdout();
         }
-        out.printf(prompt, params);
-        out.flush();
+        if(message!=null) {
+            out.printf("%s", message);
+            out.flush();
+        }
         return scanner.nextLine();
     }
 
     @Override
-    public char[] readPassword(NutsPrintStream out, String prompt, Object... params) {
+    public char[] readPassword(NutsPrintStream out, NutsMessage message,NutsSession session) {
         if (out == null) {
             out = getOut();
         }
         if (out == null) {
             out = workspace.io().stdout();
         }
-        out.printf(prompt, params);
+        if(message!=null) {
+            out.printf("%s", message);
+            out.flush();
+        }
         return scanner.nextLine().toCharArray();
     }
 
@@ -180,11 +171,6 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase, Nu
     @Override
     public NutsPrintStream getErr() {
         return this.err;
-    }
-
-    @Override
-    public NutsTerminalBase getParent() {
-        return null;
     }
 
     @Override

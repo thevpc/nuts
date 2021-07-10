@@ -6,7 +6,6 @@
 package net.thevpc.nuts.runtime.core.format;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.io.ByteArrayPrintStream;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 
 import java.io.*;
@@ -130,7 +129,7 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
     }
 
     @Override
-    public void print(NutsTerminal terminal) {
+    public void print(NutsSessionTerminal terminal) {
         checkSession();
         print(terminal == null ? getSession().getTerminal().out() : terminal.out());
     }
@@ -183,7 +182,7 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
     }
 
     @Override
-    public void println(NutsTerminal terminal) {
+    public void println(NutsSessionTerminal terminal) {
         checkSession();
         println(terminal == null ? getSession().getTerminal().out() : terminal.out());
     }

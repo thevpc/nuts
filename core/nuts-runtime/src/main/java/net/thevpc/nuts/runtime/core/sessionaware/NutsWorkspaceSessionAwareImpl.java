@@ -41,6 +41,9 @@ public class NutsWorkspaceSessionAwareImpl implements NutsWorkspace, NutsWorkspa
     private NutsWorkspace ws;
 
     public NutsWorkspaceSessionAwareImpl(NutsSession session, NutsWorkspace ws) {
+        if(ws instanceof NutsWorkspaceSessionAwareImpl){
+            ws=((NutsWorkspaceSessionAwareImpl) ws).ws;
+        }
         this.ws = ws;
         this.session = session;
     }

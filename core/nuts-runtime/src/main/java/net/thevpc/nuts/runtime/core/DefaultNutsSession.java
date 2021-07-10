@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,27 +23,29 @@
  */
 package net.thevpc.nuts.runtime.core;
 
-import java.io.InputStream;
-import java.io.PrintStream;
-
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.core.sessionaware.NutsWorkspaceSessionAwareImpl;
+import net.thevpc.nuts.runtime.core.terminals.AbstractNutsSessionTerminal;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsConfigurableHelper;
 import net.thevpc.nuts.runtime.standalone.util.NutsPropertiesHolder;
 
+import java.io.InputStream;
 import java.lang.reflect.Array;
 import java.time.Instant;
 import java.util.*;
 import java.util.logging.Filter;
 import java.util.logging.Level;
 
-import net.thevpc.nuts.runtime.core.sessionaware.NutsWorkspaceSessionAwareImpl;
-
 /**
  * Created by vpc on 2/1/17.
  */
 public class DefaultNutsSession implements Cloneable, NutsSession {
 
+    //    protected NutsIterableFormat iterFormatHandler = null;
+//    protected NutsIterableOutput iterFormat = null;
+    protected NutsWorkspace ws = null;
+    protected List<String> outputFormatOptions = new ArrayList<>();
     private NutsSessionTerminal terminal;
     private NutsPropertiesHolder properties = new NutsPropertiesHolder();
     private Map<Class, LinkedHashSet<NutsListener>> listeners = new HashMap<>();
@@ -51,7 +53,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     private Boolean bot;
     private Boolean debug;
     private NutsExecutionType executionType;
-//    private Boolean force;
+    //    private Boolean force;
     private Boolean dry;
     private Level logTermLevel;
     private Filter logTermFilter;
@@ -59,10 +61,6 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     private Filter logFileFilter;
     private NutsConfirmationMode confirm = null;
     private NutsContentType outputFormat;
-//    protected NutsIterableFormat iterFormatHandler = null;
-//    protected NutsIterableOutput iterFormat = null;
-    protected NutsWorkspace ws = null;
-    protected List<String> outputFormatOptions = new ArrayList<>();
     private NutsFetchStrategy fetchStrategy = null;
     private Boolean cached;
     private Boolean indexed;
@@ -77,332 +75,13 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     private boolean iterableOut;
 
     public DefaultNutsSession(NutsWorkspace ws) {
-        this.ws = new NutsWorkspaceSessionAwareImpl(this,ws);
+        this.ws = new NutsWorkspaceSessionAwareImpl(this, ws);
         copyFrom(this.ws.config().options());
     }
 
     public DefaultNutsSession(NutsWorkspace ws, NutsWorkspaceOptions options) {
-        this.ws = new NutsWorkspaceSessionAwareImpl(this,ws);
+        this.ws = new NutsWorkspaceSessionAwareImpl(this, ws);
         copyFrom(options);
-    }
-
-    @Override
-    public NutsSession copyFrom(NutsWorkspaceOptions options) {
-        if (options != null) {
-            this.trace = options.isTrace();
-            this.debug = options.isDebug();
-            this.progressOptions = options.getProgressOptions();
-            this.dry = options.isDry();
-            this.cached = options.isCached();
-            this.indexed = options.isIndexed();
-            this.gui = options.isGui();
-            this.confirm = options.getConfirm();
-            this.errLinePrefix = options.getErrLinePrefix();
-            this.outLinePrefix = options.getOutLinePrefix();
-            this.fetchStrategy = options.getFetchStrategy();
-            this.outputFormat = options.getOutputFormat();
-            this.outputFormatOptions.clear();
-            this.outputFormatOptions.addAll(Arrays.asList(options.getOutputFormatOptions()));
-            this.outputFormatOptions.addAll(Arrays.asList(options.getOutputFormatOptions()));
-            NutsLogConfig logConfig = options.getLogConfig();
-            if (logConfig != null) {
-                this.logTermLevel = logConfig.getLogTermLevel();
-                this.logTermFilter = logConfig.getLogTermFilter();
-                this.logFileLevel = logConfig.getLogFileLevel();
-                this.logFileFilter = logConfig.getLogFileFilter();
-            }
-
-        }
-        return this;
-    }
-
-    @Override
-    public NutsSession copyFrom(NutsSession other) {
-        this.terminal = other.getTerminal();
-        Map<String, Object> properties = other.getProperties();
-        this.properties.setProperties(properties == null ? null : new LinkedHashMap<>(properties));
-        this.listeners.clear();
-        for (NutsListener listener : other.getListeners()) {
-            addListener(listener);
-        }
-        this.trace = other.isTrace();
-//        this.force = other.isForce();
-        this.confirm = other.getConfirm();
-        this.dry = other.isDry();
-        this.gui = other.isGui();
-        this.errLinePrefix = other.getErrLinePrefix();
-        this.outLinePrefix = other.getOutLinePrefix();
-        this.fetchStrategy = other.getFetchStrategy();
-        this.fetchStrategy = other.getFetchStrategy();
-        this.cached = other.isCached();
-        this.indexed = other.isIndexed();
-        this.transitive = other.isTransitive();
-
-        if (other instanceof DefaultNutsSession) {
-            this.outputFormat = ((DefaultNutsSession) other).getPreferredOutputFormat();
-        } else {
-            this.outputFormat = other.getOutputFormat();
-        }
-        this.iterableOut = other.isIterableOut();
-        this.outputFormatOptions.clear();
-        this.outputFormatOptions.addAll(Arrays.asList(other.getOutputFormatOptions()));
-        this.progressOptions = other.getProgressOptions();
-        this.logTermLevel = other.getLogTermLevel();
-        this.logTermFilter = other.getLogTermFilter();
-        this.logFileLevel = other.getLogFileLevel();
-        this.logFileFilter = other.getLogFileFilter();
-        this.appId = other.getAppId();
-        return this;
-    }
-
-    @Override
-    public NutsSession copy() {
-        try {
-            DefaultNutsSession cloned = (DefaultNutsSession) clone();
-            cloned.properties = properties == null ? null : properties.copy();
-            cloned.outputFormatOptions = outputFormatOptions == null ? null : new ArrayList<>(outputFormatOptions);
-            cloned.listeners = null;
-            if (listeners != null) {
-                for (NutsListener listener : getListeners()) {
-                    cloned.addListener(listener);
-                }
-            }
-            return cloned;
-        } catch (CloneNotSupportedException e) {
-            throw new NutsUnsupportedOperationException(this, e);
-        }
-    }
-
-    @Override
-    public NutsId getAppId() {
-        return appId;
-    }
-
-    @Override
-    public NutsSession setAppId(NutsId appId) {
-        this.appId = appId;
-        return this;
-    }
-
-    @Override
-    public NutsSession setFetchStrategy(NutsFetchStrategy mode) {
-        this.fetchStrategy = mode;
-        return this;
-    }
-
-//    @Override
-//    public NutsSession fetchStrategy(NutsFetchStrategy mode) {
-//        return setFetchStrategy(mode);
-//    }
-//    @Override
-//    public NutsSession fetchRemote() {
-//        return setFetchStrategy(NutsFetchStrategy.REMOTE);
-//    }
-//
-//    @Override
-//    public NutsSession fetchOffline() {
-//        return setFetchStrategy(NutsFetchStrategy.OFFLINE);
-//    }
-//
-//    @Override
-//    public NutsSession fetchOnline() {
-//        return setFetchStrategy(NutsFetchStrategy.ONLINE);
-//    }
-//
-//    @Override
-//    public NutsSession fetchInstalled() {
-//        return setFetchStrategy(NutsFetchStrategy.INSTALLED);
-//    }
-//
-//    @Override
-//    public NutsSession fetchAnyWhere() {
-//        return setFetchStrategy(NutsFetchStrategy.ANYWHERE);
-//    }
-    @Override
-    public NutsFetchStrategy getFetchStrategy() {
-        if (fetchStrategy != null) {
-            return fetchStrategy;
-        }
-        NutsFetchStrategy wfetchStrategy = ws.config().getOptions().getFetchStrategy();
-        if (wfetchStrategy != null) {
-            return wfetchStrategy;
-        }
-        return NutsFetchStrategy.ONLINE;
-    }
-
-    @Override
-    public NutsSession addListener(NutsListener listener) {
-        if (listener != null) {
-            boolean ok = false;
-            for (Class cls : new Class[]{
-                NutsWorkspaceListener.class,
-                NutsRepositoryListener.class,
-                NutsInstallListener.class,
-                NutsMapListener.class
-            }) {
-                if (cls.isInstance(listener)) {
-                    if (listeners == null) {
-                        listeners = new HashMap<>();
-                    }
-                    LinkedHashSet<NutsListener> li = listeners.get(cls);
-                    if (li == null) {
-                        li = new LinkedHashSet<>();
-                        listeners.put(cls, li);
-                    }
-                    li.add(listener);
-                    ok = true;
-                }
-            }
-            if (!ok) {
-                throw new NutsIllegalArgumentException(this, "unsupported Listener " + listener.getClass().getName() + " : " + listener);
-            }
-        }
-        return this;
-    }
-
-    @Override
-    public NutsSession removeListener(NutsListener listener) {
-        if (listener != null) {
-            if (listeners != null) {
-                for (LinkedHashSet<NutsListener> value : listeners.values()) {
-                    value.remove(listener);
-                }
-            }
-        }
-        return this;
-    }
-
-    @Override
-    public <T extends NutsListener> T[] getListeners(Class<T> type) {
-        if (listeners != null) {
-            LinkedHashSet<NutsListener> tt = listeners.get(type);
-            if (tt != null) {
-                return tt.toArray((T[]) Array.newInstance(type, 0));
-            }
-        }
-        return (T[]) Array.newInstance(type, 0);
-    }
-
-    @Override
-    public NutsListener[] getListeners() {
-        if (listeners == null) {
-            return new NutsListener[0];
-        }
-        LinkedHashSet<NutsListener> all = new LinkedHashSet<>();
-        for (LinkedHashSet<NutsListener> value : listeners.values()) {
-            all.addAll(value);
-        }
-        return all.toArray(new NutsListener[0]);
-    }
-
-    @Override
-    public Map<String, Object> getProperties() {
-        return properties.getProperties();
-    }
-
-    @Override
-    public NutsSession setProperties(Map<String, Object> properties) {
-        this.properties.setProperties(properties);
-        return this;
-    }
-
-    @Override
-    public Object getProperty(String key) {
-        return properties.getProperty(key);
-    }
-
-    @Override
-    public NutsSession setProperty(String key, Object value) {
-        this.properties.setProperty(key, value);
-        return this;
-    }
-
-    @Override
-    public NutsSessionTerminal getTerminal() {
-        return terminal;
-    }
-
-    @Override
-    public NutsWorkspace getWorkspace() {
-        return ws;
-    }
-
-    @Override
-    public NutsSession setTerminal(NutsSessionTerminal terminal) {
-        this.terminal = terminal;
-//        this.out0 = (terminal.fout());
-//        this.err0 = (terminal.ferr());
-//        this.out = out0;
-//        this.err = err0;
-        return this;
-    }
-
-    @Override
-    public NutsIterableFormat getIterableOutput() {
-        if(!iterableOut){
-            return null;
-        }
-        return getWorkspace().elem().setContentType(getOutputFormat()).iter(out());
-//        if (iterFormatHandler == null) {
-//            return null;
-//        }
-//        if (iterFormat == null) {
-//            iterFormat = new CustomNutsIncrementalOutputFormat(ws, iterFormatHandler);
-//            iterFormat.setSession(this);
-//        }
-//        return iterFormat;
-    }
-
-    @Override
-    public NutsSession json() {
-        return setOutputFormat(NutsContentType.JSON);
-    }
-
-    @Override
-    public NutsSession plain() {
-        return setOutputFormat(NutsContentType.PLAIN);
-    }
-
-    @Override
-    public NutsSession tree() {
-        return setOutputFormat(NutsContentType.TREE);
-    }
-
-    @Override
-    public NutsSession table() {
-        return setOutputFormat(NutsContentType.TABLE);
-    }
-
-    @Override
-    public NutsSession xml() {
-        return setOutputFormat(NutsContentType.XML);
-    }
-
-    @Override
-    public NutsSession props() {
-        return setOutputFormat(NutsContentType.PROPS);
-    }
-
-    @Override
-    public NutsSession setOutputFormat(NutsContentType outputFormat) {
-        if (outputFormat == null) {
-            outputFormat = NutsContentType.PLAIN;
-        }
-        this.outputFormat = outputFormat;
-        return this;
-    }
-
-    /**
-     * configure the current command with the given arguments.
-     *
-     * @param skipUnsupported when true, all unsupported options are skipped
-     * silently
-     * @param commandLine arguments to configure with
-     * @return {@code this} instance
-     */
-    @Override
-    public final boolean configure(boolean skipUnsupported, NutsCommandLine commandLine) {
-        return NutsConfigurableHelper.configure(this, this, skipUnsupported, commandLine);
     }
 
     /**
@@ -419,58 +98,17 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         return NutsConfigurableHelper.configure(this, this, skipUnsupported, args, "nuts-session");
     }
 
+    /**
+     * configure the current command with the given arguments.
+     *
+     * @param skipUnsupported when true, all unsupported options are skipped
+     *                        silently
+     * @param commandLine     arguments to configure with
+     * @return {@code this} instance
+     */
     @Override
-    public NutsSession configure(NutsWorkspaceOptions options) {
-        if (options != null) {
-            if (options.getCached() != null) {
-                this.setCached(options.isCached());
-            }
-            if (options.getConfirm() != null) {
-                this.setConfirm(options.getConfirm());
-            }
-            if (options.getDry() != null) {
-                this.setDry(options.getDry());
-            }
-            if (options.getOutputFormat() != null) {
-                this.setOutputFormat(options.getOutputFormat());
-            }
-            if (options.getOutputFormatOptions() != null) {
-                this.setOutputFormatOptions(options.getOutputFormatOptions());
-            }
-            if (options.getErrLinePrefix() != null) {
-                this.setErrLinePrefix(options.getErrLinePrefix());
-            }
-            if (options.getFetchStrategy() != null) {
-                this.setFetchStrategy(options.getFetchStrategy());
-            }
-            if (options.getExpireTime() != null) {
-                this.setExpireTime(options.getExpireTime());
-            }
-            if (options.getGui() != null) {
-                this.setGui(options.getGui());
-            }
-            if (options.getProgressOptions() != null) {
-                this.setProgressOptions(options.getProgressOptions());
-            }
-            if (options.getIndexed() != null) {
-                this.setIndexed(options.getIndexed());
-            }
-            if (options.getTrace() != null) {
-                this.setTrace(options.getTrace());
-            }
-            if (options.getTransitive() != null) {
-                this.setTransitive(options.getTransitive());
-            }
-            if (options.getTerminalMode() != null) {
-                getTerminal().setOut(
-                        getTerminal().getOut().convert(options.getTerminalMode())
-                );
-            }
-            if (options.getExecutionType() != null) {
-                setExecutionType(options.getExecutionType());
-            }
-        }
-        return this;
+    public final boolean configure(boolean skipUnsupported, NutsCommandLine commandLine) {
+        return NutsConfigurableHelper.configure(this, this, skipUnsupported, commandLine);
     }
 
     @Override
@@ -683,42 +321,42 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                     if (enabled) {
                         String v = a.getStringValue("");
                         if (v.isEmpty()) {
-                            getTerminal().setOut(getTerminal().out().convert(NutsTerminalMode.FORMATTED));
-                            getTerminal().setErr(getTerminal().err().convert(NutsTerminalMode.FORMATTED));
+                            getTerminal().setOut(getTerminal().out().convertMode(NutsTerminalMode.FORMATTED));
+                            getTerminal().setErr(getTerminal().err().convertMode(NutsTerminalMode.FORMATTED));
                         } else {
                             NutsArgument bb = ws.commandLine().createArgument(v);
                             Boolean b = bb.getBoolean(null);
                             if (b != null) {
                                 if (b) {
-                                    getTerminal().setOut(getTerminal().out().convert(NutsTerminalMode.FORMATTED));
-                                    getTerminal().setErr(getTerminal().err().convert(NutsTerminalMode.FORMATTED));
+                                    getTerminal().setOut(getTerminal().out().convertMode(NutsTerminalMode.FORMATTED));
+                                    getTerminal().setErr(getTerminal().err().convertMode(NutsTerminalMode.FORMATTED));
                                 } else {
-                                    getTerminal().setOut(getTerminal().out().convert(NutsTerminalMode.FILTERED));
-                                    getTerminal().setErr(getTerminal().err().convert(NutsTerminalMode.FILTERED));
+                                    getTerminal().setOut(getTerminal().out().convertMode(NutsTerminalMode.FILTERED));
+                                    getTerminal().setErr(getTerminal().err().convertMode(NutsTerminalMode.FILTERED));
                                 }
                             } else {
                                 switch (v.toLowerCase()) {
                                     case "formatted": {
-                                        getTerminal().setOut(getTerminal().out().convert(NutsTerminalMode.FORMATTED));
-                                        getTerminal().setErr(getTerminal().err().convert(NutsTerminalMode.FORMATTED));
+                                        getTerminal().setOut(getTerminal().out().convertMode(NutsTerminalMode.FORMATTED));
+                                        getTerminal().setErr(getTerminal().err().convertMode(NutsTerminalMode.FORMATTED));
                                         break;
                                     }
                                     case "filtered": {
-                                        getTerminal().setOut(getTerminal().out().convert(NutsTerminalMode.FILTERED));
-                                        getTerminal().setErr(getTerminal().err().convert(NutsTerminalMode.FILTERED));
+                                        getTerminal().setOut(getTerminal().out().convertMode(NutsTerminalMode.FILTERED));
+                                        getTerminal().setErr(getTerminal().err().convertMode(NutsTerminalMode.FILTERED));
                                         break;
                                     }
                                     case "h":
                                     case "inherited": {
-                                        getTerminal().setOut(getTerminal().out().convert(NutsTerminalMode.INHERITED));
-                                        getTerminal().setErr(getTerminal().err().convert(NutsTerminalMode.INHERITED));
+                                        getTerminal().setOut(getTerminal().out().convertMode(NutsTerminalMode.INHERITED));
+                                        getTerminal().setErr(getTerminal().err().convertMode(NutsTerminalMode.INHERITED));
                                         break;
                                     }
                                     case "s":
                                     case "auto":
                                     case "system": {
-                                        getTerminal().setOut(getTerminal().out().convert(NutsTerminalMode.INHERITED));
-                                        getTerminal().setErr(getTerminal().err().convert(NutsTerminalMode.INHERITED));
+                                        getTerminal().setOut(getTerminal().out().convertMode(NutsTerminalMode.INHERITED));
+                                        getTerminal().setErr(getTerminal().err().convertMode(NutsTerminalMode.INHERITED));
                                         break;
                                     }
                                     default: {
@@ -735,8 +373,8 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                 case "--no-color": {
                     a = cmdLine.nextBoolean();
                     if (enabled) {
-                        getTerminal().setOut(getTerminal().out().convert(NutsTerminalMode.FILTERED));
-                        getTerminal().setErr(getTerminal().err().convert(NutsTerminalMode.FILTERED));
+                        getTerminal().setOut(getTerminal().out().convertMode(NutsTerminalMode.FILTERED));
+                        getTerminal().setErr(getTerminal().err().convertMode(NutsTerminalMode.FILTERED));
                     }
                     return true;
                 }
@@ -744,8 +382,8 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                 case "--bot": {
                     a = cmdLine.nextBoolean();
                     if (enabled && a.getBooleanValue()) {
-                        getTerminal().setOut(getTerminal().out().convert(NutsTerminalMode.FILTERED));
-                        getTerminal().setErr(getTerminal().err().convert(NutsTerminalMode.FILTERED));
+                        getTerminal().setOut(getTerminal().out().convertMode(NutsTerminalMode.FILTERED));
+                        getTerminal().setErr(getTerminal().err().convertMode(NutsTerminalMode.FILTERED));
                         setProgressOptions("none");
                         setConfirm(NutsConfirmationMode.ERROR);
                         setTrace(false);
@@ -827,23 +465,6 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     }
 
     @Override
-    public NutsContentType getOutputFormat(NutsContentType defaultValue) {
-        if (this.outputFormat != null) {
-            return this.outputFormat;
-        }
-        NutsContentType o = ws.config().options().getOutputFormat();
-        if (o != null) {
-            return o;
-        }
-        return defaultValue;
-    }
-
-    @Override
-    public NutsContentType getOutputFormat() {
-        return getOutputFormat(NutsContentType.PLAIN);
-    }
-
-    @Override
     public boolean isTrace() {
         boolean b = isBot();
         if (b) {
@@ -857,22 +478,6 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         return isTrace()
                 && !isIterableOut()
                 && getOutputFormat() == NutsContentType.PLAIN;
-    }
-
-    @Override
-    public boolean isPlainOut() {
-        return !isBot() && getOutputFormat() == NutsContentType.PLAIN;
-    }
-
-    @Override
-    public boolean isStructuredOut() {
-        return !isIterableOut()
-                && (isBot() || getOutputFormat() != NutsContentType.PLAIN);
-    }
-
-    @Override
-    public boolean isIterableOut() {
-        return iterableOut;
     }
 
     @Override
@@ -895,6 +500,22 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     }
 
     @Override
+    public boolean isIterableOut() {
+        return iterableOut;
+    }
+
+    @Override
+    public boolean isStructuredOut() {
+        return !isIterableOut()
+                && (isBot() || getOutputFormat() != NutsContentType.PLAIN);
+    }
+
+    @Override
+    public boolean isPlainOut() {
+        return !isBot() && getOutputFormat() == NutsContentType.PLAIN;
+    }
+
+    @Override
     public NutsSession setTrace(Boolean trace) {
         this.trace = trace;
         return this;
@@ -907,11 +528,6 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     }
 
     @Override
-    public Boolean getBot() {
-        return bot;
-    }
-
-    @Override
     public boolean isBot() {
         if (bot != null) {
             return bot;
@@ -919,7 +535,12 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         return ws.config().options().isBot();
     }
 
-//    @Override
+    @Override
+    public Boolean getBot() {
+        return bot;
+    }
+
+    //    @Override
 //    public NutsSession setSilent() {
 //        return setTrace(false);
 //    }
@@ -950,7 +571,312 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         return getConfirm() == NutsConfirmationMode.ASK;
     }
 
+    @Override
+    public NutsContentType getOutputFormat(NutsContentType defaultValue) {
+        if (this.outputFormat != null) {
+            return this.outputFormat;
+        }
+        NutsContentType o = ws.config().options().getOutputFormat();
+        if (o != null) {
+            return o;
+        }
+        return defaultValue;
+    }
+
+    @Override
+    public NutsContentType getOutputFormat() {
+        return getOutputFormat(NutsContentType.PLAIN);
+    }
+
+    @Override
+    public NutsSession setOutputFormat(NutsContentType outputFormat) {
+        if (outputFormat == null) {
+            outputFormat = NutsContentType.PLAIN;
+        }
+        this.outputFormat = outputFormat;
+        return this;
+    }
+
+    @Override
+    public NutsSession json() {
+        return setOutputFormat(NutsContentType.JSON);
+    }
+
+    @Override
+    public NutsSession plain() {
+        return setOutputFormat(NutsContentType.PLAIN);
+    }
+
+    @Override
+    public NutsSession props() {
+        return setOutputFormat(NutsContentType.PROPS);
+    }
+
+    @Override
+    public NutsSession tree() {
+        return setOutputFormat(NutsContentType.TREE);
+    }
+
+    @Override
+    public NutsSession table() {
+        return setOutputFormat(NutsContentType.TABLE);
+    }
+
+    @Override
+    public NutsSession xml() {
+        return setOutputFormat(NutsContentType.XML);
+    }
+
+    @Override
+    public NutsSession copy() {
+        try {
+            DefaultNutsSession cloned = (DefaultNutsSession) clone();
+            cloned.ws = new NutsWorkspaceSessionAwareImpl(cloned, ws);
+            cloned.terminal = terminal == null ? null : cloned.ws.term().createTerminal(terminal);
+            cloned.properties = properties == null ? null : properties.copy();
+            cloned.outputFormatOptions = outputFormatOptions == null ? null : new ArrayList<>(outputFormatOptions);
+            cloned.listeners = null;
+            if (listeners != null) {
+                for (NutsListener listener : getListeners()) {
+                    cloned.addListener(listener);
+                }
+            }
+            return cloned;
+        } catch (CloneNotSupportedException e) {
+            throw new NutsUnsupportedOperationException(this, e);
+        }
+    }
+
+    @Override
+    public NutsSession copyFrom(NutsSession other) {
+        this.terminal = other.getTerminal();
+        Map<String, Object> properties = other.getProperties();
+        this.properties.setProperties(properties == null ? null : new LinkedHashMap<>(properties));
+        this.listeners.clear();
+        for (NutsListener listener : other.getListeners()) {
+            addListener(listener);
+        }
+        this.trace = other.isTrace();
+//        this.force = other.isForce();
+        this.confirm = other.getConfirm();
+        this.dry = other.isDry();
+        this.gui = other.isGui();
+        this.errLinePrefix = other.getErrLinePrefix();
+        this.outLinePrefix = other.getOutLinePrefix();
+        this.fetchStrategy = other.getFetchStrategy();
+        this.fetchStrategy = other.getFetchStrategy();
+        this.cached = other.isCached();
+        this.indexed = other.isIndexed();
+        this.transitive = other.isTransitive();
+
+        if (other instanceof DefaultNutsSession) {
+            this.outputFormat = ((DefaultNutsSession) other).getPreferredOutputFormat();
+        } else {
+            this.outputFormat = other.getOutputFormat();
+        }
+        this.iterableOut = other.isIterableOut();
+        this.outputFormatOptions.clear();
+        this.outputFormatOptions.addAll(Arrays.asList(other.getOutputFormatOptions()));
+        this.progressOptions = other.getProgressOptions();
+        this.logTermLevel = other.getLogTermLevel();
+        this.logTermFilter = other.getLogTermFilter();
+        this.logFileLevel = other.getLogFileLevel();
+        this.logFileFilter = other.getLogFileFilter();
+        this.appId = other.getAppId();
+        return this;
+    }
+
+    @Override
+    public NutsSession copyFrom(NutsWorkspaceOptions options) {
+        if (options != null) {
+            this.trace = options.isTrace();
+            this.debug = options.isDebug();
+            this.progressOptions = options.getProgressOptions();
+            this.dry = options.isDry();
+            this.cached = options.isCached();
+            this.indexed = options.isIndexed();
+            this.gui = options.isGui();
+            this.confirm = options.getConfirm();
+            this.errLinePrefix = options.getErrLinePrefix();
+            this.outLinePrefix = options.getOutLinePrefix();
+            this.fetchStrategy = options.getFetchStrategy();
+            this.outputFormat = options.getOutputFormat();
+            this.outputFormatOptions.clear();
+            this.outputFormatOptions.addAll(Arrays.asList(options.getOutputFormatOptions()));
+            this.outputFormatOptions.addAll(Arrays.asList(options.getOutputFormatOptions()));
+            NutsLogConfig logConfig = options.getLogConfig();
+            if (logConfig != null) {
+                this.logTermLevel = logConfig.getLogTermLevel();
+                this.logTermFilter = logConfig.getLogTermFilter();
+                this.logFileLevel = logConfig.getLogFileLevel();
+                this.logFileFilter = logConfig.getLogFileFilter();
+            }
+
+        }
+        return this;
+    }
+
+    @Override
+    public NutsId getAppId() {
+        return appId;
+    }
+
+    @Override
+    public NutsSession setAppId(NutsId appId) {
+        this.appId = appId;
+        return this;
+    }
+
+    @Override
+    public NutsSession setFetchStrategy(NutsFetchStrategy mode) {
+        this.fetchStrategy = mode;
+        return this;
+    }
+
+    //    @Override
+//    public NutsSession fetchStrategy(NutsFetchStrategy mode) {
+//        return setFetchStrategy(mode);
+//    }
 //    @Override
+//    public NutsSession fetchRemote() {
+//        return setFetchStrategy(NutsFetchStrategy.REMOTE);
+//    }
+//
+//    @Override
+//    public NutsSession fetchOffline() {
+//        return setFetchStrategy(NutsFetchStrategy.OFFLINE);
+//    }
+//
+//    @Override
+//    public NutsSession fetchOnline() {
+//        return setFetchStrategy(NutsFetchStrategy.ONLINE);
+//    }
+//
+//    @Override
+//    public NutsSession fetchInstalled() {
+//        return setFetchStrategy(NutsFetchStrategy.INSTALLED);
+//    }
+//
+//    @Override
+//    public NutsSession fetchAnyWhere() {
+//        return setFetchStrategy(NutsFetchStrategy.ANYWHERE);
+//    }
+    @Override
+    public NutsFetchStrategy getFetchStrategy() {
+        if (fetchStrategy != null) {
+            return fetchStrategy;
+        }
+        NutsFetchStrategy wfetchStrategy = ws.config().getOptions().getFetchStrategy();
+        if (wfetchStrategy != null) {
+            return wfetchStrategy;
+        }
+        return NutsFetchStrategy.ONLINE;
+    }
+
+    @Override
+    public NutsSession addListener(NutsListener listener) {
+        if (listener != null) {
+            boolean ok = false;
+            for (Class cls : new Class[]{
+                    NutsWorkspaceListener.class,
+                    NutsRepositoryListener.class,
+                    NutsInstallListener.class,
+                    NutsMapListener.class
+            }) {
+                if (cls.isInstance(listener)) {
+                    if (listeners == null) {
+                        listeners = new HashMap<>();
+                    }
+                    LinkedHashSet<NutsListener> li = listeners.get(cls);
+                    if (li == null) {
+                        li = new LinkedHashSet<>();
+                        listeners.put(cls, li);
+                    }
+                    li.add(listener);
+                    ok = true;
+                }
+            }
+            if (!ok) {
+                throw new NutsIllegalArgumentException(this, "unsupported Listener " + listener.getClass().getName() + " : " + listener);
+            }
+        }
+        return this;
+    }
+
+    @Override
+    public NutsSession removeListener(NutsListener listener) {
+        if (listener != null) {
+            if (listeners != null) {
+                for (LinkedHashSet<NutsListener> value : listeners.values()) {
+                    value.remove(listener);
+                }
+            }
+        }
+        return this;
+    }
+
+    @Override
+    public <T extends NutsListener> T[] getListeners(Class<T> type) {
+        if (listeners != null) {
+            LinkedHashSet<NutsListener> tt = listeners.get(type);
+            if (tt != null) {
+                return tt.toArray((T[]) Array.newInstance(type, 0));
+            }
+        }
+        return (T[]) Array.newInstance(type, 0);
+    }
+
+    @Override
+    public NutsListener[] getListeners() {
+        if (listeners == null) {
+            return new NutsListener[0];
+        }
+        LinkedHashSet<NutsListener> all = new LinkedHashSet<>();
+        for (LinkedHashSet<NutsListener> value : listeners.values()) {
+            all.addAll(value);
+        }
+        return all.toArray(new NutsListener[0]);
+    }
+
+    @Override
+    public NutsSession setTerminal(NutsSessionTerminal terminal) {
+        this.terminal = terminal;
+        if (terminal != null) {
+            AbstractNutsSessionTerminal a = (AbstractNutsSessionTerminal) terminal;
+            if (a.getSession() != this) {
+                throw new NutsIllegalArgumentException(this, "session mismatch");
+            }
+        }
+//        this.out0 = (terminal.fout());
+//        this.err0 = (terminal.ferr());
+//        this.out = out0;
+//        this.err = err0;
+        return this;
+    }
+
+    @Override
+    public NutsSession setProperty(String key, Object value) {
+        this.properties.setProperty(key, value);
+        return this;
+    }
+
+    @Override
+    public NutsSession setProperties(Map<String, Object> properties) {
+        this.properties.setProperties(properties);
+        return this;
+    }
+
+    @Override
+    public Map<String, Object> getProperties() {
+        return properties.getProperties();
+    }
+
+    @Override
+    public Object getProperty(String key) {
+        return properties.getProperty(key);
+    }
+
+    //    @Override
 //    public NutsSession setAsk(boolean ask) {
 //        return setConfirm(ask ? NutsConfirmationMode.ASK : null);
 //    }
@@ -1035,16 +961,6 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     }
 
     @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder("NutsSession(");
-        if (properties.size() > 0) {
-            sb.append("properties=").append(properties);
-        }
-        sb.append(")");
-        return sb.toString();
-    }
-
-    @Override
     public NutsPrintStream out() {
         return terminal.out();
     }
@@ -1057,6 +973,46 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     @Override
     public NutsPrintStream err() {
         return terminal.err();
+    }
+
+    @Override
+    public NutsIterableFormat getIterableOutput() {
+        if (!iterableOut) {
+            return null;
+        }
+        return getWorkspace().elem().setContentType(getOutputFormat()).iter(out());
+//        if (iterFormatHandler == null) {
+//            return null;
+//        }
+//        if (iterFormat == null) {
+//            iterFormat = new CustomNutsIncrementalOutputFormat(ws, iterFormatHandler);
+//            iterFormat.setSession(this);
+//        }
+//        return iterFormat;
+    }
+
+    @Override
+    public NutsSessionTerminal getTerminal() {
+        return terminal;
+    }
+
+    @Override
+    public NutsWorkspace getWorkspace() {
+        return ws;
+    }
+
+    @Override
+    public boolean isTransitive() {
+        if (transitive != null) {
+            return transitive;
+        }
+        return ws.config().options().isTransitive();
+    }
+
+    @Override
+    public NutsSession setTransitive(Boolean value) {
+        this.transitive = value;
+        return this;
     }
 
     @Override
@@ -1088,17 +1044,14 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     }
 
     @Override
-    public boolean isTransitive() {
-        if (transitive != null) {
-            return transitive;
-        }
-        return ws.config().options().isTransitive();
+    public NutsSession setExpireTime(Instant expireTime) {
+        this.expireTime = expireTime;
+        return this;
     }
 
     @Override
-    public NutsSession setTransitive(Boolean value) {
-        this.transitive = value;
-        return this;
+    public Instant getExpireTime() {
+        return expireTime;
     }
 
     @Override
@@ -1115,17 +1068,6 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     @Override
     public NutsObjectFormat formatObject(Object any) {
         return getWorkspace().formats().object().setSession(this).setValue(any);
-    }
-
-    @Override
-    public Instant getExpireTime() {
-        return expireTime;
-    }
-
-    @Override
-    public NutsSession setExpireTime(Instant expireTime) {
-        this.expireTime = expireTime;
-        return this;
     }
 
     @Override
@@ -1184,19 +1126,86 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     }
 
     @Override
-    public Filter getLogTermFilter() {
-        return logTermFilter;
-    }
-
-    @Override
     public NutsSession setLogLevel(Level level) {
         this.logTermLevel = level;
         return this;
     }
 
     @Override
+    public Filter getLogTermFilter() {
+        return logTermFilter;
+    }
+
+    @Override
     public NutsSession setLogFilter(Filter filter) {
         this.logTermFilter = filter;
+        return this;
+    }
+
+    @Override
+    public NutsSession configure(NutsWorkspaceOptions options) {
+        if (options != null) {
+            if (options.getCached() != null) {
+                this.setCached(options.isCached());
+            }
+            if (options.getConfirm() != null) {
+                this.setConfirm(options.getConfirm());
+            }
+            if (options.getDry() != null) {
+                this.setDry(options.getDry());
+            }
+            if (options.getOutputFormat() != null) {
+                this.setOutputFormat(options.getOutputFormat());
+            }
+            if (options.getOutputFormatOptions() != null) {
+                this.setOutputFormatOptions(options.getOutputFormatOptions());
+            }
+            if (options.getErrLinePrefix() != null) {
+                this.setErrLinePrefix(options.getErrLinePrefix());
+            }
+            if (options.getFetchStrategy() != null) {
+                this.setFetchStrategy(options.getFetchStrategy());
+            }
+            if (options.getExpireTime() != null) {
+                this.setExpireTime(options.getExpireTime());
+            }
+            if (options.getGui() != null) {
+                this.setGui(options.getGui());
+            }
+            if (options.getProgressOptions() != null) {
+                this.setProgressOptions(options.getProgressOptions());
+            }
+            if (options.getIndexed() != null) {
+                this.setIndexed(options.getIndexed());
+            }
+            if (options.getTrace() != null) {
+                this.setTrace(options.getTrace());
+            }
+            if (options.getBot() != null) {
+                boolean wasBot=isBot();
+                this.setBot(options.getBot());
+                boolean becomesBot=isBot();
+                if(!wasBot && becomesBot) {
+                    if (getTerminal().out().mode() != NutsTerminalMode.FORMATTED) {
+                        getTerminal().setOut(getTerminal().out().convertMode(NutsTerminalMode.FILTERED));
+                    }
+                    if (getTerminal().err().mode() != NutsTerminalMode.FORMATTED) {
+                        getTerminal().setErr(getTerminal().err().convertMode(NutsTerminalMode.FILTERED));
+                    }
+                }
+            }
+            if (options.getTransitive() != null) {
+                this.setTransitive(options.getTransitive());
+            }
+            if (options.getTerminalMode() != null) {
+                getTerminal().setOut(
+                        getTerminal().getOut().convertMode(options.getTerminalMode())
+                );
+            }
+            if (options.getExecutionType() != null) {
+                setExecutionType(options.getExecutionType());
+            }
+        }
         return this;
     }
 
@@ -1267,5 +1276,15 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     public NutsSession setLocale(String locale) {
         this.locale = locale;
         return this;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("NutsSession(");
+        if (properties.size() > 0) {
+            sb.append("properties=").append(properties);
+        }
+        sb.append(")");
+        return sb.toString();
     }
 }
