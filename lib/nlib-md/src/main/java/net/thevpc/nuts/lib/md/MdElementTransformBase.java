@@ -117,8 +117,8 @@ public class MdElementTransformBase {
             case CODE: {
                 return transformCode((MdElementPath<MdCode>) path);
             }
-            case LINE_SEPARATOR: {
-                return transformLineSeparator((MdElementPath<MdLineSeparator>) path);
+            case HORIZONTAL_RULE: {
+                return transformHorizontalRule((MdElementPath<MdHr>) path);
             }
             case TABLE: {
                 return transformTable((MdElementPath<MdTable>) path);
@@ -141,8 +141,22 @@ public class MdElementTransformBase {
             case ROW: {
                 return transformRow((MdElementPath<MdRow>) path);
             }
+            case CODE_LINK:{
+                return transformLink((MdElementPath<MdRow>) path);
+            }
+            case LINE_BREAK:{
+                return transformLineBreak((MdElementPath<MdBr>) path);
+            }
         }
         return e;
+    }
+
+    protected MdElement transformLineBreak(MdElementPath<MdBr> path) {
+        return path.getElement();
+    }
+
+    protected MdElement transformLink(MdElementPath<MdRow> path) {
+        return path.getElement();
     }
 
     protected MdTable transformTable(MdElementPath<MdTable> path) {
@@ -151,7 +165,7 @@ public class MdElementTransformBase {
         return new MdTable(h, r);
     }
 
-    protected MdElement transformLineSeparator(MdElementPath<MdLineSeparator> path) {
+    protected MdElement transformHorizontalRule(MdElementPath<MdHr> path) {
         return path.getElement();
     }
 
@@ -222,7 +236,7 @@ public class MdElementTransformBase {
         return path.getElement();
     }
 
-    private MdElement transformRow(MdElementPath<MdRow> path) {
+    protected MdElement transformRow(MdElementPath<MdRow> path) {
         MdRow e = path.getElement();
         return new MdRow(transformArray(e.getCells(), path), e.isHeader());
     }

@@ -32,7 +32,7 @@ public interface MdElement {
 
     MdImage asImage();
 
-    MdLineSeparator asLineSeparator();
+    MdHr asHr();
 
     MdNumberedItem asNumItem();
 

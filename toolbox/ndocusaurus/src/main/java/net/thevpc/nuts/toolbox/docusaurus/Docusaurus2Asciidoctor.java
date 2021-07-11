@@ -3,13 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.thevpc.nuts.lib.md.convert;
+package net.thevpc.nuts.toolbox.docusaurus;
 
 
 import net.thevpc.nuts.NutsElement;
 import net.thevpc.nuts.NutsObjectElement;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.lib.md.docusaurus.DocusaurusProject;
+import net.thevpc.nuts.lib.md.convert.Adoc2Pdf;
+import net.thevpc.nuts.lib.md.convert.Adoc2PdfConfig;
 
 import java.io.File;
 import java.nio.file.Path;

@@ -99,12 +99,12 @@ public class AsciiDoctorWriter extends AbstractMdWriter {
             }
             case ITALIC: {
                 write("__");
-                writeInline(element.asBold().getContent());
+                writeInline(element.asItalic().getContent());
                 write("__");
                 return;
             }
             case CODE: {
-                write(" `");
+                write("`");
                 String r = element.asCode().getValue();
                 StringBuilder sb = new StringBuilder();
                 for (char c : r.toCharArray()) {
@@ -128,7 +128,7 @@ public class AsciiDoctorWriter extends AbstractMdWriter {
                     }
                 }
                 write(sb.toString());
-                write("` ");
+                write("`");
                 return;
             }
 
@@ -195,7 +195,7 @@ public class AsciiDoctorWriter extends AbstractMdWriter {
                 writeln();
                 break;
             }
-            case LINE_SEPARATOR: {
+            case HORIZONTAL_RULE: {
                 writeln();
                 writeln();
                 writeln("'''");

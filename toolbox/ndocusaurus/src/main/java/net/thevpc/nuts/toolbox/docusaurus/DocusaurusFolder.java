@@ -1,21 +1,23 @@
-package net.thevpc.nuts.lib.md.docusaurus;
+package net.thevpc.nuts.toolbox.docusaurus;
 
 import net.thevpc.nuts.NutsElement;
 import net.thevpc.nuts.NutsObjectElement;
 import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.lib.md.MdElement;
+import net.thevpc.nuts.lib.md.docusaurus.DocusaurusUtils;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.NoSuchElementException;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class DocusaurusFolder implements DocusaurusFileOrFolder {
+    public static final String FOLDER_INFO_NAME="folder-info.md";
+
     public static final NameResolver DEFAULT_NAME_RESOLVER = new NameResolver() {
         @Override
         public boolean accept(DocusaurusFileOrFolder item, String name) {
@@ -45,19 +47,25 @@ public class DocusaurusFolder implements DocusaurusFileOrFolder {
     private String longId;
     private String shortId;
     private String title;
+    private final MdElement tree;
     private int order;
     private NutsObjectElement config;
     private DocusaurusFileOrFolder[] children;
 
-    public DocusaurusFolder(String longId, String title, int order, NutsObjectElement config, DocusaurusFileOrFolder[] children) {
+    public DocusaurusFolder(String longId, String title, int order, NutsObjectElement config, DocusaurusFileOrFolder[] children,MdElement tree) {
         this.longId = longId;
-        String[] r = DocusaurusUtils.getPathArray(longId);
+        String[] r = getPathArray(longId);
         this.shortId = r.length == 0 ? "/" : r[r.length - 1];
         this.title = title;
         this.order = order;
         this.config = config;
         this.children = children;
+        this.tree = tree;
         Arrays.sort(children, DFOF_COMPARATOR);
+    }
+
+    public MdElement getContent(NutsSession session) {
+        return tree;
     }
 
     public static DocusaurusFileOrFolder ofFileOrFolder(NutsSession session, Path path, Path root, Path configRoot) {
@@ -65,53 +73,77 @@ public class DocusaurusFolder implements DocusaurusFileOrFolder {
     }
 
     public static DocusaurusFileOrFolder ofFileOrFolder(NutsSession session, Path path, Path root, Path configRoot, int maxDepth) {
-        return Files.isDirectory(path) ? DocusaurusFolder.ofFolder(session, path, root, configRoot,maxDepth) : DocusaurusFile.ofFile(path, root);
+        return Files.isDirectory(path) ? DocusaurusFolder.ofFolder(session, path, root, configRoot,maxDepth) : DocusaurusPathFile.ofFile(path, root,session);
     }
 
     public static DocusaurusFolder ofFolder(NutsSession session, Path path, Path root, Path configRoot, int maxDepth) {
         if (Files.isDirectory(path) && path.equals(root)) {
             try {
-                return DocusaurusFolder.ofRoot(
-                        session, (maxDepth == 0) ? new DocusaurusFileOrFolder[0] : Files.list(path).map(p -> DocusaurusFolder.ofFileOrFolder(session, p, root,configRoot, maxDepth < 0 ? -1 : maxDepth - 1))
-                                .filter(Objects::nonNull)
-                                .toArray(DocusaurusFileOrFolder[]::new)
+                DocusaurusFile baseContent=null;
+                List<DocusaurusFileOrFolder> children=new ArrayList<>();
+                int nexDepth = maxDepth < 0 ? -1 : maxDepth - 1;
+                for (Path path1 : Files.list(path).collect(Collectors.toList())) {
+                    if(Files.isRegularFile(path1) && path1.getFileName().toString().equals(FOLDER_INFO_NAME)){
+                        baseContent=(DocusaurusFile) DocusaurusFolder.ofFileOrFolder(session, path1, root, configRoot, nexDepth);
+                    }else if(maxDepth!=0 && (Files.isDirectory(path1) || path1.getFileName().toString().endsWith(".md"))){
+                        DocusaurusFileOrFolder cc = DocusaurusFolder.ofFileOrFolder(session, path1, root, configRoot, nexDepth);
+                        if(cc!=null) {
+                            children.add(cc);
+                        }
+                    }
+                }
 
-                );
+                return DocusaurusFolder.ofRoot(session, children.toArray(new DocusaurusFileOrFolder[0]),
+                        baseContent==null?null:baseContent.getContent(session)
+                        );
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
             }
         } else if (Files.isDirectory(path)) {
             String longId = path.subpath(root.getNameCount(), path.getNameCount()).toString();
-            Path dfi = path.resolve(".docusaurus-folder-config.json");
-            Path cfi = configRoot.resolve(longId).resolve(".docusaurus-folder-config.json");
-            NutsObjectElement config = session.getWorkspace().elem().forObject().build();
+            Path dfi = path.resolve(FOLDER_INFO_NAME);
+//            Path cfi = configRoot.resolve(longId).resolve(".docusaurus-folder-config.json");
+            int order=1;
+            NutsElement config=null;
+            String title=null;
             if (Files.isRegularFile(dfi)) {
-                try {
-                    config = session.getWorkspace().elem().parse(new String(Files.readAllBytes(dfi))).asSafeObject();
-                } catch (IOException e) {
-                    //ignore...
-                }
-            }else if(Files.isRegularFile(cfi)){
-                try {
-                    config = session.getWorkspace().elem().parse(new String(Files.readAllBytes(cfi))).asSafeObject();
-                } catch (IOException e) {
-                    //ignore...
+                DocusaurusFile ff = DocusaurusPathFile.ofFile(dfi, root,session);
+                if(ff!=null) {
+                    order = ff.getOrder();
+                    title = ff.getTitle();
+                    config = ff.getConfig();
                 }
             }
+            if(config==null){
+                config=session.getWorkspace().elem().forObject().build();
+            }
+            if(title==null || title.trim().isEmpty()){
+                title=path.getFileName().toString();
+            }
             try {
-                int order = config.getSafeInt("order",0);
                 if (order <= 0) {
                     throw new IllegalArgumentException("invalid order "+order+" in "+dfi);
                 }
-                String title = config.getSafeString("title",path.getFileName().toString());
+                DocusaurusFile baseContent=null;
+                List<DocusaurusFileOrFolder> children=new ArrayList<>();
+                int nexDepth = maxDepth < 0 ? -1 : maxDepth - 1;
+                for (Path path1 : Files.list(path).collect(Collectors.toList())) {
+                    if(Files.isRegularFile(path1) && path1.getFileName().toString().equals(FOLDER_INFO_NAME)){
+                        baseContent=(DocusaurusFile) DocusaurusFolder.ofFileOrFolder(session, path1, root, configRoot, nexDepth);
+                    }else if(maxDepth!=0 && (Files.isDirectory(path1) || path1.getFileName().toString().endsWith(".md"))){
+                        DocusaurusFileOrFolder cc = DocusaurusFolder.ofFileOrFolder(session, path1, root, configRoot, nexDepth);
+                        if(cc!=null) {
+                            children.add(cc);
+                        }
+                    }
+                }
                 return new DocusaurusFolder(
                         longId,
                         title,
                         order,
-                        config,
-                        (maxDepth == 0) ? new DocusaurusFileOrFolder[0] : Files.list(path).map(p -> DocusaurusFolder.ofFileOrFolder(session, p, root, configRoot,maxDepth < 0 ? -1 : maxDepth - 1))
-                                .filter(Objects::nonNull)
-                                .toArray(DocusaurusFileOrFolder[]::new)
+                        config.asSafeObject(),
+                        children.toArray(new DocusaurusFileOrFolder[0]),
+                        baseContent==null?null:baseContent.getContent(session)
                 );
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
@@ -121,12 +153,12 @@ public class DocusaurusFolder implements DocusaurusFileOrFolder {
         }
     }
 
-    public static DocusaurusFolder ofRoot(NutsSession session, DocusaurusFileOrFolder... children) {
-        return new DocusaurusFolder("/", "/", 0, session.getWorkspace().elem().forObject().build(), children);
+    public static DocusaurusFolder ofRoot(NutsSession session, DocusaurusFileOrFolder[] children,MdElement tree) {
+        return new DocusaurusFolder("/", "/", 0, session.getWorkspace().elem().forObject().build(), children,tree);
     }
 
     public static DocusaurusFolder of(String longId, String title, int order, NutsObjectElement config, DocusaurusFileOrFolder... children) {
-        return new DocusaurusFolder(longId, title, order, config, children);
+        return new DocusaurusFolder(longId, title, order, config, children,null);
     }
 
     @Override
@@ -263,7 +295,7 @@ public class DocusaurusFolder implements DocusaurusFileOrFolder {
         if (path.isEmpty()/* || path.startsWith("/")*/) {
             throw new IllegalArgumentException("Invalid path: " + path);
         }
-        String[] pathArray = DocusaurusUtils.getPathArray(path);
+        String[] pathArray = getPathArray(path);
         return get(pathArray, required, nameResolver);
     }
 
@@ -311,5 +343,9 @@ public class DocusaurusFolder implements DocusaurusFileOrFolder {
             s = s + "/";
         }
         return s;
+    }
+
+    private static String[] getPathArray(String path) {
+        return Arrays.stream(path.split("/")).filter(x -> x.length() > 0).toArray(String[]::new);
     }
 }

@@ -51,18 +51,18 @@ public class DocusaurusMdParserOld implements MdParser {
             return null;
         }
         if (line.startsWith("---") && line.trim().equals("---")) {
-            return (MdElement) new MdLineSeparator("---", line.substring(3));
+            return new MdHr("---");
         }
         if (line.startsWith(mul('\t', 5) + "-")) {
-            return (MdElement) MdFactory.ul(6, new DocusaurusInlineParser(line.substring(6).trim()).parse());
+            return MdFactory.ul(6, new DocusaurusInlineParser(line.substring(6).trim()).parse());
         }
         if (line.startsWith("\t-")) {
-            return (MdElement) MdFactory.ul(1, new DocusaurusInlineParser(line.substring(1).trim()).parse());
+            return MdFactory.ul(1, new DocusaurusInlineParser(line.substring(1).trim()).parse());
         }
         for (int i = 6; i > 0; i--) {
             String id = mul('#', i);
             if (line.startsWith(id)) {
-                return (MdElement) new MdTitle(id, new MdText(line.substring(i).trim()), i);
+                return new MdTitle(id, new MdText(line.substring(i).trim()), i);
             }
             id = mul('*', i);
             if (line.startsWith(id + " ")) {

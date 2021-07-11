@@ -22,7 +22,7 @@ package net.thevpc.nuts.lib.md;
  * @author thevpc
  */
 public class MdElementType {
-    public static final MdElementType LINE_SEPARATOR = new MdElementType(MdElementType0.LINE_SEPARATOR);
+//    public static final MdElementType LINE_SEPARATOR = new MdElementType(MdElementType0.LINE_SEPARATOR);
     public static final MdElementType ADMONITION = new MdElementType(MdElementType0.ADMONITION);
     public static final MdElementType BOLD = new MdElementType(MdElementType0.BOLD);
     public static final MdElementType ITALIC = new MdElementType(MdElementType0.ITALIC);

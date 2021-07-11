@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.thevpc.nuts.lib.md.convert;
+package net.thevpc.nuts.toolbox.docusaurus;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;

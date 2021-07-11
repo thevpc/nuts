@@ -35,7 +35,6 @@ public enum MdElementType0 {
     NUMBRED_ITEM,
     CODE,
     ADMONITION,
-    LINE_SEPARATOR,
     LINK,
     CODE_LINK,
     LINE_BREAK,

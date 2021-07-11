@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.thevpc.nuts.lib.md.docusaurus;
+package net.thevpc.nuts.toolbox.docusaurus;
 
 /**
  *

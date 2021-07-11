@@ -1,4 +1,7 @@
-package net.thevpc.nuts.lib.md.docusaurus;
+package net.thevpc.nuts.toolbox.docusaurus;
+
+import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.lib.md.MdElement;
 
 public interface DocusaurusFileOrFolder {
     String getShortId();
@@ -12,6 +15,8 @@ public interface DocusaurusFileOrFolder {
     int getOrder();
 
     boolean isFolder();
+
+    MdElement getContent(NutsSession session);
 
     String toJSON(int indent);
 }

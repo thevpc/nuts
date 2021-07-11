@@ -39,9 +39,6 @@ public class DocusaurusUtils {
         return path1 + path2;
     }
 
-    static String[] getPathArray(String path) {
-        return Arrays.stream(path.split("/")).filter(x -> x.length() > 0).toArray(String[]::new);
-    }
 
     public static String escapeString(String s) {
         StringBuilder outBuffer = new StringBuilder();

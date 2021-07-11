@@ -49,8 +49,8 @@ public abstract class MdAbstractElement implements MdElement {
     }
 
     @Override
-    public MdLineSeparator asLineSeparator() {
-        return (MdLineSeparator) this;
+    public MdHr asHr() {
+        return (MdHr) this;
     }
 
     @Override

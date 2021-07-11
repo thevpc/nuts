@@ -6,9 +6,6 @@
 package net.thevpc.nuts.toolbox.docusaurus;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.lib.md.convert.Docusaurus2Asciidoctor;
-import net.thevpc.nuts.lib.md.docusaurus.DocusaurusFolder;
-import net.thevpc.nuts.lib.md.docusaurus.DocusaurusProject;
 import net.thevpc.nuts.toolbox.nsh.AbstractNshBuiltin;
 import net.thevpc.nuts.toolbox.nsh.NshExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.NutsJavaShell;
@@ -42,7 +39,7 @@ public class DocusaurusCtrl {
     private String npmCommandPath;
     private NutsApplicationContext appContext;
 
-    public DocusaurusCtrl(DocusaurusProject project,NutsApplicationContext appContext) {
+    public DocusaurusCtrl(DocusaurusProject project, NutsApplicationContext appContext) {
         this.project = project;
         this.appContext = appContext;
     }
@@ -86,7 +83,7 @@ public class DocusaurusCtrl {
                 .getSafeObject("docusaurus")
                 .getSafe("generateSidebarMenu")
                 .toString();
-        boolean genSidebarMenu=Boolean.parseBoolean(genSidebarMenuString);
+        boolean genSidebarMenu = Boolean.parseBoolean(genSidebarMenuString);
         Path basePath = base;
         Path preProcessor = getPreProcessorBaseDir();
         if (Files.isDirectory(preProcessor) && Files.isRegularFile(preProcessor.resolve("project.nsh"))) {
@@ -112,7 +109,7 @@ public class DocusaurusCtrl {
                                     .setNameMimeType(DocusaurusProject.DOCUSAURUS_FOLDER_CONFIG, DocusaurusProject.DOCUSAURUS_FOLDER_CONFIG_MIMETYPE)
                     )
                     .setDefaultProcessor(DocusaurusProject.DOCUSAURUS_FOLDER_CONFIG_MIMETYPE, new FolderConfigProcessor())
-                    .setCustomVarEvaluator(new DocusaurusCustomVarEvaluator())
+                    .setCustomVarEvaluator(new DocusaurusCustomVarEvaluator(project))
                     .processProject(
                             config
                     );
@@ -120,18 +117,21 @@ public class DocusaurusCtrl {
         if (genSidebarMenu) {
             DocusaurusFolder root = project.getPhysicalDocsFolder();
             root = new DocusaurusFolder(
-                    "someSidebar", "someSidebar", 0, appContext.getWorkspace().elem().forObject().build(), root.getChildren()
+                    "someSidebar", "someSidebar", 0, appContext.getWorkspace().elem().forObject().build(), root.getChildren(),
+                    root.getContent(appContext.getSession())
             );
             String s = "module.exports = {\n" +
                     root.toJSON(1)
                     + "\n};";
-            if(appContext.getSession().isPlainOut()){
-                appContext.getSession().out().printf("generate %s%n",base.resolve("sidebars.js"));
+            if (appContext.getSession().isPlainOut()) {
+                appContext.getSession().out().printf("build sidebar %s%n", base.resolve("sidebars.js"));
+                appContext.getSession().out().printf("\tusing release folder : %s%n", project.getPhysicalDocsFolderBasePath());
+                appContext.getSession().out().printf("\tusing config folder  : %s%n", project.getPhysicalDocsFolderConfigPath());
             }
             try {
-                Files.write(base.resolve("sidebars.js"),s.getBytes());
+                Files.write(base.resolve("sidebars.js"), s.getBytes());
             } catch (IOException e) {
-                throw new NutsIOException(appContext.getSession(),e.getMessage());
+                throw new NutsIOException(appContext.getSession(), e.getMessage());
             }
 //            System.out.println(s);
         }
@@ -140,9 +140,9 @@ public class DocusaurusCtrl {
                 .getSafe("path")
                 .isNull()) {
             Docusaurus2Asciidoctor d2a = new Docusaurus2Asciidoctor(project);
-            appContext.getSession().out().printf("build adoc file : %s%n",d2a.getAdocFile());
+            appContext.getSession().out().printf("build adoc file : %s%n", d2a.getAdocFile());
             d2a.createAdocFile();
-            appContext.getSession().out().printf("build pdf  file : %s%n",d2a.getPdfFile());
+            appContext.getSession().out().printf("build pdf  file : %s%n", d2a.getPdfFile());
             d2a.createPdfFile();
         }
         if (isBuildWebSite()) {
@@ -199,7 +199,7 @@ public class DocusaurusCtrl {
     }
 
     private void runNativeCommand(Path workFolder, String... cmd) {
-        NutsSession s=appContext.getSession();
+        NutsSession s = appContext.getSession();
         appContext.getWorkspace()
                 .exec()
                 .embedded()
@@ -208,12 +208,12 @@ public class DocusaurusCtrl {
                 .setFailFast(true).getResult();
     }
 
-    private void runCommand(Path workFolder, boolean yes,String... cmd) {
-        NutsSession s=appContext.getSession().copy();
-        if(yes){
-            s=s.setConfirm(NutsConfirmationMode.YES);
-        }else{
-            s=s.setConfirm(NutsConfirmationMode.ERROR);
+    private void runCommand(Path workFolder, boolean yes, String... cmd) {
+        NutsSession s = appContext.getSession().copy();
+        if (yes) {
+            s = s.setConfirm(NutsConfirmationMode.YES);
+        } else {
+            s = s.setConfirm(NutsConfirmationMode.ERROR);
         }
         appContext.getWorkspace().exec().addCommand(cmd).setDirectory(workFolder.toString())
                 .setSession(s)
@@ -268,102 +268,6 @@ public class DocusaurusCtrl {
         return this;
     }
 
-    private class DocusaurusCustomVarEvaluator implements Function<String, Object> {
-
-        public DocusaurusCustomVarEvaluator() {
-        }
-
-        @Override
-        public Object apply(String varName) {
-            switch (varName) {
-                case "projectName": {
-                    return project.getProjectName();
-                }
-                case "projectTitle": {
-                    return project.getTitle();
-                }
-                default: {
-                    String[] a = Arrays.stream(varName.split("[./]")).map(String::trim).filter(x->!x.isEmpty())
-                            .toArray(String[]::new);
-                    NutsElement t=project.getConfig();
-                    for (String s : a) {
-                        t = t.asSafeObject().getSafe(s);
-                    }
-                    if (t.isNull()) {
-                        return null;
-                    }
-                    if (t.isString()) {
-                        return t.asString();
-                    }
-                    if (t.isArray()) {
-                        return t.asArray().stream().map(x->x.toString()).toArray(String[]::new);
-                    }
-                    return t.asString();
-                }
-            }
-        }
-    }
-
-    private class FolderConfigProcessor implements TemplateProcessor {
-        public FolderConfigProcessor() {
-        }
-
-        @Override
-        public void processStream(InputStream source, OutputStream target, FileTemplater context) {
-            throw new IllegalArgumentException("Unsupported");
-        }
-
-        @Override
-        public void processPath(Path source, String mimeType, FileTemplater context) {
-            NutsObjectElement config = DocusaurusFolder.ofFolder(appContext.getSession(), source.getParent(),
-                            Paths.get(context.getRootDirRequired()).resolve("docs"),
-                            getPreProcessorBaseDir().resolve("src"),
-                            0)
-                    .getConfig().getSafeObject("type");
-            if (
-                    "javadoc".equals(config.getSafeString("name"))
-                            || "doc".equals(config.getSafeString("name"))
-            ) {
-                String[] sources = config.asSafeObject().getSafeArray("sources")
-                        .stream().map(NutsElement::asSafeString).filter(Objects::nonNull).toArray(String[]::new);
-                if (sources.length == 0) {
-                    throw new IllegalArgumentException("missing doc sources in " + source);
-                }
-                String[] packages = config.asSafeObject().getSafeArray("packages").stream().
-                        map(NutsElement::asSafeString).filter(Objects::nonNull).toArray(String[]::new);
-                String target = context.getPathTranslator().translatePath(source.getParent().toString());
-                if (target == null) {
-                    throw new IllegalArgumentException("invalid source " + source.getParent());
-                }
-                ArrayList<String> cmd = new ArrayList<>();
-//                cmd.add("--bot");
-                cmd.add("ndoc" + ((getNdocVersion() == null || getNdocVersion().isEmpty()) ? "" : "#" + (getNdocVersion())));
-                cmd.add("--backend=docusaurus");
-                for (String s : sources) {
-                    s=context.processString(s, MimeTypeConstants.PLACEHOLDER_DOLLARS);
-                    cmd.add("--source");
-                    cmd.add(FileProcessorUtils.toAbsolutePath(Paths.get(s),source.getParent()).toString());
-                }
-                for (String s : packages) {
-                    s=context.processString(s, MimeTypeConstants.PLACEHOLDER_DOLLARS);
-                    cmd.add("--package");
-                    cmd.add(s);
-                }
-                cmd.add("--target");
-                cmd.add(target);
-                FileProcessorUtils.mkdirs(Paths.get(target));
-                runCommand(Paths.get(target), autoInstallNutsPackages,cmd.toArray(new String[0]));
-            }
-
-        }
-
-        @Override
-        public String toString() {
-            return "DocusaurusFolderConfig";
-        }
-    }
-
-
     private static class NshEvaluator implements ExprEvaluator {
         private NutsApplicationContext appContext;
         private NutsJavaShell shell;
@@ -372,7 +276,7 @@ public class DocusaurusCtrl {
         public NshEvaluator(NutsApplicationContext appContext, FileTemplater fileTemplater) {
             this.appContext = appContext;
             this.fileTemplater = fileTemplater;
-            shell = new NutsJavaShell(appContext,new String[0]);
+            shell = new NutsJavaShell(appContext, new String[0]);
             shell.setSession(shell.getSession().copy());
             shell.getRootContext().vars().addVarListener(
                     new JShellVarListener() {
@@ -429,9 +333,9 @@ public class DocusaurusCtrl {
             );
             JShellFileContext ctx = shell.createSourceFileContext(
                     shell.getRootContext(),
-                    context.getSourcePath().orElseGet(()->"nsh"),new String[0]
+                    context.getSourcePath().orElseGet(() -> "nsh"), new String[0]
             );
-            shell.executeString(content,ctx);
+            shell.executeString(content, ctx);
             return out.toString();
         }
 
@@ -447,25 +351,26 @@ public class DocusaurusCtrl {
             setProjectFileName("project.nsh");
             this.setLog(new TemplateLog() {
                 NutsLoggerOp logOp;
+
                 @Override
                 public void info(String title, String message) {
                     log().verb(NutsLogVerb.INFO).level(Level.FINER)
-                            .log( "{0} : {1}",title,message);
+                            .log("{0} : {1}", title, message);
                 }
 
                 @Override
                 public void debug(String title, String message) {
                     log().verb(NutsLogVerb.DEBUG).level(Level.FINER)
-                            .log( "{0} : {1}",title,message);
+                            .log("{0} : {1}", title, message);
                 }
 
                 @Override
                 public void error(String title, String message) {
-                    log().verb(NutsLogVerb.FAIL).level(Level.FINER).log( "{0} : {1}",title,message);
+                    log().verb(NutsLogVerb.FAIL).level(Level.FINER).log("{0} : {1}", title, message);
                 }
 
                 private NutsLoggerOp log() {
-                    if(logOp==null) {
+                    if (logOp == null) {
                         logOp = appContext.getWorkspace().log().of(DocusaurusCtrl.class)
                                 .with().session(appContext.getSession())
                                 .style(NutsTextFormatStyle.JSTYLE)
@@ -477,7 +382,107 @@ public class DocusaurusCtrl {
         }
 
         public void executeProjectFile(Path path, String mimeTypesString) {
-            executeRegularFile(path,"text/ntemplate-nsh-project");
+            executeRegularFile(path, "text/ntemplate-nsh-project");
+        }
+    }
+
+    private static class DocusaurusCustomVarEvaluator implements Function<String, Object> {
+        NutsElement config;
+        String projectName;
+        String projectTitle;
+
+        public DocusaurusCustomVarEvaluator(DocusaurusProject project) {
+            config = project.getConfig();
+            projectName = project.getProjectName();
+            projectTitle = project.getTitle();
+        }
+
+        @Override
+        public Object apply(String varName) {
+            switch (varName) {
+                case "projectName": {
+                    return projectName;
+                }
+                case "projectTitle": {
+                    return projectTitle;
+                }
+                default: {
+                    String[] a = Arrays.stream(varName.split("[./]")).map(String::trim).filter(x -> !x.isEmpty())
+                            .toArray(String[]::new);
+                    for (String s : a) {
+                        config = config.asSafeObject().getSafe(s);
+                    }
+                    if (config.isNull()) {
+                        return null;
+                    }
+                    if (config.isString()) {
+                        return config.asString();
+                    }
+                    if (config.isArray()) {
+                        return config.asArray().stream().map(x -> x.toString()).toArray(String[]::new);
+                    }
+                    return config.asString();
+                }
+            }
+        }
+    }
+
+    private class FolderConfigProcessor implements TemplateProcessor {
+        public FolderConfigProcessor() {
+        }
+
+        @Override
+        public void processStream(InputStream source, OutputStream target, FileTemplater context) {
+            throw new IllegalArgumentException("Unsupported");
+        }
+
+        @Override
+        public void processPath(Path source, String mimeType, FileTemplater context) {
+            NutsObjectElement config = DocusaurusFolder.ofFolder(appContext.getSession(), source.getParent(),
+                            Paths.get(context.getRootDirRequired()).resolve("docs"),
+                            getPreProcessorBaseDir().resolve("src"),
+                            0)
+                    .getConfig().getSafeObject("type");
+            if (
+                    "javadoc".equals(config.getSafeString("name"))
+                            || "doc".equals(config.getSafeString("name"))
+            ) {
+                String[] sources = config.asSafeObject().getSafeArray("sources")
+                        .stream().map(NutsElement::asSafeString).filter(Objects::nonNull).toArray(String[]::new);
+                if (sources.length == 0) {
+                    throw new IllegalArgumentException("missing doc sources in " + source);
+                }
+                String[] packages = config.asSafeObject().getSafeArray("packages").stream().
+                        map(NutsElement::asSafeString).filter(Objects::nonNull).toArray(String[]::new);
+                String target = context.getPathTranslator().translatePath(source.getParent().toString());
+                if (target == null) {
+                    throw new IllegalArgumentException("invalid source " + source.getParent());
+                }
+                ArrayList<String> cmd = new ArrayList<>();
+//                cmd.add("--bot");
+                cmd.add("ndoc" + ((getNdocVersion() == null || getNdocVersion().isEmpty()) ? "" : "#" + (getNdocVersion())));
+                cmd.add("--backend=docusaurus");
+                for (String s : sources) {
+                    s = context.processString(s, MimeTypeConstants.PLACEHOLDER_DOLLARS);
+                    cmd.add("--source");
+                    cmd.add(FileProcessorUtils.toAbsolutePath(Paths.get(s), source.getParent()).toString());
+                }
+                for (String s : packages) {
+                    s = context.processString(s, MimeTypeConstants.PLACEHOLDER_DOLLARS);
+                    cmd.add("--package");
+                    cmd.add(s);
+                }
+                cmd.add("--target");
+                cmd.add(target);
+                FileProcessorUtils.mkdirs(Paths.get(target));
+                runCommand(Paths.get(target), autoInstallNutsPackages, cmd.toArray(new String[0]));
+            }
+
+        }
+
+        @Override
+        public String toString() {
+            return "DocusaurusFolderConfig";
         }
     }
 

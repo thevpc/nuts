@@ -189,13 +189,6 @@ public class DocusaurusWriter extends AbstractMdWriter {
                 writeln();
                 break;
             }
-            case LINE_SEPARATOR: {
-                writeln();
-                writeln();
-                writeln("'''");
-                writeln();
-                break;
-            }
 
             case ADMONITION: {
                 MdAdmonition t = (MdAdmonition) element;

@@ -145,7 +145,7 @@ public class DefaultMdWriter extends AbstractMdWriter {
                 writeln();
                 break;
             }
-            case LINE_SEPARATOR: {
+            case HORIZONTAL_RULE: {
                 writeln();
                 writeln();
                 writeln("'''");

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.thevpc.nuts.lib.md.convert;
+package net.thevpc.nuts.toolbox.docusaurus;
 
 import net.thevpc.nuts.NutsArrayElement;
 import net.thevpc.nuts.NutsElement;
@@ -37,10 +37,10 @@ public class DocusaurusTreeTransform extends MdElementTransformBase {
         if (e instanceof MdSequence) {
             MdSequence s = (MdSequence) e;
             MdElement[] content = s.getElements();
-            if (content.length > 0 && content[0] instanceof MdLineSeparator) {
+            if (content.length > 0 && content[0] instanceof MdHr) {
                 int x = 0;
                 for (int i = 1; i < content.length; i++) {
-                    if (content[i] instanceof MdLineSeparator) {
+                    if (content[i] instanceof MdHr) {
                         x = i + 1;
                         break;
                     }
@@ -55,11 +55,13 @@ public class DocusaurusTreeTransform extends MdElementTransformBase {
                         String t = ((MdText) mdElement).getText();
                         if (t.length() == 0) {
                             it.remove();
-                        } else if (t.startsWith("import ")) {
+                        } else if (t.trim().startsWith("import ")) {
                             it.remove();
                         } else {
                             break;
                         }
+                    }else{
+                        break;
                     }
                 }
                 return super.transformDocument(MdFactory.seq(a));

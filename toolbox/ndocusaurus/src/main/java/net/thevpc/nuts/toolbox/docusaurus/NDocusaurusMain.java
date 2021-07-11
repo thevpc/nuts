@@ -1,7 +1,6 @@
 package net.thevpc.nuts.toolbox.docusaurus;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.lib.md.docusaurus.DocusaurusProject;
 
 import java.nio.file.Paths;
 

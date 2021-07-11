@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.thevpc.nuts.lib.md.convert;
+package net.thevpc.nuts.toolbox.docusaurus;
 
 import net.thevpc.nuts.NutsArrayElement;
 import net.thevpc.nuts.NutsElement;
@@ -11,7 +11,6 @@ import net.thevpc.nuts.NutsObjectElement;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.lib.md.MdElement;
 import net.thevpc.nuts.lib.md.asciidoctor.AsciiDoctorWriter;
-import net.thevpc.nuts.lib.md.docusaurus.*;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -102,31 +101,7 @@ public class Docusaurus2Adoc {
     protected void run(DocusaurusFileOrFolder part, LenientWriter out, AsciiDoctorWriter asciiDoctorWriter) {
         if(part instanceof DocusaurusFile){
             DocusaurusFile item=(DocusaurusFile) part;
-            MdElement tree = null;
-            switch (item.getType()) {
-                case PATH: {
-                    DocusaurusMdParser p = null;
-                    try {
-                        p = new DocusaurusMdParser(Files.newBufferedReader(item.getPath()));
-                    } catch (IOException e) {
-                        throw new UncheckedIOException(e);
-                    }
-                    tree = p.parse();
-                    break;
-                }
-                case CONTENT: {
-                    DocusaurusMdParser p = new DocusaurusMdParser(new StringReader(item.getContent()));
-                    tree = p.parse();
-                    break;
-                }
-                case TREE: {
-                    tree = item.getTree();
-                    break;
-                }
-                default: {
-                    throw new IllegalArgumentException("Unsupported type");
-                }
-            }
+            MdElement tree = item.getContent(session);
             if (tree != null) {
                 MdElement tree2 = new DocusaurusTreeTransform(session).transformDocument(tree);
                 if (tree2 != null) {
@@ -140,7 +115,17 @@ public class Docusaurus2Adoc {
             out.println();
 //                out.println("# " + entry.getKey());
             out.println("");
-            out.println("= " + part.getTitle());
+            MdElement tree = folder.getContent(session);
+            if(tree!=null){
+                tree = new DocusaurusTreeTransform(session).transformDocument(tree);
+            }
+            if(tree==null || !containsTitle1(tree)) {
+                out.println("= " + part.getTitle());
+            }
+            if(tree!=null) {
+                asciiDoctorWriter.write(tree);
+            }
+
 
 //                out.println("\n"
 //                        + "[partintro]\n"
@@ -153,6 +138,25 @@ public class Docusaurus2Adoc {
                 run(child,out,asciiDoctorWriter);
             }
         }
+    }
+    private boolean containsTitle1(MdElement tree){
+        if(tree.isTitle()){
+            if(tree.asTitle().getDepth()==1){
+                return true;
+            }
+            return false;
+        }
+        if(tree.isSequence()){
+            if(!tree.asSeq().isInline()) {
+                for (MdElement ee : tree.asSeq().getElements()) {
+                    if (containsTitle1(ee)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+        return false;
     }
     protected void run(LenientWriter out) {
         try {
