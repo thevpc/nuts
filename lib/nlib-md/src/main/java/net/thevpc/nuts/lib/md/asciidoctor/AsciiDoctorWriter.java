@@ -214,10 +214,13 @@ public class AsciiDoctorWriter extends AbstractMdWriter {
             case SEQ: {
                 MdSequence t = (MdSequence) node;
                 if (t.isInline()) {
+                    writeln();
                     for (MdElement mdElement : t.getElements()) {
                         writeInline(mdElement);
                     }
+                    writeln();
                 } else {
+                    writeln();
                     for (MdElement mdElement : t.getElements()) {
                         write(mdElement);
                     }
@@ -227,7 +230,9 @@ public class AsciiDoctorWriter extends AbstractMdWriter {
             case CODE: {
                 MdCode c = (MdCode) node;
                 if (c.isInline()) {
+                    writeln();
                     writeInline(c);
+                    writeln();
                 } else {
                     writeln();
                     writeln("[source," + convertLanguage(c.getLanguage()) + "]");

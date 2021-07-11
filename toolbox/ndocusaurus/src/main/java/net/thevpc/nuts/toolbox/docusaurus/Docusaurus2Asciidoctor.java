@@ -62,6 +62,19 @@ public class Docusaurus2Asciidoctor {
         createPdfFile();
     }
 
+    private Path toCanonicalFile(Path path,Path basePath) {
+        if(path.isAbsolute()){
+            return toCanonicalFile(path);
+        }
+        if(basePath!=null){
+            if(basePath.isAbsolute()){
+                return toCanonicalFile(basePath.resolve(path));
+            }else{
+                throw new IllegalArgumentException("base path must be absolute");
+            }
+        }
+        return toCanonicalFile(path);
+    }
     private Path toCanonicalFile(Path path) {
         return path.toAbsolutePath().normalize();
     }
@@ -88,7 +101,7 @@ public class Docusaurus2Asciidoctor {
         }else{
             pdfFile=project.getProjectName()+".pdf";
         }
-        pdfFile=toCanonicalFile(Paths.get(pdfFile)).toString();
+        pdfFile=toCanonicalFile(Paths.get(pdfFile),toCanonicalFile(Paths.get(project.getDocusaurusBaseFolder()))).toString();
         config.setOutputPdf(pdfFile);
         config.setPlaceHolderReplacer((String varName) -> {
             if (varName.equals("asciidoctor.baseDir")) {

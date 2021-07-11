@@ -88,16 +88,13 @@ public class DocusaurusCtrl {
         Path preProcessor = getPreProcessorBaseDir();
         if (Files.isDirectory(preProcessor) && Files.isRegularFile(preProcessor.resolve("project.nsh"))) {
 //            Files.walk(base).filter(x->Files.isDirectory(base))
-            try {
-                Path docs = basePath.resolve("docs");
-                if (Files.isDirectory(basePath.resolve("node_modules")) && Files.isRegularFile(basePath.resolve("docusaurus.config.js"))) {
-                    Files.list(docs).forEach(
-                            x -> deletePath(x)
-                    );
-                }
-            } catch (IOException e) {
-                throw new UncheckedIOException(e);
+            Path docs = basePath.resolve("docs");
+            if (Files.isDirectory(basePath.resolve("node_modules")) && Files.isRegularFile(basePath.resolve("docusaurus.config.js"))) {
+                appContext.getSession().out().printf("clear folder %s%n",docs);
+                deletePathChildren(docs);
             }
+
+            appContext.getSession().out().printf("process template %s -> %s%n",preProcessor,getTargetBaseDir());
             TemplateConfig config = new TemplateConfig()
                     .setProjectPath(preProcessor.toString())
                     .setTargetFolder(getTargetBaseDir().toString());
@@ -110,9 +107,7 @@ public class DocusaurusCtrl {
                     )
                     .setDefaultProcessor(DocusaurusProject.DOCUSAURUS_FOLDER_CONFIG_MIMETYPE, new FolderConfigProcessor())
                     .setCustomVarEvaluator(new DocusaurusCustomVarEvaluator(project))
-                    .processProject(
-                            config
-                    );
+                    .processProject(config);
         }
         if (genSidebarMenu) {
             DocusaurusFolder root = project.getPhysicalDocsFolder();
@@ -232,6 +227,18 @@ public class DocusaurusCtrl {
         }
         deletePath(toPath);
         return true;
+    }
+
+    private void deletePathChildren(Path path) {
+        if(Files.isDirectory(path)) {
+            try {
+                Files.list(path).forEach(
+                        x -> deletePath(x)
+                );
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+        }
     }
 
     private void deletePath(Path toPath) {

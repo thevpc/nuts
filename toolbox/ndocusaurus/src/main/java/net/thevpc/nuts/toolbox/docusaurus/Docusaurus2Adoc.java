@@ -10,6 +10,8 @@ import net.thevpc.nuts.NutsElement;
 import net.thevpc.nuts.NutsObjectElement;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.lib.md.MdElement;
+import net.thevpc.nuts.lib.md.MdText;
+import net.thevpc.nuts.lib.md.MdTitle;
 import net.thevpc.nuts.lib.md.asciidoctor.AsciiDoctorWriter;
 
 import java.io.*;
@@ -98,15 +100,15 @@ public class Docusaurus2Adoc {
         }
     }
 
-    protected void run(DocusaurusFileOrFolder part, LenientWriter out, AsciiDoctorWriter asciiDoctorWriter) {
+    protected void run(DocusaurusFileOrFolder part, LenientWriter out, AsciiDoctorWriter asciiDoctorWriter,int minDepth) {
         if(part instanceof DocusaurusFile){
             DocusaurusFile item=(DocusaurusFile) part;
             MdElement tree = item.getContent(session);
             if (tree != null) {
-                MdElement tree2 = new DocusaurusTreeTransform(session).transformDocument(tree);
+                MdElement tree2 = new DocusaurusTreeTransform(session,minDepth+1).transformDocument(tree);
                 if (tree2 != null) {
                     out.println();
-                    out.println("== " + item.getTitle());
+                    asciiDoctorWriter.write(new MdTitle("#",new MdText(item.getTitle()),minDepth));
                     asciiDoctorWriter.write(tree2);
                 }
             }
@@ -117,10 +119,10 @@ public class Docusaurus2Adoc {
             out.println("");
             MdElement tree = folder.getContent(session);
             if(tree!=null){
-                tree = new DocusaurusTreeTransform(session).transformDocument(tree);
+                tree = new DocusaurusTreeTransform(session,minDepth).transformDocument(tree);
             }
-            if(tree==null || !containsTitle1(tree)) {
-                out.println("= " + part.getTitle());
+            if(tree==null || !startsWithTitle(tree,minDepth)) {
+                asciiDoctorWriter.write(new MdTitle("#",new MdText(part.getTitle()),minDepth));
             }
             if(tree!=null) {
                 asciiDoctorWriter.write(tree);
@@ -135,13 +137,13 @@ public class Docusaurus2Adoc {
 //                );
             out.println("");
             for (DocusaurusFileOrFolder child : folder.getChildren()) {
-                run(child,out,asciiDoctorWriter);
+                run(child,out,asciiDoctorWriter,minDepth+1);
             }
         }
     }
-    private boolean containsTitle1(MdElement tree){
+    private boolean startsWithTitle(MdElement tree, int minDepth){
         if(tree.isTitle()){
-            if(tree.asTitle().getDepth()==1){
+            if(tree.asTitle().getDepth()<=minDepth){
                 return true;
             }
             return false;
@@ -149,8 +151,17 @@ public class Docusaurus2Adoc {
         if(tree.isSequence()){
             if(!tree.asSeq().isInline()) {
                 for (MdElement ee : tree.asSeq().getElements()) {
-                    if (containsTitle1(ee)) {
+                    if (startsWithTitle(ee,minDepth)) {
                         return true;
+                    }else if(ee.isText()){
+                        String text = ee.asText().getText();
+                        if(text.trim().isEmpty()){
+                            //
+                        }else{
+                            return false;
+                        }
+                    }else{
+                        return false;
                     }
                 }
             }
@@ -163,7 +174,8 @@ public class Docusaurus2Adoc {
             AsciiDoctorWriter asciiDoctorWriter = new AsciiDoctorWriter(out.writer);
             writeHeader(out);
             for (DocusaurusFileOrFolder docusaurusFileOrFolder : rootFolder.getChildren()) {
-                run(docusaurusFileOrFolder,out,asciiDoctorWriter);
+                //in asciidoctor the min depth = 2
+                run(docusaurusFileOrFolder,out,asciiDoctorWriter,2);
             }
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);

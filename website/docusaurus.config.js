@@ -128,11 +128,13 @@ module.exports = {
                     ':icons: font',
                     ':icon-set: pf',
                     ':doctype: book',
-                    ':revnumber: v${apiVersion}',
+                    ':revnumber: v0.8.1',
                     ':revdate: 2021-07-01',
                     ':toc:',
-                    ':toclevels: 3',
+                    ':toclevels: 4',
                     ':appendix-caption: Appx',
+                    ':sectnums:',
+                    ':sectnumlevels: 6'
                 ],
                 command: {
                     bin: 'asciidoctor-pdf.ruby2.7',

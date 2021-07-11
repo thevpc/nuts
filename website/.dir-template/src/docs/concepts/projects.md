@@ -1,4 +1,4 @@
-[---
+---
 id: projects
 title: Repository Structure
 sidebar_label: Nuts Projects

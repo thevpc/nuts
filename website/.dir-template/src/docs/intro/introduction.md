@@ -24,7 +24,7 @@ resolve and download on-need dependencies over the wire.
 view of the the  artifacts dependency and like  **npm**, **pip** or **zypper/apt-get**  package manager tools  
 to  install and uninstall artifacts allowing multiple versions of the very same artifact to  be installed.
 
-## COMMON VERBS:
+## Common Verbs
 
 + ```exec```               : execute an artifact or a command
 + ```install```, ```uninstall``` : install/uninstall an artifact (using its fetched/deployed installer)

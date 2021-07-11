@@ -19,17 +19,20 @@ import java.util.*;
  */
 public class DocusaurusTreeTransform extends MdElementTransformBase {
     private NutsSession session;
-    public DocusaurusTreeTransform(NutsSession session) {
+    private int minDepth;
+    public DocusaurusTreeTransform(NutsSession session,int minDepth) {
         this.session=session;
+        this.minDepth=minDepth;
     }
 
     @Override
     protected MdElement transformTitle(MdElementPath<MdTitle> path) {
         MdTitle e=path.getElement();
-        if (e.getDepth() < 6) {
-            return new MdTitle(e.getCode(), e.getValue(), e.getDepth() + 1);
+        int newDepth = e.getDepth() + this.minDepth-1;
+        if(newDepth>6){
+            newDepth=6;
         }
-        return e;
+        return new MdTitle(e.getCode(), e.getValue(), newDepth);
     }
 
     @Override

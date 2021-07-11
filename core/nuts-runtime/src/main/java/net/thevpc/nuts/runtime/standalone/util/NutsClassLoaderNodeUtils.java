@@ -40,7 +40,7 @@ public final class NutsClassLoaderNodeUtils {
 
     public static NutsClassLoaderNode definitionToClassLoaderNode(NutsDefinition def, NutsSession session) {
         if (session == null) {
-            throw new NullPointerException("sessino cannot be null");
+            throw new NullPointerException("session cannot be null");
         }
         if (def.getContent() == null
                 || def.getContent().getURL() == null

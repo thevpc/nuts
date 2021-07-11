@@ -820,7 +820,7 @@ public class DocusaurusMdParser implements MdParser {
                 }
             }
             if (path2.isEmpty()) {
-                return new SectionPath(new SectionLevel(type, userDepth, 1));
+                return new SectionPath(new SectionLevel(type, userDepth, userDepth/*1*/));
             }
             path2.add(path2.get(path2.size() - 1).child(type, userDepth));
             return new SectionPath(path2);

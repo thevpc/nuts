@@ -39,7 +39,9 @@ public class DocusaurusContentFile extends DocusaurusFile{
                             if(line1==null){
                                 break;
                             }
-                            if (line1.trim().startsWith("import ")) {
+                            if (line1.trim().isEmpty()) {
+                                //continue;
+                            }else if (line1.trim().startsWith("import ")) {
                                 //continue;
                             }else{
                                 br.reset();

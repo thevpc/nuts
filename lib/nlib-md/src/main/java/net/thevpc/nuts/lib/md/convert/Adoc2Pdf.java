@@ -68,6 +68,12 @@ public class Adoc2Pdf {
                 .redirectErrorStream(true)
                 .directory(workDir);
         int result = 0;
+        System.out.println(cmdList.stream().map(x->{
+            if(x.indexOf(' ')>=0){
+                return "\""+x+"\"";
+            }
+            return x;
+        }).collect(Collectors.joining(" ")));
         try {
             result = pb.start().waitFor();
         } catch (Exception ex) {

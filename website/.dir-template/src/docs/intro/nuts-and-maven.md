@@ -6,7 +6,7 @@ sidebar_label: Nuts and Maven
 
 ${include($"${resources}/header.md")}
 
-# You'd still be Maven, yet you gonna be Nuts
+## You'd still be Maven, yet you gonna be Nuts
 Is there any package manager for Java(TM) applications? You can google for it and you will find that many have 
 queried this on blogs and forums. In most cases responses point to maven and gradle, the tremendous build tools. However, 
 both maven and gradle are build tools, while helping build packages they lack of deployment features. They bundle every 
@@ -15,6 +15,7 @@ Apache ivy, as well, while competing with maven build tool does not provide more
 The main idea behind a package manager is the automation of installation, update, configuration and removal of programs 
 or libraries in a coherent manner with the help of a database that manages binaries and metadata. maven, to consider one, 
 sticks to the build process, an goes no further.
+
 
 You may also ask, "Why ever, do we need a package manager for Java(TM) applications". Okkay, let's take some 
 example of Java(TM) applications. How can we install apache netbeans IDE ? The proper way is to browse to the editor's 
@@ -37,8 +38,8 @@ be as painful as using a custom Docker image or a complicated Dockerfile or even
 
 When we recall that Java(TM) is the one language that has the more versatile number of libraries, frameworks and tools, 
 I find it annoying not to have a decent package manager to make the leap and provide facilities I find prime in other 
-languages and platforms (```pip```/python, ```npm```/nodejs/javascript) and most of linux distribution (```zypper```/opsensuse, ```dnf```/redhat 
-```apt-get```/debian/ubuntu)
+languages and platforms (```pip```/```python```, ```npm```/```nodejs```/```javascript```) and most of linux distribution (```zypper```/```opensuse```, ```dnf```/```redhat``` 
+```apt-get```/```debian```/```ubuntu```)
 
 Hence I'm introducing here a humble attempt to provide a tiny (300ko) yet powerful package manager for Java(TM) 
 applications (but not only) that should handle jar files seamlessly (with little or no modification) and that comes with 

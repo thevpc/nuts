@@ -14,6 +14,7 @@ module.exports = {
       ],
       'Nuts Concepts': [
          'concepts/commandline',
+         'concepts/projects',
       ],
       'Advanced Features': [
          'advanced/aliases',
@@ -30,26 +31,6 @@ module.exports = {
          'dev/nutsApp',
          'dev/firstNutsApp',
       ],
-      'API Documentation': [
-         'javadocs/javadoc_Application',
-         'javadocs/javadoc_Base',
-         'javadocs/javadoc_Command_Line',
-         'javadocs/javadoc_Commands',
-         'javadocs/javadoc_Config',
-         'javadocs/javadoc_Constants',
-         'javadocs/javadoc_Descriptor',
-         'javadocs/javadoc_Elements',
-         'javadocs/javadoc_Events',
-         'javadocs/javadoc_Exceptions',
-         'javadocs/javadoc_Extensions',
-         'javadocs/javadoc_Format',
-         'javadocs/javadoc_Input_Output',
-         'javadocs/javadoc_Internal',
-         'javadocs/javadoc_Logging',
-         'javadocs/javadoc_Other',
-         'javadocs/javadoc_Security',
-         'javadocs/javadoc_SPI_Base',
-         'javadocs/javadoc_Toolkit',
-      ],
+      'API Documentation': [],
    }
 };
