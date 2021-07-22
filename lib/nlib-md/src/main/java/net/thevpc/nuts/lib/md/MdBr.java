@@ -17,6 +17,8 @@
  */
 package net.thevpc.nuts.lib.md;
 
+import java.util.Objects;
+
 /**
  *
  * @author thevpc
@@ -37,7 +39,7 @@ public class MdBr extends MdAbstractElement {
     }
 
     @Override
-    public MdElementType getElementType() {
+    public MdElementType type() {
         return MdElementType.LINE_BREAK;
     }
 
@@ -46,4 +48,26 @@ public class MdBr extends MdAbstractElement {
         return "\n";
     }
 
+    @Override
+    public boolean isInline() {
+        return false;
+    }
+
+    @Override
+    public boolean isEndWithNewline() {
+        return true;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MdBr mdBr = (MdBr) o;
+        return Objects.equals(type, mdBr.type);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type);
+    }
 }

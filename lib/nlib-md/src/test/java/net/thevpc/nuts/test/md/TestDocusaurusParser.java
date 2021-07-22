@@ -1,9 +1,10 @@
 package net.thevpc.nuts.test.md;
 
-import net.thevpc.nuts.lib.md.MdElement;
-import net.thevpc.nuts.lib.md.MdFactory;
-import net.thevpc.nuts.lib.md.MdParser;
+import net.thevpc.nuts.lib.md.*;
+import net.thevpc.nuts.lib.md.asciidoctor.AsciiDoctorWriter;
 import net.thevpc.nuts.lib.md.docusaurus.DocusaurusMdParser;
+import net.thevpc.nuts.lib.md.util.MdElementAndChildrenList;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.FileReader;
@@ -12,8 +13,8 @@ import java.io.StringReader;
 
 public class TestDocusaurusParser {
     @Test
-    public void test(){
-        String s="\n" +
+    public void test() {
+        String s = "\n" +
                 "## Where can I find Documentation about the Project\n" +
                 "Mainly all of the documentation car be found in 2 places:\n" +
                 "\n" +
@@ -26,76 +27,127 @@ public class TestDocusaurusParser {
                 "  ```sh \n" +
                 "  nsh --help\n" +
                 "  ``` \n" +
-                "  you will get more details on nuts or on the tool (here nsh)\n"
-;
-        MdParser parser= MdFactory.createParser("docusaurus",new StringReader(s));
-        MdElement e = parser.parse();
-        System.out.println(e);
-    }
-    @Test
-    public void test2(){
-        String s="\n" +
-                "## Where can I find Documentation about the Project\n" +
-                "Mainly all of the documentation car be found in 2 places:\n" +
-                "\n" +
-                "* this website: it includes both user documentation and javadocs (code documentation)\n" +
-                "* each command help option. when you type \n" +
-                "  ```sh \n" +
-                "  nuts --help\n" +
-                "  ``` \n" +
-                "  or \n" +
-                "  ```sh \n" +
-                "  nsh --help\n" +
-                "  ``` \n" +
-                "  you will get more details on nuts or on the tool (here nsh)\n"
-;
-        MdParser parser= new DocusaurusMdParser(new StringReader(s));
+                "  you will get more details on nuts or on the tool (here nsh)\n";
+        MdParser parser = MdFactory.createParser("docusaurus", new StringReader(s));
         MdElement e = parser.parse();
         System.out.println(e);
     }
 
     @Test
-    public void test3(){
+    public void test2() {
+        String s = "\n" +
+                "## Where can I find Documentation about the Project\n" +
+                "Mainly all of the documentation car be found in 2 places:\n" +
+                "\n" +
+                "* this website: it includes both user documentation and javadocs (code documentation)\n" +
+                "* each command help option. when you type \n" +
+                "  ```sh \n" +
+                "  nuts --help\n" +
+                "  ``` \n" +
+                "  or \n" +
+                "  ```sh \n" +
+                "  nsh --help\n" +
+                "  ``` \n" +
+                "  you will get more details on nuts or on the tool (here nsh)\n";
+        MdParser parser = new DocusaurusMdParser(new StringReader(s));
+        MdElement e = parser.parse();
+        System.out.println(e);
+    }
+
+    @Test
+    public void test3() {
 //        String s="* **config** : defines the" ;
 //        String s="id: install-cmd" ;
 //        String s="id_test: _install_" ;
 //        String s="Or, you can also use NAF (**```nuts```** Application Framework) make your application full featured \"Nuts aware\" application." ;
-        String s="* Create Options :\n" +
+        String s = "* Create Options :\n" +
                 "    * --skip-companions\n" +
                 "    * --archetype\n" +
                 "    * --store-strategy\n" +
-                "    * --standalone\n" ;
-        MdParser parser= new DocusaurusMdParser(new StringReader(s));
+                "    * --standalone\n";
+        MdParser parser = new DocusaurusMdParser(new StringReader(s));
         MdElement e = parser.parse();
         System.out.println(e);
     }
 
     @Test
-    public void test4(){
+    public void test4() {
 //        String file="/data/git/nuts/website/.dir-template/src/docs/intro/installation.md";
-        String file="/data/git/nuts/website/.dir-template/src/docs/cmd/install.md";
-        try(FileReader fr=new FileReader(file)) {
+//        String file="/data/git/nuts/website/.dir-template/src/docs/cmd/install.md";
+        String file = "/data/git/nuts/website/.dir-template/src/docs/intro/nuts-and-maven.md";
+//        String file="/data/git/nuts/website/.dir-template/src/docs/info/faq.md";
+        try (FileReader fr = new FileReader(file)) {
+
             MdParser parser = new DocusaurusMdParser(fr);
             MdElement e = parser.parse();
-            System.out.println(e);
-        }catch (IOException ex){
+            dump(e);
+        } catch (IOException ex) {
             throw new IllegalArgumentException(ex);
         }
     }
 
     @Test
-    public void test5(){
-        String s="---\n" +
-                "Here are all **```nuts```** requirements :"
-;
-        MdParser parser= new DocusaurusMdParser(new StringReader(s));
+    public void test9() {
+        String s = "* one\n" +
+                "* two\n";
+        MdParser parser = new DocusaurusMdParser(new StringReader(s));
         MdElement e = parser.parse();
-        System.out.println(e);
+        MdBody expected = new MdBody(
+                new MdElement[]{
+                        new MdUnNumberedList(
+                                new MdUnNumberedItem[]{
+                                        new MdUnNumberedItem("*", 1, MdText.phrase("one")),
+                                        new MdUnNumberedItem("*", 1, MdText.phrase("two")),
+                                }
+                        )
+                }
+        );
+        Assertions.assertEquals(expected, e);
+        dump(e);
     }
 
     @Test
-    public void test6(){
-        String s="---\n" +
+    public void test8() {
+        String s = "* each command help option. when you type \n" +
+                "  ```sh \n" +
+                "  nuts --help\n" +
+                "  ``` \n" +
+                "  or \n" +
+                "  ```sh \n" +
+                "  nsh --help\n" +
+                "  ``` \n" +
+                "  you will get more details on nuts or on the tool (here nsh)\n";
+        MdParser parser = new DocusaurusMdParser(new StringReader(s));
+        MdElement e = parser.parse();
+        dump(e);
+    }
+
+    @Test
+    public void test10() {
+        String s = "this is an image ![name](/some/path) \n";
+        MdParser parser = new DocusaurusMdParser(new StringReader(s));
+        MdElement e = parser.parse();
+        dump(e);
+    }
+
+    private void dump(MdElement e) {
+        AsciiDoctorWriter w = new AsciiDoctorWriter(System.out);
+        w.write(e);
+        w.flush();
+    }
+
+    @Test
+    public void test5() {
+        String s = "---\n" +
+                "Here are all **```nuts```** requirements :";
+        MdParser parser = new DocusaurusMdParser(new StringReader(s));
+        MdElement e = parser.parse();
+        dump(e);
+    }
+
+    @Test
+    public void test6() {
+        String s = "---\n" +
                 "id: filesystem\n" +
                 "title: File system\n" +
                 "sidebar_label: File system\n" +
@@ -199,10 +251,36 @@ public class TestDocusaurusParser {
                 "You can type help for more details.\n" +
                 "```\n" +
                 "nuts help\n" +
-                "```\n"
-;
-        MdParser parser= new DocusaurusMdParser(new StringReader(s));
+                "```\n";
+        MdParser parser = new DocusaurusMdParser(new StringReader(s));
         MdElement e = parser.parse();
         System.out.println(e);
+    }
+
+    @Test
+    public void test7() {
+        MdElementAndChildrenList li = new MdElementAndChildrenList();
+        li.add(new MdTitle("##", MdText.phrase("Title 1"), 2));
+        li.add(MdText.phrase("description 1"));
+        li.add(MdText.phrase("description 2"));
+        li.add(new MdTitle("###", MdText.phrase("Title 1.1"), 3));
+        li.add(MdText.phrase("description 3"));
+        li.add(MdText.phrase("description 4"));
+        li.add(new MdTitle("##", MdText.phrase("Title 2"), 2));
+        li.add(MdText.phrase("description 5"));
+        li.add(MdText.phrase("description 6"));
+        li.add(new MdUnNumberedItem("*", 1, MdText.phrase("item 1")));
+        li.add(new MdUnNumberedItem("*", 1, MdText.phrase("item 2")));
+        li.add(new MdUnNumberedItem("*", 2, MdText.phrase("item 2.1")));
+        li.add(new MdUnNumberedItem("*", 1, MdText.phrase("item 3")));
+        li.add(MdText.phrase("description 7"));
+        li.add(new MdTitle("##", MdText.phrase("Title 3"), 2));
+        li.add(MdText.phrase("description 7"));
+        li.add(MdText.phrase("description 8"));
+        MdElement r = li.build();
+        AsciiDoctorWriter w = new AsciiDoctorWriter(System.out);
+        w.write(r);
+        w.flush();
+        Assertions.assertTrue(r.isBody() && r.asBody().size() == 3);
     }
 }

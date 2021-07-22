@@ -1,8 +1,8 @@
 /**
  * ====================================================================
- *            thevpc-common-md : Simple Markdown Manipulation Library
+ * thevpc-common-md : Simple Markdown Manipulation Library
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -17,9 +17,11 @@
  */
 package net.thevpc.nuts.lib.md;
 
-public interface MdWriter extends AutoCloseable{
+public interface MdWriter extends AutoCloseable {
 
     void write(MdDocument document);
+
+    void flush();
 
     @Override
     void close();

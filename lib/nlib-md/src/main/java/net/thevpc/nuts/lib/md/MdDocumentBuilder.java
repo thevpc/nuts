@@ -11,7 +11,7 @@ public class MdDocumentBuilder {
     private String version;
     private Temporal date;
     private Map<String,Object> properties;
-    private MdElementBuilder content;
+    private MdElement content;
 
     public Object getId() {
         return id;
@@ -89,40 +89,18 @@ public class MdDocumentBuilder {
         return this;
     }
 
-    public MdElementBuilder getContent() {
+    public MdElement getContent() {
         return content;
     }
 
     public MdDocumentBuilder setContent(MdElement content) {
-        return setContent(MdFactory.element(content));
-    }
-
-    public MdDocumentBuilder setContent(MdElementBuilder content) {
-        this.content = content;
-        return this;
-    }
-
-    public MdDocumentBuilder append(MdElement content) {
-        return append(MdFactory.element(content));
-    }
-
-    public MdDocumentBuilder append(MdElementBuilder content) {
-        if(this.content==null){
-            this.content=content;
-        }else if(this.content instanceof MdSequenceBuilder){
-            ((MdSequenceBuilder) this.content).add(content);
-        }else{
-            MdElementBuilder o=this.content;
-            this.content=MdFactory.seq();
-            ((MdSequenceBuilder) this.content).add(o);
-            ((MdSequenceBuilder) this.content).add(content);
-        }
+        this.content=content;
         return this;
     }
 
     public MdDocument build(){
         return new MdDocument(
-                id,title,subTitle, version, date, properties, content.build()
+                id,title,subTitle, version, date, properties, content
         );
     }
 }

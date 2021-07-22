@@ -17,6 +17,8 @@
  */
 package net.thevpc.nuts.lib.md;
 
+import java.util.Arrays;
+
 /**
  *
  * @author thevpc
@@ -39,9 +41,32 @@ public class MdTable extends MdAbstractElement {
     }
 
     @Override
-    public MdElementType getElementType() {
+    public MdElementType type() {
         return MdElementType.TABLE;
     }
-    
-    
+
+    @Override
+    public boolean isInline() {
+        return false;
+    }
+
+    @Override
+    public boolean isEndWithNewline() {
+        return true;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MdTable mdTable = (MdTable) o;
+        return Arrays.equals(columns, mdTable.columns) && Arrays.equals(rows, mdTable.rows);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Arrays.hashCode(columns);
+        result = 31 * result + Arrays.hashCode(rows);
+        return result;
+    }
 }

@@ -5,5 +5,4 @@ sidebar_label: Introduction
 order: 1
 ---
 
-# Introduction
-This is an introduction
+Nuts is a package manager for the Java Platform. 

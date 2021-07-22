@@ -17,26 +17,32 @@
  */
 package net.thevpc.nuts.lib.md;
 
+import net.thevpc.nuts.lib.md.util.MdUtils;
+
+import java.util.Objects;
+
 /**
  *
  * @author thevpc
  */
-public class MdTitle extends MdAbstractElement {
+public class MdTitle extends MdParent {
 
     private String code;
     private MdElementType id;
     private MdElement value;
-    private int depth;
 
     public MdTitle(String code, MdElement value, int depth) {
-        this.code = code;
-        this.value = value;
-        this.depth = depth;
-        id = new MdElementType(MdElementType0.TITLE,depth);
+        this(code,value,depth,new MdElement[0]);
     }
 
-    public int getDepth() {
-        return depth;
+    public MdTitle(String code, MdElement value, int depth,MdElement[] children) {
+        super(children);
+        this.code = code;
+        this.value = value;
+        if(!value.isInline()){
+            throw new IllegalArgumentException("unexpected newline element title: "+value.type());
+        }
+        id = new MdElementType(MdElementTypeGroup.TITLE,depth);
     }
 
     public MdElement getValue() {
@@ -48,15 +54,45 @@ public class MdTitle extends MdAbstractElement {
     }
 
     @Override
-    public MdElementType getElementType() {
+    public MdElementType type() {
         return id;
+    }
+
+    @Override
+    public boolean isInline() {
+        return false;
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(code).append(" ").append(getValue());
+        sb.append(MdUtils.times('#', type().depth())).append(" ").append(getValue());
+        for (int i = 0; i < size(); i++) {
+            if (i > 0) {
+                if (!isInline()) {
+                    sb.append("\n");
+                }
+            }
+            sb.append(getChild(i));
+        }
         return sb.toString();
     }
+    @Override
+    public boolean isEndWithNewline() {
+        return true;
+    }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        MdTitle mdTitle = (MdTitle) o;
+        return Objects.equals(code, mdTitle.code) && Objects.equals(id, mdTitle.id) && Objects.equals(value, mdTitle.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), code, id, value);
+    }
 }

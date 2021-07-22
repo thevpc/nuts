@@ -64,11 +64,6 @@ public abstract class MdAbstractElement implements MdElement {
     }
 
     @Override
-    public MdSequence asSeq() {
-        return (MdSequence) this;
-    }
-
-    @Override
     public MdColumn asColumn() {
         return (MdColumn) this;
     }
@@ -149,11 +144,6 @@ public abstract class MdAbstractElement implements MdElement {
     }
 
     @Override
-    public boolean isSequence() {
-        return this instanceof MdSequence;
-    }
-
-    @Override
     public boolean isRow() {
         return this instanceof MdRow;
     }
@@ -181,6 +171,46 @@ public abstract class MdAbstractElement implements MdElement {
     @Override
     public boolean isImage() {
         return this instanceof MdImage;
+    }
+
+    @Override
+    public boolean isList() {
+        return this instanceof MdListElement;
+    }
+
+    @Override
+    public MdListElement asList() {
+        return (MdListElement) this;
+    }
+
+    @Override
+    public MdNumberedList asNumList() {
+        return (MdNumberedList) this;
+    }
+
+    @Override
+    public MdBody asBody() {
+        return (MdBody) this;
+    }
+
+    @Override
+    public MdPhrase asPhrase() {
+        return (MdPhrase) this;
+    }
+
+    @Override
+    public MdUnNumberedList asUnNumList() {
+        return (MdUnNumberedList)this;
+    }
+
+    @Override
+    public boolean isBody() {
+        return this instanceof MdBody;
+    }
+
+    @Override
+    public boolean isPhrase() {
+        return this instanceof MdPhrase;
     }
 
 }

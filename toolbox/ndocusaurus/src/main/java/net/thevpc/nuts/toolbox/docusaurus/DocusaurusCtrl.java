@@ -113,7 +113,8 @@ public class DocusaurusCtrl {
             DocusaurusFolder root = project.getPhysicalDocsFolder();
             root = new DocusaurusFolder(
                     "someSidebar", "someSidebar", 0, appContext.getWorkspace().elem().forObject().build(), root.getChildren(),
-                    root.getContent(appContext.getSession())
+                    root.getContent(appContext.getSession()),
+                    project.getPhysicalDocsFolderBasePath().toString()
             );
             String s = "module.exports = {\n" +
                     root.toJSON(1)

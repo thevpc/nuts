@@ -6,5 +6,4 @@ enabled: false
 order: 3
 ---
 
-# Advanced Features
-This is an introduction
+This is an introduction for Advanced Features

@@ -77,7 +77,7 @@ public class MdTableBuilder implements MdElementBuilder{
 
         public MdColumn build() {
             return new MdColumn(
-                    name == null ? new MdText("") : name.build(),
+                    name == null ? MdText.empty() : name.build(),
                     horizontalAlign == null ? MdHorizontalAlign.LEFT : horizontalAlign
             );
         }

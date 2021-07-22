@@ -17,44 +17,77 @@
  */
 package net.thevpc.nuts.lib.md;
 
+import java.util.Objects;
+
 /**
  *
  * @author thevpc
  */
 public class MdElementType {
-//    public static final MdElementType LINE_SEPARATOR = new MdElementType(MdElementType0.LINE_SEPARATOR);
-    public static final MdElementType ADMONITION = new MdElementType(MdElementType0.ADMONITION);
-    public static final MdElementType BOLD = new MdElementType(MdElementType0.BOLD);
-    public static final MdElementType ITALIC = new MdElementType(MdElementType0.ITALIC);
-    public static final MdElementType CODE = new MdElementType(MdElementType0.CODE);
-    public static final MdElementType IMAGE = new MdElementType(MdElementType0.IMAGE);
-    public static final MdElementType COLUMN = new MdElementType(MdElementType0.COLUMN);
-    public static final MdElementType LINE_BREAK = new MdElementType(MdElementType0.LINE_BREAK);
-    public static final MdElementType HORIZONTAL_RULE = new MdElementType(MdElementType0.HORIZONTAL_RULE);
-    public static final MdElementType XML = new MdElementType(MdElementType0.XML);
-    public static final MdElementType CODE_LINK = new MdElementType(MdElementType0.CODE_LINK);
-    public static final MdElementType LINK = new MdElementType(MdElementType0.LINK);
-    public static final MdElementType TEXT = new MdElementType(MdElementType0.TEXT);
-    public static final MdElementType TABLE = new MdElementType(MdElementType0.TABLE);
-    public static final MdElementType ROW = new MdElementType(MdElementType0.ROW);
-    public static final MdElementType SEQ = new MdElementType(MdElementType0.SEQ);
-    private MdElementType0 type;
+//    public static final MdElementType LINE_SEPARATOR = new MdElementType(MdElementTypeGroup.LINE_SEPARATOR);
+    public static final MdElementType ADMONITION = new MdElementType(MdElementTypeGroup.ADMONITION);
+    public static final MdElementType BOLD = new MdElementType(MdElementTypeGroup.BOLD);
+    public static final MdElementType ITALIC = new MdElementType(MdElementTypeGroup.ITALIC);
+    public static final MdElementType CODE = new MdElementType(MdElementTypeGroup.CODE);
+    public static final MdElementType IMAGE = new MdElementType(MdElementTypeGroup.IMAGE);
+    public static final MdElementType COLUMN = new MdElementType(MdElementTypeGroup.COLUMN);
+    public static final MdElementType LINE_BREAK = new MdElementType(MdElementTypeGroup.LINE_BREAK);
+    public static final MdElementType HORIZONTAL_RULE = new MdElementType(MdElementTypeGroup.HORIZONTAL_RULE);
+    public static final MdElementType XML = new MdElementType(MdElementTypeGroup.XML);
+    public static final MdElementType CODE_LINK = new MdElementType(MdElementTypeGroup.CODE_LINK);
+    public static final MdElementType LINK = new MdElementType(MdElementTypeGroup.LINK);
+    public static final MdElementType TEXT = new MdElementType(MdElementTypeGroup.TEXT);
+    public static final MdElementType TABLE = new MdElementType(MdElementTypeGroup.TABLE);
+    public static final MdElementType ROW = new MdElementType(MdElementTypeGroup.ROW);
+    public static final MdElementType BODY = new MdElementType(MdElementTypeGroup.BODY);
+    public static final MdElementType PHRASE = new MdElementType(MdElementTypeGroup.PHRASE);
+//    public static final MdElementType NUMBERED_LIST = new MdElementType(MdElementTypeGroup.NUMBERED_LIST);
+//    public static final MdElementType UNNUMBERED_LIST = new MdElementType(MdElementTypeGroup.UNNUMBERED_LIST);
+    private MdElementTypeGroup group;
     private int depth;
 
-    public MdElementType(MdElementType0 type) {
-        this(type,0);
+    public MdElementType(MdElementTypeGroup group) {
+        this(group,0);
     }
 
-    public MdElementType(MdElementType0 type, int depth) {
-        this.type = type;
+    public MdElementType(MdElementTypeGroup group, int depth) {
+        this.group = group;
         this.depth = depth;
     }
 
-    public MdElementType0 type() {
-        return type;
+    public MdElementTypeGroup group() {
+        return group;
     }
 
     public int depth() {
         return depth;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MdElementType that = (MdElementType) o;
+        return depth == that.depth && group == that.group;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(group, depth);
+    }
+
+    @Override
+    public String toString() {
+        switch (group){
+            case TITLE:
+            case NUMBERED_ITEM:
+            case UNNUMBERED_ITEM:
+            case NUMBERED_LIST:
+            case UNNUMBERED_LIST:
+            {
+                return group +"_"+depth;
+            }
+        }
+        return group.toString();
     }
 }

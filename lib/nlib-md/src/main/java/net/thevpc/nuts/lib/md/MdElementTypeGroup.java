@@ -21,18 +21,21 @@ package net.thevpc.nuts.lib.md;
  *
  * @author thevpc
  */
-public enum MdElementType0 {
+public enum MdElementTypeGroup {
     TITLE,
     TABLE,
     COLUMN,
     ROW,
     XML,
-    SEQ,
+    BODY,
+    PHRASE,
+    NUMBERED_LIST,
+    UNNUMBERED_LIST,
     TEXT,
     BOLD,
     ITALIC,
-    UNNUMBRED_ITEM,
-    NUMBRED_ITEM,
+    UNNUMBERED_ITEM,
+    NUMBERED_ITEM,
     CODE,
     ADMONITION,
     LINK,

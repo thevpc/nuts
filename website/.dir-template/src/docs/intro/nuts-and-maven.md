@@ -2,6 +2,7 @@
 id: nutsAndMaven
 title: Nuts and Maven
 sidebar_label: Nuts and Maven
+order: 2
 ---
 
 ${include($"${resources}/header.md")}
@@ -20,17 +21,11 @@ sticks to the build process, an goes no further.
 You may also ask, "Why ever, do we need a package manager for Java(TM) applications". Okkay, let's take some 
 example of Java(TM) applications. How can we install apache netbeans IDE ? The proper way is to browse to the editor's 
 website, select the proper mirror if applicable, download the archive, uncompress it, chmod the main binary (i'm a linux 
-guy) and adjust PATH environment variable to point to this binary; Quite a pain. What do we do to update it now? Hopefully, 
-the IDE has a solid plugin architecture and an in-app update/upgrade tool that will help the process (in a gui manner of 
-course). The same applies to eclipse and apache tomcat with the exception that apache tomcat does not even bundle an in-app 
-update tool. The same applies too when dealing with other operating systems (Windows, MacOS, ...). Managing Java(TM) 
-applications is far from helpful.
+guy) and adjust PATH environment variable to point to this binary; Quite a pain. What do we do to update it now? Hopefully, the IDE has a solid plugin architecture and an in-app update/upgrade tool that will help the process (in a gui manner of course). The same applies to eclipse and apache tomcat with the exception that apache tomcat does not even bundle an in-app update tool. The same applies too when dealing with other operating systems (Windows, MacOS, ...). Managing Java(TM) applications is far from helpful.
 
 Furthermore, as Java(TM) applications are (usually) not bundled in OS-aware installers, you will end up with a spaguetty 
 home directory with applications installed all over your partitions, which - simply - does not mix up with all the work 
-OS-developers have done to separate logs from data, from temporary files, from binaries, etc. Each application will handle 
-it's files in a very specific manner that would make it hard to manage own's disk (automatic archive/backup/restore) or roaming
-applications across machines, etc.
+OS-developers have done to separate logs from data, from temporary files, from binaries, etc. Each application will handle it's files in a very specific manner that would make it hard to manage own's disk (automatic archive/backup/restore) or roaming applications across machines, etc.
 
 Moreover, in a world of containers and devops, deployments of Java(TM) applications need to be automatable and reproducible 
 with the highest level of simplicity, configurability and integrability. Installing tomcat on a custom port should not not 

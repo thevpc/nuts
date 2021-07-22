@@ -16,9 +16,15 @@ import java.io.Writer;
 class LenientWriter {
     
     Writer writer;
+    String path;
 
-    public LenientWriter(Writer w) {
+    public LenientWriter(Writer w,String path) {
         this.writer = w;
+        this.path = path;
+    }
+
+    public String getPath() {
+        return path;
     }
 
     public Writer getWriter() {

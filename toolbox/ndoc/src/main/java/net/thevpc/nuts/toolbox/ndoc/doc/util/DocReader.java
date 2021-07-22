@@ -105,12 +105,12 @@ public class DocReader {
             }
         }
         if (result.size() == 0) {
-            return new MdText("");
+            return MdText.empty();
         }
         if (result.size() == 1) {
             return result.get(0);
         }
-        return new MdSequence("", result.toArray(new MdElement[0]), true);
+        return MdFactory.ofListOrEmpty( result.toArray(new MdElement[0]));
     }
 
     private MdElement readAny() {
@@ -156,7 +156,7 @@ public class DocReader {
         if (result.size() == 1) {
             return result.get(0);
         }
-        return new MdSequence("", result.toArray(new MdElement[0]), true);
+        return MdFactory.ofListOrEmpty( result.toArray(new MdElement[0]));
     }
 
     protected MdElement prepareXml(MdXml xml) {
@@ -235,7 +235,7 @@ public class DocReader {
         while (!in.isEmpty() && in.peek() != '<') {
             s.append(in.read());
         }
-        return new MdText(s.toString());
+        return MdText.phrase(s.toString());
     }
 
     private String[] readHtmlTagStart() {

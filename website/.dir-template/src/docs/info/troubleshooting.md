@@ -1,17 +1,13 @@
 ---
-id: troubleshouting
-title: Troubleshouting
-sidebar_label: Troubleshouting
+id: troubleshooting
+title: Troubleshooting
+sidebar_label: Troubleshooting
 ---
 
 ${include($"${resources}/header.md")}
 
-# Troubleshooting nuts
-Network Updatable Things Services
-
-# Recover and Reset modes
-Whenever installation fails, it is more likely there is a mis-configuration or invalid libraries bundles used. You may have to options 
-to circumvent this which are two levels or workspace reinitialization. 
+Whenever installation fails, it is more likely there is a mis-configuration or invalid libraries bundles used. You may have to options
+to circumvent this which are two levels or workspace reinitialization.
 
 ## recover mode
 **recover mode** will apply best efforts to correct configuration without losing them. It will delete all cached data and 

@@ -17,6 +17,11 @@
  */
 package net.thevpc.nuts.lib.md;
 
+import net.thevpc.nuts.lib.md.util.MdUtils;
+
+import java.util.Arrays;
+import java.util.Objects;
+
 /**
  *
  * @author thevpc
@@ -25,24 +30,25 @@ public class MdUnNumberedItem extends MdAbstractElement {
 
     private String type;
     private MdElement value;
-    private int depth;
     private MdElementType id;
     private MdElement[] children;
+
+    public MdUnNumberedItem(String type, int depth, MdElement value) {
+        this(type,depth,value,new MdElement[0]);
+    }
 
     public MdUnNumberedItem(String type, int depth, MdElement value,MdElement[] children) {
         this.type = type;
         this.value = value;
-        this.depth = depth;
-        this.children = children;
-        id=new MdElementType(MdElementType0.UNNUMBRED_ITEM,depth);
+        if(!value.isInline()){
+            throw new IllegalArgumentException("unexpected newline element in un-numbered item: "+value.type());
+        }
+        this.children = children==null?new MdElement[0] :children ;
+        id=new MdElementType(MdElementTypeGroup.UNNUMBERED_ITEM,depth);
     }
 
     public MdElement[] getChildren() {
         return children;
-    }
-
-    public int getDepth() {
-        return depth;
     }
 
     public String getType() {
@@ -54,17 +60,38 @@ public class MdUnNumberedItem extends MdAbstractElement {
     }
 
     @Override
-    public MdElementType getElementType() {
+    public MdElementType type() {
         return id;
     }
 
     @Override
     public String toString() {
-        StringBuilder sb=new StringBuilder();
-        sb.append(type).append(" ").append(getValue());
-        return sb.toString();
+        return MdUtils.times('*', type().depth()) + " " + getValue();
     }
-    
-    
 
+
+    @Override
+    public boolean isInline() {
+        return false;
+    }
+
+    @Override
+    public boolean isEndWithNewline() {
+        return true;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MdUnNumberedItem that = (MdUnNumberedItem) o;
+        return Objects.equals(type, that.type) && Objects.equals(value, that.value) && Objects.equals(id, that.id) && Arrays.equals(children, that.children);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(type, value, id);
+        result = 31 * result + Arrays.hashCode(children);
+        return result;
+    }
 }

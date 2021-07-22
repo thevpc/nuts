@@ -8,7 +8,7 @@ ${include($"${resources}/header.md")}
 View Official releases [here](https://github.com/thevpc/nuts/releases) :
 Starred releases are most stable ones.
 
-### nuts 0.8.2.0 (NEXT VERSION)
+## nuts 0.8.2.0 (NEXT VERSION)
 - ```2021/XX/XX 	nuts 0.8.2.0 (*)``` released [download nuts-0.8.2.jar](https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/0.8.2/nuts-0.8.2.jar)
 - WARNING: API has evolved with multiple incompatibilities with previous versions  
 - TODO  : {api}   add comments support in 'element' and and propagate support for xml,json and so on
@@ -16,7 +16,7 @@ Starred releases are most stable ones.
 - TODO  : {impl}  implement yaml formatter (both print as raw and as colorized)
 - TODO  : {impl}  bundle tson parser
 
-### nuts 0.8.1.0 (DEV VERSION)
+## nuts 0.8.1.0 (DEV VERSION)
 - ```2020/11/22 	nuts 0.8.1.0 (*)``` released [download nuts-0.8.1.jar](https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/0.8.1/nuts-0.8.1.jar)
 - WARNING: API has evolved with multiple incompatibilities with previous versions  
 - CHANGED: {api}   removed NutsApplicationLifeCycle and replaced with NutsApplication (an interface instead of a class)
@@ -60,7 +60,7 @@ Starred releases are most stable ones.
   nlib-talk-agent enables one workspace to talk with any other workspace without having to create one server socket for each workspace.
   It also enables singleton per location implementation
 
-### nuts 0.8.0.0 (PUBLISHED VERSION)
+## nuts 0.8.0.0 (PUBLISHED VERSION)
 - ```2020/11/8? 	nuts 0.8.0.0 (*)``` released [download nuts-0.8.0.jar](https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/0.8.0/nuts-0.8.0.jar)
 - WARNING: this is the first version to be deployed to maven central. previous versions will no longer be supported
 - WARNING: this is a **major version**, API has evolved with multiple incompatibilities with previous versions  
@@ -78,7 +78,7 @@ Starred releases are most stable ones.
 - ADDED  : workspace.str() to create NutsStringBuilder
 - ADDED  : 'switch' command in ndi to support switching from one workspace to another. example : ```ndi switch -w other-workspace -a 0.8.0```
 
-### nuts 0.7.2.0
+## nuts 0.7.2.0
 WARNING: this version is not deployed to maven-central
 - ```2020/09/23 	nuts 0.7.2.0 (*)``` released [download nuts-0.7.2.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.7.2/nuts-0.7.2.jar) 
 - FIXED  : execute non installed artifacts sometimes do not ask for confirmation
@@ -89,13 +89,13 @@ WARNING: this version is not deployed to maven-central
 - ADDED  : Docusaurus Website
 - ADDED  : new toolbox ndocusaurus : Docusaurus Website templating
 
-### nuts 0.7.1.0
+## nuts 0.7.1.0
 WARNING: this version is not deployed to maven-central
 - ```2020/09/14 	nuts 0.7.1.0 (*)``` released [download nuts-0.7.1.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.7.1/nuts-0.7.1.jar)
 - FIXED  : reset stdout line when calling external processes
 - FIXED  : fixed several display issues.
 
-### nuts 0.7.0.0
+## nuts 0.7.0.0
 WARNING: this version is not deployed to maven-central
 - ```2020/07/26 	nuts 0.7.0.0 (*)``` released [download nuts-0.7.0.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.7.0/nuts-0.7.0.jar)
 - ADDED  : NutsApplicationContext.processCommandLine(c)
@@ -105,7 +105,7 @@ WARNING: this version is not deployed to maven-central
 - RENAMED: tomcat renamed to ntomcat
 - RENAMED: mvn renamed to nmvn
 
-### nuts 0.6.0.0
+## nuts 0.6.0.0
 WARNING: this version is not deployed to maven-central
 - ```2020/01/15 	nuts 0.6.0.0 (*)``` released [download nuts-0.6.0.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.6.0/nuts-0.6.0.jar) 
 - CHANGED  : config file format changed
@@ -122,7 +122,7 @@ WARNING: this version is not deployed to maven-central
 - FIXED    : encoding problem with json/xml
 - REMOVED  : NutsRepositorySession
 
-### nuts 0.5.8.0
+## nuts 0.5.8.0
 WARNING: this version is not deployed to maven-central
 - ```2019/09/02 	nuts 0.5.8.0 (*)``` released [download nuts-0.5.8.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.7/nuts-0.5.7.jar) 
 - ADDED    : support for Custom Monitor in Copy Command
@@ -137,7 +137,7 @@ WARNING: this version is not deployed to maven-central
 - CHANGE   : now if a command to execute ends with '!', we will force searching in installed only.
 - CHANGE   : removed install/uninstall in Terminal, replaced by NutsWarkspaceAware
 
-### nuts 0.5.7.0
+## nuts 0.5.7.0
 WARNING: this version is not deployed to maven-central
 - ```2019/07/23 	nuts 0.5.7.0 (*)``` released [download nuts-0.5.7.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.7/nuts-0.5.7.jar) 
 - ADDED    : support to Windows (Tested on Win 7) and MacOS(Not Tested) ofr Desktop Integration
@@ -158,7 +158,7 @@ WARNING: this version is not deployed to maven-central
 - REMOVED  : NutsRepositoryListener.onInstall(...) 
 - REMOVED  : 'alternative' concept, and added NutsClassifierMapping so that classifier can be resolved according to env 
 
-### nuts 0.5.6.0
+## nuts 0.5.6.0
 WARNING: this version is not deployed to maven-central
 - ```2019/06/23 	nuts 0.5.6.0``` released [download nuts-0.5.6.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.6/nuts-0.5.6.jar) 
 - ADDED    : Implements XDG Base Directory Specification
@@ -175,7 +175,7 @@ WARNING: this version is not deployed to maven-central
 - REMOVED  : [Options] --term
 - REMOVED  : [Extensions] add/remove extensions from extension manager (should use install/uninstall commands)
 
-### nuts 0.5.5.0
+## nuts 0.5.5.0
 WARNING: this version is not deployed to maven-central
 - ```2019/06/08 	nuts 0.5.5.0``` released [download nuts-0.5.5.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.5/nuts-0.5.5.jar) 
 - REMOVED  : Removed Nsh commands Console Deploy Info Install Fetch Uninstall,Push Update Exec Which
@@ -195,7 +195,7 @@ WARNING: this version is not deployed to maven-central
 - CHANGED  : (nsh) Builtin nsh command who renamed to whoami 
 - REMOVED  : (nfind) Removed nfind companion (the built-in search command is a better replacement)
 
-### nuts 0.5.4.0 Change Log
+## nuts 0.5.4.0 Change Log
 WARNING: this version is not deployed to maven-central
 - ```2019/04/21 	nuts 0.5.4.0 (*)``` released [download nuts-0.5.4.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.4/nuts-0.5.4.jar) 
 -Added lucene indexing facility (thanks to the excellent work of nasreddine bac ali)
@@ -221,7 +221,7 @@ WARNING: this version is not deployed to maven-central
     - System properties starting with "nuts.export." are exported to children processes
     - Added watch dog agains infinite child process creation
 
-### nuts 0.5.3.0 Change Log
+## nuts 0.5.3.0 Change Log
 WARNING: this version is not deployed to maven-central
 - ```2019/01/05 	nuts 0.5.3.0``` released [download nuts-0.5.3.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.3/nuts-0.5.3.jar)
 - (WINDOWS) First support to Windows platform
@@ -255,7 +255,7 @@ WARNING: this version is not deployed to maven-central
     - Code Comments
     - Help files
 
-### nuts 0.5.2.0 Change Log
+## nuts 0.5.2.0 Change Log
 WARNING: this version is not deployed to maven-central
 - ```2018/12/28 	nuts 0.5.2.0``` released [download nuts-0.5.2.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.2/nuts-0.5.2.jar) 
 - Global refactoring
@@ -263,7 +263,7 @@ WARNING: this version is not deployed to maven-central
 - Extracted nsh commands as regular nuts package (nadmin, nfind)
     WORKING-ON : Fixing "mvn" start from nuts (handling, exclude, pom import and classifiers from maven)
 
-### nuts 0.5.1.0 Change Log
+## nuts 0.5.1.0 Change Log
 WARNING: this version is not deployed to maven-central
 - ```2018/12/18 	nuts 0.5.1.0 released``` [download nuts-0.5.1.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.1/nuts-0.5.1.jar) 
 - FIXED : Fixed problem with inheritIO from child process (added InputStreamTransparentAdapter and OutputStreamTransparentAdapter interfaces)
@@ -273,7 +273,7 @@ WARNING: this version is not deployed to maven-central
 - CHANGED : Optimized pom.xml parse execution time (using DOM instead of SAX)
 - CHANGED : moved cache from bootstrap folder to default-workspace/cache
 
-### nuts 0.5.0.0 Change Log
+## nuts 0.5.0.0 Change Log
 WARNING: this version is not deployed to maven-central
 - ```2018/11/25 	nuts 0.5.0.0 released``` [download nuts-0.5.0.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.0/nuts-0.5.0.jar) 
 - Very first published version. older ones were used internally for internal projects only.

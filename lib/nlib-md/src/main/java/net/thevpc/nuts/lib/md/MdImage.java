@@ -17,6 +17,8 @@
  */
 package net.thevpc.nuts.lib.md;
 
+import java.util.Objects;
+
 /**
  *
  * @author thevpc
@@ -24,13 +26,19 @@ package net.thevpc.nuts.lib.md;
 public class MdImage extends MdAbstractElement {
 
     private String type;
+    private ImageFormat imageFormat;
     private String imageTitle;
     private String imageUrl;
 
-    public MdImage(String type, String imageTitle, String imageUrl) {
+    public MdImage(String type, ImageFormat imageFormat,String imageTitle, String imageUrl) {
         this.type = type;
+        this.imageFormat = imageFormat;
         this.imageTitle = imageTitle;
         this.imageUrl = imageUrl;
+    }
+
+    public ImageFormat getImageFormat() {
+        return imageFormat;
     }
 
     public String getType() {
@@ -46,7 +54,7 @@ public class MdImage extends MdAbstractElement {
     }
 
     @Override
-    public MdElementType getElementType() {
+    public MdElementType type() {
         return MdElementType.IMAGE;
     }
 
@@ -54,5 +62,31 @@ public class MdImage extends MdAbstractElement {
     public String toString() {
         return "![" + imageTitle + "](" + imageUrl + ")";
     }
+    @Override
+    public boolean isInline() {
+        return true;
+    }
 
+    @Override
+    public boolean isEndWithNewline() {
+        return false;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MdImage mdImage = (MdImage) o;
+        return Objects.equals(type, mdImage.type) && Objects.equals(imageTitle, mdImage.imageTitle) && Objects.equals(imageUrl, mdImage.imageUrl);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type, imageTitle, imageUrl);
+    }
+
+    public enum ImageFormat{
+        PATH,
+        ID,
+    }
 }

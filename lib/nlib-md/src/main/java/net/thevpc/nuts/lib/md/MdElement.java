@@ -1,8 +1,8 @@
 /**
  * ====================================================================
- *            thevpc-common-md : Simple Markdown Manipulation Library
+ * thevpc-common-md : Simple Markdown Manipulation Library
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -22,7 +22,7 @@ package net.thevpc.nuts.lib.md;
  * @author thevpc
  */
 public interface MdElement {
-    MdElementType getElementType();
+    MdElementType type();
 
     MdAdmonition asAdmonition();
 
@@ -36,7 +36,13 @@ public interface MdElement {
 
     MdNumberedItem asNumItem();
 
-    MdSequence asSeq();
+    MdListElement asList();
+
+    MdNumberedList asNumList();
+
+    MdBody asBody();
+
+    MdPhrase asPhrase();
 
     MdTable asTable();
 
@@ -45,6 +51,7 @@ public interface MdElement {
     MdTitle asTitle();
 
     MdUnNumberedItem asUnNumItem();
+    MdUnNumberedList asUnNumList();
 
     MdLink asLink();
 
@@ -58,7 +65,9 @@ public interface MdElement {
 
     boolean isRow();
 
-    boolean isSequence();
+    boolean isBody();
+
+    boolean isPhrase();
 
     boolean isTable();
 
@@ -86,5 +95,11 @@ public interface MdElement {
 
     boolean isBold();
 
+    boolean isList();
+
     boolean isItalic();
+
+    boolean isInline();
+
+    boolean isEndWithNewline();
 }

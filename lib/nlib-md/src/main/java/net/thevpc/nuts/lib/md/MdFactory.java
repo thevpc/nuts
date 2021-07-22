@@ -20,6 +20,7 @@ package net.thevpc.nuts.lib.md;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author thevpc
@@ -36,8 +37,8 @@ public class MdFactory {
         if (e == null) {
             return new MdElement[0];
         }
-        if (e instanceof MdSequence) {
-            return ((MdSequence) e).getElements();
+        if (e instanceof MdParent) {
+            return ((MdParent) e).getChildren();
         }
         return new MdElement[]{e};
     }
@@ -58,10 +59,6 @@ public class MdFactory {
         return w;
     }
 
-    public static MdSequenceBuilder seq() {
-        return new MdSequenceBuilder().setInline(false);
-    }
-
 
     public static MdElement seq(Collection<MdElement> arr) {
         return seq(false, arr);
@@ -79,7 +76,7 @@ public class MdFactory {
     }
 
     public static MdElement title(int depth, String e) {
-        return new MdTitle("", new MdText(e), depth);
+        return new MdTitle("", MdText.phrase(e), depth,new MdElement[0]);
     }
 
     public static MdElement seq(MdElement... arr) {
@@ -106,43 +103,29 @@ public class MdFactory {
                 }
             }
         }
-        if (all.isEmpty()) {
-            return new MdText("");
-        }
-        if (all.size() == 1) {
-            return all.get(0);
-        }
-        return new MdSequence("", all.toArray(new MdElement[0]), inline);
+        return ofListOrEmpty(all.toArray(new MdElement[0]));
     }
 
-    public static MdSequence asSeq(MdElement a) {
+    public static MdBody asBody(MdElement a) {
         if (a == null) {
-            return new MdSequence("", new MdElement[0], false);
+            return new MdBody( new MdElement[0]);
         }
-        if (a instanceof MdSequence) {
-            return (MdSequence) a;
+        if (a instanceof MdBody) {
+            return (MdBody) a;
         }
-        return new MdSequence("", new MdElement[]{a}, false);
+        return new MdBody( new MdElement[]{a});
     }
 
-    public static MdSequence asInlineSeq(MdElement a) {
-        if (a == null) {
-            return new MdSequence("", new MdElement[0], true);
-        }
-        if (a instanceof MdSequence) {
-            return (MdSequence) a;
-        }
-        return new MdSequence("", new MdElement[]{a}, true);
-    }
+
 
     public static MdElement unwrapSeq(MdElement a) {
         if (a == null) {
             return null;
         }
-        if (a instanceof MdSequence) {
-            MdElement[] elements = ((MdSequence) a).getElements();
+        if (a instanceof MdParent) {
+            MdElement[] elements = ((MdParent) a).getChildren();
             if (elements.length == 0) {
-                return new MdText("");
+                return MdText.empty();
             }
             if (elements.length == 1) {
                 return unwrapSeq(elements[0]);
@@ -186,6 +169,14 @@ public class MdFactory {
         return providers.get(mimeType);
     }
 
+    public static boolean isBlank(MdElement[] e) {
+        for (MdElement m : e) {
+            if(!isBlank(m)){
+                return false;
+            }
+        }
+        return true;
+    }
     public static boolean isBlank(MdElement e) {
         e = unpack(e);
         if (e == null) {
@@ -197,15 +188,14 @@ public class MdFactory {
                 return true;
             }
         }
-        if (e instanceof MdSequence) {
-            MdSequence li = (MdSequence) e;
-            MdElement[] t = li.getElements();
-            for (MdElement jDDocElement : t) {
-                if (!isBlank(jDDocElement)) {
-                    return false;
-                }
-            }
-            return true;
+        if (e instanceof MdTitle) {
+            MdTitle ti = (MdTitle) e;
+            return isBlank(ti.getValue())
+                    && isBlank(ti.getChildren());
+        }
+        if (e instanceof MdParent) {
+            MdParent li = (MdParent) e;
+            return isBlank(li.getChildren());
         }
         return false;
     }
@@ -214,9 +204,9 @@ public class MdFactory {
         if (e == null) {
             return null;
         }
-        if (e instanceof MdSequence) {
-            MdSequence li = (MdSequence) e;
-            MdElement[] t = li.getElements();
+        if (e instanceof MdParent) {
+            MdParent li = (MdParent) e;
+            MdElement[] t = li.getChildren();
             if (t.length == 0) {
                 return null;
             }
@@ -254,7 +244,7 @@ public class MdFactory {
         return new MdTableBuilder.MdRowBuilder();
     }
     public static MdElement text(String s) {
-        return new MdText(s);
+        return MdText.phrase(s);
     }
 
     public static MdElement ul(int depth, MdElement elem) {
@@ -305,5 +295,56 @@ public class MdFactory {
         public MdElement build() {
             return e;
         }
+    }
+
+    public static boolean detectXml(MdElement[] content) {
+        for (MdElement mdElement : content) {
+            if(mdElement.isXml()){
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    public static MdElement ofListOrNull(MdElement[] content) {
+        return ofList(content,true);
+    }
+
+    public static MdElement ofListOrEmpty(MdElement[] content) {
+        return ofList(content,false);
+    }
+
+    public static MdElement ofList(MdElement[] content,boolean noneIsNull) {
+        if(content!=null){
+            content=Arrays.stream(content).filter(Objects::nonNull).toArray(MdElement[]::new);
+        }else{
+            content=new MdElement[0];
+        }
+        if(content.length==0){
+            if(noneIsNull){
+                return null;
+            }
+            return MdText.phrase("");
+        }
+        if(content.length==1){
+            return content[0];
+        }
+        if(detectXml(content)){
+            return new MdBody(content);
+        }
+        if(MdPhrase.acceptPhrase(content)){
+            return new MdPhrase(content);
+        }
+        Set<MdElementTypeGroup> ss = Arrays.stream(content).map(x -> x.type().group()).collect(Collectors.toSet());
+        if(ss.size()==1){
+            if(ss.contains(MdElementTypeGroup.UNNUMBERED_LIST)) {
+                return new MdUnNumberedList(Arrays.asList(content).toArray(new MdUnNumberedItem[0]));
+            }
+            if(ss.contains(MdElementTypeGroup.NUMBERED_LIST)) {
+                return new MdNumberedList(Arrays.asList(content).toArray(new MdNumberedItem[0]));
+            }
+        }
+        return new MdBody(content);
     }
 }

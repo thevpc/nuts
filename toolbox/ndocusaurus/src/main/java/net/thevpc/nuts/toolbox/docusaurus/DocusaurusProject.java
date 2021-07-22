@@ -230,14 +230,20 @@ public class DocusaurusProject {
             //detect effective folder from children
             for (NutsElementEntry member : a.asObject()) {
                 DocusaurusFileOrFolder[] cc = LJSON_to_DocusaurusFileOrFolder_list(member.getValue(), root);
-                Path parentPath = detectFileParent(cc);
+                String rootPath = root.getPath();
+                Path parentPath = null;
+                if(rootPath!=null){
+                    parentPath=Paths.get(rootPath);
+                }else{
+                    parentPath=detectFileParent(cc);
+                }
                 aa.add(new DocusaurusFolder(
                         member.getKey().asString(),//no id  here!
                         member.getKey().asString(),
                         ++order,
                         session.getWorkspace().elem().forObject().build(),
                         cc,
-                        resolveFolderContent(parentPath)
+                        resolveFolderContent(parentPath),parentPath==null?null:parentPath.toString()
                 ));
             }
             return aa.toArray(new DocusaurusFileOrFolder[0]);
@@ -270,7 +276,10 @@ public class DocusaurusProject {
     }
     public DocusaurusFolder getSidebarsDocsFolder() {
         DocusaurusFileOrFolder[] someSidebars = LJSON_to_DocusaurusFileOrFolder_list(getSidebars().getSafe("someSidebar"),  getPhysicalDocsFolder());
-        return new DocusaurusFolder("/", "/", 0, session.getWorkspace().elem().forObject().build(), someSidebars,resolveFolderContent(getPhysicalDocsFolderBasePath()));
+        return new DocusaurusFolder("/", "/", 0,
+                session.getWorkspace().elem().forObject().build(), someSidebars,resolveFolderContent(getPhysicalDocsFolderBasePath()),
+                getPhysicalDocsFolder().getPath()
+                );
     }
 
     public MdElement resolveFolderContent(Path path) {

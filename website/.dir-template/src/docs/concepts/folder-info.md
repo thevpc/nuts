@@ -6,4 +6,4 @@ order: 2
 ---
 
 # Nuts Concepts
-This is an introduction
+This is an introduction for Nuts Concepts

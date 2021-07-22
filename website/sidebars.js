@@ -1,16 +1,16 @@
 module.exports = {
    'someSidebar': {
       'Introduction': [
-         'intro/installation',
          'intro/introduction',
          'intro/nutsAndMaven',
+         'intro/installation',
       ],
       'Getting Started': [
          'info/changelog',
          'info/faq',
          'info/license',
          'info/running',
-         'info/troubleshouting',
+         'info/troubleshooting',
       ],
       'Nuts Concepts': [
          'concepts/commandline',

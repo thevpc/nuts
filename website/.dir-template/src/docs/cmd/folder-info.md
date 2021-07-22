@@ -5,5 +5,4 @@ sidebar_label: Commands
 order: 3
 ---
 
-# Commands
-This is an introduction
+This is an introduction for Commands

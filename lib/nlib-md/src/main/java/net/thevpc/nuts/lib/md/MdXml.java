@@ -21,9 +21,9 @@ import net.thevpc.nuts.lib.md.docusaurus.DocusaurusUtils;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
- *
  * @author thevpc
  */
 public class MdXml extends MdAbstractElement {
@@ -33,14 +33,14 @@ public class MdXml extends MdAbstractElement {
     private MdElement content;
     private XmlTagType tagType;
 
-    public MdXml(XmlTagType tagType,String tag, String properties, MdElement content) {
+    public MdXml(XmlTagType tagType, String tag, String properties, MdElement content) {
         this.tagType = tagType;
         this.tag = tag;
         this.properties = new PropertiesParser(properties).parseMap();
         this.content = content;
     }
 
-    public MdXml(XmlTagType tagType,String tag, Map<String, String> properties, MdElement content) {
+    public MdXml(XmlTagType tagType, String tag, Map<String, String> properties, MdElement content) {
         this.tagType = tagType;
         this.tag = tag;
         this.properties = properties;
@@ -52,8 +52,13 @@ public class MdXml extends MdAbstractElement {
     }
 
     @Override
-    public MdElementType getElementType() {
+    public MdElementType type() {
         return MdElementType.XML;
+    }
+
+    @Override
+    public boolean isInline() {
+        return true;
     }
 
     public String getTag() {
@@ -86,9 +91,28 @@ public class MdXml extends MdAbstractElement {
         sb.append(">");
         return sb.toString();
     }
-    public enum XmlTagType{
+
+    public enum XmlTagType {
         OPEN,
         CLOSE,
         AUTO_CLOSE,
+    }
+
+    @Override
+    public boolean isEndWithNewline() {
+        return false;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MdXml mdXml = (MdXml) o;
+        return Objects.equals(tag, mdXml.tag) && Objects.equals(properties, mdXml.properties) && Objects.equals(content, mdXml.content) && tagType == mdXml.tagType;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(tag, properties, content, tagType);
     }
 }

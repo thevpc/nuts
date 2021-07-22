@@ -2,12 +2,14 @@
 id: installation
 title: Installation
 sidebar_label: Installation
+order: 3
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
 ${include($"${resources}/header.md")}
+
 
 ## System Requirements
 

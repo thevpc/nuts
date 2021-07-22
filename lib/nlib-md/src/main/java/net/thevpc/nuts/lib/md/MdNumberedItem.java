@@ -17,6 +17,9 @@
  */
 package net.thevpc.nuts.lib.md;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 /**
  *
  * @author thevpc
@@ -26,7 +29,6 @@ public class MdNumberedItem extends MdAbstractElement {
     private int number;
     private String sep;
     private MdElement value;
-    private int depth;
     private MdElementType id;
     private MdElement[] children;
 
@@ -34,17 +36,15 @@ public class MdNumberedItem extends MdAbstractElement {
         this.number = number;
         this.sep = sep;
         this.value = value;
-        this.depth = depth;
-        this.children = children;
-        id = new MdElementType(MdElementType0.NUMBRED_ITEM,depth);
+        if(!value.isInline()){
+            throw new IllegalArgumentException("unexpected newline element in numbered item: "+value.type());
+        }
+        this.children = children==null?new MdElement[0] :children;
+        id = new MdElementType(MdElementTypeGroup.NUMBERED_ITEM,depth);
     }
 
     public MdElement[] getChildren() {
         return children;
-    }
-
-    public int getDepth() {
-        return depth;
     }
 
     public String getSep() {
@@ -60,7 +60,7 @@ public class MdNumberedItem extends MdAbstractElement {
     }
 
     @Override
-    public MdElementType getElementType() {
+    public MdElementType type() {
         return id;
     }
 
@@ -70,5 +70,29 @@ public class MdNumberedItem extends MdAbstractElement {
         sb.append(number).append(sep).append(" ").append(getValue());
         return sb.toString();
     }
-    
+
+    @Override
+    public boolean isInline() {
+        return false;
+    }
+
+    @Override
+    public boolean isEndWithNewline() {
+        return true;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MdNumberedItem that = (MdNumberedItem) o;
+        return number == that.number && Objects.equals(sep, that.sep) && Objects.equals(value, that.value) && Objects.equals(id, that.id) && Arrays.equals(children, that.children);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(number, sep, value, id);
+        result = 31 * result + Arrays.hashCode(children);
+        return result;
+    }
 }

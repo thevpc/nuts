@@ -5,10 +5,7 @@
  */
 package net.thevpc.nuts.toolbox.ndoc.doc;
 
-import net.thevpc.nuts.lib.md.MdDocumentBuilder;
-import net.thevpc.nuts.lib.md.MdElement;
-import net.thevpc.nuts.lib.md.MdFactory;
-import net.thevpc.nuts.lib.md.MdWriter;
+import net.thevpc.nuts.lib.md.*;
 import net.thevpc.nuts.toolbox.ndoc.doc.java.JPRootDoc;
 
 import java.io.File;
@@ -450,14 +447,17 @@ public class MdDoclet /*extends Doclet*/ {
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
             }
-            MdDocumentBuilder doc = MdFactory.document();
-            doc.setId(id);
-            doc.setTitle(name);
+            List<MdElement> doc=new ArrayList<>();
+//            MdDocumentBuilder doc = MdFactory.document();
+//            doc.setId(id);
+//            doc.setTitle(name);
             for (JDClassDoc classDoc : entry.getValue()) {
-                doc.append(printClass(classDoc));
+                doc.add(printClass(classDoc));
             }
             try (MdWriter out = MdFactory.createWriter(config.getBackend(), new FileWriter(file))) {
-                out.write(doc.build());
+                out.write(new MdDocument(
+                        id,name,null,null,null,null,MdFactory.seq(doc)
+                ));
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
             }

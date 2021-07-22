@@ -17,6 +17,8 @@
  */
 package net.thevpc.nuts.lib.md;
 
+import java.util.Objects;
+
 /**
  *
  * @author thevpc
@@ -41,8 +43,30 @@ public class MdColumn extends MdAbstractElement{
     }
 
     @Override
-    public MdElementType getElementType() {
+    public MdElementType type() {
         return MdElementType.COLUMN;
     }
 
+    @Override
+    public boolean isInline() {
+        return false;
+    }
+
+    @Override
+    public boolean isEndWithNewline() {
+        return true;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MdColumn mdColumn = (MdColumn) o;
+        return Objects.equals(name, mdColumn.name) && horizontalAlign == mdColumn.horizontalAlign;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, horizontalAlign);
+    }
 }

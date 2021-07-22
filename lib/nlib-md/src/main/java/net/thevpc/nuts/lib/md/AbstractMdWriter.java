@@ -1,8 +1,8 @@
 /**
  * ====================================================================
- *            thevpc-common-md : Simple Markdown Manipulation Library
+ * thevpc-common-md : Simple Markdown Manipulation Library
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -25,17 +25,17 @@ public abstract class AbstractMdWriter implements MdWriter {
     private Writer writer;
 
 
-    public final void write(MdElement element) {
-        writeImpl(element);
-    }
-
-    public abstract void writeImpl(MdElement element) ;
-
     public AbstractMdWriter(Writer writer) {
         this.writer = writer;
     }
 
-    protected void write(String text){
+    public final void write(MdElement element) {
+        writeImpl(element, new WriteContext(null));
+    }
+
+    public abstract void writeImpl(MdElement element, WriteContext last);
+
+    protected void write(String text) {
         try {
             writer.write(text);
         } catch (IOException ex) {
@@ -43,18 +43,9 @@ public abstract class AbstractMdWriter implements MdWriter {
         }
     }
 
-    protected void writeln(){
+    public void flush() {
         try {
-            writer.write("\n");
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
-        }
-    }
-
-    protected void writeln(String text){
-        try {
-            writer.write(text);
-            writer.write("\n");
+            writer.flush();
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
@@ -66,6 +57,50 @@ public abstract class AbstractMdWriter implements MdWriter {
             writer.close();
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
+        }
+    }
+
+    protected void writeln() {
+        try {
+            writer.write("\n");
+            writer.flush();
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
+    }
+
+    protected void writeln(String text) {
+        try {
+            writer.write(text);
+            writer.write("\n");
+            writer.flush();
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
+    }
+
+    public static class WriteContext {
+        private MdElement last;
+
+        public WriteContext(MdElement last) {
+            this.last = last;
+        }
+
+        public boolean isEndWithNewline() {
+            return getLast() != null && getLast().isEndWithNewline();
+        }
+
+        public boolean hasLast() {
+            return getLast()!=null;
+        }
+
+        public MdElement getLast() {
+            return last;
+        }
+
+        public WriteContext setLast(MdElement last) {
+            this.last = last;
+            return this;
         }
     }
 }

@@ -74,18 +74,22 @@ public class MdElementPath<T extends MdElement>{
         if(parent!=null){
             prefix=parent.toString()+"/";
         }
-        switch(element.getElementType().type()){
+        switch(element.type().group()){
             case XML:{
                 return prefix+"<"+element.asXml().getTag()+">";
             }
-            case SEQ:{
-                return prefix+String.valueOf(element.getElementType())+"[..."+element.asSeq().getElements().length+"]";
+            case BODY:
+            case PHRASE:
+            case UNNUMBERED_LIST:
+            case NUMBERED_LIST:
+            {
+                return prefix+String.valueOf(element.type())+"[..."+element.asList().size()+"]";
             }
             case CODE:{
-                return prefix+String.valueOf(element.getElementType())+"("+element.asCode().getLanguage()+")";
+                return prefix+String.valueOf(element.type())+"("+element.asCode().getLanguage()+")";
             }
         }
-        return prefix+String.valueOf(element.getElementType());
+        return prefix+String.valueOf(element.type());
     }
     
 }

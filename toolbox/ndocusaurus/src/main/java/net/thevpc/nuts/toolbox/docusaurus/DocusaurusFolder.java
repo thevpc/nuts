@@ -51,8 +51,9 @@ public class DocusaurusFolder implements DocusaurusFileOrFolder {
     private int order;
     private NutsObjectElement config;
     private DocusaurusFileOrFolder[] children;
+    private String path;
 
-    public DocusaurusFolder(String longId, String title, int order, NutsObjectElement config, DocusaurusFileOrFolder[] children,MdElement tree) {
+    public DocusaurusFolder(String longId, String title, int order, NutsObjectElement config, DocusaurusFileOrFolder[] children,MdElement tree,String path) {
         this.longId = longId;
         String[] r = getPathArray(longId);
         this.shortId = r.length == 0 ? "/" : r[r.length - 1];
@@ -61,7 +62,12 @@ public class DocusaurusFolder implements DocusaurusFileOrFolder {
         this.config = config;
         this.children = children;
         this.tree = tree;
+        this.path = path;
         Arrays.sort(children, DFOF_COMPARATOR);
+    }
+
+    public String getPath() {
+        return path;
     }
 
     public MdElement getContent(NutsSession session) {
@@ -94,7 +100,7 @@ public class DocusaurusFolder implements DocusaurusFileOrFolder {
                 }
 
                 return DocusaurusFolder.ofRoot(session, children.toArray(new DocusaurusFileOrFolder[0]),
-                        baseContent==null?null:baseContent.getContent(session)
+                        baseContent==null?null:baseContent.getContent(session),path.toString()
                         );
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
@@ -143,7 +149,8 @@ public class DocusaurusFolder implements DocusaurusFileOrFolder {
                         order,
                         config.asSafeObject(),
                         children.toArray(new DocusaurusFileOrFolder[0]),
-                        baseContent==null?null:baseContent.getContent(session)
+                        baseContent==null?null:baseContent.getContent(session),
+                        path.toString()
                 );
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
@@ -153,12 +160,12 @@ public class DocusaurusFolder implements DocusaurusFileOrFolder {
         }
     }
 
-    public static DocusaurusFolder ofRoot(NutsSession session, DocusaurusFileOrFolder[] children,MdElement tree) {
-        return new DocusaurusFolder("/", "/", 0, session.getWorkspace().elem().forObject().build(), children,tree);
+    public static DocusaurusFolder ofRoot(NutsSession session, DocusaurusFileOrFolder[] children,MdElement tree,String path) {
+        return new DocusaurusFolder("/", "/", 0, session.getWorkspace().elem().forObject().build(), children,tree,path);
     }
 
-    public static DocusaurusFolder of(String longId, String title, int order, NutsObjectElement config, DocusaurusFileOrFolder... children) {
-        return new DocusaurusFolder(longId, title, order, config, children,null);
+    public static DocusaurusFolder of(String longId, String title, int order, NutsObjectElement config, DocusaurusFileOrFolder[] children,String path) {
+        return new DocusaurusFolder(longId, title, order, config, children,null,path);
     }
 
     @Override

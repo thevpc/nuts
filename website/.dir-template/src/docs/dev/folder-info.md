@@ -5,5 +5,4 @@ sidebar_label: Application Framework
 order: 4
 ---
 
-# Application Framework
-This is an introduction
+This is an introduction for Application Framework

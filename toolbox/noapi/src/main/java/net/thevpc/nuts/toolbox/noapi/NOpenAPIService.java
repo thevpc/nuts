@@ -13,6 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -158,7 +159,7 @@ public class NOpenAPIService {
         doc.setSubTitle("RESTRICTED - INTERNAL");
 
         NutsElement obj = loadElement(inputStream, json);
-        MdSequenceBuilder all = MdFactory.seq();
+        List<MdElement> all = new ArrayList<>();
         NutsObjectElement entries = obj.asObject();
         String documentTitle = entries.getObject("info").getString("title");
         doc.setTitle(documentTitle);
@@ -184,7 +185,7 @@ public class NOpenAPIService {
                                 MdFactory.text(entries.getObject("info").getObject("contact").getString("email")),
                                 MdFactory.text(entries.getObject("info").getObject("contact").getString("url"))
                         )
-                )
+                ).build()
         );
 
         all.add(MdFactory.title(3, "SERVER LIST"));
@@ -234,7 +235,7 @@ public class NOpenAPIService {
                         )
                 );
             }
-            all.add(table);
+            all.add(table.build());
         }
         if (!entries.getObject("components").getObject("securitySchemes").isEmpty()) {
             all.add(MdFactory.title(3, "SECURITY AND AUTHENTICATION"));
@@ -255,6 +256,7 @@ public class NOpenAPIService {
                                                 MdFactory.code("", ee.getValue().asObject().getString("name")),
                                                 MdFactory.code("", ee.getValue().asObject().getString("in").toUpperCase())
                                         ))
+                                .build()
                         );
                         break;
                     }
@@ -271,6 +273,7 @@ public class NOpenAPIService {
                                                 MdFactory.text(ee.getValue().asObject().getString("scheme")),
                                                 MdFactory.text(ee.getValue().asObject().getString("bearerFormat"))
                                         ))
+                                .build()
                         );
                         break;
                     }
@@ -301,6 +304,7 @@ public class NOpenAPIService {
                                         .addCells(
                                                 MdFactory.text(ee.getValue().asObject().getString("openIdConnectUrl"))
                                         ))
+                                .build()
                         );
                         break;
                     }
@@ -392,7 +396,7 @@ public class NOpenAPIService {
                         });
             }
         }
-        doc.setContent(all.build());
+        doc.setContent(MdFactory.seq(all));
         return doc.build();
     }
 

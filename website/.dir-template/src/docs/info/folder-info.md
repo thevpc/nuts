@@ -5,5 +5,4 @@ sidebar_label: Getting Started
 order: 2
 ---
 
-# Getting Started
-This is an introduction
+This is an introduction for Getting Started

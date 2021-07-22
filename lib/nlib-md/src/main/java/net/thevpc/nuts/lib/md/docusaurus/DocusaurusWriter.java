@@ -65,53 +65,160 @@ public class DocusaurusWriter extends AbstractMdWriter {
         write(document.getContent());
     }
 
-    public void writeInline(MdElement element) {
-        switch (element.getElementType().type()) {
+
+    public void writeImpl(MdElement element, WriteContext context) {
+        switch (element.type().group()) {
+            case TITLE: {
+                MdTitle t = (MdTitle) element;
+                writeln();
+                StringBuilder sb=new StringBuilder();
+                for (int i = 0; i < element.type().depth(); i++) {
+                    sb.append('#');
+                }
+                writeln(sb+" " + t.getValue());
+                break;
+            }
+            case UNNUMBERED_ITEM: {
+                MdUnNumberedItem t = (MdUnNumberedItem) element;
+                writeln();
+                StringBuilder sb=new StringBuilder();
+                for (int i = 0; i < element.type().depth(); i++) {
+                    sb.append('*');
+                }
+                write(sb+" ");
+                write(t.getValue());
+                writeln();
+                break;
+            }
+            case NUMBERED_ITEM: {
+                MdNumberedItem t = (MdNumberedItem) element;
+                writeln();
+                StringBuilder sb=new StringBuilder();
+                for (int i = 0; i < element.type().depth()-1; i++) {
+                    sb.append('\t');
+                }
+                write(sb+"1. ");
+                write(t.getValue());
+                writeln();
+                break;
+            }
+
+            case ADMONITION: {
+                MdAdmonition t = (MdAdmonition) element;
+                writeln();
+                write(t.getType().toString() + ": ");
+                write(t.getContent());
+                writeln();
+                break;
+            }
+            case BODY:
+            case UNNUMBERED_LIST:
+            case NUMBERED_LIST:
+            case PHRASE:
+            {
+                MdParent t = (MdParent) element;
+                if (t.isInline()) {
+                    for (MdElement mdElement : t.getChildren()) {
+                        write(mdElement);
+                    }
+                } else {
+                    for (MdElement mdElement : t.getChildren()) {
+                        write(mdElement);
+                        writeln();
+                    }
+                    writeln();
+                }
+                break;
+            }
+            case CODE: {
+                MdCode c = (MdCode) element;
+                if (c.isInline()) {
+                    write(" `");
+                    String r = element.asCode().getValue();
+                    StringBuilder sb = new StringBuilder();
+                    for (char cc : r.toCharArray()) {
+                        switch (cc) {
+                            case '`': {
+                                sb.append("\\`");
+                                break;
+                            }
+//                        case '_': {
+//                            sb.append("\\_");
+//                            break;
+//                        }
+                            case '\\': {
+                                sb.append("\\\\");
+                                break;
+                            }
+                            default: {
+                                sb.append(cc);
+                                break;
+                            }
+                        }
+                    }
+                    write(sb.toString());
+                    write("` ");
+                    return;
+                } else {
+                    writeln();
+                    writeln("```" + convertLanguage(c.getLanguage()));
+                    writeln(c.getValue());
+                    writeln("```");
+                }
+                break;
+            }
             case TEXT: {
+                MdText c = (MdText) element;
                 write(element.asText().getText());
-                return;
+                if(!c.isInline()) {
+                    writeln();
+                }
+                break;
             }
             case BOLD: {
                 write("**");
-                writeInline(element.asBold().getContent());
+                write(element.asBold().getContent());
                 write("**");
                 return;
             }
             case ITALIC: {
                 write("__");
-                writeInline(element.asItalic().getContent());
+                write(element.asItalic().getContent());
                 write("__");
                 return;
             }
-            case CODE: {
-                write(" `");
-                String r = element.asCode().getValue();
-                StringBuilder sb = new StringBuilder();
-                for (char c : r.toCharArray()) {
-                    switch (c) {
-                        case '`': {
-                            sb.append("\\`");
-                            break;
-                        }
-//                        case '_': {
-//                            sb.append("\\_");
-//                            break;
-//                        }
-                        case '\\': {
-                            sb.append("\\\\");
-                            break;
-                        }
-                        default: {
-                            sb.append(c);
-                            break;
-                        }
-                    }
+
+            case TABLE: {
+                MdTable tab = (MdTable) element;
+                writeln();
+                writeln("|===");
+                for (MdColumn cell : tab.getColumns()) {
+                    write("|");
+                    write(cell.getName());
+                    write(" ");
                 }
-                write(sb.toString());
-                write("` ");
+                writeln();
+                for (MdRow row : tab.getRows()) {
+                    writeln();
+                    for (MdElement cell : row.getCells()) {
+                        write("|");
+                        write(cell);
+                        write(" ");
+                    }
+                    writeln();
+                }
+                writeln("|===");
+
+                break;
+            }
+            case LINE_BREAK: {
+                writeln();
                 return;
             }
-
+            case HORIZONTAL_RULE: {
+                writeln("--------");
+                return;
+            }
             case LINK: {
                 write("link:");
                 write(element.asLink().getLinkUrl());
@@ -134,133 +241,9 @@ public class DocusaurusWriter extends AbstractMdWriter {
                 write("]");
                 return;
             }
-            case SEQ: {
-                MdSequence t = element.asSeq();
-                for (MdElement mdElement : t.getElements()) {
-                    writeInline(mdElement);
-                }
-                return;
-            }
-            case LINE_BREAK: {
-                writeln();
-                return;
-            }
-            case HORIZONTAL_RULE: {
-                writeln("--------");
-                return;
-            }
-        }
-        throw new IllegalArgumentException("Unable to inline " + element.getElementType());
-    }
 
-    public void writeImpl(MdElement element) {
-        switch (element.getElementType().type()) {
-            case TITLE: {
-                MdTitle t = (MdTitle) element;
-                writeln();
-                StringBuilder sb=new StringBuilder();
-                for (int i = 0; i < element.getElementType().depth(); i++) {
-                    sb.append('#');
-                }
-                writeln(sb+" " + t.getValue());
-                break;
-            }
-            case UNNUMBRED_ITEM: {
-                MdUnNumberedItem t = (MdUnNumberedItem) element;
-                writeln();
-                StringBuilder sb=new StringBuilder();
-                for (int i = 0; i < element.getElementType().depth(); i++) {
-                    sb.append('*');
-                }
-                write(sb+" ");
-                writeInline(t.getValue());
-                writeln();
-                break;
-            }
-            case NUMBRED_ITEM: {
-                MdNumberedItem t = (MdNumberedItem) element;
-                writeln();
-                StringBuilder sb=new StringBuilder();
-                for (int i = 0; i < element.getElementType().depth()-1; i++) {
-                    sb.append('\t');
-                }
-                write(sb+"1. ");
-                writeInline(t.getValue());
-                writeln();
-                break;
-            }
-
-            case ADMONITION: {
-                MdAdmonition t = (MdAdmonition) element;
-                writeln();
-                write(t.getType().toString() + ": ");
-                write(t.getContent());
-                writeln();
-                break;
-            }
-            case SEQ: {
-                MdSequence t = (MdSequence) element;
-                if (t.isInline()) {
-                    for (MdElement mdElement : t.getElements()) {
-                        writeInline(mdElement);
-                    }
-                } else {
-                    for (MdElement mdElement : t.getElements()) {
-                        write(mdElement);
-                    }
-                }
-                break;
-            }
-            case CODE: {
-                MdCode c = (MdCode) element;
-                if (c.isInline()) {
-                    writeInline(c);
-                } else {
-                    writeln();
-                    writeln("```" + convertLanguage(c.getLanguage()));
-                    writeln(c.getValue());
-                    writeln("```");
-                }
-                break;
-            }
-            case TEXT: {
-                MdText c = (MdText) element;
-                writeln(c.getText());
-                break;
-            }
-            case TABLE: {
-                MdTable tab = (MdTable) element;
-                writeln();
-                writeln("|===");
-                for (MdColumn cell : tab.getColumns()) {
-                    write("|");
-                    writeInline(cell.getName());
-                    write(" ");
-                }
-                writeln();
-                for (MdRow row : tab.getRows()) {
-                    writeln();
-                    for (MdElement cell : row.getCells()) {
-                        write("|");
-                        writeInline(cell);
-                        write(" ");
-                    }
-                    writeln();
-                }
-                writeln("|===");
-
-                break;
-            }
-            case LINE_BREAK: {
-                writeln();
-                return;
-            }
-            case HORIZONTAL_RULE: {
-                writeln("--------");
-                return;
-            }
             default:{
-                throw new IllegalArgumentException("Unable to write " + element.getElementType());
+                throw new IllegalArgumentException("Unable to write " + element.type());
             }
         }
     }
