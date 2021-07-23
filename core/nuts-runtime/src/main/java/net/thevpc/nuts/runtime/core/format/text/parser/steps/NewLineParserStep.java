@@ -22,7 +22,7 @@ public class NewLineParserStep extends ParserStep {
         if(c=='\n') {
             start.append(c);
         }else /*if(c=='#')*/{
-            state.applyPopReject(c);
+            state.applyPopReplay(c);
 //        }else if(c=='#'){
 //            state.applyAppendSibling(new PlainParserStep(start.toString(),state.isSpreadLine(),false,session.getWorkspace(),state,null));
 //            state.applyDropReplace(new StyledParserStep(c,true,session.getWorkspace(),state));

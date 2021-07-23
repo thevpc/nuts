@@ -60,6 +60,54 @@ public class Test12_ParseNTF {
         System.out.println(parsed);
     }
 
+    @Test
+    public void test2() {
+        Map<String, String> extraProperties = new HashMap<>();
+        extraProperties.put("nuts.export.always-show-command", "true");
+        TestUtils.setSystemProperties(extraProperties);
+        String wsPath = baseFolder + "/" + TestUtils.getCallerMethodName();
+        NutsWorkspace ws = Nuts.openWorkspace("--workspace", wsPath,
+                "--standalone",
+                "-Z",
+                "--yes",
+                "--skip-companions");
+        NutsSession session = ws.createSession();
+        NutsTextManager txt = session.getWorkspace().text();
+
+//        String str="missing command. try ```sh ndocusaurus pdf | start | build```";
+        String str="##:p2:╭───╮##\u001E\n##:p3:│##";
+        NutsText q = txt.forStyled(txt.parse(str), NutsTextStyle.error());
+        String qs=q.toString();
+        NutsText q2 = txt.parse(qs);
+        q2 = txt.parse(qs);
+        System.out.println(qs);
+        NutsText parsed = txt.parse("##:error0:n#01##");
+        System.out.println(parsed);
+    }
+
+    @Test
+    public void test3() {
+        Map<String, String> extraProperties = new HashMap<>();
+        extraProperties.put("nuts.export.always-show-command", "true");
+        TestUtils.setSystemProperties(extraProperties);
+        String wsPath = baseFolder + "/" + TestUtils.getCallerMethodName();
+        NutsWorkspace ws = Nuts.openWorkspace("--workspace", wsPath,
+                "--standalone",
+                "-Z",
+                "--yes",
+                "--skip-companions");
+        NutsSession session = ws.createSession();
+        NutsTextManager txt = session.getWorkspace().text();
+
+//        String str="missing command. try ```sh ndocusaurus pdf | start | build```";
+        String str="##:p2:╭───╮##\u001E\n##:p3:│##";
+        NutsText q = txt.parse(str);
+        q = txt.parse(str);
+        System.out.println(q);
+        NutsText parsed = txt.parse("##:error0:n#01##");
+        System.out.println(parsed);
+    }
+
 
 
     @BeforeAll

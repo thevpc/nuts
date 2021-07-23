@@ -207,7 +207,7 @@ public class DefaultNutsTextManager implements NutsTextManager {
         return fg(image, 6);
     }    @Override
     public NutsTextStyled forStyled(NutsString other, NutsTextStyle decorations) {
-        return forStyled(other.toString(), decorations);
+        return forStyled(other.toText(), decorations);
     }
 
     public NutsText commandName(String image) {
@@ -222,7 +222,7 @@ public class DefaultNutsTextManager implements NutsTextManager {
     }    @Override
     public NutsTextStyled forStyled(NutsString other, NutsTextStyles decorations) {
         checkSession();
-        return forStyled(session.getWorkspace().text().parse(other.toString()), decorations);
+        return forStyled(other.toText(), decorations);
     }
 
     public NutsText subCommand2Name(String image) {

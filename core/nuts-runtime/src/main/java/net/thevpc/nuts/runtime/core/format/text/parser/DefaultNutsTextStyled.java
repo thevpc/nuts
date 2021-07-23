@@ -49,6 +49,11 @@ public class DefaultNutsTextStyled extends AbstractNutsText implements NutsTextS
     }
 
     @Override
+    public boolean isEmpty() {
+        return false;
+    }
+
+    @Override
     public NutsTextStyles getStyles() {
         return textStyles;
     }

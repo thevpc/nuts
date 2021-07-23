@@ -327,6 +327,7 @@ public class SimpleJson implements NutsElementStreamFormat {
                 array.add(readValue());
                 skipWhiteSpaceAndComments();
             } while (readChar(','));
+            skipWhiteSpaceAndComments();
             if (!readChar(']')) {
                 throw expected("',' or ']'");
             }
@@ -707,11 +708,11 @@ public class SimpleJson implements NutsElementStreamFormat {
                         sb.append((char) current);
                         readNext();//skip /*
                         while (current > 0) {
-                            if (current == '/' && "*/".equals(foreSeek(2))) {
+                            if (current == '*' && "*/".equals(foreSeek(2))) {
                                 sb.append((char) current);
                                 readNext();
                                 sb.append((char) current);
-                                readNext();//skip /*
+                                readNext();//skip */
                                 break;
                             }
                             sb.append((char) current);

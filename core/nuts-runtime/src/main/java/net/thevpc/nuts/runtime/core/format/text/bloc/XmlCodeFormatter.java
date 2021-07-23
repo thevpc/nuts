@@ -130,6 +130,6 @@ public class XmlCodeFormatter implements NutsCodeFormat {
             }
             last.add(st.image == null ? "" : st.image);
         }
-        return factory.forList(nodes);
+        return factory.forList(nodes).simplify();
     }
 }

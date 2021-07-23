@@ -63,6 +63,16 @@ public class DefaultNutsTextList extends AbstractNutsText implements NutsTextLis
     }
 
     @Override
+    public boolean isEmpty() {
+        for (NutsText child : children) {
+            if(!child.isEmpty()){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
     public NutsTextType getType() {
         return NutsTextType.LIST;
     }

@@ -97,7 +97,7 @@ public class AntiQuote3ParserStep extends ParserStep {
                 } else {
                     if(end.length()==maxSize){
                         //!!excellent
-                        p.applyPopReject(c);
+                        p.applyPopReplay(c);
                     }else {
                         value.append(end);
                         end.delete(0, end.length());

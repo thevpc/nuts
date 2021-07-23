@@ -51,5 +51,9 @@ public class DefaultNutsTextLink extends NutsTextSpecialBase implements NutsText
     public NutsTextType getType() {
         return NutsTextType.LINK;
     }
+    @Override
+    public boolean isEmpty() {
+        return false;
+    }
 
 }

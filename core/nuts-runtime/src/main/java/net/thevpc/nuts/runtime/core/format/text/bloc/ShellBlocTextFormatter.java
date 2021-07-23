@@ -677,7 +677,7 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
             }
             all.add(commandToNode(line, session));
         }
-        return factory.forList(all);
+        return factory.forList(all).simplify();
     }
 
     public NutsText next(StringReaderExt reader, boolean exitOnClosedCurlBrace, boolean exitOnClosedPar, boolean exitOnDblQuote, boolean exitOnAntiQuote) {
@@ -844,7 +844,7 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
                         } else {
                             exit = true;
                         }
-                        all.add(factory.forList(a));
+                        all.add(factory.forList(a).simplify());
                     }
                     break;
                 }
@@ -1029,7 +1029,7 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
                 }
             }
         }
-        return factory.forList(all);
+        return factory.forList(all).simplify();
     }
 
     private NutsText nextDollar(StringReaderExt reader) {
@@ -1044,7 +1044,7 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
                     if (reader.hasNext() && reader.peekChar() == ')') {
                         a.add(factory.forStyled(reader.nextChars(1), NutsTextStyle.separator()));
                     }
-                    return factory.forList(a);
+                    return factory.forList(a).simplify();
                 }
                 case '{': {
                     List<NutsText> a = new ArrayList<>();
@@ -1053,7 +1053,7 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
                     if (reader.hasNext() && reader.peekChar() == ')') {
                         a.add(factory.forStyled(reader.nextChars(1), NutsTextStyle.separator()));
                     }
-                    return factory.forList(a);
+                    return factory.forList(a).simplify();
                 }
                 case '$':
                 case '*':
@@ -1127,7 +1127,7 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
                     } else {
                         exit = true;
                     }
-                    all.add(factory.forList(a));
+                    all.add(factory.forList(a).simplify());
                     break;
                 }
                 default: {
@@ -1139,7 +1139,7 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
             all.add(factory.forStyled(sb.toString(), NutsTextStyle.string()));
             sb.setLength(0);
         }
-        return factory.forList(all);
+        return factory.forList(all).simplify();
     }
 
     public NutsText commandToNode(String text, NutsSession session) {

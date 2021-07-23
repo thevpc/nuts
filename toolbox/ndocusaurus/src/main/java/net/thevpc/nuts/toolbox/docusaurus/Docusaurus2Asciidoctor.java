@@ -41,8 +41,22 @@ public class Docusaurus2Asciidoctor {
 
     public Path getAdocFile() {
         String asciiDoctorBaseFolder = getAsciiDoctorBaseFolder();
-        String pn = project.getProjectName();
-        if (pn == null || pn.isEmpty()) {
+        String pdfOutput = getAsciiDoctorConfig().getSafeObject("pdf").getSafeString("output");
+        String pn=null;
+        if(pdfOutput!=null && pdfOutput.endsWith(".pdf")){
+            String pn0 = Paths.get(pdfOutput).getFileName().toString();
+            pn0=pn0.substring(0,pn0.length()-4);
+            if(pn0.length()>0){
+                pn=pn0;
+            }
+        }
+        if(pn==null){
+            String pn0 = project.getProjectName();
+            if(pn0!=null && pn0.length()>0){
+                pn=pn0;
+            }
+        }
+        if(pn==null){
             pn = "docusaurus";
         }
         return toCanonicalFile(Paths.get(asciiDoctorBaseFolder).resolve(pn + ".adoc"));

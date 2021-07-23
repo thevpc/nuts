@@ -385,7 +385,7 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
             onNewChar(c);
         }
 
-        public void applyPopReject(char rejected) {
+        public void applyPopReplay(char rejected) {
             ParserStep tt = statusStack.peek();
             ParserStep p = applyPop();
             boolean wasNewLine=

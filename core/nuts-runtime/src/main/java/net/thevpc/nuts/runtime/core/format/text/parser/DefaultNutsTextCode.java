@@ -52,6 +52,11 @@ public class DefaultNutsTextCode extends NutsTextSpecialBase implements NutsText
     }
 
     @Override
+    public boolean isEmpty() {
+        return false;
+    }
+
+    @Override
     public NutsText parse(NutsSession session) {
         NutsCodeFormat t = ((DefaultNutsTextManager) getWorkspace().text())
                 .setSession(session)

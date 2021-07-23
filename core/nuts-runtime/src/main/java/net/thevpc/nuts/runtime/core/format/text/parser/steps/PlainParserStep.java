@@ -60,7 +60,7 @@ public class PlainParserStep extends ParserStep {
                     return;
                 } else {
                     if (exitCondition != null && exitCondition.test(c)) {
-                        p.applyPopReject(c);
+                        p.applyPopReplay(c);
                         return;
                     } else {
                         if (oldLast == c) {
@@ -73,7 +73,7 @@ public class PlainParserStep extends ParserStep {
                                 return;
                             }
                         }
-                        p.applyPopReject(c);
+                        p.applyPopReplay(c);
                         return;
                     }
                 }
@@ -90,7 +90,7 @@ public class PlainParserStep extends ParserStep {
                     return;
                 } else {
                     if (exitCondition != null && exitCondition.test(c)) {
-                        p.applyPopReject(c);
+                        p.applyPopReplay(c);
                         return;
                     } else {
                         p.applyPop();
@@ -119,10 +119,10 @@ public class PlainParserStep extends ParserStep {
                     return;
                 } else {
                     if (exitCondition != null && exitCondition.test(c)) {
-                        p.applyPopReject(c);
+                        p.applyPopReplay(c);
                         return;
                     } else {
-                        p.applyPopReject(c);
+                        p.applyPopReplay(c);
                         return;
                     }
                 }
@@ -150,7 +150,7 @@ public class PlainParserStep extends ParserStep {
                     p.forceEnding();
 //                        }
                 } else {
-                    p.applyPopReject(c);
+                    p.applyPopReplay(c);
                 }
 //                }
                 return;
@@ -231,7 +231,7 @@ public class PlainParserStep extends ParserStep {
                     return;
                 }
                 if (exitCondition != null && exitCondition.test(c)) {
-                    p.applyPopReject(c);
+                    p.applyPopReplay(c);
                 } else {
                     value.append(c);
                 }

@@ -217,7 +217,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
 
     @Override
     public NutsCommandLine required(String errorMessage) {
-        return required(getWorkspace().text().toText(errorMessage));
+        return required(getWorkspace().text().parse(errorMessage));
     }
 
     @Override

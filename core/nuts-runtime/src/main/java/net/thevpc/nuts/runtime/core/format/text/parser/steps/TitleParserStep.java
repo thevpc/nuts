@@ -24,7 +24,7 @@ public class TitleParserStep extends ParserStep {
         if (c == ' ' && children.isEmpty()) {
             start.append(c);
         } else if (c == '\n' || c == '\r') {
-            p.applyPopReject(c);
+            p.applyPopReplay(c);
         } else {
             p.applyStart(c, false, false);
         }
@@ -49,7 +49,7 @@ public class TitleParserStep extends ParserStep {
             for (ParserStep a : children) {
                 all.add(a.toText());
             }
-            child= ws.text().forList(all);
+            child= ws.text().forList(all).simplify();
         }
         return factory0.createTitle(s,s0.length()-1 ,child,isComplete());
     }

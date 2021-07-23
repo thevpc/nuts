@@ -173,7 +173,13 @@ public class DefaultNutsTextNodeBuilder implements NutsTextBuilder {
 
     @Override
     public NutsText build() {
-        return text1.forList(all);
+        if(all.size()==0){
+            return text1.forPlain("");
+        }
+        if(all.size()==1){
+            return all.get(0);
+        }
+        return text1.forList(all).simplify();
     }
 
     @Override

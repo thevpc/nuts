@@ -18,6 +18,6 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-/asciidoctor/docusaurus.adoc
+/asciidoctor/*.adoc
 /sidebars-old.js
 /docs/

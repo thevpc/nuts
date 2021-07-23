@@ -6,7 +6,7 @@ module.exports = {
   onBrokenLinks: 'log',
   favicon: 'img/favicon.ico',
   organizationName: 'facebook', // Usually your GitHub org/user name.
-  projectName: 'docusaurus', // Usually your repo name.
+  projectName: 'nuts', // Usually your repo name.
   themeConfig: {
     navbar: {
       title: 'Nuts Package Manager',
@@ -46,6 +46,11 @@ module.exports = {
             {
               label: 'Change Log',
               to: 'docs/info/changelog',
+            },
+            {
+              label: 'PDF Documentation',
+              to: 'pdf/nuts-documentation.pdf',
+              target: "_blank"
             },
           ],
         },
@@ -144,7 +149,7 @@ module.exports = {
                         '-a', 'pdf-fontsdir=${asciidoctor.baseDir}/resources/fonts/;GEM_FONTS_DIR',
                     ]
                 },
-                output:'static/pdf/',
+                output:'static/pdf/nuts-documentation.pdf',
             }
         }
     },

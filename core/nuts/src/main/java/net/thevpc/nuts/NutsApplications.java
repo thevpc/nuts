@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages and libraries
  * for runtime execution. Nuts is the ultimate companion for maven (and other
@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,6 +40,12 @@ public final class NutsApplications {
     private static final ThreadLocal<Map<String, Object>> sharedMap = new ThreadLocal<>();
 
     /**
+     * private constructor
+     */
+    private NutsApplications() {
+    }
+
+    /**
      * a thread local map used to share information between workspace and
      * embedded applications.
      *
@@ -54,12 +60,6 @@ public final class NutsApplications {
         return m;
     }
 
-    /**
-     * private constructor
-     */
-    private NutsApplications() {
-    }
-
     public static void runApplicationAndExit(NutsApplication application, String[] args) {
         try {
             application.run(args);
@@ -70,24 +70,25 @@ public final class NutsApplications {
         System.exit(0);
     }
 
-    public static <T extends NutsApplication> T createApplicationInstance(Class<T> appType){
+    public static <T extends NutsApplication> T createApplicationInstance(Class<T> appType) {
         T newInstance;
         try {
             newInstance = appType.newInstance();
             return newInstance;
         } catch (InstantiationException ex) {
             Throwable c = ex.getCause();
-            if(c instanceof RuntimeException){
-                throw (RuntimeException)c;
+            if (c instanceof RuntimeException) {
+                throw (RuntimeException) c;
             }
-            if(c instanceof Error){
-                throw (Error)c;
+            if (c instanceof Error) {
+                throw (Error) c;
             }
-            throw new NutsBootException("unable to instantiate "+appType.getName(),ex);
+            throw new NutsBootException("unable to instantiate " + appType.getName(), ex);
         } catch (IllegalAccessException ex) {
-            throw new NutsBootException("illegal access to default constructor for "+appType.getName(),ex);
+            throw new NutsBootException("illegal access to default constructor for " + appType.getName(), ex);
         }
     }
+
     /**
      * run application with given life cycle.
      *
@@ -111,7 +112,7 @@ public final class NutsApplications {
         }
         ws.log().setSession(session).of(NutsApplications.class).with().session(session).level(Level.FINE).verb(NutsLogVerb.START).formatted()
                 .log("running application {0}: {1} {2}", inherited ? "(inherited)" : "",
-                        applicationInstance, ws.commandLine().setSession(session).create(args)
+                        applicationInstance.getClass().getName(), ws.commandLine().setSession(session).create(args)
                 );
         NutsApplicationContext applicationContext = null;
         applicationContext = applicationInstance.createApplicationContext(ws, args, startTimeMillis);
@@ -203,7 +204,7 @@ public final class NutsApplications {
             } else {
                 errorCode = ex2.getExitCode();
             }
-        }else if (ex instanceof NutsExecutionException) {
+        } else if (ex instanceof NutsExecutionException) {
             NutsExecutionException ex2 = (NutsExecutionException) ex;
             if (ex2.getExitCode() == 0) {
                 return 0;
@@ -211,14 +212,18 @@ public final class NutsApplications {
                 errorCode = ex2.getExitCode();
             }
         }
+        NutsSession session = null;
+        NutsString fm = null;
+        if (ex instanceof NutsException) {
+            NutsException ne = (NutsException) ex;
+            session = ne.getSession();
+            fm = ne.getFormattedMessage();
+        }
         String m = ex.getMessage();
         if (m == null || m.length() < 5) {
             m = ex.toString();
         }
-        NutsSession session = null;
-        if (ex instanceof NutsException) {
-            session = ((NutsException) ex).getSession();
-        }
+
         if (session == null) {
             if (ex instanceof NutsSecurityException) {
                 session = ((NutsSecurityException) ex).getSession();
@@ -239,23 +244,60 @@ public final class NutsApplications {
 //        if (showTrace) {
 //            LOG.log(Level.SEVERE, m, ex);
 //        }
-        if (out == null && session != null) {
-            try {
-                out = session.getWorkspace().term().getSystemTerminal().getOut().asPrintStream();
-                m = "```error " + m + "```";
-            } catch (Exception ex2) {
-                session.getWorkspace().log().of(NutsApplications.class).with().level(Level.FINE).error(ex2).log("unable to get system terminal");
-                //
+        NutsPrintStream fout = null;
+        if (out == null) {
+            if (session != null) {
+                try {
+                    fout = session.getWorkspace().term().getSystemTerminal().getErr();
+                    if (fm != null) {
+                        fm = session.getWorkspace().text().forStyled(fm, NutsTextStyle.error());
+                    } else {
+                        fm = session.getWorkspace().text().forStyled(m, NutsTextStyle.error());
+                    }
+                } catch (Exception ex2) {
+                    session.getWorkspace().log().of(NutsApplications.class).with().level(Level.FINE).error(ex2).log("unable to get system terminal");
+                    //
+                }
+            } else {
+                if (fm != null) {
+                    // session is null but the exception is of NutsException type
+                    // This is kind of odd, so will ignore message fm
+                    fm = null;
+                } else {
+                    out = System.err;
+                }
+            }
+        } else {
+            if (session != null) {
+                fout = session.getWorkspace().io().createPrintStream(out, NutsTerminalMode.FORMATTED);
+            } else {
+                fout = null;
             }
         }
-        if (out == null) {
-            out = System.err;
+        if(fout!=null){
+            if(fm!=null) {
+                fout.println(fm);
+            }else{
+                fout.println(m);
+            }
+            if (showTrace) {
+                ex.printStackTrace(fout.asPrintStream());
+            }
+            fout.flush();
+        }else {
+            if(out==null){
+                out=System.err;
+            }
+            if(fm!=null) {
+                out.println(fm);
+            }else{
+                out.println(m);
+            }
+            if (showTrace) {
+                ex.printStackTrace(out);
+            }
+            out.flush();
         }
-        out.println(m);
-        if (showTrace) {
-            ex.printStackTrace(out);
-        }
-        out.flush();
         return (errorCode);
     }
 }

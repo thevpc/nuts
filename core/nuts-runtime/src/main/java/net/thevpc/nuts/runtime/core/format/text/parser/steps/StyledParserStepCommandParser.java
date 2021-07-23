@@ -172,7 +172,7 @@ public class StyledParserStepCommandParser {
             }
         }
         if (x > 0) {
-            if (!r.hasNext(x) || !isDigitChar(r.peekChar(from+x))) {
+            if (!r.hasNext(from+x) || !isDigitChar(r.peekChar(from+x))) {
                 try {
                     Integer.parseInt(s.toString());
                     return s.toString();
@@ -196,6 +196,18 @@ public class StyledParserStepCommandParser {
             return true;
         }
         return false;
+    }
+
+    public NutsTextStyle parseSimpleNutsTextStyle(String str) {
+        StringReaderExt e=new StringReaderExt(str);
+        NutsTextStyle a = readNext(e);
+        if(a==null){
+            return null;
+        }
+        if(e.hasNext()){
+            return null;
+        }
+        return a;
     }
 
     private NutsTextStyle readNext(StringReaderExt r) {

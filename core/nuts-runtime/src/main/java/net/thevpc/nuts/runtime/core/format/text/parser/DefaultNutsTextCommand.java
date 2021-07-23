@@ -47,6 +47,10 @@ public class DefaultNutsTextCommand extends NutsTextSpecialBase implements NutsT
                 , end);
         this.command = command;
     }
+    @Override
+    public boolean isEmpty() {
+        return command==null;
+    }
 
     public static AnsiEscapeCommand parseAnsiEscapeCommand(NutsTerminalCommand v, NutsWorkspace ws) {
         //this might be a command !!

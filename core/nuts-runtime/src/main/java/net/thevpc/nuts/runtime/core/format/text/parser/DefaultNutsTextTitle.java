@@ -47,6 +47,11 @@ public class DefaultNutsTextTitle extends AbstractNutsText implements NutsTextTi
         this.child = child;
     }
 
+    @Override
+    public boolean isEmpty() {
+        return false;
+    }
+
     public int getLevel() {
         return level;
     }

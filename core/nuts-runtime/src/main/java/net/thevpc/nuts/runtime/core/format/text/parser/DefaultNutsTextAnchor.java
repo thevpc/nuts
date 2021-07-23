@@ -50,5 +50,9 @@ public class DefaultNutsTextAnchor extends NutsTextSpecialBase implements NutsTe
     public NutsTextType getType() {
         return NutsTextType.ANCHOR;
     }
+    @Override
+    public boolean isEmpty() {
+        return false;
+    }
 
 }

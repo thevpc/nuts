@@ -77,7 +77,10 @@ function Home() {
                         'button button--secondary button--lg',
                         styles.getStarted,
                         )}
-                    to={'https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/0.8.1/nuts-0.8.1.jar'}>
+                    href={'nuts.jar'}
+                    target="_blank"
+                    >
+
                 Download
                 </Link>
             </div>
