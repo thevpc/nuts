@@ -53,7 +53,7 @@ public class NutsAdminServerComponent implements NutsServerComponent {
     public NutsServer start(NutsSession invokerWorkspace, ServerConfig config) {
         AdminServerConfig httpConfig = (AdminServerConfig) config;
         if (invokerWorkspace == null) {
-            throw new NutsIllegalArgumentException(invokerWorkspace, "missing workspace");
+            throw new NutsIllegalArgumentException(invokerWorkspace, NutsMessage.cstyle("missing workspace"));
         }
         NutsSession session = invokerWorkspace;
         String serverId = httpConfig.getServerId();

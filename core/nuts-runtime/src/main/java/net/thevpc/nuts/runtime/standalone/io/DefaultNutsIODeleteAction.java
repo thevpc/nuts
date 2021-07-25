@@ -1,10 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.io;
 
-import net.thevpc.nuts.NutsIODeleteAction;
-import net.thevpc.nuts.NutsException;
-import net.thevpc.nuts.NutsLogger;
-import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.NutsLogVerb;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 
 import java.io.FileNotFoundException;
@@ -37,9 +33,9 @@ public class DefaultNutsIODeleteAction extends AbstractNutsIODeleteAction {
         Path t = CoreIOUtils.toPath(getTarget());
         if (t == null) {
             if (getTarget() == null) {
-                throw new NutsException(getSession(), "missing target to delete");
+                throw new NutsException(getSession(), NutsMessage.formatted("missing target to delete"));
             }
-            throw new NutsException(getSession(), "unsupported target to delete");
+            throw new NutsException(getSession(), NutsMessage.cstyle("unsupported target to delete: %s",getTarget()));
         }
         if (!Files.exists(t)) {
             grabException(new FileNotFoundException(t.toString()));

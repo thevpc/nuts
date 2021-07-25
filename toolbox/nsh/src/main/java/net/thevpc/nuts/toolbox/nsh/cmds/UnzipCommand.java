@@ -115,7 +115,7 @@ public class UnzipCommand extends SimpleNshBuiltin {
                                                     .run();
                 }
             } catch (UncheckedIOException| NutsIOException ex) {
-                throw new NutsExecutionException(context.getSession(), ex.getMessage(), ex, 1);
+                throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("%s",ex), ex, 1);
             }
         }
     }

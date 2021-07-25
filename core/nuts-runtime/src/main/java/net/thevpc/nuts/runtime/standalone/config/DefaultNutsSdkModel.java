@@ -36,16 +36,16 @@ public class DefaultNutsSdkModel {
 //        session = CoreNutsUtils.validate(session, workspace);
         if (location != null) {
             if (CoreStringUtils.isBlank(location.getProduct())) {
-                throw new NutsIllegalArgumentException(session, "sdk type should not be null");
+                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("sdk type should not be null"));
             }
             if (CoreStringUtils.isBlank(location.getName())) {
-                throw new NutsIllegalArgumentException(session, "sdk name should not be null");
+                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("sdk name should not be null"));
             }
             if (CoreStringUtils.isBlank(location.getVersion())) {
-                throw new NutsIllegalArgumentException(session, "sdk version should not be null");
+                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("sdk version should not be null"));
             }
             if (CoreStringUtils.isBlank(location.getPath())) {
-                throw new NutsIllegalArgumentException(session, "sdk path should not be null");
+                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("sdk path should not be null"));
             }
             List<NutsSdkLocation> list = getSdk().get(location.getProduct());
             if (list == null) {

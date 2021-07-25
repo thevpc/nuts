@@ -27,6 +27,7 @@ package net.thevpc.nuts.runtime.standalone.io.progress;
 
 import net.thevpc.nuts.NutsProgressMonitor;
 import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NutsString;
 import net.thevpc.nuts.runtime.bundles.io.*;
 import net.thevpc.nuts.runtime.standalone.io.progress.DefaultNutsProgressEvent;
 
@@ -46,12 +47,12 @@ public class MonitoredInputStream extends InputStream implements InputStreamMeta
     private final long length;
     private final NutsProgressMonitor monitor;
     private final Object source;
-    private final String sourceName;
+    private final NutsString sourceName;
     private boolean completed = false;
     private boolean interrupted = false;
     private NutsSession session;
 
-    public MonitoredInputStream(InputStream base, Object source, String sourceName, long length, NutsProgressMonitor monitor, NutsSession session) {
+    public MonitoredInputStream(InputStream base, Object source, NutsString sourceName, long length, NutsProgressMonitor monitor, NutsSession session) {
         this.base = base;
         this.session = session;
         if (monitor == null) {

@@ -45,10 +45,10 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
             int speed,
             boolean supportedMirroring, String repositoryType) {
         if (options == null) {
-            throw new NutsIllegalArgumentException(session, "missing repository options");
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing repository options"));
         }
         if (options.getConfig() == null) {
-            throw new NutsIllegalArgumentException(session, "missing repository options config");
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing repository options config"));
         }
         this.repositoryRef = CoreNutsUtils.optionsToRef(options);
 //        NutsSession session = options.getSession();
@@ -60,20 +60,20 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
         speed = Math.max(0, speed);
 
         if (CoreStringUtils.isBlank(repositoryType)) {
-            throw new NutsIllegalArgumentException(session, "missing repository type");
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing repository type"));
         }
         if (CoreStringUtils.isBlank(repositoryName)) {
-            throw new NutsIllegalArgumentException(session, "missing repository name");
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing repository name"));
         }
         if (CoreStringUtils.isBlank(globalName)) {
-            throw new NutsIllegalArgumentException(session, "missing repository global name");
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing repository global name"));
         }
         if (CoreStringUtils.isBlank(storeLocation)) {
-            throw new NutsIllegalArgumentException(session, "missing folder");
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing folder"));
         }
         Path pfolder = Paths.get(storeLocation);
         if ((Files.exists(pfolder) && !Files.isDirectory(pfolder))) {
-            throw new NutsInvalidRepositoryException(session, storeLocation, "unable to resolve root as a valid folder " + storeLocation);
+            throw new NutsInvalidRepositoryException(session, storeLocation, NutsMessage.cstyle("unable to resolve root as a valid folder %s",storeLocation));
         }
 
         this.repositoryRegistryHelper = new NutsRepositoryRegistryHelper(repository.getWorkspace());
@@ -239,7 +239,7 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
 
                 }
                 default: {
-                    throw new NutsIllegalArgumentException(session, "unsupported strategy type " + getStoreLocation());
+                    throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unsupported strategy type %s", getStoreLocation()));
                 }
             }
         }
@@ -255,7 +255,7 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
 
     public void setConfig(NutsRepositoryConfig newConfig, NutsSession session, boolean fireChange) {
         if (newConfig == null) {
-            throw new NutsIllegalArgumentException(session, "missing config");
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing config"));
         }
 //        options = CoreNutsUtils.validate(options, repository.getWorkspace());
         this.config = newConfig;
@@ -271,7 +271,9 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
             fireChange = true;
             config.setType(repositoryType);
         } else if (!config.getType().equals(repositoryType)) {
-            throw new NutsIllegalArgumentException(session, "invalid Repository Type : expected " + repositoryType + ", found " + config.getType());
+            throw new NutsIllegalArgumentException(session,
+                    NutsMessage.cstyle("invalid Repository Type : expected %s, found %s" ,repositoryType, config.getType())
+                    );
         }
 
         this.globalName = newConfig.getName();
@@ -556,7 +558,11 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
                     if (y == null) {
                         y = m;
                     } else {
-                        throw new NutsIllegalArgumentException(session, "ambiguous repository name " + repositoryNameOrId + " ; found two Ids " + y.getUuid() + " and " + m.getUuid());
+                        throw new NutsIllegalArgumentException(session,
+                                NutsMessage.cstyle("ambiguous repository name %s ; found two Ids %s and %s",
+                                        repositoryNameOrId ,y.getUuid() ,m.getUuid()
+                                )
+                        );
                     }
                 }
 
@@ -579,7 +585,11 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
                     if (y == null) {
                         y = m;
                     } else {
-                        throw new NutsIllegalArgumentException(session, "ambiguous repository name " + repositoryNameOrId + " ; found two Ids " + y.getUuid() + " and " + m.getUuid());
+                        throw new NutsIllegalArgumentException(session,
+                                NutsMessage.cstyle("ambiguous repository name %s ; found two Ids %s and %s",
+                                        repositoryNameOrId ,y.getUuid() ,m.getUuid()
+                                )
+                        );
                     }
                 }
 
@@ -602,7 +612,11 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
                     if (y == null) {
                         y = m;
                     } else {
-                        throw new NutsIllegalArgumentException(session, "ambiguous repository name " + repositoryNameOrId + "; found two Ids " + y.getUuid() + " and " + m.getUuid());
+                        throw new NutsIllegalArgumentException(session,
+                                NutsMessage.cstyle("ambiguous repository name %s ; found two Ids %s and %s",
+                                        repositoryNameOrId ,y.getUuid() ,m.getUuid()
+                                )
+                        );
                     }
                 }
 

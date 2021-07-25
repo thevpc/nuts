@@ -8,6 +8,7 @@ package net.thevpc.nuts.toolbox.ncode;
 import net.thevpc.nuts.NutsApplication;
 import net.thevpc.nuts.NutsApplicationContext;
 import net.thevpc.nuts.NutsCommandLine;
+import net.thevpc.nuts.NutsMessage;
 import net.thevpc.nuts.toolbox.ncode.bundles.strings.StringComparator;
 import net.thevpc.nuts.toolbox.ncode.bundles.strings.StringComparators;
 import net.thevpc.nuts.toolbox.ncode.filters.JavaSourceFilter;
@@ -152,7 +153,7 @@ public class NCodeMain implements NutsApplication {
             applicationContext.getSession().formatObject(results).println();
         } else if (file != null) {
             if (paths.isEmpty()) {
-                cmdLine.throwError("missing location");
+                cmdLine.throwError(NutsMessage.cstyle("missing location"));
                 return;
             }
             List<Object> results=new ArrayList<>();
@@ -161,7 +162,7 @@ public class NCodeMain implements NutsApplication {
             }
             applicationContext.getSession().formatObject(results).println();
         } else {
-            cmdLine.throwError("missing arguments");
+            cmdLine.throwError(NutsMessage.cstyle("missing arguments"));
         }
     }
 }

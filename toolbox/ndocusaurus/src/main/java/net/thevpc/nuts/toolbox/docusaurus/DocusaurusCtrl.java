@@ -127,7 +127,7 @@ public class DocusaurusCtrl {
             try {
                 Files.write(base.resolve("sidebars.js"), s.getBytes());
             } catch (IOException e) {
-                throw new NutsIOException(appContext.getSession(), e.getMessage());
+                throw new NutsIOException(appContext.getSession(), NutsMessage.cstyle("%s",e));
             }
 //            System.out.println(s);
         }

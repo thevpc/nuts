@@ -10,26 +10,26 @@
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
  * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts;
 
 /**
  * Created by vpc on 1/15/17.
  *
- * @since 0.5.4
  * @category Exceptions
+ * @since 0.5.4
  */
 public class NutsFetchModeNotSupportedException extends NutsException {
 
@@ -40,15 +40,16 @@ public class NutsFetchModeNotSupportedException extends NutsException {
 
     /**
      * Constructs a new NutsFetchModeNotSupportedException exception
-     * @param session workspace
-     * @param repo repository
+     *
+     * @param session   workspace
+     * @param repo      repository
      * @param fetchMode fetch mode
-     * @param id artifact id
-     * @param message message
-     * @param cause cause
+     * @param id        artifact id
+     * @param message   message
+     * @param cause     cause
      */
-    public NutsFetchModeNotSupportedException(NutsSession session, NutsRepository repo, NutsFetchMode fetchMode, String id, String message, Exception cause) {
-        super(session, PrivateNutsUtils.isBlank(message) ? ("unsupported fetch mode " + fetchMode.id()) : message, cause);
+    public NutsFetchModeNotSupportedException(NutsSession session, NutsRepository repo, NutsFetchMode fetchMode, String id, NutsMessage message, Exception cause) {
+        super(session, message == null ? NutsMessage.cstyle("unsupported fetch mode %s", fetchMode) : message, cause);
         this.id = id;
         this.repositoryName = repo == null ? null : repo.getName();
         this.repositoryUuid = repo == null ? null : repo.getUuid();
@@ -57,14 +58,15 @@ public class NutsFetchModeNotSupportedException extends NutsException {
 
     /**
      * Constructs a new NutsFetchModeNotSupportedException exception
-     * @param session workspace
-     * @param repo repository
+     *
+     * @param session   workspace
+     * @param repo      repository
      * @param fetchMode fetch mode
-     * @param id artifact id
-     * @param message message
+     * @param id        artifact id
+     * @param message   message
      */
-    public NutsFetchModeNotSupportedException(NutsSession session, NutsRepository repo, NutsFetchMode fetchMode, String id, String message) {
-        super(session, PrivateNutsUtils.isBlank(message) ? ("unsupported fetch mode " + fetchMode.id()) : message);
+    public NutsFetchModeNotSupportedException(NutsSession session, NutsRepository repo, NutsFetchMode fetchMode, String id, NutsMessage message) {
+        super(session, message == null ? NutsMessage.cstyle("unsupported fetch mode %s", fetchMode) : message);
         this.id = id;
         this.repositoryName = repo == null ? null : repo.getName();
         this.repositoryUuid = repo == null ? null : repo.getUuid();
@@ -73,6 +75,7 @@ public class NutsFetchModeNotSupportedException extends NutsException {
 
     /**
      * repository name
+     *
      * @return repository name
      */
     public String getRepositoryName() {
@@ -81,6 +84,7 @@ public class NutsFetchModeNotSupportedException extends NutsException {
 
     /**
      * repository uuid
+     *
      * @return repository uuid
      */
     public String getRepositoryUuid() {
@@ -89,6 +93,7 @@ public class NutsFetchModeNotSupportedException extends NutsException {
 
     /**
      * fetch mode
+     *
      * @return fetch mode
      */
     public NutsFetchMode getFetchMode() {
@@ -97,6 +102,7 @@ public class NutsFetchModeNotSupportedException extends NutsException {
 
     /**
      * artifact id
+     *
      * @return artifact id
      */
     public String getId() {

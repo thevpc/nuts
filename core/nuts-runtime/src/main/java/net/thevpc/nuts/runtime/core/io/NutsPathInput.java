@@ -2,8 +2,7 @@ package net.thevpc.nuts.runtime.core.io;
 
 import net.thevpc.nuts.NutsPath;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.runtime.bundles.io.FixedInputStreamMetadata;
-import net.thevpc.nuts.runtime.bundles.io.InputStreamMetadataAwareImpl;
+import net.thevpc.nuts.NutsString;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 
 import java.io.FileNotFoundException;
@@ -17,9 +16,10 @@ import java.time.Instant;
 
 public abstract class NutsPathInput extends CoreIOUtils.AbstractMultiReadItem {
 
-    public NutsPathInput(String name, NutsPath value, NutsSession session) {
-        super(name == null ? value.asString() : name
-                , value, value.isFilePath(), true, "nutsPath", session);
+    public NutsPathInput(NutsPath value) {
+        super(value.asString(),
+                value.asFormattedString(),
+                value, value.isFilePath(), true, "nutsPath", value.getSession());
     }
 
     public NutsPath getNutsPath() {
@@ -27,7 +27,7 @@ public abstract class NutsPathInput extends CoreIOUtils.AbstractMultiReadItem {
     }
 
     @Override
-    public Path getPath() {
+    public Path getFilePath() {
         return getNutsPath().toFilePath();
     }
 
@@ -38,8 +38,8 @@ public abstract class NutsPathInput extends CoreIOUtils.AbstractMultiReadItem {
 
     @Override
     public void copyTo(Path path) {
-        if (!Files.isRegularFile(getPath())) {
-            throw createOpenError(new FileNotFoundException(getPath().toString()));
+        if (!Files.isRegularFile(this.getFilePath())) {
+            throw createOpenError(new FileNotFoundException(this.getFilePath().toString()));
         }
         try {
             try (java.io.InputStream in = open()) {

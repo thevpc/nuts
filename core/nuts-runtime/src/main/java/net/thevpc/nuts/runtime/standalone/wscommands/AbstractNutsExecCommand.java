@@ -268,7 +268,7 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
         if (o instanceof SPrintStream) {
             return o.toString();
         }
-        throw new NutsIllegalArgumentException(getSession(), "no buffer was configured; should call grabOutputString");
+        throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("no buffer was configured; should call grabOutputString"));
     }
 
     public String getOutputString0() {
@@ -277,7 +277,7 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
         if (o instanceof SPrintStream) {
             return o.toString();
         }
-        throw new NutsIllegalArgumentException(getSession(), "no buffer was configured; should call grabOutputString");
+        throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("no buffer was configured; should call grabOutputString"));
     }
 
     @Override
@@ -293,7 +293,7 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
         if (o instanceof SPrintStream) {
             return o.toString();
         }
-        throw new NutsIllegalArgumentException(getSession(), "no buffer was configured; should call grabErrorString");
+        throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("no buffer was configured; should call grabErrorString"));
     }
 
 //    @Override

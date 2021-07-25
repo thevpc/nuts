@@ -225,7 +225,7 @@ public class InternalNutsDescriptorFilterManager extends InternalNutsTypedFilter
         }
         NutsDescriptorFilter t = as(a);
         if (t == null) {
-            throw new NutsIllegalArgumentException(getSession(), "not a DescriptorFilter");
+            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("not a DescriptorFilter"));
         }
         return t;
     }

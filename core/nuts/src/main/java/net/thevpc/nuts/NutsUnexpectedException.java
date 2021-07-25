@@ -41,7 +41,7 @@ public class NutsUnexpectedException extends NutsException {
      * @param session workspace
      */
     public NutsUnexpectedException(NutsSession session) {
-        this(session, "Unexpected Behaviour");
+        this(session, (NutsMessage) null);
     }
 
     /**
@@ -49,8 +49,8 @@ public class NutsUnexpectedException extends NutsException {
      * @param session workspace
      * @param message message
      */
-    public NutsUnexpectedException(NutsSession session, String message) {
-        super(session, message);
+    public NutsUnexpectedException(NutsSession session, NutsMessage message) {
+        super(session, message==null?NutsMessage.plain("unexpected behaviour"):message);
     }
 
     /**
@@ -59,8 +59,8 @@ public class NutsUnexpectedException extends NutsException {
      * @param message message
      * @param cause cause
      */
-    public NutsUnexpectedException(NutsSession session, String message, Throwable cause) {
-        super(session, message, cause);
+    public NutsUnexpectedException(NutsSession session, NutsMessage message, Throwable cause) {
+        super(session, message==null?NutsMessage.plain("unexpected behaviour"):message, cause);
     }
 
     /**
@@ -89,8 +89,8 @@ public class NutsUnexpectedException extends NutsException {
      * @param enableSuppression whether or not suppression is enabled or disabled
      * @param writableStackTrace whether or not the stack trace should be writable
      */
-    public NutsUnexpectedException(NutsSession session, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(session, message, cause, enableSuppression, writableStackTrace);
+    public NutsUnexpectedException(NutsSession session, NutsMessage message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(session, message==null?NutsMessage.plain("unexpected behaviour"):message, cause, enableSuppression, writableStackTrace);
     }
 
 }

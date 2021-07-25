@@ -32,7 +32,6 @@ import net.thevpc.nuts.runtime.core.format.text.ExtendedFormatAware;
 import net.thevpc.nuts.runtime.core.format.text.ExtendedFormatAwarePrintWriter;
 import net.thevpc.nuts.runtime.core.format.text.RawOutputStream;
 import net.thevpc.nuts.runtime.core.io.NutsFormattedPrintStream;
-import net.thevpc.nuts.runtime.core.io.NutsPathInput;
 import net.thevpc.nuts.runtime.core.terminals.NutsTerminalModeOp;
 import net.thevpc.nuts.runtime.standalone.DefaultNutsDescriptorContentParserContext;
 import net.thevpc.nuts.runtime.standalone.index.CacheDB;
@@ -388,7 +387,7 @@ public class CoreIOUtils {
 
                 return Paths.get(uri);
             } catch (URISyntaxException ex) {
-                throw new NutsParseException(session, "not a file Path : " + s);
+                throw new NutsParseException(session, NutsMessage.cstyle("not a file path : %s", s));
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
             }
@@ -399,10 +398,10 @@ public class CoreIOUtils {
                 || s.startsWith("jar:")
                 || s.startsWith("zip:")
                 || s.startsWith("ssh:")) {
-            throw new NutsParseException(session, "not a file Path");
+            throw new NutsParseException(session, NutsMessage.cstyle("not a file path : %s", s));
         }
         if (isURL(s)) {
-            throw new NutsParseException(session, "not a file Path");
+            throw new NutsParseException(session, NutsMessage.cstyle("not a file path : %s", s));
         }
         return Paths.get(s);
     }
@@ -813,19 +812,20 @@ public class CoreIOUtils {
     public static java.io.InputStream monitor(URL from, NutsProgressMonitor monitor, NutsSession session) {
         return monitor(
                 NutsWorkspaceUtils.of(session).openURL(from),
-                from, getURLName(from), CoreIOUtils.getURLHeader(from).getContentLength(), monitor, session);
+                from, session.getWorkspace().text().forStyled(getURLName(from), NutsTextStyle.path())
+                , CoreIOUtils.getURLHeader(from).getContentLength(), monitor, session);
     }
 
-    public static java.io.InputStream monitor(java.io.InputStream from, Object source, String sourceName, long length, NutsProgressMonitor monitor, NutsSession session) {
+    public static java.io.InputStream monitor(java.io.InputStream from, Object source, NutsString sourceName, long length, NutsProgressMonitor monitor, NutsSession session) {
         return new MonitoredInputStream(from, source, sourceName, length, monitor, session);
     }
 
     public static java.io.InputStream monitor(java.io.InputStream from, Object source, NutsProgressMonitor monitor, NutsSession session) {
-        String sourceName = null;
+        NutsString sourceName = null;
         long length = -1;
         if (from instanceof InputStreamMetadataAware) {
             final InputStreamMetadataAware m = (InputStreamMetadataAware) from;
-            sourceName = m.getMetaData().getName();
+            sourceName = session.getWorkspace().text().toText(m.getMetaData().getName());
             length = m.getMetaData().getLength();
         }
         return new MonitoredInputStream(from, source, sourceName, length, monitor, session);
@@ -989,14 +989,22 @@ public class CoreIOUtils {
         return name;
     }
 
-    public static CoreInput createInputSource(byte[] source, String name, String typeName, NutsSession session) {
+    public static CoreInput createInputSource(byte[] source, String name, NutsString formattedString, String typeName, NutsSession session) {
         if (source == null) {
             return null;
         }
         if (name == null) {
+            if (formattedString != null) {
+                name = formattedString.filteredText();
+            }
+        }
+        if (name == null) {
             name = String.valueOf(source);
         }
-        return new ByteArrayInput(name, source, typeName, session);
+        if (formattedString == null) {
+            formattedString = session.getWorkspace().text().forPlain(name);
+        }
+        return new ByteArrayInput(name, formattedString, source, typeName, session);
     }
 
 
@@ -1062,7 +1070,7 @@ public class CoreIOUtils {
 
     public static URL resolveURLFromResource(Class cls, String urlPath, NutsSession session) {
         if (!urlPath.startsWith("/")) {
-            throw new NutsIllegalArgumentException(session, "unable to resolve url from " + urlPath);
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unable to resolve url from %s", urlPath));
         }
         URL url = cls.getResource(urlPath);
         String urlFile = url.getFile();
@@ -1093,7 +1101,7 @@ public class CoreIOUtils {
                     throw new UncheckedIOException(ex);
                 }
             }
-            throw new NutsIllegalArgumentException(session, "unable to resolve url from " + urlPath);
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unable to resolve url from %s", urlPath));
         }
     }
 
@@ -1108,7 +1116,7 @@ public class CoreIOUtils {
                 try {
                     encoded.append(URLEncoder.encode(t, "UTF-8"));
                 } catch (UnsupportedEncodingException ex) {
-                    throw new NutsIllegalArgumentException(session, "unable to encode " + t, ex);
+                    throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unable to encode %s", t), ex);
                 }
             }
         }
@@ -1429,7 +1437,7 @@ public class CoreIOUtils {
                 }
             });
             return ws.io().input()
-                    .setName(path)
+                    .setName(session.getWorkspace().text().forStyled(path, NutsTextStyle.path()))
                     .setTypeName(sourceTypeName)
                     .of(new InputStreamMetadataAwareImpl(ist, new FixedInputStreamMetadata(path, size)));
         } catch (IOException ex) {
@@ -1546,19 +1554,15 @@ public class CoreIOUtils {
 
     public static NutsInput toPathInputSource(NutsInput is, List<Path> tempPaths, NutsSession session) {
         NutsWorkspace ws = session.getWorkspace();
-        if (is.getSource() instanceof Path) {
-            //okkay
+        if (is.isPath()) {
             return is;
-        } else if (is.getSource() instanceof File) {
-            return ws.io().input().setMultiRead(true).of(((File) is.getSource()).toPath());
-        } else {
-            Path temp = Paths.get(ws.io().tmp()
-                    .setSession(session)
-                    .createTempFile(getURLName(is.getName())));
-            ws.io().copy().setSafe(false).from(is).to(temp).setSession(session).run();
-            tempPaths.add(temp);
-            return ws.io().input().setMultiRead(true).of(temp);
         }
+        Path temp = Paths.get(ws.io().tmp()
+                .setSession(session)
+                .createTempFile(getURLName(is.getName())));
+        ws.io().copy().setSafe(false).from(is).to(temp).setSession(session).run();
+        tempPaths.add(temp);
+        return ws.io().input().setMultiRead(true).of(temp);
     }
 
     public static String getNewLine() {
@@ -1609,9 +1613,9 @@ public class CoreIOUtils {
     public static NutsProgressFactory createLogProgressMonitorFactory(MonitorType mt) {
         switch (mt) {
             case STREAM:
-                new DefaultNutsInputStreamProgressFactory();
+                return new DefaultNutsInputStreamProgressFactory();
             case DEFAULT:
-                new DefaultNutsProgressFactory();
+                return new DefaultNutsProgressFactory();
         }
         return new DefaultNutsProgressFactory();
     }
@@ -1868,7 +1872,7 @@ public class CoreIOUtils {
         BufferedReader br = new BufferedReader(new InputStreamReader(input.open()));
         String line;
         try {
-            int count=0;
+            int count = 0;
             while ((line = br.readLine()) != null) {
                 lines.add(line);
                 count++;
@@ -1993,6 +1997,11 @@ public class CoreIOUtils {
         }
 
         @Override
+        public NutsString getFormattedName() {
+            return base.getFormattedName();
+        }
+
+        @Override
         public String getName() {
             return base.getName();
         }
@@ -2028,8 +2037,8 @@ public class CoreIOUtils {
         }
 
         @Override
-        public Path getPath() {
-            return base.getPath();
+        public Path getFilePath() {
+            return base.getFilePath();
         }
 
         @Override
@@ -2058,6 +2067,21 @@ public class CoreIOUtils {
         }
 
         @Override
+        public Stream<String> lines() {
+            return linesFrom(this);
+        }
+
+        @Override
+        public List<String> head(int count) {
+            return headFrom(this, count);
+        }
+
+        @Override
+        public List<String> tail(int count) {
+            return tailFrom(this, count);
+        }
+
+        @Override
         public void copyTo(Path path) {
             base.copyTo(path);
         }
@@ -2071,29 +2095,14 @@ public class CoreIOUtils {
         public String toString() {
             return base.toString();
         }
-
-        @Override
-        public Stream<String> lines() {
-            return linesFrom(this);
-        }
-
-        @Override
-        public List<String> head(int count) {
-            return headFrom(this,count);
-        }
-
-        @Override
-        public List<String> tail(int count) {
-            return tailFrom(this,count);
-        }
     }
 
     public static abstract class AbstractMultiReadItem
             extends AbstractItem
             implements MultiInput {
 
-        public AbstractMultiReadItem(String name, Object value, boolean path, boolean url, String typeName, NutsSession session) {
-            super(name, value, path, url, typeName, session);
+        public AbstractMultiReadItem(String name, NutsString formattedName, Object value, boolean path, boolean url, String typeName, NutsSession session) {
+            super(name, formattedName, value, path, url, typeName, session);
         }
 
     }
@@ -2104,28 +2113,23 @@ public class CoreIOUtils {
         boolean path;
         boolean url;
         String name;
+        NutsString formattedName;
         String typeName;
         NutsSession session;
 
-        public AbstractItem(String name, Object value, boolean path, boolean url, String typeName, NutsSession session) {
+        public AbstractItem(String name, NutsString formattedName, Object value, boolean path, boolean url, String typeName, NutsSession session) {
             this.name = name;
             this.value = value;
             this.path = path;
+            this.formattedName = formattedName;
             this.url = url;
             this.typeName = typeName;
             this.session = session;
         }
 
-        protected NutsIOException createOpenError(Exception ex) {
-            String n = getTypeName();
-            if (n == null) {
-                n = getName();
-            }
-            String s = toString();
-            if (s.equals(n)) {
-                return new NutsIOException(session, n + " not found", ex);
-            }
-            return new NutsIOException(session, n + " not found : " + toString(), ex);
+        @Override
+        public NutsString getFormattedName() {
+            return formattedName;
         }
 
         @Override
@@ -2155,7 +2159,7 @@ public class CoreIOUtils {
         }
 
         @Override
-        public Path getPath() {
+        public Path getFilePath() {
             throw new NutsUnsupportedOperationException(session);
         }
 
@@ -2183,6 +2187,18 @@ public class CoreIOUtils {
             return tailFrom(this, count);
         }
 
+        protected NutsIOException createOpenError(Exception ex) {
+            String n = getTypeName();
+            if (n == null) {
+                n = getName();
+            }
+            String s = toString();
+            if (s.equals(n)) {
+                return new NutsIOException(session, NutsMessage.cstyle("%s not found", n), ex);
+            }
+            return new NutsIOException(session, NutsMessage.cstyle("%s not found : %s", n, toString()), ex);
+        }
+
         @Override
         public void copyTo(Path path) {
             try {
@@ -2203,8 +2219,8 @@ public class CoreIOUtils {
 
     private static class ByteArrayInput extends AbstractMultiReadItem {
 
-        public ByteArrayInput(String name, byte[] value, String typeName, NutsSession session) {
-            super(name, value, false, false, typeName, session);
+        public ByteArrayInput(String name, NutsString formattedName, byte[] value, String typeName, NutsSession session) {
+            super(name, formattedName, value, false, false, typeName, session);
         }
 
         @Override
@@ -2244,8 +2260,8 @@ public class CoreIOUtils {
 
         private NutsURLHeader cachedNutsURLHeader = null;
 
-        public URLInput(String name, URL value, String typeName, NutsSession session) {
-            super(name, value, false, true, typeName, session);
+        public URLInput(String name, NutsString formattedName, URL value, String typeName, NutsSession session) {
+            super(name, formattedName, value, false, true, typeName, session);
         }
 
         @Override
@@ -2357,14 +2373,14 @@ public class CoreIOUtils {
 
     private static class PathInput extends AbstractMultiReadItem {
 
-        public PathInput(String name, Path value, String typeName, NutsSession session) {
-            super(name, value, true, true, typeName, session);
+        public PathInput(String name, NutsString formattedName, Path value, String typeName, NutsSession session) {
+            super(name, formattedName, value, true, true, typeName, session);
         }
 
         @Override
         public java.io.InputStream open() {
             try {
-                Path p = getPath();
+                Path p = this.getFilePath();
                 return new InputStreamMetadataAwareImpl(Files.newInputStream(p), new FixedInputStreamMetadata(p.toString(),
                         Files.size(p)));
             } catch (IOException ex) {
@@ -2373,14 +2389,14 @@ public class CoreIOUtils {
         }
 
         @Override
-        public Path getPath() {
+        public Path getFilePath() {
             return (Path) getSource();
         }
 
         @Override
         public URL getURL() {
             try {
-                return getPath().toUri().toURL();
+                return this.getFilePath().toUri().toURL();
             } catch (MalformedURLException ex) {
                 throw new UncheckedIOException(ex);
             }
@@ -2388,11 +2404,11 @@ public class CoreIOUtils {
 
         @Override
         public void copyTo(Path path) {
-            if (!Files.isRegularFile(getPath())) {
-                throw createOpenError(new FileNotFoundException(getPath().toString()));
+            if (!Files.isRegularFile(this.getFilePath())) {
+                throw createOpenError(new FileNotFoundException(this.getFilePath().toString()));
             }
             try {
-                Files.copy(getPath(), path, StandardCopyOption.REPLACE_EXISTING);
+                Files.copy(this.getFilePath(), path, StandardCopyOption.REPLACE_EXISTING);
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
             }
@@ -2401,7 +2417,7 @@ public class CoreIOUtils {
         @Override
         public long length() {
             try {
-                return Files.size(getPath());
+                return Files.size(this.getFilePath());
             } catch (IOException e) {
                 return -1;
             }
@@ -2421,7 +2437,7 @@ public class CoreIOUtils {
         public Instant getLastModified() {
             FileTime r = null;
             try {
-                r = Files.getLastModifiedTime(getPath());
+                r = Files.getLastModifiedTime(this.getFilePath());
                 if (r != null) {
                     return r.toInstant();
                 }
@@ -2433,15 +2449,15 @@ public class CoreIOUtils {
 
         @Override
         public String toString() {
-            return getPath().toString();
+            return this.getFilePath().toString();
         }
 
     }
 
     public static class InputStream extends AbstractItem {
 
-        public InputStream(String name, java.io.InputStream value, String typeName, NutsSession session) {
-            super(name, value, false, false, typeName, session);
+        public InputStream(String name, NutsString formattedName, java.io.InputStream value, String typeName, NutsSession session) {
+            super(name, formattedName, value, false, false, typeName, session);
         }
 
         @Override

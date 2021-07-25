@@ -2,7 +2,8 @@ package net.thevpc.nuts.toolbox.fileversion;
 
 import net.thevpc.nuts.*;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -12,14 +13,22 @@ public class NVersionMain implements NutsApplication {
 
     private final List<PathVersionResolver> resolvers = new ArrayList<>();
 
-    public static void main(String[] args) {
-        new NVersionMain().runAndExit(args);
-    }
-
     public NVersionMain() {
         resolvers.add(new JarPathVersionResolver());
         resolvers.add(new MavenFolderPathVersionResolver());
         resolvers.add(new ExePathVersionResolver());
+    }
+
+    public static void main(String[] args) {
+        new NVersionMain().runAndExit(args);
+    }
+
+    public static NutsPath xfileOf(String expression, String cwd, NutsSession session) {
+        NutsIOManager io = session.getWorkspace().io();
+        if (expression.startsWith("file:") || expression.contains("://")) {
+            return io.path(expression);
+        }
+        return io.path(_IOUtils.getAbsoluteFile2(expression, cwd));
     }
 
     private Set<VersionDescriptor> detectVersions(String filePath, NutsApplicationContext context, NutsWorkspace ws) throws IOException {
@@ -32,20 +41,20 @@ public class NVersionMain implements NutsApplication {
         try {
             Path p = Paths.get(filePath);
             if (!Files.exists(p)) {
-                throw new NutsExecutionException(context.getSession(), "nversion: file does not exist: " + filePath, 2);
+                throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("nversion: file does not exist: %s" + p), 2);
             }
-            if (!Files.isDirectory(p)) {
-                throw new NutsExecutionException(context.getSession(), "nversion: unsupported directory: " + filePath, 2);
+            if (Files.isDirectory(p)) {
+                throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("nversion: unsupported directory: %s", p), 2);
             }
-            if (!Files.isDirectory(p)) {
-                throw new NutsExecutionException(context.getSession(), "nversion: unsupported file: " + filePath, 2);
+            if (Files.isRegularFile(p)) {
+                throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("nversion: unsupported file: %s", filePath), 2);
             }
         } catch (NutsExecutionException ex) {
             throw ex;
         } catch (Exception ex) {
             //
         }
-        throw new NutsExecutionException(context.getSession(), "nversion: unsupported path: " + filePath, 2);
+        throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("nversion: unsupported path: %s", filePath), 2);
     }
 
     @Override
@@ -112,13 +121,13 @@ public class NVersionMain implements NutsApplication {
                 }
             }
             if (processed == 0) {
-                throw new NutsExecutionException(context.getSession(), "nversion: missing file", 2);
+                throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("nversion: missing file"), 2);
             }
             if (table && all) {
-                throw new NutsExecutionException(context.getSession(), "nversion: options conflict --table --all", 1);
+                throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("nversion: options conflict --table --all"), 1);
             }
             if (table && longFormat) {
-                throw new NutsExecutionException(context.getSession(), "nversion: options conflict --table --long", 1);
+                throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("nversion: options conflict --table --long"), 1);
             }
 
             NutsPrintStream out = context.getSession().out();
@@ -199,16 +208,9 @@ public class NVersionMain implements NutsApplication {
                 }
             }
             if (!unsupportedFileTypes.isEmpty()) {
-                throw new NutsExecutionException(context.getSession(), "nversion: unsupported file types " + unsupportedFileTypes, 3);
+                throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("nversion: unsupported file types %s", unsupportedFileTypes), 3);
             }
         }
-    }
-    public static NutsPath xfileOf(String expression, String cwd, NutsSession session) {
-        NutsIOManager io = session.getWorkspace().io();
-        if (expression.startsWith("file:") || expression.contains("://")) {
-            return io.path(expression);
-        }
-        return io.path(_IOUtils.getAbsoluteFile2(expression, cwd));
     }
 
 }

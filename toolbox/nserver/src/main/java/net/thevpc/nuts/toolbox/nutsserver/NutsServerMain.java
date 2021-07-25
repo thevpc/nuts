@@ -139,7 +139,8 @@ public class NutsServerMain implements NutsApplication {
                     ws = ws.substring(ws.indexOf('@') + 1);
                 }
                 if (servers.current().workspaceLocations.containsKey(serverContext)) {
-                    throw new NutsIllegalArgumentException(context.getSession(), "nuts-server: server workspace context already defined " + serverContext);
+                    throw new NutsIllegalArgumentException(context.getSession(),
+                            NutsMessage.cstyle("nuts-server: server workspace context already defined %s", serverContext));
                 }
                 servers.current().workspaceLocations.put(serverContext, ws);
             } else {
@@ -161,7 +162,8 @@ public class NutsServerMain implements NutsApplication {
                     }
                     if (_StringUtils.isBlank(wsContext)) {
                         if (context.getWorkspace() == null) {
-                            throw new NutsIllegalArgumentException(context.getSession(), "nuts-server: missing workspace");
+                            throw new NutsIllegalArgumentException(context.getSession(),
+                                    NutsMessage.cstyle("nuts-server: missing workspace"));
                         }
                         nutsWorkspace = context.getWorkspace();
                         server.workspaces.put(wsContext, nutsWorkspace);
@@ -198,7 +200,8 @@ public class NutsServerMain implements NutsApplication {
                         if ("https".equals(server.serverType)) {
                             config.setTls(true);
                             if (server.sslCertificate == null) {
-                                throw new NutsIllegalArgumentException(context.getSession(), "nuts-server: missing SSL certificate");
+                                throw new NutsIllegalArgumentException(context.getSession(),
+                                        NutsMessage.cstyle("nuts-server: missing SSL certificate"));
                             }
                             try {
                                 config.setSslKeystoreCertificate(_IOUtils.loadByteArray(new File(server.sslCertificate)));
@@ -206,7 +209,9 @@ public class NutsServerMain implements NutsApplication {
                                 throw new UncheckedIOException(e);
                             }
                             if (server.sslPassphrase == null) {
-                                throw new NutsIllegalArgumentException(context.getSession(), "nuts-server: missing SSL passphrase");
+                                throw new NutsIllegalArgumentException(context.getSession(),
+                                        NutsMessage.cstyle("nuts-server: missing SSL passphrase")
+                                );
                             }
                             config.setSslKeystorePassphrase(server.sslPassphrase.toCharArray());
                         }
@@ -227,7 +232,9 @@ public class NutsServerMain implements NutsApplication {
                         break;
                     }
                     default:
-                        throw new NutsIllegalArgumentException(context.getSession(), "nuts-server: unsupported server type " + server.serverType);
+                        throw new NutsIllegalArgumentException(context.getSession(),
+                                NutsMessage.cstyle("nuts-server: unsupported server type %s", server.serverType)
+                        );
                 }
                 serverManager.startServer(config0);
             }
@@ -266,11 +273,13 @@ public class NutsServerMain implements NutsApplication {
                     v.port = Integer.parseInt(pattern.group("port"));
                 }
             } else {
-                throw new NutsIllegalArgumentException(context.getSession(), "invalid Host : " + v.protocol);
+                throw new NutsIllegalArgumentException(context.getSession(),
+                        NutsMessage.cstyle("invalid Host : %s", v.protocol)
+                        );
             }
             return v;
         } catch (Exception ex) {
-            throw new NutsIllegalArgumentException(context.getSession(), "invalid");
+            throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.cstyle("invalid"));
         }
     }
 
@@ -439,7 +448,7 @@ public class NutsServerMain implements NutsApplication {
 
         SrvInfo current() {
             if (all.isEmpty()) {
-                throw new NutsIllegalArgumentException(session, "nuts-server: server type missing");
+                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("nuts-server: server type missing"));
             }
             return all.get(all.size() - 1);
         }

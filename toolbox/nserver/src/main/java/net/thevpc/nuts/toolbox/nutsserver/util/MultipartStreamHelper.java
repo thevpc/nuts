@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -11,7 +11,7 @@
  * architecture to help supporting a large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -23,21 +23,16 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.toolbox.nutsserver.util;
 
 import net.thevpc.nuts.NutsException;
 import net.thevpc.nuts.NutsIllegalArgumentException;
-import net.thevpc.nuts.NutsUnsupportedOperationException;
-import net.thevpc.nuts.NutsWorkspace;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UncheckedIOException;
-import java.util.Iterator;
+import net.thevpc.nuts.NutsMessage;
 import net.thevpc.nuts.NutsSession;
+
+import java.io.*;
+import java.util.Iterator;
 
 /**
  * Created by vpc on 1/23/17.
@@ -48,15 +43,15 @@ public class MultipartStreamHelper implements Iterable<ItemStreamInfo> {
     private NutsSession session;
 
     public MultipartStreamHelper(InputStream input,
-            String contentType,NutsSession session) {
-        this.session=session;
+                                 String contentType, NutsSession session) {
+        this.session = session;
         stream = new MultipartStream2(
-                input, resolveBoundaryFromContentType(contentType,session), MultipartStream2.DEFAULT_BUFSIZE,
-                null,session
+                input, resolveBoundaryFromContentType(contentType, session), MultipartStream2.DEFAULT_BUFSIZE,
+                null, session
         );
     }
 
-    private static byte[] resolveBoundaryFromContentType(String contentType,NutsSession session) {
+    private static byte[] resolveBoundaryFromContentType(String contentType, NutsSession session) {
         //multipart/form-data; boundary=1597f5e92b6
         for (String s : contentType.split(";")) {
             s = s.trim();
@@ -64,7 +59,7 @@ public class MultipartStreamHelper implements Iterable<ItemStreamInfo> {
                 return s.substring("boundary=".length()).getBytes();
             }
         }
-        throw new NutsIllegalArgumentException(session, "invalid boundary");
+        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid boundary"));
     }
 
     public Iterator<ItemStreamInfo> iterator() {
@@ -92,17 +87,17 @@ public class MultipartStreamHelper implements Iterable<ItemStreamInfo> {
                         return new ItemStreamInfo(
                                 new ByteArrayInputStream(headers.toByteArray()),
                                 new InputStream() {
-                            int index = 0;
+                                    int index = 0;
 
-                            @Override
-                            public int read() throws IOException {
-                                if (index < start.length) {
-                                    index++;
-                                    return (start[index - 1] & 0xff);
-                                }
-                                return itemInputStream.read();
-                            }
-                        },session
+                                    @Override
+                                    public int read() throws IOException {
+                                        if (index < start.length) {
+                                            index++;
+                                            return (start[index - 1] & 0xff);
+                                        }
+                                        return itemInputStream.read();
+                                    }
+                                }, session
                         );
                     }
                 }

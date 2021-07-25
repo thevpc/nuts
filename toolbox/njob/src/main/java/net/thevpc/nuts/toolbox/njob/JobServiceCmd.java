@@ -2,14 +2,15 @@ package net.thevpc.nuts.toolbox.njob;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.njob.model.*;
-import net.thevpc.nuts.toolbox.njob.time.*;
+import net.thevpc.nuts.toolbox.njob.time.TimeFormatter;
 
 import java.io.InputStream;
 import java.nio.file.Paths;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.*;
+import java.util.Arrays;
+import java.util.NoSuchElementException;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -95,9 +96,9 @@ public class JobServiceCmd {
             context.getSession().out().printf("%s job%s %s\n", text.forStyled("" + allJobsCount, NutsTextStyle.primary1()), allJobsCount == 1 ? "" : "s",
                     allJobsCount == 0 ? ""
                             : text.builder()
-                                    .append("(")
-                                    .append("" + jobsCount, NutsTextStyle.primary1())
-                                    .append(" this month)")
+                            .append("(")
+                            .append("" + jobsCount, NutsTextStyle.primary1())
+                            .append(" this month)")
             );
             context.getSession().out().printf("%s project%s\n", text.forStyled("" + projectsCount, NutsTextStyle.primary1()), projectsCount == 1 ? "" : "s");
         }
@@ -106,8 +107,8 @@ public class JobServiceCmd {
     protected void showCustomHelp(String name) {
         NutsTextManager text = context.getWorkspace().text();
         context.getSession().out().println(text.parser().parseResource("/net/thevpc/nuts/toolbox/" + name + ".ntf",
-                        text.parser().createLoader(getClass().getClassLoader())
-                ));
+                text.parser().createLoader(getClass().getClassLoader())
+        ));
     }
 
     protected NutsString getFormattedProject(String projectName) {
@@ -193,7 +194,7 @@ public class JobServiceCmd {
             case 5:
                 return ws.text().forStyled(x, NutsTextStyle.primary5());
         }
-        throw new NutsIllegalArgumentException(context.getSession(), "Invalid index " + index);
+        throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.cstyle("invalid index %s", index));
     }
 
     protected NutsString getFlagString(NFlag x) {

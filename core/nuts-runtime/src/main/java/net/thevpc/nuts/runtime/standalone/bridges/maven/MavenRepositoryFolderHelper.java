@@ -68,7 +68,7 @@ public class MavenRepositoryFolderHelper {
         this.repo = repo;
         this.ws = session != null ? session.getWorkspace() : repo == null ? null : repo.getWorkspace();
         if (repo == null && session == null) {
-            throw new NutsIllegalArgumentException(session, "both workspace and repo are null");
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("both workspace and repo are null"));
         }
         this.rootPath = rootPath;
     }

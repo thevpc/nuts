@@ -1,8 +1,6 @@
 package net.thevpc.nuts.runtime.core.io;
 
-import net.thevpc.nuts.NutsInput;
-import net.thevpc.nuts.NutsOutput;
-import net.thevpc.nuts.NutsPath;
+import net.thevpc.nuts.*;
 
 import java.io.File;
 import java.io.OutputStream;
@@ -37,6 +35,11 @@ public class NutsCompressedPath extends NutsPathBase{
     @Override
     public String asString() {
         return base.asString();
+    }
+
+    @Override
+    public NutsString asFormattedString() {
+        return base.getSession().getWorkspace().text().forStyled(compressedForm, NutsTextStyle.path());
     }
 
     @Override

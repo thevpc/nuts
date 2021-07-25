@@ -40,28 +40,9 @@ public class NutsNotInstallableException extends NutsInstallationException {
      * @param id artifact
      */
     public NutsNotInstallableException(NutsSession session, NutsId id) {
-        this(session, id == null ? null : id.toString());
-    }
-
-    /**
-     * Constructs a new NutsNotInstallableException exception
-     * @param session workspace
-     * @param id artifact
-     */
-    public NutsNotInstallableException(NutsSession session, String id) {
         this(session, id, null, null);
     }
 
-    /**
-     * Constructs a new NutsNotInstallableException exception
-     * @param session workspace
-     * @param id artifact
-     * @param msg message
-     * @param ex exception
-     */
-    public NutsNotInstallableException(NutsSession session, NutsId id, String msg, Exception ex) {
-        this(session, id == null ? null : id.toString(), msg, ex);
-    }
 
     /**
      * Constructs a new NutsNotInstallableException exception
@@ -70,7 +51,8 @@ public class NutsNotInstallableException extends NutsInstallationException {
      * @param msg message
      * @param ex exception
      */
-    public NutsNotInstallableException(NutsSession session, String id, String msg, Exception ex) {
-        super(session, id, PrivateNutsUtils.isBlank(msg) ? "not installed " + (id == null ? "<null>" : id) : msg, ex);
+    public NutsNotInstallableException(NutsSession session, NutsId id, NutsMessage msg, Exception ex) {
+        super(session, id,
+                msg==null ? NutsMessage.cstyle("not installed %s",(id == null ? "<null>" : id)) : msg, ex);
     }
 }

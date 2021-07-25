@@ -37,38 +37,7 @@ public class NutsPushException extends NutsException {
     /**
      * artifact id
      */
-    private final String id;
-
-    /**
-     * Constructs a new NutsPushException exception
-     * @param session workspace
-     * @param id artifact id
-     */
-    public NutsPushException(NutsSession session, String id) {
-        this(session, id, null, null);
-    }
-
-    /**
-     * Constructs a new NutsPushException exception
-     * @param session workspace
-     * @param id artifact id
-     * @param message message
-     */
-    public NutsPushException(NutsSession session, String id, String message) {
-        this(session, id, message, null);
-    }
-
-    /**
-     * Constructs a new NutsPushException exception
-     * @param session workspace
-     * @param id artifact id
-     * @param message message
-     * @param cause cause
-     */
-    public NutsPushException(NutsSession session, String id, String message, Throwable cause) {
-        super(session, message == null ? ("unable to push " + id) : message, cause);
-        this.id = id == null ? "<null>" : id;
-    }
+    private final NutsId id;
 
     /**
      * Constructs a new NutsPushException exception
@@ -85,7 +54,7 @@ public class NutsPushException extends NutsException {
      * @param id artifact id
      * @param message message
      */
-    public NutsPushException(NutsSession session, NutsId id, String message) {
+    public NutsPushException(NutsSession session, NutsId id, NutsMessage message) {
         this(session, id, message, null);
     }
 
@@ -96,15 +65,16 @@ public class NutsPushException extends NutsException {
      * @param message message
      * @param cause cause
      */
-    public NutsPushException(NutsSession session, NutsId id, String message, Throwable cause) {
-        this(session, id == null ? null : id.toString(), message, cause);
+    public NutsPushException(NutsSession session, NutsId id, NutsMessage message, Throwable cause) {
+        super(session, message == null ? NutsMessage.cstyle("unable to push %s",id == null ? "<null>" : id) : message, cause);
+        this.id = id;
     }
 
     /**
      * artifact id
      * @return artifact id
      */
-    public String getId() {
+    public NutsId getId() {
         return id;
     }
 

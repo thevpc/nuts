@@ -51,7 +51,7 @@ public class NutsExecutionException extends NutsException {
      * @param exitCode exit code
      */
     public NutsExecutionException(NutsSession session, int exitCode) {
-        super(session, "execution failed with error code " + exitCode);
+        super(session, NutsMessage.cstyle("execution failed with error code %s" , exitCode));
         this.exitCode = exitCode;
     }
 
@@ -61,7 +61,7 @@ public class NutsExecutionException extends NutsException {
      * @param message message
      * @param exitCode exit code
      */
-    public NutsExecutionException(NutsSession session, String message, int exitCode) {
+    public NutsExecutionException(NutsSession session, NutsMessage message, int exitCode) {
         super(session, message);
         this.exitCode = exitCode;
     }
@@ -72,7 +72,7 @@ public class NutsExecutionException extends NutsException {
      * @param message message
      * @param cause cause
      */
-    public NutsExecutionException(NutsSession session, String message, Throwable cause) {
+    public NutsExecutionException(NutsSession session, NutsMessage message, Throwable cause) {
         this(session, message, cause, DEFAULT_ERROR_EXIT_CODE);
     }
 
@@ -83,7 +83,7 @@ public class NutsExecutionException extends NutsException {
      * @param cause cause
      * @param exitCode exit code
      */
-    public NutsExecutionException(NutsSession session, String message, Throwable cause, int exitCode) {
+    public NutsExecutionException(NutsSession session, NutsMessage message, Throwable cause, int exitCode) {
         super(session, message, cause);
         this.exitCode = exitCode;
     }
@@ -95,7 +95,7 @@ public class NutsExecutionException extends NutsException {
      * @param exitCode exit code
      */
     public NutsExecutionException(NutsSession session, Throwable cause, int exitCode) {
-        super(session, cause == null ? "" : cause.getMessage(), cause);
+        super(session, cause == null ? null : NutsMessage.cstyle("%s",cause), cause);
         this.exitCode = exitCode;
     }
 
@@ -108,7 +108,7 @@ public class NutsExecutionException extends NutsException {
      * @param writableStackTrace whether or not the stack trace should be writable
      * @param exitCode exit code
      */
-    public NutsExecutionException(NutsSession session, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace, int exitCode) {
+    public NutsExecutionException(NutsSession session, NutsMessage message, Throwable cause, boolean enableSuppression, boolean writableStackTrace, int exitCode) {
         super(session, message, cause, enableSuppression, writableStackTrace);
         this.exitCode = exitCode;
     }

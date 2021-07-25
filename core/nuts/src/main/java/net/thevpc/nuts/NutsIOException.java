@@ -44,14 +44,6 @@ public class NutsIOException extends NutsException {
      * @param session workspace
      * @param message message
      */
-    public NutsIOException(NutsSession session, String message) {
-        super(session,message);
-    }
-    /**
-     * Constructs a new Validation Exception
-     * @param session workspace
-     * @param message message
-     */
     public NutsIOException(NutsSession session, NutsMessage message) {
         super(session,message);
     }
@@ -62,7 +54,7 @@ public class NutsIOException extends NutsException {
      * @param message message
      * @param cause cause
      */
-    public NutsIOException(NutsSession session, String message, Throwable cause) {
+    public NutsIOException(NutsSession session, NutsMessage message, Throwable cause) {
         super(session,message, cause);
     }
 

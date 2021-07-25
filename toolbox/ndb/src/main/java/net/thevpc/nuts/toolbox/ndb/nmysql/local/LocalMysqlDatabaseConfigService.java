@@ -96,7 +96,7 @@ public class LocalMysqlDatabaseConfigService {
                 if (new File(path).exists()) {
                     new File(path).delete();
                 }
-                throw new NutsExecutionException(context.getSession(), cmd.getOutputString(), 2);
+                throw new NutsExecutionException(context.getSession(), NutsMessage.formatted(cmd.getOutputString()), 2);
             }
         } else {
             if (context.getSession().isPlainTrace()) {
@@ -135,7 +135,7 @@ public class LocalMysqlDatabaseConfigService {
                 if (new File(path).exists()) {
                     new File(path).delete();
                 }
-                throw new NutsExecutionException(context.getSession(), cmd.getOutputString(), 2);
+                throw new NutsExecutionException(context.getSession(), NutsMessage.formatted(cmd.getOutputString()), 2);
             }
         }
     }

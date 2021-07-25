@@ -1,9 +1,6 @@
 package net.thevpc.nuts.runtime.core.io;
 
-import net.thevpc.nuts.NutsFormat;
-import net.thevpc.nuts.NutsInput;
-import net.thevpc.nuts.NutsOutput;
-import net.thevpc.nuts.NutsPath;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.io.FixedInputStreamMetadata;
 import net.thevpc.nuts.runtime.bundles.io.InputStreamMetadataAwareImpl;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
@@ -18,51 +15,19 @@ import java.util.Objects;
 
 public class NutsPathFromSPI extends NutsPathBase {
     private NutsPathSPI base;
+
     public NutsPathFromSPI(NutsPathSPI base) {
         super(base.getSession());
         this.base = base;
     }
 
     @Override
-    public Path toFilePath() {
-        return base.toFilePath();
-    }
-
-    @Override
-    public NutsInput input() {
-        return new NutsPathInput(null,this,getSession()){
-            @Override
-            public InputStream open() {
-                return new InputStreamMetadataAwareImpl(base.inputStream(), new FixedInputStreamMetadata(getNutsPath().toString(),
-                        getNutsPath().length()));
-            }
-        };
-    }
-    @Override
-    public NutsOutput output() {
-        return new NutsPathOutput(null,this,getSession()){
-            @Override
-            public OutputStream open() {
-                return base.outputStream();
-            }
-        };
-    }
-
-    @Override
     public String name() {
         String n = base.name();
-        if(n==null){
+        if (n == null) {
             return CoreIOUtils.getURLName(asString());
         }
         return n;
-    }
-    @Override
-    public NutsFormat formatter() {
-        NutsFormat f = base.formatter();
-        if(f!=null){
-            return f;
-        }
-        return super.formatter();
     }
 
     @Override
@@ -71,9 +36,24 @@ public class NutsPathFromSPI extends NutsPathBase {
     }
 
     @Override
+    public NutsString asFormattedString() {
+        //should implement better formatting...
+        NutsString s = base.asFormattedString();
+        if (s == null) {
+            s = getSession().getWorkspace().text().forStyled(asString(), NutsTextStyle.path());
+        }
+        return s;
+    }
+
+    @Override
+    public String location() {
+        return base.location();
+    }
+
+    @Override
     public NutsPath compressedForm() {
         NutsPath n = base.compressedForm();
-        if(n==null){
+        if (n == null) {
             return new NutsCompressedPath(this);
         }
         return this;
@@ -85,21 +65,23 @@ public class NutsPathFromSPI extends NutsPathBase {
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(base);
+    public Path toFilePath() {
+        return base.toFilePath();
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        NutsPathFromSPI that = (NutsPathFromSPI) o;
-        return base.equals(that.base);
+    public NutsInput input() {
+        return new NutsPathFromSPIInput();
     }
 
     @Override
-    public String toString() {
-        return base.toString();
+    public NutsOutput output() {
+        return new NutsPathOutput(null, this, getSession()) {
+            @Override
+            public OutputStream open() {
+                return base.outputStream();
+            }
+        };
     }
 
     @Override
@@ -128,7 +110,41 @@ public class NutsPathFromSPI extends NutsPathBase {
     }
 
     @Override
-    public String location() {
-        return base.location();
+    public NutsFormat formatter() {
+        NutsFormat f = base.formatter();
+        if (f != null) {
+            return f;
+        }
+        return super.formatter();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(base);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        NutsPathFromSPI that = (NutsPathFromSPI) o;
+        return base.equals(that.base);
+    }
+
+    @Override
+    public String toString() {
+        return base.toString();
+    }
+
+    private class NutsPathFromSPIInput extends NutsPathInput {
+        public NutsPathFromSPIInput() {
+            super(NutsPathFromSPI.this);
+        }
+
+        @Override
+        public InputStream open() {
+            return new InputStreamMetadataAwareImpl(base.inputStream(), new FixedInputStreamMetadata(getNutsPath().toString(),
+                    getNutsPath().length()));
+        }
     }
 }

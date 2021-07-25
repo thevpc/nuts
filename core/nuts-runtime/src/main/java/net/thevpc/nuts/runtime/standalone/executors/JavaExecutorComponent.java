@@ -35,7 +35,6 @@ import net.thevpc.nuts.runtime.standalone.ext.DefaultNutsWorkspaceExtensionManag
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 import java.io.File;
-import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
@@ -365,9 +364,9 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
         public int exec() {
             NutsSession session = getSession();
             //we must make a copy not to alter caller session
-            session=session.copy();
+            session = session.copy();
 
-            if(session.out()!=null){
+            if (session.out() != null) {
                 session.out().resetLine();
             }
             DefaultNutsClassLoader classLoader = null;
@@ -395,11 +394,13 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
             }
             if (th != null) {
                 if (!(th instanceof NutsExecutionException)) {
-                    throw new NutsExecutionException(session, "error executing " + def.getId().getLongName() + " : " + CoreStringUtils.exceptionToString(th), th);
+                    throw new NutsExecutionException(session,
+                            NutsMessage.cstyle("error executing %s : %s", def.getId(), th)
+                            , th);
                 }
                 NutsExecutionException nex = (NutsExecutionException) th;
                 if (nex.getExitCode() != 0) {
-                    throw new NutsExecutionException(session, "error executing " + def.getId().getLongName() + " : " + CoreStringUtils.exceptionToString(th), th);
+                    throw new NutsExecutionException(session, NutsMessage.cstyle("error executing %s : %s", def.getId(), th), th);
                 }
             }
             return 0;

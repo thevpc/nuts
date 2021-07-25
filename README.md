@@ -5,7 +5,7 @@ Network Updatable Things Services
   /\ \ \ _  __/ /______
  /  \/ / / / / __/ ___/
 / /\  / /_/ / /_(__  )
-\_\ \/\__,_/\__/____/    version ##:version0:0.8.1.0##
+\_\ \/\__,_/\__/____/    version \[0m \[0m\[0m \[38;5;220m0.8.1.0\[0m\[0m
 </pre>
 
 website : [https://thevpc.github.io/nuts](https://thevpc.github.io/nuts)
@@ -27,7 +27,7 @@ nuts --version
 It should show a result in the format : nuts-api-version/nuts-impl-version
 
 ```
-0.8.1/##:version0:0.8.1.0##
+/\[0m \[0m\[0m \[38;5;220m0.8.1.0\[0m\[0m
 ```
 
 ## Run a command

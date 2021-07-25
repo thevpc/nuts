@@ -51,10 +51,10 @@ public class NutsUnsupportedEnumException extends NutsException {
      * @param enumValue enumeration instance (cannot be null)
      * @param message   message
      */
-    public NutsUnsupportedEnumException(NutsSession session, String message, Enum enumValue) {
+    public NutsUnsupportedEnumException(NutsSession session, NutsMessage message, Enum enumValue) {
         super(session,
-                message != null ? message : (
-                        "unexpected/unsupported enum " + enumValue + " of type " + enumValue.getClass().getName())
+                message != null ? message : NutsMessage.cstyle(
+                        "unexpected/unsupported enum %s of type %s",enumValue, enumValue.getClass().getName())
         );
         this.enumValue = enumValue;
     }
@@ -67,10 +67,10 @@ public class NutsUnsupportedEnumException extends NutsException {
      * @param stringValue invalid value
      * @param message message
      */
-    public NutsUnsupportedEnumException(NutsSession session, String message, String stringValue, Enum enumValue) {
+    public NutsUnsupportedEnumException(NutsSession session, NutsMessage message, String stringValue, Enum enumValue) {
         super(session,
                 message == null ? (
-                        "unexpected/unsupported value " + stringValue + " of type " + enumValue.getClass().getName())
+                        NutsMessage.cstyle("unexpected/unsupported value %s of type %s",stringValue, enumValue.getClass().getName()))
                         : message
         );
     }

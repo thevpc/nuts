@@ -25,10 +25,7 @@
 */
 package net.thevpc.nuts.runtime.bundles.io;
 
-import net.thevpc.nuts.NutsExecutionException;
-import net.thevpc.nuts.NutsLogger;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsUnsupportedOperationException;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.repos.DefaultNutsInstalledRepository;
 
@@ -158,7 +155,7 @@ public class FolderObjectIterator<T> implements Iterator<T> {
         if (last != null) {
             model.remove(last, lastPath, session);
         } else {
-            throw new NutsUnsupportedOperationException(session, "Unsupported Remove");
+            throw new NutsUnsupportedOperationException(session, NutsMessage.cstyle("unsupported remove"));
         }
     }
 

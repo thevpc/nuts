@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,16 +23,13 @@
  */
 package net.thevpc.nuts.runtime.core.util;
 
-import net.thevpc.nuts.NutsNotFoundException;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsTextBuilder;
-import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.*;
 
 import java.io.IOException;
 import java.io.StreamTokenizer;
 import java.io.StringReader;
 import java.io.UncheckedIOException;
-import java.util.*;
+import java.util.Arrays;
 import java.util.regex.Pattern;
 
 /**
@@ -56,7 +53,7 @@ public final class CoreStringUtils {
         return -1;
     }
 
-   
+
     public static String escapeQuoteStrings(String s) {
         StringBuilder sb = new StringBuilder(s.length());
         for (char c : s.toCharArray()) {
@@ -290,7 +287,7 @@ public final class CoreStringUtils {
         return true;
     }
 
-//    /**
+    //    /**
 //     * copied from StringUtils (in order to remove dependency)
 //     *
 //     * @param s string
@@ -370,12 +367,12 @@ public final class CoreStringUtils {
                 }
             } else {
                 for (Class aClass : new Class[]{
-                    NullPointerException.class,
-                    ArrayIndexOutOfBoundsException.class,
-                    ClassCastException.class,
-                    UnsupportedOperationException.class,
-                    ReflectiveOperationException.class,
-                    Error.class,}) {
+                        NullPointerException.class,
+                        ArrayIndexOutOfBoundsException.class,
+                        ClassCastException.class,
+                        UnsupportedOperationException.class,
+                        ReflectiveOperationException.class,
+                        Error.class,}) {
                     if (aClass.isInstance(ex)) {
                         return ex.toString();
                     }
@@ -383,6 +380,64 @@ public final class CoreStringUtils {
                 msg = ex.getMessage();
                 if (msg == null) {
                     msg = ex.toString();
+                }
+            }
+        }
+        return msg;
+    }
+
+    public static NutsMessage exceptionToMessage(Throwable ex) {
+        return exceptionToMessage(ex, false);
+    }
+
+    public static NutsMessage exceptionToMessage(Throwable ex, boolean inner) {
+        NutsMessage msg = null;
+        if (ex instanceof UncheckedIOException) {
+            if (ex.getCause() != null) {
+                Throwable ex2 = ex.getCause();
+                if (ex2 instanceof UncheckedIOException) {
+                    ex2 = ex.getCause();
+                }
+                msg = exceptionToMessage(ex2, true);
+            } else {
+                msg = NutsMessage.plain(ex.getMessage());
+            }
+        } else if (ex instanceof NutsNotFoundException) {
+            if (ex.getCause() != null) {
+                Throwable ex2 = ex.getCause();
+                if (ex2 instanceof UncheckedIOException) {
+                    ex2 = ex.getCause();
+                }
+                msg = exceptionToMessage(ex2, true);
+            } else {
+                msg = NutsMessage.formatted(((NutsNotFoundException) ex).getFormattedMessage().toString());
+            }
+        } else if (ex instanceof NutsException) {
+            msg = NutsMessage.formatted(((NutsException) ex).getFormattedMessage().toString());
+        } else {
+            String msg2 = ex.toString();
+            if (msg2.startsWith(ex.getClass().getName() + ":")) {
+                if (inner) {
+                    //this is  default toString for the exception
+                    msg = NutsMessage.plain(msg2.substring((ex.getClass().getName()).length() + 1).trim());
+                } else {
+                    msg = NutsMessage.plain(ex.getClass().getSimpleName() + ": " + msg2.substring((ex.getClass().getName()).length() + 1).trim());
+                }
+            } else {
+                for (Class aClass : new Class[]{
+                        NullPointerException.class,
+                        ArrayIndexOutOfBoundsException.class,
+                        ClassCastException.class,
+                        UnsupportedOperationException.class,
+                        ReflectiveOperationException.class,
+                        Error.class,}) {
+                    if (aClass.isInstance(ex)) {
+                        return NutsMessage.plain(ex.toString());
+                    }
+                }
+                msg = ex.getMessage() == null ? null : NutsMessage.plain(ex.getMessage());
+                if (msg == null) {
+                    msg = NutsMessage.plain(ex.toString());
                 }
             }
         }
@@ -438,6 +493,7 @@ public final class CoreStringUtils {
             sb.append(x);
         }
     }
+
     public static void fillString(char x, int width, NutsTextBuilder sb) {
         if (width <= 0) {
             return;
@@ -457,6 +513,7 @@ public final class CoreStringUtils {
             sb.append(x);
         }
     }
+
     public static void fillString(String x, int width, NutsTextBuilder sb) {
         if (width <= 0) {
             return;

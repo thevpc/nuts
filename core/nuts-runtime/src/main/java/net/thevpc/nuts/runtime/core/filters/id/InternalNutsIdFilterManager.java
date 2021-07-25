@@ -127,7 +127,7 @@ public class InternalNutsIdFilterManager extends InternalNutsTypedFilters<NutsId
         }
         NutsIdFilter t = as(a);
         if (t == null) {
-            throw new NutsIllegalArgumentException(getSession(), "not a IdFilter");
+            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("not a IdFilter"));
         }
         return t;
     }

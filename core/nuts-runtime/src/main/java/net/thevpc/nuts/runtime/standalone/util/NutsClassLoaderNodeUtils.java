@@ -25,12 +25,8 @@ package net.thevpc.nuts.runtime.standalone.util;
 
 import java.net.URL;
 import java.util.Arrays;
-import net.thevpc.nuts.NutsClassLoaderNode;
-import net.thevpc.nuts.NutsDefinition;
-import net.thevpc.nuts.NutsDependencyTreeNode;
-import net.thevpc.nuts.NutsIllegalArgumentException;
-import net.thevpc.nuts.NutsNotFoundException;
-import net.thevpc.nuts.NutsSession;
+
+import net.thevpc.nuts.*;
 
 /**
  *
@@ -45,7 +41,7 @@ public final class NutsClassLoaderNodeUtils {
         if (def.getContent() == null
                 || def.getContent().getURL() == null
                 || def.getDependencies() == null) {
-            throw new NutsIllegalArgumentException(session, "definition must provide content and dependencies");
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("definition must provide content and dependencies"));
         }
         return new NutsClassLoaderNode(
                 def.getId().toString(),

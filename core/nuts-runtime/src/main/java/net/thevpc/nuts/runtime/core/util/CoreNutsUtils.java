@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -43,8 +43,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 
-import net.thevpc.nuts.runtime.bundles.iter.IteratorUtils;
-
 /**
  * Created by vpc on 5/16/17.
  */
@@ -59,7 +57,7 @@ public class CoreNutsUtils {
     public static final int DEFAULT_DATE_TIME_FORMATTER_LENGTH = 23;
     public static final DateTimeFormatter DEFAULT_DATE_TIME_FORMATTER
             = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
-                    .withZone(ZoneId.systemDefault());
+            .withZone(ZoneId.systemDefault());
     public static final String[] COLOR_NAMES = new TreeSet<String>(Arrays.asList(
             "Maroon", "Brown", "Olive", "Teal", "Navy", "Black", "Red", "Orange", "Yellow", "Lime", "Green", "Cyan", "Blue", "Purple", "Magenta", "Grey", "Pink",
             "Apricot", "Beige", "Mint", "Lavender", "White", "Turquoise", "Aqua", "Aquamarine", "Gold", "Coral", "Tomato", "Firebrick",
@@ -68,38 +66,6 @@ public class CoreNutsUtils {
     public static final int LOCK_TIME = 3;
     public static final TimeUnit LOCK_TIME_UNIT = TimeUnit.SECONDS;
     public static final NutsDefaultThreadFactory nutsDefaultThreadFactory = new NutsDefaultThreadFactory("nuts-pool", true);
-    private static final Map<String, String> _QUERY_EMPTY_ENV = new HashMap<>();
-    public static final Map<String, String> QUERY_EMPTY_ENV = Collections.unmodifiableMap(_QUERY_EMPTY_ENV);
-    public static Comparator<NutsId> NUTS_ID_COMPARATOR = new Comparator<NutsId>() {
-        @Override
-        public int compare(NutsId o1, NutsId o2) {
-            if (o1 == null || o2 == null) {
-                if (o1 == o2) {
-                    return 0;
-                }
-                if (o1 == null) {
-                    return -1;
-                }
-                return 1;
-            }
-            return o1.toString().compareTo(o2.toString());
-        }
-    };
-    public static Comparator<NutsDefinition> NUTS_FILE_COMPARATOR = new Comparator<NutsDefinition>() {
-        @Override
-        public int compare(NutsDefinition o1, NutsDefinition o2) {
-            if (o1 == null || o2 == null) {
-                if (o1 == o2) {
-                    return 0;
-                }
-                if (o1 == null) {
-                    return -1;
-                }
-                return 1;
-            }
-            return NUTS_ID_COMPARATOR.compare(o1.getId(), o2.getId());
-        }
-    };
     //    public static NutsId SAMPLE_NUTS_ID = new DefaultNutsId("namespace", "group", "name", "version", "param='true'");
 //    public static NutsDescriptor SAMPLE_NUTS_DESCRIPTOR
 //            = new DefaultNutsDescriptorBuilder()
@@ -137,6 +103,38 @@ public class CoreNutsUtils {
 //            )
 //            .build();
     public static final boolean SUPPORTS_UTF_ENCODING;
+    private static final Map<String, String> _QUERY_EMPTY_ENV = new HashMap<>();
+    public static final Map<String, String> QUERY_EMPTY_ENV = Collections.unmodifiableMap(_QUERY_EMPTY_ENV);
+    public static Comparator<NutsId> NUTS_ID_COMPARATOR = new Comparator<NutsId>() {
+        @Override
+        public int compare(NutsId o1, NutsId o2) {
+            if (o1 == null || o2 == null) {
+                if (o1 == o2) {
+                    return 0;
+                }
+                if (o1 == null) {
+                    return -1;
+                }
+                return 1;
+            }
+            return o1.toString().compareTo(o2.toString());
+        }
+    };
+    public static Comparator<NutsDefinition> NUTS_FILE_COMPARATOR = new Comparator<NutsDefinition>() {
+        @Override
+        public int compare(NutsDefinition o1, NutsDefinition o2) {
+            if (o1 == null || o2 == null) {
+                if (o1 == o2) {
+                    return 0;
+                }
+                if (o1 == null) {
+                    return -1;
+                }
+                return 1;
+            }
+            return NUTS_ID_COMPARATOR.compare(o1.getId(), o2.getId());
+        }
+    };
 
     static {
         _QUERY_EMPTY_ENV.put(NutsConstants.IdProperties.ARCH, null);
@@ -168,7 +166,7 @@ public class CoreNutsUtils {
         char h = SUPPORTS_UTF_ENCODING ? '─' : '-';
         char v = SUPPORTS_UTF_ENCODING ? '│' : '|';
         return txt.builder()
-                .append(String.valueOf(c1l)+repeat(h, len + 2)+String.valueOf(c1r), NutsTextStyle.primary2())
+                .append(String.valueOf(c1l) + repeat(h, len + 2) + String.valueOf(c1r), NutsTextStyle.primary2())
                 .append("\n")
 
                 .append(String.valueOf(v), NutsTextStyle.primary2())
@@ -507,7 +505,7 @@ public class CoreNutsUtils {
         return s1.isEmpty() || s1.equals("false");
     }
 
-//    public static boolean isDefaultAlternative(String s1) {
+    //    public static boolean isDefaultAlternative(String s1) {
 //        s1 = CoreStringUtils.trim(s1);
 //        return s1.isEmpty() || s1.equals(NutsConstants.IdProperties.ALTERNATIVE_DEFAULT_VALUE);
 //    }
@@ -598,21 +596,23 @@ public class CoreNutsUtils {
         return false;
     }
 
-//    public static NutsIterableFormat getValidOutputFormat(NutsSession session) {
+    //    public static NutsIterableFormat getValidOutputFormat(NutsSession session) {
 //        NutsIterableFormat f = session.getIterableOutput();
 //        if (f == null) {
 //            return session.getWorkspace().elem().setContentType(session.getOutputFormat()).iter(session.out());
 //        }
 //        return f;
 //    }
-    public static void traceMessage(NutsLogger log, Level lvl, String name, NutsSession session, NutsFetchMode fetchMode, NutsId id, NutsLogVerb tracePhase, String title, long startTime, String extraMsg) {
+    public static void traceMessage(NutsLogger log, Level lvl, String name, NutsSession session, NutsFetchMode fetchMode, NutsId id, NutsLogVerb tracePhase, String title, long startTime, NutsMessage extraMsg) {
         if (!log.isLoggable(lvl)) {
             return;
         }
+        String sep;
         if (extraMsg == null) {
-            extraMsg = "";
+            sep = "";
+            extraMsg = NutsMessage.formatted("");
         } else {
-            extraMsg = " : " + extraMsg;
+            sep = " : ";
         }
         long time = (startTime != 0) ? (System.currentTimeMillis() - startTime) : 0;
         String modeString = CoreStringUtils.alignLeft(fetchMode.id(), 7);
@@ -673,7 +673,7 @@ public class CoreNutsUtils {
         return nullArray(a, NutsStoreLocation.values().length);
     }
 
-//    public static String trimToNullAlternative(String s) {
+    //    public static String trimToNullAlternative(String s) {
 //        if (s == null) {
 //            return null;
 //        }
@@ -800,7 +800,7 @@ public class CoreNutsUtils {
         }
     }
 
-//    public static NutsUpdateOptions validate(NutsUpdateOptions o, NutsWorkspace ws) {
+    //    public static NutsUpdateOptions validate(NutsUpdateOptions o, NutsWorkspace ws) {
 //        if (o == null) {
 //            o = new NutsUpdateOptions();
 //        }
@@ -888,9 +888,9 @@ public class CoreNutsUtils {
         return c0.equals(c1);
     }
 
-    public static NutsString formatLogValue(NutsTextManager text,Object unresolved, Object resolved) {
-        NutsString a = desc(unresolved,text);
-        NutsString b = desc(resolved,text);
+    public static NutsString formatLogValue(NutsTextManager text, Object unresolved, Object resolved) {
+        NutsString a = desc(unresolved, text);
+        NutsString b = desc(resolved, text);
         if (a.equals(b)) {
             return a;
         } else {
@@ -903,9 +903,9 @@ public class CoreNutsUtils {
         }
     }
 
-    public static NutsString desc(Object s,NutsTextManager text) {
+    public static NutsString desc(Object s, NutsTextManager text) {
         if (s == null || (s instanceof String && ((String) s).isEmpty())) {
-            return text.forStyled("<EMPTY>",NutsTextStyle.option());
+            return text.forStyled("<EMPTY>", NutsTextStyle.option());
         }
         return text.toText(s);
     }
@@ -925,6 +925,7 @@ public class CoreNutsUtils {
         }
         return false;
     }
+
     public static Set<String> parseProgressOptions(NutsSession session) {
         LinkedHashSet<String> set = new LinkedHashSet<>();
         for (String s : StringTokenizerUtils.split(session.getProgressOptions(), ",; ")) {
@@ -937,6 +938,7 @@ public class CoreNutsUtils {
         }
         return set;
     }
+
     public static boolean acceptProgress(NutsSession session) {
         if (!session.isPlainOut()) {
             return false;
@@ -953,7 +955,7 @@ public class CoreNutsUtils {
         if (!session.isPlainOut()) {
             return false;
         }
-        if (acceptProgress(session)) {
+        if (!acceptProgress(session)) {
             return false;
         }
         Object o = session.getProperty("monitor-allowed");
@@ -982,37 +984,6 @@ public class CoreNutsUtils {
 //        }
 //        return session;
 //    }
-
-
-    public static class NutsDefaultThreadFactory implements ThreadFactory {
-
-        private static final AtomicInteger poolNumber = new AtomicInteger(1);
-        private final ThreadGroup group;
-        private final AtomicInteger threadNumber = new AtomicInteger(1);
-        private final String namePrefix;
-        private final boolean daemon;
-
-        NutsDefaultThreadFactory(String namePattern, boolean daemon) {
-            this.daemon = daemon;
-            SecurityManager s = System.getSecurityManager();
-            group = (s != null) ? s.getThreadGroup()
-                    : Thread.currentThread().getThreadGroup();
-            namePrefix = namePattern + "-"
-                    + CoreStringUtils.indexToString(poolNumber.getAndIncrement())
-                    + "-";
-        }
-
-        public Thread newThread(Runnable r) {
-            Thread t = new Thread(group, r,
-                    namePrefix + threadNumber.getAndIncrement(),
-                    0);
-            t.setDaemon(this.daemon);
-            if (t.getPriority() != Thread.NORM_PRIORITY) {
-                t.setPriority(Thread.NORM_PRIORITY);
-            }
-            return t;
-        }
-    }
 
     public static String[] parseCommandLineArray(String commandLineString, NutsSession ws) {
         if (commandLineString == null) {
@@ -1068,10 +1039,10 @@ public class CoreNutsUtils {
                             break;
                         }
                         case '\'': {
-                            throw new NutsParseException(ws, "illegal char " + c);
+                            throw new NutsParseException(ws, NutsMessage.cstyle("illegal char %s", c));
                         }
                         case '"': {
-                            throw new NutsParseException(ws, "illegal char " + c);
+                            throw new NutsParseException(ws, NutsMessage.cstyle("illegal char %s", c));
                         }
                         case '\\': {
                             i++;
@@ -1140,7 +1111,7 @@ public class CoreNutsUtils {
                 break;
             }
             case IN_QUOTED_WORD: {
-                throw new NutsParseException(ws, "expected '");
+                throw new NutsParseException(ws, NutsMessage.cstyle("expected '"));
             }
         }
         return args.toArray(new String[0]);
@@ -1180,6 +1151,36 @@ public class CoreNutsUtils {
         String _optional = copyFrom.getOptional();
         String _scope = copyFrom.getScope();
         return IteratorBuilder.of(id).convert(x -> x.toDependency().builder().setOptional(_optional).setScope(_scope).build(), "IdToDependency").build();
+    }
+
+    public static class NutsDefaultThreadFactory implements ThreadFactory {
+
+        private static final AtomicInteger poolNumber = new AtomicInteger(1);
+        private final ThreadGroup group;
+        private final AtomicInteger threadNumber = new AtomicInteger(1);
+        private final String namePrefix;
+        private final boolean daemon;
+
+        NutsDefaultThreadFactory(String namePattern, boolean daemon) {
+            this.daemon = daemon;
+            SecurityManager s = System.getSecurityManager();
+            group = (s != null) ? s.getThreadGroup()
+                    : Thread.currentThread().getThreadGroup();
+            namePrefix = namePattern + "-"
+                    + CoreStringUtils.indexToString(poolNumber.getAndIncrement())
+                    + "-";
+        }
+
+        public Thread newThread(Runnable r) {
+            Thread t = new Thread(group, r,
+                    namePrefix + threadNumber.getAndIncrement(),
+                    0);
+            t.setDaemon(this.daemon);
+            if (t.getPriority() != Thread.NORM_PRIORITY) {
+                t.setPriority(Thread.NORM_PRIORITY);
+            }
+            return t;
+        }
     }
 
 }

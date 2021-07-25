@@ -6,18 +6,17 @@
 package net.thevpc.nuts.runtime.standalone.repos;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.repos.NutsRepositoryExt0;
-import net.thevpc.nuts.runtime.core.repos.NutsRepositoryUtils;
-import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
-import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.core.terminals.DefaultWriteTypeProcessor;
-import net.thevpc.nuts.runtime.standalone.wscommands.DefaultNutsArtifactPathExecutable;
+import net.thevpc.nuts.runtime.bundles.io.FolderNutIdIterator;
 import net.thevpc.nuts.runtime.core.CoreNutsConstants;
 import net.thevpc.nuts.runtime.core.events.DefaultNutsContentEvent;
 import net.thevpc.nuts.runtime.core.filters.CoreFilterUtils;
+import net.thevpc.nuts.runtime.core.repos.NutsRepositoryExt0;
+import net.thevpc.nuts.runtime.core.repos.NutsRepositoryUtils;
+import net.thevpc.nuts.runtime.core.terminals.DefaultWriteTypeProcessor;
+import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.NamedByteArrayInputStream;
-import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
-import net.thevpc.nuts.runtime.bundles.io.FolderNutIdIterator;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
+import net.thevpc.nuts.runtime.standalone.wscommands.DefaultNutsArtifactPathExecutable;
 import net.thevpc.nuts.spi.NutsDeployRepositoryCommand;
 import net.thevpc.nuts.spi.NutsRepositorySPI;
 import net.thevpc.nuts.spi.NutsRepositoryUndeployCommand;
@@ -84,7 +83,7 @@ public class NutsRepositoryFolderHelper {
         if (repo == null) {
             return getLongNameIdLocalFolder(id, session).resolve(getWorkspace().locations().setSession(session).getDefaultIdFilename(id));
         }
-        return getLongNameIdLocalFolder(id, session).resolve(NutsRepositoryExt0.of(repo).getIdFilename(id,session));
+        return getLongNameIdLocalFolder(id, session).resolve(NutsRepositoryExt0.of(repo).getIdFilename(id, session));
     }
 
     public Path getShortNameIdLocalFolder(NutsId id, NutsSession session) {
@@ -113,7 +112,7 @@ public class NutsRepositoryFolderHelper {
         if (repo == null) {
             return ws.locations().getDefaultIdFilename(id);
         }
-        return NutsRepositoryExt0.of(repo).getIdFilename(id,session);
+        return NutsRepositoryExt0.of(repo).getIdFilename(id, session);
     }
 
     public Path getGoodPath(NutsId id, NutsSession session) {
@@ -226,7 +225,7 @@ public class NutsRepositoryFolderHelper {
             }
             return null;
         }
-        NutsWorkspace ws=session.getWorkspace();
+        NutsWorkspace ws = session.getWorkspace();
         NutsIdFilter filter2 = ws.id().filter().all(filter,
                 ws.id().filter().byName(id.getShortName())
         );
@@ -251,7 +250,7 @@ public class NutsRepositoryFolderHelper {
         } else {
             folder = rootPath;
         }
-        return new FolderNutIdIterator(repo == null ? null : repo.getName(), folder, rootPath,filter, session, new FolderNutIdIterator.AbstractFolderNutIdIteratorModel() {
+        return new FolderNutIdIterator(repo == null ? null : repo.getName(), folder, rootPath, filter, session, new FolderNutIdIterator.AbstractFolderNutIdIteratorModel() {
             @Override
             public void undeploy(NutsId id, NutsSession session) {
                 if (repo == null) {
@@ -308,7 +307,7 @@ public class NutsRepositoryFolderHelper {
                             bestId = id2;
                         }
                     } else {
-                        CoreIOUtils.delete(session,versionFolder.toPath());
+                        CoreIOUtils.delete(session, versionFolder.toPath());
                     }
                 }
             }
@@ -319,17 +318,19 @@ public class NutsRepositoryFolderHelper {
     public NutsDescriptor deploy(NutsDeployRepositoryCommand deployment, NutsConfirmationMode writeType) {
         NutsSession session = deployment.getSession();
         if (!isWriteEnabled()) {
-            throw new NutsIllegalArgumentException(session,"read-only repository");
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("read-only repository"));
         }
         if (deployment.getContent() == null) {
-            throw new NutsIllegalArgumentException(session,"invalid deployment; missing content for "+deployment.getId());
+            throw new NutsIllegalArgumentException(session,
+                    NutsMessage.cstyle("invalid deployment; missing content for %s", deployment.getId()));
         }
         NutsDescriptor descriptor = deployment.getDescriptor();
         NutsInput inputSource = ws.io().setSession(session).input().setTypeName("package content").setMultiRead(true).of(deployment.getContent());
         if (descriptor == null) {
             try (final DefaultNutsArtifactPathExecutable.CharacterizedExecFile c = DefaultNutsArtifactPathExecutable.characterizeForExec(inputSource, session, null)) {
                 if (c.descriptor == null) {
-                    throw new NutsNotFoundException(session, "", "unable to resolve a valid descriptor for " + deployment.getContent(), null);
+                    throw new NutsNotFoundException(session, null,
+                            NutsMessage.cstyle("unable to resolve a valid descriptor for %s", deployment.getContent()), null);
                 }
                 descriptor = c.descriptor;
             }
@@ -347,7 +348,7 @@ public class NutsRepositoryFolderHelper {
                     .of(writeType, session)
                     .ask("override deployment for %s?", id)
                     .withLog(_LOG(session), "nuts deployment overridden {0}", id)
-                    .onError(() -> new NutsAlreadyDeployedException(session, finalId.toString()))
+                    .onError(() -> new NutsAlreadyDeployedException(session, finalId))
                     .process()) {
                 return descriptor;
             }
@@ -370,7 +371,7 @@ public class NutsRepositoryFolderHelper {
     }
 
     protected NutsLogger _LOG(NutsSession session) {
-        if(LOG==null){
+        if (LOG == null) {
             LOG = this.ws.log().setSession(session).of(DefaultNutsFetchContentRepositoryCommand.class);
         }
         return LOG;
@@ -387,7 +388,7 @@ public class NutsRepositoryFolderHelper {
                     .of(writeType, session)
                     .ask("override descriptor file for %s?", id)
                     .withLog(_LOG(session), "nuts descriptor file overridden {0}", id)
-                    .onError(() -> new NutsAlreadyDeployedException(session, id.toString()))
+                    .onError(() -> new NutsAlreadyDeployedException(session, id))
                     .process()) {
                 return descFile;
             }
@@ -398,7 +399,10 @@ public class NutsRepositoryFolderHelper {
             ws2.descriptor().formatter(desc).setNtf(false).print(descFile);
             ws2.io().copy().setSession(session)
                     .from(
-                            ws2.io().input().setName("sha1(" + desc.getId() + ")")
+                            ws2.io().input().setName(
+                                            session.getWorkspace().text().toText(
+                                                    NutsMessage.cstyle("sha1(%s)", desc.getId())
+                                            ))
                                     .setTypeName("descriptor hash")
                                     .of(ws2.io().hash().sha1().source(desc).computeString().getBytes())
                     ).to(descFile.resolveSibling(descFile.getFileName() + ".sha1")).setSafe(true).run();
@@ -429,7 +433,7 @@ public class NutsRepositoryFolderHelper {
                     .of(writeType, session)
                     .ask("override content file for %s?", id)
                     .withLog(_LOG(session), "nuts content file overridden {0}", id)
-                    .onError(() -> new NutsAlreadyDeployedException(session, id.toString()))
+                    .onError(() -> new NutsAlreadyDeployedException(session, id))
                     .process()) {
                 return pckFile;
             }
@@ -518,7 +522,7 @@ public class NutsRepositoryFolderHelper {
                             p.println(file);
                         }
                     } catch (FileNotFoundException e) {
-                        throw new NutsIOException(session,e);
+                        throw new NutsIOException(session, e);
                     }
                     return FileVisitResult.CONTINUE;
                 }

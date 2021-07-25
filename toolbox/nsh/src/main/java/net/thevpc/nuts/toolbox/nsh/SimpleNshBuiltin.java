@@ -261,7 +261,7 @@ public abstract class SimpleNshBuiltin extends AbstractNshBuiltin {
                     printObject(context2.setErr(true), session);
                 }
             }
-            throw new NutsExecutionException(context.getSession(),printStream.toString(), context2.getExitCode());
+            throw new NutsExecutionException(context.getSession(),NutsMessage.formatted(printStream.toString()), context2.getExitCode());
         }
         return 0;
     }

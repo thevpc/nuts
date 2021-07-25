@@ -178,7 +178,7 @@ public class NProjectsSubCmd {
             }
         }
         if (projects.isEmpty()) {
-            cmd.throwError("project name expected");
+            cmd.throwError(NutsMessage.formatted("project name expected"));
         }
         if (cmd.isExecMode()) {
             NutsTextManager text = context.getWorkspace().text();

@@ -150,7 +150,7 @@ public class FolderNutIdIterator implements Iterator<NutsId> {
         if (last != null) {
             model.undeploy(last, session);
         }
-        throw new NutsUnsupportedOperationException(session, "Unsupported Remove");
+        throw new NutsUnsupportedOperationException(session, NutsMessage.cstyle("unsupported remove"));
     }
 
     public long getVisitedFoldersCount() {

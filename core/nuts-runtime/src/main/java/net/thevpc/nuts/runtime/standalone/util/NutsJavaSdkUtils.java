@@ -237,7 +237,7 @@ public class NutsJavaSdkUtils {
     public NutsSdkLocation resolveJdkLocation(String path, String preferredName, NutsSession session) {
         NutsWorkspaceUtils.checkSession(ws, session);
         if (path == null) {
-            throw new NutsException(session, "missing path");
+            throw new NutsException(session, NutsMessage.formatted("missing path"));
         }
         String appSuffix = session.getWorkspace().env().getOsFamily() == NutsOsFamily.WINDOWS ? ".exe" : "";
         Path bin = Paths.get(path).resolve("bin");
@@ -326,7 +326,7 @@ public class NutsJavaSdkUtils {
 
     public NutsId createJdkId(String version, NutsSession session) {
         if (CoreStringUtils.isBlank(version)) {
-            throw new NutsException(session, "missing version");
+            throw new NutsException(session, NutsMessage.formatted("missing version"));
         }
         NutsVersion jv = session.getWorkspace().version().parser().parse(version);
         int n1 = jv.getNumber(0, 0);

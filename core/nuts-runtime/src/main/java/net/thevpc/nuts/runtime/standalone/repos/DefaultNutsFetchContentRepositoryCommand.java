@@ -83,7 +83,7 @@ public class DefaultNutsFetchContentRepositoryCommand extends AbstractNutsFetchC
             result = f;
         } catch (RuntimeException ex) {
             if (!CoreNutsUtils.isUnsupportedFetchModeException(ex)) {
-                CoreNutsUtils.traceMessage(_LOG(session), Level.FINEST, repo.getName(), session, getFetchMode(), id.getLongNameId(), NutsLogVerb.FAIL, "fetch package", startTime, CoreStringUtils.exceptionToString(ex));
+                CoreNutsUtils.traceMessage(_LOG(session), Level.FINEST, repo.getName(), session, getFetchMode(), id.getLongNameId(), NutsLogVerb.FAIL, "fetch package", startTime, CoreStringUtils.exceptionToMessage(ex));
             }
             throw ex;
         }

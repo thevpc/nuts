@@ -178,7 +178,9 @@ public class DefaultNutsRepositorySecurityModel {
 
         if (NutsWorkspaceConfigManagerExt.of(repository.getWorkspace().config())
                 .getModel().createAuthenticationAgent(authenticationAgent, session) == null) {
-            throw new NutsIllegalArgumentException(session, "unsupported Authentication Agent " + authenticationAgent);
+            throw new NutsIllegalArgumentException(session,
+                    NutsMessage.cstyle("unsupported Authentication Agent %s", authenticationAgent)
+            );
         }
 
         NutsRepositoryConfig conf = cc.getModel().getStoredConfig(session);

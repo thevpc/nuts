@@ -59,7 +59,7 @@ public class LogNAdminSubCommand extends AbstractNAdminSubCommand {
                 }
             } else {
                 if (cmdLine.isExecMode()) {
-                    throw new NutsIllegalArgumentException(context.getSession(), "invalid loglevel");
+                    throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.cstyle("invalid loglevel"));
                 }
             }
             cmdLine.setCommandName("config log").unexpectedArgument();

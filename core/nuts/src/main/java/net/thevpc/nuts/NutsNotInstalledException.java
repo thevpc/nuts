@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -11,7 +11,7 @@
  * architecture to help supporting a large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -23,54 +23,36 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts;
 
 /**
  * This Exception is fired when an artifact fails to be uninstalled for the artifact not being installed yet.
  *
- * @since 0.5.4
  * @category Exceptions
+ * @since 0.5.4
  */
 public class NutsNotInstalledException extends NutsInstallationException {
 
     /**
      * Constructs a new NutsNotInstalledException exception
+     *
      * @param session workspace
-     * @param id artifact
+     * @param id      artifact
      */
     public NutsNotInstalledException(NutsSession session, NutsId id) {
-        this(session, id == null ? null : id.toString());
-    }
-
-    /**
-     * Constructs a new NutsNotInstalledException exception
-     * @param session workspace
-     * @param id artifact
-     */
-    public NutsNotInstalledException(NutsSession session, String id) {
         this(session, id, null, null);
     }
 
     /**
      * Constructs a new NutsNotInstalledException exception
+     *
      * @param session workspace
-     * @param id artifact
-     * @param msg message
-     * @param ex error
+     * @param id      artifact
+     * @param msg     message
+     * @param ex      exception
      */
-    public NutsNotInstalledException(NutsSession session, NutsId id, String msg, Exception ex) {
-        this(session, id == null ? null : id.toString(), msg, ex);
-    }
-
-    /**
-     * Constructs a new NutsNotInstalledException exception
-     * @param session workspace
-     * @param id artifact
-     * @param msg message
-     * @param ex exception
-     */
-    public NutsNotInstalledException(NutsSession session, String id, String msg, Exception ex) {
-        super(session, id, PrivateNutsUtils.isBlank(msg) ? "not installed " + (id == null ? "<null>" : id) : msg, ex);
+    public NutsNotInstalledException(NutsSession session, NutsId id, NutsMessage msg, Exception ex) {
+        super(session, id, msg == null ? NutsMessage.cstyle("not installed %s", (id == null ? "<null>" : id)) : msg, ex);
     }
 }

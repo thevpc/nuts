@@ -149,7 +149,7 @@ public class HistoryCommand extends SimpleNshBuiltin {
                         shistory.save(new File(context.getWorkspace().io().expandPath(options.sval)));
                     }
                 } catch (IOException ex) {
-                    throw new NutsExecutionException(context.getSession(), ex.getMessage(), ex, 100);
+                    throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("%s",ex), ex, 100);
                 }
                 return;
             }
@@ -162,12 +162,12 @@ public class HistoryCommand extends SimpleNshBuiltin {
                         shistory.load(new File(context.getWorkspace().io().expandPath(options.sval)));
                     }
                 } catch (IOException ex) {
-                    throw new NutsExecutionException(context.getSession(), ex.getMessage(), ex, 100);
+                    throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("%s",ex), ex, 100);
                 }
                 return;
             }
             default: {
-                throw new NutsUnsupportedArgumentException(context.getSession(), String.valueOf(options.action));
+                throw new NutsUnsupportedArgumentException(context.getSession(), NutsMessage.cstyle("unsupported %s",String.valueOf(options.action)));
             }
         }
     }

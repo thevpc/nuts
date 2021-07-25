@@ -27,7 +27,8 @@ public abstract class RemoteNutsWorkspace extends AbstractNutsWorkspace {
                 return resultObject.get(prv.forString("body"));
             } else {
                 //TODO mush deserialize exception
-                throw new NutsException(session, "unable to call " + commandName);
+                throw new NutsException(session, NutsMessage.cstyle("unable to call %s",
+                        session.getWorkspace().text().forStyled(commandName,NutsTextStyle.primary1())));
             }
         }
     }
@@ -103,7 +104,7 @@ public abstract class RemoteNutsWorkspace extends AbstractNutsWorkspace {
 //    }
 //
     public <T> T remoteCall(NutsElement call, Class<T> expectedType) {
-        throw new NutsUnsupportedOperationException(null, "not yet supported remoteCall");
+        throw new NutsUnsupportedOperationException(null, NutsMessage.cstyle("not yet supported remoteCall"));
     }
 
 }

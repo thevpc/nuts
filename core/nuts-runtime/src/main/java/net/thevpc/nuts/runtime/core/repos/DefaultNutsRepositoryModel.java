@@ -1,19 +1,18 @@
 package net.thevpc.nuts.runtime.core.repos;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.core.config.NutsRepositoryConfigManagerExt;
 import net.thevpc.nuts.runtime.core.config.NutsWorkspaceConfigManagerExt;
+import net.thevpc.nuts.runtime.core.events.DefaultNutsWorkspaceEvent;
+import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.config.ConfigEventType;
 import net.thevpc.nuts.runtime.standalone.repos.DefaultNutsInstalledRepository;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.repos.NutsRepositoryRegistryHelper;
 import net.thevpc.nuts.runtime.standalone.repos.NutsSimpleRepositoryWrapper;
-import net.thevpc.nuts.runtime.core.events.DefaultNutsWorkspaceEvent;
-import net.thevpc.nuts.NutsLogVerb;
-import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
-import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.spi.NutsRepositoryFactoryComponent;
 import net.thevpc.nuts.spi.NutsRepositorySPI;
 
@@ -31,8 +30,8 @@ import java.util.logging.Level;
 public class DefaultNutsRepositoryModel {
 
     private final NutsRepositoryRegistryHelper repositoryRegistryHelper;
-    private NutsWorkspace workspace;
     public NutsLogger LOG;
+    private NutsWorkspace workspace;
 
     public DefaultNutsRepositoryModel(NutsWorkspace workspace) {
         this.workspace = workspace;
@@ -76,7 +75,11 @@ public class DefaultNutsRepositoryModel {
                     if (y == null) {
                         y = m;
                     } else {
-                        throw new NutsIllegalArgumentException(session, "ambiguous repository name " + repositoryNameOrId + " Found two Ids " + y.getUuid() + " and " + m.getUuid());
+                        throw new NutsIllegalArgumentException(session,
+                                NutsMessage.cstyle("ambiguous repository name %s found two Ids %s and %s",
+                                        repositoryNameOrId, y.getUuid(), m.getUuid()
+                                )
+                        );
                     }
                 }
             }
@@ -98,7 +101,11 @@ public class DefaultNutsRepositoryModel {
                     if (y == null) {
                         y = m;
                     } else {
-                        throw new NutsIllegalArgumentException(session, "ambiguous repository name " + repositoryNameOrId + " Found two Ids " + y.getUuid() + " and " + m.getUuid());
+                        throw new NutsIllegalArgumentException(session,
+                                NutsMessage.cstyle("ambiguous repository name %s found two Ids %s and %s",
+                                        repositoryNameOrId, y.getUuid(), m.getUuid()
+                                )
+                        );
                     }
                 }
             }
@@ -120,7 +127,12 @@ public class DefaultNutsRepositoryModel {
                     if (y == null) {
                         y = m;
                     } else {
-                        throw new NutsIllegalArgumentException(session, "ambiguous repository name " + repositoryNameOrId + " Found two Ids " + y.getUuid() + " and " + m.getUuid());
+                        throw new NutsIllegalArgumentException(session,
+                                NutsMessage.cstyle("ambiguous repository name %s found two Ids %s and %s",
+                                        repositoryNameOrId, y.getUuid(), m.getUuid()
+                                )
+
+                        );
                     }
                 }
             }
@@ -237,13 +249,15 @@ public class DefaultNutsRepositoryModel {
                     if (options.isFailSafe()) {
                         return null;
                     }
-                    throw new NutsInvalidRepositoryException(session, options.getLocation(), "invalid repository location " + options.getLocation());
+                    throw new NutsInvalidRepositoryException(session, options.getLocation(),
+                            NutsMessage.cstyle("invalid repository location ", options.getLocation())
+                    );
                 }
                 options.setConfig(conf);
                 if (options.isEnabled()) {
                     options.setEnabled(
                             session.getWorkspace().config().options().getRepositories() == null
-                            || NutsRepositorySelector.parse(session.getWorkspace().config().options().getRepositories()).acceptExisting(
+                                    || NutsRepositorySelector.parse(session.getWorkspace().config().options().getRepositories()).acceptExisting(
                                     options.getName(),
                                     conf.getLocation()
                             ));
@@ -253,7 +267,7 @@ public class DefaultNutsRepositoryModel {
                 if (options.isEnabled()) {
                     options.setEnabled(
                             session.getWorkspace().config().options().getRepositories() == null
-                            || NutsRepositorySelector.parse(session.getWorkspace().config().options().getRepositories()).acceptExisting(
+                                    || NutsRepositorySelector.parse(session.getWorkspace().config().options().getRepositories()).acceptExisting(
                                     options.getName(),
                                     conf.getLocation()
                             ));
@@ -274,15 +288,15 @@ public class DefaultNutsRepositoryModel {
             }
             if (options.isTemporary()) {
                 if (CoreStringUtils.isBlank(conf.getType())) {
-                    throw new NutsInvalidRepositoryException(session, options.getName(), "unable to detect valid type for temporary repository");
+                    throw new NutsInvalidRepositoryException(session, options.getName(), NutsMessage.cstyle("unable to detect valid type for temporary repository"));
                 } else {
-                    throw new NutsInvalidRepositoryException(session, options.getName(), "invalid repository type " + conf.getType());
+                    throw new NutsInvalidRepositoryException(session, options.getName(), NutsMessage.cstyle("invalid repository type %s", conf.getType()));
                 }
             } else {
                 if (CoreStringUtils.isBlank(conf.getType())) {
-                    throw new NutsInvalidRepositoryException(session, options.getName(), "unable to detect valid type for repository");
+                    throw new NutsInvalidRepositoryException(session, options.getName(), NutsMessage.cstyle("unable to detect valid type for repository"));
                 } else {
-                    throw new NutsInvalidRepositoryException(session, options.getName(), "invalid repository type " + conf.getType());
+                    throw new NutsInvalidRepositoryException(session, options.getName(), NutsMessage.cstyle("invalid repository type %s", conf.getType()));
                 }
             }
         } catch (RuntimeException ex) {
@@ -299,7 +313,7 @@ public class DefaultNutsRepositoryModel {
         try {
             r = NutsRepositorySelector.parseSelection(repositoryNamedUrl);
         } catch (Exception ex) {
-            throw new NutsInvalidRepositoryException(session, repositoryNamedUrl, "invalid repository definition");
+            throw new NutsInvalidRepositoryException(session, repositoryNamedUrl, NutsMessage.cstyle("invalid repository definition"));
         }
         NutsAddRepositoryOptions options = NutsRepositorySelector.createRepositoryOptions(r, true, session);
         return addRepository(options, session);

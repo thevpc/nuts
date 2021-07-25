@@ -299,24 +299,24 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
         checkSession();
         NutsInput _source = source;
         if (_source == null) {
-            throw new NutsIllegalArgumentException(getSession(), "missing source");
+            throw new NutsIllegalArgumentException(getSession(), NutsMessage.formatted("missing source"));
         }
         if (target == null) {
-            throw new NutsIllegalArgumentException(getSession(), "missing target");
+            throw new NutsIllegalArgumentException(getSession(), NutsMessage.formatted("missing target"));
         }
         if (_source.isPath()) {
-            if (Files.isDirectory(_source.getPath())) {
+            if (Files.isDirectory(_source.getFilePath())) {
                 // this is a directory!!!
                 if (!target.isPath()) {
-                    throw new NutsIllegalArgumentException(getSession(), "unsupported copy of directory to " + target);
+                    throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("unsupported copy of directory to %s",target));
                 }
                 Path toPath = target.getFilePath();
                 CopyData cd = new CopyData();
                 if (isLogProgress() || getProgressMonitorFactory() != null) {
-                    prepareCopyFolder(_source.getPath(), cd);
-                    copyFolderWithMonitor(_source.getPath(), toPath, cd);
+                    prepareCopyFolder(_source.getFilePath(), cd);
+                    copyFolderWithMonitor(_source.getFilePath(), toPath, cd);
                 } else {
-                    copyFolderNoMonitor(_source.getPath(), toPath, cd);
+                    copyFolderNoMonitor(_source.getFilePath(), toPath, cd);
                 }
                 return this;
             }
@@ -462,7 +462,10 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
         NutsSession session = getSession();
         long start = System.currentTimeMillis();
         NutsProgressMonitor m = CoreIOUtils.createProgressMonitor(CoreIOUtils.MonitorType.DEFAULT, srcBase, srcBase, session, isLogProgress(), getProgressMonitorFactory());
-        m.onStart(new DefaultNutsProgressEvent(srcBase, srcBase.toString(), 0, 0, 0, 0, f.files + f.folders, null, session, false));
+        NutsText srcBaseMessage = session.getWorkspace().text().toText(srcBase);
+        m.onStart(new DefaultNutsProgressEvent(srcBase,
+                srcBaseMessage
+                , 0, 0, 0, 0, f.files + f.folders, null, session, false));
         try {
             NutsSession finalSession = session;
             Files.walkFileTree(srcBase, new FileVisitor<Path>() {
@@ -471,7 +474,7 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
                     checkInterrupted();
                     f.doneFolders++;
                     CoreIOUtils.mkdirs(transformPath(dir, srcBase, targetBase));
-                    m.onProgress(new DefaultNutsProgressEvent(srcBase, srcBase.toString(), f.doneFiles + f.doneFolders, System.currentTimeMillis() - start, 0, 0, f.files + f.folders, null, finalSession, false));
+                    m.onProgress(new DefaultNutsProgressEvent(srcBase, srcBaseMessage, f.doneFiles + f.doneFolders, System.currentTimeMillis() - start, 0, 0, f.files + f.folders, null, finalSession, false));
                     return FileVisitResult.CONTINUE;
                 }
 
@@ -480,7 +483,7 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
                     checkInterrupted();
                     f.doneFiles++;
                     copy(file, transformPath(file, srcBase, targetBase));
-                    m.onProgress(new DefaultNutsProgressEvent(srcBase, srcBase.toString(), f.doneFiles + f.doneFolders, System.currentTimeMillis() - start, 0, 0, f.files + f.folders, null, finalSession, false));
+                    m.onProgress(new DefaultNutsProgressEvent(srcBase, srcBaseMessage, f.doneFiles + f.doneFolders, System.currentTimeMillis() - start, 0, 0, f.files + f.folders, null, finalSession, false));
                     return FileVisitResult.CONTINUE;
                 }
 
@@ -499,7 +502,7 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
         } catch (IOException exc) {
             throw new UncheckedIOException(exc);
         } finally {
-            m.onComplete(new DefaultNutsProgressEvent(srcBase, srcBase.toString(), f.files + f.folders, System.currentTimeMillis() - start, 0, 0, f.files + f.folders, null, session, false));
+            m.onComplete(new DefaultNutsProgressEvent(srcBase, srcBaseMessage, f.files + f.folders, System.currentTimeMillis() - start, 0, 0, f.files + f.folders, null, session, false));
         }
     }
 
@@ -603,7 +606,7 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
         NutsInput _source = source;
         boolean _target_isPath = target.isPath();
         if (checker != null && !_target_isPath && !safe) {
-            throw new NutsIllegalArgumentException(getSession(), "unsupported validation if neither safeCopy is armed nor path is defined");
+            throw new NutsIllegalArgumentException(getSession(), NutsMessage.formatted("unsupported validation if neither safeCopy is armed nor path is defined"));
         }
         if (isLogProgress() || getProgressMonitorFactory() != null) {
             _source = getSession().getWorkspace().io().monitor().setSource(_source).setSession(session)
@@ -627,7 +630,7 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
                 }
                 try {
                     if (_source.isPath()) {
-                        copy(_source.getPath(), temp, StandardCopyOption.REPLACE_EXISTING);
+                        copy(_source.getFilePath(), temp, StandardCopyOption.REPLACE_EXISTING);
                     } else {
                         try (InputStream ins = _source.open()) {
                             copy(ins, temp, StandardCopyOption.REPLACE_EXISTING);
@@ -652,7 +655,7 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
                     Path to = target.getFilePath();
                     CoreIOUtils.mkdirs(to.getParent());
                     if (_source.isPath()) {
-                        copy(_source.getPath(), target.getFilePath(), StandardCopyOption.REPLACE_EXISTING);
+                        copy(_source.getFilePath(), target.getFilePath(), StandardCopyOption.REPLACE_EXISTING);
                     } else {
                         try (InputStream ins = _source.open()) {
                             copy(ins, target.getFilePath(), StandardCopyOption.REPLACE_EXISTING);
@@ -664,7 +667,7 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
                     if (checker != null) {
                         bos = new ByteArrayOutputStream();
                         if (_source.isPath()) {
-                            copy(_source.getPath(), bos);
+                            copy(_source.getFilePath(), bos);
                         } else {
                             try (InputStream ins = _source.open()) {
                                 copy(ins, bos);
@@ -677,7 +680,7 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
                     } else {
                         if (_source.isPath()) {
                             try (OutputStream ops = target.open()) {
-                                copy(_source.getPath(), ops);
+                                copy(_source.getFilePath(), ops);
                             }
                         } else {
                             try (InputStream ins = _source.open()) {
@@ -704,7 +707,7 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
             } catch (NutsIOCopyValidationException ex) {
                 throw ex;
             } catch (Exception ex) {
-                throw new NutsIOCopyValidationException(session, "Validate file " + temp + " failed", ex);
+                throw new NutsIOCopyValidationException(session, NutsMessage.cstyle("validate file %s failed",temp), ex);
             }
         }
     }
@@ -716,7 +719,7 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
             } catch (NutsIOCopyValidationException ex) {
                 throw ex;
             } catch (Exception ex) {
-                throw new NutsIOCopyValidationException(session, "Validate file failed", ex);
+                throw new NutsIOCopyValidationException(session, NutsMessage.cstyle("validate file failed"), ex);
             }
         }
     }

@@ -2,6 +2,7 @@ package net.thevpc.nuts.toolbox.njob;
 
 import net.thevpc.nuts.NutsApplicationContext;
 import net.thevpc.nuts.NutsIllegalArgumentException;
+import net.thevpc.nuts.NutsMessage;
 import net.thevpc.nuts.toolbox.njob.model.*;
 import net.thevpc.nuts.toolbox.njob.time.TimePeriod;
 import net.thevpc.nuts.toolbox.njob.time.TimePeriods;
@@ -280,9 +281,9 @@ public class NTasksSubService {
     public boolean removeTask(String taskId) {
         long count = findAllTasks().filter(x -> taskId.equals(x.getParentTaskId())).count();
         if (count > 1) {
-            throw new NutsIllegalArgumentException(context.getSession(), "Task is used in " + count + " tasks. It cannot be removed.");
+            throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.cstyle("Task is used in %d tasks. It cannot be removed.",count));
         } else if (count > 0) {
-            throw new NutsIllegalArgumentException(context.getSession(), "Task is used in one task. It cannot be removed.");
+            throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.cstyle("Task is used in one task. It cannot be removed."));
         }
         return dal.delete(NTask.class, taskId);
     }

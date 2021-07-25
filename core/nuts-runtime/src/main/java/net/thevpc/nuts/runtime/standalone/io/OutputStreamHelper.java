@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io;
 
 import net.thevpc.nuts.NutsIllegalArgumentException;
+import net.thevpc.nuts.NutsMessage;
 import net.thevpc.nuts.NutsOutputStreamTransparentAdapter;
 import net.thevpc.nuts.NutsSession;
 
@@ -28,7 +29,7 @@ public class OutputStreamHelper implements OutputHelper {
             loopGard--;
         }
         if (rawOutput0 instanceof NutsOutputStreamTransparentAdapter) {
-            throw new NutsIllegalArgumentException(session, "invalid rawOutput");
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid rawOutput"));
         }
     }
 

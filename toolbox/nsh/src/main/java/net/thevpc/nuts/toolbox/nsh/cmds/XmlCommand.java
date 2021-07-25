@@ -38,10 +38,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import net.thevpc.nuts.NutsArgument;
-import net.thevpc.nuts.NutsExecutionException;
-import net.thevpc.nuts.NutsCommandLine;
-import net.thevpc.nuts.NutsSingleton;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -94,7 +91,7 @@ public class XmlCommand extends SimpleNshBuiltin {
         try {
             dBuilder = dbFactory.newDocumentBuilder();
         } catch (Exception ex) {
-            throw new NutsExecutionException(context.getSession(), "Invalid to initialize xml system", ex, 3);
+            throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("updable to initialize xml system"), ex, 3);
         }
 
         Document doc = null;
@@ -104,10 +101,10 @@ public class XmlCommand extends SimpleNshBuiltin {
                 try {
                     doc = dBuilder.parse(file);
                 } catch (Exception ex) {
-                    throw new NutsExecutionException(context.getSession(), "Invalid xml " + options.input, ex, 2);
+                    throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("invalid xml %s", options.input), ex, 2);
                 }
             } else {
-                throw new NutsExecutionException(context.getSession(), "Invalid path " + options.input, 1);
+                throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("invalid path %s",options.input), 1);
             }
         } else {
             StringBuilder sb = new StringBuilder();
@@ -117,13 +114,13 @@ public class XmlCommand extends SimpleNshBuiltin {
                 try {
                     line = reader.readLine();
                 } catch (IOException ex) {
-                    throw new NutsExecutionException(context.getSession(), "Broken Input", 2);
+                    throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("broken Input"), 2);
                 }
                 if (line == null) {
                     try {
                         doc = dBuilder.parse(new InputSource(new StringReader(sb.toString())));
                     } catch (Exception ex) {
-                        throw new NutsExecutionException(context.getSession(), "Invalid xml : " + sb, ex, 2);
+                        throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("invalid xml : %s",sb), ex, 2);
                     }
                     break;
                 } else {
@@ -149,7 +146,7 @@ public class XmlCommand extends SimpleNshBuiltin {
             try {
                 result.add((NodeList) xPath.compile(query).evaluate(doc, XPathConstants.NODESET));
             } catch (XPathExpressionException ex) {
-                throw new NutsExecutionException(context.getSession(), ex.getMessage(), ex, 103);
+                throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("%s",ex), ex, 103);
             }
         }
         if (all.size() == 1) {

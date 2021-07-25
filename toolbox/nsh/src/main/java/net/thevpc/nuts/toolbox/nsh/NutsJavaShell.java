@@ -175,9 +175,9 @@ public class NutsJavaShell extends JShell {
         } catch (NutsExecutionException ex) {
             throw ex;
         } catch (JShellException ex) {
-            throw new NutsExecutionException(appContext.getSession(), ex.getMessage(), ex, ex.getResult());
+            throw new NutsExecutionException(appContext.getSession(),  NutsMessage.cstyle("%s",ex), ex, ex.getResult());
         } catch (Exception ex) {
-            throw new NutsExecutionException(appContext.getSession(), ex.getMessage(), ex, 100);
+            throw new NutsExecutionException(appContext.getSession(), NutsMessage.cstyle("%s",ex), ex, 100);
         }
     }
 
@@ -218,7 +218,7 @@ public class NutsJavaShell extends JShell {
 
     @Override
     protected void onQuit(JShellQuitException q) {
-        throw new NutsExecutionException(getSession(), q.getMessage(), q.getResult());
+        throw new NutsExecutionException(getSession(), NutsMessage.cstyle("%s",q), q.getResult());
     }
 
     @Override

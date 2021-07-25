@@ -47,7 +47,7 @@ public class NutsUnsupportedOperationException extends NutsException {
      * @param session workspace
      * @param message message
      */
-    public NutsUnsupportedOperationException(NutsSession session, String message) {
+    public NutsUnsupportedOperationException(NutsSession session, NutsMessage message) {
         super(session, message);
     }
 
@@ -57,7 +57,7 @@ public class NutsUnsupportedOperationException extends NutsException {
      * @param message message
      * @param cause cause
      */
-    public NutsUnsupportedOperationException(NutsSession session, String message, Throwable cause) {
+    public NutsUnsupportedOperationException(NutsSession session, NutsMessage message, Throwable cause) {
         super(session, message, cause);
     }
 
@@ -78,7 +78,7 @@ public class NutsUnsupportedOperationException extends NutsException {
      * @param enableSuppression whether or not suppression is enabled or disabled
      * @param writableStackTrace whether or not the stack trace should be writable
      */
-    public NutsUnsupportedOperationException(NutsSession session, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public NutsUnsupportedOperationException(NutsSession session, NutsMessage message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(session, message, cause, enableSuppression, writableStackTrace);
     }
 }

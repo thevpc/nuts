@@ -216,7 +216,7 @@ public class NdedMain  {
                 //
             }
             if (confirm("abort?")) {
-                throw new NutsExecutionException(context.getSession(), "cancelled", 1);
+                throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("cancelled"), 1);
             }
         }
         String path = b.getId().getGroupId().replace('.', '/')

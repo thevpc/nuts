@@ -37,7 +37,7 @@ public abstract class NutsInstallationException extends NutsException {
     /**
      * artifact id
      */
-    private final String id;
+    private final NutsId id;
 
     /**
      * Custom Constructor
@@ -47,29 +47,18 @@ public abstract class NutsInstallationException extends NutsException {
      * @param msg message
      * @param ex exception
      */
-    public NutsInstallationException(NutsSession session, String id, String msg, Exception ex) {
-        super(session, PrivateNutsUtils.isBlank(msg) ? "failed to install " + (id == null ? "<null>" : id) : msg,ex);
+    public NutsInstallationException(NutsSession session, NutsId id, NutsMessage msg, Exception ex) {
+        super(session, msg==null ? NutsMessage.cstyle("failed to install %s" + (id == null ? "<null>" : id)) : msg,ex);
         this.id = id;
     }
 
-    /**
-     * Custom Constructor
-     *
-     * @param session workspace
-     * @param id nuts id
-     * @param msg message
-     * @param ex exception
-     */
-    public NutsInstallationException(NutsSession session, NutsId id, String msg, Exception ex) {
-        this(session, id == null ? null : id.toString(), msg, ex);
-    }
 
     /**
      * nuts id
      *
      * @return nuts id
      */
-    public String getId() {
+    public NutsId getId() {
         return id;
     }
 }

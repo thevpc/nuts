@@ -75,7 +75,7 @@ public class DefaultNutsOutputAction implements NutsOutputAction {
         } else if (source instanceof NutsPath) {
             return of((NutsPath) source);
         } else {
-            throw new NutsUnsupportedArgumentException(session, "unsupported type " + source.getClass().getName());
+            throw new NutsUnsupportedArgumentException(session, NutsMessage.cstyle("unsupported type %s", source.getClass().getName()));
         }
     }
 

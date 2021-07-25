@@ -48,6 +48,7 @@ public class DefaultNutsUninstallCommand extends AbstractNutsUninstallCommand {
                     .setInstallStatus(ws.filters().installStatus().byInstalled(true))
                     .setSession(searchSession.copy().setTransitive(false))
                     .setOptional(false).setEffective(true)
+                    .setContent(true)//include content so that we can remove it by calling executor
                     .getResultDefinitions().list();
             for (Iterator<NutsDefinition> it = resultDefinitions.iterator(); it.hasNext();) {
                 NutsDefinition resultDefinition = it.next();
@@ -56,7 +57,7 @@ public class DefaultNutsUninstallCommand extends AbstractNutsUninstallCommand {
                 }
             }
             if (resultDefinitions.isEmpty()) {
-                throw new NutsIllegalArgumentException(getSession(), id + " is not installed");
+                throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("not installed : %s",id));
             }
             defs.addAll(resultDefinitions);
         }

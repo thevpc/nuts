@@ -3,6 +3,7 @@ package net.thevpc.nuts.spi;
 import net.thevpc.nuts.NutsFormat;
 import net.thevpc.nuts.NutsPath;
 import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NutsString;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -37,6 +38,7 @@ public interface NutsPathSPI {
 
     String toString();
 
+    NutsString asFormattedString();
     String asString();
 
     String location();

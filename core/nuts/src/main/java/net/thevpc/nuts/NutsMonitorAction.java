@@ -58,14 +58,14 @@ public interface NutsMonitorAction {
      * @param name action name
      * @return {@code this} instance
      */
-    NutsMonitorAction setName(String name);
+    NutsMonitorAction setName(NutsString name);
 
     /**
      * return action name
      *
      * @return action name
      */
-    String getName();
+    NutsString getName();
 
     /**
      * update action source origin

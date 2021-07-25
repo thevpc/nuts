@@ -27,6 +27,7 @@ package net.thevpc.nuts.toolbox.ndb.nmysql.util;
 
 import net.thevpc.nuts.NutsArgument;
 import net.thevpc.nuts.NutsCommandLine;
+import net.thevpc.nuts.NutsMessage;
 import net.thevpc.nuts.toolbox.ndb.util.NdbUtils;
 
 /**
@@ -43,7 +44,7 @@ public class AtName {
         AtName name2 = new AtName(a.getStringValue());
         if (!name2.getConfigName().isEmpty() && !name2.getDatabaseName().isEmpty()) {
             cmd.pushBack(a);
-            cmd.unexpectedArgument("should be valid a config name");
+            cmd.unexpectedArgument(NutsMessage.cstyle("should be valid a config name"));
         }
         if (name2.getConfigName().isEmpty()) {
             name2 = new AtName(name2.getDatabaseName(), "");
@@ -70,7 +71,7 @@ public class AtName {
         NutsArgument a = cmd.peek();
         AtName name2 = new AtName(a.getString());
         if (!name2.getConfigName().isEmpty() && !name2.getDatabaseName().isEmpty()) {
-            cmd.unexpectedArgument("should be valid a config name");
+            cmd.unexpectedArgument(NutsMessage.cstyle("should be valid a config name"));
         } else {
             cmd.skip();
         }

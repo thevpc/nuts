@@ -1,11 +1,13 @@
 package net.thevpc.nuts.runtime.standalone.wscommands;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.core.commands.ws.NutsExecutableInformationExt;
+import net.thevpc.nuts.runtime.core.commands.ws.NutsExecutionContextBuilder;
+import net.thevpc.nuts.runtime.core.model.DefaultNutsDefinition;
+import net.thevpc.nuts.runtime.core.util.CoreNutsDependencyUtils;
 import net.thevpc.nuts.runtime.standalone.DefaultNutsWorkspace;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
-import net.thevpc.nuts.runtime.core.terminals.DefaultNutsSessionTerminal;
-import net.thevpc.nuts.NutsExecutorComponent;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -13,10 +15,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
-import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
-import net.thevpc.nuts.runtime.core.commands.ws.NutsExecutionContextBuilder;
-import net.thevpc.nuts.runtime.core.model.DefaultNutsDefinition;
-import net.thevpc.nuts.runtime.core.util.CoreNutsDependencyUtils;
 
 /**
  * type: Command Class
@@ -34,7 +32,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
         checkSession();
         NutsSession traceSession = getSession();
         NutsSession execSession = traceSession.copy();
-        NutsSessionTerminal terminal=execSession.getWorkspace().term().createTerminal(traceSession.getTerminal());
+        NutsSessionTerminal terminal = execSession.getWorkspace().term().createTerminal(traceSession.getTerminal());
         if (this.in != null) {
             terminal.setIn(this.in);
         }
@@ -63,7 +61,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
         switch (executionType) {
             case USER_CMD: {
                 if (commandDefinition != null) {
-                    throw new NutsIllegalArgumentException(getSession(), "unable to run nuts as user-cmd");
+                    throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("unable to run nuts as user-cmd"));
                 }
                 exec = new DefaultNutsSystemExecutable(ts, getExecutorOptions(),
                         traceSession,
@@ -76,7 +74,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
             }
             case ROOT_CMD: {
                 if (commandDefinition != null) {
-                    throw new NutsIllegalArgumentException(getSession(), "unable to run nuts as root-cmd");
+                    throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("unable to run nuts as root-cmd"));
                 }
                 exec = new DefaultNutsSystemExecutable(ts, getExecutorOptions(),
                         traceSession,
@@ -98,7 +96,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
                 break;
             }
             default: {
-                throw new NutsUnsupportedArgumentException(getSession(), "invalid executionType " + executionType);
+                throw new NutsUnsupportedArgumentException(getSession(), NutsMessage.cstyle("invalid executionType %s", executionType));
             }
         }
         return exec;
@@ -119,7 +117,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
             String p = getExtraErrorMessage();
             if (p != null) {
                 result = new NutsExecutionException(getSession(),
-                        "execution failed with code " + ex.getExitCode() + " and message : " + p,
+                        NutsMessage.cstyle("execution failed with code %s and message : %s", ex.getExitCode(), p),
                         ex, ex.getExitCode());
             } else {
                 result = ex;
@@ -128,7 +126,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
             String p = getExtraErrorMessage();
             if (p != null) {
                 result = new NutsExecutionException(getSession(),
-                        "execution failed with code " + 244 + " and message : " + p,
+                        NutsMessage.cstyle("execution failed with code %s and message : %s", 244, p),
                         ex, 244);
             } else {
                 result = new NutsExecutionException(getSession(), ex, 244);
@@ -151,7 +149,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
 
     private NutsExecutableInformationExt execEmbeddedOrExternal(String[] cmd, String[] executorOptions, NutsSession prepareSession, NutsSession execSession) {
         if (cmd == null || cmd.length == 0) {
-            throw new NutsIllegalArgumentException(getSession(), "missing command");
+            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("missing command"));
         }
         String[] args = new String[cmd.length - 1];
         System.arraycopy(cmd, 1, args, 0, args.length);
@@ -222,9 +220,13 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
                 cmdName = cmdName.substring(0, cmdName.length() - 1);
                 forceInstalled = true;
             }
-            NutsId idToExec = findExecId(cmdName, prepareSession, forceInstalled, true);
-            if (idToExec == null) {
-                throw new NutsNotFoundException(getSession(), cmdName);
+            NutsId cmdNameAsId = session.getWorkspace().id().parser().setLenient(true).parse(cmdName);
+            NutsId idToExec =null;
+            if (cmdNameAsId != null) {
+                idToExec = findExecId(cmdNameAsId, prepareSession, forceInstalled, true);
+                if (idToExec == null) {
+                    throw new NutsNotFoundException(getSession(), idToExec);
+                }
             }
             return ws_execId(idToExec, cmdName, args, executorOptions, executionType, prepareSession, execSession);
         } else {
@@ -240,7 +242,12 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
                         .setExecutionType(executionType).setEnv(env);
                 return new DefaultNutsAliasExecutable(command, o, execSession, args);
             } else {
-                NutsId idToExec = findExecId(cmdName, prepareSession, forceInstalled, true);
+                NutsId cmdNameAsId = session.getWorkspace().id().parser().setLenient(true).parse(cmdName);
+
+                NutsId idToExec = null;
+                if(cmdNameAsId!=null) {
+                    idToExec = findExecId(cmdNameAsId, prepareSession, forceInstalled, true);
+                }
                 if (idToExec == null) {
                     List<String> cmdArr = new ArrayList<>();
                     cmdArr.add(cmdName);
@@ -254,9 +261,8 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
         }
     }
 
-    protected NutsId findExecId(String commandName, NutsSession traceSession, boolean forceInstalled, boolean ignoreIfUserCommand) {
+    protected NutsId findExecId(NutsId nid, NutsSession traceSession, boolean forceInstalled, boolean ignoreIfUserCommand) {
         NutsWorkspace ws = traceSession.getWorkspace();
-        NutsId nid = ws.id().parser().parse(commandName);
         if (nid == null) {
             return null;
         }
@@ -264,7 +270,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
         List<NutsId> ff = ws.search().addId(nid).setSession(noProgressSession).setOptional(false).setLatest(true).setFailFast(false)
                 .setInstallStatus(ws.filters().installStatus().byDeployed(true))
                 .getResultDefinitions().stream()
-                .sorted(Comparator.comparing(x->!x.getInstallInformation().isDefaultVersion())) // default first
+                .sorted(Comparator.comparing(x -> !x.getInstallInformation().isDefaultVersion())) // default first
                 .map(NutsDefinition::getId).collect(Collectors.toList());
 //        if (ff.isEmpty()) {
 //            //retest without checking if the parseVersion is default or not
@@ -276,14 +282,14 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
 //        }
         if (ff.isEmpty()) {
             if (!forceInstalled) {
-                if (ignoreIfUserCommand && isUserCommand(commandName)) {
+                if (ignoreIfUserCommand && isUserCommand(nid.toString())) {
                     return null;
                 }
                 //now search online
                 // this helps recovering from "invalid default parseVersion" issue
                 if (traceSession.isPlainTrace()) {
                     traceSession.out().resetLine().printf("%s is %s, will search for it online. Type ```error CTRL^C``` to stop...\n",
-                            ws.text().forStyled(commandName, NutsTextStyle.primary1()),
+                            nid,
                             ws.text().forStyled("not installed", NutsTextStyle.error())
                     );
                     traceSession.out().flush();
@@ -300,7 +306,9 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
         } else {
             List<NutsVersion> versions = ff.stream().map(x -> x.getVersion()).distinct().collect(Collectors.toList());
             if (versions.size() > 1) {
-                throw new NutsTooManyElementsException(getSession(), nid.toString() + " can be resolved to all (" + ff.size() + ") of " + ff);
+                throw new NutsTooManyElementsException(getSession(),
+                        NutsMessage.cstyle("%s can be resolved to all (%d) of %s", nid, ff.size(), ff)
+                );
             }
         }
         return ff.get(0);
@@ -342,8 +350,8 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
     }
 
     protected NutsExecutableInformationExt ws_execId(NutsId goodId, String commandName, String[] appArgs, String[] executorOptions,
-            NutsExecutionType executionType,
-            NutsSession traceSession, NutsSession execSession) {
+                                                     NutsExecutionType executionType,
+                                                     NutsSession traceSession, NutsSession execSession) {
         NutsSession noProgressSession = traceSession.copy().setProgressOptions("none");
         NutsDefinition def = ws.fetch().setId(goodId)
                 .setSession(noProgressSession)
@@ -365,9 +373,9 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
     }
 
     public void ws_execId(NutsDefinition def, String commandName, String[] appArgs, String[] executorOptions, Map<String, String> env, String dir, boolean failFast, boolean temporary,
-            NutsSession traceSession,
-            NutsSession execSession,
-            NutsExecutionType executionType, boolean dry
+                          NutsSession traceSession,
+                          NutsSession execSession,
+                          NutsExecutionType executionType, boolean dry
     ) {
         //TODO ! one of the sessions needs to be removed!
         NutsWorkspaceUtils.checkSession(ws, session);

@@ -43,10 +43,10 @@ public class DefaultNutsUpdateStatisticsCommand extends AbstractNutsUpdateStatis
         for (Path repositoryPath : getPaths()) {
             processed = true;
             if (repositoryPath == null) {
-                throw new NutsIllegalArgumentException(getSession(), "missing location " + repositoryPath);
+                throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("missing location %s", repositoryPath));
             }
             if (!Files.isDirectory(repositoryPath)) {
-                throw new NutsIllegalArgumentException(getSession(), "expected folder at location " + repositoryPath);
+                throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("expected folder at location %s",repositoryPath));
             }
             File[] mavenRepoRootFiles = repositoryPath.toFile().listFiles(x
                     -> x.getName().equals("index.html")
@@ -71,7 +71,7 @@ public class DefaultNutsUpdateStatisticsCommand extends AbstractNutsUpdateStatis
                 if (nutsRepoRootFiles != null && nutsRepoRootFiles.length > 0) {
                     new NutsRepositoryFolderHelper(null, ws, repositoryPath, false).reindexFolder(session);
                 } else {
-                    throw new NutsIllegalArgumentException(getSession(), "unsupported repository Folder");
+                    throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("unsupported repository folder"));
                 }
                 if (session.isPlainTrace()) {
                     session.out().resetLine().printf("[%s] updated stats %s%n", getWorkspace().locations().getWorkspaceLocation(), repositoryPath);
@@ -99,7 +99,7 @@ public class DefaultNutsUpdateStatisticsCommand extends AbstractNutsUpdateStatis
     @Override
     public void add(String repo) {
         if (repo == null) {
-            throw new NutsIllegalArgumentException(getSession(), "missing repo or path");
+            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("missing repo or path"));
         }
         if (repo.equals(".") || repo.equals("..") || repo.contains("/") || repo.contains("\\")) {
             addPath(Paths.get(repo));

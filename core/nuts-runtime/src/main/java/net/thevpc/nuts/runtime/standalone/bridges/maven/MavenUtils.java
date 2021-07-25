@@ -246,7 +246,7 @@ public class MavenUtils {
             long time = System.currentTimeMillis() - startTime;
             LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.FAIL).time(time).formatted()
                     .log("caching pom file {0}", urlDesc);
-            throw new NutsParseException(session, "error Parsing " + urlDesc, e);
+            throw new NutsParseException(session, NutsMessage.cstyle("error parsing %s", urlDesc), e);
         }
     }
 
@@ -305,7 +305,7 @@ public class MavenUtils {
                         } catch (NutsException ex) {
                             throw ex;
                         } catch (Exception ex) {
-                            throw new NutsNotFoundException(session, nutsDescriptor.getId(), "Unable to resolve " + nutsDescriptor.getId() + " parent " + parentId, ex);
+                            throw new NutsNotFoundException(session, nutsDescriptor.getId(), NutsMessage.cstyle("unable to resolve %s parent %s", nutsDescriptor.getId(), parentId, ex));
                         }
                         parentId = parentDescriptor.getId();
                     }
@@ -344,7 +344,7 @@ public class MavenUtils {
                             } catch (NutsException ex) {
                                 throw ex;
                             } catch (Exception ex) {
-                                throw new NutsNotFoundException(session, nutsDescriptor.getId(), "Unable to resolve " + nutsDescriptor.getId() + " parent " + pid, ex);
+                                throw new NutsNotFoundException(session, nutsDescriptor.getId(), NutsMessage.cstyle("unable to resolve %s parent %s", nutsDescriptor.getId(), pid, ex));
                             }
                         }
                         done.add(pid.getShortName());
@@ -360,7 +360,7 @@ public class MavenUtils {
                         }
                     }
                     if (CoreNutsUtils.containsVars(thisId)) {
-                        throw new NutsNotFoundException(session, nutsDescriptor.getId(), "Unable to resolve " + nutsDescriptor.getId() + " parent " + parentId, null);
+                        throw new NutsNotFoundException(session, nutsDescriptor.getId(), NutsMessage.cstyle("unable to resolve %s parent %s", nutsDescriptor.getId(), parentId));
                     }
                     nutsDescriptor = nutsDescriptor.builder().setId(thisId).build();
                 }
@@ -384,7 +384,7 @@ public class MavenUtils {
         } catch (IOException ex) {
             throw new NutsIOException(session, ex);
         } catch (Exception ex) {
-            throw new NutsParseException(session, "error Parsing " + urlDesc, ex);
+            throw new NutsParseException(session, NutsMessage.cstyle("error Parsing %s", urlDesc), ex);
         }
         return nutsDescriptor;
     }
@@ -496,25 +496,25 @@ public class MavenUtils {
                                 }
                             }
                             if (CoreStringUtils.isBlank(groupId)) {
-                                throw new NutsIllegalArgumentException(session, "unexpected empty groupId");
+                                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unexpected empty groupId"));
                             } else if (groupId.contains("$")) {
-                                throw new NutsIllegalArgumentException(session, "unexpected maven variable in groupId=" + groupId);
+                                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unexpected maven variable in groupId=%s", groupId));
                             }
                             if (CoreStringUtils.isBlank(artifactId)) {
-                                throw new NutsIllegalArgumentException(session, "unexpected empty artifactId");
+                                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unexpected empty artifactId"));
                             } else if (artifactId.contains("$")) {
-                                throw new NutsIllegalArgumentException(session, "unexpected maven variable in artifactId=" + artifactId);
+                                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unexpected maven variable in artifactId=%s", artifactId));
                             }
                             if (CoreStringUtils.isBlank(version)) {
-                                throw new NutsIllegalArgumentException(session, "unexpected empty artifactId");
+                                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unexpected empty artifactId"));
                             } else if (version.contains("$")) {
-                                throw new NutsIllegalArgumentException(session, "unexpected maven variable in artifactId=" + version);
+                                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unexpected maven variable in artifactId=%s", version));
                             }
                             //this is maven dependency, using "compile"
                             if (CoreStringUtils.isBlank(scope) || scope.equals("compile")) {
                                 depsAndRepos.deps.add(groupId + ":" + artifactId + "#" + version);
                             } else if (version.contains("$")) {
-                                throw new NutsIllegalArgumentException(session, "unexpected maven variable in artifactId=" + version);
+                                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unexpected maven variable in artifactId=%s", version));
                             }
                         }
                     }

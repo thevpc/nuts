@@ -41,7 +41,7 @@ public class NutsValidationException extends NutsException {
      * @param workspace workspace
      */
     public NutsValidationException(NutsSession workspace) {
-        super(workspace, "Invalid value");
+        super(workspace, NutsMessage.formatted("invalid value"));
     }
 
     /**
@@ -49,7 +49,7 @@ public class NutsValidationException extends NutsException {
      * @param session workspace
      * @param message message
      */
-    public NutsValidationException(NutsSession session, String message) {
+    public NutsValidationException(NutsSession session, NutsMessage message) {
         super(session, message);
     }
 
@@ -59,7 +59,7 @@ public class NutsValidationException extends NutsException {
      * @param message message
      * @param cause cause
      */
-    public NutsValidationException(NutsSession session, String message, Throwable cause) {
+    public NutsValidationException(NutsSession session, NutsMessage message, Throwable cause) {
         super(session, message, cause);
     }
 
@@ -89,7 +89,7 @@ public class NutsValidationException extends NutsException {
      * @param enableSuppression whether or not suppression is enabled or disabled
      * @param writableStackTrace whether or not the stack trace should be writable
      */
-    public NutsValidationException(NutsSession session, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public NutsValidationException(NutsSession session, NutsMessage message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(session, message, cause, enableSuppression, writableStackTrace);
     }
 

@@ -90,7 +90,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
         NutsWorkspace ws = execSession.getWorkspace();
         try (final CharacterizedExecFile c = characterizeForExec(ws.io().input().of(cmdName), traceSession, executorOptions)) {
             if (c.descriptor == null) {
-                throw new NutsNotFoundException(execSession, "", "unable to resolve a valid descriptor for " + cmdName, null);
+                throw new NutsNotFoundException(execSession, null, NutsMessage.cstyle("unable to resolve a valid descriptor for %s",cmdName), null);
             }
             String tempFolder = ws.io().tmp()
                     .setSession(traceSession)
@@ -103,7 +103,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                     _id,
                     c.descriptor,
                     new NutsDefaultContent(
-                            execSession.getWorkspace().io().path(c.getContentLocation())
+                            execSession.getWorkspace().io().path(c.getContentPath())
                             , false, c.temps.size() > 0),
                     DefaultNutsInstallInfo.notInstalled(_id),
                     idType, null, traceSession
@@ -128,9 +128,9 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
         try {
             c.baseFile = contentFile;
             c.contentFile = CoreIOUtils.toPathInputSource(contentFile, c.temps, session);
-            Path fileSource = c.contentFile.getPath();
+            Path fileSource = c.contentFile.getFilePath();
             if (!Files.exists(fileSource)) {
-                throw new NutsIllegalArgumentException(session, "file does not exists " + fileSource);
+                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("file does not exists %s",fileSource));
             }
             if (Files.isDirectory(fileSource)) {
                 Path ext = fileSource.resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME);
@@ -146,7 +146,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                         c.contentFile = ws.io().input().setMultiRead(true).of(zipFilePath);
                         c.addTemp(zipFilePath);
                     } else {
-                        throw new NutsIllegalArgumentException(session, "invalid nuts folder source. expected 'zip' ext in descriptor");
+                        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid nuts folder source. expected 'zip' ext in descriptor"));
                     }
                 }
             } else if (Files.isRegularFile(fileSource)) {
@@ -194,7 +194,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                         }
                     }
                     if (c.contentFile == null) {
-                        throw new NutsIllegalArgumentException(session, "unable to locale package for " + c.baseFile);
+                        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unable to locale package for %s" , c.baseFile));
                     }
                 } else {
                     c.descriptor = CoreIOUtils.resolveNutsDescriptorFromFileContent(c.contentFile, execOptions, session);
@@ -206,7 +206,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                     }
                 }
             } else {
-                throw new NutsIllegalArgumentException(session, "path does not denote a valid file or folder " + c.baseFile);
+                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("path does not denote a valid file or folder %s", c.baseFile));
             }
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
@@ -228,11 +228,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
         public NutsId executor;
 
         public Path getContentPath() {
-            return (Path) contentFile.getSource();
-        }
-
-        public String getContentLocation() {
-            return ((Path) contentFile.getSource()).toString();
+            return contentFile.getFilePath();
         }
 
         public void addTemp(Path f) {

@@ -102,14 +102,14 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
         super(session);
         //id can have empty groupId (namely for executors like 'java')
         if (id == null) {
-            throw new NutsIllegalArgumentException(session, "missing id");
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing id"));
         }
         if (CoreStringUtils.isBlank(id.getArtifactId())) {
-            throw new NutsIllegalArgumentException(session, "missing artifactId for " + id);
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing artifactId for %s", id));
         }
         //NutsWorkspaceUtils.of(session).checkSimpleNameNutsId(id);
         if (!id.getProperties().isEmpty()) {
-            throw new NutsIllegalArgumentException(session, "id should not have query defined in descriptors");
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("id should not have query defined in descriptors"));
         }
         this.id = id;
 //        this.alternative = CoreStringUtils.trimToNull(alternative);

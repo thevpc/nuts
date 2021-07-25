@@ -103,7 +103,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
                 result = v;
             } else {
                 if (!isLenient()) {
-                    throw new NutsIllegalArgumentException(getSession(), "property not found : " + key);
+                    throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("property not found : %s", key));
                 }
             }
         } else {
@@ -115,7 +115,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
                     e.put(request, t.get(request));
                 } else {
                     if (!isLenient()) {
-                        throw new NutsIllegalArgumentException(getSession(), "property not found : " + request);
+                        throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("property not found : %s",request));
                     }
                 }
             }

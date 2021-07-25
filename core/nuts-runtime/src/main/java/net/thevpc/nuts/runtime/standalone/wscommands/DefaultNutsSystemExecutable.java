@@ -88,7 +88,7 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
                     return a.toArray(new String[0]);
                 }
                 default: {
-                    throw new NutsExecutionException(session, "ROOT_CMD: unsupported Platform " + session.getWorkspace().env().getOsFamily(), 12);
+                    throw new NutsExecutionException(session, NutsMessage.cstyle("ROOT_CMD: unsupported Platform %s", session.getWorkspace().env().getOsFamily()), 12);
                 }
             }
         } else {

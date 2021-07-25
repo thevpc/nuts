@@ -23,6 +23,9 @@
  */
 package net.thevpc.nuts.core.test.bundles.ntf;
 
+import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.runtime.standalone.io.progress.CProgressBar;
 import org.junit.jupiter.api.Test;
 
@@ -56,6 +59,42 @@ public class TestCProgressBar {
             rr.setFormatter(formatter);
             for (int i = 0; i < 100; i++) {
                 System.out.printf("%2d ::" + rr.progress(i) + "\n", i);
+            }
+            for (int i = 0; i < 12; i++) {
+                int finalI = i;
+                rr.setIndeterminatePosition((CProgressBar bar, int size) -> finalI % size);
+                System.out.printf("%2d ::" + rr.progress(-1) + "\n", i);
+//                try {
+//                    Thread.sleep(1000);
+//                } catch (InterruptedException ex) {
+//                    Logger.getLogger(TestCProgressBar.class.getName()).log(Level.SEVERE, null, ex);
+//                }
+            }
+        }
+    }
+    @Test
+    public void test2() {
+        NutsWorkspace ws = TestUtils.openTestWorkspace("-k");
+        NutsSession session = ws.createSession();
+        CProgressBar rr = new CProgressBar(session);
+        rr.setFormatter(CProgressBar.CIRCLES2);
+        rr.setMinPeriod(-1);
+        for (CProgressBar.Formatter formatter : new CProgressBar.Formatter[]{
+//            CProgressBar.CIRCLES2,
+            CProgressBar.CIRCLES,
+//            CProgressBar.DOTS1,
+//            CProgressBar.DOTS2,
+//            CProgressBar.PARALLELOGRAM,
+//            CProgressBar.RECTANGLES,
+//            CProgressBar.RECTANGLES2,
+//            CProgressBar.RECTANGLES3,
+            CProgressBar.RECTANGLES4,
+//            CProgressBar.SIMPLE,
+        }) {
+            rr.setFormatter(formatter);
+            for (int i = 0; i < 100; i++) {
+//                System.out.printf("%2d ::" + rr.progress(i) + "\n", i);
+                session.out().printf("%2d ::" + rr.progress(i) + "\n", i);
             }
             for (int i = 0; i < 12; i++) {
                 int finalI = i;

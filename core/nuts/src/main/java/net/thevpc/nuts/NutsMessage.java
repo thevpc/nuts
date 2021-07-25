@@ -9,6 +9,14 @@ public class NutsMessage {
     private NutsTextFormatStyle style;
     private Object[] params;
 
+    public static NutsMessage formatted(String message) {
+        return new NutsMessage(NutsTextFormatStyle.FORMATTED, message);
+    }
+
+    public static NutsMessage plain(String message) {
+        return new NutsMessage(NutsTextFormatStyle.PLAIN, message);
+    }
+
     public static NutsMessage cstyle(String message, Object... params) {
         return new NutsMessage(NutsTextFormatStyle.CSTYLE, message, params);
     }
@@ -22,6 +30,11 @@ public class NutsMessage {
             throw new NullPointerException();
         }
         this.style = style;
+        if(style==NutsTextFormatStyle.PLAIN || style==NutsTextFormatStyle.FORMATTED){
+            if(params!=null && params.length>0){
+                throw new IllegalArgumentException("arguments are not supported for "+style);
+            }
+        }
         this.message = message;
         this.params = params;
     }
@@ -49,7 +62,12 @@ public class NutsMessage {
             case JSTYLE: {
                 return MessageFormat.format(message, params);
             }
-
+            case FORMATTED: {
+                return message;
+            }
+            case PLAIN: {
+                return message;
+            }
         }
         return "NutsMessage{" + "message=" + message + ", style=" + style + ", params=" + params + '}';
     }

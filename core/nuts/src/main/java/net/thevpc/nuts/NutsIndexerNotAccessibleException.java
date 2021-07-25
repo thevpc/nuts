@@ -44,7 +44,7 @@ public class NutsIndexerNotAccessibleException extends NutsException {
      * @param message message
      * @param session workspace
      */
-    public NutsIndexerNotAccessibleException(NutsSession session, String message) {
+    public NutsIndexerNotAccessibleException(NutsSession session, NutsMessage message) {
         super(session,message);
     }
 
@@ -54,7 +54,7 @@ public class NutsIndexerNotAccessibleException extends NutsException {
      * @param message message
      * @param cause cause
      */
-    public NutsIndexerNotAccessibleException(NutsSession session, String message, Throwable cause) {
+    public NutsIndexerNotAccessibleException(NutsSession session, NutsMessage message, Throwable cause) {
         super(session,message, cause);
     }
 

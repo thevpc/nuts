@@ -53,11 +53,11 @@ public interface NutsInputAction {
 
     NutsInput of(NutsPath stream);
 
-    String getName();
+    NutsString getName();
 
     String getTypeName();
 
-    NutsInputAction setName(String name);
+    NutsInputAction setName(NutsString name);
 
     NutsInputAction setTypeName(String typeName);
 

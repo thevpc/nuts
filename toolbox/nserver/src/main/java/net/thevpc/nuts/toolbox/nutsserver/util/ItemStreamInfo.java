@@ -27,6 +27,7 @@
 package net.thevpc.nuts.toolbox.nutsserver.util;
 
 import net.thevpc.nuts.NutsIllegalArgumentException;
+import net.thevpc.nuts.NutsMessage;
 import net.thevpc.nuts.NutsWorkspace;
 
 import java.io.BufferedReader;
@@ -96,7 +97,7 @@ public class ItemStreamInfo {
                 return substring;
             }
         }
-        throw new NutsIllegalArgumentException(session, "invalid boundary");
+        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid boundary"));
     }
 
 //    private static class ErrInputStream extends InputStream {

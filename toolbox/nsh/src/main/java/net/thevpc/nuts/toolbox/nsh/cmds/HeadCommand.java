@@ -25,10 +25,7 @@
  */
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
-import net.thevpc.nuts.NutsArgument;
-import net.thevpc.nuts.NutsCommandLine;
-import net.thevpc.nuts.NutsExecutionException;
-import net.thevpc.nuts.NutsSingleton;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 
 import java.io.BufferedReader;
@@ -99,7 +96,7 @@ public class HeadCommand extends SimpleNshBuiltin {
                 }
             }
         } catch (IOException ex) {
-            throw new NutsExecutionException(context.getSession(), ex.getMessage(), ex, 100);
+            throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("%s",ex), ex, 100);
         }
     }
 

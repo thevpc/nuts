@@ -68,16 +68,6 @@ public class NutsIllegalArgumentException extends NutsException {
      *
      * @param session workspace
      * @param message message
-     */
-    public NutsIllegalArgumentException(NutsSession session, String message) {
-        super(session, message);
-    }
-
-    /**
-     * Constructs a new NutsIllegalArgumentException exception
-     *
-     * @param session workspace
-     * @param message message
      * @param cause cause
      */
     public NutsIllegalArgumentException(NutsSession session, NutsString message, Throwable cause) {
@@ -92,17 +82,6 @@ public class NutsIllegalArgumentException extends NutsException {
      * @param cause cause
      */
     public NutsIllegalArgumentException(NutsSession session, NutsMessage message, Throwable cause) {
-        super(session, message, cause);
-    }
-
-    /**
-     * Constructs a new NutsIllegalArgumentException exception
-     *
-     * @param session workspace
-     * @param message message
-     * @param cause cause
-     */
-    public NutsIllegalArgumentException(NutsSession session, String message, Throwable cause) {
         super(session, message, cause);
     }
 
@@ -127,7 +106,7 @@ public class NutsIllegalArgumentException extends NutsException {
      * @param writableStackTrace whether or not the stack trace should be
      * writable
      */
-    public NutsIllegalArgumentException(NutsSession session, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public NutsIllegalArgumentException(NutsSession session, NutsMessage message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(session, message, cause, enableSuppression, writableStackTrace);
     }
 }

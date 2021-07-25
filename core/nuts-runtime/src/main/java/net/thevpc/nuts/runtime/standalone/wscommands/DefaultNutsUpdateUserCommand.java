@@ -62,14 +62,14 @@ public class DefaultNutsUpdateUserCommand extends AbstractNutsUpdateUserCommand 
                 if (!NutsConstants.Users.ANONYMOUS.equals(currentLogin)) {
                     login = currentLogin;
                 } else {
-                    throw new NutsIllegalArgumentException(getSession(), "not logged in");
+                    throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("not logged in"));
                 }
             }
             if (repo != null) {
                 NutsRepositoryConfigModel rconf = NutsRepositoryConfigManagerExt.of(repo.config()).getModel();
                 NutsUserConfig u = rconf.getUser(login, getSession());
                 if (u == null) {
-                    throw new NutsIllegalArgumentException(getSession(), "no such user " + login);
+                    throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("no such user %s", login));
                 }
                 fillNutsUserConfig(u);
 
@@ -79,7 +79,7 @@ public class DefaultNutsUpdateUserCommand extends AbstractNutsUpdateUserCommand 
                 DefaultNutsWorkspaceConfigModel wconf = NutsWorkspaceConfigManagerExt.of(ws.config()).getModel();
                 NutsUserConfig u = wconf.getUser(login, getSession());
                 if (u == null) {
-                    throw new NutsIllegalArgumentException(getSession(), "no such user " + login);
+                    throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("no such user %s", login));
                 }
 
                 fillNutsUserConfig(u);

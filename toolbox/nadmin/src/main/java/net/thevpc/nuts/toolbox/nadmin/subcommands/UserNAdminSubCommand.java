@@ -154,7 +154,7 @@ public class UserNAdminSubCommand extends AbstractNAdminSubCommand {
                         u = repository.security().getEffectiveUser(user);
                     }
                     if (u == null) {
-                        throw new NutsElementNotFoundException(session, "No such user " + user);
+                        throw new NutsElementNotFoundException(session, NutsMessage.cstyle("no such user %s", user));
                     }
                 }
                 //            NutsUserConfig u = null;

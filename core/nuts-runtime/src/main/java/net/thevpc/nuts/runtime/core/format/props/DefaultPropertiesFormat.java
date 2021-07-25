@@ -116,7 +116,7 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
                 break;
             }
             default: {
-                throw new NutsUnsupportedArgumentException(getSession(), e.type().name());
+                throw new NutsUnsupportedEnumException(getSession(), e.type());
             }
         }
     }

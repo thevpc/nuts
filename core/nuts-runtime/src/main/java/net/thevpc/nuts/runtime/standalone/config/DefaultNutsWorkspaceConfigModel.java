@@ -293,7 +293,7 @@ public class DefaultNutsWorkspaceConfigModel {
                 }
                 _ws = configLoaded.getWorkspace();
                 if (i >= maxDepth - 1) {
-                    throw new NutsIllegalArgumentException(session, "cyclic workspace resolution");
+                    throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("cyclic workspace resolution"));
                 }
             }
             if (lastConfigLoaded == null) {
@@ -1129,7 +1129,9 @@ public class DefaultNutsWorkspaceConfigModel {
                         }
                     }
                 }
-                throw new NutsIllegalArgumentException(session, "unable to load " + id);
+                throw new NutsIllegalArgumentException(session,
+                        NutsMessage.cstyle("unable to load %s", id)
+                );
             }
         }
     }

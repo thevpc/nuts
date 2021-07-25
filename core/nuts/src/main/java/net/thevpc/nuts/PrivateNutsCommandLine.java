@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -390,77 +390,55 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
     @Override
     public NutsCommandLine requireNonOption() {
         if (!hasNext() || !peek().isNonOption()) {
-            throwError("expected value");
+            throwError(NutsMessage.formatted("expected value"));
         }
         return this;
-    }
-
-    @Override
-    public NutsCommandLine unexpectedArgument(NutsMessage errorMessage) {
-        return unexpectedArgument(errorMessage == null ? "" : errorMessage.toString());
     }
 
     @Override
     public NutsCommandLine unexpectedArgument(NutsString errorMessage) {
-        return unexpectedArgument(errorMessage == null ? "" : errorMessage.toString());
+        return unexpectedArgument(NutsMessage.formatted(errorMessage == null ? "" : errorMessage.toString()));
     }
 
     @Override
-    public NutsCommandLine unexpectedArgument(String errorMessage) {
+    public NutsCommandLine unexpectedArgument(NutsMessage errorMessage) {
         if (!isEmpty()) {
-            //AUTOCOMPLETE
-//            if (autoComplete != null) {
-//                skipAll();
-//                return this;
-//            }
-            String m = "unexpected argument " + highlightText(String.valueOf(peek()));
-            if (errorMessage != null && errorMessage.trim().length() > 0) {
-                m += " , " + errorMessage;
+            List<Object> args = new ArrayList<>();
+            String m = "unexpected argument %s";
+            args.add(peek());
+            if (errorMessage != null && errorMessage.getMessage().trim().length() > 0) {
+                m += " , %s";
+                args.add(errorMessage);
             }
-            throwError(m);
+            throwError(NutsMessage.cstyle(m, args.toArray()));
         }
         return this;
     }
 
     @Override
-    public void throwError(NutsMessage message) {
-        throwError(message == null ? "" : message.toString());
-    }
-
-    @Override
-    public void throwError(NutsString message) {
-        throwError(message == null ? "" : message.toString());
-    }
-
-    @Override
     public NutsCommandLine unexpectedArgument() {
-        return unexpectedArgument("");
+        return unexpectedArgument((NutsMessage) null);
     }
 
     @Override
     public NutsCommandLine required() {
-        return required("");
+        return required((NutsMessage) null);
     }
 
     @Override
     public NutsCommandLine required(NutsString errorMessage) {
-        return required(errorMessage == null ? "" : errorMessage.toString());
+        return required(NutsMessage.formatted(errorMessage == null ? "" : errorMessage.toString()));
     }
 
     @Override
     public NutsCommandLine required(NutsMessage errorMessage) {
-        return required(errorMessage == null ? "" : errorMessage.toString());
-    }
-
-    @Override
-    public NutsCommandLine required(String errorMessage) {
         if (isEmpty()) {
             //AUTOCOMPLETE
 //            if (autoComplete != null) {
 //                skipAll();
 //                return this;
 //            }
-            throwError((errorMessage == null || errorMessage.trim().isEmpty()) ? "missing arguments" : errorMessage);
+            throwError((errorMessage == null || errorMessage.getMessage().isEmpty()) ? NutsMessage.cstyle("missing arguments") : errorMessage);
         }
         return this;
     }
@@ -468,7 +446,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
     @Override
     public NutsCommandLine pushBack(NutsArgument arg) {
         if (arg == null) {
-            throwError("null argument");
+            throwError(NutsMessage.cstyle("null argument"));
         }
         lookahead.add(0, arg);
         return this;
@@ -518,7 +496,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
             if (hasNext()) {
                 NutsArgument peeked = peek();
                 names = new String[]{
-                    peeked.getStringKey()
+                        peeked.getStringKey()
                 };
             }
         }
@@ -581,7 +559,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
                             }
                         }
                         default: {
-                            throwError("unsupported " + highlightText(String.valueOf(expectValue)));
+                            throwError(NutsMessage.cstyle("unsupported %s", expectValue));
                         }
                     }
                 }
@@ -740,7 +718,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
         return x != null && x.isOption();
     }
 
-//    @Override
+    //    @Override
 //    public NutsArgumentName createName(String type) {
 //        return createName(type, type);
 //    }
@@ -768,7 +746,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
         return this;
     }
 
-    public void throwError(String message) {
+    public void throwError(NutsMessage message) {
         StringBuilder m = new StringBuilder();
         if (!PrivateNutsUtils.isBlank(commandName)) {
             m.append(commandName).append(" : ");
@@ -781,6 +759,12 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
     public void process(NutsCommandLineConfigurable defaultConfigurable, NutsCommandLineProcessor processor) {
         throw new NutsBootException("not supported operation process(...)");
     }
+
+    @Override
+    public void throwError(NutsString message) {
+        throwError(NutsMessage.formatted(message == null ? "" : message.toString()));
+    }
+
 
     private boolean isPrefixed(String[] nameSeqArray) {
         for (int i = 0; i < nameSeqArray.length - 1; i++) {
@@ -827,9 +811,9 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
                 return null;//return new Argument("");
             }
             if (hasNext() && (!forceNonOption || !peek().isOption())) {
-                throwError("unexpected option " + highlightText(String.valueOf(peek())));
+                throwError(NutsMessage.cstyle("unexpected option %s", peek()));
             }
-            throwError("missing argument " + highlightText((name == null ? "value" : name.getName())));
+            throwError(NutsMessage.cstyle("missing argument %s", (name == null ? "value" : name.getName())));
         }
         //ignored
         return null;
@@ -844,7 +828,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
             return createArgument(v);
         } else {
             if (required) {
-                throwError("missing argument");
+                throwError(NutsMessage.cstyle("missing argument"));
             }
             return null;
         }
@@ -855,7 +839,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
         return escapeArguments(toStringArray());
     }
 
-//    @Override
+    //    @Override
 //    public NutsArgumentName createName(String type, String label) {
 //        throw new NutsBootException(NOT_SUPPORTED);
 //    }
@@ -1013,6 +997,12 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
 //            return value;
 //        }
 //    }
+
+    @Override
+    public NutsFormat formatter() {
+        throw new NutsBootException(NOT_SUPPORTED);
+    }
+
     /**
      * This is a minimal implementation of NutsArgument and hence should not be
      * used. Instead an instance of NutsArgument can be retrieved using
@@ -1289,7 +1279,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
 
         @Override
         public boolean isBoolean() {
-            return PrivateNutsUtils.parseBoolean(expression, null,null) != null;
+            return PrivateNutsUtils.parseBoolean(expression, null, null) != null;
         }
 
         @Override
@@ -1418,10 +1408,5 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
         public String toString() {
             return String.valueOf(expression);
         }
-    }
-
-    @Override
-    public NutsFormat formatter() {
-        throw new NutsBootException(NOT_SUPPORTED);
     }
 }

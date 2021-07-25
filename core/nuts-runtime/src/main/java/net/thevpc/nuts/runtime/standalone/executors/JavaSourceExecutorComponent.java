@@ -118,7 +118,7 @@ public class JavaSourceExecutorComponent implements NutsExecutorComponent {
                 .createTempFolder("jj"));
         int res = compiler.run(null, null, null, "-d", folder.toString(), javaFile.toString());
         if (res != 0) {
-            throw new NutsExecutionException(executionContext.getTraceSession(), "compilation failed", res);
+            throw new NutsExecutionException(executionContext.getTraceSession(), NutsMessage.cstyle("compilation failed"), res);
         }
         JavaExecutorComponent cc = new JavaExecutorComponent();
         NutsDefinition d = executionContext.getDefinition();

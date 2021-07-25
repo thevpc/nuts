@@ -229,7 +229,7 @@ public class InternalNutsDependencyFilterManager extends InternalNutsTypedFilter
         }
         NutsDependencyFilter t = as(a);
         if (t == null) {
-            throw new NutsIllegalArgumentException(getSession(), "not a NutsDependencyFilter");
+            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("not a NutsDependencyFilter"));
         }
         return t;
     }

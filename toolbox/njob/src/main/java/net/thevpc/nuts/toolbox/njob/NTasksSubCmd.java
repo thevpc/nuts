@@ -384,7 +384,7 @@ public class NTasksSubCmd {
             }
         }
         if (tasks.isEmpty()) {
-            cmd.throwError("task id expected");
+            cmd.throwError(NutsMessage.formatted("task id expected"));
         }
         if (cmd.isExecMode()) {
             for (NTask task : tasks) {
@@ -507,7 +507,7 @@ public class NTasksSubCmd {
                             break;
                         }
                         default: {
-                            cmd.pushBack(y).unexpectedArgument("invalid value");
+                            cmd.pushBack(y).unexpectedArgument(NutsMessage.cstyle("invalid value"));
                         }
                     }
                     break;

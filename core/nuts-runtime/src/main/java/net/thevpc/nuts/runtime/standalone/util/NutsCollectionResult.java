@@ -5,28 +5,20 @@
  */
 package net.thevpc.nuts.runtime.standalone.util;
 
-import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.runtime.bundles.iter.IteratorUtils;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
-import java.util.Spliterator;
-import java.util.Spliterators;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
+import net.thevpc.nuts.NutsMessage;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsUnsupportedArgumentException;
+import net.thevpc.nuts.runtime.bundles.iter.IteratorUtils;
 import net.thevpc.nuts.runtime.core.commands.ws.AbstractNutsResultList;
 import net.thevpc.nuts.runtime.core.util.CoreCollectionUtils;
 
+import java.util.*;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
+
 /**
- *
- * @author thevpc
  * @param <T> collection element type
+ * @author thevpc
  */
 public class NutsCollectionResult<T> extends AbstractNutsResultList<T> {
 
@@ -84,22 +76,7 @@ public class NutsCollectionResult<T> extends AbstractNutsResultList<T> {
             case 'c':
                 return new ArrayList<>((Collection<T>) o);
         }
-        throw new NutsUnsupportedArgumentException(session, "Illegal type " + type);
-    }
-
-    @Override
-    public Iterator<T> iterator() {
-        switch (type) {
-            case 'n':
-                return IteratorUtils.emptyIterator();
-            case 'i':
-                return (Iterator<T>) o;
-            case 'l':
-                return ((Collection<T>) o).iterator();
-            case 'c':
-                return ((Collection<T>) o).iterator();
-        }
-        throw new NutsUnsupportedArgumentException(session, "Illegal type " + type);
+        throw new NutsUnsupportedArgumentException(session, NutsMessage.cstyle("illegal type %s", type));
     }
 
     @Override
@@ -114,22 +91,22 @@ public class NutsCollectionResult<T> extends AbstractNutsResultList<T> {
             case 'c':
                 return ((Collection<T>) o).stream();
         }
-        throw new NutsUnsupportedArgumentException(session, "Illegal type " + type);
+        throw new NutsUnsupportedArgumentException(session, NutsMessage.cstyle("illegal type %s", type));
     }
 
     @Override
-    public String toString() {
+    public Iterator<T> iterator() {
         switch (type) {
             case 'n':
-                return "NullBasedResult" + "@" + Integer.toHexString(hashCode());
+                return IteratorUtils.emptyIterator();
             case 'i':
-                return "IteratorBasedResult" + "@" + Integer.toHexString(hashCode());
+                return (Iterator<T>) o;
             case 'l':
-                return "ListBasedResult" + "@" + Integer.toHexString(hashCode());
+                return ((Collection<T>) o).iterator();
             case 'c':
-                return "CollectionBasedResult" + "@" + Integer.toHexString(hashCode());
+                return ((Collection<T>) o).iterator();
         }
-        return super.toString();
+        throw new NutsUnsupportedArgumentException(session, NutsMessage.cstyle("illegal type %s", type));
     }
 
     @Override
@@ -159,6 +136,21 @@ public class NutsCollectionResult<T> extends AbstractNutsResultList<T> {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public String toString() {
+        switch (type) {
+            case 'n':
+                return "NullBasedResult" + "@" + Integer.toHexString(hashCode());
+            case 'i':
+                return "IteratorBasedResult" + "@" + Integer.toHexString(hashCode());
+            case 'l':
+                return "ListBasedResult" + "@" + Integer.toHexString(hashCode());
+            case 'c':
+                return "CollectionBasedResult" + "@" + Integer.toHexString(hashCode());
+        }
+        return super.toString();
     }
 
 }

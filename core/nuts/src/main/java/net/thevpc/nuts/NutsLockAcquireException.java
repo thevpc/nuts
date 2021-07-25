@@ -10,7 +10,7 @@
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -22,51 +22,55 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts;
 
 /**
  * Exception Thrown when a locked object is invoked.
+ *
  * @author thevpc
  * @category Exceptions
  */
 public class NutsLockAcquireException extends NutsLockException {
     /**
      * Constructs a new ock exception.
-     * @param session workspace
+     *
+     * @param session      workspace
      * @param lockedObject locked object
-     * @param lockObject lock Object
+     * @param lockObject   lock Object
      */
     public NutsLockAcquireException(NutsSession session, Object lockedObject, Object lockObject) {
-        this(session,null,lockedObject,lockObject);
+        this(session, null, lockedObject, lockObject);
     }
 
     /**
      * Constructs a new ock exception.
-     * @param session workspace
-     * @param message message or null
+     *
+     * @param session      workspace
+     * @param message      message or null
      * @param lockedObject locked Object
-     * @param lockObject lock Object
+     * @param lockObject   lock Object
      */
-    public NutsLockAcquireException(NutsSession session, String message, Object lockedObject, Object lockObject) {
+    public NutsLockAcquireException(NutsSession session, NutsMessage message, Object lockedObject, Object lockObject) {
         super(session,
-                message == null ? ("unable to acquire lock for " + lockedObject)
-                        : message,lockedObject,lockObject
+                message == null ? NutsMessage.cstyle("unable to acquire lock for %s", lockedObject)
+                        : message, lockedObject, lockObject
         );
     }
 
     /**
      * Constructs a new ock exception.
-     * @param session workspace
-     * @param message message or null
+     *
+     * @param session      workspace
+     * @param message      message or null
      * @param lockedObject locked Object
-     * @param lockObject lock Object
-     * @param cause cause
+     * @param lockObject   lock Object
+     * @param cause        cause
      */
-    public NutsLockAcquireException(NutsSession session, String message, Object lockedObject, Object lockObject,Throwable cause) {
+    public NutsLockAcquireException(NutsSession session, NutsMessage message, Object lockedObject, Object lockObject, Throwable cause) {
         super(session,
-                message == null ? ("unable to acquire lock for " + lockedObject)
-                        : message,lockObject,cause
+                message == null ? NutsMessage.cstyle("unable to acquire lock for %s", lockedObject)
+                        : message, lockObject, cause
         );
     }
 }

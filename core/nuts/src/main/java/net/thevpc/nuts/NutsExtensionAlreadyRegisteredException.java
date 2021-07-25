@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -11,7 +11,7 @@
  * architecture to help supporting a large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -23,7 +23,7 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts;
 
 /**
@@ -45,8 +45,10 @@ public class NutsExtensionAlreadyRegisteredException extends NutsExtensionExcept
      * @param id artifact id
      * @param installed installed id
      */
-    public NutsExtensionAlreadyRegisteredException(NutsSession session, String id, String installed) {
-        super(session, id, "extension already registered " + (id == null ? "<null>" + " as " + installed : id), null);
+    public NutsExtensionAlreadyRegisteredException(NutsSession session, NutsId id, String installed) {
+        super(session, id,
+                NutsMessage.cstyle("extension already registered %s  as %",(id == null ? "<null>" : id),installed)
+                , null);
         this.installed = installed;
     }
 
@@ -57,8 +59,8 @@ public class NutsExtensionAlreadyRegisteredException extends NutsExtensionExcept
      * @param installed installed id
      * @param cause cause
      */
-    public NutsExtensionAlreadyRegisteredException(NutsSession session, String id, String installed, Throwable cause) {
-        super(session, id, "extension already registered " + (id == null ? "<null>" : id) + " as " + installed, cause);
+    public NutsExtensionAlreadyRegisteredException(NutsSession session, NutsId id, String installed, Throwable cause) {
+        super(session, id, NutsMessage.cstyle("extension already registered %s  as %",(id == null ? "<null>" : id),installed), cause);
         this.installed = installed;
     }
 

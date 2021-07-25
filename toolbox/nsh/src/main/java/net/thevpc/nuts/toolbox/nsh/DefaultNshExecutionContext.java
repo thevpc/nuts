@@ -53,7 +53,7 @@ public class DefaultNshExecutionContext implements NshExecutionContext {
                     showHelp();
                     cmd.skipAll();
                 }
-                throw new NutsExecutionException(shellContext.getSession(), "Help", 0);
+                throw new NutsExecutionException(shellContext.getSession(), NutsMessage.cstyle("Help"), 0);
             }
             case "--version": {
                 cmd.skip();
@@ -61,7 +61,7 @@ public class DefaultNshExecutionContext implements NshExecutionContext {
                     out().printf("%s%n", getWorkspace().id().setSession(getSession()).resolveId(getClass()).getVersion().toString());
                     cmd.skipAll();
                 }
-                throw new NutsExecutionException(shellContext.getSession(), "Help", 0);
+                throw new NutsExecutionException(shellContext.getSession(), NutsMessage.cstyle("Help"), 0);
             }
             default: {
                 if (getSession() != null && getSession().configureFirst(cmd)) {

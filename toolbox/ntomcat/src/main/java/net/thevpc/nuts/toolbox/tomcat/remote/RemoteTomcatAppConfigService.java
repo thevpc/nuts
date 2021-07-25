@@ -30,13 +30,13 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
         RemoteTomcatConfig cconfig = client.getConfig();
         String localWarPath = this.config.getPath();
         if (!new File(localWarPath).exists()) {
-            throw new NutsExecutionException(context.getSession(), "missing source war file " + localWarPath, 2);
+            throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("missing source war file %s", localWarPath), 2);
         }
         String remoteTempPath = cconfig.getRemoteTempPath();
         if (_StringUtils.isBlank(remoteTempPath)) {
             remoteTempPath = "/tmp";
         }
-        String remoteFilePath = ("/"+ remoteTempPath + "/" + _FileUtils.getFileName(localWarPath));
+        String remoteFilePath = ("/" + remoteTempPath + "/" + _FileUtils.getFileName(localWarPath));
         String server = cconfig.getServer();
         if (_StringUtils.isBlank(server)) {
             server = "localhost";
@@ -52,7 +52,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
                         "--verbose",
                         "--mkdir",
                         localWarPath,
-                        server+"/"+remoteFilePath
+                        server + "/" + remoteFilePath
                 ).setSession(context.getSession())
                 .run();
         String v = config.getVersionCommand();
@@ -97,7 +97,8 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
                     remoteFilePath
             );
         } else {
-            throw new NutsExecutionException(context.getSession(), "Unable to detect file version of " + localWarPath + ".\n" + s.getOutputString(), 2);
+            throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("unable to detect file version of %s.\n%s",localWarPath ,
+                    s.getOutputString()), 2);
         }
     }
 
@@ -117,19 +118,6 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
     public RemoteTomcatAppConfig getConfig() {
         return config;
     }
-    public NutsString getBracketsPrefix(String str) {
-        return context.getWorkspace().text().builder()
-                .append("[")
-                .append(str,NutsTextStyle.primary5())
-                .append("]");
-    }
-
-    public RemoteTomcatAppConfigService remove() {
-        client.getConfig().getApps().remove(name);
-        context.getSession().out().printf("%s app removed.\n", getBracketsPrefix(name));
-        return this;
-
-    }
 
     public String getName() {
         return name;
@@ -142,6 +130,20 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
         m.putAll(ws.elem().convert(getConfig(), Map.class));
         ws.formats().object().setSession(context.getSession()).setValue(m).print(out);
         return this;
+    }
+
+    public RemoteTomcatAppConfigService remove() {
+        client.getConfig().getApps().remove(name);
+        context.getSession().out().printf("%s app removed.\n", getBracketsPrefix(name));
+        return this;
+
+    }
+
+    public NutsString getBracketsPrefix(String str) {
+        return context.getWorkspace().text().builder()
+                .append("[")
+                .append(str, NutsTextStyle.primary5())
+                .append("]");
     }
 
     public RemoteTomcatConfigService getTomcat() {

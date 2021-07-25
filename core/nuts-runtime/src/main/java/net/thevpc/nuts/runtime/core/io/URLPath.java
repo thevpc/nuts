@@ -6,10 +6,7 @@ import net.thevpc.nuts.runtime.bundles.io.InputStreamMetadataAwareImpl;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.spi.NutsPathSPI;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.UncheckedIOException;
+import java.io.*;
 import java.net.URL;
 import java.nio.file.Path;
 import java.time.Instant;
@@ -33,13 +30,7 @@ public class URLPath extends NutsPathBase implements NutsPathSPI {
     }
     @Override
     public NutsInput input() {
-        return new NutsPathInput(null,this,getSession()){
-            @Override
-            public InputStream open() {
-                return new InputStreamMetadataAwareImpl(inputStream(), new FixedInputStreamMetadata(getNutsPath().toString(),
-                        getNutsPath().length()));
-            }
-        };
+        return new URLPathInput();
     }
     @Override
     public NutsOutput output() {
@@ -84,6 +75,14 @@ public class URLPath extends NutsPathBase implements NutsPathSPI {
     }
 
     @Override
+    public NutsString asFormattedString() {
+        if(url==null){
+            return getSession().getWorkspace().text().forPlain("");
+        }
+        return getSession().getWorkspace().text().toText(url);
+    }
+
+    @Override
     public NutsPath compressedForm() {
         return new NutsCompressedPath(this);
     }
@@ -98,6 +97,10 @@ public class URLPath extends NutsPathBase implements NutsPathSPI {
 
     @Override
     public Path toFilePath() {
+        File f = CoreIOUtils.toFile(toURL());
+        if(f!=null){
+            return f.toPath();
+        }
         throw new NutsIOException(getSession(), NutsMessage.cstyle("unable to resolve file %s", toString()));
     }
 
@@ -171,6 +174,23 @@ public class URLPath extends NutsPathBase implements NutsPathSPI {
             return Instant.ofEpochMilli(z);
         } catch (IOException e) {
             return null;
+        }
+    }
+
+    private class URLPathInput extends NutsPathInput {
+        public URLPathInput() {
+            super(URLPath.this);
+        }
+
+        @Override
+        public InputStream open() {
+            return new InputStreamMetadataAwareImpl(inputStream(), new FixedInputStreamMetadata(getNutsPath().toString(),
+                    getNutsPath().length()));
+        }
+
+        @Override
+        public URL getURL() {
+            return super.getURL();
         }
     }
 }

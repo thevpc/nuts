@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -11,7 +11,7 @@
  * architecture to help supporting a large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -27,16 +27,18 @@
 package net.thevpc.nuts.runtime.standalone.config;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.bundles.iter.IteratorUtils;
+import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+import net.thevpc.nuts.spi.NutsTransportConnection;
 
 import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Scanner;
 import java.util.stream.Collectors;
-
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.bundles.iter.IteratorUtils;
-import net.thevpc.nuts.spi.NutsTransportConnection;
 
 public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
 
@@ -66,7 +68,7 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
                         return Arrays.stream(array)
                                 .map(s -> session.getWorkspace().id().parser().parse(s.get("stringId").toString()))
                                 .collect(Collectors.toList()).iterator();
-                    } catch (UncheckedIOException|NutsIOException e) {
+                    } catch (UncheckedIOException | NutsIOException e) {
                         setInaccessible();
                         return IteratorUtils.emptyIterator();
                     }
@@ -92,7 +94,7 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
                                 .map(s -> session.getWorkspace().id().parser().parse(s.get("stringId").toString()))
                                 .filter(filter != null ? new NutsIdFilterToNutsIdPredicate(filter, session) : NutsPredicates.always())
                                 .iterator();
-                    } catch (UncheckedIOException|NutsIOException e) {
+                    } catch (UncheckedIOException | NutsIOException e) {
                         setInaccessible();
                         throw new NutsIndexerNotAccessibleException(session);
 //                        return IteratorUtils.emptyIterator();
@@ -118,7 +120,7 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
             NutsTransportConnection clientFacade = CoreIOUtils.getHttpClientFacade(session,
                     URL);
             clientFacade.open();
-        } catch (UncheckedIOException|NutsIOException e) {
+        } catch (UncheckedIOException | NutsIOException e) {
             setInaccessible();
             //
         }
@@ -141,7 +143,7 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
             NutsTransportConnection clientFacade = CoreIOUtils.getHttpClientFacade(session,
                     URL);
             clientFacade.open();
-        } catch (UncheckedIOException|NutsIOException e) {
+        } catch (UncheckedIOException | NutsIOException e) {
             setInaccessible();
             //
         }
@@ -157,8 +159,8 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
             NutsTransportConnection clientFacade = CoreIOUtils.getHttpClientFacade(session,
                     URL);
             clientFacade.open();
-        } catch (UncheckedIOException|NutsIOException e) {
-            throw new NutsUnsupportedOperationException(session, "Unable to subscribe for repository" + getRepository().getName(), e);
+        } catch (UncheckedIOException | NutsIOException e) {
+            throw new NutsUnsupportedOperationException(session, NutsMessage.cstyle("unable to subscribe for repository%s", getRepository().getName()), e);
         }
         return this;
     }
@@ -172,8 +174,8 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
             NutsTransportConnection clientFacade = CoreIOUtils.getHttpClientFacade(session,
                     URL);
             clientFacade.open();
-        } catch (UncheckedIOException|NutsIOException e) {
-            throw new NutsUnsupportedOperationException(session, "Unable to unsubscribe for repository" + getRepository().getName(), e);
+        } catch (UncheckedIOException | NutsIOException e) {
+            throw new NutsUnsupportedOperationException(session, NutsMessage.cstyle("unable to unsubscribe for repository %s", getRepository().getName()), e);
         }
         return this;
     }
@@ -187,7 +189,7 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
             NutsTransportConnection clientFacade = CoreIOUtils.getHttpClientFacade(session,
                     URL);
             return new Scanner(clientFacade.open()).nextBoolean();
-        } catch (UncheckedIOException|NutsIOException e) {
+        } catch (UncheckedIOException | NutsIOException e) {
             return false;
         }
     }

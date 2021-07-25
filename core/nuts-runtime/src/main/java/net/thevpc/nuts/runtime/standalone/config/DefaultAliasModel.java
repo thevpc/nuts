@@ -3,22 +3,20 @@ package net.thevpc.nuts.runtime.standalone.config;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.config.NutsWorkspaceConfigManagerExt;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.DefaultNutsWorkspace;
 import net.thevpc.nuts.runtime.standalone.wscommands.CommandNutsWorkspaceCommandFactory;
 import net.thevpc.nuts.runtime.standalone.wscommands.ConfigNutsWorkspaceCommandFactory;
+import net.thevpc.nuts.runtime.standalone.wscommands.DefaultNutsWorkspaceCommandAlias;
 
-import java.io.PrintStream;
 import java.util.*;
 import java.util.logging.Level;
-import net.thevpc.nuts.runtime.standalone.DefaultNutsWorkspace;
-import net.thevpc.nuts.runtime.standalone.wscommands.DefaultNutsWorkspaceCommandAlias;
 
 public class DefaultAliasModel {
 
-    private NutsWorkspace workspace;
     private final ConfigNutsWorkspaceCommandFactory defaultCommandFactory;
     private final List<NutsWorkspaceCommandFactory> commandFactories = new ArrayList<>();
     public NutsLogger LOG;
+    private NutsWorkspace workspace;
 
     public DefaultAliasModel(NutsWorkspace ws) {
         this.workspace = ws;
@@ -39,7 +37,7 @@ public class DefaultAliasModel {
     public void addFactory(NutsCommandAliasFactoryConfig commandFactoryConfig, NutsSession session) {
 //        session = CoreNutsUtils.validate(session, workspace);
         if (commandFactoryConfig == null || commandFactoryConfig.getFactoryId() == null || commandFactoryConfig.getFactoryId().isEmpty() || !commandFactoryConfig.getFactoryId().trim().equals(commandFactoryConfig.getFactoryId())) {
-            throw new NutsIllegalArgumentException(session, "invalid WorkspaceCommandFactory " + commandFactoryConfig);
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid WorkspaceCommandFactory %s", commandFactoryConfig));
         }
         for (NutsWorkspaceCommandFactory factory : commandFactories) {
             if (commandFactoryConfig.getFactoryId().equals(factory.getFactoryId())) {
@@ -86,11 +84,11 @@ public class DefaultAliasModel {
     public boolean removeFactory(String factoryId, NutsSession session) {
 //        options = CoreNutsUtils.validate(options, workspace);
         if (factoryId == null || factoryId.isEmpty()) {
-            throw new NutsIllegalArgumentException(session, "invalid WorkspaceCommandFactory " + factoryId);
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid WorkspaceCommandFactory %s", factoryId));
         }
         NutsWorkspaceCommandFactory removeMe = null;
         NutsCommandAliasFactoryConfig removeMeConfig = null;
-        for (Iterator<NutsWorkspaceCommandFactory> iterator = commandFactories.iterator(); iterator.hasNext();) {
+        for (Iterator<NutsWorkspaceCommandFactory> iterator = commandFactories.iterator(); iterator.hasNext(); ) {
             NutsWorkspaceCommandFactory factory = iterator.next();
             if (factoryId.equals(factory.getFactoryId())) {
                 removeMe = factory;
@@ -103,7 +101,7 @@ public class DefaultAliasModel {
         }
         List<NutsCommandAliasFactoryConfig> _commandFactories = getStoreModelMain().getCommandFactories();
         if (_commandFactories != null) {
-            for (Iterator<NutsCommandAliasFactoryConfig> iterator = _commandFactories.iterator(); iterator.hasNext();) {
+            for (Iterator<NutsCommandAliasFactoryConfig> iterator = _commandFactories.iterator(); iterator.hasNext(); ) {
                 NutsCommandAliasFactoryConfig commandFactory = iterator.next();
                 if (factoryId.equals(commandFactory.getFactoryId())) {
                     removeMeConfig = commandFactory;
@@ -115,7 +113,7 @@ public class DefaultAliasModel {
             }
         }
         if (removeMe == null && removeMeConfig == null) {
-            throw new NutsIllegalArgumentException(session, "command factory does not exists " + factoryId);
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("command factory does not exists %s", factoryId));
         }
         return true;
     }
@@ -127,7 +125,9 @@ public class DefaultAliasModel {
                 || command.getName().contains("/") || command.getName().contains("\\")
                 || command.getCommand() == null
                 || command.getCommand().length == 0) {
-            throw new NutsIllegalArgumentException(session, "invalid command alias " + (command == null ? "<NULL>" : command.getName()));
+            throw new NutsIllegalArgumentException(session,
+                    NutsMessage.cstyle("invalid command alias %s", (command == null ? "<NULL>" : command.getName()))
+            );
         }
         boolean forced = false;
         if (defaultCommandFactory.findCommand(command.getName(), session) != null) {
@@ -137,7 +137,9 @@ public class DefaultAliasModel {
                         session.copy().setTrace(false)
                 );
             } else {
-                throw new NutsIllegalArgumentException(session, "command alias already exists " + command.getName());
+                throw new NutsIllegalArgumentException(session,
+                        NutsMessage.cstyle("command alias already exists : %s", command.getName())
+                );
             }
         }
         defaultCommandFactory.installCommand(command, session);
@@ -146,7 +148,7 @@ public class DefaultAliasModel {
             NutsTextManager text = session.getWorkspace().text();
             if (forced) {
                 out.printf("%s command alias %s%n",
-                        text.forStyled("re-install", NutsTextStyles.of(NutsTextStyle.success(),NutsTextStyle.underlined())),
+                        text.forStyled("re-install", NutsTextStyles.of(NutsTextStyle.success(), NutsTextStyle.underlined())),
                         text.forStyled(command.getName(), NutsTextStyle.primary3()));
             } else {
                 out.printf("%s command alias %s%n",
@@ -159,13 +161,17 @@ public class DefaultAliasModel {
 
     public boolean remove(String name, NutsSession session) {
         if (CoreStringUtils.isBlank(name)) {
-            throw new NutsIllegalArgumentException(session, "invalid command alias " + (name == null ? "<NULL>" : name));
+            throw new NutsIllegalArgumentException(session,
+                    NutsMessage.cstyle("invalid command alias : %s" + (name == null ? "<NULL>" : name))
+            );
         }
 //        options = CoreNutsUtils.validate(options, workspace);
 //        NutsSession session = session.getSession();
         NutsCommandAliasConfig command = defaultCommandFactory.findCommand(name, session);
         if (command == null) {
-            throw new NutsIllegalArgumentException(session, "command alias does not exists " + name);
+            throw new NutsIllegalArgumentException(session,
+                    NutsMessage.cstyle("command alias does not exists %s", name)
+            );
         }
         defaultCommandFactory.uninstallCommand(name, session);
         if (session.isPlainTrace()) {

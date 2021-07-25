@@ -49,7 +49,7 @@ public class NutsUserCancelException extends NutsExecutionException {
      * @param session workspace
      * @param message message
      */
-    public NutsUserCancelException(NutsSession session, String message) {
+    public NutsUserCancelException(NutsSession session, NutsMessage message) {
         this(session, message, DEFAULT_CANCEL_EXIT_CODE);
     }
 
@@ -59,7 +59,7 @@ public class NutsUserCancelException extends NutsExecutionException {
      * @param message message
      * @param exitCode exit code
      */
-    public NutsUserCancelException(NutsSession session, String message, int exitCode) {
-        super(session, (message == null || message.trim().isEmpty()) ? "User cancelled operation" : message, exitCode);
+    public NutsUserCancelException(NutsSession session, NutsMessage message, int exitCode) {
+        super(session, (message == null) ? NutsMessage.cstyle("user cancelled operation") : message, exitCode);
     }
 }

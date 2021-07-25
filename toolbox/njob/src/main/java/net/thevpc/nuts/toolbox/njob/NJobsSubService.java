@@ -2,6 +2,7 @@ package net.thevpc.nuts.toolbox.njob;
 
 import net.thevpc.nuts.NutsApplicationContext;
 import net.thevpc.nuts.NutsIllegalArgumentException;
+import net.thevpc.nuts.NutsMessage;
 import net.thevpc.nuts.toolbox.njob.model.NJob;
 import net.thevpc.nuts.toolbox.njob.model.NJobGroup;
 import net.thevpc.nuts.toolbox.njob.model.NProject;
@@ -223,9 +224,9 @@ public class NJobsSubService {
     public boolean removeJob(String jobId) {
         long count = service.tasks().findAllTasks().filter(x -> jobId.equals(x.getJobId())).count();
         if (count > 1) {
-            throw new NutsIllegalArgumentException(context.getSession(),"Job is used in " + count + " tasks. It cannot be removed.");
+            throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.cstyle("job is used in %d tasks. It cannot be removed.",count));
         } else if (count > 0) {
-            throw new NutsIllegalArgumentException(context.getSession(),"Job is used in one task. It cannot be removed.");
+            throw new NutsIllegalArgumentException(context.getSession(),NutsMessage.cstyle("job is used in one task. It cannot be removed."));
         }
         return dal.delete(NJob.class, jobId);
     }

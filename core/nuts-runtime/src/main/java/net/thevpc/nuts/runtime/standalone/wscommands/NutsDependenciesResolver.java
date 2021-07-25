@@ -38,7 +38,7 @@ public class NutsDependenciesResolver {
     public NutsDependenciesResolver addRootDefinition(NutsDependency dependency, NutsDefinition def) {
 
         if (dependency == null) {
-            throw new NutsIllegalArgumentException(session, "missing dependency");
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing dependency"));
         }
         if (def == null) {
             NutsWorkspace ws = session.getWorkspace();
@@ -51,7 +51,7 @@ public class NutsDependenciesResolver {
                     .setLatest(true).getResultDefinitions().required();
         }
         if (!def.isSetEffectiveDescriptor()) {
-            throw new NutsIllegalArgumentException(session, "expected an effective definition for " + def.getId());
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("expected an effective definition for %s" ,def.getId()));
         }
         NutsDependencyTreeNodeBuild info = new NutsDependencyTreeNodeBuild(null, def, dependency, dependency, 0);
         for (NutsId exclusion : dependency.getExclusions()) {
@@ -346,7 +346,8 @@ public class NutsDependenciesResolver {
             if (effDescriptor == null && def != null) {
                 effDescriptor = def.getEffectiveDescriptor();
                 if (effDescriptor == null) {
-                    throw new NutsIllegalArgumentException(session, "expected an effective definition for " + def.getId());
+                    throw new NutsIllegalArgumentException(session,
+                            NutsMessage.cstyle("expected an effective definition for %s",def.getId()));
                 }
             }
             return effDescriptor;

@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -22,15 +22,15 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.runtime.bundles.io;
-
-import java.io.*;
-import java.util.*;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.app.DefaultNutsArgument;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+
+import java.io.*;
+import java.util.*;
 
 public class ProcessBuilder2 {
 
@@ -52,6 +52,30 @@ public class ProcessBuilder2 {
         this.session = session;
     }
 
+    private static String formatArg(String s, NutsSession session) {
+        DefaultNutsArgument a = new DefaultNutsArgument(s);
+        StringBuilder sb = new StringBuilder();
+        NutsTextManager factory = session.getWorkspace().text();
+        if (a.isKeyValue()) {
+            if (a.isOption()) {
+                sb.append(factory.forStyled(CoreStringUtils.enforceDoubleQuote(a.getStringKey(), session), NutsTextStyle.option()));
+                sb.append("=");
+                sb.append(CoreStringUtils.enforceDoubleQuote(a.getStringValue(), session));
+            } else {
+                sb.append(factory.forStyled(CoreStringUtils.enforceDoubleQuote(a.getStringKey(), session), NutsTextStyle.primary4()));
+                sb.append("=");
+                sb.append(CoreStringUtils.enforceDoubleQuote(a.getStringValue(), session));
+            }
+        } else {
+            if (a.isOption()) {
+                sb.append(factory.forStyled(CoreStringUtils.enforceDoubleQuote(a.getString(), session), NutsTextStyle.option()));
+            } else {
+                sb.append(CoreStringUtils.enforceDoubleQuote(a.getString(), session));
+            }
+        }
+        return sb.toString();
+    }
+
     public long getSleepMillis() {
         return sleepMillis;
     }
@@ -67,6 +91,16 @@ public class ProcessBuilder2 {
 
     public List<String> getCommand() {
         return command;
+    }
+
+    public ProcessBuilder2 setCommand(String... command) {
+        setCommand(Arrays.asList(command));
+        return this;
+    }
+
+    public ProcessBuilder2 setCommand(List<String> command) {
+        this.command = command == null ? null : new ArrayList<>(command);
+        return this;
     }
 
     public ProcessBuilder2 addCommand(String... command) {
@@ -85,18 +119,13 @@ public class ProcessBuilder2 {
         return this;
     }
 
-    public ProcessBuilder2 setCommand(String... command) {
-        setCommand(Arrays.asList(command));
-        return this;
-    }
-
-    public ProcessBuilder2 setCommand(List<String> command) {
-        this.command = command == null ? null : new ArrayList<>(command);
-        return this;
-    }
-
     public Map<String, String> getEnv() {
         return env;
+    }
+
+    public ProcessBuilder2 setEnv(Map<String, String> env) {
+        this.env = env == null ? null : new HashMap<>(env);
+        return this;
     }
 
     public ProcessBuilder2 addEnv(Map<String, String> env) {
@@ -118,11 +147,6 @@ public class ProcessBuilder2 {
         return this;
     }
 
-    public ProcessBuilder2 setEnv(Map<String, String> env) {
-        this.env = env == null ? null : new HashMap<>(env);
-        return this;
-    }
-
     public File getDirectory() {
         return directory;
     }
@@ -137,19 +161,19 @@ public class ProcessBuilder2 {
         base.redirectOutput(file);
         return this;
     }
-    
+
     public ProcessBuilder2 setRedirectFileInput(File file) {
         base.redirectInput(file);
         return this;
     }
-    
+
     public InputStream getIn() {
         return in;
     }
 
     public ProcessBuilder2 setIn(InputStream in) {
         if (baseIO) {
-            throw new NutsIllegalArgumentException(session, "already used base IO redirection");
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("already used base IO redirection"));
         }
         this.in = in;
         return this;
@@ -174,7 +198,7 @@ public class ProcessBuilder2 {
         if (o instanceof SPrintStream) {
             return ((SPrintStream) o).getStringBuffer();
         }
-        throw new NutsIllegalArgumentException(session, "no buffer was configured; should call setOutString");
+        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("no buffer was configured; should call setOutString"));
     }
 
     public String getErrorString() {
@@ -185,12 +209,12 @@ public class ProcessBuilder2 {
         if (o instanceof SPrintStream) {
             return ((SPrintStream) o).getStringBuffer();
         }
-        throw new NutsIllegalArgumentException(session,  "no buffer was configured; should call setErrString");
+        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("no buffer was configured; should call setErrString"));
     }
 
     public ProcessBuilder2 setOutput(PrintStream out) {
         if (baseIO) {
-            throw new NutsIllegalArgumentException(session, "already used base IO redirection");
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("already used base IO redirection"));
         }
         this.out = out;
         return this;
@@ -202,7 +226,7 @@ public class ProcessBuilder2 {
 
     public ProcessBuilder2 setErr(PrintStream err) {
         if (baseIO) {
-            throw new NutsIllegalArgumentException(session, "already used base IO redirection");
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("already used base IO redirection"));
         }
         this.err = err;
         return this;
@@ -306,17 +330,21 @@ public class ProcessBuilder2 {
             if (isFailFast()) {
                 if (base.redirectErrorStream()) {
                     if (isGrabOutputString()) {
-                        throw new NutsExecutionException(session, "execution failed with code " + result + " and message : " + getOutputString(), result);
+                        throw new NutsExecutionException(session,
+                                NutsMessage.cstyle("execution failed with code %d and message : %s", result, getOutputString())
+                                , result);
                     }
                 } else {
                     if (isGrabErrorString()) {
-                        throw new NutsExecutionException(session, "execution failed with code " + result + " and message : " + getErrorString(), result);
+                        throw new NutsExecutionException(session,
+                                NutsMessage.cstyle("execution failed with code %d and message : %s", result, getOutputString())
+                                , result);
                     }
                     if (isGrabOutputString()) {
-                        throw new NutsExecutionException(session, "execution failed with code " + result + " and message : " + getOutputString(), result);
+                        throw new NutsExecutionException(session, NutsMessage.cstyle("execution failed with code %d and message : %s", result, getOutputString()), result);
                     }
                 }
-                throw new NutsExecutionException(session, "execution failed with code " + result, result);
+                throw new NutsExecutionException(session, NutsMessage.cstyle("execution failed with code %d", result), result);
             }
         }
     }
@@ -396,25 +424,6 @@ public class ProcessBuilder2 {
         return this;
     }
 
-    private static class SPrintStream extends PrintStream {
-
-        private ByteArrayOutputStream out;
-
-        public SPrintStream() {
-            this(new ByteArrayOutputStream());
-        }
-
-        public SPrintStream(ByteArrayOutputStream out1) {
-            super(out1);
-            this.out = out1;
-        }
-
-        public String getStringBuffer() {
-            flush();
-            return new String(out.toByteArray());
-        }
-    }
-
     public ProcessBuilder2 redirectInput(ProcessBuilder.Redirect source) {
         base.redirectInput(source);
         baseIO = true;
@@ -461,48 +470,13 @@ public class ProcessBuilder2 {
         return base.redirectErrorStream();
     }
 
-    public ProcessBuilder2 setRedirectErrorStream() {
-        return setRedirectErrorStream(true);
-    }
-
     public ProcessBuilder2 setRedirectErrorStream(boolean redirectErrorStream) {
         base.redirectErrorStream(redirectErrorStream);
         return this;
     }
 
-    public interface CommandStringFormat {
-
-        default boolean acceptArgument(int argIndex, String arg) {
-            return true;
-        }
-
-        default String replaceArgument(int argIndex, String arg) {
-            return null;
-        }
-
-        default boolean acceptEnvName(String envName, String envValue) {
-            return true;
-        }
-
-        default boolean acceptRedirectInput() {
-            return true;
-        }
-
-        default boolean acceptRedirectOutput() {
-            return true;
-        }
-
-        default boolean acceptRedirectError() {
-            return true;
-        }
-
-        default String replaceEnvName(String envName, String envValue) {
-            return null;
-        }
-
-        default String replaceEnvValue(String envName, String envValue) {
-            return null;
-        }
+    public ProcessBuilder2 setRedirectErrorStream() {
+        return setRedirectErrorStream(true);
     }
 
     public String getCommandString() {
@@ -712,7 +686,7 @@ public class ProcessBuilder2 {
                     sb.append(" ");
                 }
                 sb.append(
-                        session.getWorkspace().text().forStyled(CoreStringUtils.enforceDoubleQuote(k, session),NutsTextStyle.primary4())
+                        session.getWorkspace().text().forStyled(CoreStringUtils.enforceDoubleQuote(k, session), NutsTextStyle.primary4())
                 ).append("=").append(CoreStringUtils.enforceDoubleQuote(v, session));
             }
         }
@@ -743,7 +717,7 @@ public class ProcessBuilder2 {
             if (f == null || f.acceptRedirectOutput()) {
                 r = base.redirectOutput();
                 if (null == r.type()) {
-                    sb.append("##:separator:").append(escape(session," > ")).append("## ").append("##:pale:{?}##");
+                    sb.append("##:separator:").append(escape(session, " > ")).append("## ").append("##:pale:{?}##");
                 } else {
                     switch (r.type()) {
                         //sb.append(" > ").append("{inherited}");
@@ -752,25 +726,25 @@ public class ProcessBuilder2 {
                         case PIPE:
                             break;
                         case WRITE:
-                            sb.append("##:separator:").append(escape(session," >")).append("## ").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
+                            sb.append("##:separator:").append(escape(session, " >")).append("## ").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
                             break;
                         case APPEND:
-                            sb.append("##:separator:").append(escape(session," >>")).append("## ").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
+                            sb.append("##:separator:").append(escape(session, " >>")).append("## ").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
                             break;
                         default:
-                            sb.append("##:separator:").append(escape(session," >")).append("## ").append("##:pale:{?}##");
+                            sb.append("##:separator:").append(escape(session, " >")).append("## ").append("##:pale:{?}##");
                             break;
                     }
                 }
             }
             if (f == null || f.acceptRedirectError()) {
                 if (base.redirectErrorStream()) {
-                    sb.append("##:separator:").append(escape(session," 2>&1")).append("##");
+                    sb.append("##:separator:").append(escape(session, " 2>&1")).append("##");
                 } else {
                     if (f == null || f.acceptRedirectError()) {
                         r = base.redirectError();
                         if (null == r.type()) {
-                            sb.append("##:separator:").append(escape(session," 2>")).append("## ").append("##:pale:{?}##");
+                            sb.append("##:separator:").append(escape(session, " 2>")).append("## ").append("##:pale:{?}##");
                         } else {
                             switch (r.type()) {
                                 //sb.append(" 2> ").append("{inherited}");
@@ -779,13 +753,13 @@ public class ProcessBuilder2 {
                                 case PIPE:
                                     break;
                                 case WRITE:
-                                    sb.append("##:separator:").append(escape(session," 2>")).append("## ").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
+                                    sb.append("##:separator:").append(escape(session, " 2>")).append("## ").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
                                     break;
                                 case APPEND:
-                                    sb.append("##:separator:").append(escape(session," 2>>")).append("## ").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
+                                    sb.append("##:separator:").append(escape(session, " 2>>")).append("## ").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
                                     break;
                                 default:
-                                    sb.append("##:separator:").append(escape(session," 2>")).append("## ").append("##:pale:{?}##");
+                                    sb.append("##:separator:").append(escape(session, " 2>")).append("## ").append("##:pale:{?}##");
                                     break;
                             }
                         }
@@ -795,7 +769,7 @@ public class ProcessBuilder2 {
             if (f == null || f.acceptRedirectInput()) {
                 r = base.redirectInput();
                 if (null == r.type()) {
-                    sb.append("##:separator:").append(escape(session," <")).append("## ").append("##:pale:{?}##");
+                    sb.append("##:separator:").append(escape(session, " <")).append("## ").append("##:pale:{?}##");
                 } else {
                     switch (r.type()) {
                         //sb.append(" < ").append("{inherited}");
@@ -804,10 +778,10 @@ public class ProcessBuilder2 {
                         case PIPE:
                             break;
                         case READ:
-                            sb.append("##:separator:").append(escape(session," <")).append("## ").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
+                            sb.append("##:separator:").append(escape(session, " <")).append("## ").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
                             break;
                         default:
-                            sb.append("##:separator:").append(escape(session," <")).append("## ").append("##:pale:{?}##");
+                            sb.append("##:separator:").append(escape(session, " <")).append("## ").append("##:pale:{?}##");
                             break;
                     }
                 }
@@ -815,56 +789,32 @@ public class ProcessBuilder2 {
         } else if (base.redirectErrorStream()) {
             if (out != null) {
                 if (f == null || f.acceptRedirectOutput()) {
-                    sb.append("##:separator:").append(escape(session," > ")).append("## ").append("##:pale:{stream}##");
+                    sb.append("##:separator:").append(escape(session, " > ")).append("## ").append("##:pale:{stream}##");
                 }
                 if (f == null || f.acceptRedirectError()) {
-                    sb.append("##:separator:").append(escape(session," 2>&1")).append("##");
+                    sb.append("##:separator:").append(escape(session, " 2>&1")).append("##");
                 }
             }
             if (in != null) {
                 if (f == null || f.acceptRedirectInput()) {
-                    sb.append("##:separator:").append(escape(session," <")).append("## ").append("##:pale:{stream}##");
+                    sb.append("##:separator:").append(escape(session, " <")).append("## ").append("##:pale:{stream}##");
                 }
             }
         } else {
             if (out != null) {
                 if (f == null || f.acceptRedirectOutput()) {
-                    sb.append("##:separator:").append(escape(session," >")).append("## ").append("##:pale:{stream}##");
+                    sb.append("##:separator:").append(escape(session, " >")).append("## ").append("##:pale:{stream}##");
                 }
             }
             if (err != null) {
                 if (f == null || f.acceptRedirectError()) {
-                    sb.append("##:separator:").append(escape(session," 2>")).append("## ").append("##:pale:{stream}##");
+                    sb.append("##:separator:").append(escape(session, " 2>")).append("## ").append("##:pale:{stream}##");
                 }
             }
             if (in != null) {
                 if (f == null || f.acceptRedirectInput()) {
-                    sb.append("##:separator:").append(escape(session," <")).append("## ").append("##:pale:{stream}##");
+                    sb.append("##:separator:").append(escape(session, " <")).append("## ").append("##:pale:{stream}##");
                 }
-            }
-        }
-        return sb.toString();
-    }
-
-    private static String formatArg(String s, NutsSession session) {
-        DefaultNutsArgument a = new DefaultNutsArgument(s);
-        StringBuilder sb = new StringBuilder();
-        NutsTextManager factory = session.getWorkspace().text();
-        if (a.isKeyValue()) {
-            if (a.isOption()) {
-                sb.append(factory.forStyled(CoreStringUtils.enforceDoubleQuote(a.getStringKey(), session),NutsTextStyle.option()));
-                sb.append("=");
-                sb.append(CoreStringUtils.enforceDoubleQuote(a.getStringValue(), session));
-            } else {
-                sb.append(factory.forStyled(CoreStringUtils.enforceDoubleQuote(a.getStringKey(), session),NutsTextStyle.primary4()));
-                sb.append("=");
-                sb.append(CoreStringUtils.enforceDoubleQuote(a.getStringValue(), session));
-            }
-        } else {
-            if (a.isOption()) {
-                sb.append(factory.forStyled(CoreStringUtils.enforceDoubleQuote(a.getString(), session),NutsTextStyle.option()));
-            } else {
-                sb.append(CoreStringUtils.enforceDoubleQuote(a.getString(), session));
             }
         }
         return sb.toString();
@@ -884,7 +834,7 @@ public class ProcessBuilder2 {
     }
 
     private PipeThread pipe(String name, final NonBlockingInputStream in, final OutputStream out) {
-        PipeThread p = new PipeThread(name, in, out,session);
+        PipeThread p = new PipeThread(name, in, out, session);
         p.start();
         return p;
     }
@@ -892,6 +842,60 @@ public class ProcessBuilder2 {
     @Override
     public String toString() {
         return "ProcessBuilder2{" + "command=" + command + ", env=" + env + ", directory=" + directory + ", base=" + base + ", in=" + in + ", out=" + out + ", err=" + err + ", result=" + result + ", baseIO=" + baseIO + ", failFast=" + failFast + ", proc=" + proc + ", sleepMillis=" + sleepMillis + ", session=" + session + '}';
+    }
+
+    public interface CommandStringFormat {
+
+        default boolean acceptArgument(int argIndex, String arg) {
+            return true;
+        }
+
+        default String replaceArgument(int argIndex, String arg) {
+            return null;
+        }
+
+        default boolean acceptEnvName(String envName, String envValue) {
+            return true;
+        }
+
+        default boolean acceptRedirectInput() {
+            return true;
+        }
+
+        default boolean acceptRedirectOutput() {
+            return true;
+        }
+
+        default boolean acceptRedirectError() {
+            return true;
+        }
+
+        default String replaceEnvName(String envName, String envValue) {
+            return null;
+        }
+
+        default String replaceEnvValue(String envName, String envValue) {
+            return null;
+        }
+    }
+
+    private static class SPrintStream extends PrintStream {
+
+        private ByteArrayOutputStream out;
+
+        public SPrintStream() {
+            this(new ByteArrayOutputStream());
+        }
+
+        public SPrintStream(ByteArrayOutputStream out1) {
+            super(out1);
+            this.out = out1;
+        }
+
+        public String getStringBuffer() {
+            flush();
+            return new String(out.toByteArray());
+        }
     }
 
 }

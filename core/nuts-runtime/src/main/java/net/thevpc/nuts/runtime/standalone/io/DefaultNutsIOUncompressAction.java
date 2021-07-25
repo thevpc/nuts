@@ -72,7 +72,7 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
                 break;
             }
             default: {
-                throw new NutsUnsupportedArgumentException(getSession(), "unsupported compression format " + format);
+                throw new NutsUnsupportedArgumentException(getSession(), NutsMessage.cstyle("unsupported compression format %s", format));
             }
         }
         return this;
@@ -263,10 +263,10 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
         }
         NutsInput _source = source;
         if (_source == null) {
-            throw new NutsIllegalArgumentException(getSession(), "missing source");
+            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("missing source"));
         }
         if (target == null) {
-            throw new NutsIllegalArgumentException(getSession(), "missing target");
+            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("missing target"));
         }
         if (isLogProgress() || getProgressMonitorFactory() != null) {
             _source = ws.io().monitor().setSource(_source).setSession(session)
@@ -293,7 +293,7 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
                 break;
             }
             default: {
-                throw new NutsUnsupportedArgumentException(getSession(), "unsupported format " + format);
+                throw new NutsUnsupportedArgumentException(getSession(), NutsMessage.cstyle("unsupported format %s", format));
             }
         }
         return this;
@@ -307,10 +307,10 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
         }
         NutsInput _source = source;
         if (_source == null) {
-            throw new NutsIllegalArgumentException(getSession(), "missing source");
+            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("missing source"));
         }
         if (target == null) {
-            throw new NutsIllegalArgumentException(getSession(), "missing target");
+            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("missing target"));
         }
         if (isLogProgress() || getProgressMonitorFactory() != null) {
             _source = ws.io().monitor().setSource(_source).setSession(session)
@@ -337,7 +337,7 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
                 break;
             }
             default: {
-                throw new NutsUnsupportedArgumentException(getSession(), "unsupported format " + format);
+                throw new NutsUnsupportedArgumentException(getSession(), NutsMessage.cstyle("unsupported format %s" + format));
             }
         }
         return this;
@@ -506,7 +506,7 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
                     }
                     //get the zipped file list entry
                     Path newFile = folder.resolve(n);
-                    _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).log("file unzip : " + newFile);
+                    _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).log("file unzip : {0}", newFile);
                     //create all non exists folders
                     //else you will hit FileNotFoundException for compressed folder
                     if (newFile.getParent() != null) {

@@ -37,7 +37,7 @@ public class NutsNotExecutableException extends NutsExecutionException {
     /**
      * artifact id
      */
-    private final String id;
+    private final NutsId id;
 
     /**
      * Constructs a new NutsNotExecutableException exception
@@ -45,16 +45,7 @@ public class NutsNotExecutableException extends NutsExecutionException {
      * @param id artifact id
      */
     public NutsNotExecutableException(NutsSession session, NutsId id) {
-        this(session, id == null ? null : id.toString());
-    }
-
-    /**
-     * Constructs a new NutsNotExecutableException exception
-     * @param session workspace
-     * @param id artifact id
-     */
-    public NutsNotExecutableException(NutsSession session, String id) {
-        super(session, "not executable " + (id == null ? "<null>" : id), -1);
+        super(session, NutsMessage.cstyle("not executable %s" , (id == null ? "<null>" : id)), -1);
         this.id = id;
     }
 
@@ -62,7 +53,7 @@ public class NutsNotExecutableException extends NutsExecutionException {
      * artifact id
      * @return artifact id
      */
-    public String getId() {
+    public NutsId getId() {
         return id;
     }
 }

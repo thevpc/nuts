@@ -51,10 +51,10 @@ public class NutsParseEnumException extends NutsException {
      * @param invalidValue invalid value
      * @param message message
      */
-    public NutsParseEnumException(NutsSession session, String message, String invalidValue, Class<? extends Enum> enumType) {
+    public NutsParseEnumException(NutsSession session, NutsMessage message, String invalidValue, Class<? extends Enum> enumType) {
         super(session,
                 message == null ? (
-                        "invalid value " + invalidValue + " of type " + enumType.getName())
+                        NutsMessage.cstyle("invalid value %s of type %s",invalidValue, enumType.getName()))
                         : message
         );
         this.enumType = enumType;

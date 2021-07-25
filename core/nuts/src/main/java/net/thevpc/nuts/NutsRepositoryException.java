@@ -43,10 +43,9 @@ public abstract class NutsRepositoryException extends NutsException {
      * @param message message
      * @param ex exception
      */
-    public NutsRepositoryException(NutsSession session, String repository, String message, Throwable ex) {
+    public NutsRepositoryException(NutsSession session, String repository, NutsMessage message, Throwable ex) {
         super(session,
-                PrivateNutsUtils.isBlank(message)
-                ? ("repository " + (repository == null ? "<null>" : repository) + " has encountered problem") : message, ex);
+                message==null?NutsMessage.cstyle("repository %s has encountered problem",(repository == null ? "<null>" : repository)) : message, ex);
         this.repository = repository;
     }
 

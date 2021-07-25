@@ -3,8 +3,6 @@ package net.thevpc.nuts.runtime.standalone.wscommands;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.commands.ws.DefaultNutsQueryBaseOptions;
 
-import java.util.*;
-
 public abstract class AbstractNutsFetchCommand extends DefaultNutsQueryBaseOptions<NutsFetchCommand> implements NutsFetchCommand {
 
     private NutsId id;
@@ -37,7 +35,7 @@ public abstract class AbstractNutsFetchCommand extends DefaultNutsQueryBaseOptio
     public NutsFetchCommand setId(NutsId id) {
         if (id == null) {
             checkSession();
-            throw new NutsParseException(session, "Invalid Id format : null");
+            throw new NutsParseException(session, NutsMessage.formatted("invalid Id format : null"));
         }
         this.id = id;
         return this;

@@ -30,13 +30,7 @@ public class FilePath extends NutsPathBase implements NutsPathSPI {
     }
     @Override
     public NutsInput input() {
-        return new NutsPathInput(null,this,getSession()){
-            @Override
-            public InputStream open() {
-                return new InputStreamMetadataAwareImpl(inputStream(), new FixedInputStreamMetadata(getNutsPath().toString(),
-                        getNutsPath().length()));
-            }
-        };
+        return new FilePathInput();
     }
 
     @Override
@@ -86,6 +80,11 @@ public class FilePath extends NutsPathBase implements NutsPathSPI {
     @Override
     public String asString() {
         return value.toString();
+    }
+
+    @Override
+    public NutsString asFormattedString() {
+        return getSession().getWorkspace().text().toText(value);
     }
 
     @Override
@@ -177,5 +176,17 @@ public class FilePath extends NutsPathBase implements NutsPathSPI {
             //
         }
         return null;
+    }
+
+    private class FilePathInput extends NutsPathInput {
+        public FilePathInput() {
+            super(FilePath.this);
+        }
+
+        @Override
+        public InputStream open() {
+            return new InputStreamMetadataAwareImpl(inputStream(), new FixedInputStreamMetadata(getNutsPath().toString(),
+                    getNutsPath().length()));
+        }
     }
 }

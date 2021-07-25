@@ -1,9 +1,6 @@
 package net.thevpc.nuts.runtime.remote;
 
-import net.thevpc.nuts.NutsElementFormat;
-import net.thevpc.nuts.NutsExecCommand;
-import net.thevpc.nuts.NutsExecutableInformation;
-import net.thevpc.nuts.NutsExecutionException;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.wscommands.AbstractNutsExecCommand;
 
 public class RemoteNutsExecCommand extends AbstractNutsExecCommand {
@@ -24,9 +21,9 @@ public class RemoteNutsExecCommand extends AbstractNutsExecCommand {
         return getWorkspace().remoteCall(
                 getWorkspace().createCall("workspace.which",
                         e.forObject()
-                                .build(),getSession()
+                                .build(), getSession()
                 ),
-                 NutsExecutableInformation.class
+                NutsExecutableInformation.class
         );
     }
 
@@ -43,7 +40,7 @@ public class RemoteNutsExecCommand extends AbstractNutsExecCommand {
                                     .build(),
                             getSession()
                     ),
-                     Integer.class
+                    Integer.class
             );
         } catch (NutsExecutionException ex) {
             result = ex;
@@ -51,7 +48,7 @@ public class RemoteNutsExecCommand extends AbstractNutsExecCommand {
             String p = getExtraErrorMessage();
             if (p != null) {
                 result = new NutsExecutionException(session,
-                        "execution failed with code " + 244 + " and message : " + p,
+                        NutsMessage.cstyle("execution failed with code %d and message : %s", 244, p),
                         ex, 244);
             } else {
                 result = new NutsExecutionException(session, ex, 244);

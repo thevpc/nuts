@@ -1,14 +1,10 @@
 package net.thevpc.nuts.runtime.bundles.io;
 
-import net.thevpc.nuts.NutsIOException;
-import net.thevpc.nuts.NutsOutput;
-import net.thevpc.nuts.NutsUnsupportedOperationException;
-import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.*;
 
 import java.io.OutputStream;
 import java.net.URL;
 import java.nio.file.Path;
-import net.thevpc.nuts.NutsSession;
 
 public abstract class AbstractNutsOutput implements NutsOutput {
 
@@ -19,13 +15,13 @@ public abstract class AbstractNutsOutput implements NutsOutput {
     private String typeName;
     private NutsSession ws;
 
-    public AbstractNutsOutput(Object value, boolean path, boolean url, String name, String typeName,NutsSession ws) {
+    public AbstractNutsOutput(Object value, boolean path, boolean url, String name, String typeName, NutsSession ws) {
         this.value = value;
         this.path = path;
         this.url = url;
         this.typeName = typeName;
-        if(name==null){
-            name=String.valueOf(value);
+        if (name == null) {
+            name = String.valueOf(value);
         }
         this.name = name;
         this.ws = ws;
@@ -37,7 +33,7 @@ public abstract class AbstractNutsOutput implements NutsOutput {
         if (n == null) {
             n = getName();
         }
-        return new NutsIOException(ws, n+" not found : " +toString(), ex);
+        return new NutsIOException(ws, NutsMessage.cstyle("%s not found : %s", n, toString()), ex);
     }
 
     @Override
@@ -50,12 +46,18 @@ public abstract class AbstractNutsOutput implements NutsOutput {
         return typeName;
     }
 
+    public abstract OutputStream open();
+
+    public Object getSource() {
+        return value;
+    }
+
     public boolean isPath() {
         return path;
     }
 
-    public Object getSource() {
-        return value;
+    public Path getFilePath() {
+        throw new NutsUnsupportedOperationException(ws);
     }
 
     @Override
@@ -67,10 +69,4 @@ public abstract class AbstractNutsOutput implements NutsOutput {
     public URL getURL() {
         throw new NutsUnsupportedOperationException(ws);
     }
-
-    public Path getFilePath() {
-        throw new NutsUnsupportedOperationException(ws);
-    }
-
-    public abstract OutputStream open();
 }

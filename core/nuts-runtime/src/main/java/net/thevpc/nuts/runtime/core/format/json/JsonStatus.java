@@ -26,6 +26,7 @@
 */
 package net.thevpc.nuts.runtime.core.format.json;
 
+import net.thevpc.nuts.NutsMessage;
 import net.thevpc.nuts.NutsParseException;
 import net.thevpc.nuts.NutsSession;
 
@@ -49,36 +50,36 @@ public class JsonStatus {
         }
         if (countBraces == 0) {
             if (throwError) {
-                throw new NutsParseException(session, "not an object");
+                throw new NutsParseException(session, NutsMessage.cstyle("not an object"));
             }
             return false;
         }
         if (openBrackets > 0) {
             if (throwError) {
-                throw new NutsParseException(session, "Unbalanced brackets");
+                throw new NutsParseException(session, NutsMessage.cstyle("unbalanced brackets"));
             }
             return false;
         }
         if (openBraces > 0) {
             if (throwError) {
-                throw new NutsParseException(session, "Unbalanced braces");
+                throw new NutsParseException(session, NutsMessage.cstyle("unbalanced braces"));
             }
             return false;
         }
         if (openAntiSlash) {
             if (throwError) {
-                throw new NutsParseException(session, "Unbalanced anti-slash");
+                throw new NutsParseException(session, NutsMessage.cstyle("unbalanced anti-slash"));
             }
         }
         if (openSimpleQuotes) {
             if (throwError) {
-                throw new NutsParseException(session, "Unbalanced simple quotes");
+                throw new NutsParseException(session, NutsMessage.cstyle("unbalanced simple quotes"));
             }
             return false;
         }
         if (openDoubleQuotes) {
             if (throwError) {
-                throw new NutsParseException(session, "Unbalanced double quotes");
+                throw new NutsParseException(session, NutsMessage.cstyle("unbalanced double quotes"));
             }
             return false;
         }
@@ -88,13 +89,13 @@ public class JsonStatus {
     public boolean checkPartialValid(boolean throwError) {
         if (openBrackets < 0) {
             if (throwError) {
-                throw new NutsParseException(session, "Unbalanced brackets");
+                throw new NutsParseException(session, NutsMessage.cstyle("unbalanced brackets"));
             }
             return false;
         }
         if (openBraces < 0) {
             if (throwError) {
-                throw new NutsParseException(session, "Unbalanced braces");
+                throw new NutsParseException(session, NutsMessage.cstyle("unbalanced braces"));
             }
             return false;
         }

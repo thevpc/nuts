@@ -13,7 +13,6 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.function.Predicate;
 
-import net.thevpc.nuts.runtime.bundles.io.ByteArrayPrintStream;
 import net.thevpc.nuts.runtime.core.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.core.format.NutsFetchDisplayOptions;
 import net.thevpc.nuts.runtime.core.format.json.DefaultSearchFormatJson;
@@ -24,7 +23,6 @@ import net.thevpc.nuts.runtime.core.format.text.DefaultNutsTextManagerModel;
 import net.thevpc.nuts.runtime.core.format.tree.DefaultSearchFormatTree;
 import net.thevpc.nuts.runtime.core.format.xml.DefaultSearchFormatXml;
 import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
-import net.thevpc.nuts.runtime.standalone.io.NutsByteArrayPrintStream;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementFormat> implements NutsElementFormat {
@@ -95,14 +93,14 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
                     } catch (UncheckedIOException ex) {
                         throw new NutsIOException(getSession(), ex);
                     } catch (RuntimeException ex) {
-                        throw new NutsParseException(getSession(), "unable to parse url " + url, ex);
+                        throw new NutsParseException(getSession(), NutsMessage.cstyle("unable to parse url %s" , url), ex);
                     }
                 } catch (IOException ex) {
-                    throw new NutsParseException(getSession(), "unable to parse url " + url, ex);
+                    throw new NutsParseException(getSession(), NutsMessage.cstyle("unable to parse url %s", url), ex);
                 }
             }
         }
-        throw new NutsIllegalArgumentException(getSession(), "invalid content type " + contentType + ". Only structured content types are allowed.");
+        throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("invalid content type %s. Only structured content types are allowed.",contentType));
     }
 
     @Override
@@ -116,7 +114,7 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
                 return parse(new InputStreamReader(inputStream), clazz);
             }
         }
-        throw new NutsIllegalArgumentException(getSession(), "invalid content type " + contentType + ". Only structured content types are allowed.");
+        throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("invalid content type %s. Only structured content types are allowed.",contentType));
     }
 
     @Override
@@ -130,7 +128,7 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
                 return parse(new StringReader(string), clazz);
             }
         }
-        throw new NutsIllegalArgumentException(getSession(), "invalid content type " + contentType + ". Only structured content types are allowed.");
+        throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("invalid content type %s. Only structured content types are allowed.",contentType));
     }
 
     @Override
@@ -144,10 +142,10 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
                 return parse(new InputStreamReader(new ByteArrayInputStream(bytes)), clazz);
             }
         }
-        throw new NutsIllegalArgumentException(getSession(), "invalid content type " + contentType + ". Only structured content types are allowed.");
+        throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("invalid content type %s. Only structured content types are allowed.",contentType));
     }
 
-    private NutsElementStreamFormat resolveStucturedFormat() {
+    private NutsElementStreamFormat resolveStructuredFormat() {
         checkSession();
         switch (contentType) {
             case JSON: {
@@ -163,12 +161,12 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
                 throw new IllegalArgumentException("tson not supported yet");
             }
         }
-        throw new NutsIllegalArgumentException(getSession(), "invalid content type " + contentType + ". Only structured content types are allowed.");
+        throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("invalid content type %s. Only structured content types are allowed.",contentType));
     }
 
     @Override
     public <T> T parse(Reader reader, Class<T> clazz) {
-        return (T) elementToObject(resolveStucturedFormat().parseElement(reader, createFactoryContext()), clazz);
+        return (T) elementToObject(resolveStructuredFormat().parseElement(reader, createFactoryContext()), clazz);
     }
 
     private DefaultNutsElementFactoryContext createFactoryContext() {
@@ -261,7 +259,7 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
 
     @Override
     public void print(NutsPrintStream out) {
-        print(out, resolveStucturedFormat());
+        print(out, resolveStructuredFormat());
     }
 
 //    @Override
@@ -473,7 +471,7 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
 
             }
         }
-        throw new NutsParseException(getSession(), "unable to parse number " + value);
+        throw new NutsParseException(getSession(), NutsMessage.cstyle("unable to parse number %s", value));
     }
 
     @Override
@@ -510,7 +508,7 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
             case PROPS:
                 return new DefaultSearchFormatProps(getSession(), writer, new NutsFetchDisplayOptions(getSession().getWorkspace()));
         }
-        throw new NutsIllegalArgumentException(getSession(), "unsupported iterator for " + getContentType());
+        throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("unsupported iterator for " + getContentType()));
     }
 
     @Override

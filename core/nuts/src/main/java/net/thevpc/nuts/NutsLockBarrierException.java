@@ -48,9 +48,9 @@ public class NutsLockBarrierException extends NutsLockException {
      * @param lockedObject locked Object
      * @param lockObject lock Object
      */
-    public NutsLockBarrierException(NutsSession session, String message, Object lockedObject, Object lockObject) {
+    public NutsLockBarrierException(NutsSession session, NutsMessage message, Object lockedObject, Object lockObject) {
         super(session,
-                message == null ? ("item already locked" + lockedObject)
+                message == null ? NutsMessage.cstyle("item already locked %s", lockedObject)
                         : message,lockedObject,lockObject
         );
     }
@@ -63,9 +63,9 @@ public class NutsLockBarrierException extends NutsLockException {
      * @param lockObject lock Object
      * @param cause cause
      */
-    public NutsLockBarrierException(NutsSession session, String message, Object lockedObject, Object lockObject,Throwable cause) {
+    public NutsLockBarrierException(NutsSession session, NutsMessage message, Object lockedObject, Object lockObject,Throwable cause) {
         super(session,
-                message == null ? ("item already locked" + lockedObject)
+                message == null ? NutsMessage.cstyle("item already locked %s", lockedObject)
                         : message,lockObject,cause
         );
     }

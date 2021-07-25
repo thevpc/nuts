@@ -86,7 +86,7 @@ public class DefaultHttpTransportComponent implements NutsTransportComponent {
         }
 
         public InputStream upload(NutsTransportParamPart... parts) {
-            throw new NutsUnsupportedOperationException(session, "Upload unsupported");
+            throw new NutsUnsupportedOperationException(session, NutsMessage.cstyle("upload unsupported"));
         }
 
         @Override

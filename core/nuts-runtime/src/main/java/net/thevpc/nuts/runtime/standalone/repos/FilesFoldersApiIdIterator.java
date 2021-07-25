@@ -58,7 +58,7 @@ class FilesFoldersApiIdIterator implements Iterator<NutsId> {
         this.repository = repository;
         this.strategy = strategy;
         if (strategy != RemoteRepoApi.DIR_LIST && strategy != RemoteRepoApi.DIR_TEXT) {
-            throw new NutsUnexpectedException(session, "unexpected strategy " + strategy);
+            throw new NutsUnexpectedException(session, NutsMessage.cstyle("unexpected strategy ", strategy));
         }
         this.session = session;
         this.filter = filter;
@@ -136,7 +136,7 @@ class FilesFoldersApiIdIterator implements Iterator<NutsId> {
         if (last != null) {
             model.undeploy(last, session);
         }
-        throw new NutsUnsupportedOperationException(session, "unsupported Remove");
+        throw new NutsUnsupportedOperationException(session, NutsMessage.cstyle("unsupported Remove"));
     }
 
     public long getVisitedFoldersCount() {

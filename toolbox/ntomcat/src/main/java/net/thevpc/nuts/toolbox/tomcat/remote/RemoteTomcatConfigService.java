@@ -144,7 +144,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
 
     public RemoteTomcatConfigService loadConfig() {
         if (name == null) {
-            throw new NutsExecutionException(context.getSession(), "missing instance name", 2);
+            throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("missing instance name"), 2);
         }
         Path f = getConfigPath();
         if (Files.exists(f)) {
@@ -192,7 +192,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
     public RemoteTomcatAppConfigService getAppOrError(String appName) {
         RemoteTomcatAppConfig a = getConfig().getApps().get(appName);
         if (a == null) {
-            throw new NutsExecutionException(context.getSession(), "app not found :" + appName, 2);
+            throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("app not found :%s", appName), 2);
         }
         return new RemoteTomcatAppConfigService(appName, a, this);
     }

@@ -1,13 +1,10 @@
 package net.thevpc.nuts.runtime.core.filters.installstatus;
 
-import net.thevpc.nuts.NutsFilter;
-import net.thevpc.nuts.NutsIllegalArgumentException;
-import net.thevpc.nuts.NutsInstallStatusFilter;
-import net.thevpc.nuts.NutsInstallStatusFilterManager;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.filters.InternalNutsTypedFilters;
 
 import java.util.List;
-import net.thevpc.nuts.NutsSession;
+
 import net.thevpc.nuts.runtime.core.filters.DefaultNutsFilterModel;
 
 public class InternalNutsInstallStatusFilterManager extends InternalNutsTypedFilters<NutsInstallStatusFilter> implements NutsInstallStatusFilterManager {
@@ -120,7 +117,7 @@ public class InternalNutsInstallStatusFilterManager extends InternalNutsTypedFil
         }
         NutsInstallStatusFilter t = as(a);
         if (t == null) {
-            throw new NutsIllegalArgumentException(getSession(), "not a InstallStatusFilter");
+            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("not a InstallStatusFilter"));
         }
         return t;
     }

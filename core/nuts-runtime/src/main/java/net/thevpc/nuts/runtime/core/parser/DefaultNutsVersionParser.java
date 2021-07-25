@@ -1,10 +1,6 @@
 package net.thevpc.nuts.runtime.core.parser;
 
-import net.thevpc.nuts.NutsParseException;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsVersion;
-import net.thevpc.nuts.NutsVersionParser;
-import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.model.DefaultNutsVersion;
 
 public class DefaultNutsVersionParser implements NutsVersionParser {
@@ -34,7 +30,7 @@ public class DefaultNutsVersionParser implements NutsVersionParser {
     public NutsVersion parse(String version) {
         NutsVersion v = DefaultNutsVersion.valueOf(version,session);
         if(v==null && !isLenient()){
-            throw new NutsParseException(session, "Invalid version format : " + version);
+            throw new NutsParseException(session, NutsMessage.cstyle("invalid version format : %s", version));
         }
         return v;
     }

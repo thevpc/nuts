@@ -55,7 +55,7 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
             }
         }
         if (commands.isEmpty()) {
-            throw new NutsIllegalArgumentException(getSession(), "which: missing commands");
+            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("which: missing commands"));
         }
         NutsTextManager factory = ws.text();
         for (String arg : this.args) {
@@ -82,7 +82,12 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
                     }
                     case ARTIFACT: {
                         if (p.getId() == null) {
-                            throw new NutsNotFoundException( getSession(), arg);
+                            NutsId nid = getSession().getWorkspace().id().parser().setLenient(true).parse(arg);
+                            if(nid!=null) {
+                                throw new NutsNotFoundException(getSession(), nid);
+                            }else{
+                                throw new NutsNotFoundException(getSession(), null,NutsMessage.cstyle("artifact not found: %s%s", (arg == null ? "<null>" : arg)));
+                            }
                         }
                         out.printf("%s : %s %s%n",
                                 factory.forStyled(arg, NutsTextStyle.primary4()),

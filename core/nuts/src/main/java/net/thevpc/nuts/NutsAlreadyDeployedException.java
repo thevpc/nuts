@@ -35,6 +35,7 @@ package net.thevpc.nuts;
  */
 public class NutsAlreadyDeployedException extends NutsInstallationException {
 
+
     /**
      * Custom Constructor
      *
@@ -42,30 +43,9 @@ public class NutsAlreadyDeployedException extends NutsInstallationException {
      * @param id nuts id
      */
     public NutsAlreadyDeployedException(NutsSession session, NutsId id) {
-        this(session, id == null ? null : id.toString());
-    }
-
-    /**
-     * Custom Constructor
-     *
-     * @param session workspace
-     * @param id nuts id
-     */
-    public NutsAlreadyDeployedException(NutsSession session, String id) {
         this(session, id, null, null);
     }
 
-    /**
-     * Custom Constructor
-     *
-     * @param session workspace
-     * @param id nuts id
-     * @param msg message
-     * @param ex exception
-     */
-    public NutsAlreadyDeployedException(NutsSession session, NutsId id, String msg, Exception ex) {
-        this(session, id == null ? null : id.toString(), msg, ex);
-    }
 
     /**
      * Custom Constructor
@@ -75,8 +55,8 @@ public class NutsAlreadyDeployedException extends NutsInstallationException {
      * @param msg message
      * @param cause cuse
      */
-    public NutsAlreadyDeployedException(NutsSession session, String id, String msg, Exception cause) {
-        super(session, id, PrivateNutsUtils.isBlank(msg) ? "already deployed " + (id == null ? "<null>" : id) : msg, cause);
+    public NutsAlreadyDeployedException(NutsSession session, NutsId id, NutsMessage msg, Exception cause) {
+        super(session, id, msg==null ? NutsMessage.cstyle("already deployed %s" , (id == null ? "<null>" : id)) : msg, cause);
     }
 
 }

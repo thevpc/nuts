@@ -36,7 +36,15 @@ public abstract class NutsExtensionException extends NutsException {
     /**
      * id
      */
-    private final String id;
+    private final NutsId id;
+
+    /**
+     * extension id
+     * @return extension id
+     */
+    public NutsId getId() {
+        return id;
+    }
 
     /**
      * Constructs a new runtime exception with the specified detail message and
@@ -56,18 +64,10 @@ public abstract class NutsExtensionException extends NutsException {
      * @param session the workspace of this Nuts Exception
      * @param extensionId extension id
      */
-    public NutsExtensionException(NutsSession session, String extensionId, String message, Throwable cause) {
+    public NutsExtensionException(NutsSession session, NutsId extensionId, NutsMessage message, Throwable cause) {
         super(session,
-                PrivateNutsUtils.isBlank(message)
-                        ? ("extension " + (extensionId == null ? "<null>" : extensionId) + " has encountered problem") : message, cause);
+                message==null
+                        ? NutsMessage.cstyle("extension %s has encountered problem",(extensionId == null ? "<null>" : extensionId)) : message, cause);
         this.id = extensionId;
-    }
-
-    /**
-     * extension id
-     * @return extension id
-     */
-    public String getId() {
-        return id;
     }
 }

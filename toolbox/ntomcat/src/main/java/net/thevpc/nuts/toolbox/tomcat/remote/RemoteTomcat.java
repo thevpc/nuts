@@ -69,7 +69,7 @@ public class RemoteTomcat {
                 }
             }
         }
-        throw new NutsExecutionException(context.getSession(), "missing tomcat action. Type: nuts tomcat --help", 1);
+        throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("missing tomcat action. Type: nuts tomcat --help"), 1);
     }
 
     public void list(NutsCommandLine args) {
@@ -116,7 +116,7 @@ public class RemoteTomcat {
                     instanceName = a.getStringValue();
                     c = loadOrCreateTomcatConfig(instanceName);
                 } else {
-                    throw new NutsExecutionException(session, "instance already defined", 2);
+                    throw new NutsExecutionException(session, NutsMessage.cstyle("instance already defined"), 2);
                 }
             } else if ((a = args.nextString("--server")) != null) {
                 if (c == null) {
@@ -209,7 +209,7 @@ public class RemoteTomcat {
                     }
                 }
             } catch (NutsUserCancelException ex) {
-                throw new NutsExecutionException(session, "Cancelled", 1);
+                throw new NutsExecutionException(session, NutsMessage.cstyle("cancelled"), 1);
             }
         }
         c.save();
@@ -234,7 +234,7 @@ public class RemoteTomcat {
             }
         }
         if (!processed) {
-            throw new NutsExecutionException(context.getSession(), "Invalid parameters", 2);
+            throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("invalid parameters"), 2);
         }
         if (lastExitCode != 0) {
             throw new NutsExecutionException(context.getSession(), lastExitCode);
@@ -431,7 +431,7 @@ public class RemoteTomcat {
             RemoteTomcatConfigService u = loadOrCreateTomcatConfig(strings[0]);
             RemoteTomcatAppConfigService a = u.getAppOrNull(strings[1]);
             if (a == null) {
-                throw new NutsExecutionException(context.getSession(), "Unknown name " + name + ". it is no domain or app", 3);
+                throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("unknown name %s. it is no domain or app",name), 3);
             }
             return a;
         }

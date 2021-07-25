@@ -25,10 +25,7 @@
  */
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
-import net.thevpc.nuts.NutsArgument;
-import net.thevpc.nuts.NutsCommandLine;
-import net.thevpc.nuts.NutsCommandLineManager;
-import net.thevpc.nuts.NutsIOCompressAction;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.nsh.AbstractNshBuiltin;
 import net.thevpc.nuts.toolbox.nsh.NshExecutionContext;
 
@@ -72,10 +69,10 @@ public class ZipCommand extends AbstractNshBuiltin {
             }
         }
         if (files.isEmpty()) {
-            commandLine.required("missing input-files");
+            commandLine.required(NutsMessage.cstyle("missing input-files"));
         }
         if (outZip == null) {
-            commandLine.required("missing out-zip");
+            commandLine.required(NutsMessage.cstyle("missing out-zip"));
         }
         NutsIOCompressAction aa = context.getSession().getWorkspace().io().compress()
                 .setTarget(outZip.getPath());

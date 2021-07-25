@@ -6,9 +6,12 @@ import java.nio.file.Path;
 import java.time.Instant;
 
 public interface NutsPath extends NutsFormattable {
+    NutsString formattedName();
     String name();
 
     String asString();
+
+    NutsString asFormattedString();
 
     String location();
 

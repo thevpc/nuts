@@ -119,7 +119,7 @@ public class DefaultNutsObjectFormat extends NutsObjectFormatBase {
                 return ws.formats().table();
             }
         }
-        throw new NutsException(getSession(), "Unsupported");
+        throw new NutsException(getSession(), NutsMessage.cstyle("unsupported format %s",getOutputFormat()));
     }
 
     @Override

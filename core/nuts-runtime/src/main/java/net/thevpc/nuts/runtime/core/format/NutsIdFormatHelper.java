@@ -556,7 +556,7 @@ public class NutsIdFormatHelper {
             }
 
             default: {
-                throw new NutsUnsupportedArgumentException(session, String.valueOf(dp));
+                throw new NutsUnsupportedEnumException(session, dp);
             }
         }
     }

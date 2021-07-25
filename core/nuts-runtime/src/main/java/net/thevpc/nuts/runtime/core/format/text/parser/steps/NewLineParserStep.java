@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.core.format.text.parser.steps;
 
 import net.thevpc.nuts.NutsIllegalArgumentException;
+import net.thevpc.nuts.NutsMessage;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.runtime.core.format.text.DefaultNutsTextManager;
 import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextNodeParser;
@@ -35,7 +36,7 @@ public class NewLineParserStep extends ParserStep {
 
     @Override
     public void appendChild(ParserStep tt) {
-        throw new NutsIllegalArgumentException(session,"unsupported");
+        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unsupported"));
     }
 
     @Override

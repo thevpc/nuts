@@ -1,25 +1,20 @@
 package net.thevpc.nuts.runtime.standalone.executors;
 
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+import net.thevpc.nuts.runtime.bundles.parsers.StringTokenizerUtils;
+import net.thevpc.nuts.runtime.core.util.*;
+import net.thevpc.nuts.runtime.standalone.util.NutsClassLoaderNodeUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsJavaSdkUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import net.thevpc.nuts.runtime.bundles.parsers.StringTokenizerUtils;
-import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
-import net.thevpc.nuts.runtime.core.util.CoreNutsDependencyUtils;
-import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.core.util.CoreNumberUtils;
-import net.thevpc.nuts.runtime.standalone.util.NutsClassLoaderNodeUtils;
 
 public final class JavaExecutorOptions {
 
@@ -46,7 +41,7 @@ public final class JavaExecutorOptions {
         if (tempId) {
             descriptor = def.getDescriptor();
             if (!CoreNutsUtils.isEffectiveId(id)) {
-                throw new NutsException(session, "id should be effective : " + id);
+                throw new NutsException(session, NutsMessage.cstyle("id should be effective : %s", id));
             }
             id = descriptor.getId();
         } else {
@@ -165,17 +160,17 @@ public final class JavaExecutorOptions {
         }
         if (se.getIds().length > 0) {
             nutsDefinitions.addAll(se
-                            .setSession(se.getSession().copy().setTransitive(true))
-                            .setDistinct(true)
-                            .setContent(true)
-                            .setDependencies(true)
-                            .setLatest(true)
-                            //
-                            .setOptional(false)
-                            .addScope(NutsDependencyScopePattern.RUN)
-                            .setDependencyFilter(CoreNutsDependencyUtils.createJavaRunDependencyFilter(session))
-                            //
-                            .getResultDefinitions().list()
+                    .setSession(se.getSession().copy().setTransitive(true))
+                    .setDistinct(true)
+                    .setContent(true)
+                    .setDependencies(true)
+                    .setLatest(true)
+                    //
+                    .setOptional(false)
+                    .addScope(NutsDependencyScopePattern.RUN)
+                    .setDependencyFilter(CoreNutsDependencyUtils.createJavaRunDependencyFilter(session))
+                    //
+                    .getResultDefinitions().list()
             );
         }
         if (this.jar) {
@@ -193,7 +188,7 @@ public final class JavaExecutorOptions {
                 }
             }
             if (this.excludeBase) {
-                throw new NutsIllegalArgumentException(session, "cannot exclude base with jar modifier");
+                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("cannot exclude base with jar modifier"));
             }
         } else {
             if (mainClass == null) {
@@ -217,7 +212,7 @@ public final class JavaExecutorOptions {
                 }
             }
             if (mainClass == null) {
-                throw new NutsIllegalArgumentException(session, "missing Main Class for " + id);
+                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing Main Class for %s", id));
             }
             boolean baseDetected = false;
             for (NutsDefinition nutsDefinition : nutsDefinitions) {
@@ -238,7 +233,7 @@ public final class JavaExecutorOptions {
             }
             if (!isExcludeBase() && !baseDetected) {
                 if (path == null) {
-                    throw new NutsIllegalArgumentException(session, "missing Path for " + id);
+                    throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing path for %s",id));
                 }
                 currentCP.add(0, NutsClassLoaderNodeUtils.definitionToClassLoaderNode(def, session));
 //                nutsPath.add(0, nutsIdFormat.value(id).format());
@@ -251,13 +246,13 @@ public final class JavaExecutorOptions {
                 List<String> possibleClasses = StringTokenizerUtils.split(getMainClass(), ":");
                 switch (possibleClasses.size()) {
                     case 0:
-                        throw new NutsIllegalArgumentException(session, "missing Main-Class in Manifest for " + id);
+                        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing Main-Class in Manifest for %s", id));
                     case 1:
                         //
                         break;
                     default: {
                         if (!session.isPlainOut()) {
-                            throw new NutsExecutionException(session, "multiple runnable classes detected : " + possibleClasses, 102);
+                            throw new NutsExecutionException(session, NutsMessage.cstyle("multiple runnable classes detected : %s" + possibleClasses), 102);
                         }
                         NutsTextManager text = getWorkspace().text();
                         NutsTextBuilder msgString = text.builder();
@@ -419,7 +414,7 @@ public final class JavaExecutorOptions {
         return jar;
     }
 
-//    public List<String> getClassPath() {
+    //    public List<String> getClassPath() {
 //        return classPath;
 //    }
 //

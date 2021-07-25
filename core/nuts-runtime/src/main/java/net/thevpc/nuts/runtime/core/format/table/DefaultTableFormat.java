@@ -201,7 +201,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                 break;
             }
             default: {
-                throw new NutsUnsupportedArgumentException(session, String.valueOf(a));
+                throw new NutsUnsupportedArgumentException(session, NutsMessage.cstyle("unsupported position type %s", a));
             }
         }
     }
@@ -255,7 +255,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
     public NutsTableFormat setBorder(String borderName) {
         NutsTableBordersFormat n = parseTableBorders(borderName);
         if (n == null) {
-            throw new NutsIllegalArgumentException(getSession(), "unsupported border. use one of : " + getAvailableTableBorders());
+            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("unsupported border. use one of : %s", getAvailableTableBorders()));
         }
         setBorder(n);
         return this;
@@ -622,8 +622,8 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                 } else {
                     if (oelem2 instanceof Map) {
                         Map<String, Object> m = new HashMap<>();
-                        Map<Object,Object> omap=(Map<Object, Object>) oelem2;
-                        for (Map.Entry<Object,Object> vv : omap.entrySet()) {
+                        Map<Object, Object> omap = (Map<Object, Object>) oelem2;
+                        for (Map.Entry<Object, Object> vv : omap.entrySet()) {
                             String k = String.valueOf(vv.getKey());
                             m.put(k, vv.getValue());
                         }
@@ -712,7 +712,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                 return model;
             }
             default: {
-                throw new NutsUnsupportedArgumentException(getSession(), "Unsupported " + elem.type());
+                throw new NutsUnsupportedArgumentException(getSession(), NutsMessage.cstyle("unsupported %s", elem.type()));
             }
         }
     }

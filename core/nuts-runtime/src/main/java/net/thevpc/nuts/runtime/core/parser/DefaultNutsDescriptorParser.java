@@ -31,10 +31,10 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
             } catch (NutsException ex) {
                 throw ex;
             } catch (RuntimeException ex) {
-                throw new NutsParseException(getSession(), "unable to parse url " + url, ex);
+                throw new NutsParseException(getSession(), NutsMessage.cstyle("unable to parse url %s", url), ex);
             }
         } catch (IOException ex) {
-            throw new NutsParseException(getSession(), "unable to parse url " + url, ex);
+            throw new NutsParseException(getSession(), NutsMessage.cstyle("unable to parse url %s", url), ex);
         }
     }
 
@@ -47,14 +47,14 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
     public NutsDescriptor parse(Path path) {
         checkSession();
         if (!Files.exists(path)) {
-            throw new NutsNotFoundException(getSession(), "at file " + path);
+            throw new NutsNotFoundException(getSession(), null, NutsMessage.cstyle("at file %s", path), null);
         }
         try {
             return parse(Files.newInputStream(path), true);
         } catch (NutsException ex) {
             throw ex;
         } catch (Exception ex) {
-            throw new NutsParseException(getSession(), "Unable to parse file " + path, ex);
+            throw new NutsParseException(getSession(), NutsMessage.cstyle("unable to parse file %s", path), ex);
         }
     }
 
@@ -84,9 +84,11 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
         this.lenient = lenient;
         return this;
     }
+
     private void checkSession() {
         NutsWorkspaceUtils.checkSession(getWorkspace(), getSession());
     }
+
     private NutsDescriptor parse(InputStream in, boolean closeStream) {
         checkSession();
         DescriptorFormat f = getDescriptorFormat();
@@ -128,19 +130,15 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
             }
         }
     }
+
     public NutsWorkspace getWorkspace() {
         return ws;
-    }@Override
+    }
+
+    @Override
     public NutsSession getSession() {
         return session;
     }
-
-
-
-
-
-
-
 
 
     @Override

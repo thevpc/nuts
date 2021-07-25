@@ -114,7 +114,7 @@ public class NJobConfigStore {
             try {
                 Files.createDirectories(objectFile.getParent());
             } catch (IOException e) {
-                throw new NutsIllegalArgumentException(context.getSession(),"unable to create parent path");
+                throw new NutsIllegalArgumentException(context.getSession(),NutsMessage.cstyle("unable to create parent path"));
             }
         }
         json.setValue(o).println(objectFile);

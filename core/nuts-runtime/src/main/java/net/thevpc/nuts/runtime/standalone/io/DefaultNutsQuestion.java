@@ -2,11 +2,9 @@ package net.thevpc.nuts.runtime.standalone.io;
 
 import net.thevpc.nuts.*;
 
-import java.io.PrintStream;
 import java.util.Arrays;
 
 import net.thevpc.nuts.runtime.standalone.util.NutsConfigurableHelper;
-import net.thevpc.nuts.runtime.bundles.io.ByteArrayPrintStream;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
@@ -86,12 +84,12 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
                         NutsByteArrayPrintStream os = new NutsByteArrayPrintStream(getSession());
                         os.printf(message, this.getCancelMessage());
                         os.flush();
-                        throw new NutsUserCancelException(getSession(), os.toString());
+                        throw new NutsUserCancelException(getSession(), NutsMessage.formatted(os.toString()));
                     } else {
                         NutsByteArrayPrintStream os = new NutsByteArrayPrintStream(getSession());
                         os.printf(message, this.getCancelMessageParameters());
                         os.flush();
-                        throw new NutsUserCancelException(getSession(), "cancelled : " + os.toString());
+                        throw new NutsUserCancelException(getSession(), NutsMessage.cstyle("cancelled : %s", NutsMessage.formatted(os.toString())));
                     }
                 }
             }
@@ -100,8 +98,10 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
             NutsByteArrayPrintStream os = new NutsByteArrayPrintStream(getSession());
             os.printf(message, this.getMessageParameters());
             os.flush();
-            throw new NutsExecutionException(getSession(), "unable to switch to interactive mode for non plain text output format. "
-                    + "You need to provide default response (-y|-n) for question : " + os.toString(), 243);
+            throw new NutsExecutionException(getSession(), NutsMessage.cstyle(
+                    "unable to switch to interactive mode for non plain text output format. "
+                    + "You need to provide default response (-y|-n) for question : " + os
+            ), 243);
         }
         String message = this.getMessage();
         if (message.endsWith("\n")) {

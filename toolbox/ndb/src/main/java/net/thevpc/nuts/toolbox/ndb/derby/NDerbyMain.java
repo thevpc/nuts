@@ -9,7 +9,6 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.ndb.NdbSupport;
 
 import java.io.File;
-import java.io.PrintStream;
 
 /**
  * @author thevpc
@@ -77,7 +76,7 @@ public class NDerbyMain implements NdbSupport {
                                 factory.forStyled("already running", NutsTextStyle.warn()),
                                 factory.forStyled("" + effectivePort, NutsTextStyle.number())
                         );
-                        throw new NutsExecutionException(appContext.getSession(), "derby is already running on port " + effectivePort, 3);
+                        throw new NutsExecutionException(appContext.getSession(), NutsMessage.cstyle("derby is already running on port %d", effectivePort), 3);
                     }
                 }
             } else if (options.cmd == Command.shutdown) {
@@ -89,7 +88,7 @@ public class NDerbyMain implements NdbSupport {
                                 factory.forStyled("" + effectivePort, NutsTextStyle.number())
                         );
                         appContext.getSession().out().printf("derby is %s%n", factory.forStyled("already stopped", NutsTextStyle.warn()));
-                        throw new NutsExecutionException(appContext.getSession(), "derby is already stopped" + effectivePort, 3);
+                        throw new NutsExecutionException(appContext.getSession(), NutsMessage.cstyle("derby is already stopped on port %d", effectivePort), 3);
                     }
                 }
             }

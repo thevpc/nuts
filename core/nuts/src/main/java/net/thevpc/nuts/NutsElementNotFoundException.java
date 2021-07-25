@@ -51,7 +51,7 @@ public class NutsElementNotFoundException extends NutsException {
      * @param   message   the detail message. The detail message is saved for
      *          later retrieval by the {@link #getMessage()} method.
      */
-    public NutsElementNotFoundException(NutsSession session, String message) {
+    public NutsElementNotFoundException(NutsSession session, NutsMessage message) {
         super(session, message);
     }
 
@@ -71,7 +71,7 @@ public class NutsElementNotFoundException extends NutsException {
      *         unknown.)
      * @param session the workspace of this Nuts Exception
      */
-    public NutsElementNotFoundException(NutsSession session, String message, Throwable cause) {
+    public NutsElementNotFoundException(NutsSession session, NutsMessage message, Throwable cause) {
         super(session, message, cause);
     }
 
@@ -106,7 +106,7 @@ public class NutsElementNotFoundException extends NutsException {
      *                           be writable
      * @param session the workspace of this Nuts Exception
      */
-    public NutsElementNotFoundException(NutsSession session, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public NutsElementNotFoundException(NutsSession session, NutsMessage message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(session, message, cause, enableSuppression, writableStackTrace);
     }
 }

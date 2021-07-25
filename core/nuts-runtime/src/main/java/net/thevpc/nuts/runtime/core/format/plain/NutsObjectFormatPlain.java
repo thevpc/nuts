@@ -63,7 +63,7 @@ public class NutsObjectFormatPlain extends NutsObjectFormatBase {
     private String getFormattedPrimitiveValue(NutsElement value) {
         switch (value.type()) {
             default: {
-                throw new NutsUnsupportedArgumentException(getSession(), value.type().toString());
+                throw new NutsUnsupportedArgumentException(getSession(), NutsMessage.cstyle("invalid element type: %s", value.type()));
             }
         }
     }
@@ -99,16 +99,16 @@ public class NutsObjectFormatPlain extends NutsObjectFormatBase {
     public void printElement(NutsPrintStream w, Object value) {
         NutsPrintStream out = getValidPrintStream(w);
         NutsWorkspace ws = getSession().getWorkspace();
-        if(value instanceof Map){
+        if (value instanceof Map) {
             NutsTreeFormat tree = ws.formats().tree();
             tree.configure(true, extraConfig.toArray(new String[0]));
             tree.setValue(value).print(w);
-        }else if(value instanceof List){
+        } else if (value instanceof List) {
             NutsTableFormat table = ws.formats().table();
             table.configure(true, "--no-header", "--border=spaces");
             table.setValue(value).print(w);
-        }else{
-            out.printf("%s",value);
+        } else {
+            out.printf("%s", value);
             out.flush();
         }
 //        switch (value.type()) {

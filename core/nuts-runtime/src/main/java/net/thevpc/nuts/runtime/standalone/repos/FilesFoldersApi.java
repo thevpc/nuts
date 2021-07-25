@@ -82,7 +82,7 @@ public class FilesFoldersApi {
                 return getDirList(folders, files, baseUrl, session);
             }
         }
-        throw new NutsUnexpectedException(session, "unexpected strategy " + strategy);
+        throw new NutsUnexpectedException(session, NutsMessage.cstyle("unexpected strategy %s", strategy));
     }
 
     private static Item[] getDirText(boolean folders, boolean files, String baseUrl, NutsSession session) {

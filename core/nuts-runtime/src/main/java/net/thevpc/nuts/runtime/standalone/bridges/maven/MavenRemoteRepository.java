@@ -52,7 +52,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
     private final FilesFoldersApi.IteratorModel findModel = new FilesFoldersApi.AbstractIteratorModel() {
         @Override
         public void undeploy(NutsId id, NutsSession session) throws NutsExecutionException {
-            throw new NutsUnsupportedOperationException(session, "Not supported undeploy.");
+            throw new NutsUnsupportedOperationException(session, NutsMessage.cstyle("not supported undeploy."));
         }
 
         @Override
@@ -209,7 +209,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
                 return null;
             }
             default: {
-                throw new NutsUnsupportedArgumentException(session, String.valueOf(versionApi));
+                throw new NutsUnsupportedEnumException(session, versionApi);
             }
         }
     }
@@ -314,7 +314,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
             case GITHUB: {
                 List<Iterator<NutsId>> li = new ArrayList<>();
                 for (String root : roots) {
-                    session.getTerminal().printProgress("%-8s %s", "browse",session.getWorkspace().io().path(root).compressedForm());
+                    session.getTerminal().printProgress("%-8s %s", "browse", session.getWorkspace().io().path(root).compressedForm());
                     if (root.endsWith("/*")) {
                         String name = root.substring(0, root.length() - 2);
                         li.add(FilesFoldersApi.createIterator(getWorkspace(), this, config.getLocation(true), name, filter, RemoteRepoApi.DIR_TEXT, session, Integer.MAX_VALUE, findModel));
@@ -356,13 +356,18 @@ public class MavenRemoteRepository extends NutsCachedRepository {
                 return null;
             }
             default: {
-                throw new NutsUnsupportedArgumentException(session, String.valueOf(versionApi));
+                throw new NutsUnsupportedEnumException(session, versionApi);
             }
         }
     }
 
     @Override
     public boolean isAcceptFetchMode(NutsFetchMode mode, NutsSession session) {
+        return true;
+    }
+
+    @Override
+    public boolean isRemote() {
         return true;
     }
 
@@ -485,7 +490,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
             }
             return ret.iterator();
         } else {
-            throw new NutsIllegalArgumentException(session, "expected single version in " + id);
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("expected single version in %s", id));
         }
     }
 
@@ -549,11 +554,6 @@ public class MavenRemoteRepository extends NutsCachedRepository {
     @Override
     protected String getIdExtension(NutsId id, NutsSession session) {
         return helper.getIdExtension(id, session);
-    }
-
-    @Override
-    public boolean isRemote() {
-        return true;
     }
 
 }

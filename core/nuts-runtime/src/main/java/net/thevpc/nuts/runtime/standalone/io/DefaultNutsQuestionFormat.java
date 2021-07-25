@@ -1,9 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.io;
 
-import net.thevpc.nuts.NutsQuestion;
-import net.thevpc.nuts.NutsQuestionFormat;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsUnsupportedArgumentException;
+import net.thevpc.nuts.*;
 
 public class DefaultNutsQuestionFormat<T> implements NutsQuestionFormat<T> {
 
@@ -43,7 +40,7 @@ public class DefaultNutsQuestionFormat<T> implements NutsQuestionFormat<T> {
                 return new Object[]{true, false};
             }
             default: {
-                throw new NutsUnsupportedArgumentException(session, "Unsupported type " + type.getName());
+                throw new NutsUnsupportedArgumentException(session, NutsMessage.cstyle("unsupported type %s", type.getName()));
             }
         }
     }

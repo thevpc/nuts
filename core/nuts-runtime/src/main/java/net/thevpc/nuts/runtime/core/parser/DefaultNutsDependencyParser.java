@@ -56,7 +56,7 @@ public class DefaultNutsDependencyParser implements NutsDependencyParser {
                     .build();
         }
         if (!isLenient()) {
-            throw new NutsParseException(session, "invalid dependency format : " + dependency);
+            throw new NutsParseException(session, NutsMessage.cstyle("invalid dependency format : %s", dependency));
         }
         return null;
     }

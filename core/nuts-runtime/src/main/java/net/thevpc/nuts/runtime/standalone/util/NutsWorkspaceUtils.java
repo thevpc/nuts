@@ -5,21 +5,29 @@
  */
 package net.thevpc.nuts.runtime.standalone.util;
 
-import net.thevpc.nuts.runtime.core.repos.NutsInstalledRepository;
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.bundles.common.CorePlatformUtils;
 import net.thevpc.nuts.runtime.bundles.http.SimpleHttpClient;
+import net.thevpc.nuts.runtime.bundles.io.InputStreamVisitor;
+import net.thevpc.nuts.runtime.bundles.io.ProcessBuilder2;
+import net.thevpc.nuts.runtime.bundles.io.ZipUtils;
 import net.thevpc.nuts.runtime.bundles.parsers.StringPlaceHolderParser;
+import net.thevpc.nuts.runtime.bundles.reflect.*;
+import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.core.commands.repo.NutsRepositorySupportedAction;
 import net.thevpc.nuts.runtime.core.format.NutsFetchDisplayOptions;
 import net.thevpc.nuts.runtime.core.format.NutsPrintIterator;
-import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
-import net.thevpc.nuts.runtime.core.repos.DefaultNutsRepositoryManager;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.bundles.io.ProcessBuilder2;
-import net.thevpc.nuts.runtime.standalone.io.DefaultNutsExecutionEntry;
 import net.thevpc.nuts.runtime.core.format.plain.DefaultSearchFormatPlain;
-import net.thevpc.nuts.NutsLogVerb;
-import net.thevpc.nuts.runtime.bundles.common.CorePlatformUtils;
+import net.thevpc.nuts.runtime.core.repos.DefaultNutsRepositoryManager;
+import net.thevpc.nuts.runtime.core.repos.NutsInstalledRepository;
+import net.thevpc.nuts.runtime.core.repos.NutsRepositoryUtils;
+import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
+import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+import net.thevpc.nuts.runtime.standalone.io.DefaultNutsExecutionEntry;
+import net.thevpc.nuts.runtime.standalone.wscommands.NutsRepositoryAndFetchMode;
+import net.thevpc.nuts.spi.NutsRepositorySPI;
 
 import java.io.*;
 import java.net.URL;
@@ -33,21 +41,6 @@ import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 import java.util.logging.Level;
 
-import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
-import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.bundles.io.InputStreamVisitor;
-import net.thevpc.nuts.runtime.bundles.io.ZipUtils;
-import net.thevpc.nuts.runtime.bundles.parsers.StringTokenizerUtils;
-import net.thevpc.nuts.runtime.bundles.reflect.DefaultReflectRepository;
-import net.thevpc.nuts.runtime.bundles.reflect.ReflectConfigurationBuilder;
-import net.thevpc.nuts.runtime.bundles.reflect.ReflectPropertyAccessStrategy;
-import net.thevpc.nuts.runtime.bundles.reflect.ReflectPropertyDefaultValueStrategy;
-import net.thevpc.nuts.runtime.bundles.reflect.ReflectRepository;
-import net.thevpc.nuts.runtime.core.repos.NutsRepositoryUtils;
-import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
-import net.thevpc.nuts.runtime.standalone.wscommands.NutsRepositoryAndFetchMode;
-import net.thevpc.nuts.spi.NutsRepositorySPI;
-
 /**
  * @author thevpc
  */
@@ -58,14 +51,61 @@ public class NutsWorkspaceUtils {
     private NutsWorkspace ws;
     private NutsSession session;
 
-    public static NutsWorkspaceUtils of(NutsSession ws) {
-        return new NutsWorkspaceUtils(ws);
-    }
-
     private NutsWorkspaceUtils(NutsSession session) {
         this.session = session;
         this.ws = session.getWorkspace();
 //        LOG = ws.log().of(NutsWorkspaceUtils.class);
+    }
+
+    public static NutsWorkspaceUtils of(NutsSession ws) {
+        return new NutsWorkspaceUtils(ws);
+    }
+
+    /**
+     * used only for exceptions and logger when a session is not available
+     *
+     * @param ws workspace
+     * @return default session
+     */
+    public static NutsSession defaultSession(NutsWorkspace ws) {
+        return ((NutsWorkspaceExt) ws).defaultSession();
+    }
+
+    public static void checkSession(NutsWorkspace ws, NutsSession session) {
+        if (session == null) {
+            throw new NutsIllegalArgumentException(defaultSession(ws), NutsMessage.cstyle("missing session"));
+        }
+        if (!Objects.equals(session.getWorkspace().getUuid(), ws.getUuid())) {
+            throw new NutsIllegalArgumentException(defaultSession(ws), NutsMessage.cstyle("invalid session"));
+        }
+    }
+
+    public static void checkNutsIdBase(NutsWorkspace ws, NutsId id) {
+        if (id == null) {
+            throw new NutsIllegalArgumentException(defaultSession(ws), NutsMessage.cstyle("missing id"));
+        }
+        if (CoreStringUtils.isBlank(id.getGroupId())) {
+            throw new NutsIllegalArgumentException(defaultSession(ws), NutsMessage.cstyle("missing group for %s", id));
+        }
+        if (CoreStringUtils.isBlank(id.getArtifactId())) {
+            throw new NutsIllegalArgumentException(defaultSession(ws), NutsMessage.cstyle("missing name for %s", id));
+        }
+    }
+
+    public static boolean setSession(Object o, NutsSession session) {
+        if (o instanceof NutsSessionAware) {
+            ((NutsSessionAware) o).setSession(session);
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean unsetWorkspace(Object o) {
+        if (o instanceof NutsWorkspaceAware) {
+            ((NutsWorkspaceAware) o).setWorkspace(null);
+            return true;
+        }
+        return false;
     }
 
     protected NutsLoggerOp _LOGOP(NutsSession session) {
@@ -94,10 +134,10 @@ public class NutsWorkspaceUtils {
 
     public NutsId createSdkId(String type, String version) {
         if (CoreStringUtils.isBlank(type)) {
-            throw new NutsException(session, "missing sdk type");
+            throw new NutsException(session, NutsMessage.formatted("missing sdk type"));
         }
         if (CoreStringUtils.isBlank(version)) {
-            throw new NutsException(session, "missing version");
+            throw new NutsException(session, NutsMessage.formatted("missing version"));
         }
         if ("java".equalsIgnoreCase(type)) {
             return NutsJavaSdkUtils.of(ws).createJdkId(version, session);
@@ -200,39 +240,39 @@ public class NutsWorkspaceUtils {
         List<RepoAndLevel> repos2 = new ArrayList<>();
         //        List<Integer> reposLevels = new ArrayList<>();
 
-            for (NutsRepository repository : ws.repos().setSession(session).getRepositories()) {
-                if (repository.isEnabled()
-                        && repository.isAvailable()
-                        && repoSPI(repository).isAcceptFetchMode(mode, session)
-                        && (repositoryFilter == null || repositoryFilter.acceptRepository(repository))) {
-                    int t = 0;
-                    int d = 0;
-                    if (fmode == NutsRepositorySupportedAction.DEPLOY) {
-                        try {
-                            d = NutsRepositoryUtils.getSupportDeployLevel(repository, fmode, id, mode, session.isTransitive(), session);
-                        } catch (Exception ex) {
-                            _LOGOP(session).level(Level.FINE).error(ex).log("unable to resolve support deploy level for : {0}", repository.getName());
-                        }
-                    }
+        for (NutsRepository repository : ws.repos().setSession(session).getRepositories()) {
+            if (repository.isEnabled()
+                    && repository.isAvailable()
+                    && repoSPI(repository).isAcceptFetchMode(mode, session)
+                    && (repositoryFilter == null || repositoryFilter.acceptRepository(repository))) {
+                int t = 0;
+                int d = 0;
+                if (fmode == NutsRepositorySupportedAction.DEPLOY) {
                     try {
-                        t = NutsRepositoryUtils.getSupportSpeedLevel(repository, fmode, id, mode, session.isTransitive(), session);
+                        d = NutsRepositoryUtils.getSupportDeployLevel(repository, fmode, id, mode, session.isTransitive(), session);
                     } catch (Exception ex) {
-                        _LOGOP(session).level(Level.FINE).error(ex).log("unable to resolve support speed level for : {0}", repository.getName());
-                    }
-                    if (t > 0) {
-                        repos2.add(new RepoAndLevel(repository, d, t, postComp));
+                        _LOGOP(session).level(Level.FINE).error(ex).log("unable to resolve support deploy level for : {0}", repository.getName());
                     }
                 }
+                try {
+                    t = NutsRepositoryUtils.getSupportSpeedLevel(repository, fmode, id, mode, session.isTransitive(), session);
+                } catch (Exception ex) {
+                    _LOGOP(session).level(Level.FINE).error(ex).log("unable to resolve support speed level for : {0}", repository.getName());
+                }
+                if (t > 0) {
+                    repos2.add(new RepoAndLevel(repository, d, t, postComp));
+                }
             }
-            if (sortByLevelDesc || postComp != null) {
-                Collections.sort(repos2);
-            }
+        }
+        if (sortByLevelDesc || postComp != null) {
+            Collections.sort(repos2);
+        }
 
         List<NutsRepository> ret = new ArrayList<>();
         NutsInstalledRepository installedRepository = NutsWorkspaceExt.of(ws).getInstalledRepository();
         if (mode == NutsFetchMode.LOCAL && fmode == NutsRepositorySupportedAction.SEARCH
                 &&
-                (repositoryFilter==null || repositoryFilter.acceptRepository(installedRepository))) {
+                (repositoryFilter == null || repositoryFilter.acceptRepository(installedRepository))) {
             ret.add(installedRepository);
         }
         for (RepoAndLevel repoAndLevel : repos2) {
@@ -243,90 +283,29 @@ public class NutsWorkspaceUtils {
 
     public void checkSimpleNameNutsId(NutsId id) {
         if (id == null) {
-            throw new NutsIllegalArgumentException(session, "missing id");
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing id"));
         }
         if (CoreStringUtils.isBlank(id.getGroupId())) {
-            throw new NutsIllegalArgumentException(session, "missing groupId for " + id);
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing groupId for %s", id));
         }
         if (CoreStringUtils.isBlank(id.getArtifactId())) {
-            throw new NutsIllegalArgumentException(session, "missing artifactId for " + id);
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing artifactId for %s", id));
         }
     }
 
     public void checkLongNameNutsId(NutsId id, NutsSession session) {
         checkSimpleNameNutsId(id);
         if (CoreStringUtils.isBlank(id.getVersion().toString())) {
-            throw new NutsIllegalArgumentException(session, "missing version for " + id);
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing version for %s", id));
         }
     }
 
     public void validateRepositoryName(String repositoryName, Set<String> registered, NutsSession session) {
         if (!repositoryName.matches("[a-zA-Z][.a-zA-Z0-9_-]*")) {
-            throw new NutsIllegalArgumentException(session, "Invalid repository id " + repositoryName);
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid repository id %s", repositoryName));
         }
         if (registered.contains(repositoryName)) {
             throw new NutsRepositoryAlreadyRegisteredException(session, repositoryName);
-        }
-    }
-
-
-
-//    public static NutsId parseRequiredNutsId0(String nutFormat) {
-//        NutsId id = CoreNutsUtils.parseNutsId(nutFormat);
-//        if (id == null) {
-//            throw new NutsParseException(null, "invalid Id format : " + nutFormat);
-//        }
-//        return id;
-//    }
-//    public NutsId parseRequiredNutsId(String nutFormat) {
-//        NutsId id = CoreNutsUtils.parseNutsId(nutFormat);
-//        if (id == null) {
-//            throw new NutsParseException(ws, "invalid Id format : " + nutFormat);
-//        }
-//        return id;
-//    }
-//    public NutsId findNutsIdBySimpleNameInStrings(NutsId id, Collection<String> all) {
-//        if (all != null) {
-//            for (String nutsId : all) {
-//                if (nutsId != null) {
-//                    NutsId nutsId2 = parseRequiredNutsId(nutsId);
-//                    if (nutsId2.equalsShortName(id)) {
-//                        return nutsId2;
-//                    }
-//                }
-//            }
-//        }
-//        return null;
-//    }
-    private static class RepoAndLevel implements Comparable<RepoAndLevel> {
-
-        NutsRepository r;
-        int deployOrder;
-        int speedOrder;
-        Comparator<NutsRepository> postComp;
-
-        public RepoAndLevel(NutsRepository r, int deployOrder, int speedOrder, Comparator<NutsRepository> postComp) {
-            super();
-            this.r = r;
-            this.deployOrder = deployOrder;
-            this.speedOrder = speedOrder;
-            this.postComp = postComp;
-        }
-
-        @Override
-        public int compareTo(RepoAndLevel o2) {
-            int x = Integer.compare(this.deployOrder, o2.deployOrder);
-            if (x != 0) {
-                return x;
-            }
-            x = Integer.compare(o2.speedOrder, this.speedOrder);
-            if (x != 0) {
-                return x;
-            }
-            if (postComp != null) {
-                x = postComp.compare(this.r, o2.r);
-            }
-            return x;
         }
     }
 
@@ -363,136 +342,15 @@ public class NutsWorkspaceUtils {
         return d;
     }
 
-    /**
-     * used only for exceptions and logger when a session is not available
-     *
-     * @param ws workspace
-     * @return default session
-     */
-    public static NutsSession defaultSession(NutsWorkspace ws) {
-        return ((NutsWorkspaceExt) ws).defaultSession();
-    }
-
-    public static void checkSession(NutsWorkspace ws, NutsSession session) {
-        if (session == null) {
-            throw new NutsIllegalArgumentException(defaultSession(ws), "missing session");
-        }
-        if (!Objects.equals(session.getWorkspace().getUuid(), ws.getUuid())) {
-            throw new NutsIllegalArgumentException(defaultSession(ws), "invalid session");
-        }
-    }
-
-    public static void checkNutsIdBase(NutsWorkspace ws, NutsId id) {
-        if (id == null) {
-            throw new NutsIllegalArgumentException(defaultSession(ws), "missing id");
-        }
-        if (CoreStringUtils.isBlank(id.getGroupId())) {
-            throw new NutsIllegalArgumentException(defaultSession(ws), "missing group for " + id);
-        }
-        if (CoreStringUtils.isBlank(id.getArtifactId())) {
-            throw new NutsIllegalArgumentException(defaultSession(ws), "missing name for " + id);
-        }
-    }
-
     public void checkNutsId(NutsId id) {
         checkNutsIdBase(ws, id);
         if (id.getVersion().isBlank()) {
-            throw new NutsIllegalArgumentException(defaultSession(ws), "missing name for " + id);
+            throw new NutsIllegalArgumentException(defaultSession(ws), NutsMessage.cstyle("missing name for %s", id));
         }
     }
 
     public Events events() {
         return new Events(this);
-    }
-
-    public static class Events {
-
-        private NutsWorkspaceUtils u;
-
-        public Events(NutsWorkspaceUtils u) {
-            this.u = u;
-        }
-
-        public void fireOnInstall(NutsInstallEvent event) {
-            u._LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE).formatted().log("installed {0}", event.getDefinition().getId());
-            for (NutsInstallListener listener : u.ws.events().getInstallListeners()) {
-                listener.onInstall(event);
-            }
-            for (NutsInstallListener listener : event.getSession().getListeners(NutsInstallListener.class)) {
-                listener.onInstall(event);
-            }
-        }
-
-        public void fireOnRequire(NutsInstallEvent event) {
-            u._LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE).formatted().log("required {0}", event.getDefinition().getId());
-            for (NutsInstallListener listener : u.ws.events().getInstallListeners()) {
-                listener.onRequire(event);
-            }
-            for (NutsInstallListener listener : event.getSession().getListeners(NutsInstallListener.class)) {
-                listener.onRequire(event);
-            }
-        }
-
-        public void fireOnUpdate(NutsUpdateEvent event) {
-            if (u._LOG(event.getSession()).isLoggable(Level.FINEST)) {
-                if (event.getOldValue() == null) {
-                    u._LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE).formatted()
-                            .log("updated {0}", event.getNewValue().getId());
-                } else {
-                    u._LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE).formatted()
-                            .log("updated {0} (old is {1})",
-                                    event.getOldValue().getId().getLongNameId(),
-                                    event.getNewValue().getId().getLongNameId());
-                }
-            }
-            for (NutsInstallListener listener : u.ws.events().getInstallListeners()) {
-                listener.onUpdate(event);
-            }
-            for (NutsInstallListener listener : event.getSession().getListeners(NutsInstallListener.class)) {
-                listener.onUpdate(event);
-            }
-        }
-
-        public void fireOnUninstall(NutsInstallEvent event) {
-            if (u._LOG(event.getSession()).isLoggable(Level.FINEST)) {
-                u._LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE).formatted()
-                        .log("uninstalled {0}", event.getDefinition().getId());
-            }
-            for (NutsInstallListener listener : u.ws.events().getInstallListeners()) {
-                listener.onUninstall(event);
-            }
-            for (NutsInstallListener listener : event.getSession().getListeners(NutsInstallListener.class)) {
-                listener.onUninstall(event);
-            }
-        }
-
-        public void fireOnAddRepository(NutsWorkspaceEvent event) {
-            if (u._LOG(event.getSession()).isLoggable(Level.CONFIG)) {
-                u._LOGOP(event.getSession()).level(Level.CONFIG).verb(NutsLogVerb.UPDATE).formatted()
-                        .log("added repo ##{0}##", event.getRepository().getName());
-            }
-
-            for (NutsWorkspaceListener listener : u.ws.events().getWorkspaceListeners()) {
-                listener.onAddRepository(event);
-            }
-            for (NutsWorkspaceListener listener : event.getSession().getListeners(NutsWorkspaceListener.class)) {
-                listener.onAddRepository(event);
-            }
-        }
-
-        public void fireOnRemoveRepository(NutsWorkspaceEvent event) {
-            if (u._LOG(event.getSession()).isLoggable(Level.FINEST)) {
-                u._LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE).formatted()
-                        .log("removed repo ##{0}##", event.getRepository().getName());
-            }
-            for (NutsWorkspaceListener listener : u.ws.events().getWorkspaceListeners()) {
-                listener.onRemoveRepository(event);
-            }
-            for (NutsWorkspaceListener listener : event.getSession().getListeners(NutsWorkspaceListener.class)) {
-                listener.onRemoveRepository(event);
-            }
-        }
-
     }
 
     public void traceMessage(NutsFetchStrategy fetchMode, NutsId id, NutsLogVerb tracePhase, String message, long startTime) {
@@ -511,9 +369,9 @@ public class NutsWorkspaceUtils {
     }
 
     public CoreIOUtils.ProcessExecHelper execAndWait(String[] args, Map<String, String> env, Path directory, NutsSessionTerminal prepareTerminal,
-            NutsSessionTerminal execTerminal, boolean showCommand, boolean failFast, long sleep,
-            boolean inheritSystemIO, boolean redirectErr, File outputFile, File inputFile,
-            NutsSession session) {
+                                                     NutsSessionTerminal execTerminal, boolean showCommand, boolean failFast, long sleep,
+                                                     boolean inheritSystemIO, boolean redirectErr, File outputFile, File inputFile,
+                                                     NutsSession session) {
         NutsPrintStream out = null;
         NutsPrintStream err = null;
         InputStream in = null;
@@ -540,7 +398,7 @@ public class NutsWorkspaceUtils {
             if (ws.io().setSession(session).isStandardErrorStream(err)) {
                 err = null;
             }
-            if(out!=null){
+            if (out != null) {
                 out.run(NutsTerminalCommand.MOVE_LINE_START);
             }
         }
@@ -556,14 +414,14 @@ public class NutsWorkspaceUtils {
                 pb.setRedirectFileInput(inputFile);
             }
             if (outputFile == null) {
-                pb.setOutput(out==null?null:out.asPrintStream());
+                pb.setOutput(out == null ? null : out.asPrintStream());
             } else {
                 pb.setRedirectFileOutput(outputFile);
             }
             if (redirectErr) {
                 pb.setRedirectErrorStream();
             } else {
-                pb.setErr(err==null?null:err.asPrintStream());
+                pb.setErr(err == null ? null : err.asPrintStream());
             }
         }
 
@@ -574,7 +432,7 @@ public class NutsWorkspaceUtils {
                     ));
         }
         if (showCommand || CoreBooleanUtils.getSysBoolNutsProperty("show-command", false)) {
-            if (prepareTerminal.out().mode()==NutsTerminalMode.FORMATTED) {
+            if (prepareTerminal.out().mode() == NutsTerminalMode.FORMATTED) {
                 prepareTerminal.out().printf("%s ", ws.text().forStyled("[exec]", NutsTextStyle.primary4()));
                 prepareTerminal.out().println(ws.text().forCode("sh", pb.getCommandString()));
             } else {
@@ -586,12 +444,12 @@ public class NutsWorkspaceUtils {
     }
 
     public CoreIOUtils.ProcessExecHelper execAndWait(NutsDefinition nutMainFile,
-            NutsSession prepareSession,
-            NutsSession execSession,
-            Map<String, String> execProperties, String[] args, Map<String, String> env,
-            String directory, boolean showCommand,
-            boolean failFast, long sleep,
-            boolean inheritSystemIO, boolean redirectErr, File outputFile, File inputFile
+                                                     NutsSession prepareSession,
+                                                     NutsSession execSession,
+                                                     Map<String, String> execProperties, String[] args, Map<String, String> env,
+                                                     String directory, boolean showCommand,
+                                                     boolean failFast, long sleep,
+                                                     boolean inheritSystemIO, boolean redirectErr, File outputFile, File inputFile
     ) throws NutsExecutionException {
         NutsWorkspace workspace = execSession.getWorkspace();
         NutsId id = nutMainFile.getId();
@@ -777,14 +635,6 @@ public class NutsWorkspaceUtils {
         return entries.toArray(new NutsExecutionEntry[0]);
     }
 
-    public static boolean setSession(Object o, NutsSession session) {
-        if (o instanceof NutsSessionAware) {
-            ((NutsSessionAware) o).setSession(session);
-            return true;
-        }
-        return false;
-    }
-
     public InputStream openURL(String o) {
         return new SimpleHttpClient(o).openStream();
     }
@@ -793,11 +643,152 @@ public class NutsWorkspaceUtils {
         return new SimpleHttpClient(o).openStream();
     }
 
-    public static boolean unsetWorkspace(Object o) {
-        if (o instanceof NutsWorkspaceAware) {
-            ((NutsWorkspaceAware) o).setWorkspace(null);
-            return true;
+    //    public static NutsId parseRequiredNutsId0(String nutFormat) {
+//        NutsId id = CoreNutsUtils.parseNutsId(nutFormat);
+//        if (id == null) {
+//            throw new NutsParseException(null, "invalid Id format : " + nutFormat);
+//        }
+//        return id;
+//    }
+//    public NutsId parseRequiredNutsId(String nutFormat) {
+//        NutsId id = CoreNutsUtils.parseNutsId(nutFormat);
+//        if (id == null) {
+//            throw new NutsParseException(ws, "invalid Id format : " + nutFormat);
+//        }
+//        return id;
+//    }
+//    public NutsId findNutsIdBySimpleNameInStrings(NutsId id, Collection<String> all) {
+//        if (all != null) {
+//            for (String nutsId : all) {
+//                if (nutsId != null) {
+//                    NutsId nutsId2 = parseRequiredNutsId(nutsId);
+//                    if (nutsId2.equalsShortName(id)) {
+//                        return nutsId2;
+//                    }
+//                }
+//            }
+//        }
+//        return null;
+//    }
+    private static class RepoAndLevel implements Comparable<RepoAndLevel> {
+
+        NutsRepository r;
+        int deployOrder;
+        int speedOrder;
+        Comparator<NutsRepository> postComp;
+
+        public RepoAndLevel(NutsRepository r, int deployOrder, int speedOrder, Comparator<NutsRepository> postComp) {
+            super();
+            this.r = r;
+            this.deployOrder = deployOrder;
+            this.speedOrder = speedOrder;
+            this.postComp = postComp;
         }
-        return false;
+
+        @Override
+        public int compareTo(RepoAndLevel o2) {
+            int x = Integer.compare(this.deployOrder, o2.deployOrder);
+            if (x != 0) {
+                return x;
+            }
+            x = Integer.compare(o2.speedOrder, this.speedOrder);
+            if (x != 0) {
+                return x;
+            }
+            if (postComp != null) {
+                x = postComp.compare(this.r, o2.r);
+            }
+            return x;
+        }
+    }
+
+    public static class Events {
+
+        private NutsWorkspaceUtils u;
+
+        public Events(NutsWorkspaceUtils u) {
+            this.u = u;
+        }
+
+        public void fireOnInstall(NutsInstallEvent event) {
+            u._LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE).formatted().log("installed {0}", event.getDefinition().getId());
+            for (NutsInstallListener listener : u.ws.events().getInstallListeners()) {
+                listener.onInstall(event);
+            }
+            for (NutsInstallListener listener : event.getSession().getListeners(NutsInstallListener.class)) {
+                listener.onInstall(event);
+            }
+        }
+
+        public void fireOnRequire(NutsInstallEvent event) {
+            u._LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE).formatted().log("required {0}", event.getDefinition().getId());
+            for (NutsInstallListener listener : u.ws.events().getInstallListeners()) {
+                listener.onRequire(event);
+            }
+            for (NutsInstallListener listener : event.getSession().getListeners(NutsInstallListener.class)) {
+                listener.onRequire(event);
+            }
+        }
+
+        public void fireOnUpdate(NutsUpdateEvent event) {
+            if (u._LOG(event.getSession()).isLoggable(Level.FINEST)) {
+                if (event.getOldValue() == null) {
+                    u._LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE).formatted()
+                            .log("updated {0}", event.getNewValue().getId());
+                } else {
+                    u._LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE).formatted()
+                            .log("updated {0} (old is {1})",
+                                    event.getOldValue().getId().getLongNameId(),
+                                    event.getNewValue().getId().getLongNameId());
+                }
+            }
+            for (NutsInstallListener listener : u.ws.events().getInstallListeners()) {
+                listener.onUpdate(event);
+            }
+            for (NutsInstallListener listener : event.getSession().getListeners(NutsInstallListener.class)) {
+                listener.onUpdate(event);
+            }
+        }
+
+        public void fireOnUninstall(NutsInstallEvent event) {
+            if (u._LOG(event.getSession()).isLoggable(Level.FINEST)) {
+                u._LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE).formatted()
+                        .log("uninstalled {0}", event.getDefinition().getId());
+            }
+            for (NutsInstallListener listener : u.ws.events().getInstallListeners()) {
+                listener.onUninstall(event);
+            }
+            for (NutsInstallListener listener : event.getSession().getListeners(NutsInstallListener.class)) {
+                listener.onUninstall(event);
+            }
+        }
+
+        public void fireOnAddRepository(NutsWorkspaceEvent event) {
+            if (u._LOG(event.getSession()).isLoggable(Level.CONFIG)) {
+                u._LOGOP(event.getSession()).level(Level.CONFIG).verb(NutsLogVerb.UPDATE).formatted()
+                        .log("added repo ##{0}##", event.getRepository().getName());
+            }
+
+            for (NutsWorkspaceListener listener : u.ws.events().getWorkspaceListeners()) {
+                listener.onAddRepository(event);
+            }
+            for (NutsWorkspaceListener listener : event.getSession().getListeners(NutsWorkspaceListener.class)) {
+                listener.onAddRepository(event);
+            }
+        }
+
+        public void fireOnRemoveRepository(NutsWorkspaceEvent event) {
+            if (u._LOG(event.getSession()).isLoggable(Level.FINEST)) {
+                u._LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE).formatted()
+                        .log("removed repo ##{0}##", event.getRepository().getName());
+            }
+            for (NutsWorkspaceListener listener : u.ws.events().getWorkspaceListeners()) {
+                listener.onRemoveRepository(event);
+            }
+            for (NutsWorkspaceListener listener : event.getSession().getListeners(NutsWorkspaceListener.class)) {
+                listener.onRemoveRepository(event);
+            }
+        }
+
     }
 }

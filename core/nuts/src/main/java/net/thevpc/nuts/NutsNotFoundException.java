@@ -40,7 +40,7 @@ import java.util.stream.Collectors;
  */
 public class NutsNotFoundException extends NutsException {
 
-    private final String id;
+    private final NutsId id;
     private Set<NutsIdInvalidLocation> locations = Collections.emptySet();
     private Set<NutsIdInvalidDependency> missingDependencies = Collections.emptySet();
 
@@ -51,7 +51,7 @@ public class NutsNotFoundException extends NutsException {
      * @param id        artifact id
      */
     public NutsNotFoundException(NutsSession session, NutsId id) {
-        this(session, id == null ? null : id.toString());
+        this(session, id,(NutsMessage) null);
     }
 
     /**
@@ -62,17 +62,7 @@ public class NutsNotFoundException extends NutsException {
      * @param cause     cause
      */
     public NutsNotFoundException(NutsSession session, NutsId id, Exception cause) {
-        this(session, id == null ? null : id.toString(), null, null, cause);
-    }
-
-    /**
-     * Constructs a new NutsNotFoundException exception
-     *
-     * @param ns workspace
-     * @param id        artifact id
-     */
-    public NutsNotFoundException(NutsSession ns, String id) {
-        this(ns, id, null, null, null);
+        this(session, id, null, null, cause);
     }
 
 
@@ -86,21 +76,8 @@ public class NutsNotFoundException extends NutsException {
      * @param cause cause
      */
     public NutsNotFoundException(NutsSession session, NutsId id, NutsIdInvalidDependency[] dependencies, NutsIdInvalidLocation[] locations, Exception cause) {
-        this(session, id == null ? null : id.toString(), dependencies, locations, cause);
-    }
-
-    /**
-     * Constructs a new NutsNotFoundException exception
-     *
-     * @param session workspace
-     * @param id        artifact id
-     * @param dependencies dependencies
-     * @param locations locations
-     * @param cause cause
-     */
-    public NutsNotFoundException(NutsSession session, String id, NutsIdInvalidDependency[] dependencies, NutsIdInvalidLocation[] locations, Exception cause) {
-        super(session, "artifact not found: " + (id == null ? "<null>" : id)
-                        + dependenciesToString(dependencies)
+        super(session,
+                NutsMessage.cstyle("artifact not found: %s%s", (id == null ? "<null>" : id),dependenciesToString(dependencies))
                 , cause);
         this.id = id;
         if (locations != null) {
@@ -119,9 +96,9 @@ public class NutsNotFoundException extends NutsException {
      * @param message   message
      * @param cause     cause
      */
-    public NutsNotFoundException(NutsSession session, String id, String message, Exception cause) {
+    public NutsNotFoundException(NutsSession session, NutsId id, NutsMessage message, Exception cause) {
         super(
-                session, PrivateNutsUtils.isBlank(message) ? "No such nuts : " + (id == null ? "<null>" : id) : message,
+                session, message==null? NutsMessage.cstyle("no such nuts : %s",(id == null ? "<null>" : id)) : message,
                 cause);
         this.id = id;
     }
@@ -132,10 +109,9 @@ public class NutsNotFoundException extends NutsException {
      * @param session workspace
      * @param id        artifact id
      * @param message   message
-     * @param cause     cause
      */
-    public NutsNotFoundException(NutsSession session, NutsId id, String message, Exception cause) {
-        this(session, id == null ? null : id.toString(), message, cause);
+    public NutsNotFoundException(NutsSession session, NutsId id, NutsMessage message) {
+        this(session,id,message,null);
     }
 
     protected static String dependenciesToString(NutsIdInvalidDependency[] dependencies) {
@@ -171,7 +147,7 @@ public class NutsNotFoundException extends NutsException {
         );
     }
 
-    public String getId() {
+    public NutsId getId() {
         return id;
     }
 
@@ -187,15 +163,15 @@ public class NutsNotFoundException extends NutsException {
      * @category Exceptions
      */
     public static class NutsIdInvalidDependency implements Serializable {
-        private String id;
+        private NutsId id;
         private Set<NutsIdInvalidDependency> cause;
 
-        public NutsIdInvalidDependency(String id, Set<NutsIdInvalidDependency> cause) {
+        public NutsIdInvalidDependency(NutsId id, Set<NutsIdInvalidDependency> cause) {
             this.id = id;
             this.cause = cause == null ? Collections.emptySet() : cause;
         }
 
-        public String getId() {
+        public NutsId getId() {
             return id;
         }
 

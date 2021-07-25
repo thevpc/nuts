@@ -96,7 +96,7 @@ public class InternalNutsVersionFilterManager extends InternalNutsTypedFilters<N
         }
         NutsVersionFilter t = as(a);
         if (t == null) {
-            throw new NutsIllegalArgumentException(getSession(), "not a VersionFilter");
+            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("not a VersionFilter"));
         }
         return t;
     }

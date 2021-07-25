@@ -8,6 +8,7 @@ package net.thevpc.nuts.core.test.utils;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import net.thevpc.nuts.Nuts;
+import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 
 /**
@@ -122,11 +124,48 @@ public class TestUtils {
         }
     }
 
-    public static String getCallerSimpleClasMethod(int index) {
+    public static String getCallerSimpleClassMethod(int index) {
         StackTraceElement i = getCallerStackTraceElement0(3 + index);
         String cn = i.getClassName();
         String m = i.getClassName();
         return cn + "." + m;
+    }
+
+    public static File getTestFolder() {
+        String test_id = TestUtils.getCallerMethodId(2);
+        try {
+            return new File("./runtime/test/" + test_id).getCanonicalFile();
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
+    }
+
+    public static NutsWorkspace openTestWorkspace(String... args) {
+        String test_id = TestUtils.getCallerMethodId(1);
+        File path;
+        try {
+            path = new File("./runtime/test/" + test_id).getCanonicalFile();
+            CoreIOUtils.delete(null, path);
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
+        List<String> argsList=new ArrayList<>();
+        argsList.add("-w");
+        argsList.add(path.getPath());
+        argsList.add("-y");
+        argsList.addAll(Arrays.asList(args));
+        return Nuts.openWorkspace(argsList.toArray(new String[0]));
+    }
+
+    public static File getAndResetTestFolder() {
+        String test_id = TestUtils.getCallerMethodId(2);
+        try {
+            File path = new File("./runtime/test/" + test_id).getCanonicalFile();
+            CoreIOUtils.delete(null, path);
+            return path;
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
     }
 
     public static String getCallerMethodId() {

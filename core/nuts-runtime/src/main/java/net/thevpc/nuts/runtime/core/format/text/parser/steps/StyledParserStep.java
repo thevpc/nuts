@@ -568,10 +568,10 @@ public class StyledParserStep extends ParserStep {
                 if (s != null) {
                     return ws.text().forStyled(a, s);
                 }
-                throw new NutsIllegalArgumentException(ws.createSession(), "unable to resolve style from " + s);
+                throw new NutsIllegalArgumentException(ws.createSession(), NutsMessage.cstyle("unable to resolve style from %s",s));
             }
         }
-        throw new IllegalArgumentException("unexpected");
+        throw new NutsUnsupportedEnumException(ws.createSession(), curState);
     }
 
     @Override

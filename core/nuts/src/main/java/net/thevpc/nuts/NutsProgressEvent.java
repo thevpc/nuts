@@ -80,7 +80,7 @@ public interface NutsProgressEvent {
      * event message
      * @return event message
      */
-    String getMessage();
+    NutsString getMessage();
 
     /**
      * progress percentage ([0..100])

@@ -70,7 +70,7 @@ public class NoapiMain implements NutsApplication {
             @Override
             public void onPrepare(NutsCommandLine commandline) {
                 if (path == null) {
-                    commandline.required("missing path");
+                    commandline.required(NutsMessage.cstyle("missing path"));
                 }
                 if (command == null) {
                     command = "pdf";

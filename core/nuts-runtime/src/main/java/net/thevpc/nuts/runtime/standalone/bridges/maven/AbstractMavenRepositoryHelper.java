@@ -163,7 +163,7 @@ public abstract class AbstractMavenRepositoryHelper {
                 return session.getWorkspace().locations().getDefaultIdContentExtension(packaging);
             }
             default: {
-                throw new NutsUnsupportedArgumentException(session, "unsupported fact " + f);
+                throw new NutsUnsupportedArgumentException(session, NutsMessage.cstyle("unsupported fact %s",f));
             }
         }
     }

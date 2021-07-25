@@ -90,7 +90,7 @@ public class DefaultNutsStreamProgressMonitor implements NutsProgressMonitor/*, 
             if(p==null|| p.isEmpty()){
                 return false;
             }
-            formattedLine.append(p);
+            formattedLine.append(text.parse(p));
             BytesSizeFormat mf = new BytesSizeFormat("BTD1F", event.getSession());
 
             formattedLine.append(" ").append(text.forStyled(String.format("%6s", df.format(percent)),NutsTextStyle.config())).append("% ");

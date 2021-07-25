@@ -128,7 +128,7 @@ public abstract class AbstractNutsRepositoryBase extends AbstractNutsRepository 
         return a;
     }
 
-    protected void traceMessage(NutsSession session, NutsFetchMode fetchMode, Level lvl, NutsId id, NutsLogVerb tracePhase, String title, long startTime, String extraMessage) {
+    protected void traceMessage(NutsSession session, NutsFetchMode fetchMode, Level lvl, NutsId id, NutsLogVerb tracePhase, String title, long startTime, NutsMessage extraMessage) {
         CoreNutsUtils.traceMessage(LOG, lvl, getName(), session, fetchMode, id, tracePhase, title, startTime, extraMessage);
     }
 

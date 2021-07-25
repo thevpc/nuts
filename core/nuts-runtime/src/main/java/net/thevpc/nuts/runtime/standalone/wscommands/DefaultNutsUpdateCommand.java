@@ -167,7 +167,9 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                     NutsUpdateResult updated = regularUpdates.get(dd.getSimpleName());
                     //FIX ME
                     if (!dd.getVersion().filter().acceptVersion(updated.getId().getVersion(), session)) {
-                        throw new NutsIllegalArgumentException(getSession(), dd + " unsatisfied  : " + updated.getId().getVersion());
+                        throw new NutsIllegalArgumentException(getSession(),
+                                NutsMessage.cstyle("%s unsatisfied  : %s",dd, updated.getId().getVersion())
+                        );
                     }
                 }
             }
@@ -376,7 +378,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
 //            }
 //        }
         if (d0 == null) {
-            throw new NutsIllegalArgumentException(getSession(), id + " is not yet installed for it to be updated.");
+            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("%s is not yet installed for it to be updated.",id));
         }
         if (!d0.getInstallInformation().isDefaultVersion()) {
             shouldUpdateDefault = true;

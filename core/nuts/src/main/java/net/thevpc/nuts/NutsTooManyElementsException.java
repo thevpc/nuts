@@ -41,7 +41,7 @@ public class NutsTooManyElementsException extends NutsException {
      * @param session workspace
      */
     public NutsTooManyElementsException(NutsSession session) {
-        this(session, "Too many Elements");
+        this(session, NutsMessage.formatted("too many elements"));
     }
 
     /**
@@ -49,7 +49,7 @@ public class NutsTooManyElementsException extends NutsException {
      * @param session workspace
      * @param message message
      */
-    public NutsTooManyElementsException(NutsSession session, String message) {
+    public NutsTooManyElementsException(NutsSession session, NutsMessage message) {
         super(session, message);
     }
 
@@ -59,7 +59,7 @@ public class NutsTooManyElementsException extends NutsException {
      * @param message message
      * @param cause cause
      */
-    public NutsTooManyElementsException(NutsSession session, String message, Throwable cause) {
+    public NutsTooManyElementsException(NutsSession session, NutsMessage message, Throwable cause) {
         super(session, message, cause);
     }
 
@@ -89,7 +89,7 @@ public class NutsTooManyElementsException extends NutsException {
      * @param enableSuppression whether or not suppression is enabled or disabled
      * @param writableStackTrace whether or not the stack trace should be writable
      */
-    public NutsTooManyElementsException(NutsSession session, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public NutsTooManyElementsException(NutsSession session, NutsMessage message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(session, message, cause, enableSuppression, writableStackTrace);
     }
 

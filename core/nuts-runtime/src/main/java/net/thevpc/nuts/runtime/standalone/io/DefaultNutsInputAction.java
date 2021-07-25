@@ -17,7 +17,7 @@ import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 public class DefaultNutsInputAction implements NutsInputAction {
 
     private NutsWorkspace ws;
-    private String name;
+    private NutsString name;
     private String typeName;
     private NutsSession session;
     private boolean multiRead;
@@ -52,7 +52,7 @@ public class DefaultNutsInputAction implements NutsInputAction {
         } else if (source instanceof NutsPath) {
             return of((NutsPath) source);
         } else {
-            throw new NutsUnsupportedArgumentException(getSession(), "unsupported type " + source.getClass().getName());
+            throw new NutsUnsupportedArgumentException(getSession(), NutsMessage.cstyle("unsupported type %s", source.getClass().getName()));
         }
     }
 
@@ -74,7 +74,11 @@ public class DefaultNutsInputAction implements NutsInputAction {
     @Override
     public NutsInput of(byte[] bytes) {
         checkSession();
-        NutsInput v = CoreIOUtils.createInputSource(bytes, getName(), getTypeName(), getSession());
+        NutsString n = getName();
+        if(n==null){
+            n=getSession().getWorkspace().text().forStyled("<bytes>",NutsTextStyle.path());
+        }
+        NutsInput v = CoreIOUtils.createInputSource(bytes, n.filteredText(),n,  getTypeName(), getSession());
         v = toMulti(v);
         return v;
     }
@@ -85,11 +89,11 @@ public class DefaultNutsInputAction implements NutsInputAction {
             return null;
         }
         checkSession();
-        String name=getName();
-        if (name == null) {
-            name = String.valueOf(source);
+        NutsString name = getName();
+        if(name==null){
+            name=getSession().getWorkspace().text().toText(source);
         }
-        return toMulti(new CoreIOUtils.InputStream(name, source, "inputStream", getSession()));
+        return toMulti(new CoreIOUtils.InputStream(name.filteredText(),name, source, "inputStream", getSession()));
     }
 
     @Override
@@ -123,7 +127,7 @@ public class DefaultNutsInputAction implements NutsInputAction {
     }
 
     @Override
-    public String getName() {
+    public NutsString getName() {
         return name;
     }
 
@@ -133,7 +137,7 @@ public class DefaultNutsInputAction implements NutsInputAction {
     }
 
     @Override
-    public NutsInputAction setName(String name) {
+    public NutsInputAction setName(NutsString name) {
         this.name = name;
         return this;
     }

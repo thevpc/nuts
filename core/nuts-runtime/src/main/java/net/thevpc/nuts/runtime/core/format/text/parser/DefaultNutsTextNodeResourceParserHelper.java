@@ -25,7 +25,7 @@ public class DefaultNutsTextNodeResourceParserHelper {
 
     public NutsText parseResource(String resourceName, NutsTextFormatLoader loader) {
         if (loader == null) {
-            throw new NutsIllegalArgumentException(session, "missing loader");
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing loader"));
         }
         Reader reader = loader.forPath(resourceName);
         if (reader == null) {
@@ -44,7 +44,7 @@ public class DefaultNutsTextNodeResourceParserHelper {
 
     public NutsText parseResource(String resourceName, Reader reader, NutsTextFormatLoader loader) {
         if (loader == null) {
-            throw new NutsIllegalArgumentException(session, "missing loader");
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing loader"));
         }
         if (reader == null) {
             reader = loader.forPath(resourceName);

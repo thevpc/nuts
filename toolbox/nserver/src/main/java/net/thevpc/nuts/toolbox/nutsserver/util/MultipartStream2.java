@@ -45,6 +45,8 @@ package net.thevpc.nuts.toolbox.nutsserver.util;
 import net.thevpc.nuts.NutsIllegalArgumentException;
 
 import java.io.*;
+
+import net.thevpc.nuts.NutsMessage;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.toolbox.nutsserver.bundled._IOUtils;
 import sun.misc.IOUtils;
@@ -308,14 +310,14 @@ public class MultipartStream2 {
                             ProgressNotifier pNotifier, NutsSession session) {
 
         if (boundary == null) {
-            throw new NutsIllegalArgumentException(session, "boundary may not be null");
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("boundary may not be null"));
         }
         // We prepend CR/LF to the boundary to chop trailing CR/LF from
         // body-data tokens.
         this.boundaryLength = boundary.length + BOUNDARY_PREFIX.length;
         if (bufSize < this.boundaryLength + 1) {
             throw new NutsIllegalArgumentException(
-                    null, "The buffer size specified for the MultipartStream is too small");
+                    null, NutsMessage.cstyle("the buffer size specified for the MultipartStream is too small"));
         }
 
         this.input = input;

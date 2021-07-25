@@ -54,7 +54,7 @@ public class NDocusaurusMain implements NutsApplication {
             @Override
             public void onPrepare(NutsCommandLine commandline) {
                 if(!start && !build && !buildPdf){
-                    commandline.required("missing command. try ```sh ndocusaurus pdf | start | build```");
+                    commandline.required(NutsMessage.cstyle("missing command. try ```sh ndocusaurus pdf | start | build```"));
                 }
             }
 

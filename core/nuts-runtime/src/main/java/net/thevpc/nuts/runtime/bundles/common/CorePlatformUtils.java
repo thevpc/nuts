@@ -205,7 +205,7 @@ public class CorePlatformUtils {
                     }
                 }
             } catch (Exception e) {
-                System.err.printf("error: %s%n", CoreStringUtils.exceptionToString(e));
+                System.err.printf("error: %s%n", CoreStringUtils.exceptionToMessage(e));
             }
         }
         Map<String, String> m = new HashMap<>();
@@ -308,7 +308,7 @@ public class CorePlatformUtils {
         if (SUPPORTED_ARCH.contains(arch)) {
             return true;
         }
-        throw new NutsIllegalArgumentException(null, "unsupported Architecture " + arch + " please do use one of " + SUPPORTED_ARCH);
+        throw new NutsIllegalArgumentException(null, NutsMessage.cstyle("unsupported Architecture %s please do use one of %s" ,arch, SUPPORTED_ARCH));
     }
 
     public static boolean checkSupportedOs(String os) {
@@ -318,7 +318,7 @@ public class CorePlatformUtils {
         if (SUPPORTED_OS.contains(os)) {
             return true;
         }
-        throw new NutsIllegalArgumentException(null, "unsupported Operating System " + os + " please do use one of " + SUPPORTED_OS);
+        throw new NutsIllegalArgumentException(null, NutsMessage.cstyle("unsupported Operating System %s please do use one of %s",os, SUPPORTED_OS));
     }
 
     public static Boolean getExecutableJar(File file) {

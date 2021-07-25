@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages and libraries
  * for runtime execution. Nuts is the ultimate companion for maven (and other
@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,25 +23,17 @@
  */
 package net.thevpc.nuts.runtime.core.util;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UncheckedIOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
 import net.thevpc.nuts.NutsException;
+import net.thevpc.nuts.NutsMessage;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.bundles.io.InputStreamVisitor;
 import net.thevpc.nuts.runtime.bundles.io.ZipUtils;
 
+import java.io.*;
+import java.net.URL;
+import java.util.*;
+
 /**
- *
  * @author vpc
  */
 public final class CoreServiceUtils {
@@ -61,7 +53,7 @@ public final class CoreServiceUtils {
                         while ((line = reader.readLine()) != null) {
                             line = line.trim();
                             if (line.length() > 0 && !line.startsWith("#")) {
-                                found.add(line); 
+                                found.add(line);
                             }
                         }
                         return false;
@@ -74,7 +66,7 @@ public final class CoreServiceUtils {
         return found;
     }
 
-    public static List<String> loadServiceClasseNames(URL u, Class<?> service){
+    public static List<String> loadServiceClasseNames(URL u, Class<?> service) {
         InputStream in = null;
         BufferedReader r = null;
         List<String> names = new ArrayList<>();
@@ -131,11 +123,12 @@ public final class CoreServiceUtils {
                 throw new NutsException(ws, x);
             }
             if (!service.isAssignableFrom(c)) {
-                throw new NutsException(ws, "not a valid type " + c + " <> " + service);
+                throw new NutsException(ws,
+                        NutsMessage.cstyle("not a valid type %s <> %s", c, service));
             }
             classes.add(c);
         }
         return classes;
     }
-    
+
 }

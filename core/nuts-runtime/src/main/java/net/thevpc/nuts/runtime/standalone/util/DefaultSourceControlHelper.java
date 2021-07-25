@@ -48,7 +48,7 @@ public class DefaultSourceControlHelper {
         NutsWorkspaceUtils.checkSession(ws, session);
         ws.security().setSession(session).checkAllowed(NutsConstants.Permissions.DEPLOY, "commit");
         if (folder == null || !Files.isDirectory(folder)) {
-            throw new NutsIllegalArgumentException(session, "not a directory " + folder);
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("not a directory %s", folder));
         }
 
         Path file = folder.resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME);
@@ -74,7 +74,7 @@ public class DefaultSourceControlHelper {
             CoreIOUtils.delete(session, folder);
             return newId;
         } else {
-            throw new NutsUnsupportedOperationException(session, "commit not supported");
+            throw new NutsUnsupportedOperationException(session, NutsMessage.cstyle("commit not supported"));
         }
     }
 
@@ -118,7 +118,7 @@ public class DefaultSourceControlHelper {
                     idType, null, session
             );
         } else {
-            throw new NutsUnsupportedOperationException(session, "Checkout not supported");
+            throw new NutsUnsupportedOperationException(session, NutsMessage.cstyle("checkout not supported"));
         }
     }
 }

@@ -154,7 +154,7 @@ public final class NutsApplications {
                 return;
             }
         }
-        throw new NutsExecutionException(session, "unsupported execution mode " + applicationContext.getMode(), 204);
+        throw new NutsExecutionException(session, NutsMessage.cstyle("unsupported execution mode %s",applicationContext.getMode()), 204);
     }
 
     /**

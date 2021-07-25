@@ -598,7 +598,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
     public boolean restart(String[] deployApps, boolean deleteLog) {
         stop();
         if (getRunningTomcat() != null) {
-            throw new NutsExecutionException(context.getSession(), "server " + getName() + " is running. it cannot be stopped!", 2);
+            throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("server %s is running. it cannot be stopped!",getName()), 2);
         }
         start(deployApps, deleteLog);
         return true;
@@ -617,7 +617,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                 context.getSession().out().printf("%s Tomcat started on port" + getHttpConnectorPort() + " .\n", getFormattedPrefix(getName()));
                 return AppStatus.RUNNING;
             }
-            throw new NutsExecutionException(context.getSession(), "unable to start tomcat", 2);
+            throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("unable to start tomcat"), 2);
         }
         for (int i = 0; i < timeout; i++) {
             try {
@@ -635,7 +635,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             context.getSession().out().printf("%s Tomcat out of memory.\n", getFormattedPrefix(getName()));
             return y;
         }
-        throw new NutsExecutionException(context.getSession(), "unable to start tomcat", 2);
+        throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("unable to start tomcat"), 2);
     }
 
     public boolean waitForStoppedStatus(int timeout, boolean kill) {
@@ -778,7 +778,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             switch (mode) {
                 case OPEN_OR_ERROR: {
                     if (a == null) {
-                        throw new NutsExecutionException(context.getSession(), "App not found :" + appName, 2);
+                        throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("app not found : %s", appName), 2);
                     }
                     break;
                 }
@@ -787,7 +787,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                         a = new LocalTomcatAppConfig();
                         getConfig().getApps().put(appName, a);
                     } else {
-                        throw new NutsExecutionException(context.getSession(), "App already found :" + appName, 2);
+                        throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("app already found : %s", appName), 2);
                     }
                     break;
                 }
@@ -814,7 +814,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             switch (mode) {
                 case OPEN_OR_ERROR: {
                     if (a == null) {
-                        throw new NutsExecutionException(context.getSession(), "Domain not found :" + domainName, 2);
+                        throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("domain not found : %s", domainName), 2);
                     }
                     break;
                 }
@@ -823,7 +823,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                         a = new LocalTomcatDomainConfig();
                         getConfig().getDomains().put(domainName, a);
                     } else {
-                        throw new NutsExecutionException(context.getSession(), "Domain already found :" + domainName, 2);
+                        throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("domain already found : %s", domainName), 2);
                     }
                     break;
                 }
@@ -1127,7 +1127,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                     transformer.transform(domSource, streamResult);
                     return;
                 }
-                throw new NutsIllegalArgumentException(context.getSession(), "not found connector");
+                throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.cstyle("not found connector"));
             }
         } catch (SAXException | IOException | ParserConfigurationException | TransformerException ex) {
             if (context.getSession().isPlainOut()) {

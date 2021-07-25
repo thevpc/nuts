@@ -1,6 +1,9 @@
 package net.thevpc.nuts.lib.ssh;
 
 import com.jcraft.jsch.*;
+import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NutsString;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,44 +11,45 @@ import java.util.Properties;
 
 public class SShConnection implements AutoCloseable {
 
-    public static final SshListener LOGGER = new SshListener() {
-        @Override
-        public void onExec(String command) {
-            System.out.println("[SSH-EXEC] " + command);
-        }
-
-        @Override
-        public void onGet(String from, String to, boolean mkdir) {
-            System.out.println("[SSH-GET ] " + from + " " + to);
-        }
-
-        @Override
-        public void onPut(String from, String to, boolean mkdir) {
-            System.out.println("[SSH-PUT ] " + from + " " + to);
-        }
-
-        @Override
-        public InputStream monitorInputStream(InputStream stream, long length, String name) {
-            return null;
-        }
-    };
+//    public static final SshListener LOGGER = new SshListener() {
+//        @Override
+//        public void onExec(String command) {
+//            System.out.println("[SSH-EXEC] " + command);
+//        }
+//
+//        @Override
+//        public void onGet(String from, String to, boolean mkdir) {
+//            System.out.println("[SSH-GET ] " + from + " " + to);
+//        }
+//
+//        @Override
+//        public void onPut(String from, String to, boolean mkdir) {
+//            System.out.println("[SSH-PUT ] " + from + " " + to);
+//        }
+//
+//        @Override
+//        public InputStream monitorInputStream(InputStream stream, long length, NutsString message) {
+//            return null;
+//        }
+//    };
     Session session;
+    NutsSession nutsSession;
     private boolean redirectErrorStream;
     private boolean failFast;
     private PrintStream out = new PrintStream(new NonClosableOutputStream(System.out));
     private PrintStream err = new PrintStream(new NonClosableOutputStream(System.err));
     private List<SshListener> listeners = new ArrayList<>();
 
-    public SShConnection(String address) {
-        this(new SshAddress(address));
+    public SShConnection(String address,NutsSession nutsSession) {
+        this(new SshAddress(address),nutsSession);
     }
 
-    public SShConnection(SshAddress address) {
-        init(address.getUser(), address.getHost(), address.getPort(), address.getKeyFile(), address.getPassword());
+    public SShConnection(SshAddress address,NutsSession nutsSession) {
+        init(address.getUser(), address.getHost(), address.getPort(), address.getKeyFile(), address.getPassword(),nutsSession);
     }
 
-    public SShConnection(String user, String host, int port, String keyFilePath, String keyPassword) {
-        init(user, host, port, keyFilePath, keyPassword);
+    public SShConnection(String user, String host, int port, String keyFilePath, String keyPassword,NutsSession nutsSession) {
+        init(user, host, port, keyFilePath, keyPassword,nutsSession);
     }
 
     public boolean isRedirectErrorStream() {
@@ -83,7 +87,8 @@ public class SShConnection implements AutoCloseable {
         return this;
     }
 
-    private void init(String user, String host, int port, String keyFilePath, String keyPassword) {
+    private void init(String user, String host, int port, String keyFilePath, String keyPassword,NutsSession nutsSession) {
+        this.nutsSession=nutsSession;
         try {
             JSch jsch = new JSch();
 
@@ -666,7 +671,7 @@ public class SShConnection implements AutoCloseable {
     public InputStream prepareStream(File file) throws FileNotFoundException {
         FileInputStream in = new FileInputStream(file);
         for (SshListener listener : listeners) {
-            InputStream v = listener.monitorInputStream(in, file.length(), file.getPath());
+            InputStream v = listener.monitorInputStream(in, file.length(), nutsSession.getWorkspace().text().toText(file.getPath()));
             if (v != null) {
                 return v;
             }

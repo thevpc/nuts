@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.core.app;
 
 import net.thevpc.nuts.*;
 
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -99,7 +98,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
                         break;
                     }
                     default: {
-                        throw new NutsExecutionException(session, "Unsupported nuts-exec-mode : " + args[0], 205);
+                        throw new NutsExecutionException(session, NutsMessage.cstyle("Unsupported nuts-exec-mode : %s", args[0]), 205);
                     }
                 }
             }
@@ -112,7 +111,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
             _appId = this.workspace.id().setSession(session).resolveId(appClass);
         }
         if (_appId == null) {
-            throw new NutsExecutionException(session, "invalid Nuts Application (" + appClass.getName() + "). Id cannot be resolved", 203);
+            throw new NutsExecutionException(session, NutsMessage.cstyle("invalid Nuts Application (%s). Id cannot be resolved",appClass.getName()), 203);
         }
         this.args = (args);
         this.appId = (_appId);
@@ -209,7 +208,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
                         printHelp();
                     }
                     cmd.skipAll();
-                    throw new NutsExecutionException(session, "Help", 0);
+                    throw new NutsExecutionException(session, NutsMessage.cstyle("help"), 0);
                 }
                 break;
             }
@@ -220,7 +219,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
                     case UPDATE: {
                         if (enabled) {
                             cmd.skip();
-                            throw new NutsExecutionException(session, "skip-event", 0);
+                            throw new NutsExecutionException(session, NutsMessage.cstyle("skip-event"), 0);
                         }
                     }
                 }
@@ -233,7 +232,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
                         getSession().out().printf("%s%n", getWorkspace().id().setSession(session).resolveId(getClass()).getVersion().toString());
                         cmd.skipAll();
                     }
-                    throw new NutsExecutionException(session, "Version", 0);
+                    throw new NutsExecutionException(session, NutsMessage.cstyle("version"), 0);
                 }
                 return true;
             }
@@ -493,7 +492,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
             NutsArgumentCandidate c = super.addCandidatesImpl(value);
             String v = value.getValue();
             if (v == null) {
-                throw new NutsExecutionException(session, "candidate cannot be null", 2);
+                throw new NutsExecutionException(session, NutsMessage.cstyle("candidate cannot be null"), 2);
             }
             String d = value.getDisplay();
             if (Objects.equals(v, d) || d == null) {

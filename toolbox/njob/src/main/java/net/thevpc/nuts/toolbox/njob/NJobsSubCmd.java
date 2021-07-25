@@ -192,7 +192,7 @@ public class NJobsSubCmd {
             }
         }
         if (jobs.isEmpty()) {
-            cmd.throwError("job id expected");
+            cmd.throwError(NutsMessage.formatted("job id expected"));
         }
         if (cmd.isExecMode()) {
             for (NJob job : jobs) {
@@ -359,7 +359,7 @@ public class NJobsSubCmd {
                             break;
                         }
                         default: {
-                            cmd.pushBack(y).unexpectedArgument("invalid value");
+                            cmd.pushBack(y).unexpectedArgument(NutsMessage.cstyle("invalid value"));
                         }
                     }
                     break;

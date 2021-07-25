@@ -199,7 +199,7 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
                 break;
             }
             default: {
-                throw new NutsUnsupportedArgumentException(getSession(), "unsupported compression format " + getFormat());
+                throw new NutsUnsupportedArgumentException(getSession(), NutsMessage.cstyle("unsupported compression format %s", getFormat()));
             }
         }
         return this;
@@ -212,10 +212,10 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
     public void runZip() {
         checkSession();
         if (sources.isEmpty()) {
-            throw new NutsIllegalArgumentException(getSession(), "missing source");
+            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("missing source"));
         }
         if (target == null) {
-            throw new NutsIllegalArgumentException(getSession(), "missing target");
+            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("missing target"));
         }
         if (isLogProgress() || getProgressMonitorFactory() != null) {
             //how to monitor???
@@ -271,7 +271,7 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
                     Files.move(tempPath, path, StandardCopyOption.REPLACE_EXISTING);
                 }
             } else {
-                throw new NutsIllegalArgumentException(getSession(), "unsupported target " + target);
+                throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("unsupported target %s", target));
             }
         } catch (IOException ex) {
             LOG.with().session(session).level(Level.CONFIG).verb(NutsLogVerb.FAIL)
@@ -426,7 +426,7 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
             if (o instanceof NutsInput) {
                 NutsInput s = (NutsInput) o;
                 if (s.isPath()) {
-                    return Files.isDirectory(s.getPath());
+                    return Files.isDirectory(s.getFilePath());
                 }
             }
             return false;
@@ -453,7 +453,7 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
             if (o instanceof NutsInput) {
                 NutsInput s = (NutsInput) o;
                 if (s.isPath()) {
-                    Path o1 = s.getPath();
+                    Path o1 = s.getFilePath();
                     try {
                         return Files.list(o1).map(Item::new).toArray(Item[]::new);
                     } catch (IOException ex) {
@@ -495,7 +495,7 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
             }
             if (o instanceof NutsInput) {
                 NutsInput s = (NutsInput) o;
-                return s.getPath().getFileName().toString();
+                return s.getFilePath().getFileName().toString();
             }
             return "";
         }
@@ -541,7 +541,7 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
                 break;
             }
             default: {
-                throw new NutsUnsupportedArgumentException(getSession(), "unsupported compression format " + format);
+                throw new NutsUnsupportedArgumentException(getSession(), NutsMessage.cstyle("unsupported compression format %s",format));
             }
         }
         return this;

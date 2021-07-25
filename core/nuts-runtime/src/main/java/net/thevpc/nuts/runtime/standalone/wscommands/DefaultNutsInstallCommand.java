@@ -131,7 +131,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
         } else if (info.ignored) {
             return false;
         } else {
-            throw new NutsUnexpectedException(getSession(), "unexpected");
+            throw new NutsUnexpectedException(getSession(), NutsMessage.cstyle("unexpected"));
         }
     }
 
@@ -247,7 +247,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                         break;
                     }
                     default: {
-                        throw new NutsUnexpectedException(getSession(), "unsupported strategy " + strategy);
+                        throw new NutsUnexpectedException(getSession(), NutsMessage.cstyle("unsupported strategy %s", strategy));
                     }
                 }
             } else if (info.getOldInstallStatus().isObsolete()) {
@@ -281,7 +281,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                         break;
                     }
                     default: {
-                        throw new NutsUnexpectedException(getSession(), "unsupported strategy " + strategy);
+                        throw new NutsUnexpectedException(getSession(), NutsMessage.cstyle("unsupported strategy %s", strategy));
                     }
                 }
             } else if (info.getOldInstallStatus().isInstalled()) {
@@ -309,7 +309,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                         break;
                     }
                     default: {
-                        throw new NutsUnexpectedException(getSession(), "unsupported strategy " + strategy);
+                        throw new NutsUnexpectedException(getSession(), NutsMessage.cstyle("unsupported strategy %s", strategy));
                     }
                 }
             } else if (info.getOldInstallStatus().isRequired()) {
@@ -338,11 +338,11 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                         break;
                     }
                     default: {
-                        throw new NutsUnexpectedException(getSession(), "unsupported strategy " + strategy);
+                        throw new NutsUnexpectedException(getSession(), NutsMessage.cstyle("unsupported strategy %s", strategy));
                     }
                 }
             } else {
-                throw new NutsUnexpectedException(getSession(), "unsupported status " + info.oldInstallStatus);
+                throw new NutsUnexpectedException(getSession(), NutsMessage.cstyle("unsupported status %s", info.oldInstallStatus));
             }
         }
         Map<String, List<InstallIdInfo>> error = list.infos().stream().filter(x -> x.doError != null).collect(Collectors.groupingBy(installIdInfo -> installIdInfo.doError));
@@ -357,7 +357,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                         .map(x -> ws.id().formatter().omitImportedGroupId().value(x.getLongNameId()).format().toString())
                         .collect(Collectors.joining(", ")));
             }
-            throw new NutsInstallException(getSession(), "", sb.toString().trim(), null);
+            throw new NutsInstallException(getSession(), null, NutsMessage.formatted(sb.toString().trim()), null);
         }
 
         NutsTextManager text = ws.text().setSession(session);
@@ -399,7 +399,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                 .setDefaultValue(true)
                 .setCancelMessage("installation cancelled : %s ", nonIgnored.stream().map(NutsId::getFullName).collect(Collectors.joining(", ")))
                 .getBooleanValue()) {
-            throw new NutsUserCancelException(getSession(), "installation cancelled: " + nonIgnored.stream().map(NutsId::getFullName).collect(Collectors.joining(", ")));
+            throw new NutsUserCancelException(getSession(), NutsMessage.cstyle("installation cancelled: %s", nonIgnored.stream().map(NutsId::getFullName).collect(Collectors.joining(", "))));
         }
 //        List<String> cmdArgs = new ArrayList<>(Arrays.asList(this.getArgs()));
 //        if (session.isForce()) {
@@ -445,7 +445,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
             failed = failedList.toArray(new NutsId[0]);
         }
         if (list.emptyCommand) {
-            throw new NutsExecutionException(getSession(), "missing packages to install", 1);
+            throw new NutsExecutionException(getSession(), NutsMessage.cstyle("missing packages to install"), 1);
         }
         return this;
     }

@@ -54,7 +54,7 @@ public class DefaultNutsIdParser implements NutsIdParser {
             }
         }
         if (!isLenient()) {
-            throw new NutsParseException(session, "invalid id format : " + nutsId);
+            throw new NutsParseException(session, NutsMessage.cstyle("invalid id format : %s", nutsId));
         }
         return null;
     }

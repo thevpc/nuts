@@ -44,7 +44,7 @@ public class NutsIOCopyValidationException extends NutsIOException {
      * @param session workspace
      * @param message message
      */
-    public NutsIOCopyValidationException(NutsSession session,String message) {
+    public NutsIOCopyValidationException(NutsSession session,NutsMessage message) {
         super(session,message);
     }
 
@@ -54,7 +54,7 @@ public class NutsIOCopyValidationException extends NutsIOException {
      * @param message message
      * @param cause cause
      */
-    public NutsIOCopyValidationException(NutsSession session,String message, Throwable cause) {
+    public NutsIOCopyValidationException(NutsSession session,NutsMessage message, Throwable cause) {
         super(session,message, cause);
     }
 

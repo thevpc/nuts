@@ -41,16 +41,6 @@ public class NutsUninstallException extends NutsInstallationException {
      * @param id nuts id
      */
     public NutsUninstallException(NutsSession session, NutsId id) {
-        this(session, id == null ? null : id.toString());
-    }
-
-    /**
-     * Custom Constructor
-     *
-     * @param session workspace
-     * @param id nuts id
-     */
-    public NutsUninstallException(NutsSession session, String id) {
         this(session, id, null, null);
     }
 
@@ -62,19 +52,8 @@ public class NutsUninstallException extends NutsInstallationException {
      * @param msg message
      * @param ex exception
      */
-    public NutsUninstallException(NutsSession session, NutsId id, String msg, Exception ex) {
-        this(session, id == null ? null : id.toString(), msg, ex);
-    }
-
-    /**
-     * Custom Constructor
-     *
-     * @param session workspace
-     * @param id nuts id
-     * @param msg message
-     * @param ex exception
-     */
-    public NutsUninstallException(NutsSession session, String id, String msg, Exception ex) {
-        super(session, id, PrivateNutsUtils.isBlank(msg) ? "unable to uninstall " + (id == null ? "<null>" : id) : msg, ex);
+    public NutsUninstallException(NutsSession session, NutsId id, NutsMessage msg, Exception ex) {
+        super(session, id,
+                msg==null ? NutsMessage.cstyle("unable to uninstall %s" , (id == null ? "<null>" : id)) : msg, ex);
     }
 }

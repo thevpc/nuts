@@ -1,5 +1,11 @@
 package net.thevpc.nuts.runtime.standalone.config;
 
+import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+import net.thevpc.nuts.runtime.standalone.NutsHomeLocationsMap;
+import net.thevpc.nuts.runtime.standalone.NutsStoreLocationsMap;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -7,14 +13,13 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.NutsHomeLocationsMap;
-import net.thevpc.nuts.runtime.standalone.NutsStoreLocationsMap;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
-
 public final class DefaultNutsWorkspaceCurrentConfig {
 
+    private final Map<String, String> userStoreLocations = new HashMap<>();
+    private final Map<String, String> effStoreLocationsMap = new HashMap<>();
+    private final Path[] effStoreLocationPath = new Path[NutsStoreLocation.values().length];
+    private final Map<String, String> homeLocations = new HashMap<>();
+    private final NutsWorkspace ws;
     private String name;
     private NutsId apiId;
     private NutsId bootRuntime;
@@ -26,12 +31,7 @@ public final class DefaultNutsWorkspaceCurrentConfig {
     private NutsStoreLocationStrategy storeLocationStrategy;
     private NutsStoreLocationStrategy repositoryStoreLocationStrategy;
     private NutsOsFamily storeLocationLayout;
-    private final Map<String, String> userStoreLocations = new HashMap<>();
-    private final Map<String, String> effStoreLocationsMap = new HashMap<>();
-    private final Path[] effStoreLocationPath = new Path[NutsStoreLocation.values().length];
-    private final Map<String, String> homeLocations = new HashMap<>();
     private boolean global;
-    private final NutsWorkspace ws;
 //    private NutsId platform;
 //    private NutsId os;
 //    private NutsOsFamily osFamily;
@@ -110,7 +110,8 @@ public final class DefaultNutsWorkspaceCurrentConfig {
         for (NutsStoreLocation type : NutsStoreLocation.values()) {
             String ss = Nuts.getPlatformHomeFolder(getStoreLocationLayout(), type, homeLocations, isGlobal(), getName());
             if (CoreStringUtils.isBlank(ss)) {
-                throw new NutsIllegalArgumentException(session, "missing Home for " + type.id());
+                throw new NutsIllegalArgumentException(session,
+                        NutsMessage.cstyle("missing Home for %s", type));
             }
             homes[type.ordinal()] = Paths.get(ss);
         }
@@ -191,8 +192,8 @@ public final class DefaultNutsWorkspaceCurrentConfig {
             this.runtimeBootDescriptor = new NutsBootDescriptor(
                     NutsBootId.parse(this.bootRuntime.toString()),
                     Arrays.stream(c.getDependencies().split(";"))
-                    .map(x->NutsBootId.parse(x)).toArray(NutsBootId[]::new)
-                    
+                            .map(x -> NutsBootId.parse(x)).toArray(NutsBootId[]::new)
+
             );
         }
         return this;
@@ -264,82 +265,119 @@ public final class DefaultNutsWorkspaceCurrentConfig {
         return extensionBootDescriptors;
     }
 
+    public DefaultNutsWorkspaceCurrentConfig setExtensionBootDescriptors(NutsBootDescriptor[] extensionBootDescriptors) {
+        this.extensionBootDescriptors = extensionBootDescriptors;
+        return this;
+    }
 
     public String getName() {
         return name;
     }
 
+    public DefaultNutsWorkspaceCurrentConfig setName(String name) {
+        this.name = name;
+        return this;
+    }
 
     public boolean isGlobal() {
         return this.global;
     }
 
+    public DefaultNutsWorkspaceCurrentConfig setGlobal(boolean global) {
+        this.global = global;
+        return this;
+    }
 
     public String getApiVersion() {
         return getApiId().getVersion().getValue();
     }
 
-
     public NutsId getApiId() {
         return apiId;
     }
 
+    public DefaultNutsWorkspaceCurrentConfig setApiId(NutsId apiId) {
+        this.apiId = apiId;
+        return this;
+    }
 
     public NutsId getRuntimeId() {
         return bootRuntime;
     }
 
+    public DefaultNutsWorkspaceCurrentConfig setRuntimeId(NutsId bootRuntime) {
+        this.bootRuntime = bootRuntime;
+        return this;
+    }
 
     public NutsBootDescriptor getRuntimeBootDescriptor() {
         return runtimeBootDescriptor;
     }
 
+    public DefaultNutsWorkspaceCurrentConfig setRuntimeBootDescriptor(NutsBootDescriptor runtimeBootDescriptor) {
+        this.runtimeBootDescriptor = runtimeBootDescriptor;
+        return this;
+    }
 
     public String getBootRepositories() {
         return bootRepositories;
     }
 
+    public DefaultNutsWorkspaceCurrentConfig setBootRepositories(String bootRepositories) {
+        this.bootRepositories = bootRepositories;
+        return this;
+    }
 
     public String getJavaCommand() {
         return bootJavaCommand;
     }
 
-
     public String getJavaOptions() {
         return bootJavaOptions;
     }
-
 
     public NutsStoreLocationStrategy getStoreLocationStrategy() {
         return storeLocationStrategy;
     }
 
+    public DefaultNutsWorkspaceCurrentConfig setStoreLocationStrategy(NutsStoreLocationStrategy storeLocationStrategy) {
+        this.storeLocationStrategy = storeLocationStrategy;
+        return this;
+    }
 
     public NutsStoreLocationStrategy getRepositoryStoreLocationStrategy() {
         return repositoryStoreLocationStrategy;
     }
 
+    public DefaultNutsWorkspaceCurrentConfig setRepositoryStoreLocationStrategy(NutsStoreLocationStrategy repositoryStoreLocationStrategy) {
+        this.repositoryStoreLocationStrategy = repositoryStoreLocationStrategy;
+        return this;
+    }
 
     public Map<String, String> getStoreLocations() {
         return new LinkedHashMap<>(effStoreLocationsMap);
     }
 
-
     public Map<String, String> getHomeLocations() {
         return new LinkedHashMap<>(homeLocations);
     }
 
+    public DefaultNutsWorkspaceCurrentConfig setHomeLocations(Map<String, String> homeLocations) {
+        this.homeLocations.clear();
+        if (homeLocations != null) {
+            this.homeLocations.putAll(homeLocations);
+        }
+        return this;
+    }
 
     public String getStoreLocation(NutsStoreLocation folderType) {
         return effStoreLocationPath[folderType.ordinal()].toString();
     }
 
-
     public String getHomeLocation(NutsOsFamily layout, NutsStoreLocation folderType) {
         String path = new NutsHomeLocationsMap(homeLocations).get(layout, folderType);
         return path;
     }
-
 
     public String getHomeLocation(NutsStoreLocation folderType) {
         return Paths.get(Nuts.getPlatformHomeFolder(getStoreLocationLayout(),
@@ -349,16 +387,12 @@ public final class DefaultNutsWorkspaceCurrentConfig {
         )).toString();
     }
 
-
     public NutsOsFamily getStoreLocationLayout() {
         return storeLocationLayout;
     }
 
-    public DefaultNutsWorkspaceCurrentConfig setHomeLocations(Map<String, String> homeLocations) {
-        this.homeLocations.clear();
-        if (homeLocations != null) {
-            this.homeLocations.putAll(homeLocations);
-        }
+    public DefaultNutsWorkspaceCurrentConfig setStoreLocationLayout(NutsOsFamily storeLocationLayout) {
+        this.storeLocationLayout = storeLocationLayout;
         return this;
     }
 
@@ -370,36 +404,6 @@ public final class DefaultNutsWorkspaceCurrentConfig {
         return this;
     }
 
-    public DefaultNutsWorkspaceCurrentConfig setName(String name) {
-        this.name = name;
-        return this;
-    }
-
-    public DefaultNutsWorkspaceCurrentConfig setApiId(NutsId apiId) {
-        this.apiId = apiId;
-        return this;
-    }
-
-    public DefaultNutsWorkspaceCurrentConfig setRuntimeId(NutsId bootRuntime) {
-        this.bootRuntime = bootRuntime;
-        return this;
-    }
-
-    public DefaultNutsWorkspaceCurrentConfig setRuntimeBootDescriptor(NutsBootDescriptor runtimeBootDescriptor) {
-        this.runtimeBootDescriptor = runtimeBootDescriptor;
-        return this;
-    }
-
-    public DefaultNutsWorkspaceCurrentConfig setExtensionBootDescriptors(NutsBootDescriptor[] extensionBootDescriptors) {
-        this.extensionBootDescriptors = extensionBootDescriptors;
-        return this;
-    }
-
-    public DefaultNutsWorkspaceCurrentConfig setBootRepositories(String bootRepositories) {
-        this.bootRepositories = bootRepositories;
-        return this;
-    }
-
     public DefaultNutsWorkspaceCurrentConfig setBootJavaCommand(String bootJavaCommand) {
         this.bootJavaCommand = bootJavaCommand;
         return this;
@@ -407,26 +411,6 @@ public final class DefaultNutsWorkspaceCurrentConfig {
 
     public DefaultNutsWorkspaceCurrentConfig setBootJavaOptions(String bootJavaOptions) {
         this.bootJavaOptions = bootJavaOptions;
-        return this;
-    }
-
-    public DefaultNutsWorkspaceCurrentConfig setStoreLocationStrategy(NutsStoreLocationStrategy storeLocationStrategy) {
-        this.storeLocationStrategy = storeLocationStrategy;
-        return this;
-    }
-
-    public DefaultNutsWorkspaceCurrentConfig setRepositoryStoreLocationStrategy(NutsStoreLocationStrategy repositoryStoreLocationStrategy) {
-        this.repositoryStoreLocationStrategy = repositoryStoreLocationStrategy;
-        return this;
-    }
-
-    public DefaultNutsWorkspaceCurrentConfig setStoreLocationLayout(NutsOsFamily storeLocationLayout) {
-        this.storeLocationLayout = storeLocationLayout;
-        return this;
-    }
-
-    public DefaultNutsWorkspaceCurrentConfig setGlobal(boolean global) {
-        this.global = global;
         return this;
     }
 

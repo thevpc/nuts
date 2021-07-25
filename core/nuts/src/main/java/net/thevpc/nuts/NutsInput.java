@@ -37,6 +37,8 @@ import java.util.stream.Stream;
  * @category Input Output
  */
 public interface NutsInput extends AutoCloseable {
+    NutsString getFormattedName();
+
     String getName();
 
     String getTypeName();
@@ -52,7 +54,7 @@ public interface NutsInput extends AutoCloseable {
 
     boolean isPath();
 
-    Path getPath();
+    Path getFilePath();
 
     boolean isURL();
 

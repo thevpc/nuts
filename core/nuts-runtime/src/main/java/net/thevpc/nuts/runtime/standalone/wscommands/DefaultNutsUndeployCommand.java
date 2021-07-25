@@ -17,7 +17,7 @@ public class DefaultNutsUndeployCommand extends AbstractNutsUndeployCommand {
     public NutsUndeployCommand run() {
         NutsWorkspaceUtils.of(getSession()).checkReadOnly();
         if (ids.isEmpty()) {
-            throw new NutsExecutionException(getSession(), "no package to undeploy", 1);
+            throw new NutsExecutionException(getSession(), NutsMessage.cstyle("no package to undeploy"), 1);
         }
         checkSession();
         NutsWorkspace ws = getSession().getWorkspace();

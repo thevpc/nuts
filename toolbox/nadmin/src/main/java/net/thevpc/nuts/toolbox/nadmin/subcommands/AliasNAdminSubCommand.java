@@ -112,7 +112,7 @@ public class AliasNAdminSubCommand extends AbstractNAdminSubCommand {
                                                     NutsWorkspaceCommandAlias::getName,
                                                     x -> context.getWorkspace().commandLine().create(x.getCommand()).toString(),
                                                     (x, y) -> {
-                                                        throw new NutsIllegalArgumentException(context.getSession(),"duplicate " + x);
+                                                        throw new NutsIllegalArgumentException(context.getSession(),NutsMessage.cstyle("duplicate %s",x));
                                                     },
                                                     //preserve order
                                                     LinkedHashMap::new

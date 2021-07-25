@@ -797,7 +797,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                 }
             }
             if (!ok) {
-                throw new NutsIllegalArgumentException(this, "unsupported Listener " + listener.getClass().getName() + " : " + listener);
+                throw new NutsIllegalArgumentException(this, NutsMessage.cstyle("unsupported Listener %s : %s", listener.getClass().getName(), listener));
             }
         }
         return this;
@@ -844,7 +844,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         if (terminal != null) {
             AbstractNutsSessionTerminal a = (AbstractNutsSessionTerminal) terminal;
             if (a.getSession() != this) {
-                throw new NutsIllegalArgumentException(this, "session mismatch");
+                throw new NutsIllegalArgumentException(this, NutsMessage.cstyle("session mismatch"));
             }
         }
 //        this.out0 = (terminal.fout());
@@ -1182,10 +1182,10 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                 this.setTrace(options.getTrace());
             }
             if (options.getBot() != null) {
-                boolean wasBot=isBot();
+                boolean wasBot = isBot();
                 this.setBot(options.getBot());
-                boolean becomesBot=isBot();
-                if(!wasBot && becomesBot) {
+                boolean becomesBot = isBot();
+                if (!wasBot && becomesBot) {
                     if (getTerminal().out().mode() != NutsTerminalMode.FORMATTED) {
                         getTerminal().setOut(getTerminal().out().convertMode(NutsTerminalMode.FILTERED));
                     }

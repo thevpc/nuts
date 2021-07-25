@@ -308,7 +308,7 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
                 if (UserNAdminSubCommand.exec(editedRepo, cmdLine, autoSave, context)) {
                     //okkay
                 } else {
-                    throw new NutsIllegalArgumentException(context.getSession(), "config edit repo: Unsupported command " + cmdLine);
+                    throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.cstyle("config edit repo: Unsupported command %s", cmdLine));
                 }
             }
             return true;

@@ -16,6 +16,10 @@ public abstract class NutsPathBase implements NutsPath {
         //session will be used later
         this.session = session;
     }
+    @Override
+    public NutsString formattedName() {
+        return getSession().getWorkspace().text().forStyled(name(),NutsTextStyle.path());
+    }
 
     @Override
     public boolean isURL() {

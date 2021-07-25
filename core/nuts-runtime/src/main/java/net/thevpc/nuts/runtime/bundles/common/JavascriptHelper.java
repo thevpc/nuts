@@ -123,10 +123,10 @@ public class JavascriptHelper {
             }
         }
         if (code == null) {
-            throw new NutsIllegalArgumentException(session, "illegal js filter : empty content");
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("illegal js filter : empty content"));
         }
         if (!code.contains("return")) {
-            throw new NutsIllegalArgumentException(session, "js filter must contain a return clause");
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("js filter must contain a return clause"));
         }
         try {
             engine = createScriptEngine();

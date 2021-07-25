@@ -1,9 +1,6 @@
 package net.thevpc.nuts.toolbox.ndb.nmysql;
 
-import net.thevpc.nuts.NutsApplicationContext;
-import net.thevpc.nuts.NutsIllegalArgumentException;
-import net.thevpc.nuts.NutsOpenMode;
-import net.thevpc.nuts.NutsStoreLocation;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.ndb.nmysql.local.LocalMysqlConfigService;
 import net.thevpc.nuts.toolbox.ndb.nmysql.local.LocalMysqlDatabaseConfigService;
 import net.thevpc.nuts.toolbox.ndb.nmysql.local.config.LocalMysqlConfig;
@@ -57,7 +54,7 @@ public class NMySqlService {
         LocalMysqlConfigService t = new LocalMysqlConfigService(name, context);
         if (t.existsConfig()) {
             if(action==NutsOpenMode.CREATE_OR_ERROR){
-                throw new NutsIllegalArgumentException(context.getSession(),"local mysql config already exist: " + name);
+                throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.cstyle("local mysql config already exist: %s", name));
             }
             t.loadConfig();
         } else {
@@ -67,7 +64,7 @@ public class NMySqlService {
                     break;
                 }
                 case OPEN_OR_ERROR:{
-                    throw new NutsIllegalArgumentException(context.getSession(),"no such local mysql config: " + name);
+                    throw new NutsIllegalArgumentException(context.getSession(),NutsMessage.cstyle("no such local mysql config: %s", name));
                 }
                 case OPEN_OR_NULL:{
                     t=null;
@@ -82,7 +79,7 @@ public class NMySqlService {
         RemoteMysqlConfigService t = new RemoteMysqlConfigService(name, context);
         if (t.existsConfig()) {
             if(action==NutsOpenMode.CREATE_OR_ERROR){
-                throw new NutsIllegalArgumentException(context.getSession(),"remote mysql config already exist: " + name);
+                throw new NutsIllegalArgumentException(context.getSession(),NutsMessage.cstyle("remote mysql config already exist: %s", name));
             }
             t.loadConfig();
         } else {
@@ -92,7 +89,7 @@ public class NMySqlService {
                      break;
                 }
                 case OPEN_OR_ERROR:{
-                    throw new NutsIllegalArgumentException(context.getSession(),"no such remote mysql config: " + name);
+                    throw new NutsIllegalArgumentException(context.getSession(),NutsMessage.cstyle("no such remote mysql config: %s", name));
                 }
                 case OPEN_OR_NULL:{
                     t=null;

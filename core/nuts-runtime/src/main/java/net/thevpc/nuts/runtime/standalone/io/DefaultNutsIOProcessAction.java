@@ -109,10 +109,12 @@ public class DefaultNutsIOProcessAction implements NutsIOProcessAction {
                 return v;
             }
         }
-        throw new NutsExecutionException(session, "Unable to resolve a valid jdk installation. "
+        throw new NutsExecutionException(session,
+                NutsMessage.cstyle("unable to resolve a valid jdk installation. "
                 + "Either run nuts with a valid JDK/SDK (not JRE) or register a valid one using nadmin tool. "
-                + "All the followings are invalid : \n"
-                + String.join("\n", detectedJavaHomes),
+                + "All the followings are invalid : \n%s",
+                String.join("\n", detectedJavaHomes)
+                ),
                  10);
     }
 
@@ -137,7 +139,7 @@ public class DefaultNutsIOProcessAction implements NutsIOProcessAction {
             return getResultListJava("");
         } else {
             if (isFailFast()) {
-                throw new NutsIllegalArgumentException(getSession(), "unsupported list processes of type : " + processType);
+                throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("unsupported list processes of type : %s" , processType));
             }
             return new NutsCollectionResult<>(getSession(), "process-" + processType, Collections.emptyList());
         }

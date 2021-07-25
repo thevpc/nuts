@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -11,7 +11,7 @@
  * architecture to help supporting a large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -23,14 +23,14 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts;
 
 /**
  * Exception thrown when extension could not be resolved.
  *
- * @since 0.5.4
  * @category Exceptions
+ * @since 0.5.4
  */
 public class NutsExtensionNotFoundException extends NutsExtensionException {
 
@@ -46,18 +46,24 @@ public class NutsExtensionNotFoundException extends NutsExtensionException {
 
     /**
      * Constructs a new NutsExtensionNotFoundException exception
-     * @param session workspace
-     * @param missingType missing type
+     *
+     * @param session       workspace
+     * @param missingType   missing type
      * @param extensionName extension name
      */
     public NutsExtensionNotFoundException(NutsSession session, Class missingType, String extensionName) {
-        super(session, null, "extension " + extensionName + " could not found: type " + missingType.getName() + " could not be wired.", null);
+        super(session, null,
+                NutsMessage.cstyle(
+                        "extension %s could not found: type %s could not be wired", extensionName, missingType.getName()
+                )
+                , null);
         this.missingType = missingType;
         this.extensionName = extensionName;
     }
 
     /**
      * missing type
+     *
      * @return missing type
      */
     public Class getMissingType() {
@@ -67,6 +73,7 @@ public class NutsExtensionNotFoundException extends NutsExtensionException {
 
     /**
      * extension name
+     *
      * @return extension name
      */
     public String getExtensionName() {

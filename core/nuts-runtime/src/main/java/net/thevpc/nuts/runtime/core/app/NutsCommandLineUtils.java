@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.core.app;
 
+import net.thevpc.nuts.NutsMessage;
 import net.thevpc.nuts.NutsParseException;
 
 import java.util.ArrayList;
@@ -107,10 +108,10 @@ public class NutsCommandLineUtils {
                             break;
                         }
                         case '\'': {
-                            throw new NutsParseException(session, "Illegal char " + c);
+                            throw new NutsParseException(session, NutsMessage.cstyle("illegal char %s", c));
                         }
                         case '"': {
-                            throw new NutsParseException(session, "Illegal char " + c);
+                            throw new NutsParseException(session, NutsMessage.cstyle("illegal char %s", c));
                         }
                         case '\\': {
                             i++;
@@ -179,7 +180,7 @@ public class NutsCommandLineUtils {
                 break;
             }
             case IN_QUOTED_WORD: {
-                throw new NutsParseException(session, "Expected '");
+                throw new NutsParseException(session, NutsMessage.cstyle("expected '"));
             }
         }
         return args.toArray(new String[0]);

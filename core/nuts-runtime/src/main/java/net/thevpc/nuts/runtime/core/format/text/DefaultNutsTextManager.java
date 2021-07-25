@@ -33,7 +33,7 @@ public class DefaultNutsTextManager implements NutsTextManager {
         return new DefaultNutsTextNodeBuilder(getSession());
     }
 
-    private NutsText _NutsFormattedMessage_toString(NutsMessage m) {
+    private NutsText _NutsMessage_toString(NutsMessage m) {
         checkSession();
         NutsTextFormatStyle style = m.getStyle();
         if (style == null) {
@@ -68,6 +68,12 @@ public class DefaultNutsTextManager implements NutsTextManager {
             }
             case JSTYLE: {
                 return txt.parse(MessageFormat.format(msg, args2));
+            }
+            case PLAIN: {
+                return txt.forPlain(msg);
+            }
+            case FORMATTED: {
+                return txt.parse(msg);
             }
         }
         throw new NutsUnsupportedEnumException(getSession(), style);
@@ -133,7 +139,7 @@ public class DefaultNutsTextManager implements NutsTextManager {
             return (((NutsFormattable) t).formatter().setSession(getSession()).setNtf(true).format()).toText();
         }
         if (t instanceof NutsMessage) {
-            return _NutsFormattedMessage_toString((NutsMessage) t);
+            return _NutsMessage_toString((NutsMessage) t);
         }
         if (t instanceof NutsString) {
             return ((NutsString) t).toText();
@@ -159,7 +165,7 @@ public class DefaultNutsTextManager implements NutsTextManager {
         }
         if (t instanceof Throwable) {
             return forStyled(
-                    CoreStringUtils.exceptionToString((Throwable) t),
+                    toText(CoreStringUtils.exceptionToMessage((Throwable) t)),
                     NutsTextStyle.error()
             );
         }

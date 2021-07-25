@@ -34,7 +34,7 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
     private String sourceKind;
     private Object source;
     private Object sourceOrigin;
-    private String sourceName;
+    private NutsString sourceName;
     private long length = -1;
     private NutsSession session;
     private boolean logProgress;
@@ -57,13 +57,13 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
     }
 
     @Override
-    public NutsMonitorAction setName(String name) {
+    public NutsMonitorAction setName(NutsString name) {
         this.sourceName = name;
         return this;
     }
 
     @Override
-    public String getName() {
+    public NutsString getName() {
         return sourceName;
     }
 
@@ -135,7 +135,7 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
     public InputStream create() {
         checkSession();
         if (source == null || sourceKind == null) {
-            throw new NutsIllegalArgumentException(getSession(), "missing Source");
+            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("missing Source"));
         }
         switch (sourceKind) {
             case "inputSource": {
@@ -157,7 +157,7 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
                 return monitorInputStream(((File) source).getPath(), sourceOrigin, sourceName);
             }
             default:
-                throw new NutsUnsupportedArgumentException(getSession(), sourceKind);
+                throw new NutsUnsupportedArgumentException(getSession(), NutsMessage.cstyle("unsupported kind %s",sourceKind));
         }
     }
 
@@ -180,7 +180,7 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
         boolean isUrl = base.isURL();
         String sourceKind0 = sourceKind;
         String sourceTypeName0 = sourceTypeName;
-        String sourceName0 = sourceName;
+        NutsString sourceName0 = sourceName;
         if (sourceTypeName0 == null && getOrigin() instanceof NutsInput) {
             sourceTypeName0 = ((NutsInput) getOrigin()).getTypeName();
         }
@@ -188,35 +188,35 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
             sourceTypeName0 = ((NutsInput) source).getTypeName();
         }
         if (sourceName0 == null && getOrigin() instanceof NutsInput) {
-            sourceName0 = ((NutsInput) getOrigin()).getName();
+            sourceName0 = session.getWorkspace().text().toText(((NutsInput) getOrigin()).getName());
         }
         if (sourceName0 == null && source instanceof NutsInput) {
-            sourceName0 = ((NutsInput) source).getName();
+            sourceName0 = session.getWorkspace().text().toText(((NutsInput) source).getName());
         }
         if (sourceKind0.equalsIgnoreCase("inputSource")) {
             return monitorInputStream(((NutsInput) source), sourceOrigin, sourceName0);
         }
         if (sourceName0 == null) {
-            sourceName0 = NutsCompressedPath.compressPath(source.toString());
+            sourceName0 = session.getWorkspace().text().forStyled(NutsCompressedPath.compressPath(source.toString()),NutsTextStyle.path());
         }
         switch (sourceKind0) {
             case "string": {
-                return new InputFromString(sourceName0, base, isPath, isUrl, sourceTypeName0, getSession(), base);
+                return monitorInputStream(new InputFromString(sourceName0.filteredText(),sourceName0, base, isPath, isUrl, sourceTypeName0, getSession(), base), sourceOrigin, sourceName0);
             }
             case "filePath": {
-                return new InputFromPath(sourceName0, base, isPath, isUrl, sourceTypeName0, getSession(), base);
+                return monitorInputStream(new InputFromPath(sourceName0.filteredText(),sourceName0, base, isPath, isUrl, sourceTypeName0, getSession(), base), sourceOrigin, sourceName0);
             }
             case "nutsPath": {
-                return new InputFromNutsPath(sourceName0, base, isPath, isUrl, sourceTypeName0, getSession(), base);
+                return monitorInputStream(new InputFromNutsPath(sourceName0.filteredText(),sourceName0, base, isPath, isUrl, sourceTypeName0, getSession(), base), sourceOrigin, sourceName0);
             }
             case "file": {
-                return new InputFromFile(sourceName0, base, isPath, isUrl, sourceTypeName0, getSession(), base);
+                return monitorInputStream(new InputFromFile(sourceName0.filteredText(),sourceName0, base, isPath, isUrl, sourceTypeName0, getSession(), base), sourceOrigin, sourceName0);
             }
             case "stream": {
-                return new InputFromStream(sourceName0, base, isPath, isUrl, sourceTypeName0, getSession(), base);
+                return monitorInputStream(new InputFromStream(sourceName0.filteredText(),sourceName0, base, isPath, isUrl, sourceTypeName0, getSession(), base), sourceOrigin, sourceName0);
             }
             default:
-                throw new NutsUnsupportedArgumentException(getSession(), sourceKind);
+                throw new NutsUnsupportedArgumentException(getSession(), NutsMessage.cstyle("unsupported kind %s",sourceKind));
         }
     }
 
@@ -281,13 +281,13 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
         return this;
     }
 
-    public InputStream monitorInputStream(String path, Object source, String sourceName) {
+    public InputStream monitorInputStream(String path, Object source, NutsString sourceName) {
         checkSession();
         if (CoreStringUtils.isBlank(path)) {
             throw new UncheckedIOException(new IOException("missing path"));
         }
-        if (CoreStringUtils.isBlank(sourceName)) {
-            sourceName = String.valueOf(path);
+        if (sourceName==null) {
+            sourceName = session.getWorkspace().text().forStyled(path,NutsTextStyle.path());
         }
         NutsProgressMonitor monitor = CoreIOUtils.createProgressMonitor(CoreIOUtils.MonitorType.STREAM, path, source, session, isLogProgress(), getProgressFactory());
         boolean verboseMode
@@ -325,13 +325,13 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
         return CoreIOUtils.monitor(openedStream, source, sourceName, size, new SilentStartNutsInputStreamProgressMonitorAdapter(ws, monitor, path), session);
 
     }
-    public NutsInput monitorInputStream(NutsInput inputSource, Object source, String sourceName) {
+    public NutsInput monitorInputStream(NutsInput inputSource, Object source, NutsString sourceName) {
         checkSession();
         if (inputSource == null) {
             throw new UncheckedIOException(new IOException("missing inputSource"));
         }
-        if (CoreStringUtils.isBlank(sourceName)) {
-            sourceName = inputSource.getName();
+        if (sourceName==null) {
+            sourceName = session.getWorkspace().text().toText(inputSource.getName());
         }
         NutsProgressMonitor monitor = CoreIOUtils.createProgressMonitor(CoreIOUtils.MonitorType.STREAM, inputSource, source, session, isLogProgress(), getProgressFactory());
         boolean verboseMode
@@ -374,13 +374,13 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
                 ;
 
     }
-    public NutsInput monitorInputStream(NutsPath inputSource, Object source, String sourceName) {
+    public NutsInput monitorInputStream(NutsPath inputSource, Object source, NutsString sourceName) {
         checkSession();
         if (inputSource == null) {
             throw new UncheckedIOException(new IOException("missing inputSource"));
         }
-        if (CoreStringUtils.isBlank(sourceName)) {
-            sourceName = inputSource.name();
+        if (sourceName==null || sourceName.isEmpty()) {
+            sourceName = session.getWorkspace().text().toText(inputSource);
         }
         NutsProgressMonitor monitor = CoreIOUtils.createProgressMonitor(CoreIOUtils.MonitorType.STREAM, inputSource, source, session, isLogProgress(), getProgressFactory());
         boolean verboseMode
@@ -424,14 +424,14 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
 
     }
 
-    public InputStream monitorInputStream(InputStream stream, Object sourceOrigin, long length, String name) {
+    public InputStream monitorInputStream(InputStream stream, Object sourceOrigin, long length, NutsString name) {
         checkSession();
         if (length > 0) {
             NutsProgressMonitor m = CoreIOUtils.createProgressMonitor(CoreIOUtils.MonitorType.STREAM, stream, sourceOrigin, session, isLogProgress(), getProgressFactory());
             if (m == null) {
                 return stream;
             }
-            return CoreIOUtils.monitor(stream, sourceOrigin, (name == null ? "Stream" : name), length, m, session);
+            return CoreIOUtils.monitor(stream, sourceOrigin, (name == null ? session.getWorkspace().text().forPlain("Stream") : name), length, m, session);
         } else {
             if (stream instanceof InputStreamMetadataAware) {
                 NutsProgressMonitor m = CoreIOUtils.createProgressMonitor(CoreIOUtils.MonitorType.STREAM, stream, sourceOrigin, session, isLogProgress(), getProgressFactory());
@@ -453,8 +453,8 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
 
         private final NutsInput base;
 
-        public InputFromStream(String string, Object o, boolean bln, boolean bln1, String string1, NutsSession ns, NutsInput base) {
-            super(string, o, bln, bln1, string1, ns);
+        public InputFromStream(String string, NutsString formattedName, Object o, boolean bln, boolean bln1, String string1, NutsSession ns, NutsInput base) {
+            super(string, formattedName, o, bln, bln1, string1, ns);
             this.base = base;
         }
 
@@ -493,8 +493,8 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
 
         private final NutsInput base;
 
-        public InputFromFile(String string, Object o, boolean bln, boolean bln1, String string1, NutsSession ns, NutsInput base) {
-            super(string, o, bln, bln1, string1, ns);
+        public InputFromFile(String string, NutsString formattedName, Object o, boolean bln, boolean bln1, String string1, NutsSession ns, NutsInput base) {
+            super(string, formattedName,o, bln, bln1, string1, ns);
             this.base = base;
         }
 
@@ -504,7 +504,7 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
         }
 
         @Override
-        public Path getPath() {
+        public Path getFilePath() {
             return ((File) source).toPath();
         }
 
@@ -532,7 +532,7 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
         public Instant getLastModified() {
             FileTime r = null;
             try {
-                r = Files.getLastModifiedTime(getPath());
+                r = Files.getLastModifiedTime(this.getFilePath());
                 if (r != null) {
                     return r.toInstant();
                 }
@@ -547,8 +547,8 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
 
         private final NutsInput base;
 
-        public InputFromPath(String string, Object o, boolean bln, boolean bln1, String string1, NutsSession ns, NutsInput base) {
-            super(string, o, bln, bln1, string1, ns);
+        public InputFromPath(String string, NutsString formattedName, Object o, boolean bln, boolean bln1, String string1, NutsSession ns, NutsInput base) {
+            super(string, formattedName,o, bln, bln1, string1, ns);
             this.base = base;
         }
 
@@ -581,7 +581,7 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
         public Instant getLastModified() {
             FileTime r = null;
             try {
-                r = Files.getLastModifiedTime(getPath());
+                r = Files.getLastModifiedTime(getFilePath());
                 if (r != null) {
                     return r.toInstant();
                 }
@@ -595,8 +595,8 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
 
         private final NutsInput base;
 
-        public InputFromNutsPath(String string, Object o, boolean bln, boolean bln1, String string1, NutsSession ns, NutsInput base) {
-            super(string, o, bln, bln1, string1, ns);
+        public InputFromNutsPath(String string, NutsString formattedName, Object o, boolean bln, boolean bln1, String string1, NutsSession ns, NutsInput base) {
+            super(string, formattedName,o, bln, bln1, string1, ns);
             this.base = base;
         }
         NutsPath np(){
@@ -631,7 +631,7 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
         public Instant getLastModified() {
             FileTime r = null;
             try {
-                r = Files.getLastModifiedTime(getPath());
+                r = Files.getLastModifiedTime(getFilePath());
                 if (r != null) {
                     return r.toInstant();
                 }
@@ -646,8 +646,8 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
 
         private final NutsInput base;
 
-        public InputFromString(String string, Object o, boolean bln, boolean bln1, String string1, NutsSession ns, NutsInput base) {
-            super(string, o, bln, bln1, string1, ns);
+        public InputFromString(String name, NutsString formattedName, Object value, boolean pathFlag, boolean urlFlag, String typeName, NutsSession session, NutsInput base) {
+            super(name, formattedName, value, pathFlag, urlFlag, typeName, session);
             this.base = base;
         }
 

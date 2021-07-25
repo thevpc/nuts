@@ -130,7 +130,7 @@ public class DefaultNutsWorkspaceExtensionModel {
     // @Override
     public List<NutsExtensionInformation> findExtensions(NutsId id, String extensionType, NutsSession session) {
         if (id.getVersion().isBlank()) {
-            throw new NutsIllegalArgumentException(session, "missing version");
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing version"));
         }
         List<NutsExtensionInformation> ret = new ArrayList<>();
         List<String> allUrls = new ArrayList<>();
@@ -373,10 +373,10 @@ public class DefaultNutsWorkspaceExtensionModel {
                             .setLatest(true)
                             .getResultDefinitions().required();
                     if (def == null || def.getContent() == null) {
-                        throw new NutsIllegalArgumentException(session, "extension not found: " + extension);
+                        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("extension not found: %s", extension));
                     }
                     if (def.getType() != NutsIdType.EXTENSION) {
-                        throw new NutsIllegalArgumentException(session, "not an extension: " + extension);
+                        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("not an extension: " ,extension));
                     }
 //                    ws.install().setSession(session).id(def.getId());
                     workspaceExtensionsClassLoader.add(NutsClassLoaderNodeUtils.definitionToClassLoaderNode(def, session));
@@ -439,11 +439,11 @@ public class DefaultNutsWorkspaceExtensionModel {
         NutsWorkspaceUtils.checkSession(ws, session);
         NutsSession searchSession = session.setTrace(false);
         if (id == null) {
-            throw new NutsIllegalArgumentException(session, "extension Id could not be null");
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("extension Id could not be null"));
         }
         NutsId wired = CoreNutsUtils.findNutsIdBySimpleName(id, extensions.keySet());
         if (wired != null) {
-            throw new NutsExtensionAlreadyRegisteredException(session, id.toString(), wired.toString());
+            throw new NutsExtensionAlreadyRegisteredException(session, id, wired.toString());
         }
 
         _LOGOP(session).level(Level.FINE).verb(NutsLogVerb.UPDATE).formatted().log("installing extension {0}", id);

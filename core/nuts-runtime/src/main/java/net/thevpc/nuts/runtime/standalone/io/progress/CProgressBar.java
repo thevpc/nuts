@@ -46,7 +46,7 @@ public class CProgressBar {
     private long minPeriod = 300;
     private IndeterminatePosition indeterminatePosition = DEFAULT_INDETERMINATE_POSITION;
     private boolean optionNewline;
-    private Formatter formatter = CoreNutsUtils.SUPPORTS_UTF_ENCODING ?RECTANGLES2:SIMPLE;
+    private Formatter formatter = CoreNutsUtils.SUPPORTS_UTF_ENCODING ?RECTANGLES4:SIMPLE;
 
     public CProgressBar(NutsSession session) {
         this.session = session;
@@ -324,6 +324,11 @@ public class CProgressBar {
     }
 
     public String progressWithSession(int percent) {
+        return progressWithSessionOld(percent);
+//        return progressWithSessionNew(percent);
+    }
+
+    public String progressWithSessionOld(int percent) {
         long now = System.currentTimeMillis();
         if (now < lastPrint + minPeriod) {
             return "";
@@ -403,7 +408,91 @@ public class CProgressBar {
                     sb.append(getFormatter().getIndicator(0, x + i));
                 }
             }
+            formattedLine.append(sb.toString(), NutsTextStyle.primary1());
+            formattedLine.append(getFormatter().getEnd());
+            return formattedLine.toString();
+        }
+    }
+
+    public String progressWithSessionNew(int percent) {
+        long now = System.currentTimeMillis();
+        if (now < lastPrint + minPeriod) {
+            return "";
+        }
+        lastPrint = now;
+        boolean indeterminate = percent < 0;
+        if (indeterminate) {
+            NutsTextBuilder formattedLine = session.getWorkspace().text().builder();
+            formattedLine.append(getFormatter().getStart());
+            int indeterminateSize = (int) (this.indeterminateSize * size);
+            boolean forward = true;
+            if (indeterminateSize >= size) {
+                indeterminateSize = size - 1;
+            }
+            if (indeterminateSize < 1) {
+                indeterminateSize = 1;
+            }
+            int x = 0;
+            if (indeterminateSize < size) {
+                int p = this.size - indeterminateSize;
+                int h = indeterminatePosition.evalIndeterminatePos(this, 2 * p);
+                if (h < 0) {
+                    h = -h;
+                }
+                x = h % (2 * p);//(int) ((s * 2 * size) / 60.0);
+                if (x >= p) {
+                    forward = false;
+                    x = 2 * p - x;
+                }
+            } else {
+                x = 0;
+            }
+
+            if (x < 0) {
+                x = 0;
+            }
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < x; i++) {
+                sb.append(getFormatter().getIndicator(0, i));
+            }
+            for (int i = 0; i < indeterminateSize; i++) {
+                sb.append(getFormatter().getIntermediateIndicator(i, indeterminateSize, x, forward));
+            }
+            formattedLine.append(sb.toString(), NutsTextStyle.primary1());
+            int r = size - x - indeterminateSize;
+            sb.setLength(0);
+            for (int i = 0; i < r; i++) {
+                sb.append(getFormatter().getIndicator(0, x + indeterminateSize + i));
+            }
             formattedLine.append(sb.toString());
+            formattedLine.append(getFormatter().getEnd());
+            return formattedLine.toString();
+        } else {
+            if (percent > 100) {
+                percent = 100 - percent;
+            }
+            double d = (size / 100.0 * percent);
+            int x = (int) d;
+            float rest = (float) (d - x);
+            NutsTextBuilder formattedLine = session.getWorkspace().text().builder();
+            formattedLine.append(getFormatter().getStart());
+            StringBuilder sb = new StringBuilder();
+            if (x > 0) {
+                for (int i = 0; i < x; i++) {
+                    sb.append(getFormatter().getIndicator(1, i));
+                }
+            }
+            if (rest > 0 && (size - x) > 0) {
+                sb.append(getFormatter().getIndicator(rest, x));
+                for (int i = 0; i < size - x - 1; i++) {
+                    sb.append(getFormatter().getIndicator(0, x + 1 + i));
+                }
+            } else {
+                for (int i = 0; i < size - x; i++) {
+                    sb.append(getFormatter().getIndicator(0, x + i));
+                }
+            }
+            formattedLine.append(sb.toString(), NutsTextStyle.primary1());
             formattedLine.append(getFormatter().getEnd());
             return formattedLine.toString();
         }

@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -10,26 +10,26 @@
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
  * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.runtime.standalone.repos;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  *
@@ -59,7 +59,7 @@ public class NutsRepositoryRegistryHelper {
         if (repository == null) {
             return;
         }
-        NutsRepositoryRef repositoryRef=repository.config().setSession(session).getRepositoryRef();
+        NutsRepositoryRef repositoryRef = repository.config().setSession(session).getRepositoryRef();
         String uuid = repository.getUuid();
         String name = repository.getName();
         if (name == null) {
@@ -69,15 +69,17 @@ public class NutsRepositoryRegistryHelper {
         if (uuid != null) {
             ii = repositoriesByUuid.get(uuid);
             if (ii != null) {
-                throw new NutsIllegalArgumentException(session, "repository with the same uuid already exists " + ii.repo.getUuid() + "/" + ii.repo.getName());
+                throw new NutsIllegalArgumentException(session,
+                        NutsMessage.cstyle("repository with the same uuid already exists % / %s", ii.repo.getUuid(), ii.repo.getName())
+                );
             }
         }
         ii = repositoriesByName.get(name);
         if (ii != null) {
-            throw new NutsIllegalArgumentException(session, "repository with the same name already exists " + ii.repo.getUuid() + "/" + ii.repo.getName());
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("repository with the same name already exists %s / %s", ii.repo.getUuid(), ii.repo.getName()));
         }
         if (!name.matches("[a-zA-Z][.a-zA-Z0-9_-]*")) {
-            throw new NutsIllegalArgumentException(session, "invalid repository name " + name);
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid repository name %s", name));
         }
         RepoAndRef rr = new RepoAndRef(repository);
         rr.ref = repositoryRef;
@@ -87,7 +89,7 @@ public class NutsRepositoryRegistryHelper {
         }
     }
 
-//    public void addRepositoryRef(NutsRepositoryRef repositoryRef) {
+    //    public void addRepositoryRef(NutsRepositoryRef repositoryRef) {
 //        RepoAndRef ii = repositoriesByName.get(repositoryRef.getName());
 //        if (ii != null) {
 //            throw new NutsIllegalArgumentException(ws, "Repository with the same name already exists " + ii.repo.getUuid() + "/" + ii.repo.config().name());

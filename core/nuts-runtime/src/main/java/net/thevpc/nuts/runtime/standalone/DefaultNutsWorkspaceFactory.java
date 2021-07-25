@@ -223,7 +223,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
     public <T> void registerInstance(Class<T> extensionPoint, T implementation, NutsSession session) {
         checkSession(session);
         if (isRegisteredInstance(extensionPoint, implementation, session)) {
-            throw new NutsIllegalArgumentException(session, "already registered Extension " + implementation + " for " + extensionPoint.getName());
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("already registered Extension %s for %s", implementation, extensionPoint.getName()));
         }
         if (LOG.isLoggable(Level.CONFIG)) {
             LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.UPDATE).formatted()
@@ -253,7 +253,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
     public void registerType(Class extensionPoint, Class implementation, NutsId source, NutsSession session) {
         checkSession(session);
         if (isRegisteredType(extensionPoint, implementation.getName(), session)) {
-            throw new NutsIllegalArgumentException(session, "already registered Extension " + implementation.getName() + " for " + extensionPoint.getName());
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("already registered Extension %s for %s", implementation.getName(), extensionPoint.getName()));
         }
         if (LOG.isLoggable(Level.CONFIG)) {
             LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.UPDATE).formatted()
@@ -413,7 +413,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
         }
         if (singleton) {
             if (argTypes.length > 0) {
-                throw new NutsIllegalArgumentException(session, "singletons should have no arg types");
+                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("singletons should have no arg types"));
             }
             Object o = singletons.get(type);
             if (o == null) {
@@ -454,7 +454,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
         for (Class<T> t : extensionTypes) {
             return (T) instantiate0(t, session);
         }
-        throw new NutsElementNotFoundException(session, "Type " + type + " not found");
+        throw new NutsElementNotFoundException(session, NutsMessage.cstyle("type %s not found",type));
     }
 
     @Override

@@ -70,7 +70,7 @@ public abstract class AbstractNshBuiltin implements NshBuiltin {
         context.getNutsShellContext().setAutoComplete(autoComplete);
         try {
             if (autoComplete == null) {
-                throw new NutsIllegalArgumentException(context.getSession(), "missing auto-complete");
+                throw new NutsIllegalArgumentException(context.getSession(),  NutsMessage.cstyle("missing auto-complete"));
             }
             NutsCommandAutoCompleteComponent best = context.getWorkspace().extensions().createServiceLoader(NutsCommandAutoCompleteComponent.class, NshBuiltin.class, NutsCommandAutoCompleteComponent.class.getClassLoader())
                     .loadBest(AbstractNshBuiltin.this);

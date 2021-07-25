@@ -42,7 +42,16 @@ public enum NutsTextFormatStyle implements NutsEnum{
     /**
      * @see java.text.MessageFormat
      */
-    JSTYLE;
+    JSTYLE,
+    /**
+     * plain text
+     */
+    PLAIN,
+    /**
+     * NTF format without arguments
+     */
+    FORMATTED,
+    ;
     private String id;
 
     NutsTextFormatStyle() {

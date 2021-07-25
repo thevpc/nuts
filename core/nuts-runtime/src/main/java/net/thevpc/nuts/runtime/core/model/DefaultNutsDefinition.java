@@ -170,7 +170,7 @@ public class DefaultNutsDefinition implements NutsDefinition {
     @Override
     public NutsDescriptor getEffectiveDescriptor() {
         if (!isSetEffectiveDescriptor()) {
-            throw new NutsElementNotFoundException(session, "unable to get effectiveDescriptor. You need to call search.setEffective(...) first.");
+            throw new NutsElementNotFoundException(session, NutsMessage.cstyle("unable to get effectiveDescriptor. You need to call search.setEffective(...) first."));
         }
         return effectiveDescriptor;
     }
@@ -183,7 +183,7 @@ public class DefaultNutsDefinition implements NutsDefinition {
     @Override
     public NutsDependencies getDependencies() {
         if (!isSetDependencies()) {
-            throw new NutsElementNotFoundException(session, "unable to get dependencies. You need to call search.setDependencies(...) first.");
+            throw new NutsElementNotFoundException(session, NutsMessage.cstyle("unable to get dependencies. You need to call search.setDependencies(...) first."));
         }
         return this.dependencies;
     }

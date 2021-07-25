@@ -185,9 +185,11 @@ public class NutsRepositoryMirroringHelper {
                 throw new NutsRepositoryNotFoundException(session, "Not Repo for pushing " + id);
             } else if (all.size() > 1) {
                 throw new NutsPushException(session, id,
-                        "Unable to perform push for " + id + ". Alteast Two Repositories ("
-                        + all.stream().map(NutsRepository::getName).collect(Collectors.joining(","))
-                        + ") provides the same nuts " + id
+                        NutsMessage.cstyle("unable to perform push for %s. At least two Repositories (%s) provides the same nuts %s",
+                                id,
+                                all.stream().map(NutsRepository::getName).collect(Collectors.joining(",")),
+                                id
+                        )
                 );
             }
             repo = all.get(0);

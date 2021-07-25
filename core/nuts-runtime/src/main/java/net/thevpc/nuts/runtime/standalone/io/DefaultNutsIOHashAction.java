@@ -141,7 +141,7 @@ public class DefaultNutsIOHashAction implements NutsIOHashAction {
     public NutsIOHashAction writeHash(OutputStream out) {
         checkSession();
         if (type == null || value == null) {
-            throw new NutsIllegalArgumentException(getSession(), "missing Source");
+            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("missing Source"));
         }
         switch (type) {
             case "stream": {
@@ -179,7 +179,7 @@ public class DefaultNutsIOHashAction implements NutsIOHashAction {
                 }
             }
             default: {
-                throw new NutsUnsupportedArgumentException(getSession(), "Unsupported type " + type);
+                throw new NutsUnsupportedArgumentException(getSession(), NutsMessage.cstyle("unsupported type %s", type));
             }
         }
     }
@@ -187,7 +187,7 @@ public class DefaultNutsIOHashAction implements NutsIOHashAction {
     @Override
     public byte[] computeBytes() {
         if (type == null || value == null) {
-            throw new NutsIllegalArgumentException(getSession(), "missing Source");
+            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("missing Source"));
         }
         switch (type) {
             case "stream": {
@@ -217,7 +217,7 @@ public class DefaultNutsIOHashAction implements NutsIOHashAction {
                 }
             }
             default: {
-                throw new NutsUnsupportedArgumentException(getSession(), "Unsupported type " + type);
+                throw new NutsUnsupportedArgumentException(getSession(), NutsMessage.cstyle("unsupported type %s", type));
             }
         }
     }

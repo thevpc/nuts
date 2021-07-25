@@ -26,6 +26,7 @@
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.NutsExecutionException;
+import net.thevpc.nuts.NutsMessage;
 import net.thevpc.nuts.toolbox.nsh.AbstractNshBuiltin;
 import net.thevpc.nuts.toolbox.nsh.util.ShellHelper;
 
@@ -72,7 +73,7 @@ public class TailCommand extends AbstractNshBuiltin {
             }
         }
         if (files.isEmpty()) {
-            throw new NutsExecutionException(context.getSession(), "Not yet supported", 2);
+            throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("not yet supported"), 2);
         }
         for (String file : files) {
             tail(file, options.max, context);
@@ -105,7 +106,7 @@ public class TailCommand extends AbstractNshBuiltin {
                 }
             }
         } catch (IOException ex) {
-            throw new NutsExecutionException(context.getSession(), ex.getMessage(), ex, 100);
+            throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("%s",ex), ex, 100);
         }
     }
 }

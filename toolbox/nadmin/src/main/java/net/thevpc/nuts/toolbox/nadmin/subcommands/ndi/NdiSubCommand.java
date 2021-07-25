@@ -132,7 +132,7 @@ public class NdiSubCommand extends AbstractNAdminSubCommand {
                 if (ignoreUnsupportedOs) {
                     return;
                 }
-                throw new NutsExecutionException(session, "platform not supported : " + ws.env().getOs(), 2);
+                throw new NutsExecutionException(session, NutsMessage.cstyle("platform not supported : %s", ws.env().getOs()), 2);
             }
             if (!idsToInstall.isEmpty()) {
                 printResults(context, ndi.createNutsScript(idsToInstall, switchWorkspaceLocation, linkName, persistentConfig, executorOptions, env, fetch, execType, context));
@@ -172,7 +172,7 @@ public class NdiSubCommand extends AbstractNAdminSubCommand {
                 if (ignoreUnsupportedOs) {
                     return;
                 }
-                throw new NutsExecutionException(context.getSession(), "platform not supported : " + ws.env().getOs(), 2);
+                throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("platform not supported : %s" ,ws.env().getOs()), 2);
             }
             boolean subTrace = context.getSession().isTrace();
             if (!context.getSession().isPlainTrace()) {
@@ -186,7 +186,7 @@ public class NdiSubCommand extends AbstractNAdminSubCommand {
                                 context.getSession().copy().setTrace(subTrace)
                         );
                     } catch (UncheckedIOException e) {
-                        throw new NutsExecutionException(context.getSession(), "unable to run script " + id + " : " + e.toString(), e);
+                        throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("unable to run script %s : %s",id, e), e);
                     }
                 }
             }
@@ -230,7 +230,7 @@ public class NdiSubCommand extends AbstractNAdminSubCommand {
                 if (ignoreUnsupportedOs) {
                     return;
                 }
-                throw new NutsExecutionException(context.getSession(), "platform not supported : " + ws.env().getOs(), 2);
+                throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("platform not supported : %s ", ws.env().getOs()), 2);
             }
             if (switchWorkspaceLocation != null || switchWorkspaceApi != null) {
                 ndi.switchWorkspace(switchWorkspaceLocation, switchWorkspaceApi);

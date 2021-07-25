@@ -1,9 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.io;
 
-import net.thevpc.nuts.NutsException;
-import net.thevpc.nuts.NutsIODeleteAction;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.*;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -56,7 +53,7 @@ public abstract class AbstractNutsIODeleteAction implements NutsIODeleteAction {
         if (target instanceof Path) {
             return setTarget((Path) target);
         }
-        throw new NutsException(session, "Unsupported Delete " + target);
+        throw new NutsException(session, NutsMessage.cstyle("unsupported delete %s",target));
     }
 
     @Override

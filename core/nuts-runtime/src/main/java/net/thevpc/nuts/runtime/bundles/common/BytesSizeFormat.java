@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.bundles.common;
 
 import net.thevpc.nuts.NutsIllegalArgumentException;
+import net.thevpc.nuts.NutsMessage;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 /**
@@ -96,17 +96,12 @@ public class BytesSizeFormat {
         this.high = high;
         this.low = low;
         this.depth = depth <= 0 ? Integer.MAX_VALUE : depth;
-        this.session=session;
+        this.session = session;
     }
 
 //    public BytesSizeFormat() {
 //        this("B0EF");
 //    }
-
-//    @Override
-    public String formatDouble(double value) {
-        return format((long) value);
-    }
 
     /**
      * Size format is a sequence of commands :
@@ -164,11 +159,11 @@ public class BytesSizeFormat {
      *
      * </pre>
      *
-     * @param format size format
+     * @param format  size format
      * @param session session
      */
     public BytesSizeFormat(String format, NutsSession session) {
-        this.session=session;
+        this.session = session;
         leadingZeros = false;
         intermediateZeros = false;
         trailingZeros = false;
@@ -209,7 +204,7 @@ public class BytesSizeFormat {
                             depth = -1;
                         }
                         if (depth <= 0 || depth > 9) {
-                            throw new NutsIllegalArgumentException(session, "invalid depth " + depth);
+                            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid depth %s", depth));
                         }
                     }
                     case 'F': {
@@ -227,7 +222,7 @@ public class BytesSizeFormat {
                         break;
                     }
                     default: {
-                        throw new NutsIllegalArgumentException(session, "unsupported " + c);
+                        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unsupported %s", c));
                     }
                 }
             }
@@ -245,6 +240,11 @@ public class BytesSizeFormat {
             this.low = this.high;
             this.high = t;
         }
+    }
+
+    //    @Override
+    public String formatDouble(double value) {
+        return format((long) value);
     }
 
     private long eval(char c) {

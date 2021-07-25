@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -11,37 +11,36 @@
  * architecture to help supporting a large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
  * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.runtime.core.filters.version;
 
-import java.io.IOException;
-
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.core.filters.id.NutsScriptAwareIdFilter;
 import net.thevpc.nuts.runtime.core.model.DefaultNutsVersion;
+import net.thevpc.nuts.runtime.core.model.DefaultNutsVersionInterval;
+import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.core.util.Simplifiable;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.io.StreamTokenizer;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import net.thevpc.nuts.runtime.core.model.DefaultNutsVersionInterval;
-import net.thevpc.nuts.runtime.core.filters.id.NutsScriptAwareIdFilter;
-import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 
 /**
  * Examples [2.6,], ]2.6,] . Created by vpc on 1/20/17.
@@ -78,6 +77,17 @@ public class DefaultNutsVersionFilter extends AbstractVersionFilter implements N
         super(ws, NutsFilterOp.CUSTOM);
     }
 
+    public static NutsVersionFilter parse(String version, NutsSession session) {
+        if (DefaultNutsVersion.isBlank(version) || "*".equals(version)) {
+//            if(session!=null){
+            return session.getWorkspace().version().filter().always();
+//            }
+//            return new NutsVersionFilterTrue(session.getWorkspace());
+        }
+        ParseHelper pp = new ParseHelper(session);
+        return pp.parse(version);
+    }
+
     @Override
     public boolean acceptVersion(NutsVersion version, NutsSession session) {
         if (intervals.isEmpty()) {
@@ -91,35 +101,12 @@ public class DefaultNutsVersionFilter extends AbstractVersionFilter implements N
         return false;
     }
 
-    public NutsVersionInterval[] getIntervals() {
-        return intervals.toArray(new NutsVersionInterval[0]);
-    }
-
 //    public static NutsVersionFilter parse(String version) {
 //        return parse(version,null);
 //    }
 
-    public static NutsVersionFilter parse(String version,NutsSession session) {
-        if (DefaultNutsVersion.isBlank(version) || "*".equals(version)) {
-//            if(session!=null){
-                return session.getWorkspace().version().filter().always();
-//            }
-//            return new NutsVersionFilterTrue(session.getWorkspace());
-        }
-        ParseHelper pp = new ParseHelper(session);
-        return pp.parse(version);
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        for (NutsVersionInterval interval : intervals) {
-            if (sb.length() > 0) {
-                sb.append(", ");
-            }
-            sb.append(interval.toString());
-        }
-        return sb.toString();
+    public NutsVersionInterval[] getIntervals() {
+        return intervals.toArray(new NutsVersionInterval[0]);
     }
 
     public void add(NutsVersionInterval interval) {
@@ -185,9 +172,20 @@ public class DefaultNutsVersionFilter extends AbstractVersionFilter implements N
         return true;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (NutsVersionInterval interval : intervals) {
+            if (sb.length() > 0) {
+                sb.append(", ");
+            }
+            sb.append(interval.toString());
+        }
+        return sb.toString();
+    }
+
     private static class ParseHelper {
 
-        int t;
         final int START = 0;
         final int NEXT = 1;
         final int NEXT_COMMA = 2;
@@ -195,6 +193,7 @@ public class DefaultNutsVersionFilter extends AbstractVersionFilter implements N
         final int EXPECT_V_COMMA = 4;
         final int EXPECT_V2 = 5;
         final int EXPECT_CLOSE = 6;
+        int t;
         int state = NEXT;
         int open = -1;
         int close = -1;
@@ -204,7 +203,7 @@ public class DefaultNutsVersionFilter extends AbstractVersionFilter implements N
         NutsSession session;
 
         public ParseHelper(NutsSession session) {
-            this.session=session;
+            this.session = session;
             dd = new DefaultNutsVersionFilter(session);
         }
 
@@ -218,9 +217,9 @@ public class DefaultNutsVersionFilter extends AbstractVersionFilter implements N
         void addNextValue(String sval) {
             if (sval.endsWith("*")) {
                 String min = sval.substring(0, sval.length() - 1);
-                if(min.equals("")){
+                if (min.equals("")) {
                     dd.add(new DefaultNutsVersionInterval(false, false, min, null));
-                }else {
+                } else {
                     String max = session.getWorkspace().version().parser().parse(min).inc(-1).getValue();
                     dd.add(new DefaultNutsVersionInterval(true, false, min, max));
                 }
@@ -273,7 +272,7 @@ public class DefaultNutsVersionFilter extends AbstractVersionFilter implements N
                                     break;
                                 }
                                 default: {
-                                    throw new NutsParseException(session,"unexpected  " + ((char) t));
+                                    throw new NutsParseException(session, NutsMessage.cstyle("unexpected  %s", ((char) t)));
                                 }
                             }
                             break;
@@ -285,7 +284,7 @@ public class DefaultNutsVersionFilter extends AbstractVersionFilter implements N
                                     break;
                                 }
                                 default: {
-                                    throw new NutsParseException(session,"expected ',' found " + ((char) t));
+                                    throw new NutsParseException(session, NutsMessage.cstyle("expected ',' found %s", ((char) t)));
                                 }
                             }
                             break;
@@ -302,7 +301,7 @@ public class DefaultNutsVersionFilter extends AbstractVersionFilter implements N
                                     break;
                                 }
                                 default: {
-                                    throw new NutsParseException(session,"unexpected  " + ((char) t));
+                                    throw new NutsParseException(session, NutsMessage.cstyle("unexpected %s", ((char) t)));
                                 }
                             }
                             break;
@@ -330,7 +329,7 @@ public class DefaultNutsVersionFilter extends AbstractVersionFilter implements N
                                     break;
                                 }
                                 default: {
-                                    throw new NutsParseException(session,"unexpected  " + ((char) t));
+                                    throw new NutsParseException(session, NutsMessage.cstyle("unexpected %s", ((char) t)));
                                 }
                             }
                             break;
@@ -351,7 +350,7 @@ public class DefaultNutsVersionFilter extends AbstractVersionFilter implements N
                                     break;
                                 }
                                 default: {
-                                    throw new NutsParseException(session,"unexpected  " + ((char) t));
+                                    throw new NutsParseException(session, NutsMessage.cstyle("unexpected %s", ((char) t)));
                                 }
                             }
                             break;
@@ -367,21 +366,21 @@ public class DefaultNutsVersionFilter extends AbstractVersionFilter implements N
                                     break;
                                 }
                                 default: {
-                                    throw new NutsParseException(session,"unexpected  " + ((char) t));
+                                    throw new NutsParseException(session, NutsMessage.cstyle("unexpected %s", ((char) t)));
                                 }
                             }
                             break;
                         }
                         default: {
-                            throw new NutsParseException(session,"unsupported state " + state);
+                            throw new NutsParseException(session, NutsMessage.cstyle("unsupported state %s", state));
                         }
                     }
                 }
                 if (state != NEXT_COMMA && state != START) {
-                    throw new NutsParseException(session,"invalid state" + state);
+                    throw new NutsParseException(session, NutsMessage.cstyle("invalid state %s", state));
                 }
             } catch (IOException ex) {
-                throw new NutsIllegalArgumentException(session,ex);
+                throw new NutsIllegalArgumentException(session, ex);
             }
             return dd;
         }

@@ -26,6 +26,7 @@
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.NutsExecutionException;
+import net.thevpc.nuts.NutsMessage;
 import net.thevpc.nuts.toolbox.nsh.AbstractNshBuiltin;
 
 import java.io.*;
@@ -100,7 +101,7 @@ public class GrepCommand extends AbstractNshBuiltin {
             files.add(null);
         }
         if (expression == null) {
-            throw new NutsExecutionException(context.getSession(), "missing Expression", 2);
+            throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("missing Expression"), 2);
         }
         String baseExpr = options.regexp ? ("^" + simpexpToRegexp(expression, false) + "$") : expression;
         if (options.word) {
@@ -168,7 +169,7 @@ public class GrepCommand extends AbstractNshBuiltin {
                 }
             }
         } catch (IOException ex) {
-            throw new NutsExecutionException(context.getSession(), ex.getMessage(), ex, 100);
+            throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("%s",ex), ex, 100);
         }
         return  0;
     }

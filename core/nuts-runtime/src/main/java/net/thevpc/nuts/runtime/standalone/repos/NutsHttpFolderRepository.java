@@ -51,7 +51,7 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
     private FilesFoldersApi.IteratorModel findModel = new FilesFoldersApi.AbstractIteratorModel() {
         @Override
         public void undeploy(NutsId id, NutsSession session) throws NutsExecutionException {
-            throw new NutsUnsupportedOperationException(session, "Not supported undeploy.");
+            throw new NutsUnsupportedOperationException(session, NutsMessage.cstyle("not supported undeploy."));
         }
 
         @Override
@@ -241,7 +241,7 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
                     return null;
                 }
                 default: {
-                    throw new NutsUnsupportedArgumentException(session, String.valueOf(versionApi));
+                    throw new NutsUnsupportedEnumException(session, versionApi);
                 }
             }
         }
@@ -338,7 +338,7 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
                 return null;
             }
             default: {
-                throw new NutsUnsupportedArgumentException(session, String.valueOf(versionApi));
+                throw new NutsUnsupportedEnumException(session, versionApi);
             }
         }
     }

@@ -13,7 +13,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
@@ -57,7 +56,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     public WorkspaceAndApiVersion persistConfig(NutsWorkspaceBootConfig bootConfig, String apiVersion, String preferredName, NutsSession session) {
         NutsWorkspace ws = context.getWorkspace();
         if (session == null) {
-            throw new NutsIllegalArgumentException(session, "missing session");
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing session"));
         }
         if (apiVersion == null) {
             if (bootConfig == null) {
@@ -66,12 +65,12 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                 NutsVersion _latestVersion = null;
                 try {
                     _latestVersion = Files.list(
-                            Paths.get(bootConfig.getStoreLocation(ws.getApiId(), NutsStoreLocation.CONFIG))
-                                    .getParent())
+                                    Paths.get(bootConfig.getStoreLocation(ws.getApiId(), NutsStoreLocation.CONFIG))
+                                            .getParent())
                             .filter(
                                     f
-                                    -> ws.version().parse(f.getFileName().toString()).getNumber(0, -1) != -1
-                                    && Files.exists(f.resolve("nuts-api-config.json"))
+                                            -> ws.version().parse(f.getFileName().toString()).getNumber(0, -1) != -1
+                                            && Files.exists(f.resolve("nuts-api-config.json"))
                             ).map(
                                     f -> ws.version().parse(f.getFileName().toString())
                             ).sorted(Comparator.reverseOrder()).findFirst().orElse(null);
@@ -79,7 +78,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                     throw new UncheckedIOException(e);
                 }
                 if (_latestVersion == null) {
-                    throw new NutsIllegalArgumentException(session, "missing nuts-api version to link to");
+                    throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing nuts-api version to link to"));
                 }
                 apiVersion = _latestVersion.toString();
             }
@@ -90,130 +89,6 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                 : ws.locations().getWorkspaceLocation().toString();
         UpdatedPaths t = persistConfig2(bootConfig, apiId, preferredName, session);
         return new WorkspaceAndApiVersion(wsEff, ws.version().parse(apiVersion), t.getUpdated(), t.getDiscarded());
-    }
-
-    @Override
-    public boolean isNutsBootId(NutsId nid) {
-        if ("nuts".equals(nid.getShortName()) || "net.thevpc.nuts:nuts".equals(nid.getShortName())) {
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public List<NdiScriptnfo> createNutsScript(
-            List<String> idsToInstall,
-            String switchWorkspaceLocation,
-            String linkName,
-            Boolean persistentConfig,
-            ArrayList<String> executorOptions,
-            boolean env,
-            boolean fetch,
-            NutsExecutionType execType,
-            NutsApplicationContext context) {
-        NutsWorkspace ws = context.getWorkspace();
-        Path workspaceLocation = Paths.get(ws.locations().getWorkspaceLocation());
-        List<NdiScriptnfo> result = new ArrayList<>();
-        boolean subTrace = context.getSession().isTrace();
-        if (!context.getSession().isPlainTrace()) {
-            subTrace = false;
-        }
-        if (!idsToInstall.isEmpty()) {
-            if (persistentConfig == null) {
-                if (workspaceLocation.equals(Paths.get(System.getProperty("user.home")).resolve(".config/nuts/default-workspace"))) {
-                    persistentConfig = true;
-                } else {
-                    persistentConfig = false;
-                }
-            }
-            boolean includeEnv = env;
-            for (String id : idsToInstall) {
-                NutsId nid = ws.id().parser().parse(id);
-                if (nid == null) {
-                    throw new NutsExecutionException(context.getSession(), "unable to create script for " + id + " : invalid id", 100);
-                }
-                if (!nid.getVersion().isBlank()) {
-                    includeEnv = true;
-                }
-            }
-            String linkNameCurrent = linkName;
-            if (includeEnv) {
-                linkNameCurrent = prepareLinkName(linkNameCurrent);
-            }
-            List<String> nutsIds = idsToInstall.stream().filter(x -> isNutsBootId(ws.id().parser().parse(x))).collect(Collectors.toList());
-            List<String> nonNutsIds = idsToInstall.stream().filter(x -> !isNutsBootId(ws.id().parser().parse(x))).collect(Collectors.toList());
-            boolean bootAlreadyProcessed = false;
-            for (String id : nutsIds) {
-                try {
-                    NutsId nid = ws.id().parser().parse(id);
-                    bootAlreadyProcessed = true;
-                    if (!nid.getVersion().isBlank()) {
-                        String verString = nid.getVersion().toString();
-                        if (verString.equalsIgnoreCase("current")
-                                || verString.equalsIgnoreCase("curr")) {
-                            id = nid.builder().setVersion(ws.getApiId().getVersion()).build().toString();
-                        }
-                    }
-
-                    result.addAll(
-                            createNutsScript(
-                                    new NdiScriptOptions().setId(id)
-                                            .setSession(context.getSession().copy().setTrace(subTrace))
-                                            .setForceBoot(context.getSession().isYes())
-                                            .setFetch(fetch)
-                                            .setExecType(execType)
-                                            .setExecutorOptions(executorOptions)
-                                            .setIncludeEnv(includeEnv)
-                                            .setPreferredScriptName(linkNameCurrent)
-                            )
-                    );
-                } catch (UncheckedIOException e) {
-                    throw new NutsExecutionException(context.getSession(), "unable to add script for " + id + " : " + e.toString(), e);
-                }
-            }
-            if (!bootAlreadyProcessed && !nonNutsIds.isEmpty()) {
-                result.addAll(createBootScript(
-                        null,
-                        null,
-                        false, false, includeEnv));
-            }
-            for (String id : nonNutsIds) {
-                try {
-                    NutsId nid = ws.id().parser().parse(id);
-                    if (nid == null) {
-                        throw new NutsExecutionException(context.getSession(), "unable to create script for " + id + " : invalid id", 100);
-                    }
-                    result.addAll(
-                            createNutsScript(
-                                    new NdiScriptOptions().setId(id)
-                                            .setAddNutsScript(false)
-                                            .setSession(context.getSession().copy().setTrace(subTrace))
-                                            .setForceBoot(context.getSession().isYes())
-                                            .setFetch(fetch)
-                                            .setExecType(execType)
-                                            .setExecutorOptions(executorOptions)
-                                            .setIncludeEnv(includeEnv)
-                                            .setPreferredScriptName(linkNameCurrent)
-                            )
-                    );
-                } catch (UncheckedIOException e) {
-                    throw new NutsExecutionException(context.getSession(), "unable to add script for " + id + " : " + e.toString(), e);
-                }
-            }
-            configurePath(context.getSession(), persistentConfig);
-        }
-        return result;
-    }
-
-    private String prepareLinkName(String linkName) {
-        if (linkName == null) {
-            linkName = "%n-%v";
-        } else if (Files.isDirectory(Paths.get(linkName))) {
-            linkName = Paths.get(linkName).resolve("%n-%v").toString();
-        } else if (linkName.endsWith("/") || linkName.endsWith("\\")) {
-            linkName = Paths.get(linkName).resolve("%n-%v").toString();
-        }
-        return linkName;
     }
 
     @Override
@@ -287,8 +162,8 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             if (session.getTerminal().ask()
                     .resetLine()
                     .forBoolean("tool %s will be removed. Confirm?",
-                    factory.forStyled(NdiUtils.betterPath(f.toString()), NutsTextStyle.path())
-            )
+                            factory.forStyled(NdiUtils.betterPath(f.toString()), NutsTextStyle.path())
+                    )
                     .setDefaultValue(true)
                     .setSession(session)
                     .getBooleanValue()) {
@@ -310,7 +185,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         if (switchWorkspaceLocation != null) {
             bootconfig = context.getWorkspace().config().loadBootConfig(switchWorkspaceLocation, false, true);
             if (bootconfig == null) {
-                throw new NutsIllegalArgumentException(context.getSession(), "invalid workspace: " + switchWorkspaceLocation);
+                throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.cstyle("invalid workspace: %s", switchWorkspaceLocation));
             }
         }
         WorkspaceAndApiVersion v = persistConfig(bootconfig, apiVersion, preferredScriptName, context.getSession());
@@ -325,13 +200,254 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         if (switchWorkspaceLocation != null) {
             bootconfig = context.getWorkspace().config().loadBootConfig(switchWorkspaceLocation, false, true);
             if (bootconfig == null) {
-                throw new NutsIllegalArgumentException(context.getSession(), "invalid workspace: " + switchWorkspaceLocation);
+                throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.cstyle("invalid workspace: %s",switchWorkspaceLocation));
             }
         }
         WorkspaceAndApiVersion v = persistConfig(bootconfig, apiVersion, null, context.getSession());
         if (context.getSession().isPlainTrace()) {
             context.getSession().out().printf("```sh nuts``` switched to workspace %s to point to %s\n", v.getWorkspace(), v.getApiVersion());
         }
+    }
+
+    @Override
+    public boolean isNutsBootId(NutsId nid) {
+        if ("nuts".equals(nid.getShortName()) || "net.thevpc.nuts:nuts".equals(nid.getShortName())) {
+            return true;
+        }
+        return false;
+    }
+
+    public List<NdiScriptnfo> createBootScript(String preferredName, String apiVersion, boolean force, boolean trace, boolean includeEnv) {
+        boolean currId = false;
+        NutsId apiId = null;
+        NutsId b = context.getWorkspace().getApiId();
+        if (apiVersion == null || apiVersion.isEmpty()) {
+            apiId = b;
+            apiVersion = b.getVersion().toString();
+            currId = true;
+        } else {
+            if (!apiVersion.equals(b.getVersion().toString())) {
+                apiId = b.builder().setVersion(apiVersion).build();
+            } else {
+                apiId = b;
+            }
+        }
+        NutsDefinition f = context.getWorkspace().search()
+                .setSession(context.getSession().copy().setTrace(false))
+                .addId(apiId).setOptional(false).setLatest(true).setContent(true).getResultDefinitions().required();
+        Path script = null;
+        boolean standardPath = true;
+        if (preferredName != null && preferredName.length() > 0) {
+            standardPath = false;
+            if (preferredName.contains("%v")) {
+                preferredName = preferredName.replace("%v", apiId.getVersion().toString());
+            }
+            script = Paths.get(preferredName);
+        } else {
+            if (currId) {
+                script = getScriptFile("nuts");
+            } else {
+                script = getScriptFile("nuts-" + apiVersion);
+            }
+        }
+        script = script.toAbsolutePath();
+        String scriptString = script.toString();
+        List<NdiScriptnfo> all = new ArrayList<>();
+        boolean createPath = false;
+        if (!force && Files.exists(script)) {
+            if (context.getSession().getTerminal().ask()
+                    .resetLine()
+                    .setDefaultValue(true).setSession(context.getSession())
+                    .forBoolean("override existing script %s ?",
+                            context.getWorkspace().text().forStyled(
+                                    NdiUtils.betterPath(script.toString()), NutsTextStyle.path()
+                            )
+                    ).getBooleanValue()) {
+                createPath = true;
+            }
+        } else {
+            createPath = true;
+        }
+        if (createPath) {
+            all.add(
+                    createScript("nuts", script.toString(), b, trace, f.getId().getLongName(),
+                            x -> {
+                                switch (x) {
+                                    case "NUTS_ID":
+                                        return f.getId().toString();
+                                    case "GENERATOR":
+                                        return context.getAppId().toString();
+                                    case "BODY":
+                                        return createBootScriptCommand(f, includeEnv);
+                                }
+                                return null;
+                            }
+                    ));
+        }
+        if (currId && standardPath) {
+            Path ff2 = Paths.get(context.getWorkspace().locations().getWorkspaceLocation())
+                    .resolve("nuts");
+            boolean overridden = Files.exists(ff2);
+            boolean gen = true;
+
+            if (!force && Files.exists(ff2)) {
+                if (!context.getSession().getTerminal().ask()
+                        .resetLine()
+                        .setSession(context.getSession())
+                        .forBoolean("override existing script %s ?",
+                                context.getWorkspace().text().forStyled(NdiUtils.betterPath(ff2.toString()), NutsTextStyle.path()))
+                        .setDefaultValue(false)
+                        .getBooleanValue()) {
+                    gen = false;
+                }
+            }
+            if (gen) {
+
+                if (trace && context.getSession().isPlainTrace()) {
+                    context.getSession().out().printf((Files.exists(ff2) ? "re-install" : "install")
+                                    + " script %s %n",
+                            context.getWorkspace().text().forStyled(NdiUtils.betterPath(ff2.toString()), NutsTextStyle.path())
+                    );
+                }
+                try {
+                    try (BufferedWriter w = Files.newBufferedWriter(ff2)) {
+                        NdiUtils.generateScript("/net/thevpc/nuts/toolbox/nadmin/" + getTemplateBodyName(), w, x -> {
+                            switch (x) {
+                                case "NUTS_ID":
+                                    return f.getId().toString();
+                                case "GENERATOR":
+                                    return context.getAppId().toString();
+                                case "BODY": {
+                                    return getCallScriptCommand(NdiUtils.replaceFilePrefix(scriptString, ff2.toString(), ""));
+                                }
+                            }
+                            return null;
+                        });
+                    }
+                } catch (IOException ex) {
+                    throw new UncheckedIOException(ex);
+                }
+                NdiUtils.setExecutable(ff2);
+                all.add(new NdiScriptnfo("nuts", b, ff2, overridden));
+            }
+        }
+        return all;
+    }
+
+    @Override
+    public List<NdiScriptnfo> createNutsScript(
+            List<String> idsToInstall,
+            String switchWorkspaceLocation,
+            String linkName,
+            Boolean persistentConfig,
+            ArrayList<String> executorOptions,
+            boolean env,
+            boolean fetch,
+            NutsExecutionType execType,
+            NutsApplicationContext context) {
+        NutsWorkspace ws = context.getWorkspace();
+        Path workspaceLocation = Paths.get(ws.locations().getWorkspaceLocation());
+        List<NdiScriptnfo> result = new ArrayList<>();
+        boolean subTrace = context.getSession().isTrace();
+        if (!context.getSession().isPlainTrace()) {
+            subTrace = false;
+        }
+        if (!idsToInstall.isEmpty()) {
+            if (persistentConfig == null) {
+                if (workspaceLocation.equals(Paths.get(System.getProperty("user.home")).resolve(".config/nuts/default-workspace"))) {
+                    persistentConfig = true;
+                } else {
+                    persistentConfig = false;
+                }
+            }
+            boolean includeEnv = env;
+            for (String id : idsToInstall) {
+                NutsId nid = ws.id().parser().parse(id);
+                if (nid == null) {
+                    throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("unable to create script for %s : invalid id", id), 100);
+                }
+                if (!nid.getVersion().isBlank()) {
+                    includeEnv = true;
+                }
+            }
+            String linkNameCurrent = linkName;
+            if (includeEnv) {
+                linkNameCurrent = prepareLinkName(linkNameCurrent);
+            }
+            List<String> nutsIds = idsToInstall.stream().filter(x -> isNutsBootId(ws.id().parser().parse(x))).collect(Collectors.toList());
+            List<String> nonNutsIds = idsToInstall.stream().filter(x -> !isNutsBootId(ws.id().parser().parse(x))).collect(Collectors.toList());
+            boolean bootAlreadyProcessed = false;
+            for (String id : nutsIds) {
+                try {
+                    NutsId nid = ws.id().parser().parse(id);
+                    bootAlreadyProcessed = true;
+                    if (!nid.getVersion().isBlank()) {
+                        String verString = nid.getVersion().toString();
+                        if (verString.equalsIgnoreCase("current")
+                                || verString.equalsIgnoreCase("curr")) {
+                            id = nid.builder().setVersion(ws.getApiId().getVersion()).build().toString();
+                        }
+                    }
+
+                    result.addAll(
+                            createNutsScript(
+                                    new NdiScriptOptions().setId(id)
+                                            .setSession(context.getSession().copy().setTrace(subTrace))
+                                            .setForceBoot(context.getSession().isYes())
+                                            .setFetch(fetch)
+                                            .setExecType(execType)
+                                            .setExecutorOptions(executorOptions)
+                                            .setIncludeEnv(includeEnv)
+                                            .setPreferredScriptName(linkNameCurrent)
+                            )
+                    );
+                } catch (UncheckedIOException e) {
+                    throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("unable to add script for %s : %s", id, e), e);
+                }
+            }
+            if (!bootAlreadyProcessed && !nonNutsIds.isEmpty()) {
+                result.addAll(createBootScript(
+                        null,
+                        null,
+                        false, false, includeEnv));
+            }
+            for (String id : nonNutsIds) {
+                try {
+                    NutsId nid = ws.id().parser().parse(id);
+                    if (nid == null) {
+                        throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("unable to create script for %s : invalid id", id), 100);
+                    }
+                    result.addAll(
+                            createNutsScript(
+                                    new NdiScriptOptions().setId(id)
+                                            .setAddNutsScript(false)
+                                            .setSession(context.getSession().copy().setTrace(subTrace))
+                                            .setForceBoot(context.getSession().isYes())
+                                            .setFetch(fetch)
+                                            .setExecType(execType)
+                                            .setExecutorOptions(executorOptions)
+                                            .setIncludeEnv(includeEnv)
+                                            .setPreferredScriptName(linkNameCurrent)
+                            )
+                    );
+                } catch (UncheckedIOException e) {
+                    throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("unable to add script for %s : %s", id, e), e);
+                }
+            }
+            configurePath(context.getSession(), persistentConfig);
+        }
+        return result;
+    }
+
+    private String prepareLinkName(String linkName) {
+        if (linkName == null) {
+            linkName = "%n-%v";
+        } else if (Files.isDirectory(Paths.get(linkName))) {
+            linkName = Paths.get(linkName).resolve("%n-%v").toString();
+        } else if (linkName.endsWith("/") || linkName.endsWith("\\")) {
+            linkName = Paths.get(linkName).resolve("%n-%v").toString();
+        }
+        return linkName;
     }
 
     protected abstract UpdatedPaths persistConfig2(NutsWorkspaceBootConfig bootConfig, NutsId nutsId, String rcPath, NutsSession session);
@@ -450,123 +566,6 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     }
 
     protected abstract String getCallScriptCommand(String path);
-
-    public List<NdiScriptnfo> createBootScript(String preferredName, String apiVersion, boolean force, boolean trace, boolean includeEnv) {
-        boolean currId = false;
-        NutsId apiId = null;
-        NutsId b = context.getWorkspace().getApiId();
-        if (apiVersion == null || apiVersion.isEmpty()) {
-            apiId = b;
-            apiVersion = b.getVersion().toString();
-            currId = true;
-        } else {
-            if (!apiVersion.equals(b.getVersion().toString())) {
-                apiId = b.builder().setVersion(apiVersion).build();
-            } else {
-                apiId = b;
-            }
-        }
-        NutsDefinition f = context.getWorkspace().search()
-                .setSession(context.getSession().copy().setTrace(false))
-                .addId(apiId).setOptional(false).setLatest(true).setContent(true).getResultDefinitions().required();
-        Path script = null;
-        boolean standardPath = true;
-        if (preferredName != null && preferredName.length() > 0) {
-            standardPath = false;
-            if (preferredName.contains("%v")) {
-                preferredName = preferredName.replace("%v", apiId.getVersion().toString());
-            }
-            script = Paths.get(preferredName);
-        } else {
-            if (currId) {
-                script = getScriptFile("nuts");
-            } else {
-                script = getScriptFile("nuts-" + apiVersion);
-            }
-        }
-        script = script.toAbsolutePath();
-        String scriptString = script.toString();
-        List<NdiScriptnfo> all = new ArrayList<>();
-        boolean createPath = false;
-        if (!force && Files.exists(script)) {
-            if (context.getSession().getTerminal().ask()
-                    .resetLine()
-                    .setDefaultValue(true).setSession(context.getSession())
-                    .forBoolean("override existing script %s ?",
-                            context.getWorkspace().text().forStyled(
-                                    NdiUtils.betterPath(script.toString()), NutsTextStyle.path()
-                            )
-                    ).getBooleanValue()) {
-                createPath = true;
-            }
-        } else {
-            createPath = true;
-        }
-        if (createPath) {
-            all.add(
-                    createScript("nuts", script.toString(), b, trace, f.getId().getLongName(),
-                            x -> {
-                                switch (x) {
-                                    case "NUTS_ID":
-                                        return f.getId().toString();
-                                    case "GENERATOR":
-                                        return context.getAppId().toString();
-                                    case "BODY":
-                                        return createBootScriptCommand(f, includeEnv);
-                                }
-                                return null;
-                            }
-                    ));
-        }
-        if (currId && standardPath) {
-            Path ff2 = Paths.get(context.getWorkspace().locations().getWorkspaceLocation())
-                    .resolve("nuts");
-            boolean overridden = Files.exists(ff2);
-            boolean gen = true;
-
-            if (!force && Files.exists(ff2)) {
-                if (!context.getSession().getTerminal().ask()
-                        .resetLine()
-                        .setSession(context.getSession())
-                        .forBoolean("override existing script %s ?",
-                                context.getWorkspace().text().forStyled(NdiUtils.betterPath(ff2.toString()), NutsTextStyle.path()))
-                        .setDefaultValue(false)
-                        .getBooleanValue()) {
-                    gen = false;
-                }
-            }
-            if (gen) {
-
-                if (trace && context.getSession().isPlainTrace()) {
-                    context.getSession().out().printf((Files.exists(ff2) ? "re-install" : "install")
-                            + " script %s %n",
-                            context.getWorkspace().text().forStyled(NdiUtils.betterPath(ff2.toString()), NutsTextStyle.path())
-                    );
-                }
-                try {
-                    try (BufferedWriter w = Files.newBufferedWriter(ff2)) {
-                        NdiUtils.generateScript("/net/thevpc/nuts/toolbox/nadmin/" + getTemplateBodyName(), w, x -> {
-                            switch (x) {
-                                case "NUTS_ID":
-                                    return f.getId().toString();
-                                case "GENERATOR":
-                                    return context.getAppId().toString();
-                                case "BODY": {
-                                    return getCallScriptCommand(NdiUtils.replaceFilePrefix(scriptString, ff2.toString(), ""));
-                                }
-                            }
-                            return null;
-                        });
-                    }
-                } catch (IOException ex) {
-                    throw new UncheckedIOException(ex);
-                }
-                NdiUtils.setExecutable(ff2);
-                all.add(new NdiScriptnfo("nuts", b, ff2, overridden));
-            }
-        }
-        return all;
-    }
 
     protected abstract String getExecFileName(String name);
 

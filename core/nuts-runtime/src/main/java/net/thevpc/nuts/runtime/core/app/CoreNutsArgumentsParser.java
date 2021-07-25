@@ -26,13 +26,13 @@
 package net.thevpc.nuts.runtime.core.app;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsJavaSdkUtils;
 
 import java.time.Instant;
 import java.util.*;
 import java.util.logging.Level;
-import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
 
 /**
  * Nuts Arguments parser. Creates a {@link NutsWorkspaceOptions} instance from
@@ -55,12 +55,12 @@ public final class CoreNutsArgumentsParser {
      * Fill a {@link NutsWorkspaceOptions} instance from string array of valid
      * nuts options
      *
-     * @param session workspace
+     * @param session       workspace
      * @param bootArguments input arguments to parse
      * @param options       options instance to fill
      */
     public static void parseNutsArguments(NutsSession session, String[] bootArguments, NutsWorkspaceOptionsBuilder options) {
-        List<String> showError = new ArrayList<>();
+        List<NutsMessage> showError = new ArrayList<>();
         HashSet<String> excludedExtensions = new HashSet<>();
         HashSet<String> repositories = new HashSet<>();
         Set<String> tempProps = new LinkedHashSet<>();
@@ -879,34 +879,30 @@ public final class CoreNutsArgumentsParser {
                         }
                         break;
                     }
-                    case "--open-or-error": 
-                    case "--open": 
-                    {
+                    case "--open-or-error":
+                    case "--open": {
                         a = cmdLine.nextBoolean();
                         if (enabled && a.getBooleanValue()) {
                             options.setOpenMode(NutsOpenMode.OPEN_OR_ERROR);
                         }
                         break;
                     }
-                    case "--create-or-error": 
-                    case "--create": 
-                    {
+                    case "--create-or-error":
+                    case "--create": {
                         a = cmdLine.nextBoolean();
                         if (enabled && a.getBooleanValue()) {
                             options.setOpenMode(NutsOpenMode.CREATE_OR_ERROR);
                         }
                         break;
                     }
-                    case "--open-or-create": 
-                    {
+                    case "--open-or-create": {
                         a = cmdLine.nextBoolean();
                         if (enabled && a.getBooleanValue()) {
                             options.setOpenMode(NutsOpenMode.OPEN_OR_CREATE);
                         }
                         break;
                     }
-                    case "--open-or-null": 
-                    {
+                    case "--open-or-null": {
                         a = cmdLine.nextBoolean();
                         if (enabled && a.getBooleanValue()) {
                             options.setOpenMode(NutsOpenMode.OPEN_OR_NULL);
@@ -923,7 +919,7 @@ public final class CoreNutsArgumentsParser {
                         cmdLine.skip();
                         if (enabled) {
                             if (!a.getArgumentValue().isNull()) {
-                                throw new NutsIllegalArgumentException(session, "invalid argument for workspace: " + a.getString());
+                                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid argument for workspace: %s", a.getString()));
                             }
                             applicationArguments.add(NutsConstants.Ids.NUTS_SHELL);
                             if (!cmdLine.isEmpty()) {
@@ -1084,7 +1080,7 @@ public final class CoreNutsArgumentsParser {
                             tempProps.add(a.toString().substring(3));
                         } else {
                             cmdLine.skip();
-                            showError.add("nuts: invalid option " + a.getString());
+                            showError.add(NutsMessage.cstyle("nuts: invalid option %s", a.getString()));
                         }
                     }
                 }
@@ -1108,13 +1104,13 @@ public final class CoreNutsArgumentsParser {
         )
         )) {
             if (!showError.isEmpty()) {
-                StringBuilder errorMessage = new StringBuilder();
-                for (String s : showError) {
+                NutsTextBuilder errorMessage = session.getWorkspace().text().builder();
+                for (NutsMessage s : showError) {
                     errorMessage.append(s).append("\n");
                 }
                 errorMessage.append("Try 'nuts --help' for more information.");
                 if (!options.isSkipErrors()) {
-                    throw new NutsIllegalArgumentException(session, errorMessage.toString());
+                    throw new NutsIllegalArgumentException(session, NutsMessage.formatted(errorMessage.toString()));
                 } else {
                     session.err().println(errorMessage.toString());
                 }
@@ -1247,7 +1243,7 @@ public final class CoreNutsArgumentsParser {
             case "EXPLODED":
                 return NutsStoreLocationStrategy.EXPLODED;
         }
-        throw new NutsIllegalArgumentException(ws, "unable to parse value for NutsStoreLocationStrategy : " + s0);
+        throw new NutsIllegalArgumentException(ws, NutsMessage.cstyle("unable to parse value for NutsStoreLocationStrategy : %s", s0));
     }
 
     private static NutsOsFamily parseNutsStoreLocationLayout(String s, NutsSession ws) {
@@ -1276,7 +1272,7 @@ public final class CoreNutsArgumentsParser {
             case "SYSTEM":
                 return null;
         }
-        throw new NutsIllegalArgumentException(ws, "unable to parse value for NutsStoreLocationLayout : " + s0);
+        throw new NutsIllegalArgumentException(ws, NutsMessage.cstyle("unable to parse value for NutsStoreLocationLayout : %s", s0));
     }
 
     private static NutsTerminalMode parseNutsTerminalMode(String s, NutsSession ws) {
@@ -1296,7 +1292,7 @@ public final class CoreNutsArgumentsParser {
             case "INHERITED":
                 return NutsTerminalMode.INHERITED;
         }
-        throw new NutsIllegalArgumentException(ws, "unable to parse value for NutsTerminalMode : " + s0);
+        throw new NutsIllegalArgumentException(ws, NutsMessage.cstyle("unable to parse value for NutsTerminalMode : %s", s0));
     }
 
     private static NutsOpenMode parseNutsWorkspaceOpenMode(String s, NutsSession ws) {
@@ -1342,7 +1338,7 @@ public final class CoreNutsArgumentsParser {
                 return NutsOpenMode.OPEN_OR_NULL;
             }
         }
-        throw new NutsIllegalArgumentException(ws, "unable to parse value for NutsOpenMode : " + s0);
+        throw new NutsIllegalArgumentException(ws, NutsMessage.cstyle("unable to parse value for NutsOpenMode : %s", s0));
     }
 
     private static Level parseLevel(String s, NutsSession ws) {

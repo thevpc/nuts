@@ -274,17 +274,17 @@ public class MavenFolderRepository extends NutsCachedRepository {
 
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    throw new NutsIOException(session, "updateStatistics Not supported.");
+                    throw new NutsIOException(session, NutsMessage.cstyle("updateStatistics Not supported."));
                 }
 
                 @Override
                 public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
-                    throw new NutsIOException(session, "updateStatistics Not supported.");
+                    throw new NutsIOException(session, NutsMessage.cstyle("updateStatistics Not supported."));
                 }
 
                 @Override
                 public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-                    throw new NutsIOException(session, "updateStatistics Not supported.");
+                    throw new NutsIOException(session, NutsMessage.cstyle("updateStatistics Not supported."));
                 }
             }
             );

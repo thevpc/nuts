@@ -110,7 +110,7 @@ public class DefaultNutsFetchDescriptorRepositoryCommand extends AbstractNutsFet
             result = d;
         } catch (Exception ex) {
             if (!CoreNutsUtils.isUnsupportedFetchModeException(ex)) {
-                CoreNutsUtils.traceMessage(_LOG(session), Level.FINEST, getRepo().getName(), session, getFetchMode(), id.getLongNameId(), NutsLogVerb.FAIL, "fetch descriptor", startTime, CoreStringUtils.exceptionToString(ex));
+                CoreNutsUtils.traceMessage(_LOG(session), Level.FINEST, getRepo().getName(), session, getFetchMode(), id.getLongNameId(), NutsLogVerb.FAIL, "fetch descriptor", startTime, CoreStringUtils.exceptionToMessage(ex));
             }
             throw ex;
         }

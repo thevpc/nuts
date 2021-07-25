@@ -160,7 +160,7 @@ public class DefaultNutsWorkspaceSecurityModel {
     public void logout(NutsSession session) {
         Stack<LoginContext> r = loginContextStack.get();
         if (r == null || r.isEmpty()) {
-            throw new NutsLoginException(session, "not logged in");
+            throw new NutsLoginException(session, NutsMessage.cstyle("not logged in"));
         }
         try {
             LoginContext loginContext = r.pop();
@@ -391,7 +391,9 @@ public class DefaultNutsWorkspaceSecurityModel {
         DefaultNutsWorkspaceConfigModel cc = NutsWorkspaceConfigManagerExt.of(ws.config()).getModel();
 
         if (cc.createAuthenticationAgent(authenticationAgentId, session) == null) {
-            throw new NutsIllegalArgumentException(session, "unsupported Authentication Agent " + authenticationAgentId);
+            throw new NutsIllegalArgumentException(session,
+                    NutsMessage.cstyle("unsupported Authentication Agent %s" , authenticationAgentId)
+            );
         }
 
         NutsWorkspaceConfigSecurity conf = cc.getStoredConfigSecurity();

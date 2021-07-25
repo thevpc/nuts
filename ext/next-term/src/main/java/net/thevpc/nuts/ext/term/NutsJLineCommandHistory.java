@@ -25,12 +25,9 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Objects;
 import java.util.function.Consumer;
-import net.thevpc.nuts.NutsCommandHistory;
-import net.thevpc.nuts.NutsCommandHistoryEntry;
-import net.thevpc.nuts.NutsExecutionException;
-import net.thevpc.nuts.NutsIOException;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsWorkspace;
+
+import net.thevpc.nuts.*;
+
 import static net.thevpc.nuts.ext.term.NutsJLineHistory.DEFAULT_HISTORY_FILE_SIZE;
 import static net.thevpc.nuts.ext.term.NutsJLineHistory.DEFAULT_HISTORY_SIZE;
 import org.jline.reader.History;
@@ -99,9 +96,9 @@ public class NutsJLineCommandHistory implements NutsCommandHistory {
                     public void accept(String l) {
                         int idx = l.indexOf(':');
                         if (idx < 0) {
-                            throw new NutsExecutionException(session, "Bad history file syntax! "
+                            throw new NutsExecutionException(session,  NutsMessage.cstyle("Bad history file syntax! "
                                     + "The history file may be an older history: "
-                                    + "please remove it or use a different history file.", 2);
+                                    + "please remove it or use a different history file."), 2);
                         }
                         Instant time = Instant.ofEpochMilli(Long.parseLong(l.substring(0, idx)));
                         String line = unescape(l.substring(idx + 1));

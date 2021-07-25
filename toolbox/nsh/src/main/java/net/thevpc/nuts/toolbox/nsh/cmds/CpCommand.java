@@ -89,12 +89,12 @@ public class CpCommand extends SimpleNshBuiltin {
         Options options = context.getOptions();
         for (String value : options.files) {
             if (_StringUtils.isBlank(value)) {
-                throw new NutsExecutionException(context.getSession(), "Empty File Path", 2);
+                throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("empty file path"), 2);
             }
             options.xfiles.add(context.getWorkspace().io().path((value.contains("://") ? value : context.getWorkspace().io().expandPath(value))));
         }
         if (options.xfiles.size() < 2) {
-            throw new NutsExecutionException(context.getSession(), "missing parameters", 2);
+            throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("missing parameters"), 2);
         }
 
         options.sshlistener = new ShellHelper.WsSshListener(context.getSession());

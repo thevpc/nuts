@@ -40,9 +40,9 @@ public abstract class NutsWorkspaceException extends NutsException {
      * @param message message
      * @param ex exception
      */
-    public NutsWorkspaceException(NutsSession session, String message, Throwable ex) {
+    public NutsWorkspaceException(NutsSession session, NutsMessage message, Throwable ex) {
         super(session,
-                PrivateNutsUtils.isBlank(message)
-                ? ("workspace " + (session == null ? "<null>" : session.getWorkspace().getName()) + " has encountered problem") : message, ex);
+                message==null
+                ? NutsMessage.cstyle("workspace %s has encountered problem",session.getWorkspace().getName()) : message, ex);
     }
 }
