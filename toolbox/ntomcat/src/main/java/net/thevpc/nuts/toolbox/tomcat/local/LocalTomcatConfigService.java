@@ -487,7 +487,9 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                 catalinaVersion = "[3.3,4[";
             }
         }
-        if (catalinaNutsDefinition == null || !Objects.equals(catalinaVersion, this.catalinaVersion)) {
+        if (catalinaNutsDefinition == null || !Objects.equals(catalinaVersion, this.catalinaVersion)
+                || !catalinaNutsDefinition.getInstallInformation().getInstallStatus().isInstalled()
+        ) {
             this.catalinaVersion = catalinaVersion;
             String cv = catalinaVersion;
             if (!cv.startsWith("[") && !cv.startsWith("]")) {
@@ -511,6 +513,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             if (r.getInstallInformation().isInstalledOrRequired()) {
                 return r;
             } else {
+                //TODO: FIX install return
                 catalinaNutsDefinition = ws
                         .install()
                         .id(r.getId())
@@ -524,6 +527,9 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                                 }
                             }
                         })).getResult().required();
+                //this is a workaround. Def returned by install does not include all information!
+                catalinaNutsDefinition = searchLatestCommand.setInstallStatus(ws.filters().installStatus().byInstalled(true))
+                        .getResultDefinitions().first();
             }
         }
         return catalinaNutsDefinition;
