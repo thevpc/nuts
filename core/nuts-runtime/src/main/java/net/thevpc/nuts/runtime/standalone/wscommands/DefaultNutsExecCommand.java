@@ -165,6 +165,9 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
             case "install": {
                 return new DefaultNutsInstallInternalExecutable(args, execSession);
             }
+            case "reinstall": {
+                return new DefaultNutsReinstallInternalExecutable(args, execSession);
+            }
             case "uninstall": {
                 return new DefaultNutsUninstallInternalExecutable(args, execSession);
             }

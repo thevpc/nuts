@@ -324,6 +324,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         NutsBootWorkspaceFactory bootFactory = info.getBootWorkspaceFactory();
         ClassLoader bootClassLoader = info.getClassWorldLoader();
         NutsWorkspaceConfigManager _config = config().setSession(defaultSession());
+        NutsWorkspaceEnvManager _env = env().setSession(defaultSession());
         if (uoptions == null) {
             uoptions = new ReadOnlyNutsWorkspaceOptions(_config.optionsBuilder());
         } else {
@@ -391,9 +392,9 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 .setTerminal(_term.createTerminal()
                 );
         bootModel.bootSession().setTerminal(term().setSession(bootModel.bootSession()).createTerminal());
-        if (defaultSession().isPlainOut()) {
-            defaultSession().getTerminal().out().run(NutsTerminalCommand.LATER_RESET_LINE);
-        }
+//        if (defaultSession().isPlainOut()) {
+//            defaultSession().getTerminal().out().run(NutsTerminalCommand.LATER_RESET_LINE);
+//        }
         ((DefaultNutsLogger) LOG).resumeTerminal(defaultSession());
 
 //        for (Iterator<DefaultNutsWorkspaceExtensionManager.RegInfo> iterator = regInfos.iterator(); iterator.hasNext(); ) {
@@ -466,7 +467,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                     LOG.with().session(defaultSession()).level(Level.CONFIG).verb(NutsLogVerb.SUCCESS).log("nuts workspace v{0} created.", nutsVersion);
                 }
                 //should install default
-                if (defaultSession().isPlainTrace() && !_config.options().isSkipWelcome()) {
+                if (defaultSession().isPlainTrace() && !_env.getBootOptions().isSkipWelcome()) {
                     NutsPrintStream out = defaultSession().out();
                     out.resetLine();
                     StringBuilder version = new StringBuilder(nutsVersion);
@@ -492,7 +493,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                     );
                     out.println();
                 }
-                for (URL bootClassWorldURL : _config.getBootClassWorldURLs()) {
+                for (URL bootClassWorldURL : _env.getBootClassWorldURLs()) {
                     NutsInstalledRepository repo = getInstalledRepository();
                     NutsRepositorySPI repoSPI = NutsWorkspaceUtils.of(defaultSession()).repoSPI(repo);
                     NutsDeployRepositoryCommand desc = repoSPI.deploy()
@@ -561,7 +562,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             configModel.setStartCreateTimeMillis(uoptions.getCreationTime());
             configModel.setEndCreateTimeMillis(System.currentTimeMillis());
             if (justInstalled) {
-                if (!_config.options().isSkipCompanions()) {
+                if (!_env.getBootOptions().isSkipCompanions()) {
                     installCompanions(defaultSession());
                 }
                 DefaultNutsWorkspaceEvent workspaceCreatedEvent = new DefaultNutsWorkspaceEvent(defaultSession(), null, null, null, null);
@@ -583,12 +584,12 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             }
             LOG.with().session(defaultSession()).level(Level.FINE).verb(NutsLogVerb.SUCCESS)
                     .formatted().log("```sh nuts``` workspace loaded in ```error {0}```",
-                            CoreTimeUtils.formatPeriodMilli(_config.getCreationFinishTimeMillis() - _config.getCreationStartTimeMillis())
+                            CoreTimeUtils.formatPeriodMilli(_env.getCreationFinishTimeMillis() - _env.getCreationStartTimeMillis())
                     );
 
             if (CoreBooleanUtils.getSysBoolNutsProperty("perf", false)) {
                 defaultSession().out().printf("```sh nuts``` workspace loaded in %s%n",
-                        configModel.getWorkspace().text().forStyled(CoreTimeUtils.formatPeriodMilli(_config.getCreationFinishTimeMillis() - _config.getCreationStartTimeMillis()),
+                        configModel.getWorkspace().text().forStyled(CoreTimeUtils.formatPeriodMilli(_env.getCreationFinishTimeMillis() - _env.getCreationStartTimeMillis()),
                                 NutsTextStyle.error()
                         )
                 );
@@ -615,8 +616,8 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         try {
             install().companions().setSession(session.copy().setTrace(session.isTrace() && session.isPlainOut()))
                     .addConditionalArgs(d -> d.getId().getShortName().equals("net.thevpc.nuts:nadmin")
-                                    && config().setSession(session).options().getSwitchWorkspace() != null,
-                            "--switch=" + config().setSession(session).options().getSwitchWorkspace())
+                                    && env().setSession(session).getBootOptions().getSwitchWorkspace() != null,
+                            "--switch=" + env().setSession(session).getBootOptions().getSwitchWorkspace())
                     .run();
         } catch (Exception ex) {
             LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).error(ex).log("unable to install companions : " + ex.toString());
@@ -908,7 +909,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                     .setTraceSession(session.copy())
                     .setExecSession(session.copy())
                     .setDefinition(def).setArguments(args).setFailFast(true).setTemporary(false)
-                    .setExecutionType(config.options().getExecutionType());
+                    .setExecutionType(env().setSession(session).getBootOptions().getExecutionType());
             NutsArtifactCall installer = def.getDescriptor().getInstaller();
             if (installer != null) {
                 cc.addExecutorArguments(installer.getArguments());

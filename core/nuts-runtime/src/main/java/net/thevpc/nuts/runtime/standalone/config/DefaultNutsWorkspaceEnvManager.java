@@ -1,6 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.config;
 
 import net.thevpc.nuts.*;
+
+import java.net.URL;
 import java.util.Map;
 import java.util.function.Supplier;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
@@ -189,4 +191,48 @@ public class DefaultNutsWorkspaceEnvManager implements NutsWorkspaceEnvManager {
         return model;
     }
 
+    private DefaultNutsWorkspaceConfigModel _configModel(){
+        DefaultNutsWorkspaceConfigManager config = (DefaultNutsWorkspaceConfigManager) session.getWorkspace().config();
+        return config.getModel();
+    }
+
+    @Override
+    public String getBootRepositories() {
+        checkSession();
+        return _configModel().getBootRepositories();
+    }
+    @Override
+    public long getCreationStartTimeMillis() {
+        checkSession();
+        return _configModel().getCreationStartTimeMillis();
+    }
+
+    @Override
+    public long getCreationFinishTimeMillis() {
+        checkSession();
+        return _configModel().getCreationFinishTimeMillis();
+    }
+
+    @Override
+    public long getCreationTimeMillis() {
+        checkSession();
+        return _configModel().getCreationTimeMillis();
+    }
+    @Override
+    public ClassLoader getBootClassLoader() {
+        checkSession();
+        return _configModel().getBootClassLoader();
+    }
+
+    @Override
+    public URL[] getBootClassWorldURLs() {
+        checkSession();
+        return _configModel().getBootClassWorldURLs();
+    }
+
+    @Override
+    public NutsWorkspaceOptions getBootOptions() {
+        checkSession();
+        return _configModel().getOptions();
+    }
 }

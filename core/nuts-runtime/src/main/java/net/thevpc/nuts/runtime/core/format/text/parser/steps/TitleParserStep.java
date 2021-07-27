@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.core.format.text.parser.steps;
 
-import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.runtime.core.format.text.DefaultNutsTextManager;
 import net.thevpc.nuts.runtime.core.format.text.parser.*;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
@@ -13,10 +13,10 @@ public class TitleParserStep extends ParserStep {
 
     StringBuilder start = new StringBuilder();
     List<ParserStep> children = new ArrayList<>();
-    private NutsWorkspace ws;
-    public TitleParserStep(String c,NutsWorkspace ws) {
+    private NutsSession session;
+    public TitleParserStep(String c, NutsSession session) {
         start.append(c);
-        this.ws=ws;
+        this.session = session;
     }
 
     @Override
@@ -26,7 +26,7 @@ public class TitleParserStep extends ParserStep {
         } else if (c == '\n' || c == '\r') {
             p.applyPopReplay(c);
         } else {
-            p.applyStart(c, false, false);
+            p.applyPush(c, false, false, false);
         }
     }
 
@@ -39,7 +39,7 @@ public class TitleParserStep extends ParserStep {
     public NutsText toText() {
         String s = start.toString();
 //        NutsTextManager text = ws.text();
-        DefaultNutsTextManager factory0 = (DefaultNutsTextManager) ws.text();
+        DefaultNutsTextManager factory0 = (DefaultNutsTextManager) session.getWorkspace().text();
         String s0=s.trim();
         NutsText child=null;
         if (children.size() == 1) {
@@ -49,7 +49,7 @@ public class TitleParserStep extends ParserStep {
             for (ParserStep a : children) {
                 all.add(a.toText());
             }
-            child= ws.text().forList(all).simplify();
+            child= session.getWorkspace().text().forList(all).simplify();
         }
         return factory0.createTitle(s,s0.length()-1 ,child,isComplete());
     }

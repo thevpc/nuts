@@ -39,11 +39,6 @@ public interface NutsWorkspaceConfigManager {
 
     NutsWorkspaceStoredConfig stored();
 
-    ClassLoader getBootClassLoader();
-
-    URL[] getBootClassWorldURLs();
-
-
     boolean isReadOnly();
 
     /**
@@ -63,10 +58,6 @@ public interface NutsWorkspaceConfigManager {
 
     boolean isExcludedExtension(String extensionId,NutsWorkspaceOptions options) ;
 
-    NutsWorkspaceOptions options();
-
-    NutsWorkspaceOptions getOptions();
-
     NutsId createContentFaceId(NutsId id, NutsDescriptor desc);
 
     NutsWorkspaceListManager createWorkspaceListManager(String name);
@@ -81,19 +72,11 @@ public interface NutsWorkspaceConfigManager {
 
     NutsIndexStoreFactory getIndexStoreClientFactory();
 
-    String getBootRepositories();
-
     String getJavaCommand();
 
     String getJavaOptions();
 
     boolean isGlobal();
-
-    long getCreationStartTimeMillis();
-
-    long getCreationFinishTimeMillis();
-
-    long getCreationTimeMillis();
 
     NutsSession getSession();
 

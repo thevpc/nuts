@@ -679,7 +679,7 @@ public class DefaultNutsWorkspaceConfigModel {
             storeModelMainChanged = false;
             return true;
         } catch (RuntimeException ex) {
-            if (session.getWorkspace().config().getOptions().isRecover()) {
+            if (session.getWorkspace().env().getBootOptions().isRecover()) {
                 onLoadWorkspaceError(ex, session);
             } else {
                 throw ex;

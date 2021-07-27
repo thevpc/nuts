@@ -92,7 +92,7 @@ public class DefaultNutsObjectFormat extends NutsObjectFormatBase {
             base = createObjectFormat();
             base.setValue(getValue());
             base.setSession(session);
-            base.configure(true, session.getWorkspace().config().options().getOutputFormatOptions());
+            base.configure(true, session.getWorkspace().env().getBootOptions().getOutputFormatOptions());
             base.configure(true, session.getOutputFormatOptions());
         }
         return base;

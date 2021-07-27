@@ -335,7 +335,7 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
         }
         NutsProgressMonitor monitor = CoreIOUtils.createProgressMonitor(CoreIOUtils.MonitorType.STREAM, inputSource, source, session, isLogProgress(), getProgressFactory());
         boolean verboseMode
-                = CoreBooleanUtils.getSysBoolNutsProperty("monitor.start", false);
+                = true;//CoreBooleanUtils.getSysBoolNutsProperty("monitor.start", false);
         long size = -1;
         try {
             if (verboseMode && monitor != null) {

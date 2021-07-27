@@ -63,18 +63,6 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
-    public ClassLoader getBootClassLoader() {
-        checkSession();
-        return model.getBootClassLoader();
-    }
-
-    @Override
-    public URL[] getBootClassWorldURLs() {
-        checkSession();
-        return model.getBootClassWorldURLs();
-    }
-
-    @Override
     public boolean isReadOnly() {
         checkSession();
         return model.isReadOnly();
@@ -109,22 +97,11 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
-    public NutsWorkspaceOptions options() {
-        checkSession();
-        return getOptions();
-    }
-
-    @Override
     public boolean isExcludedExtension(String extensionId, NutsWorkspaceOptions options) {
         checkSession();
         return model.isExcludedExtension(extensionId, options, session);
     }
 
-    @Override
-    public NutsWorkspaceOptions getOptions() {
-        checkSession();
-        return model.getOptions();
-    }
 
     @Override
     public NutsId createContentFaceId(NutsId id, NutsDescriptor desc) {
@@ -168,11 +145,6 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         return model.getIndexStoreClientFactory();
     }
 
-    @Override
-    public String getBootRepositories() {
-        checkSession();
-        return model.getBootRepositories();
-    }
 
     @Override
     public String getJavaCommand() {
@@ -190,24 +162,6 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     public boolean isGlobal() {
         checkSession();
         return model.isGlobal();
-    }
-
-    @Override
-    public long getCreationStartTimeMillis() {
-        checkSession();
-        return model.getCreationStartTimeMillis();
-    }
-
-    @Override
-    public long getCreationFinishTimeMillis() {
-        checkSession();
-        return model.getCreationFinishTimeMillis();
-    }
-
-    @Override
-    public long getCreationTimeMillis() {
-        checkSession();
-        return model.getCreationTimeMillis();
     }
 
     @Override

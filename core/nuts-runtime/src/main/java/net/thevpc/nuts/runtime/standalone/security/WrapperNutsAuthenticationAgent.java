@@ -52,7 +52,7 @@ class WrapperNutsAuthenticationAgent {
         String b = new String(a);
         int x = b.indexOf(':');
         if (x <= 0) {
-            if (ws.config().options().isRecover()) {
+            if (ws.env().getBootOptions().isRecover()) {
                 //All stored passwords will be reset to 'secret'
                 ws.createSession().err().println("```error RECOVER MODE : Password could no be parsed due a change in encryption spec. WIll use new default agent```");
                 return null;

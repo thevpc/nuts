@@ -309,7 +309,7 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
         private boolean lineStart = true;
 
         public State() {
-            statusStack.push(new RootParserStep(true, getSession().getWorkspace()));
+            statusStack.push(new RootParserStep(true, getSession()));
         }
 
         public boolean isLineStart() {
@@ -375,6 +375,10 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
             statusStack.push(r);
         }
 
+        public void applyDropReplacePreParsedPlain(String text,boolean exitOnBrace) {
+            applyDropReplace(new PlainParserStep(text, lineStart, false, session, state, null,true,exitOnBrace));
+        }
+
         public void applyDropReplace(ParserStep r) {
             ParserStep tt = statusStack.pop();
             //just drop
@@ -394,23 +398,23 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
             p.consume(rejected, this, wasNewLine);
         }
 
-        public void applyStart(String c, boolean spreadLines, boolean lineStart) {
+        public void applyPush(String c, boolean spreadLines, boolean lineStart,boolean exitOnBrace) {
             if (c.length() > 0) {
-                applyStart(c.charAt(0), spreadLines, lineStart);
+                applyPush(c.charAt(0), spreadLines, lineStart, exitOnBrace);
                 for (int i = 1; i < c.length(); i++) {
                     onNewChar(c.charAt(i));
                 }
             }
         }
 
-        public void applyStart(char c, boolean spreadLines, boolean lineStart) {
+        public void applyPush(char c, boolean spreadLines, boolean lineStart, boolean exitOnBrace) {
             switch (c) {
                 case '`': {
-                    this.applyPush(new AntiQuote3ParserStep(c, spreadLines, getSession().getWorkspace()));
+                    this.applyPush(new AntiQuote3ParserStep(c, spreadLines, getSession(),exitOnBrace));
                     break;
                 }
                 case '#': {
-                    this.applyPush(new StyledParserStep(c, lineStart, getSession().getWorkspace(), state()));
+                    this.applyPush(new StyledParserStep(c, lineStart, getSession(), state(),exitOnBrace));
                     break;
                 }
                 case NutsConstants.Ntf.SILENT: {
@@ -428,7 +432,7 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
                 default: {
                     State state = state();
 //                    state.setLineStart(lineStart);
-                    this.applyPush(new PlainParserStep(c, lineStart, getSession().getWorkspace(), state, null));
+                    this.applyPush(new PlainParserStep(c, lineStart, getSession(), state, null,exitOnBrace));
                 }
             }
         }
@@ -533,7 +537,7 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
             statusStack.clear();
             lineMode = false;
             lineStart = true;
-            statusStack.push(new RootParserStep(true, getSession().getWorkspace()));
+            statusStack.push(new RootParserStep(true, getSession()));
         }
     }
 

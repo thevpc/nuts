@@ -244,7 +244,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
         FilteredMap props = new FilteredMap(filter);
         NutsWorkspace ws = getSession().getWorkspace();
         NutsWorkspaceConfigManager rt = ws.config();
-        NutsWorkspaceOptions options = ws.config().getOptions();
+        NutsWorkspaceOptions options = ws.env().getBootOptions();
         Set<String> extraKeys = new TreeSet<>(extraProperties.keySet());
 
         props.put("name", stringValue(ws.getName()));
@@ -252,7 +252,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
 //        NutsIdFormat idFormat = ws.id().formatter();
         props.put("nuts-api-id", ws.getApiId());
         props.put("nuts-runtime-id", ws.getRuntimeId());
-        URL[] cl = rt.getBootClassWorldURLs();
+        URL[] cl = ws.env().getBootClassWorldURLs();
         List<NutsPath> runtimeClassPath = new ArrayList<>();
         if (cl != null) {
             for (URL url : cl) {
@@ -320,20 +320,20 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
         props.put("user-home", ws.io().path(System.getProperty("user.home")));
         props.put("user-dir", ws.io().path(System.getProperty("user.dir")));
         props.put("command-line-long",
-                ws.commandLine().create(ws.config().options().format().compact(false).getBootCommand())
+                ws.commandLine().create(ws.env().getBootOptions().format().compact(false).getBootCommand())
                         .format()
         );
-        props.put("command-line-short", ws.commandLine().create(ws.config().options().format().compact(true).getBootCommand())
+        props.put("command-line-short", ws.commandLine().create(ws.env().getBootOptions().format().compact(true).getBootCommand())
                 .format()
         );
-        props.put("inherited", ws.config().options().isInherited());
+        props.put("inherited", ws.env().getBootOptions().isInherited());
         props.put("inherited-nuts-boot-args", ws.commandLine().parse(System.getProperty("nuts.boot.args")).format());
         props.put("inherited-nuts-args", ws.commandLine().parse(System.getProperty("nuts.args"))
                 .format()
         );
-        props.put("creation-started", Instant.ofEpochMilli(ws.config().getCreationStartTimeMillis()));
-        props.put("creation-finished", Instant.ofEpochMilli(ws.config().getCreationFinishTimeMillis()));
-        props.put("creation-within", CoreTimeUtils.formatPeriodMilli(ws.config().getCreationTimeMillis()).trim());
+        props.put("creation-started", Instant.ofEpochMilli(ws.env().getCreationStartTimeMillis()));
+        props.put("creation-finished", Instant.ofEpochMilli(ws.env().getCreationFinishTimeMillis()));
+        props.put("creation-within", CoreTimeUtils.formatPeriodMilli(ws.env().getCreationTimeMillis()).trim());
         props.put("repositories-count", (ws.repos().setSession(getSession()).getRepositories().length));
         for (String extraKey : extraKeys) {
             props.put(extraKey, extraProperties.get(extraKey));

@@ -231,12 +231,12 @@ public final class NutsApplications {
         }
         if (session != null) {
             try {
-                NutsWorkspaceConfigManager cfg = session.getWorkspace().config();
-                showTrace = cfg.getOptions().isDebug()
-                        || (cfg.getOptions().getLogConfig() != null
-                        && cfg.getOptions().getLogConfig() != null
-                        && cfg.getOptions().getLogConfig().getLogTermLevel() != null
-                        && cfg.getOptions().getLogConfig().getLogTermLevel().intValue() <= Level.FINE.intValue());
+                NutsWorkspaceEnvManager env = session.getWorkspace().env();
+                showTrace = env.getBootOptions().isDebug()
+                        || (env.getBootOptions().getLogConfig() != null
+                        && env.getBootOptions().getLogConfig() != null
+                        && env.getBootOptions().getLogConfig().getLogTermLevel() != null
+                        && env.getBootOptions().getLogConfig().getLogTermLevel().intValue() <= Level.FINE.intValue());
             } catch (Exception ex2) {
                 session.getWorkspace().log().of(NutsApplications.class).with().level(Level.FINE).error(ex2).log("unable to check if option debug is enabled");
             }

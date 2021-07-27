@@ -78,4 +78,8 @@ public class DefaultNutsTextStyled extends AbstractNutsText implements NutsTextS
         return child;
     }
 
+    @Override
+    public String toString() {
+        return super.toString();
+    }
 }

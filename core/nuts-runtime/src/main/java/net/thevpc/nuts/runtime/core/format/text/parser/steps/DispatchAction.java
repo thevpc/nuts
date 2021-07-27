@@ -6,16 +6,18 @@ import net.thevpc.nuts.NutsText;
 public class DispatchAction extends ParserStep {
     private boolean spreadLines;
     private boolean lineStart;
+    private boolean exitOnBrace;
 
-    public DispatchAction(boolean spreadLines, boolean lineStart) {
+    public DispatchAction(boolean spreadLines, boolean lineStart,boolean exitOnBrace) {
         this.spreadLines = spreadLines;
         this.lineStart = lineStart;
+        this.exitOnBrace = exitOnBrace;
     }
 
     @Override
     public void consume(char c, DefaultNutsTextNodeParser.State p, boolean wasNewLine) {
         p.applyDrop();
-        p.applyStart(c, spreadLines, lineStart);
+        p.applyPush(c, spreadLines, lineStart, exitOnBrace);
     }
 
     @Override

@@ -334,9 +334,15 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
                 break;
             }
             default: {
-                writeRaw(h
-                        + style.getType().toString().toLowerCase() + style.getVariant()
-                        + ":");
+                if(style.getVariant()==0){
+                    writeRaw(h
+                            + style.getType().toString().toLowerCase()
+                            + ":");
+                }else {
+                    writeRaw(h
+                            + style.getType().toString().toLowerCase() + style.getVariant()
+                            + ":");
+                }
                 break;
             }
         }

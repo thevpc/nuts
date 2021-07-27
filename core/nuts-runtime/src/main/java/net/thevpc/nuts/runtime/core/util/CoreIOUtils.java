@@ -166,8 +166,8 @@ public class CoreIOUtils {
     }
 
 //    public static void clearMonitor(NutsPrintStream out, NutsWorkspace ws) {
-//        NutsTerminalMode terminalMode = ws.config().options().getTerminalMode();
-//        boolean bot = ws.config().options().isBot();
+//        NutsTerminalMode terminalMode = ws.env().getBootOptions().getTerminalMode();
+//        boolean bot = ws.env().getBootOptions().isBot();
 //        if (terminalMode == null) {
 //            terminalMode = bot ? NutsTerminalMode.FILTERED : NutsTerminalMode.FORMATTED;
 //        }
@@ -1962,7 +1962,7 @@ public class CoreIOUtils {
         public int exec() {
             try {
                 if (out != null) {
-                    out.run(NutsTerminalCommand.MOVE_LINE_START);
+                    out.resetLine();//.run(NutsTerminalCommand.MOVE_LINE_START);
                 }
                 ProcessBuilder2 p = pb.start();
                 return p.waitFor().getResult();

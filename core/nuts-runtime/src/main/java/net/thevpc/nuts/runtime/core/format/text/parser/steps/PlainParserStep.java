@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.core.format.text.parser.steps;
 
-import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextNodeParser;
 import net.thevpc.nuts.runtime.bundles.string.StringBuilder2;
 
@@ -15,15 +15,17 @@ public class PlainParserStep extends ParserStep {
 //    private boolean spreadLines;
     private boolean lineStart;
     private StringBuilder2 value = new StringBuilder2();
-    private NutsWorkspace ws;
+    private NutsSession session;
     private DefaultNutsTextNodeParser.State state;
     private IntPredicate exitCondition;
+    private boolean exitOnBrace;
+//    private static int _COUNT=0;
 
-    public PlainParserStep(char c, boolean lineStart, NutsWorkspace ws, DefaultNutsTextNodeParser.State state, IntPredicate exitCondition) {
+    public PlainParserStep(char c, boolean lineStart, NutsSession session, DefaultNutsTextNodeParser.State state, IntPredicate exitCondition,boolean exitOnBrace) {
         this.state = state;
         this.exitCondition = exitCondition;
 //        this.spreadLines = spreadLines;
-        this.ws = ws;
+        this.session = session;
         this.lineStart = state.isLineStart();
         if (c == '\\') {
             escape = new StringBuilder("\\");
@@ -32,13 +34,39 @@ public class PlainParserStep extends ParserStep {
         }
         last = c;
         state.setLineStart(c == '\n');
+        this.exitOnBrace = exitOnBrace;
+//        _COUNT++;
+//        System.err.println(" PlainParserStep "+c+" : "+value);
     }
 
-    public PlainParserStep(String s, boolean spreadLines, boolean lineStart, NutsWorkspace ws, DefaultNutsTextNodeParser.State state, IntPredicate exitCondition) {
-        this(s.charAt(0),lineStart, ws,state,exitCondition);
-        for (int i = 1; i < s.length(); i++) {
-            char c=s.charAt(i);
-            consume(c,state, false);
+    public PlainParserStep(String s, boolean spreadLines, boolean lineStart, NutsSession session, DefaultNutsTextNodeParser.State state, IntPredicate exitCondition,boolean preParsed,boolean exitOnBrace) {
+        this.state = state;
+        this.exitCondition = exitCondition;
+        this.exitOnBrace = exitOnBrace;
+//        this.spreadLines = spreadLines;
+        this.session = session;
+        this.lineStart = state.isLineStart();
+        if(preParsed){
+            value.append(s);
+            last = value.last();
+//            _COUNT++;
+//            System.err.println(" PlainParserStep "+s+" : "+value);
+            state.setLineStart(s.indexOf('\n')>=0);
+        }else {
+            char c=s.charAt(0);
+            if (c == '\\') {
+                escape = new StringBuilder("\\");
+            } else {
+                value.append(c);
+            }
+            last = c;
+            state.setLineStart(c == '\n');
+//            _COUNT++;
+//            System.err.println(" PlainParserStep "+c+" : "+value);
+            for (int i = 1; i < s.length(); i++) {
+                char c2 = s.charAt(i);
+                consume(c2, state, false);
+            }
         }
     }
 
@@ -66,10 +94,10 @@ public class PlainParserStep extends ParserStep {
                         if (oldLast == c) {
                             value.readLast();
                             if (value.length() == 0) {
-                                p.applyDropReplace(new StyledParserStep(c + "" + c, lineStart, ws, state));
+                                p.applyDropReplace(new StyledParserStep(c + "" + c, lineStart, session, state, exitOnBrace));
                                 return;
                             } else {
-                                p.applyPopReplace(new StyledParserStep(c + "" + c, lineStart, ws, state));
+                                p.applyPopReplace(new StyledParserStep(c + "" + c, lineStart, session, state, exitOnBrace));
                                 return;
                             }
                         }
@@ -230,7 +258,7 @@ public class PlainParserStep extends ParserStep {
                     }
                     return;
                 }
-                if (exitCondition != null && exitCondition.test(c)) {
+                if ((c=='}'&& exitOnBrace) || (exitCondition != null && exitCondition.test(c))) {
                     p.applyPopReplay(c);
                 } else {
                     value.append(c);
@@ -250,7 +278,7 @@ public class PlainParserStep extends ParserStep {
     public NutsText toText() {
         String t = value.toString();
 //        String q = NutsTextNodeWriterStringer.removeEscapes(t);
-        return ws.text().forPlain(t);
+        return session.getWorkspace().text().forPlain(t);
     }
 
     @Override

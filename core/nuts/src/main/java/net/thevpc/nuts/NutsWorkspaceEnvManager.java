@@ -24,6 +24,7 @@
  */
 package net.thevpc.nuts;
 
+import java.net.URL;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -108,6 +109,8 @@ public interface NutsWorkspaceEnvManager {
      */
     NutsWorkspaceEnvManager setProperty(String property, Object value);
 
+    NutsWorkspaceOptions getBootOptions();
+
     NutsOsFamily getOsFamily();
 
     NutsId getPlatform();
@@ -132,4 +135,10 @@ public interface NutsWorkspaceEnvManager {
 
     NutsWorkspaceEnvManager setSession(NutsSession session);
 
+    public ClassLoader getBootClassLoader() ;
+    public URL[] getBootClassWorldURLs() ;
+    public String getBootRepositories() ;
+    public long getCreationStartTimeMillis() ;
+    public long getCreationFinishTimeMillis() ;
+    public long getCreationTimeMillis() ;
 }

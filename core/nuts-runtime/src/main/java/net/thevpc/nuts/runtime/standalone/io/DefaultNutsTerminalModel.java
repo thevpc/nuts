@@ -55,7 +55,7 @@ public class DefaultNutsTerminalModel {
         } else {
             NutsWorkspace ws = session.getWorkspace();
             NutsId extId = ws.id().parser().parse("net.thevpc.nuts.ext:next-term#" + ws.getApiVersion());
-            if (!ws.config().isExcludedExtension(extId.toString(), ws.config().options())) {
+            if (!ws.config().isExcludedExtension(extId.toString(), ws.env().getBootOptions())) {
                 NutsWorkspaceExtensionManager extensions = ws.extensions();
                 extensions.setSession(session).loadExtension(extId);
                 NutsSystemTerminal systemTerminal = createSystemTerminal(

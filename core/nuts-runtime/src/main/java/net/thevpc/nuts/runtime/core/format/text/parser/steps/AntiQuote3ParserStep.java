@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.core.format.text.parser.steps;
 
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsTerminalCommand;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.core.format.text.DefaultNutsTextManager;
@@ -21,12 +22,14 @@ public class AntiQuote3ParserStep extends ParserStep {
     int status = START_QUOTES;
     char c0;
     boolean spreadLines;
-    NutsWorkspace ws;
+    NutsSession session;
+    boolean exitOnBrace;
 
-    public AntiQuote3ParserStep(char c, boolean spreadLines,NutsWorkspace ws) {
+    public AntiQuote3ParserStep(char c, boolean spreadLines, NutsSession session,boolean exitOnBrace) {
         start.append(c0=c);
         this.spreadLines=spreadLines;
-        this.ws=ws;
+        this.session = session;
+        this.exitOnBrace = exitOnBrace;
     }
 
 //    public AntiQuote3ParserStep(String c) {
@@ -43,7 +46,7 @@ public class AntiQuote3ParserStep extends ParserStep {
                     } else {
                         //too much, ignore it all and consider it as forPlain
                         start.append(c);
-                        p.applyDropReplace(new PlainParserStep(start.toString(),spreadLines,false,ws,p,cc->cc=='\''));
+                        p.applyDropReplacePreParsedPlain(start.toString(),exitOnBrace);
                     }
                 } else {
                     if (start.length() == maxSize) {
@@ -59,7 +62,7 @@ public class AntiQuote3ParserStep extends ParserStep {
                         status = CONTENT;
                     }else{
                         start.append(c);
-                        p.applyDropReplace(new PlainParserStep(start.toString(),spreadLines,false,ws,p,cc->cc=='\''));
+                        p.applyDropReplacePreParsedPlain(start.toString(),exitOnBrace);
                     }
                 }
 //                    p.applyContinue();
@@ -128,7 +131,7 @@ public class AntiQuote3ParserStep extends ParserStep {
     public NutsText toText() {
         char[] dst = new char[value.length()];
         value.getChars(0,value.length(), dst,0 );
-        DefaultNutsTextManager factory0 = (DefaultNutsTextManager) ws.text();
+        DefaultNutsTextManager factory0 = (DefaultNutsTextManager) session.getWorkspace().text();
         int i=0;
         int endOffset=-1;
         if(dst.length>0 && dst[i]=='!') {

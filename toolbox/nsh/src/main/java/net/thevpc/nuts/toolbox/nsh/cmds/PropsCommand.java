@@ -298,7 +298,7 @@ public class PropsCommand extends AbstractNshBuiltin {
             switch (format) {
                 case AUTO: {
                     NutsObjectFormat f = context.getWorkspace().formats().object().setSession(context.getSession()).setValue(p);
-                    f.configure(true, context.getWorkspace().config().options().getOutputFormatOptions());
+                    f.configure(true, context.getWorkspace().env().getBootOptions().getOutputFormatOptions());
                     f.configure(true, context.getSession().getOutputFormatOptions());
                     f.println(context.getSession().out());
                     break;

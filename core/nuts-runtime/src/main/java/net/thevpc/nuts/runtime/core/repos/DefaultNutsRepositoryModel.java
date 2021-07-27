@@ -256,8 +256,8 @@ public class DefaultNutsRepositoryModel {
                 options.setConfig(conf);
                 if (options.isEnabled()) {
                     options.setEnabled(
-                            session.getWorkspace().config().options().getRepositories() == null
-                                    || NutsRepositorySelector.parse(session.getWorkspace().config().options().getRepositories()).acceptExisting(
+                            session.getWorkspace().env().getBootOptions().getRepositories() == null
+                                    || NutsRepositorySelector.parse(session.getWorkspace().env().getBootOptions().getRepositories()).acceptExisting(
                                     options.getName(),
                                     conf.getLocation()
                             ));
@@ -266,8 +266,8 @@ public class DefaultNutsRepositoryModel {
                 options.setConfig(conf);
                 if (options.isEnabled()) {
                     options.setEnabled(
-                            session.getWorkspace().config().options().getRepositories() == null
-                                    || NutsRepositorySelector.parse(session.getWorkspace().config().options().getRepositories()).acceptExisting(
+                            session.getWorkspace().env().getBootOptions().getRepositories() == null
+                                    || NutsRepositorySelector.parse(session.getWorkspace().env().getBootOptions().getRepositories()).acceptExisting(
                                     options.getName(),
                                     conf.getLocation()
                             ));
@@ -340,7 +340,7 @@ public class DefaultNutsRepositoryModel {
                 }
                 conf = ws.elem().setSession(session).setContentType(NutsContentType.JSON).parse(file, NutsRepositoryConfig.class);
             } catch (RuntimeException ex) {
-                if (session.getWorkspace().config().options().isRecover()) {
+                if (session.getWorkspace().env().getBootOptions().isRecover()) {
                     onLoadRepositoryError(file, name, null, ex, session);
                 } else {
                     throw ex;
@@ -355,7 +355,8 @@ public class DefaultNutsRepositoryModel {
     }
 
     private void onLoadRepositoryError(Path file, String name, String uuid, Throwable ex, NutsSession session) {
-        NutsWorkspaceConfigManager wconfig = getWorkspace().config();
+        NutsWorkspaceConfigManager wconfig = getWorkspace().config().setSession(session);
+        NutsWorkspaceEnvManager wenv = getWorkspace().env().setSession(session);
         if (wconfig.isReadOnly()) {
             throw new UncheckedIOException("error loading repository " + file.toString(), new IOException(ex));
         }
@@ -379,7 +380,7 @@ public class DefaultNutsRepositoryModel {
         try (PrintStream o = new PrintStream(logError.resolve(fileName + ".error").toFile())) {
             o.println("workspace.path:" + workspace.locations().getWorkspaceLocation());
             o.println("repository.path:" + file);
-            o.println("workspace.options:" + wconfig.getOptions().format().setCompact(false).setRuntime(true).setInit(true).setExported(true).getBootCommandLine());
+            o.println("workspace.options:" + wenv.getBootOptions().format().setCompact(false).setRuntime(true).setInit(true).setExported(true).getBootCommandLine());
             for (NutsStoreLocation location : NutsStoreLocation.values()) {
                 o.println("location." + location.id() + ":" + workspace.locations().getStoreLocation(location));
             }

@@ -121,7 +121,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                 }
 
                 HashMap<String, String> osEnv = new HashMap<>();
-                NutsWorkspaceOptionsBuilder options = ws.config().options().copy();
+                NutsWorkspaceOptionsBuilder options = ws.env().getBootOptions().copy();
 
                 //copy session parameters to the newly created workspace
                 options.setDry(execSession.isDry());
@@ -474,7 +474,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                 mainMethod.invoke(nutsApp, new Object[]{getSession().copy(), joptions.getApp().toArray(new String[0])});
             } else {
                 //NutsWorkspace
-                System.setProperty("nuts.boot.args", getSession().getWorkspace().config().options()
+                System.setProperty("nuts.boot.args", getSession().getWorkspace().env().getBootOptions()
                         .format().exported().compact().getBootCommandLine()
                 );
                 mainMethod = cls.getMethod("main", String[].class);

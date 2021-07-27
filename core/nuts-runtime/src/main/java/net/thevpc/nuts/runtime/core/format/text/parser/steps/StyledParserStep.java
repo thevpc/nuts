@@ -4,12 +4,14 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.collections.EvictingCharQueue;
 import net.thevpc.nuts.runtime.bundles.string.StringBuilder2;
 import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextNodeParser;
+import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextPlain;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.IntPredicate;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class StyledParserStep extends ParserStep {
 
@@ -18,19 +20,20 @@ public class StyledParserStep extends ParserStep {
     int sharpsStartCount = 0;
     int sharpsEndCount = 0;
     CurState curState = CurState.EMPTY;
-    List<NutsText> childrenTextNodes = new ArrayList<>();
-    StringBuilder2 sharp_name = new StringBuilder2();
-    StringBuilder2 sharp_content = new StringBuilder2();
+    List<NutsText> children = new ArrayList<>();
+    StringBuilder2 name = new StringBuilder2();
+    StringBuilder2 content = new StringBuilder2();
     boolean lineStart;
 //    List<ParserStep> children = new ArrayList<>();
     int maxSize = 10;
-    private NutsWorkspace ws;
+    private NutsSession session;
     private EvictingCharQueue charQueue = new EvictingCharQueue(5);
     private DefaultNutsTextNodeParser.State state;
     private StyledParserStepCommandParser parseHelper = new StyledParserStepCommandParser();
     private boolean wasEscape;
+    private boolean exitOnBrace;
 
-    public StyledParserStep(char c, boolean lineStart, NutsWorkspace ws, DefaultNutsTextNodeParser.State state) {
+    public StyledParserStep(char c, boolean lineStart, NutsSession session, DefaultNutsTextNodeParser.State state,boolean exitOnBrace) {
         switch (c) {
             case '#': {
                 curState = CurState.SHARP;
@@ -43,11 +46,13 @@ public class StyledParserStep extends ParserStep {
         }
 //        this.spreadLines = spreadLines;
         this.lineStart = lineStart;
-        this.ws = ws;
+        this.session = session;
         this.state = state;
+        this.exitOnBrace = exitOnBrace;
     }
 
-    public StyledParserStep(String c, boolean lineStart, NutsWorkspace ws, DefaultNutsTextNodeParser.State state) {
+    public StyledParserStep(String c, boolean lineStart, NutsSession session, DefaultNutsTextNodeParser.State state,boolean exitOnBrace) {
+        this.session = session;
         if (c.charAt(0) == '#') {
             curState = CurState.SHARP;
             sharpsStartCount = 1;
@@ -59,12 +64,13 @@ public class StyledParserStep extends ParserStep {
         }
 //        this.spreadLines = spreadLines;
         this.lineStart = lineStart;
-        this.ws = ws;
         this.state = state;
+        this.exitOnBrace = exitOnBrace;
     }
 
     public void consume(char c, DefaultNutsTextNodeParser.State state, boolean wasNewLine) {
         charQueue.add(c);
+        NutsTextManager text = session.getWorkspace().text();
         switch (curState) {
             case EMPTY: {
                 throw new IllegalArgumentException("unexpected");
@@ -74,7 +80,8 @@ public class StyledParserStep extends ParserStep {
                     case '\\': {
                         wasEscape=true;
                         if(sharpsStartCount==1){
-                            state.applyDropReplace(new PlainParserStep("#",false,lineStart, ws,state,null));
+                            beforeChangingStep();
+                            state.applyDropReplacePreParsedPlain("#", exitOnBrace);
                         }else{
                             curState=CurState.SHARP_CONTENT;
                         }
@@ -86,19 +93,21 @@ public class StyledParserStep extends ParserStep {
                         break;
                     }
                     case ')': {
+                        beforeChangingStep();
                         state.applyDropReplace(new TitleParserStep(
-                                CoreStringUtils.fillString("#", sharpsStartCount) + ")", ws));
+                                CoreStringUtils.fillString("#", sharpsStartCount) + ")", session));
                         break;
                     }
                     case NutsConstants.Ntf.SILENT: {
-                        state.applyDropReplace(new PlainParserStep(CoreStringUtils.fillString("#", sharpsStartCount), lineStart, false, ws, state, null));
+                        beforeChangingStep();
+                        state.applyDropReplacePreParsedPlain(CoreStringUtils.fillString("#", sharpsStartCount), exitOnBrace);
                         break;
                     }
                     case ':': {
                         if (sharpsStartCount == 2) {
                             curState = CurState.SHARP2_COL_NAME;
                         } else {
-                            sharp_content.append(c);
+                            content.append(c);
                             curState = CurState.SHARP_CONTENT;
                         }
                         break;
@@ -107,17 +116,25 @@ public class StyledParserStep extends ParserStep {
                         if (sharpsStartCount == 2) {
                             curState = CurState.SHARP2_OBRACE_NAME;
                         } else {
-                            sharp_content.append(c);
+                            content.append(c);
                             curState = CurState.SHARP_CONTENT;
                         }
                         break;
                     }
                     default: {
-                        if (sharpsStartCount == 1) {
-                            state.applyDropReplace(new PlainParserStep(CoreStringUtils.fillString("#", sharpsStartCount) + c, lineStart, false, ws, state, null));
-                        } else {
-                            sharp_content.append(c);
-                            curState = CurState.SHARP_CONTENT;
+                        if(c=='}' && exitOnBrace){
+                            state.applyDropReplacePreParsedPlain(CoreStringUtils.fillString("#", sharpsStartCount),false);
+                            state.applyPop();
+                            state.applyNextChar(c);
+                        }else {
+                            if (sharpsStartCount == 1) {
+                                beforeChangingStep();
+                                state.applyDropReplacePreParsedPlain(CoreStringUtils.fillString("#", sharpsStartCount), exitOnBrace);
+                                state.applyNextChar(c);
+                            } else {
+                                content.append(c);
+                                curState = CurState.SHARP_CONTENT;
+                            }
                         }
                         break;
                     }
@@ -130,7 +147,7 @@ public class StyledParserStep extends ParserStep {
                     case '\\': {
                         if(wasEscape){
                             wasEscape = false;
-                            sharp_content.append(c);
+                            content.append(c);
                         }else {
                             wasEscape = true;
                         }
@@ -139,10 +156,10 @@ public class StyledParserStep extends ParserStep {
                     case '#': {
                         if(wasEscape) {
                             wasEscape = false;
-                            sharp_content.append(c);
+                            content.append(c);
                         }else {
-                            if (!sharp_content.isEmpty()) {
-                                childrenTextNodes.add(ws.text().forPlain(sharp_content.readAll()));
+                            if (!content.isEmpty()) {
+                                children.add(text.forPlain(content.readAll()));
                             }
                             if (curState == CurState.SHARP_CONTENT) {
                                 curState = CurState.SHARP_CONTENT_SHARP;
@@ -158,19 +175,20 @@ public class StyledParserStep extends ParserStep {
                     case '`': {
                         if(wasEscape) {
                             wasEscape = false;
-                            sharp_content.append(c);
+                            content.append(c);
                         }else {
-                            if (!sharp_content.isEmpty()) {
-                                childrenTextNodes.add(ws.text().forPlain(sharp_content.readAll()));
+                            if (!content.isEmpty()) {
+                                children.add(text.forPlain(content.readAll()));
                             }
-                            state.applyStart(c, true, false);
+                            beforeChangingStep();
+                            state.applyPush(c, true, false, exitOnBrace);
                         }
                         break;
                     }
                     case NutsConstants.Ntf.SILENT: {
                         if(wasEscape) {
                             wasEscape = false;
-                            sharp_content.append(c);
+                            content.append(c);
                         }else {
                             //ignore!
                         }
@@ -179,10 +197,14 @@ public class StyledParserStep extends ParserStep {
                     default: {
                         if(wasEscape) {
                             wasEscape = false;
-                            sharp_content.append('\\');
-                            sharp_content.append(c);
+                            content.append('\\');
+                            content.append(c);
                         }else {
-                            sharp_content.append(c);
+//                            if(c=='}' && exitOnBrace){
+//                                logErr("encountered '}' whiled expected '#'. force closing styled text");
+//                            }else {
+                                content.append(c);
+//                            }
                         }
                     }
                 }
@@ -201,7 +223,7 @@ public class StyledParserStep extends ParserStep {
                             }
                             state.applyPopReplay(c);
                         }else{
-                            sharp_content.append(CoreStringUtils.fillString("#", sharpsEndCount));
+                            content.append(CoreStringUtils.fillString("#", sharpsEndCount));
                             sharpsEndCount=0;
                             if (curState == CurState.SHARP_CONTENT_SHARP) {
                                 curState = CurState.SHARP_CONTENT;
@@ -226,7 +248,8 @@ public class StyledParserStep extends ParserStep {
                             state.applyPop();
                         } else {
                             logErr("expected " + CoreStringUtils.fillString("#", sharpsStartCount) + "<END>");
-                            childrenTextNodes.add(ws.text().forPlain(CoreStringUtils.fillString("#", sharpsStartCount)));
+                            sharpsEndCount=0;
+                            children.add(text.forPlain(CoreStringUtils.fillString("#", sharpsStartCount)));
                             if (curState == CurState.SHARP_CONTENT_SHARP) {
                                 curState = CurState.SHARP_CONTENT_SHARP_END;
                             } else if (curState == CurState.SHARP2_COL_NAME_CONTENT_SHARP) {
@@ -244,7 +267,14 @@ public class StyledParserStep extends ParserStep {
                             }
                             state.applyPopReplay(c);
                         } else {
-                            state.applyPush(new StyledParserStep("#", false, ws, state));
+                            if (curState == CurState.SHARP_CONTENT_SHARP) {
+                                curState = CurState.SHARP_CONTENT;
+                            } else if (curState == CurState.SHARP2_COL_NAME_CONTENT_SHARP) {
+                                curState = CurState.SHARP2_COL_NAME_CONTENT;
+                            }
+                            sharpsEndCount=0;
+                            beforeChangingStep();
+                            state.applyPush(new StyledParserStep("#", false, session, state,false));
                             for (int i = 0; i < sharpsEndCount - 1; i++) {
                                 state.applyNextChar('#');
                             }
@@ -261,7 +291,7 @@ public class StyledParserStep extends ParserStep {
                     case '\\': {
                         if(wasEscape){
                             wasEscape = false;
-                            sharp_name.append(c);
+                            name.append(c);
                         }else {
                             wasEscape = true;
                         }
@@ -270,7 +300,7 @@ public class StyledParserStep extends ParserStep {
                     case ':': {
                         if(wasEscape){
                             wasEscape = false;
-                            sharp_name.append(c);
+                            name.append(c);
                         }else {
                             if(curState==CurState.SHARP2_COL_NAME) {
                                 curState = CurState.SHARP2_COL_NAME_CONTENT;
@@ -291,10 +321,10 @@ public class StyledParserStep extends ParserStep {
                         if(wasEscape){
                             wasEscape = false;
                             if(c==NutsConstants.Ntf.SILENT) {
-                                sharp_name.append(c);
+                                name.append(c);
                             }else{
-                                sharp_name.append('\\');
-                                sharp_name.append(c);
+                                name.append('\\');
+                                name.append(c);
                             }
                         }else {
                             logErr("expected ':'");
@@ -309,21 +339,21 @@ public class StyledParserStep extends ParserStep {
                     default: {
                         if(wasEscape){
                             if (c <= 32 || c==':'|| c=='#') {
-                                sharp_name.append(c);
+                                name.append(c);
                             } else {
-                                sharp_name.append('\\');
-                                sharp_name.append(c);
+                                name.append('\\');
+                                name.append(c);
                             }
                             wasEscape=false;
                         }else {
                             if (c <= 32) {
-                                if (sharp_name.isEmpty()) {
+                                if (name.isEmpty()) {
                                     //ignore
                                 } else {
-                                    sharp_name.append(c);
+                                    name.append(c);
                                 }
                             } else {
-                                sharp_name.append(c);
+                                name.append(c);
                             }
                         }
                     }
@@ -335,24 +365,25 @@ public class StyledParserStep extends ParserStep {
                     case '#': {
                         if(wasEscape){
                             wasEscape=false;
-                            sharp_content.append(c);
+                            content.append(c);
                         }else {
-                            if (!sharp_content.isEmpty()) {
-                                childrenTextNodes.add(ws.text().forPlain(sharp_content.readAll()));
+                            if (!content.isEmpty()) {
+                                children.add(text.forPlain(content.readAll()));
                             }
-                            state.applyPush(new StyledParserStep("#", false, ws, state));
+                            beforeChangingStep();
+                            state.applyPush(new StyledParserStep("#", false, session, state,true));
                         }
                         break;
                     }
                     case '}': {
                         if(wasEscape){
                             wasEscape=false;
-                            sharp_content.append(c);
+                            content.append(c);
                         }else {
-                            if (!sharp_content.isEmpty()) {
-                                childrenTextNodes.add(ws.text().forPlain(sharp_content.readAll()));
+                            if (!content.isEmpty()) {
+                                children.add(text.forPlain(content.readAll()));
                             }
-                            curState = CurState.SHARP2_OBRACE_NAME_COL_CONTENT;
+                            curState = CurState.SHARP2_OBRACE_NAME_COL_CONTENT_CBRACE;
                         }
                         break;
 
@@ -360,10 +391,11 @@ public class StyledParserStep extends ParserStep {
                     case NutsConstants.Ntf.SILENT: {
                         if(wasEscape){
                             wasEscape=false;
-                            sharp_content.append(c);
+                            content.append(c);
                         }else {
-                            if (!sharp_content.isEmpty()) {
-                                childrenTextNodes.add(ws.text().forPlain(sharp_content.readAll()));
+                            //ignore
+                            if (!content.isEmpty()) {
+                                children.add(text.forPlain(content.readAll()));
                             }
                         }
                         break;
@@ -371,22 +403,23 @@ public class StyledParserStep extends ParserStep {
                     case '`': {
                         if(wasEscape){
                             wasEscape=false;
-                            sharp_content.append(c);
+                            content.append(c);
                         }else {
-                            if (!sharp_content.isEmpty()) {
-                                childrenTextNodes.add(ws.text().forPlain(sharp_content.readAll()));
+                            if (!content.isEmpty()) {
+                                children.add(text.forPlain(content.readAll()));
                             }
-                            state.applyStart(c, true, false);
+                            beforeChangingStep();
+                            state.applyPush(c, true, false, exitOnBrace);
                         }
                         break;
                     }
                     default: {
                         if(wasEscape){
                             wasEscape=false;
-                            sharp_content.append('\\');
-                            sharp_content.append(c);
+                            content.append('\\');
+                            content.append(c);
                         }else {
-                            sharp_content.append(c);
+                            content.append(c);
                         }
                     }
                 }
@@ -395,7 +428,7 @@ public class StyledParserStep extends ParserStep {
             case SHARP2_OBRACE_NAME_COL_CONTENT_CBRACE: {
                 switch (c) {
                     case '\\': {
-                        sharp_content.append('{');
+                        content.append('{');
                         curState=CurState.SHARP2_OBRACE_NAME_COL_CONTENT;
                         wasEscape=true;
                         break;
@@ -406,19 +439,20 @@ public class StyledParserStep extends ParserStep {
                         break;
                     }
                     case '`': {
-                        childrenTextNodes.add(ws.text().forPlain("}"));
+                        children.add(text.forPlain("}"));
                         curState = CurState.SHARP2_OBRACE_NAME_COL_CONTENT;
-                        state.applyStart(c, true, false);
+                        beforeChangingStep();
+                        state.applyPush(c, true, false, exitOnBrace);
                         break;
                     }
                     case NutsConstants.Ntf.SILENT: {
-                        childrenTextNodes.add(ws.text().forPlain("}"));
+                        children.add(text.forPlain("}"));
                         curState = CurState.SHARP2_OBRACE_NAME_COL_CONTENT;
                         //ignore
                         break;
                     }
                     default: {
-                        sharp_content.append(c);
+                        content.append(c);
                     }
                 }
                 break;
@@ -426,8 +460,9 @@ public class StyledParserStep extends ParserStep {
             case SHARP2_OBRACE_NAME_COL_CONTENT_CBRACE_SHARP: {
                 switch (c) {
                     case '\\': {
-                        sharp_content.append('{');
-                        sharp_content.append('#');
+                        sharpsEndCount=0;
+                        content.append('{');
+                        content.append('#');
                         curState=CurState.SHARP2_OBRACE_NAME_COL_CONTENT;
                         wasEscape=true;
                         break;
@@ -439,21 +474,25 @@ public class StyledParserStep extends ParserStep {
                         break;
                     }
                     case '`': {
-                        childrenTextNodes.add(ws.text().forPlain("}#"));
+                        sharpsEndCount=0;
+                        children.add(text.forPlain("}#"));
                         curState = CurState.SHARP2_OBRACE_NAME_COL_CONTENT;
-                        state.applyStart(c, true, false);
+                        beforeChangingStep();
+                        state.applyPush(c, true, false, exitOnBrace);
                         break;
                     }
                     case NutsConstants.Ntf.SILENT: {
-                        childrenTextNodes.add(ws.text().forPlain("}#"));
+                        sharpsEndCount=0;
+                        children.add(text.forPlain("}#"));
                         curState = CurState.SHARP2_OBRACE_NAME_COL_CONTENT;
                         //ignore
                         break;
                     }
                     default: {
-                        childrenTextNodes.add(ws.text().forPlain("}#"));
+                        sharpsEndCount=0;
+                        children.add(text.forPlain("}#"));
                         curState = CurState.SHARP2_OBRACE_NAME_COL_CONTENT;
-                        sharp_content.append(c);
+                        content.append(c);
                     }
                 }
                 break;
@@ -465,7 +504,8 @@ public class StyledParserStep extends ParserStep {
                         curState=CurState.SHARP_CONTENT;
                         int _sharpsEndCount=sharpsEndCount;
                         sharpsEndCount=0;
-                        state.applyPush(new StyledParserStep("#", false, ws, state));
+                        beforeChangingStep();
+                        state.applyPush(new StyledParserStep("#", false, session, state,false));
                         for (int i = 0; i < _sharpsEndCount - 1; i++) {
                             state.applyNextChar('#');
                         }
@@ -473,8 +513,8 @@ public class StyledParserStep extends ParserStep {
                         break;
                     }
                     default:{
-                        if (!sharp_content.isEmpty()) {
-                            childrenTextNodes.add(ws.text().forPlain(sharp_content.readAll()));
+                        if (!content.isEmpty()) {
+                            children.add(text.forPlain(content.readAll()));
                         }
                         state.applyPopReplay(c);
                     }
@@ -488,7 +528,8 @@ public class StyledParserStep extends ParserStep {
                         curState=CurState.SHARP2_COL_NAME_CONTENT;
                         int _sharpsEndCount=sharpsEndCount;
                         sharpsEndCount=0;
-                        state.applyPush(new StyledParserStep("#", false, ws, state));
+                        beforeChangingStep();
+                        state.applyPush(new StyledParserStep("#", false, session, state,false));
                         for (int i = 0; i < _sharpsEndCount - 1; i++) {
                             state.applyNextChar('#');
                         }
@@ -496,8 +537,8 @@ public class StyledParserStep extends ParserStep {
                         break;
                     }
                     default:{
-                        if (!sharp_content.isEmpty()) {
-                            childrenTextNodes.add(ws.text().forPlain(sharp_content.readAll()));
+                        if (!content.isEmpty()) {
+                            children.add(text.forPlain(content.readAll()));
                         }
                         state.applyPopReplay(c);
                     }
@@ -505,8 +546,8 @@ public class StyledParserStep extends ParserStep {
                 break;
             }
             case SHARP2_OBRACE_NAME_COL_CONTENT_CBRACE_SHARP2_END:{
-                if (!sharp_content.isEmpty()) {
-                    childrenTextNodes.add(ws.text().forPlain(sharp_content.readAll()));
+                if (!content.isEmpty()) {
+                    children.add(text.forPlain(content.readAll()));
                 }
                 state.applyPopReplay(c);
                 break;
@@ -517,41 +558,55 @@ public class StyledParserStep extends ParserStep {
         }
     }
 
+    private void beforeChangingStep() {
+        charQueue.clear();
+    }
+
     @Override
     public void appendChild(ParserStep tt) {
-        childrenTextNodes.add(tt.toText());
+        NutsText n = tt.toText();
+        if(n instanceof DefaultNutsTextPlain
+            && !children.isEmpty()
+            && children.get(children.size()-1) instanceof  DefaultNutsTextPlain) {
+            //consecutive plain text
+            NutsTextPlain p1=(NutsTextPlain) n;
+            NutsTextPlain p2=(NutsTextPlain) children.remove(children.size()-1);
+            children.add(new DefaultNutsTextPlain(
+                    session,p1.getText()+p2.getText()
+            ));
+        }else{
+            children.add(n);
+        }
     }
 
     @Override
     public NutsText toText() {
-        List<NutsText> childrenTextNodes2 = new ArrayList<>(childrenTextNodes);
-        if (!sharp_content.isEmpty()) {
-            childrenTextNodes2.add(ws.text().forPlain(sharp_content.toString()));
+        List<NutsText> childrenTextNodes2 = new ArrayList<>(children);
+        NutsTextManager text = session.getWorkspace().text();
+        if (!content.isEmpty()) {
+            childrenTextNodes2.add(text.forPlain(content.toString()));
         }
 
-        NutsText a = ws.text().forList(childrenTextNodes2.toArray(new NutsText[0])).simplify();
+        NutsText a = text.forList(childrenTextNodes2.toArray(new NutsText[0])).simplify();
         if(a==null){
-            return  ws.text().forPlain("");
+            return  text.forPlain("");
         }
         switch (curState) {
             case SHARP:
             {
-                return ws.text().forPlain("#");
+                return text.forPlain("#");
             }
             case EMPTY:{
-                return ws.text().forPlain("");
+                return text.forPlain("");
             }
             case SHARP_CONTENT:
             case SHARP_CONTENT_SHARP:
             case SHARP_CONTENT_SHARP_END:
             {
-                return ws.text().forStyled(a, NutsTextStyle.primary(sharpsStartCount));
+                return text.forStyled(a, NutsTextStyle.primary(sharpsStartCount));
             }
             case SHARP2_OBRACE_NAME:{
-                return ws.text().forPlain("##{"+sharp_name.toString());
-            }
-            case SHARP2_OBRACE_NAME_COL:{
-                return ws.text().forPlain("##{"+sharp_name.toString()+":");
+                return text.forPlain("##{"+ name.toString());
             }
             case SHARP2_OBRACE_NAME_COL_CONTENT:
             case SHARP2_COL_NAME_SHARP1:
@@ -564,14 +619,14 @@ public class StyledParserStep extends ParserStep {
             case SHARP2_COL_NAME_CONTENT_SHARP:
             case SHARP2_COL_NAME_CONTENT_SHARP_END:
             {
-                NutsTextStyle s = parseHelper.parseSimpleNutsTextStyle(sharp_name.toString());
+                NutsTextStyle s = parseHelper.parseSimpleNutsTextStyle(name.toString());
                 if (s != null) {
-                    return ws.text().forStyled(a, s);
+                    return text.forStyled(a, s);
                 }
-                throw new NutsIllegalArgumentException(ws.createSession(), NutsMessage.cstyle("unable to resolve style from %s",s));
+                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unable to resolve style from %s",s));
             }
         }
-        throw new NutsUnsupportedEnumException(ws.createSession(), curState);
+        throw new NutsUnsupportedEnumException(session, curState);
     }
 
     @Override
@@ -591,11 +646,34 @@ public class StyledParserStep extends ParserStep {
     }
 
     private void logErr(String s) {
-        System.err.println(s);
+        if(session.getWorkspace().env().getBootOptions().isDebug()) {
+            System.err.println(s);
+        }
     }
 
     @Override
     public String toString() {
+        String contentString = (children.stream().map(Object::toString).collect(Collectors.joining()))
+                + content;
+        switch (curState){
+            case EMPTY:return "";
+            case SHARP:return CoreStringUtils.fillString("#", sharpsStartCount);
+            case SHARP_CONTENT:return CoreStringUtils.fillString("#", sharpsStartCount)+contentString;
+            case SHARP_CONTENT_SHARP:
+            case SHARP_CONTENT_SHARP_END:return CoreStringUtils.fillString("#", sharpsStartCount)+contentString+CoreStringUtils.fillString("#", sharpsEndCount);
+            case SHARP2_COL_NAME:return CoreStringUtils.fillString("#", sharpsStartCount)+":"+name;
+            case SHARP2_COL_NAME_SHARP1:return CoreStringUtils.fillString("#", sharpsStartCount)+":"+name+"#";
+            case SHARP2_COL_NAME_SHARP2:return CoreStringUtils.fillString("#", sharpsStartCount)+":"+name+"##";
+            case SHARP2_COL_NAME_CONTENT:return CoreStringUtils.fillString("#", sharpsStartCount)+":"+name+":"+contentString;
+            case SHARP2_COL_NAME_CONTENT_SHARP:
+            case SHARP2_COL_NAME_CONTENT_SHARP_END:return CoreStringUtils.fillString("#", sharpsStartCount)+":"+name+":"+contentString+CoreStringUtils.fillString("#", sharpsEndCount);
+            case SHARP2_OBRACE_NAME:return CoreStringUtils.fillString("#", sharpsStartCount)+"{"+name;
+            case SHARP2_OBRACE_NAME_COL_CONTENT:return CoreStringUtils.fillString("#", sharpsStartCount)+"{"+name+":"+contentString;
+            case SHARP2_OBRACE_NAME_COL_CONTENT_CBRACE:return CoreStringUtils.fillString("#", sharpsStartCount)+"{"+name+":"+content+"}";
+            case SHARP2_OBRACE_NAME_COL_CONTENT_CBRACE_SHARP:
+            case SHARP2_OBRACE_NAME_COL_CONTENT_CBRACE_SHARP2_END:return CoreStringUtils.fillString("#", sharpsStartCount)+"{"+name+":"+contentString+"}"+CoreStringUtils.fillString("#", sharpsEndCount);
+            default:return "<unexpected>";
+        }
 //        StringBuilder sb = new StringBuilder("Typed(" + CoreStringUtils.dblQuote(start.toString()));
 //        if (!started) {
 //            sb.append(",<NEW>");
@@ -607,11 +685,11 @@ public class StyledParserStep extends ParserStep {
 //        sb.append(",END(").append(CoreStringUtils.dblQuote(end.toString())).append(")");
 //        sb.append(isComplete() ? "" : ",incomplete");
 //        return sb.append(")").toString();
-        StringBuilder sb = new StringBuilder();
-        for (NutsText parserStep : childrenTextNodes) {
-            sb.append(parserStep.toString());
-        }
-        return sb.toString();
+//        StringBuilder sb = new StringBuilder();
+//        for (NutsText parserStep : childrenTextNodes) {
+//            sb.append(parserStep.toString());
+//        }
+//        return sb.toString();
     }
 
     enum CurState {
@@ -635,7 +713,6 @@ public class StyledParserStep extends ParserStep {
         // ##{<name>
         SHARP2_OBRACE_NAME,
         // ##{<name>:
-        SHARP2_OBRACE_NAME_COL,
         // ##{<name>:<sub-node>
         SHARP2_OBRACE_NAME_COL_CONTENT,
         // ##{<name>:<sub-node>}

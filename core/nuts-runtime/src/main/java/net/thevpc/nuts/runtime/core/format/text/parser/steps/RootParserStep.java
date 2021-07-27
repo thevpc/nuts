@@ -1,25 +1,27 @@
 package net.thevpc.nuts.runtime.core.format.text.parser.steps;
 
-import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NutsTextPlain;
 import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextNodeParser;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import net.thevpc.nuts.NutsText;
+import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextPlain;
 
 public class RootParserStep extends ParserStep {
     boolean spreadLines;
     LinkedList<ParserStep> available = new LinkedList<>();
-    private NutsWorkspace ws;
-    public RootParserStep(boolean spreadLines,NutsWorkspace ws) {
+    private NutsSession session;
+    public RootParserStep(boolean spreadLines, NutsSession session) {
         this.spreadLines = spreadLines;
-        this.ws = ws;
+        this.session = session;
     }
 
     @Override
     public void consume(char c, DefaultNutsTextNodeParser.State p, boolean wasNewLine) {
-        p.applyStart(c, spreadLines, wasNewLine);
+        p.applyPush(c, spreadLines, wasNewLine, false);
     }
 
     public ParserStep pop() {
@@ -38,8 +40,8 @@ public class RootParserStep extends ParserStep {
         return available.size();
     }
 
-    public void appendChild(ParserStep tt) {
-        available.add(tt);
+    public void appendChild(ParserStep n) {
+        available.add(n);
     }
 
     @Override
@@ -53,9 +55,21 @@ public class RootParserStep extends ParserStep {
             if (!partial && !a.isComplete()) {
                 partial = true;
             }
-            all.add(a.toText());
+            NutsText n = a.toText();
+            if(n instanceof DefaultNutsTextPlain
+                    && !all.isEmpty()
+                    && all.get(all.size()-1) instanceof  DefaultNutsTextPlain) {
+                //consecutive plain text
+                NutsTextPlain p1=(NutsTextPlain) n;
+                NutsTextPlain p2=(NutsTextPlain) all.remove(all.size()-1);
+                all.add(new DefaultNutsTextPlain(
+                        session,p1.getText()+p2.getText()
+                ));
+            }else{
+                all.add(n);
+            }
         }
-        return ws.text().forList(all).simplify();
+        return session.getWorkspace().text().forList(all).simplify();
     }
 
     @Override

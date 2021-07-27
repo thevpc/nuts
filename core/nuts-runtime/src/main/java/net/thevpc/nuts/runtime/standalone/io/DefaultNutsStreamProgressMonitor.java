@@ -50,7 +50,7 @@ public class DefaultNutsStreamProgressMonitor implements NutsProgressMonitor/*, 
     public void onComplete(NutsProgressEvent event) {
         if (event.getSession().isPlainOut()) {
             onProgress0(event, true);
-            out.println();
+            //out.println();
         }
     }
 

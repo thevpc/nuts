@@ -24,14 +24,11 @@
  */
 package net.thevpc.nuts.runtime.core.format.text.parser;
 
-import net.thevpc.nuts.NutsTextList;
-import net.thevpc.nuts.NutsTextType;
+import net.thevpc.nuts.*;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsText;
 
 /**
  * Created by vpc on 5/23/17.
@@ -40,12 +37,24 @@ public class DefaultNutsTextList extends AbstractNutsText implements NutsTextLis
 
     private List<NutsText> children = new ArrayList<NutsText>();
 
-    public DefaultNutsTextList(NutsSession ws, NutsText... children) {
-        super(ws);
+    public DefaultNutsTextList(NutsSession session, NutsText... children) {
+        super(session);
+        NutsTextPlain lastPlain=null;
+        NutsTextPlain newPlain=null;
         if (children != null) {
             for (NutsText c : children) {
                 if (c != null) {
-                    this.children.add(c);
+                    newPlain=(c instanceof NutsTextPlain)?(NutsTextPlain) c:null;
+                    if(lastPlain!=null && newPlain!=null){
+                        this.children.remove(this.children.size()-1);
+                        newPlain = new DefaultNutsTextPlain(
+                                session, lastPlain.getText() + newPlain.getText()
+                        );
+                        this.children.add(newPlain);
+                    }else {
+                        this.children.add(c);
+                    }
+                    lastPlain=newPlain;
                 }
             }
         }

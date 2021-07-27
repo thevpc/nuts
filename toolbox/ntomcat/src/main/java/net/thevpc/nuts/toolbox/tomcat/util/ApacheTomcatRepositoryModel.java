@@ -10,6 +10,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -120,12 +121,21 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
             NutsWorkspace ws = session.getWorkspace();
 //            String r = getUrl(id.getVersion(), ".zip.md5");
             String r = getUrl(id.getVersion(), ".zip");
+            URL url = null;
             boolean found = false;
-            try (InputStream inputStream= new URL(r).openStream()){
-                //ws.io().copy().from(r).getByteArrayResult();
-                found = true;
-            } catch (Exception ex) {
-                found = false;
+            try {
+                url = new URL(r);
+            } catch (MalformedURLException e) {
+
+            }
+            if(url!=null) {
+                session.getTerminal().printProgress(NutsMessage.cstyle("peek %s", url));
+                try (InputStream inputStream = url.openStream()) {
+                    //ws.io().copy().from(r).getByteArrayResult();
+                    found = true;
+                } catch (Exception ex) {
+                    found = false;
+                }
             }
             if (found) {
                 return ws.descriptor()

@@ -84,7 +84,7 @@ public class ProcessExecutorComponent implements NutsExecutorComponent {
         }
 
         Map<String, String> osEnv = new HashMap<>();
-        String bootArgumentsString = executionContext.getWorkspace().config().options()
+        String bootArgumentsString = executionContext.getWorkspace().env().getBootOptions()
                 .format().exported().compact().getBootCommandLine();
         osEnv.put("nuts_boot_args", bootArgumentsString);
         String dir = null;

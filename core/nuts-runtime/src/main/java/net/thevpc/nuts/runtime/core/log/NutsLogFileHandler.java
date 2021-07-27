@@ -84,7 +84,7 @@ public class NutsLogFileHandler extends FileHandler {
         if(session==null){
             session=this.session;
         }
-        NutsLogConfig logConfig = session.getWorkspace().config().options().getLogConfig();
+        NutsLogConfig logConfig = session.getWorkspace().env().getBootOptions().getLogConfig();
         Level sessionLogLevel = session.getLogFileLevel();
         if (sessionLogLevel == null) {
             if (logConfig != null) {

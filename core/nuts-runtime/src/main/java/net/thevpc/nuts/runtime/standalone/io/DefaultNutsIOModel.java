@@ -137,7 +137,7 @@ public class DefaultNutsIOModel {
         if (out == null) {
             return null;
         }
-        NutsWorkspaceOptions woptions = ws.config().setSession(session).options();
+        NutsWorkspaceOptions woptions = ws.env().setSession(session).getBootOptions();
         NutsTerminalMode expectedMode0 = woptions.getTerminalMode();
         if (expectedMode0 == null) {
             if (woptions.isBot()) {

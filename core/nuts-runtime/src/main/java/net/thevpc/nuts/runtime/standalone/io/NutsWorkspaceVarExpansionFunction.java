@@ -62,13 +62,13 @@ public class NutsWorkspaceVarExpansionFunction implements Function<String, Strin
             case "nuts.workspace-boot.id":
                 return NutsConstants.Ids.NUTS_API + "#" + Nuts.getVersion();
             case "nuts.workspace-runtime.version": {
-                String rt = ws.config().getOptions().getRuntimeId();
+                String rt = ws.env().getBootOptions().getRuntimeId();
                 return rt == null ? ws.getRuntimeId().getVersion().toString() : rt.contains("#")
                         ? rt.substring(rt.indexOf("#") + 1)
                         : rt;
             }
             case "nuts.workspace-runtime.id": {
-                String rt = ws.config().getOptions().getRuntimeId();
+                String rt = ws.env().getBootOptions().getRuntimeId();
                 return rt == null ? ws.getRuntimeId().getVersion().toString() : rt.contains("#")
                         ? rt
                         : (NutsConstants.Ids.NUTS_RUNTIME + "#" + rt);

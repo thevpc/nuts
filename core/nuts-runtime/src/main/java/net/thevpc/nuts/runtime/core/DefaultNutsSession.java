@@ -76,7 +76,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
 
     public DefaultNutsSession(NutsWorkspace ws) {
         this.ws = new NutsWorkspaceSessionAwareImpl(this, ws);
-        copyFrom(this.ws.config().options());
+        copyFrom(this.ws.env().getBootOptions());
     }
 
     public DefaultNutsSession(NutsWorkspace ws, NutsWorkspaceOptions options) {
@@ -470,7 +470,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         if (b) {
             return false;
         }
-        return (trace != null) ? trace : ws.config().options().isTrace();
+        return (trace != null) ? trace : ws.env().getBootOptions().isTrace();
     }
 
     @Override
@@ -532,7 +532,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         if (bot != null) {
             return bot;
         }
-        return ws.config().options().isBot();
+        return ws.env().getBootOptions().isBot();
     }
 
     @Override
@@ -547,7 +547,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
 //    @Override
 //    public boolean isForce() {
 //        if(force==null){
-//            return ws.config().options().isForce();
+//            return ws.env().getBootOptions().isForce();
 //        }
 //        return force;
 //    }
@@ -576,7 +576,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         if (this.outputFormat != null) {
             return this.outputFormat;
         }
-        NutsContentType o = ws.config().options().getOutputFormat();
+        NutsContentType o = ws.env().getBootOptions().getOutputFormat();
         if (o != null) {
             return o;
         }
@@ -766,7 +766,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         if (fetchStrategy != null) {
             return fetchStrategy;
         }
-        NutsFetchStrategy wfetchStrategy = ws.config().getOptions().getFetchStrategy();
+        NutsFetchStrategy wfetchStrategy = ws.env().getBootOptions().getFetchStrategy();
         if (wfetchStrategy != null) {
             return wfetchStrategy;
         }
@@ -916,7 +916,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
 //    }
     @Override
     public NutsConfirmationMode getConfirm() {
-        NutsConfirmationMode cm = (confirm != null) ? confirm : ws.config().options().getConfirm();
+        NutsConfirmationMode cm = (confirm != null) ? confirm : ws.env().getBootOptions().getConfirm();
         if (isBot()) {
             if (cm == null) {
                 return NutsConfirmationMode.ERROR;
@@ -1006,7 +1006,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         if (transitive != null) {
             return transitive;
         }
-        return ws.config().options().isTransitive();
+        return ws.env().getBootOptions().isTransitive();
     }
 
     @Override
@@ -1020,7 +1020,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         if (cached != null) {
             return cached;
         }
-        return ws.config().options().isCached();
+        return ws.env().getBootOptions().isCached();
     }
 
     @Override
@@ -1034,7 +1034,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         if (indexed != null) {
             return indexed;
         }
-        return ws.config().options().isIndexed();
+        return ws.env().getBootOptions().isIndexed();
     }
 
     @Override
@@ -1075,7 +1075,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         if (gui != null) {
             return gui;
         }
-        return ws.config().options().isGui();
+        return ws.env().getBootOptions().isGui();
     }
 
     @Override
@@ -1109,7 +1109,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     @Override
     public boolean isDry() {
         if (dry == null) {
-            return ws.config().options().isDry();
+            return ws.env().getBootOptions().isDry();
         }
         return dry;
     }
@@ -1236,7 +1236,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         if (executionType != null) {
             return executionType;
         }
-        return ws.config().options().getExecutionType();
+        return ws.env().getBootOptions().getExecutionType();
     }
 
     @Override
@@ -1248,7 +1248,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     @Override
     public boolean isDebug() {
         if (debug == null) {
-            return ws.config().options().isDebug();
+            return ws.env().getBootOptions().isDebug();
         }
         return debug;
     }
@@ -1267,7 +1267,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     @Override
     public String getLocale() {
         if (locale == null) {
-            return ws.config().options().getLocale();
+            return ws.env().getBootOptions().getLocale();
         }
         return locale;
     }
