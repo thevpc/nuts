@@ -23,8 +23,10 @@
  */
 package net.thevpc.nuts;
 
-import java.io.PrintStream;
+import java.io.*;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
@@ -275,15 +277,53 @@ public final class NutsApplications {
             }
         }
         if(fout!=null){
-            if(fm!=null) {
-                fout.println(fm);
+            if(session.getOutputFormat() == NutsContentType.PLAIN) {
+                if (fm != null) {
+                    fout.println(fm);
+                } else {
+                    fout.println(m);
+                }
+                if (showTrace) {
+                    ex.printStackTrace(fout.asPrintStream());
+                }
+                fout.flush();
             }else{
-                fout.println(m);
+                if (fm != null) {
+                    session.eout().add(session.getWorkspace().elem().forObject()
+                            .set("app-id",session.getAppId()==null?"":session.getAppId().toString())
+                            .set("error",fm.filteredText())
+                            .build()
+                    );
+                    if (showTrace) {
+                        session.eout().add(session.getWorkspace().elem().forObject().set("error-trace",
+                                session.getWorkspace().elem().forArray().addAll(stacktrace(ex)).build()
+                                ).build());
+                    }
+                    NutsArrayElementBuilder e = session.eout();
+                    if (e.size() > 0) {
+                        session.formatObject(e.build()).println(fout);
+                        e.clear();
+                    }
+                    fout.flush();
+                } else {
+                    session.eout().add(session.getWorkspace().elem().forObject()
+                            .set("app-id",session.getAppId()==null?"":session.getAppId().toString())
+                            .set("error",m)
+                            .build());
+                    if (showTrace) {
+                        session.eout().add(session.getWorkspace().elem().forObject().set("error-trace",
+                                session.getWorkspace().elem().forArray().addAll(stacktrace(ex)).build()
+                        ).build());
+                    }
+                    NutsArrayElementBuilder e = session.eout();
+                    if (e.size() > 0) {
+                        session.formatObject(e.build()).println(fout);
+                        e.clear();
+                    }
+                    fout.flush();
+                }
+                fout.flush();
             }
-            if (showTrace) {
-                ex.printStackTrace(fout.asPrintStream());
-            }
-            fout.flush();
         }else {
             if(out==null){
                 out=System.err;
@@ -299,5 +339,24 @@ public final class NutsApplications {
             out.flush();
         }
         return (errorCode);
+    }
+
+    private static String[] stacktrace(Throwable th){
+        try {
+            StringWriter sw = new StringWriter();
+            try (PrintWriter pw = new PrintWriter(sw)) {
+                th.printStackTrace(pw);
+            }
+            BufferedReader br=new BufferedReader(new StringReader(sw.toString()));
+            List<String> s=new ArrayList<>();
+            String line=null;
+            while((line=br.readLine())!=null){
+                s.add(line);
+            }
+            return s.toArray(new String[0]);
+        } catch (Exception ex) {
+            // ignore
+        }
+        return new String[0];
     }
 }

@@ -466,10 +466,12 @@ public class LocalTomcat {
                         context.getWorkspace().text().forStyled("not found", NutsTextStyle.error())
                 );
             } else {
-                HashMap<String, String> r = new HashMap<>();
-                r.put("name", name);
-                r.put("status", "not-found");
-                context.getWorkspace().formats().object().setSession(context.getSession()).setValue(r).println();
+                context.getSession().eout().add(
+                        context.getSession().getWorkspace().elem().forObject()
+                                .set("config-name", name)
+                                .set("status", "not-found")
+                                .build()
+                );
             }
         }
     }

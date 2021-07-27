@@ -565,12 +565,12 @@ public class StyledParserStep extends ParserStep {
     @Override
     public void appendChild(ParserStep tt) {
         NutsText n = tt.toText();
-        if(n instanceof DefaultNutsTextPlain
+        if(n instanceof NutsTextPlain
             && !children.isEmpty()
-            && children.get(children.size()-1) instanceof  DefaultNutsTextPlain) {
+            && children.get(children.size()-1) instanceof  NutsTextPlain) {
             //consecutive plain text
-            NutsTextPlain p1=(NutsTextPlain) n;
-            NutsTextPlain p2=(NutsTextPlain) children.remove(children.size()-1);
+            NutsTextPlain p1=(NutsTextPlain) children.remove(children.size()-1);
+            NutsTextPlain p2=(NutsTextPlain) n;
             children.add(new DefaultNutsTextPlain(
                     session,p1.getText()+p2.getText()
             ));

@@ -24,6 +24,7 @@
 package net.thevpc.nuts.runtime.core;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.core.format.elem.DefaultNutsArrayElementBuilder;
 import net.thevpc.nuts.runtime.core.sessionaware.NutsWorkspaceSessionAwareImpl;
 import net.thevpc.nuts.runtime.core.terminals.AbstractNutsSessionTerminal;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
@@ -61,6 +62,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     private Filter logFileFilter;
     private NutsConfirmationMode confirm = null;
     private NutsContentType outputFormat;
+    private NutsArrayElementBuilder eout;
     private NutsFetchStrategy fetchStrategy = null;
     private Boolean cached;
     private Boolean indexed;
@@ -511,6 +513,36 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     }
 
     @Override
+    public NutsArrayElementBuilder eout() {
+        if(eout==null){
+            eout=new DefaultNutsArrayElementBuilder(this);
+        }
+        return eout;
+    }
+
+    @Override
+    public NutsSession flush() {
+        NutsArrayElementBuilder e = eout();
+        if (e.size() > 0) {
+            formatObject(e.build()).println();
+            e.clear();
+        }
+        out().flush();
+        return this;
+    }
+
+    @Override
+    public NutsArrayElementBuilder getElemOut() {
+        return eout;
+    }
+
+    @Override
+    public NutsSession setElemOut(NutsArrayElementBuilder eout) {
+        this.eout = eout;
+        return this;
+    }
+
+    @Override
     public boolean isPlainOut() {
         return !isBot() && getOutputFormat() == NutsContentType.PLAIN;
     }
@@ -682,6 +714,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         this.logTermFilter = other.getLogTermFilter();
         this.logFileLevel = other.getLogFileLevel();
         this.logFileFilter = other.getLogFileFilter();
+        this.eout = other.eout();
         this.appId = other.getAppId();
         return this;
     }

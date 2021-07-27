@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -48,6 +48,17 @@ public interface NutsSession extends NutsCommandLineConfigurable {
     boolean isTrace();
 
     /**
+     * change trace flag value. When true, operations are invited to print to
+     * output stream information about processing. Output may be in different
+     * formats according to {@link #getOutputFormat()} and
+     * {@link #isIterableOut()}
+     *
+     * @param trace new value
+     * @return {@code this} instance
+     */
+    NutsSession setTrace(Boolean trace);
+
+    /**
      * true if non iterable and plain formats along with trace flag are armed.
      * equivalent to {@code isTrace()
      * && !isIterableOut()
@@ -56,8 +67,6 @@ public interface NutsSession extends NutsCommandLineConfigurable {
      * @return true plain non iterable format AND trace are armed
      */
     boolean isPlainTrace();
-
-    NutsSession setIterableOut(boolean iterableOut);
 
     /**
      * true if iterable format and trace flag are armed. equivalent to {@code isTrace()
@@ -86,6 +95,8 @@ public interface NutsSession extends NutsCommandLineConfigurable {
      */
     boolean isIterableOut();
 
+    NutsSession setIterableOut(boolean iterableOut);
+
     /**
      * true if NON iterable and NON plain formats are armed. equivalent to {@code !isIterableOut()
      * && getOutputFormat() != NutsContentType.PLAIN}
@@ -95,6 +106,10 @@ public interface NutsSession extends NutsCommandLineConfigurable {
      */
     boolean isStructuredOut();
 
+    NutsArrayElementBuilder getElemOut();
+
+    NutsSession setElemOut(NutsArrayElementBuilder eout);
+
     /**
      * true if NON iterable and plain format are armed.
      *
@@ -103,22 +118,11 @@ public interface NutsSession extends NutsCommandLineConfigurable {
      */
     boolean isPlainOut();
 
-    /**
-     * change trace flag value. When true, operations are invited to print to
-     * output stream information about processing. Output may be in different
-     * formats according to {@link #getOutputFormat()} and
-     * {@link #isIterableOut()}
-     *
-     * @param trace new value
-     * @return {@code this} instance
-     */
-    NutsSession setTrace(Boolean trace);
-
-    NutsSession setBot(Boolean bot);
-
     boolean isBot();
 
     Boolean getBot();
+
+    NutsSession setBot(Boolean bot);
 
 //    /**
 //     * equivalent to {@code setTrace(false)}
@@ -184,6 +188,7 @@ public interface NutsSession extends NutsCommandLineConfigurable {
 //     * @return {@code this} instance
 //     */
 //    NutsSession yes(boolean enable);
+
     /**
      * true if YES is armed.
      *
@@ -216,6 +221,7 @@ public interface NutsSession extends NutsCommandLineConfigurable {
 //     * @return {@code this} instance
 //     */
 //    NutsSession no(boolean enable);
+
     /**
      * true if NO is armed.
      *
@@ -329,12 +335,13 @@ public interface NutsSession extends NutsCommandLineConfigurable {
     NutsSession setAppId(NutsId appId);
 
     /**
-     * change fetch strategy
+     * return current fetch strategy. When no strategy (or null strategy) was
+     * set, return workspace strategy default strategy. When none defines use
+     * ONLINE
      *
-     * @param mode new strategy or null
      * @return {@code this} instance
      */
-    NutsSession setFetchStrategy(NutsFetchStrategy mode);
+    NutsFetchStrategy getFetchStrategy();
 
 //    /**
 //     * change fetch strategy to REMOTE
@@ -365,14 +372,14 @@ public interface NutsSession extends NutsCommandLineConfigurable {
 //     * @return {@code this} instance
 //     */
 //    NutsSession fetchAnyWhere();
+
     /**
-     * return current fetch strategy. When no strategy (or null strategy) was
-     * set, return workspace strategy default strategy. When none defines use
-     * ONLINE
+     * change fetch strategy
      *
+     * @param mode new strategy or null
      * @return {@code this} instance
      */
-    NutsFetchStrategy getFetchStrategy();
+    NutsSession setFetchStrategy(NutsFetchStrategy mode);
 
     /**
      * add session listener. supported listeners are instances of:
@@ -425,14 +432,6 @@ public interface NutsSession extends NutsCommandLineConfigurable {
     NutsListener[] getListeners();
 
     /**
-     * set session terminal
-     *
-     * @param terminal session terminal
-     * @return {@code this} instance
-     */
-    NutsSession setTerminal(NutsSessionTerminal terminal);
-
-    /**
      * set session property
      *
      * @param key property key
@@ -442,19 +441,19 @@ public interface NutsSession extends NutsCommandLineConfigurable {
     NutsSession setProperty(String key, Object value);
 
     /**
+     * return defined properties
+     *
+     * @return defined properties
+     */
+    Map<String, Object> getProperties();
+
+    /**
      * add session properties
      *
      * @param properties properties
      * @return {@code this} instance
      */
     NutsSession setProperties(Map<String, Object> properties);
-
-    /**
-     * return defined properties
-     *
-     * @return defined properties
-     */
-    Map<String, Object> getProperties();
 
     /**
      * return property value or null
@@ -480,14 +479,6 @@ public interface NutsSession extends NutsCommandLineConfigurable {
     NutsSession setConfirm(NutsConfirmationMode confirm);
 
     /**
-     * set output format options (clear and add)
-     *
-     * @param options output format options.
-     * @return {@code this} instance
-     */
-    NutsSession setOutputFormatOptions(String... options);
-
-    /**
      * add output format options
      *
      * @param options output format options.
@@ -501,6 +492,14 @@ public interface NutsSession extends NutsCommandLineConfigurable {
      * @return output format options
      */
     String[] getOutputFormatOptions();
+
+    /**
+     * set output format options (clear and add)
+     *
+     * @param options output format options.
+     * @return {@code this} instance
+     */
+    NutsSession setOutputFormatOptions(String... options);
 
     /**
      * current output stream
@@ -531,6 +530,14 @@ public interface NutsSession extends NutsCommandLineConfigurable {
      * @return current terminal
      */
     NutsSessionTerminal getTerminal();
+
+    /**
+     * set session terminal
+     *
+     * @param terminal session terminal
+     * @return {@code this} instance
+     */
+    NutsSession setTerminal(NutsSessionTerminal terminal);
 
     /**
      * current workspace
@@ -585,6 +592,15 @@ public interface NutsSession extends NutsCommandLineConfigurable {
     NutsSession setIndexed(Boolean value);
 
     /**
+     * return expired date/time or zero if not set. Expire time is used to
+     * expire any cached file that was downloaded before the given date/time
+     *
+     * @return expired date/time or zero
+     * @since 0.8.0
+     */
+    Instant getExpireTime();
+
+    /**
      * set expire instant. Expire time is used to expire any cached file that
      * was downloaded before the given date/time.
      *
@@ -593,15 +609,6 @@ public interface NutsSession extends NutsCommandLineConfigurable {
      * @since 0.8.0
      */
     NutsSession setExpireTime(Instant value);
-
-    /**
-     * return expired date/time or zero if not set. Expire time is used to
-     * expire any cached file that was downloaded before the given date/time
-     *
-     * @return expired date/time or zero
-     * @since 0.8.0
-     */
-    Instant getExpireTime();
 
     /**
      * return progress options
@@ -673,6 +680,10 @@ public interface NutsSession extends NutsCommandLineConfigurable {
     Filter getLogFileFilter();
 
     NutsSession setLogFileFilter(Filter logFileFilter);
+
+    NutsArrayElementBuilder eout();
+
+    NutsSession flush();
 
     NutsExecutionType getExecutionType();
 

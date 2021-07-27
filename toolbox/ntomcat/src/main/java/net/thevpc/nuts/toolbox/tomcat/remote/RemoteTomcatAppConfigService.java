@@ -126,7 +126,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
     public RemoteTomcatAppConfigService print(NutsPrintStream out) {
         NutsWorkspace ws = context.getWorkspace();
         Map<String, Object> m = new LinkedHashMap<>();
-        m.put("name", getName());
+        m.put("config-name", getName());
         m.putAll(ws.elem().convert(getConfig(), Map.class));
         ws.formats().object().setSession(context.getSession()).setValue(m).print(out);
         return this;

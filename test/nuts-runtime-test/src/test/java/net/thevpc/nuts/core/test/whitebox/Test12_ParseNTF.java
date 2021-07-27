@@ -275,4 +275,21 @@ public class Test12_ParseNTF {
     }
 
 
+    @Test
+    public void test8() {
+        Map<String, String> extraProperties = new HashMap<>();
+        extraProperties.put("nuts.export.always-show-command", "true");
+        TestUtils.setSystemProperties(extraProperties);
+        NutsWorkspace ws = TestUtils.openTestWorkspace("-ZSkK");
+        NutsSession session = ws.createSession();
+        NutsTextManager txt = session.getWorkspace().text();
+
+//        String str = "##{string0:\"<main>://com.github.vatbub:mslinks#1.0.5\"}##";
+        String str = "##:string:\"a#b\"##";
+        NutsText q2 = txt.parse(str);
+        String str2 = q2.toString();
+        System.out.println(str2);
+    }
+
+
 }

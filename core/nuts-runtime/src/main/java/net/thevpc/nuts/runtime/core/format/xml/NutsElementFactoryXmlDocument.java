@@ -61,10 +61,12 @@ public class NutsElementFactoryXmlDocument implements NutsElementMapper {
     @Override
     public Object createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
         Document doc = NutsXmlUtils.createDocument(context.getWorkspace().createSession());
-        doc.adoptNode(NutsElementFactoryXmlElement.runWithDoc(
+        Node source = NutsElementFactoryXmlElement.runWithDoc(
                 context,
-                () -> (Node)context.elementToObject(o, Element.class),
-                doc));
+                () -> (Node) context.elementToObject(o, Element.class),
+                doc);
+        doc.insertBefore(source,null);
+//        doc.adoptNode(source);
         return doc;
     }
     

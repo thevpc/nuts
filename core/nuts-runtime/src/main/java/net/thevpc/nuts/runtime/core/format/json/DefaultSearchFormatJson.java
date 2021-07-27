@@ -75,7 +75,8 @@ public class DefaultSearchFormatJson extends DefaultSearchFormatBase {
                 .format()
                 .filteredText()
                 ;
-        getWriter().printf("%s%n", codeFormat.stringToText(json, getSession()));
+        NutsText ee = codeFormat.stringToText(json, getSession());
+        getWriter().printf("%s%n", ee);
         getWriter().flush();
     }
 

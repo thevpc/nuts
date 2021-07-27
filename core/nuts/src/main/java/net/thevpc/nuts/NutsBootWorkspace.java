@@ -1107,6 +1107,7 @@ public final class NutsBootWorkspace {
         }
 
         NutsSession session = workspace.createSession();
+        session.setAppId(workspace.getApiId());
         if (LOG2 == null) {
             LOG2 = workspace.log().setSession(session).of(NutsBootWorkspace.class);
         }

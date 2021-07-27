@@ -362,33 +362,30 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
 
         NutsTextManager text = ws.text().setSession(session);
         if (getSession().isPlainTrace() || (!list.emptyCommand && getSession().getConfirm() == NutsConfirmationMode.ASK)) {
-            printList(out, text.builder().append("new", NutsTextStyle.primary2()),
-                    text.builder().append("installed", NutsTextStyle.primary1()),
+            printList(out, "new","installed",
                     list.ids(x -> x.doInstall && !x.isAlreadyExists()));
 
-            printList(out, text.builder().append("new", NutsTextStyle.primary2()),
-                    text.builder().append("required", NutsTextStyle.primary1()),
+            printList(out, "new","required",
                     list.ids(x -> x.doRequire && !x.doInstall && !x.isAlreadyExists()));
             printList(out,
-                    text.builder().append("required", NutsTextStyle.primary2()),
-                    text.builder().append("re-required", NutsTextStyle.primary1()),
+                    "required", "re-required",
                     list.ids(x -> (!x.doInstall && x.doRequire) && x.isAlreadyRequired()));
             printList(out,
-                    text.builder().append("required", NutsTextStyle.primary2()),
-                    text.builder().append("installed", NutsTextStyle.primary1()),
+                    "required",
+                    "installed",
                     list.ids(x -> x.doInstall && x.isAlreadyRequired() && !x.isAlreadyInstalled()));
 
             printList(out,
-                    text.builder().append("required", NutsTextStyle.primary2()),
-                    text.builder().append("re-reinstalled", NutsTextStyle.primary1()),
+                    "required",
+                    "re-reinstalled",
                     list.ids(x -> x.doInstall && x.isAlreadyInstalled()));
             printList(out,
-                    text.builder().append("installed", NutsTextStyle.primary2()),
-                    text.builder().append("set as default", NutsTextStyle.primary3()),
+                    "installed",
+                    "set as default",
                     list.ids(x -> x.doSwitchVersion && x.isAlreadyInstalled()));
             printList(out,
-                    text.builder().append("installed", NutsTextStyle.primary2()),
-                    text.builder().append("ignored", NutsTextStyle.pale()),
+                    "installed",
+                    "ignored",
                     list.ids(x -> x.ignored));
         }
         List<NutsId> nonIgnored = list.ids(x -> !x.ignored);
@@ -450,22 +447,43 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
         return this;
     }
 
-    private void printList(NutsPrintStream out, NutsString kind, NutsString action, List<NutsId> all) {
+    private void printList(NutsPrintStream out, String skind, String saction, List<NutsId> all) {
         if (all.size() > 0) {
-            NutsWorkspace ws = getSession().getWorkspace();
-            NutsTextBuilder msg = ws.text().builder();
-            msg.append("the following ")
-                    .append(kind).append(" ").append((all.size() > 1 ? "artifacts are" : "artifact is"))
-                    .append(" going to be ").append(action).append(" : ")
-                    .appendJoined(
-                            ws.text().forPlain(", "),
-                            all.stream().map(x
-                                            -> ws.text().toText(
-                                            x.builder().omitImportedGroupId().build()
-                                    )
-                            ).collect(Collectors.toList())
-                    );
-            out.resetLine().println(msg);
+            if(session.isPlainOut()) {
+                NutsTextManager text = session.getWorkspace().text();
+                NutsText kind = text.forStyled(skind, NutsTextStyle.primary2());
+                NutsText action =
+                        text.forStyled(saction,
+                                saction.equals("set as default") ? NutsTextStyle.primary3() :
+                                        saction.equals("ignored") ? NutsTextStyle.pale() :
+                                                NutsTextStyle.primary1()
+                        );
+                NutsWorkspace ws = getSession().getWorkspace();
+                NutsTextBuilder msg = ws.text().builder();
+                msg.append("the following ")
+                        .append(kind).append(" ").append((all.size() > 1 ? "artifacts are" : "artifact is"))
+                        .append(" going to be ").append(action).append(" : ")
+                        .appendJoined(
+                                ws.text().forPlain(", "),
+                                all.stream().map(x
+                                                -> ws.text().toText(
+                                                x.builder().omitImportedGroupId().build()
+                                        )
+                                ).collect(Collectors.toList())
+                        );
+                out.resetLine().println(msg);
+            }else{
+                NutsElementFormat elm = session.getWorkspace().elem();
+                session.eout().add(elm.forObject()
+                        .set("command","warning")
+                        .set("artifact-kind",skind)
+                        .set("action-warning",saction)
+                        .set("artifacts",elm.forArray().addAll(
+                                all.stream().map(x->x.toString()).toArray(String[]::new)
+                        ).build())
+                        .build()
+                );
+            }
         }
     }
 
