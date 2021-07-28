@@ -9,7 +9,7 @@ import net.thevpc.nuts.spi.NutsSystemTerminalBase;
 import java.io.*;
 import java.util.Scanner;
 
-@NutsPrototype
+//@NutsPrototype
 public class DefaultNutsSessionTerminal extends AbstractNutsSessionTerminal {
 
     protected NutsWorkspace ws;

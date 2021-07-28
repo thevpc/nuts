@@ -200,6 +200,18 @@ public class CoreIOUtils {
         return "unknown";
     }
 
+    public static URL asURL(String s) {
+        if(s==null||s.trim().isEmpty()){
+            return null;
+        }
+        try {
+            return new URL(s);
+        } catch (MalformedURLException e) {
+            //
+        }
+        return null;
+    }
+
     public static URL[] toURL(String[] all) {
         List<URL> urls = new ArrayList<>();
         if (all != null) {
@@ -572,7 +584,7 @@ public class CoreIOUtils {
                     try {
                         desc = parser.parse(ctx);
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        //e.printStackTrace();
                     }
                     if (desc != null) {
                         return desc;

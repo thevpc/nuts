@@ -47,7 +47,7 @@ import java.util.Set;
 public class NshDescriptorContentParserComponent implements NutsDescriptorContentParserComponent {
 
     public static NutsId NSH;
-    public static final Set<String> POSSIBLE_EXT = new HashSet<>(Arrays.asList("nsh", "nuts"));
+    public static final Set<String> POSSIBLE_EXT = new HashSet<>(Arrays.asList("nsh", "sh", "bash"));
     private NutsWorkspace ws;
     @Override
     public NutsDescriptor parse(NutsDescriptorContentParserContext parserContext) {
@@ -85,6 +85,7 @@ public class NshDescriptorContentParserComponent implements NutsDescriptorConten
     }
 
     private static NutsDescriptor readNutDescriptorFromBashScriptFile(NutsSession session, InputStream file) throws IOException {
+        NutsWorkspace ws = session.getWorkspace();
         BufferedReader r = null;
         try {
             r = new BufferedReader(new InputStreamReader(file));
@@ -124,12 +125,23 @@ public class NshDescriptorContentParserComponent implements NutsDescriptorConten
                     }
                 }
             }
-            NutsWorkspace ws = session.getWorkspace();
+            switch (sheban){
+                case "/bin/sh":
+                case "/bin/nsh":
+                case "/bin/nuts":
+                case "/bin/bash":{
+                    //accept
+                    break;
+                }
+                default:{
+                    return null;
+                }
+            }
             if (comment.toString().trim().isEmpty()) {
                 return ws.descriptor().descriptorBuilder()
                         .setId(ws.id().parser().parse("temp:nsh#1.0"))
                         .setPackaging("nsh")
-                        .setExecutor(new DefaultNutsArtifactCall(NSH))
+                        .setExecutor(new DefaultNutsArtifactCall(ws.id().parser().parse("net.thevpc.nuts.toolbox:nsh")))
                         .build();
             }
             return ws.descriptor().parser().setSession(session).parse(comment.getValidString());

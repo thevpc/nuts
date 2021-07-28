@@ -3,7 +3,6 @@ net.thevpc.nuts.runtime.standalone.io.DefaultHttpTransportComponent
 net.thevpc.nuts.runtime.standalone.repos.DefaultNutsRepoFactoryComponent
 
 
-net.thevpc.nuts.runtime.core.terminals.DefaultNutsSessionTerminal
 net.thevpc.nuts.runtime.core.terminals.DefaultNutsSystemTerminalBase
 
 net.thevpc.nuts.runtime.standalone.archetypes.ServerNutsWorkspaceArchetypeComponent
@@ -12,14 +11,12 @@ net.thevpc.nuts.runtime.standalone.archetypes.DefaultNutsWorkspaceArchetypeCompo
 
 net.thevpc.nuts.runtime.standalone.installers.ZipInstallerComponent
 
-net.thevpc.nuts.runtime.standalone.parsers.BashDescriptorContentParserComponent
 net.thevpc.nuts.runtime.standalone.parsers.ZipDescriptorContentParserComponent
 net.thevpc.nuts.runtime.standalone.parsers.JarDescriptorContentParserComponent
 net.thevpc.nuts.runtime.standalone.parsers.NshDescriptorContentParserComponent
 
 net.thevpc.nuts.runtime.standalone.executors.JavaExecutorComponent
 net.thevpc.nuts.runtime.standalone.executors.JavaSourceExecutorComponent
-net.thevpc.nuts.runtime.standalone.executors.ShellExecutorComponent
 net.thevpc.nuts.runtime.standalone.executors.ProcessExecutorComponent
 
 net.thevpc.nuts.runtime.standalone.bridges.maven.MavenRepositoryFactoryComponent

@@ -5,6 +5,7 @@ import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.core.commands.ws.NutsExecutableInformationExt;
 import net.thevpc.nuts.runtime.core.commands.ws.NutsExecutionContextBuilder;
 import net.thevpc.nuts.runtime.core.model.DefaultNutsDefinition;
+import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.core.util.CoreNutsDependencyUtils;
 import net.thevpc.nuts.runtime.standalone.DefaultNutsWorkspace;
 import net.thevpc.nuts.runtime.standalone.executors.ArtifactExecutorComponent;
@@ -139,6 +140,11 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
         }
         return this;
     }
+    enum CmdKind{
+        PATH,
+        ID,
+        KEYWORD,
+    }
 
     private NutsExecutableInformationExt execEmbeddedOrExternal(String[] cmd, String[] executorOptions, NutsSession prepareSession, NutsSession execSession) {
         if (cmd == null || cmd.length == 0) {
@@ -148,59 +154,6 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
         System.arraycopy(cmd, 1, args, 0, args.length);
         String cmdName = cmd[0];
         //resolve internal commands!
-        switch (cmdName) {
-            case "update": {
-                return new DefaultNutsUpdateInternalExecutable(args, execSession);
-            }
-            case "check-updates": {
-                return new DefaultNutsCheckUpdatesInternalExecutable(args, execSession);
-            }
-            case "install": {
-                return new DefaultNutsInstallInternalExecutable(args, execSession);
-            }
-            case "reinstall": {
-                return new DefaultNutsReinstallInternalExecutable(args, execSession);
-            }
-            case "uninstall": {
-                return new DefaultNutsUninstallInternalExecutable(args, execSession);
-            }
-            case "deploy": {
-                return new DefaultNutsDeployInternalExecutable(args, execSession);
-            }
-            case "undeploy": {
-                return new DefaultNutsUndeployInternalExecutable(args, execSession);
-            }
-            case "push": {
-                return new DefaultNutsPushInternalExecutable(args, execSession);
-            }
-            case "fetch": {
-                return new DefaultNutsFetchInternalExecutable(args, execSession);
-            }
-            case "search": {
-                return new DefaultNutsSearchInternalExecutable(args, execSession);
-            }
-            case "version": {
-                return new DefaultNutsVersionInternalExecutable(args, execSession, this);
-            }
-            case "license": {
-                return new DefaultNutsLicenseInternalExecutable(args, execSession);
-            }
-            case "help": {
-                return new DefaultNutsHelpInternalExecutable(args, execSession);
-            }
-            case "welcome": {
-                return new DefaultNutsWelcomeInternalExecutable(args, execSession);
-            }
-            case "info": {
-                return new DefaultNutsInfoInternalExecutable(args, execSession);
-            }
-            case "which": {
-                return new DefaultNutsWhichInternalExecutable(args, execSession, this);
-            }
-            case "exec": {
-                return new DefaultNutsExecInternalExecutable(args, execSession, this);
-            }
-        }
         NutsExecutionType executionType = getExecutionType();
         if (executionType == null) {
             executionType = session.getExecutionType();
@@ -208,53 +161,131 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
         if (executionType == null) {
             executionType = NutsExecutionType.SPAWN;
         }
-        if (cmdName.contains("/") || cmdName.contains("\\")) {
-            return new DefaultNutsArtifactPathExecutable(cmdName, args, executorOptions, executionType, prepareSession, execSession, this, isInheritSystemIO());
-        } else if (cmdName.contains(":")) {
-            boolean forceInstalled = false;
-            if (cmdName.endsWith("!")) {
-                cmdName = cmdName.substring(0, cmdName.length() - 1);
+        CmdKind cmdKind=null;
+        NutsId goodId =null;
+        String goodKw =null;
+        boolean forceInstalled = false;
+        if (cmdName.endsWith("!")) {
+            goodId=session.getWorkspace().id().parser().setLenient(true).parse(cmdName.substring(0, cmdName.length() - 1));
+            if(goodId!=null) {
                 forceInstalled = true;
             }
-            NutsId cmdNameAsId = session.getWorkspace().id().parser().setLenient(true).parse(cmdName);
-            NutsId idToExec =null;
-            if (cmdNameAsId != null) {
-                idToExec = findExecId(cmdNameAsId, prepareSession, forceInstalled, true);
-                if (idToExec == null) {
-                    throw new NutsNotFoundException(getSession(), idToExec);
-                }
-            }
-            return ws_execId(idToExec, cmdName, args, executorOptions, executionType, prepareSession, execSession);
-        } else {
-            NutsWorkspaceCommandAlias command = null;
-            boolean forceInstalled = false;
-            if (cmdName.endsWith("!")) {
-                cmdName = cmdName.substring(0, cmdName.length() - 1);
-                forceInstalled = true;
-            }
-            command = prepareSession.getWorkspace().aliases().find(cmdName);
-            if (command != null) {
-                NutsCommandExecOptions o = new NutsCommandExecOptions().setExecutorOptions(executorOptions).setDirectory(directory).setFailFast(failFast)
-                        .setExecutionType(executionType).setEnv(env);
-                return new DefaultNutsAliasExecutable(command, o, execSession, args);
-            } else {
-                NutsId cmdNameAsId = session.getWorkspace().id().parser().setLenient(true).parse(cmdName);
+        }else{
+            goodId = session.getWorkspace().id().parser().setLenient(true).parse(cmdName);
+        }
 
-                NutsId idToExec = null;
-                if(cmdNameAsId!=null) {
-                    idToExec = findExecId(cmdNameAsId, prepareSession, forceInstalled, true);
+        if (cmdName.contains("/") || cmdName.contains("\\")) {
+            if(goodId!=null){
+                cmdKind=CmdKind.ID;
+            }else{
+                cmdKind=CmdKind.PATH;
+            }
+        }else if(cmdName.contains(":") || cmdName.contains("#")){
+            if(goodId!=null){
+                cmdKind=CmdKind.ID;
+            }else{
+                throw new NutsNotFoundException(getSession(), null,NutsMessage.cstyle("unable to resolve id %", cmdName));
+            }
+        }else{
+            if (cmdName.endsWith("!")) {
+                //name that terminates with '!'
+                goodKw=cmdName.substring(0, cmdName.length() - 1);
+                forceInstalled = true;
+            }else{
+                goodKw=cmdName;
+            }
+            cmdKind=CmdKind.KEYWORD;
+        }
+        switch (cmdKind){
+            case PATH:{
+                return new DefaultNutsArtifactPathExecutable(cmdName, args, executorOptions, executionType, prepareSession, execSession, this, isInheritSystemIO());
+            }
+            case ID:{
+                NutsId idToExec = findExecId(goodId, prepareSession, forceInstalled, true);
+                if (idToExec != null) {
+                    return ws_execId(idToExec, cmdName, args, executorOptions, executionType, prepareSession, execSession);
+                }else{
+                    throw new NutsNotFoundException(getSession(), goodId);
                 }
-                if (idToExec == null) {
-                    List<String> cmdArr = new ArrayList<>();
-                    cmdArr.add(cmdName);
-                    cmdArr.addAll(Arrays.asList(args));
-                    return new DefaultNutsSystemExecutable(cmdArr.toArray(new String[0]), executorOptions, prepareSession, execSession, this, false,
-                            isInheritSystemIO()
-                    );
+            }
+            case KEYWORD:{
+                switch (goodKw) {
+                    case "update": {
+                        return new DefaultNutsUpdateInternalExecutable(args, execSession);
+                    }
+                    case "check-updates": {
+                        return new DefaultNutsCheckUpdatesInternalExecutable(args, execSession);
+                    }
+                    case "install": {
+                        return new DefaultNutsInstallInternalExecutable(args, execSession);
+                    }
+                    case "reinstall": {
+                        return new DefaultNutsReinstallInternalExecutable(args, execSession);
+                    }
+                    case "uninstall": {
+                        return new DefaultNutsUninstallInternalExecutable(args, execSession);
+                    }
+                    case "deploy": {
+                        return new DefaultNutsDeployInternalExecutable(args, execSession);
+                    }
+                    case "undeploy": {
+                        return new DefaultNutsUndeployInternalExecutable(args, execSession);
+                    }
+                    case "push": {
+                        return new DefaultNutsPushInternalExecutable(args, execSession);
+                    }
+                    case "fetch": {
+                        return new DefaultNutsFetchInternalExecutable(args, execSession);
+                    }
+                    case "search": {
+                        return new DefaultNutsSearchInternalExecutable(args, execSession);
+                    }
+                    case "version": {
+                        return new DefaultNutsVersionInternalExecutable(args, execSession, this);
+                    }
+                    case "license": {
+                        return new DefaultNutsLicenseInternalExecutable(args, execSession);
+                    }
+                    case "help": {
+                        return new DefaultNutsHelpInternalExecutable(args, execSession);
+                    }
+                    case "welcome": {
+                        return new DefaultNutsWelcomeInternalExecutable(args, execSession);
+                    }
+                    case "info": {
+                        return new DefaultNutsInfoInternalExecutable(args, execSession);
+                    }
+                    case "which": {
+                        return new DefaultNutsWhichInternalExecutable(args, execSession, this);
+                    }
+                    case "exec": {
+                        return new DefaultNutsExecInternalExecutable(args, execSession, this);
+                    }
                 }
-                return ws_execId(idToExec, cmdName, args, executorOptions, executionType, prepareSession, execSession);
+                NutsWorkspaceCommandAlias command = null;
+                command = prepareSession.getWorkspace().aliases().find(goodKw);
+                if (command != null) {
+                    NutsCommandExecOptions o = new NutsCommandExecOptions().setExecutorOptions(executorOptions).setDirectory(directory).setFailFast(failFast)
+                            .setExecutionType(executionType).setEnv(env);
+                    return new DefaultNutsAliasExecutable(command, o, execSession, args);
+                } else {
+                    NutsId idToExec = null;
+                    if(goodId!=null) {
+                        idToExec = findExecId(goodId, prepareSession, forceInstalled, true);
+                    }
+                    if (idToExec == null) {
+                        List<String> cmdArr = new ArrayList<>();
+                        cmdArr.add(cmdName);
+                        cmdArr.addAll(Arrays.asList(args));
+                        return new DefaultNutsSystemExecutable(cmdArr.toArray(new String[0]), executorOptions, prepareSession, execSession, this, false,
+                                isInheritSystemIO()
+                        );
+                    }
+                    return ws_execId(idToExec, cmdName, args, executorOptions, executionType, prepareSession, execSession);
+                }
             }
         }
+        throw new NutsNotFoundException(getSession(), goodId, NutsMessage.cstyle("unable to resolve id %", cmdName));
     }
 
     protected NutsId findExecId(NutsId nid, NutsSession traceSession, boolean forceInstalled, boolean ignoreIfUserCommand) {
@@ -394,14 +425,27 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
             if(executorCall !=null){
                 NutsId eid = executorCall.getId();
                 if(eid!=null){
-                    //nutsDefinition
-                    NutsResultList<NutsDefinition> q = getSession().getWorkspace().search().addId(eid).setLatest(true)
-                            .getResultDefinitions();
-                    NutsDefinition[] availableExecutors = q.stream().limit(2).toArray(NutsDefinition[]::new);
-                    if(availableExecutors.length==2){
-                        throw new NutsTooManyElementsException(session, NutsMessage.cstyle("too many results for %s", eid));
-                    }else if(availableExecutors.length==1){
-                        execComponent=new ArtifactExecutorComponent(availableExecutors[0].getId(),session);
+                    //process special executors
+                    if(eid.getGroupId()==null){
+                        if(eid.getArtifactId().equals("nuts")) {
+                            eid = eid.builder().setGroupId("net.thevpc.nuts").build();
+                        }else if(eid.getArtifactId().equals("nsh")){
+                            eid=eid.builder().setGroupId("net.thevpc.nuts.toolbox").build();
+                        }
+                    }
+                    if(eid.getGroupId()!=null) {
+                        //nutsDefinition
+                        NutsResultList<NutsDefinition> q = getSession().getWorkspace().search().addId(eid).setLatest(true)
+                                .getResultDefinitions();
+                        NutsDefinition[] availableExecutors = q.stream().limit(2).toArray(NutsDefinition[]::new);
+                        if (availableExecutors.length > 1) {
+                            throw new NutsTooManyElementsException(session, NutsMessage.cstyle("too many results for executor %s", eid));
+                        } else if (availableExecutors.length == 1) {
+                            execComponent = new ArtifactExecutorComponent(availableExecutors[0].getId(), session);
+                        }else{
+                            // availableExecutors.length=0;
+                            throw new NutsNotFoundException(session, eid,NutsMessage.cstyle("executor not found %s", eid));
+                        }
                     }
                 }
             }
