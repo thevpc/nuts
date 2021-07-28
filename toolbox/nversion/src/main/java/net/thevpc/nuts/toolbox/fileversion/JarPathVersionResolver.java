@@ -27,7 +27,6 @@ package net.thevpc.nuts.toolbox.fileversion;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UncheckedIOException;
 import java.util.*;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
@@ -152,7 +151,7 @@ public class JarPathVersionResolver implements PathVersionResolver{
                                     }
                                     all.add(new VersionDescriptor(
                                             context.getWorkspace().id().builder().setGroupId(d.getId().getGroupId())
-                                                    .setNamespace(d.getId().getArtifactId())
+                                                    .setRepository(d.getId().getArtifactId())
                                                     .setVersion(d.getId().getVersion())
                                                     .build(),
                                             properties));

@@ -503,8 +503,8 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
         if (descriptor != null) {
             NutsId nutsId = dws.resolveEffectiveId(descriptor, session);
             NutsIdBuilder newIdBuilder = nutsId.builder();
-            if (CoreStringUtils.isBlank(newIdBuilder.getNamespace())) {
-                newIdBuilder.setNamespace(repo.getName());
+            if (CoreStringUtils.isBlank(newIdBuilder.getRepository())) {
+                newIdBuilder.setRepository(repo.getName());
             }
             //inherit classifier from requested parse
             String classifier = id.getClassifier();

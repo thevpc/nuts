@@ -8,7 +8,7 @@ import net.thevpc.nuts.*;
 
 public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependencyFormat> implements NutsDependencyFormat {
 
-    private boolean omitNamespace;
+    private boolean omitRepository;
     private boolean omitGroup;
     private boolean omitImportedGroup;
     private boolean omitQuery = false;
@@ -29,13 +29,13 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
     }
 
     @Override
-    public boolean isOmitNamespace() {
-        return omitNamespace;
+    public boolean isOmitRepository() {
+        return omitRepository;
     }
 
     @Override
-    public NutsDependencyFormat setOmitNamespace(boolean omitNamespace) {
-        this.omitNamespace = omitNamespace;
+    public NutsDependencyFormat setOmitRepository(boolean omitRepository) {
+        this.omitRepository = omitRepository;
         return this;
     }
 
@@ -150,7 +150,7 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
                 .setOmitOtherProperties(false)
                 .setOmitGroupId(isOmitGroupId())
                 .setOmitImportedGroupId(isOmitImportedGroupId())
-                .setOmitNamespace(isOmitNamespace())
+                .setOmitRepository(isOmitRepository())
                 .setNtf(isNtf())
                 .format();
     }
@@ -286,10 +286,10 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
                 }
                 return true;
             }
-            case "--omit-namespace": {
+            case "--omit-repo": {
                 boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if(enabled) {
-                    setOmitNamespace(val);
+                    setOmitRepository(val);
                 }
                 return true;
             }

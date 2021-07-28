@@ -173,7 +173,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
 //                        //
 //                    }
 //                    if (d != null) {
-                    return Collections.singletonList(id.builder().setNamespace(getName()).build()).iterator();
+                    return Collections.singletonList(id.builder().setRepository(getName()).build()).iterator();
 //                    }
                 }
 //                return IteratorUtils.emptyIterator();

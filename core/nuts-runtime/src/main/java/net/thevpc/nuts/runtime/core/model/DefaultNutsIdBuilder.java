@@ -39,7 +39,6 @@ import java.util.function.Function;
 public class DefaultNutsIdBuilder implements NutsIdBuilder {
 
     private transient NutsSession session;
-    private String namespace;
     private String groupId;
     private String artifactId;
     private NutsVersion version;
@@ -48,10 +47,6 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
             switch (name) {
                 case NutsConstants.IdProperties.VERSION: {
                     setVersion(value);
-                    return true;
-                }
-                case NutsConstants.IdProperties.NAMESPACE: {
-                    setNamespace(value);
                     return true;
                 }
             }
@@ -65,16 +60,14 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
 
     public DefaultNutsIdBuilder(NutsId id,NutsSession session) {
         this.session=session;
-        setNamespace(id.getNamespace());
         setGroupId(id.getGroupId());
         setArtifactId(id.getArtifactId());
         setVersion(id.getVersion());
         setProperties(id.getPropertiesQuery());
     }
 
-    public DefaultNutsIdBuilder(String namespace, String groupId, String artifactId, NutsVersion version, String propertiesQuery,NutsSession session) {
+    public DefaultNutsIdBuilder(String groupId, String artifactId, NutsVersion version, String propertiesQuery,NutsSession session) {
         this.session=session;
-        this.namespace = CoreStringUtils.trimToNull(namespace);
         this.groupId = CoreStringUtils.trimToNull(groupId);
         this.artifactId = CoreStringUtils.trimToNull(artifactId);
         this.version = version == null ? session.getWorkspace().version().parser().parse("") : version;
@@ -86,7 +79,6 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
         if (id == null) {
             clear();
         } else {
-            setNamespace(id.getNamespace());
             setGroupId(id.getGroupId());
             setArtifactId(id.getArtifactId());
             setVersion(id.getVersion());
@@ -97,7 +89,6 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
 
     @Override
     public NutsIdBuilder clear() {
-        setNamespace(null);
         setGroupId(null);
         setArtifactId(null);
         setVersion((NutsVersion) null);
@@ -110,7 +101,6 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
         if (id == null) {
             clear();
         } else {
-            setNamespace(id.getNamespace());
             setGroupId(id.getGroupId());
             setArtifactId(id.getArtifactId());
             setVersion(id.getVersion());
@@ -126,9 +116,8 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
     }
 
     @Override
-    public NutsIdBuilder setNamespace(String value) {
-        this.namespace = CoreStringUtils.trimToNull(value);
-        return this;
+    public NutsIdBuilder setRepository(String value) {
+        return setProperty(NutsConstants.IdProperties.REPO, CoreStringUtils.trimToNull(value));
     }
 
     @Override
@@ -292,8 +281,8 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
     }
 
     @Override
-    public String getNamespace() {
-        return namespace;
+    public String getRepository() {
+        return CoreStringUtils.trimToNull(getProperties().get(NutsConstants.IdProperties.REPO));
     }
 
     @Override
@@ -341,9 +330,6 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        if (!CoreStringUtils.isBlank(namespace)) {
-            sb.append(namespace).append("://");
-        }
         if (!CoreStringUtils.isBlank(groupId)) {
             sb.append(groupId).append(":");
         }
@@ -369,9 +355,6 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
 
         DefaultNutsIdBuilder nutsId = (DefaultNutsIdBuilder) o;
 
-        if (namespace != null ? !namespace.equals(nutsId.namespace) : nutsId.namespace != null) {
-            return false;
-        }
         if (groupId != null ? !groupId.equals(nutsId.groupId) : nutsId.groupId != null) {
             return false;
         }
@@ -387,8 +370,7 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
 
     @Override
     public int hashCode() {
-        int result = namespace != null ? namespace.hashCode() : 0;
-        result = 31 * result + (groupId != null ? groupId.hashCode() : 0);
+        int result =  (groupId != null ? groupId.hashCode() : 0);
         result = 31 * result + (artifactId != null ? artifactId.hashCode() : 0);
         result = 31 * result + (version != null ? version.hashCode() : 0);
         result = 31 * result + (propertiesQuery != null ? propertiesQuery.hashCode() : 0);
@@ -397,7 +379,6 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
 
     @Override
     public NutsIdBuilder apply(Function<String, String> properties) {
-        setNamespace(CoreNutsUtils.applyStringProperties(this.getNamespace(), properties));
         setGroupId(CoreNutsUtils.applyStringProperties(this.getGroupId(), properties));
         setArtifactId(CoreNutsUtils.applyStringProperties(this.getArtifactId(), properties));
         setVersion(CoreNutsUtils.applyStringProperties(this.getVersion().getValue(), properties));
@@ -419,7 +400,7 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
     @Override
     public NutsId build() {
         return new DefaultNutsId(
-                namespace, groupId, artifactId, version == null ? null : version.getValue(), propertiesQuery.getPropertiesQuery(),session
+                groupId, artifactId, version == null ? null : version.getValue(), propertiesQuery.getPropertiesQuery(),session
         );
     }
 

@@ -82,7 +82,7 @@ public class NutsComponentController {
                 NutsSession session = ws.createSession();
                 NutsId id = ws.id().builder()
                         .setArtifactId(name)
-                        .setNamespace(namespace)
+                        .setRepository(namespace)
                         .setGroupId(group)
                         .setVersion(version)
                         .setArch(arch)
@@ -124,7 +124,7 @@ public class NutsComponentController {
                 NutsWorkspace ws = Nuts.openWorkspace("--workspace",workspaceLocation.getLocation());
                 NutsId id = ws.id().builder()
                         .setArtifactId(name)
-                        .setNamespace(namespace)
+                        .setRepository(namespace)
                         .setGroupId(group)
                         .setArch(arch)
                         .setOs(os)
@@ -163,7 +163,7 @@ public class NutsComponentController {
                 Map<String, String> data = NutsIndexerUtils.nutsIdToMap(
                         ws.id().builder()
                                 .setArtifactId(name)
-                                .setNamespace(namespace)
+                                .setRepository(namespace)
                                 .setGroupId(group)
                                 .setVersion(version)
                                 .setArch(arch)
@@ -201,7 +201,7 @@ public class NutsComponentController {
                 NutsWorkspace ws = Nuts.openWorkspace("--workspace",workspaceLocation.getLocation());
                 NutsId id = ws.id().builder()
                         .setArtifactId(name)
-                        .setNamespace(namespace)
+                        .setRepository(namespace)
                         .setGroupId(group)
                         .setVersion(version)
                         .setArch(arch)

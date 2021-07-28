@@ -68,10 +68,10 @@ public interface NutsId extends NutsTokenFilter, Serializable, Comparable<NutsId
     NutsTokenFilter artifactIdToken();
 
     /**
-     * non null namespace non null namespace token
-     * @return non null namespace non null namespace token
+     * non null repository non null repository token
+     * @return non null repository non null repository token
      */
-    NutsTokenFilter namespaceToken();
+    NutsTokenFilter repositoryToken();
 
     /**
      * non null token filter that searches in all id fields
@@ -124,10 +124,10 @@ public interface NutsId extends NutsTokenFilter, Serializable, Comparable<NutsId
     Map<String, String> getProperties();
 
     /**
-     * artifact namespace (usually repository name or id)
-     * @return artifact namespace (usually repository name or id)
+     * artifact repository (usually repository name or id)
+     * @return artifact repository (usually repository name or id)
      */
-    String getNamespace();
+    String getRepository();
 
     /**
      * artifact group which identifies uniquely projects and group of projects.
@@ -137,7 +137,7 @@ public interface NutsId extends NutsTokenFilter, Serializable, Comparable<NutsId
 
     /**
      * return a string representation of this id. All of group, name, version,
-     * namespace, queryMap values are printed. This method is equivalent to
+     * repository, queryMap values are printed. This method is equivalent to
      * {@link Object#toString()}
      *
      * @return string representation of this id
@@ -146,7 +146,7 @@ public interface NutsId extends NutsTokenFilter, Serializable, Comparable<NutsId
 
     /**
      * return a string concatenation of group, name and version,
-     * ignoring namespace, and queryMap values. An example of long name is
+     * ignoring repository, and queryMap values. An example of long name is
      * <code>my-group:my-artifact#my-version?alt</code>
      *
      * @return group id, artifact id and version only Id instance
@@ -155,7 +155,7 @@ public interface NutsId extends NutsTokenFilter, Serializable, Comparable<NutsId
 
     /**
      * returns a string concatenation of group and name (':' separated) ignoring
-     * version,namespace, and queryMap values. In group is empty or null, name
+     * version,repository, and queryMap values. In group is empty or null, name
      * is returned. Ann null values are trimmed to "" An example of simple name
      * is <code>my-group:my-artifact</code>
      *
@@ -165,7 +165,7 @@ public interface NutsId extends NutsTokenFilter, Serializable, Comparable<NutsId
 
     /**
      * return a new instance of NutsId defining only group and name ignoring
-     * version,namespace, and queryMap values.
+     * version,repository, and queryMap values.
      *
      * @return group and name only Id instance
      */
@@ -173,7 +173,7 @@ public interface NutsId extends NutsTokenFilter, Serializable, Comparable<NutsId
 
     /**
      * return a new instance of NutsId defining only group, name and version,
-     * ignoring namespace, and queryMap values.
+     * ignoring repository, and queryMap values.
      *
      * @return group, name and version only Id instance
      */

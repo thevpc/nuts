@@ -177,7 +177,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                         throw new NutsNotFoundException(getSession(), sid);
                     }
                     for (NutsId id0 : allIds) {
-                        list.addForInstall(id0.builder().setNamespace(null).build(), this.getCompanions(), false);
+                        list.addForInstall(id0.builder().setRepository(null).build(), this.getCompanions(), false);
                     }
                 }
             }
@@ -548,7 +548,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
         }
 
         private String normalizeId(NutsId id) {
-            return id.builder().setNamespace(null).setProperty("optional", null).build().toString();
+            return id.builder().setRepository(null).setProperty("optional", null).build().toString();
         }
 
         public List<NutsId> ids(Predicate<InstallIdInfo> filter) {

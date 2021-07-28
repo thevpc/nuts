@@ -74,10 +74,10 @@ public interface NutsDependency extends Serializable, NutsFormattable{
     NutsId toId();
 
     /**
-     * return namespace
-     * @return namespace
+     * return repository
+     * @return repository
      */
-    String getNamespace();
+    String getRepository();
 
 
     /**
@@ -110,7 +110,7 @@ public interface NutsDependency extends Serializable, NutsFormattable{
 
     /**
      * return dependency full name in the form
-     * namespace://group:name#version?scope=&lt;scope&gt;{@code &}optional=&lt;optional&gt;
+     * group:name#version?scope=&lt;scope&gt;{@code &}optional=&lt;optional&gt;
      *
      * @return return dependency full name
      */

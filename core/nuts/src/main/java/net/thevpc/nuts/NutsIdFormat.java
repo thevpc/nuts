@@ -38,30 +38,30 @@ package net.thevpc.nuts;
 public interface NutsIdFormat extends NutsFormat {
 
     /**
-     * return true when the namespace should not be included in formatted instance
-     * @return return true when the namespace should not be included in formatted instance
+     * return true when the repository should not be included in formatted instance
+     * @return return true when the repository should not be included in formatted instance
      */
-    boolean isOmitNamespace();
+    boolean isOmitRepository();
 
     /**
-     * update omitNamespace
-     * @param value true when the namespace should not be included in formatted instance
+     * update omitRepository
+     * @param value true when the repository should not be included in formatted instance
      * @return {@code this} instance
      */
-    NutsIdFormat setOmitNamespace(boolean value);
+    NutsIdFormat setOmitRepository(boolean value);
 
     /**
-     * update omitNamespace
-     * @param value true when the namespace should not be included in formatted instance
+     * update omitRepository
+     * @param value true when the repository should not be included in formatted instance
      * @return {@code this} instance
      */
-    NutsIdFormat omitNamespace(boolean value);
+    NutsIdFormat omitRepository(boolean value);
 
     /**
-     * update omitNamespace to true
+     * update omitRepository to true
      * @return {@code this} instance
      */
-    NutsIdFormat omitNamespace();
+    NutsIdFormat omitRepository();
 
     /**
      * return true when the groupId should not be included in formatted instance

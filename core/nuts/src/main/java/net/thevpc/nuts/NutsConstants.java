@@ -91,7 +91,7 @@ public final class NutsConstants {
 
     /**
      * Nuts Id query parameter names. Nuts id has the following form
-     * namespace://group:name#version?query where query is in the form
+     * group:name#version?query where query is in the form
      * key=value{@literal @}key=value...
      * <br>
      * This class defines all standard key names and their default values in the
@@ -197,9 +197,9 @@ public final class NutsConstants {
         public static final String VERSION = "version";
 
         /**
-         * id namespace can be defined as a property
+         * id repository can be defined as a property
          */
-        public static final String NAMESPACE = "namespace";
+        public static final String REPO = "repo";
 
         /**
          * dependency exclusions

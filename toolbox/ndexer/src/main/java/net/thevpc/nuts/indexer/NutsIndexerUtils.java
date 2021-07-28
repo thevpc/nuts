@@ -61,7 +61,7 @@ public class NutsIndexerUtils {
         Map<String, String> entity = new HashMap<>();
         id = id.builder().setFace(StringUtils.isEmpty(id.getFace()) ? "default" : id.getFace()).build();
         _condPut(entity, "name", id.getArtifactId());
-        _condPut(entity, "namespace", id.getNamespace());
+        _condPut(entity, "namespace", id.getRepository());
         _condPut(entity, "group", id.getGroupId());
         _condPut(entity, "version", id.getVersion().getValue());
         _condPut(entity, "face", id.getFace());
@@ -77,7 +77,7 @@ public class NutsIndexerUtils {
     public static Map<String, String> nutsDependencyToMap(NutsDependency dependency) {
         Map<String, String> entity = new HashMap<>();
         _condPut(entity, "name", dependency.getArtifactId());
-        _condPut(entity, "namespace", dependency.getNamespace());
+        _condPut(entity, "namespace", dependency.getRepository());
         _condPut(entity, "group", dependency.getGroupId());
         _condPut(entity, "version", dependency.getVersion().getValue());
         NutsId id2 = dependency.toId().builder()
@@ -127,7 +127,7 @@ public class NutsIndexerUtils {
     public static NutsId mapToNutsId(Map<String, String> map, NutsWorkspace ws) {
         return ws.id().builder()
                 .setArtifactId(trim(map.get("name")))
-                .setNamespace(trim(map.get("namespace")))
+                .setRepository(trim(map.get("namespace")))
                 .setGroupId(trim(map.get("group")))
                 .setVersion(trim(map.get("version")))
                 .setOs(trim(map.get("os")))

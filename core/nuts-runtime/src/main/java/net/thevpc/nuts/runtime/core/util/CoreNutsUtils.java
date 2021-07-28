@@ -66,7 +66,7 @@ public class CoreNutsUtils {
     public static final int LOCK_TIME = 3;
     public static final TimeUnit LOCK_TIME_UNIT = TimeUnit.SECONDS;
     public static final NutsDefaultThreadFactory nutsDefaultThreadFactory = new NutsDefaultThreadFactory("nuts-pool", true);
-    //    public static NutsId SAMPLE_NUTS_ID = new DefaultNutsId("namespace", "group", "name", "version", "param='true'");
+    //    public static NutsId SAMPLE_NUTS_ID = new DefaultNutsId("repository", "group", "name", "version", "param='true'");
 //    public static NutsDescriptor SAMPLE_NUTS_DESCRIPTOR
 //            = new DefaultNutsDescriptorBuilder()
 //            .setId(new DefaultNutsId(null, "group", "name", "version", (String) null))
@@ -94,7 +94,7 @@ public class CoreNutsUtils {
 //            .setDependencies(
 //                    new NutsDependency[]{
 //                            new DefaultNutsDependencyBuilder()
-//                                    .setNamespace("namespace")
+//                                    .setRepository("repository")
 //                                    .setGroupId("group")
 //                                    .setArtifactId("name")
 //                                    .setVersion("version")
@@ -463,14 +463,14 @@ public class CoreNutsUtils {
     public static NutsId applyNutsIdInheritance(NutsId child, NutsId parent, NutsWorkspace ws) {
         if (parent != null) {
             boolean modified = false;
-            String namespace = child.getNamespace();
+            String repository = child.getRepository();
             String group = child.getGroupId();
             String name = child.getArtifactId();
             String version = child.getVersion().getValue();
             Map<String, String> props = child.getProperties();
-            if (CoreStringUtils.isBlank(namespace)) {
+            if (CoreStringUtils.isBlank(repository)) {
                 modified = true;
-                namespace = parent.getNamespace();
+                repository = parent.getRepository();
             }
             if (CoreStringUtils.isBlank(group)) {
                 modified = true;
@@ -490,7 +490,7 @@ public class CoreNutsUtils {
                 props.putAll(parentFaceMap);
             }
             if (modified) {
-                return ws.id().builder().setNamespace(namespace)
+                return ws.id().builder().setRepository(repository)
                         .setGroupId(group)
                         .setArtifactId(name)
                         .setVersion(version)

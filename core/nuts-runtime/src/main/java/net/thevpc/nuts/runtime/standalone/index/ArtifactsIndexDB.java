@@ -49,11 +49,11 @@ public class ArtifactsIndexDB {
         return new NanoDBTableDefinition<NutsId>(
                 name, NutsId.class, db.getSerializers().of(NutsId.class,false),
                 new NanoDBDefaultIndexDefinition<>("id", String.class,false, x->x.getLongNameId()
-                        .builder().setNamespace(x.getNamespace()).build().toString()
+                        .builder().setRepository(x.getRepository()).build().toString()
                         ),
                 new NanoDBDefaultIndexDefinition<>("groupId", String.class,false, NutsId::getGroupId),
                 new NanoDBDefaultIndexDefinition<>("artifactId", String.class,false,NutsId::getArtifactId),
-                new NanoDBDefaultIndexDefinition<>("repository", String.class,false,NutsId::getNamespace)
+                new NanoDBDefaultIndexDefinition<>("repository", String.class,false,NutsId::getRepository)
         );
     }
 
@@ -69,7 +69,7 @@ public class ArtifactsIndexDB {
     public boolean contains(NutsId id) {
         return table.findByIndex("id",
                 id.getLongNameId()
-                .builder().setNamespace(id.getNamespace())
+                .builder().setRepository(id.getRepository())
                 .build().toDependency()
         ).findAny().orElse(null)!=null;
     }

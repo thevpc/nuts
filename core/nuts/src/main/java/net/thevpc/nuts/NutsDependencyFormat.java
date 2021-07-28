@@ -35,18 +35,18 @@ package net.thevpc.nuts;
 public interface NutsDependencyFormat extends NutsFormat {
 
     /**
-     * true if omit namespace from formatted string.
-     * @return true if omit namespace from formatted string
+     * true if omit repository from formatted string.
+     * @return true if omit repository from formatted string
      */
-    boolean isOmitNamespace();
+    boolean isOmitRepository();
 
     /**
-     * if true omit (do not include) namespace when formatting the value
+     * if true omit (do not include) repository when formatting the value
      * set using {@link #setValue(NutsDependency)} .
-     * @param omitNamespace new value
+     * @param omitRepository new value
      * @return {@code this} instance
      */
-    NutsDependencyFormat setOmitNamespace(boolean omitNamespace);
+    NutsDependencyFormat setOmitRepository(boolean omitRepository);
 
     /**
      * return true if omit group

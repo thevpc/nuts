@@ -6,7 +6,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class DefaultNutsIdParser implements NutsIdParser {
-    public static final Pattern NUTS_ID_PATTERN = Pattern.compile("^(([a-zA-Z0-9_${}*-]+|<main>)://)?([a-zA-Z0-9_.${}*-]+)(:([a-zA-Z0-9_.${}*-]+))?(#(?<version>[^?]+))?(\\?(?<query>.+))?$");
+    //(([a-zA-Z0-9_${}*-]+|<main>)://)?
+    public static final Pattern NUTS_ID_PATTERN = Pattern.compile("^(?<group>[a-zA-Z0-9_.${}*-]+)(:(?<artifact>[a-zA-Z0-9_.${}*-]+))?(#(?<version>[^?]+))?(\\?(?<query>.+))?$");
     private NutsSession session;
     private boolean lenient = true;
 
@@ -38,12 +39,11 @@ public class DefaultNutsIdParser implements NutsIdParser {
             Matcher m = NUTS_ID_PATTERN.matcher(nutsId);
             if (m.find()) {
                 NutsIdBuilder builder = session.getWorkspace().id().builder();
-                builder.setNamespace(m.group(2));
-                String group = m.group(3);
-                String artifact = m.group(5);
+                String group = m.group("group");
+                String artifact = m.group("artifact");
                 builder.setArtifactId(artifact);
-                builder.setVersion(m.group(7));
-                builder.setProperties(m.group(9));
+                builder.setVersion(m.group("version"));
+                builder.setProperties(m.group("query"));
                 if (artifact == null) {
                     artifact = group;
                     group = null;

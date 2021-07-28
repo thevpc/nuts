@@ -36,7 +36,6 @@ import java.util.logging.Level;
 import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.core.filters.NutsSearchIdByDescriptor;
 import net.thevpc.nuts.runtime.core.filters.NutsSearchIdById;
-import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 
 /**
@@ -175,7 +174,7 @@ public class FolderNutIdIterator implements Iterator<NutsId> {
                     t = nutsDescriptor;
                 }
                 if (t != null && (filter == null || filter.acceptSearchId(new NutsSearchIdByDescriptor(t), session))) {
-                    NutsId nutsId = t.getId().builder().setNamespace(repository).build();
+                    NutsId nutsId = t.getId().builder().setRepository(repository).build();
 //                        nutsId = nutsId.setAlternative(t.getAlternative());
                     return nutsId;
                 }

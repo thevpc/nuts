@@ -52,7 +52,7 @@ public class LuceneIndexImporter {
         int allCount=0;
         try (DirtyLuceneIndexParser p = new DirtyLuceneIndexParser(new FileInputStream(filePath))) {
             while (p.hasNext()) {
-                NutsId id = idParser.parse(p.next()).builder().setNamespace(repository).build();
+                NutsId id = idParser.parse(p.next()).builder().setRepository(repository).build();
                 if (!adb.contains(id)) {
                     addedCount++;
                     adb.add(id);

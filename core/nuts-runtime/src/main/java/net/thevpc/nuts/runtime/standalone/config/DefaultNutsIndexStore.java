@@ -55,9 +55,10 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
                         return IteratorUtils.emptyIterator();
                     }
                     String URL = "http://localhost:7070/indexer/" + NutsConstants.Folders.ID + "/allVersions"
-                            + String.format("?repositoryUuid=%s&name=%s&namespace=%s&group=%s"
-                                    + "&os=%s&osdist=%s&arch=%s&face=%s&"/*alternative=%s*/, getRepository().getUuid(),
-                            CoreStringUtils.trim(id.getArtifactId()), CoreStringUtils.trim(id.getNamespace()), CoreStringUtils.trim(id.getGroupId()), CoreStringUtils.trim(id.getOs()),
+                            + String.format("?repositoryUuid=%s&name=%s&repo=%s&group=%s"
+                                    + "&os=%s&osdist=%s&arch=%s&face=%s&"/*alternative=%s*/,
+                            getRepository().getUuid(),
+                            CoreStringUtils.trim(id.getArtifactId()), CoreStringUtils.trim(id.getRepository()), CoreStringUtils.trim(id.getGroupId()), CoreStringUtils.trim(id.getOs()),
                             CoreStringUtils.trim(id.getOsdist()), CoreStringUtils.trim(id.getArch()), CoreStringUtils.trim(id.getFace())
 //                , CoreStringUtils.trim(id.getAlternative())
                     );
@@ -110,9 +111,9 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
             return this;
         }
         String URL = "http://localhost:7070/indexer/" + NutsConstants.Folders.ID + "/delete"
-                + String.format("?repositoryUuid=%s&name=%s&namespace=%s&group=%s&version=%s"
+                + String.format("?repositoryUuid=%s&name=%s&repo=%s&group=%s&version=%s"
                         + "&os=%s&osdist=%s&arch=%s&face=%s"/*&alternative=%s*/, getRepository().getUuid(),
-                CoreStringUtils.trim(id.getArtifactId()), CoreStringUtils.trim(id.getNamespace()), CoreStringUtils.trim(id.getGroupId()), CoreStringUtils.trim(id.getVersion().toString()),
+                CoreStringUtils.trim(id.getArtifactId()), CoreStringUtils.trim(id.getRepository()), CoreStringUtils.trim(id.getGroupId()), CoreStringUtils.trim(id.getVersion().toString()),
                 CoreStringUtils.trim(id.getOs()), CoreStringUtils.trim(id.getOsdist()), CoreStringUtils.trim(id.getArch()), CoreStringUtils.trim(id.getFace())
 //                ,CoreStringUtils.trim(id.getAlternative())
         );
@@ -133,9 +134,9 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
             return this;
         }
         String URL = "http://localhost:7070/indexer/" + NutsConstants.Folders.ID + "/addData"
-                + String.format("?repositoryUuid=%s&name=%s&namespace=%s&group=%s&version=%s"
+                + String.format("?repositoryUuid=%s&name=%s&repo=%s&group=%s&version=%s"
                         + "&os=%s&osdist=%s&arch=%s&face=%s"/*&alternative=%s*/, getRepository().getUuid(),
-                CoreStringUtils.trim(id.getArtifactId()), CoreStringUtils.trim(id.getNamespace()), CoreStringUtils.trim(id.getGroupId()), CoreStringUtils.trim(id.getVersion().toString()),
+                CoreStringUtils.trim(id.getArtifactId()), CoreStringUtils.trim(id.getRepository()), CoreStringUtils.trim(id.getGroupId()), CoreStringUtils.trim(id.getVersion().toString()),
                 CoreStringUtils.trim(id.getOs()), CoreStringUtils.trim(id.getOsdist()), CoreStringUtils.trim(id.getArch()), CoreStringUtils.trim(id.getFace())
 //                ,CoreStringUtils.trim(id.getAlternative())
         );

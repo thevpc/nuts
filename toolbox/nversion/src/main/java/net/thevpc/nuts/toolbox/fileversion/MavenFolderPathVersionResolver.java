@@ -63,7 +63,7 @@ public class MavenFolderPathVersionResolver implements PathVersionResolver {
                 }
                 all.add(new VersionDescriptor(
                         context.getWorkspace().id().builder().setGroupId(d.getId().getGroupId())
-                                .setNamespace(d.getId().getArtifactId())
+                                .setRepository(d.getId().getArtifactId())
                                 .setVersion(d.getId().getVersion())
                                 .build(),
                         properties));

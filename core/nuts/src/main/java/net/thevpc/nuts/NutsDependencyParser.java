@@ -38,7 +38,7 @@ public interface NutsDependencyParser {
 
     /**
      * parse dependency in the form
-     * namespace://group:name#version?scope=&lt;scope&gt;{@code &}optional=&lt;optional&gt;
+     * group:name#version?scope=&lt;scope&gt;{@code &}optional=&lt;optional&gt;
      * If the string cannot be evaluated, return null (when not required).
      * @param dependency dependency
      * @return new instance of parsed dependency

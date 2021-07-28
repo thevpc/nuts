@@ -92,7 +92,7 @@ public class CommandForIdNutsInstallerComponent implements NutsInstallerComponen
             executionContext.getWorkspace().exec()
                     .setCommand(def2)
                     .addCommand("--nuts-exec-mode=update", "--yes")
-                    //                    .addCommand(id.builder().setNamespace(null).build().toString(), "--nuts-exec-mode=update", "--force")
+                    //                    .addCommand(id.builder().setRepository(null).build().toString(), "--nuts-exec-mode=update", "--force")
                     .addExecutorOptions().addCommand(executionContext.getArguments())
                     .setFailFast(true).run();
         }

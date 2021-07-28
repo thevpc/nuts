@@ -38,7 +38,7 @@ import net.thevpc.nuts.runtime.standalone.util.NutsDependencyScopes;
 public class DefaultNutsDependency implements NutsDependency {
 
     public static final long serialVersionUID = 1L;
-    private final String namespace;
+    private final String repository;
     private final String groupId;
     private final String artifactId;
     private final NutsVersion version;
@@ -52,16 +52,16 @@ public class DefaultNutsDependency implements NutsDependency {
     private final String properties;
     private transient final NutsSession session;
 
-    public DefaultNutsDependency(String namespace, String groupId, String artifactId, String classifier, NutsVersion version, String scope, String optional, NutsId[] exclusions,
-            String os, String arch, String type,
-            Map<String, String> properties, NutsSession ws) {
-        this(namespace, groupId, artifactId, classifier, version, scope, optional, exclusions, os, arch, type, QueryStringParser.formatSortedPropertiesQuery(properties), ws);
+    public DefaultNutsDependency(String repository, String groupId, String artifactId, String classifier, NutsVersion version, String scope, String optional, NutsId[] exclusions,
+                                 String os, String arch, String type,
+                                 Map<String, String> properties, NutsSession ws) {
+        this(repository, groupId, artifactId, classifier, version, scope, optional, exclusions, os, arch, type, QueryStringParser.formatSortedPropertiesQuery(properties), ws);
     }
 
-    public DefaultNutsDependency(String namespace, String groupId, String artifactId, String classifier, NutsVersion version, String scope, String optional, NutsId[] exclusions,
-            String os, String arch, String type,
-            String properties, NutsSession session) {
-        this.namespace = CoreStringUtils.trimToNull(namespace);
+    public DefaultNutsDependency(String repository, String groupId, String artifactId, String classifier, NutsVersion version, String scope, String optional, NutsId[] exclusions,
+                                 String os, String arch, String type,
+                                 String properties, NutsSession session) {
+        this.repository = CoreStringUtils.trimToNull(repository);
         this.groupId = CoreStringUtils.trimToNull(groupId);
         this.artifactId = CoreStringUtils.trimToNull(artifactId);
         this.version = version == null ? session.getWorkspace().version().parser().parse("") : version;
@@ -132,6 +132,9 @@ public class DefaultNutsDependency implements NutsDependency {
         if (!CoreStringUtils.isBlank(type)) {
             m.put(NutsConstants.IdProperties.TYPE, type);
         }
+        if (!CoreStringUtils.isBlank(repository)) {
+            m.put(NutsConstants.IdProperties.REPO, repository);
+        }
         if (exclusions.length > 0) {
             TreeSet<String> ex = new TreeSet<>();
             for (NutsId exclusion : exclusions) {
@@ -140,7 +143,6 @@ public class DefaultNutsDependency implements NutsDependency {
             m.put(NutsConstants.IdProperties.EXCLUSIONS, String.join(",", ex));
         }
         return session.getWorkspace().id().builder()
-                .setNamespace(getNamespace())
                 .setGroupId(getGroupId())
                 .setArtifactId(getArtifactId())
                 .setVersion(getVersion())
@@ -160,8 +162,8 @@ public class DefaultNutsDependency implements NutsDependency {
     }
 
     @Override
-    public String getNamespace() {
-        return namespace;
+    public String getRepository() {
+        return repository;
     }
 
     @Override
@@ -202,8 +204,8 @@ public class DefaultNutsDependency implements NutsDependency {
         return version;
     }
 
-    //    public void setNamespace(String namespace) {
-//        this.namespace = namespace;
+    //    public void setRepository(String repository) {
+//        this.repository = repository;
 //    }
 //    public void setGroup(String group) {
 //        this.group = group;
@@ -219,9 +221,6 @@ public class DefaultNutsDependency implements NutsDependency {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        if (!CoreStringUtils.isBlank(namespace)) {
-            sb.append(namespace).append("://");
-        }
         if (!CoreStringUtils.isBlank(groupId)) {
             sb.append(groupId).append(":");
         }
@@ -230,6 +229,9 @@ public class DefaultNutsDependency implements NutsDependency {
             sb.append("#").append(version);
         }
         Map<String, String> p = new HashMap<>();
+        if (!CoreStringUtils.isBlank(repository)) {
+            p.put(NutsConstants.IdProperties.REPO, repository);
+        }
         if (!CoreStringUtils.isBlank(scope)) {
             if (!scope.equals(NutsDependencyScope.API.id())) {
                 p.put(NutsConstants.IdProperties.SCOPE, scope);
@@ -251,7 +253,7 @@ public class DefaultNutsDependency implements NutsDependency {
         }
         if (exclusions.length>0) {
             p.put(NutsConstants.IdProperties.EXCLUSIONS, Arrays.stream(exclusions)
-                            .map(Object::toString)
+                            .map(NutsId::getShortName)
                     .collect(Collectors.joining(","))
             );
         }

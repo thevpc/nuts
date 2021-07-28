@@ -186,7 +186,7 @@ public class FilesFoldersApi {
                     t = nutsDescriptor;
                 }
                 if ((filter == null || filter.acceptSearchId(new NutsSearchIdByDescriptor(t), session))) {
-                    NutsId nutsId = t.getId().builder().setNamespace(repository.getName()).build();
+                    NutsId nutsId = t.getId().builder().setRepository(repository.getName()).build();
 //                        nutsId = nutsId.setAlternative(t.getAlternative());
                     return nutsId;
                 }

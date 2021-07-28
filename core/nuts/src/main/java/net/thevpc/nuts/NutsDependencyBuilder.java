@@ -39,12 +39,12 @@ import java.util.Map;
 public interface NutsDependencyBuilder {
 
     /**
-     * set namespace value
+     * set repository value
      *
-     * @param namespace new value
+     * @param repository new value
      * @return {@code this} instance
      */
-    NutsDependencyBuilder setNamespace(String namespace);
+    NutsDependencyBuilder setRepository(String repository);
 
     /**
      * set group value
@@ -228,11 +228,11 @@ public interface NutsDependencyBuilder {
     NutsId toId();
 
     /**
-     * return namespace
+     * return repository
      *
-     * @return namespace
+     * @return repository
      */
-    String getNamespace();
+    String getRepository();
 
     /**
      * return os

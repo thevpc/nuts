@@ -7,6 +7,7 @@ import net.thevpc.nuts.runtime.core.commands.ws.NutsExecutionContextBuilder;
 import net.thevpc.nuts.runtime.core.model.DefaultNutsDefinition;
 import net.thevpc.nuts.runtime.core.util.CoreNutsDependencyUtils;
 import net.thevpc.nuts.runtime.standalone.DefaultNutsWorkspace;
+import net.thevpc.nuts.runtime.standalone.executors.ArtifactExecutorComponent;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 import java.io.File;
@@ -137,14 +138,6 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
 //            checkFailFast(result.getExitCode());
         }
         return this;
-    }
-
-    private NutsExecutorComponent resolveNutsExecutorComponent(NutsDefinition nutsDefinition) {
-        NutsExecutorComponent executorComponent = getSession().getWorkspace().extensions().createSupported(NutsExecutorComponent.class, nutsDefinition);
-        if (executorComponent != null) {
-            return executorComponent;
-        }
-        throw new NutsNotFoundException(getSession(), nutsDefinition.getId());
     }
 
     private NutsExecutableInformationExt execEmbeddedOrExternal(String[] cmd, String[] executorOptions, NutsSession prepareSession, NutsSession execSession) {
@@ -393,26 +386,34 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
 //                session.getTerminal().getErr().println(nutToRun.getId()+" is not executable... will perform extra checks.");
 //                throw new NutsNotExecutableException(descriptor.getId());
             }
-            NutsArtifactCall executor = descriptor.getExecutor();
+            NutsArtifactCall executorCall = descriptor.getExecutor();
             NutsExecutorComponent execComponent = null;
             List<String> executorArgs = new ArrayList<>();
             Map<String, String> execProps = null;
-            if (executor == null) {
-                execComponent = resolveNutsExecutorComponent(def);
-            } else {
-                if (executor.getId() == null) {
-                    execComponent = resolveNutsExecutorComponent(def);
-                } else {
-                    NutsDefinition customDef = new DefaultNutsDefinition(null, null, executor.getId(),
-                            ws.descriptor().descriptorBuilder()
-                                    .setId(executor.getId()).setExecutor(executor)
-                                    .setExecutable(true)
-                                    .build(), null, null, NutsIdType.REGULAR, null, getSession()
-                    );
-                    execComponent = resolveNutsExecutorComponent(customDef);
+
+            if(executorCall !=null){
+                NutsId eid = executorCall.getId();
+                if(eid!=null){
+                    //nutsDefinition
+                    NutsResultList<NutsDefinition> q = getSession().getWorkspace().search().addId(eid).setLatest(true)
+                            .getResultDefinitions();
+                    NutsDefinition[] availableExecutors = q.stream().limit(2).toArray(NutsDefinition[]::new);
+                    if(availableExecutors.length==2){
+                        throw new NutsTooManyElementsException(session, NutsMessage.cstyle("too many results for %s", eid));
+                    }else if(availableExecutors.length==1){
+                        execComponent=new ArtifactExecutorComponent(availableExecutors[0].getId(),session);
+                    }
                 }
-                executorArgs.addAll(Arrays.asList(executor.getArguments()));
-                execProps = executor.getProperties();
+            }
+            if(execComponent==null) {
+                execComponent = getSession().getWorkspace().extensions().createSupported(NutsExecutorComponent.class, def);
+                if (execComponent == null) {
+                    throw new NutsNotFoundException(getSession(), def.getId());
+                }
+            }
+            if (executorCall != null) {
+                executorArgs.addAll(Arrays.asList(executorCall.getArguments()));
+                execProps = executorCall.getProperties();
             }
             executorArgs.addAll(Arrays.asList(executorOptions));
             NutsExecutionContextBuilder ecb = NutsWorkspaceExt.of(ws).createExecutionContext();

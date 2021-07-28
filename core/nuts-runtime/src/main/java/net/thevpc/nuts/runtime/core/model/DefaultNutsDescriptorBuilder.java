@@ -752,7 +752,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 
     private NutsId applyNutsIdProperties(NutsId child, Function<String, String> properties) {
         return session.getWorkspace().id().builder()
-                .setNamespace(CoreNutsUtils.applyStringProperties(child.getNamespace(), properties))
+                .setRepository(CoreNutsUtils.applyStringProperties(child.getRepository(), properties))
                 .setGroupId(CoreNutsUtils.applyStringProperties(child.getGroupId(), properties))
                 .setArtifactId(CoreNutsUtils.applyStringProperties(child.getArtifactId(), properties))
                 .setVersion(CoreNutsUtils.applyStringProperties(child.getVersion().getValue(), properties))
@@ -771,7 +771,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
             exclusions[i] = applyNutsIdProperties(exclusions[i], properties);
         }
         return session.getWorkspace().dependency().builder()
-                .setNamespace(CoreNutsUtils.applyStringProperties(child.getNamespace(), properties))
+                .setRepository(CoreNutsUtils.applyStringProperties(child.getRepository(), properties))
                 .setGroupId(CoreNutsUtils.applyStringProperties(child.getGroupId(), properties))
                 .setArtifactId(CoreNutsUtils.applyStringProperties(child.getArtifactId(), properties))
                 .setVersion(CoreNutsUtils.applyStringProperties(child.getVersion(), properties,session.getWorkspace()))

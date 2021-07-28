@@ -41,7 +41,7 @@ import net.thevpc.nuts.runtime.core.util.CoreNutsDependencyUtils;
  */
 public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
 
-    private String namespace;
+    private String repo;
     private String groupId;
     private String artifactId;
     private NutsVersion version;
@@ -72,8 +72,8 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
                     setClassifier(value);
                     return true;
                 }
-                case NutsConstants.IdProperties.NAMESPACE: {
-                    setNamespace(value);
+                case NutsConstants.IdProperties.REPO: {
+                    setRepository(value);
                     return true;
                 }
                 case NutsConstants.IdProperties.EXCLUSIONS: {
@@ -106,8 +106,8 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
     }
 
     @Override
-    public NutsDependencyBuilder setNamespace(String namespace) {
-        this.namespace = CoreStringUtils.trimToNull(namespace);
+    public NutsDependencyBuilder setRepository(String repository) {
+        this.repo = CoreStringUtils.trimToNull(repository);
         return this;
     }
 
@@ -138,12 +138,12 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
     @Override
     public NutsDependencyBuilder setId(NutsId id) {
         if (id == null) {
-            setNamespace(null);
+            setRepository(null);
             setGroupId(null);
             setArtifactId(null);
             setVersion((String) null);
         } else {
-            setNamespace(id.getNamespace());
+            setRepository(id.getRepository());
             setGroupId(id.getGroupId());
             setArtifactId(id.getArtifactId());
             setVersion(id.getVersion());
@@ -229,7 +229,7 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
     @Override
     public NutsDependencyBuilder set(NutsDependencyBuilder value) {
         if (value != null) {
-            setNamespace(value.getNamespace());
+            setRepository(value.getRepository());
             setGroupId(value.getGroupId());
             setArtifactId(value.getArtifactId());
             setVersion(value.getVersion());
@@ -250,7 +250,7 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
     @Override
     public NutsDependencyBuilder set(NutsDependency value) {
         if (value != null) {
-            setNamespace(value.getNamespace());
+            setRepository(value.getRepository());
             setGroupId(value.getGroupId());
             setArtifactId(value.getArtifactId());
             setVersion(value.getVersion());
@@ -275,7 +275,7 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
 
     @Override
     public NutsDependencyBuilder clear() {
-        setNamespace(null);
+        setRepository(null);
         setGroupId(null);
         setArtifactId(null);
         setVersion((NutsVersion) null);
@@ -328,7 +328,7 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
             m.put(NutsConstants.IdProperties.EXCLUSIONS, String.join(",", ex));
         }
         return session.getWorkspace().id().builder()
-                .setNamespace(getNamespace())
+                .setRepository(getRepository())
                 .setGroupId(getGroupId())
                 .setArtifactId(getArtifactId())
                 .setVersion(getVersion())
@@ -338,8 +338,8 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
     }
 
     @Override
-    public String getNamespace() {
-        return namespace;
+    public String getRepository() {
+        return repo;
     }
 
     @Override
@@ -378,7 +378,7 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
     @Override
     public NutsDependency build() {
         return new DefaultNutsDependency(
-                getNamespace(), getGroupId(), getArtifactId(), getClassifier(),
+                getRepository(), getGroupId(), getArtifactId(), getClassifier(),
                 getVersion(),
                 getScope(),
                 getOptional(),

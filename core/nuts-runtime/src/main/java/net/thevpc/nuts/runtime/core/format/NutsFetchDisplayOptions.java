@@ -51,7 +51,7 @@ public class NutsFetchDisplayOptions {
         this.idFormat.setHighlightImportedGroupId(true);
         this.idFormat.setOmitOtherProperties(true);
         this.idFormat.setOmitFace(true);
-        this.idFormat.setOmitNamespace(true);
+        this.idFormat.setOmitRepository(true);
 //        this.idFormat.setOmitAlternative(false);
         this.idFormat.setOmitClassifier(false);
         this.idFormat.setOmitGroupId(false);
@@ -187,8 +187,8 @@ public class NutsFetchDisplayOptions {
             if (this.getIdFormat().isOmitImportedGroupId()) {
                 displayOptionsArgs.add("--omit-imported-group");
             }
-            if (this.getIdFormat().isOmitNamespace()) {
-                displayOptionsArgs.add("--omit-namespace");
+            if (this.getIdFormat().isOmitRepository()) {
+                displayOptionsArgs.add("--omit-repo");
             }
 
             displayOptionsArgs.add("--display=" + String.join(",", Arrays.asList(getDisplayProperties()).stream().map(x -> CoreEnumUtils.getEnumString(x)).collect(Collectors.toList())));

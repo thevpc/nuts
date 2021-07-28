@@ -11,14 +11,12 @@ import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.core.commands.ws.DefaultNutsUpdateResult;
 import net.thevpc.nuts.runtime.core.config.NutsWorkspaceConfigManagerExt;
 import net.thevpc.nuts.runtime.core.repos.NutsInstalledRepository;
-import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.DefaultNutsWorkspaceUpdateResult;
 import net.thevpc.nuts.runtime.standalone.NutsExtensionListHelper;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
-import java.io.PrintStream;
 import java.time.Instant;
 import java.util.*;
 import java.util.function.Function;
@@ -700,7 +698,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
 
     private NutsId toCanonicalForm(NutsId id) {
         if (id != null) {
-            id = id.builder().setNamespace(null).build();
+            id = id.builder().setRepository(null).build();
             String oldValue = id.getProperties().get(NutsConstants.IdProperties.FACE);
             if (oldValue != null && oldValue.trim().isEmpty()) {
                 id = id.builder().setProperty(NutsConstants.IdProperties.FACE, null).build();

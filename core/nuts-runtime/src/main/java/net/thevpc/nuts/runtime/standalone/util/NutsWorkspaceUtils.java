@@ -484,7 +484,7 @@ public class NutsWorkspaceUtils {
         map.put("nuts.name", id.getArtifactId());
         map.put("nuts.group", id.getGroupId());
         map.put("nuts.face", id.getFace());
-        map.put("nuts.namespace", id.getNamespace());
+        map.put("nuts.repo", id.getRepository());
         map.put("nuts.id", id.toString());
         if (installerFile != null) {
             map.put("nuts.installer", installerFile.toString());

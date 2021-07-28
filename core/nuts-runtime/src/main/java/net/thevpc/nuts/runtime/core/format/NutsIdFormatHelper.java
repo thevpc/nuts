@@ -423,7 +423,7 @@ public class NutsIdFormatHelper {
                     }
                 }
                 if (rname == null && id != null) {
-                    rname = id.getNamespace();
+                    rname = id.getRepository();
                 }
                 return stringValue(rname);
             }
@@ -435,7 +435,7 @@ public class NutsIdFormatHelper {
                     }
                 }
                 if (ruuid == null && id != null) {
-                    String p = id.getNamespace();
+                    String p = id.getRepository();
                     NutsRepository r = ws.repos()
                             .setSession(session.copy().setTransitive(false))
                             .findRepositoryByName(p);

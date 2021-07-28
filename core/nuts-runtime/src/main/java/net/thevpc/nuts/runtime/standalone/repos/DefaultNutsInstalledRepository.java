@@ -211,8 +211,8 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
         NutsWorkspaceUtils.of(session).checkReadOnly();
         InstallInfoConfig ii;
         try {
-            String namespace = id.getNamespace();
-            NutsRepository r = session.getWorkspace().repos().findRepository(namespace);
+            String repository = id.getRepository();
+            NutsRepository r = session.getWorkspace().repos().findRepository(repository);
             ii = new InstallInfoConfig();
             ii.setConfigVersion(DefaultNutsWorkspace.VERSION_INSTALL_INFO_CONFIG);
             ii.setId(id);

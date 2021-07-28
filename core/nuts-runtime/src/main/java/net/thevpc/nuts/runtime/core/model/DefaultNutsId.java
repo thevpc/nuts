@@ -40,7 +40,6 @@ import net.thevpc.nuts.runtime.bundles.string.GlobUtils;
  */
 public class DefaultNutsId implements NutsId {
     public static final long serialVersionUID = 1L;
-    private final String namespace;
     private final String groupId;
     private final String artifactId;
     private final NutsVersion version;
@@ -48,24 +47,22 @@ public class DefaultNutsId implements NutsId {
     private transient NutsWorkspace ws;
     private transient NutsSession session;
 
-    public DefaultNutsId(String namespace, String groupId, String artifactId, String version, Map<String, String> properties,NutsSession session) {
-        this(namespace, groupId, artifactId, session.getWorkspace().version().parser().parse(version), properties,session);
+    public DefaultNutsId(String groupId, String artifactId, String version, Map<String, String> properties,NutsSession session) {
+        this( groupId, artifactId, session.getWorkspace().version().parser().parse(version), properties,session);
     }
 
-    protected DefaultNutsId(String namespace, String groupId, String artifactId, NutsVersion version, Map<String, String> properties,NutsSession session) {
+    protected DefaultNutsId(String groupId, String artifactId, NutsVersion version, Map<String, String> properties,NutsSession session) {
         this.ws = session.getWorkspace();
         this.session = session;
-        this.namespace = CoreStringUtils.trimToNull(namespace);
         this.groupId = CoreStringUtils.trimToNull(groupId);
         this.artifactId = CoreStringUtils.trimToNull(artifactId);
         this.version = version == null ? ws.version().parser().parse("") : version;
         this.properties = QueryStringParser.formatSortedPropertiesQuery(properties);
     }
 
-    protected DefaultNutsId(String namespace, String groupId, String artifactId, NutsVersion version, String properties,NutsSession session) {
+    protected DefaultNutsId(String groupId, String artifactId, NutsVersion version, String properties, NutsSession session) {
         this.ws = session.getWorkspace();
         this.session = session;
-        this.namespace = CoreStringUtils.trimToNull(namespace);
         this.groupId = CoreStringUtils.trimToNull(groupId);
         this.artifactId = CoreStringUtils.trimToNull(artifactId);
         this.version = version == null ? ws.version().parser().parse("") : version;
@@ -73,13 +70,12 @@ public class DefaultNutsId implements NutsId {
     }
 
     public DefaultNutsId(String groupId, String artifactId, String version,NutsSession session) {
-        this(null, groupId, artifactId, version, (String) null,session);
+        this(groupId, artifactId, version, (String) null,session);
     }
 
-    public DefaultNutsId(String namespace, String groupId, String artifactId, String version, String properties,NutsSession session) {
+    public DefaultNutsId(String groupId, String artifactId, String version, String properties, NutsSession session) {
         this.ws = session.getWorkspace();
         this.session = session;
-        this.namespace = CoreStringUtils.trimToNull(namespace);
         this.groupId = CoreStringUtils.trimToNull(groupId);
         this.artifactId = CoreStringUtils.trimToNull(artifactId);
         this.version = ws.version().parser().parse(version);
@@ -135,13 +131,13 @@ public class DefaultNutsId implements NutsId {
     }
 
     @Override
-    public NutsTokenFilter namespaceToken() {
-        return new DefaultNutsTokenFilter(getNamespace());
+    public NutsTokenFilter repositoryToken() {
+        return new DefaultNutsTokenFilter(getRepository());
     }
 
     @Override
     public NutsTokenFilter anyToken() {
-        NutsTokenFilter[] oo = {groupIdToken(), propertiesToken(), versionToken(), artifactIdToken(), namespaceToken()};
+        NutsTokenFilter[] oo = {groupIdToken(), propertiesToken(), versionToken(), artifactIdToken(), repositoryToken()};
         return new NutsTokenFilter() {
             @Override
             public boolean isNull() {
@@ -265,8 +261,9 @@ public class DefaultNutsId implements NutsId {
     }
 
     @Override
-    public String getNamespace() {
-        return namespace;
+    public String getRepository() {
+        String s = getProperties().get(NutsConstants.IdProperties.REPO);
+        return CoreStringUtils.trimToNull(s);
     }
 
     @Override
@@ -276,12 +273,12 @@ public class DefaultNutsId implements NutsId {
 
     @Override
     public NutsId getShortNameId() {
-        return new DefaultNutsId(null, groupId, artifactId, (NutsVersion) null, "",session);
+        return new DefaultNutsId( groupId, artifactId, (NutsVersion) null, "",session);
     }
 
     @Override
     public NutsId getLongNameId() {
-        return new DefaultNutsId(null, groupId, artifactId, version, "",session);
+        return new DefaultNutsId( groupId, artifactId, version, "",session);
     }
 
     @Override
@@ -320,9 +317,6 @@ public class DefaultNutsId implements NutsId {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        if (!CoreStringUtils.isBlank(namespace)) {
-            sb.append(namespace).append("://");
-        }
         if (!CoreStringUtils.isBlank(groupId)) {
             sb.append(groupId).append(":");
         }
@@ -348,9 +342,6 @@ public class DefaultNutsId implements NutsId {
 
         DefaultNutsId nutsId = (DefaultNutsId) o;
 
-        if (namespace != null ? !namespace.equals(nutsId.namespace) : nutsId.namespace != null) {
-            return false;
-        }
         if (groupId != null ? !groupId.equals(nutsId.groupId) : nutsId.groupId != null) {
             return false;
         }
@@ -366,8 +357,7 @@ public class DefaultNutsId implements NutsId {
 
     @Override
     public int hashCode() {
-        int result = namespace != null ? namespace.hashCode() : 0;
-        result = 31 * result + (groupId != null ? groupId.hashCode() : 0);
+        int result =  (groupId != null ? groupId.hashCode() : 0);
         result = 31 * result + (artifactId != null ? artifactId.hashCode() : 0);
         result = 31 * result + (version != null ? version.hashCode() : 0);
         result = 31 * result + (properties != null ? properties.hashCode() : 0);
@@ -390,7 +380,7 @@ public class DefaultNutsId implements NutsId {
             }
         }
         return ws.dependency().builder()
-                .setNamespace(getNamespace())
+                .setRepository(getRepository())
                 .setArtifactId(getArtifactId())
                 .setGroupId(getGroupId())
                 .setClassifier(getClassifier())

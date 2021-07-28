@@ -161,8 +161,8 @@ search for artifacts
     when formatting id, omit group
 ```sh --omit-imported-group```
     when formatting id, omit imported group
-```sh --omit-namespace```
-    when formatting id, omit namespace
+```sh --omit-repo```
+    when formatting id, omit repository
 ```sh --highlight-imported-group```
     when formatting id, highlight imported group
 ```sh --highlight-optional```

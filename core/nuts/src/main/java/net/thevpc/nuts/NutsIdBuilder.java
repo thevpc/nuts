@@ -48,11 +48,11 @@ public interface NutsIdBuilder extends Serializable {
 
 
     /**
-     * update namespace
+     * update repository
      * @param value new value
      * @return {@code this} instance
      */
-    NutsIdBuilder setNamespace(String value);
+    NutsIdBuilder setRepository(String value);
 
 
     /**
@@ -242,10 +242,10 @@ public interface NutsIdBuilder extends Serializable {
     Map<String, String> getProperties();
 
     /**
-     * artifact namespace (usually repository name or id)
-     * @return artifact namespace (usually repository name or id)
+     * artifact repository (usually repository name or id)
+     * @return artifact repository (usually repository name or id)
      */
-    String getNamespace();
+    String getRepository();
 
     /**
      * artifact group which identifies uniquely projects and group of projects.
@@ -255,7 +255,7 @@ public interface NutsIdBuilder extends Serializable {
 
     /**
      * return a string concatenation of group, name and version,
-     * ignoring namespace, and queryMap values. An example of long name is
+     * ignoring repository, and queryMap values. An example of long name is
      * <code>my-group:my-artifact#my-version?alt</code>
      *
      * @return group id, artifact id and version only Id instance
@@ -264,7 +264,7 @@ public interface NutsIdBuilder extends Serializable {
 
     /**
      * returns a string concatenation of group and name (':' separated) ignoring
-     * version,namespace, and queryMap values. In group is empty or null, name
+     * version,repository, and queryMap values. In group is empty or null, name
      * is returned. Ann null values are trimmed to "" An example of simple name
      * is <code>my-group:my-artifact</code>
      *
@@ -274,7 +274,7 @@ public interface NutsIdBuilder extends Serializable {
 
     /**
      * return a string representation of this id. All of group, name, version,
-     * namespace, queryMap values are printed. This method is equivalent to
+     * repository, queryMap values are printed. This method is equivalent to
      * {@link Object#toString()}
      *
      * @return string representation of this id

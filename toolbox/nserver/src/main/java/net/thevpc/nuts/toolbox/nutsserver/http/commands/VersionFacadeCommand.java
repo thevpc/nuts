@@ -15,7 +15,7 @@ public class VersionFacadeCommand extends AbstractFacadeCommand {
         context.sendResponseText(200,
                 context.getWorkspace()
                         .id().builder()
-                        .setNamespace(context.getServerId())
+                        .setRepository(context.getServerId())
                         .setGroupId("net.thevpc.nuts")
                         .setArtifactId("nuts-server")
                         .setVersion(context.getWorkspace().getRuntimeId().getVersion().toString())

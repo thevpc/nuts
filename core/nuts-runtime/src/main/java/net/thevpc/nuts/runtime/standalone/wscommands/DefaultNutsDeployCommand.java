@@ -200,7 +200,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                     throw new NutsNotFoundException(getSession(), null, NutsMessage.cstyle("artifact not found at %s", contentFile));
                 }
                 //remove workspace
-                descriptor = descriptor.builder().setId(descriptor.getId().builder().setNamespace(null).build()).build();
+                descriptor = descriptor.builder().setId(descriptor.getId().builder().setRepository(null).build()).build();
                 if (CoreStringUtils.trim(descriptor.getId().getVersion().getValue()).endsWith(CoreNutsConstants.Versions.CHECKED_OUT_EXTENSION)) {
                     throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("invalid version %s", descriptor.getId().getVersion()));
                 }
