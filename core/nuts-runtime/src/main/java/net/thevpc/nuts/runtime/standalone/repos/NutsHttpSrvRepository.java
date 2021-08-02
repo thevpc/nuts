@@ -87,8 +87,8 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
                 command.getSession(),
                 new NutsTransportParamBinaryStreamPart("descriptor", "Project.nuts",
                         new ByteArrayInputStream(descStream.toByteArray())),
-                new NutsTransportParamBinaryFilePart("content", content.getPath().name(), content.getFilePath()),
-                new NutsTransportParamParamPart("descriptor-hash", getWorkspace().io().hash().sha1().source(desc).computeString()),
+                new NutsTransportParamBinaryFilePart("content", content.getPath().getName(), content.getFilePath()),
+                new NutsTransportParamParamPart("descriptor-hash", getWorkspace().io().hash().sha1().setSource(desc).computeString()),
                 new NutsTransportParamParamPart("content-hash", CoreIOUtils.evalSHA1Hex(content.getFilePath())),
                 new NutsTransportParamParamPart("force", String.valueOf(command.getSession().isYes()))
         );

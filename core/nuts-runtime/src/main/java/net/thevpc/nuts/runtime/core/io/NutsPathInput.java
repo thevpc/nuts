@@ -1,8 +1,6 @@
 package net.thevpc.nuts.runtime.core.io;
 
 import net.thevpc.nuts.NutsPath;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsString;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 
 import java.io.FileNotFoundException;
@@ -18,7 +16,7 @@ public abstract class NutsPathInput extends CoreIOUtils.AbstractMultiReadItem {
 
     public NutsPathInput(NutsPath value) {
         super(value.asString(),
-                value.asFormattedString(),
+                value.format(),
                 value, value.isFilePath(), true, "nutsPath", value.getSession());
     }
 
@@ -69,7 +67,7 @@ public abstract class NutsPathInput extends CoreIOUtils.AbstractMultiReadItem {
 
     @Override
     public Instant getLastModified() {
-        return getNutsPath().lastModifiedInstant();
+        return getNutsPath().getLastModifiedInstant();
     }
 
     @Override

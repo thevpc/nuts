@@ -1,7 +1,7 @@
 package net.thevpc.nuts;
 
 public interface NutsSupplier<T> {
-    int level();
+    int getLevel();
 
     T create();
 }

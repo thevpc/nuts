@@ -48,7 +48,7 @@ public class DefaultNutsDescriptorFormat extends DefaultFormatBase<NutsDescripto
         return this;
     }
 
-    public NutsDescriptorFormat value(NutsDescriptor desc) {
+    public NutsDescriptorFormat setValue(NutsDescriptor desc) {
         return setDescriptor(desc);
     }
 

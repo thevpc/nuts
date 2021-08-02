@@ -17,8 +17,8 @@ public abstract class NutsPathBase implements NutsPath {
         this.session = session;
     }
     @Override
-    public NutsString formattedName() {
-        return getSession().getWorkspace().text().forStyled(name(),NutsTextStyle.path());
+    public NutsString getFormattedName() {
+        return getSession().getWorkspace().text().forStyled(getName(),NutsTextStyle.path());
     }
 
     @Override
@@ -52,15 +52,16 @@ public abstract class NutsPathBase implements NutsPath {
         }
     }
 
+
+    public NutsString toNutsString() {
+        return session.getWorkspace().text().forPlain(toString());
+    }
+
     @Override
     public NutsFormat formatter() {
         return new PathFormat(this)
                 .setSession(getSession())
                 ;
-    }
-
-    public NutsString toNutsString() {
-        return session.getWorkspace().text().forPlain(toString());
     }
 
     private static class PathFormat extends DefaultFormatBase<NutsFormat> {

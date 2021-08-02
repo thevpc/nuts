@@ -12,15 +12,13 @@ import java.nio.file.Path;
 import java.time.Instant;
 
 public interface NutsPathSPI {
-    default NutsFormat formatter() {
+    NutsFormatSPI getFormatterSPI() ;
+
+    default String getName() {
         return null;
     }
 
-    default String name() {
-        return null;
-    }
-
-    default NutsPath compressedForm() {
+    default NutsPath toCompressedForm() {
         return null;
     }
 
@@ -38,10 +36,9 @@ public interface NutsPathSPI {
 
     String toString();
 
-    NutsString asFormattedString();
     String asString();
 
-    String location();
+    String getLocation();
 
     InputStream inputStream();
 
@@ -53,6 +50,6 @@ public interface NutsPathSPI {
 
     void mkdir(boolean parents);
 
-    Instant lastModifiedInstant();
+    Instant getLastModifiedInstant();
 
 }

@@ -268,7 +268,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                     return new FixAction(nutsInstallInformation.getId(), "MissingInstallation") {
                         @Override
                         public void fix(NutsSession session) {
-                            session.getWorkspace().install().id(getId()).run();
+                            session.getWorkspace().install().addId(getId()).run();
                         }
                     };
                 }

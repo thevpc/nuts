@@ -3,7 +3,9 @@ package net.thevpc.nuts.runtime.core.io;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.io.FixedInputStreamMetadata;
 import net.thevpc.nuts.runtime.bundles.io.InputStreamMetadataAwareImpl;
+import net.thevpc.nuts.runtime.core.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
+import net.thevpc.nuts.spi.NutsFormatSPI;
 import net.thevpc.nuts.spi.NutsPathSPI;
 
 import java.io.InputStream;
@@ -22,8 +24,8 @@ public class NutsPathFromSPI extends NutsPathBase {
     }
 
     @Override
-    public String name() {
-        String n = base.name();
+    public String getName() {
+        String n = base.getName();
         if (n == null) {
             return CoreIOUtils.getURLName(asString());
         }
@@ -36,23 +38,13 @@ public class NutsPathFromSPI extends NutsPathBase {
     }
 
     @Override
-    public NutsString asFormattedString() {
-        //should implement better formatting...
-        NutsString s = base.asFormattedString();
-        if (s == null) {
-            s = getSession().getWorkspace().text().forStyled(asString(), NutsTextStyle.path());
-        }
-        return s;
+    public String getLocation() {
+        return base.getLocation();
     }
 
     @Override
-    public String location() {
-        return base.location();
-    }
-
-    @Override
-    public NutsPath compressedForm() {
-        NutsPath n = base.compressedForm();
+    public NutsPath toCompressedForm() {
+        NutsPath n = base.toCompressedForm();
         if (n == null) {
             return new NutsCompressedPath(this);
         }
@@ -105,15 +97,25 @@ public class NutsPathFromSPI extends NutsPathBase {
     }
 
     @Override
-    public Instant lastModifiedInstant() {
-        return base.lastModifiedInstant();
+    public Instant getLastModifiedInstant() {
+        return base.getLastModifiedInstant();
     }
 
     @Override
     public NutsFormat formatter() {
-        NutsFormat f = base.formatter();
-        if (f != null) {
-            return f;
+        NutsFormatSPI fspi = base.getFormatterSPI();
+        if (fspi != null) {
+            return new DefaultFormatBase<NutsFormat>(getSession().getWorkspace(), "path") {
+                @Override
+                public void print(NutsPrintStream out) {
+                    fspi.print(out);
+                }
+
+                @Override
+                public boolean configureFirst(NutsCommandLine commandLine) {
+                    return fspi.configureFirst(commandLine);
+                }
+            };
         }
         return super.formatter();
     }

@@ -44,16 +44,6 @@ public abstract class AbstractDefaultNutsPushCommand extends NutsWorkspaceComman
     }
 
     @Override
-    public NutsPushCommand id(String id) {
-        return addId(id);
-    }
-
-    @Override
-    public NutsPushCommand id(NutsId id) {
-        return addId(id);
-    }
-
-    @Override
     public NutsPushCommand addId(String id) {
         checkSession();
         NutsWorkspace ws = getSession().getWorkspace();
@@ -130,16 +120,6 @@ public abstract class AbstractDefaultNutsPushCommand extends NutsWorkspaceComman
             lockedIds.add(id);
         }
         return this;
-    }
-
-    @Override
-    public NutsPushCommand ids(String... ids) {
-        return addIds(ids);
-    }
-
-    @Override
-    public NutsPushCommand ids(NutsId... ids) {
-        return addIds(ids);
     }
 
     @Override
@@ -245,41 +225,6 @@ public abstract class AbstractDefaultNutsPushCommand extends NutsWorkspaceComman
     }
 
     @Override
-    public NutsPushCommand repository(String repository) {
-        return setRepository(repository);
-    }
-
-    @Override
-    public NutsPushCommand lockedId(NutsId id) {
-        return addLockedId(id);
-    }
-
-    @Override
-    public NutsPushCommand lockedId(String id) {
-        return addLockedId(id);
-    }
-
-    @Override
-    public NutsPushCommand lockedIds(NutsId... values) {
-        return addLockedIds(values);
-    }
-
-    @Override
-    public NutsPushCommand lockedIds(String... values) {
-        return addLockedIds(values);
-    }
-
-    @Override
-    public NutsPushCommand arg(String arg) {
-        return addArg(arg);
-    }
-
-    @Override
-    public NutsPushCommand args(String... args) {
-        return addArgs(args);
-    }
-
-    @Override
     public NutsPushCommand args(Collection<String> args) {
         return addArgs(args);
     }
@@ -322,7 +267,7 @@ public abstract class AbstractDefaultNutsPushCommand extends NutsWorkspaceComman
             case "--freeze": {
                 for (String id : cmdLine.nextString().getStringValue().split(",")) {
                     if (enabled) {
-                        lockedId(id);
+                        addLockedId(id);
                     }
                 }
                 return true;
@@ -353,7 +298,7 @@ public abstract class AbstractDefaultNutsPushCommand extends NutsWorkspaceComman
                     cmdLine.unexpectedArgument();
                 } else {
                     cmdLine.skip();
-                    id(a.getString());
+                    addId(a.getString());
                     return true;
                 }
             }

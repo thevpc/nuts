@@ -1,21 +1,19 @@
 package net.thevpc.nuts;
 
-import java.io.OutputStream;
 import java.net.URL;
 import java.nio.file.Path;
 import java.time.Instant;
 
 public interface NutsPath extends NutsFormattable {
-    NutsString formattedName();
-    String name();
+    NutsString getFormattedName();
+
+    String getName();
 
     String asString();
 
-    NutsString asFormattedString();
+    String getLocation();
 
-    String location();
-
-    NutsPath compressedForm();
+    NutsPath toCompressedForm();
 
     URL toURL();
 
@@ -46,5 +44,5 @@ public interface NutsPath extends NutsFormattable {
 
     long length();
 
-    Instant lastModifiedInstant();
+    Instant getLastModifiedInstant();
 }

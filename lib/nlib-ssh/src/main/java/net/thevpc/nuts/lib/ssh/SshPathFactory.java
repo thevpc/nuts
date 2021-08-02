@@ -11,7 +11,7 @@ public class SshPathFactory implements NutsPathFactory {
                 SshPath a=new SshPath(path);
                 return new NutsSupplier<NutsPathSPI>() {
                     @Override
-                    public int level() {
+                    public int getLevel() {
                         return 3;
                     }
 

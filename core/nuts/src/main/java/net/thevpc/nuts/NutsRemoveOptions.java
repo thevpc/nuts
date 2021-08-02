@@ -43,14 +43,6 @@ public class NutsRemoveOptions {
         return erase;
     }
 
-    public NutsRemoveOptions erase() {
-        return erase(true);
-    }
-
-    public NutsRemoveOptions erase(boolean erase) {
-        return setErase(erase);
-    }
-
     public NutsRemoveOptions setErase(boolean erase) {
         this.erase = erase;
         return this;

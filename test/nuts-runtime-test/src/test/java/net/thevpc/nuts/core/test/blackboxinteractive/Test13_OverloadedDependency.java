@@ -41,8 +41,8 @@ public class Test13_OverloadedDependency {
                 "-z", "-b" ,"--debug" ,"--progress=newline",
                 "--archetype", "default",
                 "--log-info");
-        ws.install().id("netbeans-launcher").run();
-        ws.install().id("tomcat").run();
+        ws.install().addId("netbeans-launcher").run();
+        ws.install().addId("tomcat").run();
     }
 
 //    @BeforeAll

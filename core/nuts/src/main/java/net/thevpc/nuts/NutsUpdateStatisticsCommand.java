@@ -39,8 +39,6 @@ public interface NutsUpdateStatisticsCommand extends NutsWorkspaceCommand {
 
     NutsUpdateStatisticsCommand clearRepos();
 
-    NutsUpdateStatisticsCommand repo(String s);
-
     NutsUpdateStatisticsCommand addRepo(String s);
 
     NutsUpdateStatisticsCommand removeRepo(String s);
@@ -50,8 +48,6 @@ public interface NutsUpdateStatisticsCommand extends NutsWorkspaceCommand {
     NutsUpdateStatisticsCommand addRepos(Collection<String> all);
 
     NutsUpdateStatisticsCommand clearPaths();
-
-    NutsUpdateStatisticsCommand path(Path s);
 
     NutsUpdateStatisticsCommand addPath(Path s);
 

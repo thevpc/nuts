@@ -20,6 +20,7 @@ public interface NutsPrintStream {
 
     NutsPrintStream write(char buf[], int off, int len);
 
+    NutsPrintStream print(NutsString b);
     NutsPrintStream print(boolean b);
 
     NutsPrintStream print(char c);
@@ -44,6 +45,7 @@ public interface NutsPrintStream {
 
     NutsPrintStream println(char x);
 
+    NutsPrintStream println(NutsString b);
     NutsPrintStream println(int x);
 
     NutsPrintStream println(long x);

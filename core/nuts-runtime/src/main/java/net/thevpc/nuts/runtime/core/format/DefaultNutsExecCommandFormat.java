@@ -63,11 +63,6 @@ public class DefaultNutsExecCommandFormat extends DefaultFormatBase<NutsExecComm
     }
 
     @Override
-    public NutsExecCommandFormat value(NutsExecCommand value) {
-        return setValue(value);
-    }
-
-    @Override
     public NutsExecCommandFormat setValue(NutsExecCommand value) {
         this.value = value;
         return this;

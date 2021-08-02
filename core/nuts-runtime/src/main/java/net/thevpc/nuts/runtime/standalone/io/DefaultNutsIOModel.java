@@ -304,8 +304,8 @@ public class DefaultNutsIOModel {
                     }
                     return null;
                 })
-                .filter(x -> x != null && x.level() > 0)
-                .max(Comparator.comparingInt(NutsSupplier::level))
+                .filter(x -> x != null && x.getLevel() > 0)
+                .max(Comparator.comparingInt(NutsSupplier::getLevel))
                 .orElse(null);
         NutsPathSPI s= z == null ? null : z.create();
         if(s!=null){
@@ -333,6 +333,26 @@ public class DefaultNutsIOModel {
                         return new URLPath(url, session);
                     }
                 };
+            }catch (Exception ex){
+                //ignore
+            }
+            return null;
+        }
+    }
+
+    private class NutsResourcePathFactory implements NutsPathFactory {
+        @Override
+        public NutsSupplier<NutsPathSPI> createPath(String path, NutsSession session, ClassLoader classLoader) {
+            NutsWorkspaceUtils.checkSession(getWorkspace(), session);
+            try {
+                if(path.startsWith("nuts-resource:")) {
+                    return new NutsSupplierBase<NutsPathSPI>(2) {
+                        @Override
+                        public NutsPathSPI create() {
+                            return new ClassLoaderPath(path, classLoader, session);
+                        }
+                    };
+                }
             }catch (Exception ex){
                 //ignore
             }

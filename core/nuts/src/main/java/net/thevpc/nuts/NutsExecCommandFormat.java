@@ -87,13 +87,6 @@ public interface NutsExecCommandFormat extends NutsFormat {
      * @param value value to format
      * @return {@code this} instance
      */
-    NutsExecCommandFormat value(NutsExecCommand value);
-
-    /**
-     * set value to format
-     * @param value value to format
-     * @return {@code this} instance
-     */
     NutsExecCommandFormat setValue(NutsExecCommand value);
 
     /**

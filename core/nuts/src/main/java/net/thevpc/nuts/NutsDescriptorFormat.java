@@ -70,7 +70,7 @@ public interface NutsDescriptorFormat extends NutsFormat {
      * @return {@code this} instance
      * @since 0.5.6
      */
-    NutsDescriptorFormat value(NutsDescriptor descriptor);
+    NutsDescriptorFormat setValue(NutsDescriptor descriptor);
 
     /**
      * configure the current command with the given arguments. This is an

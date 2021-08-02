@@ -64,13 +64,6 @@ public interface NutsIODeleteAction {
     NutsIODeleteAction setTarget(Path target);
 
     /**
-     * update target to delete
-     * @param target target
-     * @return {@code this} instance
-     */
-    NutsIODeleteAction target(Object target);
-
-    /**
      * current session
      * @return current session
      */
@@ -98,22 +91,10 @@ public interface NutsIODeleteAction {
     boolean isFailFast();
 
     /**
-     * set fail fast flag
-     * @return {@code this} instance
-     */
-    NutsIODeleteAction failFast();
-
-    /**
      * update fail fast flag
      * @param failFast value
      * @return {@code this} instance
      */
     NutsIODeleteAction setFailFast(boolean failFast);
 
-    /**
-     * update fail fast flag
-     * @param failFast value
-     * @return {@code this} instance
-     */
-    NutsIODeleteAction failFast(boolean failFast);
 }

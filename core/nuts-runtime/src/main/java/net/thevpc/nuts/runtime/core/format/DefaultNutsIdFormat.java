@@ -38,15 +38,6 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
         return this;
     }
 
-    @Override
-    public NutsIdFormat omitRepository(boolean value) {
-        return setOmitRepository(value);
-    }
-
-    @Override
-    public NutsIdFormat omitRepository() {
-        return omitRepository(true);
-    }
 
     @Override
     public boolean isOmitGroupId() {
@@ -60,16 +51,6 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
     }
 
     @Override
-    public NutsIdFormat omitGroupId(boolean value) {
-        return setOmitGroupId(value);
-    }
-
-    @Override
-    public NutsIdFormat omitGroupId() {
-        return omitGroupId(true);
-    }
-
-    @Override
     public boolean isOmitImportedGroupId() {
         return omitImportedGroup;
     }
@@ -80,15 +61,6 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
         return this;
     }
 
-    @Override
-    public NutsIdFormat omitImportedGroupId(boolean value) {
-        return setOmitImportedGroupId(value);
-    }
-
-    @Override
-    public NutsIdFormat omitImportedGroupId() {
-        return omitImportedGroupId(true);
-    }
 
     @Override
     public boolean isOmitOtherProperties() {
@@ -101,15 +73,6 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
         return this;
     }
 
-    @Override
-    public NutsIdFormat omitOtherProperties(boolean value) {
-        return setOmitOtherProperties(value);
-    }
-
-    @Override
-    public NutsIdFormat omitOtherProperties() {
-        return omitOtherProperties(true);
-    }
 
     @Override
     public boolean isOmitFace() {
@@ -119,16 +82,6 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
     @Override
     public NutsIdFormat setOmitFace(boolean value) {
         return setOmitProperty(NutsConstants.IdProperties.FACE, value);
-    }
-
-    @Override
-    public NutsIdFormat omitFace(boolean value) {
-        return setOmitFace(value);
-    }
-
-    @Override
-    public NutsIdFormat omitFace() {
-        return omitFace(true);
     }
 
     @Override
@@ -143,16 +96,6 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
     }
 
     @Override
-    public NutsIdFormat highlightImportedGroupId(boolean value) {
-        return setHighlightImportedGroupId(value);
-    }
-
-    @Override
-    public NutsIdFormat highlightImportedGroupId() {
-        return highlightImportedGroupId(true);
-    }
-
-    @Override
     public boolean isHighlightScope() {
         return highlightScope;
     }
@@ -161,16 +104,6 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
     public NutsIdFormat setHighlightScope(boolean value) {
         this.highlightScope = value;
         return this;
-    }
-
-    @Override
-    public NutsIdFormat highlightScope(boolean value) {
-        return setHighlightScope(value);
-    }
-
-    @Override
-    public NutsIdFormat highlightScope() {
-        return highlightScope(true);
     }
 
     @Override
@@ -185,16 +118,6 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
     }
 
     @Override
-    public NutsIdFormat highlightOptional(boolean value) {
-        return setHighlightOptional(value);
-    }
-
-    @Override
-    public NutsIdFormat highlightOptional() {
-        return highlightOptional(true);
-    }
-
-    @Override
     public boolean isOmitClassifier() {
         return isOmitProperty(NutsConstants.IdProperties.CLASSIFIER);
     }
@@ -202,16 +125,6 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
     @Override
     public NutsIdFormat setOmitClassifier(boolean value) {
         return setOmitProperty(NutsConstants.IdProperties.CLASSIFIER, value);
-    }
-
-    @Override
-    public NutsIdFormat omitClassifier(boolean value) {
-        return setOmitClassifier(value);
-    }
-
-    @Override
-    public NutsIdFormat omitClassifier() {
-        return omitClassifier(true);
     }
 
     //    @Override
@@ -254,23 +167,8 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
     }
 
     @Override
-    public NutsIdFormat omitProperty(String name, boolean value) {
-        return setOmitProperty(name, true);
-    }
-
-    @Override
-    public NutsIdFormat omitProperty(String name) {
-        return omitProperty(name, true);
-    }
-
-    @Override
     public NutsId getValue() {
         return id;
-    }
-
-    @Override
-    public NutsIdFormat value(NutsId id) {
-        return setValue(id);
     }
 
     @Override
@@ -438,56 +336,56 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
             case "--omit-env": {
                 boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
-                    omitOtherProperties(val);
+                    setOmitOtherProperties(val);
                 }
                 return true;
             }
             case "--omit-face": {
                 boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
-                    omitFace(val);
+                    setOmitFace(val);
                 }
                 return true;
             }
             case "--omit-group": {
                 boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
-                    omitGroupId(val);
+                    setOmitGroupId(val);
                 }
                 return true;
             }
             case "--omit-imported-group": {
                 boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
-                    omitImportedGroupId(val);
+                    setOmitImportedGroupId(val);
                 }
                 return true;
             }
             case "--omit-repo": {
                 boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
-                    omitRepository(val);
+                    setOmitRepository(val);
                 }
                 return true;
             }
             case "--highlight-imported-group": {
                 boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
-                    highlightImportedGroupId(val);
+                    setHighlightImportedGroupId(val);
                 }
                 return true;
             }
             case "--highlight-optional": {
                 boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
-                    highlightOptional(val);
+                    setHighlightOptional(val);
                 }
                 return true;
             }
             case "--highlight-scope": {
                 boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
-                    highlightScope(val);
+                    setHighlightScope(val);
                 }
                 return true;
             }

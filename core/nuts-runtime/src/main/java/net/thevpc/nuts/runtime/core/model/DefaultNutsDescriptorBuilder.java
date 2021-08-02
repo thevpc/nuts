@@ -47,13 +47,16 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     private String packaging;
     //    private String ext;
     private boolean executable;
-    private boolean nutsApplication;
+    private boolean application;
     private NutsArtifactCall executor;
     private NutsArtifactCall installer;
     /**
      * short description
      */
     private String name;
+    private String icon;
+    private String category;
+    private String genericName;
     /**
      * some longer (but not too long) description
      */
@@ -102,6 +105,9 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         setDependencies((NutsDependency[])null);
         setStandardDependencies((NutsDependency[])null);
         setProperties(null);
+        setIcon(null);
+        setCategory(null);
+        setGenericName(null);
         return this;
     }
 
@@ -113,7 +119,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
             setPackaging(other.getPackaging());
             setParents(other.getParents());
             setExecutable(other.isExecutable());
-            setApplication(other.isNutsApplication());
+            setApplication(other.isApplication());
             setDescription(other.getDescription());
             setName(other.getName());
             setExecutor(other.getExecutor());
@@ -127,6 +133,9 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
             setDependencies(other.getDependencies());
             setStandardDependencies(other.getStandardDependencies());
             setProperties(other.getProperties());
+            setIcon(other.getIcon());
+            setCategory(other.getCategory());
+            setGenericName(other.getGenericName());
         }else{
             clear();
         }
@@ -155,6 +164,9 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
             setDependencies(other.getDependencies());
             setStandardDependencies(other.getStandardDependencies());
             setProperties(other.getProperties());
+            setIcon(other.getIcon());
+            setGenericName(other.getGenericName());
+            setCategory(other.getCategory());
         }else{
             clear();
         }
@@ -211,7 +223,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 
     @Override
     public NutsDescriptorBuilder setApplication(boolean nutsApp) {
-        this.nutsApplication = nutsApp;
+        this.application = nutsApp;
         return this;
     }
 
@@ -312,11 +324,6 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         return this;
     }
 
-    @Override
-    public NutsDescriptorBuilder packaging(String packaging) {
-        return setPackaging(packaging);
-    }
-
     public NutsDescriptorBuilder setParents(NutsId[] parents) {
         this.parents = parents == null ? new NutsId[0] : new NutsId[parents.length];
         if (parents != null) {
@@ -363,8 +370,8 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     }
 
     @Override
-    public boolean isNutsApplication() {
-        return nutsApplication;
+    public boolean isApplication() {
+        return application;
     }
 
     @Override
@@ -445,11 +452,13 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     @Override
     public NutsDescriptor build() {
         return new DefaultNutsDescriptor(
-                getId(), /*getAlternative(),*/ getParents(), getPackaging(), isExecutable(), isNutsApplication(),
+                getId(), /*getAlternative(),*/ getParents(), getPackaging(), isExecutable(), isApplication(),
                 //                getExt(),
                 getExecutor(), getInstaller(),
                 getName(), getDescription(), getArch(), getOs(), getOsdist(), getPlatform(), getDependencies(), getStandardDependencies(),
-                getLocations(), getProperties(), getClassifierMappings(),session
+                getLocations(), getProperties(), getClassifierMappings(),
+                genericName,category,icon,
+                session
         );
     }
 
@@ -634,6 +643,9 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 //        String n_ext = getExt();
         boolean n_executable = isExecutable();
         String n_name = getName();
+        String n_category = getCategory();
+        String n_icon = getIcon();
+        String n_genericName = getGenericName();
         String n_desc = getDescription();
         NutsArtifactCall n_executor = getExecutor();
         NutsArtifactCall n_installer = getInstaller();
@@ -667,6 +679,9 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
             //n_packaging = applyStringInheritance(n_packaging, parentDescriptor.getPackaging());
 //            n_ext = CoreNutsUtils.applyStringInheritance(n_ext, parentDescriptor.getExt());
             n_name = CoreNutsUtils.applyStringInheritance(n_name, parentDescriptor.getName());
+            n_category = CoreNutsUtils.applyStringInheritance(n_category, parentDescriptor.getCategory());
+            n_icon = CoreNutsUtils.applyStringInheritance(n_icon, parentDescriptor.getIcon());
+            n_genericName = CoreNutsUtils.applyStringInheritance(n_genericName, parentDescriptor.getGenericName());
             n_desc = CoreNutsUtils.applyStringInheritance(n_desc, parentDescriptor.getDescription());
             n_deps.addAll(Arrays.asList(parentDescriptor.getDependencies()));
             n_sdeps.addAll(Arrays.asList(parentDescriptor.getStandardDependencies()));
@@ -691,6 +706,9 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         setExecutor(n_executor);
         setInstaller(n_installer);
         setName(n_name);
+        setGenericName(n_genericName);
+        setCategory(n_category);
+        setIcon(n_icon);
         setDescription(n_desc);
         setArch(n_archs.toArray(new String[0]));
         setOs(n_os.toArray(new String[0]));
@@ -740,6 +758,9 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         this.setInstaller(n_installer);
         this.setName(n_name);
         this.setDescription(n_desc);
+        this.setGenericName(CoreNutsUtils.applyStringProperties(getGenericName(), map));
+        this.setIcon(CoreNutsUtils.applyStringProperties(getIcon(), map));
+        this.setCategory(CoreNutsUtils.applyStringProperties(getCategory(), map));
         this.setArch(CoreNutsUtils.applyStringProperties(getArch(), map));
         this.setOs(CoreNutsUtils.applyStringProperties(getOs(), map));
         this.setOsdist(CoreNutsUtils.applyStringProperties(getOsdist(), map));
@@ -823,112 +844,35 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     }
 
     @Override
-    public NutsDescriptorBuilder locations(NutsIdLocation[] locations) {
-        return setLocations(locations);
+    public String getGenericName() {
+        return genericName;
     }
 
     @Override
-    public NutsDescriptorBuilder classifierMappings(NutsClassifierMapping[] value) {
-        return setClassifierMappings(value);
+    public NutsDescriptorBuilder setGenericName(String name) {
+        this.genericName=name;
+        return this;
     }
 
     @Override
-    public NutsDescriptorBuilder installer(NutsArtifactCall installer) {
-        return setInstaller(installer);
+    public String getIcon() {
+        return icon;
     }
 
     @Override
-    public NutsDescriptorBuilder description(String description) {
-        return setDescription(description);
+    public NutsDescriptorBuilder setIcon(String name) {
+        this.icon=name;
+        return this;
     }
 
     @Override
-    public NutsDescriptorBuilder executable(boolean executable) {
-        return setExecutable(executable);
+    public String getCategory() {
+        return category;
     }
 
     @Override
-    public NutsDescriptorBuilder application(boolean nutsApp) {
-        return setApplication(nutsApp);
-    }
-
-    @Override
-    public NutsDescriptorBuilder executor(NutsArtifactCall executor) {
-        return setExecutor(executor);
-    }
-
-    @Override
-    public NutsDescriptorBuilder property(String name, String value) {
-        return setProperty(name,value);
-    }
-
-    @Override
-    public NutsDescriptorBuilder id(NutsId id) {
-        return setId(id);
-    }
-
-    @Override
-    public NutsDescriptorBuilder descriptor(NutsDescriptor other) {
-        return set(other);
-    }
-
-    @Override
-    public NutsDescriptorBuilder descriptor(NutsDescriptorBuilder other) {
-        return set(other);
-    }
-
-    @Override
-    public NutsDescriptorBuilder dependencies(NutsDependency[] dependencies) {
-        return setDependencies(dependencies);
-    }
-
-    @Override
-    public NutsDescriptorBuilder standardDependencies(NutsDependency[] dependencies) {
-        return setStandardDependencies(dependencies);
-    }
-
-    @Override
-    public NutsDescriptorBuilder properties(Map<String, String> properties) {
-        return setProperties(properties);
-    }
-
-    @Override
-    public NutsDescriptorBuilder name(String name) {
-        return setName(name);
-    }
-
-    @Override
-    public NutsDescriptorBuilder parents(NutsId[] parents) {
-        return setParents(parents);
-    }
-
-    @Override
-    public NutsDescriptorBuilder arch(String[] archs) {
-        return setArch(archs);
-    }
-
-    @Override
-    public NutsDescriptorBuilder os(String[] os) {
-        return setOs(os);
-    }
-
-    @Override
-    public NutsDescriptorBuilder osdist(String[] osdist) {
-        return setOsdist(osdist);
-    }
-
-    @Override
-    public NutsDescriptorBuilder platform(String[] platform) {
-        return setPlatform(platform);
-    }
-
-    @Override
-    public NutsDescriptorBuilder executable() {
-        return executable(true);
-    }
-
-    @Override
-    public NutsDescriptorBuilder application() {
-        return application(true);
+    public NutsDescriptorBuilder setCategory(String name) {
+        this.category=name;
+        return this;
     }
 }

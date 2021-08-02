@@ -574,7 +574,7 @@ public class CoreNutsUtils {
             x.put("repository-uuid", def.getRepositoryUuid());
         }
         if (def.getDescriptor() != null) {
-            x.put("descriptor", session.getWorkspace().descriptor().formatter().value(def.getDescriptor()).format());
+            x.put("descriptor", session.getWorkspace().descriptor().formatter().setValue(def.getDescriptor()).format());
             x.put("effective-descriptor", session.getWorkspace().descriptor().formatter(
                     NutsWorkspaceUtils.of(session).getEffectiveDescriptor(def)
             ).format());

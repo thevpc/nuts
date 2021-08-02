@@ -40,20 +40,6 @@ import java.util.function.Predicate;
 public interface NutsInstallCommand extends NutsWorkspaceCommand {
 
     /**
-     * add artifact id to install
-     * @param id id to install
-     * @return {@code this} instance
-     */
-    NutsInstallCommand id(NutsId id);
-
-    /**
-     * add artifact id to install
-     * @param id id to install
-     * @return {@code this} instance
-     */
-    NutsInstallCommand id(String id);
-
-    /**
      * remove artifact id to install
      * @param id id to install
      * @return {@code this} instance
@@ -66,20 +52,6 @@ public interface NutsInstallCommand extends NutsWorkspaceCommand {
      * @return {@code this} instance
      */
     NutsInstallCommand removeId(String id);
-
-    /**
-     * add artifact ids to install
-     * @param ids id to install
-     * @return {@code this} instance
-     */
-    NutsInstallCommand ids(NutsId... ids);
-
-    /**
-     * add artifact ids to install
-     * @param ids id to install
-     * @return {@code this} instance
-     */
-    NutsInstallCommand ids(String... ids);
 
     /**
      * add artifact id to install
@@ -126,21 +98,7 @@ public interface NutsInstallCommand extends NutsWorkspaceCommand {
      * @param arg argument
      * @return {@code this} instance
      */
-    NutsInstallCommand arg(String arg);
-
-    /**
-     * add argument to pass to the install command
-     * @param arg argument
-     * @return {@code this} instance
-     */
     NutsInstallCommand addArg(String arg);
-
-    /**
-     * add arguments to pass to the install command
-     * @param args argument
-     * @return {@code this} instance
-     */
-    NutsInstallCommand args(Collection<String> args);
 
     NutsInstallCommand addConditionalArgs(Predicate<NutsDefinition> definition, String... args);
 
@@ -157,13 +115,6 @@ public interface NutsInstallCommand extends NutsWorkspaceCommand {
      * @return {@code this} instance
      */
     NutsInstallCommand addArgs(String... args);
-
-    /**
-     * add arguments to pass to the install command
-     * @param args argument
-     * @return {@code this} instance
-     */
-    NutsInstallCommand args(String... args);
 
     /**
      * clear all arguments to pass to the install command
@@ -241,20 +192,7 @@ public interface NutsInstallCommand extends NutsWorkspaceCommand {
      */
     boolean isInstalled();
 
-    /**
-     * reinstall installed artifacts
-     * @return return {@code this} instance
-     */
-    NutsInstallCommand installed();
-
     NutsInstallStrategy getInstalled();
-
-    /**
-     * if true reinstall installed artifacts
-     * @param value flag
-     * @return return {@code this} instance
-     */
-    NutsInstallCommand installed(boolean value);
 
     /**
      * if true reinstall installed artifacts

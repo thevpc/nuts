@@ -33,11 +33,6 @@ public abstract class AbstractNutsIOLockAction implements NutsIOLockAction {
     }
 
     @Override
-    public NutsIOLockAction source(Object source) {
-        return setSource(source);
-    }
-
-    @Override
     public NutsIOLockAction setSource(Object source) {
         this.source=source;
         return this;
@@ -56,7 +51,7 @@ public abstract class AbstractNutsIOLockAction implements NutsIOLockAction {
     }
 
     @Override
-    public NutsIOLockAction resource(Object source) {
+    public NutsIOLockAction setResource(Object source) {
         this.resource=source;
         return this;
     }

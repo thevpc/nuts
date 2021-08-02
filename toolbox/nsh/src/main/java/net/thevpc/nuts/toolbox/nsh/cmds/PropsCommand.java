@@ -256,7 +256,7 @@ public class PropsCommand extends AbstractNshBuiltin {
 
             Format sourceFormat = o.sourceFormat;
             if (sourceFormat == Format.AUTO) {
-                sourceFormat = detectFileFormat(filePath.name(), context);
+                sourceFormat = detectFileFormat(filePath.getName(), context);
             }
             switch (sourceFormat) {
                 case PROPS: {
@@ -323,7 +323,7 @@ public class PropsCommand extends AbstractNshBuiltin {
             try (OutputStream os = filePath.output().open()) {
                 Format format = o.targetFormat;
                 if (format == Format.AUTO) {
-                    format = detectFileFormat(filePath.name(), null);
+                    format = detectFileFormat(filePath.getName(), null);
                 }
                 switch (format) {
                     case PROPS: {

@@ -554,7 +554,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                 //TODO: FIX install return
                 catalinaNutsDefinition = ws
                         .install()
-                        .id(r.getId())
+                        .addId(r.getId())
                         .setSession(context.getSession().copy()/*.setTrace(true)*/.addListener(new NutsInstallListener() {
                             @Override
                             public void onInstall(NutsInstallEvent event) {

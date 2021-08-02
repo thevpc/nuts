@@ -144,4 +144,18 @@ public abstract class DelegateNutsDescriptor extends AbstractNutsDescriptor {
         return getBase().getClassifierMappings();
     }
 
+    @Override
+    public String getIcon() {
+        return getBase().getIcon();
+    }
+
+    @Override
+    public String getGenericName() {
+        return getBase().getGenericName();
+    }
+
+    @Override
+    public String getCategory() {
+        return getBase().getCategory();
+    }
 }

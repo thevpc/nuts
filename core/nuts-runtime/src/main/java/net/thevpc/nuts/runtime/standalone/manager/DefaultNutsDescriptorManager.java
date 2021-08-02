@@ -70,7 +70,7 @@ public DefaultNutsDescriptorManager(NutsWorkspace workspace) {
 
     @Override
     public NutsDescriptorFormat formatter(NutsDescriptor value) {
-        return formatter().value(value);
+        return formatter().setValue(value);
     }
 
     @Override

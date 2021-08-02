@@ -56,7 +56,7 @@ public final class JavaExecutorOptions {
         this.execArgs = executorOptions;
 //        List<String> classPath0 = new ArrayList<>();
 //        List<NutsClassLoaderNode> extraCp = new ArrayList<>();
-        NutsIdFormat nutsIdFormat = getWorkspace().id().formatter().omitRepository();
+        NutsIdFormat nutsIdFormat = getWorkspace().id().formatter().setOmitRepository(true);
         //will accept all -- and - based options!
         NutsCommandLine cmdLine = getWorkspace().commandLine().create(getExecArgs()).setExpandSimpleOptions(false);
         NutsArgument a;

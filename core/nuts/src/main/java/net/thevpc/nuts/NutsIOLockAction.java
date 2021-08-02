@@ -58,13 +58,6 @@ public interface NutsIOLockAction {
      * @param source source
      * @return {@code this} instance
      */
-    NutsIOLockAction source(Object source);
-
-    /**
-     * update source
-     * @param source source
-     * @return {@code this} instance
-     */
     NutsIOLockAction setSource(Object source);
 
     /**
@@ -86,7 +79,7 @@ public interface NutsIOLockAction {
      * @param source resource
      * @return {@code this} instance
      */
-    NutsIOLockAction resource(Object source);
+    NutsIOLockAction setResource(Object source);
 
     /**
      * return session

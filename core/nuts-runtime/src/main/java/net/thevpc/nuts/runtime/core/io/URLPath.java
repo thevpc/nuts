@@ -3,7 +3,9 @@ package net.thevpc.nuts.runtime.core.io;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.io.FixedInputStreamMetadata;
 import net.thevpc.nuts.runtime.bundles.io.InputStreamMetadataAwareImpl;
+import net.thevpc.nuts.runtime.core.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
+import net.thevpc.nuts.spi.NutsFormatSPI;
 import net.thevpc.nuts.spi.NutsPathSPI;
 
 import java.io.*;
@@ -28,24 +30,6 @@ public class URLPath extends NutsPathBase implements NutsPathSPI {
         }
         this.url = url;
     }
-    @Override
-    public NutsInput input() {
-        return new URLPathInput();
-    }
-    @Override
-    public NutsOutput output() {
-        return new NutsPathOutput(null,this,getSession()){
-            @Override
-            public OutputStream open() {
-                return outputStream();
-            }
-        };
-    }
-
-    @Override
-    public String location() {
-        return url.getFile();
-    }
 
     @Override
     public int hashCode() {
@@ -65,7 +49,7 @@ public class URLPath extends NutsPathBase implements NutsPathSPI {
         return url == null ? ("broken-url") : url.toString();
     }
 
-    public String name() {
+    public String getName() {
         return url == null ? "" : CoreIOUtils.getURLName(url);
     }
 
@@ -75,15 +59,12 @@ public class URLPath extends NutsPathBase implements NutsPathSPI {
     }
 
     @Override
-    public NutsString asFormattedString() {
-        if(url==null){
-            return getSession().getWorkspace().text().forPlain("");
-        }
-        return getSession().getWorkspace().text().toText(url);
+    public String getLocation() {
+        return url.getFile();
     }
 
     @Override
-    public NutsPath compressedForm() {
+    public NutsPath toCompressedForm() {
         return new NutsCompressedPath(this);
     }
 
@@ -98,32 +79,25 @@ public class URLPath extends NutsPathBase implements NutsPathSPI {
     @Override
     public Path toFilePath() {
         File f = CoreIOUtils.toFile(toURL());
-        if(f!=null){
+        if (f != null) {
             return f.toPath();
         }
         throw new NutsIOException(getSession(), NutsMessage.cstyle("unable to resolve file %s", toString()));
     }
 
-    public InputStream inputStream() {
-        try {
-            if (url == null) {
-                throw new NutsIOException(getSession(), NutsMessage.cstyle("unable to resolve input stream %s", toString()));
-            }
-            return url.openStream();
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
+    @Override
+    public NutsInput input() {
+        return new URLPathInput();
     }
 
-    public OutputStream outputStream() {
-        try {
-            if (url == null) {
-                throw new NutsIOException(getSession(), NutsMessage.cstyle("unable to resolve output stream %s", toString()));
+    @Override
+    public NutsOutput output() {
+        return new NutsPathOutput(null, this, getSession()) {
+            @Override
+            public OutputStream open() {
+                return outputStream();
             }
-            return url.openConnection().getOutputStream();
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
+        };
     }
 
     @Override
@@ -162,18 +136,78 @@ public class URLPath extends NutsPathBase implements NutsPathSPI {
     }
 
     @Override
-    public Instant lastModifiedInstant() {
+    public Instant getLastModifiedInstant() {
         if (url == null) {
             return null;
         }
         try {
             long z = url.openConnection().getLastModified();
-            if(z==-1){
+            if (z == -1) {
                 return null;
             }
             return Instant.ofEpochMilli(z);
         } catch (IOException e) {
             return null;
+        }
+    }
+
+    @Override
+    public NutsFormat formatter() {
+        return new MyPathFormat(this)
+                .setSession(getSession())
+                ;
+    }
+
+    @Override
+    public NutsFormatSPI getFormatterSPI() {
+        return new NutsFormatSPIFromNutsFormat(formatter());
+    }
+
+    public InputStream inputStream() {
+        try {
+            if (url == null) {
+                throw new NutsIOException(getSession(), NutsMessage.cstyle("unable to resolve input stream %s", toString()));
+            }
+            return url.openStream();
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    public OutputStream outputStream() {
+        try {
+            if (url == null) {
+                throw new NutsIOException(getSession(), NutsMessage.cstyle("unable to resolve output stream %s", toString()));
+            }
+            return url.openConnection().getOutputStream();
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    private static class MyPathFormat extends DefaultFormatBase<NutsFormat> {
+        private URLPath p;
+
+        public MyPathFormat(URLPath p) {
+            super(p.getSession().getWorkspace(), "path");
+            this.p = p;
+        }
+
+        public NutsString asFormattedString() {
+            if (p.url == null) {
+                return getSession().getWorkspace().text().forPlain("");
+            }
+            return getSession().getWorkspace().text().toText(p.url);
+        }
+
+        @Override
+        public void print(NutsPrintStream out) {
+            out.print(asFormattedString());
+        }
+
+        @Override
+        public boolean configureFirst(NutsCommandLine commandLine) {
+            return false;
         }
     }
 

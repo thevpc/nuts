@@ -10,27 +10,26 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
  * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.runtime.core.model;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.core.util.CoreArrayUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 import java.util.*;
-import net.thevpc.nuts.runtime.core.util.CoreArrayUtils;
-import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 /**
  * Created by vpc on 1/5/17.
@@ -40,10 +39,10 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
     private static final long serialVersionUID = 1L;
 
     private NutsId id;
-//    private String alternative;
+    //    private String alternative;
     private NutsId[] parents;
     private String packaging;
-//    private String ext;
+    //    private String ext;
     private boolean executable;
     private boolean application;
     private NutsArtifactCall executor;
@@ -56,6 +55,9 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
      * some longer (but not too long) description
      */
     private String description;
+    private String icon;
+    private String category;
+    private String genericName;
     private String[] arch;
     private String[] os;
     private String[] osdist;
@@ -66,7 +68,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
     private NutsDependency[] standardDependencies;
     private Map<String, String> properties;
 
-    public DefaultNutsDescriptor(NutsDescriptor d,NutsSession session) {
+    public DefaultNutsDescriptor(NutsDescriptor d, NutsSession session) {
         this(
                 d.getId(),
 //                d.getAlternative(),
@@ -88,6 +90,9 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
                 d.getLocations(),
                 d.getProperties(),
                 d.getClassifierMappings(),
+                d.getGenericName(),
+                d.getCategory(),
+                d.getIcon(),
                 session
         );
     }
@@ -98,7 +103,9 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
                                  String[] arch, String[] os, String[] osdist, String[] platform,
                                  NutsDependency[] dependencies,
                                  NutsDependency[] standardDependencies,
-                                 NutsIdLocation[] locations, Map<String, String> properties, NutsClassifierMapping[] classifierMappings,NutsSession session) {
+                                 NutsIdLocation[] locations, Map<String, String> properties, NutsClassifierMapping[] classifierMappings,
+                                 String genericName, String category, String icon,
+                                 NutsSession session) {
         super(session);
         //id can have empty groupId (namely for executors like 'java')
         if (id == null) {
@@ -122,6 +129,9 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
         this.application = application;
         this.description = CoreStringUtils.trimToNull(description);
         this.name = CoreStringUtils.trimToNull(name);
+        this.genericName = CoreStringUtils.trimToNull(genericName);
+        this.icon = CoreStringUtils.trimToNull(icon);
+        this.category = CoreStringUtils.trimToNull(category);
         this.executor = executor;
         this.installer = installer;
 //        this.ext = CoreStringUtils.trimToNull(ext);
@@ -151,10 +161,10 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
             HashMap<String, String> p = new HashMap<>(properties);
             this.properties = Collections.unmodifiableMap(p);
         }
-        if(this.properties!=null
-            && "true".equals(this.properties.get("nuts.application"))
-            && !application
-        ){
+        if (this.properties != null
+                && "true".equals(this.properties.get("nuts.application"))
+                && !application
+        ) {
             System.out.println("why");
         }
     }
@@ -165,28 +175,13 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
 //    }
 
     @Override
-    public NutsArtifactCall getInstaller() {
-        return installer;
-    }
-
-    @Override
-    public Map<String, String> getProperties() {
-        return properties == null ? Collections.EMPTY_MAP : Collections.unmodifiableMap(properties);
+    public NutsId getId() {
+        return id;
     }
 
     @Override
     public NutsId[] getParents() {
         return parents;
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public String getDescription() {
-        return description;
     }
 
     @Override
@@ -199,33 +194,13 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
         return application;
     }
 
-    @Override
-    public NutsArtifactCall getExecutor() {
-        return executor;
-    }
-
-//    @Override
+    //    @Override
 //    public String getExt() {
 //        return ext;
 //    }
     @Override
     public String getPackaging() {
         return packaging;
-    }
-
-    @Override
-    public NutsId getId() {
-        return id;
-    }
-
-    @Override
-    public NutsDependency[] getDependencies() {
-        return dependencies;
-    }
-
-    @Override
-    public NutsDependency[] getStandardDependencies() {
-        return standardDependencies;
     }
 
     @Override
@@ -249,13 +224,117 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
     }
 
     @Override
-    public NutsIdLocation[] getLocations() {
-        return locations;
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public String getDescription() {
+        return description;
     }
 
     @Override
     public NutsClassifierMapping[] getClassifierMappings() {
         return classifierMappings;
+    }
+
+    @Override
+    public NutsIdLocation[] getLocations() {
+        return locations;
+    }
+
+    @Override
+    public NutsDependency[] getStandardDependencies() {
+        return standardDependencies;
+    }
+
+    @Override
+    public NutsDependency[] getDependencies() {
+        return dependencies;
+    }
+
+    @Override
+    public NutsArtifactCall getExecutor() {
+        return executor;
+    }
+
+    @Override
+    public NutsArtifactCall getInstaller() {
+        return installer;
+    }
+
+    @Override
+    public Map<String, String> getProperties() {
+        return properties == null ? Collections.EMPTY_MAP : Collections.unmodifiableMap(properties);
+    }
+
+    @Override
+    public String getIcon() {
+        return icon;
+    }
+
+    @Override
+    public String getCategory() {
+        return category;
+    }
+
+    @Override
+    public String getGenericName() {
+        return genericName;
+    }
+
+    @Override
+    public int hashCode() {
+
+        int result = Objects.hash(id, /*alternative,*/ packaging,
+                //                ext,
+                executable, application, executor, installer, name, description, properties,
+                icon,category,genericName
+                );
+        result = 31 * result + Arrays.hashCode(parents);
+        result = 31 * result + Arrays.hashCode(arch);
+        result = 31 * result + Arrays.hashCode(os);
+        result = 31 * result + Arrays.hashCode(osdist);
+        result = 31 * result + Arrays.hashCode(platform);
+        result = 31 * result + Arrays.hashCode(locations);
+        result = 31 * result + Arrays.hashCode(classifierMappings);
+        result = 31 * result + Arrays.hashCode(dependencies);
+        result = 31 * result + Arrays.hashCode(standardDependencies);
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        DefaultNutsDescriptor that = (DefaultNutsDescriptor) o;
+        return executable == that.executable
+                && application == that.application
+                && Objects.equals(id, that.id)
+//                && Objects.equals(alternative, that.alternative)
+                && Arrays.equals(parents, that.parents)
+                && Objects.equals(packaging, that.packaging)
+                && //                        Objects.equals(ext, that.ext) &&
+                Objects.equals(executor, that.executor)
+                && Objects.equals(installer, that.installer)
+                && Objects.equals(name, that.name)
+                && Objects.equals(icon, that.icon)
+                && Objects.equals(category, that.category)
+                && Objects.equals(genericName, that.genericName)
+                && Objects.equals(description, that.description)
+                && Arrays.equals(arch, that.arch)
+                && Arrays.equals(os, that.os)
+                && Arrays.equals(osdist, that.osdist)
+                && Arrays.equals(platform, that.platform)
+                && Arrays.equals(locations, that.locations)
+                && Arrays.equals(classifierMappings, that.classifierMappings)
+                && Arrays.equals(dependencies, that.dependencies)
+                && Arrays.equals(standardDependencies, that.standardDependencies)
+                && Objects.equals(properties, that.properties);
     }
 
     @Override
@@ -279,56 +358,10 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
                 + ", locations=" + Arrays.toString(locations)
                 + ", dependencies=" + Arrays.toString(dependencies)
                 + ", standardDependencies=" + Arrays.toString(standardDependencies)
+                + ", icon=" + icon
+                + ", category=" + category
+                + ", genericName=" + genericName
                 + ", properties=" + properties
                 + '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        DefaultNutsDescriptor that = (DefaultNutsDescriptor) o;
-        return executable == that.executable
-                && application == that.application
-                && Objects.equals(id, that.id)
-//                && Objects.equals(alternative, that.alternative)
-                && Arrays.equals(parents, that.parents)
-                && Objects.equals(packaging, that.packaging)
-                && //                        Objects.equals(ext, that.ext) &&
-                Objects.equals(executor, that.executor)
-                && Objects.equals(installer, that.installer)
-                && Objects.equals(name, that.name)
-                && Objects.equals(description, that.description)
-                && Arrays.equals(arch, that.arch)
-                && Arrays.equals(os, that.os)
-                && Arrays.equals(osdist, that.osdist)
-                && Arrays.equals(platform, that.platform)
-                && Arrays.equals(locations, that.locations)
-                && Arrays.equals(classifierMappings, that.classifierMappings)
-                && Arrays.equals(dependencies, that.dependencies)
-                && Arrays.equals(standardDependencies, that.standardDependencies)
-                && Objects.equals(properties, that.properties);
-    }
-
-    @Override
-    public int hashCode() {
-
-        int result = Objects.hash(id, /*alternative,*/ packaging,
-                //                ext,
-                executable, application, executor, installer, name, description, properties);
-        result = 31 * result + Arrays.hashCode(parents);
-        result = 31 * result + Arrays.hashCode(arch);
-        result = 31 * result + Arrays.hashCode(os);
-        result = 31 * result + Arrays.hashCode(osdist);
-        result = 31 * result + Arrays.hashCode(platform);
-        result = 31 * result + Arrays.hashCode(locations);
-        result = 31 * result + Arrays.hashCode(classifierMappings);
-        result = 31 * result + Arrays.hashCode(dependencies);
-        result = 31 * result + Arrays.hashCode(standardDependencies);
-        return result;
     }
 }

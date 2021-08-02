@@ -66,7 +66,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
             checkSession();
             NutsWorkspace ws = getSession().getWorkspace();
             Path f = getResultDefinition().getPath();
-            return ws.io().hash().source(f).computeString();
+            return ws.io().hash().setSource(f).computeString();
         } catch (NutsNotFoundException ex) {
             if (!isFailFast()) {
                 return null;
@@ -79,7 +79,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
     public String getResultDescriptorHash() {
         try {
             checkSession();
-            return getSession().getWorkspace().io().hash().source(getResultDescriptor()).computeString();
+            return getSession().getWorkspace().io().hash().setSource(getResultDescriptor()).computeString();
         } catch (NutsNotFoundException ex) {
             if (!isFailFast()) {
                 return null;

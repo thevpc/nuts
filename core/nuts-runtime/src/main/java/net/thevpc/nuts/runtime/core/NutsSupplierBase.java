@@ -13,7 +13,7 @@ public abstract class NutsSupplierBase<T> implements NutsSupplier<T> {
     }
 
     @Override
-    public int level() {
+    public int getLevel() {
         return level;
     }
 }

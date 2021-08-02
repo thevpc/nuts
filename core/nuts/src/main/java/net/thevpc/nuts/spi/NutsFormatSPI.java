@@ -23,55 +23,42 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
+*/
+package net.thevpc.nuts.spi;
+
+import net.thevpc.nuts.*;
+
+import java.io.File;
+import java.io.OutputStream;
+import java.io.Writer;
+import java.nio.file.Path;
+
+/**
+ * Base Format Interface used to print "things".
+ * @author thevpc
+ * @since 0.8.1
+ * @category SPI Base
  */
-package net.thevpc.nuts.runtime.standalone.config;
+public interface NutsFormatSPI  {
 
-import net.thevpc.nuts.NutsIndexStore;
-import net.thevpc.nuts.NutsRepository;
+    /**
+     * format current value and write result to {@code out} and finally appends
+     * a new line.
+     *
+     * @param out recipient print stream
+     */
+    void print(NutsPrintStream out);
 
-import java.util.*;
+    /**
+     * ask {@code this} instance to configure with the very first argument of
+     * {@code commandLine}. If the first argument is not supported, return
+     * {@code false} and consume (skip/read) the argument. If the argument
+     * required one or more parameters, these arguments are also consumed and
+     * finally return {@code true}
+     *
+     * @param commandLine arguments to configure with
+     * @return true when the at least one argument was processed
+     */
+    boolean configureFirst(NutsCommandLine commandLine);
 
-public abstract class AbstractNutsIndexStore implements NutsIndexStore {
-
-    private NutsRepository repository;
-    private boolean enabled = true;
-    private Date inaccessibleDate = null;
-
-    public AbstractNutsIndexStore(NutsRepository repository) {
-        this.repository = repository;
-    }
-
-    protected void setInaccessible() {
-        inaccessibleDate = new Date();
-    }
-
-    public boolean isInaccessible() {
-        if (inaccessibleDate == null) {
-            return false;
-        }
-        long elapsed = System.currentTimeMillis() - inaccessibleDate.getTime();
-        if (elapsed > 1000 * 60 * 5) {
-            inaccessibleDate = null;
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    @Override
-    public NutsIndexStore setEnabled(boolean enabled) {
-        this.enabled = enabled;
-        return this;
-    }
-    public NutsRepository getRepository() {
-        return repository;
-    }
-
-    public void setRepository(NutsRepository repository) {
-        this.repository = repository;
-    }
 }

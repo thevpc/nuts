@@ -140,10 +140,10 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
             if (found) {
                 return ws.descriptor()
                         .descriptorBuilder()
-                        .id(id.getLongNameId())
-                        .packaging("zip")
-                        .platform(new String[]{"java"})
-                        .description("Apache Tomcat Official Zip Bundle")
+                        .setId(id.getLongNameId())
+                        .setPackaging("zip")
+                        .setPlatform(new String[]{"java"})
+                        .setDescription("Apache Tomcat Official Zip Bundle")
                         .setProperty("dynamic-descriptor", "true")
                         .build();
             }
@@ -217,7 +217,7 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
                 }
             }
         } catch (UncheckedIOException|NutsIOException io) {
-            LOG.log(Level.FINER, "Inaccessible url " + url + " (" + io.getCause().toString());
+            LOG.log(Level.FINER, "inaccessible url " + url + " (" + io.getCause().toString());
         }
         return all.toArray(new String[0]);
     }

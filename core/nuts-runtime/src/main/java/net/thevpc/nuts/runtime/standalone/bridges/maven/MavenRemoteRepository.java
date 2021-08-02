@@ -62,7 +62,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
 
         @Override
         public NutsDescriptor parseDescriptor(String pathname, InputStream in, NutsFetchMode fetchMode, NutsRepository repository, NutsSession session, String rootURL) throws IOException {
-            session.getTerminal().printProgress("%-8s %s", "parse", session.getWorkspace().io().path(pathname).compressedForm());
+            session.getTerminal().printProgress("%-8s %s", "parse", session.getWorkspace().io().path(pathname).toCompressedForm());
             return MavenUtils.of(session).parsePomXml(in, fetchMode, pathname, repository);
         }
 
@@ -115,7 +115,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
 
         @Override
         protected boolean exists(NutsId id, String path, Object source, String typeName, NutsSession session) {
-            session.getTerminal().printProgress("%-8s %s", "search", session.getWorkspace().io().path(path).compressedForm());
+            session.getTerminal().printProgress("%-8s %s", "search", session.getWorkspace().io().path(path).toCompressedForm());
             try {
                 try (InputStream s = session.getWorkspace().io().monitor().setSource(path).setOrigin(source).setSession(session)
                         .setSourceTypeName(typeName).createSource().open()) {
@@ -129,7 +129,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
 
         @Override
         protected NutsInput openStream(NutsId id, String path, Object source, String typeName, String action, NutsSession session) {
-            session.getTerminal().printProgress("%-8s %s", action, session.getWorkspace().io().path(path).compressedForm());
+            session.getTerminal().printProgress("%-8s %s", action, session.getWorkspace().io().path(path).toCompressedForm());
             return session.getWorkspace().io().monitor().setSource(path).setOrigin(source).setSession(session).setSourceTypeName(typeName).createSource();
         }
 
@@ -314,7 +314,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
             case GITHUB: {
                 List<Iterator<NutsId>> li = new ArrayList<>();
                 for (String root : roots) {
-                    session.getTerminal().printProgress("%-8s %s", "browse", session.getWorkspace().io().path(root).compressedForm());
+                    session.getTerminal().printProgress("%-8s %s", "browse", session.getWorkspace().io().path(root).toCompressedForm());
                     if (root.endsWith("/*")) {
                         String name = root.substring(0, root.length() - 2);
                         li.add(FilesFoldersApi.createIterator(getWorkspace(), this, config.getLocation(true), name, filter, RemoteRepoApi.DIR_TEXT, session, Integer.MAX_VALUE, findModel));
@@ -327,7 +327,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
             case DIR_LIST: {
                 List<Iterator<NutsId>> li = new ArrayList<>();
                 for (String root : roots) {
-                    session.getTerminal().printProgress("%-8s %s", "browse", session.getWorkspace().io().path(root).compressedForm());
+                    session.getTerminal().printProgress("%-8s %s", "browse", session.getWorkspace().io().path(root).toCompressedForm());
                     if (root.endsWith("/*")) {
                         String name = root.substring(0, root.length() - 2);
                         li.add(FilesFoldersApi.createIterator(getWorkspace(), this, config.getLocation(true), name, filter, RemoteRepoApi.DIR_LIST, session, Integer.MAX_VALUE, findModel));

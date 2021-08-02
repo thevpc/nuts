@@ -11,7 +11,7 @@ public class ClassLoaderPath extends URLPath {
         this.path = path;
     }
 
-    public String name() {
+    public String getName() {
         return CoreIOUtils.getURLName(path);
     }
 

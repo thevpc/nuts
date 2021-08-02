@@ -44,13 +44,6 @@ public interface NutsIdLocationBuilder {
      * @param value location url
      * @return {@code this} instance
      */
-    NutsIdLocationBuilder url(String value);
-
-    /**
-     * update location url
-     * @param value location url
-     * @return {@code this} instance
-     */
     NutsIdLocationBuilder setUrl(String value);
 
     /**
@@ -64,13 +57,6 @@ public interface NutsIdLocationBuilder {
      * @param value location classifier
      * @return {@code this} instance
      */
-    NutsIdLocationBuilder classifier(String value);
-
-    /**
-     * update location classifier
-     * @param value location classifier
-     * @return {@code this} instance
-     */
     NutsIdLocationBuilder setClassifier(String value);
 
     /**
@@ -78,13 +64,6 @@ public interface NutsIdLocationBuilder {
      * @return location region
      */
     String getRegion();
-
-    /**
-     * update location region
-     * @param value location region
-     * @return {@code this} instance
-     */
-    NutsIdLocationBuilder region(String value);
 
     /**
      * update location region

@@ -790,20 +790,39 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             cwd = System.getProperty("user.home");
         }
         sl.setPath(cwd);
+        if(iconPath==null){
+            String descAppIcon = appDef.getDescriptor().getIcon();
+            if(descAppIcon!=null) {
+                if(descAppIcon.startsWith("classpath://")) {
+                    descAppIcon="nuts-resource://"+appDef.getId()+descAppIcon.substring("classpath://".length()-1);
+                }
+                NutsPath p = context.getWorkspace().io().path(descAppIcon);
+                if(p.exists()) {
+                    Path localIconPath = Paths.get(context.getWorkspace().locations().getStoreLocation(appDef.getId(),NutsStoreLocation.APPS))
+                            .resolve("nuts-extra")
+                            .resolve("icon.png");
+                    ws.io().copy()
+                            .from(p)
+                            .to(localIconPath)
+                            .run();
+                }
+            }
+
+        }
         sl.setIcon(iconPath==null? getDefaultIconPath() :iconPath);
         if (preferredName != null) {
             preferredName = preferredName.replace("%v", apiVersion);
         }
         if (preferredName == null) {
             if (appDef.getDescriptor().getName() != null) {
-                preferredName = appDef.getDescriptor().getName() + "-" + appDef.getDescriptor().getId().getVersion();
+                preferredName = appDef.getDescriptor().getName() + " - " + appDef.getDescriptor().getId().getVersion();
             }
             if (preferredName == null) {
                 preferredName = appDef.getDescriptor().getId().getArtifactId() + "-" + appDef.getDescriptor().getId().getVersion();
             }
         }
         sl.setName(preferredName);
-        sl.setGenericName(preferredName);
+        sl.setGenericName(apiDefinition.getDescriptor().getGenericName());
         sl.setComment(appDef.getDescriptor().getDescription());
         if (appShortcutTarget == AppShortcutTarget.DESKTOP) {
             results.addAll(Arrays.asList(ww.writeDesktop(fdi, true)));

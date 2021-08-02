@@ -98,28 +98,35 @@ public class DefaultNutsIOHashAction implements NutsIOHashAction {
     }
 
     @Override
-    public NutsIOHashAction source(InputStream input) {
+    public NutsIOHashAction setSource(InputStream input) {
         this.value = input;
         this.type = "stream";
         return this;
     }
 
     @Override
-    public NutsIOHashAction source(File file) {
+    public NutsIOHashAction setSource(File file) {
         this.value = file;
         this.type = "file";
         return this;
     }
 
     @Override
-    public NutsIOHashAction source(Path path) {
+    public NutsIOHashAction setSource(Path path) {
         this.value = path;
         this.type = "path";
         return this;
     }
 
     @Override
-    public NutsIOHashAction source(NutsDescriptor descriptor) {
+    public NutsIOHashAction setSource(NutsPath path) {
+        this.value = path;
+        this.type = "nuts-path";
+        return this;
+    }
+
+    @Override
+    public NutsIOHashAction setSource(NutsDescriptor descriptor) {
         this.value = descriptor;
         this.type = "desc";
         return this;
@@ -162,6 +169,14 @@ public class DefaultNutsIOHashAction implements NutsIOHashAction {
             }
             case "path": {
                 try (InputStream is = new BufferedInputStream(Files.newInputStream(((Path) value)))) {
+                    out.write(CoreIOUtils.evalHash(is, getValidAlgo()));
+                    return this;
+                } catch (IOException ex) {
+                    throw new UncheckedIOException(ex);
+                }
+            }
+            case "nuts-path": {
+                try (InputStream is = new BufferedInputStream((((NutsPath) value)).input().open())) {
                     out.write(CoreIOUtils.evalHash(is, getValidAlgo()));
                     return this;
                 } catch (IOException ex) {

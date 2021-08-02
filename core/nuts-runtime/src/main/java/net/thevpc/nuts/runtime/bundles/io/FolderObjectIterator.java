@@ -26,7 +26,6 @@
 package net.thevpc.nuts.runtime.bundles.io;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.repos.DefaultNutsInstalledRepository;
 
 import java.io.IOException;
@@ -93,7 +92,7 @@ public class FolderObjectIterator<T> implements Iterator<T> {
         while (!stack.isEmpty()) {
             PathAndDepth file = stack.pop();
             if (Files.isDirectory(file.path)) {
-                session.getTerminal().printProgress("%-8s %s","browse",session.getWorkspace().io().path(file.path.toString()).compressedForm());
+                session.getTerminal().printProgress("%-8s %s","browse",session.getWorkspace().io().path(file.path.toString()).toCompressedForm());
                 visitedFoldersCount++;
                 boolean deep = maxDepth < 0 || file.depth < maxDepth;
                 if (Files.isDirectory(file.path)) {

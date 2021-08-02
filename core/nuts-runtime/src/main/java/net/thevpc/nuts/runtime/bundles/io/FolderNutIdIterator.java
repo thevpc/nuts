@@ -92,7 +92,7 @@ public class FolderNutIdIterator implements Iterator<NutsId> {
         while (!stack.isEmpty()) {
             PathAndDepth file = stack.pop();
             if (Files.isDirectory(file.path)) {
-                session.getTerminal().printProgress("%-8s %s", "search",session.getWorkspace().io().path(file.path.toString()).compressedForm());
+                session.getTerminal().printProgress("%-8s %s", "search",session.getWorkspace().io().path(file.path.toString()).toCompressedForm());
                 visitedFoldersCount++;
                 boolean deep = file.depth < maxDepth;
                 if (Files.isDirectory(file.path)) {

@@ -73,16 +73,6 @@ public abstract class AbstractNutsInstallCommand extends NutsWorkspaceCommandBas
     }
 
     @Override
-    public NutsInstallCommand id(String id) {
-        return addId(id);
-    }
-
-    @Override
-    public NutsInstallCommand id(NutsId id) {
-        return addId(id);
-    }
-
-    @Override
     public NutsInstallCommand addId(String id) {
         checkSession();
         NutsWorkspace ws = getSession().getWorkspace();
@@ -137,12 +127,6 @@ public abstract class AbstractNutsInstallCommand extends NutsWorkspaceCommandBas
     @Override
     public NutsInstallCommand clearIds() {
         this.ids.clear();
-        return this;
-    }
-
-    @Override
-    public NutsInstallCommand arg(String arg) {
-        this.addArg(arg);
         return this;
     }
 
@@ -239,36 +223,6 @@ public abstract class AbstractNutsInstallCommand extends NutsWorkspaceCommandBas
     }
 
     @Override
-    public NutsInstallCommand installed(boolean value) {
-        return setInstalled(value);
-    }
-
-    @Override
-    public NutsInstallCommand installed() {
-        return installed(true);
-    }
-
-    @Override
-    public NutsInstallCommand args(Collection<String> args) {
-        return addArgs(args);
-    }
-
-    @Override
-    public NutsInstallCommand args(String... args) {
-        return addArgs(args);
-    }
-
-    @Override
-    public NutsInstallCommand ids(NutsId... ids) {
-        return addIds(ids);
-    }
-
-    @Override
-    public NutsInstallCommand ids(String... ids) {
-        return addIds(ids);
-    }
-
-    @Override
     public boolean isDefaultVersion() {
         return defaultVersion;
     }
@@ -333,7 +287,7 @@ public abstract class AbstractNutsInstallCommand extends NutsWorkspaceCommandBas
             case "--installed": {
                 boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
-                    this.installed(val);
+                    this.setInstalled(val);
                 }
                 return true;
             }
@@ -384,7 +338,7 @@ public abstract class AbstractNutsInstallCommand extends NutsWorkspaceCommandBas
                     return false;
                 } else {
                     cmdLine.skip();
-                    id(a.getString());
+                    addId(a.getString());
                     return true;
                 }
             }

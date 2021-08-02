@@ -394,7 +394,7 @@ public class NutsRepositoryFolderHelper {
             }
         }
         NutsWorkspace ws2 = session.getWorkspace();
-        return ws2.concurrent().lock().source(descFile).call(() -> {
+        return ws2.concurrent().lock().setSource(descFile).call(() -> {
 
             ws2.descriptor().formatter(desc).setNtf(false).print(descFile);
             ws2.io().copy().setSession(session)
@@ -404,7 +404,7 @@ public class NutsRepositoryFolderHelper {
                                                     NutsMessage.cstyle("sha1(%s)", desc.getId())
                                             ))
                                     .setTypeName("descriptor hash")
-                                    .of(ws2.io().hash().sha1().source(desc).computeString().getBytes())
+                                    .of(ws2.io().hash().sha1().setSource(desc).computeString().getBytes())
                     ).to(descFile.resolveSibling(descFile.getFileName() + ".sha1")).setSafe(true).run();
             return descFile;
         });
@@ -438,7 +438,7 @@ public class NutsRepositoryFolderHelper {
                 return pckFile;
             }
         }
-        return session.getWorkspace().concurrent().lock().source(pckFile).call(() -> {
+        return session.getWorkspace().concurrent().lock().setSource(pckFile).call(() -> {
             session.getWorkspace().io().copy().from(content).to(pckFile).setSafe(true).run();
             session.getWorkspace().io().copy().from(new NamedByteArrayInputStream(
                             CoreIOUtils.evalSHA1Hex(pckFile).getBytes(),
@@ -455,7 +455,7 @@ public class NutsRepositoryFolderHelper {
         }
         Path localFolder = getLongNameIdLocalFile(command.getId().builder().setFaceContent().build(), command.getSession());
         if (localFolder != null && Files.exists(localFolder)) {
-            if (command.getSession().getWorkspace().concurrent().lock().source(localFolder).call(() -> {
+            if (command.getSession().getWorkspace().concurrent().lock().setSource(localFolder).call(() -> {
                 CoreIOUtils.delete(command.getSession(), localFolder);
                 return false;
             })) {

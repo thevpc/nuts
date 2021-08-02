@@ -351,16 +351,15 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
             for (Map.Entry<String, List<InstallIdInfo>> stringListEntry : error.entrySet()) {
                 out.resetLine().println("the following " + (stringListEntry.getValue().size() > 1 ? "artifacts are" : "artifact is") + " cannot be ```error installed``` (" + stringListEntry.getKey() + ") : "
                         + stringListEntry.getValue().stream().map(x -> x.id)
-                        .map(x -> ws.id().formatter().omitImportedGroupId().value(x.getLongNameId()).format().toString())
+                        .map(x -> ws.id().formatter().setOmitImportedGroupId(true).setValue(x.getLongNameId()).format().toString())
                         .collect(Collectors.joining(", ")));
                 sb.append("\n" + "the following ").append(stringListEntry.getValue().size() > 1 ? "artifacts are" : "artifact is").append(" cannot be installed (").append(stringListEntry.getKey()).append(") : ").append(stringListEntry.getValue().stream().map(x -> x.id)
-                        .map(x -> ws.id().formatter().omitImportedGroupId().value(x.getLongNameId()).format().toString())
+                        .map(x -> ws.id().formatter().setOmitImportedGroupId(true).setValue(x.getLongNameId()).format().toString())
                         .collect(Collectors.joining(", ")));
             }
             throw new NutsInstallException(getSession(), null, NutsMessage.formatted(sb.toString().trim()), null);
         }
 
-        NutsTextManager text = ws.text().setSession(session);
         if (getSession().isPlainTrace() || (!list.emptyCommand && getSession().getConfirm() == NutsConfirmationMode.ASK)) {
             printList(out, "new","installed",
                     list.ids(x -> x.doInstall && !x.isAlreadyExists()));

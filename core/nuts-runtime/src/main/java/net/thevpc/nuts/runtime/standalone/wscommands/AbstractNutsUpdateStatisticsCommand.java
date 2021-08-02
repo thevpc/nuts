@@ -34,11 +34,6 @@ public abstract class AbstractNutsUpdateStatisticsCommand extends NutsWorkspaceC
     }
 
     @Override
-    public NutsUpdateStatisticsCommand repo(String s) {
-        return addRepo(s);
-    }
-
-    @Override
     public NutsUpdateStatisticsCommand addRepo(String s) {
         if (s != null) {
             repositrories.add(s);
@@ -82,11 +77,6 @@ public abstract class AbstractNutsUpdateStatisticsCommand extends NutsWorkspaceC
     public NutsUpdateStatisticsCommand clearPaths() {
         paths.clear();
         return this;
-    }
-
-    @Override
-    public NutsUpdateStatisticsCommand path(Path s) {
-        return addPath(s);
     }
 
     @Override

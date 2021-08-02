@@ -107,21 +107,6 @@ public class DefaultNutsIdLocationBuilder implements NutsIdLocationBuilder {
     }
 
     @Override
-    public NutsIdLocationBuilder url(String value) {
-        return setUrl(value);
-    }
-
-    @Override
-    public NutsIdLocationBuilder classifier(String value) {
-        return setClassifier(value);
-    }
-
-    @Override
-    public NutsIdLocationBuilder region(String value) {
-        return setRegion(value);
-    }
-
-    @Override
     public NutsIdLocation build() {
         return new DefaultNutsIdLocation(url, classifier,region);
     }

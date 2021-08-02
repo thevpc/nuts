@@ -35,7 +35,7 @@ public class FilesFoldersApi {
         String dotFilesUrl = baseUrl;
 //        NutsVersion versionString = ws.version().parser().parse("0.5.5");
         try {
-            session.getTerminal().printProgress("%-8s %s","browse", session.getWorkspace().io().path(baseUrl).compressedForm());
+            session.getTerminal().printProgress("%-8s %s","browse", session.getWorkspace().io().path(baseUrl).toCompressedForm());
             List<String> splitted = null;
             try (InputStream foldersFileStream
                     = ws.io().monitor().setSource(dotFilesUrl).setSession(session).create()) {
@@ -92,7 +92,7 @@ public class FilesFoldersApi {
         String dotFilesUrl = baseUrl + "/" + CoreNutsConstants.Files.DOT_FILES;
         NutsVersion versionString = ws.version().parser().parse("0.5.5");
         try {
-            session.getTerminal().printProgress("%-8s %s", "browse",session.getWorkspace().io().path(baseUrl).compressedForm());
+            session.getTerminal().printProgress("%-8s %s", "browse",session.getWorkspace().io().path(baseUrl).toCompressedForm());
             foldersFileStream = ws.io().monitor().setSource(dotFilesUrl).setSession(session).create();
             List<String> splitted = StringTokenizerUtils.split(CoreIOUtils.loadString(foldersFileStream, true), "\n\r");
             for (String s : splitted) {

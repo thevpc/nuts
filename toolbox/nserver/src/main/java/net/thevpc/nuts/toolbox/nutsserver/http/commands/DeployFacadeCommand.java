@@ -45,7 +45,7 @@ public class DeployFacadeCommand extends AbstractFacadeCommand {
                     break;
                 case "content-hash":
                     try {
-                        receivedContentHash = context.getWorkspace().io().hash().source(info.getContent()).computeString();
+                        receivedContentHash = context.getWorkspace().io().hash().setSource(info.getContent()).computeString();
                     } finally {
                         info.getContent().close();
                     }

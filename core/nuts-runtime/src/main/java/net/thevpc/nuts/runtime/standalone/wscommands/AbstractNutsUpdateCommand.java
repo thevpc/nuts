@@ -93,26 +93,11 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
     }
 
     @Override
-    public NutsUpdateCommand scope(NutsDependencyScope scope) {
-        return addScope(scope);
-    }
-
-    @Override
     public NutsUpdateCommand addScope(NutsDependencyScope scope) {
         if (scope != null) {
             scopes.add(scope);
         }
         return this;
-    }
-
-    @Override
-    public NutsUpdateCommand scopes(NutsDependencyScope... scopes) {
-        return addScopes(scopes);
-    }
-
-    @Override
-    public NutsUpdateCommand scopes(Collection<NutsDependencyScope> scopes) {
-        return addScopes(scopes);
     }
 
     @Override
@@ -335,44 +320,24 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
         return this;
     }
 
-    @Override
-    public NutsUpdateCommand workspace() {
-        setApi(true);
-        setRuntime(true);
-        setExtensions(true);
-        setCompanions(true);
-        return this;
-    }
+//    @Override
+//    public NutsUpdateCommand workspace() {
+//        setApi(true);
+//        setRuntime(true);
+//        setExtensions(true);
+//        setCompanions(true);
+//        return this;
+//    }
 
-    @Override
-    public NutsUpdateCommand runtime() {
-        return runtime(true);
-    }
-
-    @Override
-    public NutsUpdateCommand runtime(boolean enable) {
-        return setRuntime(enable);
-    }
-
-    @Override
-    public NutsUpdateCommand companions() {
-        return companions(false);
-    }
-
-    @Override
-    public NutsUpdateCommand companions(boolean enable) {
-        return setCompanions(enable);
-    }
-
-    @Override
-    public NutsUpdateCommand installed() {
-        return installed(true);
-    }
-
-    @Override
-    public NutsUpdateCommand installed(boolean enable) {
-        return setInstalled(enable);
-    }
+//    @Override
+//    public NutsUpdateCommand companions() {
+//        return companions(false);
+//    }
+//
+//    @Override
+//    public NutsUpdateCommand companions(boolean enable) {
+//        return setCompanions(enable);
+//    }
 
     @Override
     public NutsUpdateCommand setAll() {
@@ -391,16 +356,6 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
     }
 
     @Override
-    public NutsUpdateCommand lockedId(NutsId id) {
-        return addLockedId(id);
-    }
-
-    @Override
-    public NutsUpdateCommand lockedId(String id) {
-        return addLockedId(id);
-    }
-
-    @Override
     public NutsUpdateCommand addLockedId(NutsId id) {
         if (id != null) {
             lockedIds.add(id);
@@ -416,16 +371,6 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
             lockedIds.add(ws.id().parser().setLenient(false).parse(id));
         }
         return this;
-    }
-
-    @Override
-    public NutsUpdateCommand lockedIds(NutsId... ids) {
-        return addLockedIds(ids);
-    }
-
-    @Override
-    public NutsUpdateCommand lockedIds(String... ids) {
-        return addLockedIds(ids);
     }
 
     @Override
@@ -489,7 +434,7 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
             case "--installed": {
                 boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
-                    this.installed(val);
+                    this.setInstalled(val);
                 }
                 return true;
             }
@@ -497,7 +442,7 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
             case "--runtime": {
                 boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
-                    this.runtime(val);
+                    this.setRuntime(val);
                 }
                 return true;
             }
@@ -522,7 +467,7 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
             case "--companions": {
                 boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
-                    this.companions(val);
+                    this.setCompanions(val);
                 }
                 return true;
             }

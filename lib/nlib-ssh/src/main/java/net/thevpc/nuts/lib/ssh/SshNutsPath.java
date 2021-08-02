@@ -1,10 +1,14 @@
 package net.thevpc.nuts.lib.ssh;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.spi.NutsFormatSPI;
 import net.thevpc.nuts.spi.NutsPathSPI;
 
+import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Writer;
+import java.nio.file.Path;
 import java.time.Instant;
 
 class SshNutsPath implements NutsPathSPI {
@@ -23,62 +27,69 @@ class SshNutsPath implements NutsPathSPI {
     }
 
     @Override
-    public NutsString asFormattedString() {
-        //should implement better formatting...
-        NutsTextStyle _sep = NutsTextStyle.separator();
-        NutsTextStyle _path = NutsTextStyle.path();
-        NutsTextStyle _nbr = NutsTextStyle.number();
+    public NutsFormatSPI getFormatterSPI() {
+        return new NutsFormatSPI() {
+            @Override
+            public void print(NutsPrintStream out) {
+                //should implement better formatting...
+                NutsTextStyle _sep = NutsTextStyle.separator();
+                NutsTextStyle _path = NutsTextStyle.path();
+                NutsTextStyle _nbr = NutsTextStyle.number();
 //        if(true) {
-            NutsTextManager text = session.getWorkspace().text();
-            NutsTextBuilder sb = text.builder();
-            String user=this.path.getUser();
-            String host=this.path.getHost();
-            int port=this.path.getPort();
-            String path=this.path.getPath();
-            String password=this.path.getPassword();
-            String keyFile=this.path.getKeyFile();
+                NutsTextManager text = session.getWorkspace().text();
+                NutsTextBuilder sb = text.builder();
+                String user=path.getUser();
+                String host=path.getHost();
+                int port=path.getPort();
+                String path0=path.getPath();
+                String password=path.getPassword();
+                String keyFile=path.getKeyFile();
 
-            sb.append(text.forStyled("ssh://", _sep));
-            if (!(user == null || user.trim().length() == 0)) {
-                sb.append(user)
-                        .append(text.forStyled("@", _sep));
-            }
-            sb.append(host);
-            if (port >= 0) {
-                sb.append(text.forStyled(":", _sep))
-                        .append(text.forStyled(String.valueOf(port),_nbr));
-            }
-            if (!path.startsWith("/")) {
-                sb.append(text.forStyled('/'+path,_path));
-            }else {
-                sb.append(text.forStyled(path,_path));
-            }
-            if (password != null || keyFile != null) {
-                sb.append(text.forStyled("?",_sep));
-                boolean first = true;
-                if (password != null) {
-                    first = false;
-                    sb
-                            .append("password")
-                            .append(text.forStyled("=",_sep))
-                            .append(password);
+                sb.append(text.forStyled("ssh://", _sep));
+                if (!(user == null || user.trim().length() == 0)) {
+                    sb.append(user)
+                            .append(text.forStyled("@", _sep));
                 }
-                if (keyFile != null) {
-                    if (!first) {
-                        sb.append(text.forStyled(",",_sep));
+                sb.append(host);
+                if (port >= 0) {
+                    sb.append(text.forStyled(":", _sep))
+                            .append(text.forStyled(String.valueOf(port),_nbr));
+                }
+                if (!path0.startsWith("/")) {
+                    sb.append(text.forStyled('/'+path0,_path));
+                }else {
+                    sb.append(text.forStyled(path0,_path));
+                }
+                if (password != null || keyFile != null) {
+                    sb.append(text.forStyled("?",_sep));
+                    boolean first = true;
+                    if (password != null) {
+                        first = false;
+                        sb
+                                .append("password")
+                                .append(text.forStyled("=",_sep))
+                                .append(password);
                     }
-                    sb
-                            .append("key-file")
-                            .append(text.forStyled("=",_sep))
-                            .append(keyFile);
+                    if (keyFile != null) {
+                        if (!first) {
+                            sb.append(text.forStyled(",",_sep));
+                        }
+                        sb
+                                .append("key-file")
+                                .append(text.forStyled("=",_sep))
+                                .append(keyFile);
+                    }
                 }
+                out.print(sb.toText());
             }
-            return sb.toText();
-//        }
 
-//        return getSession().getWorkspace().text().forStyled(path.toString(), _sep);
-        //return getSession().getWorkspace().text().toText(path);
+            @Override
+            public boolean configureFirst(NutsCommandLine commandLine) {
+                return false;
+            }
+        };
     }
+
     @Override
     public InputStream inputStream() {
         return new SshFileInputStream(path,session);
@@ -116,7 +127,7 @@ class SshNutsPath implements NutsPathSPI {
     }
 
     @Override
-    public String location() {
+    public String getLocation() {
         return path.getPath();
     }
 
@@ -126,7 +137,7 @@ class SshNutsPath implements NutsPathSPI {
     }
 
     @Override
-    public Instant lastModifiedInstant() {
+    public Instant getLastModifiedInstant() {
         return null;
     }
 }

@@ -95,6 +95,18 @@ public abstract class NutsPrintStreamBase implements NutsPrintStream {
     }
 
     @Override
+    public NutsPrintStream print(NutsString b) {
+        this.print(String.valueOf(b));
+        return this;
+    }
+
+    @Override
+    public NutsPrintStream println(NutsString b) {
+        this.println(String.valueOf(b));
+        return this;
+    }
+
+    @Override
     public NutsPrintStream print(Object obj) {
         this.print(String.valueOf(obj));
         return this;

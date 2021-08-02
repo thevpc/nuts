@@ -425,7 +425,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
         Path finalPath = path;
         NutsWorkspace workspace = session.getWorkspace();
         if (Files.isRegularFile(path)) {
-            InstallInfoConfig c = workspace.concurrent().lock().source(path).setSession(session).call(
+            InstallInfoConfig c = workspace.concurrent().lock().setSource(path).setSession(session).call(
                     () -> workspace.elem().setSession(session).setContentType(NutsContentType.JSON).parse(finalPath, InstallInfoConfig.class),
                     CoreNutsUtils.LOCK_TIME, CoreNutsUtils.LOCK_TIME_UNIT
             );
@@ -453,7 +453,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
                     }
                 }
                 if (changeStatus && !workspace.config().isReadOnly()) {
-                    workspace.concurrent().lock().source(path).setSession(session).call(() -> {
+                    workspace.concurrent().lock().setSource(path).setSession(session).call(() -> {
                                 _LOGOP(session).level(Level.CONFIG).log("install-info upgraded {0}", finalPath.toString());
                                 c.setConfigVersion(workspace.getApiVersion().toString());
                                 workspace.elem().setSession(session).setContentType(NutsContentType.JSON).setValue(c).print(finalPath);

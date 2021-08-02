@@ -525,7 +525,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                             defaultSession());
                     configModel.setBootRepositories(cfg.getBootRepositories(), defaultSession());
                     try {
-                        install().installed().setSession(defaultSession()).getResult();
+                        install().setInstalled(true).setSession(defaultSession()).getResult();
                     } catch (Exception ex) {
                         LOG.with().session(defaultSession()).level(Level.SEVERE).verb(NutsLogVerb.FAIL)
                                 .log("reinstall artifacts failed : " + CoreStringUtils.exceptionToString(ex));

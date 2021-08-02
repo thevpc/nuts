@@ -104,6 +104,10 @@ public class UnixFreeDesktopEntryWriter implements FreeDesktopEntryWriter {
                 boolean alreadyExists0 = menuFile.isFile();
                 if (!alreadyExists0 || doOverride) {
                     Files.write(menuFile.toPath(), b.toByteArray());
+                    //should we run
+                    //    KDE  : 'kbuildsycoca5'
+                    //    GNOME: update-desktop-database ~/.local/share/applications
+                    // more generic : xdg-desktop-menu forceupdate
                 }
                 if (alreadyExists0) {
                     menuPathInfo = new PathInfo(NdiScriptInfo.Type.DESKTOP_MENU,menuFile.toPath(), PathInfo.Status.OVERRIDDEN);

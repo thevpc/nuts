@@ -25,7 +25,6 @@ package net.thevpc.nuts.runtime.standalone.wscommands;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.iter.IteratorBuilder;
-import net.thevpc.nuts.runtime.bundles.iter.IteratorUtils;
 import net.thevpc.nuts.runtime.core.DefaultNutsClassLoader;
 import net.thevpc.nuts.runtime.core.commands.ws.DefaultNutsQueryBaseOptions;
 import net.thevpc.nuts.runtime.core.format.NutsDisplayProperty;
@@ -673,7 +672,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     @Override
     public NutsResultList<String> getResultPathNames() {
         return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(true, isEffective()))
-                .map(x -> (x.getContent() == null || x.getContent().getPath() == null) ? null : x.getContent().getPath().name())
+                .map(x -> (x.getContent() == null || x.getContent().getPath() == null) ? null : x.getContent().getPath().getName())
                 .notBlank());
     }
 

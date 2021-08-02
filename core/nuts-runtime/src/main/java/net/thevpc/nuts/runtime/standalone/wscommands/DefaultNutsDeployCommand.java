@@ -279,7 +279,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
         NutsDescriptor mdescriptor = null;
         if (descriptor instanceof NutsDescriptor) {
             mdescriptor = (NutsDescriptor) descriptor;
-            if (descSHA1 != null && !ws.io().hash().sha1().source(mdescriptor).computeString().equalsIgnoreCase(descSHA1)) {
+            if (descSHA1 != null && !ws.io().hash().sha1().setSource(mdescriptor).computeString().equalsIgnoreCase(descSHA1)) {
                 throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("invalid content Hash"));
             }
             return mdescriptor;
@@ -288,7 +288,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
             if (descSHA1 != null) {
                 inputStreamSource = ws.io().input().setMultiRead(true).of(inputStreamSource);
                 try (InputStream is = inputStreamSource.open()) {
-                    if (!ws.io().hash().sha1().source(is).computeString().equalsIgnoreCase(descSHA1)) {
+                    if (!ws.io().hash().sha1().setSource(is).computeString().equalsIgnoreCase(descSHA1)) {
                         throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("invalid content Hash"));
                     }
                 } catch (IOException ex) {

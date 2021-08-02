@@ -50,17 +50,9 @@ public interface NutsUpdateCommand extends NutsWorkspaceCommand {
 
     NutsId[] getIds();
 
-    NutsUpdateCommand lockedId(NutsId id);
-
-    NutsUpdateCommand lockedId(String id);
-
     NutsUpdateCommand addLockedId(NutsId id);
 
     NutsUpdateCommand addLockedId(String id);
-
-    NutsUpdateCommand lockedIds(NutsId... id);
-
-    NutsUpdateCommand lockedIds(String... id);
 
     NutsUpdateCommand addLockedIds(NutsId... ids);
 
@@ -148,13 +140,6 @@ public interface NutsUpdateCommand extends NutsWorkspaceCommand {
     int getResultCount();
 
     /**
-     * update api, runtime, extensions and companions
-     *
-     * @return {@code this} instance
-     */
-    NutsUpdateCommand workspace();
-
-    /**
      * update api, runtime, extensions, companions and all installed artifacts
      *
      * @return {@code this} instance
@@ -172,50 +157,25 @@ public interface NutsUpdateCommand extends NutsWorkspaceCommand {
 
     /**
      * update workspace companion versions
+     * @param updateCompanions updateCompanions
      * @return {@code this} instance
      */
-    NutsUpdateCommand companions();
-
-    NutsUpdateCommand companions(boolean enable);
-
     NutsUpdateCommand setCompanions(boolean updateCompanions);
 
     boolean isCompanions();
 
-    /**
-     * update workspace runtime version
-     * @return {@code this} instance
-     */
-    NutsUpdateCommand runtime();
 
     NutsUpdateCommand setRuntime(boolean enable);
 
-    NutsUpdateCommand runtime(boolean enable);
-
     boolean isRuntime();
-
-    /**
-     * update installed artifacts
-     * @return {@code this} instance
-     */
-    NutsUpdateCommand installed();
 
     NutsUpdateCommand setInstalled(boolean enable);
 
     boolean isInstalled();
 
-    NutsUpdateCommand installed(boolean enable);
-
-
-    NutsUpdateCommand scope(NutsDependencyScope scope);
-
     NutsUpdateCommand addScope(NutsDependencyScope scope);
 
-    NutsUpdateCommand scopes(Collection<NutsDependencyScope> scopes);
-
     NutsUpdateCommand addScopes(Collection<NutsDependencyScope> scopes);
-
-    NutsUpdateCommand scopes(NutsDependencyScope... scopes);
 
     NutsUpdateCommand addScopes(NutsDependencyScope... scopes);
 

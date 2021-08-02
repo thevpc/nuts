@@ -36,22 +36,6 @@ import java.util.Collection;
 public interface NutsPushCommand extends NutsWorkspaceCommand {
 
     /**
-     * add id to push.
-     *
-     * @param id id to push
-     * @return {@code this} instance
-     */
-    NutsPushCommand id(NutsId id);
-
-    /**
-     * add id to push.
-     *
-     * @param id id to push
-     * @return {@code this} instance
-     */
-    NutsPushCommand id(String id);
-
-    /**
      * remove id to push.
      *
      * @param id id to push
@@ -100,22 +84,6 @@ public interface NutsPushCommand extends NutsWorkspaceCommand {
     NutsPushCommand addIds(String... ids);
 
     /**
-     * add ids to push.
-     *
-     * @param ids id to push
-     * @return {@code this} instance
-     */
-    NutsPushCommand ids(NutsId... ids);
-
-    /**
-     * add ids to push.
-     *
-     * @param ids id to push
-     * @return {@code this} instance
-     */
-    NutsPushCommand ids(String... ids);
-
-    /**
      * reset ids to push for
      * @return {@code this} instance
      */
@@ -126,20 +94,6 @@ public interface NutsPushCommand extends NutsWorkspaceCommand {
      * @return ids to push for
      */
     NutsId[] getIds();
-
-    /**
-     * add locked ids to prevent them to be updated or the force other ids to use them (the installed version).
-     * @param id id to lock
-     * @return {@code this} instance
-     */
-    NutsPushCommand lockedId(NutsId id);
-
-    /**
-     * add locked ids to prevent them to be updated or the force other ids to use them (the installed version).
-     * @param id id to lock
-     * @return {@code this} instance
-     */
-    NutsPushCommand lockedId(String id);
 
     /**
      * remove locked ids to prevent them to be updated or the force other ids to use them (the installed version).
@@ -184,20 +138,6 @@ public interface NutsPushCommand extends NutsWorkspaceCommand {
     NutsPushCommand addLockedIds(String... values);
 
     /**
-     * define locked ids to prevent them to be updated or the force other ids to use them (the installed version).
-     * @param values ids
-     * @return {@code this} instance
-     */
-    NutsPushCommand lockedIds(NutsId... values);
-
-    /**
-     * define locked ids to prevent them to be updated or the force other ids to use them (the installed version).
-     * @param values ids
-     * @return {@code this} instance
-     */
-    NutsPushCommand lockedIds(String... values);
-
-    /**
      * reset locked ids
      * @return {@code this} instance
      */
@@ -214,21 +154,7 @@ public interface NutsPushCommand extends NutsWorkspaceCommand {
      * @param arg argument
      * @return {@code this} instance
      */
-    NutsPushCommand arg(String arg);
-
-    /**
-     * add argument to pass to the push command
-     * @param arg argument
-     * @return {@code this} instance
-     */
     NutsPushCommand addArg(String arg);
-
-    /**
-     * add arguments to pass to the push command
-     * @param args argument
-     * @return {@code this} instance
-     */
-    NutsPushCommand args(String... args);
 
     /**
      * add arguments to pass to the push command
@@ -275,13 +201,6 @@ public interface NutsPushCommand extends NutsWorkspaceCommand {
      * @return true when offline mode
      */
     boolean isOffline();
-
-    /**
-     * repository to push from
-     * @param repository repository to push from
-     * @return {@code this} instance
-     */
-    NutsPushCommand repository(String repository);
 
     /**
      * repository to push from

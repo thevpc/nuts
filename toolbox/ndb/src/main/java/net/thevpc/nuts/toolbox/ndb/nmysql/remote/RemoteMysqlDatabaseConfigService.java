@@ -156,7 +156,7 @@ public class RemoteMysqlDatabaseConfigService {
                         "nsh",
                         "-c",
                         "rm",
-                        remoteFullFilePath.location()
+                        remoteFullFilePath.getLocation()
                 );
                 lastRun.put("deleted","true");
             }
@@ -204,7 +204,7 @@ public class RemoteMysqlDatabaseConfigService {
                         "--bot",
                         "cp",
                         localPath,
-                        remoteFullFilePath.location()
+                        remoteFullFilePath.getLocation()
                 ).setSession(context.getSession())
                 .setRedirectErrorStream(true)
                 .grabOutputString()

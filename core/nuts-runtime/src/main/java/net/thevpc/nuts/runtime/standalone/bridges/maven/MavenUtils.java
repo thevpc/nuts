@@ -240,6 +240,9 @@ public class MavenUtils {
                     .setPlatform(new String[]{"java"})
                     .setDependencies(toNutsDependencies(pom.getDependencies(), session))
                     .setStandardDependencies(toNutsDependencies(pom.getDependenciesManagement(), session))
+                    .setCategory(pom.getProperties().get("nuts.category"))
+                    .setIcon(pom.getProperties().get("nuts.icon"))
+                    .setGenericName(pom.getProperties().get("nuts.genericName"))
                     .setProperties(pom.getProperties())
                     .build();
         } catch (Exception e) {
@@ -258,7 +261,7 @@ public class MavenUtils {
 
     public NutsDescriptor parsePomXml(Path path, NutsFetchMode fetchMode, NutsRepository repository) throws IOException {
         try {
-            session.getTerminal().printProgress("%-8s %s", "parse", session.getWorkspace().io().path(path.toString()).compressedForm());
+            session.getTerminal().printProgress("%-8s %s", "parse", session.getWorkspace().io().path(path.toString()).toCompressedForm());
             try (InputStream is = Files.newInputStream(path)) {
                 NutsDescriptor nutsDescriptor = parsePomXml(is, fetchMode, path.toString(), repository);
                 if (nutsDescriptor.getId().getArtifactId() == null) {
@@ -441,7 +444,7 @@ public class MavenUtils {
     }
 
     public DepsAndRepos loadDependenciesAndRepositoriesFromPomUrl(String url, NutsSession session) {
-        session.getTerminal().printProgress("%-8s %s", "load", session.getWorkspace().io().path(url).compressedForm());
+        session.getTerminal().printProgress("%-8s %s", "load", session.getWorkspace().io().path(url).toCompressedForm());
         DepsAndRepos depsAndRepos = new DepsAndRepos();
 //        String repositories = null;
 //        String dependencies = null;

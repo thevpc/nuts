@@ -98,7 +98,7 @@ public interface NutsDescriptor extends Serializable {
     String[] getOsdist();
 
     /**
-     * supported platforms (java, dotnet, ...). if empty patform is not relevant.
+     * supported platforms (java, dotnet, ...). if empty platform is not relevant.
      * This is helpful to bind application to a jdk version for instance (in that case platform may be in the form java#8 for instance)
      * @return supported platforms
      */
@@ -109,6 +109,25 @@ public interface NutsDescriptor extends Serializable {
      * @return user friendly name
      */
     String getName();
+
+    /**
+     * url (external or classpath url) to the application Icon
+     * @return url (external or classpath url) to the application Icon
+     */
+    String getIcon();
+
+    /**
+     * Generic Artifact Name (like 'Text Editor', 'Image Processing Application', etc)
+     * @return Generic Artifact Name
+     */
+    String getGenericName();
+
+    /**
+     * category path of the artifact (slash separated).
+     * Standard Category Names should be used.
+     * @return category path of the artifact
+     */
+    String getCategory();
 
     /**
      * long description for the artifact

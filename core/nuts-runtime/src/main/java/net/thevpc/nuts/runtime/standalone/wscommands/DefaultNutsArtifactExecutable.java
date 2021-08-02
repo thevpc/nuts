@@ -78,7 +78,7 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
         NutsInstallStatus installStatus = def.getInstallInformation().getInstallStatus();
         if (!installStatus.isInstalled()) {
             if(autoInstall) {
-                traceSession.getWorkspace().install().setSession(traceSession).id(def.getId()).run();
+                traceSession.getWorkspace().install().setSession(traceSession).addId(def.getId()).run();
                 NutsInstallStatus st = traceSession.getWorkspace().fetch().setSession(traceSession).setId(def.getId()).getResultDefinition().getInstallInformation().getInstallStatus();
                 if (!st.isInstalled()) {
                     throw new NutsUnexpectedException(execSession, NutsMessage.cstyle("auto installation of %s failed",def.getId()));
@@ -87,7 +87,7 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
                 throw new NutsUnexpectedException(execSession, NutsMessage.cstyle("you must install %s to be able to run it",def.getId()));
             }
         } else if (installStatus.isObsolete()) {
-            traceSession.getWorkspace().install().setSession(traceSession).id(def.getId()).run();
+            traceSession.getWorkspace().install().setSession(traceSession).addId(def.getId()).run();
         }
 //        LinkedHashSet<NutsDependency> reinstall = new LinkedHashSet<>();
 //        NutsDependencyFilter depFilter = CoreNutsDependencyUtils.createJavaRunDependencyFilter(traceSession);

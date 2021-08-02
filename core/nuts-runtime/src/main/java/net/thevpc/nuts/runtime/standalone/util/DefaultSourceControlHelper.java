@@ -65,9 +65,9 @@ public class DefaultSourceControlHelper {
                 //ignore
             }
             if (newVersionFound == null) {
-                d = d.builder().id(d.getId().builder().setVersion(newVersion).build()).build();
+                d = d.builder().setId(d.getId().builder().setVersion(newVersion).build()).build();
             } else {
-                d = d.builder().id(d.getId().builder().setVersion(oldVersion + ".1").build()).build();
+                d = d.builder().setId(d.getId().builder().setVersion(oldVersion + ".1").build()).build();
             }
             NutsId newId = ws.deploy().setContent(folder).setDescriptor(d).setSession(session).getResult()[0];
             ws.descriptor().formatter(d).print(file);

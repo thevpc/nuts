@@ -3,7 +3,9 @@ package net.thevpc.nuts.runtime.core.io;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.io.FixedInputStreamMetadata;
 import net.thevpc.nuts.runtime.bundles.io.InputStreamMetadataAwareImpl;
+import net.thevpc.nuts.runtime.core.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
+import net.thevpc.nuts.spi.NutsFormatSPI;
 import net.thevpc.nuts.spi.NutsPathSPI;
 
 import java.io.IOException;
@@ -28,32 +30,6 @@ public class FilePath extends NutsPathBase implements NutsPathSPI {
         }
         this.value = value;
     }
-    @Override
-    public NutsInput input() {
-        return new FilePathInput();
-    }
-
-    @Override
-    public NutsOutput output() {
-        return new NutsPathOutput(null,this,getSession()){
-            @Override
-            public OutputStream open() {
-                return outputStream();
-            }
-        };
-    }
-
-    public boolean exists() {
-        return Files.exists(value);
-    }
-
-    public long length() {
-        try {
-            return Files.size(value);
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
-    }
 
     @Override
     public int hashCode() {
@@ -73,7 +49,7 @@ public class FilePath extends NutsPathBase implements NutsPathSPI {
         return value.toString();
     }
 
-    public String name() {
+    public String getName() {
         return CoreIOUtils.getURLName(value.toString());
     }
 
@@ -83,17 +59,12 @@ public class FilePath extends NutsPathBase implements NutsPathSPI {
     }
 
     @Override
-    public NutsString asFormattedString() {
-        return getSession().getWorkspace().text().toText(value);
-    }
-
-    @Override
-    public String location() {
+    public String getLocation() {
         return value.toString();
     }
 
     @Override
-    public NutsPath compressedForm() {
+    public NutsPath toCompressedForm() {
         return new NutsCompressedPath(this);
     }
 
@@ -110,20 +81,19 @@ public class FilePath extends NutsPathBase implements NutsPathSPI {
         return value;
     }
 
-    public InputStream inputStream() {
-        try {
-            return Files.newInputStream(value);
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
+    @Override
+    public NutsInput input() {
+        return new FilePathInput();
     }
 
-    public OutputStream outputStream() {
-        try {
-            return Files.newOutputStream(value);
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
+    @Override
+    public NutsOutput output() {
+        return new NutsPathOutput(null, this, getSession()) {
+            @Override
+            public OutputStream open() {
+                return outputStream();
+            }
+        };
     }
 
     @Override
@@ -164,8 +134,20 @@ public class FilePath extends NutsPathBase implements NutsPathSPI {
         }
     }
 
+    public boolean exists() {
+        return Files.exists(value);
+    }
+
+    public long length() {
+        try {
+            return Files.size(value);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
     @Override
-    public Instant lastModifiedInstant() {
+    public Instant getLastModifiedInstant() {
         FileTime r = null;
         try {
             r = Files.getLastModifiedTime(value);
@@ -176,6 +158,61 @@ public class FilePath extends NutsPathBase implements NutsPathSPI {
             //
         }
         return null;
+    }
+
+    @Override
+    public NutsFormat formatter() {
+        return new MyPathFormat(this)
+                .setSession(getSession())
+                ;
+    }
+
+    @Override
+    public NutsFormatSPI getFormatterSPI() {
+        NutsFormat formatter = formatter();
+        return new NutsFormatSPIFromNutsFormat(formatter);
+    }
+
+    public InputStream inputStream() {
+        try {
+            return Files.newInputStream(value);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    public OutputStream outputStream() {
+        try {
+            return Files.newOutputStream(value);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    private static class MyPathFormat extends DefaultFormatBase<NutsFormat> {
+        private FilePath p;
+
+        public MyPathFormat(FilePath p) {
+            super(p.getSession().getWorkspace(), "path");
+            this.p = p;
+        }
+
+        public NutsString asFormattedString() {
+            if (p.value == null) {
+                return getSession().getWorkspace().text().forPlain("");
+            }
+            return getSession().getWorkspace().text().toText(p.value);
+        }
+
+        @Override
+        public void print(NutsPrintStream out) {
+            out.print(asFormattedString());
+        }
+
+        @Override
+        public boolean configureFirst(NutsCommandLine commandLine) {
+            return false;
+        }
     }
 
     private class FilePathInput extends NutsPathInput {
@@ -189,4 +226,5 @@ public class FilePath extends NutsPathBase implements NutsPathSPI {
                     getNutsPath().length()));
         }
     }
+
 }

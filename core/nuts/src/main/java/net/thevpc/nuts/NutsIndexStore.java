@@ -67,19 +67,6 @@ public interface NutsIndexStore {
     NutsIndexStore setEnabled(boolean enabled);
 
     /**
-     * enable of disable ot index
-     * @param enabled new value
-     * @return {@code this} instance
-     */
-    NutsIndexStore enabled(boolean enabled);
-
-    /**
-     * enable index
-     * @return {@code this} instance
-     */
-    NutsIndexStore enabled();
-
-    /**
      * invalidate the artifact from the index
      * @param id id to invalidate
      * @param session session

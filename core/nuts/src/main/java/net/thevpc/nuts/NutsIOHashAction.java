@@ -44,28 +44,35 @@ public interface NutsIOHashAction {
      * @param input source stream to  hash
      * @return {@code this} instance
      */
-    NutsIOHashAction source(InputStream input);
+    NutsIOHashAction setSource(InputStream input);
 
     /**
      * file to  hash
      * @param file source file to  hash
      * @return {@code this} instance
      */
-    NutsIOHashAction source(File file);
+    NutsIOHashAction setSource(File file);
 
     /**
      * file to  hash
      * @param path source path to  hash
      * @return {@code this} instance
      */
-    NutsIOHashAction source(Path path);
+    NutsIOHashAction setSource(Path path);
+
+    /**
+     * file to  hash
+     * @param path source path to  hash
+     * @return {@code this} instance
+     */
+    NutsIOHashAction setSource(NutsPath path);
 
     /**
      * source stream to  hash
      * @param descriptor source descriptor to  hash
      * @return {@code this} instance
      */
-    NutsIOHashAction source(NutsDescriptor descriptor);
+    NutsIOHashAction setSource(NutsDescriptor descriptor);
 
     /**
      * compute hash digest and return it as hexadecimal string

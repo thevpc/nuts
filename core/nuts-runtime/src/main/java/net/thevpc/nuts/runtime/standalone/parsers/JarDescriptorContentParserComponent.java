@@ -148,7 +148,7 @@ public class JarDescriptorContentParserComponent implements NutsDescriptorConten
         if (baseNutsDescriptor == null) {
             baseNutsDescriptor = parserContext.getWorkspace().descriptor().descriptorBuilder()
                     .setId(ws.id().parser().parse("temp:jar#1.0"))
-                    .executable()
+                    .setExecutable(true)
                     .setPackaging("jar")
                     .build();
         }
@@ -169,12 +169,12 @@ public class JarDescriptorContentParserComponent implements NutsDescriptorConten
             if (classes.length == 0) {
                 return baseNutsDescriptor;
             } else {
-                return baseNutsDescriptor.builder().executor(new DefaultNutsArtifactCall(JAVA, new String[]{
+                return baseNutsDescriptor.builder().setExecutor(new DefaultNutsArtifactCall(JAVA, new String[]{
                         "--main-class=" + String.join(":",
                                 Arrays.stream(classes)
                                         .map(x -> x.getName())
                                         .collect(Collectors.toList())
-                        )}, null)).executable().build();
+                        )}, null)).setExecutable(true).build();
             }
         } else {
             return baseNutsDescriptor;

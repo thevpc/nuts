@@ -348,7 +348,7 @@ public class NutsIdFormatHelper {
         }
         switch (dp) {
             case ID: {
-                return oo.getIdFormat().value(id).setNtf(ntf).format();
+                return oo.getIdFormat().setValue(id).setNtf(ntf).format();
             }
             case STATUS: {
                 return getFormattedStatusString();
@@ -361,7 +361,7 @@ public class NutsIdFormatHelper {
             }
             case FILE_NAME: {
                 if (def != null && def.getContent() != null && def.getContent().getPath() != null) {
-                    return text.forPlain(def.getContent().getPath().name());
+                    return text.forPlain(def.getContent().getPath().getName());
                 }
                 return text.forStyled("missing-file-name", NutsTextStyle.error());
             }

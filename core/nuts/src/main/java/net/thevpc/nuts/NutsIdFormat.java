@@ -51,19 +51,6 @@ public interface NutsIdFormat extends NutsFormat {
     NutsIdFormat setOmitRepository(boolean value);
 
     /**
-     * update omitRepository
-     * @param value true when the repository should not be included in formatted instance
-     * @return {@code this} instance
-     */
-    NutsIdFormat omitRepository(boolean value);
-
-    /**
-     * update omitRepository to true
-     * @return {@code this} instance
-     */
-    NutsIdFormat omitRepository();
-
-    /**
      * return true when the groupId should not be included in formatted instance
      * @return return true when the groupId should not be included in formatted instance
      */
@@ -75,19 +62,6 @@ public interface NutsIdFormat extends NutsFormat {
      * @return {@code this} instance
      */
     NutsIdFormat setOmitGroupId(boolean value);
-
-    /**
-     * update omitGroup
-     * @param value new value
-     * @return {@code this} instance
-     */
-    NutsIdFormat omitGroupId(boolean value);
-
-    /**
-     * update omitGroup to true
-     * @return {@code this} instance
-     */
-    NutsIdFormat omitGroupId();
 
     /**
      * return true when the imported groupId should not be included in formatted instance
@@ -103,19 +77,6 @@ public interface NutsIdFormat extends NutsFormat {
     NutsIdFormat setOmitImportedGroupId(boolean value);
 
     /**
-     * update omitImportedGroupId
-     * @param value value
-     * @return {@code this} instance
-     */
-    NutsIdFormat omitImportedGroupId(boolean value);
-
-    /**
-     * update omitImportedGroupId to ture
-     * @return {@code this} instance
-     */
-    NutsIdFormat omitImportedGroupId();
-
-    /**
      * return true if omit other properties
      * @return true if omit other properties
      */
@@ -127,19 +88,6 @@ public interface NutsIdFormat extends NutsFormat {
      * @return {@code this} instance
      */
     NutsIdFormat setOmitOtherProperties(boolean value);
-
-    /**
-     * update omitOtherProperties
-     * @param value value
-     * @return {@code this} instance
-     */
-    NutsIdFormat omitOtherProperties(boolean value);
-
-    /**
-     * update omitOtherProperties to true
-     * @return {@code this} instance
-     */
-    NutsIdFormat omitOtherProperties();
 
     /**
      * return true when the face should not be included in formatted instance
@@ -154,18 +102,6 @@ public interface NutsIdFormat extends NutsFormat {
      */
     NutsIdFormat setOmitFace(boolean value);
 
-    /**
-     * update omitFace
-     * @param value value
-     * @return {@code this} instance
-     */
-    NutsIdFormat omitFace(boolean value);
-
-    /**
-     * update omitFace to true
-     * @return {@code this} instance
-     */
-    NutsIdFormat omitFace();
 
     /**
      * return true when the imported group should be highlighted in formatted instance
@@ -181,19 +117,6 @@ public interface NutsIdFormat extends NutsFormat {
     NutsIdFormat setHighlightImportedGroupId(boolean value);
 
     /**
-     * update highlightImportedGroupId
-     * @param value value
-     * @return {@code this} instance
-     */
-    NutsIdFormat highlightImportedGroupId(boolean value);
-
-    /**
-     * update highlightImportedGroupId to true
-     * @return {@code this} instance
-     */
-    NutsIdFormat highlightImportedGroupId();
-
-    /**
      * return true when the scope should be highlighted in formatted instance
      * @return return true when the scope should be highlighted in formatted instance
      */
@@ -205,19 +128,6 @@ public interface NutsIdFormat extends NutsFormat {
      * @return {@code this} instance
      */
     NutsIdFormat setHighlightScope(boolean value);
-
-    /**
-     * update highlightScope
-     * @param value value
-     * @return {@code this} instance
-     */
-    NutsIdFormat highlightScope(boolean value);
-
-    /**
-     * update highlightScope to true
-     * @return {@code this} instance
-     */
-    NutsIdFormat highlightScope();
 
     /**
      * return true when the optional should be highlighted in formatted instance
@@ -233,19 +143,6 @@ public interface NutsIdFormat extends NutsFormat {
     NutsIdFormat setHighlightOptional(boolean value);
 
     /**
-     * update highlightOptional
-     * @param value value
-     * @return {@code this} instance
-     */
-    NutsIdFormat highlightOptional(boolean value);
-
-    /**
-     * update highlightOptional tot true
-     * @return {@code this} instance
-     */
-    NutsIdFormat highlightOptional();
-
-    /**
      * return true if omit scope
      * @return true if omit scope
      */
@@ -258,20 +155,6 @@ public interface NutsIdFormat extends NutsFormat {
      * @return {@code this} instance
      */
     NutsIdFormat setOmitClassifier(boolean value);
-
-    /**
-     * if true omit (do not include) face when formatting the value
-     * set using {@link #setValue(NutsId)} .
-     * @param value new value
-     * @return {@code this} instance
-     */
-    NutsIdFormat omitClassifier(boolean value);
-
-    /**
-     * omit scope
-     * @return {@code this} instance
-     */
-    NutsIdFormat omitClassifier();
 
     /**
      * query properties omitted
@@ -296,35 +179,11 @@ public interface NutsIdFormat extends NutsFormat {
     NutsIdFormat setOmitProperty(String name, boolean value);
 
     /**
-     * if true omit (do not include) query property named {@code name} when formatting the value
-     * set using {@link #setValue(NutsId)} .
-     * @param name property name
-     * @param value new value
-     * @return {@code this} instance
-     */
-    NutsIdFormat omitProperty(String name, boolean value);
-
-    /**
-     * omit query property named {@code name}
-     * @param name property name
-     * @return {@code this} instance
-     */
-    NutsIdFormat omitProperty(String name);
-
-    /**
      * id to format
      * @return id to format
      * @since 0.5.6
      */
     NutsId getValue();
-
-    /**
-     * set id to format
-     * @param id id to format
-     * @return {@code this} instance
-     * @since 0.5.6
-     */
-    NutsIdFormat value(NutsId id);
 
     /**
      * id to format
