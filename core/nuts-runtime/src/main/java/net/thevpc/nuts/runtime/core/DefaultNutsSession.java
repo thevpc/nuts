@@ -524,7 +524,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     public NutsSession flush() {
         NutsArrayElementBuilder e = eout();
         if (e.size() > 0) {
-            formatObject(e.build()).println();
+            getWorkspace().formats().object(e.build()).println();
             e.clear();
         }
         out().flush();
@@ -1096,11 +1096,6 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     public NutsSession setProgressOptions(String progressOptions) {
         this.progressOptions = progressOptions;
         return this;
-    }
-
-    @Override
-    public NutsObjectFormat formatObject(Object any) {
-        return getWorkspace().formats().object().setSession(this).setValue(any);
     }
 
     @Override

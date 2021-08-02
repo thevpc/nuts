@@ -111,7 +111,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
             throw new NutsIllegalArgumentException(getSession(), NutsMessage.formatted("missing package to deploy"));
         }
         if (getSession().isTrace()) {
-            getSession().formatObject(result).println();
+            getSession().getWorkspace().formats().object(result).println();
         }
         return this;
     }

@@ -104,9 +104,7 @@ public class AliasNAdminSubCommand extends AbstractNAdminSubCommand {
                         .sorted((x, y) -> x.getName().compareTo(y.getName()))
                         .collect(Collectors.toList());
                 if (context.getSession().isPlainOut()) {
-                    context.getWorkspace().formats().props()
-                            .setSession(context.getSession())
-                            .setValue(
+                    context.getWorkspace().formats().props(
                                     r.stream().collect(
                                             Collectors.toMap(
                                                     NutsWorkspaceCommandAlias::getName,
@@ -119,7 +117,7 @@ public class AliasNAdminSubCommand extends AbstractNAdminSubCommand {
                                             ))
                             ).println();
                 } else {
-                    context.getSession().formatObject(
+                    context.getSession().getWorkspace().formats().object(
                             r.stream().map(x -> new AliasInfo(x, context.getWorkspace())).collect(Collectors.toList())
                     ).println();
                 }

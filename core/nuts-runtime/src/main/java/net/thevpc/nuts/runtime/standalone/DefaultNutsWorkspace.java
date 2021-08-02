@@ -1529,8 +1529,8 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
     }
 
     @Override
-    public String getApiVersion() {
-        return apiVersion.toString();
+    public NutsVersion getApiVersion() {
+        return apiVersion;
     }
 
     @Override

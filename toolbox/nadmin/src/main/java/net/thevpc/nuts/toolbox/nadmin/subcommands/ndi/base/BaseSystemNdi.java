@@ -1,10 +1,11 @@
 package net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.base;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.NdiScriptOptions;
-import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.NdiScriptnfo;
-import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.WorkspaceAndApiVersion;
+import net.thevpc.nuts.toolbox.nadmin.PathInfo;
+import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.*;
 import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.util.NdiUtils;
+import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.util.ReplaceString;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -13,6 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
@@ -20,11 +22,47 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public abstract class BaseSystemNdi extends AbstractSystemNdi {
+    public static final ReplaceString COMMENT_LINE_CONFIG_HEADER = new ReplaceString("net.thevpc.nuts configuration", "((net[.]thevpc[.]nuts)|(net[.]thevpc[.]nuts.toolbox[.]ndi)|(net[.]vpc[.]app[.]nuts)) configuration");
 
     private static final Logger LOG = Logger.getLogger(BaseSystemNdi.class.getName());
 
     public BaseSystemNdi(NutsApplicationContext appContext) {
         super(appContext);
+    }
+    public Path getNutsRcPath(String nutsVersion, String switchWorkspaceLocation) {
+        return getNutsApiAppsFolder(nutsVersion, switchWorkspaceLocation).resolve(getExecFileName(".nutsrc"));
+    }
+
+    public Path getNutsStartPath() {
+        return getNadminAppsFolder().resolve(getExecFileName("nuts"));
+    }
+
+    public Path getNutsApiAppsFolder(String nutsVersion, String switchWorkspaceLocation) {
+        final NutsWorkspace ws = context.getWorkspace();
+        NutsId nid = getNutsId(nutsVersion, switchWorkspaceLocation);
+        if (switchWorkspaceLocation != null) {
+            NutsWorkspaceBootConfig bootConfig = loadSwitchWorkspaceLocationConfig(switchWorkspaceLocation);
+            return Paths.get(bootConfig.getStoreLocation(nid, NutsStoreLocation.APPS));
+        } else {
+            return Paths.get(ws.locations().getStoreLocation(nid, NutsStoreLocation.APPS));
+        }
+    }
+    public NutsId getNutsId(String nutsVersion, String switchWorkspaceLocation) {
+        final NutsWorkspace ws = context.getWorkspace();
+        NutsId nid = ws.getApiId();
+        if (nutsVersion != null && nutsVersion.length() > 0) {
+            String c = ws.getApiId().getVersion().toString();
+            if (!c.equals(nutsVersion)) {
+                return nid.builder().setVersion(nutsVersion).build();
+            }
+        }
+        return nid;
+    }
+
+    //ws.getApiId().getVersion()
+    public Path getNadminAppsFolder() {
+        final NutsWorkspace ws = context.getWorkspace();
+        return Paths.get(ws.locations().getStoreLocation(context.getAppId(), NutsStoreLocation.APPS));
     }
 
     public Path getScriptFile(String name) {
@@ -32,35 +70,52 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         return bin.resolve(getExecFileName(name));
     }
 
+    public abstract boolean isComments(String line);
+
+    //    @Override
+    public abstract String trimComments(String line);
+
+    public Path getNutsAppsFolder(String apiVersion, String switchWorkspaceLocation) {
+        NutsWorkspace ws = context.getWorkspace();
+        NutsWorkspaceBootConfig bootConfig = null;
+        NutsId apiId = ws.getApiId().builder().setVersion(apiVersion).build();
+        apiId = ws.search().addId(apiId).setLatest(true).setFailFast(true).setContent(true).getResultDefinitions().singleton().getId();
+        if (switchWorkspaceLocation != null) {
+            bootConfig = loadSwitchWorkspaceLocationConfig(switchWorkspaceLocation);
+            return Paths.get(bootConfig.getStoreLocation(apiId, NutsStoreLocation.APPS));
+        } else {
+            return Paths.get(ws.locations().getStoreLocation(apiId, NutsStoreLocation.APPS));
+        }
+    }
+
     protected abstract String createNutsScriptCommand(NutsId fnutsId, NdiScriptOptions options);
 
-    public String createBootScriptCommand(NutsDefinition f, boolean includeEnv) {
+    public String createBootScriptCommand(NutsDefinition apiDef, boolean includeEnv) {
         String txt = NdiUtils.generateScriptAsString("/net/thevpc/nuts/toolbox/nadmin/" + getTemplateNutsName(),
                 ss -> {
                     switch (ss) {
                         case "NUTS_JAR":
-                            return f.getPath().toString();
+                            return apiDef.getPath().toString();
                     }
                     return null;
                 }
         );
         if (includeEnv) {
-            Path ndiAppsFolder = Paths.get(context.getAppsFolder());
-            Path ndiConfigFile = ndiAppsFolder.resolve(getExecFileName(".nadmin-bashrc"));
-            txt = getCallScriptCommand(ndiConfigFile.toString()) + "\n"
-                    + txt;
+            Path nutsRcPath = getNutsRcPath(apiDef.getId().getVersion().toString(), null);
+            txt = getCallScriptCommand(nutsRcPath.toString()) + "\n" + txt;
         }
         return txt;
     }
 
-    public WorkspaceAndApiVersion persistConfig(NutsWorkspaceBootConfig bootConfig, String apiVersion, String preferredName, NutsSession session) {
+    public WorkspaceAndApiVersion persistConfig(String switchWorkspaceLocation, String apiVersion, String preferredName) {
         NutsWorkspace ws = context.getWorkspace();
-        if (session == null) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing session"));
+        NutsWorkspaceBootConfig bootConfig = null;
+        if (switchWorkspaceLocation != null) {
+            bootConfig = loadSwitchWorkspaceLocationConfig(switchWorkspaceLocation);
         }
         if (apiVersion == null) {
-            if (bootConfig == null) {
-                apiVersion = ws.getApiVersion();
+            if (switchWorkspaceLocation == null) {
+                apiVersion = ws.getApiVersion().toString();
             } else {
                 NutsVersion _latestVersion = null;
                 try {
@@ -78,21 +133,21 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                     throw new UncheckedIOException(e);
                 }
                 if (_latestVersion == null) {
-                    throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing nuts-api version to link to"));
+                    throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.cstyle("missing nuts-api version to link to"));
                 }
                 apiVersion = _latestVersion.toString();
             }
         }
         NutsId apiId = ws.getApiId().builder().setVersion(apiVersion).build();
-        ws.fetch().setSession(session).setId(apiId).setFailFast(true).getResultDefinition();
+        ws.fetch().setId(apiId).setFailFast(true).getResultDefinition();
         String wsEff = bootConfig != null ? bootConfig.getEffectiveWorkspace()
                 : ws.locations().getWorkspaceLocation().toString();
-        UpdatedPaths t = persistConfig2(bootConfig, apiId, preferredName, session);
-        return new WorkspaceAndApiVersion(wsEff, ws.version().parse(apiVersion), t.getUpdated(), t.getDiscarded());
+        PathInfo[] t = persistConfig2(switchWorkspaceLocation, apiId, preferredName);
+        return new WorkspaceAndApiVersion(wsEff, ws.version().parse(apiVersion), t);
     }
 
     @Override
-    public List<NdiScriptnfo> createNutsScript(NdiScriptOptions options) {
+    public List<NdiScriptInfo> createNutsScript(NdiScriptOptions options) {
         NutsId nid = context.getWorkspace().id().parser().parse(options.getId());
         if (isNutsBootId(nid)) {
             return createBootScript(
@@ -100,7 +155,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                     nid.getVersion().toString(),
                     options.isForceBoot() || options.getSession().isYes(), options.getSession().isTrace(), options.isIncludeEnv());
         } else {
-            List<NdiScriptnfo> r = new ArrayList<>();
+            List<NdiScriptInfo> r = new ArrayList<>();
             if (options.isAddNutsScript()) {
                 r.addAll(createBootScript(
                         null,
@@ -133,7 +188,9 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             }
             if (gen) {
                 final NutsId fnutsId = nid;
-                NdiScriptnfo p = createScript(n, options.getPreferredScriptName(), fnutsId, options.getSession().isTrace(), nid.toString(),
+                NdiScriptInfo p = createScript(
+                        options.isIncludeEnv() ? NdiScriptInfo.Type.ARTIFACT_WITH_ENV : NdiScriptInfo.Type.ARTIFACT_WITHOUT_ENV,
+                        n, options.getPreferredScriptName(), fnutsId, options.getSession().isTrace(), nid.toString(),
                         x -> {
                             switch (x) {
                                 case "NUTS_ID":
@@ -148,6 +205,40 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                         }
                 );
                 r.add(p);
+            }
+            if (options.isCreateDesktop()) {
+                for (PathInfo pathInfo : configurePathShortcut(
+                        AppShortcutTarget.DESKTOP, nid,
+                        context.getWorkspace().getApiId().getVersion().toString(),
+                        null, options.getMenuPath(),
+                        options.getIcon(),
+                        options.getCwd(),
+                        options.getAppArgs().toArray(new String[0])
+                )) {
+                    r.add(new NdiScriptInfo(
+                            NdiScriptInfo.Type.DESKTOP_SHORTCUT,
+                            pathInfo.getPath().getFileName().toString(),
+                            nid, pathInfo.getPath(),
+                            pathInfo.getStatus() == PathInfo.Status.OVERRIDDEN
+                    ));
+                }
+            }
+            if (options.isCreateMenu()) {
+                for (PathInfo pathInfo : configurePathShortcut(
+                        AppShortcutTarget.MENU, nid,
+                        context.getWorkspace().getApiId().getVersion().toString(),
+                        null, options.getMenuPath(),
+                        options.getIcon(),
+                        options.getCwd(),
+                        options.getAppArgs().toArray(new String[0])
+                )) {
+                    r.add(new NdiScriptInfo(
+                            NdiScriptInfo.Type.DESKTOP_MENU,
+                            pathInfo.getPath().getFileName().toString(),
+                            nid, pathInfo.getPath(),
+                            pathInfo.getStatus() == PathInfo.Status.OVERRIDDEN
+                    ));
+                }
             }
             return r;
         }
@@ -181,16 +272,9 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
 
     @Override
     public void addNutsWorkspaceScript(String preferredScriptName, String switchWorkspaceLocation, String apiVersion) {
-        NutsWorkspaceBootConfig bootconfig = null;
-        if (switchWorkspaceLocation != null) {
-            bootconfig = context.getWorkspace().config().loadBootConfig(switchWorkspaceLocation, false, true);
-            if (bootconfig == null) {
-                throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.cstyle("invalid workspace: %s", switchWorkspaceLocation));
-            }
-        }
-        WorkspaceAndApiVersion v = persistConfig(bootconfig, apiVersion, preferredScriptName, context.getSession());
+        WorkspaceAndApiVersion v = persistConfig(switchWorkspaceLocation, apiVersion, preferredScriptName);
         if (context.getSession().isPlainTrace()) {
-            context.getSession().out().printf("added script %s to point to %s %s\n", v.getWorkspace(), v.getApiVersion(), v.getUpdatedPaths());
+            context.getSession().out().printf("added script %s to point to %s %s\n", v.getWorkspace(), v.getApiVersion(), v.getUpdatedPathStrings());
         }
     }
 
@@ -200,10 +284,10 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         if (switchWorkspaceLocation != null) {
             bootconfig = context.getWorkspace().config().loadBootConfig(switchWorkspaceLocation, false, true);
             if (bootconfig == null) {
-                throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.cstyle("invalid workspace: %s",switchWorkspaceLocation));
+                throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.cstyle("invalid workspace: %s", switchWorkspaceLocation));
             }
         }
-        WorkspaceAndApiVersion v = persistConfig(bootconfig, apiVersion, null, context.getSession());
+        WorkspaceAndApiVersion v = persistConfig(switchWorkspaceLocation, apiVersion, null);
         if (context.getSession().isPlainTrace()) {
             context.getSession().out().printf("```sh nuts``` switched to workspace %s to point to %s\n", v.getWorkspace(), v.getApiVersion());
         }
@@ -217,7 +301,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         return false;
     }
 
-    public List<NdiScriptnfo> createBootScript(String preferredName, String apiVersion, boolean force, boolean trace, boolean includeEnv) {
+    public List<NdiScriptInfo> createBootScript(String preferredName, String apiVersion, boolean force, boolean trace, boolean includeEnv) {
         boolean currId = false;
         NutsId apiId = null;
         NutsId b = context.getWorkspace().getApiId();
@@ -232,8 +316,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                 apiId = b;
             }
         }
-        NutsDefinition f = context.getWorkspace().search()
-                .setSession(context.getSession().copy().setTrace(false))
+        NutsDefinition apiDef = context.getWorkspace().search()
                 .addId(apiId).setOptional(false).setLatest(true).setContent(true).getResultDefinitions().required();
         Path script = null;
         boolean standardPath = true;
@@ -252,7 +335,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         }
         script = script.toAbsolutePath();
         String scriptString = script.toString();
-        List<NdiScriptnfo> all = new ArrayList<>();
+        List<NdiScriptInfo> all = new ArrayList<>();
         boolean createPath = false;
         if (!force && Files.exists(script)) {
             if (context.getSession().getTerminal().ask()
@@ -270,15 +353,17 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         }
         if (createPath) {
             all.add(
-                    createScript("nuts", script.toString(), b, trace, f.getId().getLongName(),
+                    createScript(
+                            includeEnv ? NdiScriptInfo.Type.NUTS_WITH_ENV : NdiScriptInfo.Type.NUTS_WITHOUT_ENV,
+                            "nuts", script.toString(), b, trace, apiDef.getId().getLongName(),
                             x -> {
                                 switch (x) {
                                     case "NUTS_ID":
-                                        return f.getId().toString();
+                                        return apiDef.getId().toString();
                                     case "GENERATOR":
                                         return context.getAppId().toString();
                                     case "BODY":
-                                        return createBootScriptCommand(f, includeEnv);
+                                        return createBootScriptCommand(apiDef, includeEnv);
                                 }
                                 return null;
                             }
@@ -314,7 +399,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                         NdiUtils.generateScript("/net/thevpc/nuts/toolbox/nadmin/" + getTemplateBodyName(), w, x -> {
                             switch (x) {
                                 case "NUTS_ID":
-                                    return f.getId().toString();
+                                    return apiDef.getId().toString();
                                 case "GENERATOR":
                                     return context.getAppId().toString();
                                 case "BODY": {
@@ -328,31 +413,29 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                     throw new UncheckedIOException(ex);
                 }
                 NdiUtils.setExecutable(ff2);
-                all.add(new NdiScriptnfo("nuts", b, ff2, overridden));
+                all.add(new NdiScriptInfo(
+                        includeEnv ?
+                                NdiScriptInfo.Type.NUTS_WITH_ENV :
+                                NdiScriptInfo.Type.NUTS_WITHOUT_ENV
+                        , "nuts", b, ff2, overridden));
             }
         }
         return all;
     }
 
     @Override
-    public List<NdiScriptnfo> createNutsScript(
-            List<String> idsToInstall,
-            String switchWorkspaceLocation,
-            String linkName,
-            Boolean persistentConfig,
-            ArrayList<String> executorOptions,
-            boolean env,
-            boolean fetch,
-            NutsExecutionType execType,
+    public List<NdiScriptInfo> createNutsScript(
+            CreateNutsScriptCommand cmd,
             NutsApplicationContext context) {
         NutsWorkspace ws = context.getWorkspace();
         Path workspaceLocation = Paths.get(ws.locations().getWorkspaceLocation());
-        List<NdiScriptnfo> result = new ArrayList<>();
+        List<NdiScriptInfo> result = new ArrayList<>();
         boolean subTrace = context.getSession().isTrace();
         if (!context.getSession().isPlainTrace()) {
             subTrace = false;
         }
-        if (!idsToInstall.isEmpty()) {
+        Boolean persistentConfig = cmd.getPersistentConfig();
+        if (!cmd.getIdsToInstall().isEmpty()) {
             if (persistentConfig == null) {
                 if (workspaceLocation.equals(Paths.get(System.getProperty("user.home")).resolve(".config/nuts/default-workspace"))) {
                     persistentConfig = true;
@@ -360,8 +443,8 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                     persistentConfig = false;
                 }
             }
-            boolean includeEnv = env;
-            for (String id : idsToInstall) {
+            boolean includeEnv = cmd.isEnv();
+            for (String id : cmd.getIdsToInstall()) {
                 NutsId nid = ws.id().parser().parse(id);
                 if (nid == null) {
                     throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("unable to create script for %s : invalid id", id), 100);
@@ -370,12 +453,12 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                     includeEnv = true;
                 }
             }
-            String linkNameCurrent = linkName;
+            String linkNameCurrent = cmd.getLinkName();
             if (includeEnv) {
                 linkNameCurrent = prepareLinkName(linkNameCurrent);
             }
-            List<String> nutsIds = idsToInstall.stream().filter(x -> isNutsBootId(ws.id().parser().parse(x))).collect(Collectors.toList());
-            List<String> nonNutsIds = idsToInstall.stream().filter(x -> !isNutsBootId(ws.id().parser().parse(x))).collect(Collectors.toList());
+            List<String> nutsIds = cmd.getIdsToInstall().stream().filter(x -> isNutsBootId(ws.id().parser().parse(x))).collect(Collectors.toList());
+            List<String> nonNutsIds = cmd.getIdsToInstall().stream().filter(x -> !isNutsBootId(ws.id().parser().parse(x))).collect(Collectors.toList());
             boolean bootAlreadyProcessed = false;
             for (String id : nutsIds) {
                 try {
@@ -394,11 +477,17 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                                     new NdiScriptOptions().setId(id)
                                             .setSession(context.getSession().copy().setTrace(subTrace))
                                             .setForceBoot(context.getSession().isYes())
-                                            .setFetch(fetch)
-                                            .setExecType(execType)
-                                            .setExecutorOptions(executorOptions)
+                                            .setFetch(cmd.isFetch())
+                                            .setExecType(cmd.getExecType())
+                                            .setExecutorOptions(cmd.getExecutorOptions())
                                             .setIncludeEnv(includeEnv)
                                             .setPreferredScriptName(linkNameCurrent)
+                                            .setCreateDesktop(cmd.isCreateDesktop())
+                                            .setCreateMenu(cmd.isCreateMenu())
+                                            .setAppArgs(cmd.getAppArgs())
+                                            .setMenuPath(cmd.getMenuPath())
+                                            .setIcon(cmd.getIcon())
+                                            .setCwd(cmd.getCwd())
                             )
                     );
                 } catch (UncheckedIOException e) {
@@ -423,20 +512,34 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                                             .setAddNutsScript(false)
                                             .setSession(context.getSession().copy().setTrace(subTrace))
                                             .setForceBoot(context.getSession().isYes())
-                                            .setFetch(fetch)
-                                            .setExecType(execType)
-                                            .setExecutorOptions(executorOptions)
+                                            .setFetch(cmd.isFetch())
+                                            .setExecType(cmd.getExecType())
+                                            .setExecutorOptions(cmd.getExecutorOptions())
                                             .setIncludeEnv(includeEnv)
                                             .setPreferredScriptName(linkNameCurrent)
+                                            .setCreateDesktop(cmd.isCreateDesktop())
+                                            .setCreateMenu(cmd.isCreateMenu())
+                                            .setAppArgs(cmd.getAppArgs())
+                                            .setMenuPath(cmd.getMenuPath())
+                                            .setIcon(cmd.getIcon())
+                                            .setCwd(cmd.getCwd())
                             )
                     );
                 } catch (UncheckedIOException e) {
                     throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("unable to add script for %s : %s", id, e), e);
                 }
             }
-            configurePath(context.getSession(), persistentConfig);
+            configurePath(persistentConfig);
         }
         return result;
+    }
+
+    public NutsWorkspaceBootConfig loadSwitchWorkspaceLocationConfig(String switchWorkspaceLocation) {
+        NutsWorkspaceBootConfig bootconfig = context.getWorkspace().config().loadBootConfig(switchWorkspaceLocation, false, true);
+        if (bootconfig == null) {
+            throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.cstyle("invalid workspace: %s", switchWorkspaceLocation));
+        }
+        return bootconfig;
     }
 
     private String prepareLinkName(String linkName) {
@@ -450,7 +553,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         return linkName;
     }
 
-    protected abstract UpdatedPaths persistConfig2(NutsWorkspaceBootConfig bootConfig, NutsId nutsId, String rcPath, NutsSession session);
+    protected abstract PathInfo[] persistConfig2(String switchWorkspaceLocation, NutsId nutsId, String rcPath);
 
     public abstract String toCommentLine(String line);
 
@@ -471,8 +574,11 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         }
     }
 
-    public boolean addFileLine(Path filePath, String commentLine, String goodLine, boolean force, String ensureHeader, String headerReplace) {
+    public PathInfo addFileLine(NdiScriptInfo.Type type,Path filePath, ReplaceString commentLine, String goodLine, boolean force, ReplaceString header) {
+//        Pattern commentLineConditionPattern = Pattern.compile(commentLineConditionRegexp);
         filePath = filePath.toAbsolutePath();
+        List<String> goodLinesList = Arrays.asList(goodLine.split("\n"));
+        boolean alreadyExists = Files.exists(filePath);
         boolean found = false;
         boolean updatedFile = false;
         List<String> lines = new ArrayList<>();
@@ -484,25 +590,39 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                 throw new UncheckedIOException(ex);
             }
             String[] fileRows = fileContent.split("\n");
-            if (ensureHeader != null) {
-                if (fileRows.length == 0 || !fileRows[0].trim().matches(ensureHeader)) {
-                    lines.add(headerReplace);
+            if (header != null) {
+                if (fileRows.length == 0 || !header.matches(fileRows[0].trim())) {
+                    lines.add(header.getReplacement());
                     updatedFile = true;
                 }
             }
             for (int i = 0; i < fileRows.length; i++) {
                 String row = fileRows[i];
-                if (row.trim().equals(toCommentLine(commentLine))) {
-                    lines.add(row);
+                if (isComments(row.trim()) && commentLine.matches(trimComments(row.trim()))) {
+                    String clta = toCommentLine(commentLine.getReplacement());
+                    if (!clta.equals(row)) {
+                        updatedFile = true;
+                    }
+                    lines.add(clta);
                     found = true;
                     i++;
-                    if (i < fileRows.length) {
-                        if (!fileRows[i].trim().equals(goodLine)) {
-                            updatedFile = true;
+                    List<String> old = new ArrayList<>();
+                    while (i < fileRows.length) {
+                        i++;
+                        if (fileRows[i].trim().isEmpty()) {
+                            break;
+                        } else if (fileRows[i].trim().startsWith("#")) {
+                            i--;
+                            break;
+                        } else {
+                            old.add(fileRows[i].trim());
                         }
                     }
-                    lines.add(goodLine);
-                    i++;
+                    lines.addAll(goodLinesList);
+                    lines.add("");
+                    if (!old.equals(goodLinesList)) {
+                        updatedFile = true;
+                    }
                     for (; i < fileRows.length; i++) {
                         lines.add(fileRows[i]);
                     }
@@ -512,11 +632,12 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             }
         }
         if (!found) {
-            if (ensureHeader != null && headerReplace != null && lines.isEmpty()) {
-                lines.add(headerReplace);
+            if (header != null && lines.isEmpty()) {
+                lines.add(header.getReplacement());
             }
-            lines.add(toCommentLine(commentLine));
-            lines.add(goodLine);
+            lines.add(toCommentLine(commentLine.getReplacement()));
+            lines.addAll(goodLinesList);
+            lines.add("");
             updatedFile = true;
         }
         if (force || updatedFile) {
@@ -527,11 +648,15 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                 throw new UncheckedIOException(ex);
             }
         }
-        return updatedFile;
+        return new PathInfo(
+                type,filePath,
+                alreadyExists?force? PathInfo.Status.OVERRIDDEN : PathInfo.Status.CREATED : PathInfo.Status.DISCARDED
+        );
     }
 
-    public boolean removeFileCommented2Lines(Path filePath, String commentLine, boolean force) {
+    public PathInfo removeFileCommented2Lines(NdiScriptInfo.Type type, Path filePath, String commentLine, boolean force) {
         filePath = filePath.toAbsolutePath();
+        boolean alreadyExists = Files.exists(filePath);
         boolean found = false;
         boolean updatedFile = false;
         try {
@@ -559,7 +684,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                 Files.createDirectories(filePath.getParent());
                 Files.write(filePath, (String.join("\n", lines) + "\n").getBytes());
             }
-            return updatedFile;
+            return new PathInfo(type, filePath, updatedFile ? alreadyExists ? PathInfo.Status.OVERRIDDEN : PathInfo.Status.CREATED : PathInfo.Status.DISCARDED);
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
@@ -573,7 +698,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
 
     protected abstract String getTemplateNutsName();
 
-    public NdiScriptnfo createScript(String name, String preferredName, NutsId fnutsId, boolean trace, String desc, Function<String, String> mapper) {
+    public NdiScriptInfo createScript(NdiScriptInfo.Type type, String name, String preferredName, NutsId fnutsId, boolean trace, String desc, Function<String, String> mapper) {
         try {
             Path script = getScriptFile(name);
             if (preferredName != null && preferredName.length() > 0) {
@@ -598,26 +723,101 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                 NdiUtils.generateScript("/net/thevpc/nuts/toolbox/nadmin/" + getTemplateBodyName(), w, mapper);
             }
             NdiUtils.setExecutable(script);
-            return new NdiScriptnfo(name, fnutsId, script, _override);
+            return new NdiScriptInfo(type, name, fnutsId, script, _override);
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
     }
 
-    protected NdiConfig loadNdiConfig(String nutsVersion) {
+    protected NAdminConfig loadNadminConfig(String nutsVersion) {
         Path t = Paths.get(context.getWorkspace().locations().getStoreLocation(context.getAppId(), NutsStoreLocation.CONFIG))
                 .resolve("nadmin-config.json");
         if (Files.isRegularFile(t)) {
-            return context.getWorkspace().elem().setContentType(NutsContentType.JSON).parse(t, NdiConfig.class);
+            return context.getWorkspace().elem().setContentType(NutsContentType.JSON).parse(t, NAdminConfig.class);
         }
         return null;
     }
 
-    protected void saveNdiConfig(NdiConfig config) {
+    protected void saveNadminConfig(NAdminConfig config) {
         Path t = Paths.get(context.getWorkspace().locations().getStoreLocation(context.getAppId(), NutsStoreLocation.CONFIG))
                 .resolve("nadmin-config.json");
         context.getWorkspace().elem().setContentType(NutsContentType.JSON).setCompact(false).setValue(config)
                 .print(t);
+    }
+
+    @NotNull
+    protected abstract FreeDesktopEntryWriter createFreeDesktopEntryWriter();
+
+    public PathInfo[] configurePathShortcut(
+            AppShortcutTarget appShortcutTarget,
+            NutsId appId,
+            String apiVersion,
+            String preferredName,
+            String menuPath,
+            String iconPath,
+            String cwd,
+            String[] extraArgs) {
+        List<PathInfo> results = new ArrayList<>();
+
+        NutsWorkspace ws = context.getWorkspace();
+        if (apiVersion == null) {
+            throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.cstyle("missing nuts-api version to link to"));
+        }
+        NutsId apiId = ws.getApiId().builder().setVersion(apiVersion).build();
+        NutsDefinition apiDefinition = ws.search().addId(apiId).setFailFast(true).setLatest(true).setContent(true).getResultDefinitions().singleton();
+
+//            Path apiConfigFolder
+//                    = bootConfig != null ? Paths.get(bootConfig.getStoreLocation(apiId, NutsStoreLocation.APPS))
+//                    : Paths.get(ws.locations().getStoreLocation(apiId, NutsStoreLocation.APPS));
+//            Path startNutsFile = apiConfigFolder.resolve(getExecFileName("start-nuts"));
+
+        FreeDesktopEntryWriter ww = createFreeDesktopEntryWriter();
+        FreeDesktopEntry fdi = new FreeDesktopEntry();
+        FreeDesktopEntry.Group sl = fdi.getOrCreateDesktopEntry();
+        NutsDefinition appDef = context.getWorkspace().search().addId(appId).setLatest(true).setEffective(true).getResultDefinitions().singleton();
+        StringBuilder execCmd = new StringBuilder();
+
+        execCmd.append("'"+getNutsStartPath().toString()+"'").append(" -y '").append(appId).append("'");
+        if (extraArgs != null) {
+            for (String extraArg : extraArgs) {
+                execCmd.append(" '").append(extraArg).append("'");
+            }
+        }
+        sl.setStartNotify(true);
+        sl.setExec(execCmd.toString());
+        if (cwd == null) {
+            //should it be id's var folder?
+            cwd = System.getProperty("user.home");
+        }
+        sl.setPath(cwd);
+        sl.setIcon(iconPath==null? getDefaultIconPath() :iconPath);
+        if (preferredName != null) {
+            preferredName = preferredName.replace("%v", apiVersion);
+        }
+        if (preferredName == null) {
+            if (appDef.getDescriptor().getName() != null) {
+                preferredName = appDef.getDescriptor().getName() + "-" + appDef.getDescriptor().getId().getVersion();
+            }
+            if (preferredName == null) {
+                preferredName = appDef.getDescriptor().getId().getArtifactId() + "-" + appDef.getDescriptor().getId().getVersion();
+            }
+        }
+        sl.setName(preferredName);
+        sl.setGenericName(preferredName);
+        sl.setComment(appDef.getDescriptor().getDescription());
+        if (appShortcutTarget == AppShortcutTarget.DESKTOP) {
+            results.addAll(Arrays.asList(ww.writeDesktop(fdi, true)));
+        } else if (appShortcutTarget == AppShortcutTarget.MENU) {
+            results.addAll(Arrays.asList(ww.writeMenu(fdi, menuPath, true)));
+        } else {
+            throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.cstyle("unsupported"));
+        }
+        return results.toArray(new PathInfo[0]);
+    }
+
+    @NotNull
+    private String getDefaultIconPath() {
+        return "apper";
     }
 
 }

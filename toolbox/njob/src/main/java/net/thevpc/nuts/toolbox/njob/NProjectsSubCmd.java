@@ -303,9 +303,9 @@ public class NProjectsSubCmd {
                 context.getSession().setProperty("LastResults", lastResults.toArray(new NProject[0]));
                 ws.formats().table()
                         .setBorder("spaces")
-                        .setModel(m).println(context.getSession().out());
+                        .setValue(m).println(context.getSession().out());
             } else {
-                context.getSession().formatObject(r.collect(Collectors.toList())).print(context.getSession().out());
+                context.getSession().getWorkspace().formats().object(r.collect(Collectors.toList())).print(context.getSession().out());
             }
         }
     }

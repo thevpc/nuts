@@ -114,14 +114,8 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
     }
 
     @Override
-    public NutsObjectFormat setValue(Object value) {
+    public DefaultTreeFormat setValue(Object value) {
         this.tree = value;
-        return this;
-    }
-
-    @Override
-    public DefaultTreeFormat setValue(NutsTreeModel tree) {
-        this.tree = tree;
         return this;
     }
 

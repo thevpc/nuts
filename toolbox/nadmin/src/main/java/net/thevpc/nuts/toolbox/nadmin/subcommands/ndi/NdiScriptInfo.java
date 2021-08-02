@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -10,7 +10,7 @@
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -22,28 +22,35 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.toolbox.nadmin.subcommands.ndi;
 
-import java.nio.file.Path;
 import net.thevpc.nuts.NutsId;
+
+import java.nio.file.Path;
 
 /**
  *
  * @author thevpc
  */
-public class NdiScriptnfo {
+public class NdiScriptInfo {
 
-    private NutsId id;
     private final String name;
     private final Path path;
     private final boolean override;
+    private final Type type;
+    private NutsId id;
 
-    public NdiScriptnfo(String name, NutsId id, Path path,boolean override) {
+    public NdiScriptInfo(Type type, String name, NutsId id, Path path, boolean override) {
+        this.type = type;
         this.path = path;
         this.name = name;
         this.id = id;
         this.override = override;
+    }
+
+    public Type getType() {
+        return type;
     }
 
     public boolean isOverride() {
@@ -65,6 +72,18 @@ public class NdiScriptnfo {
     @Override
     public String toString() {
         return "{ id=" + id + ", name=" + name + ", path=" + path + '}';
+    }
+
+    public enum Type {
+        DESKTOP_SHORTCUT,
+        DESKTOP_MENU,
+        NUTS_WITH_ENV,
+        NUTS_RC,
+        NUTS_WITHOUT_ENV,
+        ARTIFACT_WITH_ENV,
+        ARTIFACT_WITHOUT_ENV,
+        ;
+
     }
 
 }

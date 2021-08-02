@@ -120,7 +120,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
                 }
             }
         }
-        getSession().formatObject(result).configure(true, args.toArray(new String[0])).print(w);
+        getSession().getWorkspace().formats().object(result).configure(true, args.toArray(new String[0])).print(w);
     }
 
     @Override
@@ -248,7 +248,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
         Set<String> extraKeys = new TreeSet<>(extraProperties.keySet());
 
         props.put("name", stringValue(ws.getName()));
-        props.put("nuts-api-version", ws.version().parser().parse(ws.getApiVersion()));
+        props.put("nuts-api-version", ws.getApiVersion());
 //        NutsIdFormat idFormat = ws.id().formatter();
         props.put("nuts-api-id", ws.getApiId());
         props.put("nuts-runtime-id", ws.getRuntimeId());

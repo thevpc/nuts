@@ -54,7 +54,7 @@ public class NutsWorkspaceVarExpansionFunction implements Function<String, Strin
             case "var":
                 return ws.locations().getStoreLocation(NutsStoreLocation.VAR).toString();
             case "nuts.boot.version":
-                return ws.getApiVersion();
+                return ws.getApiVersion().toString();
             case "nuts.boot.id":
                 return ws.getApiId().toString();
             case "nuts.workspace-boot.version":

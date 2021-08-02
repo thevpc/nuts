@@ -83,7 +83,7 @@ public class JavaNAdminSubCommand extends AbstractNAdminSubCommand {
                     //                    .setBorder(TableFormatter.SPACE_BORDER)
                     .setVisibleHeader(true);
             NutsMutableTableModel m = t.createModel();
-            t.setModel(m);
+            t.setValue(m);
             m.addHeaderCells("Name", "Version", "Path");
             while (cmdLine.hasNext()) {
                 if (!t.configureFirst(cmdLine)) {

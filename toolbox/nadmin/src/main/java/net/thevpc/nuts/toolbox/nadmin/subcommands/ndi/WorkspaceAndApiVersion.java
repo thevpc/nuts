@@ -1,28 +1,20 @@
 package net.thevpc.nuts.toolbox.nadmin.subcommands.ndi;
 
 import net.thevpc.nuts.NutsVersion;
+import net.thevpc.nuts.toolbox.nadmin.PathInfo;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class WorkspaceAndApiVersion {
     private String workspace;
     private NutsVersion apiVersion;
-    private Set<String> updatedPaths;
-    private Set<String> nonUpdatedPaths;
+    private List<PathInfo> updatedPaths;
 
-    public WorkspaceAndApiVersion(String workspace, NutsVersion apiVersion, String[] updatedPaths, String[] nonUpdatedPaths) {
+    public WorkspaceAndApiVersion(String workspace, NutsVersion apiVersion, PathInfo[] updatedPaths) {
         this.workspace = workspace;
         this.apiVersion = apiVersion;
-        this.updatedPaths = new HashSet<>();
-        this.nonUpdatedPaths = new HashSet<>();
-        if (updatedPaths != null) {
-            this.updatedPaths.addAll(Arrays.asList(updatedPaths));
-        }
-        if (nonUpdatedPaths != null) {
-            this.nonUpdatedPaths.addAll(Arrays.asList(nonUpdatedPaths));
-        }
+        this.updatedPaths = new ArrayList<>(Arrays.asList(updatedPaths));
     }
 
     public String getWorkspace() {
@@ -33,11 +25,11 @@ public class WorkspaceAndApiVersion {
         return apiVersion;
     }
 
-    public Set<String> getUpdatedPaths() {
+    public List<PathInfo> getUpdatedPaths() {
         return updatedPaths;
     }
 
-    public Set<String> getNonUpdatedPaths() {
-        return nonUpdatedPaths;
+    public Set<String> getUpdatedPathStrings() {
+        return updatedPaths.stream().filter(x->x.getStatus()!= PathInfo.Status.DISCARDED).map(x->x.getPath().toString()).collect(Collectors.toSet());
     }
 }

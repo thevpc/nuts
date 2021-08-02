@@ -62,6 +62,17 @@ public interface NutsPrintStream {
 
     NutsPrintStream printf(String format, Object... args);
 
+    /**
+     * print java formatted string (with {})
+     * <code>
+     *     printj("{1,choice,0#|1# 1 file|1< {1} files}");
+     * </code>
+     * @param format java style format (with {})
+     * @param args format args
+     * @return {@code this} instance
+     */
+    NutsPrintStream printj(String format, Object... args);
+
     NutsPrintStream printf(Locale l, String format, Object... args);
 
     NutsPrintStream format(String format, Object... args);

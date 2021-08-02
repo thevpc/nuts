@@ -110,13 +110,13 @@ public class DefaultNutsWorkspaceExtensionModel {
 
     //    @Override
     public List<NutsExtensionInformation> findWorkspaceExtensions(NutsSession session) {
-        return findWorkspaceExtensions(ws.getApiVersion(), session);
+        return findWorkspaceExtensions(ws.getApiVersion().toString(), session);
     }
 
     //  @Override
     public List<NutsExtensionInformation> findWorkspaceExtensions(String version, NutsSession session) {
         if (version == null) {
-            version = ws.getApiVersion();
+            version = ws.getApiVersion().toString();
         }
         NutsId id = ws.getApiId().builder().setVersion(version).build();
         return findExtensions(id, "extensions", session);
@@ -365,7 +365,7 @@ public class DefaultNutsWorkspaceExtensionModel {
                     //load extension
                     NutsDefinition def = ws.search()
                             .setSession(session)
-                            .addId(extension).setTargetApiVersion(ws.getApiVersion())
+                            .addId(extension).setTargetApiVersion(ws.getApiVersion().toString())
                             .setContent(true)
                             .setDependencies(true)
                             .setDependencyFilter(CoreNutsDependencyUtils.createJavaRunDependencyFilter(session)
@@ -399,7 +399,7 @@ public class DefaultNutsWorkspaceExtensionModel {
 
     private void updateLoadedExtensionURLs(NutsSession session) {
         loadedExtensionURLs.clear();
-        for (NutsDefinition def : ws.search().addIds(loadedExtensionIds.toArray(new NutsId[0])).setTargetApiVersion(ws.getApiVersion())
+        for (NutsDefinition def : ws.search().addIds(loadedExtensionIds.toArray(new NutsId[0])).setTargetApiVersion(ws.getApiVersion().toString())
                 .setSession(session)
                 .setDependencies(true)
                 .setDependencyFilter(CoreNutsDependencyUtils.createJavaRunDependencyFilter(session))

@@ -59,7 +59,7 @@ public class NutsWorkspaceSessionAwareImpl implements NutsWorkspace, NutsWorkspa
     }
 
     @Override
-    public String getApiVersion() {
+    public NutsVersion getApiVersion() {
         return ws().getApiVersion();
     }
 

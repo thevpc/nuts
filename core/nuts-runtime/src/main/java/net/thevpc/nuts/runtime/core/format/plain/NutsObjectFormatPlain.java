@@ -74,9 +74,9 @@ public class NutsObjectFormatPlain extends NutsObjectFormatBase {
         Object value = getValue();
         NutsWorkspace ws = getSession().getWorkspace();
         if (value instanceof NutsTableModel) {
-            ws.formats().table().setModel(((NutsTableModel) value)).configure(true, extraConfig.toArray(new String[0])).print(w);
+            ws.formats().table(value).configure(true, extraConfig.toArray(new String[0])).print(w);
         } else if (value instanceof NutsTreeModel) {
-            ws.formats().tree().setValue(value).configure(true, extraConfig.toArray(new String[0])).print(w);
+            ws.formats().tree(value).configure(true, extraConfig.toArray(new String[0])).print(w);
 //        } else if (value instanceof Map) {
 //            ws.props().setModel(((Map) value)).configure(true, extraConfig.toArray(new String[0])).print(w);
         } else if (value instanceof org.w3c.dom.Document) {

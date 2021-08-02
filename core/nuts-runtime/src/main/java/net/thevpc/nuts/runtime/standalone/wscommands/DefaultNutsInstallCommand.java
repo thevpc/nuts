@@ -172,7 +172,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
         if (this.isCompanions()) {
             for (NutsId sid : ws.getCompanionIds(session)) {
                 if (!list.isVisited(sid)) {
-                    List<NutsId> allIds = ws.search().setSession(searchSession).addId(sid).setLatest(true).setTargetApiVersion(ws.getApiVersion()).getResultIds().list();
+                    List<NutsId> allIds = ws.search().setSession(searchSession).addId(sid).setLatest(true).setTargetApiVersion(ws.getApiVersion().toString()).getResultIds().list();
                     if (allIds.isEmpty()) {
                         throw new NutsNotFoundException(getSession(), sid);
                     }

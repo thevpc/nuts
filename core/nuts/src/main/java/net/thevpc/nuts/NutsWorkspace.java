@@ -51,7 +51,7 @@ public interface NutsWorkspace extends NutsComponent<NutsWorkspaceOptions> {
      */
     String getName();
 
-    String getApiVersion();
+    NutsVersion getApiVersion();
 
     NutsId getApiId();
 

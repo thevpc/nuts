@@ -1,11 +1,13 @@
 package net.thevpc.nuts.toolbox.nadmin.subcommands.ndi;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.toolbox.nadmin.optional.oswindows.OptionalWindows;
 import net.thevpc.nuts.toolbox.nadmin.subcommands.AbstractNAdminSubCommand;
-import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.sys.LinuxNdi;
-import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.sys.MacosNdi;
-import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.sys.UnixNdi;
-import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.sys.WindowsNdi;
+import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.base.CreateNutsScriptCommand;
+import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.sys.unix.LinuxNdi;
+import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.sys.unix.MacosNdi;
+import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.sys.unix.UnixNdi;
+import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.sys.win.WindowsNdi;
 import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.util.NdiUtils;
 
 import java.io.UncheckedIOException;
@@ -13,7 +15,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import net.thevpc.nuts.toolbox.nadmin.optional.oswindows.OptionalWindows;
 
 public class NdiSubCommand extends AbstractNAdminSubCommand {
 
@@ -43,63 +44,86 @@ public class NdiSubCommand extends AbstractNAdminSubCommand {
     }
 
     public void runAddScript(NutsCommandLine commandLine, NutsApplicationContext context) {
-        ArrayList<String> idsToInstall = new ArrayList<>();
+        CreateNutsScriptCommand cmd = new CreateNutsScriptCommand();
+//        ArrayList<String> idsToInstall ;
         NutsWorkspace ws = context.getWorkspace();
         NutsSession session = context.getSession();
-        ArrayList<String> executorOptions = new ArrayList<>();
-        NutsExecutionType execType = null;
-        boolean fetch = false;
+//        ArrayList<String> executorOptions = new ArrayList<>();
+//        NutsExecutionType execType = null;
+//        boolean fetch = false;
         boolean missingAnyArgument = true;
         NutsArgument a;
 //        boolean forceAll = false;
-        Boolean persistentConfig = null;
+//        Boolean persistentConfig = null;
         boolean ignoreUnsupportedOs = false;
 
-        String switchWorkspaceLocation = null;
-        String linkName = null;
-        boolean env = false;
-
+//        String linkName = null;
+//        boolean env = false;
+        commandLine.setCommandName("nadmin add script");
         while (commandLine.hasNext()) {
             if ((a = commandLine.nextBoolean("-t", "--fetch")) != null) {
-                fetch = a.getBooleanValue();
+                cmd.setFetch(a.getBooleanValue());
+            } else if ((a = commandLine.nextString("-d", "--workdir")) != null) {
+                if (a.isEnabled()) {
+                    cmd.setCwd(a.getStringValue());
+                }
+            } else if ((a = commandLine.nextString("--icon")) != null) {
+                if (a.isEnabled()) {
+                    cmd.setIcon(a.getStringValue());
+                }
+            } else if ((a = commandLine.nextBoolean("--menu")) != null) {
+                if (a.getBooleanValue()) {
+                    cmd.setCreateMenu(true);
+                }
+            } else if ((a = commandLine.nextString("--menu-path")) != null) {
+                if (a.isEnabled()) {
+                    cmd.setMenuPath(a.getStringValue());
+                    if(cmd.getMenuPath()!=null && !cmd.getMenuPath().isEmpty()){
+                        cmd.setCreateMenu(true);
+                    }
+                }
+            } else if ((a = commandLine.nextBoolean("--desktop")) != null) {
+                if (a.getBooleanValue()) {
+                    cmd.setCreateDesktop(true);
+                }
             } else if ((a = commandLine.nextBoolean("-x", "--external", "--spawn")) != null) {
                 if (a.getBooleanValue()) {
-                    execType = NutsExecutionType.SPAWN;
+                    cmd.setExecType(NutsExecutionType.SPAWN);
                 }
             } else if ((a = commandLine.nextBoolean("-b", "--embedded")) != null) {
                 if (a.getBooleanValue()) {
-                    execType = NutsExecutionType.EMBEDDED;
+                    cmd.setExecType(NutsExecutionType.EMBEDDED);
                 }
             } else if ((a = commandLine.nextBoolean("-e", "--env")) != null) {
-                env = a.getBooleanValue();
+                cmd.setEnv(a.getBooleanValue());
             } else if ((a = commandLine.nextBoolean("--user-cmd")) != null) {
                 if (a.getBooleanValue()) {
-                    execType = NutsExecutionType.USER_CMD;
+                    cmd.setExecType(NutsExecutionType.USER_CMD);
                 }
             } else if ((a = commandLine.nextBoolean("--root-cmd")) != null) {
                 if (a.getBooleanValue()) {
-                    execType = NutsExecutionType.ROOT_CMD;
+                    cmd.setExecType(NutsExecutionType.ROOT_CMD);
                 }
             } else if ((a = commandLine.nextString("-X", "--exec-options")) != null) {
-                executorOptions.add(a.getStringValue());
+                cmd.getExecutorOptions().add(a.getStringValue());
             } else if ((a = commandLine.nextString("-i", "--installed")) != null) {
                 session.setConfirm(NutsConfirmationMode.YES);
                 for (NutsId resultId : ws.search().setInstallStatus(
                         ws.filters().installStatus().byInstalled(true)
                 ).getResultIds()) {
-                    idsToInstall.add(resultId.getLongName());
+                    cmd.getIdsToInstall().add(resultId.getLongName());
                     missingAnyArgument = false;
                 }
             } else if ((a = commandLine.nextString("-c", "--companions")) != null) {
                 session.setConfirm(NutsConfirmationMode.YES);
                 for (NutsId companion : ws.getCompanionIds(session)) {
-                    idsToInstall.add(ws.search().addId(companion).setLatest(true).getResultIds().required().getLongName());
+                    cmd.getIdsToInstall().add(ws.search().addId(companion).setLatest(true).getResultIds().required().getLongName());
                     missingAnyArgument = false;
                 }
             } else if ((a = commandLine.nextString("--switch")) != null) {
                 Boolean booleanValue = a.getBooleanValue(null);
                 if (booleanValue != null) {
-                    persistentConfig = booleanValue;
+                    cmd.setPersistentConfig(booleanValue);
                 }
             } else if ((a = commandLine.nextString("--ignore-unsupported-os")) != null) {
                 if (a.isEnabled()) {
@@ -108,17 +132,17 @@ public class NdiSubCommand extends AbstractNAdminSubCommand {
             } else if (commandLine.peek().getStringKey().equals("-w") || commandLine.peek().getStringKey().equals("--workspace")) {
                 a = commandLine.nextString();
                 if (a.isEnabled()) {
-                    switchWorkspaceLocation = a.getStringValue();
+                    cmd.setSwitchWorkspaceLocation(a.getStringValue());
                 }
             } else if (commandLine.peek().getStringKey().equals("-n") || commandLine.peek().getStringKey().equals("--name")) {
                 a = commandLine.nextString();
                 if (a.isEnabled()) {
-                    linkName = a.getStringValue();
+                    cmd.setLinkName(a.getStringValue());
                 }
             } else if (commandLine.peek().isOption()) {
                 context.configureLast(commandLine);
             } else {
-                idsToInstall.add(commandLine.next().getString());
+                cmd.getIdsToInstall().add(commandLine.next().getString());
                 missingAnyArgument = false;
             }
         }
@@ -134,8 +158,8 @@ public class NdiSubCommand extends AbstractNAdminSubCommand {
                 }
                 throw new NutsExecutionException(session, NutsMessage.cstyle("platform not supported : %s", ws.env().getOs()), 2);
             }
-            if (!idsToInstall.isEmpty()) {
-                printResults(context, ndi.createNutsScript(idsToInstall, switchWorkspaceLocation, linkName, persistentConfig, executorOptions, env, fetch, execType, context));
+            if (!cmd.getIdsToInstall().isEmpty()) {
+                printResults(context, ndi.createNutsScript(cmd, context));
             }
         }
     }
@@ -172,7 +196,7 @@ public class NdiSubCommand extends AbstractNAdminSubCommand {
                 if (ignoreUnsupportedOs) {
                     return;
                 }
-                throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("platform not supported : %s" ,ws.env().getOs()), 2);
+                throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("platform not supported : %s", ws.env().getOs()), 2);
             }
             boolean subTrace = context.getSession().isTrace();
             if (!context.getSession().isPlainTrace()) {
@@ -186,7 +210,7 @@ public class NdiSubCommand extends AbstractNAdminSubCommand {
                                 context.getSession().copy().setTrace(subTrace)
                         );
                     } catch (UncheckedIOException e) {
-                        throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("unable to run script %s : %s",id, e), e);
+                        throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("unable to run script %s : %s", id, e), e);
                     }
                 }
             }
@@ -197,7 +221,7 @@ public class NdiSubCommand extends AbstractNAdminSubCommand {
         NutsWorkspace ws = context.getWorkspace();
         String switchWorkspaceLocation = null;
         String switchWorkspaceApi = null;
-        List<NdiScriptnfo> result = new ArrayList<NdiScriptnfo>();
+        List<NdiScriptInfo> result = new ArrayList<NdiScriptInfo>();
         ArrayList<String> executorOptions = new ArrayList<>();
         NutsExecutionType execType = null;
         NutsArgument a;
@@ -239,25 +263,25 @@ public class NdiSubCommand extends AbstractNAdminSubCommand {
 
     }
 
-    private void printResults(NutsApplicationContext context, List<NdiScriptnfo> result) {
+    private void printResults(NutsApplicationContext context, List<NdiScriptInfo> result) {
         NutsWorkspace ws = context.getWorkspace();
         if (context.getSession().isTrace()) {
             if (context.getSession().isPlainTrace()) {
                 int namesSize = result.stream().mapToInt(x -> x.getName().length()).max().orElse(1);
-                for (NdiScriptnfo ndiScriptnfo : result) {
+                for (NdiScriptInfo ndiScriptInfo : result) {
                     context.getSession().out().printf("%s script %-" + namesSize + "s for %s"
-                            + " at %s%n",
-                            ndiScriptnfo.isOverride()
-                            ? ws.text().forStyled("re-install", NutsTextStyles.of(NutsTextStyle.success(),NutsTextStyle.underlined()))
-                            : ws.text().forStyled("install", NutsTextStyle.success()),
-                            ndiScriptnfo.getName(),
-                            ndiScriptnfo.getId(),
-                            ws.text().forStyled(NdiUtils.betterPath(ndiScriptnfo.getPath().toString()), NutsTextStyle.path())
+                                    + " at %s%n",
+                            ndiScriptInfo.isOverride()
+                                    ? ws.text().forStyled("re-install", NutsTextStyles.of(NutsTextStyle.success(), NutsTextStyle.underlined()))
+                                    : ws.text().forStyled("install", NutsTextStyle.success()),
+                            ndiScriptInfo.getName(),
+                            ndiScriptInfo.getId(),
+                            ws.text().forStyled(NdiUtils.betterPath(ndiScriptInfo.getPath().toString()), NutsTextStyle.path())
                     );
                 }
 
             } else {
-                context.getSession().formatObject(result).println();
+                context.getSession().getWorkspace().formats().object(result).println();
             }
         }
     }

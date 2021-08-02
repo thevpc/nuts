@@ -457,9 +457,9 @@ public class NJobsSubCmd {
                 context.getSession().setProperty("LastResults", lastResults.toArray(new NJob[0]));
                 ws.formats().table()
                         .setBorder("spaces")
-                        .setModel(m).println(context.getSession().out());
+                        .setValue(m).println();
             } else {
-                context.getSession().formatObject(r.collect(Collectors.toList())).print(context.getSession().out());
+                context.getSession().getWorkspace().formats().object(r.collect(Collectors.toList())).print(context.getSession().out());
             }
         }
     }

@@ -155,7 +155,7 @@ public abstract class SimpleNshBuiltin extends AbstractNshBuiltin {
             if(session==null){
                 session=context.getSession();
             }
-            NutsObjectFormat objstream = session.formatObject(any);
+            NutsObjectFormat objstream = session.getWorkspace().formats().object(any);
             if (err) {
                 if (errObjectNewLine) {
                     objstream.println(session.err());

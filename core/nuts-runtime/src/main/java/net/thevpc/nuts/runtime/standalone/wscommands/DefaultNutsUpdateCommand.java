@@ -107,7 +107,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         Map<String, NutsUpdateResult> extUpdates = new LinkedHashMap<>();
         Map<String, NutsUpdateResult> regularUpdates = new HashMap<>();
         NutsUpdateResult apiUpdate = null;
-        String bootVersion0 = ws.getApiVersion();
+        String bootVersion0 = ws.getApiVersion().toString();
         String bootVersion = bootVersion0;
         if (!CoreStringUtils.isBlank(this.getApiVersion())) {
             bootVersion = this.getApiVersion();

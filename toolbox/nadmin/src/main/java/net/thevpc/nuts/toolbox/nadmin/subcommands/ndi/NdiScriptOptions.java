@@ -2,6 +2,7 @@ package net.thevpc.nuts.toolbox.nadmin.subcommands.ndi;
 
 import net.thevpc.nuts.NutsExecutionType;
 
+import java.util.ArrayList;
 import java.util.List;
 import net.thevpc.nuts.NutsSession;
 
@@ -16,6 +17,13 @@ public class NdiScriptOptions {
     private String preferredScriptName;
     private boolean includeEnv;
     private boolean addNutsScript;
+
+    private List<String> appArgs= new ArrayList<>();
+    private String cwd;
+    private String icon;
+    private String menuPath;
+    private boolean createMenu;
+    private boolean createDesktop;
 
     public boolean isAddNutsScript() {
         return addNutsScript;
@@ -95,6 +103,60 @@ public class NdiScriptOptions {
 
     public NdiScriptOptions setIncludeEnv(boolean includeEnv) {
         this.includeEnv = includeEnv;
+        return this;
+    }
+
+    public List<String> getAppArgs() {
+        return appArgs;
+    }
+
+    public NdiScriptOptions setAppArgs(List<String> appArgs) {
+        this.appArgs = appArgs;
+        return this;
+    }
+
+    public String getCwd() {
+        return cwd;
+    }
+
+    public NdiScriptOptions setCwd(String cwd) {
+        this.cwd = cwd;
+        return this;
+    }
+
+    public String getIcon() {
+        return icon;
+    }
+
+    public NdiScriptOptions setIcon(String icon) {
+        this.icon = icon;
+        return this;
+    }
+
+    public String getMenuPath() {
+        return menuPath;
+    }
+
+    public NdiScriptOptions setMenuPath(String menuPath) {
+        this.menuPath = menuPath;
+        return this;
+    }
+
+    public boolean isCreateMenu() {
+        return createMenu;
+    }
+
+    public NdiScriptOptions setCreateMenu(boolean createMenu) {
+        this.createMenu = createMenu;
+        return this;
+    }
+
+    public boolean isCreateDesktop() {
+        return createDesktop;
+    }
+
+    public NdiScriptOptions setCreateDesktop(boolean createDesktop) {
+        this.createDesktop = createDesktop;
         return this;
     }
 }

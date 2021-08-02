@@ -180,6 +180,17 @@ public abstract class NutsPrintStreamBase implements NutsPrintStream {
     }
 
     @Override
+    public NutsPrintStream printj(String format, Object... args) {
+        NutsText s = session.getWorkspace().text().toText(
+                NutsMessage.jstyle(
+                        format, args
+                )
+        );
+        print(s);
+        return this;
+    }
+
+    @Override
     public NutsPrintStream printf(String format, Object... args) {
         format(format, args);
         return this;

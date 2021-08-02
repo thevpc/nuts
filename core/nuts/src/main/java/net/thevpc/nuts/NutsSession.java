@@ -33,8 +33,8 @@ import java.util.logging.Level;
  * session is context defining common command options and parameters.
  *
  * @author thevpc
- * @since 0.5.4
  * @category Base
+ * @since 0.5.4
  */
 public interface NutsSession extends NutsCommandLineConfigurable {
 
@@ -418,7 +418,7 @@ public interface NutsSession extends NutsCommandLineConfigurable {
      * <li>{@link NutsRepositoryListener}</li>
      * </ul>
      *
-     * @param <T> listener type
+     * @param <T>  listener type
      * @param type listener type class
      * @return registered listeners
      */
@@ -434,7 +434,7 @@ public interface NutsSession extends NutsCommandLineConfigurable {
     /**
      * set session property
      *
-     * @param key property key
+     * @param key   property key
      * @param value property value
      * @return {@code this} instance
      */
@@ -624,21 +624,6 @@ public interface NutsSession extends NutsCommandLineConfigurable {
      * @return {@code this} instance
      */
     NutsSession setProgressOptions(String progressOptions);
-
-    /**
-     * This is a helper method to create and Object format initialized with this
-     * session instance and the given object to print.
-     *
-     * {@code thisSession.getWorkspace().formats().object().setSession(thisSession).setValue(any)}
-     * <br>
-     * Using this method is recommended to print objects to default format
-     * (json, xml,...)
-     *
-     * @param any any object to print in the configured/default format
-     * @return new instance of {@link NutsObjectFormat}
-     * @since 0.6.0
-     */
-    NutsObjectFormat formatObject(Object any);
 
     boolean isGui();
 

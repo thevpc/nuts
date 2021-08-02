@@ -53,6 +53,14 @@ public interface NutsFormatManager {
      */
     NutsTableFormat table();
 
+    NutsElementFormat element(Object value);
+
+    NutsTableFormat table(Object value);
+
+    NutsTreeFormat tree(Object value);
+
+    NutsPropertiesFormat props(Object value);
+
     /**
      * create properties format instance
      *
@@ -68,6 +76,8 @@ public interface NutsFormatManager {
      * @since 0.5.5
      */
     NutsObjectFormat object();
+
+    NutsObjectFormat object(Object value);
 
     NutsSession getSession();
 

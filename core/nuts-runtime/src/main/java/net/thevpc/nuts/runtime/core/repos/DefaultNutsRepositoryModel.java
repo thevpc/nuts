@@ -332,7 +332,7 @@ public class DefaultNutsRepositoryModel {
                 Map<String, Object> a_config0 = ws.elem().setSession(session).setContentType(NutsContentType.JSON).parse(bytes, Map.class);
                 String version = (String) a_config0.get("configVersion");
                 if (version == null) {
-                    version = ws.getApiVersion();
+                    version = ws.getApiVersion().toString();
                 }
                 int buildNumber = CoreNutsUtils.getApiVersionOrdinalNumber(version);
                 if (buildNumber < 506) {

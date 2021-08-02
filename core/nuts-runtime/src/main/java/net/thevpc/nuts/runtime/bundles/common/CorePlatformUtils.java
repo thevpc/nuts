@@ -28,14 +28,19 @@ package net.thevpc.nuts.runtime.bundles.common;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.io.SimpleClassStream;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+import net.thevpc.nuts.runtime.standalone.config.DefaultNutsWorkspaceEnvManagerModel;
 
 import java.io.*;
 import java.lang.reflect.Modifier;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -97,10 +102,13 @@ public class CorePlatformUtils {
         return new HashMap<>();
     }
 
+
+
     /**
      * this is inspired from
      * http://stackoverflow.com/questions/15018474/getting-linux-distro-from-java
      * so thanks //PbxMan//
+     *
      * @param ws ws
      * @return os distribution map including keys distId, distName, distVersion,osVersion
      */
@@ -235,6 +243,7 @@ public class CorePlatformUtils {
 
     /**
      * https://en.wikipedia.org/wiki/List_of_Microsoft_Windows_versions
+     *
      * @param ws workspace
      * @return platform os name
      */
@@ -308,7 +317,7 @@ public class CorePlatformUtils {
         if (SUPPORTED_ARCH.contains(arch)) {
             return true;
         }
-        throw new NutsIllegalArgumentException(null, NutsMessage.cstyle("unsupported Architecture %s please do use one of %s" ,arch, SUPPORTED_ARCH));
+        throw new NutsIllegalArgumentException(null, NutsMessage.cstyle("unsupported Architecture %s please do use one of %s", arch, SUPPORTED_ARCH));
     }
 
     public static boolean checkSupportedOs(String os) {
@@ -318,7 +327,7 @@ public class CorePlatformUtils {
         if (SUPPORTED_OS.contains(os)) {
             return true;
         }
-        throw new NutsIllegalArgumentException(null, NutsMessage.cstyle("unsupported Operating System %s please do use one of %s",os, SUPPORTED_OS));
+        throw new NutsIllegalArgumentException(null, NutsMessage.cstyle("unsupported Operating System %s please do use one of %s", os, SUPPORTED_OS));
     }
 
     public static Boolean getExecutableJar(File file) {
@@ -475,13 +484,13 @@ public class CorePlatformUtils {
                 if (superName != null && superName.equals("net/thevpc/nuts/NutsApplication")) {
                     nutsApp.set(true);
                     nutsAppVer.set("0.8.0");
-                //TODO remove me
+                    //TODO remove me
                 } else if (superName != null && superName.equals("net/vpc/app/nuts/NutsApplication")) {
                     //this is nut version < 0.8.0
                     nutsApp.set(true);
                     nutsAppVer.set("0.7.0");
                 }
-                if(interfaces!=null){
+                if (interfaces != null) {
                     for (String anInterface : interfaces) {
                         //v0.8.1
                         if (anInterface != null && anInterface.equals("net/thevpc/nuts/NutsApplication")) {

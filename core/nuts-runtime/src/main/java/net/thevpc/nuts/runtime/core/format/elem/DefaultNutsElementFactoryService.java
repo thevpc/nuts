@@ -704,7 +704,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
         @Override
         public Object destruct(NutsText src, Type typeOfSrc, NutsElementFactoryContext context) {
-            return src.toString();
+            return src.filteredText();
         }
 
         @Override
@@ -715,7 +715,8 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         @Override
         public NutsText createObject(NutsElement o, Type to, NutsElementFactoryContext context) {
             String i = context.defaultElementToObject(o, String.class);
-            return context.getSession().getWorkspace().text().parse(i).toText();
+            //return context.getSession().getWorkspace().text().parse(i).toText();
+            return context.getSession().getWorkspace().text().forPlain(i).toText();
         }
     }
     private static class NutsElementFactoryNutsPath implements NutsElementMapper<NutsPath> {

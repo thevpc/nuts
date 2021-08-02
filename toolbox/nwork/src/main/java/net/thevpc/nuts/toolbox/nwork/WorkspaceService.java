@@ -697,7 +697,7 @@ public class WorkspaceService {
             }
         }
         if (structuredOutContentType) {
-            appContext.getSession().formatObject(result).println();
+            appContext.getSession().getWorkspace().formats().object(result).println();
         }
         return scanned;
     }

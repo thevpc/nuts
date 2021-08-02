@@ -46,7 +46,7 @@ public class DefaultNutsUndeployCommand extends AbstractNutsUndeployCommand {
             addResult(id);
         }
         if (getSession().isTrace()) {
-            getSession().formatObject(result).println();
+            getSession().getWorkspace().formats().object(result).println();
         }
         return this;
     }

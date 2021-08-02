@@ -224,7 +224,7 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
             }
             if (cmdLine.isExecMode()) {
                 NutsRepository[] r = parent == null ? ws.repos().getRepositories() : ws.repos().getRepository(parent).config().getMirrors();
-                context.getSession().formatObject(
+                context.getSession().getWorkspace().formats().object(
                         Arrays.stream(ws.repos().getRepositories())
                                 .map(x -> repoInfo(x, context.getSession().getOutputFormat() != NutsContentType.TABLE && context.getSession().getOutputFormat() != NutsContentType.PLAIN, context.getSession())
                                 )
@@ -280,7 +280,7 @@ public class RepositoryNAdminSubCommand extends AbstractNAdminSubCommand {
                 out.printf("%s sub repositories.%n", linkRepositories.length);
                 NutsTableFormat t = ws.formats().table();
                 NutsMutableTableModel m = t.createModel();
-                t.setModel(m);
+                t.setValue(m);
                 m.addHeaderCells("Id", "Enabled", "Type", "Location");
                 while (cmdLine.hasNext()) {
                     if (!t.configureFirst(cmdLine)) {

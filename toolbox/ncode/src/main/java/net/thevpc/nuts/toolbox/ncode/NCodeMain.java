@@ -5,10 +5,7 @@
  */
 package net.thevpc.nuts.toolbox.ncode;
 
-import net.thevpc.nuts.NutsApplication;
-import net.thevpc.nuts.NutsApplicationContext;
-import net.thevpc.nuts.NutsCommandLine;
-import net.thevpc.nuts.NutsMessage;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.ncode.bundles.strings.StringComparator;
 import net.thevpc.nuts.toolbox.ncode.bundles.strings.StringComparators;
 import net.thevpc.nuts.toolbox.ncode.filters.JavaSourceFilter;
@@ -139,6 +136,7 @@ public class NCodeMain implements NutsApplication {
                 }
             }
         }
+        NutsFormatManager formats = applicationContext.getSession().getWorkspace().formats();
         if (type != null) {
             if (paths.isEmpty()) {
                 System.err.println("missing location");
@@ -150,7 +148,7 @@ public class NCodeMain implements NutsApplication {
             for (String path : paths) {
                 navigate(SourceFactory.create(new File(path)), new JavaSourceFilter(type, file), new JavaSourceFormatter(),applicationContext.getSession(),results);
             }
-            applicationContext.getSession().formatObject(results).println();
+            formats.object(results).println();
         } else if (file != null) {
             if (paths.isEmpty()) {
                 cmdLine.throwError(NutsMessage.cstyle("missing location"));
@@ -160,7 +158,7 @@ public class NCodeMain implements NutsApplication {
             for (String path : paths) {
                 navigate(SourceFactory.create(new File(path)), new PathSourceFilter(file), new PathSourceFormatter(),applicationContext.getSession(),results);
             }
-            applicationContext.getSession().formatObject(results).println();
+            formats.object(results).println();
         } else {
             cmdLine.throwError(NutsMessage.cstyle("missing arguments"));
         }

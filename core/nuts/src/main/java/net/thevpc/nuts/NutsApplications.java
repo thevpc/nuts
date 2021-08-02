@@ -301,7 +301,7 @@ public final class NutsApplications {
                     }
                     NutsArrayElementBuilder e = session.eout();
                     if (e.size() > 0) {
-                        session.formatObject(e.build()).println(fout);
+                        session.getWorkspace().formats().object(e.build()).println(fout);
                         e.clear();
                     }
                     fout.flush();
@@ -317,7 +317,7 @@ public final class NutsApplications {
                     }
                     NutsArrayElementBuilder e = session.eout();
                     if (e.size() > 0) {
-                        session.formatObject(e.build()).println(fout);
+                        session.getWorkspace().formats().object(e.build()).println(fout);
                         e.clear();
                     }
                     fout.flush();

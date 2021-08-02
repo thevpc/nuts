@@ -189,7 +189,7 @@ public class InternalNutsDescriptorFilterManager extends InternalNutsTypedFilter
     public NutsDescriptorFilter byApiVersion(String apiVersion) {
         checkSession();
         if (apiVersion == null) {
-            apiVersion = getSession().getWorkspace().getApiVersion();
+            apiVersion = getSession().getWorkspace().getApiVersion().toString();
         }
         return new BootAPINutsDescriptorFilter(
                 getSession(),

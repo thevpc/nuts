@@ -59,8 +59,33 @@ public class DefaultNutsFormatManager implements NutsFormatManager {
     }
 
     @Override
+    public NutsElementFormat element(Object value) {
+        return element().setValue(value);
+    }
+
+    @Override
+    public NutsTableFormat table(Object value) {
+        return table().setValue(value);
+    }
+
+    @Override
+    public NutsTreeFormat tree(Object value) {
+        return tree().setValue(value);
+    }
+
+    @Override
+    public NutsPropertiesFormat props(Object value) {
+        return props().setValue(value);
+    }
+
+    @Override
     public NutsPropertiesFormat props() {
         return new DefaultPropertiesFormat(ws).setSession(getSession());
+    }
+
+    @Override
+    public NutsObjectFormat object(Object value) {
+        return object().setValue(value);
     }
 
     @Override

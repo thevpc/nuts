@@ -26,6 +26,7 @@ package net.thevpc.nuts.runtime.core.format.table;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.string.StringBuilder2;
 import net.thevpc.nuts.runtime.core.format.DefaultFormatBase;
+import net.thevpc.nuts.runtime.core.format.tree.DefaultNutsFormatDestructTypePredicate;
 import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
@@ -276,11 +277,6 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         return new DefaultNutsMutableTableModel();
     }
 
-    @Override
-    public NutsTableFormat setModel(NutsTableModel model) {
-        this.model = model;
-        return this;
-    }
 
     private String getSeparator(Separator id) {
         String s = border.format(id);
@@ -576,14 +572,15 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
             a.add(_elems().toElement(o));
             return createTableModel(_elems().toElement(a));
         }
-        if (o instanceof List) {
+        o=_elems().setDestructTypeFilter(DefaultNutsFormatDestructTypePredicate.INSTANCE).destruct(o);
+        if (o instanceof Collection) {
             NutsMutableTableModel model = createModel();
             LinkedHashSet<String> columns = new LinkedHashSet<>();
-            resolveColumns((List) o, columns);
+            resolveColumns(o, columns);
             for (String column : columns) {
                 model.addHeaderCell(column);
             }
-            for (Object oelem2 : ((List) o)) {
+            for (Object oelem2 : ((Collection) o)) {
                 model.newRow();
                 if (oelem2 instanceof NutsElement) {
                     NutsElement elem2 = (NutsElement) oelem2;
@@ -645,6 +642,22 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                         }
                     }
                 }
+            }
+            return model;
+        }
+        if (o instanceof Map) {
+            NutsMutableTableModel model = createModel();
+            LinkedHashSet<String> columns = new LinkedHashSet<>();
+            columns.add("Name");
+            columns.add("Value");
+//            resolveColumns(o, columns);
+            for (String column : columns) {
+                model.addHeaderCell(column);
+            }
+            for (Map.Entry<Object,Object> eoelem2 : ((Map<Object,Object>) o).entrySet()) {
+                model.newRow();
+                model.addCell(formatObject(eoelem2.getKey()));
+                model.addCell(formatObject(eoelem2.getValue()));
             }
             return model;
         }
@@ -769,7 +782,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
     }
 
     @Override
-    public NutsObjectFormat setValue(Object value) {
+    public NutsTableFormat setValue(Object value) {
         this.model = value;
         return this;
     }

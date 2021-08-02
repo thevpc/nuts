@@ -455,7 +455,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
                 if (changeStatus && !workspace.config().isReadOnly()) {
                     workspace.concurrent().lock().source(path).setSession(session).call(() -> {
                                 _LOGOP(session).level(Level.CONFIG).log("install-info upgraded {0}", finalPath.toString());
-                                c.setConfigVersion(workspace.getApiVersion());
+                                c.setConfigVersion(workspace.getApiVersion().toString());
                                 workspace.elem().setSession(session).setContentType(NutsContentType.JSON).setValue(c).print(finalPath);
                                 return null;
                             },
@@ -624,7 +624,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
     }
 
     public void printJson(NutsId id, String name, InstallInfoConfig value, NutsSession session) {
-        value.setConfigVersion(workspace.getApiVersion());
+        value.setConfigVersion(workspace.getApiVersion().toString());
         session.getWorkspace().elem()
                 .setSession(session).setContentType(NutsContentType.JSON).setValue(value)
                 .print(getPath(id, name, session));

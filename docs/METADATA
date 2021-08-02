@@ -1,4 +1,4 @@
-apiVersion=
-implVersion=
-jarLocation=https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts//nuts-.jar
-buildTime=Wed Jul 28 04:51:17 PM +0000 2021
+apiVersion=0.8.1
+implVersion=##:version:0.8.1.0##
+jarLocation=https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/0.8.1/nuts-0.8.1.jar
+buildTime=Wed Jul 28 09:58:07 PM +0000 2021

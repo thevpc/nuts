@@ -101,7 +101,7 @@ public class DefaultVersionFormat extends DefaultFormatBase<NutsVersionFormat> i
             }
         }else{
             if (isWorkspaceVersion()) {
-                getSession().formatObject(buildProps()).print(out);
+                getSession().getWorkspace().formats().object(buildProps()).print(out);
             } else {
                 out.print(
                         getSession().getWorkspace().text().forStyled(
@@ -119,7 +119,7 @@ public class DefaultVersionFormat extends DefaultFormatBase<NutsVersionFormat> i
             extraKeys = new TreeSet(extraProperties.keySet());
         }
         NutsWorkspace ws = getSession().getWorkspace();
-        props.put("nuts-api-version", ws.getApiVersion());
+        props.put("nuts-api-version", ws.getApiVersion().toString());
         props.put("nuts-runtime-version", ws.getRuntimeId().getVersion().toString());
         if (all) {
             props.put("java-version", System.getProperty("java.version"));

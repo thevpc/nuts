@@ -97,15 +97,9 @@ public interface NutsTreeFormat extends NutsObjectFormat {
      */
     NutsTreeModel getModel();
 
-    /**
-     * update tree model
-     *
-     * @param tree new tree model
-     * @return {@code this} instance
-     */
-    NutsTreeFormat setValue(NutsTreeModel tree);
+    @Override
+    NutsTreeFormat setNtf(boolean ntf);
 
     @Override
-    public NutsTreeFormat setNtf(boolean ntf);
-
+    NutsTreeFormat setValue(Object value);
 }

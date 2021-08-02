@@ -1,6 +1,6 @@
 package net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.base;
 
-public class NdiConfig {
+public class NAdminConfig {
     private String apiVersion;
     private String ndiVersion;
 
@@ -8,7 +8,7 @@ public class NdiConfig {
         return apiVersion;
     }
 
-    public NdiConfig setApiVersion(String apiVersion) {
+    public NAdminConfig setApiVersion(String apiVersion) {
         this.apiVersion = apiVersion;
         return this;
     }
@@ -17,7 +17,7 @@ public class NdiConfig {
         return ndiVersion;
     }
 
-    public NdiConfig setNdiVersion(String ndiVersion) {
+    public NAdminConfig setNdiVersion(String ndiVersion) {
         this.ndiVersion = ndiVersion;
         return this;
     }

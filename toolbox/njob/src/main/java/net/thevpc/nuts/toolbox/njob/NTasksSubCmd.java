@@ -588,9 +588,9 @@ public class NTasksSubCmd {
                 context.getSession().setProperty("LastResults", lastResults.toArray(new NTask[0]));
                 ws.formats().table()
                         .setBorder("spaces")
-                        .setModel(m).setSession(context.getSession()).println();
+                        .setValue(m).println();
             } else {
-                context.getSession().formatObject(r.collect(Collectors.toList())).print(context.getSession().out());
+                context.getSession().getWorkspace().formats().object(r.collect(Collectors.toList())).print(context.getSession().out());
             }
         }
     }

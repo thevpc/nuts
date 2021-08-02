@@ -25,6 +25,7 @@
 package net.thevpc.nuts;
 
 import java.net.URL;
+import java.nio.file.Path;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -44,48 +45,47 @@ public interface NutsWorkspaceEnvManager {
     Boolean getEnvAsBoolean(String property, Boolean defaultValue);
 
     /**
-     *
      * @param property property
-     * @param value value
-//     * @param options options
+     * @param value    value
+     *                 //     * @param options options
      * @return {@code this} instance
      */
     NutsWorkspaceEnvManager setEnv(String property, String value);
 
     /**
-     * @since 0.8.1
      * @return properties
+     * @since 0.8.1
      */
     Map<String, Object> getProperties();
 
     /**
-     * @since 0.8.1
-     * @param property property
+     * @param property     property
      * @param defaultValue defaultValue
      * @return property value
+     * @since 0.8.1
      */
     Integer getPropertyAsInt(String property, Integer defaultValue);
 
     /**
-     * @since 0.8.1
-     * @param property property
+     * @param property     property
      * @param defaultValue defaultValue
      * @return property value
+     * @since 0.8.1
      */
     String getPropertyAsString(String property, String defaultValue);
 
     /**
-     * @since 0.8.1
-     * @param property property
+     * @param property     property
      * @param defaultValue defaultValue
      * @return property value
+     * @since 0.8.1
      */
     Boolean getPropertyAsBoolean(String property, Boolean defaultValue);
 
     /**
-     * @since 0.8.1
      * @param property property name
      * @return property value
+     * @since 0.8.1
      */
     Object getProperty(String property);
 
@@ -94,18 +94,18 @@ public interface NutsWorkspaceEnvManager {
     <T> T getOrCreateProperty(Class<T> propertyType, Supplier<T> supplier);
 
     /**
-     * @since 0.8.1
-     * @param property property name
+     * @param property     property name
      * @param defaultValue default value
      * @return property value
+     * @since 0.8.1
      */
     Object getProperty(String property, Object defaultValue);
 
     /**
-     * @since 0.8.1
      * @param property property
-     * @param value value
+     * @param value    value
      * @return {@code this} instance
+     * @since 0.8.1
      */
     NutsWorkspaceEnvManager setProperty(String property, Object value);
 
@@ -135,10 +135,16 @@ public interface NutsWorkspaceEnvManager {
 
     NutsWorkspaceEnvManager setSession(NutsSession session);
 
-    public ClassLoader getBootClassLoader() ;
-    public URL[] getBootClassWorldURLs() ;
-    public String getBootRepositories() ;
-    public long getCreationStartTimeMillis() ;
-    public long getCreationFinishTimeMillis() ;
-    public long getCreationTimeMillis() ;
+    ClassLoader getBootClassLoader();
+
+    URL[] getBootClassWorldURLs();
+
+    String getBootRepositories();
+
+    long getCreationStartTimeMillis();
+
+    long getCreationFinishTimeMillis();
+
+    long getCreationTimeMillis();
+
 }
