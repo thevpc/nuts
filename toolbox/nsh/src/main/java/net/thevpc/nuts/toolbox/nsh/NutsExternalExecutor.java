@@ -26,6 +26,7 @@
 */
 package net.thevpc.nuts.toolbox.nsh;
 
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellContext;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellFileContext;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellExternalExecutor;
 
@@ -37,7 +38,7 @@ public class NutsExternalExecutor implements JShellExternalExecutor {
     
     @Override
     public int execExternalCommand(String[] command, JShellFileContext context) {
-        NutsShellContext jc = (NutsShellContext) context.getShellContext();
+        JShellContext jc = (JShellContext) context.getShellContext();
         return jc.getWorkspace().exec().addCommand(command).setFailFast(true)
                 .setExecutionType(jc.getSession().getExecutionType())
                 .setDirectory(context.getCwd())

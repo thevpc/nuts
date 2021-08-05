@@ -293,6 +293,13 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase {
 
     @Override
     public int getSupportLevel(NutsSupportLevelContext<NutsTerminalSpec> criteria) {
+        try {
+            prepare(criteria.getSession());
+        }catch (Exception ex){
+            criteria.getSession().getWorkspace().log().of(NutsJLineTerminal.class)
+                            .with().level(Level.FINEST).verb(NutsLogVerb.FAIL).error(ex).log("unable to create NutsJLineTerminal. ignored.");
+            return NO_SUPPORT;
+        }
         return DEFAULT_SUPPORT + 1;
     }
 

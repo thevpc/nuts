@@ -27,11 +27,11 @@ package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.nsh.bundles._StringUtils;
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.util.ShellHelper;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.thevpc.nuts.toolbox.nsh.NshExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 
 /**
@@ -103,7 +103,7 @@ public class CpCommand extends SimpleNshBuiltin {
         }
     }
 
-    public void copy(NutsPath from, NutsPath to, Options o, NshExecutionContext context) {
+    public void copy(NutsPath from, NutsPath to, Options o, JShellExecutionContext context) {
         NutsIOCopyAction ccp = context.getSession().getWorkspace().io().copy()
                 .from(from)
                 .to(to)

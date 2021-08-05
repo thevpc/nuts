@@ -35,8 +35,8 @@ import java.util.concurrent.Executor;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.NutsComponent;
-import net.thevpc.nuts.toolbox.nsh.NutsJavaShell;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShell;
 import net.thevpc.nuts.toolbox.nutsserver.NutsServer;
 
 /**
@@ -112,7 +112,7 @@ public class AdminServerRunnable implements NutsServer, Runnable {
                         @Override
                         public void run() {
                             String[] args = {NutsConstants.Ids.NUTS_SHELL};
-                            NutsJavaShell cli = null;
+                            JShell cli = null;
                             try {
                                 try {
                                     PrintStream out = new PrintStream(finalAccept.getOutputStream());
@@ -123,7 +123,7 @@ public class AdminServerRunnable implements NutsServer, Runnable {
                                                     finalAccept.getInputStream(),
                                                     eout,eout)
                                     );
-                                    cli = new NutsJavaShell(invokerWorkspace, session,
+                                    cli = new JShell(invokerWorkspace, session,
                                             invokerWorkspace.id().setSession(session).resolveId(AdminServerRunnable.class),
                                             serverId,new String[0]);
                                     cli.getRootContext().builtins().unset("connect");

@@ -271,4 +271,7 @@ public class JShellOptions {
         this.errExit = errExit;
         return this;
     }
+    public boolean isNsh() {
+        return !bash && !posix;
+    }
 }

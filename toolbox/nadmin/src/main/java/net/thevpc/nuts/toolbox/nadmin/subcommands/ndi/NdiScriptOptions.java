@@ -24,10 +24,20 @@ public class NdiScriptOptions {
     private String icon;
     private String menuPath;
     private boolean persistentConfig;
+    private boolean terminalMode;
     private boolean createMenu;
     private boolean createDesktop;
     private boolean createShortcut;
     private NutsEnvInfo env;
+
+    public boolean isTerminalMode() {
+        return terminalMode;
+    }
+
+    public NdiScriptOptions setTerminalMode(boolean terminalMode) {
+        this.terminalMode = terminalMode;
+        return this;
+    }
 
     public NdiScriptOptions(NutsEnvInfo env) {
         this.env = env;

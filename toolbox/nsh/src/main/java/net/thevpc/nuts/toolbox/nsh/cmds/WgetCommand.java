@@ -35,11 +35,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import net.thevpc.nuts.toolbox.nsh.NshExecutionContext;
 import net.thevpc.nuts.NutsCommandLine;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 import net.thevpc.nuts.toolbox.nsh.bundles._StringUtils;
 import net.thevpc.nuts.toolbox.nsh.bundles._URLUtils;
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellExecutionContext;
 
 /**
  * Created by vpc on 1/7/17.
@@ -88,7 +88,7 @@ public class WgetCommand extends SimpleNshBuiltin {
         }
     }
 
-    protected void download(String path, String output, NshExecutionContext context) {
+    protected void download(String path, String output, JShellExecutionContext context) {
         String output2 = output;
         URL url;
         try {

@@ -68,11 +68,11 @@
             <artifactId>nlib-ssh</artifactId>
             <version>0.8.1.0</version>
         </dependency>
-        <dependency>
-            <groupId>org.jline</groupId>
-            <artifactId>jline</artifactId>
-            <version>3.5.2</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.jline</groupId>-->
+<!--            <artifactId>jline</artifactId>-->
+<!--            <version>3.5.2</version>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>

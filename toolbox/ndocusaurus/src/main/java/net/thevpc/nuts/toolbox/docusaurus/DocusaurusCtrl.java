@@ -7,8 +7,6 @@ package net.thevpc.nuts.toolbox.docusaurus;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.nsh.AbstractNshBuiltin;
-import net.thevpc.nuts.toolbox.nsh.NshExecutionContext;
-import net.thevpc.nuts.toolbox.nsh.NutsJavaShell;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.*;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.*;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.util.FileProcessorUtils;
@@ -278,13 +276,13 @@ public class DocusaurusCtrl {
 
     private static class NshEvaluator implements ExprEvaluator {
         private NutsApplicationContext appContext;
-        private NutsJavaShell shell;
+        private JShell shell;
         private FileTemplater fileTemplater;
 
         public NshEvaluator(NutsApplicationContext appContext, FileTemplater fileTemplater) {
             this.appContext = appContext;
             this.fileTemplater = fileTemplater;
-            shell = new NutsJavaShell(appContext, new String[0]);
+            shell = new JShell(appContext, new String[0]);
             shell.setSession(shell.getSession().copy());
             shell.getRootContext().vars().addVarListener(
                     new JShellVarListener() {
@@ -309,7 +307,7 @@ public class DocusaurusCtrl {
                     .set(
                             new AbstractNshBuiltin("process", 10) {
                                 @Override
-                                public int execImpl(String[] args, NshExecutionContext context) {
+                                public int execImpl(String[] args, JShellExecutionContext context) {
                                     if (args.length != 1) {
                                         context.err().println(getName() + " : invalid arguments count");
                                         return 1;

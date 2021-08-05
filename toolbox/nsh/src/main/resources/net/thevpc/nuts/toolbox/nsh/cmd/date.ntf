@@ -1,0 +1,19 @@
+print or set the system date and time
+
+##) SYNOPSIS:
+
+```sh
+```sh date [<--option>...]```
+```
+
+print or set the system date and time
+
+##) EXAMPLES:
+
+```sh
+```sh date```
+```
+   display date
+
+
+

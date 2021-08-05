@@ -26,20 +26,22 @@
 */
 package net.thevpc.nuts.toolbox.nsh;
 
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShell;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellBuiltin;
 import net.thevpc.nuts.spi.NutsComponent;
 import net.thevpc.nuts.NutsCommandAutoComplete;
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellExecutionContext;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public interface NshBuiltin extends NutsComponent<NutsJavaShell>, JShellBuiltin<NshExecutionContext> {
+public interface NshBuiltin extends NutsComponent<JShell>, JShellBuiltin<JShellExecutionContext> {
 
 //    String getName();
-//    int exec(String[] args, NshExecutionContext context) throws Exception;
+//    int exec(String[] args, JShellExecutionContext context) throws Exception;
 //    String getHelp();
 //    String getHelpHeader();
-    default void autoComplete(NshExecutionContext context, NutsCommandAutoComplete autoComplete) {
+    default void autoComplete(JShellExecutionContext context, NutsCommandAutoComplete autoComplete) {
 
     }
 }

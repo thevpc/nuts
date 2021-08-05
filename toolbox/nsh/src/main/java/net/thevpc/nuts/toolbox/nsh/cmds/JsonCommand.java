@@ -39,8 +39,8 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.toolbox.nsh.NutsShellContext;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -157,15 +157,15 @@ public class JsonCommand extends SimpleNshBuiltin {
         }
     }
 
-    private Document readJsonConvertXml(String path, NutsShellContext context) {
+    private Document readJsonConvertXml(String path, JShellContext context) {
         return readJsonConvertAny(path, Document.class, context);
     }
 
-    private NutsElement readJsonConvertElement(String path, NutsShellContext context) {
+    private NutsElement readJsonConvertElement(String path, JShellContext context) {
         return readJsonConvertAny(path, NutsElement.class, context);
     }
 
-    private <T> T readJsonConvertAny(String path, Class<T> cls, NutsShellContext context) {
+    private <T> T readJsonConvertAny(String path, Class<T> cls, JShellContext context) {
         NutsElementFormat njson = context.getWorkspace().elem().setContentType(NutsContentType.JSON);
         T inputDocument = null;
         if (path != null) {

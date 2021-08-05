@@ -27,7 +27,7 @@ package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.nsh.AbstractNshBuiltin;
-import net.thevpc.nuts.toolbox.nsh.NshExecutionContext;
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.util.ShellHelper;
 
 import java.io.IOException;
@@ -44,7 +44,7 @@ public class PropsCommand extends AbstractNshBuiltin {
         super("props", DEFAULT_SUPPORT);
     }
 
-    public int execImpl(String[] args, NshExecutionContext context) {
+    public int execImpl(String[] args, JShellExecutionContext context) {
         NutsCommandLine commandLine = cmdLine(args, context);
         Options o = new Options();
         NutsArgument a;
@@ -211,19 +211,19 @@ public class PropsCommand extends AbstractNshBuiltin {
         return "show properties vars";
     }
 
-    private int action_list(NshExecutionContext context, Options o) {
+    private int action_list(JShellExecutionContext context, Options o) {
         context.getWorkspace().formats().object().setSession(context.getSession()).setValue(getProperties(o, context)).print();
         return 0;
     }
 
-    private int action_get(NshExecutionContext context, Options o) {
+    private int action_get(JShellExecutionContext context, Options o) {
         Map<String, String> p = getProperties(o, context);
         String v = p.get(o.property);
         context.getWorkspace().formats().object().setSession(context.getSession()).setValue(v == null ? "" : v).print();
         return 0;
     }
 
-    private Map<String, String> getProperties(Options o, NshExecutionContext context) {
+    private Map<String, String> getProperties(Options o, JShellExecutionContext context) {
         Map<String, String> p = o.sort ? new TreeMap<String, String>() : new HashMap<String, String>();
         switch (o.sourceType) {
             case FILE: {
@@ -238,7 +238,7 @@ public class PropsCommand extends AbstractNshBuiltin {
         return p;
     }
 
-    private Format detectFileFormat(String file, NshExecutionContext context) {
+    private Format detectFileFormat(String file, JShellExecutionContext context) {
         if (file.toLowerCase().endsWith(".props")
                 || file.toLowerCase().endsWith(".properties")) {
             return Format.PROPS;
@@ -248,7 +248,7 @@ public class PropsCommand extends AbstractNshBuiltin {
         throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("unknown file format %s", file), 2);
     }
 
-    private Map<String, String> readProperties(Options o, NshExecutionContext context) {
+    private Map<String, String> readProperties(Options o, JShellExecutionContext context) {
         Map<String, String> p = new LinkedHashMap<>();
         String sourceFile = o.sourceFile;
         NutsPath filePath = ShellHelper.xfileOf(sourceFile, context.getGlobalContext().getCwd(), context.getSession());
@@ -278,7 +278,7 @@ public class PropsCommand extends AbstractNshBuiltin {
         return p;
     }
 
-    private int storeProperties(Map<String, String> p, Options o, NshExecutionContext context) throws IOException {
+    private int storeProperties(Map<String, String> p, Options o, JShellExecutionContext context) throws IOException {
         String targetFile = o.targetFile;
         boolean console = false;
         switch (o.targetType) {
@@ -307,14 +307,14 @@ public class PropsCommand extends AbstractNshBuiltin {
                     if (o.sort && !(p instanceof SortedMap)) {
                         p = new TreeMap<String, String>(p);
                     }
-                    new OrderedProperties(p).store(context.out(), o.comments);
+                    new OrderedProperties(p).store(context.out().asPrintStream(), o.comments);
                     break;
                 }
                 case XML: {
                     if (o.sort && !(p instanceof SortedMap)) {
                         p = new TreeMap<String, String>(p);
                     }
-                    new OrderedProperties(p).storeToXML(context.out(), o.comments);
+                    new OrderedProperties(p).storeToXML(context.out().asPrintStream(), o.comments);
                     break;
                 }
             }

@@ -91,7 +91,7 @@ public class CatCommand extends SimpleNshBuiltin {
         if (options.files.isEmpty()) {
             options.files.add(null);
         }
-        PrintStream out = context.out();
+        NutsPrintStream out = context.out();
         try {
             if (options.n || options.T || options.E) {
                 options.currentNumber = 1;
@@ -106,7 +106,7 @@ public class CatCommand extends SimpleNshBuiltin {
                         close = true;
                     }
                     try {
-                        catText(in, out, options, context);
+                        catText(in, out.asOutputStream(), options, context);
                     } finally {
                         if (close) {
                             in.close();
@@ -116,9 +116,9 @@ public class CatCommand extends SimpleNshBuiltin {
             } else {
                 for (File f : options.files) {
                     if (f == null) {
-                        _IOUtils.copy(context.in(), out, 4096 * 2);
+                        _IOUtils.copy(context.in(), out.asOutputStream(), 4096 * 2);
                     } else {
-                        _IOUtils.copy(f, out, 4096 * 2);
+                        _IOUtils.copy(f, out.asOutputStream(), 4096 * 2);
                     }
                 }
             }

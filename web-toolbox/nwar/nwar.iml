@@ -15,6 +15,5 @@
     <orderEntry type="module" module-name="nsh" />
     <orderEntry type="module" module-name="nlib-ssh" />
     <orderEntry type="library" name="Maven: com.jcraft:jsch:0.1.55" level="project" />
-    <orderEntry type="library" name="Maven: org.jline:jline:3.5.2" level="project" />
   </component>
 </module>

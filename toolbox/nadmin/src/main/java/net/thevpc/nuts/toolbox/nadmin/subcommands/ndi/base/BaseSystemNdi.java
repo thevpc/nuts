@@ -220,6 +220,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                         options.getPreferredScriptName(), options.getMenuPath(),
                         options.getIcon(),
                         options.getCwd(),
+                        options.isTerminalMode(),
                         options.getAppArgs().toArray(new String[0]),
                         options.getEnv()
                 )));
@@ -231,6 +232,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                         options.getPreferredScriptName(), options.getMenuPath(),
                         options.getIcon(),
                         options.getCwd(),
+                        options.isTerminalMode(),
                         options.getAppArgs().toArray(new String[0]),
                         options.getEnv()
                 )));
@@ -242,6 +244,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                         options.getPreferredScriptName(), options.getMenuPath(),
                         options.getIcon(),
                         options.getCwd(),
+                        options.isTerminalMode(),
                         options.getAppArgs().toArray(new String[0]),
                         options.getEnv()
                 )));
@@ -499,6 +502,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                                             .setIcon(cmd.getIcon())
                                             .setCwd(cmd.getCwd())
                                             .setPersistentConfig(persistentConfig)
+                                            .setTerminalMode(cmd.isTerminalMode())
                             )
                     ));
                 } catch (UncheckedIOException e) {
@@ -540,6 +544,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                                             .setIcon(cmd.getIcon())
                                             .setCwd(cmd.getCwd())
                                             .setPersistentConfig(persistentConfig)
+                                            .setTerminalMode(cmd.isTerminalMode())
                             ))
                     );
                 } catch (UncheckedIOException e) {
@@ -853,6 +858,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             String menuPath,
             String iconPath,
             String cwd,
+            boolean terminalMode,
             String[] extraArgs,
             NutsEnvInfo env
     ) {
@@ -873,7 +879,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         NutsDefinition appDef = context.getWorkspace().search().addId(appId).setLatest(true).setEffective(true).getResultDefinitions().singleton();
         StringBuilder execCmd = new StringBuilder();
 
-        execCmd.append("'" + getNutsStart(env).toString() + "'").append(" -y '").append(appId).append("'");
+        execCmd.append("'" + getNutsStart(env).path().toString() + "'").append(" -y '").append(appId).append("'");
         if (extraArgs != null) {
             for (String extraArg : extraArgs) {
                 execCmd.append(" '").append(extraArg).append("'");
@@ -893,6 +899,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         sl.setIcon(iconPath);
         sl.setGenericName(apiDefinition.getDescriptor().getGenericName());
         sl.setComment(appDef.getDescriptor().getDescription());
+        sl.setTerminal(terminalMode);
         if (menuPath != null) {
             sl.addCategory(menuPath);
         }
@@ -972,4 +979,5 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     public String getPathVarSep() {
         return System.getProperty("path.separator");
     }
+
 }

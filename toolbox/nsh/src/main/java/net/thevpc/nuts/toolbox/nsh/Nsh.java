@@ -1,5 +1,7 @@
 package net.thevpc.nuts.toolbox.nsh;
 
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.DefaultJShellOptionsParser;
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShell;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellOptions;
 import net.thevpc.nuts.*;
@@ -51,7 +53,7 @@ public class Nsh implements NutsApplication {
 //        );
 //        applicationContext.getWorkspace().io().term().enableRichTerm(session);
 
-        NutsJavaShell c = new NutsJavaShell(applicationContext,null);
+        JShell c = new JShell(applicationContext,null);
         JShellBuiltin[] commands = c.getRootContext().builtins().getAll();
         Set<String> reinstalled = new TreeSet<>();
         Set<String> firstInstalled = new TreeSet<>();
@@ -143,13 +145,13 @@ public class Nsh implements NutsApplication {
     public void run(NutsApplicationContext applicationContext) {
 
         //before loading JShell check if we need to activate rich term
-        NshOptionsParser options = new NshOptionsParser(applicationContext);
+        DefaultJShellOptionsParser options = new DefaultJShellOptionsParser(applicationContext);
         JShellOptions o = options.parse(applicationContext.getCommandLine().toStringArray());
 
 //        if (o.isEffectiveInteractive()) {
 //            applicationContext.getWorkspace().io().term().enableRichTerm(applicationContext.getSession());
 //        }
-        new NutsJavaShell(applicationContext,
+        new JShell(applicationContext,
                 null/*inherit args from applicationContext*/
         ).run();
     }

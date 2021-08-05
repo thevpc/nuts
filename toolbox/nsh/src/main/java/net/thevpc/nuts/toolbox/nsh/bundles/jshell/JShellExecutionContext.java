@@ -1,5 +1,7 @@
 package net.thevpc.nuts.toolbox.nsh.bundles.jshell;
 
+import net.thevpc.nuts.*;
+
 import java.io.InputStream;
 import java.io.PrintStream;
 
@@ -9,11 +11,25 @@ public interface JShellExecutionContext {
 
     InputStream in();
 
-    PrintStream out();
+    NutsPrintStream out();
 
-    PrintStream err();
+    NutsPrintStream err();
 
     JShellVariables vars();
 
     JShellFileContext getGlobalContext();
+
+
+    JShellContext getNutsShellContext();
+
+    NutsWorkspace getWorkspace();
+
+    NutsSession getSession();
+
+    boolean configureFirst(NutsCommandLine cmd);
+
+    void configureLast(NutsCommandLine cmd);
+
+    NutsApplicationContext getAppContext();
+
 }

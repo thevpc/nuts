@@ -27,8 +27,8 @@ package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.lib.ssh.SShConnection;
 import net.thevpc.nuts.toolbox.nsh.AbstractNshBuiltin;
-import net.thevpc.nuts.toolbox.nsh.NshExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.bundles._StringUtils;
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.util.ShellHelper;
 import net.thevpc.nuts.*;
 
@@ -55,7 +55,7 @@ public class SshCommand extends AbstractNshBuiltin {
         List<String> cmd = new ArrayList<>();
     }
 
-    public int execImpl(String[] args, NshExecutionContext context) {
+    public int execImpl(String[] args, JShellExecutionContext context) {
         NutsCommandLine commandLine = cmdLine(args, context);
         Options o = new Options();
         NutsArgument a;

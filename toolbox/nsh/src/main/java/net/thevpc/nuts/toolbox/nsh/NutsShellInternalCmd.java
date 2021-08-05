@@ -8,16 +8,16 @@
 //class NutsShellInternalCmd implements JShellCommandNode {
 //
 //    private final NshCommand ncommand;
-//    private final NutsJavaShell component;
+//    private final JShell component;
 //
-//    public NutsShellInternalCmd(NshCommand ncommand, NutsJavaShell component) {
+//    public NutsShellInternalCmd(NshCommand ncommand, JShell component) {
 //        this.ncommand = ncommand;
 //        this.component = component;
 //    }
 //
 //    @Override
 //    public int exec(String[] command, ConsoleContext shell) throws Exception {
-//        DefaultNutsShellContext ncontext = (DefaultNutsShellContext) shell;
+//        DefaultJShellContext ncontext = (DefaultJShellContext) shell;
 //        NutsConsoleContext commandContext = ncontext.getCommandContext();
 //        NutsConsoleContext context = component.getContext();
 //        NutsSession session = context.getSession().copy();

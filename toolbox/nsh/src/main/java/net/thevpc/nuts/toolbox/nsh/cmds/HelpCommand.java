@@ -27,8 +27,8 @@ package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.nsh.AbstractNshBuiltin;
-import net.thevpc.nuts.toolbox.nsh.NshExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.bundles._StringUtils;
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.options.CommandNonOption;
 
 import java.util.ArrayList;
@@ -49,7 +49,7 @@ public class HelpCommand extends AbstractNshBuiltin {
     }
 
     @Override
-    public int execImpl(String[] args, NshExecutionContext context) {
+    public int execImpl(String[] args, JShellExecutionContext context) {
         NutsCommandLine commandLine = cmdLine(args, context);
         List<String> commandNames = new ArrayList<>();
         NutsArgument a;

@@ -2,6 +2,7 @@ package net.thevpc.nuts.toolbox.nadmin;
 
 import net.thevpc.nuts.*;
 
+import java.awt.*;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,6 +30,9 @@ public class NAdminMain implements NutsApplication {
 
     @Override
     public void onInstallApplication(NutsApplicationContext applicationContext) {
+        onInstallOrApplication(applicationContext,false);
+    }
+    public void onInstallOrApplication(NutsApplicationContext applicationContext,boolean updateMode) {
         this.applicationContext = applicationContext;
         NutsCommandLine cmd = applicationContext.getCommandLine();
         NutsArgument a;
@@ -77,43 +81,38 @@ public class NAdminMain implements NutsApplication {
         companions.add("net.thevpc.nuts:nuts");
         companions.add("net.thevpc.nuts.toolbox:nadmin");
         companions.addAll(applicationContext.getWorkspace().getCompanionIds(applicationContext.getSession()).stream().map(NutsId::getShortName).collect(Collectors.toList()));
-        args.addAll(companions);
         applicationContext.getSession().setConfirm(NutsConfirmationMode.YES);
 
-        run(this.applicationContext.getSession(), args.toArray(new String[0]));
+        for (String companion : companions) {
+            List<String> args2=new ArrayList<>(args);
+            switch (companion){
+                case "net.thevpc.nuts:nuts":{
+                    if(!GraphicsEnvironment.isHeadless()){
+                        args2.addAll(Arrays.asList("--menu","--desktop"));
+                    }
+                    args2.add(companion);
+                    run(this.applicationContext.getSession(), args2.toArray(new String[0]));
+                    break;
+                }
+                case "net.thevpc.nuts.toolbox:nsh":{
+                    if(!GraphicsEnvironment.isHeadless()){
+                        args2.addAll(Arrays.asList("--menu","--desktop","--terminal"));
+                    }
+                    args2.add(companion);
+                    run(this.applicationContext.getSession(), args2.toArray(new String[0]));
+                    break;
+                }
+                default:{
+                    args2.add(companion);
+                    run(this.applicationContext.getSession(), args2.toArray(new String[0]));
+                }
+            }
+        }
     }
 
     @Override
     public void onUpdateApplication(NutsApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
-        NutsCommandLine cmd = applicationContext.getCommandLine();
-        NutsArgument a;
-        while (cmd.hasNext()) {
-            if (applicationContext.configureFirst(cmd)) {
-                // consumed
-            } else if ((a = cmd.nextBoolean("--skip-init")) != null) {
-                if (a.getBooleanValue()) {
-                    return;
-                }
-            } else {
-                cmd.unexpectedArgument();
-            }
-        }
-        NutsWorkspace ws = applicationContext.getWorkspace();
-        for (NutsSdkLocation java : ws.sdks().searchSystem("java")) {
-            ws.sdks().add(java);
-        }
-        ws.config().save();
-
-        List<String> args = new ArrayList<>();
-        args.addAll(Arrays.asList("add", "script", "--ignore-unsupported-os", "--embedded"));
-        LinkedHashSet<String> companions = new LinkedHashSet<>();
-        companions.add("net.thevpc.nuts:nuts");
-        companions.add("net.thevpc.nuts.toolbox:nadmin");
-        companions.addAll(applicationContext.getWorkspace().getCompanionIds(applicationContext.getSession()).stream().map(NutsId::getShortName).collect(Collectors.toList()));
-        args.addAll(companions);
-        applicationContext.getSession().setConfirm(NutsConfirmationMode.YES);
-        run(applicationContext.getSession(), args.toArray(new String[0]));
+        onInstallOrApplication(applicationContext,true);
     }
 
     @Override
@@ -148,7 +147,7 @@ public class NAdminMain implements NutsApplication {
                 }
                 if (cmdLine.hasNext()) {
                     NutsPrintStream out = applicationContext.getSession().err();
-                    out.printf("Unexpected %s%n", cmdLine.peek());
+                    out.printf("unexpected %s%n", cmdLine.peek());
                     out.printf("type for more help : nadmin -h%n");
                     throw new NutsExecutionException(applicationContext.getSession(), NutsMessage.cstyle("unexpected %s", cmdLine.peek()), 1);
                 }

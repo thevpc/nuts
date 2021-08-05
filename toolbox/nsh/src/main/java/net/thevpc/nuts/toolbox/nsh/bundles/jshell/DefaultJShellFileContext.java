@@ -1,6 +1,8 @@
 package net.thevpc.nuts.toolbox.nsh.bundles.jshell;
 
 
+import net.thevpc.nuts.NutsPrintStream;
+
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -100,12 +102,12 @@ public class DefaultJShellFileContext implements JShellFileContext {
     }
 
     @Override
-    public PrintStream out() {
+    public NutsPrintStream out() {
         return shellContext.out();
     }
 
     @Override
-    public PrintStream err() {
+    public NutsPrintStream err() {
         return shellContext.err();
     }
 

@@ -32,8 +32,8 @@ import net.thevpc.nuts.NutsArgumentCandidate;
 import net.thevpc.nuts.NutsArgumentName;
 import net.thevpc.nuts.NutsCommandAutoComplete;
 import net.thevpc.nuts.NutsCommandLineManager;
-import net.thevpc.nuts.toolbox.nsh.NutsShellContext;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellContext;
 
 /**
  *
@@ -41,10 +41,10 @@ import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellBuiltin;
  */
 public class CommandNonOption implements NutsArgumentName {
 
-    private NutsShellContext context;
+    private JShellContext context;
     private String name;
 
-    public CommandNonOption(String name, NutsShellContext context) {
+    public CommandNonOption(String name, JShellContext context) {
         this.name = name;
         this.context = context;
     }

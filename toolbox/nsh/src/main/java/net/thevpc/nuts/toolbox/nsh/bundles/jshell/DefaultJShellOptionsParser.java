@@ -1,17 +1,26 @@
 package net.thevpc.nuts.toolbox.nsh.bundles.jshell;
 
+import net.thevpc.nuts.NutsApplicationContext;
+import net.thevpc.nuts.NutsCommandLine;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class DefaultJShellOptionsParser implements JShellOptionsParser {
-    protected JShellOptions createOptions() {
+    private NutsApplicationContext appContext;
+
+    protected JShellOptions createOptions(NutsApplicationContext appContext) {
         return new JShellOptions();
+    }
+
+    public DefaultJShellOptionsParser(NutsApplicationContext appContext) {
+        this.appContext = appContext;
     }
 
     @Override
     public JShellOptions parse(String[] args) {
-        JShellOptions options= createOptions();
+        JShellOptions options= createOptions(appContext);
         List<String> args0 = new ArrayList<>(Arrays.asList(args));
         while (!args0.isEmpty()) {
             parseNextArgument(args0,options);
@@ -188,7 +197,14 @@ public class DefaultJShellOptionsParser implements JShellOptionsParser {
     }
 
     protected void parseUnsupportedNextArgument(List<String> args, JShellOptions options) {
-        throw new JShellException(1, "unsupported option "+args.get(0));
+        NutsCommandLine a = appContext.getWorkspace().commandLine().create(args);
+        if(appContext.getSession().configureFirst(a)){
+            //replace remaining...
+            args.clear();
+            args.addAll(Arrays.asList(a.toStringArray()));
+        }else{
+            throw new JShellException(1, "unsupported option "+args.get(0));
+        }
     }
 
 }

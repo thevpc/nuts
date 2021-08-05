@@ -35,10 +35,9 @@ import java.nio.file.attribute.FileTime;
 import java.nio.file.attribute.UserPrincipal;
 import java.util.Stack;
 import net.thevpc.nuts.NutsArgument;
-import net.thevpc.nuts.NutsExecutionException;
 import net.thevpc.nuts.toolbox.nsh.AbstractNshBuiltin;
-import net.thevpc.nuts.toolbox.nsh.NshExecutionContext;
 import net.thevpc.nuts.NutsCommandLine;
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellExecutionContext;
 
 /**
  * Created by vpc on 1/7/17.
@@ -171,7 +170,7 @@ public class TestCommand extends AbstractNshBuiltin {
     }
 
     @Override
-    public int execImpl(String[] args, NshExecutionContext context) {
+    public int execImpl(String[] args, JShellExecutionContext context) {
         NutsCommandLine commandLine = context.getWorkspace().commandLine().create(args)
                 .setCommandName("test")
                 .setExpandSimpleOptions(false)
@@ -237,7 +236,7 @@ public class TestCommand extends AbstractNshBuiltin {
 
         String getType();
 
-        int eval(NshExecutionContext context);
+        int eval(JShellExecutionContext context);
     }
 
     public static abstract class EvalBase implements Eval {
@@ -269,7 +268,7 @@ public class TestCommand extends AbstractNshBuiltin {
         }
 
         @Override
-        public int eval(NshExecutionContext context) {
+        public int eval(JShellExecutionContext context) {
             return arg.getString().length() > 0 ? 0 : 1;
         }
 
@@ -285,7 +284,7 @@ public class TestCommand extends AbstractNshBuiltin {
         }
 
         @Override
-        public int eval(NshExecutionContext context) {
+        public int eval(JShellExecutionContext context) {
             switch (type) {
                 case "!": {
                     return 1 - arg.eval(context);
@@ -397,18 +396,18 @@ public class TestCommand extends AbstractNshBuiltin {
 
     }
 
-    private static Path evalPath(Eval a, NshExecutionContext context) {
+    private static Path evalPath(Eval a, JShellExecutionContext context) {
         return Paths.get(evalStr(a, context));
     }
 
-    private static String evalStr(Eval a, NshExecutionContext context) {
+    private static String evalStr(Eval a, JShellExecutionContext context) {
         if (a instanceof EvalArg) {
             return ((EvalArg) a).arg.getString();
         }
         return String.valueOf(a.eval(context));
     }
 
-    private static int evalInt(Eval a, NshExecutionContext context) {
+    private static int evalInt(Eval a, JShellExecutionContext context) {
         if (a instanceof EvalArg) {
             return ((EvalArg) a).arg.getInt();
         }
@@ -427,7 +426,7 @@ public class TestCommand extends AbstractNshBuiltin {
         }
 
         @Override
-        public int eval(NshExecutionContext context) {
+        public int eval(JShellExecutionContext context) {
             switch (type) {
                 case "=": {
                     String s1 = evalStr(arg1, context);

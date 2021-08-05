@@ -117,7 +117,7 @@ public class HistoryCommand extends SimpleNshBuiltin {
         JShellHistory shistory = context.getShell().getHistory();
         switch (options.action) {
             case PRINT: {
-                PrintStream out = context.out();
+                NutsPrintStream out = context.out();
                 List<String> history = shistory.getElements(options.ival <= 0 ? 1000 : options.ival);
                 int offset = shistory.size() - history.size();
                 LinkedHashMap<String, String> result = new LinkedHashMap<>();

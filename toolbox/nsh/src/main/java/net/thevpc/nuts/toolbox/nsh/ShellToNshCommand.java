@@ -1,6 +1,7 @@
 package net.thevpc.nuts.toolbox.nsh;
 
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellExecutionContext;
 
 public class ShellToNshCommand extends AbstractNshBuiltin {
 
@@ -17,7 +18,7 @@ public class ShellToNshCommand extends AbstractNshBuiltin {
     }
 
     @Override
-    public int execImpl(String[] args, NshExecutionContext context) {
+    public int execImpl(String[] args, JShellExecutionContext context) {
         return command.exec(args, context);
     }
 

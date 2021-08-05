@@ -29,7 +29,7 @@ package net.thevpc.nuts.toolbox.nsh.cmds;
 import java.util.Arrays;
 import net.thevpc.nuts.toolbox.nsh.AbstractNshBuiltin;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellBuiltin;
-import net.thevpc.nuts.toolbox.nsh.NshExecutionContext;
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellExecutionContext;
 
 /**
  * Created by vpc on 1/7/17.
@@ -41,7 +41,7 @@ public class BuiltinCommand extends AbstractNshBuiltin {
     }
 
     @Override
-    public int execImpl(String[] args, NshExecutionContext context) {
+    public int execImpl(String[] args, JShellExecutionContext context) {
         if (args.length > 0) {
             JShellBuiltin a = context.getGlobalContext().builtins().get(args[0]);
             return a.exec(Arrays.copyOfRange(args, 1, args.length), context);

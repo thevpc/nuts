@@ -401,6 +401,7 @@ public class DefaultNutsWorkspaceExtensionModel {
         loadedExtensionURLs.clear();
         for (NutsDefinition def : ws.search().addIds(loadedExtensionIds.toArray(new NutsId[0])).setTargetApiVersion(ws.getApiVersion().toString())
                 .setSession(session)
+                .setContent(true)
                 .setDependencies(true)
                 .setDependencyFilter(CoreNutsDependencyUtils.createJavaRunDependencyFilter(session))
                 .setLatest(true)

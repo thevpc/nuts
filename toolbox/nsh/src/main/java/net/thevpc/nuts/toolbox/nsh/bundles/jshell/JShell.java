@@ -30,11 +30,15 @@
  */
 package net.thevpc.nuts.toolbox.nsh.bundles.jshell;
 
+import net.thevpc.nuts.*;
+import net.thevpc.nuts.toolbox.nsh.*;
+import net.thevpc.nuts.toolbox.nsh.bundles._StringUtils;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.parser.JShellParser;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.util.ByteArrayPrintStream;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.util.ShellUtils;
 
 import java.io.*;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -52,11 +56,12 @@ public class JShell {
     public static final String ENV_HOME = "HOME";
     public static final String ENV_EXEC_PACKAGES = "EXEC_PKG";
     public static final String ENV_EXEC_EXTENSIONS = "EXEC_EXT";
-
+    private static final Logger LOG = Logger.getLogger(JShell.class.getName());
     public boolean fallBackToMain = false;
-
     public Object shellInterpreter = null;
     protected JShellFileContext rootContext;
+    //        String forCommand = null;
+    long boot_startMillis;
     private String version = "1.0.0";
     private JShellOptions options;
     private JShellEvaluator evaluator;
@@ -66,6 +71,135 @@ public class JShell {
     private JShellCommandTypeResolver commandTypeResolver;
     private BufferedReader _in_reader = null;
     private List<JShellVarListener> listeners = new ArrayList<>();
+    private NutsApplicationContext appContext;
+    private File histFile = null;
+    private NutsId appId = null;
+
+    public JShell(NutsApplicationContext appContext, String[] args) {
+        this(appContext, null, null, args);
+    }
+
+    public JShell(NutsWorkspace workspace, String[] args) {
+        this(workspace.apps().createApplicationContext(new String[]{}, Nsh.class, null, 0, null), null, null, args);
+    }
+
+    public JShell(NutsWorkspace workspace, NutsSession session, NutsId appId, String[] args) {
+        this(workspace.apps().createApplicationContext(new String[]{}, Nsh.class, null, 0, session), appId, null, args);
+    }
+
+    public JShell(NutsWorkspace workspace, NutsSession session, NutsId appId, String serviceName, String[] args) {
+        this(workspace.apps().createApplicationContext(new String[]{}, Nsh.class, null, 0, session), appId, serviceName, args);
+    }
+
+    private JShell(NutsApplicationContext appContext, NutsId appId, String serviceName, String[] args) {
+        this(resolveServiceName(appContext, serviceName, appId), resolveArgs(appContext, args), new DefaultJShellOptionsParser(appContext),
+                new NshEvaluator(), new NutsCommandTypeResolver(), new NutsErrorHandler(), new NutsExternalExecutor(),
+                null
+        );
+        boot_startMillis = appContext.getStartTimeMillis();
+        this.appContext = appContext;
+        this.appId = appId;
+        //super.setCwd(workspace.getConfigManager().getCwd());
+        if (this.appId == null) {
+            this.appId = appContext.getWorkspace().id().resolveId(JShell.class);
+        }
+        if (this.appId == null) {
+            throw new IllegalArgumentException("unable to resolve application id");
+        }
+        JShellContext _nrootContext = getRootNutsShellContext();
+        JShellFileContext _rootContext = getRootContext();
+        NutsWorkspace ws = this.getWorkspace();
+        JShellHistory hist = getHistory();
+
+        this.appContext.getWorkspace().env().setProperty(JShellFileContext.class.getName(), _rootContext
+        );
+        _nrootContext.setSession(appContext.getSession());
+        //add default commands
+        List<NshBuiltin> allCommand = new ArrayList<>();
+        NutsSupportLevelContext<JShell> constraints = new NutsDefaultSupportLevelContext<>(appContext.getSession(), this);
+
+        for (NshBuiltin command : this.appContext.getWorkspace().extensions().
+                createServiceLoader(NshBuiltin.class, JShell.class, NshBuiltin.class.getClassLoader())
+                .loadAll(this)) {
+            NshBuiltin old = (NshBuiltin) _rootContext.builtins().find(command.getName());
+            if (old != null && old.getSupportLevel(constraints) >= command.getSupportLevel(constraints)) {
+                continue;
+            }
+            allCommand.add(command);
+        }
+        _rootContext.builtins().set(allCommand.toArray(new JShellBuiltin[0]));
+        _rootContext.getUserProperties().put(JShellContext.class.getName(), _rootContext);
+        try {
+            histFile = Paths.get(ws.locations().getStoreLocation(this.appId,
+                    NutsStoreLocation.VAR)).resolve(serviceName + ".history").toFile();
+            hist.setHistoryFile(histFile);
+            if (histFile.exists()) {
+                hist.load(histFile);
+            }
+        } catch (Exception ex) {
+            //ignore
+            LOG.log(Level.SEVERE, "error resolving history file", ex);
+        }
+        ws.env().setProperty(JShellHistory.class.getName(), hist);
+    }
+
+
+    public JShell() {
+        this(null, null, null, null, null, null, null, null);
+    }
+
+    public JShell(String serviceName, String[] args, JShellOptionsParser shellOptionsParser,
+                  JShellEvaluator evaluator, JShellCommandTypeResolver commandTypeResolver,
+                  JShellErrorHandler errorHandler,
+                  JShellExternalExecutor externalExecutor,
+                  JShellHistory history
+    ) {
+        if (commandTypeResolver == null) {
+            this.commandTypeResolver = new DefaultJShellCommandTypeResolver();
+        } else {
+            this.commandTypeResolver = commandTypeResolver;
+        }
+        if (errorHandler == null) {
+            this.errorHandler = new DefaultJShellErrorHandler();
+        } else {
+            this.errorHandler = errorHandler;
+        }
+        if (evaluator == null) {
+            this.evaluator = new DefaultJShellEvaluator();
+        } else {
+            this.evaluator = evaluator;
+        }
+        if (history == null) {
+            this.history = new DefaultJShellHistory();
+        } else {
+            this.history = history;
+        }
+        if (shellOptionsParser == null) {
+            shellOptionsParser = new DefaultJShellOptionsParser(appContext);
+        }
+        options = shellOptionsParser.parse(args);
+        this.externalExecutor = externalExecutor;
+        if (options.getServiceName() == null) {
+            options.setServiceName(serviceName == null ? "jshell" : serviceName);
+        }
+    }
+
+    private static String[] resolveArgs(NutsApplicationContext appContext, String[] args) {
+        if (args != null) {
+            return args;
+        }
+        return appContext.getArguments();
+    }
+
+    private static String resolveServiceName(NutsApplicationContext appContext, String serviceName, NutsId appId) {
+        if ((serviceName == null || serviceName.trim().isEmpty())) {
+            if (appId == null) {
+                appId = appContext.getWorkspace().id().setSession(appContext.getSession()).resolveId(JShell.class);
+            }
+            serviceName = appId.getArtifactId();
+        }
+        return serviceName;
+    }
 
     public void addVarListener(JShellVarListener listener) {
         this.listeners.add(listener);
@@ -78,51 +212,6 @@ public class JShell {
     public JShellVarListener[] getVarListeners() {
         return listeners.toArray(new JShellVarListener[0]);
     }
-
-    public JShell(){
-        this(null,null,null,null,null,null,null,null);
-    }
-
-    public JShell(String serviceName, String[] args,JShellOptionsParser shellOptionsParser,
-                  JShellEvaluator evaluator,JShellCommandTypeResolver commandTypeResolver,
-                  JShellErrorHandler errorHandler,
-                  JShellExternalExecutor externalExecutor,
-                  JShellHistory history
-    ) {
-        if(commandTypeResolver==null) {
-            this.commandTypeResolver = new DefaultJShellCommandTypeResolver();
-        }else{
-            this.commandTypeResolver=commandTypeResolver;
-        }
-        if(errorHandler==null) {
-            this.errorHandler = new DefaultJShellErrorHandler();
-        }else{
-            this.errorHandler=errorHandler;
-        }
-        if(evaluator==null) {
-            this.evaluator = new DefaultJShellEvaluator();
-        }else{
-            this.evaluator=evaluator;
-        }
-        if(history==null) {
-            this.history = new DefaultJShellHistory();
-        }else{
-            this.history=history;
-        }
-        if(shellOptionsParser==null){
-            shellOptionsParser=new DefaultJShellOptionsParser();
-        }
-        options=shellOptionsParser.parse(args);
-        this.externalExecutor=externalExecutor;
-        if(options.getServiceName()==null){
-            options.setServiceName(serviceName==null?"jshell":serviceName);
-        }
-    }
-
-
-
-
-
 
     public JShellEvaluator getEvaluator() {
         return evaluator;
@@ -187,9 +276,11 @@ public class JShell {
         getRootContext().setServiceName(serviceName);
     }
 
-
+    //    protected JShellContext createRootContext() {
+//        return new DefaultJShellContext(this);
+//    }
     protected JShellContext createRootContext() {
-        return new DefaultJShellContext(this);
+        return createContext(null, null, null, null);
     }
 
     public JShellFileContext createFileContext(JShellContext rootContext, String serviceName, String[] args) {
@@ -220,17 +311,19 @@ public class JShell {
         );
     }
 
-    public JShellContext createContext(JShellContext parentContext) {
-        return new DefaultJShellContext(parentContext);
+    //    public JShellContext createContext(JShellContext parentContext) {
+//        return new DefaultJShellContext(parentContext);
+//    }
+    public JShellContext createContext(JShellContext ctx) {
+        return createContext((JShellContext) ctx, null, null, null);
     }
 
     public JShellCommandNode createCommandNode(String[] args) {
         return JShellParser.createCommandNode(args);
     }
 
-
     public JShellFileContext getRootContext() {
-        if(rootContext==null){
+        if (rootContext == null) {
             rootContext = createFileContext(createRootContext(), options.getServiceName(), options.getCommandArgs().toArray(new String[0]));
         }
         return rootContext;
@@ -245,7 +338,7 @@ public class JShell {
             try {
                 getHistory().add(line);
                 JShellCommandNode nn = parseCommandLine(line);
-                context.getShell().evalNode(nn,context);
+                context.getShell().evalNode(nn, context);
                 success = true;
             } catch (Throwable e) {
                 if (storeResult) {
@@ -275,7 +368,7 @@ public class JShell {
 
     public int onResult(int r, JShellFileContext context) {
         context.setLastResult(new JShellResult(r, null, null));
-            return r;
+        return r;
     }
 
     public int onResult(Throwable th, JShellFileContext context) {
@@ -332,7 +425,7 @@ public class JShell {
     public int executeCommand(String[] command, JShellFileContext context) {
         context.setServiceName(command[0]);
         context.setArgs(Arrays.copyOfRange(command, 1, command.length));
-        return context.getShell().evalNode(createCommandNode(command),context);
+        return context.getShell().evalNode(createCommandNode(command), context);
     }
 
     public void addToHistory(String[] command) {
@@ -352,10 +445,10 @@ public class JShell {
     }
 
     public int executePreparedCommand(String[] command,
-                                       boolean considerAliases, boolean considerBuiltins, boolean considerExternal,
-                                       JShellFileContext context
+                                      boolean considerAliases, boolean considerBuiltins, boolean considerExternal,
+                                      JShellFileContext context
     ) {
-        context.getShell().traceExecution(()->String.join(" ",command), context);
+        context.getShell().traceExecution(() -> String.join(" ", command), context);
         String cmdToken = command[0];
         if (cmdToken.indexOf('/') >= 0 || cmdToken.indexOf('\\') >= 0) {
             final JShellExternalExecutor externalExec = getExternalExecutor();
@@ -415,63 +508,83 @@ public class JShell {
         return 0;
     }
 
+//    protected String readInteractiveLine(JShellFileContext context) {
+//        if (_in_reader == null) {
+//            _in_reader = new BufferedReader(new InputStreamReader(System.in));
+//        }
+//        try {
+//            return _in_reader.readLine();
+//        } catch (IOException ex) {
+//            throw new UncheckedIOException(ex);
+//        }
+//    }
 
     public void run() {
-        if (getOptions().isHelp()) {
-            executeHelp(getRootContext());
-            return;
-        }
-        if (getOptions().isVersion()) {
-            executeVersion(getRootContext());
-            return;
-        }
-        if (getOptions().isStdInAndPos()) {
-            if (getOptions().getCommandArgs().isEmpty()) {
-                //ok
-                executeInteractive(getRootContext());
-            } else {
-                getRootContext().err().println("-s option not supported yet. ignored");
-                executeInteractive(getRootContext());
+        try {
+            if (appContext.getAutoComplete() != null) {
+                return;
             }
-            if (getOptions().isInteractive()) {
-                executeInteractive(getRootContext());
+            if (getOptions().isHelp()) {
+                executeHelp(getRootContext());
+                return;
             }
-            return;
-        }
+            if (getOptions().isVersion()) {
+                executeVersion(getRootContext());
+                return;
+            }
+            if (getOptions().isStdInAndPos()) {
+                if (getOptions().getCommandArgs().isEmpty()) {
+                    //ok
+                    executeInteractive(getRootContext());
+                } else {
+                    getRootContext().err().println("-s option not supported yet. ignored");
+                    executeInteractive(getRootContext());
+                }
+                if (getOptions().isInteractive()) {
+                    executeInteractive(getRootContext());
+                }
+                return;
+            }
 
-        if (getOptions().isCommand()) {
-            executeCommand(getOptions().getCommandArgs().toArray(new String[0]),getRootContext());
-            if (getOptions().isInteractive()) {
-                executeInteractive(getRootContext());
+            if (getOptions().isCommand()) {
+                executeCommand(getOptions().getCommandArgs().toArray(new String[0]), getRootContext());
+                if (getOptions().isInteractive()) {
+                    executeInteractive(getRootContext());
+                }
+                return;
             }
-            return;
-        }
 
-        if (!getOptions().getFiles().isEmpty()) {
-            for (String file : getOptions().getFiles()) {
-                executeFile(createSourceFileContext(getRootContext(), file, getOptions().getCommandArgs().toArray(new String[0])), false);
+            if (!getOptions().getFiles().isEmpty()) {
+                for (String file : getOptions().getFiles()) {
+                    executeFile(createSourceFileContext(getRootContext(), file, getOptions().getCommandArgs().toArray(new String[0])), false);
+                }
+                if (getOptions().isInteractive()) {
+                    executeInteractive(getRootContext());
+                }
+                return;
             }
-            if (getOptions().isInteractive()) {
-                executeInteractive(getRootContext());
-            }
-            return;
+            executeInteractive(getRootContext());
+        } catch (NutsExecutionException ex) {
+            throw ex;
+        } catch (JShellException ex) {
+            throw new NutsExecutionException(appContext.getSession(), NutsMessage.cstyle("%s", ex), ex, ex.getResult());
+        } catch (Exception ex) {
+            throw new NutsExecutionException(appContext.getSession(), NutsMessage.cstyle("%s", ex), ex, 100);
         }
-        executeInteractive(getRootContext());
     }
 
     protected String readInteractiveLine(JShellFileContext context) {
-        if (_in_reader == null) {
-            _in_reader = new BufferedReader(new InputStreamReader(System.in));
-        }
-        try {
-            return _in_reader.readLine();
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
-        }
+        NutsSessionTerminal terminal = null;
+        terminal = getRootNutsShellContext().getSession().getTerminal();
+        return terminal.readLine(getPromptString(context));
     }
 
-    protected void printHeader(PrintStream out) {
-        //
+    protected void printHeader(NutsPrintStream out) {
+        out.resetLine().println(appContext.getWorkspace().text().builder()
+                .appendCode("sh", "nuts")
+                .append(" shell ")
+                .append("v" + getWorkspace().getRuntimeId().getVersion().toString(), NutsTextStyle.version())
+                .append(" (c) thevpc 2020"));
     }
 
     protected void executeHelp(JShellFileContext context) {
@@ -484,6 +597,20 @@ public class JShell {
     }
 
     protected void executeInteractive(JShellFileContext context) {
+        appContext.getWorkspace().term().enableRichTerm();
+        appContext.getWorkspace().term().getSystemTerminal()
+                .setCommandAutoCompleteResolver(new NshAutoCompleter())
+                .setCommandHistory(
+                        appContext.getWorkspace().commandLine().createHistory()
+                                .setPath(Paths.get(appContext.getVarFolder()).resolve("nsh-history.hist"))
+                                .build()
+                )
+                .setCommandReadHighlighter(new NutsCommandReadHighlighter() {
+                    @Override
+                    public NutsText highlight(String buffer, NutsSession session) {
+                        return session.getWorkspace().text().forCode("sh", buffer).parse(session);
+                    }
+                });
         prepareContext(getRootContext());
         printHeader(context.out());
         if (getOptions().isLogin()) {
@@ -563,7 +690,8 @@ public class JShell {
         } catch (IOException e) {
             //e.printStackTrace();
         }
-        throw quitExcepion;
+        throw new NutsExecutionException(getSession(), NutsMessage.cstyle("%s", quitExcepion), quitExcepion.getResult());
+//        throw quitExcepion;
     }
 
     public int executeFile(JShellFileContext context, boolean ignoreIfNotFound) {
@@ -587,7 +715,7 @@ public class JShell {
                     return 0;
                 }
                 JShellFileContext c = context.setRoot(ii);//.setParent(null);
-                return context.getShell().evalNode(ii,c);
+                return context.getShell().evalNode(ii, c);
             } catch (IOException ex) {
                 throw new JShellException(1, ex);
             }
@@ -615,23 +743,23 @@ public class JShell {
                 return 0;
             }
             JShellFileContext c = context.setRoot(ii);//.setParent(null);
-            return evalNode(ii,c);
+            return evalNode(ii, c);
         } catch (IOException ex) {
             throw new JShellException(1, ex);
         }
     }
 
-    public int evalNode(JShellCommandNode node,JShellFileContext context){
+    public int evalNode(JShellCommandNode node, JShellFileContext context) {
         try {
             int r = node.eval(context);
             onResult(r, context);
             return r;
         } catch (JShellUniformException th) {
-            if(th.isQuit()){
+            if (th.isQuit()) {
                 onResult(null, context);
                 th.throwQuit();
                 return 0;
-            }else {
+            } else {
                 onResult(th, context);
                 throw th;
             }
@@ -641,7 +769,7 @@ public class JShell {
                 throw new JShellUniformException(getErrorHandler().errorToCode(th), true, th);
             }
             onResult(th, context);
-            context.err().printf("error: %s%n",th);
+            context.err().printf("error: %s%n", th);
             return getErrorHandler().errorToCode(th);
         }
     }
@@ -664,6 +792,21 @@ public class JShell {
 //        return getPromptString(getRootContext());
 //    }
     protected String getPromptString(JShellFileContext context) {
+        NutsWorkspace ws = getWorkspace();
+//        String wss = ws == null ? "" : new File(getRootContext().getAbsolutePath(ws.config().getWorkspaceLocation().toString())).getName();
+        String login = null;
+        if (ws != null) {
+            login = ws.security().getCurrentUsername();
+        }
+        String prompt = ((login != null && login.length() > 0 && !"anonymous".equals(login)) ? (login + "@") : "");//+ wss;
+        if (!_StringUtils.isBlank(getRootContext().getServiceName())) {
+            prompt = prompt + "@" + getRootContext().getServiceName();
+        }
+        prompt += "> ";
+        return prompt;
+    }
+
+    protected String getPromptString0(JShellFileContext context) {
 
         String promptValue = context.vars().getAll().getProperty("PS1");
         if (promptValue == null) {
@@ -708,28 +851,6 @@ public class JShell {
         }
         return s.toString();
 
-    }
-
-    public void prepareContext(JShellFileContext context) {
-//        try {
-//            cwd = new File(".").getCanonicalPath();
-//        } catch (IOException ex) {
-//            cwd = new File(".").getAbsolutePath();
-//        }
-        context.vars().set(System.getenv());
-        setUndefinedStartupEnv("USER", System.getProperty("user.name"),context);
-        setUndefinedStartupEnv("LOGNAME", System.getProperty("user.name"),context);
-        setUndefinedStartupEnv(JShell.ENV_PATH, ".",context);
-        setUndefinedStartupEnv("PWD", System.getProperty("user.dir"),context);
-        setUndefinedStartupEnv(JShell.ENV_HOME, System.getProperty("user.home"),context);
-        setUndefinedStartupEnv("PS1", ">",context);
-        setUndefinedStartupEnv("IFS", " \t\n",context);
-    }
-
-    private void setUndefinedStartupEnv(String name, String defaultValue,JShellFileContext context) {
-        if (context.vars().get(name) == null) {
-            context.vars().set(name, defaultValue);
-        }
     }
 
 
@@ -851,6 +972,28 @@ public class JShell {
 //        return found.toArray(new String[found.size()]);
 //    }
 
+    public void prepareContext(JShellFileContext context) {
+//        try {
+//            cwd = new File(".").getCanonicalPath();
+//        } catch (IOException ex) {
+//            cwd = new File(".").getAbsolutePath();
+//        }
+        context.vars().set(System.getenv());
+        setUndefinedStartupEnv("USER", System.getProperty("user.name"), context);
+        setUndefinedStartupEnv("LOGNAME", System.getProperty("user.name"), context);
+        setUndefinedStartupEnv(JShell.ENV_PATH, ".", context);
+        setUndefinedStartupEnv("PWD", System.getProperty("user.dir"), context);
+        setUndefinedStartupEnv(JShell.ENV_HOME, System.getProperty("user.home"), context);
+        setUndefinedStartupEnv("PS1", ">", context);
+        setUndefinedStartupEnv("IFS", " \t\n", context);
+    }
+
+    private void setUndefinedStartupEnv(String name, String defaultValue, JShellFileContext context) {
+        if (context.vars().get(name) == null) {
+            context.vars().set(name, defaultValue);
+        }
+    }
+
     public JShellCommandNode parseCommand(InputStream stream) {
         JShellNode node0 = null;
         try {
@@ -882,6 +1025,27 @@ public class JShell {
         }
         throw new IllegalArgumentException("expected node " + line);
     }
+//    public String escapeStringForDoubleQuotes(String s) {
+//        StringBuilder sb=new StringBuilder();
+//        for (char c: s.toCharArray()) {
+//            switch (c){
+//                case '\\':
+//                case '(':
+//                case ')':
+//                case '&':
+//                case '|':
+//                    {
+//                    sb.append('\\');
+//                    sb.append(c);
+//                    break;
+//                }
+//                default:{
+//                    sb.append(c);
+//                }
+//            }
+//        }
+//        return sb.toString();
+//    }
 
     public String escapeString(String s) {
         StringBuilder sb = new StringBuilder();
@@ -927,27 +1091,6 @@ public class JShell {
         }
         return sb.toString();
     }
-//    public String escapeStringForDoubleQuotes(String s) {
-//        StringBuilder sb=new StringBuilder();
-//        for (char c: s.toCharArray()) {
-//            switch (c){
-//                case '\\':
-//                case '(':
-//                case ')':
-//                case '&':
-//                case '|':
-//                    {
-//                    sb.append('\\');
-//                    sb.append(c);
-//                    break;
-//                }
-//                default:{
-//                    sb.append(c);
-//                }
-//            }
-//        }
-//        return sb.toString();
-//    }
 
     public void traceExecution(Supplier<String> msg, JShellFileContext context) {
         if (getOptions().isXtrace()) {
@@ -965,33 +1108,71 @@ public class JShell {
     }
 
     public String getVersion() {
-        return version;
+        NutsId nutsId = appContext.getWorkspace().id().resolveId(getClass());
+        if (nutsId == null) {
+            return "dev";
+        }
+        return nutsId.getVersion().getValue();
     }
 
     protected void setVersion(String version) {
         this.version = version;
     }
 
+    public NutsApplicationContext getAppContext() {
+        return appContext;
+    }
+
     public MemResult executeCommand(String[] command) {
-        return executeCommand(command,(String)null);
+        return executeCommand(command, (String) null);
     }
 
     public MemResult executeCommand(String[] command, String in) {
-        StringBuilder out=new StringBuilder();
-        StringBuilder err=new StringBuilder();
+        StringBuilder out = new StringBuilder();
+        StringBuilder err = new StringBuilder();
         ByteArrayPrintStream oout = new ByteArrayPrintStream();
         ByteArrayPrintStream oerr = new ByteArrayPrintStream();
         JShellFileContext newContext = createNewContext(getRootContext(), command[0], Arrays.copyOfRange(command, 1, command.length));
         newContext.setIn(new ByteArrayInputStream(in == null ? new byte[0] : in.toString().getBytes()));
         newContext.setOut(oout);
         newContext.setErr(oerr);
-        int r=executeCommand(command, newContext);
+        int r = executeCommand(command, newContext);
         out.append(oout.toString());
         err.append(oerr.toString());
-        return new MemResult(out.toString(),err.toString(),r);
+        return new MemResult(out.toString(), err.toString(), r);
     }
 
-    public static class MemResult{
+    public JShellContext getRootNutsShellContext() {
+        return (JShellContext) getRootContext().getShellContext();
+    }
+
+    public JShellContext getNutsShellContext() {
+        JShellFileContext f = (JShellFileContext) getWorkspace().env().getProperty(JShellFileContext.class.getName());
+        return (JShellContext) f.getShellContext();
+
+    }
+
+    public NutsSession getSession() {
+        return getNutsShellContext().getSession();
+    }
+
+    public void setSession(NutsSession session) {
+        getNutsShellContext().setSession(session);
+    }
+
+    public NutsWorkspace getWorkspace() {
+        return this.appContext.getWorkspace();
+    }
+
+    public void setWorkspace(NutsWorkspace workspace) {
+        getRootNutsShellContext().setWorkspace(workspace);
+    }
+
+    public JShellContext createContext(JShellContext ctx, JShellNode root, JShellNode parent, JShellVariables env) {
+        return new DefaultJShellContext(this, root, parent, ctx, getWorkspace(), appContext.getSession(), env);
+    }
+
+    public static class MemResult {
         private String out;
         private String err;
         private int exitCode;
@@ -1014,4 +1195,42 @@ public class JShell {
             return exitCode;
         }
     }
+
+    private static class NshAutoCompleter implements NutsCommandAutoCompleteResolver {
+
+        @Override
+        public List<NutsArgumentCandidate> resolveCandidates(NutsCommandLine commandline, int wordIndex, NutsSession session) {
+            NutsWorkspace workspace = session.getWorkspace();
+            List<NutsArgumentCandidate> candidates = new ArrayList<>();
+            JShellFileContext fileContext = (JShellFileContext) workspace.env().getProperty(JShellFileContext.class.getName());
+            JShellContext nutsConsoleContext = (JShellContext) fileContext.getShellContext();
+
+            if (wordIndex == 0) {
+                for (JShellBuiltin command : nutsConsoleContext.builtins().getAll()) {
+                    candidates.add(workspace.commandLine().createCandidate(command.getName()).build());
+                }
+            } else {
+                List<String> autoCompleteWords = new ArrayList<>(Arrays.asList(commandline.toStringArray()));
+                int x = commandline.getCommandName().length();
+
+                List<JShellAutoCompleteCandidate> autoCompleteCandidates
+                        = nutsConsoleContext.resolveAutoCompleteCandidates(commandline.getCommandName(), autoCompleteWords, wordIndex, commandline.toString(), fileContext);
+                for (Object cmdCandidate0 : autoCompleteCandidates) {
+                    JShellAutoCompleteCandidate cmdCandidate = (JShellAutoCompleteCandidate) cmdCandidate0;
+                    if (cmdCandidate != null) {
+                        String value = cmdCandidate.getValue();
+                        if (!_StringUtils.isBlank(value)) {
+                            String display = cmdCandidate.getDisplay();
+                            if (_StringUtils.isBlank(display)) {
+                                display = value;
+                            }
+                            candidates.add(workspace.commandLine().createCandidate(value).setDisplay(display).build());
+                        }
+                    }
+                }
+            }
+            return candidates;
+        }
+    }
+
 }

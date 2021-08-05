@@ -25,8 +25,7 @@
 */
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
-import net.thevpc.nuts.NutsExecutionException;
-import net.thevpc.nuts.NutsMessage;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.nsh.AbstractNshBuiltin;
 
 import java.io.*;
@@ -34,9 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import net.thevpc.nuts.NutsArgument;
-import net.thevpc.nuts.toolbox.nsh.NshExecutionContext;
-import net.thevpc.nuts.NutsCommandLine;
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellExecutionContext;
 
 /**
  * Created by vpc on 1/7/17.
@@ -57,12 +54,12 @@ public class GrepCommand extends AbstractNshBuiltin {
         boolean n = false;
     }
 
-    public int execImpl(String[] args, NshExecutionContext context) {
+    public int execImpl(String[] args, JShellExecutionContext context) {
         NutsCommandLine commandLine = cmdLine(args, context);
         Options options = new Options();
         List<File> files = new ArrayList<>();
         String expression = null;
-        PrintStream out = context.out();
+        NutsPrintStream out = context.out();
         NutsArgument a;
         while (commandLine.hasNext()) {
             if (commandLine.next("-") != null) {
@@ -123,7 +120,7 @@ public class GrepCommand extends AbstractNshBuiltin {
         return x;
     }
 
-    protected int grepFile(File f, Pattern p, Options options, NshExecutionContext context, boolean prefixFileName) {
+    protected int grepFile(File f, Pattern p, Options options, JShellExecutionContext context, boolean prefixFileName) {
 
         Reader reader = null;
         try {
@@ -146,7 +143,7 @@ public class GrepCommand extends AbstractNshBuiltin {
                 try (BufferedReader r = new BufferedReader(reader)) {
                     String line = null;
                     int nn = 1;
-                    PrintStream out = context.out();
+                    NutsPrintStream out = context.out();
                     while ((line = r.readLine()) != null) {
                         boolean matches = p.matcher(line).matches();
                         if (matches != options.invertMatch) {

@@ -32,6 +32,9 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Arrays;
 
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShell;
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellContext;
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellFileContext;
 import net.thevpc.nuts.*;
 
@@ -47,7 +50,7 @@ public abstract class SimpleNshBuiltin extends AbstractNshBuiltin {
 
     public static class SimpleNshCommandContext {
 
-        private NshExecutionContext context;
+        private JShellExecutionContext context;
         private String[] args;
         private Object options;
         private int exitCode = 0;
@@ -57,7 +60,7 @@ public abstract class SimpleNshBuiltin extends AbstractNshBuiltin {
         private boolean outObjectNewLine;
         private boolean errObjectNewLine;
 
-        public SimpleNshCommandContext(String[] args, NshExecutionContext context, Object configObject) {
+        public SimpleNshCommandContext(String[] args, JShellExecutionContext context, Object configObject) {
             this.context = context;
             this.options = configObject;
             this.args = args;
@@ -111,11 +114,11 @@ public abstract class SimpleNshBuiltin extends AbstractNshBuiltin {
             this.exitCode = exitCode;
         }
 
-        public NshExecutionContext getExecutionContext() {
+        public JShellExecutionContext getExecutionContext() {
             return context;
         }
 
-        public NutsJavaShell getShell() {
+        public JShell getShell() {
             return context.getShell();
         }
 
@@ -130,7 +133,7 @@ public abstract class SimpleNshBuiltin extends AbstractNshBuiltin {
         public boolean isErr() {
             return err;
         }
-        public PrintStream out() {
+        public NutsPrintStream out() {
             return isErr() ? context.err() : context.out();
         }
 
@@ -143,7 +146,7 @@ public abstract class SimpleNshBuiltin extends AbstractNshBuiltin {
             return this;
         }
 
-        public PrintStream err() {
+        public NutsPrintStream err() {
             return context.err();
         }
 
@@ -183,7 +186,7 @@ public abstract class SimpleNshBuiltin extends AbstractNshBuiltin {
             return context.getGlobalContext();
         }
 
-        public NutsShellContext getRootContext() {
+        public JShellContext getRootContext() {
             return context.getNutsShellContext();
         }
 
@@ -200,7 +203,7 @@ public abstract class SimpleNshBuiltin extends AbstractNshBuiltin {
     protected abstract void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context);
 
     @Override
-    public int execImpl(String[] args, NshExecutionContext context) {
+    public int execImpl(String[] args, JShellExecutionContext context) {
         boolean conf = false;
         int maxLoops = 1000;
         boolean robustMode = false;

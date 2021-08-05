@@ -266,21 +266,22 @@ public class ProcessBuilder2 {
             NonBlockingInputStreamAdapter procError;
             NonBlockingInputStreamAdapter termIn = null;
             List<PipeThread> pipes = new ArrayList<>();
+            String procString = proc.toString();
             if (out != null) {
-                procInput = new NonBlockingInputStreamAdapter("pipe-out-proc-" + proc.toString(), proc.getInputStream());
-                pipes.add(pipe("pipe-out-proc-" + proc.toString(), procInput, out));
+                procInput = new NonBlockingInputStreamAdapter("pipe-out-proc-" + procString, proc.getInputStream());
+                pipes.add(pipe("pipe-out-proc-" + procString, procInput, out));
             }
             if (err != null) {
-                procError = new NonBlockingInputStreamAdapter("pipe-err-proc-" + proc.toString(), proc.getErrorStream());
+                procError = new NonBlockingInputStreamAdapter("pipe-err-proc-" + procString, proc.getErrorStream());
                 if (base.redirectErrorStream()) {
-                    pipes.add(pipe("pipe-err-proc-" + proc.toString(), procError, out));
+                    pipes.add(pipe("pipe-err-proc-" + procString, procError, out));
                 } else {
-                    pipes.add(pipe("pipe-err-proc-" + proc.toString(), procError, err));
+                    pipes.add(pipe("pipe-err-proc-" + procString, procError, err));
                 }
             }
             if (in != null) {
-                termIn = new NonBlockingInputStreamAdapter("pipe-in-proc-" + proc.toString(), in);
-                pipes.add(pipe("pipe-in-proc-" + proc.toString(), termIn, proc.getOutputStream()));
+                termIn = new NonBlockingInputStreamAdapter("pipe-in-proc-" + procString, in);
+                pipes.add(pipe("pipe-in-proc-" + procString, termIn, proc.getOutputStream()));
             }
             while (proc.isAlive()) {
                 if (termIn != null) {

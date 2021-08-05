@@ -13,6 +13,7 @@ public class CreateNutsScriptCommand {
     private List<String> executorOptions= new ArrayList<>();
     private boolean env;
     private boolean fetch;
+    private boolean terminalMode;
     private NutsExecutionType execType;
     private List<String> appArgs= new ArrayList<>();
     private String cwd;
@@ -21,6 +22,15 @@ public class CreateNutsScriptCommand {
     private boolean createShortcut;
     private boolean createMenu;
     private boolean createDesktop;
+
+    public boolean isTerminalMode() {
+        return terminalMode;
+    }
+
+    public CreateNutsScriptCommand setTerminalMode(boolean terminalMode) {
+        this.terminalMode = terminalMode;
+        return this;
+    }
 
     public String getIcon() {
         return icon;

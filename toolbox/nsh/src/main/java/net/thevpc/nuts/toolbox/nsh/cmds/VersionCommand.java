@@ -25,12 +25,11 @@
 */
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
-import net.thevpc.nuts.NutsId;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.toolbox.nsh.AbstractNshBuiltin;
-import net.thevpc.nuts.toolbox.nsh.NshExecutionContext;
 import net.thevpc.nuts.NutsCommandLine;
 import net.thevpc.nuts.NutsVersionFormat;
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellExecutionContext;
 
 /**
  * Created by vpc on 1/7/17.
@@ -42,7 +41,7 @@ public class VersionCommand extends AbstractNshBuiltin {
     }
 
     @Override
-    public int execImpl(String[] args, NshExecutionContext context) {
+    public int execImpl(String[] args, JShellExecutionContext context) {
         NutsWorkspace ws = context.getWorkspace();
         NutsCommandLine cmdLine = context.getWorkspace().commandLine().create(args);
         NutsVersionFormat version = ws.version().formatter();

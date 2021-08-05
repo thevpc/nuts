@@ -1,5 +1,7 @@
 package net.thevpc.nuts.toolbox.nsh.bundles.jshell;
 
+import net.thevpc.nuts.NutsPrintStream;
+
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -35,9 +37,9 @@ public interface JShellFileContext {
 
     InputStream in();
 
-    PrintStream out();
+    NutsPrintStream out();
 
-    PrintStream err();
+    NutsPrintStream err();
 
     JShellVariables vars();
 

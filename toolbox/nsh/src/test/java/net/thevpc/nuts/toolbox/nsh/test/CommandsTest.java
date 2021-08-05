@@ -26,7 +26,6 @@
 */
 package net.thevpc.nuts.toolbox.nsh.test;
 
-import net.thevpc.nuts.toolbox.nsh.NutsJavaShell;
 import net.thevpc.nuts.Nuts;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShell;
 import org.junit.jupiter.api.Assertions;
@@ -45,7 +44,7 @@ public class CommandsTest {
 
     @Test
     public void testDirname() {
-        NutsJavaShell c = new NutsJavaShell(Nuts.openWorkspace("-y","--verbose","--workspace", baseFolder + "/" + TestUtils.getCallerMethodName()),new String[0]);
+        JShell c = new JShell(Nuts.openWorkspace("-y","--verbose","--workspace", baseFolder + "/" + TestUtils.getCallerMethodName()),new String[0]);
         JShell.MemResult r = c.executeCommand(new String[]{"dirname", "/", "a", "/a", "/a/"});
         Assertions.assertEquals(
                 "/\n"
@@ -58,7 +57,7 @@ public class CommandsTest {
 
     @Test
     public void testBasename() {
-        NutsJavaShell c = new NutsJavaShell(Nuts.openWorkspace("-y","--verbose","--workspace", baseFolder + "/" + TestUtils.getCallerMethodName()),new String[0]);
+        JShell c = new JShell(Nuts.openWorkspace("-y","--verbose","--workspace", baseFolder + "/" + TestUtils.getCallerMethodName()),new String[0]);
         JShell.MemResult r = c.executeCommand(new String[]{"basename", "-a", "/", "a", "/a", "/a/"});
         Assertions.assertEquals(
                 "/\n"
@@ -71,7 +70,7 @@ public class CommandsTest {
 
     @Test
     public void testEnv() {
-        NutsJavaShell c = new NutsJavaShell(Nuts.openWorkspace("-y","--verbose","--workspace", baseFolder + "/" + TestUtils.getCallerMethodName()),new String[0]);
+        JShell c = new JShell(Nuts.openWorkspace("-y","--verbose","--workspace", baseFolder + "/" + TestUtils.getCallerMethodName()),new String[0]);
         {
             JShell.MemResult r = c.executeCommand(new String[]{"env"});
             Assertions.assertTrue(r.out().contains("PWD="));
@@ -86,7 +85,7 @@ public class CommandsTest {
 
     @Test
     public void testCheck() {
-        NutsJavaShell c = new NutsJavaShell(Nuts.openWorkspace("-y","--workspace", baseFolder + "/" + TestUtils.getCallerMethodName()),new String[0]);
+        JShell c = new JShell(Nuts.openWorkspace("-y","--workspace", baseFolder + "/" + TestUtils.getCallerMethodName()),new String[0]);
         {
             JShell.MemResult r = c.executeCommand(new String[]{"test", "1", "-lt", "2"});
             Assertions.assertEquals("", r.out());

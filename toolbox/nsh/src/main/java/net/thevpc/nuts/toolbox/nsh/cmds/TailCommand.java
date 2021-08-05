@@ -25,9 +25,9 @@
 */
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
-import net.thevpc.nuts.NutsExecutionException;
-import net.thevpc.nuts.NutsMessage;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.nsh.AbstractNshBuiltin;
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.util.ShellHelper;
 
 import java.io.*;
@@ -35,9 +35,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import net.thevpc.nuts.NutsArgument;
-import net.thevpc.nuts.toolbox.nsh.NshExecutionContext;
-import net.thevpc.nuts.NutsCommandLine;
 
 /**
  * Created by vpc on 1/7/17.
@@ -53,11 +50,11 @@ public class TailCommand extends AbstractNshBuiltin {
         int max = 0;
     }
 
-    public int execImpl(String[] args, NshExecutionContext context) {
+    public int execImpl(String[] args, JShellExecutionContext context) {
         NutsCommandLine commandLine = cmdLine(args, context);
         Options options = new Options();
         List<String> files = new ArrayList<>();
-        PrintStream out = context.out();
+        NutsPrintStream out = context.out();
         while (commandLine.hasNext()) {
             NutsArgument a = commandLine.peek();
             if (a.isOption()) {
@@ -81,7 +78,7 @@ public class TailCommand extends AbstractNshBuiltin {
         return 0;
     }
 
-    private void tail(String file, int max, NshExecutionContext context) {
+    private void tail(String file, int max, JShellExecutionContext context) {
         BufferedReader r = null;
         try {
             try {

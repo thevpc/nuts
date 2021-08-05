@@ -97,6 +97,10 @@ public class NdiSubCommand extends AbstractNAdminSubCommand {
                 if (a.getBooleanValue()) {
                     cmd.setExecType(NutsExecutionType.EMBEDDED);
                 }
+            } else if ((a = commandLine.nextBoolean("--terminal")) != null) {
+                if (a.isEnabled()) {
+                    cmd.setTerminalMode(a.getBooleanValue());
+                }
             } else if ((a = commandLine.nextBoolean("-e", "--env")) != null) {
                 cmd.setEnv(a.getBooleanValue());
             } else if ((a = commandLine.nextBoolean("--user-cmd")) != null) {

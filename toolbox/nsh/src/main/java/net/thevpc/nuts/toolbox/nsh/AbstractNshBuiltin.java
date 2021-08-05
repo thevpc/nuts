@@ -28,7 +28,9 @@ package net.thevpc.nuts.toolbox.nsh;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.nsh.bundles._IOUtils;
 import net.thevpc.nuts.toolbox.nsh.bundles._StringUtils;
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShell;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellException;
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellExecutionContext;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -53,19 +55,19 @@ public abstract class AbstractNshBuiltin implements NshBuiltin {
         this.supportLevel = supportLevel;
     }
 
-    protected NutsCommandLine cmdLine(String[] args, NshExecutionContext context) {
+    protected NutsCommandLine cmdLine(String[] args, JShellExecutionContext context) {
         return context.getWorkspace().commandLine().create(args)
                 .setAutoComplete(context.getNutsShellContext().getAutoComplete())
                 .setCommandName(getName());
     }
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext<NutsJavaShell> param) {
+    public int getSupportLevel(NutsSupportLevelContext<JShell> param) {
         return supportLevel;
     }
 
     @Override
-    public void autoComplete(NshExecutionContext context, NutsCommandAutoComplete autoComplete) {
+    public void autoComplete(JShellExecutionContext context, NutsCommandAutoComplete autoComplete) {
         NutsCommandAutoComplete oldAutoComplete = context.getNutsShellContext().getAutoComplete();
         context.getNutsShellContext().setAutoComplete(autoComplete);
         try {
@@ -89,9 +91,9 @@ public abstract class AbstractNshBuiltin implements NshBuiltin {
         }
     }
 
-    protected abstract int execImpl(String[] args, NshExecutionContext context);
+    protected abstract int execImpl(String[] args, JShellExecutionContext context);
 
-    public final int exec(String[] args, NshExecutionContext context) {
+    public final int exec(String[] args, JShellExecutionContext context) {
         try {
             return execImpl(args, context);
         } catch (JShellException ex) {
