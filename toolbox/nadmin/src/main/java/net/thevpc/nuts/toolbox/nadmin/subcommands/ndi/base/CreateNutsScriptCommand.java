@@ -18,6 +18,7 @@ public class CreateNutsScriptCommand {
     private String cwd;
     private String icon;
     private String menuPath;
+    private boolean createShortcut;
     private boolean createMenu;
     private boolean createDesktop;
 
@@ -148,5 +149,12 @@ public class CreateNutsScriptCommand {
     }
 
 
+    public boolean isCreateShortcut() {
+        return createShortcut;
+    }
 
+    public CreateNutsScriptCommand setCreateShortcut(boolean createShortcut) {
+        this.createShortcut = createShortcut;
+        return this;
+    }
 }

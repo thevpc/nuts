@@ -5,10 +5,7 @@ import net.thevpc.nuts.runtime.bundles.io.NullInputStream;
 import net.thevpc.nuts.runtime.bundles.parsers.StringPlaceHolderParser;
 import net.thevpc.nuts.runtime.core.NutsSupplierBase;
 import net.thevpc.nuts.runtime.core.format.text.SimpleWriterOutputStream;
-import net.thevpc.nuts.runtime.core.io.ClassLoaderPath;
-import net.thevpc.nuts.runtime.core.io.FilePath;
-import net.thevpc.nuts.runtime.core.io.NutsPathFromSPI;
-import net.thevpc.nuts.runtime.core.io.URLPath;
+import net.thevpc.nuts.runtime.core.io.*;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNutsBootModel;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
@@ -26,9 +23,11 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
+import java.util.regex.Pattern;
 
 public class DefaultNutsIOModel {
 
+    public static final Pattern MOSTLY_URL_PATTERN = Pattern.compile("([a-zA-Z][a-zA-Z0-9_-]+):.*");
     public final NutsPrintStream nullOut;
     private final Function<String, String> pathExpansionConverter;
     public DefaultNutsBootModel bootModel;
@@ -50,6 +49,7 @@ public class DefaultNutsIOModel {
         addPathFactory(new FilePathFactory());
         addPathFactory(new ClasspathNutsPathFactory());
         addPathFactory(new URLPathFactory());
+        addPathFactory(new NutsResourcePathFactory());
     }
 
     public NutsWorkspace getWorkspace() {
@@ -349,7 +349,7 @@ public class DefaultNutsIOModel {
                     return new NutsSupplierBase<NutsPathSPI>(2) {
                         @Override
                         public NutsPathSPI create() {
-                            return new ClassLoaderPath(path, classLoader, session);
+                            return new NutsResourcePath(path, session);
                         }
                     };
                 }
@@ -385,6 +385,9 @@ public class DefaultNutsIOModel {
         public NutsSupplier<NutsPathSPI> createPath(String path, NutsSession session, ClassLoader classLoader) {
             NutsWorkspaceUtils.checkSession(getWorkspace(), session);
             try {
+                if(MOSTLY_URL_PATTERN.matcher(path).matches()){
+                    return null;
+                }
                 Path value = Paths.get(path);
                 return new NutsSupplierBase<NutsPathSPI>(1) {
                     @Override

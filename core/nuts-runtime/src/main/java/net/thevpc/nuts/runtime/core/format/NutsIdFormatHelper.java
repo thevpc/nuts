@@ -403,7 +403,7 @@ public class NutsIdFormatHelper {
             }
             case INSTALL_DATE: {
                 if (def != null && def.getInstallInformation() != null) {
-                    return stringValue(def.getInstallInformation().getCreatedDate());
+                    return stringValue(def.getInstallInformation().getCreatedInstant());
                 }
                 return text.forStyled("<null>", NutsTextStyle.pale());
             }
@@ -568,7 +568,7 @@ public class NutsIdFormatHelper {
             NutsInstalledRepository rr = NutsWorkspaceExt.of(ws).getInstalledRepository();
             this.installStatus = rr.getInstallStatus(id, session);
             NutsInstallInformation iif = rr.getInstallInformation(id, session);
-            this.dte = iif == null ? null : iif.getCreatedDate();
+            this.dte = iif == null ? null : iif.getCreatedInstant();
             this.usr = iif == null ? null : iif.getInstallUser();
 //            Boolean updatable = null;
             this.executable = null;

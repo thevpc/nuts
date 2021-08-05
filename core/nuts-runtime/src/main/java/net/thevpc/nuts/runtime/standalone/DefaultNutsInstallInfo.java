@@ -29,10 +29,7 @@ import net.thevpc.nuts.NutsId;
 import net.thevpc.nuts.NutsInstallInformation;
 import net.thevpc.nuts.NutsInstallStatus;
 
-import java.nio.file.Path;
 import java.time.Instant;
-import java.util.EnumSet;
-import java.util.Set;
 
 /**
  * @author thevpc
@@ -69,8 +66,8 @@ public class DefaultNutsInstallInfo implements NutsInstallInformation {
         this.id = other.getId();
         this.installStatus = other.getInstallStatus();
         this.installFolder = other.getInstallFolder();
-        this.createdDate = other.getCreatedDate();
-        this.lasModifiedDate = other.getLastModifiedDate();
+        this.createdDate = other.getCreatedInstant();
+        this.lasModifiedDate = other.getLastModifiedInstant();
         this.installUser = other.getInstallUser();
         this.sourceRepositoryName = other.getSourceRepositoryName();
         this.sourceRepositoryUUID = other.getSourceRepositoryUUID();
@@ -95,12 +92,12 @@ public class DefaultNutsInstallInfo implements NutsInstallInformation {
     }
 
     @Override
-    public Instant getCreatedDate() {
+    public Instant getCreatedInstant() {
         return createdDate;
     }
 
     @Override
-    public Instant getLastModifiedDate() {
+    public Instant getLastModifiedInstant() {
         return lasModifiedDate;
     }
 

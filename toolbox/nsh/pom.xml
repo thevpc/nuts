@@ -6,9 +6,21 @@
     <artifactId>nsh</artifactId>
     <version>0.8.1.0</version>
     <packaging>jar</packaging>
-    <name>net.thevpc.nuts.toolbox.nsh</name>
+    <name>Nuts Shell</name>
     <url>https://github.com/thevpc/nuts</url>
     <description>Nuts bash shell companion</description>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <github.global.server>github</github.global.server>
+        <nuts.application>true</nuts.application>
+        <nuts.genericName>Bash Compatible Shell</nuts.genericName>
+        <nuts.category>/Utilities/Nuts</nuts.category>
+        <nuts.icon>classpath://net/thevpc/nuts/toolbox/nsh/nsh.svg</nuts.icon>
+    </properties>
+
     <scm>
         <connection>scm:git:git://github.com/thevpc/nuts.git</connection>
         <developerConnection>scm:git:ssh://github.com:thevpc/nuts.git</developerConnection>
@@ -45,13 +57,6 @@
             <url>https://www.apache.org/licenses/LICENSE-2.0</url>
         </license>
     </licenses>
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <github.global.server>github</github.global.server>
-        <nuts.application>true</nuts.application>
-    </properties>
     <dependencies>
         <dependency>
             <groupId>net.thevpc.nuts</groupId>

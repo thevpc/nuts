@@ -22,6 +22,16 @@ class SshNutsPath implements NutsPathSPI {
     }
 
     @Override
+    public String getContentEncoding() {
+        return null;
+    }
+
+    @Override
+    public String getContentType() {
+        return null;
+    }
+
+    @Override
     public String asString() {
         return path.toString();
     }
@@ -101,7 +111,7 @@ class SshNutsPath implements NutsPathSPI {
     }
 
     @Override
-    public long length() {
+    public long getContentLength() {
         return -1;
     }
 

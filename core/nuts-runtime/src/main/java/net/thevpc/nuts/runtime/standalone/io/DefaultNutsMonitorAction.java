@@ -176,7 +176,7 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
     public NutsInput createSource() {
         checkSession();
         NutsInput base = getSession().getWorkspace().io().input().of(source);
-        boolean isPath = base.isPath();
+        boolean isPath = base.isFile();
         boolean isUrl = base.isURL();
         String sourceKind0 = sourceKind;
         String sourceTypeName0 = sourceTypeName;
@@ -390,7 +390,7 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
             if (verboseMode && monitor != null) {
                 monitor.onStart(new DefaultNutsProgressEvent(source, sourceName, 0, 0, 0, 0, size, null, session, true));
             }
-            size = inputSource.length();
+            size = inputSource.getContentLength();
         } catch (UncheckedIOException | NutsIOException e) {
             if (verboseMode && monitor != null) {
                 monitor.onComplete(new DefaultNutsProgressEvent(source, sourceName, 0, 0, 0, 0, size, e, session, true));
@@ -484,7 +484,7 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
         }
 
         @Override
-        public Instant getLastModified() {
+        public Instant getLastModifiedInstant() {
             return null;
         }
     }
@@ -529,7 +529,7 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
         }
 
         @Override
-        public Instant getLastModified() {
+        public Instant getLastModifiedInstant() {
             FileTime r = null;
             try {
                 r = Files.getLastModifiedTime(this.getFilePath());
@@ -578,7 +578,7 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
         }
 
         @Override
-        public Instant getLastModified() {
+        public Instant getLastModifiedInstant() {
             FileTime r = null;
             try {
                 r = Files.getLastModifiedTime(getFilePath());
@@ -628,7 +628,7 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
         }
 
         @Override
-        public Instant getLastModified() {
+        public Instant getLastModifiedInstant() {
             FileTime r = null;
             try {
                 r = Files.getLastModifiedTime(getFilePath());
@@ -677,7 +677,7 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
         }
 
         @Override
-        public Instant getLastModified() {
+        public Instant getLastModifiedInstant() {
             return null;
         }
     }

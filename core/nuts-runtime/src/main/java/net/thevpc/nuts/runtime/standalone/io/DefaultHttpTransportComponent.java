@@ -81,8 +81,8 @@ public class DefaultHttpTransportComponent implements NutsTransportComponent {
         }
 
         @Override
-        public NutsURLHeader getURLHeader() {
-            return CoreIOUtils.getURLHeader(url);
+        public NutsPath getPath() {
+            return session.getWorkspace().io().path(url);
         }
 
         public InputStream upload(NutsTransportParamPart... parts) {

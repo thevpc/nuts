@@ -235,7 +235,7 @@ public class MavenUtils {
                     .setPackaging(pom.getPackaging())
                     .setExecutable(executable)
                     .setApplication(application)
-                    .setName(pom.getArtifactId())
+                    .setName(pom.getName())
                     .setDescription(pom.getDescription())
                     .setPlatform(new String[]{"java"})
                     .setDependencies(toNutsDependencies(pom.getDependencies(), session))

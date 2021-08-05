@@ -176,9 +176,9 @@ public class CoreIOUtils {
 //        }
 //    }
 
-    public static NutsURLHeader getURLHeader(URL url) {
-        return new DefaultNutsURLHeader(new SimpleHttpClient(url));
-    }
+//    public static NutsURLHeader getURLHeader(URL url) {
+//        return new DefaultNutsURLHeader(new SimpleHttpClient(url));
+//    }
 
     public static String getPlatformOsFamily() {
         String property = System.getProperty("os.name").toLowerCase(Locale.ENGLISH);
@@ -825,7 +825,7 @@ public class CoreIOUtils {
         return monitor(
                 NutsWorkspaceUtils.of(session).openURL(from),
                 from, session.getWorkspace().text().forStyled(getURLName(from), NutsTextStyle.path())
-                , CoreIOUtils.getURLHeader(from).getContentLength(), monitor, session);
+                , session.getWorkspace().io().path(from).getContentLength(), monitor, session);
     }
 
     public static java.io.InputStream monitor(java.io.InputStream from, Object source, NutsString sourceName, long length, NutsProgressMonitor monitor, NutsSession session) {
@@ -1387,15 +1387,15 @@ public class CoreIOUtils {
             }
         }
         try {
-            NutsURLHeader header = null;
+            NutsPath header = null;
             long size = -1;
             long lastModified = -1;
             NutsTransportConnection f = CoreIOUtils.getHttpClientFacade(session, path);
             try {
 
-                header = f.getURLHeader();
+                header = f.getPath();
                 size = header.getContentLength();
-                Instant lastModifiedInstant = header.getLastModified();
+                Instant lastModifiedInstant = header.getLastModifiedInstant();
                 if (lastModifiedInstant != null) {
                     lastModified = lastModifiedInstant.toEpochMilli();
                 }
@@ -1566,7 +1566,7 @@ public class CoreIOUtils {
 
     public static NutsInput toPathInputSource(NutsInput is, List<Path> tempPaths, NutsSession session) {
         NutsWorkspace ws = session.getWorkspace();
-        if (is.isPath()) {
+        if (is.isFile()) {
             return is;
         }
         Path temp = Paths.get(ws.io().tmp()
@@ -2044,8 +2044,8 @@ public class CoreIOUtils {
         }
 
         @Override
-        public boolean isPath() {
-            return base.isPath();
+        public boolean isFile() {
+            return base.isFile();
         }
 
         @Override
@@ -2074,8 +2074,8 @@ public class CoreIOUtils {
         }
 
         @Override
-        public Instant getLastModified() {
-            return base.getLastModified();
+        public Instant getLastModifiedInstant() {
+            return base.getLastModifiedInstant();
         }
 
         @Override
@@ -2166,7 +2166,7 @@ public class CoreIOUtils {
             return value;
         }
 
-        public boolean isPath() {
+        public boolean isFile() {
             return path;
         }
 
@@ -2258,7 +2258,7 @@ public class CoreIOUtils {
         }
 
         @Override
-        public Instant getLastModified() {
+        public Instant getLastModifiedInstant() {
             return null;
         }
 
@@ -2270,7 +2270,7 @@ public class CoreIOUtils {
 
     public static class URLInput extends AbstractItem {
 
-        private NutsURLHeader cachedNutsURLHeader = null;
+        private NutsPath cachedNutsURLHeader = null;
 
         public URLInput(String name, NutsString formattedName, URL value, String typeName, NutsSession session) {
             super(name, formattedName, value, false, true, typeName, session);
@@ -2282,7 +2282,7 @@ public class CoreIOUtils {
                 URL u = getURL();
                 if (CoreIOUtils.isPathHttp(u.toString())) {
                     try {
-                        NutsURLHeader uh = getURLHeader();
+                        NutsPath uh = getPath();
                         return new InputStreamMetadataAwareImpl(
                                 NutsWorkspaceUtils.of(session).openURL(u),
                                 new FixedInputStreamMetadata(u.toString(), uh == null ? -1 : uh.getContentLength()));
@@ -2301,13 +2301,13 @@ public class CoreIOUtils {
             return (URL) getSource();
         }
 
-        protected NutsURLHeader getURLHeader() {
+        protected NutsPath getPath() {
             if (cachedNutsURLHeader == null) {
                 URL u = getURL();
                 if (CoreIOUtils.isPathHttp(u.toString())) {
                     try {
                         NutsTransportConnection hf = DefaultHttpTransportComponent.INSTANCE.open(u.toString());
-                        cachedNutsURLHeader = hf.getURLHeader();
+                        cachedNutsURLHeader = hf.getPath();
                     } catch (Exception ex) {
                         //ignore
                     }
@@ -2321,7 +2321,7 @@ public class CoreIOUtils {
             URL u = getURL();
             if (CoreIOUtils.isPathHttp(u.toString())) {
                 try {
-                    NutsURLHeader uh = getURLHeader();
+                    NutsPath uh = getPath();
                     return uh == null ? -1 : uh.getContentLength();
                 } catch (Exception ex) {
                     //ignore
@@ -2336,9 +2336,9 @@ public class CoreIOUtils {
 
         @Override
         public String getContentType() {
-            NutsURLHeader r = null;
+            NutsPath r = null;
             try {
-                r = getURLHeader();
+                r = getPath();
             } catch (Exception ex) {
                 //
             }
@@ -2350,9 +2350,9 @@ public class CoreIOUtils {
 
         @Override
         public String getContentEncoding() {
-            NutsURLHeader r = null;
+            NutsPath r = null;
             try {
-                r = getURLHeader();
+                r = getPath();
             } catch (Exception ex) {
                 //
             }
@@ -2363,15 +2363,15 @@ public class CoreIOUtils {
         }
 
         @Override
-        public Instant getLastModified() {
-            NutsURLHeader r = null;
+        public Instant getLastModifiedInstant() {
+            NutsPath r = null;
             try {
-                r = getURLHeader();
+                r = getPath();
             } catch (Exception ex) {
                 //
             }
             if (r != null) {
-                return r.getLastModified();
+                return r.getLastModifiedInstant();
             }
             return null;
         }
@@ -2446,7 +2446,7 @@ public class CoreIOUtils {
         }
 
         @Override
-        public Instant getLastModified() {
+        public Instant getLastModifiedInstant() {
             FileTime r = null;
             try {
                 r = Files.getLastModifiedTime(this.getFilePath());
@@ -2502,7 +2502,7 @@ public class CoreIOUtils {
         }
 
         @Override
-        public Instant getLastModified() {
+        public Instant getLastModifiedInstant() {
             return null;
         }
 

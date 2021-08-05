@@ -1,9 +1,12 @@
 package net.thevpc.nuts.runtime.core.io;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
+import net.thevpc.nuts.spi.NutsFormatSPI;
+import net.thevpc.nuts.spi.NutsPathSPI;
 
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
 import java.nio.file.Path;
 import java.time.Instant;
@@ -12,16 +15,17 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class NutsResourcePath extends NutsPathBase {
+public class NutsResourcePath implements NutsPathSPI {
     private String path;
     private List<NutsId> ids;
     private String location;
     private boolean urlPathLookedUp = false;
     private NutsPath urlPath = null;
+    private NutsSession session;
 
     public NutsResourcePath(String path, NutsSession session) {
-        super(session);
         this.path = path;
+        this.session = session;
         String idsStr;
         if (path.startsWith("nuts-resource://(")) {
             int x = path.indexOf(')');
@@ -57,23 +61,42 @@ public class NutsResourcePath extends NutsPathBase {
         return String.valueOf(path);
     }
 
+    public NutsPath toURLPath() {
+        if (!urlPathLookedUp) {
+            urlPathLookedUp = true;
+            try {
+                String loc = location;
+                ClassLoader resultClassLoader = getSession().getWorkspace().search().addIds(
+                        this.ids.toArray(new NutsId[0])
+                ).setLatest(true).setContent(true).setDependencies(true)
+                        .setDependencyFilter(
+                                getSession().getWorkspace().filters().dependency()
+                                        .byScope(NutsDependencyScopePattern.RUN)
+                        )
+                        .setOptional(false).getResultClassLoader();
+                //class loader do not expect
+                if(loc.length()>1 && loc.startsWith("/")){
+                    loc=loc.substring(1);
+                }
+                URL resource = resultClassLoader.getResource(loc);
+                if (resource != null) {
+                    urlPath = getSession().getWorkspace().io().path(resource);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                //ignore...
+            }
+        }
+        return urlPath;
+    }
+
+    @Override
+    public NutsFormatSPI getFormatterSPI() {
+        return new MyPathFormat(this);
+    }
+
     public String getName() {
         return CoreIOUtils.getURLName(path);
-    }
-
-    @Override
-    public String asString() {
-        return path;
-    }
-
-    @Override
-    public String getLocation() {
-        return location;
-    }
-
-    @Override
-    public NutsPath toCompressedForm() {
-        return new NutsCompressedPath(this);
     }
 
     @Override
@@ -91,21 +114,72 @@ public class NutsResourcePath extends NutsPathBase {
     }
 
     @Override
-    public NutsInput input() {
+    public boolean exists() {
+        NutsPath up = toURLPath();
+        if (up == null) {
+            return false;
+        }
+        return up.exists();
+    }
+
+    @Override
+    public long getContentLength() {
+        NutsPath up = toURLPath();
+        if (up == null) {
+            return -1;
+        }
+        return up.getContentLength();
+    }
+
+    @Override
+    public String getContentEncoding() {
+        NutsPath up = toURLPath();
+        if (up != null) {
+            return up.getContentEncoding();
+        }
+        return null;
+    }
+
+    @Override
+    public String getContentType() {
+        NutsPath up = toURLPath();
+        if (up != null) {
+            return up.getContentType();
+        }
+        return null;
+    }
+
+    @Override
+    public String asString() {
+        return path;
+    }
+
+    @Override
+    public String getLocation() {
+        return location;
+    }
+
+    @Override
+    public InputStream inputStream() {
         NutsPath up = toURLPath();
         if (up == null) {
             throw new NutsIOException(getSession(), NutsMessage.cstyle("unable to resolve input stream %s", toString()));
         }
-        return up.input();
+        return up.input().open();
     }
 
     @Override
-    public NutsOutput output() {
+    public OutputStream outputStream() {
         NutsPath up = toURLPath();
         if (up == null) {
             throw new NutsIOException(getSession(), NutsMessage.cstyle("unable to resolve output stream %s", toString()));
         }
-        return up.output();
+        return up.output().open();
+    }
+
+    @Override
+    public NutsSession getSession() {
+        return session;
     }
 
     @Override
@@ -127,24 +201,6 @@ public class NutsResourcePath extends NutsPathBase {
     }
 
     @Override
-    public boolean exists() {
-        NutsPath up = toURLPath();
-        if (up == null) {
-            return false;
-        }
-        return up.exists();
-    }
-
-    @Override
-    public long length() {
-        NutsPath up = toURLPath();
-        if (up == null) {
-            return -1;
-        }
-        return up.length();
-    }
-
-    @Override
     public Instant getLastModifiedInstant() {
         NutsPath up = toURLPath();
         if (up == null) {
@@ -153,42 +209,16 @@ public class NutsResourcePath extends NutsPathBase {
         return up.getLastModifiedInstant();
     }
 
-    public NutsPath toURLPath() {
-        if (!urlPathLookedUp) {
-            urlPathLookedUp = true;
-            try {
-                String loc = location;
-                URL resource = getSession().getWorkspace().search().addIds(
-                        this.ids.toArray(new NutsId[0])
-                ).setLatest(true).getResultClassLoader().getResource(loc);
-                if (resource != null) {
-                    urlPath = getSession().getWorkspace().io().path(resource);
-                }
-            } catch (Exception e) {
-                //ignore...
-            }
-        }
-        return urlPath;
-    }
-
-    @Override
-    public NutsFormat formatter() {
-        return new MyPathFormat(this)
-                .setSession(getSession())
-                ;
-    }
-
-    private static class MyPathFormat extends DefaultFormatBase<NutsFormat> {
+    private static class MyPathFormat implements NutsFormatSPI {
         private NutsResourcePath p;
 
         public MyPathFormat(NutsResourcePath p) {
-            super(p.getSession().getWorkspace(), "path");
             this.p = p;
         }
 
         public NutsString asFormattedString() {
             String path = p.path;
-            NutsTextManager text = getSession().getWorkspace().text();
+            NutsTextManager text = p.getSession().getWorkspace().text();
             NutsTextBuilder tb = text.builder();
             tb.append("nuts-resource://", NutsTextStyle.primary1());
             if (path.startsWith("nuts-resource://(")) {
@@ -226,5 +256,16 @@ public class NutsResourcePath extends NutsPathBase {
         }
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        NutsResourcePath that = (NutsResourcePath) o;
+        return urlPathLookedUp == that.urlPathLookedUp && Objects.equals(path, that.path) && Objects.equals(ids, that.ids) && Objects.equals(location, that.location) && Objects.equals(urlPath, that.urlPath) && Objects.equals(session, that.session);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(path, session);
+    }
 }

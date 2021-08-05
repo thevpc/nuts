@@ -1,6 +1,5 @@
 package net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.sys.unix;
 
-import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.base.AnyNixNdi;
 import net.thevpc.nuts.NutsApplicationContext;
 
 public class MacosNdi extends AnyNixNdi {

@@ -8,7 +8,18 @@
     <packaging>jar</packaging>
     <name>net.thevpc.nuts.toolbox.nadmin</name>
     <url>https://github.com/thevpc/nuts</url>
-    <description>Nuts Admin companion</description>
+    <description>Nuts Administration Tool</description>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <github.global.server>github</github.global.server>
+        <nuts.application>true</nuts.application>
+        <nuts.genericName>Nuts Administration Tool</nuts.genericName>
+        <nuts.category>/Utilities/Nuts</nuts.category>
+        <nuts.icon>classpath://net/thevpc/nuts/toolbox/nadmin/nadmin.svg</nuts.icon>
+        <dependencies.com.github.vatbub:mslinks.os>windows</dependencies.com.github.vatbub:mslinks.os>
+    </properties>
     <scm>
         <connection>scm:git:git://github.com/thevpc/nuts.git</connection>
         <developerConnection>scm:git:ssh://github.com:thevpc/nuts.git</developerConnection>
@@ -45,14 +56,6 @@
             <url>https://www.apache.org/licenses/LICENSE-2.0</url>
         </license>
     </licenses>
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <github.global.server>github</github.global.server>
-        <nuts.application>true</nuts.application>
-        <dependencies.com.github.vatbub:mslinks.os>windows</dependencies.com.github.vatbub:mslinks.os>
-    </properties>
     <dependencies>
         <dependency>
             <groupId>net.thevpc.nuts</groupId>

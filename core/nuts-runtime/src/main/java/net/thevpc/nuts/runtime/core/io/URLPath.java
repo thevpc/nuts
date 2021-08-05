@@ -15,7 +15,7 @@ import java.time.Instant;
 import java.util.Objects;
 
 public class URLPath extends NutsPathBase implements NutsPathSPI {
-    private URL url;
+    protected URL url;
 
     public URLPath(URL url, NutsSession session) {
         this(url, session, false);
@@ -49,6 +49,22 @@ public class URLPath extends NutsPathBase implements NutsPathSPI {
         return url == null ? ("broken-url") : url.toString();
     }
 
+    public String getContentEncoding() {
+        try {
+            return url.openConnection().getContentEncoding();
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    public String getContentType() {
+        try {
+            return url.openConnection().getContentType();
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
     public String getName() {
         return url == null ? "" : CoreIOUtils.getURLName(url);
     }
@@ -60,7 +76,7 @@ public class URLPath extends NutsPathBase implements NutsPathSPI {
 
     @Override
     public String getLocation() {
-        return url.getFile();
+        return url == null ? null : url.getFile();
     }
 
     @Override
@@ -124,7 +140,7 @@ public class URLPath extends NutsPathBase implements NutsPathSPI {
     }
 
     @Override
-    public long length() {
+    public long getContentLength() {
         if (url == null) {
             return -1;
         }
@@ -219,7 +235,7 @@ public class URLPath extends NutsPathBase implements NutsPathSPI {
         @Override
         public InputStream open() {
             return new InputStreamMetadataAwareImpl(inputStream(), new FixedInputStreamMetadata(getNutsPath().toString(),
-                    getNutsPath().length()));
+                    getNutsPath().getContentLength()));
         }
 
         @Override

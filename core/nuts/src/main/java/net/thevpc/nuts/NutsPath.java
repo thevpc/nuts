@@ -5,6 +5,20 @@ import java.nio.file.Path;
 import java.time.Instant;
 
 public interface NutsPath extends NutsFormattable {
+    /**
+     * content encoding if explicitly defined (from HTTP headers for instance).
+     * return null when unknown.
+     * @return content encoding if explicitly defined (from HTTP headers for instance)
+     */
+    String getContentEncoding();
+
+    /**
+     * content type if explicitly defined (from HTTP headers for instance) or probe for content type.
+     * return null when unknown.
+     * @return content type if explicitly defined (from HTTP headers for instance) or probe for content type.
+     */
+    String getContentType();
+
     NutsString getFormattedName();
 
     String getName();
@@ -42,7 +56,7 @@ public interface NutsPath extends NutsFormattable {
 
     boolean exists();
 
-    long length();
+    long getContentLength();
 
     Instant getLastModifiedInstant();
 }

@@ -52,7 +52,7 @@ public interface NutsInput extends AutoCloseable {
 
     Object getSource();
 
-    boolean isPath();
+    boolean isFile();
 
     Path getFilePath();
 
@@ -79,7 +79,7 @@ public interface NutsInput extends AutoCloseable {
      *
      * @return url content last modified
      */
-    Instant getLastModified();
+    Instant getLastModifiedInstant();
 
     Stream<String> lines();
 

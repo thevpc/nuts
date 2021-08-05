@@ -5,6 +5,7 @@ import net.thevpc.nuts.NutsExecutionType;
 import java.util.ArrayList;
 import java.util.List;
 import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.base.NutsEnvInfo;
 
 public class NdiScriptOptions {
 
@@ -22,8 +23,28 @@ public class NdiScriptOptions {
     private String cwd;
     private String icon;
     private String menuPath;
+    private boolean persistentConfig;
     private boolean createMenu;
     private boolean createDesktop;
+    private boolean createShortcut;
+    private NutsEnvInfo env;
+
+    public NdiScriptOptions(NutsEnvInfo env) {
+        this.env = env;
+    }
+
+    public boolean isPersistentConfig() {
+        return persistentConfig;
+    }
+
+    public NdiScriptOptions setPersistentConfig(boolean persistentConfig) {
+        this.persistentConfig = persistentConfig;
+        return this;
+    }
+
+    public NutsEnvInfo getEnv() {
+        return env;
+    }
 
     public boolean isAddNutsScript() {
         return addNutsScript;
@@ -148,6 +169,15 @@ public class NdiScriptOptions {
 
     public NdiScriptOptions setCreateMenu(boolean createMenu) {
         this.createMenu = createMenu;
+        return this;
+    }
+
+    public boolean isCreateShortcut() {
+        return createShortcut;
+    }
+
+    public NdiScriptOptions setCreateShortcut(boolean createShortcut) {
+        this.createShortcut = createShortcut;
         return this;
     }
 

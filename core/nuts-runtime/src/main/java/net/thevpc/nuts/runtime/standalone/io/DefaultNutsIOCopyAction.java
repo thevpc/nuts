@@ -304,7 +304,7 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
         if (target == null) {
             throw new NutsIllegalArgumentException(getSession(), NutsMessage.formatted("missing target"));
         }
-        if (_source.isPath()) {
+        if (_source.isFile()) {
             if (Files.isDirectory(_source.getFilePath())) {
                 // this is a directory!!!
                 if (!target.isPath()) {
@@ -629,7 +629,7 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
                     );
                 }
                 try {
-                    if (_source.isPath()) {
+                    if (_source.isFile()) {
                         copy(_source.getFilePath(), temp, StandardCopyOption.REPLACE_EXISTING);
                     } else {
                         try (InputStream ins = _source.open()) {
@@ -654,7 +654,7 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
                 if (_target_isPath) {
                     Path to = target.getFilePath();
                     CoreIOUtils.mkdirs(to.getParent());
-                    if (_source.isPath()) {
+                    if (_source.isFile()) {
                         copy(_source.getFilePath(), target.getFilePath(), StandardCopyOption.REPLACE_EXISTING);
                     } else {
                         try (InputStream ins = _source.open()) {
@@ -666,7 +666,7 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
                     ByteArrayOutputStream bos = null;
                     if (checker != null) {
                         bos = new ByteArrayOutputStream();
-                        if (_source.isPath()) {
+                        if (_source.isFile()) {
                             copy(_source.getFilePath(), bos);
                         } else {
                             try (InputStream ins = _source.open()) {
@@ -678,7 +678,7 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
                         }
                         _validate(bos.toByteArray());
                     } else {
-                        if (_source.isPath()) {
+                        if (_source.isFile()) {
                             try (OutputStream ops = target.open()) {
                                 copy(_source.getFilePath(), ops);
                             }

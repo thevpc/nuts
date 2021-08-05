@@ -4,7 +4,6 @@
     <output url="file://$MODULE_DIR$/target/classes" />
     <output-test url="file://$MODULE_DIR$/target/test-classes" />
     <content url="file://$MODULE_DIR$">
-      <excludeFolder url="file://$MODULE_DIR$/target" />
       <excludeFolder url="file://$MODULE_DIR$/core/nutsc/build" />
       <excludeFolder url="file://$MODULE_DIR$/core/nutsc/dist" />
       <excludeFolder url="file://$MODULE_DIR$/lsp/conf" />
@@ -17,6 +16,7 @@
       <excludeFolder url="file://$MODULE_DIR$/website/build" />
       <excludeFolder url="file://$MODULE_DIR$/website/docs" />
       <excludeFolder url="file://$MODULE_DIR$/website/node_modules" />
+      <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

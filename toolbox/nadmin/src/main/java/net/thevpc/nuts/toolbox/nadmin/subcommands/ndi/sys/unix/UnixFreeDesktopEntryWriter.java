@@ -1,11 +1,12 @@
 package net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.sys.unix;
 
+import net.thevpc.nuts.NutsId;
 import net.thevpc.nuts.NutsPrintStream;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.toolbox.nadmin.PathInfo;
+import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.AbstractFreeDesktopEntryWriter;
 import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.FreeDesktopEntry;
-import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.FreeDesktopEntryWriter;
-import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.NdiScriptInfo;
+import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.NdiScriptInfoType;
 import net.thevpc.nuts.toolbox.nadmin.util._IOUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -13,68 +14,94 @@ import org.w3c.dom.Element;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.*;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
-public class UnixFreeDesktopEntryWriter implements FreeDesktopEntryWriter {
+public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
     private NutsSession session;
     private Path desktopPath;
 
-    public UnixFreeDesktopEntryWriter(NutsSession session,Path desktopPath) {
+    public UnixFreeDesktopEntryWriter(NutsSession session, Path desktopPath) {
         this.session = session;
         this.desktopPath = desktopPath;
     }
 
+
     @Override
-    public PathInfo[] writeDesktop(FreeDesktopEntry file, boolean doOverride) {
-        String name = file.getOrCreateDesktopEntry().getName();
-        File m = new File(desktopPath.toString());
-        File q = new File(m, name + ".desktop");
-        boolean alreadyExists = q.exists();
+    public PathInfo[] writeShortcut(FreeDesktopEntry descriptor, Path path, boolean doOverride, NutsId id) {
+        path=Paths.get(ensureName(path==null?null:path.toString(),descriptor.getOrCreateDesktopEntry().getName(),"desktop"));
+        boolean alreadyExists = Files.isRegularFile(path);
         if (alreadyExists && !doOverride) {
-            return new PathInfo[]{new PathInfo(NdiScriptInfo.Type.DESKTOP_SHORTCUT, q.toPath(), PathInfo.Status.DISCARDED)};
+            return new PathInfo[]{new PathInfo(NdiScriptInfoType.DESKTOP_SHORTCUT, id,path, PathInfo.Status.DISCARDED)};
         }
-        write(file, q);
-        return new PathInfo[]{new PathInfo(NdiScriptInfo.Type.DESKTOP_SHORTCUT, q.toPath(), alreadyExists ? PathInfo.Status.OVERRIDDEN : PathInfo.Status.CREATED)};
+        write(descriptor, path);
+        return new PathInfo[]{new PathInfo(NdiScriptInfoType.DESKTOP_SHORTCUT, id,path, alreadyExists ? PathInfo.Status.OVERRIDDEN : PathInfo.Status.CREATED)};
     }
 
     @Override
-    public PathInfo[] writeMenu(FreeDesktopEntry file, String menuPath, boolean doOverride) {
-        String name = file.getOrCreateDesktopEntry().getName();
-        String[] part = Arrays.stream((menuPath == null ? "" : menuPath).split("/")).filter(x -> !x.isEmpty()).toArray(String[]::new);
-        if (part.length == 0) {
-            part = new String[]{"Applications"};
-        } else if (!part[0].equals("Applications")) {
-            List<String> li = new ArrayList<>();
-            li.add("Applications");
-            li.addAll(Arrays.asList(part));
-            part = li.toArray(new String[0]);
-        }
-        String menuName = name;//"nuts-" + UUID.randomUUID();
-        File folder4shortcuts = new File(System.getProperty("user.home") + "/.local/share/applications");
-        File folder4menus = new File(System.getProperty("user.home") + "/.config/menus/applications-merged");
-        folder4shortcuts.mkdirs();
-        folder4menus.mkdirs();
-        try {
-            File shortcutFile = new File(folder4shortcuts, name + ".desktop");
-            boolean shortcutFileAlreadyExists = shortcutFile.exists();
-            byte[] oldShortcutContent = _IOUtils.loadFileContentLenient(shortcutFile.toPath());
-            if (!shortcutFileAlreadyExists || doOverride) {
-                write(file, shortcutFile);
-            }
-            PathInfo shortcutPathInfo = new PathInfo(
-                    NdiScriptInfo.Type.DESKTOP_MENU,
-                    shortcutFile.toPath(), shortcutFileAlreadyExists ? PathInfo.Status.OVERRIDDEN : PathInfo.Status.CREATED);
+    public PathInfo[] writeDesktop(FreeDesktopEntry descriptor, String fileName, boolean doOverride, NutsId id) {
+        fileName=Paths.get(ensureName(fileName,descriptor.getOrCreateDesktopEntry().getName(),"desktop")).getFileName().toString();
+        File q = desktopPath.resolve(fileName).toFile();
+        return writeShortcut(descriptor,q.toPath(),doOverride,id);
+    }
 
-            //menu
-            DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-            Document dom = builder.newDocument();
+    @Override
+    public PathInfo[] writeMenu(FreeDesktopEntry descriptor, String fileName, boolean doOverride, NutsId id) {
+        String menuFileName=Paths.get(ensureName(fileName,descriptor.getOrCreateDesktopEntry().getName(),"menu")).getFileName().toString();
+        String desktopFileName=Paths.get(ensureName(fileName,descriptor.getOrCreateDesktopEntry().getName(),"desktop")).getFileName().toString();
+
+        List<PathInfo> all = new ArrayList<>();
+        FreeDesktopEntry.Group root = descriptor.getOrCreateDesktopEntry();
+        File folder4shortcuts = new File(System.getProperty("user.home") + "/.local/share/applications");
+        folder4shortcuts.mkdirs();
+        PathInfo shortcutPathInfo = null;
+//        String name = root.getName();
+        File shortcutFile = new File(folder4shortcuts, desktopFileName);
+        boolean shortcutFileAlreadyExists = shortcutFile.exists();
+        byte[] oldShortcutContent = _IOUtils.loadFileContentLenient(shortcutFile.toPath());
+        if (!shortcutFileAlreadyExists || doOverride) {
+            write(descriptor, shortcutFile);
+        }
+        shortcutPathInfo = new PathInfo(
+                NdiScriptInfoType.DESKTOP_MENU,id,
+                shortcutFile.toPath(), shortcutFileAlreadyExists ? PathInfo.Status.OVERRIDDEN : PathInfo.Status.CREATED);
+        all.add(shortcutPathInfo);
+
+        List<String> categories = new ArrayList<>(root.getCategories());
+        if (categories.isEmpty()) {
+            categories.add("/");
+        }
+        File folder4menus = new File(System.getProperty("user.home") + "/.config/menus/applications-merged");
+        folder4menus.mkdirs();
+
+        for (String menuPath : categories) {
+            String[] part = Arrays.stream((menuPath == null ? "" : menuPath).split("/")).filter(x -> !x.isEmpty()).toArray(String[]::new);
+            if (part.length == 0) {
+                part = new String[]{"Applications"};
+            } else if (!part[0].equals("Applications")) {
+                List<String> li = new ArrayList<>();
+                li.add("Applications");
+                li.addAll(Arrays.asList(part));
+                part = li.toArray(new String[0]);
+            }
+            try {
+
+                //menu
+                DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+                Document dom = builder.newDocument();
 //        <Menu>
 //    <Name>Applications</Name>
 //    <Menu>
@@ -89,39 +116,42 @@ public class UnixFreeDesktopEntryWriter implements FreeDesktopEntryWriter {
 //        </Menu>
 //    </Menu>
 //</Menu>
-            dom.appendChild(createMenuXmlElement(part, menuName + ".desktop", dom));
-            // write DOM to XML file
-            Transformer tr = TransformerFactory.newInstance().newTransformer();
-            tr.setOutputProperty(OutputKeys.INDENT, "yes");
-            ByteArrayOutputStream b = new ByteArrayOutputStream();
-            tr.transform(new DOMSource(dom), new StreamResult(b));
-            File menuFile = new File(folder4menus, name + ".menu");
-            byte[] oldMenuContent = _IOUtils.loadFileContentLenient(menuFile.toPath());
-            PathInfo menuPathInfo;
-            if (Arrays.equals(oldMenuContent, b.toByteArray())) {
-                menuPathInfo = new PathInfo(NdiScriptInfo.Type.DESKTOP_MENU, menuFile.toPath(), PathInfo.Status.DISCARDED);
-            } else {
-                boolean alreadyExists0 = menuFile.isFile();
-                if (!alreadyExists0 || doOverride) {
-                    Files.write(menuFile.toPath(), b.toByteArray());
-                    //should we run
-                    //    KDE  : 'kbuildsycoca5'
-                    //    GNOME: update-desktop-database ~/.local/share/applications
-                    // more generic : xdg-desktop-menu forceupdate
-                }
-                if (alreadyExists0) {
-                    menuPathInfo = new PathInfo(NdiScriptInfo.Type.DESKTOP_MENU,menuFile.toPath(), PathInfo.Status.OVERRIDDEN);
+                dom.appendChild(createMenuXmlElement(part, desktopFileName, dom));
+                // write DOM to XML file
+                Transformer tr = TransformerFactory.newInstance().newTransformer();
+                tr.setOutputProperty(OutputKeys.INDENT, "yes");
+                ByteArrayOutputStream b = new ByteArrayOutputStream();
+                tr.transform(new DOMSource(dom), new StreamResult(b));
+                File menuFile = new File(folder4menus, menuFileName);
+                byte[] oldMenuContent = _IOUtils.loadFileContentLenient(menuFile.toPath());
+                PathInfo menuPathInfo;
+                if (Arrays.equals(oldMenuContent, b.toByteArray())) {
+                    menuPathInfo = new PathInfo(NdiScriptInfoType.DESKTOP_MENU, id,menuFile.toPath(), PathInfo.Status.DISCARDED);
                 } else {
-                    menuPathInfo = new PathInfo(NdiScriptInfo.Type.DESKTOP_MENU,menuFile.toPath(), PathInfo.Status.CREATED);
+                    boolean alreadyExists0 = menuFile.isFile();
+                    if (!alreadyExists0 || doOverride) {
+                        Files.write(menuFile.toPath(), b.toByteArray());
+                    }
+                    if (alreadyExists0) {
+                        menuPathInfo = new PathInfo(NdiScriptInfoType.DESKTOP_MENU, id,menuFile.toPath(), PathInfo.Status.OVERRIDDEN);
+                    } else {
+                        menuPathInfo = new PathInfo(NdiScriptInfoType.DESKTOP_MENU, id,menuFile.toPath(), PathInfo.Status.CREATED);
+                    }
                 }
+                all.add(menuPathInfo);
+            } catch (IOException ex) {
+                throw new UncheckedIOException(ex);
+            } catch (ParserConfigurationException | TransformerException ex) {
+                throw new RuntimeException(ex);
             }
-
-            return new PathInfo[]{shortcutPathInfo, menuPathInfo};
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
-        } catch (ParserConfigurationException | TransformerException ex) {
-            throw new RuntimeException(ex);
         }
+        if (all.stream().anyMatch(x -> x.getStatus() != PathInfo.Status.DISCARDED)) {
+            //should we run
+            //    KDE  : 'kbuildsycoca5'
+            //    GNOME: update-desktop-database ~/.local/share/applications
+            // more generic : xdg-desktop-menu forceupdate
+        }
+        return all.toArray(new PathInfo[0]);
     }
 
     private Element createMenuXmlElement(String[] a, String name, Document dom) {
@@ -222,9 +252,9 @@ public class UnixFreeDesktopEntryWriter implements FreeDesktopEntryWriter {
                 String key = e.getKey();
                 if (value instanceof FreeDesktopEntry.Type) {
                     String v = value.toString().toLowerCase();
-                    v=Character.toUpperCase(v.charAt(0))+v.substring(1);
+                    v = Character.toUpperCase(v.charAt(0)) + v.substring(1);
                     out.println(key + "=" + v);
-                }else if (value instanceof Boolean || value instanceof String) {
+                } else if (value instanceof Boolean || value instanceof String) {
                     out.println(key + "=" + value);
                 } else if (value instanceof List) {
                     char sep = ';';

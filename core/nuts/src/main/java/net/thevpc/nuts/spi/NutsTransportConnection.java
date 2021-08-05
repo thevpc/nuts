@@ -26,7 +26,7 @@
 */
 package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.NutsURLHeader;
+import net.thevpc.nuts.NutsPath;
 
 import java.io.InputStream;
 import java.io.UncheckedIOException;
@@ -46,12 +46,7 @@ public interface NutsTransportConnection {
      */
     InputStream open();
 
-    /**
-     * parse connection header and return meaningful information
-     * @return a valid NutsURLHeader instance
-     * @throws UncheckedIOException if the connection is not valid
-     */
-    NutsURLHeader getURLHeader() throws UncheckedIOException;
+    NutsPath getPath();
 
     /**
      * parse connection header and return meaningful information
@@ -59,5 +54,5 @@ public interface NutsTransportConnection {
      * @return InputStream stream to the remote server to read returned resource
      * @throws UncheckedIOException if the connection is not valid
      */
-    InputStream upload(NutsTransportParamPart... parts) throws UncheckedIOException;
+    InputStream upload(NutsTransportParamPart... parts);
 }

@@ -425,7 +425,7 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
             }
             if (o instanceof NutsInput) {
                 NutsInput s = (NutsInput) o;
-                if (s.isPath()) {
+                if (s.isFile()) {
                     return Files.isDirectory(s.getFilePath());
                 }
             }
@@ -452,7 +452,7 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
             }
             if (o instanceof NutsInput) {
                 NutsInput s = (NutsInput) o;
-                if (s.isPath()) {
+                if (s.isFile()) {
                     Path o1 = s.getFilePath();
                     try {
                         return Files.list(o1).map(Item::new).toArray(Item[]::new);

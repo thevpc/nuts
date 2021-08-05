@@ -32,6 +32,20 @@ public class FilePath extends NutsPathBase implements NutsPathSPI {
     }
 
     @Override
+    public String getContentEncoding() {
+        return null;
+    }
+
+    @Override
+    public String getContentType() {
+        try {
+            return Files.probeContentType(value);
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hash(value);
     }
@@ -138,7 +152,7 @@ public class FilePath extends NutsPathBase implements NutsPathSPI {
         return Files.exists(value);
     }
 
-    public long length() {
+    public long getContentLength() {
         try {
             return Files.size(value);
         } catch (IOException e) {
@@ -223,7 +237,7 @@ public class FilePath extends NutsPathBase implements NutsPathSPI {
         @Override
         public InputStream open() {
             return new InputStreamMetadataAwareImpl(inputStream(), new FixedInputStreamMetadata(getNutsPath().toString(),
-                    getNutsPath().length()));
+                    getNutsPath().getContentLength()));
         }
     }
 

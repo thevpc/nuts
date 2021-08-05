@@ -13,9 +13,21 @@ public class FreeDesktopEntry {
     //#!/usr/bin/env xdg-open
     private Map<String, Group> groups = new LinkedHashMap<>();
 
+    public void add(Group g) {
+        if (g.getGroupName() == null) {
+            throw new IllegalArgumentException("illegal free desktop group Name");
+        }
+        groups.put(g.getGroupName(), g);
+    }
+
     public Group getOrCreateDesktopEntry() {
-        Group q = getOrCreateGroup(GROUP_DESKTOP_ENTRY);
-        if(q.getType()==null){
+        Group q = groups.get(GROUP_DESKTOP_ENTRY);
+        if (q == null) {
+            q = Group.desktopEntry(null, null, System.getProperty("user.home"));
+            groups.put(GROUP_DESKTOP_ENTRY, q);
+        }
+        if (q.getType() == null) {
+            //should never happen
             q.setType(Type.APPLICATION);
         }
         return q;
@@ -37,6 +49,10 @@ public class FreeDesktopEntry {
 
     public static class Group {
         private final String groupName;
+        /**
+         * menu path/category, will not be persisted
+         */
+
         /**
          * Version of the Desktop Group Specification that the desktop entry conforms with. Entries that confirm with this version of the specification should use 1.5. Note that the version field is not required to be present.
          */
@@ -177,6 +193,10 @@ public class FreeDesktopEntry {
             this.groupName = groupName;
         }
 
+
+        public static Group desktopEntry(String name, String exec, String path) {
+            return application(GROUP_DESKTOP_ENTRY, name, exec, path);
+        }
 
         public static Group application(String entryId, String name, String exec, String path) {
             return new Group(entryId).setType(Type.APPLICATION)
@@ -402,6 +422,13 @@ public class FreeDesktopEntry {
 
         public List<String> getCategories() {
             return categories;
+        }
+
+        public Group addCategory(String category) {
+            if(category!=null && !categories.contains(category)){
+                categories.add(category);
+            }
+            return this;
         }
 
         public Group setCategories(List<String> categories) {

@@ -605,6 +605,11 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     @Override
     public ClassLoader getResultClassLoader(ClassLoader parent) {
         checkSession();
+
+        //force content and dependencies!
+        setContent(true);
+        setDependencies(true);
+
         List<NutsDefinition> nutsDefinitions = getResultDefinitions().list();
         URL[] allURLs = new URL[nutsDefinitions.size()];
         NutsId[] allIds = new NutsId[nutsDefinitions.size()];
@@ -679,7 +684,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     @Override
     public NutsResultList<Instant> getResultInstallDates() {
         return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
-                .map(x -> (x.getInstallInformation() == null) ? null : x.getInstallInformation().getCreatedDate())
+                .map(x -> (x.getInstallInformation() == null) ? null : x.getInstallInformation().getCreatedInstant())
                 .notNull());
     }
 

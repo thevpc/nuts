@@ -52,7 +52,7 @@ public abstract class NutsPathInput extends CoreIOUtils.AbstractMultiReadItem {
 
     @Override
     public long length() {
-        return getNutsPath().length();
+        return getNutsPath().getContentLength();
     }
 
     @Override
@@ -66,7 +66,7 @@ public abstract class NutsPathInput extends CoreIOUtils.AbstractMultiReadItem {
     }
 
     @Override
-    public Instant getLastModified() {
+    public Instant getLastModifiedInstant() {
         return getNutsPath().getLastModifiedInstant();
     }
 

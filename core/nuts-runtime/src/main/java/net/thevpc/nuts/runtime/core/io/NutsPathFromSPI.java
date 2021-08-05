@@ -33,6 +33,16 @@ public class NutsPathFromSPI extends NutsPathBase {
     }
 
     @Override
+    public String getContentEncoding() {
+        return base.getContentEncoding();
+    }
+
+    @Override
+    public String getContentType() {
+        return base.getContentType();
+    }
+
+    @Override
     public String asString() {
         return base.asString();
     }
@@ -92,8 +102,8 @@ public class NutsPathFromSPI extends NutsPathBase {
     }
 
     @Override
-    public long length() {
-        return base.length();
+    public long getContentLength() {
+        return base.getContentLength();
     }
 
     @Override
@@ -115,7 +125,7 @@ public class NutsPathFromSPI extends NutsPathBase {
                 public boolean configureFirst(NutsCommandLine commandLine) {
                     return fspi.configureFirst(commandLine);
                 }
-            };
+            }.setSession(getSession());
         }
         return super.formatter();
     }
@@ -146,7 +156,7 @@ public class NutsPathFromSPI extends NutsPathBase {
         @Override
         public InputStream open() {
             return new InputStreamMetadataAwareImpl(base.inputStream(), new FixedInputStreamMetadata(getNutsPath().toString(),
-                    getNutsPath().length()));
+                    getNutsPath().getContentLength()));
         }
     }
 }

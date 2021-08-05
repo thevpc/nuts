@@ -1,13 +1,11 @@
 package net.thevpc.nuts.runtime.bundles.http;
 
-import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.standalone.io.DefaultNutsURLHeader;
+import net.thevpc.nuts.NutsPath;
+import net.thevpc.nuts.NutsSession;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -47,14 +45,17 @@ public class SimpleHttpClient {
     private Instant lastModified;
     private int connectTimeout = 5000;
     private int readTimeout = 5000;
+    private NutsSession session;
 
-    public SimpleHttpClient(URL url) {
+    public SimpleHttpClient(URL url, NutsSession session) {
         this.url = url;
+        this.session = session;
     }
 
-    public SimpleHttpClient(String url) {
+    public SimpleHttpClient(String url,NutsSession session) {
         try {
             this.url = new URL(url);
+            this.session=session;
         } catch (MalformedURLException e) {
             throw new UncheckedIOException(e);
         }
@@ -95,37 +96,11 @@ public class SimpleHttpClient {
     }
 
     private void readHeader() {
-        if (url.getProtocol().equals("file")) {
-            File f = CoreIOUtils.toFile(url);
-            DefaultNutsURLHeader info = new DefaultNutsURLHeader(url.toString());
-            this.contentEncoding = null;
-            this.contentType = null;
-            this.contentLength = f.length();
-            this.lastModified = (Instant.ofEpochMilli(f.lastModified()));
-        } else {
-            URLConnection conn = null;
-            try {
-                try {
-                    conn = prepareConnection();
-                    if (conn instanceof HttpURLConnection) {
-                        ((HttpURLConnection) conn).setRequestMethod("HEAD");
-                    }
-                    conn.getInputStream();
-                } catch (IOException ex) {
-                    throw new UncheckedIOException(ex);
-                }
-                this.contentType = conn.getContentType();
-                this.contentEncoding = conn.getContentEncoding();
-                this.contentLength = conn.getContentLengthLong();
-                String hf = conn.getHeaderField("last-modified");
-                long m = (hf == null) ? 0 : conn.getLastModified();
-                this.lastModified = m == 0 ? null : Instant.ofEpochMilli(m);
-            } finally {
-                if (conn instanceof HttpURLConnection) {
-                    ((HttpURLConnection) conn).disconnect();
-                }
-            }
-        }
+        NutsPath info = session.getWorkspace().io().path(url);
+        this.contentEncoding = info.getContentEncoding();
+        this.contentType = info.getContentType();
+        this.contentLength = info.getContentLength();
+        this.lastModified = info.getLastModifiedInstant();
     }
 
     public long getContentLength() {
@@ -143,7 +118,7 @@ public class SimpleHttpClient {
         return contentEncoding;
     }
 
-    public Instant getLastModified() {
+    public Instant getLastModifiedInstant() {
         tryReadHeader();
         return lastModified;
     }

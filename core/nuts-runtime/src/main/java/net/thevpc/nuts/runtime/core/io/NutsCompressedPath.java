@@ -126,6 +126,16 @@ public class NutsCompressedPath extends NutsPathBase {
     }
 
     @Override
+    public String getContentEncoding() {
+        return base.getContentEncoding();
+    }
+
+    @Override
+    public String getContentType() {
+        return base.getContentType();
+    }
+
+    @Override
     public String getName() {
         return base.getName();
     }
@@ -181,8 +191,8 @@ public class NutsCompressedPath extends NutsPathBase {
     }
 
     @Override
-    public long length() {
-        return base.length();
+    public long getContentLength() {
+        return base.getContentLength();
     }
 
     @Override

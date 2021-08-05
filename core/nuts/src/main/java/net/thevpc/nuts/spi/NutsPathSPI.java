@@ -1,9 +1,7 @@
 package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.NutsFormat;
 import net.thevpc.nuts.NutsPath;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsString;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -12,7 +10,7 @@ import java.nio.file.Path;
 import java.time.Instant;
 
 public interface NutsPathSPI {
-    NutsFormatSPI getFormatterSPI() ;
+    NutsFormatSPI getFormatterSPI();
 
     default String getName() {
         return null;
@@ -32,7 +30,11 @@ public interface NutsPathSPI {
 
     boolean exists();
 
-    long length();
+    long getContentLength();
+
+    String getContentEncoding();
+
+    String getContentType();
 
     String toString();
 

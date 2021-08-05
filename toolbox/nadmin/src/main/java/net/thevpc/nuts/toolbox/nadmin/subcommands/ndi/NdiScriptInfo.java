@@ -26,6 +26,7 @@
 package net.thevpc.nuts.toolbox.nadmin.subcommands.ndi;
 
 import net.thevpc.nuts.NutsId;
+import net.thevpc.nuts.toolbox.nadmin.PathInfo;
 
 import java.nio.file.Path;
 
@@ -33,57 +34,9 @@ import java.nio.file.Path;
  *
  * @author thevpc
  */
-public class NdiScriptInfo {
+public interface NdiScriptInfo {
 
-    private final String name;
-    private final Path path;
-    private final boolean override;
-    private final Type type;
-    private NutsId id;
+    Path path();
 
-    public NdiScriptInfo(Type type, String name, NutsId id, Path path, boolean override) {
-        this.type = type;
-        this.path = path;
-        this.name = name;
-        this.id = id;
-        this.override = override;
-    }
-
-    public Type getType() {
-        return type;
-    }
-
-    public boolean isOverride() {
-        return override;
-    }
-
-    public Path getPath() {
-        return path;
-    }
-
-    public NutsId getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public String toString() {
-        return "{ id=" + id + ", name=" + name + ", path=" + path + '}';
-    }
-
-    public enum Type {
-        DESKTOP_SHORTCUT,
-        DESKTOP_MENU,
-        NUTS_WITH_ENV,
-        NUTS_RC,
-        NUTS_WITHOUT_ENV,
-        ARTIFACT_WITH_ENV,
-        ARTIFACT_WITHOUT_ENV,
-        ;
-
-    }
-
+    PathInfo create();
 }

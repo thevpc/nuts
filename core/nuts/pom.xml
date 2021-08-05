@@ -6,9 +6,17 @@
     <artifactId>nuts</artifactId>
     <version>0.8.1</version>
     <packaging>jar</packaging>
-    <name>net.thevpc.nuts.nuts</name>
+    <name>Nuts Package Manager</name>
     <url>https://github.com/thevpc/nuts</url>
     <description>Network Updatable Things Services Bootstrap</description>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <github.global.server>github</github.global.server>
+        <nuts.genericName>Package Manager</nuts.genericName>
+        <nuts.category>/Utilities/Nuts</nuts.category>
+    </properties>
     <scm>
         <connection>scm:git:git://github.com/thevpc/nuts.git</connection>
         <developerConnection>scm:git:ssh://github.com:thevpc/nuts.git</developerConnection>
@@ -46,12 +54,6 @@
         </license>
     </licenses>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <github.global.server>github</github.global.server>
-    </properties>
     <dependencies>
     </dependencies>
     <distributionManagement>

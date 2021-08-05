@@ -636,11 +636,11 @@ public class NutsWorkspaceUtils {
     }
 
     public InputStream openURL(String o) {
-        return new SimpleHttpClient(o).openStream();
+        return new SimpleHttpClient(o,session).openStream();
     }
 
     public InputStream openURL(URL o) {
-        return new SimpleHttpClient(o).openStream();
+        return new SimpleHttpClient(o,session).openStream();
     }
 
     //    public static NutsId parseRequiredNutsId0(String nutFormat) {

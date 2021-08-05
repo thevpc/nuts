@@ -49,9 +49,9 @@ public interface NutsInstallInformation {
      *
      * @return installation date
      */
-    Instant getCreatedDate();
+    Instant getCreatedInstant();
 
-    Instant getLastModifiedDate();
+    Instant getLastModifiedInstant();
 
     /**
      * true when the installed artifact is default version

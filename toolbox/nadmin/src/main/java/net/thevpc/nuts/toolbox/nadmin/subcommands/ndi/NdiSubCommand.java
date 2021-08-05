@@ -1,9 +1,11 @@
 package net.thevpc.nuts.toolbox.nadmin.subcommands.ndi;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.toolbox.nadmin.PathInfo;
 import net.thevpc.nuts.toolbox.nadmin.optional.oswindows.OptionalWindows;
 import net.thevpc.nuts.toolbox.nadmin.subcommands.AbstractNAdminSubCommand;
 import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.base.CreateNutsScriptCommand;
+import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.base.DefaultNutsEnvInfo;
 import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.sys.unix.LinuxNdi;
 import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.sys.unix.MacosNdi;
 import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.sys.unix.UnixNdi;
@@ -14,6 +16,7 @@ import java.io.UncheckedIOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class NdiSubCommand extends AbstractNAdminSubCommand {
@@ -203,11 +206,15 @@ public class NdiSubCommand extends AbstractNAdminSubCommand {
                 subTrace = false;
             }
             if (!idsToUninstall.isEmpty()) {
+                DefaultNutsEnvInfo env = new DefaultNutsEnvInfo(
+                        null, null/*switchWorkspaceLocation*/, context.getSession()
+                );
                 for (String id : idsToUninstall) {
                     try {
                         ndi.removeNutsScript(
                                 id,
-                                context.getSession().copy().setTrace(subTrace)
+                                context.getSession().copy().setTrace(subTrace),
+                                env
                         );
                     } catch (UncheckedIOException e) {
                         throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("unable to run script %s : %s", id, e), e);
@@ -221,12 +228,14 @@ public class NdiSubCommand extends AbstractNAdminSubCommand {
         NutsWorkspace ws = context.getWorkspace();
         String switchWorkspaceLocation = null;
         String switchWorkspaceApi = null;
-        List<NdiScriptInfo> result = new ArrayList<NdiScriptInfo>();
         ArrayList<String> executorOptions = new ArrayList<>();
         NutsExecutionType execType = null;
         NutsArgument a;
         Runnable action = null;
         boolean ignoreUnsupportedOs = false;
+        boolean createDesktop = false;
+        boolean createMenu = false;
+        String menuPath = null;
         while (commandLine.hasNext()) {
             if ((a = commandLine.nextString("--ignore-unsupported-os")) != null) {
                 if (a.isEnabled()) {
@@ -236,6 +245,21 @@ public class NdiSubCommand extends AbstractNAdminSubCommand {
                 switchWorkspaceLocation = commandLine.nextString().getStringValue();
             } else if (commandLine.peek().getStringKey().equals("-a") || commandLine.peek().getStringKey().equals("--api")) {
                 switchWorkspaceApi = commandLine.nextString().getStringValue();
+            } else if ((a = commandLine.nextBoolean("--menu")) != null) {
+                if (a.getBooleanValue()) {
+                    createMenu=true;
+                }
+            } else if ((a = commandLine.nextString("--menu-path")) != null) {
+                if (a.isEnabled()) {
+                    menuPath=a.getStringValue();
+                    if(menuPath!=null && !menuPath.isEmpty()){
+                        createMenu=true;
+                    }
+                }
+            } else if ((a = commandLine.nextBoolean("--desktop")) != null) {
+                if (a.getBooleanValue()) {
+                    createDesktop=true;
+                }
             } else if (commandLine.peek().isOption()) {
                 commandLine.unexpectedArgument();
             } else if (switchWorkspaceLocation == null) {
@@ -257,24 +281,26 @@ public class NdiSubCommand extends AbstractNAdminSubCommand {
                 throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("platform not supported : %s ", ws.env().getOs()), 2);
             }
             if (switchWorkspaceLocation != null || switchWorkspaceApi != null) {
-                ndi.switchWorkspace(switchWorkspaceLocation, switchWorkspaceApi);
+                ndi.switchWorkspace(new DefaultNutsEnvInfo(
+                        null,switchWorkspaceLocation, context.getSession()
+                ), createDesktop, createMenu);
             }
         }
 
     }
 
-    private void printResults(NutsApplicationContext context, List<NdiScriptInfo> result) {
+    private void printResults(NutsApplicationContext context, PathInfo[] result) {
         NutsWorkspace ws = context.getWorkspace();
         if (context.getSession().isTrace()) {
             if (context.getSession().isPlainTrace()) {
-                int namesSize = result.stream().mapToInt(x -> x.getName().length()).max().orElse(1);
-                for (NdiScriptInfo ndiScriptInfo : result) {
+                int namesSize = Arrays.stream(result).mapToInt(x -> x.getPath().getFileName().toString().length()).max().orElse(1);
+                for (PathInfo ndiScriptInfo : result) {
                     context.getSession().out().printf("%s script %-" + namesSize + "s for %s"
                                     + " at %s%n",
-                            ndiScriptInfo.isOverride()
+                            ndiScriptInfo.getStatus()!= PathInfo.Status.DISCARDED
                                     ? ws.text().forStyled("re-install", NutsTextStyles.of(NutsTextStyle.success(), NutsTextStyle.underlined()))
                                     : ws.text().forStyled("install", NutsTextStyle.success()),
-                            ndiScriptInfo.getName(),
+                            ndiScriptInfo.getPath().getFileName().toString(),
                             ndiScriptInfo.getId(),
                             ws.text().forStyled(NdiUtils.betterPath(ndiScriptInfo.getPath().toString()), NutsTextStyle.path())
                     );

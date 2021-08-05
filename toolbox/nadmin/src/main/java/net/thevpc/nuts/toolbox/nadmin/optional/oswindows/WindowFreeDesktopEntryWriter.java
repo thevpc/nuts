@@ -1,11 +1,12 @@
 package net.thevpc.nuts.toolbox.nadmin.optional.oswindows;
 
+import net.thevpc.nuts.NutsId;
 import net.thevpc.nuts.NutsPrintStream;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.toolbox.nadmin.PathInfo;
+import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.AbstractFreeDesktopEntryWriter;
 import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.FreeDesktopEntry;
-import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.FreeDesktopEntryWriter;
-import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.NdiScriptInfo;
+import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.NdiScriptInfoType;
 import net.thevpc.nuts.toolbox.nadmin.util._IOUtils;
 
 import java.io.File;
@@ -13,12 +14,14 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class WindowFreeDesktopEntryWriter implements FreeDesktopEntryWriter {
+public class WindowFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
     private NutsSession session;
     private Path desktopPath;
 
@@ -28,8 +31,9 @@ public class WindowFreeDesktopEntryWriter implements FreeDesktopEntryWriter {
     }
 
     @Override
-    public PathInfo[] writeDesktop(FreeDesktopEntry file, boolean doOverride) {
-        FreeDesktopEntry.Group g = file.getOrCreateDesktopEntry();
+    public PathInfo[] writeShortcut(FreeDesktopEntry descriptor, Path path, boolean doOverride, NutsId id) {
+        path = Paths.get(ensureName(path == null ? null : path.toString(), descriptor.getOrCreateDesktopEntry().getName(), "lnk"));
+        FreeDesktopEntry.Group g = descriptor.getOrCreateDesktopEntry();
         if (g == null || g.getType() != FreeDesktopEntry.Type.APPLICATION) {
             throw new IllegalArgumentException("invalid entry");
         }
@@ -50,59 +54,76 @@ public class WindowFreeDesktopEntryWriter implements FreeDesktopEntryWriter {
         try {
             //.setFontSize(16)
             //.setTextColor(5)
-            File m = new File(desktopPath.toString());
-            File q = new File(m, file.getOrCreateDesktopEntry().getName() + ".lnk");
+            File q = path.toFile();
             boolean alreadyExists = q.exists();
             if (alreadyExists && doOverride) {
-                return new PathInfo[]{new PathInfo(NdiScriptInfo.Type.DESKTOP_SHORTCUT, q.toPath(), PathInfo.Status.DISCARDED)};
+                return new PathInfo[]{new PathInfo(NdiScriptInfoType.DESKTOP_SHORTCUT, id, q.toPath(), PathInfo.Status.DISCARDED)};
             }
             se.saveTo(q.toString());
-            return new PathInfo[]{new PathInfo(NdiScriptInfo.Type.DESKTOP_SHORTCUT, q.toPath(), alreadyExists ? PathInfo.Status.OVERRIDDEN : PathInfo.Status.CREATED)};
+            return new PathInfo[]{new PathInfo(NdiScriptInfoType.DESKTOP_SHORTCUT, id, q.toPath(), alreadyExists ? PathInfo.Status.OVERRIDDEN : PathInfo.Status.CREATED)};
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
     }
 
     @Override
-    public PathInfo[] writeMenu(FreeDesktopEntry file, String menuPath, boolean doOverride) {
-        FreeDesktopEntry.Group g = file.getOrCreateDesktopEntry();
-        if (g == null || g.getType() != FreeDesktopEntry.Type.APPLICATION) {
+    public PathInfo[] writeDesktop(FreeDesktopEntry descriptor, String fileName, boolean doOverride, NutsId id) {
+        fileName = Paths.get(ensureName(fileName, descriptor.getOrCreateDesktopEntry().getName(), "lnk")).getFileName().toString();
+        File q = desktopPath.resolve(fileName).toFile();
+        return writeShortcut(descriptor, q.toPath(), doOverride, id);
+    }
+
+    @Override
+    public PathInfo[] writeMenu(FreeDesktopEntry descriptor, String fileName, boolean doOverride, NutsId id) {
+        List<PathInfo> result = new ArrayList<>();
+        FreeDesktopEntry.Group root = descriptor.getOrCreateDesktopEntry();
+        if (root == null || root.getType() != FreeDesktopEntry.Type.APPLICATION) {
             throw new IllegalArgumentException("invalid entry");
         }
-        String wd = g.getPath();
+        String wd = root.getPath();
         if (wd == null) {
             wd = System.getProperty("user.home");
         }
-        mslinks.ShellLink se = mslinks.ShellLink.createLink(g.getExec())
+        mslinks.ShellLink se = mslinks.ShellLink.createLink(root.getExec())
                 .setWorkingDir(wd);
-        if (g.getIcon() == null) {
+        if (root.getIcon() == null) {
             se.setIconLocation("%SystemRoot%\\system32\\SHELL32.dll");
             se.getHeader().setIconIndex(148);
         } else {
-            se.setIconLocation(g.getIcon());
+            se.setIconLocation(root.getIcon());
         }
         se.getConsoleData().setFont(mslinks.extra.ConsoleData.Font.Consolas);
-
-
-        String[] part = Arrays.stream((menuPath == null ? "" : menuPath).split("/")).filter(x -> !x.isEmpty()).toArray(String[]::new);
-        File m = new File(System.getProperty("user.home") + "\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs");
-        if (part.length > 0) {
-            m = new File(m, String.join("\\", part));
-            m.mkdirs();
+        List<String> categories = new ArrayList<>(root.getCategories());
+        if (categories.isEmpty()) {
+            categories.add("/");
         }
-        try {
-            //.setFontSize(16)
-            //.setTextColor(5)
-            File q = new File(m, file.getOrCreateDesktopEntry().getName() + ".lnk");
-            boolean alreadyExists = q.exists();
-            if (alreadyExists && doOverride) {
-                return new PathInfo[]{new PathInfo(NdiScriptInfo.Type.DESKTOP_MENU, q.toPath(), PathInfo.Status.DISCARDED)};
+        for (String category : categories) {
+            List<String> part = Arrays.stream((category == null ? "" : category).split("/")).filter(x -> !x.isEmpty()).collect(Collectors.toList());
+
+            File m = new File(System.getProperty("user.home") + "\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs");
+            if (!part.isEmpty() && part.get(0).equals("Applications")) {
+                part.remove(0);
             }
-            se.saveTo(q.getPath());
-            return new PathInfo[]{new PathInfo(NdiScriptInfo.Type.DESKTOP_MENU, q.toPath(), alreadyExists ? PathInfo.Status.OVERRIDDEN : PathInfo.Status.CREATED)};
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            if (part.size() > 0) {
+                m = new File(m, String.join("\\", part));
+                m.mkdirs();
+            }
+            try {
+                //.setFontSize(16)
+                //.setTextColor(5)
+                File q = new File(m, descriptor.getOrCreateDesktopEntry().getName() + ".lnk");
+                boolean alreadyExists = q.exists();
+                if (alreadyExists && doOverride) {
+                    result.add(new PathInfo(NdiScriptInfoType.DESKTOP_MENU, id, q.toPath(), PathInfo.Status.DISCARDED));
+                } else {
+                    se.saveTo(q.getPath());
+                    result.add(new PathInfo(NdiScriptInfoType.DESKTOP_MENU, id, q.toPath(), alreadyExists ? PathInfo.Status.OVERRIDDEN : PathInfo.Status.CREATED));
+                }
+            } catch (IOException ex) {
+                throw new UncheckedIOException(ex);
+            }
         }
+        return result.toArray(new PathInfo[0]);
     }
 
     public void write(FreeDesktopEntry file, Path out) {
