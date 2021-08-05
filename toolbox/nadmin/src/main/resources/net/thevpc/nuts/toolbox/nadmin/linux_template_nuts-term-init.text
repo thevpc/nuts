@@ -13,6 +13,7 @@ if [ -f "~/.bashrc" ]; then
     . "~/.bashrc"
 fi
 
-/bin/bash --init-file $$SCRIPT_NUTS_TERM_INIT$$
+source $$SCRIPT_NUTS_INIT$$
+source $$SCRIPT_NUTS$$ welcome
 
 # END-COMMAND

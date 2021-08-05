@@ -18,6 +18,6 @@ public class ReplaceString {
     }
 
     public boolean matches(String str) {
-        return expression.matches(str);
+        return str.matches(expression);
     }
 }

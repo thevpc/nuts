@@ -3,7 +3,9 @@ package net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.sys.unix;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.nadmin.PathInfo;
 import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.*;
-import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.base.*;
+import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.base.BaseSystemNdi;
+import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.base.NameBuilder;
+import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.base.NutsEnvInfo;
 import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.util.ReplaceString;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,15 +28,55 @@ public class AnyNixNdi extends BaseSystemNdi {
         super(appContext);
     }
 
+    public String getBashrcName() {
+        return ".bashrc";
+    }
+
+    public PathInfo[] createCallNutsRC(String fileName, NutsEnvInfo env) {
+        Path sysrcFile = null;
+        if (fileName == null) {
+            sysrcFile = getSysRC(env).path();
+        } else {
+            sysrcFile = Paths.get(new NameBuilder(env.getNutsApiId(), fileName, env.getNutsApiDef().getDescriptor()).buildName());
+        }
+        Path nutsRcPath = getNutsInit(env).path();
+        //old configs
+        sysrcFile = sysrcFile.toAbsolutePath();
+        return new PathInfo[]{
+                addFileLine(NdiScriptInfoType.NUTS,
+                        env.getNutsApiId(),
+                        sysrcFile,
+                        getCommentLineConfigHeader(),
+                        getCallScriptCommand(nutsRcPath.toString()),
+                        getShebanSh())
+        };
+    }
+
+    public NdiScriptInfo getSysRC(NutsEnvInfo env) {
+        return new NdiScriptInfo() {
+            @Override
+            public Path path() {
+                return Paths.get(System.getProperty("user.home")).resolve(getBashrcName());
+            }
+
+            @Override
+            public PathInfo create() {
+                Path apiConfigFile = path();
+                return addFileLine(NdiScriptInfoType.SYS_RC,
+                        env.getNutsApiId(),
+                        apiConfigFile, getCommentLineConfigHeader(),
+                        getCallScriptCommand(getNutsInit(env).path().toString()),
+                        getShebanSh());
+            }
+        };
+    }
+
+
+
     //    @Override
     public boolean isComments(String line) {
         line = line.trim();
         return line.startsWith("#");
-    }
-
-    //    @Override
-    public String varRef(String v) {
-        return "${"+v+"}";
     }
 
     public String trimComments(String line) {
@@ -43,11 +85,10 @@ public class AnyNixNdi extends BaseSystemNdi {
             while (line.startsWith("#")) {
                 line = line.substring(1);
             }
-            return line;
+            return line.trim();
         }
         throw new IllegalArgumentException("Not a comment: " + line);
     }
-
 
     @Override
     public String createNutsScriptContent(NutsId fnutsId, NdiScriptOptions options) {
@@ -60,83 +101,6 @@ public class AnyNixNdi extends BaseSystemNdi {
         command.append(" \"$@\"");
         return command.toString();
     }
-
-
-    public String getPathVarSep() {
-        return ":";
-    }
-
-    public String toCommentLine(String line) {
-        return "# " + line;
-    }
-
-    @Override
-    protected String getCallScriptCommand(String path,String ... args) {
-        return "source \"" + path + "\" "+Arrays.stream(args).map(a->dblQte(a)).collect(Collectors.joining(" "));
-    }
-
-    @Override
-    protected String getSetVarCommand(String name, String value) {
-        return "name=\""+value+"\"";
-    }
-
-    @Override
-    protected String getSetVarStaticCommand(String name, String value) {
-        return "name=\'"+value+"\'";
-    }
-
-    @Override
-    public String getExecFileName(String name) {
-        return name;
-    }
-
-    @Override
-    protected String getTemplateName(String name) {
-        return "linux_template_"+name+".text";
-    }
-
-    @NotNull
-    protected FreeDesktopEntryWriter createFreeDesktopEntryWriter() {
-        return new UnixFreeDesktopEntryWriter(context.getSession(), getOsDesktopPath());
-    }
-
-//    public PathInfo[] persistConfigGlobal(NutsEnvInfo env, boolean createDesktop, boolean createMenu) {
-//        List<PathInfo> updatedPaths = new ArrayList<>();
-//        if (createDesktop) {
-//            updatedPaths.addAll(Arrays.asList(createLaunchTermShortcutGlobal(AppShortcutTarget.DESKTOP, env)));
-//        }
-//        if (createMenu) {
-//            updatedPaths.addAll(Arrays.asList(createLaunchTermShortcutGlobal(AppShortcutTarget.MENU, env)));
-//        }
-//        updatedPaths.addAll(Arrays.asList(createSysRC(env)));
-//        updatedPaths.addAll(Arrays.asList(createNutsEnv(env)));
-//        updatedPaths.addAll(Arrays.asList(createNutsRC(env)));
-//
-//        return updatedPaths.toArray(new PathInfo[0]);
-//    }
-
-//    public PathInfo[] persistConfigSpecial(String name, String fileName, NutsEnvInfo env, boolean createDesktop, boolean createMenu, boolean createShortcut) {
-//        if (name == null) {
-//            name = "Nuts Terminal " + env.getNutsApiVersion();
-//        }
-//        if (fileName == null) {
-//            fileName = env.getNutsApiId().getLongName().replace(':', '-').replace('#', '-');
-//        }
-//        List<PathInfo> updatedPaths = new ArrayList<>();
-//        if (createDesktop) {
-//            updatedPaths.addAll(Arrays.asList(createLaunchTermShortcut(AppShortcutTarget.DESKTOP, env, name, fileName)));
-//        }
-//        if (createMenu) {
-//            updatedPaths.addAll(Arrays.asList(createLaunchTermShortcut(AppShortcutTarget.MENU, env, name, fileName)));
-//        }
-//        if (createShortcut) {
-//            updatedPaths.addAll(Arrays.asList(createLaunchTermShortcut(AppShortcutTarget.SHORTCUT, env, name, fileName)));
-//        }
-//        updatedPaths.addAll(Arrays.asList(createNutsRC(env, true)));
-////        configurePathShortcut(AppShortcutTarget.DESKTOP, true,nutsId.getVersion().toString(),bootConfig,fileName,session,updatedPaths,discardedPaths);
-////        configurePathShortcut(AppShortcutTarget.MENU, true,nutsId.getVersion().toString(),bootConfig,fileName,session,updatedPaths,discardedPaths);
-//        return updatedPaths.toArray(new PathInfo[0]);
-//    }
 
     public void onPostGlobal(NutsEnvInfo env, PathInfo[] updatedPaths) {
         NutsTextManager factory = context.getWorkspace().text();
@@ -200,8 +164,71 @@ public class AnyNixNdi extends BaseSystemNdi {
         }
     }
 
-    public String getBashrcName() {
-        return ".bashrc";
+    public String toCommentLine(String line) {
+        return "# " + line;
+    }
+
+    @Override
+    protected String getSetVarCommand(String name, String value) {
+        return name +"=\"" + value + "\"";
+    }
+
+    @Override
+    protected String getSetVarStaticCommand(String name, String value) {
+        return name + "='" + value + "'";
+    }
+
+//    public PathInfo[] persistConfigGlobal(NutsEnvInfo env, boolean createDesktop, boolean createMenu) {
+//        List<PathInfo> updatedPaths = new ArrayList<>();
+//        if (createDesktop) {
+//            updatedPaths.addAll(Arrays.asList(createLaunchTermShortcutGlobal(AppShortcutTarget.DESKTOP, env)));
+//        }
+//        if (createMenu) {
+//            updatedPaths.addAll(Arrays.asList(createLaunchTermShortcutGlobal(AppShortcutTarget.MENU, env)));
+//        }
+//        updatedPaths.addAll(Arrays.asList(createSysRC(env)));
+//        updatedPaths.addAll(Arrays.asList(createNutsEnv(env)));
+//        updatedPaths.addAll(Arrays.asList(createNutsRC(env)));
+//
+//        return updatedPaths.toArray(new PathInfo[0]);
+//    }
+
+//    public PathInfo[] persistConfigSpecial(String name, String fileName, NutsEnvInfo env, boolean createDesktop, boolean createMenu, boolean createShortcut) {
+//        if (name == null) {
+//            name = "Nuts Terminal " + env.getNutsApiVersion();
+//        }
+//        if (fileName == null) {
+//            fileName = env.getNutsApiId().getLongName().replace(':', '-').replace('#', '-');
+//        }
+//        List<PathInfo> updatedPaths = new ArrayList<>();
+//        if (createDesktop) {
+//            updatedPaths.addAll(Arrays.asList(createLaunchTermShortcut(AppShortcutTarget.DESKTOP, env, name, fileName)));
+//        }
+//        if (createMenu) {
+//            updatedPaths.addAll(Arrays.asList(createLaunchTermShortcut(AppShortcutTarget.MENU, env, name, fileName)));
+//        }
+//        if (createShortcut) {
+//            updatedPaths.addAll(Arrays.asList(createLaunchTermShortcut(AppShortcutTarget.SHORTCUT, env, name, fileName)));
+//        }
+//        updatedPaths.addAll(Arrays.asList(createNutsRC(env, true)));
+////        configurePathShortcut(AppShortcutTarget.DESKTOP, true,nutsId.getVersion().toString(),bootConfig,fileName,session,updatedPaths,discardedPaths);
+////        configurePathShortcut(AppShortcutTarget.MENU, true,nutsId.getVersion().toString(),bootConfig,fileName,session,updatedPaths,discardedPaths);
+//        return updatedPaths.toArray(new PathInfo[0]);
+//    }
+
+    @Override
+    protected String getCallScriptCommand(String path, String... args) {
+        return "source \"" + path + "\" " + Arrays.stream(args).map(a -> dblQte(a)).collect(Collectors.joining(" "));
+    }
+
+    @Override
+    public String getExecFileName(String name) {
+        return name;
+    }
+
+    @NotNull
+    protected FreeDesktopEntryWriter createFreeDesktopEntryWriter() {
+        return new UnixFreeDesktopEntryWriter(context.getSession(), getOsDesktopPath());
     }
 
     public PathInfo[] createLaunchTermShortcut(AppShortcutTarget appShortcutTarget,
@@ -212,9 +239,9 @@ public class AnyNixNdi extends BaseSystemNdi {
 //        String termCommand = "konsole";
 //        Path homerc = getSysRCPath();
 //        Path nrc = getNutsRcPath(env);
-        String cmd = "/bin/bash --init-file "+getNutsTerm(env).path().toString();
+        String cmd = getNutsTerm(env).path().toString();
         //remove aby path
-        fileName = new NameBuilder(env.getNutsApiId(),fileName==null?name==null?"%n-%v":name:fileName,env.getNutsApiDef().getDescriptor())
+        fileName = new NameBuilder(env.getNutsApiId(), fileName == null ? name == null ? "%n-%v" : name : fileName, env.getNutsApiDef().getDescriptor())
                 .buildName();
         if (name == null) {
             name = "Nuts Terminal " + env.getNutsApiId().getVersion();
@@ -223,7 +250,7 @@ public class AnyNixNdi extends BaseSystemNdi {
                 env.getNutsApiId(),
                 fileName,
                 FreeDesktopEntry.Group.desktopEntry(name, cmd, System.getProperty("user.home"))
-                        .setIcon(resolveIcon(null,env.getNutsApiId()))
+                        .setIcon(resolveIcon(null, env.getNutsApiId()))
                         .setStartNotify(true)
                         .addCategory("/Utilities/Nuts")
                         .setGenericName(env.getNutsApiDef().getDescriptor().getGenericName())
@@ -232,51 +259,17 @@ public class AnyNixNdi extends BaseSystemNdi {
         );
     }
 
-    public PathInfo[] createCallNutsRC(String fileName, NutsEnvInfo env) {
-        Path sysrcFile = null;
-        if (fileName == null) {
-            sysrcFile = getSysRC(env).path();
-        } else {
-            sysrcFile = Paths.get(new NameBuilder(env.getNutsApiId(), fileName, env.getNutsApiDef().getDescriptor()).buildName());
-        }
-        Path nutsRcPath = getNutsRc(env).path();
-        //old configs
-        sysrcFile = sysrcFile.toAbsolutePath();
-        return new PathInfo[]{
-                addFileLine(NdiScriptInfoType.NUTS,
-                        env.getNutsApiId(),
-                        sysrcFile,
-                        getCommentLineConfigHeader(),
-                        getCallScriptCommand(nutsRcPath.toString()),
-                        getShebanSh())
-        };
-    }
-
-    public NdiScriptInfo getSysRC(NutsEnvInfo env) {
-        return new NdiScriptInfo() {
-            @Override
-            public Path path() {
-                return Paths.get(System.getProperty("user.home")).resolve(getBashrcName());
-            }
-
-            @Override
-            public PathInfo create() {
-                Path apiConfigFile = path();
-                return addFileLine(NdiScriptInfoType.SYS_RC,
-                        env.getNutsApiId(),
-                        apiConfigFile, getCommentLineConfigHeader(),
-                        getCallScriptCommand(getNutsRc(env).toString()),
-                        getShebanSh());            }
-        };
-    }
-
-
-
     protected ReplaceString getShebanSh() {
         return SHEBAN_SH;
     }
+
     protected ReplaceString getCommentLineConfigHeader() {
         return COMMENT_LINE_CONFIG_HEADER;
+    }
+
+    @Override
+    protected String getTemplateName(String name) {
+        return "linux_template_" + name + ".text";
     }
 
 
@@ -284,6 +277,15 @@ public class AnyNixNdi extends BaseSystemNdi {
 //        Path p = x.getPath();
 //        return null;
 //    }
+
+    //    @Override
+    public String varRef(String v) {
+        return "${" + v + "}";
+    }
+
+    public String getPathVarSep() {
+        return ":";
+    }
 
     private Path getOsDesktopPath() {
         File f = new File(System.getProperty("user.home"), ".config/user-dirs.dirs");
@@ -323,45 +325,6 @@ public class AnyNixNdi extends BaseSystemNdi {
         return new File(System.getProperty("user.home"), "Desktop").toPath();
     }
 
-    public NdiScriptInfo getNutsWelcome(NutsEnvInfo env) {
-        return new NdiScriptInfo() {
-            @Override
-            public Path path() {
-                return env.getIncFolder().resolve(getExecFileName(".nuts-welcome"));
-            }
 
-            @Override
-            public PathInfo create() {
-                return ScriptBuilder.fromTemplate(NdiScriptInfoType.NUTS_TERM,env.getNutsApiId(),AnyNixNdi.this)
-                        .setPath(path())
-                        .println("#/bin/bash --init-file")
-                        .printCall(getNutsStart(env).path().toString(),"welcome")
-                        .build();
-            }
-        };
-    }
-    @Override
-    public NdiScriptInfo getNutsTerm(NutsEnvInfo env) {
-        return new NdiScriptInfo() {
-            @Override
-            public Path path() {
-                return env.getBinFolder().resolve(getExecFileName("nuts-term"));
-            }
 
-            @Override
-            public PathInfo create() {
-                return ScriptBuilder.fromTemplate(NdiScriptInfoType.NUTS_TERM,env.getNutsApiId(),AnyNixNdi.this)
-                        .setTemplateName("nuts-term")
-                        .setMapper(k->{
-                            if (k.equals("NUTS")) {
-                                return getNutsStart(env).path().toString();
-                            }
-                            return null;
-                        })
-                        .setPath(path())
-                        .build();
-            }
-        };
-
-    }
 }

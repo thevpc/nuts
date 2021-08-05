@@ -28,7 +28,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
 
     public abstract NdiScriptInfo getSysRC(NutsEnvInfo env);
 
-    public NdiScriptInfo getNutsRc(NutsEnvInfo env) {
+    public NdiScriptInfo getNutsInit(NutsEnvInfo env) {
         return new NdiScriptInfo() {
             @Override
             public Path path() {
@@ -38,35 +38,56 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             @Override
             public PathInfo create() {
                 Path apiConfigFile = path();
-                return addFileLine(NdiScriptInfoType.NUTS_RC,
+                return addFileLine(NdiScriptInfoType.NUTS_INIT,
                         env.getNutsApiId(),
                         apiConfigFile, getCommentLineConfigHeader(),
-                        createNutsEnvString(env, true, true),
+                        getCallScriptCommand(getNutsEnv(env).path().toString()) + newlineString() +
+                                createNutsEnvString(env, false, true),
                         getShebanSh());
             }
         };
     }
 
-    public NdiScriptInfo getNutsWelcome(NutsEnvInfo env) {
+    public NdiScriptInfo getNutsTermInit(NutsEnvInfo env) {
         return new NdiScriptInfo() {
             @Override
             public Path path() {
-                return env.getIncFolder().resolve(getExecFileName(".nuts-welcome"));
+                return env.getIncFolder().resolve(getExecFileName(".nuts-term-init"));
             }
 
             @Override
             public PathInfo create() {
-                Path apiConfigFile = path();
-                return ScriptBuilder.fromTemplate(NdiScriptInfoType.NUTS, env.getNutsApiId(), BaseSystemNdi.this)
-                        .setPath(apiConfigFile)
-                        .printCall(getNutsRc(env).path().toString())
-                        .println(getExecFileName("nuts"))
+                return scriptBuilderTemplate("nuts-term-init", NdiScriptInfoType.NUTS_TERM, env.getNutsApiId(), env)
+                        .setPath(path())
                         .build();
             }
         };
     }
 
-    public abstract NdiScriptInfo getNutsTerm(NutsEnvInfo env);
+    public FromTemplateScriptBuilder scriptBuilderTemplate(String templateName, NdiScriptInfoType type, NutsId anyId, NutsEnvInfo env) {
+        return ScriptBuilder.fromTemplate(templateName, type, anyId, BaseSystemNdi.this, env);
+    }
+
+    public SimpleScriptBuilder scriptBuilderSimple(NdiScriptInfoType type, NutsId anyId, NutsEnvInfo env) {
+        return ScriptBuilder.simple(type, anyId, BaseSystemNdi.this)/*,env*/;
+    }
+
+    public NdiScriptInfo getNutsTerm(NutsEnvInfo env) {
+        return new NdiScriptInfo() {
+            @Override
+            public Path path() {
+                return env.getBinFolder().resolve(getExecFileName("nuts-term"));
+            }
+
+            @Override
+            public PathInfo create() {
+                return scriptBuilderTemplate("nuts-term", NdiScriptInfoType.NUTS_TERM, env.getNutsApiId(), env)
+                        .setPath(path())
+                        .build();
+            }
+        };
+    }
+
 
     public NdiScriptInfo getNutsEnv(NutsEnvInfo env) {
         return new NdiScriptInfo() {
@@ -77,12 +98,10 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
 
             @Override
             public PathInfo create() {
-                Path apiConfigFile = path();
-                return addFileLine(NdiScriptInfoType.NUTS_ENV,
-                        env.getNutsApiId(),
-                        apiConfigFile, getCommentLineConfigHeader(),
-                        createNutsEnvString(env, true, true),
-                        getShebanSh());
+                return scriptBuilderTemplate("body", NdiScriptInfoType.NUTS_ENV, env.getNutsApiId(), env)
+                        .setPath(path())
+                        .println(createNutsEnvString(env, true, false))
+                        .build();
             }
         };
     }
@@ -189,8 +208,8 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                 }
             }
             if (gen) {
-                r.add(ScriptBuilder.fromTemplate(NdiScriptInfoType.ARTIFACT, nid, BaseSystemNdi.this)
-                        .setPreferredName(options.getPreferredScriptName())
+                r.add(scriptBuilderTemplate("body", NdiScriptInfoType.ARTIFACT, nid, options.getEnv())
+                        .setPath(options.getPreferredScriptName())
                         .println(createNutsScriptContent(nid, options))
                         .build());
             }
@@ -298,20 +317,11 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         // create $nuts-api-app/.nutsenv
         all.add(getNutsEnv(env).create());
         // create $nuts-api-app/.nutsrc
-        all.add(getNutsRc(env).create());
-        if (global) {
-            // create $home/.bashrc
-            PathInfo sysRC = getSysRC(env).create();
-            if (sysRC != null) {
-                all.add(sysRC);
-            }
-        }
+        all.add(getNutsInit(env).create());
 
-        boolean currId = false;
 //        NutsDefinition apiDef = context.getWorkspace().search()
 //                .addId(apiId).setOptional(false).setLatest(true).setContent(true).getResultDefinitions().required();
         Path script = null;
-        boolean standardPath = true;
         script = getScriptFile(new NameBuilder(env.getNutsApiId(), preferredName == null ? "%n" : preferredName,
                 env.getNutsApiDef().getDescriptor()).buildName(), env);
         boolean createPath = false;
@@ -331,18 +341,8 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         }
         if (createPath) {
             all.add(
-                    ScriptBuilder.fromTemplate(NdiScriptInfoType.NUTS, env.getNutsApiId(), BaseSystemNdi.this)
+                    scriptBuilderTemplate("nuts", NdiScriptInfoType.NUTS, env.getNutsApiId(), env)
                             .setPath(script)
-                            .setTemplateName("nuts")
-                            .setMapper(k -> {
-                                        switch (k) {
-                                            case "NUTS_JAR":
-                                                return env.getNutsJarPath().toString();
-                                        }
-                                        return null;
-                                    }
-                            )
-                            .printCall(getNutsEnv(env).path().toString())
                             .build()
             );
         }
@@ -396,11 +396,15 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
 //            }
 //        }
 
-        all.addAll(Arrays.asList(getNutsWelcome(env).create()));
+        all.addAll(Arrays.asList(getNutsTermInit(env).create()));
         all.addAll(Arrays.asList(getNutsTerm(env).create()));
 
-        // add shortcuts and menus
         if (global) {
+            // create $home/.bashrc
+            PathInfo sysRC = getSysRC(env).create();
+            if (sysRC != null) {
+                all.add(sysRC);
+            }
             if (desktop) {
                 all.addAll(Arrays.asList(createLaunchTermShortcutGlobal(AppShortcutTarget.DESKTOP, env)));
             }
@@ -614,7 +618,6 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         filePath = filePath.toAbsolutePath();
         List<String> goodLinesList = Arrays.asList(goodLine.split("[\n\r]"));
         boolean exists = Files.exists(filePath);
-        boolean alreadyExists = exists;
         boolean found = false;
         boolean updatedFile = false;
         List<String> lines = new ArrayList<>();
@@ -625,33 +628,39 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
             }
-            String[] fileRows = fileContent.split("[\n\r]");
-            if (header != null) {
-                if (fileRows.length == 0 || !header.matches(fileRows[0].trim())) {
-                    lines.add(header.getReplacement());
-                    updatedFile = true;
+            List<String> fileRows = new ArrayList<>(Arrays.asList(fileContent.split("[\n\r]")));
+            //trim lines
+            while (!fileRows.isEmpty()) {
+                if (fileRows.get(0).trim().isEmpty()) {
+                    fileRows.remove(0);
+                } else if (fileRows.get(fileRows.size() - 1).trim().isEmpty()) {
+                    fileRows.remove(fileRows.size() - 1);
+                } else {
+                    break;
                 }
             }
-            for (int i = 0; i < fileRows.length; i++) {
-                String row = fileRows[i];
+            for (int i = 0; i < fileRows.size(); i++) {
+                String row = fileRows.get(i);
                 if (isComments(row.trim()) && commentLine.matches(trimComments(row.trim()))) {
                     String clta = toCommentLine(commentLine.getReplacement());
                     if (!clta.equals(row)) {
                         updatedFile = true;
                     }
+                    lines.add("");
                     lines.add(clta);
                     found = true;
                     i++;
                     List<String> old = new ArrayList<>();
-                    while (i < fileRows.length) {
-                        i++;
-                        if (fileRows[i].trim().isEmpty()) {
+                    while (i < fileRows.size()) {
+                        String s = fileRows.get(i);
+                        if (s.trim().isEmpty()) {
+                            i++;
                             break;
-                        } else if (fileRows[i].trim().startsWith("#")) {
-                            i--;
+                        } else if (s.trim().startsWith("#")) {
                             break;
                         } else {
-                            old.add(fileRows[i].trim());
+                            i++;
+                            old.add(s.trim());
                         }
                     }
                     lines.addAll(goodLinesList);
@@ -659,18 +668,22 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                     if (!old.equals(goodLinesList)) {
                         updatedFile = true;
                     }
-                    for (; i < fileRows.length; i++) {
-                        lines.add(fileRows[i]);
+                    for (; i < fileRows.size(); i++) {
+                        lines.add(fileRows.get(i));
                     }
                 } else {
                     lines.add(row);
                 }
             }
         }
-        if (!found) {
-            if (header != null && lines.isEmpty()) {
-                lines.add(header.getReplacement());
+        if (header != null) {
+            if (lines.size() == 0 || !header.matches(lines.get(0).trim())) {
+                lines.add(0, header.getReplacement());
+                updatedFile = true;
             }
+        }
+        if (!found) {
+            lines.add("");
             lines.add(toCommentLine(commentLine.getReplacement()));
             lines.addAll(goodLinesList);
             lines.add("");
@@ -920,12 +933,9 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
          *                         "#\n"
          */
         TreeSet<String> exports = new TreeSet<>();
-        FromTemplateScriptBuilder tmp = ScriptBuilder.fromTemplate(NdiScriptInfoType.NUTS_ENV, env.getNutsApiId(), this);
-        if (context.getWorkspace().env().getOsFamily() == NutsOsFamily.WINDOWS) {
-            tmp.println("@ECHO OFF");
-        }
+        SimpleScriptBuilder tmp = scriptBuilderSimple(NdiScriptInfoType.NUTS_ENV, env.getNutsApiId(), env);
         if (updateEnv) {
-            exports.addAll(Arrays.asList("NUTS_VERSION", "NUTS_WORKSPACE", "NUTS_JAR"));
+            exports.addAll(Arrays.asList("NUTS_VERSION", "NUTS_WORKSPACE", "NUTS_JAR", "NUTS_WORKSPACE_BINDIR"));
             tmp.printSetStatic("NUTS_VERSION", ws.getApiVersion().toString());
             tmp.printSetStatic("NUTS_WORKSPACE", ws.locations().getWorkspaceLocation().toString());
             for (NutsStoreLocation value : NutsStoreLocation.values()) {
