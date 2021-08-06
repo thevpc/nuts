@@ -32,7 +32,7 @@ package net.thevpc.nuts;
  * @since 0.5.4
  * @category Config
  */
-public interface NutsWorkspaceCommandAlias {
+public interface NutsWorkspaceCustomCommand {
 
     String getFactoryId();
 

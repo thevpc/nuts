@@ -35,7 +35,7 @@ import java.util.Objects;
  * @since 0.5.4
  * @category Config
  */
-public class NutsCommandAliasConfig extends NutsConfigItem{
+public class NutsCommandConfig extends NutsConfigItem{
     private static final long serialVersionUID = 1;
 
     /**
@@ -86,7 +86,7 @@ public class NutsCommandAliasConfig extends NutsConfigItem{
      * @param value new value
      * @return {@code this} instance
      */
-    public NutsCommandAliasConfig setOwner(NutsId value) {
+    public NutsCommandConfig setOwner(NutsId value) {
         this.owner = value;
         return this;
     }
@@ -104,7 +104,7 @@ public class NutsCommandAliasConfig extends NutsConfigItem{
      * @param value new value
      * @return {@code this} instance
      */
-    public NutsCommandAliasConfig setFactoryId(String value) {
+    public NutsCommandConfig setFactoryId(String value) {
         this.factoryId = value;
         return this;
     }
@@ -122,7 +122,7 @@ public class NutsCommandAliasConfig extends NutsConfigItem{
      * @param value new value
      * @return {@code this} instance
      */
-    public NutsCommandAliasConfig setCommand(String... value) {
+    public NutsCommandConfig setCommand(String... value) {
         this.command = value;
         return this;
     }
@@ -140,7 +140,7 @@ public class NutsCommandAliasConfig extends NutsConfigItem{
      * @param value new value
      * @return {@code this} instance
      */
-    public NutsCommandAliasConfig setName(String value) {
+    public NutsCommandConfig setName(String value) {
         this.name = value;
         return this;
     }
@@ -158,7 +158,7 @@ public class NutsCommandAliasConfig extends NutsConfigItem{
      * @param value new value
      * @return {@code this} instance
      */
-    public NutsCommandAliasConfig setExecutorOptions(String[] value) {
+    public NutsCommandConfig setExecutorOptions(String[] value) {
         this.executorOptions = value;
         return this;
     }
@@ -176,7 +176,7 @@ public class NutsCommandAliasConfig extends NutsConfigItem{
      * @param value new value
      * @return {@code this} instance
      */
-    public NutsCommandAliasConfig setHelpCommand(String... value) {
+    public NutsCommandConfig setHelpCommand(String... value) {
         this.helpCommand = value;
         return this;
     }
@@ -194,14 +194,14 @@ public class NutsCommandAliasConfig extends NutsConfigItem{
      * @param value new value
      * @return {@code this} instance
      */
-    public NutsCommandAliasConfig setHelpText(String value) {
+    public NutsCommandConfig setHelpText(String value) {
         this.helpText = value;
         return this;
     }
 
     @Override
     public String toString() {
-        return "NutsCommandAliasConfig{" +
+        return "NutsCommandConfig{" +
                 "owner=" + owner +
                 ", name='" + name + '\'' +
                 ", factoryId='" + factoryId + '\'' +
@@ -216,7 +216,7 @@ public class NutsCommandAliasConfig extends NutsConfigItem{
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        NutsCommandAliasConfig that = (NutsCommandAliasConfig) o;
+        NutsCommandConfig that = (NutsCommandConfig) o;
         return Objects.equals(owner, that.owner) &&
                 Objects.equals(name, that.name) &&
                 Objects.equals(factoryId, that.factoryId) &&

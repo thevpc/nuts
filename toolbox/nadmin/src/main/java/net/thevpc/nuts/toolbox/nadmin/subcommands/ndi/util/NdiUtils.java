@@ -10,31 +10,32 @@
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
  * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.util;
 
+import net.thevpc.nuts.NutsTextStyle;
+import net.thevpc.nuts.toolbox.nadmin.PathInfo;
 import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.sys.unix.AnyNixNdi;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.attribute.PosixFileAttributeView;
 import java.nio.file.attribute.PosixFilePermission;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -43,6 +44,38 @@ import java.util.regex.Pattern;
  * @author thevpc
  */
 public class NdiUtils {
+
+    public static Path sysWhich(String commandName) {
+        Path[] p = sysWhichAll(commandName);
+        if(p.length>0){
+            return p[0];
+        }
+        return null;
+    }
+    public static Path[] sysWhichAll(String commandName) {
+        if (commandName == null || commandName.isEmpty()) {
+            return new Path[0];
+        }
+        List<Path> all = new ArrayList<>();
+        String p = System.getenv("PATH");
+        if (p != null) {
+            for (String s : p.split(File.pathSeparator)) {
+                try {
+                    if (!s.trim().isEmpty()) {
+                        Path c = Paths.get(s, commandName);
+                        if (Files.isRegularFile(c)) {
+                            if (Files.isExecutable(c)) {
+                                all.add(c);
+                            }
+                        }
+                    }
+                } catch (Exception ex) {
+                    //ignore
+                }
+            }
+        }
+        return all.toArray(new Path[0]);
+    }
 
     public static boolean setExecutable(Path path) {
         if (Files.exists(path) && !Files.isExecutable(path)) {
@@ -112,36 +145,36 @@ public class NdiUtils {
         return path1;
     }
 
-    public static String replaceFilePrefixes(String path, Map<String,String> map) {
+    public static String replaceFilePrefixes(String path, Map<String, String> map) {
         for (Map.Entry<String, String> e : map.entrySet()) {
             String v = replaceFilePrefix(path, e.getKey(), e.getValue());
-            if(!v.equals(path)){
+            if (!v.equals(path)) {
                 return v;
             }
         }
         return path;
     }
 
-    public static String replaceFilePrefix(String path, String prefix,String replacement) {
-        String path1=path;
+    public static String replaceFilePrefix(String path, String prefix, String replacement) {
+        String path1 = path;
         String fs = File.separator;
-        if(!prefix.endsWith(fs)){
-            prefix=prefix+fs;
+        if (!prefix.endsWith(fs)) {
+            prefix = prefix + fs;
         }
-        if(!path1.endsWith(fs)){
-            path1=prefix+fs;
+        if (!path1.endsWith(fs)) {
+            path1 = prefix + fs;
         }
-        if(path1.equals(prefix)){
-            if(replacement==null){
+        if (path1.equals(prefix)) {
+            if (replacement == null) {
                 return "";
             }
             return replacement;
         }
-        if(path.startsWith(prefix)){
-            if(replacement==null || replacement.equals("")){
+        if (path.startsWith(prefix)) {
+            if (replacement == null || replacement.equals("")) {
                 return path1.substring(prefix.length());
             }
-            return replacement+fs+path1.substring(prefix.length());
+            return replacement + fs + path1.substring(prefix.length());
         }
         return path;
     }
@@ -160,5 +193,62 @@ public class NdiUtils {
             return "";
         }
         return path1.substring(0, latestSlash + 1);
+    }
+
+    public static byte[] loadFile(Path out) {
+        if (Files.isRegularFile(out)) {
+            try {
+                return Files.readAllBytes(out);
+            } catch (Exception ex) {
+                //ignore
+            }
+        }
+        return null;
+    }
+
+    public static PathInfo.Status tryWriteStatus(byte[] content, Path out) {
+        return tryWrite(content,out,true);
+    }
+
+    public static PathInfo.Status tryWrite(byte[] content, Path out) {
+        return tryWrite(content,out,false);
+    }
+    public static PathInfo.Status tryWrite(byte[] content, Path out,boolean doNotWrite) {
+        out=out.toAbsolutePath().normalize();
+        byte[] old = loadFile(out);
+        if (old == null) {
+            if(!doNotWrite) {
+                try {
+                    if (out.getParent() != null) {
+                        Files.createDirectories(out.getParent());
+                    }
+                    Files.write(out, content);
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
+                }
+            }
+            return PathInfo.Status.CREATED;
+        }
+        if (Arrays.equals(old, content)) {
+            return PathInfo.Status.DISCARDED;
+        }
+//        if (!context.getSession().getTerminal().ask()
+//                .resetLine()
+//                .setDefaultValue(false).setSession(context.getSession())
+//                .forBoolean("override existing script %s ?",
+//                        context.getWorkspace().text().forStyled(
+//                                NdiUtils.betterPath(filePath.toString()), NutsTextStyle.path()
+//                        )
+//                ).getBooleanValue()) {
+//            return new PathInfo(type, id, filePath, PathInfo.Status.DISCARDED);
+//        }
+        if(!doNotWrite) {
+            try {
+                Files.write(out, content);
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+        }
+        return PathInfo.Status.OVERRIDDEN;
     }
 }

@@ -482,6 +482,10 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                                     .append("location", NutsTextStyle.underlined())
                                     .append(":")
                                     .append(locations().getWorkspaceLocation(), NutsTextStyle.path())
+                                    .append(" ")
+                                    .append(" (")
+                                    .append(getHashName())
+                                    .append(")")
                     );
                     out.println(
                             CoreNutsUtils.createBox(txt,
@@ -1114,8 +1118,8 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
     public String resolveCommandName(NutsId id, NutsSession session) {
         checkSession(session);
         String nn = id.getArtifactId();
-        NutsCommandAliasManager aliases = aliases().setSession(session);
-        NutsWorkspaceCommandAlias c = aliases.find(nn);
+        NutsCommandManager aliases = commands().setSession(session);
+        NutsWorkspaceCustomCommand c = aliases.findCommand(nn);
         if (c != null) {
             if (CoreNutsUtils.matchesSimpleNameStaticVersion(c.getOwner(), id)) {
                 return nn;
@@ -1124,7 +1128,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             return nn;
         }
         nn = id.getArtifactId() + "-" + id.getVersion();
-        c = aliases.find(nn);
+        c = aliases.findCommand(nn);
         if (c != null) {
             if (CoreNutsUtils.matchesSimpleNameStaticVersion(c.getOwner(), id)) {
                 return nn;
@@ -1133,7 +1137,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             return nn;
         }
         nn = id.getGroupId() + "." + id.getArtifactId() + "-" + id.getVersion();
-        c = aliases.find(nn);
+        c = aliases.findCommand(nn);
         if (c != null) {
             if (CoreNutsUtils.matchesSimpleNameStaticVersion(c.getOwner(), id)) {
                 return nn;
@@ -1177,9 +1181,9 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                         .updateUser(NutsConstants.Users.ADMIN).credentials("admin".toCharArray())
                         .run();
             }
-            for (NutsCommandAliasFactoryConfig commandFactory : aliases().setSession(session).getFactories()) {
+            for (NutsCommandFactoryConfig commandFactory : commands().setSession(session).getCommandFactories()) {
                 try {
-                    aliases().setSession(session).addFactory(commandFactory);
+                    commands().setSession(session).addCommandFactory(commandFactory);
                 } catch (Exception e) {
                     LOG.with().session(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL).log("unable to instantiate Command Factory {0}", commandFactory);
                 }
@@ -1290,12 +1294,12 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 all.addAll(Arrays.asList(dd.getParents()));
             }
             throw new NutsNotFoundException(session, bestId,
-                    NutsMessage.cstyle("unable to fetchEffective for %s. best Result is %s",bestId,bestId), null);
+                    NutsMessage.cstyle("unable to fetchEffective for %s. best Result is %s", bestId, bestId), null);
         }
         NutsId bestId = id().setSession(session).builder().setGroupId(g).setArtifactId(thisId.getArtifactId()).setVersion(v).build();
         if (!CoreNutsUtils.isEffectiveId(bestId)) {
             throw new NutsNotFoundException(session, bestId,
-                    NutsMessage.cstyle("unable to fetchEffective for %s. best Result is %s",thisId,bestId), null);
+                    NutsMessage.cstyle("unable to fetchEffective for %s. best Result is %s", thisId, bestId), null);
         }
 //        return bestId.setAlternative(descriptor.getAlternative());
         return bestId;
@@ -1529,6 +1533,11 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
     }
 
     @Override
+    public String getHashName() {
+        return config().getHashName(this);
+    }
+
+    @Override
     public NutsVersion getApiVersion() {
         return apiVersion;
     }
@@ -1745,8 +1754,8 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
     }
 
     @Override
-    public NutsCommandAliasManager aliases() {
-        return new DefaultAliasManager(aliasesModel);
+    public NutsCommandManager commands() {
+        return new DefaultManager(aliasesModel);
     }
 
     @Override

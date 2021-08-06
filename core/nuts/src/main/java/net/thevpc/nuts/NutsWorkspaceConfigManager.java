@@ -83,4 +83,7 @@ public interface NutsWorkspaceConfigManager {
     NutsWorkspaceConfigManager setSession(NutsSession session);
 
 
+    String getHashName(Object o);
+
+    String getWorkspaceHashName(String path);
 }

@@ -37,7 +37,7 @@ public class AnyNixNdi extends BaseSystemNdi {
         if (fileName == null) {
             sysrcFile = getSysRC(env).path();
         } else {
-            sysrcFile = Paths.get(new NameBuilder(env.getNutsApiId(), fileName, env.getNutsApiDef().getDescriptor()).buildName());
+            sysrcFile = Paths.get(NameBuilder.id(env.getNutsApiId(), fileName,null, env.getNutsApiDef().getDescriptor(), context.getSession()).buildName());
         }
         Path nutsRcPath = getNutsInit(env).path();
         //old configs
@@ -241,10 +241,11 @@ public class AnyNixNdi extends BaseSystemNdi {
 //        Path nrc = getNutsRcPath(env);
         String cmd = getNutsTerm(env).path().toString();
         //remove aby path
-        fileName = new NameBuilder(env.getNutsApiId(), fileName == null ? name == null ? "%n-%v" : name : fileName, env.getNutsApiDef().getDescriptor())
+        fileName = NameBuilder.id(env.getNutsApiId(), fileName,name, env.getNutsApiDef().getDescriptor(), context.getSession())
                 .buildName();
         if (name == null) {
-            name = "Nuts Terminal " + env.getNutsApiId().getVersion();
+            name = NameBuilder.label(env.getNutsApiId(), "Nuts Terminal%s%v%s%h",null, env.getNutsApiDef().getDescriptor(), context.getSession())
+                    .buildName();
         }
         return createShortcut(appShortcutTarget,
                 env.getNutsApiId(),

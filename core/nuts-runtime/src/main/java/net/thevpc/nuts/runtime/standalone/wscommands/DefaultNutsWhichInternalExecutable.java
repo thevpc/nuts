@@ -8,7 +8,6 @@ package net.thevpc.nuts.runtime.standalone.wscommands;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -76,7 +75,7 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
                                 factory.forStyled(arg, NutsTextStyle.primary4()),
                                 factory.forStyled("nuts alias", NutsTextStyle.primary6()),
                                 p.getId(),
-                                ws.commandLine().create(ws.aliases().find(p.getName()).getCommand())
+                                ws.commandLine().create(ws.commands().findCommand(p.getName()).getCommand())
                         );
                         break;
                     }

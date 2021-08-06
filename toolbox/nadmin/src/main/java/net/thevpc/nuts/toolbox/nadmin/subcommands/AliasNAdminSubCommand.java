@@ -35,7 +35,7 @@ public class AliasNAdminSubCommand extends AbstractNAdminSubCommand {
             this.executionOptions = executionOptions;
         }
 
-        public AliasInfo(NutsWorkspaceCommandAlias a, NutsWorkspace ws) {
+        public AliasInfo(NutsWorkspaceCustomCommand a, NutsWorkspace ws) {
             name = a.getName();
             command = ws.commandLine().create(a.getCommand()).toString();
             executionOptions = ws.commandLine().create(a.getExecutorOptions()).toString();
@@ -79,11 +79,11 @@ public class AliasNAdminSubCommand extends AbstractNAdminSubCommand {
                 }
             }
             if (cmdLine.isExecMode()) {
-                List<NutsWorkspaceCommandAlias> r = context.getWorkspace().aliases().findAll()
+                List<NutsWorkspaceCustomCommand> r = context.getWorkspace().commands().findAllCommands()
                         .stream()
-                        .filter(new Predicate<NutsWorkspaceCommandAlias>() {
+                        .filter(new Predicate<NutsWorkspaceCustomCommand>() {
                             @Override
-                            public boolean test(NutsWorkspaceCommandAlias nutsWorkspaceCommandAlias) {
+                            public boolean test(NutsWorkspaceCustomCommand nutsWorkspaceCommandAlias) {
                                 if(toList.isEmpty()){
                                     return true;
                                 }
@@ -107,7 +107,7 @@ public class AliasNAdminSubCommand extends AbstractNAdminSubCommand {
                     context.getWorkspace().formats().props(
                                     r.stream().collect(
                                             Collectors.toMap(
-                                                    NutsWorkspaceCommandAlias::getName,
+                                                    NutsWorkspaceCustomCommand::getName,
                                                     x -> context.getWorkspace().commandLine().create(x.getCommand()).toString(),
                                                     (x, y) -> {
                                                         throw new NutsIllegalArgumentException(context.getSession(),NutsMessage.cstyle("duplicate %s",x));
@@ -126,7 +126,7 @@ public class AliasNAdminSubCommand extends AbstractNAdminSubCommand {
         } else if (cmdLine.next("remove alias") != null) {
             if (cmdLine.isExecMode()) {
                 while (cmdLine.hasNext()) {
-                    context.getWorkspace().aliases().remove(cmdLine.next().toString());
+                    context.getWorkspace().commands().removeCommand(cmdLine.next().toString());
                 }
                 context.getWorkspace().config().save();
             }
@@ -160,9 +160,9 @@ public class AliasNAdminSubCommand extends AbstractNAdminSubCommand {
                     cmdLine.required();
                 }
                 for (AliasInfo value : toAdd.values()) {
-                    context.getWorkspace().aliases()
-                            .add(
-                            new NutsCommandAliasConfig()
+                    context.getWorkspace().commands()
+                            .addCommand(
+                            new NutsCommandConfig()
                                     .setCommand(context.getWorkspace().commandLine().parse(value.command).toStringArray())
                                     .setName(value.name)
                                     .setExecutorOptions(context.getWorkspace().commandLine().parse(value.executionOptions).toStringArray())

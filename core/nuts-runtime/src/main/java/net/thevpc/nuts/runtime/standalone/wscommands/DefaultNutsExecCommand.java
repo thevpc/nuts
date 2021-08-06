@@ -4,8 +4,6 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.core.commands.ws.NutsExecutableInformationExt;
 import net.thevpc.nuts.runtime.core.commands.ws.NutsExecutionContextBuilder;
-import net.thevpc.nuts.runtime.core.model.DefaultNutsDefinition;
-import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.core.util.CoreNutsDependencyUtils;
 import net.thevpc.nuts.runtime.standalone.DefaultNutsWorkspace;
 import net.thevpc.nuts.runtime.standalone.executors.ArtifactExecutorComponent;
@@ -262,8 +260,8 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
                         return new DefaultNutsExecInternalExecutable(args, execSession, this);
                     }
                 }
-                NutsWorkspaceCommandAlias command = null;
-                command = prepareSession.getWorkspace().aliases().find(goodKw);
+                NutsWorkspaceCustomCommand command = null;
+                command = prepareSession.getWorkspace().commands().findCommand(goodKw);
                 if (command != null) {
                     NutsCommandExecOptions o = new NutsCommandExecOptions().setExecutorOptions(executorOptions).setDirectory(directory).setFailFast(failFast)
                             .setExecutionType(executionType).setEnv(env);

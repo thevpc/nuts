@@ -4,17 +4,17 @@ import net.thevpc.nuts.*;
 import java.util.*;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
-public class DefaultAliasManager implements NutsCommandAliasManager {
+public class DefaultManager implements NutsCommandManager {
 
     public DefaultAliasModel model;
     public NutsSession session;
 
-    public DefaultAliasManager(DefaultAliasModel model) {
+    public DefaultManager(DefaultAliasModel model) {
         this.model = model;
     }
 
     @Override
-    public void addFactory(NutsCommandAliasFactoryConfig commandFactoryConfig) {
+    public void addCommandFactory(NutsCommandFactoryConfig commandFactoryConfig) {
         checkSession();
         model.addFactory(commandFactoryConfig, session);
     }
@@ -24,49 +24,49 @@ public class DefaultAliasManager implements NutsCommandAliasManager {
     }
 
     @Override
-    public boolean removeFactory(String factoryId) {
+    public boolean removeCommandFactory(String factoryId) {
         checkSession();
         return model.removeFactory(factoryId, session);
     }
 
     @Override
-    public boolean add(NutsCommandAliasConfig command) {
+    public boolean addCommand(NutsCommandConfig command) {
         checkSession();
         return model.add(command, session);
     }
 
     @Override
-    public boolean remove(String name) {
+    public boolean removeCommand(String name) {
         checkSession();
         return model.remove(name, session);
     }
 
     @Override
-    public NutsWorkspaceCommandAlias find(String name) {
+    public NutsWorkspaceCustomCommand findCommand(String name) {
         checkSession();
         return model.find(name, session);
     }
 
     @Override
-    public List<NutsWorkspaceCommandAlias> findAll() {
+    public List<NutsWorkspaceCustomCommand> findAllCommands() {
         checkSession();
         return model.findAll(session);
     }
 
     @Override
-    public List<NutsWorkspaceCommandAlias> findByOwner(NutsId id) {
+    public List<NutsWorkspaceCustomCommand> findCommandByOwner(NutsId id) {
         checkSession();
         return model.findByOwner(id, session);
     }
 
     @Override
-    public NutsCommandAliasFactoryConfig[] getFactories() {
+    public NutsCommandFactoryConfig[] getCommandFactories() {
         checkSession();
         return model.getFactories(session);
     }
 
     @Override
-    public NutsWorkspaceCommandAlias find(String name, NutsId forId, NutsId forOwner) {
+    public NutsWorkspaceCustomCommand findCommand(String name, NutsId forId, NutsId forOwner) {
         checkSession();
         return model.find(name, forId, forOwner, session);
     }
@@ -77,7 +77,7 @@ public class DefaultAliasManager implements NutsCommandAliasManager {
     }
 
     @Override
-    public NutsCommandAliasManager setSession(NutsSession session) {
+    public NutsCommandManager setSession(NutsSession session) {
         this.session = session;
         return this;
     }

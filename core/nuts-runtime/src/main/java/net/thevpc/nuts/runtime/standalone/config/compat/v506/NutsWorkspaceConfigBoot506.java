@@ -88,7 +88,7 @@ public final class NutsWorkspaceConfigBoot506 extends NutsConfigItem {
      * @see NutsId#getLongNameId()
      */
     private String extensionDependencies = null;
-    private List<NutsCommandAliasFactoryConfig> commandFactories;
+    private List<NutsCommandFactoryConfig> commandFactories;
     private Properties env = new Properties();
     private List<NutsSdkLocation> sdk = new ArrayList<>();
     private List<String> imports = new ArrayList<>();
@@ -144,7 +144,7 @@ public final class NutsWorkspaceConfigBoot506 extends NutsConfigItem {
         return this;
     }
 
-    public NutsWorkspaceConfigBoot506 setCommandFactories(List<NutsCommandAliasFactoryConfig> commandFactories) {
+    public NutsWorkspaceConfigBoot506 setCommandFactories(List<NutsCommandFactoryConfig> commandFactories) {
         this.commandFactories = commandFactories;
         return this;
     }
@@ -248,7 +248,7 @@ public final class NutsWorkspaceConfigBoot506 extends NutsConfigItem {
         return this;
     }
 
-    public List<NutsCommandAliasFactoryConfig> getCommandFactories() {
+    public List<NutsCommandFactoryConfig> getCommandFactories() {
         return commandFactories;
     }
 

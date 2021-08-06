@@ -62,9 +62,9 @@ public class Nsh implements NutsApplication {
         for (JShellBuiltin command : commands) {
             if (!CONTEXTUAL_BUILTINS.contains(command.getName())) {
                 //avoid recursive definition!
-                if (ws.aliases()
+                if (ws.commands()
                         .setSession(sessionCopy.setConfirm(NutsConfirmationMode.YES).setTrace(false))
-                        .add(new NutsCommandAliasConfig()
+                        .addCommand(new NutsCommandConfig()
                                 .setFactoryId("nsh")
                                 .setName(command.getName())
                                 .setCommand(nshIdStr, "-c", command.getName())
@@ -120,13 +120,13 @@ public class Nsh implements NutsApplication {
         try {
             NutsWorkspace ws = applicationContext.getWorkspace();
             try {
-                ws.aliases().removeFactory("nsh");
+                ws.commands().removeCommandFactory("nsh");
             } catch (Exception notFound) {
                 //ignore!
             }
-            for (NutsWorkspaceCommandAlias command : ws.aliases().findByOwner(applicationContext.getAppId())) {
+            for (NutsWorkspaceCustomCommand command : ws.commands().findCommandByOwner(applicationContext.getAppId())) {
                 try {
-                    ws.aliases().remove(command.getName());
+                    ws.commands().removeCommand(command.getName());
                 } catch (Exception ex) {
                     if (applicationContext.getSession().isPlainTrace()) {
                         NutsTextManager factory = ws.text();

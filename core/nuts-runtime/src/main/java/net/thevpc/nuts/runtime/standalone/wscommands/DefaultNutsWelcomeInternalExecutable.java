@@ -47,6 +47,7 @@ public class DefaultNutsWelcomeInternalExecutable extends DefaultInternalNutsExe
             welcome.put("runtime-id", ws.getRuntimeId().builder().setVersion("").build());
             welcome.put("runtime-version", ws.getRuntimeId().getVersion());
             welcome.put("workspace", ws.io().path(ws.locations().getWorkspaceLocation()));
+            welcome.put("hash-name", ws.io().path(ws.getHashName()));
             if (session.isPlainOut()) {
                 session = session.copy().setOutputFormat(NutsContentType.PROPS);
             }

@@ -38,7 +38,7 @@ public class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFa
     }
 
     @Override
-    public void configure(NutsCommandAliasFactoryConfig config) {
+    public void configure(NutsCommandFactoryConfig config) {
 
     }
 
@@ -81,7 +81,7 @@ public class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFa
         NutsWorkspaceUtils.checkSession(ws, session);
     }
 
-    public void installCommand(NutsCommandAliasConfig command, NutsSession session) {
+    public void installCommand(NutsCommandConfig command, NutsSession session) {
         checkSession(session);
         Path path = getCommandsFolder(session).resolve(command.getName() + NutsConstants.Files.NUTS_COMMAND_FILE_EXTENSION);
         session.getWorkspace().elem().setContentType(NutsContentType.JSON).setValue(command).print(path);
@@ -89,11 +89,11 @@ public class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFa
     }
 
     @Override
-    public NutsCommandAliasConfig findCommand(String name, NutsSession session) {
+    public NutsCommandConfig findCommand(String name, NutsSession session) {
         checkSession(session);
         Path file = getCommandsFolder(session).resolve(name + NutsConstants.Files.NUTS_COMMAND_FILE_EXTENSION);
         if (Files.exists(file)) {
-            NutsCommandAliasConfig c = session.getWorkspace().elem().setContentType(NutsContentType.JSON).parse(file, NutsCommandAliasConfig.class);
+            NutsCommandConfig c = session.getWorkspace().elem().setContentType(NutsContentType.JSON).parse(file, NutsCommandConfig.class);
             if (c != null) {
                 c.setName(name);
                 return c;
@@ -103,17 +103,17 @@ public class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFa
     }
 
     @Override
-    public List<NutsCommandAliasConfig> findCommands(NutsSession session) {
-        return findCommands((Predicate<NutsCommandAliasConfig>) null, session);
+    public List<NutsCommandConfig> findCommands(NutsSession session) {
+        return findCommands((Predicate<NutsCommandConfig>) null, session);
     }
 
-    public List<NutsCommandAliasConfig> findCommands(NutsId id, NutsSession session) {
+    public List<NutsCommandConfig> findCommands(NutsId id, NutsSession session) {
         return findCommands(value -> CoreNutsUtils.matchesSimpleNameStaticVersion(value.getOwner(), id), session);
     }
 
-    public List<NutsCommandAliasConfig> findCommands(Predicate<NutsCommandAliasConfig> filter, NutsSession session) {
+    public List<NutsCommandConfig> findCommands(Predicate<NutsCommandConfig> filter, NutsSession session) {
         checkSession(session);
-        List<NutsCommandAliasConfig> all = new ArrayList<>();
+        List<NutsCommandConfig> all = new ArrayList<>();
         try {
             Path storeLocation = getCommandsFolder(session);
             if (!Files.isDirectory(storeLocation)) {
@@ -123,9 +123,9 @@ public class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFa
             Files.list(storeLocation).forEach(file -> {
                 String fileName = file.getFileName().toString();
                 if (file.getFileName().toString().endsWith(NutsConstants.Files.NUTS_COMMAND_FILE_EXTENSION)) {
-                    NutsCommandAliasConfig c = null;
+                    NutsCommandConfig c = null;
                     try {
-                        c = session.getWorkspace().elem().setContentType(NutsContentType.JSON).parse(file, NutsCommandAliasConfig.class);
+                        c = session.getWorkspace().elem().setContentType(NutsContentType.JSON).parse(file, NutsCommandConfig.class);
                     } catch (Exception ex) {
                         _LOGOP(session).level(Level.FINE).error(ex).log("unable to parse {0}", file);
                         //

@@ -25,7 +25,7 @@
 */
 package net.thevpc.nuts.runtime.standalone.config;
 
-import net.thevpc.nuts.NutsCommandAliasFactoryConfig;
+import net.thevpc.nuts.NutsCommandFactoryConfig;
 import net.thevpc.nuts.NutsConfigItem;
 import net.thevpc.nuts.NutsRepositoryRef;
 import net.thevpc.nuts.NutsSdkLocation;
@@ -42,7 +42,7 @@ public final class NutsWorkspaceConfigMain extends NutsConfigItem {
     private static final long serialVersionUID = 3;
 
     private List<NutsRepositoryRef> repositories;
-    private List<NutsCommandAliasFactoryConfig> commandFactories;
+    private List<NutsCommandFactoryConfig> commandFactories;
     private Map<String,String> env = new LinkedHashMap<>();
     private List<NutsSdkLocation> sdk = new ArrayList<>();
     private List<String> imports = new ArrayList<>();
@@ -68,7 +68,7 @@ public final class NutsWorkspaceConfigMain extends NutsConfigItem {
         return this;
     }
 
-    public NutsWorkspaceConfigMain setCommandFactories(List<NutsCommandAliasFactoryConfig> commandFactories) {
+    public NutsWorkspaceConfigMain setCommandFactories(List<NutsCommandFactoryConfig> commandFactories) {
         this.commandFactories = commandFactories;
         return this;
     }
@@ -91,7 +91,7 @@ public final class NutsWorkspaceConfigMain extends NutsConfigItem {
         return sdk;
     }
 
-    public List<NutsCommandAliasFactoryConfig> getCommandFactories() {
+    public List<NutsCommandFactoryConfig> getCommandFactories() {
         return commandFactories;
     }
 

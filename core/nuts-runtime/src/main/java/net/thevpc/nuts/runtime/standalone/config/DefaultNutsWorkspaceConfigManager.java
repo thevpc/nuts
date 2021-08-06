@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,17 +24,20 @@
 package net.thevpc.nuts.runtime.standalone.config;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.model.CoreNutsWorkspaceOptions;
-import net.thevpc.nuts.spi.NutsIndexStoreFactory;
-import java.net.URL;
-import java.util.*;
 import net.thevpc.nuts.runtime.core.config.NutsWorkspaceConfigManagerExt;
+import net.thevpc.nuts.runtime.core.model.CoreNutsWorkspaceOptions;
+import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
+import net.thevpc.nuts.spi.NutsIndexStoreFactory;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Set;
 
 /**
  * @author thevpc
  */
-public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManager, NutsWorkspaceConfigManagerExt{
+public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManager, NutsWorkspaceConfigManagerExt {
 
     private DefaultNutsWorkspaceConfigModel model;
     private NutsSession session;
@@ -47,15 +50,6 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         return model;
     }
 
-    public NutsSession getSession() {
-        return session;
-    }
-
-    public NutsWorkspaceConfigManager setSession(NutsSession session) {
-        this.session = session;
-        return this;
-    }
-
     @Override
     public NutsWorkspaceStoredConfig stored() {
         checkSession();
@@ -66,10 +60,6 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     public boolean isReadOnly() {
         checkSession();
         return model.isReadOnly();
-    }
-
-    protected void checkSession() {
-        NutsWorkspaceUtils.checkSession(model.getWorkspace(), session);
     }
 
     @Override
@@ -101,7 +91,6 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         checkSession();
         return model.isExcludedExtension(extensionId, options, session);
     }
-
 
     @Override
     public NutsId createContentFaceId(NutsId id, NutsDescriptor desc) {
@@ -145,7 +134,6 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         return model.getIndexStoreClientFactory();
     }
 
-
     @Override
     public String getJavaCommand() {
         checkSession();
@@ -162,6 +150,76 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     public boolean isGlobal() {
         checkSession();
         return model.isGlobal();
+    }
+
+    public NutsSession getSession() {
+        return session;
+    }
+
+    public NutsWorkspaceConfigManager setSession(NutsSession session) {
+        this.session = session;
+        return this;
+    }
+
+    protected void checkSession() {
+        NutsWorkspaceUtils.checkSession(model.getWorkspace(), session);
+    }
+
+    @Override
+    public String getHashName(Object o) {
+        if (o == null) {
+            return "null";
+        }
+        if (o instanceof String && o.toString().isEmpty()) {
+            return "empty";
+        }
+        if (o instanceof NutsWorkspace) {
+            return getWorkspaceHashName(((NutsWorkspace) o).getLocation());
+        }
+        if (o instanceof NutsSession) {
+            return getWorkspaceHashName(((NutsSession) o).getWorkspace().getLocation());
+        }
+        if (o instanceof Integer) {
+            int i = (int) o;
+            return CoreNutsUtils.COLOR_NAMES[Math.abs(i) % CoreNutsUtils.COLOR_NAMES.length];
+        }
+        return getHashName(o.hashCode());
+    }
+
+    public String getWorkspaceHashName() {
+        return getHashName(model.getWorkspace());
+    }
+
+    @Override
+    public String getWorkspaceHashName(String path) {
+        if (path == null) {
+            path = "";
+        }
+        String n;
+        String p;
+        if (path.contains("\\") || path.contains("/")) {
+            Path pp = Paths.get(path).toAbsolutePath().normalize();
+            n = pp.getFileName().toString();
+            p = pp.getParent() == null ? null : pp.getParent().toString();
+        } else {
+            n = path;
+            p = "";
+        }
+        if (p == null) {
+            return ("Root " + n).trim();
+        } else {
+            Path root = Paths.get(Nuts.getPlatformHomeFolder(
+                    null,
+                    NutsStoreLocation.CONFIG,
+                    null,
+                    false,
+                    null
+            )).getParent().getParent();
+            if (p.equals(root.toString())) {
+                return n;
+            }
+            return (getHashName(p) + " " + n).trim();
+        }
     }
 
     @Override

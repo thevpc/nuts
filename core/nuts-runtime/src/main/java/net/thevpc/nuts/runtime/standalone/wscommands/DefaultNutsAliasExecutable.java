@@ -9,7 +9,7 @@ import net.thevpc.nuts.NutsCommandExecOptions;
 import net.thevpc.nuts.NutsExecutableType;
 import net.thevpc.nuts.NutsId;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsWorkspaceCommandAlias;
+import net.thevpc.nuts.NutsWorkspaceCustomCommand;
 
 /**
  *
@@ -17,12 +17,12 @@ import net.thevpc.nuts.NutsWorkspaceCommandAlias;
  */
 public class DefaultNutsAliasExecutable extends AbstractNutsExecutableCommand {
 
-    NutsWorkspaceCommandAlias command;
+    NutsWorkspaceCustomCommand command;
     NutsCommandExecOptions o;
     NutsSession session;
     String[] args;
 
-    public DefaultNutsAliasExecutable(NutsWorkspaceCommandAlias command, NutsCommandExecOptions o, NutsSession session, String[] args) {
+    public DefaultNutsAliasExecutable(NutsWorkspaceCustomCommand command, NutsCommandExecOptions o, NutsSession session, String[] args) {
         super(command.getName(),
                 session.getWorkspace().commandLine().create(command.getCommand()).toString(),
                 NutsExecutableType.ALIAS);

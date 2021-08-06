@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.config.compat;
 
-import net.thevpc.nuts.NutsCommandAliasFactoryConfig;
+import net.thevpc.nuts.NutsCommandFactoryConfig;
 import net.thevpc.nuts.NutsRepositoryRef;
 import net.thevpc.nuts.NutsSdkLocation;
 import net.thevpc.nuts.NutsUserConfig;
@@ -85,16 +85,16 @@ public class CompatUtils {
         return list.toArray(new NutsUserConfig[0]);
     }
 
-    public static List<NutsCommandAliasFactoryConfig> copyNutsCommandAliasFactoryConfigList(List<NutsCommandAliasFactoryConfig> refs) {
+    public static List<NutsCommandFactoryConfig> copyNutsCommandAliasFactoryConfigList(List<NutsCommandFactoryConfig> refs) {
         if (refs == null) {
             return null;
         }
-        List<NutsCommandAliasFactoryConfig> list = new ArrayList<>();
-        for (NutsCommandAliasFactoryConfig r : refs) {
+        List<NutsCommandFactoryConfig> list = new ArrayList<>();
+        for (NutsCommandFactoryConfig r : refs) {
             if (r == null) {
                 list.add(null);
             } else {
-                NutsCommandAliasFactoryConfig r2 = new NutsCommandAliasFactoryConfig();
+                NutsCommandFactoryConfig r2 = new NutsCommandFactoryConfig();
                 r2.setFactoryId(r.getFactoryId());
                 r2.setFactoryType(r.getFactoryType());
                 r2.setParameters(r.getParameters() == null ? null : new LinkedHashMap<>(r.getParameters()));

@@ -54,58 +54,16 @@ public abstract class AbstractScriptBuilder implements ScriptBuilder {
 
     @Override
     public PathInfo build() {
-        try {
-            //Path script = getScriptFile(name);
-            NutsDefinition anyIdDef = session.getWorkspace().search().addId(anyId).setLatest(true).getResultDefinitions().singleton();
-            NutsId anyId = anyIdDef.getId();
-            String path = new NameBuilder(anyId,
-                    this.path == null ? "%n" : this.path
-                    , anyIdDef.getDescriptor()).buildName();
-            Path script = Paths.get(path);
-            boolean alreadyExists = Files.exists(script);
-            boolean requireWrite = false;
-            String oldContent = "";
-            String newContent = buildString();
-            if (alreadyExists) {
-                try {
-                    oldContent = new String(Files.readAllBytes(script));
-                } catch (Exception ex) {
-                    //ignore
-                }
-                if (newContent.equals(oldContent)) {
-                    return new PathInfo(type, anyId, script, PathInfo.Status.DISCARDED);
-                }
-                if (session.getTerminal().ask()
-                        .resetLine()
-                        .setDefaultValue(true).setSession(session)
-                        .forBoolean("override existing script %s ?",
-                                session.getWorkspace().text().forStyled(
-                                        NdiUtils.betterPath(script.toString()), NutsTextStyle.path()
-                                )
-                        ).getBooleanValue()) {
-                    requireWrite = true;
-                }
-            } else {
-                requireWrite = true;
-            }
-            if (script.getParent() != null) {
-                if (!Files.exists(script.getParent())) {
-                    Files.createDirectories(script.getParent());
-                }
-            }
-            Files.write(script, newContent.getBytes());
-            NdiUtils.setExecutable(script);
-            if (requireWrite) {
-                if (alreadyExists) {
-                    return new PathInfo(type, anyId, script, PathInfo.Status.OVERRIDDEN);
-                } else {
-                    return new PathInfo(type, anyId, script, PathInfo.Status.CREATED);
-                }
-            } else {
-                return new PathInfo(type, anyId, script, PathInfo.Status.DISCARDED);
-            }
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
-        }
+        //Path script = getScriptFile(name);
+        NutsDefinition anyIdDef = session.getWorkspace().search().addId(anyId).setLatest(true).getResultDefinitions().singleton();
+        NutsId anyId = anyIdDef.getId();
+        String path = NameBuilder.id(anyId,
+                this.path,"%n", anyIdDef.getDescriptor(),session).buildName();
+        Path script = Paths.get(path);
+        String newContent = buildString();
+        PathInfo.Status update0 = NdiUtils.tryWriteStatus(newContent.getBytes(), script);
+        PathInfo.Status update = NdiUtils.tryWrite(newContent.getBytes(), script);
+        NdiUtils.setExecutable(script);
+        return new PathInfo(type, anyId, script, update);
     }
 }

@@ -13,10 +13,10 @@ import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.NutsLogger;
 import net.thevpc.nuts.NutsLoggerOp;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
-import net.thevpc.nuts.NutsWorkspaceCommandAlias;
+import net.thevpc.nuts.NutsWorkspaceCustomCommand;
 import net.thevpc.nuts.runtime.core.util.CoreArrayUtils;
 
-public class DefaultNutsWorkspaceCommandAlias implements NutsWorkspaceCommandAlias {
+public class DefaultNutsWorkspaceCustomCommand implements NutsWorkspaceCustomCommand {
 
     private NutsLogger LOG;
     private String name;
@@ -28,7 +28,7 @@ public class DefaultNutsWorkspaceCommandAlias implements NutsWorkspaceCommandAli
     private String[] executorOptions;
     private NutsWorkspace ws;
 
-    public DefaultNutsWorkspaceCommandAlias(NutsWorkspace ws) {
+    public DefaultNutsWorkspaceCustomCommand(NutsWorkspace ws) {
         this.ws = ws;
     }
 
@@ -38,7 +38,7 @@ public class DefaultNutsWorkspaceCommandAlias implements NutsWorkspaceCommandAli
 
     protected NutsLogger _LOG(NutsSession session) {
         if (LOG == null) {
-            LOG = session.getWorkspace().log().setSession(session).of(DefaultNutsWorkspaceCommandAlias.class);
+            LOG = session.getWorkspace().log().setSession(session).of(DefaultNutsWorkspaceCustomCommand.class);
         }
         return LOG;
     }
@@ -48,7 +48,7 @@ public class DefaultNutsWorkspaceCommandAlias implements NutsWorkspaceCommandAli
         return name;
     }
 
-    public DefaultNutsWorkspaceCommandAlias setName(String name) {
+    public DefaultNutsWorkspaceCustomCommand setName(String name) {
         this.name = name;
         return this;
     }
@@ -58,7 +58,7 @@ public class DefaultNutsWorkspaceCommandAlias implements NutsWorkspaceCommandAli
         return owner;
     }
 
-    public DefaultNutsWorkspaceCommandAlias setOwner(NutsId owner) {
+    public DefaultNutsWorkspaceCustomCommand setOwner(NutsId owner) {
         this.owner = owner;
         return this;
     }
@@ -68,17 +68,17 @@ public class DefaultNutsWorkspaceCommandAlias implements NutsWorkspaceCommandAli
         return factoryId;
     }
 
-    public DefaultNutsWorkspaceCommandAlias setFactoryId(String factoryId) {
+    public DefaultNutsWorkspaceCustomCommand setFactoryId(String factoryId) {
         this.factoryId = factoryId;
         return this;
     }
 
-    public DefaultNutsWorkspaceCommandAlias setHelpCommand(String[] helpCommand) {
+    public DefaultNutsWorkspaceCustomCommand setHelpCommand(String[] helpCommand) {
         this.helpCommand = helpCommand;
         return this;
     }
 
-    public DefaultNutsWorkspaceCommandAlias setHelpText(String helpText) {
+    public DefaultNutsWorkspaceCustomCommand setHelpText(String helpText) {
         this.helpText = helpText;
         return this;
     }
@@ -96,7 +96,7 @@ public class DefaultNutsWorkspaceCommandAlias implements NutsWorkspaceCommandAli
         return command == null ? new String[0] : Arrays.copyOf(command, command.length);
     }
 
-    public DefaultNutsWorkspaceCommandAlias setCommand(String[] command) {
+    public DefaultNutsWorkspaceCustomCommand setCommand(String[] command) {
         this.command = command;
         return this;
     }
@@ -106,7 +106,7 @@ public class DefaultNutsWorkspaceCommandAlias implements NutsWorkspaceCommandAli
         return executorOptions == null ? new String[0] : Arrays.copyOf(executorOptions, command.length);
     }
 
-    public DefaultNutsWorkspaceCommandAlias setExecutorOptions(String[] executorOptions) {
+    public DefaultNutsWorkspaceCustomCommand setExecutorOptions(String[] executorOptions) {
         this.executorOptions = executorOptions;
         return this;
     }

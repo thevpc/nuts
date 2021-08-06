@@ -20,7 +20,7 @@ public class CommandNutsWorkspaceCommandFactory implements NutsWorkspaceCommandF
         this.ws = ws;
     }
 
-    public void configure(NutsCommandAliasFactoryConfig config) {
+    public void configure(NutsCommandFactoryConfig config) {
         factoryId = config.getFactoryId();
         factoryId = "command";
         priority = config.getPriority();
@@ -85,7 +85,7 @@ public class CommandNutsWorkspaceCommandFactory implements NutsWorkspaceCommandF
     }
 
     @Override
-    public NutsCommandAliasConfig findCommand(String name, NutsSession session) {
+    public NutsCommandConfig findCommand(String name, NutsSession session) {
         if (findCommand.length > 0 && execCommand.length > 0) {
             String[] fc = replaceParam(findCommand, name);
             String[] ec = replaceParam(execCommand, name);
@@ -96,7 +96,7 @@ public class CommandNutsWorkspaceCommandFactory implements NutsWorkspaceCommandF
                     .run();
             int r = exec.getResult();
             if (r == 0) {
-                return new NutsCommandAliasConfig()
+                return new NutsCommandConfig()
                         .setFactoryId(getFactoryId())
                         .setOwner(ws.id().parser().parse(ec[0]))
                         .setName(name)
@@ -107,8 +107,8 @@ public class CommandNutsWorkspaceCommandFactory implements NutsWorkspaceCommandF
     }
 
     @Override
-    public List<NutsCommandAliasConfig> findCommands(NutsSession session) {
-        List<NutsCommandAliasConfig> c = new ArrayList<>();
+    public List<NutsCommandConfig> findCommands(NutsSession session) {
+        List<NutsCommandConfig> c = new ArrayList<>();
         if (listCommand.length > 0) {
             NutsExecCommand b = ws.exec().addCommand(listCommand).setSession(session)
                     .setRedirectErrorStream(true)
@@ -118,7 +118,7 @@ public class CommandNutsWorkspaceCommandFactory implements NutsWorkspaceCommandF
                 for (String s : b.getOutputString().split("\n")) {
                     s = s.trim();
                     if (s.length() > 0) {
-                        c.add(new NutsCommandAliasConfig().setName(s).setCommand(new String[]{"nsh", s}));
+                        c.add(new NutsCommandConfig().setName(s).setCommand(new String[]{"nsh", s}));
                     }
                 }
             }

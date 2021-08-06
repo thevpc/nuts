@@ -51,6 +51,8 @@ public interface NutsWorkspace extends NutsComponent<NutsWorkspaceOptions> {
      */
     String getName();
 
+    String getHashName();
+
     NutsVersion getApiVersion();
 
     NutsId getApiId();
@@ -154,7 +156,7 @@ public interface NutsWorkspace extends NutsComponent<NutsWorkspaceOptions> {
 
     NutsImportManager imports();
 
-    NutsCommandAliasManager aliases();
+    NutsCommandManager commands();
 
     NutsWorkspaceLocationManager locations();
 

@@ -2,16 +2,53 @@ package net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.base;
 
 import net.thevpc.nuts.NutsDescriptor;
 import net.thevpc.nuts.NutsId;
+import net.thevpc.nuts.NutsSession;
 
 public class NameBuilder {
     private NutsId id;
     private NutsDescriptor descriptor;
     private String preferredName;
+    private String defaultName;
+    private NutsSession session;
+    private boolean preferId;
 
-    public NameBuilder(NutsId id, String preferredName, NutsDescriptor descriptor) {
+    public NameBuilder(NutsId id, String preferredName, String defaultName, NutsDescriptor descriptor, NutsSession session, boolean preferId) {
         this.id = id;
         this.preferredName = preferredName;
         this.descriptor = descriptor;
+        this.session = session;
+        this.preferId = preferId;
+        if (defaultName == null) {
+            defaultName = "";
+        }
+        defaultName = defaultName.trim();
+        if (defaultName.isEmpty()) {
+            if(preferId) {
+                defaultName = "%n%s%v%s%h";
+            }else{
+                defaultName = "%N%s%v%s%h";
+            }
+        }
+        this.defaultName = defaultName;
+    }
+
+    public static NameBuilder id(NutsId id, String preferredName, String defaultName, NutsDescriptor descriptor, NutsSession session) {
+        return new NameBuilder(id, preferredName, defaultName, descriptor, session, true);
+    }
+
+    public static NameBuilder label(NutsId id, String preferredName, String defaultName, NutsDescriptor descriptor, NutsSession session) {
+        return new NameBuilder(id, preferredName, defaultName, descriptor, session, false);
+    }
+
+    public static String extractPathName(String s) {
+        if (s == null) {
+            return "";
+        }
+        int i = Math.max(s.lastIndexOf('/'), s.lastIndexOf('\\'));
+        if (i >= 0) {
+            return s.substring(i + 1).trim();
+        }
+        return s.trim();
     }
 
     private String toValidString(String s) {
@@ -26,6 +63,9 @@ public class NameBuilder {
 
     private String toValidChar(char c) {
         if (c == ' ') {
+            if (preferId) {
+                return "-";
+            }
             return " ";
         }
         if (Character.isWhitespace(c)) {
@@ -51,15 +91,28 @@ public class NameBuilder {
 
     public String buildName() {
         String s = preferredName;
+        if (s != null) {
+            int i = Math.max(s.lastIndexOf('/'), s.lastIndexOf('\\'));
+            if (i >= 0) {
+                String p = s.substring(0, i + 1);
+                String n = s.substring(i + 1);
+                return p + buildName(n);
+            }
+        }
+        return buildName(s);
+    }
+
+    private String buildName(String s) {
         if (s == null) {
             s = "";
         }
         s = s.trim();
         if (s.isEmpty()) {
-            s = "%n-%v";
+            s = defaultName;
         }
         StringBuilder sb = new StringBuilder();
         char[] charArray = s.toCharArray();
+        boolean wasSep = false;
         for (int i = 0; i < charArray.length; i++) {
             char c = charArray[i];
             if (c == '%' && i + 1 < charArray.length) {
@@ -67,34 +120,87 @@ public class NameBuilder {
                 char cc = charArray[i];
                 switch (cc) {
                     case 'v': {
-                        sb.append(toValidString(id.getVersion().toString()));
+                        String str = id.getVersion().toString();
+                        if (wasSep) {
+                            if (!str.isEmpty()) {
+                                sb.append(toValidChar(' '));
+                            }
+                            wasSep = false;
+                        }
+                        sb.append(toValidString(str));
                         break;
                     }
                     case 'g': {
-                        sb.append(toValidString(id.getGroupId()));
+                        String str = id.getGroupId();
+                        if (wasSep) {
+                            if (!str.isEmpty()) {
+                                sb.append(toValidChar(' '));
+                            }
+                            wasSep = false;
+                        }
+                        sb.append(toValidString(str));
                         break;
                     }
                     case 'n': {
-                        sb.append(toValidString(id.getArtifactId()));
+                        String str = id.getArtifactId();
+                        if (wasSep) {
+                            if (!str.isEmpty()) {
+                                sb.append(toValidChar(' '));
+                            }
+                            wasSep = false;
+                        }
+                        sb.append(toValidString(str));
                         break;
                     }
                     case 'N': {
-                        String n = descriptor.getName();
-                        if (n == null) {
-                            n = "";
+                        String str = descriptor.getName();
+                        if (str == null) {
+                            str = "";
                         }
-                        n = n.trim();
-                        if (n.isEmpty()) {
-                            n = id.getArtifactId();
+                        str = str.trim();
+                        if (str.isEmpty()) {
+                            str = id.getArtifactId();
                         }
-                        sb.append(toValidString(n));
+                        if (wasSep) {
+                            if (!str.isEmpty()) {
+                                sb.append(toValidChar(' '));
+                            }
+                            wasSep = false;
+                        }
+                        sb.append(toValidString(str));
+                        break;
+                    }
+                    case 'h': {
+                        String str = session.getWorkspace().getHashName().trim();
+                        if (str.equalsIgnoreCase("default")) {
+                            str = "";
+                        }
+                        if (wasSep) {
+                            if (!str.isEmpty()) {
+                                sb.append(toValidChar(' '));
+                            }
+                            wasSep = false;
+                        }
+                        sb.append(toValidString(str));
                         break;
                     }
                     case 'a': {
-                        sb.append(toValidString(id.getArch()));
+                        String str = toValidString(id.getArch());
+                        if (wasSep) {
+                            if (!str.isEmpty()) {
+                                sb.append(toValidChar(' '));
+                            }
+                            wasSep = false;
+                        }
+                        sb.append(str);
+                        break;
+                    }
+                    case 's': {
+                        wasSep = true;
                         break;
                     }
                     default: {
+                        wasSep = false;
                         sb.append(c);
                     }
                 }

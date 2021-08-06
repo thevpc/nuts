@@ -189,7 +189,7 @@ public class DefaultNutsWorkspaceConfigModel {
             Path file = Paths.get(configVersionSpecificLocation).resolve(CoreNutsConstants.Files.WORKSPACE_MAIN_CONFIG_FILE_NAME);
             storeModelMain.setConfigVersion(current().getApiVersion());
             if (storeModelMain.getCommandFactories() != null) {
-                for (NutsCommandAliasFactoryConfig item : storeModelMain.getCommandFactories()) {
+                for (NutsCommandFactoryConfig item : storeModelMain.getCommandFactories()) {
                     //inherited
                     item.setConfigVersion(null);
                 }

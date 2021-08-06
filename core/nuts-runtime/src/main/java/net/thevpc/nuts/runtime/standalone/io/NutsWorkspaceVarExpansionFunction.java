@@ -33,25 +33,30 @@ public class NutsWorkspaceVarExpansionFunction implements Function<String, Strin
                 return ws.locations().getHomeLocation(NutsStoreLocation.LOG);
             case "home.run":
                 return ws.locations().getHomeLocation(NutsStoreLocation.RUN);
+            case "workspace.hash-name":
+                return ws.getHashName();
+            case "workspace.name":
+                return ws.getName();
+            case "workspace.location":
             case "workspace":
                 return ws.locations().getWorkspaceLocation().toString();
             case "user.home":
                 return System.getProperty("user.home");
-            case "config":
+            case "workspace.config":
                 return ws.locations().getStoreLocation(NutsStoreLocation.CONFIG).toString();
-            case "lib":
+            case "workspace.lib":
                 return ws.locations().getStoreLocation(NutsStoreLocation.LIB).toString();
-            case "apps":
+            case "workspace.apps":
                 return ws.locations().getStoreLocation(NutsStoreLocation.APPS).toString();
-            case "cache":
+            case "workspace.cache":
                 return ws.locations().getStoreLocation(NutsStoreLocation.CACHE).toString();
-            case "run":
+            case "workspace.run":
                 return ws.locations().getStoreLocation(NutsStoreLocation.RUN).toString();
-            case "temp":
+            case "workspace.temp":
                 return ws.locations().getStoreLocation(NutsStoreLocation.TEMP).toString();
-            case "log":
+            case "workspace.log":
                 return ws.locations().getStoreLocation(NutsStoreLocation.LOG).toString();
-            case "var":
+            case "workspace.var":
                 return ws.locations().getStoreLocation(NutsStoreLocation.VAR).toString();
             case "nuts.boot.version":
                 return ws.getApiVersion().toString();

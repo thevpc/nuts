@@ -7,6 +7,7 @@ import net.thevpc.nuts.toolbox.nadmin.PathInfo;
 import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.AbstractFreeDesktopEntryWriter;
 import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.FreeDesktopEntry;
 import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.NdiScriptInfoType;
+import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.util.NdiUtils;
 import net.thevpc.nuts.toolbox.nadmin.util._IOUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -43,12 +44,8 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
     @Override
     public PathInfo[] writeShortcut(FreeDesktopEntry descriptor, Path path, boolean doOverride, NutsId id) {
         path=Paths.get(ensureName(path==null?null:path.toString(),descriptor.getOrCreateDesktopEntry().getName(),"desktop"));
-        boolean alreadyExists = Files.isRegularFile(path);
-        if (alreadyExists && !doOverride) {
-            return new PathInfo[]{new PathInfo(NdiScriptInfoType.DESKTOP_SHORTCUT, id,path, PathInfo.Status.DISCARDED)};
-        }
-        write(descriptor, path);
-        return new PathInfo[]{new PathInfo(NdiScriptInfoType.DESKTOP_SHORTCUT, id,path, alreadyExists ? PathInfo.Status.OVERRIDDEN : PathInfo.Status.CREATED)};
+        PathInfo.Status s = tryWrite(descriptor, path);
+        return new PathInfo[]{new PathInfo(NdiScriptInfoType.DESKTOP_SHORTCUT, id,path, s)};
     }
 
     @Override
@@ -67,18 +64,9 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
         FreeDesktopEntry.Group root = descriptor.getOrCreateDesktopEntry();
         File folder4shortcuts = new File(System.getProperty("user.home") + "/.local/share/applications");
         folder4shortcuts.mkdirs();
-        PathInfo shortcutPathInfo = null;
-//        String name = root.getName();
         File shortcutFile = new File(folder4shortcuts, desktopFileName);
-        boolean shortcutFileAlreadyExists = shortcutFile.exists();
-        byte[] oldShortcutContent = _IOUtils.loadFileContentLenient(shortcutFile.toPath());
-        if (!shortcutFileAlreadyExists || doOverride) {
-            write(descriptor, shortcutFile);
-        }
-        shortcutPathInfo = new PathInfo(
-                NdiScriptInfoType.DESKTOP_MENU,id,
-                shortcutFile.toPath(), shortcutFileAlreadyExists ? PathInfo.Status.OVERRIDDEN : PathInfo.Status.CREATED);
-        all.add(shortcutPathInfo);
+        all.add(new PathInfo(NdiScriptInfoType.DESKTOP_MENU,id,
+                shortcutFile.toPath(), tryWrite(descriptor, shortcutFile)));
 
         List<String> categories = new ArrayList<>(root.getCategories());
         if (categories.isEmpty()) {
@@ -123,35 +111,46 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
                 ByteArrayOutputStream b = new ByteArrayOutputStream();
                 tr.transform(new DOMSource(dom), new StreamResult(b));
                 File menuFile = new File(folder4menus, menuFileName);
-                byte[] oldMenuContent = _IOUtils.loadFileContentLenient(menuFile.toPath());
-                PathInfo menuPathInfo;
-                if (Arrays.equals(oldMenuContent, b.toByteArray())) {
-                    menuPathInfo = new PathInfo(NdiScriptInfoType.DESKTOP_MENU, id,menuFile.toPath(), PathInfo.Status.DISCARDED);
-                } else {
-                    boolean alreadyExists0 = menuFile.isFile();
-                    if (!alreadyExists0 || doOverride) {
-                        Files.write(menuFile.toPath(), b.toByteArray());
-                    }
-                    if (alreadyExists0) {
-                        menuPathInfo = new PathInfo(NdiScriptInfoType.DESKTOP_MENU, id,menuFile.toPath(), PathInfo.Status.OVERRIDDEN);
-                    } else {
-                        menuPathInfo = new PathInfo(NdiScriptInfoType.DESKTOP_MENU, id,menuFile.toPath(), PathInfo.Status.CREATED);
-                    }
-                }
-                all.add(menuPathInfo);
-            } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
+                all.add(new PathInfo(NdiScriptInfoType.DESKTOP_MENU, id,menuFile.toPath(), NdiUtils.tryWrite(b.toByteArray(),menuFile.toPath())));
             } catch (ParserConfigurationException | TransformerException ex) {
                 throw new RuntimeException(ex);
             }
         }
         if (all.stream().anyMatch(x -> x.getStatus() != PathInfo.Status.DISCARDED)) {
-            //should we run
-            //    KDE  : 'kbuildsycoca5'
-            //    GNOME: update-desktop-database ~/.local/share/applications
-            // more generic : xdg-desktop-menu forceupdate
+            updateDesktopMenus();
         }
         return all.toArray(new PathInfo[0]);
+    }
+
+    private void updateDesktopMenus() {
+        //    KDE  : 'kbuildsycoca5'
+        Path a = NdiUtils.sysWhich("kbuildsycoca5");
+        if(a!=null){
+            session.getWorkspace().exec().setCommand(a.toString()).userCmd().run();
+        }
+
+        //    GNOME: update-desktop-database ~/.local/share/applications
+        a = NdiUtils.sysWhich("update-desktop-database");
+        if(a!=null) {
+            session.getWorkspace().exec().setCommand(a.toString(),System.getProperty("user.home")+"/.local/share/applications").userCmd().run();
+        }
+
+        // more generic : xdg-desktop-menu forceupdate
+        a = NdiUtils.sysWhich("xdg-desktop-menu");
+        if(a!=null) {
+            session.getWorkspace().exec().setCommand(a.toString(),"forceupdate").userCmd().run();
+        }
+    }
+    private boolean isKDE() {
+        return "kde".equalsIgnoreCase(getDesktopEnvironment());
+    }
+
+    private boolean isGNOME() {
+        return "gnome".equalsIgnoreCase(getDesktopEnvironment());
+    }
+
+    private String getDesktopEnvironment() {
+        return System.getenv("XDG_SESSION_DESKTOP");
     }
 
     private Element createMenuXmlElement(String[] a, String name, Document dom) {
@@ -184,32 +183,13 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
         }
     }
 
-    public boolean tryWrite(FreeDesktopEntry file, Path out) {
-        String old = null;
-        if (Files.isRegularFile(out)) {
-            try {
-                old = new String(Files.readAllBytes(out));
-            } catch (Exception ex) {
-                //ignore
-            }
-        }
-        if (old == null) {
-            write(file, out);
-            return true;
-        }
-        String s = writeAsString(file);
-        if (old.trim().equals(s.trim())) {
-            return false;
-        }
-        try {
-            Files.write(out, s.getBytes());
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
-        }
-        return true;
+
+
+    public PathInfo.Status tryWrite(FreeDesktopEntry file, Path out) {
+        return NdiUtils.tryWrite(writeAsString(file).getBytes(),out);
     }
 
-    public boolean tryWrite(FreeDesktopEntry file, File out) {
+    public PathInfo.Status tryWrite(FreeDesktopEntry file, File out) {
         return tryWrite(file, out.toPath());
     }
 

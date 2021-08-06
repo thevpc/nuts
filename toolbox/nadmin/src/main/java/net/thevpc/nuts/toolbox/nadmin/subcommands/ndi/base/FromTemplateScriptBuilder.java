@@ -116,9 +116,9 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
                                 }
                                 switch (s) {
                                     case "NUTS_ID":
-                                        return anyId.toString();
+                                        return anyId.getLongName();
                                     case "GENERATOR":
-                                        return getSession().getAppId().toString();
+                                        return getSession().getAppId().getLongName();
                                     case "SCRIPT_NUTS":
                                         return sndi.getNutsStart(env).path().toString();
                                     case "SCRIPT_NUTS_TERM_INIT":

@@ -36,7 +36,7 @@ import java.util.Objects;
  * @since 0.5.4
  * @category SPI Base
  */
-public class NutsCommandAliasFactoryConfig extends NutsConfigItem {
+public class NutsCommandFactoryConfig extends NutsConfigItem {
     private static final long serialVersionUID = 1;
 
     /**
@@ -72,7 +72,7 @@ public class NutsCommandAliasFactoryConfig extends NutsConfigItem {
      * @param value new value
      * @return {@code this} instance
      */
-    public NutsCommandAliasFactoryConfig setFactoryId(String value) {
+    public NutsCommandFactoryConfig setFactoryId(String value) {
         this.factoryId = value;
         return this;
     }
@@ -90,7 +90,7 @@ public class NutsCommandAliasFactoryConfig extends NutsConfigItem {
      * @param value new value
      * @return {@code this} instance
      */
-    public NutsCommandAliasFactoryConfig setFactoryType(String value) {
+    public NutsCommandFactoryConfig setFactoryType(String value) {
         this.factoryType = value;
         return this;
     }
@@ -108,7 +108,7 @@ public class NutsCommandAliasFactoryConfig extends NutsConfigItem {
      * @param value new value
      * @return {@code this} instance
      */
-    public NutsCommandAliasFactoryConfig setParameters(Map<String, String> value) {
+    public NutsCommandFactoryConfig setParameters(Map<String, String> value) {
         this.parameters = value;
         return this;
     }
@@ -126,7 +126,7 @@ public class NutsCommandAliasFactoryConfig extends NutsConfigItem {
      * @param value new value
      * @return {@code this} instance
      */
-    public NutsCommandAliasFactoryConfig setPriority(int value) {
+    public NutsCommandFactoryConfig setPriority(int value) {
         this.priority = value;
         return this;
     }
@@ -135,7 +135,7 @@ public class NutsCommandAliasFactoryConfig extends NutsConfigItem {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        NutsCommandAliasFactoryConfig that = (NutsCommandAliasFactoryConfig) o;
+        NutsCommandFactoryConfig that = (NutsCommandFactoryConfig) o;
         return priority == that.priority &&
                 Objects.equals(factoryId, that.factoryId) &&
                 Objects.equals(factoryType, that.factoryType) &&
@@ -149,7 +149,7 @@ public class NutsCommandAliasFactoryConfig extends NutsConfigItem {
 
     @Override
     public String toString() {
-        return "NutsCommandAliasFactoryConfig{" +
+        return "NutsCommandFactoryConfig{" +
                 "factoryId='" + factoryId + '\'' +
                 ", factoryType='" + factoryType + '\'' +
                 ", priority=" + priority +

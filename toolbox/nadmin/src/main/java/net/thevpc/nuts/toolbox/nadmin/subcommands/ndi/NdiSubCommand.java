@@ -296,15 +296,17 @@ public class NdiSubCommand extends AbstractNAdminSubCommand {
     private void printResults(NutsApplicationContext context, PathInfo[] result) {
         NutsWorkspace ws = context.getWorkspace();
         if (context.getSession().isTrace()) {
+            result=Arrays.stream(result).filter(x->x.getStatus()!= PathInfo.Status.DISCARDED).toArray(PathInfo[]::new);
             if (context.getSession().isPlainTrace()) {
                 int namesSize = Arrays.stream(result).mapToInt(x -> x.getPath().getFileName().toString().length()).max().orElse(1);
                 for (PathInfo ndiScriptInfo : result) {
-                    context.getSession().out().printf("%s script %-" + namesSize + "s for %s"
+                    context.getSession().out().resetLine().printf("%s script %-" + namesSize + "s for %s"
                                     + " at %s%n",
-                            ndiScriptInfo.getStatus()!= PathInfo.Status.DISCARDED
+                            (ndiScriptInfo.getStatus()== PathInfo.Status.OVERRIDDEN)
                                     ? ws.text().forStyled("re-install", NutsTextStyles.of(NutsTextStyle.success(), NutsTextStyle.underlined()))
-                                    : ws.text().forStyled("install", NutsTextStyle.success()),
-                            ndiScriptInfo.getPath().getFileName().toString(),
+                                    : ws.text().forStyled("install", NutsTextStyle.success())
+                            ,
+                            ws.text().forStyled(ndiScriptInfo.getPath().getFileName().toString(),NutsTextStyle.path()),
                             ndiScriptInfo.getId(),
                             ws.text().forStyled(NdiUtils.betterPath(ndiScriptInfo.getPath().toString()), NutsTextStyle.path())
                     );

@@ -325,8 +325,8 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
 //        NutsDefinition apiDef = context.getWorkspace().search()
 //                .addId(apiId).setOptional(false).setLatest(true).setContent(true).getResultDefinitions().required();
         Path script = null;
-        script = getScriptFile(new NameBuilder(env.getNutsApiId(), preferredName == null ? "%n" : preferredName,
-                env.getNutsApiDef().getDescriptor()).buildName(), env);
+        script = getScriptFile(NameBuilder.id(env.getNutsApiId(), preferredName, "%n",
+                env.getNutsApiDef().getDescriptor(), context.getSession()).buildName(), env);
         boolean createPath = false;
         if (Files.exists(script)) {
             if (context.getSession().getTerminal().ask()
@@ -622,9 +622,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
 //        Pattern commentLineConditionPattern = Pattern.compile(commentLineConditionRegexp);
         filePath = filePath.toAbsolutePath();
         List<String> goodLinesList = Arrays.asList(goodLine.split("[\n\r]"));
-        boolean exists = Files.exists(filePath);
         boolean found = false;
-        boolean updatedFile = false;
         List<String> lines = new ArrayList<>();
         if (Files.isRegularFile(filePath)) {
             String fileContent = null;
@@ -649,9 +647,13 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                 if (isComments(row.trim()) && commentLine.matches(trimComments(row.trim()))) {
                     String clta = toCommentLine(commentLine.getReplacement());
                     if (!clta.equals(row)) {
-                        updatedFile = true;
+//                        updatedFile = true;
                     }
-                    lines.add("");
+                    if (lines.size() > 0) {
+                        if (lines.get(lines.size() - 1).trim().length() > 0) {
+                            lines.add("");
+                        }
+                    }
                     lines.add(clta);
                     found = true;
                     i++;
@@ -670,9 +672,8 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                     }
                     lines.addAll(goodLinesList);
                     lines.add("");
-                    if (!old.equals(goodLinesList)) {
-                        updatedFile = true;
-                    }
+//                    if (!old.equals(goodLinesList)) {
+//                    }
                     for (; i < fileRows.size(); i++) {
                         lines.add(fileRows.get(i));
                     }
@@ -684,47 +685,28 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         if (header != null) {
             if (lines.size() == 0 || !header.matches(lines.get(0).trim())) {
                 lines.add(0, header.getReplacement());
-                updatedFile = true;
             }
         }
         if (!found) {
-            lines.add("");
+            if (lines.size() > 0 && !lines.get(0).trim().isEmpty()) {
+                lines.add("");
+            }
             lines.add(toCommentLine(commentLine.getReplacement()));
             lines.addAll(goodLinesList);
             lines.add("");
-            updatedFile = true;
-        }
-        if (updatedFile) {
-            if (exists) {
-                if (!context.getSession().getTerminal().ask()
-                        .resetLine()
-                        .setDefaultValue(false).setSession(context.getSession())
-                        .forBoolean("override existing script %s ?",
-                                context.getWorkspace().text().forStyled(
-                                        NdiUtils.betterPath(filePath.toString()), NutsTextStyle.path()
-                                )
-                        ).getBooleanValue()) {
-                    return new PathInfo(type, id, filePath, PathInfo.Status.DISCARDED);
-                }
-                try {
-                    Files.createDirectories(filePath.getParent());
-                    Files.write(filePath, (String.join(newlineString(), lines) + newlineString()).getBytes());
-                } catch (IOException ex) {
-                    throw new UncheckedIOException(ex);
-                }
-                return new PathInfo(type, id, filePath, PathInfo.Status.OVERRIDDEN);
-            } else {
-                try {
-                    Files.createDirectories(filePath.getParent());
-                    Files.write(filePath, (String.join(newlineString(), lines) + newlineString()).getBytes());
-                } catch (IOException ex) {
-                    throw new UncheckedIOException(ex);
-                }
-                return new PathInfo(type, id, filePath, PathInfo.Status.CREATED);
-            }
         } else {
-            return new PathInfo(type, id, filePath, PathInfo.Status.DISCARDED);
+//            if (lines.size() > 0) {
+//                if (lines.get(lines.size() - 1).trim().length() > 0) {
+//                    lines.add("");
+//                }
+//            }
         }
+        byte[] oldContent = NdiUtils.loadFile(filePath);
+        String oldContentString = oldContent == null ? "" : new String(oldContent);
+        byte[] newContent = (String.join(newlineString(), lines)).getBytes();
+        String newContentString = new String(newContent);
+        PathInfo.Status s = NdiUtils.tryWriteStatus(newContent, filePath);
+        return new PathInfo(type, id, filePath, NdiUtils.tryWrite(newContent, filePath));
     }
 
     public PathInfo removeFileCommented2Lines(NdiScriptInfoType type, NutsId id, Path filePath, String commentLine, boolean force) {
@@ -854,7 +836,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             AppShortcutTarget appShortcutTarget,
             NutsId appId,
             String apiVersion,
-            String preferredName,
+            String path,
             String menuPath,
             String iconPath,
             String cwd,
@@ -890,10 +872,15 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             cwd = System.getProperty("user.home");
         }
         iconPath = resolveIcon(iconPath, appId);
-        if (preferredName == null && appShortcutTarget == AppShortcutTarget.DESKTOP) {
-            preferredName = "%N %v";
+
+        String preferredName = NameBuilder.label(appDef.getId(),
+                NameBuilder.extractPathName(path),
+                null, appDef.getDescriptor(), context.getSession()).buildName();
+        if (preferredName.isEmpty() && appShortcutTarget == AppShortcutTarget.DESKTOP) {
+            preferredName = "%N%s%v%s%h";
         }
-        preferredName = new NameBuilder(appDef.getId(), preferredName, appDef.getDescriptor()).buildName();
+        preferredName = NameBuilder.label(appDef.getId(), preferredName, null, appDef.getDescriptor(), context.getSession()).buildName();
+
         FreeDesktopEntry.Group sl = FreeDesktopEntry.Group.desktopEntry(preferredName, execCmd.toString(), cwd);
         sl.setStartNotify(true);
         sl.setIcon(iconPath);
@@ -903,7 +890,8 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         if (menuPath != null) {
             sl.addCategory(menuPath);
         }
-        return createShortcut(appShortcutTarget, appId, preferredName, sl);
+        String preferredPath = NameBuilder.id(appDef.getId(), path, null, appDef.getDescriptor(), context.getSession()).buildName();
+        return createShortcut(appShortcutTarget, appId, preferredPath, sl);
     }
 
     @NotNull

@@ -39,7 +39,7 @@ public enum NutsExecutableType implements NutsEnum{
 
     /**
      * workspace configured command using
-     * {@link NutsCommandAliasManager#add(NutsCommandAliasConfig)}
+     * {@link NutsCommandManager#addCommand(NutsCommandConfig)}
      */
     ALIAS,
 

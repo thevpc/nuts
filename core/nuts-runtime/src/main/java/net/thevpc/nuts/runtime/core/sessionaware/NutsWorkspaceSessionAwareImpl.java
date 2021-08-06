@@ -49,6 +49,11 @@ public class NutsWorkspaceSessionAwareImpl implements NutsWorkspace, NutsWorkspa
     }
 
     @Override
+    public String getHashName() {
+        return ws().getHashName();
+    }
+
+    @Override
     public String getUuid() {
         return ws().getUuid();
     }
@@ -224,8 +229,8 @@ public class NutsWorkspaceSessionAwareImpl implements NutsWorkspace, NutsWorkspa
     }
 
     @Override
-    public NutsCommandAliasManager aliases() {
-        return ws().aliases().setSession(getSession());
+    public NutsCommandManager commands() {
+        return ws().commands().setSession(getSession());
     }
 
     @Override

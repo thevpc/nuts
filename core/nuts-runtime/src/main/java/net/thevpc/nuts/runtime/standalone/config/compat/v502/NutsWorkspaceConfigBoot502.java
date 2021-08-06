@@ -27,7 +27,7 @@ package net.thevpc.nuts.runtime.standalone.config.compat.v502;
 
 import java.io.Serializable;
 import java.util.*;
-import net.thevpc.nuts.NutsCommandAliasFactoryConfig;
+import net.thevpc.nuts.NutsCommandFactoryConfig;
 import net.thevpc.nuts.NutsId;
 import net.thevpc.nuts.NutsOsFamily;
 import net.thevpc.nuts.NutsRepositoryRef;
@@ -124,7 +124,7 @@ public final class NutsWorkspaceConfigBoot502 implements Serializable {
 
     private List<NutsRepositoryRef> repositories;
     private List<NutsId> extensions;
-    private List<NutsCommandAliasFactoryConfig> commandFactories;
+    private List<NutsCommandFactoryConfig> commandFactories;
     private Properties env = new Properties();
     private List<NutsSdkLocation> sdk = new ArrayList<>();
     private List<String> imports = new ArrayList<>();
@@ -169,7 +169,7 @@ public final class NutsWorkspaceConfigBoot502 implements Serializable {
 
     }
 
-    public void setCommandFactories(List<NutsCommandAliasFactoryConfig> commandFactories) {
+    public void setCommandFactories(List<NutsCommandFactoryConfig> commandFactories) {
         this.commandFactories = commandFactories;
 
     }
@@ -273,7 +273,7 @@ public final class NutsWorkspaceConfigBoot502 implements Serializable {
 
     }
 
-    public List<NutsCommandAliasFactoryConfig> getCommandFactories() {
+    public List<NutsCommandFactoryConfig> getCommandFactories() {
         return commandFactories;
     }
 
