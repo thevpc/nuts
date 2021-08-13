@@ -124,7 +124,7 @@ public class Nsh implements NutsApplication {
             } catch (Exception notFound) {
                 //ignore!
             }
-            for (NutsWorkspaceCustomCommand command : ws.commands().findCommandByOwner(applicationContext.getAppId())) {
+            for (NutsWorkspaceCustomCommand command : ws.commands().findCommandsByOwner(applicationContext.getAppId())) {
                 try {
                     ws.commands().removeCommand(command.getName());
                 } catch (Exception ex) {

@@ -365,7 +365,7 @@ public class DefaultNutsWorkspaceExtensionModel {
                     //load extension
                     NutsDefinition def = ws.search()
                             .setSession(session)
-                            .addId(extension).setTargetApiVersion(ws.getApiVersion().toString())
+                            .addId(extension).setTargetApiVersion(ws.getApiVersion())
                             .setContent(true)
                             .setDependencies(true)
                             .setDependencyFilter(CoreNutsDependencyUtils.createJavaRunDependencyFilter(session)
@@ -399,7 +399,8 @@ public class DefaultNutsWorkspaceExtensionModel {
 
     private void updateLoadedExtensionURLs(NutsSession session) {
         loadedExtensionURLs.clear();
-        for (NutsDefinition def : ws.search().addIds(loadedExtensionIds.toArray(new NutsId[0])).setTargetApiVersion(ws.getApiVersion().toString())
+        for (NutsDefinition def : ws.search().addIds(loadedExtensionIds.toArray(new NutsId[0]))
+                .setTargetApiVersion(ws.getApiVersion())
                 .setSession(session)
                 .setContent(true)
                 .setDependencies(true)

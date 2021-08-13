@@ -275,6 +275,10 @@ public final class CoreStringUtils {
         return string == null || string.trim().isEmpty();
     }
 
+    public static boolean isBlank(NutsVersion string) {
+        return string == null || string.isBlank();
+    }
+
     public static boolean isBlank(char[] string) {
         if (string == null || string.length == 0) {
             return true;

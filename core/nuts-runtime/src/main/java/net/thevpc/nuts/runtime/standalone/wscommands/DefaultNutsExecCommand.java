@@ -4,7 +4,9 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.core.commands.ws.NutsExecutableInformationExt;
 import net.thevpc.nuts.runtime.core.commands.ws.NutsExecutionContextBuilder;
+import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.core.util.CoreNutsDependencyUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.DefaultNutsWorkspace;
 import net.thevpc.nuts.runtime.standalone.executors.ArtifactExecutorComponent;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
@@ -49,6 +51,9 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
         terminal.out().flush();
         terminal.err().flush();
         String[] ts = command.toArray(new String[0]);
+        if(ts.length==0){
+            throw new NutsIllegalArgumentException(traceSession,NutsMessage.plain("missing command"));
+        }
         NutsExecutableInformationExt exec = null;
         execSession.setTerminal(terminal);
         NutsExecutionType executionType = this.getExecutionType();
@@ -59,29 +64,41 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
             executionType = NutsExecutionType.SPAWN;
         }
         switch (executionType) {
+            case OPEN: {
+                if (commandDefinition != null) {
+                    throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("unable to run open artifact"));
+                }
+                exec=new DefaultNutsOpenExecutable(ts,getExecutorOptions(), traceSession, execSession,this);
+                break;
+            }
             case USER_CMD: {
                 if (commandDefinition != null) {
-                    throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("unable to run nuts as user-cmd"));
+                    throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("unable to run artifact as user-cmd"));
                 }
-                exec = new DefaultNutsSystemExecutable(ts, getExecutorOptions(),
+                List<String> tsl=new ArrayList<>(Arrays.asList(ts));
+                if(CoreStringUtils.firstIndexOf(ts[0],new char[]{'/','\\'})<0) {
+                    Path p = CoreIOUtils.sysWhich(ts[0]);
+                    if(p!=null){
+                        tsl.set(0,p.toString());
+                    }
+                }
+                exec = new DefaultNutsSystemExecutable(tsl.toArray(new String[0]), getExecutorOptions(),
                         traceSession,
                         execSession,
                         this,
-                        false,
-                        isInheritSystemIO()
+                        false
                 );
                 break;
             }
             case ROOT_CMD: {
                 if (commandDefinition != null) {
-                    throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("unable to run nuts as root-cmd"));
+                    throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("unable to run artifact as root-cmd"));
                 }
                 exec = new DefaultNutsSystemExecutable(ts, getExecutorOptions(),
                         traceSession,
                         execSession,
                         this,
-                        true,
-                        isInheritSystemIO()
+                        true
                 );
                 break;
             }
@@ -96,7 +113,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
                 break;
             }
             default: {
-                throw new NutsUnsupportedArgumentException(getSession(), NutsMessage.cstyle("invalid executionType %s", executionType));
+                throw new NutsUnsupportedArgumentException(getSession(), NutsMessage.cstyle("invalid execution type %s", executionType));
             }
         }
         return exec;
@@ -272,12 +289,17 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
                         idToExec = findExecId(goodId, prepareSession, forceInstalled, true);
                     }
                     if (idToExec == null) {
+                        Path sw = CoreIOUtils.sysWhich(cmdName);
+                        if(sw!=null){
+                            List<String> cmdArr = new ArrayList<>();
+                            cmdArr.add(sw.toString());
+                            cmdArr.addAll(Arrays.asList(args));
+                            return new DefaultNutsSystemExecutable(cmdArr.toArray(new String[0]), executorOptions, prepareSession, execSession, this, false);
+                        }
                         List<String> cmdArr = new ArrayList<>();
                         cmdArr.add(cmdName);
                         cmdArr.addAll(Arrays.asList(args));
-                        return new DefaultNutsSystemExecutable(cmdArr.toArray(new String[0]), executorOptions, prepareSession, execSession, this, false,
-                                isInheritSystemIO()
-                        );
+                        return new DefaultNutsSystemExecutable(cmdArr.toArray(new String[0]), executorOptions, prepareSession, execSession, this, false);
                     }
                     return ws_execId(idToExec, cmdName, args, executorOptions, executionType, prepareSession, execSession);
                 }

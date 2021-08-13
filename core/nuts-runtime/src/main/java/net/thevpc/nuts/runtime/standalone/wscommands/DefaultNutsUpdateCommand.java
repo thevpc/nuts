@@ -107,15 +107,15 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         Map<String, NutsUpdateResult> extUpdates = new LinkedHashMap<>();
         Map<String, NutsUpdateResult> regularUpdates = new HashMap<>();
         NutsUpdateResult apiUpdate = null;
-        String bootVersion0 = ws.getApiVersion().toString();
-        String bootVersion = bootVersion0;
+        NutsVersion bootVersion0 = ws.getApiVersion();
+        NutsVersion bootVersion = bootVersion0;
         if (!CoreStringUtils.isBlank(this.getApiVersion())) {
             bootVersion = this.getApiVersion();
         }
         if (this.isApi() || !CoreStringUtils.isBlank(this.getApiVersion())) {
             apiUpdate = checkCoreUpdate(ws.id().parser().parse(NutsConstants.Ids.NUTS_API), this.getApiVersion(), session, Type.API, now);
             if (apiUpdate.isUpdateAvailable()) {
-                bootVersion = apiUpdate.getAvailable().getId().getVersion().getValue();
+                bootVersion = apiUpdate.getAvailable().getId().getVersion();
                 allUpdates.put(NutsConstants.Ids.NUTS_API, apiUpdate);
             } else {
                 //reset bootVersion
@@ -126,7 +126,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         if (this.isRuntime()) {
             if (dws.requiresRuntimeExtension(session)) {
                 runtimeUpdate = checkCoreUpdate(ws.id().parser().parse(ws.getRuntimeId().getShortName()),
-                        apiUpdate != null && apiUpdate.getAvailable().getId() != null ? apiUpdate.getAvailable().getId().getVersion().toString()
+                        apiUpdate != null && apiUpdate.getAvailable().getId() != null ? apiUpdate.getAvailable().getId().getVersion()
                                 : bootVersion, session, Type.RUNTIME, now);
                 if (runtimeUpdate.isUpdateAvailable()) {
                     allUpdates.put(runtimeUpdate.getId().getShortName(), runtimeUpdate);
@@ -346,7 +346,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         return se;
     }
 
-    protected NutsUpdateResult checkRegularUpdate(NutsId id, Type type, String targetApiVersion, Instant now,boolean updateEvenIfExisting) {
+    protected NutsUpdateResult checkRegularUpdate(NutsId id, Type type, NutsVersion targetApiVersion, Instant now,boolean updateEvenIfExisting) {
         checkSession();
         NutsWorkspace ws = getSession().getWorkspace();
         NutsSession session = getSession();
@@ -574,7 +574,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         }
     }
 
-    public NutsUpdateResult checkCoreUpdate(NutsId id, String bootApiVersion, NutsSession session, Type type, Instant now) {
+    public NutsUpdateResult checkCoreUpdate(NutsId id, NutsVersion bootApiVersion, NutsSession session, Type type, Instant now) {
         //disable trace so that search do not write to stream
         checkSession();
         NutsWorkspace ws = getSession().getWorkspace();
@@ -592,9 +592,9 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                 if (confId != null) {
                     oldId = confId;
                 }
-                String v = bootApiVersion;
+                NutsVersion v = bootApiVersion;
                 if (CoreStringUtils.isBlank(v)) {
-                    v = NutsConstants.Versions.LATEST;
+                    v = getSession().getWorkspace().version().parse(NutsConstants.Versions.LATEST);
                 }
                 try {
                     oldFile = fetch0().setId(oldId).setSession(session.copy().setFetchStrategy(NutsFetchStrategy.ONLINE)).getResultDefinition();

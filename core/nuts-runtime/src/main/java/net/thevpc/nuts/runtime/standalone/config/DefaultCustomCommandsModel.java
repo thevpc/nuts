@@ -11,14 +11,14 @@ import net.thevpc.nuts.runtime.standalone.wscommands.DefaultNutsWorkspaceCustomC
 import java.util.*;
 import java.util.logging.Level;
 
-public class DefaultAliasModel {
+public class DefaultCustomCommandsModel {
 
     private final ConfigNutsWorkspaceCommandFactory defaultCommandFactory;
     private final List<NutsWorkspaceCommandFactory> commandFactories = new ArrayList<>();
     public NutsLogger LOG;
     private NutsWorkspace workspace;
 
-    public DefaultAliasModel(NutsWorkspace ws) {
+    public DefaultCustomCommandsModel(NutsWorkspace ws) {
         this.workspace = ws;
         defaultCommandFactory = new ConfigNutsWorkspaceCommandFactory(ws);
     }
@@ -29,7 +29,7 @@ public class DefaultAliasModel {
 
     protected NutsLogger _LOG(NutsSession session) {
         if (LOG == null) {
-            LOG = this.workspace.log().setSession(session).of(DefaultAliasModel.class);
+            LOG = this.workspace.log().setSession(session).of(DefaultCustomCommandsModel.class);
         }
         return LOG;
     }
@@ -81,9 +81,44 @@ public class DefaultAliasModel {
                 .getModel().fireConfigurationChanged("command", session, ConfigEventType.MAIN);
     }
 
-    public boolean removeFactory(String factoryId, NutsSession session) {
+    public boolean removeFactoryIfExists(String factoryId, NutsSession session) {
+        return removeFactory(factoryId, session,false);
+    }
+
+    public void removeFactory(String factoryId, NutsSession session) {
+        removeFactory(factoryId, session,true);
+    }
+
+    public boolean commandFactoryExists(String factoryId, NutsSession session) {
+        if (factoryId == null || factoryId.isEmpty()) {
+            return false;
+        }
+        NutsWorkspaceCommandFactory removeMe = null;
+        NutsCommandFactoryConfig removeMeConfig = null;
+        for (Iterator<NutsWorkspaceCommandFactory> iterator = commandFactories.iterator(); iterator.hasNext(); ) {
+            NutsWorkspaceCommandFactory factory = iterator.next();
+            if (factoryId.equals(factory.getFactoryId())) {
+                return true;
+            }
+        }
+        List<NutsCommandFactoryConfig> _commandFactories = getStoreModelMain().getCommandFactories();
+        if (_commandFactories != null) {
+            for (Iterator<NutsCommandFactoryConfig> iterator = _commandFactories.iterator(); iterator.hasNext(); ) {
+                NutsCommandFactoryConfig commandFactory = iterator.next();
+                if (factoryId.equals(commandFactory.getFactoryId())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean removeFactory(String factoryId, NutsSession session,boolean error) {
 //        options = CoreNutsUtils.validate(options, workspace);
         if (factoryId == null || factoryId.isEmpty()) {
+            if(!error){
+                return false;
+            }
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid WorkspaceCommandFactory %s", factoryId));
         }
         NutsWorkspaceCommandFactory removeMe = null;
@@ -113,6 +148,9 @@ public class DefaultAliasModel {
             }
         }
         if (removeMe == null && removeMeConfig == null) {
+            if(!error){
+                return false;
+            }
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("command factory does not exists %s", factoryId));
         }
         return true;
@@ -126,43 +164,78 @@ public class DefaultAliasModel {
                 || command.getCommand() == null
                 || command.getCommand().length == 0) {
             throw new NutsIllegalArgumentException(session,
-                    NutsMessage.cstyle("invalid command alias %s", (command == null ? "<NULL>" : command.getName()))
+                    NutsMessage.cstyle("invalid command %s", (command == null ? "<NULL>" : command.getName()))
             );
         }
-        boolean forced = false;
-        if (defaultCommandFactory.findCommand(command.getName(), session) != null) {
-            if (session.isYes()) {
-                forced = true;
-                remove(command.getName(),
-                        session.copy().setTrace(false)
-                );
-            } else {
-                throw new NutsIllegalArgumentException(session,
-                        NutsMessage.cstyle("command alias already exists : %s", command.getName())
-                );
+        NutsCommandConfig oldCommand =defaultCommandFactory.findCommand(command.getName(), session);
+                find(command.getName(), session);
+        if (oldCommand != null) {
+            if(oldCommand.equals(command)){
+                return false;
             }
-        }
-        defaultCommandFactory.installCommand(command, session);
-        if (session.isPlainTrace()) {
-            NutsPrintStream out = session.getTerminal().out();
-            NutsTextManager text = session.getWorkspace().text();
-            if (forced) {
-                out.printf("%s command %s%n",
-                        text.forStyled("re-install", NutsTextStyles.of(NutsTextStyle.success(), NutsTextStyle.underlined())),
-                        text.forStyled(command.getName(), NutsTextStyle.primary3()));
-            } else {
+            if (!session.getTerminal().ask()
+                    .resetLine()
+                    .setDefaultValue(false)
+                    .forBoolean("override existing command %s ?",
+                            session.getWorkspace().text().forStyled(
+                                    command.getName(), NutsTextStyle.primary1()
+                            )
+                    ).getBooleanValue()) {
+                update(command,session);
+                return true;
+            }else{
+                return false;
+            }
+        }else{
+            defaultCommandFactory.installCommand(command, session);
+            if (session.isPlainTrace()) {
+                NutsPrintStream out = session.getTerminal().out();
+                NutsTextManager text = session.getWorkspace().text();
                 out.printf("%s command %s%n",
                         text.forStyled("install", NutsTextStyle.success()),
                         text.forStyled(command.getName(), NutsTextStyle.primary3()));
             }
+            return true;
         }
-        return forced;
     }
 
-    public boolean remove(String name, NutsSession session) {
+    public boolean update(NutsCommandConfig command, NutsSession session) {
+        if (command == null
+                || CoreStringUtils.isBlank(command.getName())
+                || command.getName().contains(" ") || command.getName().contains(".")
+                || command.getName().contains("/") || command.getName().contains("\\")
+                || command.getCommand() == null
+                || command.getCommand().length == 0) {
+            throw new NutsIllegalArgumentException(session,
+                    NutsMessage.cstyle("invalid command %s", (command == null ? "<NULL>" : command.getName()))
+            );
+        }
+        NutsCommandConfig oldCommand = defaultCommandFactory.findCommand(command.getName(), session);
+        if (oldCommand != null) {
+            if(oldCommand.equals(command)){
+                return false;
+            }
+            defaultCommandFactory.uninstallCommand(command.getName(), session);
+            defaultCommandFactory.installCommand(command, session);
+            if (session.isPlainTrace()) {
+                NutsPrintStream out = session.getTerminal().out();
+                NutsTextManager text = session.getWorkspace().text();
+                out.printf("%s command %s%n",
+                        text.forStyled("update ", NutsTextStyles.of(NutsTextStyle.success(), NutsTextStyle.underlined())),
+                        text.forStyled(command.getName(), NutsTextStyle.primary3()));
+            }
+            return true;
+        }else{
+            throw new NutsIllegalArgumentException(session,
+                    NutsMessage.cstyle("command not found %s", command.getName())
+            );
+        }
+    }
+
+    public void remove(String name, NutsSession session) {
         if (CoreStringUtils.isBlank(name)) {
             throw new NutsIllegalArgumentException(session,
-                    NutsMessage.cstyle("invalid command alias : %s" + (name == null ? "<NULL>" : name))
+                    NutsMessage.cstyle("invalid command : %s" + (name == null ? "<NULL>" : name))
             );
         }
 //        options = CoreNutsUtils.validate(options, workspace);
@@ -170,15 +243,14 @@ public class DefaultAliasModel {
         NutsCommandConfig command = defaultCommandFactory.findCommand(name, session);
         if (command == null) {
             throw new NutsIllegalArgumentException(session,
-                    NutsMessage.cstyle("command alias does not exists %s", name)
+                    NutsMessage.cstyle("command does not exists %s", name)
             );
         }
         defaultCommandFactory.uninstallCommand(name, session);
         if (session.isPlainTrace()) {
             NutsPrintStream out = session.getTerminal().out();
-            out.printf("%s command alias %s%n", "uninstall", session.getWorkspace().text().forStyled(name, NutsTextStyle.primary3()));
+            out.printf("%s command %s%n", "uninstall", session.getWorkspace().text().forStyled(name, NutsTextStyle.primary3()));
         }
-        return true;
     }
 
     NutsWorkspaceConfigMain getStoreModelMain() {
@@ -227,7 +299,7 @@ public class DefaultAliasModel {
     private NutsWorkspaceCustomCommand toDefaultNutsWorkspaceCommand(NutsCommandConfig c, NutsSession session) {
         if (c.getCommand() == null || c.getCommand().length == 0) {
 
-            _LOGOP(session).level(Level.WARNING).verb(NutsLogVerb.FAIL).log("invalid alias definition ''{0}''. Missing alias . Ignored", c.getName());
+            _LOGOP(session).level(Level.WARNING).verb(NutsLogVerb.FAIL).log("invalid command definition ''{0}''. Missing command . Ignored", c.getName());
             return null;
         }
 //        if (c.getOwner() == null) {

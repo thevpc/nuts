@@ -37,7 +37,7 @@ public class RemoteNutsSearchCommand extends AbstractNutsSearchCommand {
         NutsObjectElementBuilder eb = e.forObject()
                 .set("execType", getExecType())
                 .set("defaultVersions", getDefaultVersions())
-                .set("targetApiVersion", getTargetApiVersion())
+                .set("targetApiVersion", getTargetApiVersion().toString())
                 .set("optional", getOptional())
                 .set("arch", e.forArray().addAll(getArch()).build())
                 .set("packaging", e.forArray().addAll(getPackaging()).build())
@@ -64,4 +64,6 @@ public class RemoteNutsSearchCommand extends AbstractNutsSearchCommand {
                 List.class
         ).iterator();
     }
+
+
 }

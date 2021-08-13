@@ -125,7 +125,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
     private DefaultNutsLogModel logModel;
     private DefaultNutsWorkspaceEnvManagerModel envModel;
     private DefaultNutsWorkspaceExtensionModel extensionModel;
-    private DefaultAliasModel aliasesModel;
+    private DefaultCustomCommandsModel aliasesModel;
     private DefaultImportModel importModel;
     private DefaultNutsConcurrentModel concurrentModel;
 
@@ -213,7 +213,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         repositoryModel = new DefaultNutsRepositoryModel(this);
         configModel = new DefaultNutsWorkspaceConfigModel(this, info);
         envModel = new DefaultNutsWorkspaceEnvManagerModel(this, info, defaultSession());
-        aliasesModel = new DefaultAliasModel(this);
+        aliasesModel = new DefaultCustomCommandsModel(this);
         importModel = new DefaultImportModel(this);
         locationsModel = new DefaultNutsWorkspaceLocationModel(this, info, Paths.get(info.getWorkspaceLocation()).toString());
         eventsModel = new DefaultNutsWorkspaceEventModel(this);
@@ -281,6 +281,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
 //                LOG.log(Level.CONFIG, "\t execution-requirements         : satisfied");
 //            }
             LOGCRF.log("   nuts-workspace                 : {0}", CoreNutsUtils.formatLogValue(text, info.getOptions().getWorkspace(), info.getWorkspaceLocation()));
+            LOGCRF.log("   nuts-hash-name                 : {0}", CoreNutsUtils.formatLogValue(text, getHashName(), info.getWorkspaceLocation()));
             LOGCRF.log("   nuts-store-apps                : {0}", CoreNutsUtils.formatLogValue(text, info.getOptions().getStoreLocation(NutsStoreLocation.APPS), info.getStoreLocation(NutsStoreLocation.APPS)));
             LOGCRF.log("   nuts-store-config              : {0}", CoreNutsUtils.formatLogValue(text, info.getOptions().getStoreLocation(NutsStoreLocation.CONFIG), info.getStoreLocation(NutsStoreLocation.CONFIG)));
             LOGCRF.log("   nuts-store-var                 : {0}", CoreNutsUtils.formatLogValue(text, info.getOptions().getStoreLocation(NutsStoreLocation.VAR), info.getStoreLocation(NutsStoreLocation.VAR)));
@@ -1118,7 +1119,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
     public String resolveCommandName(NutsId id, NutsSession session) {
         checkSession(session);
         String nn = id.getArtifactId();
-        NutsCommandManager aliases = commands().setSession(session);
+        NutsCustomCommandManager aliases = commands().setSession(session);
         NutsWorkspaceCustomCommand c = aliases.findCommand(nn);
         if (c != null) {
             if (CoreNutsUtils.matchesSimpleNameStaticVersion(c.getOwner(), id)) {
@@ -1754,8 +1755,8 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
     }
 
     @Override
-    public NutsCommandManager commands() {
-        return new DefaultManager(aliasesModel);
+    public NutsCustomCommandManager commands() {
+        return new DefaultCustomCommandManager(aliasesModel);
     }
 
     @Override
@@ -1792,7 +1793,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         return envModel;
     }
 
-    public DefaultAliasModel getAliasesModel() {
+    public DefaultCustomCommandsModel getAliasesModel() {
         return aliasesModel;
     }
 

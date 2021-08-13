@@ -49,4 +49,6 @@ public interface NutsWorkspaceCustomCommand {
     String[] getCommand();
 
     String[] getExecutorOptions();
+
+    NutsCommandConfig toCommandConfig();
 }

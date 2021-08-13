@@ -614,7 +614,9 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
                     .setLogProgress(isLogProgress())
                     .createSource();
         }
-        _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.START).log("copy {0} to {1}", _source, target);
+        _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.START).log("copy {0} to {1}",
+                _source,
+                target);
         try {
             if (safe) {
                 Path temp = null;

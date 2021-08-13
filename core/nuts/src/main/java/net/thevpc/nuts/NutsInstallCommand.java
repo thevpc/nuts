@@ -81,6 +81,35 @@ public interface NutsInstallCommand extends NutsWorkspaceCommand {
      */
     NutsInstallCommand addIds(String... ids);
 
+
+    /**
+     * add artifact id to install
+     * @param id id to install
+     * @return {@code this} instance
+     */
+    NutsInstallCommand setId(NutsId id);
+
+    /**
+     * add artifact id to install
+     * @param id id to install
+     * @return {@code this} instance
+     */
+    NutsInstallCommand setId(String id);
+
+    /**
+     * add artifact ids to install
+     * @param ids ids to install
+     * @return {@code this} instance
+     */
+    NutsInstallCommand setIds(NutsId... ids);
+
+    /**
+     * add artifact ids to install
+     * @param ids ids to install
+     * @return {@code this} instance
+     */
+    NutsInstallCommand setIds(String... ids);
+
     /**
      * clear ids to install
      * @return {@code this} instance

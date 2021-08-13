@@ -570,7 +570,7 @@ public class DefaultNutsWorkspaceConfigModel {
             if (runtimeId == null) {
                 runtimeId = session.getWorkspace().search().addId(NutsConstants.Ids.NUTS_RUNTIME)
                         .setRuntime(true)
-                        .setTargetApiVersion(apiId.getVersion().getValue())
+                        .setTargetApiVersion(apiId.getVersion())
                         .setFailFast(false).setLatest(true).getResultIds().first();
             }
             if (runtimeId == null) {

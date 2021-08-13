@@ -8,7 +8,6 @@ import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.AbstractFreeDesktopEntryWr
 import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.FreeDesktopEntry;
 import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.NdiScriptInfoType;
 import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.util.NdiUtils;
-import net.thevpc.nuts.toolbox.nadmin.util._IOUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -43,29 +42,29 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
 
     @Override
     public PathInfo[] writeShortcut(FreeDesktopEntry descriptor, Path path, boolean doOverride, NutsId id) {
-        path=Paths.get(ensureName(path==null?null:path.toString(),descriptor.getOrCreateDesktopEntry().getName(),"desktop"));
+        path = Paths.get(ensureName(path == null ? null : path.toString(), descriptor.getOrCreateDesktopEntry().getName(), "desktop"));
         PathInfo.Status s = tryWrite(descriptor, path);
-        return new PathInfo[]{new PathInfo(NdiScriptInfoType.DESKTOP_SHORTCUT, id,path, s)};
+        return new PathInfo[]{new PathInfo(NdiScriptInfoType.DESKTOP_SHORTCUT, id, path, s)};
     }
 
     @Override
     public PathInfo[] writeDesktop(FreeDesktopEntry descriptor, String fileName, boolean doOverride, NutsId id) {
-        fileName=Paths.get(ensureName(fileName,descriptor.getOrCreateDesktopEntry().getName(),"desktop")).getFileName().toString();
+        fileName = Paths.get(ensureName(fileName, descriptor.getOrCreateDesktopEntry().getName(), "desktop")).getFileName().toString();
         File q = desktopPath.resolve(fileName).toFile();
-        return writeShortcut(descriptor,q.toPath(),doOverride,id);
+        return writeShortcut(descriptor, q.toPath(), doOverride, id);
     }
 
     @Override
     public PathInfo[] writeMenu(FreeDesktopEntry descriptor, String fileName, boolean doOverride, NutsId id) {
-        String menuFileName=Paths.get(ensureName(fileName,descriptor.getOrCreateDesktopEntry().getName(),"menu")).getFileName().toString();
-        String desktopFileName=Paths.get(ensureName(fileName,descriptor.getOrCreateDesktopEntry().getName(),"desktop")).getFileName().toString();
+        String menuFileName = Paths.get(ensureName(fileName, descriptor.getOrCreateDesktopEntry().getName(), "menu")).getFileName().toString();
+        String desktopFileName = Paths.get(ensureName(fileName, descriptor.getOrCreateDesktopEntry().getName(), "desktop")).getFileName().toString();
 
         List<PathInfo> all = new ArrayList<>();
         FreeDesktopEntry.Group root = descriptor.getOrCreateDesktopEntry();
         File folder4shortcuts = new File(System.getProperty("user.home") + "/.local/share/applications");
         folder4shortcuts.mkdirs();
         File shortcutFile = new File(folder4shortcuts, desktopFileName);
-        all.add(new PathInfo(NdiScriptInfoType.DESKTOP_MENU,id,
+        all.add(new PathInfo(NdiScriptInfoType.DESKTOP_MENU, id,
                 shortcutFile.toPath(), tryWrite(descriptor, shortcutFile)));
 
         List<String> categories = new ArrayList<>(root.getCategories());
@@ -111,7 +110,7 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
                 ByteArrayOutputStream b = new ByteArrayOutputStream();
                 tr.transform(new DOMSource(dom), new StreamResult(b));
                 File menuFile = new File(folder4menus, menuFileName);
-                all.add(new PathInfo(NdiScriptInfoType.DESKTOP_MENU, id,menuFile.toPath(), NdiUtils.tryWrite(b.toByteArray(),menuFile.toPath())));
+                all.add(new PathInfo(NdiScriptInfoType.DESKTOP_MENU, id, menuFile.toPath(), NdiUtils.tryWrite(b.toByteArray(), menuFile.toPath())));
             } catch (ParserConfigurationException | TransformerException ex) {
                 throw new RuntimeException(ex);
             }
@@ -125,22 +124,41 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
     private void updateDesktopMenus() {
         //    KDE  : 'kbuildsycoca5'
         Path a = NdiUtils.sysWhich("kbuildsycoca5");
-        if(a!=null){
-            session.getWorkspace().exec().setCommand(a.toString()).userCmd().run();
+        if (a != null) {
+            String outStr = session.getWorkspace().exec().setCommand(a.toString()).userCmd()
+                    .setRedirectErrorStream(true).grabOutputString()
+                    .run()
+                    .getOutputString();
+            if(session.isPlainTrace()){
+                session.out().println(outStr);
+            }
         }
 
         //    GNOME: update-desktop-database ~/.local/share/applications
         a = NdiUtils.sysWhich("update-desktop-database");
-        if(a!=null) {
-            session.getWorkspace().exec().setCommand(a.toString(),System.getProperty("user.home")+"/.local/share/applications").userCmd().run();
+        if (a != null) {
+            String outStr = session.getWorkspace().exec().setCommand(a.toString(), System.getProperty("user.home") + "/.local/share/applications").userCmd()
+                    .setRedirectErrorStream(true).grabOutputString()
+                    .run()
+                    .getOutputString();
+            if(session.isPlainTrace()){
+                session.out().println(outStr);
+            }
         }
 
         // more generic : xdg-desktop-menu forceupdate
         a = NdiUtils.sysWhich("xdg-desktop-menu");
-        if(a!=null) {
-            session.getWorkspace().exec().setCommand(a.toString(),"forceupdate").userCmd().run();
+        if (a != null) {
+            String outStr = session.getWorkspace().exec().setCommand(a.toString(), "forceupdate").userCmd()
+                    .setRedirectErrorStream(true).grabOutputString()
+                    .run()
+                    .getOutputString();
+            if(session.isPlainTrace()){
+                session.out().println(outStr);
+            }
         }
     }
+
     private boolean isKDE() {
         return "kde".equalsIgnoreCase(getDesktopEnvironment());
     }
@@ -184,9 +202,8 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
     }
 
 
-
     public PathInfo.Status tryWrite(FreeDesktopEntry file, Path out) {
-        return NdiUtils.tryWrite(writeAsString(file).getBytes(),out);
+        return NdiUtils.tryWrite(writeAsString(file).getBytes(), out);
     }
 
     public PathInfo.Status tryWrite(FreeDesktopEntry file, File out) {

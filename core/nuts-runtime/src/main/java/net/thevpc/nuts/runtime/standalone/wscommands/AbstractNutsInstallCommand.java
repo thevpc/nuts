@@ -80,6 +80,26 @@ public abstract class AbstractNutsInstallCommand extends NutsWorkspaceCommandBas
     }
 
     @Override
+    public NutsInstallCommand setId(NutsId id) {
+        return clearIds().addId(id);
+    }
+
+    @Override
+    public NutsInstallCommand setId(String id) {
+        return clearIds().addId(id);
+    }
+
+    @Override
+    public NutsInstallCommand setIds(NutsId... ids) {
+        return clearIds().addIds(ids);
+    }
+
+    @Override
+    public NutsInstallCommand setIds(String... ids) {
+        return clearIds().addIds(ids);
+    }
+
+    @Override
     public NutsInstallCommand addId(NutsId id) {
         if (id == null) {
             checkSession();

@@ -340,6 +340,8 @@ public class JShell {
                 JShellCommandNode nn = parseCommandLine(line);
                 context.getShell().evalNode(nn, context);
                 success = true;
+            } catch (JShellQuitException e) {
+                throw e;
             } catch (Throwable e) {
                 if (storeResult) {
                     onResult(e, context);
@@ -763,6 +765,8 @@ public class JShell {
                 onResult(th, context);
                 throw th;
             }
+        } catch (JShellQuitException th) {
+            throw th;
         } catch (Exception th) {
             if (getErrorHandler().isRequireExit(th)) {
                 onResult(null, context);

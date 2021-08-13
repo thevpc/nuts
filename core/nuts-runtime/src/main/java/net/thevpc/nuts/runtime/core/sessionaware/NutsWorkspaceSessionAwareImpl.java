@@ -229,7 +229,7 @@ public class NutsWorkspaceSessionAwareImpl implements NutsWorkspace, NutsWorkspa
     }
 
     @Override
-    public NutsCommandManager commands() {
+    public NutsCustomCommandManager commands() {
         return ws().commands().setSession(getSession());
     }
 

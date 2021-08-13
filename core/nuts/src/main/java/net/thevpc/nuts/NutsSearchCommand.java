@@ -623,7 +623,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      *
      * @return target api version
      */
-    String getTargetApiVersion();
+    NutsVersion getTargetApiVersion();
 
     /**
      * set target api version
@@ -631,7 +631,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * @param targetApiVersion new value
      * @return target api version
      */
-    NutsSearchCommand setTargetApiVersion(String targetApiVersion);
+    NutsSearchCommand setTargetApiVersion(NutsVersion targetApiVersion);
 
     /**
      * true if base package flag is armed.
@@ -1132,4 +1132,36 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      */
     NutsSearchCommand setInstallStatus(NutsInstallStatusFilter installStatus);
 
+
+    /**
+     * add id to search.
+     *
+     * @param id id to search
+     * @return {@code this} instance
+     */
+    NutsSearchCommand setId(String id);
+
+    /**
+     * add id to search.
+     *
+     * @param id id to search
+     * @return {@code this} instance
+     */
+    NutsSearchCommand setId(NutsId id);
+
+    /**
+     * add ids to search.
+     *
+     * @param ids id to search
+     * @return {@code this} instance
+     */
+    NutsSearchCommand setIds(String... ids);
+
+    /**
+     * add ids to search.
+     *
+     * @param ids ids to search
+     * @return {@code this} instance
+     */
+    NutsSearchCommand setIds(NutsId... ids);
 }

@@ -14,23 +14,19 @@ public interface SystemNdi {
 //
 //    PathInfo[] persistConfigSpecial(String name, String fileName, NutsEnvInfo env, boolean createDesktop, boolean createMenu, boolean createShortcut);
 
-    PathInfo[] createNutsScript(NdiScriptOptions options);
+    PathInfo[] createArtifactScript(NdiScriptOptions options);
 
     void removeNutsScript(String id, NutsSession session,NutsEnvInfo env);
 
 //    void addNutsWorkspaceScript(String preferredScriptName, NutsEnvInfo env);
 
-    PathInfo[] switchWorkspace(NutsEnvInfo env, boolean createDesktop, boolean createMenu);
+    PathInfo[] switchWorkspace(NdiScriptOptions options);
 
     boolean isNutsBootId(NutsId id);
 
-    PathInfo[] createBootScripts(String preferredName, NutsEnvInfo env,
-                                 boolean global,
-                                 boolean desktop, boolean menu, boolean shortcut,
-                                 String fileName
-    );
+    PathInfo[] createBootScripts(NdiScriptOptions options);
 
-    PathInfo[] createNutsScript(
+    PathInfo[] addScript(
             CreateNutsScriptCommand cmd,
 //            List<String> idsToInstall, String switchWorkspaceLocation, String linkName, Boolean persistentConfig,
 //            ArrayList<String> executorOptions, boolean env, boolean fetch, NutsExecutionType execType,

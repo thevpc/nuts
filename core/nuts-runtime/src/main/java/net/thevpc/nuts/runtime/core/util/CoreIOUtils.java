@@ -2264,7 +2264,7 @@ public class CoreIOUtils {
 
         @Override
         public String toString() {
-            return "bytes(" + ((byte[]) this.getSource()).length + ")";
+            return "bytes://" + ((byte[]) this.getSource()).length;
         }
     }
 
@@ -2508,8 +2508,39 @@ public class CoreIOUtils {
 
         @Override
         public String toString() {
-            return "InputStream(" + getSource() + ")";
+            return "input-stream://" + getSource();
         }
     }
 
+    public static Path sysWhich(String commandName) {
+        Path[] p = sysWhichAll(commandName);
+        if(p.length>0){
+            return p[0];
+        }
+        return null;
+    }
+    public static Path[] sysWhichAll(String commandName) {
+        if (commandName == null || commandName.isEmpty()) {
+            return new Path[0];
+        }
+        List<Path> all = new ArrayList<>();
+        String p = System.getenv("PATH");
+        if (p != null) {
+            for (String s : p.split(File.pathSeparator)) {
+                try {
+                    if (!s.trim().isEmpty()) {
+                        Path c = Paths.get(s, commandName);
+                        if (Files.isRegularFile(c)) {
+                            if (Files.isExecutable(c)) {
+                                all.add(c);
+                            }
+                        }
+                    }
+                } catch (Exception ex) {
+                    //ignore
+                }
+            }
+        }
+        return all.toArray(new Path[0]);
+    }
 }

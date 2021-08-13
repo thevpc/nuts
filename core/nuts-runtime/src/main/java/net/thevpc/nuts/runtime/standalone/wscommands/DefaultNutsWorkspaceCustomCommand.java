@@ -1,20 +1,14 @@
 package net.thevpc.nuts.runtime.standalone.wscommands;
 
+import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.core.util.CoreArrayUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
-
-import net.thevpc.nuts.NutsCommandExecOptions;
-import net.thevpc.nuts.NutsExecutionException;
-import net.thevpc.nuts.NutsId;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.NutsLogger;
-import net.thevpc.nuts.NutsLoggerOp;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
-import net.thevpc.nuts.NutsWorkspaceCustomCommand;
-import net.thevpc.nuts.runtime.core.util.CoreArrayUtils;
 
 public class DefaultNutsWorkspaceCustomCommand implements NutsWorkspaceCustomCommand {
 
@@ -44,13 +38,8 @@ public class DefaultNutsWorkspaceCustomCommand implements NutsWorkspaceCustomCom
     }
 
     @Override
-    public String getName() {
-        return name;
-    }
-
-    public DefaultNutsWorkspaceCustomCommand setName(String name) {
-        this.name = name;
-        return this;
+    public String getFactoryId() {
+        return factoryId;
     }
 
     @Override
@@ -58,56 +47,13 @@ public class DefaultNutsWorkspaceCustomCommand implements NutsWorkspaceCustomCom
         return owner;
     }
 
-    public DefaultNutsWorkspaceCustomCommand setOwner(NutsId owner) {
-        this.owner = owner;
-        return this;
-    }
-
     @Override
-    public String getFactoryId() {
-        return factoryId;
+    public String getName() {
+        return name;
     }
 
-    public DefaultNutsWorkspaceCustomCommand setFactoryId(String factoryId) {
-        this.factoryId = factoryId;
-        return this;
-    }
-
-    public DefaultNutsWorkspaceCustomCommand setHelpCommand(String[] helpCommand) {
-        this.helpCommand = helpCommand;
-        return this;
-    }
-
-    public DefaultNutsWorkspaceCustomCommand setHelpText(String helpText) {
-        this.helpText = helpText;
-        return this;
-    }
-
-    public NutsWorkspace getWorkspace() {
-        return ws;
-    }
-
-    public void setWs(NutsWorkspace ws) {
-        this.ws = ws;
-    }
-
-    @Override
-    public String[] getCommand() {
-        return command == null ? new String[0] : Arrays.copyOf(command, command.length);
-    }
-
-    public DefaultNutsWorkspaceCustomCommand setCommand(String[] command) {
-        this.command = command;
-        return this;
-    }
-
-    @Override
-    public String[] getExecutorOptions() {
-        return executorOptions == null ? new String[0] : Arrays.copyOf(executorOptions, command.length);
-    }
-
-    public DefaultNutsWorkspaceCustomCommand setExecutorOptions(String[] executorOptions) {
-        this.executorOptions = executorOptions;
+    public DefaultNutsWorkspaceCustomCommand setName(String name) {
+        this.name = name;
         return this;
     }
 
@@ -180,8 +126,67 @@ public class DefaultNutsWorkspaceCustomCommand implements NutsWorkspaceCustomCom
     }
 
     @Override
+    public String[] getCommand() {
+        return command == null ? new String[0] : Arrays.copyOf(command, command.length);
+    }
+
+    public DefaultNutsWorkspaceCustomCommand setCommand(String[] command) {
+        this.command = command;
+        return this;
+    }
+
+    @Override
+    public String[] getExecutorOptions() {
+        return executorOptions == null ? new String[0] : Arrays.copyOf(executorOptions, command.length);
+    }
+
+    public DefaultNutsWorkspaceCustomCommand setExecutorOptions(String[] executorOptions) {
+        this.executorOptions = executorOptions;
+        return this;
+    }
+
+    @Override
+    public NutsCommandConfig toCommandConfig() {
+        return new NutsCommandConfig()
+                .setCommand(getCommand())
+                .setFactoryId(getFactoryId())
+                .setOwner(getOwner())
+                .setExecutorOptions(getExecutorOptions())
+                .setName(getName())
+                .setHelpCommand(helpCommand)
+                .setHelpText(helpText);
+    }
+
+    public DefaultNutsWorkspaceCustomCommand setOwner(NutsId owner) {
+        this.owner = owner;
+        return this;
+    }
+
+    public DefaultNutsWorkspaceCustomCommand setFactoryId(String factoryId) {
+        this.factoryId = factoryId;
+        return this;
+    }
+
+    public DefaultNutsWorkspaceCustomCommand setHelpCommand(String[] helpCommand) {
+        this.helpCommand = helpCommand;
+        return this;
+    }
+
+    public DefaultNutsWorkspaceCustomCommand setHelpText(String helpText) {
+        this.helpText = helpText;
+        return this;
+    }
+
+    public NutsWorkspace getWorkspace() {
+        return ws;
+    }
+
+    public void setWs(NutsWorkspace ws) {
+        this.ws = ws;
+    }
+
+    @Override
     public String toString() {
         return "DefaultNutsWorkspaceCommand{" + "name=" + name + ", owner=" + owner + ", factoryId=" + factoryId + ", command=" + Arrays.toString(command) + ", executorOptions=" + Arrays.toString(executorOptions) + '}';
     }
-
 }

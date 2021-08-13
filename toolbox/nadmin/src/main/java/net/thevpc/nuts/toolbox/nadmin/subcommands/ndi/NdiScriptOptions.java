@@ -7,7 +7,7 @@ import java.util.List;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.base.NutsEnvInfo;
 
-public class NdiScriptOptions {
+public class NdiScriptOptions implements Cloneable{
 
     private String id;
     private boolean forceBoot;
@@ -15,20 +15,41 @@ public class NdiScriptOptions {
     private NutsExecutionType execType;
     private List<String> executorOptions;
     private NutsSession session;
-    private String preferredScriptName;
+    private String scriptPath;
+    private String shortcutName;
+    private String shortcutPath;
     private boolean includeEnv;
     private boolean addNutsScript;
 
     private List<String> appArgs= new ArrayList<>();
-    private String cwd;
+    private String workingDirectory;
     private String icon;
-    private String menuPath;
-    private boolean persistentConfig;
+    private String menuCategory;
+    private Boolean persistentConfig;
     private boolean terminalMode;
     private boolean createMenu;
     private boolean createDesktop;
     private boolean createShortcut;
     private NutsEnvInfo env;
+    private String switchWorkspaceLocation;
+
+    public String getShortcutName() {
+        return shortcutName;
+    }
+
+    public NdiScriptOptions setShortcutName(String shortcutName) {
+        this.shortcutName = shortcutName;
+        return this;
+    }
+
+    public String getShortcutPath() {
+        return shortcutPath;
+    }
+
+    public NdiScriptOptions setShortcutPath(String shortcutPath) {
+        this.shortcutPath = shortcutPath;
+        return this;
+    }
 
     public boolean isTerminalMode() {
         return terminalMode;
@@ -39,15 +60,19 @@ public class NdiScriptOptions {
         return this;
     }
 
-    public NdiScriptOptions(NutsEnvInfo env) {
-        this.env = env;
+    public NdiScriptOptions() {
     }
 
-    public boolean isPersistentConfig() {
+    public NdiScriptOptions setEnv(NutsEnvInfo env) {
+        this.env = env;
+        return this;
+    }
+
+    public Boolean getPersistentConfig() {
         return persistentConfig;
     }
 
-    public NdiScriptOptions setPersistentConfig(boolean persistentConfig) {
+    public NdiScriptOptions setPersistentConfig(Boolean persistentConfig) {
         this.persistentConfig = persistentConfig;
         return this;
     }
@@ -119,12 +144,12 @@ public class NdiScriptOptions {
         return this;
     }
 
-    public String getPreferredScriptName() {
-        return preferredScriptName;
+    public String getScriptPath() {
+        return scriptPath;
     }
 
-    public NdiScriptOptions setPreferredScriptName(String preferredScriptName) {
-        this.preferredScriptName = preferredScriptName;
+    public NdiScriptOptions setScriptPath(String scriptPath) {
+        this.scriptPath = scriptPath;
         return this;
     }
 
@@ -146,12 +171,12 @@ public class NdiScriptOptions {
         return this;
     }
 
-    public String getCwd() {
-        return cwd;
+    public String getWorkingDirectory() {
+        return workingDirectory;
     }
 
-    public NdiScriptOptions setCwd(String cwd) {
-        this.cwd = cwd;
+    public NdiScriptOptions setWorkingDirectory(String workingDirectory) {
+        this.workingDirectory = workingDirectory;
         return this;
     }
 
@@ -164,12 +189,12 @@ public class NdiScriptOptions {
         return this;
     }
 
-    public String getMenuPath() {
-        return menuPath;
+    public String getMenuCategory() {
+        return menuCategory;
     }
 
-    public NdiScriptOptions setMenuPath(String menuPath) {
-        this.menuPath = menuPath;
+    public NdiScriptOptions setMenuCategory(String menuCategory) {
+        this.menuCategory = menuCategory;
         return this;
     }
 
@@ -191,6 +216,15 @@ public class NdiScriptOptions {
         return this;
     }
 
+    public String getSwitchWorkspaceLocation() {
+        return switchWorkspaceLocation;
+    }
+
+    public NdiScriptOptions setSwitchWorkspaceLocation(String switchWorkspaceLocation) {
+        this.switchWorkspaceLocation = switchWorkspaceLocation;
+        return this;
+    }
+
     public boolean isCreateDesktop() {
         return createDesktop;
     }
@@ -199,4 +233,17 @@ public class NdiScriptOptions {
         this.createDesktop = createDesktop;
         return this;
     }
+
+    public NdiScriptOptions copy() {
+        NdiScriptOptions c;
+        try {
+            c=(NdiScriptOptions) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new IllegalArgumentException(e);
+        }
+        c.setAppArgs(c.getAppArgs()==null?null:new ArrayList<>(c.getAppArgs()));
+        c.setExecutorOptions(c.getExecutorOptions()==null?null:new ArrayList<>(c.getExecutorOptions()));
+        return c;
+    }
+
 }

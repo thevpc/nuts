@@ -25,7 +25,7 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
     protected boolean updateInstalled = false;
     protected boolean updateCompanions = false;
     protected boolean includeOptional = false;
-    protected String forceBootAPIVersion;
+    protected NutsVersion forceBootAPIVersion;
     protected Instant expireTime;
     protected List<String> args;
     protected final List<NutsDependencyScope> scopes = new ArrayList<>();
@@ -267,12 +267,12 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
     }
 
     @Override
-    public String getApiVersion() {
+    public NutsVersion getApiVersion() {
         return forceBootAPIVersion;
     }
 
     @Override
-    public NutsUpdateCommand setApiVersion(String value) {
+    public NutsUpdateCommand setApiVersion(NutsVersion value) {
         this.forceBootAPIVersion = value;
         return this;
     }
@@ -407,6 +407,7 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
 
     @Override
     public boolean configureFirst(NutsCommandLine cmdLine) {
+        checkSession();
         NutsArgument a = cmdLine.peek();
         if (a == null) {
             return false;
@@ -476,7 +477,7 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
             case "--to-version": {
                 String val = cmdLine.nextString().getStringValue();
                 if (enabled) {
-                    this.setApiVersion(val);
+                    this.setApiVersion(getSession().getWorkspace().version().parse(val));
                 }
                 return true;
             }

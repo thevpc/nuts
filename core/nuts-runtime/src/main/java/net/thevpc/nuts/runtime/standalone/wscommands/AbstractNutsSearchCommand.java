@@ -62,7 +62,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     protected boolean sorted = false;
     protected Boolean defaultVersions = null;
     protected String execType = null;
-    protected String targetApiVersion = null;
+    protected NutsVersion targetApiVersion = null;
     protected boolean printResult = false;
     protected NutsInstallStatusFilter installStatus;
 
@@ -382,7 +382,6 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     }
 
 
-
     @Override
     public NutsSearchCommand sort(Comparator comparator) {
         this.comparator = comparator;
@@ -538,12 +537,12 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     }
 
     @Override
-    public String getTargetApiVersion() {
+    public NutsVersion getTargetApiVersion() {
         return targetApiVersion;
     }
 
     @Override
-    public NutsSearchCommand setTargetApiVersion(String targetApiVersion) {
+    public NutsSearchCommand setTargetApiVersion(NutsVersion targetApiVersion) {
         this.targetApiVersion = targetApiVersion;
         return this;
     }
@@ -919,7 +918,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
             case "--api-version": {
                 String val = cmdLine.nextBoolean().getStringValue();
                 if (enabled) {
-                    this.setTargetApiVersion(val);
+                    this.setTargetApiVersion(getSession().getWorkspace().version().parse(val));
                 }
                 return true;
             }
@@ -1272,9 +1271,9 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
 //                    NutsDefinition d = null;
 //                    if (isContent()) {
                     NutsDefinition d = fetch.setId(next).getResultDefinition();
-                    if(d==null){
-                        if(isFailFast()){
-                            throw new NutsNotFoundException(getSession(),next);
+                    if (d == null) {
+                        if (isFailFast()) {
+                            throw new NutsNotFoundException(getSession(), next);
                         }
                         return d;
                     }
@@ -1339,4 +1338,31 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
         return print ? NutsWorkspaceUtils.of(getSearchSession()).decoratePrint(curr, getSearchSession(), getDisplayOptions()) : curr;
     }
 
+    @Override
+    public NutsSearchCommand setId(String id) {
+        clearIds();
+        addId(id);
+        return this;
+    }
+
+    @Override
+    public NutsSearchCommand setId(NutsId id) {
+        clearIds();
+        addId(id);
+        return this;
+    }
+
+    @Override
+    public NutsSearchCommand setIds(String... ids) {
+        clearIds();
+        addIds(ids);
+        return this;
+    }
+
+    @Override
+    public NutsSearchCommand setIds(NutsId... ids) {
+        clearIds();
+        addIds(ids);
+        return this;
+    }
 }

@@ -442,7 +442,7 @@ public class NutsRepositoryFolderHelper {
             session.getWorkspace().io().copy().from(content).to(pckFile).setSafe(true).run();
             session.getWorkspace().io().copy().from(new NamedByteArrayInputStream(
                             CoreIOUtils.evalSHA1Hex(pckFile).getBytes(),
-                            "sha1(" + id + ")"
+                            "sha1://" + id
                     )
             ).to(pckFile.resolveSibling(pckFile.getFileName() + ".sha1")).setSafe(true).run();
             return pckFile;

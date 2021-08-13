@@ -56,7 +56,10 @@ public enum NutsExecutionType implements NutsEnum{
      * command will resolved as a class to run within the current Virtual
      * Machine
      */
-    EMBEDDED;
+    EMBEDDED,
+
+    OPEN,
+    ;
 
     /**
      * lower-cased identifier for the enum entry

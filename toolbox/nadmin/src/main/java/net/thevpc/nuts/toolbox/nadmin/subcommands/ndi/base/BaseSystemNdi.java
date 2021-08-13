@@ -155,32 +155,16 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     protected abstract String createNutsScriptContent(NutsId fnutsId, NdiScriptOptions options);
 
     @Override
-    public PathInfo[] createNutsScript(NdiScriptOptions options) {
+    public PathInfo[] createArtifactScript(NdiScriptOptions options) {
         NutsId nid = context.getWorkspace().id().parser().parse(options.getId());
         List<PathInfo> r = new ArrayList<>();
         if (isNutsBootId(nid)) {
             r.addAll(Arrays.asList(
-                    createBootScripts(
-                            null,
-                            options.getEnv(),
-                            options.isPersistentConfig(),
-                            options.isCreateDesktop(),
-                            options.isCreateMenu(),
-                            options.isCreateShortcut(),
-                            options.getPreferredScriptName()
-                    )));
+                    createBootScripts(options.copy().setId(options.getEnv().getNutsApiId().toString()))));
         } else {
             if (options.isAddNutsScript()) {
                 r.addAll(
-                        Arrays.asList(createBootScripts(
-                                null,
-                                options.getEnv(),
-                                options.isPersistentConfig(),
-                                options.isCreateDesktop(),
-                                options.isCreateMenu(),
-                                options.isCreateShortcut(),
-                                options.getPreferredScriptName()
-                        ))
+                        Arrays.asList(createBootScripts(options.copy().setId(options.getEnv().getNutsApiId().toString())))
                 );
             }
             NutsDefinition fetched = null;
@@ -209,45 +193,18 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             }
             if (gen) {
                 r.add(scriptBuilderTemplate("body", NdiScriptInfoType.ARTIFACT, nid, options.getEnv())
-                        .setPath(options.getPreferredScriptName())
+                        .setPath(options.getScriptPath())
                         .println(createNutsScriptContent(nid, options))
                         .build());
             }
             if (options.isCreateDesktop()) {
-                r.addAll(Arrays.asList(createShortcut(
-                        AppShortcutTarget.DESKTOP, nid,
-                        context.getWorkspace().getApiId().getVersion().toString(),
-                        options.getPreferredScriptName(), options.getMenuPath(),
-                        options.getIcon(),
-                        options.getCwd(),
-                        options.isTerminalMode(),
-                        options.getAppArgs().toArray(new String[0]),
-                        options.getEnv()
-                )));
+                r.addAll(Arrays.asList(createShortcut(AppShortcutTarget.DESKTOP, options.copy().setId(nid.toString()))));
             }
             if (options.isCreateShortcut()) {
-                r.addAll(Arrays.asList(createShortcut(
-                        AppShortcutTarget.SHORTCUT, nid,
-                        context.getWorkspace().getApiId().getVersion().toString(),
-                        options.getPreferredScriptName(), options.getMenuPath(),
-                        options.getIcon(),
-                        options.getCwd(),
-                        options.isTerminalMode(),
-                        options.getAppArgs().toArray(new String[0]),
-                        options.getEnv()
-                )));
+                r.addAll(Arrays.asList(createShortcut(AppShortcutTarget.SHORTCUT, options.copy().setId(nid.toString()))));
             }
             if (options.isCreateMenu()) {
-                r.addAll(Arrays.asList(createShortcut(
-                        AppShortcutTarget.MENU, nid,
-                        context.getWorkspace().getApiId().getVersion().toString(),
-                        options.getPreferredScriptName(), options.getMenuPath(),
-                        options.getIcon(),
-                        options.getCwd(),
-                        options.isTerminalMode(),
-                        options.getAppArgs().toArray(new String[0]),
-                        options.getEnv()
-                )));
+                r.addAll(Arrays.asList(createShortcut(AppShortcutTarget.MENU, options.copy().setId(nid.toString()))));
             }
         }
         return r.toArray(new PathInfo[0]);
@@ -290,12 +247,16 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
 //    }
 
     @Override
-    public PathInfo[] switchWorkspace(NutsEnvInfo env, boolean createDesktop, boolean createMenu) {
-
-        PathInfo[] v = createBootScripts(null, env, true, createDesktop, createMenu, false, null);
+    public PathInfo[] switchWorkspace(NdiScriptOptions options) {
+        options=options.copy();
+        options.setPersistentConfig(true);
+        PathInfo[] v = createBootScripts(options);
 
         if (context.getSession().isPlainTrace()) {
-            context.getSession().out().printf("```sh nuts``` switched to workspace %s to point to %s\n", env.getWorkspaceLocation(), env.getNutsApiVersion());
+            context.getSession().out().printf("```sh nuts``` switched to workspace %s to point to %s\n",
+                    options.getEnv().getWorkspaceLocation(),
+                    options.getEnv().getNutsApiVersion()
+            );
         }
         return v;
     }
@@ -308,25 +269,27 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         return false;
     }
 
-    public PathInfo[] createBootScripts(String preferredName,
-                                        NutsEnvInfo env,
-                                        boolean global,
-                                        boolean desktop,
-                                        boolean menu,
-                                        boolean shortcut,
-                                        String fileName
+    public PathInfo[] createBootScripts(NdiScriptOptions options
+//                                        String preferredName,
+//                                        NutsEnvInfo env,
+//                                        boolean global,
+//                                        boolean desktop,
+//                                        boolean menu,
+//                                        boolean shortcut,
+//                                        String fileName
     ) {
+        String preferredName = null;
         List<PathInfo> all = new ArrayList<>();
         // create $nuts-api-app/.nutsenv
-        all.add(getNutsEnv(env).create());
+        all.add(getNutsEnv(options.getEnv()).create());
         // create $nuts-api-app/.nutsrc
-        all.add(getNutsInit(env).create());
+        all.add(getNutsInit(options.getEnv()).create());
 
 //        NutsDefinition apiDef = context.getWorkspace().search()
 //                .addId(apiId).setOptional(false).setLatest(true).setContent(true).getResultDefinitions().required();
         Path script = null;
-        script = getScriptFile(NameBuilder.id(env.getNutsApiId(), preferredName, "%n",
-                env.getNutsApiDef().getDescriptor(), context.getSession()).buildName(), env);
+        script = getScriptFile(NameBuilder.id(options.getEnv().getNutsApiId(), options.getScriptPath(), "%n",
+                options.getEnv().getNutsApiDef().getDescriptor(), context.getSession()).buildName(), options.getEnv());
         boolean createPath = false;
         if (Files.exists(script)) {
             if (context.getSession().getTerminal().ask()
@@ -344,7 +307,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         }
         if (createPath) {
             all.add(
-                    scriptBuilderTemplate("nuts", NdiScriptInfoType.NUTS, env.getNutsApiId(), env)
+                    scriptBuilderTemplate("nuts", NdiScriptInfoType.NUTS, options.getEnv().getNutsApiId(), options.getEnv())
                             .setPath(script)
                             .build()
             );
@@ -399,41 +362,42 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
 //            }
 //        }
 
-        all.addAll(Arrays.asList(getNutsTermInit(env).create()));
-        all.addAll(Arrays.asList(getNutsTerm(env).create()));
+        all.addAll(Arrays.asList(getNutsTermInit(options.getEnv()).create()));
+        all.addAll(Arrays.asList(getNutsTerm(options.getEnv()).create()));
 
-        if (global) {
+        if (options.getPersistentConfig() != null && options.getPersistentConfig()) {
             // create $home/.bashrc
-            PathInfo sysRC = getSysRC(env).create();
+            PathInfo sysRC = getSysRC(options.getEnv()).create();
             if (sysRC != null) {
                 all.add(sysRC);
             }
-            if (desktop) {
-                all.addAll(Arrays.asList(createLaunchTermShortcutGlobal(AppShortcutTarget.DESKTOP, env)));
+            if (options.isCreateDesktop()) {
+                all.addAll(Arrays.asList(createLaunchTermShortcutGlobal(AppShortcutTarget.DESKTOP, options.getEnv())));
             }
-            if (menu) {
-                all.addAll(Arrays.asList(createLaunchTermShortcutGlobal(AppShortcutTarget.MENU, env)));
+            if (options.isCreateMenu()) {
+                all.addAll(Arrays.asList(createLaunchTermShortcutGlobal(AppShortcutTarget.MENU, options.getEnv())));
             }
         } else {
-            if (desktop) {
-                all.addAll(Arrays.asList(createLaunchTermShortcut(AppShortcutTarget.DESKTOP, env, preferredName, fileName)));
+            if (options.isCreateDesktop()) {
+                all.addAll(Arrays.asList(createLaunchTermShortcut(AppShortcutTarget.DESKTOP, options.getEnv(), preferredName, options.getScriptPath())));
             }
-            if (menu) {
-                all.addAll(Arrays.asList(createLaunchTermShortcut(AppShortcutTarget.MENU, env, preferredName, fileName)));
+            if (options.isCreateMenu()) {
+                all.addAll(Arrays.asList(createLaunchTermShortcut(AppShortcutTarget.MENU, options.getEnv(), preferredName, options.getScriptPath())));
             }
-            if (shortcut) {
-                all.addAll(Arrays.asList(createLaunchTermShortcut(AppShortcutTarget.SHORTCUT, env, preferredName, fileName)));
+            if (options.isCreateShortcut()) {
+                all.addAll(Arrays.asList(createLaunchTermShortcut(AppShortcutTarget.SHORTCUT, options.getEnv(), preferredName, options.getScriptPath())));
             }
         }
 
-        if (global && all.stream().anyMatch(x -> x.getStatus() != PathInfo.Status.DISCARDED)) {
-            onPostGlobal(env, all.toArray(new PathInfo[0]));
+        if (options.getPersistentConfig() != null && options.getPersistentConfig()
+                && all.stream().anyMatch(x -> x.getStatus() != PathInfo.Status.DISCARDED)) {
+            onPostGlobal(options.getEnv(), all.toArray(new PathInfo[0]));
         }
         return all.toArray(new PathInfo[0]);
     }
 
     @Override
-    public PathInfo[] createNutsScript(
+    public PathInfo[] addScript(
             CreateNutsScriptCommand cmd,
             NutsApplicationContext context) {
         NutsWorkspace ws = context.getWorkspace();
@@ -443,11 +407,11 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         if (!context.getSession().isPlainTrace()) {
             subTrace = false;
         }
-        NutsEnvInfo env = new DefaultNutsEnvInfo(
-                null, cmd.getSwitchWorkspaceLocation(),
+        cmd.getOptions().setEnv(new DefaultNutsEnvInfo(
+                null, cmd.getOptions().getSwitchWorkspaceLocation(),
                 context.getSession()
-        );
-        Boolean persistentConfig = cmd.getPersistentConfig();
+        ));
+        Boolean persistentConfig = cmd.getOptions().getPersistentConfig();
         if (!cmd.getIdsToInstall().isEmpty()) {
             if (persistentConfig == null) {
                 if (workspaceLocation.equals(Paths.get(System.getProperty("user.home")).resolve(".config/nuts/default-workspace"))) {
@@ -456,7 +420,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                     persistentConfig = false;
                 }
             }
-            boolean includeEnv = cmd.isEnv();
+            boolean includeEnv = cmd.getOptions().isIncludeEnv();
             for (String id : cmd.getIdsToInstall()) {
                 NutsId nid = ws.id().parser().parse(id);
                 if (nid == null) {
@@ -466,7 +430,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                     includeEnv = true;
                 }
             }
-            String linkNameCurrent = cmd.getLinkName();
+            String linkNameCurrent = cmd.getOptions().getScriptPath();
             if (includeEnv) {
                 linkNameCurrent = prepareLinkName(linkNameCurrent);
             }
@@ -486,23 +450,11 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                     }
 
                     result.addAll(Arrays.asList(
-                            createNutsScript(
-                                    new NdiScriptOptions(env).setId(id)
-                                            .setSession(context.getSession().copy().setTrace(subTrace))
-                                            .setForceBoot(context.getSession().isYes())
-                                            .setFetch(cmd.isFetch())
-                                            .setExecType(cmd.getExecType())
-                                            .setExecutorOptions(cmd.getExecutorOptions())
-                                            .setIncludeEnv(includeEnv)
-                                            .setPreferredScriptName(linkNameCurrent)
-                                            .setCreateDesktop(cmd.isCreateDesktop())
-                                            .setCreateMenu(cmd.isCreateMenu())
-                                            .setAppArgs(cmd.getAppArgs())
-                                            .setMenuPath(cmd.getMenuPath())
-                                            .setIcon(cmd.getIcon())
-                                            .setCwd(cmd.getCwd())
-                                            .setPersistentConfig(persistentConfig)
-                                            .setTerminalMode(cmd.isTerminalMode())
+                            createArtifactScript(
+                                    cmd.getOptions().copy()
+                                            .setId(id)
+                                            .setScriptPath(linkNameCurrent)
+                                            .setPersistentConfig(persistentConfig != null && persistentConfig)
                             )
                     ));
                 } catch (UncheckedIOException e) {
@@ -511,13 +463,10 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             }
             if (!bootAlreadyProcessed && !nonNutsIds.isEmpty()) {
                 result.addAll(Arrays.asList(createBootScripts(
-                        null,
-                        env,
-                        persistentConfig,
-                        cmd.isCreateDesktop(),
-                        cmd.isCreateMenu(),
-                        cmd.isCreateShortcut(),
-                        cmd.getLinkName()
+                        cmd.getOptions().copy()
+                                .setId(cmd.getOptions().getEnv().getNutsApiId().toString())
+                                .setScriptPath(linkNameCurrent)
+                                .setPersistentConfig(persistentConfig != null && persistentConfig)
                 )));
             }
             for (String id : nonNutsIds) {
@@ -527,24 +476,12 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                         throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("unable to create script for %s : invalid id", id), 100);
                     }
                     result.addAll(Arrays.asList(
-                            createNutsScript(
-                                    new NdiScriptOptions(env).setId(id)
-                                            .setAddNutsScript(false)
-                                            .setSession(context.getSession().copy().setTrace(subTrace))
-                                            .setForceBoot(context.getSession().isYes())
-                                            .setFetch(cmd.isFetch())
-                                            .setExecType(cmd.getExecType())
-                                            .setExecutorOptions(cmd.getExecutorOptions())
+                            createArtifactScript(
+                                    cmd.getOptions().copy()
+                                            .setId(id)
+                                            .setScriptPath(linkNameCurrent)
+                                            .setPersistentConfig(persistentConfig != null && persistentConfig)
                                             .setIncludeEnv(includeEnv)
-                                            .setPreferredScriptName(linkNameCurrent)
-                                            .setCreateDesktop(cmd.isCreateDesktop())
-                                            .setCreateMenu(cmd.isCreateMenu())
-                                            .setAppArgs(cmd.getAppArgs())
-                                            .setMenuPath(cmd.getMenuPath())
-                                            .setIcon(cmd.getIcon())
-                                            .setCwd(cmd.getCwd())
-                                            .setPersistentConfig(persistentConfig)
-                                            .setTerminalMode(cmd.isTerminalMode())
                             ))
                     );
                 } catch (UncheckedIOException e) {
@@ -832,19 +769,19 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         return iconPath;
     }
 
-    public PathInfo[] createShortcut(
-            AppShortcutTarget appShortcutTarget,
-            NutsId appId,
-            String apiVersion,
-            String path,
-            String menuPath,
-            String iconPath,
-            String cwd,
-            boolean terminalMode,
-            String[] extraArgs,
-            NutsEnvInfo env
-    ) {
+    public Path getScriptPath(NdiScriptOptions options) {
+        NutsDefinition appDef = options.getSession().getWorkspace().search()
+                .addId(options.getId())
+                .setLatest(true)
+                .setEffective(true).getResultDefinitions().singleton();
+        String path = NameBuilder.id(
+                options.getSession().getWorkspace().id().parser().parse(options.getId()),
+                options.getScriptPath(),"%n", appDef.getDescriptor(),options.getSession()).buildName();
+        return Paths.get(path);
+    }
 
+    public PathInfo[] createShortcut(AppShortcutTarget appShortcutTarget, NdiScriptOptions options) {
+        String apiVersion = options.getEnv().getNutsApiVersion().toString();
         NutsWorkspace ws = context.getWorkspace();
         if (apiVersion == null) {
             throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.cstyle("missing nuts-api version to link to"));
@@ -858,39 +795,49 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
 //            Path startNutsFile = apiConfigFolder.resolve(getExecFileName("start-nuts"));
 
 //        FreeDesktopEntry fdi = new FreeDesktopEntry();
+        NutsId appId = options.getSession().getWorkspace().id().parser().parse(options.getId());
         NutsDefinition appDef = context.getWorkspace().search().addId(appId).setLatest(true).setEffective(true).getResultDefinitions().singleton();
         StringBuilder execCmd = new StringBuilder();
 
-        execCmd.append("'" + getNutsStart(env).path().toString() + "'").append(" -y '").append(appId).append("'");
-        if (extraArgs != null) {
-            for (String extraArg : extraArgs) {
+        execCmd.append("'" + getNutsStart(options.getEnv()).path().toString() + "'").append(" -y '").append(appId).append("'");
+        if (options.getAppArgs() != null) {
+            for (String extraArg : options.getAppArgs()) {
                 execCmd.append(" '").append(extraArg).append("'");
             }
         }
+        String cwd = options.getWorkingDirectory();
         if (cwd == null) {
             //should it be id's var folder?
             cwd = System.getProperty("user.home");
         }
-        iconPath = resolveIcon(iconPath, appId);
+        String iconPath = resolveIcon(options.getIcon(), appId);
 
-        String preferredName = NameBuilder.label(appDef.getId(),
-                NameBuilder.extractPathName(path),
-                null, appDef.getDescriptor(), context.getSession()).buildName();
-        if (preferredName.isEmpty() && appShortcutTarget == AppShortcutTarget.DESKTOP) {
-            preferredName = "%N%s%v%s%h";
+        String shortcutName=options.getShortcutName();
+        if(shortcutName==null){
+            if(appShortcutTarget==AppShortcutTarget.SHORTCUT) {
+                shortcutName = options.getShortcutPath();
+                if(shortcutName==null){
+                    shortcutName = options.getScriptPath();
+                }
+            }
         }
-        preferredName = NameBuilder.label(appDef.getId(), preferredName, null, appDef.getDescriptor(), context.getSession()).buildName();
+        shortcutName=NameBuilder.extractPathName(shortcutName);
+        if (shortcutName.isEmpty() && appShortcutTarget == AppShortcutTarget.DESKTOP) {
+            shortcutName = "%N";
+        }
+        shortcutName+="%s%v%s%h";
+        shortcutName = NameBuilder.label(appDef.getId(), shortcutName, null, appDef.getDescriptor(), context.getSession()).buildName();
 
-        FreeDesktopEntry.Group sl = FreeDesktopEntry.Group.desktopEntry(preferredName, execCmd.toString(), cwd);
+        FreeDesktopEntry.Group sl = FreeDesktopEntry.Group.desktopEntry(shortcutName, execCmd.toString(), cwd);
         sl.setStartNotify(true);
         sl.setIcon(iconPath);
         sl.setGenericName(apiDefinition.getDescriptor().getGenericName());
         sl.setComment(appDef.getDescriptor().getDescription());
-        sl.setTerminal(terminalMode);
-        if (menuPath != null) {
-            sl.addCategory(menuPath);
+        sl.setTerminal(options.isTerminalMode());
+        if (options.getMenuCategory() != null) {
+            sl.addCategory(options.getMenuCategory());
         }
-        String preferredPath = NameBuilder.id(appDef.getId(), path, null, appDef.getDescriptor(), context.getSession()).buildName();
+        String preferredPath = NameBuilder.id(appDef.getId(), getScriptPath(options).toString(), null, appDef.getDescriptor(), context.getSession()).buildName();
         return createShortcut(appShortcutTarget, appId, preferredPath, sl);
     }
 

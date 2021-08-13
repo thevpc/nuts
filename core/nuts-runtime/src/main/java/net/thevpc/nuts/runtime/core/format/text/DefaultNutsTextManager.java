@@ -144,6 +144,9 @@ public class DefaultNutsTextManager implements NutsTextManager {
         if (t instanceof NutsString) {
             return ((NutsString) t).toText();
         }
+        if (t instanceof NutsInput || t instanceof NutsOutput) {
+            return forStyled(t.toString(), NutsTextStyle.path());
+        }
         if (t instanceof Enum) {
             if (t instanceof NutsEnum) {
                 return forStyled(((NutsEnum) t).id(), NutsTextStyle.option());

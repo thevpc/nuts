@@ -103,14 +103,14 @@ public interface NutsUpdateCommand extends NutsWorkspaceCommand {
      * @param value target api version
      * @return {@code this} instance
      */
-    NutsUpdateCommand setApiVersion(String value);
+    NutsUpdateCommand setApiVersion(NutsVersion value);
 
     /**
      * return target api version required for updating other artifacts
      *
      * @return target api version required for updating other artifacts
      */
-    String getApiVersion();
+    NutsVersion getApiVersion();
 
     /**
      * @return null if no updates

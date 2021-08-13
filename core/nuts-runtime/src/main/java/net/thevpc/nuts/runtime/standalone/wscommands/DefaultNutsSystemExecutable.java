@@ -28,13 +28,11 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
     private boolean inheritSystemIO;
 
     public DefaultNutsSystemExecutable(String[] cmd,
-            String[] executorOptions, NutsSession traceSession, NutsSession execSession, NutsExecCommand execCommand, boolean root,
-            boolean inheritSystemIO
-    ) {
+            String[] executorOptions, NutsSession traceSession, NutsSession execSession, NutsExecCommand execCommand, boolean root) {
         super(cmd[0],
                 execSession.getWorkspace().commandLine().create(cmd).toString(),
                 NutsExecutableType.SYSTEM);
-        this.inheritSystemIO = inheritSystemIO;
+        this.inheritSystemIO = execCommand.isInheritSystemIO();
         this.cmd = cmd;
         this.root = root;
         this.execCommand = execCommand;

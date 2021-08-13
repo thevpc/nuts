@@ -156,7 +156,7 @@ public interface NutsWorkspace extends NutsComponent<NutsWorkspaceOptions> {
 
     NutsImportManager imports();
 
-    NutsCommandManager commands();
+    NutsCustomCommandManager commands();
 
     NutsWorkspaceLocationManager locations();
 

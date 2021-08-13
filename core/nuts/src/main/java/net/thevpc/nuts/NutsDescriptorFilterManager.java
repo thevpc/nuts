@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -11,7 +11,7 @@
  * architecture to help supporting a large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -29,11 +29,13 @@ package net.thevpc.nuts;
 /**
  * @category Base
  */
-public interface NutsDescriptorFilterManager extends NutsTypedFilters<NutsDescriptorFilter>{
+public interface NutsDescriptorFilterManager extends NutsTypedFilters<NutsDescriptorFilter> {
     NutsDescriptorFilterManager setSession(NutsSession session);
+
     NutsDescriptorFilter byExpression(String expression);
 
     NutsDescriptorFilter byPackaging(String... values);
+
     NutsDescriptorFilter byArch(String... values);
 
     NutsDescriptorFilter byOsdist(String... values);
@@ -44,12 +46,13 @@ public interface NutsDescriptorFilterManager extends NutsTypedFilters<NutsDescri
 
     NutsDescriptorFilter byApp(Boolean value);
 
-    NutsDescriptorFilter byExtension(String apiVersion);
-    NutsDescriptorFilter byRuntime(String apiVersion);
+    NutsDescriptorFilter byExtension(NutsVersion apiVersion);
 
-    NutsDescriptorFilter byCompanion(String apiVersion);
+    NutsDescriptorFilter byRuntime(NutsVersion apiVersion);
 
-    NutsDescriptorFilter byApiVersion(String apiVersion);
+    NutsDescriptorFilter byCompanion(NutsVersion apiVersion);
 
-    NutsDescriptorFilter byLockedIds(String ...ids);
+    NutsDescriptorFilter byApiVersion(NutsVersion apiVersion);
+
+    NutsDescriptorFilter byLockedIds(String... ids);
 }

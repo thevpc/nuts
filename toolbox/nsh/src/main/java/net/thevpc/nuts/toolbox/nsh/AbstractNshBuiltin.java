@@ -97,8 +97,9 @@ public abstract class AbstractNshBuiltin implements NshBuiltin {
         try {
             return execImpl(args, context);
         } catch (JShellException ex) {
-            context.err().println(ex.toString());
-            return ex.getResult();
+            throw ex;
+//            context.err().println(ex.toString());
+//            return ex.getResult();
         } catch (NutsExecutionException ex) {
             context.err().println(ex.toString());
             return ex.getExitCode();

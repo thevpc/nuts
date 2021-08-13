@@ -160,7 +160,7 @@ public class InternalNutsDescriptorFilterManager extends InternalNutsTypedFilter
     }
 
     @Override
-    public NutsDescriptorFilter byExtension(String targetApiVersion) {
+    public NutsDescriptorFilter byExtension(NutsVersion targetApiVersion) {
         checkSession();
         return new NutsExecExtensionFilter(getSession(),
                 targetApiVersion == null ? null : getSession().getWorkspace().id().parser().parse(NutsConstants.Ids.NUTS_API).builder().setVersion(targetApiVersion).build()
@@ -168,7 +168,7 @@ public class InternalNutsDescriptorFilterManager extends InternalNutsTypedFilter
     }
 
     @Override
-    public NutsDescriptorFilter byRuntime(String targetApiVersion) {
+    public NutsDescriptorFilter byRuntime(NutsVersion targetApiVersion) {
         checkSession();
         return new NutsExecRuntimeFilter(getSession(),
                 targetApiVersion == null ? null : getSession().getWorkspace().id().parser().parse(NutsConstants.Ids.NUTS_API).builder().setVersion(targetApiVersion).build(),
@@ -177,7 +177,7 @@ public class InternalNutsDescriptorFilterManager extends InternalNutsTypedFilter
     }
 
     @Override
-    public NutsDescriptorFilter byCompanion(String targetApiVersion) {
+    public NutsDescriptorFilter byCompanion(NutsVersion targetApiVersion) {
         checkSession();
         return new NutsExecCompanionFilter(getSession(),
                 targetApiVersion == null ? null : ws.id().parser().parse(NutsConstants.Ids.NUTS_API).builder().setVersion(targetApiVersion).build(),
@@ -186,10 +186,10 @@ public class InternalNutsDescriptorFilterManager extends InternalNutsTypedFilter
     }
 
     @Override
-    public NutsDescriptorFilter byApiVersion(String apiVersion) {
+    public NutsDescriptorFilter byApiVersion(NutsVersion apiVersion) {
         checkSession();
         if (apiVersion == null) {
-            apiVersion = getSession().getWorkspace().getApiVersion().toString();
+            apiVersion = getSession().getWorkspace().getApiVersion();
         }
         return new BootAPINutsDescriptorFilter(
                 getSession(),
