@@ -100,11 +100,11 @@
             <artifactId>maven-embedder</artifactId>
             <version>3.6.3</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>org.apache.maven.plugins</groupId>-->
-<!--            <artifactId>maven-downloader-plugin</artifactId>-->
-<!--            <version>1.0</version>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.apache.maven.plugins</groupId>-->
+        <!--            <artifactId>maven-downloader-plugin</artifactId>-->
+        <!--            <version>1.0</version>-->
+        <!--        </dependency>-->
         <dependency>
             <groupId>org.codehaus.plexus</groupId>
             <artifactId>plexus-utils</artifactId>
@@ -138,17 +138,17 @@
             <artifactId>maven-resolver-util</artifactId>
             <version>${resolverVersion}</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>org.apache.maven.resolver</groupId>-->
-<!--            <artifactId>maven-resolver-transport-wagon</artifactId>-->
-<!--            <version>${resolverVersion}</version>-->
-<!--            <exclusions>-->
-<!--                <exclusion>-->
-<!--                    <groupId>org.codehaus.plexus</groupId>-->
-<!--                    <artifactId>plexus-container-default</artifactId>-->
-<!--                </exclusion>-->
-<!--            </exclusions>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.apache.maven.resolver</groupId>-->
+        <!--            <artifactId>maven-resolver-transport-wagon</artifactId>-->
+        <!--            <version>${resolverVersion}</version>-->
+        <!--            <exclusions>-->
+        <!--                <exclusion>-->
+        <!--                    <groupId>org.codehaus.plexus</groupId>-->
+        <!--                    <artifactId>plexus-container-default</artifactId>-->
+        <!--                </exclusion>-->
+        <!--            </exclusions>-->
+        <!--        </dependency>-->
         <dependency>
             <groupId>org.apache.maven.resolver</groupId>
             <artifactId>maven-resolver-connector-basic</artifactId>
@@ -306,20 +306,21 @@
                     </execution>
                 </executions>
             </plugin>
-<plugin>
-      <groupId>org.apache.maven.plugins</groupId>
-      <artifactId>maven-gpg-plugin</artifactId>
-      <version>1.6</version>
-      <executions>
-        <execution>
-          <id>sign-artifacts</id>
-          <phase>verify</phase>
-          <goals>
-            <goal>sign</goal>
-          </goals>
-        </execution>
-      </executions>
-    </plugin><plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.6</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <version>3.0.2</version>
                 <executions>
@@ -332,7 +333,7 @@
 
                         <configuration>
 
-<outputDirectory>${targetdirectory}</outputDirectory>
+                            <outputDirectory>${targetdirectory}</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
