@@ -82,7 +82,7 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
                         ret.add(factory.forPlain(sb.toString()));
                         sb.setLength(0);
                     }
-                    ret.addAll(Arrays.asList(parseCommandLine_readAntiSlash(ws, ar, session)));
+                    ret.addAll(Arrays.asList(parseCommandLine_readAntiSlash(ar, session)));
                     break;
                 }
                 case ';': {
@@ -142,13 +142,13 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
         return ret.toArray(new NutsText[0]);
     }
 
-    private static NutsText[] parseCommandLine_readAntiSlash(NutsWorkspace ws, StringReaderExt ar, NutsSession session) {
+    private static NutsText[] parseCommandLine_readAntiSlash(StringReaderExt ar, NutsSession session) {
         StringBuilder sb2 = new StringBuilder();
         sb2.append(ar.nextChar());
         if (ar.hasNext()) {
             sb2.append(ar.nextChar());
         }
-        NutsTextManager factory = ws.text();
+        NutsTextManager factory = session.getWorkspace().text();
         return new NutsText[]{factory.forStyled(sb2.toString(), NutsTextStyle.separator())};
     }
 
@@ -215,7 +215,7 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
                     ret.add(factory.forStyled(sb.toString(), NutsTextStyle.string()));
                     sb.setLength(0);
                 }
-                ret.addAll(Arrays.asList(parseCommandLine_readAntiSlash(ws, ar, session)));
+                ret.addAll(Arrays.asList(parseCommandLine_readAntiSlash(ar, session)));
             } else if (c == '$') {
                 if (sb.length() > 0) {
                     ret.add(factory.forStyled(sb.toString(), NutsTextStyle.string()));

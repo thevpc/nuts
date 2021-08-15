@@ -44,7 +44,7 @@ public class DefaultNutsCommandLineManager implements NutsCommandLineManager {
     @Override
     public NutsCommandLine parse(String line) {
         checkSession();
-        return new DefaultNutsCommandLine(getSession(), NutsCommandLineUtils.parseCommandLine(getSession(), line));
+        return new DefaultNutsCommandLine(getSession(), NutsCommandLineUtils.parseCommandLine(line, getSession()));
     }
 
     protected void checkSession() {

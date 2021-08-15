@@ -54,7 +54,7 @@ public class NutsCommandLineUtils {
         return sb.toString();
     }
 
-    public static String[] parseCommandLine(NutsSession session, String commandLineString) {
+    public static String[] parseCommandLine(String commandLineString, NutsSession session) {
         if (commandLineString == null) {
             return new String[0];
         }
@@ -131,11 +131,6 @@ public class NutsCommandLineUtils {
                             args.add(sb.toString());
                             sb.delete(0, sb.length());
                             status = START;
-                            //ignore
-                            break;
-                        }
-                        case '\\': {
-                            i = readEscaped(charArray, i + 1, sb);
                             //ignore
                             break;
                         }
