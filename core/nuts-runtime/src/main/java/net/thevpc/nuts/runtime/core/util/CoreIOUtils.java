@@ -48,6 +48,7 @@ import java.io.*;
 import java.net.*;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
+import java.nio.channels.Channel;
 import java.nio.charset.Charset;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -2543,4 +2544,98 @@ public class CoreIOUtils {
         }
         return all.toArray(new Path[0]);
     }
+
+    public static final int readFully(byte b[], int off, int len, java.io.InputStream in) {
+        if (len < 0)
+            throw new IndexOutOfBoundsException();
+        int n = 0;
+        while (n < len) {
+            int count = 0;
+            try {
+                count = in.read(b, off + n, len - n);
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+            if (count < 0) {
+                break;
+            }
+            n += count;
+        }
+        return n;
+    }
+
+    public static boolean Arrays_equals(byte[] a, int aFromIndex, int aToIndex,
+                                 byte[] b, int bFromIndex, int bToIndex) {
+        //method added in JDK 9
+        int aLength = aToIndex - aFromIndex;
+        int bLength = bToIndex - bFromIndex;
+        if (aLength != bLength) {
+            return false;
+        }
+        for (int i=0; i < aLength; i++) {
+            if (a[aFromIndex + i] != b[bFromIndex + i]) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public static boolean compareContent(Path file1,Path file2) {
+        if(Files.isRegularFile(file1) && Files.isRegularFile(file2)) {
+            try {
+                if(Files.size(file1)==Files.size(file2)) {
+                    int max=2048;
+                    byte[] b1 = new byte[max];
+                    byte[] b2 = new byte[max];
+                    try(java.io.InputStream in1=Files.newInputStream(file1)){
+                        try(java.io.InputStream in2=Files.newInputStream(file1)){
+                            while(true) {
+                                int c1 = readFully(b1, 0, b1.length, in1);
+                                int c2 = readFully(b2, 0, b2.length, in2);
+                                if (c1 !=c2){
+                                    return false;
+                                }
+                                if(c1==0){
+                                    return true;
+                                }
+                                if(!Arrays_equals(b1,0,c1,b2,0,c1)){
+                                    return false;
+                                }
+                                if(c1<max){
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+        }
+        return false;
+    }
+
+//    public static boolean isFileExistsAndIsWritable(Path file) {
+//        if(!Files.exists(file)){
+//            return false;
+//        }
+//        boolean writable;
+//        Channel channel = null;
+//        try {
+//            channel = new RandomAccessFile(file.toFile(), "rw").getChannel();
+//            writable = true;
+//        } catch(Exception ex) {
+//            writable = false;
+//        } finally {
+//            if(channel!=null) {
+//                try {
+//                    channel.close();
+//                } catch (IOException ex) {
+//                    // exception handling
+//                }
+//            }
+//        }
+//        return writable;
+//    }
 }

@@ -640,7 +640,17 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
                     }
                     _validate(temp);
                     if (_target_isPath) {
-                        Files.move(temp, target.getFilePath(), StandardCopyOption.REPLACE_EXISTING);
+                        try {
+                            Files.move(temp, target.getFilePath(), StandardCopyOption.REPLACE_EXISTING);
+                        }catch (FileSystemException e){
+                            // happens when the file is used by another process
+                            // in that case try to check if the file needs to be copied
+                            //if not, return safely!
+                            if(CoreIOUtils.compareContent(temp,target.getFilePath())){
+                                //cannot write the file (used by another process), but no pbm because does not need to
+                                return;
+                            }throw e;
+                        }
                         temp = null;
                     } else {
                         try (OutputStream ops = target.open()) {
