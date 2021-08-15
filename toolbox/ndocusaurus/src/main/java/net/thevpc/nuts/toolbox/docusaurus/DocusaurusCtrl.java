@@ -154,7 +154,7 @@ public class DocusaurusCtrl {
                 }
                 Path toPath = FileProcessorUtils.toAbsolute(Paths.get(copyBuildPath), base);
                 deleteFolderIfFound(toPath, "index.html", "404.html", "sitemap.xml");
-                new FileTemplater()
+                new FileTemplater(appContext.getSession())
                         .setWorkingDir(fromPath)
                         .setTargetPath(toPath)
                         .setMimeTypeResolver((String path) -> MimeTypeConstants.ANY_TYPE)
@@ -353,38 +353,9 @@ public class DocusaurusCtrl {
 
     private static class NFileTemplater extends FileTemplater {
         public NFileTemplater(NutsApplicationContext appContext) {
+            super(appContext.getSession());
             this.setDefaultExecutor("text/ntemplate-nsh-project", new NshEvaluator(appContext, this));
             setProjectFileName("project.nsh");
-            this.setLog(new TemplateLog() {
-                NutsLoggerOp logOp;
-
-                @Override
-                public void info(String title, String message) {
-                    log().verb(NutsLogVerb.INFO).level(Level.FINER)
-                            .log("{0} : {1}", title, message);
-                }
-
-                @Override
-                public void debug(String title, String message) {
-                    log().verb(NutsLogVerb.DEBUG).level(Level.FINER)
-                            .log("{0} : {1}", title, message);
-                }
-
-                @Override
-                public void error(String title, String message) {
-                    log().verb(NutsLogVerb.FAIL).level(Level.FINER).log("{0} : {1}", title, message);
-                }
-
-                private NutsLoggerOp log() {
-                    if (logOp == null) {
-                        logOp = appContext.getWorkspace().log().of(DocusaurusCtrl.class)
-                                .with().session(appContext.getSession())
-                                .style(NutsTextFormatStyle.JSTYLE)
-                        ;
-                    }
-                    return logOp;
-                }
-            });
         }
 
         public void executeProjectFile(Path path, String mimeTypesString) {
