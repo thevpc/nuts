@@ -30,7 +30,7 @@ package net.thevpc.nuts.spi;
  * Created by vpc on 1/8/17.
  *
  * @since 0.5.4
- * @category SPI Base
+ * @app.category SPI Base
  */
 public class NutsTransportParamPart{
 }

@@ -27,7 +27,7 @@
 package net.thevpc.nuts;
 
 /**
- * @category Base
+ * @app.category Base
  */
 public interface NutsDescriptorFilterManager extends NutsTypedFilters<NutsDescriptorFilter> {
     NutsDescriptorFilterManager setSession(NutsSession session);

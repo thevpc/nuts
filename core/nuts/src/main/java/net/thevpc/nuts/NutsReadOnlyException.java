@@ -29,7 +29,7 @@ package net.thevpc.nuts;
  * Created by vpc on 1/15/17.
  *
  * @since 0.5.4
- * @category Exceptions
+ * @app.category Exceptions
  */
 public class NutsReadOnlyException extends NutsException {
 

@@ -31,7 +31,7 @@ import java.util.Collection;
  * Push command
  * @author thevpc
  * @since 0.5.4
- * @category Commands
+ * @app.category Commands
  */
 public interface NutsPushCommand extends NutsWorkspaceCommand {
 

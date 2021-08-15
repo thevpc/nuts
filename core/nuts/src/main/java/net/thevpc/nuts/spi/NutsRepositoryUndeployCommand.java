@@ -33,7 +33,7 @@ import net.thevpc.nuts.NutsSession;
  *
  * @author thevpc
  * @since 0.5.4
- * @category SPI Base
+ * @app.category SPI Base
  */
 public interface NutsRepositoryUndeployCommand extends NutsRepositoryCommand {
 

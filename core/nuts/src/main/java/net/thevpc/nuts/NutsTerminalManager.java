@@ -31,7 +31,7 @@ import net.thevpc.nuts.spi.NutsSystemTerminalBase;
 import java.io.InputStream;
 
 /**
- * @category Input Output
+ * @app.category Input Output
  */
 public interface NutsTerminalManager {
 

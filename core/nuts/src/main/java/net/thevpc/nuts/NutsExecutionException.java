@@ -30,7 +30,7 @@ package net.thevpc.nuts;
  * Standard Execution thrown when an artifact fails to run.
  *
  * @since 0.5.4
- * @category Exceptions
+ * @app.category Exceptions
  */
 public class NutsExecutionException extends NutsException {
 

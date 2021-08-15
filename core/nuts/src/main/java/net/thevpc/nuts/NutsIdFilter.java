@@ -30,7 +30,7 @@ package net.thevpc.nuts;
  * Class for filtering Artifact Ids
  *
  * @since 0.5.4
- * @category Descriptor
+ * @app.category Descriptor
  */
 public interface NutsIdFilter extends NutsArtifactFilter {
 

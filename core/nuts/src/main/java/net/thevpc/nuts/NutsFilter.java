@@ -27,7 +27,7 @@ package net.thevpc.nuts;
 /**
  * Top Level filter
  *
- * @category Base
+ * @app.category Base
  */
 public interface NutsFilter {
 

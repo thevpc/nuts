@@ -29,7 +29,7 @@ package net.thevpc.nuts;
  * Base exception for Extension related exceptions
  *
  * @since 0.5.4
- * @category Exceptions
+ * @app.category Exceptions
  */
 public abstract class NutsExtensionException extends NutsException {
 
@@ -58,7 +58,7 @@ public abstract class NutsExtensionException extends NutsException {
      *         by the {@link #getMessage()} method). if the message is null, a
      *         default one is provided
      * @param  cause the cause (which is saved for later retrieval by the
-     *         {@link #getCause()} method).  (A <tt>null</tt> value is
+     *         {@link #getCause()} method).  (A {@code null} value is
      *         permitted, and indicates that the cause is nonexistent or
      *         unknown.)
      * @param session the workspace of this Nuts Exception

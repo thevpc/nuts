@@ -72,7 +72,7 @@ import java.util.*;
  * activated
  *
  * @author thevpc
- * @category Internal
+ * @app.category Internal
  * @since 0.5.5
  */
 final class PrivateNutsCommandLine implements NutsCommandLine {
@@ -1010,7 +1010,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
      *
      * @author thevpc
      * @since 0.5.5
-     * @category Format
+     * @app.category Format
      */
     final static class ArgumentImpl extends PrivateNutsTokenFilter implements NutsArgument {
 

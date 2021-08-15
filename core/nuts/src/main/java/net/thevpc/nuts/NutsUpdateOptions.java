@@ -33,7 +33,7 @@ import java.io.Serializable;
  *
  * author vpc
  * @since 0.5.7
- * @category Commands
+ * @app.category Commands
  */
 public class NutsUpdateOptions implements Serializable {
     private static final long serialVersionUID = 1;

@@ -32,7 +32,7 @@ import java.io.Serializable;
 import java.util.Map;
 
 /**
- * @category Input Output
+ * @app.category Input Output
  */
 public interface NutsTerminalSpec extends Serializable {
     NutsSystemTerminalBase getParent();

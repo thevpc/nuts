@@ -36,7 +36,7 @@ import java.util.Set;
 /**
  * This class holds information gathered by nuts Boot and passed to Runtime on BootTime
  * @author thevpc
- * @category Internal
+ * @app.category Internal
  */
 final class PrivateNutsWorkspaceInitInformation implements NutsWorkspaceInitInformation {
 

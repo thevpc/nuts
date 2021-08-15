@@ -32,7 +32,7 @@ import java.util.Objects;
  *
  * @author thevpc
  * @since 0.5.4
- * @category Base
+ * @app.category Base
  */
 public class NutsRepositoryRef extends NutsConfigItem {
 

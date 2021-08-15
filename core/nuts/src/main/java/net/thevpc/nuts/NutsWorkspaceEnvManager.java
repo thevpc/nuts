@@ -30,7 +30,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 /**
- * @category Base
+ * @app.category Base
  */
 public interface NutsWorkspaceEnvManager {
 

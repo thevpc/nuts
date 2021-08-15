@@ -3,7 +3,7 @@ package net.thevpc.nuts;
 import java.util.Collection;
 
 /**
- * @category Format
+ * @app.category Format
  */
 public interface NutsTextBuilder extends NutsString {
 

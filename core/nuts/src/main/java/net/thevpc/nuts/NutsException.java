@@ -30,7 +30,7 @@ import java.io.IOException;
  * Base Nuts Exception. Parent of all Nuts defined Exceptions.
  *
  * @author thevpc
- * @category Exceptions
+ * @app.category Exceptions
  * @since 0.5.4
  */
 public class NutsException extends RuntimeException {
@@ -90,7 +90,7 @@ public class NutsException extends RuntimeException {
      * @param message the detail message (which is saved for later retrieval by
      * the {@link #getMessage()} method).
      * @param cause the cause (which is saved for later retrieval by the
-     * {@link #getCause()} method). (A <tt>null</tt> value is permitted, and
+     * {@link #getCause()} method). (A {@code null} value is permitted, and
      * indicates that the cause is nonexistent or unknown.)
      * @param session the workspace session of this Nuts Exception
      */
@@ -110,7 +110,7 @@ public class NutsException extends RuntimeException {
      * @param message the detail message (which is saved for later retrieval by
      * the {@link #getMessage()} method).
      * @param cause the cause (which is saved for later retrieval by the
-     * {@link #getCause()} method). (A <tt>null</tt> value is permitted, and
+     * {@link #getCause()} method). (A {@code null} value is permitted, and
      * indicates that the cause is nonexistent or unknown.)
      * @param session the workspace of this Nuts Exception
      */
@@ -130,7 +130,7 @@ public class NutsException extends RuntimeException {
 //     * @param message the detail message (which is saved for later retrieval by
 //     * the {@link #getMessage()} method).
 //     * @param cause the cause (which is saved for later retrieval by the
-//     * {@link #getCause()} method). (A <tt>null</tt> value is permitted, and
+//     * {@link #getCause()} method). (A {@code null} value is permitted, and
 //     * indicates that the cause is nonexistent or unknown.)
 //     * @param session the workspace of this Nuts Exception
 //     */
@@ -142,13 +142,13 @@ public class NutsException extends RuntimeException {
 
     /**
      * Constructs a new runtime exception with the specified cause and a detail
-     * message of <tt>(cause==null ? null : cause.toString())</tt>
+     * message of {@code (cause==null ? null : cause.toString())}
      * (which typically contains the class and detail message of
-     * <tt>cause</tt>). This constructor is useful for runtime exceptions that
+     * {@code cause}). This constructor is useful for runtime exceptions that
      * are little more than wrappers for other throwables.
      *
      * @param cause the cause (which is saved for later retrieval by the
-     * {@link #getCause()} method). (A <tt>null</tt> value is permitted, and
+     * {@link #getCause()} method). (A {@code null} value is permitted, and
      * indicates that the cause is nonexistent or unknown.)
      * @param session the workspace session of this Nuts Exception
      */
@@ -160,13 +160,13 @@ public class NutsException extends RuntimeException {
 
     /**
      * Constructs a new runtime exception with the specified cause and a detail
-     * message of <tt>(cause==null ? null : cause.toString())</tt>
+     * message of {@code (cause==null ? null : cause.toString())}
      * (which typically contains the class and detail message of
-     * <tt>cause</tt>). This constructor is useful for runtime exceptions that
+     * {@code cause}). This constructor is useful for runtime exceptions that
      * are little more than wrappers for other throwables.
      *
      * @param cause the cause (which is saved for later retrieval by the
-     * {@link #getCause()} method). (A <tt>null</tt> value is permitted, and
+     * {@link #getCause()} method). (A {@code null} value is permitted, and
      * indicates that the cause is nonexistent or unknown.)
      * @param session the workspace session of this Nuts Exception
      */

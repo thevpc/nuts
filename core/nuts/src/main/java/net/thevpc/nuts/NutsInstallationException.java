@@ -30,7 +30,7 @@ package net.thevpc.nuts;
  * Base exception for installation fails.
  *
  * @since 0.5.4
- * @category Exceptions
+ * @app.category Exceptions
  */
 public abstract class NutsInstallationException extends NutsException {
 

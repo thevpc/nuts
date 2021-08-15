@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 /**
- * @category Input Output
+ * @app.category Input Output
  */
 public interface NutsInput extends AutoCloseable {
     NutsString getFormattedName();

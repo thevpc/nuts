@@ -30,7 +30,7 @@ package net.thevpc.nuts;
  * SearchId Filter.
  * @author thevpc
  * @since 0.5.4
- * @category Base
+ * @app.category Base
  */
 public interface NutsArtifactFilter extends NutsFilter{
 

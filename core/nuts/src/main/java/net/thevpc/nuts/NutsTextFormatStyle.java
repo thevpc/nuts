@@ -31,7 +31,7 @@ import java.util.Locale;
 /**
  * 
  * @author thevpc
- * @category Format
+ * @app.category Format
  */
 public enum NutsTextFormatStyle implements NutsEnum{
     /**

@@ -27,7 +27,7 @@ package net.thevpc.nuts;
 import java.util.Collection;
 
 /**
- * @category Base
+ * @app.category Base
  */
 public interface NutsDependencyFilterManager extends NutsTypedFilters<NutsDependencyFilter> {
 

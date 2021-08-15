@@ -32,7 +32,7 @@ import java.util.Map;
  * NutsDependency is an <strong>immutable</strong> object that contains all information about a package's dependency.
  * @author thevpc
  * @since 0.5.3
- * @category Descriptor
+ * @app.category Descriptor
  */
 public interface NutsDependency extends Serializable, NutsFormattable{
 

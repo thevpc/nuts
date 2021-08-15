@@ -32,7 +32,7 @@ import java.time.Instant;
  * and objects using simple argument line options.
  * @author thevpc
  * @since 0.5.5
- * @category Command Line
+ * @app.category Command Line
  */
 public interface NutsCommandLineConfigurable {
 

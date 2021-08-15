@@ -35,7 +35,7 @@ import java.io.OutputStream;
  *
  * @author thevpc
  * @since 0.5.4
- * @category Input Output
+ * @app.category Input Output
  */
 public interface NutsSystemTerminal extends NutsSystemTerminalBase {
     /**
@@ -44,7 +44,7 @@ public interface NutsSystemTerminal extends NutsSystemTerminalBase {
      * @param message       message
      * @param session       session
      * @return A string containing the line read from the terminal's input
-     * stream, not including any line-termination characters, or <tt>null</tt>
+     * stream, not including any line-termination characters, or {@code null}
      * if an end of stream has been reached.
      * @throws java.io.UncheckedIOException If an I/O error occurs.
      */
@@ -56,7 +56,7 @@ public interface NutsSystemTerminal extends NutsSystemTerminalBase {
      * @param message       message
      * @param session       session
      * @return A string containing the line read from the terminal's input
-     * stream, not including any line-termination characters, or <tt>null</tt>
+     * stream, not including any line-termination characters, or {@code null}
      * if an end of stream has been reached.
      * @throws java.io.UncheckedIOException If an I/O error occurs.
      */

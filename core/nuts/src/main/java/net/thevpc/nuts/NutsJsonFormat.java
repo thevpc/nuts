@@ -36,7 +36,7 @@
 // * simple mechanism to write json text from given object.
 // * @author thevpc
 // * @since 0.5.5
-// * @category Format
+// * @app.category Format
 // */
 //public interface NutsJsonFormat extends NutsFormat {
 //

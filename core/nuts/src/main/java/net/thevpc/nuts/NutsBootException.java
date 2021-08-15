@@ -33,7 +33,7 @@ import java.io.IOException;
  * and is not yet available.
  * @author thevpc
  * @since 0.5.4
- * @category Exceptions
+ * @app.category Exceptions
  */
 public class NutsBootException extends RuntimeException {
 
@@ -62,7 +62,7 @@ public class NutsBootException extends RuntimeException {
      * @param  message the detail message (which is saved for later retrieval
      *         by the {@link #getMessage()} method).
      * @param  cause the cause (which is saved for later retrieval by the
-     *         {@link #getCause()} method).  (A <tt>null</tt> value is
+     *         {@link #getCause()} method).  (A {@code null} value is
      *         permitted, and indicates that the cause is nonexistent or
      *         unknown.)
      */
@@ -96,7 +96,7 @@ public class NutsBootException extends RuntimeException {
      * @param  message the detail message (which is saved for later retrieval
      *         by the {@link #getMessage()} method).
      * @param  cause the cause (which is saved for later retrieval by the
-     *         {@link #getCause()} method).  (A <tt>null</tt> value is
+     *         {@link #getCause()} method).  (A {@code null} value is
      *         permitted, and indicates that the cause is nonexistent or
      *         unknown.)
      */

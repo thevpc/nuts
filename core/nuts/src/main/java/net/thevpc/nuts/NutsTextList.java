@@ -1,7 +1,7 @@
 package net.thevpc.nuts;
 
 /**
- * @category Format
+ * @app.category Format
  */
 public interface NutsTextList extends NutsText, Iterable<NutsText> {
 

@@ -30,7 +30,7 @@ package net.thevpc.nuts;
  * Dependency Format Helper
  * @author thevpc
  * @since 0.5.6
- * @category Format
+ * @app.category Format
  */
 public interface NutsDependencyFormat extends NutsFormat {
 

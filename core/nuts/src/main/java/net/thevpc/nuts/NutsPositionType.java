@@ -31,7 +31,7 @@ package net.thevpc.nuts;
  *
  * @author thevpc
  * @since 0.5.5
- * @category Format
+ * @app.category Format
  */
 public enum NutsPositionType implements NutsEnum{
     /**

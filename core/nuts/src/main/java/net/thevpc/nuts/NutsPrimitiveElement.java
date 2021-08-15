@@ -33,7 +33,7 @@ import java.time.Instant;
  *
  * @author thevpc
  * @since 0.5.6
- * @category Elements
+ * @app.category Elements
  */
 public interface NutsPrimitiveElement extends NutsElement {
 

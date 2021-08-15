@@ -32,7 +32,7 @@ import java.util.Objects;
  *
  * @author thevpc
  * @since 0.5.4
- * @category Config
+ * @app.category Config
  */
 public class NutsAddRepositoryOptions implements Serializable {
 

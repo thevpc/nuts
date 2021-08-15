@@ -30,7 +30,7 @@ package net.thevpc.nuts;
  * Formats supported by Nuts
  * @author thevpc
  * @since 0.5.4
- * @category Format
+ * @app.category Format
  */
 public enum NutsContentType implements NutsEnum{
     /**

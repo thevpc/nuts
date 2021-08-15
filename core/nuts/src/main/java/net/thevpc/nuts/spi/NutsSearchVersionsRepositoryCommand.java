@@ -36,7 +36,7 @@ import java.util.Iterator;
 /**
  *
  * @author thevpc
- * @category SPI Base
+ * @app.category SPI Base
  */
 public interface NutsSearchVersionsRepositoryCommand extends NutsRepositoryCommand {
 

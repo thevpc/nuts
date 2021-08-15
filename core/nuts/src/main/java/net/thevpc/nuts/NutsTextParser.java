@@ -5,7 +5,7 @@ import java.io.InputStream;
 import java.io.Reader;
 
 /**
- * @category Format
+ * @app.category Format
  */
 public interface NutsTextParser {
 //    NutsText parse(String text);

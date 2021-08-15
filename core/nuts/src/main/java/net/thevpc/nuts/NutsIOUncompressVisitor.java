@@ -34,7 +34,7 @@ import java.nio.file.Path;
  * I/O Action that help visit compressed resource.
  * @author thevpc
  * @since 0.5.8
- * @category Input Output
+ * @app.category Input Output
  */
 public interface NutsIOUncompressVisitor {
     boolean visitFolder(String path);

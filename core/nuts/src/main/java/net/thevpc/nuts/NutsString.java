@@ -29,7 +29,7 @@ package net.thevpc.nuts;
 import java.io.PrintStream;
 
 /**
- * @category Base
+ * @app.category Base
  */
 public interface NutsString {
     NutsString immutable();

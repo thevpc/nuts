@@ -35,7 +35,7 @@ import java.util.logging.Level;
  * log configuration for running nuts
  * @author thevpc
  * @since 0.5.4
- * @category Logging
+ * @app.category Logging
  */
 public class NutsLogConfig implements Serializable,Cloneable{
     private static final long serialVersionUID = 1;

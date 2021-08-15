@@ -32,7 +32,7 @@ import javax.security.auth.callback.CallbackHandler;
  * Workspace Security configuration manager
  * @author thevpc
  * @since 0.5.4
- * @category Security
+ * @app.category Security
  */
 public interface NutsWorkspaceSecurityManager {
 

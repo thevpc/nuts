@@ -33,7 +33,7 @@ import java.nio.file.Path;
  * Definition is an <strong>immutable</strong> object that contains all information about a artifact identified by it's Id.
  *
  * @since 0.5.4
- * @category Base
+ * @app.category Base
  */
 public interface NutsDefinition extends Serializable, Comparable<NutsDefinition> {
 

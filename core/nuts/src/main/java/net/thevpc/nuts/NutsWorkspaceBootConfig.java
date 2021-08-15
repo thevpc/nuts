@@ -32,7 +32,7 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * @category Config
+ * @app.category Config
  */
 public interface NutsWorkspaceBootConfig {
     boolean isImmediateLocation();
@@ -74,7 +74,7 @@ public interface NutsWorkspaceBootConfig {
     String getHomeLocation(NutsStoreLocation storeLocation);
 
     /**
-     * @category Config
+     * @app.category Config
      */
     interface Extension {
         NutsId getId();

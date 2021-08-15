@@ -1,7 +1,7 @@
 package net.thevpc.nuts;
 
 /**
- * @category Format
+ * @app.category Format
  */
 public class NutsTextWriteConfiguration implements Cloneable{
     private boolean filtered;

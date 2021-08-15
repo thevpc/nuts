@@ -35,7 +35,7 @@ import net.thevpc.nuts.NutsSession;
  * Repository command used to fetch an artifact descriptor from a specific repository.
  * @author thevpc
  * @since 0.5.5
- * @category SPI Base
+ * @app.category SPI Base
  */
 public interface NutsFetchDescriptorRepositoryCommand extends NutsRepositoryCommand {
 

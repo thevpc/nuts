@@ -66,9 +66,9 @@ public interface NutsPrintStream {
 
     /**
      * print java formatted string (with {})
-     * <code>
-     *     printj("{1,choice,0#|1# 1 file|1< {1} files}");
-     * </code>
+     * {@code
+     *     printj("{1,choice,0#|1# 1 file|1< {1} files}",nbr);
+     * }
      * @param format java style format (with {})
      * @param args format args
      * @return {@code this} instance

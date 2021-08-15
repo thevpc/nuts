@@ -30,7 +30,7 @@ package net.thevpc.nuts;
  * This Exception is thrown when the workspace does not exist.
  *
  * @since 0.5.4
- * @category Exceptions
+ * @app.category Exceptions
  */
 public class NutsWorkspaceNotFoundException extends NutsBootException {
 

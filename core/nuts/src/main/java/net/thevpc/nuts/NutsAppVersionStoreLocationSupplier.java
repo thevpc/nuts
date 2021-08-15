@@ -1,7 +1,7 @@
 package net.thevpc.nuts;
 
 /**
- * @category Application
+ * @app.category Application
  */
 public interface NutsAppVersionStoreLocationSupplier {
     String getStoreLocation(NutsStoreLocation folderType, String version);

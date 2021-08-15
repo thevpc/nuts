@@ -32,7 +32,7 @@ import java.util.stream.Stream;
  * JSON like parsable objects.
  *
  * @author thevpc
- * @category Elements
+ * @app.category Elements
  * @since 0.5.6
  */
 public interface NutsObjectElement extends NutsElement, Iterable<NutsElementEntry> {

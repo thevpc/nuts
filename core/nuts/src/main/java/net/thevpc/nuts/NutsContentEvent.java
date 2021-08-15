@@ -32,7 +32,7 @@ import java.nio.file.Path;
  * Event for {@link NutsRepositoryListener} methods.
  * @author thevpc
  * @since 0.5.3
- * @category Events
+ * @app.category Events
  */
 public interface NutsContentEvent {
 

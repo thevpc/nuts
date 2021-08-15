@@ -34,7 +34,7 @@ import java.util.function.Predicate;
  * @author thevpc
  * @see NutsExecCommand#format()
  * @since 0.5.4
- * @category Format
+ * @app.category Format
  */
 public interface NutsExecCommandFormat extends NutsFormat {
     /**
@@ -145,7 +145,7 @@ public interface NutsExecCommandFormat extends NutsFormat {
     NutsExecCommandFormat setNtf(boolean ntf);
     /**
      * env entry
-     * @category Format
+     * @app.category Format
      */
     interface EnvEntry {
         /**
@@ -163,7 +163,7 @@ public interface NutsExecCommandFormat extends NutsFormat {
 
     /**
      * argument entry
-     * @category Format
+     * @app.category Format
      */
     interface ArgEntry {
         /**

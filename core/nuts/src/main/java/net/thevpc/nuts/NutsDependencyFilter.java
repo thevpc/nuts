@@ -28,7 +28,7 @@ package net.thevpc.nuts;
  * Dependency filter
  *
  * @since 0.5.4
- * @category Descriptor
+ * @app.category Descriptor
  */
 public interface NutsDependencyFilter extends NutsFilter {
 

@@ -34,7 +34,7 @@ import java.util.Map;
  *
  * @author thevpc
  * @since 0.5.4
- * @category Commands
+ * @app.category Commands
  */
 public interface NutsExecCommand extends NutsWorkspaceCommand {
 

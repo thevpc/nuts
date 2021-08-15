@@ -26,7 +26,7 @@ package net.thevpc.nuts;
 /**
  * @author thevpc
  * @since 0.5.4
- * @category Config
+ * @app.category Config
  */
 public interface NutsRepositoryConfigManager {
 

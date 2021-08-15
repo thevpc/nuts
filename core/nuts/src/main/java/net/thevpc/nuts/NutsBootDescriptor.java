@@ -3,7 +3,7 @@ package net.thevpc.nuts;
 import java.util.Arrays;
 
 /**
- * @category Internal
+ * @app.category Internal
  */
 public class NutsBootDescriptor {
     private NutsBootId id;

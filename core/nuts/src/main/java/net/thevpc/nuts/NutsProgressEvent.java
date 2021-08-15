@@ -29,7 +29,7 @@ package net.thevpc.nuts;
  * Progress event
  * @author thevpc
  * @since 0.5.8
- * @category Toolkit
+ * @app.category Toolkit
  */
 public interface NutsProgressEvent {
 

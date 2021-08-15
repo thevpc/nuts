@@ -34,7 +34,7 @@ import java.util.Objects;
  *
  * @author thevpc
  * @since 0.5.4
- * @category SPI Base
+ * @app.category SPI Base
  */
 public class NutsCommandFactoryConfig extends NutsConfigItem {
     private static final long serialVersionUID = 1;

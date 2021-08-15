@@ -32,7 +32,7 @@ package net.thevpc.nuts;
  * @param <K> key type
  * @param <V> value type
  * @since 0.2.0
- * @category Base
+ * @app.category Base
  */
 public interface NutsMapListener<K, V> extends NutsListener{
 

@@ -30,7 +30,7 @@ package net.thevpc.nuts;
  * Thrown to indicate that the artifact is already installed and should not be
  * reinstalled Created by vpc on 1/15/17.
  *
- * @category Exceptions
+ * @app.category Exceptions
  * @since 0.5.4
  */
 public class NutsAlreadyInstalledException extends NutsInstallationException {

@@ -29,7 +29,7 @@ package net.thevpc.nuts;
 /**
  * This Exception is fired when an artifact fails to be uninstalled for the artifact not being installed yet.
  *
- * @category Exceptions
+ * @app.category Exceptions
  * @since 0.5.4
  */
 public class NutsNotInstalledException extends NutsInstallationException {

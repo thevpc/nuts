@@ -34,7 +34,7 @@ import java.util.Set;
  * files.
  *
  * @author thevpc
- * @category Commands
+ * @app.category Commands
  * @since 0.5.4
  */
 public interface NutsSearchCommand extends NutsWorkspaceCommand {

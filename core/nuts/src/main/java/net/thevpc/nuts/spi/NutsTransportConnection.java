@@ -35,7 +35,7 @@ import java.io.UncheckedIOException;
  * Connection to a remote server.
  *
  * @since 0.5.4
- * @category SPI Base
+ * @app.category SPI Base
  */
 public interface NutsTransportConnection {
 

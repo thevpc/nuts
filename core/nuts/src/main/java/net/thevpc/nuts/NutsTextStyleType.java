@@ -1,7 +1,7 @@
 package net.thevpc.nuts;
 
 /**
- * @category Format
+ * @app.category Format
  */
 public enum NutsTextStyleType implements NutsEnum{
     UNDERLINED(true),//_

@@ -33,7 +33,7 @@ import java.util.Objects;
  * Command Alias definition class Config
  * @author thevpc
  * @since 0.5.4
- * @category Config
+ * @app.category Config
  */
 public class NutsCommandConfig extends NutsConfigItem{
     private static final long serialVersionUID = 1;

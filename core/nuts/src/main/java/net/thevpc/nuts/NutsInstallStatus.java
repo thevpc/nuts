@@ -40,7 +40,7 @@ import java.util.Objects;
  *    <li>INSTALLED OBSOLETE</li>
  *    <li>INSTALLED REQUIRED OBSOLETE</li>
  * </ul>
- * @category Base
+ * @app.category Base
  */
 public class NutsInstallStatus {
 

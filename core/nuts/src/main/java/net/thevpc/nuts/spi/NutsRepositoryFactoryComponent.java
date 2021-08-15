@@ -32,7 +32,7 @@ import net.thevpc.nuts.*;
  * Created by vpc on 1/15/17.
  *
  * @since 0.5.4
- * @category SPI Base
+ * @app.category SPI Base
  */
 public interface NutsRepositoryFactoryComponent extends NutsComponent<NutsRepositoryConfig> {
 

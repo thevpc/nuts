@@ -30,7 +30,7 @@ package net.thevpc.nuts;
  * Repository Event
  * @author thevpc
  * @since 0.5.4
- * @category Events
+ * @app.category Events
  */
 public interface NutsRepositoryEvent {
 

@@ -30,7 +30,7 @@ package net.thevpc.nuts;
  *
  * @author thevpc
  * @since 0.5.7
- * @category Command Line
+ * @app.category Command Line
  */
 public interface NutsCommandLineFormat extends NutsFormat{
 

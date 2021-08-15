@@ -31,7 +31,7 @@ import java.util.*;
  *
  * @author thevpc
  * @since 0.5.4
- * @category Config
+ * @app.category Config
  */
 public class NutsRepositoryConfig extends NutsConfigItem {
 

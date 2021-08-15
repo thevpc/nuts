@@ -31,7 +31,7 @@ import java.io.Serializable;
 /**
  * 
  * @author thevpc
- * @category Config
+ * @app.category Config
  */
 public class NutsConfigItem implements Serializable {
     private static final long serialVersionUID = 1;

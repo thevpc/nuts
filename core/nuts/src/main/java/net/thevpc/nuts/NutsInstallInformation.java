@@ -33,7 +33,7 @@ import java.util.Set;
  * Information about installed artifact
  *
  * @author thevpc
- * @category Base
+ * @app.category Base
  * @since 0.5.5
  */
 public interface NutsInstallInformation {

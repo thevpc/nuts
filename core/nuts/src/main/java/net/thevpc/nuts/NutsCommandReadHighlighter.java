@@ -25,7 +25,7 @@
 package net.thevpc.nuts;
 
 /**
- * @category Command Line
+ * @app.category Command Line
  */
 public interface NutsCommandReadHighlighter {
 

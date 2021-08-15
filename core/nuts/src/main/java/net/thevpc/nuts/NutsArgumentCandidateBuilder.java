@@ -29,7 +29,7 @@ package net.thevpc.nuts;
 import java.io.Serializable;
 
 /**
- * @category Application
+ * @app.category Application
  */
 public interface NutsArgumentCandidateBuilder extends Serializable {
 

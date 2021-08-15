@@ -54,7 +54,7 @@ import java.util.zip.ZipFile;
  * <br>
  *
  * @author thevpc
- * @category SPI Base
+ * @app.category SPI Base
  * @since 0.5.4
  */
 public final class NutsBootWorkspace {

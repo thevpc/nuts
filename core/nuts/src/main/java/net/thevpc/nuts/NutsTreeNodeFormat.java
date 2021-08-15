@@ -30,7 +30,7 @@ package net.thevpc.nuts;
  * classes implementing this interface handle formatting of the tree node.
  * @author thevpc
  * @since 0.5.5
- * @category Format
+ * @app.category Format
  */
 public interface NutsTreeNodeFormat {
 

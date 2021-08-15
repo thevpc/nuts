@@ -25,7 +25,7 @@
 package net.thevpc.nuts;
 
 /**
- * @category Format
+ * @app.category Format
  */
 public interface NutsFormatManager {
 

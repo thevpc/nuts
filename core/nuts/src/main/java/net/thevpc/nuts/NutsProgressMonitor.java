@@ -30,7 +30,7 @@ package net.thevpc.nuts;
  * Monitor handles events from copy, compress and delete actions
  * @author thevpc
  * @since 0.5.8
- * @category Toolkit
+ * @app.category Toolkit
  */
 public interface NutsProgressMonitor {
 

@@ -30,7 +30,7 @@ import java.time.Instant;
 import java.util.ListIterator;
 
 /**
- * @category Command Line
+ * @app.category Command Line
  */
 public interface NutsCommandHistory {
 

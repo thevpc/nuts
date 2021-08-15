@@ -49,7 +49,7 @@ import java.util.stream.Collectors;
 /**
  * Created by vpc on 1/15/17.
  *
- * @category Internal
+ * @app.category Internal
  * @since 0.5.4
  */
 final class PrivateNutsUtils {
@@ -852,7 +852,7 @@ final class PrivateNutsUtils {
     }
 
     /**
-     * @category Internal
+     * @app.category Internal
      */
     private interface ConfirmDelete {
 
@@ -866,7 +866,7 @@ final class PrivateNutsUtils {
     }
 
     /**
-     * @category Internal
+     * @app.category Internal
      */
     private static class SimpleConfirmDelete implements ConfirmDelete {
 
@@ -1022,7 +1022,7 @@ final class PrivateNutsUtils {
     }
 
     /**
-     * @category Internal
+     * @app.category Internal
      */
     public static class Mvn {
 
@@ -1406,7 +1406,7 @@ final class PrivateNutsUtils {
     }
 
     /**
-     * @category Internal
+     * @app.category Internal
      */
     public static class Deps {
 

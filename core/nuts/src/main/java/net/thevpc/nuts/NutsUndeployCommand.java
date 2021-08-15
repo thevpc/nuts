@@ -29,7 +29,7 @@ package net.thevpc.nuts;
  *
  * @author thevpc
  * @since 0.5.4
- * @category Commands
+ * @app.category Commands
  */
 public interface NutsUndeployCommand extends NutsWorkspaceCommand {
 

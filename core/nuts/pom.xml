@@ -119,7 +119,7 @@
                 <configuration>
                     <tags>
                         <tag>
-                            <name>category</name>
+                            <name>app.category</name>
                             <placement>a</placement>
                             <head>Category:</head>
                         </tag>

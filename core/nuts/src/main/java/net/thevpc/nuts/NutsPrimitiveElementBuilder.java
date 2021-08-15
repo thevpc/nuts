@@ -31,7 +31,7 @@
 // * arrays.
 // *
 // * @author thevpc
-// * @category Elements
+// * @app.category Elements
 // */
 //public interface NutsPrimitiveElementBuilder extends NutsElementBuilder {
 //

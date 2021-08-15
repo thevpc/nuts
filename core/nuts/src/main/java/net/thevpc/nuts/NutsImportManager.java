@@ -27,7 +27,7 @@ package net.thevpc.nuts;
 import java.util.Set;
 
 /**
- * @category Base
+ * @app.category Base
  */
 public interface NutsImportManager {
 

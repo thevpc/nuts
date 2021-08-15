@@ -29,7 +29,7 @@ package net.thevpc.nuts;
  *
  * @author thevpc
  * @since 0.5.4
- * @category Format
+ * @app.category Format
  */
 public interface NutsQuestionFormat<T> {
 

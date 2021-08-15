@@ -27,7 +27,7 @@ package net.thevpc.nuts;
 import java.util.concurrent.ExecutorService;
 
 /**
- * @category Toolkit
+ * @app.category Toolkit
  */
 public interface NutsConcurrentManager {
 

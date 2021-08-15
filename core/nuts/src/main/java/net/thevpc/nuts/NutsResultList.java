@@ -36,7 +36,7 @@ import java.util.stream.Stream;
  * @author thevpc
  * @param <T> Result Type
  * @since 0.5.4
- * @category Base
+ * @app.category Base
  */
 public interface NutsResultList<T> extends Iterable<T> {
 

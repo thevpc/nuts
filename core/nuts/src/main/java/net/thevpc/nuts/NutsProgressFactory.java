@@ -29,7 +29,7 @@ package net.thevpc.nuts;
  * NutsProgressFactory is responsible of creating instances of {@link NutsProgressMonitor}
  * @author thevpc
  * @since 0.5.8
- * @category Toolkit
+ * @app.category Toolkit
  */
 public interface NutsProgressFactory {
 

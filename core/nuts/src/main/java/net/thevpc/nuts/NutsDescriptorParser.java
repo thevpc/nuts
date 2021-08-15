@@ -32,7 +32,7 @@ import java.net.URL;
 import java.nio.file.Path;
 
 /**
- * @category Base
+ * @app.category Base
  */
 public interface NutsDescriptorParser {
 

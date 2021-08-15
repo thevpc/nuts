@@ -7,7 +7,7 @@ import java.util.Objects;
 /**
  * Default Logging verb names
  *
- * @category Logging
+ * @app.category Logging
  */
 public final class NutsLogVerb {
     private static final Map<String, NutsLogVerb> cached = new HashMap<>();

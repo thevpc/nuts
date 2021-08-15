@@ -29,7 +29,7 @@ package net.thevpc.nuts;
  *
  * @author thevpc
  * @since 0.8.1
- * @category Base
+ * @app.category Base
  */
 public enum NutsArchFamily implements NutsEnum{
     X86_32,

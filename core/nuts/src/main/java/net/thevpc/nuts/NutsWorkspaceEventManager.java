@@ -25,7 +25,7 @@
 package net.thevpc.nuts;
 
 /**
- * @category Events
+ * @app.category Events
  */
 public interface NutsWorkspaceEventManager {
 

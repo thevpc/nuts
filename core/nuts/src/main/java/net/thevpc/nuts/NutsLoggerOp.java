@@ -31,7 +31,7 @@ import java.util.logging.Level;
 
 /**
  * Log operation
- * @category Logging
+ * @app.category Logging
  */
 public interface NutsLoggerOp {
     NutsLoggerOp session(NutsSession session);

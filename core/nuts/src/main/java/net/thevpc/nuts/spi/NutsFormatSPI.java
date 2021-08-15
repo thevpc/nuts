@@ -37,7 +37,7 @@ import java.nio.file.Path;
  * Base Format Interface used to print "things".
  * @author thevpc
  * @since 0.8.1
- * @category SPI Base
+ * @app.category SPI Base
  */
 public interface NutsFormatSPI  {
 

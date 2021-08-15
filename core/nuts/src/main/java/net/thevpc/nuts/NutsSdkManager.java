@@ -29,7 +29,7 @@ package net.thevpc.nuts;
 import java.util.function.Predicate;
 
 /**
- * @category Toolkit
+ * @app.category Toolkit
  */
 public interface NutsSdkManager {
     String[] findSdkTypes();

@@ -41,7 +41,7 @@ import net.thevpc.nuts.NutsSupportLevelContext;
  *
  * @param <CriteriaType> support criteria type
  * @since 0.5.4
- * @category SPI Base
+ * @app.category SPI Base
  */
 public interface NutsComponent<CriteriaType> {
 

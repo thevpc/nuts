@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * Manage (add/update/remove) custom nuts commands (aliases)
  *
- * @category Config
+ * @app.category Config
  */
 public interface NutsCustomCommandManager {
 

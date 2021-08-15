@@ -32,7 +32,7 @@ import java.io.IOException;
  * Exception thrown when a package cannot be resolved by the factory.
  * @author thevpc
  * @since 0.5.4
- * @category Exceptions
+ * @app.category Exceptions
  */
 public class NutsFactoryException extends NutsException {
 

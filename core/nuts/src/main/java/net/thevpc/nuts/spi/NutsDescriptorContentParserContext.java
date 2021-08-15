@@ -34,7 +34,7 @@ import java.io.InputStream;
  * context holding useful information for {@link NutsDescriptorContentParserComponent#parse(NutsDescriptorContentParserContext)}
  *
  * @since 0.5.4
- * @category SPI Base
+ * @app.category SPI Base
  */
 public interface NutsDescriptorContentParserContext {
 

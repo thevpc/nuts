@@ -36,7 +36,7 @@ import java.io.InputStream;
  * Created by vpc on 2/20/17.
  *
  * @since 0.5.4
- * @category SPI Base
+ * @app.category SPI Base
  */
 public interface NutsTerminalBase {
 

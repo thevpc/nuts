@@ -38,7 +38,7 @@ import java.util.Map;
  * Criteria type is a string representing authentication agent id
  * @author thevpc
  * @since 0.5.4
- * @category Security
+ * @app.category Security
  */
 public interface NutsAuthenticationAgent extends NutsComponent<String/* as authentication agent*/> {
 

@@ -4,7 +4,7 @@ import java.net.URL;
 import java.util.Arrays;
 
 /**
- * @category Internal
+ * @app.category Internal
  */
 public class NutsClassLoaderNode {
 

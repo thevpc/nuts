@@ -32,7 +32,7 @@ import java.net.URL;
 import java.nio.file.Path;
 
 /**
- * @category Input Output
+ * @app.category Input Output
  */
 public interface NutsInputAction {
     NutsInput of(Object any);

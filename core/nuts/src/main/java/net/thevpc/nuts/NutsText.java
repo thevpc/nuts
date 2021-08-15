@@ -28,7 +28,7 @@ package net.thevpc.nuts;
 
 /**
  * Created by vpc on 5/23/17.
- * @category Format
+ * @app.category Format
  */
 public interface NutsText extends NutsString{
     NutsTextType getType();

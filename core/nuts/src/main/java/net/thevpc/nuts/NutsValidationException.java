@@ -32,7 +32,7 @@ import java.io.IOException;
  *
  * @author thevpc
  * @since 0.5.5
- * @category Exceptions
+ * @app.category Exceptions
  */
 public class NutsValidationException extends NutsException {
 

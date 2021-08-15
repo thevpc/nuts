@@ -1,7 +1,7 @@
 package net.thevpc.nuts;
 
 /**
- * @category Format
+ * @app.category Format
  */
 public interface NutsTextCode extends NutsText{
     /**

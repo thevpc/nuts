@@ -33,7 +33,7 @@ package net.thevpc.nuts;
  * </ul>
  * @author thevpc
  * @since 0.5.4
- * @category Format
+ * @app.category Format
  */
 public interface NutsIdFormat extends NutsFormat {
 

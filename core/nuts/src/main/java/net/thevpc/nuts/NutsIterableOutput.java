@@ -35,7 +35,7 @@
 // * TODO : should merge with NutsIterableFormat
 // * @author thevpc
 // * @since 0.5.5
-// * @category Format
+// * @app.category Format
 // */
 //public interface NutsIterableOutput extends NutsCommandLineConfigurable {
 //

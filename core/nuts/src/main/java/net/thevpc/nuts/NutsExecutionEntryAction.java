@@ -31,7 +31,7 @@ import java.io.InputStream;
 import java.nio.file.Path;
 
 /**
- * @category Base
+ * @app.category Base
  */
 public interface NutsExecutionEntryAction {
 

@@ -36,7 +36,7 @@ import java.util.Objects;
  * Default Content implementation.
  * @author thevpc
  * @since 0.5.4
- * @category Descriptor
+ * @app.category Descriptor
  */
 public class NutsDefaultContent implements NutsContent {
 

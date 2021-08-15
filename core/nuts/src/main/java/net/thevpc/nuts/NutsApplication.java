@@ -146,7 +146,7 @@ package net.thevpc.nuts;
  *     }
  * </pre>
  *
- * @category Application
+ * @app.category Application
  * @since 0.5.5
  */
 public interface NutsApplication {

@@ -27,7 +27,7 @@ import java.util.*;
 
 /**
  * @author thevpc
- * @category Internal
+ * @app.category Internal
  */
 final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFormat {
 

@@ -29,7 +29,7 @@ package net.thevpc.nuts;
  * Exception Thrown when a locked object is invoked.
  *
  * @author thevpc
- * @category Exceptions
+ * @app.category Exceptions
  */
 public class NutsLockAcquireException extends NutsLockException {
     /**

@@ -31,7 +31,7 @@ package net.thevpc.nuts;
  * a given object. Multiple implementation should be available
  * to support tables, trees, json, xml,...
  * @author thevpc
- * @category Format
+ * @app.category Format
  */
 public interface NutsObjectFormat extends NutsFormat {
 

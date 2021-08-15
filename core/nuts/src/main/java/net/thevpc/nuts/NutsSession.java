@@ -33,7 +33,7 @@ import java.util.logging.Level;
  * session is context defining common command options and parameters.
  *
  * @author thevpc
- * @category Base
+ * @app.category Base
  * @since 0.5.4
  */
 public interface NutsSession extends NutsCommandLineConfigurable {

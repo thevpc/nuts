@@ -28,7 +28,7 @@ package net.thevpc.nuts;
 /**
  * Named Element
  * @author thevpc
- * @category Format
+ * @app.category Format
  */
 public interface NutsElementEntry {
 

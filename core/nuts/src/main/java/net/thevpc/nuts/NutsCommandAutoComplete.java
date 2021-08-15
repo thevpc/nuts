@@ -31,7 +31,7 @@ import java.util.List;
  * Auto Complete Helper class used to collect argument candidates
  * @author thevpc
  * @since 0.5.5
- * @category Command Line
+ * @app.category Command Line
  */
 public interface NutsCommandAutoComplete {
 

@@ -28,7 +28,7 @@ package net.thevpc.nuts;
 /**
  * Created by vpc on 1/15/17.
  *
- * @category Exceptions
+ * @app.category Exceptions
  * @since 0.5.4
  */
 public class NutsFetchModeNotSupportedException extends NutsException {

@@ -30,7 +30,7 @@ import java.util.Collection;
 /**
  * Builder for manipulating {@link NutsObjectElement} instances
  * @author thevpc
- * @category Format
+ * @app.category Format
  */
 public interface NutsObjectElementBuilder extends NutsElementBuilder{
 

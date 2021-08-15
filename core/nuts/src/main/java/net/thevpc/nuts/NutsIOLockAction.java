@@ -35,7 +35,7 @@ import java.util.concurrent.locks.Lock;
  * Lock builder to create mainly File based Locks
  * @author thevpc
  * @since 0.5.8
- * @category Input Output
+ * @app.category Input Output
  */
 public interface NutsIOLockAction {
 

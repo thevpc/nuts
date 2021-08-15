@@ -30,7 +30,7 @@ package net.thevpc.nuts;
  * Exception thrown when extension is already registered.
  *
  * @since 0.5.4
- * @category Exceptions
+ * @app.category Exceptions
  */
 public class NutsExtensionAlreadyRegisteredException extends NutsExtensionException {
 

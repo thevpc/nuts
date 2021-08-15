@@ -33,7 +33,7 @@
 // * Session Terminal Base instance are special Terminal Base classes instances that handle workspace session.
 // *
 // * @since 0.5.4
-// * @category SPI Base
+// * @app.category SPI Base
 // */
 //public interface NutsSessionTerminalBase  {
 //    String readLine(NutsPrintStream out, String prompt, Object... params);

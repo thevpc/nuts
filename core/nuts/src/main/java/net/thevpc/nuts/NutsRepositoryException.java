@@ -30,7 +30,7 @@ package net.thevpc.nuts;
  * Base exception for Repository related exceptions
  *
  * @since 0.5.4
- * @category Exceptions
+ * @app.category Exceptions
  */
 public abstract class NutsRepositoryException extends NutsException {
 

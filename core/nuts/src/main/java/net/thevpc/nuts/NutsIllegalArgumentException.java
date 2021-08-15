@@ -30,7 +30,7 @@ package net.thevpc.nuts;
  *
  * @author thevpc
  * @since 0.5.4
- * @category Exceptions
+ * @app.category Exceptions
  */
 public class NutsIllegalArgumentException extends NutsException {
 

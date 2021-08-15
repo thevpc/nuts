@@ -31,7 +31,7 @@ package net.thevpc.nuts;
  * @param <T> value type returned by this question object
  * @author thevpc
  * @since 0.5.4
- * @category Toolkit
+ * @app.category Toolkit
  */
 public interface NutsQuestion<T> extends NutsCommandLineConfigurable {
 

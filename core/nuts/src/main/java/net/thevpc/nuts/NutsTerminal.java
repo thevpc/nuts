@@ -31,7 +31,7 @@
 // * A Terminal handles in put stream, an output stream and an error stream to
 // * communicate with user.
 // *
-// * @category Input Output
+// * @app.category Input Output
 // * @since 0.5.4
 // */
 //public interface NutsTerminal extends NutsTerminalBase {

@@ -32,7 +32,7 @@ import net.thevpc.nuts.NutsSession;
 /**
  * Push Command
  * @author thevpc
- * @category SPI Base
+ * @app.category SPI Base
  */
 public interface NutsPushRepositoryCommand extends NutsRepositoryCommand {
 

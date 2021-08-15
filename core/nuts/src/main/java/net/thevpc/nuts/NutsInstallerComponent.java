@@ -32,7 +32,7 @@ import net.thevpc.nuts.spi.NutsComponent;
  * Component responsible of installing other artifacts.
  *
  * @since 0.5.4
- * @category SPI Base
+ * @app.category SPI Base
  */
 public interface NutsInstallerComponent extends NutsComponent<NutsDefinition> {
 

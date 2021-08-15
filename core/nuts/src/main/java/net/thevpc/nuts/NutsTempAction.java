@@ -27,7 +27,7 @@
 package net.thevpc.nuts;
 
 /**
- * @category Input Output
+ * @app.category Input Output
  */
 public interface NutsTempAction {
 

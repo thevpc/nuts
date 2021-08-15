@@ -32,7 +32,7 @@ import java.util.Objects;
  *
  * @author thevpc
  * @since 0.5.4
- * @category Commands
+ * @app.category Commands
  */
 public class NutsRemoveOptions {
 

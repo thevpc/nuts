@@ -31,7 +31,7 @@ import java.util.Iterator;
 /**
  * 
  * @author thevpc
- * @category Extensions
+ * @app.category Extensions
  */
 public interface NutsRepositoryModel {
     int MIRRORING = 1;

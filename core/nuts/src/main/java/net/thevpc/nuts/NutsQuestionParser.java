@@ -29,7 +29,7 @@ package net.thevpc.nuts;
  *
  * @author thevpc
  * @since 0.5.4
- * @category Base
+ * @app.category Base
  */
 public interface NutsQuestionParser<T> {
 

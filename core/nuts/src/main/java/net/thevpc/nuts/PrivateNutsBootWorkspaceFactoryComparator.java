@@ -33,7 +33,7 @@ import java.util.Comparator;
 /**
  * 
  * @author thevpc
- * @category Internal
+ * @app.category Internal
  */
 final class PrivateNutsBootWorkspaceFactoryComparator implements Comparator<NutsBootWorkspaceFactory> {
 

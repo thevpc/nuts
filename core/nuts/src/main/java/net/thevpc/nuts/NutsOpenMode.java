@@ -30,7 +30,7 @@ package net.thevpc.nuts;
  *
  * @author thevpc
  * @since 0.5.4 (renamed from NutsWorkspaceOpenMode to NutsOpenMode in 0.8.1)
- * @category Config
+ * @app.category Config
  */
 public enum NutsOpenMode implements NutsEnum{
     /**

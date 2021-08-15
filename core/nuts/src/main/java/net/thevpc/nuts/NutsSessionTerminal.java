@@ -32,7 +32,7 @@ import java.io.InputStream;
  * Created by vpc on 2/20/17.
  *
  * @since 0.5.4
- * @category Base
+ * @app.category Base
  */
 public interface NutsSessionTerminal {
 
@@ -76,7 +76,7 @@ public interface NutsSessionTerminal {
      * @param promptFormat prompt message format (cstyle)
      * @param params prompt message parameters
      * @return A string containing the line read from the terminal's input
-     * stream, not including any line-termination characters, or <tt>null</tt>
+     * stream, not including any line-termination characters, or {@code null}
      * if an end of stream has been reached.
      */
     String readLine(String promptFormat, Object... params);
@@ -89,7 +89,7 @@ public interface NutsSessionTerminal {
      * @param promptFormat prompt message format (cstyle)
      * @param params prompt message parameters
      * @return A string containing the line read from the terminal's input
-     * stream, not including any line-termination characters, or <tt>null</tt>
+     * stream, not including any line-termination characters, or {@code null}
      * if an end of stream has been reached.
      */
     char[] readPassword(String promptFormat, Object... params);

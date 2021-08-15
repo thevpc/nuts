@@ -27,7 +27,7 @@ package net.thevpc.nuts;
 
 /**
  * Exception thrown when copy validation fails
- * @category Exceptions
+ * @app.category Exceptions
  */
 public class NutsIndexerNotAccessibleException extends NutsException {
 

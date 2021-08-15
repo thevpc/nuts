@@ -35,7 +35,7 @@ package net.thevpc.nuts;
  *
  * @author thevpc
  * @since 0.5.5
- * @category Base
+ * @app.category Base
  */
 public enum NutsConfirmationMode implements NutsEnum{
     /**

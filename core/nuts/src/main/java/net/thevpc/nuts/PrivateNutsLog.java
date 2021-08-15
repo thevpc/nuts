@@ -36,7 +36,7 @@ import java.util.regex.Pattern;
 /**
  * 
  * @author thevpc
- * @category Internal
+ * @app.category Internal
  */
 public class PrivateNutsLog {
 

@@ -36,7 +36,7 @@ import java.util.List;
  * @author Nasreddine Bac Ali
  * date 2019-03-02
  * @since 0.5.4
- * @category Config
+ * @app.category Config
  */
 public class NutsWorkspaceListConfig implements Serializable {
 

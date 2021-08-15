@@ -27,7 +27,7 @@ package net.thevpc.nuts;
 import java.util.Map;
 
 /**
- * @category Base
+ * @app.category Base
  */
 public interface NutsRepositoryEnvManager {
 

@@ -34,7 +34,7 @@ import java.io.Serializable;
  * Created by vpc on 3/7/17.
  *
  * @since 0.5.5
- * @category Command Line
+ * @app.category Command Line
  */
 public interface NutsArgumentCandidate extends Serializable {
 

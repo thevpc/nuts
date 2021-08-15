@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @category Internal
+ * @app.category Internal
  */
 public class NutsClassLoaderNodeBuilder {
 

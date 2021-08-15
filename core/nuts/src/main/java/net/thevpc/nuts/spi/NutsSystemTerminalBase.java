@@ -31,7 +31,7 @@ import java.io.InputStream;
  * Created by vpc on 2/20/17.
  *
  * @since 0.5.4
- * @category SPI Base
+ * @app.category SPI Base
  */
 public interface NutsSystemTerminalBase extends NutsComponent<NutsTerminalSpec> {
     String readLine(NutsPrintStream out, NutsMessage message, NutsSession session);

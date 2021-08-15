@@ -33,7 +33,7 @@ import java.util.Map;
  *
  * @author thevpc
  * @since 0.5.4
- * @category Internal
+ * @app.category Internal
  */
 final class PrivateNutsPlatformUtils {
 

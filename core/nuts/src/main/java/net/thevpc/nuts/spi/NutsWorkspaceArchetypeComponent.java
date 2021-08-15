@@ -31,7 +31,7 @@ import net.thevpc.nuts.NutsSession;
  * Created by vpc on 1/23/17.
  *
  * @since 0.5.4
- * @category SPI Base
+ * @app.category SPI Base
  */
 public interface NutsWorkspaceArchetypeComponent extends NutsComponent<String/*archetype id*/> {
 

@@ -29,7 +29,7 @@ package net.thevpc.nuts;
 /**
  *
  * @since 0.5.4
- * @category Base
+ * @app.category Base
  */
 public enum NutsStoreLocationStrategy implements NutsEnum{
     /**

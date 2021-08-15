@@ -39,7 +39,7 @@ import java.util.List;
  *
  * @author thevpc
  * @since 0.5.4
- * @category Toolkit
+ * @app.category Toolkit
  */
 public interface NutsIOCompressAction {
 

@@ -32,7 +32,7 @@ import net.thevpc.nuts.NutsRepository;
  * Index Store Factory responsible of creating stores for a given repository
  * @author thevpc
  * @since 0.5.4
- * @category Base
+ * @app.category Base
  */
 public interface NutsIndexStoreFactory extends NutsComponent<Object/*any object or null*/> {
 
