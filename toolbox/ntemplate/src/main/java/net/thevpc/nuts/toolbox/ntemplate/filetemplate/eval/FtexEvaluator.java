@@ -1,9 +1,9 @@
 package net.thevpc.nuts.toolbox.ntemplate.filetemplate.eval;
 
+import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.ExprEvaluator;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.FileTemplater;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.util.FileProcessorUtils;
-import net.thevpc.nuts.toolbox.ntemplate.filetemplate.util.ProcessUtils;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.util.StringUtils;
 
 import java.io.*;
@@ -180,7 +180,7 @@ public class FtexEvaluator implements ExprEvaluator {
                     case "\"": {
                         return evalDoubleQuotesString((String) n.getValue(), context);
                     }
-                    case "\'": {
+                    case "'": {
                         return evalSimpleQuotesString((String) n.getValue(), context);
                     }
                     case "`": {
@@ -226,7 +226,13 @@ public class FtexEvaluator implements ExprEvaluator {
     }
 
     private Object evalAntiQuotesString(String value, FileTemplater ctx) {
-        return ProcessUtils.execProcess(value, ctx.getWorkingDirRequired());
+        NutsWorkspace ws = ctx.getSession().getWorkspace();
+        return ws.exec().addCommand(
+                ws.commandLine().parse(value).toStringArray()
+        ).setDirectory(ctx.getWorkingDirRequired())
+                .grabOutputString()
+                .run()
+                .getOutputString();
     }
 
     private Object evalSimpleQuotesString(String value, FileTemplater ctx) {

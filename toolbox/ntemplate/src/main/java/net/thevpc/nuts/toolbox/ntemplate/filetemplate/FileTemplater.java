@@ -5,6 +5,10 @@
  */
 package net.thevpc.nuts.toolbox.ntemplate.filetemplate;
 
+import net.thevpc.nuts.NutsLogVerb;
+import net.thevpc.nuts.NutsLoggerOp;
+import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NutsTextFormatStyle;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.eval.FtexEvaluator;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.processors.CopyStreamProcessor;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.processors.DefaultExecutor;
@@ -21,10 +25,10 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.logging.Level;
 import java.util.stream.Stream;
 
 /**
- *
  * @author thevpc
  */
 public class FileTemplater {
@@ -33,7 +37,7 @@ public class FileTemplater {
     private static final Map<String, TemplateProcessor> globalExecProcessorsByMimeType = new HashMap<>();
     private static final StreamToTemplateProcessor DEFAULT_PROCESSOR = new StreamToTemplateProcessor(new CopyStreamProcessor());
     private static final StreamToTemplateProcessor FTEX_PROCESSOR = new StreamToTemplateProcessor(new DefaultExecutor(new FtexEvaluator()));
-    private static final TemplateProcessor IGNORE_PROCESSOR = new TemplateProcessor(){
+    private static final TemplateProcessor IGNORE_PROCESSOR = new TemplateProcessor() {
         @Override
         public void processStream(InputStream source, OutputStream target, FileTemplater context) {
 
@@ -70,14 +74,50 @@ public class FileTemplater {
     private final Map<String, TemplateProcessor> execProcessorsByMimeType = new HashMap<>();
     private boolean userParentProperties;
     private PathTranslator pathTranslator;
-    private String projectFileName= PROJECT_FILENAME;
+    private String projectFileName = PROJECT_FILENAME;
+    private NutsSession session;
 
-    public FileTemplater() {
+    public FileTemplater(NutsSession session) {
+        this.session = session;
+        this.setLog(new TemplateLog() {
+            NutsLoggerOp logOp;
 
+            @Override
+            public void info(String title, String message) {
+                log().verb(NutsLogVerb.INFO).level(Level.FINER)
+                        .log("{0} : {1}", title, message);
+            }
+
+            @Override
+            public void debug(String title, String message) {
+                log().verb(NutsLogVerb.DEBUG).level(Level.FINER)
+                        .log("{0} : {1}", title, message);
+            }
+
+            @Override
+            public void error(String title, String message) {
+                log().verb(NutsLogVerb.FAIL).level(Level.FINER).log("{0} : {1}", title, message);
+            }
+
+            private NutsLoggerOp log() {
+                if (logOp == null) {
+                    logOp = session.getWorkspace().log().of(FileTemplater.this.getClass())
+                            .with()
+                            .style(NutsTextFormatStyle.JSTYLE)
+                    ;
+                }
+                return logOp;
+            }
+        });
     }
 
     public FileTemplater(FileTemplater parent) {
+        this(parent.session);
         this.parent = parent;
+    }
+
+    public NutsSession getSession() {
+        return session;
     }
 
     public boolean isUserParentProperties() {
@@ -94,8 +134,8 @@ public class FileTemplater {
     }
 
     public FileTemplater setProjectFileName(String projectFileName) {
-        if(projectFileName==null ||projectFileName.isEmpty()){
-            projectFileName=PROJECT_FILENAME;
+        if (projectFileName == null || projectFileName.isEmpty()) {
+            projectFileName = PROJECT_FILENAME;
         }
         this.projectFileName = projectFileName;
         return this;
@@ -164,7 +204,7 @@ public class FileTemplater {
     }
 
     public FileTemplater setDefaultProcessor(String mimetype, ExprEvaluator processor) {
-        return setDefaultProcessor(mimetype,processor==null?null:new StreamToTemplateProcessor(new DefaultExecutor(processor)));
+        return setDefaultProcessor(mimetype, processor == null ? null : new StreamToTemplateProcessor(new DefaultExecutor(processor)));
     }
 
     public FileTemplater setDefaultProcessor(String mimetype, TemplateProcessor processor) {
@@ -180,7 +220,7 @@ public class FileTemplater {
         if (mimetype == null || mimetype.isEmpty() || mimetype.equals("*")) {
             mimetype = MimeTypeConstants.ANY_TYPE;
         }
-        String[] mts=Stream.of(mimetype.split(";")).map(x->x.trim()).filter(x->x.length()>0).toArray(String[]::new);
+        String[] mts = Stream.of(mimetype.split(";")).map(String::trim).filter(x -> x.length() > 0).toArray(String[]::new);
         for (String mt : mts) {
             TemplateProcessor m = getExecutorExact(mt);
             if (m != null) {
@@ -201,7 +241,7 @@ public class FileTemplater {
             }
         }
         TemplateProcessor z = getExecutorExact(MimeTypeConstants.ANY_TYPE);
-        if(z!=null){
+        if (z != null) {
             return z;
         }
         return DEFAULT_PROCESSOR;
@@ -262,7 +302,7 @@ public class FileTemplater {
     }
 
     public FileTemplater setDefaultExecutor(String mimetype, ExprEvaluator executor) {
-        return setDefaultExecutor(mimetype,executor==null?null:new StreamToTemplateProcessor(new DefaultExecutor(executor)));
+        return setDefaultExecutor(mimetype, executor == null ? null : new StreamToTemplateProcessor(new DefaultExecutor(executor)));
     }
 
     public FileTemplater setDefaultExecutor(String mimetype, TemplateProcessor executor) {
@@ -360,7 +400,7 @@ public class FileTemplater {
     public String getSourcePathRequired() {
         return (String) getVarRequired(SOURCE_PATH);
     }
-    
+
     public Optional<String> getSourcePath() {
         return (Optional) getVar(SOURCE_PATH);
     }
@@ -491,7 +531,7 @@ public class FileTemplater {
     }
 
     public void processTree(Path path, Predicate<Path> filter) {
-        if(!getRootDir().isPresent()){
+        if (!getRootDir().isPresent()) {
             setRootDir(path.toString());
         }
         Path path0 = toAbsolutePath(path);
@@ -506,8 +546,8 @@ public class FileTemplater {
                     if (filter == null || filter.test(x)) {
                         try {
                             processRegularFile(x, null);
-                        }catch (Exception ex){
-                            throw new RuntimeException("error processing "+x+": "+ex.toString(),ex);
+                        } catch (Exception ex) {
+                            throw new RuntimeException("error processing " + x + ": " + ex.toString(), ex);
                         }
                     }
                 });
@@ -544,7 +584,7 @@ public class FileTemplater {
     }
 
     public void executeProjectFile(Path path, String mimeTypesString) {
-        executeRegularFile(path,mimeTypesString);
+        executeRegularFile(path, mimeTypesString);
     }
 
     public String executeRegularFile(Path path, String mimeTypesString) {
@@ -564,12 +604,12 @@ public class FileTemplater {
             }
             if (proc != null) {
                 try {
-                    String s1=path.toString();
-                    String s2=absolutePath.toString();
-                    if(s1.equals(s2)) {
-                        getLog().debug("file", "[" + proc + "] ["+mimeType+"] execute path : " + s1);
-                    }else{
-                        getLog().debug("file", "[" + proc + "] ["+mimeType+"] execute path : " + s1 + " = " + s2);
+                    String s1 = path.toString();
+                    String s2 = absolutePath.toString();
+                    if (s1.equals(s2)) {
+                        getLog().debug("file", "[" + proc + "] [" + mimeType + "] execute path : " + s1);
+                    } else {
+                        getLog().debug("file", "[" + proc + "] [" + mimeType + "] execute path : " + s1 + " = " + s2);
                     }
                     try (InputStream in = Files.newInputStream(absolutePath)) {
                         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -605,12 +645,12 @@ public class FileTemplater {
                 getLog().error("file", "error resolving processor for mimetype " + mimeType0 + " and file : " + path.toString() + ". " + ex.toString());
             }
             if (proc != null) {
-                String s1=path.toString();
-                String s2=absolutePath.toString();
-                if(s1.equals(s2)) {
-                    getLog().debug("file", "[" + proc + "] ["+mimeType+"] process path : " + s1);
-                }else{
-                    getLog().debug("file", "[" + proc + "] ["+mimeType+"] process path : " + s1 + " = " + s2);
+                String s1 = path.toString();
+                String s2 = absolutePath.toString();
+                if (s1.equals(s2)) {
+                    getLog().debug("file", "[" + proc + "] [" + mimeType + "] process path : " + s1);
+                } else {
+                    getLog().debug("file", "[" + proc + "] [" + mimeType + "] process path : " + s1 + " = " + s2);
                 }
                 proc.processPath(path, mimeType0,
                         newChild()
@@ -627,7 +667,7 @@ public class FileTemplater {
     }
 
     public String executeString(String source, String mimeType) {
-        return executeStream(new ByteArrayInputStream(source.getBytes()),mimeType);
+        return executeStream(new ByteArrayInputStream(source.getBytes()), mimeType);
     }
 
     public String executeStream(InputStream source, String mimeType) {
@@ -655,8 +695,8 @@ public class FileTemplater {
     }
 
     public String processString(String source, String mimeType) {
-        ByteArrayOutputStream bos=new ByteArrayOutputStream();
-        processStream(new ByteArrayInputStream(source.getBytes()),bos,mimeType);
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        processStream(new ByteArrayInputStream(source.getBytes()), bos, mimeType);
         return bos.toString();
     }
 
@@ -667,7 +707,7 @@ public class FileTemplater {
             try {
                 proc = getProcessor(mimeType0);
             } catch (Exception ex) {
-                getLog().error("file", "unsupported mimeType : " + mimeType0 + ". " + ex.toString());
+                getLog().error("file", "unsupported mimeType : " + mimeType0 + ". " + ex);
             }
             if (proc != null) {
                 try {
@@ -676,7 +716,7 @@ public class FileTemplater {
                                     .setUserParentProperties(true)
                     );
                 } catch (Exception ex) {
-                    getLog().error("file", "error processing mimeType : " + mimeType + ". " + ex.toString());
+                    getLog().error("file", "error processing mimeType : " + mimeType + ". " + ex);
                 }
                 return;
             }
@@ -710,11 +750,11 @@ public class FileTemplater {
     }
 
     public FileTemplater setPathTranslator(Path from, Path to) {
-        return setPathTranslator(new DefaultPathTranslator(from,to));
+        return setPathTranslator(new DefaultPathTranslator(from, to));
     }
 
     public FileTemplater setTargetPath(Path to) {
-        return setPathTranslator(new DefaultPathTranslator(Paths.get(getWorkingDirRequired()),to));
+        return setPathTranslator(new DefaultPathTranslator(Paths.get(getWorkingDirRequired()), to));
     }
 
     public FileTemplater setPathTranslator(PathTranslator pathTranslator) {
