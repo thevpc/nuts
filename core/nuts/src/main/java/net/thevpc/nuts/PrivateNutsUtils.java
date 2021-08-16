@@ -741,33 +741,33 @@ final class PrivateNutsUtils {
         return errorValue;
     }
 
-    /**
-     * v1 and v2 are supposed in the following form nbr1.nbr2, ... where all
-     * items (nbr) between dots are positive numbers
-     *
-     * @param v1 version 1
-     * @param v2 version 2
-     * @return 1, 0 or -1
-     */
-    public static int compareRuntimeVersion(String v1, String v2) {
-        String[] a1 = v1.split("\\.");
-        String[] a2 = v2.split("\\.");
-        int max = Math.max(a1.length, a2.length);
-        for (int i = 0; i < max; i++) {
-            if (i >= a1.length) {
-                return -1;
-            }
-            if (i >= a2.length) {
-                return 1;
-            }
-            int i1 = Integer.parseInt(a1[i]);
-            int i2 = Integer.parseInt(a2[i]);
-            if (i1 != i2) {
-                return Integer.compare(i1, i2);
-            }
-        }
-        return 0;
-    }
+//    /**
+//     * v1 and v2 are supposed in the following form nbr1.nbr2, ... where all
+//     * items (nbr) between dots are positive numbers
+//     *
+//     * @param v1 version 1
+//     * @param v2 version 2
+//     * @return 1, 0 or -1
+//     */
+//    public static int compareRuntimeVersion(String v1, String v2) {
+//        String[] a1 = v1.split("\\.");
+//        String[] a2 = v2.split("\\.");
+//        int max = Math.max(a1.length, a2.length);
+//        for (int i = 0; i < max; i++) {
+//            if (i >= a1.length) {
+//                return -1;
+//            }
+//            if (i >= a2.length) {
+//                return 1;
+//            }
+//            int i1 = Integer.parseInt(a1[i]);
+//            int i2 = Integer.parseInt(a2[i]);
+//            if (i1 != i2) {
+//                return Integer.compare(i1, i2);
+//            }
+//        }
+//        return 0;
+//    }
 
     public static Set<NutsBootId> parseDependencies(String s) {
         return PrivateNutsUtils.split(s, ";", false)
@@ -1215,7 +1215,7 @@ final class PrivateNutsUtils {
                                 if (isBlank(scope) || scope.equals("compile")) {
                                     depsAndRepos.deps.add(
                                             new NutsBootId(
-                                                    groupId, artifactId, version, PrivateNutsUtils.parseBoolean(optional, false, false),
+                                                    groupId, artifactId, NutsBootVersion.parse(version), PrivateNutsUtils.parseBoolean(optional, false, false),
                                                     osMap.get(groupId + ":" + artifactId),
                                                     archMap.get(groupId + ":" + artifactId)
                                             )
@@ -1319,17 +1319,12 @@ final class PrivateNutsUtils {
                         if (children != null) {
                             for (File file : children) {
                                 if (file.isDirectory()) {
-                                    String[] goodChildren = file.list(new FilenameFilter() {
-                                        @Override
-                                        public boolean accept(File dir, String name) {
-                                            return name.endsWith(".pom");
-                                        }
-                                    });
+                                    String[] goodChildren = file.list((dir, name) -> name.endsWith(".pom"));
                                     if (goodChildren != null && goodChildren.length > 0) {
                                         String p = file.getName();
                                         if (filter == null || filter.test(p)) {
                                             found = true;
-                                            if (bestVersion == null || compareRuntimeVersion(bestVersion, p) < 0) {
+                                            if (bestVersion == null || NutsBootVersion.parse(bestVersion).compare(NutsBootVersion.parse(p)) < 0) {
                                                 bestVersion = p;
                                                 bestPath = "local location : " + file.getPath();
                                             }
@@ -1372,7 +1367,7 @@ final class PrivateNutsUtils {
                                                     String p = c4.getTextContent();
                                                     if (filter == null || filter.test(p)) {
                                                         found = true;
-                                                        if (bestVersion == null || compareRuntimeVersion(bestVersion, p) < 0) {
+                                                        if (bestVersion == null || NutsBootVersion.parse(bestVersion).compare(NutsBootVersion.parse(p)) < 0) {
                                                             bestVersion = p;
                                                             bestPath = "remote file " + mavenMetadata;
                                                         }
@@ -1398,7 +1393,7 @@ final class PrivateNutsUtils {
             if (bestVersion == null) {
                 return null;
             }
-            NutsBootId iid = new NutsBootId(zId.getGroupId(), zId.getArtifactId(), bestVersion, false, null, null);
+            NutsBootId iid = new NutsBootId(zId.getGroupId(), zId.getArtifactId(), NutsBootVersion.parse(bestVersion), false, null, null);
             LOG.log(Level.FINEST, NutsLogVerb.SUCCESS, "resolved " + iid + " from " + bestPath);
             return iid;
         }

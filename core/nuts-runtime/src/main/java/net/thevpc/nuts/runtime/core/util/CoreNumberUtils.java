@@ -39,4 +39,14 @@ public class CoreNumberUtils {
             return defaultValue;
         }
     }
+    public static Long convertToLong(String value, Long defaultValue) {
+        if (CoreStringUtils.isBlank(value)) {
+            return defaultValue;
+        }
+        try {
+            return Long.parseLong(value);
+        } catch (Exception ex) {
+            return defaultValue;
+        }
+    }
 }

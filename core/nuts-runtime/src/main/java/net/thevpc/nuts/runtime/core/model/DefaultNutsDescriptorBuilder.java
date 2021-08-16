@@ -35,6 +35,8 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
+
 import net.thevpc.nuts.runtime.core.util.CoreArrayUtils;
 
 public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
@@ -54,7 +56,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
      * short description
      */
     private String name;
-    private String icon;
+    private List<String> icons=new ArrayList<>();
     private String category;
     private String genericName;
     /**
@@ -105,7 +107,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         setDependencies((NutsDependency[])null);
         setStandardDependencies((NutsDependency[])null);
         setProperties(null);
-        setIcon(null);
+        setIcons(new ArrayList<>());
         setCategory(null);
         setGenericName(null);
         return this;
@@ -133,7 +135,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
             setDependencies(other.getDependencies());
             setStandardDependencies(other.getStandardDependencies());
             setProperties(other.getProperties());
-            setIcon(other.getIcon());
+            setIcons(new ArrayList<>(other.getIcons()));
             setCategory(other.getCategory());
             setGenericName(other.getGenericName());
         }else{
@@ -164,7 +166,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
             setDependencies(other.getDependencies());
             setStandardDependencies(other.getStandardDependencies());
             setProperties(other.getProperties());
-            setIcon(other.getIcon());
+            setIcons(new ArrayList<>(Arrays.asList(other.getIcons())));
             setGenericName(other.getGenericName());
             setCategory(other.getCategory());
         }else{
@@ -457,7 +459,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
                 getExecutor(), getInstaller(),
                 getName(), getDescription(), getArch(), getOs(), getOsdist(), getPlatform(), getDependencies(), getStandardDependencies(),
                 getLocations(), getProperties(), getClassifierMappings(),
-                genericName,category,icon,
+                genericName,category, icons==null?new String[0] :icons.toArray(new String[0]) ,
                 session
         );
     }
@@ -644,7 +646,12 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         boolean n_executable = isExecutable();
         String n_name = getName();
         String n_category = getCategory();
-        String n_icon = getIcon();
+        List<String> n_icons = getIcons();
+        if(n_icons==null){
+            n_icons=new ArrayList<>();
+        }else{
+            n_icons=new ArrayList<>(n_icons);
+        }
         String n_genericName = getGenericName();
         String n_desc = getDescription();
         NutsArtifactCall n_executor = getExecutor();
@@ -680,12 +687,12 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 //            n_ext = CoreNutsUtils.applyStringInheritance(n_ext, parentDescriptor.getExt());
             n_name = CoreNutsUtils.applyStringInheritance(n_name, parentDescriptor.getName());
             n_category = CoreNutsUtils.applyStringInheritance(n_category, parentDescriptor.getCategory());
-            n_icon = CoreNutsUtils.applyStringInheritance(n_icon, parentDescriptor.getIcon());
             n_genericName = CoreNutsUtils.applyStringInheritance(n_genericName, parentDescriptor.getGenericName());
             n_desc = CoreNutsUtils.applyStringInheritance(n_desc, parentDescriptor.getDescription());
             n_deps.addAll(Arrays.asList(parentDescriptor.getDependencies()));
             n_sdeps.addAll(Arrays.asList(parentDescriptor.getStandardDependencies()));
             n_archs.addAll(Arrays.asList(parentDescriptor.getArch()));
+            n_icons.addAll(Arrays.asList(parentDescriptor.getIcons()));
             n_os.addAll(Arrays.asList(parentDescriptor.getOs()));
             n_osdist.addAll(Arrays.asList(parentDescriptor.getOsdist()));
             n_platform.addAll(Arrays.asList(parentDescriptor.getPlatform()));
@@ -708,7 +715,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         setName(n_name);
         setGenericName(n_genericName);
         setCategory(n_category);
-        setIcon(n_icon);
+        setIcons(n_icons);
         setDescription(n_desc);
         setArch(n_archs.toArray(new String[0]));
         setOs(n_os.toArray(new String[0]));
@@ -759,7 +766,12 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         this.setName(n_name);
         this.setDescription(n_desc);
         this.setGenericName(CoreNutsUtils.applyStringProperties(getGenericName(), map));
-        this.setIcon(CoreNutsUtils.applyStringProperties(getIcon(), map));
+        this.setIcons(
+                getIcons().stream()
+                        .map(
+                                x->CoreNutsUtils.applyStringProperties(x, map)
+                        ).collect(Collectors.toList())
+        );
         this.setCategory(CoreNutsUtils.applyStringProperties(getCategory(), map));
         this.setArch(CoreNutsUtils.applyStringProperties(getArch(), map));
         this.setOs(CoreNutsUtils.applyStringProperties(getOs(), map));
@@ -855,13 +867,13 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     }
 
     @Override
-    public String getIcon() {
-        return icon;
+    public List<String> getIcons() {
+        return icons;
     }
 
     @Override
-    public NutsDescriptorBuilder setIcon(String name) {
-        this.icon=name;
+    public NutsDescriptorBuilder setIcons(List<String> icons) {
+        this.icons =icons==null?new ArrayList<>() :icons;
         return this;
     }
 

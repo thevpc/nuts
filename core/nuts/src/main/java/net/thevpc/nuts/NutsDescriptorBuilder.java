@@ -26,6 +26,7 @@
 package net.thevpc.nuts;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -197,9 +198,9 @@ public interface NutsDescriptorBuilder extends Serializable {
 
     NutsDescriptorBuilder setGenericName(String name);
 
-    String getIcon();
+    List<String> getIcons();
 
-    NutsDescriptorBuilder setIcon(String name);
+    NutsDescriptorBuilder setIcons(List<String> name);
 
     String getCategory();
 

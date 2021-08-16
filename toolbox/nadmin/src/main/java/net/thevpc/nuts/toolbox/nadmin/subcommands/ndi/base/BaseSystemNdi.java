@@ -5,7 +5,6 @@ import net.thevpc.nuts.toolbox.nadmin.PathInfo;
 import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.*;
 import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.util.NdiUtils;
 import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.util.ReplaceString;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -248,7 +247,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
 
     @Override
     public PathInfo[] switchWorkspace(NdiScriptOptions options) {
-        options=options.copy();
+        options = options.copy();
         options.setPersistentConfig(true);
         PathInfo[] v = createBootScripts(options);
 
@@ -499,7 +498,6 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
 
     }
 
-    @NotNull
     protected String newlineString() {
         return "\n";
     }
@@ -706,7 +704,6 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                 .print(t);
     }
 
-    @NotNull
     protected abstract FreeDesktopEntryWriter createFreeDesktopEntryWriter();
 
     public PathInfo[] createShortcut(AppShortcutTarget appShortcutTarget, NutsId id, String path, FreeDesktopEntry.Group shortcut) {
@@ -724,16 +721,76 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         return results.toArray(new PathInfo[0]);
     }
 
+    /**
+     * bigger is better
+     * @param extension extension
+     * @return
+     */
+    protected int resolveIconExtensionPriority(String extension) {
+        extension = extension.toLowerCase();
+        switch (extension) {
+            case "svg":
+                return 10;
+            case "png":
+                return 8;
+            case "jpg":
+                return 6;
+            case "jpeg":
+                return 5;
+            case "gif":
+                return 4;
+            case "ico":
+                return 3;
+        }
+        return -1;
+    }
+
+    protected int compareIconExtensions(String a, String b) {
+        int ai = resolveIconExtensionPriority(a);
+        int bi = resolveIconExtensionPriority(b);
+        //bigger is first
+        return Integer.compare(bi, ai);
+    }
+
+    protected int compareIconPaths(String a, String b) {
+        String n1 = context.getWorkspace().io().path(a).getLastExtension();
+        String n2 = context.getWorkspace().io().path(b).getLastExtension();
+        return compareIconExtensions(n1, n2);
+    }
+
+    protected String resolveBestIcon(String... iconPaths) {
+        if (iconPaths != null) {
+            List<String> all = Arrays.stream(iconPaths).map(x -> (x == null) ? "" : x.trim())
+                    .filter(x -> !x.isEmpty())
+                    .filter(x ->
+                            resolveIconExtensionPriority(context.getWorkspace().io().path(x).getLastExtension()) >= 0
+                    )
+                    .sorted(this::compareIconPaths).collect(Collectors.toList());
+            if (all.size() > 0) {
+                return all.get(0);
+            }
+        }
+        return null;
+    }
+
     public String resolveIcon(String iconPath, NutsId appId) {
+        if (iconPath != null && iconPath.length() > 0) {
+            return iconPath;
+        }
         NutsWorkspace ws = context.getWorkspace();
         NutsDefinition appDef = ws.search().addId(appId).setLatest(true).setEffective(true).getResultDefinitions().singleton();
-        String descAppIcon = appDef.getDescriptor().getIcon();
+        String descAppIcon = resolveBestIcon(appDef.getDescriptor().getIcons());
         if (descAppIcon == null) {
             if (isNutsBootId(appDef.getId())
                     || appDef.getId().getGroupId().startsWith("net.thevpc.nuts")
             ) {
                 //get icon from nadmin
-                descAppIcon = "nuts-resource://" + context.getAppId().getLongName() + "/net/thevpc/nuts/toolbox/nadmin/nuts.svg";
+                descAppIcon =
+                        resolveBestIcon(
+                                "nuts-resource://" + context.getAppId().getLongName() + "/net/thevpc/nuts/runtime/nuts.svg",
+                                "nuts-resource://" + context.getAppId().getLongName() + "/net/thevpc/nuts/runtime/nuts.png",
+                                "nuts-resource://" + context.getAppId().getLongName() + "/net/thevpc/nuts/runtime/nuts.ico"
+                        );
             }
         }
         if (descAppIcon != null) {
@@ -741,12 +798,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             if (descAppIcon.startsWith("classpath://")) {
                 descAppIcon = "nuts-resource://" + appDef.getId().getLongName() + "" + descAppIcon.substring("classpath://".length() - 1);
             }
-            int q = p0.getLocation().lastIndexOf('.');
-            String extension = q > 0 ? p0.getLocation().substring(q + 1) : "";
-            String bestName = "icon.png";
-            if (ACCEPTED_ICON_EXTENSIONS.contains(extension.toLowerCase())) {
-                bestName = "icon." + extension.toLowerCase();
-            }
+            String bestName = "icon." + p0.getLastExtension();
             Path localIconPath = Paths.get(ws.locations().getStoreLocation(appDef.getId(), NutsStoreLocation.APPS))
                     .resolve(".nuts")
                     .resolve(bestName);
@@ -776,7 +828,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                 .setEffective(true).getResultDefinitions().singleton();
         String path = NameBuilder.id(
                 options.getSession().getWorkspace().id().parser().parse(options.getId()),
-                options.getScriptPath(),"%n", appDef.getDescriptor(),options.getSession()).buildName();
+                options.getScriptPath(), "%n", appDef.getDescriptor(), options.getSession()).buildName();
         return Paths.get(path);
     }
 
@@ -812,20 +864,20 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         }
         String iconPath = resolveIcon(options.getIcon(), appId);
 
-        String shortcutName=options.getShortcutName();
-        if(shortcutName==null){
-            if(appShortcutTarget==AppShortcutTarget.SHORTCUT) {
+        String shortcutName = options.getShortcutName();
+        if (shortcutName == null) {
+            if (appShortcutTarget == AppShortcutTarget.SHORTCUT) {
                 shortcutName = options.getShortcutPath();
-                if(shortcutName==null){
+                if (shortcutName == null) {
                     shortcutName = options.getScriptPath();
                 }
             }
         }
-        shortcutName=NameBuilder.extractPathName(shortcutName);
+        shortcutName = NameBuilder.extractPathName(shortcutName);
         if (shortcutName.isEmpty() && appShortcutTarget == AppShortcutTarget.DESKTOP) {
             shortcutName = "%N";
         }
-        shortcutName+="%s%v%s%h";
+        shortcutName += "%s%v%s%h";
         shortcutName = NameBuilder.label(appDef.getId(), shortcutName, null, appDef.getDescriptor(), context.getSession()).buildName();
 
         FreeDesktopEntry.Group sl = FreeDesktopEntry.Group.desktopEntry(shortcutName, execCmd.toString(), cwd);
@@ -841,7 +893,6 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         return createShortcut(appShortcutTarget, appId, preferredPath, sl);
     }
 
-    @NotNull
     protected String getDefaultIconPath() {
         return "apper";
     }

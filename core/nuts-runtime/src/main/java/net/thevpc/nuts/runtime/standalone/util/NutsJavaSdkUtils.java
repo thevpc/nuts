@@ -329,9 +329,9 @@ public class NutsJavaSdkUtils {
             throw new NutsException(session, NutsMessage.formatted("missing version"));
         }
         NutsVersion jv = session.getWorkspace().version().parser().parse(version);
-        int n1 = jv.getNumber(0, 0);
-        int n2 = jv.getNumber(1, 0);
-        int classFileId = 0;
+        long n1 = jv.getNumber(0, 0);
+        long n2 = jv.getNumber(1, 0);
+        long classFileId = 0;
         String standard = n1 + "." + n2;
         if (n1 == 1) {
             classFileId = 44 + n2;

@@ -8,6 +8,7 @@ public interface NutsPath extends NutsFormattable {
     /**
      * content encoding if explicitly defined (from HTTP headers for instance).
      * return null when unknown.
+     *
      * @return content encoding if explicitly defined (from HTTP headers for instance)
      */
     String getContentEncoding();
@@ -15,11 +16,18 @@ public interface NutsPath extends NutsFormattable {
     /**
      * content type if explicitly defined (from HTTP headers for instance) or probe for content type.
      * return null when unknown.
+     *
      * @return content type if explicitly defined (from HTTP headers for instance) or probe for content type.
      */
     String getContentType();
 
     NutsString getFormattedName();
+
+    String getBaseName();
+
+    String getLastExtension();
+
+    String getFullExtension();
 
     String getName();
 

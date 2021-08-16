@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages and libraries
  * for runtime execution. Nuts is the ultimate companion for maven (and other
@@ -11,7 +11,7 @@
  * large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,29 +24,33 @@
  */
 package net.thevpc.nuts;
 
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.IntPredicate;
 
 /**
- * simple and dummy implementation of NutsId base functions
+ * simple and dummy implementation of NutsId base functions.
  *
  * @author thevpc
- * @since 0.5.4
  * @app.category Internal
+ * @since 0.5.4
  */
 public final class NutsBootId {
 
     private final String groupId;
     private final String artifactId;
-    private final String version;
+    private final NutsBootVersion version;
     private final boolean optional;
     private final String os;
     private final String arch;
 
-    public NutsBootId(String groupId, String artifactId, String version, boolean optional, String os, String arch) {
+    public NutsBootId(String groupId, String artifactId, NutsBootVersion version, boolean optional, String os, String arch) {
         this.groupId = groupId;
         this.artifactId = artifactId;
-        this.version = version == null ? "" : version;
+        this.version = version;
         this.optional = optional;
         this.os = os == null ? "" : os;
         this.arch = arch == null ? "" : arch;
@@ -62,6 +66,69 @@ public final class NutsBootId {
 
     public boolean isOptional() {
         return optional;
+    }
+
+    private static String readUntil(Reader r, boolean include, IntPredicate stop) {
+        try {
+            StringBuilder sb = new StringBuilder();
+            while (true) {
+                r.mark(1);
+                int x = r.read();
+                if (x < 0) {
+                    break;
+                }
+                if (include) {
+                    sb.append((char) x);
+                }
+                if (stop.test(x)) {
+                    r.reset();
+                    break;
+                }
+                if (!include) {
+                    sb.append((char) x);
+                }
+            }
+            return sb.toString();
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+
+    public static NutsBootId[] parseAll(String id) {
+        List<NutsBootId> all = new ArrayList<>();
+        if (id != null) {
+            StringReader r = new StringReader(id);
+            boolean loop = true;
+            while (loop) {
+                StringBuilder sb = new StringBuilder();
+                while (true) {
+                    sb.append(readUntil(r, false, x -> (Character.isWhitespace(x) || x == '[' || x == ']') || x == ',' || x == ';'));
+                    int n = 0;
+                    try {
+                        n = r.read();
+                    } catch (IOException e) {
+                        throw new UncheckedIOException(e);
+                    }
+                    if (n < 0) {
+                        loop = false;
+                        break;
+                    } else if (n == '[' || n == ']') {
+                        sb.append((char) n);
+                        sb.append(readUntil(r, true, x -> (x == '[' || x == ']')));
+                    } else {
+                        //space ',' or ';'
+                        break;
+                    }
+                }
+                String s = sb.toString();
+                s=s.trim();
+                if(!s.isEmpty()) {
+                    all.add(parse(s));
+                }
+            }
+        }
+        return all.toArray(new NutsBootId[0]);
     }
 
     public static NutsBootId parse(String id) {
@@ -91,6 +158,30 @@ public final class NutsBootId {
                 }
             }
         }
+        int brackets1 = id.indexOf('[');
+        int brackets2 = id.indexOf(']');
+        int bracketsStart = brackets2 < 0 ? brackets1 : brackets1 < 0 ? brackets2 : Math.min(brackets1, brackets2);
+        if (bracketsStart >= 0) {
+            brackets1 = id.indexOf('[', bracketsStart + 1);
+            brackets2 = id.indexOf(']', bracketsStart + 1);
+            int bracketsEnd = brackets2 < 0 ? brackets1 : brackets1 < 0 ? brackets2 : Math.min(brackets1, brackets2);
+            String verStr = null;
+            boolean startInclude = id.charAt(bracketsStart) == '[';
+            boolean endInclude = true;
+            if (bracketsEnd < 0) {
+                //some error, suppose '['
+                verStr = id.substring(bracketsStart + 1);
+            } else {
+                verStr = id.substring(bracketsStart + 1, bracketsEnd);
+                endInclude = id.charAt(bracketsEnd) == ']';
+            }
+            int vir = verStr.indexOf(',');
+            String verFrom;
+            String verTo;
+            if (vir < 0) {
+
+            }
+        }
         int dots = id.indexOf(':');
         if (dots > 0) {
             int dash = id.indexOf('#', dots + 1);
@@ -99,11 +190,12 @@ public final class NutsBootId {
                 dash = id.indexOf(':', dots + 1);
             }
             if (dash >= 0) {
-                return new NutsBootId(id.substring(0, dots), id.substring(dots + 1, dash), id.substring(dash + 1),
+                return new NutsBootId(id.substring(0, dots), id.substring(dots + 1, dash),
+                        NutsBootVersion.parse(id.substring(dash + 1)),
                         optional, os, arch
                 );
             }
-            return new NutsBootId(id.substring(0, dots), id.substring(dots + 1), NutsConstants.Versions.LATEST,
+            return new NutsBootId(id.substring(0, dots), id.substring(dots + 1), NutsBootVersion.parse(NutsConstants.Versions.LATEST),
                     optional, os, arch);
         }
         int dash = id.indexOf('#', dots + 1);
@@ -112,10 +204,10 @@ public final class NutsBootId {
             dash = id.indexOf(':', dots + 1);
         }
         if (dash >= 0) {
-            return new NutsBootId("", id.substring(0, dash), id.substring(dash + 1),
+            return new NutsBootId("", id.substring(0, dash), NutsBootVersion.parse(id.substring(dash + 1)),
                     optional, os, arch);
         }
-        return new NutsBootId("", id, NutsConstants.Versions.LATEST,
+        return new NutsBootId("", id, NutsBootVersion.parse(NutsConstants.Versions.LATEST),
                 optional, os, arch);
     }
 
@@ -126,33 +218,33 @@ public final class NutsBootId {
             sb.append(groupId).append(":");
         }
         sb.append(artifactId);
-        if (version != null && version.length() > 0) {
+        if (version != null && !version.isBlank()) {
             sb.append("#").append(version);
         }
         boolean inter = false;
         if (optional) {
             if (!inter) {
                 sb.append("?");
-                inter=true;
-            }else{
+                inter = true;
+            } else {
                 sb.append("&");
             }
             sb.append("optional=true");
         }
-        if (os.length()>0) {
+        if (os.length() > 0) {
             if (!inter) {
                 sb.append("?");
-                inter=true;
-            }else{
+                inter = true;
+            } else {
                 sb.append("&");
             }
             sb.append("os=").append(os);
         }
-        if (arch.length()>0) {
+        if (arch.length() > 0) {
             if (!inter) {
                 sb.append("?");
-                inter=true;
-            }else{
+                inter = true;
+            } else {
                 sb.append("&");
             }
             sb.append("arch=").append(arch);
@@ -160,7 +252,7 @@ public final class NutsBootId {
         return sb.toString();
     }
 
-    public String getVersion() {
+    public NutsBootVersion getVersion() {
         return version;
     }
 
@@ -173,11 +265,24 @@ public final class NutsBootId {
     }
 
     public String getShortName() {
+        if(groupId.isEmpty()){
+            return artifactId;
+        }
         return groupId + ":" + artifactId;
     }
 
     public String getLongName() {
-        return groupId + ":" + artifactId + "#" + version;
+        StringBuilder sb=new StringBuilder();
+        if(!groupId.isEmpty()){
+            sb.append(groupId);
+            sb.append(":");
+        }
+        sb.append(artifactId);
+        if(!version.isBlank()){
+            sb.append("#");
+            sb.append(version);
+        }
+        return sb.toString();
     }
 
     @Override

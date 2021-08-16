@@ -53,6 +53,20 @@ public final class CoreStringUtils {
         return -1;
     }
 
+    public static long getStartingLong(String v1) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < v1.length(); i++) {
+            char c = v1.charAt(i);
+            if (c >= '0' && c <= '9') {
+                sb.append(c);
+            }
+        }
+        if (sb.length() > 0) {
+            return Long.parseLong(sb.toString());
+        }
+        return -1;
+    }
+
 
     public static String escapeQuoteStrings(String s) {
         StringBuilder sb = new StringBuilder(s.length());

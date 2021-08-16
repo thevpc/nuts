@@ -114,7 +114,7 @@ public interface NutsDescriptor extends Serializable {
      * url (external or classpath url) to the application Icon
      * @return url (external or classpath url) to the application Icon
      */
-    String getIcon();
+    String[] getIcons();
 
     /**
      * Generic Artifact Name (like 'Text Editor', 'Image Processing Application', etc)

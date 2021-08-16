@@ -53,6 +53,7 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 /**
  * Created by vpc on 2/20/17.
@@ -229,6 +230,10 @@ public class MavenUtils {
                             urlDesc
                     );
 
+            String icons = pom.getProperties().get("nuts.icons");
+            if(icons==null){
+                icons="";
+            }
             return ws.descriptor().descriptorBuilder()
                     .setId(toNutsId(pom.getPomId()))
                     .setParents(pom.getParent() == null ? new NutsId[0] : new NutsId[]{toNutsId(pom.getParent())})
@@ -241,7 +246,12 @@ public class MavenUtils {
                     .setDependencies(toNutsDependencies(pom.getDependencies(), session))
                     .setStandardDependencies(toNutsDependencies(pom.getDependenciesManagement(), session))
                     .setCategory(pom.getProperties().get("nuts.category"))
-                    .setIcon(pom.getProperties().get("nuts.icon"))
+                    .setIcons(
+                            Arrays.stream(icons.split("[\n\r]"))
+                                    .map(String::trim)
+                                    .filter(x->!x.isEmpty())
+                                    .collect(Collectors.toList())
+                    )
                     .setGenericName(pom.getProperties().get("nuts.genericName"))
                     .setProperties(pom.getProperties())
                     .build();

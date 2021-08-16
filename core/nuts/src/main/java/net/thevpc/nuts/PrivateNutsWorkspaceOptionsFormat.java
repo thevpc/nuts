@@ -191,7 +191,9 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
             for (String outputFormatOption : options.getOutputFormatOptions()) {
                 fillOption("--output-format-option", "-T", outputFormatOption, arguments, false);
             }
-            if (PrivateNutsUtils.isBlank(apiVersion) || PrivateNutsUtils.compareRuntimeVersion(apiVersion, "0.8.0") >= 0) {
+            if (PrivateNutsUtils.isBlank(apiVersion) ||
+                    NutsBootVersion.parse(apiVersion).compare(NutsBootVersion.parse("0.8.0"))
+                     >= 0) {
                 fillOption("--expire", "-N",
                         options.getExpireTime() == null ? null : options.getExpireTime().toString(),
                         arguments, false);
@@ -206,7 +208,7 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
                     }
                 }
             }
-            if (PrivateNutsUtils.isBlank(apiVersion) || PrivateNutsUtils.compareRuntimeVersion(apiVersion, "0.8.1") >= 0) {
+            if (PrivateNutsUtils.isBlank(apiVersion) || NutsBootVersion.parse(apiVersion).compare(NutsBootVersion.parse("0.8.1")) >= 0) {
                 fillOption("--err-line-prefix", null, options.getTheme(), arguments, false);
             }
         }
@@ -242,7 +244,7 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
                     }
                 }
             }
-            if (PrivateNutsUtils.isBlank(apiVersion) || PrivateNutsUtils.compareRuntimeVersion(apiVersion, "0.8.0") >= 0) {
+            if (PrivateNutsUtils.isBlank(apiVersion) || NutsBootVersion.parse(apiVersion).compare(NutsBootVersion.parse("0.8.0")) >= 0) {
                 if (options.getSwitchWorkspace() != null) {
                     fillOption("--switch", null, options.getSwitchWorkspace(), false, arguments, false);
                 }
@@ -257,7 +259,7 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
             fillOption("--reset", "-Z", options.isReset(), false, arguments, false);
             fillOption("--recover", "-z", options.isRecover(), false, arguments, false);
             fillOption("--dry", "-D", options.isDry(), false, arguments, false);
-            if (PrivateNutsUtils.isBlank(apiVersion) || PrivateNutsUtils.compareRuntimeVersion(apiVersion, "0.8.1") >= 0) {
+            if (PrivateNutsUtils.isBlank(apiVersion) || NutsBootVersion.parse(apiVersion).compare(NutsBootVersion.parse("0.8.1")) >= 0) {
                 if (options.getProperties() != null) {
                     for (String property : options.getProperties()) {
                         arguments.add("---" + property);

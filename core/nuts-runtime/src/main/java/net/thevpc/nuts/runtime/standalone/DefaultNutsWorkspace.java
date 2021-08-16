@@ -224,7 +224,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         runtimeId = new DefaultNutsId(
                 info.getRuntimeId().getGroupId(),
                 info.getRuntimeId().getArtifactId(),
-                info.getRuntimeId().getVersion(),
+                info.getRuntimeId().getVersion().toString(),
                 defaultSession());
 
         NutsLoggerOp LOGCRF = LOG.with().level(Level.CONFIG).verb(NutsLogVerb.READ).formatted().session(defaultSession());

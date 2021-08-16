@@ -96,7 +96,7 @@ public interface NutsVersion extends Serializable, NutsTokenFilter, NutsFormatta
      * @param amount amount of the increment
      * @return new version incrementing the last number
      */
-    NutsVersion inc(int position, int amount);
+    NutsVersion inc(int position, long amount);
 
     /**
      * number of elements in the version.
@@ -145,7 +145,7 @@ public interface NutsVersion extends Serializable, NutsTokenFilter, NutsFormatta
      * @param index version part index
      * @return element at given index.
      */
-    int getNumber(int index);
+    long getNumber(int index);
 
     /**
      * return number element at position or default value. if the index is negative will return from right (-1 is the first starting from the right).
@@ -155,5 +155,5 @@ public interface NutsVersion extends Serializable, NutsTokenFilter, NutsFormatta
      * @return number element at position or default value
      */
 
-    int getNumber(int index,int defaultValue);
+    long getNumber(int index,long defaultValue);
 }

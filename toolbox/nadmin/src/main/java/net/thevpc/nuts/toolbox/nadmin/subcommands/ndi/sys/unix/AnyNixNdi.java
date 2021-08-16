@@ -7,7 +7,6 @@ import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.base.BaseSystemNdi;
 import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.base.NameBuilder;
 import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.base.NutsEnvInfo;
 import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.util.ReplaceString;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -226,7 +225,6 @@ public class AnyNixNdi extends BaseSystemNdi {
         return name;
     }
 
-    @NotNull
     protected FreeDesktopEntryWriter createFreeDesktopEntryWriter() {
         return new UnixFreeDesktopEntryWriter(context.getSession(), getOsDesktopPath());
     }
@@ -327,5 +325,22 @@ public class AnyNixNdi extends BaseSystemNdi {
     }
 
 
-
+    protected int resolveIconExtensionPriority(String extension) {
+        extension = extension.toLowerCase();
+        switch (extension) {
+            case "svg":
+                return 10;
+            case "png":
+                return 8;
+            case "jpg":
+                return 6;
+            case "jpeg":
+                return 5;
+            case "gif":
+                return 4;
+            case "ico":
+                return 3;
+        }
+        return -1;
+    }
 }

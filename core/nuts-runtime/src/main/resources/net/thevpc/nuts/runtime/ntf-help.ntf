@@ -128,8 +128,8 @@ Tables are special formatted lines and are usable simply by suffix # chars with 
 
 
 ##) NTF SYNTAX COLORING:
-NTF supports as well a advanced features that allow you to syntax coloring popular formats.
-Especially Xml, Json, Bash and Java are supported.
+NTF supports as well advanced features that allow you to syntax coloring popular formats.
+Particularly Xml, Json, Bash and Java are supported.
 
 ###) Xml format
 ####) NTF syntax

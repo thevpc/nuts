@@ -16,6 +16,40 @@ public abstract class NutsPathBase implements NutsPath {
         //session will be used later
         this.session = session;
     }
+
+    @Override
+    public String getBaseName() {
+        String n=getName();
+        int i = n.indexOf('.');
+        if(i<0){
+            return n;
+        }
+        if(i==n.length()-1){
+            return n;
+        }
+        return n.substring(0,i);
+    }
+
+    @Override
+    public String getLastExtension() {
+        String n=getName();
+        int i = n.lastIndexOf('.');
+        if(i<0){
+            return "";
+        }
+        return n.substring(i+1);
+    }
+
+    @Override
+    public String getFullExtension() {
+        String n=getName();
+        int i = n.indexOf('.');
+        if(i<0){
+            return "";
+        }
+        return n.substring(i+1);
+    }
+
     @Override
     public NutsString getFormattedName() {
         return getSession().getWorkspace().text().forStyled(getName(),NutsTextStyle.path());

@@ -145,8 +145,8 @@ public abstract class DelegateNutsDescriptor extends AbstractNutsDescriptor {
     }
 
     @Override
-    public String getIcon() {
-        return getBase().getIcon();
+    public String[] getIcons() {
+        return getBase().getIcons();
     }
 
     @Override

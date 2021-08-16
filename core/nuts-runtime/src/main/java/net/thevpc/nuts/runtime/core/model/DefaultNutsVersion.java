@@ -134,23 +134,23 @@ public class DefaultNutsVersion extends DefaultNutsTokenFilter implements NutsVe
         }
     }
 
-    public int getNumber(int level) {
+    public long getNumber(int level) {
         VersionParts parts = getParts();
         int size = parts.getDigitCount();
         if (level >= 0) {
-            return Integer.parseInt(parts.getDigit(level).string);
+            return Long.parseLong(parts.getDigit(level).string);
         }else{
             int x=size+level;
-            return Integer.parseInt(parts.getDigit(x).string);
+            return Long.parseLong(parts.getDigit(x).string);
         }
     }
 
-    public int getNumber(int level,int defaultValue) {
+    public long getNumber(int level,long defaultValue) {
         VersionParts parts = getParts();
         int size = parts.getDigitCount();
         if (level >= 0) {
             if(level<size) {
-                return Integer.parseInt(parts.getDigit(level).string);
+                return Long.parseLong(parts.getDigit(level).string);
             }
         }else{
             int x=size+level;
@@ -162,7 +162,7 @@ public class DefaultNutsVersion extends DefaultNutsTokenFilter implements NutsVe
     }
 
     @Override
-    public NutsVersion inc(int position, int amount) {
+    public NutsVersion inc(int position, long amount) {
         return new DefaultNutsVersion(incVersion(getValue(), position, amount),session);
     }
 
@@ -206,7 +206,7 @@ public class DefaultNutsVersion extends DefaultNutsTokenFilter implements NutsVe
         return pattern.equals(version);
     }
 
-    public static String incVersion(String oldVersion, int level, int count) {
+    public static String incVersion(String oldVersion, int level, long count) {
         VersionParts parts = splitVersionParts2(oldVersion);
         int digitCount = parts.getDigitCount();
         if (digitCount == 0) {
@@ -417,23 +417,23 @@ public class DefaultNutsVersion extends DefaultNutsTokenFilter implements NutsVe
     }
 
     private static int compareVersionItem(String v1, String v2) {
-        Integer i1 = null;
-        Integer i2 = null;
+        Long i1 = null;
+        Long i2 = null;
 
         if (v1.equals(v2)) {
             return 0;
-        } else if ((i1 = CoreNumberUtils.convertToInteger(v1, null)) != null
-                && (i2 = CoreNumberUtils.convertToInteger(v2, null)) != null) {
-            return i1 - i2;
+        } else if ((i1 = CoreNumberUtils.convertToLong(v1, null)) != null
+                && (i2 = CoreNumberUtils.convertToLong(v2, null)) != null) {
+            return Long.compare(i1,i2);
         } else if ("SNAPSHOT".equalsIgnoreCase(v1)) {
             return -1;
         } else if ("SNAPSHOT".equalsIgnoreCase(v2)) {
             return 1;
         } else {
-            int a = CoreStringUtils.getStartingInt(v1);
-            int b = CoreStringUtils.getStartingInt(v2);
+            long a = CoreStringUtils.getStartingLong(v1);
+            long b = CoreStringUtils.getStartingLong(v2);
             if (a != -1 && b != -1 && a != b) {
-                return a - b;
+                return Long.compare(a,b);
             } else {
                 return v1.compareTo(v2);
             }

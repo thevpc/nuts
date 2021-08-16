@@ -41,8 +41,13 @@ public class WindowFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter
         if (wd == null) {
             wd = System.getProperty("user.home");
         }
-        mslinks.ShellLink se = mslinks.ShellLink.createLink(g.getExec())
-                .setWorkingDir(wd);
+        String[] cmd = session.getWorkspace().commandLine().parse(g.getExec()).toStringArray();
+        mslinks.ShellLink se = mslinks.ShellLink.createLink(cmd[0])
+                .setWorkingDir(wd)
+                .setCMDArgs(session.getWorkspace().commandLine().create(
+                        Arrays.copyOfRange(cmd,1,cmd.length)
+                ).toString())
+                ;
         if (g.getIcon() == null) {
             se.setIconLocation("%SystemRoot%\\system32\\SHELL32.dll");
             se.getHeader().setIconIndex(148);

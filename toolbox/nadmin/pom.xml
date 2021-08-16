@@ -17,8 +17,23 @@
         <nuts.application>true</nuts.application>
         <nuts.genericName>Nuts Administration Tool</nuts.genericName>
         <nuts.category>/Utilities/Nuts</nuts.category>
-        <nuts.icon>classpath://net/thevpc/nuts/toolbox/nadmin/nadmin.svg</nuts.icon>
+        <nuts.icons>
+            classpath://net/thevpc/nuts/toolbox/nadmin/nadmin.svg
+            classpath://net/thevpc/nuts/toolbox/nadmin/nadmin.png
+            classpath://net/thevpc/nuts/toolbox/nadmin/nadmin.ico
+        </nuts.icons>
         <dependencies.com.github.vatbub:mslinks.os>windows</dependencies.com.github.vatbub:mslinks.os>
+        <conditional-dependencies>
+            <![CDATA[
+            <conditional-dependencies>
+                <dependency>
+                    <groupId>com.github.vatbub</groupId>
+                    <artifactId>mslinks</artifactId>
+                    <os>windows</os>
+                </dependency>
+            </conditional-dependencies>
+            ]]>
+        </conditional-dependencies>
     </properties>
     <scm>
         <connection>scm:git:git://github.com/thevpc/nuts.git</connection>
@@ -65,7 +80,10 @@
         <dependency>
             <groupId>com.github.vatbub</groupId>
             <artifactId>mslinks</artifactId>
-            <version>1.0.5</version>
+            <version>1.0.6.2</version>
+            <!--!
+             <os>windows</os>
+            -->
         </dependency>
     </dependencies>
     <distributionManagement>

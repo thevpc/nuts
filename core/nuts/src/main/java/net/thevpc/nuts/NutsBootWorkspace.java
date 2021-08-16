@@ -374,7 +374,7 @@ public final class NutsBootWorkspace {
                 if (s == null) {
                     throw new NutsBootException("unable to load latest nuts version");
                 }
-                workspaceInformation.setApiVersion(s.getVersion());
+                workspaceInformation.setApiVersion(s.getVersion().toString());
             }
             if (PrivateNutsUtils.isBlank(workspaceInformation.getApiVersion())) {
                 workspaceInformation.setApiVersion(Nuts.getVersion());
@@ -429,14 +429,16 @@ public final class NutsBootWorkspace {
                 }
                 if (workspaceInformation.getRuntimeId() == null) {
                     workspaceInformation.setRuntimeId(
-                            new NutsBootId("net.thevpc.nuts", "nuts-runtime", workspaceInformation.getApiVersion() + ".0", false, null, null)
+                            new NutsBootId("net.thevpc.nuts", "nuts-runtime",
+                                    NutsBootVersion.parse( workspaceInformation.getApiVersion().toString() + ".0")
+                                    , false, null, null)
                     );
                     LOG.log(Level.CONFIG, NutsLogVerb.FAIL, "consider default runtime-id : {0}", new Object[]{workspaceInformation.getRuntimeId()});
                 }
-                if (workspaceInformation.getRuntimeId().getVersion().length() == 0) {
+                if (workspaceInformation.getRuntimeId().getVersion().isBlank()) {
                     workspaceInformation.setRuntimeId(
                             new NutsBootId(workspaceInformation.getRuntimeId().getGroupId(), workspaceInformation.getRuntimeId().getArtifactId(),
-                                    workspaceInformation.getApiVersion() + ".0", false, null, null)
+                                    NutsBootVersion.parse(workspaceInformation.getApiVersion().toString() + ".0"), false, null, null)
                     );
                 }
 
@@ -585,7 +587,7 @@ public final class NutsBootWorkspace {
                 if (Files.isDirectory(nbase)) {
                     latestDefaultVersion = Files.list(nbase).filter(f -> Files.exists(f.resolve(".nuts-bashrc")))
                             .map(x -> sysrcFile.getFileName().toString())
-                            .sorted((o1, o2) -> -PrivateNutsUtils.compareRuntimeVersion(o1, o2))
+                            .sorted((o1, o2) -> NutsBootVersion.parse(o2).compare(NutsBootVersion.parse(o1)))
                             .findFirst().orElse(null);
                 }
                 if (latestDefaultVersion != null) {
@@ -1370,6 +1372,49 @@ public final class NutsBootWorkspace {
         return false;
     }
 
+    private NutsBootId[] parseBootIdList(String s) {
+        List<NutsBootId> boots=new ArrayList<>();
+        StringBuilder q=null;
+        boolean inBrackets=false;
+        for (char c : s.toCharArray()) {
+            if(q==null){
+                q=new StringBuilder();
+                if(c=='[' || c==']'){
+                    inBrackets=true;
+                    q.append(c);
+                }else if(c==',' || Character.isWhitespace(c)){
+                    //ignore
+                }else{
+                    q.append(c);
+                }
+            }else{
+                if(c==',' || c==' ') {
+                    if (inBrackets) {
+                        q.append(c);
+                    } else {
+                        boots.add(NutsBootId.parse(q.toString()));
+                        q = null;
+                        inBrackets = false;
+                    }
+                }else if(c=='[' || c==']'){
+                    if(inBrackets){
+                        inBrackets=false;
+                        q.append(c);
+                    }else{
+                        inBrackets=true;
+                        q.append(c);
+                    }
+                }else{
+                    q.append(c);
+                }
+            }
+        }
+        if(q!=null) {
+            boots.add(NutsBootId.parse(q.toString()));
+        }
+        return boots.toArray(new NutsBootId[0]);
+    }
+
     private boolean isAcceptDependency(NutsBootId s, boolean bootOptionals) {
         //by default ignore optionals
         if (s.isOptional()) {
@@ -1385,12 +1430,12 @@ public final class NutsBootWorkspace {
         if (!os.isEmpty()) {
             NutsOsFamily eos = PrivateNutsPlatformUtils.getPlatformOsFamily();
             boolean osOk = false;
-            for (String e : os.split("[,; ]")) {
-                if (!e.isEmpty()) {
-                    if (e.equalsIgnoreCase(eos.id())) {
+            for (NutsBootId e : NutsBootId.parseAll(os)) {
+                if (e.getShortName().equalsIgnoreCase(eos.id())) {
+                    if(e.getVersion().accept(NutsBootVersion.parse(System.getProperty("os.version")))) {
                         osOk = true;
-                        break;
                     }
+                    break;
                 }
             }
             if (!osOk) {

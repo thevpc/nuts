@@ -377,4 +377,22 @@ public class WindowsNdi extends BaseSystemNdi {
         return "%"+v+"%";
     }
 
-}
+    protected int resolveIconExtensionPriority(String extension) {
+        extension = extension.toLowerCase();
+        switch (extension) {
+            //support only ico
+            case "ico":
+                return 3;
+//            case "svg":
+//                return 10;
+//            case "png":
+//                return 8;
+//            case "jpg":
+//                return 6;
+//            case "jpeg":
+//                return 5;
+//            case "gif":
+//                return 4;
+        }
+        return -1;
+    }}
