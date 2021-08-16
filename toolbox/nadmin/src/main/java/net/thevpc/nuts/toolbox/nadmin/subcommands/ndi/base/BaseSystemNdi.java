@@ -25,7 +25,33 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         super(appContext);
     }
 
-    public abstract NdiScriptInfo getSysRC(NutsEnvInfo env);
+    public abstract String getBashrcName();
+
+    public NdiScriptInfo getSysRC(NutsEnvInfo env) {
+        return new NdiScriptInfo() {
+            @Override
+            public Path path() {
+                String bashrcName = getBashrcName();
+                if(bashrcName==null){
+                    return null;
+                }
+                return Paths.get(System.getProperty("user.home")).resolve(bashrcName);
+            }
+
+            @Override
+            public PathInfo create() {
+                Path apiConfigFile = path();
+                if(apiConfigFile==null){
+                    return null;
+                }
+                return addFileLine(NdiScriptInfoType.SYS_RC,
+                        env.getNutsApiId(),
+                        apiConfigFile, getCommentLineConfigHeader(),
+                        getCallScriptCommand(getNutsInit(env).path().toString()),
+                        getShebanSh());
+            }
+        };
+    }
 
     public NdiScriptInfo getNutsInit(NutsEnvInfo env) {
         return new NdiScriptInfo() {
@@ -904,11 +930,31 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         return createLaunchTermShortcut(appShortcutTarget, env, name, fileName);
     }
 
-    public abstract PathInfo[] createLaunchTermShortcut(AppShortcutTarget appShortcutTarget,
-                                                        NutsEnvInfo env,
-                                                        String name,
-                                                        String fileName
-    );
+    public PathInfo[] createLaunchTermShortcut(AppShortcutTarget appShortcutTarget,
+                                               NutsEnvInfo env,
+                                               String name,
+                                               String fileName
+    ) {
+        String cmd = getNutsTerm(env).path().toString();
+        fileName = NameBuilder.id(env.getNutsApiId(), fileName,name, env.getNutsApiDef().getDescriptor(), context.getSession())
+                .buildName();
+        if (name == null) {
+            name = NameBuilder.label(env.getNutsApiId(), "Nuts Terminal%s%v%s%h",null, env.getNutsApiDef().getDescriptor(), context.getSession())
+                    .buildName();
+        }
+        return createShortcut(appShortcutTarget,
+                env.getNutsApiId(),
+                fileName,
+                FreeDesktopEntry.Group.desktopEntry(name, cmd, System.getProperty("user.home"))
+                        .setIcon(resolveIcon(null, env.getNutsApiId()))
+                        .setStartNotify(true)
+                        .addCategory("/Utilities/Nuts")
+                        .setGenericName(env.getNutsApiDef().getDescriptor().getGenericName())
+                        .setComment(env.getNutsApiDef().getDescriptor().getDescription())
+                        .setTerminal(true)
+        );
+    }
+
 
 
     public String createNutsEnvString(NutsEnvInfo env, boolean updateEnv, boolean updatePATH) {

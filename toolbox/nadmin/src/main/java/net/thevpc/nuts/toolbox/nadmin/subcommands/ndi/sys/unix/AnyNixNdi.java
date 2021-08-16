@@ -31,53 +31,17 @@ public class AnyNixNdi extends BaseSystemNdi {
         return ".bashrc";
     }
 
-    public PathInfo[] createCallNutsRC(String fileName, NutsEnvInfo env) {
-        Path sysrcFile = null;
-        if (fileName == null) {
-            sysrcFile = getSysRC(env).path();
-        } else {
-            sysrcFile = Paths.get(NameBuilder.id(env.getNutsApiId(), fileName,null, env.getNutsApiDef().getDescriptor(), context.getSession()).buildName());
-        }
-        Path nutsRcPath = getNutsInit(env).path();
-        //old configs
-        sysrcFile = sysrcFile.toAbsolutePath();
-        return new PathInfo[]{
-                addFileLine(NdiScriptInfoType.NUTS,
-                        env.getNutsApiId(),
-                        sysrcFile,
-                        getCommentLineConfigHeader(),
-                        getCallScriptCommand(nutsRcPath.toString()),
-                        getShebanSh())
-        };
+    public String getPathVarSep() {
+        return ":";
     }
 
-    public NdiScriptInfo getSysRC(NutsEnvInfo env) {
-        return new NdiScriptInfo() {
-            @Override
-            public Path path() {
-                return Paths.get(System.getProperty("user.home")).resolve(getBashrcName());
-            }
-
-            @Override
-            public PathInfo create() {
-                Path apiConfigFile = path();
-                return addFileLine(NdiScriptInfoType.SYS_RC,
-                        env.getNutsApiId(),
-                        apiConfigFile, getCommentLineConfigHeader(),
-                        getCallScriptCommand(getNutsInit(env).path().toString()),
-                        getShebanSh());
-            }
-        };
-    }
-
-
-
-    //    @Override
+    @Override
     public boolean isComments(String line) {
         line = line.trim();
         return line.startsWith("#");
     }
 
+    @Override
     public String trimComments(String line) {
         line = line.trim();
         if (line.startsWith("#")) {
@@ -86,19 +50,28 @@ public class AnyNixNdi extends BaseSystemNdi {
             }
             return line.trim();
         }
-        throw new IllegalArgumentException("Not a comment: " + line);
+        throw new IllegalArgumentException("not a comment: " + line);
+    }
+
+    @Override
+    public String toCommentLine(String line) {
+        return "# " + line;
     }
 
     @Override
     public String createNutsScriptContent(NutsId fnutsId, NdiScriptOptions options) {
         StringBuilder command = new StringBuilder();
-        command.append(getExecFileName("nuts")).append(" $NUTS_OPTIONS ");
+        command.append(getExecFileName("nuts")).append(" ").append(varRef("NUTS_OPTIONS")).append(" ");
         if (options.getExecType() != null) {
             command.append("--").append(options.getExecType().id());
         }
         command.append(" \"").append(fnutsId).append("\"");
         command.append(" \"$@\"");
         return command.toString();
+    }
+
+    protected String newlineString() {
+        return "\n";
     }
 
     public void onPostGlobal(NutsEnvInfo env, PathInfo[] updatedPaths) {
@@ -163,10 +136,10 @@ public class AnyNixNdi extends BaseSystemNdi {
         }
     }
 
-    public String toCommentLine(String line) {
-        return "# " + line;
+    @Override
+    protected String getCallScriptCommand(String path, String... args) {
+        return "source \"" + path + "\" " + Arrays.stream(args).map(a -> dblQte(a)).collect(Collectors.joining(" "));
     }
-
     @Override
     protected String getSetVarCommand(String name, String value) {
         return name +"=\"" + value + "\"";
@@ -177,85 +150,14 @@ public class AnyNixNdi extends BaseSystemNdi {
         return name + "='" + value + "'";
     }
 
-//    public PathInfo[] persistConfigGlobal(NutsEnvInfo env, boolean createDesktop, boolean createMenu) {
-//        List<PathInfo> updatedPaths = new ArrayList<>();
-//        if (createDesktop) {
-//            updatedPaths.addAll(Arrays.asList(createLaunchTermShortcutGlobal(AppShortcutTarget.DESKTOP, env)));
-//        }
-//        if (createMenu) {
-//            updatedPaths.addAll(Arrays.asList(createLaunchTermShortcutGlobal(AppShortcutTarget.MENU, env)));
-//        }
-//        updatedPaths.addAll(Arrays.asList(createSysRC(env)));
-//        updatedPaths.addAll(Arrays.asList(createNutsEnv(env)));
-//        updatedPaths.addAll(Arrays.asList(createNutsRC(env)));
-//
-//        return updatedPaths.toArray(new PathInfo[0]);
-//    }
-
-//    public PathInfo[] persistConfigSpecial(String name, String fileName, NutsEnvInfo env, boolean createDesktop, boolean createMenu, boolean createShortcut) {
-//        if (name == null) {
-//            name = "Nuts Terminal " + env.getNutsApiVersion();
-//        }
-//        if (fileName == null) {
-//            fileName = env.getNutsApiId().getLongName().replace(':', '-').replace('#', '-');
-//        }
-//        List<PathInfo> updatedPaths = new ArrayList<>();
-//        if (createDesktop) {
-//            updatedPaths.addAll(Arrays.asList(createLaunchTermShortcut(AppShortcutTarget.DESKTOP, env, name, fileName)));
-//        }
-//        if (createMenu) {
-//            updatedPaths.addAll(Arrays.asList(createLaunchTermShortcut(AppShortcutTarget.MENU, env, name, fileName)));
-//        }
-//        if (createShortcut) {
-//            updatedPaths.addAll(Arrays.asList(createLaunchTermShortcut(AppShortcutTarget.SHORTCUT, env, name, fileName)));
-//        }
-//        updatedPaths.addAll(Arrays.asList(createNutsRC(env, true)));
-////        configurePathShortcut(AppShortcutTarget.DESKTOP, true,nutsId.getVersion().toString(),bootConfig,fileName,session,updatedPaths,discardedPaths);
-////        configurePathShortcut(AppShortcutTarget.MENU, true,nutsId.getVersion().toString(),bootConfig,fileName,session,updatedPaths,discardedPaths);
-//        return updatedPaths.toArray(new PathInfo[0]);
-//    }
-
-    @Override
-    protected String getCallScriptCommand(String path, String... args) {
-        return "source \"" + path + "\" " + Arrays.stream(args).map(a -> dblQte(a)).collect(Collectors.joining(" "));
-    }
-
     @Override
     public String getExecFileName(String name) {
         return name;
     }
 
+    @Override
     protected FreeDesktopEntryWriter createFreeDesktopEntryWriter() {
         return new UnixFreeDesktopEntryWriter(context.getSession(), getOsDesktopPath());
-    }
-
-    public PathInfo[] createLaunchTermShortcut(AppShortcutTarget appShortcutTarget,
-                                               NutsEnvInfo env,
-                                               String name,
-                                               String fileName
-    ) {
-//        String termCommand = "konsole";
-//        Path homerc = getSysRCPath();
-//        Path nrc = getNutsRcPath(env);
-        String cmd = getNutsTerm(env).path().toString();
-        //remove aby path
-        fileName = NameBuilder.id(env.getNutsApiId(), fileName,name, env.getNutsApiDef().getDescriptor(), context.getSession())
-                .buildName();
-        if (name == null) {
-            name = NameBuilder.label(env.getNutsApiId(), "Nuts Terminal%s%v%s%h",null, env.getNutsApiDef().getDescriptor(), context.getSession())
-                    .buildName();
-        }
-        return createShortcut(appShortcutTarget,
-                env.getNutsApiId(),
-                fileName,
-                FreeDesktopEntry.Group.desktopEntry(name, cmd, System.getProperty("user.home"))
-                        .setIcon(resolveIcon(null, env.getNutsApiId()))
-                        .setStartNotify(true)
-                        .addCategory("/Utilities/Nuts")
-                        .setGenericName(env.getNutsApiDef().getDescriptor().getGenericName())
-                        .setComment(env.getNutsApiDef().getDescriptor().getDescription())
-                        .setTerminal(true)
-        );
     }
 
     protected ReplaceString getShebanSh() {
@@ -271,19 +173,9 @@ public class AnyNixNdi extends BaseSystemNdi {
         return "linux_template_" + name + ".text";
     }
 
-
-//    private String simplifyPath(PathInfo x) {
-//        Path p = x.getPath();
-//        return null;
-//    }
-
-    //    @Override
+    @Override
     public String varRef(String v) {
         return "${" + v + "}";
-    }
-
-    public String getPathVarSep() {
-        return ":";
     }
 
     private Path getOsDesktopPath() {

@@ -13,6 +13,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.UncheckedIOException;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -28,6 +30,21 @@ public class WindowFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter
     public WindowFreeDesktopEntryWriter(Path desktopPath, NutsSession session) {
         this.session = session;
         this.desktopPath = desktopPath;
+    }
+
+    public static boolean isSupported(){
+        try{
+            Iterator<Path> a=FileSystems.getDefault().getRootDirectories();
+            Path someRoot=null;
+            if(a.hasNext()){
+                someRoot=a.next();
+                mslinks.ShellLink.createLink(someRoot.resolve("anyName"));
+                return true;
+            }
+        }catch (Throwable a){
+            //
+        }
+        return false;
     }
 
     @Override
