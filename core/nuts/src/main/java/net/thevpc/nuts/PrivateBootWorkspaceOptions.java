@@ -1477,7 +1477,7 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
 
     @Override
     public String toString() {
-        return format().getBootCommandLine();
+        return format().getBootCommandLine().toString();
     }
 
     @Override

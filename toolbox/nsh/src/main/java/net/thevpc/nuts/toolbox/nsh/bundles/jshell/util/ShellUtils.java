@@ -286,11 +286,11 @@ public class ShellUtils {
     }
 
     /**
-     * *
-     * **
      *
-     * @param pattern
-     * @return
+     * GLOB (shell wildcards) to regular expression pattern
+     *
+     * @param pattern pattern
+     * @return regexpr string
      */
     public static String simpexpToRegexp(String pattern, boolean contains) {
         if (pattern == null) {

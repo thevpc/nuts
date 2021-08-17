@@ -13,14 +13,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.UncheckedIOException;
-import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class WindowFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
@@ -33,12 +29,17 @@ public class WindowFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter
     }
 
     public static boolean isSupported(){
+        try {
+            Class.forName("mslinks.ShellLink");
+        } catch (Exception e) {
+            return false;
+        }
         try{
-            Iterator<Path> a=FileSystems.getDefault().getRootDirectories();
+            Iterator<Path> a=FileSystems.getDefault().getRootDirectories().iterator();
             Path someRoot=null;
             if(a.hasNext()){
                 someRoot=a.next();
-                mslinks.ShellLink.createLink(someRoot.resolve("anyName"));
+                mslinks.ShellLink.createLink(someRoot.resolve("anyName").toString());
                 return true;
             }
         }catch (Throwable a){
@@ -106,8 +107,13 @@ public class WindowFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter
         if (wd == null) {
             wd = System.getProperty("user.home");
         }
-        mslinks.ShellLink se = mslinks.ShellLink.createLink(root.getExec())
-                .setWorkingDir(wd);
+        String[] cmd = session.getWorkspace().commandLine().parse(root.getExec()).toStringArray();
+        mslinks.ShellLink se = mslinks.ShellLink.createLink(cmd[0])
+                .setWorkingDir(wd)
+                .setCMDArgs(session.getWorkspace().commandLine().create(
+                        Arrays.copyOfRange(cmd,1,cmd.length)
+                ).toString())
+                ;
         if (root.getIcon() == null) {
             se.setIconLocation("%SystemRoot%\\system32\\SHELL32.dll");
             se.getHeader().setIconIndex(148);
@@ -158,8 +164,14 @@ public class WindowFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter
             wd = System.getProperty("user.home");
         }
 
-        mslinks.ShellLink se = mslinks.ShellLink.createLink(g.getExec())
-                .setWorkingDir(wd);
+        String[] cmd = session.getWorkspace().commandLine().parse(g.getExec()).toStringArray();
+        mslinks.ShellLink se = mslinks.ShellLink.createLink(cmd[0])
+                .setWorkingDir(wd)
+                .setCMDArgs(session.getWorkspace().commandLine().create(
+                        Arrays.copyOfRange(cmd,1,cmd.length)
+                ).toString())
+                ;
+
         if (g.getIcon() == null) {
             se.setIconLocation("%SystemRoot%\\system32\\SHELL32.dll");
             se.getHeader().setIconIndex(148);

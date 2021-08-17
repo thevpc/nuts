@@ -85,7 +85,7 @@ public class ProcessExecutorComponent implements NutsExecutorComponent {
 
         Map<String, String> osEnv = new HashMap<>();
         String bootArgumentsString = executionContext.getWorkspace().env().getBootOptions()
-                .format().exported().compact().getBootCommandLine();
+                .format().setExported(true).setCompact(true).getBootCommandLine().toString();
         osEnv.put("nuts_boot_args", bootArgumentsString);
         String dir = null;
         boolean showCommand = CoreBooleanUtils.getSysBoolNutsProperty("show-command", false);

@@ -63,6 +63,20 @@ public interface NutsCommandLineFormat extends NutsFormat{
     NutsCommandLine getValue();
 
     /**
+     * return command line family
+     * @since 0.8.1
+     * @return command line family
+     */
+    NutsCommandlineFamily getCommandlineFamily();
+
+    /**
+     * change command line family
+     * @param family family
+     * @return {@code this} instance
+     */
+    NutsCommandLineFormat setCommandlineFamily(NutsCommandlineFamily family);
+
+    /**
      * update session
      *
      * @param session session
@@ -71,6 +85,9 @@ public interface NutsCommandLineFormat extends NutsFormat{
     @Override
     NutsCommandLineFormat setSession(NutsSession session);
 
+    NutsCommandLineFormatStrategy getFormatStrategy() ;
+
+    void setFormatStrategy(NutsCommandLineFormatStrategy formatStrategy);
     /**
      * configure the current command with the given arguments. This is an
      * override of the {@link NutsCommandLineConfigurable#configure(boolean, java.lang.String...) }

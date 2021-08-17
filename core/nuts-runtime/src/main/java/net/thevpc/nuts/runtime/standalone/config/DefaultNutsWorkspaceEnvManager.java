@@ -21,6 +21,7 @@ public class DefaultNutsWorkspaceEnvManager implements NutsWorkspaceEnvManager {
 
     private DefaultNutsWorkspaceEnvManagerModel model;
     private NutsSession session;
+    public static final Pattern UNIX_USER_DIRS_PATTERN = Pattern.compile("^\\s*(?<k>[A-Z_]+)\\s*=\\s*(?<v>.*)$");
 
     public DefaultNutsWorkspaceEnvManager(DefaultNutsWorkspaceEnvManagerModel model) {
         this.model = model;
@@ -244,5 +245,153 @@ public class DefaultNutsWorkspaceEnvManager implements NutsWorkspaceEnvManager {
     public NutsWorkspaceOptions getBootOptions() {
         checkSession();
         return _configModel().getOptions();
+    }
+
+    public boolean matchCondition(NutsActionSupportCondition request, NutsActionSupport support) {
+        checkSession();
+        if (request == null) {
+            request = NutsActionSupportCondition.NEVER;
+        }
+        if (support == null) {
+            support = NutsActionSupport.UNSUPPORTED;
+        }
+        switch (support) {
+            case UNSUPPORTED: {
+                return false;
+            }
+            case SUPPORTED: {
+                switch (request) {
+                    case NEVER:
+                        return false;
+                    case ALWAYS:
+                    case SUPPORTED: {
+                        return true;
+                    }
+                    case PREFERRED: {
+                        return false;
+                    }
+                    default: {
+                        throw new NutsUnsupportedEnumException(getSession(), request);
+                    }
+                }
+            }
+            case PREFERRED: {
+                switch (request) {
+                    case NEVER:
+                        return false;
+                    case ALWAYS:
+                    case PREFERRED: {
+                        return true;
+                    }
+                    case SUPPORTED: {
+                        return false;
+                    }
+                    default: {
+                        throw new NutsUnsupportedEnumException(getSession(), request);
+                    }
+                }
+            }
+            default: {
+                throw new NutsUnsupportedEnumException(getSession(), support);
+            }
+        }
+    }
+
+    @Override
+    public NutsActionSupport getDesktopIntegrationSupport(NutsDesktopIntegrationItem item) {
+        checkSession();
+        if(item==null){
+            throw new NutsIllegalArgumentException(getSession(),NutsMessage.cstyle("missing item"));
+        }
+        switch (getOsFamily()){
+            case LINUX:{
+                switch (item){
+                    case DESKTOP:{
+                        return NutsActionSupport.SUPPORTED;
+                    }
+                    case MENU:{
+                        return NutsActionSupport.PREFERRED;
+                    }
+                    case SHORTCUT:{
+                        return NutsActionSupport.PREFERRED;
+                    }
+                }
+                break;
+            }
+            case UNIX:{
+                return NutsActionSupport.UNSUPPORTED;
+            }
+            case WINDOWS:{
+                switch (item){
+                    case DESKTOP:{
+                        return NutsActionSupport.PREFERRED;
+                    }
+                    case MENU:{
+                        return NutsActionSupport.PREFERRED;
+                    }
+                    case SHORTCUT:{
+                        return NutsActionSupport.PREFERRED;
+                    }
+                }
+                break;
+            }
+            case MACOS:{
+                return NutsActionSupport.UNSUPPORTED;
+            }
+            case UNKNOWN:{
+                return NutsActionSupport.UNSUPPORTED;
+            }
+        }
+        return NutsActionSupport.UNSUPPORTED;
+    }
+
+    public Path getDesktopPath() {
+        switch (getOsFamily()){
+            case LINUX:
+            case UNIX:
+            case MACOS:{
+                File f = new File(System.getProperty("user.home"), ".config/user-dirs.dirs");
+                if (f.exists()) {
+                    try (BufferedReader r = new BufferedReader(new FileReader(f))) {
+                        String line;
+                        while ((line = r.readLine()) != null) {
+                            line = line.trim();
+                            if (line.startsWith("#")) {
+                                //ignore
+                            } else {
+                                Matcher m = UNIX_USER_DIRS_PATTERN.matcher(line);
+                                if (m.find()) {
+                                    String k = m.group("k");
+                                    if (k.equals("XDG_DESKTOP_DIR")) {
+                                        String v = m.group("v");
+                                        v = v.trim();
+                                        if (v.startsWith("\"")) {
+                                            int last = v.indexOf('\"', 1);
+                                            String s = v.substring(1, last);
+                                            s = s.replace("$HOME", System.getProperty("user.home"));
+                                            return Paths.get(s);
+                                        } else {
+                                            return Paths.get(v);
+                                        }
+                                    }
+                                } else {
+                                    //this is unexpected format!
+                                    break;
+                                }
+                            }
+                        }
+                    } catch (IOException ex) {
+                        //ignore
+                    }
+                }
+                return new File(System.getProperty("user.home"), "Desktop").toPath();
+            }
+            case WINDOWS:{
+                return new File(System.getProperty("user.home"), "Desktop").toPath();
+            }
+            default:{
+                return new File(System.getProperty("user.home"), "Desktop").toPath();
+            }
+        }
     }
 }

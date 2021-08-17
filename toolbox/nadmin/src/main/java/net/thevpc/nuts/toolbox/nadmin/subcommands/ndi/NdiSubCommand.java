@@ -74,47 +74,49 @@ public class NdiSubCommand extends AbstractNAdminSubCommand {
                 if (a.isEnabled()) {
                     cmd.getOptions().setIcon(a.getStringValue());
                 }
-            } else if ((a = commandLine.nextBoolean("--menu")) != null) {
-                if (a.getBooleanValue()) {
-                    cmd.getOptions().setCreateMenu(true);
+            } else if ((a = commandLine.next("--menu")) != null) {
+                if(a.isEnabled()) {
+                    cmd.getOptions().setCreateMenu(parseCond(a));
                 }
             } else if ((a = commandLine.nextString("--menu-category")) != null) {
                 if (a.isEnabled()) {
                     cmd.getOptions().setMenuCategory(a.getStringValue());
                     if (cmd.getOptions().getMenuCategory() != null && !cmd.getOptions().getMenuCategory().isEmpty()) {
-                        cmd.getOptions().setCreateMenu(true);
+                        if(cmd.getOptions().getCreateMenu()== NutsActionSupportCondition.NEVER) {
+                            cmd.getOptions().setCreateMenu(NutsActionSupportCondition.PREFERRED);
+                        }
                     }
                 }
             } else if ((a = commandLine.nextBoolean("--desktop")) != null) {
-                if (a.getBooleanValue()) {
-                    cmd.getOptions().setCreateDesktop(true);
+                if(a.isEnabled()) {
+                    cmd.getOptions().setCreateDesktop(parseCond(a));
                 }
             } else if ((a = commandLine.nextString("--desktop-name")) != null) {
                 if (a.isEnabled()) {
                     cmd.getOptions().setShortcutName(a.getStringValue());
-                    if (!cmd.getOptions().isCreateDesktop()) {
-                        cmd.getOptions().setCreateDesktop(true);
+                    if(cmd.getOptions().getCreateDesktop()== NutsActionSupportCondition.NEVER) {
+                        cmd.getOptions().setCreateDesktop(NutsActionSupportCondition.PREFERRED);
                     }
                 }
             } else if ((a = commandLine.nextString("--menu-name")) != null) {
                 if (a.isEnabled()) {
                     cmd.getOptions().setShortcutName(a.getStringValue());
-                    if (!cmd.getOptions().isCreateMenu()) {
-                        cmd.getOptions().setCreateMenu(true);
+                    if(cmd.getOptions().getCreateDesktop()== NutsActionSupportCondition.NEVER) {
+                        cmd.getOptions().setCreateMenu(NutsActionSupportCondition.PREFERRED);
                     }
                 }
             } else if ((a = commandLine.nextString("--shortcut-name")) != null) {
                 if (a.isEnabled()) {
                     cmd.getOptions().setShortcutName(a.getStringValue());
-                    if (!cmd.getOptions().isCreateShortcut()) {
-                        cmd.getOptions().setCreateShortcut(true);
+                    if(cmd.getOptions().getCreateShortcut()== NutsActionSupportCondition.NEVER) {
+                        cmd.getOptions().getCreateShortcut(NutsActionSupportCondition.PREFERRED);
                     }
                 }
             } else if ((a = commandLine.nextString("--shortcut-path")) != null) {
                 if (a.isEnabled()) {
                     cmd.getOptions().setShortcutPath(a.getStringValue());
-                    if (!cmd.getOptions().isCreateShortcut()) {
-                        cmd.getOptions().setCreateShortcut(true);
+                    if(cmd.getOptions().getCreateShortcut()== NutsActionSupportCondition.NEVER) {
+                        cmd.getOptions().getCreateShortcut(NutsActionSupportCondition.PREFERRED);
                     }
                 }
             } else if ((a = commandLine.nextBoolean("-x", "--external", "--spawn")) != null) {
@@ -199,6 +201,32 @@ public class NdiSubCommand extends AbstractNAdminSubCommand {
         }
     }
 
+    private NutsActionSupportCondition parseCond(NutsArgument a) {
+        String s = a.getStringValue("");
+        switch (s){
+            case "supported":{
+                return NutsActionSupportCondition.SUPPORTED;
+            }
+            case "never":{
+                return NutsActionSupportCondition.NEVER;
+            }
+            case "always":{
+                return NutsActionSupportCondition.ALWAYS;
+            }
+            case "preferred":
+            case "": {
+                return NutsActionSupportCondition.PREFERRED;
+            }
+            default:{
+                if(a.getBooleanValue()){
+                    return NutsActionSupportCondition.PREFERRED;
+                }else{
+                    return NutsActionSupportCondition.NEVER;
+                }
+            }
+        }
+    }
+
     public void runRemoveScript(NutsCommandLine commandLine, NutsApplicationContext context) {
         ArrayList<String> idsToUninstall = new ArrayList<>();
         boolean forceAll = false;
@@ -262,8 +290,8 @@ public class NdiSubCommand extends AbstractNAdminSubCommand {
         String switchWorkspaceApi = null;
         NutsArgument a;
         boolean ignoreUnsupportedOs = false;
-        boolean createDesktop = false;
-        boolean createMenu = false;
+        NutsActionSupportCondition createDesktop = NutsActionSupportCondition.NEVER;
+        NutsActionSupportCondition createMenu = NutsActionSupportCondition.NEVER;
         String menuCategory = null;
         String shortcutName = null;
         while (commandLine.hasNext()) {
@@ -275,34 +303,40 @@ public class NdiSubCommand extends AbstractNAdminSubCommand {
                 switchWorkspaceLocation = commandLine.nextString().getStringValue();
             } else if (commandLine.peek().getStringKey().equals("-a") || commandLine.peek().getStringKey().equals("--api")) {
                 switchWorkspaceApi = commandLine.nextString().getStringValue();
-            } else if ((a = commandLine.nextBoolean("--menu")) != null) {
-                if (a.getBooleanValue()) {
-                    createMenu = true;
+            } else if ((a = commandLine.next("--menu")) != null) {
+                if(a.isEnabled()) {
+                    createMenu=parseCond(a);
                 }
             } else if ((a = commandLine.nextString("--menu-category")) != null) {
                 if (a.isEnabled()) {
                     menuCategory = a.getStringValue();
                     if (menuCategory != null && !menuCategory.isEmpty()) {
-                        createMenu = true;
+                        if(createMenu== NutsActionSupportCondition.NEVER) {
+                            createMenu = NutsActionSupportCondition.PREFERRED;
+                        }
                     }
                 }
             } else if ((a = commandLine.nextString("--menu-name")) != null) {
                 if (a.isEnabled()) {
                     shortcutName = a.getStringValue();
                     if (shortcutName != null && !shortcutName.isEmpty()) {
-                        createMenu = true;
+                        if(createMenu== NutsActionSupportCondition.NEVER) {
+                            createMenu = NutsActionSupportCondition.PREFERRED;
+                        }
                     }
                 }
             } else if ((a = commandLine.nextString("--desktop-name")) != null) {
                 if (a.isEnabled()) {
                     shortcutName = a.getStringValue();
                     if (shortcutName != null && !shortcutName.isEmpty()) {
-                        createDesktop = true;
+                        if(createDesktop== NutsActionSupportCondition.NEVER) {
+                            createDesktop = NutsActionSupportCondition.PREFERRED;
+                        }
                     }
                 }
-            } else if ((a = commandLine.nextBoolean("--desktop")) != null) {
-                if (a.getBooleanValue()) {
-                    createDesktop = true;
+            } else if ((a = commandLine.next("--desktop")) != null) {
+                if (a.isEnabled()) {
+                    createDesktop = parseCond(a);
                 }
             } else if (commandLine.peek().isOption()) {
                 commandLine.unexpectedArgument();

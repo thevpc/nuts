@@ -1,5 +1,6 @@
 package net.thevpc.nuts.toolbox.nadmin.subcommands.ndi;
 
+import net.thevpc.nuts.NutsActionSupportCondition;
 import net.thevpc.nuts.NutsExecutionType;
 
 import java.util.ArrayList;
@@ -27,9 +28,9 @@ public class NdiScriptOptions implements Cloneable{
     private String menuCategory;
     private Boolean persistentConfig;
     private boolean terminalMode;
-    private boolean createMenu;
-    private boolean createDesktop;
-    private boolean createShortcut;
+    private NutsActionSupportCondition createMenu= NutsActionSupportCondition.NEVER;
+    private NutsActionSupportCondition createDesktop= NutsActionSupportCondition.NEVER;
+    private NutsActionSupportCondition createShortcut= NutsActionSupportCondition.NEVER;
     private NutsEnvInfo env;
     private String switchWorkspaceLocation;
 
@@ -198,20 +199,20 @@ public class NdiScriptOptions implements Cloneable{
         return this;
     }
 
-    public boolean isCreateMenu() {
+    public NutsActionSupportCondition getCreateMenu() {
         return createMenu;
     }
 
-    public NdiScriptOptions setCreateMenu(boolean createMenu) {
+    public NdiScriptOptions setCreateMenu(NutsActionSupportCondition createMenu) {
         this.createMenu = createMenu;
         return this;
     }
 
-    public boolean isCreateShortcut() {
+    public NutsActionSupportCondition getCreateShortcut() {
         return createShortcut;
     }
 
-    public NdiScriptOptions setCreateShortcut(boolean createShortcut) {
+    public NdiScriptOptions getCreateShortcut(NutsActionSupportCondition createShortcut) {
         this.createShortcut = createShortcut;
         return this;
     }
@@ -225,11 +226,11 @@ public class NdiScriptOptions implements Cloneable{
         return this;
     }
 
-    public boolean isCreateDesktop() {
+    public NutsActionSupportCondition getCreateDesktop() {
         return createDesktop;
     }
 
-    public NdiScriptOptions setCreateDesktop(boolean createDesktop) {
+    public NdiScriptOptions setCreateDesktop(NutsActionSupportCondition createDesktop) {
         this.createDesktop = createDesktop;
         return this;
     }

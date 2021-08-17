@@ -38,7 +38,7 @@ public class CoreNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsForma
 
     private static final long serialVersionUID = 1;
     private final NutsWorkspaceOptions options;
-    private final NutsWorkspace ws;
+    private final NutsSession session;
     private boolean exportedOptions;
     private boolean runtimeOptions;
     private boolean createOptions;
@@ -48,9 +48,9 @@ public class CoreNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsForma
     private String apiVersion;
     private NutsVersion apiVersionObj;
 
-    public CoreNutsWorkspaceOptionsFormat(NutsWorkspace ws, NutsWorkspaceOptions options) {
+    public CoreNutsWorkspaceOptionsFormat(NutsSession session, NutsWorkspaceOptions options) {
         this.options = options;
-        this.ws = ws;
+        this.session = session;
     }
 
     @Override
@@ -66,16 +66,6 @@ public class CoreNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsForma
     @Override
     public boolean isExported() {
         return exportedOptions;
-    }
-
-    @Override
-    public NutsWorkspaceOptionsFormat exported() {
-        return exported(true);
-    }
-
-    @Override
-    public NutsWorkspaceOptionsFormat exported(boolean e) {
-        return setExported(e);
     }
 
     @Override
@@ -97,29 +87,9 @@ public class CoreNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsForma
     }
 
     @Override
-    public NutsWorkspaceOptionsFormat runtime() {
-        return runtime(true);
-    }
-
-    @Override
-    public NutsWorkspaceOptionsFormat runtime(boolean e) {
-        return setRuntime(e);
-    }
-
-    @Override
     public NutsWorkspaceOptionsFormat setRuntime(boolean e) {
         this.runtimeOptions = true;
         return this;
-    }
-
-    @Override
-    public NutsWorkspaceOptionsFormat init() {
-        return init(true);
-    }
-
-    @Override
-    public NutsWorkspaceOptionsFormat init(boolean e) {
-        return setInit(e);
     }
 
     @Override
@@ -129,12 +99,7 @@ public class CoreNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsForma
     }
 
     @Override
-    public String getBootCommandLine() {
-        return NutsCommandLineUtils.escapeArguments(getBootCommand());
-    }
-
-    @Override
-    public String[] getBootCommand() {
+    public NutsCommandLine getBootCommandLine() {
         NutsVersion apiVersionObj = getApiVersionObj();
         List<String> arguments = new ArrayList<>();
         if (exportedOptions || isImplicitAll()) {
@@ -291,17 +256,7 @@ public class CoreNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsForma
             arguments.addAll(Arrays.asList(options.getExecutorOptions()));
             arguments.addAll(Arrays.asList(options.getApplicationArguments()));
         }
-        return arguments.toArray(new String[0]);
-    }
-
-    @Override
-    public NutsWorkspaceOptionsFormat compact() {
-        return compact(true);
-    }
-
-    @Override
-    public NutsWorkspaceOptionsFormat compact(boolean compact) {
-        return setCompact(compact);
+        return session.getWorkspace().commandLine().create(arguments.toArray(new String[0]));
     }
 
     @Override
@@ -570,13 +525,13 @@ public class CoreNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsForma
 
     @Override
     public String toString() {
-        return getBootCommandLine();
+        return getBootCommandLine().toString();
     }
 
     public NutsVersion getApiVersionObj() {
         if (apiVersionObj == null) {
             if (apiVersion != null) {
-                apiVersionObj = ws.version().parser().parse(apiVersion);
+                apiVersionObj = session.getWorkspace().version().parser().parse(apiVersion);
             }
         }
         return apiVersionObj;

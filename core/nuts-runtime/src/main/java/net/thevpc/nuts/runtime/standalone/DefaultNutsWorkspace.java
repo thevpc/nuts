@@ -243,8 +243,8 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             LOGCSF.log(" ");
             LOGCSF.log("start ```sh nuts``` ```primary3 {0}``` at {1}", Nuts.getVersion(), CoreNutsUtils.DEFAULT_DATE_TIME_FORMATTER.format(Instant.ofEpochMilli(info.getOptions().getCreationTime())));
             NutsCommandLineManager commandLine = commandLine().setSession(defaultSession());
-            LOGCRF.log("open Nuts Workspace               : {0}", commandLine.create(info.getOptions().format().getBootCommand()));
-            LOGCRF.log("open Nuts Workspace (compact)     : {0}", commandLine.create(info.getOptions().format().compact().getBootCommand()));
+            LOGCRF.log("open Nuts Workspace               : {0}", info.getOptions().format().getBootCommandLine());
+            LOGCRF.log("open Nuts Workspace (compact)     : {0}", info.getOptions().format().setCompact(true).getBootCommandLine());
 
             LOGCRF.log("open Workspace with config        : ");
             LOGCRF.log("   nuts-uuid                      : {0}", CoreNutsUtils.desc(info.getUuid(), text));

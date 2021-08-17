@@ -21,15 +21,58 @@
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
-package net.thevpc.nuts.toolbox.nadmin.optional.oswindows;
+package net.thevpc.nuts;
 
 /**
+ * uniform platform architecture impl-note: list updated from
+ * https://github.com/trustin/os-maven-plugin
  *
- * @author vpc
+ * @author thevpc
+ * @since 0.8.1
+ * @app.category Base
  */
-public class OptionalWindows {
-    public static boolean isAvailable() {
-        return WindowFreeDesktopEntryWriter.isSupported();
+public enum NutsCommandlineFamily implements NutsEnum{
+    DEFAULT,
+    BASH,
+    WINDOWS_CMD
+    ;
+
+    /**
+     * lower-cased identifier for the enum entry
+     */
+    private final String id;
+
+    NutsCommandlineFamily() {
+        this.id = name().toLowerCase();//.replace('_', '-');
     }
 
+    /**
+     * lower cased identifier.
+     *
+     * @return lower cased identifier
+     */
+    public String id() {
+        return id;
+    }
+
+    public static NutsCommandlineFamily getArchFamily() {
+        return parseLenient(System.getProperty("os.arch"));
+    }
+
+    public static NutsCommandlineFamily parseLenient(String arch) {
+        arch = arch == null ? "" : arch.toLowerCase().replace('-', '_');
+        switch (arch) {
+            case "":
+            case "default":
+                return DEFAULT;
+            case "sh":
+            case "bash":
+                return BASH;
+            case "windows_cmd":
+            case "win_cmd":
+            case "cmd":
+                return WINDOWS_CMD;
+        }
+        return DEFAULT;
+    }
 }

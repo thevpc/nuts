@@ -173,14 +173,71 @@ public class DefaultCustomCommandManager implements NutsCustomCommandManager {
                 cmd.addCommand("--name",alias);
             }
             if (!GraphicsEnvironment.isHeadless()) {
-                if(launcher.isCreateDesktopShortcut()){
-                    cmd.addCommand("--desktop");
+                if(launcher.getCreateDesktopShortcut()!=null){
+                    switch (launcher.getCreateDesktopShortcut()) {
+                        case NEVER:{
+                            break;
+                        }
+                        case ALWAYS:{
+                            cmd.addCommand("--desktop=always");
+                            break;
+                        }
+                        case PREFERRED:{
+                            cmd.addCommand("--desktop=preferred");
+                            break;
+                        }
+                        case SUPPORTED:{
+                            cmd.addCommand("--desktop=supported");
+                            break;
+                        }
+                        default:{
+                            throw new NutsUnsupportedEnumException(getSession(), launcher.getCreateDesktopShortcut());
+                        }
+                    }
                 }
-                if(launcher.isCreateMenuShortcut()){
-                    cmd.addCommand("--menu");
+                if(launcher.getCreateMenuShortcut()!=null){
+                    switch (launcher.getCreateMenuShortcut()) {
+                        case NEVER:{
+                            break;
+                        }
+                        case ALWAYS:{
+                            cmd.addCommand("--menu=always");
+                            break;
+                        }
+                        case PREFERRED:{
+                            cmd.addCommand("--menu=preferred");
+                            break;
+                        }
+                        case SUPPORTED:{
+                            cmd.addCommand("--menu=supported");
+                            break;
+                        }
+                        default:{
+                            throw new NutsUnsupportedEnumException(getSession(), launcher.getCreateMenuShortcut());
+                        }
+                    }
                 }
-                if(launcher.isCreateCustomShortcut()){
-                    cmd.addCommand("--shortcut");
+                if(launcher.getCreateCustomShortcut()!=null){
+                    switch (launcher.getCreateCustomShortcut()) {
+                        case NEVER:{
+                            break;
+                        }
+                        case ALWAYS:{
+                            cmd.addCommand("--shortcut=always");
+                            break;
+                        }
+                        case PREFERRED:{
+                            cmd.addCommand("--shortcut=preferred");
+                            break;
+                        }
+                        case SUPPORTED:{
+                            cmd.addCommand("--shortcut=supported");
+                            break;
+                        }
+                        default:{
+                            throw new NutsUnsupportedEnumException(getSession(), launcher.getCreateCustomShortcut());
+                        }
+                    }
                 }
                 if(launcher.getShortcutName()!=null){
                     cmd.addCommand("--shortcut-name",launcher.getShortcutName());

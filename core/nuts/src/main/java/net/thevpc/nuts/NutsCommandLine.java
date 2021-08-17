@@ -507,4 +507,5 @@ public interface NutsCommandLine extends Iterable<NutsArgument>,NutsFormattable{
      */
     void throwError(NutsString message);
 
+    NutsCommandLineFormat formatter();
 }

@@ -21,15 +21,58 @@
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
-package net.thevpc.nuts.toolbox.nadmin.optional.oswindows;
+package net.thevpc.nuts;
 
 /**
+ * uniform platform architecture impl-note: list updated from
+ * https://github.com/trustin/os-maven-plugin
  *
- * @author vpc
+ * @author thevpc
+ * @since 0.8.1
+ * @app.category Base
  */
-public class OptionalWindows {
-    public static boolean isAvailable() {
-        return WindowFreeDesktopEntryWriter.isSupported();
+public enum NutsCommandLineFormatStrategy implements NutsEnum{
+    DEFAULT,
+    NO_QUOTES,
+    REQUIRE_QUOTES,
+    SUPPORT_QUOTES
+    ;
+
+    /**
+     * lower-cased identifier for the enum entry
+     */
+    private final String id;
+
+    NutsCommandLineFormatStrategy() {
+        this.id = name().toLowerCase();//.replace('_', '-');
     }
 
+    /**
+     * lower cased identifier.
+     *
+     * @return lower cased identifier
+     */
+    public String id() {
+        return id;
+    }
+
+    public static NutsCommandLineFormatStrategy getArchFamily() {
+        return parseLenient(System.getProperty("os.arch"));
+    }
+
+    public static NutsCommandLineFormatStrategy parseLenient(String arch) {
+        arch = arch == null ? "" : arch.toLowerCase().replace('-', '_');
+        switch (arch) {
+            case "":
+            case "default":
+                return DEFAULT;
+            case "no_quotes":
+                return NO_QUOTES;
+            case "require_quotes":
+                return REQUIRE_QUOTES;
+            case "support_quotes":
+                return SUPPORT_QUOTES;
+        }
+        return DEFAULT;
+    }
 }

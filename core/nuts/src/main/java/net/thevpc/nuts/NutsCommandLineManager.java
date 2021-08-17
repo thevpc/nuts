@@ -101,4 +101,18 @@ public interface NutsCommandLineManager {
     NutsSession getSession();
 
     NutsCommandLineManager setSession(NutsSession session);
+
+    /**
+     * return command line family
+     * @since 0.8.1
+     * @return command line family
+     */
+    NutsCommandlineFamily getCommandlineFamily();
+
+    /**
+     * change command line family
+     * @param family family
+     * @return {@code this} instance
+     */
+    NutsCommandLineManager setCommandlineFamily(NutsCommandlineFamily family);
 }

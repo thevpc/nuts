@@ -39,9 +39,10 @@ package net.thevpc.nuts.toolbox.nsh.bundles.jshell;
 public interface JShellBuiltin<T extends JShellExecutionContext> {
 
     /**
-     * 
+     * exec and retur error code
      * @param command command
      * @param context context
+     * @return error code
      */
     int exec(String[] command, T context);
 

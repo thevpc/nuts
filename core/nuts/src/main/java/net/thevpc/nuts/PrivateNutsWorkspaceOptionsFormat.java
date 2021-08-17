@@ -61,16 +61,6 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
     }
 
     @Override
-    public NutsWorkspaceOptionsFormat exported() {
-        return exported(true);
-    }
-
-    @Override
-    public NutsWorkspaceOptionsFormat exported(boolean e) {
-        return setExported(e);
-    }
-
-    @Override
     public NutsWorkspaceOptionsFormat setExported(boolean e) {
         this.exportedOptions = true;
         return this;
@@ -88,30 +78,11 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
     }
 
     @Override
-    public NutsWorkspaceOptionsFormat runtime() {
-        return runtime(true);
-    }
-
-    @Override
-    public NutsWorkspaceOptionsFormat runtime(boolean e) {
-        return setRuntime(e);
-    }
-
-    @Override
     public NutsWorkspaceOptionsFormat setRuntime(boolean e) {
         this.runtimeOptions = true;
         return this;
     }
 
-    @Override
-    public NutsWorkspaceOptionsFormat init() {
-        return init(true);
-    }
-
-    @Override
-    public NutsWorkspaceOptionsFormat init(boolean e) {
-        return setInit(e);
-    }
 
     @Override
     public NutsWorkspaceOptionsFormat setInit(boolean e) {
@@ -120,12 +91,7 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
     }
 
     @Override
-    public String getBootCommandLine() {
-        return PrivateNutsCommandLine.escapeArguments(getBootCommand());
-    }
-
-    @Override
-    public String[] getBootCommand() {
+    public NutsCommandLine getBootCommandLine() {
         List<String> arguments = new ArrayList<>();
         if (exportedOptions || isImplicitAll()) {
             fillOption("--boot-runtime", null, options.getRuntimeId(), arguments, false);
@@ -273,17 +239,9 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
             arguments.addAll(Arrays.asList(options.getExecutorOptions()));
             arguments.addAll(Arrays.asList(options.getApplicationArguments()));
         }
-        return arguments.toArray(new String[0]);
-    }
-
-    @Override
-    public NutsWorkspaceOptionsFormat compact() {
-        return compact(true);
-    }
-
-    @Override
-    public NutsWorkspaceOptionsFormat compact(boolean compact) {
-        return setCompact(compact);
+        return new PrivateNutsCommandLine(
+                arguments.toArray(new String[0])
+        );
     }
 
     @Override
@@ -552,7 +510,7 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
 
     @Override
     public String toString() {
-        return getBootCommandLine();
+        return getBootCommandLine().toString();
     }
 
 }

@@ -3,9 +3,9 @@ package net.thevpc.nuts;
 public class NutsLauncherOptions implements Cloneable {
     private boolean createAlias;
     private boolean createScript;
-    private boolean createMenuShortcut;
-    private boolean createDesktopShortcut;
-    private boolean createCustomShortcut;
+    private NutsActionSupportCondition createMenuShortcut;
+    private NutsActionSupportCondition createDesktopShortcut;
+    private NutsActionSupportCondition createCustomShortcut;
     private boolean installExtensions;
     private String alias;
     private String shortcutName;
@@ -25,29 +25,29 @@ public class NutsLauncherOptions implements Cloneable {
         return this;
     }
 
-    public boolean isCreateMenuShortcut() {
+    public NutsActionSupportCondition getCreateMenuShortcut() {
         return createMenuShortcut;
     }
 
-    public NutsLauncherOptions setCreateMenuShortcut(boolean createMenuShortcut) {
+    public NutsLauncherOptions setCreateMenuShortcut(NutsActionSupportCondition createMenuShortcut) {
         this.createMenuShortcut = createMenuShortcut;
         return this;
     }
 
-    public boolean isCreateDesktopShortcut() {
+    public NutsActionSupportCondition getCreateDesktopShortcut() {
         return createDesktopShortcut;
     }
 
-    public NutsLauncherOptions setCreateDesktopShortcut(boolean createDesktopShortcut) {
+    public NutsLauncherOptions setCreateDesktopShortcut(NutsActionSupportCondition createDesktopShortcut) {
         this.createDesktopShortcut = createDesktopShortcut;
         return this;
     }
 
-    public boolean isCreateCustomShortcut() {
+    public NutsActionSupportCondition getCreateCustomShortcut() {
         return createCustomShortcut;
     }
 
-    public NutsLauncherOptions setCreateCustomShortcut(boolean createCustomShortcut) {
+    public NutsLauncherOptions setCreateCustomShortcut(NutsActionSupportCondition createCustomShortcut) {
         this.createCustomShortcut = createCustomShortcut;
         return this;
     }

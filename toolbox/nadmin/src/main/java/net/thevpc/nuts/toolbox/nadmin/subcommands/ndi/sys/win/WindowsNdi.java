@@ -2,24 +2,14 @@ package net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.sys.win;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.nadmin.PathInfo;
-import net.thevpc.nuts.toolbox.nadmin.optional.oswindows.OptionalWindows;
-import net.thevpc.nuts.toolbox.nadmin.optional.oswindows.WinShellHelper;
 import net.thevpc.nuts.toolbox.nadmin.optional.oswindows.WindowFreeDesktopEntryWriter;
 import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.*;
 import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.base.BaseSystemNdi;
 import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.base.NutsEnvInfo;
 import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.util.ReplaceString;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 public class WindowsNdi extends BaseSystemNdi {
@@ -98,7 +88,9 @@ public class WindowsNdi extends BaseSystemNdi {
 
     @Override
     protected FreeDesktopEntryWriter createFreeDesktopEntryWriter() {
-        return new WindowFreeDesktopEntryWriter(getOsDesktopPath(), context.getSession());
+        return new WindowFreeDesktopEntryWriter(
+                context.getSession().getWorkspace().env().getDesktopPath()
+                , context.getSession());
     }
 
     protected ReplaceString getShebanSh() {
@@ -117,10 +109,6 @@ public class WindowsNdi extends BaseSystemNdi {
     @Override
     protected String varRef(String v){
         return "%"+v+"%";
-    }
-
-    private Path getOsDesktopPath() {
-        return new File(System.getProperty("user.home"), "Desktop").toPath();
     }
 
     @Override
@@ -154,4 +142,6 @@ public class WindowsNdi extends BaseSystemNdi {
                 return 3;
         }
         return -1;
-    }}
+    }
+
+}

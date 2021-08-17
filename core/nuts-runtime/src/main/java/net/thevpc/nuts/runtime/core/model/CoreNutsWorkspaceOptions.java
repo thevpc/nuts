@@ -1086,7 +1086,7 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
 
     @Override
     public NutsWorkspaceOptionsFormat format() {
-        return new CoreNutsWorkspaceOptionsFormat(session.getWorkspace(), this);
+        return new CoreNutsWorkspaceOptionsFormat(session, this);
     }
 
     @Override
@@ -1485,7 +1485,7 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
 
     @Override
     public String toString() {
-        return format().getBootCommandLine();
+        return format().getBootCommandLine().toString();
     }
 
     @Override

@@ -147,4 +147,8 @@ public interface NutsWorkspaceEnvManager {
 
     long getCreationTimeMillis();
 
+    NutsActionSupport getDesktopIntegrationSupport(NutsDesktopIntegrationItem target);
+
+    Path getDesktopPath();
+
 }

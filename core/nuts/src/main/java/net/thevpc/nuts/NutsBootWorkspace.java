@@ -206,7 +206,10 @@ public final class NutsBootWorkspace {
         }
         cmd.add("-jar");
         cmd.add(file.getPath());
-        cmd.addAll(Arrays.asList(options.format().compact().setApiVersion(workspaceInformation.getApiVersion()).getBootCommand()));
+        cmd.addAll(Arrays.asList(
+                options.format().setCompact(true).setApiVersion(workspaceInformation.getApiVersion()).getBootCommandLine()
+                        .toStringArray()
+        ));
         if (showCommand) {
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < cmd.size(); i++) {

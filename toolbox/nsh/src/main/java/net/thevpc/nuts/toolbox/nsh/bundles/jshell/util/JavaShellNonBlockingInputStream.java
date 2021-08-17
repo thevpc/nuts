@@ -11,7 +11,7 @@ public interface JavaShellNonBlockingInputStream extends Closeable {
      * has been reached, the value <code>-1</code> is returned. This method
      * blocks until input data is available, the end of the stream is detected,
      * or an exception is thrown.
-     * <p>
+     *
      * <p> A subclass must provide an implementation of this method.
      *
      * @return the next byte of data, or <code>-1</code> if the end of the
@@ -25,13 +25,13 @@ public interface JavaShellNonBlockingInputStream extends Closeable {
      * the buffer array <code>b</code>. The number of bytes actually readAll is
      * returned as an integer.  This method blocks until input data is
      * available, end of file is detected, or an exception is thrown.
-     * <p>
+     *
      * <p> If the length of <code>b</code> is zero, then no bytes are readAll and
      * <code>0</code> is returned; otherwise, there is an attempt to readAll at
      * least one byte. If no byte is available because the stream is at the
      * end of the file, the value <code>-1</code> is returned; otherwise, at
      * least one byte is readAll and stored into <code>b</code>.
-     * <p>
+     *
      * <p> The first byte readAll is stored into element <code>b[0]</code>, the
      * next one into <code>b[1]</code>, and so on. The number of bytes readAll is,
      * at most, equal to the length of <code>b</code>. Let <i>k</i> be the
@@ -39,7 +39,7 @@ public interface JavaShellNonBlockingInputStream extends Closeable {
      * <code>b[0]</code> through <code>b[</code><i>k</i><code>-1]</code>,
      * leaving elements <code>b[</code><i>k</i><code>]</code> through
      * <code>b[b.length-1]</code> unaffected.
-     * <p>
+     *
      * <p> The <code>readAll(b)</code> method for class <code>InputStream</code>
      * has the same effect as: <pre><code> readAll(b, 0, b.length) </code></pre>
      *
@@ -60,16 +60,16 @@ public interface JavaShellNonBlockingInputStream extends Closeable {
      * an array of bytes.  An attempt is made to readAll as many as
      * <code>len</code> bytes, but a smaller number may be readAll.
      * The number of bytes actually readAll is returned as an integer.
-     * <p>
+     *
      * <p> This method blocks until input data is available, end of file is
      * detected, or an exception is thrown.
-     * <p>
+     *
      * <p> If <code>len</code> is zero, then no bytes are readAll and
      * <code>0</code> is returned; otherwise, there is an attempt to readAll at
      * least one byte. If no byte is available because the stream is at end of
      * file, the value <code>-1</code> is returned; otherwise, at least one
      * byte is readAll and stored into <code>b</code>.
-     * <p>
+     *
      * <p> The first byte readAll is stored into element <code>b[off]</code>, the
      * next one into <code>b[off+1]</code>, and so on. The number of bytes readAll
      * is, at most, equal to <code>len</code>. Let <i>k</i> be the number of
@@ -77,11 +77,11 @@ public interface JavaShellNonBlockingInputStream extends Closeable {
      * <code>b[off]</code> through <code>b[off+</code><i>k</i><code>-1]</code>,
      * leaving elements <code>b[off+</code><i>k</i><code>]</code> through
      * <code>b[off+len-1]</code> unaffected.
-     * <p>
+     *
      * <p> In every case, elements <code>b[0]</code> through
      * <code>b[off]</code> and elements <code>b[off+len]</code> through
      * <code>b[b.length-1]</code> are unaffected.
-     * <p>
+     *
      * <p> The <code>readAll(b,</code> <code>off,</code> <code>len)</code> method
      * for class <code>InputStream</code> simply calls the method
      * <code>readAll()</code> repeatedly. If the first such call results in an
@@ -128,7 +128,7 @@ public interface JavaShellNonBlockingInputStream extends Closeable {
      * negative, the {@code skip} method for class {@code InputStream} always
      * returns 0, and no bytes are skipped. Subclasses may handle the negative
      * value differently.
-     * <p>
+     *
      * <p> The <code>skip</code> method of this class creates a
      * byte array and then repeatedly reads into it until <code>n</code> bytes
      * have been readAll or the end of the stream has been reached. Subclasses are
@@ -148,19 +148,19 @@ public interface JavaShellNonBlockingInputStream extends Closeable {
      * invocation of a method for this input stream. The next invocation
      * might be the same thread or another thread.  A single readAll or skip of this
      * many bytes will not block, but may readAll or skip fewer bytes.
-     * <p>
+     *
      * <p> Note that while some implementations of {@code InputStream} will return
      * the total number of bytes in the stream, many will not.  It is
      * never correct to use the return value of this method to allocate
      * a buffer intended to hold all data in this stream.
-     * <p>
+     *
      * <p> A subclass' implementation of this method may choose to throw an
      * {@link IOException} if this input stream has been closed by
      * invoking the {@link #close()} method.
-     * <p>
+     *
      * <p> The {@code available} method for class {@code InputStream} always
      * returns {@code 0}.
-     * <p>
+     *
      * <p> This method should be overridden by subclasses.
      *
      * @return an estimate of the number of bytes that can be readAll (or skipped
@@ -185,11 +185,11 @@ public interface JavaShellNonBlockingInputStream extends Closeable {
      * Marks the current position in this input stream. A subsequent call to
      * the <code>reset</code> method repositions this stream at the last marked
      * position so that subsequent reads re-readAll the same bytes.
-     * <p>
+     *
      * <p> The <code>readlimit</code> arguments tells this input stream to
      * allow that many bytes to be readAll before the mark position gets
      * invalidated.
-     * <p>
+     *
      * <p> The general contract of <code>mark</code> is that, if the method
      * <code>markSupported</code> returns <code>true</code>, the stream somehow
      * remembers all the bytes readAll after the call to <code>mark</code> and
@@ -197,9 +197,9 @@ public interface JavaShellNonBlockingInputStream extends Closeable {
      * <code>reset</code> is called.  However, the stream is not required to
      * remember any data at all if more than <code>readlimit</code> bytes are
      * readAll from the stream before <code>reset</code> is called.
-     * <p>
+     *
      * <p> Marking a closed stream should not have any effect on the stream.
-     * <p>
+     *
      * <p> The <code>mark</code> method of <code>InputStream</code> does
      * nothing.
      *
@@ -212,19 +212,19 @@ public interface JavaShellNonBlockingInputStream extends Closeable {
     /**
      * Repositions this stream to the position at the time the
      * <code>mark</code> method was last called on this input stream.
-     * <p>
+     *
      * <p> The general contract of <code>reset</code> is:
-     * <p>
+     *
      * <ul>
      * <li> If the method <code>markSupported</code> returns
      * <code>true</code>, then:
-     * <p>
+     *
      * <ul><li> If the method <code>mark</code> has not been called since
      * the stream was created, or the number of bytes readAll from the stream
      * since <code>mark</code> was last called is larger than the argument
      * to <code>mark</code> at that last call, then an
      * <code>IOException</code> might be thrown.
-     * <p>
+     *
      * <li> If such an <code>IOException</code> is not thrown, then the
      * stream is reset to a state such that all the bytes readAll since the
      * most recent call to <code>mark</code> (or since the start of the
@@ -232,19 +232,19 @@ public interface JavaShellNonBlockingInputStream extends Closeable {
      * to subsequent callers of the <code>readAll</code> method, followed by
      * any bytes that otherwise would have been the next input data as of
      * the time of the call to <code>reset</code>. </ul>
-     * <p>
+     *
      * <li> If the method <code>markSupported</code> returns
      * <code>false</code>, then:
-     * <p>
+     *
      * <ul><li> The call to <code>reset</code> may throw an
      * <code>IOException</code>.
-     * <p>
+     *
      * <li> If an <code>IOException</code> is not thrown, then the stream
      * is reset to a fixed state that depends on the particular type of the
      * input stream and how it was created. The bytes that will be supplied
      * to subsequent callers of the <code>readAll</code> method depend on the
      * particular type of the input stream. </ul></ul>
-     * <p>
+     *
      * <p>The method <code>reset</code> for class <code>InputStream</code>
      * does nothing except throw an <code>IOException</code>.
      *

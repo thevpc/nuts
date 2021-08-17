@@ -19,8 +19,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class AnyNixNdi extends BaseSystemNdi {
-    public static final Pattern UNIX_USER_DIRS_PATTERN = Pattern.compile("^\\s*(?<k>[A-Z_]+)\\s*=\\s*(?<v>.*)$");
+public abstract class AnyNixNdi extends BaseSystemNdi {
     public static final ReplaceString SHEBAN_SH = new ReplaceString("#!/bin/sh", "#!.*");
 
     public AnyNixNdi(NutsApplicationContext appContext) {
@@ -157,7 +156,9 @@ public class AnyNixNdi extends BaseSystemNdi {
 
     @Override
     protected FreeDesktopEntryWriter createFreeDesktopEntryWriter() {
-        return new UnixFreeDesktopEntryWriter(context.getSession(), getOsDesktopPath());
+        return new UnixFreeDesktopEntryWriter(context.getSession(),
+                context.getSession().getWorkspace().env().getDesktopPath()
+        );
     }
 
     protected ReplaceString getShebanSh() {
@@ -177,45 +178,6 @@ public class AnyNixNdi extends BaseSystemNdi {
     public String varRef(String v) {
         return "${" + v + "}";
     }
-
-    private Path getOsDesktopPath() {
-        File f = new File(System.getProperty("user.home"), ".config/user-dirs.dirs");
-        if (f.exists()) {
-            try (BufferedReader r = new BufferedReader(new FileReader(f))) {
-                String line;
-                while ((line = r.readLine()) != null) {
-                    line = line.trim();
-                    if (line.startsWith("#")) {
-                        //ignore
-                    } else {
-                        Matcher m = UNIX_USER_DIRS_PATTERN.matcher(line);
-                        if (m.find()) {
-                            String k = m.group("k");
-                            if (k.equals("XDG_DESKTOP_DIR")) {
-                                String v = m.group("v");
-                                v = v.trim();
-                                if (v.startsWith("\"")) {
-                                    int last = v.indexOf('\"', 1);
-                                    String s = v.substring(1, last);
-                                    s = s.replace("$HOME", System.getProperty("user.home"));
-                                    return Paths.get(s);
-                                } else {
-                                    return Paths.get(v);
-                                }
-                            }
-                        } else {
-                            //this is unexpected format!
-                            break;
-                        }
-                    }
-                }
-            } catch (IOException ex) {
-                //ignore
-            }
-        }
-        return new File(System.getProperty("user.home"), "Desktop").toPath();
-    }
-
 
     protected int resolveIconExtensionPriority(String extension) {
         extension = extension.toLowerCase();

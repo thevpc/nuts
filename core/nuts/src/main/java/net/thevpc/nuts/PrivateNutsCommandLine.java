@@ -999,7 +999,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
 //    }
 
     @Override
-    public NutsFormat formatter() {
+    public NutsCommandLineFormat formatter() {
         throw new NutsBootException(NOT_SUPPORTED);
     }
 

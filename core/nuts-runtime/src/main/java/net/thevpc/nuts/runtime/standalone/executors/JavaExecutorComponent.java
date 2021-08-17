@@ -198,8 +198,8 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                 }
 //                options.setConfirm(execSession.getConfirm());
 
-                String[] bootCommand = options.format().exported().setApiVersion(nutsDependencyVersion == null ? null : nutsDependencyVersion.toString())
-                        .compact().getBootCommand();
+                String bootArgumentsString = options.format().setExported(true).setApiVersion(nutsDependencyVersion == null ? null : nutsDependencyVersion.toString())
+                        .setCompact(true).getBootCommandLine().toString();
 //                if(nutsDependencyVersion!=null && nutsDependencyVersion.compareTo(executionContext.getWorkspace().getApiVersion())<0){
 //                    if(nutsDependencyVersion.compareTo("0.8.0")<0){
 //                        for (String s : bootCommand) {
@@ -213,8 +213,8 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
 //                validBootCommand.addAll(Arrays.asList(bootCommand));
 //                    }
 //                }
-                String bootArgumentsString = executionContext.getWorkspace().commandLine().create(bootCommand)
-                        .toString();
+//                String bootArgumentsString = executionContext.getWorkspace().commandLine().create(bootCommand)
+//                        .toString();
                 if (!CoreStringUtils.isBlank(bootArgumentsString)) {
                     osEnv.put("nuts_boot_args", bootArgumentsString);
                     joptions.getJvmArgs().add("-Dnuts.boot.args=" + bootArgumentsString);
@@ -475,7 +475,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
             } else {
                 //NutsWorkspace
                 System.setProperty("nuts.boot.args", getSession().getWorkspace().env().getBootOptions()
-                        .format().exported().compact().getBootCommandLine()
+                        .format().setExported(true).setCompact(true).getBootCommandLine().toString()
                 );
                 mainMethod = cls.getMethod("main", String[].class);
 //                List<String> nargs = new ArrayList<>();

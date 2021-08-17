@@ -512,7 +512,9 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
     }
 
     public NutsCommandLine parseLine(String commandLine) {
-        setArguments(NutsCommandLineUtils.parseCommandLine(commandLine, session));
+        setArguments(
+                session.getWorkspace().commandLine().parse(commandLine).toStringArray()
+        );
         return this;
     }
 
@@ -757,16 +759,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
 
     @Override
     public String toString() {
-        String[] args = toStringArray();
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < args.length; i++) {
-            String arg = args[i];
-            if (i > 0) {
-                sb.append(" ");
-            }
-            sb.append(NutsCommandLineUtils.escapeArgument(arg));
-        }
-        return sb.toString();
+        return formatter().format().filteredText();
     }
 
     private boolean isExpandableOption(String v, boolean expandSimpleOptions) {
@@ -910,7 +903,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
     }
 
     @Override
-    public NutsFormat formatter() {
-        return getWorkspace().commandLine().formatter().setValue(this);
+    public NutsCommandLineFormat formatter() {
+        return session.getWorkspace().commandLine().formatter().setValue(this);
     }
 }
