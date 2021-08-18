@@ -1,9 +1,16 @@
 package net.thevpc.nuts.toolbox.nadmin;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.NdiScriptInfoType;
+import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.sys.win.WindowsNdi;
+import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.util.ReplaceString;
 
 import java.awt.*;
+import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -118,6 +125,12 @@ public class NAdminMain implements NutsApplication {
     @Override
     public void run(NutsApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
+        //test
+//        if(true){
+//        //Just for test, We need to add a simple way to test NutsApplication (provide an instance of
+//        //ApplicationContext in test environment)
+//
+//        }
         applicationContext.getWorkspace().extensions().discoverTypes(
                 applicationContext.getAppId(),
                 Thread.currentThread().getContextClassLoader());

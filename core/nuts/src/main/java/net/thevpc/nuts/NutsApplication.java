@@ -196,7 +196,7 @@ public interface NutsApplication {
      * @since 0.6.0, first parameter changed from NutsWorkspace to NutsSession to enable passing session options
      */
     default void run(NutsSession session, String[] args) {
-        NutsApplications.runApplication(args, session, this);
+        NutsApplications.runApplication(this, args, session);
     }
 
     /**

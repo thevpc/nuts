@@ -92,30 +92,24 @@ public final class NutsApplications {
     }
 
     /**
-     * run application with given life cycle.
-     *
+     * create an Application Context instance for the given arguments. The session can be null.
+     * @param applicationInstance application instance (to resolve appId)
      * @param args application arguments
-     * @param session session
-     * @param applicationInstance application
+     * @param session caller workspace session (or null to create an inherited workspace)
+     * @return NutsApplicationContext instance
      */
-    public static void runApplication(String[] args, NutsSession session, NutsApplication applicationInstance) {
+    public static NutsApplicationContext createApplicationContext(NutsApplication applicationInstance, String[] args, NutsSession session) {
         long startTimeMillis = System.currentTimeMillis();
         if (applicationInstance == null) {
             throw new NullPointerException("null application");
         }
-        boolean inherited = false;
         NutsWorkspace ws = session == null ? null : session.getWorkspace();
         if (ws == null) {
-            inherited = true;
             ws = Nuts.openInheritedWorkspace(args);
         }
         if (session == null) {
             session = ws.createSession();
         }
-        ws.log().setSession(session).of(NutsApplications.class).with().session(session).level(Level.FINE).verb(NutsLogVerb.START).formatted()
-                .log("running application {0}: {1} {2}", inherited ? "(inherited)" : "",
-                        applicationInstance.getClass().getName(), ws.commandLine().setSession(session).create(args)
-                );
         NutsApplicationContext applicationContext = null;
         applicationContext = applicationInstance.createApplicationContext(ws, args, startTimeMillis);
         if (applicationContext == null) {
@@ -133,6 +127,23 @@ public final class NutsApplications {
             ctxSession.setTransitive(session.isTransitive());
             ctxSession.setTerminal(ctxSession.getWorkspace().term().createTerminal(session.getTerminal()));
         }
+        return applicationContext;
+    }
+    /**
+     * run application with given life cycle.
+     *
+     * @param applicationInstance application
+     * @param args application arguments
+     * @param session session
+     */
+    public static void runApplication(NutsApplication applicationInstance, String[] args, NutsSession session) {
+        NutsApplicationContext applicationContext = createApplicationContext(applicationInstance, args, session);
+        NutsWorkspace ws = applicationContext.getWorkspace();
+        boolean inherited = ws.env().getBootOptions().isInherited();
+        ws.log().setSession(session).of(NutsApplications.class).with().session(session).level(Level.FINE).verb(NutsLogVerb.START).formatted()
+                .log("running application {0}: {1} {2}", inherited ? "(inherited)" : "",
+                        applicationInstance.getClass().getName(), ws.commandLine().setSession(session).create(args)
+                );
         switch (applicationContext.getMode()) {
             /**
              * both RUN and AUTO_COMPLETE executes the save branch. Later

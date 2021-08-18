@@ -27,6 +27,8 @@ import net.thevpc.nuts.spi.NutsBootWorkspaceFactory;
 
 import java.io.Serializable;
 import java.net.URL;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * workspace initialization options.
@@ -80,6 +82,14 @@ public interface NutsWorkspaceInitInformation extends Serializable {
     NutsStoreLocationStrategy getRepositoryStoreLocationStrategy();
 
     String getStoreLocation(NutsStoreLocation location);
+
+    Map<String, String> getStoreLocations();
+
+    Map<String, String> getHomeLocations();
+
+    boolean isGlobal();
+
+    Set<String> getExtensionsSet();
 
     NutsClassLoaderNode getRuntimeBootDependencyNode();
 

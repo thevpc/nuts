@@ -12,7 +12,7 @@
 CALL $$SCRIPT_NUTS_ENV$$
 
 SET _java=java
-%_java% %NUTS_JAVA_OPTIONS% -jar "$$NUTS_JAR$$" -w "%%NUTS_WORKSPACE%%" %*
+%_java% %NUTS_JAVA_OPTIONS% -jar "$$NUTS_JAR$$" -w "%NUTS_WORKSPACE%" %*
 
 :: END-COMMAND
 

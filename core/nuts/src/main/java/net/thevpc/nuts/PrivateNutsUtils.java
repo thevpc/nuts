@@ -529,7 +529,27 @@ final class PrivateNutsUtils {
                     public FileVisitResult postVisitDirectory(Path dir, IOException exc)
                             throws IOException {
                         count[0]++;
-                        Files.delete(dir);
+                        boolean deleted=false;
+                        for (int i = 0; i < 3; i++) {
+                            try {
+                                Files.delete(dir);
+                                deleted=true;
+                                break;
+                            }catch (DirectoryNotEmptyException e){
+                                // sometimes, on Windows OS, the Filesystem hasn't yet finished deleting
+                                // the children (asynchronous)
+                                //try three times and then exit!
+                            }
+                            try {
+                                Thread.sleep(500);
+                            }catch (InterruptedException e){
+                                break;
+                            }
+                        }
+                        if(!deleted){
+                            //do not catch, last time the exception is thrown
+                            Files.delete(dir);
+                        }
                         return FileVisitResult.CONTINUE;
                     }
                 });

@@ -358,7 +358,7 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
      */
     private String theme;
 
-    private NutsSession session = null;
+    private NutsSession session;
 
     public CoreNutsWorkspaceOptions(NutsSession session) {
         this.session = session;
@@ -1519,5 +1519,9 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
     public NutsWorkspaceOptionsBuilder setTheme(String theme) {
         this.theme = theme;
         return this;
+    }
+
+    public void setSession(NutsSession session) {
+        this.session=session;
     }
 }

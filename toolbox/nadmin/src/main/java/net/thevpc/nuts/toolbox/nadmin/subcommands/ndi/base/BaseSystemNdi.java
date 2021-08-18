@@ -6,7 +6,9 @@ import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.*;
 import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.util.NdiUtils;
 import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.util.ReplaceString;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.StringReader;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -584,54 +586,70 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             throw new UncheckedIOException(ex);
         }
     }
+    public List<String> splitLines(String text){
+        ArrayList<String> lines = new ArrayList<>();
+        if(text==null){
+            return lines;
+        }
+        try(BufferedReader br=new BufferedReader(new StringReader(text))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                lines.add(line);
+            }
+        }catch (IOException ex){
+            throw new UncheckedIOException(ex);
+        }
+        return lines;
+    }
 
     public PathInfo addFileLine(NdiScriptInfoType type,
                                 NutsId id,
                                 Path filePath,
                                 ReplaceString commentLine,
-                                String goodLine,
+                                String contentToAdd,
                                 ReplaceString header) {
 //        Pattern commentLineConditionPattern = Pattern.compile(commentLineConditionRegexp);
         filePath = filePath.toAbsolutePath();
-        List<String> goodLinesList = Arrays.asList(goodLine.split("[\n\r]"));
+        List<String> contentToAddRows = splitLines(contentToAdd);
         boolean found = false;
-        List<String> lines = new ArrayList<>();
+        List<String> newFileContentRows = new ArrayList<>();
+        List<String> oldFileContentRows=null;
         if (Files.isRegularFile(filePath)) {
-            String fileContent = null;
+            String fileContentString = null;
             try {
-                fileContent = new String(Files.readAllBytes(filePath));
+                fileContentString = new String(Files.readAllBytes(filePath));
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
             }
-            List<String> fileRows = new ArrayList<>(Arrays.asList(fileContent.split("[\n\r]")));
+            oldFileContentRows = splitLines(fileContentString);
             //trim lines
-            while (!fileRows.isEmpty()) {
-                if (fileRows.get(0).trim().isEmpty()) {
-                    fileRows.remove(0);
-                } else if (fileRows.get(fileRows.size() - 1).trim().isEmpty()) {
-                    fileRows.remove(fileRows.size() - 1);
+            while (!oldFileContentRows.isEmpty()) {
+                if (oldFileContentRows.get(0).trim().isEmpty()) {
+                    oldFileContentRows.remove(0);
+                } else if (oldFileContentRows.get(oldFileContentRows.size() - 1).trim().isEmpty()) {
+                    oldFileContentRows.remove(oldFileContentRows.size() - 1);
                 } else {
                     break;
                 }
             }
-            for (int i = 0; i < fileRows.size(); i++) {
-                String row = fileRows.get(i);
+            for (int i = 0; i < oldFileContentRows.size(); i++) {
+                String row = oldFileContentRows.get(i);
                 if (isComments(row.trim()) && commentLine.matches(trimComments(row.trim()))) {
                     String clta = toCommentLine(commentLine.getReplacement());
                     if (!clta.equals(row)) {
 //                        updatedFile = true;
                     }
-                    if (lines.size() > 0) {
-                        if (lines.get(lines.size() - 1).trim().length() > 0) {
-                            lines.add("");
+                    if (newFileContentRows.size() > 0) {
+                        if (newFileContentRows.get(newFileContentRows.size() - 1).trim().length() > 0) {
+                            newFileContentRows.add("");
                         }
                     }
-                    lines.add(clta);
+                    newFileContentRows.add(clta);
                     found = true;
                     i++;
                     List<String> old = new ArrayList<>();
-                    while (i < fileRows.size()) {
-                        String s = fileRows.get(i);
+                    while (i < oldFileContentRows.size()) {
+                        String s = oldFileContentRows.get(i);
                         if (s.trim().isEmpty()) {
                             i++;
                             break;
@@ -642,30 +660,30 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                             old.add(s.trim());
                         }
                     }
-                    lines.addAll(goodLinesList);
-                    lines.add("");
-//                    if (!old.equals(goodLinesList)) {
+                    newFileContentRows.addAll(contentToAddRows);
+                    newFileContentRows.add("");
+//                    if (!old.equals(contentToAddRows)) {
 //                    }
-                    for (; i < fileRows.size(); i++) {
-                        lines.add(fileRows.get(i));
+                    for (; i < oldFileContentRows.size(); i++) {
+                        newFileContentRows.add(oldFileContentRows.get(i));
                     }
                 } else {
-                    lines.add(row);
+                    newFileContentRows.add(row);
                 }
             }
         }
         if (header != null) {
-            if (lines.size() == 0 || !header.matches(lines.get(0).trim())) {
-                lines.add(0, header.getReplacement());
+            if (newFileContentRows.size() == 0 || !header.matches(newFileContentRows.get(0).trim())) {
+                newFileContentRows.add(0, header.getReplacement());
             }
         }
         if (!found) {
-            if (lines.size() > 0 && !lines.get(0).trim().isEmpty()) {
-                lines.add("");
+            if (newFileContentRows.size() > 0 && !newFileContentRows.get(0).trim().isEmpty()) {
+                newFileContentRows.add("");
             }
-            lines.add(toCommentLine(commentLine.getReplacement()));
-            lines.addAll(goodLinesList);
-            lines.add("");
+            newFileContentRows.add(toCommentLine(commentLine.getReplacement()));
+            newFileContentRows.addAll(contentToAddRows);
+            newFileContentRows.add("");
         } else {
 //            if (lines.size() > 0) {
 //                if (lines.get(lines.size() - 1).trim().length() > 0) {
@@ -675,7 +693,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         }
         byte[] oldContent = NdiUtils.loadFile(filePath);
         String oldContentString = oldContent == null ? "" : new String(oldContent);
-        byte[] newContent = (String.join(newlineString(), lines)).getBytes();
+        byte[] newContent = (String.join(newlineString(), newFileContentRows)).getBytes();
         String newContentString = new String(newContent);
         PathInfo.Status s = NdiUtils.tryWriteStatus(newContent, filePath);
         return new PathInfo(type, id, filePath, NdiUtils.tryWrite(newContent, filePath));
@@ -762,7 +780,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
      * bigger is better
      *
      * @param extension extension
-     * @return
+     * @return extension support order (bigger is better, 0 or less is ignored)
      */
     protected int resolveIconExtensionPriority(String extension) {
         extension = extension.toLowerCase();

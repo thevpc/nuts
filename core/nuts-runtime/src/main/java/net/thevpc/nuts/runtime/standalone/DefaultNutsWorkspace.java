@@ -197,31 +197,34 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
     }
 
     private void initWorkspace(NutsWorkspaceInitInformation info) {
+        info=new CoreNutsWorkspaceInitInformation(info,null);
         this.uuid = info.getUuid();
         this.bootModel = new DefaultNutsBootModel(this, info);
-        ioModel = new DefaultNutsIOModel(this, bootModel);
+        ((CoreNutsWorkspaceInitInformation)info).setSession(defaultSession());
+
+        this.ioModel = new DefaultNutsIOModel(this, bootModel);
         this.logModel = new DefaultNutsLogModel(this, info);
-        logModel.setDefaultSession(defaultSession());
+        this.logModel.setDefaultSession(defaultSession());
         this.LOG = log().setSession(defaultSession()).of(DefaultNutsWorkspace.class);
         ((DefaultNutsLogger) LOG).suspendTerminal();
         this.name = Paths.get(info.getWorkspaceLocation()).getFileName().toString();
-        termModel = new DefaultNutsTerminalModel(this);
-        concurrentModel = new DefaultNutsConcurrentModel(this);
-        sdkModel = new DefaultNutsSdkModel(this);
-        filtersModel = new DefaultNutsFilterModel(this);
-        installedRepository = new DefaultNutsInstalledRepository(this, info);
-        repositoryModel = new DefaultNutsRepositoryModel(this);
-        configModel = new DefaultNutsWorkspaceConfigModel(this, info);
-        envModel = new DefaultNutsWorkspaceEnvManagerModel(this, info, defaultSession());
-        aliasesModel = new DefaultCustomCommandsModel(this);
-        importModel = new DefaultImportModel(this);
-        locationsModel = new DefaultNutsWorkspaceLocationModel(this, info, Paths.get(info.getWorkspaceLocation()).toString());
-        eventsModel = new DefaultNutsWorkspaceEventModel(this);
-        textModel = new DefaultNutsTextManagerModel(this, info);
-        location = info.getWorkspaceLocation();
-        apiVersion = DefaultNutsVersion.valueOf(Nuts.getVersion(), defaultSession());
-        apiId = new DefaultNutsId("net.thevpc.nuts", "nuts", apiVersion.toString(), defaultSession());
-        runtimeId = new DefaultNutsId(
+        this.termModel = new DefaultNutsTerminalModel(this);
+        this.concurrentModel = new DefaultNutsConcurrentModel(this);
+        this.sdkModel = new DefaultNutsSdkModel(this);
+        this.filtersModel = new DefaultNutsFilterModel(this);
+        this.installedRepository = new DefaultNutsInstalledRepository(this, info);
+        this.repositoryModel = new DefaultNutsRepositoryModel(this);
+        this.configModel = new DefaultNutsWorkspaceConfigModel(this, info);
+        this.envModel = new DefaultNutsWorkspaceEnvManagerModel(this, info, defaultSession());
+        this.aliasesModel = new DefaultCustomCommandsModel(this);
+        this.importModel = new DefaultImportModel(this);
+        this.locationsModel = new DefaultNutsWorkspaceLocationModel(this, info, Paths.get(info.getWorkspaceLocation()).toString());
+        this.eventsModel = new DefaultNutsWorkspaceEventModel(this);
+        this.textModel = new DefaultNutsTextManagerModel(this, info);
+        this.location = info.getWorkspaceLocation();
+        this.apiVersion = DefaultNutsVersion.valueOf(Nuts.getVersion(), defaultSession());
+        this.apiId = new DefaultNutsId("net.thevpc.nuts", "nuts", apiVersion.toString(), defaultSession());
+        this.runtimeId = new DefaultNutsId(
                 info.getRuntimeId().getGroupId(),
                 info.getRuntimeId().getArtifactId(),
                 info.getRuntimeId().getVersion().toString(),
@@ -243,7 +246,9 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             LOGCSF.log(" ");
             LOGCSF.log("start ```sh nuts``` ```primary3 {0}``` at {1}", Nuts.getVersion(), CoreNutsUtils.DEFAULT_DATE_TIME_FORMATTER.format(Instant.ofEpochMilli(info.getOptions().getCreationTime())));
             NutsCommandLineManager commandLine = commandLine().setSession(defaultSession());
-            LOGCRF.log("open Nuts Workspace               : {0}", info.getOptions().format().getBootCommandLine());
+            LOGCRF.log("open Nuts Workspace               : {0}",
+                    info.getOptions().format().getBootCommandLine()
+            );
             LOGCRF.log("open Nuts Workspace (compact)     : {0}", info.getOptions().format().setCompact(true).getBootCommandLine());
 
             LOGCRF.log("open Workspace with config        : ");

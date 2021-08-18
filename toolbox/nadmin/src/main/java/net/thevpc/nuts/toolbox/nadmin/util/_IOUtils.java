@@ -12,6 +12,10 @@ public class _IOUtils {
         return p;
     }
 
+    public static String loadFileContentLenientString(Path out) {
+        return new String(loadFileContentLenient(out));
+    }
+
     public static byte[] loadFileContentLenient(Path out) {
         if (Files.isRegularFile(out)) {
             try {

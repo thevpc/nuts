@@ -68,17 +68,17 @@ public class WindowsNdi extends BaseSystemNdi {
 
     @Override
     protected String getCallScriptCommand(String path,String... args) {
-        return "@CALL \"" + path + "\"" + "\" "+Arrays.stream(args).map(a->dblQte(a)).collect(Collectors.joining(" "));
+        return "@CALL \"" + path + "\"" + " "+Arrays.stream(args).map(a->dblQte(a)).collect(Collectors.joining(" "));
     }
 
     @Override
     protected String getSetVarCommand(String name, String value) {
-        return "SET \"name="+value+"\"";
+        return "SET \""+name+"="+value+"\"";
     }
 
     @Override
     protected String getSetVarStaticCommand(String name, String value) {
-        return "SET \"name="+value+"\"";
+        return "SET \""+name+"="+value+"\"";
     }
 
     @Override
