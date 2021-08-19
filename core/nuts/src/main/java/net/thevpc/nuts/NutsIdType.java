@@ -56,7 +56,6 @@ public enum NutsIdType implements NutsEnum{
      * the id denotes a nuts companion id artifact.
      * Default companions are
      * <ul>
-     *     <li>net.thevpc.nuts.toolbox:nadmin</li>
      *     <li>net.thevpc.nuts.toolbox:nsh</li>
      * </ul>
      *

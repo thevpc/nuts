@@ -49,9 +49,10 @@ public class NutsComponentController {
             Iterator<NutsWorkspaceLocation> iterator = subscriber.getWorkspaceLocations().values().iterator();
             if (iterator.hasNext()) {
                 NutsWorkspaceLocation workspaceLocation = iterator.next();
-                NutsWorkspace ws = Nuts.openWorkspace("--workspace",workspaceLocation.getLocation());
+                NutsSession session = Nuts.openWorkspace("--workspace",workspaceLocation.getLocation());
+                NutsWorkspace ws = session.getWorkspace();
                 List<Map<String, String>> rows = this.dataService.
-                        getAllData(NutsIndexerUtils.getCacheDir(ws.createSession(), subscriber.cacheFolderName()));
+                        getAllData(NutsIndexerUtils.getCacheDir(session, subscriber.cacheFolderName()));
                 List<Map<String, Object>> resData = cleanNutsIdMap(ws, rows);
                 return ResponseEntity.ok(resData);
             }
@@ -78,8 +79,8 @@ public class NutsComponentController {
             Iterator<NutsWorkspaceLocation> iterator = subscriber.getWorkspaceLocations().values().iterator();
             if (iterator.hasNext()) {
                 NutsWorkspaceLocation workspaceLocation = iterator.next();
-                NutsWorkspace ws = Nuts.openWorkspace("--workspace",workspaceLocation.getLocation());
-                NutsSession session = ws.createSession();
+                NutsSession session = Nuts.openWorkspace("--workspace",workspaceLocation.getLocation());
+                NutsWorkspace ws = session.getWorkspace();
                 NutsId id = ws.id().builder()
                         .setArtifactId(name)
                         .setRepository(namespace)
@@ -121,7 +122,8 @@ public class NutsComponentController {
             Iterator<NutsWorkspaceLocation> iterator = subscriber.getWorkspaceLocations().values().iterator();
             if (iterator.hasNext()) {
                 NutsWorkspaceLocation workspaceLocation = iterator.next();
-                NutsWorkspace ws = Nuts.openWorkspace("--workspace",workspaceLocation.getLocation());
+                NutsSession session = Nuts.openWorkspace("--workspace",workspaceLocation.getLocation());
+                NutsWorkspace ws = session.getWorkspace();
                 NutsId id = ws.id().builder()
                         .setArtifactId(name)
                         .setRepository(namespace)
@@ -159,7 +161,8 @@ public class NutsComponentController {
             Iterator<NutsWorkspaceLocation> iterator = subscriber.getWorkspaceLocations().values().iterator();
             if (iterator.hasNext()) {
                 NutsWorkspaceLocation workspaceLocation = iterator.next();
-                NutsWorkspace ws = Nuts.openWorkspace("--workspace",workspaceLocation.getLocation());
+                NutsSession session = Nuts.openWorkspace("--workspace",workspaceLocation.getLocation());
+                NutsWorkspace ws = session.getWorkspace();
                 Map<String, String> data = NutsIndexerUtils.nutsIdToMap(
                         ws.id().builder()
                                 .setArtifactId(name)
@@ -198,7 +201,8 @@ public class NutsComponentController {
             Iterator<NutsWorkspaceLocation> iterator = subscriber.getWorkspaceLocations().values().iterator();
             if (iterator.hasNext()) {
                 NutsWorkspaceLocation workspaceLocation = iterator.next();
-                NutsWorkspace ws = Nuts.openWorkspace("--workspace",workspaceLocation.getLocation());
+                NutsSession session = Nuts.openWorkspace("--workspace",workspaceLocation.getLocation());
+                NutsWorkspace ws = session.getWorkspace();
                 NutsId id = ws.id().builder()
                         .setArtifactId(name)
                         .setRepository(namespace)
@@ -211,7 +215,6 @@ public class NutsComponentController {
 //                        .setAlternative(alternative)
                         .build();
                 Map<String, String> data = NutsIndexerUtils.nutsIdToMap(id);
-                NutsSession session = ws.createSession();
                 List<Map<String, String>> list = this.dataService.searchData(NutsIndexerUtils.getCacheDir(session, subscriber.cacheFolderName()), data, null);
                 if (list.isEmpty()) {
                     Iterator<NutsDefinition> it = ws.search()

@@ -34,14 +34,14 @@ public interface NutsWorkspaceAppsManager {
     /**
      * create a new instance of {@link NutsApplicationContext}
      *
+     * @param session session context session. If null will consider {@code getSession()} that should not be null as well.
      * @param args            application arguments
+     * @param startTimeMillis application start time
      * @param appClass        application class
      * @param storeId         application store id or null
-     * @param startTimeMillis application start time
-     * @param session session
      * @return new instance of {@link NutsApplicationContext}
      */
-    NutsApplicationContext createApplicationContext(String[] args, Class appClass, String storeId, long startTimeMillis, NutsSession session);
+    NutsApplicationContext createApplicationContext(NutsSession session, String[] args, long startTimeMillis, Class appClass, String storeId);
 
     /**
      * create a new exec entries action

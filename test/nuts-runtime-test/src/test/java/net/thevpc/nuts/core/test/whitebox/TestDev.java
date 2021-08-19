@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 public class TestDev {
     @Test
     void test(){
-        NutsWorkspace ws = Nuts.openWorkspace();
+        NutsWorkspace ws = Nuts.openWorkspace().getWorkspace();
         NutsSession session = ws.createSession();
 
 

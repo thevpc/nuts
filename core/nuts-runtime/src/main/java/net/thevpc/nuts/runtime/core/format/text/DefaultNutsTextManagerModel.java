@@ -25,12 +25,8 @@ package net.thevpc.nuts.runtime.core.format.text;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.thevpc.nuts.NutsCodeFormat;
-import net.thevpc.nuts.NutsDefaultSupportLevelContext;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsTextFormatTheme;
-import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.NutsWorkspaceInitInformation;
+
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.format.elem.DefaultNutsElementFactoryService;
 import net.thevpc.nuts.runtime.core.format.elem.NutsElementFactoryService;
 import net.thevpc.nuts.runtime.core.format.elem.NutsElementStreamFormat;
@@ -55,6 +51,7 @@ import net.thevpc.nuts.spi.NutsComponent;
  */
 public class DefaultNutsTextManagerModel {
 
+    private String styleThemeName;
     private NutsTextFormatTheme styleTheme;
     private List<NutsCodeFormat> codeFormats = new ArrayList<>();
     private JavaBlocTextFormatter javaBlocTextFormatter;
@@ -64,7 +61,7 @@ public class DefaultNutsTextManagerModel {
     private ShellBlocTextFormatter shellBlocTextFormatter;
     private PlainBlocTextFormatter plainBlocTextFormatter;
     private NutsWorkspaceInitInformation info;
-    private DefaultNutsTextFormatTheme defaultTheme;
+    private NutsTextFormatTheme defaultTheme;
     private NutsWorkspace ws;
     private NutsElementFactoryService elementFactoryService;
     private NutsElementStreamFormat jsonMan;
@@ -76,32 +73,53 @@ public class DefaultNutsTextManagerModel {
         this.info = info;
     }
 
-    public final DefaultNutsTextFormatTheme getDefaultTheme(NutsSession session) {
+    public final NutsTextFormatTheme getDefaultTheme(NutsSession session) {
         if (defaultTheme == null) {
-            defaultTheme = new DefaultNutsTextFormatTheme(ws);
+            if(session.getWorkspace().env().getOsFamily()== NutsOsFamily.WINDOWS){
+                //dark blue is very ugly under windows, replace it with light blue!
+                defaultTheme=new NutsTextFormatThemeWrapper(new NutsTextFormatPropertiesTheme("simple", null, session));
+            }else {
+                defaultTheme = new DefaultNutsTextFormatTheme(ws);
+            }
         }
         return defaultTheme;
     }
 
+    public NutsTextFormatTheme createTheme(String y,NutsSession session) {
+        if (!CoreStringUtils.isBlank(y)) {
+            y=y.trim();
+            if ("default".equals(y)) {
+                //default always refers to this implementation
+                return getDefaultTheme(session);
+            } else {
+                return new NutsTextFormatThemeWrapper(new NutsTextFormatPropertiesTheme(y, null, session));
+            }
+        } else {
+            return getDefaultTheme(session);
+        }
+    }
+
     public NutsTextFormatTheme getTheme(NutsSession session) {
         if (styleTheme == null) {
-            String y = info.getOptions().getTheme();
-            if (!CoreStringUtils.isBlank(y)) {
-                if ("default".equals(y)) {
-                    //default always refers to the this implementation
-                    styleTheme = getDefaultTheme(session);
-                } else {
-                    styleTheme = new NutsTextFormatThemeWrapper(new NutsTextFormatPropertiesTheme(y, null, ws));
-                }
-            } else {
-                styleTheme = getDefaultTheme(session);
+            if(styleThemeName==null){
+                styleThemeName=info.getOptions().getTheme();
             }
+            styleTheme=createTheme(styleThemeName,session);
         }
         return styleTheme;
     }
 
     public void setTheme(NutsTextFormatTheme styleTheme, NutsSession session) {
         this.styleTheme = styleTheme;
+    }
+
+    public void setTheme(String styleThemeName, NutsSession session) {
+        if(styleThemeName==null || styleThemeName.trim().isEmpty()){
+            styleThemeName="default";
+        }
+        styleThemeName=styleThemeName.trim();
+        styleTheme=createTheme(styleThemeName,session);
+        this.styleThemeName = styleThemeName;
     }
 
     public NutsCodeFormat getCodeFormat(String kind, NutsSession session) {

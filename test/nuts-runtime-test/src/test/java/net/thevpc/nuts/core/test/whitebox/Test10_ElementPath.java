@@ -48,7 +48,7 @@ public class Test10_ElementPath {
 
     @Test
     public void test1() {
-        NutsWorkspace ws = Nuts.openWorkspace("-y","--workspace", baseFolder + "/" + TestUtils.getCallerMethodName());
+        NutsWorkspace ws = TestUtils.openTestWorkspace("-y","--workspace", baseFolder + "/" + TestUtils.getCallerMethodName()).getWorkspace();
         NutsElementFormat e = ws.elem();
         NutsElement p
                 = e.forArray()

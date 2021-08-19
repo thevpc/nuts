@@ -120,27 +120,27 @@ public class DefaultCustomCommandManager implements NutsCustomCommandManager {
         return this;
     }
 
-    public void createLauncher(NutsLauncherOptions launcher) {
+    public void addLauncher(NutsLauncherOptions launcher) {
         checkSession();
-        if(launcher==null){
-            throw new NutsIllegalArgumentException(getSession(),NutsMessage.cstyle("missing launcher options"));
+        if (launcher == null) {
+            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("missing launcher options"));
         }
         NutsId id = launcher.getId();
-        if(id==null){
-            throw new NutsIllegalArgumentException(getSession(),NutsMessage.cstyle("missing id"));
+        if (id == null) {
+            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("missing id"));
         }
 
         NutsWorkspace ws = getSession().getWorkspace();
         List<String> cmdLine = new ArrayList<>();
         cmdLine.add(id.getShortName());
-        if(launcher.getArgs()!=null) {
+        if (launcher.getArgs() != null) {
             cmdLine.addAll(Arrays.asList(launcher.getArgs()));
         }
-        String alias=launcher.getAlias();
-        if(alias==null|| alias.isEmpty()){
-            alias=id.getArtifactId();
+        String alias = launcher.getAlias();
+        if (alias == null || alias.isEmpty()) {
+            alias = id.getArtifactId();
         }
-        if(launcher.isCreateAlias()) {
+        if (launcher.isCreateAlias()) {
             if (!ws.commands().commandExists(alias)) {
                 ws.commands()
                         .addCommand(
@@ -151,110 +151,95 @@ public class DefaultCustomCommandManager implements NutsCustomCommandManager {
                         );
             }
         }
-        boolean installedNadmin = ws.search().addIds("net.thevpc.nuts.toolbox:nadmin")
-                .setTargetApiVersion(ws.getApiId().getVersion())
-                .setInstallStatus(ws.filters().installStatus().byDefaultValue(true))
-                .getResultIds().first() != null;
-        if (!installedNadmin && launcher.isInstallExtensions()) {
-            ws.install().setId(
-                    ws.search().addIds("net.thevpc.nuts.toolbox:nadmin")
-                            .setTargetApiVersion(ws.getApiId().getVersion())
-                            .setLatest(true)
-                            .getResultIds().required()
-            ).run();
-            installedNadmin = true;
+
+        NutsExecCommand cmd = ws.exec().setCommand("settings", "add", "launcher");
+        if (alias != null) {
+            cmd.addCommand("--name", alias);
         }
-        if (installedNadmin) {
-            NutsExecCommand cmd = ws.exec().setCommand(
-                    "net.thevpc.nuts.toolbox:nadmin",
-                    "add", "script"
-            );
-            if (alias != null) {
-                cmd.addCommand("--name",alias);
-            }
-            if (!GraphicsEnvironment.isHeadless()) {
-                if(launcher.getCreateDesktopShortcut()!=null){
-                    switch (launcher.getCreateDesktopShortcut()) {
-                        case NEVER:{
-                            break;
-                        }
-                        case ALWAYS:{
-                            cmd.addCommand("--desktop=always");
-                            break;
-                        }
-                        case PREFERRED:{
-                            cmd.addCommand("--desktop=preferred");
-                            break;
-                        }
-                        case SUPPORTED:{
-                            cmd.addCommand("--desktop=supported");
-                            break;
-                        }
-                        default:{
-                            throw new NutsUnsupportedEnumException(getSession(), launcher.getCreateDesktopShortcut());
-                        }
+        if (!GraphicsEnvironment.isHeadless()) {
+            if (launcher.getCreateDesktopShortcut() != null) {
+                switch (launcher.getCreateDesktopShortcut()) {
+                    case NEVER: {
+                        break;
                     }
-                }
-                if(launcher.getCreateMenuShortcut()!=null){
-                    switch (launcher.getCreateMenuShortcut()) {
-                        case NEVER:{
-                            break;
-                        }
-                        case ALWAYS:{
-                            cmd.addCommand("--menu=always");
-                            break;
-                        }
-                        case PREFERRED:{
-                            cmd.addCommand("--menu=preferred");
-                            break;
-                        }
-                        case SUPPORTED:{
-                            cmd.addCommand("--menu=supported");
-                            break;
-                        }
-                        default:{
-                            throw new NutsUnsupportedEnumException(getSession(), launcher.getCreateMenuShortcut());
-                        }
+                    case ALWAYS: {
+                        cmd.addCommand("--desktop=always");
+                        break;
                     }
-                }
-                if(launcher.getCreateCustomShortcut()!=null){
-                    switch (launcher.getCreateCustomShortcut()) {
-                        case NEVER:{
-                            break;
-                        }
-                        case ALWAYS:{
-                            cmd.addCommand("--shortcut=always");
-                            break;
-                        }
-                        case PREFERRED:{
-                            cmd.addCommand("--shortcut=preferred");
-                            break;
-                        }
-                        case SUPPORTED:{
-                            cmd.addCommand("--shortcut=supported");
-                            break;
-                        }
-                        default:{
-                            throw new NutsUnsupportedEnumException(getSession(), launcher.getCreateCustomShortcut());
-                        }
+                    case PREFERRED: {
+                        cmd.addCommand("--desktop=preferred");
+                        break;
                     }
-                }
-                if(launcher.getShortcutName()!=null){
-                    cmd.addCommand("--shortcut-name",launcher.getShortcutName());
-                }
-                if(launcher.getCustomShortcutPath()!=null){
-                    cmd.addCommand("--shortcut-path",launcher.getCustomShortcutPath());
-                }
-                if(launcher.getMenuCategory()!=null){
-                    cmd.addCommand("--menu-category",launcher.getMenuCategory());
-                }
-                if(launcher.getIcon()!=null){
-                    cmd.addCommand("--icon",launcher.getMenuCategory());
+                    case SUPPORTED: {
+                        cmd.addCommand("--desktop=supported");
+                        break;
+                    }
+                    default: {
+                        throw new NutsUnsupportedEnumException(getSession(), launcher.getCreateDesktopShortcut());
+                    }
                 }
             }
-            cmd.addCommand(id.getLongName());
-            cmd.setFailFast(true);
-            cmd.run();
+            if (launcher.getCreateMenuShortcut() != null) {
+                switch (launcher.getCreateMenuShortcut()) {
+                    case NEVER: {
+                        break;
+                    }
+                    case ALWAYS: {
+                        cmd.addCommand("--menu=always");
+                        break;
+                    }
+                    case PREFERRED: {
+                        cmd.addCommand("--menu=preferred");
+                        break;
+                    }
+                    case SUPPORTED: {
+                        cmd.addCommand("--menu=supported");
+                        break;
+                    }
+                    default: {
+                        throw new NutsUnsupportedEnumException(getSession(), launcher.getCreateMenuShortcut());
+                    }
+                }
+            }
+            if (launcher.getCreateCustomShortcut() != null) {
+                switch (launcher.getCreateCustomShortcut()) {
+                    case NEVER: {
+                        break;
+                    }
+                    case ALWAYS: {
+                        cmd.addCommand("--shortcut=always");
+                        break;
+                    }
+                    case PREFERRED: {
+                        cmd.addCommand("--shortcut=preferred");
+                        break;
+                    }
+                    case SUPPORTED: {
+                        cmd.addCommand("--shortcut=supported");
+                        break;
+                    }
+                    default: {
+                        throw new NutsUnsupportedEnumException(getSession(), launcher.getCreateCustomShortcut());
+                    }
+                }
+            }
+            if (launcher.getShortcutName() != null) {
+                cmd.addCommand("--shortcut-name", launcher.getShortcutName());
+            }
+            if (launcher.getCustomShortcutPath() != null) {
+                cmd.addCommand("--shortcut-path", launcher.getCustomShortcutPath());
+            }
+            if (launcher.getMenuCategory() != null) {
+                cmd.addCommand("--menu-category", launcher.getMenuCategory());
+            }
+            if (launcher.getIcon() != null) {
+                cmd.addCommand("--icon", launcher.getMenuCategory());
+            }
         }
+        cmd.addCommand(id.getLongName());
+        cmd.setFailFast(true);
+        cmd.setExecutionType(NutsExecutionType.EMBEDDED);
+        cmd.run();
+
     }
 }

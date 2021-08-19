@@ -34,11 +34,10 @@ public class Test12_CopyTest {
         extraProperties.put("nuts.export.always-show-command", "true");
         TestUtils.setSystemProperties(extraProperties);
 
-        NutsWorkspace ws = Nuts.openWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
+        NutsWorkspace ws = TestUtils.openTestWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
                 "--archetype", "default",
-                "--yes",
                 "--log-info",
-                "--skip-companions");
+                "--skip-companions").getWorkspace();
         NutsSession session = ws.createSession();
         ws = ws.createSession().getWorkspace();
         Path from = Paths.get(ws.io().tmp()

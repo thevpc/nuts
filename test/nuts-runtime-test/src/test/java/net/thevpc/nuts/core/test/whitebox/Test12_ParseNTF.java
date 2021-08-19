@@ -61,10 +61,9 @@ public class Test12_ParseNTF {
         extraProperties.put("nuts.export.always-show-command", "true");
         TestUtils.setSystemProperties(extraProperties);
         String wsPath = baseFolder + "/" + TestUtils.getCallerMethodName();
-        NutsWorkspace ws = Nuts.openWorkspace("--workspace", wsPath,
+        NutsWorkspace ws = TestUtils.openTestWorkspace("--workspace", wsPath,
                 "--standalone",
-                "--yes",
-                "--skip-companions");
+                "--skip-companions").getWorkspace();
         NutsSession session = ws.createSession();
         NutsTextManager txt = session.getWorkspace().text();
         NutsText parsed = txt.parse("##:error0:n#01##");
@@ -77,11 +76,11 @@ public class Test12_ParseNTF {
         extraProperties.put("nuts.export.always-show-command", "true");
         TestUtils.setSystemProperties(extraProperties);
         String wsPath = baseFolder + "/" + TestUtils.getCallerMethodName();
-        NutsWorkspace ws = Nuts.openWorkspace("--workspace", wsPath,
+        NutsWorkspace ws = TestUtils.openTestWorkspace("--workspace", wsPath,
                 "--standalone",
                 "-Z",
                 "--yes",
-                "--skip-companions");
+                "--skip-companions").getWorkspace();
         NutsSession session = ws.createSession();
         NutsTextManager txt = session.getWorkspace().text();
 
@@ -102,11 +101,11 @@ public class Test12_ParseNTF {
         extraProperties.put("nuts.export.always-show-command", "true");
         TestUtils.setSystemProperties(extraProperties);
         String wsPath = baseFolder + "/" + TestUtils.getCallerMethodName();
-        NutsWorkspace ws = Nuts.openWorkspace("--workspace", wsPath,
+        NutsWorkspace ws = TestUtils.openTestWorkspace("--workspace", wsPath,
                 "--standalone",
                 "-Z",
                 "--yes",
-                "--skip-companions");
+                "--skip-companions").getWorkspace();
         NutsSession session = ws.createSession();
         NutsTextManager txt = session.getWorkspace().text();
 
@@ -127,7 +126,7 @@ public class Test12_ParseNTF {
         NutsWorkspace ws = TestUtils.openTestWorkspace(
                 "--standalone",
                 "-Z",
-                "--skip-companions");
+                "--skip-companions").getWorkspace();
         NutsSession session = ws.createSession();
         NutsTextManager txt = session.getWorkspace().text();
 
@@ -148,7 +147,7 @@ public class Test12_ParseNTF {
         NutsWorkspace ws = TestUtils.openTestWorkspace(
                 "--standalone",
                 "-Z",
-                "--skip-companions");
+                "--skip-companions").getWorkspace();
         NutsSession session = ws.createSession();
         NutsTextManager txt = session.getWorkspace().text();
 
@@ -205,7 +204,7 @@ public class Test12_ParseNTF {
         NutsWorkspace ws = TestUtils.openTestWorkspace(
                 "--standalone",
                 "-Z",
-                "--skip-companions");
+                "--skip-companions").getWorkspace();
         NutsSession session = ws.createSession();
         NutsTextManager txt = session.getWorkspace().text();
 
@@ -263,7 +262,7 @@ public class Test12_ParseNTF {
         NutsWorkspace ws = TestUtils.openTestWorkspace(
                 "--standalone",
                 "-Z",
-                "--skip-companions");
+                "--skip-companions").getWorkspace();
         NutsSession session = ws.createSession();
         NutsTextManager txt = session.getWorkspace().text();
 
@@ -280,7 +279,7 @@ public class Test12_ParseNTF {
         Map<String, String> extraProperties = new HashMap<>();
         extraProperties.put("nuts.export.always-show-command", "true");
         TestUtils.setSystemProperties(extraProperties);
-        NutsWorkspace ws = TestUtils.openTestWorkspace("-ZSkK");
+        NutsWorkspace ws = TestUtils.openTestWorkspace("-ZSkK").getWorkspace();
         NutsSession session = ws.createSession();
         NutsTextManager txt = session.getWorkspace().text();
 

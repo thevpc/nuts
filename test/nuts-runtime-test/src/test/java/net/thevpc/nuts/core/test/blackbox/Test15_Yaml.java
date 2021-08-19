@@ -57,9 +57,9 @@ public class Test15_Yaml {
 
     @Test
     public void test1() throws Exception {
-        NutsWorkspace ws = Nuts.openWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
+        NutsWorkspace ws = TestUtils.openTestWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
                 "-byZSKk"
-        );
+        ).getWorkspace();
         String path = "net/thevpc/nuts/core/test/blackbox/yaml1.yml";
         ws = ws.createSession().getWorkspace();
         NutsElement e = ws.elem().setContentType(NutsContentType.YAML)

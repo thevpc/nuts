@@ -12,8 +12,8 @@ public class DefaultNutsSystemTerminalBaseBoot implements NutsSystemTerminalBase
 
     private NutsLogger LOG;
     private Scanner scanner;
-    private NutsTerminalMode outMode = NutsTerminalMode.FORMATTED;
-    private NutsTerminalMode errMode = NutsTerminalMode.FORMATTED;
+//    private NutsTerminalMode outMode = NutsTerminalMode.FORMATTED;
+//    private NutsTerminalMode errMode = NutsTerminalMode.FORMATTED;
     private NutsPrintStream out;
     private NutsPrintStream err;
     private InputStream in;
@@ -26,18 +26,20 @@ public class DefaultNutsSystemTerminalBaseBoot implements NutsSystemTerminalBase
         NutsWorkspaceOptions options = bootModel.getWorkspaceInitInformation().getOptions();
         this.session = bootModel.bootSession();
         this.workspace = session.getWorkspace();
-        NutsTerminalMode terminalMode = options.getTerminalMode();
-        if (terminalMode == null) {
-            if (options.isBot()) {
-                terminalMode = NutsTerminalMode.FILTERED;
-            } else {
-                terminalMode = NutsTerminalMode.FORMATTED;
-            }
-        }
-        this.outMode = terminalMode;
-        this.errMode = terminalMode;
-        this.out = bootModel.stdout().convertMode(terminalMode);
-        this.err = bootModel.stderr().convertMode(terminalMode);
+//        NutsTerminalMode terminalMode = options.getTerminalMode();
+//        if (terminalMode == null) {
+//            if (options.isBot()) {
+//                terminalMode = NutsTerminalMode.FILTERED;
+//            } else {
+//                terminalMode = NutsTerminalMode.FORMATTED;
+//            }
+//        }
+//        this.outMode = terminalMode;
+//        this.errMode = terminalMode;
+//        this.outMode = bootModel.stdout().mode();
+//        this.errMode = bootModel.stderr().mode();
+        this.out = bootModel.stdout();//.convertMode(terminalMode);
+        this.err = bootModel.stderr();//.convertMode(terminalMode);
         this.in = bootModel.stdin();
         this.scanner = new Scanner(this.in);
     }

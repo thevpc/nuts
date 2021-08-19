@@ -31,10 +31,9 @@ public class Test11_LogTest {
         extraProperties.put("nuts.export.always-show-command", "true");
         TestUtils.setSystemProperties(extraProperties);
 
-        NutsWorkspace ws = Nuts.openWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
+        NutsWorkspace ws = TestUtils.openTestWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
                 "--archetype", "default",
-                "--yes",
-                "--skip-companions");
+                "--skip-companions").getWorkspace();
 
         ws = ws.createSession().getWorkspace();
         TestUtils.println(ws.version().formatter());

@@ -175,7 +175,7 @@ public class NutsServerMain implements NutsApplication {
                                             .setWorkspace(wsLocation)
                                             .setOpenMode(NutsOpenMode.OPEN_OR_ERROR)
                                             .setReadOnly(server.readOnly)
-                            );
+                            ).getWorkspace();
                             server.workspaces.put(wsContext, nutsWorkspace);
                         }
                     }

@@ -29,13 +29,12 @@ public class Test14_Commandline {
         extraProperties.put("nuts.export.always-show-command", "true");
         TestUtils.setSystemProperties(extraProperties);
 
-        NutsWorkspace ws = Nuts.openWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
+        NutsWorkspace ws = TestUtils.openTestWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
                 "--archetype", "default",
-                "--yes",
                 "--log-info",
                 "--skip-companions",
                 "--skip-welcome"
-        );
+        ).getWorkspace();
         NutsSession session = ws.createSession();
 
         NutsArgument[] cmd = session.getWorkspace().commandLine().parse("-ad+ +ad--").toArgumentArray();

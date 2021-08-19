@@ -148,9 +148,6 @@ public class SshCommand extends AbstractNshBuiltin {
                             } else {
                                 javaCmd = ("java");
                             }
-                            if (sshSession.exec(javaCmd, "-jar", workspace + "/" + bootApiFileName, "-y", "install", "nadmin", "--yes") != 0) {
-                                throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("install remote nuts failed"), 2);
-                            }
                         }
                     }
                     cmd.add(workspace + "/nuts");

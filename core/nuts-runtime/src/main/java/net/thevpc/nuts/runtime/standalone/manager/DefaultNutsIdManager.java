@@ -80,6 +80,11 @@ public class DefaultNutsIdManager implements NutsIdManager {
         return new DefaultNutsIdParser(getSession());
     }
 
+    @Override
+    public NutsId parse(String id) {
+        return parser().parse(id);
+    }
+
     public NutsWorkspace getWorkspace() {
         return ws;
     }

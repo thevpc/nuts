@@ -143,7 +143,7 @@ public class NutsHttpServlet extends HttpServlet {
                         .setWorkspace(workspaceLocation)
                         .setOpenMode(NutsOpenMode.OPEN_OR_CREATE)
                         .setArchetype("server")
-        );
+        ).getWorkspace();
         DefaultNutsWorkspaceServerManager serverManager = new DefaultNutsWorkspaceServerManager(workspace.createSession());
         if (workspaces.isEmpty()) {
             String wl = workspaceLocation == null ? "" : workspaceLocation;
@@ -164,7 +164,7 @@ public class NutsHttpServlet extends HttpServlet {
                         .setWorkspace(location)
                         .setOpenMode(NutsOpenMode.OPEN_OR_CREATE)
                         .setArchetype("server")
-                );
+                ).getWorkspace();
                 workspacesByLocation.put(location, ws);
             }
             workspacesByWebContextPath.put(webContext, ws);

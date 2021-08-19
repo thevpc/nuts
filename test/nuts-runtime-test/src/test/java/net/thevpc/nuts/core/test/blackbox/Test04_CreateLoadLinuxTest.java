@@ -52,8 +52,8 @@ public class Test04_CreateLoadLinuxTest {
                 "--yes",
                 "info");
 
-        NutsWorkspace w = Nuts.openWorkspace("--system-config-home", new File(base, "system.config").getPath(),
-                "-y","info");
+        NutsWorkspace w = TestUtils.openTestWorkspace("--system-config-home", new File(base, "system.config").getPath(),
+                "info").getWorkspace();
         TestUtils.println("==========================");
         w = w.createSession().getWorkspace();
         w.info().println();
@@ -93,9 +93,9 @@ public class Test04_CreateLoadLinuxTest {
                 w.locations().getStoreLocation(NutsStoreLocation.RUN)
         );
 
-        w = Nuts.openWorkspace(//            "--workspace", "default-workspace",
+        w = TestUtils.openTestWorkspace(//            "--workspace", "default-workspace",
 //            "--workspace", new File(base, "system.config/default-workspace").getPath(),
-                "info");
+                "info").getWorkspace();
         w = w.createSession().getWorkspace();
         TestUtils.println(w.locations().getStoreLocation(NutsStoreLocation.APPS));
         Assertions.assertEquals(

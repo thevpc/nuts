@@ -115,7 +115,7 @@ public final class Nuts {
      * @param args arguments
      * @return NutsWorkspace instance
      */
-    public static NutsWorkspace openInheritedWorkspace(String... args) throws NutsUnsatisfiedRequirementsException {
+    public static NutsSession openInheritedWorkspace(String... args) throws NutsUnsatisfiedRequirementsException {
         long startTime = System.currentTimeMillis();
         NutsBootWorkspace boot;
         String nutsWorkspaceOptions = PrivateNutsUtils.trim(
@@ -139,7 +139,7 @@ public final class Nuts {
      * @param args nuts boot arguments
      * @return new NutsWorkspace instance
      */
-    public static NutsWorkspace openWorkspace(String... args) throws NutsUnsatisfiedRequirementsException {
+    public static NutsSession openWorkspace(String... args) throws NutsUnsatisfiedRequirementsException {
         return new NutsBootWorkspace(args).openWorkspace();
     }
 
@@ -148,7 +148,7 @@ public final class Nuts {
      *
      * @return new NutsWorkspace instance
      */
-    public static NutsWorkspace openWorkspace() {
+    public static NutsSession openWorkspace() {
         return openWorkspace((NutsWorkspaceOptions) null);
     }
 
@@ -158,7 +158,7 @@ public final class Nuts {
      * @param options boot options
      * @return new NutsWorkspace instance
      */
-    public static NutsWorkspace openWorkspace(NutsWorkspaceOptions options) {
+    public static NutsSession openWorkspace(NutsWorkspaceOptions options) {
         return new NutsBootWorkspace(options).openWorkspace();
     }
 

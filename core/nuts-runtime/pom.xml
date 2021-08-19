@@ -53,6 +53,23 @@
         <github.global.server>github</github.global.server>
         <nuts-runtime>true</nuts-runtime>
         <dependencies.org.fusesource.jansi:jansi.os>windows</dependencies.org.fusesource.jansi:jansi.os>
+        <dependencies.com.github.vatbub:mslinks.os>windows</dependencies.com.github.vatbub:mslinks.os>
+        <conditional-dependencies>
+            <![CDATA[
+            <conditional-dependencies>
+                <dependency>
+                    <groupId>org.fusesource.jansi</groupId>
+                    <artifactId>jansi</artifactId>
+                    <os>windows</os>
+                </dependency>
+                <dependency>
+                    <groupId>com.github.vatbub</groupId>
+                    <artifactId>mslinks</artifactId>
+                    <os>windows</os>
+                </dependency>
+            </conditional-dependencies>
+            ]]>
+        </conditional-dependencies>
         <nuts.repositories>
             ~/.m2/repository
             https://repo.maven.apache.org/maven2/
@@ -69,8 +86,21 @@
             <groupId>org.fusesource.jansi</groupId>
             <artifactId>jansi</artifactId>
 <!--            <optional>true</optional>-->
+            <!--!
+             <os>windows</os>
+            -->
             <version>2.3.4</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.vatbub</groupId>
+            <artifactId>mslinks</artifactId>
+            <version>1.0.5</version>
+            <!--            <version>1.0.6.2</version> requires JDK10-->
+            <!--!
+             <os>windows</os>
+            -->
+        </dependency>
+
         <!--        <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>

@@ -25,7 +25,7 @@
         </goals>
         <properties>
             <exec.args>--hold -e java -agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address} -classpath
-                %classpath net.thevpc.nuts.Nuts nadmin list aliases</exec.args>
+                %classpath net.thevpc.nuts.Nuts settings list aliases</exec.args>
             <exec.executable>konsole</exec.executable>
             <jpda.listen>true</jpda.listen>
         </properties>

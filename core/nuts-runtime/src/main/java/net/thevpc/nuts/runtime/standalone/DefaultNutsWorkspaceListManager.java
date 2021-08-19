@@ -85,7 +85,7 @@ public class DefaultNutsWorkspaceListManager implements NutsWorkspaceListManager
 
     @Override
     public NutsWorkspace addWorkspace(String path, NutsSession session) {
-        NutsWorkspace workspace = this.createWorkspace(path);
+        NutsWorkspace workspace = this.createWorkspace(path).getWorkspace();
         NutsWorkspaceLocation workspaceLocation = new NutsWorkspaceLocation()
                 .setUuid(workspace.getUuid())
                 .setName(
@@ -97,7 +97,7 @@ public class DefaultNutsWorkspaceListManager implements NutsWorkspaceListManager
         return workspace;
     }
 
-    private NutsWorkspace createWorkspace(String path) {
+    private NutsSession createWorkspace(String path) {
         return Nuts.openWorkspace(
                 this.defaultWorkspace.config().optionsBuilder()
                 .setWorkspace(path)

@@ -33,12 +33,11 @@ public class Test06_CacheURL {
         TestUtils.setSystemProperties(extraProperties);
         String wsPath = baseFolder + "/" + TestUtils.getCallerMethodName();
 
-        NutsWorkspace ws = Nuts.openWorkspace("--workspace", wsPath,
+        NutsWorkspace ws = TestUtils.openTestWorkspace("--workspace", wsPath,
                 "--standalone",
                 "--archetype", "minimal",
                 //            "--verbose",
-                "--yes",
-                "--skip-companions");
+                "--skip-companions").getWorkspace();
         NutsSession session = ws.createSession();
         final String url = "https://repo.maven.apache.org/maven2/archetype-catalog.xml";
         NutsInput j1 = CoreIOUtils.getCachedUrlWithSHA1(ws, url, "archetype-catalog", true,null);

@@ -33,10 +33,9 @@ public class Test09_FindLinuxTest {
 
         //should throw NutsNotFoundException because
         //would not be able to install nsh and other companions
-        NutsWorkspace ws = Nuts.openWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
+        NutsWorkspace ws = TestUtils.openTestWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
                 "--archetype", "default",
-                "--yes",
-                "--skip-companions");
+                "--skip-companions").getWorkspace();
         ws=ws.createSession().getWorkspace();
         NutsSession session = ws.createSession();
         List<NutsId> def = session.getWorkspace().search().addId("nuts").setOptional(false).setLatest(true).setFailFast(false)

@@ -46,7 +46,7 @@ public class Test08_NutsAuthenticationAgent {
     private void testHelperRetrievable(NutsAuthenticationAgent a) {
         String mySecret = "my-secret";
         Map<String,String> envProvider = new LinkedHashMap<>();
-        NutsWorkspace ws = Nuts.openWorkspace();
+        NutsWorkspace ws = Nuts.openWorkspace().getWorkspace();
         NutsSession session = ws.createSession();
         String withAllowRetreiveId = new String(a.createCredentials(mySecret.toCharArray(), true, null, envProvider, session));
         TestUtils.println(withAllowRetreiveId);
@@ -68,7 +68,7 @@ public class Test08_NutsAuthenticationAgent {
     private void testHelperHashed(NutsAuthenticationAgent a, boolean alwaysRetrievable) {
         String mySecret = "my-secret";
         Map<String,String> envProvider = new LinkedHashMap<>();
-        NutsWorkspace ws = Nuts.openWorkspace();
+        NutsWorkspace ws = Nuts.openWorkspace().getWorkspace();
         NutsSession session = ws.createSession();
         String withoutAllowRetreiveId = new String(a.createCredentials(mySecret.toCharArray(), false, null, envProvider, session));
         TestUtils.println(withoutAllowRetreiveId);

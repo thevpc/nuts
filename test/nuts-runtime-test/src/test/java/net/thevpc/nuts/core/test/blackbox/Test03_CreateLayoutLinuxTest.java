@@ -33,29 +33,28 @@ public class Test03_CreateLayoutLinuxTest {
         System.setProperty("nuts.export.debug", "true");
         CoreIOUtils.delete(null, base);
         TestUtils.resetLinuxFolders();
-        NutsWorkspace ws = Nuts.openWorkspace(
+        NutsWorkspace ws = TestUtils.openTestWorkspace(
                 TestUtils.sarr(
                         TestUtils.createSysDirs(base),
                         //            "--verbose",
-                        "--yes", "--trace",
+                        "--trace",
                         "info"
                 )
-        );
+        ).getWorkspace();
 
-        NutsWorkspace wsAgain = Nuts.openWorkspace(
+        NutsWorkspace wsAgain = TestUtils.openTestWorkspace(
                 TestUtils.sarr(
                         TestUtils.createSysDirs(base),
                         //            "--verbose",
-                        "--yes", "--trace",
+                         "--trace",
                         "info"
-                ));
+                )).getWorkspace();
 
-        ws = ws.createSession().getWorkspace();
-        NutsId ndiId = ws.search().setInstallStatus(ws.filters().installStatus().byInstalled(true)).addId("nadmin").getResultIds().singleton();
+        NutsId ndiId = ws.search().setInstallStatus(ws.filters().installStatus().byInstalled(true)).addId("nsh").getResultIds().singleton();
         Assertions.assertTrue(ndiId.getVersion().getValue().startsWith(TestUtils.NUTS_VERSION + "."));
 
         Assertions.assertEquals(
-                TestUtils.createNamesSet("nadmin", "nsh"),
+                TestUtils.createNamesSet("nsh"),
                 TestUtils.listNamesSet(new File(base, "system.config/default-workspace/" + NutsConstants.Folders.ID + "/net/thevpc/nuts/toolbox"), File::isDirectory)
         );
         Assertions.assertEquals(
@@ -64,7 +63,7 @@ public class Test03_CreateLayoutLinuxTest {
         );
         Assertions.assertEquals(
                 NDI_COMPANIONS,
-                TestUtils.listNamesSet(new File(base, "system.apps/default-workspace/" + NutsConstants.Folders.ID + "/net/thevpc/nuts/toolbox/nadmin/" + ndiId.getVersion()), x -> x.isFile() && !x.getName().startsWith(".")).size()
+                TestUtils.listNamesSet(new File(base, "system.apps/default-workspace/" + NutsConstants.Folders.ID + "/net/thevpc/nuts/nuts/" + ndiId.getVersion()+"/bin"), x -> x.isFile() && !x.getName().startsWith(".")).size()
         );
         Assertions.assertEquals(
                 3,
@@ -89,24 +88,23 @@ public class Test03_CreateLayoutLinuxTest {
         System.setProperty("nuts.export.debug", "true");
         CoreIOUtils.delete(null, base);
         TestUtils.resetLinuxFolders();
-        NutsWorkspace ws1 = Nuts.openWorkspace(
+        NutsWorkspace ws1 = TestUtils.openTestWorkspace(
                 TestUtils.sarr(
                         TestUtils.createSysDirs(base),
                         //            "--verbose",
-                        "--yes", "--trace",
-                        "info"));
+                        "--trace",
+                        "info")).getWorkspace();
 
-        NutsWorkspace ws2 = Nuts.openWorkspace(TestUtils.sarr(
+        NutsWorkspace ws2 = TestUtils.openTestWorkspace(TestUtils.sarr(
                 TestUtils.createSysDirs(base),
                 //            "--verbose",
-                "--yes", "--trace",
-                "info"));
-        ws2 = ws2.createSession().getWorkspace();
-        NutsId ndiId = ws2.search().setInstallStatus(ws2.filters().installStatus().byInstalled(true)).addId("nadmin").getResultIds().singleton();
+                "--trace",
+                "info")).getWorkspace();
+        NutsId ndiId = ws2.search().setInstallStatus(ws2.filters().installStatus().byInstalled(true)).addId("nsh").getResultIds().singleton();
         Assertions.assertTrue(ndiId.getVersion().getValue().startsWith(TestUtils.NUTS_VERSION + "."));
 
         Assertions.assertEquals(
-                TestUtils.createNamesSet("nadmin", "nsh"),
+                TestUtils.createNamesSet("nsh"),
                 TestUtils.listNamesSet(new File(base, "system.config/default-workspace/" + NutsConstants.Folders.ID + "/net/thevpc/nuts/toolbox"), File::isDirectory)
         );
         Assertions.assertEquals(
@@ -115,7 +113,7 @@ public class Test03_CreateLayoutLinuxTest {
         );
         Assertions.assertEquals(
                 NDI_COMPANIONS,
-                TestUtils.listNamesSet(new File(base, "system.apps/default-workspace/" + NutsConstants.Folders.ID + "/net/thevpc/nuts/toolbox/nadmin/" + ndiId.getVersion()), x -> x.isFile() && !x.getName().startsWith(".")).size()
+                TestUtils.listNamesSet(new File(base, "system.apps/default-workspace/" + NutsConstants.Folders.ID + "/net/thevpc/nuts/nuts/" + ndiId.getVersion()+"/bin"), x -> x.isFile() && !x.getName().startsWith(".")).size()
         );
         Assertions.assertEquals(
                 3,
@@ -138,20 +136,19 @@ public class Test03_CreateLayoutLinuxTest {
         TestUtils.println("Deleting " + base);
         CoreIOUtils.delete(null, base);
 //        Nuts.runWorkspace(new String[]{"--verbose", "--workspace", base.getPath(), "--standalone", "--yes", "--info"});
-        NutsWorkspace ws = Nuts.openWorkspace("--reset", "-b", "--debug", "--workspace", base.getPath(), "--standalone", "--yes", "info");
-        ws = ws.createSession().getWorkspace();
-        NutsId nadminId=null;
+        NutsWorkspace ws = TestUtils.openTestWorkspace("--reset", "-b", "--debug", "--workspace", base.getPath(), "--standalone", "info").getWorkspace();
+        NutsId nshId=null;
         try {
-            nadminId = ws.search().setInstallStatus(ws.filters().installStatus().byInstalled(true)).addId("nadmin").getResultIds().singleton();
+            nshId = ws.search().setInstallStatus(ws.filters().installStatus().byInstalled(true)).addId("nsh").getResultIds().singleton();
         }catch (Exception ex){
-            nadminId = ws.search().setInstallStatus(ws.filters().installStatus().byInstalled(true)).addId("nadmin").getResultIds().singleton();
+            nshId = ws.search().setInstallStatus(ws.filters().installStatus().byInstalled(true)).addId("nsh").getResultIds().singleton();
         }
-        Assertions.assertTrue(nadminId.getVersion().getValue().startsWith(TestUtils.NUTS_VERSION + "."));
+        Assertions.assertTrue(nshId.getVersion().getValue().startsWith(TestUtils.NUTS_VERSION + "."));
         String c = ws.locations().getStoreLocation(NutsStoreLocation.CONFIG);
         TestUtils.println(c);
         TestUtils.println(new File(base, "config").getPath());
         Assertions.assertEquals(
-                TestUtils.createNamesSet("nadmin", "nsh"),
+                TestUtils.createNamesSet("nsh"),
                 TestUtils.listNamesSet(new File(base, "/config/" + NutsConstants.Folders.ID + "/net/thevpc/nuts/toolbox"), File::isDirectory)
         );
         Assertions.assertEquals(
@@ -160,7 +157,7 @@ public class Test03_CreateLayoutLinuxTest {
         );
         Assertions.assertEquals(
                 NDI_COMPANIONS,
-                TestUtils.listNamesSet(new File(base, "apps/" + NutsConstants.Folders.ID + "/net/thevpc/nuts/toolbox/nadmin/" + nadminId.getVersion()), x -> x.isFile() && !x.getName().startsWith(".")).size()
+                TestUtils.listNamesSet(new File(base, "apps/" + NutsConstants.Folders.ID + "/net/thevpc/nuts/toolbox/" + nshId.getVersion()+"/bin"), x -> x.isFile() && !x.getName().startsWith(".")).size()
         );
         Assertions.assertEquals(
                 TestUtils.createNamesSet("com", "net", "org"),
@@ -180,10 +177,10 @@ public class Test03_CreateLayoutLinuxTest {
 //        String test_id = TestUtils.getCallerMethodId();
 //        Assumptions.assumeTrue(Nuts.getPlatformOsFamily() == NutsOsFamily.LINUX);
 //        NutsWorkspace ws = Nuts.openWorkspace("--verbose", "--yes", "info");
-//        NutsId ndiId = ws.search().installed().id("nadmin").getResultIds().singleton();
+//        NutsId ndiId = ws.search().installed().id("nsh").getResultIds().singleton();
 //        Assertions.assertTrue(ndiId.getVersion().getValue().startsWith(NUTS_VERSION + "."));
 //        Assertions.assertEquals(
-//                createNamesSet("nadmin", "nsh"),
+//                createNamesSet("nsh"),
 //                listNamesSet(new File(TestUtils.LINUX_CONFIG, "default-workspace/config/" + NutsConstants.Folders.ID + "/net/thevpc/nuts/toolbox"), File::isDirectory)
 //        );
 //        Assertions.assertEquals(
@@ -192,7 +189,7 @@ public class Test03_CreateLayoutLinuxTest {
 //        );
 //        Assertions.assertEquals(
 //                NDI_COMPANIONS,
-//                listNamesSet(new File(TestUtils.LINUX_APPS, "default-workspace/apps/net/thevpc/nuts/toolbox/nadmin/" + ndiId.getVersion()), x -> x.isFile() && !x.getName().startsWith(".")).size()
+//                listNamesSet(new File(TestUtils.LINUX_APPS, "default-workspace/apps/net/thevpc/nuts/nuts/" + ndiId.getVersion()+"/bin"), x -> x.isFile() && !x.getName().startsWith(".")).size()
 //        );
 //        Assertions.assertEquals(
 //                3,

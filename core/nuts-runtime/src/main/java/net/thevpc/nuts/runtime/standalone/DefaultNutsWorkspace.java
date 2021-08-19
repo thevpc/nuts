@@ -83,6 +83,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.*;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
@@ -197,10 +198,10 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
     }
 
     private void initWorkspace(NutsWorkspaceInitInformation info) {
-        info=new CoreNutsWorkspaceInitInformation(info,null);
+        info = new CoreNutsWorkspaceInitInformation(info, null);
         this.uuid = info.getUuid();
         this.bootModel = new DefaultNutsBootModel(this, info);
-        ((CoreNutsWorkspaceInitInformation)info).setSession(defaultSession());
+        ((CoreNutsWorkspaceInitInformation) info).setSession(defaultSession());
 
         this.ioModel = new DefaultNutsIOModel(this, bootModel);
         this.logModel = new DefaultNutsLogModel(this, info);
@@ -230,10 +231,23 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 info.getRuntimeId().getVersion().toString(),
                 defaultSession());
 
+        boolean errorTheme=false;
+        NutsTextManager text = text().setSession(defaultSession());
+        try{
+            NutsTextFormatTheme theme = text.getTheme();
+        }catch (Exception ex){
+            errorTheme=true;
+            //unable to load theme;
+            text.setTheme("");//set default!
+        }
+
         NutsLoggerOp LOGCRF = LOG.with().level(Level.CONFIG).verb(NutsLogVerb.READ).formatted().session(defaultSession());
         NutsLoggerOp LOGCSF = LOG.with().level(Level.CONFIG).verb(NutsLogVerb.START).formatted().session(defaultSession());
 //        NutsFormatManager formats = this.formats().setSession(defaultSession());
-        NutsTextManager text = text().setSession(defaultSession());
+        if(errorTheme){
+            LOG.with().level(Level.CONFIG).verb(NutsLogVerb.FAIL).formatted().session(defaultSession())
+                    .log("unable to load theme {0}. Reset to default!",info.getOptions().getTheme());
+        }
         if (LOG.isLoggable(Level.CONFIG)) {
             LOGCSF.log(" ===============================================================================");
             String s = CoreIOUtils.loadString(getClass().getResourceAsStream("/net/thevpc/nuts/runtime/includes/standard-header.ntf"), true);
@@ -572,6 +586,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             configModel.setStartCreateTimeMillis(uoptions.getCreationTime());
             configModel.setEndCreateTimeMillis(System.currentTimeMillis());
             if (justInstalled) {
+                installSettings(defaultSession());
                 if (!_env.getBootOptions().isSkipCompanions()) {
                     installCompanions(defaultSession());
                 }
@@ -610,12 +625,52 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
 //        return !exists;
     }
 
+    private void installSettings(NutsSession session) {
+        if (session.isPlainTrace()) {
+            session.out().println("looking for java installations in default locations...");
+        }
+        NutsSdkLocation[] found = session.getWorkspace().sdks()
+                .setSession(session.copy().setTrace(false))
+                .searchSystem("java");
+        int someAdded = 0;
+        for (NutsSdkLocation java : found) {
+            if (session.getWorkspace().sdks().add(java)) {
+                someAdded++;
+            }
+        }
+        NutsTextManager factory = session.getWorkspace().text();
+        if (session.isPlainTrace()) {
+            if (someAdded == 0) {
+                session.out().print("```error no new``` java installation locations found...\n");
+            } else if (someAdded == 1) {
+                session.out().printf("%s new java installation location added...\n", factory.forStyled("1", NutsTextStyle.primary2()));
+            } else {
+                session.out().printf("%s new java installation locations added...\n", factory.forStyled("" + someAdded, NutsTextStyle.primary2()));
+            }
+            session.out().println("you can always add another installation manually using 'nuts settings add java' command.");
+        }
+        if (!session.getWorkspace().config().isReadOnly()) {
+            session.getWorkspace().config().save();
+        }
+
+        session.getWorkspace().commands().addLauncher(
+                new NutsLauncherOptions()
+                        .setId(getApiId())
+                        .setCreateScript(true)
+                        .setCreateDesktopShortcut(NutsActionSupportCondition.PREFERRED)
+                        .setCreateMenuShortcut(NutsActionSupportCondition.SUPPORTED)
+        );
+    }
+
     public void installCompanions(NutsSession session) {
         NutsWorkspaceUtils.checkSession(this, session);
         NutsTextManager text = text().setSession(session);
+        Set<NutsId> companionIds = getCompanionIds(session);
+        if(companionIds.isEmpty()){
+            return;
+        }
         if (session.isPlainTrace()) {
             NutsPrintStream out = session.out();
-            Set<NutsId> companionIds = getCompanionIds(session);
             out.resetLine();
             out.printf("looking for recommended companion tools to install... detected : %s%n",
                     text.builder().appendJoined(text.forPlain(","),
@@ -625,12 +680,9 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         }
         try {
             install().companions().setSession(session.copy().setTrace(session.isTrace() && session.isPlainOut()))
-                    .addConditionalArgs(d -> d.getId().getShortName().equals("net.thevpc.nuts:nadmin")
-                                    && env().setSession(session).getBootOptions().getSwitchWorkspace() != null,
-                            "--switch=" + env().setSession(session).getBootOptions().getSwitchWorkspace())
                     .run();
         } catch (Exception ex) {
-            LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).error(ex).log("unable to install companions : " + ex.toString());
+            LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).error(ex).log("unable to install companions : " + ex);
             if (session.isPlainTrace()) {
                 NutsPrintStream out = session.out();
                 out.resetLine();
@@ -787,7 +839,6 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         NutsWorkspaceUtils wu = NutsWorkspaceUtils.of(session);
 
         if (session.isPlainTrace()) {
-            NutsIdManager vid = id().setSession(session);
             NutsTextManager text = session.getWorkspace().text();
             if (strategy0 == InstallStrategy0.UPDATE) {
                 session.out().resetLine().printf("%s %s ...%n",
@@ -1568,10 +1619,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         NutsWorkspaceUtils.checkSession(this, session);
         NutsIdParser parser = id().setSession(session).parser();
         return Collections.unmodifiableSet(new HashSet<>(
-                        Arrays.asList(parser.parse("net.thevpc.nuts.toolbox:nsh"),
-                                parser.parse("net.thevpc.nuts.toolbox:nadmin")
-                                //            "net.thevpc.nuts.toolbox:mvn"
-                        )
+                        Arrays.asList(parser.parse("net.thevpc.nuts.toolbox:nsh"))
                 )
         );
     }

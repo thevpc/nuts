@@ -18,7 +18,7 @@ public class Test01_TestInputSource {
 
     @Test
     public void test1() throws Exception {
-        NutsWorkspace ws = Nuts.openWorkspace();
+        NutsWorkspace ws = Nuts.openWorkspace().getWorkspace();
         NutsInput s = ws.io().input().of("http://maven.ibiblio.org/maven2/archetype-catalog.xml");
 
         Assertions.assertFalse(s.isFile());

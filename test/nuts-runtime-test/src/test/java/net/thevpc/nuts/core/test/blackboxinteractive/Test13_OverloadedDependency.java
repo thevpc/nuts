@@ -37,10 +37,10 @@ public class Test13_OverloadedDependency {
         extraProperties.put("nuts.export.always-show-command", "true");
         TestUtils.setSystemProperties(extraProperties);
 
-        NutsWorkspace ws = Nuts.openWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
+        NutsWorkspace ws = TestUtils.openTestWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
                 "-z", "-b" ,"--debug" ,"--progress=newline",
                 "--archetype", "default",
-                "--log-info");
+                "--log-info").getWorkspace();
         ws.install().addId("netbeans-launcher").run();
         ws.install().addId("tomcat").run();
     }

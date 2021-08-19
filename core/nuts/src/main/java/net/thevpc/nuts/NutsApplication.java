@@ -229,12 +229,12 @@ public interface NutsApplication {
     /**
      * create application context or return null for default
      *
-     * @param ws              workspace
+     * @param session         session
      * @param args            arguments
      * @param startTimeMillis start time
      * @return new instance of NutsApplicationContext or null
      */
-    default NutsApplicationContext createApplicationContext(NutsWorkspace ws, String[] args, long startTimeMillis) {
+    default NutsApplicationContext createApplicationContext(NutsSession session, String[] args, long startTimeMillis) {
         return null;
     }
 

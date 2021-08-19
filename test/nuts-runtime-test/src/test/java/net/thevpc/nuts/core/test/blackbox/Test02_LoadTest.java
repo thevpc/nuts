@@ -27,12 +27,10 @@ public class Test02_LoadTest {
     @Test
     public void load1() throws Exception {
 
-        NutsWorkspace w1 = Nuts.openWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
-                "--yes",
-                "--skip-companions");
-        NutsWorkspace w2 = Nuts.openWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
-                "--yes",
-                "--skip-companions");
+        NutsWorkspace w1 = TestUtils.openTestWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
+                "--skip-companions").getWorkspace();
+        NutsWorkspace w2 = TestUtils.openTestWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
+                "--skip-companions").getWorkspace();
     }
 
     @BeforeAll

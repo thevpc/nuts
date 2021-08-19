@@ -1,0 +1,160 @@
+package net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.sys.win;
+
+import net.thevpc.nuts.NutsApplicationContext;
+import net.thevpc.nuts.NutsId;
+import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.runtime.standalone.wscommands.settings.PathInfo;
+import net.thevpc.nuts.runtime.standalone.wscommands.settings.oswindows.WindowFreeDesktopEntryWriter;
+import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.FreeDesktopEntryWriter;
+import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.NdiScriptInfo;
+import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.NdiScriptInfoType;
+import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.NdiScriptOptions;
+import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.base.BaseSystemNdi;
+import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.base.NutsEnvInfo;
+import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.util.ReplaceString;
+
+import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
+public class WindowsNdi extends BaseSystemNdi {
+
+    public WindowsNdi(NutsSession session) {
+        super(session);
+    }
+
+    public String getBashrcName() {
+        return null;
+    }
+
+    public String getPathVarSep() {
+        return ";";
+    }
+
+    @Override
+    public boolean isComments(String line) {
+        return line.startsWith(":: ");
+    }
+
+    @Override
+    public String trimComments(String line) {
+        if (line.startsWith(":: ")) {
+            return line.substring(2).trim();
+        }
+        throw new IllegalArgumentException("not a comment");
+    }
+
+    @Override
+    public String toCommentLine(String line) {
+        return ":: " + line;
+    }
+
+    @Override
+    protected String createNutsScriptContent(NutsId fnutsId, NdiScriptOptions options) {
+        StringBuilder command = new StringBuilder();
+        command.append(getExecFileName("nuts")).append(" ").append(varRef("NUTS_OPTIONS")).append(" ");
+        if (options.getExecType() != null) {
+            command.append("--").append(options.getExecType().id());
+        }
+        command.append(" \"").append(fnutsId).append("\"");
+        command.append(" %*");
+        return command.toString();
+    }
+
+    protected String newlineString() {
+        return "\r\n";
+    }
+
+    public void onPostGlobal(NutsEnvInfo env, PathInfo[] updatedPaths) {
+
+    }
+
+
+
+    @Override
+    protected String getCallScriptCommand(String path,String... args) {
+        return "@CALL \"" + path + "\"" + " "+Arrays.stream(args).map(a->dblQte(a)).collect(Collectors.joining(" "));
+    }
+
+    @Override
+    protected String getSetVarCommand(String name, String value) {
+        return "SET \""+name+"="+value+"\"";
+    }
+
+    @Override
+    protected String getSetVarStaticCommand(String name, String value) {
+        return "SET \""+name+"="+value+"\"";
+    }
+
+    @Override
+    public String getExecFileName(String name) {
+        return name + ".cmd";
+    }
+
+    @Override
+    protected FreeDesktopEntryWriter createFreeDesktopEntryWriter() {
+        return new WindowFreeDesktopEntryWriter(
+                session.getWorkspace().env().getDesktopPath()
+                , session);
+    }
+
+    protected ReplaceString getShebanSh() {
+        return null;
+    }
+
+    protected ReplaceString getCommentLineConfigHeader() {
+        return COMMENT_LINE_CONFIG_HEADER;
+    }
+
+    @Override
+    protected String getTemplateName(String name) {
+        return "windows_template_"+name+".text";
+    }
+
+    @Override
+    protected String varRef(String v){
+        return "%"+v+"%";
+    }
+
+    @Override
+    public NdiScriptInfo getNutsTerm(NutsEnvInfo env) {
+        return new NdiScriptInfo() {
+            @Override
+            public Path path() {
+                return env.getBinFolder().resolve(getExecFileName("nuts-term"));
+            }
+
+            @Override
+            public PathInfo create() {
+                Path apiConfigFile = path();
+                return addFileLine(NdiScriptInfoType.NUTS_TERM,
+                        env.getNutsApiId(),
+                        apiConfigFile, getCommentLineConfigHeader(),
+                        "@ECHO OFF"+newlineString()+
+                        createNutsEnvString(env, true, true)+newlineString()
+                                +"cmd.exe /K "+getExecFileName("nuts")+" welcome "+newlineString()
+                        ,
+                        getShebanSh());
+            }
+        };
+    }
+
+    protected int resolveIconExtensionPriority(String extension) {
+        extension = extension.toLowerCase();
+        switch (extension) {
+            //support only ico
+            case "ico":
+                return 3;
+        }
+        return -1;
+    }
+
+    public boolean isShortcutFieldNameUserFriendly(){
+        return true;
+    }
+
+    @Override
+    protected String getExportCommand(String[] names) {
+        return null;
+    }
+}

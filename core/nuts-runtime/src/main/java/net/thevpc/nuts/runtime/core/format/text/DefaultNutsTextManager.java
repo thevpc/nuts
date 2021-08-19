@@ -497,6 +497,13 @@ public class DefaultNutsTextManager implements NutsTextManager {
     }
 
     @Override
+    public NutsTextManager setTheme(String theme) {
+        checkSession();
+        shared.setTheme(theme, getSession());
+        return this;
+    }
+
+    @Override
     public NutsCodeFormat getCodeFormat(String kind) {
         checkSession();
         return shared.getCodeFormat(kind, getSession());

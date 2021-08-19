@@ -48,9 +48,9 @@ public class Test16_TermLayout {
 
     @Test
     public void test1() throws Exception {
-        NutsWorkspace ws = Nuts.openWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
+        NutsWorkspace ws = TestUtils.openTestWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
                 "-byZSKk"
-        );
+        ).getWorkspace();
 
         NutsSession session = ws.createSession();
         for (int i = 0; i < 100; i++) {

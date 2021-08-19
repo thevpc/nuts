@@ -22,3 +22,18 @@ net.thevpc.nuts.runtime.standalone.executors.ProcessExecutorComponent
 net.thevpc.nuts.runtime.standalone.bridges.maven.MavenRepositoryFactoryComponent
 net.thevpc.nuts.runtime.standalone.config.DefaultNutsIndexStoreFactory
 net.thevpc.nuts.runtime.standalone.security.DefaultNutsAuthenticationAgent
+
+##################### Settings Subcommands!
+
+net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.NutsSettingsArchetypeSubCommand
+net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.NutsSettingsImportSubCommand
+net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.NutsSettingsBackupSubCommand
+net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.NutsSettingsLogSubCommand
+net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.NutsSettingsRepositorySubCommand
+net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.NutsSettingsUserSubCommand
+net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.NutsSettingsJavaSubCommand
+net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.NutsSettingsDeleteFoldersSubCommand
+net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.NutsSettingsIndexSubCommand
+net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.NutsSettingsConnectSubCommand
+net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.NutsSettingsAliasSubCommand
+net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.NutsSettingsNdiSubCommand

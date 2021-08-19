@@ -18,6 +18,7 @@ public interface SourceProcessor {
      *
      * @param source source
      * @param session session
+     * @return processed source value
      */
     Object process(Source source, NutsSession session);
 }

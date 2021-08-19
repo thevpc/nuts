@@ -205,13 +205,13 @@ public class ProjectService {
                 NutsWorkspace ws2 = null;
                 NutsSession s = null;
                 if (a.getNutsWorkspace() != null && a.getNutsWorkspace().trim().length() > 0 && !a.getNutsWorkspace().equals(appContext.getWorkspace().locations().getWorkspaceLocation().toString())) {
-                    ws2 = Nuts.openWorkspace(
+                    s = Nuts.openWorkspace(
                             Nuts.createOptions()
                                     .setOpenMode(NutsOpenMode.OPEN_OR_ERROR)
                                     .setReadOnly(true)
                                     .setWorkspace(a.getNutsWorkspace())
                     );
-                    s = ws2.createSession().setTrace(false);
+                    ws2=s.getWorkspace();
                     s.copyFrom(appContext.getSession());
                 } else {
                     ws2 = appContext.getWorkspace();
@@ -259,13 +259,13 @@ public class ProjectService {
                         NutsWorkspace ws2 = null;
                         NutsSession s = null;
                         if (a.getNutsWorkspace() != null && a.getNutsWorkspace().trim().length() > 0 && !a.getNutsWorkspace().equals(appContext.getWorkspace().locations().getWorkspaceLocation().toString())) {
-                            ws2 = Nuts.openWorkspace(
+                            s = Nuts.openWorkspace(
                                     appContext.getWorkspace().config().optionsBuilder()
                                             .setOpenMode(NutsOpenMode.OPEN_OR_ERROR)
                                             .setReadOnly(true)
                                             .setWorkspace(a.getNutsWorkspace())
                             );
-                            s = ws2.createSession().setTrace(false);
+                            ws2=s.getWorkspace();
                             s.copyFrom(appContext.getSession());
                         } else {
                             ws2 = appContext.getWorkspace();

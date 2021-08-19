@@ -49,9 +49,9 @@ public class Test17_Json {
 
     @Test
     public void test1() throws Exception {
-        NutsWorkspace ws = Nuts.openWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
+        NutsWorkspace ws = TestUtils.openTestWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
                 "-byZSKk"
-        );
+        ).getWorkspace();
 
         NutsSession session = ws.createSession();
 //        NutsString e = ws.elem()
@@ -72,9 +72,9 @@ public class Test17_Json {
 
     @Test
     public void test2() throws Exception {
-        NutsWorkspace ws = Nuts.openWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
+        NutsWorkspace ws = TestUtils.openTestWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
                 "-byZSKk"
-        );
+        ).getWorkspace();
         NutsSession session = ws.createSession();
         ws=session.getWorkspace();
         NutsElement a = ws.elem().setContentType(NutsContentType.JSON)

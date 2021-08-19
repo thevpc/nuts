@@ -39,7 +39,7 @@ public class Test02_SimpleClassStream {
 
     @Test
     public void test1() throws Exception {
-        NutsWorkspace ws = Nuts.openWorkspace("-y", "--workspace", baseFolder + "/" + TestUtils.getCallerMethodName());
+        NutsWorkspace ws = TestUtils.openTestWorkspace( "--workspace", baseFolder + "/" + TestUtils.getCallerMethodName()).getWorkspace();
         Path path = Paths.get("/home/vpc/.m2/repository/org/ow2/asm/asm-commons/7.0/asm-commons-7.0.jar");
         NutsSession session=ws.createSession();
         if (Files.exists(path)) {

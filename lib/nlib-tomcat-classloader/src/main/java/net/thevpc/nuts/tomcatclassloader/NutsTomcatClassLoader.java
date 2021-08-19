@@ -29,7 +29,7 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
     private static final String SERVICES_PREFIX = "/META-INF/services/";
     private static final org.apache.juli.logging.Log log
             = org.apache.juli.logging.LogFactory.getLog(WebappClassLoaderBase.class);
-    protected NutsWorkspace nutsWorkspace;
+    protected NutsSession nutsWorkspace;
     protected ClassLoader nutsClassLoader;
     protected boolean nutsClassLoaderUnderConstruction;
     protected String nutsPath;
@@ -111,9 +111,8 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
                 String nutsPath = getNutsPath();
                 String[] pathList = splitString(nutsPath, "; ,");
                 try {
-                    NutsWorkspace ws = resolveNutsWorkspace();
-                    NutsSession session = ws.createSession().setTrace(false);
-                    nutsClassLoader = ws.search().setSession(session).addIds(pathList).setInlineDependencies(true).getResultClassLoader();
+                    NutsSession session = resolveNutsWorkspace();
+                    nutsClassLoader = session.getWorkspace().search().addIds(pathList).setInlineDependencies(true).getResultClassLoader();
                 } catch (Exception ex) {
                     ex.printStackTrace();
                     nutsClassLoader = Thread.currentThread().getContextClassLoader();
@@ -125,7 +124,7 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
         return nutsClassLoader;
     }
 
-    public synchronized NutsWorkspace resolveNutsWorkspace() {
+    public synchronized NutsSession resolveNutsWorkspace() {
         if (nutsWorkspace == null) {
             nutsWorkspace
                     = Nuts.openWorkspace(

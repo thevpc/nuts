@@ -566,7 +566,7 @@ public final class NutsBootWorkspace {
     }
 
     private void ndiUndo() {
-        //need to unset nadmin configuration.
+        //need to unset settings configuration.
         //what is the safest way to do so?
         NutsOsFamily os = Nuts.getPlatformOsFamily();
         //windows is ignored because it does not define a global nuts environment
@@ -705,7 +705,7 @@ public final class NutsBootWorkspace {
         return !options.isRecover() && !options.isReset();
     }
 
-    public NutsWorkspace openWorkspace() {
+    public NutsSession openWorkspace() {
         prepareWorkspace();
         if (hasUnsatisfiedRequirements()) {
             throw new NutsUnsatisfiedRequirementsException("unable to open a distinct version : " + getRequirementsHelpString(true) + " from nuts#" + Nuts.getVersion());
@@ -828,7 +828,7 @@ public final class NutsBootWorkspace {
 //                LOG2.with().session(nutsWorkspace.createSession())
 //                        .level(Level.FINE).verb(NutsLogVerb.SUCCESS).log("end initialize workspace");
 //            }
-            return nutsWorkspace;
+            return nutsWorkspace.createSession();
         } catch (NutsReadOnlyException | NutsUserCancelException | PrivateNutsBootCancelException ex) {
             throw ex;
         } catch (Throwable ex) {
@@ -1106,7 +1106,8 @@ public final class NutsBootWorkspace {
             startNewProcess();
             return;
         }
-        NutsWorkspace workspace = this.openWorkspace();
+        NutsSession session = this.openWorkspace();
+        NutsWorkspace workspace = session.getWorkspace();
         String message = "workspace started successfully";
         NutsWorkspaceOptions o = this.getOptions();
         if (workspace == null) {
@@ -1114,7 +1115,6 @@ public final class NutsBootWorkspace {
             throw new NutsBootException("workspace not available to run : " + new PrivateNutsCommandLine(o.getApplicationArguments()).toString());
         }
 
-        NutsSession session = workspace.createSession();
         session.setAppId(workspace.getApiId());
         if (LOG2 == null) {
             LOG2 = workspace.log().setSession(session).of(NutsBootWorkspace.class);

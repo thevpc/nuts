@@ -34,8 +34,8 @@ import java.util.logging.Level;
  * Helper class for Nuts Applications
  *
  * @author thevpc
- * @since 0.5.5
  * @app.category Application
+ * @since 0.5.5
  */
 public final class NutsApplications {
 
@@ -93,9 +93,10 @@ public final class NutsApplications {
 
     /**
      * create an Application Context instance for the given arguments. The session can be null.
+     *
      * @param applicationInstance application instance (to resolve appId)
-     * @param args application arguments
-     * @param session caller workspace session (or null to create an inherited workspace)
+     * @param args                application arguments
+     * @param session             caller workspace session (or null to create an inherited workspace)
      * @return NutsApplicationContext instance
      */
     public static NutsApplicationContext createApplicationContext(NutsApplication applicationInstance, String[] args, NutsSession session) {
@@ -103,38 +104,35 @@ public final class NutsApplications {
         if (applicationInstance == null) {
             throw new NullPointerException("null application");
         }
-        NutsWorkspace ws = session == null ? null : session.getWorkspace();
-        if (ws == null) {
-            ws = Nuts.openInheritedWorkspace(args);
-        }
         if (session == null) {
-            session = ws.createSession();
+            session = Nuts.openInheritedWorkspace(args);
         }
+        NutsWorkspace ws = session.getWorkspace();
         NutsApplicationContext applicationContext = null;
-        applicationContext = applicationInstance.createApplicationContext(ws, args, startTimeMillis);
+        applicationContext = applicationInstance.createApplicationContext(session, args, startTimeMillis);
         if (applicationContext == null) {
-            applicationContext = ws.apps().createApplicationContext(args, applicationInstance.getClass(), null, startTimeMillis, session);
+            applicationContext = ws.apps().createApplicationContext(session, args, startTimeMillis, applicationInstance.getClass(), null);
         }
-        if (session != null) {
-            //copy inter-process parameters only
-            NutsSession ctxSession = applicationContext.getSession();
-            ctxSession.setFetchStrategy(session.getFetchStrategy());
-            ctxSession.setOutputFormat(session.getOutputFormat());
-            ctxSession.setConfirm(session.getConfirm());
-            ctxSession.setTrace(session.isTrace());
-            ctxSession.setIndexed(session.isIndexed());
-            ctxSession.setCached(session.isCached());
-            ctxSession.setTransitive(session.isTransitive());
-            ctxSession.setTerminal(ctxSession.getWorkspace().term().createTerminal(session.getTerminal()));
-        }
+
+        //copy inter-process parameters only
+        NutsSession ctxSession = applicationContext.getSession();
+        ctxSession.setFetchStrategy(session.getFetchStrategy());
+        ctxSession.setOutputFormat(session.getOutputFormat());
+        ctxSession.setConfirm(session.getConfirm());
+        ctxSession.setTrace(session.isTrace());
+        ctxSession.setIndexed(session.isIndexed());
+        ctxSession.setCached(session.isCached());
+        ctxSession.setTransitive(session.isTransitive());
+        ctxSession.setTerminal(ctxSession.getWorkspace().term().createTerminal(session.getTerminal()));
         return applicationContext;
     }
+
     /**
      * run application with given life cycle.
      *
      * @param applicationInstance application
-     * @param args application arguments
-     * @param session session
+     * @param args                application arguments
+     * @param session             session
      */
     public static void runApplication(NutsApplication applicationInstance, String[] args, NutsSession session) {
         NutsApplicationContext applicationContext = createApplicationContext(applicationInstance, args, session);
@@ -167,16 +165,16 @@ public final class NutsApplications {
                 return;
             }
         }
-        throw new NutsExecutionException(session, NutsMessage.cstyle("unsupported execution mode %s",applicationContext.getMode()), 204);
+        throw new NutsExecutionException(session, NutsMessage.cstyle("unsupported execution mode %s", applicationContext.getMode()), 204);
     }
 
     /**
      * process throwable and return exit code
      *
-     * @param ex exception
+     * @param ex   exception
      * @param args application arguments to check from if a '--verbose' or
-     * '--debug' option is armed
-     * @param out out stream
+     *             '--debug' option is armed
+     * @param out  out stream
      * @return exit code
      */
     public static int processThrowable(Throwable ex, String[] args, PrintStream out) {
@@ -287,8 +285,8 @@ public final class NutsApplications {
                 fout = null;
             }
         }
-        if(fout!=null){
-            if(session.getOutputFormat() == NutsContentType.PLAIN) {
+        if (fout != null) {
+            if (session.getOutputFormat() == NutsContentType.PLAIN) {
                 if (fm != null) {
                     fout.println(fm);
                 } else {
@@ -298,17 +296,17 @@ public final class NutsApplications {
                     ex.printStackTrace(fout.asPrintStream());
                 }
                 fout.flush();
-            }else{
+            } else {
                 if (fm != null) {
                     session.eout().add(session.getWorkspace().elem().forObject()
-                            .set("app-id",session.getAppId()==null?"":session.getAppId().toString())
-                            .set("error",fm.filteredText())
+                            .set("app-id", session.getAppId() == null ? "" : session.getAppId().toString())
+                            .set("error", fm.filteredText())
                             .build()
                     );
                     if (showTrace) {
                         session.eout().add(session.getWorkspace().elem().forObject().set("error-trace",
                                 session.getWorkspace().elem().forArray().addAll(stacktrace(ex)).build()
-                                ).build());
+                        ).build());
                     }
                     NutsArrayElementBuilder e = session.eout();
                     if (e.size() > 0) {
@@ -318,8 +316,8 @@ public final class NutsApplications {
                     fout.flush();
                 } else {
                     session.eout().add(session.getWorkspace().elem().forObject()
-                            .set("app-id",session.getAppId()==null?"":session.getAppId().toString())
-                            .set("error",m)
+                            .set("app-id", session.getAppId() == null ? "" : session.getAppId().toString())
+                            .set("error", m)
                             .build());
                     if (showTrace) {
                         session.eout().add(session.getWorkspace().elem().forObject().set("error-trace",
@@ -335,13 +333,13 @@ public final class NutsApplications {
                 }
                 fout.flush();
             }
-        }else {
-            if(out==null){
-                out=System.err;
+        } else {
+            if (out == null) {
+                out = System.err;
             }
-            if(fm!=null) {
+            if (fm != null) {
                 out.println(fm);
-            }else{
+            } else {
                 out.println(m);
             }
             if (showTrace) {
@@ -352,16 +350,16 @@ public final class NutsApplications {
         return (errorCode);
     }
 
-    private static String[] stacktrace(Throwable th){
+    private static String[] stacktrace(Throwable th) {
         try {
             StringWriter sw = new StringWriter();
             try (PrintWriter pw = new PrintWriter(sw)) {
                 th.printStackTrace(pw);
             }
-            BufferedReader br=new BufferedReader(new StringReader(sw.toString()));
-            List<String> s=new ArrayList<>();
-            String line=null;
-            while((line=br.readLine())!=null){
+            BufferedReader br = new BufferedReader(new StringReader(sw.toString()));
+            List<String> s = new ArrayList<>();
+            String line = null;
+            while ((line = br.readLine()) != null) {
                 s.add(line);
             }
             return s.toArray(new String[0]);

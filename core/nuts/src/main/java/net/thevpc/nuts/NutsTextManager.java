@@ -50,6 +50,7 @@ public interface NutsTextManager {
     NutsTextFormatTheme getTheme();
 
     NutsTextManager setTheme(NutsTextFormatTheme theme);
+    NutsTextManager setTheme(String themeName);
 
     NutsCodeFormat getCodeFormat(String kind);
 

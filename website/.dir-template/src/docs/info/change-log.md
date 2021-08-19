@@ -19,7 +19,8 @@ Starred releases are most stable ones.
 ## nuts 0.8.1.0 (DEV VERSION)
 - ```2021/07/31 	nuts 0.8.1.0 (*)``` released [download nuts-0.8.1.jar](https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/0.8.1/nuts-0.8.1.jar)
 - WARNING: API has evolved with multiple incompatibilities with previous versions  
-- REMOVED: {api}   removed session.formatObject() as the session is now propagted silently
+- CHANGED: {nadmin} removed nadmin and merged into runtime (tight coupling!!)
+- REMOVED: {api}   removed session.formatObject() as the session is now propagated silently
 - CHANGED: {api}   removed NutsApplicationLifeCycle and replaced with NutsApplication (an interface instead of a class)
 - ADDED  : {api}   added support for parsing pom.xml (MAVEN) along with *.nuts (nuts descriptors)
 - ADDED  : {api}   added io killProcess support

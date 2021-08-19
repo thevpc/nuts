@@ -28,6 +28,7 @@ import net.thevpc.nuts.runtime.core.DefaultNutsSession;
 import net.thevpc.nuts.runtime.core.terminals.DefaultNutsSessionTerminal;
 import net.thevpc.nuts.runtime.core.terminals.DefaultNutsSystemTerminalBaseBoot;
 import net.thevpc.nuts.runtime.core.terminals.DefaultSystemTerminal;
+import net.thevpc.nuts.runtime.optional.jansi.OptionalJansi;
 import net.thevpc.nuts.runtime.standalone.config.DefaultNutsWorkspaceEnvManagerModel;
 import net.thevpc.nuts.runtime.standalone.io.NutsPrintStreamSystem;
 
@@ -50,25 +51,23 @@ public class DefaultNutsBootModel implements NutsBootModel {
         this.workspace = workspace;
         this.workspaceInitInformation = workspaceInitInformation;
         this.bootSession = new DefaultNutsSession(workspace, workspaceInitInformation.getOptions());
-        boolean ansiSupport = detectAnsiTerminalSupport(DefaultNutsWorkspaceEnvManagerModel.getPlatformOsFamily0());
+        StdFd std = detectAnsiTerminalSupport(DefaultNutsWorkspaceEnvManagerModel.getPlatformOsFamily0());
         NutsTerminalMode terminalMode = workspaceInitInformation.getOptions().getTerminalMode();
         if (terminalMode == null) {
             if (workspaceInitInformation.getOptions().isBot()) {
                 terminalMode = NutsTerminalMode.FILTERED;
             } else {
-                terminalMode = NutsTerminalMode.FORMATTED;
+                if(std.ansiSupport) {
+                    terminalMode = NutsTerminalMode.FORMATTED;
+                }else{
+                    terminalMode = NutsTerminalMode.FILTERED;
+                }
             }
         }
-
-        if(DefaultNutsWorkspaceEnvManagerModel.getPlatformOsFamily0()==NutsOsFamily.WINDOWS){
-            org.fusesource.jansi.AnsiConsole.systemInstall();
-        }
-        stdout =new NutsPrintStreamSystem(System.out,null,null,ansiSupport,
-                this.bootSession
-        ).convertMode(terminalMode);
-        stderr =new NutsPrintStreamSystem(System.err,null,null,ansiSupport,
-                this.bootSession
-        ).convertMode(terminalMode);
+        stdout =new NutsPrintStreamSystem(std.out,null,null,std.ansiSupport,
+                this.bootSession).convertMode(terminalMode);
+        stderr =new NutsPrintStreamSystem(std.err,null,null,std.ansiSupport,
+                this.bootSession).convertMode(terminalMode);
         stdin=System.in;
         DefaultSystemTerminal sys = new DefaultSystemTerminal(new DefaultNutsSystemTerminalBaseBoot(this));
         bootSession.setTerminal(new DefaultNutsSessionTerminal(bootSession,sys));
@@ -98,21 +97,41 @@ public class DefaultNutsBootModel implements NutsBootModel {
         return workspaceInitInformation;
     }
 
-    public static boolean detectAnsiTerminalSupport(NutsOsFamily os) {
-        boolean IS_WINDOWS = os == NutsOsFamily.WINDOWS;
-        boolean IS_CYGWIN = IS_WINDOWS
-                && System.getenv("PWD") != null
-                && System.getenv("PWD").startsWith("/")
-                && !"cygwin".equals(System.getenv("TERM"));
+    public static StdFd detectAnsiTerminalSupport(NutsOsFamily os) {
+        if(System.console()!=null) {
+            switch (os){
+                case LINUX:
+                case MACOS:
+                case UNIX:{
+                    return new StdFd(System.in,System.out,System.err,true);
+                }
+                case WINDOWS:{
+                    boolean IS_CYGWIN =
+                            System.getenv("PWD") != null
+                            && System.getenv("PWD").startsWith("/")
+                            && !"cygwin".equals(System.getenv("TERM"));
 
-        boolean IS_MINGW_XTERM = IS_WINDOWS
-                && System.getenv("MSYSTEM") != null
-                && System.getenv("MSYSTEM").startsWith("MINGW")
-                && "xterm".equals(System.getenv("TERM"));
-        return (IS_WINDOWS && (IS_CYGWIN || IS_MINGW_XTERM))
-                || os == NutsOsFamily.LINUX || os == NutsOsFamily.UNIX
-                || os == NutsOsFamily.MACOS
-                ;
+                    boolean IS_MINGW_XTERM =
+                            System.getenv("MSYSTEM") != null
+                            && System.getenv("MSYSTEM").startsWith("MINGW")
+                            && "xterm".equals(System.getenv("TERM"));
+                    if(IS_CYGWIN || IS_MINGW_XTERM){
+                        return new StdFd(System.in,System.out,System.err,true);
+                    }
+                    if(OptionalJansi.isAvailable()){
+                        return OptionalJansi.resolveStdFd();
+                    }
+                    return new StdFd(System.in,System.out,System.err,false);
+                }
+                default:{
+                    if(OptionalJansi.isAvailable()){
+                        return OptionalJansi.resolveStdFd();
+                    }
+                    return new StdFd(System.in,System.out,System.err,false);
+                }
+            }
+        }
+        return new StdFd(System.in,System.out,System.err,false);
     }
     
 }

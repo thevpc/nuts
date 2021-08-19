@@ -31,10 +31,9 @@ public class Test08_FindLinuxTest {
 
         //should throw NutsNotFoundException because
         //would not be able to installe nsh and other companions
-        NutsWorkspace ws = Nuts.openWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
+        NutsWorkspace ws = TestUtils.openTestWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
                 "--archetype", "default",
-                "--yes",
-                "--skip-companions");
+                "--skip-companions").getWorkspace();
 
         NutsSession session = ws.createSession();
         NutsDefinition def = session.getWorkspace().search().addId(
@@ -55,10 +54,9 @@ public class Test08_FindLinuxTest {
 
         //should throw NutsNotFoundException because
         //would not be able to installe nsh and other companions
-        NutsWorkspace ws = Nuts.openWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
+        NutsWorkspace ws = TestUtils.openTestWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
                 "--archetype", "default",
-                "--yes",
-                "--skip-companions");
+                "--skip-companions").getWorkspace();
 
         NutsResultList<NutsId> resultIds = ws.search().setSession(ws.createSession().setTrace(false)).addId("net.thevpc.scholar.doovos.kernel:doovos-kernel-core")
                 .setLatest(true).setInlineDependencies(true).getResultIds();

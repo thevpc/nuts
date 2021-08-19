@@ -16,10 +16,10 @@ import java.util.UUID;
 
 public class NutsTextFormatPropertiesTheme implements NutsTextFormatTheme {
     private Properties props = new Properties();
-    private NutsWorkspace ws;
+    private NutsSession session;
 
-    public NutsTextFormatPropertiesTheme(String name, ClassLoader cls, NutsWorkspace ws) {
-        this.ws = ws;
+    public NutsTextFormatPropertiesTheme(String name, ClassLoader cls, NutsSession session) {
+        this.session = session;
         if (name.indexOf('/') >= 0 || name.indexOf('\\') >= 0) {
             if (name.startsWith("classpath://")) {
                 if (cls == null) {
@@ -89,8 +89,8 @@ public class NutsTextFormatPropertiesTheme implements NutsTextFormatTheme {
                     throw new UncheckedIOException(e);
                 }
             } else {
-                Path themeFile = Paths.get(ws.locations().getStoreLocation(
-                        ws.id().parser().parse("net.thevpc.nuts:nuts-runtime#SHARED"),
+                Path themeFile = Paths.get(session.getWorkspace().locations().getStoreLocation(
+                        session.getWorkspace().id().parser().parse("net.thevpc.nuts:nuts-runtime#SHARED"),
                         NutsStoreLocation.CONFIG
                 )).resolve("themes").resolve(name);
                 if (Files.isRegularFile(themeFile)) {
@@ -100,7 +100,7 @@ public class NutsTextFormatPropertiesTheme implements NutsTextFormatTheme {
                         throw new UncheckedIOException(e);
                     }
                 } else {
-                    throw new IllegalArgumentException("invalid theme: " + name);
+                    throw new NutsIllegalArgumentException(session,NutsMessage.cstyle("invalid theme: %s",name));
                 }
             }
         }

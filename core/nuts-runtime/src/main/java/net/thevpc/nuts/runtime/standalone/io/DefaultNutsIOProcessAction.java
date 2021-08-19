@@ -111,7 +111,7 @@ public class DefaultNutsIOProcessAction implements NutsIOProcessAction {
         }
         throw new NutsExecutionException(session,
                 NutsMessage.cstyle("unable to resolve a valid jdk installation. "
-                + "Either run nuts with a valid JDK/SDK (not JRE) or register a valid one using nadmin tool. "
+                + "Either run nuts with a valid JDK/SDK (not JRE) or register a valid one using 'nuts settings' command. "
                 + "All the followings are invalid : \n%s",
                 String.join("\n", detectedJavaHomes)
                 ),

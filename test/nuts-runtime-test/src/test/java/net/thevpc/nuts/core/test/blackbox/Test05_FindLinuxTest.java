@@ -33,11 +33,10 @@ public class Test05_FindLinuxTest {
         //should throw NutsNotFoundException because
         //would not be able to install nsh and other companions
         try {
-            NutsWorkspace ws = Nuts.openWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
+            NutsWorkspace ws = TestUtils.openTestWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
                     "--archetype", "minimal",
-                    "--yes",
                     //            "--skip-companions",
-                    "--verbose");
+                    "--verbose").getWorkspace();
         }catch (NutsInvalidWorkspaceException ex){
             Assertions.fail();
         }catch (NutsNotFoundException ex){
@@ -53,11 +52,10 @@ public class Test05_FindLinuxTest {
 
         //should throw NutsNotFoundException because
         //would not be able to installe nsh and other companions
-        NutsWorkspace ws = Nuts.openWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
+        NutsWorkspace ws = TestUtils.openTestWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
                 "--archetype", "minimal",
-                "--yes",
                 "--skip-companions" //            "--verbose"
-        );
+        ).getWorkspace();
 
         NutsResultList<NutsId> result = ws.search()
                 .setSession(ws.createSession().setFetchStrategy(NutsFetchStrategy.REMOTE))
@@ -73,11 +71,10 @@ public class Test05_FindLinuxTest {
         TestUtils.setSystemProperties(extraProperties);
 
         //should throw NutsNotFoundException because
-        //would not be able to installe nsh and other companions
-        NutsWorkspace ws = Nuts.openWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
+        //would not be able to install nsh and other companions
+        NutsWorkspace ws = TestUtils.openTestWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
                 "--archetype", "default",
-                "--yes",
-                "--skip-companions");
+                "--skip-companions").getWorkspace();
 
         int count = 0;
         NutsResultList<NutsId> result = ws.search()
@@ -94,10 +91,9 @@ public class Test05_FindLinuxTest {
 
         //should throw NutsNotFoundException because
         //would not be able to installe nsh and other companions
-        NutsWorkspace ws = Nuts.openWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
+        NutsWorkspace ws = TestUtils.openTestWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
                 "--archetype", "default",
-                "--yes",
-                "--skip-companions");
+                "--skip-companions").getWorkspace();
 
         ws = ws.createSession().getWorkspace();
         List<NutsId> result1 = ws.search().setLatest(true).addId("nuts-runtime").getResultIds().list();
@@ -115,10 +111,9 @@ public class Test05_FindLinuxTest {
 
         //should throw NutsNotFoundException because
         //would not be able to installe nsh and other companions
-        NutsWorkspace ws = Nuts.openWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
+        NutsWorkspace ws = TestUtils.openTestWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
                 "--archetype", "default",
-                "--yes",
-                "--skip-companions");
+                "--skip-companions").getWorkspace();
         ws = ws.createSession().getWorkspace();
 
         List<NutsId> result1 = ws.search().configure(false, "nuts-runtime").getResultIds().list();

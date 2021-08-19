@@ -23,7 +23,6 @@
         <module>lib/nlib-template</module>
         <module>lib/nlib-servlet</module>
         <module>lib/nlib-tomcat-classloader</module>
-        <module>toolbox/nadmin</module>
         <module>toolbox/nsh</module>
         <module>toolbox/nserver</module>
         <module>toolbox/ndiff</module>

@@ -10,6 +10,7 @@ import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.DefaultNutsWorkspace;
 import net.thevpc.nuts.runtime.standalone.executors.ArtifactExecutorComponent;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
+import net.thevpc.nuts.runtime.standalone.wscommands.settings.DefaultNutsSettingsInternalExecutable;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -275,6 +276,9 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
                     }
                     case "exec": {
                         return new DefaultNutsExecInternalExecutable(args, execSession, this);
+                    }
+                    case "settings": {
+                        return new DefaultNutsSettingsInternalExecutable(args, execSession);
                     }
                 }
                 NutsWorkspaceCustomCommand command = null;

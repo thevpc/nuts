@@ -31,14 +31,12 @@ public class Test01_CreateTest {
         TestUtils.setSystemProperties(extraProperties);
         String wsPath = baseFolder + "/" + TestUtils.getCallerMethodName();
 
-        NutsWorkspace ws = Nuts.openWorkspace("--workspace", wsPath,
+        NutsSession session = TestUtils.openTestWorkspace("--workspace", wsPath,
                 "--standalone",
                 "--archetype", "minimal",
                 "--verbose",
-                "--yes",
                 "--skip-companions");
-        NutsSession session = ws.createSession();
-        ws=session.getWorkspace();
+        NutsWorkspace ws= session.getWorkspace();
         Assertions.assertEquals(wsPath + "/cache", ws.locations().getStoreLocation(NutsStoreLocation.CACHE));
         Assertions.assertEquals(wsPath + "/cache/" + NutsConstants.Folders.REPOSITORIES + "/"+
                         ws.repos().getRepositories()[0].getName()+
@@ -78,12 +76,11 @@ public class Test01_CreateTest {
         extraProperties.put("nuts.export.always-show-command", "true");
         TestUtils.setSystemProperties(extraProperties);
 
-        NutsWorkspace ws = Nuts.openWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
+        NutsWorkspace ws = TestUtils.openTestWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
                 "--standalone",
                 "--archetype", "minimal",
                 "--verbose",
-                "--yes",
-                "--skip-companions");
+                "--skip-companions").getWorkspace();
     }
 
     @Test
@@ -92,12 +89,11 @@ public class Test01_CreateTest {
         extraProperties.put("nuts.export.always-show-command", "true");
         TestUtils.setSystemProperties(extraProperties);
 
-        NutsWorkspace ws = Nuts.openWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
+        NutsWorkspace ws = TestUtils.openTestWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
                 "--exploded",
                 "--archetype", "minimal",
                 "--verbose",
-                "--yes",
-                "--skip-companions");
+                "--skip-companions").getWorkspace();
     }
 
     @Test
@@ -107,12 +103,11 @@ public class Test01_CreateTest {
         TestUtils.setSystemProperties(extraProperties);
         String wsPath = baseFolder + "/" + TestUtils.getCallerMethodName();
 
-        NutsWorkspace ws = Nuts.openWorkspace("--workspace", wsPath,
+        NutsWorkspace ws = TestUtils.openTestWorkspace("--workspace", wsPath,
                 "--exploded",
                 "--archetype", "minimal",
                 "--verbose",
-                "--yes",
-                "--skip-companions");
+                "--skip-companions").getWorkspace();
         NutsSession session = ws.createSession();
         ws=session.getWorkspace();
         Assertions.assertEquals(System.getProperty("user.home") + "/.cache/nuts/" + new File(wsPath).getName(),
@@ -131,12 +126,11 @@ public class Test01_CreateTest {
         extraProperties.put("nuts.export.always-show-command", "true");
         TestUtils.setSystemProperties(extraProperties);
 
-        NutsWorkspace ws = Nuts.openWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
+        NutsWorkspace ws = TestUtils.openTestWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
                 "--exploded",
                 "--archetype", "minimal",
                 "--verbose",
-                "--yes",
-                "--skip-companions");
+                "--skip-companions").getWorkspace();
     }
 
     @Test
@@ -145,12 +139,11 @@ public class Test01_CreateTest {
         extraProperties.put("nuts.export.always-show-command", "true");
         TestUtils.setSystemProperties(extraProperties);
 
-        NutsWorkspace ws = Nuts.openWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
+        NutsWorkspace ws = TestUtils.openTestWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
                 "--exploded",
                 "--archetype", "minimal",
                 "--verbose",
-                "--yes",
-                "--skip-companions");
+                "--skip-companions").getWorkspace();
     }
 
     @BeforeAll

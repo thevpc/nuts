@@ -64,7 +64,7 @@ public class Test06_UpateTest {
                 "--yes",
                 "--progress=newline",
                 "--skip-companions"
-        );
+        ).getWorkspace();
         NutsSession session = uws.createSession();
         uws=session.getWorkspace();
         NutsRepository updateRepo1 = uws.repos().addRepository("local");
@@ -81,7 +81,7 @@ public class Test06_UpateTest {
                 "--progress=newline",
                 "--yes",
                 "--skip-companions"
-        );
+        ).getWorkspace();
         nws=nws.createSession().getWorkspace();
         nws.repos().addRepository(new NutsAddRepositoryOptions().setTemporary(true).setName("temp").setLocation(updateRepoPath)
                 .setConfig(new NutsRepositoryConfig().setStoreLocationStrategy(NutsStoreLocationStrategy.STANDALONE))

@@ -31,7 +31,7 @@ nuts --reset
 ## Kill mode
 **Kill mode** is a special variant of reset mode where workspace will not be recreated after deletion. 
 This can be achieved by using a combination of reset mode and --skip-boot (-Q)option. Do not ever
-invoke it unless your are really knowing what you are doing. To run nuts in reset mode type :
+invoke it unless you are really knowing what you are doing. To run nuts in reset mode type :
 
 To run nuts in prune mode type :
 ```
@@ -39,7 +39,7 @@ nuts --reset -Q
 ```
 
 ## After invoking reset mode
-After invoking reset mode, nuts commands (installed by nadmin) will not be available anymore. 
+After invoking reset mode, nuts commands (installed by nuts settings) will not be available anymore. 
 you should use the jar base invocation at least once to reinstall these commands.
 
 ```

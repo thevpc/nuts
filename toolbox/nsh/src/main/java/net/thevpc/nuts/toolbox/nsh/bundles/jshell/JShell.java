@@ -79,16 +79,16 @@ public class JShell {
         this(appContext, null, null, args);
     }
 
-    public JShell(NutsWorkspace workspace, String[] args) {
-        this(workspace.apps().createApplicationContext(new String[]{}, Nsh.class, null, 0, null), null, null, args);
+    public JShell(NutsSession session, String[] args) {
+        this(session.getWorkspace().apps().createApplicationContext(null, new String[]{}, 0, Nsh.class, null), null, null, args);
     }
 
-    public JShell(NutsWorkspace workspace, NutsSession session, NutsId appId, String[] args) {
-        this(workspace.apps().createApplicationContext(new String[]{}, Nsh.class, null, 0, session), appId, null, args);
+    public JShell(NutsSession session, NutsId appId, String[] args) {
+        this(session.getWorkspace().apps().createApplicationContext(session, new String[]{}, 0, Nsh.class, null), appId, null, args);
     }
 
-    public JShell(NutsWorkspace workspace, NutsSession session, NutsId appId, String serviceName, String[] args) {
-        this(workspace.apps().createApplicationContext(new String[]{}, Nsh.class, null, 0, session), appId, serviceName, args);
+    public JShell(NutsSession session, NutsId appId, String serviceName, String[] args) {
+        this(session.getWorkspace().apps().createApplicationContext(session, new String[]{}, 0, Nsh.class, null), appId, serviceName, args);
     }
 
     private JShell(NutsApplicationContext appContext, NutsId appId, String serviceName, String[] args) {

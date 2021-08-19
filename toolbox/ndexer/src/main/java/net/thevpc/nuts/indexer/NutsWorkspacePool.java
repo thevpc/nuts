@@ -23,7 +23,7 @@ public class NutsWorkspacePool {
             } else {
                 o = Nuts.openWorkspace(Nuts.createOptions()
                         .setSkipCompanions(true)
-                        .setWorkspace(ws));
+                        .setWorkspace(ws)).getWorkspace();
             }
             pool.put(ws, o);
             pool.put(o.getUuid(), o);

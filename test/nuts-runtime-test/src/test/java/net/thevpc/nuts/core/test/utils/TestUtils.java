@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import net.thevpc.nuts.Nuts;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 
@@ -140,7 +141,7 @@ public class TestUtils {
         }
     }
 
-    public static NutsWorkspace openTestWorkspace(String... args) {
+    public static NutsSession openTestWorkspace(String... args) {
         String test_id = TestUtils.getCallerMethodId(1);
         File path;
         try {

@@ -161,6 +161,6 @@ public interface NutsCustomCommandManager {
      */
     NutsCustomCommandManager setSession(NutsSession session);
 
-    void createLauncher(NutsLauncherOptions launcher);
+    void addLauncher(NutsLauncherOptions launcher);
 
 }

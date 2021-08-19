@@ -40,7 +40,7 @@ In this form, **```nuts```** will auto-detect both the ```groupId``` and the ```
 By default, there is a couple of groupIds that are automatically imported :
 
   + ```net.vpc.app``` (contains various applications of the author)
-  + ```net.vpc.nuts.toolbox``` (contains various companion tools of **```nuts```**, such as ```nsh```, ```nadmin```, ...)
+  + ```net.vpc.nuts.toolbox``` (contains various companion tools of **```nuts```**, such as ```nsh```, ...)
 
 And it turns out, hopefully, that netbeans-launcher belongs to an imported groupId, so we can omit it.
 Besides, if no version is provided, **```nuts```** will also auto-detect the best version to execute. If the application is already installed, the version you choose to install will be resolved. If you have not installed any, the most recent version, obviously, will be detected for you.

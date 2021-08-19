@@ -6,6 +6,7 @@
 package net.thevpc.nuts.core.test.bundles.ntf;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.runtime.core.format.text.NutsTextNodeWriter;
 import net.thevpc.nuts.runtime.core.format.text.NutsTextNodeWriterRenderer;
 import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextNodeParser;
@@ -41,7 +42,7 @@ public class Test07_ColorfulStream {
 
     private static void writeColors(String s) {
         System.out.println(s);
-        NutsWorkspace ws = Nuts.openWorkspace();
+        NutsWorkspace ws = TestUtils.openTestWorkspace().getWorkspace();
         {
             NutsSession session = ws.createSession();
             NutsText node = new DefaultNutsTextNodeParser(session).parse(new StringReader(s));

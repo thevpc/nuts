@@ -33,12 +33,11 @@ public class Test07_AppTypeTest {
         TestUtils.setSystemProperties(extraProperties);
         final String workpacePath = baseFolder + "/" + TestUtils.getCallerMethodName();
 
-        NutsWorkspace uws = Nuts.openWorkspace(
+        NutsWorkspace uws = TestUtils.openTestWorkspace(
                 "--workspace", workpacePath + "-update",
                 "--standalone",
-                "--yes",
                 "--skip-companions"
-        );
+        ).getWorkspace();
         uws = uws.createSession().getWorkspace();
         NutsDefinition u = uws.search().addId("nsh").getResultDefinitions().required();
         System.out.println(u.getDescriptor());

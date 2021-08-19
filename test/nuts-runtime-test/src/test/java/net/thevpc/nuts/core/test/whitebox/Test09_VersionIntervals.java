@@ -51,7 +51,7 @@ public class Test09_VersionIntervals {
     }
 
     private void check(String a, String b) {
-        NutsWorkspace ws = Nuts.openWorkspace();
+        NutsWorkspace ws = Nuts.openWorkspace().getWorkspace();
         NutsVersionFilter u = DefaultNutsVersionFilter.parse(a,ws.createSession());
         String b2 = u.toString();
         Assertions.assertEquals(b, b2);
@@ -60,7 +60,7 @@ public class Test09_VersionIntervals {
 
     @Test
     public void test2(){
-        NutsWorkspace ws = Nuts.openWorkspace();
+        NutsWorkspace ws = Nuts.openWorkspace().getWorkspace();
         TestUtils.println(ws.version().parser().parse("").inc(-1).getValue());
     }
 }

@@ -7,7 +7,7 @@ public class TestFetch {
 
     @Test
     public void test(){
-        NutsWorkspace ws = Nuts.openWorkspace();
+        NutsWorkspace ws = Nuts.openWorkspace().getWorkspace();
         NutsDefinition resultDefinition = ws.fetch().setId("org.springframework.boot:spring-boot#2.4.1")
                 .setDependencies(true)
                 .setContent(true)

@@ -30,7 +30,10 @@ package net.thevpc.nuts;
  * @app.category Base
  */
 public interface NutsIdManager {
+    NutsId parse(String id);
+
     NutsIdParser parser();
+
     NutsIdFormat formatter();
 
     NutsIdFormat formatter(NutsId id);
