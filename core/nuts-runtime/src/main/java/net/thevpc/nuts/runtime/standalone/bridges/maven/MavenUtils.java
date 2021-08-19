@@ -234,6 +234,10 @@ public class MavenUtils {
             if(icons==null){
                 icons="";
             }
+            String categories = pom.getProperties().get("nuts.categories");
+            if(categories==null){
+                categories="";
+            }
             return ws.descriptor().descriptorBuilder()
                     .setId(toNutsId(pom.getPomId()))
                     .setParents(pom.getParent() == null ? new NutsId[0] : new NutsId[]{toNutsId(pom.getParent())})
@@ -245,7 +249,12 @@ public class MavenUtils {
                     .setPlatform(new String[]{"java"})
                     .setDependencies(toNutsDependencies(pom.getDependencies(), session))
                     .setStandardDependencies(toNutsDependencies(pom.getDependenciesManagement(), session))
-                    .setCategory(pom.getProperties().get("nuts.category"))
+                    .setCategories(
+                            Arrays.stream(categories.split("[\n\r;,]"))
+                                    .map(String::trim)
+                                    .filter(x->!x.isEmpty())
+                                    .collect(Collectors.toList())
+                    )
                     .setIcons(
                             Arrays.stream(icons.split("[\n\r]"))
                                     .map(String::trim)

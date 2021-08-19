@@ -51,8 +51,8 @@ public class ReadOnlyNutsWorkspaceOptions implements NutsWorkspaceOptions {
     }
 
     @Override
-    public NutsWorkspaceOptionsFormat format() {
-        return options.format();
+    public NutsWorkspaceOptionsFormat formatter() {
+        return options.formatter();
     }
 
     @Override

@@ -26,6 +26,7 @@
 package net.thevpc.nuts;
 
 import java.io.*;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -127,7 +128,7 @@ public interface NutsDescriptor extends Serializable {
      * Standard Category Names should be used.
      * @return category path of the artifact
      */
-    String getCategory();
+    String[] getCategories();
 
     /**
      * long description for the artifact

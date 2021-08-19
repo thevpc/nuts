@@ -320,11 +320,12 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
         props.put("user-home", ws.io().path(System.getProperty("user.home")));
         props.put("user-dir", ws.io().path(System.getProperty("user.dir")));
         props.put("command-line-long",
-                ws.env().getBootOptions().format().setCompact(false).getBootCommandLine()
+                ws.env().getBootOptions().formatter().setCompact(false).getBootCommandLine()
         );
-        props.put("command-line-short", ws.env().getBootOptions().format().setCompact(true).getBootCommandLine());
+        props.put("command-line-short", ws.env().getBootOptions().formatter().setCompact(true).getBootCommandLine());
         props.put("inherited", ws.env().getBootOptions().isInherited());
-        props.put("inherited-nuts-boot-args", ws.commandLine().parse(System.getProperty("nuts.boot.args")).format());
+        // nuts-boot-args must always be parsed in bash format
+        props.put("inherited-nuts-boot-args", ws.commandLine().setCommandlineFamily(NutsCommandlineFamily.BASH).parse(System.getProperty("nuts.boot.args")).format());
         props.put("inherited-nuts-args", ws.commandLine().parse(System.getProperty("nuts.args"))
                 .format()
         );

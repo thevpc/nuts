@@ -32,7 +32,7 @@ import java.util.function.Predicate;
  * Format used to format command line by {@link NutsExecCommand}
  *
  * @author thevpc
- * @see NutsExecCommand#format()
+ * @see NutsExecCommand#formatter()
  * @since 0.5.4
  * @app.category Format
  */

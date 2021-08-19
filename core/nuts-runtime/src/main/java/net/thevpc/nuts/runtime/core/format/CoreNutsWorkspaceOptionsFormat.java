@@ -24,6 +24,9 @@
 package net.thevpc.nuts.runtime.core.format;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.core.app.DefaultCommandLineBash;
+import net.thevpc.nuts.runtime.core.app.DefaultCommandLineWindowsCmd;
+import net.thevpc.nuts.runtime.core.app.NutsCommandLineBashFamilySupport;
 import net.thevpc.nuts.runtime.core.model.CoreNutsWorkspaceOptions;
 import net.thevpc.nuts.runtime.core.app.NutsCommandLineUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;

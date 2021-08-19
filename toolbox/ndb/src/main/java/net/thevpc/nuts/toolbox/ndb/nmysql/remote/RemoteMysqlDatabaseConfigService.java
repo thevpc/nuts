@@ -261,7 +261,7 @@ public class RemoteMysqlDatabaseConfigService {
             b.addCommand(cmd);
         }
         if (context.getSession().isPlainTrace()) {
-            NutsString ff = b.format()
+            NutsString ff = b.formatter()
                     .setEnvReplacer(envEntry -> {
                         if (envEntry.getName().toLowerCase().contains("password")
                                 || envEntry.getName().toLowerCase().contains("pwd")) {

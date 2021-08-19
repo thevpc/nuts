@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DefaultCommandLineWindowsCmd implements NutsCommandLineBashFamilySupport{
-
+    //special chars : &()[]{}^=;!'+,`~
     public DefaultCommandLineWindowsCmd() {
     }
 

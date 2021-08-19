@@ -56,7 +56,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
      */
     private String description;
     private String[] icons;
-    private String category;
+    private String[] categories;
     private String genericName;
     private String[] arch;
     private String[] os;
@@ -91,7 +91,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
                 d.getProperties(),
                 d.getClassifierMappings(),
                 d.getGenericName(),
-                d.getCategory(),
+                d.getCategories(),
                 d.getIcons(),
                 session
         );
@@ -104,7 +104,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
                                  NutsDependency[] dependencies,
                                  NutsDependency[] standardDependencies,
                                  NutsIdLocation[] locations, Map<String, String> properties, NutsClassifierMapping[] classifierMappings,
-                                 String genericName, String category, String[] icons,
+                                 String genericName, String[] categories, String[] icons,
                                  NutsSession session) {
         super(session);
         //id can have empty groupId (namely for executors like 'java')
@@ -133,7 +133,9 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
         this.icons =icons==null?new String[0] :
                 Arrays.stream(icons).map(x->x==null?"":x.trim()).filter(x->x.length()>0)
                         .toArray(String[]::new);
-        this.category = CoreStringUtils.trimToNull(category);
+        this.categories = categories==null?new String[0] :
+                Arrays.stream(categories).map(x->x==null?"":x.trim()).filter(x->x.length()>0)
+                        .toArray(String[]::new);
         this.executor = executor;
         this.installer = installer;
 //        this.ext = CoreStringUtils.trimToNull(ext);
@@ -276,8 +278,8 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
     }
 
     @Override
-    public String getCategory() {
-        return category;
+    public String[] getCategories() {
+        return categories;
     }
 
     @Override
@@ -291,7 +293,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
         int result = Objects.hash(id, /*alternative,*/ packaging,
                 //                ext,
                 executable, application, executor, installer, name, description, properties,
-                category,genericName
+                categories,genericName
                 );
         result = 31 * result + Arrays.hashCode(icons);
         result = 31 * result + Arrays.hashCode(parents);
@@ -326,7 +328,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
                 && Objects.equals(installer, that.installer)
                 && Objects.equals(name, that.name)
                 && Arrays.equals(icons, that.icons)
-                && Objects.equals(category, that.category)
+                && Objects.equals(categories, that.categories)
                 && Objects.equals(genericName, that.genericName)
                 && Objects.equals(description, that.description)
                 && Arrays.equals(arch, that.arch)
@@ -362,7 +364,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
                 + ", dependencies=" + Arrays.toString(dependencies)
                 + ", standardDependencies=" + Arrays.toString(standardDependencies)
                 + ", icon=" + Arrays.toString(icons)
-                + ", category=" + category
+                + ", category=" + categories
                 + ", genericName=" + genericName
                 + ", properties=" + properties
                 + '}';

@@ -198,8 +198,11 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                 }
 //                options.setConfirm(execSession.getConfirm());
 
-                String bootArgumentsString = options.format().setExported(true).setApiVersion(nutsDependencyVersion == null ? null : nutsDependencyVersion.toString())
-                        .setCompact(true).getBootCommandLine().toString();
+                String bootArgumentsString = options.formatter()
+                        .setExported(true)
+                        .setApiVersion(nutsDependencyVersion == null ? null : nutsDependencyVersion.toString())
+                        .setCompact(true)
+                        .getBootCommandLine().formatter().setCommandlineFamily(NutsCommandlineFamily.BASH).toString();
 //                if(nutsDependencyVersion!=null && nutsDependencyVersion.compareTo(executionContext.getWorkspace().getApiVersion())<0){
 //                    if(nutsDependencyVersion.compareTo("0.8.0")<0){
 //                        for (String s : bootCommand) {
@@ -474,8 +477,10 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                 mainMethod.invoke(nutsApp, new Object[]{getSession().copy(), joptions.getApp().toArray(new String[0])});
             } else {
                 //NutsWorkspace
-                System.setProperty("nuts.boot.args", getSession().getWorkspace().env().getBootOptions()
-                        .format().setExported(true).setCompact(true).getBootCommandLine().toString()
+                System.setProperty("nuts.boot.args",
+                        getSession().getWorkspace().env().getBootOptions()
+                                .formatter().setExported(true).setCompact(true).getBootCommandLine()
+                                .formatter().setCommandlineFamily(NutsCommandlineFamily.BASH).toString()
                 );
                 mainMethod = cls.getMethod("main", String[].class);
 //                List<String> nargs = new ArrayList<>();

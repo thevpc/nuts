@@ -42,7 +42,7 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
     }
 
     @Override
-    public NutsExecCommandFormat format() {
+    public NutsExecCommandFormat formatter() {
         return (NutsExecCommandFormat) new DefaultNutsExecCommandFormat(ws).setValue(this).setSession(getSession());
     }
 

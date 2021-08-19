@@ -140,9 +140,9 @@ public final class NutsApplications {
         NutsApplicationContext applicationContext = createApplicationContext(applicationInstance, args, session);
         NutsWorkspace ws = applicationContext.getWorkspace();
         boolean inherited = ws.env().getBootOptions().isInherited();
-        ws.log().setSession(session).of(NutsApplications.class).with().session(session).level(Level.FINE).verb(NutsLogVerb.START).formatted()
+        ws.log().of(NutsApplications.class).with().level(Level.FINE).verb(NutsLogVerb.START).formatted()
                 .log("running application {0}: {1} {2}", inherited ? "(inherited)" : "",
-                        applicationInstance.getClass().getName(), ws.commandLine().setSession(session).create(args)
+                        applicationInstance.getClass().getName(), ws.commandLine().create(args)
                 );
         switch (applicationContext.getMode()) {
             /**

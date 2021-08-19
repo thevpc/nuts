@@ -6,10 +6,12 @@ import net.thevpc.nuts.toolbox.nadmin.optional.oswindows.WindowFreeDesktopEntryW
 import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.*;
 import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.base.BaseSystemNdi;
 import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.base.NutsEnvInfo;
+import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.base.SimpleScriptBuilder;
 import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.util.ReplaceString;
 
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 public class WindowsNdi extends BaseSystemNdi {
@@ -125,9 +127,9 @@ public class WindowsNdi extends BaseSystemNdi {
                 return addFileLine(NdiScriptInfoType.NUTS_TERM,
                         env.getNutsApiId(),
                         apiConfigFile, getCommentLineConfigHeader(),
+                        "@ECHO OFF"+newlineString()+
                         createNutsEnvString(env, true, true)+newlineString()
-                                +getExecFileName("nuts")+" welcome "+newlineString()
-                                +"cmd.exe"+newlineString()
+                                +"cmd.exe /K "+getExecFileName("nuts")+" welcome "+newlineString()
                         ,
                         getShebanSh());
             }
@@ -144,4 +146,12 @@ public class WindowsNdi extends BaseSystemNdi {
         return -1;
     }
 
+    public boolean isShortcutFieldNameUserFriendly(){
+        return true;
+    }
+
+    @Override
+    protected String getExportCommand(String[] names) {
+        return null;
+    }
 }

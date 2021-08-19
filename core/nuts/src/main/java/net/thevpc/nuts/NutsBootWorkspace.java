@@ -207,7 +207,7 @@ public final class NutsBootWorkspace {
         cmd.add("-jar");
         cmd.add(file.getPath());
         cmd.addAll(Arrays.asList(
-                options.format().setCompact(true).setApiVersion(workspaceInformation.getApiVersion()).getBootCommandLine()
+                options.formatter().setCompact(true).setApiVersion(workspaceInformation.getApiVersion()).getBootCommandLine()
                         .toStringArray()
         ));
         if (showCommand) {
@@ -372,7 +372,10 @@ public final class NutsBootWorkspace {
 
             //after eventual clean up
             if (NutsConstants.Versions.LATEST.equalsIgnoreCase(workspaceInformation.getApiVersion())
-                    || NutsConstants.Versions.RELEASE.equalsIgnoreCase(workspaceInformation.getApiVersion())) {
+                    || NutsConstants.Versions.RELEASE.equalsIgnoreCase(workspaceInformation.getApiVersion())
+                    || workspaceInformation.getApiVersion()==null
+                    || "".equals(workspaceInformation.getApiVersion())
+            ) {
                 NutsBootId s = PrivateNutsUtils.Mvn.resolveLatestMavenId(NutsBootId.parse(NutsConstants.Ids.NUTS_API), null, LOG, resolveBootRepositories());
                 if (s == null) {
                     throw new NutsBootException("unable to load latest nuts version");
@@ -1255,7 +1258,7 @@ public final class NutsBootWorkspace {
         System.err.printf("  nuts-store-lib                   : %s%n", rbc_locations.get(NutsStoreLocation.LIB.id()));
         System.err.printf("  nuts-store-strategy              : %s%n", PrivateNutsUtils.desc(actualBootConfig.getStoreLocationStrategy()));
         System.err.printf("  nuts-store-layout                : %s%n", PrivateNutsUtils.desc(actualBootConfig.getStoreLocationLayout()));
-        System.err.printf("  nuts-boot-args                   : %s%n", options.format().getBootCommandLine());
+        System.err.printf("  nuts-boot-args                   : %s%n", options.formatter().getBootCommandLine());
         System.err.printf("  nuts-app-args                    : %s%n", Arrays.toString(options.getApplicationArguments()));
         System.err.printf("  option-read-only                 : %s%n", options.isReadOnly());
         System.err.printf("  option-trace                     : %s%n", options.isTrace());

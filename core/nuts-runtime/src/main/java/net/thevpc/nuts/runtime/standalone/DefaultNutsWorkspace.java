@@ -247,9 +247,9 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             LOGCSF.log("start ```sh nuts``` ```primary3 {0}``` at {1}", Nuts.getVersion(), CoreNutsUtils.DEFAULT_DATE_TIME_FORMATTER.format(Instant.ofEpochMilli(info.getOptions().getCreationTime())));
             NutsCommandLineManager commandLine = commandLine().setSession(defaultSession());
             LOGCRF.log("open Nuts Workspace               : {0}",
-                    info.getOptions().format().getBootCommandLine()
+                    info.getOptions().formatter().getBootCommandLine()
             );
-            LOGCRF.log("open Nuts Workspace (compact)     : {0}", info.getOptions().format().setCompact(true).getBootCommandLine());
+            LOGCRF.log("open Nuts Workspace (compact)     : {0}", info.getOptions().formatter().setCompact(true).getBootCommandLine());
 
             LOGCRF.log("open Workspace with config        : ");
             LOGCRF.log("   nuts-uuid                      : {0}", CoreNutsUtils.desc(info.getUuid(), text));
@@ -303,10 +303,10 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             LOGCRF.log("   option-progress                : {0}", CoreNutsUtils.desc(info.getOptions().getProgressOptions(), text));
             LOGCRF.log("   inherited                      : {0}", info.getOptions().isInherited());
             LOGCRF.log("   inherited-nuts-boot-args       : {0}", System.getProperty("nuts.boot.args") == null ? CoreNutsUtils.desc(null, text)
-                    : CoreNutsUtils.desc(commandLine.parse(System.getProperty("nuts.boot.args")), text)
+                    : CoreNutsUtils.desc(commandLine.setCommandlineFamily(NutsCommandlineFamily.BASH).parse(System.getProperty("nuts.boot.args")), text)
             );
             LOGCRF.log("   inherited-nuts-args            : {0}", System.getProperty("nuts.args") == null ? CoreNutsUtils.desc(null, text)
-                    : CoreNutsUtils.desc(text.toText(commandLine.parse(System.getProperty("nuts.args"))), text)
+                    : CoreNutsUtils.desc(text.toText(commandLine.setCommandlineFamily(NutsCommandlineFamily.BASH).parse(System.getProperty("nuts.args"))), text)
             );
             LOGCRF.log("   option-open-mode               : {0}", CoreNutsUtils.formatLogValue(text, info.getOptions().getOpenMode(), info.getOptions().getOpenMode() == null ? NutsOpenMode.OPEN_OR_CREATE : info.getOptions().getOpenMode()));
             LOGCRF.log("   java-home                      : {0}", System.getProperty("java.home"));

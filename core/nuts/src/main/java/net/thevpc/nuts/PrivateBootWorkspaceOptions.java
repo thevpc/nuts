@@ -1081,7 +1081,7 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
     }
 
     @Override
-    public NutsWorkspaceOptionsFormat format() {
+    public NutsWorkspaceOptionsFormat formatter() {
         return new PrivateNutsWorkspaceOptionsFormat(this);
     }
 
@@ -1477,7 +1477,7 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
 
     @Override
     public String toString() {
-        return format().getBootCommandLine().toString();
+        return formatter().getBootCommandLine().toString();
     }
 
     @Override

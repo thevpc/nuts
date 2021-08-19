@@ -57,7 +57,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
      */
     private String name;
     private List<String> icons=new ArrayList<>();
-    private String category;
+    private List<String> categories;
     private String genericName;
     /**
      * some longer (but not too long) description
@@ -108,7 +108,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         setStandardDependencies((NutsDependency[])null);
         setProperties(null);
         setIcons(new ArrayList<>());
-        setCategory(null);
+        setCategories(null);
         setGenericName(null);
         return this;
     }
@@ -136,7 +136,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
             setStandardDependencies(other.getStandardDependencies());
             setProperties(other.getProperties());
             setIcons(new ArrayList<>(other.getIcons()));
-            setCategory(other.getCategory());
+            setCategories(other.getCategories());
             setGenericName(other.getGenericName());
         }else{
             clear();
@@ -168,7 +168,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
             setProperties(other.getProperties());
             setIcons(new ArrayList<>(Arrays.asList(other.getIcons())));
             setGenericName(other.getGenericName());
-            setCategory(other.getCategory());
+            setCategories(new ArrayList<>(Arrays.asList(other.getCategories())));
         }else{
             clear();
         }
@@ -459,7 +459,9 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
                 getExecutor(), getInstaller(),
                 getName(), getDescription(), getArch(), getOs(), getOsdist(), getPlatform(), getDependencies(), getStandardDependencies(),
                 getLocations(), getProperties(), getClassifierMappings(),
-                genericName,category, icons==null?new String[0] :icons.toArray(new String[0]) ,
+                genericName,
+                categories==null?new String[0] :categories.toArray(new String[0]) ,
+                icons==null?new String[0] :icons.toArray(new String[0]) ,
                 session
         );
     }
@@ -645,7 +647,12 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 //        String n_ext = getExt();
         boolean n_executable = isExecutable();
         String n_name = getName();
-        String n_category = getCategory();
+        List<String> n_categories = getCategories();
+        if(n_categories==null){
+            n_categories=new ArrayList<>();
+        }else{
+            n_categories=new ArrayList<>(n_categories);
+        }
         List<String> n_icons = getIcons();
         if(n_icons==null){
             n_icons=new ArrayList<>();
@@ -686,13 +693,13 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
             //n_packaging = applyStringInheritance(n_packaging, parentDescriptor.getPackaging());
 //            n_ext = CoreNutsUtils.applyStringInheritance(n_ext, parentDescriptor.getExt());
             n_name = CoreNutsUtils.applyStringInheritance(n_name, parentDescriptor.getName());
-            n_category = CoreNutsUtils.applyStringInheritance(n_category, parentDescriptor.getCategory());
             n_genericName = CoreNutsUtils.applyStringInheritance(n_genericName, parentDescriptor.getGenericName());
             n_desc = CoreNutsUtils.applyStringInheritance(n_desc, parentDescriptor.getDescription());
             n_deps.addAll(Arrays.asList(parentDescriptor.getDependencies()));
             n_sdeps.addAll(Arrays.asList(parentDescriptor.getStandardDependencies()));
             n_archs.addAll(Arrays.asList(parentDescriptor.getArch()));
             n_icons.addAll(Arrays.asList(parentDescriptor.getIcons()));
+            n_categories.addAll(Arrays.asList(parentDescriptor.getCategories()));
             n_os.addAll(Arrays.asList(parentDescriptor.getOs()));
             n_osdist.addAll(Arrays.asList(parentDescriptor.getOsdist()));
             n_platform.addAll(Arrays.asList(parentDescriptor.getPlatform()));
@@ -714,7 +721,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         setInstaller(n_installer);
         setName(n_name);
         setGenericName(n_genericName);
-        setCategory(n_category);
+        setCategories(n_categories);
         setIcons(n_icons);
         setDescription(n_desc);
         setArch(n_archs.toArray(new String[0]));
@@ -772,7 +779,12 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
                                 x->CoreNutsUtils.applyStringProperties(x, map)
                         ).collect(Collectors.toList())
         );
-        this.setCategory(CoreNutsUtils.applyStringProperties(getCategory(), map));
+        this.setCategories(
+                getCategories().stream()
+                        .map(
+                                x->CoreNutsUtils.applyStringProperties(x, map)
+                        ).collect(Collectors.toList())
+        );
         this.setArch(CoreNutsUtils.applyStringProperties(getArch(), map));
         this.setOs(CoreNutsUtils.applyStringProperties(getOs(), map));
         this.setOsdist(CoreNutsUtils.applyStringProperties(getOsdist(), map));
@@ -873,18 +885,18 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 
     @Override
     public NutsDescriptorBuilder setIcons(List<String> icons) {
-        this.icons =icons==null?new ArrayList<>() :icons;
+        this.icons =icons==null?new ArrayList<>() :new ArrayList<>(icons);
         return this;
     }
 
     @Override
-    public String getCategory() {
-        return category;
+    public List<String> getCategories() {
+        return categories;
     }
 
     @Override
-    public NutsDescriptorBuilder setCategory(String name) {
-        this.category=name;
+    public NutsDescriptorBuilder setCategories(List<String> categories) {
+        this.categories =categories==null?new ArrayList<>() : new ArrayList<>(categories);
         return this;
     }
 }

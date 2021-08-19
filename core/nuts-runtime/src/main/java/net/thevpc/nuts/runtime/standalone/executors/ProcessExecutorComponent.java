@@ -27,7 +27,6 @@ package net.thevpc.nuts.runtime.standalone.executors;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
-import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.bundles.io.IProcessExecHelper;
 import net.thevpc.nuts.NutsExecutorComponent;
@@ -85,7 +84,7 @@ public class ProcessExecutorComponent implements NutsExecutorComponent {
 
         Map<String, String> osEnv = new HashMap<>();
         String bootArgumentsString = executionContext.getWorkspace().env().getBootOptions()
-                .format().setExported(true).setCompact(true).getBootCommandLine().toString();
+                .formatter().setExported(true).setCompact(true).getBootCommandLine().toString();
         osEnv.put("nuts_boot_args", bootArgumentsString);
         String dir = null;
         boolean showCommand = CoreBooleanUtils.getSysBoolNutsProperty("show-command", false);

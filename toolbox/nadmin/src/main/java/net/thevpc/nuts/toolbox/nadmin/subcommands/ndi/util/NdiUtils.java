@@ -45,6 +45,20 @@ import java.util.regex.Pattern;
  */
 public class NdiUtils {
 
+    public static boolean isPathFolder(String p) {
+        if(p==null){
+            return false;
+        }
+        return (p.equals(".") || p.equals("..") || p.endsWith("/") || p.endsWith("\\"));
+    }
+
+    public static boolean isPath(String p) {
+        if(p==null){
+            return false;
+        }
+        return (p.equals(".") || p.equals("..") || p.contains("/") || p.contains("\\"));
+    }
+
     public static Path sysWhich(String commandName) {
         Path[] p = sysWhichAll(commandName);
         if(p.length>0){

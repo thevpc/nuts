@@ -60,6 +60,9 @@ public class DefaultNutsBootModel implements NutsBootModel {
             }
         }
 
+        if(DefaultNutsWorkspaceEnvManagerModel.getPlatformOsFamily0()==NutsOsFamily.WINDOWS){
+            org.fusesource.jansi.AnsiConsole.systemInstall();
+        }
         stdout =new NutsPrintStreamSystem(System.out,null,null,ansiSupport,
                 this.bootSession
         ).convertMode(terminalMode);

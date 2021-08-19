@@ -17,7 +17,7 @@
         <github.global.server>github</github.global.server>
         <nuts.application>true</nuts.application>
         <nuts.genericName>Bash Compatible Shell</nuts.genericName>
-        <nuts.category>/Utilities/Nuts</nuts.category>
+        <nuts.categories>/System/TerminalEmulator</nuts.categories>
         <nuts.icons>
             classpath://net/thevpc/nuts/toolbox/nsh/nsh.svg
             classpath://net/thevpc/nuts/toolbox/nsh/nsh.png

@@ -6,6 +6,7 @@ import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.*;
 import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.base.BaseSystemNdi;
 import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.base.NameBuilder;
 import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.base.NutsEnvInfo;
+import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.base.SimpleScriptBuilder;
 import net.thevpc.nuts.toolbox.nadmin.subcommands.ndi.util.ReplaceString;
 
 import java.io.BufferedReader;
@@ -139,6 +140,12 @@ public abstract class AnyNixNdi extends BaseSystemNdi {
     protected String getCallScriptCommand(String path, String... args) {
         return "source \"" + path + "\" " + Arrays.stream(args).map(a -> dblQte(a)).collect(Collectors.joining(" "));
     }
+
+    @Override
+    protected String getExportCommand(String[] names) {
+        return "export " + String.join(" ", names);
+    }
+
     @Override
     protected String getSetVarCommand(String name, String value) {
         return name +"=\"" + value + "\"";

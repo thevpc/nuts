@@ -155,7 +155,7 @@ public abstract class DelegateNutsDescriptor extends AbstractNutsDescriptor {
     }
 
     @Override
-    public String getCategory() {
-        return getBase().getCategory();
+    public String[] getCategories() {
+        return getBase().getCategories();
     }
 }

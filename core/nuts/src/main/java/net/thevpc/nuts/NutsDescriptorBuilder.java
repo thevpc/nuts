@@ -200,11 +200,11 @@ public interface NutsDescriptorBuilder extends Serializable {
 
     List<String> getIcons();
 
-    NutsDescriptorBuilder setIcons(List<String> name);
+    NutsDescriptorBuilder setIcons(List<String> icons);
 
-    String getCategory();
+    List<String> getCategories();
 
-    NutsDescriptorBuilder setCategory(String name);
+    NutsDescriptorBuilder setCategories(List<String> categories);
 
     /**
      * long description for the artifact

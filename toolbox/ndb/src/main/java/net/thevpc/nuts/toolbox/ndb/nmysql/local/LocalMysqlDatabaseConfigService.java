@@ -120,7 +120,7 @@ public class LocalMysqlDatabaseConfigService {
                     .setRedirectErrorStream(true);
             if (context.getSession().isPlainTrace()) {
                 context.getSession().out().printf("%s    [EXEC] %s%n", getBracketsPrefix(getDatabaseName()),
-                        cmd.format().setEnvReplacer(envEntry -> {
+                        cmd.formatter().setEnvReplacer(envEntry -> {
                             if ("CMD_PWD".equals(envEntry.getName())) {
                                 return "****";
                             }

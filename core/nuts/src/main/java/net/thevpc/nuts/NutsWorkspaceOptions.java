@@ -53,7 +53,7 @@ public interface NutsWorkspaceOptions extends Serializable {
      *
      * @return a new instance of options formatter that help formatting this instance.
      */
-    NutsWorkspaceOptionsFormat format();
+    NutsWorkspaceOptionsFormat formatter();
 
     /**
      * nuts api version to boot.

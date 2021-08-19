@@ -38,7 +38,7 @@ import java.util.Map;
  */
 public interface NutsExecCommand extends NutsWorkspaceCommand {
 
-    NutsExecCommandFormat format();
+    NutsExecCommandFormat formatter();
 
     /**
      * when the execution returns a non zero result, an exception is

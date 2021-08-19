@@ -195,7 +195,7 @@ public final class NutsBootId {
                         optional, os, arch
                 );
             }
-            return new NutsBootId(id.substring(0, dots), id.substring(dots + 1), NutsBootVersion.parse(NutsConstants.Versions.LATEST),
+            return new NutsBootId(id.substring(0, dots), id.substring(dots + 1), NutsBootVersion.parse(""),
                     optional, os, arch);
         }
         int dash = id.indexOf('#', dots + 1);
@@ -207,7 +207,7 @@ public final class NutsBootId {
             return new NutsBootId("", id.substring(0, dash), NutsBootVersion.parse(id.substring(dash + 1)),
                     optional, os, arch);
         }
-        return new NutsBootId("", id, NutsBootVersion.parse(NutsConstants.Versions.LATEST),
+        return new NutsBootId("", id, NutsBootVersion.parse(""),
                 optional, os, arch);
     }
 

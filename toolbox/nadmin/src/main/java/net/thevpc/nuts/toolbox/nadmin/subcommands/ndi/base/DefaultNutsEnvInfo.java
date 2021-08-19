@@ -28,12 +28,12 @@ public class DefaultNutsEnvInfo implements NutsEnvInfo {
     public Path getNutsJarPath() {
         if (nutsJarPath == null) {
             NutsId nid = getNutsApiId();
-            NutsWorkspaceBootConfig bootConfig = loadSwitchWorkspaceLocationConfig(switchWorkspaceLocation);
             if (switchWorkspaceLocation == null) {
                 NutsDefinition apiDef = session.getWorkspace().search()
                         .addId(nid).setOptional(false).setLatest(true).setContent(true).getResultDefinitions().required();
                 nutsJarPath = apiDef.getPath();
             } else {
+                NutsWorkspaceBootConfig bootConfig = loadSwitchWorkspaceLocationConfig(switchWorkspaceLocation);
                 nutsJarPath = Paths.get(bootConfig.getStoreLocation(nid, NutsStoreLocation.LIB),
                         session.getWorkspace().locations().getDefaultIdFilename(nid));
             }

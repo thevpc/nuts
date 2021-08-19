@@ -16,7 +16,7 @@
         <github.global.server>github</github.global.server>
         <nuts.application>true</nuts.application>
         <nuts.genericName>Nuts Administration Tool</nuts.genericName>
-        <nuts.category>/Utilities/Nuts</nuts.category>
+        <nuts.categories>/Settings/PackageManager/Nuts</nuts.categories>
         <nuts.icons>
             classpath://net/thevpc/nuts/toolbox/nadmin/nadmin.svg
             classpath://net/thevpc/nuts/toolbox/nadmin/nadmin.png
@@ -80,7 +80,8 @@
         <dependency>
             <groupId>com.github.vatbub</groupId>
             <artifactId>mslinks</artifactId>
-            <version>1.0.6.2</version>
+            <version>1.0.5</version>
+<!--            <version>1.0.6.2</version> requires JDK10-->
             <!--!
              <os>windows</os>
             -->

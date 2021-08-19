@@ -1192,7 +1192,7 @@ public class DefaultNutsWorkspaceConfigModel {
             o.println("workspace.path:");
             o.println(ws.locations().getWorkspaceLocation());
             o.println("workspace.options:");
-            o.println(wconfig.getOptions().format().setCompact(false).setRuntime(true).setInit(true).setExported(true).getBootCommandLine());
+            o.println(wconfig.getOptions().formatter().setCompact(false).setRuntime(true).setInit(true).setExported(true).getBootCommandLine());
             for (NutsStoreLocation location : NutsStoreLocation.values()) {
                 o.println("location." + location.id() + ":");
                 o.println(ws.locations().getStoreLocation(location));
