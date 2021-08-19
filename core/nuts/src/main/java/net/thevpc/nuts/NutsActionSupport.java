@@ -37,11 +37,10 @@ public enum NutsActionSupport {
                     case NEVER:
                         return false;
                     case ALWAYS:
-                    case PREFERRED: {
+                    case PREFERRED:
+                    case SUPPORTED:
+                    {
                         return true;
-                    }
-                    case SUPPORTED: {
-                        return false;
                     }
                     default: {
                         throw new NutsUnsupportedEnumException(session, request);

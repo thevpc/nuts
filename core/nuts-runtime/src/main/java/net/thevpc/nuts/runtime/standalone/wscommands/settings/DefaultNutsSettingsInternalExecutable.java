@@ -25,10 +25,10 @@ public class DefaultNutsSettingsInternalExecutable extends DefaultInternalNutsEx
     private List<NutsSettingsSubCommand> subCommands;
     @Override
     public void execute() {
-        if (CoreNutsUtils.isIncludesHelpOption(args)) {
-            showDefaultHelp();
-            return;
-        }
+//        if (CoreNutsUtils.isIncludesHelpOption(args)) {
+//            showDefaultHelp();
+//            return;
+//        }
 //        getSession().getWorkspace().extensions().discoverTypes(
 //                getSession().getAppId(),
 //                Thread.currentThread().getContextClassLoader());
