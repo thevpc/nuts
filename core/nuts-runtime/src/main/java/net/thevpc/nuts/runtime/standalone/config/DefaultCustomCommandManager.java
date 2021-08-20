@@ -236,6 +236,9 @@ public class DefaultCustomCommandManager implements NutsCustomCommandManager {
                 cmd.addCommand("--icon", launcher.getMenuCategory());
             }
         }
+        if (launcher.isOpenTerminal()) {
+            cmd.addCommand("--terminal");
+        }
         cmd.addCommand(id.getLongName());
         cmd.setFailFast(true);
         cmd.setExecutionType(NutsExecutionType.EMBEDDED);

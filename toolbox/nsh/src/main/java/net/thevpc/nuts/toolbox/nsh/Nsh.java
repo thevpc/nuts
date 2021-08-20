@@ -104,6 +104,14 @@ public class Nsh implements NutsApplication {
             }
         }
         cfg.save(false);
+        session.getWorkspace().commands().addLauncher(
+                new NutsLauncherOptions()
+                        .setId(session.getAppId())
+                        .setCreateScript(true)
+                        .setCreateDesktopShortcut(NutsActionSupportCondition.PREFERRED)
+                        .setCreateMenuShortcut(NutsActionSupportCondition.SUPPORTED)
+                        .setOpenTerminal(true)
+        );
     }
 
     @Override

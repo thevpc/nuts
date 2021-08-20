@@ -227,7 +227,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                     s=s+File.separator+NameBuilder.id(appDef.getId(),getExecFileName("%n"),null, appDef.getDescriptor(), session).buildName();
                 }else {
                     NutsDefinition appDef = loadIdDefinition(nid);
-                    s=File.separator+NameBuilder.id(appDef.getId(),s,null, appDef.getDescriptor(), session).buildName();
+                    s=NameBuilder.id(appDef.getId(),s,null, appDef.getDescriptor(), session).buildName();
                     s= getBinScriptFile(s,options.getEnv()).toString();
                 }
                 r.add(scriptBuilderTemplate("body", NdiScriptInfoType.ARTIFACT, nid, options.getEnv())
@@ -334,7 +334,8 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
 //        NutsDefinition apiDef = context.getWorkspace().search()
 //                .addId(apiId).setOptional(false).setLatest(true).setContent(true).getResultDefinitions().required();
         Path script = null;
-        script = getBinScriptFile(NameBuilder.id(options.getEnv().getNutsApiId(), options.getScriptPath(), "%n",
+        String scriptPath = options.getScriptPath();
+        script = getBinScriptFile(NameBuilder.id(options.getEnv().getNutsApiId(), scriptPath, "%n",
                 options.getEnv().getNutsApiDef().getDescriptor(), session).buildName(), options.getEnv());
         boolean createPath = false;
         if (Files.exists(script)) {
@@ -376,13 +377,13 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             }
         } else {
             if (matchCondition(options.getCreateDesktop(), getDesktopIntegrationSupport(NutsDesktopIntegrationItem.DESKTOP))) {
-                all.addAll(Arrays.asList(createLaunchTermShortcut(NutsDesktopIntegrationItem.DESKTOP, options.getEnv(), preferredName, options.getScriptPath())));
+                all.addAll(Arrays.asList(createLaunchTermShortcut(NutsDesktopIntegrationItem.DESKTOP, options.getEnv(), preferredName, scriptPath)));
             }
             if (matchCondition(options.getCreateMenu(), getDesktopIntegrationSupport(NutsDesktopIntegrationItem.MENU))) {
-                all.addAll(Arrays.asList(createLaunchTermShortcut(NutsDesktopIntegrationItem.MENU, options.getEnv(), preferredName, options.getScriptPath())));
+                all.addAll(Arrays.asList(createLaunchTermShortcut(NutsDesktopIntegrationItem.MENU, options.getEnv(), preferredName, scriptPath)));
             }
             if (matchCondition(options.getCreateShortcut(), getDesktopIntegrationSupport(NutsDesktopIntegrationItem.SHORTCUT))) {
-                all.addAll(Arrays.asList(createLaunchTermShortcut(NutsDesktopIntegrationItem.SHORTCUT, options.getEnv(), preferredName, options.getScriptPath())));
+                all.addAll(Arrays.asList(createLaunchTermShortcut(NutsDesktopIntegrationItem.SHORTCUT, options.getEnv(), preferredName, scriptPath)));
             }
         }
 
@@ -468,6 +469,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             if (!bootAlreadyProcessed && !nonNutsIds.isEmpty()) {
                 result.addAll(Arrays.asList(createBootScripts(
                         cmd.getOptions().copy()
+                                .setScriptPath(null)//reset script path!
                                 .setId(cmd.getOptions().getEnv().getNutsApiId().toString())
                                 .setScriptPath(linkNameCurrent)
                                 .setPersistentConfig(persistentConfig != null && persistentConfig)
@@ -903,6 +905,8 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         sl.setTerminal(options.isTerminalMode());
         if (options.getMenuCategory() != null) {
             sl.addCategory(options.getMenuCategory());
+        }else{
+            sl.setCategories(Arrays.asList(appDef.getDescriptor().getCategories()));
         }
         String preferredPath = getShortcutPath(options).toString();
         return createShortcut(nutsDesktopIntegrationItem, appId, preferredPath, sl);
