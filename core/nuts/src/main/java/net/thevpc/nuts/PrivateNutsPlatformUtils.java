@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -11,19 +11,19 @@
  * architecture to help supporting a large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
  * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts;
 
 import java.util.Locale;
@@ -61,11 +61,11 @@ final class PrivateNutsPlatformUtils {
         String s = null;
         String locationName = location.id();
         NutsOsFamily platformOsFamily = getPlatformOsFamily();
-        s = PrivateNutsUtils.trim(System.getProperty("nuts.home.global." + locationName + "." + platformOsFamily.id()));
+        s = NutsUtilStrings.trim(System.getProperty("nuts.home.global." + locationName + "." + platformOsFamily.id()));
         if (!s.isEmpty()) {
             return s + "/" + workspaceName;
         }
-        s = PrivateNutsUtils.trim(System.getProperty("nuts.export.home.global." + locationName + "." + platformOsFamily.id()));
+        s = NutsUtilStrings.trim(System.getProperty("nuts.export.home.global." + locationName + "." + platformOsFamily.id()));
         if (!s.isEmpty()) {
             return s.trim() + "/" + workspaceName;
         }
@@ -80,7 +80,7 @@ final class PrivateNutsPlatformUtils {
                     }
                     case WINDOWS: {
                         String pf = System.getenv("ProgramFiles");
-                        if (PrivateNutsUtils.isBlank(pf)) {
+                        if (NutsUtilStrings.isBlank(pf)) {
                             pf = "C:\\Program Files";
                         }
                         return pf + "\\nuts\\" + PrivateNutsUtils.syspath(workspaceName);
@@ -98,7 +98,7 @@ final class PrivateNutsPlatformUtils {
                     }
                     case WINDOWS: {
                         String pf = System.getenv("ProgramFiles");
-                        if (PrivateNutsUtils.isBlank(pf)) {
+                        if (NutsUtilStrings.isBlank(pf)) {
                             pf = "C:\\Program Files";
                         }
                         return pf + "\\nuts\\" + PrivateNutsUtils.syspath(workspaceName);
@@ -116,7 +116,7 @@ final class PrivateNutsPlatformUtils {
                     }
                     case WINDOWS: {
                         String pf = System.getenv("ProgramFiles");
-                        if (PrivateNutsUtils.isBlank(pf)) {
+                        if (NutsUtilStrings.isBlank(pf)) {
                             pf = "C:\\Program Files";
                         }
                         return pf + "\\nuts" + PrivateNutsUtils.syspath(workspaceName);
@@ -134,7 +134,7 @@ final class PrivateNutsPlatformUtils {
                     }
                     case WINDOWS: {
                         String pf = System.getenv("ProgramFiles");
-                        if (PrivateNutsUtils.isBlank(pf)) {
+                        if (NutsUtilStrings.isBlank(pf)) {
                             pf = "C:\\Program Files";
                         }
                         return pf + "\\nuts" + PrivateNutsUtils.syspath(workspaceName);
@@ -152,7 +152,7 @@ final class PrivateNutsPlatformUtils {
                     }
                     case WINDOWS: {
                         String pf = System.getenv("ProgramFiles");
-                        if (PrivateNutsUtils.isBlank(pf)) {
+                        if (NutsUtilStrings.isBlank(pf)) {
                             pf = "C:\\Program Files";
                         }
                         return pf + "\\nuts" + PrivateNutsUtils.syspath(workspaceName);
@@ -170,7 +170,7 @@ final class PrivateNutsPlatformUtils {
                     }
                     case WINDOWS: {
                         String pf = System.getenv("ProgramFiles");
-                        if (PrivateNutsUtils.isBlank(pf)) {
+                        if (NutsUtilStrings.isBlank(pf)) {
                             pf = "C:\\Program Files";
                         }
                         return pf + "\\nuts" + PrivateNutsUtils.syspath(workspaceName);
@@ -188,7 +188,7 @@ final class PrivateNutsPlatformUtils {
                     }
                     case WINDOWS: {
                         String pf = System.getenv("TMP");
-                        if (PrivateNutsUtils.isBlank(pf)) {
+                        if (NutsUtilStrings.isBlank(pf)) {
                             pf = "C:\\windows\\TEMP";
                         }
                         return pf + "\\nuts" + PrivateNutsUtils.syspath(workspaceName);
@@ -206,7 +206,7 @@ final class PrivateNutsPlatformUtils {
                     }
                     case WINDOWS: {
                         String pf = System.getenv("TMP");
-                        if (PrivateNutsUtils.isBlank(pf)) {
+                        if (NutsUtilStrings.isBlank(pf)) {
                             pf = "C:\\windows\\TEMP";
                         }
                         return pf + "\\nuts\\run" + PrivateNutsUtils.syspath(workspaceName);
@@ -251,21 +251,21 @@ final class PrivateNutsPlatformUtils {
         }
         String s = null;
         String locationName = location.id();
-        s = PrivateNutsUtils.trim(System.getProperty("nuts.home." + locationName + "." + platformOsFamily.id()));
+        s = NutsUtilStrings.trim(System.getProperty("nuts.home." + locationName + "." + platformOsFamily.id()));
         if (!s.isEmpty()) {
             return s + "/" + workspaceName;
         }
-        s = PrivateNutsUtils.trim(System.getProperty("nuts.export.home." + locationName + "." + platformOsFamily.id()));
+        s = NutsUtilStrings.trim(System.getProperty("nuts.export.home." + locationName + "." + platformOsFamily.id()));
         if (!s.isEmpty()) {
             return s.trim() + "/" + workspaceName;
         }
         String key = PrivateBootWorkspaceOptions.createHomeLocationKey(platformOsFamily, location);
-        s = homeLocations == null ? "" : PrivateNutsUtils.trim(homeLocations.get(key));
+        s = homeLocations == null ? "" : NutsUtilStrings.trim(homeLocations.get(key));
         if (!s.isEmpty()) {
             return s.trim() + "/" + workspaceName;
         }
         key = PrivateBootWorkspaceOptions.createHomeLocationKey(null, location);
-        s = homeLocations == null ? "" : PrivateNutsUtils.trim(homeLocations.get(key));
+        s = homeLocations == null ? "" : NutsUtilStrings.trim(homeLocations.get(key));
         if (!s.isEmpty()) {
             return s.trim() + "/" + workspaceName;
         } else if (global) {
@@ -281,7 +281,7 @@ final class PrivateNutsPlatformUtils {
                         }
                         case MACOS:
                         case LINUX: {
-                            String val = PrivateNutsUtils.trim(System.getenv("XDG_DATA_HOME"));
+                            String val = NutsUtilStrings.trim(System.getenv("XDG_DATA_HOME"));
                             if (!val.isEmpty()) {
                                 return val + "/nuts/" + locationName + "/" + workspaceName;
                             }
@@ -297,7 +297,7 @@ final class PrivateNutsPlatformUtils {
                         }
                         case MACOS:
                         case LINUX: {
-                            String val = PrivateNutsUtils.trim(System.getenv("XDG_LOG_HOME"));
+                            String val = NutsUtilStrings.trim(System.getenv("XDG_LOG_HOME"));
                             if (!val.isEmpty()) {
                                 return val + "/nuts/" + workspaceName;
                             }
@@ -313,7 +313,7 @@ final class PrivateNutsPlatformUtils {
                         }
                         case MACOS:
                         case LINUX: {
-                            String val = PrivateNutsUtils.trim(System.getenv("XDG_RUNTIME_DIR"));
+                            String val = NutsUtilStrings.trim(System.getenv("XDG_RUNTIME_DIR"));
                             if (!val.isEmpty()) {
                                 return val + "/nuts" + "/" + workspaceName;
                             }
@@ -331,7 +331,7 @@ final class PrivateNutsPlatformUtils {
                         }
                         case MACOS:
                         case LINUX: {
-                            String val = PrivateNutsUtils.trim(System.getenv("XDG_CONFIG_HOME"));
+                            String val = NutsUtilStrings.trim(System.getenv("XDG_CONFIG_HOME"));
                             if (!val.isEmpty()) {
                                 return val + "/nuts" + "/" + workspaceName + (folderType0 == null ? "" : "/config");
                             }
@@ -347,7 +347,7 @@ final class PrivateNutsPlatformUtils {
                         }
                         case MACOS:
                         case LINUX: {
-                            String val = PrivateNutsUtils.trim(System.getenv("XDG_CACHE_HOME"));
+                            String val = NutsUtilStrings.trim(System.getenv("XDG_CACHE_HOME"));
                             if (!val.isEmpty()) {
                                 return val + "/nuts" + "/" + workspaceName;
                             }
@@ -368,7 +368,9 @@ final class PrivateNutsPlatformUtils {
                 }
             }
         }
-        throw new NutsBootException("unsupported " + platformOsFamily + "/" + location + " for " + workspaceName);
+        throw new NutsBootException(
+                NutsMessage.cstyle("unsupported %s/%s for %s", platformOsFamily, location, workspaceName)
+        );
     }
 
 }

@@ -1,9 +1,7 @@
 package net.thevpc.nuts.runtime.core.filters.version;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.filters.AbstractNutsFilter;
 import net.thevpc.nuts.runtime.core.filters.id.NutsScriptAwareIdFilter;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.core.util.Simplifiable;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 
@@ -63,7 +61,7 @@ public class NutsVersionFilterNone extends AbstractVersionFilter implements Nuts
             if (id instanceof NutsScriptAwareIdFilter) {
                 NutsScriptAwareIdFilter b = (NutsScriptAwareIdFilter) id;
                 String expr = b.toJsNutsIdFilterExpr();
-                if (CoreStringUtils.isBlank(expr)) {
+                if (NutsUtilStrings.isBlank(expr)) {
                     return null;
                 }
                 sb.append("(").append(expr).append("')");

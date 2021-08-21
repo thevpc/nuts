@@ -10,7 +10,9 @@ public interface NutsEnvInfo {
     Path getNutsJarPath();
 
     Path getBinFolder();
+
     Path getIncFolder();
+
     Path getNutsAppsFolder();
 
     Path getNutsApiAppsFolder();

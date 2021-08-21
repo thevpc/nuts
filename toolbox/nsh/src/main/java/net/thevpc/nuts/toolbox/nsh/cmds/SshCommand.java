@@ -27,7 +27,6 @@ package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.lib.ssh.SShConnection;
 import net.thevpc.nuts.toolbox.nsh.AbstractNshBuiltin;
-import net.thevpc.nuts.toolbox.nsh.bundles._StringUtils;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.util.ShellHelper;
 import net.thevpc.nuts.*;
@@ -115,7 +114,7 @@ public class SshCommand extends AbstractNshBuiltin {
                         c.skip();
                     }
                 }
-                if (!_StringUtils.isBlank(o.nutsCommand)) {
+                if (!NutsUtilStrings.isBlank(o.nutsCommand)) {
                     cmd.add(o.nutsCommand);
                 } else {
                     String userHome = null;
@@ -123,7 +122,7 @@ public class SshCommand extends AbstractNshBuiltin {
                             .setRedirectErrorStream(true)
                             .grabOutputString().exec("echo", "$HOME");
                     userHome = sshSession.getOutputString().trim();
-                    if (_StringUtils.isBlank(workspace)) {
+                    if (NutsUtilStrings.isBlank(workspace)) {
                         workspace = userHome + "/.config/nuts/" + NutsConstants.Names.DEFAULT_WORKSPACE_NAME;
                     }
                     boolean nutsCommandFound = false;

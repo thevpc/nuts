@@ -26,6 +26,7 @@ package net.thevpc.nuts;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import javax.swing.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.*;
@@ -57,27 +58,8 @@ final class PrivateNutsUtils {
     public static final boolean NO_M2 = PrivateNutsUtils.getSysBoolNutsProperty("no-m2", false);
     private static final Pattern DOLLAR_PLACE_HOLDER_PATTERN = Pattern.compile("[$][{](?<name>([a-zA-Z]+))[}]");
 
-    public static boolean isPreferConsole(String[] args) {
-        try {
-            if (java.awt.GraphicsEnvironment.isHeadless()) {
-                // non gui mode
-                return true;
-            }
-        } catch (Exception ex) {
-            return true;
-        }
-        if (System.console() != null) {
-            return true;
-        }
-        Map<String, String> getenv = System.getenv();
-        if (getenv.get("XDG_SESSION_DESKTOP") != null) {
-            return false;
-        }
-        return false;
-    }
-
     public static boolean isValidWorkspaceName(String workspace) {
-        if (isBlank(workspace)) {
+        if (NutsUtilStrings.isBlank(workspace)) {
             return true;
         }
         String workspaceName = workspace.trim();
@@ -87,7 +69,7 @@ final class PrivateNutsUtils {
     }
 
     public static String resolveValidWorkspaceName(String workspace) {
-        if (isBlank(workspace)) {
+        if (NutsUtilStrings.isBlank(workspace)) {
             return NutsConstants.Names.DEFAULT_WORKSPACE_NAME;
         }
         String workspaceName = workspace.trim();
@@ -109,66 +91,9 @@ final class PrivateNutsUtils {
         }
     }
 
-    public static boolean isBlank(String str) {
-        return str == null || str.trim().length() == 0;
-    }
-
-    public static String trim(String str) {
-        if (str == null) {
-            return "";
-        }
-        return str.trim();
-    }
-
     public static String idToPath(NutsBootId id) {
         return id.getGroupId().replace('.', '/') + "/"
                 + id.getArtifactId() + "/" + id.getVersion();
-    }
-
-    //    public static String idToPath(String str) {
-//        int status = 0;
-//
-//        char[] chars = str.toCharArray();
-//        for (int i = 0; i < chars.length; i++) {
-//            char c = chars[i];
-//            switch (status) {
-//                case 0: {
-//                    switch (c) {
-//                        case ':': {
-//                            status = 1;
-//                            chars[i] = '/';
-//                            break;
-//                        }
-//                        case '.': {
-//                            chars[i] = '/';
-//                            break;
-//                        }
-//                        case '#': {
-//                            status = 2;
-//                            chars[i] = '/';
-//                            break;
-//                        }
-//                    }
-//                }
-//                case 1: {
-//                    switch (c) {
-//                        case '#': {
-//                            status = 2;
-//                            chars[i] = '/';
-//                            break;
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//        return new String(chars);
-//    }
-    public static String trimToNull(String str) {
-        if (str == null) {
-            return null;
-        }
-        String s = str.trim();
-        return s.length() == 0 ? null : s;
     }
 
     public static List<String> split(String str, String separators, boolean trim) {
@@ -210,7 +135,7 @@ final class PrivateNutsUtils {
         }
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         copy(requestURL.openStream(), out, true, true);
-        return new String(out.toByteArray());
+        return out.toString();
     }
 
     public static String readStringFromFile(File file) throws IOException {
@@ -221,39 +146,6 @@ final class PrivateNutsUtils {
         return new File(location).isAbsolute();
     }
 
-    //    public static boolean storeProperties(Properties p, File file) {
-//        Writer writer = null;
-//        try {
-//            File parentFile = file.getParentFile();
-//            if (parentFile != null) {
-//                parentFile.mkdirs();
-//            }
-//            try {
-//                p.store(writer = new FileWriter(file), null);
-//            } finally {
-//                if (writer != null) {
-//                    writer.close();
-//                }
-//            }
-//            return true;
-//        } catch (IOException e) {
-//            LOG.log(Level.SEVERE, "unable to store {0}", file);
-//        }
-//        return false;
-//    }
-//
-//    public static Properties loadURLPropertiesFromLocalFile(File file) {
-//
-//        Properties p = new Properties();
-//        if (file.isFile()) {
-//            try (InputStream in = Files.newInputStream(file.toPath())) {
-//                p.load(in);
-//            } catch (IOException ex) {
-//                //ignore...
-//            }
-//        }
-//        return p;
-//    }
     public static Properties loadURLProperties(URL url, File cacheFile, boolean useCache, PrivateNutsLog LOG) {
         long startTime = System.currentTimeMillis();
         Properties props = new Properties();
@@ -452,7 +344,7 @@ final class PrivateNutsUtils {
         String exe = PrivateNutsPlatformUtils.getPlatformOsFamily().equals(NutsOsFamily.WINDOWS) ? "java.exe" : "java";
         if (javaHome == null || javaHome.isEmpty()) {
             javaHome = System.getProperty("java.home");
-            if (PrivateNutsUtils.isBlank(javaHome) || "null".equals(javaHome)) {
+            if (NutsUtilStrings.isBlank(javaHome) || "null".equals(javaHome)) {
                 //this may happen is using a precompiled image (such as with graalvm)
                 return exe;
             }
@@ -460,11 +352,11 @@ final class PrivateNutsUtils {
         return javaHome + File.separator + "bin" + File.separator + exe;
     }
 
-    public static long deleteAndConfirmAll(File[] folders, boolean force, String header, NutsSessionTerminal term, NutsSession session, PrivateNutsLog LOG) {
-        return deleteAndConfirmAll(folders, force, new SimpleConfirmDelete(), header, term, session, LOG);
+    public static long deleteAndConfirmAll(File[] folders, boolean force, String header, NutsSessionTerminal term, NutsSession session, PrivateNutsLog LOG, boolean gui) {
+        return deleteAndConfirmAll(folders, force, new SimpleConfirmDelete(), header, term, session, LOG, gui);
     }
 
-    private static long deleteAndConfirmAll(File[] folders, boolean force, ConfirmDelete refForceAll, String header, NutsSessionTerminal term, NutsSession session, PrivateNutsLog LOG) {
+    private static long deleteAndConfirmAll(File[] folders, boolean force, ConfirmDelete refForceAll, String header, NutsSessionTerminal term, NutsSession session, PrivateNutsLog LOG, boolean gui) {
         long count = 0;
         boolean headerWritten = false;
         if (folders != null) {
@@ -482,14 +374,14 @@ final class PrivateNutsUtils {
                             }
                         }
                     }
-                    count += PrivateNutsUtils.deleteAndConfirm(child, force, refForceAll, term, session, LOG);
+                    count += PrivateNutsUtils.deleteAndConfirm(child, force, refForceAll, term, session, LOG, gui);
                 }
             }
         }
         return count;
     }
 
-    private static long deleteAndConfirm(File directory, boolean force, ConfirmDelete refForceAll, NutsSessionTerminal term, NutsSession session, PrivateNutsLog LOG) {
+    private static long deleteAndConfirm(File directory, boolean force, ConfirmDelete refForceAll, NutsSessionTerminal term, NutsSession session, PrivateNutsLog LOG, boolean gui) {
         if (directory.exists()) {
             if (!force && !refForceAll.isForce() && refForceAll.accept(directory)) {
                 String line;
@@ -498,11 +390,21 @@ final class PrivateNutsUtils {
                             .resetLine()
                             .forString("do you confirm deleting %s [y/n/c/a] (default 'n') ?", directory).setSession(session).getValue();
                 } else {
-                    Scanner s = new Scanner(System.in);
                     System.out.printf("do you confirm deleting %s [y/n/c/a] (default 'n') ?", directory);
                     System.out.print(" : ");
                     System.out.flush();
-                    line = s.nextLine();
+                    if (gui) {
+                        line = JOptionPane.showInputDialog(
+                                null, NutsMessage.cstyle("do you confirm deleting %s [y/n/c/a] (default 'n') ?", directory),
+                                "Nuts Package Manager - " + Nuts.getVersion(),JOptionPane.QUESTION_MESSAGE
+                        );
+                        if (line == null) {
+                            line = "";
+                        }
+                    } else {
+                        Scanner s = new Scanner(System.in);
+                        line = s.nextLine();
+                    }
                 }
                 if ("a".equalsIgnoreCase(line) || "all".equalsIgnoreCase(line)) {
                     refForceAll.setForce(true);
@@ -529,24 +431,24 @@ final class PrivateNutsUtils {
                     public FileVisitResult postVisitDirectory(Path dir, IOException exc)
                             throws IOException {
                         count[0]++;
-                        boolean deleted=false;
+                        boolean deleted = false;
                         for (int i = 0; i < 3; i++) {
                             try {
                                 Files.delete(dir);
-                                deleted=true;
+                                deleted = true;
                                 break;
-                            }catch (DirectoryNotEmptyException e){
+                            } catch (DirectoryNotEmptyException e) {
                                 // sometimes, on Windows OS, the Filesystem hasn't yet finished deleting
                                 // the children (asynchronous)
                                 //try three times and then exit!
                             }
                             try {
                                 Thread.sleep(500);
-                            }catch (InterruptedException e){
+                            } catch (InterruptedException e) {
                                 break;
                             }
                         }
-                        if(!deleted){
+                        if (!deleted) {
                             //do not catch, last time the exception is thrown
                             Files.delete(dir);
                         }
@@ -573,7 +475,7 @@ final class PrivateNutsUtils {
             return true;
         }
         String javaHome = System.getProperty("java.home");
-        if (PrivateNutsUtils.isBlank(javaHome) || "null".equals(javaHome)) {
+        if (NutsUtilStrings.isBlank(javaHome) || "null".equals(javaHome)) {
             return cmd.equals("java") || cmd.equals("java.exe") || cmd.equals("javaw.exe") || cmd.equals("javaw");
         }
         String jh = javaHome.replace("\\", "/");
@@ -593,10 +495,7 @@ final class PrivateNutsUtils {
         if (cmd.equals(jh + "/jre/bin/java")) {
             return true;
         }
-        if (cmd.equals(jh + "/jre/bin/java.exe")) {
-            return true;
-        }
-        return false;
+        return cmd.equals(jh + "/jre/bin/java.exe");
     }
 
     public static String desc(Object s) {
@@ -633,7 +532,7 @@ final class PrivateNutsUtils {
     }
 
     public static File toFile(String url) {
-        if (isBlank(url)) {
+        if (NutsUtilStrings.isBlank(url)) {
             return null;
         }
         URL u = null;
@@ -853,7 +752,7 @@ final class PrivateNutsUtils {
                                 byte[] bytes = Files.readAllBytes(new File(src, "pom.xml").toPath());
                                 xml = new String(bytes);
                             } catch (IOException ex) {
-                                throw new NutsBootException("unable to detect nuts version in dev mode.");
+                                throw new NutsBootException(NutsMessage.plain("unable to detect nuts version in dev mode."));
                             }
                             m = Pattern.compile("<version>(?<v>([0-9. ]+))</version>").matcher(xml);
                             if (m.find()) {
@@ -869,6 +768,56 @@ final class PrivateNutsUtils {
         } else {
             return version;
         }
+    }
+
+    static File createFile(String parent, String child) {
+        String userHome = System.getProperty("user.home");
+        if (child.startsWith("~/")) {
+            child = new File(userHome, child.substring(2)).getPath();
+        }
+        if ((child.startsWith("/") || child.startsWith("\\") || new File(child).isAbsolute())) {
+            return new File(child);
+        }
+        if (parent != null) {
+            if (parent.startsWith("~/")) {
+                parent = new File(userHome, parent.substring(2)).getPath();
+            }
+        } else {
+            parent = ".";
+        }
+        return new File(parent, child);
+    }
+
+    public static String stacktrace(Throwable th) {
+        try {
+            StringWriter sw = new StringWriter();
+            try (PrintWriter pw = new PrintWriter(sw)) {
+                th.printStackTrace(pw);
+            }
+            return sw.toString();
+        } catch (Exception ex) {
+            // ignore
+        }
+        return "";
+    }
+
+    public static boolean isInfiniteLoopThread(String className, String methodName) {
+        Thread thread = Thread.currentThread();
+        StackTraceElement[] elements = thread.getStackTrace();
+
+        if (elements == null || elements.length == 0) {
+            return false;
+        }
+
+        for (int i = 0; i < elements.length; i++) {
+            StackTraceElement element = elements[elements.length - (i + 1)];
+            if (className.equals(element.getClassName())) {
+                if (methodName.equals(element.getMethodName())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -890,8 +839,8 @@ final class PrivateNutsUtils {
      */
     private static class SimpleConfirmDelete implements ConfirmDelete {
 
+        private final List<File> ignoreDeletion = new ArrayList<>();
         private boolean force;
-        private List<File> ignoreDeletion = new ArrayList<>();
 
         @Override
         public boolean isForce() {
@@ -921,8 +870,8 @@ final class PrivateNutsUtils {
 
     public static class StringMapParser {
 
-        private String eqSeparators;
-        private String entrySeparators;
+        private final String eqSeparators;
+        private final String entrySeparators;
 
         /**
          * @param eqSeparators    equality separators, example '='
@@ -1088,7 +1037,7 @@ final class PrivateNutsUtils {
         public static File resolveOrDownloadJar(String nutsId, String[] repositories, String cacheFolder, PrivateNutsLog LOG, boolean includeDesc, Instant expire, ErrorInfoList errors) {
             File cachedJarFile = new File(resolveMavenFullPath(cacheFolder, nutsId, "jar"));
             if (cachedJarFile.isFile()) {
-                if(isFileAccessible(cachedJarFile.toPath(),expire,LOG)){
+                if (isFileAccessible(cachedJarFile.toPath(), expire, LOG)) {
                     return cachedJarFile;
                 }
             }
@@ -1216,23 +1165,23 @@ final class PrivateNutsUtils {
                                         }
                                     }
                                 }
-                                if (isBlank(groupId)) {
-                                    throw new NutsBootException("unexpected empty groupId");
+                                if (NutsUtilStrings.isBlank(groupId)) {
+                                    throw new NutsBootException(NutsMessage.plain("unexpected empty groupId"));
                                 } else if (groupId.contains("$")) {
-                                    throw new NutsBootException("unexpected maven variable in groupId=" + groupId);
+                                    throw new NutsBootException(NutsMessage.cstyle("unexpected maven variable in groupId=%s", groupId));
                                 }
-                                if (isBlank(artifactId)) {
-                                    throw new NutsBootException("unexpected empty artifactId");
+                                if (NutsUtilStrings.isBlank(artifactId)) {
+                                    throw new NutsBootException(NutsMessage.plain("unexpected empty artifactId"));
                                 } else if (artifactId.contains("$")) {
-                                    throw new NutsBootException("unexpected maven variable in artifactId=" + artifactId);
+                                    throw new NutsBootException(NutsMessage.cstyle("unexpected maven variable in artifactId=%s", artifactId));
                                 }
-                                if (isBlank(version)) {
-                                    throw new NutsBootException("unexpected empty artifactId");
+                                if (NutsUtilStrings.isBlank(version)) {
+                                    throw new NutsBootException(NutsMessage.cstyle("unexpected empty artifactId"));
                                 } else if (version.contains("$")) {
-                                    throw new NutsBootException("unexpected maven variable in artifactId=" + version);
+                                    throw new NutsBootException(NutsMessage.cstyle("unexpected maven variable in artifactId=%s", version));
                                 }
                                 //this is maven dependency, using "compile"
-                                if (isBlank(scope) || scope.equals("compile")) {
+                                if (NutsUtilStrings.isBlank(scope) || scope.equals("compile")) {
                                     depsAndRepos.deps.add(
                                             new NutsBootId(
                                                     groupId, artifactId, NutsBootVersion.parse(version), PrivateNutsUtils.parseBoolean(optional, false, false),
@@ -1241,7 +1190,7 @@ final class PrivateNutsUtils {
                                             )
                                     );
                                 } else if (version.contains("$")) {
-                                    throw new NutsBootException("unexpected maven variable in artifactId=" + version);
+                                    throw new NutsBootException(NutsMessage.cstyle("unexpected maven variable in artifactId=%s", version));
                                 }
                             }
                         }
@@ -1344,7 +1293,7 @@ final class PrivateNutsUtils {
                                         String p = file.getName();
                                         if (filter == null || filter.test(p)) {
                                             found = true;
-                                            if (bestVersion == null || NutsBootVersion.parse(bestVersion).compare(NutsBootVersion.parse(p)) < 0) {
+                                            if (bestVersion == null || NutsBootVersion.parse(bestVersion).compareTo(NutsBootVersion.parse(p)) < 0) {
                                                 bestVersion = p;
                                                 bestPath = "local location : " + file.getPath();
                                             }
@@ -1387,7 +1336,7 @@ final class PrivateNutsUtils {
                                                     String p = c4.getTextContent();
                                                     if (filter == null || filter.test(p)) {
                                                         found = true;
-                                                        if (bestVersion == null || NutsBootVersion.parse(bestVersion).compare(NutsBootVersion.parse(p)) < 0) {
+                                                        if (bestVersion == null || NutsBootVersion.parse(bestVersion).compareTo(NutsBootVersion.parse(p)) < 0) {
                                                             bestVersion = p;
                                                             bestPath = "remote file " + mavenMetadata;
                                                         }
@@ -1430,7 +1379,7 @@ final class PrivateNutsUtils {
     }
 
     public static class ErrorInfoList {
-        private List<ErrorInfo> all = new ArrayList<>();
+        private final List<ErrorInfo> all = new ArrayList<>();
 
         public void removeErrorsFor(String nutsId) {
             all.removeIf(x -> x.getNutsId().equals(nutsId));
@@ -1446,11 +1395,11 @@ final class PrivateNutsUtils {
     }
 
     public static class ErrorInfo {
-        private String nutsId;
-        private String repository;
-        private String url;
-        private String message;
-        private String error;
+        private final String nutsId;
+        private final String repository;
+        private final String url;
+        private final String message;
+        private final String error;
 
         public ErrorInfo(String nutsId, String repository, String url, String message, String error) {
             this.nutsId = nutsId;
@@ -1484,41 +1433,5 @@ final class PrivateNutsUtils {
         public String toString() {
             return getMessage() + " " + getNutsId() + " from " + getUrl() + " (repository " + getRepository() + ") : " + getError();
         }
-    }
-    static File createFile(String parent, String child) {
-        String userHome = System.getProperty("user.home");
-        if (child.startsWith("~/")) {
-            child = new File(userHome, child.substring(2)).getPath();
-        }
-        if ((child.startsWith("/") || child.startsWith("\\") || new File(child).isAbsolute())) {
-            return new File(child);
-        }
-        if (parent != null) {
-            if (parent.startsWith("~/")) {
-                parent = new File(userHome, parent.substring(2)).getPath();
-            }
-        } else {
-            parent = ".";
-        }
-        return new File(parent, child);
-    }
-
-    public static boolean isInfiniteLoopThread(String className, String methodName) {
-        Thread thread = Thread.currentThread();
-        StackTraceElement[] elements = thread.getStackTrace();
-
-        if (elements == null || elements.length == 0) {
-            return false;
-        }
-
-        for (int i = 0; i < elements.length; i++) {
-            StackTraceElement element = elements[elements.length - (i + 1)];
-            if (className.equals(element.getClassName())) {
-                if (methodName.equals(element.getMethodName())) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 }

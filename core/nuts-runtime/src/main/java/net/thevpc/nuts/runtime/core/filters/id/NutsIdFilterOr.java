@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.core.filters.id;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.filters.AbstractNutsFilter;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.core.util.Simplifiable;
 
@@ -9,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 public class NutsIdFilterOr extends AbstractIdFilter implements NutsIdFilter, Simplifiable<NutsIdFilter>, NutsScriptAwareIdFilter {
 
@@ -66,7 +64,7 @@ public class NutsIdFilterOr extends AbstractIdFilter implements NutsIdFilter, Si
             if (id instanceof NutsScriptAwareIdFilter) {
                 NutsScriptAwareIdFilter b = (NutsScriptAwareIdFilter) id;
                 String expr = b.toJsNutsIdFilterExpr();
-                if (CoreStringUtils.isBlank(expr)) {
+                if (NutsUtilStrings.isBlank(expr)) {
                     return null;
                 }
                 sb.append("(").append(expr).append("')");

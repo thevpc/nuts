@@ -4,7 +4,6 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.parsers.StringReaderExt;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.core.util.CoreNumberUtils;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 import java.io.*;
 import java.net.URL;
@@ -109,7 +108,7 @@ public class NutsTextFormatPropertiesTheme implements NutsTextFormatTheme {
     @Override
     public String getName() {
         String themeName = props.getProperty("theme-name");
-        if (CoreStringUtils.isBlank(themeName)) {
+        if (NutsUtilStrings.isBlank(themeName)) {
             themeName = UUID.randomUUID().toString();
             props.put("theme-name", themeName);
         }

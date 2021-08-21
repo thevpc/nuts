@@ -38,6 +38,7 @@ import java.io.IOException;
 public class NutsBootException extends RuntimeException {
 
     private final int exitCode;
+    private final NutsMessage message;
 
     /** Constructs a new runtime exception with the specified detail message.
      * The cause is not initialized, and may subsequently be initialized by a
@@ -46,8 +47,9 @@ public class NutsBootException extends RuntimeException {
      * @param   message   the detail message. The detail message is saved for
      *          later retrieval by the {@link #getMessage()} method.
      */
-    public NutsBootException(String message) {
-        super(message);
+    public NutsBootException(NutsMessage message) {
+        super(message.toString());
+        this.message=message;
         this.exitCode=1;
     }
 
@@ -66,8 +68,9 @@ public class NutsBootException extends RuntimeException {
      *         permitted, and indicates that the cause is nonexistent or
      *         unknown.)
      */
-    public NutsBootException(String message, Throwable cause) {
-        super(message, cause);
+    public NutsBootException(NutsMessage message, Throwable cause) {
+        super(message.toString(), cause);
+        this.message=message;
         this.exitCode=1;
     }
 
@@ -79,8 +82,9 @@ public class NutsBootException extends RuntimeException {
      * @param   message   the detail message. The detail message is saved for
      *          later retrieval by the {@link #getMessage()} method.
      */
-    public NutsBootException(String message,int exitCode) {
-        super(message);
+    public NutsBootException(NutsMessage message,int exitCode) {
+        super(message.toString());
+        this.message=message;
         this.exitCode=exitCode;
     }
 
@@ -100,12 +104,17 @@ public class NutsBootException extends RuntimeException {
      *         permitted, and indicates that the cause is nonexistent or
      *         unknown.)
      */
-    public NutsBootException(String message, Throwable cause,int exitCode) {
-        super(message, cause);
+    public NutsBootException(NutsMessage message, Throwable cause,int exitCode) {
+        super(message.toString(), cause);
+        this.message=message;
         this.exitCode=exitCode;
     }
 
     public int getExitCode() {
         return exitCode;
+    }
+
+    public NutsMessage getFormattedMessage() {
+        return message;
     }
 }

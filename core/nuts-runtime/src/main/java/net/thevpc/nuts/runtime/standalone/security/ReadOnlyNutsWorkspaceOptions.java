@@ -105,6 +105,11 @@ public class ReadOnlyNutsWorkspaceOptions implements NutsWorkspaceOptions {
     }
 
     @Override
+    public NutsRunAs getRunAs() {
+        return options.getRunAs();
+    }
+
+    @Override
     public String[] getExecutorOptions() {
         String[] v = options.getExecutorOptions();
         return v == null ? null : Arrays.copyOf(v, v.length);
@@ -327,7 +332,7 @@ public class ReadOnlyNutsWorkspaceOptions implements NutsWorkspaceOptions {
     }
 
     @Override
-    public String[] getErrors() {
+    public NutsMessage[] getErrors() {
         return options.getErrors();
     }
 

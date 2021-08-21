@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.bundles.nanodb;
 
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+import net.thevpc.nuts.NutsUtilStrings;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -82,7 +82,7 @@ public class NanoDB implements AutoCloseable{
                 return oldTable;
             }
         }
-        if (CoreStringUtils.isBlank(name)) {
+        if (NutsUtilStrings.isBlank(name)) {
             throw new IllegalArgumentException("invalid table definition: null name");
         }
         NanoDBSerializer<T> serializer = def.getSerializer();

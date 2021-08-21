@@ -2,9 +2,7 @@ package net.thevpc.nuts.runtime.standalone.wscommands;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.CoreArrayUtils;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -105,7 +103,7 @@ public class DefaultNutsWorkspaceCustomCommand implements NutsWorkspaceCustomCom
 
     @Override
     public String getHelpText(NutsSession session) throws NutsExecutionException {
-        if (!CoreStringUtils.isBlank(helpText)) {
+        if (!NutsUtilStrings.isBlank(helpText)) {
             return helpText;
         }
         if (helpCommand != null && helpCommand.length > 0) {

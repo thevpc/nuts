@@ -78,7 +78,7 @@ public class LocalMysqlDatabaseConfigService {
             }
 
             NutsExecCommand cmd = context.getWorkspace().exec()
-                    .setExecutionType(NutsExecutionType.USER_CMD)
+                    .setExecutionType(NutsExecutionType.SYSTEM)
                     .setCommand("sh", "-c",
                             "\"" + mysql.getMysqldumpCommand() + "\" -u \"$CMD_USER\" -p\"$CMD_PWD\" --databases \"$CMD_DB\" > \"$CMD_FILE\""
                     )
@@ -107,7 +107,7 @@ public class LocalMysqlDatabaseConfigService {
 //                        "set -o pipefail && \"" + mysql.getMysqldumpCommand() + "\" -u \"$CMD_USER\" -p\"$CMD_PWD\" --databases \"$CMD_DB\" | gzip > \"$CMD_FILE\""
 //                )
             NutsExecCommand cmd = context.getWorkspace().exec()
-                    .setExecutionType(NutsExecutionType.USER_CMD)
+                    .setExecutionType(NutsExecutionType.SYSTEM)
                     .setCommand("sh", "-c",
                             "set -o pipefail && \"" + mysql.getMysqldumpCommand() + "\" -u \"$CMD_USER\" -p" + password + " --databases \"$CMD_DB\" | gzip > \"$CMD_FILE\""
                     )
@@ -151,7 +151,7 @@ public class LocalMysqlDatabaseConfigService {
                 context.getSession().out().printf("%s restore archive %s%n", getBracketsPrefix(getDatabaseName()), path);
             }
             int result = context.getWorkspace().exec()
-                    .setExecutionType(NutsExecutionType.USER_CMD)
+                    .setExecutionType(NutsExecutionType.SYSTEM)
                     .setCommand("sh", "-c",
                             "cat \"$CMD_FILE\" | " + "\"" + mysql.getMysqlCommand() + "\" -h \"$CMD_HOST\" -u \"$CMD_USER\" \"-p$CMD_PWD\" \"$CMD_DB\""
                     )
@@ -170,7 +170,7 @@ public class LocalMysqlDatabaseConfigService {
             }
 
             int result = context.getWorkspace().exec()
-                    .setExecutionType(NutsExecutionType.USER_CMD).setCommand("sh", "-c",
+                    .setExecutionType(NutsExecutionType.SYSTEM).setCommand("sh", "-c",
                             "gunzip -c \"$CMD_FILE\" | \"" + mysql.getMysqlCommand() + "\" -h \"$CMD_HOST\" -u \"$CMD_USER\" \"-p$CMD_PWD\" \"$CMD_DB\""
                     )
                     .setEnv("CMD_FILE", path)

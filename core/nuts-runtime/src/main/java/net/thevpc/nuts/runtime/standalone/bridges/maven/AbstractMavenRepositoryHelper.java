@@ -29,7 +29,6 @@ import java.io.*;
 import java.util.Map;
 import java.util.logging.Level;
 
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.core.CoreNutsConstants;
 import net.thevpc.nuts.runtime.standalone.io.NamedByteArrayInputStream;
@@ -72,7 +71,7 @@ public abstract class AbstractMavenRepositoryHelper {
     }
 
     protected void checkSHA1Hash(NutsId id, InputStream stream, String typeName, NutsSession session) throws IOException {
-        switch (CoreStringUtils.trim(id.getFace())) {
+        switch (NutsUtilStrings.trim(id.getFace())) {
             case NutsConstants.QueryFaces.CONTENT_HASH:
             case NutsConstants.QueryFaces.DESCRIPTOR_HASH: {
                 break;
@@ -144,7 +143,7 @@ public abstract class AbstractMavenRepositoryHelper {
     protected String getIdExtension(NutsId id, NutsSession session) {
         checkSession(session);
         Map<String, String> q = id.getProperties();
-        String f = CoreStringUtils.trim(q.get(NutsConstants.IdProperties.FACE));
+        String f = NutsUtilStrings.trim(q.get(NutsConstants.IdProperties.FACE));
         switch (f) {
             case NutsConstants.QueryFaces.DESCRIPTOR: {
                 return ".pom";

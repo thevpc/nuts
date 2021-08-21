@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.core.format.text;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.format.text.parser.*;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -144,7 +143,7 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
                     writeRaw(s.getStart());
 //                    writeRaw(s.getKind());
                     writeEscapedSpecial(s.getCommand().getName());
-                    if (!CoreStringUtils.isBlank(s.getCommand().getArgs())) {
+                    if (!NutsUtilStrings.isBlank(s.getCommand().getArgs())) {
                         writeEscapedSpecial(" ");
                         writeEscapedSpecial(s.getCommand().getArgs());
                     }

@@ -43,21 +43,18 @@ public enum NutsExecutionType implements NutsEnum{
      * delegate running to underlining operating system using standard
      * ProcessBuilder
      */
-    USER_CMD,
+    SYSTEM,
 
     /**
-     * command will be resolved as an external native command. Nuts will
-     * delegate running to underlining operating system using standard
-     * ProcessBuilder
-     */
-    ROOT_CMD,
-
-    /**
-     * command will resolved as a class to run within the current Virtual
-     * Machine
+     * command will be resolved as a class to run within the current Virtual
+     * Machine by means of classloading
      */
     EMBEDDED,
 
+    /**
+     * command will be resolved as a list of documents to open using
+     * system mapping
+     */
     OPEN,
     ;
 

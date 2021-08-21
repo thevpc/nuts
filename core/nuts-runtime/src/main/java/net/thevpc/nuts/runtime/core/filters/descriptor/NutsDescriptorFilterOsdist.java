@@ -57,7 +57,7 @@ public class NutsDescriptorFilterOsdist extends AbstractDescriptorFilter impleme
      */
     @Override
     public NutsDescriptorFilter simplify() {
-        if (CoreStringUtils.isBlank(osdist)) {
+        if (NutsUtilStrings.isBlank(osdist)) {
             return null;
         }
         return this;

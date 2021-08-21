@@ -28,7 +28,6 @@ import net.thevpc.nuts.runtime.core.commands.repo.NutsRepositorySupportedAction;
 import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.core.common.SuccessFailResult;
 import net.thevpc.nuts.runtime.standalone.repocommands.AbstractNutsUpdateRepositoryStatisticsCommand;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.bundles.io.CommonRootsHelper;
 import net.thevpc.nuts.runtime.bundles.iter.IteratorBuilder;
 import net.thevpc.nuts.runtime.bundles.iter.IteratorUtils;
@@ -372,7 +371,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
 
     public boolean acceptAction(NutsId id, NutsRepositorySupportedAction supportedAction, NutsFetchMode mode, NutsSession session) {
         String groups = config().setSession(session).getGroups();
-        if (CoreStringUtils.isBlank(groups)) {
+        if (NutsUtilStrings.isBlank(groups)) {
             return true;
         }
         return GlobUtils.ofExact(groups).matcher(id.getGroupId()).matches();

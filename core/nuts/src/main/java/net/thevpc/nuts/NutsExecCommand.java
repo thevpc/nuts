@@ -24,7 +24,6 @@
 package net.thevpc.nuts;
 
 import java.io.InputStream;
-import java.io.PrintStream;
 import java.util.Collection;
 import java.util.Map;
 
@@ -303,33 +302,9 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
      */
     NutsExecCommand setExecutionType(NutsExecutionType executionType);
 
-    /**
-     * set embedded execution type
-     *
-     * @return {@code this} instance
-     */
-    NutsExecCommand embedded();
+    NutsExecCommand setRunAs(NutsRunAs runAs);
 
-    /**
-     * set user command execution type
-     *
-     * @return {@code this} instance
-     */
-    NutsExecCommand userCmd();
-
-    /**
-     * set root command execution type
-     *
-     * @return {@code this} instance
-     */
-    NutsExecCommand rootCmd();
-
-    /**
-     * set spawn execution type
-     *
-     * @return {@code this} instance
-     */
-    NutsExecCommand spawn();
+    NutsRunAs getRunAs();
 
     /**
      * return true if dry execution.

@@ -24,7 +24,6 @@
 package net.thevpc.nuts.runtime.core.util;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.http.SimpleHttpClient;
 import net.thevpc.nuts.runtime.bundles.io.*;
 import net.thevpc.nuts.runtime.bundles.nanodb.NanoDB;
 import net.thevpc.nuts.runtime.bundles.nanodb.NanoDBTableFile;
@@ -48,7 +47,6 @@ import java.io.*;
 import java.net.*;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
-import java.nio.channels.Channel;
 import java.nio.charset.Charset;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -59,8 +57,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.*;
-import java.util.concurrent.Future;
-import java.util.concurrent.FutureTask;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -217,7 +213,7 @@ public class CoreIOUtils {
         List<URL> urls = new ArrayList<>();
         if (all != null) {
             for (String s : all) {
-                if (!CoreStringUtils.isBlank(s)) {
+                if (!NutsUtilStrings.isBlank(s)) {
                     try {
                         URL u = new URL(s);
                         urls.add(u);
@@ -252,7 +248,7 @@ public class CoreIOUtils {
     }
 
     public static File toFile(String url) {
-        if (CoreStringUtils.isBlank(url)) {
+        if (NutsUtilStrings.isBlank(url)) {
             return null;
         }
         URL u;
@@ -387,7 +383,7 @@ public class CoreIOUtils {
     }
 
     public static Path toPathFile(String s, NutsSession session) {
-        if (CoreStringUtils.isBlank(s)) {
+        if (NutsUtilStrings.isBlank(s)) {
             return null;
         }
         if (s.startsWith("file:")) {
@@ -420,7 +416,7 @@ public class CoreIOUtils {
     }
 
     public static boolean isPathFile(String s) {
-        if (CoreStringUtils.isBlank(s)) {
+        if (NutsUtilStrings.isBlank(s)) {
             return false;
         }
         if (s.startsWith("file:")) {
@@ -441,7 +437,7 @@ public class CoreIOUtils {
     }
 
     public static boolean isPathLocal(String s) {
-        if (CoreStringUtils.isBlank(s)) {
+        if (NutsUtilStrings.isBlank(s)) {
             return false;
         }
         if (s.startsWith("file:")
@@ -462,7 +458,7 @@ public class CoreIOUtils {
     }
 
     public static boolean isPathHttp(String s) {
-        if (CoreStringUtils.isBlank(s)) {
+        if (NutsUtilStrings.isBlank(s)) {
             return false;
         }
         if (s.startsWith("http://")
@@ -473,10 +469,10 @@ public class CoreIOUtils {
     }
 
     public static boolean isPathURL(String s) {
-        if (CoreStringUtils.isBlank(s)) {
+        if (NutsUtilStrings.isBlank(s)) {
             return false;
         }
-        if (CoreStringUtils.isBlank(s)
+        if (NutsUtilStrings.isBlank(s)
                 || s.startsWith("file:")
                 || s.startsWith("jar:")
                 || s.startsWith("zip:")) {
@@ -502,22 +498,22 @@ public class CoreIOUtils {
         NutsWorkspace ws = session.getWorkspace();
         String loc = options.getLocation();
         String goodName = options.getName();
-        if (CoreStringUtils.isBlank(goodName)) {
+        if (NutsUtilStrings.isBlank(goodName)) {
             goodName = options.getConfig().getName();
         }
-        if (CoreStringUtils.isBlank(goodName)) {
+        if (NutsUtilStrings.isBlank(goodName)) {
             goodName = options.getName();
         }
-        if (CoreStringUtils.isBlank(goodName)) {
+        if (NutsUtilStrings.isBlank(goodName)) {
             if (options.isTemporary()) {
                 goodName = "temp-" + UUID.randomUUID().toString();
             } else {
                 goodName = "repo-" + UUID.randomUUID().toString();
             }
         }
-        if (CoreStringUtils.isBlank(loc)) {
+        if (NutsUtilStrings.isBlank(loc)) {
             if (options.isTemporary()) {
-                if (CoreStringUtils.isBlank(goodName)) {
+                if (NutsUtilStrings.isBlank(goodName)) {
                     goodName = "temp";
                 }
                 if (goodName.length() < 3) {
@@ -527,8 +523,8 @@ public class CoreIOUtils {
                         .setSession(session)
                         .createTempFolder(goodName + "-");
             } else {
-                if (CoreStringUtils.isBlank(loc)) {
-                    if (CoreStringUtils.isBlank(goodName)) {
+                if (NutsUtilStrings.isBlank(loc)) {
+                    if (NutsUtilStrings.isBlank(goodName)) {
                         goodName = CoreNutsUtils.randomColorName() + "-repo";
                     }
                     loc = goodName;
@@ -1652,7 +1648,7 @@ public class CoreIOUtils {
     }
 
     public static Path toPath(String path) {
-        return CoreStringUtils.isBlank(path) ? null : Paths.get(path);
+        return NutsUtilStrings.isBlank(path) ? null : Paths.get(path);
     }
 
     public static java.io.InputStream interruptible(java.io.InputStream in) {
@@ -1948,53 +1944,6 @@ public class CoreIOUtils {
         String sha1;
         long lastModified;
         long size;
-    }
-
-    public static class ProcessExecHelper implements IProcessExecHelper {
-
-        ProcessBuilder2 pb;
-        NutsSession session;
-        NutsPrintStream out;
-
-        public ProcessExecHelper(ProcessBuilder2 pb, NutsSession session, NutsPrintStream out) {
-            this.pb = pb;
-            this.session = session;
-            this.out = out;
-        }
-
-        public void dryExec() {
-            if (out.mode() == NutsTerminalMode.FORMATTED) {
-                out.print("[dry] ==[exec]== ");
-                out.println(pb.getFormattedCommandString(session));
-            } else {
-                out.print("[dry] exec ");
-                out.printf("%s%n", pb.getCommandString());
-            }
-        }
-
-        public int exec() {
-            try {
-                if (out != null) {
-                    out.resetLine();//.run(NutsTerminalCommand.MOVE_LINE_START);
-                }
-                ProcessBuilder2 p = pb.start();
-                return p.waitFor().getResult();
-            } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
-            }
-        }
-
-        public Future<Integer> execAsync() {
-            try {
-                if (out != null) {
-                    out.run(NutsTerminalCommand.MOVE_LINE_START);
-                }
-                ProcessBuilder2 p = pb.start();
-                return new FutureTask<Integer>(() -> p.waitFor().getResult());
-            } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
-            }
-        }
     }
 
     public static class DefaultMultiReadItem implements MultiInput {

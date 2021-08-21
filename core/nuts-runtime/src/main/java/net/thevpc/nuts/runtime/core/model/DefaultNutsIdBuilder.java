@@ -28,7 +28,6 @@ package net.thevpc.nuts.runtime.core.model;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.bundles.parsers.QueryStringParser;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 import java.util.Map;
 import java.util.function.Function;
@@ -68,8 +67,8 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
 
     public DefaultNutsIdBuilder(String groupId, String artifactId, NutsVersion version, String propertiesQuery,NutsSession session) {
         this.session=session;
-        this.groupId = CoreStringUtils.trimToNull(groupId);
-        this.artifactId = CoreStringUtils.trimToNull(artifactId);
+        this.groupId = NutsUtilStrings.trimToNull(groupId);
+        this.artifactId = NutsUtilStrings.trimToNull(artifactId);
         this.version = version == null ? session.getWorkspace().version().parser().parse("") : version;
         this.propertiesQuery.setProperties(propertiesQuery);
     }
@@ -111,13 +110,13 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
 
     @Override
     public NutsIdBuilder setGroupId(String value) {
-        this.groupId = CoreStringUtils.trimToNull(value);
+        this.groupId = NutsUtilStrings.trimToNull(value);
         return this;
     }
 
     @Override
     public NutsIdBuilder setRepository(String value) {
-        return setProperty(NutsConstants.IdProperties.REPO, CoreStringUtils.trimToNull(value));
+        return setProperty(NutsConstants.IdProperties.REPO, NutsUtilStrings.trimToNull(value));
     }
 
     @Override
@@ -134,55 +133,55 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
 
     @Override
     public DefaultNutsIdBuilder setArtifactId(String value) {
-        this.artifactId = CoreStringUtils.trimToNull(value);
+        this.artifactId = NutsUtilStrings.trimToNull(value);
         return this;
     }
 
     @Override
     public String getFace() {
         String s = getProperties().get(NutsConstants.IdProperties.FACE);
-        return CoreStringUtils.trimToNull(s);
+        return NutsUtilStrings.trimToNull(s);
     }
 
 //    @Override
 //    public String getAlternative() {
 //        String s = getProperties().get(NutsConstants.IdProperties.ALTERNATIVE);
-//        return CoreStringUtils.trimToNull(s);
+//        return NutsUtilStrings.trimToNull(s);
 //    }
 
     @Override
     public String getOs() {
         String s = getProperties().get(NutsConstants.IdProperties.OS);
-        return CoreStringUtils.trimToNull(s);
+        return NutsUtilStrings.trimToNull(s);
     }
 
     @Override
     public String getOsdist() {
         String s = getProperties().get(NutsConstants.IdProperties.OSDIST);
-        return CoreStringUtils.trimToNull(s);
+        return NutsUtilStrings.trimToNull(s);
     }
 
     @Override
     public String getPlatform() {
         String s = getProperties().get(NutsConstants.IdProperties.PLATFORM);
-        return CoreStringUtils.trimToNull(s);
+        return NutsUtilStrings.trimToNull(s);
     }
 
     @Override
     public String getPackaging() {
         String s = getProperties().get(NutsConstants.IdProperties.PACKAGING);
-        return CoreStringUtils.trimToNull(s);
+        return NutsUtilStrings.trimToNull(s);
     }
 
     @Override
     public String getArch() {
         String s = getProperties().get(NutsConstants.IdProperties.ARCH);
-        return CoreStringUtils.trimToNull(s);
+        return NutsUtilStrings.trimToNull(s);
     }
 
     @Override
     public NutsIdBuilder setFace(String value) {
-        return setProperty(NutsConstants.IdProperties.FACE, CoreStringUtils.trimToNull(value));
+        return setProperty(NutsConstants.IdProperties.FACE, NutsUtilStrings.trimToNull(value));
 //                .setQuery(NutsConstants.QUERY_EMPTY_ENV, true);
     }
 
@@ -198,45 +197,45 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
 
 //    @Override
 //    public NutsIdBuilder setAlternative(String value) {
-//        return setProperty(NutsConstants.IdProperties.ALTERNATIVE, CoreStringUtils.trimToNull(value));
+//        return setProperty(NutsConstants.IdProperties.ALTERNATIVE, NutsUtilStrings.trimToNull(value));
 ////                .setQuery(NutsConstants.QUERY_EMPTY_ENV, true);
 //    }
 
     @Override
     public String getClassifier() {
         String s = getProperties().get(NutsConstants.IdProperties.CLASSIFIER);
-        return CoreStringUtils.trimToNull(s);
+        return NutsUtilStrings.trimToNull(s);
     }
 
     @Override
     public NutsIdBuilder setClassifier(String value) {
-        return setProperty(NutsConstants.IdProperties.CLASSIFIER, CoreStringUtils.trimToNull(value));
+        return setProperty(NutsConstants.IdProperties.CLASSIFIER, NutsUtilStrings.trimToNull(value));
 //                .setQuery(NutsConstants.QUERY_EMPTY_ENV, true);
     }
 
     @Override
     public NutsIdBuilder setPackaging(String value) {
-        return setProperty(NutsConstants.IdProperties.PACKAGING, CoreStringUtils.trimToNull(value));
+        return setProperty(NutsConstants.IdProperties.PACKAGING, NutsUtilStrings.trimToNull(value));
     }
 
     @Override
     public NutsIdBuilder setPlatform(String value) {
-        return setProperty(NutsConstants.IdProperties.PLATFORM, CoreStringUtils.trimToNull(value));
+        return setProperty(NutsConstants.IdProperties.PLATFORM, NutsUtilStrings.trimToNull(value));
     }
 
     @Override
     public NutsIdBuilder setArch(String value) {
-        return setProperty(NutsConstants.IdProperties.ARCH, CoreStringUtils.trimToNull(value));
+        return setProperty(NutsConstants.IdProperties.ARCH, NutsUtilStrings.trimToNull(value));
     }
 
     @Override
     public NutsIdBuilder setOs(String value) {
-        return setProperty(NutsConstants.IdProperties.OSDIST, CoreStringUtils.trimToNull(value));
+        return setProperty(NutsConstants.IdProperties.OSDIST, NutsUtilStrings.trimToNull(value));
     }
 
     @Override
     public NutsIdBuilder setOsdist(String value) {
-        return setProperty(NutsConstants.IdProperties.OS, CoreStringUtils.trimToNull(value));
+        return setProperty(NutsConstants.IdProperties.OS, NutsUtilStrings.trimToNull(value));
     }
 
     @Override
@@ -282,7 +281,7 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
 
     @Override
     public String getRepository() {
-        return CoreStringUtils.trimToNull(getProperties().get(NutsConstants.IdProperties.REPO));
+        return NutsUtilStrings.trimToNull(getProperties().get(NutsConstants.IdProperties.REPO));
     }
 
     @Override
@@ -292,18 +291,18 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
 
     @Override
     public String getFullName() {
-        if (CoreStringUtils.isBlank(groupId)) {
-            return CoreStringUtils.trim(artifactId);
+        if (NutsUtilStrings.isBlank(groupId)) {
+            return NutsUtilStrings.trim(artifactId);
         }
-        return CoreStringUtils.trim(groupId) + ":" + CoreStringUtils.trim(artifactId);
+        return NutsUtilStrings.trim(groupId) + ":" + NutsUtilStrings.trim(artifactId);
     }
 
     @Override
     public String getShortName() {
-        if (CoreStringUtils.isBlank(groupId)) {
-            return CoreStringUtils.trim(artifactId);
+        if (NutsUtilStrings.isBlank(groupId)) {
+            return NutsUtilStrings.trim(artifactId);
         }
-        return CoreStringUtils.trim(groupId) + ":" + CoreStringUtils.trim(artifactId);
+        return NutsUtilStrings.trim(groupId) + ":" + NutsUtilStrings.trim(artifactId);
     }
 
     @Override
@@ -330,11 +329,11 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        if (!CoreStringUtils.isBlank(groupId)) {
+        if (!NutsUtilStrings.isBlank(groupId)) {
             sb.append(groupId).append(":");
         }
         sb.append(artifactId);
-        if (!CoreStringUtils.isBlank(version.getValue())) {
+        if (!NutsUtilStrings.isBlank(version.getValue())) {
             sb.append("#").append(version);
         }
         if (!propertiesQuery.isEmpty()) {

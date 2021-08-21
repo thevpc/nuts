@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.standalone.config;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.NutsHomeLocationsMap;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 
 import java.io.File;
@@ -57,7 +56,7 @@ class DefaultNutsWorkspaceBootConfig implements NutsWorkspaceBootConfig {
         for (NutsStoreLocation type : NutsStoreLocation.values()) {
             homes[type.ordinal()] = Nuts.getPlatformHomeFolder(storeLocationLayout, type, homeLocations,
                     global, name);
-            if (CoreStringUtils.isBlank(homes[type.ordinal()])) {
+            if (NutsUtilStrings.isBlank(homes[type.ordinal()])) {
                 throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing Home for %s", type.id()));
             }
         }
@@ -67,7 +66,7 @@ class DefaultNutsWorkspaceBootConfig implements NutsWorkspaceBootConfig {
         for (NutsStoreLocation location : NutsStoreLocation.values()) {
             String typeId = location.id();
             String _storeLocation = storeLocations.get(typeId);
-            if (CoreStringUtils.isBlank(_storeLocation)) {
+            if (NutsUtilStrings.isBlank(_storeLocation)) {
                 switch (storeLocationStrategy) {
                     case STANDALONE: {
                         storeLocations.put(typeId, (effectiveWorkspace + File.separator + typeId));

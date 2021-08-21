@@ -27,7 +27,6 @@ package net.thevpc.nuts.runtime.core.model;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.CoreArrayUtils;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 import java.util.*;
 
@@ -62,6 +61,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
     private String[] os;
     private String[] osdist;
     private String[] platform;
+    private String[] desktopEnvironment;
     private NutsIdLocation[] locations;
     private NutsClassifierMapping[] classifierMappings;
     private NutsDependency[] dependencies;
@@ -85,6 +85,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
                 d.getOs(),
                 d.getOsdist(),
                 d.getPlatform(),
+                d.getDesktopEnvironment(),
                 d.getDependencies(),
                 d.getStandardDependencies(),
                 d.getLocations(),
@@ -100,7 +101,9 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
     public DefaultNutsDescriptor(NutsId id, /*String alternative, */NutsId[] parents, String packaging, boolean executable, boolean application,
                                  //                                 String ext,
                                  NutsArtifactCall executor, NutsArtifactCall installer, String name, String description,
-                                 String[] arch, String[] os, String[] osdist, String[] platform,
+                                 String[] arch, String[] os, String[] osdist,
+                                 String[] platform,
+                                 String[] desktopEnvironment,
                                  NutsDependency[] dependencies,
                                  NutsDependency[] standardDependencies,
                                  NutsIdLocation[] locations, Map<String, String> properties, NutsClassifierMapping[] classifierMappings,
@@ -111,7 +114,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
         if (id == null) {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing id"));
         }
-        if (CoreStringUtils.isBlank(id.getArtifactId())) {
+        if (NutsUtilStrings.isBlank(id.getArtifactId())) {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing artifactId for %s", id));
         }
         //NutsWorkspaceUtils.of(session).checkSimpleNameNutsId(id);
@@ -119,17 +122,17 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("id should not have query defined in descriptors"));
         }
         this.id = id;
-//        this.alternative = CoreStringUtils.trimToNull(alternative);
-        this.packaging = CoreStringUtils.trimToNull(packaging);
+//        this.alternative = NutsUtilStrings.trimToNull(alternative);
+        this.packaging = NutsUtilStrings.trimToNull(packaging);
         this.parents = parents == null ? new NutsId[0] : new NutsId[parents.length];
         if (parents != null) {
             System.arraycopy(parents, 0, this.parents, 0, this.parents.length);
         }
         this.executable = executable;
         this.application = application;
-        this.description = CoreStringUtils.trimToNull(description);
-        this.name = CoreStringUtils.trimToNull(name);
-        this.genericName = CoreStringUtils.trimToNull(genericName);
+        this.description = NutsUtilStrings.trimToNull(description);
+        this.name = NutsUtilStrings.trimToNull(name);
+        this.genericName = NutsUtilStrings.trimToNull(genericName);
         this.icons =icons==null?new String[0] :
                 Arrays.stream(icons).map(x->x==null?"":x.trim()).filter(x->x.length()>0)
                         .toArray(String[]::new);
@@ -138,11 +141,12 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
                         .toArray(String[]::new);
         this.executor = executor;
         this.installer = installer;
-//        this.ext = CoreStringUtils.trimToNull(ext);
+//        this.ext = NutsUtilStrings.trimToNull(ext);
         this.arch = CoreArrayUtils.toArraySet(arch);
         this.os = CoreArrayUtils.toArraySet(os);
         this.osdist = CoreArrayUtils.toArraySet(osdist);
         this.platform = CoreArrayUtils.toArraySet(platform);
+        this.desktopEnvironment = CoreArrayUtils.toArraySet(desktopEnvironment);
         this.locations = CoreArrayUtils.toArraySet(locations);
         this.classifierMappings = CoreArrayUtils.toArraySet(classifierMappings);
         this.dependencies = dependencies == null ? new NutsDependency[0] : new NutsDependency[dependencies.length];
@@ -228,6 +232,11 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
     }
 
     @Override
+    public String[] getDesktopEnvironment() {
+        return desktopEnvironment;
+    }
+
+    @Override
     public String getName() {
         return name;
     }
@@ -301,6 +310,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
         result = 31 * result + Arrays.hashCode(os);
         result = 31 * result + Arrays.hashCode(osdist);
         result = 31 * result + Arrays.hashCode(platform);
+        result = 31 * result + Arrays.hashCode(desktopEnvironment);
         result = 31 * result + Arrays.hashCode(locations);
         result = 31 * result + Arrays.hashCode(classifierMappings);
         result = 31 * result + Arrays.hashCode(dependencies);
@@ -328,13 +338,14 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
                 && Objects.equals(installer, that.installer)
                 && Objects.equals(name, that.name)
                 && Arrays.equals(icons, that.icons)
-                && Objects.equals(categories, that.categories)
+                && Arrays.equals(categories, that.categories)
                 && Objects.equals(genericName, that.genericName)
                 && Objects.equals(description, that.description)
                 && Arrays.equals(arch, that.arch)
                 && Arrays.equals(os, that.os)
                 && Arrays.equals(osdist, that.osdist)
                 && Arrays.equals(platform, that.platform)
+                && Arrays.equals(desktopEnvironment, that.desktopEnvironment)
                 && Arrays.equals(locations, that.locations)
                 && Arrays.equals(classifierMappings, that.classifierMappings)
                 && Arrays.equals(dependencies, that.dependencies)
@@ -360,6 +371,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
                 + ", os=" + Arrays.toString(os)
                 + ", osdist=" + Arrays.toString(osdist)
                 + ", platform=" + Arrays.toString(platform)
+                + ", desktopEnvironment=" + Arrays.toString(desktopEnvironment)
                 + ", locations=" + Arrays.toString(locations)
                 + ", dependencies=" + Arrays.toString(dependencies)
                 + ", standardDependencies=" + Arrays.toString(standardDependencies)

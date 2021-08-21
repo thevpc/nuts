@@ -28,7 +28,6 @@ package net.thevpc.nuts.runtime.core.model;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.common.MapToFunction;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 
 import java.util.*;
@@ -67,6 +66,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     private List<String> os=new ArrayList<>(); //defaults to empty;
     private List<String> osdist=new ArrayList<>(); //defaults to empty;
     private List<String> platform=new ArrayList<>(); //defaults to empty;
+    private List<String> desktopEnvironment=new ArrayList<>(); //defaults to empty;
     private List<NutsIdLocation> locations=new ArrayList<>(); //defaults to empty;
     private List<NutsClassifierMapping> classifierMappings=new ArrayList<>(); //defaults to empty;
     private List<NutsDependency> dependencies=new ArrayList<>(); //defaults to empty;
@@ -103,6 +103,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         setOs(null);
         setOsdist(null);
         setPlatform(null);
+        setDesktopEnvironment(null);
         setLocations(null);
         setDependencies((NutsDependency[])null);
         setStandardDependencies((NutsDependency[])null);
@@ -131,6 +132,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
             setOs(other.getOs());
             setOsdist(other.getOsdist());
             setPlatform(other.getPlatform());
+            setDesktopEnvironment(other.getDesktopEnvironment());
             setLocations(other.getLocations());
             setDependencies(other.getDependencies());
             setStandardDependencies(other.getStandardDependencies());
@@ -162,6 +164,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
             setOs(other.getOs());
             setOsdist(other.getOsdist());
             setPlatform(other.getPlatform());
+            setDesktopEnvironment(other.getDesktopEnvironment());
             setLocations(other.getLocations());
             setDependencies(other.getDependencies());
             setStandardDependencies(other.getStandardDependencies());
@@ -189,7 +192,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 
     @Override
     public NutsDescriptorBuilder setName(String name) {
-        this.name = CoreStringUtils.trim(name);
+        this.name = NutsUtilStrings.trim(name);
         return this;
     }
 
@@ -213,7 +216,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 
     @Override
     public NutsDescriptorBuilder setDescription(String description) {
-        this.description = CoreStringUtils.trim(description);
+        this.description = NutsUtilStrings.trim(description);
         return this;
     }
 
@@ -231,7 +234,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 
     //    @Override
 //    public NutsDescriptorBuilder setExt(String ext) {
-//        this.ext = CoreStringUtils.trim(ext);
+//        this.ext = NutsUtilStrings.trim(ext);
 //        return this;
 //    }
     public NutsDescriptorBuilder addPlatform(String platform) {
@@ -246,6 +249,21 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 
     public NutsDescriptorBuilder setPlatform(String[] platform) {
         this.platform = new ArrayList<>(Arrays.asList(CoreArrayUtils.toArraySet(platform)));
+        return this;
+    }
+
+    public NutsDescriptorBuilder addDesktopEnvironment(String desktopEnvironment) {
+        if (desktopEnvironment != null) {
+            if (this.desktopEnvironment == null) {
+                this.desktopEnvironment = new ArrayList<>();
+            }
+            this.desktopEnvironment.add(desktopEnvironment);
+        }
+        return this;
+    }
+
+    public NutsDescriptorBuilder setDesktopEnvironment(String[] desktopEnvironment) {
+        this.desktopEnvironment = new ArrayList<>(Arrays.asList(CoreArrayUtils.toArraySet(desktopEnvironment)));
         return this;
     }
 
@@ -322,7 +340,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 
     @Override
     public NutsDescriptorBuilder setPackaging(String packaging) {
-        this.packaging = CoreStringUtils.trim(packaging);
+        this.packaging = NutsUtilStrings.trim(packaging);
         return this;
     }
 
@@ -423,6 +441,10 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         return platform == null ? new String[0] : platform.toArray(new String[0]);
     }
 
+    public String[] getDesktopEnvironment() {
+        return desktopEnvironment == null ? new String[0] : desktopEnvironment.toArray(new String[0]);
+    }
+
     @Override
     public NutsDescriptorBuilder setDependencies(NutsDependency[] dependencies) {
         this.dependencies = new ArrayList<>();
@@ -457,7 +479,9 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
                 getId(), /*getAlternative(),*/ getParents(), getPackaging(), isExecutable(), isApplication(),
                 //                getExt(),
                 getExecutor(), getInstaller(),
-                getName(), getDescription(), getArch(), getOs(), getOsdist(), getPlatform(), getDependencies(), getStandardDependencies(),
+                getName(), getDescription(), getArch(), getOs(), getOsdist(), getPlatform(),
+                getDesktopEnvironment(),
+                getDependencies(), getStandardDependencies(),
                 getLocations(), getProperties(), getClassifierMappings(),
                 genericName,
                 categories==null?new String[0] :categories.toArray(new String[0]) ,
@@ -546,6 +570,14 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     public NutsDescriptorBuilder removePlatform(String platform) {
         if (this.platform != null) {
             this.platform.remove(platform);
+        }
+        return this;
+    }
+
+    @Override
+    public NutsDescriptorBuilder removeDesktopEnvironment(String desktopEnvironment) {
+        if (this.desktopEnvironment != null) {
+            this.desktopEnvironment.remove(desktopEnvironment);
         }
         return this;
     }
@@ -677,6 +709,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         LinkedHashSet<String> n_os = new LinkedHashSet<>();
         LinkedHashSet<String> n_osdist = new LinkedHashSet<>();
         LinkedHashSet<String> n_platform = new LinkedHashSet<>();
+        LinkedHashSet<String> n_desktopEnvironment = new LinkedHashSet<>();
         for (NutsDescriptor parentDescriptor : parentDescriptors) {
             n_id = CoreNutsUtils.applyNutsIdInheritance(n_id, parentDescriptor.getId(),session.getWorkspace());
             if (!n_executable && parentDescriptor.isExecutable()) {
@@ -703,6 +736,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
             n_os.addAll(Arrays.asList(parentDescriptor.getOs()));
             n_osdist.addAll(Arrays.asList(parentDescriptor.getOsdist()));
             n_platform.addAll(Arrays.asList(parentDescriptor.getPlatform()));
+            n_desktopEnvironment.addAll(Arrays.asList(parentDescriptor.getDesktopEnvironment()));
         }
         n_deps.addAll(Arrays.asList(getDependencies()));
         n_sdeps.addAll(Arrays.asList(getStandardDependencies()));
@@ -710,6 +744,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         n_os.addAll(Arrays.asList(getOs()));
         n_osdist.addAll(Arrays.asList(getOsdist()));
         n_platform.addAll(Arrays.asList(getPlatform()));
+        n_desktopEnvironment.addAll(Arrays.asList(getDesktopEnvironment()));
         NutsId[] n_parents = new NutsId[0];
 
         setId(n_id);
@@ -728,6 +763,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         setOs(n_os.toArray(new String[0]));
         setOsdist(n_osdist.toArray(new String[0]));
         setPlatform(n_platform.toArray(new String[0]));
+        setDesktopEnvironment(n_desktopEnvironment.toArray(new String[0]));
         setDependencies(n_deps.toArray(new NutsDependency[0]));
         setStandardDependencies(n_sdeps.toArray(new NutsDependency[0]));
         setProperties(n_props);
@@ -789,6 +825,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         this.setOs(CoreNutsUtils.applyStringProperties(getOs(), map));
         this.setOsdist(CoreNutsUtils.applyStringProperties(getOsdist(), map));
         this.setPlatform(CoreNutsUtils.applyStringProperties(getPlatform(), map));
+        this.setDesktopEnvironment(CoreNutsUtils.applyStringProperties(getDesktopEnvironment(), map));
         this.setDependencies(n_deps.toArray(new NutsDependency[0]));
         this.setStandardDependencies(n_sdeps.toArray(new NutsDependency[0]));
         this.setProperties(n_props);
@@ -898,5 +935,20 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     public NutsDescriptorBuilder setCategories(List<String> categories) {
         this.categories =categories==null?new ArrayList<>() : new ArrayList<>(categories);
         return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DefaultNutsDescriptorBuilder that = (DefaultNutsDescriptorBuilder) o;
+        return executable == that.executable && application == that.application && Objects.equals(id, that.id) && Arrays.equals(parents, that.parents) && Objects.equals(packaging, that.packaging) && Objects.equals(executor, that.executor) && Objects.equals(installer, that.installer) && Objects.equals(name, that.name) && Objects.equals(icons, that.icons) && Objects.equals(categories, that.categories) && Objects.equals(genericName, that.genericName) && Objects.equals(description, that.description) && Objects.equals(arch, that.arch) && Objects.equals(os, that.os) && Objects.equals(osdist, that.osdist) && Objects.equals(platform, that.platform) && Objects.equals(desktopEnvironment, that.desktopEnvironment) && Objects.equals(locations, that.locations) && Objects.equals(classifierMappings, that.classifierMappings) && Objects.equals(dependencies, that.dependencies) && Objects.equals(standardDependencies, that.standardDependencies) && Objects.equals(properties, that.properties) && Objects.equals(session, that.session);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(id, packaging, executable, application, executor, installer, name, icons, categories, genericName, description, arch, os, osdist, platform, desktopEnvironment, locations, classifierMappings, dependencies, standardDependencies, properties, session);
+        result = 31 * result + Arrays.hashCode(parents);
+        return result;
     }
 }

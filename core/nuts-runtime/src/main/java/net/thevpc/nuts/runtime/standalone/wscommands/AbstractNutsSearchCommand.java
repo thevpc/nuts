@@ -31,7 +31,6 @@ import net.thevpc.nuts.runtime.core.format.NutsDisplayProperty;
 import net.thevpc.nuts.runtime.core.format.NutsFetchDisplayOptions;
 import net.thevpc.nuts.runtime.core.format.NutsIdFormatHelper;
 import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.ext.DefaultNutsWorkspaceExtensionManager;
 import net.thevpc.nuts.runtime.standalone.util.NutsClassLoaderNodeUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsCollectionResult;
@@ -79,7 +78,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     @Override
     public NutsSearchCommand addId(String id) {
         checkSession();
-        if (!CoreStringUtils.isBlank(id)) {
+        if (!NutsUtilStrings.isBlank(id)) {
             ids.add(getSession().getWorkspace().id().parser().setLenient(false).parse(id));
         }
         return this;
@@ -98,7 +97,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
         checkSession();
         if (values != null) {
             for (String s : values) {
-                if (!CoreStringUtils.isBlank(s)) {
+                if (!NutsUtilStrings.isBlank(s)) {
                     ids.add(getSession().getWorkspace().id().parser().setLenient(false).parse(s));
                 }
             }
@@ -252,7 +251,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
         checkSession();
         if (values != null) {
             for (String s : values) {
-                if (!CoreStringUtils.isBlank(s)) {
+                if (!NutsUtilStrings.isBlank(s)) {
                     lockedIds.add(getSession().getWorkspace().id().parser().setLenient(false).parse(s));
                 }
             }
@@ -280,7 +279,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
 
     @Override
     public NutsSearchCommand addArch(String value) {
-        if (!CoreStringUtils.isBlank(value)) {
+        if (!NutsUtilStrings.isBlank(value)) {
             this.arch.add(value);
         }
         return this;
@@ -370,7 +369,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     @Override
     public NutsSearchCommand addLockedId(String id) {
         checkSession();
-        if (!CoreStringUtils.isBlank(id)) {
+        if (!NutsUtilStrings.isBlank(id)) {
             lockedIds.add(getSession().getWorkspace().id().parser().setLenient(false).parse(id));
         }
         return this;

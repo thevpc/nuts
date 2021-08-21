@@ -1,14 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.repos;
 
 import java.util.LinkedHashMap;
-import net.thevpc.nuts.NutsRepository;
+
+import net.thevpc.nuts.*;
 
 import java.util.Map;
-import net.thevpc.nuts.NutsRepositoryConfig;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsWorkspace;
+
 import net.thevpc.nuts.runtime.core.repos.NutsRepositoryConfigModel;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 public class DefaultNutsRepositoryEnvModel {
     private NutsRepository repository;
@@ -68,12 +66,12 @@ public class DefaultNutsRepositoryEnvModel {
         if (config.getEnv() != null) {
             t = config.getEnv().get(defaultValue);
         }
-        if (!CoreStringUtils.isBlank(t)) {
+        if (!NutsUtilStrings.isBlank(t)) {
             return t;
         }
         if (inherit) {
             t = repository.getWorkspace().env().getEnv(key, null);
-            if (!CoreStringUtils.isBlank(t)) {
+            if (!NutsUtilStrings.isBlank(t)) {
                 return t;
             }
         }
@@ -98,7 +96,7 @@ public class DefaultNutsRepositoryEnvModel {
         NutsRepositoryConfigModel model = ((DefaultNutsRepoConfigManager) repository.config()).getModel();
         NutsRepositoryConfig config = model.getConfig(session);
 //        options = CoreNutsUtils.validate(options, repository.getWorkspace());
-        if (CoreStringUtils.isBlank(value)) {
+        if (NutsUtilStrings.isBlank(value)) {
             if (config.getEnv() != null) {
                 config.getEnv().remove(property);
                 model.fireConfigurationChanged("env", session);

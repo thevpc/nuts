@@ -26,6 +26,8 @@ package net.thevpc.nuts.runtime.core.format.text;
 
 import java.util.Objects;
 import java.util.function.Supplier;
+
+import net.thevpc.nuts.NutsExecutionType;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsTerminalCommand;
 import net.thevpc.nuts.NutsWorkspace;
@@ -201,7 +203,9 @@ public class DefaultAnsiEscapeCommand extends AnsiEscapeCommand implements AnsiS
                 case UNIX:
                 case MACOS: {
                     try {
-                        String d = ws.exec().userCmd().grabOutputString()
+                        String d = ws.exec()
+                                .setExecutionType(NutsExecutionType.SYSTEM)
+                                .grabOutputString()
                                 .setSession(session)
                                 .addCommand("tput", "cols")
                                 .getOutputString();

@@ -9,9 +9,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.common.CorePlatformUtils;
 import net.thevpc.nuts.runtime.bundles.http.SimpleHttpClient;
 import net.thevpc.nuts.runtime.bundles.io.InputStreamVisitor;
-import net.thevpc.nuts.runtime.bundles.io.ProcessBuilder2;
 import net.thevpc.nuts.runtime.bundles.io.ZipUtils;
-import net.thevpc.nuts.runtime.bundles.parsers.StringPlaceHolderParser;
 import net.thevpc.nuts.runtime.bundles.reflect.*;
 import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.core.commands.repo.NutsRepositorySupportedAction;
@@ -21,21 +19,14 @@ import net.thevpc.nuts.runtime.core.format.plain.DefaultSearchFormatPlain;
 import net.thevpc.nuts.runtime.core.repos.DefaultNutsRepositoryManager;
 import net.thevpc.nuts.runtime.core.repos.NutsInstalledRepository;
 import net.thevpc.nuts.runtime.core.repos.NutsRepositoryUtils;
-import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
-import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+import net.thevpc.nuts.runtime.core.util.*;
 import net.thevpc.nuts.runtime.standalone.io.DefaultNutsExecutionEntry;
 import net.thevpc.nuts.runtime.standalone.wscommands.NutsRepositoryAndFetchMode;
 import net.thevpc.nuts.spi.NutsRepositorySPI;
 
 import java.io.*;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
@@ -84,10 +75,10 @@ public class NutsWorkspaceUtils {
         if (id == null) {
             throw new NutsIllegalArgumentException(defaultSession(ws), NutsMessage.cstyle("missing id"));
         }
-        if (CoreStringUtils.isBlank(id.getGroupId())) {
+        if (NutsUtilStrings.isBlank(id.getGroupId())) {
             throw new NutsIllegalArgumentException(defaultSession(ws), NutsMessage.cstyle("missing group for %s", id));
         }
-        if (CoreStringUtils.isBlank(id.getArtifactId())) {
+        if (NutsUtilStrings.isBlank(id.getArtifactId())) {
             throw new NutsIllegalArgumentException(defaultSession(ws), NutsMessage.cstyle("missing name for %s", id));
         }
     }
@@ -133,10 +124,10 @@ public class NutsWorkspaceUtils {
     }
 
     public NutsId createSdkId(String type, String version) {
-        if (CoreStringUtils.isBlank(type)) {
+        if (NutsUtilStrings.isBlank(type)) {
             throw new NutsException(session, NutsMessage.formatted("missing sdk type"));
         }
-        if (CoreStringUtils.isBlank(version)) {
+        if (NutsUtilStrings.isBlank(version)) {
             throw new NutsException(session, NutsMessage.formatted("missing version"));
         }
         if ("java".equalsIgnoreCase(type)) {
@@ -285,17 +276,17 @@ public class NutsWorkspaceUtils {
         if (id == null) {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing id"));
         }
-        if (CoreStringUtils.isBlank(id.getGroupId())) {
+        if (NutsUtilStrings.isBlank(id.getGroupId())) {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing groupId for %s", id));
         }
-        if (CoreStringUtils.isBlank(id.getArtifactId())) {
+        if (NutsUtilStrings.isBlank(id.getArtifactId())) {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing artifactId for %s", id));
         }
     }
 
     public void checkLongNameNutsId(NutsId id, NutsSession session) {
         checkSimpleNameNutsId(id);
-        if (CoreStringUtils.isBlank(id.getVersion().toString())) {
+        if (NutsUtilStrings.isBlank(id.getVersion().toString())) {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing version for %s", id));
         }
     }
@@ -368,197 +359,6 @@ public class NutsWorkspaceUtils {
         }
     }
 
-    public CoreIOUtils.ProcessExecHelper execAndWait(String[] args, Map<String, String> env, Path directory, NutsSessionTerminal prepareTerminal,
-                                                     NutsSessionTerminal execTerminal, boolean showCommand, boolean failFast, long sleep,
-                                                     boolean inheritSystemIO, boolean redirectErr, File outputFile, File inputFile,
-                                                     NutsSession session) {
-        NutsPrintStream out = null;
-        NutsPrintStream err = null;
-        InputStream in = null;
-        ProcessBuilder2 pb = new ProcessBuilder2(session);
-        pb.setCommand(args)
-                .setEnv(env)
-                .setDirectory(directory == null ? null : directory.toFile())
-                .setSleepMillis(sleep)
-                .setFailFast(failFast);
-        if (!inheritSystemIO) {
-            if (inputFile == null) {
-                in = execTerminal.in();
-                if (ws.io().setSession(session).isStandardInputStream(in)) {
-                    in = null;
-                }
-            }
-            if (outputFile == null) {
-                out = execTerminal.out();
-                if (ws.io().setSession(session).isStandardOutputStream(out)) {
-                    out = null;
-                }
-            }
-            err = execTerminal.err();
-            if (ws.io().setSession(session).isStandardErrorStream(err)) {
-                err = null;
-            }
-            if (out != null) {
-                out.run(NutsTerminalCommand.MOVE_LINE_START);
-            }
-        }
-        if (out == null && err == null && in == null && inputFile == null && outputFile == null) {
-            pb.inheritIO();
-            if (redirectErr) {
-                pb.setRedirectErrorStream();
-            }
-        } else {
-            if (inputFile == null) {
-                pb.setIn(in);
-            } else {
-                pb.setRedirectFileInput(inputFile);
-            }
-            if (outputFile == null) {
-                pb.setOutput(out == null ? null : out.asPrintStream());
-            } else {
-                pb.setRedirectFileOutput(outputFile);
-            }
-            if (redirectErr) {
-                pb.setRedirectErrorStream();
-            } else {
-                pb.setErr(err == null ? null : err.asPrintStream());
-            }
-        }
-
-        if (_LOG(session).isLoggable(Level.FINEST)) {
-            _LOGOP(session).level(Level.FINE).verb(NutsLogVerb.START).formatted().log("[exec] {0}",
-                    ws.text().forCode("sh",
-                            pb.getCommandString()
-                    ));
-        }
-        if (showCommand || CoreBooleanUtils.getSysBoolNutsProperty("show-command", false)) {
-            if (prepareTerminal.out().mode() == NutsTerminalMode.FORMATTED) {
-                prepareTerminal.out().printf("%s ", ws.text().forStyled("[exec]", NutsTextStyle.primary4()));
-                prepareTerminal.out().println(ws.text().forCode("sh", pb.getCommandString()));
-            } else {
-                prepareTerminal.out().print("exec ");
-                prepareTerminal.out().printf("%s%n", pb.getCommandString());
-            }
-        }
-        return new CoreIOUtils.ProcessExecHelper(pb, session, out == null ? execTerminal.out() : out);
-    }
-
-    public CoreIOUtils.ProcessExecHelper execAndWait(NutsDefinition nutMainFile,
-                                                     NutsSession prepareSession,
-                                                     NutsSession execSession,
-                                                     Map<String, String> execProperties, String[] args, Map<String, String> env,
-                                                     String directory, boolean showCommand,
-                                                     boolean failFast, long sleep,
-                                                     boolean inheritSystemIO, boolean redirectErr, File outputFile, File inputFile
-    ) throws NutsExecutionException {
-        NutsWorkspace workspace = execSession.getWorkspace();
-        NutsId id = nutMainFile.getId();
-        Path installerFile = nutMainFile.getPath();
-        String storeFolder = nutMainFile.getInstallInformation().getInstallFolder();
-        HashMap<String, String> map = new HashMap<>();
-        HashMap<String, String> envmap = new HashMap<>();
-//        for (Map.Entry<Object, Object> entry : System.getProperties().entrySet()) {
-//            map.put((String) entry.getKey(), (String) entry.getValue());
-//        }
-        for (Map.Entry<String, String> entry : execProperties.entrySet()) {
-            map.put(entry.getKey(), entry.getValue());
-        }
-        Path nutsJarFile = workspace.fetch().setNutsApi().setSession(CoreNutsUtils.silent(prepareSession)).getResultPath();
-        if (nutsJarFile != null) {
-            map.put("nuts.jar", nutsJarFile.toAbsolutePath().normalize().toString());
-        }
-        map.put("nuts.id", id.getLongName());
-        map.put("nuts.id.version", id.getVersion().getValue());
-        map.put("nuts.id.name", id.getArtifactId());
-        map.put("nuts.id.simpleName", id.getShortName());
-        map.put("nuts.id.group", id.getGroupId());
-        map.put("nuts.file", nutMainFile.getPath().toString());
-        String defaultJavaCommand = NutsJavaSdkUtils.of(ws).resolveJavaCommandByVersion("", false, prepareSession);
-
-        map.put("nuts.java", defaultJavaCommand);
-        if (map.containsKey("nuts.jar")) {
-            map.put("nuts.cmd", map.get("nuts.java") + " -jar " + map.get("nuts.jar"));
-        }
-        map.put("nuts.workspace", workspace.locations().getWorkspaceLocation());
-        map.put("nuts.version", id.getVersion().getValue());
-        map.put("nuts.name", id.getArtifactId());
-        map.put("nuts.group", id.getGroupId());
-        map.put("nuts.face", id.getFace());
-        map.put("nuts.repo", id.getRepository());
-        map.put("nuts.id", id.toString());
-        if (installerFile != null) {
-            map.put("nuts.installer", installerFile.toString());
-        }
-        if (storeFolder == null && installerFile != null) {
-            map.put("nuts.store", installerFile.getParent().toString());
-        } else if (storeFolder != null) {
-            map.put("nuts.store", storeFolder);
-        }
-        if (env != null) {
-            map.putAll(env);
-        }
-        Function<String, String> mapper = new Function<String, String>() {
-            @Override
-            public String apply(String skey) {
-                if (skey.equals("java") || skey.startsWith("java#")) {
-                    String javaVer = skey.substring(4);
-                    if (CoreStringUtils.isBlank(javaVer)) {
-                        return defaultJavaCommand;
-                    }
-                    return NutsJavaSdkUtils.of(ws).resolveJavaCommandByVersion(javaVer, false, prepareSession);
-                } else if (skey.equals("javaw") || skey.startsWith("javaw#")) {
-                    String javaVer = skey.substring(4);
-                    if (CoreStringUtils.isBlank(javaVer)) {
-                        return defaultJavaCommand;
-                    }
-                    return NutsJavaSdkUtils.of(ws).resolveJavaCommandByVersion(javaVer, true, prepareSession);
-                } else if (skey.equals("nuts")) {
-                    NutsDefinition nutsDefinition;
-                    nutsDefinition = workspace.fetch().setId(NutsConstants.Ids.NUTS_API)
-                            .setSession(prepareSession).getResultDefinition();
-                    if (nutsDefinition.getPath() != null) {
-                        return ("<::expand::> " + apply("java") + " -jar " + nutsDefinition.getPath());
-                    }
-                    return null;
-                }
-                return map.get(skey);
-            }
-        };
-        for (Map.Entry<String, String> e : map.entrySet()) {
-            String k = e.getKey();
-            if (!CoreStringUtils.isBlank(k)) {
-                k = k.replace('.', '_');
-                if (!CoreStringUtils.isBlank(e.getValue())) {
-                    envmap.put(k, e.getValue());
-                }
-            }
-        }
-        List<String> args2 = new ArrayList<>();
-        for (String arg : args) {
-            String s = CoreStringUtils.trim(StringPlaceHolderParser.replaceDollarPlaceHolders(arg, mapper));
-            if (s.startsWith("<::expand::>")) {
-                Collections.addAll(args2, workspace.commandLine().parse(s).toStringArray());
-            } else {
-                args2.add(s);
-            }
-        }
-        args = args2.toArray(new String[0]);
-
-        Path path = Paths.get(workspace.locations().getWorkspaceLocation()).resolve(args[0]).normalize();
-        if (Files.exists(path)) {
-            CoreIOUtils.setExecutable(path);
-        }
-        Path pdirectory = null;
-        if (CoreStringUtils.isBlank(directory)) {
-            pdirectory = Paths.get(workspace.locations().getWorkspaceLocation());
-        } else {
-            pdirectory = Paths.get(workspace.locations().getWorkspaceLocation()).resolve(directory);
-        }
-        return execAndWait(args, envmap, pdirectory, prepareSession.getTerminal(), execSession.getTerminal(), showCommand, failFast,
-                sleep,
-                inheritSystemIO, redirectErr, inputFile, outputFile,
-                prepareSession);
-    }
 
     public NutsExecutionEntry parseClassExecutionEntry(InputStream classStream, String sourceName) {
         CorePlatformUtils.MainClassType mainClass = null;
@@ -603,7 +403,7 @@ public class NutsWorkspaceUtils {
                         Attributes a = manifest.getMainAttributes();
                         if (a != null && a.containsKey("Main-Class")) {
                             String v = a.getValue("Main-Class");
-                            if (!CoreStringUtils.isBlank(v)) {
+                            if (!NutsUtilStrings.isBlank(v)) {
                                 manifestClass.add(v);
                             }
                         }

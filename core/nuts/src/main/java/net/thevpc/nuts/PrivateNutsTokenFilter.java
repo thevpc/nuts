@@ -62,7 +62,7 @@ class PrivateNutsTokenFilter implements NutsTokenFilter {
 
     @Override
     public boolean contains(String substring) {
-        return PrivateNutsUtils.trim(expression).contains(PrivateNutsUtils.trim(substring));
+        return NutsUtilStrings.trim(expression).contains(NutsUtilStrings.trim(substring));
     }
 
 }

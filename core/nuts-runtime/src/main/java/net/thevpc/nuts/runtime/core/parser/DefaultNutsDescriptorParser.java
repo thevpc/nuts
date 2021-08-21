@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.core.parser;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.bridges.maven.MavenUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
@@ -73,7 +72,7 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
     @Override
     public NutsDescriptor parse(String str) {
         checkSession();
-        if (CoreStringUtils.isBlank(str)) {
+        if (NutsUtilStrings.isBlank(str)) {
             return null;
         }
         return parse(new ByteArrayInputStream(str.getBytes()), true);

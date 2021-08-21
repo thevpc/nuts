@@ -25,20 +25,14 @@ package net.thevpc.nuts.runtime.core.repos;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import net.thevpc.nuts.Nuts;
-import net.thevpc.nuts.NutsAddRepositoryOptions;
-import net.thevpc.nuts.NutsConstants;
-import net.thevpc.nuts.NutsRepositoryConfig;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsStoreLocation;
+
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 /**
  *
@@ -319,14 +313,14 @@ public class NutsRepositorySelector {
                 for (Map.Entry<String, String> entry : existing.entrySet()) {
                     String k = entry.getKey();
                     String v = entry.getValue();
-                    if (isBlank(v) && !isBlank(k)) {
+                    if (NutsUtilStrings.isBlank(v) && !NutsUtilStrings.isBlank(k)) {
                         String u2 = getRepositoryURLByName(k);
                         if (u2 != null) {
                             v = u2;
                         } else {
                             v = k;
                         }
-                    } else if (!isBlank(v) && isBlank(k)) {
+                    } else if (!NutsUtilStrings.isBlank(v) && NutsUtilStrings.isBlank(k)) {
                         String u2 = getRepositoryNameByURL(k);
                         if (u2 != null) {
                             k = u2;
@@ -387,10 +381,6 @@ public class NutsRepositorySelector {
             }
             return includeOthers;
         }
-    }
-
-    private static boolean isBlank(String s) {
-        return CoreStringUtils.isBlank(s);
     }
 
     public static NutsAddRepositoryOptions createRepositoryOptions(String s, boolean requireName, NutsSession session) {

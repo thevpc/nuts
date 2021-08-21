@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.base;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.PathInfo;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.*;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.util.NdiUtils;
@@ -217,43 +216,35 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                 }
             }
             if (gen) {
-                String s=options.getScriptPath();
-                if(CoreStringUtils.isBlank(s)){
+                String s = options.getLauncher().getCustomScriptPath();
+                if (NutsUtilStrings.isBlank(s)) {
                     NutsDefinition appDef = loadIdDefinition(nid);
-                    s=NameBuilder.id(appDef.getId(),"%n",null, appDef.getDescriptor(), session).buildName();
-                    s= getBinScriptFile(s,options.getEnv()).toString();
-                }else if(NdiUtils.isPathFolder(s)){
+                    s = NameBuilder.id(appDef.getId(), "%n", null, appDef.getDescriptor(), session).buildName();
+                    s = getBinScriptFile(s, options.getEnv()).toString();
+                } else if (NdiUtils.isPathFolder(s)) {
                     NutsDefinition appDef = loadIdDefinition(nid);
-                    s=s+File.separator+NameBuilder.id(appDef.getId(),getExecFileName("%n"),null, appDef.getDescriptor(), session).buildName();
-                }else {
+                    s = s + File.separator + NameBuilder.id(appDef.getId(), getExecFileName("%n"), null, appDef.getDescriptor(), session).buildName();
+                } else {
                     NutsDefinition appDef = loadIdDefinition(nid);
-                    s=NameBuilder.id(appDef.getId(),s,null, appDef.getDescriptor(), session).buildName();
-                    s= getBinScriptFile(s,options.getEnv()).toString();
+                    s = NameBuilder.id(appDef.getId(), s, null, appDef.getDescriptor(), session).buildName();
+                    s = getBinScriptFile(s, options.getEnv()).toString();
                 }
                 r.add(scriptBuilderTemplate("body", NdiScriptInfoType.ARTIFACT, nid, options.getEnv())
                         .setPath(s)
                         .println(createNutsScriptContent(nid, options))
                         .build());
             }
-            if (matchCondition(options.getCreateDesktop(), getDesktopIntegrationSupport(NutsDesktopIntegrationItem.DESKTOP))) {
+            if (matchCondition(options.getLauncher().getCreateDesktopShortcut(), getDesktopIntegrationSupport(NutsDesktopIntegrationItem.DESKTOP))) {
                 r.addAll(Arrays.asList(createShortcut(NutsDesktopIntegrationItem.DESKTOP, options.copy().setId(nid.toString()))));
             }
-            if (matchCondition(options.getCreateShortcut(), getDesktopIntegrationSupport(NutsDesktopIntegrationItem.SHORTCUT))) {
+            if (matchCondition(options.getLauncher().getCreateCustomShortcut(), getDesktopIntegrationSupport(NutsDesktopIntegrationItem.SHORTCUT))) {
                 r.addAll(Arrays.asList(createShortcut(NutsDesktopIntegrationItem.SHORTCUT, options.copy().setId(nid.toString()))));
             }
-            if (matchCondition(options.getCreateMenu(), getDesktopIntegrationSupport(NutsDesktopIntegrationItem.MENU))) {
+            if (matchCondition(options.getLauncher().getCreateMenuShortcut(), getDesktopIntegrationSupport(NutsDesktopIntegrationItem.MENU))) {
                 r.addAll(Arrays.asList(createShortcut(NutsDesktopIntegrationItem.MENU, options.copy().setId(nid.toString()))));
             }
         }
         return r.toArray(new PathInfo[0]);
-    }
-
-    private NutsDefinition loadIdDefinition(NutsId nid) {
-        return session.getWorkspace().search().addId(nid).setLatest(true).setEffective(true).getResultDefinitions().singleton();
-    }
-
-    public NutsActionSupport getDesktopIntegrationSupport(NutsDesktopIntegrationItem target) {
-        return session.getWorkspace().env().getDesktopIntegrationSupport(target);
     }
 
     @Override
@@ -282,20 +273,10 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         }
     }
 
-//    @Override
-//    public void addNutsWorkspaceScript(String preferredScriptName, NutsEnvInfo env) {
-//        PathInfo[] v = persistConfig(preferredScriptName, env, createDesktop, createMenu);
-//        if (context.getSession().isPlainTrace()) {
-//            context.getSession().out().printf("added script %s to point to %s %s\n", env.getWorkspaceLocation(), env.getNutsApiVersion(),
-//                    Arrays.stream(v).map(x -> x.getPath()).toArray()
-//            );
-//        }
-//    }
-
     @Override
     public PathInfo[] switchWorkspace(NdiScriptOptions options) {
         options = options.copy();
-        options.setPersistentConfig(true);
+        options.getLauncher().setSystemWideConfig(true);
         PathInfo[] v = createBootScripts(options);
 
         if (session.isPlainTrace()) {
@@ -309,11 +290,18 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
 
     @Override
     public boolean isNutsBootId(NutsId nid) {
-        if ("nuts".equals(nid.getShortName()) || "net.thevpc.nuts:nuts".equals(nid.getShortName())) {
-            return true;
-        }
-        return false;
+        return "nuts".equals(nid.getShortName()) || "net.thevpc.nuts:nuts".equals(nid.getShortName());
     }
+
+//    @Override
+//    public void addNutsWorkspaceScript(String preferredScriptName, NutsEnvInfo env) {
+//        PathInfo[] v = persistConfig(preferredScriptName, env, createDesktop, createMenu);
+//        if (context.getSession().isPlainTrace()) {
+//            context.getSession().out().printf("added script %s to point to %s %s\n", env.getWorkspaceLocation(), env.getNutsApiVersion(),
+//                    Arrays.stream(v).map(x -> x.getPath()).toArray()
+//            );
+//        }
+//    }
 
     public PathInfo[] createBootScripts(NdiScriptOptions options
 //                                        String preferredName,
@@ -334,7 +322,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
 //        NutsDefinition apiDef = context.getWorkspace().search()
 //                .addId(apiId).setOptional(false).setLatest(true).setContent(true).getResultDefinitions().required();
         Path script = null;
-        String scriptPath = options.getScriptPath();
+        String scriptPath = options.getLauncher().getCustomScriptPath();
         script = getBinScriptFile(NameBuilder.id(options.getEnv().getNutsApiId(), scriptPath, "%n",
                 options.getEnv().getNutsApiDef().getDescriptor(), session).buildName(), options.getEnv());
         boolean createPath = false;
@@ -363,42 +351,35 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         all.addAll(Arrays.asList(getNutsTermInit(options.getEnv()).create()));
         all.addAll(Arrays.asList(getNutsTerm(options.getEnv()).create()));
 
-        if (options.getPersistentConfig() != null && options.getPersistentConfig()) {
+        if (options.getLauncher().getSystemWideConfig() != null && options.getLauncher().getSystemWideConfig()) {
             // create $home/.bashrc
             PathInfo sysRC = getSysRC(options.getEnv()).create();
             if (sysRC != null) {
                 all.add(sysRC);
             }
-            if (matchCondition(options.getCreateDesktop(), getDesktopIntegrationSupport(NutsDesktopIntegrationItem.DESKTOP))) {
+            if (matchCondition(options.getLauncher().getCreateDesktopShortcut(), getDesktopIntegrationSupport(NutsDesktopIntegrationItem.DESKTOP))) {
                 all.addAll(Arrays.asList(createLaunchTermShortcutGlobal(NutsDesktopIntegrationItem.DESKTOP, options.getEnv())));
             }
-            if (matchCondition(options.getCreateMenu(), getDesktopIntegrationSupport(NutsDesktopIntegrationItem.MENU))) {
+            if (matchCondition(options.getLauncher().getCreateMenuShortcut(), getDesktopIntegrationSupport(NutsDesktopIntegrationItem.MENU))) {
                 all.addAll(Arrays.asList(createLaunchTermShortcutGlobal(NutsDesktopIntegrationItem.MENU, options.getEnv())));
             }
         } else {
-            if (matchCondition(options.getCreateDesktop(), getDesktopIntegrationSupport(NutsDesktopIntegrationItem.DESKTOP))) {
+            if (matchCondition(options.getLauncher().getCreateDesktopShortcut(), getDesktopIntegrationSupport(NutsDesktopIntegrationItem.DESKTOP))) {
                 all.addAll(Arrays.asList(createLaunchTermShortcut(NutsDesktopIntegrationItem.DESKTOP, options.getEnv(), preferredName, scriptPath)));
             }
-            if (matchCondition(options.getCreateMenu(), getDesktopIntegrationSupport(NutsDesktopIntegrationItem.MENU))) {
+            if (matchCondition(options.getLauncher().getCreateMenuShortcut(), getDesktopIntegrationSupport(NutsDesktopIntegrationItem.MENU))) {
                 all.addAll(Arrays.asList(createLaunchTermShortcut(NutsDesktopIntegrationItem.MENU, options.getEnv(), preferredName, scriptPath)));
             }
-            if (matchCondition(options.getCreateShortcut(), getDesktopIntegrationSupport(NutsDesktopIntegrationItem.SHORTCUT))) {
+            if (matchCondition(options.getLauncher().getCreateCustomShortcut(), getDesktopIntegrationSupport(NutsDesktopIntegrationItem.SHORTCUT))) {
                 all.addAll(Arrays.asList(createLaunchTermShortcut(NutsDesktopIntegrationItem.SHORTCUT, options.getEnv(), preferredName, scriptPath)));
             }
         }
 
-        if (options.getPersistentConfig() != null && options.getPersistentConfig()
+        if (options.getLauncher().getSystemWideConfig() != null && options.getLauncher().getSystemWideConfig()
                 && all.stream().anyMatch(x -> x.getStatus() != PathInfo.Status.DISCARDED)) {
             onPostGlobal(options.getEnv(), all.toArray(new PathInfo[0]));
         }
         return all.toArray(new PathInfo[0]);
-    }
-
-    protected boolean matchCondition(NutsActionSupportCondition createDesktop, NutsActionSupport desktopIntegrationSupport) {
-        if (desktopIntegrationSupport == null) {
-            desktopIntegrationSupport = NutsActionSupport.UNSUPPORTED;
-        }
-        return desktopIntegrationSupport.acceptCondition(createDesktop, session);
     }
 
     @Override
@@ -413,17 +394,13 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             subTrace = false;
         }
         cmd.getOptions().setEnv(new DefaultNutsEnvInfo(
-                null, cmd.getOptions().getSwitchWorkspaceLocation(),
+                null, cmd.getOptions().getLauncher().getSwitchWorkspaceLocation(),
                 session
         ));
-        Boolean persistentConfig = cmd.getOptions().getPersistentConfig();
+        Boolean systemWideConfig = cmd.getOptions().getLauncher().getSystemWideConfig();
         if (!cmd.getIdsToInstall().isEmpty()) {
-            if (persistentConfig == null) {
-                if (workspaceLocation.equals(Paths.get(System.getProperty("user.home")).resolve(".config/nuts/default-workspace"))) {
-                    persistentConfig = true;
-                } else {
-                    persistentConfig = false;
-                }
+            if (systemWideConfig == null) {
+                systemWideConfig = workspaceLocation.equals(Paths.get(System.getProperty("user.home")).resolve(".config/nuts/default-workspace"));
             }
             boolean includeEnv = cmd.getOptions().isIncludeEnv();
             for (String id : cmd.getIdsToInstall()) {
@@ -435,7 +412,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                     includeEnv = true;
                 }
             }
-            String linkNameCurrent = cmd.getOptions().getScriptPath();
+            String linkNameCurrent = cmd.getOptions().getLauncher().getCustomScriptPath();
             if (includeEnv) {
                 linkNameCurrent = prepareLinkName(linkNameCurrent);
             }
@@ -454,26 +431,22 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                         }
                     }
 
-                    result.addAll(Arrays.asList(
-                            createArtifactScript(
-                                    cmd.getOptions().copy()
-                                            .setId(id)
-                                            .setScriptPath(linkNameCurrent)
-                                            .setPersistentConfig(persistentConfig != null && persistentConfig)
-                            )
-                    ));
+                    NdiScriptOptions oo = cmd.getOptions().copy().setId(id);
+                    oo.getLauncher().setCustomScriptPath(linkNameCurrent);
+                    oo.getLauncher().setSystemWideConfig(systemWideConfig != null && systemWideConfig);
+
+                    result.addAll(Arrays.asList(createArtifactScript(oo)));
                 } catch (UncheckedIOException e) {
                     throw new NutsExecutionException(session, NutsMessage.cstyle("unable to add launcher for %s : %s", id, e), e);
                 }
             }
             if (!bootAlreadyProcessed && !nonNutsIds.isEmpty()) {
-                result.addAll(Arrays.asList(createBootScripts(
-                        cmd.getOptions().copy()
-                                .setScriptPath(null)//reset script path!
-                                .setId(cmd.getOptions().getEnv().getNutsApiId().toString())
-                                .setScriptPath(linkNameCurrent)
-                                .setPersistentConfig(persistentConfig != null && persistentConfig)
-                )));
+                NdiScriptOptions oo = cmd.getOptions().copy()
+                        .setId(cmd.getOptions().getEnv().getNutsApiId().toString());
+                oo.getLauncher().setCustomScriptPath(null);//reset script path!
+                oo.getLauncher().setCustomScriptPath(linkNameCurrent);
+                oo.getLauncher().setSystemWideConfig(systemWideConfig != null && systemWideConfig);
+                result.addAll(Arrays.asList(createBootScripts(oo)));
             }
             for (String id : nonNutsIds) {
                 try {
@@ -481,24 +454,36 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                     if (nid == null) {
                         throw new NutsExecutionException(session, NutsMessage.cstyle("unable to create script for %s : invalid id", id), 100);
                     }
-                    result.addAll(Arrays.asList(
-                            createArtifactScript(
-                                    cmd.getOptions().copy()
-                                            .setId(id)
-                                            .setScriptPath(linkNameCurrent)
-                                            .setPersistentConfig(persistentConfig != null && persistentConfig)
-                                            .setIncludeEnv(includeEnv)
-                            ))
-                    );
+                    NdiScriptOptions oo = cmd.getOptions().copy()
+                            .setId(id);
+                    oo.getLauncher().setCustomScriptPath(linkNameCurrent);
+                            oo.getLauncher().setSystemWideConfig(systemWideConfig != null && systemWideConfig);
+                            oo.setIncludeEnv(includeEnv);
+                    result.addAll(Arrays.asList(createArtifactScript(oo)));
                 } catch (UncheckedIOException e) {
                     throw new NutsExecutionException(session, NutsMessage.cstyle("unable to add launcher for %s : %s", id, e), e);
                 }
             }
 //            result.addAll(Arrays.asList(configurePath(
 //                    env
-//                    , cmd.isCreateDesktop(), cmd.isCreateMenu(), persistentConfig, cmd.isCreateShortcut(), linkNameCurrent)));
+//                    , cmd.isCreateDesktop(), cmd.isCreateMenu(), systemWideConfig, cmd.isCreateShortcut(), linkNameCurrent)));
         }
         return result.toArray(new PathInfo[0]);
+    }
+
+    private NutsDefinition loadIdDefinition(NutsId nid) {
+        return session.getWorkspace().search().addId(nid).setLatest(true).setEffective(true).getResultDefinitions().singleton();
+    }
+
+    public NutsActionSupport getDesktopIntegrationSupport(NutsDesktopIntegrationItem target) {
+        return session.getWorkspace().env().getDesktopIntegrationSupport(target);
+    }
+
+    protected boolean matchCondition(NutsActionSupportCondition createDesktop, NutsActionSupport desktopIntegrationSupport) {
+        if (desktopIntegrationSupport == null) {
+            desktopIntegrationSupport = NutsActionSupport.UNSUPPORTED;
+        }
+        return desktopIntegrationSupport.acceptCondition(createDesktop, session);
     }
 
     public void onPostGlobal(NutsEnvInfo env, PathInfo[] updatedPaths) {
@@ -705,6 +690,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     }
 
     protected abstract String getExportCommand(String[] names);
+
     protected abstract String getSetVarCommand(String name, String value);
 
     protected abstract String getSetVarStaticCommand(String name, String value);
@@ -841,7 +827,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                 .setLatest(true)
                 .setEffective(true).getResultDefinitions().singleton();
 
-        String fileName=options.getScriptPath();
+        String fileName = options.getLauncher().getCustomScriptPath();
         fileName = resolveShortcutFileName(appDef.getId(), appDef.getDescriptor(), fileName, null);
         return Paths.get(fileName);
     }
@@ -868,24 +854,24 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         cmd.add(getNutsStart(options.getEnv()).path().toString());
         cmd.add("-y");
         cmd.add(appId.toString());
-        if (options.getAppArgs() != null) {
-            for (String extraArg : options.getAppArgs()) {
+        if (options.getLauncher().getArgs() != null) {
+            for (String extraArg : options.getLauncher().getArgs()) {
                 cmd.add(extraArg);
             }
         }
-        String cwd = options.getWorkingDirectory();
+        String cwd = options.getLauncher().getWorkingDirectory();
         if (cwd == null) {
             //should it be id's var folder?
             cwd = System.getProperty("user.home");
         }
-        String iconPath = resolveIcon(options.getIcon(), appId);
+        String iconPath = resolveIcon(options.getLauncher().getIcon(), appId);
 
-        String shortcutName = options.getShortcutName();
+        String shortcutName = options.getLauncher().getShortcutName();
         if (shortcutName == null) {
             if (nutsDesktopIntegrationItem == NutsDesktopIntegrationItem.SHORTCUT) {
-                shortcutName = options.getShortcutPath();
+                shortcutName = options.getLauncher().getCustomShortcutPath();
                 if (shortcutName == null) {
-                    shortcutName = options.getScriptPath();
+                    shortcutName = options.getLauncher().getCustomScriptPath();
                 }
             }
         }
@@ -902,10 +888,10 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         sl.setIcon(iconPath);
         sl.setGenericName(apiDefinition.getDescriptor().getGenericName());
         sl.setComment(appDef.getDescriptor().getDescription());
-        sl.setTerminal(options.isTerminalMode());
-        if (options.getMenuCategory() != null) {
-            sl.addCategory(options.getMenuCategory());
-        }else{
+        sl.setTerminal(options.getLauncher().isOpenTerminal());
+        if (options.getLauncher().getMenuCategory() != null) {
+            sl.addCategory(options.getLauncher().getMenuCategory());
+        } else {
             sl.setCategories(Arrays.asList(appDef.getDescriptor().getCategories()));
         }
         String preferredPath = getShortcutPath(options).toString();
@@ -928,11 +914,11 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     }
 
     public String resolveShortcutFileName(NutsId id, NutsDescriptor descriptor, String fileName, String name) {
-        if (CoreStringUtils.isBlank(fileName)) {
+        if (NutsUtilStrings.isBlank(fileName)) {
             if (isShortcutFieldNameUserFriendly()) {
                 fileName = name;
             }
-            if (CoreStringUtils.isBlank(fileName)) {
+            if (NutsUtilStrings.isBlank(fileName)) {
                 if (isShortcutFieldNameUserFriendly()) {
                     fileName = "%N%s%v%s%h";
                 } else {
@@ -986,7 +972,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         if (updateEnv) {
             exports.addAll(Arrays.asList("NUTS_VERSION", "NUTS_WORKSPACE", "NUTS_JAR", "NUTS_WORKSPACE_BINDIR"));
             tmp.printSetStatic("NUTS_VERSION", ws.getApiVersion().toString());
-            tmp.printSetStatic("NUTS_WORKSPACE", ws.locations().getWorkspaceLocation().toString());
+            tmp.printSetStatic("NUTS_WORKSPACE", ws.locations().getWorkspaceLocation());
             for (NutsStoreLocation value : NutsStoreLocation.values()) {
                 tmp.printSetStatic("NUTS_WORKSPACE_" + value, ws.locations().getStoreLocation(value));
                 exports.add("NUTS_WORKSPACE_" + value);
@@ -1007,7 +993,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             tmp.printSet("PATH", varRef("NUTS_WORKSPACE_BINDIR") + getPathVarSep() + varRef("PATH"));
         }
         String export = getExportCommand(exports.toArray(new String[0]));
-        if(!CoreStringUtils.isBlank(export)) {
+        if (!NutsUtilStrings.isBlank(export)) {
             tmp.println(export);
         }
         return tmp.buildString();

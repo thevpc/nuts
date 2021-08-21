@@ -40,7 +40,6 @@ import net.thevpc.nuts.runtime.standalone.config.compat.v506.NutsVersionCompat50
 import net.thevpc.nuts.runtime.standalone.config.compat.v507.NutsVersionCompat507;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.spi.NutsIndexStoreFactory;
 import net.thevpc.nuts.spi.NutsRepositoryFactoryComponent;
@@ -287,7 +286,7 @@ public class DefaultNutsWorkspaceConfigModel {
                     //not loaded
                     break;
                 }
-                if (CoreStringUtils.isBlank(configLoaded.getWorkspace())) {
+                if (NutsUtilStrings.isBlank(configLoaded.getWorkspace())) {
                     lastConfigLoaded = configLoaded;
                     break;
                 }
@@ -352,8 +351,8 @@ public class DefaultNutsWorkspaceConfigModel {
 
     public NutsId createContentFaceId(NutsId id, NutsDescriptor desc) {
         Map<String, String> q = id.getProperties();
-        q.put(NutsConstants.IdProperties.PACKAGING, CoreStringUtils.trim(desc.getPackaging()));
-//        q.put(NutsConstants.QUERY_EXT,CoreStringUtils.trim(descriptor.getExt()));
+        q.put(NutsConstants.IdProperties.PACKAGING, NutsUtilStrings.trim(desc.getPackaging()));
+//        q.put(NutsConstants.QUERY_EXT,NutsUtilStrings.trim(descriptor.getExt()));
         q.put(NutsConstants.IdProperties.FACE, NutsConstants.QueryFaces.CONTENT);
         return id.builder().setProperties(q).build();
     }
@@ -367,7 +366,7 @@ public class DefaultNutsWorkspaceConfigModel {
 //        if (other == null) {
 //            other = new NutsBootConfig();
 //        }
-//        if (!CoreStringUtils.isBlank(other.getRuntimeId())) {
+//        if (!NutsUtilStrings.isBlank(other.getRuntimeId())) {
 //            NutsSession searchSession = ws.createSession().silent();
 //            other.setRuntimeDependencies(ws.search().setSession(searchSession).addId(other.getRuntimeId())
 //                    .scope(NutsDependencyScopePattern.RUN)
@@ -387,7 +386,7 @@ public class DefaultNutsWorkspaceConfigModel {
 //        fireConfigurationChanged();
 //    }
     public boolean isSupportedRepositoryType(String repositoryType, NutsSession session) {
-        if (CoreStringUtils.isBlank(repositoryType)) {
+        if (NutsUtilStrings.isBlank(repositoryType)) {
             repositoryType = NutsConstants.RepoTypes.NUTS;
         }
         return session.getWorkspace().extensions().createAllSupported(NutsRepositoryFactoryComponent.class,
@@ -829,7 +828,7 @@ public class DefaultNutsWorkspaceConfigModel {
 
     public NutsAuthenticationAgent createAuthenticationAgent(String authenticationAgent, NutsSession session) {
         NutsWorkspace ws = session.getWorkspace();
-        authenticationAgent = CoreStringUtils.trim(authenticationAgent);
+        authenticationAgent = NutsUtilStrings.trim(authenticationAgent);
         NutsAuthenticationAgent supported = null;
         if (authenticationAgent.isEmpty()) {
             supported = ws.extensions().createSupported(NutsAuthenticationAgent.class, "");
@@ -931,7 +930,7 @@ public class DefaultNutsWorkspaceConfigModel {
 
     private void setConfigBoot(NutsWorkspaceConfigBoot config, NutsSession session, boolean fire) {
         this.storeModelBoot = config;
-        if (CoreStringUtils.isBlank(config.getUuid())) {
+        if (NutsUtilStrings.isBlank(config.getUuid())) {
             config.setUuid(UUID.randomUUID().toString());
             fire = true;
         }

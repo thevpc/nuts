@@ -376,5 +376,4 @@ public class NutsWorkspaceSessionAwareImpl implements NutsWorkspace, NutsWorkspa
     public String toString() {
         return ws.toString();
     }
-    
 }

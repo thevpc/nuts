@@ -25,7 +25,6 @@ package net.thevpc.nuts;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -295,14 +294,14 @@ class PrivateNutsRepositorySelector {
                 for (Map.Entry<String, String> entry : existing.entrySet()) {
                     String k = entry.getKey();
                     String v = entry.getValue();
-                    if (isBlank(v) && !isBlank(k)) {
+                    if (NutsUtilStrings.isBlank(v) && !NutsUtilStrings.isBlank(k)) {
                         String u2 = getRepositoryURLByName(k);
                         if (u2 != null) {
                             v = u2;
                         }else{
                             v = k;
                         }
-                    } else if (!isBlank(v) && isBlank(k)) {
+                    } else if (!NutsUtilStrings.isBlank(v) && NutsUtilStrings.isBlank(k)) {
                         String u2 = getRepositoryNameByURL(k);
                         if (u2 != null) {
                             k=u2;
@@ -363,8 +362,5 @@ class PrivateNutsRepositorySelector {
             }
             return includeOthers;
         }
-    }
-    private static boolean isBlank(String s){
-        return PrivateNutsUtils.isBlank(s);
     }
 }

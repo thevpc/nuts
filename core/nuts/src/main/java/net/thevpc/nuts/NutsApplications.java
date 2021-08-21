@@ -23,11 +23,13 @@
  */
 package net.thevpc.nuts;
 
+import javax.swing.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 
 /**
@@ -85,9 +87,9 @@ public final class NutsApplications {
             if (c instanceof Error) {
                 throw (Error) c;
             }
-            throw new NutsBootException("unable to instantiate " + appType.getName(), ex);
+            throw new NutsBootException(NutsMessage.cstyle("unable to instantiate %s", appType.getName()), ex);
         } catch (IllegalAccessException ex) {
-            throw new NutsBootException("illegal access to default constructor for " + appType.getName(), ex);
+            throw new NutsBootException(NutsMessage.cstyle("illegal access to default constructor for %s", appType.getName()), ex);
         }
     }
 
@@ -250,6 +252,9 @@ public final class NutsApplications {
                         && env.getBootOptions().getLogConfig().getLogTermLevel().intValue() <= Level.FINE.intValue());
             } catch (Exception ex2) {
                 session.getWorkspace().log().of(NutsApplications.class).with().level(Level.FINE).error(ex2).log("unable to check if option debug is enabled");
+                if (session.isGui() && session.getWorkspace().env().isGraphicalDesktopEnvironment()) {
+
+                }
             }
         }
 //        if (showTrace) {
@@ -347,7 +352,24 @@ public final class NutsApplications {
             }
             out.flush();
         }
+        guiShowErr(ex, showTrace, session, fm, m);
         return (errorCode);
+    }
+
+    private static void guiShowErr(Throwable ex, boolean showTrace, NutsSession session, NutsString fm, String m) {
+        StringBuilder sb = new StringBuilder();
+        if (fm != null) {
+            sb.append(fm.filteredText());
+        } else {
+            sb.append(m);
+        }
+        if (showTrace) {
+            if (sb.length() > 0) {
+                sb.append("\n");
+                sb.append(PrivateNutsUtils.stacktrace(ex));
+            }
+        }
+        showGuiMessage(session, () -> NutsMessage.plain(sb.toString()));
     }
 
     private static String[] stacktrace(Throwable th) {
@@ -367,5 +389,15 @@ public final class NutsApplications {
             // ignore
         }
         return new String[0];
+    }
+
+    public static void showGuiMessage(NutsSession s, Supplier<NutsMessage> msg) {
+        if (s != null) {
+            if (s.isGui() && s.getWorkspace().env().isGraphicalDesktopEnvironment()) {
+                showGuiMessage(null, msg);
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, msg.get().toString());
+        }
     }
 }

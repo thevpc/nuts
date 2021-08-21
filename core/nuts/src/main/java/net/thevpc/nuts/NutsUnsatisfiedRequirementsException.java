@@ -40,14 +40,14 @@ public class NutsUnsatisfiedRequirementsException extends NutsBootException {
      * Constructs a new NutsUnsatisfiedRequirementsException exception
      */
     public NutsUnsatisfiedRequirementsException() {
-        super("unsatisfiedR workspace requirements");
+        super(NutsMessage.plain("unsatisfiedR workspace requirements"));
     }
 
     /**
      * Constructs a new NutsUnsatisfiedRequirementsException exception
      * @param message message
      */
-    public NutsUnsatisfiedRequirementsException(String message) {
+    public NutsUnsatisfiedRequirementsException(NutsMessage message) {
         super(message);
     }
 

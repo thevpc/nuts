@@ -35,7 +35,6 @@ import net.thevpc.nuts.runtime.standalone.util.*;
 import net.thevpc.nuts.runtime.bundles.io.NutsInstallStatusIdFilter;
 import net.thevpc.nuts.runtime.bundles.iter.IteratorBuilder;
 import net.thevpc.nuts.runtime.bundles.iter.IteratorUtils;
-import net.thevpc.nuts.runtime.bundles.iter.NamedIterator;
 import net.thevpc.nuts.spi.NutsRepositorySPI;
 
 import java.util.*;
@@ -193,7 +192,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
         NutsDependencyFilter depFilter = ws.dependency().filter().always();
         NutsRepositoryFilter rfilter = ws.repos().filter().always();
         for (String j : this.getScripts()) {
-            if (!CoreStringUtils.isBlank(j)) {
+            if (!NutsUtilStrings.isBlank(j)) {
                 if (CoreStringUtils.containsTopWord(j, "descriptor")) {
                     _descriptorFilter = _descriptorFilter.and(ws.descriptor().filter().byExpression(j));
                 } else if (CoreStringUtils.containsTopWord(j, "dependency")) {
@@ -537,7 +536,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                 NutsId nutsId = ws.id().parser().parse(id);
                 if (nutsId != null) {
                     List<NutsId> nutsId2 = new ArrayList<>();
-                    if (CoreStringUtils.isBlank(nutsId.getGroupId())) {
+                    if (NutsUtilStrings.isBlank(nutsId.getGroupId())) {
                         if (nutsId.getArtifactId().equals("nuts")) {
                             nutsId2.add(nutsId.builder().setGroupId("net.thevpc.nuts").build());
                         } else {
@@ -771,7 +770,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
 //                if (nutsId != null) {
 //                    NutsDependency dep = nutsId.toDependency();
 //                    List<NutsId> nutsId2 = new ArrayList<>();
-//                    if (CoreStringUtils.isBlank(nutsId.getGroupId())) {
+//                    if (NutsUtilStrings.isBlank(nutsId.getGroupId())) {
 //                        if (nutsId.getArtifactId().equals("nuts")) {
 //                            nutsId2.add(nutsId.builder().setGroupId("net.thevpc.nuts").build());
 //                        } else {

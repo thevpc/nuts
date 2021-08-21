@@ -28,7 +28,6 @@ package net.thevpc.nuts.runtime.core.filters.descriptor;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.core.util.Simplifiable;
 
 import java.util.Objects;
 import net.thevpc.nuts.runtime.core.filters.CoreFilterUtils;
@@ -59,7 +58,7 @@ public class NutsDescriptorFilterArch extends AbstractDescriptorFilter implement
      */
     @Override
     public NutsDescriptorFilter simplify() {
-        if (CoreStringUtils.isBlank(arch)) {
+        if (NutsUtilStrings.isBlank(arch)) {
             return null;
         }
         return this;

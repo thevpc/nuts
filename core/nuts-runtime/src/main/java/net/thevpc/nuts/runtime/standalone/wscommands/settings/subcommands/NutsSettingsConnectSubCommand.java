@@ -7,7 +7,6 @@ package net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.io.NonBlockingInputStreamAdapter;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.util._IOUtils;
 
 import java.io.PrintStream;
@@ -54,7 +53,7 @@ public class NutsSettingsConnectSubCommand extends AbstractNutsSettingsSubComman
                 port = Integer.parseInt(server.substring(server.indexOf(":") + 1));
                 server = server.substring(0, server.indexOf(":"));
             }
-            if (!CoreStringUtils.isBlank(login) && isBlank(password)) {
+            if (!NutsUtilStrings.isBlank(login) && NutsUtilStrings.isBlank(password)) {
                 password = session.getTerminal().readPassword("Password:");
             }
             Socket socket = null;
@@ -64,7 +63,7 @@ public class NutsSettingsConnectSubCommand extends AbstractNutsSettingsSubComman
                     socket = new Socket(InetAddress.getByName(server), validPort);
                     _IOUtils.pipe("pipe-out-socket-" + server + ":" + validPort, new NonBlockingInputStreamAdapter("pipe-out-socket-" + server + ":" + validPort, socket.getInputStream()), session.out().asPrintStream(),session);
                     PrintStream out = new PrintStream(socket.getOutputStream());
-                    if (!CoreStringUtils.isBlank(login)) {
+                    if (!NutsUtilStrings.isBlank(login)) {
                         out.printf("connect ==%s %s== %n", login, new String(password));
                     }
                     while (true) {
@@ -91,17 +90,4 @@ public class NutsSettingsConnectSubCommand extends AbstractNutsSettingsSubComman
         }
         return false;
     }
-
-    public static boolean isBlank(char[] string) {
-        if (string == null || string.length == 0) {
-            return true;
-        }
-        for (char c : string) {
-            if (c > ' ') {
-                return false;
-            }
-        }
-        return true;
-    }
-
 }

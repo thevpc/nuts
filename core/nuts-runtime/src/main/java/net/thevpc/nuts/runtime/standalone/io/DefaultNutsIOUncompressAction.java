@@ -7,7 +7,6 @@ package net.thevpc.nuts.runtime.standalone.io;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.NutsLogVerb;
 
 import java.io.*;
@@ -61,7 +60,7 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
     @Override
     public NutsIOUncompressAction setFormat(String format) {
         checkSession();
-        if (CoreStringUtils.isBlank(format)) {
+        if (NutsUtilStrings.isBlank(format)) {
             format = "zip";
         }
         switch (format) {
@@ -258,7 +257,7 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
     public NutsIOUncompressAction run() {
         checkSession();
         String format = getFormat();
-        if (CoreStringUtils.isBlank(format)) {
+        if (NutsUtilStrings.isBlank(format)) {
             format = "zip";
         }
         NutsInput _source = source;
@@ -302,7 +301,7 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
     public NutsIOUncompressAction visit(NutsIOUncompressVisitor visitor) {
         checkSession();
         String format = getFormat();
-        if (CoreStringUtils.isBlank(format)) {
+        if (NutsUtilStrings.isBlank(format)) {
             format = "zip";
         }
         NutsInput _source = source;

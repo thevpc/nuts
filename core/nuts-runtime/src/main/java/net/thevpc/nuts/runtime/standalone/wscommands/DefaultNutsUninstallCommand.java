@@ -76,6 +76,7 @@ public class DefaultNutsUninstallCommand extends AbstractNutsUninstallCommand {
                         .setFailFast(true)
                         .setTemporary(false)
                         .setExecutionType(ws.env().getBootOptions().getExecutionType())
+                        .setRunAs(NutsRunAs.currentUser())//uninstall always uses current user
                         .build();
                 ii.uninstall(executionContext, this.isErase());
             }

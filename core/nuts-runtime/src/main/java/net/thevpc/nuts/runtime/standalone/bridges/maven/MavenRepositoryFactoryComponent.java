@@ -26,8 +26,6 @@ package net.thevpc.nuts.runtime.standalone.bridges.maven;
 import java.io.File;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.repos.RemoteRepoApi;
 import net.thevpc.nuts.runtime.standalone.repos.FilesFoldersApi;
 import net.thevpc.nuts.spi.NutsRepositoryFactoryComponent;
@@ -79,8 +77,8 @@ public class MavenRepositoryFactoryComponent implements NutsRepositoryFactoryCom
         }
         String repositoryType = criteria.getConstraints().getType();
         String location = criteria.getConstraints().getLocation();
-        if (CoreStringUtils.isBlank(repositoryType)) {
-            if (!CoreStringUtils.isBlank(location)) {
+        if (NutsUtilStrings.isBlank(repositoryType)) {
+            if (!NutsUtilStrings.isBlank(location)) {
                 NutsRepositoryURL nru = new NutsRepositoryURL(location);
                 if (nru.getRepositoryType().isMaven()) {
                     criteria.getConstraints().setType(nru.getRepositoryType().toString());

@@ -23,8 +23,9 @@
  */
 package net.thevpc.nuts.runtime.bundles.string;
 
+import net.thevpc.nuts.NutsUtilStrings;
+
 import java.util.regex.Pattern;
-import static net.thevpc.nuts.runtime.core.util.CoreStringUtils.isBlank;
 
 /**
  *
@@ -35,13 +36,13 @@ public class GlobUtils {
     private static final Pattern PATTERN_ALL = Pattern.compile(".*");
 
     public static Pattern ofExact(String pattern) {
-        if (isBlank(pattern)) {
+        if (NutsUtilStrings.isBlank(pattern)) {
             return PATTERN_ALL;
         }
         return Pattern.compile(simpexpToRegexp(pattern, false));
     }
     public static Pattern ofContains(String pattern) {
-        if (isBlank(pattern)) {
+        if (NutsUtilStrings.isBlank(pattern)) {
             return PATTERN_ALL;
         }
         return Pattern.compile(simpexpToRegexp(pattern, true));

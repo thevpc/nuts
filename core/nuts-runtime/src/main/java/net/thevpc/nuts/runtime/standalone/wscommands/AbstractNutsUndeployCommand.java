@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.wscommands;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +34,7 @@ public abstract class AbstractNutsUndeployCommand extends NutsWorkspaceCommandBa
     public NutsUndeployCommand addId(String id) {
         checkSession();
         NutsWorkspace ws = getSession().getWorkspace();
-        return addId(CoreStringUtils.isBlank(id) ? null : ws.id().parser().setLenient(false).parse(id));
+        return addId(NutsUtilStrings.isBlank(id) ? null : ws.id().parser().setLenient(false).parse(id));
     }
 
     @Override
@@ -44,7 +43,7 @@ public abstract class AbstractNutsUndeployCommand extends NutsWorkspaceCommandBa
         NutsWorkspace ws = getSession().getWorkspace();
         if (values != null) {
             for (String s : values) {
-                if (!CoreStringUtils.isBlank(s)) {
+                if (!NutsUtilStrings.isBlank(s)) {
                     ids.add(ws.id().parser().setLenient(false).parse(s));
                 }
             }

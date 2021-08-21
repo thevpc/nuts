@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.core.common;
 
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+import net.thevpc.nuts.NutsUtilStrings;
 
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
@@ -17,7 +17,7 @@ public class TimePeriod {
     }
 
     public static TimePeriod parse(String str, boolean lenient, TimeUnit defaultUnit) {
-        if (CoreStringUtils.isBlank(str)) {
+        if (NutsUtilStrings.isBlank(str)) {
             return null;
         }
         if (defaultUnit == null) {

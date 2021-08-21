@@ -7,7 +7,6 @@ package net.thevpc.nuts.runtime.standalone.io;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NutsLogVerb;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 import java.io.*;
 import java.net.URL;
@@ -530,7 +529,7 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
     @Override
     public NutsIOCompressAction setFormat(String format) {
         checkSession();
-        if (CoreStringUtils.isBlank(format)) {
+        if (NutsUtilStrings.isBlank(format)) {
             format = "zip";
         }
         switch (format) {

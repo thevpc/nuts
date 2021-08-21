@@ -102,7 +102,8 @@ public class JpsCommand extends SimpleNshBuiltin {
         Options options = context.getOptions();
         List<JpsRow> results = new ArrayList<>();
 
-        NutsExecCommand e = context.getWorkspace().exec().userCmd()
+        NutsExecCommand e = context.getWorkspace().exec()
+                .setExecutionType(NutsExecutionType.SYSTEM)
                 .addCommand(resolveJpsCommand(context.getWorkspace()), "-l", "-v", "-m")
                 .setRedirectErrorStream(true)
                 .grabOutputString()

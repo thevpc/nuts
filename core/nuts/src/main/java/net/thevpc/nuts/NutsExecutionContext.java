@@ -132,9 +132,11 @@ public interface NutsExecutionContext {
      */
     NutsExecutionType getExecutionType();
 
+    NutsRunAs getRunAs();
+
     boolean isInheritSystemIO();
 
-    String getRedirectOuputFile();
+    String getRedirectOutputFile();
 
-    String getRedirectInpuFile();
+    String getRedirectInputFile();
 }

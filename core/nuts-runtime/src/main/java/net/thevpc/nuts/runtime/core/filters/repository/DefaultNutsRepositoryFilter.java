@@ -3,18 +3,12 @@ package net.thevpc.nuts.runtime.core.filters.repository;
 import java.util.Collection;
 import java.util.HashSet;
 
-import net.thevpc.nuts.NutsFilterOp;
-import net.thevpc.nuts.NutsRepository;
-import net.thevpc.nuts.NutsRepositoryFilter;
-import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.core.filters.AbstractNutsFilter;
-import net.thevpc.nuts.runtime.core.util.Simplifiable;
+import net.thevpc.nuts.*;
 
 import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Pattern;
-import net.thevpc.nuts.NutsSession;
+
 import net.thevpc.nuts.runtime.bundles.string.GlobUtils;
 
 public class DefaultNutsRepositoryFilter extends AbstractRepositoryFilter{
@@ -27,7 +21,7 @@ public class DefaultNutsRepositoryFilter extends AbstractRepositoryFilter{
         this.exactRepos = new HashSet<>();
         this.wildcardRepos = new HashSet<>();
         for (String repo : exactRepos) {
-            if (!CoreStringUtils.isBlank(repo)) {
+            if (!NutsUtilStrings.isBlank(repo)) {
                 if(repo.indexOf('*')>0) {
                     this.wildcardRepos.add(GlobUtils.ofExact(repo));
                 }else if(repo.length()>2 && repo.startsWith("/") && repo.endsWith("/")){

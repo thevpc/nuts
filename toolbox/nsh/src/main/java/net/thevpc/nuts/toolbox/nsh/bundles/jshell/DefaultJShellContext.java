@@ -7,7 +7,6 @@ package net.thevpc.nuts.toolbox.nsh.bundles.jshell;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.nsh.*;
-import net.thevpc.nuts.toolbox.nsh.bundles._StringUtils;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.util.DirectoryScanner;
 
 import java.io.*;
@@ -311,7 +310,7 @@ public class DefaultJShellContext extends AbstractJShellContext {
                 NutsDefinition def = ws.search().addId(selectedId).setEffective(true).setSession(this.getSession()
                         .copy().setTrace(false).setFetchStrategy(NutsFetchStrategy.OFFLINE)).getResultDefinitions().required();
                 NutsDescriptor d = def.getDescriptor();
-                String nuts_autocomplete_support = _StringUtils.trim(d.getProperties().get("nuts.autocomplete"));
+                String nuts_autocomplete_support = NutsUtilStrings.trim(d.getProperties().get("nuts.autocomplete"));
                 if (d.isApplication()
                         || "true".equalsIgnoreCase(nuts_autocomplete_support)
                         || "supported".equalsIgnoreCase(nuts_autocomplete_support)) {

@@ -8,7 +8,6 @@ import net.thevpc.nuts.runtime.core.CoreNutsConstants;
 import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsRepositorySPI;
 
@@ -201,7 +200,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                 }
                 //remove workspace
                 descriptor = descriptor.builder().setId(descriptor.getId().builder().setRepository(null).build()).build();
-                if (CoreStringUtils.trim(descriptor.getId().getVersion().getValue()).endsWith(CoreNutsConstants.Versions.CHECKED_OUT_EXTENSION)) {
+                if (NutsUtilStrings.trim(descriptor.getId().getVersion().getValue()).endsWith(CoreNutsConstants.Versions.CHECKED_OUT_EXTENSION)) {
                     throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("invalid version %s", descriptor.getId().getVersion()));
                 }
 
@@ -212,12 +211,12 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                 for (String arch : descriptor.getArch()) {
                     CorePlatformUtils.checkSupportedArch(ws.id().parser().setLenient(false).parse(arch).getShortName());
                 }
-                if (CoreStringUtils.isBlank(repository)) {
+                if (NutsUtilStrings.isBlank(repository)) {
                     NutsRepositoryFilter repositoryFilter = null;
                     //TODO CHECK ME, why offline
                     for (NutsRepository repo : wu.filterRepositoriesDeploy(effId, repositoryFilter)) {
 
-                        effId = ws.config().createContentFaceId(effId.builder().setProperties("").build(), descriptor) //                                    .setAlternative(CoreStringUtils.trim(descriptor.getAlternative()))
+                        effId = ws.config().createContentFaceId(effId.builder().setProperties("").build(), descriptor) //                                    .setAlternative(NutsUtilStrings.trim(descriptor.getAlternative()))
                         ;
                         NutsRepositorySPI repoSPI = wu.repoSPI(repo);
                         repoSPI.deploy()
@@ -236,7 +235,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                     if (!repo.config().isEnabled()) {
                         throw new NutsRepositoryNotFoundException(getSession(), "Repository " + repository + " is disabled.");
                     }
-                    effId = ws.config().createContentFaceId(effId.builder().setProperties("").build(), descriptor) //                                .setAlternative(CoreStringUtils.trim(descriptor.getAlternative()))
+                    effId = ws.config().createContentFaceId(effId.builder().setProperties("").build(), descriptor) //                                .setAlternative(NutsUtilStrings.trim(descriptor.getAlternative()))
                     ;
                     NutsRepositorySPI repoSPI = wu.repoSPI(repo);
                     repoSPI.deploy()
@@ -312,7 +311,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
         NutsWorkspace ws = getSession().getWorkspace();
         if (values != null) {
             for (String s : values) {
-                if (!CoreStringUtils.isBlank(s)) {
+                if (!NutsUtilStrings.isBlank(s)) {
                     ids.add(ws.id().parser().parse(s));
                 }
             }

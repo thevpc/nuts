@@ -139,7 +139,7 @@ public class NutsRepositoryFolderHelper {
 //            if (Files.exists(goodFile)) {
 //                return getWorkspace().descriptor().parse(goodFile);
 //            }
-//        } else if (!CoreStringUtils.isBlank(alt)) {
+//        } else if (!NutsUtilStrings.isBlank(alt)) {
 //            goodAlt = alt.trim();
 //            goodFile = versionFolder.resolve(goodAlt).resolve(idFilename);
 //            if (Files.exists(goodFile)) {

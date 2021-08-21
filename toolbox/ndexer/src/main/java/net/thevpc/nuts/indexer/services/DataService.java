@@ -1,6 +1,7 @@
 package net.thevpc.nuts.indexer.services;
 
 import net.thevpc.nuts.NutsContentType;
+import net.thevpc.nuts.NutsUtilStrings;
 import net.thevpc.nuts.indexer.NutsIndexerUtils;
 import net.thevpc.nuts.NutsId;
 import net.thevpc.nuts.NutsWorkspace;
@@ -68,7 +69,7 @@ public class DataService {
     private Document mapToDocument(Map<String, String> data) {
         Document document = new Document();
         for (Map.Entry<String, String> entry : data.entrySet()) {
-            document.add(new StringField(entry.getKey(), NutsIndexerUtils.trim(entry.getValue()), Field.Store.YES));
+            document.add(new StringField(entry.getKey(), NutsUtilStrings.trim(entry.getValue()), Field.Store.YES));
         }
         return document;
     }

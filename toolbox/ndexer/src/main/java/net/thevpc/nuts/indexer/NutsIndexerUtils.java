@@ -8,7 +8,10 @@ import org.springframework.util.StringUtils;
 import java.io.File;
 import java.io.StringWriter;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class NutsIndexerUtils {
@@ -94,7 +97,7 @@ public class NutsIndexerUtils {
     }
 
     private static void _condPut(Map<String, String> m, String k, String v) {
-        if (!trim(v).isEmpty()) {
+        if (!NutsUtilStrings.trim(v).isEmpty()) {
             m.put(k, v);
         }
     }
@@ -126,14 +129,14 @@ public class NutsIndexerUtils {
 
     public static NutsId mapToNutsId(Map<String, String> map, NutsWorkspace ws) {
         return ws.id().builder()
-                .setArtifactId(trim(map.get("name")))
-                .setRepository(trim(map.get("namespace")))
-                .setGroupId(trim(map.get("group")))
-                .setVersion(trim(map.get("version")))
-                .setOs(trim(map.get("os")))
-                .setOsdist(trim(map.get("osdist")))
-                .setClassifier(trim(map.get(NutsConstants.IdProperties.CLASSIFIER)))
-                .setArch(trim(map.get("arch")))
+                .setArtifactId(NutsUtilStrings.trim(map.get("name")))
+                .setRepository(NutsUtilStrings.trim(map.get("namespace")))
+                .setGroupId(NutsUtilStrings.trim(map.get("group")))
+                .setVersion(NutsUtilStrings.trim(map.get("version")))
+                .setOs(NutsUtilStrings.trim(map.get("os")))
+                .setOsdist(NutsUtilStrings.trim(map.get("osdist")))
+                .setClassifier(NutsUtilStrings.trim(map.get(NutsConstants.IdProperties.CLASSIFIER)))
+                .setArch(NutsUtilStrings.trim(map.get("arch")))
 //                .setAlternative(trim(map.get(NutsConstants.IdProperties.ALTERNATIVE)))
                 .build();
     }
@@ -147,17 +150,13 @@ public class NutsIndexerUtils {
         for (Map.Entry<String, String> entry : map.entrySet()) {
             if (!set.contains(entry.getKey())) {
                 builder.add(new PhraseQuery.Builder()
-                        .add(new Term(entry.getKey(),
-                                trim(entry.getValue()))).build(),
+                                .add(new Term(entry.getKey(),
+                                        NutsUtilStrings.trim(entry.getValue()))).build(),
                         BooleanClause.Occur.MUST);
             }
         }
         builder.add(new BooleanClause(new MatchAllDocsQuery(), BooleanClause.Occur.SHOULD));
         return builder.build();
-    }
-
-    public static String trim(String s) {
-        return s == null ? "" : s.trim();
     }
 
 }

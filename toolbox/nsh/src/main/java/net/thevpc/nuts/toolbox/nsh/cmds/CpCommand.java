@@ -26,7 +26,6 @@
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.toolbox.nsh.bundles._StringUtils;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.util.ShellHelper;
 import java.util.ArrayList;
@@ -88,7 +87,7 @@ public class CpCommand extends SimpleNshBuiltin {
     protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         for (String value : options.files) {
-            if (_StringUtils.isBlank(value)) {
+            if (NutsUtilStrings.isBlank(value)) {
                 throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("empty file path"), 2);
             }
             options.xfiles.add(context.getWorkspace().io().path((value.contains("://") ? value : context.getWorkspace().io().expandPath(value))));

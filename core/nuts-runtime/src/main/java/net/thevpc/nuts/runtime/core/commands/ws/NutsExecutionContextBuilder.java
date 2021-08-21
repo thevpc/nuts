@@ -134,6 +134,8 @@ public interface NutsExecutionContextBuilder {
      */
     NutsExecutionType getExecutionType();
 
+    NutsRunAs getRunAs();
+
     NutsExecutionContextBuilder setDefinition(NutsDefinition definition);
 
     NutsExecutionContextBuilder setSleepMillis(long sleepMillis);
@@ -167,6 +169,8 @@ public interface NutsExecutionContextBuilder {
     NutsExecutionContextBuilder setTemporary(boolean temporary);
 
     NutsExecutionContextBuilder setExecutionType(NutsExecutionType executionType);
+
+    NutsExecutionContextBuilder setRunAs(NutsRunAs runAs);
 
     boolean isInheritSystemIO();
 

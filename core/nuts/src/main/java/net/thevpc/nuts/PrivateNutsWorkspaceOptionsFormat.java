@@ -40,6 +40,7 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
     private boolean singleArgOptions;
     private boolean omitDefaults;
     private String apiVersion;
+    private NutsBootVersion apiVersionObj;
 
     public PrivateNutsWorkspaceOptionsFormat(NutsWorkspaceOptions options) {
         this.options = options;
@@ -74,6 +75,7 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
     @Override
     public NutsWorkspaceOptionsFormat setApiVersion(String apiVersion) {
         this.apiVersion = apiVersion;
+        this.apiVersionObj = null;
         return this;
     }
 
@@ -83,7 +85,6 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
         return this;
     }
 
-
     @Override
     public NutsWorkspaceOptionsFormat setInit(boolean e) {
         this.createOptions = true;
@@ -92,13 +93,14 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
 
     @Override
     public NutsCommandLine getBootCommandLine() {
+        NutsBootVersion apiVersionObj = getApiVersionObj();
         List<String> arguments = new ArrayList<>();
         if (exportedOptions || isImplicitAll()) {
             fillOption("--boot-runtime", null, options.getRuntimeId(), arguments, false);
             fillOption("--java", "-j", options.getJavaCommand(), arguments, false);
             fillOption("--java-options", "-O", options.getJavaOptions(), arguments, false);
             String wsString = options.getWorkspace();
-            if (PrivateNutsUtils.isBlank(wsString)) {
+            if (NutsUtilStrings.isBlank(wsString)) {
                 //default workspace name
                 wsString = "";
             } else if (wsString.contains("/") || wsString.contains("\\")) {
@@ -135,7 +137,13 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
                 fillOption("--log-inherited", null, logConfig.isLogInherited(), false, arguments, false);
             }
             fillOption("--exclude-extension", "-X", options.getExcludedExtensions(), ";", arguments, false);
-            fillOption("--repository", "-r", options.getRepositories(), ";", arguments, false);
+
+            if (apiVersionObj == null || apiVersionObj.compareTo("0.8.1") >= 0) {
+                fillOption("--repositories", "-r", options.getRepositories(), ";", arguments, false);
+            } else {
+                fillOption("--repository", "-r", options.getRepositories(), ";", arguments, false);
+            }
+
             fillOption("--global", "-g", options.isGlobal(), false, arguments, false);
             fillOption("--gui", null, options.isGui(), false, arguments, false);
             fillOption("--read-only", "-R", options.isReadOnly(), false, arguments, false);
@@ -148,7 +156,9 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
             fillOption("--cached", null, options.isCached(), true, arguments, false);
             fillOption("--indexed", null, options.isIndexed(), true, arguments, false);
             fillOption("--transitive", null, options.isTransitive(), true, arguments, false);
-            fillOption("--bot", "-B", options.isBot(), false, arguments, false);
+            if (apiVersionObj == null || apiVersionObj.compareTo("0.8.1") >= 0) {
+                fillOption("--bot", "-B", options.isBot(), false, arguments, false);
+            }
             if (options.getFetchStrategy() != null && options.getFetchStrategy() != NutsFetchStrategy.ONLINE) {
                 fillOption("--fetch", "-f", options.getFetchStrategy(), NutsFetchStrategy.class, arguments, false);
             }
@@ -157,30 +167,30 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
             for (String outputFormatOption : options.getOutputFormatOptions()) {
                 fillOption("--output-format-option", "-T", outputFormatOption, arguments, false);
             }
-            if (PrivateNutsUtils.isBlank(apiVersion) ||
-                    NutsBootVersion.parse(apiVersion).compare(NutsBootVersion.parse("0.8.0"))
-                     >= 0) {
+            if (apiVersionObj == null || apiVersionObj.compareTo("0.8.0") >= 0) {
                 fillOption("--expire", "-N",
                         options.getExpireTime() == null ? null : options.getExpireTime().toString(),
                         arguments, false);
-                if (options.getOutLinePrefix() != null && Objects.equals(options.getOutLinePrefix(), options.getErrLinePrefix())) {
+                if (options.getOutLinePrefix() != null
+                        && Objects.equals(options.getOutLinePrefix(), options.getErrLinePrefix())
+                        && options.getOutLinePrefix().length() > 0) {
                     fillOption("--line-prefix", null, options.getOutLinePrefix(), arguments, false);
                 } else {
-                    if (options.getOutLinePrefix() != null) {
+                    if (options.getOutLinePrefix() != null && options.getOutLinePrefix().length() > 0) {
                         fillOption("--out-line-prefix", null, options.getOutLinePrefix(), arguments, false);
                     }
-                    if (options.getErrLinePrefix() != null) {
-                        fillOption("--err-line-prefix", null, options.getOutLinePrefix(), arguments, false);
+                    if (options.getErrLinePrefix() != null && options.getErrLinePrefix().length() > 0) {
+                        fillOption("--err-line-prefix", null, options.getErrLinePrefix(), arguments, false);
                     }
                 }
             }
-            if (PrivateNutsUtils.isBlank(apiVersion) || NutsBootVersion.parse(apiVersion).compare(NutsBootVersion.parse("0.8.1")) >= 0) {
-                fillOption("--err-line-prefix", null, options.getTheme(), arguments, false);
+            if (apiVersionObj == null || apiVersionObj.compareTo("0.8.1") >= 0) {
+                fillOption("--theme", null, options.getTheme(), arguments, false);
             }
         }
 
         if (createOptions || isImplicitAll()) {
-            fillOption("--name", null, PrivateNutsUtils.trim(options.getName()), arguments, false);
+            fillOption("--name", null, NutsUtilStrings.trim(options.getName()), arguments, false);
             fillOption("--archetype", "-A", options.getArchetype(), arguments, false);
             fillOption("--store-layout", null, options.getStoreLocationLayout(), NutsOsFamily.class, arguments, false);
             fillOption("--store-strategy", null, options.getStoreLocationStrategy(), NutsStoreLocationStrategy.class, arguments, false);
@@ -188,7 +198,7 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
             Map<String, String> storeLocations = options.getStoreLocations();
             for (NutsStoreLocation location : NutsStoreLocation.values()) {
                 String s = storeLocations.get(location.id());
-                if (!PrivateNutsUtils.isBlank(s)) {
+                if (!NutsUtilStrings.isBlank(s)) {
                     fillOption("--" + location.id() + "-location", null, s, arguments, false);
                 }
             }
@@ -197,20 +207,20 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
             if (homeLocations != null) {
                 for (NutsStoreLocation location : NutsStoreLocation.values()) {
                     String s = homeLocations.get(PrivateBootWorkspaceOptions.createHomeLocationKey(null, location));
-                    if (!PrivateNutsUtils.isBlank(s)) {
+                    if (!NutsUtilStrings.isBlank(s)) {
                         fillOption("--system-" + location.id() + "-home", null, s, arguments, false);
                     }
                 }
                 for (NutsOsFamily osFamily : NutsOsFamily.values()) {
                     for (NutsStoreLocation location : NutsStoreLocation.values()) {
                         String s = homeLocations.get(PrivateBootWorkspaceOptions.createHomeLocationKey(osFamily, location));
-                        if (!PrivateNutsUtils.isBlank(s)) {
+                        if (!NutsUtilStrings.isBlank(s)) {
                             fillOption("--" + osFamily.id() + "-" + location.id() + "-home", null, s, arguments, false);
                         }
                     }
                 }
             }
-            if (PrivateNutsUtils.isBlank(apiVersion) || NutsBootVersion.parse(apiVersion).compare(NutsBootVersion.parse("0.8.0")) >= 0) {
+            if (apiVersionObj == null || apiVersionObj.compareTo("0.8.0") >= 0) {
                 if (options.getSwitchWorkspace() != null) {
                     fillOption("--switch", null, options.getSwitchWorkspace(), false, arguments, false);
                 }
@@ -222,10 +232,11 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
                 fillOption(options.getOpenMode(), arguments, false);
             }
             fillOption(options.getExecutionType(), arguments, false);
+            fillOption(options.getRunAs(), arguments);
             fillOption("--reset", "-Z", options.isReset(), false, arguments, false);
             fillOption("--recover", "-z", options.isRecover(), false, arguments, false);
             fillOption("--dry", "-D", options.isDry(), false, arguments, false);
-            if (PrivateNutsUtils.isBlank(apiVersion) || NutsBootVersion.parse(apiVersion).compare(NutsBootVersion.parse("0.8.1")) >= 0) {
+            if (apiVersionObj == null || apiVersionObj.compareTo("0.8.1") >= 0) {
                 if (options.getProperties() != null) {
                     for (String property : options.getProperties()) {
                         arguments.add("---" + property);
@@ -239,9 +250,7 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
             arguments.addAll(Arrays.asList(options.getExecutorOptions()));
             arguments.addAll(Arrays.asList(options.getApplicationArguments()));
         }
-        return new PrivateNutsCommandLine(
-                arguments.toArray(new String[0])
-        );
+        return new PrivateNutsCommandLine(arguments.toArray(new String[0]));
     }
 
     @Override
@@ -291,7 +300,7 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
     }
 
     private void fillOption(String longName, String shortName, String value, List<String> arguments, boolean forceSingle) {
-        if (!PrivateNutsUtils.isBlank(value)) {
+        if (!NutsUtilStrings.isBlank(value)) {
             fillOption0(selectOptionName(longName, shortName), value, arguments, forceSingle);
         }
     }
@@ -365,6 +374,55 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
         }
     }
 
+    private boolean fillOption(NutsRunAs value, List<String> arguments) {
+        switch (value.getMode()) {
+            case CURRENT_USER: {
+                if (!NutsUtilStrings.isBlank(apiVersion) &&
+                        NutsBootVersion.parse(apiVersion).compareTo(NutsBootVersion.parse("0.8.1"))
+                                < 0) {
+                    arguments.add("--user-cmd");
+                }else{
+                    if(!omitDefaults) {
+                        arguments.add("--current-user");
+                    }
+                }
+                return true;
+            }
+            case ROOT: {
+                if (!NutsUtilStrings.isBlank(apiVersion) &&
+                        NutsBootVersion.parse(apiVersion).compareTo(NutsBootVersion.parse("0.8.1"))
+                                < 0) {
+                    arguments.add("--root-cmd");
+                }else {
+                    arguments.add("--as-root");
+                }
+                return true;
+            }
+            case SUDO: {
+                if (!NutsUtilStrings.isBlank(apiVersion) &&
+                        NutsBootVersion.parse(apiVersion).compareTo(NutsBootVersion.parse("0.8.1"))
+                                < 0) {
+                    //ignore
+                }else {
+                    arguments.add("--sudo");
+                }
+                return true;
+            }
+            case USER: {
+                if (!NutsUtilStrings.isBlank(apiVersion) &&
+                        NutsBootVersion.parse(apiVersion).compareTo(NutsBootVersion.parse("0.8.1"))
+                                < 0) {
+                    //ignore
+                }else {
+                    arguments.add("--run-as="+value.getUser());
+                }
+                return true;
+            }
+            default: {
+                throw new NutsBootException(NutsMessage.cstyle("unsupported enum %s",value.getMode()));
+            }
+        }
+    }
     private boolean tryFillOptionShort(Enum value, List<String> arguments, boolean forceSingle) {
         if (value != null) {
             if (shortOptions) {
@@ -392,12 +450,14 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
                 }
                 if (value instanceof NutsExecutionType) {
                     switch ((NutsExecutionType) value) {
-                        case USER_CMD: {
-                            arguments.add("--user-cmd");
-                            return true;
-                        }
-                        case ROOT_CMD: {
-                            arguments.add("--root-cmd");
+                        case SYSTEM: {
+                            if (!NutsUtilStrings.isBlank(apiVersion) &&
+                                    NutsBootVersion.parse(apiVersion).compareTo(NutsBootVersion.parse("0.8.1"))
+                                            < 0) {
+                                arguments.add("--user-cmd");
+                            }else{
+                                arguments.add("--system");
+                            }
                             return true;
                         }
                         case EMBEDDED: {
@@ -408,6 +468,9 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
                             if (!omitDefaults) {
                                 arguments.add("-x");
                             }
+                            return true;
+                        }
+                        case OPEN:{
                             return true;
                         }
                     }
@@ -505,7 +568,8 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
                 && singleArgOptions == that.singleArgOptions
                 && omitDefaults == that.omitDefaults
                 && Objects.equals(apiVersion, that.apiVersion)
-                && Objects.equals(options, that.options);
+                && Objects.equals(options, that.options)
+                ;
     }
 
     @Override
@@ -513,4 +577,12 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
         return getBootCommandLine().toString();
     }
 
+    public NutsBootVersion getApiVersionObj() {
+        if (apiVersionObj == null) {
+            if (apiVersion != null) {
+                apiVersionObj = NutsBootVersion.parse(apiVersion);
+            }
+        }
+        return apiVersionObj;
+    }
 }

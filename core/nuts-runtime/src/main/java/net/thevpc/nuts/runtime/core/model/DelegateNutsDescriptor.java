@@ -129,6 +129,11 @@ public abstract class DelegateNutsDescriptor extends AbstractNutsDescriptor {
         return getBase().getPlatform();
     }
 
+    @Override
+    public String[] getDesktopEnvironment() {
+        return getBase().getDesktopEnvironment();
+    }
+
 //    @Override
 //    public String getAlternative() {
 //        return getBase().getAlternative();

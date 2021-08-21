@@ -6,7 +6,6 @@
 package net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 import java.util.Arrays;
 
@@ -76,7 +75,7 @@ public class NutsSettingsUserSubCommand extends AbstractNutsSettingsSubCommand {
                     }
                     for (NutsUser u : security) {
                         out.printf("User: %s%n", u.getUser());
-                        if (!CoreStringUtils.isBlank(u.getRemoteIdentity())) {
+                        if (!NutsUtilStrings.isBlank(u.getRemoteIdentity())) {
                             out.printf("   Mapper to  : %s%n", u.getRemoteIdentity());
                         }
                         out.printf("   Password   : %s%n", (u.hasCredentials() ? "Set" : "None"));

@@ -5,6 +5,7 @@
  */
 package net.thevpc.nuts.core.test.blackboxinteractive;
 
+import net.thevpc.nuts.NutsExecutionType;
 import net.thevpc.nuts.NutsOsFamily;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import java.io.File;
@@ -32,7 +33,7 @@ public class Test01_InstallTest {
         String wsPath = baseFolder + "/" + TestUtils.getCallerMethodName();
         NutsWorkspace ws = TestUtils.openTestWorkspace("-w="+wsPath,"--standalone","--embedded").getWorkspace();
         TestUtils.println(ws.locations().getWorkspaceLocation());
-        TestUtils.println(ws.exec().embedded().addCommand("ls").which());
+        TestUtils.println(ws.exec().setExecutionType(NutsExecutionType.SYSTEM).addCommand("ls").which());
 
 //        Nuts.runWorkspace(
 ////            "--workspace", wsPath,

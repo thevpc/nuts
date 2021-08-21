@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+
 import net.thevpc.nuts.runtime.core.filters.id.NutsScriptAwareIdFilter;
 
 public class NutsVersionFilterAnd extends AbstractVersionFilter implements NutsVersionFilter, Simplifiable<NutsVersionFilter>, NutsScriptAwareIdFilter {
@@ -62,7 +62,7 @@ public class NutsVersionFilterAnd extends AbstractVersionFilter implements NutsV
             if (id instanceof NutsScriptAwareIdFilter) {
                 NutsScriptAwareIdFilter b = (NutsScriptAwareIdFilter) id;
                 String expr = b.toJsNutsIdFilterExpr();
-                if (CoreStringUtils.isBlank(expr)) {
+                if (NutsUtilStrings.isBlank(expr)) {
                     return null;
                 }
                 sb.append("(").append(expr).append("')");

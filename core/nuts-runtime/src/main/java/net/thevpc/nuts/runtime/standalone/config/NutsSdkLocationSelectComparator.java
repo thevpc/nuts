@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.config;
 
 import net.thevpc.nuts.NutsSdkLocation;
+import net.thevpc.nuts.NutsUtilStrings;
 import net.thevpc.nuts.NutsVersion;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
@@ -29,26 +30,26 @@ public class NutsSdkLocationSelectComparator implements Comparator<NutsSdkLocati
         if (x != 0) {
             return x;
         }
-        String s1 = CoreStringUtils.trim(o1.getName());
-        String s2 = CoreStringUtils.trim(o2.getName());
+        String s1 = NutsUtilStrings.trim(o1.getName());
+        String s2 = NutsUtilStrings.trim(o2.getName());
         x = s1.compareTo(s2);
         if (x != 0) {
             return x;
         }
-        s1 = CoreStringUtils.trim(o1.getPackaging());
-        s2 = CoreStringUtils.trim(o2.getPackaging());
+        s1 = NutsUtilStrings.trim(o1.getPackaging());
+        s2 = NutsUtilStrings.trim(o2.getPackaging());
         x = s1.compareTo(s2);
         if (x != 0) {
             return x;
         }
-        s1 = CoreStringUtils.trim(o1.getProduct());
-        s2 = CoreStringUtils.trim(o2.getProduct());
+        s1 = NutsUtilStrings.trim(o1.getProduct());
+        s2 = NutsUtilStrings.trim(o2.getProduct());
         x = s1.compareTo(s2);
         if (x != 0) {
             return x;
         }
-        s1 = CoreStringUtils.trim(o1.getPath());
-        s2 = CoreStringUtils.trim(o2.getPath());
+        s1 = NutsUtilStrings.trim(o1.getPath());
+        s2 = NutsUtilStrings.trim(o2.getPath());
         x = s1.compareTo(s2);
         if (x != 0) {
             return x;

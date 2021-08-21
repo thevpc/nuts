@@ -8,7 +8,6 @@ package net.thevpc.nuts.runtime.core.commands.ws;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.format.NutsFetchDisplayOptions;
 import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsDependencyScopes;
 import net.thevpc.nuts.runtime.standalone.wscommands.NutsWorkspaceCommandBase;
 
@@ -338,7 +337,7 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
             case "--location": {
                 String location = cmdLine.nextString().getStringValue();
                 if (enabled) {
-                    this.setLocation(CoreStringUtils.isBlank(location) ? null : Paths.get(location));
+                    this.setLocation(NutsUtilStrings.isBlank(location) ? null : Paths.get(location));
                 }
                 return true;
             }

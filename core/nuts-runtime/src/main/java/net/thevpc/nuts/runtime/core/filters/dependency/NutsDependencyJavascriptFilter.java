@@ -27,7 +27,6 @@
 package net.thevpc.nuts.runtime.core.filters.dependency;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.bundles.common.JavascriptHelper;
 
 import java.util.Objects;
@@ -42,7 +41,7 @@ public class NutsDependencyJavascriptFilter extends AbstractDependencyFilter imp
     private String code;
 
     public static NutsDependencyJavascriptFilter valueOf(String value, NutsSession ws) {
-        if (CoreStringUtils.isBlank(value)) {
+        if (NutsUtilStrings.isBlank(value)) {
             return null;
         }
         return new NutsDependencyJavascriptFilter(ws,value);

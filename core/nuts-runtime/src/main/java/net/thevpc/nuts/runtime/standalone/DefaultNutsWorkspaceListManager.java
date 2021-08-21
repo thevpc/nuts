@@ -7,8 +7,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
-
 /**
  * Class for managing a Workspace list
  *
@@ -24,7 +22,7 @@ public class DefaultNutsWorkspaceListManager implements NutsWorkspaceListManager
 
     public DefaultNutsWorkspaceListManager(NutsWorkspace ws, NutsSession session,String name) {
         this.defaultWorkspace = ws;
-        if (CoreStringUtils.isBlank(name)) {
+        if (NutsUtilStrings.isBlank(name)) {
             name = "default";
         }
         this.name = name.trim();

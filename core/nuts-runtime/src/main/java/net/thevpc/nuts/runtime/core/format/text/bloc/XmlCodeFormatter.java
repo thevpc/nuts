@@ -1,20 +1,15 @@
 package net.thevpc.nuts.runtime.core.format.text.bloc;
 
-import net.thevpc.nuts.NutsTextStyle;
-import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.collections.EvictingQueue;
 import net.thevpc.nuts.runtime.bundles.parsers.StreamTokenizerExt;
 
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
-import net.thevpc.nuts.NutsSupportLevelContext;
+
 import net.thevpc.nuts.spi.NutsComponent;
-import net.thevpc.nuts.NutsCodeFormat;
-import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
-import net.thevpc.nuts.NutsTextManager;
-import net.thevpc.nuts.NutsText;
 
 public class XmlCodeFormatter implements NutsCodeFormat {
 
@@ -34,7 +29,7 @@ public class XmlCodeFormatter implements NutsCodeFormat {
 
     public NutsText tokenToText(String text, String nodeType,NutsSession session) {
         factory.setSession(session);
-        switch (CoreStringUtils.trim(nodeType).toLowerCase()) {
+        switch (NutsUtilStrings.trim(nodeType).toLowerCase()) {
             case "name":
                 return formatNodeName(text);
             case "attribute":

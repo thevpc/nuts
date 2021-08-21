@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.core.filters.dependency;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.filters.InternalNutsTypedFilters;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -200,7 +199,7 @@ public class InternalNutsDependencyFilterManager extends InternalNutsTypedFilter
     @Override
     public NutsDependencyFilter byExpression(String expression) {
         checkSession();
-        if (CoreStringUtils.isBlank(expression)) {
+        if (NutsUtilStrings.isBlank(expression)) {
             return always();
         }
         return NutsDependencyJavascriptFilter.valueOf(expression, getSession());

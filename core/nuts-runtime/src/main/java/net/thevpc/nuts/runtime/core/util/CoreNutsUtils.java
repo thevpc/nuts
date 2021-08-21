@@ -214,7 +214,7 @@ public class CoreNutsUtils {
     }
 
     public static boolean isEffectiveValue(String value) {
-        return (!CoreStringUtils.isBlank(value) && !CoreStringUtils.containsVars(value));
+        return (!NutsUtilStrings.isBlank(value) && !CoreStringUtils.containsVars(value));
     }
 
     public static boolean isEffectiveId(NutsId id) {
@@ -246,18 +246,18 @@ public class CoreNutsUtils {
             return child;
         }
         String s = child.getValue();
-        if (CoreStringUtils.isBlank(s)) {
+        if (NutsUtilStrings.isBlank(s)) {
             return ws.version().parser().parse("");
         }
         String s2 = applyStringProperties(s, properties);
-        if (!CoreStringUtils.trim(s2).equals(s)) {
+        if (!NutsUtilStrings.trim(s2).equals(s)) {
             return ws.version().parser().parse(s2);
         }
         return child;
     }
 
     public static String applyStringProperties(String child, Function<String, String> properties) {
-        if (CoreStringUtils.isBlank(child)) {
+        if (NutsUtilStrings.isBlank(child)) {
             return null;
         }
 //        return applyStringProperties(child, properties == null ? null : new StringConverterAdapter(properties));
@@ -271,8 +271,8 @@ public class CoreNutsUtils {
 //        return CoreStringUtils.replaceDollarPlaceHolders(child, properties);
 //    }
     public static String applyStringInheritance(String child, String parent) {
-        child = CoreStringUtils.trimToNull(child);
-        parent = CoreStringUtils.trimToNull(parent);
+        child = NutsUtilStrings.trimToNull(child);
+        parent = NutsUtilStrings.trimToNull(parent);
         if (child == null) {
             return parent;
         }
@@ -468,19 +468,19 @@ public class CoreNutsUtils {
             String name = child.getArtifactId();
             String version = child.getVersion().getValue();
             Map<String, String> props = child.getProperties();
-            if (CoreStringUtils.isBlank(repository)) {
+            if (NutsUtilStrings.isBlank(repository)) {
                 modified = true;
                 repository = parent.getRepository();
             }
-            if (CoreStringUtils.isBlank(group)) {
+            if (NutsUtilStrings.isBlank(group)) {
                 modified = true;
                 group = parent.getGroupId();
             }
-            if (CoreStringUtils.isBlank(name)) {
+            if (NutsUtilStrings.isBlank(name)) {
                 modified = true;
                 name = parent.getArtifactId();
             }
-            if (CoreStringUtils.isBlank(version)) {
+            if (NutsUtilStrings.isBlank(version)) {
                 modified = true;
                 version = parent.getVersion().getValue();
             }
@@ -501,12 +501,12 @@ public class CoreNutsUtils {
     }
 
     public static boolean isDefaultOptional(String s1) {
-        s1 = CoreStringUtils.trim(s1);
+        s1 = NutsUtilStrings.trim(s1);
         return s1.isEmpty() || s1.equals("false");
     }
 
     //    public static boolean isDefaultAlternative(String s1) {
-//        s1 = CoreStringUtils.trim(s1);
+//        s1 = NutsUtilStrings.trim(s1);
 //        return s1.isEmpty() || s1.equals(NutsConstants.IdProperties.ALTERNATIVE_DEFAULT_VALUE);
 //    }
     public static boolean isValidIdentifier(String s) {
@@ -746,7 +746,7 @@ public class CoreNutsUtils {
 //        if (id == null) {
 //            throw new NutsElementNotFoundException(ws, "missing id");
 //        }
-//        if (CoreStringUtils.isBlank(id.getGroupId())) {
+//        if (NutsUtilStrings.isBlank(id.getGroupId())) {
 //            throw new NutsElementNotFoundException(ws, "missing group for " + id);
 //        }
 //    }
@@ -755,16 +755,16 @@ public class CoreNutsUtils {
 //        if (id == null) {
 //            throw new NutsElementNotFoundException(ws, "missing id");
 //        }
-//        if (CoreStringUtils.isBlank(id.getGroupId())) {
+//        if (NutsUtilStrings.isBlank(id.getGroupId())) {
 //            throw new NutsElementNotFoundException(ws, "missing group for " + id);
 //        }
-//        if (CoreStringUtils.isBlank(id.getArtifactId())) {
+//        if (NutsUtilStrings.isBlank(id.getArtifactId())) {
 //            throw new NutsElementNotFoundException(ws, "missing name for " + id.toString());
 //        }
 //    }
 
     public static boolean isValidWorkspaceName(String workspace) {
-        if (CoreStringUtils.isBlank(workspace)) {
+        if (NutsUtilStrings.isBlank(workspace)) {
             return true;
         }
         String workspaceName = workspace.trim();
@@ -778,7 +778,7 @@ public class CoreNutsUtils {
     }
 
     public static String resolveValidWorkspaceName(String workspace) {
-        if (CoreStringUtils.isBlank(workspace)) {
+        if (NutsUtilStrings.isBlank(workspace)) {
             return NutsConstants.Names.DEFAULT_WORKSPACE_NAME;
         }
         String workspaceName = workspace.trim();
@@ -883,8 +883,8 @@ public class CoreNutsUtils {
         if (location == null) {
             return false;
         }
-        String c0 = CoreStringUtils.trim(classifier);
-        String c1 = CoreStringUtils.trim(location.getClassifier());
+        String c0 = NutsUtilStrings.trim(classifier);
+        String c1 = NutsUtilStrings.trim(location.getClassifier());
         return c0.equals(c1);
     }
 

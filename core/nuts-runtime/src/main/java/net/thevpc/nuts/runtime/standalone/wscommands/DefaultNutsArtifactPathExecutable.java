@@ -38,15 +38,17 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
     String[] args;
     String[] executorOptions;
     NutsExecutionType executionType;
+    NutsRunAs runAs;
     NutsSession traceSession;
     NutsSession execSession;
     DefaultNutsExecCommand execCommand;
 
-    public DefaultNutsArtifactPathExecutable(String cmdName, String[] args, String[] executorOptions, NutsExecutionType executionType, NutsSession traceSession, NutsSession execSession, DefaultNutsExecCommand execCommand, boolean inheritSystemIO) {
+    public DefaultNutsArtifactPathExecutable(String cmdName, String[] args, String[] executorOptions, NutsExecutionType executionType, NutsRunAs runAs,NutsSession traceSession, NutsSession execSession, DefaultNutsExecCommand execCommand, boolean inheritSystemIO) {
         super(cmdName,
                 execSession.getWorkspace().commandLine().create(args).toString(),
                 NutsExecutableType.ARTIFACT);
         LOG = execSession.getWorkspace().log().of(DefaultNutsArtifactPathExecutable.class);
+        this.runAs = runAs;
         this.cmdName = cmdName;
         this.args = args;
         this.executionType = executionType;
@@ -110,7 +112,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
             );
             try {
                 execCommand.ws_execId(nutToRun, cmdName, args, executorOptions, execCommand.getEnv(),
-                        execCommand.getDirectory(), execCommand.isFailFast(), true, traceSession, execSession, executionType, dry);
+                        execCommand.getDirectory(), execCommand.isFailFast(), true, traceSession, execSession, executionType,runAs, dry);
             } finally {
                 try {
                     CoreIOUtils.delete(traceSession, Paths.get(tempFolder));

@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.core.app;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.CoreNutsConstants;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.DefaultNutsWorkspace;
 import net.thevpc.nuts.runtime.standalone.NutsHomeLocationsMap;
 import net.thevpc.nuts.runtime.standalone.NutsStoreLocationsMap;
@@ -180,7 +179,7 @@ public class DefaultNutsWorkspaceLocationModel {
         String ext = getDefaultIdExtension(id, session);
         if (!ext.equals(NutsConstants.Files.DESCRIPTOR_FILE_EXTENSION) && !ext.equals(".pom")) {
             String c = id.getClassifier();
-            if (!CoreStringUtils.isBlank(c)) {
+            if (!NutsUtilStrings.isBlank(c)) {
                 classifier = "-" + c;
             }
         }
@@ -189,7 +188,7 @@ public class DefaultNutsWorkspaceLocationModel {
 
 
     public String getDefaultIdContentExtension(String packaging, NutsSession session) {
-        if (CoreStringUtils.isBlank(packaging)) {
+        if (NutsUtilStrings.isBlank(packaging)) {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unsupported empty packaging"));
         }
         switch (packaging) {
@@ -229,7 +228,7 @@ public class DefaultNutsWorkspaceLocationModel {
 
     public String getDefaultIdExtension(NutsId id, NutsSession session) {
         Map<String, String> q = id.getProperties();
-        String f = CoreStringUtils.trim(q.get(NutsConstants.IdProperties.FACE));
+        String f = NutsUtilStrings.trim(q.get(NutsConstants.IdProperties.FACE));
         switch (f) {
             case NutsConstants.QueryFaces.DESCRIPTOR: {
                 return NutsConstants.Files.DESCRIPTOR_FILE_EXTENSION;
@@ -250,7 +249,7 @@ public class DefaultNutsWorkspaceLocationModel {
                 if (f.equals("cache") || f.endsWith(".cache")) {
                     return "." + f;
                 }
-                if (CoreStringUtils.isBlank(f)) {
+                if (NutsUtilStrings.isBlank(f)) {
                     throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing face in %s", id));
                 }
                 throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unsupported face %s in %s", f, id));

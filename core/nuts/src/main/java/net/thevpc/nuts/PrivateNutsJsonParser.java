@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -10,19 +10,19 @@
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
  * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts;
 
 import java.io.IOException;
@@ -44,11 +44,19 @@ import java.util.Map;
  */
 final class PrivateNutsJsonParser {
 
-    private StreamTokenizer st;
+    private final StreamTokenizer st;
 
     public PrivateNutsJsonParser(Reader r) {
         st = new StreamTokenizer(r);
         st.ordinaryChar('/');
+    }
+
+    public static Map<String, Object> parse(Path path) {
+        try (Reader r = Files.newBufferedReader(path)) {
+            return new PrivateNutsJsonParser(r).parseObject();
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
     public Map<String, Object> parseObject() {
@@ -64,11 +72,11 @@ final class PrivateNutsJsonParser {
             Object a = nextElement();
             int p = st.nextToken();
             if (p != StreamTokenizer.TT_EOF) {
-                throw new NutsBootException("json syntax error :  encountered " + st);
+                throw new NutsBootException(NutsMessage.cstyle("json syntax error :  encountered %s", st));
             }
             return a;
         } catch (IOException ex) {
-            throw new NutsBootException("json syntax error :  " + ex.getMessage(), ex);
+            throw new NutsBootException(NutsMessage.cstyle("json syntax error : %s", ex.getMessage()), ex);
         }
     }
 
@@ -87,7 +95,7 @@ final class PrivateNutsJsonParser {
                     case "null":
                         return null;
                     default:
-                        throw new NutsBootException("json syntax error : " + st.sval);
+                        throw new NutsBootException(NutsMessage.cstyle("json syntax error : %s", st.sval));
                 }
             }
             case '\"': {
@@ -102,7 +110,7 @@ final class PrivateNutsJsonParser {
                 return nextObject();
             }
             default: {
-                throw new NutsBootException("json syntax error : " + str(p));
+                throw new NutsBootException(NutsMessage.cstyle("json syntax error : %s", str(p)));
             }
         }
     }
@@ -112,7 +120,7 @@ final class PrivateNutsJsonParser {
         int p = -1;
         p = st.nextToken();
         if (p != '[') {
-            throw new NutsBootException("json syntax error : " + str(p));
+            throw new NutsBootException(NutsMessage.cstyle("json syntax error : %s", str(p)));
         }
         p = st.nextToken();
         if (p == ']') {
@@ -129,23 +137,25 @@ final class PrivateNutsJsonParser {
                     arr.add(nextElement());
                     break;
                 default:
-                    throw new NutsBootException("json syntax error : " + str(p));
+                    throw new NutsBootException(NutsMessage.cstyle("json syntax error : %s", str(p)));
             }
         }
-        throw new NutsBootException("json syntax error : missing ]");
+        throw new NutsBootException(NutsMessage.cstyle("json syntax error : missing ]"));
     }
 
     private void readChar(char expected) throws IOException {
         int encountered = st.nextToken();
         if (encountered != expected) {
-            throw new NutsBootException("json syntax error : expected " + str(expected) + " , encountered " + str(encountered));
+            throw new NutsBootException(
+                    NutsMessage.cstyle("json syntax error : expected %s  , encountered %s",str(expected), str(encountered))
+            );
         }
     }
 
     private Object[] nextKeyValue() throws IOException {
         Object t = nextElement();
         if (!(t instanceof String)) {
-            throw new NutsBootException("json syntax error : expected entry name, , encountered " + t);
+            throw new NutsBootException(NutsMessage.cstyle("json syntax error : expected entry name, , encountered %s", t));
         }
         readChar(':');
         Object v = nextElement();
@@ -157,7 +167,7 @@ final class PrivateNutsJsonParser {
         int p = -1;
         p = st.nextToken();
         if (p != '{') {
-            throw new NutsBootException("json syntax error : " + p);
+            throw new NutsBootException(NutsMessage.cstyle("json syntax error : %s", p));
         }
         p = st.nextToken();
         if (p == '}') {
@@ -176,10 +186,10 @@ final class PrivateNutsJsonParser {
                     map.put((String) kv[0], kv[1]);
                     break;
                 default:
-                    throw new NutsBootException("json syntax error : " + p);
+                    throw new NutsBootException(NutsMessage.cstyle("json syntax error : %s", p));
             }
         }
-        throw new NutsBootException("json syntax error : Missing }");
+        throw new NutsBootException(NutsMessage.cstyle("json syntax error : Missing }"));
     }
 
     private String str(int a) {
@@ -200,14 +210,6 @@ final class PrivateNutsJsonParser {
                 return "\\r";
             default:
                 return "'" + ((char) a) + "'";
-        }
-    }
-
-    public static Map<String,Object> parse(Path path) {
-        try(Reader r= Files.newBufferedReader(path)) {
-            return new PrivateNutsJsonParser(r).parseObject();
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
         }
     }
 }

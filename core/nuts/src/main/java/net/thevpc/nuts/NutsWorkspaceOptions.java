@@ -139,6 +139,8 @@ public interface NutsWorkspaceOptions extends Serializable {
      */
     NutsExecutionType getExecutionType();
 
+    NutsRunAs getRunAs();
+
     /**
      * extra executor options.
      * <br>
@@ -580,7 +582,7 @@ public interface NutsWorkspaceOptions extends Serializable {
 
     Boolean getSwitchWorkspace();
 
-    String[] getErrors();
+    NutsMessage[] getErrors();
 
     String[] getProperties();
 

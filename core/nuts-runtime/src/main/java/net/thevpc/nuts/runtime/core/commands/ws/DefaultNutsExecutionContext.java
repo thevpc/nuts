@@ -48,9 +48,10 @@ public class DefaultNutsExecutionContext implements NutsExecutionContext {
     private boolean temporary;
     private long sleepMillis;
     private NutsExecutionType executionType;
+    private NutsRunAs runAs;
     private boolean inheritSystemIO;
-    private String redirectOuputFile;
-    private String redirectInpuFile;
+    private String redirectOutputFile;
+    private String redirectInputFile;
 
     //    public NutsExecutionContextImpl(NutsDefinition nutsDefinition, NutsSession session, NutsWorkspace workspace,String cwd) {
 //        this.nutsDefinition = nutsDefinition;
@@ -80,8 +81,8 @@ public class DefaultNutsExecutionContext implements NutsExecutionContext {
             String commandName,
             long sleepMillis,
             boolean inheritSystemIO,
-            String redirectOuputFile,
-            String redirectInpuFile
+            String redirectOutputFile,
+            String redirectInputFile
     ) {
         if (arguments == null) {
             arguments = new String[0];
@@ -111,8 +112,8 @@ public class DefaultNutsExecutionContext implements NutsExecutionContext {
         this.executionType = executionType;
         this.executorDescriptor = definition.getDescriptor().getExecutor();
         this.inheritSystemIO = inheritSystemIO;
-        this.redirectOuputFile = redirectOuputFile;
-        this.redirectInpuFile = redirectInpuFile;
+        this.redirectOutputFile = redirectOutputFile;
+        this.redirectInputFile = redirectInputFile;
     }
 
     public DefaultNutsExecutionContext(NutsExecutionContext other) {
@@ -132,20 +133,20 @@ public class DefaultNutsExecutionContext implements NutsExecutionContext {
         this.executorDescriptor = other.getExecutorDescriptor();
         this.sleepMillis = other.getSleepMillis();
         this.inheritSystemIO = other.isInheritSystemIO();
-        this.redirectOuputFile = other.getRedirectOuputFile();
-        this.redirectInpuFile = other.getRedirectInpuFile();
+        this.redirectOutputFile = other.getRedirectOutputFile();
+        this.redirectInputFile = other.getRedirectInputFile();
     }
 
     public boolean isInheritSystemIO() {
         return inheritSystemIO;
     }
 
-    public String getRedirectOuputFile() {
-        return redirectOuputFile;
+    public String getRedirectOutputFile() {
+        return redirectOutputFile;
     }
 
-    public String getRedirectInpuFile() {
-        return redirectInpuFile;
+    public String getRedirectInputFile() {
+        return redirectInputFile;
     }
     
 
@@ -289,6 +290,16 @@ public class DefaultNutsExecutionContext implements NutsExecutionContext {
 
     public DefaultNutsExecutionContext setExecutionType(NutsExecutionType executionType) {
         this.executionType = executionType;
+        return this;
+    }
+
+    @Override
+    public NutsRunAs getRunAs() {
+        return runAs;
+    }
+
+    public DefaultNutsExecutionContext setRunAs(NutsRunAs runAs) {
+        this.runAs = runAs;
         return this;
     }
 }

@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.core.filters.version;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.filters.InternalNutsTypedFilters;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 import java.util.List;
 import net.thevpc.nuts.runtime.core.filters.DefaultNutsFilterModel;
@@ -73,7 +72,7 @@ public class InternalNutsVersionFilterManager extends InternalNutsTypedFilters<N
     @Override
     public NutsVersionFilter byExpression(String expression) {
         checkSession();
-        if (CoreStringUtils.isBlank(expression)) {
+        if (NutsUtilStrings.isBlank(expression)) {
             return always();
         }
         return NutsVersionJavascriptFilter.valueOf(expression, getSession());

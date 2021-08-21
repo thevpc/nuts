@@ -27,7 +27,6 @@
 package net.thevpc.nuts.runtime.core.filters.id;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.bundles.common.JavascriptHelper;
 import net.thevpc.nuts.runtime.core.util.Simplifiable;
 
@@ -44,7 +43,7 @@ public class NutsJavascriptIdFilter extends AbstractIdFilter implements NutsIdFi
     private String code;
 
     public static NutsIdFilter valueOf(String value, NutsSession ws) {
-        if (CoreStringUtils.isBlank(value)) {
+        if (NutsUtilStrings.isBlank(value)) {
             return ws.getWorkspace().id().filter().always();
         }
         return new NutsJavascriptIdFilter(ws,value);

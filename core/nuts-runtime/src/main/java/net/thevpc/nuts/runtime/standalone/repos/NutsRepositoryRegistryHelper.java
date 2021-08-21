@@ -26,7 +26,6 @@
 package net.thevpc.nuts.runtime.standalone.repos;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -133,7 +132,7 @@ public class NutsRepositoryRegistryHelper {
     }
 
     private RepoAndRef findRepositoryAndRefById(String repositoryNameOrId) {
-        if (!CoreStringUtils.isBlank(repositoryNameOrId)) {
+        if (!NutsUtilStrings.isBlank(repositoryNameOrId)) {
             RepoAndRef y = repositoriesByUuid.get(repositoryNameOrId);
             if (y != null) {
                 return y;
@@ -143,7 +142,7 @@ public class NutsRepositoryRegistryHelper {
     }
 
     private RepoAndRef findRepositoryAndRef(String repositoryNameOrId) {
-        if (!CoreStringUtils.isBlank(repositoryNameOrId)) {
+        if (!NutsUtilStrings.isBlank(repositoryNameOrId)) {
             RepoAndRef y = repositoriesByUuid.get(repositoryNameOrId);
             if (y != null) {
                 return y;
@@ -157,7 +156,7 @@ public class NutsRepositoryRegistryHelper {
     }
 
     private RepoAndRef findRepositoryAndRefByName(String repositoryNameOrId) {
-        if (!CoreStringUtils.isBlank(repositoryNameOrId)) {
+        if (!NutsUtilStrings.isBlank(repositoryNameOrId)) {
             RepoAndRef y = repositoriesByName.get(repositoryNameOrId);
             if (y != null) {
                 return y;

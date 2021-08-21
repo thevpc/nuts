@@ -4,10 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-import net.thevpc.nuts.NutsAuthenticationAgent;
-import net.thevpc.nuts.NutsSecurityException;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
@@ -26,7 +23,7 @@ class WrapperNutsAuthenticationAgent {
 
     public NutsAuthenticationAgent getCachedAuthenticationAgent(String name,NutsSession session) {
         NutsWorkspaceUtils.checkSession(ws, session);
-        name = CoreStringUtils.trim(name);
+        name = NutsUtilStrings.trim(name);
         NutsAuthenticationAgent a = cache.get(name);
         if (a == null) {
             a = provider.create(name,session);

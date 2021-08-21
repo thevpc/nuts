@@ -23,6 +23,8 @@
  */
 package net.thevpc.nuts.runtime.core.util;
 
+import net.thevpc.nuts.NutsUtilStrings;
+
 /**
  *
  * @author vpc
@@ -30,7 +32,7 @@ package net.thevpc.nuts.runtime.core.util;
 public class CoreNumberUtils {
 
     public static Integer convertToInteger(String value, Integer defaultValue) {
-        if (CoreStringUtils.isBlank(value)) {
+        if (NutsUtilStrings.isBlank(value)) {
             return defaultValue;
         }
         try {
@@ -40,7 +42,7 @@ public class CoreNumberUtils {
         }
     }
     public static Long convertToLong(String value, Long defaultValue) {
-        if (CoreStringUtils.isBlank(value)) {
+        if (NutsUtilStrings.isBlank(value)) {
             return defaultValue;
         }
         try {

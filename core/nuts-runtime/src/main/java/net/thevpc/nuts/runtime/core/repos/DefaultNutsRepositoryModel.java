@@ -7,7 +7,6 @@ import net.thevpc.nuts.runtime.core.config.NutsWorkspaceConfigManagerExt;
 import net.thevpc.nuts.runtime.core.events.DefaultNutsWorkspaceEvent;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.config.ConfigEventType;
 import net.thevpc.nuts.runtime.standalone.repos.DefaultNutsInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.repos.NutsRepositoryRegistryHelper;
@@ -214,10 +213,10 @@ public class DefaultNutsRepositoryModel {
             NutsRepositoryConfig config = new NutsRepositoryConfig();
             String name = repoModel.getName();
             String uuid = repoModel.getUuid();
-            if (CoreStringUtils.isBlank(name)) {
+            if (NutsUtilStrings.isBlank(name)) {
                 name = "custom";
             }
-            if (CoreStringUtils.isBlank(uuid)) {
+            if (NutsUtilStrings.isBlank(uuid)) {
                 uuid = UUID.randomUUID().toString();
             }
             config.setName(name);
@@ -274,7 +273,7 @@ public class DefaultNutsRepositoryModel {
                 }
                 options.setLocation(CoreIOUtils.resolveRepositoryPath(options, rootFolder, session));
             }
-            if (CoreStringUtils.isBlank(conf.getName())) {
+            if (NutsUtilStrings.isBlank(conf.getName())) {
                 conf.setName(options.getName());
             }
             NutsRepositoryFactoryComponent factory_ = getWorkspace().extensions()
@@ -287,13 +286,13 @@ public class DefaultNutsRepositoryModel {
                 }
             }
             if (options.isTemporary()) {
-                if (CoreStringUtils.isBlank(conf.getType())) {
+                if (NutsUtilStrings.isBlank(conf.getType())) {
                     throw new NutsInvalidRepositoryException(session, options.getName(), NutsMessage.cstyle("unable to detect valid type for temporary repository"));
                 } else {
                     throw new NutsInvalidRepositoryException(session, options.getName(), NutsMessage.cstyle("invalid repository type %s", conf.getType()));
                 }
             } else {
-                if (CoreStringUtils.isBlank(conf.getType())) {
+                if (NutsUtilStrings.isBlank(conf.getType())) {
                     throw new NutsInvalidRepositoryException(session, options.getName(), NutsMessage.cstyle("unable to detect valid type for repository"));
                 } else {
                     throw new NutsInvalidRepositoryException(session, options.getName(), NutsMessage.cstyle("invalid repository type %s", conf.getType()));

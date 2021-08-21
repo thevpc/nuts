@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.standalone.config;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.config.NutsWorkspaceConfigManagerExt;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.DefaultNutsWorkspace;
 import net.thevpc.nuts.runtime.standalone.wscommands.CommandNutsWorkspaceCommandFactory;
 import net.thevpc.nuts.runtime.standalone.wscommands.ConfigNutsWorkspaceCommandFactory;
@@ -45,7 +44,7 @@ public class DefaultCustomCommandsModel {
             }
         }
         NutsWorkspaceCommandFactory f = null;
-        if (CoreStringUtils.isBlank(commandFactoryConfig.getFactoryType()) || "command".equals(commandFactoryConfig.getFactoryType().trim())) {
+        if (NutsUtilStrings.isBlank(commandFactoryConfig.getFactoryType()) || "command".equals(commandFactoryConfig.getFactoryType().trim())) {
             f = new CommandNutsWorkspaceCommandFactory(workspace);
         }
         if (f != null) {
@@ -158,7 +157,7 @@ public class DefaultCustomCommandsModel {
 
     public boolean add(NutsCommandConfig command, NutsSession session) {
         if (command == null
-                || CoreStringUtils.isBlank(command.getName())
+                || NutsUtilStrings.isBlank(command.getName())
                 || command.getName().contains(" ") || command.getName().contains(".")
                 || command.getName().contains("/") || command.getName().contains("\\")
                 || command.getCommand() == null
@@ -201,7 +200,7 @@ public class DefaultCustomCommandsModel {
 
     public boolean update(NutsCommandConfig command, NutsSession session) {
         if (command == null
-                || CoreStringUtils.isBlank(command.getName())
+                || NutsUtilStrings.isBlank(command.getName())
                 || command.getName().contains(" ") || command.getName().contains(".")
                 || command.getName().contains("/") || command.getName().contains("\\")
                 || command.getCommand() == null
@@ -233,7 +232,7 @@ public class DefaultCustomCommandsModel {
     }
 
     public void remove(String name, NutsSession session) {
-        if (CoreStringUtils.isBlank(name)) {
+        if (NutsUtilStrings.isBlank(name)) {
             throw new NutsIllegalArgumentException(session,
                     NutsMessage.cstyle("invalid command : %s" + (name == null ? "<NULL>" : name))
             );

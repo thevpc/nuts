@@ -26,8 +26,8 @@ import javax.xml.transform.stream.StreamResult;
 
 import net.thevpc.nuts.NutsLogger;
 import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NutsUtilStrings;
 import net.thevpc.nuts.runtime.core.format.xml.NutsXmlUtils;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -79,12 +79,12 @@ public class MavenMetadataParser {
         Element metadata = document.createElement("metadata");
         document.appendChild(metadata);
 
-        if (!isBlank(m.getGroupId())) {
+        if (!NutsUtilStrings.isBlank(m.getGroupId())) {
             Element groupId = document.createElement("groupId");
             groupId.appendChild(document.createTextNode(m.getGroupId()));
             metadata.appendChild(groupId);
         }
-        if (!isBlank(m.getArtifactId())) {
+        if (!NutsUtilStrings.isBlank(m.getArtifactId())) {
             Element artifactId = document.createElement("artifactId");
             artifactId.appendChild(document.createTextNode(m.getArtifactId()));
             metadata.appendChild(artifactId);
@@ -93,13 +93,13 @@ public class MavenMetadataParser {
         Element versioning = document.createElement("versioning");
         metadata.appendChild(versioning);
 
-        if (!isBlank(m.getRelease())) {
+        if (!NutsUtilStrings.isBlank(m.getRelease())) {
             Element release = document.createElement("release");
             release.appendChild(document.createTextNode(m.getRelease()));
             versioning.appendChild(release);
         }
 
-        if (!isBlank(m.getLatest())) {
+        if (!NutsUtilStrings.isBlank(m.getLatest())) {
             Element latest = document.createElement("latest");
             latest.appendChild(document.createTextNode(m.getLatest()));
             versioning.appendChild(latest);
@@ -109,7 +109,7 @@ public class MavenMetadataParser {
         versioning.appendChild(versions);
         if (m.getVersions() != null) {
             for (String sversion : m.getVersions()) {
-                if (!isBlank(sversion)) {
+                if (!NutsUtilStrings.isBlank(sversion)) {
                     Element version = document.createElement("version");
                     version.appendChild(document.createTextNode(sversion));
                     versions.appendChild(version);
@@ -216,9 +216,5 @@ public class MavenMetadataParser {
             }
         }
         return true;
-    }
-
-    public boolean isBlank(String str) {
-        return str == null || str.trim().length() == 0;
     }
 }

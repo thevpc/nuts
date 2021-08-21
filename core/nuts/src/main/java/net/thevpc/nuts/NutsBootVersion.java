@@ -102,13 +102,13 @@ public class NutsBootVersion {
 
     public boolean accept(NutsBootVersion other) {
         if(!other.isSingleValue()){
-            throw new NutsBootException("expected single value version: "+other);
+            throw new NutsBootException(NutsMessage.cstyle("expected single value version: %s",other));
         }
         NutsBootVersion a = parse(getFrom());
         if(a.isBlank()){
             //ok
         }else{
-            int c = a.compare(other);
+            int c = a.compareTo(other);
             if(isIncludeFrom()){
                 if(c>0){
                     return false;
@@ -123,7 +123,7 @@ public class NutsBootVersion {
         if(a.isBlank()){
             //ok
         }else{
-            int c = a.compare(other);
+            int c = a.compareTo(other);
             if(isIncludeTo()){
                 if(c<0){
                     return false;
@@ -137,7 +137,11 @@ public class NutsBootVersion {
         return true;
     }
 
-    public int compare(NutsBootVersion other) {
+    public int compareTo(String other) {
+        return compareTo(parse(other));
+    }
+
+    public int compareTo(NutsBootVersion other) {
         if (this.isSingleValue() && other.isSingleValue()) {
             String a1i=from;
             String a2i=other.from;
@@ -184,7 +188,7 @@ public class NutsBootVersion {
             }
             return 0;
         }
-        throw new NutsBootException("unsupported compare versions");
+        throw new NutsBootException(NutsMessage.plain("unsupported compare versions"));
     }
 
     private BigInteger asInt(String s){

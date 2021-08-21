@@ -65,7 +65,7 @@ public class NutsXmlUtils {
 //        try {
 //            Document document = NutsXmlUtils.createDocument(session);
 //            String rootName = name;
-//            document.appendChild(createElement(CoreStringUtils.isBlank(rootName) ? "root" : rootName, object, elemIndex,document, session));
+//            document.appendChild(createElement(NutsUtilStrings.isBlank(rootName) ? "root" : rootName, object, elemIndex,document, session));
 //            StreamResult streamResult = null;
 //            if (out instanceof PrintStream) {
 //                streamResult = new StreamResult((PrintStream) out);
@@ -86,7 +86,7 @@ public class NutsXmlUtils {
 
 //    public static Document createDocument(String name, Object object, NutsSession session) {
 //            Document document = createDocument(session);
-//            document.appendChild(createElement(CoreStringUtils.isBlank(name) ? "root" : name, object, -1,document, session));
+//            document.appendChild(createElement(NutsUtilStrings.isBlank(name) ? "root" : name, object, -1,document, session));
 //            return document;
 //    }
 

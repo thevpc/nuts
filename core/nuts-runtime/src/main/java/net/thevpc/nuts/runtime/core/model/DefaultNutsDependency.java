@@ -24,7 +24,6 @@
 package net.thevpc.nuts.runtime.core.model;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.bundles.parsers.QueryStringParser;
 
 import java.util.*;
@@ -61,14 +60,14 @@ public class DefaultNutsDependency implements NutsDependency {
     public DefaultNutsDependency(String repository, String groupId, String artifactId, String classifier, NutsVersion version, String scope, String optional, NutsId[] exclusions,
                                  String os, String arch, String type,
                                  String properties, NutsSession session) {
-        this.repository = CoreStringUtils.trimToNull(repository);
-        this.groupId = CoreStringUtils.trimToNull(groupId);
-        this.artifactId = CoreStringUtils.trimToNull(artifactId);
+        this.repository = NutsUtilStrings.trimToNull(repository);
+        this.groupId = NutsUtilStrings.trimToNull(groupId);
+        this.artifactId = NutsUtilStrings.trimToNull(artifactId);
         this.version = version == null ? session.getWorkspace().version().parser().parse("") : version;
-        this.classifier = CoreStringUtils.trimToNull(classifier);
+        this.classifier = NutsUtilStrings.trimToNull(classifier);
         this.scope = NutsDependencyScopes.normalizeScope(scope);
 
-        String o = CoreStringUtils.trimToNull(optional);
+        String o = NutsUtilStrings.trimToNull(optional);
         if ("false".equalsIgnoreCase(o)) {
             o = null;
         } else if ("true".equalsIgnoreCase(o)) {
@@ -81,9 +80,9 @@ public class DefaultNutsDependency implements NutsDependency {
                 throw new NullPointerException();
             }
         }
-        this.os = CoreStringUtils.trimToNull(os);
-        this.arch = CoreStringUtils.trimToNull(arch);
-        this.type = CoreStringUtils.trimToNull(type);
+        this.os = NutsUtilStrings.trimToNull(os);
+        this.arch = NutsUtilStrings.trimToNull(arch);
+        this.type = NutsUtilStrings.trimToNull(type);
         this.properties = QueryStringParser.formatSortedPropertiesQuery(properties);
         this.session = session;
 //        if (toString().contains("jai_imageio")) {
@@ -123,16 +122,16 @@ public class DefaultNutsDependency implements NutsDependency {
         if (!NutsDependencyScopes.isDefaultScope(scope)) {
             m.put(NutsConstants.IdProperties.SCOPE, scope);
         }
-        if (!CoreStringUtils.isBlank(optional) && !"false".equals(optional)) {
+        if (!NutsUtilStrings.isBlank(optional) && !"false".equals(optional)) {
             m.put(NutsConstants.IdProperties.OPTIONAL, optional);
         }
-        if (!CoreStringUtils.isBlank(classifier)) {
+        if (!NutsUtilStrings.isBlank(classifier)) {
             m.put(NutsConstants.IdProperties.CLASSIFIER, classifier);
         }
-        if (!CoreStringUtils.isBlank(type)) {
+        if (!NutsUtilStrings.isBlank(type)) {
             m.put(NutsConstants.IdProperties.TYPE, type);
         }
-        if (!CoreStringUtils.isBlank(repository)) {
+        if (!NutsUtilStrings.isBlank(repository)) {
             m.put(NutsConstants.IdProperties.REPO, repository);
         }
         if (exclusions.length > 0) {
@@ -178,10 +177,10 @@ public class DefaultNutsDependency implements NutsDependency {
 
     @Override
     public String getSimpleName() {
-        if (CoreStringUtils.isBlank(groupId)) {
-            return CoreStringUtils.trim(artifactId);
+        if (NutsUtilStrings.isBlank(groupId)) {
+            return NutsUtilStrings.trim(artifactId);
         }
-        return CoreStringUtils.trim(groupId) + ":" + CoreStringUtils.trim(artifactId);
+        return NutsUtilStrings.trim(groupId) + ":" + NutsUtilStrings.trim(artifactId);
     }
 
     @Override
@@ -221,34 +220,34 @@ public class DefaultNutsDependency implements NutsDependency {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        if (!CoreStringUtils.isBlank(groupId)) {
+        if (!NutsUtilStrings.isBlank(groupId)) {
             sb.append(groupId).append(":");
         }
         sb.append(artifactId);
-        if (!CoreStringUtils.isBlank(version.getValue())) {
+        if (!NutsUtilStrings.isBlank(version.getValue())) {
             sb.append("#").append(version);
         }
         Map<String, String> p = new HashMap<>();
-        if (!CoreStringUtils.isBlank(repository)) {
+        if (!NutsUtilStrings.isBlank(repository)) {
             p.put(NutsConstants.IdProperties.REPO, repository);
         }
-        if (!CoreStringUtils.isBlank(scope)) {
+        if (!NutsUtilStrings.isBlank(scope)) {
             if (!scope.equals(NutsDependencyScope.API.id())) {
                 p.put(NutsConstants.IdProperties.SCOPE, scope);
             }
         }
-        if (!CoreStringUtils.isBlank(optional)) {
+        if (!NutsUtilStrings.isBlank(optional)) {
             if (!optional.equals("false")) {
                 p.put(NutsConstants.IdProperties.OPTIONAL, optional);
             }
         }
-        if (!CoreStringUtils.isBlank(type)) {
+        if (!NutsUtilStrings.isBlank(type)) {
             p.put(NutsConstants.IdProperties.TYPE, type);
         }
-        if (!CoreStringUtils.isBlank(os)) {
+        if (!NutsUtilStrings.isBlank(os)) {
             p.put(NutsConstants.IdProperties.OS, os);
         }
-        if (!CoreStringUtils.isBlank(arch)) {
+        if (!NutsUtilStrings.isBlank(arch)) {
             p.put(NutsConstants.IdProperties.ARCH, arch);
         }
         if (exclusions.length>0) {

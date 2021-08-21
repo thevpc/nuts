@@ -180,6 +180,21 @@ public interface NutsDescriptorBuilder extends Serializable {
     NutsDescriptorBuilder setPlatform(String[] platform);
 
     /**
+     * supported desktop environment (kde, gnome, none, ...). if empty desktop environment is not relevant.
+     *
+     * @return supported environment list
+     */
+    String[] getDesktopEnvironment();
+
+    /**
+     * set desktopEnvironment
+     *
+     * @param desktopEnvironment value to set
+     * @return {@code this} instance
+     */
+    NutsDescriptorBuilder setDesktopEnvironment(String[] desktopEnvironment);
+
+    /**
      * user friendly name, a short description for the artifact
      *
      * @return user friendly name
@@ -451,6 +466,8 @@ public interface NutsDescriptorBuilder extends Serializable {
      * @return {@code this instance}
      */
     NutsDescriptorBuilder clear();
+
+    NutsDescriptorBuilder removeDesktopEnvironment(String desktopEnvironment);
 
     /**
      * remove dependency

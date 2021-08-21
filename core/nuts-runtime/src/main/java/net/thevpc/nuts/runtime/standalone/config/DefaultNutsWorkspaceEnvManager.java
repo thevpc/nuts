@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.config;
 
 import net.thevpc.nuts.*;
 
+import java.awt.*;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -9,6 +10,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
@@ -16,6 +20,10 @@ import java.util.regex.Pattern;
 
 import net.thevpc.nuts.runtime.bundles.common.CorePlatformUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
+import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.NutsSettingsNdiSubCommand;
+import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.SystemNdi;
+import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.base.CreateNutsScriptCommand;
+import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.base.DefaultNutsEnvInfo;
 
 public class DefaultNutsWorkspaceEnvManager implements NutsWorkspaceEnvManager {
 
@@ -127,6 +135,26 @@ public class DefaultNutsWorkspaceEnvManager implements NutsWorkspaceEnvManager {
         return model.getPlatform(session);
     }
 
+    @Override
+    public NutsDesktopEnvironmentFamily[] getDesktopEnvironmentFamilies() {
+        return model.getDesktopEnvironmentFamilies(session);
+    }
+
+    @Override
+    public NutsDesktopEnvironmentFamily getDesktopEnvironmentFamily() {
+        return model.getDesktopEnvironmentFamily(session);
+    }
+
+    @Override
+    public NutsId getDesktopEnvironment() {
+        return getDesktopEnvironments()[0];
+    }
+
+    @Override
+    public NutsId[] getDesktopEnvironments() {
+        return model.getDesktopEnvironments(session);
+    }
+
     public NutsId getOsDist() {
 //        checkSession();
         return model.getOsDist();
@@ -222,6 +250,11 @@ public class DefaultNutsWorkspaceEnvManager implements NutsWorkspaceEnvManager {
     public long getCreationFinishTimeMillis() {
         checkSession();
         return _configModel().getCreationFinishTimeMillis();
+    }
+
+    @Override
+    public boolean isGraphicalDesktopEnvironment() {
+        return model.isGraphicalDesktopEnvironment();
     }
 
     @Override
@@ -394,4 +427,147 @@ public class DefaultNutsWorkspaceEnvManager implements NutsWorkspaceEnvManager {
             }
         }
     }
+
+
+    public void addLauncher(NutsLauncherOptions launcher) {
+        checkSession();
+        NutsSession session = getSession();
+        SystemNdi ndi = NutsSettingsNdiSubCommand.createNdi(session);
+        if(ndi!=null) {
+            CreateNutsScriptCommand cmd = new CreateNutsScriptCommand()
+                    .setIdsToInstall(
+                            Arrays.asList(launcher.getId().getFullName())
+                    );
+            DefaultNutsEnvInfo env = new DefaultNutsEnvInfo(null, launcher.getSwitchWorkspaceLocation(), session);
+            cmd.getOptions().setEnv(env);
+            cmd.getOptions().setLauncher(launcher.copy());
+            ndi.addScript(cmd, session);
+        }
+    }
+
+//    public void addLauncherOld(NutsLauncherOptions launcher) {
+//        checkSession();
+//        if (launcher == null) {
+//            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("missing launcher options"));
+//        }
+//        NutsId id = launcher.getId();
+//        if (id == null) {
+//            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("missing id"));
+//        }
+//
+//        NutsWorkspace ws = getSession().getWorkspace();
+//        List<String> cmdLine = new ArrayList<>();
+//        cmdLine.add(id.getShortName());
+//        if (launcher.getArgs() != null) {
+//            cmdLine.addAll(Arrays.asList(launcher.getArgs()));
+//        }
+//        String alias = launcher.getAlias();
+//        if (alias == null || alias.isEmpty()) {
+//            alias = id.getArtifactId();
+//        }
+//        if (launcher.isCreateAlias()) {
+//            if (!ws.commands().commandExists(alias)) {
+//                ws.commands()
+//                        .addCommand(
+//                                new NutsCommandConfig()
+//                                        .setName(alias)
+//                                        .setOwner(getSession().getAppId())
+//                                        .setCommand(ws.commandLine().create(cmdLine.toString()).toString())
+//                        );
+//            }
+//        }
+//
+//        NutsExecCommand cmd = ws.exec().setCommand("settings", "add", "launcher");
+//        if (alias != null) {
+//            cmd.addCommand("--name", alias);
+//        }
+//        if (!GraphicsEnvironment.isHeadless()) {
+//            if (launcher.getCreateDesktopShortcut() != null) {
+//                switch (launcher.getCreateDesktopShortcut()) {
+//                    case NEVER: {
+//                        break;
+//                    }
+//                    case ALWAYS: {
+//                        cmd.addCommand("--desktop=always");
+//                        break;
+//                    }
+//                    case PREFERRED: {
+//                        cmd.addCommand("--desktop=preferred");
+//                        break;
+//                    }
+//                    case SUPPORTED: {
+//                        cmd.addCommand("--desktop=supported");
+//                        break;
+//                    }
+//                    default: {
+//                        throw new NutsUnsupportedEnumException(getSession(), launcher.getCreateDesktopShortcut());
+//                    }
+//                }
+//            }
+//            if (launcher.getCreateMenuShortcut() != null) {
+//                switch (launcher.getCreateMenuShortcut()) {
+//                    case NEVER: {
+//                        break;
+//                    }
+//                    case ALWAYS: {
+//                        cmd.addCommand("--menu=always");
+//                        break;
+//                    }
+//                    case PREFERRED: {
+//                        cmd.addCommand("--menu=preferred");
+//                        break;
+//                    }
+//                    case SUPPORTED: {
+//                        cmd.addCommand("--menu=supported");
+//                        break;
+//                    }
+//                    default: {
+//                        throw new NutsUnsupportedEnumException(getSession(), launcher.getCreateMenuShortcut());
+//                    }
+//                }
+//            }
+//            if (launcher.getCreateCustomShortcut() != null) {
+//                switch (launcher.getCreateCustomShortcut()) {
+//                    case NEVER: {
+//                        break;
+//                    }
+//                    case ALWAYS: {
+//                        cmd.addCommand("--shortcut=always");
+//                        break;
+//                    }
+//                    case PREFERRED: {
+//                        cmd.addCommand("--shortcut=preferred");
+//                        break;
+//                    }
+//                    case SUPPORTED: {
+//                        cmd.addCommand("--shortcut=supported");
+//                        break;
+//                    }
+//                    default: {
+//                        throw new NutsUnsupportedEnumException(getSession(), launcher.getCreateCustomShortcut());
+//                    }
+//                }
+//            }
+//            if (launcher.getShortcutName() != null) {
+//                cmd.addCommand("--shortcut-name", launcher.getShortcutName());
+//            }
+//            if (launcher.getCustomShortcutPath() != null) {
+//                cmd.addCommand("--shortcut-path", launcher.getCustomShortcutPath());
+//            }
+//            if (launcher.getMenuCategory() != null) {
+//                cmd.addCommand("--menu-category", launcher.getMenuCategory());
+//            }
+//            if (launcher.getIcon() != null) {
+//                cmd.addCommand("--icon", launcher.getMenuCategory());
+//            }
+//        }
+//        if (launcher.isOpenTerminal()) {
+//            cmd.addCommand("--terminal");
+//        }
+//        cmd.addCommand(id.getLongName());
+//        cmd.setFailFast(true);
+//        cmd.setExecutionType(NutsExecutionType.EMBEDDED);
+//        cmd.run();
+//    }
+
 }

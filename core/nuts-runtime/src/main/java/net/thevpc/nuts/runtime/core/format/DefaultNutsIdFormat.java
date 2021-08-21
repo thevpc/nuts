@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.core.format;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsDependencyScopes;
 
 import java.util.*;
@@ -203,7 +202,7 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
 //        NutsTextFormatManager tf = getWorkspace().text();
         NutsTextBuilder sb = getSession().getWorkspace().text().builder();
         if (!isOmitGroupId()) {
-            if (!CoreStringUtils.isBlank(id.getGroupId())) {
+            if (!NutsUtilStrings.isBlank(id.getGroupId())) {
                 boolean importedGroup2 = "net.thevpc.nuts".equals(id.getGroupId());
                 boolean importedGroup = getSession().getWorkspace().imports().getAll().contains(id.getGroupId());
                 if (!(importedGroup && isOmitImportedGroupId())) {
@@ -217,13 +216,13 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
             }
         }
         sb.append(id.getArtifactId(), NutsTextStyle.primary1());
-        if (!CoreStringUtils.isBlank(id.getVersion().getValue())) {
+        if (!NutsUtilStrings.isBlank(id.getVersion().getValue())) {
             sb.append("#", NutsTextStyle.separator());
             sb.append(id.getVersion());
         }
         boolean firstQ = true;
 
-        if (!CoreStringUtils.isBlank(classifier)) {
+        if (!NutsUtilStrings.isBlank(classifier)) {
             if (firstQ) {
                 sb.append("?", NutsTextStyle.separator());
                 firstQ = false;
@@ -247,7 +246,7 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
         }
 //        }
 //        if (highlightOptional) {
-        if (!CoreStringUtils.isBlank(optional) && !"false".equalsIgnoreCase(optional)) {
+        if (!NutsUtilStrings.isBlank(optional) && !"false".equalsIgnoreCase(optional)) {
             if (firstQ) {
                 sb.append("?", NutsTextStyle.separator());
                 firstQ = false;
@@ -259,7 +258,7 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
         }
 //        }
         if (!isOmitRepository()) {
-            if (!CoreStringUtils.isBlank(id.getRepository())) {
+            if (!NutsUtilStrings.isBlank(id.getRepository())) {
                 if (firstQ) {
                     sb.append("?", NutsTextStyle.separator());
                     firstQ = false;
@@ -271,7 +270,7 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
             }
         }
 
-        if (!CoreStringUtils.isBlank(exclusions)) {
+        if (!NutsUtilStrings.isBlank(exclusions)) {
             if (firstQ) {
                 sb.append("?", NutsTextStyle.separator());
                 firstQ = false;
@@ -281,7 +280,7 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
             sb.append("exclusions", NutsTextStyle.keyword(2)).append("=", NutsTextStyle.separator());
             sb.append(exclusions, NutsTextStyle.warn());
         }
-        if (!CoreStringUtils.isBlank(id.getPropertiesQuery())) {
+        if (!NutsUtilStrings.isBlank(id.getPropertiesQuery())) {
             Set<String> otherKeys = new TreeSet<>(queryMap.keySet());
             for (String k : otherKeys) {
                 String v = queryMap.get(k);

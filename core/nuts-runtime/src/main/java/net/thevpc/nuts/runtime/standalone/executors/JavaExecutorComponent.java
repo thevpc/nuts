@@ -27,12 +27,8 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.collections.StringKeyValueList;
 import net.thevpc.nuts.runtime.bundles.io.IProcessExecHelper;
 import net.thevpc.nuts.runtime.core.DefaultNutsClassLoader;
-import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
-import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.core.util.CoreNumberUtils;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+import net.thevpc.nuts.runtime.core.util.*;
 import net.thevpc.nuts.runtime.standalone.ext.DefaultNutsWorkspaceExtensionManager;
-import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -102,7 +98,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                 executionContext.isTemporary(),
                 executionContext.getArguments(),
                 executionContext.getExecutorArguments(),
-                CoreStringUtils.isBlank(executionContext.getCwd()) ? System.getProperty("user.dir") : executionContext.getCwd(),
+                NutsUtilStrings.isBlank(executionContext.getCwd()) ? System.getProperty("user.dir") : executionContext.getCwd(),
                 executionContext.getTraceSession()/*.copy().setProgressOptions("none")*/);
         final NutsSession execSession = executionContext.getExecSession();
         switch (executionContext.getExecutionType()) {
@@ -218,7 +214,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
 //                }
 //                String bootArgumentsString = executionContext.getWorkspace().commandLine().create(bootCommand)
 //                        .toString();
-                if (!CoreStringUtils.isBlank(bootArgumentsString)) {
+                if (!NutsUtilStrings.isBlank(bootArgumentsString)) {
                     osEnv.put("nuts_boot_args", bootArgumentsString);
                     joptions.getJvmArgs().add("-Dnuts.boot.args=" + bootArgumentsString);
                 }
@@ -260,7 +256,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                 args.add(joptions.getJavaHome());
                 args.addAll(joptions.getJvmArgs());
 
-//                if (!CoreStringUtils.isBlank(bootArgumentsString)) {
+//                if (!NutsUtilStrings.isBlank(bootArgumentsString)) {
 //                    String Dnuts_boot_args = "-Dnuts.boot.args=" + bootArgumentsString;
 //                    xargs.add(Dnuts_boot_args);
 //                    args.add(Dnuts_boot_args);
@@ -529,17 +525,10 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                 out.println("\t\t " + xarg);
 //                }
             }
-            String directory = CoreStringUtils.isBlank(joptions.getDir()) ? null : ws.io().expandPath(joptions.getDir());
-            NutsWorkspaceUtils.of(executionContext.getTraceSession()).execAndWait(def,
-                    executionContext.getTraceSession(),
-                    execSession,
-                    executionContext.getExecutorProperties(),
-                    args.toArray(new String[0]),
-                    osEnv, directory, joptions.isShowCommand(), true,
-                    executionContext.getSleepMillis(),
-                    executionContext.isInheritSystemIO(), false,
-                    CoreStringUtils.isBlank(executionContext.getRedirectOuputFile()) ? null : new File(executionContext.getRedirectOuputFile()),
-                    CoreStringUtils.isBlank(executionContext.getRedirectInpuFile()) ? null : new File(executionContext.getRedirectInpuFile())
+            String directory = NutsUtilStrings.isBlank(joptions.getDir()) ? null : ws.io().expandPath(joptions.getDir());
+            ProcessExecHelper.ofDefinition(def,
+                    args.toArray(new String[0]), osEnv, directory, executionContext.getExecutorProperties(), joptions.isShowCommand(), true, executionContext.getSleepMillis(), executionContext.isInheritSystemIO(), false, NutsUtilStrings.isBlank(executionContext.getRedirectOutputFile()) ? null : new File(executionContext.getRedirectOutputFile()), NutsUtilStrings.isBlank(executionContext.getRedirectInputFile()) ? null : new File(executionContext.getRedirectInputFile()), executionContext.getRunAs(), executionContext.getTraceSession(),
+                    execSession
             ).dryExec();
         }
 
@@ -548,7 +537,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
             return preExec().exec();
         }
 
-        private CoreIOUtils.ProcessExecHelper preExec() {
+        private ProcessExecHelper preExec() {
             if (joptions.isShowCommand() || CoreBooleanUtils.getSysBoolNutsProperty("show-command", false)) {
                 NutsPrintStream out = execSession.out();
                 out.printf("%s %n", ws.text().forStyled("nuts-exec", NutsTextStyle.primary1()));
@@ -563,17 +552,10 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
 //                    }
                 }
             }
-            String directory = CoreStringUtils.isBlank(joptions.getDir()) ? null : ws.io().expandPath(joptions.getDir());
-            return NutsWorkspaceUtils.of(executionContext.getTraceSession()).execAndWait(def,
-                    executionContext.getTraceSession(),
-                    execSession,
-                    executionContext.getExecutorProperties(),
-                    args.toArray(new String[0]),
-                    osEnv, directory, joptions.isShowCommand(), true,
-                    executionContext.getSleepMillis(),
-                    executionContext.isInheritSystemIO(), false,
-                    CoreStringUtils.isBlank(executionContext.getRedirectOuputFile()) ? null : new File(executionContext.getRedirectOuputFile()),
-                    CoreStringUtils.isBlank(executionContext.getRedirectInpuFile()) ? null : new File(executionContext.getRedirectInpuFile())
+            String directory = NutsUtilStrings.isBlank(joptions.getDir()) ? null : ws.io().expandPath(joptions.getDir());
+            return ProcessExecHelper.ofDefinition(def,
+                    args.toArray(new String[0]), osEnv, directory, executionContext.getExecutorProperties(), joptions.isShowCommand(), true, executionContext.getSleepMillis(), executionContext.isInheritSystemIO(), false, NutsUtilStrings.isBlank(executionContext.getRedirectOutputFile()) ? null : new File(executionContext.getRedirectOutputFile()), NutsUtilStrings.isBlank(executionContext.getRedirectInputFile()) ? null : new File(executionContext.getRedirectInputFile()), executionContext.getRunAs(), executionContext.getTraceSession(),
+                    execSession
             );
         }
 

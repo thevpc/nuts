@@ -1,5 +1,8 @@
 package net.thevpc.nuts;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class NutsLauncherOptions implements Cloneable {
     private boolean createAlias;
     private boolean createScript;
@@ -10,11 +13,19 @@ public class NutsLauncherOptions implements Cloneable {
     private String alias;
     private String shortcutName;
     private String customShortcutPath;
+    private String customScriptPath;
     private String icon;
     private String menuCategory;
     private boolean openTerminal;
+
+    private Boolean systemWideConfig;
     private NutsId id;
-    private String[] args;
+    private List<String> args = new ArrayList<>();
+
+    private List<String> nutsOptions = new ArrayList<>();
+
+    private String switchWorkspaceLocation;
+    private String workingDirectory;
 
     public boolean isCreateScript() {
         return createScript;
@@ -106,12 +117,21 @@ public class NutsLauncherOptions implements Cloneable {
         return this;
     }
 
-    public String[] getArgs() {
+    public List<String> getArgs() {
         return args;
     }
 
-    public NutsLauncherOptions setArgs(String[] args) {
+    public NutsLauncherOptions setArgs(List<String> args) {
         this.args = args;
+        return this;
+    }
+
+    public List<String> getNutsOptions() {
+        return nutsOptions;
+    }
+
+    public NutsLauncherOptions setNutsOptions(List<String> nutsOptions) {
+        this.nutsOptions = nutsOptions;
         return this;
     }
 
@@ -142,10 +162,52 @@ public class NutsLauncherOptions implements Cloneable {
         return this;
     }
 
-    @Override
-    protected NutsLauncherOptions clone() {
+    public String getCustomScriptPath() {
+        return customScriptPath;
+    }
+
+    public NutsLauncherOptions setCustomScriptPath(String customScriptPath) {
+        this.customScriptPath = customScriptPath;
+        return this;
+    }
+
+    public Boolean getSystemWideConfig() {
+        return systemWideConfig;
+    }
+
+    public NutsLauncherOptions setSystemWideConfig(Boolean systemWideConfig) {
+        this.systemWideConfig = systemWideConfig;
+        return this;
+    }
+
+    public String getSwitchWorkspaceLocation() {
+        return switchWorkspaceLocation;
+    }
+
+    public NutsLauncherOptions setSwitchWorkspaceLocation(String switchWorkspaceLocation) {
+        this.switchWorkspaceLocation = switchWorkspaceLocation;
+        return this;
+    }
+
+    public String getWorkingDirectory() {
+        return workingDirectory;
+    }
+
+    public NutsLauncherOptions setWorkingDirectory(String workingDirectory) {
+        this.workingDirectory = workingDirectory;
+        return this;
+    }
+
+    public NutsLauncherOptions copy() {
         try {
-            return (NutsLauncherOptions) super.clone();
+            NutsLauncherOptions c = (NutsLauncherOptions) super.clone();
+            if (c.args != null) {
+                c.args = new ArrayList<>(c.args);
+            }
+            if (c.nutsOptions != null) {
+                c.nutsOptions = new ArrayList<>(c.nutsOptions);
+            }
+            return c;
         } catch (CloneNotSupportedException e) {
             throw new UnsupportedOperationException(e);
         }

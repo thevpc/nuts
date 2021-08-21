@@ -1,8 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi;
 
-import net.thevpc.nuts.NutsActionSupportCondition;
-import net.thevpc.nuts.NutsExecutionType;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.base.NutsEnvInfo;
 
 import java.util.ArrayList;
@@ -13,51 +11,35 @@ public class NdiScriptOptions implements Cloneable{
     private String id;
     private boolean forceBoot;
     private boolean fetch;
-    private NutsExecutionType execType;
-    private List<String> executorOptions;
+//    private NutsExecutionType execType;
+//    private NutsRunAs runAs=NutsRunAs.currentUser();
+//    private List<String> executorOptions;
     private NutsSession session;
-    private String scriptPath;
-    private String shortcutName;
-    private String shortcutPath;
+//    private String customScriptPath;
+//    private String shortcutName;
+//    private String customShortcutPath;
     private boolean includeEnv;
     private boolean addNutsScript;
 
-    private List<String> appArgs= new ArrayList<>();
-    private String workingDirectory;
-    private String icon;
-    private String menuCategory;
-    private Boolean persistentConfig;
-    private boolean terminalMode;
-    private NutsActionSupportCondition createMenu= NutsActionSupportCondition.NEVER;
-    private NutsActionSupportCondition createDesktop= NutsActionSupportCondition.NEVER;
-    private NutsActionSupportCondition createShortcut= NutsActionSupportCondition.NEVER;
+//    private List<String> appArgs= new ArrayList<>();
+//    private String workingDirectory;
+//    private String icon;
+//    private String menuCategory;
+//    private Boolean systemWideConfig;
+//    private boolean openTerminal;
+//    private NutsActionSupportCondition createMenu= NutsActionSupportCondition.NEVER;
+//    private NutsActionSupportCondition createDesktop= NutsActionSupportCondition.NEVER;
+//    private NutsActionSupportCondition createShortcut= NutsActionSupportCondition.NEVER;
+//    private String switchWorkspaceLocation;
     private NutsEnvInfo env;
-    private String switchWorkspaceLocation;
+    private NutsLauncherOptions launcher=new NutsLauncherOptions();
 
-    public String getShortcutName() {
-        return shortcutName;
+    public NutsLauncherOptions getLauncher() {
+        return launcher;
     }
 
-    public NdiScriptOptions setShortcutName(String shortcutName) {
-        this.shortcutName = shortcutName;
-        return this;
-    }
-
-    public String getShortcutPath() {
-        return shortcutPath;
-    }
-
-    public NdiScriptOptions setShortcutPath(String shortcutPath) {
-        this.shortcutPath = shortcutPath;
-        return this;
-    }
-
-    public boolean isTerminalMode() {
-        return terminalMode;
-    }
-
-    public NdiScriptOptions setTerminalMode(boolean terminalMode) {
-        this.terminalMode = terminalMode;
+    public NdiScriptOptions setLauncher(NutsLauncherOptions launcher) {
+        this.launcher = launcher;
         return this;
     }
 
@@ -66,15 +48,6 @@ public class NdiScriptOptions implements Cloneable{
 
     public NdiScriptOptions setEnv(NutsEnvInfo env) {
         this.env = env;
-        return this;
-    }
-
-    public Boolean getPersistentConfig() {
-        return persistentConfig;
-    }
-
-    public NdiScriptOptions setPersistentConfig(Boolean persistentConfig) {
-        this.persistentConfig = persistentConfig;
         return this;
     }
 
@@ -118,23 +91,14 @@ public class NdiScriptOptions implements Cloneable{
         return this;
     }
 
-    public NutsExecutionType getExecType() {
-        return execType;
-    }
-
-    public NdiScriptOptions setExecType(NutsExecutionType execType) {
-        this.execType = execType;
-        return this;
-    }
-
-    public List<String> getExecutorOptions() {
-        return executorOptions;
-    }
-
-    public NdiScriptOptions setExecutorOptions(List<String> executorOptions) {
-        this.executorOptions = executorOptions;
-        return this;
-    }
+//    public List<String> getExecutorOptions() {
+//        return executorOptions;
+//    }
+//
+//    public NdiScriptOptions setExecutorOptions(List<String> executorOptions) {
+//        this.executorOptions = executorOptions;
+//        return this;
+//    }
 
     public NutsSession getSession() {
         return session;
@@ -142,15 +106,6 @@ public class NdiScriptOptions implements Cloneable{
 
     public NdiScriptOptions setSession(NutsSession session) {
         this.session = session;
-        return this;
-    }
-
-    public String getScriptPath() {
-        return scriptPath;
-    }
-
-    public NdiScriptOptions setScriptPath(String scriptPath) {
-        this.scriptPath = scriptPath;
         return this;
     }
 
@@ -163,78 +118,6 @@ public class NdiScriptOptions implements Cloneable{
         return this;
     }
 
-    public List<String> getAppArgs() {
-        return appArgs;
-    }
-
-    public NdiScriptOptions setAppArgs(List<String> appArgs) {
-        this.appArgs = appArgs;
-        return this;
-    }
-
-    public String getWorkingDirectory() {
-        return workingDirectory;
-    }
-
-    public NdiScriptOptions setWorkingDirectory(String workingDirectory) {
-        this.workingDirectory = workingDirectory;
-        return this;
-    }
-
-    public String getIcon() {
-        return icon;
-    }
-
-    public NdiScriptOptions setIcon(String icon) {
-        this.icon = icon;
-        return this;
-    }
-
-    public String getMenuCategory() {
-        return menuCategory;
-    }
-
-    public NdiScriptOptions setMenuCategory(String menuCategory) {
-        this.menuCategory = menuCategory;
-        return this;
-    }
-
-    public NutsActionSupportCondition getCreateMenu() {
-        return createMenu;
-    }
-
-    public NdiScriptOptions setCreateMenu(NutsActionSupportCondition createMenu) {
-        this.createMenu = createMenu;
-        return this;
-    }
-
-    public NutsActionSupportCondition getCreateShortcut() {
-        return createShortcut;
-    }
-
-    public NdiScriptOptions getCreateShortcut(NutsActionSupportCondition createShortcut) {
-        this.createShortcut = createShortcut;
-        return this;
-    }
-
-    public String getSwitchWorkspaceLocation() {
-        return switchWorkspaceLocation;
-    }
-
-    public NdiScriptOptions setSwitchWorkspaceLocation(String switchWorkspaceLocation) {
-        this.switchWorkspaceLocation = switchWorkspaceLocation;
-        return this;
-    }
-
-    public NutsActionSupportCondition getCreateDesktop() {
-        return createDesktop;
-    }
-
-    public NdiScriptOptions setCreateDesktop(NutsActionSupportCondition createDesktop) {
-        this.createDesktop = createDesktop;
-        return this;
-    }
-
     public NdiScriptOptions copy() {
         NdiScriptOptions c;
         try {
@@ -242,8 +125,7 @@ public class NdiScriptOptions implements Cloneable{
         } catch (CloneNotSupportedException e) {
             throw new IllegalArgumentException(e);
         }
-        c.setAppArgs(c.getAppArgs()==null?null:new ArrayList<>(c.getAppArgs()));
-        c.setExecutorOptions(c.getExecutorOptions()==null?null:new ArrayList<>(c.getExecutorOptions()));
+        c.setLauncher(c.getLauncher()==null?null:c.getLauncher().copy());
         return c;
     }
 

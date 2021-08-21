@@ -42,7 +42,6 @@ import net.thevpc.nuts.runtime.core.format.text.stylethemes.NutsTextFormatProper
 import net.thevpc.nuts.runtime.core.format.text.stylethemes.NutsTextFormatThemeWrapper;
 import net.thevpc.nuts.runtime.core.format.xml.DefaultXmlNutsElementStreamFormat;
 import net.thevpc.nuts.runtime.core.format.yaml.SimpleYaml;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.spi.NutsComponent;
 
 /**
@@ -86,7 +85,7 @@ public class DefaultNutsTextManagerModel {
     }
 
     public NutsTextFormatTheme createTheme(String y,NutsSession session) {
-        if (!CoreStringUtils.isBlank(y)) {
+        if (!NutsUtilStrings.isBlank(y)) {
             y=y.trim();
             if ("default".equals(y)) {
                 //default always refers to this implementation

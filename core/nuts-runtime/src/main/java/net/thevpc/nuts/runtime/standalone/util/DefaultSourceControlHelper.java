@@ -7,7 +7,6 @@ package net.thevpc.nuts.runtime.standalone.util;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.core.CoreNutsConstants;
 import net.thevpc.nuts.runtime.core.model.DefaultNutsDefinition;
@@ -53,7 +52,7 @@ public class DefaultSourceControlHelper {
 
         Path file = folder.resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME);
         NutsDescriptor d = ws.descriptor().parser().setSession(session).parse(file);
-        String oldVersion = CoreStringUtils.trim(d.getId().getVersion().getValue());
+        String oldVersion = NutsUtilStrings.trim(d.getId().getVersion().getValue());
         if (oldVersion.endsWith(CoreNutsConstants.Versions.CHECKED_OUT_EXTENSION)) {
             oldVersion = oldVersion.substring(0, oldVersion.length() - CoreNutsConstants.Versions.CHECKED_OUT_EXTENSION.length());
             String newVersion = ws.version().parser().parse(oldVersion).inc().getValue();

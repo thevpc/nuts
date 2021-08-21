@@ -25,17 +25,6 @@ public class _StringUtils {
         return sb.toString();
     }
 
-    public static boolean isBlank(String line) {
-        return line==null || line.trim().length()==0;
-    }
-
-    public static String trim(String value) {
-        if (value == null) {
-            return "";
-        }
-        return value.trim();
-    }
-
     public static String exceptionToString(Throwable ex) {
         for (Class aClass : new Class[]{
                 NullPointerException.class,

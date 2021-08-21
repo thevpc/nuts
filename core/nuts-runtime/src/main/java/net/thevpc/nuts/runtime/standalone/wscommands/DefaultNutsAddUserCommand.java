@@ -46,7 +46,7 @@ public class DefaultNutsAddUserCommand extends AbstractNutsAddUserCommand {
 
     @Override
     public NutsAddUserCommand run() {
-        if (CoreStringUtils.isBlank(getUsername())) {
+        if (NutsUtilStrings.isBlank(getUsername())) {
             throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("invalid user"));
         }
         checkSession();

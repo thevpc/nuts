@@ -26,7 +26,6 @@ package net.thevpc.nuts.runtime.core.model;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.app.CoreNutsArgumentsParser;
 import net.thevpc.nuts.runtime.core.format.CoreNutsWorkspaceOptionsFormat;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -141,11 +140,7 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
     /**
      * option-type : exported (inherited in child workspaces)
      */
-//    private String[] excludedRepositories;
-    /**
-     * option-type : exported (inherited in child workspaces)
-     */
-    private String[] transientRepositories;
+    private String[] repositories;
 
     /**
      * option-type : exported (inherited in child workspaces)
@@ -247,6 +242,11 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
      * option-type : runtime (available only for the current workspace instance)
      */
     private NutsExecutionType executionType;
+    /**
+     * option-type : runtime (available only for the current workspace instance)
+     * @since 0.8.1
+     */
+    private NutsRunAs runAs =NutsRunAs.CURRENT_USER;
 
     /**
      * option-type : create (used when creating new workspace. will not be
@@ -311,6 +311,7 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
      * option-type : exported (inherited in child workspaces)
      */
     private Boolean transitive;
+
     /**
      * option-type : exported (inherited in child workspaces)
      */
@@ -345,7 +346,7 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
      */
 //    private String bootRepositories = null;
     private Instant expireTime = null;
-    private String[] errors = new String[0];
+    private NutsMessage[] errors = new NutsMessage[0];
     private Boolean skipErrors;
 
     /**
@@ -412,6 +413,7 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
         this.setDebug(other.getDebug());
         this.setInherited(other.getInherited());
         this.setExecutionType(other.getExecutionType());
+        this.setRunAs(other.getRunAs());
         this.setArchetype(other.getArchetype());
         this.setStoreLocationStrategy(other.getStoreLocationStrategy());
         this.setHomeLocations(other.getHomeLocations());
@@ -530,17 +532,6 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
     }
 
     /**
-     * set excludedRepositories
-     *
-     * @param excludedRepositories new value
-     * @return {@code this} instance
-     */
-//    @Override
-//    public NutsWorkspaceOptionsBuilder setExcludedRepositories(String[] excludedRepositories) {
-//        this.excludedRepositories = excludedRepositories;
-//        return this;
-//    }
-    /**
      * set login
      *
      * @param username new value
@@ -573,6 +564,17 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
     @Override
     public NutsWorkspaceOptionsBuilder setExecutionType(NutsExecutionType executionType) {
         this.executionType = executionType;
+        return this;
+    }
+
+    /**
+     * set runAsUser
+     *
+     * @param runAs new value
+     * @return {@code this} instance
+     */
+    public NutsWorkspaceOptionsBuilder setRunAs(NutsRunAs runAs) {
+        this.runAs = runAs==null?NutsRunAs.CURRENT_USER : runAs;
         return this;
     }
 
@@ -612,8 +614,8 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
     }
 
     @Override
-    public NutsWorkspaceOptionsBuilder setErrors(String[] errors) {
-        this.errors = errors == null ? new String[0] : Arrays.copyOf(errors, errors.length);
+    public NutsWorkspaceOptionsBuilder setErrors(NutsMessage[] errors) {
+        this.errors = errors == null ? new NutsMessage[0] : Arrays.copyOf(errors, errors.length);
         return this;
     }
 
@@ -774,14 +776,14 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
     }
 
     /**
-     * set transientRepositories
+     * set repositories
      *
-     * @param transientRepositories new value
+     * @param repositories new value
      * @return {@code this} instance
      */
     @Override
-    public NutsWorkspaceOptionsBuilder setRepositories(String[] transientRepositories) {
-        this.transientRepositories = transientRepositories;
+    public NutsWorkspaceOptionsBuilder setRepositories(String[] repositories) {
+        this.repositories = repositories;
         return this;
     }
 
@@ -854,7 +856,7 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
      */
     @Override
     public NutsWorkspaceOptionsBuilder setStoreLocation(NutsStoreLocation location, String value) {
-        if (CoreStringUtils.isBlank(value)) {
+        if (NutsUtilStrings.isBlank(value)) {
             storeLocations.remove(location.id());
         } else {
             storeLocations.put(location.id(), value);
@@ -873,7 +875,7 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
     @Override
     public NutsWorkspaceOptionsBuilder setHomeLocation(NutsOsFamily layout, NutsStoreLocation location, String value) {
         String key = createHomeLocationKey(layout, location);
-        if (CoreStringUtils.isBlank(value)) {
+        if (NutsUtilStrings.isBlank(value)) {
             homeLocations.remove(key);
         } else {
             homeLocations.put(key, value);
@@ -964,7 +966,7 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
         if (options != null) {
             for (String option : options) {
                 if (option != null) {
-                    option = CoreStringUtils.trim(option);
+                    option = NutsUtilStrings.trim(option);
                     if (!option.isEmpty()) {
                         outputFormatOptions.add(option);
                     }
@@ -1040,11 +1042,6 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
         return this;
     }
 
-//    @Override
-//    public NutsWorkspaceOptionsBuilder setBootRepositories(String bootRepositories) {
-//        this.bootRepositories = bootRepositories;
-//        return this;
-//    }
     @Override
     public NutsWorkspaceOptionsBuilder setHomeLocations(Map<String, String> homeLocations) {
         this.homeLocations.clear();
@@ -1135,14 +1132,13 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
     public String[] getExcludedExtensions() {
         return excludedExtensions;
     }
-
-//    @Override
-//    public String[] getExcludedRepositories() {
-//        return excludedRepositories;
-//    }
     @Override
     public NutsExecutionType getExecutionType() {
         return executionType;
+    }
+    @Override
+    public NutsRunAs getRunAs() {
+        return runAs;
     }
 
     @Override
@@ -1238,7 +1234,7 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
 
     @Override
     public String[] getRepositories() {
-        return transientRepositories == null ? new String[0] : transientRepositories;
+        return repositories == null ? new String[0] : repositories;
     }
 
     @Override
@@ -1409,7 +1405,6 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
         return transitive;
     }
 
-
     @Override
     public boolean isBot() {
         return bot != null && bot;
@@ -1445,10 +1440,6 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
         return executorService;
     }
 
-//    @Override
-//    public String getBootRepositories() {
-//        return bootRepositories;
-//    }
     @Override
     public Instant getExpireTime() {
         return expireTime;
@@ -1475,7 +1466,7 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
     }
 
     @Override
-    public String[] getErrors() {
+    public NutsMessage[] getErrors() {
         return Arrays.copyOf(errors, errors.length);
     }
 

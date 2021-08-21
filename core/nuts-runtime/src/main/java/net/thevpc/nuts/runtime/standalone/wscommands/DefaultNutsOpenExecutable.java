@@ -93,7 +93,7 @@ public class DefaultNutsOpenExecutable extends AbstractNutsExecutableCommand {
             throw new NutsIllegalArgumentException(traceSession, NutsMessage.cstyle("unable to resolve viewer for %s", cmd[0]));
         }
         NutsExecCommand cc = execCommand.copy();
-        cc.setExecutionType(NutsExecutionType.USER_CMD);
+        cc.setExecutionType(NutsExecutionType.SYSTEM);
         List<String> ss = new ArrayList<>(Arrays.asList(effectiveOpenExecutable));
         ss.addAll(Arrays.asList(cmd));
         cc.setCommand(ss);

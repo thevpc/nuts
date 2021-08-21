@@ -30,7 +30,7 @@ import java.io.StringReader;
 import java.io.UncheckedIOException;
 import java.util.NoSuchElementException;
 
-import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
+import net.thevpc.nuts.NutsUtilStrings;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.core.filters.DefaultNutsTokenFilter;
 import net.thevpc.nuts.NutsArgument;
@@ -341,7 +341,7 @@ public class DefaultNutsArgument extends DefaultNutsTokenFilter implements NutsA
 
     @Override
     public int getInt() {
-        if (CoreStringUtils.isBlank(expression)) {
+        if (NutsUtilStrings.isBlank(expression)) {
             throw new NumberFormatException("missing value");
         }
         return Integer.parseInt(expression);
@@ -381,7 +381,7 @@ public class DefaultNutsArgument extends DefaultNutsTokenFilter implements NutsA
 
     @Override
     public int getInt(int defaultValue) {
-        if (CoreStringUtils.isBlank(expression)) {
+        if (NutsUtilStrings.isBlank(expression)) {
             return defaultValue;
         }
         try {
@@ -406,7 +406,7 @@ public class DefaultNutsArgument extends DefaultNutsTokenFilter implements NutsA
 
     @Override
     public long getLong() {
-        if (CoreStringUtils.isBlank(expression)) {
+        if (NutsUtilStrings.isBlank(expression)) {
             throw new NumberFormatException("missing value");
         }
         return Long.parseLong(expression);
@@ -414,7 +414,7 @@ public class DefaultNutsArgument extends DefaultNutsTokenFilter implements NutsA
 
     @Override
     public long getLong(long defaultValue) {
-        if (CoreStringUtils.isBlank(expression)) {
+        if (NutsUtilStrings.isBlank(expression)) {
             return defaultValue;
         }
         try {
@@ -439,7 +439,7 @@ public class DefaultNutsArgument extends DefaultNutsTokenFilter implements NutsA
 
     @Override
     public double getDouble() {
-        if (CoreStringUtils.isBlank(expression)) {
+        if (NutsUtilStrings.isBlank(expression)) {
             throw new NumberFormatException("missing value");
         }
         return Double.parseDouble(expression);
@@ -447,7 +447,7 @@ public class DefaultNutsArgument extends DefaultNutsTokenFilter implements NutsA
 
     @Override
     public double getDouble(double defaultValue) {
-        if (CoreStringUtils.isBlank(expression)) {
+        if (NutsUtilStrings.isBlank(expression)) {
             return defaultValue;
         }
         try {

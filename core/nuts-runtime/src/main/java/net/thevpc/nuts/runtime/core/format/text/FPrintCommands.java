@@ -5,12 +5,10 @@
  */
 package net.thevpc.nuts.runtime.core.format.text;
 
-import net.thevpc.nuts.NutsTerminalManager;
-
 import java.io.PrintStream;
 import net.thevpc.nuts.NutsConstants;
 import net.thevpc.nuts.NutsTerminalCommand;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+import net.thevpc.nuts.NutsUtilStrings;
 
 /**
  * @author thevpc
@@ -50,7 +48,7 @@ public class FPrintCommands {
     public static void runCommand(StringBuilder out, NutsTerminalCommand cmd) {
         out.append(NutsConstants.Ntf.SILENT);
         out.append("```!").append(cmd.getName());
-        if (!CoreStringUtils.isBlank(cmd.getArgs())) {
+        if (!NutsUtilStrings.isBlank(cmd.getArgs())) {
             out.append(" ");
             out.append(cmd.getArgs());
         }

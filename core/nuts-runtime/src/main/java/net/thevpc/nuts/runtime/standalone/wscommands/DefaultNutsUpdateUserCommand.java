@@ -28,12 +28,10 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.config.NutsRepositoryConfigManagerExt;
 import net.thevpc.nuts.runtime.core.config.NutsWorkspaceConfigManagerExt;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.standalone.wscommands.AbstractNutsUpdateUserCommand;
 
 import java.util.*;
 import net.thevpc.nuts.runtime.core.repos.NutsRepositoryConfigModel;
 import net.thevpc.nuts.runtime.standalone.config.DefaultNutsWorkspaceConfigModel;
-import net.thevpc.nuts.runtime.standalone.repos.DefaultNutsRepositoryConfigModel;
 
 /**
  *
@@ -55,10 +53,10 @@ public class DefaultNutsUpdateUserCommand extends AbstractNutsUpdateUserCommand 
         checkSession();
         NutsWorkspace ws = getSession().getWorkspace();
         NutsWorkspaceSecurityManager sec = ws.security().setSession(session);
-        if (!CoreStringUtils.isBlank(getCredentials())) {
+        if (!(getCredentials()==null || NutsUtilStrings.isBlank(new String(getCredentials())))) {
             sec.checkAllowed(NutsConstants.Permissions.SET_PASSWORD, "set-user-credentials");
             String currentLogin = sec.getCurrentUsername();
-            if (CoreStringUtils.isBlank(login)) {
+            if (NutsUtilStrings.isBlank(login)) {
                 if (!NutsConstants.Users.ANONYMOUS.equals(currentLogin)) {
                     login = currentLogin;
                 } else {

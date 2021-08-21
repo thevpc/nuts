@@ -683,4 +683,9 @@ public interface NutsSession extends NutsCommandLineConfigurable {
     String getLocale();
 
     NutsSession setLocale(String locale);
+
+    NutsRunAs getRunAs();
+
+    NutsSession setRunAs(NutsRunAs runAs);
+
 }

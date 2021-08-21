@@ -11,7 +11,6 @@ import net.thevpc.nuts.runtime.standalone.io.progress.DefaultNutsProgressEvent;
 import net.thevpc.nuts.runtime.bundles.io.InputStreamMetadataAware;
 import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 import java.io.File;
@@ -283,7 +282,7 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
 
     public InputStream monitorInputStream(String path, Object source, NutsString sourceName) {
         checkSession();
-        if (CoreStringUtils.isBlank(path)) {
+        if (NutsUtilStrings.isBlank(path)) {
             throw new UncheckedIOException(new IOException("missing path"));
         }
         if (sourceName==null) {

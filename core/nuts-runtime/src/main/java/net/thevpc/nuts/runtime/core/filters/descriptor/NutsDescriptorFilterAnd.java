@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.core.filters.descriptor;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 
 import java.util.ArrayList;
@@ -60,7 +59,7 @@ public class NutsDescriptorFilterAnd extends AbstractDescriptorFilter implements
             if (id instanceof JsNutsDescriptorFilter) {
                 JsNutsDescriptorFilter b = (JsNutsDescriptorFilter) id;
                 String expr = b.toJsNutsDescriptorFilterExpr();
-                if (CoreStringUtils.isBlank(expr)) {
+                if (NutsUtilStrings.isBlank(expr)) {
                     return null;
                 }
                 sb.append("(").append(expr).append("')");

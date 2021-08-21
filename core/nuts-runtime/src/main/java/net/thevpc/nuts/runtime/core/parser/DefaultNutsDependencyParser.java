@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.core.parser;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.NutsDependencyScopes;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -40,7 +39,7 @@ public class DefaultNutsDependencyParser implements NutsDependencyParser {
             String group = m.group("group");
             String name = m.group("artifact");
             String version = m.group("version");
-            String face = CoreStringUtils.trim(m.group("face"));
+            String face = NutsUtilStrings.trim(m.group("face"));
             Map<String, String> queryMap = QPARSER.parseMap(face);
             if (name == null) {
                 name = group;
@@ -66,7 +65,7 @@ public class DefaultNutsDependencyParser implements NutsDependencyParser {
 
     @Override
     public boolean parseOptional(String optional) {
-        if(CoreStringUtils.isBlank(optional)){
+        if(NutsUtilStrings.isBlank(optional)){
             return false;
         }
         return "true".equals(optional.trim());

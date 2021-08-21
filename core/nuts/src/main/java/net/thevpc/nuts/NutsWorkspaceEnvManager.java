@@ -24,8 +24,12 @@
  */
 package net.thevpc.nuts;
 
+import java.awt.*;
 import java.net.URL;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -113,6 +117,13 @@ public interface NutsWorkspaceEnvManager {
 
     NutsOsFamily getOsFamily();
 
+    NutsId getDesktopEnvironment() ;
+    NutsId[] getDesktopEnvironments() ;
+
+    NutsDesktopEnvironmentFamily getDesktopEnvironmentFamily();
+
+    NutsDesktopEnvironmentFamily[] getDesktopEnvironmentFamilies();
+
     NutsId getPlatform();
 
     NutsId getOs();
@@ -147,8 +158,12 @@ public interface NutsWorkspaceEnvManager {
 
     long getCreationTimeMillis();
 
+    boolean isGraphicalDesktopEnvironment();
+
     NutsActionSupport getDesktopIntegrationSupport(NutsDesktopIntegrationItem target);
 
     Path getDesktopPath();
+
+    void addLauncher(NutsLauncherOptions launcher);
 
 }

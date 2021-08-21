@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.bundles.parsers;
 
+import net.thevpc.nuts.NutsUtilStrings;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 import java.util.*;
@@ -29,11 +30,11 @@ public class QueryStringParser {
     }
 
     protected String prepareKey(String key) {
-        return CoreStringUtils.trimToNull(key);
+        return NutsUtilStrings.trimToNull(key);
     }
 
     protected String prepareValue(String value) {
-        return CoreStringUtils.trimToNull(value);
+        return NutsUtilStrings.trimToNull(value);
     }
 
     public void setProperty(String key, String value) {
@@ -143,7 +144,7 @@ public class QueryStringParser {
                 }
             }
         }
-        return CoreStringUtils.trimToNull(sb.toString());
+        return NutsUtilStrings.trimToNull(sb.toString());
     }
 
     public static String formatSortedPropertiesQuery(String query){

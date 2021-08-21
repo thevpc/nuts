@@ -23,11 +23,7 @@
  */
 package net.thevpc.nuts.runtime.core.util;
 
-import net.thevpc.nuts.NutsDependencyFilter;
-import net.thevpc.nuts.NutsDependencyFilterManager;
-import net.thevpc.nuts.NutsDependencyScopePattern;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.*;
 
 /**
  *
@@ -36,7 +32,7 @@ import net.thevpc.nuts.NutsWorkspace;
 public class CoreNutsDependencyUtils {
 
     public static String normalizeDependencyType(String s1) {
-        return CoreStringUtils.trimToNull(s1);
+        return NutsUtilStrings.trimToNull(s1);
     }
 
     public static NutsDependencyFilter createJavaRunDependencyFilter(NutsSession session) {

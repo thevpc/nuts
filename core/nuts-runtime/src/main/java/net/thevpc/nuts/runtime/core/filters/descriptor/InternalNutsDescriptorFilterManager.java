@@ -3,7 +3,6 @@ package net.thevpc.nuts.runtime.core.filters.descriptor;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.filters.InternalNutsTypedFilters;
 import net.thevpc.nuts.runtime.core.filters.id.*;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -71,7 +70,7 @@ public class InternalNutsDescriptorFilterManager extends InternalNutsTypedFilter
     @Override
     public NutsDescriptorFilter byExpression(String expression) {
         checkSession();
-        if (CoreStringUtils.isBlank(expression)) {
+        if (NutsUtilStrings.isBlank(expression)) {
             return always();
         }
         return NutsDescriptorJavascriptFilter.valueOf(expression, getSession());

@@ -59,16 +59,16 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
 
         speed = Math.max(0, speed);
 
-        if (CoreStringUtils.isBlank(repositoryType)) {
+        if (NutsUtilStrings.isBlank(repositoryType)) {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing repository type"));
         }
-        if (CoreStringUtils.isBlank(repositoryName)) {
+        if (NutsUtilStrings.isBlank(repositoryName)) {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing repository name"));
         }
-        if (CoreStringUtils.isBlank(globalName)) {
+        if (NutsUtilStrings.isBlank(globalName)) {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing repository global name"));
         }
-        if (CoreStringUtils.isBlank(storeLocation)) {
+        if (NutsUtilStrings.isBlank(storeLocation)) {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing folder"));
         }
         Path pfolder = Paths.get(storeLocation);
@@ -126,12 +126,12 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
 //        if (config.getEnv() != null) {
 //            t = config.getEnv().get(defaultValue);
 //        }
-//        if (!CoreStringUtils.isBlank(t)) {
+//        if (!NutsUtilStrings.isBlank(t)) {
 //            return t;
 //        }
 //        if (inherit) {
 //            t = repository.getWorkspace().env().getEnv(key, null);
-//            if (!CoreStringUtils.isBlank(t)) {
+//            if (!NutsUtilStrings.isBlank(t)) {
 //                return t;
 //            }
 //        }
@@ -151,7 +151,7 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
 
     public void setEnv(String property, String value, NutsSession session) {
 //        options = CoreNutsUtils.validate(options, repository.getWorkspace());
-        if (CoreStringUtils.isBlank(value)) {
+        if (NutsUtilStrings.isBlank(value)) {
             if (config.getEnv() != null) {
                 config.getEnv().remove(property);
                 fireConfigurationChanged("env", session);
@@ -218,7 +218,7 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
 //        String n = CoreNutsUtils.getArrItem(config.getStoreLocations(), folderType.ordinal());
         String n = hlm.get(folderType);
         if (temporary) {
-            if (CoreStringUtils.isBlank(n)) {
+            if (NutsUtilStrings.isBlank(n)) {
                 n = folderType.toString().toLowerCase();
                 n = n.trim();
             }
@@ -226,7 +226,7 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
         } else {
             switch (getStoreLocationStrategy(session)) {
                 case STANDALONE: {
-                    if (CoreStringUtils.isBlank(n)) {
+                    if (NutsUtilStrings.isBlank(n)) {
                         n = folderType.toString().toLowerCase();
                     }
                     n = n.trim();
@@ -267,7 +267,7 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
             fireChange = true;
             this.config.setStoreLocationStrategy(repository.getWorkspace().locations().getRepositoryStoreLocationStrategy());
         }
-        if (CoreStringUtils.isBlank(config.getType())) {
+        if (NutsUtilStrings.isBlank(config.getType())) {
             fireChange = true;
             config.setType(repositoryType);
         } else if (!config.getType().equals(repositoryType)) {
@@ -409,7 +409,7 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
             }
             config.setMirrors(Arrays.asList(repositoryRegistryHelper.getRepositoryRefs()));
             config.setUsers(configUsers.isEmpty() ? null : new ArrayList<>(configUsers.values()));
-//            if (CoreStringUtils.isBlank(config.getConfigVersion())) {
+//            if (NutsUtilStrings.isBlank(config.getConfigVersion())) {
 //                config.setConfigVersion(repository.getWorkspace().getApiVersion());
 //            }
             repository.getWorkspace().elem().setSession(session).setContentType(NutsContentType.JSON).setValue(config).print(file);

@@ -2,9 +2,7 @@ package net.thevpc.nuts.runtime.core.app;
 
 import net.thevpc.nuts.NutsDefaultArgumentCandidate;
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
@@ -139,7 +137,7 @@ public class DefaultNutsCommandLineManager implements NutsCommandLineManager {
         }
 
         public static NutsArgumentCandidate createCandidate0(NutsWorkspace ws, String value, String label) {
-            return new NutsDefaultArgumentCandidate(value, CoreStringUtils.isBlank(label) ? value : label);
+            return new NutsDefaultArgumentCandidate(value, NutsUtilStrings.isBlank(label) ? value : label);
         }
 
         public static NutsArgumentName createName0(NutsSession session, String type, String label) {

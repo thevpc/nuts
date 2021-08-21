@@ -56,7 +56,11 @@ public final class Nuts {
                 if (version == null) {
                     String v = PrivateNutsUtils.resolveNutsVersionFromClassPath();
                     if (v == null) {
-                        throw new NutsBootException("unable to detect nuts version. Most likely you are missing valid compilation of nuts. pom.properties could not be resolved and hence, we are unable to resolve nuts version.");
+                        throw new NutsBootException(
+                                NutsMessage.plain(
+                                        "unable to detect nuts version. Most likely you are missing valid compilation of nuts. pom.properties could not be resolved and hence, we are unable to resolve nuts version."
+                                )
+                        );
                     }
                     version = v;
                 }
@@ -118,12 +122,12 @@ public final class Nuts {
     public static NutsSession openInheritedWorkspace(String... args) throws NutsUnsatisfiedRequirementsException {
         long startTime = System.currentTimeMillis();
         NutsBootWorkspace boot;
-        String nutsWorkspaceOptions = PrivateNutsUtils.trim(
-                PrivateNutsUtils.trim(System.getProperty("nuts.boot.args"))
-                + " " + PrivateNutsUtils.trim(System.getProperty("nuts.args"))
+        String nutsWorkspaceOptions = NutsUtilStrings.trim(
+                NutsUtilStrings.trim(System.getProperty("nuts.boot.args"))
+                + " " + NutsUtilStrings.trim(System.getProperty("nuts.args"))
         );
         NutsWorkspaceOptionsBuilder options = createOptions();
-        if (!PrivateNutsUtils.isBlank(nutsWorkspaceOptions)) {
+        if (!NutsUtilStrings.isBlank(nutsWorkspaceOptions)) {
             options.parseCommandLine(nutsWorkspaceOptions);
         }
         options.setApplicationArguments(args);

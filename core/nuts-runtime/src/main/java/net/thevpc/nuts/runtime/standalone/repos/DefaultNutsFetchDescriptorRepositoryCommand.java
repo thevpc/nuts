@@ -84,7 +84,7 @@ public class DefaultNutsFetchDescriptorRepositoryCommand extends AbstractNutsFet
         try {
             String versionString = id.getVersion().getValue();
             NutsDescriptor d = null;
-            if (DefaultNutsVersion.isBlank(versionString)) {
+            if (DefaultNutsVersion.isBlankVersion(versionString)) {
                 NutsId a = xrepo.searchLatestVersion(id.builder().setVersion("").build(), null, getFetchMode(), session);
                 if (a == null) {
                     throw new NutsNotFoundException(getSession(), id.getLongNameId());

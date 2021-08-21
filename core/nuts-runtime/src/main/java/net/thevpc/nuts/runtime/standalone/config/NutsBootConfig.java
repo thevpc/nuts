@@ -30,7 +30,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 /**
  * Nuts Boot editable configuration object
@@ -343,13 +342,13 @@ public final class NutsBootConfig implements Cloneable, Serializable {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder().append("NutsBootConfig{");
-        if (!CoreStringUtils.isBlank(apiVersion)) {
+        if (!NutsUtilStrings.isBlank(apiVersion)) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }
             sb.append("apiVersion='").append(apiVersion).append('\'');
         }
-        if (!CoreStringUtils.isBlank(runtimeId)) {
+        if (!NutsUtilStrings.isBlank(runtimeId)) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }
@@ -361,25 +360,25 @@ public final class NutsBootConfig implements Cloneable, Serializable {
             }
             sb.append("runtimeDependencies=").append(runtimeBootDescriptor);
         }
-        if (!CoreStringUtils.isBlank(bootRepositories)) {
+        if (!NutsUtilStrings.isBlank(bootRepositories)) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }
             sb.append("repositories='").append(bootRepositories).append('\'');
         }
-        if (!CoreStringUtils.isBlank(javaCommand)) {
+        if (!NutsUtilStrings.isBlank(javaCommand)) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }
             sb.append("javaCommand='").append(javaCommand).append('\'');
         }
-        if (!CoreStringUtils.isBlank(javaOptions)) {
+        if (!NutsUtilStrings.isBlank(javaOptions)) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }
             sb.append("javaOptions='").append(javaOptions).append('\'');
         }
-        if (!CoreStringUtils.isBlank(workspace)) {
+        if (!NutsUtilStrings.isBlank(workspace)) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }

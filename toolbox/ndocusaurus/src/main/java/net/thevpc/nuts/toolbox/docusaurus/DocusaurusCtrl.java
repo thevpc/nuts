@@ -196,7 +196,7 @@ public class DocusaurusCtrl {
         NutsSession s = appContext.getSession();
         appContext.getWorkspace()
                 .exec()
-                .embedded()
+                .setExecutionType(NutsExecutionType.EMBEDDED)
                 .addCommand(cmd).setDirectory(workFolder.toString())
                 .setSession(s)
                 .setFailFast(true).getResult();

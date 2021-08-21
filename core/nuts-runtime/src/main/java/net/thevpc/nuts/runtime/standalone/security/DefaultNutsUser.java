@@ -10,7 +10,7 @@ import net.thevpc.nuts.NutsUserConfig;
 
 import java.util.Arrays;
 
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+import net.thevpc.nuts.NutsUtilStrings;
 
 /**
  *
@@ -28,7 +28,7 @@ public class DefaultNutsUser implements NutsUser {
     public DefaultNutsUser(NutsUserConfig config, String[] inheritedPermissions) {
         user = config.getUser();
         remoteIdentity = config.getRemoteIdentity();
-        credentials = !CoreStringUtils.isBlank(config.getCredentials());
+        credentials = !NutsUtilStrings.isBlank(config.getCredentials());
 
         String[] rights0 = config.getPermissions();
         permissions = Arrays.copyOf(rights0, rights0.length);

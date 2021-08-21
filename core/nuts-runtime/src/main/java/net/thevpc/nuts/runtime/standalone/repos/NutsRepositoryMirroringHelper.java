@@ -18,7 +18,6 @@ import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.core.filters.NutsSearchIdByDescriptor;
 import net.thevpc.nuts.runtime.core.repos.NutsRepositoryUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.bundles.iter.IteratorUtils;
 import net.thevpc.nuts.runtime.bundles.iter.LazyIterator;
 import net.thevpc.nuts.runtime.core.events.DefaultNutsContentEvent;
@@ -125,7 +124,7 @@ public class NutsRepositoryMirroringHelper {
 //                    if (CoreNutsUtils.isDefaultAlternative(a)) {
 //                        goodFile = versionFolder.resolve(idFilename);
 //                    } else {
-//                        goodFile = versionFolder.resolve(CoreStringUtils.trim(a)).resolve(idFilename);
+//                        goodFile = versionFolder.resolve(NutsUtilStrings.trim(a)).resolve(idFilename);
 //                    }
                     getWorkspace().descriptor().setSession(session).formatter(nutsDescriptor).print(goodFile);
                     return nutsDescriptor;
@@ -173,7 +172,7 @@ public class NutsRepositoryMirroringHelper {
             throw new NutsRepositoryNotFoundException(session, "Not Repo for pushing " + id);
         }
         NutsRepository repo = this.repo;
-        if (CoreStringUtils.isBlank(repository)) {
+        if (NutsUtilStrings.isBlank(repository)) {
             List<NutsRepository> all = new ArrayList<>();
             for (NutsRepository remote : repo.config().setSession(session).getMirrors()) {
                 int lvl = NutsRepositoryUtils.getSupportSpeedLevel(remote,NutsRepositorySupportedAction.DEPLOY, id, NutsFetchMode.LOCAL, false,session);
@@ -198,7 +197,7 @@ public class NutsRepositoryMirroringHelper {
         }
         if (repo != null) {
             NutsId effId = getWorkspace().config().createContentFaceId(id.builder().setProperties("").build(), desc)
-//                    .setAlternative(CoreStringUtils.trim(desc.getAlternative()))
+//                    .setAlternative(NutsUtilStrings.trim(desc.getAlternative()))
                     ;
             NutsDeployRepositoryCommand dep = repoSPI.deploy()
                     .setId(effId)

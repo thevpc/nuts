@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.config;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.core.config.NutsWorkspaceConfigManagerExt;
 import net.thevpc.nuts.runtime.standalone.util.NutsJavaSdkUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
@@ -35,16 +34,16 @@ public class DefaultNutsSdkModel {
     public boolean add0(NutsSdkLocation location, NutsSession session, boolean notify) {
 //        session = CoreNutsUtils.validate(session, workspace);
         if (location != null) {
-            if (CoreStringUtils.isBlank(location.getProduct())) {
+            if (NutsUtilStrings.isBlank(location.getProduct())) {
                 throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("sdk type should not be null"));
             }
-            if (CoreStringUtils.isBlank(location.getName())) {
+            if (NutsUtilStrings.isBlank(location.getName())) {
                 throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("sdk name should not be null"));
             }
-            if (CoreStringUtils.isBlank(location.getVersion())) {
+            if (NutsUtilStrings.isBlank(location.getVersion())) {
                 throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("sdk version should not be null"));
             }
-            if (CoreStringUtils.isBlank(location.getPath())) {
+            if (NutsUtilStrings.isBlank(location.getPath())) {
                 throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("sdk path should not be null"));
             }
             List<NutsSdkLocation> list = getSdk().get(location.getProduct());
@@ -239,10 +238,10 @@ public class DefaultNutsSdkModel {
     }
 
     private String toValidSdkName(String type) {
-        if (CoreStringUtils.isBlank(type)) {
+        if (NutsUtilStrings.isBlank(type)) {
             type = "java";
         } else {
-            type = CoreStringUtils.trim(type);
+            type = NutsUtilStrings.trim(type);
         }
         return type;
     }

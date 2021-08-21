@@ -8,7 +8,6 @@ import net.thevpc.nuts.runtime.core.repos.NutsInstalledRepository;
 import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.DefaultNutsInstallInfo;
 import net.thevpc.nuts.runtime.standalone.repos.DefaultNutsInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.util.NutsDependencyScopes;
@@ -503,12 +502,12 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
         if (descriptor != null) {
             NutsId nutsId = dws.resolveEffectiveId(descriptor, session);
             NutsIdBuilder newIdBuilder = nutsId.builder();
-            if (CoreStringUtils.isBlank(newIdBuilder.getRepository())) {
+            if (NutsUtilStrings.isBlank(newIdBuilder.getRepository())) {
                 newIdBuilder.setRepository(repo.getName());
             }
             //inherit classifier from requested parse
             String classifier = id.getClassifier();
-            if (!CoreStringUtils.isBlank(classifier)) {
+            if (!NutsUtilStrings.isBlank(classifier)) {
                 newIdBuilder.setClassifier(classifier);
             }
             Map<String, String> q = id.getProperties();

@@ -34,7 +34,7 @@ public class DefaultNutsExecutionContextBuilder implements NutsExecutionContextB
 
     private NutsDefinition definition;
     private Map<String, String> env;
-    private List<String> executorArguments = new ArrayList<>();
+    private final List<String> executorArguments = new ArrayList<>();
     private Map<String, String> executorProperties = new LinkedHashMap<>();
     private String[] arguments;
     private NutsSession execSession;
@@ -51,6 +51,7 @@ public class DefaultNutsExecutionContextBuilder implements NutsExecutionContextB
     private String redirectInpuFile;
 
     private NutsExecutionType executionType;
+    private NutsRunAs runAs = NutsRunAs.currentUser();
 
     //    public NutsExecutionContextImpl(NutsDefinition nutsDefinition, NutsSession session, NutsWorkspace workspace,String cwd) {
 //        this.nutsDefinition = nutsDefinition;
@@ -76,12 +77,12 @@ public class DefaultNutsExecutionContextBuilder implements NutsExecutionContextB
     }
 
     public DefaultNutsExecutionContextBuilder(NutsDefinition definition,
-            String[] arguments, String[] executorArgs, Map<String, String> env, Map<String, String> executorProperties,
-            String cwd, NutsSession traceSession, NutsSession execSession, NutsWorkspace workspace, boolean failFast,
-            boolean temporary,
-            NutsExecutionType executionType,
-            String commandName,
-            long sleepMillis
+                                              String[] arguments, String[] executorArgs, Map<String, String> env, Map<String, String> executorProperties,
+                                              String cwd, NutsSession traceSession, NutsSession execSession, NutsWorkspace workspace, boolean failFast,
+                                              boolean temporary,
+                                              NutsExecutionType executionType,
+                                              String commandName,
+                                              long sleepMillis
     ) {
         if (arguments == null) {
             arguments = new String[0];
@@ -128,29 +129,6 @@ public class DefaultNutsExecutionContextBuilder implements NutsExecutionContextB
         this.executionType = other.getExecutionType();
         this.executorDescriptor = other.getExecutorDescriptor();
         this.sleepMillis = other.getSleepMillis();
-    }
-
-    public NutsExecutionContextBuilder setAll(NutsExecutionContext other) {
-        this.commandName = other.getCommandName();
-        this.definition = other.getDefinition();
-        this.arguments = other.getArguments();
-        this.execSession = other.getExecSession();
-        this.traceSession = other.getTraceSession();
-        this.workspace = other.getWorkspace();
-        this.executorArguments.clear();
-        this.executorArguments.addAll(Arrays.asList(other.getExecutorArguments()));
-        this.executorProperties = other.getExecutorProperties();
-        this.cwd = other.getCwd();
-        this.env = other.getEnv();
-        this.failFast = other.isFailFast();
-        this.temporary = other.isTemporary();
-        this.executionType = other.getExecutionType();
-        this.executorDescriptor = other.getExecutorDescriptor();
-        this.sleepMillis = other.getSleepMillis();
-        this.inheritSystemIO = other.isInheritSystemIO();
-        this.redirectOuputFile = other.getRedirectOuputFile();
-        this.redirectInpuFile = other.getRedirectInpuFile();
-        return this;
     }
 
     @Override
@@ -224,6 +202,11 @@ public class DefaultNutsExecutionContextBuilder implements NutsExecutionContextB
     @Override
     public NutsExecutionType getExecutionType() {
         return executionType;
+    }
+
+    @Override
+    public NutsRunAs getRunAs() {
+        return runAs;
     }
 
     @Override
@@ -337,8 +320,22 @@ public class DefaultNutsExecutionContextBuilder implements NutsExecutionContextB
         return this;
     }
 
+    @Override
+    public NutsExecutionContextBuilder setRunAs(NutsRunAs runAs) {
+        this.runAs = runAs == null ? NutsRunAs.currentUser() : runAs;
+        return this;
+    }
+
     public boolean isInheritSystemIO() {
         return inheritSystemIO;
+    }
+
+    public String getRedirectOuputFile() {
+        return redirectOuputFile;
+    }
+
+    public String getRedirectInpuFile() {
+        return redirectInpuFile;
     }
 
     public NutsExecutionContextBuilder setInheritSystemIO(boolean inheritSystemIO) {
@@ -346,17 +343,9 @@ public class DefaultNutsExecutionContextBuilder implements NutsExecutionContextB
         return this;
     }
 
-    public String getRedirectOuputFile() {
-        return redirectOuputFile;
-    }
-
     public NutsExecutionContextBuilder setRedirectOuputFile(String redirectOuputFile) {
         this.redirectOuputFile = redirectOuputFile;
         return this;
-    }
-
-    public String getRedirectInpuFile() {
-        return redirectInpuFile;
     }
 
     public NutsExecutionContextBuilder setRedirectInpuFile(String redirectInpuFile) {
@@ -371,5 +360,28 @@ public class DefaultNutsExecutionContextBuilder implements NutsExecutionContextB
                 workspace, failFast, temporary, executionType,
                 commandName, sleepMillis, inheritSystemIO, redirectOuputFile, redirectInpuFile
         );
+    }
+
+    public NutsExecutionContextBuilder setAll(NutsExecutionContext other) {
+        this.commandName = other.getCommandName();
+        this.definition = other.getDefinition();
+        this.arguments = other.getArguments();
+        this.execSession = other.getExecSession();
+        this.traceSession = other.getTraceSession();
+        this.workspace = other.getWorkspace();
+        this.executorArguments.clear();
+        this.executorArguments.addAll(Arrays.asList(other.getExecutorArguments()));
+        this.executorProperties = other.getExecutorProperties();
+        this.cwd = other.getCwd();
+        this.env = other.getEnv();
+        this.failFast = other.isFailFast();
+        this.temporary = other.isTemporary();
+        this.executionType = other.getExecutionType();
+        this.executorDescriptor = other.getExecutorDescriptor();
+        this.sleepMillis = other.getSleepMillis();
+        this.inheritSystemIO = other.isInheritSystemIO();
+        this.redirectOuputFile = other.getRedirectOutputFile();
+        this.redirectInpuFile = other.getRedirectInputFile();
+        return this;
     }
 }

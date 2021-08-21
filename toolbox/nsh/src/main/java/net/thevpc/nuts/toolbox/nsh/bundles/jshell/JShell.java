@@ -32,7 +32,6 @@ package net.thevpc.nuts.toolbox.nsh.bundles.jshell;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.nsh.*;
-import net.thevpc.nuts.toolbox.nsh.bundles._StringUtils;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.parser.JShellParser;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.util.ByteArrayPrintStream;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.util.ShellUtils;
@@ -803,7 +802,7 @@ public class JShell {
             login = ws.security().getCurrentUsername();
         }
         String prompt = ((login != null && login.length() > 0 && !"anonymous".equals(login)) ? (login + "@") : "");//+ wss;
-        if (!_StringUtils.isBlank(getRootContext().getServiceName())) {
+        if (!NutsUtilStrings.isBlank(getRootContext().getServiceName())) {
             prompt = prompt + "@" + getRootContext().getServiceName();
         }
         prompt += "> ";
@@ -1223,9 +1222,9 @@ public class JShell {
                     JShellAutoCompleteCandidate cmdCandidate = (JShellAutoCompleteCandidate) cmdCandidate0;
                     if (cmdCandidate != null) {
                         String value = cmdCandidate.getValue();
-                        if (!_StringUtils.isBlank(value)) {
+                        if (!NutsUtilStrings.isBlank(value)) {
                             String display = cmdCandidate.getDisplay();
-                            if (_StringUtils.isBlank(display)) {
+                            if (NutsUtilStrings.isBlank(display)) {
                                 display = value;
                             }
                             candidates.add(workspace.commandLine().createCandidate(value).setDisplay(display).build());

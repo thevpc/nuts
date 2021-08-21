@@ -202,7 +202,7 @@ public class MavenUtils {
                             return true;
                         }
                         if (e.getNodeName().equals("goal")) {
-                            if (CoreStringUtils.trim(e.getTextContent()).equals("exec-war-only")) {
+                            if (NutsUtilStrings.trim(e.getTextContent()).equals("exec-war-only")) {
                                 return true;
                             }
                         }
@@ -345,10 +345,10 @@ public class MavenUtils {
                 NutsId thisId = nutsDescriptor.getId();
                 if (!CoreNutsUtils.isEffectiveId(thisId)) {
                     if (parentId != null) {
-                        if (CoreStringUtils.isBlank(thisId.getGroupId())) {
+                        if (NutsUtilStrings.isBlank(thisId.getGroupId())) {
                             thisId = thisId.builder().setGroupId(parentId.getGroupId()).build();
                         }
-                        if (CoreStringUtils.isBlank(thisId.getVersion().getValue())) {
+                        if (NutsUtilStrings.isBlank(thisId.getVersion().getValue())) {
                             thisId = thisId.builder().setVersion(parentId.getVersion().getValue()).build();
                         }
                     }
@@ -387,7 +387,7 @@ public class MavenUtils {
                     nutsDescriptor = nutsDescriptor.builder().setId(thisId).build();
                 }
                 String nutsPackaging = nutsDescriptor.getProperties().get("nuts-packaging");
-                if (!CoreStringUtils.isBlank(nutsPackaging)) {
+                if (!NutsUtilStrings.isBlank(nutsPackaging)) {
                     nutsDescriptor = nutsDescriptor.builder().setPackaging(nutsPackaging).build();
                 }
                 properties.put("pom.groupId", thisId.getGroupId());
@@ -517,23 +517,23 @@ public class MavenUtils {
                                     }
                                 }
                             }
-                            if (CoreStringUtils.isBlank(groupId)) {
+                            if (NutsUtilStrings.isBlank(groupId)) {
                                 throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unexpected empty groupId"));
                             } else if (groupId.contains("$")) {
                                 throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unexpected maven variable in groupId=%s", groupId));
                             }
-                            if (CoreStringUtils.isBlank(artifactId)) {
+                            if (NutsUtilStrings.isBlank(artifactId)) {
                                 throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unexpected empty artifactId"));
                             } else if (artifactId.contains("$")) {
                                 throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unexpected maven variable in artifactId=%s", artifactId));
                             }
-                            if (CoreStringUtils.isBlank(version)) {
+                            if (NutsUtilStrings.isBlank(version)) {
                                 throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unexpected empty artifactId"));
                             } else if (version.contains("$")) {
                                 throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unexpected maven variable in artifactId=%s", version));
                             }
                             //this is maven dependency, using "compile"
-                            if (CoreStringUtils.isBlank(scope) || scope.equals("compile")) {
+                            if (NutsUtilStrings.isBlank(scope) || scope.equals("compile")) {
                                 depsAndRepos.deps.add(groupId + ":" + artifactId + "#" + version);
                             } else if (version.contains("$")) {
                                 throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unexpected maven variable in artifactId=%s", version));

@@ -29,7 +29,6 @@ import net.thevpc.nuts.runtime.core.repos.AbstractNutsRepository;
 import net.thevpc.nuts.runtime.core.repos.NutsRepositoryExt;
 import net.thevpc.nuts.runtime.standalone.repocommands.AbstractNutsUpdateRepositoryStatisticsCommand;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.spi.*;
 
@@ -74,7 +73,7 @@ public abstract class AbstractNutsRepositoryBase extends AbstractNutsRepository 
     @Override
     public boolean acceptAction(NutsId id, NutsRepositorySupportedAction supportedAction, NutsFetchMode mode, NutsSession session) {
         String groups = config().getGroups();
-        if (CoreStringUtils.isBlank(groups)) {
+        if (NutsUtilStrings.isBlank(groups)) {
             return true;
         }
         return GlobUtils.ofExact(groups).matcher(id.getGroupId()).matches();

@@ -26,7 +26,6 @@
 package net.thevpc.nuts.runtime.core.filters.version;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.filters.AbstractNutsFilter;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.bundles.common.JavascriptHelper;
 import net.thevpc.nuts.runtime.core.util.Simplifiable;
@@ -42,7 +41,7 @@ public class NutsVersionJavascriptFilter extends AbstractVersionFilter implement
     private JavascriptHelper engineHelper;
 
     public static NutsVersionFilter valueOf(String value, NutsSession session) {
-        if (CoreStringUtils.isBlank(value)) {
+        if (NutsUtilStrings.isBlank(value)) {
             return session.getWorkspace().version().filter().always();
         }
         return new NutsVersionJavascriptFilter(session,value);

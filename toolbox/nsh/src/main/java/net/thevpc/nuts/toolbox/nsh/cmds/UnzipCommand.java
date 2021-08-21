@@ -34,7 +34,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
-import net.thevpc.nuts.toolbox.nsh.bundles._StringUtils;
 
 /**
  * Created by vpc on 1/7/17.
@@ -104,7 +103,7 @@ public class UnzipCommand extends SimpleNshBuiltin {
                                     });
                 } else {
                     String dir = options.dir;
-                    if (_StringUtils.isBlank(dir)) {
+                    if (NutsUtilStrings.isBlank(dir)) {
                         dir = context.getRootContext().getCwd();
                     }
                     dir = context.getRootContext().getAbsolutePath(dir);

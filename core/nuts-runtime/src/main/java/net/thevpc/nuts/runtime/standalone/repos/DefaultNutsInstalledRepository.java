@@ -168,7 +168,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
                         //                .setAlternative("")
                         .builder().setVersion("ANY").build(), NutsStoreLocation.CONFIG))
                 .resolveSibling("default-version");
-        if (CoreStringUtils.isBlank(version)) {
+        if (NutsUtilStrings.isBlank(version)) {
             if (Files.isRegularFile(pp)) {
                 try {
                     Files.delete(pp);
@@ -246,7 +246,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
         }
         try {
             String pck = def.getDescriptor().getPackaging();
-            undeploy().setId(def.getId().builder().setPackaging(CoreStringUtils.isBlank(pck) ? "jar" : pck).build())
+            undeploy().setId(def.getId().builder().setPackaging(NutsUtilStrings.isBlank(pck) ? "jar" : pck).build())
                     //.setFetchMode(NutsFetchMode.LOCAL)
                     .setSession(session)
                     .run();

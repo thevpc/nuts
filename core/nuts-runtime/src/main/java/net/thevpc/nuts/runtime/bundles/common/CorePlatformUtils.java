@@ -28,19 +28,14 @@ package net.thevpc.nuts.runtime.bundles.common;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.io.SimpleClassStream;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.standalone.config.DefaultNutsWorkspaceEnvManagerModel;
 
 import java.io.*;
 import java.lang.reflect.Modifier;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -67,7 +62,7 @@ public class CorePlatformUtils {
     private static String buildUnixOsNameAndVersion(String name, NutsWorkspace ws) {
         Map<String, String> m = getOsDistMap(ws);
         String v = m.get("osVersion");
-        if (CoreStringUtils.isBlank(v)) {
+        if (NutsUtilStrings.isBlank(v)) {
             return name;
         }
         return name + "#" + v;
@@ -152,7 +147,7 @@ public class CorePlatformUtils {
             CoreStringUtils.clear(osVersion);
             try {
                 osVersion.append(
-                        ws.exec().setExecutionType(NutsExecutionType.USER_CMD)
+                        ws.exec().setExecutionType(NutsExecutionType.SYSTEM)
                                 .setCommand("uname", "-r")
                                 .setRedirectErrorStream(true)
                                 .grabOutputString()
@@ -206,7 +201,7 @@ public class CorePlatformUtils {
                                     disVersion = v;
                                     break;
                             }
-                            if (!CoreStringUtils.isBlank(disVersion) && !CoreStringUtils.isBlank(disName) && !CoreStringUtils.isBlank(disId)) {
+                            if (!NutsUtilStrings.isBlank(disVersion) && !NutsUtilStrings.isBlank(disName) && !NutsUtilStrings.isBlank(disId)) {
                                 break;
                             }
                         }
@@ -230,8 +225,8 @@ public class CorePlatformUtils {
             Map<String, String> m = getOsDistMap(ws);
             String distId = m.get("distId");
             String distVersion = m.get("distVersion");
-            if (!CoreStringUtils.isBlank(distId)) {
-                if (!CoreStringUtils.isBlank(distId)) {
+            if (!NutsUtilStrings.isBlank(distId)) {
+                if (!NutsUtilStrings.isBlank(distId)) {
                     return distId + "#" + distVersion;
                 } else {
                     return distId;
@@ -311,7 +306,7 @@ public class CorePlatformUtils {
     }
 
     public static boolean checkSupportedArch(String arch) {
-        if (CoreStringUtils.isBlank(arch)) {
+        if (NutsUtilStrings.isBlank(arch)) {
             return true;
         }
         if (SUPPORTED_ARCH.contains(arch)) {
@@ -321,7 +316,7 @@ public class CorePlatformUtils {
     }
 
     public static boolean checkSupportedOs(String os) {
-        if (CoreStringUtils.isBlank(os)) {
+        if (NutsUtilStrings.isBlank(os)) {
             return true;
         }
         if (SUPPORTED_OS.contains(os)) {
@@ -459,7 +454,7 @@ public class CorePlatformUtils {
                     return null;
                 }
                 String mainClass = manifest.getMainAttributes().getValue("Main-Class");
-                return !CoreStringUtils.isBlank(mainClass) ? mainClass : null;
+                return !NutsUtilStrings.isBlank(mainClass) ? mainClass : null;
             }
         } catch (Exception ex) {
             //invalid file

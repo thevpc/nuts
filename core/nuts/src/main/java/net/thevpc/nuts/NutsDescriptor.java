@@ -106,6 +106,13 @@ public interface NutsDescriptor extends Serializable {
     String[] getPlatform();
 
     /**
+     * supported desktop environments (gnome, kde, none, ...). if empty desktop environment is not relevant.
+     * This is helpful to bind application to a specific environment
+     * @return supported platforms
+     */
+    String[] getDesktopEnvironment();
+
+    /**
      * user friendly name, a short description for the artifact
      * @return user friendly name
      */

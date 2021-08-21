@@ -27,7 +27,6 @@ package net.thevpc.nuts.toolbox.nsh;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.nsh.bundles._IOUtils;
-import net.thevpc.nuts.toolbox.nsh.bundles._StringUtils;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShell;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellException;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellExecutionContext;
@@ -154,7 +153,7 @@ public abstract class AbstractNshBuiltin implements NshBuiltin {
             if (line == null) {
                 break;
             }
-            if (!_StringUtils.isBlank(line)) {
+            if (!NutsUtilStrings.isBlank(line)) {
                 return line;
             }
         }

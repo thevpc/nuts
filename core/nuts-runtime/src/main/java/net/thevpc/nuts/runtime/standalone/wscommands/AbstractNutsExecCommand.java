@@ -2,14 +2,12 @@ package net.thevpc.nuts.runtime.standalone.wscommands;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.bundles.io.ByteArrayPrintStream;
 import net.thevpc.nuts.runtime.bundles.io.ProcessBuilder2;
 import net.thevpc.nuts.runtime.core.format.DefaultNutsExecCommandFormat;
 import net.thevpc.nuts.runtime.standalone.io.NutsByteArrayPrintStream;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.io.PrintStream;
 import java.util.*;
 
 /**
@@ -30,6 +28,7 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
     protected NutsPrintStream err;
     protected InputStream in;
     protected NutsExecutionType executionType = NutsExecutionType.SPAWN;
+    protected NutsRunAs runAs = NutsRunAs.CURRENT_USER;
     protected boolean redirectErrorStream;
     protected boolean failFast;
     protected boolean dry;
@@ -353,8 +352,14 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
     }
 
     @Override
-    public NutsExecCommand embedded() {
-        return setExecutionType(NutsExecutionType.EMBEDDED);
+    public NutsRunAs getRunAs() {
+        return runAs;
+    }
+
+    @Override
+    public NutsExecCommand setRunAs(NutsRunAs runAs) {
+        this.runAs = runAs==null?NutsRunAs.currentUser() : runAs;
+        return this;
     }
 
     @Override
@@ -371,6 +376,7 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
         setSession(other.getSession());
         setFailFast(other.isFailFast());
         setExecutionType(other.getExecutionType());
+        setRunAs(other.getRunAs());
         return this;
     }
 
@@ -406,21 +412,6 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
             run();
         }
         return result;
-    }
-
-    @Override
-    public NutsExecCommand userCmd() {
-        return setExecutionType(NutsExecutionType.USER_CMD);
-    }
-
-    @Override
-    public NutsExecCommand rootCmd() {
-        return setExecutionType(NutsExecutionType.ROOT_CMD);
-    }
-
-    @Override
-    public NutsExecCommand spawn() {
-        return setExecutionType(NutsExecutionType.SPAWN);
     }
 
     protected String getExtraErrorMessage() {
@@ -471,17 +462,47 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
                 }
                 return true;
             }
-            case "--user-cmd": {
+            case "--user-cmd":
+            case "--system":
+            {
                 cmdLine.skip();
                 if (enabled) {
-                    setExecutionType(NutsExecutionType.USER_CMD);
+                    setExecutionType(NutsExecutionType.SYSTEM);
                 }
                 return true;
             }
-            case "--root-cmd": {
+            case "--current-user":
+            {
                 cmdLine.skip();
                 if (enabled) {
-                    setExecutionType(NutsExecutionType.ROOT_CMD);
+                    setRunAs(NutsRunAs.currentUser());
+                }
+                return true;
+            }
+            case "--as-root":
+            {
+                cmdLine.skip();
+                if (enabled) {
+                    setRunAs(NutsRunAs.ROOT);
+                }
+                return true;
+            }
+            case "--run-as":
+            {
+                NutsArgument s = cmdLine.nextString();
+                if (enabled) {
+                    if(NutsUtilStrings.isBlank(s.getStringValue())){
+                        throw new NutsIllegalArgumentException(getSession(),NutsMessage.cstyle("missing user name"));
+                    }
+                    setRunAs(NutsRunAs.user(s.getStringValue()));
+                }
+                return true;
+            }
+            case "--sudo":
+            {
+                cmdLine.skip();
+                if (enabled) {
+                    setRunAs(NutsRunAs.sudo());
                 }
                 return true;
             }

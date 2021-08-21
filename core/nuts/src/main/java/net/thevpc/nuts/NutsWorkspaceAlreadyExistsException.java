@@ -44,7 +44,7 @@ public class NutsWorkspaceAlreadyExistsException extends NutsBootException {
      * @param workspaceLocation location
      */
     public NutsWorkspaceAlreadyExistsException(String workspaceLocation) {
-        super("workspace already exists " + (workspaceLocation == null ? "<null>" : workspaceLocation),null);
+        super(NutsMessage.cstyle("workspace already exists %s",(workspaceLocation == null ? "<null>" : workspaceLocation)),null);
         this.workspaceLocation = workspaceLocation;
     }
 
@@ -54,7 +54,7 @@ public class NutsWorkspaceAlreadyExistsException extends NutsBootException {
      * @param err exception
      */
     public NutsWorkspaceAlreadyExistsException(String workspaceLocation, Throwable err) {
-        super("workspace already exists " + (workspaceLocation == null ? "<null>" : workspaceLocation), err);
+        super(NutsMessage.cstyle("workspace already exists %s",(workspaceLocation == null ? "<null>" : workspaceLocation)), err);
         this.workspaceLocation = workspaceLocation;
     }
 

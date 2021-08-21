@@ -124,7 +124,7 @@ public class RemoteMysqlDatabaseConfigService {
                     throw new NutsIOException(session,e);
                 }
             }
-            context.getWorkspace().exec().embedded()
+            context.getWorkspace().exec().setExecutionType(NutsExecutionType.EMBEDDED)
                     .setSession(session.copy().setTrace(false))
                     .addCommand("nsh",
                             "--bot",

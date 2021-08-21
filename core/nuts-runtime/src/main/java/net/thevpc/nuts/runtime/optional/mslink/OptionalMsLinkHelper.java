@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.optional.mslink;
 
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+import net.thevpc.nuts.NutsUtilStrings;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -53,7 +53,7 @@ public class OptionalMsLinkHelper {
                         Arrays.copyOfRange(cmd, 1, cmd.length)
                 ).toString());
 
-        if (CoreStringUtils.isBlank(icon)) {
+        if (NutsUtilStrings.isBlank(icon)) {
             se.setIconLocation("%SystemRoot%\\system32\\SHELL32.dll");
             se.getHeader().setIconIndex(148);
         } else {

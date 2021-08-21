@@ -223,7 +223,7 @@ public class DefaultNutsWorkspaceSecurityModel {
     
     public void checkAllowed(String permission, String operationName, NutsSession session) {
         if (!isAllowed(permission, session)) {
-            if (CoreStringUtils.isBlank(operationName)) {
+            if (NutsUtilStrings.isBlank(operationName)) {
                 throw new NutsSecurityException(session, permission + " not allowed!");
             } else {
                 throw new NutsSecurityException(session, operationName + ": " + permission + " not allowed!");
@@ -253,7 +253,7 @@ public class DefaultNutsWorkspaceSecurityModel {
             return true;
         }
         String name = getCurrentUsername(session);
-        if (CoreStringUtils.isBlank(name)) {
+        if (NutsUtilStrings.isBlank(name)) {
             return false;
         }
         if (NutsConstants.Users.ADMIN.equals(name)) {
@@ -318,8 +318,8 @@ public class DefaultNutsWorkspaceSecurityModel {
         if (currentSubject != null) {
             for (Principal principal : currentSubject.getPrincipals()) {
                 name = principal.getName();
-                if (!CoreStringUtils.isBlank(name)) {
-                    if (!CoreStringUtils.isBlank(name)) {
+                if (!NutsUtilStrings.isBlank(name)) {
+                    if (!NutsUtilStrings.isBlank(name)) {
                         return name;
                     }
                 }
@@ -375,8 +375,8 @@ public class DefaultNutsWorkspaceSecurityModel {
 
     
     public NutsAuthenticationAgent getAuthenticationAgent(String authenticationAgentId, NutsSession session) {
-        authenticationAgentId = CoreStringUtils.trim(authenticationAgentId);
-        if (CoreStringUtils.isBlank(authenticationAgentId)) {
+        authenticationAgentId = NutsUtilStrings.trim(authenticationAgentId);
+        if (NutsUtilStrings.isBlank(authenticationAgentId)) {
             authenticationAgentId = NutsWorkspaceConfigManagerExt.of(ws.config())
                     .getModel().getStoredConfigSecurity().getAuthenticationAgent();
         }

@@ -54,7 +54,7 @@ final class PrivateNutsArgumentsParser {
      * @param options options instance to fill
      */
     public static void parseNutsArguments(String[] bootArguments, NutsWorkspaceOptionsBuilder options) {
-        List<String> showError = new ArrayList<>();
+        List<NutsMessage> showError = new ArrayList<>();
         HashSet<String> excludedExtensions = new HashSet<>();
         HashSet<String> repositories = new HashSet<>();
         Set<String> tempProps = new LinkedHashSet<>();
@@ -491,23 +491,10 @@ final class PrivateNutsArgumentsParser {
                         break;
                     }
                     case "-B":
-                    case "--bot":
-                    {
+                    case "--bot":{
                         a = cmdLine.nextBoolean();
                         if (enabled) {
                             options.setBot(a.getBooleanValue());
-//                            options.setTerminalMode(NutsTerminalMode.FILTERED);
-//                            options.setProgressOptions("none");
-//                            if (!explicitConfirm) {
-//                                options.setConfirm(NutsConfirmationMode.ERROR);
-//                            }
-//                            options.setTrace(false);
-//                            options.setDebug(false);
-//                            options.setGui(false);
-//                            NutsLogConfig lc = options.getLogConfig();
-//                            if (lc != null) {
-//                                lc.setLogTermLevel(Level.OFF);
-//                            }
                         }
                         break;
                     }
@@ -842,17 +829,36 @@ final class PrivateNutsArgumentsParser {
                         }
                         break;
                     }
-                    case "--user-cmd": {
+                    case "--user-cmd"://deprecated since 0.8.1
+                    case "--system":{
                         a = cmdLine.nextBoolean();
                         if (enabled && a.getBooleanValue()) {
-                            options.setExecutionType(NutsExecutionType.USER_CMD);
+                            options.setExecutionType(NutsExecutionType.SYSTEM);
                         }
                         break;
                     }
-                    case "--root-cmd": {
+                    case "--root-cmd": //deprecated since 0.8.1
+                    case "--as-root":{
                         a = cmdLine.nextBoolean();
                         if (enabled && a.getBooleanValue()) {
-                            options.setExecutionType(NutsExecutionType.ROOT_CMD);
+                            options.setRunAs(NutsRunAs.root());
+                        }
+                        break;
+                    }
+                    case "--current-user":{
+                        a = cmdLine.nextBoolean();
+                        if (enabled && a.getBooleanValue()) {
+                            options.setRunAs(NutsRunAs.currentUser());
+                        }
+                        break;
+                    }
+                    case "--run-as":{
+                        a = cmdLine.nextString();
+                        if (enabled) {
+                            if(NutsUtilStrings.isBlank(a.getStringValue())){
+                                throw new NutsBootException(NutsMessage.cstyle("missing user name"));
+                            }
+                            options.setRunAs(NutsRunAs.user(a.getStringValue()));
                         }
                         break;
                     }
@@ -866,8 +872,7 @@ final class PrivateNutsArgumentsParser {
                         break;
                     }
                     case "--open-or-error": 
-                    case "--open": 
-                    {
+                    case "--open": {
                         a = cmdLine.nextBoolean();
                         if (enabled && a.getBooleanValue()) {
                             options.setOpenMode(NutsOpenMode.OPEN_OR_ERROR);
@@ -875,24 +880,21 @@ final class PrivateNutsArgumentsParser {
                         break;
                     }
                     case "--create-or-error": 
-                    case "--create": 
-                    {
+                    case "--create": {
                         a = cmdLine.nextBoolean();
                         if (enabled && a.getBooleanValue()) {
                             options.setOpenMode(NutsOpenMode.CREATE_OR_ERROR);
                         }
                         break;
                     }
-                    case "--open-or-create": 
-                    {
+                    case "--open-or-create": {
                         a = cmdLine.nextBoolean();
                         if (enabled && a.getBooleanValue()) {
                             options.setOpenMode(NutsOpenMode.OPEN_OR_CREATE);
                         }
                         break;
                     }
-                    case "--open-or-null": 
-                    {
+                    case "--open-or-null": {
                         a = cmdLine.nextBoolean();
                         if (enabled && a.getBooleanValue()) {
                             options.setOpenMode(NutsOpenMode.OPEN_OR_NULL);
@@ -909,7 +911,7 @@ final class PrivateNutsArgumentsParser {
                         cmdLine.skip();
                         if (enabled) {
                             if (!a.getArgumentValue().isNull()) {
-                                throw new NutsBootException("invalid argument for workspace: " + a.getString());
+                                throw new NutsBootException(NutsMessage.cstyle("invalid argument for workspace: %s", a.getString()));
                             }
                             applicationArguments.add(NutsConstants.Ids.NUTS_SHELL);
                             if (!cmdLine.isEmpty()) {
@@ -1069,7 +1071,7 @@ final class PrivateNutsArgumentsParser {
                             tempProps.add(a.toString().substring(3));
                         } else {
                             cmdLine.skip();
-                            showError.add("nuts: invalid option " + a.getString());
+                            showError.add(NutsMessage.cstyle("nuts: invalid option %s", a.getString()));
                         }
                     }
                 }
@@ -1085,7 +1087,7 @@ final class PrivateNutsArgumentsParser {
         options.setRepositories(repositories.toArray(new String[0]));
         options.setApplicationArguments(applicationArguments.toArray(new String[0]));
         options.setExecutorOptions(executorOptions.toArray(new String[0]));
-        options.setErrors(showError.toArray(new String[0]));
+        options.setErrors(showError.toArray(new NutsMessage[0]));
         //error only if not asking for help
         if (!(applicationArguments.size() > 0
                 && (applicationArguments.get(0).equals("help")
@@ -1094,12 +1096,12 @@ final class PrivateNutsArgumentsParser {
         )) {
             if (!showError.isEmpty()) {
                 StringBuilder errorMessage = new StringBuilder();
-                for (String s : showError) {
+                for (NutsMessage s : showError) {
                     errorMessage.append(s).append("\n");
                 }
                 errorMessage.append("Try 'nuts --help' for more information.");
                 if (!options.isSkipErrors()) {
-                    throw new NutsBootException(errorMessage.toString());
+                    throw new NutsBootException(NutsMessage.plain(errorMessage.toString()));
                 } else {
                     System.err.println(errorMessage.toString());
                 }
@@ -1232,7 +1234,7 @@ final class PrivateNutsArgumentsParser {
             case "EXPLODED":
                 return NutsStoreLocationStrategy.EXPLODED;
         }
-        throw new NutsBootException("unable to parse value for NutsStoreLocationStrategy : " + s0);
+        throw new NutsBootException(NutsMessage.cstyle("unable to parse value for NutsStoreLocationStrategy : %s",s0));
     }
 
     private static NutsOsFamily parseNutsStoreLocationLayout(String s) {
@@ -1261,7 +1263,7 @@ final class PrivateNutsArgumentsParser {
             case "SYSTEM":
                 return null;
         }
-        throw new NutsBootException("unable to parse value for NutsStoreLocationLayout : " + s0);
+        throw new NutsBootException(NutsMessage.cstyle("unable to parse value for NutsStoreLocationLayout : %s", s0));
     }
 
     private static NutsTerminalMode parseNutsTerminalMode(String s) {
@@ -1281,7 +1283,7 @@ final class PrivateNutsArgumentsParser {
             case "INHERITED":
                 return NutsTerminalMode.INHERITED;
         }
-        throw new NutsBootException("unable to parse value for NutsTerminalMode : " + s0);
+        throw new NutsBootException(NutsMessage.cstyle("unable to parse value for NutsTerminalMode : %s", s0));
     }
 
     private static NutsOpenMode parseNutsWorkspaceOpenMode(String s) {
@@ -1327,7 +1329,7 @@ final class PrivateNutsArgumentsParser {
                 return NutsOpenMode.OPEN_OR_NULL;
             }
         }
-        throw new NutsBootException("unable to parse value for NutsOpenMode : " + s0);
+        throw new NutsBootException(NutsMessage.cstyle("unable to parse value for NutsOpenMode : %s", s0));
     }
 
     private static Level parseLevel(String s) {

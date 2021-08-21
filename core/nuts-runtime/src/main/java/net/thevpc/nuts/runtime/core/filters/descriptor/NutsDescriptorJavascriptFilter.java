@@ -27,7 +27,6 @@
 package net.thevpc.nuts.runtime.core.filters.descriptor;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.bundles.common.JavascriptHelper;
 
 import java.util.Objects;
@@ -40,7 +39,7 @@ public class NutsDescriptorJavascriptFilter extends AbstractDescriptorFilter imp
     private String code;
 
     public static NutsDescriptorFilter valueOf(String value, NutsSession ws) {
-        if (CoreStringUtils.isBlank(value)) {
+        if (NutsUtilStrings.isBlank(value)) {
             return ws.getWorkspace().descriptor().filter().always();
         }
         return new NutsDescriptorJavascriptFilter(ws,value);

@@ -28,7 +28,6 @@ package net.thevpc.nuts.runtime.core.model;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.parsers.QueryStringParser;
 import net.thevpc.nuts.runtime.core.filters.DefaultNutsTokenFilter;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,8 +53,8 @@ public class DefaultNutsId implements NutsId {
     protected DefaultNutsId(String groupId, String artifactId, NutsVersion version, Map<String, String> properties,NutsSession session) {
         this.ws = session.getWorkspace();
         this.session = session;
-        this.groupId = CoreStringUtils.trimToNull(groupId);
-        this.artifactId = CoreStringUtils.trimToNull(artifactId);
+        this.groupId = NutsUtilStrings.trimToNull(groupId);
+        this.artifactId = NutsUtilStrings.trimToNull(artifactId);
         this.version = version == null ? ws.version().parser().parse("") : version;
         this.properties = QueryStringParser.formatSortedPropertiesQuery(properties);
     }
@@ -63,8 +62,8 @@ public class DefaultNutsId implements NutsId {
     protected DefaultNutsId(String groupId, String artifactId, NutsVersion version, String properties, NutsSession session) {
         this.ws = session.getWorkspace();
         this.session = session;
-        this.groupId = CoreStringUtils.trimToNull(groupId);
-        this.artifactId = CoreStringUtils.trimToNull(artifactId);
+        this.groupId = NutsUtilStrings.trimToNull(groupId);
+        this.artifactId = NutsUtilStrings.trimToNull(artifactId);
         this.version = version == null ? ws.version().parser().parse("") : version;
         this.properties = QueryStringParser.formatSortedPropertiesQuery(properties);
     }
@@ -76,8 +75,8 @@ public class DefaultNutsId implements NutsId {
     public DefaultNutsId(String groupId, String artifactId, String version, String properties, NutsSession session) {
         this.ws = session.getWorkspace();
         this.session = session;
-        this.groupId = CoreStringUtils.trimToNull(groupId);
-        this.artifactId = CoreStringUtils.trimToNull(artifactId);
+        this.groupId = NutsUtilStrings.trimToNull(groupId);
+        this.artifactId = NutsUtilStrings.trimToNull(artifactId);
         this.version = ws.version().parser().parse(version);
         this.properties = QueryStringParser.formatSortedPropertiesQuery(properties);
     }
@@ -196,8 +195,8 @@ public class DefaultNutsId implements NutsId {
         if (other == null) {
             return false;
         }
-        return CoreStringUtils.trim(artifactId).equals(CoreStringUtils.trim(other.getArtifactId()))
-                && CoreStringUtils.trim(groupId).equals(CoreStringUtils.trim(other.getGroupId()));
+        return NutsUtilStrings.trim(artifactId).equals(NutsUtilStrings.trim(other.getArtifactId()))
+                && NutsUtilStrings.trim(groupId).equals(NutsUtilStrings.trim(other.getGroupId()));
     }
 
     @Override
@@ -211,43 +210,43 @@ public class DefaultNutsId implements NutsId {
     @Override
     public String getFace() {
         String s = getProperties().get(NutsConstants.IdProperties.FACE);
-        return CoreStringUtils.trimToNull(s);
+        return NutsUtilStrings.trimToNull(s);
     }
 
     @Override
     public String getClassifier() {
         String s = getProperties().get(NutsConstants.IdProperties.CLASSIFIER);
-        return CoreStringUtils.trimToNull(s);
+        return NutsUtilStrings.trimToNull(s);
     }
 
     @Override
     public String getPackaging() {
         String s = getProperties().get(NutsConstants.IdProperties.PACKAGING);
-        return CoreStringUtils.trimToNull(s);
+        return NutsUtilStrings.trimToNull(s);
     }
 
     @Override
     public String getOs() {
         String s = getProperties().get(NutsConstants.IdProperties.OS);
-        return CoreStringUtils.trimToNull(s);
+        return NutsUtilStrings.trimToNull(s);
     }
 
     @Override
     public String getOsdist() {
         String s = getProperties().get(NutsConstants.IdProperties.OSDIST);
-        return CoreStringUtils.trimToNull(s);
+        return NutsUtilStrings.trimToNull(s);
     }
 
     @Override
     public String getPlatform() {
         String s = getProperties().get(NutsConstants.IdProperties.PLATFORM);
-        return CoreStringUtils.trimToNull(s);
+        return NutsUtilStrings.trimToNull(s);
     }
 
     @Override
     public String getArch() {
         String s = getProperties().get(NutsConstants.IdProperties.ARCH);
-        return CoreStringUtils.trimToNull(s);
+        return NutsUtilStrings.trimToNull(s);
     }
 
     @Override
@@ -263,7 +262,7 @@ public class DefaultNutsId implements NutsId {
     @Override
     public String getRepository() {
         String s = getProperties().get(NutsConstants.IdProperties.REPO);
-        return CoreStringUtils.trimToNull(s);
+        return NutsUtilStrings.trimToNull(s);
     }
 
     @Override
@@ -283,10 +282,10 @@ public class DefaultNutsId implements NutsId {
 
     @Override
     public String getShortName() {
-        if (CoreStringUtils.isBlank(groupId)) {
-            return CoreStringUtils.trim(artifactId);
+        if (NutsUtilStrings.isBlank(groupId)) {
+            return NutsUtilStrings.trim(artifactId);
         }
-        return CoreStringUtils.trim(groupId) + ":" + CoreStringUtils.trim(artifactId);
+        return NutsUtilStrings.trim(groupId) + ":" + NutsUtilStrings.trim(artifactId);
     }
 
     @Override
@@ -317,14 +316,14 @@ public class DefaultNutsId implements NutsId {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        if (!CoreStringUtils.isBlank(groupId)) {
+        if (!NutsUtilStrings.isBlank(groupId)) {
             sb.append(groupId).append(":");
         }
         sb.append(artifactId);
         if (!version.isBlank()) {
             sb.append("#").append(version);
         }
-        if (!CoreStringUtils.isBlank(properties)) {
+        if (!NutsUtilStrings.isBlank(properties)) {
             sb.append("?");
             sb.append(properties);
         }

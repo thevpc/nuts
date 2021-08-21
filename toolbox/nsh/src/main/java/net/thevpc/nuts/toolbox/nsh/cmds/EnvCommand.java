@@ -57,6 +57,7 @@ public class EnvCommand extends SimpleNshBuiltin {
         boolean ignoreEnvironment = false;
         String dir = null;
         NutsExecutionType executionType = null;
+        NutsRunAs runAs = null;
     }
 
     @Override
@@ -88,14 +89,29 @@ public class EnvCommand extends SimpleNshBuiltin {
                         options.executionType = (NutsExecutionType.EMBEDDED);
                         return true;
                     }
-                    case "--user-cmd":{
+                    case "--system":{
                         commandLine.skip();
-                        options.executionType = (NutsExecutionType.USER_CMD);
+                        options.executionType = (NutsExecutionType.SYSTEM);
                         return true;
                     }
-                    case "--root-cmd":{
+                    case "--current-user":{
                         commandLine.skip();
-                        options.executionType = (NutsExecutionType.ROOT_CMD);
+                        options.runAs = NutsRunAs.currentUser();
+                        return true;
+                    }
+                    case "--as-root":{
+                        commandLine.skip();
+                        options.runAs = NutsRunAs.root();
+                        return true;
+                    }
+                    case "--sudo":{
+                        commandLine.skip();
+                        options.runAs = NutsRunAs.sudo();
+                        return true;
+                    }
+                    case "--as-user":{
+                        a = commandLine.nextString();
+                        options.runAs = NutsRunAs.user(a.getStringValue());
                         return true;
                     }
                     case "-C":

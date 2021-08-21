@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.security;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -29,7 +28,7 @@ public class PlainNutsAuthenticationAgent implements NutsAuthenticationAgent {
 
     @Override
     public void checkCredentials(char[] credentialsId, char[] password, Map<String, String> envProvider, NutsSession session) {
-        if (CoreStringUtils.isBlank(password)) {
+        if (password==null || NutsUtilStrings.isBlank(new String(password))) {
             throw new NutsSecurityException(session, "missing old password");
         }
         char[] iid = extractId(credentialsId,session);
@@ -40,7 +39,7 @@ public class PlainNutsAuthenticationAgent implements NutsAuthenticationAgent {
     }
 
     private char[] extractId(char[] a,NutsSession session) {
-        if (!CoreStringUtils.isBlank(a)) {
+        if (!(a==null || NutsUtilStrings.isBlank(new String(a)))) {
             char[] idc = (getId()+":").toCharArray();
             if (a.length > idc.length + 1) {
                 boolean ok = true;
@@ -70,7 +69,7 @@ public class PlainNutsAuthenticationAgent implements NutsAuthenticationAgent {
             char[] credentialId,
             Map<String, String> envProvider,
             NutsSession session) {
-        if (CoreStringUtils.isBlank(credentials)) {
+        if (credentials==null || NutsUtilStrings.isBlank(new String(credentials))) {
             return null;
         } else {
             char[] val = credentials;

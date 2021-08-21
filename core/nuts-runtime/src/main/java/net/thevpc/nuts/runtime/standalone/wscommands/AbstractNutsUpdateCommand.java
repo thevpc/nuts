@@ -6,7 +6,6 @@
 package net.thevpc.nuts.runtime.standalone.wscommands;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 import java.time.Instant;
 import java.util.*;
@@ -367,7 +366,7 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
     public NutsUpdateCommand addLockedId(String id) {
         checkSession();
         NutsWorkspace ws = getSession().getWorkspace();
-        if (!CoreStringUtils.isBlank(id)) {
+        if (!NutsUtilStrings.isBlank(id)) {
             lockedIds.add(ws.id().parser().setLenient(false).parse(id));
         }
         return this;

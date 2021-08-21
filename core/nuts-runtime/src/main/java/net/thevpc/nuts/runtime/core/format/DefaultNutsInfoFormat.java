@@ -12,7 +12,6 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsJavaSdkUtils;
 import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
 import net.thevpc.nuts.runtime.core.util.CoreTimeUtils;
@@ -232,7 +231,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
     }
 
     private static String key(String prefix, String key) {
-        if (CoreStringUtils.isBlank(prefix)) {
+        if (NutsUtilStrings.isBlank(prefix)) {
             return key;
         }
         return prefix + "." + key;

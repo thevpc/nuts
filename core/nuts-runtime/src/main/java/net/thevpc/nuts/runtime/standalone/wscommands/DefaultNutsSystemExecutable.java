@@ -5,13 +5,11 @@
  */
 package net.thevpc.nuts.runtime.standalone.wscommands;
 
-import java.util.*;
-
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.core.app.DefaultNutsCommandLine;
+import net.thevpc.nuts.runtime.core.util.ProcessExecHelper;
+
+import java.util.*;
 
 /**
  * @author thevpc
@@ -22,19 +20,17 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
     String[] executorOptions;
     NutsSession traceSession;
     NutsSession execSession;
-    private boolean showCommand = false;
-    private boolean root;
     NutsExecCommand execCommand;
-    private boolean inheritSystemIO;
+    private boolean showCommand = false;
+    private final boolean inheritSystemIO;
 
     public DefaultNutsSystemExecutable(String[] cmd,
-            String[] executorOptions, NutsSession traceSession, NutsSession execSession, NutsExecCommand execCommand, boolean root) {
+                                       String[] executorOptions, NutsSession traceSession, NutsSession execSession, NutsExecCommand execCommand) {
         super(cmd[0],
                 execSession.getWorkspace().commandLine().create(cmd).toString(),
                 NutsExecutableType.SYSTEM);
         this.inheritSystemIO = execCommand.isInheritSystemIO();
         this.cmd = cmd;
-        this.root = root;
         this.execCommand = execCommand;
         this.executorOptions = executorOptions == null ? new String[0] : executorOptions;
         this.traceSession = traceSession;
@@ -59,57 +55,28 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
         return null;
     }
 
-    private String[] resolveUserOrRootCommand() {
-        if (root) {
-            NutsSession session = execCommand.getSession();
-            NutsWorkspaceUtils.checkSession(execSession.getWorkspace(), session);
-            switch (session.getWorkspace().env().getOsFamily()) {
-                case LINUX:
-                case UNIX:
-                case MACOS: {
-                    List<String> a = new ArrayList<>();
-                    a.addAll(Arrays.asList("su", "-c"));
-                    a.addAll(Arrays.asList(execCommand.getCommand()));
-                    return a.toArray(new String[0]);
-                }
-                case WINDOWS: {
-                    String s = (String) session.getProperty("WINDOWS_ROOT_USER");
-                    if (s == null) {
-                        s = session.getWorkspace().env().getEnv("WINDOWS_ROOT_USER", null);
-                    }
-                    if (CoreStringUtils.isBlank(s)) {
-                        s = "Administrator";
-                    }
-                    List<String> a = new ArrayList<>();
-                    a.addAll(Arrays.asList("runas", "/user:" + s));
-                    a.add(new DefaultNutsCommandLine(Arrays.asList(execCommand.getCommand())).toString());
-                    return a.toArray(new String[0]);
-                }
-                default: {
-                    throw new NutsExecutionException(session, NutsMessage.cstyle("ROOT_CMD: unsupported Platform %s", session.getWorkspace().env().getOsFamily()), 12);
-                }
-            }
-        } else {
-            return execCommand.getCommand();
-        }
-    }
-
-    private CoreIOUtils.ProcessExecHelper resolveExecHelper() {
+    private ProcessExecHelper resolveExecHelper() {
         Map<String, String> e2 = null;
         Map<String, String> env1 = execCommand.getEnv();
         if (env1 != null) {
             e2 = new HashMap<>((Map) env1);
         }
-        return NutsWorkspaceUtils.of(traceSession).execAndWait(
-                resolveUserOrRootCommand(), e2, CoreIOUtils.toPath(execCommand.getDirectory()),
+        return ProcessExecHelper.ofArgs(
+                execCommand.getCommand(), e2,
+                CoreIOUtils.toPath(execCommand.getDirectory()),
                 traceSession.getTerminal(),
                 execSession.getTerminal(), showCommand, true, execCommand.getSleepMillis(),
                 inheritSystemIO,
                 /*redirectErr*/ false,
                 /*fileIn*/ null,
                 /*fileOut*/ null,
+                execCommand.getRunAs(),
                 traceSession);
     }
+
+
+
+
 
     @Override
     public void execute() {
@@ -135,11 +102,7 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
 
     @Override
     public String toString() {
-        if (root) {
-            return "ROOT_CMD " + execSession.getWorkspace().commandLine().create(cmd).toString();
-        } else {
-            return "USER_CMD " + execSession.getWorkspace().commandLine().create(cmd).toString();
-        }
+        return execCommand.getRunAs() + "_CMD " + execSession.getWorkspace().commandLine().create(cmd).toString();
     }
 
 }

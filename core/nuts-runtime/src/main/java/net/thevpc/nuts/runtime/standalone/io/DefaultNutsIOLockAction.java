@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.io;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -134,7 +133,7 @@ public class DefaultNutsIOLockAction extends AbstractNutsIOLockAction {
         if (lockedObject instanceof NutsId) {
             NutsId nid = (NutsId) lockedObject;
             String face = nid.getFace();
-            if (CoreStringUtils.isBlank(face)) {
+            if (NutsUtilStrings.isBlank(face)) {
                 face = "content";
             }
             return Paths.get(getWs().locations().setSession(getSession()).getStoreLocation((NutsId) lockedObject, NutsStoreLocation.RUN)).resolve("nuts-" + face);

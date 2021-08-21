@@ -26,8 +26,6 @@ package net.thevpc.nuts.runtime.standalone.repos;
 import java.io.File;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.spi.NutsRepositoryFactoryComponent;
 
 import java.io.InputStream;
@@ -37,7 +35,6 @@ import java.util.Map;
 import net.thevpc.nuts.runtime.core.repos.NutsRepositorySelector;
 import net.thevpc.nuts.runtime.core.repos.NutsRepositoryType;
 import net.thevpc.nuts.runtime.core.repos.NutsRepositoryURL;
-import static net.thevpc.nuts.spi.NutsComponent.DEFAULT_SUPPORT;
 
 /**
  * Created by vpc on 1/15/17.
@@ -51,9 +48,9 @@ public class DefaultNutsRepoFactoryComponent implements NutsRepositoryFactoryCom
             return NO_SUPPORT;
         }
         String repositoryType = criteria.getConstraints().getType();
-        if (CoreStringUtils.isBlank(repositoryType)) {
+        if (NutsUtilStrings.isBlank(repositoryType)) {
             String location = criteria.getConstraints().getLocation();
-            if (!CoreStringUtils.isBlank(location)) {
+            if (!NutsUtilStrings.isBlank(location)) {
                 NutsRepositoryURL nru = new NutsRepositoryURL(location);
                 if (nru.getRepositoryType().isNuts()) {
                     criteria.getConstraints().setType(nru.getRepositoryType().toString());
@@ -107,7 +104,7 @@ public class DefaultNutsRepoFactoryComponent implements NutsRepositoryFactoryCom
                 && !"nuts:api".equals(repositoryType)) {
             return NO_SUPPORT;
         }
-        if (CoreStringUtils.isBlank(location)) {
+        if (NutsUtilStrings.isBlank(location)) {
             return DEFAULT_SUPPORT;
         }
         if (!location.contains("://")) {
@@ -132,13 +129,13 @@ public class DefaultNutsRepoFactoryComponent implements NutsRepositoryFactoryCom
     @Override
     public NutsRepository create(NutsAddRepositoryOptions options, NutsSession session, NutsRepository parentRepository) {
         NutsRepositoryConfig config = options.getConfig();
-        if (CoreStringUtils.isBlank(config.getType())) {
-            if (CoreStringUtils.isBlank(config.getLocation())) {
+        if (NutsUtilStrings.isBlank(config.getType())) {
+            if (NutsUtilStrings.isBlank(config.getLocation())) {
                 config.setType(NutsConstants.RepoTypes.NUTS);
             }
         }
         if (NutsConstants.RepoTypes.NUTS.equals(config.getType())) {
-            if (CoreStringUtils.isBlank(config.getLocation()) || CoreIOUtils.isPathFile(config.getLocation())) {
+            if (NutsUtilStrings.isBlank(config.getLocation()) || CoreIOUtils.isPathFile(config.getLocation())) {
                 return new NutsFolderRepository(options, session, parentRepository);
             }
             if (CoreIOUtils.isPathURL(config.getLocation())) {

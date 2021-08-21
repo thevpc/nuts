@@ -27,7 +27,6 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.common.DefaultObservableMap;
 import net.thevpc.nuts.runtime.core.common.ObservableMap;
 import net.thevpc.nuts.runtime.standalone.repos.DefaultNutsRepositoryEnvManager;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.spi.NutsRepositorySPI;
 
 import java.nio.file.Paths;
@@ -213,7 +212,7 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
         String ext = getIdExtension(id, session);
         if (!ext.equals(NutsConstants.Files.DESCRIPTOR_FILE_EXTENSION) && !ext.equals(".pom")) {
             String c = id.getClassifier();
-            if (!CoreStringUtils.isBlank(c)) {
+            if (!NutsUtilStrings.isBlank(c)) {
                 classifier = "-" + c;
             }
         }

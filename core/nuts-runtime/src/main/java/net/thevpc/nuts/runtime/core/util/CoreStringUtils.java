@@ -249,61 +249,6 @@ public final class CoreStringUtils {
         return new String(s);
     }
 
-    /**
-     * copied from StringUtils (in order to remove dependency)
-     *
-     * @param value value
-     * @return trimmed value
-     */
-    public static String trim(String value) {
-        if (value == null) {
-            return "";
-        }
-        return value.trim();
-    }
-
-    /**
-     * copied from StringUtils (in order to remove dependency)
-     *
-     * @param str string
-     * @return trimmed value
-     */
-    public static String trimToNull(String str) {
-        if (str == null) {
-            return null;
-        }
-        String trimmed = str.trim();
-        if (trimmed.isEmpty()) {
-            return null;
-        }
-        return trimmed;
-    }
-
-    /**
-     * copied from StringUtils (in order to remove dependency)
-     *
-     * @param string value
-     * @return true if forBlank
-     */
-    public static boolean isBlank(String string) {
-        return string == null || string.trim().isEmpty();
-    }
-
-    public static boolean isBlank(NutsVersion string) {
-        return string == null || string.isBlank();
-    }
-
-    public static boolean isBlank(char[] string) {
-        if (string == null || string.length == 0) {
-            return true;
-        }
-        for (char c : string) {
-            if (c > ' ') {
-                return false;
-            }
-        }
-        return true;
-    }
 
     //    /**
 //     * copied from StringUtils (in order to remove dependency)
@@ -470,7 +415,7 @@ public final class CoreStringUtils {
      */
     public static String coalesce(String... cmd) {
         for (String string : cmd) {
-            if (!isBlank(string)) {
+            if (!NutsUtilStrings.isBlank(string)) {
                 return string;
             }
         }

@@ -32,7 +32,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
@@ -64,7 +63,7 @@ public class DefaultNutsIOHashAction implements NutsIOHashAction {
 
     @Override
     public NutsIOHashAction setAlgorithm(String algorithm) {
-        if (CoreStringUtils.isBlank(algorithm)) {
+        if (NutsUtilStrings.isBlank(algorithm)) {
             algorithm = null;
         }
         try {

@@ -29,7 +29,6 @@ import java.util.ArrayList;
 
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.toolbox.nsh.bundles._StringUtils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -145,7 +144,7 @@ public class WhoamiCommand extends SimpleNshBuiltin {
                     NutsUser ruser = repository.security().getEffectiveUser(login);
                     if (ruser != null && (ruser.getGroups().length > 0
                             || ruser.getPermissions().length > 0
-                            || !_StringUtils.isBlank(ruser.getRemoteIdentity()))) {
+                            || !NutsUtilStrings.isBlank(ruser.getRemoteIdentity()))) {
                         RepoResult rt = new RepoResult();
                         rr.add(rt);
                         rt.name = repository.getName();

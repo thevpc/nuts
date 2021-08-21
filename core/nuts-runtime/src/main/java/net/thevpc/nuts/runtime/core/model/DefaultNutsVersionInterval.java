@@ -27,9 +27,9 @@ package net.thevpc.nuts.runtime.core.model;
 
 import java.io.Serializable;
 import net.thevpc.nuts.NutsConstants;
+import net.thevpc.nuts.NutsUtilStrings;
 import net.thevpc.nuts.NutsVersion;
 import net.thevpc.nuts.NutsVersionInterval;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 /**
  * Created by vpc on 2/1/17.
@@ -48,19 +48,19 @@ public class DefaultNutsVersionInterval implements NutsVersionInterval, Serializ
     public DefaultNutsVersionInterval(boolean inclusiveLowerBoundary, boolean inclusiveUpperBoundary, String min, String max) {
         this.includeLowerBound = inclusiveLowerBoundary;
         this.includeUpperBound = inclusiveUpperBoundary;
-        this.lowerBound = CoreStringUtils.trimToNull(min);
-        this.upperBound = CoreStringUtils.trimToNull(max);
+        this.lowerBound = NutsUtilStrings.trimToNull(min);
+        this.upperBound = NutsUtilStrings.trimToNull(max);
     }
 
     @Override
     public boolean acceptVersion(NutsVersion version) {
-        if (!CoreStringUtils.isBlank(lowerBound) && !lowerBound.equals(NutsConstants.Versions.LATEST) && !lowerBound.equals(NutsConstants.Versions.RELEASE)) {
+        if (!NutsUtilStrings.isBlank(lowerBound) && !lowerBound.equals(NutsConstants.Versions.LATEST) && !lowerBound.equals(NutsConstants.Versions.RELEASE)) {
             int t = version.compareTo(lowerBound);
             if ((includeLowerBound && t < 0) || (!includeLowerBound && t <= 0)) {
                 return false;
             }
         }
-        if (!CoreStringUtils.isBlank(upperBound) && !upperBound.equals(NutsConstants.Versions.LATEST) && !upperBound.equals(NutsConstants.Versions.RELEASE)) {
+        if (!NutsUtilStrings.isBlank(upperBound) && !upperBound.equals(NutsConstants.Versions.LATEST) && !upperBound.equals(NutsConstants.Versions.RELEASE)) {
             int t = version.compareTo(upperBound);
             return (!includeUpperBound || t <= 0) && (includeUpperBound || t < 0);
         }
@@ -69,7 +69,7 @@ public class DefaultNutsVersionInterval implements NutsVersionInterval, Serializ
 
     @Override
     public boolean isFixedValue() {
-        return includeLowerBound && includeUpperBound && CoreStringUtils.trim(lowerBound).equals(CoreStringUtils.trim(upperBound))
+        return includeLowerBound && includeUpperBound && NutsUtilStrings.trim(lowerBound).equals(NutsUtilStrings.trim(upperBound))
                 && !NutsConstants.Versions.LATEST.equals(lowerBound) && !NutsConstants.Versions.RELEASE.equals(lowerBound);
     }
 

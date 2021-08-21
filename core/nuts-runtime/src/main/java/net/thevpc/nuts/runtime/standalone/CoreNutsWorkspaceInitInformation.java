@@ -26,7 +26,6 @@ package net.thevpc.nuts.runtime.standalone;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.model.CoreNutsWorkspaceOptions;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.spi.NutsBootWorkspaceFactory;
 
 import java.io.File;
@@ -187,7 +186,7 @@ public final class CoreNutsWorkspaceInitInformation implements NutsWorkspaceInit
             this.global = options.isGlobal();
             this.javaCommand = options.getJavaCommand();
             this.javaOptions = options.getJavaOptions();
-            this.apiVersion = CoreStringUtils.trimToNull(options.getApiVersion());
+            this.apiVersion = NutsUtilStrings.trimToNull(options.getApiVersion());
         }
         return this;
     }
@@ -452,7 +451,7 @@ public final class CoreNutsWorkspaceInitInformation implements NutsWorkspaceInit
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder().append("NutsBootConfig{");
-        if (!CoreStringUtils.isBlank(apiVersion)) {
+        if (!NutsUtilStrings.isBlank(apiVersion)) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }
@@ -470,25 +469,25 @@ public final class CoreNutsWorkspaceInitInformation implements NutsWorkspaceInit
 //            }
 //            sb.append("runtimeDependencies='").append(runtimeDependenciesSet).append('\'');
 //        }
-        if (!CoreStringUtils.isBlank(bootRepositories)) {
+        if (!NutsUtilStrings.isBlank(bootRepositories)) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }
             sb.append("bootRepositories='").append(bootRepositories).append('\'');
         }
-        if (!CoreStringUtils.isBlank(javaCommand)) {
+        if (!NutsUtilStrings.isBlank(javaCommand)) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }
             sb.append("javaCommand='").append(javaCommand).append('\'');
         }
-        if (!CoreStringUtils.isBlank(javaOptions)) {
+        if (!NutsUtilStrings.isBlank(javaOptions)) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }
             sb.append("javaOptions='").append(javaOptions).append('\'');
         }
-        if (!CoreStringUtils.isBlank(workspace)) {
+        if (!NutsUtilStrings.isBlank(workspace)) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }

@@ -35,7 +35,6 @@ import java.util.*;
 import java.util.regex.Pattern;
 import net.thevpc.nuts.runtime.bundles.string.GlobUtils;
 import net.thevpc.nuts.runtime.core.model.DefaultNutsVersion;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 /**
  *
@@ -74,8 +73,8 @@ public class JavascriptHelper {
                 }
                 return GlobUtils.ofContains(pattern).matcher(value.toString()).matches();
             }
-            if (CoreStringUtils.isBlank(pattern)) {
-                return CoreStringUtils.isBlank(value.toString());
+            if (NutsUtilStrings.isBlank(pattern)) {
+                return NutsUtilStrings.isBlank(value.toString());
             }
             if (value instanceof NutsId) {
                 NutsIdFilter f = session.getWorkspace().id().filter().byExpression(pattern);
@@ -92,10 +91,6 @@ public class JavascriptHelper {
                 return f == null || f.acceptVersion((NutsVersion) value, session);
             }
             return true;
-        }
-
-        public String trim(String s) {
-            return CoreStringUtils.trim(s);
         }
 
         public int compareVersions(String v1, String v2) {
@@ -134,7 +129,7 @@ public class JavascriptHelper {
             engine = createManagerJdk();
         }
         try {
-            if (CoreStringUtils.isBlank(initExprs)) {
+            if (NutsUtilStrings.isBlank(initExprs)) {
                 initExprs = "";
             }
             engine.eval("function accept(x) { " + initExprs + code + " }");

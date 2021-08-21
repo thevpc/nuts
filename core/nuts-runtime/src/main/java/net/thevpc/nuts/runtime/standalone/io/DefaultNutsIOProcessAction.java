@@ -2,13 +2,11 @@ package net.thevpc.nuts.runtime.standalone.io;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.io.DefaultNutsProcessInfo;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsCollectionResult;
 import net.thevpc.nuts.runtime.bundles.iter.IteratorBuilder;
 import net.thevpc.nuts.runtime.bundles.iter.IteratorUtils;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
@@ -98,7 +96,7 @@ public class DefaultNutsIOProcessAction implements NutsIOProcessAction {
         if (v != null) {
             return v;
         }
-        NutsVersionFilter nvf = CoreStringUtils.isBlank(version) ? null : ws.version().parser().parse(version).filter();
+        NutsVersionFilter nvf = NutsUtilStrings.isBlank(version) ? null : ws.version().parser().parse(version).filter();
         NutsSdkLocation[] availableJava = ws.sdks().setSession(session).find("java",
                 java -> "jdk".equals(java.getPackaging()) && (nvf == null || nvf.acceptVersion(ws.version().parser().parse(java.getVersion()), session))
         );
@@ -132,7 +130,7 @@ public class DefaultNutsIOProcessAction implements NutsIOProcessAction {
     @Override
     public NutsResultList<NutsProcessInfo> getResultList() {
         checkSession();
-        String processType = CoreStringUtils.trim(getType());
+        String processType = NutsUtilStrings.trim(getType());
         if (processType.toLowerCase().startsWith("java#")) {
             return getResultListJava(processType.substring("java#".length()));
         } else if (processType.toLowerCase().equals("java")) {
@@ -157,7 +155,7 @@ public class DefaultNutsIOProcessAction implements NutsIOProcessAction {
                 cmd = jdkHome + File.separator + "bin" + File.separator + cmd;
             }
             b = getSession().getWorkspace().exec()
-                    .setExecutionType(NutsExecutionType.USER_CMD)
+                    .setExecutionType(NutsExecutionType.SYSTEM)
                     .addCommand(cmd)
                     .addCommand("-l" + (mainArgs ? "m" : "") + (vmArgs ? "v" : ""))
                     .setRedirectErrorStream(true)

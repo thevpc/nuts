@@ -29,7 +29,6 @@ package net.thevpc.nuts.runtime.standalone.config;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.iter.IteratorUtils;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.spi.NutsTransportConnection;
 
 import java.io.InputStreamReader;
@@ -58,9 +57,9 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
                             + String.format("?repositoryUuid=%s&name=%s&repo=%s&group=%s"
                                     + "&os=%s&osdist=%s&arch=%s&face=%s&"/*alternative=%s*/,
                             getRepository().getUuid(),
-                            CoreStringUtils.trim(id.getArtifactId()), CoreStringUtils.trim(id.getRepository()), CoreStringUtils.trim(id.getGroupId()), CoreStringUtils.trim(id.getOs()),
-                            CoreStringUtils.trim(id.getOsdist()), CoreStringUtils.trim(id.getArch()), CoreStringUtils.trim(id.getFace())
-//                , CoreStringUtils.trim(id.getAlternative())
+                            NutsUtilStrings.trim(id.getArtifactId()), NutsUtilStrings.trim(id.getRepository()), NutsUtilStrings.trim(id.getGroupId()), NutsUtilStrings.trim(id.getOs()),
+                            NutsUtilStrings.trim(id.getOsdist()), NutsUtilStrings.trim(id.getArch()), NutsUtilStrings.trim(id.getFace())
+//                , NutsUtilStrings.trim(id.getAlternative())
                     );
                     try {
                         NutsTransportConnection clientFacade = CoreIOUtils.getHttpClientFacade(session,
@@ -113,9 +112,9 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
         String URL = "http://localhost:7070/indexer/" + NutsConstants.Folders.ID + "/delete"
                 + String.format("?repositoryUuid=%s&name=%s&repo=%s&group=%s&version=%s"
                         + "&os=%s&osdist=%s&arch=%s&face=%s"/*&alternative=%s*/, getRepository().getUuid(),
-                CoreStringUtils.trim(id.getArtifactId()), CoreStringUtils.trim(id.getRepository()), CoreStringUtils.trim(id.getGroupId()), CoreStringUtils.trim(id.getVersion().toString()),
-                CoreStringUtils.trim(id.getOs()), CoreStringUtils.trim(id.getOsdist()), CoreStringUtils.trim(id.getArch()), CoreStringUtils.trim(id.getFace())
-//                ,CoreStringUtils.trim(id.getAlternative())
+                NutsUtilStrings.trim(id.getArtifactId()), NutsUtilStrings.trim(id.getRepository()), NutsUtilStrings.trim(id.getGroupId()), NutsUtilStrings.trim(id.getVersion().toString()),
+                NutsUtilStrings.trim(id.getOs()), NutsUtilStrings.trim(id.getOsdist()), NutsUtilStrings.trim(id.getArch()), NutsUtilStrings.trim(id.getFace())
+//                ,NutsUtilStrings.trim(id.getAlternative())
         );
         try {
             NutsTransportConnection clientFacade = CoreIOUtils.getHttpClientFacade(session,
@@ -136,9 +135,9 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
         String URL = "http://localhost:7070/indexer/" + NutsConstants.Folders.ID + "/addData"
                 + String.format("?repositoryUuid=%s&name=%s&repo=%s&group=%s&version=%s"
                         + "&os=%s&osdist=%s&arch=%s&face=%s"/*&alternative=%s*/, getRepository().getUuid(),
-                CoreStringUtils.trim(id.getArtifactId()), CoreStringUtils.trim(id.getRepository()), CoreStringUtils.trim(id.getGroupId()), CoreStringUtils.trim(id.getVersion().toString()),
-                CoreStringUtils.trim(id.getOs()), CoreStringUtils.trim(id.getOsdist()), CoreStringUtils.trim(id.getArch()), CoreStringUtils.trim(id.getFace())
-//                ,CoreStringUtils.trim(id.getAlternative())
+                NutsUtilStrings.trim(id.getArtifactId()), NutsUtilStrings.trim(id.getRepository()), NutsUtilStrings.trim(id.getGroupId()), NutsUtilStrings.trim(id.getVersion().toString()),
+                NutsUtilStrings.trim(id.getOs()), NutsUtilStrings.trim(id.getOsdist()), NutsUtilStrings.trim(id.getArch()), NutsUtilStrings.trim(id.getFace())
+//                ,NutsUtilStrings.trim(id.getAlternative())
         );
         try {
             NutsTransportConnection clientFacade = CoreIOUtils.getHttpClientFacade(session,

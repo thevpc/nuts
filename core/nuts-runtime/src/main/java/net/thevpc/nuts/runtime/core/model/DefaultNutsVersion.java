@@ -44,7 +44,7 @@ public class DefaultNutsVersion extends DefaultNutsTokenFilter implements NutsVe
     private VersionParts parts;
     private transient NutsSession session;
     public static NutsVersion valueOf(String value, NutsSession session) {
-        value = CoreStringUtils.trim(value);
+        value = NutsUtilStrings.trim(value);
         if (value.isEmpty()) {
             return new DefaultNutsVersion("",session);
         }
@@ -52,7 +52,7 @@ public class DefaultNutsVersion extends DefaultNutsTokenFilter implements NutsVe
     }
 
     private DefaultNutsVersion(String expression,NutsSession session) {
-        super(CoreStringUtils.trim(expression));
+        super(NutsUtilStrings.trim(expression));
         this.session=session;
     }
 
@@ -193,14 +193,14 @@ public class DefaultNutsVersion extends DefaultNutsTokenFilter implements NutsVe
 
     @Override
     public boolean matches(String expression) {
-        if (CoreStringUtils.isBlank(expression)) {
+        if (NutsUtilStrings.isBlank(expression)) {
             return true;
         }
         return DefaultNutsVersionFilter.parse(expression,session).acceptVersion(this, session);
     }
 
     public static boolean versionMatches(String version, String pattern) {
-        if (isBlank(pattern)) {
+        if (isBlankVersion(pattern)) {
             return true;
         }
         return pattern.equals(version);
@@ -233,8 +233,8 @@ public class DefaultNutsVersion extends DefaultNutsTokenFilter implements NutsVe
     }
 
     public static int compareVersions(String v1, String v2) {
-        v1 = CoreStringUtils.trim(v1);
-        v2 = CoreStringUtils.trim(v2);
+        v1 = NutsUtilStrings.trim(v1);
+        v2 = NutsUtilStrings.trim(v2);
         if (v1.equals(v2)) {
             return 0;
         }
@@ -361,7 +361,7 @@ public class DefaultNutsVersion extends DefaultNutsTokenFilter implements NutsVe
     }
 
     private static VersionParts splitVersionParts2(String v1) {
-        v1 = CoreStringUtils.trim(v1);
+        v1 = NutsUtilStrings.trim(v1);
         List<VersionPart> parts = new ArrayList<>();
         StringBuilder last = new StringBuilder();
         boolean digit = false;
@@ -397,7 +397,7 @@ public class DefaultNutsVersion extends DefaultNutsTokenFilter implements NutsVe
     }
 
     private static String[] splitVersionParts(String v1) {
-        v1 = CoreStringUtils.trim(v1);
+        v1 = NutsUtilStrings.trim(v1);
         List<String> parts = new ArrayList<>();
         StringBuilder last = new StringBuilder();
         for (char c : v1.toCharArray()) {
@@ -440,15 +440,15 @@ public class DefaultNutsVersion extends DefaultNutsTokenFilter implements NutsVe
         }
     }
 
-    public static boolean isBlank(String pattern) {
-        if (CoreStringUtils.isBlank(pattern)) {
+    public static boolean isBlankVersion(String pattern) {
+        if (NutsUtilStrings.isBlank(pattern)) {
             return true;
         }
         return NutsConstants.Versions.LATEST.equals(pattern) || NutsConstants.Versions.RELEASE.equals(pattern);
     }
 
     public static boolean isStaticVersionPattern(String pattern) {
-        if (isBlank(pattern)) {
+        if (isBlankVersion(pattern)) {
             return false;
         }
         if (pattern.contains("[") || pattern.contains("]") || pattern.contains(",") || pattern.contains("*")) {

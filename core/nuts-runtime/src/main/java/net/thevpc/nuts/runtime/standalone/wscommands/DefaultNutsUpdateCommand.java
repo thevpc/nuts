@@ -109,10 +109,10 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         NutsUpdateResult apiUpdate = null;
         NutsVersion bootVersion0 = ws.getApiVersion();
         NutsVersion bootVersion = bootVersion0;
-        if (!CoreStringUtils.isBlank(this.getApiVersion())) {
+        if (!(this.getApiVersion()==null || this.getApiVersion().isBlank())) {
             bootVersion = this.getApiVersion();
         }
-        if (this.isApi() || !CoreStringUtils.isBlank(this.getApiVersion())) {
+        if (this.isApi() || !(this.getApiVersion()==null || this.getApiVersion().isBlank())) {
             apiUpdate = checkCoreUpdate(ws.id().parser().parse(NutsConstants.Ids.NUTS_API), this.getApiVersion(), session, Type.API, now);
             if (apiUpdate.isUpdateAvailable()) {
                 bootVersion = apiUpdate.getAvailable().getId().getVersion();
@@ -593,7 +593,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                     oldId = confId;
                 }
                 NutsVersion v = bootApiVersion;
-                if (CoreStringUtils.isBlank(v)) {
+                if (v==null|| v.isBlank()) {
                     v = getSession().getWorkspace().version().parse(NutsConstants.Versions.LATEST);
                 }
                 try {

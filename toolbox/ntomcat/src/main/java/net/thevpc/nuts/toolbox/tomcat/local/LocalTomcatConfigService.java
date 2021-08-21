@@ -389,7 +389,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
 //        b.setOutput(context.getSession().out());
 //        b.setErr(context.getSession().err());
         NutsExecCommand b = context.getWorkspace().exec()
-                .setExecutionType(NutsExecutionType.USER_CMD).setSession(context.getSession());
+                .setExecutionType(NutsExecutionType.SYSTEM).setSession(context.getSession());
         b.addCommand(catalinaHome + "/bin/catalina." + ext);
         b.addCommand(catalinaCommand);
 //        if (catalinaHome != null) {

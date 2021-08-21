@@ -26,8 +26,6 @@
 package net.thevpc.nuts.runtime.core.filters;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.filters.id.*;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 import java.lang.reflect.Array;
 import java.util.*;
@@ -324,10 +322,10 @@ public class CoreFilterUtils {
     }
 
     public static boolean matchesPackaging(String packaging, NutsDescriptor desc, NutsSession session) {
-        if (CoreStringUtils.isBlank(packaging)) {
+        if (NutsUtilStrings.isBlank(packaging)) {
             return true;
         }
-        if (CoreStringUtils.isBlank(desc.getPackaging())) {
+        if (NutsUtilStrings.isBlank(desc.getPackaging())) {
             return true;
         }
         NutsIdParser parser = session.getWorkspace().id().parser();
@@ -345,7 +343,7 @@ public class CoreFilterUtils {
     }
 
     public static boolean matchesArch(String arch, NutsDescriptor desc, NutsSession session) {
-        if (CoreStringUtils.isBlank(arch)) {
+        if (NutsUtilStrings.isBlank(arch)) {
             return true;
         }
         NutsIdParser parser = session.getWorkspace().id().parser();
@@ -353,7 +351,7 @@ public class CoreFilterUtils {
         String[] all = desc.getArch();
         if (all != null && all.length > 0) {
             for (String v : all) {
-                if (CoreStringUtils.isBlank(v)) {
+                if (NutsUtilStrings.isBlank(v)) {
                     return true;
                 }
                 NutsId y = parser.setLenient(false).parse(v);
@@ -370,7 +368,7 @@ public class CoreFilterUtils {
     }
 
     public static boolean matchesOs(String os, NutsDescriptor desc, NutsSession session) {
-        if (CoreStringUtils.isBlank(os)) {
+        if (NutsUtilStrings.isBlank(os)) {
             return true;
         }
         NutsIdParser parser = session.getWorkspace().id().parser();
@@ -378,7 +376,7 @@ public class CoreFilterUtils {
         String[] all = desc.getOs();
         if (all != null && all.length > 0) {
             for (String v : all) {
-                if (CoreStringUtils.isBlank(v)) {
+                if (NutsUtilStrings.isBlank(v)) {
                     return true;
                 }
                 NutsId y = parser.setLenient(false).parse(v);
@@ -395,7 +393,7 @@ public class CoreFilterUtils {
     }
 
     public static boolean matchesOsdist(String osdist, NutsDescriptor desc, NutsSession session) {
-        if (CoreStringUtils.isBlank(osdist)) {
+        if (NutsUtilStrings.isBlank(osdist)) {
             return true;
         }
         NutsIdParser parser = session.getWorkspace().id().parser();
@@ -403,7 +401,7 @@ public class CoreFilterUtils {
         String[] all = desc.getOsdist();
         if (all != null && all.length > 0) {
             for (String v : all) {
-                if (CoreStringUtils.isBlank(v)) {
+                if (NutsUtilStrings.isBlank(v)) {
                     return true;
                 }
                 NutsId y = parser.setLenient(false).parse(v);
@@ -421,7 +419,7 @@ public class CoreFilterUtils {
     }
 
     public static boolean matchesPlatform(String platform, NutsDescriptor desc, NutsSession session) {
-        if (CoreStringUtils.isBlank(platform)) {
+        if (NutsUtilStrings.isBlank(platform)) {
             return true;
         }
         NutsIdParser parser = session.getWorkspace().id().parser();
@@ -429,7 +427,7 @@ public class CoreFilterUtils {
         String[] all = desc.getPlatform();
         if (all != null && all.length > 0) {
             for (String v : all) {
-                if (CoreStringUtils.isBlank(v)) {
+                if (NutsUtilStrings.isBlank(v)) {
                     return true;
                 }
                 NutsId y = parser.setLenient(false).parse(v);

@@ -83,7 +83,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.*;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
@@ -231,12 +230,12 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 info.getRuntimeId().getVersion().toString(),
                 defaultSession());
 
-        boolean errorTheme=false;
+        boolean errorTheme = false;
         NutsTextManager text = text().setSession(defaultSession());
-        try{
+        try {
             NutsTextFormatTheme theme = text.getTheme();
-        }catch (Exception ex){
-            errorTheme=true;
+        } catch (Exception ex) {
+            errorTheme = true;
             //unable to load theme;
             text.setTheme("");//set default!
         }
@@ -244,9 +243,9 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         NutsLoggerOp LOGCRF = LOG.with().level(Level.CONFIG).verb(NutsLogVerb.READ).formatted().session(defaultSession());
         NutsLoggerOp LOGCSF = LOG.with().level(Level.CONFIG).verb(NutsLogVerb.START).formatted().session(defaultSession());
 //        NutsFormatManager formats = this.formats().setSession(defaultSession());
-        if(errorTheme){
+        if (errorTheme) {
             LOG.with().level(Level.CONFIG).verb(NutsLogVerb.FAIL).formatted().session(defaultSession())
-                    .log("unable to load theme {0}. Reset to default!",info.getOptions().getTheme());
+                    .log("unable to load theme {0}. Reset to default!", info.getOptions().getTheme());
         }
         if (LOG.isLoggable(Level.CONFIG)) {
             LOGCSF.log(" ===============================================================================");
@@ -535,7 +534,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
 
             } else {
                 uuid = configModel.getStoreModelBoot().getUuid();
-                if (CoreStringUtils.isBlank(uuid)) {
+                if (NutsUtilStrings.isBlank(uuid)) {
                     uuid = UUID.randomUUID().toString();
                     configModel.getStoreModelBoot().setUuid(uuid);
                 }
@@ -566,13 +565,13 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 for (NutsRepositorySelector.Selection loc : expected.resolveSelectors(null)) {
                     NutsAddRepositoryOptions d = NutsRepositorySelector.createRepositoryOptions(loc, false, defaultSession());
                     String n = d.getName();
-                    String ruuid = (CoreStringUtils.isBlank(n) ? "temporary" : n) + "_" + UUID.randomUUID().toString().replace("-", "");
+                    String ruuid = (NutsUtilStrings.isBlank(n) ? "temporary" : n) + "_" + UUID.randomUUID().toString().replace("-", "");
                     d.setName(ruuid);
                     d.setTemporary(true);
                     d.setEnabled(true);
                     d.setFailSafe(false);
                     if (d.getConfig() != null) {
-                        d.getConfig().setName(CoreStringUtils.isBlank(n) ? ruuid : n);
+                        d.getConfig().setName(NutsUtilStrings.isBlank(n) ? ruuid : n);
                         d.getConfig().setStoreLocationStrategy(NutsStoreLocationStrategy.STANDALONE);
                     }
                     repos().setSession(defaultSession()).addRepository(d);
@@ -602,7 +601,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
 //            }
             if (uoptions.getUserName() != null && uoptions.getUserName().trim().length() > 0) {
                 char[] password = uoptions.getCredentials();
-                if (CoreStringUtils.isBlank(password)) {
+                if (password == null || NutsUtilStrings.isBlank(new String(password))) {
                     password = term().setSession(defaultSession()).getTerminal().readPassword("Password : ");
                 }
                 this.security().setSession(defaultSession()).login(uoptions.getUserName(), password);
@@ -653,7 +652,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             session.getWorkspace().config().save();
         }
 
-        session.getWorkspace().commands().addLauncher(
+        session.getWorkspace().env().addLauncher(
                 new NutsLauncherOptions()
                         .setId(getApiId())
                         .setCreateScript(true)
@@ -666,7 +665,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         NutsWorkspaceUtils.checkSession(this, session);
         NutsTextManager text = text().setSession(session);
         Set<NutsId> companionIds = getCompanionIds(session);
-        if(companionIds.isEmpty()){
+        if (companionIds.isEmpty()) {
             return;
         }
         if (session.isPlainTrace()) {
@@ -717,9 +716,9 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         boolean someChange = false;
 
         for (NutsDependency d : oldDependencies) {
-            if (CoreStringUtils.isBlank(d.getScope())
+            if (NutsUtilStrings.isBlank(d.getScope())
                     || d.getVersion().isBlank()
-                    || CoreStringUtils.isBlank(d.getOptional())) {
+                    || NutsUtilStrings.isBlank(d.getOptional())) {
                 NutsDependency standardDependencyOk = null;
                 for (NutsDependency standardDependency : effectiveDescriptor.getStandardDependencies()) {
                     if (standardDependency.getSimpleName().equals(d.toId().getShortName())) {
@@ -728,13 +727,13 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                     }
                 }
                 if (standardDependencyOk != null) {
-                    if (CoreStringUtils.isBlank(d.getScope())
-                            && !CoreStringUtils.isBlank(standardDependencyOk.getScope())) {
+                    if (NutsUtilStrings.isBlank(d.getScope())
+                            && !NutsUtilStrings.isBlank(standardDependencyOk.getScope())) {
                         someChange = true;
                         d = d.builder().setScope(standardDependencyOk.getScope()).build();
                     }
-                    if (CoreStringUtils.isBlank(d.getOptional())
-                            && !CoreStringUtils.isBlank(standardDependencyOk.getOptional())) {
+                    if (NutsUtilStrings.isBlank(d.getOptional())
+                            && !NutsUtilStrings.isBlank(standardDependencyOk.getOptional())) {
                         someChange = true;
                         d = d.builder().setOptional(standardDependencyOk.getOptional()).build();
                     }
@@ -773,7 +772,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
 
     protected void initializeWorkspace(String archetype, NutsSession session) {
         checkSession(session);
-        if (CoreStringUtils.isBlank(archetype)) {
+        if (NutsUtilStrings.isBlank(archetype)) {
             archetype = "default";
         }
         NutsWorkspaceArchetypeComponent instance = null;
@@ -970,7 +969,9 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                     .setTraceSession(session.copy())
                     .setExecSession(session.copy())
                     .setDefinition(def).setArguments(args).setFailFast(true).setTemporary(false)
-                    .setExecutionType(env().setSession(session).getBootOptions().getExecutionType());
+                    .setExecutionType(env().setSession(session).getBootOptions().getExecutionType())
+                    .setRunAs(NutsRunAs.currentUser())// install or update always uses current user
+                    ;
             NutsArtifactCall installer = def.getDescriptor().getInstaller();
             if (installer != null) {
                 cc.addExecutorArguments(installer.getArguments());
@@ -1230,7 +1231,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             NutsUserConfig adminSecurity = NutsWorkspaceConfigManagerExt.of(config())
                     .getModel()
                     .getUser(NutsConstants.Users.ADMIN, session);
-            if (adminSecurity == null || CoreStringUtils.isBlank(adminSecurity.getCredentials())) {
+            if (adminSecurity == null || NutsUtilStrings.isBlank(adminSecurity.getCredentials())) {
                 if (LOG.isLoggable(Level.CONFIG)) {
                     LOG.with().session(session).level(Level.CONFIG).verb(NutsLogVerb.FAIL).log(NutsConstants.Users.ADMIN + " user has no credentials. reset to default");
                 }
@@ -1311,21 +1312,21 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         String a = thisId.getArtifactId();
         String g = thisId.getGroupId();
         String v = thisId.getVersion().getValue();
-        if ((CoreStringUtils.isBlank(g)) || (CoreStringUtils.isBlank(v))) {
+        if ((NutsUtilStrings.isBlank(g)) || (NutsUtilStrings.isBlank(v))) {
             NutsId[] parents = descriptor.getParents();
             for (NutsId parent : parents) {
                 NutsId p = fetch().setSession(session).setId(parent).setEffective(true).getResultId();
-                if (CoreStringUtils.isBlank(g)) {
+                if (NutsUtilStrings.isBlank(g)) {
                     g = p.getGroupId();
                 }
-                if (CoreStringUtils.isBlank(v)) {
+                if (NutsUtilStrings.isBlank(v)) {
                     v = p.getVersion().getValue();
                 }
-                if (!CoreStringUtils.isBlank(g) && !CoreStringUtils.isBlank(v)) {
+                if (!NutsUtilStrings.isBlank(g) && !NutsUtilStrings.isBlank(v)) {
                     break;
                 }
             }
-            if (CoreStringUtils.isBlank(g) || CoreStringUtils.isBlank(v)) {
+            if (NutsUtilStrings.isBlank(g) || NutsUtilStrings.isBlank(v)) {
                 throw new NutsNotFoundException(session, thisId,
                         NutsMessage.cstyle("unable to fetchEffective for %s. best Result is %s", thisId, thisId)
                         , null);
@@ -1862,7 +1863,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         INSTALL,
         UPDATE,
         REQUIRE;
-        private String id;
+        private final String id;
 
         InstallStrategy0() {
             this.id = name().toLowerCase().replace('_', '-');
@@ -1873,4 +1874,5 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             return id;
         }
     }
+
 }

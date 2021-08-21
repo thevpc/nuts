@@ -25,9 +25,7 @@
 */
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
-import net.thevpc.nuts.NutsExecutionException;
-import net.thevpc.nuts.NutsMessage;
-import net.thevpc.nuts.NutsSingleton;
+import net.thevpc.nuts.*;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -35,9 +33,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import net.thevpc.nuts.NutsCommandLine;
+
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
-import net.thevpc.nuts.toolbox.nsh.bundles._StringUtils;
 import net.thevpc.nuts.toolbox.nsh.bundles._URLUtils;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellExecutionContext;
 
@@ -97,10 +94,10 @@ public class WgetCommand extends SimpleNshBuiltin {
             throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("%s",ex), ex, 100);
         }
         String urlName = _URLUtils.getURLName(url);
-        if (!_StringUtils.isBlank(output2)) {
+        if (!NutsUtilStrings.isBlank(output2)) {
             output2 = output2.replace("{}", urlName);
         }
-        Path file = Paths.get(context.getGlobalContext().getAbsolutePath(_StringUtils.isBlank(output2) ? urlName : output2));
+        Path file = Paths.get(context.getGlobalContext().getAbsolutePath(NutsUtilStrings.isBlank(output2) ? urlName : output2));
         context.getWorkspace().io()
                 .copy()
                 .setSession(context.getSession())

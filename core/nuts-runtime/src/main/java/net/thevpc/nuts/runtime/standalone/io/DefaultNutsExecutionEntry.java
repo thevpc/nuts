@@ -27,7 +27,7 @@ package net.thevpc.nuts.runtime.standalone.io;
 
 import java.util.Objects;
 import net.thevpc.nuts.NutsExecutionEntry;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+import net.thevpc.nuts.NutsUtilStrings;
 
 /**
  *
@@ -40,8 +40,8 @@ public class DefaultNutsExecutionEntry implements NutsExecutionEntry {
     private final boolean app;
 
     public DefaultNutsExecutionEntry(String name, boolean defaultEntry, boolean app) {
-        if (CoreStringUtils.isBlank(name)) {
-            throw new IllegalArgumentException("Empty name");
+        if (NutsUtilStrings.isBlank(name)) {
+            throw new IllegalArgumentException("empty name");
         }
         this.name = name;
         this.defaultEntry = defaultEntry;

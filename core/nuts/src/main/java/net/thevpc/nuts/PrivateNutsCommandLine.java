@@ -156,11 +156,9 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
                             status = START;
                             break;
                         }
-                        case '\'': {
-                            throw new NutsBootException("illegal char " + c);
-                        }
-                        case '"': {
-                            throw new NutsBootException("illegal char " + c);
+                        case '\'':
+                        case '"':{
+                            throw new NutsBootException(NutsMessage.cstyle("illegal char %s", c));
                         }
                         case '\\': {
                             i++;
@@ -229,7 +227,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
                 break;
             }
             case IN_QUOTED_WORD: {
-                throw new NutsBootException("expected '");
+                throw new NutsBootException(NutsMessage.cstyle("expected %s","'"));
             }
         }
         return args.toArray(new String[0]);
@@ -309,7 +307,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
 
     @Override
     public NutsCommandLine setAutoComplete(NutsCommandAutoComplete autoComplete) {
-        throw new NutsBootException(NOT_SUPPORTED);
+        throw new NutsBootException(NutsMessage.plain(NOT_SUPPORTED));
     }
 
     @Override
@@ -730,7 +728,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
 
     @Override
     public NutsCommandLine parseLine(String commandLine) {
-        throw new NutsBootException("unsupported parseLine");
+        throw new NutsBootException(NutsMessage.plain("unsupported parseLine"));
     }
 
     public NutsCommandLine setArguments(List<String> arguments) {
@@ -748,16 +746,16 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
 
     public void throwError(NutsMessage message) {
         StringBuilder m = new StringBuilder();
-        if (!PrivateNutsUtils.isBlank(commandName)) {
+        if (!NutsUtilStrings.isBlank(commandName)) {
             m.append(commandName).append(" : ");
         }
         m.append(message);
-        throw new NutsBootException(m.toString());
+        throw new NutsBootException(NutsMessage.plain(m.toString()));
     }
 
     @Override
     public void process(NutsCommandLineConfigurable defaultConfigurable, NutsCommandLineProcessor processor) {
-        throw new NutsBootException("not supported operation process(...)");
+        throw new NutsBootException(NutsMessage.plain("not supported operation process(...)"));
     }
 
     @Override
@@ -1000,7 +998,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
 
     @Override
     public NutsCommandLineFormat formatter() {
-        throw new NutsBootException(NOT_SUPPORTED);
+        throw new NutsBootException(NutsMessage.plain(NOT_SUPPORTED));
     }
 
     /**
@@ -1152,7 +1150,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
 
         @Override
         public int getInt() {
-            if (PrivateNutsUtils.isBlank(expression)) {
+            if (NutsUtilStrings.isBlank(expression)) {
                 throw new NumberFormatException("missing value");
             }
             return Integer.parseInt(expression);
@@ -1178,7 +1176,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
 
         @Override
         public int getInt(int defaultValue) {
-            if (PrivateNutsUtils.isBlank(expression)) {
+            if (NutsUtilStrings.isBlank(expression)) {
                 return defaultValue;
             }
             try {
@@ -1217,7 +1215,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
 
         @Override
         public long getLong() {
-            if (PrivateNutsUtils.isBlank(expression)) {
+            if (NutsUtilStrings.isBlank(expression)) {
                 throw new NumberFormatException("missing value");
             }
             return Long.parseLong(expression);
@@ -1225,7 +1223,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
 
         @Override
         public long getLong(long defaultValue) {
-            if (PrivateNutsUtils.isBlank(expression)) {
+            if (NutsUtilStrings.isBlank(expression)) {
                 return defaultValue;
             }
             try {
@@ -1250,7 +1248,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
 
         @Override
         public double getDouble() {
-            if (PrivateNutsUtils.isBlank(expression)) {
+            if (NutsUtilStrings.isBlank(expression)) {
                 throw new NumberFormatException("missing value");
             }
             return Double.parseDouble(expression);
@@ -1258,7 +1256,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
 
         @Override
         public double getDouble(double defaultValue) {
-            if (PrivateNutsUtils.isBlank(expression)) {
+            if (NutsUtilStrings.isBlank(expression)) {
                 return defaultValue;
             }
             try {
@@ -1339,7 +1337,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
 
         @Override
         public String getStringOptionPrefix() {
-            throw new NutsBootException("unsupported operation getStringOptionPrefix");
+            throw new NutsBootException(NutsMessage.plain("unsupported operation getStringOptionPrefix"));
         }
 
         @Override
@@ -1349,12 +1347,12 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
 
         @Override
         public NutsArgument getArgumentOptionName() {
-            throw new NutsBootException("unsupported operation getArgumentOptionName");
+            throw new NutsBootException(NutsMessage.plain("unsupported operation getArgumentOptionName"));
         }
 
         @Override
         public String getStringOptionName() {
-            throw new NutsBootException("unsupported operation getStringOptionName");
+            throw new NutsBootException(NutsMessage.plain("unsupported operation getStringOptionName"));
         }
 
         @Override

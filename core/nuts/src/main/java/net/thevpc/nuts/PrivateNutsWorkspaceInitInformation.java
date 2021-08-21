@@ -156,7 +156,7 @@ final class PrivateNutsWorkspaceInitInformation implements NutsWorkspaceInitInfo
             this.global = options.isGlobal();
             this.javaCommand = options.getJavaCommand();
             this.javaOptions = options.getJavaOptions();
-            this.apiVersion = PrivateNutsUtils.trimToNull(options.getApiVersion());
+            this.apiVersion = NutsUtilStrings.trimToNull(options.getApiVersion());
         }
         return this;
     }
@@ -417,7 +417,7 @@ final class PrivateNutsWorkspaceInitInformation implements NutsWorkspaceInitInfo
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder().append("NutsBootConfig{");
-        if (!PrivateNutsUtils.isBlank(apiVersion)) {
+        if (!NutsUtilStrings.isBlank(apiVersion)) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }
@@ -435,25 +435,25 @@ final class PrivateNutsWorkspaceInitInformation implements NutsWorkspaceInitInfo
 //            }
 //            sb.append("runtimeDependencies='").append(runtimeDependenciesSet).append('\'');
 //        }
-        if (!PrivateNutsUtils.isBlank(bootRepositories)) {
+        if (!NutsUtilStrings.isBlank(bootRepositories)) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }
             sb.append("bootRepositories='").append(bootRepositories).append('\'');
         }
-        if (!PrivateNutsUtils.isBlank(javaCommand)) {
+        if (!NutsUtilStrings.isBlank(javaCommand)) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }
             sb.append("javaCommand='").append(javaCommand).append('\'');
         }
-        if (!PrivateNutsUtils.isBlank(javaOptions)) {
+        if (!NutsUtilStrings.isBlank(javaOptions)) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }
             sb.append("javaOptions='").append(javaOptions).append('\'');
         }
-        if (!PrivateNutsUtils.isBlank(workspace)) {
+        if (!NutsUtilStrings.isBlank(workspace)) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }

@@ -26,8 +26,7 @@
 package net.thevpc.nuts.runtime.standalone.executors;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+import net.thevpc.nuts.runtime.core.util.ProcessExecHelper;
 import net.thevpc.nuts.runtime.bundles.io.IProcessExecHelper;
 import net.thevpc.nuts.NutsExecutorComponent;
 
@@ -99,15 +98,10 @@ public class ProcessExecutorComponent implements NutsExecutorComponent {
                 dir = execArgs[i].substring(arg.indexOf('=') + 1);
             }
         }
-        String directory = CoreStringUtils.isBlank(dir) ? null : executionContext.getWorkspace().io().expandPath(dir);
-        return NutsWorkspaceUtils.of(executionContext.getTraceSession()).execAndWait(nutMainFile,
-                executionContext.getTraceSession(), 
-                executionContext.getExecSession(), 
-                executionContext.getExecutorProperties(),
-                app.toArray(new String[0]),
-                osEnv, directory, showCommand, true,
-                executionContext.getSleepMillis(),
-                false,false,null,null
+        String directory = NutsUtilStrings.isBlank(dir) ? null : executionContext.getWorkspace().io().expandPath(dir);
+        return ProcessExecHelper.ofDefinition(nutMainFile,
+                app.toArray(new String[0]), osEnv, directory, executionContext.getExecutorProperties(), showCommand, true, executionContext.getSleepMillis(), false, false, null, null, executionContext.getRunAs(), executionContext.getTraceSession(),
+                executionContext.getExecSession()
         );
     }
 }

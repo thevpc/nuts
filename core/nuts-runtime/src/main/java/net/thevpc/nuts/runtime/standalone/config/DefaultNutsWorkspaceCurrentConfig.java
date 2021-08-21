@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.standalone.config;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.NutsHomeLocationsMap;
 import net.thevpc.nuts.runtime.standalone.NutsStoreLocationsMap;
 
@@ -109,7 +108,7 @@ public final class DefaultNutsWorkspaceCurrentConfig {
         Path[] homes = new Path[NutsStoreLocation.values().length];
         for (NutsStoreLocation type : NutsStoreLocation.values()) {
             String ss = Nuts.getPlatformHomeFolder(getStoreLocationLayout(), type, homeLocations, isGlobal(), getName());
-            if (CoreStringUtils.isBlank(ss)) {
+            if (NutsUtilStrings.isBlank(ss)) {
                 throw new NutsIllegalArgumentException(session,
                         NutsMessage.cstyle("missing Home for %s", type));
             }
@@ -121,7 +120,7 @@ public final class DefaultNutsWorkspaceCurrentConfig {
             switch (location) {
                 default: {
                     String typeLocation = storeLocations.get(typeId);
-                    if (CoreStringUtils.isBlank(typeLocation)) {
+                    if (NutsUtilStrings.isBlank(typeLocation)) {
                         switch (storeLocationStrategy) {
                             case STANDALONE: {
                                 storeLocations.put(typeId, Paths.get(workspaceLocation).resolve(location.id()).toString());
@@ -501,7 +500,7 @@ public final class DefaultNutsWorkspaceCurrentConfig {
 ////        String n = CoreNutsUtils.getArrItem(getStoreLocations(), folderType.ordinal());
 ////        switch (getStoreLocationStrategy()) {
 ////            case STANDALONE: {
-////                if (CoreStringUtils.isBlank(n)) {
+////                if (NutsUtilStrings.isBlank(n)) {
 ////                    n = folderType.toString().toLowerCase();
 ////                }
 ////                n = n.trim();

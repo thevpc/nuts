@@ -12,7 +12,6 @@ import java.util.*;
 import net.thevpc.nuts.runtime.core.config.NutsRepositoryConfigManagerExt;
 import net.thevpc.nuts.runtime.core.config.NutsWorkspaceConfigManagerExt;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.wscommands.DefaultNutsAddUserCommand;
 import net.thevpc.nuts.runtime.standalone.wscommands.DefaultNutsRemoveUserCommand;
 import net.thevpc.nuts.runtime.standalone.wscommands.DefaultNutsUpdateUserCommand;
@@ -45,7 +44,7 @@ public class DefaultNutsRepositorySecurityModel {
     public void checkAllowed(String right, String operationName, NutsSession session) {
         NutsWorkspaceUtils.checkSession(repository.getWorkspace(), session);
         if (!isAllowed(right, session)) {
-            if (CoreStringUtils.isBlank(operationName)) {
+            if (NutsUtilStrings.isBlank(operationName)) {
                 throw new NutsSecurityException(session, right + " not allowed!");
             } else {
                 throw new NutsSecurityException(session, operationName + ": " + right + " not allowed!");
@@ -160,7 +159,7 @@ public class DefaultNutsRepositorySecurityModel {
     }
 
     public NutsAuthenticationAgent getAuthenticationAgent(String id, NutsSession session) {
-        id = CoreStringUtils.trim(id);
+        id = NutsUtilStrings.trim(id);
         if (id.isEmpty()) {
             id = ((DefaultNutsRepoConfigManager) repository.config())
                     .getModel()

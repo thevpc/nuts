@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Set;
 import net.thevpc.nuts.NutsClassifierMapping;
 import net.thevpc.nuts.NutsIdLocation;
+import net.thevpc.nuts.NutsUtilStrings;
 
 /**
  *
@@ -49,8 +50,8 @@ public class CoreCollectionUtils {
         LinkedHashSet<String> set = new LinkedHashSet<>();
         if (values0 != null) {
             for (String a : values0) {
-                a = CoreStringUtils.trim(a);
-                if (!CoreStringUtils.isBlank(a) && !set.contains(a)) {
+                a = NutsUtilStrings.trim(a);
+                if (!NutsUtilStrings.isBlank(a)) {
                     set.add(a);
                 }
             }

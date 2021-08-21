@@ -1,9 +1,6 @@
 package net.thevpc.nuts.runtime.core.log;
 
-import net.thevpc.nuts.NutsLogConfig;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+import net.thevpc.nuts.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,7 +10,6 @@ import java.util.logging.FileHandler;
 import java.util.logging.Filter;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
-import net.thevpc.nuts.NutsConstants;
 
 public class NutsLogFileHandler extends FileHandler {
 
@@ -34,10 +30,10 @@ public class NutsLogFileHandler extends FileHandler {
             level = Level.INFO;
         }
         int MEGA = 1024 * 1024;
-        if (name == null || CoreStringUtils.isBlank(name)) {
+        if (name == null || NutsUtilStrings.isBlank(name)) {
             name = Instant.now().toString().replace(":", "") + "-nuts-%g.log";
         }
-        if (folder == null || CoreStringUtils.isBlank(folder)) {
+        if (folder == null || NutsUtilStrings.isBlank(folder)) {
             folder = logFolder + "/" + NutsConstants.Folders.ID + "/net/thevpc/nuts/nuts/" + session.getWorkspace().getApiVersion();
         }
         String pattern = (folder + "/" + name).replace('/', File.separatorChar);

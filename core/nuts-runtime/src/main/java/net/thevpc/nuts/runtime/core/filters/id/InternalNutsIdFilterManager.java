@@ -3,7 +3,6 @@ package net.thevpc.nuts.runtime.core.filters.id;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.filters.InternalNutsTypedFilters;
 import net.thevpc.nuts.runtime.core.filters.NutsPatternIdFilter;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.bundles.io.NutsInstallStatusIdFilter;
 
 import java.util.List;
@@ -68,7 +67,7 @@ public class InternalNutsIdFilterManager extends InternalNutsTypedFilters<NutsId
 
     @Override
     public NutsIdFilter byExpression(String expression) {
-        if (CoreStringUtils.isBlank(expression)) {
+        if (NutsUtilStrings.isBlank(expression)) {
             return always();
         }
         return NutsJavascriptIdFilter.valueOf(expression, getSession());

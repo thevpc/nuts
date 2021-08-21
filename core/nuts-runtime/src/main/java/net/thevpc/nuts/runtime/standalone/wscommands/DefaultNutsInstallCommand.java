@@ -359,39 +359,40 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
             }
             throw new NutsInstallException(getSession(), null, NutsMessage.formatted(sb.toString().trim()), null);
         }
-
+        NutsMemoryPrintStream mout = session.getWorkspace().io().createMemoryPrintStream();
         if (getSession().isPlainTrace() || (!list.emptyCommand && getSession().getConfirm() == NutsConfirmationMode.ASK)) {
-            printList(out, "new","installed",
+            printList(mout, "new","installed",
                     list.ids(x -> x.doInstall && !x.isAlreadyExists()));
 
-            printList(out, "new","required",
+            printList(mout, "new","required",
                     list.ids(x -> x.doRequire && !x.doInstall && !x.isAlreadyExists()));
-            printList(out,
+            printList(mout,
                     "required", "re-required",
                     list.ids(x -> (!x.doInstall && x.doRequire) && x.isAlreadyRequired()));
-            printList(out,
+            printList(mout,
                     "required",
                     "installed",
                     list.ids(x -> x.doInstall && x.isAlreadyRequired() && !x.isAlreadyInstalled()));
 
-            printList(out,
+            printList(mout,
                     "required",
                     "re-reinstalled",
                     list.ids(x -> x.doInstall && x.isAlreadyInstalled()));
-            printList(out,
+            printList(mout,
                     "installed",
                     "set as default",
                     list.ids(x -> x.doSwitchVersion && x.isAlreadyInstalled()));
-            printList(out,
+            printList(mout,
                     "installed",
                     "ignored",
                     list.ids(x -> x.ignored));
         }
+        mout.println("should we proceed?");
         List<NutsId> nonIgnored = list.ids(x -> !x.ignored);
         if (!nonIgnored.isEmpty() && !ws.term().setSession(getSession()).getTerminal().ask()
                 .resetLine()
                 .setSession(session)
-                .forBoolean("should we proceed?")
+                .forBoolean(mout.toString())
                 .setDefaultValue(true)
                 .setCancelMessage("installation cancelled : %s ", nonIgnored.stream().map(NutsId::getFullName).collect(Collectors.joining(", ")))
                 .getBooleanValue()) {

@@ -25,7 +25,6 @@ package net.thevpc.nuts.runtime.core.app;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.parsers.StringTokenizerUtils;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 import java.util.*;
 
@@ -536,7 +535,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
 
     @Override
     public void throwError(NutsMessage message) {
-        if (CoreStringUtils.isBlank(commandName)) {
+        if (NutsUtilStrings.isBlank(commandName)) {
             throw new NutsIllegalArgumentException(session, message);
         }
         throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("%s : %s", commandName, message));
@@ -584,7 +583,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
     @Override
     public void throwError(NutsString message) {
         NutsTextBuilder m = getWorkspace().text().builder();
-        if (!CoreStringUtils.isBlank(commandName)) {
+        if (!NutsUtilStrings.isBlank(commandName)) {
             m.append(commandName).append(" : ");
         }
         m.append(message);

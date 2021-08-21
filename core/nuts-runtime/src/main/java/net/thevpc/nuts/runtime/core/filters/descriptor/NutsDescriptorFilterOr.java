@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 public class NutsDescriptorFilterOr extends AbstractDescriptorFilter implements JsNutsDescriptorFilter {
 
@@ -60,7 +59,7 @@ public class NutsDescriptorFilterOr extends AbstractDescriptorFilter implements 
             if (id instanceof JsNutsDescriptorFilter) {
                 JsNutsDescriptorFilter b = (JsNutsDescriptorFilter) id;
                 String expr = b.toJsNutsDescriptorFilterExpr();
-                if (CoreStringUtils.isBlank(expr)) {
+                if (NutsUtilStrings.isBlank(expr)) {
                     return null;
                 }
                 sb.append("(").append(expr).append("')");

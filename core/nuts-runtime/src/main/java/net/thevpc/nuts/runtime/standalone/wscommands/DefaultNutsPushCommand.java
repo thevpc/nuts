@@ -54,7 +54,7 @@ public class DefaultNutsPushCommand extends AbstractDefaultNutsPushCommand {
         NutsRepositoryFilter repositoryFilter = null;
         Map<NutsId, NutsDefinition> toProcess = new LinkedHashMap<>();
         for (NutsId id : this.getIds()) {
-            if (CoreStringUtils.trim(id.getVersion().getValue()).endsWith(CoreNutsConstants.Versions.CHECKED_OUT_EXTENSION)) {
+            if (NutsUtilStrings.trim(id.getVersion().getValue()).endsWith(CoreNutsConstants.Versions.CHECKED_OUT_EXTENSION)) {
                 throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("invalid version %s", id.getVersion()));
             }
             NutsDefinition file = ws.fetch().setId(id).setSession(session.copy().setTransitive(false)).setContent(true).getResultDefinition();
@@ -72,7 +72,7 @@ public class DefaultNutsPushCommand extends AbstractDefaultNutsPushCommand {
             NutsDefinition file = entry.getValue();
             NutsFetchMode fetchMode = this.isOffline() ? NutsFetchMode.LOCAL : NutsFetchMode.REMOTE;
             NutsWorkspaceUtils wu = NutsWorkspaceUtils.of(session);
-            if (CoreStringUtils.isBlank(this.getRepository())) {
+            if (NutsUtilStrings.isBlank(this.getRepository())) {
                 Set<String> errors = new LinkedHashSet<>();
                 //TODO : CHECK ME, why offline?
                 boolean ok = false;
@@ -111,7 +111,7 @@ public class DefaultNutsPushCommand extends AbstractDefaultNutsPushCommand {
                 if (!repo.config().isEnabled()) {
                     throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("repository %s is disabled", repo.getName()));
                 }
-                NutsId effId = ws.config().createContentFaceId(id.builder().setProperties("").build(), file.getDescriptor()) //                        .setAlternative(CoreStringUtils.trim(file.getDescriptor().getAlternative()))
+                NutsId effId = ws.config().createContentFaceId(id.builder().setProperties("").build(), file.getDescriptor()) //                        .setAlternative(NutsUtilStrings.trim(file.getDescriptor().getAlternative()))
                         ;
                 NutsRepositorySPI repoSPI = wu.repoSPI(repo);
                 repoSPI.deploy().setSession(session)

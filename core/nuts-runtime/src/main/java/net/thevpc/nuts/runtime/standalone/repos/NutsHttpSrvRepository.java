@@ -26,7 +26,6 @@ package net.thevpc.nuts.runtime.standalone.repos;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.config.NutsRepositoryConfigManagerExt;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.NutsLogVerb;
 import net.thevpc.nuts.runtime.bundles.io.CoreSecurityUtils;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
@@ -233,13 +232,13 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
             credentials = "anonymous".toCharArray();
         } else {
             newLogin = security.getRemoteIdentity();
-            if (CoreStringUtils.isBlank(newLogin)) {
+            if (NutsUtilStrings.isBlank(newLogin)) {
                 NutsUser security2 = getWorkspace().security().setSession(session).findUser(login);
                 if (security2 != null) {
                     newLogin = security2.getRemoteIdentity();
                 }
             }
-            if (CoreStringUtils.isBlank(newLogin)) {
+            if (NutsUtilStrings.isBlank(newLogin)) {
                 newLogin = login;
             } else {
                 security = NutsRepositoryConfigManagerExt.of(config()).getModel().getUser(newLogin, session);
@@ -255,7 +254,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
         }
 
         String passphrase = env().get(CoreSecurityUtils.ENV_KEY_PASSPHRASE, CoreSecurityUtils.DEFAULT_PASSPHRASE);
-        newLogin = new String(CoreSecurityUtils.defaultEncryptChars(CoreStringUtils.trim(newLogin).toCharArray(), passphrase));
+        newLogin = new String(CoreSecurityUtils.defaultEncryptChars(NutsUtilStrings.trim(newLogin).toCharArray(), passphrase));
         credentials = CoreSecurityUtils.defaultEncryptChars(credentials, passphrase);
         return new String[]{newLogin, new String(credentials)};
     }

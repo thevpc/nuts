@@ -53,8 +53,10 @@ public abstract class AnyNixNdi extends BaseSystemNdi {
     public String createNutsScriptContent(NutsId fnutsId, NdiScriptOptions options) {
         StringBuilder command = new StringBuilder();
         command.append(getExecFileName("nuts")).append(" ").append(varRef("NUTS_OPTIONS")).append(" ");
-        if (options.getExecType() != null) {
-            command.append("--").append(options.getExecType().id());
+        if (options.getLauncher().getNutsOptions() != null) {
+            for (String no : options.getLauncher().getNutsOptions()) {
+                command.append(" ").append(no);
+            }
         }
         command.append(" \"").append(fnutsId).append("\"");
         command.append(" \"$@\"");

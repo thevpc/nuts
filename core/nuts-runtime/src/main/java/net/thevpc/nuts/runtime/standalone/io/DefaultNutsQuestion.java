@@ -1,14 +1,18 @@
 package net.thevpc.nuts.runtime.standalone.io;
 
 import net.thevpc.nuts.*;
-
-import java.util.Arrays;
-
 import net.thevpc.nuts.runtime.standalone.util.NutsConfigurableHelper;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
+import javax.swing.*;
+import java.io.ByteArrayOutputStream;
+import java.util.Arrays;
+
 public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
 
+    private final NutsSessionTerminal terminal;
+    private final NutsPrintStream out;
+    private final NutsWorkspace ws;
     private String message;
     private Object[] messageParameters;
     private String cancelMessage;
@@ -22,10 +26,6 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
     private NutsQuestionFormat<T> format;
     private NutsQuestionParser<T> parser;
     private NutsQuestionValidator<T> validator;
-
-    private final NutsSessionTerminal terminal;
-    private final NutsPrintStream out;
-    private final NutsWorkspace ws;
     private NutsSession session;
     private boolean traceConfirmation = false;
     private boolean executed = false;
@@ -36,37 +36,6 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
         this.ws = ws;
         this.terminal = terminal;
         this.out = out;
-    }
-
-    @Override
-    public NutsQuestion<T> run() {
-        lastResult = execute();
-        executed = true;
-        return this;
-    }
-
-    @Override
-    public Boolean getBooleanValue() {
-        return (Boolean) getValue();
-    }
-
-    @Override
-    public T getValue() {
-        if (!executed) {
-            run();
-        }
-        return (T) lastResult;
-    }
-
-    @Override
-    public NutsSession getSession() {
-        return session;
-    }
-
-    @Override
-    public NutsQuestion<T> setSession(NutsSession session) {
-        this.session = session;
-        return this;
     }
 
     private T execute() {
@@ -100,9 +69,12 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
             os.flush();
             throw new NutsExecutionException(getSession(), NutsMessage.cstyle(
                     "unable to switch to interactive mode for non plain text output format. "
-                    + "You need to provide default response (-y|-n) for question : " + os
+                            + "You need to provide default response (-y|-n) for question : " + os
             ), 243);
         }
+
+        boolean gui = session.isGui() && session.getWorkspace().env().isGraphicalDesktopEnvironment();
+
         String message = this.getMessage();
         if (message.endsWith("\n")) {
             message = message.substring(0, message.length() - 1);
@@ -124,7 +96,13 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
             _acceptedValues = new Object[0];
         }
         while (true) {
-            if(resetLine){
+            NutsPrintStream out = this.out;
+            ByteArrayOutputStream bos = null;
+            if (gui) {
+                bos = new ByteArrayOutputStream();
+                out = session.getWorkspace().io().createPrintStream(bos);
+            }
+            if (resetLine) {
                 out.resetLine();
             }
             out.printf(message, this.getMessageParameters());
@@ -194,10 +172,30 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
                 if (extraInfo) {
                     out.print("?\n");
                     out.flush();
-                    v = terminal.readPassword("\t Please enter value or ```error %s``` to cancel : ", "cancel!");
+                    if (gui) {
+                        out.printf("\t Please enter value or ```error %s``` to cancel : ", "cancel!");
+                        out.flush();
+                        String v0 = showGuiInput(bos.toString(), true);
+                        if (v0 == null) {
+                            v0 = "";
+                        }
+                        v = v0.toCharArray();
+                    } else {
+                        v = terminal.readPassword("\t Please enter value or ```error %s``` to cancel : ", "cancel!");
+                    }
                 } else {
                     out.flush();
-                    v = terminal.readPassword(" ");
+                    if (gui) {
+                        out.printf(" ");
+                        out.flush();
+                        String v0 = showGuiInput(bos.toString(), true);
+                        if (v0 == null) {
+                            v0 = "";
+                        }
+                        v = v0.toCharArray();
+                    } else {
+                        v = terminal.readPassword(" ");
+                    }
                 }
                 if (Arrays.equals("cancel!".toCharArray(), v)) {
                     throw new NutsUserCancelException(getSession());
@@ -217,13 +215,33 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
                 if (extraInfo) {
                     out.print("?\n");
                     out.flush();
-                    v = terminal.readLine("\t Please enter value or ```error %s``` to cancel : ", "cancel!");
+                    if (gui) {
+                        out.printf("\t Please enter value or ```error %s``` to cancel : ", "cancel!");
+                        out.flush();
+                        String v0 = showGuiInput(bos.toString(), false);
+                        if (v0 == null) {
+                            v0 = "";
+                        }
+                        v = v0;
+                    } else {
+                        v = terminal.readLine("\t Please enter value or ```error %s``` to cancel : ", "cancel!");
+                    }
                 } else {
                     out.flush();
-                    v = terminal.readLine(" ? : ");
+                    if (gui) {
+                        out.printf(" ? : ");
+                        out.flush();
+                        String v0 = showGuiInput(bos.toString(), false);
+                        if (v0 == null) {
+                            v0 = "";
+                        }
+                        v = v0;
+                    } else {
+                        v = terminal.readLine(" ? : ");
+                    }
                 }
                 try {
-                    T parsed = (T) p.parse(v, (T) this.getDefaultValue(), this);
+                    T parsed = p.parse(v, this.getDefaultValue(), this);
                     if (this.validator != null) {
                         parsed = this.validator.validate(parsed, this);
                     }
@@ -238,6 +256,46 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
         }
     }
 
+    private String showGuiInput(String str, boolean pwd) {
+        String ft = getSession().getWorkspace().text().parse(str).filteredText();
+        String title = "Nuts Package Manager - " + getSession().getWorkspace().getApiId().getVersion();
+        if (session.getAppId() != null) {
+            try {
+                NutsDefinition def = session.getWorkspace().search().setId(session.getAppId())
+                        .setEffective(true).setLatest(true).getResultDefinitions().first();
+                if (def != null) {
+                    String n = def.getEffectiveDescriptor().getName();
+                    if (!NutsUtilStrings.isBlank(n)) {
+                        title = n + " - " + def.getEffectiveDescriptor().getId().getVersion();
+                    }
+                }
+            } catch (Exception ex) {
+                //
+            }
+        }
+        if(password){
+            JPanel panel = new JPanel();
+            JLabel label = new JLabel(ft);
+            JPasswordField pass = new JPasswordField(10);
+            panel.add(label);
+            panel.add(pass);
+            String[] options = new String[]{"OK", "Cancel"};
+            int option = JOptionPane.showOptionDialog(null, panel, title,
+                    JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
+                    null, options, options[1]);
+            if(option == 0){
+                return new String(pass.getPassword());
+            }
+            return "";
+        }else {
+            String s = JOptionPane.showInputDialog(null, ft, title, JOptionPane.QUESTION_MESSAGE);
+            if (s == null) {
+                s = "";
+            }
+            return s;
+        }
+    }
+
     @Override
     public boolean isResetLine() {
         return resetLine;
@@ -247,6 +305,7 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
     public NutsQuestion<T> resetLine() {
         return resetLine(true);
     }
+
     @Override
     public NutsQuestion<T> resetLine(boolean resetLine) {
         this.resetLine = resetLine;
@@ -259,14 +318,14 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
     }
 
     @Override
-    public NutsQuestion<String> forString(String msg, Object... params) {
-        return ((NutsQuestion<String>) this).setValueType(String.class).setMessage(msg, params);
-    }
-
-    @Override
     public NutsQuestion<char[]> forPassword(String msg, Object... params) {
         this.password = true;
         return ((NutsQuestion<char[]>) this).setValueType(char[].class).setMessage(msg, params);
+    }
+
+    @Override
+    public NutsQuestion<String> forString(String msg, Object... params) {
+        return ((NutsQuestion<String>) this).setValueType(String.class).setMessage(msg, params);
     }
 
     @Override
@@ -298,6 +357,16 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
     }
 
     @Override
+    public String getHintMessage() {
+        return hintMessage;
+    }
+
+    @Override
+    public Object[] getHintMessageParameters() {
+        return hintMessageParameters;
+    }
+
+    @Override
     public String getMessage() {
         return message;
     }
@@ -308,13 +377,13 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
     }
 
     @Override
-    public String getHintMessage() {
-        return hintMessage;
+    public String getCancelMessage() {
+        return cancelMessage;
     }
 
     @Override
-    public Object[] getHintMessageParameters() {
-        return hintMessageParameters;
+    public Object[] getCancelMessageParameters() {
+        return cancelMessageParameters;
     }
 
     @Override
@@ -386,6 +455,60 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
         return this;
     }
 
+    @Override
+    public NutsQuestion<T> setValidator(NutsQuestionValidator<T> validator) {
+        this.validator = validator;
+        return this;
+    }
+
+    @Override
+    public NutsQuestionValidator<T> getValidator() {
+        return this.validator;
+    }
+
+    @Override
+    public NutsQuestion<T> run() {
+        lastResult = execute();
+        executed = true;
+        return this;
+    }
+
+    @Override
+    public Boolean getBooleanValue() {
+        return (Boolean) getValue();
+    }
+
+    @Override
+    public T getValue() {
+        if (!executed) {
+            run();
+        }
+        return (T) lastResult;
+    }
+
+    @Override
+    public NutsSession getSession() {
+        return session;
+    }
+
+    @Override
+    public NutsQuestion<T> setCancelMessage(String message, Object... params) {
+        if (message == null) {
+            this.cancelMessage = null;
+            this.cancelMessageParameters = null;
+        } else {
+            this.cancelMessage = message;
+            this.cancelMessageParameters = params == null ? new Object[0] : params;
+        }
+        return this;
+    }
+
+    @Override
+    public NutsQuestion<T> setSession(NutsSession session) {
+        this.session = session;
+        return this;
+    }
+
     /**
      * configure the current command with the given arguments. This is an
      * override of the {@link NutsCommandLineConfigurable#configure(boolean, java.lang.String...)
@@ -405,8 +528,8 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
      * configure the current forCommand with the given arguments.
      *
      * @param skipUnsupported when true, all unsupported options are skipped
-     * silently
-     * @param commandLine arguments to configure with
+     *                        silently
+     * @param commandLine     arguments to configure with
      * @return {@code this} instance
      */
     @Override
@@ -431,39 +554,6 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
             }
         }
         return false;
-    }
-
-    @Override
-    public NutsQuestion<T> setValidator(NutsQuestionValidator<T> validator) {
-        this.validator = validator;
-        return this;
-    }
-
-    @Override
-    public NutsQuestionValidator<T> getValidator() {
-        return this.validator;
-    }
-
-    @Override
-    public String getCancelMessage() {
-        return cancelMessage;
-    }
-
-    @Override
-    public Object[] getCancelMessageParameters() {
-        return cancelMessageParameters;
-    }
-
-    @Override
-    public NutsQuestion<T> setCancelMessage(String message, Object... params) {
-        if (message == null) {
-            this.cancelMessage = null;
-            this.cancelMessageParameters = null;
-        } else {
-            this.cancelMessage = message;
-            this.cancelMessageParameters = params == null ? new Object[0] : params;
-        }
-        return this;
     }
 
     private void checkSession() {

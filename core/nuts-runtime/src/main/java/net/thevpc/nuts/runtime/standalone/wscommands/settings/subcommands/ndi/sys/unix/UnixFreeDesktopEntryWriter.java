@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.sys.unix;
 
+import net.thevpc.nuts.NutsExecutionType;
 import net.thevpc.nuts.NutsId;
 import net.thevpc.nuts.NutsPrintStream;
 import net.thevpc.nuts.NutsSession;
@@ -31,8 +32,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
-    private NutsSession session;
-    private Path desktopPath;
+    private final NutsSession session;
+    private final Path desktopPath;
 
     public UnixFreeDesktopEntryWriter(NutsSession session, Path desktopPath) {
         this.session = session;
@@ -125,11 +126,12 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
         //    KDE  : 'kbuildsycoca5'
         Path a = NdiUtils.sysWhich("kbuildsycoca5");
         if (a != null) {
-            String outStr = session.getWorkspace().exec().setCommand(a.toString()).userCmd()
+            String outStr = session.getWorkspace().exec().setCommand(a.toString())
+                    .setExecutionType(NutsExecutionType.SYSTEM)
                     .setRedirectErrorStream(true).grabOutputString()
                     .run()
-                    .getOutputString();
-            if(session.isPlainTrace()){
+                    .getOutputString().trim();
+            if (session.isPlainTrace() && !outStr.isEmpty()) {
                 session.out().println(outStr);
             }
         }
@@ -137,11 +139,12 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
         //    GNOME: update-desktop-database ~/.local/share/applications
         a = NdiUtils.sysWhich("update-desktop-database");
         if (a != null) {
-            String outStr = session.getWorkspace().exec().setCommand(a.toString(), System.getProperty("user.home") + "/.local/share/applications").userCmd()
+            String outStr = session.getWorkspace().exec().setCommand(a.toString(), System.getProperty("user.home") + "/.local/share/applications")
+                    .setExecutionType(NutsExecutionType.SYSTEM)
                     .setRedirectErrorStream(true).grabOutputString()
                     .run()
-                    .getOutputString();
-            if(session.isPlainTrace()){
+                    .getOutputString().trim();
+            if (session.isPlainTrace() && !outStr.isEmpty()) {
                 session.out().println(outStr);
             }
         }
@@ -149,22 +152,15 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
         // more generic : xdg-desktop-menu forceupdate
         a = NdiUtils.sysWhich("xdg-desktop-menu");
         if (a != null) {
-            String outStr = session.getWorkspace().exec().setCommand(a.toString(), "forceupdate").userCmd()
+            String outStr = session.getWorkspace().exec().setCommand(a.toString(), "forceupdate")
+                    .setExecutionType(NutsExecutionType.SYSTEM)
                     .setRedirectErrorStream(true).grabOutputString()
                     .run()
-                    .getOutputString();
-            if(session.isPlainTrace()){
+                    .getOutputString().trim();
+            if (session.isPlainTrace() && !outStr.isEmpty()) {
                 session.out().println(outStr);
             }
         }
-    }
-
-    private boolean isKDE() {
-        return "kde".equalsIgnoreCase(getDesktopEnvironment());
-    }
-
-    private boolean isGNOME() {
-        return "gnome".equalsIgnoreCase(getDesktopEnvironment());
     }
 
     private String getDesktopEnvironment() {

@@ -71,7 +71,7 @@ public interface NutsWorkspaceOptionsBuilder extends NutsWorkspaceOptions{
 
     NutsWorkspaceOptionsBuilder setSwitchWorkspace(Boolean value);
 
-    NutsWorkspaceOptionsBuilder setErrors(String[] errors);
+    NutsWorkspaceOptionsBuilder setErrors(NutsMessage[] errors);
 
     NutsWorkspaceOptionsBuilder setDry(Boolean dry);
 
@@ -233,4 +233,12 @@ public interface NutsWorkspaceOptionsBuilder extends NutsWorkspaceOptions{
      * @since 0.8.1
      */
     NutsWorkspaceOptionsBuilder setTheme(String theme);
+
+    /**
+     * set runAs mode
+     * @param runAs runAs
+     * @return {@code this} instance
+     * @since 0.8.1
+     */
+    NutsWorkspaceOptionsBuilder setRunAs(NutsRunAs runAs);
 }

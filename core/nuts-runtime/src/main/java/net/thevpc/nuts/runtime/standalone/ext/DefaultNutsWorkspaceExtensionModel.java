@@ -11,7 +11,6 @@ import net.thevpc.nuts.runtime.core.config.NutsWorkspaceConfigManagerExt;
 import net.thevpc.nuts.runtime.core.io.NutsFormattedPrintStream;
 import net.thevpc.nuts.runtime.core.DefaultNutsClassLoader;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.config.NutsWorkspaceConfigBoot;
 import net.thevpc.nuts.runtime.standalone.DefaultNutsServiceLoader;
@@ -598,7 +597,7 @@ public class DefaultNutsWorkspaceExtensionModel {
                 ;
         List<String> urls = new ArrayList<>();
         for (String r : StringTokenizerUtils.split(repos, "; ")) {
-            if (!CoreStringUtils.isBlank(r)) {
+            if (!NutsUtilStrings.isBlank(r)) {
                 urls.add(r);
             }
         }

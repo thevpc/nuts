@@ -26,6 +26,7 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
     NutsSession traceSession;
     NutsSession execSession;
     NutsExecutionType executionType;
+    NutsRunAs runAs;
     DefaultNutsExecCommand execCommand;
     boolean autoInstall = true;
 
@@ -33,9 +34,10 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
             Map<String, String> env, String dir, boolean failFast,
             NutsSession traceSession,
             NutsSession execSession,
-            NutsExecutionType executionType, DefaultNutsExecCommand execCommand) {
+            NutsExecutionType executionType, NutsRunAs runAs, DefaultNutsExecCommand execCommand) {
         super(commandName, def.getId().getLongName(), NutsExecutableType.ARTIFACT);
         this.def = def;
+        this.runAs = runAs;
         //all these information areavailable, an exception would be thrown if not!
         def.getContent();
         def.getDependencies();
@@ -117,7 +119,7 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
 //                }
 //            }
 //        }
-        execCommand.ws_execId(def, commandName, appArgs, executorOptions, env, dir, failFast, false, traceSession, execSession, executionType, false);
+        execCommand.ws_execId(def, commandName, appArgs, executorOptions, env, dir, failFast, false, traceSession, execSession, executionType,runAs, false);
     }
 
     @Override
@@ -127,7 +129,7 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
             NutsPrintStream out = execSession.out();
             out.printf("[dry] ==install== %s%n", def.getId().getLongName());
         }
-        execCommand.ws_execId(def, commandName, appArgs, executorOptions, env, dir, failFast, false, traceSession, execSession, executionType, true);
+        execCommand.ws_execId(def, commandName, appArgs, executorOptions, env, dir, failFast, false, traceSession, execSession, executionType,runAs, true);
     }
 
     @Override
