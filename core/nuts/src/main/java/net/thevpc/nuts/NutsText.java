@@ -31,5 +31,10 @@ package net.thevpc.nuts;
  * @app.category Format
  */
 public interface NutsText extends NutsString{
+    static NutsString parse(String str, NutsSession session) {
+        PrivateNutsUtils.checkSession(session);
+        return session.getWorkspace().text().parse(str);
+    }
+
     NutsTextType getType();
 }

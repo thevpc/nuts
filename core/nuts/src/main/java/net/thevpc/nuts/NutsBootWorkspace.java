@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -61,7 +61,7 @@ public final class NutsBootWorkspace {
 
     private static final String DELETE_FOLDERS_HEADER = "ATTENTION ! You are about to delete nuts workspace files.";
     private final long creationTime = System.currentTimeMillis();
-    private NutsWorkspaceOptions options;
+    private final NutsWorkspaceOptions options;
     private Supplier<ClassLoader> contextClassLoaderSupplier;
     private int newInstanceRequirements;
     private PrivateNutsWorkspaceInitInformation workspaceInformation;
@@ -102,24 +102,24 @@ public final class NutsBootWorkspace {
     };
     private Set<String> parsedBootRepositories;
     private boolean preparedWorkspace;
-    private PrivateNutsLog LOG = new PrivateNutsLog();
+    private final PrivateNutsLog LOG = new PrivateNutsLog();
     private NutsLogger LOG2;
 
     public NutsBootWorkspace(String... args) {
-        this(Nuts.createOptions().parseArguments(args));
+        this(Nuts.createOptionsBuilder().parseArguments(args).build());
     }
 
     public NutsBootWorkspace(NutsWorkspaceOptions options) {
         if (options == null) {
-            options = Nuts.createOptions();
+            this.options = Nuts.createOptionsBuilder().setCreationTime(creationTime).build();
+        } else if (options.getCreationTime() == 0) {
+            NutsWorkspaceOptionsBuilder copy = options.builder();
+            copy.setCreationTime(creationTime);
+            this.options = copy.build();
+        } else {
+            this.options = options;
         }
         LOG.setOptions(options);
-        if (options.getCreationTime() == 0) {
-            NutsWorkspaceOptionsBuilder copy = options.copy();
-            copy.setCreationTime(creationTime);
-            options = copy;
-        }
-        this.options = (options instanceof NutsWorkspaceOptionsBuilder) ? ((NutsWorkspaceOptionsBuilder) options) : options.copy();
         newInstanceRequirements = 0;
     }
 
@@ -152,8 +152,8 @@ public final class NutsBootWorkspace {
         PrivateNutsRepositorySelector.SelectorList bootRepositories = PrivateNutsRepositorySelector.parse(options.getRepositories());
         return parsedBootRepositories
                 = Arrays.stream(bootRepositories.resolveSelectors(defaults))
-                        .map(x -> x.getUrl())
-                        .collect(Collectors.toSet());
+                .map(x -> x.getUrl())
+                .collect(Collectors.toSet());
     }
 
     public String[] createProcessCommandLine() {
@@ -166,7 +166,7 @@ public final class NutsBootWorkspace {
         Collection<String> bootRepositories = resolveBootRepositories();
         repos.addAll(bootRepositories);
         PrivateNutsUtils.ErrorInfoList errorList = new PrivateNutsUtils.ErrorInfoList();
-        File file = PrivateNutsUtils.Mvn.resolveOrDownloadJar(NutsConstants.Ids.NUTS_API + "#" + workspaceInformation.getApiVersion(),
+        File file = PrivateNutsMavenUtils.resolveOrDownloadJar(NutsConstants.Ids.NUTS_API + "#" + workspaceInformation.getApiVersion(),
                 repos.toArray(new String[0]),
                 workspaceInformation.getLib(), LOG,
                 false,
@@ -183,7 +183,7 @@ public final class NutsBootWorkspace {
                     errors.toString()
             );
             throw new NutsBootException(
-                    NutsMessage.cstyle("unable to load %s#%s",NutsConstants.Ids.NUTS_API, workspaceInformation.getApiVersion())
+                    NutsMessage.cstyle("unable to load %s#%s", NutsConstants.Ids.NUTS_API, workspaceInformation.getApiVersion())
             );
         }
 
@@ -259,10 +259,10 @@ public final class NutsBootWorkspace {
                     lastConfigPath
                             = PrivateNutsUtils.isValidWorkspaceName(_ws)
                             ? PrivateNutsPlatformUtils.getPlatformHomeFolder(
-                                    null, null, null,
-                                    workspaceInformation.isGlobal(),
-                                    PrivateNutsUtils.resolveValidWorkspaceName(_ws)
-                            ) : PrivateNutsUtils.getAbsolutePath(_ws);
+                            null, null, null,
+                            workspaceInformation.isGlobal(),
+                            PrivateNutsUtils.resolveValidWorkspaceName(_ws)
+                    ) : PrivateNutsUtils.getAbsolutePath(_ws);
 
                     PrivateNutsWorkspaceInitInformation configLoaded = PrivateNutsBootConfigLoader.loadBootConfig(lastConfigPath, LOG);
                     if (configLoaded == null) {
@@ -308,7 +308,7 @@ public final class NutsBootWorkspace {
                 homes[type.ordinal()] = PrivateNutsPlatformUtils.getPlatformHomeFolder(workspaceInformation.getStoreLocationLayout(), type, homeLocations,
                         workspaceInformation.isGlobal(), workspaceInformation.getName());
                 if (NutsUtilStrings.isBlank(homes[type.ordinal()])) {
-                    throw new NutsBootException(NutsMessage.cstyle("missing Home for %s",type.id()));
+                    throw new NutsBootException(NutsMessage.cstyle("missing Home for %s", type.id()));
                 }
             }
             NutsStoreLocationStrategy storeLocationStrategy = workspaceInformation.getStoreLocationStrategy();
@@ -371,14 +371,20 @@ public final class NutsBootWorkspace {
                     deleteStoreLocations(false, folders.toArray());
                 }
             }
+            //if recover or reset mode with -K option (SkipWelcome)
+            //as long as there are no applications to run, will exit before creating workspace
+            if (options.getApplicationArguments().length == 0 && options.isSkipBoot()
+                    && (options.isRecover() || options.isReset())) {
+                throw new NutsBootException(null, 0);
+            }
 
             //after eventual clean up
             if (NutsConstants.Versions.LATEST.equalsIgnoreCase(workspaceInformation.getApiVersion())
                     || NutsConstants.Versions.RELEASE.equalsIgnoreCase(workspaceInformation.getApiVersion())
-                    || workspaceInformation.getApiVersion()==null
+                    || workspaceInformation.getApiVersion() == null
                     || "".equals(workspaceInformation.getApiVersion())
             ) {
-                NutsBootId s = PrivateNutsUtils.Mvn.resolveLatestMavenId(NutsBootId.parse(NutsConstants.Ids.NUTS_API), null, LOG, resolveBootRepositories());
+                NutsBootId s = PrivateNutsMavenUtils.resolveLatestMavenId(NutsBootId.parse(NutsConstants.Ids.NUTS_API), null, LOG, resolveBootRepositories());
                 if (s == null) {
                     throw new NutsBootException(NutsMessage.plain("unable to load latest nuts version"));
                 }
@@ -425,7 +431,7 @@ public final class NutsBootWorkspace {
                 //resolve extension id
                 if (workspaceInformation.getRuntimeId() == null) {
                     String apiVersion = workspaceInformation.getApiId().substring(workspaceInformation.getApiId().indexOf('#') + 1);
-                    NutsBootId runtimeId = PrivateNutsUtils.Mvn.resolveLatestMavenId(NutsBootId.parse(NutsConstants.Ids.NUTS_RUNTIME), (rtVersion) -> rtVersion.startsWith(apiVersion + "."), LOG, resolveBootRepositories());
+                    NutsBootId runtimeId = PrivateNutsMavenUtils.resolveLatestMavenId(NutsBootId.parse(NutsConstants.Ids.NUTS_RUNTIME), (rtVersion) -> rtVersion.startsWith(apiVersion + "."), LOG, resolveBootRepositories());
                     if (runtimeId != null) {
                         //LOG.log(Level.FINEST, "[success] Resolved latest runtime-id : {0}", new Object[]{runtimeId});
                     } else {
@@ -438,7 +444,7 @@ public final class NutsBootWorkspace {
                 if (workspaceInformation.getRuntimeId() == null) {
                     workspaceInformation.setRuntimeId(
                             new NutsBootId("net.thevpc.nuts", "nuts-runtime",
-                                    NutsBootVersion.parse( workspaceInformation.getApiVersion().toString() + ".0")
+                                    NutsBootVersion.parse(workspaceInformation.getApiVersion() + ".0")
                                     , false, null, null)
                     );
                     LOG.log(Level.CONFIG, NutsLogVerb.FAIL, "consider default runtime-id : {0}", new Object[]{workspaceInformation.getRuntimeId()});
@@ -446,7 +452,7 @@ public final class NutsBootWorkspace {
                 if (workspaceInformation.getRuntimeId().getVersion().isBlank()) {
                     workspaceInformation.setRuntimeId(
                             new NutsBootId(workspaceInformation.getRuntimeId().getGroupId(), workspaceInformation.getRuntimeId().getArtifactId(),
-                                    NutsBootVersion.parse(workspaceInformation.getApiVersion().toString() + ".0"), false, null, null)
+                                    NutsBootVersion.parse(workspaceInformation.getApiVersion() + ".0"), false, null, null)
                     );
                 }
 
@@ -473,7 +479,7 @@ public final class NutsBootWorkspace {
                             cacheLoaded = true;
                         }
                         if (!cacheLoaded || loadedDeps == null) {
-                            PrivateNutsUtils.Deps depsAndRepos = PrivateNutsUtils.Mvn.loadDependencies(workspaceInformation.getRuntimeId(),
+                            PrivateNutsUtils.Deps depsAndRepos = PrivateNutsMavenUtils.loadDependencies(workspaceInformation.getRuntimeId(),
                                     LOG, bootRepositories0);
                             if (depsAndRepos != null) {
                                 loadedDeps = depsAndRepos.deps;
@@ -485,7 +491,7 @@ public final class NutsBootWorkspace {
                         //
                     }
                     if (loadedDeps == null) {
-                        throw new NutsBootException(NutsMessage.cstyle("unable to load dependencies for %s",rid));
+                        throw new NutsBootException(NutsMessage.cstyle("unable to load dependencies for %s", rid));
                     }
                     workspaceInformation.setRuntimeBootDescriptor(new NutsBootDescriptor(
                             workspaceInformation.getRuntimeId(),
@@ -536,7 +542,7 @@ public final class NutsBootWorkspace {
                                     }
                                 }
                                 if (loadedDeps == null) {
-                                    PrivateNutsUtils.Deps depsAndRepos = PrivateNutsUtils.Mvn.loadDependencies(eid, LOG, bootRepositories0);
+                                    PrivateNutsUtils.Deps depsAndRepos = PrivateNutsMavenUtils.loadDependencies(eid, LOG, bootRepositories0);
                                     if (depsAndRepos != null) {
                                         loadedDeps = depsAndRepos.deps;
                                     }
@@ -544,7 +550,7 @@ public final class NutsBootWorkspace {
                                 if (loadedDeps != null) {
                                     all.add(new NutsBootDescriptor(NutsBootId.parse(extension), loadedDeps.toArray(new NutsBootId[0])));
                                 } else {
-                                    throw new NutsBootException(NutsMessage.cstyle("unable to load dependencies for %s",eid));
+                                    throw new NutsBootException(NutsMessage.cstyle("unable to load dependencies for %s", eid));
                                 }
                             }
                         }
@@ -724,7 +730,7 @@ public final class NutsBootWorkspace {
         URL[] bootClassWorldURLs = null;
         ClassLoader workspaceClassLoader;
         NutsWorkspace nutsWorkspace = null;
-        PrivateNutsUtils.ErrorInfoList errorList=new PrivateNutsUtils.ErrorInfoList();
+        PrivateNutsUtils.ErrorInfoList errorList = new PrivateNutsUtils.ErrorInfoList();
         try {
             if (options.getOpenMode() == NutsOpenMode.OPEN_OR_ERROR) {
                 //add fail fast test!!
@@ -754,14 +760,14 @@ public final class NutsBootWorkspace {
 
             NutsClassLoaderNodeBuilder rt = new NutsClassLoaderNodeBuilder();
             rt.setId(workspaceInformation.getRuntimeId().toString())
-                    .setUrl(getBootCacheJar(workspaceInformation.getRuntimeId(), repositories, workspaceBootLibFolder, !recover, "runtime", options.getExpireTime(),errorList)
+                    .setUrl(getBootCacheJar(workspaceInformation.getRuntimeId(), repositories, workspaceBootLibFolder, !recover, "runtime", options.getExpireTime(), errorList)
                             .toURI().toURL());
             boolean bootOptionals = isBootOptional();
             for (NutsBootId s : workspaceInformation.getRuntimeBootDescriptor().getDependencies()) {
                 NutsClassLoaderNodeBuilder x = new NutsClassLoaderNodeBuilder();
                 if (isAcceptDependency(s, bootOptionals)) {
                     x.setId(s.toString())
-                            .setUrl(getBootCacheJar(s, repositories, workspaceBootLibFolder, !recover, "runtime dependency", options.getExpireTime(),errorList)
+                            .setUrl(getBootCacheJar(s, repositories, workspaceBootLibFolder, !recover, "runtime dependency", options.getExpireTime(), errorList)
                                     .toURI().toURL()
                             );
                     rt.addDependency(x.build());
@@ -772,13 +778,13 @@ public final class NutsBootWorkspace {
             for (NutsBootDescriptor nutsBootDescriptor : workspaceInformation.getExtensionBootDescriptors()) {
                 NutsClassLoaderNodeBuilder rt2 = new NutsClassLoaderNodeBuilder();
                 rt2.setId(nutsBootDescriptor.getId().toString())
-                        .setUrl(getBootCacheJar(workspaceInformation.getRuntimeId(), repositories, workspaceBootLibFolder, !recover, "extension " + nutsBootDescriptor.getId(), options.getExpireTime(),errorList)
+                        .setUrl(getBootCacheJar(workspaceInformation.getRuntimeId(), repositories, workspaceBootLibFolder, !recover, "extension " + nutsBootDescriptor.getId(), options.getExpireTime(), errorList)
                                 .toURI().toURL());
                 for (NutsBootId s : nutsBootDescriptor.getDependencies()) {
                     if (isAcceptDependency(s, bootOptionals)) {
                         NutsClassLoaderNodeBuilder x = new NutsClassLoaderNodeBuilder();
                         x.setId(s.toString())
-                                .setUrl(getBootCacheJar(s, repositories, workspaceBootLibFolder, !recover, "extension " + nutsBootDescriptor.getId() + " dependency", options.getExpireTime(),errorList)
+                                .setUrl(getBootCacheJar(s, repositories, workspaceBootLibFolder, !recover, "extension " + nutsBootDescriptor.getId() + " dependency", options.getExpireTime(), errorList)
                                         .toURI().toURL()
                                 );
                         rt2.addDependency(x.build());
@@ -837,8 +843,8 @@ public final class NutsBootWorkspace {
         } catch (NutsReadOnlyException | NutsUserCancelException | PrivateNutsBootCancelException ex) {
             throw ex;
         } catch (Throwable ex) {
-            StringBuilder errors=new StringBuilder();
-            errors.append("unable to boot workspace : ").append(ex.toString()).append("\n");
+            StringBuilder errors = new StringBuilder();
+            errors.append("unable to boot workspace : ").append(ex).append("\n");
             for (PrivateNutsUtils.ErrorInfo errorInfo : errorList.list()) {
                 errors.append(errorInfo.toString()).append("\n");
             }
@@ -907,7 +913,7 @@ public final class NutsBootWorkspace {
     }
 
     private File getBootCacheJar(NutsBootId vid, String[] repositories, String cacheFolder, boolean useCache, String name, Instant expire, PrivateNutsUtils.ErrorInfoList errorList) {
-        File f = getBootCacheFile(vid, PrivateNutsUtils.Mvn.getFileName(vid, "jar"), repositories, cacheFolder, useCache, expire,errorList);
+        File f = getBootCacheFile(vid, PrivateNutsMavenUtils.getFileName(vid, "jar"), repositories, cacheFolder, useCache, expire, errorList);
         if (f == null) {
             throw new NutsInvalidWorkspaceException(this.workspaceInformation.getWorkspaceLocation(), "unable to load " + name + " " + vid + " from repositories " + Arrays.asList(repositories));
         }
@@ -915,7 +921,7 @@ public final class NutsBootWorkspace {
     }
 
     private File getBootCacheFile(NutsBootId vid, String fileName, String[] repositories, String cacheFolder, boolean useCache, Instant expire, PrivateNutsUtils.ErrorInfoList errorList) {
-        String path = PrivateNutsUtils.Mvn.getPathFile(vid, fileName);
+        String path = PrivateNutsMavenUtils.getPathFile(vid, fileName);
         if (useCache && cacheFolder != null) {
 
             File f = new File(cacheFolder, path.replace('/', File.separatorChar));
@@ -927,7 +933,7 @@ public final class NutsBootWorkspace {
             if (useCache && cacheFolder != null && cacheFolder.equals(repository)) {
                 return null; // I do not remember why I did this!
             }
-            File file = getBootCacheFile(vid.toString(),path, repository, cacheFolder, useCache, expire,errorList);
+            File file = getBootCacheFile(vid.toString(), path, repository, cacheFolder, useCache, expire, errorList);
             if (file != null) {
                 return file;
             }
@@ -936,8 +942,7 @@ public final class NutsBootWorkspace {
     }
 
 
-
-    private File getBootCacheFile(String nutsId,String path, String repository, String cacheFolder, boolean useCache, Instant expire, PrivateNutsUtils.ErrorInfoList errorList) {
+    private File getBootCacheFile(String nutsId, String path, String repository, String cacheFolder, boolean useCache, Instant expire, PrivateNutsUtils.ErrorInfoList errorList) {
         boolean cacheLocalFiles = true;//Boolean.getBoolean("nuts.cache.cache-local-files");
         repository = expandPath(repository, workspaceInformation.getWorkspaceLocation());
         File repositoryFolder = null;
@@ -971,7 +976,7 @@ public final class NutsBootWorkspace {
                 LOG.log(Level.CONFIG, NutsLogVerb.SUCCESS, "loaded   {0} ({1}ms)", new Object[]{urlPath, end - start});
                 ok = to;
             } catch (IOException ex) {
-                errorList.add(new PrivateNutsUtils.ErrorInfo(nutsId,repository,urlPath,"unable to load",ex.toString()));
+                errorList.add(new PrivateNutsUtils.ErrorInfo(nutsId, repository, urlPath, "unable to load", ex.toString()));
                 long end = System.currentTimeMillis();
                 LOG.log(Level.CONFIG, NutsLogVerb.FAIL, "loaded   {0} ({1}ms)", new Object[]{urlPath, end - start});
                 //not found
@@ -1020,7 +1025,7 @@ public final class NutsBootWorkspace {
                     }
                     return to;
                 } catch (IOException ex) {
-                    errorList.add(new PrivateNutsUtils.ErrorInfo(nutsId,repository,ff.getPath(),"unable to cache",ex.toString()));
+                    errorList.add(new PrivateNutsUtils.ErrorInfo(nutsId, repository, ff.getPath(), "unable to cache", ex.toString()));
                     LOG.log(Level.CONFIG, NutsLogVerb.FAIL, "error caching file {0} to {1} : {2}", new Object[]{ff, to, ex.toString()});
                     //not found
                 }
@@ -1039,7 +1044,7 @@ public final class NutsBootWorkspace {
                 try {
                     file = new File(url.toURI());
                 } catch (URISyntaxException e) {
-                    throw new NutsBootException(NutsMessage.cstyle("unsupported classpath item; expected a file path: %s",url));
+                    throw new NutsBootException(NutsMessage.cstyle("unsupported classpath item; expected a file path: %s", url));
                 }
                 ZipFile zipFile = null;
                 try {
@@ -1389,22 +1394,22 @@ public final class NutsBootWorkspace {
     }
 
     private NutsBootId[] parseBootIdList(String s) {
-        List<NutsBootId> boots=new ArrayList<>();
-        StringBuilder q=null;
-        boolean inBrackets=false;
+        List<NutsBootId> boots = new ArrayList<>();
+        StringBuilder q = null;
+        boolean inBrackets = false;
         for (char c : s.toCharArray()) {
-            if(q==null){
-                q=new StringBuilder();
-                if(c=='[' || c==']'){
-                    inBrackets=true;
+            if (q == null) {
+                q = new StringBuilder();
+                if (c == '[' || c == ']') {
+                    inBrackets = true;
                     q.append(c);
-                }else if(c==',' || Character.isWhitespace(c)){
+                } else if (c == ',' || Character.isWhitespace(c)) {
                     //ignore
-                }else{
+                } else {
                     q.append(c);
                 }
-            }else{
-                if(c==',' || c==' ') {
+            } else {
+                if (c == ',' || c == ' ') {
                     if (inBrackets) {
                         q.append(c);
                     } else {
@@ -1412,20 +1417,20 @@ public final class NutsBootWorkspace {
                         q = null;
                         inBrackets = false;
                     }
-                }else if(c=='[' || c==']'){
-                    if(inBrackets){
-                        inBrackets=false;
+                } else if (c == '[' || c == ']') {
+                    if (inBrackets) {
+                        inBrackets = false;
                         q.append(c);
-                    }else{
-                        inBrackets=true;
+                    } else {
+                        inBrackets = true;
                         q.append(c);
                     }
-                }else{
+                } else {
                     q.append(c);
                 }
             }
         }
-        if(q!=null) {
+        if (q != null) {
             boots.add(NutsBootId.parse(q.toString()));
         }
         return boots.toArray(new NutsBootId[0]);
@@ -1448,7 +1453,7 @@ public final class NutsBootWorkspace {
             boolean osOk = false;
             for (NutsBootId e : NutsBootId.parseAll(os)) {
                 if (e.getShortName().equalsIgnoreCase(eos.id())) {
-                    if(e.getVersion().accept(NutsBootVersion.parse(System.getProperty("os.version")))) {
+                    if (e.getVersion().accept(NutsBootVersion.parse(System.getProperty("os.version")))) {
                         osOk = true;
                     }
                     break;
@@ -1470,9 +1475,7 @@ public final class NutsBootWorkspace {
                         }
                     }
                 }
-                if (!archOk) {
-                    return false;
-                }
+                return archOk;
             }
         }
         return true;

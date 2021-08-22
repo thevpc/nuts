@@ -10,33 +10,20 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
  * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.toolbox.nsh.cmds;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.StringReader;
-import java.util.*;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
@@ -46,6 +33,16 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by vpc on 1/7/17.
  */
@@ -54,13 +51,6 @@ public class JsonCommand extends SimpleNshBuiltin {
 
     public JsonCommand() {
         super("json", DEFAULT_SUPPORT);
-    }
-
-    private static class Options {
-
-        String input;
-        String queryType = "jpath";
-        List<String> queries = new ArrayList<>();
     }
 
     @Override
@@ -111,7 +101,7 @@ public class JsonCommand extends SimpleNshBuiltin {
                     try {
                         resultDocument = documentFactory.newDocumentBuilder().newDocument();
                     } catch (ParserConfigurationException ex) {
-                        throw new NutsExecutionException(context.getSession(), ex, 1);
+                        throw new NutsExecutionException(context.getSession(), NutsMessage.plain("failed to create xml document"), ex, 1);
                     }
                     Element resultElement = resultDocument.createElement("result");
                     resultDocument.appendChild(resultElement);
@@ -124,7 +114,7 @@ public class JsonCommand extends SimpleNshBuiltin {
                                 resultElement.appendChild(o);
                             }
                         } catch (XPathExpressionException ex) {
-                            throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("%s",ex), ex, 103);
+                            throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("%s", ex), ex, 103);
                         }
                     }
                     if (context.getSession().getOutputFormat(null) == null) {
@@ -200,6 +190,13 @@ public class JsonCommand extends SimpleNshBuiltin {
             }
         }
         return inputDocument;
+    }
+
+    private static class Options {
+
+        String input;
+        String queryType = "jpath";
+        List<String> queries = new ArrayList<>();
     }
 
 }

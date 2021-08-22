@@ -94,6 +94,16 @@ import java.util.List;
  */
 public interface NutsCommandLine extends Iterable<NutsArgument>,NutsFormattable{
 
+    static NutsCommandLine of(String[] args,NutsSession session){
+        PrivateNutsUtils.checkSession(session);
+        return session.getWorkspace().commandLine().create(args);
+    }
+
+    static NutsCommandLine parse(String line,NutsSession session){
+        PrivateNutsUtils.checkSession(session);
+        return session.getWorkspace().commandLine().parse(line);
+    }
+
     /**
      * set autocomplete instance
      *

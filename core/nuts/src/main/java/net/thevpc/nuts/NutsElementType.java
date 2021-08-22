@@ -131,4 +131,27 @@ public enum NutsElementType implements NutsEnum{
         return primitive;
     }
 
+    public static NutsElementType parseLenient(String value) {
+        return parseLenient(value, null);
+    }
+
+    public static NutsElementType parseLenient(String value, NutsElementType emptyOrErrorValue) {
+        return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
+    }
+
+    public static NutsElementType parseLenient(String value, NutsElementType emptyValue, NutsElementType errorValue) {
+        if (value == null) {
+            value = "";
+        } else {
+            value = value.toUpperCase().trim().replace('-', '_');
+        }
+        if (value.isEmpty()) {
+            return emptyValue;
+        }
+        try {
+            return NutsElementType.valueOf(value.toUpperCase());
+        } catch (Exception notFound) {
+            return errorValue;
+        }
+    }
 }

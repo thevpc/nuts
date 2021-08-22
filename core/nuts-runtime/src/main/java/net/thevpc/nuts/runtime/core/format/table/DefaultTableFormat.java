@@ -278,7 +278,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
     }
 
 
-    private String getSeparator(Separator id) {
+    private String getSeparator(NutsTableSeparator id) {
         String s = border.format(id);
         if (s == null) {
             return "";
@@ -294,21 +294,21 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         if (rows.size() > 0) {
             List<DefaultCell> cells = rows.get(0).cells;
             NutsWorkspace ws = getSession().getWorkspace();
-            if ((getSeparator(Separator.FIRST_ROW_START)
-                    + getSeparator(Separator.FIRST_ROW_SEP)
-                    + getSeparator(Separator.FIRST_ROW_LINE)
-                    + getSeparator(Separator.FIRST_ROW_END)).length() > 0) {
-                line.write(getSeparator(Separator.FIRST_ROW_START));
+            if ((getSeparator(NutsTableSeparator.FIRST_ROW_START)
+                    + getSeparator(NutsTableSeparator.FIRST_ROW_SEP)
+                    + getSeparator(NutsTableSeparator.FIRST_ROW_LINE)
+                    + getSeparator(NutsTableSeparator.FIRST_ROW_END)).length() > 0) {
+                line.write(getSeparator(NutsTableSeparator.FIRST_ROW_START));
                 for (int i = 0; i < cells.size(); i++) {
                     if (i > 0) {
-                        line.write(getSeparator(Separator.FIRST_ROW_SEP));
+                        line.write(getSeparator(NutsTableSeparator.FIRST_ROW_SEP));
                     }
                     DefaultCell cell = cells.get(i);
-                    String B = getSeparator(Separator.FIRST_ROW_LINE);
+                    String B = getSeparator(NutsTableSeparator.FIRST_ROW_LINE);
                     String s = cell.rendered.toString();
                     line.write(CoreStringUtils.fillString(B, ws.text().setSession(getSession()).parse(s).textLength()));
                 }
-                line.write(getSeparator(Separator.FIRST_ROW_END));
+                line.write(getSeparator(NutsTableSeparator.FIRST_ROW_END));
 
                 out.print(line.trim().newLine().toString());
                 out.flush();
@@ -316,21 +316,21 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
             }
             for (int i1 = 0; i1 < rows.size(); i1++) {
                 if (i1 > 0) {
-                    if ((getSeparator(Separator.MIDDLE_ROW_START)
-                            + getSeparator(Separator.MIDDLE_ROW_SEP)
-                            + getSeparator(Separator.MIDDLE_ROW_LINE)
-                            + getSeparator(Separator.MIDDLE_ROW_END)).length() > 0) {
-                        line.write(getSeparator(Separator.MIDDLE_ROW_START));
+                    if ((getSeparator(NutsTableSeparator.MIDDLE_ROW_START)
+                            + getSeparator(NutsTableSeparator.MIDDLE_ROW_SEP)
+                            + getSeparator(NutsTableSeparator.MIDDLE_ROW_LINE)
+                            + getSeparator(NutsTableSeparator.MIDDLE_ROW_END)).length() > 0) {
+                        line.write(getSeparator(NutsTableSeparator.MIDDLE_ROW_START));
                         for (int i = 0; i < cells.size(); i++) {
                             if (i > 0) {
-                                line.write(getSeparator(Separator.MIDDLE_ROW_SEP));
+                                line.write(getSeparator(NutsTableSeparator.MIDDLE_ROW_SEP));
                             }
                             DefaultCell cell = cells.get(i);
-                            String B = getSeparator(Separator.MIDDLE_ROW_LINE);
+                            String B = getSeparator(NutsTableSeparator.MIDDLE_ROW_LINE);
                             String s = cell.rendered.toString();
                             line.write(CoreStringUtils.fillString(B, ws.text().setSession(getSession()).parse(s).textLength()));
                         }
-                        line.write(getSeparator(Separator.MIDDLE_ROW_END));
+                        line.write(getSeparator(NutsTableSeparator.MIDDLE_ROW_END));
 
                         out.print(line.trim().newLine().toString());
                         out.flush();
@@ -341,38 +341,38 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                 Row row = rows.get(i1);
                 cells = row.cells;
 
-                line.write(getSeparator(Separator.ROW_START));
+                line.write(getSeparator(NutsTableSeparator.ROW_START));
                 for (int i = 0; i < cells.size(); i++) {
                     if (i > 0) {
-                        line.write(getSeparator(Separator.ROW_SEP));
+                        line.write(getSeparator(NutsTableSeparator.ROW_SEP));
                     }
                     DefaultCell cell = cells.get(i);
                     String s = cell.rendered.toString();
                     line.write(s);
                 }
-                line.write(getSeparator(Separator.ROW_END));
+                line.write(getSeparator(NutsTableSeparator.ROW_END));
 
                 out.print(line.trim().newLine().toString());
                 out.flush();
                 line.clear();
             }
 
-            if ((getSeparator(Separator.LAST_ROW_START)
-                    + getSeparator(Separator.LAST_ROW_SEP)
-                    + getSeparator(Separator.LAST_ROW_LINE)
-                    + getSeparator(Separator.LAST_ROW_END)).length() > 0) {
-                line.write(getSeparator(Separator.LAST_ROW_START));
+            if ((getSeparator(NutsTableSeparator.LAST_ROW_START)
+                    + getSeparator(NutsTableSeparator.LAST_ROW_SEP)
+                    + getSeparator(NutsTableSeparator.LAST_ROW_LINE)
+                    + getSeparator(NutsTableSeparator.LAST_ROW_END)).length() > 0) {
+                line.write(getSeparator(NutsTableSeparator.LAST_ROW_START));
                 cells = rows.get(0).cells;
                 for (int i = 0; i < cells.size(); i++) {
                     if (i > 0) {
-                        line.write(getSeparator(Separator.LAST_ROW_SEP));
+                        line.write(getSeparator(NutsTableSeparator.LAST_ROW_SEP));
                     }
                     DefaultCell cell = cells.get(i);
-                    String B = getSeparator(Separator.LAST_ROW_LINE);
+                    String B = getSeparator(NutsTableSeparator.LAST_ROW_LINE);
                     String s = cell.rendered.toString();
                     line.write(CoreStringUtils.fillString(B, ws.text().setSession(getSession()).parse(s).textLength()));
                 }
-                line.write(getSeparator(Separator.LAST_ROW_END));
+                line.write(getSeparator(NutsTableSeparator.LAST_ROW_END));
             }
         }
         out.print(line.trim().toString());

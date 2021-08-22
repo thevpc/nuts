@@ -1,4 +1,4 @@
-package net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.util;
+package net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.script;
 
 public class ReplaceString {
     private String expression;

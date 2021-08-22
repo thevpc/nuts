@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -11,7 +11,7 @@
  * architecture to help supporting a large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -32,7 +32,7 @@ package net.thevpc.nuts;
  * @since 0.5.5
  * @app.category Application
  */
-public enum NutsApplicationMode implements NutsEnum{
+public enum NutsApplicationMode implements NutsEnum {
     /**
      * Default application execution Mode. This mode is considered if the
      * --nuts-exec-mode=... is not present (or is not the very first argument).
@@ -81,6 +81,30 @@ public enum NutsApplicationMode implements NutsEnum{
         this.id = name().toLowerCase().replace('_', '-');
     }
 
+    public static NutsApplicationMode parseLenient(String value) {
+        return parseLenient(value, null);
+    }
+
+    public static NutsApplicationMode parseLenient(String value, NutsApplicationMode emptyOrErrorValue) {
+        return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
+    }
+
+    public static NutsApplicationMode parseLenient(String value, NutsApplicationMode emptyValue, NutsApplicationMode errorValue) {
+        if (value == null) {
+            value = "";
+        } else {
+            value = value.toUpperCase().trim().replace('-', '_');
+        }
+        if (value.isEmpty()) {
+            return emptyValue;
+        }
+        try {
+            return NutsApplicationMode.valueOf(value.toUpperCase());
+        } catch (Exception notFound) {
+            return errorValue;
+        }
+    }
+
     /**
      * lower cased identifier.
      * @return lower cased identifier
@@ -88,4 +112,5 @@ public enum NutsApplicationMode implements NutsEnum{
     public String id() {
         return id;
     }
+
 }

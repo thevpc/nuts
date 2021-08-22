@@ -70,4 +70,28 @@ public enum NutsArgumentType implements NutsEnum{
     public String id() {
         return id;
     }
+
+    public static NutsArgumentType parseLenient(String value) {
+        return parseLenient(value, null);
+    }
+
+    public static NutsArgumentType parseLenient(String value, NutsArgumentType emptyOrErrorValue) {
+        return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
+    }
+
+    public static NutsArgumentType parseLenient(String value, NutsArgumentType emptyValue, NutsArgumentType errorValue) {
+        if (value == null) {
+            value = "";
+        } else {
+            value = value.toUpperCase().trim().replace('-', '_');
+        }
+        if (value.isEmpty()) {
+            return emptyValue;
+        }
+        try {
+            return NutsArgumentType.valueOf(value.toUpperCase());
+        } catch (Exception notFound) {
+            return errorValue;
+        }
+    }
 }

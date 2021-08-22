@@ -43,4 +43,17 @@ public class NutsUtilStrings {
         return t;
     }
 
+    public static Boolean parseBoolean(String value, Boolean emptyValue, Boolean errorValue) {
+        if (value == null || value.trim().isEmpty()) {
+            return emptyValue;
+        }
+        value = value.trim().toLowerCase();
+        if (value.matches("true|enable|enabled|yes|always|y|on|ok|t|o")) {
+            return true;
+        }
+        if (value.matches("false|disable|disabled|no|none|never|n|off|ko|f")) {
+            return false;
+        }
+        return errorValue;
+    }
 }

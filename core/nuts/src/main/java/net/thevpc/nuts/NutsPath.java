@@ -1,10 +1,31 @@
 package net.thevpc.nuts;
 
+import java.io.File;
 import java.net.URL;
 import java.nio.file.Path;
 import java.time.Instant;
 
 public interface NutsPath extends NutsFormattable {
+    static NutsPath of(URL path, NutsSession session) {
+        PrivateNutsUtils.checkSession(session);
+        return session.getWorkspace().io().path(path);
+    }
+
+    static NutsPath of(String path, ClassLoader classLoader, NutsSession session) {
+        PrivateNutsUtils.checkSession(session);
+        return session.getWorkspace().io().path(path, classLoader);
+    }
+
+    static NutsPath of(File path, NutsSession session) {
+        PrivateNutsUtils.checkSession(session);
+        return session.getWorkspace().io().path(path);
+    }
+
+    static NutsPath of(String path, NutsSession session) {
+        PrivateNutsUtils.checkSession(session);
+        return session.getWorkspace().io().path(path);
+    }
+
     /**
      * content encoding if explicitly defined (from HTTP headers for instance).
      * return null when unknown.

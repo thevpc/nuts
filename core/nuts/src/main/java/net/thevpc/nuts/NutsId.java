@@ -36,6 +36,11 @@ import java.util.Map;
  */
 public interface NutsId extends NutsTokenFilter, Serializable, Comparable<NutsId>,NutsFormattable {
 
+    public static NutsId parse(String value,NutsSession session){
+        PrivateNutsUtils.checkSession(session);
+        return session.getWorkspace().id().parser().parse(value);
+    }
+
     /**
      * true if other has exact shot name than {@code this}
      * @param other other id

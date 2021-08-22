@@ -29,14 +29,21 @@ import java.util.Collection;
 
 /**
  * Builder for manipulating {@link NutsObjectElement} instances
+ *
  * @author thevpc
  * @app.category Format
  */
-public interface NutsObjectElementBuilder extends NutsElementBuilder{
+public interface NutsObjectElementBuilder extends NutsElementBuilder {
+
+    static NutsObjectElementBuilder of(NutsSession session) {
+        PrivateNutsUtils.checkSession(session);
+        return session.getWorkspace().elem().forObject();
+    }
 
     /**
      * set value for property {@code name}
-     * @param name property name
+     *
+     * @param name  property name
      * @param value property value. should not be null
      * @return this {@code this} instance
      */
@@ -52,12 +59,14 @@ public interface NutsObjectElementBuilder extends NutsElementBuilder{
 
     /**
      * remove all properties
+     *
      * @return this {@code this} instance
      */
     NutsObjectElementBuilder clear();
 
     /**
      * remove property
+     *
      * @param name property name
      * @return this {@code this} instance
      */
@@ -66,6 +75,7 @@ public interface NutsObjectElementBuilder extends NutsElementBuilder{
     /**
      * return value for name or null.
      * If multiple values are available return any of them.
+     *
      * @param name key name
      * @return value for name or null
      */
@@ -73,12 +83,14 @@ public interface NutsObjectElementBuilder extends NutsElementBuilder{
 
     /**
      * object (key,value) attributes
+     *
      * @return object attributes
      */
     Collection<NutsElementEntry> children();
 
     /**
      * element count
+     *
      * @return element count
      */
     int size();
@@ -86,6 +98,7 @@ public interface NutsObjectElementBuilder extends NutsElementBuilder{
     /**
      * set all properties from the given {@code other} instance.
      * all properties not found in {@code other} will be removed.
+     *
      * @param other other instance
      * @return this {@code this} instance
      */
@@ -94,6 +107,7 @@ public interface NutsObjectElementBuilder extends NutsElementBuilder{
     /**
      * set all properties from the given {@code other} instance.
      * all properties not found in {@code other} will be removed.
+     *
      * @param other other instance
      * @return this {@code this} instance
      */
@@ -102,6 +116,7 @@ public interface NutsObjectElementBuilder extends NutsElementBuilder{
     /**
      * set all properties from the given {@code other} instance.
      * all properties not found in {@code other} will be retained.
+     *
      * @param other other instance
      * @return this {@code this} instance
      */
@@ -110,6 +125,7 @@ public interface NutsObjectElementBuilder extends NutsElementBuilder{
     /**
      * set all properties from the given {@code other} instance.
      * all properties not found in {@code other} will be retained.
+     *
      * @param other other instance
      * @return this {@code this} instance
      */
@@ -117,6 +133,7 @@ public interface NutsObjectElementBuilder extends NutsElementBuilder{
 
     /**
      * set entry key value binding
+     *
      * @param entry other entry
      * @return this {@code this} instance
      */
@@ -125,6 +142,7 @@ public interface NutsObjectElementBuilder extends NutsElementBuilder{
     /**
      * create a immutable instance of {@link NutsObjectElement} representing
      * this builder.
+     *
      * @return new instance of {@link NutsObjectElement}
      */
     NutsObjectElement build();

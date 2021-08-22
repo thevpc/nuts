@@ -10,6 +10,7 @@ import net.thevpc.nuts.NutsElement;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.lib.md.MdElement;
 import net.thevpc.nuts.lib.md.docusaurus.DocusaurusUtils;
+import net.thevpc.nuts.lib.md.util.MdUtils;
 
 /**
  *
@@ -84,7 +85,7 @@ public abstract class DocusaurusFile implements DocusaurusFileOrFolder {
     public String toJSON(int indent) {
         StringBuilder sb = new StringBuilder();
         sb.append(DocusaurusUtils.indentChars(indent));
-        sb.append("'").append(DocusaurusUtils.escapeString(getLongId() + "'"));
+        sb.append("'").append(MdUtils.escapeString(getLongId() + "'"));
         return sb.toString();
     }
 }

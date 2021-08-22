@@ -39,7 +39,7 @@ import java.util.function.Supplier;
  * @since 0.5.4
  * @app.category Internal
  */
-final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, NutsWorkspaceOptionsBuilder {
+final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, NutsWorkspaceOptionsBuilder,NutsWorkspaceOptions {
     private static final long serialVersionUID = 1;
     /**
      * option-type : exported (inherited in child workspaces)
@@ -1504,5 +1504,17 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
     public NutsWorkspaceOptionsBuilder setTheme(String theme) {
         this.theme = theme;
         return this;
+    }
+
+    @Override
+    public NutsWorkspaceOptions build() {
+        PrivateBootWorkspaceOptions c = new PrivateBootWorkspaceOptions();
+        c.setAll(this);
+        return c;
+    }
+
+    @Override
+    public NutsWorkspaceOptionsBuilder builder() {
+        return new PrivateBootWorkspaceOptions().setAll(this);
     }
 }

@@ -33,14 +33,6 @@ public class NutsIndexerNotAccessibleException extends NutsException {
 
     /**
      * Constructs a new Validation Exception
-     * @param session workspace
-     */
-    public NutsIndexerNotAccessibleException(NutsSession session) {
-        super(session);
-    }
-
-    /**
-     * Constructs a new Validation Exception
      * @param message message
      * @param session workspace
      */
@@ -56,15 +48,6 @@ public class NutsIndexerNotAccessibleException extends NutsException {
      */
     public NutsIndexerNotAccessibleException(NutsSession session, NutsMessage message, Throwable cause) {
         super(session,message, cause);
-    }
-
-    /**
-     * Constructs a new Validation Exception
-     * @param session workspace
-     * @param cause cause
-     */
-    public NutsIndexerNotAccessibleException(NutsSession session, Throwable cause) {
-        super(session,cause);
     }
 
 }

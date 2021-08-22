@@ -44,4 +44,27 @@ public enum ReflectPropertyDefaultValueStrategy  implements NutsEnum {
         return id;
     }
 
+    public static ReflectPropertyDefaultValueStrategy parseLenient(String value) {
+        return parseLenient(value, null);
+    }
+
+    public static ReflectPropertyDefaultValueStrategy parseLenient(String value, ReflectPropertyDefaultValueStrategy emptyOrErrorValue) {
+        return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
+    }
+
+    public static ReflectPropertyDefaultValueStrategy parseLenient(String value, ReflectPropertyDefaultValueStrategy emptyValue, ReflectPropertyDefaultValueStrategy errorValue) {
+        if (value == null) {
+            value = "";
+        } else {
+            value = value.toUpperCase().trim().replace('-', '_');
+        }
+        if (value.isEmpty()) {
+            return emptyValue;
+        }
+        try {
+            return ReflectPropertyDefaultValueStrategy.valueOf(value.toUpperCase());
+        } catch (Exception notFound) {
+            return errorValue;
+        }
+    }
 }

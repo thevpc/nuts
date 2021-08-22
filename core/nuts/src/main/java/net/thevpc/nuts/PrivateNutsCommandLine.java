@@ -1268,7 +1268,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
 
         @Override
         public boolean getBoolean() {
-            Boolean b = PrivateNutsUtils.parseBoolean(expression, false, false);
+            Boolean b = NutsUtilStrings.parseBoolean(expression, false, false);
             if (isNegated()) {
                 return !b;
             }
@@ -1277,12 +1277,12 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
 
         @Override
         public boolean isBoolean() {
-            return PrivateNutsUtils.parseBoolean(expression, null, null) != null;
+            return NutsUtilStrings.parseBoolean(expression, null, null) != null;
         }
 
         @Override
         public Boolean getBoolean(Boolean defaultValue) {
-            return PrivateNutsUtils.parseBoolean(expression, defaultValue, defaultValue);
+            return NutsUtilStrings.parseBoolean(expression, defaultValue, defaultValue);
         }
 
         @Override

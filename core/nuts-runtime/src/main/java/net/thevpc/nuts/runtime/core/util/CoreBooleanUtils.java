@@ -34,57 +34,6 @@ public final class CoreBooleanUtils {
     private CoreBooleanUtils() {
     }
     
-
-    //    public static boolean isYes(String s) {
-    //        switch (s == null ? "" : s.trim().toLowerCase()) {
-    //            case "ok":
-    //            case "true":
-    //            case "yes":
-    //            case "always":
-    //            case "y":
-    //                return true;
-    //        }
-    //        return false;
-    //    }
-    //
-    //    public static boolean isNo(String s) {
-    //        switch (s == null ? "" : s.trim().toLowerCase()) {
-    //            case "false":
-    //            case "no":
-    //            case "none":
-    //            case "never":
-    //                return true;
-    //        }
-    //        return false;
-    //    }
-    public static Boolean parseBoolean(String value, Boolean defaultValue) {
-        if (value == null || value.trim().isEmpty()) {
-            return defaultValue;
-        }
-        value = value.trim().toLowerCase();
-        if (value.matches("true|enable|enabled|yes|always|y|on|ok|t|o")) {
-            return true;
-        }
-        if (value.matches("false|disable|disabled|no|none|never|n|off|ko|f")) {
-            return false;
-        }
-        return defaultValue;
-    }
-
-    public static Boolean parseBoolean(String value, Boolean emptyValue, Boolean incorrectValue) {
-        if (value == null || value.trim().isEmpty()) {
-            return emptyValue;
-        }
-        value = value.trim().toLowerCase();
-        if (value.matches("true|enable|enabled|yes|always|y|on|ok|t|o")) {
-            return true;
-        }
-        if (value.matches("false|disable|disabled|no|none|never|n|off|ko|f")) {
-            return false;
-        }
-        return incorrectValue;
-    }
-
     public static boolean getSysBoolNutsProperty(String property, boolean defaultValue) {
         return getSystemBoolean("nuts." + property, defaultValue) || getSystemBoolean("nuts.export." + property, defaultValue);
     }

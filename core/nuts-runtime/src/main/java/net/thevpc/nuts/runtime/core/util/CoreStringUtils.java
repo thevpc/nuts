@@ -373,10 +373,10 @@ public final class CoreStringUtils {
                 }
                 msg = exceptionToMessage(ex2, true);
             } else {
-                msg = NutsMessage.formatted(((NutsNotFoundException) ex).getFormattedMessage().toString());
+                msg = NutsMessage.formatted(((NutsNotFoundException) ex).getFormattedString().toString());
             }
         } else if (ex instanceof NutsException) {
-            msg = NutsMessage.formatted(((NutsException) ex).getFormattedMessage().toString());
+            msg = NutsMessage.formatted(((NutsException) ex).getFormattedString().toString());
         } else {
             String msg2 = ex.toString();
             if (msg2.startsWith(ex.getClass().getName() + ":")) {

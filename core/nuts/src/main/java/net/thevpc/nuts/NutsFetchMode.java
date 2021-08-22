@@ -78,4 +78,28 @@ public enum NutsFetchMode implements NutsEnum{
     public String id() {
         return id;
     }
+
+    public static NutsFetchMode parseLenient(String value) {
+        return parseLenient(value, null);
+    }
+
+    public static NutsFetchMode parseLenient(String value, NutsFetchMode emptyOrErrorValue) {
+        return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
+    }
+
+    public static NutsFetchMode parseLenient(String value, NutsFetchMode emptyValue, NutsFetchMode errorValue) {
+        if (value == null) {
+            value = "";
+        } else {
+            value = value.toUpperCase().trim().replace('-', '_');
+        }
+        if (value.isEmpty()) {
+            return emptyValue;
+        }
+        try {
+            return NutsFetchMode.valueOf(value.toUpperCase());
+        } catch (Exception notFound) {
+            return errorValue;
+        }
+    }
 }

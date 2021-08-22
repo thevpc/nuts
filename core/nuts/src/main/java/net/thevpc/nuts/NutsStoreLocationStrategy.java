@@ -57,4 +57,28 @@ public enum NutsStoreLocationStrategy implements NutsEnum{
     public String id() {
         return id;
     }
+
+    public static NutsStoreLocationStrategy parseLenient(String value) {
+        return parseLenient(value, null);
+    }
+
+    public static NutsStoreLocationStrategy parseLenient(String value, NutsStoreLocationStrategy emptyOrErrorValue) {
+        return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
+    }
+
+    public static NutsStoreLocationStrategy parseLenient(String value, NutsStoreLocationStrategy emptyValue, NutsStoreLocationStrategy errorValue) {
+        if (value == null) {
+            value = "";
+        } else {
+            value = value.toUpperCase().trim().replace('-', '_');
+        }
+        if (value.isEmpty()) {
+            return emptyValue;
+        }
+        try {
+            return NutsStoreLocationStrategy.valueOf(value.toUpperCase());
+        } catch (Exception notFound) {
+            return errorValue;
+        }
+    }
 }

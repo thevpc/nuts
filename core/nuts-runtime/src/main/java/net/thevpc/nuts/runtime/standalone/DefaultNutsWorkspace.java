@@ -345,9 +345,10 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         NutsWorkspaceConfigManager _config = config().setSession(defaultSession());
         NutsWorkspaceEnvManager _env = env().setSession(defaultSession());
         if (uoptions == null) {
-            uoptions = new ReadOnlyNutsWorkspaceOptions(_config.optionsBuilder());
+            uoptions = new ReadOnlyNutsWorkspaceOptions(_config.optionsBuilder().build(),defaultSession());
         } else {
-            uoptions = new ReadOnlyNutsWorkspaceOptions(uoptions.copy());
+            //builder().build() (just to make a copy)
+            uoptions = new ReadOnlyNutsWorkspaceOptions(uoptions.builder().build(),defaultSession());
         }
         if (uoptions.getCreationTime() == 0) {
             configModel.setStartCreateTimeMillis(System.currentTimeMillis());
@@ -506,6 +507,16 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                                     .append(getHashName())
                                     .append(")")
                     );
+
+                    formats().setSession(defaultSession()).table().setValue(
+                            NutsTableModel.of(defaultSession())
+                                    .addCell(
+                                            txt.builder()
+                                                    .append("This is the very first time ")
+                                                    .appendCode("sh", "nuts")
+                                                    .append(" has been started for this workspace")
+                                    )
+                    ).println(out);
                     out.println(
                             CoreNutsUtils.createBox(txt,
                                     txt.builder()
@@ -1873,6 +1884,31 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         public String id() {
             return id;
         }
+
+        public static InstallStrategy0 parseLenient(String value) {
+            return parseLenient(value, null);
+        }
+
+        public static InstallStrategy0 parseLenient(String value, InstallStrategy0 emptyOrErrorValue) {
+            return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
+        }
+
+        public static InstallStrategy0 parseLenient(String value, InstallStrategy0 emptyValue, InstallStrategy0 errorValue) {
+            if (value == null) {
+                value = "";
+            } else {
+                value = value.toUpperCase().trim().replace('-', '_');
+            }
+            if (value.isEmpty()) {
+                return emptyValue;
+            }
+            try {
+                return InstallStrategy0.valueOf(value.toUpperCase());
+            } catch (Exception notFound) {
+                return errorValue;
+            }
+        }
+
     }
 
 }

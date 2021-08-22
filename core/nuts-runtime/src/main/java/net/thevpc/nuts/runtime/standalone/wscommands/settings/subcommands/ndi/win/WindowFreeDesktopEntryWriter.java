@@ -1,13 +1,13 @@
-package net.thevpc.nuts.runtime.standalone.wscommands.settings.oswindows;
+package net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.win;
 
 import net.thevpc.nuts.NutsId;
 import net.thevpc.nuts.NutsPrintStream;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.runtime.optional.mslink.OptionalMsLinkHelper;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.PathInfo;
-import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.AbstractFreeDesktopEntryWriter;
+import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.base.AbstractFreeDesktopEntryWriter;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.FreeDesktopEntry;
-import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.NdiScriptInfoType;
+import net.thevpc.nuts.runtime.standalone.wscommands.settings.PathInfoType;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.util._IOUtils;
 
 import java.io.File;
@@ -42,11 +42,11 @@ public class WindowFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter
         File q = path.toFile();
         boolean alreadyExists = q.exists();
         if (alreadyExists && doOverride) {
-            return new PathInfo[]{new PathInfo(NdiScriptInfoType.DESKTOP_SHORTCUT, id, q.toPath(), PathInfo.Status.DISCARDED)};
+            return new PathInfo[]{new PathInfo(PathInfoType.DESKTOP_SHORTCUT, id, q.toPath(), PathInfo.Status.DISCARDED)};
         }
         new OptionalMsLinkHelper(g.getExec(), wd, g.getIcon(), q.toString(), session).write();
 
-        return new PathInfo[]{new PathInfo(NdiScriptInfoType.DESKTOP_SHORTCUT, id, q.toPath(), alreadyExists ? PathInfo.Status.OVERRIDDEN : PathInfo.Status.CREATED)};
+        return new PathInfo[]{new PathInfo(PathInfoType.DESKTOP_SHORTCUT, id, q.toPath(), alreadyExists ? PathInfo.Status.OVERRIDDEN : PathInfo.Status.CREATED)};
     }
 
     @Override
@@ -87,10 +87,10 @@ public class WindowFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter
             File q = new File(m, descriptor.getOrCreateDesktopEntry().getName() + ".lnk");
             boolean alreadyExists = q.exists();
             if (alreadyExists && doOverride) {
-                result.add(new PathInfo(NdiScriptInfoType.DESKTOP_MENU, id, q.toPath(), PathInfo.Status.DISCARDED));
+                result.add(new PathInfo(PathInfoType.DESKTOP_MENU, id, q.toPath(), PathInfo.Status.DISCARDED));
             } else {
                 new OptionalMsLinkHelper(root.getExec(), wd, root.getIcon(), q.getPath(), session).write();
-                result.add(new PathInfo(NdiScriptInfoType.DESKTOP_MENU, id, q.toPath(), alreadyExists ? PathInfo.Status.OVERRIDDEN : PathInfo.Status.CREATED));
+                result.add(new PathInfo(PathInfoType.DESKTOP_MENU, id, q.toPath(), alreadyExists ? PathInfo.Status.OVERRIDDEN : PathInfo.Status.CREATED));
             }
 
         }

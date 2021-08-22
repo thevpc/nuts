@@ -1,11 +1,13 @@
-package net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi;
+package net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.base;
 
 import net.thevpc.nuts.NutsId;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.PathInfo;
+import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.FreeDesktopEntry;
+import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.FreeDesktopEntryWriter;
 
 import java.nio.file.Path;
 
-public abstract class AbstractFreeDesktopEntryWriter implements FreeDesktopEntryWriter{
+public abstract class AbstractFreeDesktopEntryWriter implements FreeDesktopEntryWriter {
 
     protected String ensureName(String input,String defaultName,String extension){
         String p=input;

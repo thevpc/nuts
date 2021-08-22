@@ -17,7 +17,7 @@
  */
 package net.thevpc.nuts.lib.md;
 
-import net.thevpc.nuts.lib.md.docusaurus.DocusaurusUtils;
+import net.thevpc.nuts.lib.md.util.MdUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -81,7 +81,7 @@ public class MdXml extends MdAbstractElement {
             for (Map.Entry<String, String> e : properties.entrySet()) {
                 sb.append(" ").append(e.getKey());
                 if (e.getValue() != null) {
-                    sb.append("=").append('"').append(DocusaurusUtils.escapeString(e.getValue())).append('"');
+                    sb.append("=").append('"').append(MdUtils.escapeString(e.getValue())).append('"');
                 }
             }
         }

@@ -27,6 +27,9 @@
 package net.thevpc.nuts;
 
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.Stack;
 
 /**
  * Base Boot Nuts Exception. Thrown when the Workspace could is booting
@@ -116,5 +119,27 @@ public class NutsBootException extends RuntimeException {
 
     public NutsMessage getFormattedMessage() {
         return message;
+    }
+
+
+    public static NutsBootException detectBootException(Throwable th) {
+        Set<Throwable> visited = new HashSet<>();
+        Stack<Throwable> stack = new Stack<>();
+        if (th != null) {
+            stack.push(th);
+        }
+        while (!stack.isEmpty()) {
+            Throwable a = stack.pop();
+            if (visited.add(a)) {
+                if (th instanceof NutsBootException) {
+                    return ((NutsBootException) th);
+                }
+                Throwable c = th.getCause();
+                if (c != null) {
+                    stack.add(c);
+                }
+            }
+        }
+        return null;
     }
 }

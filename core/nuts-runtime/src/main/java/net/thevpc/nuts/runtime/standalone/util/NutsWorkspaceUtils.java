@@ -91,14 +91,6 @@ public class NutsWorkspaceUtils {
         return false;
     }
 
-    public static boolean unsetWorkspace(Object o) {
-        if (o instanceof NutsWorkspaceAware) {
-            ((NutsWorkspaceAware) o).setWorkspace(null);
-            return true;
-        }
-        return false;
-    }
-
     protected NutsLoggerOp _LOGOP(NutsSession session) {
         return _LOG(session).with().session(session);
     }

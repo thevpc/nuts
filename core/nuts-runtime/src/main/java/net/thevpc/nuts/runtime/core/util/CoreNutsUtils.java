@@ -505,10 +505,6 @@ public class CoreNutsUtils {
         return s1.isEmpty() || s1.equals("false");
     }
 
-    //    public static boolean isDefaultAlternative(String s1) {
-//        s1 = NutsUtilStrings.trim(s1);
-//        return s1.isEmpty() || s1.equals(NutsConstants.IdProperties.ALTERNATIVE_DEFAULT_VALUE);
-//    }
     public static boolean isValidIdentifier(String s) {
         if (s == null || s.length() == 0) {
             return false;
@@ -596,13 +592,6 @@ public class CoreNutsUtils {
         return false;
     }
 
-    //    public static NutsIterableFormat getValidOutputFormat(NutsSession session) {
-//        NutsIterableFormat f = session.getIterableOutput();
-//        if (f == null) {
-//            return session.getWorkspace().elem().setContentType(session.getOutputFormat()).iter(session.out());
-//        }
-//        return f;
-//    }
     public static void traceMessage(NutsLogger log, Level lvl, String name, NutsSession session, NutsFetchMode fetchMode, NutsId id, NutsLogVerb tracePhase, String title, long startTime, NutsMessage extraMsg) {
         if (!log.isLoggable(lvl)) {
             return;
@@ -742,27 +731,6 @@ public class CoreNutsUtils {
         }
     }
 
-//    public static void checkId_GN(NutsId id, NutsSession ws) {
-//        if (id == null) {
-//            throw new NutsElementNotFoundException(ws, "missing id");
-//        }
-//        if (NutsUtilStrings.isBlank(id.getGroupId())) {
-//            throw new NutsElementNotFoundException(ws, "missing group for " + id);
-//        }
-//    }
-//
-//    public static void checkId_GNV(NutsId id, NutsSession ws) {
-//        if (id == null) {
-//            throw new NutsElementNotFoundException(ws, "missing id");
-//        }
-//        if (NutsUtilStrings.isBlank(id.getGroupId())) {
-//            throw new NutsElementNotFoundException(ws, "missing group for " + id);
-//        }
-//        if (NutsUtilStrings.isBlank(id.getArtifactId())) {
-//            throw new NutsElementNotFoundException(ws, "missing name for " + id.toString());
-//        }
-//    }
-
     public static boolean isValidWorkspaceName(String workspace) {
         if (NutsUtilStrings.isBlank(workspace)) {
             return true;
@@ -800,62 +768,6 @@ public class CoreNutsUtils {
         }
     }
 
-    //    public static NutsUpdateOptions validate(NutsUpdateOptions o, NutsWorkspace ws) {
-//        if (o == null) {
-//            o = new NutsUpdateOptions();
-//        }
-//        if (o.getSession() == null) {
-//            o.setSession(ws.createSession());
-//        } else {
-//            NutsWorkspaceUtils.of(ws).validateSession(o.getSession());
-//        }
-//        return o;
-//    }
-//    public static NutsAddOptions validate(NutsAddOptions o, NutsWorkspace ws) {
-//        if (o == null) {
-//            o = new NutsAddOptions();
-//        }
-//        if (o.getSession() == null) {
-//            o.setSession(ws.createSession());
-//        } else {
-//            NutsWorkspaceUtils.of(ws).validateSession(o.getSession());
-//        }
-//        return o;
-//    }
-//    public static NutsRemoveOptions validate(NutsRemoveOptions o, NutsWorkspace ws) {
-//        if (o == null) {
-//            o = new NutsRemoveOptions();
-//        }
-//        if (o.getSession() == null) {
-//            o.setSession(ws.createSession());
-//        } else {
-//            NutsWorkspaceUtils.of(ws).validateSession(o.getSession());
-//        }
-//        return o;
-//    }
-//    public static NutsAddOptions toAddOptions(NutsUpdateOptions o) {
-//        return new NutsAddOptions().setSession(o.getSession());
-//    }
-//
-//    public static NutsRemoveOptions toRemoveOptions(NutsUpdateOptions o) {
-//        return new NutsRemoveOptions().setSession(o.getSession());
-//    }
-//
-//    public static NutsUpdateOptions toUpdateOptions(NutsAddOptions o) {
-//        return new NutsUpdateOptions().setSession(o.getSession());
-//    }
-//
-//    public static NutsUpdateOptions toUpdateOptions(NutsRemoveOptions o) {
-//        return new NutsUpdateOptions().setSession(o.getSession());
-//    }
-//
-//    public static NutsRemoveOptions toRemoveOptions(NutsAddOptions o) {
-//        return new NutsRemoveOptions().setSession(o.getSession());
-//    }
-//
-//    public static NutsRemoveOptions toRemoveOptions(NutsRemoveOptions o) {
-//        return new NutsRemoveOptions().setSession(o.getSession());
-//    }
     public static String idToPath(NutsId id) {
         return id.getGroupId().replace('.', '/') + "/"
                 + id.getArtifactId() + "/" + id.getVersion();
@@ -929,7 +841,7 @@ public class CoreNutsUtils {
     public static Set<String> parseProgressOptions(NutsSession session) {
         LinkedHashSet<String> set = new LinkedHashSet<>();
         for (String s : StringTokenizerUtils.split(session.getProgressOptions(), ",; ")) {
-            Boolean n = CoreBooleanUtils.parseBoolean(s, null, null);
+            Boolean n = NutsUtilStrings.parseBoolean(s, null, null);
             if (n == null) {
                 set.add(s);
             } else {
@@ -978,170 +890,7 @@ public class CoreNutsUtils {
         return monitorable;
     }
 
-//    public static NutsSession checkSession(NutsSession session) {
-//        if (session == null) {
-//            throw new IllegalArgumentException("missing Session");
-//        }
-//        return session;
-//    }
 
-    public static String[] parseCommandLineArray(String commandLineString, NutsSession ws) {
-        if (commandLineString == null) {
-            return new String[0];
-        }
-        List<String> args = new ArrayList<>();
-        StringBuilder sb = new StringBuilder();
-        final int START = 0;
-        final int IN_WORD = 1;
-        final int IN_QUOTED_WORD = 2;
-        final int IN_DBQUOTED_WORD = 3;
-        int status = START;
-        char[] charArray = commandLineString.toCharArray();
-        for (int i = 0; i < charArray.length; i++) {
-            char c = charArray[i];
-            switch (status) {
-                case START: {
-                    switch (c) {
-                        case ' ': {
-                            //ignore
-                            break;
-                        }
-                        case '\'': {
-                            status = IN_QUOTED_WORD;
-                            //ignore
-                            break;
-                        }
-                        case '"': {
-                            status = IN_DBQUOTED_WORD;
-                            //ignore
-                            break;
-                        }
-                        case '\\': {
-                            status = IN_WORD;
-                            i++;
-                            sb.append(charArray[i]);
-                            break;
-                        }
-                        default: {
-                            sb.append(c);
-                            status = IN_WORD;
-                            break;
-                        }
-                    }
-                    break;
-                }
-                case IN_WORD: {
-                    switch (c) {
-                        case ' ': {
-                            args.add(sb.toString());
-                            sb.delete(0, sb.length());
-                            status = START;
-                            break;
-                        }
-                        case '\'': {
-                            throw new NutsParseException(ws, NutsMessage.cstyle("illegal char %s", c));
-                        }
-                        case '"': {
-                            throw new NutsParseException(ws, NutsMessage.cstyle("illegal char %s", c));
-                        }
-                        case '\\': {
-                            i++;
-                            sb.append(charArray[i]);
-                            break;
-                        }
-                        default: {
-                            sb.append(c);
-                            break;
-                        }
-                    }
-                    break;
-                }
-                case IN_QUOTED_WORD: {
-                    switch (c) {
-                        case '\'': {
-                            args.add(sb.toString());
-                            sb.delete(0, sb.length());
-                            status = START;
-                            //ignore
-                            break;
-                        }
-                        case '\\': {
-                            i = readEscapedArgument(charArray, i + 1, sb);
-                            //ignore
-                            break;
-                        }
-                        default: {
-                            sb.append(c);
-                            //ignore
-                            break;
-                        }
-                    }
-                    break;
-                }
-                case IN_DBQUOTED_WORD: {
-                    switch (c) {
-                        case '"': {
-                            args.add(sb.toString());
-                            sb.delete(0, sb.length());
-                            status = START;
-                            //ignore
-                            break;
-                        }
-                        case '\\': {
-                            i = readEscapedArgument(charArray, i + 1, sb);
-                            //ignore
-                            break;
-                        }
-                        default: {
-                            sb.append(c);
-                            //ignore
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        switch (status) {
-            case START: {
-                break;
-            }
-            case IN_WORD: {
-                args.add(sb.toString());
-                sb.delete(0, sb.length());
-                break;
-            }
-            case IN_QUOTED_WORD: {
-                throw new NutsParseException(ws, NutsMessage.cstyle("expected '"));
-            }
-        }
-        return args.toArray(new String[0]);
-    }
-
-    public static int readEscapedArgument(char[] charArray, int i, StringBuilder sb) {
-        char c = charArray[i];
-        switch (c) {
-            case 'n': {
-                sb.append('\n');
-                break;
-            }
-            case 't': {
-                sb.append('\t');
-                break;
-            }
-            case 'r': {
-                sb.append('\r');
-                break;
-            }
-            case 'f': {
-                sb.append('\f');
-                break;
-            }
-            default: {
-                sb.append(c);
-            }
-        }
-        return i;
-    }
 
     public static Iterator<NutsDependency> itIdToDep(Iterator<NutsId> id) {
         return IteratorBuilder.of(id).convert(x -> x.toDependency(), "IdToDependency").build();

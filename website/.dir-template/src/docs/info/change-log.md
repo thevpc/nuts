@@ -9,7 +9,7 @@ View Official releases [here](https://github.com/thevpc/nuts/releases) :
 Starred releases are most stable ones.
 
 ## nuts 0.8.2.0 (NEXT VERSION)
-- ```2021/XX/XX 	nuts 0.8.2.0 (*)``` released [download nuts-0.8.2.jar](https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/0.8.2/nuts-0.8.2.jar)
+- ```2021/XX/XX 	nuts 0.8.2.0 (*)``` not released yet [download nuts-0.8.2.jar](https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/0.8.2/nuts-0.8.2.jar)
 - WARNING: API has evolved with multiple incompatibilities with previous versions  
 - TODO  : {api}   add comments support in 'element' and and propagate support for xml,json and so on
 - TODO  : {impl}  better yaml parser
@@ -18,7 +18,9 @@ Starred releases are most stable ones.
 
 ## nuts 0.8.1.0 (DEV VERSION)
 - ```2021/07/31 	nuts 0.8.1.0 (*)``` released [download nuts-0.8.1.jar](https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/0.8.1/nuts-0.8.1.jar)
-- WARNING: API has evolved with multiple incompatibilities with previous versions  
+- WARNING: API has evolved with multiple incompatibilities with previous versions
+- ADDED: {api} added static methods of() in interfaces to simplify instantiation
+- ADDED: {api} parseLenient to all NutsEnum classes
 - CHANGED: {nadmin} removed nadmin and merged into runtime (tight coupling!!)
 - REMOVED: {api}   removed session.formatObject() as the session is now propagated silently
 - CHANGED: {api}   removed NutsApplicationLifeCycle and replaced with NutsApplication (an interface instead of a class)

@@ -38,25 +38,6 @@ public class NutsIllegalArgumentException extends NutsException {
      * Constructs a new NutsIllegalArgumentException exception
      *
      * @param session workspace
-     */
-    public NutsIllegalArgumentException(NutsSession session) {
-        super(session);
-    }
-
-    /**
-     * Constructs a new NutsIllegalArgumentException exception
-     *
-     * @param session workspace
-     * @param message message
-     */
-    public NutsIllegalArgumentException(NutsSession session, NutsString message) {
-        super(session, message);
-    }
-
-    /**
-     * Constructs a new NutsIllegalArgumentException exception
-     *
-     * @param session workspace
      * @param message message
      */
     public NutsIllegalArgumentException(NutsSession session, NutsMessage message) {
@@ -70,29 +51,8 @@ public class NutsIllegalArgumentException extends NutsException {
      * @param message message
      * @param cause cause
      */
-    public NutsIllegalArgumentException(NutsSession session, NutsString message, Throwable cause) {
-        super(session, message, cause);
-    }
-
-    /**
-     * Constructs a new NutsIllegalArgumentException exception
-     *
-     * @param session workspace
-     * @param message message
-     * @param cause cause
-     */
     public NutsIllegalArgumentException(NutsSession session, NutsMessage message, Throwable cause) {
         super(session, message, cause);
-    }
-
-    /**
-     * Constructs a new NutsIllegalArgumentException exception
-     *
-     * @param session workspace
-     * @param cause cause
-     */
-    public NutsIllegalArgumentException(NutsSession session, Throwable cause) {
-        super(session, cause);
     }
 
     /**

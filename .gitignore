@@ -3,6 +3,7 @@
 /toolbox/ndoc/target
 /toolbox/ndiff/target
 /core/nuts-runtime-test/runtime
+/test/runtime
 /core/nuts-runtime/nbproject/
 /core/nuts-runtime/nuts-runtime.iml
 /core/nuts-runtime/target/
@@ -62,3 +63,18 @@
 /toolbox/ndb/target/
 /test/nuts-runtime-test/target/
 /test/nuts-runtime-test/runtime/
+/test/nuts-runtime-test/nuts-runtime-test.iml
+/toolbox/nwork/nwork.iml
+/toolbox/nversion/nversion.iml
+/nuts-builder.iml
+/toolbox/ntemplate/ntemplate.iml
+/toolbox/ntalk-agent/ntalk-agent.iml
+/toolbox/nserver/nserver.iml
+/toolbox/noapi/noapi.iml
+/toolbox/ntomcat/ntomcat.iml
+/toolbox/nmvn/nmvn.iml
+/toolbox/ndocusaurus/ndocusaurus.iml
+/toolbox/ndoc/ndoc.iml
+/toolbox/ndiff/ndiff.iml
+/toolbox/ndb/ndb.iml
+/toolbox/ncode/ncode.iml

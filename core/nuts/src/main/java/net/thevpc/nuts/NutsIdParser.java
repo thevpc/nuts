@@ -30,6 +30,12 @@ package net.thevpc.nuts;
  * @app.category Base
  */
 public interface NutsIdParser {
+
+    public static NutsIdParser of(NutsSession session){
+        PrivateNutsUtils.checkSession(session);
+        return session.getWorkspace().id().parser();
+    }
+
     NutsIdParser setLenient(boolean lenient);
 
     boolean isLenient();

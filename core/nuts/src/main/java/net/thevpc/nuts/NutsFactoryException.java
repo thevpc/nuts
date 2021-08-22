@@ -39,14 +39,6 @@ public class NutsFactoryException extends NutsException {
     /**
      * Constructs a new NutsFactoryException exception
      * @param session workspace
-     */
-    public NutsFactoryException(NutsSession session) {
-        super(session);
-    }
-
-    /**
-     * Constructs a new NutsFactoryException exception
-     * @param session workspace
      * @param message message
      */
     public NutsFactoryException(NutsSession session, NutsMessage message) {
@@ -61,24 +53,6 @@ public class NutsFactoryException extends NutsException {
      */
     public NutsFactoryException(NutsSession session, NutsMessage message, Throwable cause) {
         super(session, message, cause);
-    }
-
-    /**
-     * Constructs a new NutsFactoryException exception
-     * @param session workspace
-     * @param cause cause
-     */
-    public NutsFactoryException(NutsSession session, Throwable cause) {
-        super(session, cause);
-    }
-
-    /**
-     * Constructs a new NutsFactoryException exception
-     * @param session workspace
-     * @param cause cause
-     */
-    public NutsFactoryException(NutsSession session, IOException cause) {
-        super(session, cause);
     }
 
     /**

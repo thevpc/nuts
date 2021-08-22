@@ -166,10 +166,7 @@ public class DefaultNutsVersionFilter extends AbstractVersionFilter implements N
             return false;
         }
         final DefaultNutsVersionFilter other = (DefaultNutsVersionFilter) obj;
-        if (!Objects.equals(this.intervals, other.intervals)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(this.intervals, other.intervals);
     }
 
     @Override
@@ -380,7 +377,7 @@ public class DefaultNutsVersionFilter extends AbstractVersionFilter implements N
                     throw new NutsParseException(session, NutsMessage.cstyle("invalid state %s", state));
                 }
             } catch (IOException ex) {
-                throw new NutsIllegalArgumentException(session, ex);
+                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("parse version failed: %s", version), ex);
             }
             return dd;
         }

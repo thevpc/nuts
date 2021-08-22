@@ -173,9 +173,6 @@ public class DefaultNutsTerminalModel {
             throw new NutsExtensionNotFoundException(session, NutsSystemTerminalBase.class, "SystemTerminalBase");
         }
         NutsSystemTerminal syst = NutsSystemTerminal_of_NutsSystemTerminalBase(terminal, session);
-        if (this.systemTerminal != null) {
-            NutsWorkspaceUtils.unsetWorkspace(this.systemTerminal);
-        }
         NutsSystemTerminal old = this.systemTerminal;
         this.systemTerminal = syst;
 

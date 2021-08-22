@@ -1,4 +1,4 @@
-package net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.sys.unix;
+package net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.unix;
 
 import net.thevpc.nuts.NutsSession;
 

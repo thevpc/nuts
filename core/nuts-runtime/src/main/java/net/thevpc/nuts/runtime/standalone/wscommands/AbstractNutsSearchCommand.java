@@ -946,7 +946,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
             case "--optional": {
                 NutsArgument val = cmdLine.nextString();
                 if (enabled) {
-                    this.setOptional(CoreBooleanUtils.parseBoolean(val.getStringValue(), null, null));
+                    this.setOptional(NutsUtilStrings.parseBoolean(val.getStringValue(), null, null));
                 }
                 return true;
             }

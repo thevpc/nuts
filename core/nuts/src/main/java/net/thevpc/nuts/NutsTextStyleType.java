@@ -57,4 +57,28 @@ public enum NutsTextStyleType implements NutsEnum{
     public boolean basic() {
         return basic;
     }
+
+    public static NutsTextStyleType parseLenient(String value) {
+        return parseLenient(value, null);
+    }
+
+    public static NutsTextStyleType parseLenient(String value, NutsTextStyleType emptyOrErrorValue) {
+        return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
+    }
+
+    public static NutsTextStyleType parseLenient(String value, NutsTextStyleType emptyValue, NutsTextStyleType errorValue) {
+        if (value == null) {
+            value = "";
+        } else {
+            value = value.toUpperCase().trim().replace('-', '_');
+        }
+        if (value.isEmpty()) {
+            return emptyValue;
+        }
+        try {
+            return NutsTextStyleType.valueOf(value.toUpperCase());
+        } catch (Exception notFound) {
+            return errorValue;
+        }
+    }
 }

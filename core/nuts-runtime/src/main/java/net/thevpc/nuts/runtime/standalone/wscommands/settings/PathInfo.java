@@ -1,17 +1,16 @@
 package net.thevpc.nuts.runtime.standalone.wscommands.settings;
 
 import net.thevpc.nuts.NutsId;
-import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.NdiScriptInfoType;
 
 import java.nio.file.Path;
 
 public class PathInfo {
-    private NdiScriptInfoType type;
+    private PathInfoType type;
     private NutsId id;
     private Path path;
     private Status status;
 
-    public PathInfo(NdiScriptInfoType type, NutsId id, Path path, Status status) {
+    public PathInfo(PathInfoType type, NutsId id, Path path, Status status) {
         this.id = id;
         this.type = type;
         this.path = path;
@@ -22,7 +21,7 @@ public class PathInfo {
         return id;
     }
 
-    public NdiScriptInfoType getType() {
+    public PathInfoType getType() {
         return type;
     }
 

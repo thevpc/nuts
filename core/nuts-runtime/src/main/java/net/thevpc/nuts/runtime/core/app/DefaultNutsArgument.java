@@ -459,7 +459,7 @@ public class DefaultNutsArgument extends DefaultNutsTokenFilter implements NutsA
 
     @Override
     public boolean getBoolean() {
-        boolean b = CoreBooleanUtils.parseBoolean(expression, false, false);
+        boolean b = NutsUtilStrings.parseBoolean(expression, false, false);
         if (isNegated()) {
             return !b;
         }
@@ -468,12 +468,12 @@ public class DefaultNutsArgument extends DefaultNutsTokenFilter implements NutsA
 
     @Override
     public boolean isBoolean() {
-        return CoreBooleanUtils.parseBoolean(expression, null, null) != null;
+        return NutsUtilStrings.parseBoolean(expression, null, null) != null;
     }
 
     @Override
     public Boolean getBoolean(Boolean defaultValue) {
-        return CoreBooleanUtils.parseBoolean(expression, defaultValue,false);
+        return NutsUtilStrings.parseBoolean(expression, defaultValue,false);
     }
 
     @Override

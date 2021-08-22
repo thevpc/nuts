@@ -152,5 +152,28 @@ public enum NutsDependencyScope implements NutsEnum{
         return id;
     }
 
+    public static NutsDependencyScope parseLenient(String value) {
+        return parseLenient(value, null);
+    }
+
+    public static NutsDependencyScope parseLenient(String value, NutsDependencyScope emptyOrErrorValue) {
+        return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
+    }
+
+    public static NutsDependencyScope parseLenient(String value, NutsDependencyScope emptyValue, NutsDependencyScope errorValue) {
+        if (value == null) {
+            value = "";
+        } else {
+            value = value.toUpperCase().trim().replace('-', '_');
+        }
+        if (value.isEmpty()) {
+            return emptyValue;
+        }
+        try {
+            return NutsDependencyScope.valueOf(value.toUpperCase());
+        } catch (Exception notFound) {
+            return errorValue;
+        }
+    }
 
 }

@@ -587,7 +587,12 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
             m.append(commandName).append(" : ");
         }
         m.append(message);
-        throw new NutsIllegalArgumentException(session, m.build().immutable());
+        throw new NutsIllegalArgumentException(session, NutsMessage.formatted(m.build().toString()));
+    }
+
+    @Override
+    public NutsCommandLineFormat formatter() {
+        return session.getWorkspace().commandLine().formatter().setValue(this);
     }
 
     private NutsArgumentCandidate[] resolveRecommendations(NutsArgumentType expectValue, String[] names, int autoCompletecurrentWordIndex) {
@@ -769,16 +774,10 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
             return false;
         }
         if (v.charAt(0) == '-') {
-            if (v.charAt(1) == '-') {
-                return false;
-            }
-            return true;
+            return v.charAt(1) != '-';
         }
         if (v.charAt(0) == '+') {
-            if (v.charAt(1) == '+') {
-                return false;
-            }
-            return true;
+            return v.charAt(1) != '+';
         }
         return false;
     }
@@ -899,10 +898,5 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
     @Override
     public Iterator<NutsArgument> iterator() {
         return Arrays.asList(toArgumentArray()).iterator();
-    }
-
-    @Override
-    public NutsCommandLineFormat formatter() {
-        return session.getWorkspace().commandLine().formatter().setValue(this);
     }
 }

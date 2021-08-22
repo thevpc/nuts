@@ -74,4 +74,28 @@ public enum NutsTerminalMode implements NutsEnum{
     public String id() {
         return id;
     }
+
+    public static NutsTerminalMode parseLenient(String value) {
+        return parseLenient(value, null);
+    }
+
+    public static NutsTerminalMode parseLenient(String value, NutsTerminalMode emptyOrErrorValue) {
+        return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
+    }
+
+    public static NutsTerminalMode parseLenient(String value, NutsTerminalMode emptyValue, NutsTerminalMode errorValue) {
+        if (value == null) {
+            value = "";
+        } else {
+            value = value.toUpperCase().trim().replace('-', '_');
+        }
+        if (value.isEmpty()) {
+            return emptyValue;
+        }
+        try {
+            return NutsTerminalMode.valueOf(value.toUpperCase());
+        } catch (Exception notFound) {
+            return errorValue;
+        }
+    }
 }

@@ -21,9 +21,11 @@ public class NutsWorkspacePool {
             if (app.getApplicationContext().getWorkspace().locations().getWorkspaceLocation().toString().equals(ws)) {
                 o = app.getApplicationContext().getWorkspace();
             } else {
-                o = Nuts.openWorkspace(Nuts.createOptions()
+                o = Nuts.openWorkspace(Nuts.createOptionsBuilder()
                         .setSkipCompanions(true)
-                        .setWorkspace(ws)).getWorkspace();
+                        .setWorkspace(ws)
+                        .build()
+                ).getWorkspace();
             }
             pool.put(ws, o);
             pool.put(o.getUuid(), o);

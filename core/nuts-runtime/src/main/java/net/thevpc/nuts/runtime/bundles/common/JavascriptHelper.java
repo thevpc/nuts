@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -11,7 +11,7 @@
  * architecture to help supporting a large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -23,18 +23,18 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.runtime.bundles.common;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.bundles.string.GlobUtils;
+import net.thevpc.nuts.runtime.core.model.DefaultNutsVersion;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import java.util.*;
 import java.util.regex.Pattern;
-import net.thevpc.nuts.runtime.bundles.string.GlobUtils;
-import net.thevpc.nuts.runtime.core.model.DefaultNutsVersion;
 
 /**
  *
@@ -44,9 +44,9 @@ public class JavascriptHelper {
 
     public List<Pattern> blacklistClassNamePatterns = new ArrayList<>();
     private ScriptEngine engine;
-    private NutsSession session;
+    private final NutsSession session;
 
-    private Set<String> blacklistClassNames = new HashSet<>(
+    private final Set<String> blacklistClassNames = new HashSet<>(
             Arrays.asList(
                     "java.io.File",
                     "java.lang.Process",
@@ -54,6 +54,86 @@ public class JavascriptHelper {
                     "java.lang.Thread"
             )
     );
+
+    public JavascriptHelper(String code, String initExprs, Set<String> blacklist, Object util, NutsSession session) {
+        this.session = session;
+        if (blacklist == null) {
+            blacklistClassNames.addAll(Arrays.asList(
+                    "java.io.File",
+                    "java.lang.Process",
+                    "java.lang.System",
+                    "java.lang.Thread"
+            ));
+        } else {
+            for (String s : blacklist) {
+                if (s.contains("*")) {
+                    blacklistClassNamePatterns.add(GlobUtils.ofExact(s));
+                } else {
+                    blacklistClassNames.add(s);
+                }
+            }
+        }
+        if (code == null) {
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("illegal js filter : empty content"));
+        }
+        if (!code.contains("return")) {
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("js filter must contain a return clause"));
+        }
+        try {
+            engine = createScriptEngine();
+        } catch (Exception ex) {
+            engine = createManagerJdk();
+        }
+        try {
+            if (NutsUtilStrings.isBlank(initExprs)) {
+                initExprs = "";
+            }
+            engine.eval("function accept(x) { " + initExprs + code + " }");
+            if (util == null) {
+                util = new NutScriptUtil(session);
+            }
+            engine.put("util", util);
+        } catch (ScriptException e) {
+            throw new NutsParseException(session, NutsMessage.plain("javascript execution failed"), e);
+        }
+    }
+
+    public void createEngine(String code, String initExprs) {
+
+    }
+
+    private ScriptEngine createScriptEngine() {
+        jdk.nashorn.api.scripting.NashornScriptEngineFactory f = new jdk.nashorn.api.scripting.NashornScriptEngineFactory();
+        return f.getScriptEngine(new jdk.nashorn.api.scripting.ClassFilter() {
+            @Override
+            public boolean exposeToScripts(String s) {
+                if (blacklistClassNames.contains(s)) {
+                    return false;
+                }
+                for (Pattern pattern : blacklistClassNamePatterns) {
+                    if (pattern.matcher(s).matches()) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        });
+    }
+
+    private ScriptEngine createManagerJdk() {
+        ScriptEngineManager engineManager
+                = new ScriptEngineManager();
+        return engineManager.getEngineByName("nashorn");
+    }
+
+    public boolean accept(Object id) {
+        engine.put("x", id);
+        try {
+            return Boolean.TRUE.equals(engine.eval("accept(x);"));
+        } catch (ScriptException e) {
+            throw new NutsParseException(session, NutsMessage.plain("javascript execution failed"), e);
+        }
+    }
 
     public static class NutScriptUtil {
 
@@ -97,85 +177,5 @@ public class JavascriptHelper {
             return DefaultNutsVersion.compareVersions(v1, v2);
         }
 
-    }
-
-    public JavascriptHelper(String code, String initExprs, Set<String> blacklist, Object util, NutsSession session) {
-        this.session = session;
-        if (blacklist == null) {
-            blacklistClassNames.addAll(Arrays.asList(
-                    "java.io.File",
-                    "java.lang.Process",
-                    "java.lang.System",
-                    "java.lang.Thread"
-            ));
-        } else {
-            for (String s : blacklist) {
-                if (s.contains("*")) {
-                    blacklistClassNamePatterns.add(GlobUtils.ofExact(s));
-                } else {
-                    blacklistClassNames.add(s);
-                }
-            }
-        }
-        if (code == null) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("illegal js filter : empty content"));
-        }
-        if (!code.contains("return")) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("js filter must contain a return clause"));
-        }
-        try {
-            engine = createScriptEngine();
-        } catch (Exception ex) {
-            engine = createManagerJdk();
-        }
-        try {
-            if (NutsUtilStrings.isBlank(initExprs)) {
-                initExprs = "";
-            }
-            engine.eval("function accept(x) { " + initExprs + code + " }");
-            if (util == null) {
-                util = new NutScriptUtil(session);
-            }
-            engine.put("util", util);
-        } catch (ScriptException e) {
-            throw new NutsParseException(session, e);
-        }
-    }
-
-    public void createEngine(String code, String initExprs) {
-
-    }
-
-    private ScriptEngine createScriptEngine() {
-        jdk.nashorn.api.scripting.NashornScriptEngineFactory f = new jdk.nashorn.api.scripting.NashornScriptEngineFactory();
-        return f.getScriptEngine(new jdk.nashorn.api.scripting.ClassFilter() {
-            @Override
-            public boolean exposeToScripts(String s) {
-                if (blacklistClassNames.contains(s)) {
-                    return false;
-                }
-                for (Pattern pattern : blacklistClassNamePatterns) {
-                    if (pattern.matcher(s).matches()) {
-                        return false;
-                    }
-                }
-                return true;
-            }
-        });
-    }
-
-    private ScriptEngine createManagerJdk() {
-        ScriptEngineManager engineManager
-                = new ScriptEngineManager();
-        return engineManager.getEngineByName("nashorn");
-    }
-
-    public boolean accept(Object id) {
-        engine.put("x", id);
-        try {
-            return Boolean.TRUE.equals(engine.eval("accept(x);"));
-        } catch (ScriptException e) {
-            throw new NutsParseException(session, e);
-        }
     }
 }

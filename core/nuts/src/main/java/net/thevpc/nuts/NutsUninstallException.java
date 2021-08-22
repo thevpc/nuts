@@ -52,7 +52,7 @@ public class NutsUninstallException extends NutsInstallationException {
      * @param msg message
      * @param ex exception
      */
-    public NutsUninstallException(NutsSession session, NutsId id, NutsMessage msg, Exception ex) {
+    public NutsUninstallException(NutsSession session, NutsId id, NutsMessage msg, Throwable ex) {
         super(session, id,
                 msg==null ? NutsMessage.cstyle("unable to uninstall %s" , (id == null ? "<null>" : id)) : msg, ex);
     }

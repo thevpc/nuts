@@ -37,14 +37,6 @@ public class NutsParseException extends NutsException {
     /**
      * Constructs a new NutsParseException exception
      * @param session workspace
-     */
-    public NutsParseException(NutsSession session) {
-        super(session);
-    }
-
-    /**
-     * Constructs a new NutsParseException exception
-     * @param session workspace
      * @param message message
      */
     public NutsParseException(NutsSession session, NutsMessage message) {
@@ -59,15 +51,6 @@ public class NutsParseException extends NutsException {
      */
     public NutsParseException(NutsSession session, NutsMessage message, Throwable cause) {
         super(session, message, cause);
-    }
-
-    /**
-     * Constructs a new NutsParseException exception
-     * @param session workspace
-     * @param cause cause
-     */
-    public NutsParseException(NutsSession session, Throwable cause) {
-        super(session, cause);
     }
 
     /**

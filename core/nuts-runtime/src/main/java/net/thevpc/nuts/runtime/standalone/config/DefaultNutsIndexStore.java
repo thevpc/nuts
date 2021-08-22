@@ -82,7 +82,7 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
         return IteratorUtils.supplier(
                 () -> {
                     if (isInaccessible()) {
-                        throw new NutsIndexerNotAccessibleException(session);
+                        throw new NutsIndexerNotAccessibleException(session,NutsMessage.cstyle("index search failed for %s",getRepository().getName()));
 //                        return IteratorUtils.emptyIterator();
                     }
                     String URL = "http://localhost:7070/indexer/" + NutsConstants.Folders.ID + "?repositoryUuid=" + getRepository().getUuid();
@@ -96,7 +96,7 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
                                 .iterator();
                     } catch (UncheckedIOException | NutsIOException e) {
                         setInaccessible();
-                        throw new NutsIndexerNotAccessibleException(session);
+                        throw new NutsIndexerNotAccessibleException(session,NutsMessage.cstyle("index search failed for %s",getRepository().getName()));
 //                        return IteratorUtils.emptyIterator();
                     }
                 },

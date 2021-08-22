@@ -42,7 +42,7 @@ import java.util.function.Supplier;
  *
  * @since 0.5.4
  */
-public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, NutsWorkspaceOptionsBuilder {
+public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, NutsWorkspaceOptionsBuilder,NutsWorkspaceOptions {
 
     private static final long serialVersionUID = 1;
     /**
@@ -1516,5 +1516,17 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
 
     public void setSession(NutsSession session) {
         this.session=session;
+    }
+
+    @Override
+    public NutsWorkspaceOptions build() {
+        CoreNutsWorkspaceOptions c = new CoreNutsWorkspaceOptions(session);
+        c.setAll(this);
+        return c;
+    }
+
+    @Override
+    public NutsWorkspaceOptionsBuilder builder() {
+        return new CoreNutsWorkspaceOptions(session).setAll(this);
     }
 }

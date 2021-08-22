@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,6 +23,9 @@
  */
 package net.thevpc.nuts.runtime.standalone.security;
 
+import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.core.model.CoreNutsWorkspaceOptions;
+
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.time.Instant;
@@ -32,22 +35,17 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Supplier;
 
-import net.thevpc.nuts.*;
-
 /**
  * @author thevpc
  */
 public class ReadOnlyNutsWorkspaceOptions implements NutsWorkspaceOptions {
 
     private final NutsWorkspaceOptions options;
+    private final NutsSession session;
 
-    public ReadOnlyNutsWorkspaceOptions(NutsWorkspaceOptions options) {
+    public ReadOnlyNutsWorkspaceOptions(NutsWorkspaceOptions options, NutsSession session) {
         this.options = options;
-    }
-
-    @Override
-    public NutsWorkspaceOptionsBuilder copy() {
-        return options.copy();
+        this.session = session;
     }
 
     @Override
@@ -81,13 +79,18 @@ public class ReadOnlyNutsWorkspaceOptions implements NutsWorkspaceOptions {
     }
 
     @Override
-    public long getCreationTime() {
-        return options.getCreationTime();
+    public boolean isDry() {
+        return options.isDry();
     }
 
     @Override
-    public boolean isDry() {
-        return options.isDry();
+    public Boolean getDry() {
+        return options.getDry();
+    }
+
+    @Override
+    public long getCreationTime() {
+        return options.getCreationTime();
     }
 
     @Override
@@ -95,7 +98,7 @@ public class ReadOnlyNutsWorkspaceOptions implements NutsWorkspaceOptions {
         return options.getExcludedExtensions();
     }
 
-//    @Override
+    //    @Override
 //    public String[] getExcludedRepositories() {
 //        return options.getExcludedRepositories();
 //    }
@@ -222,8 +225,18 @@ public class ReadOnlyNutsWorkspaceOptions implements NutsWorkspaceOptions {
     }
 
     @Override
+    public Boolean getDebug() {
+        return options.getDebug();
+    }
+
+    @Override
     public boolean isGlobal() {
         return options.isGlobal();
+    }
+
+    @Override
+    public Boolean getGlobal() {
+        return options.getGlobal();
     }
 
     @Override
@@ -232,8 +245,18 @@ public class ReadOnlyNutsWorkspaceOptions implements NutsWorkspaceOptions {
     }
 
     @Override
+    public Boolean getGui() {
+        return options.getGui();
+    }
+
+    @Override
     public boolean isInherited() {
         return options.isInherited();
+    }
+
+    @Override
+    public Boolean getInherited() {
+        return options.getInherited();
     }
 
     @Override
@@ -242,8 +265,18 @@ public class ReadOnlyNutsWorkspaceOptions implements NutsWorkspaceOptions {
     }
 
     @Override
+    public Boolean getReadOnly() {
+        return options.getReadOnly();
+    }
+
+    @Override
     public boolean isRecover() {
         return options.isRecover();
+    }
+
+    @Override
+    public Boolean getRecover() {
+        return options.getRecover();
     }
 
     @Override
@@ -252,8 +285,18 @@ public class ReadOnlyNutsWorkspaceOptions implements NutsWorkspaceOptions {
     }
 
     @Override
+    public Boolean getReset() {
+        return options.getReset();
+    }
+
+    @Override
     public boolean isSkipCompanions() {
         return options.isSkipCompanions();
+    }
+
+    @Override
+    public Boolean getSkipCompanions() {
+        return options.getSkipCompanions();
     }
 
     @Override
@@ -262,8 +305,43 @@ public class ReadOnlyNutsWorkspaceOptions implements NutsWorkspaceOptions {
     }
 
     @Override
+    public Boolean getSkipWelcome() {
+        return options.getSkipWelcome();
+    }
+//
+//    @Override
+//    public String getBootRepositories() {
+//        return options.getBootRepositories();
+//    }
+
+    @Override
+    public String getOutLinePrefix() {
+        return options.getOutLinePrefix();
+    }
+
+    @Override
+    public String getErrLinePrefix() {
+        return options.getErrLinePrefix();
+    }
+
+    @Override
+    public boolean isSkipBoot() {
+        return options.isSkipBoot();
+    }
+
+    @Override
+    public Boolean getSkipBoot() {
+        return options.getSkipBoot();
+    }
+
+    @Override
     public boolean isTrace() {
         return options.isTrace();
+    }
+
+    @Override
+    public Boolean getTrace() {
+        return options.getTrace();
     }
 
     @Override
@@ -277,13 +355,38 @@ public class ReadOnlyNutsWorkspaceOptions implements NutsWorkspaceOptions {
     }
 
     @Override
+    public Boolean getCached() {
+        return options.getCached();
+    }
+
+    @Override
     public boolean isIndexed() {
         return options.isIndexed();
     }
 
     @Override
+    public Boolean getIndexed() {
+        return options.getIndexed();
+    }
+
+    @Override
     public boolean isTransitive() {
         return options.isTransitive();
+    }
+
+    @Override
+    public Boolean getTransitive() {
+        return options.getTransitive();
+    }
+
+    @Override
+    public boolean isBot() {
+        return options.isBot();
+    }
+
+    @Override
+    public Boolean getBot() {
+        return options.getBot();
     }
 
     @Override
@@ -310,16 +413,6 @@ public class ReadOnlyNutsWorkspaceOptions implements NutsWorkspaceOptions {
     public ExecutorService getExecutorService() {
         return options.getExecutorService();
     }
-//
-//    @Override
-//    public String getBootRepositories() {
-//        return options.getBootRepositories();
-//    }
-
-    @Override
-    public boolean isSkipBoot() {
-        return options.isSkipBoot();
-    }
 
     @Override
     public Instant getExpireTime() {
@@ -332,8 +425,13 @@ public class ReadOnlyNutsWorkspaceOptions implements NutsWorkspaceOptions {
     }
 
     @Override
-    public NutsMessage[] getErrors() {
-        return options.getErrors();
+    public Boolean getSkipErrors() {
+        return options.getSkipErrors();
+    }
+
+    @Override
+    public boolean isSwitchWorkspace() {
+        return options.isSwitchWorkspace();
     }
 
     @Override
@@ -342,98 +440,8 @@ public class ReadOnlyNutsWorkspaceOptions implements NutsWorkspaceOptions {
     }
 
     @Override
-    public String getOutLinePrefix() {
-        return options.getOutLinePrefix();
-    }
-
-    @Override
-    public String getErrLinePrefix() {
-        return options.getErrLinePrefix();
-    }
-
-    @Override
-    public Boolean getDry() {
-        return options.getDry();
-    }
-
-    @Override
-    public Boolean getDebug() {
-        return options.getDebug();
-    }
-
-    @Override
-    public Boolean getGlobal() {
-        return options.getGlobal();
-    }
-
-    @Override
-    public Boolean getGui() {
-        return options.getGui();
-    }
-
-    @Override
-    public Boolean getInherited() {
-        return options.getInherited();
-    }
-
-    @Override
-    public Boolean getReadOnly() {
-        return options.getReadOnly();
-    }
-
-    @Override
-    public Boolean getRecover() {
-        return options.getRecover();
-    }
-
-    @Override
-    public Boolean getReset() {
-        return options.getReset();
-    }
-
-    @Override
-    public Boolean getSkipCompanions() {
-        return options.getSkipCompanions();
-    }
-
-    @Override
-    public Boolean getSkipWelcome() {
-        return options.getSkipWelcome();
-    }
-
-    @Override
-    public Boolean getSkipBoot() {
-        return options.getSkipBoot();
-    }
-
-    @Override
-    public Boolean getTrace() {
-        return options.getTrace();
-    }
-
-    @Override
-    public Boolean getCached() {
-        return options.getCached();
-    }
-
-    @Override
-    public Boolean getIndexed() {
-        return options.getIndexed();
-    }
-
-    @Override
-    public Boolean getTransitive() {
-        return options.getTransitive();
-    }
-
-    @Override
-    public Boolean getSkipErrors() {
-        return options.getSkipErrors();
-    }
-
-    @Override
-    public boolean isSwitchWorkspace() {
-        return options.isSwitchWorkspace();
+    public NutsMessage[] getErrors() {
+        return options.getErrors();
     }
 
     @Override
@@ -452,13 +460,7 @@ public class ReadOnlyNutsWorkspaceOptions implements NutsWorkspaceOptions {
     }
 
     @Override
-    public boolean isBot() {
-        return options.isBot();
+    public NutsWorkspaceOptionsBuilder builder() {
+        return new CoreNutsWorkspaceOptions(session).setAll(this);
     }
-
-    @Override
-    public Boolean getBot() {
-        return options.getBot();
-    }
-
 }

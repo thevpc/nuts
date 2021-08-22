@@ -42,13 +42,6 @@ import java.util.function.Supplier;
 public interface NutsWorkspaceOptions extends Serializable {
 
     /**
-     * create a <strong>mutable</strong> copy of this instance
-     *
-     * @return a <strong>mutable</strong> copy of this instance
-     */
-    NutsWorkspaceOptionsBuilder copy();
-
-    /**
      * create a new instance of options formatter that help formatting this instance.
      *
      * @return a new instance of options formatter that help formatting this instance.
@@ -599,4 +592,6 @@ public interface NutsWorkspaceOptions extends Serializable {
      * @return session locale
      */
     String getTheme();
+
+    NutsWorkspaceOptionsBuilder builder();
 }

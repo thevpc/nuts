@@ -26,8 +26,9 @@
 package net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.util;
 
 
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.PathInfo;
-import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.sys.unix.AnyNixNdi;
+import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.unix.AnyNixNdi;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -221,50 +222,134 @@ public class NdiUtils {
         return null;
     }
 
-    public static PathInfo.Status tryWriteStatus(byte[] content, Path out) {
-        return tryWrite(content, out, true);
+    public static PathInfo.Status tryWriteStatus(byte[] content, Path out,NutsSession session) {
+        return tryWrite(content, out, DoWhenExist.IGNORE, DoWhenNotExists.IGNORE,session);
     }
 
-    public static PathInfo.Status tryWrite(byte[] content, Path out) {
-        return tryWrite(content, out, false);
+    public static PathInfo.Status tryWrite(byte[] content, Path out,NutsSession session) {
+        return tryWrite(content, out, DoWhenExist.ASK, DoWhenNotExists.CREATE, session);
     }
 
-    public static PathInfo.Status tryWrite(byte[] content, Path out, boolean doNotWrite) {
+    public enum DoWhenExist {
+        IGNORE,
+        OVERRIDE,
+        ASK,
+    }
+
+    public enum DoWhenNotExists {
+        IGNORE,
+        CREATE,
+        ASK,
+    }
+
+    public static PathInfo.Status tryWrite(byte[] content, Path out, /*boolean doNotWrite*/ DoWhenExist doWhenExist, DoWhenNotExists doWhenNotExist, NutsSession session) {
+        if(doWhenExist==null){
+            throw new NutsIllegalArgumentException(session, NutsMessage.plain("missing doWhenExist"));
+        }
+        if(doWhenNotExist==null){
+            throw new NutsIllegalArgumentException(session, NutsMessage.plain("missing doWhenNotExist"));
+        }
+//        System.err.println("[DEBUG] try write "+out);
         out = out.toAbsolutePath().normalize();
         byte[] old = loadFile(out);
         if (old == null) {
-            if (!doNotWrite) {
-                try {
-                    if (out.getParent() != null) {
-                        Files.createDirectories(out.getParent());
+            switch (doWhenNotExist){
+                case IGNORE:{
+                    return PathInfo.Status.DISCARDED;
+                }
+                case CREATE:{
+                    try {
+                        if (out.getParent() != null) {
+                            Files.createDirectories(out.getParent());
+                        }
+                        Files.write(out, content);
+                        if(session.isPlainTrace()){
+                            session.out().printf("create file %s%n",session.getWorkspace().io().path(out));
+                        }
+                    } catch (IOException e) {
+                        throw new UncheckedIOException(e);
                     }
-                    Files.write(out, content);
-                } catch (IOException e) {
-                    throw new UncheckedIOException(e);
+                    return PathInfo.Status.CREATED;
+                }
+                case ASK:{
+                    if (session.getTerminal().ask()
+                            .resetLine()
+                            .setDefaultValue(true).setSession(session)
+                            .forBoolean("create %s ?",
+                                    session.getWorkspace().text().forStyled(
+                                            NdiUtils.betterPath(out.toString()), NutsTextStyle.path()
+                                    )
+                            ).getBooleanValue()) {
+                        try {
+                            if (out.getParent() != null) {
+                                Files.createDirectories(out.getParent());
+                            }
+                            Files.write(out, content);
+                            if(session.isPlainTrace()){
+                                session.out().printf("create file %s%n",session.getWorkspace().io().path(out));
+                            }
+                        } catch (IOException e) {
+                            throw new UncheckedIOException(e);
+                        }
+                        return PathInfo.Status.CREATED;
+                    }else{
+                        return PathInfo.Status.DISCARDED;
+                    }
+                }
+                default:{
+                    throw new NutsUnsupportedEnumException(session,doWhenNotExist);
                 }
             }
-            return PathInfo.Status.CREATED;
-        }
-        if (Arrays.equals(old, content)) {
-            return PathInfo.Status.DISCARDED;
-        }
-//        if (!context.getSession().getTerminal().ask()
-//                .resetLine()
-//                .setDefaultValue(false).setSession(context.getSession())
-//                .forBoolean("override existing script %s ?",
-//                        context.getWorkspace().text().forStyled(
-//                                NdiUtils.betterPath(filePath.toString()), NutsTextStyle.path()
-//                        )
-//                ).getBooleanValue()) {
-//            return new PathInfo(type, id, filePath, PathInfo.Status.DISCARDED);
-//        }
-        if (!doNotWrite) {
-            try {
-                Files.write(out, content);
-            } catch (IOException e) {
-                throw new UncheckedIOException(e);
+        }else {
+            if (Arrays.equals(old, content)) {
+                return PathInfo.Status.DISCARDED;
+            }
+            switch (doWhenExist){
+                case IGNORE:{
+                    return PathInfo.Status.DISCARDED;
+                }
+                case OVERRIDE:{
+                    try {
+                        Files.write(out, content);
+                    } catch (IOException e) {
+                        throw new UncheckedIOException(e);
+                    }
+                    if(session.isPlainTrace()){
+                        session.out().printf("update file %s%n",session.getWorkspace().io().path(out));
+                    }
+                    return PathInfo.Status.OVERRIDDEN;
+                }
+                case ASK:{
+                    if (session.getTerminal().ask()
+                            .resetLine()
+                            .setDefaultValue(true).setSession(session)
+                            .forBoolean("override %s ?",
+                                    session.getWorkspace().text().forStyled(
+                                            NdiUtils.betterPath(out.toString()), NutsTextStyle.path()
+                                    )
+                            ).getBooleanValue()) {
+                        try {
+                            try {
+                                Files.write(out, content);
+                            } catch (IOException e) {
+                                throw new UncheckedIOException(e);
+                            }
+                            Files.write(out, content);
+                        } catch (IOException e) {
+                            throw new UncheckedIOException(e);
+                        }
+                        if(session.isPlainTrace()){
+                            session.out().printf("update file %s%n",session.getWorkspace().io().path(out));
+                        }
+                        return PathInfo.Status.OVERRIDDEN;
+                    }else{
+                        return PathInfo.Status.DISCARDED;
+                    }
+                }
+                default:{
+                    throw new NutsUnsupportedEnumException(session,doWhenExist);
+                }
             }
         }
-        return PathInfo.Status.OVERRIDDEN;
     }
 }

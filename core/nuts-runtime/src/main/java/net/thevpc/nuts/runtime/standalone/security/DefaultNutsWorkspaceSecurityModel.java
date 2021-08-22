@@ -10,32 +10,22 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
  * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.runtime.standalone.security;
 
-import java.io.IOException;
-import java.security.Principal;
 import net.thevpc.nuts.*;
-
-import javax.security.auth.Subject;
-import javax.security.auth.callback.*;
-import javax.security.auth.login.LoginContext;
-import java.util.*;
-import java.util.concurrent.Callable;
-import java.util.logging.Level;
-import javax.security.auth.login.LoginException;
 import net.thevpc.nuts.runtime.bundles.common.CorePlatformUtils;
 import net.thevpc.nuts.runtime.core.config.NutsWorkspaceConfigManagerExt;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
@@ -48,21 +38,31 @@ import net.thevpc.nuts.runtime.standalone.wscommands.DefaultNutsAddUserCommand;
 import net.thevpc.nuts.runtime.standalone.wscommands.DefaultNutsRemoveUserCommand;
 import net.thevpc.nuts.runtime.standalone.wscommands.DefaultNutsUpdateUserCommand;
 
+import javax.security.auth.Subject;
+import javax.security.auth.callback.*;
+import javax.security.auth.login.LoginContext;
+import javax.security.auth.login.LoginException;
+import java.io.IOException;
+import java.security.Principal;
+import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.logging.Level;
+
 /**
  *
  * @author thevpc
  */
 public class DefaultNutsWorkspaceSecurityModel {
 
-    private NutsLogger LOG;
     private final ThreadLocal<Stack<LoginContext>> loginContextStack = new ThreadLocal<>();
     private final DefaultNutsWorkspace ws;
     private final WrapperNutsAuthenticationAgent agent;
     private final Map<String, NutsAuthorizations> authorizations = new HashMap<>();
+    private NutsLogger LOG;
 
     public DefaultNutsWorkspaceSecurityModel(final DefaultNutsWorkspace ws) {
         this.ws = ws;
-        this.agent = new WrapperNutsAuthenticationAgent(ws, (session)->ws.env().setSession(session).getEnvMap(), (x, s) -> getAuthenticationAgent(x, s));
+        this.agent = new WrapperNutsAuthenticationAgent(ws, (session) -> ws.env().setSession(session).getEnvMap(), (x, s) -> getAuthenticationAgent(x, s));
         ws.events().addWorkspaceListener(new ClearAuthOnWorkspaceChange());
     }
 
@@ -76,9 +76,10 @@ public class DefaultNutsWorkspaceSecurityModel {
         }
         return LOG;
     }
+
     public void login(final String username, final char[] password, NutsSession session) {
         login(new CallbackHandler() {
-            
+
             @Override
             public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
                 for (Callback callback : callbacks) {
@@ -96,12 +97,12 @@ public class DefaultNutsWorkspaceSecurityModel {
         }, session);
     }
 
-    
+
     public boolean setSecureMode(boolean secure, char[] adminPassword, NutsSession session) {
-        if(secure){
-            return switchSecureMode(adminPassword,session);
-        }else{
-            return switchUnsecureMode(adminPassword,session);
+        if (secure) {
+            return switchSecureMode(adminPassword, session);
+        } else {
+            return switchUnsecureMode(adminPassword, session);
         }
     }
 
@@ -112,7 +113,7 @@ public class DefaultNutsWorkspaceSecurityModel {
         NutsUser adminSecurity = findUser(NutsConstants.Users.ADMIN, session);
         if (adminSecurity == null || !adminSecurity.hasCredentials()) {
             if (_LOG(session).isLoggable(Level.CONFIG)) {
-                _LOGOP(session).level(Level.CONFIG).verb(NutsLogVerb.WARNING).log( NutsConstants.Users.ADMIN + " user has no credentials. reset to default");
+                _LOGOP(session).level(Level.CONFIG).verb(NutsLogVerb.WARNING).log(NutsConstants.Users.ADMIN + " user has no credentials. reset to default");
             }
             NutsUserConfig u = NutsWorkspaceConfigManagerExt.of(ws.config()).getModel().getUser(NutsConstants.Users.ADMIN, session);
             u.setCredentials(CoreStringUtils.chrToStr(createCredentials("admin".toCharArray(), false, null, session)));
@@ -122,7 +123,7 @@ public class DefaultNutsWorkspaceSecurityModel {
         char[] credentials = CoreIOUtils.evalSHA1(adminPassword);
         if (Arrays.equals(credentials, adminPassword)) {
             Arrays.fill(credentials, '\0');
-            throw new NutsSecurityException(session, "Invalid credentials");
+            throw new NutsSecurityException(session, NutsMessage.plain("invalid credentials"));
         }
         Arrays.fill(credentials, '\0');
         boolean activated = false;
@@ -141,7 +142,7 @@ public class DefaultNutsWorkspaceSecurityModel {
         char[] credentials = CoreIOUtils.evalSHA1(adminPassword);
         if (Arrays.equals(credentials, adminPassword)) {
             Arrays.fill(credentials, '\0');
-            throw new NutsSecurityException(session, "invalid credentials");
+            throw new NutsSecurityException(session, NutsMessage.plain("invalid credentials"));
         }
         Arrays.fill(credentials, '\0');
         if (!isSecure(session)) {
@@ -151,12 +152,12 @@ public class DefaultNutsWorkspaceSecurityModel {
         return deactivated;
     }
 
-    
+
     public boolean isAdmin(NutsSession session) {
         return NutsConstants.Users.ADMIN.equals(getCurrentUsername(session));
     }
 
-    
+
     public void logout(NutsSession session) {
         Stack<LoginContext> r = loginContextStack.get();
         if (r == null || r.isEmpty()) {
@@ -166,11 +167,11 @@ public class DefaultNutsWorkspaceSecurityModel {
             LoginContext loginContext = r.pop();
             loginContext.logout();
         } catch (LoginException ex) {
-            throw new NutsLoginException(session, ex);
+            throw new NutsLoginException(session, NutsMessage.plain("login failed"), ex);
         }
     }
 
-    
+
     public NutsUser findUser(String username, NutsSession session) {
         NutsUserConfig security = NutsWorkspaceConfigManagerExt.of(ws.config()).getModel().getUser(username, session);
         Stack<String> inherited = new Stack<>();
@@ -196,7 +197,7 @@ public class DefaultNutsWorkspaceSecurityModel {
         return security == null ? null : new DefaultNutsUser(security, inherited.toArray(new String[0]));
     }
 
-    
+
     public NutsUser[] findUsers(NutsSession session) {
         List<NutsUser> all = new ArrayList<>();
         for (NutsUserConfig secu : NutsWorkspaceConfigManagerExt.of(ws.config()).getModel().getUsers(session)) {
@@ -205,28 +206,28 @@ public class DefaultNutsWorkspaceSecurityModel {
         return all.toArray(new NutsUser[0]);
     }
 
-    
+
     public NutsAddUserCommand addUser(String name, NutsSession session) {
         return new DefaultNutsAddUserCommand(ws).setUsername(name).setSession(session);
     }
 
-    
+
     public NutsUpdateUserCommand updateUser(String name, NutsSession session) {
         return new DefaultNutsUpdateUserCommand(ws).setUsername(name).setSession(session);
     }
 
-    
+
     public NutsRemoveUserCommand removeUser(String name, NutsSession session) {
         return new DefaultNutsRemoveUserCommand(ws).setUsername(name).setSession(session);
     }
 
-    
+
     public void checkAllowed(String permission, String operationName, NutsSession session) {
         if (!isAllowed(permission, session)) {
             if (NutsUtilStrings.isBlank(operationName)) {
-                throw new NutsSecurityException(session, permission + " not allowed!");
+                throw new NutsSecurityException(session, NutsMessage.cstyle("%s not allowed!", permission));
             } else {
-                throw new NutsSecurityException(session, operationName + ": " + permission + " not allowed!");
+                throw new NutsSecurityException(session, NutsMessage.cstyle("%s : %s not allowed!", operationName, permission));
             }
         }
     }
@@ -247,7 +248,7 @@ public class DefaultNutsWorkspaceSecurityModel {
         return aa;
     }
 
-    
+
     public boolean isAllowed(String permission, NutsSession session) {
         if (!isSecure(session)) {
             return true;
@@ -283,7 +284,7 @@ public class DefaultNutsWorkspaceSecurityModel {
         return false;
     }
 
-    
+
     public String[] getCurrentLoginStack(NutsSession session) {
         List<String> logins = new ArrayList<String>();
         Stack<LoginContext> c = loginContextStack.get();
@@ -308,7 +309,7 @@ public class DefaultNutsWorkspaceSecurityModel {
         return logins.toArray(new String[0]);
     }
 
-    
+
     public String getCurrentUsername(NutsSession session) {
         if (ws.isInitializing()) {
             return NutsConstants.Users.ADMIN;
@@ -336,7 +337,7 @@ public class DefaultNutsWorkspaceSecurityModel {
         return c.getSubject();
     }
 
-    
+
     public void login(CallbackHandler handler, NutsSession session) {
         NutsWorkspaceLoginModule.configure(ws); //initialize it
         //        if (!NutsConstants.Misc.USER_ANONYMOUS.equals(getCurrentLogin())) {
@@ -345,14 +346,14 @@ public class DefaultNutsWorkspaceSecurityModel {
         LoginContext login;
         try {
             login = CorePlatformUtils.runWithinLoader(new Callable<LoginContext>() {
-                
+
                 public LoginContext call() throws Exception {
                     return new LoginContext("nuts", handler);
                 }
             }, NutsWorkspaceLoginModule.class.getClassLoader(), session);
             login.login();
         } catch (LoginException ex) {
-            throw new NutsLoginException(session, ex);
+            throw new NutsLoginException(session, NutsMessage.plain("login failed"), ex);
         }
         Stack<LoginContext> r = loginContextStack.get();
         if (r == null) {
@@ -373,7 +374,7 @@ public class DefaultNutsWorkspaceSecurityModel {
         return c.peek();
     }
 
-    
+
     public NutsAuthenticationAgent getAuthenticationAgent(String authenticationAgentId, NutsSession session) {
         authenticationAgentId = NutsUtilStrings.trim(authenticationAgentId);
         if (NutsUtilStrings.isBlank(authenticationAgentId)) {
@@ -385,14 +386,14 @@ public class DefaultNutsWorkspaceSecurityModel {
         return a;
     }
 
-    
+
     public void setAuthenticationAgent(String authenticationAgentId, NutsSession session) {
 
         DefaultNutsWorkspaceConfigModel cc = NutsWorkspaceConfigManagerExt.of(ws.config()).getModel();
 
         if (cc.createAuthenticationAgent(authenticationAgentId, session) == null) {
             throw new NutsIllegalArgumentException(session,
-                    NutsMessage.cstyle("unsupported Authentication Agent %s" , authenticationAgentId)
+                    NutsMessage.cstyle("unsupported Authentication Agent %s", authenticationAgentId)
             );
         }
 
@@ -403,27 +404,27 @@ public class DefaultNutsWorkspaceSecurityModel {
         }
     }
 
-    
+
     public boolean isSecure(NutsSession session) {
         return NutsWorkspaceConfigManagerExt.of(ws.config()).getModel().getStoredConfigSecurity().isSecure();
     }
 
-    
+
     public void checkCredentials(char[] credentialsId, char[] password, NutsSession session) throws NutsSecurityException {
         agent.checkCredentials(credentialsId, password, session);
     }
 
-    
+
     public char[] getCredentials(char[] credentialsId, NutsSession session) {
         return agent.getCredentials(credentialsId, session);
     }
 
-    
+
     public boolean removeCredentials(char[] credentialsId, NutsSession session) {
         return agent.removeCredentials(credentialsId, session);
     }
 
-    
+
     public char[] createCredentials(char[] credentials, boolean allowRetrieve, char[] credentialId, NutsSession session) {
         return agent.createCredentials(credentials, allowRetrieve, credentialId, session);
     }
@@ -442,5 +443,5 @@ public class DefaultNutsWorkspaceSecurityModel {
             authorizations.clear();
         }
     }
-    
+
 }

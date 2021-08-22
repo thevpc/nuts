@@ -45,6 +45,11 @@ import java.util.function.Predicate;
  */
 public interface NutsElementFormat extends NutsObjectFormat {
 
+    static NutsElementFormat of(NutsSession session){
+        PrivateNutsUtils.checkSession(session);
+        return session.getWorkspace().elem();
+    }
+
     /**
      * return parse content type
      *

@@ -31,6 +31,11 @@ package net.thevpc.nuts;
  */
 public interface NutsVersionParser {
 
+    static NutsVersionParser parse(NutsSession session) {
+        PrivateNutsUtils.checkSession(session);
+        return session.getWorkspace().version().parser();
+    }
+
     /**
      * return version instance representing the {@code version} string
      *

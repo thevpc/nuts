@@ -127,7 +127,7 @@ public class DefaultNutsWorkspaceEnvManagerModel {
         String t = getEnv(property);
         if (t != null) {
             try {
-                return CoreBooleanUtils.parseBoolean(t, false, false);
+                return NutsUtilStrings.parseBoolean(t, false, false);
             } catch (Exception ex) {
                 //
             }
@@ -139,7 +139,7 @@ public class DefaultNutsWorkspaceEnvManagerModel {
         String t = getOption(property);
         if (t != null) {
             try {
-                return CoreBooleanUtils.parseBoolean(t, true, false);
+                return NutsUtilStrings.parseBoolean(t, true, false);
             } catch (Exception ex) {
                 //
             }
@@ -265,11 +265,16 @@ public class DefaultNutsWorkspaceEnvManagerModel {
     }
 
     public boolean isGraphicalDesktopEnvironment() {
-        return !java.awt.GraphicsEnvironment.isHeadless();
+        try{
+            return !java.awt.GraphicsEnvironment.isHeadless();
+        }catch (Exception e){
+            //exception may occur if the sdk is build without awt package for instance!
+            return false;
+        }
     }
 
     protected NutsId[] getDesktopEnvironments0(NutsSession session) {
-        if(java.awt.GraphicsEnvironment.isHeadless()){
+        if(!isGraphicalDesktopEnvironment()){
             return new NutsId[]{
                     session.getWorkspace().id().builder().setArtifactId("none").build()
             };
@@ -437,7 +442,7 @@ public class DefaultNutsWorkspaceEnvManagerModel {
                 return ((Number) t).doubleValue() != 0;
             }
             if (t instanceof CharSequence) {
-                return CoreBooleanUtils.parseBoolean(t.toString(), false, false);
+                return NutsUtilStrings.parseBoolean(t.toString(), false, false);
             }
         } catch (Exception ex) {
             //

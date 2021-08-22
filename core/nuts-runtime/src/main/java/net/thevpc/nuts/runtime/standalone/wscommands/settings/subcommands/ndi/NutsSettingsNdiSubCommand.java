@@ -4,12 +4,10 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.optional.mslink.OptionalMsLinkHelper;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.PathInfo;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.AbstractNutsSettingsSubCommand;
-import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.base.CreateNutsScriptCommand;
-import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.base.DefaultNutsEnvInfo;
-import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.sys.unix.LinuxNdi;
-import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.sys.unix.MacosNdi;
-import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.sys.unix.UnixNdi;
-import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.sys.win.WindowsNdi;
+import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.unix.LinuxNdi;
+import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.unix.MacosNdi;
+import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.unix.UnixNdi;
+import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.win.WindowsNdi;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.util.NdiUtils;
 
 import java.io.UncheckedIOException;
@@ -17,6 +15,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
 
@@ -46,8 +45,10 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
     }
 
     public void runAddLauncher(NutsCommandLine commandLine, NutsSession session) {
-        CreateNutsScriptCommand cmd = new CreateNutsScriptCommand();
-        cmd.getOptions().setSession(session.copy());
+        NdiScriptOptions options = new NdiScriptOptions();
+        options.setSession(session.copy());
+        List<String> idsToInstall = new ArrayList<>();
+
 //        ArrayList<String> idsToInstall ;
         NutsWorkspace ws = session.getWorkspace();
 //        ArrayList<String> executorOptions = new ArrayList<>();
@@ -64,114 +65,114 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
         commandLine.setCommandName("settings add launcher");
         while (commandLine.hasNext()) {
             if ((a = commandLine.nextBoolean("-t", "--fetch")) != null) {
-                cmd.getOptions().setFetch(a.getBooleanValue());
+                options.setFetch(a.getBooleanValue());
             } else if ((a = commandLine.nextString("-d", "--workdir")) != null) {
                 if (a.isEnabled()) {
-                    cmd.getOptions().getLauncher().setWorkingDirectory(a.getStringValue());
+                    options.getLauncher().setWorkingDirectory(a.getStringValue());
                 }
             } else if ((a = commandLine.nextString("--icon")) != null) {
                 if (a.isEnabled()) {
-                    cmd.getOptions().getLauncher().setIcon(a.getStringValue());
+                    options.getLauncher().setIcon(a.getStringValue());
                 }
             } else if ((a = commandLine.next("--menu")) != null) {
                 if (a.isEnabled()) {
-                    cmd.getOptions().getLauncher().setCreateMenuShortcut(parseCond(a));
+                    options.getLauncher().setCreateMenuShortcut(parseCond(a));
                 }
             } else if ((a = commandLine.nextString("--menu-category")) != null) {
                 if (a.isEnabled()) {
-                    cmd.getOptions().getLauncher().setMenuCategory(a.getStringValue());
-                    if (cmd.getOptions().getLauncher().getMenuCategory() != null && !cmd.getOptions().getLauncher().getMenuCategory().isEmpty()) {
-                        if (cmd.getOptions().getLauncher().getCreateMenuShortcut() == NutsActionSupportCondition.NEVER) {
-                            cmd.getOptions().getLauncher().setCreateMenuShortcut(NutsActionSupportCondition.PREFERRED);
+                    options.getLauncher().setMenuCategory(a.getStringValue());
+                    if (options.getLauncher().getMenuCategory() != null && !options.getLauncher().getMenuCategory().isEmpty()) {
+                        if (options.getLauncher().getCreateMenuShortcut() == NutsActionSupportCondition.NEVER) {
+                            options.getLauncher().setCreateMenuShortcut(NutsActionSupportCondition.PREFERRED);
                         }
                     }
                 }
             } else if ((a = commandLine.nextBoolean("--desktop")) != null) {
                 if (a.isEnabled()) {
-                    cmd.getOptions().getLauncher().setCreateDesktopShortcut(parseCond(a));
+                    options.getLauncher().setCreateDesktopShortcut(parseCond(a));
                 }
             } else if ((a = commandLine.nextString("--desktop-name")) != null) {
                 if (a.isEnabled()) {
-                    cmd.getOptions().getLauncher().setShortcutName(a.getStringValue());
-                    if (cmd.getOptions().getLauncher().getCreateDesktopShortcut() == NutsActionSupportCondition.NEVER) {
-                        cmd.getOptions().getLauncher().setCreateDesktopShortcut(NutsActionSupportCondition.PREFERRED);
+                    options.getLauncher().setShortcutName(a.getStringValue());
+                    if (options.getLauncher().getCreateDesktopShortcut() == NutsActionSupportCondition.NEVER) {
+                        options.getLauncher().setCreateDesktopShortcut(NutsActionSupportCondition.PREFERRED);
                     }
                 }
             } else if ((a = commandLine.nextString("--menu-name")) != null) {
                 if (a.isEnabled()) {
-                    cmd.getOptions().getLauncher().setShortcutName(a.getStringValue());
-                    if (cmd.getOptions().getLauncher().getCreateDesktopShortcut() == NutsActionSupportCondition.NEVER) {
-                        cmd.getOptions().getLauncher().setCreateMenuShortcut(NutsActionSupportCondition.PREFERRED);
+                    options.getLauncher().setShortcutName(a.getStringValue());
+                    if (options.getLauncher().getCreateDesktopShortcut() == NutsActionSupportCondition.NEVER) {
+                        options.getLauncher().setCreateMenuShortcut(NutsActionSupportCondition.PREFERRED);
                     }
                 }
             } else if ((a = commandLine.nextString("--shortcut-name")) != null) {
                 if (a.isEnabled()) {
-                    cmd.getOptions().getLauncher().setShortcutName(a.getStringValue());
-                    if (cmd.getOptions().getLauncher().getCreateCustomShortcut() == NutsActionSupportCondition.NEVER) {
-                        cmd.getOptions().getLauncher().setCreateCustomShortcut(NutsActionSupportCondition.PREFERRED);
+                    options.getLauncher().setShortcutName(a.getStringValue());
+                    if (options.getLauncher().getCreateCustomShortcut() == NutsActionSupportCondition.NEVER) {
+                        options.getLauncher().setCreateCustomShortcut(NutsActionSupportCondition.PREFERRED);
                     }
                 }
             } else if ((a = commandLine.nextString("--shortcut-path")) != null) {
                 if (a.isEnabled()) {
-                    cmd.getOptions().getLauncher().setCustomShortcutPath(a.getStringValue());
-                    if (cmd.getOptions().getLauncher().getCreateCustomShortcut() == NutsActionSupportCondition.NEVER) {
-                        cmd.getOptions().getLauncher().setCreateCustomShortcut(NutsActionSupportCondition.PREFERRED);
+                    options.getLauncher().setCustomShortcutPath(a.getStringValue());
+                    if (options.getLauncher().getCreateCustomShortcut() == NutsActionSupportCondition.NEVER) {
+                        options.getLauncher().setCreateCustomShortcut(NutsActionSupportCondition.PREFERRED);
                     }
                 }
             } else if ((a = commandLine.nextBoolean("-x", "--external", "--spawn")) != null) {
                 if (a.getBooleanValue()) {
-                    cmd.getOptions().getLauncher().getNutsOptions().add("--spawn");
+                    options.getLauncher().getNutsOptions().add("--spawn");
                 }
             } else if ((a = commandLine.nextBoolean("-b", "--embedded")) != null) {
                 if (a.getBooleanValue()) {
-                    cmd.getOptions().getLauncher().getNutsOptions().add("--embedded");
+                    options.getLauncher().getNutsOptions().add("--embedded");
                 }
             } else if ((a = commandLine.nextBoolean("--terminal")) != null) {
                 if (a.isEnabled()) {
-                    cmd.getOptions().getLauncher().setOpenTerminal(a.getBooleanValue());
+                    options.getLauncher().setOpenTerminal(a.getBooleanValue());
                 }
             } else if ((a = commandLine.nextBoolean("-e", "--env")) != null) {
-                cmd.getOptions().setIncludeEnv(a.getBooleanValue());
+                options.setIncludeEnv(a.getBooleanValue());
             } else if ((a = commandLine.nextBoolean("--system")) != null) {
                 if (a.getBooleanValue()) {
-                    cmd.getOptions().getLauncher().getNutsOptions().add("--system");
+                    options.getLauncher().getNutsOptions().add("--system");
                 }
             } else if ((a = commandLine.nextBoolean("--current-user")) != null) {
                 if (a.getBooleanValue()) {
-                    cmd.getOptions().getLauncher().getNutsOptions().add("--current-user");
+                    options.getLauncher().getNutsOptions().add("--current-user");
                 }
             } else if ((a = commandLine.nextBoolean("--as-root")) != null) {
                 if (a.isEnabled() && a.getBooleanValue()) {
-                    cmd.getOptions().getLauncher().getNutsOptions().add("--as-root");
+                    options.getLauncher().getNutsOptions().add("--as-root");
                 }
             } else if ((a = commandLine.nextBoolean("--sudo")) != null) {
                 if (a.isEnabled() && a.getBooleanValue()) {
-                    cmd.getOptions().getLauncher().getNutsOptions().add("--sudo");
+                    options.getLauncher().getNutsOptions().add("--sudo");
                 }
             } else if ((a = commandLine.nextString("--run-as")) != null) {
                 if (a.isEnabled()) {
-                    cmd.getOptions().getLauncher().getNutsOptions().add("--run-as=" + a.getStringValue());
+                    options.getLauncher().getNutsOptions().add("--run-as=" + a.getStringValue());
                 }
             } else if ((a = commandLine.nextString("-X", "--exec-options")) != null) {
-                cmd.getOptions().getLauncher().getNutsOptions().add("--exec-options=" + a.getStringValue());
+                options.getLauncher().getNutsOptions().add("--exec-options=" + a.getStringValue());
             } else if ((a = commandLine.nextString("-i", "--installed")) != null) {
                 session.setConfirm(NutsConfirmationMode.YES);
                 for (NutsId resultId : ws.search().setInstallStatus(
                         ws.filters().installStatus().byInstalled(true)
                 ).getResultIds()) {
-                    cmd.getIdsToInstall().add(resultId.getLongName());
+                    idsToInstall.add(resultId.getLongName());
                     missingAnyArgument = false;
                 }
             } else if ((a = commandLine.nextString("-c", "--companions")) != null) {
                 session.setConfirm(NutsConfirmationMode.YES);
                 for (NutsId companion : ws.getCompanionIds(session)) {
-                    cmd.getIdsToInstall().add(ws.search().addId(companion).setLatest(true).getResultIds().required().getLongName());
+                    idsToInstall.add(ws.search().addId(companion).setLatest(true).getResultIds().required().getLongName());
                     missingAnyArgument = false;
                 }
             } else if ((a = commandLine.nextString("--switch")) != null) {
                 Boolean booleanValue = a.getBooleanValue(null);
                 if (booleanValue != null) {
-                    cmd.getOptions().getLauncher().setSystemWideConfig(booleanValue);
+                    options.getLauncher().setSystemWideConfig(booleanValue);
                 }
             } else if ((a = commandLine.nextString("--ignore-unsupported-os")) != null) {
                 if (a.isEnabled()) {
@@ -180,17 +181,17 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
             } else if (commandLine.peek().getStringKey().equals("-w") || commandLine.peek().getStringKey().equals("--workspace")) {
                 a = commandLine.nextString();
                 if (a.isEnabled()) {
-                    cmd.getOptions().getLauncher().setSwitchWorkspaceLocation(a.getStringValue());
+                    options.getLauncher().setSwitchWorkspaceLocation(a.getStringValue());
                 }
             } else if (commandLine.peek().getStringKey().equals("-n") || commandLine.peek().getStringKey().equals("--name")) {
                 a = commandLine.nextString();
                 if (a.isEnabled()) {
-                    cmd.getOptions().getLauncher().setCustomScriptPath(a.getStringValue());
+                    options.getLauncher().setCustomScriptPath(a.getStringValue());
                 }
             } else if (commandLine.peek().isOption()) {
                 session.configureLast(commandLine);
             } else {
-                cmd.getIdsToInstall().add(commandLine.next().getString());
+                idsToInstall.add(commandLine.next().getString());
                 missingAnyArgument = false;
             }
         }
@@ -206,8 +207,8 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
                 }
                 throw new NutsExecutionException(session, NutsMessage.cstyle("platform not supported : %s", ws.env().getOs()), 2);
             }
-            if (!cmd.getIdsToInstall().isEmpty()) {
-                printResults(session, ndi.addScript(cmd, session));
+            if (!idsToInstall.isEmpty()) {
+                printResults(session, ndi.addScript(options, idsToInstall.toArray(new String[0])));
             }
         }
     }
@@ -277,15 +278,12 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
                 subTrace = false;
             }
             if (!idsToUninstall.isEmpty()) {
-                DefaultNutsEnvInfo env = new DefaultNutsEnvInfo(
-                        null, null/*switchWorkspaceLocation*/, session
-                );
                 for (String id : idsToUninstall) {
                     try {
                         ndi.removeNutsScript(
                                 id,
-                                session.copy().setTrace(subTrace),
-                                env
+                                null,
+                                session.copy().setTrace(subTrace)
                         );
                     } catch (UncheckedIOException e) {
                         throw new NutsExecutionException(session, NutsMessage.cstyle("unable to run script %s : %s", id, e), e);
@@ -371,7 +369,9 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
             }
             if (switchWorkspaceLocation != null || switchWorkspaceApi != null) {
                 NdiScriptOptions oo = new NdiScriptOptions()
-                        .setEnv(new DefaultNutsEnvInfo(null, switchWorkspaceLocation, session));
+                        .setSession(session)
+                ;
+                oo.getLauncher().setSwitchWorkspaceLocation(switchWorkspaceLocation);
                 oo.getLauncher().setCreateDesktopShortcut(createDesktop);
                 oo.getLauncher().setMenuCategory(menuCategory);
                 oo.getLauncher().setCreateMenuShortcut(createMenu);

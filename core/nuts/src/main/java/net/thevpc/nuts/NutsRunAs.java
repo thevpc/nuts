@@ -57,6 +57,31 @@ public class NutsRunAs {
         public String id() {
             return id;
         }
+
+        public static Mode parseLenient(String value) {
+            return parseLenient(value, null);
+        }
+
+        public static Mode parseLenient(String value, Mode emptyOrErrorValue) {
+            return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
+        }
+
+        public static Mode parseLenient(String value, Mode emptyValue, Mode errorValue) {
+            if (value == null) {
+                value = "";
+            } else {
+                value = value.toUpperCase().trim().replace('-', '_');
+            }
+            if (value.isEmpty()) {
+                return emptyValue;
+            }
+            try {
+                return Mode.valueOf(value.toUpperCase());
+            } catch (Exception notFound) {
+                return errorValue;
+            }
+        }
+
     }
 
     @Override

@@ -31,4 +31,28 @@ public enum NutsTerminalModeOp  implements NutsEnum {
     public NutsTerminalMode out() {
         return out;
     }
+
+    public static NutsTerminalModeOp parseLenient(String value) {
+        return parseLenient(value, null);
+    }
+
+    public static NutsTerminalModeOp parseLenient(String value, NutsTerminalModeOp emptyOrErrorValue) {
+        return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
+    }
+
+    public static NutsTerminalModeOp parseLenient(String value, NutsTerminalModeOp emptyValue, NutsTerminalModeOp errorValue) {
+        if (value == null) {
+            value = "";
+        } else {
+            value = value.toUpperCase().trim().replace('-', '_');
+        }
+        if (value.isEmpty()) {
+            return emptyValue;
+        }
+        try {
+            return NutsTerminalModeOp.valueOf(value.toUpperCase());
+        } catch (Exception notFound) {
+            return errorValue;
+        }
+    }
 }

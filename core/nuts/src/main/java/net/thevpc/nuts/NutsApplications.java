@@ -23,13 +23,11 @@
  */
 package net.thevpc.nuts;
 
-import javax.swing.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Supplier;
 import java.util.logging.Level;
 
 /**
@@ -68,7 +66,7 @@ public final class NutsApplications {
         try {
             application.run(args);
         } catch (Exception ex) {
-            System.exit(NutsApplications.processThrowable(ex, args, null));
+            System.exit(NutsApplications.processThrowable(ex));
             return;
         }
         System.exit(0);
@@ -170,96 +168,90 @@ public final class NutsApplications {
         throw new NutsExecutionException(session, NutsMessage.cstyle("unsupported execution mode %s", applicationContext.getMode()), 204);
     }
 
+    public static int processThrowable(Throwable ex) {
+        return processThrowable(ex, null);
+    }
+
     /**
      * process throwable and return exit code
      *
-     * @param ex   exception
-     * @param args application arguments to check from if a '--verbose' or
-     *             '--debug' option is armed
-     * @param out  out stream
+     * @param ex  exception
+     * @param out out stream
      * @return exit code
      */
-    public static int processThrowable(Throwable ex, String[] args, PrintStream out) {
+    public static int processThrowable(Throwable ex, PrintStream out) {
         if (ex == null) {
             return 0;
         }
-        int errorCode = 204;
-        boolean showTrace = false;
-        String nutsArgs = System.getProperty("nuts.args");
-        if (nutsArgs != null) {
-            String[] aargs = PrivateNutsCommandLine.parseCommandLineArray(nutsArgs);
-            for (String arg : aargs) {
-                if (arg.equals("--verbose") || arg.equals("--debug")) {
-                    showTrace = true;
-                    break;
-                }
+
+        NutsSession session = NutsExceptionBase.detectSession(ex);
+        NutsWorkspaceOptionsBuilder bo = null;
+        if (session != null) {
+            bo = session.getWorkspace().env().getBootOptions().builder();
+            if (!session.getWorkspace().env().isGraphicalDesktopEnvironment()) {
+                bo.setGui(false);
+            }
+        } else {
+            NutsWorkspaceOptionsBuilder options = Nuts.createOptionsBuilder();
+            //load inherited
+            String nutsArgs = NutsUtilStrings.trim(
+                    NutsUtilStrings.trim(System.getProperty("nuts.boot.args"))
+                            + " " + NutsUtilStrings.trim(System.getProperty("nuts.args"))
+            );
+            try {
+                options.parseArguments(PrivateNutsCommandLine.parseCommandLineArray(nutsArgs));
+            } catch (Exception e) {
+                //any, ignore...
+            }
+            bo = options;
+            if (!isGraphicalDesktopEnvironment0()) {
+                bo.setGui(false);
             }
         }
+
+        boolean bot = bo.isBot();
+        boolean gui = bo.isGui();
+        boolean showTrace = bo.isDebug();
+        showTrace |= (bo.getLogConfig() != null
+                && bo.getLogConfig().getLogTermLevel() != null
+                && bo.getLogConfig().getLogTermLevel().intValue() < Level.INFO.intValue());
         if (!showTrace) {
             showTrace = PrivateNutsUtils.getSysBoolNutsProperty("debug", false);
         }
-        if (!showTrace && args != null) {
-            for (String arg : args) {
-                if (arg.startsWith("-")) {
-                    if (arg.equals("--verbose") || arg.equals("--debug")) {
-                        showTrace = true;
-                        break;
-                    }
-                } else {
-                    break;
-                }
-            }
+        if (bot) {
+            showTrace = false;
+            gui = false;
         }
-        if (ex instanceof NutsBootException) {
-            NutsBootException ex2 = (NutsBootException) ex;
-            if (ex2.getExitCode() == 0) {
-                return 0;
-            } else {
-                errorCode = ex2.getExitCode();
-            }
-        } else if (ex instanceof NutsExecutionException) {
+        return processThrowable(ex, out, !bot, showTrace, gui);
+    }
+
+    public static int processThrowable(Throwable ex, PrintStream out, boolean showMessage, boolean showTrace, boolean showGui) {
+        if (ex == null) {
+            return 0;
+        }
+        NutsExceptionBase neb = NutsExceptionBase.detectExceptionBase(ex);
+        NutsBootException nbe = neb != null ? null : NutsBootException.detectBootException(ex);
+        int errorCode = 204;
+        if (nbe != null) {
+            errorCode = nbe.getExitCode();
+        } else if (neb instanceof NutsExecutionException) {
             NutsExecutionException ex2 = (NutsExecutionException) ex;
-            if (ex2.getExitCode() == 0) {
-                return 0;
-            } else {
-                errorCode = ex2.getExitCode();
-            }
+            errorCode = ex2.getExitCode();
+        }
+        if (errorCode == 0) {
+            return 0;
         }
         NutsSession session = null;
         NutsString fm = null;
-        if (ex instanceof NutsException) {
-            NutsException ne = (NutsException) ex;
-            session = ne.getSession();
-            fm = ne.getFormattedMessage();
+        if (neb != null) {
+            session = neb.getSession();
+            fm = neb.getFormattedString();
         }
         String m = ex.getMessage();
         if (m == null || m.length() < 5) {
             m = ex.toString();
         }
 
-        if (session == null) {
-            if (ex instanceof NutsSecurityException) {
-                session = ((NutsSecurityException) ex).getSession();
-            }
-        }
-        if (session != null) {
-            try {
-                NutsWorkspaceEnvManager env = session.getWorkspace().env();
-                showTrace = env.getBootOptions().isDebug()
-                        || (env.getBootOptions().getLogConfig() != null
-                        && env.getBootOptions().getLogConfig() != null
-                        && env.getBootOptions().getLogConfig().getLogTermLevel() != null
-                        && env.getBootOptions().getLogConfig().getLogTermLevel().intValue() <= Level.FINE.intValue());
-            } catch (Exception ex2) {
-                session.getWorkspace().log().of(NutsApplications.class).with().level(Level.FINE).error(ex2).log("unable to check if option debug is enabled");
-                if (session.isGui() && session.getWorkspace().env().isGraphicalDesktopEnvironment()) {
-
-                }
-            }
-        }
-//        if (showTrace) {
-//            LOG.log(Level.SEVERE, m, ex);
-//        }
         NutsPrintStream fout = null;
         if (out == null) {
             if (session != null) {
@@ -290,86 +282,92 @@ public final class NutsApplications {
                 fout = null;
             }
         }
-        if (fout != null) {
-            if (session.getOutputFormat() == NutsContentType.PLAIN) {
-                if (fm != null) {
-                    fout.println(fm);
+        if (showMessage) {
+
+            if (fout != null) {
+                if (session.getOutputFormat() == NutsContentType.PLAIN) {
+                    if (fm != null) {
+                        fout.println(fm);
+                    } else {
+                        fout.println(m);
+                    }
+                    if (showTrace) {
+                        ex.printStackTrace(fout.asPrintStream());
+                    }
+                    fout.flush();
                 } else {
-                    fout.println(m);
+                    if (fm != null) {
+                        session.eout().add(session.getWorkspace().elem().forObject()
+                                .set("app-id", session.getAppId() == null ? "" : session.getAppId().toString())
+                                .set("error", fm.filteredText())
+                                .build()
+                        );
+                        if (showTrace) {
+                            session.eout().add(session.getWorkspace().elem().forObject().set("error-trace",
+                                    session.getWorkspace().elem().forArray().addAll(stacktrace(ex)).build()
+                            ).build());
+                        }
+                        NutsArrayElementBuilder e = session.eout();
+                        if (e.size() > 0) {
+                            session.getWorkspace().formats().object(e.build()).println(fout);
+                            e.clear();
+                        }
+                        fout.flush();
+                    } else {
+                        session.eout().add(session.getWorkspace().elem().forObject()
+                                .set("app-id", session.getAppId() == null ? "" : session.getAppId().toString())
+                                .set("error", m)
+                                .build());
+                        if (showTrace) {
+                            session.eout().add(session.getWorkspace().elem().forObject().set("error-trace",
+                                    session.getWorkspace().elem().forArray().addAll(stacktrace(ex)).build()
+                            ).build());
+                        }
+                        NutsArrayElementBuilder e = session.eout();
+                        if (e.size() > 0) {
+                            session.getWorkspace().formats().object(e.build()).println(fout);
+                            e.clear();
+                        }
+                        fout.flush();
+                    }
+                    fout.flush();
+                }
+            } else {
+                if (out == null) {
+                    out = System.err;
+                }
+                if (fm != null) {
+                    out.println(fm);
+                } else {
+                    out.println(m);
                 }
                 if (showTrace) {
-                    ex.printStackTrace(fout.asPrintStream());
+                    ex.printStackTrace(out);
                 }
-                fout.flush();
-            } else {
-                if (fm != null) {
-                    session.eout().add(session.getWorkspace().elem().forObject()
-                            .set("app-id", session.getAppId() == null ? "" : session.getAppId().toString())
-                            .set("error", fm.filteredText())
-                            .build()
-                    );
-                    if (showTrace) {
-                        session.eout().add(session.getWorkspace().elem().forObject().set("error-trace",
-                                session.getWorkspace().elem().forArray().addAll(stacktrace(ex)).build()
-                        ).build());
-                    }
-                    NutsArrayElementBuilder e = session.eout();
-                    if (e.size() > 0) {
-                        session.getWorkspace().formats().object(e.build()).println(fout);
-                        e.clear();
-                    }
-                    fout.flush();
-                } else {
-                    session.eout().add(session.getWorkspace().elem().forObject()
-                            .set("app-id", session.getAppId() == null ? "" : session.getAppId().toString())
-                            .set("error", m)
-                            .build());
-                    if (showTrace) {
-                        session.eout().add(session.getWorkspace().elem().forObject().set("error-trace",
-                                session.getWorkspace().elem().forArray().addAll(stacktrace(ex)).build()
-                        ).build());
-                    }
-                    NutsArrayElementBuilder e = session.eout();
-                    if (e.size() > 0) {
-                        session.getWorkspace().formats().object(e.build()).println(fout);
-                        e.clear();
-                    }
-                    fout.flush();
-                }
-                fout.flush();
+                out.flush();
             }
-        } else {
-            if (out == null) {
-                out = System.err;
-            }
+        }
+        if (showGui) {
+            StringBuilder sb = new StringBuilder();
             if (fm != null) {
-                out.println(fm);
+                sb.append(fm.filteredText());
             } else {
-                out.println(m);
+                sb.append(m);
             }
             if (showTrace) {
-                ex.printStackTrace(out);
+                if (sb.length() > 0) {
+                    sb.append("\n");
+                    sb.append(PrivateNutsUtils.stacktrace(ex));
+                }
             }
-            out.flush();
+            if (session != null) {
+                //TODO show we delegate to the workspace implementation?
+                javax.swing.JOptionPane.showMessageDialog(null, NutsMessage.plain(sb.toString()).toString());
+            } else {
+                javax.swing.JOptionPane.showMessageDialog(null, NutsMessage.plain(sb.toString()).toString());
+            }
         }
-        guiShowErr(ex, showTrace, session, fm, m);
         return (errorCode);
-    }
-
-    private static void guiShowErr(Throwable ex, boolean showTrace, NutsSession session, NutsString fm, String m) {
-        StringBuilder sb = new StringBuilder();
-        if (fm != null) {
-            sb.append(fm.filteredText());
-        } else {
-            sb.append(m);
-        }
-        if (showTrace) {
-            if (sb.length() > 0) {
-                sb.append("\n");
-                sb.append(PrivateNutsUtils.stacktrace(ex));
-            }
-        }
-        showGuiMessage(session, () -> NutsMessage.plain(sb.toString()));
     }
 
     private static String[] stacktrace(Throwable th) {
@@ -391,13 +389,12 @@ public final class NutsApplications {
         return new String[0];
     }
 
-    public static void showGuiMessage(NutsSession s, Supplier<NutsMessage> msg) {
-        if (s != null) {
-            if (s.isGui() && s.getWorkspace().env().isGraphicalDesktopEnvironment()) {
-                showGuiMessage(null, msg);
-            }
-        } else {
-            JOptionPane.showMessageDialog(null, msg.get().toString());
+    private static boolean isGraphicalDesktopEnvironment0() {
+        try {
+            return !java.awt.GraphicsEnvironment.isHeadless();
+        } catch (Exception e) {
+            //exception may occur if the sdk is build without awt package for instance!
+            return false;
         }
     }
 }

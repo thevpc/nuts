@@ -1,3 +1,9 @@
+stableApiVersion=${stableApiVersion}
+stableImplVersion=${stableImplVersion}
+stableJarLocation=${stableJarLocation}
+latestApiVersion=${latestApiVersion}
+latestImplVersion=${latestImplVersion}
+latestJarLocation=${latestJarLocation}
 apiVersion=${apiVersion}
 implVersion=${implVersion}
 jarLocation=${jarLocation}

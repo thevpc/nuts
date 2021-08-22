@@ -58,6 +58,7 @@
             https://repo.maven.apache.org/maven2/
             https://raw.githubusercontent.com/thevpc/vpc-public-maven/master
         </nuts.repositories>
+
     </properties>
     <dependencies>
         <dependency>
@@ -76,6 +77,7 @@
             <version>5.5.0</version>
             <scope>test</scope>
         </dependency>
+
     </dependencies>
     <distributionManagement>
         <snapshotRepository>
@@ -96,15 +98,6 @@
                         <version>5.5.0</version>
                     </dependency>
                 </dependencies>
-            </plugin>            
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.0</version>
-                <configuration>
-                    <showDeprecation>true</showDeprecation>
-                    <debug>true</debug>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -193,6 +186,32 @@
                     <serverId>ossrh</serverId>
                     <nexusUrl>https://oss.sonatype.org/</nexusUrl>
                     <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.0</version>
+                <executions>
+                    <execution>
+                        <id>compile</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>testCompile</id>
+                        <phase>test-compile</phase>
+                        <goals>
+                            <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <showDeprecation>true</showDeprecation>
+                    <debug>true</debug>
                 </configuration>
             </plugin>
         </plugins>

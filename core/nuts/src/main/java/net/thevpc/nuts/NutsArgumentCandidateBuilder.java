@@ -33,6 +33,11 @@ import java.io.Serializable;
  */
 public interface NutsArgumentCandidateBuilder extends Serializable {
 
+    static NutsArgumentCandidateBuilder of(NutsSession session) {
+        PrivateNutsUtils.checkSession(session);
+        return session.getWorkspace().commandLine().createCandidate();
+    }
+
     /**
      * argument value
      *

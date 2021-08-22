@@ -220,7 +220,7 @@ public class NutsHttpServerComponent implements NutsServerComponent {
                     }
                 });
             } catch (GeneralSecurityException e) {
-                throw new NutsIllegalArgumentException(invokerWorkspace, e);
+                throw new NutsIllegalArgumentException(invokerWorkspace,NutsMessage.plain("start server failed"), e);
             }
         }
 

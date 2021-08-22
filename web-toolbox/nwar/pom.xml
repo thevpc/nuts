@@ -13,6 +13,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
     </properties>
 
     <dependencies>
@@ -26,6 +27,7 @@
             <artifactId>nlib-servlet</artifactId>
             <version>0.8.1.0</version>
         </dependency>
+
     </dependencies>
 
     <repositories>
@@ -34,5 +36,11 @@
             <url>https://raw.github.com/thevpc/vpc-public-maven/master</url>
         </repository>
     </repositories>
+
+    <build>
+        <plugins>
+
+        </plugins>
+    </build>
 
 </project>

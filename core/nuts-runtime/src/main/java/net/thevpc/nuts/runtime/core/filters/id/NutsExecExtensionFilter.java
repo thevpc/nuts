@@ -22,7 +22,7 @@ public class NutsExecExtensionFilter extends AbstractDescriptorFilter {
 
     @Override
     public boolean acceptDescriptor(NutsDescriptor other, NutsSession session) {
-        if(!CoreBooleanUtils.parseBoolean(other.getProperties().get("nuts-extension"),false,false)){
+        if(!NutsUtilStrings.parseBoolean(other.getProperties().get("nuts-extension"),false,false)){
             return false;
         }
         for (NutsDependency dependency : other.getDependencies()) {

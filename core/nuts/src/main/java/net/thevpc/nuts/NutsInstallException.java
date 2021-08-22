@@ -53,7 +53,7 @@ public class NutsInstallException extends NutsInstallationException {
      * @param msg message
      * @param ex exception
      */
-    public NutsInstallException(NutsSession workspace, NutsId id, NutsMessage msg, Exception ex) {
+    public NutsInstallException(NutsSession workspace, NutsId id, NutsMessage msg, Throwable ex) {
         super(workspace, id, msg == null ? NutsMessage.cstyle("unable to install %s", (id == null ? "<null>" : id)) : msg, ex);
     }
 

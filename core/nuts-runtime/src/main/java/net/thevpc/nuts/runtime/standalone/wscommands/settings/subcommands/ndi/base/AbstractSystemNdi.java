@@ -13,4 +13,7 @@ public abstract class AbstractSystemNdi implements SystemNdi {
         this.session = appContext;
     }
 
+    public NutsSession getSession() {
+        return session;
+    }
 }

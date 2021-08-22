@@ -14,28 +14,48 @@ public class DefaultNutsIOLockAction extends AbstractNutsIOLockAction {
     }
 
     @Override
-    public void run(Runnable runnable, long time, TimeUnit unit) {
+    public NutsLock create() {
+        checkSession();
+        Object s = getSource();
+        Object lr = getResource();
+        Path lrPath = null;
+        if (lr == null) {
+            if (s == null) {
+                throw new NutsLockException(getSession(), NutsMessage.cstyle("unsupported lock for null"), null, null);
+            }
+            Path p = toPath(s);
+            if (p == null) {
+                throw new NutsLockException(getSession(), NutsMessage.cstyle("unsupported lock for %s", s.getClass().getName()), null, s);
+            }
+            lrPath = p.resolveSibling(p.getFileName().toString() + ".lock");
+        } else {
+            lrPath = toPath(lr);
+            if (lrPath == null) {
+                throw new NutsLockException(getSession(), NutsMessage.cstyle("unsupported lock %s", lr.getClass().getName()), lr, s);
+            }
+        }
+        return new DefaultFileNutsLock(lrPath, s, getSession());
+    }
+
+    @Override
+    public <T> T call(Callable<T> runnable) {
         checkSession();
         NutsLock lock = create();
-        boolean b = false;
-        try {
-            b = lock.tryLock(time, unit);
-        } catch (InterruptedException e) {
+        if (!lock.tryLock()) {
             throw new NutsLockAcquireException(getSession(), null, getResource(), lock);
         }
-        if (!b) {
-            throw new NutsLockAcquireException(getSession(), null, getResource(), lock);
-        }
+        T value = null;
         try {
-            runnable.run();
+            value = runnable.call();
         } catch (Exception e) {
             if (e instanceof NutsException) {
                 throw (NutsException) e;
             }
-            throw new NutsException(getSession(), e);
+            throw new NutsException(getSession(), NutsMessage.plain("call failed"), e);
         } finally {
             lock.unlock();
         }
+        return value;
     }
 
     @Override
@@ -58,28 +78,7 @@ public class DefaultNutsIOLockAction extends AbstractNutsIOLockAction {
             if (e instanceof NutsException) {
                 throw (NutsException) e;
             }
-            throw new NutsException(getSession(), e);
-        } finally {
-            lock.unlock();
-        }
-        return value;
-    }
-
-    @Override
-    public <T> T call(Callable<T> runnable) {
-        checkSession();
-        NutsLock lock = create();
-        if (!lock.tryLock()) {
-            throw new NutsLockAcquireException(getSession(), null, getResource(), lock);
-        }
-        T value = null;
-        try {
-            value = runnable.call();
-        } catch (Exception e) {
-            if (e instanceof NutsException) {
-                throw (NutsException) e;
-            }
-            throw new NutsException(getSession(), e);
+            throw new NutsException(getSession(), NutsMessage.plain("call failed"), e);
         } finally {
             lock.unlock();
         }
@@ -99,34 +98,35 @@ public class DefaultNutsIOLockAction extends AbstractNutsIOLockAction {
             if (e instanceof NutsException) {
                 throw (NutsException) e;
             }
-            throw new NutsException(getSession(), e);
+            throw new NutsException(getSession(), NutsMessage.plain("call failed"), e);
         } finally {
             lock.unlock();
         }
     }
 
     @Override
-    public NutsLock create() {
+    public void run(Runnable runnable, long time, TimeUnit unit) {
         checkSession();
-        Object s = getSource();
-        Object lr = getResource();
-        Path lrPath = null;
-        if (lr == null) {
-            if (s == null) {
-                throw new NutsLockException(getSession(), NutsMessage.cstyle("unsupported lock for null"), null, null);
-            }
-            Path p = toPath(s);
-            if (p == null) {
-                throw new NutsLockException(getSession(), NutsMessage.cstyle("unsupported lock for %s", s.getClass().getName()), null, s);
-            }
-            lrPath = p.resolveSibling(p.getFileName().toString() + ".lock");
-        } else {
-            lrPath = toPath(lr);
-            if (lrPath == null) {
-                throw new NutsLockException(getSession(), NutsMessage.cstyle("unsupported lock %s", lr.getClass().getName()), lr, s);
-            }
+        NutsLock lock = create();
+        boolean b = false;
+        try {
+            b = lock.tryLock(time, unit);
+        } catch (InterruptedException e) {
+            throw new NutsLockAcquireException(getSession(), null, getResource(), lock);
         }
-        return new DefaultFileNutsLock(lrPath, s, getSession());
+        if (!b) {
+            throw new NutsLockAcquireException(getSession(), null, getResource(), lock);
+        }
+        try {
+            runnable.run();
+        } catch (Exception e) {
+            if (e instanceof NutsException) {
+                throw (NutsException) e;
+            }
+            throw new NutsException(getSession(), NutsMessage.cstyle("lock action failed"), e);
+        } finally {
+            lock.unlock();
+        }
     }
 
     private Path toPath(Object lockedObject) {

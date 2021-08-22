@@ -74,7 +74,7 @@ public class ProjectService {
                 try {
                     return appContext.getWorkspace().descriptor()
                             .parser()
-                            .setDescriptorFormat(NutsDescriptorParser.DescriptorFormat.MAVEN)
+                            .setDescriptorStyle(NutsDescriptorStyle.MAVEN)
                             .parse(new File(f, "pom.xml"));
                 } catch (Exception ex) {
                     //
@@ -95,7 +95,7 @@ public class ProjectService {
                 try {
                     NutsDescriptor g= appContext.getWorkspace().descriptor()
                             .parser()
-                            .setDescriptorFormat(NutsDescriptorParser.DescriptorFormat.MAVEN)
+                            .setDescriptorStyle(NutsDescriptorStyle.MAVEN)
                             .parse(new File(f, "pom.xml"));
                     if (g.getId().getGroupId() != null
                             && g.getId().getArtifactId() != null
@@ -176,7 +176,7 @@ public class ProjectService {
                     try {
                         return appContext.getWorkspace().descriptor()
                                 .parser()
-                                .setDescriptorFormat(NutsDescriptorParser.DescriptorFormat.MAVEN)
+                                .setDescriptorStyle(NutsDescriptorStyle.MAVEN)
                                 .parse(new File(f, "pom.xml")).getId().getVersion().toString();
                     } catch (Exception e) {
                         throw new IllegalArgumentException(e);
@@ -206,10 +206,11 @@ public class ProjectService {
                 NutsSession s = null;
                 if (a.getNutsWorkspace() != null && a.getNutsWorkspace().trim().length() > 0 && !a.getNutsWorkspace().equals(appContext.getWorkspace().locations().getWorkspaceLocation().toString())) {
                     s = Nuts.openWorkspace(
-                            Nuts.createOptions()
+                            Nuts.createOptionsBuilder()
                                     .setOpenMode(NutsOpenMode.OPEN_OR_ERROR)
                                     .setReadOnly(true)
                                     .setWorkspace(a.getNutsWorkspace())
+                                    .build()
                     );
                     ws2=s.getWorkspace();
                     s.copyFrom(appContext.getSession());
@@ -254,7 +255,7 @@ public class ProjectService {
                     try {
                         NutsDescriptor g= appContext.getWorkspace().descriptor()
                                 .parser()
-                                .setDescriptorFormat(NutsDescriptorParser.DescriptorFormat.MAVEN)
+                                .setDescriptorStyle(NutsDescriptorStyle.MAVEN)
                                 .parse(new File(f, "pom.xml"));
                         NutsWorkspace ws2 = null;
                         NutsSession s = null;
@@ -264,6 +265,7 @@ public class ProjectService {
                                             .setOpenMode(NutsOpenMode.OPEN_OR_ERROR)
                                             .setReadOnly(true)
                                             .setWorkspace(a.getNutsWorkspace())
+                                            .build()
                             );
                             ws2=s.getWorkspace();
                             s.copyFrom(appContext.getSession());

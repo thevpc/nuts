@@ -413,7 +413,7 @@ public class DefaultProjectTemplate implements ProjectTemplate {
             if (!pomFile.isFile()) {
                 return null;
             }
-            session.getWorkspace().descriptor().parser().setDescriptorFormat(NutsDescriptorParser.DescriptorFormat.MAVEN).parse(pomFile);
+            session.getWorkspace().descriptor().parser().setDescriptorStyle(NutsDescriptorStyle.MAVEN).parse(pomFile);
             return pomFile;
         } catch (Exception ex) {
             throw new RuntimeException(ex);
@@ -445,7 +445,7 @@ public class DefaultProjectTemplate implements ProjectTemplate {
             }
         }
         try {
-            return session.getWorkspace().descriptor().parser().setDescriptorFormat(NutsDescriptorParser.DescriptorFormat.MAVEN)
+            return session.getWorkspace().descriptor().parser().setDescriptorStyle(NutsDescriptorStyle.MAVEN)
                     .parse(new File(getProjectRootFolder(), "pom.xml"));
         } catch (Exception ex) {
             throw new RuntimeException(ex);

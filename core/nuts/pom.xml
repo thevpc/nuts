@@ -8,7 +8,7 @@
     <packaging>jar</packaging>
     <name>Nuts Package Manager</name>
     <url>https://github.com/thevpc/nuts</url>
-    <description>Network Updatable Things Services Bootstrap</description>
+    <description>Nuts Package Manager Bootstrap</description>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -16,6 +16,7 @@
         <github.global.server>github</github.global.server>
         <nuts.genericName>Package Manager</nuts.genericName>
         <nuts.categories>/Settings/PackageManager/Nuts</nuts.categories>
+
     </properties>
     <scm>
         <connection>scm:git:git://github.com/thevpc/nuts.git</connection>
@@ -55,6 +56,7 @@
     </licenses>
 
     <dependencies>
+
     </dependencies>
     <distributionManagement>
         <snapshotRepository>
@@ -77,15 +79,6 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.0</version>
-                <configuration>
-                    <showDeprecation>true</showDeprecation>
-                    <debug>true</debug>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -162,6 +155,32 @@
                     <serverId>ossrh</serverId>
                     <nexusUrl>https://oss.sonatype.org/</nexusUrl>
                     <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.0</version>
+                <executions>
+                    <execution>
+                        <id>compile</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>testCompile</id>
+                        <phase>test-compile</phase>
+                        <goals>
+                            <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <showDeprecation>true</showDeprecation>
+                    <debug>true</debug>
                 </configuration>
             </plugin>
         </plugins>

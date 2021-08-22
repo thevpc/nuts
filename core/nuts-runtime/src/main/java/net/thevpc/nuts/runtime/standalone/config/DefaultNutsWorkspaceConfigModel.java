@@ -39,6 +39,7 @@ import net.thevpc.nuts.runtime.standalone.config.compat.v502.NutsVersionCompat50
 import net.thevpc.nuts.runtime.standalone.config.compat.v506.NutsVersionCompat506;
 import net.thevpc.nuts.runtime.standalone.config.compat.v507.NutsVersionCompat507;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.standalone.security.ReadOnlyNutsWorkspaceOptions;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.spi.NutsIndexStoreFactory;
@@ -323,10 +324,6 @@ public class DefaultNutsWorkspaceConfigModel {
         return new CoreNutsWorkspaceOptions(session);
     }
 
-    public NutsWorkspaceOptions options() {
-        return getOptions();
-    }
-
     public boolean isExcludedExtension(String extensionId, NutsWorkspaceOptions options, NutsSession session) {
         if (extensionId != null && options != null) {
             NutsId pnid = session.getWorkspace().id().parser().parse(extensionId);
@@ -345,8 +342,8 @@ public class DefaultNutsWorkspaceConfigModel {
         return false;
     }
 
-    public NutsWorkspaceOptions getOptions() {
-        return options.copy();
+    public NutsWorkspaceOptions getOptions(NutsSession session) {
+        return new ReadOnlyNutsWorkspaceOptions(options,session);
     }
 
     public NutsId createContentFaceId(NutsId id, NutsDescriptor desc) {
@@ -640,7 +637,7 @@ public class DefaultNutsWorkspaceConfigModel {
             if (cconfig.getBootRepositories() == null) {
                 cconfig.setBootRepositories(initOptions.getBootRepositories());
             }
-            cconfig.merge(options(), session);
+            cconfig.merge(getOptions(session), session);
 
             setCurrentConfig(cconfig.build(session.getWorkspace().locations().getWorkspaceLocation(), session));
 
@@ -1191,7 +1188,7 @@ public class DefaultNutsWorkspaceConfigModel {
             o.println("workspace.path:");
             o.println(ws.locations().getWorkspaceLocation());
             o.println("workspace.options:");
-            o.println(wconfig.getOptions().formatter().setCompact(false).setRuntime(true).setInit(true).setExported(true).getBootCommandLine());
+            o.println(wconfig.getOptions(session).formatter().setCompact(false).setRuntime(true).setInit(true).setExported(true).getBootCommandLine());
             for (NutsStoreLocation location : NutsStoreLocation.values()) {
                 o.println("location." + location.id() + ":");
                 o.println(ws.locations().getStoreLocation(location));

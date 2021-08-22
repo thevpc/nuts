@@ -1,12 +1,11 @@
-package net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.sys.unix;
+package net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.unix;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.PathInfo;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.FreeDesktopEntryWriter;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.NdiScriptOptions;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.base.BaseSystemNdi;
-import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.base.NutsEnvInfo;
-import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.util.ReplaceString;
+import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.script.ReplaceString;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -30,6 +29,10 @@ public abstract class AnyNixNdi extends BaseSystemNdi {
     public boolean isComments(String line) {
         line = line.trim();
         return line.startsWith("#");
+    }
+
+    public boolean isShortcutFieldNameUserFriendly() {
+        return false;
     }
 
     @Override
@@ -63,11 +66,11 @@ public abstract class AnyNixNdi extends BaseSystemNdi {
         return command.toString();
     }
 
-    protected String newlineString() {
+    public String newlineString() {
         return "\n";
     }
 
-    public void onPostGlobal(NutsEnvInfo env, PathInfo[] updatedPaths) {
+    public void onPostGlobal(NdiScriptOptions options, PathInfo[] updatedPaths) {
         NutsTextManager factory = session.getWorkspace().text();
         if (Arrays.stream(updatedPaths).anyMatch(x -> x.getStatus() != PathInfo.Status.DISCARDED) && session.isTrace()) {
             if (session.isPlainTrace()) {
@@ -130,7 +133,7 @@ public abstract class AnyNixNdi extends BaseSystemNdi {
     }
 
     @Override
-    protected String getCallScriptCommand(String path, String... args) {
+    public String getCallScriptCommand(String path, String... args) {
         return "source \"" + path + "\" " + Arrays.stream(args).map(a -> dblQte(a)).collect(Collectors.joining(" "));
     }
 
@@ -140,12 +143,12 @@ public abstract class AnyNixNdi extends BaseSystemNdi {
     }
 
     @Override
-    protected String getSetVarCommand(String name, String value) {
+    public String getSetVarCommand(String name, String value) {
         return name +"=\"" + value + "\"";
     }
 
     @Override
-    protected String getSetVarStaticCommand(String name, String value) {
+    public String getSetVarStaticCommand(String name, String value) {
         return name + "='" + value + "'";
     }
 
@@ -170,7 +173,7 @@ public abstract class AnyNixNdi extends BaseSystemNdi {
     }
 
     @Override
-    protected String getTemplateName(String name) {
+    public String getTemplateName(String name) {
         return "linux_template_" + name + ".text";
     }
 

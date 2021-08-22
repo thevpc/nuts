@@ -1,6 +1,5 @@
-package net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.sys.unix;
+package net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.unix;
 
-import net.thevpc.nuts.NutsApplicationContext;
 import net.thevpc.nuts.NutsSession;
 
 public class LinuxNdi extends AnyNixNdi {

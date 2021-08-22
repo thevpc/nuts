@@ -408,19 +408,19 @@ public class CorePlatformUtils {
         return false;
     }
 
-    public static RuntimeException toRuntimeException(Throwable ex) {
-        if (ex instanceof RuntimeException) {
-            return (RuntimeException) ex;
-        }
-        return new NutsException(null, ex);
-    }
-
-    public static NutsException toNutsException(Throwable ex, NutsSession ws) {
-        if (ex instanceof NutsException) {
-            return (NutsException) ex;
-        }
-        return new NutsException(ws, ex);
-    }
+//    public static RuntimeException toRuntimeException(Throwable ex) {
+//        if (ex instanceof RuntimeException) {
+//            return (RuntimeException) ex;
+//        }
+//        return new NutsException(null, ex);
+//    }
+//
+//    public static NutsException toNutsException(Throwable ex, NutsSession ws) {
+//        if (ex instanceof NutsException) {
+//            return (NutsException) ex;
+//        }
+//        return new NutsException(ws, ex);
+//    }
 
     public static <T> T runWithinLoader(Callable<T> callable, ClassLoader loader, NutsSession ws) {
         Ref<T> ref = new Ref<>();
@@ -430,7 +430,7 @@ public class CorePlatformUtils {
             } catch (RuntimeException ex) {
                 throw ex;
             } catch (Exception ex) {
-                throw new NutsException(ws, ex);
+                throw new NutsException(ws, NutsMessage.plain("run with loader failed"),ex);
             }
         }, "RunWithinLoader");
         thread.setContextClassLoader(loader);
@@ -438,7 +438,7 @@ public class CorePlatformUtils {
         try {
             thread.join();
         } catch (InterruptedException ex) {
-            throw new NutsException(ws, ex);
+            throw new NutsException(ws, NutsMessage.plain("run with loader failed"),ex);
         }
         return ref.get();
     }

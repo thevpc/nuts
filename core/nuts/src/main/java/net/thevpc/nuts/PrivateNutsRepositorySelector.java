@@ -98,10 +98,44 @@ class PrivateNutsRepositorySelector {
         return defaultRepositoriesByName.get(name);
     }
 
-    public static enum Op {
+    public enum Op implements NutsEnum{
         INCLUDE,
         EXCLUDE,
-        EXACT,
+        EXACT;
+        private String id;
+
+        Op() {
+            this.id = name().toLowerCase().replace('_', '-');
+        }
+
+        @Override
+        public String id() {
+            return id;
+        }
+
+        public static Op parseLenient(String value) {
+            return parseLenient(value, null);
+        }
+
+        public static Op parseLenient(String value, Op emptyOrErrorValue) {
+            return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
+        }
+
+        public static Op parseLenient(String value, Op emptyValue, Op errorValue) {
+            if (value == null) {
+                value = "";
+            } else {
+                value = value.toUpperCase().trim().replace('-', '_');
+            }
+            if (value.isEmpty()) {
+                return emptyValue;
+            }
+            try {
+                return Op.valueOf(value.toUpperCase());
+            } catch (Exception notFound) {
+                return errorValue;
+            }
+        }
     }
     private Op op = Op.INCLUDE;
     private String name;

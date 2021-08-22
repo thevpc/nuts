@@ -37,14 +37,6 @@ public class NutsLoginException extends NutsException {
     /**
      * Constructs a new NutsLoginException exception
      * @param session workspace
-     */
-    public NutsLoginException(NutsSession session) {
-        super(session);
-    }
-
-    /**
-     * Constructs a new NutsLoginException exception
-     * @param session workspace
      * @param message message
      */
     public NutsLoginException(NutsSession session, NutsMessage message) {
@@ -59,15 +51,6 @@ public class NutsLoginException extends NutsException {
      */
     public NutsLoginException(NutsSession session, NutsMessage message, Throwable cause) {
         super(session, message, cause);
-    }
-
-    /**
-     * Constructs a new NutsLoginException exception
-     * @param session workspace
-     * @param cause cause
-     */
-    public NutsLoginException(NutsSession session, Throwable cause) {
-        super(session, cause);
     }
 
     /**

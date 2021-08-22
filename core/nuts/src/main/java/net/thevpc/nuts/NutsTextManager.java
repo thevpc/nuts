@@ -6,10 +6,14 @@ import java.util.Collection;
  * @app.category Format
  */
 public interface NutsTextManager {
-
-    NutsTextManager setSession(NutsSession session);
+    static NutsTextManager of(NutsSession session) {
+        PrivateNutsUtils.checkSession(session);
+        return session.getWorkspace().text();
+    }
 
     NutsSession getSession();
+
+    NutsTextManager setSession(NutsSession session);
 
     NutsTextBuilder builder();
 
@@ -50,6 +54,7 @@ public interface NutsTextManager {
     NutsTextFormatTheme getTheme();
 
     NutsTextManager setTheme(NutsTextFormatTheme theme);
+
     NutsTextManager setTheme(String themeName);
 
     NutsCodeFormat getCodeFormat(String kind);

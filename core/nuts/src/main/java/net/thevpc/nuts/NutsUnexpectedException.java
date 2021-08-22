@@ -66,24 +66,6 @@ public class NutsUnexpectedException extends NutsException {
     /**
      * Constructs a new NutsUnexpectedException exception
      * @param session workspace
-     * @param cause cause
-     */
-    public NutsUnexpectedException(NutsSession session, Throwable cause) {
-        super(session, cause);
-    }
-
-    /**
-     * Constructs a new NutsUnexpectedException exception
-     * @param session workspace
-     * @param cause cause
-     */
-    public NutsUnexpectedException(NutsSession session, IOException cause) {
-        super(session, cause);
-    }
-
-    /**
-     * Constructs a new NutsUnexpectedException exception
-     * @param session workspace
      * @param message message
      * @param cause cause
      * @param enableSuppression whether or not suppression is enabled or disabled

@@ -53,4 +53,28 @@ public enum NutsRepositorySupportedAction  implements NutsEnum {
     public String id() {
         return id;
     }
+
+    public static NutsRepositorySupportedAction parseLenient(String value) {
+        return parseLenient(value, null);
+    }
+
+    public static NutsRepositorySupportedAction parseLenient(String value, NutsRepositorySupportedAction emptyOrErrorValue) {
+        return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
+    }
+
+    public static NutsRepositorySupportedAction parseLenient(String value, NutsRepositorySupportedAction emptyValue, NutsRepositorySupportedAction errorValue) {
+        if (value == null) {
+            value = "";
+        } else {
+            value = value.toUpperCase().trim().replace('-', '_');
+        }
+        if (value.isEmpty()) {
+            return emptyValue;
+        }
+        try {
+            return NutsRepositorySupportedAction.valueOf(value.toUpperCase());
+        } catch (Exception notFound) {
+            return errorValue;
+        }
+    }
 }

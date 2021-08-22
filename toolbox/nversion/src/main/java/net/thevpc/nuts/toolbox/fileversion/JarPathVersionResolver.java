@@ -137,7 +137,7 @@ public class JarPathVersionResolver implements PathVersionResolver{
                                 Properties properties = new Properties();
                                 try {
                                     NutsDescriptor d = context.getWorkspace().descriptor()
-                                            .parser().setDescriptorFormat(NutsDescriptorParser.DescriptorFormat.MAVEN)
+                                            .parser().setDescriptorStyle(NutsDescriptorStyle.MAVEN)
                                             .parse(inputStream);
                                     properties.put("groupId", d.getId().getGroupId());
                                     properties.put("artifactId", d.getId().getArtifactId());

@@ -47,6 +47,6 @@ public class NutsReadOnlyException extends NutsException {
      * @param session workspace
      */
     public NutsReadOnlyException(NutsSession session) {
-        this(session, session == null ? null : session.getWorkspace().locations().getWorkspaceLocation().toString());
+        this(session, session == null ? null : session.getWorkspace().locations().getWorkspaceLocation());
     }
 }

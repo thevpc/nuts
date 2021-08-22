@@ -1,6 +1,6 @@
-package net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi;
+package net.thevpc.nuts.runtime.standalone.wscommands.settings;
 
-public enum NdiScriptInfoType {
+public enum PathInfoType {
     DESKTOP_SHORTCUT,
     DESKTOP_MENU,
     NUTS,

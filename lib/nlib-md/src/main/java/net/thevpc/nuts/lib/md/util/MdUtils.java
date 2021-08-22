@@ -7,6 +7,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class MdUtils {
+    private static final char[] HEXARR = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+
     public static String times(char c, int x) {
         char[] s = new char[x];
         Arrays.fill(s, c);
@@ -57,5 +59,50 @@ public class MdUtils {
             p += len;
         }
         return new String(dest);
+    }
+
+    public static String escapeString(String s) {
+        StringBuilder outBuffer = new StringBuilder();
+
+        for (char aChar : s.toCharArray()) {
+            if (aChar == '\\') {
+                outBuffer.append("\\\\");
+            } else if (aChar == '"') {
+                outBuffer.append("\\\"");
+            } else if ((aChar > 61) && (aChar < 127)) {
+                outBuffer.append(aChar);
+            } else {
+                switch (aChar) {
+                    case '\t':
+                        outBuffer.append("\\t");
+                        break;
+                    case '\n':
+                        outBuffer.append("\\n");
+                        break;
+                    case '\r':
+                        outBuffer.append("\\r");
+                        break;
+                    case '\f':
+                        outBuffer.append("\\f");
+                        break;
+                    default:
+                        if (((aChar < 0x0020) || (aChar > 0x007e))) {
+                            outBuffer.append('\\');
+                            outBuffer.append('u');
+                            outBuffer.append(toHex((aChar >> 12) & 0xF));
+                            outBuffer.append(toHex((aChar >> 8) & 0xF));
+                            outBuffer.append(toHex((aChar >> 4) & 0xF));
+                            outBuffer.append(toHex(aChar & 0xF));
+                        } else {
+                            outBuffer.append(aChar);
+                        }
+                }
+            }
+        }
+        return outBuffer.toString();
+    }
+
+    public static char toHex(int nibble) {
+        return HEXARR[(nibble & 0xF)];
     }
 }

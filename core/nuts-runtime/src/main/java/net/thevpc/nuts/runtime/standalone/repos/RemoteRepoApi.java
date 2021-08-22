@@ -30,4 +30,27 @@ public enum RemoteRepoApi  implements NutsEnum {
         return id;
     }
 
+    public static RemoteRepoApi parseLenient(String value) {
+        return parseLenient(value, null);
+    }
+
+    public static RemoteRepoApi parseLenient(String value, RemoteRepoApi emptyOrErrorValue) {
+        return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
+    }
+
+    public static RemoteRepoApi parseLenient(String value, RemoteRepoApi emptyValue, RemoteRepoApi errorValue) {
+        if (value == null) {
+            value = "";
+        } else {
+            value = value.toUpperCase().trim().replace('-', '_');
+        }
+        if (value.isEmpty()) {
+            return emptyValue;
+        }
+        try {
+            return RemoteRepoApi.valueOf(value.toUpperCase());
+        } catch (Exception notFound) {
+            return errorValue;
+        }
+    }
 }

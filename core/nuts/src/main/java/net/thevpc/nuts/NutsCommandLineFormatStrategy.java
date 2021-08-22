@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages and libraries
  * for runtime execution. Nuts is the ultimate companion for maven (and other
@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -31,12 +31,11 @@ package net.thevpc.nuts;
  * @since 0.8.1
  * @app.category Base
  */
-public enum NutsCommandLineFormatStrategy implements NutsEnum{
+public enum NutsCommandLineFormatStrategy implements NutsEnum {
     DEFAULT,
     NO_QUOTES,
     REQUIRE_QUOTES,
-    SUPPORT_QUOTES
-    ;
+    SUPPORT_QUOTES;
 
     /**
      * lower-cased identifier for the enum entry
@@ -47,23 +46,24 @@ public enum NutsCommandLineFormatStrategy implements NutsEnum{
         this.id = name().toLowerCase();//.replace('_', '-');
     }
 
-    /**
-     * lower cased identifier.
-     *
-     * @return lower cased identifier
-     */
-    public String id() {
-        return id;
-    }
-
     public static NutsCommandLineFormatStrategy getArchFamily() {
         return parseLenient(System.getProperty("os.arch"));
     }
 
     public static NutsCommandLineFormatStrategy parseLenient(String arch) {
-        arch = arch == null ? "" : arch.toLowerCase().replace('-', '_');
+        return parseLenient(arch, DEFAULT, DEFAULT);
+    }
+
+    public static NutsCommandLineFormatStrategy parseLenient(String arch, NutsCommandLineFormatStrategy emptyValue) {
+        return parseLenient(arch, emptyValue, emptyValue);
+    }
+
+    public static NutsCommandLineFormatStrategy parseLenient(String arch, NutsCommandLineFormatStrategy emptyValue, NutsCommandLineFormatStrategy errorValue) {
+        arch = arch == null ? "" : arch.toLowerCase().replace('-', '_').trim();
         switch (arch) {
-            case "":
+            case "": {
+                return emptyValue;
+            }
             case "default":
                 return DEFAULT;
             case "no_quotes":
@@ -73,6 +73,15 @@ public enum NutsCommandLineFormatStrategy implements NutsEnum{
             case "support_quotes":
                 return SUPPORT_QUOTES;
         }
-        return DEFAULT;
+        return errorValue;
+    }
+
+    /**
+     * lower cased identifier.
+     *
+     * @return lower cased identifier
+     */
+    public String id() {
+        return id;
     }
 }

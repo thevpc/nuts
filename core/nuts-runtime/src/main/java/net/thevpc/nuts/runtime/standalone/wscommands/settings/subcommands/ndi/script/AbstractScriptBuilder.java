@@ -1,10 +1,11 @@
-package net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.base;
+package net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.script;
 
 import net.thevpc.nuts.NutsDefinition;
 import net.thevpc.nuts.NutsId;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.PathInfo;
-import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.NdiScriptInfoType;
+import net.thevpc.nuts.runtime.standalone.wscommands.settings.PathInfoType;
+import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.NameBuilder;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.util.NdiUtils;
 
 import java.nio.file.Path;
@@ -14,9 +15,9 @@ public abstract class AbstractScriptBuilder implements ScriptBuilder {
     private NutsSession session;
     private NutsId anyId;
     private String path;
-    private NdiScriptInfoType type;
+    private PathInfoType type;
 
-    public AbstractScriptBuilder(NdiScriptInfoType type, NutsId anyId, NutsSession session) {
+    public AbstractScriptBuilder(PathInfoType type, NutsId anyId, NutsSession session) {
         this.session = session;
         this.anyId = anyId;
         this.type = type;
@@ -30,7 +31,7 @@ public abstract class AbstractScriptBuilder implements ScriptBuilder {
         return anyId;
     }
 
-    public NdiScriptInfoType getType() {
+    public PathInfoType getType() {
         return type;
     }
 
@@ -57,8 +58,8 @@ public abstract class AbstractScriptBuilder implements ScriptBuilder {
                 this.path,"%n", anyIdDef.getDescriptor(),session).buildName();
         Path script = Paths.get(path);
         String newContent = buildString();
-        PathInfo.Status update0 = NdiUtils.tryWriteStatus(newContent.getBytes(), script);
-        PathInfo.Status update = NdiUtils.tryWrite(newContent.getBytes(), script);
+//        PathInfo.Status update0 = NdiUtils.tryWriteStatus(newContent.getBytes(), script,session);
+        PathInfo.Status update = NdiUtils.tryWrite(newContent.getBytes(), script,session);
         NdiUtils.setExecutable(script);
         return new PathInfo(type, anyId, script, update);
     }

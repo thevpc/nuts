@@ -117,7 +117,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                 }
 
                 HashMap<String, String> osEnv = new HashMap<>();
-                NutsWorkspaceOptionsBuilder options = ws.env().getBootOptions().copy();
+                NutsWorkspaceOptionsBuilder options = ws.env().getBootOptions().builder();
 
                 //copy session parameters to the newly created workspace
                 options.setDry(execSession.isDry());

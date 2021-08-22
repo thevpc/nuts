@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages and libraries
  * for runtime execution. Nuts is the ultimate companion for maven (and other
@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,10 +23,11 @@
  */
 package net.thevpc.nuts.runtime.core.util;
 
+import net.thevpc.nuts.NutsEnum;
+
 import java.util.NoSuchElementException;
 
 /**
- *
  * @author vpc
  */
 public class CoreEnumUtils {
@@ -36,16 +37,42 @@ public class CoreEnumUtils {
     }
 
     public static <T extends Enum> T parseEnumString(String val, Class<T> e, boolean lenient) {
-        String v2 = val.toUpperCase().replace("-", "_");
-        for (T enumConstant : e.getEnumConstants()) {
-            if (enumConstant.toString().equals(v2)) {
-                return enumConstant;
+        if (NutsEnum.class.isAssignableFrom(e)) {
+            T r = (T) NutsEnum.parseLenient((Class) e, val, null, null);
+            if (r != null) {
+                return r;
             }
+            if (lenient) {
+                return null;
+            }
+            throw new NoSuchElementException(val + " of type " + e.getSimpleName());
+        }
+        if (val == null) {
+            val = "";
+        } else {
+            val = val.trim();
+        }
+        T r = null;
+        if (!val.isEmpty()) {
+            r = (T) Enum.valueOf((Class) e, val);
+        }
+
+//        String v2 = val.toUpperCase().replace("-", "_");
+//
+//        T r = null;
+//        try {
+//            r = (T) m.invoke(null, val);
+//        } catch (Exception ex) {
+//            throw new IllegalArgumentException("unable to run  valueOf(String)");
+//        }
+
+        if (r != null) {
+            return r;
         }
         if (lenient) {
             return null;
         }
         throw new NoSuchElementException(val + " of type " + e.getSimpleName());
     }
-    
+
 }

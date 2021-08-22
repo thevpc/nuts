@@ -1,4 +1,4 @@
-package net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.base;
+package net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi;
 
 import net.thevpc.nuts.NutsDescriptor;
 import net.thevpc.nuts.NutsId;

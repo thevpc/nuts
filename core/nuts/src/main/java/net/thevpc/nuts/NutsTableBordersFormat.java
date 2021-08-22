@@ -33,5 +33,5 @@ package net.thevpc.nuts;
  */
 public interface NutsTableBordersFormat {
 
-    String format(NutsTableFormat.Separator s);
+    String format(NutsTableSeparator s);
 }

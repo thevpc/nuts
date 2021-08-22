@@ -80,4 +80,27 @@ public enum NutsInstallStrategy implements NutsEnum{
         return id;
     }
 
+    public static NutsInstallStrategy parseLenient(String value) {
+        return parseLenient(value, null);
+    }
+
+    public static NutsInstallStrategy parseLenient(String value, NutsInstallStrategy emptyOrErrorValue) {
+        return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
+    }
+
+    public static NutsInstallStrategy parseLenient(String value, NutsInstallStrategy emptyValue, NutsInstallStrategy errorValue) {
+        if (value == null) {
+            value = "";
+        } else {
+            value = value.toUpperCase().trim().replace('-', '_');
+        }
+        if (value.isEmpty()) {
+            return emptyValue;
+        }
+        try {
+            return NutsInstallStrategy.valueOf(value.toUpperCase());
+        } catch (Exception notFound) {
+            return errorValue;
+        }
+    }
 }

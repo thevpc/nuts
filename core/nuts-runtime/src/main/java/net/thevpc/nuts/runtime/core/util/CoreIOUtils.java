@@ -2122,7 +2122,7 @@ public class CoreIOUtils {
 
         @Override
         public Path getFilePath() {
-            throw new NutsUnsupportedOperationException(session);
+            throw new NutsUnsupportedOperationException(session,NutsMessage.cstyle("unsupported operation '%s'","getFilePath"));
         }
 
         public boolean isURL() {
@@ -2131,7 +2131,7 @@ public class CoreIOUtils {
 
         @Override
         public URL getURL() {
-            throw new NutsUnsupportedOperationException(session);
+            throw new NutsUnsupportedOperationException(session,NutsMessage.cstyle("unsupported operation '%s'","getURL"));
         }
 
         @Override

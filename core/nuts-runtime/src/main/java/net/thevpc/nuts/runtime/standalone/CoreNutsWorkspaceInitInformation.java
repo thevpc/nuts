@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages and libraries
  * for runtime execution. Nuts is the ultimate companion for maven (and other
@@ -11,7 +11,7 @@
  * large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -140,31 +140,31 @@ public final class CoreNutsWorkspaceInitInformation implements NutsWorkspaceInit
     private Map<String, String> homeLocations;
     private NutsSession session;
 
-    public CoreNutsWorkspaceInitInformation(NutsWorkspaceInitInformation boot,NutsSession session) {
-        this.session=session;
-        options=new CoreNutsWorkspaceOptions(session).setAll(boot.getOptions());
-        apiVersion=boot.getApiVersion();
-        runtimeId=boot.getRuntimeId();
-        runtimeBootDescriptor=boot.getRuntimeBootDescriptor();
-        runtimeBootDependencyNode=boot.getRuntimeBootDependencyNode();
-        extensionBootDescriptors=boot.getExtensionBootDescriptors();
-        extensionBootDependencyNodes=boot.getExtensionBootDependencyNodes();
-        bootWorkspaceFactory=boot.getBootWorkspaceFactory();
-        bootClassWorldURLs=boot.getClassWorldURLs();
-        workspaceClassLoader=boot.getClassWorldLoader();
-        uuid=boot.getUuid();
-        name=boot.getName();
-        workspace=boot.getWorkspaceLocation();
-        extensionsSet=boot.getExtensionsSet()==null?new LinkedHashSet<>() : new LinkedHashSet<>(boot.getExtensionsSet());
-        bootRepositories=boot.getBootRepositories();
-        javaCommand=boot.getJavaCommand();
-        javaOptions=boot.getJavaOptions();
-        storeLocationStrategy=boot.getStoreLocationStrategy();
-        repositoryStoreLocationStrategy=boot.getRepositoryStoreLocationStrategy();
-        storeLocationLayout=boot.getStoreLocationLayout();
-        global=boot.isGlobal();
-        storeLocations=boot.getStoreLocations()==null?new LinkedHashMap<>() : new LinkedHashMap<>(boot.getStoreLocations());
-        homeLocations=boot.getHomeLocations()==null?new LinkedHashMap<>() : new LinkedHashMap<>(boot.getHomeLocations());
+    public CoreNutsWorkspaceInitInformation(NutsWorkspaceInitInformation boot, NutsSession session) {
+        this.session = session;
+        options = new CoreNutsWorkspaceOptions(session).setAll(boot.getOptions()).build();
+        apiVersion = boot.getApiVersion();
+        runtimeId = boot.getRuntimeId();
+        runtimeBootDescriptor = boot.getRuntimeBootDescriptor();
+        runtimeBootDependencyNode = boot.getRuntimeBootDependencyNode();
+        extensionBootDescriptors = boot.getExtensionBootDescriptors();
+        extensionBootDependencyNodes = boot.getExtensionBootDependencyNodes();
+        bootWorkspaceFactory = boot.getBootWorkspaceFactory();
+        bootClassWorldURLs = boot.getClassWorldURLs();
+        workspaceClassLoader = boot.getClassWorldLoader();
+        uuid = boot.getUuid();
+        name = boot.getName();
+        workspace = boot.getWorkspaceLocation();
+        extensionsSet = boot.getExtensionsSet() == null ? new LinkedHashSet<>() : new LinkedHashSet<>(boot.getExtensionsSet());
+        bootRepositories = boot.getBootRepositories();
+        javaCommand = boot.getJavaCommand();
+        javaOptions = boot.getJavaOptions();
+        storeLocationStrategy = boot.getStoreLocationStrategy();
+        repositoryStoreLocationStrategy = boot.getRepositoryStoreLocationStrategy();
+        storeLocationLayout = boot.getStoreLocationLayout();
+        global = boot.isGlobal();
+        storeLocations = boot.getStoreLocations() == null ? new LinkedHashMap<>() : new LinkedHashMap<>(boot.getStoreLocations());
+        homeLocations = boot.getHomeLocations() == null ? new LinkedHashMap<>() : new LinkedHashMap<>(boot.getHomeLocations());
     }
 
     @Override
@@ -182,30 +182,12 @@ public final class CoreNutsWorkspaceInitInformation implements NutsWorkspaceInit
             this.setStoreLocationLayout(options.getStoreLocationLayout());
             this.storeLocations = new LinkedHashMap<>(options.getStoreLocations());
             this.homeLocations = new LinkedHashMap<>(options.getHomeLocations());
-            this.setRuntimeId(options.getRuntimeId()==null?null:NutsBootId.parse(options.getRuntimeId()));
+            this.setRuntimeId(options.getRuntimeId() == null ? null : NutsBootId.parse(options.getRuntimeId()));
             this.global = options.isGlobal();
             this.javaCommand = options.getJavaCommand();
             this.javaOptions = options.getJavaOptions();
             this.apiVersion = NutsUtilStrings.trimToNull(options.getApiVersion());
         }
-        return this;
-    }
-
-    public NutsBootDescriptor getRuntimeBootDescriptor() {
-        return runtimeBootDescriptor;
-    }
-
-    public CoreNutsWorkspaceInitInformation setRuntimeBootDescriptor(NutsBootDescriptor runtimeBootDescriptor) {
-        this.runtimeBootDescriptor = runtimeBootDescriptor;
-        return this;
-    }
-
-    public NutsBootDescriptor[] getExtensionBootDescriptors() {
-        return extensionBootDescriptors;
-    }
-
-    public CoreNutsWorkspaceInitInformation setExtensionBootDescriptors(NutsBootDescriptor[] extensionBootDescriptors) {
-        this.extensionBootDescriptors = extensionBootDescriptors;
         return this;
     }
 
@@ -229,12 +211,25 @@ public final class CoreNutsWorkspaceInitInformation implements NutsWorkspaceInit
         return runtimeId;
     }
 
-    public CoreNutsWorkspaceInitInformation setRuntimeId(NutsBootId runtimeId) {
-        this.runtimeId = runtimeId;
+    public NutsBootDescriptor getRuntimeBootDescriptor() {
+        return runtimeBootDescriptor;
+    }
+
+    public CoreNutsWorkspaceInitInformation setRuntimeBootDescriptor(NutsBootDescriptor runtimeBootDescriptor) {
+        this.runtimeBootDescriptor = runtimeBootDescriptor;
         return this;
     }
 
-//    @Override
+    public NutsBootDescriptor[] getExtensionBootDescriptors() {
+        return extensionBootDescriptors;
+    }
+
+    public CoreNutsWorkspaceInitInformation setExtensionBootDescriptors(NutsBootDescriptor[] extensionBootDescriptors) {
+        this.extensionBootDescriptors = extensionBootDescriptors;
+        return this;
+    }
+
+    //    @Override
 //    public String getRuntimeDependencies() {
 //        return String.join(";", getRuntimeDependenciesSet());
 //    }
@@ -263,19 +258,9 @@ public final class CoreNutsWorkspaceInitInformation implements NutsWorkspaceInit
         return bootClassWorldURLs;
     }
 
-    public CoreNutsWorkspaceInitInformation setBootClassWorldURLs(URL[] bootClassWorldURLs) {
-        this.bootClassWorldURLs = bootClassWorldURLs;
-        return this;
-    }
-
     @Override
     public ClassLoader getClassWorldLoader() {
         return workspaceClassLoader;
-    }
-
-    public CoreNutsWorkspaceInitInformation setWorkspaceClassLoader(ClassLoader workspaceClassLoader) {
-        this.workspaceClassLoader = workspaceClassLoader;
-        return this;
     }
 
     @Override
@@ -301,7 +286,7 @@ public final class CoreNutsWorkspaceInitInformation implements NutsWorkspaceInit
         return NutsConstants.Ids.NUTS_API + "#" + apiVersion;
     }
 
-//    @Override
+    //    @Override
 //    public Set<String> getRuntimeDependenciesSet() {
 //        return runtimeDependenciesSet;
 //    }
@@ -339,11 +324,6 @@ public final class CoreNutsWorkspaceInitInformation implements NutsWorkspaceInit
         return this;
     }
 
-    public CoreNutsWorkspaceInitInformation setBootRepositories(String repositories) {
-        this.bootRepositories = repositories;
-        return this;
-    }
-
     @Override
     public NutsStoreLocationStrategy getStoreLocationStrategy() {
         return storeLocationStrategy;
@@ -354,22 +334,9 @@ public final class CoreNutsWorkspaceInitInformation implements NutsWorkspaceInit
         return this;
     }
 
-    public CoreNutsWorkspaceInitInformation setWorkspaceLocation(String workspace) {
-        this.workspace = workspace;
-        return this;
-    }
-
     @Override
     public NutsOsFamily getStoreLocationLayout() {
         return storeLocationLayout;
-    }
-
-    public void setStoreLocations(Map<String, String> storeLocations) {
-        this.storeLocations = storeLocations;
-    }
-
-    public void setHomeLocations(Map<String, String> homeLocations) {
-        this.homeLocations = homeLocations;
     }
 
     public CoreNutsWorkspaceInitInformation setStoreLocationLayout(NutsOsFamily storeLocationLayout) {
@@ -387,14 +354,6 @@ public final class CoreNutsWorkspaceInitInformation implements NutsWorkspaceInit
         return this;
     }
 
-    public String getCacheBoot() {
-        return getStoreLocation(NutsStoreLocation.CACHE) + File.separator + NutsConstants.Folders.ID;
-    }
-
-    public String getLib() {
-        return getStoreLocation(NutsStoreLocation.LIB) + File.separator + NutsConstants.Folders.ID;
-    }
-
     @Override
     public String getStoreLocation(NutsStoreLocation location) {
         Map<String, String> s = storeLocations;
@@ -409,9 +368,17 @@ public final class CoreNutsWorkspaceInitInformation implements NutsWorkspaceInit
         return storeLocations;
     }
 
+    public void setStoreLocations(Map<String, String> storeLocations) {
+        this.storeLocations = storeLocations;
+    }
+
     @Override
     public Map<String, String> getHomeLocations() {
         return homeLocations;
+    }
+
+    public void setHomeLocations(Map<String, String> homeLocations) {
+        this.homeLocations = homeLocations;
     }
 
     @Override
@@ -448,6 +415,39 @@ public final class CoreNutsWorkspaceInitInformation implements NutsWorkspaceInit
         return this;
     }
 
+    public CoreNutsWorkspaceInitInformation setBootRepositories(String repositories) {
+        this.bootRepositories = repositories;
+        return this;
+    }
+
+    public CoreNutsWorkspaceInitInformation setRuntimeId(NutsBootId runtimeId) {
+        this.runtimeId = runtimeId;
+        return this;
+    }
+
+    public CoreNutsWorkspaceInitInformation setWorkspaceLocation(String workspace) {
+        this.workspace = workspace;
+        return this;
+    }
+
+    public CoreNutsWorkspaceInitInformation setBootClassWorldURLs(URL[] bootClassWorldURLs) {
+        this.bootClassWorldURLs = bootClassWorldURLs;
+        return this;
+    }
+
+    public CoreNutsWorkspaceInitInformation setWorkspaceClassLoader(ClassLoader workspaceClassLoader) {
+        this.workspaceClassLoader = workspaceClassLoader;
+        return this;
+    }
+
+    public String getCacheBoot() {
+        return getStoreLocation(NutsStoreLocation.CACHE) + File.separator + NutsConstants.Folders.ID;
+    }
+
+    public String getLib() {
+        return getStoreLocation(NutsStoreLocation.LIB) + File.separator + NutsConstants.Folders.ID;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder().append("NutsBootConfig{");
@@ -457,11 +457,11 @@ public final class CoreNutsWorkspaceInitInformation implements NutsWorkspaceInit
             }
             sb.append("apiVersion='").append(apiVersion).append('\'');
         }
-        if (runtimeId!=null) {
+        if (runtimeId != null) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }
-            sb.append("runtimeId='").append(runtimeId.toString()).append('\'');
+            sb.append("runtimeId='").append(runtimeId).append('\'');
         }
 //        if (!runtimeDependenciesSet.isEmpty()) {
 //            if (sb.length() > 0) {
@@ -536,7 +536,7 @@ public final class CoreNutsWorkspaceInitInformation implements NutsWorkspaceInit
     }
 
     public void setSession(NutsSession session) {
-        this.session=session;
-        ((CoreNutsWorkspaceOptions)options).setSession(session);
+        this.session = session;
+        ((CoreNutsWorkspaceOptions) options).setSession(session);
     }
 }

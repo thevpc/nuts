@@ -38,7 +38,7 @@ public class NutsExecRuntimeFilter extends AbstractDescriptorFilter {
             }
         }
         if(communityRuntime) {
-            if (!CoreBooleanUtils.parseBoolean(other.getProperties().get("nuts-runtime"), false,false)) {
+            if (!NutsUtilStrings.parseBoolean(other.getProperties().get("nuts-runtime"), false,false)) {
                 return false;
             }
             for (NutsDependency dependency : other.getDependencies()) {

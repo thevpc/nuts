@@ -1,8 +1,9 @@
-package net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.base;
+package net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.script;
 
 import net.thevpc.nuts.NutsId;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.NdiScriptInfoType;
+import net.thevpc.nuts.runtime.standalone.wscommands.settings.PathInfoType;
+import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.base.BaseSystemNdi;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,7 +17,7 @@ public class SimpleScriptBuilder extends AbstractScriptBuilder {
     private BaseSystemNdi sndi;
     private List<String> lines=new ArrayList<>();
 
-    public SimpleScriptBuilder(NdiScriptInfoType type, NutsId anyId, BaseSystemNdi sndi, NutsSession session) {
+    public SimpleScriptBuilder(PathInfoType type, NutsId anyId, BaseSystemNdi sndi, NutsSession session) {
         super(type, anyId,session);
         this.sndi = sndi;
     }

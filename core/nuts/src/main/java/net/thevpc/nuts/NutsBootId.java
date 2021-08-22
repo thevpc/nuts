@@ -144,7 +144,7 @@ public final class NutsBootId {
             for (Map.Entry<String, String> entry : props.entrySet()) {
                 switch (entry.getKey()) {
                     case NutsConstants.IdProperties.OPTIONAL: {
-                        optional = PrivateNutsUtils.parseBoolean(entry.getValue(), true, false);
+                        optional = NutsUtilStrings.parseBoolean(entry.getValue(), true, false);
                         break;
                     }
                     case NutsConstants.IdProperties.OS: {

@@ -15,12 +15,12 @@ import java.util.*;
  */
 public class DefaultNutsWorkspaceListManager implements NutsWorkspaceListManager {
 
-    private Map<String, NutsWorkspaceLocation> workspaces = new LinkedHashMap<>();
     private final NutsWorkspace defaultWorkspace;
-    private NutsWorkspaceListConfig config;
     private final String name;
+    private Map<String, NutsWorkspaceLocation> workspaces = new LinkedHashMap<>();
+    private NutsWorkspaceListConfig config;
 
-    public DefaultNutsWorkspaceListManager(NutsWorkspace ws, NutsSession session,String name) {
+    public DefaultNutsWorkspaceListManager(NutsWorkspace ws, NutsSession session, String name) {
         this.defaultWorkspace = ws;
         if (NutsUtilStrings.isBlank(name)) {
             name = "default";
@@ -40,7 +40,7 @@ public class DefaultNutsWorkspaceListManager implements NutsWorkspaceListManager
                     new NutsWorkspaceLocation()
                             .setUuid(ws.getUuid())
                             .setName("default-workspace")
-                            .setLocation(this.defaultWorkspace.locations().getWorkspaceLocation().toString())
+                            .setLocation(this.defaultWorkspace.locations().getWorkspaceLocation())
             );
             this.save(session);
         }
@@ -48,10 +48,10 @@ public class DefaultNutsWorkspaceListManager implements NutsWorkspaceListManager
 
     private Path getConfigFile(NutsSession session) {
         return Paths.get(this.defaultWorkspace
-                .locations()
-                .getStoreLocation(this.defaultWorkspace
-                                .id().setSession(session).resolveId(DefaultNutsWorkspaceListManager.class),
-                        NutsStoreLocation.CONFIG))
+                        .locations()
+                        .getStoreLocation(this.defaultWorkspace
+                                        .id().setSession(session).resolveId(DefaultNutsWorkspaceListManager.class),
+                                NutsStoreLocation.CONFIG))
                 .resolve(name + "-nuts-workspace-list.json");
     }
 
@@ -63,11 +63,6 @@ public class DefaultNutsWorkspaceListManager implements NutsWorkspaceListManager
     @Override
     public NutsWorkspaceLocation getWorkspaceLocation(String uuid) {
         return this.workspaces.get(uuid);
-    }
-
-    public DefaultNutsWorkspaceListManager setWorkspaces(Map<String, NutsWorkspaceLocation> workspaces) {
-        this.workspaces = workspaces;
-        return this;
     }
 
     @Override
@@ -88,20 +83,20 @@ public class DefaultNutsWorkspaceListManager implements NutsWorkspaceListManager
                 .setUuid(workspace.getUuid())
                 .setName(
                         Paths.get(workspace.locations().getWorkspaceLocation())
-                        .getFileName().toString())
-                .setLocation(workspace.locations().getWorkspaceLocation().toString());
+                                .getFileName().toString())
+                .setLocation(workspace.locations().getWorkspaceLocation());
         workspaces.put(workspace.getUuid(), workspaceLocation);
         this.save(session);
         return workspace;
     }
 
-    private NutsSession createWorkspace(String path) {
-        return Nuts.openWorkspace(
-                this.defaultWorkspace.config().optionsBuilder()
-                .setWorkspace(path)
-                .setOpenMode(NutsOpenMode.OPEN_OR_CREATE)
-                .setSkipCompanions(true)
-        );
+    @Override
+    public boolean removeWorkspace(String uuid, NutsSession session) {
+        boolean b = this.workspaces.remove(uuid) != null;
+        if (b) {
+            save(session);
+        }
+        return b;
     }
 
     @Override
@@ -115,12 +110,18 @@ public class DefaultNutsWorkspaceListManager implements NutsWorkspaceListManager
                 .print(file);
     }
 
-    @Override
-    public boolean removeWorkspace(String uuid, NutsSession session) {
-        boolean b = this.workspaces.remove(uuid) != null;
-        if (b) {
-            save(session);
-        }
-        return b;
+    public DefaultNutsWorkspaceListManager setWorkspaces(Map<String, NutsWorkspaceLocation> workspaces) {
+        this.workspaces = workspaces;
+        return this;
+    }
+
+    private NutsSession createWorkspace(String path) {
+        return Nuts.openWorkspace(
+                this.defaultWorkspace.config().optionsBuilder()
+                        .setWorkspace(path)
+                        .setOpenMode(NutsOpenMode.OPEN_OR_CREATE)
+                        .setSkipCompanions(true)
+                        .build()
+        );
     }
 }

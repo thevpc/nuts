@@ -237,7 +237,7 @@ public class RemoteTomcat {
             throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("invalid parameters"), 2);
         }
         if (lastExitCode != 0) {
-            throw new NutsExecutionException(context.getSession(), lastExitCode);
+            throw new NutsExecutionException(context.getSession(),NutsMessage.cstyle("tomcat remove failed"), lastExitCode);
         }
     }
 

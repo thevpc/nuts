@@ -43,4 +43,28 @@ public enum ReflectPropertyAccessStrategy  implements NutsEnum {
     public String id() {
         return id;
     }
+
+    public static ReflectPropertyAccessStrategy parseLenient(String value) {
+        return parseLenient(value, null);
+    }
+
+    public static ReflectPropertyAccessStrategy parseLenient(String value, ReflectPropertyAccessStrategy emptyOrErrorValue) {
+        return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
+    }
+
+    public static ReflectPropertyAccessStrategy parseLenient(String value, ReflectPropertyAccessStrategy emptyValue, ReflectPropertyAccessStrategy errorValue) {
+        if (value == null) {
+            value = "";
+        } else {
+            value = value.toUpperCase().trim().replace('-', '_');
+        }
+        if (value.isEmpty()) {
+            return emptyValue;
+        }
+        try {
+            return ReflectPropertyAccessStrategy.valueOf(value.toUpperCase());
+        } catch (Exception notFound) {
+            return errorValue;
+        }
+    }
 }

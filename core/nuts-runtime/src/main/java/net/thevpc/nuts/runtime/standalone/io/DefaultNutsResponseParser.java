@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.io;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.app.DefaultNutsArgument;
+import net.thevpc.nuts.runtime.core.util.CoreEnumUtils;
 
 public class DefaultNutsResponseParser<T> implements NutsQuestionParser<T> {
 
@@ -30,19 +31,7 @@ public class DefaultNutsResponseParser<T> implements NutsQuestionParser<T> {
         }
         if (type.isEnum()) {
             String s = String.valueOf(response).trim();
-            if (s.isEmpty()) {
-                return null;
-            }
-            try {
-                return (T) Enum.valueOf((Class) type, s);
-            } catch (Exception ex) {
-                for (Object enumConstant : type.getEnumConstants()) {
-                    if (enumConstant.toString().equalsIgnoreCase(s.replace("-", "_"))) {
-                        return (T) enumConstant;
-                    }
-                }
-                throw ex;
-            }
+            return (T) CoreEnumUtils.parseEnumString(s,(Class)type,false);
         }
         switch (type.getName()) {
             case "java.lang.String": {

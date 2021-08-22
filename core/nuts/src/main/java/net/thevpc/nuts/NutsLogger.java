@@ -35,6 +35,11 @@ import java.util.logging.*;
  */
 public interface NutsLogger {
 
+    static NutsLogger of(Class clazz, NutsSession session) {
+        PrivateNutsUtils.checkSession(session);
+        return session.getWorkspace().log().of(clazz);
+    }
+
     /**
      * Check if a message of the given level would actually be logged
      * by this logger.  This check is based on the Loggers effective level,

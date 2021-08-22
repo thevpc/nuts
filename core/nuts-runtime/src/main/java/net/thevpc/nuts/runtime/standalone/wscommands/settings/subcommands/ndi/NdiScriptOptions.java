@@ -1,38 +1,32 @@
 package net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.base.NutsEnvInfo;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Comparator;
 
 public class NdiScriptOptions implements Cloneable{
 
     private String id;
     private boolean forceBoot;
     private boolean fetch;
-//    private NutsExecutionType execType;
-//    private NutsRunAs runAs=NutsRunAs.currentUser();
-//    private List<String> executorOptions;
-    private NutsSession session;
-//    private String customScriptPath;
-//    private String shortcutName;
-//    private String customShortcutPath;
     private boolean includeEnv;
     private boolean addNutsScript;
-
-//    private List<String> appArgs= new ArrayList<>();
-//    private String workingDirectory;
-//    private String icon;
-//    private String menuCategory;
-//    private Boolean systemWideConfig;
-//    private boolean openTerminal;
-//    private NutsActionSupportCondition createMenu= NutsActionSupportCondition.NEVER;
-//    private NutsActionSupportCondition createDesktop= NutsActionSupportCondition.NEVER;
-//    private NutsActionSupportCondition createShortcut= NutsActionSupportCondition.NEVER;
-//    private String switchWorkspaceLocation;
-    private NutsEnvInfo env;
+//    private NutsEnvInfo env;
     private NutsLauncherOptions launcher=new NutsLauncherOptions();
+
+
+
+    private String nutsVersion;
+    private NutsSession session;
+
+    private NutsId nutsApiId;
+    private Path nutsApiJarPath;
+    private NutsWorkspaceBootConfig workspaceBootConfig;
 
     public NutsLauncherOptions getLauncher() {
         return launcher;
@@ -46,15 +40,15 @@ public class NdiScriptOptions implements Cloneable{
     public NdiScriptOptions() {
     }
 
-    public NdiScriptOptions setEnv(NutsEnvInfo env) {
-        this.env = env;
-        return this;
-    }
-
-    public NutsEnvInfo getEnv() {
-        return env;
-    }
-
+//    public NdiScriptOptions setEnv(NutsEnvInfo env) {
+//        this.env = env;
+//        return this;
+//    }
+//
+//    public NutsEnvInfo getEnv() {
+//        return env;
+//    }
+//
     public boolean isAddNutsScript() {
         return addNutsScript;
     }
@@ -104,11 +98,6 @@ public class NdiScriptOptions implements Cloneable{
         return session;
     }
 
-    public NdiScriptOptions setSession(NutsSession session) {
-        this.session = session;
-        return this;
-    }
-
     public boolean isIncludeEnv() {
         return includeEnv;
     }
@@ -129,4 +118,124 @@ public class NdiScriptOptions implements Cloneable{
         return c;
     }
 
+    public Path resolveNutsApiJarPath() {
+        if (nutsApiJarPath == null) {
+            NutsId nid = resolveNutsApiId();
+            if (getLauncher().getSwitchWorkspaceLocation() == null) {
+                NutsDefinition apiDef = session.getWorkspace().search()
+                        .addId(nid).setOptional(false).setLatest(true).setContent(true).getResultDefinitions().required();
+                nutsApiJarPath = apiDef.getPath();
+            } else {
+                NutsWorkspaceBootConfig bootConfig = loadSwitchWorkspaceLocationConfig(getLauncher().getSwitchWorkspaceLocation());
+                nutsApiJarPath = Paths.get(bootConfig.getStoreLocation(nid, NutsStoreLocation.LIB),
+                        session.getWorkspace().locations().getDefaultIdFilename(nid));
+            }
+        }
+        return nutsApiJarPath;
+    }
+
+    public Path resolveBinFolder() {
+        return resolveNutsAppsFolder().resolve("bin");
+    }
+
+    public Path resolveIncFolder() {
+        return resolveNutsAppsFolder().resolve("inc");
+    }
+
+    public Path resolveNutsAppsFolder() {
+        NutsWorkspace ws = session.getWorkspace();
+        NutsWorkspaceBootConfig bootConfig = null;
+        NutsId apiId = session.getWorkspace().getApiId();
+        if (getLauncher().getSwitchWorkspaceLocation() != null) {
+            bootConfig = loadSwitchWorkspaceLocationConfig(getLauncher().getSwitchWorkspaceLocation());
+            return Paths.get(bootConfig.getStoreLocation(apiId, NutsStoreLocation.APPS));
+        } else {
+            return Paths.get(ws.locations().getStoreLocation(apiId, NutsStoreLocation.APPS));
+        }
+    }
+
+    public Path resolveNutsApiAppsFolder() {
+        NutsWorkspace ws = session.getWorkspace();
+        NutsWorkspaceBootConfig bootConfig = null;
+        NutsId apiId = ws.getApiId().builder().setVersion(nutsVersion).build();
+        apiId = ws.search().addId(apiId).setLatest(true).setFailFast(true).setContent(true).getResultDefinitions().singleton().getId();
+        if (getLauncher().getSwitchWorkspaceLocation() != null) {
+            bootConfig = loadSwitchWorkspaceLocationConfig(getLauncher().getSwitchWorkspaceLocation());
+            return Paths.get(bootConfig.getStoreLocation(apiId, NutsStoreLocation.APPS));
+        } else {
+            return Paths.get(ws.locations().getStoreLocation(apiId, NutsStoreLocation.APPS));
+        }
+    }
+
+    public NutsDefinition resolveNutsApiDef() {
+        return session.getWorkspace().search().addId(resolveNutsApiId())
+                .setLatest(true)
+                .setContent(true)
+                .setFailFast(true)
+                .getResultDefinitions().singleton();
+    }
+
+    public NutsId resolveNutsApiId() {
+        if (nutsApiId == null) {
+            if (getLauncher().getSwitchWorkspaceLocation() == null) {
+                if (nutsVersion == null) {
+                    nutsApiId = session.getWorkspace().getApiId();
+                } else {
+                    nutsApiId = session.getWorkspace().search().addId(
+                            session.getWorkspace().getApiId().builder().setVersion(nutsVersion).build()
+                    ).setLatest(true).getResultIds().singleton();
+                }
+            } else {
+                NutsWorkspaceBootConfig bootConfig = loadSwitchWorkspaceLocationConfig(getLauncher().getSwitchWorkspaceLocation());
+                NutsVersion _latestVersion = null;
+                try {
+                    _latestVersion = Files.list(
+                                    Paths.get(bootConfig.getStoreLocation(session.getWorkspace().getApiId(), NutsStoreLocation.CONFIG))
+                                            .getParent())
+                            .filter(
+                                    f
+                                            -> session.getWorkspace().version().parse(f.getFileName().toString()).getNumber(0, -1) != -1
+                                            && Files.exists(f.resolve("nuts-api-config.json"))
+                            ).map(
+                                    f -> session.getWorkspace().version().parse(f.getFileName().toString())
+                            ).sorted(Comparator.reverseOrder()).findFirst().orElse(null);
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
+                }
+                if (_latestVersion == null) {
+                    throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing nuts-api version to link to"));
+                }
+                nutsApiId = session.getWorkspace().getApiId().builder().setVersion(_latestVersion).build();
+            }
+        }
+        return nutsApiId;
+    }
+
+    public NutsVersion getNutsApiVersion() {
+        return resolveNutsApiId().getVersion();
+    }
+
+    public Path getWorkspaceLocation() {
+        if (getLauncher().getSwitchWorkspaceLocation() != null) {
+            NutsWorkspaceBootConfig bootConfig = loadSwitchWorkspaceLocationConfig(getLauncher().getSwitchWorkspaceLocation());
+            return Paths.get(bootConfig.getEffectiveWorkspace());
+        } else {
+            return Paths.get(session.getWorkspace().locations().getWorkspaceLocation());
+        }
+    }
+
+    public NutsWorkspaceBootConfig loadSwitchWorkspaceLocationConfig(String switchWorkspaceLocation) {
+        if (workspaceBootConfig == null) {
+            workspaceBootConfig = session.getWorkspace().config().loadBootConfig(switchWorkspaceLocation, false, true);
+            if (workspaceBootConfig == null) {
+                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid workspace: %s", switchWorkspaceLocation));
+            }
+        }
+        return workspaceBootConfig;
+    }
+
+    public NdiScriptOptions setSession(NutsSession session) {
+        this.session = session;
+        return this;
+    }
 }

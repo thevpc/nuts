@@ -5,6 +5,7 @@ import net.thevpc.nuts.NutsObjectElement;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.lib.md.MdElement;
 import net.thevpc.nuts.lib.md.docusaurus.DocusaurusUtils;
+import net.thevpc.nuts.lib.md.util.MdUtils;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -213,13 +214,13 @@ public class DocusaurusFolder implements DocusaurusFileOrFolder {
         if(foldersCount==0 && filesCount==0){
 
         }else if(foldersCount>0 && filesCount>0){
-            sb.append("'").append(DocusaurusUtils.escapeString(getTitle() + "': {"));
+            sb.append("'").append(MdUtils.escapeString(getTitle() + "': {"));
             if (children.length == 0) {
                 sb.append("}");
             } else {
                 for (DocusaurusFileOrFolder child : children) {
                     if(child instanceof DocusaurusFile){
-                        sb.append("\n").append("'").append(DocusaurusUtils.escapeString(child.getTitle() + "': ["));
+                        sb.append("\n").append("'").append(MdUtils.escapeString(child.getTitle() + "': ["));
                         sb.append(child.toJSON(indent + 1));
                         sb.append("],");
                     }else {
@@ -230,7 +231,7 @@ public class DocusaurusFolder implements DocusaurusFileOrFolder {
             }
             return sb.toString();
         }else if(foldersCount>0){
-            sb.append("'").append(DocusaurusUtils.escapeString(getTitle() + "': {"));
+            sb.append("'").append(MdUtils.escapeString(getTitle() + "': {"));
             if (children.length == 0) {
                 sb.append("}");
             } else {
@@ -241,7 +242,7 @@ public class DocusaurusFolder implements DocusaurusFileOrFolder {
             }
             return sb.toString();
         }else if(filesCount>0){
-            sb.append("'").append(DocusaurusUtils.escapeString(getTitle() + "': ["));
+            sb.append("'").append(MdUtils.escapeString(getTitle() + "': ["));
             if (children.length == 0) {
                 sb.append("]");
             } else {
@@ -255,7 +256,7 @@ public class DocusaurusFolder implements DocusaurusFileOrFolder {
 
         }
 
-        sb.append("'").append(DocusaurusUtils.escapeString(getTitle() + "': ["));
+        sb.append("'").append(MdUtils.escapeString(getTitle() + "': ["));
         if (children.length == 0) {
             sb.append("]");
         } else {

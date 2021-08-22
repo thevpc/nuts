@@ -60,9 +60,18 @@ public enum NutsCommandlineFamily implements NutsEnum{
     }
 
     public static NutsCommandlineFamily parseLenient(String arch) {
-        arch = arch == null ? "" : arch.toLowerCase().replace('-', '_');
+        return parseLenient(arch,DEFAULT);
+    }
+
+    public static NutsCommandlineFamily parseLenient(String arch,NutsCommandlineFamily emptyOrErrorValue) {
+        return parseLenient(arch,emptyOrErrorValue,emptyOrErrorValue);
+    }
+
+    public static NutsCommandlineFamily parseLenient(String arch,NutsCommandlineFamily emptyValue,NutsCommandlineFamily errorValue) {
+        arch = arch == null ? "" : arch.toLowerCase().replace('-', '_').trim();
         switch (arch) {
             case "":
+                return emptyValue;
             case "default":
                 return DEFAULT;
             case "sh":
@@ -71,8 +80,9 @@ public enum NutsCommandlineFamily implements NutsEnum{
             case "windows_cmd":
             case "win_cmd":
             case "cmd":
+            case "win":
                 return WINDOWS_CMD;
         }
-        return DEFAULT;
+        return errorValue;
     }
 }

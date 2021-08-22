@@ -38,6 +38,11 @@ import java.io.Serializable;
  */
 public interface NutsArgumentCandidate extends Serializable {
 
+    static NutsArgumentCandidate of(String value, NutsSession session) {
+        PrivateNutsUtils.checkSession(session);
+        return session.getWorkspace().commandLine().createCandidate(value).build();
+    }
+
     /**
      * argument value
      *

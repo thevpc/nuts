@@ -679,7 +679,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
             }
             return cloned;
         } catch (CloneNotSupportedException e) {
-            throw new NutsUnsupportedOperationException(this, e);
+            throw new NutsUnsupportedOperationException(this, NutsMessage.cstyle("clone failed for type %s", getClass().getName()), e);
         }
     }
 

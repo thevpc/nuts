@@ -14,7 +14,7 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
     private NutsWorkspace ws;
     private NutsSession session;
     private boolean lenient = true;
-    private DescriptorFormat descriptorFormat;
+    private NutsDescriptorStyle descriptorStyle;
     private String format;
 
     public DefaultNutsDescriptorParser(NutsWorkspace ws) {
@@ -90,11 +90,11 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
 
     private NutsDescriptor parse(InputStream in, boolean closeStream) {
         checkSession();
-        DescriptorFormat f = getDescriptorFormat();
-        if (f == null) {
-            f = DescriptorFormat.NUTS;
+        NutsDescriptorStyle style = getDescriptorStyle();
+        if (style == null) {
+            style = NutsDescriptorStyle.NUTS;
         }
-        switch (f) {
+        switch (style) {
             case MAVEN: {
                 try {
                     return MavenUtils.of(session).parsePomXml0(in, NutsFetchMode.LOCAL, "descriptor", null);
@@ -125,7 +125,7 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
                 }
             }
             default: {
-                throw new NutsUnsupportedEnumException(getSession(), f);
+                throw new NutsUnsupportedEnumException(getSession(), style);
             }
         }
     }
@@ -154,13 +154,13 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
 
 
     @Override
-    public DescriptorFormat getDescriptorFormat() {
-        return descriptorFormat;
+    public NutsDescriptorStyle getDescriptorStyle() {
+        return descriptorStyle;
     }
 
     @Override
-    public DefaultNutsDescriptorParser setDescriptorFormat(DescriptorFormat descriptorFormat) {
-        this.descriptorFormat = descriptorFormat;
+    public DefaultNutsDescriptorParser setDescriptorStyle(NutsDescriptorStyle descriptorStyle) {
+        this.descriptorStyle = descriptorStyle;
         return this;
     }
 }

@@ -77,4 +77,28 @@ public enum NutsOpenMode implements NutsEnum{
     public String id() {
         return id;
     }
+
+    public static NutsOpenMode parseLenient(String value) {
+        return parseLenient(value, null);
+    }
+
+    public static NutsOpenMode parseLenient(String value, NutsOpenMode emptyOrErrorValue) {
+        return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
+    }
+
+    public static NutsOpenMode parseLenient(String value, NutsOpenMode emptyValue, NutsOpenMode errorValue) {
+        if (value == null) {
+            value = "";
+        } else {
+            value = value.toUpperCase().trim().replace('-', '_');
+        }
+        if (value.isEmpty()) {
+            return emptyValue;
+        }
+        try {
+            return NutsOpenMode.valueOf(value.toUpperCase());
+        } catch (Exception notFound) {
+            return errorValue;
+        }
+    }
 }

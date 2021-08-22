@@ -135,7 +135,16 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
                         NutsMessage.cstyle("execution failed with code %s and message : %s", 244, p),
                         ex, 244);
             } else {
-                result = new NutsExecutionException(getSession(), ex, 244);
+                String s = null;
+                try {
+                    s = exec.toString();
+                } catch (Exception ex2) {
+                    s = exec.getClass().getName();
+                }
+                result = new NutsExecutionException(getSession(), NutsMessage.cstyle("execution failed of : %s", s),
+                        ex,
+                        244
+                );
             }
         }
         if (result != null && result.getExitCode() != 0 && failFast) {

@@ -80,42 +80,4 @@ public interface NutsTableFormat extends NutsObjectFormat {
     @Override
     NutsTableFormat setValue(Object value);
 
-    /**
-     * @app.category Format
-     */
-    enum Separator {
-        FIRST_ROW_START,
-        FIRST_ROW_LINE,
-        FIRST_ROW_SEP,
-        FIRST_ROW_END,
-        ROW_START,
-        ROW_SEP,
-        ROW_END,
-        MIDDLE_ROW_START,
-        MIDDLE_ROW_LINE,
-        MIDDLE_ROW_SEP,
-        MIDDLE_ROW_END,
-        LAST_ROW_START,
-        LAST_ROW_LINE,
-        LAST_ROW_SEP,
-        LAST_ROW_END;
-
-        /**
-         * lower-cased identifier for the enum entry
-         */
-        private final String id;
-
-        Separator() {
-            this.id = name().toLowerCase().replace('_', '-');
-        }
-
-        /**
-         * lower cased identifier.
-         * @return lower cased identifier
-         */
-        public String id() {
-            return id;
-        }
-    }
-
 }

@@ -32,6 +32,11 @@ package net.thevpc.nuts;
  */
 public interface NutsMutableTableModel extends NutsTableModel {
 
+    static NutsMutableTableModel of(NutsSession session){
+        PrivateNutsUtils.checkSession(session);
+        return session.getWorkspace().formats().table().createModel();
+    }
+
     /**
      * add new row to the model
      * @return {@code this} instance

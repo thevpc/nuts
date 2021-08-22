@@ -36,6 +36,11 @@ import java.nio.file.Path;
  */
 public interface NutsDescriptorParser {
 
+    public static NutsDescriptorParser of(NutsSession session){
+        PrivateNutsUtils.checkSession(session);
+        return session.getWorkspace().descriptor().parser();
+    }
+
     /**
      * parse descriptor.
      *
@@ -92,9 +97,9 @@ public interface NutsDescriptorParser {
 
     NutsDescriptorParser setLenient(boolean lenient);
 
-    NutsDescriptorParser setDescriptorFormat(DescriptorFormat descriptorFormat);
+    NutsDescriptorParser setDescriptorStyle(NutsDescriptorStyle descriptorStyle);
 
-    DescriptorFormat getDescriptorFormat();
+    NutsDescriptorStyle getDescriptorStyle();
 
     boolean isLenient();
     
@@ -102,8 +107,4 @@ public interface NutsDescriptorParser {
 
     NutsDescriptorParser setSession(NutsSession session);
 
-    enum DescriptorFormat{
-        MAVEN,
-        NUTS
-    }
 }

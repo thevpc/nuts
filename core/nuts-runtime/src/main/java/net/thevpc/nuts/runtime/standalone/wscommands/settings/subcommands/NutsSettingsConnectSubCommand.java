@@ -84,7 +84,7 @@ public class NutsSettingsConnectSubCommand extends AbstractNutsSettingsSubComman
                     }
                 }
             } catch (Exception ex) {
-                throw new NutsExecutionException(session, ex, 2);
+                throw new NutsExecutionException(session,NutsMessage.plain("settings connect failed"), ex, 2);
             }
             return true;
         }

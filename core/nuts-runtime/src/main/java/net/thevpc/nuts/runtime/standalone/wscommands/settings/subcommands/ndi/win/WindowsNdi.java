@@ -1,16 +1,14 @@
-package net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.sys.win;
+package net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.win;
 
 import net.thevpc.nuts.NutsId;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.PathInfo;
-import net.thevpc.nuts.runtime.standalone.wscommands.settings.oswindows.WindowFreeDesktopEntryWriter;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.FreeDesktopEntryWriter;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.NdiScriptInfo;
-import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.NdiScriptInfoType;
+import net.thevpc.nuts.runtime.standalone.wscommands.settings.PathInfoType;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.NdiScriptOptions;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.base.BaseSystemNdi;
-import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.base.NutsEnvInfo;
-import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.util.ReplaceString;
+import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.script.ReplaceString;
 
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -27,21 +25,21 @@ public class WindowsNdi extends BaseSystemNdi {
     }
 
     @Override
-    public NdiScriptInfo getNutsTerm(NutsEnvInfo env) {
+    public NdiScriptInfo getNutsTerm(NdiScriptOptions options) {
         return new NdiScriptInfo() {
             @Override
             public Path path() {
-                return env.getBinFolder().resolve(getExecFileName("nuts-term"));
+                return options.resolveBinFolder().resolve(getExecFileName("nuts-term"));
             }
 
             @Override
             public PathInfo create() {
                 Path apiConfigFile = path();
-                return addFileLine(NdiScriptInfoType.NUTS_TERM,
-                        env.getNutsApiId(),
+                return addFileLine(PathInfoType.NUTS_TERM,
+                        options.resolveNutsApiId(),
                         apiConfigFile, getCommentLineConfigHeader(),
                         "@ECHO OFF" + newlineString() +
-                                createNutsEnvString(env, true, true) + newlineString()
+                                createNutsEnvString(options, true, true) + newlineString()
                                 + "cmd.exe /K " + getExecFileName("nuts") + " welcome " + newlineString()
                         ,
                         getShebanSh());
@@ -76,11 +74,11 @@ public class WindowsNdi extends BaseSystemNdi {
         return command.toString();
     }
 
-    public void onPostGlobal(NutsEnvInfo env, PathInfo[] updatedPaths) {
+    public void onPostGlobal(NdiScriptOptions options, PathInfo[] updatedPaths) {
 
     }
 
-    protected String newlineString() {
+    public String newlineString() {
         return "\r\n";
     }
 
@@ -95,17 +93,17 @@ public class WindowsNdi extends BaseSystemNdi {
     }
 
     @Override
-    protected String getSetVarCommand(String name, String value) {
+    public String getSetVarCommand(String name, String value) {
         return "SET \"" + name + "=" + value + "\"";
     }
 
     @Override
-    protected String getSetVarStaticCommand(String name, String value) {
+    public String getSetVarStaticCommand(String name, String value) {
         return "SET \"" + name + "=" + value + "\"";
     }
 
     @Override
-    protected String getCallScriptCommand(String path, String... args) {
+    public String getCallScriptCommand(String path, String... args) {
         return "@CALL \"" + path + "\"" + " " + Arrays.stream(args).map(a -> dblQte(a)).collect(Collectors.joining(" "));
     }
 
@@ -144,7 +142,7 @@ public class WindowsNdi extends BaseSystemNdi {
     }
 
     @Override
-    protected String getTemplateName(String name) {
+    public String getTemplateName(String name) {
         return "windows_template_" + name + ".text";
     }
 

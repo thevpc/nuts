@@ -120,4 +120,28 @@ public enum NutsFetchStrategy implements Iterable<NutsFetchMode>, NutsEnum{
         return Arrays.asList(all).iterator();
     }
 
+    public static NutsFetchStrategy parseLenient(String value) {
+        return parseLenient(value, null);
+    }
+
+    public static NutsFetchStrategy parseLenient(String value, NutsFetchStrategy emptyOrErrorValue) {
+        return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
+    }
+
+    public static NutsFetchStrategy parseLenient(String value, NutsFetchStrategy emptyValue, NutsFetchStrategy errorValue) {
+        if (value == null) {
+            value = "";
+        } else {
+            value = value.toUpperCase().trim().replace('-', '_');
+        }
+        if (value.isEmpty()) {
+            return emptyValue;
+        }
+        try {
+            return NutsFetchStrategy.valueOf(value.toUpperCase());
+        } catch (Exception notFound) {
+            return errorValue;
+        }
+    }
+
 }

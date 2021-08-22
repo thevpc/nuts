@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,13 +24,14 @@
 package net.thevpc.nuts;
 
 import java.util.Map;
+import java.util.logging.Level;
 
 /**
  * Nuts Top Class. Nuts is a Package manager for Java Applications and this
  * class is it's main class for creating and opening nuts workspaces.
  *
- * @since 0.1.0
  * @app.category Base
+ * @since 0.1.0
  */
 public final class Nuts {
 
@@ -82,13 +83,54 @@ public final class Nuts {
             runWorkspace(args);
             System.exit(0);
         } catch (Exception ex) {
-            System.exit(NutsApplications.processThrowable(ex, args, null));
+            NutsSession session = NutsExceptionBase.detectSession(ex);
+            NutsWorkspaceOptionsBuilder bo = null;
+            if (session != null) {
+                bo = session.getWorkspace().env().getBootOptions().builder();
+                if (!session.getWorkspace().env().isGraphicalDesktopEnvironment()) {
+                    bo.setGui(false);
+                }
+            } else {
+                NutsWorkspaceOptionsBuilder options = Nuts.createOptionsBuilder();
+                //load inherited
+                String nutsArgs = System.getProperty("nuts.args");
+                if (nutsArgs != null) {
+                    try {
+                        options.parseArguments(args);
+                    } catch (Exception e) {
+                        //any, ignore...
+                    }
+                }
+                bo = options;
+                try {
+                    if (java.awt.GraphicsEnvironment.isHeadless()) {
+                        bo.setGui(false);
+                    }
+                } catch (Exception e) {
+                    //exception may occur if the sdk is build without awt package for instance!
+                    bo.setGui(false);
+                }
+            }
+
+            boolean bot = bo.isBot();
+            boolean gui = !bot && bo.isGui();
+            boolean showTrace = bo.isDebug();
+            showTrace |= (bo.getLogConfig() != null
+                    && bo.getLogConfig().getLogTermLevel() != null
+                    && bo.getLogConfig().getLogTermLevel().intValue() < Level.INFO.intValue());
+            if (!showTrace) {
+                showTrace = PrivateNutsUtils.getSysBoolNutsProperty("debug", false);
+            }
+            if (bot) {
+                showTrace = false;
+            }
+            System.exit(NutsApplications.processThrowable(ex, null, !bot, showTrace, gui));
         }
     }
 
     public static void run(NutsSession session, String[] args) {
         NutsWorkspace workspace = session.getWorkspace();
-        NutsWorkspaceOptionsBuilder o = createOptions().parseArguments(args);
+        NutsWorkspaceOptionsBuilder o = createOptionsBuilder().parseArguments(args);
         String[] appArgs;
         if (o.getApplicationArguments().length == 0) {
             if (o.isSkipWelcome()) {
@@ -98,7 +140,7 @@ public final class Nuts {
         } else {
             appArgs = o.getApplicationArguments();
         }
-        session.configure(o);
+        session.configure(o.build());
         workspace.exec()
                 .setSession(session)
                 .addCommand(appArgs)
@@ -124,16 +166,16 @@ public final class Nuts {
         NutsBootWorkspace boot;
         String nutsWorkspaceOptions = NutsUtilStrings.trim(
                 NutsUtilStrings.trim(System.getProperty("nuts.boot.args"))
-                + " " + NutsUtilStrings.trim(System.getProperty("nuts.args"))
+                        + " " + NutsUtilStrings.trim(System.getProperty("nuts.args"))
         );
-        NutsWorkspaceOptionsBuilder options = createOptions();
+        NutsWorkspaceOptionsBuilder options = createOptionsBuilder();
         if (!NutsUtilStrings.isBlank(nutsWorkspaceOptions)) {
             options.parseCommandLine(nutsWorkspaceOptions);
         }
         options.setApplicationArguments(args);
         options.setInherited(true);
         options.setCreationTime(startTime);
-        boot = new NutsBootWorkspace(options);
+        boot = new NutsBootWorkspace(options.build());
         return boot.openWorkspace();// openWorkspace(boot.getOptions());
     }
 
@@ -166,7 +208,11 @@ public final class Nuts {
         return new NutsBootWorkspace(options).openWorkspace();
     }
 
-    public static NutsWorkspaceOptionsBuilder createOptions() {
+    public static NutsWorkspaceOptionsBuilder createOptionsBuilder() {
+        return new PrivateBootWorkspaceOptions();
+    }
+
+    public static NutsWorkspaceOptions createOptions() {
         return new PrivateBootWorkspaceOptions();
     }
 
@@ -190,11 +236,11 @@ public final class Nuts {
      * Specifications: XDG Base Directory Specification
      * (https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html)
      *
-     * @param folderType folder type to resolve home for
+     * @param folderType          folder type to resolve home for
      * @param storeLocationLayout location layout to resolve home for
-     * @param homeLocations workspace home locations
-     * @param global global workspace
-     * @param workspaceName workspace name or id (discriminator)
+     * @param homeLocations       workspace home locations
+     * @param global              global workspace
+     * @param workspaceName       workspace name or id (discriminator)
      * @return home folder path
      */
     public static String getPlatformHomeFolder(

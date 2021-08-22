@@ -95,4 +95,29 @@ public enum NutsContentType implements NutsEnum{
     public String id() {
         return id;
     }
+
+    public static NutsContentType parseLenient(String value) {
+        return parseLenient(value, null);
+    }
+
+    public static NutsContentType parseLenient(String value, NutsContentType emptyOrErrorValue) {
+        return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
+    }
+
+    public static NutsContentType parseLenient(String value, NutsContentType emptyValue, NutsContentType errorValue) {
+        if (value == null) {
+            value = "";
+        } else {
+            value = value.toUpperCase().trim().replace('-', '_');
+        }
+        if (value.isEmpty()) {
+            return emptyValue;
+        }
+        try {
+            return NutsContentType.valueOf(value.toUpperCase());
+        } catch (Exception notFound) {
+            return errorValue;
+        }
+    }
+
 }

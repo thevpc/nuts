@@ -114,7 +114,7 @@ public class NVersionMain implements NutsApplication {
                     processed++;
                     value = detectVersions(context.getWorkspace().io().expandPath(arg), context, ws);
                 } catch (IOException e) {
-                    throw new NutsExecutionException(context.getSession(), e, 2);
+                    throw new NutsExecutionException(context.getSession(),NutsMessage.cstyle("nversion: unable to detect version for %s",arg), e, 2);
                 }
                 if (!value.isEmpty()) {
                     results.put(arg, value);

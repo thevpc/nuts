@@ -72,4 +72,28 @@ public enum NutsExecutableType implements NutsEnum{
     public String id() {
         return id;
     }
+
+    public static NutsExecutableType parseLenient(String value) {
+        return parseLenient(value, null);
+    }
+
+    public static NutsExecutableType parseLenient(String value, NutsExecutableType emptyOrErrorValue) {
+        return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
+    }
+
+    public static NutsExecutableType parseLenient(String value, NutsExecutableType emptyValue, NutsExecutableType errorValue) {
+        if (value == null) {
+            value = "";
+        } else {
+            value = value.toUpperCase().trim().replace('-', '_');
+        }
+        if (value.isEmpty()) {
+            return emptyValue;
+        }
+        try {
+            return NutsExecutableType.valueOf(value.toUpperCase());
+        } catch (Exception notFound) {
+            return errorValue;
+        }
+    }
 }

@@ -123,7 +123,7 @@ public class MultipartStreamHelper implements Iterable<ItemStreamInfo> {
             } catch (RuntimeException e) {
                 throw e;
             } catch (Exception e) {
-                throw new NutsException(session, e);
+                throw new NutsException(session, NutsMessage.plain("parse multipart failed"),e);
             }
         }
 

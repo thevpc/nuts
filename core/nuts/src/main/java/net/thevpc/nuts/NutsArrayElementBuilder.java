@@ -35,6 +35,11 @@ import java.util.List;
  */
 public interface NutsArrayElementBuilder extends NutsElementBuilder{
 
+    static NutsArrayElementBuilder of(NutsSession session){
+        PrivateNutsUtils.checkSession(session);
+        return session.getWorkspace().elem().forArray();
+    }
+
     /**
      * array items
      * @return array items

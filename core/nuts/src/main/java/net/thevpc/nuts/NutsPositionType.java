@@ -67,4 +67,28 @@ public enum NutsPositionType implements NutsEnum{
     public String id() {
         return id;
     }
+
+    public static NutsPositionType parseLenient(String value) {
+        return parseLenient(value, null);
+    }
+
+    public static NutsPositionType parseLenient(String value, NutsPositionType emptyOrErrorValue) {
+        return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
+    }
+
+    public static NutsPositionType parseLenient(String value, NutsPositionType emptyValue, NutsPositionType errorValue) {
+        if (value == null) {
+            value = "";
+        } else {
+            value = value.toUpperCase().trim().replace('-', '_');
+        }
+        if (value.isEmpty()) {
+            return emptyValue;
+        }
+        try {
+            return NutsPositionType.valueOf(value.toUpperCase());
+        } catch (Exception notFound) {
+            return errorValue;
+        }
+    }
 }

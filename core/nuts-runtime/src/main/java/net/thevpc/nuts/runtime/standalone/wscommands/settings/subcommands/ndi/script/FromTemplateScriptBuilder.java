@@ -1,9 +1,11 @@
-package net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.base;
+package net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.script;
 
 import net.thevpc.nuts.NutsDefinition;
 import net.thevpc.nuts.NutsId;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.NdiScriptInfoType;
+import net.thevpc.nuts.runtime.standalone.wscommands.settings.PathInfoType;
+import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.NdiScriptOptions;
+import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.base.BaseSystemNdi;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.util.NdiUtils;
 
 import java.io.*;
@@ -15,17 +17,17 @@ import java.util.Map;
 import java.util.function.Function;
 
 public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
-    private BaseSystemNdi sndi;
+    private final BaseSystemNdi sndi;
     private String templateName;
-    private Map<String, List<String>> bodyMap = new LinkedHashMap<>();
+    private final Map<String, List<String>> bodyMap = new LinkedHashMap<>();
     private String currBody = "BODY";
     private Function<String, String> mapper;
-    private NutsEnvInfo env;
+    private final NdiScriptOptions options;
 
-    public FromTemplateScriptBuilder(String templateName, NdiScriptInfoType type, NutsId anyId, BaseSystemNdi sndi, NutsEnvInfo env, NutsSession session) {
+    public FromTemplateScriptBuilder(String templateName, PathInfoType type, NutsId anyId, BaseSystemNdi sndi, NdiScriptOptions options, NutsSession session) {
         super(type, anyId, session);
         this.sndi = sndi;
-        this.env = env;
+        this.options = options;
         this.templateName = templateName;
     }
 
@@ -118,33 +120,34 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
                                     case "NUTS_ID":
                                         return anyId.getLongName();
                                     case "GENERATOR": {
-                                        NutsId appId = getSession().getAppId();
-                                        if(appId!=null){
-                                            return appId.getLongName();
-                                        }
-                                        appId=getSession().getWorkspace().getRuntimeId();
-                                        return appId.getLongName();
+//                                        NutsId appId = getSession().getAppId();
+//                                        if(appId!=null){
+//                                            return appId.getLongName();
+//                                        }
+//                                        appId=getSession().getWorkspace().getRuntimeId();
+//                                        return appId.getLongName();
+                                        return getSession().getWorkspace().getRuntimeId().getLongName();
                                     }
                                     case "SCRIPT_NUTS":
-                                        return sndi.getNutsStart(env).path().toString();
+                                        return sndi.getNutsStart(options).path().toString();
                                     case "SCRIPT_NUTS_TERM_INIT":
-                                        return sndi.getNutsTermInit(env).path().toString();
+                                        return sndi.getNutsTermInit(options).path().toString();
                                     case "SCRIPT_NUTS_TERM":
-                                        return sndi.getNutsTerm(env).path().toString();
+                                        return sndi.getNutsTerm(options).path().toString();
                                     case "SCRIPT_NUTS_INIT":
-                                        return sndi.getNutsInit(env).path().toString();
+                                        return sndi.getNutsInit(options).path().toString();
                                     case "SCRIPT_NUTS_ENV":
-                                        return sndi.getNutsEnv(env).path().toString();
+                                        return sndi.getNutsEnv(options).path().toString();
                                     case "NUTS_JAR":
-                                        return env.getNutsJarPath().toString();
+                                        return options.resolveNutsApiJarPath().toString();
                                     case "BIN_FOLDER":
-                                        return env.getBinFolder().toString();
+                                        return options.resolveBinFolder().toString();
                                     case "INC_FOLDER":
-                                        return env.getIncFolder().toString();
+                                        return options.resolveIncFolder().toString();
                                     case "NUTS_API_VERSION":
-                                        return env.getNutsApiVersion().toString();
+                                        return options.getNutsApiVersion().toString();
                                     case "NUTS_API_ID":
-                                        return env.getNutsApiId().toString();
+                                        return options.resolveNutsApiId().toString();
                                     default: {
                                         List<String> q = bodyMap.get(s);
                                         if (q != null) {

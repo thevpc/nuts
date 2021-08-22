@@ -41,6 +41,11 @@ import java.util.function.UnaryOperator;
  */
 public interface NutsDescriptorBuilder extends Serializable {
 
+    static NutsDescriptorBuilder of(NutsSession session){
+        PrivateNutsUtils.checkSession(session);
+        return session.getWorkspace().descriptor().descriptorBuilder();
+    }
+
     /**
      * artifact full id (groupId+artifactId+version)
      *

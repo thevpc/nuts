@@ -55,7 +55,7 @@ public class NutsAlreadyDeployedException extends NutsInstallationException {
      * @param msg message
      * @param cause cuse
      */
-    public NutsAlreadyDeployedException(NutsSession session, NutsId id, NutsMessage msg, Exception cause) {
+    public NutsAlreadyDeployedException(NutsSession session, NutsId id, NutsMessage msg, Throwable cause) {
         super(session, id, msg==null ? NutsMessage.cstyle("already deployed %s" , (id == null ? "<null>" : id)) : msg, cause);
     }
 

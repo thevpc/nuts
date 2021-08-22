@@ -449,7 +449,7 @@ public final class CoreNutsArgumentsParser {
                             if (v.isEmpty()) {
                                 options.setTerminalMode(NutsTerminalMode.FORMATTED);
                             } else {
-                                Boolean b = CoreBooleanUtils.parseBoolean(v, null, null);
+                                Boolean b = NutsUtilStrings.parseBoolean(v, null, null);
                                 if (b != null) {
                                     if (b) {
                                         options.setTerminalMode(NutsTerminalMode.FORMATTED);

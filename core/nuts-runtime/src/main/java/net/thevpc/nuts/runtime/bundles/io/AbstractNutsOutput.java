@@ -8,14 +8,14 @@ import java.nio.file.Path;
 
 public abstract class AbstractNutsOutput implements NutsOutput {
 
-    private Object value;
-    private boolean path;
-    private boolean url;
-    private String name;
-    private String typeName;
-    private NutsSession ws;
+    private final Object value;
+    private final boolean path;
+    private final boolean url;
+    private final String name;
+    private final String typeName;
+    private final NutsSession session;
 
-    public AbstractNutsOutput(Object value, boolean path, boolean url, String name, String typeName, NutsSession ws) {
+    public AbstractNutsOutput(Object value, boolean path, boolean url, String name, String typeName, NutsSession session) {
         this.value = value;
         this.path = path;
         this.url = url;
@@ -24,7 +24,7 @@ public abstract class AbstractNutsOutput implements NutsOutput {
             name = String.valueOf(value);
         }
         this.name = name;
-        this.ws = ws;
+        this.session = session;
 
     }
 
@@ -33,7 +33,7 @@ public abstract class AbstractNutsOutput implements NutsOutput {
         if (n == null) {
             n = getName();
         }
-        return new NutsIOException(ws, NutsMessage.cstyle("%s not found : %s", n, toString()), ex);
+        return new NutsIOException(session, NutsMessage.cstyle("%s not found : %s", n, toString()), ex);
     }
 
     @Override
@@ -57,7 +57,7 @@ public abstract class AbstractNutsOutput implements NutsOutput {
     }
 
     public Path getFilePath() {
-        throw new NutsUnsupportedOperationException(ws);
+        throw new NutsUnsupportedOperationException(session, NutsMessage.cstyle("unsupported operation '%s'", "getFilePath"));
     }
 
     @Override
@@ -67,6 +67,6 @@ public abstract class AbstractNutsOutput implements NutsOutput {
 
     @Override
     public URL getURL() {
-        throw new NutsUnsupportedOperationException(ws);
+        throw new NutsUnsupportedOperationException(session, NutsMessage.cstyle("unsupported operation '%s'", "getURL"));
     }
 }

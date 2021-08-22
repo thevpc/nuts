@@ -33,6 +33,11 @@ package net.thevpc.nuts;
  */
 public interface NutsTableModel {
 
+    static NutsMutableTableModel of(NutsSession session){
+        PrivateNutsUtils.checkSession(session);
+        return session.getWorkspace().formats().table().createModel();
+    }
+
     int getColumnsCount();
 
     int getRowsCount();

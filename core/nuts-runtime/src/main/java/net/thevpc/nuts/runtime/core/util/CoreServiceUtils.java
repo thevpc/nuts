@@ -31,6 +31,7 @@ import net.thevpc.nuts.runtime.bundles.io.ZipUtils;
 
 import java.io.*;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 /**
@@ -72,7 +73,7 @@ public final class CoreServiceUtils {
         List<String> names = new ArrayList<>();
         try {
             in = u.openStream();
-            r = new BufferedReader(new InputStreamReader(in, "utf-8"));
+            r = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
             int lc = 1;
             String line;
             while ((line = r.readLine()) != null) {
@@ -120,7 +121,7 @@ public final class CoreServiceUtils {
             try {
                 c = Class.forName(n, false, classLoader);
             } catch (ClassNotFoundException x) {
-                throw new NutsException(ws, x);
+                throw new NutsException(ws, NutsMessage.cstyle("unable to load service class %s", n), x);
             }
             if (!service.isAssignableFrom(c)) {
                 throw new NutsException(ws,

@@ -29,6 +29,7 @@ module.exports = {
       'Application Framework': [
          'dev/building',
          'dev/nutsApp',
+         'dev/nutsPath',
          'dev/firstNutsApp',
       ],
       'API Documentation': [],

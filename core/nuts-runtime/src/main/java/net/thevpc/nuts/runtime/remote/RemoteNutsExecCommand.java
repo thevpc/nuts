@@ -51,7 +51,7 @@ public class RemoteNutsExecCommand extends AbstractNutsExecCommand {
                         NutsMessage.cstyle("execution failed with code %d and message : %s", 244, p),
                         ex, 244);
             } else {
-                result = new NutsExecutionException(session, ex, 244);
+                result = new NutsExecutionException(session, NutsMessage.plain("remote command failed"), ex, 244);
             }
         }
         executed = true;

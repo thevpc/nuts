@@ -338,7 +338,7 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
 
     @Override
     public NutsPrimitiveElement forBoolean(String value) {
-        return forBoolean(CoreBooleanUtils.parseBoolean(value, false, false));
+        return forBoolean(NutsUtilStrings.parseBoolean(value, false, false));
     }
 
     @Override

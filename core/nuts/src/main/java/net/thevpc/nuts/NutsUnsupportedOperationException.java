@@ -37,14 +37,6 @@ public class NutsUnsupportedOperationException extends NutsException {
     /**
      * Constructs a new NutsUnsupportedOperationException exception
      * @param session workspace
-     */
-    public NutsUnsupportedOperationException(NutsSession session) {
-        super(session);
-    }
-
-    /**
-     * Constructs a new NutsUnsupportedOperationException exception
-     * @param session workspace
      * @param message message
      */
     public NutsUnsupportedOperationException(NutsSession session, NutsMessage message) {
@@ -59,15 +51,6 @@ public class NutsUnsupportedOperationException extends NutsException {
      */
     public NutsUnsupportedOperationException(NutsSession session, NutsMessage message, Throwable cause) {
         super(session, message, cause);
-    }
-
-    /**
-     * Constructs a new NutsUnsupportedOperationException exception
-     * @param session workspace
-     * @param cause cause
-     */
-    public NutsUnsupportedOperationException(NutsSession session, Throwable cause) {
-        super(session, cause);
     }
 
     /**

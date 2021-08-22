@@ -23,15 +23,14 @@
  */
 package net.thevpc.nuts.runtime.core.format.elem;
 
-import net.thevpc.nuts.NutsElementType;
+import net.thevpc.nuts.*;
+
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Objects;
-import net.thevpc.nuts.NutsPrimitiveElement;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsString;
+
 import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
@@ -134,7 +133,7 @@ class DefaultNutsPrimitiveElement extends AbstractNutsElement implements NutsPri
         if (value instanceof Number) {
             return ((Number) value).doubleValue() != 0;
         }
-        return CoreBooleanUtils.parseBoolean(String.valueOf(value), false, false);
+        return NutsUtilStrings.parseBoolean(String.valueOf(value), false, false);
     }
 
     @Override

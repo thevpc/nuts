@@ -1,12 +1,49 @@
 package net.thevpc.nuts;
 
-public enum NutsActionSupport {
+public enum NutsActionSupport implements NutsEnum{
     UNSUPPORTED,
     SUPPORTED,
     PREFERRED;
 
+    /**
+     * lower-cased identifier for the enum entry
+     */
+    private final String id;
+
+    NutsActionSupport() {
+        this.id = name().toLowerCase().replace('_', '-');
+    }
+
+
+
+    public static NutsActionSupport parseLenient(String any) {
+        return parseLenient(any, null);
+    }
+
+    public static NutsActionSupport parseLenient(String any, NutsActionSupport emptyOrErrorValue) {
+        return parseLenient(any, emptyOrErrorValue, emptyOrErrorValue);
+    }
+
+    public static NutsActionSupport parseLenient(String any, NutsActionSupport emptyValue, NutsActionSupport errorValue) {
+        if (any == null) {
+            any = "";
+        }
+        any = any.toLowerCase();
+        switch (any) {
+            case "unsupported":
+                return UNSUPPORTED;
+            case "supported":
+                return SUPPORTED;
+            case "preferred":
+                return PREFERRED;
+            case "":
+                return emptyValue;
+        }
+        return errorValue;
+    }
+
     public boolean acceptCondition(NutsActionSupportCondition request, NutsSession session) {
-        if(session==null){
+        if (session == null) {
             throw new IllegalArgumentException("missing session");
         }
         if (request == null) {
@@ -38,8 +75,7 @@ public enum NutsActionSupport {
                         return false;
                     case ALWAYS:
                     case PREFERRED:
-                    case SUPPORTED:
-                    {
+                    case SUPPORTED: {
                         return true;
                     }
                     default: {
@@ -51,5 +87,10 @@ public enum NutsActionSupport {
                 throw new NutsUnsupportedEnumException(session, this);
             }
         }
+    }
+
+    @Override
+    public String id() {
+        return id;
     }
 }

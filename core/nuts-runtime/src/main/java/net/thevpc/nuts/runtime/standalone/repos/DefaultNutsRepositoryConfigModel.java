@@ -519,7 +519,7 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
     @Override
     public void removeMirror(String repositoryId, NutsSession session) {
         if (!isSupportedMirroring(session)) {
-            throw new NutsUnsupportedOperationException(session);
+            throw new NutsUnsupportedOperationException(session,NutsMessage.cstyle("unsupported operation '%s'","removeMirror"));
         }
 //        options = CoreNutsUtils.validate(options, repository.getWorkspace());
         repository.security().setSession(session).checkAllowed(NutsConstants.Permissions.REMOVE_REPOSITORY, "remove-repository");
@@ -631,7 +631,7 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
 
     public NutsRepository addMirror(NutsAddRepositoryOptions options, NutsSession session) {
         if (!isSupportedMirroring(session)) {
-            throw new NutsUnsupportedOperationException(session);
+            throw new NutsUnsupportedOperationException(session,NutsMessage.cstyle("unsupported operation '%s'","addMirror"));
         }
         if (options.isTemporary()) {
             return null;

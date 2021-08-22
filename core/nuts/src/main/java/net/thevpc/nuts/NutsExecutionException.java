@@ -40,24 +40,6 @@ public class NutsExecutionException extends NutsException {
     /**
      * Constructs a new NutsExecutionException exception
      * @param session workspace
-     */
-    public NutsExecutionException(NutsSession session) {
-        this(session, DEFAULT_ERROR_EXIT_CODE);
-    }
-
-    /**
-     * Constructs a new NutsExecutionException exception
-     * @param session workspace
-     * @param exitCode exit code
-     */
-    public NutsExecutionException(NutsSession session, int exitCode) {
-        super(session, NutsMessage.cstyle("execution failed with error code %s" , exitCode));
-        this.exitCode = exitCode;
-    }
-
-    /**
-     * Constructs a new NutsExecutionException exception
-     * @param session workspace
      * @param message message
      * @param exitCode exit code
      */
@@ -85,17 +67,6 @@ public class NutsExecutionException extends NutsException {
      */
     public NutsExecutionException(NutsSession session, NutsMessage message, Throwable cause, int exitCode) {
         super(session, message, cause);
-        this.exitCode = exitCode;
-    }
-
-    /**
-     * Constructs a new NutsExecutionException exception
-     * @param session workspace
-     * @param cause cause
-     * @param exitCode exit code
-     */
-    public NutsExecutionException(NutsSession session, Throwable cause, int exitCode) {
-        super(session, cause == null ? null : NutsMessage.cstyle("%s",cause), cause);
         this.exitCode = exitCode;
     }
 

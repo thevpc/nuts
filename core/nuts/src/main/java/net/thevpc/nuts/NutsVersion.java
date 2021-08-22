@@ -42,6 +42,11 @@ import java.io.Serializable;
  */
 public interface NutsVersion extends Serializable, NutsTokenFilter, NutsFormattable, Comparable<NutsVersion> {
 
+    static NutsVersion parse(String str, NutsSession session) {
+        PrivateNutsUtils.checkSession(session);
+        return session.getWorkspace().version().parse(str);
+    }
+
     /**
      * return string representation of the version
      * @return string representation of the version (never null)

@@ -8,7 +8,10 @@ import java.io.Reader;
  * @app.category Format
  */
 public interface NutsTextParser {
-//    NutsText parse(String text);
+    static NutsTextParser of(NutsSession session) {
+        PrivateNutsUtils.checkSession(session);
+        return session.getWorkspace().text().parser();
+    }
 
     String escapeText(String text);
 

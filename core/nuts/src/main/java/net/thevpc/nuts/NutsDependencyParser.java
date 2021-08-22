@@ -31,6 +31,11 @@ package net.thevpc.nuts;
  */
 public interface NutsDependencyParser {
 
+    static NutsDependencyParser of(NutsSession session){
+        PrivateNutsUtils.checkSession(session);
+        return session.getWorkspace().dependency().parser();
+    }
+
     NutsDependencyParser setLenient(boolean lenient);
 
     boolean isLenient();

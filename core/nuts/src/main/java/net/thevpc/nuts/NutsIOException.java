@@ -34,14 +34,6 @@ public class NutsIOException extends NutsException {
     /**
      * Constructs a new Validation Exception
      * @param session workspace
-     */
-    public NutsIOException(NutsSession session) {
-        super(session);
-    }
-
-    /**
-     * Constructs a new Validation Exception
-     * @param session workspace
      * @param message message
      */
     public NutsIOException(NutsSession session, NutsMessage message) {
@@ -64,7 +56,11 @@ public class NutsIOException extends NutsException {
      * @param cause cause
      */
     public NutsIOException(NutsSession session, Throwable cause) {
-        super(session,cause);
+        super(session,
+                cause==null?null
+                        :(cause instanceof NutsExceptionBase)?
+                                ((NutsExceptionBase) cause).getFormattedMessage()
+                                :NutsMessage.plain(cause.getMessage()),
+                cause);
     }
-
 }

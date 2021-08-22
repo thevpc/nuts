@@ -38,6 +38,11 @@ import java.util.Map;
  */
 public interface NutsDependencyBuilder {
 
+    public static NutsDependencyBuilder of(NutsSession session){
+        PrivateNutsUtils.checkSession(session);
+        return session.getWorkspace().dependency().builder();
+    }
+
     /**
      * set repository value
      *
