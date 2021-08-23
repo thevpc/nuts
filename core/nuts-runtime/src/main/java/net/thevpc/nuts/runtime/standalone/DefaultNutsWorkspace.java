@@ -512,19 +512,11 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                             NutsTableModel.of(defaultSession())
                                     .addCell(
                                             txt.builder()
-                                                    .append("This is the very first time ")
+                                                    .append(" This is the very first time ")
                                                     .appendCode("sh", "nuts")
-                                                    .append(" has been started for this workspace")
+                                                    .append(" has been started for this workspace ")
                                     )
                     ).println(out);
-                    out.println(
-                            CoreNutsUtils.createBox(txt,
-                                    txt.builder()
-                                            .append("This is the very first time ")
-                                            .appendCode("sh", "nuts")
-                                            .append(" has been started for this workspace")
-                            )
-                    );
                     out.println();
                 }
                 for (URL bootClassWorldURL : _env.getBootClassWorldURLs()) {

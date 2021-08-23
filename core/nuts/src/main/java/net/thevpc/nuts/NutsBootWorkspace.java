@@ -62,6 +62,7 @@ public final class NutsBootWorkspace {
     private static final String DELETE_FOLDERS_HEADER = "ATTENTION ! You are about to delete nuts workspace files.";
     private final long creationTime = System.currentTimeMillis();
     private final NutsWorkspaceOptions options;
+    private final PrivateNutsLog LOG = new PrivateNutsLog();
     private Supplier<ClassLoader> contextClassLoaderSupplier;
     private int newInstanceRequirements;
     private PrivateNutsWorkspaceInitInformation workspaceInformation;
@@ -102,7 +103,6 @@ public final class NutsBootWorkspace {
     };
     private Set<String> parsedBootRepositories;
     private boolean preparedWorkspace;
-    private final PrivateNutsLog LOG = new PrivateNutsLog();
     private NutsLogger LOG2;
 
     public NutsBootWorkspace(String... args) {
@@ -221,7 +221,7 @@ public final class NutsBootWorkspace {
                 }
                 sb.append(s);
             }
-            System.out.println("[EXEC] " + sb);
+            PrivateNutsUtils.out_printf("[EXEC] %s%n", sb);
         }
         return cmd.toArray(new String[0]);
     }
@@ -345,19 +345,19 @@ public final class NutsBootWorkspace {
             }
             workspaceInformation.setStoreLocations(storeLocations);
             workspaceInformation.setApiVersion(options.getApiVersion());
-
+            long countDeleted=0;
             //now that config information is prepared proceed to any cleanup
             if (options.isReset()) {
                 if (options.isDry()) {
-                    System.out.println("[dry] [reset] delete ALL workspace folders and configurations");
+                    PrivateNutsUtils.out_printf("[dry] [reset] delete ALL workspace folders and configurations%n");
                 } else {
                     LOG.log(Level.CONFIG, NutsLogVerb.WARNING, "reset workspace.");
-                    deleteStoreLocations(true, (Object[]) NutsStoreLocation.values());
+                    countDeleted=deleteStoreLocations(true, (Object[]) NutsStoreLocation.values());
                     ndiUndo();
                 }
             } else if (options.isRecover()) {
                 if (options.isDry()) {
-                    System.out.println("[dry] [recover] delete CACHE/TEMP workspace folders");
+                    PrivateNutsUtils.out_printf("[dry] [recover] delete CACHE/TEMP workspace folders%n");
                 } else {
                     LOG.log(Level.CONFIG, NutsLogVerb.WARNING, "recover workspace.");
                     List<Object> folders = new ArrayList<>();
@@ -368,14 +368,21 @@ public final class NutsBootWorkspace {
                         folders.add(new File(p, "id/net/thevpc/nuts/nuts"));
                         folders.add(new File(p, "id/net/thevpc/nuts/nuts-runtime"));
                     }
-                    deleteStoreLocations(false, folders.toArray());
+                    countDeleted=deleteStoreLocations(false, folders.toArray());
                 }
             }
             //if recover or reset mode with -K option (SkipWelcome)
             //as long as there are no applications to run, will exit before creating workspace
             if (options.getApplicationArguments().length == 0 && options.isSkipBoot()
                     && (options.isRecover() || options.isReset())) {
-                throw new NutsBootException(null, 0);
+                if (isPlainTrace()) {
+                    if(countDeleted>0) {
+                        PrivateNutsUtils.out_printf("workspace erased : %s%n", workspaceInformation.getWorkspaceLocation());
+                    }else{
+                        PrivateNutsUtils.out_printf("workspace is not erased because it does not exist : %s%n", workspaceInformation.getWorkspaceLocation());
+                    }
+                }
+                throw new NutsBootException(NutsMessage.cstyle(""), 0);
             }
 
             //after eventual clean up
@@ -573,6 +580,13 @@ public final class NutsBootWorkspace {
         return false;
     }
 
+    private boolean isPlainTrace() {
+        return options.isTrace() && !options.isBot()
+                && (options.getOutputFormat() == NutsContentType.PLAIN
+                || options.getOutputFormat() == null
+        );
+    }
+
     private void ndiUndo() {
         //need to unset settings configuration.
         //what is the safest way to do so?
@@ -725,6 +739,9 @@ public final class NutsBootWorkspace {
         //as long as there are no applications to run, will exit before creating workspace
         if (options.getApplicationArguments().length == 0 && options.isSkipBoot()
                 && (options.isRecover() || options.isReset())) {
+            if (isPlainTrace()) {
+                PrivateNutsUtils.out_printf("workspace erased : %s%n", workspaceInformation.getWorkspaceLocation());
+            }
             throw new NutsBootException(null, 0);
         }
         URL[] bootClassWorldURLs = null;
@@ -822,12 +839,12 @@ public final class NutsBootWorkspace {
             }
             if (nutsWorkspace == null) {
                 //should never happen
-                System.err.print("unable to load Workspace \"" + workspaceInformation.getName() + "\" from ClassPath : \n");
+                PrivateNutsUtils.err_printf("unable to load Workspace \"%s\" from ClassPath : \n", workspaceInformation.getName());
                 for (URL url : bootClassWorldURLs) {
-                    System.err.printf("\t %s%n", PrivateNutsUtils.formatURL(url));
+                    PrivateNutsUtils.err_printf("\t %s%n", PrivateNutsUtils.formatURL(url));
                 }
                 for (Exception exception : exceptions) {
-                    exception.printStackTrace(System.err);
+                    PrivateNutsUtils.err_printStack(exception);
                 }
                 LOG.log(Level.SEVERE, NutsLogVerb.FAIL, "unable to load Workspace Component from ClassPath : {0}", new Object[]{Arrays.asList(bootClassWorldURLs)});
                 throw new NutsInvalidWorkspaceException(this.workspaceInformation.getWorkspaceLocation(),
@@ -859,6 +876,7 @@ public final class NutsBootWorkspace {
             throw new NutsBootException(NutsMessage.plain("unable to locate valid nuts-runtime package"), ex);
         }
     }
+
 
     private void fillBootDependencyNodes(NutsClassLoaderNode info, Set<URL> urls) {
         urls.add(info.getURL());
@@ -1192,9 +1210,9 @@ public final class NutsBootWorkspace {
 
     /**
      * @param includeRoot true if include root
-     * @param locations of type NutsStoreLocation, Path of File
+     * @param locations   of type NutsStoreLocation, Path of File
      */
-    private void deleteStoreLocations(boolean includeRoot, Object... locations) {
+    private long deleteStoreLocations(boolean includeRoot, Object... locations) {
         NutsWorkspaceOptions o = getOptions();
         NutsConfirmationMode confirm = o.getConfirm() == null ? NutsConfirmationMode.ASK : o.getConfirm();
         if (confirm == NutsConfirmationMode.ASK
@@ -1217,7 +1235,7 @@ public final class NutsBootWorkspace {
             }
             case NO:
             case ERROR: {
-                System.err.println("reset cancelled (applied '--no' argument)");
+                PrivateNutsUtils.err_printf("reset cancelled (applied '--no' argument)%n");
                 throw new PrivateNutsBootCancelException(NutsMessage.plain("cancel delete locations"));
             }
         }
@@ -1243,11 +1261,11 @@ public final class NutsBootWorkspace {
                 }
             }
         }
-        PrivateNutsUtils.deleteAndConfirmAll(folders.toArray(new File[0]), force, DELETE_FOLDERS_HEADER, null, null, LOG, options.isGui());
+        return PrivateNutsUtils.deleteAndConfirmAll(folders.toArray(new File[0]), force, DELETE_FOLDERS_HEADER, null,  LOG, options);
     }
 
     private void fallbackInstallActionUnavailable(String message) {
-        System.out.println(message);
+        PrivateNutsUtils.out_printf("%s%n", message);
         LOG.log(Level.SEVERE, NutsLogVerb.FAIL, message, new Object[0]);
     }
 
@@ -1256,68 +1274,68 @@ public final class NutsBootWorkspace {
         if (rbc_locations == null) {
             rbc_locations = Collections.emptyMap();
         }
-        System.err.printf("unable to bootstrap nuts :%n");
-        System.err.printf("%s%n", extraMessage);
-        System.err.printf("here after current environment info:%n");
-        System.err.printf("  nuts-boot-api-version            : %s%n", PrivateNutsUtils.nvl(actualBootConfig.getApiVersion(), "<?> Not Found!"));
-        System.err.printf("  nuts-boot-runtime                : %s%n", PrivateNutsUtils.nvl(actualBootConfig.getRuntimeId(), "<?> Not Found!"));
-        System.err.printf("  nuts-boot-repositories           : %s%n", PrivateNutsUtils.nvl(actualBootConfig.getBootRepositories(), "<?> Not Found!"));
-        System.err.printf("  workspace-location               : %s%n", PrivateNutsUtils.nvl(workspace, "<default-location>"));
-        System.err.printf("  nuts-store-apps                  : %s%n", rbc_locations.get(NutsStoreLocation.APPS.id()));
-        System.err.printf("  nuts-store-config                : %s%n", rbc_locations.get(NutsStoreLocation.CONFIG.id()));
-        System.err.printf("  nuts-store-var                   : %s%n", rbc_locations.get(NutsStoreLocation.VAR.id()));
-        System.err.printf("  nuts-store-log                   : %s%n", rbc_locations.get(NutsStoreLocation.LOG.id()));
-        System.err.printf("  nuts-store-temp                  : %s%n", rbc_locations.get(NutsStoreLocation.TEMP.id()));
-        System.err.printf("  nuts-store-cache                 : %s%n", rbc_locations.get(NutsStoreLocation.CACHE.id()));
-        System.err.printf("  nuts-store-run                   : %s%n", rbc_locations.get(NutsStoreLocation.RUN.id()));
-        System.err.printf("  nuts-store-lib                   : %s%n", rbc_locations.get(NutsStoreLocation.LIB.id()));
-        System.err.printf("  nuts-store-strategy              : %s%n", PrivateNutsUtils.desc(actualBootConfig.getStoreLocationStrategy()));
-        System.err.printf("  nuts-store-layout                : %s%n", PrivateNutsUtils.desc(actualBootConfig.getStoreLocationLayout()));
-        System.err.printf("  nuts-boot-args                   : %s%n", options.formatter().getBootCommandLine());
-        System.err.printf("  nuts-app-args                    : %s%n", Arrays.toString(options.getApplicationArguments()));
-        System.err.printf("  option-read-only                 : %s%n", options.isReadOnly());
-        System.err.printf("  option-trace                     : %s%n", options.isTrace());
-        System.err.printf("  option-progress                  : %s%n", PrivateNutsUtils.desc(options.getProgressOptions()));
-        System.err.printf("  option-open-mode                 : %s%n", PrivateNutsUtils.desc(options.getOpenMode() == null ? NutsOpenMode.OPEN_OR_CREATE : options.getOpenMode()));
+        PrivateNutsUtils.err_printf("unable to bootstrap nuts :%n");
+        PrivateNutsUtils.err_printf("%s%n", extraMessage);
+        PrivateNutsUtils.err_printf("here after current environment info:%n");
+        PrivateNutsUtils.err_printf("  nuts-boot-api-version            : %s%n", PrivateNutsUtils.nvl(actualBootConfig.getApiVersion(), "<?> Not Found!"));
+        PrivateNutsUtils.err_printf("  nuts-boot-runtime                : %s%n", PrivateNutsUtils.nvl(actualBootConfig.getRuntimeId(), "<?> Not Found!"));
+        PrivateNutsUtils.err_printf("  nuts-boot-repositories           : %s%n", PrivateNutsUtils.nvl(actualBootConfig.getBootRepositories(), "<?> Not Found!"));
+        PrivateNutsUtils.err_printf("  workspace-location               : %s%n", PrivateNutsUtils.nvl(workspace, "<default-location>"));
+        PrivateNutsUtils.err_printf("  nuts-store-apps                  : %s%n", rbc_locations.get(NutsStoreLocation.APPS.id()));
+        PrivateNutsUtils.err_printf("  nuts-store-config                : %s%n", rbc_locations.get(NutsStoreLocation.CONFIG.id()));
+        PrivateNutsUtils.err_printf("  nuts-store-var                   : %s%n", rbc_locations.get(NutsStoreLocation.VAR.id()));
+        PrivateNutsUtils.err_printf("  nuts-store-log                   : %s%n", rbc_locations.get(NutsStoreLocation.LOG.id()));
+        PrivateNutsUtils.err_printf("  nuts-store-temp                  : %s%n", rbc_locations.get(NutsStoreLocation.TEMP.id()));
+        PrivateNutsUtils.err_printf("  nuts-store-cache                 : %s%n", rbc_locations.get(NutsStoreLocation.CACHE.id()));
+        PrivateNutsUtils.err_printf("  nuts-store-run                   : %s%n", rbc_locations.get(NutsStoreLocation.RUN.id()));
+        PrivateNutsUtils.err_printf("  nuts-store-lib                   : %s%n", rbc_locations.get(NutsStoreLocation.LIB.id()));
+        PrivateNutsUtils.err_printf("  nuts-store-strategy              : %s%n", PrivateNutsUtils.desc(actualBootConfig.getStoreLocationStrategy()));
+        PrivateNutsUtils.err_printf("  nuts-store-layout                : %s%n", PrivateNutsUtils.desc(actualBootConfig.getStoreLocationLayout()));
+        PrivateNutsUtils.err_printf("  nuts-boot-args                   : %s%n", options.formatter().getBootCommandLine());
+        PrivateNutsUtils.err_printf("  nuts-app-args                    : %s%n", Arrays.toString(options.getApplicationArguments()));
+        PrivateNutsUtils.err_printf("  option-read-only                 : %s%n", options.isReadOnly());
+        PrivateNutsUtils.err_printf("  option-trace                     : %s%n", options.isTrace());
+        PrivateNutsUtils.err_printf("  option-progress                  : %s%n", PrivateNutsUtils.desc(options.getProgressOptions()));
+        PrivateNutsUtils.err_printf("  option-open-mode                 : %s%n", PrivateNutsUtils.desc(options.getOpenMode() == null ? NutsOpenMode.OPEN_OR_CREATE : options.getOpenMode()));
         if (bootClassWorldURLs == null || bootClassWorldURLs.length == 0) {
-            System.err.printf("  nuts-runtime-classpath           : %s%n", "<none>");
+            PrivateNutsUtils.err_printf("  nuts-runtime-classpath           : %s%n", "<none>");
         } else {
             for (int i = 0; i < bootClassWorldURLs.length; i++) {
                 URL bootClassWorldURL = bootClassWorldURLs[i];
                 if (i == 0) {
-                    System.err.printf("  nuts-runtime-classpath           : %s%n", PrivateNutsUtils.formatURL(bootClassWorldURL));
+                    PrivateNutsUtils.err_printf("  nuts-runtime-classpath           : %s%n", PrivateNutsUtils.formatURL(bootClassWorldURL));
                 } else {
-                    System.err.printf("                                     %s%n", PrivateNutsUtils.formatURL(bootClassWorldURL));
+                    PrivateNutsUtils.err_printf("                                     %s%n", PrivateNutsUtils.formatURL(bootClassWorldURL));
                 }
             }
         }
-        System.err.printf("  java-version                     : %s%n", System.getProperty("java.version"));
-        System.err.printf("  java-executable                  : %s%n", PrivateNutsUtils.resolveJavaCommand(null));
-        System.err.printf("  java-class-path                  : %s%n", System.getProperty("java.class.path"));
-        System.err.printf("  java-library-path                : %s%n", System.getProperty("java.library.path"));
-        System.err.printf("  os-name                          : %s%n", System.getProperty("os.name"));
-        System.err.printf("  os-arch                          : %s%n", System.getProperty("os.arch"));
-        System.err.printf("  os-version                       : %s%n", System.getProperty("os.version"));
-        System.err.printf("  user-name                        : %s%n", System.getProperty("user.name"));
-        System.err.printf("  user-home                        : %s%n", System.getProperty("user.home"));
-        System.err.printf("  user-dir                         : %s%n", System.getProperty("user.dir"));
-        System.err.printf("%n");
+        PrivateNutsUtils.err_printf("  java-version                     : %s%n", System.getProperty("java.version"));
+        PrivateNutsUtils.err_printf("  java-executable                  : %s%n", PrivateNutsUtils.resolveJavaCommand(null));
+        PrivateNutsUtils.err_printf("  java-class-path                  : %s%n", System.getProperty("java.class.path"));
+        PrivateNutsUtils.err_printf("  java-library-path                : %s%n", System.getProperty("java.library.path"));
+        PrivateNutsUtils.err_printf("  os-name                          : %s%n", System.getProperty("os.name"));
+        PrivateNutsUtils.err_printf("  os-arch                          : %s%n", System.getProperty("os.arch"));
+        PrivateNutsUtils.err_printf("  os-version                       : %s%n", System.getProperty("os.version"));
+        PrivateNutsUtils.err_printf("  user-name                        : %s%n", System.getProperty("user.name"));
+        PrivateNutsUtils.err_printf("  user-home                        : %s%n", System.getProperty("user.home"));
+        PrivateNutsUtils.err_printf("  user-dir                         : %s%n", System.getProperty("user.dir"));
+        PrivateNutsUtils.err_printf("%n");
         if (options.getLogConfig() == null
                 || options.getLogConfig().getLogTermLevel() == null
                 || options.getLogConfig().getLogFileLevel().intValue() > Level.FINEST.intValue()) {
-            System.err.printf("If the problem persists you may want to get more debug info by adding '--verbose' arguments.%n");
+            PrivateNutsUtils.err_printf("If the problem persists you may want to get more debug info by adding '--verbose' arguments.%n");
         }
         if (!options.isReset() && !options.isRecover() && options.getExpireTime() == null) {
-            System.err.printf("You may also enable recover mode to ignore existing cache info with '--recover' and '--expire' arguments.%n");
-            System.err.printf("Here is the proper command : %n");
-            System.err.printf("  java -jar nuts.jar --verbose --recover --expire [...]%n");
+            PrivateNutsUtils.err_printf("You may also enable recover mode to ignore existing cache info with '--recover' and '--expire' arguments.%n");
+            PrivateNutsUtils.err_printf("Here is the proper command : %n");
+            PrivateNutsUtils.err_printf("  java -jar nuts.jar --verbose --recover --expire [...]%n");
         } else if (!options.isReset() && options.isRecover() && options.getExpireTime() != null) {
-            System.err.printf("You may also enable full reset mode to ignore existing configuration with '--reset' argument.%n");
-            System.err.printf("ATTENTION: this will delete all your nuts configuration. Use it at your own risk.%n");
-            System.err.printf("Here is the proper command : %n");
-            System.err.printf("  java -jar nuts.jar --verbose --reset [...]%n");
+            PrivateNutsUtils.err_printf("You may also enable full reset mode to ignore existing configuration with '--reset' argument.%n");
+            PrivateNutsUtils.err_printf("ATTENTION: this will delete all your nuts configuration. Use it at your own risk.%n");
+            PrivateNutsUtils.err_printf("Here is the proper command : %n");
+            PrivateNutsUtils.err_printf("  java -jar nuts.jar --verbose --reset [...]%n");
         }
-        System.err.printf("now exiting nuts, Bye!%n");
+        PrivateNutsUtils.err_printf("now exiting nuts, Bye!%n");
     }
 
     /**
@@ -1480,4 +1498,5 @@ public final class NutsBootWorkspace {
         }
         return true;
     }
+
 }

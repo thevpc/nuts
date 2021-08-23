@@ -222,7 +222,7 @@ public final class NutsApplications {
             showTrace = false;
             gui = false;
         }
-        return processThrowable(ex, out, !bot, showTrace, gui);
+        return processThrowable(ex, out, true, showTrace, gui);
     }
 
     public static int processThrowable(Throwable ex, PrintStream out, boolean showMessage, boolean showTrace, boolean showGui) {

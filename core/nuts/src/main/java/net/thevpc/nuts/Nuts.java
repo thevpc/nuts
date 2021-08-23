@@ -91,17 +91,7 @@ public final class Nuts {
                     bo.setGui(false);
                 }
             } else {
-                NutsWorkspaceOptionsBuilder options = Nuts.createOptionsBuilder();
-                //load inherited
-                String nutsArgs = System.getProperty("nuts.args");
-                if (nutsArgs != null) {
-                    try {
-                        options.parseArguments(args);
-                    } catch (Exception e) {
-                        //any, ignore...
-                    }
-                }
-                bo = options;
+                bo = Nuts.createOptionsBuilder().parseArguments(args);
                 try {
                     if (java.awt.GraphicsEnvironment.isHeadless()) {
                         bo.setGui(false);
@@ -124,7 +114,7 @@ public final class Nuts {
             if (bot) {
                 showTrace = false;
             }
-            System.exit(NutsApplications.processThrowable(ex, null, !bot, showTrace, gui));
+            System.exit(NutsApplications.processThrowable(ex, null, true, showTrace, gui));
         }
     }
 

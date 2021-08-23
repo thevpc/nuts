@@ -23,12 +23,7 @@
  */
 package net.thevpc.nuts;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
 import javax.swing.*;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -41,7 +36,6 @@ import java.nio.file.attribute.FileTime;
 import java.time.Instant;
 import java.util.*;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -56,7 +50,7 @@ import java.util.stream.Collectors;
 final class PrivateNutsUtils {
 
     private static final Pattern DOLLAR_PLACE_HOLDER_PATTERN = Pattern.compile("[$][{](?<name>([a-zA-Z]+))[}]");
-
+    private static Scanner inScanner;
     public static void checkSession(NutsSession session) {
         if (session == null) {
             throw new IllegalArgumentException("missing session");
@@ -335,11 +329,11 @@ final class PrivateNutsUtils {
         return javaHome + File.separator + "bin" + File.separator + exe;
     }
 
-    public static long deleteAndConfirmAll(File[] folders, boolean force, String header, NutsSessionTerminal term, NutsSession session, PrivateNutsLog LOG, boolean gui) {
-        return deleteAndConfirmAll(folders, force, new SimpleConfirmDelete(), header, term, session, LOG, gui);
+    public static long deleteAndConfirmAll(File[] folders, boolean force, String header, NutsSession session, PrivateNutsLog LOG, NutsWorkspaceOptions woptions) {
+        return deleteAndConfirmAll(folders, force, new SimpleConfirmDelete(), header, session, LOG, woptions);
     }
 
-    private static long deleteAndConfirmAll(File[] folders, boolean force, ConfirmDelete refForceAll, String header, NutsSessionTerminal term, NutsSession session, PrivateNutsLog LOG, boolean gui) {
+    private static long deleteAndConfirmAll(File[] folders, boolean force, ConfirmDelete refForceAll, String header, NutsSession session, PrivateNutsLog LOG, NutsWorkspaceOptions woptions) {
         long count = 0;
         boolean headerWritten = false;
         if (folders != null) {
@@ -349,44 +343,71 @@ final class PrivateNutsUtils {
                         headerWritten = true;
                         if (!force && !refForceAll.isForce()) {
                             if (header != null) {
-                                if (term != null) {
-                                    term.out().println(header);
-                                } else {
-                                    System.out.println(header);
+                                if (!woptions.isBot()) {
+                                    if (session != null) {
+                                        session.err().println(header);
+                                    } else {
+                                        err_printf("%s%n",header);
+                                    }
                                 }
                             }
                         }
                     }
-                    count += PrivateNutsUtils.deleteAndConfirm(child, force, refForceAll, term, session, LOG, gui);
+                    count += PrivateNutsUtils.deleteAndConfirm(child, force, refForceAll, session, LOG, woptions);
                 }
             }
         }
         return count;
     }
 
-    private static long deleteAndConfirm(File directory, boolean force, ConfirmDelete refForceAll, NutsSessionTerminal term, NutsSession session, PrivateNutsLog LOG, boolean gui) {
+    private static long deleteAndConfirm(File directory, boolean force, ConfirmDelete refForceAll, NutsSession session, PrivateNutsLog LOG, NutsWorkspaceOptions woptions) {
         if (directory.exists()) {
             if (!force && !refForceAll.isForce() && refForceAll.accept(directory)) {
-                String line;
-                if (term != null) {
-                    line = term.ask()
+                String line = null;
+                if (session != null) {
+                    line = session.getTerminal().ask()
                             .resetLine()
                             .forString("do you confirm deleting %s [y/n/c/a] (default 'n') ?", directory).setSession(session).getValue();
                 } else {
-                    System.out.printf("do you confirm deleting %s [y/n/c/a] (default 'n') ?", directory);
-                    System.out.print(" : ");
-                    System.out.flush();
-                    if (gui) {
-                        line = JOptionPane.showInputDialog(
-                                null, NutsMessage.cstyle("do you confirm deleting %s [y/n/c/a] (default 'n') ?", directory),
-                                "Nuts Package Manager - " + Nuts.getVersion(), JOptionPane.QUESTION_MESSAGE
-                        );
-                        if (line == null) {
-                            line = "";
+                    if (woptions.isBot()) {
+                        if (woptions.getConfirm() == NutsConfirmationMode.YES) {
+                            line = "y";
+                        } else {
+                            throw new NutsBootException(NutsMessage.plain("failed to delete files in --bot mode without auto confirmation"));
                         }
                     } else {
-                        Scanner s = new Scanner(System.in);
-                        line = s.nextLine();
+                        if (woptions.isGui()) {
+                            line = JOptionPane.showInputDialog(
+                                    null, NutsMessage.cstyle("do you confirm deleting %s [y/n/c/a] (default 'n') ?", directory),
+                                    "Nuts Package Manager - " + Nuts.getVersion(), JOptionPane.QUESTION_MESSAGE
+                            );
+                            if (line == null) {
+                                line = "";
+                            }
+                        } else {
+                            NutsConfirmationMode cc = woptions.getConfirm();
+                            if(cc==null){
+                                cc=NutsConfirmationMode.ASK;
+                            }
+                            switch (cc) {
+                                case YES: {
+                                    line = "y";
+                                    break;
+                                }
+                                case NO: {
+                                    line = "n";
+                                    break;
+                                }
+                                case ERROR: {
+                                    throw new NutsBootException(NutsMessage.plain("error response"));
+                                }
+                                case ASK:{
+                                    err_printf("do you confirm deleting %s [y/n/c/a] (default 'n') ?", directory);
+                                    err_printf(" : ");
+                                    line = in_readLine();
+                                }
+                            }
+                        }
                     }
                 }
                 if ("a".equalsIgnoreCase(line) || "all".equalsIgnoreCase(line)) {
@@ -415,7 +436,7 @@ final class PrivateNutsUtils {
                             throws IOException {
                         count[0]++;
                         boolean deleted = false;
-                        for (int i = 0; i < 3; i++) {
+                        for (int i = 0; i < 2; i++) {
                             try {
                                 Files.delete(dir);
                                 deleted = true;
@@ -759,6 +780,20 @@ final class PrivateNutsUtils {
         return false;
     }
 
+    static void err_printf(String msg, Object... p) {
+        System.err.printf(msg, p);
+        System.err.flush();
+    }
+
+    static void out_printf(String msg, Object... p) {
+        System.out.printf(msg, p);
+        System.out.flush();
+    }
+
+    static void err_printStack(Exception exception) {
+        exception.printStackTrace(System.err);
+    }
+
     /**
      * @app.category Internal
      */
@@ -993,5 +1028,12 @@ final class PrivateNutsUtils {
         public String toString() {
             return getMessage() + " " + getNutsId() + " from " + getUrl() + " (repository " + getRepository() + ") : " + getError();
         }
+    }
+
+    public static String in_readLine(){
+        if(inScanner==null) {
+            inScanner = new Scanner(System.in);
+        }
+        return inScanner.nextLine();
     }
 }
