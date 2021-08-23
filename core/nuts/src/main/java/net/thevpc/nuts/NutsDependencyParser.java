@@ -26,13 +26,15 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
 /**
  * @app.category Base
  */
 public interface NutsDependencyParser {
 
     static NutsDependencyParser of(NutsSession session){
-        PrivateNutsUtils.checkSession(session);
+        NutsApiUtils.checkSession(session);
         return session.getWorkspace().dependency().parser();
     }
 

@@ -24,9 +24,10 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
 import java.io.File;
 import java.io.InputStream;
-import java.io.PrintStream;
 import java.io.Reader;
 import java.lang.reflect.Type;
 import java.net.URL;
@@ -46,7 +47,7 @@ import java.util.function.Predicate;
 public interface NutsElementFormat extends NutsObjectFormat {
 
     static NutsElementFormat of(NutsSession session){
-        PrivateNutsUtils.checkSession(session);
+        NutsApiUtils.checkSession(session);
         return session.getWorkspace().elem();
     }
 

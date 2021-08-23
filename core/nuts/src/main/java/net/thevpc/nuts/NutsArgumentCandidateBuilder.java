@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
 import java.io.Serializable;
 
 /**
@@ -34,7 +36,7 @@ import java.io.Serializable;
 public interface NutsArgumentCandidateBuilder extends Serializable {
 
     static NutsArgumentCandidateBuilder of(NutsSession session) {
-        PrivateNutsUtils.checkSession(session);
+        NutsApiUtils.checkSession(session);
         return session.getWorkspace().commandLine().createCandidate();
     }
 

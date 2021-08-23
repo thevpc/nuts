@@ -52,6 +52,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <github.global.server>github</github.global.server>
         <nuts-runtime>true</nuts-runtime>
+        <nuts.buildNumber>000080010006</nuts.buildNumber>
         <dependencies.org.fusesource.jansi:jansi.os>windows</dependencies.org.fusesource.jansi:jansi.os>
         <dependencies.com.github.vatbub:mslinks.os>windows</dependencies.com.github.vatbub:mslinks.os>
         <conditional-dependencies>
@@ -73,7 +74,6 @@
         <nuts.repositories>
             ~/.m2/repository
             https://repo.maven.apache.org/maven2/
-            https://raw.githubusercontent.com/thevpc/vpc-public-maven/master
         </nuts.repositories>
 
     </properties>

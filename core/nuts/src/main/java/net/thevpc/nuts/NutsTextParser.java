@@ -1,5 +1,7 @@
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
 import java.io.File;
 import java.io.InputStream;
 import java.io.Reader;
@@ -9,7 +11,7 @@ import java.io.Reader;
  */
 public interface NutsTextParser {
     static NutsTextParser of(NutsSession session) {
-        PrivateNutsUtils.checkSession(session);
+        NutsApiUtils.checkSession(session);
         return session.getWorkspace().text().parser();
     }
 

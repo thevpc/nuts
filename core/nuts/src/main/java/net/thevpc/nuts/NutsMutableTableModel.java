@@ -25,6 +25,8 @@
 */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
 /**
  * Mutable Table Model
  * @author thevpc
@@ -33,7 +35,7 @@ package net.thevpc.nuts;
 public interface NutsMutableTableModel extends NutsTableModel {
 
     static NutsMutableTableModel of(NutsSession session){
-        PrivateNutsUtils.checkSession(session);
+        NutsApiUtils.checkSession(session);
         return session.getWorkspace().formats().table().createModel();
     }
 

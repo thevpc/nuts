@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.StreamTokenizer;
 import java.io.StringReader;
 import java.io.UncheckedIOException;
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
@@ -39,33 +40,6 @@ public final class CoreStringUtils {
 
     private static final Pattern PATTERN_ALL = Pattern.compile(".*");
 
-    public static int getStartingInt(String v1) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < v1.length(); i++) {
-            char c = v1.charAt(i);
-            if (c >= '0' && c <= '9') {
-                sb.append(c);
-            }
-        }
-        if (sb.length() > 0) {
-            return Integer.parseInt(sb.toString());
-        }
-        return -1;
-    }
-
-    public static long getStartingLong(String v1) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < v1.length(); i++) {
-            char c = v1.charAt(i);
-            if (c >= '0' && c <= '9') {
-                sb.append(c);
-            }
-        }
-        if (sb.length() > 0) {
-            return Long.parseLong(sb.toString());
-        }
-        return -1;
-    }
 
 
     public static String escapeQuoteStrings(String s) {

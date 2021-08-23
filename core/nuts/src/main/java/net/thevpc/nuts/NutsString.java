@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
 import java.io.PrintStream;
 
 /**
@@ -34,7 +36,7 @@ import java.io.PrintStream;
 public interface NutsString {
 
     static NutsString parse(String str, NutsSession session) {
-        PrivateNutsUtils.checkSession(session);
+        NutsApiUtils.checkSession(session);
         return session.getWorkspace().text().parse(str);
     }
 

@@ -24,9 +24,7 @@
  */
 package net.thevpc.nuts;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.Stack;
+import net.thevpc.nuts.boot.NutsApiUtils;
 
 /**
  * Base Nuts Exception. Parent of all Nuts defined Exceptions.
@@ -108,7 +106,7 @@ public class NutsException extends RuntimeException implements NutsExceptionBase
     }
 
     static NutsString messageToFormattedString(NutsMessage message, NutsSession session) {
-        PrivateNutsUtils.checkSession(session);
+        NutsApiUtils.checkSession(session);
         return session.getWorkspace().text().toText(validateFormattedMessage(message));
     }
 

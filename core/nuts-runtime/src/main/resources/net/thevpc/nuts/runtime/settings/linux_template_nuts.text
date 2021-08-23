@@ -9,7 +9,7 @@
 #
 # START-COMMAND
 
-source $$SCRIPT_NUTS_ENV$$
+. $$SCRIPT_NUTS_ENV$$
 
 if [ -n "$NUTS_JAVA_HOME" ] && [ -x "$NUTS_JAVA_HOME/bin/java" ];  then
     _java="$NUTS_JAVA_HOME/bin/java"

@@ -23,6 +23,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.*;
+
 import java.util.Map;
 import java.util.logging.Level;
 
@@ -39,11 +41,31 @@ public final class Nuts {
      * current Nuts version
      */
     public static String version;
+    public static String buildNumber;
 
     /**
      * private constructor
      */
     private Nuts() {
+    }
+
+    public static String getBuildNumber() {
+        if (buildNumber == null) {
+            synchronized (Nuts.class) {
+                if (buildNumber == null) {
+                    String v = NutsApiUtils.resolveNutsBuildNumber();
+                    if (v == null) {
+                        throw new NutsBootException(
+                                NutsMessage.plain(
+                                        "unable to detect nuts build number. Most likely you are missing valid compilation of nuts. pom.properties could not be resolved and hence, we are unable to resolve nuts version."
+                                )
+                        );
+                    }
+                    buildNumber = v;
+                }
+            }
+        }
+        return buildNumber;
     }
 
     /**
@@ -55,7 +77,7 @@ public final class Nuts {
         if (version == null) {
             synchronized (Nuts.class) {
                 if (version == null) {
-                    String v = PrivateNutsUtils.resolveNutsVersionFromClassPath();
+                    String v = NutsApiUtils.resolveNutsVersionFromClassPath();
                     if (v == null) {
                         throw new NutsBootException(
                                 NutsMessage.plain(
@@ -93,7 +115,7 @@ public final class Nuts {
             } else {
                 bo = Nuts.createOptionsBuilder().parseArguments(args);
                 try {
-                    if (java.awt.GraphicsEnvironment.isHeadless()) {
+                    if (NutsApiUtils.isGraphicalDesktopEnvironment()) {
                         bo.setGui(false);
                     }
                 } catch (Exception e) {
@@ -109,12 +131,13 @@ public final class Nuts {
                     && bo.getLogConfig().getLogTermLevel() != null
                     && bo.getLogConfig().getLogTermLevel().intValue() < Level.INFO.intValue());
             if (!showTrace) {
-                showTrace = PrivateNutsUtils.getSysBoolNutsProperty("debug", false);
+                showTrace = NutsApiUtils.getSysBoolNutsProperty("debug", false);
             }
             if (bot) {
                 showTrace = false;
+                gui = false;
             }
-            System.exit(NutsApplications.processThrowable(ex, null, true, showTrace, gui));
+            System.exit(NutsApiUtils.processThrowable(ex, null, true, showTrace, gui));
         }
     }
 
@@ -199,11 +222,11 @@ public final class Nuts {
     }
 
     public static NutsWorkspaceOptionsBuilder createOptionsBuilder() {
-        return new PrivateBootWorkspaceOptions();
+        return NutsApiUtils.createOptionsBuilder();
     }
 
     public static NutsWorkspaceOptions createOptions() {
-        return new PrivateBootWorkspaceOptions();
+        return NutsApiUtils.createOptions();
     }
 
     /**
@@ -239,7 +262,7 @@ public final class Nuts {
             Map<String, String> homeLocations,
             boolean global,
             String workspaceName) {
-        return PrivateNutsPlatformUtils.getPlatformHomeFolder(storeLocationLayout, folderType, homeLocations, global, workspaceName);
+        return NutsApiUtils.getPlatformHomeFolder(storeLocationLayout, folderType, homeLocations, global, workspaceName);
     }
 
     /**
@@ -248,6 +271,6 @@ public final class Nuts {
      * @return default OS family, resolvable before booting nuts workspace
      */
     public static NutsOsFamily getPlatformOsFamily() {
-        return PrivateNutsPlatformUtils.getPlatformOsFamily();
+        return NutsApiUtils.getPlatformOsFamily();
     }
 }

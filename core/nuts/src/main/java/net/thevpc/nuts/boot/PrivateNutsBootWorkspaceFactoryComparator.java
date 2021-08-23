@@ -24,8 +24,9 @@
  * <br>
  * ====================================================================
  */
-package net.thevpc.nuts;
+package net.thevpc.nuts.boot;
 
+import net.thevpc.nuts.NutsWorkspaceOptions;
 import net.thevpc.nuts.spi.NutsBootWorkspaceFactory;
 
 import java.util.Comparator;

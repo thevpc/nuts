@@ -24,7 +24,10 @@
  * <br>
  * ====================================================================
 */
-package net.thevpc.nuts;
+package net.thevpc.nuts.boot;
+
+import net.thevpc.nuts.NutsTokenFilter;
+import net.thevpc.nuts.NutsUtilStrings;
 
 /**
  *

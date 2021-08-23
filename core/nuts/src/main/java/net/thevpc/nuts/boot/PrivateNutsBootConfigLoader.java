@@ -23,7 +23,9 @@
  * <br>
  * ====================================================================
  */
-package net.thevpc.nuts;
+package net.thevpc.nuts.boot;
+
+import net.thevpc.nuts.*;
 
 import java.io.File;
 import java.io.StringReader;
@@ -40,20 +42,20 @@ import java.util.logging.Level;
 final class PrivateNutsBootConfigLoader {
 
     static PrivateNutsWorkspaceInitInformation loadBootConfig(String workspaceLocation, PrivateNutsLog LOG) {
-        File versionFile = new File(workspaceLocation, NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME);
+        File bootFile = new File(workspaceLocation, NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME);
         try {
-            if (versionFile.isFile()) {
-                LOG.log(Level.CONFIG, NutsLogVerb.READ, "loading boot file : {0}", versionFile.getPath());
-                String json = PrivateNutsUtils.readStringFromFile(versionFile).trim();
+            if (bootFile.isFile()) {
+                LOG.log(Level.CONFIG, NutsLogVerb.READ, "loading boot file : {0}", bootFile.getPath());
+                String json = PrivateNutsUtils.readStringFromFile(bootFile).trim();
                 if (json.length() > 0) {
                     return loadBootConfigJSON(json, LOG);
                 }
             }
             if (LOG.isLoggable(Level.FINEST)) {
-                LOG.log(Level.CONFIG, NutsLogVerb.FAIL, "previous Workspace config not found at {0}", versionFile.getPath());
+                LOG.log(Level.CONFIG, NutsLogVerb.FAIL, "previous Workspace config not found at {0}", bootFile.getPath());
             }
         } catch (Exception ex) {
-            LOG.log(Level.CONFIG, "unable to load nuts version file " + versionFile + ".\n", ex);
+            LOG.log(Level.CONFIG, "unable to load nuts version file " + bootFile + ".\n", ex);
         }
         return null;
     }
@@ -108,27 +110,19 @@ final class PrivateNutsBootConfigLoader {
      * @param jsonObject config JSON object
      */
     private static void loadConfigVersion507(PrivateNutsWorkspaceInitInformation config, Map<String, Object> jsonObject, PrivateNutsLog LOG) {
-        LOG.log(Level.CONFIG, NutsLogVerb.READ, "effective load config version : 0.5.7");
+        LOG.log(Level.CONFIG, NutsLogVerb.READ, "config version compatibility : 0.5.7");
         config.setUuid((String) jsonObject.get("uuid"));
         config.setName((String) jsonObject.get("name"));
         config.setWorkspaceLocation((String) jsonObject.get("workspace"));
         config.setJavaCommand((String) jsonObject.get("javaCommand"));
         config.setJavaOptions((String) jsonObject.get("javaOptions"));
-        config.setStoreLocations((Map<String, String>) jsonObject.get("storeLocations"));
         config.setHomeLocations((Map<String, String>) jsonObject.get("homeLocations"));
-        String s = (String) jsonObject.get("storeLocationStrategy");
-        if (s != null && s.length() > 0) {
-            config.setStoreLocationStrategy(NutsStoreLocationStrategy.valueOf(s.toUpperCase()));
-        }
-        s = (String) jsonObject.get("repositoryStoreLocationStrategy");
-        if (s != null && s.length() > 0) {
-            config.setRepositoryStoreLocationStrategy(NutsStoreLocationStrategy.valueOf(s.toUpperCase()));
-        }
-        s = (String) jsonObject.get("storeLocationLayout");
+        config.setStoreLocations((Map<String, String>) jsonObject.get("storeLocations"));
+        config.setStoreLocationStrategy(NutsStoreLocationStrategy.parseLenient((String) jsonObject.get("storeLocationStrategy"),null,null));
+        config.setStoreLocationLayout(NutsOsFamily.parseLenient((String) jsonObject.get("storeLocationLayout"),null,null));
+        config.setRepositoryStoreLocationStrategy(NutsStoreLocationStrategy.parseLenient((String) jsonObject.get("repositoryStoreLocationStrategy"),null,null));
+        config.setBootRepositories((String) jsonObject.get("bootRepositories"));
 
-        if (s != null && s.length() > 0) {
-            config.setStoreLocationLayout(NutsOsFamily.valueOf(s.toUpperCase()));
-        }
         List<Map<String, Object>> extensions = (List<Map<String, Object>>) jsonObject.get("extensions");
         if (extensions != null) {
             LinkedHashSet<String> extSet = new LinkedHashSet<>();
@@ -154,7 +148,7 @@ final class PrivateNutsBootConfigLoader {
      * @param jsonObject config JSON object
      */
     private static void loadConfigVersion506(PrivateNutsWorkspaceInitInformation config, Map<String, Object> jsonObject, PrivateNutsLog LOG) {
-        LOG.log(Level.CONFIG, NutsLogVerb.READ, "effective load config version : 0.5.6");
+        LOG.log(Level.CONFIG, NutsLogVerb.READ, "config version compatibility : 0.5.6");
         config.setUuid((String) jsonObject.get("uuid"));
         config.setName((String) jsonObject.get("name"));
         config.setWorkspaceLocation((String) jsonObject.get("workspace"));
@@ -187,7 +181,7 @@ final class PrivateNutsBootConfigLoader {
      * @param jsonObject config JSON object
      */
     private static void loadConfigVersion502(PrivateNutsWorkspaceInitInformation config, Map<String, Object> jsonObject, PrivateNutsLog LOG) {
-        LOG.log(Level.CONFIG, NutsLogVerb.READ, "effective load config version : 0.5.2");
+        LOG.log(Level.CONFIG, NutsLogVerb.READ, "config version compatibility : 0.5.2");
         config.setUuid((String) jsonObject.get("uuid"));
         config.setName((String) jsonObject.get("name"));
         config.setWorkspaceLocation((String) jsonObject.get("workspace"));

@@ -1,6 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.config;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.boot.NutsBootDescriptor;
+import net.thevpc.nuts.boot.NutsBootId;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.NutsHomeLocationsMap;
 import net.thevpc.nuts.runtime.standalone.NutsStoreLocationsMap;

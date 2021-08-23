@@ -23,6 +23,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsBootDescriptor;
+import net.thevpc.nuts.boot.NutsBootId;
 import net.thevpc.nuts.spi.NutsBootWorkspaceFactory;
 
 import java.io.Serializable;

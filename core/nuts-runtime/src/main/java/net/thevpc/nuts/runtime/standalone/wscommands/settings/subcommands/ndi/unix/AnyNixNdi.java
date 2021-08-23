@@ -134,7 +134,7 @@ public abstract class AnyNixNdi extends BaseSystemNdi {
 
     @Override
     public String getCallScriptCommand(String path, String... args) {
-        return "source \"" + path + "\" " + Arrays.stream(args).map(a -> dblQte(a)).collect(Collectors.joining(" "));
+        return ". \"" + path + "\" " + Arrays.stream(args).map(a -> dblQte(a)).collect(Collectors.joining(" "));
     }
 
     @Override

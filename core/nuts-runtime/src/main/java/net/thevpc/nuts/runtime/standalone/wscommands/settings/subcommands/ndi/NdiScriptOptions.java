@@ -4,21 +4,21 @@ import net.thevpc.nuts.*;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Comparator;
 
-public class NdiScriptOptions implements Cloneable{
+public class NdiScriptOptions implements Cloneable {
 
     private String id;
     private boolean forceBoot;
     private boolean fetch;
     private boolean includeEnv;
     private boolean addNutsScript;
-//    private NutsEnvInfo env;
-    private NutsLauncherOptions launcher=new NutsLauncherOptions();
-
+    //    private NutsEnvInfo env;
+    private NutsLauncherOptions launcher = new NutsLauncherOptions();
 
 
     private String nutsVersion;
@@ -27,6 +27,9 @@ public class NdiScriptOptions implements Cloneable{
     private NutsId nutsApiId;
     private Path nutsApiJarPath;
     private NutsWorkspaceBootConfig workspaceBootConfig;
+
+    public NdiScriptOptions() {
+    }
 
     public NutsLauncherOptions getLauncher() {
         return launcher;
@@ -37,10 +40,7 @@ public class NdiScriptOptions implements Cloneable{
         return this;
     }
 
-    public NdiScriptOptions() {
-    }
-
-//    public NdiScriptOptions setEnv(NutsEnvInfo env) {
+    //    public NdiScriptOptions setEnv(NutsEnvInfo env) {
 //        this.env = env;
 //        return this;
 //    }
@@ -98,6 +98,11 @@ public class NdiScriptOptions implements Cloneable{
         return session;
     }
 
+    public NdiScriptOptions setSession(NutsSession session) {
+        this.session = session;
+        return this;
+    }
+
     public boolean isIncludeEnv() {
         return includeEnv;
     }
@@ -110,11 +115,11 @@ public class NdiScriptOptions implements Cloneable{
     public NdiScriptOptions copy() {
         NdiScriptOptions c;
         try {
-            c=(NdiScriptOptions) super.clone();
+            c = (NdiScriptOptions) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new IllegalArgumentException(e);
         }
-        c.setLauncher(c.getLauncher()==null?null:c.getLauncher().copy());
+        c.setLauncher(c.getLauncher() == null ? null : c.getLauncher().copy());
         return c;
     }
 
@@ -194,7 +199,8 @@ public class NdiScriptOptions implements Cloneable{
                                             .getParent())
                             .filter(
                                     f
-                                            -> session.getWorkspace().version().parse(f.getFileName().toString()).getNumber(0, -1) != -1
+                                            -> session.getWorkspace().version().parse(f.getFileName().toString()).getNumber(0, -1)
+                                            .equals(BigInteger.valueOf(-1))
                                             && Files.exists(f.resolve("nuts-api-config.json"))
                             ).map(
                                     f -> session.getWorkspace().version().parse(f.getFileName().toString())
@@ -232,10 +238,5 @@ public class NdiScriptOptions implements Cloneable{
             }
         }
         return workspaceBootConfig;
-    }
-
-    public NdiScriptOptions setSession(NutsSession session) {
-        this.session = session;
-        return this;
     }
 }

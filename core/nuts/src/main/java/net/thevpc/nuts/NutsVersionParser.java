@@ -26,13 +26,15 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
 /**
  * @app.category Base
  */
 public interface NutsVersionParser {
 
     static NutsVersionParser parse(NutsSession session) {
-        PrivateNutsUtils.checkSession(session);
+        NutsApiUtils.checkSession(session);
         return session.getWorkspace().version().parser();
     }
 

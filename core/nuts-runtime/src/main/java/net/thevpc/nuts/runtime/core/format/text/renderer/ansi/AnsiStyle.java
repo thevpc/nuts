@@ -9,7 +9,6 @@ import net.thevpc.nuts.NutsUtilStrings;
 import net.thevpc.nuts.runtime.core.format.text.RenderedRawStream;
 import net.thevpc.nuts.runtime.core.format.text.renderer.StyleRenderer;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -189,7 +188,7 @@ public class AnsiStyle implements StyleRenderer {
     }
 
     public AnsiStyle setForeground24(int intColor) {
-        Color color = new Color(intColor);
+        java.awt.Color color = new java.awt.Color(intColor);
         int red = color.getRed();
         int green = color.getGreen();
         int blue = color.getBlue();
@@ -207,7 +206,7 @@ public class AnsiStyle implements StyleRenderer {
     }
 
     public AnsiStyle setBackground24(int intColor) {
-        Color color = new Color(intColor);
+        java.awt.Color color = new java.awt.Color(intColor);
         int red = color.getRed();
         int green = color.getGreen();
         int blue = color.getBlue();

@@ -35,6 +35,7 @@ import net.thevpc.nuts.runtime.core.common.ObservableMap;
 import net.thevpc.nuts.runtime.core.config.NutsWorkspaceConfigManagerExt;
 import net.thevpc.nuts.runtime.core.parser.DefaultNutsIdParser;
 import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
+import net.thevpc.nuts.runtime.standalone.gui.CoreNutsUtilGui;
 import net.thevpc.nuts.runtime.standalone.util.NutsJavaSdkUtils;
 
 /**
@@ -265,12 +266,8 @@ public class DefaultNutsWorkspaceEnvManagerModel {
     }
 
     public boolean isGraphicalDesktopEnvironment() {
-        try{
-            return !java.awt.GraphicsEnvironment.isHeadless();
-        }catch (Exception e){
-            //exception may occur if the sdk is build without awt package for instance!
-            return false;
-        }
+        //perhaps We can better work here
+        return CoreNutsUtilGui.isGraphicalDesktopEnvironment();
     }
 
     protected NutsId[] getDesktopEnvironments0(NutsSession session) {

@@ -25,6 +25,8 @@ package net.thevpc.nuts.runtime.core.util;
 
 import net.thevpc.nuts.NutsUtilStrings;
 
+import java.math.BigInteger;
+
 /**
  *
  * @author vpc
@@ -51,4 +53,57 @@ public class CoreNumberUtils {
             return defaultValue;
         }
     }
+    public static BigInteger convertToBigInteger(String value, BigInteger defaultValue) {
+        if (NutsUtilStrings.isBlank(value)) {
+            return defaultValue;
+        }
+        try {
+            return new BigInteger(value);
+        } catch (Exception ex) {
+            return defaultValue;
+        }
+    }
+
+    public static BigInteger getStartingBigInteger(String v1) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < v1.length(); i++) {
+            char c = v1.charAt(i);
+            if (c >= '0' && c <= '9') {
+                sb.append(c);
+            }
+        }
+        if (sb.length() > 0) {
+            return new BigInteger(sb.toString());
+        }
+        return null;
+    }
+
+    public static int getStartingInt(String v1) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < v1.length(); i++) {
+            char c = v1.charAt(i);
+            if (c >= '0' && c <= '9') {
+                sb.append(c);
+            }
+        }
+        if (sb.length() > 0) {
+            return Integer.parseInt(sb.toString());
+        }
+        return -1;
+    }
+
+    public static long getStartingLong(String v1) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < v1.length(); i++) {
+            char c = v1.charAt(i);
+            if (c >= '0' && c <= '9') {
+                sb.append(c);
+            }
+        }
+        if (sb.length() > 0) {
+            return Long.parseLong(sb.toString());
+        }
+        return -1;
+    }
+
 }

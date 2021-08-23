@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
 import java.util.NoSuchElementException;
 
 /**
@@ -38,7 +40,7 @@ import java.util.NoSuchElementException;
 public interface NutsArgument extends NutsTokenFilter {
 
     static NutsArgument of(String value, NutsSession session) {
-        PrivateNutsUtils.checkSession(session);
+        NutsApiUtils.checkSession(session);
         return session.getWorkspace().commandLine().createArgument(value);
     }
 

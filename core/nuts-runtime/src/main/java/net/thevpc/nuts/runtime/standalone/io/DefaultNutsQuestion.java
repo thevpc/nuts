@@ -1,10 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.io;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.gui.CoreNutsUtilGui;
 import net.thevpc.nuts.runtime.standalone.util.NutsConfigurableHelper;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
-import javax.swing.*;
 import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 
@@ -258,7 +258,7 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
 
     private String showGuiInput(String str, boolean pwd) {
         String ft = getSession().getWorkspace().text().parse(str).filteredText();
-        String title = "Nuts Package Manager - " + getSession().getWorkspace().getApiId().getVersion();
+        NutsMessage title = NutsMessage.cstyle("Nuts Package Manager - %s",getSession().getWorkspace().getApiId().getVersion());
         if (session.getAppId() != null) {
             try {
                 NutsDefinition def = session.getWorkspace().search().setId(session.getAppId())
@@ -266,7 +266,7 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
                 if (def != null) {
                     String n = def.getEffectiveDescriptor().getName();
                     if (!NutsUtilStrings.isBlank(n)) {
-                        title = n + " - " + def.getEffectiveDescriptor().getId().getVersion();
+                        title = NutsMessage.cstyle("%s - %s",n, def.getEffectiveDescriptor().getId().getVersion());
                     }
                 }
             } catch (Exception ex) {
@@ -274,25 +274,9 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
             }
         }
         if(password){
-            JPanel panel = new JPanel();
-            JLabel label = new JLabel(ft);
-            JPasswordField pass = new JPasswordField(10);
-            panel.add(label);
-            panel.add(pass);
-            String[] options = new String[]{"OK", "Cancel"};
-            int option = JOptionPane.showOptionDialog(null, panel, title,
-                    JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
-                    null, options, options[1]);
-            if(option == 0){
-                return new String(pass.getPassword());
-            }
-            return "";
+            return CoreNutsUtilGui.inputPassword(NutsMessage.formatted(str),title,getSession());
         }else {
-            String s = JOptionPane.showInputDialog(null, ft, title, JOptionPane.QUESTION_MESSAGE);
-            if (s == null) {
-                s = "";
-            }
-            return s;
+            return CoreNutsUtilGui.inputString(NutsMessage.formatted(str),title,getSession());
         }
     }
 

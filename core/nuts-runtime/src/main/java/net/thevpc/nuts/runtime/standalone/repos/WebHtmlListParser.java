@@ -3,6 +3,8 @@ package net.thevpc.nuts.runtime.standalone.repos;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +14,15 @@ public class WebHtmlListParser {
         EXPECT_BODY,
         EXPECT_PRE,
         EXPECT_HREF,
+    }
+
+    public static void main(String[] args) {
+        try {
+            System.out.println(new WebHtmlListParser().parse(new URL("http://thevpc.net/maven/net/thevpc/nuts/nuts/").openStream()));
+//            System.out.println(new WebHtmlListParser().parse(new URL("http://thevpc.net/maven/net/thevpc/nuts/nuts/0.8.1/").openStream()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public List<String> parse(InputStream html){

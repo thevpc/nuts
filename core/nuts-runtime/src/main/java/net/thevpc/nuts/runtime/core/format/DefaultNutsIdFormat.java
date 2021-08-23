@@ -10,7 +10,7 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
     private boolean omitRepository;
     private boolean omitGroup;
     private boolean omitImportedGroup;
-    private boolean omitProperties = true;
+    private boolean omitProperties;
     private boolean highlightImportedGroup;
     private boolean highlightScope;
     private boolean highlightOptional;

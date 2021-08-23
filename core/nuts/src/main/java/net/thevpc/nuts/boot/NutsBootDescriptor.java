@@ -1,4 +1,6 @@
-package net.thevpc.nuts;
+package net.thevpc.nuts.boot;
+
+import net.thevpc.nuts.boot.NutsBootId;
 
 import java.util.Arrays;
 

@@ -23,7 +23,10 @@
  * <br>
  * ====================================================================
  */
-package net.thevpc.nuts;
+package net.thevpc.nuts.boot;
+
+import net.thevpc.nuts.NutsBootException;
+import net.thevpc.nuts.NutsMessage;
 
 import java.io.IOException;
 import java.io.Reader;

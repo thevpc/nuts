@@ -25,7 +25,10 @@
 */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
 import java.io.Serializable;
+import java.math.BigInteger;
 
 /**
  * this class represents an <strong>immutable</strong> string representation of a version parsed as a suite of alternating numbers and words.
@@ -43,7 +46,7 @@ import java.io.Serializable;
 public interface NutsVersion extends Serializable, NutsTokenFilter, NutsFormattable, Comparable<NutsVersion> {
 
     static NutsVersion parse(String str, NutsSession session) {
-        PrivateNutsUtils.checkSession(session);
+        NutsApiUtils.checkSession(session);
         return session.getWorkspace().version().parse(str);
     }
 
@@ -103,6 +106,8 @@ public interface NutsVersion extends Serializable, NutsTokenFilter, NutsFormatta
      */
     NutsVersion inc(int position, long amount);
 
+    NutsVersion inc(int position, BigInteger amount);
+
     /**
      * number of elements in the version.
      * <ul>
@@ -150,7 +155,7 @@ public interface NutsVersion extends Serializable, NutsTokenFilter, NutsFormatta
      * @param index version part index
      * @return element at given index.
      */
-    long getNumber(int index);
+    BigInteger getNumber(int index);
 
     /**
      * return number element at position or default value. if the index is negative will return from right (-1 is the first starting from the right).
@@ -160,5 +165,6 @@ public interface NutsVersion extends Serializable, NutsTokenFilter, NutsFormatta
      * @return number element at position or default value
      */
 
-    long getNumber(int index,long defaultValue);
+    BigInteger getNumber(int index,BigInteger defaultValue);
+    BigInteger getNumber(int index,long defaultValue);
 }

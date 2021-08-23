@@ -25,6 +25,8 @@
 */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
 import java.util.Map;
 
 /**
@@ -39,7 +41,7 @@ import java.util.Map;
 public interface NutsDependencyBuilder {
 
     public static NutsDependencyBuilder of(NutsSession session){
-        PrivateNutsUtils.checkSession(session);
+        NutsApiUtils.checkSession(session);
         return session.getWorkspace().dependency().builder();
     }
 

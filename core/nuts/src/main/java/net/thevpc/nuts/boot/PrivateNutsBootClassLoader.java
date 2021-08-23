@@ -22,7 +22,10 @@
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
-package net.thevpc.nuts;
+package net.thevpc.nuts.boot;
+
+import net.thevpc.nuts.NutsClassLoaderNode;
+import net.thevpc.nuts.boot.NutsBootId;
 
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -33,7 +36,7 @@ import java.util.LinkedHashMap;
  *
  * @app.category SPI Base
  */
-class NutsBootClassLoader extends URLClassLoader {
+class PrivateNutsBootClassLoader extends URLClassLoader {
 
     private LinkedHashMap<String, NutsClassLoaderNode> nodes = new LinkedHashMap<>();
     private LinkedHashMap<String, NutsClassLoaderNode> effective = new LinkedHashMap<>();
@@ -44,7 +47,7 @@ class NutsBootClassLoader extends URLClassLoader {
      * @param urls urls
      * @param parent parent class loader
      */
-    NutsBootClassLoader(NutsClassLoaderNode[] urls, ClassLoader parent) {
+    PrivateNutsBootClassLoader(NutsClassLoaderNode[] urls, ClassLoader parent) {
         super(new URL[0], parent);
         for (NutsClassLoaderNode url : urls) {
             add(url);
@@ -98,7 +101,7 @@ class NutsBootClassLoader extends URLClassLoader {
 
     @Override
     public String toString() {
-        return "NutsBootClassLoader{" + nodes.values() + '}';
+        return "PrivateNutsBootClassLoader{" + nodes.values() + '}';
     }
 
 }

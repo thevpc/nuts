@@ -24,7 +24,9 @@
  * <br>
  * ====================================================================
  */
-package net.thevpc.nuts;
+package net.thevpc.nuts.boot;
+
+import net.thevpc.nuts.*;
 
 import java.util.Locale;
 import java.util.Map;

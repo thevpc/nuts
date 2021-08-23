@@ -8,6 +8,7 @@ import net.thevpc.nuts.NutsLogVerb;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.math.BigInteger;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -330,8 +331,8 @@ public class NutsJavaSdkUtils {
             throw new NutsException(session, NutsMessage.formatted("missing version"));
         }
         NutsVersion jv = session.getWorkspace().version().parser().parse(version);
-        long n1 = jv.getNumber(0, 0);
-        long n2 = jv.getNumber(1, 0);
+        long n1 = jv.getNumber(0, BigInteger.ZERO).longValue();
+        long n2 = jv.getNumber(1, BigInteger.ZERO).longValue();
         long classFileId = 0;
         String standard = n1 + "." + n2;
         if (n1 == 1) {

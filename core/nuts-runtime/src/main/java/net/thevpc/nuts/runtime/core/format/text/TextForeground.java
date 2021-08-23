@@ -26,7 +26,6 @@
 */
 package net.thevpc.nuts.runtime.core.format.text;
 
-import java.awt.*;
 import java.util.Objects;
 
 /**
@@ -35,10 +34,10 @@ import java.util.Objects;
  */
 public class TextForeground extends AnsiEscapeCommand {
 
-    private Color color;
+    private java.awt.Color color;
     private String name;
 
-    public TextForeground(String name, Color color) {
+    public TextForeground(String name, java.awt.Color color) {
         this.color = color;
         this.name = name;
     }
@@ -48,11 +47,11 @@ public class TextForeground extends AnsiEscapeCommand {
         return "Foreground(" + name + ')';
     }
 
-    public Color getColor() {
+    public java.awt.Color getColor() {
         return color;
     }
 
-    public void setColor(Color color) {
+    public void setColor(java.awt.Color color) {
         this.color = color;
     }
 

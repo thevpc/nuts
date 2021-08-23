@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
 import java.util.function.Supplier;
 import java.util.logging.Level;
 
@@ -35,7 +37,7 @@ import java.util.logging.Level;
  */
 public interface NutsLoggerOp {
     static NutsLoggerOp of(Class clazz, NutsSession session) {
-        PrivateNutsUtils.checkSession(session);
+        NutsApiUtils.checkSession(session);
         return session.getWorkspace().log().of(clazz).with();
     }
 

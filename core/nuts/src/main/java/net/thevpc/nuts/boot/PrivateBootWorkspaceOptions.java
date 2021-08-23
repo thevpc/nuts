@@ -23,7 +23,9 @@
  * <br>
  * ====================================================================
  */
-package net.thevpc.nuts;
+package net.thevpc.nuts.boot;
+
+import net.thevpc.nuts.*;
 
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -39,7 +41,7 @@ import java.util.function.Supplier;
  * @since 0.5.4
  * @app.category Internal
  */
-final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, NutsWorkspaceOptionsBuilder,NutsWorkspaceOptions {
+final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, NutsWorkspaceOptionsBuilder, NutsWorkspaceOptions {
     private static final long serialVersionUID = 1;
     /**
      * option-type : exported (inherited in child workspaces)

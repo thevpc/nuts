@@ -24,7 +24,10 @@
  * <br>
  * ====================================================================
  */
-package net.thevpc.nuts;
+package net.thevpc.nuts.boot;
+
+import net.thevpc.nuts.NutsLogVerb;
+import net.thevpc.nuts.NutsWorkspaceOptions;
 
 import java.time.Instant;
 import java.time.ZoneId;

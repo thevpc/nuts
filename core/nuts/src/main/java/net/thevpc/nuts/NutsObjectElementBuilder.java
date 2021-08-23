@@ -25,6 +25,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
 import java.util.Collection;
 
 /**
@@ -36,7 +38,7 @@ import java.util.Collection;
 public interface NutsObjectElementBuilder extends NutsElementBuilder {
 
     static NutsObjectElementBuilder of(NutsSession session) {
-        PrivateNutsUtils.checkSession(session);
+        NutsApiUtils.checkSession(session);
         return session.getWorkspace().elem().forObject();
     }
 

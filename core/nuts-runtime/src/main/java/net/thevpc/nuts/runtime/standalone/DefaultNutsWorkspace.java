@@ -24,6 +24,8 @@
 package net.thevpc.nuts.runtime.standalone;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.boot.NutsBootDescriptor;
+import net.thevpc.nuts.boot.NutsBootId;
 import net.thevpc.nuts.runtime.bundles.common.MapToFunction;
 import net.thevpc.nuts.runtime.core.AbstractNutsWorkspace;
 import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
@@ -268,7 +270,9 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             LOGCRF.log("   nuts-uuid                      : {0}", CoreNutsUtils.desc(info.getUuid(), text));
             LOGCRF.log("   nuts-name                      : {0}", CoreNutsUtils.desc(info.getName(), text));
             LOGCRF.log("   nuts-api-version               : {0}", version().setSession(defaultSession()).parser().parse(Nuts.getVersion()));
+            LOGCRF.log("   nuts-api-build-number          : {0}", text.forStyled(Nuts.getBuildNumber(), NutsTextStyle.version()));
             LOGCRF.log("   nuts-boot-repositories         : {0}", CoreNutsUtils.desc(info.getBootRepositories(), text));
+            LOGCRF.log("   nuts-runtime                   : {0}", getRuntimeId());
             LOGCRF.log("   nuts-runtime-dependencies      : {0}",
                     text.builder().appendJoined(text.forStyled(";", NutsTextStyle.separator()),
                             Arrays.stream(info.getRuntimeBootDescriptor().getDependencies())
@@ -345,10 +349,10 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         NutsWorkspaceConfigManager _config = config().setSession(defaultSession());
         NutsWorkspaceEnvManager _env = env().setSession(defaultSession());
         if (uoptions == null) {
-            uoptions = new ReadOnlyNutsWorkspaceOptions(_config.optionsBuilder().build(),defaultSession());
+            uoptions = new ReadOnlyNutsWorkspaceOptions(_config.optionsBuilder().build(), defaultSession());
         } else {
             //builder().build() (just to make a copy)
-            uoptions = new ReadOnlyNutsWorkspaceOptions(uoptions.builder().build(),defaultSession());
+            uoptions = new ReadOnlyNutsWorkspaceOptions(uoptions.builder().build(), defaultSession());
         }
         if (uoptions.getCreationTime() == 0) {
             configModel.setStartCreateTimeMillis(System.currentTimeMillis());
@@ -629,7 +633,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
 
     private void installSettings(NutsSession session) {
         if (session.isPlainTrace()) {
-            session.out().println("looking for java installations in default locations...");
+            session.out().resetLine().println("looking for java installations in default locations...");
         }
         NutsSdkLocation[] found = session.getWorkspace().sdks()
                 .setSession(session.copy().setTrace(false))
@@ -1872,11 +1876,6 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             this.id = name().toLowerCase().replace('_', '-');
         }
 
-        @Override
-        public String id() {
-            return id;
-        }
-
         public static InstallStrategy0 parseLenient(String value) {
             return parseLenient(value, null);
         }
@@ -1899,6 +1898,11 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             } catch (Exception notFound) {
                 return errorValue;
             }
+        }
+
+        @Override
+        public String id() {
+            return id;
         }
 
     }

@@ -30,6 +30,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.boot.NutsBootDescriptor;
 
 /**
  * Nuts Boot editable configuration object

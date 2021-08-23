@@ -1,13 +1,12 @@
-package net.thevpc.nuts;
+package net.thevpc.nuts.boot;
 
+import net.thevpc.nuts.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
 import java.nio.file.Files;
 import java.time.Instant;
@@ -99,7 +98,7 @@ public final class PrivateNutsMavenUtils {
                 try {
                     PrivateNutsUtils.copy(new URL(path), cachedPomFile, LOG);
                 } catch (Exception ex) {
-                    errors.add(new PrivateNutsUtils.ErrorInfo(nutsId, r, path, "unable to load descriptor", ex.toString()));
+                    errors.add(new PrivateNutsUtils.ErrorInfo(nutsId, r, path, "unable to load descriptor", ex));
                     LOG.log(Level.SEVERE, NutsLogVerb.FAIL, "unable to load descriptor {0} from {1}.\n", new Object[]{nutsId, r});
                     continue;
                 }
@@ -111,7 +110,7 @@ public final class PrivateNutsMavenUtils {
                 errors.removeErrorsFor(nutsId);
                 return cachedJarFile;
             } catch (Exception ex) {
-                errors.add(new PrivateNutsUtils.ErrorInfo(nutsId, r, path, "unable to load binaries", ex.toString()));
+                errors.add(new PrivateNutsUtils.ErrorInfo(nutsId, r, path, "unable to load binaries", ex));
                 LOG.log(Level.SEVERE, NutsLogVerb.FAIL, "unable to load binaries {0} from {1}.\n", new Object[]{nutsId, r});
             }
         }
@@ -316,16 +315,67 @@ public final class PrivateNutsMavenUtils {
         return depsAndRepos;
     }
 
+    static List<NutsBootVersion> detectVersionsFromMetaData(String mavenMetadata, PrivateNutsLog LOG) {
+        List<NutsBootVersion> all = new ArrayList<>();
+        try {
+            URL runtimeMetadata = new URL(mavenMetadata);
+            DocumentBuilderFactory factory
+                    = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            InputStream is = null;
+            try {
+                is = runtimeMetadata.openStream();
+            } catch (IOException ex) {
+                //do not need to log error
+                //ignore
+            }
+            if (is != null) {
+                LOG.log(Level.FINEST, NutsLogVerb.SUCCESS, "parsing " + mavenMetadata);
+                Document doc = builder.parse(is);
+                Element c = doc.getDocumentElement();
+                for (int i = 0; i < c.getChildNodes().getLength(); i++) {
+                    if (c.getChildNodes().item(i) instanceof Element && c.getChildNodes().item(i).getNodeName().equals("versioning")) {
+                        Element c2 = (Element) c.getChildNodes().item(i);
+                        for (int j = 0; j < c2.getChildNodes().getLength(); j++) {
+                            if (c2.getChildNodes().item(j) instanceof Element && c2.getChildNodes().item(j).getNodeName().equals("versions")) {
+                                Element c3 = (Element) c2.getChildNodes().item(j);
+                                for (int k = 0; k < c3.getChildNodes().getLength(); k++) {
+                                    if (c3.getChildNodes().item(k) instanceof Element && c3.getChildNodes().item(k).getNodeName().equals("version")) {
+                                        Element c4 = (Element) c3.getChildNodes().item(k);
+                                        NutsBootVersion p = NutsBootVersion.parse(c4.getTextContent());
+                                        if(!p.isBlank()) {
+                                            all.add(p);
+                                        }
+                                    }
+                                }
+
+                            }
+                        }
+                    }
+                    //NutsConstants.Ids.NUTS_RUNTIME.replaceAll("[.:]", "/")
+                }
+            }
+        } catch (Exception ex) {
+            LOG.log(Level.FINE, "unable to parse " + mavenMetadata, ex);
+            // ignore any error
+        }
+        return all;
+    }
+
     /**
      * find latest maven artifact
      *
      * @param filter filter
      * @return latest runtime version
      */
-    static NutsBootId resolveLatestMavenId(NutsBootId zId, Predicate<String> filter, PrivateNutsLog LOG, Collection<String> bootRepositories) {
-        LOG.log(Level.FINEST, NutsLogVerb.START, "looking for {0}", zId);
+    static NutsBootId resolveLatestMavenId(NutsBootId zId, Predicate<NutsBootVersion> filter, PrivateNutsLog LOG, Collection<String> bootRepositories) {
+        LOG.log(Level.FINEST, NutsLogVerb.START, "looking for {0} in: ", zId);
+        for (String repoUrl : bootRepositories) {
+            LOG.log(Level.FINEST, NutsLogVerb.START, "    {0}", repoUrl);
+        }
+
         String path = zId.getGroupId().replace('.', '/') + '/' + zId.getArtifactId();
-        String bestVersion = null;
+        NutsBootVersion bestVersion = null;
         String bestPath = null;
         boolean stopOnFirstValidRepo = false;
         for (String repoUrl : bootRepositories) {
@@ -339,10 +389,10 @@ public final class PrivateNutsMavenUtils {
                             if (file.isDirectory()) {
                                 String[] goodChildren = file.list((dir, name) -> name.endsWith(".pom"));
                                 if (goodChildren != null && goodChildren.length > 0) {
-                                    String p = file.getName();
+                                    NutsBootVersion p = NutsBootVersion.parse(file.getName());//folder name is version name
                                     if (filter == null || filter.test(p)) {
                                         found = true;
-                                        if (bestVersion == null || NutsBootVersion.parse(bestVersion).compareTo(NutsBootVersion.parse(p)) < 0) {
+                                        if (bestVersion == null || bestVersion.compareTo(p) < 0) {
                                             bestVersion = p;
                                             bestPath = "local location : " + file.getPath();
                                         }
@@ -356,52 +406,30 @@ public final class PrivateNutsMavenUtils {
                 if (!repoUrl.endsWith("/")) {
                     repoUrl = repoUrl + "/";
                 }
-                String mavenMetadata = repoUrl + path + "/maven-metadata.xml";
-                try {
-                    URL runtimeMetadata = new URL(mavenMetadata);
-                    DocumentBuilderFactory factory
-                            = DocumentBuilderFactory.newInstance();
-                    DocumentBuilder builder = factory.newDocumentBuilder();
-                    InputStream is = null;
-                    try {
-                        is = runtimeMetadata.openStream();
-                    } catch (IOException ex) {
-                        //do not need to log error
-                        //ignore
-                    }
-                    if (is != null) {
-                        LOG.log(Level.FINEST, NutsLogVerb.SUCCESS, "parsing " + mavenMetadata);
-                        Document doc = builder.parse(is);
-                        Element c = doc.getDocumentElement();
-                        for (int i = 0; i < c.getChildNodes().getLength(); i++) {
-                            if (c.getChildNodes().item(i) instanceof Element && c.getChildNodes().item(i).getNodeName().equals("versioning")) {
-                                Element c2 = (Element) c.getChildNodes().item(i);
-                                for (int j = 0; j < c2.getChildNodes().getLength(); j++) {
-                                    if (c2.getChildNodes().item(j) instanceof Element && c2.getChildNodes().item(j).getNodeName().equals("versions")) {
-                                        Element c3 = (Element) c2.getChildNodes().item(j);
-                                        for (int k = 0; k < c3.getChildNodes().getLength(); k++) {
-                                            if (c3.getChildNodes().item(k) instanceof Element && c3.getChildNodes().item(k).getNodeName().equals("version")) {
-                                                Element c4 = (Element) c3.getChildNodes().item(k);
-                                                String p = c4.getTextContent();
-                                                if (filter == null || filter.test(p)) {
-                                                    found = true;
-                                                    if (bestVersion == null || NutsBootVersion.parse(bestVersion).compareTo(NutsBootVersion.parse(p)) < 0) {
-                                                        bestVersion = p;
-                                                        bestPath = "remote file " + mavenMetadata;
-                                                    }
-                                                }
-                                            }
-                                        }
-
-                                    }
-                                }
-                            }
-                            //NutsConstants.Ids.NUTS_RUNTIME.replaceAll("[.:]", "/")
+                String basePath = repoUrl + path;
+                if (!basePath.endsWith("/")) {
+                    basePath = basePath + "/";
+                }
+                String mavenMetadata = basePath + "maven-metadata.xml";
+                for (NutsBootVersion p : detectVersionsFromMetaData(mavenMetadata, LOG)) {
+                    if (filter == null || filter.test(p)) {
+                        found = true;
+                        if (bestVersion == null || bestVersion.compareTo(p) < 0) {
+                            bestVersion = p;
+                            bestPath = "remote file " + mavenMetadata;
                         }
                     }
-                } catch (Exception ex) {
-                    LOG.log(Level.FINE, "unable to parse " + mavenMetadata, ex);
-                    // ignore any error
+                }
+                if (!found) {
+                    for (NutsBootVersion p : detectVersionsFromTomcatDirectoryListing(basePath)) {
+                        if (filter == null || filter.test(p)) {
+                            found = true;
+                            if (bestVersion == null || bestVersion.compareTo(p) < 0) {
+                                bestVersion = p;
+                                bestPath = "remote file " + basePath;
+                            }
+                        }
+                    }
                 }
             }
             if (stopOnFirstValidRepo && found) {
@@ -411,8 +439,146 @@ public final class PrivateNutsMavenUtils {
         if (bestVersion == null) {
             return null;
         }
-        NutsBootId iid = new NutsBootId(zId.getGroupId(), zId.getArtifactId(), NutsBootVersion.parse(bestVersion), false, null, null);
+        NutsBootId iid = new NutsBootId(zId.getGroupId(), zId.getArtifactId(), bestVersion, false, null, null);
         LOG.log(Level.FINEST, NutsLogVerb.SUCCESS, "resolved " + iid + " from " + bestPath);
         return iid;
+    }
+
+    private static List<NutsBootVersion> detectVersionsFromTomcatDirectoryListing(String basePath) {
+        List<NutsBootVersion> all=new ArrayList<>();
+        try (InputStream in=new URL(basePath).openStream()){
+            List<String> p=new SimpleTomcatDirectoryListParser().parse(in);
+            if(p!=null){
+                for (String s : p) {
+                    if(s.endsWith("/")){
+                        s=s.substring(0,s.length()-1);
+                        int a = s.lastIndexOf('/');
+                        if(a>=0){
+                            String n=s.substring(a+1);
+                            NutsBootVersion v = NutsBootVersion.parse(n);
+                            if(!v.isBlank()){
+                                all.add(v);
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (IOException ex) {
+            //ignore
+        }
+        return all;
+    }
+
+
+
+
+    private enum SimpleTomcatDirectoryListParserState {
+        EXPECT_DOCTYPE,
+        EXPECT_BODY,
+        EXPECT_PRE,
+        EXPECT_HREF,
+    }
+    private static class SimpleTomcatDirectoryListParser {
+
+        public List<String> parse(InputStream html){
+            try {
+                List<String> found=new ArrayList<>();
+                BufferedReader br = new BufferedReader(new InputStreamReader(html));
+                SimpleTomcatDirectoryListParserState s= SimpleTomcatDirectoryListParserState.EXPECT_DOCTYPE;
+                String line ;
+                while((line=br.readLine())!=null){
+                    line=line.trim();
+                    switch (s){
+                        case EXPECT_DOCTYPE:{
+                            if(!line.isEmpty()){
+                                if(line.toLowerCase().startsWith("<!DOCTYPE html".toLowerCase())) {
+                                    s = SimpleTomcatDirectoryListParserState.EXPECT_BODY;
+                                }else if(
+                                        line.toLowerCase().startsWith("<html>".toLowerCase())
+                                                || line.toLowerCase().startsWith("<html ".toLowerCase())
+                                ){
+                                    s= SimpleTomcatDirectoryListParserState.EXPECT_BODY;
+                                }else{
+                                    return null;
+                                }
+                            }
+                            break;
+                        }
+                        case EXPECT_BODY:{
+                            if(!line.isEmpty()){
+                                if(
+                                        line.toLowerCase()
+                                                .startsWith("<body>".toLowerCase())
+                                                || line.toLowerCase()
+                                                .startsWith("<body ".toLowerCase())
+                                ){
+                                    s= SimpleTomcatDirectoryListParserState.EXPECT_PRE;
+                                }
+                            }
+                            break;
+                        }
+                        case EXPECT_PRE:{
+                            if(!line.isEmpty()){
+                                String lowLine = line;
+                                if(
+                                        lowLine.toLowerCase()
+                                                .startsWith("<pre>".toLowerCase())
+                                                || lowLine.toLowerCase()
+                                                .startsWith("<pre ".toLowerCase())
+                                ){
+                                    //spring.io
+                                    if(lowLine.toLowerCase().startsWith("<pre>") && lowLine.toLowerCase().matches("<pre>name[ ]+last modified[ ]+size</pre>(<hr/>)?")){
+                                        //just ignore
+                                    }else if(lowLine.toLowerCase().startsWith("<pre>") && lowLine.toLowerCase().matches("<pre>[ ]*<a href=.*")){
+                                        lowLine=lowLine.substring("<pre>".length()).trim();
+                                        if(lowLine.toLowerCase().startsWith("<a href=\"")){
+                                            int i0 = "<a href=\"".length();
+                                            int i1= lowLine.indexOf('\"', i0);
+                                            if(i1>0){
+                                                found.add(lowLine.substring(i0,i1));
+                                                s= SimpleTomcatDirectoryListParserState.EXPECT_HREF;
+                                            }else{
+                                                return null;
+                                            }
+                                        }
+                                    }else if(lowLine.toLowerCase().startsWith("<pre ")){
+                                        s= SimpleTomcatDirectoryListParserState.EXPECT_HREF;
+                                    }else {
+                                        //ignore
+                                    }
+                                }else if(lowLine.toLowerCase().matches("<td .*<strong>last modified</strong>.*</td>")){
+                                    s= SimpleTomcatDirectoryListParserState.EXPECT_HREF;
+                                }
+                            }
+                            break;
+                        }
+                        case EXPECT_HREF:{
+                            if(!line.isEmpty()){
+                                String lowLine = line;
+                                if(lowLine.toLowerCase().startsWith("</pre>".toLowerCase())){
+                                    return found;
+                                }
+                                if(lowLine.toLowerCase().startsWith("</html>".toLowerCase())){
+                                    return found;
+                                }
+                                if(lowLine.toLowerCase().startsWith("<a href=\"")){
+                                    int i0 = "<a href=\"".length();
+                                    int i1= lowLine.indexOf('\"', i0);
+                                    if(i1>0){
+                                        found.add(lowLine.substring(i0,i1));
+                                    }else{
+                                        //ignore
+                                    }
+                                }
+                            }
+                            break;
+                        }
+                    }
+                }
+            }catch (Exception ex){
+                //ignore
+            }
+            return null;
+        }
     }
 }

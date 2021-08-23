@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
 import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
@@ -37,7 +39,7 @@ import java.nio.file.Path;
 public interface NutsDescriptorParser {
 
     public static NutsDescriptorParser of(NutsSession session){
-        PrivateNutsUtils.checkSession(session);
+        NutsApiUtils.checkSession(session);
         return session.getWorkspace().descriptor().parser();
     }
 

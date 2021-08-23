@@ -25,6 +25,7 @@
 */
 package net.thevpc.nuts.runtime.core.model;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -134,28 +135,33 @@ public class DefaultNutsVersion extends DefaultNutsTokenFilter implements NutsVe
         }
     }
 
-    public long getNumber(int level) {
+    public BigInteger getNumber(int level) {
         VersionParts parts = getParts();
         int size = parts.getDigitCount();
         if (level >= 0) {
-            return Long.parseLong(parts.getDigit(level).string);
+            return new BigInteger(parts.getDigit(level).string);
         }else{
             int x=size+level;
-            return Long.parseLong(parts.getDigit(x).string);
+            return new BigInteger(parts.getDigit(x).string);
         }
     }
 
-    public long getNumber(int level,long defaultValue) {
+    @Override
+    public BigInteger getNumber(int index, long defaultValue) {
+        return getNumber(index,BigInteger.valueOf(defaultValue));
+    }
+
+    public BigInteger getNumber(int level, BigInteger defaultValue) {
         VersionParts parts = getParts();
         int size = parts.getDigitCount();
         if (level >= 0) {
             if(level<size) {
-                return Long.parseLong(parts.getDigit(level).string);
+                return new BigInteger(parts.getDigit(level).string);
             }
         }else{
             int x=size+level;
             if(x<size) {
-                return Integer.parseInt(parts.getDigit(x).string);
+                return new BigInteger(parts.getDigit(x).string);
             }
         }
         return defaultValue;
@@ -163,6 +169,11 @@ public class DefaultNutsVersion extends DefaultNutsTokenFilter implements NutsVe
 
     @Override
     public NutsVersion inc(int position, long amount) {
+        return new DefaultNutsVersion(incVersion(getValue(), position, amount),session);
+    }
+
+    @Override
+    public NutsVersion inc(int position, BigInteger amount) {
         return new DefaultNutsVersion(incVersion(getValue(), position, amount),session);
     }
 
@@ -207,27 +218,33 @@ public class DefaultNutsVersion extends DefaultNutsTokenFilter implements NutsVe
     }
 
     public static String incVersion(String oldVersion, int level, long count) {
+        return incVersion(oldVersion,level,BigInteger.valueOf(count));
+    }
+    public static String incVersion(String oldVersion, int level, BigInteger count) {
+        if(count==null){
+            count=BigInteger.ZERO;
+        }
         VersionParts parts = splitVersionParts2(oldVersion);
         int digitCount = parts.getDigitCount();
         if (digitCount == 0) {
-            parts.addDigit(0, ".");
+            parts.addDigit(BigInteger.ZERO, ".");
         }
         digitCount = parts.getDigitCount();
         if (level < 0) {
             level = digitCount-1;
             while(level<0){
-                parts.addDigit(0, ".");
+                parts.addDigit(BigInteger.ZERO, ".");
                 level++;
             }
             VersionPart digit = parts.getDigit(level);
-            digit.string = String.valueOf(Long.parseLong(digit.string) + count);
+            digit.string = String.valueOf(new BigInteger(digit.string).add(count));
             return parts.toString();
         }else {
             for (int i = digitCount; i < level; i++) {
-                parts.addDigit(0, ".");
+                parts.addDigit(BigInteger.ZERO, ".");
             }
             VersionPart digit = parts.getDigit(level);
-            digit.string = String.valueOf(Long.parseLong(digit.string) + count);
+            digit.string = String.valueOf(new BigInteger(digit.string).add(count));
             return parts.toString();
         }
     }
@@ -340,7 +357,7 @@ public class DefaultNutsVersion extends DefaultNutsTokenFilter implements NutsVe
             }
         }
 
-        public void addDigit(long val, String sep) {
+        public void addDigit(BigInteger val, String sep) {
             if (all.size() == 0) {
                 all.add(new VersionPart(String.valueOf(val), true));
             } else if (all.get(all.size() - 1).digit) {
@@ -417,23 +434,23 @@ public class DefaultNutsVersion extends DefaultNutsTokenFilter implements NutsVe
     }
 
     private static int compareVersionItem(String v1, String v2) {
-        Long i1 = null;
-        Long i2 = null;
+        BigInteger i1 = null;
+        BigInteger i2 = null;
 
         if (v1.equals(v2)) {
             return 0;
-        } else if ((i1 = CoreNumberUtils.convertToLong(v1, null)) != null
-                && (i2 = CoreNumberUtils.convertToLong(v2, null)) != null) {
-            return Long.compare(i1,i2);
+        } else if ((i1 = CoreNumberUtils.convertToBigInteger(v1, null)) != null
+                && (i2 = CoreNumberUtils.convertToBigInteger(v2, null)) != null) {
+            return i1.compareTo(i2);
         } else if ("SNAPSHOT".equalsIgnoreCase(v1)) {
             return -1;
         } else if ("SNAPSHOT".equalsIgnoreCase(v2)) {
             return 1;
         } else {
-            long a = CoreStringUtils.getStartingLong(v1);
-            long b = CoreStringUtils.getStartingLong(v2);
-            if (a != -1 && b != -1 && a != b) {
-                return Long.compare(a,b);
+            BigInteger a = CoreNumberUtils.getStartingBigInteger(v1);
+            BigInteger b = CoreNumberUtils.getStartingBigInteger(v2);
+            if (a != null && b != null && !a.equals(b)) {
+                return a.compareTo(b);
             } else {
                 return v1.compareTo(v2);
             }

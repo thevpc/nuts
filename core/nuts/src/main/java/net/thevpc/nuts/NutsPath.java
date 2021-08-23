@@ -1,5 +1,7 @@
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
 import java.io.File;
 import java.net.URL;
 import java.nio.file.Path;
@@ -7,22 +9,22 @@ import java.time.Instant;
 
 public interface NutsPath extends NutsFormattable {
     static NutsPath of(URL path, NutsSession session) {
-        PrivateNutsUtils.checkSession(session);
+        NutsApiUtils.checkSession(session);
         return session.getWorkspace().io().path(path);
     }
 
     static NutsPath of(String path, ClassLoader classLoader, NutsSession session) {
-        PrivateNutsUtils.checkSession(session);
+        NutsApiUtils.checkSession(session);
         return session.getWorkspace().io().path(path, classLoader);
     }
 
     static NutsPath of(File path, NutsSession session) {
-        PrivateNutsUtils.checkSession(session);
+        NutsApiUtils.checkSession(session);
         return session.getWorkspace().io().path(path);
     }
 
     static NutsPath of(String path, NutsSession session) {
-        PrivateNutsUtils.checkSession(session);
+        NutsApiUtils.checkSession(session);
         return session.getWorkspace().io().path(path);
     }
 

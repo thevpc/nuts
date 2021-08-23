@@ -26,13 +26,15 @@
 */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
 /**
  * Created by vpc on 5/23/17.
  * @app.category Format
  */
 public interface NutsText extends NutsString{
     static NutsString parse(String str, NutsSession session) {
-        PrivateNutsUtils.checkSession(session);
+        NutsApiUtils.checkSession(session);
         return session.getWorkspace().text().parse(str);
     }
 

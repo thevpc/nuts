@@ -22,7 +22,10 @@
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
-package net.thevpc.nuts;
+package net.thevpc.nuts.boot;
+
+import net.thevpc.nuts.NutsConstants;
+import net.thevpc.nuts.NutsUtilStrings;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -140,7 +143,7 @@ public final class NutsBootId {
         if (interro >= 0) {
             String propsString = id.substring(interro + 1);
             id = id.substring(0, interro);
-            props = new PrivateNutsUtils.StringMapParser("=", "&").parseMap(propsString);
+            props = new PrivateNutsStringMapParser("=", "&").parseMap(propsString);
             for (Map.Entry<String, String> entry : props.entrySet()) {
                 switch (entry.getKey()) {
                     case NutsConstants.IdProperties.OPTIONAL: {

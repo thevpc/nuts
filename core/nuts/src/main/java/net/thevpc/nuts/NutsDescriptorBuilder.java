@@ -25,6 +25,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
@@ -42,7 +44,7 @@ import java.util.function.UnaryOperator;
 public interface NutsDescriptorBuilder extends Serializable {
 
     static NutsDescriptorBuilder of(NutsSession session){
-        PrivateNutsUtils.checkSession(session);
+        NutsApiUtils.checkSession(session);
         return session.getWorkspace().descriptor().descriptorBuilder();
     }
 

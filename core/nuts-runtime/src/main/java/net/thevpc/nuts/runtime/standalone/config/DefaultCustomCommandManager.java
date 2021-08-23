@@ -3,9 +3,6 @@ package net.thevpc.nuts.runtime.standalone.config;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class DefaultCustomCommandManager implements NutsCustomCommandManager {

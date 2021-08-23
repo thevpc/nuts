@@ -21,9 +21,10 @@
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
-package net.thevpc.nuts;
+package net.thevpc.nuts.boot;
 
-import javax.swing.*;
+import net.thevpc.nuts.*;
+
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -51,11 +52,6 @@ final class PrivateNutsUtils {
 
     private static final Pattern DOLLAR_PLACE_HOLDER_PATTERN = Pattern.compile("[$][{](?<name>([a-zA-Z]+))[}]");
     private static Scanner inScanner;
-    public static void checkSession(NutsSession session) {
-        if (session == null) {
-            throw new IllegalArgumentException("missing session");
-        }
-    }
 
     public static boolean isValidWorkspaceName(String workspace) {
         if (NutsUtilStrings.isBlank(workspace)) {
@@ -347,7 +343,7 @@ final class PrivateNutsUtils {
                                     if (session != null) {
                                         session.err().println(header);
                                     } else {
-                                        err_printf("%s%n",header);
+                                        err_printf("%s%n", header);
                                     }
                                 }
                             }
@@ -377,17 +373,14 @@ final class PrivateNutsUtils {
                         }
                     } else {
                         if (woptions.isGui()) {
-                            line = JOptionPane.showInputDialog(
-                                    null, NutsMessage.cstyle("do you confirm deleting %s [y/n/c/a] (default 'n') ?", directory),
-                                    "Nuts Package Manager - " + Nuts.getVersion(), JOptionPane.QUESTION_MESSAGE
+                            line = PrivateNutsGui.inputString(
+                                    NutsMessage.cstyle("do you confirm deleting %s [y/n/c/a] (default 'n') ?", directory).toString(),
+                                    null
                             );
-                            if (line == null) {
-                                line = "";
-                            }
                         } else {
                             NutsConfirmationMode cc = woptions.getConfirm();
-                            if(cc==null){
-                                cc=NutsConfirmationMode.ASK;
+                            if (cc == null) {
+                                cc = NutsConfirmationMode.ASK;
                             }
                             switch (cc) {
                                 case YES: {
@@ -401,7 +394,7 @@ final class PrivateNutsUtils {
                                 case ERROR: {
                                     throw new NutsBootException(NutsMessage.plain("error response"));
                                 }
-                                case ASK:{
+                                case ASK: {
                                     err_printf("do you confirm deleting %s [y/n/c/a] (default 'n') ?", directory);
                                     err_printf(" : ");
                                     line = in_readLine();
@@ -590,6 +583,10 @@ final class PrivateNutsUtils {
         if (to.getParentFile() != null) {
             to.getParentFile().mkdirs();
         }
+        if (ff == null || !ff.exists()) {
+            LOG.log(Level.CONFIG, NutsLogVerb.FAIL, "not found {0}", new Object[]{ff});
+            throw new FileNotFoundException(ff == null ? "" : ff.getPath());
+        }
         try {
             Files.copy(ff.toPath(), to.toPath(), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException ex) {
@@ -615,6 +612,9 @@ final class PrivateNutsUtils {
             ReadableByteChannel rbc = Channels.newChannel(in);
             FileOutputStream fos = new FileOutputStream(to);
             fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+        } catch (FileNotFoundException ex) {
+            LOG.log(Level.CONFIG, NutsLogVerb.FAIL, "not found {0}", new Object[]{url});
+            throw ex;
         } catch (IOException ex) {
             LOG.log(Level.CONFIG, NutsLogVerb.FAIL, "error copying {0} to {1} : {2}", new Object[]{url, to, ex.toString()});
             throw ex;
@@ -684,50 +684,82 @@ final class PrivateNutsUtils {
     }
 
     public static String resolveNutsVersionFromClassPath() {
+        return resolvePomPattern("version");
+    }
+
+    public static String resolveNutsBuildNumber() {
+        return resolvePomPattern("nuts.buildNumber");
+    }
+
+    public static String resolvePomPattern(String propName) {
 //        boolean devMode = false;
-        String version = null;
+        String propValue = null;
         try {
-            version = PrivateNutsUtils.loadURLProperties(
+            propValue = PrivateNutsUtils.loadURLProperties(
                     Nuts.class.getResource("/META-INF/maven/net.thevpc.nuts/nuts/pom.properties"),
-                    null, false, new PrivateNutsLog()).getProperty("version");
+                    null, false, new PrivateNutsLog()).getProperty(propName);
         } catch (Exception ex) {
             //
         }
-        if (version == null || version.trim().isEmpty() || version.equals("0.0.0")) {
-            //check if we are in dev mode
-            String cp = System.getProperty("java.class.path");
-            for (String p : cp.split(File.pathSeparator)) {
-                File f = new File(p);
-                if (f.isDirectory()) {
-                    Matcher m = Pattern.compile("(?<src>.*)[/\\\\]+target[/\\\\]+classes[/\\\\]*")
-                            .matcher(f.getPath().replace('/', File.separatorChar));
-                    if (m.find()) {
-                        String src = m.group("src");
-                        if (new File(src, "pom.xml").exists() && new File(src,
-                                "src/main/java/net/thevpc/nuts/Nuts.java".replace('/', File.separatorChar)
-                        ).exists()) {
+        if (propValue != null && !propValue.trim().isEmpty() && !propValue.equals("0.0.0")) {
+            return propValue;
+        }
+
+        Pattern pattern = Pattern.compile("<" + propName.replace(".", "[.]") + ">(?<value>([0-9. ]+))</" + propName.replace(".", "[.]") + ">");
+
+        URL pomXml = Nuts.class.getResource("/META-INF/maven/net.thevpc.nuts/nuts/pom.xml");
+        if (pomXml != null) {
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            try (InputStream is = pomXml.openStream()) {
+                copy(is, bos, false, false);
+            } catch (Exception ex) {
+                //
+            }
+            Matcher m = pattern.matcher(bos.toString());
+            if (m.find()) {
+                propValue = m.group("value").trim();
+            }
+        }
+        if (propValue != null && !propValue.trim().isEmpty() && !propValue.equals("0.0.0")) {
+            return propValue;
+        }
+
+        //check if we are in dev mode
+        String cp = System.getProperty("java.class.path");
+        for (String p : cp.split(File.pathSeparator)) {
+            File f = new File(p);
+            if (f.isDirectory()) {
+                Matcher m = Pattern.compile("(?<src>.*)[/\\\\]+target[/\\\\]+classes[/\\\\]*")
+                        .matcher(f.getPath().replace('/', File.separatorChar));
+                if (m.find()) {
+                    String src = m.group("src");
+                    if (new File(src, "pom.xml").exists() && new File(src,
+                            "src/main/java/net/thevpc/nuts/Nuts.java".replace('/', File.separatorChar)
+                    ).exists()) {
 //                            devMode = true;
-                            String xml = null;
-                            try {
-                                byte[] bytes = Files.readAllBytes(new File(src, "pom.xml").toPath());
-                                xml = new String(bytes);
-                            } catch (IOException ex) {
-                                throw new NutsBootException(NutsMessage.plain("unable to detect nuts version in dev mode."));
-                            }
-                            m = Pattern.compile("<version>(?<v>([0-9. ]+))</version>").matcher(xml);
+                        String xml = null;
+                        try {
+                            byte[] bytes = Files.readAllBytes(new File(src, "pom.xml").toPath());
+                            xml = new String(bytes);
+                        } catch (IOException ex) {
+                            //
+                        }
+                        if (xml != null) {
+                            m = pattern.matcher(xml);
                             if (m.find()) {
-                                version = m.group("v").trim();
+                                propValue = m.group("value").trim();
+                                break;
                             }
                         }
                     }
                 }
             }
         }
-        if (version == null || version.trim().isEmpty()) {
-            return null;
-        } else {
-            return version;
+
+        if (propValue != null && !propValue.trim().isEmpty() && !propValue.equals("0.0.0")) {
+            return propValue;
         }
+        return null;
     }
 
     static File createFile(String parent, String child) {
@@ -746,6 +778,25 @@ final class PrivateNutsUtils {
             parent = ".";
         }
         return new File(parent, child);
+    }
+
+    public static String[] stacktraceToArray(Throwable th) {
+        try {
+            StringWriter sw = new StringWriter();
+            try (PrintWriter pw = new PrintWriter(sw)) {
+                th.printStackTrace(pw);
+            }
+            BufferedReader br = new BufferedReader(new StringReader(sw.toString()));
+            List<String> s = new ArrayList<>();
+            String line = null;
+            while ((line = br.readLine()) != null) {
+                s.add(line);
+            }
+            return s.toArray(new String[0]);
+        } catch (Exception ex) {
+            // ignore
+        }
+        return new String[0];
     }
 
     public static String stacktrace(Throwable th) {
@@ -790,8 +841,15 @@ final class PrivateNutsUtils {
         System.out.flush();
     }
 
-    static void err_printStack(Exception exception) {
+    static void err_printStack(Throwable exception) {
         exception.printStackTrace(System.err);
+    }
+
+    public static String in_readLine() {
+        if (inScanner == null) {
+            inScanner = new Scanner(System.in);
+        }
+        return inScanner.nextLine();
     }
 
     /**
@@ -842,128 +900,6 @@ final class PrivateNutsUtils {
         }
     }
 
-    public static class StringMapParser {
-
-        private final String eqSeparators;
-        private final String entrySeparators;
-
-        /**
-         * @param eqSeparators    equality separators, example '='
-         * @param entrySeparators entry separators, example ','
-         */
-        public StringMapParser(String eqSeparators, String entrySeparators) {
-            this.eqSeparators = eqSeparators;
-            this.entrySeparators = entrySeparators;
-        }
-
-        /**
-         * copied from StringUtils (in order to remove dependency)
-         *
-         * @param reader     reader
-         * @param stopTokens stopTokens
-         * @param result     result
-         * @return next token
-         * @throws IOException IOException
-         */
-        private static int readToken(Reader reader, String stopTokens, StringBuilder result) throws IOException {
-            while (true) {
-                int r = reader.read();
-                if (r == -1) {
-                    return -1;
-                }
-                if (r == '\"' || r == '\'') {
-                    char s = (char) r;
-                    while (true) {
-                        r = reader.read();
-                        if (r == -1) {
-                            throw new RuntimeException("Expected " + '\"');
-                        }
-                        if (r == s) {
-                            break;
-                        }
-                        if (r == '\\') {
-                            r = reader.read();
-                            if (r == -1) {
-                                throw new RuntimeException("Expected " + '\"');
-                            }
-                            switch ((char) r) {
-                                case 'n': {
-                                    result.append('\n');
-                                    break;
-                                }
-                                case 'r': {
-                                    result.append('\r');
-                                    break;
-                                }
-                                case 'f': {
-                                    result.append('\f');
-                                    break;
-                                }
-                                default: {
-                                    result.append((char) r);
-                                }
-                            }
-                        } else {
-                            char cr = (char) r;
-                            result.append(cr);
-                        }
-                    }
-                } else {
-                    char cr = (char) r;
-                    if (stopTokens != null && stopTokens.indexOf(cr) >= 0) {
-                        return cr;
-                    }
-                    result.append(cr);
-                }
-            }
-        }
-
-        /**
-         * copied from StringUtils (in order to remove dependency)
-         *
-         * @param text text to parse
-         * @return parsed map
-         */
-        public Map<String, String> parseMap(String text) {
-            Map<String, String> m = new LinkedHashMap<>();
-            StringReader reader = new StringReader(text == null ? "" : text);
-            while (true) {
-                StringBuilder key = new StringBuilder();
-                int r = 0;
-                try {
-                    r = readToken(reader, eqSeparators + entrySeparators, key);
-                } catch (IOException e) {
-                    throw new UncheckedIOException(e);
-                }
-                String t = key.toString();
-                if (r == -1) {
-                    if (!t.isEmpty()) {
-                        m.put(t, null);
-                    }
-                    break;
-                } else {
-                    char c = (char) r;
-                    if (eqSeparators.indexOf(c) >= 0) {
-                        StringBuilder value = new StringBuilder();
-                        try {
-                            r = readToken(reader, entrySeparators, value);
-                        } catch (IOException e) {
-                            throw new UncheckedIOException(e);
-                        }
-                        m.put(t, value.toString());
-                        if (r == -1) {
-                            break;
-                        }
-                    } else {
-                        //
-                    }
-                }
-            }
-            return m;
-        }
-
-    }
-
     /**
      * @app.category Internal
      */
@@ -994,14 +930,14 @@ final class PrivateNutsUtils {
         private final String repository;
         private final String url;
         private final String message;
-        private final String error;
+        private final Throwable throwable;
 
-        public ErrorInfo(String nutsId, String repository, String url, String message, String error) {
+        public ErrorInfo(String nutsId, String repository, String url, String message, Throwable throwable) {
             this.nutsId = nutsId;
             this.repository = repository;
             this.url = url;
             this.message = message;
-            this.error = error;
+            this.throwable = throwable;
         }
 
         public String getNutsId() {
@@ -1020,20 +956,14 @@ final class PrivateNutsUtils {
             return message;
         }
 
-        public String getError() {
-            return error;
+        public Throwable getThrowable() {
+            return throwable;
         }
 
         @Override
         public String toString() {
-            return getMessage() + " " + getNutsId() + " from " + getUrl() + " (repository " + getRepository() + ") : " + getError();
+            return getMessage() + " " + getNutsId() + " from " + getUrl() + " (repository " + getRepository() + ") : "
+                    + (getThrowable()==null?"":getThrowable().toString());
         }
-    }
-
-    public static String in_readLine(){
-        if(inScanner==null) {
-            inScanner = new Scanner(System.in);
-        }
-        return inScanner.nextLine();
     }
 }

@@ -25,6 +25,8 @@
 */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
 import java.io.Serializable;
 import java.util.Map;
 
@@ -37,7 +39,7 @@ import java.util.Map;
 public interface NutsId extends NutsTokenFilter, Serializable, Comparable<NutsId>,NutsFormattable {
 
     public static NutsId parse(String value,NutsSession session){
-        PrivateNutsUtils.checkSession(session);
+        NutsApiUtils.checkSession(session);
         return session.getWorkspace().id().parser().parse(value);
     }
 

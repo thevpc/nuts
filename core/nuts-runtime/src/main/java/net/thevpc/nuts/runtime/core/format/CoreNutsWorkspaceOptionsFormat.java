@@ -24,6 +24,7 @@
 package net.thevpc.nuts.runtime.core.format;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.boot.NutsBootVersion;
 import net.thevpc.nuts.runtime.core.model.CoreNutsWorkspaceOptions;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 
