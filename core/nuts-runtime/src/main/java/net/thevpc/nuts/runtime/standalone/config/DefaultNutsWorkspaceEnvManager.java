@@ -268,11 +268,28 @@ public class DefaultNutsWorkspaceEnvManager implements NutsWorkspaceEnvManager {
         if (item == null) {
             throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("missing item"));
         }
-        String o = getPropertyAsString("desktop-integration-support-for-" + item.name().toLowerCase(), null);
-        if (!NutsUtilStrings.isBlank(o)) {
-            NutsActionSupport q = NutsActionSupport.parseLenient(o, null, null);
-            if (q != null) {
-                return q;
+        String optionName = null;
+        switch (item) {
+            case DESKTOP: {
+                optionName = "system-desktop-launcher";
+                break;
+            }
+            case MENU: {
+                optionName = "system-menu-launcher";
+                break;
+            }
+            case SHORTCUT: {
+                optionName = "system-custom-launcher";
+                break;
+            }
+        }
+        if (optionName != null) {
+            String o = getOption(optionName, null);
+            if (!NutsUtilStrings.isBlank(o)) {
+                NutsActionSupport q = NutsActionSupport.parseLenient(o, null, null);
+                if (q != null) {
+                    return q;
+                }
             }
         }
         switch (getOsFamily()) {

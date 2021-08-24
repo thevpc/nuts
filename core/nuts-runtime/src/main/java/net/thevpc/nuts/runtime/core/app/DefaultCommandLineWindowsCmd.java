@@ -197,8 +197,23 @@ public class DefaultCommandLineWindowsCmd implements NutsCommandLineBashFamilySu
                 StringBuilder sb=new StringBuilder();
                 for (char c : arg.toCharArray()) {
                     switch (c){
+                        case '\"':
+                        case ':':
+                        case ';':
+                        case '^':
+                        case '=':
+                        case ',':
                         case ' ':
                         case '\t':
+                        case '<':
+                        case '>':
+                        case '&':
+                        case '(':
+                        case ')':
+                        case '!':
+                        case '\'':
+                        case '`':
+                        case '~':
                         {
                             return escapeArgument(arg,NutsCommandLineFormatStrategy.REQUIRE_QUOTES,session);
                         }

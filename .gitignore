@@ -78,3 +78,7 @@
 /toolbox/ndiff/ndiff.iml
 /toolbox/ndb/ndb.iml
 /toolbox/ncode/ncode.iml
+/lib/nlib-tomcat-classloader/nlib-tomcat-classloader.iml
+/lib/nlib-ssh/nlib-ssh.iml
+/lib/nlib-servlet/nlib-servlet.iml
+/lib/nlib-md/nlib-md.iml

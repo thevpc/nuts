@@ -39,7 +39,7 @@ public class DefaultNutsWorkspaceListManager implements NutsWorkspaceListManager
             this.workspaces.put(ws.getUuid(),
                     new NutsWorkspaceLocation()
                             .setUuid(ws.getUuid())
-                            .setName("default-workspace")
+                            .setName(NutsConstants.Names.DEFAULT_WORKSPACE_NAME)
                             .setLocation(this.defaultWorkspace.locations().getWorkspaceLocation())
             );
             this.save(session);

@@ -344,7 +344,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         Boolean systemWideConfig = options.getLauncher().getSystemWideConfig();
         if (!idsToInstall.isEmpty()) {
             if (systemWideConfig == null) {
-                systemWideConfig = workspaceLocation.equals(Paths.get(System.getProperty("user.home")).resolve(".config/nuts/default-workspace"));
+                systemWideConfig = workspaceLocation.equals(Paths.get(System.getProperty("user.home")).resolve(".config/nuts/").resolve(NutsConstants.Names.DEFAULT_WORKSPACE_NAME));
             }
             boolean includeEnv = options.isIncludeEnv();
             for (String id : idsToInstall) {

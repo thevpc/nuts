@@ -633,7 +633,7 @@ public final class NutsBootWorkspace {
             // accessible when deleting others
             String latestDefaultVersion = null;
             try {
-                Path nbase = Paths.get(System.getProperty("user.home")).resolve(".local/share/nuts/apps/default-workspace/id/net/thevpc/nuts/nuts");
+                Path nbase = Paths.get(System.getProperty("user.home")).resolve(".local/share/nuts/apps/"+NutsConstants.Names.DEFAULT_WORKSPACE_NAME+"/id/net/thevpc/nuts/nuts");
                 if (Files.isDirectory(nbase)) {
                     latestDefaultVersion = Files.list(nbase).filter(f -> Files.exists(f.resolve(".nuts-bashrc")))
                             .map(x -> sysrcFile.getFileName().toString())

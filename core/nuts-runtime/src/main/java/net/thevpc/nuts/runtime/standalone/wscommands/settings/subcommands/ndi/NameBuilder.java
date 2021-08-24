@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi;
 
+import net.thevpc.nuts.NutsConstants;
 import net.thevpc.nuts.NutsDescriptor;
 import net.thevpc.nuts.NutsId;
 import net.thevpc.nuts.NutsSession;
@@ -172,7 +173,7 @@ public class NameBuilder {
                     }
                     case 'h': {
                         String str = session.getWorkspace().getHashName().trim();
-                        if (str.equalsIgnoreCase("default")) {
+                        if (str.equalsIgnoreCase(NutsConstants.Names.DEFAULT_WORKSPACE_NAME)) {
                             str = "";
                         }
                         if (wasSep) {

@@ -146,6 +146,13 @@ public class DefaultCommandLineBash implements NutsCommandLineBashFamilySupport{
             case '\'':
             case '$':
             case ' ':
+            case '<':
+            case '>':
+            case '(':
+            case ')':
+            case '~':
+            case '&':
+            case '|':
             {
                 sb.append(c);
                 break;
@@ -175,6 +182,13 @@ public class DefaultCommandLineBash implements NutsCommandLineBashFamilySupport{
                         case ' ':
                         case '\t':
                         case ';':
+                        case '<':
+                        case '>':
+                        case '(':
+                        case ')':
+                        case '~':
+                        case '&':
+                        case '|':
                         {
                             sb.append("\\").append(c);
                             break;
@@ -203,6 +217,13 @@ public class DefaultCommandLineBash implements NutsCommandLineBashFamilySupport{
                         case '"':
                         case '\'':
                         case '\\':
+                        case '<':
+                        case '>':
+                        case '(':
+                        case ')':
+                        case '~':
+                        case '&':
+                        case '|':
                         {
                             return escapeArgument(arg,NutsCommandLineFormatStrategy.REQUIRE_QUOTES,session);
                         }

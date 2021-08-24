@@ -17,7 +17,7 @@ Starred releases are most stable ones.
 - TODO  : {impl}  bundle tson parser
 
 ## nuts 0.8.1.0 (DEV VERSION)
-- ```2021/07/31 	nuts 0.8.1.0 (*)``` released [download nuts-0.8.1.jar](https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/0.8.1/nuts-0.8.1.jar)
+- ```2021/08/24 	nuts 0.8.1.0 (*)``` released [download nuts-0.8.1.jar](https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/0.8.1/nuts-0.8.1.jar)
 - WARNING: API has evolved with multiple incompatibilities with previous versions
 - ADDED: {api} added static methods of() in interfaces to simplify instantiation
 - ADDED: {api} parseLenient to all NutsEnum classes
