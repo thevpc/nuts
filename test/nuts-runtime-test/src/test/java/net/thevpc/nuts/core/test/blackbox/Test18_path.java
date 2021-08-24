@@ -60,7 +60,7 @@ public class Test18_path {
 
     @BeforeEach
     public void startup() throws IOException {
-        Assumptions.assumeTrue(Nuts.getPlatformOsFamily() == NutsOsFamily.LINUX);
+        //Assumptions.assumeTrue(Nuts.getPlatformOsFamily() == NutsOsFamily.LINUX);
         TestUtils.unsetNutsSystemProperties();
     }
 

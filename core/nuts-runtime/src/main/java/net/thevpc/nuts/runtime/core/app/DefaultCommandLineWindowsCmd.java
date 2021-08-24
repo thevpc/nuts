@@ -115,11 +115,24 @@ public class DefaultCommandLineWindowsCmd implements NutsCommandLineBashFamilySu
     public int readEscaped(char[] charArray, int i, StringBuilder sb) {
         char c = charArray[i];
         switch (c) {
-            case '^':
-            case ';':
-            case '\"':
             case '%':
+            case '\"':
+            case ':':
+            case ';':
+            case '^':
+            case '=':
+            case ',':
             case ' ':
+            case '\t':
+            case '<':
+            case '>':
+            case '&':
+            case '(':
+            case ')':
+            case '!':
+            case '\'':
+            case '`':
+            case '~':
             {
                 sb.append(c);
                 break;
@@ -144,6 +157,7 @@ public class DefaultCommandLineWindowsCmd implements NutsCommandLineBashFamilySu
                 StringBuilder sb = new StringBuilder();
                 for (char c : arg.toCharArray()) {
                     switch (c){
+                        //special chars : &()[]{}^=;!'+,`~
                         case '\"':
                         case ':':
                         case ';':
@@ -152,6 +166,15 @@ public class DefaultCommandLineWindowsCmd implements NutsCommandLineBashFamilySu
                         case ',':
                         case ' ':
                         case '\t':
+                        case '<':
+                        case '>':
+                        case '&':
+                        case '(':
+                        case ')':
+                        case '!':
+                        case '\'':
+                        case '`':
+                        case '~':
                         {
                             sb.append("^").append(c);
                             break;

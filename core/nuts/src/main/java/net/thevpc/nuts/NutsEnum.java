@@ -6,12 +6,13 @@ import java.lang.reflect.Modifier;
 /**
  * implementations of any class T must implement 3 static methods :
  *
+ * <ul>
  * <li> {@code static T parseLenient(String value) } </li>
  *
  * <li> {@code static T parseLenient(String value, T emptyValue) } </li>
  *
  * <li> {@code static T parseLenient(String value, T emptyValue, T errorValue) } </li>
- *
+ * </ul>
  *
  * @since 0.8.1
  */
