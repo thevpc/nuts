@@ -23,11 +23,10 @@
  */
 package net.thevpc.nuts.runtime.optional.jansi;
 
-import java.util.Locale;
-
 import net.thevpc.nuts.NutsOsFamily;
+import net.thevpc.nuts.NutsUtilPlatforms;
+import net.thevpc.nuts.runtime.bundles.common.CorePlatformUtils;
 import net.thevpc.nuts.runtime.standalone.boot.StdFd;
-import net.thevpc.nuts.runtime.standalone.config.DefaultNutsWorkspaceEnvManagerModel;
 
 /**
  *
@@ -35,20 +34,8 @@ import net.thevpc.nuts.runtime.standalone.config.DefaultNutsWorkspaceEnvManagerM
  */
 public class OptionalJansi {
 
-    public static final boolean IS_WINDOWS = System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("win");
-
-    public static final boolean IS_CYGWIN = IS_WINDOWS
-            && System.getenv("PWD") != null
-            && System.getenv("PWD").startsWith("/")
-            && !"cygwin".equals(System.getenv("TERM"));
-
-    public static final boolean IS_MINGW_XTERM = IS_WINDOWS
-            && System.getenv("MSYSTEM") != null
-            && System.getenv("MSYSTEM").startsWith("MINGW")
-            && "xterm".equals(System.getenv("TERM"));
-
     public static boolean isAvailable() {
-        if (DefaultNutsWorkspaceEnvManagerModel.getPlatformOsFamily0() == NutsOsFamily.WINDOWS) {
+        if (NutsUtilPlatforms.getPlatformOsFamily() == NutsOsFamily.WINDOWS) {
             try {
                 Class.forName("org.fusesource.jansi.io.AnsiOutputStream");
                 return true;

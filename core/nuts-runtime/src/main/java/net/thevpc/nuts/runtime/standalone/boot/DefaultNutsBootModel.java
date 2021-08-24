@@ -24,12 +24,12 @@
 package net.thevpc.nuts.runtime.standalone.boot;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.bundles.common.CorePlatformUtils;
 import net.thevpc.nuts.runtime.core.DefaultNutsSession;
 import net.thevpc.nuts.runtime.core.terminals.DefaultNutsSessionTerminal;
 import net.thevpc.nuts.runtime.core.terminals.DefaultNutsSystemTerminalBaseBoot;
 import net.thevpc.nuts.runtime.core.terminals.DefaultSystemTerminal;
 import net.thevpc.nuts.runtime.optional.jansi.OptionalJansi;
-import net.thevpc.nuts.runtime.standalone.config.DefaultNutsWorkspaceEnvManagerModel;
 import net.thevpc.nuts.runtime.standalone.io.NutsPrintStreamSystem;
 
 import java.io.InputStream;
@@ -51,7 +51,7 @@ public class DefaultNutsBootModel implements NutsBootModel {
         this.workspace = workspace;
         this.workspaceInitInformation = workspaceInitInformation;
         this.bootSession = new DefaultNutsSession(workspace, workspaceInitInformation.getOptions());
-        StdFd std = detectAnsiTerminalSupport(DefaultNutsWorkspaceEnvManagerModel.getPlatformOsFamily0());
+        StdFd std = detectAnsiTerminalSupport(NutsUtilPlatforms.getPlatformOsFamily());
         NutsTerminalMode terminalMode = workspaceInitInformation.getOptions().getTerminalMode();
         if (terminalMode == null) {
             if (workspaceInitInformation.getOptions().isBot()) {
@@ -106,16 +106,7 @@ public class DefaultNutsBootModel implements NutsBootModel {
                     return new StdFd(System.in,System.out,System.err,true);
                 }
                 case WINDOWS:{
-                    boolean IS_CYGWIN =
-                            System.getenv("PWD") != null
-                            && System.getenv("PWD").startsWith("/")
-                            && !"cygwin".equals(System.getenv("TERM"));
-
-                    boolean IS_MINGW_XTERM =
-                            System.getenv("MSYSTEM") != null
-                            && System.getenv("MSYSTEM").startsWith("MINGW")
-                            && "xterm".equals(System.getenv("TERM"));
-                    if(IS_CYGWIN || IS_MINGW_XTERM){
+                    if(CorePlatformUtils.IS_CYGWIN || CorePlatformUtils.IS_MINGW_XTERM){
                         return new StdFd(System.in,System.out,System.err,true);
                     }
                     if(OptionalJansi.isAvailable()){

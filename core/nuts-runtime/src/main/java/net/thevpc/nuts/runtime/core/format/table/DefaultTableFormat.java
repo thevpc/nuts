@@ -24,11 +24,11 @@
 package net.thevpc.nuts.runtime.core.format.table;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.bundles.common.CorePlatformUtils;
 import net.thevpc.nuts.runtime.bundles.string.StringBuilder2;
 import net.thevpc.nuts.runtime.core.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.core.format.tree.DefaultNutsFormatDestructTypePredicate;
 import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
-import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 import java.io.ByteArrayOutputStream;
@@ -58,17 +58,11 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
             "╰", "─", "┴", "╯"
     );
 
-    //    public static NutsTableBordersFormat DEFAULT_BORDER = new DefaultTableFormatBorders(
-//            "╭", "─", "┬", "╮",
-//            "│", "│", "│",
-//            "├", "─", "┼", "┤",
-//            "╰", "─", "┴", "╯"
-//    );
     public static NutsTableBordersFormat SIMPLE_BORDER = new DefaultTableFormatBorders(
-            ".", "-", "-", ".",
+            "-", "-", "-", "-",
             "|", " | ", "|",
             "|", "-", "+", "|",
-            ".", "-", "-", "."
+            "-", "-", "-", "-"
     );
     public static NutsTableBordersFormat FANCY_ROWS_BORDER = new DefaultTableFormatBorders(
             "", "", "", "",
@@ -99,7 +93,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
      * LMMMMNMMMMO
      * </pre>
      */
-    private NutsTableBordersFormat border = CoreNutsUtils.SUPPORTS_UTF_ENCODING ? UNICODE_BORDER : SIMPLE_BORDER;
+    private NutsTableBordersFormat border = CorePlatformUtils.SUPPORTS_UTF_ENCODING ? UNICODE_BORDER : SIMPLE_BORDER;
     private Object model;
     private List<Boolean> visibleColumns = new ArrayList<>();
     private boolean visibleHeader = true;
@@ -126,7 +120,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                 return (SPACE_BORDER);
             }
             case "default": {
-                return CoreNutsUtils.SUPPORTS_UTF_ENCODING ? UNICODE_BORDER : SIMPLE_BORDER;
+                return CorePlatformUtils.SUPPORTS_UTF_ENCODING ? UNICODE_BORDER : SIMPLE_BORDER;
             }
             case "unicode": {
                 return (UNICODE_BORDER);

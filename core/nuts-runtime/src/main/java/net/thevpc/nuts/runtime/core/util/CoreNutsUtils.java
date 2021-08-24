@@ -24,6 +24,7 @@
 package net.thevpc.nuts.runtime.core.util;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.bundles.common.CorePlatformUtils;
 import net.thevpc.nuts.runtime.bundles.iter.IteratorBuilder;
 import net.thevpc.nuts.runtime.bundles.parsers.StringPlaceHolderParser;
 import net.thevpc.nuts.runtime.bundles.parsers.StringTokenizerUtils;
@@ -66,43 +67,6 @@ public class CoreNutsUtils {
     public static final int LOCK_TIME = 3;
     public static final TimeUnit LOCK_TIME_UNIT = TimeUnit.SECONDS;
     public static final NutsDefaultThreadFactory nutsDefaultThreadFactory = new NutsDefaultThreadFactory("nuts-pool", true);
-    //    public static NutsId SAMPLE_NUTS_ID = new DefaultNutsId("repository", "group", "name", "version", "param='true'");
-//    public static NutsDescriptor SAMPLE_NUTS_DESCRIPTOR
-//            = new DefaultNutsDescriptorBuilder()
-//            .setId(new DefaultNutsId(null, "group", "name", "version", (String) null))
-////                    .setAlternative("suse")
-//            .setName("Application Full Name")
-//            .setDescription("Application Description")
-//            .setExecutable(true)
-//            .setPackaging("jar")
-//            //                    .setExt("exe")
-//            .setArch(new String[]{"64bit"})
-//            .setOs(new String[]{"linux#4.6"})
-//            .setOsdist(new String[]{"opensuse#42"})
-//            .setPlatform(new String[]{"java#1.8"})
-//            .setExecutor(new DefaultNutsArtifactCall(
-//                    new DefaultNutsId(null, null, "java", "1.8", (String) null),
-//                    new String[]{"-jar"}
-//            ))
-//            .setInstaller(new DefaultNutsArtifactCall(
-//                    new DefaultNutsId(null, null, "java", "1.8", (String) null),
-//                    new String[]{"-jar"}
-//            ))
-//            .setLocations(new NutsIdLocation[]{
-//                    new DefaultNutsIdLocation("http://server/somelink", null, null)
-//            })
-//            .setDependencies(
-//                    new NutsDependency[]{
-//                            new DefaultNutsDependencyBuilder()
-//                                    .setRepository("repository")
-//                                    .setGroupId("group")
-//                                    .setArtifactId("name")
-//                                    .setVersion("version")
-//                                    .setOptional("false").build()
-//                    }
-//            )
-//            .build();
-    public static final boolean SUPPORTS_UTF_ENCODING;
     private static final Map<String, String> _QUERY_EMPTY_ENV = new HashMap<>();
     public static final Map<String, String> QUERY_EMPTY_ENV = Collections.unmodifiableMap(_QUERY_EMPTY_ENV);
     public static Comparator<NutsId> NUTS_ID_COMPARATOR = new Comparator<NutsId>() {
@@ -141,7 +105,6 @@ public class CoreNutsUtils {
         _QUERY_EMPTY_ENV.put(NutsConstants.IdProperties.OS, null);
         _QUERY_EMPTY_ENV.put(NutsConstants.IdProperties.OSDIST, null);
         _QUERY_EMPTY_ENV.put(NutsConstants.IdProperties.PLATFORM, null);
-        SUPPORTS_UTF_ENCODING = new String("ø".getBytes()).equals("ø");
     }
 
     public static String randomColorName() {

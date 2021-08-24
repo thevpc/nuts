@@ -208,14 +208,14 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
             Map<String, String> homeLocations = options.getHomeLocations();
             if (homeLocations != null) {
                 for (NutsStoreLocation location : NutsStoreLocation.values()) {
-                    String s = homeLocations.get(PrivateBootWorkspaceOptions.createHomeLocationKey(null, location));
+                    String s = homeLocations.get(NutsApiUtils.createHomeLocationKey(null, location));
                     if (!NutsUtilStrings.isBlank(s)) {
                         fillOption("--system-" + location.id() + "-home", null, s, arguments, false);
                     }
                 }
                 for (NutsOsFamily osFamily : NutsOsFamily.values()) {
                     for (NutsStoreLocation location : NutsStoreLocation.values()) {
-                        String s = homeLocations.get(PrivateBootWorkspaceOptions.createHomeLocationKey(osFamily, location));
+                        String s = homeLocations.get(NutsApiUtils.createHomeLocationKey(osFamily, location));
                         if (!NutsUtilStrings.isBlank(s)) {
                             fillOption("--" + osFamily.id() + "-" + location.id() + "-home", null, s, arguments, false);
                         }

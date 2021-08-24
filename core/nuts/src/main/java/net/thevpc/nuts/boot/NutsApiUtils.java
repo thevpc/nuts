@@ -41,12 +41,12 @@ public class NutsApiUtils {
             Map<String, String> homeLocations,
             boolean global,
             String workspaceName) {
-        return PrivateNutsPlatformUtils.getPlatformHomeFolder(platformOsFamily, location, homeLocations,
+        return NutsUtilPlatforms.getPlatformHomeFolder(platformOsFamily, location, homeLocations,
                 global, workspaceName);
     }
 
     public static NutsOsFamily getPlatformOsFamily() {
-        return PrivateNutsPlatformUtils.getPlatformOsFamily();
+        return NutsUtilPlatforms.getPlatformOsFamily();
     }
 
     public static String resolveNutsVersionFromClassPath() {
@@ -64,5 +64,19 @@ public class NutsApiUtils {
 
     public static NutsWorkspaceOptions createOptions() {
         return new PrivateBootWorkspaceOptions();
+    }
+
+    /**
+     * creates a string key combining layout and location.
+     * le key has the form of a concatenated layout and location ids separated by ':'
+     * where null layout is replaced by 'system' keyword.
+     * used in {@link NutsWorkspaceOptions#getHomeLocations()}.
+     *
+     * @param storeLocationLayout layout
+     * @param location            location
+     * @return combination of layout and location separated by ':'.
+     */
+    public static String createHomeLocationKey(NutsOsFamily storeLocationLayout, NutsStoreLocation location) {
+        return (storeLocationLayout == null ? "system" : storeLocationLayout.id()) + ":" + (location == null ? "system" : location.id());
     }
 }

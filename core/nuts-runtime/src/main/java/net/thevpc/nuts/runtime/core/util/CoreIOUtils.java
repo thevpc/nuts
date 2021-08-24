@@ -177,25 +177,7 @@ public class CoreIOUtils {
 //        return new DefaultNutsURLHeader(new SimpleHttpClient(url));
 //    }
 
-    public static String getPlatformOsFamily() {
-        String property = System.getProperty("os.name").toLowerCase(Locale.ENGLISH);
-        if (property.startsWith("linux")) {
-            return "linux";
-        }
-        if (property.startsWith("win")) {
-            return "windows";
-        }
-        if (property.startsWith("mac")) {
-            return "mac";
-        }
-        if (property.startsWith("sunos")) {
-            return "unix";
-        }
-        if (property.startsWith("freebsd")) {
-            return "unix";
-        }
-        return "unknown";
-    }
+
 
     public static URL asURL(String s) {
         if(s==null||s.trim().isEmpty()){

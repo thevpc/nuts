@@ -11,8 +11,9 @@
 
 CALL $$SCRIPT_NUTS_ENV$$
 
-SET _java=java
-%_java% %NUTS_JAVA_OPTIONS% -jar "$$NUTS_JAR$$" -w "%NUTS_WORKSPACE%" %*
+if [%NUTS_JAVA_COMMAND%] == [] SET "NUTS_JAVA_COMMAND=java.exe"
+
+%NUTS_JAVA_COMMAND% %NUTS_JAVA_OPTIONS% -jar "$$NUTS_JAR$$" -w "%NUTS_WORKSPACE%" %*
 
 :: END-COMMAND
 

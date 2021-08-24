@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages and libraries
  * for runtime execution. Nuts is the ultimate companion for maven (and other
@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,26 +23,21 @@
  */
 package net.thevpc.nuts.runtime.core.format.text;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.format.elem.DefaultNutsElementFactoryService;
 import net.thevpc.nuts.runtime.core.format.elem.NutsElementFactoryService;
 import net.thevpc.nuts.runtime.core.format.elem.NutsElementStreamFormat;
 import net.thevpc.nuts.runtime.core.format.json.SimpleJson;
-import net.thevpc.nuts.runtime.core.format.text.bloc.HadraBlocTextFormatter;
-import net.thevpc.nuts.runtime.core.format.text.bloc.JavaBlocTextFormatter;
-import net.thevpc.nuts.runtime.core.format.text.bloc.JsonCodeFormatter;
-import net.thevpc.nuts.runtime.core.format.text.bloc.PlainBlocTextFormatter;
-import net.thevpc.nuts.runtime.core.format.text.bloc.ShellBlocTextFormatter;
-import net.thevpc.nuts.runtime.core.format.text.bloc.XmlCodeFormatter;
+import net.thevpc.nuts.runtime.core.format.text.bloc.*;
 import net.thevpc.nuts.runtime.core.format.text.stylethemes.DefaultNutsTextFormatTheme;
 import net.thevpc.nuts.runtime.core.format.text.stylethemes.NutsTextFormatPropertiesTheme;
 import net.thevpc.nuts.runtime.core.format.text.stylethemes.NutsTextFormatThemeWrapper;
 import net.thevpc.nuts.runtime.core.format.xml.DefaultXmlNutsElementStreamFormat;
 import net.thevpc.nuts.runtime.core.format.yaml.SimpleYaml;
 import net.thevpc.nuts.spi.NutsComponent;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -52,16 +47,16 @@ public class DefaultNutsTextManagerModel {
 
     private String styleThemeName;
     private NutsTextFormatTheme styleTheme;
-    private List<NutsCodeFormat> codeFormats = new ArrayList<>();
+    private final List<NutsCodeFormat> codeFormats = new ArrayList<>();
     private JavaBlocTextFormatter javaBlocTextFormatter;
     private HadraBlocTextFormatter hadraBlocTextFormatter;
     private XmlCodeFormatter xmlBlocTextFormatter;
     private JsonCodeFormatter jsonBlocTextFormatter;
     private ShellBlocTextFormatter shellBlocTextFormatter;
     private PlainBlocTextFormatter plainBlocTextFormatter;
-    private NutsWorkspaceInitInformation info;
+    private final NutsWorkspaceInitInformation info;
     private NutsTextFormatTheme defaultTheme;
-    private NutsWorkspace ws;
+    private final NutsWorkspace ws;
     private NutsElementFactoryService elementFactoryService;
     private NutsElementStreamFormat jsonMan;
     private NutsElementStreamFormat yamlMan;
@@ -72,38 +67,34 @@ public class DefaultNutsTextManagerModel {
         this.info = info;
     }
 
-    public final NutsTextFormatTheme getDefaultTheme(NutsSession session) {
-        if (defaultTheme == null) {
-            if(session.getWorkspace().env().getOsFamily()== NutsOsFamily.WINDOWS){
-                //dark blue is very ugly under windows, replace it with light blue!
-                defaultTheme=new NutsTextFormatThemeWrapper(new NutsTextFormatPropertiesTheme("simple", null, session));
-            }else {
-                defaultTheme = new DefaultNutsTextFormatTheme(ws);
-            }
-        }
-        return defaultTheme;
-    }
 
-    public NutsTextFormatTheme createTheme(String y,NutsSession session) {
-        if (!NutsUtilStrings.isBlank(y)) {
-            y=y.trim();
-            if ("default".equals(y)) {
-                //default always refers to this implementation
-                return getDefaultTheme(session);
-            } else {
-                return new NutsTextFormatThemeWrapper(new NutsTextFormatPropertiesTheme(y, null, session));
+    public NutsTextFormatTheme createTheme(String y, NutsSession session) {
+        y = y == null ? "" : y.trim();
+        if (NutsUtilStrings.isBlank(y)) {
+            y = "default";
+        }
+        if ("default".equals(y)) {
+            //default always refers to this implementation
+            if (defaultTheme == null) {
+                if (session.getWorkspace().env().getOsFamily() == NutsOsFamily.WINDOWS) {
+                    //dark blue and red are very ugly under windows, replace them with green tones !
+                    defaultTheme = new NutsTextFormatThemeWrapper(new NutsTextFormatPropertiesTheme("grass", null, session));
+                } else {
+                    defaultTheme = new DefaultNutsTextFormatTheme(ws);
+                }
             }
+            return defaultTheme;
         } else {
-            return getDefaultTheme(session);
+            return new NutsTextFormatThemeWrapper(new NutsTextFormatPropertiesTheme(y, null, session));
         }
     }
 
     public NutsTextFormatTheme getTheme(NutsSession session) {
         if (styleTheme == null) {
-            if(styleThemeName==null){
-                styleThemeName=info.getOptions().getTheme();
+            if (styleThemeName == null) {
+                styleThemeName = info.getOptions().getTheme();
             }
-            styleTheme=createTheme(styleThemeName,session);
+            styleTheme = createTheme(styleThemeName, session);
         }
         return styleTheme;
     }
@@ -113,11 +104,11 @@ public class DefaultNutsTextManagerModel {
     }
 
     public void setTheme(String styleThemeName, NutsSession session) {
-        if(styleThemeName==null || styleThemeName.trim().isEmpty()){
-            styleThemeName="default";
+        if (styleThemeName == null || styleThemeName.trim().isEmpty()) {
+            styleThemeName = "default";
         }
-        styleThemeName=styleThemeName.trim();
-        styleTheme=createTheme(styleThemeName,session);
+        styleThemeName = styleThemeName.trim();
+        styleTheme = createTheme(styleThemeName, session);
         this.styleThemeName = styleThemeName;
     }
 

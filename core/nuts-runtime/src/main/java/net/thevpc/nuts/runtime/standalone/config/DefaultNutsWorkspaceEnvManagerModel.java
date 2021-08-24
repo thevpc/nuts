@@ -34,7 +34,6 @@ import net.thevpc.nuts.runtime.core.common.DefaultObservableMap;
 import net.thevpc.nuts.runtime.core.common.ObservableMap;
 import net.thevpc.nuts.runtime.core.config.NutsWorkspaceConfigManagerExt;
 import net.thevpc.nuts.runtime.core.parser.DefaultNutsIdParser;
-import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
 import net.thevpc.nuts.runtime.standalone.gui.CoreNutsUtilGui;
 import net.thevpc.nuts.runtime.standalone.util.NutsJavaSdkUtils;
 
@@ -201,48 +200,6 @@ public class DefaultNutsWorkspaceEnvManagerModel {
 //                .current();
 //    }
 
-//    @Override
-//    public NutsOsFamily getOsFamily() {
-//        return current().getOsFamily();
-//    }
-//    @Override
-//    public NutsId getPlatform() {
-//        return current().getPlatform();
-//    }
-//
-//    @Override
-//    public NutsId getOs() {
-//        return current().getOs();
-//    }
-//
-//    @Override
-//    public NutsId getOsDist() {
-//        return current().getOsDist();
-//    }
-//    @Override
-//    public NutsId getArch() {
-//        return current().getArch();
-//    }
-    public static NutsOsFamily getPlatformOsFamily0() {
-        String property = System.getProperty("os.name").toLowerCase(Locale.ENGLISH);
-        if (property.startsWith("linux")) {
-            return NutsOsFamily.LINUX;
-        }
-        if (property.startsWith("win")) {
-            return NutsOsFamily.WINDOWS;
-        }
-        if (property.startsWith("mac")) {
-            return NutsOsFamily.MACOS;
-        }
-        if (property.startsWith("sunos")) {
-            return NutsOsFamily.UNIX;
-        }
-        if (property.startsWith("freebsd")) {
-            return NutsOsFamily.UNIX;
-        }
-        return NutsOsFamily.UNKNOWN;
-    }
-
     public NutsId getArch() {
         return arch;
     }
@@ -253,7 +210,7 @@ public class DefaultNutsWorkspaceEnvManagerModel {
 
     public NutsOsFamily getOsFamily() {
         if (osFamily == null) {
-            osFamily = getPlatformOsFamily0();
+            osFamily = NutsUtilPlatforms.getPlatformOsFamily();
         }
         return osFamily;
     }
@@ -316,7 +273,7 @@ public class DefaultNutsWorkspaceEnvManagerModel {
             }
             return a.toArray(new NutsId[0]);
         }
-        if(getPlatformOsFamily0()==NutsOsFamily.WINDOWS){
+        if(NutsUtilPlatforms.getPlatformOsFamily()==NutsOsFamily.WINDOWS){
             return new NutsId[]{
                     session.getWorkspace().id().builder().setArtifactId("windows").build()
             };

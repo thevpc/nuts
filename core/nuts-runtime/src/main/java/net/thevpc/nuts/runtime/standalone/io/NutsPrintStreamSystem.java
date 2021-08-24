@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.bundles.common.CorePlatformUtils;
 import net.thevpc.nuts.runtime.core.format.text.DefaultAnsiEscapeCommand;
 import net.thevpc.nuts.runtime.core.util.CachedValue;
 
@@ -71,17 +72,7 @@ public class NutsPrintStreamSystem extends NutsPrintStreamBase {
         NutsWorkspace ws = session.getWorkspace();
         //if(out==System.out || out==System.err){
         NutsOsFamily os = ws.env().getOsFamily();
-        boolean IS_WINDOWS = os == NutsOsFamily.WINDOWS;
-        boolean IS_CYGWIN = IS_WINDOWS
-                && System.getenv("PWD") != null
-                && System.getenv("PWD").startsWith("/")
-                && !"cygwin".equals(System.getenv("TERM"));
-
-        boolean IS_MINGW_XTERM = IS_WINDOWS
-                && System.getenv("MSYSTEM") != null
-                && System.getenv("MSYSTEM").startsWith("MINGW")
-                && "xterm".equals(System.getenv("TERM"));
-        if ((IS_WINDOWS && (IS_CYGWIN || IS_MINGW_XTERM)) || os == NutsOsFamily.LINUX || os == NutsOsFamily.UNIX || os == NutsOsFamily.MACOS) {
+        if (((os == NutsOsFamily.WINDOWS) && (CorePlatformUtils.IS_CYGWIN || CorePlatformUtils.IS_MINGW_XTERM)) || os == NutsOsFamily.LINUX || os == NutsOsFamily.UNIX || os == NutsOsFamily.MACOS) {
             return NutsTerminalMode.ANSI;
         } else {
             return NutsTerminalMode.INHERITED;

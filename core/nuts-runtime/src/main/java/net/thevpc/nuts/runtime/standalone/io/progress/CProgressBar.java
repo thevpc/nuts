@@ -3,8 +3,8 @@ package net.thevpc.nuts.runtime.standalone.io.progress;
 import net.thevpc.nuts.NutsPrintStream;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsTextStyle;
+import net.thevpc.nuts.runtime.bundles.common.CorePlatformUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.core.format.text.FPrintCommands;
 
 import java.util.Calendar;
@@ -46,7 +46,7 @@ public class CProgressBar {
     private long minPeriod = 300;
     private IndeterminatePosition indeterminatePosition = DEFAULT_INDETERMINATE_POSITION;
     private boolean optionNewline;
-    private Formatter formatter = CoreNutsUtils.SUPPORTS_UTF_ENCODING ?RECTANGLES4:SIMPLE;
+    private Formatter formatter = CorePlatformUtils.SUPPORTS_UTF_ENCODING ?RECTANGLES4:SIMPLE;
 
     public CProgressBar(NutsSession session) {
         this.session = session;

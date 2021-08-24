@@ -1,5 +1,10 @@
 package net.thevpc.nuts;
 
+/**
+ * @author thevpc
+ * @app.category Util
+ * @since 0.8.1
+ */
 public class NutsUtilStrings {
     public static boolean isBlank(CharSequence s) {
         return s == null || isBlank(s.toString().toCharArray());

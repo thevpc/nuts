@@ -44,6 +44,43 @@ import java.util.zip.ZipFile;
  */
 public class CorePlatformUtils {
 
+    //    public static NutsId SAMPLE_NUTS_ID = new DefaultNutsId("repository", "group", "name", "version", "param='true'");
+//    public static NutsDescriptor SAMPLE_NUTS_DESCRIPTOR
+//            = new DefaultNutsDescriptorBuilder()
+//            .setId(new DefaultNutsId(null, "group", "name", "version", (String) null))
+////                    .setAlternative("suse")
+//            .setName("Application Full Name")
+//            .setDescription("Application Description")
+//            .setExecutable(true)
+//            .setPackaging("jar")
+//            //                    .setExt("exe")
+//            .setArch(new String[]{"64bit"})
+//            .setOs(new String[]{"linux#4.6"})
+//            .setOsdist(new String[]{"opensuse#42"})
+//            .setPlatform(new String[]{"java#1.8"})
+//            .setExecutor(new DefaultNutsArtifactCall(
+//                    new DefaultNutsId(null, null, "java", "1.8", (String) null),
+//                    new String[]{"-jar"}
+//            ))
+//            .setInstaller(new DefaultNutsArtifactCall(
+//                    new DefaultNutsId(null, null, "java", "1.8", (String) null),
+//                    new String[]{"-jar"}
+//            ))
+//            .setLocations(new NutsIdLocation[]{
+//                    new DefaultNutsIdLocation("http://server/somelink", null, null)
+//            })
+//            .setDependencies(
+//                    new NutsDependency[]{
+//                            new DefaultNutsDependencyBuilder()
+//                                    .setRepository("repository")
+//                                    .setGroupId("group")
+//                                    .setArtifactId("name")
+//                                    .setVersion("version")
+//                                    .setOptional("false").build()
+//                    }
+//            )
+//            .build();
+    public static final boolean SUPPORTS_UTF_ENCODING;
     //    private static final java.util.logging.Logger LOG = java.util.logging.Logger.getLogger(CorePlatformUtils.class.getName());
     //    public static final Map<String, String> SUPPORTED_ARCH_ALIASES = new HashMap<>();
     private static final Set<String> SUPPORTED_ARCH = new HashSet<>(Arrays.asList("x86_32", "x86_64", "itanium_32", "itanium_64"
@@ -53,11 +90,43 @@ public class CorePlatformUtils {
     private static final Set<String> SUPPORTED_OS = new HashSet<>(Arrays.asList("linux", "windows", "macos", "sunos"
             , "freebsd", "openbsd", "netbsd", "aix", "hpux", "as400", "zos", "unknown"
     ));
+    public static boolean IS_CYGWIN =
+            System.getenv("PWD") != null
+                    && System.getenv("PWD").startsWith("/")
+                    && !"cygwin".equals(System.getenv("TERM"));
+    public static boolean IS_MINGW_XTERM =
+            System.getenv("MSYSTEM") != null
+                    && System.getenv("MSYSTEM").startsWith("MINGW")
+                    && "xterm".equals(System.getenv("TERM"));
     private static Map<String, String> LOADED_OS_DIST_MAP = null;
 
     static {
 //        SUPPORTED_ARCH_ALIASES.put("i386", "x86");
+        boolean _e = new String("ø".getBytes()).equals("ø");
+        if (_e) {
+            switch (NutsUtilPlatforms.getPlatformOsFamily()) {
+                case LINUX:
+                case MACOS: {
+                    //okkay
+                    break;
+                }
+                case WINDOWS: {
+                    if (CorePlatformUtils.IS_CYGWIN || CorePlatformUtils.IS_MINGW_XTERM) {
+                        //okkay
+                    } else {
+                        _e = false;
+                    }
+                }
+                case UNIX:
+                case UNKNOWN:
+                default: {
+                    _e = false;
+                }
+            }
+        }
+        SUPPORTS_UTF_ENCODING = _e;
     }
+
 
     private static String buildUnixOsNameAndVersion(String name, NutsWorkspace ws) {
         Map<String, String> m = getOsDistMap(ws);
@@ -98,11 +167,10 @@ public class CorePlatformUtils {
     }
 
 
-
     /**
      * this is inspired from
      * http://stackoverflow.com/questions/15018474/getting-linux-distro-from-java
-     * so thanks //PbxMan//
+     * thanks to //PbxMan//
      *
      * @param ws ws
      * @return os distribution map including keys distId, distName, distVersion,osVersion
@@ -430,7 +498,7 @@ public class CorePlatformUtils {
             } catch (RuntimeException ex) {
                 throw ex;
             } catch (Exception ex) {
-                throw new NutsException(ws, NutsMessage.plain("run with loader failed"),ex);
+                throw new NutsException(ws, NutsMessage.plain("run with loader failed"), ex);
             }
         }, "RunWithinLoader");
         thread.setContextClassLoader(loader);
@@ -438,7 +506,7 @@ public class CorePlatformUtils {
         try {
             thread.join();
         } catch (InterruptedException ex) {
-            throw new NutsException(ws, NutsMessage.plain("run with loader failed"),ex);
+            throw new NutsException(ws, NutsMessage.plain("run with loader failed"), ex);
         }
         return ref.get();
     }
@@ -513,11 +581,35 @@ public class CorePlatformUtils {
         return null;
     }
 
+    //    @Override
+    //    public NutsOsFamily getOsFamily() {
+    //        return current().getOsFamily();
+    //    }
+    //    @Override
+    //    public NutsId getPlatform() {
+    //        return current().getPlatform();
+    //    }
+    //
+    //    @Override
+    //    public NutsId getOs() {
+    //        return current().getOs();
+    //    }
+    //
+    //    @Override
+    //    public NutsId getOsDist() {
+    //        return current().getOsDist();
+    //    }
+    //    @Override
+    //    public NutsId getArch() {
+    //        return current().getArch();
+    //    }
+
+
     public static class MainClassType {
 
-        private String name;
-        private boolean app;
-        private boolean main;
+        private final String name;
+        private final boolean app;
+        private final boolean main;
 
         public MainClassType(String name, boolean main, boolean app) {
             this.name = name;

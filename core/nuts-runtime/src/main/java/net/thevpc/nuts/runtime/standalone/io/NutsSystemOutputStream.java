@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.io;
 
 import net.thevpc.nuts.NutsTerminalMode;
 import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.runtime.bundles.common.CorePlatformUtils;
 import net.thevpc.nuts.runtime.core.format.text.EscapeOutputStream;
 import net.thevpc.nuts.runtime.core.format.text.ExtendedFormatAware;
 import net.thevpc.nuts.runtime.core.format.text.UnescapeOutputStream;
@@ -44,17 +45,8 @@ public class NutsSystemOutputStream extends BaseTransparentFilterOutputStream im
         }else*/
         {
             NutsOsFamily os = ws.env().getOsFamily();
-            boolean IS_WINDOWS = os == NutsOsFamily.WINDOWS;
-            boolean IS_CYGWIN = IS_WINDOWS
-                    && System.getenv("PWD") != null
-                    && System.getenv("PWD").startsWith("/")
-                    && !"cygwin".equals(System.getenv("TERM"));
-
-            boolean IS_MINGW_XTERM = IS_WINDOWS
-                    && System.getenv("MSYSTEM") != null
-                    && System.getenv("MSYSTEM").startsWith("MINGW")
-                    && "xterm".equals(System.getenv("TERM"));
-            if ((IS_WINDOWS && (IS_CYGWIN || IS_MINGW_XTERM)) || os == NutsOsFamily.LINUX || os == NutsOsFamily.UNIX || os == NutsOsFamily.MACOS) {
+            if ((os == NutsOsFamily.WINDOWS && (CorePlatformUtils.IS_CYGWIN || CorePlatformUtils.IS_MINGW_XTERM))
+                    || os == NutsOsFamily.LINUX || os == NutsOsFamily.UNIX || os == NutsOsFamily.MACOS) {
                 FilterOutputStream filterOutputStream = new AnsiResetOnCloseOutputStream(base);
                 this.formatted = CoreIOUtils.convertOutputStream(filterOutputStream, NutsTerminalMode.FORMATTED, session);
                 setType(type);

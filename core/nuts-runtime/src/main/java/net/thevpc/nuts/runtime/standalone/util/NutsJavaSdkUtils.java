@@ -1,9 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.util;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.config.NutsSdkLocationComparator;
+import net.thevpc.nuts.runtime.bundles.common.CorePlatformUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
-import net.thevpc.nuts.NutsLogVerb;
+import net.thevpc.nuts.runtime.standalone.DefaultNutsWorkspace;
+import net.thevpc.nuts.runtime.standalone.config.NutsSdkLocationComparator;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,16 +16,22 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
 import java.util.logging.Level;
-import net.thevpc.nuts.runtime.standalone.DefaultNutsWorkspace;
 
 public class NutsJavaSdkUtils {
 
     private NutsLogger LOG;
 
-    private NutsWorkspace ws;
+    private final NutsWorkspace ws;
+
+    private NutsJavaSdkUtils(NutsWorkspace ws) {
+        this.ws = ws;
+    }
 
     public static NutsJavaSdkUtils of(NutsSession ws) {
         return of(ws.getWorkspace());
@@ -38,10 +45,6 @@ public class NutsJavaSdkUtils {
 //            ws.env().setProperty(NutsJavaSdkUtils.class.getName(), wp);
 //        }
 //        return wp;
-    }
-
-    private NutsJavaSdkUtils(NutsWorkspace ws) {
-        this.ws = ws;
     }
 
     protected NutsLoggerOp _LOGOP(NutsSession session) {
@@ -103,7 +106,10 @@ public class NutsJavaSdkUtils {
                 break;
             }
             case WINDOWS: {
-                conf = new String[]{CoreStringUtils.coalesce(System.getenv("ProgramFiles"), "C:\\Program Files") + "\\Java", CoreStringUtils.coalesce(System.getenv("ProgramFiles(x86)"), "C:\\Program Files (x86)") + "\\Java"};
+                conf = new String[]{
+                        NutsUtilPlatforms.getWindowsProgramFiles()+"\\Java",
+                        NutsUtilPlatforms.getWindowsProgramFilesX86()+"\\Java"
+                };
                 break;
             }
             case MACOS: {
@@ -119,24 +125,38 @@ public class NutsJavaSdkUtils {
     }
 
     public Future<NutsSdkLocation[]> searchJdkLocationsFuture(NutsSession session) {
-        String[] conf = {};
+        LinkedHashSet<String> conf = new LinkedHashSet<>();
+        File file = new File(System.getProperty("java.home"));
+        try {
+            file = file.getCanonicalFile();
+        } catch (IOException ex) {
+            //
+        }
+
+        List<Future<NutsSdkLocation[]>> all = new ArrayList<>();
+        NutsSdkLocation base = resolveJdkLocation(file.getPath(), null, session);
+        if (base != null) {
+            all.add(CompletableFuture.completedFuture(new NutsSdkLocation[]{base}));
+        }
         switch (session.getWorkspace().env().getOsFamily()) {
             case LINUX:
             case UNIX:
             case UNKNOWN: {
-                conf = new String[]{"/usr/java", "/usr/lib64/jvm", "/usr/lib/jvm"};
+                conf.addAll(Arrays.asList("/usr/java", "/usr/lib64/jvm", "/usr/lib/jvm"));
                 break;
             }
             case WINDOWS: {
-                conf = new String[]{CoreStringUtils.coalesce(System.getenv("ProgramFiles"), "C:\\Program Files") + "\\Java", CoreStringUtils.coalesce(System.getenv("ProgramFiles(x86)"), "C:\\Program Files (x86)") + "\\Java"};
+                conf.addAll(Arrays.asList(
+                        NutsUtilPlatforms.getWindowsProgramFiles()+"\\Java",
+                        NutsUtilPlatforms.getWindowsProgramFilesX86()+"\\Java"
+                ));
                 break;
             }
             case MACOS: {
-                conf = new String[]{"/Library/Java/JavaVirtualMachines", "/System/Library/Frameworks/JavaVM.framework"};
+                conf.addAll(Arrays.asList("/Library/Java/JavaVirtualMachines", "/System/Library/Frameworks/JavaVM.framework"));
                 break;
             }
         }
-        List<Future<NutsSdkLocation[]>> all = new ArrayList<>();
         for (String s : conf) {
             all.add(searchJdkLocationsFuture(Paths.get(s), session));
         }
@@ -317,7 +337,7 @@ public class NutsJavaSdkUtils {
                 NutsWorkspaceUtils.of(session).createSdkId("java", jdkVersion),
                 product,
                 preferredName,
-                path.toString(),
+                path,
                 jdkVersion,
                 packaging,
                 0

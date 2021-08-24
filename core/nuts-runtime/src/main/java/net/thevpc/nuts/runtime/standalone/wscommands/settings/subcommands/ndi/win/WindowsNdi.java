@@ -24,28 +24,28 @@ public class WindowsNdi extends BaseSystemNdi {
         return null;
     }
 
-    @Override
-    public NdiScriptInfo getNutsTerm(NdiScriptOptions options) {
-        return new NdiScriptInfo() {
-            @Override
-            public Path path() {
-                return options.resolveBinFolder().resolve(getExecFileName("nuts-term"));
-            }
-
-            @Override
-            public PathInfo create() {
-                Path apiConfigFile = path();
-                return addFileLine(PathInfoType.NUTS_TERM,
-                        options.resolveNutsApiId(),
-                        apiConfigFile, getCommentLineConfigHeader(),
-                        "@ECHO OFF" + newlineString() +
-                                createNutsEnvString(options, true, true) + newlineString()
-                                + "cmd.exe /K " + getExecFileName("nuts") + " welcome " + newlineString()
-                        ,
-                        getShebanSh());
-            }
-        };
-    }
+//    @Override
+//    public NdiScriptInfo getNutsTerm(NdiScriptOptions options) {
+//        return new NdiScriptInfo() {
+//            @Override
+//            public Path path() {
+//                return options.resolveBinFolder().resolve(getExecFileName("nuts-term"));
+//            }
+//
+//            @Override
+//            public PathInfo create() {
+//                Path apiConfigFile = path();
+//                return addFileLine(PathInfoType.NUTS_TERM,
+//                        options.resolveNutsApiId(),
+//                        apiConfigFile, getCommentLineConfigHeader(),
+//                        "@ECHO OFF" + newlineString() +
+//                                createNutsEnvString(options, true, true) + newlineString()
+//                                + "cmd.exe /K " + getExecFileName("nuts") + " welcome " + newlineString()
+//                        ,
+//                        getShebanSh());
+//            }
+//        };
+//    }
 
     @Override
     public boolean isComments(String line) {

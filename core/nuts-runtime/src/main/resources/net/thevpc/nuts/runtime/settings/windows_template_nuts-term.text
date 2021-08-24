@@ -9,6 +9,19 @@
 :: START-COMMAND
 @ECHO OFF
 
+CALL $$SCRIPT_NUTS_INIT$$
+
 cmd.exe /K $$SCRIPT_NUTS_TERM_INIT$$
+
+:: If you are using ConEmu uncomment this line
+:: if [%NUTS_SYS_TERM_START%] == [] SET "NUTS_SYS_TERM_START=C:\Path\To\ConEmu\ConEmu64.exe  -run cmd /K"
+
+:: If you are using Console uncomment this line
+:: if [%NUTS_SYS_TERM_START%] == [] SET "NUTS_SYS_TERM_START=C:\Path\To\Console\Console.exe /K"
+
+:: If you are using standard cmd.exe
+if [%NUTS_SYS_TERM_START%] == [] SET "NUTS_SYS_TERM_START=cmd.exe /K"
+
+%NUTS_SYS_TERM_START% nuts welcome
 
 :: END-COMMAND

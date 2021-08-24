@@ -203,7 +203,7 @@ final class PrivateNutsBootConfigLoader {
 
             k = folderName502.toLowerCase() + "SystemHome";
             v = (String) jsonObject.get(k);
-            homeLocations.put(PrivateBootWorkspaceOptions.createHomeLocationKey(null, folder), v);
+            homeLocations.put(NutsApiUtils.createHomeLocationKey(null, folder), v);
             for (NutsOsFamily osFamily : NutsOsFamily.values()) {
                 switch (osFamily) {
                     case LINUX: {
@@ -231,7 +231,7 @@ final class PrivateNutsBootConfigLoader {
                     }
                 }
                 v = (String) jsonObject.get(k);
-                homeLocations.put(PrivateBootWorkspaceOptions.createHomeLocationKey(osFamily, folder), v);
+                homeLocations.put(NutsApiUtils.createHomeLocationKey(osFamily, folder), v);
             }
         }
         config.setHomeLocations(homeLocations);

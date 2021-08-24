@@ -5,10 +5,10 @@ import java.io.PrintWriter;
 import java.util.*;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.bundles.common.CorePlatformUtils;
 import net.thevpc.nuts.runtime.core.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.core.format.props.DefaultPropertiesFormat;
 import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
-import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 
 public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> implements NutsTreeFormat {
 
@@ -46,7 +46,7 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
     public DefaultTreeFormat(NutsWorkspace ws) {
         super(ws, "tree-format");
         formatter = TO_STRING_FORMATTER;
-        linkFormatter = CoreNutsUtils.SUPPORTS_UTF_ENCODING ? LINK_UNICODE_FORMATTER : LINK_ASCII_FORMATTER;
+        linkFormatter = CorePlatformUtils.SUPPORTS_UTF_ENCODING ? LINK_UNICODE_FORMATTER : LINK_ASCII_FORMATTER;
     }
 
     public DefaultTreeFormat(NutsWorkspace ws, NutsTreeModel tree) {

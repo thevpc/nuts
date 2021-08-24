@@ -314,7 +314,7 @@ final class PrivateNutsUtils {
     }
 
     public static String resolveJavaCommand(String javaHome) {
-        String exe = PrivateNutsPlatformUtils.getPlatformOsFamily().equals(NutsOsFamily.WINDOWS) ? "java.exe" : "java";
+        String exe = NutsUtilPlatforms.getPlatformOsFamily().equals(NutsOsFamily.WINDOWS) ? "java.exe" : "java";
         if (javaHome == null || javaHome.isEmpty()) {
             javaHome = System.getProperty("java.home");
             if (NutsUtilStrings.isBlank(javaHome) || "null".equals(javaHome)) {

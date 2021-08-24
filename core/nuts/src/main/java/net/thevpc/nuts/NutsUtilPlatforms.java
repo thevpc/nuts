@@ -24,20 +24,21 @@
  * <br>
  * ====================================================================
  */
-package net.thevpc.nuts.boot;
+package net.thevpc.nuts;
 
-import net.thevpc.nuts.*;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
+import java.io.File;
 import java.util.Locale;
 import java.util.Map;
 
 /**
- *
  * @author thevpc
- * @since 0.5.4
- * @app.category Internal
+ * @app.category Util
+ * @since 0.8.1
  */
-final class PrivateNutsPlatformUtils {
+public final class NutsUtilPlatforms {
 
     public static NutsOsFamily getPlatformOsFamily() {
         String property = System.getProperty("os.name").toLowerCase(Locale.ENGLISH);
@@ -81,11 +82,7 @@ final class PrivateNutsPlatformUtils {
                         return "/opt/nuts/apps/" + workspaceName;
                     }
                     case WINDOWS: {
-                        String pf = System.getenv("ProgramFiles");
-                        if (NutsUtilStrings.isBlank(pf)) {
-                            pf = "C:\\Program Files";
-                        }
-                        return pf + "\\nuts\\" + PrivateNutsUtils.syspath(workspaceName);
+                        return getWindowsProgramFiles() + "\\nuts\\" + syspath(workspaceName);
                     }
                 }
                 break;
@@ -99,11 +96,7 @@ final class PrivateNutsPlatformUtils {
                         return "/opt/nuts/lib/" + workspaceName;
                     }
                     case WINDOWS: {
-                        String pf = System.getenv("ProgramFiles");
-                        if (NutsUtilStrings.isBlank(pf)) {
-                            pf = "C:\\Program Files";
-                        }
-                        return pf + "\\nuts\\" + PrivateNutsUtils.syspath(workspaceName);
+                        return getWindowsProgramFiles() + "\\nuts\\" + syspath(workspaceName);
                     }
                 }
                 break;
@@ -117,11 +110,7 @@ final class PrivateNutsPlatformUtils {
                         return "/etc/opt/nuts/" + workspaceName;
                     }
                     case WINDOWS: {
-                        String pf = System.getenv("ProgramFiles");
-                        if (NutsUtilStrings.isBlank(pf)) {
-                            pf = "C:\\Program Files";
-                        }
-                        return pf + "\\nuts" + PrivateNutsUtils.syspath(workspaceName);
+                        return getWindowsProgramFiles() + "\\nuts" + syspath(workspaceName);
                     }
                 }
                 break;
@@ -135,11 +124,7 @@ final class PrivateNutsPlatformUtils {
                         return "/var/log/nuts/" + workspaceName;
                     }
                     case WINDOWS: {
-                        String pf = System.getenv("ProgramFiles");
-                        if (NutsUtilStrings.isBlank(pf)) {
-                            pf = "C:\\Program Files";
-                        }
-                        return pf + "\\nuts" + PrivateNutsUtils.syspath(workspaceName);
+                        return getWindowsProgramFiles() + "\\nuts" + syspath(workspaceName);
                     }
                 }
                 break;
@@ -153,11 +138,7 @@ final class PrivateNutsPlatformUtils {
                         return "/var/cache/nuts/" + workspaceName;
                     }
                     case WINDOWS: {
-                        String pf = System.getenv("ProgramFiles");
-                        if (NutsUtilStrings.isBlank(pf)) {
-                            pf = "C:\\Program Files";
-                        }
-                        return pf + "\\nuts" + PrivateNutsUtils.syspath(workspaceName);
+                        return getWindowsProgramFiles() + "\\nuts" + syspath(workspaceName);
                     }
                 }
                 break;
@@ -171,11 +152,7 @@ final class PrivateNutsPlatformUtils {
                         return "/var/opt/nuts/" + workspaceName;
                     }
                     case WINDOWS: {
-                        String pf = System.getenv("ProgramFiles");
-                        if (NutsUtilStrings.isBlank(pf)) {
-                            pf = "C:\\Program Files";
-                        }
-                        return pf + "\\nuts" + PrivateNutsUtils.syspath(workspaceName);
+                        return getWindowsProgramFiles() + "\\nuts" + syspath(workspaceName);
                     }
                 }
                 break;
@@ -191,9 +168,9 @@ final class PrivateNutsPlatformUtils {
                     case WINDOWS: {
                         String pf = System.getenv("TMP");
                         if (NutsUtilStrings.isBlank(pf)) {
-                            pf = "C:\\windows\\TEMP";
+                            pf = getWindowsSystemRoot() + "\\TEMP";
                         }
-                        return pf + "\\nuts" + PrivateNutsUtils.syspath(workspaceName);
+                        return pf + "\\nuts" + syspath(workspaceName);
                     }
                 }
                 break;
@@ -209,9 +186,9 @@ final class PrivateNutsPlatformUtils {
                     case WINDOWS: {
                         String pf = System.getenv("TMP");
                         if (NutsUtilStrings.isBlank(pf)) {
-                            pf = "C:\\windows\\TEMP";
+                            pf = getWindowsSystemRoot() + "\\TEMP";
                         }
-                        return pf + "\\nuts\\run" + PrivateNutsUtils.syspath(workspaceName);
+                        return pf + "\\nuts\\run" + syspath(workspaceName);
                     }
                 }
                 break;
@@ -227,11 +204,11 @@ final class PrivateNutsPlatformUtils {
      * Specifications: XDG Base Directory Specification
      * (https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html)
      *
-     * @param location folder type to resolve home for
+     * @param location         folder type to resolve home for
      * @param platformOsFamily location layout to resolve home for
-     * @param homeLocations workspace home locations
-     * @param global global workspace
-     * @param workspaceName workspace name or id (discriminator)
+     * @param homeLocations    workspace home locations
+     * @param global           global workspace
+     * @param workspaceName    workspace name or id (discriminator)
      * @return home folder path
      */
     public static String getPlatformHomeFolder(
@@ -249,7 +226,7 @@ final class PrivateNutsPlatformUtils {
         }
         boolean wasSystem = false;
         if (platformOsFamily == null) {
-            platformOsFamily = PrivateNutsPlatformUtils.getPlatformOsFamily();
+            platformOsFamily = NutsUtilPlatforms.getPlatformOsFamily();
         }
         String s = null;
         String locationName = location.id();
@@ -261,12 +238,12 @@ final class PrivateNutsPlatformUtils {
         if (!s.isEmpty()) {
             return s.trim() + "/" + workspaceName;
         }
-        String key = PrivateBootWorkspaceOptions.createHomeLocationKey(platformOsFamily, location);
+        String key = NutsApiUtils.createHomeLocationKey(platformOsFamily, location);
         s = homeLocations == null ? "" : NutsUtilStrings.trim(homeLocations.get(key));
         if (!s.isEmpty()) {
             return s.trim() + "/" + workspaceName;
         }
-        key = PrivateBootWorkspaceOptions.createHomeLocationKey(null, location);
+        key = NutsApiUtils.createHomeLocationKey(null, location);
         s = homeLocations == null ? "" : NutsUtilStrings.trim(homeLocations.get(key));
         if (!s.isEmpty()) {
             return s.trim() + "/" + workspaceName;
@@ -279,7 +256,7 @@ final class PrivateNutsPlatformUtils {
                 case LIB: {
                     switch (platformOsFamily) {
                         case WINDOWS: {
-                            return System.getProperty("user.home") + PrivateNutsUtils.syspath("/AppData/Roaming/nuts/" + locationName + "/" + workspaceName);
+                            return System.getProperty("user.home") + syspath("/AppData/Roaming/nuts/" + locationName + "/" + workspaceName);
                         }
                         case MACOS:
                         case LINUX: {
@@ -295,7 +272,7 @@ final class PrivateNutsPlatformUtils {
                 case LOG: {
                     switch (platformOsFamily) {
                         case WINDOWS: {
-                            return System.getProperty("user.home") + PrivateNutsUtils.syspath("/AppData/LocalLow/nuts/" + locationName + "/" + workspaceName);
+                            return System.getProperty("user.home") + syspath("/AppData/LocalLow/nuts/" + locationName + "/" + workspaceName);
                         }
                         case MACOS:
                         case LINUX: {
@@ -311,7 +288,7 @@ final class PrivateNutsPlatformUtils {
                 case RUN: {
                     switch (platformOsFamily) {
                         case WINDOWS: {
-                            return System.getProperty("user.home") + PrivateNutsUtils.syspath("/AppData/Local/nuts/" + locationName + "/" + workspaceName);
+                            return System.getProperty("user.home") + syspath("/AppData/Local/nuts/" + locationName + "/" + workspaceName);
                         }
                         case MACOS:
                         case LINUX: {
@@ -327,7 +304,7 @@ final class PrivateNutsPlatformUtils {
                 case CONFIG: {
                     switch (platformOsFamily) {
                         case WINDOWS: {
-                            return System.getProperty("user.home") + PrivateNutsUtils.syspath("/AppData/Roaming/nuts/" + locationName + "/" + workspaceName
+                            return System.getProperty("user.home") + syspath("/AppData/Roaming/nuts/" + locationName + "/" + workspaceName
                                     + (folderType0 == null ? "" : "/config")
                             );
                         }
@@ -345,7 +322,7 @@ final class PrivateNutsPlatformUtils {
                 case CACHE: {
                     switch (platformOsFamily) {
                         case WINDOWS: {
-                            return System.getProperty("user.home") + PrivateNutsUtils.syspath("/AppData/Local/nuts/cache/" + workspaceName);
+                            return System.getProperty("user.home") + syspath("/AppData/Local/nuts/cache/" + workspaceName);
                         }
                         case MACOS:
                         case LINUX: {
@@ -361,11 +338,11 @@ final class PrivateNutsPlatformUtils {
                 case TEMP: {
                     switch (platformOsFamily) {
                         case WINDOWS:
-                            return System.getProperty("user.home") + PrivateNutsUtils.syspath("/AppData/Local/nuts/log/" + workspaceName);
+                            return System.getProperty("user.home") + syspath("/AppData/Local/nuts/log/" + workspaceName);
                         case MACOS:
                         case LINUX:
                             //on macos/unix/linux temp folder is shared. will add user folder as discriminator
-                            return System.getProperty("java.io.tmpdir") + PrivateNutsUtils.syspath("/" + System.getProperty("user.name") + "/nuts" + "/" + workspaceName);
+                            return System.getProperty("java.io.tmpdir") + syspath("/" + System.getProperty("user.name") + "/nuts" + "/" + workspaceName);
                     }
                 }
             }
@@ -375,4 +352,65 @@ final class PrivateNutsPlatformUtils {
         );
     }
 
+    public static String getWindowsProgramFiles() {
+        String s = System.getenv("ProgramFiles");
+        if (!NutsUtilStrings.isBlank(s)) {
+            return s;
+        }
+        String c = getWindowsSystemDrive();
+        if (!NutsUtilStrings.isBlank(c)) {
+            return c + "\\Program Files";
+        }
+        return "C:\\Program Files";
+    }
+
+    public static String getWindowsProgramFilesX86() {
+        String s = System.getenv("ProgramFiles(x86)");
+        if (!NutsUtilStrings.isBlank(s)) {
+            return s;
+        }
+        String c = getWindowsSystemDrive();
+        if (!NutsUtilStrings.isBlank(c)) {
+            return c + "\\Program Files (x86)";
+        }
+        return "C:\\Program Files (x86)";
+    }
+
+
+    public static String getWindowsSystemRoot() {
+        String e;
+        e = System.getenv("SystemRoot");
+        if (!NutsUtilStrings.isBlank(e)) {
+            return e;
+        }
+        e = System.getenv("windir");
+        if (!NutsUtilStrings.isBlank(e)) {
+            return e;
+        }
+        e = System.getenv("SystemDrive");
+        if (!NutsUtilStrings.isBlank(e)) {
+            return e + "\\Windows";
+        }
+        return "C:\\Windows";
+    }
+
+    public static String getWindowsSystemDrive() {
+        String e = System.getenv("SystemDrive");
+        if (!NutsUtilStrings.isBlank(e)) {
+            return e;
+        }
+        e = System.getenv("SystemRoot");
+        if (!NutsUtilStrings.isBlank(e)) {
+            return e.substring(0, 2);
+        }
+        e = System.getenv("windir");
+        if (!NutsUtilStrings.isBlank(e)) {
+            return e.substring(0, 2);
+        }
+        return null;
+    }
+
+    private static String syspath(String s) {
+        return s.replace('/', File.separatorChar);
+    }
 }

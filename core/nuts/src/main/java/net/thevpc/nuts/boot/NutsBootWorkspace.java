@@ -261,7 +261,7 @@ public final class NutsBootWorkspace {
                 //this is a protocol based workspace
                 //String protocol=ws.substring(0,ws.indexOf("://"));
                 workspaceName = "remote-bootstrap";
-                lastConfigPath = PrivateNutsPlatformUtils.getPlatformHomeFolder(null, null, null,
+                lastConfigPath = NutsUtilPlatforms.getPlatformHomeFolder(null, null, null,
                         workspaceInformation.isGlobal(),
                         PrivateNutsUtils.resolveValidWorkspaceName(workspaceName));
                 lastConfigLoaded = PrivateNutsBootConfigLoader.loadBootConfig(lastConfigPath, LOG);
@@ -273,7 +273,7 @@ public final class NutsBootWorkspace {
                 for (int i = 0; i < maxDepth; i++) {
                     lastConfigPath
                             = PrivateNutsUtils.isValidWorkspaceName(_ws)
-                            ? PrivateNutsPlatformUtils.getPlatformHomeFolder(
+                            ? NutsUtilPlatforms.getPlatformHomeFolder(
                             null, null, null,
                             workspaceInformation.isGlobal(),
                             PrivateNutsUtils.resolveValidWorkspaceName(_ws)
@@ -300,7 +300,13 @@ public final class NutsBootWorkspace {
                 workspaceInformation.setWorkspaceLocation(lastConfigPath);
                 workspaceInformation.setName(lastConfigLoaded.getName());
                 workspaceInformation.setUuid(lastConfigLoaded.getUuid());
-                workspaceInformation.setBootRepositories(lastConfigLoaded.getBootRepositories());
+                if (!options.isReset()) {
+                    workspaceInformation.setBootRepositories(lastConfigLoaded.getBootRepositories());
+                    workspaceInformation.setJavaCommand(lastConfigLoaded.getJavaCommand());
+                    workspaceInformation.setJavaOptions(lastConfigLoaded.getJavaOptions());
+                    workspaceInformation.setExtensionsSet(lastConfigLoaded.getExtensionsSet()==null?new LinkedHashSet<>()
+                            :new LinkedHashSet<>(lastConfigLoaded.getExtensionsSet()));
+                }
                 workspaceInformation.setStoreLocationStrategy(lastConfigLoaded.getStoreLocationStrategy());
                 workspaceInformation.setRepositoryStoreLocationStrategy(lastConfigLoaded.getRepositoryStoreLocationStrategy());
                 workspaceInformation.setStoreLocationLayout(lastConfigLoaded.getStoreLocationLayout());
@@ -320,7 +326,7 @@ public final class NutsBootWorkspace {
             String workspace = workspaceInformation.getWorkspaceLocation();
             String[] homes = new String[NutsStoreLocation.values().length];
             for (NutsStoreLocation type : NutsStoreLocation.values()) {
-                homes[type.ordinal()] = PrivateNutsPlatformUtils.getPlatformHomeFolder(workspaceInformation.getStoreLocationLayout(), type, homeLocations,
+                homes[type.ordinal()] = NutsUtilPlatforms.getPlatformHomeFolder(workspaceInformation.getStoreLocationLayout(), type, homeLocations,
                         workspaceInformation.isGlobal(), workspaceInformation.getName());
                 if (NutsUtilStrings.isBlank(homes[type.ordinal()])) {
                     throw new NutsBootException(NutsMessage.cstyle("missing Home for %s", type.id()));
@@ -447,7 +453,9 @@ public final class NutsBootWorkspace {
                 }
             }
             if (!loadedApiConfig || workspaceInformation.getRuntimeId() == null
-                    || workspaceInformation.getRuntimeBootDescriptor() == null || workspaceInformation.getExtensionBootDescriptors() == null || workspaceInformation.getBootRepositories() == null) {
+                    || workspaceInformation.getRuntimeBootDescriptor() == null
+                    || workspaceInformation.getExtensionBootDescriptors() == null
+                    || workspaceInformation.getBootRepositories() == null) {
 
                 //resolve extension id
                 if (workspaceInformation.getRuntimeId() == null) {
@@ -925,7 +933,7 @@ public final class NutsBootWorkspace {
     }
 
     protected String getHome(NutsStoreLocation storeFolder) {
-        return PrivateNutsPlatformUtils.getPlatformHomeFolder(
+        return NutsUtilPlatforms.getPlatformHomeFolder(
                 workspaceInformation.getStoreLocationLayout(),
                 storeFolder,
                 workspaceInformation.getHomeLocations(),
@@ -1525,7 +1533,7 @@ public final class NutsBootWorkspace {
             return true;
         }
         if (!os.isEmpty()) {
-            NutsOsFamily eos = PrivateNutsPlatformUtils.getPlatformOsFamily();
+            NutsOsFamily eos = NutsUtilPlatforms.getPlatformOsFamily();
             boolean osOk = false;
             for (NutsBootId e : NutsBootId.parseAll(os)) {
                 if (e.getShortName().equalsIgnoreCase(eos.id())) {

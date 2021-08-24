@@ -36,12 +36,12 @@ public class NutsTextFormatPropertiesTheme implements NutsTextFormatTheme {
                     }
                 }
                 if (u == null) {
-                    throw new IllegalArgumentException("invalid theme: " + name);
+                    throw new NutsIllegalArgumentException(session,NutsMessage.cstyle("invalid theme: %s",name));
                 }
                 try {
                     props.load(u.openStream());
                 } catch (IOException e) {
-                    throw new UncheckedIOException(e);
+                    throw new NutsIllegalArgumentException(session,NutsMessage.cstyle("invalid theme: %s",name),e);
                 }
             }
             if (CoreIOUtils.isURL(name)) {
@@ -50,7 +50,7 @@ public class NutsTextFormatPropertiesTheme implements NutsTextFormatTheme {
                     InputStream inStream = null;
                     inStream = uu.openStream();
                     if (inStream == null) {
-                        throw new IllegalArgumentException("invalid theme: " + name);
+                        throw new NutsIllegalArgumentException(session,NutsMessage.cstyle("invalid theme: %s",name));
                     }
                     try {
                         props.load(inStream);
@@ -77,7 +77,7 @@ public class NutsTextFormatPropertiesTheme implements NutsTextFormatTheme {
                     InputStream inStream = null;
                     inStream = u.openStream();
                     if (inStream == null) {
-                        throw new IllegalArgumentException("invalid theme: " + name);
+                        throw new NutsIllegalArgumentException(session,NutsMessage.cstyle("invalid theme: %s",name));
                     }
                     try {
                         props.load(inStream);
@@ -96,7 +96,7 @@ public class NutsTextFormatPropertiesTheme implements NutsTextFormatTheme {
                     try (InputStream inStream = Files.newInputStream(themeFile)) {
                         props.load(inStream);
                     } catch (IOException e) {
-                        throw new UncheckedIOException(e);
+                        throw new NutsIllegalArgumentException(session,NutsMessage.cstyle("invalid theme: %s",name),e);
                     }
                 } else {
                     throw new NutsIllegalArgumentException(session,NutsMessage.cstyle("invalid theme: %s",name));
