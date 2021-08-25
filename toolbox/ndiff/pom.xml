@@ -7,6 +7,7 @@
     <version>0.8.1.0</version>
     <packaging>jar</packaging>
     <name>net.thevpc.nuts.toolbox.ndiff</name>
+    <url>https://github.com/thevpc/nuts</url>
     <description>Nuts Difff Search Command</description>
     <scm>
         <connection>scm:git:git://github.com/thevpc/nuts.git</connection>
@@ -59,7 +60,12 @@
             <version>0.8.1</version>
         </dependency>
     </dependencies>
-
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
     <build>
         <plugins>
             <plugin>
@@ -174,6 +180,8 @@
                 <configuration>
                     <showDeprecation>true</showDeprecation>
                     <debug>true</debug>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
                 </configuration>
             </plugin>
         </plugins>
