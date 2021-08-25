@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.thevpc.nuts.toolbox</groupId>
     <artifactId>ntomcat</artifactId>
-    <version>0.8.1.0</version>
+    <version>0.8.2.0</version>
     <packaging>jar</packaging>
     <name>net.thevpc.nuts.toolbox.ntomcat</name>
     <url>https://github.com/thevpc/nuts</url>
@@ -57,12 +57,12 @@
         <dependency>
             <groupId>net.thevpc.nuts</groupId>
             <artifactId>nuts</artifactId>
-            <version>0.8.1</version>
+            <version>0.8.2</version>
         </dependency>
         <dependency>
             <groupId>net.thevpc.nuts.lib</groupId>
             <artifactId>nlib-ssh</artifactId>
-            <version>0.8.1.0</version>
+            <version>0.8.2.0</version>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>

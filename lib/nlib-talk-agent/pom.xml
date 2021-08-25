@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.thevpc.nuts.lib</groupId>
     <artifactId>nlib-talk-agent</artifactId>
-    <version>0.8.1.0</version>
+    <version>0.8.2.0</version>
     <packaging>jar</packaging>
     <name>net.thevpc.nuts.lib.nlib-talk-agent</name>
     <url>https://github.com/thevpc/nuts</url>

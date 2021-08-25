@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.thevpc.nuts</groupId>
     <artifactId>nuts-runtime-test</artifactId>
-    <version>0.8.1.0</version><!--published 0.8.0.0-->
+    <version>0.8.2.0</version><!--published 0.8.0.0-->
     <packaging>jar</packaging>
     <name>net.thevpc.nuts.nuts-runtime</name>
     <url>https://github.com/thevpc/nuts</url>
@@ -64,12 +64,12 @@
         <dependency>
             <groupId>net.thevpc.nuts</groupId>
             <artifactId>nuts</artifactId>
-            <version>0.8.1</version>
+            <version>0.8.2</version>
         </dependency>
         <dependency>
             <groupId>net.thevpc.nuts</groupId>
             <artifactId>nuts-runtime</artifactId>
-            <version>0.8.1.0</version>
+            <version>0.8.2.0</version>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
