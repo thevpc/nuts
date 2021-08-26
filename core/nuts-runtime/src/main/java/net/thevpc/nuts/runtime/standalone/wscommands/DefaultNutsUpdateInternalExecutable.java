@@ -21,10 +21,10 @@ public class DefaultNutsUpdateInternalExecutable extends DefaultInternalNutsExec
 
     @Override
     public void execute() {
-        if (CoreNutsUtils.isIncludesHelpOption(args)) {
-            showDefaultHelp();
-            return;
-        }
+//        if (CoreNutsUtils.isIncludesHelpOption(args)) {
+//            showDefaultHelp();
+//            return;
+//        }
         getSession().getWorkspace().update().setSession(getSession()
 //                .setConfirm(NutsConfirmationMode.ASK)
 //                .setTrace(true)

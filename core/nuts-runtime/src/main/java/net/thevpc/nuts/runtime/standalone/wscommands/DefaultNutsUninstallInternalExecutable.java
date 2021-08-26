@@ -20,10 +20,10 @@ public class DefaultNutsUninstallInternalExecutable extends DefaultInternalNutsE
 
     @Override
     public void execute() {
-        if (CoreNutsUtils.isIncludesHelpOption(args)) {
-            showDefaultHelp();
-            return;
-        }
+//        if (CoreNutsUtils.isIncludesHelpOption(args)) {
+//            showDefaultHelp();
+//            return;
+//        }
         getSession().getWorkspace().uninstall().setSession(getSession().setTrace(true)).configure(false, args).run();
     }
 

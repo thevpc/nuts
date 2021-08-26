@@ -7,8 +7,7 @@ package net.thevpc.nuts.runtime.standalone.wscommands;
 
 import java.io.PrintStream;
 
-import net.thevpc.nuts.NutsPrintStream;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 
 /**
@@ -26,10 +25,11 @@ public class DefaultNutsVersionInternalExecutable extends DefaultInternalNutsExe
 
     @Override
     public void execute() {
-        if (CoreNutsUtils.isIncludesHelpOption(args)) {
-            showDefaultHelp();
-            return;
-        }
+//        if (CoreNutsUtils.isIncludesHelpOption(args)) {
+//            showDefaultHelp();
+//            return;
+//        }
+        NutsWorkspace ws = getSession().getWorkspace();
         NutsPrintStream out = getSession().out();
         getSession().getWorkspace().version().formatter().configure(false, args).println(out);
     }

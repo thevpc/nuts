@@ -20,10 +20,10 @@ public class DefaultNutsUndeployInternalExecutable extends DefaultInternalNutsEx
 
     @Override
     public void execute() {
-        if (CoreNutsUtils.isIncludesHelpOption(args)) {
-            showDefaultHelp();
-            return;
-        }
+//        if (CoreNutsUtils.isIncludesHelpOption(args)) {
+//            showDefaultHelp();
+//            return;
+//        }
         getSession().getWorkspace().undeploy().setSession(getSession().setTrace(true)).configure(false, args).run();
     }
 

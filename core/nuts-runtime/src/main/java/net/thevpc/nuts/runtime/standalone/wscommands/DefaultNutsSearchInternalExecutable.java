@@ -20,10 +20,10 @@ public class DefaultNutsSearchInternalExecutable extends DefaultInternalNutsExec
 
     @Override
     public void execute() {
-        if (CoreNutsUtils.isIncludesHelpOption(args)) {
-            showDefaultHelp();
-            return;
-        }
+//        if (CoreNutsUtils.isIncludesHelpOption(args)) {
+//            showDefaultHelp();
+//            return;
+//        }
         getSession().getWorkspace().search().setSession(getSession()).setPrintResult(true)
                 .configure(false, args).run();
     }

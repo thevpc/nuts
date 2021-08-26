@@ -67,4 +67,9 @@ public abstract class DefaultInternalNutsExecutableCommand extends AbstractNutsE
                 );
     }
 
+    @Override
+    public String toString() {
+        return getName()+" "+ NutsCommandLine.of(args,getSession()).toString();
+    }
+
 }

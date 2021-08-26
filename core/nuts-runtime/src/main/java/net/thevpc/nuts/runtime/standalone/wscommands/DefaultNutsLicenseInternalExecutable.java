@@ -5,7 +5,10 @@
  */
 package net.thevpc.nuts.runtime.standalone.wscommands;
 
+import net.thevpc.nuts.NutsArgument;
+import net.thevpc.nuts.NutsCommandLine;
 import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 
@@ -24,6 +27,25 @@ public class DefaultNutsLicenseInternalExecutable extends DefaultInternalNutsExe
         if (CoreNutsUtils.isIncludesHelpOption(args)) {
             showDefaultHelp();
             return;
+        }
+        NutsWorkspace ws = getSession().getWorkspace();
+        NutsCommandLine commandLine = ws.commandLine().create(args);
+        while (commandLine.hasNext()) {
+            NutsArgument a = commandLine.peek();
+            if (a.isOption()) {
+                switch (a.getStringKey()) {
+                    case "--help": {
+                        commandLine.skipAll();
+                        showDefaultHelp();
+                        return;
+                    }
+                    default: {
+                        getSession().configureLast(commandLine);
+                    }
+                }
+            } else {
+                getSession().configureLast(commandLine);
+            }
         }
         getSession().out().println(NutsWorkspaceExt.of(getSession().getWorkspace()).getLicenseText(getSession()));
     }

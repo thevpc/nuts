@@ -55,7 +55,7 @@ public class DefaultNutsHelpInternalExecutable extends DefaultInternalNutsExecut
                             break;
                         }
                         default: {
-                            cmdLine.unexpectedArgument();
+                            getSession().configureLast(cmdLine);
                         }
                     }
                 } else {

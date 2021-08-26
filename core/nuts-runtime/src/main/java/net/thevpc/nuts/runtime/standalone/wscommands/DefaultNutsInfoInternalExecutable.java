@@ -23,10 +23,10 @@ public class DefaultNutsInfoInternalExecutable extends DefaultInternalNutsExecut
 
     @Override
     public void execute() {
-        if (CoreNutsUtils.isIncludesHelpOption(args)) {
-            showDefaultHelp();
-            return;
-        }
+//        if (CoreNutsUtils.isIncludesHelpOption(args)) {
+//            showDefaultHelp();
+//            return;
+//        }
         NutsPrintStream out = getSession().out();
         getSession().getWorkspace().info().configure(false, args).println(out);
     }

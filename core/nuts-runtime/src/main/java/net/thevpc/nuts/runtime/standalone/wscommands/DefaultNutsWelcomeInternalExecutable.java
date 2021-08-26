@@ -5,13 +5,11 @@
  */
 package net.thevpc.nuts.runtime.standalone.wscommands;
 
-import net.thevpc.nuts.NutsContentType;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsTextStyle;
-import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -32,6 +30,25 @@ public class DefaultNutsWelcomeInternalExecutable extends DefaultInternalNutsExe
         }
         NutsSession session = getSession();
         NutsWorkspace ws = session.getWorkspace();
+        NutsCommandLine commandLine = ws.commandLine().create(args);
+        while (commandLine.hasNext()) {
+            NutsArgument a = commandLine.peek();
+            if (a.isOption()) {
+                switch (a.getStringKey()) {
+                    case "--help": {
+                        commandLine.skipAll();
+                        showDefaultHelp();
+                        return;
+                    }
+                    default: {
+                        getSession().configureLast(commandLine);
+                    }
+                }
+            } else {
+                getSession().configureLast(commandLine);
+            }
+        }
+
         if (!session.isBot() && session.isPlainOut()) {
             session.out().resetLine().println(NutsWorkspaceExt.of(ws).getWelcomeText(session));
         } else {

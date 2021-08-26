@@ -24,19 +24,19 @@ public class DefaultNutsExecInternalExecutable extends DefaultInternalNutsExecut
 
     @Override
     public void execute() {
-        if (CoreNutsUtils.isIncludesHelpOption(args)) {
-            showDefaultHelp();
-            return;
-        }
+//        if (CoreNutsUtils.isIncludesHelpOption(args)) {
+//            showDefaultHelp();
+//            return;
+//        }
         execCommand.copy().setSession(getSession()).clearCommand().configure(false, args).setFailFast(true).run();
     }
 
     @Override
     public void dryExecute() {
-        if (CoreNutsUtils.isIncludesHelpOption(args)) {
-            getSession().out().println("[dry] ==show-help==");
-            return;
-        }
+//        if (CoreNutsUtils.isIncludesHelpOption(args)) {
+//            getSession().out().println("[dry] ==show-help==");
+//            return;
+//        }
         execCommand.copy().setSession(getSession()).clearCommand().configure(false, args).setFailFast(true).setDry(true).run();
     }
 }

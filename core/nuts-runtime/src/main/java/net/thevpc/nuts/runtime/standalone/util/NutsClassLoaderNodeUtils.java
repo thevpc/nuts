@@ -53,9 +53,13 @@ public final class NutsClassLoaderNodeUtils {
     }
 
     private static NutsClassLoaderNode toClassLoaderNode(NutsDependencyTreeNode d, NutsSession session) {
-        URL url = session.getWorkspace().fetch().setId(d.getDependency().toId())
+        NutsContent cc = session.getWorkspace().fetch().setId(d.getDependency().toId())
                 .setSession(session)
-                .getResultContent().getURL();
+                .getResultContent();
+        if (cc == null) {
+            throw new NutsNotFoundException(session, d.getDependency().toId());
+        }
+        URL url = cc.getURL();
         if (url == null) {
             throw new NutsNotFoundException(session, d.getDependency().toId());
         }

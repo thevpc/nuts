@@ -20,10 +20,10 @@ public class DefaultNutsCheckUpdatesInternalExecutable extends DefaultInternalNu
 
     @Override
     public void execute() {
-        if (CoreNutsUtils.isIncludesHelpOption(args)) {
-            showDefaultHelp();
-            return;
-        }
+//        if (CoreNutsUtils.isIncludesHelpOption(args)) {
+//            showDefaultHelp();
+//            return;
+//        }
         getSession().getWorkspace().update().setSession(getSession().setTrace(true)).configure(false, args).checkUpdates();
     }
 

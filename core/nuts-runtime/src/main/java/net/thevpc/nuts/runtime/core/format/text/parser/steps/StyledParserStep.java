@@ -350,7 +350,11 @@ public class StyledParserStep extends ParserStep {
                                 if (name.isEmpty()) {
                                     //ignore
                                 } else {
-                                    name.append(c);
+                                    if(curState==CurState.SHARP2_COL_NAME) {
+                                        curState = CurState.SHARP2_COL_NAME_CONTENT;
+                                    }else {
+                                        curState = CurState.SHARP2_OBRACE_NAME_COL_CONTENT;
+                                    }
                                 }
                             } else {
                                 name.append(c);
@@ -623,7 +627,8 @@ public class StyledParserStep extends ParserStep {
                 if (s != null) {
                     return text.forStyled(a, s);
                 }
-                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unable to resolve style from %s",s));
+                s = parseHelper.parseSimpleNutsTextStyle(name.toString());
+                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unable to resolve style from %s",name.toString()));
             }
         }
         throw new NutsUnsupportedEnumException(session, curState);

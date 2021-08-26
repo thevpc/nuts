@@ -334,20 +334,27 @@ public class ProcessBuilder2 {
                 if (base.redirectErrorStream()) {
                     if (isGrabOutputString()) {
                         throw new NutsExecutionException(session,
-                                NutsMessage.cstyle("execution failed with code %d and message : %s", result, getOutputString())
+                                NutsMessage.cstyle("execution failed with code %d and message : %s. Command was %s", result, getOutputString(),
+                                        session.getWorkspace().commandLine().create(getCommand()))
                                 , result);
                     }
                 } else {
                     if (isGrabErrorString()) {
                         throw new NutsExecutionException(session,
-                                NutsMessage.cstyle("execution failed with code %d and message : %s", result, getOutputString())
+                                NutsMessage.cstyle("execution failed with code %d and message : %s. Command was %s", result, getOutputString(),
+                                        session.getWorkspace().commandLine().create(getCommand()))
                                 , result);
                     }
                     if (isGrabOutputString()) {
-                        throw new NutsExecutionException(session, NutsMessage.cstyle("execution failed with code %d and message : %s", result, getOutputString()), result);
+                        throw new NutsExecutionException(session, NutsMessage.cstyle(
+                                "execution failed with code %d and message : %s. Command was %s", result, getOutputString(),
+                                session.getWorkspace().commandLine().create(getCommand())
+                                ), result);
                     }
                 }
-                throw new NutsExecutionException(session, NutsMessage.cstyle("execution failed with code %d", result), result);
+                throw new NutsExecutionException(session, NutsMessage.cstyle("execution failed with code %d. Command was %s", result,
+                        session.getWorkspace().commandLine().create(getCommand())
+                        ), result);
             }
         }
     }

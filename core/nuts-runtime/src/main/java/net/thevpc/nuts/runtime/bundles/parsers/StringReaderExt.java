@@ -71,6 +71,23 @@ public class StringReaderExt {
         return content.length() - pos > 0;
     }
 
+    public interface CharPosPredicate{
+        boolean test(char c, int pos);
+    }
+
+    public boolean peekChars(int count, CharPosPredicate filter) {
+        if(hasNext(count)){
+            for (int i = 0; i < count; i++) {
+                if(!filter.test(peekChar(i),i)){
+                    return false;
+                }
+            }
+            return true;
+        }else {
+            return false;
+        }
+    }
+
     public boolean peekChars(String s) {
         return peekChars(s.length()).equals(s);
     }

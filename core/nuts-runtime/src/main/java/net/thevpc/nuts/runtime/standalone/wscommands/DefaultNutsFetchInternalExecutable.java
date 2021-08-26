@@ -20,10 +20,10 @@ public class DefaultNutsFetchInternalExecutable extends DefaultInternalNutsExecu
 
     @Override
     public void execute() {
-        if (CoreNutsUtils.isIncludesHelpOption(args)) {
-            showDefaultHelp();
-            return;
-        }
+//        if (CoreNutsUtils.isIncludesHelpOption(args)) {
+//            showDefaultHelp();
+//            return;
+//        }
         getSession().getWorkspace().fetch().setSession(getSession().setTrace(true)).configure(false, args).run();
     }
 

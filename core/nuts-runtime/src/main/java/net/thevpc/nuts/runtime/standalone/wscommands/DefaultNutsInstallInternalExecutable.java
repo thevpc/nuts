@@ -5,8 +5,11 @@
  */
 package net.thevpc.nuts.runtime.standalone.wscommands;
 
+import net.thevpc.nuts.NutsCommandLine;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
+
+import java.util.Arrays;
 
 /**
  *
@@ -20,11 +23,10 @@ public class DefaultNutsInstallInternalExecutable extends DefaultInternalNutsExe
 
     @Override
     public void execute() {
-        if (CoreNutsUtils.isIncludesHelpOption(args)) {
-            showDefaultHelp();
-            return;
-        }
+//        if (CoreNutsUtils.isIncludesHelpOption(args)) {
+//            showDefaultHelp();
+//            return;
+//        }
         getSession().getWorkspace().install().setSession(getSession().setTrace(true)).configure(false, args).run();
     }
-
 }
