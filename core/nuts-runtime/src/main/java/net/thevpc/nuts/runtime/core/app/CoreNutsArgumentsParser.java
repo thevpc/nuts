@@ -26,7 +26,6 @@
 package net.thevpc.nuts.runtime.core.app;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsJavaSdkUtils;
 
@@ -214,8 +213,7 @@ public final class CoreNutsArgumentsParser {
                     }
                     case "-S":
                     case "--standalone":
-                    case "--standalone-workspace":
-                    {
+                    case "--standalone-workspace": {
                         a = cmdLine.nextBoolean();
                         if (enabled && a.getBooleanValue()) {
                             options.setStoreLocationStrategy(NutsStoreLocationStrategy.STANDALONE);
@@ -226,8 +224,7 @@ public final class CoreNutsArgumentsParser {
                     }
                     case "-E":
                     case "--exploded":
-                    case "--exploded-workspace":
-                    {
+                    case "--exploded-workspace": {
                         a = cmdLine.nextBoolean();
                         if (enabled && a.getBooleanValue()) {
                             options.setStoreLocationStrategy(NutsStoreLocationStrategy.EXPLODED);
@@ -836,7 +833,7 @@ public final class CoreNutsArgumentsParser {
                         break;
                     }
                     case "--user-cmd"://deprecated since 0.8.1
-                    case "--system":{
+                    case "--system": {
                         a = cmdLine.nextBoolean();
                         if (enabled && a.getBooleanValue()) {
                             options.setExecutionType(NutsExecutionType.SYSTEM);
@@ -844,24 +841,24 @@ public final class CoreNutsArgumentsParser {
                         break;
                     }
                     case "--root-cmd": //deprecated since 0.8.1
-                    case "--as-root":{
+                    case "--as-root": {
                         a = cmdLine.nextBoolean();
                         if (enabled && a.getBooleanValue()) {
                             options.setRunAs(NutsRunAs.root());
                         }
                         break;
                     }
-                    case "--current-user":{
+                    case "--current-user": {
                         a = cmdLine.nextBoolean();
                         if (enabled && a.getBooleanValue()) {
                             options.setRunAs(NutsRunAs.currentUser());
                         }
                         break;
                     }
-                    case "--run-as":{
+                    case "--run-as": {
                         a = cmdLine.nextString();
                         if (enabled) {
-                            if(NutsUtilStrings.isBlank(a.getStringValue())){
+                            if (NutsUtilStrings.isBlank(a.getStringValue())) {
                                 throw new NutsBootException(NutsMessage.cstyle("missing user name"));
                             }
                             options.setRunAs(NutsRunAs.user(a.getStringValue()));
@@ -935,14 +932,9 @@ public final class CoreNutsArgumentsParser {
                     case "-version":
                     case "-v":
                     case "--version": {
-                        cmdLine.skip();
+                        a = cmdLine.nextBoolean();
                         if (enabled) {
-                            applicationArguments.add("version");
-                            applicationArguments.addAll(Arrays.asList(cmdLine.toStringArray()));
-                            cmdLine.skipAll();
-                        } else {
-                            cmdLine.toStringArray();
-                            cmdLine.skipAll();
+                            options.setCommandVersion(a.isEnabled());
                         }
                         break;
                     }
@@ -974,7 +966,7 @@ public final class CoreNutsArgumentsParser {
                     case "--expire": {
                         a = cmdLine.next();
                         if (enabled) {
-                            if (a.getStringValue() != null) {
+                            if (!NutsUtilStrings.isBlank(a.getStringValue())) {
                                 options.setExpireTime(Instant.parse(a.getStringValue()));
                             } else {
                                 options.setExpireTime(Instant.now());
@@ -1027,11 +1019,7 @@ public final class CoreNutsArgumentsParser {
                     case "-h": {
                         a = cmdLine.nextBoolean();
                         if (enabled && a.getBooleanValue()) {
-                            applicationArguments.add("help");
-                            applicationArguments.addAll(Arrays.asList(cmdLine.toStringArray()));
-                            cmdLine.skipAll();
-                        } else {
-                            cmdLine.skipAll();
+                            options.setCommandHelp(a.getBooleanValue());
                         }
                         break;
                     }
@@ -1096,8 +1084,11 @@ public final class CoreNutsArgumentsParser {
         options.setErrors(showError.toArray(new NutsMessage[0]));
         //error only if not asking for help
         if (!(applicationArguments.size() > 0
-                && (applicationArguments.get(0).equals("help")
-                || applicationArguments.get(0).equals("--help")
+                && (
+                applicationArguments.get(0).equals("help")
+                        || options.isCommandHelp()
+                        ||  applicationArguments.get(0).equals("version")
+                        || options.isCommandVersion()
         )
         )) {
             if (!showError.isEmpty()) {

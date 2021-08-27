@@ -384,7 +384,16 @@ public interface NutsWorkspaceOptions extends Serializable {
      * @return if true, workspace will be reset (all configuration and runtime files deleted).
      */
     boolean isReset();
+
     Boolean getReset();
+
+    boolean isCommandVersion();
+
+    Boolean getCommandVersion();
+
+    boolean isCommandHelp();
+
+    Boolean getCommandHelp();
 
     /**
      * if true, do not install nuts companion tools upon workspace creation.

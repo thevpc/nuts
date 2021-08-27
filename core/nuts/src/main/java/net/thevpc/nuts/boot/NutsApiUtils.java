@@ -50,11 +50,11 @@ public class NutsApiUtils {
     }
 
     public static String resolveNutsVersionFromClassPath() {
-        return PrivateNutsUtils.resolveNutsVersionFromClassPath();
+        return PrivateNutsMavenUtils.resolveNutsApiVersionFromClassPath();
     }
 
     public static String resolveNutsBuildNumber() {
-        return PrivateNutsUtils.resolveNutsBuildNumber();
+        return PrivateNutsMavenUtils.resolveNutsApiBuildNumber();
     }
 
 

@@ -11,8 +11,11 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.time.Instant;
 import java.util.*;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.logging.Level;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @app.category Internal
@@ -82,7 +85,7 @@ public final class PrivateNutsMavenUtils {
         return id.getGroupId().replace('.', '/') + '/' + id.getArtifactId() + '/' + id.getVersion() + "/" + name;
     }
 
-    public static File resolveOrDownloadJar(String nutsId, String[] repositories, String cacheFolder, PrivateNutsLog LOG, boolean includeDesc, Instant expire, PrivateNutsUtils.ErrorInfoList errors) {
+    public static File resolveOrDownloadJar(String nutsId, String[] repositories, String cacheFolder, PrivateNutsLog LOG, boolean includeDesc, Instant expire, PrivateNutsErrorInfoList errors) {
         File cachedJarFile = new File(resolveMavenFullPath(cacheFolder, nutsId, "jar"));
         if (cachedJarFile.isFile()) {
             if (PrivateNutsUtils.isFileAccessible(cachedJarFile.toPath(), expire, LOG)) {
@@ -98,7 +101,7 @@ public final class PrivateNutsMavenUtils {
                 try {
                     PrivateNutsUtils.copy(new URL(path), cachedPomFile, LOG);
                 } catch (Exception ex) {
-                    errors.add(new PrivateNutsUtils.ErrorInfo(nutsId, r, path, "unable to load descriptor", ex));
+                    errors.add(new PrivateNutsErrorInfo(nutsId, r, path, "unable to load descriptor", ex));
                     LOG.log(Level.SEVERE, NutsLogVerb.FAIL, "unable to load descriptor {0} from {1}.\n", new Object[]{nutsId, r});
                     continue;
                 }
@@ -110,7 +113,7 @@ public final class PrivateNutsMavenUtils {
                 errors.removeErrorsFor(nutsId);
                 return cachedJarFile;
             } catch (Exception ex) {
-                errors.add(new PrivateNutsUtils.ErrorInfo(nutsId, r, path, "unable to load binaries", ex));
+                errors.add(new PrivateNutsErrorInfo(nutsId, r, path, "unable to load binaries", ex));
                 LOG.log(Level.SEVERE, NutsLogVerb.FAIL, "unable to load binaries {0} from {1}.\n", new Object[]{nutsId, r});
             }
         }
@@ -469,7 +472,209 @@ public final class PrivateNutsMavenUtils {
         return all;
     }
 
+    static File getBootCacheJar(NutsBootId vid, String[] repositories, String cacheFolder, boolean useCache, String name, Instant expire, PrivateNutsErrorInfoList errorList, PrivateNutsWorkspaceInitInformation workspaceInformation, Function<String, String> pathExpansionConverter, PrivateNutsLog LOG) {
+        File f = getBootCacheFile(vid, getFileName(vid, "jar"), repositories, cacheFolder, useCache, expire, errorList,workspaceInformation, pathExpansionConverter, LOG);
+        if (f == null) {
+            throw new NutsInvalidWorkspaceException(workspaceInformation.getWorkspaceLocation(),
+                    NutsMessage.cstyle("unable to load %s %s from repositories %s", name, vid, Arrays.asList(repositories)));
+        }
+        return f;
+    }
 
+    static File getBootCacheFile(NutsBootId vid, String fileName, String[] repositories, String cacheFolder, boolean useCache, Instant expire, PrivateNutsErrorInfoList errorList, PrivateNutsWorkspaceInitInformation workspaceInformation, Function<String, String> pathExpansionConverter, PrivateNutsLog LOG) {
+        String path = getPathFile(vid, fileName);
+        if (useCache && cacheFolder != null) {
+
+            File f = new File(cacheFolder, path.replace('/', File.separatorChar));
+            if (PrivateNutsUtils.isFileAccessible(f.toPath(), expire, LOG)) {
+                return f;
+            }
+        }
+        for (String repository : repositories) {
+            if (useCache && cacheFolder != null && cacheFolder.equals(repository)) {
+                return null; // I do not remember why I did this!
+            }
+            File file = getBootCacheFile(vid.toString(), path, repository, cacheFolder, useCache, expire, errorList,workspaceInformation,pathExpansionConverter,LOG);
+            if (file != null) {
+                return file;
+            }
+        }
+        return null;
+    }
+
+    private static File getBootCacheFile(String nutsId, String path, String repository, String cacheFolder, boolean useCache, Instant expire, PrivateNutsErrorInfoList errorList, PrivateNutsWorkspaceInitInformation workspaceInformation, Function<String, String> pathExpansionConverter, PrivateNutsLog LOG) {
+        boolean cacheLocalFiles = true;//Boolean.getBoolean("nuts.cache.cache-local-files");
+        repository = PrivateNutsUtils.expandPath(repository, workspaceInformation.getWorkspaceLocation(),pathExpansionConverter);
+        File repositoryFolder = null;
+        if (PrivateNutsUtils.isURL(repository)) {
+            try {
+                repositoryFolder = PrivateNutsUtils.toFile(new URL(repository));
+            } catch (Exception ex) {
+                LOG.log(Level.FINE, "unable to convert url to file : " + repository, ex);
+                //ignore
+            }
+        } else {
+            repositoryFolder = new File(repository);
+        }
+        if (repositoryFolder == null) {
+            if (cacheFolder == null) {
+                return null;
+            }
+            File ok = null;
+            File to = new File(cacheFolder, path);
+            String urlPath = repository;
+            if (!urlPath.endsWith("/")) {
+                urlPath += "/";
+            }
+            urlPath += path;
+            long start = System.currentTimeMillis();
+            try {
+                LOG.log(Level.CONFIG, NutsLogVerb.SUCCESS, "loading  {0}", new Object[]{urlPath});
+                PrivateNutsUtils.copy(new URL(urlPath), to, LOG);
+                errorList.removeErrorsFor(nutsId);
+                long end = System.currentTimeMillis();
+                LOG.log(Level.CONFIG, NutsLogVerb.SUCCESS, "loaded   {0} ({1}ms)", new Object[]{urlPath, end - start});
+                ok = to;
+            } catch (IOException ex) {
+                errorList.add(new PrivateNutsErrorInfo(nutsId, repository, urlPath, "unable to load", ex));
+                long end = System.currentTimeMillis();
+                LOG.log(Level.CONFIG, NutsLogVerb.FAIL, "loaded   {0} ({1}ms)", new Object[]{urlPath, end - start});
+                //not found
+            }
+            return ok;
+        } else {
+            repository = repositoryFolder.getPath();
+        }
+        File repoFolder = PrivateNutsUtils.createFile(PrivateNutsUtils.getHome(NutsStoreLocation.CONFIG,workspaceInformation), repository);
+        File ff = null;
+
+        if (repoFolder.isDirectory()) {
+            File file = new File(repoFolder, path.replace('/', File.separatorChar));
+            if (file.isFile()) {
+                ff = file;
+            } else {
+                LOG.log(Level.CONFIG, NutsLogVerb.FAIL, "locating {0}", new Object[]{file});
+            }
+        } else {
+            File file = new File(repoFolder, path.replace('/', File.separatorChar));
+            LOG.log(Level.CONFIG, NutsLogVerb.FAIL, "locating {0} ; repository is not a valid folder : {1}", new Object[]{file, repoFolder});
+        }
+
+        if (ff != null) {
+            if (cacheFolder != null && cacheLocalFiles) {
+                File to = new File(cacheFolder, path);
+                String toc = PrivateNutsUtils.getAbsolutePath(to.getPath());
+                String ffc = PrivateNutsUtils.getAbsolutePath(ff.getPath());
+                if (ffc.equals(toc)) {
+                    return ff;
+                }
+                try {
+                    if (to.getParentFile() != null) {
+                        to.getParentFile().mkdirs();
+                    }
+                    String ext = "config";
+                    if (ff.getName().endsWith(".jar")) {
+                        ext = "jar";
+                    }
+                    if (to.isFile()) {
+                        PrivateNutsUtils.copy(ff, to, LOG);
+                        LOG.log(Level.CONFIG, NutsLogVerb.CACHE, "recover cached " + ext + " file {0} to {1}", new Object[]{ff, to});
+                    } else {
+                        PrivateNutsUtils.copy(ff, to, LOG);
+                        LOG.log(Level.CONFIG, NutsLogVerb.CACHE, "cached " + ext + " file {0} to {1}", new Object[]{ff, to});
+                    }
+                    return to;
+                } catch (IOException ex) {
+                    errorList.add(new PrivateNutsErrorInfo(nutsId, repository, ff.getPath(), "unable to cache", ex));
+                    LOG.log(Level.CONFIG, NutsLogVerb.FAIL, "error caching file {0} to {1} : {2}", new Object[]{ff, to, ex.toString()});
+                    //not found
+                }
+                return ff;
+
+            }
+            return ff;
+        }
+        return null;
+    }
+
+    public static String resolveNutsApiVersionFromClassPath() {
+        return resolveNutsApiPomPattern("version");
+    }
+
+    public static String resolveNutsApiBuildNumber() {
+        return resolveNutsApiPomPattern("nuts.buildNumber");
+    }
+
+    public static String resolveNutsApiPomPattern(String propName) {
+//        boolean devMode = false;
+        String propValue = null;
+        try {
+            propValue = PrivateNutsUtils.loadURLProperties(
+                    Nuts.class.getResource("/META-INF/maven/net.thevpc.nuts/nuts/pom.properties"),
+                    null, false, new PrivateNutsLog()).getProperty(propName);
+        } catch (Exception ex) {
+            //
+        }
+        if (propValue != null && !propValue.trim().isEmpty() && !propValue.equals("0.0.0")) {
+            return propValue;
+        }
+
+        Pattern pattern = Pattern.compile("<" + propName.replace(".", "[.]") + ">(?<value>([0-9. ]+))</" + propName.replace(".", "[.]") + ">");
+
+        URL pomXml = Nuts.class.getResource("/META-INF/maven/net.thevpc.nuts/nuts/pom.xml");
+        if (pomXml != null) {
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            try (InputStream is = pomXml.openStream()) {
+                PrivateNutsUtils.copy(is, bos, false, false);
+            } catch (Exception ex) {
+                //
+            }
+            Matcher m = pattern.matcher(bos.toString());
+            if (m.find()) {
+                propValue = m.group("value").trim();
+            }
+        }
+        if (propValue != null && !propValue.trim().isEmpty() && !propValue.equals("0.0.0")) {
+            return propValue;
+        }
+
+        //check if we are in dev mode
+        String cp = System.getProperty("java.class.path");
+        for (String p : cp.split(File.pathSeparator)) {
+            File f = new File(p);
+            if (f.isDirectory()) {
+                Matcher m = Pattern.compile("(?<src>.*)[/\\\\]+target[/\\\\]+classes[/\\\\]*")
+                        .matcher(f.getPath().replace('/', File.separatorChar));
+                if (m.find()) {
+                    String src = m.group("src");
+                    if (new File(src, "pom.xml").exists() && new File(src,
+                            "src/main/java/net/thevpc/nuts/Nuts.java".replace('/', File.separatorChar)
+                    ).exists()) {
+//                            devMode = true;
+                        String xml = null;
+                        try {
+                            byte[] bytes = Files.readAllBytes(new File(src, "pom.xml").toPath());
+                            xml = new String(bytes);
+                        } catch (IOException ex) {
+                            //
+                        }
+                        if (xml != null) {
+                            m = pattern.matcher(xml);
+                            if (m.find()) {
+                                propValue = m.group("value").trim();
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if (propValue != null && !propValue.trim().isEmpty() && !propValue.equals("0.0.0")) {
+            return propValue;
+        }
+        return null;
+    }
 
 
     private enum SimpleTomcatDirectoryListParserState {

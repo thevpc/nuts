@@ -53,7 +53,7 @@ final class PrivateNutsArgumentsParser {
      * nuts options
      *
      * @param bootArguments input arguments to parse
-     * @param options options instance to fill
+     * @param options       options instance to fill
      */
     public static void parseNutsArguments(String[] bootArguments, NutsWorkspaceOptionsBuilder options) {
         List<NutsMessage> showError = new ArrayList<>();
@@ -210,8 +210,7 @@ final class PrivateNutsArgumentsParser {
                     }
                     case "-S":
                     case "--standalone":
-                    case "--standalone-workspace":
-                    {
+                    case "--standalone-workspace": {
                         a = cmdLine.nextBoolean();
                         if (enabled && a.getBooleanValue()) {
                             options.setStoreLocationStrategy(NutsStoreLocationStrategy.STANDALONE);
@@ -221,9 +220,8 @@ final class PrivateNutsArgumentsParser {
 
                     }
                     case "-E":
-                    case "--exploded": 
-                    case "--exploded-workspace": 
-                    {
+                    case "--exploded":
+                    case "--exploded-workspace": {
                         a = cmdLine.nextBoolean();
                         if (enabled && a.getBooleanValue()) {
                             options.setStoreLocationStrategy(NutsStoreLocationStrategy.EXPLODED);
@@ -493,7 +491,7 @@ final class PrivateNutsArgumentsParser {
                         break;
                     }
                     case "-B":
-                    case "--bot":{
+                    case "--bot": {
                         a = cmdLine.nextBoolean();
                         if (enabled) {
                             options.setBot(a.getBooleanValue());
@@ -832,7 +830,7 @@ final class PrivateNutsArgumentsParser {
                         break;
                     }
                     case "--user-cmd"://deprecated since 0.8.1
-                    case "--system":{
+                    case "--system": {
                         a = cmdLine.nextBoolean();
                         if (enabled && a.getBooleanValue()) {
                             options.setExecutionType(NutsExecutionType.SYSTEM);
@@ -840,24 +838,24 @@ final class PrivateNutsArgumentsParser {
                         break;
                     }
                     case "--root-cmd": //deprecated since 0.8.1
-                    case "--as-root":{
+                    case "--as-root": {
                         a = cmdLine.nextBoolean();
                         if (enabled && a.getBooleanValue()) {
                             options.setRunAs(NutsRunAs.root());
                         }
                         break;
                     }
-                    case "--current-user":{
+                    case "--current-user": {
                         a = cmdLine.nextBoolean();
                         if (enabled && a.getBooleanValue()) {
                             options.setRunAs(NutsRunAs.currentUser());
                         }
                         break;
                     }
-                    case "--run-as":{
+                    case "--run-as": {
                         a = cmdLine.nextString();
                         if (enabled) {
-                            if(NutsUtilStrings.isBlank(a.getStringValue())){
+                            if (NutsUtilStrings.isBlank(a.getStringValue())) {
                                 throw new NutsBootException(NutsMessage.cstyle("missing user name"));
                             }
                             options.setRunAs(NutsRunAs.user(a.getStringValue()));
@@ -873,7 +871,7 @@ final class PrivateNutsArgumentsParser {
                         }
                         break;
                     }
-                    case "--open-or-error": 
+                    case "--open-or-error":
                     case "--open": {
                         a = cmdLine.nextBoolean();
                         if (enabled && a.getBooleanValue()) {
@@ -881,7 +879,7 @@ final class PrivateNutsArgumentsParser {
                         }
                         break;
                     }
-                    case "--create-or-error": 
+                    case "--create-or-error":
                     case "--create": {
                         a = cmdLine.nextBoolean();
                         if (enabled && a.getBooleanValue()) {
@@ -931,14 +929,9 @@ final class PrivateNutsArgumentsParser {
                     case "-version":
                     case "-v":
                     case "--version": {
-                        cmdLine.skip();
+                        a = cmdLine.nextBoolean();
                         if (enabled) {
-                            applicationArguments.add("version");
-                            applicationArguments.addAll(Arrays.asList(cmdLine.toStringArray()));
-                            cmdLine.skipAll();
-                        } else {
-                            cmdLine.toStringArray();
-                            cmdLine.skipAll();
+                            options.setCommandVersion(a.isEnabled());
                         }
                         break;
                     }
@@ -970,7 +963,7 @@ final class PrivateNutsArgumentsParser {
                     case "--expire": {
                         a = cmdLine.next();
                         if (enabled) {
-                            if (a.getStringValue() != null) {
+                            if (!NutsUtilStrings.isBlank(a.getStringValue())) {
                                 options.setExpireTime(Instant.parse(a.getStringValue()));
                             } else {
                                 options.setExpireTime(Instant.now());
@@ -1022,12 +1015,8 @@ final class PrivateNutsArgumentsParser {
                     case "--help":
                     case "-h": {
                         a = cmdLine.nextBoolean();
-                        if (enabled && a.getBooleanValue()) {
-                            applicationArguments.add("help");
-                            applicationArguments.addAll(Arrays.asList(cmdLine.toStringArray()));
-                            cmdLine.skipAll();
-                        } else {
-                            cmdLine.skipAll();
+                        if (enabled) {
+                            options.setCommandHelp(a.getBooleanValue());
                         }
                         break;
                     }
@@ -1092,9 +1081,12 @@ final class PrivateNutsArgumentsParser {
         options.setErrors(showError.toArray(new NutsMessage[0]));
         //error only if not asking for help
         if (!(applicationArguments.size() > 0
-                && (applicationArguments.get(0).equals("help")
-                || applicationArguments.get(0).equals("--help")
-        )
+                && (
+                        applicationArguments.get(0).equals("help")
+                    || options.isCommandHelp()
+                    ||  applicationArguments.get(0).equals("version")
+                    || options.isCommandVersion()
+                    )
         )) {
             if (!showError.isEmpty()) {
                 StringBuilder errorMessage = new StringBuilder();
@@ -1105,7 +1097,7 @@ final class PrivateNutsArgumentsParser {
                 if (!options.isSkipErrors()) {
                     throw new NutsBootException(NutsMessage.plain(errorMessage.toString()));
                 } else {
-                    System.err.println(errorMessage.toString());
+                    PrivateNutsUtils.err_printf("%s%n",errorMessage.toString());
                 }
             }
         }
@@ -1236,7 +1228,7 @@ final class PrivateNutsArgumentsParser {
             case "EXPLODED":
                 return NutsStoreLocationStrategy.EXPLODED;
         }
-        throw new NutsBootException(NutsMessage.cstyle("unable to parse value for NutsStoreLocationStrategy : %s",s0));
+        throw new NutsBootException(NutsMessage.cstyle("unable to parse value for NutsStoreLocationStrategy : %s", s0));
     }
 
     private static NutsOsFamily parseNutsStoreLocationLayout(String s) {

@@ -230,6 +230,16 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
     /**
      * option-type : runtime (available only for the current workspace instance)
      */
+    private Boolean commandVersion;
+
+    /**
+     * option-type : runtime (available only for the current workspace instance)
+     */
+    private Boolean commandHelp;
+
+    /**
+     * option-type : runtime (available only for the current workspace instance)
+     */
     private Boolean debug;
 
     /**
@@ -392,6 +402,8 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
         this.setExecutorOptions(other.getExecutorOptions());
         this.setRecover(other.getRecover());
         this.setReset(other.getReset());
+        this.setCommandVersion(other.getCommandVersion());
+        this.setCommandHelp(other.getCommandHelp());
         this.setDebug(other.getDebug());
         this.setInherited(other.getInherited());
         this.setExecutionType(other.getExecutionType());
@@ -740,6 +752,18 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
     @Override
     public NutsWorkspaceOptionsBuilder setReset(Boolean reset) {
         this.reset = reset;
+        return this;
+    }
+
+    @Override
+    public NutsWorkspaceOptionsBuilder setCommandVersion(Boolean version) {
+        this.commandVersion= version;
+        return this;
+    }
+
+    @Override
+    public NutsWorkspaceOptionsBuilder setCommandHelp(Boolean help) {
+        this.commandHelp= help;
         return this;
     }
 
@@ -1295,6 +1319,24 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
     @Override
     public Boolean getReset() {
         return reset;
+    }
+
+    @Override
+    public boolean isCommandVersion() {
+        return commandVersion != null && commandVersion;
+    }
+    @Override
+    public Boolean getCommandVersion() {
+        return commandVersion;
+    }
+
+    @Override
+    public boolean isCommandHelp() {
+        return commandHelp != null && commandHelp;
+    }
+    @Override
+    public Boolean getCommandHelp() {
+        return commandHelp;
     }
 
     @Override

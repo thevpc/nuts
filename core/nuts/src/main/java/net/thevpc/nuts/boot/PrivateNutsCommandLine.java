@@ -159,7 +159,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
                             break;
                         }
                         case '\'':
-                        case '"':{
+                        case '"': {
                             throw new NutsBootException(NutsMessage.cstyle("illegal char %s", c));
                         }
                         case '\\': {
@@ -229,7 +229,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
                 break;
             }
             case IN_QUOTED_WORD: {
-                throw new NutsBootException(NutsMessage.cstyle("expected %s","'"));
+                throw new NutsBootException(NutsMessage.cstyle("expected %s", "'"));
             }
         }
         return args.toArray(new String[0]);
@@ -332,14 +332,45 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
 
     @Override
     public NutsCommandLine registerSpecialSimpleOption(String option) {
-        specialSimpleOptions.add(option);
-        return this;
+        int len = option.length();
+        switch (len) {
+            case 0: {
+                break;
+            }
+            case 1: {
+                if (option.equals("-")) {
+                    specialSimpleOptions.add(option);
+                    return this;
+                }
+                break;
+            }
+            default: {
+                if (option.charAt(0) == '-' && option.charAt(1) != '-') {
+                    specialSimpleOptions.add(option);
+                    return this;
+                }
+                break;
+            }
+        }
+        throw new NutsBootException(NutsMessage.cstyle("invalid special option %s", option));
     }
 
     @Override
     public boolean isSpecialSimpleOption(String option) {
         for (String x : specialSimpleOptions) {
-            if (option.equals("-" + x) || option.startsWith("-" + x + eq)) {
+            if (option.equals(x) || option.startsWith(x + eq)) {
+                return true;
+            }
+            if (option.startsWith("-//"+x.substring(1))) {
+                //disabled option
+                return true;
+            }
+            if (option.startsWith("-!"+x.substring(1))) {
+                //unarmed
+                return true;
+            }
+            if (option.startsWith("-~"+x.substring(1))) {
+                //unarmed
                 return true;
             }
         }
@@ -765,6 +796,10 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
         throwError(NutsMessage.formatted(message == null ? "" : message.toString()));
     }
 
+    @Override
+    public NutsCommandLineFormat formatter() {
+        throw new NutsBootException(NutsMessage.plain(NOT_SUPPORTED));
+    }
 
     private boolean isPrefixed(String[] nameSeqArray) {
         for (int i = 0; i < nameSeqArray.length - 1; i++) {
@@ -851,16 +886,10 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
             return false;
         }
         if (v.charAt(0) == '-') {
-            if (v.charAt(1) == '-') {
-                return false;
-            }
-            return true;
+            return v.charAt(1) != '-';
         }
         if (v.charAt(0) == '+') {
-            if (v.charAt(1) == '+') {
-                return false;
-            }
-            return true;
+            return v.charAt(1) != '+';
         }
         return false;
     }
@@ -961,11 +990,6 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
                 && t != Character.TITLECASE_LETTER;
     }
 
-    @Override
-    public Iterator<NutsArgument> iterator() {
-        return Arrays.asList(toArgumentArray()).iterator();
-    }
-
 //    @Override
 //    public NutsArgumentCandidate createCandidate(String value, String label) {
 //        throw new NutsBootException(NOT_SUPPORTED);
@@ -999,8 +1023,8 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
 //    }
 
     @Override
-    public NutsCommandLineFormat formatter() {
-        throw new NutsBootException(NutsMessage.plain(NOT_SUPPORTED));
+    public Iterator<NutsArgument> iterator() {
+        return Arrays.asList(toArgumentArray()).iterator();
     }
 
     /**
@@ -1009,8 +1033,8 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
      * {@link NutsCommandLineManager#createArgument(String)}
      *
      * @author thevpc
-     * @since 0.5.5
      * @app.category Format
+     * @since 0.5.5
      */
     final static class ArgumentImpl extends PrivateNutsTokenFilter implements NutsArgument {
 
@@ -1023,7 +1047,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
          * Constructor
          *
          * @param expression expression
-         * @param eq equals
+         * @param eq         equals
          */
         public ArgumentImpl(String expression, char eq) {
             super(expression);

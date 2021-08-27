@@ -326,10 +326,10 @@ final class PrivateNutsUtils {
     }
 
     public static long deleteAndConfirmAll(File[] folders, boolean force, String header, NutsSession session, PrivateNutsLog LOG, NutsWorkspaceOptions woptions) {
-        return deleteAndConfirmAll(folders, force, new SimpleConfirmDelete(), header, session, LOG, woptions);
+        return deleteAndConfirmAll(folders, force, new PrivateNutsSimpleConfirmDelete(), header, session, LOG, woptions);
     }
 
-    private static long deleteAndConfirmAll(File[] folders, boolean force, ConfirmDelete refForceAll, String header, NutsSession session, PrivateNutsLog LOG, NutsWorkspaceOptions woptions) {
+    private static long deleteAndConfirmAll(File[] folders, boolean force, PrivateNutsConfirmDelete refForceAll, String header, NutsSession session, PrivateNutsLog LOG, NutsWorkspaceOptions woptions) {
         long count = 0;
         boolean headerWritten = false;
         if (folders != null) {
@@ -356,7 +356,7 @@ final class PrivateNutsUtils {
         return count;
     }
 
-    private static long deleteAndConfirm(File directory, boolean force, ConfirmDelete refForceAll, NutsSession session, PrivateNutsLog LOG, NutsWorkspaceOptions woptions) {
+    private static long deleteAndConfirm(File directory, boolean force, PrivateNutsConfirmDelete refForceAll, NutsSession session, PrivateNutsLog LOG, NutsWorkspaceOptions woptions) {
         if (directory.exists()) {
             if (!force && !refForceAll.isForce() && refForceAll.accept(directory)) {
                 String line = null;
@@ -683,85 +683,6 @@ final class PrivateNutsUtils {
         return -1;
     }
 
-    public static String resolveNutsVersionFromClassPath() {
-        return resolvePomPattern("version");
-    }
-
-    public static String resolveNutsBuildNumber() {
-        return resolvePomPattern("nuts.buildNumber");
-    }
-
-    public static String resolvePomPattern(String propName) {
-//        boolean devMode = false;
-        String propValue = null;
-        try {
-            propValue = PrivateNutsUtils.loadURLProperties(
-                    Nuts.class.getResource("/META-INF/maven/net.thevpc.nuts/nuts/pom.properties"),
-                    null, false, new PrivateNutsLog()).getProperty(propName);
-        } catch (Exception ex) {
-            //
-        }
-        if (propValue != null && !propValue.trim().isEmpty() && !propValue.equals("0.0.0")) {
-            return propValue;
-        }
-
-        Pattern pattern = Pattern.compile("<" + propName.replace(".", "[.]") + ">(?<value>([0-9. ]+))</" + propName.replace(".", "[.]") + ">");
-
-        URL pomXml = Nuts.class.getResource("/META-INF/maven/net.thevpc.nuts/nuts/pom.xml");
-        if (pomXml != null) {
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            try (InputStream is = pomXml.openStream()) {
-                copy(is, bos, false, false);
-            } catch (Exception ex) {
-                //
-            }
-            Matcher m = pattern.matcher(bos.toString());
-            if (m.find()) {
-                propValue = m.group("value").trim();
-            }
-        }
-        if (propValue != null && !propValue.trim().isEmpty() && !propValue.equals("0.0.0")) {
-            return propValue;
-        }
-
-        //check if we are in dev mode
-        String cp = System.getProperty("java.class.path");
-        for (String p : cp.split(File.pathSeparator)) {
-            File f = new File(p);
-            if (f.isDirectory()) {
-                Matcher m = Pattern.compile("(?<src>.*)[/\\\\]+target[/\\\\]+classes[/\\\\]*")
-                        .matcher(f.getPath().replace('/', File.separatorChar));
-                if (m.find()) {
-                    String src = m.group("src");
-                    if (new File(src, "pom.xml").exists() && new File(src,
-                            "src/main/java/net/thevpc/nuts/Nuts.java".replace('/', File.separatorChar)
-                    ).exists()) {
-//                            devMode = true;
-                        String xml = null;
-                        try {
-                            byte[] bytes = Files.readAllBytes(new File(src, "pom.xml").toPath());
-                            xml = new String(bytes);
-                        } catch (IOException ex) {
-                            //
-                        }
-                        if (xml != null) {
-                            m = pattern.matcher(xml);
-                            if (m.find()) {
-                                propValue = m.group("value").trim();
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        if (propValue != null && !propValue.trim().isEmpty() && !propValue.equals("0.0.0")) {
-            return propValue;
-        }
-        return null;
-    }
-
     static File createFile(String parent, String child) {
         String userHome = System.getProperty("user.home");
         if (child.startsWith("~/")) {
@@ -852,52 +773,31 @@ final class PrivateNutsUtils {
         return inScanner.nextLine();
     }
 
-    /**
-     * @app.category Internal
-     */
-    private interface ConfirmDelete {
-
-        boolean isForce();
-
-        void setForce(boolean value);
-
-        boolean accept(File directory);
-
-        void ignore(File directory);
+    protected static String getHome(NutsStoreLocation storeFolder, PrivateNutsWorkspaceInitInformation workspaceInformation) {
+        return NutsUtilPlatforms.getPlatformHomeFolder(
+                workspaceInformation.getStoreLocationLayout(),
+                storeFolder,
+                workspaceInformation.getHomeLocations(),
+                workspaceInformation.isGlobal(),
+                workspaceInformation.getName()
+        );
     }
 
-    /**
-     * @app.category Internal
-     */
-    private static class SimpleConfirmDelete implements ConfirmDelete {
-
-        private final List<File> ignoreDeletion = new ArrayList<>();
-        private boolean force;
-
-        @Override
-        public boolean isForce() {
-            return force;
+    protected static String expandPath(String path, String base, Function<String, String> pathExpansionConverter) {
+        path = replaceDollarString(path.trim(), pathExpansionConverter);
+        if (isURL(path)) {
+            return path;
         }
-
-        @Override
-        public void setForce(boolean value) {
-            this.force = value;
+        if (path.startsWith("~/") || path.startsWith("~\\")) {
+            path = System.getProperty("user.home") + path.substring(1);
         }
-
-        @Override
-        public boolean accept(File directory) {
-            for (File ignored : ignoreDeletion) {
-                String s = ignored.getPath() + File.separatorChar;
-                if (s.startsWith(directory.getPath() + "/")) {
-                    return false;
-                }
-            }
-            return true;
+        if (base == null) {
+            base = System.getProperty("user.dir");
         }
-
-        public void ignore(File directory) {
-            ignoreDeletion.add(directory);
+        if (new File(path).isAbsolute()) {
+            return path;
         }
+        return base + File.separator + path;
     }
 
     /**
@@ -909,61 +809,4 @@ final class PrivateNutsUtils {
         LinkedHashSet<String> repos = new LinkedHashSet<>();
     }
 
-    public static class ErrorInfoList {
-        private final List<ErrorInfo> all = new ArrayList<>();
-
-        public void removeErrorsFor(String nutsId) {
-            all.removeIf(x -> x.getNutsId().equals(nutsId));
-        }
-
-        public void add(ErrorInfo e) {
-            all.add(e);
-        }
-
-        public List<ErrorInfo> list() {
-            return all;
-        }
-    }
-
-    public static class ErrorInfo {
-        private final String nutsId;
-        private final String repository;
-        private final String url;
-        private final String message;
-        private final Throwable throwable;
-
-        public ErrorInfo(String nutsId, String repository, String url, String message, Throwable throwable) {
-            this.nutsId = nutsId;
-            this.repository = repository;
-            this.url = url;
-            this.message = message;
-            this.throwable = throwable;
-        }
-
-        public String getNutsId() {
-            return nutsId;
-        }
-
-        public String getRepository() {
-            return repository;
-        }
-
-        public String getUrl() {
-            return url;
-        }
-
-        public String getMessage() {
-            return message;
-        }
-
-        public Throwable getThrowable() {
-            return throwable;
-        }
-
-        @Override
-        public String toString() {
-            return getMessage() + " " + getNutsId() + " from " + getUrl() + " (repository " + getRepository() + ") : "
-                    + (getThrowable()==null?"":getThrowable().toString());
-        }
-    }
 }

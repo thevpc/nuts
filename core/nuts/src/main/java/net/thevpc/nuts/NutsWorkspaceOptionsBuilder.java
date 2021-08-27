@@ -390,6 +390,14 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
     boolean isReset();
     Boolean getReset();
 
+    boolean isCommandVersion();
+
+    Boolean getCommandVersion();
+
+    boolean isCommandHelp();
+
+    Boolean getCommandHelp();
+
     /**
      * if true, do not install nuts companion tools upon workspace creation.
      * <br>
@@ -665,6 +673,10 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      * @return {@code this} instance
      */
     NutsWorkspaceOptionsBuilder setReset(Boolean reset);
+
+    NutsWorkspaceOptionsBuilder setCommandVersion(Boolean version);
+
+    NutsWorkspaceOptionsBuilder setCommandHelp(Boolean help);
 
     NutsWorkspaceOptionsBuilder setDebug(Boolean debug);
 

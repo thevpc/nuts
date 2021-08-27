@@ -29,19 +29,14 @@ import net.thevpc.nuts.spi.NutsBootWorkspaceFactory;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.Instant;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 /**
  * NutsBootWorkspace is responsible of loading initial nuts-runtime.jar and its
@@ -83,7 +78,7 @@ public final class NutsBootWorkspace {
                 case "home.cache":
                 case "home.run":
                 case "home.log":
-                    return getHome(NutsStoreLocation.valueOf(from.substring("home.".length()).toUpperCase()));
+                    return PrivateNutsUtils.getHome(NutsStoreLocation.valueOf(from.substring("home.".length()).toUpperCase()),workspaceInformation);
                 case "apps":
                 case "config":
                 case "lib":
@@ -179,7 +174,7 @@ public final class NutsBootWorkspace {
         repos.add(defaultWorkspaceLibFolder);
         Collection<String> bootRepositories = resolveBootRepositories();
         repos.addAll(bootRepositories);
-        PrivateNutsUtils.ErrorInfoList errorList = new PrivateNutsUtils.ErrorInfoList();
+        PrivateNutsErrorInfoList errorList = new PrivateNutsErrorInfoList();
         File file = PrivateNutsMavenUtils.resolveOrDownloadJar(NutsConstants.Ids.NUTS_API + "#" + workspaceInformation.getApiVersion(),
                 repos.toArray(new String[0]),
                 workspaceInformation.getLib(), LOG,
@@ -189,7 +184,7 @@ public final class NutsBootWorkspace {
         );
         if (file == null) {
             errors.append("unable to load nuts ").append(workspaceInformation.getApiVersion()).append("\n");
-            for (PrivateNutsUtils.ErrorInfo errorInfo : errorList.list()) {
+            for (PrivateNutsErrorInfo errorInfo : errorList.list()) {
                 errors.append(errorInfo.toString()).append("\n");
             }
             showError(workspaceInformation,
@@ -374,7 +369,7 @@ public final class NutsBootWorkspace {
                 } else {
                     LOG.log(Level.CONFIG, NutsLogVerb.WARNING, "reset workspace.");
                     countDeleted = deleteStoreLocations(true, (Object[]) NutsStoreLocation.values());
-                    ndiUndo();
+                    PrivateNutsLauncherUtils.ndiUndo(LOG);
                 }
             } else if (options.isRecover()) {
                 if (options.isDry()) {
@@ -611,141 +606,6 @@ public final class NutsBootWorkspace {
         );
     }
 
-    private void ndiUndo() {
-        //need to unset settings configuration.
-        //what is the safest way to do so?
-        NutsOsFamily os = Nuts.getPlatformOsFamily();
-        //windows is ignored because it does not define a global nuts environment
-        if (os == NutsOsFamily.LINUX || os == NutsOsFamily.MACOS) {
-            String bashrc = os == NutsOsFamily.LINUX ? ".bashrc" : ".bash_profile";
-            Path sysrcFile = Paths.get(System.getProperty("user.home")).resolve(bashrc);
-            if (Files.exists(sysrcFile)) {
-
-                //these two lines will remove older versions of nuts ( before 0.8.0)
-                ndiRemoveFileCommented2Lines(sysrcFile, "net.vpc.app.nuts.toolbox.ndi configuration", true);
-                ndiRemoveFileCommented2Lines(sysrcFile, "net.vpc.app.nuts configuration", true);
-
-                //this line will remove 0.8.0+ versions of nuts
-                ndiRemoveFileCommented2Lines(sysrcFile, "net.thevpc.nuts configuration", true);
-            }
-
-            // if we have deleted a non default workspace, we will fall back to the default one
-            // and will consider the latest version of it.
-            // this is helpful if we are playing with multiple workspaces. The default workspace will always be
-            // accessible when deleting others
-            String latestDefaultVersion = null;
-            try {
-                Path nbase = Paths.get(System.getProperty("user.home")).resolve(".local/share/nuts/apps/" + NutsConstants.Names.DEFAULT_WORKSPACE_NAME + "/id/net/thevpc/nuts/nuts");
-                if (Files.isDirectory(nbase)) {
-                    latestDefaultVersion = Files.list(nbase).filter(f -> Files.exists(f.resolve(".nuts-bashrc")))
-                            .map(x -> sysrcFile.getFileName().toString())
-                            .sorted((o1, o2) -> NutsBootVersion.parse(o2).compareTo(NutsBootVersion.parse(o1)))
-                            .findFirst().orElse(null);
-                }
-                if (latestDefaultVersion != null) {
-                    ndiAddFileLine(sysrcFile, "net.thevpc.nuts configuration",
-                            "source " + nbase.resolve(latestDefaultVersion).resolve(".nuts-bashrc"),
-                            true, "#!.*", "#!/bin/sh");
-                }
-            } catch (Exception e) {
-                //ignore
-                LOG.log(Level.FINEST, NutsLogVerb.FAIL, "unable to undo NDI : {0}", new String[]{e.toString()});
-            }
-        }
-    }
-
-    private boolean ndiAddFileLine(Path filePath, String commentLine, String goodLine, boolean force, String ensureHeader, String headerReplace) {
-        boolean found = false;
-        boolean updatedFile = false;
-        List<String> lines = new ArrayList<>();
-        if (Files.isRegularFile(filePath)) {
-            String fileContent = null;
-            try {
-                fileContent = new String(Files.readAllBytes(filePath));
-            } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
-            }
-            String[] fileRows = fileContent.split("\n");
-            if (ensureHeader != null) {
-                if (fileRows.length == 0 || !fileRows[0].trim().matches(ensureHeader)) {
-                    lines.add(headerReplace);
-                    updatedFile = true;
-                }
-            }
-            for (int i = 0; i < fileRows.length; i++) {
-                String row = fileRows[i];
-                if (row.trim().equals("# " + (commentLine))) {
-                    lines.add(row);
-                    found = true;
-                    i++;
-                    if (i < fileRows.length) {
-                        if (!fileRows[i].trim().equals(goodLine)) {
-                            updatedFile = true;
-                        }
-                    }
-                    lines.add(goodLine);
-                    i++;
-                    for (; i < fileRows.length; i++) {
-                        lines.add(fileRows[i]);
-                    }
-                } else {
-                    lines.add(row);
-                }
-            }
-        }
-        if (!found) {
-            if (ensureHeader != null && headerReplace != null && lines.isEmpty()) {
-                lines.add(headerReplace);
-            }
-            lines.add("# " + (commentLine));
-            lines.add(goodLine);
-            updatedFile = true;
-        }
-        if (force || updatedFile) {
-            try {
-                Files.createDirectories(filePath.getParent());
-                Files.write(filePath, (String.join("\n", lines) + "\n").getBytes());
-            } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
-            }
-        }
-        return updatedFile;
-    }
-
-    private boolean ndiRemoveFileCommented2Lines(Path filePath, String commentLine, boolean force) {
-        boolean found = false;
-        boolean updatedFile = false;
-        try {
-            List<String> lines = new ArrayList<>();
-            if (Files.isRegularFile(filePath)) {
-                String fileContent = new String(Files.readAllBytes(filePath));
-                String[] fileRows = fileContent.split("\n");
-                for (int i = 0; i < fileRows.length; i++) {
-                    String row = fileRows[i];
-                    if (row.trim().equals("# " + (commentLine))) {
-                        found = true;
-                        i += 2;
-                        for (; i < fileRows.length; i++) {
-                            lines.add(fileRows[i]);
-                        }
-                    } else {
-                        lines.add(row);
-                    }
-                }
-            }
-            if (found) {
-                updatedFile = true;
-            }
-            if (force || updatedFile) {
-                Files.createDirectories(filePath.getParent());
-                Files.write(filePath, (String.join("\n", lines) + "\n").getBytes());
-            }
-            return updatedFile;
-        } catch (IOException ex) {
-            LOG.log(Level.WARNING, "unable to update update " + filePath, ex);
-            return false;
-        }
-    }
 
     private boolean isLoadFromCache() {
         return !options.isRecover() && !options.isReset();
@@ -771,7 +631,7 @@ public final class NutsBootWorkspace {
         URL[] bootClassWorldURLs = null;
         ClassLoader workspaceClassLoader;
         NutsWorkspace nutsWorkspace = null;
-        PrivateNutsUtils.ErrorInfoList errorList = new PrivateNutsUtils.ErrorInfoList();
+        PrivateNutsErrorInfoList errorList = new PrivateNutsErrorInfoList();
         try {
             if (options.getOpenMode() == NutsOpenMode.OPEN_OR_ERROR) {
                 //add fail fast test!!
@@ -801,14 +661,13 @@ public final class NutsBootWorkspace {
 
             NutsClassLoaderNodeBuilder rt = new NutsClassLoaderNodeBuilder();
             rt.setId(workspaceInformation.getRuntimeId().toString())
-                    .setUrl(getBootCacheJar(workspaceInformation.getRuntimeId(), repositories, workspaceBootLibFolder, !recover, "runtime", options.getExpireTime(), errorList)
+                    .setUrl(PrivateNutsMavenUtils.getBootCacheJar(workspaceInformation.getRuntimeId(), repositories, workspaceBootLibFolder, !recover, "runtime", options.getExpireTime(), errorList,workspaceInformation,pathExpansionConverter, LOG)
                             .toURI().toURL());
-            boolean bootOptionals = isBootOptional();
             for (NutsBootId s : workspaceInformation.getRuntimeBootDescriptor().getDependencies()) {
                 NutsClassLoaderNodeBuilder x = new NutsClassLoaderNodeBuilder();
-                if (isAcceptDependency(s, bootOptionals)) {
+                if (PrivateNutsBootIdUtils.isAcceptDependency(s, workspaceInformation.getOptions())) {
                     x.setId(s.toString())
-                            .setUrl(getBootCacheJar(s, repositories, workspaceBootLibFolder, !recover, "runtime dependency", options.getExpireTime(), errorList)
+                            .setUrl(PrivateNutsMavenUtils.getBootCacheJar(s, repositories, workspaceBootLibFolder, !recover, "runtime dependency", options.getExpireTime(), errorList,workspaceInformation,pathExpansionConverter,LOG)
                                     .toURI().toURL()
                             );
                     rt.addDependency(x.build());
@@ -819,13 +678,13 @@ public final class NutsBootWorkspace {
             for (NutsBootDescriptor nutsBootDescriptor : workspaceInformation.getExtensionBootDescriptors()) {
                 NutsClassLoaderNodeBuilder rt2 = new NutsClassLoaderNodeBuilder();
                 rt2.setId(nutsBootDescriptor.getId().toString())
-                        .setUrl(getBootCacheJar(workspaceInformation.getRuntimeId(), repositories, workspaceBootLibFolder, !recover, "extension " + nutsBootDescriptor.getId(), options.getExpireTime(), errorList)
+                        .setUrl(PrivateNutsMavenUtils.getBootCacheJar(workspaceInformation.getRuntimeId(), repositories, workspaceBootLibFolder, !recover, "extension " + nutsBootDescriptor.getId(), options.getExpireTime(), errorList,workspaceInformation,pathExpansionConverter,LOG)
                                 .toURI().toURL());
                 for (NutsBootId s : nutsBootDescriptor.getDependencies()) {
-                    if (isAcceptDependency(s, bootOptionals)) {
+                    if (PrivateNutsBootIdUtils.isAcceptDependency(s, workspaceInformation.getOptions())) {
                         NutsClassLoaderNodeBuilder x = new NutsClassLoaderNodeBuilder();
                         x.setId(s.toString())
-                                .setUrl(getBootCacheJar(s, repositories, workspaceBootLibFolder, !recover, "extension " + nutsBootDescriptor.getId() + " dependency", options.getExpireTime(), errorList)
+                                .setUrl(PrivateNutsMavenUtils.getBootCacheJar(s, repositories, workspaceBootLibFolder, !recover, "extension " + nutsBootDescriptor.getId() + " dependency", options.getExpireTime(), errorList,workspaceInformation,pathExpansionConverter,LOG)
                                         .toURI().toURL()
                                 );
                         rt2.addDependency(x.build());
@@ -836,7 +695,7 @@ public final class NutsBootWorkspace {
             workspaceInformation.setExtensionBootDependencyNodes(deps.toArray(new NutsClassLoaderNode[0]));
             deps.add(0, workspaceInformation.getRuntimeBootDependencyNode());
 
-            bootClassWorldURLs = resolveClassWorldURLs(deps.toArray(new NutsClassLoaderNode[0]));
+            bootClassWorldURLs = PrivateNutsClasspathUtils.resolveClassWorldURLs(deps.toArray(new NutsClassLoaderNode[0]),getContextClassLoader(), LOG);
             workspaceClassLoader = bootClassWorldURLs.length == 0 ? getContextClassLoader() : new PrivateNutsBootClassLoader(deps.toArray(new NutsClassLoaderNode[0]), getContextClassLoader());
             workspaceInformation.setWorkspaceClassLoader(workspaceClassLoader);
             workspaceInformation.setBootClassWorldURLs(bootClassWorldURLs);
@@ -853,10 +712,7 @@ public final class NutsBootWorkspace {
                 try {
                     workspaceInformation.setBootWorkspaceFactory(factoryInstance);
                     nutsWorkspace = a.createWorkspace(workspaceInformation);
-                } catch (UnsatisfiedLinkError ex) {
-                    exceptions.add(ex);
-                    LOG.log(Level.SEVERE, "unable to create workspace using factory " + a, ex);
-                } catch (Exception ex) {
+                } catch (UnsatisfiedLinkError | Exception ex) {
                     exceptions.add(ex);
                     LOG.log(Level.SEVERE, "unable to create workspace using factory " + a, ex);
                 }
@@ -888,11 +744,11 @@ public final class NutsBootWorkspace {
             throw ex;
         } catch (Throwable ex) {
             StringBuilder errors = new StringBuilder();
-            errorList.add(new PrivateNutsUtils.ErrorInfo(
+            errorList.add(new PrivateNutsErrorInfo(
                     null, null, null, "unable to boot workspace : " + ex,
                     ex
             ));
-            for (PrivateNutsUtils.ErrorInfo errorInfo : errorList.list()) {
+            for (PrivateNutsErrorInfo errorInfo : errorList.list()) {
                 errors.append(errorInfo.toString()).append("\n");
             }
             showError(workspaceInformation,
@@ -908,236 +764,6 @@ public final class NutsBootWorkspace {
         }
     }
 
-
-    private void fillBootDependencyNodes(NutsClassLoaderNode info, Set<URL> urls) {
-        urls.add(info.getURL());
-        for (NutsClassLoaderNode dependency : info.getDependencies()) {
-            fillBootDependencyNodes(dependency, urls);
-        }
-    }
-
-    private URL[] resolveClassWorldURLs(NutsClassLoaderNode[] infos) {
-        LinkedHashSet<URL> urls0 = new LinkedHashSet<>();
-        for (NutsClassLoaderNode info : infos) {
-            fillBootDependencyNodes(info, urls0);
-        }
-        List<URL> urls = new ArrayList<>();
-        for (URL url0 : urls0) {
-            if (url0 != null) {
-                if (isLoadedClassPath(url0)) {
-                    LOG.log(Level.WARNING, NutsLogVerb.CACHE, "url will not be loaded (already in classloader) : {0}", new Object[]{url0});
-                } else {
-                    urls.add(url0);
-                }
-            }
-        }
-        return urls.toArray(new URL[0]);
-    }
-
-    protected String getHome(NutsStoreLocation storeFolder) {
-        return NutsUtilPlatforms.getPlatformHomeFolder(
-                workspaceInformation.getStoreLocationLayout(),
-                storeFolder,
-                workspaceInformation.getHomeLocations(),
-                workspaceInformation.isGlobal(),
-                workspaceInformation.getName()
-        );
-    }
-
-    protected String expandPath(String path, String base) {
-        path = PrivateNutsUtils.replaceDollarString(path.trim(), pathExpansionConverter);
-        if (PrivateNutsUtils.isURL(path)) {
-            return path;
-        }
-        if (path.startsWith("~/") || path.startsWith("~\\")) {
-            path = System.getProperty("user.home") + path.substring(1);
-        }
-        if (base == null) {
-            base = System.getProperty("user.dir");
-        }
-        if (new File(path).isAbsolute()) {
-            return path;
-        }
-        return base + File.separator + path;
-    }
-
-    private File getBootCacheJar(NutsBootId vid, String[] repositories, String cacheFolder, boolean useCache, String name, Instant expire, PrivateNutsUtils.ErrorInfoList errorList) {
-        File f = getBootCacheFile(vid, PrivateNutsMavenUtils.getFileName(vid, "jar"), repositories, cacheFolder, useCache, expire, errorList);
-        if (f == null) {
-            throw new NutsInvalidWorkspaceException(this.workspaceInformation.getWorkspaceLocation(),
-                    NutsMessage.cstyle("unable to load %s %s from repositories %s", name, vid, Arrays.asList(repositories)));
-        }
-        return f;
-    }
-
-    private File getBootCacheFile(NutsBootId vid, String fileName, String[] repositories, String cacheFolder, boolean useCache, Instant expire, PrivateNutsUtils.ErrorInfoList errorList) {
-        String path = PrivateNutsMavenUtils.getPathFile(vid, fileName);
-        if (useCache && cacheFolder != null) {
-
-            File f = new File(cacheFolder, path.replace('/', File.separatorChar));
-            if (PrivateNutsUtils.isFileAccessible(f.toPath(), expire, LOG)) {
-                return f;
-            }
-        }
-        for (String repository : repositories) {
-            if (useCache && cacheFolder != null && cacheFolder.equals(repository)) {
-                return null; // I do not remember why I did this!
-            }
-            File file = getBootCacheFile(vid.toString(), path, repository, cacheFolder, useCache, expire, errorList);
-            if (file != null) {
-                return file;
-            }
-        }
-        return null;
-    }
-
-
-    private File getBootCacheFile(String nutsId, String path, String repository, String cacheFolder, boolean useCache, Instant expire, PrivateNutsUtils.ErrorInfoList errorList) {
-        boolean cacheLocalFiles = true;//Boolean.getBoolean("nuts.cache.cache-local-files");
-        repository = expandPath(repository, workspaceInformation.getWorkspaceLocation());
-        File repositoryFolder = null;
-        if (PrivateNutsUtils.isURL(repository)) {
-            try {
-                repositoryFolder = PrivateNutsUtils.toFile(new URL(repository));
-            } catch (Exception ex) {
-                LOG.log(Level.FINE, "unable to convert url to file : " + repository, ex);
-                //ignore
-            }
-        } else {
-            repositoryFolder = new File(repository);
-        }
-        if (repositoryFolder == null) {
-            if (cacheFolder == null) {
-                return null;
-            }
-            File ok = null;
-            File to = new File(cacheFolder, path);
-            String urlPath = repository;
-            if (!urlPath.endsWith("/")) {
-                urlPath += "/";
-            }
-            urlPath += path;
-            long start = System.currentTimeMillis();
-            try {
-                LOG.log(Level.CONFIG, NutsLogVerb.SUCCESS, "loading  {0}", new Object[]{urlPath});
-                PrivateNutsUtils.copy(new URL(urlPath), to, LOG);
-                errorList.removeErrorsFor(nutsId);
-                long end = System.currentTimeMillis();
-                LOG.log(Level.CONFIG, NutsLogVerb.SUCCESS, "loaded   {0} ({1}ms)", new Object[]{urlPath, end - start});
-                ok = to;
-            } catch (IOException ex) {
-                errorList.add(new PrivateNutsUtils.ErrorInfo(nutsId, repository, urlPath, "unable to load", ex));
-                long end = System.currentTimeMillis();
-                LOG.log(Level.CONFIG, NutsLogVerb.FAIL, "loaded   {0} ({1}ms)", new Object[]{urlPath, end - start});
-                //not found
-            }
-            return ok;
-        } else {
-            repository = repositoryFolder.getPath();
-        }
-        File repoFolder = PrivateNutsUtils.createFile(getHome(NutsStoreLocation.CONFIG), repository);
-        File ff = null;
-
-        if (repoFolder.isDirectory()) {
-            File file = new File(repoFolder, path.replace('/', File.separatorChar));
-            if (file.isFile()) {
-                ff = file;
-            } else {
-                LOG.log(Level.CONFIG, NutsLogVerb.FAIL, "locating {0}", new Object[]{file});
-            }
-        } else {
-            File file = new File(repoFolder, path.replace('/', File.separatorChar));
-            LOG.log(Level.CONFIG, NutsLogVerb.FAIL, "locating {0} ; repository is not a valid folder : {1}", new Object[]{file, repoFolder});
-        }
-
-        if (ff != null) {
-            if (cacheFolder != null && cacheLocalFiles) {
-                File to = new File(cacheFolder, path);
-                String toc = PrivateNutsUtils.getAbsolutePath(to.getPath());
-                String ffc = PrivateNutsUtils.getAbsolutePath(ff.getPath());
-                if (ffc.equals(toc)) {
-                    return ff;
-                }
-                try {
-                    if (to.getParentFile() != null) {
-                        to.getParentFile().mkdirs();
-                    }
-                    String ext = "config";
-                    if (ff.getName().endsWith(".jar")) {
-                        ext = "jar";
-                    }
-                    if (to.isFile()) {
-                        PrivateNutsUtils.copy(ff, to, LOG);
-                        LOG.log(Level.CONFIG, NutsLogVerb.CACHE, "recover cached " + ext + " file {0} to {1}", new Object[]{ff, to});
-                    } else {
-                        PrivateNutsUtils.copy(ff, to, LOG);
-                        LOG.log(Level.CONFIG, NutsLogVerb.CACHE, "cached " + ext + " file {0} to {1}", new Object[]{ff, to});
-                    }
-                    return to;
-                } catch (IOException ex) {
-                    errorList.add(new PrivateNutsUtils.ErrorInfo(nutsId, repository, ff.getPath(), "unable to cache", ex));
-                    LOG.log(Level.CONFIG, NutsLogVerb.FAIL, "error caching file {0} to {1} : {2}", new Object[]{ff, to, ex.toString()});
-                    //not found
-                }
-                return ff;
-
-            }
-            return ff;
-        }
-        return null;
-    }
-
-    private boolean isLoadedClassPath(URL url) {
-        try {
-            if (url != null) {
-                File file = null;
-                try {
-                    file = new File(url.toURI());
-                } catch (URISyntaxException e) {
-                    throw new NutsBootException(NutsMessage.cstyle("unsupported classpath item; expected a file path: %s", url));
-                }
-                ZipFile zipFile = null;
-                try {
-                    zipFile = new ZipFile(file);
-                    Enumeration<? extends ZipEntry> entries = zipFile.entries();
-
-                    while (entries.hasMoreElements()) {
-                        ZipEntry zipEntry = entries.nextElement();
-                        String zname = zipEntry.getName();
-                        if (!zname.endsWith("/") && zname.endsWith(".class")) {
-                            String clz = zname.substring(0, zname.length() - 6).replace('/', '.');
-                            try {
-                                if (PrivateNutsUtils.isInfiniteLoopThread(NutsBootWorkspace.class.getName(), "isLoadedClassPath")) {
-                                    return false;
-                                }
-                                ClassLoader contextClassLoader = getContextClassLoader();
-                                if (contextClassLoader == null) {
-                                    return false;
-                                }
-                                Class<?> aClass = contextClassLoader.loadClass(clz);
-                                LOG.log(Level.FINEST, NutsLogVerb.SUCCESS, "class {0} loaded successfully from {1}", new Object[]{aClass, file});
-                                return true;
-                            } catch (ClassNotFoundException e) {
-                                return false;
-                            }
-                        }
-                    }
-                } finally {
-                    if (zipFile != null) {
-                        try {
-                            zipFile.close();
-                        } catch (IOException e) {
-                            //ignorereturn false;
-                        }
-                    }
-                }
-
-            }
-        } catch (IOException e) {
-            return false;
-        }
-        return false;
-    }
 
     private Supplier<ClassLoader> getContextClassLoaderSupplier() {
         return contextClassLoaderSupplier;
@@ -1161,7 +787,173 @@ public final class NutsBootWorkspace {
         }
     }
 
+    private void runCommandHelp() {
+        NutsContentType f = options.getOutputFormat();
+        if(f==null){
+            f=NutsContentType.PLAIN;
+        }
+        if (options.isDry()) {
+            printDryCommand("help");
+        } else {
+            String msg = "nuts is an open source package manager mainly for java applications. Type 'nuts help' or visit https://github.com/thevpc/nuts for more help.";
+            switch (f){
+                case JSON:{
+                    PrivateNutsUtils.out_printf("{%n");
+                    PrivateNutsUtils.out_printf("  \"help\": \"%s\"%n",msg);
+                    PrivateNutsUtils.out_printf("}%n");
+                    return;
+                }
+                case TSON:{
+                    PrivateNutsUtils.out_printf("{%n");
+                    PrivateNutsUtils.out_printf("  help: \"%s\"%n",msg);
+                    PrivateNutsUtils.out_printf("}%n");
+                    return;
+                }
+                case YAML:{
+                    PrivateNutsUtils.out_printf("help: %s%n",msg);
+                    return;
+                }
+                case TREE:{
+                    PrivateNutsUtils.out_printf("- help: %s%n",msg);
+                    return;
+                }
+                case TABLE:{
+                    PrivateNutsUtils.out_printf("help  %s%n",msg);
+                    return;
+                }
+                case XML:{
+                    PrivateNutsUtils.out_printf("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>%n");
+                    PrivateNutsUtils.out_printf("<string>%n");
+                    PrivateNutsUtils.out_printf(" %s%n",msg);
+                    PrivateNutsUtils.out_printf("</string>%n");
+                    return;
+                }
+                case PROPS:{
+                    PrivateNutsUtils.out_printf("help=%s%n",msg);
+                    return;
+                }
+            }
+            PrivateNutsUtils.out_printf("%s%n",msg);
+        }
+    }
+
+    private void printDryCommand(String cmd) {
+        NutsContentType f = options.getOutputFormat();
+        if(f==null){
+            f=NutsContentType.PLAIN;
+        }
+        if (options.isDry()) {
+            switch (f){
+                case JSON:{
+                    PrivateNutsUtils.out_printf("{%n");
+                    PrivateNutsUtils.out_printf("  \"dryCommand\": \"%s\"%n",cmd);
+                    PrivateNutsUtils.out_printf("}%n");
+                    return;
+                }
+                case TSON:{
+                    PrivateNutsUtils.out_printf("{%n");
+                    PrivateNutsUtils.out_printf("  dryCommand: \"%s\"%n",cmd);
+                    PrivateNutsUtils.out_printf("}%n");
+                    return;
+                }
+                case YAML:{
+                    PrivateNutsUtils.out_printf("dryCommand: %s%n",cmd);
+                    return;
+                }
+                case TREE:{
+                    PrivateNutsUtils.out_printf("- dryCommand: %s%n",cmd);
+                    return;
+                }
+                case TABLE:{
+                    PrivateNutsUtils.out_printf("dryCommand  %s%n",cmd);
+                    return;
+                }
+                case XML:{
+                    PrivateNutsUtils.out_printf("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>%n");
+                    PrivateNutsUtils.out_printf("<object>%n");
+                    PrivateNutsUtils.out_printf("  <string key=\"%s\" value=\"%s\"/>%n","dryCommand",cmd);
+                    PrivateNutsUtils.out_printf("</object>%n");
+                    return;
+                }
+                case PROPS:{
+                    PrivateNutsUtils.out_printf("dryCommand=%s%n",cmd);
+                    return;
+                }
+            }
+            PrivateNutsUtils.out_printf("[Dry] %s%n",Nuts.getVersion());
+        }
+    }
+    private void runCommandVersion() {
+//        if (options.isDry()) {
+//            session.out().println("[boot-internal-command] show-version");
+//        } else {
+//            session.out().println("nuts-version :" + Nuts.getVersion());
+//        }
+        NutsContentType f = options.getOutputFormat();
+        if(f==null){
+            f=NutsContentType.PLAIN;
+        }
+        if (options.isDry()) {
+            printDryCommand("version");
+            return;
+        }
+        switch (f){
+            case JSON:{
+                PrivateNutsUtils.out_printf("{%n");
+                PrivateNutsUtils.out_printf("  \"version\": \"%s\",%n",Nuts.getVersion());
+                PrivateNutsUtils.out_printf("  \"buildNumber\": \"%s\"%n",Nuts.getBuildNumber());
+                PrivateNutsUtils.out_printf("}%n");
+                return;
+            }
+            case TSON:{
+                PrivateNutsUtils.out_printf("{%n");
+                PrivateNutsUtils.out_printf("  version: \"%s\",%n",Nuts.getVersion());
+                PrivateNutsUtils.out_printf("  buildNumber: \"%s\"%n",Nuts.getBuildNumber());
+                PrivateNutsUtils.out_printf("}%n");
+                return;
+            }
+            case YAML:{
+                PrivateNutsUtils.out_printf("version: %s%n",Nuts.getVersion());
+                PrivateNutsUtils.out_printf("buildNumber: %s%n",Nuts.getBuildNumber());
+                return;
+            }
+            case TREE:{
+                PrivateNutsUtils.out_printf("- version: %s%n",Nuts.getVersion());
+                PrivateNutsUtils.out_printf("- buildNumber: %s%n",Nuts.getBuildNumber());
+                return;
+            }
+            case TABLE:{
+                PrivateNutsUtils.out_printf("version      %s%n",Nuts.getVersion());
+                PrivateNutsUtils.out_printf("buildNumber  %s%n",Nuts.getBuildNumber());
+                return;
+            }
+            case XML:{
+                PrivateNutsUtils.out_printf("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>%n");
+                PrivateNutsUtils.out_printf("<object>%n");
+                PrivateNutsUtils.out_printf("  <string key=\"%s\" value=\"%s\"/>%n","version",Nuts.getVersion());
+                PrivateNutsUtils.out_printf("  <string key=\"%s\" value=\"%s\"/>%n","buildNumber",Nuts.getBuildNumber());
+                PrivateNutsUtils.out_printf("</object>%n");
+                return;
+            }
+            case PROPS:{
+                PrivateNutsUtils.out_printf("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>%n");
+                PrivateNutsUtils.out_printf("version=%s%n",Nuts.getVersion());
+                PrivateNutsUtils.out_printf("buildNumber=%s%n",Nuts.getBuildNumber());
+                PrivateNutsUtils.out_printf("</object>%n");
+                return;
+            }
+        }
+        PrivateNutsUtils.out_printf("%s%n",Nuts.getVersion());
+    }
+
     public void runWorkspace() {
+        if(options.isCommandHelp()){
+            runCommandHelp();
+            return;
+        }else if(options.isCommandVersion()){
+           runCommandVersion();
+            return;
+        }
         if (hasUnsatisfiedRequirements()) {
             startNewProcess();
             return;
@@ -1188,22 +980,11 @@ public final class NutsBootWorkspace {
         if (workspace == null && o.getApplicationArguments().length > 0) {
             switch (o.getApplicationArguments()[0]) {
                 case "version": {
-                    if (options.isDry()) {
-                        session.out().println("[boot-internal-command] show-version");
-                    } else {
-                        session.out().println("nuts-version :" + Nuts.getVersion());
-                    }
+                    runCommandVersion();
                     return;
                 }
                 case "help": {
-                    if (options.isDry()) {
-                        session.out().println("[boot-internal-command] show-help");
-                    } else {
-                        session.out().println("nuts is a package manager mainly for java applications.");
-                        session.out().println("unluckily it was unable to locate nuts-runtime package which is essential for its execution.\n");
-                        session.out().println("nuts-version :" + Nuts.getVersion());
-                        session.out().println("try to reinstall nuts (with internet access available) and type 'nuts help' to get a list of global options and commands");
-                    }
+                    runCommandHelp();
                     return;
                 }
             }
@@ -1305,7 +1086,7 @@ public final class NutsBootWorkspace {
         LOG.log(Level.SEVERE, NutsLogVerb.FAIL, message, new Object[0]);
     }
 
-    private void showError(PrivateNutsWorkspaceInitInformation actualBootConfig, String workspace, URL[] bootClassWorldURLs, String extraMessage, PrivateNutsUtils.ErrorInfoList ths) {
+    private void showError(PrivateNutsWorkspaceInitInformation actualBootConfig, String workspace, URL[] bootClassWorldURLs, String extraMessage, PrivateNutsErrorInfoList ths) {
         Map<String, String> rbc_locations = actualBootConfig.getStoreLocations();
         if (rbc_locations == null) {
             rbc_locations = Collections.emptyMap();
@@ -1373,7 +1154,7 @@ public final class NutsBootWorkspace {
         }
         if (!ths.list().isEmpty()) {
             PrivateNutsUtils.err_printf("error stack trace is:%n");
-            for (PrivateNutsUtils.ErrorInfo th : ths.list()) {
+            for (PrivateNutsErrorInfo th : ths.list()) {
                 StringBuilder msg = new StringBuilder();
                 List<Object> msgParams = new ArrayList<>();
                 msg.append("[error]");
@@ -1457,114 +1238,6 @@ public final class NutsBootWorkspace {
             return sb.toString();
         }
         return null;
-    }
-
-    private boolean isBootOptional(String name) {
-        for (String property : workspaceInformation.getOptions().getProperties()) {
-            PrivateNutsCommandLine.ArgumentImpl a = new PrivateNutsCommandLine.ArgumentImpl(property, '=');
-            if (a.getStringKey().equals("boot-" + name)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean isBootOptional() {
-        for (String property : workspaceInformation.getOptions().getProperties()) {
-            PrivateNutsCommandLine.ArgumentImpl a = new PrivateNutsCommandLine.ArgumentImpl(property, '=');
-            if (a.getStringKey().equals("boot-optional")) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private NutsBootId[] parseBootIdList(String s) {
-        List<NutsBootId> boots = new ArrayList<>();
-        StringBuilder q = null;
-        boolean inBrackets = false;
-        for (char c : s.toCharArray()) {
-            if (q == null) {
-                q = new StringBuilder();
-                if (c == '[' || c == ']') {
-                    inBrackets = true;
-                    q.append(c);
-                } else if (c == ',' || Character.isWhitespace(c)) {
-                    //ignore
-                } else {
-                    q.append(c);
-                }
-            } else {
-                if (c == ',' || c == ' ') {
-                    if (inBrackets) {
-                        q.append(c);
-                    } else {
-                        boots.add(NutsBootId.parse(q.toString()));
-                        q = null;
-                        inBrackets = false;
-                    }
-                } else if (c == '[' || c == ']') {
-                    if (inBrackets) {
-                        inBrackets = false;
-                        q.append(c);
-                    } else {
-                        inBrackets = true;
-                        q.append(c);
-                    }
-                } else {
-                    q.append(c);
-                }
-            }
-        }
-        if (q != null) {
-            boots.add(NutsBootId.parse(q.toString()));
-        }
-        return boots.toArray(new NutsBootId[0]);
-    }
-
-    private boolean isAcceptDependency(NutsBootId s, boolean bootOptionals) {
-        //by default ignore optionals
-        if (s.isOptional()) {
-            if (!bootOptionals && !isBootOptional(s.getArtifactId())) {
-                return false;
-            }
-        }
-        String os = s.getOs();
-        String arch = s.getArch();
-        if (os.isEmpty() && arch.isEmpty()) {
-            return true;
-        }
-        if (!os.isEmpty()) {
-            NutsOsFamily eos = NutsUtilPlatforms.getPlatformOsFamily();
-            boolean osOk = false;
-            for (NutsBootId e : NutsBootId.parseAll(os)) {
-                if (e.getShortName().equalsIgnoreCase(eos.id())) {
-                    if (e.getVersion().accept(NutsBootVersion.parse(System.getProperty("os.version")))) {
-                        osOk = true;
-                    }
-                    break;
-                }
-            }
-            if (!osOk) {
-                return false;
-            }
-        }
-        if (!arch.isEmpty()) {
-            String earch = System.getProperty("os.arch");
-            if (earch != null) {
-                boolean archOk = false;
-                for (String e : arch.split("[,; ]")) {
-                    if (!e.isEmpty()) {
-                        if (e.equalsIgnoreCase(earch)) {
-                            archOk = true;
-                            break;
-                        }
-                    }
-                }
-                return archOk;
-            }
-        }
-        return true;
     }
 
 }

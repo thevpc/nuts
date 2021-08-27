@@ -118,14 +118,45 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
 
     @Override
     public NutsCommandLine registerSpecialSimpleOption(String option) {
-        specialSimpleOptions.add(option);
-        return this;
+        int len = option.length();
+        switch (len) {
+            case 0: {
+                break;
+            }
+            case 1: {
+                if (option.equals("-")) {
+                    specialSimpleOptions.add(option);
+                    return this;
+                }
+                break;
+            }
+            default: {
+                if (option.charAt(0) == '-' && option.charAt(1) != '-') {
+                    specialSimpleOptions.add(option);
+                    return this;
+                }
+                break;
+            }
+        }
+        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid special option %s", option));
     }
 
     @Override
     public boolean isSpecialSimpleOption(String option) {
         for (String x : specialSimpleOptions) {
-            if (option.equals("-" + x) || option.startsWith("-" + x + eq)) {
+            if (option.equals(x) || option.startsWith(x + eq)) {
+                return true;
+            }
+            if (option.startsWith("-//"+x.substring(1))) {
+                //disabled option
+                return true;
+            }
+            if (option.startsWith("-!"+x.substring(1))) {
+                //unarmed
+                return true;
+            }
+            if (option.startsWith("-~"+x.substring(1))) {
+                //unarmed
                 return true;
             }
         }
