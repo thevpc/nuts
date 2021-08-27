@@ -78,13 +78,13 @@ final class PrivateNutsBootConfigLoader {
             //load nothing!
             LOG.log(Level.CONFIG, NutsLogVerb.READ, "detected config version " + configVersion + " ( considered as 0.5.1, very old config, ignored)");
         } else if (buildNumber <= 505) {
-            LOG.log(Level.CONFIG, NutsLogVerb.READ, "detected config version " + configVersion + " ( best effort to load 0.5.2 config file )");
+            LOG.log(Level.CONFIG, NutsLogVerb.READ, "detected config version " + configVersion + " ( compatible with 0.5.2 config file )");
             loadConfigVersion502(c, jsonObject, LOG);
         } else if (buildNumber <= 506) {
-            LOG.log(Level.CONFIG, NutsLogVerb.READ, "detected config version " + configVersion + " ( best effort to load 0.5.6 config file )");
+            LOG.log(Level.CONFIG, NutsLogVerb.READ, "detected config version " + configVersion + " ( compatible with 0.5.6 config file )");
             loadConfigVersion506(c, jsonObject, LOG);
         } else {
-            LOG.log(Level.CONFIG, NutsLogVerb.READ, "detected config version " + configVersion + " ( best effort to load 0.5.7 config file )");
+            LOG.log(Level.CONFIG, NutsLogVerb.READ, "detected config version " + configVersion + " ( compatible with 0.5.7 config file )");
             loadConfigVersion507(c, jsonObject, LOG);
         }
         return c;

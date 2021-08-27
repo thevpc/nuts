@@ -148,20 +148,20 @@ public final class NutsBootWorkspace {
             return parsedBootRepositories;
         }
         LOG.log(Level.FINE, NutsLogVerb.START, "resolve boot repositories from options : {0}, config: {1}", new Object[]{
-                (options.getRepositories()==null?"[]":Arrays.toString(options.getRepositories()))
-                ,NutsUtilStrings.isBlank(workspaceInformation.getBootRepositories())?"[]":workspaceInformation.getBootRepositories()
+                (options.getRepositories() == null ? "[]" : Arrays.toString(options.getRepositories()))
+                , NutsUtilStrings.isBlank(workspaceInformation.getBootRepositories()) ? "[]" : workspaceInformation.getBootRepositories()
         });
         PrivateNutsRepositorySelectorList bootRepositories = PrivateNutsRepositorySelector.parse(options.getRepositories());
         PrivateNutsRepositorySelector[] old = PrivateNutsRepositorySelector.parse(new String[]{workspaceInformation.getBootRepositories()}).toArray();
-        PrivateNutsRepositorySelection[] result=null;
-        if(old.length==0){
+        PrivateNutsRepositorySelection[] result = null;
+        if (old.length == 0) {
             //no previous config, use defaults!
             result = bootRepositories.resolveSelectors(new PrivateNutsRepositorySelection[]{
                     new PrivateNutsRepositorySelection("maven-local", null),
                     new PrivateNutsRepositorySelection("maven-central", null),
             });
-        }else{
-            result = bootRepositories.resolveSelectors(Arrays.stream(old).map(x->new PrivateNutsRepositorySelection(x.getName(),x.getUrl()))
+        } else {
+            result = bootRepositories.resolveSelectors(Arrays.stream(old).map(x -> new PrivateNutsRepositorySelection(x.getName(), x.getUrl()))
                     .toArray(PrivateNutsRepositorySelection[]::new));
         }
         return parsedBootRepositories
@@ -304,8 +304,8 @@ public final class NutsBootWorkspace {
                     workspaceInformation.setBootRepositories(lastConfigLoaded.getBootRepositories());
                     workspaceInformation.setJavaCommand(lastConfigLoaded.getJavaCommand());
                     workspaceInformation.setJavaOptions(lastConfigLoaded.getJavaOptions());
-                    workspaceInformation.setExtensionsSet(lastConfigLoaded.getExtensionsSet()==null?new LinkedHashSet<>()
-                            :new LinkedHashSet<>(lastConfigLoaded.getExtensionsSet()));
+                    workspaceInformation.setExtensionsSet(lastConfigLoaded.getExtensionsSet() == null ? new LinkedHashSet<>()
+                            : new LinkedHashSet<>(lastConfigLoaded.getExtensionsSet()));
                 }
                 workspaceInformation.setStoreLocationStrategy(lastConfigLoaded.getStoreLocationStrategy());
                 workspaceInformation.setRepositoryStoreLocationStrategy(lastConfigLoaded.getRepositoryStoreLocationStrategy());
@@ -406,16 +406,18 @@ public final class NutsBootWorkspace {
                 throw new NutsBootException(NutsMessage.cstyle(""), 0);
             }
             //after eventual clean up
-            if (NutsConstants.Versions.LATEST.equalsIgnoreCase(workspaceInformation.getApiVersion())
-                    || NutsConstants.Versions.RELEASE.equalsIgnoreCase(workspaceInformation.getApiVersion())
-                    || workspaceInformation.getApiVersion() == null
-                    || "".equals(workspaceInformation.getApiVersion())
-            ) {
-                NutsBootId s = PrivateNutsMavenUtils.resolveLatestMavenId(NutsBootId.parse(NutsConstants.Ids.NUTS_API), null, LOG, resolveBootRepositories());
-                if (s == null) {
-                    throw new NutsBootException(NutsMessage.plain("unable to load latest nuts version"));
+            if (options.isInherited()) {//when Inherited, always use the current Api version!
+                if (NutsConstants.Versions.LATEST.equalsIgnoreCase(workspaceInformation.getApiVersion())
+                        || NutsConstants.Versions.RELEASE.equalsIgnoreCase(workspaceInformation.getApiVersion())
+//                    || workspaceInformation.getApiVersion() == null
+//                    || "".equals(workspaceInformation.getApiVersion())
+                ) {
+                    NutsBootId s = PrivateNutsMavenUtils.resolveLatestMavenId(NutsBootId.parse(NutsConstants.Ids.NUTS_API), null, LOG, resolveBootRepositories());
+                    if (s == null) {
+                        throw new NutsBootException(NutsMessage.plain("unable to load latest nuts version"));
+                    }
+                    workspaceInformation.setApiVersion(s.getVersion().toString());
                 }
-                workspaceInformation.setApiVersion(s.getVersion().toString());
             }
             if (NutsUtilStrings.isBlank(workspaceInformation.getApiVersion())) {
                 workspaceInformation.setApiVersion(Nuts.getVersion());
@@ -633,7 +635,7 @@ public final class NutsBootWorkspace {
             // accessible when deleting others
             String latestDefaultVersion = null;
             try {
-                Path nbase = Paths.get(System.getProperty("user.home")).resolve(".local/share/nuts/apps/"+NutsConstants.Names.DEFAULT_WORKSPACE_NAME+"/id/net/thevpc/nuts/nuts");
+                Path nbase = Paths.get(System.getProperty("user.home")).resolve(".local/share/nuts/apps/" + NutsConstants.Names.DEFAULT_WORKSPACE_NAME + "/id/net/thevpc/nuts/nuts");
                 if (Files.isDirectory(nbase)) {
                     latestDefaultVersion = Files.list(nbase).filter(f -> Files.exists(f.resolve(".nuts-bashrc")))
                             .map(x -> sysrcFile.getFileName().toString())
@@ -887,7 +889,7 @@ public final class NutsBootWorkspace {
         } catch (Throwable ex) {
             StringBuilder errors = new StringBuilder();
             errorList.add(new PrivateNutsUtils.ErrorInfo(
-                    null,null,null,"unable to boot workspace : "+ex,
+                    null, null, null, "unable to boot workspace : " + ex,
                     ex
             ));
             for (PrivateNutsUtils.ErrorInfo errorInfo : errorList.list()) {
@@ -963,7 +965,7 @@ public final class NutsBootWorkspace {
         File f = getBootCacheFile(vid, PrivateNutsMavenUtils.getFileName(vid, "jar"), repositories, cacheFolder, useCache, expire, errorList);
         if (f == null) {
             throw new NutsInvalidWorkspaceException(this.workspaceInformation.getWorkspaceLocation(),
-                    NutsMessage.cstyle("unable to load %s %s from repositories %s" , name,vid,Arrays.asList(repositories)));
+                    NutsMessage.cstyle("unable to load %s %s from repositories %s", name, vid, Arrays.asList(repositories)));
         }
         return f;
     }
@@ -1292,7 +1294,7 @@ public final class NutsBootWorkspace {
             }
         }
         NutsWorkspaceOptionsBuilder optionsCopy = options.builder();
-        if(optionsCopy.isBot() || !PrivateNutsGui.isGraphicalDesktopEnvironment()){
+        if (optionsCopy.isBot() || !PrivateNutsGui.isGraphicalDesktopEnvironment()) {
             optionsCopy.setGui(false);
         }
         return PrivateNutsUtils.deleteAndConfirmAll(folders.toArray(new File[0]), force, DELETE_FOLDERS_HEADER, null, LOG, optionsCopy.build());
@@ -1372,30 +1374,30 @@ public final class NutsBootWorkspace {
         if (!ths.list().isEmpty()) {
             PrivateNutsUtils.err_printf("error stack trace is:%n");
             for (PrivateNutsUtils.ErrorInfo th : ths.list()) {
-                StringBuilder msg=new StringBuilder();
-                List<Object> msgParams=new ArrayList<>();
+                StringBuilder msg = new StringBuilder();
+                List<Object> msgParams = new ArrayList<>();
                 msg.append("[error]");
-                if(th.getNutsId()!=null){
+                if (th.getNutsId() != null) {
                     msg.append(" <id>=%s");
                     msgParams.add(th.getNutsId());
                 }
-                if(th.getRepository()!=null){
+                if (th.getRepository() != null) {
                     msg.append(" <repo>=%s");
                     msgParams.add(th.getRepository());
                 }
-                if(th.getUrl()!=null){
+                if (th.getUrl() != null) {
                     msg.append(" <url>=%s");
                     msgParams.add(th.getUrl());
                 }
-                if(th.getThrowable()!=null){
+                if (th.getThrowable() != null) {
                     msg.append(" <error>=%s");
                     msgParams.add(th.getThrowable().toString());
-                }else{
+                } else {
                     msg.append(" <error>=%s");
                     msgParams.add("unexpected error");
                 }
                 msg.append(" %n");
-                PrivateNutsUtils.err_printf(msg.toString(),msgParams.toArray());
+                PrivateNutsUtils.err_printf(msg.toString(), msgParams.toArray());
                 PrivateNutsUtils.err_printStack(th.getThrowable());
             }
         } else {

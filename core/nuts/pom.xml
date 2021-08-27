@@ -14,7 +14,7 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <github.global.server>github</github.global.server>
-        <nuts.buildNumber>000080010008</nuts.buildNumber>
+        <nuts.buildNumber>000080020001</nuts.buildNumber>
         <nuts.genericName>Package Manager</nuts.genericName>
         <nuts.categories>/Settings/PackageManager/Nuts</nuts.categories>
 
