@@ -37,12 +37,12 @@ import java.util.function.Supplier;
 
 /**
  * Workspace creation/opening options class.
- *
+ * <p>
  * %category Config
  *
  * @since 0.5.4
  */
-public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, NutsWorkspaceOptionsBuilder,NutsWorkspaceOptions {
+public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, NutsWorkspaceOptionsBuilder, NutsWorkspaceOptions {
 
     private static final long serialVersionUID = 1;
     /**
@@ -231,6 +231,16 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
     /**
      * option-type : runtime (available only for the current workspace instance)
      */
+    private Boolean commandVersion;
+
+    /**
+     * option-type : runtime (available only for the current workspace instance)
+     */
+    private Boolean commandHelp;
+
+    /**
+     * option-type : runtime (available only for the current workspace instance)
+     */
     private Boolean debug;
 
     /**
@@ -244,9 +254,10 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
     private NutsExecutionType executionType;
     /**
      * option-type : runtime (available only for the current workspace instance)
+     *
      * @since 0.8.1
      */
-    private NutsRunAs runAs =NutsRunAs.CURRENT_USER;
+    private NutsRunAs runAs = NutsRunAs.CURRENT_USER;
 
     /**
      * option-type : create (used when creating new workspace. will not be
@@ -365,18 +376,439 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
         this.session = session;
     }
 
-    /**
-     * creates a string key combining layout and location. le key has the form
-     * of a concatenated layout and location ids separated by ':' where null
-     * layout is replaced by 'system' keyword. used in
-     * {@link NutsWorkspaceOptions#getHomeLocations()}.
-     *
-     * @param storeLocationLayout layout
-     * @param location location
-     * @return combination of layout and location separated by ':'.
-     */
-    public static String createHomeLocationKey(NutsOsFamily storeLocationLayout, NutsStoreLocation location) {
-        return (storeLocationLayout == null ? "system" : storeLocationLayout.id()) + ":" + (location == null ? "system" : location.id());
+    @Override
+    public NutsWorkspaceOptionsBuilder copy() {
+        try {
+            CoreNutsWorkspaceOptions t = (CoreNutsWorkspaceOptions) clone();
+            t.logConfig = logConfig == null ? null : t.logConfig;
+            t.storeLocations = new LinkedHashMap<>(storeLocations);
+            t.homeLocations = new LinkedHashMap<>(homeLocations);
+            t.setExcludedExtensions(t.getExcludedExtensions() == null ? null : Arrays.copyOf(t.getExcludedExtensions(), t.getExcludedExtensions().length));
+//            t.setExcludedRepositories(t.getExcludedRepositories() == null ? null : Arrays.copyOf(t.getExcludedRepositories(), t.getExcludedRepositories().length));
+            t.setRepositories(t.getRepositories() == null ? null : Arrays.copyOf(t.getRepositories(), t.getRepositories().length));
+            t.setApplicationArguments(t.getApplicationArguments() == null ? null : Arrays.copyOf(t.getApplicationArguments(), t.getApplicationArguments().length));
+            return t;
+        } catch (CloneNotSupportedException e) {
+            throw new IllegalStateException("should never Happen", e);
+        }
+    }
+
+    @Override
+    public NutsWorkspaceOptionsFormat formatter() {
+        return new CoreNutsWorkspaceOptionsFormat(session, this);
+    }
+
+    @Override
+    public String getApiVersion() {
+        return apiVersion;
+    }
+
+    @Override
+    public String[] getApplicationArguments() {
+        return applicationArguments == null ? new String[0] : Arrays.copyOf(applicationArguments, applicationArguments.length);
+    }
+
+    @Override
+    public String getArchetype() {
+        return archetype;
+    }
+
+    @Override
+    public Supplier<ClassLoader> getClassLoaderSupplier() {
+        return classLoaderSupplier;
+    }
+
+    @Override
+    public NutsConfirmationMode getConfirm() {
+        return confirm;
+    }
+
+    @Override
+    public boolean isDry() {
+        return dry != null && dry;
+    }
+
+    @Override
+    public Boolean getDry() {
+        return dry;
+    }
+
+    @Override
+    public long getCreationTime() {
+        return creationTime;
+    }
+
+    @Override
+    public String[] getExcludedExtensions() {
+        return excludedExtensions;
+    }
+
+    @Override
+    public NutsExecutionType getExecutionType() {
+        return executionType;
+    }
+
+    @Override
+    public NutsRunAs getRunAs() {
+        return runAs;
+    }
+
+    @Override
+    public String[] getExecutorOptions() {
+        return executorOptions == null ? new String[0] : executorOptions;
+    }
+
+    @Override
+    public String getHomeLocation(NutsOsFamily layout, NutsStoreLocation location) {
+        String key = NutsUtilPlatforms.createHomeLocationKey(layout, location);
+        return homeLocations.get(key);
+    }
+
+    @Override
+    public Map<String, String> getHomeLocations() {
+        return new LinkedHashMap<>(homeLocations);
+    }
+
+    @Override
+    public String getJavaCommand() {
+        return javaCommand;
+    }
+
+    @Override
+    public String getJavaOptions() {
+        return javaOptions;
+    }
+
+    @Override
+    public NutsLogConfig getLogConfig() {
+        return logConfig;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public NutsOpenMode getOpenMode() {
+        return openMode;
+    }
+
+    @Override
+    public NutsContentType getOutputFormat() {
+        return outputFormat;
+    }
+
+    @Override
+    public String[] getOutputFormatOptions() {
+        return outputFormatOptions.toArray(new String[0]);
+    }
+
+    @Override
+    public char[] getCredentials() {
+        return credentials;
+    }
+
+    @Override
+    public NutsStoreLocationStrategy getRepositoryStoreLocationStrategy() {
+        return repositoryStoreLocationStrategy;
+    }
+
+    @Override
+    public String getRuntimeId() {
+        return runtimeId;
+    }
+
+    @Override
+    public String getStoreLocation(NutsStoreLocation folder) {
+        return storeLocations.get(folder.id());
+    }
+
+    @Override
+    public NutsOsFamily getStoreLocationLayout() {
+        return storeLocationLayout;
+    }
+
+    @Override
+    public NutsStoreLocationStrategy getStoreLocationStrategy() {
+        return storeLocationStrategy;
+    }
+
+    @Override
+    public Map<String, String> getStoreLocations() {
+        return new LinkedHashMap<>(storeLocations);
+    }
+
+    @Override
+    public NutsTerminalMode getTerminalMode() {
+        return terminalMode;
+    }
+
+    @Override
+    public String[] getRepositories() {
+        return repositories == null ? new String[0] : repositories;
+    }
+
+    @Override
+    public String getUserName() {
+        return userName;
+    }
+
+    @Override
+    public String getWorkspace() {
+        return workspace;
+    }
+
+    @Override
+    public boolean isDebug() {
+        return debug != null && debug;
+    }
+
+    @Override
+    public Boolean getDebug() {
+        return debug;
+    }
+
+    @Override
+    public boolean isGlobal() {
+        return global != null && global;
+    }
+
+    @Override
+    public Boolean getGlobal() {
+        return global;
+    }
+
+    @Override
+    public boolean isGui() {
+        return gui != null && gui;
+    }
+
+    @Override
+    public Boolean getGui() {
+        return gui;
+    }
+
+    @Override
+    public boolean isInherited() {
+        return inherited != null && inherited;
+    }
+
+    @Override
+    public Boolean getInherited() {
+        return inherited;
+    }
+
+    @Override
+    public boolean isReadOnly() {
+        return readOnly != null && readOnly;
+    }
+
+    @Override
+    public Boolean getReadOnly() {
+        return readOnly;
+    }
+
+    @Override
+    public boolean isRecover() {
+        return recover != null && recover;
+    }
+
+    @Override
+    public Boolean getRecover() {
+        return recover;
+    }
+
+    @Override
+    public boolean isReset() {
+        return reset != null && reset;
+    }
+
+    @Override
+    public Boolean getReset() {
+        return reset;
+    }
+
+    @Override
+    public boolean isCommandVersion() {
+        return commandVersion != null && commandVersion;
+    }
+
+    @Override
+    public Boolean getCommandVersion() {
+        return commandVersion;
+    }
+
+    @Override
+    public boolean isCommandHelp() {
+        return commandHelp != null && commandHelp;
+    }
+
+    @Override
+    public Boolean getCommandHelp() {
+        return commandHelp;
+    }
+
+    @Override
+    public boolean isSkipCompanions() {
+        return skipCompanions != null && skipCompanions;
+    }
+
+    @Override
+    public Boolean getSkipCompanions() {
+        return skipCompanions;
+    }
+
+    @Override
+    public boolean isSkipWelcome() {
+        return skipWelcome != null && skipWelcome;
+    }
+
+    @Override
+    public Boolean getSkipWelcome() {
+        return skipWelcome;
+    }
+
+    @Override
+    public String getOutLinePrefix() {
+        return outLinePrefix;
+    }
+
+    @Override
+    public String getErrLinePrefix() {
+        return errLinePrefix;
+    }
+
+    @Override
+    public boolean isSkipBoot() {
+        return skipBoot != null && skipBoot;
+    }
+
+    @Override
+    public Boolean getSkipBoot() {
+        return skipBoot;
+    }
+
+    @Override
+    public boolean isTrace() {
+        return trace == null || trace;
+    }
+
+    @Override
+    public Boolean getTrace() {
+        return trace;
+    }
+
+    public String getProgressOptions() {
+        return progressOptions;
+    }
+
+    public boolean isCached() {
+        return cached == null || cached;
+    }
+
+    @Override
+    public Boolean getCached() {
+        return cached;
+    }
+
+    public boolean isIndexed() {
+        return indexed == null || indexed;
+    }
+
+    @Override
+    public Boolean getIndexed() {
+        return indexed;
+    }
+
+    @Override
+    public boolean isTransitive() {
+        return transitive == null || transitive;
+    }
+
+    @Override
+    public Boolean getTransitive() {
+        return transitive;
+    }
+
+    @Override
+    public boolean isBot() {
+        return bot != null && bot;
+    }
+
+    @Override
+    public Boolean getBot() {
+        return bot;
+    }
+
+    @Override
+    public NutsFetchStrategy getFetchStrategy() {
+        return fetchStrategy;
+    }
+
+    @Override
+    public InputStream getStdin() {
+        return stdin;
+    }
+
+    @Override
+    public PrintStream getStdout() {
+        return stdout;
+    }
+
+    @Override
+    public PrintStream getStderr() {
+        return stderr;
+    }
+
+    @Override
+    public ExecutorService getExecutorService() {
+        return executorService;
+    }
+
+    @Override
+    public Instant getExpireTime() {
+        return expireTime;
+    }
+
+    @Override
+    public boolean isSkipErrors() {
+        return skipErrors != null && skipErrors;
+    }
+
+    @Override
+    public Boolean getSkipErrors() {
+        return skipErrors;
+    }
+
+    @Override
+    public boolean isSwitchWorkspace() {
+        return switchWorkspace != null && switchWorkspace;
+    }
+
+    @Override
+    public Boolean getSwitchWorkspace() {
+        return switchWorkspace;
+    }
+
+    @Override
+    public NutsMessage[] getErrors() {
+        return Arrays.copyOf(errors, errors.length);
+    }
+
+    @Override
+    public String[] getProperties() {
+        return properties == null ? new String[0] : properties;
+    }
+
+    @Override
+    public String getLocale() {
+        return locale;
+    }
+
+    @Override
+    public String getTheme() {
+        return theme;
     }
 
     @Override
@@ -410,6 +842,8 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
         this.setExecutorOptions(other.getExecutorOptions());
         this.setRecover(other.getRecover());
         this.setReset(other.getReset());
+        this.setCommandVersion(other.getCommandVersion());
+        this.setCommandHelp(other.getCommandHelp());
         this.setDebug(other.getDebug());
         this.setInherited(other.getInherited());
         this.setExecutionType(other.getExecutionType());
@@ -564,17 +998,6 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
     @Override
     public NutsWorkspaceOptionsBuilder setExecutionType(NutsExecutionType executionType) {
         this.executionType = executionType;
-        return this;
-    }
-
-    /**
-     * set runAsUser
-     *
-     * @param runAs new value
-     * @return {@code this} instance
-     */
-    public NutsWorkspaceOptionsBuilder setRunAs(NutsRunAs runAs) {
-        this.runAs = runAs==null?NutsRunAs.CURRENT_USER : runAs;
         return this;
     }
 
@@ -763,6 +1186,18 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
         return this;
     }
 
+    @Override
+    public NutsWorkspaceOptionsBuilder setCommandVersion(Boolean version) {
+        this.commandVersion = version;
+        return this;
+    }
+
+    @Override
+    public NutsWorkspaceOptionsBuilder setCommandHelp(Boolean help) {
+        this.commandHelp = help;
+        return this;
+    }
+
     /**
      * set debug
      *
@@ -851,7 +1286,7 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
      * set store location
      *
      * @param location location
-     * @param value new value
+     * @param value    new value
      * @return {@code this} instance
      */
     @Override
@@ -867,14 +1302,14 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
     /**
      * set home location
      *
-     * @param layout layout
+     * @param layout   layout
      * @param location location
-     * @param value new value
+     * @param value    new value
      * @return {@code this} instance
      */
     @Override
     public NutsWorkspaceOptionsBuilder setHomeLocation(NutsOsFamily layout, NutsStoreLocation location, String value) {
-        String key = createHomeLocationKey(layout, location);
+        String key = NutsUtilPlatforms.createHomeLocationKey(layout, location);
         if (NutsUtilStrings.isBlank(value)) {
             homeLocations.remove(key);
         } else {
@@ -1067,407 +1502,9 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
     }
 
     @Override
-    public NutsWorkspaceOptionsBuilder copy() {
-        try {
-            CoreNutsWorkspaceOptions t = (CoreNutsWorkspaceOptions) clone();
-            t.logConfig = logConfig == null ? null : t.logConfig;
-            t.storeLocations = new LinkedHashMap<>(storeLocations);
-            t.homeLocations = new LinkedHashMap<>(homeLocations);
-            t.setExcludedExtensions(t.getExcludedExtensions() == null ? null : Arrays.copyOf(t.getExcludedExtensions(), t.getExcludedExtensions().length));
-//            t.setExcludedRepositories(t.getExcludedRepositories() == null ? null : Arrays.copyOf(t.getExcludedRepositories(), t.getExcludedRepositories().length));
-            t.setRepositories(t.getRepositories() == null ? null : Arrays.copyOf(t.getRepositories(), t.getRepositories().length));
-            t.setApplicationArguments(t.getApplicationArguments() == null ? null : Arrays.copyOf(t.getApplicationArguments(), t.getApplicationArguments().length));
-            return t;
-        } catch (CloneNotSupportedException e) {
-            throw new IllegalStateException("should never Happen", e);
-        }
-    }
-
-    @Override
-    public NutsWorkspaceOptionsFormat formatter() {
-        return new CoreNutsWorkspaceOptionsFormat(session, this);
-    }
-
-    @Override
-    public String getApiVersion() {
-        return apiVersion;
-    }
-
-    @Override
-    public String[] getApplicationArguments() {
-        return applicationArguments == null ? new String[0] : Arrays.copyOf(applicationArguments, applicationArguments.length);
-    }
-
-    @Override
-    public String getArchetype() {
-        return archetype;
-    }
-
-    @Override
-    public Supplier<ClassLoader> getClassLoaderSupplier() {
-        return classLoaderSupplier;
-    }
-
-    @Override
-    public NutsConfirmationMode getConfirm() {
-        return confirm;
-    }
-
-    @Override
-    public boolean isDry() {
-        return dry != null && dry;
-    }
-
-    @Override
-    public Boolean getDry() {
-        return dry;
-    }
-
-    @Override
-    public long getCreationTime() {
-        return creationTime;
-    }
-
-    @Override
-    public String[] getExcludedExtensions() {
-        return excludedExtensions;
-    }
-    @Override
-    public NutsExecutionType getExecutionType() {
-        return executionType;
-    }
-    @Override
-    public NutsRunAs getRunAs() {
-        return runAs;
-    }
-
-    @Override
-    public String[] getExecutorOptions() {
-        return executorOptions == null ? new String[0] : executorOptions;
-    }
-
-    @Override
-    public String getHomeLocation(NutsOsFamily layout, NutsStoreLocation location) {
-        String key = createHomeLocationKey(layout, location);
-        return homeLocations.get(key);
-    }
-
-    @Override
-    public Map<String, String> getHomeLocations() {
-        return new LinkedHashMap<>(homeLocations);
-    }
-
-    @Override
-    public String getJavaCommand() {
-        return javaCommand;
-    }
-
-    @Override
-    public String getJavaOptions() {
-        return javaOptions;
-    }
-
-    @Override
-    public NutsLogConfig getLogConfig() {
-        return logConfig;
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public NutsOpenMode getOpenMode() {
-        return openMode;
-    }
-
-    @Override
-    public NutsContentType getOutputFormat() {
-        return outputFormat;
-    }
-
-    @Override
-    public String[] getOutputFormatOptions() {
-        return outputFormatOptions.toArray(new String[0]);
-    }
-
-    @Override
-    public char[] getCredentials() {
-        return credentials;
-    }
-
-    @Override
-    public NutsStoreLocationStrategy getRepositoryStoreLocationStrategy() {
-        return repositoryStoreLocationStrategy;
-    }
-
-    @Override
-    public String getRuntimeId() {
-        return runtimeId;
-    }
-
-    @Override
-    public String getStoreLocation(NutsStoreLocation folder) {
-        return storeLocations.get(folder.id());
-    }
-
-    @Override
-    public NutsOsFamily getStoreLocationLayout() {
-        return storeLocationLayout;
-    }
-
-    @Override
-    public NutsStoreLocationStrategy getStoreLocationStrategy() {
-        return storeLocationStrategy;
-    }
-
-    @Override
-    public Map<String, String> getStoreLocations() {
-        return new LinkedHashMap<>(storeLocations);
-    }
-
-    @Override
-    public NutsTerminalMode getTerminalMode() {
-        return terminalMode;
-    }
-
-    @Override
-    public String[] getRepositories() {
-        return repositories == null ? new String[0] : repositories;
-    }
-
-    @Override
-    public String getUserName() {
-        return userName;
-    }
-
-    @Override
-    public String getWorkspace() {
-        return workspace;
-    }
-
-    @Override
-    public boolean isDebug() {
-        return debug != null && debug;
-    }
-
-    @Override
-    public Boolean getDebug() {
-        return debug;
-    }
-
-    @Override
-    public boolean isGlobal() {
-        return global != null && global;
-    }
-
-    @Override
-    public Boolean getGlobal() {
-        return global;
-    }
-
-    @Override
-    public boolean isGui() {
-        return gui != null && gui;
-    }
-
-    @Override
-    public Boolean getGui() {
-        return gui;
-    }
-
-    @Override
-    public boolean isInherited() {
-        return inherited != null && inherited;
-    }
-
-    @Override
-    public Boolean getInherited() {
-        return inherited;
-    }
-
-    @Override
-    public boolean isReadOnly() {
-        return readOnly != null && readOnly;
-    }
-
-    @Override
-    public Boolean getReadOnly() {
-        return readOnly;
-    }
-
-    @Override
-    public boolean isRecover() {
-        return recover != null && recover;
-    }
-
-    @Override
-    public Boolean getRecover() {
-        return recover;
-    }
-
-    @Override
-    public boolean isReset() {
-        return reset != null && reset;
-    }
-
-    @Override
-    public Boolean getReset() {
-        return reset;
-    }
-
-    @Override
-    public boolean isSkipCompanions() {
-        return skipCompanions != null && skipCompanions;
-    }
-
-    @Override
-    public Boolean getSkipCompanions() {
-        return skipCompanions;
-    }
-
-    @Override
-    public boolean isSkipWelcome() {
-        return skipWelcome != null && skipWelcome;
-    }
-
-    @Override
-    public Boolean getSkipWelcome() {
-        return skipWelcome;
-    }
-
-    @Override
-    public String getOutLinePrefix() {
-        return outLinePrefix;
-    }
-
-    @Override
     public NutsWorkspaceOptionsBuilder setOutLinePrefix(String outLinePrefix) {
         this.outLinePrefix = outLinePrefix;
         return this;
-    }
-
-    @Override
-    public String getErrLinePrefix() {
-        return errLinePrefix;
-    }
-
-    @Override
-    public boolean isSkipBoot() {
-        return skipBoot != null && skipBoot;
-    }
-
-    @Override
-    public Boolean getSkipBoot() {
-        return skipBoot;
-    }
-
-    @Override
-    public boolean isTrace() {
-        return trace == null || trace;
-    }
-
-    @Override
-    public Boolean getTrace() {
-        return trace;
-    }
-
-    public String getProgressOptions() {
-        return progressOptions;
-    }
-
-    public boolean isCached() {
-        return cached == null || cached;
-    }
-
-    @Override
-    public Boolean getCached() {
-        return cached;
-    }
-
-    public boolean isIndexed() {
-        return indexed == null || indexed;
-    }
-
-    @Override
-    public Boolean getIndexed() {
-        return indexed;
-    }
-
-    @Override
-    public boolean isTransitive() {
-        return transitive == null || transitive;
-    }
-
-    @Override
-    public Boolean getTransitive() {
-        return transitive;
-    }
-
-    @Override
-    public boolean isBot() {
-        return bot != null && bot;
-    }
-
-    @Override
-    public Boolean getBot() {
-        return bot;
-    }
-
-    @Override
-    public NutsFetchStrategy getFetchStrategy() {
-        return fetchStrategy;
-    }
-
-    @Override
-    public InputStream getStdin() {
-        return stdin;
-    }
-
-    @Override
-    public PrintStream getStdout() {
-        return stdout;
-    }
-
-    @Override
-    public PrintStream getStderr() {
-        return stderr;
-    }
-
-    @Override
-    public ExecutorService getExecutorService() {
-        return executorService;
-    }
-
-    @Override
-    public Instant getExpireTime() {
-        return expireTime;
-    }
-
-    @Override
-    public boolean isSkipErrors() {
-        return skipErrors != null && skipErrors;
-    }
-
-    @Override
-    public Boolean getSkipErrors() {
-        return skipErrors;
-    }
-
-    @Override
-    public boolean isSwitchWorkspace() {
-        return switchWorkspace != null && switchWorkspace;
-    }
-
-    @Override
-    public Boolean getSwitchWorkspace() {
-        return switchWorkspace;
-    }
-
-    @Override
-    public NutsMessage[] getErrors() {
-        return Arrays.copyOf(errors, errors.length);
     }
 
     @Override
@@ -1477,24 +1514,9 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
     }
 
     @Override
-    public String toString() {
-        return formatter().getBootCommandLine().toString();
-    }
-
-    @Override
-    public String[] getProperties() {
-        return properties==null?new String[0]:properties;
-    }
-
-    @Override
     public NutsWorkspaceOptionsBuilder setProperties(String[] properties) {
         this.properties = properties;
         return this;
-    }
-
-    @Override
-    public String getLocale() {
-        return locale;
     }
 
     @Override
@@ -1504,18 +1526,20 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
     }
 
     @Override
-    public String getTheme() {
-        return theme;
-    }
-
-    @Override
     public NutsWorkspaceOptionsBuilder setTheme(String theme) {
         this.theme = theme;
         return this;
     }
 
-    public void setSession(NutsSession session) {
-        this.session=session;
+    /**
+     * set runAsUser
+     *
+     * @param runAs new value
+     * @return {@code this} instance
+     */
+    public NutsWorkspaceOptionsBuilder setRunAs(NutsRunAs runAs) {
+        this.runAs = runAs == null ? NutsRunAs.CURRENT_USER : runAs;
+        return this;
     }
 
     @Override
@@ -1526,7 +1550,17 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
     }
 
     @Override
+    public String toString() {
+        return formatter().getBootCommandLine().toString();
+    }
+
+    @Override
     public NutsWorkspaceOptionsBuilder builder() {
         return new CoreNutsWorkspaceOptions(session).setAll(this);
     }
+
+    public void setSession(NutsSession session) {
+        this.session = session;
+    }
+
 }

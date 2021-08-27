@@ -196,6 +196,19 @@ public final class NutsUtilPlatforms {
         }
         throw new UnsupportedOperationException();
     }
+    /**
+     * creates a string key combining layout and location.
+     * le key has the form of a concatenated layout and location ids separated by ':'
+     * where null layout is replaced by 'system' keyword.
+     * used in {@link NutsWorkspaceOptions#getHomeLocations()}.
+     *
+     * @param storeLocationLayout layout
+     * @param location            location
+     * @return combination of layout and location separated by ':'.
+     */
+    public static String createHomeLocationKey(NutsOsFamily storeLocationLayout, NutsStoreLocation location) {
+        return NutsApiUtils.createHomeLocationKey(storeLocationLayout, location);
+    }
 
     /**
      * resolves nuts home folder.Home folder is the root for nuts folders.It

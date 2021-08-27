@@ -230,6 +230,9 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
         }
 
         if (runtimeOptions || isImplicitAll()) {
+            fillOption("--help", "-h", options.isCommandHelp(), false, arguments, false);
+            fillOption("--version", "-v", options.isCommandVersion(), false, arguments, false);
+
             if (!(omitDefaults && (options.getOpenMode() == null || options.getOpenMode() == NutsOpenMode.OPEN_OR_CREATE))) {
                 fillOption(options.getOpenMode(), arguments, false);
             }

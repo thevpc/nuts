@@ -213,14 +213,14 @@ public class CoreNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsForma
             Map<String, String> homeLocations = options.getHomeLocations();
             if (homeLocations != null) {
                 for (NutsStoreLocation location : NutsStoreLocation.values()) {
-                    String s = homeLocations.get(CoreNutsWorkspaceOptions.createHomeLocationKey(null, location));
+                    String s = homeLocations.get(NutsUtilPlatforms.createHomeLocationKey(null, location));
                     if (!NutsUtilStrings.isBlank(s)) {
                         fillOption("--system-" + location.id() + "-home", null, s, arguments, false);
                     }
                 }
                 for (NutsOsFamily osFamily : NutsOsFamily.values()) {
                     for (NutsStoreLocation location : NutsStoreLocation.values()) {
-                        String s = homeLocations.get(CoreNutsWorkspaceOptions.createHomeLocationKey(osFamily, location));
+                        String s = homeLocations.get(NutsUtilPlatforms.createHomeLocationKey(osFamily, location));
                         if (!NutsUtilStrings.isBlank(s)) {
                             fillOption("--" + osFamily.id() + "-" + location.id() + "-home", null, s, arguments, false);
                         }
@@ -235,6 +235,8 @@ public class CoreNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsForma
         }
 
         if (runtimeOptions || isImplicitAll()) {
+            fillOption("--help", "-h", options.isCommandHelp(), false, arguments, false);
+            fillOption("--version", "-v", options.isCommandVersion(), false, arguments, false);
             if (!(omitDefaults && (options.getOpenMode() == null || options.getOpenMode() == NutsOpenMode.OPEN_OR_CREATE))) {
                 fillOption(options.getOpenMode(), arguments, false);
             }

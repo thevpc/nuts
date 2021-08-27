@@ -290,6 +290,31 @@ public class ReadOnlyNutsWorkspaceOptions implements NutsWorkspaceOptions {
     }
 
     @Override
+    public boolean isCommandVersion() {
+        return options.isCommandVersion();
+    }
+
+    @Override
+    public Boolean getCommandVersion() {
+        return options.getCommandVersion();
+    }
+
+    @Override
+    public boolean isCommandHelp() {
+        return options.isCommandHelp();
+    }
+
+    @Override
+    public Boolean getCommandHelp() {
+        return options.getCommandHelp();
+    }
+//
+//    @Override
+//    public String getBootRepositories() {
+//        return options.getBootRepositories();
+//    }
+
+    @Override
     public boolean isSkipCompanions() {
         return options.isSkipCompanions();
     }
@@ -308,11 +333,6 @@ public class ReadOnlyNutsWorkspaceOptions implements NutsWorkspaceOptions {
     public Boolean getSkipWelcome() {
         return options.getSkipWelcome();
     }
-//
-//    @Override
-//    public String getBootRepositories() {
-//        return options.getBootRepositories();
-//    }
 
     @Override
     public String getOutLinePrefix() {
