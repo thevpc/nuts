@@ -22,7 +22,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
     private long startTimeMillis;
     private String[] args;
     private NutsApplicationMode mode = NutsApplicationMode.RUN;
-    private NutsAppVersionStoreLocationSupplier appVersionStoreLocationSupplier;
+    private NutsAppStoreLocationResolver storeLocationResolver;
 
     /**
      * previous parse for "update" mode
@@ -335,15 +335,14 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
                 || version.equals(getAppId().getVersion().getValue())) {
             return getFolder(location);
         }
-        if (appVersionStoreLocationSupplier != null) {
-            String r = appVersionStoreLocationSupplier.getStoreLocation(location, version);
+        NutsId newId = this.getAppId().builder().setVersion(version).build();
+        if (storeLocationResolver != null) {
+            String r = storeLocationResolver.getStoreLocation(newId, location);
             if (r != null) {
                 return r;
             }
         }
-        return workspace.locations().getStoreLocation(
-                this.getAppId().builder().setVersion(version).build(),
-                location);
+        return workspace.locations().getStoreLocation(newId,location);
     }
 
     public NutsApplicationContext setFolder(NutsStoreLocation location, String folder) {
@@ -520,13 +519,13 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
     }
 
     @Override
-    public NutsAppVersionStoreLocationSupplier getAppVersionStoreLocationSupplier() {
-        return appVersionStoreLocationSupplier;
+    public NutsAppStoreLocationResolver getStoreLocationResolver() {
+        return storeLocationResolver;
     }
 
     @Override
-    public NutsApplicationContext setAppVersionStoreLocationSupplier(NutsAppVersionStoreLocationSupplier appVersionStoreLocationSupplier) {
-        this.appVersionStoreLocationSupplier = appVersionStoreLocationSupplier;
+    public NutsApplicationContext setAppVersionStoreLocationSupplier(NutsAppStoreLocationResolver appVersionStoreLocationSupplier) {
+        this.storeLocationResolver = appVersionStoreLocationSupplier;
         return this;
     }
 }

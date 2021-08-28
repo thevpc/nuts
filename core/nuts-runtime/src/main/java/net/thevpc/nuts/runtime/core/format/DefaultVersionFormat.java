@@ -2,7 +2,10 @@ package net.thevpc.nuts.runtime.core.format;
 
 import net.thevpc.nuts.*;
 
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * type: Command Class
@@ -19,23 +22,6 @@ public class DefaultVersionFormat extends DefaultFormatBase<NutsVersionFormat> i
         super(ws, "version");
     }
 
-
-    @Override
-    public NutsVersion getVersion() {
-        return version;
-    }
-
-    @Override
-    public NutsVersionFormat setVersion(NutsVersion version) {
-        this.version = version;
-        return this;
-    }
-
-    @Override
-    public boolean isWorkspaceVersion() {
-        return version == null;
-    }
-
     @Override
     public boolean configureFirst(NutsCommandLine cmdLine) {
         checkSession();
@@ -48,14 +34,14 @@ public class DefaultVersionFormat extends DefaultFormatBase<NutsVersionFormat> i
             case "-a":
             case "--all": {
                 boolean val = cmdLine.nextBoolean().getBooleanValue();
-                if(enabled) {
+                if (enabled) {
                     this.all = val;
                 }
                 return true;
             }
             case "--add": {
                 NutsArgument r = cmdLine.nextString().getArgumentValue();
-                if(enabled) {
+                if (enabled) {
                     this.all = true;
                     extraProperties.put(r.getStringKey(), r.getStringValue());
                 }
@@ -91,21 +77,42 @@ public class DefaultVersionFormat extends DefaultFormatBase<NutsVersionFormat> i
     }
 
     @Override
+    public NutsVersion getVersion() {
+        return version;
+    }
+
+    @Override
+    public NutsVersionFormat setVersion(NutsVersion version) {
+        this.version = version;
+        return this;
+    }
+
+    @Override
+    public boolean isWorkspaceVersion() {
+        return version == null;
+    }
+
+    @Override
     public void print(NutsPrintStream out) {
         checkSession();
-        if(!isNtf()) {
+        if (!isNtf()) {
+            out = out.convertMode(NutsTerminalMode.FILTERED);
+        }
+        if (getSession().isPlainOut()) {
             if (isWorkspaceVersion()) {
                 out.printf("%s/%s", getSession().getWorkspace().getApiVersion(), getSession().getWorkspace().getRuntimeId().getVersion());
             } else {
-                out.printf("%s", getVersion());
+                out.printf("%s", getSession().getWorkspace().text().forStyled(
+                        getVersion().toString(), NutsTextStyle.version()
+                ));
             }
-        }else{
+        } else {
             if (isWorkspaceVersion()) {
                 getSession().getWorkspace().formats().object(buildProps()).print(out);
             } else {
                 out.print(
                         getSession().getWorkspace().text().forStyled(
-                                getVersion().toString(),NutsTextStyle.version()
+                                getVersion().toString(), NutsTextStyle.version()
                         )
                 );
             }

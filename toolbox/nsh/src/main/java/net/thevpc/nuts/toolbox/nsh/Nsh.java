@@ -108,8 +108,8 @@ public class Nsh implements NutsApplication {
                 new NutsLauncherOptions()
                         .setId(session.getAppId())
                         .setCreateScript(true)
-                        .setCreateDesktopShortcut(NutsActionSupportCondition.PREFERRED)
-                        .setCreateMenuShortcut(NutsActionSupportCondition.SUPPORTED)
+                        .setCreateDesktopShortcut(NutsSupportCondition.PREFERRED)
+                        .setCreateMenuShortcut(NutsSupportCondition.SUPPORTED)
                         .setOpenTerminal(true)
         );
     }

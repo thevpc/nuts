@@ -121,38 +121,15 @@ public final class Nuts {
         }
     }
 
-    public static void run(NutsSession session, String[] args) {
-        NutsWorkspace workspace = session.getWorkspace();
-        NutsWorkspaceOptionsBuilder o = NutsWorkspaceOptionsBuilder.of().parseArguments(args);
-        String[] appArgs;
-        if (o.getApplicationArguments().length == 0) {
-            if (o.isSkipWelcome()) {
-                return;
-            }
-            appArgs = new String[]{"welcome"};
-        } else {
-            appArgs = o.getApplicationArguments();
-        }
-        session.configure(o.build());
-        workspace.exec()
-                .setSession(session)
-                .addCommand(appArgs)
-                .addExecutorOptions(o.getExecutorOptions())
-                .setExecutionType(o.getExecutionType())
-                .setFailFast(true)
-                .setDry(session.isDry())
-                .run();
-    }
-
     /**
-     * opens a workspace using "nuts.boot.args" and "nut.args" system
+     * open a workspace using "nuts.boot.args" and "nut.args" system
      * properties. "nuts.boot.args" is to be passed by nuts parent process.
      * "nuts.args" is an optional property that can be 'exec' method. This
      * method is to be called by child processes of nuts in order to inherit
      * workspace configuration.
      *
      * @param args arguments
-     * @return NutsWorkspace instance
+     * @return NutsSession instance
      */
     public static NutsSession openInheritedWorkspace(String... args) throws NutsUnsatisfiedRequirementsException {
         long startTime = System.currentTimeMillis();
@@ -176,7 +153,7 @@ public final class Nuts {
      * open a workspace. Nuts Boot arguments are passed in <code>args</code>
      *
      * @param args nuts boot arguments
-     * @return new NutsWorkspace instance
+     * @return new NutsSession instance
      */
     public static NutsSession openWorkspace(String... args) throws NutsUnsatisfiedRequirementsException {
         return new NutsBootWorkspace(args).openWorkspace();
@@ -185,7 +162,7 @@ public final class Nuts {
     /**
      * open default workspace (no boot options)
      *
-     * @return new NutsWorkspace instance
+     * @return new NutsSession instance
      */
     public static NutsSession openWorkspace() {
         return openWorkspace((NutsWorkspaceOptions) null);
@@ -195,7 +172,7 @@ public final class Nuts {
      * open a workspace using the given options
      *
      * @param options boot options
-     * @return new NutsWorkspace instance
+     * @return new NutsSession instance
      */
     public static NutsSession openWorkspace(NutsWorkspaceOptions options) {
         return new NutsBootWorkspace(options).openWorkspace();

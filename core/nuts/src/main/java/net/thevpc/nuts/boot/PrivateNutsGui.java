@@ -42,8 +42,8 @@ final class PrivateNutsGui {
             return line;
         } catch (UnsatisfiedLinkError e) {
             //exception may occur if the sdk is built in headless mode
-            PrivateNutsUtils.err_printf("[Graphical Environment Unsupported] %s%n", title);
-            return PrivateNutsUtils.in_readLine();
+            PrivateNutsTerm.errPrintf("[Graphical Environment Unsupported] %s%n", title);
+            return PrivateNutsTerm.readLine();
         }
     }
 
@@ -55,7 +55,7 @@ final class PrivateNutsGui {
             javax.swing.JOptionPane.showMessageDialog(null, message);
         } catch (UnsatisfiedLinkError e) {
             //exception may occur if the sdk is built in headless mode
-            PrivateNutsUtils.err_printf("[Graphical Environment Unsupported] %s%n", title);
+            PrivateNutsTerm.errPrintf("[Graphical Environment Unsupported] %s%n", title);
         }
     }
 }

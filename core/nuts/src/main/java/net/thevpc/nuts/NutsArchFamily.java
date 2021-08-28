@@ -62,18 +62,41 @@ public enum NutsArchFamily implements NutsEnum {
         this.id = name().toLowerCase();//.replace('_', '-');
     }
 
+    /**
+     * resolved platform architecture (from {@code System.getProperty("os.arch")})
+     * or UNKNOWN
+     * @return resolved platform architecture
+     */
     public static NutsArchFamily getArchFamily() {
-        return parseLenient(System.getProperty("os.arch"));
+        return parseLenient(System.getProperty("os.arch"),UNKNOWN);
     }
 
+    /**
+     * parse string and return null if parse fails
+     * @param arch value to parse
+     * @return parsed instance or null
+     */
     public static NutsArchFamily parseLenient(String arch) {
-        return parseLenient(arch, UNKNOWN, UNKNOWN);
+        return parseLenient(arch, null);
     }
 
+    /**
+     * parse string and return {@code emptyOrErrorValue} if parse fails
+     * @param arch value to parse
+     * @return parsed instance or {@code emptyOrErrorValue}
+     */
     public static NutsArchFamily parseLenient(String arch, NutsArchFamily emptyOrErrorValue) {
         return parseLenient(arch, emptyOrErrorValue, emptyOrErrorValue);
     }
 
+    /**
+     *
+     * parse string and return {@code emptyValue} when null or {@code errorValue} if parse fails
+     * @param arch value to parse
+     * @param emptyValue value when the value is null or empty
+     * @param errorValue value when the value cannot be parsed
+     * @return parsed value
+     */
     public static NutsArchFamily parseLenient(String arch, NutsArchFamily emptyValue, NutsArchFamily errorValue) {
         arch = arch == null ? "" : arch.toLowerCase().replace('-', '_').trim();
         switch (arch) {

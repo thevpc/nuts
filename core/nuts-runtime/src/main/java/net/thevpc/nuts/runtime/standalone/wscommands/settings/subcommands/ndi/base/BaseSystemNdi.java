@@ -420,13 +420,13 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         return session.getWorkspace().search().addId(nid).setLatest(true).setEffective(true).getResultDefinitions().singleton();
     }
 
-    public NutsActionSupport getDesktopIntegrationSupport(NutsDesktopIntegrationItem target) {
+    public NutsSupportMode getDesktopIntegrationSupport(NutsDesktopIntegrationItem target) {
         return session.getWorkspace().env().getDesktopIntegrationSupport(target);
     }
 
-    protected boolean matchCondition(NutsActionSupportCondition createDesktop, NutsActionSupport desktopIntegrationSupport) {
+    protected boolean matchCondition(NutsSupportCondition createDesktop, NutsSupportMode desktopIntegrationSupport) {
         if (desktopIntegrationSupport == null) {
-            desktopIntegrationSupport = NutsActionSupport.UNSUPPORTED;
+            desktopIntegrationSupport = NutsSupportMode.UNSUPPORTED;
         }
         return desktopIntegrationSupport.acceptCondition(createDesktop, session);
     }

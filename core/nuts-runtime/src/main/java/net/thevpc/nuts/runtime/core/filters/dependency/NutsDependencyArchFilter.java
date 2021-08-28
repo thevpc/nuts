@@ -26,7 +26,7 @@ public class NutsDependencyArchFilter extends AbstractDependencyFilter {
         this.archs = EnumSet.noneOf(NutsArchFamily.class);
         for (String e : os.split("[,; ]")) {
             if (!e.isEmpty()) {
-                this.archs.add(NutsArchFamily.parseLenient(e));
+                this.archs.add(NutsArchFamily.parseLenient(e,NutsArchFamily.UNKNOWN));
             }
         }
     }
@@ -45,7 +45,7 @@ public class NutsDependencyArchFilter extends AbstractDependencyFilter {
             for (String e : current.split("[,; ]")) {
                 if (!e.isEmpty()) {
                     empty = false;
-                    if (archs.contains(NutsArchFamily.parseLenient(e))) {
+                    if (archs.contains(NutsArchFamily.parseLenient(e,NutsArchFamily.UNKNOWN))) {
                         return true;
                     }
                 }

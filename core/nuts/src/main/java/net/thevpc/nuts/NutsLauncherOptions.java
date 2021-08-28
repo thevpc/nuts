@@ -6,9 +6,9 @@ import java.util.List;
 public class NutsLauncherOptions implements Cloneable {
     private boolean createAlias;
     private boolean createScript;
-    private NutsActionSupportCondition createMenuShortcut;
-    private NutsActionSupportCondition createDesktopShortcut;
-    private NutsActionSupportCondition createCustomShortcut;
+    private NutsSupportCondition createMenuShortcut;
+    private NutsSupportCondition createDesktopShortcut;
+    private NutsSupportCondition createCustomShortcut;
     private boolean installExtensions;
     private String alias;
     private String shortcutName;
@@ -36,29 +36,29 @@ public class NutsLauncherOptions implements Cloneable {
         return this;
     }
 
-    public NutsActionSupportCondition getCreateMenuShortcut() {
+    public NutsSupportCondition getCreateMenuShortcut() {
         return createMenuShortcut;
     }
 
-    public NutsLauncherOptions setCreateMenuShortcut(NutsActionSupportCondition createMenuShortcut) {
+    public NutsLauncherOptions setCreateMenuShortcut(NutsSupportCondition createMenuShortcut) {
         this.createMenuShortcut = createMenuShortcut;
         return this;
     }
 
-    public NutsActionSupportCondition getCreateDesktopShortcut() {
+    public NutsSupportCondition getCreateDesktopShortcut() {
         return createDesktopShortcut;
     }
 
-    public NutsLauncherOptions setCreateDesktopShortcut(NutsActionSupportCondition createDesktopShortcut) {
+    public NutsLauncherOptions setCreateDesktopShortcut(NutsSupportCondition createDesktopShortcut) {
         this.createDesktopShortcut = createDesktopShortcut;
         return this;
     }
 
-    public NutsActionSupportCondition getCreateCustomShortcut() {
+    public NutsSupportCondition getCreateCustomShortcut() {
         return createCustomShortcut;
     }
 
-    public NutsLauncherOptions setCreateCustomShortcut(NutsActionSupportCondition createCustomShortcut) {
+    public NutsLauncherOptions setCreateCustomShortcut(NutsSupportCondition createCustomShortcut) {
         this.createCustomShortcut = createCustomShortcut;
         return this;
     }

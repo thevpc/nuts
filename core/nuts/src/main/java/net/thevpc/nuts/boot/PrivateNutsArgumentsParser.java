@@ -1097,7 +1097,7 @@ final class PrivateNutsArgumentsParser {
                 if (!options.isSkipErrors()) {
                     throw new NutsBootException(NutsMessage.plain(errorMessage.toString()));
                 } else {
-                    PrivateNutsUtils.err_printf("%s%n",errorMessage.toString());
+                    PrivateNutsTerm.errPrintf("%s%n",errorMessage.toString());
                 }
             }
         }

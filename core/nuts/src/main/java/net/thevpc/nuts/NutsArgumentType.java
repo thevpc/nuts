@@ -71,14 +71,32 @@ public enum NutsArgumentType implements NutsEnum{
         return id;
     }
 
+    /**
+     * parse string and return null if parse fails
+     * @param value value to parse
+     * @return parsed instance or null
+     */
     public static NutsArgumentType parseLenient(String value) {
         return parseLenient(value, null);
     }
 
+    /**
+     * parse string and return {@code emptyOrErrorValue} if parse fails
+     * @param value value to parse
+     * @return parsed instance or {@code emptyOrErrorValue}
+     */
     public static NutsArgumentType parseLenient(String value, NutsArgumentType emptyOrErrorValue) {
         return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
     }
 
+    /**
+     *
+     * parse string and return {@code emptyValue} when null or {@code errorValue} if parse fails
+     * @param value value to parse
+     * @param emptyValue value when the value is null or empty
+     * @param errorValue value when the value cannot be parsed
+     * @return parsed value
+     */
     public static NutsArgumentType parseLenient(String value, NutsArgumentType emptyValue, NutsArgumentType errorValue) {
         if (value == null) {
             value = "";

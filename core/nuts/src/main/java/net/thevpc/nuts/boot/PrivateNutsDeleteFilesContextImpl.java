@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * @app.category Internal
  */
-class PrivateNutsSimpleConfirmDelete implements PrivateNutsConfirmDelete {
+class PrivateNutsDeleteFilesContextImpl implements PrivateNutsDeleteFilesContext {
 
     private final List<File> ignoreDeletion = new ArrayList<>();
     private boolean force;

@@ -30,9 +30,8 @@ import net.thevpc.nuts.runtime.core.commands.ws.DefaultNutsQueryBaseOptions;
 import net.thevpc.nuts.runtime.core.format.NutsDisplayProperty;
 import net.thevpc.nuts.runtime.core.format.NutsFetchDisplayOptions;
 import net.thevpc.nuts.runtime.core.format.NutsIdFormatHelper;
-import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
 import net.thevpc.nuts.runtime.standalone.ext.DefaultNutsWorkspaceExtensionManager;
-import net.thevpc.nuts.runtime.standalone.util.NutsClassLoaderNodeUtils;
+import net.thevpc.nuts.runtime.standalone.util.NutsClassLoaderUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsCollectionResult;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
@@ -618,7 +617,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
         DefaultNutsClassLoader cl = ((DefaultNutsWorkspaceExtensionManager) getSession().getWorkspace().extensions())
                 .getModel().getNutsURLClassLoader("SEARCH-" + UUID.randomUUID().toString(), parent, getSession());
         for (NutsDefinition def : nutsDefinitions) {
-            cl.add(NutsClassLoaderNodeUtils.definitionToClassLoaderNode(def, getSession()));
+            cl.add(NutsClassLoaderUtils.definitionToClassLoaderNode(def, getSession()));
         }
         return cl;
     }

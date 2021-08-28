@@ -36,7 +36,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import net.thevpc.nuts.runtime.bundles.parsers.StringTokenizerUtils;
 import net.thevpc.nuts.runtime.core.util.CoreNutsDependencyUtils;
-import net.thevpc.nuts.runtime.standalone.util.NutsClassLoaderNodeUtils;
+import net.thevpc.nuts.runtime.standalone.util.NutsClassLoaderUtils;
 
 /**
  * @author thevpc
@@ -378,7 +378,7 @@ public class DefaultNutsWorkspaceExtensionModel {
                         throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("not an extension: " ,extension));
                     }
 //                    ws.install().setSession(session).id(def.getId());
-                    workspaceExtensionsClassLoader.add(NutsClassLoaderNodeUtils.definitionToClassLoaderNode(def, session));
+                    workspaceExtensionsClassLoader.add(NutsClassLoaderUtils.definitionToClassLoaderNode(def, session));
                     objectFactory.discoverTypes(def.getId(), def.getContent().getURL(), workspaceExtensionsClassLoader, session);
                     //should check current classpath
                     //and the add to classpath
@@ -461,7 +461,7 @@ public class DefaultNutsWorkspaceExtensionModel {
                 .setLatest(true)
                 .getResultDefinitions().required();
         if (!isLoadedClassPath(nutsDefinitions, session)) {
-            this.workspaceExtensionsClassLoader.add(NutsClassLoaderNodeUtils.definitionToClassLoaderNode(nutsDefinitions, session));
+            this.workspaceExtensionsClassLoader.add(NutsClassLoaderUtils.definitionToClassLoaderNode(nutsDefinitions, session));
         }
         DefaultNutsWorkspaceExtension workspaceExtension = new DefaultNutsWorkspaceExtension(id, nutsDefinitions.getId(), this.workspaceExtensionsClassLoader);
         //now will iterate over Extension classes to wire them ...

@@ -263,7 +263,7 @@ public class DefaultNutsWorkspaceEnvManager implements NutsWorkspaceEnvManager {
     }
 
     @Override
-    public NutsActionSupport getDesktopIntegrationSupport(NutsDesktopIntegrationItem item) {
+    public NutsSupportMode getDesktopIntegrationSupport(NutsDesktopIntegrationItem item) {
         checkSession();
         if (item == null) {
             throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("missing item"));
@@ -286,7 +286,7 @@ public class DefaultNutsWorkspaceEnvManager implements NutsWorkspaceEnvManager {
         if (optionName != null) {
             String o = getOption(optionName, null);
             if (!NutsUtilStrings.isBlank(o)) {
-                NutsActionSupport q = NutsActionSupport.parseLenient(o, null, null);
+                NutsSupportMode q = NutsSupportMode.parseLenient(o, null, null);
                 if (q != null) {
                     return q;
                 }
@@ -296,42 +296,42 @@ public class DefaultNutsWorkspaceEnvManager implements NutsWorkspaceEnvManager {
             case LINUX: {
                 switch (item) {
                     case DESKTOP: {
-                        return NutsActionSupport.SUPPORTED;
+                        return NutsSupportMode.SUPPORTED;
                     }
                     case MENU: {
-                        return NutsActionSupport.PREFERRED;
+                        return NutsSupportMode.PREFERRED;
                     }
                     case SHORTCUT: {
-                        return NutsActionSupport.PREFERRED;
+                        return NutsSupportMode.PREFERRED;
                     }
                 }
                 break;
             }
             case UNIX: {
-                return NutsActionSupport.UNSUPPORTED;
+                return NutsSupportMode.UNSUPPORTED;
             }
             case WINDOWS: {
                 switch (item) {
                     case DESKTOP: {
-                        return NutsActionSupport.PREFERRED;
+                        return NutsSupportMode.PREFERRED;
                     }
                     case MENU: {
-                        return NutsActionSupport.PREFERRED;
+                        return NutsSupportMode.PREFERRED;
                     }
                     case SHORTCUT: {
-                        return NutsActionSupport.PREFERRED;
+                        return NutsSupportMode.PREFERRED;
                     }
                 }
                 break;
             }
             case MACOS: {
-                return NutsActionSupport.UNSUPPORTED;
+                return NutsSupportMode.UNSUPPORTED;
             }
             case UNKNOWN: {
-                return NutsActionSupport.UNSUPPORTED;
+                return NutsSupportMode.UNSUPPORTED;
             }
         }
-        return NutsActionSupport.UNSUPPORTED;
+        return NutsSupportMode.UNSUPPORTED;
     }
 
     public Path getDesktopPath() {
@@ -411,13 +411,13 @@ public class DefaultNutsWorkspaceEnvManager implements NutsWorkspaceEnvManager {
         return config.getModel();
     }
 
-    public boolean matchCondition(NutsActionSupportCondition request, NutsActionSupport support) {
+    public boolean matchCondition(NutsSupportCondition request, NutsSupportMode support) {
         checkSession();
         if (request == null) {
-            request = NutsActionSupportCondition.NEVER;
+            request = NutsSupportCondition.NEVER;
         }
         if (support == null) {
-            support = NutsActionSupport.UNSUPPORTED;
+            support = NutsSupportMode.UNSUPPORTED;
         }
         switch (support) {
             case UNSUPPORTED: {

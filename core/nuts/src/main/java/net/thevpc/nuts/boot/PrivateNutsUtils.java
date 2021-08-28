@@ -46,7 +46,6 @@ import java.util.stream.Collectors;
 final class PrivateNutsUtils {
 
     private static final Pattern DOLLAR_PLACE_HOLDER_PATTERN = Pattern.compile("[$][{](?<name>([a-zA-Z]+))[}]");
-    private static Scanner inScanner;
 
     public static boolean isValidWorkspaceName(String workspace) {
         if (NutsUtilStrings.isBlank(workspace)) {
@@ -379,27 +378,6 @@ final class PrivateNutsUtils {
             }
         }
         return false;
-    }
-
-    static void err_printf(String msg, Object... p) {
-        System.err.printf(msg, p);
-        System.err.flush();
-    }
-
-    static void out_printf(String msg, Object... p) {
-        System.out.printf(msg, p);
-        System.out.flush();
-    }
-
-    static void err_printStack(Throwable exception) {
-        exception.printStackTrace(System.err);
-    }
-
-    public static String in_readLine() {
-        if (inScanner == null) {
-            inScanner = new Scanner(System.in);
-        }
-        return inScanner.nextLine();
     }
 
     protected static String getHome(NutsStoreLocation storeFolder, PrivateNutsWorkspaceInitInformation workspaceInformation) {

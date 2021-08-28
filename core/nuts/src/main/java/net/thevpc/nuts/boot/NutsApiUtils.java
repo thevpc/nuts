@@ -40,21 +40,21 @@ public class NutsApiUtils {
         return PrivateNutsMavenUtils.resolveNutsApiVersionFromClassPath();
     }
 
-    public static String resolveNutsIdHash() {
-        return resolveNutsIdHash(
+    public static String resolveNutsIdDigest() {
+        return resolveNutsIdDigest(
                 new NutsBootId("net.thevpc.nuts", "nuts", NutsBootVersion.parse(Nuts.getVersion())),
-                PrivateNutsClasspathUtils.resolveClasspathURLs(Thread.currentThread().getContextClassLoader())
+                PrivateNutsClassLoaderUtils.resolveClasspathURLs(Thread.currentThread().getContextClassLoader())
         );
     }
 
-    public static String resolveNutsIdHash(NutsBootId id, URL[] urls) {
-        return PrivateNutsIOUtils.getURLDigest(
-                PrivateNutsClasspathUtils.findClassLoaderJar(id, urls)
+    public static String resolveNutsIdDigest(NutsBootId id, URL[] urls) {
+        return PrivateNutsDigestUtils.getURLDigest(
+                PrivateNutsClassLoaderUtils.findClassLoaderJar(id, urls)
         );
     }
 
     public static URL findClassLoaderJar(NutsBootId id, URL[] urls) {
-        return PrivateNutsClasspathUtils.findClassLoaderJar(id, urls);
+        return PrivateNutsClassLoaderUtils.findClassLoaderJar(id, urls);
     }
 
 

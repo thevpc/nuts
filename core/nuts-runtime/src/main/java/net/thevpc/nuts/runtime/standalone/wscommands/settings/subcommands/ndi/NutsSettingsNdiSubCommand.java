@@ -82,8 +82,8 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
                 if (a.isEnabled()) {
                     options.getLauncher().setMenuCategory(a.getStringValue());
                     if (options.getLauncher().getMenuCategory() != null && !options.getLauncher().getMenuCategory().isEmpty()) {
-                        if (options.getLauncher().getCreateMenuShortcut() == NutsActionSupportCondition.NEVER) {
-                            options.getLauncher().setCreateMenuShortcut(NutsActionSupportCondition.PREFERRED);
+                        if (options.getLauncher().getCreateMenuShortcut() == NutsSupportCondition.NEVER) {
+                            options.getLauncher().setCreateMenuShortcut(NutsSupportCondition.PREFERRED);
                         }
                     }
                 }
@@ -94,29 +94,29 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
             } else if ((a = commandLine.nextString("--desktop-name")) != null) {
                 if (a.isEnabled()) {
                     options.getLauncher().setShortcutName(a.getStringValue());
-                    if (options.getLauncher().getCreateDesktopShortcut() == NutsActionSupportCondition.NEVER) {
-                        options.getLauncher().setCreateDesktopShortcut(NutsActionSupportCondition.PREFERRED);
+                    if (options.getLauncher().getCreateDesktopShortcut() == NutsSupportCondition.NEVER) {
+                        options.getLauncher().setCreateDesktopShortcut(NutsSupportCondition.PREFERRED);
                     }
                 }
             } else if ((a = commandLine.nextString("--menu-name")) != null) {
                 if (a.isEnabled()) {
                     options.getLauncher().setShortcutName(a.getStringValue());
-                    if (options.getLauncher().getCreateDesktopShortcut() == NutsActionSupportCondition.NEVER) {
-                        options.getLauncher().setCreateMenuShortcut(NutsActionSupportCondition.PREFERRED);
+                    if (options.getLauncher().getCreateDesktopShortcut() == NutsSupportCondition.NEVER) {
+                        options.getLauncher().setCreateMenuShortcut(NutsSupportCondition.PREFERRED);
                     }
                 }
             } else if ((a = commandLine.nextString("--shortcut-name")) != null) {
                 if (a.isEnabled()) {
                     options.getLauncher().setShortcutName(a.getStringValue());
-                    if (options.getLauncher().getCreateCustomShortcut() == NutsActionSupportCondition.NEVER) {
-                        options.getLauncher().setCreateCustomShortcut(NutsActionSupportCondition.PREFERRED);
+                    if (options.getLauncher().getCreateCustomShortcut() == NutsSupportCondition.NEVER) {
+                        options.getLauncher().setCreateCustomShortcut(NutsSupportCondition.PREFERRED);
                     }
                 }
             } else if ((a = commandLine.nextString("--shortcut-path")) != null) {
                 if (a.isEnabled()) {
                     options.getLauncher().setCustomShortcutPath(a.getStringValue());
-                    if (options.getLauncher().getCreateCustomShortcut() == NutsActionSupportCondition.NEVER) {
-                        options.getLauncher().setCreateCustomShortcut(NutsActionSupportCondition.PREFERRED);
+                    if (options.getLauncher().getCreateCustomShortcut() == NutsSupportCondition.NEVER) {
+                        options.getLauncher().setCreateCustomShortcut(NutsSupportCondition.PREFERRED);
                     }
                 }
             } else if ((a = commandLine.nextBoolean("-x", "--external", "--spawn")) != null) {
@@ -213,27 +213,27 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
         }
     }
 
-    private NutsActionSupportCondition parseCond(NutsArgument a) {
+    private NutsSupportCondition parseCond(NutsArgument a) {
         String s = a.getStringValue("");
         switch (s) {
             case "supported": {
-                return NutsActionSupportCondition.SUPPORTED;
+                return NutsSupportCondition.SUPPORTED;
             }
             case "never": {
-                return NutsActionSupportCondition.NEVER;
+                return NutsSupportCondition.NEVER;
             }
             case "always": {
-                return NutsActionSupportCondition.ALWAYS;
+                return NutsSupportCondition.ALWAYS;
             }
             case "preferred":
             case "": {
-                return NutsActionSupportCondition.PREFERRED;
+                return NutsSupportCondition.PREFERRED;
             }
             default: {
                 if (a.getBooleanValue()) {
-                    return NutsActionSupportCondition.PREFERRED;
+                    return NutsSupportCondition.PREFERRED;
                 } else {
-                    return NutsActionSupportCondition.NEVER;
+                    return NutsSupportCondition.NEVER;
                 }
             }
         }
@@ -299,8 +299,8 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
         String switchWorkspaceApi = null;
         NutsArgument a;
         boolean ignoreUnsupportedOs = false;
-        NutsActionSupportCondition createDesktop = NutsActionSupportCondition.NEVER;
-        NutsActionSupportCondition createMenu = NutsActionSupportCondition.NEVER;
+        NutsSupportCondition createDesktop = NutsSupportCondition.NEVER;
+        NutsSupportCondition createMenu = NutsSupportCondition.NEVER;
         String menuCategory = null;
         String shortcutName = null;
         while (commandLine.hasNext()) {
@@ -320,8 +320,8 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
                 if (a.isEnabled()) {
                     menuCategory = a.getStringValue();
                     if (menuCategory != null && !menuCategory.isEmpty()) {
-                        if (createMenu == NutsActionSupportCondition.NEVER) {
-                            createMenu = NutsActionSupportCondition.PREFERRED;
+                        if (createMenu == NutsSupportCondition.NEVER) {
+                            createMenu = NutsSupportCondition.PREFERRED;
                         }
                     }
                 }
@@ -329,8 +329,8 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
                 if (a.isEnabled()) {
                     shortcutName = a.getStringValue();
                     if (shortcutName != null && !shortcutName.isEmpty()) {
-                        if (createMenu == NutsActionSupportCondition.NEVER) {
-                            createMenu = NutsActionSupportCondition.PREFERRED;
+                        if (createMenu == NutsSupportCondition.NEVER) {
+                            createMenu = NutsSupportCondition.PREFERRED;
                         }
                     }
                 }
@@ -338,8 +338,8 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
                 if (a.isEnabled()) {
                     shortcutName = a.getStringValue();
                     if (shortcutName != null && !shortcutName.isEmpty()) {
-                        if (createDesktop == NutsActionSupportCondition.NEVER) {
-                            createDesktop = NutsActionSupportCondition.PREFERRED;
+                        if (createDesktop == NutsSupportCondition.NEVER) {
+                            createDesktop = NutsSupportCondition.PREFERRED;
                         }
                     }
                 }

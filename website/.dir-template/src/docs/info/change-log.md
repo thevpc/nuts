@@ -8,15 +8,22 @@ ${include($"${resources}/header.md")}
 View Official releases [here](https://github.com/thevpc/nuts/releases) :
 Starred releases are most stable ones.
 
-## nuts 0.8.2.0 (NEXT VERSION)
+## nuts 0.8.3.0 (NEXT VERSION)
 - ```2021/XX/XX 	nuts 0.8.2.0 (*)``` not released yet [download nuts-0.8.2.jar](https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/0.8.2/nuts-0.8.2.jar)
-- WARNING: API has evolved with multiple incompatibilities with previous versions  
+- WARNING: API has evolved with multiple incompatibilities with previous versions
 - TODO  : {api}   add comments support in 'element' and and propagate support for xml,json and so on
 - TODO  : {impl}  better yaml parser
 - TODO  : {impl}  implement yaml formatter (both print as raw and as colorized)
 - TODO  : {impl}  bundle tson parser
 
-## nuts 0.8.1.0 (DEV VERSION)
+## nuts 0.8.2.0 (DEV VERSION)
+- ```2021/XX/XX 	nuts 0.8.2.0 (*)``` not released yet [download nuts-0.8.2.jar](https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/0.8.2/nuts-0.8.2.jar)
+- WARNING: API has evolved with multiple incompatibilities with previous versions  
+- FIXED: Fixed problem that requires reinstalling nuts each time we have a new version
+- FIXED: Fixed some Documentation issues (still fixing)
+- 
+
+## nuts 0.8.1.0 (PUBLISHED VERSION)
 - ```2021/08/24 	nuts 0.8.1.0 (*)``` released [download nuts-0.8.1.jar](https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/0.8.1/nuts-0.8.1.jar)
 - WARNING: API has evolved with multiple incompatibilities with previous versions
 - ADDED: {api} added static methods of() in interfaces to simplify instantiation

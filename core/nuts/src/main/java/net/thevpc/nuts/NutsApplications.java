@@ -26,6 +26,7 @@ package net.thevpc.nuts;
 import net.thevpc.nuts.boot.NutsApiUtils;
 
 import java.io.PrintStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -62,6 +63,11 @@ public final class NutsApplications {
         return m;
     }
 
+    /**
+     * run the given application and call System.exit(?)
+     * @param application application
+     * @param args arguments
+     */
     public static void runApplicationAndExit(NutsApplication application, String[] args) {
         try {
             application.run(args);
@@ -72,10 +78,16 @@ public final class NutsApplications {
         System.exit(0);
     }
 
+    /**
+     * creates application instance by calling
+     * @param appType application type
+     * @param <T> application type
+     * @return new instance
+     */
     public static <T extends NutsApplication> T createApplicationInstance(Class<T> appType) {
         T newInstance;
         try {
-            newInstance = appType.newInstance();
+            newInstance = appType.getConstructor().newInstance();
             return newInstance;
         } catch (InstantiationException ex) {
             Throwable c = ex.getCause();
@@ -88,6 +100,10 @@ public final class NutsApplications {
             throw new NutsBootException(NutsMessage.cstyle("unable to instantiate %s", appType.getName()), ex);
         } catch (IllegalAccessException ex) {
             throw new NutsBootException(NutsMessage.cstyle("illegal access to default constructor for %s", appType.getName()), ex);
+        } catch (InvocationTargetException ex) {
+            throw new NutsBootException(NutsMessage.cstyle("invocation exception for %s", appType.getName()), ex);
+        } catch (NoSuchMethodException ex) {
+            throw new NutsBootException(NutsMessage.cstyle("missing default constructor for %s", appType.getName()), ex);
         }
     }
 
@@ -168,6 +184,11 @@ public final class NutsApplications {
         throw new NutsExecutionException(session, NutsMessage.cstyle("unsupported execution mode %s", applicationContext.getMode()), 204);
     }
 
+    /**
+     * process throwable and extract exit code
+     * @param ex throwable
+     * @return exit code
+     */
     public static int processThrowable(Throwable ex) {
         return processThrowable(ex, null);
     }

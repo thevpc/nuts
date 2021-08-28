@@ -36,8 +36,17 @@ import java.util.Objects;
  */
 public class NutsAddRepositoryOptions implements Serializable {
 
+    /**
+     * Repository Order for local repositories, used for prioritising local access
+     */
     public static final int ORDER_USER_LOCAL = 1000;
+    /**
+     * Repository Order for local system repositories, used for prioritising local access
+     */
     public static final int ORDER_SYSTEM_LOCAL = 2000;
+    /**
+     * Repository Order for remote repositories, used for prioritising local access
+     */
     public static final int ORDER_USER_REMOTE = 10000;
     private static final long serialVersionUID = 1;
 
@@ -68,10 +77,6 @@ public class NutsAddRepositoryOptions implements Serializable {
     private boolean create;
 
     /**
-     * create a proxy for the created repository
-     */
-//    private boolean proxy;
-    /**
      * temporary repository
      */
     private boolean temporary;
@@ -86,14 +91,21 @@ public class NutsAddRepositoryOptions implements Serializable {
      * repository config information
      */
     private NutsRepositoryConfig config;
+
+    /**
+     * repository model used for creating the repository
+     */
     private NutsRepositoryModel repositoryModel;
+
+    /**
+     * repository processing order, use one from {@code ORDER_USER_LOCAL,ORDER_USER_REMOTE,ORDER_SYSTEM_LOCAL}
+     */
     private int order;
 
     /**
      * default constructor
      */
     public NutsAddRepositoryOptions() {
-        this.enabled = true;
     }
 
     /**
@@ -108,26 +120,44 @@ public class NutsAddRepositoryOptions implements Serializable {
         this.failSafe = other.failSafe;
         this.create = other.create;
         this.config = other.config;
-//        this.proxy = other.proxy;
         this.temporary = other.temporary;
         this.deployOrder = other.deployOrder;
         this.order = other.order;
         this.repositoryModel = other.repositoryModel;
     }
 
+    /**
+     * repository model
+     * @return repository model
+     */
     public NutsRepositoryModel getRepositoryModel() {
         return repositoryModel;
     }
 
+    /**
+     * set repository model
+     * @param repositoryModel repository model
+     * @return {@code this instance}
+     */
     public NutsAddRepositoryOptions setRepositoryModel(NutsRepositoryModel repositoryModel) {
         this.repositoryModel = repositoryModel;
         return this;
     }
 
+    /**
+     * repository processing order. Lower values ensure processing (using, searching,...)
+     * repositories before others.
+     * @return order
+     */
     public int getOrder() {
         return order;
     }
 
+    /**
+     * set repository order number
+     * @param order order
+     * @return {@code this instance}
+     */
     public NutsAddRepositoryOptions setOrder(int order) {
         this.order = order;
         return this;
@@ -275,23 +305,6 @@ public class NutsAddRepositoryOptions implements Serializable {
         return this;
     }
 
-//    /**
-//     * is create a proxy for the created repository
-//     * @return is create a proxy for the created repository
-//     */
-//    public boolean isProxy() {
-//        return proxy;
-//    }
-//
-//    /**
-//     * create a proxy for the created repository
-//     * @param value new value
-//     * @return {@code this} instance
-//     */
-//    public NutsAddRepositoryOptions setProxy(boolean value) {
-//        this.proxy = value;
-//        return this;
-//    }
     /**
      * repository deploy order
      *
@@ -333,8 +346,8 @@ public class NutsAddRepositoryOptions implements Serializable {
         return enabled == that.enabled
                 && failSafe == that.failSafe
                 && create == that.create
-                && //                proxy == that.proxy &&
-                temporary == that.temporary
+                && temporary == that.temporary
+                && order == that.order
                 && deployOrder == that.deployOrder
                 && Objects.equals(name, that.name)
                 && Objects.equals(location, that.location)
@@ -343,9 +356,8 @@ public class NutsAddRepositoryOptions implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, location, enabled, failSafe, create //                , proxy
-                ,
-                 temporary, deployOrder, config);
+        return Objects.hash(name, location, enabled, failSafe, create,
+                temporary, order, deployOrder, config);
     }
 
     @Override
@@ -356,9 +368,9 @@ public class NutsAddRepositoryOptions implements Serializable {
                 + ", enabled=" + enabled
                 + ", failSafe=" + failSafe
                 + ", create=" + create
-                + //                ", proxy=" + proxy +
-                ", temporary=" + temporary
+                + ", temporary=" + temporary
                 + ", deployOrder=" + deployOrder
+                + ", order=" + order
                 + ", config=" + config
                 + '}';
     }

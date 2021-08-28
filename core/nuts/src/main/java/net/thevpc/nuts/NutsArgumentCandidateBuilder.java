@@ -54,12 +54,31 @@ public interface NutsArgumentCandidateBuilder extends Serializable {
      */
     String getDisplay();
 
+    /**
+     * set value
+     * @param value value
+     * @return {@code this} instance
+     */
     NutsArgumentCandidateBuilder setValue(String value);
 
+    /**
+     * set display
+     * @param value value
+     * @return {@code this} instance
+     */
     NutsArgumentCandidateBuilder setDisplay(String value);
 
-    NutsArgumentCandidateBuilder setCandidate(NutsArgumentCandidate value);
+    /**
+     * set all values from the given candidate
+     * @param value value
+     * @return {@code this} instance
+     */
+    NutsArgumentCandidateBuilder setAll(NutsArgumentCandidate value);
 
+    /**
+     * build a candidate
+     * @return candidate
+     */
     NutsArgumentCandidate build();
 
 }

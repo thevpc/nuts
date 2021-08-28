@@ -31,7 +31,7 @@ public class DefaultNutsArgumentCandidateBuilder implements NutsArgumentCandidat
     }
 
     @Override
-    public NutsArgumentCandidateBuilder setCandidate(NutsArgumentCandidate value) {
+    public NutsArgumentCandidateBuilder setAll(NutsArgumentCandidate value) {
         setValue(value==null?null:value.getValue());
         setDisplay(value==null?null:value.getDisplay());
         return this;

@@ -39,6 +39,12 @@ import java.util.NoSuchElementException;
  */
 public interface NutsArgument extends NutsTokenFilter {
 
+    /**
+     * create instance for the given value and with the given session
+     * @param value value
+     * @param session session (must not be null)
+     * @return new instance
+     */
     static NutsArgument of(String value, NutsSession session) {
         NutsApiUtils.checkSession(session);
         return session.getWorkspace().commandLine().createArgument(value);
@@ -114,20 +120,43 @@ public interface NutsArgument extends NutsTokenFilter {
      */
     int getInt() throws NumberFormatException;
 
+    /**
+     * parse number and return long.
+     *
+     * @return parsed long or error
+     * @throws NumberFormatException if not parsable
+     */
     long getLongValue();
 
+    /**
+     * parse number and return double.
+     *
+     * @return parsed double or error
+     * @throws NumberFormatException if not parsable
+     */
     double getDoubleValue();
 
     /**
-     * parse number and return integer or {@code defaultValue} if not parsable.
+     * parse expression as number and return integer or {@code defaultValue} if not parsable.
      *
      * @param defaultValue defaultValue
      * @return parsed integer or {@code defaultValue} if not parsable
      */
     int getInt(int defaultValue);
 
+    /**
+     * parse value as number and return int or {@code defaultValue} if not parsable.
+     *
+     * @param defaultValue defaultValue
+     * @return parsed long or {@code defaultValue} if not parsable
+     */
     int getIntValue(int defaultValue);
 
+    /**
+     * parse value as number and return int or throw exception if not parsable.
+     *
+     * @return parsed int
+     */
     int getIntValue();
 
     /**
@@ -321,6 +350,11 @@ public interface NutsArgument extends NutsTokenFilter {
      */
     String getStringValue();
 
+    /**
+     * parse value as boolean or return {@code defaultValue}
+     * @param defaultValue defaultValue
+     * @return parsed value
+     */
     Boolean getBooleanValue(Boolean defaultValue);
 
     /**

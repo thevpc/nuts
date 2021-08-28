@@ -346,7 +346,7 @@ public interface NutsApplicationContext extends NutsCommandLineConfigurable {
      */
     void configureLast(NutsCommandLine commandLine);
 
-    NutsAppVersionStoreLocationSupplier getAppVersionStoreLocationSupplier();
+    NutsAppStoreLocationResolver getStoreLocationResolver();
 
-    NutsApplicationContext setAppVersionStoreLocationSupplier(NutsAppVersionStoreLocationSupplier appVersionStoreLocationSupplier);
+    NutsApplicationContext setAppVersionStoreLocationSupplier(NutsAppStoreLocationResolver appVersionStoreLocationSupplier);
 }

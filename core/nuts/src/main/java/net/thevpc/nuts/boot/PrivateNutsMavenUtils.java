@@ -23,8 +23,8 @@ import java.util.zip.ZipFile;
  * @app.category Internal
  */
 public final class PrivateNutsMavenUtils {
-    public static final Pattern JAR_POM_PATH = Pattern.compile("/META-INF/maven/(?<g>[a-zA-Z0-9_.]+)/(?<a>[a-zA-Z0-9_]+/pom.xml)");
-    public static final Pattern JAR_NUTS_JSON_POM_PATH = Pattern.compile("/META-INF/nuts/(?<g>[a-zA-Z0-9_.]+)/(?<a>[a-zA-Z0-9_]+/nuts.json)");
+    public static final Pattern JAR_POM_PATH = Pattern.compile("META-INF/maven/(?<g>[a-zA-Z0-9_.]+)/(?<a>[a-zA-Z0-9_]+)/pom.xml");
+    public static final Pattern JAR_NUTS_JSON_POM_PATH = Pattern.compile("META-INF/nuts/(?<g>[a-zA-Z0-9_.]+)/(?<a>[a-zA-Z0-9_]+)/nuts.json");
 
     public PrivateNutsMavenUtils() {
     }
@@ -689,10 +689,6 @@ public final class PrivateNutsMavenUtils {
 
     public static String resolveNutsApiVersionFromClassPath() {
         return resolveNutsApiPomPattern("version");
-    }
-
-    public static String resolveNutsApiBuildNumber() {
-        return resolveNutsApiPomPattern("nuts.buildNumber");
     }
 
     public static String resolveNutsApiPomPattern(String propName) {

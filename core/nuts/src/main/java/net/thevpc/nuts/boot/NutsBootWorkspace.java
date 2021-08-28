@@ -186,11 +186,11 @@ public final class NutsBootWorkspace {
         if (apiDigest == null) {
             synchronized (Nuts.class) {
                 if (apiDigest == null) {
-                    String v = NutsApiUtils.resolveNutsIdHash();
+                    String v = NutsApiUtils.resolveNutsIdDigest();
                     if (v == null) {
                         throw new NutsBootException(
                                 NutsMessage.plain(
-                                        "unable to detect nuts version. Most likely you are missing valid compilation of nuts. pom.properties could not be resolved and hence, we are unable to resolve nuts version."
+                                        "unable to detect nuts digest. Most likely you are missing valid compilation of nuts. pom.properties could not be resolved and hence, we are unable to resolve nuts version."
                                 )
                         );
                     }
@@ -313,7 +313,7 @@ public final class NutsBootWorkspace {
                 }
                 sb.append(s);
             }
-            PrivateNutsUtils.out_printf("[EXEC] %s%n", sb);
+            PrivateNutsTerm.outPrintf("[EXEC] %s%n", sb);
         }
         return cmd.toArray(new String[0]);
     }
@@ -416,7 +416,7 @@ public final class NutsBootWorkspace {
             if (options.isReset()) {
                 if (lastWorkspaceInformation != null) {
                     if (options.isDry()) {
-                        PrivateNutsUtils.out_printf("[dry] [reset] delete ALL workspace folders and configurations%n");
+                        PrivateNutsTerm.outPrintf("[dry] [reset] delete ALL workspace folders and configurations%n");
                     } else {
                         LOG.log(Level.CONFIG, NutsLogVerb.WARNING, "reset workspace.");
                         countDeleted = PrivateNutsDeleteFilesUtils.deleteStoreLocations(lastWorkspaceInformation, getOptions(), true, LOG, NutsStoreLocation.values());
@@ -425,7 +425,7 @@ public final class NutsBootWorkspace {
                 }
             } else if (options.isRecover()) {
                 if (options.isDry()) {
-                    PrivateNutsUtils.out_printf("[dry] [recover] delete CACHE/TEMP workspace folders%n");
+                    PrivateNutsTerm.outPrintf("[dry] [recover] delete CACHE/TEMP workspace folders%n");
                 } else {
                     LOG.log(Level.CONFIG, NutsLogVerb.WARNING, "recover workspace.");
                     List<Object> folders = new ArrayList<>();
@@ -445,9 +445,9 @@ public final class NutsBootWorkspace {
                     && (options.isRecover() || options.isReset())) {
                 if (isPlainTrace()) {
                     if (countDeleted > 0) {
-                        PrivateNutsUtils.out_printf("workspace erased : %s%n", workspaceInformation.getWorkspaceLocation());
+                        PrivateNutsTerm.outPrintf("workspace erased : %s%n", workspaceInformation.getWorkspaceLocation());
                     } else {
-                        PrivateNutsUtils.out_printf("workspace is not erased because it does not exist : %s%n", workspaceInformation.getWorkspaceLocation());
+                        PrivateNutsTerm.outPrintf("workspace is not erased because it does not exist : %s%n", workspaceInformation.getWorkspaceLocation());
                     }
                 }
                 throw new NutsBootException(NutsMessage.cstyle(""), 0);
@@ -676,7 +676,7 @@ public final class NutsBootWorkspace {
         if (options.getApplicationArguments().length == 0 && options.isSkipBoot()
                 && (options.isRecover() || options.isReset())) {
             if (isPlainTrace()) {
-                PrivateNutsUtils.out_printf("workspace erased : %s%n", workspaceInformation.getWorkspaceLocation());
+                PrivateNutsTerm.outPrintf("workspace erased : %s%n", workspaceInformation.getWorkspaceLocation());
             }
             throw new NutsBootException(null, 0);
         }
@@ -717,7 +717,7 @@ public final class NutsBootWorkspace {
             if (LOG.isLoggable(Level.CONFIG)) {
                 String rtHash = "";
                 if (workspaceInformation.getRuntimeId() != null) {
-                    rtHash = PrivateNutsIOUtils.getFileOrDirectoryDigest(runtimeJarFile.toPath());
+                    rtHash = PrivateNutsDigestUtils.getFileOrDirectoryDigest(runtimeJarFile.toPath());
                     if (rtHash == null) {
                         rtHash = "";
                     }
@@ -760,7 +760,7 @@ public final class NutsBootWorkspace {
             workspaceInformation.setExtensionBootDependencyNodes(deps.toArray(new NutsClassLoaderNode[0]));
             deps.add(0, workspaceInformation.getRuntimeBootDependencyNode());
 
-            bootClassWorldURLs = PrivateNutsClasspathUtils.resolveClassWorldURLs(deps.toArray(new NutsClassLoaderNode[0]), getContextClassLoader(), LOG);
+            bootClassWorldURLs = PrivateNutsClassLoaderUtils.resolveClassWorldURLs(deps.toArray(new NutsClassLoaderNode[0]), getContextClassLoader(), LOG);
             workspaceClassLoader = bootClassWorldURLs.length == 0 ? getContextClassLoader() : new PrivateNutsBootClassLoader(deps.toArray(new NutsClassLoaderNode[0]), getContextClassLoader());
             workspaceInformation.setWorkspaceClassLoader(workspaceClassLoader);
             workspaceInformation.setBootClassWorldURLs(bootClassWorldURLs);
@@ -787,12 +787,12 @@ public final class NutsBootWorkspace {
             }
             if (nutsWorkspace == null) {
                 //should never happen
-                PrivateNutsUtils.err_printf("unable to load Workspace \"%s\" from ClassPath : \n", workspaceInformation.getName());
+                PrivateNutsTerm.errPrintf("unable to load Workspace \"%s\" from ClassPath : \n", workspaceInformation.getName());
                 for (URL url : bootClassWorldURLs) {
-                    PrivateNutsUtils.err_printf("\t %s%n", PrivateNutsUtils.formatURL(url));
+                    PrivateNutsTerm.errPrintf("\t %s%n", PrivateNutsUtils.formatURL(url));
                 }
                 for (Throwable exception : exceptions) {
-                    PrivateNutsUtils.err_printStack(exception);
+                    PrivateNutsTerm.errPrintStack(exception);
                 }
                 LOG.log(Level.SEVERE, NutsLogVerb.FAIL, "unable to load Workspace Component from ClassPath : {0}", new Object[]{Arrays.asList(bootClassWorldURLs)});
                 throw new NutsInvalidWorkspaceException(this.workspaceInformation.getWorkspaceLocation(),
@@ -863,42 +863,42 @@ public final class NutsBootWorkspace {
             String msg = "nuts is an open source package manager mainly for java applications. Type 'nuts help' or visit https://github.com/thevpc/nuts for more help.";
             switch (f) {
                 case JSON: {
-                    PrivateNutsUtils.out_printf("{%n");
-                    PrivateNutsUtils.out_printf("  \"help\": \"%s\"%n", msg);
-                    PrivateNutsUtils.out_printf("}%n");
+                    PrivateNutsTerm.outPrintf("{%n");
+                    PrivateNutsTerm.outPrintf("  \"help\": \"%s\"%n", msg);
+                    PrivateNutsTerm.outPrintf("}%n");
                     return;
                 }
                 case TSON: {
-                    PrivateNutsUtils.out_printf("{%n");
-                    PrivateNutsUtils.out_printf("  help: \"%s\"%n", msg);
-                    PrivateNutsUtils.out_printf("}%n");
+                    PrivateNutsTerm.outPrintf("{%n");
+                    PrivateNutsTerm.outPrintf("  help: \"%s\"%n", msg);
+                    PrivateNutsTerm.outPrintf("}%n");
                     return;
                 }
                 case YAML: {
-                    PrivateNutsUtils.out_printf("help: %s%n", msg);
+                    PrivateNutsTerm.outPrintf("help: %s%n", msg);
                     return;
                 }
                 case TREE: {
-                    PrivateNutsUtils.out_printf("- help: %s%n", msg);
+                    PrivateNutsTerm.outPrintf("- help: %s%n", msg);
                     return;
                 }
                 case TABLE: {
-                    PrivateNutsUtils.out_printf("help  %s%n", msg);
+                    PrivateNutsTerm.outPrintf("help  %s%n", msg);
                     return;
                 }
                 case XML: {
-                    PrivateNutsUtils.out_printf("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>%n");
-                    PrivateNutsUtils.out_printf("<string>%n");
-                    PrivateNutsUtils.out_printf(" %s%n", msg);
-                    PrivateNutsUtils.out_printf("</string>%n");
+                    PrivateNutsTerm.outPrintf("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>%n");
+                    PrivateNutsTerm.outPrintf("<string>%n");
+                    PrivateNutsTerm.outPrintf(" %s%n", msg);
+                    PrivateNutsTerm.outPrintf("</string>%n");
                     return;
                 }
                 case PROPS: {
-                    PrivateNutsUtils.out_printf("help=%s%n", msg);
+                    PrivateNutsTerm.outPrintf("help=%s%n", msg);
                     return;
                 }
             }
-            PrivateNutsUtils.out_printf("%s%n", msg);
+            PrivateNutsTerm.outPrintf("%s%n", msg);
         }
     }
 
@@ -910,42 +910,42 @@ public final class NutsBootWorkspace {
         if (options.isDry()) {
             switch (f) {
                 case JSON: {
-                    PrivateNutsUtils.out_printf("{%n");
-                    PrivateNutsUtils.out_printf("  \"dryCommand\": \"%s\"%n", cmd);
-                    PrivateNutsUtils.out_printf("}%n");
+                    PrivateNutsTerm.outPrintf("{%n");
+                    PrivateNutsTerm.outPrintf("  \"dryCommand\": \"%s\"%n", cmd);
+                    PrivateNutsTerm.outPrintf("}%n");
                     return;
                 }
                 case TSON: {
-                    PrivateNutsUtils.out_printf("{%n");
-                    PrivateNutsUtils.out_printf("  dryCommand: \"%s\"%n", cmd);
-                    PrivateNutsUtils.out_printf("}%n");
+                    PrivateNutsTerm.outPrintf("{%n");
+                    PrivateNutsTerm.outPrintf("  dryCommand: \"%s\"%n", cmd);
+                    PrivateNutsTerm.outPrintf("}%n");
                     return;
                 }
                 case YAML: {
-                    PrivateNutsUtils.out_printf("dryCommand: %s%n", cmd);
+                    PrivateNutsTerm.outPrintf("dryCommand: %s%n", cmd);
                     return;
                 }
                 case TREE: {
-                    PrivateNutsUtils.out_printf("- dryCommand: %s%n", cmd);
+                    PrivateNutsTerm.outPrintf("- dryCommand: %s%n", cmd);
                     return;
                 }
                 case TABLE: {
-                    PrivateNutsUtils.out_printf("dryCommand  %s%n", cmd);
+                    PrivateNutsTerm.outPrintf("dryCommand  %s%n", cmd);
                     return;
                 }
                 case XML: {
-                    PrivateNutsUtils.out_printf("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>%n");
-                    PrivateNutsUtils.out_printf("<object>%n");
-                    PrivateNutsUtils.out_printf("  <string key=\"%s\" value=\"%s\"/>%n", "dryCommand", cmd);
-                    PrivateNutsUtils.out_printf("</object>%n");
+                    PrivateNutsTerm.outPrintf("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>%n");
+                    PrivateNutsTerm.outPrintf("<object>%n");
+                    PrivateNutsTerm.outPrintf("  <string key=\"%s\" value=\"%s\"/>%n", "dryCommand", cmd);
+                    PrivateNutsTerm.outPrintf("</object>%n");
                     return;
                 }
                 case PROPS: {
-                    PrivateNutsUtils.out_printf("dryCommand=%s%n", cmd);
+                    PrivateNutsTerm.outPrintf("dryCommand=%s%n", cmd);
                     return;
                 }
             }
-            PrivateNutsUtils.out_printf("[Dry] %s%n", Nuts.getVersion());
+            PrivateNutsTerm.outPrintf("[Dry] %s%n", Nuts.getVersion());
         }
     }
 
@@ -965,51 +965,51 @@ public final class NutsBootWorkspace {
         }
         switch (f) {
             case JSON: {
-                PrivateNutsUtils.out_printf("{%n");
-                PrivateNutsUtils.out_printf("  \"version\": \"%s\",%n", Nuts.getVersion());
-                PrivateNutsUtils.out_printf("  \"buildNumber\": \"%s\"%n", getApiDigest());
-                PrivateNutsUtils.out_printf("}%n");
+                PrivateNutsTerm.outPrintf("{%n");
+                PrivateNutsTerm.outPrintf("  \"version\": \"%s\",%n", Nuts.getVersion());
+                PrivateNutsTerm.outPrintf("  \"digest\": \"%s\"%n", getApiDigest());
+                PrivateNutsTerm.outPrintf("}%n");
                 return;
             }
             case TSON: {
-                PrivateNutsUtils.out_printf("{%n");
-                PrivateNutsUtils.out_printf("  version: \"%s\",%n", Nuts.getVersion());
-                PrivateNutsUtils.out_printf("  buildNumber: \"%s\"%n", getApiDigest());
-                PrivateNutsUtils.out_printf("}%n");
+                PrivateNutsTerm.outPrintf("{%n");
+                PrivateNutsTerm.outPrintf("  version: \"%s\",%n", Nuts.getVersion());
+                PrivateNutsTerm.outPrintf("  digest: \"%s\"%n", getApiDigest());
+                PrivateNutsTerm.outPrintf("}%n");
                 return;
             }
             case YAML: {
-                PrivateNutsUtils.out_printf("version: %s%n", Nuts.getVersion());
-                PrivateNutsUtils.out_printf("buildNumber: %s%n", getApiDigest());
+                PrivateNutsTerm.outPrintf("version: %s%n", Nuts.getVersion());
+                PrivateNutsTerm.outPrintf("digest: %s%n", getApiDigest());
                 return;
             }
             case TREE: {
-                PrivateNutsUtils.out_printf("- version: %s%n", Nuts.getVersion());
-                PrivateNutsUtils.out_printf("- buildNumber: %s%n", getApiDigest());
+                PrivateNutsTerm.outPrintf("- version: %s%n", Nuts.getVersion());
+                PrivateNutsTerm.outPrintf("- digest: %s%n", getApiDigest());
                 return;
             }
             case TABLE: {
-                PrivateNutsUtils.out_printf("version      %s%n", Nuts.getVersion());
-                PrivateNutsUtils.out_printf("buildNumber  %s%n", getApiDigest());
+                PrivateNutsTerm.outPrintf("version      %s%n", Nuts.getVersion());
+                PrivateNutsTerm.outPrintf("digest  %s%n", getApiDigest());
                 return;
             }
             case XML: {
-                PrivateNutsUtils.out_printf("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>%n");
-                PrivateNutsUtils.out_printf("<object>%n");
-                PrivateNutsUtils.out_printf("  <string key=\"%s\" value=\"%s\"/>%n", "version", Nuts.getVersion());
-                PrivateNutsUtils.out_printf("  <string key=\"%s\" value=\"%s\"/>%n", "buildNumber", getApiDigest());
-                PrivateNutsUtils.out_printf("</object>%n");
+                PrivateNutsTerm.outPrintf("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>%n");
+                PrivateNutsTerm.outPrintf("<object>%n");
+                PrivateNutsTerm.outPrintf("  <string key=\"%s\" value=\"%s\"/>%n", "version", Nuts.getVersion());
+                PrivateNutsTerm.outPrintf("  <string key=\"%s\" value=\"%s\"/>%n", "digest", getApiDigest());
+                PrivateNutsTerm.outPrintf("</object>%n");
                 return;
             }
             case PROPS: {
-                PrivateNutsUtils.out_printf("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>%n");
-                PrivateNutsUtils.out_printf("version=%s%n", Nuts.getVersion());
-                PrivateNutsUtils.out_printf("buildNumber=%s%n", getApiDigest());
-                PrivateNutsUtils.out_printf("</object>%n");
+                PrivateNutsTerm.outPrintf("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>%n");
+                PrivateNutsTerm.outPrintf("version=%s%n", Nuts.getVersion());
+                PrivateNutsTerm.outPrintf("digest=%s%n", getApiDigest());
+                PrivateNutsTerm.outPrintf("</object>%n");
                 return;
             }
         }
-        PrivateNutsUtils.out_printf("%s%n", Nuts.getVersion());
+        PrivateNutsTerm.outPrintf("%s%n", Nuts.getVersion());
     }
 
     public void runWorkspace() {
@@ -1080,7 +1080,7 @@ public final class NutsBootWorkspace {
     }
 
     private void fallbackInstallActionUnavailable(String message) {
-        PrivateNutsUtils.out_printf("%s%n", message);
+        PrivateNutsTerm.outPrintf("%s%n", message);
         LOG.log(Level.SEVERE, NutsLogVerb.FAIL, message, new Object[0]);
     }
 
@@ -1089,78 +1089,78 @@ public final class NutsBootWorkspace {
         if (rbc_locations == null) {
             rbc_locations = Collections.emptyMap();
         }
-        PrivateNutsUtils.err_printf("unable to bootstrap nuts (hash %s):%n", getApiDigest());
-        PrivateNutsUtils.err_printf("%s%n", extraMessage);
-        PrivateNutsUtils.err_printf("here after current environment info:%n");
-        PrivateNutsUtils.err_printf("  nuts-boot-api-version            : %s%n", PrivateNutsUtils.nvl(actualBootConfig.getApiVersion(), "<?> Not Found!"));
-        PrivateNutsUtils.err_printf("  nuts-boot-runtime                : %s%n", PrivateNutsUtils.nvl(actualBootConfig.getRuntimeId(), "<?> Not Found!"));
-        PrivateNutsUtils.err_printf("  nuts-boot-repositories           : %s%n", PrivateNutsUtils.nvl(actualBootConfig.getBootRepositories(), "<?> Not Found!"));
-        PrivateNutsUtils.err_printf("  workspace-location               : %s%n", PrivateNutsUtils.nvl(workspace, "<default-location>"));
-        PrivateNutsUtils.err_printf("  nuts-store-apps                  : %s%n", rbc_locations.get(NutsStoreLocation.APPS.id()));
-        PrivateNutsUtils.err_printf("  nuts-store-config                : %s%n", rbc_locations.get(NutsStoreLocation.CONFIG.id()));
-        PrivateNutsUtils.err_printf("  nuts-store-var                   : %s%n", rbc_locations.get(NutsStoreLocation.VAR.id()));
-        PrivateNutsUtils.err_printf("  nuts-store-log                   : %s%n", rbc_locations.get(NutsStoreLocation.LOG.id()));
-        PrivateNutsUtils.err_printf("  nuts-store-temp                  : %s%n", rbc_locations.get(NutsStoreLocation.TEMP.id()));
-        PrivateNutsUtils.err_printf("  nuts-store-cache                 : %s%n", rbc_locations.get(NutsStoreLocation.CACHE.id()));
-        PrivateNutsUtils.err_printf("  nuts-store-run                   : %s%n", rbc_locations.get(NutsStoreLocation.RUN.id()));
-        PrivateNutsUtils.err_printf("  nuts-store-lib                   : %s%n", rbc_locations.get(NutsStoreLocation.LIB.id()));
-        PrivateNutsUtils.err_printf("  nuts-store-strategy              : %s%n", PrivateNutsUtils.desc(actualBootConfig.getStoreLocationStrategy()));
-        PrivateNutsUtils.err_printf("  nuts-store-layout                : %s%n", PrivateNutsUtils.desc(actualBootConfig.getStoreLocationLayout()));
-        PrivateNutsUtils.err_printf("  nuts-boot-args                   : %s%n", options.formatter().getBootCommandLine());
-        PrivateNutsUtils.err_printf("  nuts-app-args                    : %s%n", Arrays.toString(options.getApplicationArguments()));
-        PrivateNutsUtils.err_printf("  option-read-only                 : %s%n", options.isReadOnly());
-        PrivateNutsUtils.err_printf("  option-trace                     : %s%n", options.isTrace());
-        PrivateNutsUtils.err_printf("  option-progress                  : %s%n", PrivateNutsUtils.desc(options.getProgressOptions()));
-        PrivateNutsUtils.err_printf("  option-open-mode                 : %s%n", PrivateNutsUtils.desc(options.getOpenMode() == null ? NutsOpenMode.OPEN_OR_CREATE : options.getOpenMode()));
+        PrivateNutsTerm.errPrintf("unable to bootstrap nuts (hash %s):%n", getApiDigest());
+        PrivateNutsTerm.errPrintf("%s%n", extraMessage);
+        PrivateNutsTerm.errPrintf("here after current environment info:%n");
+        PrivateNutsTerm.errPrintf("  nuts-boot-api-version            : %s%n", PrivateNutsUtils.nvl(actualBootConfig.getApiVersion(), "<?> Not Found!"));
+        PrivateNutsTerm.errPrintf("  nuts-boot-runtime                : %s%n", PrivateNutsUtils.nvl(actualBootConfig.getRuntimeId(), "<?> Not Found!"));
+        PrivateNutsTerm.errPrintf("  nuts-boot-repositories           : %s%n", PrivateNutsUtils.nvl(actualBootConfig.getBootRepositories(), "<?> Not Found!"));
+        PrivateNutsTerm.errPrintf("  workspace-location               : %s%n", PrivateNutsUtils.nvl(workspace, "<default-location>"));
+        PrivateNutsTerm.errPrintf("  nuts-store-apps                  : %s%n", rbc_locations.get(NutsStoreLocation.APPS.id()));
+        PrivateNutsTerm.errPrintf("  nuts-store-config                : %s%n", rbc_locations.get(NutsStoreLocation.CONFIG.id()));
+        PrivateNutsTerm.errPrintf("  nuts-store-var                   : %s%n", rbc_locations.get(NutsStoreLocation.VAR.id()));
+        PrivateNutsTerm.errPrintf("  nuts-store-log                   : %s%n", rbc_locations.get(NutsStoreLocation.LOG.id()));
+        PrivateNutsTerm.errPrintf("  nuts-store-temp                  : %s%n", rbc_locations.get(NutsStoreLocation.TEMP.id()));
+        PrivateNutsTerm.errPrintf("  nuts-store-cache                 : %s%n", rbc_locations.get(NutsStoreLocation.CACHE.id()));
+        PrivateNutsTerm.errPrintf("  nuts-store-run                   : %s%n", rbc_locations.get(NutsStoreLocation.RUN.id()));
+        PrivateNutsTerm.errPrintf("  nuts-store-lib                   : %s%n", rbc_locations.get(NutsStoreLocation.LIB.id()));
+        PrivateNutsTerm.errPrintf("  nuts-store-strategy              : %s%n", PrivateNutsUtils.desc(actualBootConfig.getStoreLocationStrategy()));
+        PrivateNutsTerm.errPrintf("  nuts-store-layout                : %s%n", PrivateNutsUtils.desc(actualBootConfig.getStoreLocationLayout()));
+        PrivateNutsTerm.errPrintf("  nuts-boot-args                   : %s%n", options.formatter().getBootCommandLine());
+        PrivateNutsTerm.errPrintf("  nuts-app-args                    : %s%n", Arrays.toString(options.getApplicationArguments()));
+        PrivateNutsTerm.errPrintf("  option-read-only                 : %s%n", options.isReadOnly());
+        PrivateNutsTerm.errPrintf("  option-trace                     : %s%n", options.isTrace());
+        PrivateNutsTerm.errPrintf("  option-progress                  : %s%n", PrivateNutsUtils.desc(options.getProgressOptions()));
+        PrivateNutsTerm.errPrintf("  option-open-mode                 : %s%n", PrivateNutsUtils.desc(options.getOpenMode() == null ? NutsOpenMode.OPEN_OR_CREATE : options.getOpenMode()));
 
         NutsClassLoaderNode rtn = workspaceInformation.getRuntimeBootDependencyNode();
         String rtHash = "";
         if (rtn != null) {
-            rtHash = PrivateNutsIOUtils.getURLDigest(rtn.getURL());
+            rtHash = PrivateNutsDigestUtils.getURLDigest(rtn.getURL());
         }
-        PrivateNutsUtils.err_printf("  nuts-runtime-digest                : %s%n", rtHash);
+        PrivateNutsTerm.errPrintf("  nuts-runtime-digest                : %s%n", rtHash);
 
         if (bootClassWorldURLs == null || bootClassWorldURLs.length == 0) {
-            PrivateNutsUtils.err_printf("  nuts-runtime-classpath           : %s%n", "<none>");
+            PrivateNutsTerm.errPrintf("  nuts-runtime-classpath           : %s%n", "<none>");
         } else {
-            PrivateNutsUtils.err_printf("  nuts-runtime-hash                : %s%n", "<none>");
+            PrivateNutsTerm.errPrintf("  nuts-runtime-hash                : %s%n", "<none>");
             for (int i = 0; i < bootClassWorldURLs.length; i++) {
                 URL bootClassWorldURL = bootClassWorldURLs[i];
                 if (i == 0) {
-                    PrivateNutsUtils.err_printf("  nuts-runtime-classpath           : %s%n", PrivateNutsUtils.formatURL(bootClassWorldURL));
+                    PrivateNutsTerm.errPrintf("  nuts-runtime-classpath           : %s%n", PrivateNutsUtils.formatURL(bootClassWorldURL));
                 } else {
-                    PrivateNutsUtils.err_printf("                                     %s%n", PrivateNutsUtils.formatURL(bootClassWorldURL));
+                    PrivateNutsTerm.errPrintf("                                     %s%n", PrivateNutsUtils.formatURL(bootClassWorldURL));
                 }
             }
         }
-        PrivateNutsUtils.err_printf("  java-version                     : %s%n", System.getProperty("java.version"));
-        PrivateNutsUtils.err_printf("  java-executable                  : %s%n", PrivateNutsUtils.resolveJavaCommand(null));
-        PrivateNutsUtils.err_printf("  java-class-path                  : %s%n", System.getProperty("java.class.path"));
-        PrivateNutsUtils.err_printf("  java-library-path                : %s%n", System.getProperty("java.library.path"));
-        PrivateNutsUtils.err_printf("  os-name                          : %s%n", System.getProperty("os.name"));
-        PrivateNutsUtils.err_printf("  os-arch                          : %s%n", System.getProperty("os.arch"));
-        PrivateNutsUtils.err_printf("  os-version                       : %s%n", System.getProperty("os.version"));
-        PrivateNutsUtils.err_printf("  user-name                        : %s%n", System.getProperty("user.name"));
-        PrivateNutsUtils.err_printf("  user-home                        : %s%n", System.getProperty("user.home"));
-        PrivateNutsUtils.err_printf("  user-dir                         : %s%n", System.getProperty("user.dir"));
-        PrivateNutsUtils.err_printf("%n");
+        PrivateNutsTerm.errPrintf("  java-version                     : %s%n", System.getProperty("java.version"));
+        PrivateNutsTerm.errPrintf("  java-executable                  : %s%n", PrivateNutsUtils.resolveJavaCommand(null));
+        PrivateNutsTerm.errPrintf("  java-class-path                  : %s%n", System.getProperty("java.class.path"));
+        PrivateNutsTerm.errPrintf("  java-library-path                : %s%n", System.getProperty("java.library.path"));
+        PrivateNutsTerm.errPrintf("  os-name                          : %s%n", System.getProperty("os.name"));
+        PrivateNutsTerm.errPrintf("  os-arch                          : %s%n", System.getProperty("os.arch"));
+        PrivateNutsTerm.errPrintf("  os-version                       : %s%n", System.getProperty("os.version"));
+        PrivateNutsTerm.errPrintf("  user-name                        : %s%n", System.getProperty("user.name"));
+        PrivateNutsTerm.errPrintf("  user-home                        : %s%n", System.getProperty("user.home"));
+        PrivateNutsTerm.errPrintf("  user-dir                         : %s%n", System.getProperty("user.dir"));
+        PrivateNutsTerm.errPrintf("%n");
         if (options.getLogConfig() == null
                 || options.getLogConfig().getLogTermLevel() == null
                 || options.getLogConfig().getLogFileLevel().intValue() > Level.FINEST.intValue()) {
-            PrivateNutsUtils.err_printf("If the problem persists you may want to get more debug info by adding '--verbose' arguments.%n");
+            PrivateNutsTerm.errPrintf("If the problem persists you may want to get more debug info by adding '--verbose' arguments.%n");
         }
         if (!options.isReset() && !options.isRecover() && options.getExpireTime() == null) {
-            PrivateNutsUtils.err_printf("You may also enable recover mode to ignore existing cache info with '--recover' and '--expire' arguments.%n");
-            PrivateNutsUtils.err_printf("Here is the proper command : %n");
-            PrivateNutsUtils.err_printf("  java -jar nuts.jar --verbose --recover --expire [...]%n");
+            PrivateNutsTerm.errPrintf("You may also enable recover mode to ignore existing cache info with '--recover' and '--expire' arguments.%n");
+            PrivateNutsTerm.errPrintf("Here is the proper command : %n");
+            PrivateNutsTerm.errPrintf("  java -jar nuts.jar --verbose --recover --expire [...]%n");
         } else if (!options.isReset() && options.isRecover() && options.getExpireTime() != null) {
-            PrivateNutsUtils.err_printf("You may also enable full reset mode to ignore existing configuration with '--reset' argument.%n");
-            PrivateNutsUtils.err_printf("ATTENTION: this will delete all your nuts configuration. Use it at your own risk.%n");
-            PrivateNutsUtils.err_printf("Here is the proper command : %n");
-            PrivateNutsUtils.err_printf("  java -jar nuts.jar --verbose --reset [...]%n");
+            PrivateNutsTerm.errPrintf("You may also enable full reset mode to ignore existing configuration with '--reset' argument.%n");
+            PrivateNutsTerm.errPrintf("ATTENTION: this will delete all your nuts configuration. Use it at your own risk.%n");
+            PrivateNutsTerm.errPrintf("Here is the proper command : %n");
+            PrivateNutsTerm.errPrintf("  java -jar nuts.jar --verbose --reset [...]%n");
         }
         if (!ths.list().isEmpty()) {
-            PrivateNutsUtils.err_printf("error stack trace is:%n");
+            PrivateNutsTerm.errPrintf("error stack trace is:%n");
             for (PrivateNutsErrorInfo th : ths.list()) {
                 StringBuilder msg = new StringBuilder();
                 List<Object> msgParams = new ArrayList<>();
@@ -1185,13 +1185,13 @@ public final class NutsBootWorkspace {
                     msgParams.add("unexpected error");
                 }
                 msg.append(" %n");
-                PrivateNutsUtils.err_printf(msg.toString(), msgParams.toArray());
-                PrivateNutsUtils.err_printStack(th.getThrowable());
+                PrivateNutsTerm.errPrintf(msg.toString(), msgParams.toArray());
+                PrivateNutsTerm.errPrintStack(th.getThrowable());
             }
         } else {
-            PrivateNutsUtils.err_printf("no stack trace is available.%n");
+            PrivateNutsTerm.errPrintf("no stack trace is available.%n");
         }
-        PrivateNutsUtils.err_printf("now exiting nuts, Bye!%n");
+        PrivateNutsTerm.errPrintf("now exiting nuts, Bye!%n");
     }
 
     /**

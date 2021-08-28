@@ -77,18 +77,39 @@ public enum NutsApplicationMode implements NutsEnum {
      */
     private final String id;
 
+    /**
+     * default constructor
+     */
     NutsApplicationMode() {
         this.id = name().toLowerCase().replace('_', '-');
     }
 
+    /**
+     * parse string and return null if parse fails
+     * @param value value to parse
+     * @return parsed instance or null
+     */
     public static NutsApplicationMode parseLenient(String value) {
         return parseLenient(value, null);
     }
 
+    /**
+     * parse string and return {@code emptyOrErrorValue} if parse fails
+     * @param value value to parse
+     * @return parsed instance or {@code emptyOrErrorValue}
+     */
     public static NutsApplicationMode parseLenient(String value, NutsApplicationMode emptyOrErrorValue) {
         return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
     }
 
+    /**
+     *
+     * parse string and return {@code emptyValue} when null or {@code errorValue} if parse fails
+     * @param value value to parse
+     * @param emptyValue value when the value is null or empty
+     * @param errorValue value when the value cannot be parsed
+     * @return parsed value
+     */
     public static NutsApplicationMode parseLenient(String value, NutsApplicationMode emptyValue, NutsApplicationMode errorValue) {
         if (value == null) {
             value = "";

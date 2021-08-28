@@ -5,7 +5,7 @@ import java.io.File;
 /**
  * @app.category Internal
  */
-interface PrivateNutsConfirmDelete {
+interface PrivateNutsDeleteFilesContext {
 
     boolean isForce();
 

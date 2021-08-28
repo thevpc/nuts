@@ -23,8 +23,13 @@
  */
 package net.thevpc.nuts.runtime.standalone.util;
 
+import java.io.IOException;
 import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.List;
 
 import net.thevpc.nuts.*;
 
@@ -32,7 +37,7 @@ import net.thevpc.nuts.*;
  *
  * @author vpc
  */
-public final class NutsClassLoaderNodeUtils {
+public final class NutsClassLoaderUtils {
 
     public static NutsClassLoaderNode definitionToClassLoaderNode(NutsDefinition def, NutsSession session) {
         if (session == null) {
@@ -69,4 +74,35 @@ public final class NutsClassLoaderNodeUtils {
         );
     }
 
+    public static URL[] resolveClasspathURLs(ClassLoader contextClassLoader) {
+        List<URL> all = new ArrayList<>();
+        if (contextClassLoader != null) {
+            if (contextClassLoader instanceof URLClassLoader) {
+                all.addAll(Arrays.asList(((URLClassLoader) contextClassLoader).getURLs()));
+            }else{
+                //open jdk 9+ uses module and AppClassLoader no longer extends URLClassLoader
+                try {
+                    Enumeration<URL> r = contextClassLoader.getResources("META-INF/MANIFEST.MF");
+                    while (r.hasMoreElements()) {
+                        URL u = r.nextElement();
+                        if("jrt".equals(u.getProtocol())) {
+                            //ignore java runtime until we find a way to retrieve their content
+                            // In anyways we do not think this is useful for nuts.jar file!
+                        }else if("jar".equals(u.getProtocol())){
+                            if(u.getFile().endsWith("!/META-INF/MANIFEST.MF")){
+                                String jar = u.getFile().substring(0, u.getFile().length() - "!/META-INF/MANIFEST.MF".length());
+                                all.add(new URL(jar));
+                            }
+                        }else {
+                            //ignore any other loading url format!
+                        }
+                    }
+                }catch (IOException ex){
+                    //ignore...
+                }
+            }
+        }
+        //Thread.currentThread().getContextClassLoader()
+        return all.toArray(new URL[0]);
+    }
 }

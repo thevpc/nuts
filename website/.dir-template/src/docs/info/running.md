@@ -20,7 +20,7 @@ Then, all executable classes (public with static void main method) are enumerate
 ## Artifact Long Ids
 **```nuts```** long ids are a string representation of a unique identifier of the artifact. It has the following form :
 
-```java
+```bash
 groupId:artifactId#version
 ```
 
@@ -109,5 +109,5 @@ nuts ./my-app.jar some-argument-of-my-app
 If you need to pass JVM arguments you have to prefix them with "--exec". So if you want to fix maximum heap size use 
 
 ```bash
-nuts --exe -Xms1G -Xmx2G ./my-app.jar argument-1 argument-2
+nuts --exec -Xms1G -Xmx2G ./my-app.jar argument-1 argument-2
 ```

@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.executors;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.parsers.StringTokenizerUtils;
 import net.thevpc.nuts.runtime.core.util.*;
-import net.thevpc.nuts.runtime.standalone.util.NutsClassLoaderNodeUtils;
+import net.thevpc.nuts.runtime.standalone.util.NutsClassLoaderUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsJavaSdkUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
@@ -220,12 +220,12 @@ public final class JavaExecutorOptions {
                     if (id.getLongName().equals(nutsDefinition.getId().getLongName())) {
                         baseDetected = true;
                         if (!isExcludeBase()) {
-                            currentCP.add(NutsClassLoaderNodeUtils.definitionToClassLoaderNode(nutsDefinition, session));
+                            currentCP.add(NutsClassLoaderUtils.definitionToClassLoaderNode(nutsDefinition, session));
 //                            classPath.add(nutsDefinition.getPath().toString());
 //                            nutsPath.add(nutsIdFormat.value(nutsDefinition.getId()).format());
                         }
                     } else {
-                        currentCP.add(NutsClassLoaderNodeUtils.definitionToClassLoaderNode(nutsDefinition, session));
+                        currentCP.add(NutsClassLoaderUtils.definitionToClassLoaderNode(nutsDefinition, session));
 //                        classPath.add(nutsDefinition.getPath().toString());
 //                        nutsPath.add(nutsIdFormat.value(nutsDefinition.getId()).format());
                     }
@@ -235,7 +235,7 @@ public final class JavaExecutorOptions {
                 if (path == null) {
                     throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing path for %s",id));
                 }
-                currentCP.add(0, NutsClassLoaderNodeUtils.definitionToClassLoaderNode(def, session));
+                currentCP.add(0, NutsClassLoaderUtils.definitionToClassLoaderNode(def, session));
 //                nutsPath.add(0, nutsIdFormat.value(id).format());
 //                classPath.add(0, path.toString());
             }
@@ -378,7 +378,7 @@ public final class JavaExecutorOptions {
         for (NutsId nutsId : ns.getResultIds()) {
             NutsDefinition f = getWorkspace()
                     .search().addId(nutsId).setSession(searchSession).setLatest(true).getResultDefinitions().required();
-            classPath.add(NutsClassLoaderNodeUtils.definitionToClassLoaderNode(f, session));
+            classPath.add(NutsClassLoaderUtils.definitionToClassLoaderNode(f, session));
         }
     }
 

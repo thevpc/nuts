@@ -74,8 +74,8 @@ import net.thevpc.nuts.runtime.standalone.repos.DefaultNutsInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.security.DefaultNutsWorkspaceSecurityManager;
 import net.thevpc.nuts.runtime.standalone.security.DefaultNutsWorkspaceSecurityModel;
 import net.thevpc.nuts.runtime.standalone.security.ReadOnlyNutsWorkspaceOptions;
-import net.thevpc.nuts.runtime.standalone.util.CoreClasspathUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreDigestHelper;
+import net.thevpc.nuts.runtime.standalone.util.NutsClassLoaderUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.wscommands.*;
 import net.thevpc.nuts.spi.*;
@@ -641,7 +641,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
 
     private URL getApiURL() {
         NutsBootId nid = new NutsBootId("net.thevpc.nuts", "nuts", NutsBootVersion.parse(Nuts.getVersion()));
-        return NutsApiUtils.findClassLoaderJar(nid, CoreClasspathUtils.resolveClasspathURLs(Thread.currentThread().getContextClassLoader()));
+        return NutsApiUtils.findClassLoaderJar(nid, NutsClassLoaderUtils.resolveClasspathURLs(Thread.currentThread().getContextClassLoader()));
     }
 
     private String getApiDigest() {
@@ -680,8 +680,8 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 new NutsLauncherOptions()
                         .setId(getApiId())
                         .setCreateScript(true)
-                        .setCreateDesktopShortcut(NutsActionSupportCondition.PREFERRED)
-                        .setCreateMenuShortcut(NutsActionSupportCondition.SUPPORTED)
+                        .setCreateDesktopShortcut(NutsSupportCondition.PREFERRED)
+                        .setCreateMenuShortcut(NutsSupportCondition.SUPPORTED)
         );
     }
 

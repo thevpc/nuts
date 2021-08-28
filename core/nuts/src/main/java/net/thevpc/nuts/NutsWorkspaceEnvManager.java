@@ -156,7 +156,7 @@ public interface NutsWorkspaceEnvManager {
 
     boolean isGraphicalDesktopEnvironment();
 
-    NutsActionSupport getDesktopIntegrationSupport(NutsDesktopIntegrationItem target);
+    NutsSupportMode getDesktopIntegrationSupport(NutsDesktopIntegrationItem target);
 
     Path getDesktopPath();
 
