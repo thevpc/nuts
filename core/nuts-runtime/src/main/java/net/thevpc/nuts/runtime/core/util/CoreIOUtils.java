@@ -82,7 +82,6 @@ public class CoreIOUtils {
             }
         }
     };
-    private static final char[] HEX_ARR = "0123456789ABCDEF".toCharArray();
     public static String newLineString = null;
 
     public static PrintWriter toPrintWriter(Writer writer, NutsSession session) {
@@ -1126,38 +1125,7 @@ public class CoreIOUtils {
         }
     }
 
-    public static String bytesToHex(byte[] bytes) {
-        char[] hexChars = new char[bytes.length * 2];
-        for (int j = 0; j < bytes.length; j++) {
-            int v = bytes[j] & 255;
-            hexChars[j * 2] = HEX_ARR[v >>> 4];
-            hexChars[j * 2 + 1] = HEX_ARR[v & 15];
-        }
-        return new String(hexChars);
-    }
 
-    public static String toHexString(byte[] bytes) {
-        StringBuilder sb = new StringBuilder(bytes.length * 2);
-        for (byte aByte : bytes) {
-            sb.append(toHex(aByte >> 4));
-            sb.append(toHex(aByte));
-        }
-        return sb.toString();
-    }
-
-    public static char[] toHexChars(byte[] bytes) {
-        char[] sb = new char[bytes.length * 2];
-        int x = 0;
-        for (byte aByte : bytes) {
-            sb[x++] = toHex(aByte >> 4);
-            sb[x++] = toHex(aByte);
-        }
-        return sb;
-    }
-
-    public static char toHex(int nibble) {
-        return HEX_ARR[nibble & 15];
-    }
 
     public static byte[] evalMD5(String input) {
         try {
@@ -1169,7 +1137,7 @@ public class CoreIOUtils {
     }
 
     public static String evalMD5Hex(Path path) {
-        return toHexString(evalMD5(path));
+        return NutsUtilStrings.toHexString(evalMD5(path));
     }
 
     public static byte[] evalMD5(Path path) {
@@ -1181,7 +1149,7 @@ public class CoreIOUtils {
     }
 
     public static String evalMD5Hex(java.io.InputStream input) {
-        return toHexString(evalMD5(input));
+        return NutsUtilStrings.toHexString(evalMD5(input));
     }
 
     public static byte[] evalHash(java.io.InputStream input, String algo) {
@@ -1287,11 +1255,11 @@ public class CoreIOUtils {
     }
 
     public static String evalSHA1Hex(java.io.InputStream input, boolean closeStream) {
-        return toHexString(evalSHA1(input, closeStream));
+        return NutsUtilStrings.toHexString(evalSHA1(input, closeStream));
     }
 
     public static char[] evalSHA1HexChars(java.io.InputStream input, boolean closeStream) {
-        return toHexChars(evalSHA1(input, closeStream));
+        return NutsUtilStrings.toHexString(evalSHA1(input, closeStream)).toCharArray();
     }
 
     public static byte[] evalSHA1(java.io.InputStream input, boolean closeStream) {
@@ -1530,10 +1498,10 @@ public class CoreIOUtils {
                     } else if (((c < 0x0020) || (c > 0x007e))) {
                         buffer.append('\\');
                         buffer.append('u');
-                        buffer.append(toHex((c >> 12) & 0xF));
-                        buffer.append(toHex((c >> 8) & 0xF));
-                        buffer.append(toHex((c >> 4) & 0xF));
-                        buffer.append(toHex(c & 0xF));
+                        buffer.append(NutsUtilStrings.toHexChar((c >> 12) & 0xF));
+                        buffer.append(NutsUtilStrings.toHexChar((c >> 8) & 0xF));
+                        buffer.append(NutsUtilStrings.toHexChar((c >> 4) & 0xF));
+                        buffer.append(NutsUtilStrings.toHexChar(c & 0xF));
                     } else {
                         buffer.append(c);
                     }

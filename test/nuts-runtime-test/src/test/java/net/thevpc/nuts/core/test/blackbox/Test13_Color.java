@@ -72,7 +72,7 @@ public class Test13_Color {
 
     @BeforeEach
     public void startup() throws IOException {
-        Assumptions.assumeTrue(Nuts.getPlatformOsFamily()== NutsOsFamily.LINUX);
+        Assumptions.assumeTrue(NutsUtilPlatforms.getPlatformOsFamily()== NutsOsFamily.LINUX);
         TestUtils.unsetNutsSystemProperties();
     }
 

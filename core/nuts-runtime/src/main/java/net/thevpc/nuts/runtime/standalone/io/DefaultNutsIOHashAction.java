@@ -133,7 +133,7 @@ public class DefaultNutsIOHashAction implements NutsIOHashAction {
 
     @Override
     public String computeString() {
-        return CoreIOUtils.toHexString(computeBytes());
+        return NutsUtilStrings.toHexString(computeBytes());
     }
 
     protected String getValidAlgo() {

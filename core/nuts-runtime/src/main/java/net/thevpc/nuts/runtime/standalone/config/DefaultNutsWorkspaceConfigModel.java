@@ -264,7 +264,7 @@ public class DefaultNutsWorkspaceConfigModel {
             //this is a protocol based workspace
             //String protocol=ws.substring(0,ws.indexOf("://"));
             effWorkspaceName = "remote-bootstrap";
-            lastConfigPath = Nuts.getPlatformHomeFolder(null, null, null,
+            lastConfigPath = NutsUtilPlatforms.getPlatformHomeFolder(null, null, null,
                     global,
                     CoreNutsUtils.resolveValidWorkspaceName(effWorkspaceName));
             lastConfigLoaded = parseBootConfig(lastConfigPath, session);
@@ -276,7 +276,7 @@ public class DefaultNutsWorkspaceConfigModel {
             for (int i = 0; i < maxDepth; i++) {
                 lastConfigPath
                         = CoreNutsUtils.isValidWorkspaceName(_ws)
-                        ? Nuts.getPlatformHomeFolder(
+                        ? NutsUtilPlatforms.getPlatformHomeFolder(
                                 null, null, null,
                                 global,
                                 CoreNutsUtils.resolveValidWorkspaceName(_ws)
@@ -305,7 +305,7 @@ public class DefaultNutsWorkspaceConfigModel {
             defaultLocation = CoreNutsUtils.isValidWorkspaceName(_ws);
             lastConfigPath
                     = CoreNutsUtils.isValidWorkspaceName(_ws)
-                    ? Nuts.getPlatformHomeFolder(
+                    ? NutsUtilPlatforms.getPlatformHomeFolder(
                             null, null, null,
                             global,
                             CoreNutsUtils.resolveValidWorkspaceName(_ws)

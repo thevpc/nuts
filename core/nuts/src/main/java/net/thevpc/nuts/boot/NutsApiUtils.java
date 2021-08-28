@@ -3,9 +3,10 @@ package net.thevpc.nuts.boot;
 import net.thevpc.nuts.*;
 
 import java.io.PrintStream;
-import java.util.Map;
+import java.net.URL;
 
 public class NutsApiUtils {
+
     private NutsApiUtils() {
     }
 
@@ -35,26 +36,25 @@ public class NutsApiUtils {
         return PrivateNutsUtils.getSysBoolNutsProperty(property, defaultValue);
     }
 
-    public static String getPlatformHomeFolder(
-            NutsOsFamily platformOsFamily,
-            NutsStoreLocation location,
-            Map<String, String> homeLocations,
-            boolean global,
-            String workspaceName) {
-        return NutsUtilPlatforms.getPlatformHomeFolder(platformOsFamily, location, homeLocations,
-                global, workspaceName);
-    }
-
-    public static NutsOsFamily getPlatformOsFamily() {
-        return NutsUtilPlatforms.getPlatformOsFamily();
-    }
-
     public static String resolveNutsVersionFromClassPath() {
         return PrivateNutsMavenUtils.resolveNutsApiVersionFromClassPath();
     }
 
-    public static String resolveNutsBuildNumber() {
-        return PrivateNutsMavenUtils.resolveNutsApiBuildNumber();
+    public static String resolveNutsIdHash() {
+        return resolveNutsIdHash(
+                new NutsBootId("net.thevpc.nuts", "nuts", NutsBootVersion.parse(Nuts.getVersion())),
+                PrivateNutsClasspathUtils.resolveClasspathURLs(Thread.currentThread().getContextClassLoader())
+        );
+    }
+
+    public static String resolveNutsIdHash(NutsBootId id, URL[] urls) {
+        return PrivateNutsIOUtils.getURLDigest(
+                PrivateNutsClasspathUtils.findClassLoaderJar(id, urls)
+        );
+    }
+
+    public static URL findClassLoaderJar(NutsBootId id, URL[] urls) {
+        return PrivateNutsClasspathUtils.findClassLoaderJar(id, urls);
     }
 
 
@@ -79,4 +79,5 @@ public class NutsApiUtils {
     public static String createHomeLocationKey(NutsOsFamily storeLocationLayout, NutsStoreLocation location) {
         return (storeLocationLayout == null ? "system" : storeLocationLayout.id()) + ":" + (location == null ? "system" : location.id());
     }
+
 }

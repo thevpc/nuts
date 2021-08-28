@@ -191,6 +191,7 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
         String classifier = queryMap.remove(NutsConstants.IdProperties.CLASSIFIER);
 //        String alternative = queryMap.remove(NutsConstants.IdProperties.ALTERNATIVE);
         String exclusions = queryMap.remove(NutsConstants.IdProperties.EXCLUSIONS);
+        String repo = queryMap.remove(NutsConstants.IdProperties.REPO);
         NutsIdBuilder idBuilder = id.builder();
         if (isOmitOtherProperties()) {
             idBuilder.setProperties(new LinkedHashMap<>());

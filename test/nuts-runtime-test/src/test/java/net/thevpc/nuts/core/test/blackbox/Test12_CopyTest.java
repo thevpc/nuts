@@ -101,7 +101,7 @@ public class Test12_CopyTest {
 
     @BeforeEach
     public void startup() throws IOException {
-        Assumptions.assumeTrue(Nuts.getPlatformOsFamily()== NutsOsFamily.LINUX);
+        Assumptions.assumeTrue(NutsUtilPlatforms.getPlatformOsFamily()== NutsOsFamily.LINUX);
         TestUtils.unsetNutsSystemProperties();
     }
 

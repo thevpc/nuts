@@ -23,9 +23,9 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.*;
+import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.boot.NutsBootWorkspace;
 
-import java.util.Map;
 import java.util.logging.Level;
 
 /**
@@ -41,7 +41,6 @@ public final class Nuts {
      * current Nuts version
      */
     public static String version;
-    public static String buildNumber;
 
     /**
      * private constructor
@@ -49,27 +48,8 @@ public final class Nuts {
     private Nuts() {
     }
 
-    public static String getBuildNumber() {
-        if (buildNumber == null) {
-            synchronized (Nuts.class) {
-                if (buildNumber == null) {
-                    String v = NutsApiUtils.resolveNutsBuildNumber();
-                    if (v == null) {
-                        throw new NutsBootException(
-                                NutsMessage.plain(
-                                        "unable to detect nuts build number. Most likely you are missing valid compilation of nuts. pom.properties could not be resolved and hence, we are unable to resolve nuts version."
-                                )
-                        );
-                    }
-                    buildNumber = v;
-                }
-            }
-        }
-        return buildNumber;
-    }
-
     /**
-     * current nuts version
+     * current nuts version, loaded from pom file
      *
      * @return current nuts version
      */
@@ -113,7 +93,7 @@ public final class Nuts {
                     bo.setGui(false);
                 }
             } else {
-                bo = Nuts.createOptionsBuilder().parseArguments(args);
+                bo = NutsWorkspaceOptionsBuilder.of().parseArguments(args);
                 try {
                     if (NutsApiUtils.isGraphicalDesktopEnvironment()) {
                         bo.setGui(false);
@@ -143,7 +123,7 @@ public final class Nuts {
 
     public static void run(NutsSession session, String[] args) {
         NutsWorkspace workspace = session.getWorkspace();
-        NutsWorkspaceOptionsBuilder o = createOptionsBuilder().parseArguments(args);
+        NutsWorkspaceOptionsBuilder o = NutsWorkspaceOptionsBuilder.of().parseArguments(args);
         String[] appArgs;
         if (o.getApplicationArguments().length == 0) {
             if (o.isSkipWelcome()) {
@@ -181,7 +161,7 @@ public final class Nuts {
                 NutsUtilStrings.trim(System.getProperty("nuts.boot.args"))
                         + " " + NutsUtilStrings.trim(System.getProperty("nuts.args"))
         );
-        NutsWorkspaceOptionsBuilder options = createOptionsBuilder();
+        NutsWorkspaceOptionsBuilder options = NutsWorkspaceOptionsBuilder.of();
         if (!NutsUtilStrings.isBlank(nutsWorkspaceOptions)) {
             options.parseCommandLine(nutsWorkspaceOptions);
         }
@@ -221,14 +201,6 @@ public final class Nuts {
         return new NutsBootWorkspace(options).openWorkspace();
     }
 
-    public static NutsWorkspaceOptionsBuilder createOptionsBuilder() {
-        return NutsApiUtils.createOptionsBuilder();
-    }
-
-    public static NutsWorkspaceOptions createOptions() {
-        return NutsApiUtils.createOptions();
-    }
-
     /**
      * open then run Nuts application with the provided arguments. This Main
      * will
@@ -238,39 +210,6 @@ public final class Nuts {
      * @param args boot arguments
      */
     public static void runWorkspace(String... args) throws NutsExecutionException {
-        //long startTime = System.currentTimeMillis();
         new NutsBootWorkspace(args).runWorkspace();
-    }
-
-    /**
-     * resolves nuts home folder.Home folder is the root for nuts folders.It
-     * depends on folder type and store layout. For instance log folder depends
-     * on the underlying operating system (linux,windows,...).
-     * Specifications: XDG Base Directory Specification
-     * (https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html)
-     *
-     * @param folderType          folder type to resolve home for
-     * @param storeLocationLayout location layout to resolve home for
-     * @param homeLocations       workspace home locations
-     * @param global              global workspace
-     * @param workspaceName       workspace name or id (discriminator)
-     * @return home folder path
-     */
-    public static String getPlatformHomeFolder(
-            NutsOsFamily storeLocationLayout,
-            NutsStoreLocation folderType,
-            Map<String, String> homeLocations,
-            boolean global,
-            String workspaceName) {
-        return NutsApiUtils.getPlatformHomeFolder(storeLocationLayout, folderType, homeLocations, global, workspaceName);
-    }
-
-    /**
-     * default OS family, resolvable before booting nuts workspace
-     *
-     * @return default OS family, resolvable before booting nuts workspace
-     */
-    public static NutsOsFamily getPlatformOsFamily() {
-        return NutsApiUtils.getPlatformOsFamily();
     }
 }

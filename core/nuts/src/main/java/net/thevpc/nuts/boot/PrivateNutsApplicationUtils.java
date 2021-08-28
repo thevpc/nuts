@@ -29,7 +29,7 @@ public class PrivateNutsApplicationUtils {
                 }
             }
         } else {
-            NutsWorkspaceOptionsBuilder options = Nuts.createOptionsBuilder();
+            NutsWorkspaceOptionsBuilder options = NutsWorkspaceOptionsBuilder.of();
             //load inherited
             String nutsArgs = NutsUtilStrings.trim(
                     NutsUtilStrings.trim(System.getProperty("nuts.boot.args"))

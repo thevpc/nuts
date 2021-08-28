@@ -392,7 +392,7 @@ final class PrivateNutsWorkspaceInitInformation implements NutsWorkspaceInitInfo
     }
 
     public void setExtensionsSet(Set<String> extensionsSet) {
-        this.extensionsSet = extensionsSet == null ? new LinkedHashSet<>() : new LinkedHashSet<>(extensionsSet);
+        this.extensionsSet = PrivateNutsUtils.copy(extensionsSet);
     }
 
     @Override

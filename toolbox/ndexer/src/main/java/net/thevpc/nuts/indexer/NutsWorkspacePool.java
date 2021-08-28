@@ -5,6 +5,8 @@ import net.thevpc.nuts.NutsWorkspace;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import net.thevpc.nuts.NutsWorkspaceOptionsBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,7 +23,7 @@ public class NutsWorkspacePool {
             if (app.getApplicationContext().getWorkspace().locations().getWorkspaceLocation().toString().equals(ws)) {
                 o = app.getApplicationContext().getWorkspace();
             } else {
-                o = Nuts.openWorkspace(Nuts.createOptionsBuilder()
+                o = Nuts.openWorkspace(NutsWorkspaceOptionsBuilder.of()
                         .setSkipCompanions(true)
                         .setWorkspace(ws)
                         .build()

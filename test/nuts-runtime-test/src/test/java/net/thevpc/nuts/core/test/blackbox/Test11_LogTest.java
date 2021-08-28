@@ -5,6 +5,7 @@
  */
 package net.thevpc.nuts.core.test.blackbox;
 
+import net.thevpc.nuts.NutsUtilPlatforms;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.Nuts;
 import net.thevpc.nuts.NutsOsFamily;
@@ -61,7 +62,7 @@ public class Test11_LogTest {
 
     @BeforeEach
     public void startup() throws IOException {
-        Assumptions.assumeTrue(Nuts.getPlatformOsFamily()== NutsOsFamily.LINUX);
+        Assumptions.assumeTrue(NutsUtilPlatforms.getPlatformOsFamily()== NutsOsFamily.LINUX);
         TestUtils.unsetNutsSystemProperties();
     }
 

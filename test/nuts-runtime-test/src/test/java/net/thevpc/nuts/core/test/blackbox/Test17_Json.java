@@ -243,7 +243,7 @@ public class Test17_Json {
 
     @BeforeEach
     public void startup() throws IOException {
-        Assumptions.assumeTrue(Nuts.getPlatformOsFamily() == NutsOsFamily.LINUX);
+        Assumptions.assumeTrue(NutsUtilPlatforms.getPlatformOsFamily() == NutsOsFamily.LINUX);
         TestUtils.unsetNutsSystemProperties();
     }
 

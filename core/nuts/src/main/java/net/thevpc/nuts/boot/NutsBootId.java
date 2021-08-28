@@ -50,6 +50,10 @@ public final class NutsBootId {
     private final String os;
     private final String arch;
 
+    public NutsBootId(String groupId, String artifactId, NutsBootVersion version) {
+        this(groupId, artifactId, version,false,null,null);
+    }
+
     public NutsBootId(String groupId, String artifactId, NutsBootVersion version, boolean optional, String os, String arch) {
         this.groupId = groupId;
         this.artifactId = artifactId;
@@ -253,6 +257,10 @@ public final class NutsBootId {
             sb.append("arch=").append(arch);
         }
         return sb.toString();
+    }
+
+    public String getVersionString() {
+        return version==null?null:version.toString();
     }
 
     public NutsBootVersion getVersion() {

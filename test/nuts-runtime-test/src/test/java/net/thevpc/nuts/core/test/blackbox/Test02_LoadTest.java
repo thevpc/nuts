@@ -6,6 +6,7 @@
 package net.thevpc.nuts.core.test.blackbox;
 
 import net.thevpc.nuts.NutsOsFamily;
+import net.thevpc.nuts.NutsUtilPlatforms;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import java.io.File;
 import java.io.IOException;
@@ -47,7 +48,7 @@ public class Test02_LoadTest {
 
     @BeforeEach
     public void startup() throws IOException {
-        Assumptions.assumeTrue(Nuts.getPlatformOsFamily()== NutsOsFamily.LINUX);
+        Assumptions.assumeTrue(NutsUtilPlatforms.getPlatformOsFamily()== NutsOsFamily.LINUX);
         Map<String, String> extraProperties = new HashMap<>();
         extraProperties.put("nuts.export.always-show-command", "true");
         TestUtils.setSystemProperties(extraProperties);

@@ -19,7 +19,7 @@ public abstract class AbstractScriptBuilder implements ScriptBuilder {
 
     public AbstractScriptBuilder(PathInfoType type, NutsId anyId, NutsSession session) {
         this.session = session;
-        this.anyId = anyId;
+        this.anyId = anyId.builder().setRepository(null).build();//remove repo!
         this.type = type;
     }
 

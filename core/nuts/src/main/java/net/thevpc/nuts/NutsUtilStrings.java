@@ -6,6 +6,7 @@ package net.thevpc.nuts;
  * @since 0.8.1
  */
 public class NutsUtilStrings {
+    private static final char[] HEX_ARR = "0123456789ABCDEF".toCharArray();
     public static boolean isBlank(CharSequence s) {
         return s == null || isBlank(s.toString().toCharArray());
     }
@@ -61,4 +62,19 @@ public class NutsUtilStrings {
         }
         return errorValue;
     }
+
+    public static String toHexString(byte[] bytes) {
+        char[] hexChars = new char[bytes.length * 2];
+        for (int j = 0; j < bytes.length; j++) {
+            int v = bytes[j] & 255;
+            hexChars[j * 2] = HEX_ARR[v >>> 4];
+            hexChars[j * 2 + 1] = HEX_ARR[v & 15];
+        }
+        return new String(hexChars);
+    }
+
+    public static char toHexChar(int nibble) {
+        return HEX_ARR[nibble & 15];
+    }
+
 }

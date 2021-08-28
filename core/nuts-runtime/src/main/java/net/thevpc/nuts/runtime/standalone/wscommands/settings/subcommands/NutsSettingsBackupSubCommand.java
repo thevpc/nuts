@@ -127,7 +127,7 @@ public class NutsSettingsBackupSubCommand extends AbstractNutsSettingsSubCommand
                 if (ws == null || ws.isEmpty()) {
                     commandLine.required(NutsMessage.cstyle("not a valid file : %s", file));
                 }
-                String platformHomeFolder = Nuts.getPlatformHomeFolder(null, NutsStoreLocation.CONFIG, null, false, ws);
+                String platformHomeFolder = NutsUtilPlatforms.getPlatformHomeFolder(null, NutsStoreLocation.CONFIG, null, false, ws);
                 session
                         .getWorkspace().io()
                         .uncompress()

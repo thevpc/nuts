@@ -44,7 +44,7 @@ public class NutsRepositorySelector {
 
     static {
         defaultRepositoriesByName.put("system", CoreIOUtils.getNativePath(
-                Nuts.getPlatformHomeFolder(null,
+                NutsUtilPlatforms.getPlatformHomeFolder(null,
                         NutsStoreLocation.CONFIG, null,
                         true,
                         NutsConstants.Names.DEFAULT_WORKSPACE_NAME)
@@ -487,7 +487,7 @@ public class NutsRepositorySelector {
                                 new NutsRepositoryConfig()
                                         .setLocation(
                                                 CoreIOUtils.getNativePath(
-                                                        Nuts.getPlatformHomeFolder(null,
+                                                        NutsUtilPlatforms.getPlatformHomeFolder(null,
                                                                 NutsStoreLocation.CONFIG, null,
                                                                 true,
                                                                 NutsConstants.Names.DEFAULT_WORKSPACE_NAME)

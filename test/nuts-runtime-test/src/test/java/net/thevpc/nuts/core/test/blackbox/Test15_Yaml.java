@@ -26,11 +26,7 @@ package net.thevpc.nuts.core.test.blackbox;
 import java.io.File;
 import java.io.IOException;
 
-import net.thevpc.nuts.Nuts;
-import net.thevpc.nuts.NutsContentType;
-import net.thevpc.nuts.NutsElement;
-import net.thevpc.nuts.NutsOsFamily;
-import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import org.junit.jupiter.api.AfterAll;
@@ -76,7 +72,7 @@ public class Test15_Yaml {
 
     @BeforeEach
     public void startup() throws IOException {
-        Assumptions.assumeTrue(Nuts.getPlatformOsFamily() == NutsOsFamily.LINUX);
+        Assumptions.assumeTrue(NutsUtilPlatforms.getPlatformOsFamily() == NutsOsFamily.LINUX);
         TestUtils.unsetNutsSystemProperties();
     }
 

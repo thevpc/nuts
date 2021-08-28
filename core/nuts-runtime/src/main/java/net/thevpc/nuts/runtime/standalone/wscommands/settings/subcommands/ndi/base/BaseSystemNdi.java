@@ -857,7 +857,8 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                 if (isShortcutFieldNameUserFriendly()) {
                     fileName = "%N%s%v%s%h";
                 } else {
-                    fileName = "%g-%n-%v-%h";
+//                    fileName = "%g-%n-%v-%h";
+                    fileName = "%g-%n-%v%s%h";
                 }
             }
         }

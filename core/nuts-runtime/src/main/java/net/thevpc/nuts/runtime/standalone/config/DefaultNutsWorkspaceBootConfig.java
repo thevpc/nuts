@@ -54,7 +54,7 @@ class DefaultNutsWorkspaceBootConfig implements NutsWorkspaceBootConfig {
 
         String[] homes = new String[NutsStoreLocation.values().length];
         for (NutsStoreLocation type : NutsStoreLocation.values()) {
-            homes[type.ordinal()] = Nuts.getPlatformHomeFolder(storeLocationLayout, type, homeLocations,
+            homes[type.ordinal()] = NutsUtilPlatforms.getPlatformHomeFolder(storeLocationLayout, type, homeLocations,
                     global, name);
             if (NutsUtilStrings.isBlank(homes[type.ordinal()])) {
                 throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing Home for %s", type.id()));
@@ -227,7 +227,7 @@ class DefaultNutsWorkspaceBootConfig implements NutsWorkspaceBootConfig {
 
     @Override
     public String getHomeLocation(NutsStoreLocation storeLocation) {
-        return Nuts.getPlatformHomeFolder(getStoreLocationLayout(),
+        return NutsUtilPlatforms.getPlatformHomeFolder(getStoreLocationLayout(),
                 storeLocation, getHomeLocations(),
                 isGlobal(),
                 getName()

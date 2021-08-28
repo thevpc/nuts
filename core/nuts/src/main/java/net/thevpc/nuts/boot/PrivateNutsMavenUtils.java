@@ -16,12 +16,102 @@ import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 /**
  * @app.category Internal
  */
 public final class PrivateNutsMavenUtils {
+    public static final Pattern JAR_POM_PATH = Pattern.compile("/META-INF/maven/(?<g>[a-zA-Z0-9_.]+)/(?<a>[a-zA-Z0-9_]+/pom.xml)");
+    public static final Pattern JAR_NUTS_JSON_POM_PATH = Pattern.compile("/META-INF/nuts/(?<g>[a-zA-Z0-9_.]+)/(?<a>[a-zA-Z0-9_]+/nuts.json)");
+
     public PrivateNutsMavenUtils() {
+    }
+
+    /**
+     * detect artifact ids from an URL. Work in very simplistic way :
+     * It looks for pom.xml or nuts.json files and parses them with simplistic heuristics
+     * (do not handle comments or multiline values for XML)
+     *
+     * @param url to look into!
+     * @return list of detected urls
+     */
+    public static NutsBootId[] resolveJarIds(URL url) {
+        File file = PrivateNutsIOUtils.toFile(url);
+        if (file != null) {
+            if (file.isDirectory()) {
+                Matcher m = Pattern.compile("(?<src>.*)[/\\\\]+target[/\\\\]+classes[/\\\\]*")
+                        .matcher(file.getPath().replace('/', File.separatorChar));
+                if (m.find()) {
+                    String src = m.group("src");
+                    if (new File(src, "pom.xml").exists()) {
+                        Map<String, String> map = resolvePomTagValues(new String[]{
+                                "groupId", "artifactId", "version"
+                        }, new File(src, "pom.xml"));
+                        String groupId = map.get("groupId");
+                        String artifactId = map.get("artifactId");
+                        String version = map.get("version");
+                        if (groupId != null && artifactId != null && version != null) {
+                            return new NutsBootId[]{new NutsBootId(
+                                    groupId, artifactId, NutsBootVersion.parse(version)
+                            )};
+                        }
+                    }
+                }
+
+
+                return new NutsBootId[0];
+            } else if (file.isFile()) {
+                List<NutsBootId> all = new ArrayList<>();
+                String fileName = file.getName().toLowerCase();
+                if (fileName.endsWith(".jar") || fileName.endsWith(".zip")) {
+                    try (ZipFile zf = new ZipFile(file)) {
+
+                        Enumeration<? extends ZipEntry> zipEntries = zf.entries();
+                        while (zipEntries.hasMoreElements()) {
+                            ZipEntry entry = zipEntries.nextElement();
+                            String currPath = entry.getName();
+                            Matcher m = JAR_POM_PATH.matcher(currPath);
+                            if (m.find()) {
+                                String groupId = m.group("g");
+                                String artifactId = m.group("a");
+                                //now detect version from pom
+                                try (InputStream is = zf.getInputStream(entry)) {
+                                    Map<String, String> map = resolvePomTagValues(new String[]{"groupId", "artifactId", "version"}, is);
+                                    if (map.containsKey("version")) {
+                                        String version = map.get("version");
+                                        all.add(new NutsBootId(groupId, artifactId, NutsBootVersion.parse(version)));
+                                    }
+                                }
+                            }
+                            m = JAR_NUTS_JSON_POM_PATH.matcher(currPath);
+                            if (m.find()) {
+                                String groupId = m.group("g");
+                                String artifactId = m.group("a");
+                                //now detect version from pom
+                                try (InputStream is = zf.getInputStream(entry)) {
+                                    try (Reader r = new InputStreamReader(is)) {
+                                        Object p = new PrivateNutsJsonParser(r).parse();
+                                        if (p instanceof Map) {
+                                            Map<?, ?> map = ((Map<?, ?>) p);
+                                            Object v = map.get("version");
+                                            if (v instanceof String) {
+                                                all.add(new NutsBootId(groupId, artifactId, NutsBootVersion.parse((String) v)));
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    } catch (IOException e) {
+                        //
+                    }
+                }
+                return all.toArray(new NutsBootId[0]);
+            }
+        }
+        return new NutsBootId[0];
     }
 
     public static String toMavenFileName(String nutsId, String extension) {
@@ -68,7 +158,7 @@ public final class PrivateNutsMavenUtils {
         String jarPath = toMavenPath(nutsId) + "/" + toMavenFileName(nutsId, ext);
         String mvnUrl = repo;
         String sep = "/";
-        if (!PrivateNutsUtils.isURL(repo)) {
+        if (!PrivateNutsIOUtils.isURL(repo)) {
             sep = File.separator;
         }
         if (!mvnUrl.endsWith("/") && !mvnUrl.endsWith(sep)) {
@@ -99,7 +189,7 @@ public final class PrivateNutsMavenUtils {
                 String path = resolveMavenFullPath(r, nutsId, "pom");
                 File cachedPomFile = new File(resolveMavenFullPath(cacheFolder, nutsId, "pom"));
                 try {
-                    PrivateNutsUtils.copy(new URL(path), cachedPomFile, LOG);
+                    PrivateNutsIOUtils.copy(new URL(path), cachedPomFile, LOG);
                 } catch (Exception ex) {
                     errors.add(new PrivateNutsErrorInfo(nutsId, r, path, "unable to load descriptor", ex));
                     LOG.log(Level.SEVERE, NutsLogVerb.FAIL, "unable to load descriptor {0} from {1}.\n", new Object[]{nutsId, r});
@@ -108,7 +198,7 @@ public final class PrivateNutsMavenUtils {
             }
             String path = resolveMavenFullPath(r, nutsId, "jar");
             try {
-                PrivateNutsUtils.copy(new URL(path), cachedJarFile, LOG);
+                PrivateNutsIOUtils.copy(new URL(path), cachedJarFile, LOG);
                 LOG.log(Level.CONFIG, NutsLogVerb.CACHE, "cache jar file {0}", new Object[]{cachedJarFile.getPath()});
                 errors.removeErrorsFor(nutsId);
                 return cachedJarFile;
@@ -150,7 +240,7 @@ public final class PrivateNutsMavenUtils {
                 }
             } else if (url.startsWith("file://")) {
                 URL url1 = new URL(url);
-                File file = PrivateNutsUtils.toFile(url1);
+                File file = PrivateNutsIOUtils.toFile(url1);
                 if (file == null) {
                     // was not able to resolve to File
                     try {
@@ -346,7 +436,7 @@ public final class PrivateNutsMavenUtils {
                                     if (c3.getChildNodes().item(k) instanceof Element && c3.getChildNodes().item(k).getNodeName().equals("version")) {
                                         Element c4 = (Element) c3.getChildNodes().item(k);
                                         NutsBootVersion p = NutsBootVersion.parse(c4.getTextContent());
-                                        if(!p.isBlank()) {
+                                        if (!p.isBlank()) {
                                             all.add(p);
                                         }
                                     }
@@ -442,24 +532,24 @@ public final class PrivateNutsMavenUtils {
         if (bestVersion == null) {
             return null;
         }
-        NutsBootId iid = new NutsBootId(zId.getGroupId(), zId.getArtifactId(), bestVersion, false, null, null);
+        NutsBootId iid = new NutsBootId(zId.getGroupId(), zId.getArtifactId(), bestVersion);
         LOG.log(Level.FINEST, NutsLogVerb.SUCCESS, "resolved " + iid + " from " + bestPath);
         return iid;
     }
 
     private static List<NutsBootVersion> detectVersionsFromTomcatDirectoryListing(String basePath) {
-        List<NutsBootVersion> all=new ArrayList<>();
-        try (InputStream in=new URL(basePath).openStream()){
-            List<String> p=new SimpleTomcatDirectoryListParser().parse(in);
-            if(p!=null){
+        List<NutsBootVersion> all = new ArrayList<>();
+        try (InputStream in = new URL(basePath).openStream()) {
+            List<String> p = new SimpleTomcatDirectoryListParser().parse(in);
+            if (p != null) {
                 for (String s : p) {
-                    if(s.endsWith("/")){
-                        s=s.substring(0,s.length()-1);
+                    if (s.endsWith("/")) {
+                        s = s.substring(0, s.length() - 1);
                         int a = s.lastIndexOf('/');
-                        if(a>=0){
-                            String n=s.substring(a+1);
+                        if (a >= 0) {
+                            String n = s.substring(a + 1);
                             NutsBootVersion v = NutsBootVersion.parse(n);
-                            if(!v.isBlank()){
+                            if (!v.isBlank()) {
                                 all.add(v);
                             }
                         }
@@ -473,7 +563,7 @@ public final class PrivateNutsMavenUtils {
     }
 
     static File getBootCacheJar(NutsBootId vid, String[] repositories, String cacheFolder, boolean useCache, String name, Instant expire, PrivateNutsErrorInfoList errorList, PrivateNutsWorkspaceInitInformation workspaceInformation, Function<String, String> pathExpansionConverter, PrivateNutsLog LOG) {
-        File f = getBootCacheFile(vid, getFileName(vid, "jar"), repositories, cacheFolder, useCache, expire, errorList,workspaceInformation, pathExpansionConverter, LOG);
+        File f = getBootCacheFile(vid, getFileName(vid, "jar"), repositories, cacheFolder, useCache, expire, errorList, workspaceInformation, pathExpansionConverter, LOG);
         if (f == null) {
             throw new NutsInvalidWorkspaceException(workspaceInformation.getWorkspaceLocation(),
                     NutsMessage.cstyle("unable to load %s %s from repositories %s", name, vid, Arrays.asList(repositories)));
@@ -494,7 +584,7 @@ public final class PrivateNutsMavenUtils {
             if (useCache && cacheFolder != null && cacheFolder.equals(repository)) {
                 return null; // I do not remember why I did this!
             }
-            File file = getBootCacheFile(vid.toString(), path, repository, cacheFolder, useCache, expire, errorList,workspaceInformation,pathExpansionConverter,LOG);
+            File file = getBootCacheFile(vid.toString(), path, repository, cacheFolder, useCache, expire, errorList, workspaceInformation, pathExpansionConverter, LOG);
             if (file != null) {
                 return file;
             }
@@ -504,11 +594,11 @@ public final class PrivateNutsMavenUtils {
 
     private static File getBootCacheFile(String nutsId, String path, String repository, String cacheFolder, boolean useCache, Instant expire, PrivateNutsErrorInfoList errorList, PrivateNutsWorkspaceInitInformation workspaceInformation, Function<String, String> pathExpansionConverter, PrivateNutsLog LOG) {
         boolean cacheLocalFiles = true;//Boolean.getBoolean("nuts.cache.cache-local-files");
-        repository = PrivateNutsUtils.expandPath(repository, workspaceInformation.getWorkspaceLocation(),pathExpansionConverter);
+        repository = PrivateNutsIOUtils.expandPath(repository, workspaceInformation.getWorkspaceLocation(), pathExpansionConverter);
         File repositoryFolder = null;
-        if (PrivateNutsUtils.isURL(repository)) {
+        if (PrivateNutsIOUtils.isURL(repository)) {
             try {
-                repositoryFolder = PrivateNutsUtils.toFile(new URL(repository));
+                repositoryFolder = PrivateNutsIOUtils.toFile(new URL(repository));
             } catch (Exception ex) {
                 LOG.log(Level.FINE, "unable to convert url to file : " + repository, ex);
                 //ignore
@@ -530,7 +620,7 @@ public final class PrivateNutsMavenUtils {
             long start = System.currentTimeMillis();
             try {
                 LOG.log(Level.CONFIG, NutsLogVerb.SUCCESS, "loading  {0}", new Object[]{urlPath});
-                PrivateNutsUtils.copy(new URL(urlPath), to, LOG);
+                PrivateNutsIOUtils.copy(new URL(urlPath), to, LOG);
                 errorList.removeErrorsFor(nutsId);
                 long end = System.currentTimeMillis();
                 LOG.log(Level.CONFIG, NutsLogVerb.SUCCESS, "loaded   {0} ({1}ms)", new Object[]{urlPath, end - start});
@@ -545,7 +635,7 @@ public final class PrivateNutsMavenUtils {
         } else {
             repository = repositoryFolder.getPath();
         }
-        File repoFolder = PrivateNutsUtils.createFile(PrivateNutsUtils.getHome(NutsStoreLocation.CONFIG,workspaceInformation), repository);
+        File repoFolder = PrivateNutsIOUtils.createFile(PrivateNutsUtils.getHome(NutsStoreLocation.CONFIG, workspaceInformation), repository);
         File ff = null;
 
         if (repoFolder.isDirectory()) {
@@ -563,8 +653,8 @@ public final class PrivateNutsMavenUtils {
         if (ff != null) {
             if (cacheFolder != null && cacheLocalFiles) {
                 File to = new File(cacheFolder, path);
-                String toc = PrivateNutsUtils.getAbsolutePath(to.getPath());
-                String ffc = PrivateNutsUtils.getAbsolutePath(ff.getPath());
+                String toc = PrivateNutsIOUtils.getAbsolutePath(to.getPath());
+                String ffc = PrivateNutsIOUtils.getAbsolutePath(ff.getPath());
                 if (ffc.equals(toc)) {
                     return ff;
                 }
@@ -577,10 +667,10 @@ public final class PrivateNutsMavenUtils {
                         ext = "jar";
                     }
                     if (to.isFile()) {
-                        PrivateNutsUtils.copy(ff, to, LOG);
+                        PrivateNutsIOUtils.copy(ff, to, LOG);
                         LOG.log(Level.CONFIG, NutsLogVerb.CACHE, "recover cached " + ext + " file {0} to {1}", new Object[]{ff, to});
                     } else {
-                        PrivateNutsUtils.copy(ff, to, LOG);
+                        PrivateNutsIOUtils.copy(ff, to, LOG);
                         LOG.log(Level.CONFIG, NutsLogVerb.CACHE, "cached " + ext + " file {0} to {1}", new Object[]{ff, to});
                     }
                     return to;
@@ -609,35 +699,33 @@ public final class PrivateNutsMavenUtils {
 //        boolean devMode = false;
         String propValue = null;
         try {
-            propValue = PrivateNutsUtils.loadURLProperties(
-                    Nuts.class.getResource("/META-INF/maven/net.thevpc.nuts/nuts/pom.properties"),
-                    null, false, new PrivateNutsLog()).getProperty(propName);
+            switch (propName){
+                case "groupId":
+                case "artifactId":
+                case "versionId":{
+                    propValue = PrivateNutsIOUtils.loadURLProperties(
+                            Nuts.class.getResource("/META-INF/maven/net.thevpc.nuts/nuts/pom.properties"),
+                            null, false, new PrivateNutsLog()).getProperty(propName);
+                    break;
+                }
+            }
         } catch (Exception ex) {
             //
         }
-        if (propValue != null && !propValue.trim().isEmpty() && !propValue.equals("0.0.0")) {
+        if (!NutsUtilStrings.isBlank(propValue)) {
             return propValue;
         }
-
-        Pattern pattern = Pattern.compile("<" + propName.replace(".", "[.]") + ">(?<value>([0-9. ]+))</" + propName.replace(".", "[.]") + ">");
-
         URL pomXml = Nuts.class.getResource("/META-INF/maven/net.thevpc.nuts/nuts/pom.xml");
         if (pomXml != null) {
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
             try (InputStream is = pomXml.openStream()) {
-                PrivateNutsUtils.copy(is, bos, false, false);
+                propValue = resolvePomTagValues(new String[]{propName}, is).get(propName);
             } catch (Exception ex) {
                 //
             }
-            Matcher m = pattern.matcher(bos.toString());
-            if (m.find()) {
-                propValue = m.group("value").trim();
-            }
         }
-        if (propValue != null && !propValue.trim().isEmpty() && !propValue.equals("0.0.0")) {
+        if (!NutsUtilStrings.isBlank(propValue)) {
             return propValue;
         }
-
         //check if we are in dev mode
         String cp = System.getProperty("java.class.path");
         for (String p : cp.split(File.pathSeparator)) {
@@ -650,30 +738,68 @@ public final class PrivateNutsMavenUtils {
                     if (new File(src, "pom.xml").exists() && new File(src,
                             "src/main/java/net/thevpc/nuts/Nuts.java".replace('/', File.separatorChar)
                     ).exists()) {
-//                            devMode = true;
-                        String xml = null;
-                        try {
-                            byte[] bytes = Files.readAllBytes(new File(src, "pom.xml").toPath());
-                            xml = new String(bytes);
-                        } catch (IOException ex) {
-                            //
-                        }
-                        if (xml != null) {
-                            m = pattern.matcher(xml);
-                            if (m.find()) {
-                                propValue = m.group("value").trim();
-                                break;
-                            }
-                        }
+                        propValue = resolvePomTagValues(new String[]{propName}, new File(src, "pom.xml")).get(propName);
                     }
                 }
             }
         }
-
-        if (propValue != null && !propValue.trim().isEmpty() && !propValue.equals("0.0.0")) {
+        if (!NutsUtilStrings.isBlank(propValue)) {
             return propValue;
         }
         return null;
+    }
+
+    public static Map<String, String> resolvePomTagValues(String[] propNames, File file) {
+        if (file != null && file.isFile()) {
+            try (InputStream is = new FileInputStream(file)) {
+                return resolvePomTagValues(propNames, is);
+            } catch (IOException e) {
+                //
+            }
+        }
+        return new HashMap<>();
+    }
+
+    public static Map<String, String> resolvePomTagValues(String[] propNames, InputStream is) {
+//        boolean devMode = false;
+        String propValue = null;
+        StringBuilder sb = new StringBuilder("<(?<name>");
+        for (int i = 0; i < propNames.length; i++) {
+            if (i > 0) {
+                sb.append("|");
+            }
+            sb.append(propNames[i].replace(".", "[.]"));
+        }
+        sb.append(")>");
+        sb.append("(?<value>[^<]*)");
+        sb.append("</(?<name2>");
+        for (int i = 0; i < propNames.length; i++) {
+            if (i > 0) {
+                sb.append("|");
+            }
+            sb.append(propNames[i].replace(".", "[.]"));
+        }
+        sb.append(")>");
+        Pattern pattern = Pattern.compile(sb.toString());
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        try {
+            PrivateNutsIOUtils.copy(is, bos, false, false);
+        } catch (Exception ex) {
+            //
+        }
+        Map<String, String> map = new HashMap<>();
+        Matcher m = pattern.matcher(bos.toString());
+        while (m.find()) {
+            String n = m.group("name").trim();
+            String n2 = m.group("name2").trim();
+            //n==n2
+            propValue = m.group("value").trim();
+            //only consider the very first!
+            if (!map.containsKey(n)) {
+                map.put(n, propValue);
+            }
+        }
+        return map;
     }
 
 
@@ -683,95 +809,96 @@ public final class PrivateNutsMavenUtils {
         EXPECT_PRE,
         EXPECT_HREF,
     }
+
     private static class SimpleTomcatDirectoryListParser {
 
-        public List<String> parse(InputStream html){
+        public List<String> parse(InputStream html) {
             try {
-                List<String> found=new ArrayList<>();
+                List<String> found = new ArrayList<>();
                 BufferedReader br = new BufferedReader(new InputStreamReader(html));
-                SimpleTomcatDirectoryListParserState s= SimpleTomcatDirectoryListParserState.EXPECT_DOCTYPE;
-                String line ;
-                while((line=br.readLine())!=null){
-                    line=line.trim();
-                    switch (s){
-                        case EXPECT_DOCTYPE:{
-                            if(!line.isEmpty()){
-                                if(line.toLowerCase().startsWith("<!DOCTYPE html".toLowerCase())) {
+                SimpleTomcatDirectoryListParserState s = SimpleTomcatDirectoryListParserState.EXPECT_DOCTYPE;
+                String line;
+                while ((line = br.readLine()) != null) {
+                    line = line.trim();
+                    switch (s) {
+                        case EXPECT_DOCTYPE: {
+                            if (!line.isEmpty()) {
+                                if (line.toLowerCase().startsWith("<!DOCTYPE html".toLowerCase())) {
                                     s = SimpleTomcatDirectoryListParserState.EXPECT_BODY;
-                                }else if(
+                                } else if (
                                         line.toLowerCase().startsWith("<html>".toLowerCase())
                                                 || line.toLowerCase().startsWith("<html ".toLowerCase())
-                                ){
-                                    s= SimpleTomcatDirectoryListParserState.EXPECT_BODY;
-                                }else{
+                                ) {
+                                    s = SimpleTomcatDirectoryListParserState.EXPECT_BODY;
+                                } else {
                                     return null;
                                 }
                             }
                             break;
                         }
-                        case EXPECT_BODY:{
-                            if(!line.isEmpty()){
-                                if(
+                        case EXPECT_BODY: {
+                            if (!line.isEmpty()) {
+                                if (
                                         line.toLowerCase()
                                                 .startsWith("<body>".toLowerCase())
                                                 || line.toLowerCase()
                                                 .startsWith("<body ".toLowerCase())
-                                ){
-                                    s= SimpleTomcatDirectoryListParserState.EXPECT_PRE;
+                                ) {
+                                    s = SimpleTomcatDirectoryListParserState.EXPECT_PRE;
                                 }
                             }
                             break;
                         }
-                        case EXPECT_PRE:{
-                            if(!line.isEmpty()){
+                        case EXPECT_PRE: {
+                            if (!line.isEmpty()) {
                                 String lowLine = line;
-                                if(
+                                if (
                                         lowLine.toLowerCase()
                                                 .startsWith("<pre>".toLowerCase())
                                                 || lowLine.toLowerCase()
                                                 .startsWith("<pre ".toLowerCase())
-                                ){
+                                ) {
                                     //spring.io
-                                    if(lowLine.toLowerCase().startsWith("<pre>") && lowLine.toLowerCase().matches("<pre>name[ ]+last modified[ ]+size</pre>(<hr/>)?")){
+                                    if (lowLine.toLowerCase().startsWith("<pre>") && lowLine.toLowerCase().matches("<pre>name[ ]+last modified[ ]+size</pre>(<hr/>)?")) {
                                         //just ignore
-                                    }else if(lowLine.toLowerCase().startsWith("<pre>") && lowLine.toLowerCase().matches("<pre>[ ]*<a href=.*")){
-                                        lowLine=lowLine.substring("<pre>".length()).trim();
-                                        if(lowLine.toLowerCase().startsWith("<a href=\"")){
+                                    } else if (lowLine.toLowerCase().startsWith("<pre>") && lowLine.toLowerCase().matches("<pre>[ ]*<a href=.*")) {
+                                        lowLine = lowLine.substring("<pre>".length()).trim();
+                                        if (lowLine.toLowerCase().startsWith("<a href=\"")) {
                                             int i0 = "<a href=\"".length();
-                                            int i1= lowLine.indexOf('\"', i0);
-                                            if(i1>0){
-                                                found.add(lowLine.substring(i0,i1));
-                                                s= SimpleTomcatDirectoryListParserState.EXPECT_HREF;
-                                            }else{
+                                            int i1 = lowLine.indexOf('\"', i0);
+                                            if (i1 > 0) {
+                                                found.add(lowLine.substring(i0, i1));
+                                                s = SimpleTomcatDirectoryListParserState.EXPECT_HREF;
+                                            } else {
                                                 return null;
                                             }
                                         }
-                                    }else if(lowLine.toLowerCase().startsWith("<pre ")){
-                                        s= SimpleTomcatDirectoryListParserState.EXPECT_HREF;
-                                    }else {
+                                    } else if (lowLine.toLowerCase().startsWith("<pre ")) {
+                                        s = SimpleTomcatDirectoryListParserState.EXPECT_HREF;
+                                    } else {
                                         //ignore
                                     }
-                                }else if(lowLine.toLowerCase().matches("<td .*<strong>last modified</strong>.*</td>")){
-                                    s= SimpleTomcatDirectoryListParserState.EXPECT_HREF;
+                                } else if (lowLine.toLowerCase().matches("<td .*<strong>last modified</strong>.*</td>")) {
+                                    s = SimpleTomcatDirectoryListParserState.EXPECT_HREF;
                                 }
                             }
                             break;
                         }
-                        case EXPECT_HREF:{
-                            if(!line.isEmpty()){
+                        case EXPECT_HREF: {
+                            if (!line.isEmpty()) {
                                 String lowLine = line;
-                                if(lowLine.toLowerCase().startsWith("</pre>".toLowerCase())){
+                                if (lowLine.toLowerCase().startsWith("</pre>".toLowerCase())) {
                                     return found;
                                 }
-                                if(lowLine.toLowerCase().startsWith("</html>".toLowerCase())){
+                                if (lowLine.toLowerCase().startsWith("</html>".toLowerCase())) {
                                     return found;
                                 }
-                                if(lowLine.toLowerCase().startsWith("<a href=\"")){
+                                if (lowLine.toLowerCase().startsWith("<a href=\"")) {
                                     int i0 = "<a href=\"".length();
-                                    int i1= lowLine.indexOf('\"', i0);
-                                    if(i1>0){
-                                        found.add(lowLine.substring(i0,i1));
-                                    }else{
+                                    int i1 = lowLine.indexOf('\"', i0);
+                                    if (i1 > 0) {
+                                        found.add(lowLine.substring(i0, i1));
+                                    } else {
                                         //ignore
                                     }
                                 }
@@ -780,7 +907,7 @@ public final class PrivateNutsMavenUtils {
                         }
                     }
                 }
-            }catch (Exception ex){
+            } catch (Exception ex) {
                 //ignore
             }
             return null;

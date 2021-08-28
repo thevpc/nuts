@@ -109,7 +109,7 @@ public final class DefaultNutsWorkspaceCurrentConfig {
         }
         Path[] homes = new Path[NutsStoreLocation.values().length];
         for (NutsStoreLocation type : NutsStoreLocation.values()) {
-            String ss = Nuts.getPlatformHomeFolder(getStoreLocationLayout(), type, homeLocations, isGlobal(), getName());
+            String ss = NutsUtilPlatforms.getPlatformHomeFolder(getStoreLocationLayout(), type, homeLocations, isGlobal(), getName());
             if (NutsUtilStrings.isBlank(ss)) {
                 throw new NutsIllegalArgumentException(session,
                         NutsMessage.cstyle("missing Home for %s", type));
@@ -381,7 +381,7 @@ public final class DefaultNutsWorkspaceCurrentConfig {
     }
 
     public String getHomeLocation(NutsStoreLocation folderType) {
-        return Paths.get(Nuts.getPlatformHomeFolder(getStoreLocationLayout(),
+        return Paths.get(NutsUtilPlatforms.getPlatformHomeFolder(getStoreLocationLayout(),
                 folderType, getHomeLocations(),
                 isGlobal(),
                 getName()

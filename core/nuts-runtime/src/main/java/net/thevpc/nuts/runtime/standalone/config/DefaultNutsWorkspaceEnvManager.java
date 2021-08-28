@@ -393,7 +393,7 @@ public class DefaultNutsWorkspaceEnvManager implements NutsWorkspaceEnvManager {
                     new NdiScriptOptions()
                             .setSession(session)
                             .setLauncher(launcher.copy()),
-                    new String[]{launcher.getId().getFullName()}
+                    new String[]{launcher.getId().builder().getFullName()}
             );
         }
     }

@@ -46,7 +46,7 @@ final class PrivateNutsBootConfigLoader {
         try {
             if (bootFile.isFile()) {
                 LOG.log(Level.CONFIG, NutsLogVerb.READ, "loading boot file : {0}", bootFile.getPath());
-                String json = PrivateNutsUtils.readStringFromFile(bootFile).trim();
+                String json = PrivateNutsIOUtils.readStringFromFile(bootFile).trim();
                 if (json.length() > 0) {
                     return loadBootConfigJSON(json, LOG);
                 }

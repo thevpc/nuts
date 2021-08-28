@@ -107,7 +107,7 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
                 wsString = "";
             } else if (wsString.contains("/") || wsString.contains("\\")) {
                 //workspace path
-                wsString = PrivateNutsUtils.getAbsolutePath(wsString);
+                wsString = PrivateNutsIOUtils.getAbsolutePath(wsString);
             } else {
                 //workspace name
             }

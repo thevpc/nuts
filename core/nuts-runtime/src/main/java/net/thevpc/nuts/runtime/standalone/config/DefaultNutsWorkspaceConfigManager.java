@@ -208,7 +208,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         if (p == null) {
             return ("Root " + n).trim();
         } else {
-            Path root = Paths.get(Nuts.getPlatformHomeFolder(
+            Path root = Paths.get(NutsUtilPlatforms.getPlatformHomeFolder(
                     null,
                     NutsStoreLocation.CONFIG,
                     null,

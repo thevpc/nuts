@@ -24,8 +24,10 @@
 package net.thevpc.nuts.runtime.standalone;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.boot.NutsApiUtils;
 import net.thevpc.nuts.boot.NutsBootDescriptor;
 import net.thevpc.nuts.boot.NutsBootId;
+import net.thevpc.nuts.boot.NutsBootVersion;
 import net.thevpc.nuts.runtime.bundles.common.MapToFunction;
 import net.thevpc.nuts.runtime.core.AbstractNutsWorkspace;
 import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
@@ -72,6 +74,8 @@ import net.thevpc.nuts.runtime.standalone.repos.DefaultNutsInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.security.DefaultNutsWorkspaceSecurityManager;
 import net.thevpc.nuts.runtime.standalone.security.DefaultNutsWorkspaceSecurityModel;
 import net.thevpc.nuts.runtime.standalone.security.ReadOnlyNutsWorkspaceOptions;
+import net.thevpc.nuts.runtime.standalone.util.CoreClasspathUtils;
+import net.thevpc.nuts.runtime.standalone.util.CoreDigestHelper;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.wscommands.*;
 import net.thevpc.nuts.spi.*;
@@ -267,12 +271,16 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             LOGCRF.log("open Nuts Workspace (compact)     : {0}", info.getOptions().formatter().setCompact(true).getBootCommandLine());
 
             LOGCRF.log("open Workspace with config        : ");
-            LOGCRF.log("   nuts-uuid                      : {0}", CoreNutsUtils.desc(info.getUuid(), text));
-            LOGCRF.log("   nuts-name                      : {0}", CoreNutsUtils.desc(info.getName(), text));
+            LOGCRF.log("   nuts-workspace-uuid            : {0}", CoreNutsUtils.desc(info.getUuid(), text));
+            LOGCRF.log("   nuts-workspace-name            : {0}", CoreNutsUtils.desc(info.getName(), text));
             LOGCRF.log("   nuts-api-version               : {0}", version().setSession(defaultSession()).parser().parse(Nuts.getVersion()));
-            LOGCRF.log("   nuts-api-build-number          : {0}", text.forStyled(Nuts.getBuildNumber(), NutsTextStyle.version()));
+            LOGCRF.log("   nuts-api-url                   : {0}", io().setSession(defaultSession()).path(getApiURL()));
+            LOGCRF.log("   nuts-api-digest                : {0}", text.forStyled(getApiDigest(), NutsTextStyle.version()));
             LOGCRF.log("   nuts-boot-repositories         : {0}", CoreNutsUtils.desc(info.getBootRepositories(), text));
             LOGCRF.log("   nuts-runtime                   : {0}", getRuntimeId());
+            LOGCRF.log("   nuts-runtime-digest            : {0}",
+                    text.forStyled(new CoreDigestHelper().append(info.getClassWorldURLs()).getDigest(), NutsTextStyle.version())
+            );
             LOGCRF.log("   nuts-runtime-dependencies      : {0}",
                     text.builder().appendJoined(text.forStyled(";", NutsTextStyle.separator()),
                             Arrays.stream(info.getRuntimeBootDescriptor().getDependencies())
@@ -486,7 +494,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 if (!_config.isReadOnly()) {
                     _config.save();
                 }
-                String nutsVersion = getRuntimeId().getVersion().toString();
+                NutsVersion nutsVersion = getRuntimeId().getVersion();
                 if (LOG.isLoggable(Level.CONFIG)) {
                     LOG.with().session(defaultSession()).level(Level.CONFIG).verb(NutsLogVerb.SUCCESS).log("nuts workspace v{0} created.", nutsVersion);
                 }
@@ -494,7 +502,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 if (defaultSession().isPlainTrace() && !_env.getBootOptions().isSkipWelcome()) {
                     NutsPrintStream out = defaultSession().out();
                     out.resetLine();
-                    StringBuilder version = new StringBuilder(nutsVersion);
+                    StringBuilder version = new StringBuilder(nutsVersion.toString());
                     CoreStringUtils.fillString(' ', 25 - version.length(), version);
                     NutsTextManager txt = text.setSession(defaultSession());
                     NutsText n = txt.parser().parseResource("/net/thevpc/nuts/runtime/includes/standard-header.ntf",
@@ -629,6 +637,15 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             initializing = false;
         }
 //        return !exists;
+    }
+
+    private URL getApiURL() {
+        NutsBootId nid = new NutsBootId("net.thevpc.nuts", "nuts", NutsBootVersion.parse(Nuts.getVersion()));
+        return NutsApiUtils.findClassLoaderJar(nid, CoreClasspathUtils.resolveClasspathURLs(Thread.currentThread().getContextClassLoader()));
+    }
+
+    private String getApiDigest() {
+        return new CoreDigestHelper().append(getApiURL()).getDigest();
     }
 
     private void installSettings(NutsSession session) {

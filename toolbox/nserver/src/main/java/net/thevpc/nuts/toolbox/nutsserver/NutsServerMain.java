@@ -171,7 +171,7 @@ public class NutsServerMain implements NutsApplication {
                         nutsWorkspace = server.workspaces.get(wsContext);
                         if (nutsWorkspace == null) {
                             nutsWorkspace = Nuts.openWorkspace(
-                                    Nuts.createOptionsBuilder()
+                                    NutsWorkspaceOptionsBuilder.of()
                                             .setWorkspace(wsLocation)
                                             .setOpenMode(NutsOpenMode.OPEN_OR_ERROR)
                                             .setReadOnly(server.readOnly)

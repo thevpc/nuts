@@ -4,7 +4,8 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.nwork.config.ProjectConfig;
 import net.thevpc.nuts.toolbox.nwork.config.RepositoryAddress;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -13,9 +14,9 @@ import java.util.List;
 public class ProjectService {
 
     private ProjectConfig config;
-    private NutsApplicationContext appContext;
-    private RepositoryAddress defaultRepositoryAddress;
-    private Path sharedConfigFolder;
+    private final NutsApplicationContext appContext;
+    private final RepositoryAddress defaultRepositoryAddress;
+    private final Path sharedConfigFolder;
 
     public ProjectService(NutsApplicationContext context, RepositoryAddress defaultRepositoryAddress, Path file) throws IOException {
         this.appContext = context;
@@ -93,7 +94,7 @@ public class ProjectService {
         if (f.isDirectory()) {
             if (new File(f, "pom.xml").isFile()) {
                 try {
-                    NutsDescriptor g= appContext.getWorkspace().descriptor()
+                    NutsDescriptor g = appContext.getWorkspace().descriptor()
                             .parser()
                             .setDescriptorStyle(NutsDescriptorStyle.MAVEN)
                             .parse(new File(f, "pom.xml"));
@@ -204,15 +205,15 @@ public class ProjectService {
             try {
                 NutsWorkspace ws2 = null;
                 NutsSession s = null;
-                if (a.getNutsWorkspace() != null && a.getNutsWorkspace().trim().length() > 0 && !a.getNutsWorkspace().equals(appContext.getWorkspace().locations().getWorkspaceLocation().toString())) {
+                if (a.getNutsWorkspace() != null && a.getNutsWorkspace().trim().length() > 0 && !a.getNutsWorkspace().equals(appContext.getWorkspace().locations().getWorkspaceLocation())) {
                     s = Nuts.openWorkspace(
-                            Nuts.createOptionsBuilder()
+                            NutsWorkspaceOptionsBuilder.of()
                                     .setOpenMode(NutsOpenMode.OPEN_OR_ERROR)
                                     .setReadOnly(true)
                                     .setWorkspace(a.getNutsWorkspace())
                                     .build()
                     );
-                    ws2=s.getWorkspace();
+                    ws2 = s.getWorkspace();
                     s.copyFrom(appContext.getSession());
                 } else {
                     ws2 = appContext.getWorkspace();
@@ -253,13 +254,13 @@ public class ProjectService {
                         throw new NutsExecutionException(appContext.getSession(), NutsMessage.cstyle("missing repository. try 'nwork set -r vpc-public-maven' or something like that"), 2);
                     }
                     try {
-                        NutsDescriptor g= appContext.getWorkspace().descriptor()
+                        NutsDescriptor g = appContext.getWorkspace().descriptor()
                                 .parser()
                                 .setDescriptorStyle(NutsDescriptorStyle.MAVEN)
                                 .parse(new File(f, "pom.xml"));
                         NutsWorkspace ws2 = null;
                         NutsSession s = null;
-                        if (a.getNutsWorkspace() != null && a.getNutsWorkspace().trim().length() > 0 && !a.getNutsWorkspace().equals(appContext.getWorkspace().locations().getWorkspaceLocation().toString())) {
+                        if (a.getNutsWorkspace() != null && a.getNutsWorkspace().trim().length() > 0 && !a.getNutsWorkspace().equals(appContext.getWorkspace().locations().getWorkspaceLocation())) {
                             s = Nuts.openWorkspace(
                                     appContext.getWorkspace().config().optionsBuilder()
                                             .setOpenMode(NutsOpenMode.OPEN_OR_ERROR)
@@ -267,7 +268,7 @@ public class ProjectService {
                                             .setWorkspace(a.getNutsWorkspace())
                                             .build()
                             );
-                            ws2=s.getWorkspace();
+                            ws2 = s.getWorkspace();
                             s.copyFrom(appContext.getSession());
                         } else {
                             ws2 = appContext.getWorkspace();

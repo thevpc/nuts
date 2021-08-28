@@ -105,10 +105,10 @@ public class SimpleJson implements NutsElementStreamFormat {
                             default: {
                                 sb.append('\\');
                                 sb.append('u');
-                                sb.append(CoreIOUtils.toHex((c >> 12) & 0xF));
-                                sb.append(CoreIOUtils.toHex((c >> 8) & 0xF));
-                                sb.append(CoreIOUtils.toHex((c >> 4) & 0xF));
-                                sb.append(CoreIOUtils.toHex(c & 0xF));
+                                sb.append(NutsUtilStrings.toHexChar((c >> 12) & 0xF));
+                                sb.append(NutsUtilStrings.toHexChar((c >> 8) & 0xF));
+                                sb.append(NutsUtilStrings.toHexChar((c >> 4) & 0xF));
+                                sb.append(NutsUtilStrings.toHexChar(c & 0xF));
                             }
                         }
                     } else {
@@ -125,10 +125,10 @@ public class SimpleJson implements NutsElementStreamFormat {
                                 if (c > 0x007e) {
                                     sb.append('\\');
                                     sb.append('u');
-                                    sb.append(CoreIOUtils.toHex((c >> 12) & 0xF));
-                                    sb.append(CoreIOUtils.toHex((c >> 8) & 0xF));
-                                    sb.append(CoreIOUtils.toHex((c >> 4) & 0xF));
-                                    sb.append(CoreIOUtils.toHex(c & 0xF));
+                                    sb.append(NutsUtilStrings.toHexChar((c >> 12) & 0xF));
+                                    sb.append(NutsUtilStrings.toHexChar((c >> 8) & 0xF));
+                                    sb.append(NutsUtilStrings.toHexChar((c >> 4) & 0xF));
+                                    sb.append(NutsUtilStrings.toHexChar(c & 0xF));
                                 } else {
                                     sb.append(c);
                                 }

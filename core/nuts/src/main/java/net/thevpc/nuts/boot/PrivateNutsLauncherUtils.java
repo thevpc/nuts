@@ -1,9 +1,6 @@
 package net.thevpc.nuts.boot;
 
-import net.thevpc.nuts.Nuts;
-import net.thevpc.nuts.NutsConstants;
-import net.thevpc.nuts.NutsLogVerb;
-import net.thevpc.nuts.NutsOsFamily;
+import net.thevpc.nuts.*;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -111,7 +108,7 @@ class PrivateNutsLauncherUtils {
     static void ndiUndo(PrivateNutsLog LOG) {
         //need to unset settings configuration.
         //what is the safest way to do so?
-        NutsOsFamily os = Nuts.getPlatformOsFamily();
+        NutsOsFamily os = NutsUtilPlatforms.getPlatformOsFamily();
         //windows is ignored because it does not define a global nuts environment
         if (os == NutsOsFamily.LINUX || os == NutsOsFamily.MACOS) {
             String bashrc = os == NutsOsFamily.LINUX ? ".bashrc" : ".bash_profile";

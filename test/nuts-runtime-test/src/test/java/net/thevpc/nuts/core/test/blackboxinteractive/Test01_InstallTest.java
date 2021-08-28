@@ -5,15 +5,13 @@
  */
 package net.thevpc.nuts.core.test.blackboxinteractive;
 
-import net.thevpc.nuts.NutsExecutionType;
-import net.thevpc.nuts.NutsOsFamily;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import net.thevpc.nuts.Nuts;
-import net.thevpc.nuts.NutsWorkspace;
+
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import org.junit.jupiter.api.*;
 
@@ -56,7 +54,7 @@ public class Test01_InstallTest {
 
     @BeforeEach
     public void startup() throws IOException {
-        Assumptions.assumeTrue(Nuts.getPlatformOsFamily().equals(NutsOsFamily.LINUX));
+        Assumptions.assumeTrue(NutsUtilPlatforms.getPlatformOsFamily().equals(NutsOsFamily.LINUX));
         TestUtils.unsetNutsSystemProperties();
     }
 

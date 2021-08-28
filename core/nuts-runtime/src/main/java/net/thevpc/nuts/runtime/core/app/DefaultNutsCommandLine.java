@@ -124,14 +124,17 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
                 break;
             }
             case 1: {
-                if (option.equals("-")) {
+                if (option.equals("-") || option.equals("+")) {
                     specialSimpleOptions.add(option);
                     return this;
                 }
                 break;
             }
             default: {
-                if (option.charAt(0) == '-' && option.charAt(1) != '-') {
+                if (
+                        (option.charAt(0) == '-' && option.charAt(1) != '-')
+                                || (option.charAt(0) == '+' && option.charAt(1) != '+')
+                ) {
                     specialSimpleOptions.add(option);
                     return this;
                 }
