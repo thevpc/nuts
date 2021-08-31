@@ -99,7 +99,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                     .createTempFolder("exec-path-");
             NutsId _id = c.descriptor.getId();
             NutsIdType idType = NutsWorkspaceExt.of(ws).resolveNutsIdType(_id, traceSession);
-            NutsDefinition nutToRun = new DefaultNutsDefinition(
+            DefaultNutsDefinition nutToRun = new DefaultNutsDefinition(
                     null,
                     null,
                     _id,
@@ -110,6 +110,19 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                     DefaultNutsInstallInfo.notInstalled(_id),
                     idType, null, traceSession
             );
+            NutsDependenciesResolver resolver = new NutsDependenciesResolver(traceSession);
+            NutsDependencyFilterManager ff = ws.dependency().filter();
+
+            resolver
+                    .setDependencyFilter(ff.byScope(NutsDependencyScopePattern.RUN)
+//                            .and(ff.byOptional(getOptional())
+//                            ).and(getDependencyFilter())
+                    );
+            for (NutsDependency dependency : c.descriptor.getDependencies()) {
+                resolver.addRootDefinition(dependency);
+            }
+            nutToRun.setDependencies(resolver.resolve());
+
             try {
                 execCommand.ws_execId(nutToRun, cmdName, args, executorOptions, execCommand.getEnv(),
                         execCommand.getDirectory(), execCommand.isFailFast(), true, traceSession, execSession, executionType,runAs, dry);
