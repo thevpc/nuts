@@ -473,7 +473,7 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
                 public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
                     checkInterrupted();
                     f.doneFolders++;
-                    CoreIOUtils.mkdirs(transformPath(dir, srcBase, targetBase));
+                    CoreIOUtils.mkdirs(transformPath(dir, srcBase, targetBase),session);
                     m.onProgress(new DefaultNutsProgressEvent(srcBase, srcBaseMessage, f.doneFiles + f.doneFolders, System.currentTimeMillis() - start, 0, 0, f.files + f.folders, null, finalSession, false));
                     return FileVisitResult.CONTINUE;
                 }
@@ -572,7 +572,7 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
                 public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
                     checkInterrupted();
                     f.doneFolders++;
-                    CoreIOUtils.mkdirs(transformPath(dir, srcBase, targetBase));
+                    CoreIOUtils.mkdirs(transformPath(dir, srcBase, targetBase),session);
                     return FileVisitResult.CONTINUE;
                 }
 
@@ -622,7 +622,7 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
                 Path temp = null;
                 if (_target_isPath) {
                     Path to = target.getFilePath();
-                    CoreIOUtils.mkdirs(to.getParent());
+                    CoreIOUtils.mkdirs(to.getParent(),session);
                     temp = to.resolveSibling(to.getFileName() + "~");
                 } else {
                     temp = Paths.get(getSession().getWorkspace().io().tmp()
@@ -665,7 +665,7 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
             } else {
                 if (_target_isPath) {
                     Path to = target.getFilePath();
-                    CoreIOUtils.mkdirs(to.getParent());
+                    CoreIOUtils.mkdirs(to.getParent(),session);
                     if (_source.isFile()) {
                         copy(_source.getFilePath(), target.getFilePath(), StandardCopyOption.REPLACE_EXISTING);
                     } else {

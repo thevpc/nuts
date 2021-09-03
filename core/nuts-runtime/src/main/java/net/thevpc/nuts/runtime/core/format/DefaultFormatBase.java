@@ -8,7 +8,10 @@ package net.thevpc.nuts.runtime.core.format;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -57,7 +60,7 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
         checkSession();
         NutsPrintStream out = getSession().getWorkspace().io().createMemoryPrintStream();
         print(out);
-        return isNtf()?
+        return isNtf() ?
                 getSession().getWorkspace().text().parse(out.toString())
                 :
                 getSession().getWorkspace().text().forPlain(out.toString())
@@ -105,9 +108,8 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
     public void print(OutputStream out) {
         checkSession();
         NutsPrintStream p =
-                out==null?getValidPrintStream():
-                getSession().getWorkspace().io().createPrintStream(out)
-                ;
+                out == null ? getValidPrintStream() :
+                        getSession().getWorkspace().io().createPrintStream(out);
         print(p);
         p.flush();
     }
@@ -115,7 +117,7 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
     @Override
     public void print(Path path) {
         checkSession();
-                CoreIOUtils.mkdirs(path.getParent());
+        CoreIOUtils.mkdirs(path.getParent(), getSession());
         try (Writer w = Files.newBufferedWriter(path)) {
             print(w);
         } catch (IOException ex) {
@@ -149,6 +151,15 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
     }
 
     @Override
+    public void println(NutsPrintStream out) {
+        checkSession();
+        NutsPrintStream p = getValidPrintStream(out);
+        print(out);
+        p.println();
+        p.flush();
+    }
+
+    @Override
     public void println(OutputStream out) {
         checkSession();
         if (out == null) {
@@ -163,17 +174,9 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
     }
 
     @Override
-    public void println(NutsPrintStream out) {
-        checkSession();
-        NutsPrintStream p = getValidPrintStream(out);
-        print(out);
-        p.println();
-        p.flush();
-    }
-
-    @Override
     public void println(Path path) {
         checkSession();
+        CoreIOUtils.mkdirs(path.getParent(), getSession());
         try (Writer w = Files.newBufferedWriter(path)) {
             println(w);
         } catch (IOException ex) {

@@ -45,6 +45,7 @@ public class DefaultNutsCommandLineManager implements NutsCommandLineManager {
 
     @Override
     public NutsCommandLineFormat formatter() {
+        checkSession();
         return new DefaultNutsCommandLineFormat(getWorkspace())
                 .setSession(session)
                 .setCommandlineFamily(getCommandlineFamily())
@@ -187,7 +188,8 @@ public class DefaultNutsCommandLineManager implements NutsCommandLineManager {
 
     @Override
     public NutsCommandHistoryBuilder createHistory() {
-        return new NutsCommandHistoryBuilderImpl(ws);
+        checkSession();
+        return new NutsCommandHistoryBuilderImpl(getSession());
     }
 
 }

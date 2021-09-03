@@ -27,6 +27,7 @@ import java.io.File;
 import java.nio.file.Path;
 import net.thevpc.nuts.NutsCommandHistory;
 import net.thevpc.nuts.NutsCommandHistoryBuilder;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsWorkspace;
 
 /**
@@ -35,10 +36,10 @@ import net.thevpc.nuts.NutsWorkspace;
  */
 class NutsCommandHistoryBuilderImpl implements NutsCommandHistoryBuilder {
     
-    private NutsWorkspace ws;
+    private NutsSession session;
 
-    public NutsCommandHistoryBuilderImpl(NutsWorkspace ws) {
-        this.ws = ws;
+    public NutsCommandHistoryBuilderImpl(NutsSession session) {
+        this.session = session;
     }
     private Path path;
 
@@ -56,7 +57,7 @@ class NutsCommandHistoryBuilderImpl implements NutsCommandHistoryBuilder {
 
     @Override
     public NutsCommandHistory build() {
-        return new NutsCommandHistoryImpl(ws,path);
+        return new NutsCommandHistoryImpl(session,path);
     }
     
 }

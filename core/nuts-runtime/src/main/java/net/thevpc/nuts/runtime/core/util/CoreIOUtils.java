@@ -349,7 +349,7 @@ public class CoreIOUtils {
 //            throw new UncheckedIOException(ex);
 //        }
 //    }
-    public static boolean mkdirs(Path p) {
+    public static boolean mkdirs(Path p,NutsSession session) {
         if (p != null) {
             try {
                 if (!Files.isDirectory(p)) {
@@ -357,7 +357,7 @@ public class CoreIOUtils {
                 }
                 return true;
             } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
+                throw new NutsIOException(session,ex);
             }
         }
         return false;
@@ -1367,7 +1367,7 @@ public class CoreIOUtils {
 
             final String s = UUID.randomUUID().toString();
             final Path outPath = urlContent.resolve(s + "~");
-            CoreIOUtils.mkdirs(urlContent);
+            CoreIOUtils.mkdirs(urlContent,session);
             final OutputStream p = Files.newOutputStream(outPath);
 
             long finalLastModified = lastModified;

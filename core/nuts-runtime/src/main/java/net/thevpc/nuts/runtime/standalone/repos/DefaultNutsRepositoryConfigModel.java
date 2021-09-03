@@ -402,7 +402,7 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
             if (!Files.exists(file)) {
                 created = true;
             }
-            CoreIOUtils.mkdirs(Paths.get(getStoreLocation()));
+            CoreIOUtils.mkdirs(Paths.get(getStoreLocation()),session);
             config.setConfigVersion(DefaultNutsWorkspace.VERSION_REPOSITORY_CONFIG);
             if (config.getEnv() != null && config.getEnv().isEmpty()) {
                 config.setEnv(null);

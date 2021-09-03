@@ -364,7 +364,7 @@ public class DefaultNutsRepositoryModel {
         Path logError = Paths.get(getWorkspace().locations().getStoreLocation(getWorkspace().getApiId(), NutsStoreLocation.LOG))
                 .resolve("invalid-config");
         try {
-            CoreIOUtils.mkdirs(logError);
+            CoreIOUtils.mkdirs(logError,session);
         } catch (Exception ex1) {
             throw new UncheckedIOException("unable to log repository error while loading config file " + file.toString() + " : " + ex1.toString(), new IOException(ex));
         }

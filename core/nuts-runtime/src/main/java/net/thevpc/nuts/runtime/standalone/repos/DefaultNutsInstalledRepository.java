@@ -178,7 +178,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
             }
         } else {
             try {
-                CoreIOUtils.mkdirs(pp.getParent());
+                CoreIOUtils.mkdirs(pp.getParent(),session);
                 Files.write(pp, version.trim().getBytes());
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);

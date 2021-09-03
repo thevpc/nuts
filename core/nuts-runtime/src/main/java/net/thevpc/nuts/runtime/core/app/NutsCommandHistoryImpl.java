@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.ListIterator;
 import net.thevpc.nuts.NutsCommandHistory;
 import net.thevpc.nuts.NutsCommandHistoryEntry;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 
@@ -47,12 +48,12 @@ import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
  */
 public class NutsCommandHistoryImpl implements NutsCommandHistory {
 
-    private NutsWorkspace ws;
+    private NutsSession session;
     private List<NutsCommandHistoryEntry> entries = new ArrayList<>();
     private Path path;
 
-    public NutsCommandHistoryImpl(NutsWorkspace ws, Path path) {
-        this.ws = ws;
+    public NutsCommandHistoryImpl(NutsSession session, Path path) {
+        this.session = session;
         this.path = path;
         if (path == null) {
             throw new IllegalArgumentException("path cannot be null");
@@ -114,7 +115,7 @@ public class NutsCommandHistoryImpl implements NutsCommandHistory {
     @Override
     public void save() {
         Path p = path.getParent();
-        CoreIOUtils.mkdirs(p);
+        CoreIOUtils.mkdirs(p,session);
         try (OutputStream out = Files.newOutputStream(path)) {
             save(out);
         } catch (IOException ex) {

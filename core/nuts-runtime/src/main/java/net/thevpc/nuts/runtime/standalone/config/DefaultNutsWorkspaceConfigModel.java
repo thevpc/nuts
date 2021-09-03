@@ -1172,7 +1172,7 @@ public class DefaultNutsWorkspaceConfigModel {
         _LOGOP(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL)
                 .log("erroneous workspace config file. Unable to load file {0} : {1}", new Object[]{file, ex});
         try {
-            CoreIOUtils.mkdirs(logError);
+            CoreIOUtils.mkdirs(logError,session);
         } catch (Exception ex1) {
             throw new UncheckedIOException("unable to log workspace error while loading config file " + file.toString() + " : " + ex1.toString(), new IOException(ex));
         }
