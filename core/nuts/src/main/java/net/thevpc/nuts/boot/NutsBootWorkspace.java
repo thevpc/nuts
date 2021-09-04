@@ -722,7 +722,7 @@ public final class NutsBootWorkspace {
                         rtHash = "";
                     }
                 }
-                LOG.log(Level.CONFIG, NutsLogVerb.READ, "loaded nuts-runtime version {0} - hash {1} from {1}", new Object[]{workspaceInformation.getRuntimeId(), rtHash, runtimeJarFile});
+                LOG.log(Level.CONFIG, NutsLogVerb.READ, "loaded nuts-runtime version {0} - digest {1} from {2}", new Object[]{workspaceInformation.getRuntimeId(), rtHash, runtimeJarFile});
             }
 
             rt.setId(workspaceInformation.getRuntimeId().toString())
