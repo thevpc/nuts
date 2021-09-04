@@ -649,40 +649,59 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
     }
 
     private void installSettings(NutsSession session) {
-        if (session.isPlainTrace()) {
-            session.out().resetLine().println("looking for java installations in default locations...");
-        }
-        NutsSdkLocation[] found = session.getWorkspace().sdks()
-                .setSession(session.copy().setTrace(false))
-                .searchSystem("java");
-        int someAdded = 0;
-        for (NutsSdkLocation java : found) {
-            if (session.getWorkspace().sdks().add(java)) {
-                someAdded++;
+        try {
+            if (session.isPlainTrace()) {
+                session.out().resetLine().println("looking for java installations in default locations...");
+            }
+            NutsSdkLocation[] found = session.getWorkspace().sdks()
+                    .setSession(session.copy().setTrace(false))
+                    .searchSystem("java");
+            int someAdded = 0;
+            for (NutsSdkLocation java : found) {
+                if (session.getWorkspace().sdks().add(java)) {
+                    someAdded++;
+                }
+            }
+            NutsTextManager factory = session.getWorkspace().text();
+            if (session.isPlainTrace()) {
+                if (someAdded == 0) {
+                    session.out().print("```error no new``` java installation locations found...\n");
+                } else if (someAdded == 1) {
+                    session.out().printf("%s new java installation location added...\n", factory.forStyled("1", NutsTextStyle.primary2()));
+                } else {
+                    session.out().printf("%s new java installation locations added...\n", factory.forStyled("" + someAdded, NutsTextStyle.primary2()));
+                }
+                session.out().println("you can always add another installation manually using 'nuts settings add java' command.");
+            }
+            if (!session.getWorkspace().config().isReadOnly()) {
+                session.getWorkspace().config().save();
+            }
+        } catch (Exception ex) {
+            LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).error(ex).log("unable to resolve default JDK/JDK locations : {0}", ex, ex);
+            if (session.isPlainTrace()) {
+                NutsPrintStream out = session.out();
+                out.resetLine();
+                out.printf("```unable to resolve default JDK/JDK locations``` :  %s%n", ex);
             }
         }
-        NutsTextManager factory = session.getWorkspace().text();
-        if (session.isPlainTrace()) {
-            if (someAdded == 0) {
-                session.out().print("```error no new``` java installation locations found...\n");
-            } else if (someAdded == 1) {
-                session.out().printf("%s new java installation location added...\n", factory.forStyled("1", NutsTextStyle.primary2()));
-            } else {
-                session.out().printf("%s new java installation locations added...\n", factory.forStyled("" + someAdded, NutsTextStyle.primary2()));
+        try {
+            session.getWorkspace().env().addLauncher(
+                    new NutsLauncherOptions()
+                            .setId(getApiId())
+                            .setCreateScript(true)
+                            .setCreateDesktopShortcut(NutsSupportCondition.PREFERRED)
+                            .setCreateMenuShortcut(NutsSupportCondition.SUPPORTED)
+            );
+        } catch (Exception ex) {
+            LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).error(ex).log("unable to install desktop launchers : {0}", ex, ex);
+            if (session.isPlainTrace()) {
+                NutsPrintStream out = session.out();
+                out.resetLine();
+                out.printf("```error unable to install desktop launchers``` :  %s%n", ex);
             }
-            session.out().println("you can always add another installation manually using 'nuts settings add java' command.");
-        }
-        if (!session.getWorkspace().config().isReadOnly()) {
-            session.getWorkspace().config().save();
         }
 
-        session.getWorkspace().env().addLauncher(
-                new NutsLauncherOptions()
-                        .setId(getApiId())
-                        .setCreateScript(true)
-                        .setCreateDesktopShortcut(NutsSupportCondition.PREFERRED)
-                        .setCreateMenuShortcut(NutsSupportCondition.SUPPORTED)
-        );
+
     }
 
     public void installCompanions(NutsSession session) {
@@ -979,16 +998,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 }
             }
 
-//            installedRepositorySPI.deploy()
-//                    .setId(def.getId())
-//                    .setContent(def.getPath())
-//                    //.setFetchMode(NutsFetchMode.LOCAL)
-//                    .setSession(session)
-//                    .setDescriptor(def.getDescriptor())
-//                    .run();
-
             //should change def to reflect install location!
-
             NutsExecutionContextBuilder cc = createExecutionContext()
                     .setTraceSession(session.copy())
                     .setExecSession(session.copy())

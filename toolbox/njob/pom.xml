@@ -52,6 +52,10 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <github.global.server>github</github.global.server>
         <nuts.application>true</nuts.application>
+        <nuts.categories>
+            /Settings/PackageManager/Nuts
+            /Utilities
+        </nuts.categories>
     </properties>
     <dependencies>
         <dependency>
@@ -117,7 +121,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.0.2</version>
+                <version>3.2.0</version>
                 <executions>
                     <execution>
                         <phase>process-sources</phase>

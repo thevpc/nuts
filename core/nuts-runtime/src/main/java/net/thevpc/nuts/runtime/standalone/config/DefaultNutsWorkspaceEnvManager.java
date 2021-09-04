@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
@@ -313,7 +314,10 @@ public class DefaultNutsWorkspaceEnvManager implements NutsWorkspaceEnvManager {
             case WINDOWS: {
                 switch (item) {
                     case DESKTOP: {
-                        return NutsSupportMode.PREFERRED;
+                        if(Files.isDirectory(getDesktopPath())){
+                            return NutsSupportMode.PREFERRED;
+                        }
+                        return NutsSupportMode.SUPPORTED;
                     }
                     case MENU: {
                         return NutsSupportMode.PREFERRED;

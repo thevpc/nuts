@@ -2,11 +2,13 @@ package net.thevpc.nuts.runtime.optional.mslink;
 
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsUtilStrings;
+import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Iterator;
 
@@ -64,6 +66,7 @@ public class OptionalMsLinkHelper {
         try {
             //.setFontSize(16)
             //.setTextColor(5)
+            CoreIOUtils.mkdirs(Paths.get(filePath).getParent(),session);
             se.saveTo(filePath);
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);

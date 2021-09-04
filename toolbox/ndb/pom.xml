@@ -17,7 +17,10 @@
         <github.global.server>github</github.global.server>
         <nuts.application>true</nuts.application>
         <nuts.genericName>Database Utility</nuts.genericName>
-        <nuts.categories>/Development/Database</nuts.categories>
+        <nuts.categories>
+            /Development/Database
+            /Settings/PackageManager/Nuts
+        </nuts.categories>
     </properties>
 
     <scm>

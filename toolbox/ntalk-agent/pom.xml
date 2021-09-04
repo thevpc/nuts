@@ -52,6 +52,9 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <github.global.server>github</github.global.server>
         <nuts.application>true</nuts.application>
+        <nuts.categories>
+            /Settings/PackageManager/Nuts
+        </nuts.categories>
     </properties>
     <dependencies>
         <dependency>

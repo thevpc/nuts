@@ -4,6 +4,7 @@ import net.thevpc.nuts.NutsExecutionType;
 import net.thevpc.nuts.NutsId;
 import net.thevpc.nuts.NutsPrintStream;
 import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.PathInfo;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.base.AbstractFreeDesktopEntryWriter;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.FreeDesktopEntry;
@@ -190,6 +191,7 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
     }
 
     public void write(FreeDesktopEntry file, Path out) {
+        CoreIOUtils.mkdirs(out.getParent(),session);
         try (PrintStream p = new PrintStream(Files.newOutputStream(out))) {
             write(file, p);
         } catch (IOException ex) {
@@ -199,6 +201,7 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
 
 
     public PathInfo.Status tryWrite(FreeDesktopEntry file, Path out) {
+        CoreIOUtils.mkdirs(out.getParent(),session);
         return NdiUtils.tryWrite(writeAsString(file).getBytes(), out,session);
     }
 
@@ -216,6 +219,7 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
 
 
     public void write(FreeDesktopEntry file, File out) {
+        CoreIOUtils.mkdirs(out.toPath().getParent(),session);
         try (PrintStream p = new PrintStream(out)) {
             write(file, p);
         } catch (IOException ex) {

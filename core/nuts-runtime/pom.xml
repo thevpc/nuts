@@ -15,6 +15,14 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <github.global.server>github</github.global.server>
         <nuts-runtime>true</nuts-runtime>
+        <nuts.categories>
+            /Settings/PackageManager/Nuts
+        </nuts.categories>
+        <nuts.icons>
+            classpath://net/thevpc/nuts/runtime/nuts.svg
+            classpath://net/thevpc/nuts/runtime/nuts.png
+            classpath://net/thevpc/nuts/runtime/nuts.ico
+        </nuts.icons>
         <dependencies.org.fusesource.jansi:jansi.os>windows</dependencies.org.fusesource.jansi:jansi.os>
         <dependencies.com.github.vatbub:mslinks.os>windows</dependencies.com.github.vatbub:mslinks.os>
         <conditional-dependencies>
