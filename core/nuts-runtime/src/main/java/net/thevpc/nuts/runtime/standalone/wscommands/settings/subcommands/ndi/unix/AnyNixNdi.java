@@ -164,17 +164,17 @@ public abstract class AnyNixNdi extends BaseSystemNdi {
         );
     }
 
-    protected ReplaceString getShebanSh() {
+    public ReplaceString getShebanSh() {
         return SHEBAN_SH;
     }
 
-    protected ReplaceString getCommentLineConfigHeader() {
+    public ReplaceString getCommentLineConfigHeader() {
         return COMMENT_LINE_CONFIG_HEADER;
     }
 
     @Override
     public String getTemplateName(String name) {
-        return "linux_template_" + name + ".text";
+        return "linux-template-" + name + ".text";
     }
 
     @Override

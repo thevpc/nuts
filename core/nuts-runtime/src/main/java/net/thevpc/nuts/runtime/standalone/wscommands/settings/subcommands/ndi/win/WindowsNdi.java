@@ -4,13 +4,10 @@ import net.thevpc.nuts.NutsId;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.PathInfo;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.FreeDesktopEntryWriter;
-import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.NdiScriptInfo;
-import net.thevpc.nuts.runtime.standalone.wscommands.settings.PathInfoType;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.NdiScriptOptions;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.base.BaseSystemNdi;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.script.ReplaceString;
 
-import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -35,7 +32,7 @@ public class WindowsNdi extends BaseSystemNdi {
 //            @Override
 //            public PathInfo create() {
 //                Path apiConfigFile = path();
-//                return addFileLine(PathInfoType.NUTS_TERM,
+//                return addFileLine("nuts-term",
 //                        options.resolveNutsApiId(),
 //                        apiConfigFile, getCommentLineConfigHeader(),
 //                        "@ECHO OFF" + newlineString() +
@@ -133,21 +130,21 @@ public class WindowsNdi extends BaseSystemNdi {
         return true;
     }
 
-    protected ReplaceString getShebanSh() {
+    public ReplaceString getShebanSh() {
         return null;
     }
 
-    protected ReplaceString getCommentLineConfigHeader() {
+    public ReplaceString getCommentLineConfigHeader() {
         return COMMENT_LINE_CONFIG_HEADER;
     }
 
     @Override
     public String getTemplateName(String name) {
-        return "windows_template_" + name + ".text";
+        return "windows-template-" + name + ".text";
     }
 
     @Override
-    protected String varRef(String v) {
+    public String varRef(String v) {
         return "%" + v + "%";
     }
 

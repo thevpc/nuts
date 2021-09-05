@@ -16,7 +16,7 @@ if [ -n "$NUTS_JAVA_HOME" ] && [ -x "$NUTS_JAVA_HOME/bin/java" ];  then
 elif (type -p java > /dev/null) ; then
     _java=java
 elif [ -n "$JAVA_HOME" ] && [ -x "$JAVA_HOME/bin/java" ];  then
-    echo found java executable in JAVA_HOME     
+#    echo found java executable in JAVA_HOME
     _java="$JAVA_HOME/bin/java"
 else
     _java="java"

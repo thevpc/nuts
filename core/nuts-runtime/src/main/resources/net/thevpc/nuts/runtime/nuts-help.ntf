@@ -451,6 +451,30 @@ Boot Runtime Version: ###${nuts.workspace-runtime.version}###
  ```sh --create```
       will create non existing workspace of fail
 
+
+###) NUTS NON STANDARD OPTIONS:
+
+```sh nuts``` provides extra, non standards options (aka susceptible to change in later versions).
+Non standard options can be used by ```sh nuts``` or any ```sh nuts``` application. Such options start with three dashes (and not two dashes).
+
+```sh ---system-desktop-launcher=unsupported|supported|preferred``` this option overrides default behaviour of the system desktop environment.
+   It defines the support mode for desktop icons (application shortcut on the Desktop) for the desktop environment ( ##@see## NutsSupportMode class).
+   ```sh ---system-desktop-launcher=unsupported``` disables creating any desktop icon on the system
+   ```sh ---system-desktop-launcher=supported``` enables creating desktop icons whenever asked by an application
+   ```sh ---system-desktop-launcher=preferred``` enables creating desktop icons whenever asked by an application and that application requires this preference
+
+```sh ---system-menu-launcher=unsupported|supported|preferred``` this option overrides default behaviour of the system desktop environment.
+   It defines the support mode for creating a menu for the desktop environment.
+
+```sh ---system-custom-launcher=unsupported|supported|preferred``` this option overrides default behaviour of the system desktop environment.
+   It defines the support mode for creating a custom application shortcut for the desktop environment.
+
+
+```sh ---jdb=port,(suspend|no-suspend)``` this option enables running child processes with debug mode.
+   It defaults to "-agentlib:jdwp=transport=dt_socket,server=y,suspend=" + (suspend ? 'y' : 'n') + ",address=" + port
+   Hence it runs by default in server mode, and using socket transport. If the port is not defined, it defaults to ```number 5005```.
+   It the suspend mode is not defined it defaults to ```boolean true```
+
 ##) NUTS COMMAND:
 ```sh nuts``` handles a set of command to manage nuts it sel and to run/exec other programs, mainly those its was responsible
 for installing. Commands support include internal commands, supported packages (installed or not, when not installed

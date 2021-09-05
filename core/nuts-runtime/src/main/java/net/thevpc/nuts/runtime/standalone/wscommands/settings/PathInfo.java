@@ -5,12 +5,12 @@ import net.thevpc.nuts.NutsId;
 import java.nio.file.Path;
 
 public class PathInfo {
-    private PathInfoType type;
+    private String type;
     private NutsId id;
     private Path path;
     private Status status;
 
-    public PathInfo(PathInfoType type, NutsId id, Path path, Status status) {
+    public PathInfo(String type, NutsId id, Path path, Status status) {
         this.id = id;
         this.type = type;
         this.path = path;
@@ -21,7 +21,7 @@ public class PathInfo {
         return id;
     }
 
-    public PathInfoType getType() {
+    public String getType() {
         return type;
     }
 
