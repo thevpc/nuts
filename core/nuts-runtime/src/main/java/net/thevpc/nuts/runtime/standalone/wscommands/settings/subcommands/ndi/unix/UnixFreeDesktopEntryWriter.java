@@ -8,7 +8,6 @@ import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.PathInfo;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.base.AbstractFreeDesktopEntryWriter;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.FreeDesktopEntry;
-import net.thevpc.nuts.runtime.standalone.wscommands.settings.PathInfoType;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.util.NdiUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -46,7 +45,7 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
     public PathInfo[] writeShortcut(FreeDesktopEntry descriptor, Path path, boolean doOverride, NutsId id) {
         path = Paths.get(ensureName(path == null ? null : path.toString(), descriptor.getOrCreateDesktopEntry().getName(), "desktop"));
         PathInfo.Status s = tryWrite(descriptor, path);
-        return new PathInfo[]{new PathInfo(PathInfoType.DESKTOP_SHORTCUT, id, path, s)};
+        return new PathInfo[]{new PathInfo("desktop-shortcut", id, path, s)};
     }
 
     @Override
@@ -66,7 +65,7 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
         File folder4shortcuts = new File(System.getProperty("user.home") + "/.local/share/applications");
         folder4shortcuts.mkdirs();
         File shortcutFile = new File(folder4shortcuts, desktopFileName);
-        all.add(new PathInfo(PathInfoType.DESKTOP_MENU, id,
+        all.add(new PathInfo("desktop-menu", id,
                 shortcutFile.toPath(), tryWrite(descriptor, shortcutFile)));
 
         List<String> categories = new ArrayList<>(root.getCategories());
@@ -112,7 +111,7 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
                 ByteArrayOutputStream b = new ByteArrayOutputStream();
                 tr.transform(new DOMSource(dom), new StreamResult(b));
                 File menuFile = new File(folder4menus, menuFileName);
-                all.add(new PathInfo(PathInfoType.DESKTOP_MENU, id, menuFile.toPath(), NdiUtils.tryWrite(b.toByteArray(), menuFile.toPath(),session)));
+                all.add(new PathInfo("desktop-menu", id, menuFile.toPath(), NdiUtils.tryWrite(b.toByteArray(), menuFile.toPath(),session)));
             } catch (ParserConfigurationException | TransformerException ex) {
                 throw new RuntimeException(ex);
             }

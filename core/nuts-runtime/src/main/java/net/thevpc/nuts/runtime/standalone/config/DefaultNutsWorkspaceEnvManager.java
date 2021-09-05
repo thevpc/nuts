@@ -415,55 +415,55 @@ public class DefaultNutsWorkspaceEnvManager implements NutsWorkspaceEnvManager {
         return config.getModel();
     }
 
-    public boolean matchCondition(NutsSupportCondition request, NutsSupportMode support) {
-        checkSession();
-        if (request == null) {
-            request = NutsSupportCondition.NEVER;
-        }
-        if (support == null) {
-            support = NutsSupportMode.UNSUPPORTED;
-        }
-        switch (support) {
-            case UNSUPPORTED: {
-                return false;
-            }
-            case SUPPORTED: {
-                switch (request) {
-                    case NEVER:
-                        return false;
-                    case ALWAYS:
-                    case SUPPORTED: {
-                        return true;
-                    }
-                    case PREFERRED: {
-                        return false;
-                    }
-                    default: {
-                        throw new NutsUnsupportedEnumException(getSession(), request);
-                    }
-                }
-            }
-            case PREFERRED: {
-                switch (request) {
-                    case NEVER:
-                        return false;
-                    case ALWAYS:
-                    case PREFERRED: {
-                        return true;
-                    }
-                    case SUPPORTED: {
-                        return false;
-                    }
-                    default: {
-                        throw new NutsUnsupportedEnumException(getSession(), request);
-                    }
-                }
-            }
-            default: {
-                throw new NutsUnsupportedEnumException(getSession(), support);
-            }
-        }
-    }
+//    public boolean matchCondition(NutsSupportCondition request, NutsSupportMode support) {
+//        checkSession();
+//        if (request == null) {
+//            request = NutsSupportCondition.NEVER;
+//        }
+//        if (support == null) {
+//            support = NutsSupportMode.UNSUPPORTED;
+//        }
+//        switch (support) {
+//            case UNSUPPORTED: {
+//                return false;
+//            }
+//            case SUPPORTED: {
+//                switch (request) {
+//                    case NEVER:
+//                        return false;
+//                    case ALWAYS:
+//                    case SUPPORTED: {
+//                        return true;
+//                    }
+//                    case PREFERRED: {
+//                        return false;
+//                    }
+//                    default: {
+//                        throw new NutsUnsupportedEnumException(getSession(), request);
+//                    }
+//                }
+//            }
+//            case PREFERRED: {
+//                switch (request) {
+//                    case NEVER:
+//                        return false;
+//                    case ALWAYS:
+//                    case PREFERRED: {
+//                        return true;
+//                    }
+//                    case SUPPORTED: {
+//                        return false;
+//                    }
+//                    default: {
+//                        throw new NutsUnsupportedEnumException(getSession(), request);
+//                    }
+//                }
+//            }
+//            default: {
+//                throw new NutsUnsupportedEnumException(getSession(), support);
+//            }
+//        }
+//    }
 
 //    public void addLauncherOld(NutsLauncherOptions launcher) {
 //        checkSession();

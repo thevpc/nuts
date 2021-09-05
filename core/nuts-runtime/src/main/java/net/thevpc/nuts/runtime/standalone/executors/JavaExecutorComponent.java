@@ -261,7 +261,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
 //                    xargs.add(Dnuts_boot_args);
 //                    args.add(Dnuts_boot_args);
 //                }
-                String jdb = (String) ws.env().getOption("jdb", null);
+                String jdb = ws.env().getOption("jdb", null);
                 if (jdb != null) {
                     boolean suspend = true;
                     int port = 5005;

@@ -4,8 +4,8 @@ import net.thevpc.nuts.NutsDefinition;
 import net.thevpc.nuts.NutsId;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.PathInfo;
-import net.thevpc.nuts.runtime.standalone.wscommands.settings.PathInfoType;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.NameBuilder;
+import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.base.BaseSystemNdi;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.util.NdiUtils;
 
 import java.nio.file.Path;
@@ -15,9 +15,9 @@ public abstract class AbstractScriptBuilder implements ScriptBuilder {
     private NutsSession session;
     private NutsId anyId;
     private String path;
-    private PathInfoType type;
+    private String type;
 
-    public AbstractScriptBuilder(PathInfoType type, NutsId anyId, NutsSession session) {
+    public AbstractScriptBuilder(String type, NutsId anyId, NutsSession session) {
         this.session = session;
         this.anyId = anyId.builder().setRepository(null).build();//remove repo!
         this.type = type;
@@ -31,7 +31,7 @@ public abstract class AbstractScriptBuilder implements ScriptBuilder {
         return anyId;
     }
 
-    public PathInfoType getType() {
+    public String getType() {
         return type;
     }
 
@@ -49,7 +49,12 @@ public abstract class AbstractScriptBuilder implements ScriptBuilder {
         return this;
     }
 
-    @Override
+    public PathInfo buildAddLine(BaseSystemNdi ndi) {
+        return ndi.addFileLine(type,
+                anyId,
+                Paths.get(path), ndi.getCommentLineConfigHeader(),buildString(),ndi.getShebanSh());
+    }
+
     public PathInfo build() {
         //Path script = getScriptFile(name);
         NutsDefinition anyIdDef = session.getWorkspace().search().addId(anyId).setLatest(true).getResultDefinitions().singleton();
