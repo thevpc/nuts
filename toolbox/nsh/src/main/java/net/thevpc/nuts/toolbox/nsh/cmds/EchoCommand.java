@@ -84,10 +84,13 @@ public class EchoCommand extends SimpleNshBuiltin {
     @Override
     protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
+        Object ns=options.plain?
+                options.message.toString()
+                :context.getSession().getWorkspace().text().parse(options.message.toString());
         if (options.newLine) {
-            context.setPrintlnOutObject(options.message.toString());
+            context.setPrintlnOutObject(ns);
         } else {
-            context.setPrintOutObject(options.message.toString());
+            context.setPrintOutObject(ns);
         }
     }
 }

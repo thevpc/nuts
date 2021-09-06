@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.thevpc.nuts.toolbox</groupId>
     <artifactId>nsh</artifactId>
-    <version>0.8.2.0</version>
+    <version>0.8.2.1</version>
     <packaging>jar</packaging>
     <name>Nuts Shell</name>
     <url>https://github.com/thevpc/nuts</url>
