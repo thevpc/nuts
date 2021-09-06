@@ -22,15 +22,15 @@ public class PrivateNutsIOUtils {
         return new File(path).toPath().toAbsolutePath().normalize().toString();
     }
 
-    public static String readStringFromURL(URL requestURL) throws IOException {
-        File f = toFile(requestURL);
-        if (f != null) {
-            return new String(Files.readAllBytes(f.toPath()));
-        }
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        copy(requestURL.openStream(), out, true, true);
-        return out.toString();
-    }
+//    public static String readStringFromURL(URL requestURL) throws IOException {
+//        File f = toFile(requestURL);
+//        if (f != null) {
+//            return new String(Files.readAllBytes(f.toPath()));
+//        }
+//        ByteArrayOutputStream out = new ByteArrayOutputStream();
+//        copy(requestURL.openStream(), out, true, true);
+//        return out.toString();
+//    }
 
     public static String readStringFromFile(File file) throws IOException {
         return new String(Files.readAllBytes(file.toPath()));
@@ -48,7 +48,7 @@ public class PrivateNutsIOUtils {
                         inputStream = new FileInputStream(cacheFile);
                         props.load(inputStream);
                         long time = System.currentTimeMillis() - startTime;
-                        LOG.log(Level.CONFIG, NutsLogVerb.SUCCESS, "loaded cached file from  {0}" + ((time > 0) ? " (time {1})" : ""), new Object[]{cacheFile.getPath(), PrivateNutsUtils.formatPeriodMilli(time)});
+                        LOG.log(Level.CONFIG, NutsLogVerb.SUCCESS, "load cached file from  {0}" + ((time > 0) ? " (time {1})" : ""), new Object[]{cacheFile.getPath(), PrivateNutsUtils.formatPeriodMilli(time)});
                         return props;
                     } catch (IOException ex) {
                         LOG.log(Level.CONFIG, NutsLogVerb.FAIL, "invalid cache. Ignored {0} : {1}", new Object[]{cacheFile.getPath(), ex.toString()});
@@ -96,16 +96,16 @@ public class PrivateNutsIOUtils {
                                 if (cachedRecovered) {
                                     LOG.log(Level.CONFIG, NutsLogVerb.CACHE, "recover cached prp file {0} (from {1})" + ((time > 0) ? " (time {2})" : ""), new Object[]{cacheFile.getPath(), urlString, PrivateNutsUtils.formatPeriodMilli(time)});
                                 } else {
-                                    LOG.log(Level.CONFIG, NutsLogVerb.CACHE, "cached prp file {0} (from {1})" + ((time > 0) ? " (time {2})" : ""), new Object[]{cacheFile.getPath(), urlString, PrivateNutsUtils.formatPeriodMilli(time)});
+                                    LOG.log(Level.CONFIG, NutsLogVerb.CACHE, "cache prp file {0} (from {1})" + ((time > 0) ? " (time {2})" : ""), new Object[]{cacheFile.getPath(), urlString, PrivateNutsUtils.formatPeriodMilli(time)});
                                 }
                                 return props;
                             }
                         }
                         long time = System.currentTimeMillis() - startTime;
-                        LOG.log(Level.CONFIG, NutsLogVerb.SUCCESS, "loading props file from  {0}" + ((time > 0) ? " (time {1})" : ""), new Object[]{urlString, PrivateNutsUtils.formatPeriodMilli(time)});
+                        LOG.log(Level.CONFIG, NutsLogVerb.SUCCESS, "load props file from  {0}" + ((time > 0) ? " (time {1})" : ""), new Object[]{urlString, PrivateNutsUtils.formatPeriodMilli(time)});
                     } else {
                         long time = System.currentTimeMillis() - startTime;
-                        LOG.log(Level.CONFIG, NutsLogVerb.FAIL, "loading props file from  {0}" + ((time > 0) ? " (time {1})" : ""), new Object[]{urlString, PrivateNutsUtils.formatPeriodMilli(time)});
+                        LOG.log(Level.CONFIG, NutsLogVerb.FAIL, "load props file from  {0}" + ((time > 0) ? " (time {1})" : ""), new Object[]{urlString, PrivateNutsUtils.formatPeriodMilli(time)});
                     }
                 }
             } finally {
@@ -115,7 +115,7 @@ public class PrivateNutsIOUtils {
             }
         } catch (Exception e) {
             long time = System.currentTimeMillis() - startTime;
-            LOG.log(Level.CONFIG, NutsLogVerb.FAIL, "loading props file from  {0}" + ((time > 0) ? " (time {1})" : ""), new Object[]{
+            LOG.log(Level.CONFIG, NutsLogVerb.FAIL, "load props file from  {0}" + ((time > 0) ? " (time {1})" : ""), new Object[]{
                     String.valueOf(url),
                     PrivateNutsUtils.formatPeriodMilli(time)});
         }
@@ -207,7 +207,7 @@ public class PrivateNutsIOUtils {
         try {
             InputStream in = url.openStream();
             if (in == null) {
-                throw new IOException("Empty Stream " + url);
+                throw new IOException("empty Stream " + url);
             }
             if (to.getParentFile() != null) {
                 if (!to.getParentFile().isDirectory()) {

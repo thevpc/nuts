@@ -45,7 +45,7 @@ final class PrivateNutsBootConfigLoader {
         File bootFile = new File(workspaceLocation, NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME);
         try {
             if (bootFile.isFile()) {
-                LOG.log(Level.CONFIG, NutsLogVerb.READ, "loading boot file : {0}", bootFile.getPath());
+                LOG.log(Level.CONFIG, NutsLogVerb.READ, "load boot file : {0}", bootFile.getPath());
                 String json = PrivateNutsIOUtils.readStringFromFile(bootFile).trim();
                 if (json.length() > 0) {
                     return loadBootConfigJSON(json, LOG);
@@ -76,15 +76,15 @@ final class PrivateNutsBootConfigLoader {
         int buildNumber = getApiVersionOrdinalNumber(configVersion);
         if (buildNumber <= 501) {
             //load nothing!
-            LOG.log(Level.CONFIG, NutsLogVerb.READ, "detected config version " + configVersion + " ( considered as 0.5.1, very old config, ignored)");
+            LOG.log(Level.CONFIG, NutsLogVerb.READ, "detect config version " + configVersion + " ( considered as 0.5.1, very old config, ignored)");
         } else if (buildNumber <= 505) {
-            LOG.log(Level.CONFIG, NutsLogVerb.READ, "detected config version " + configVersion + " ( compatible with 0.5.2 config file )");
+            LOG.log(Level.CONFIG, NutsLogVerb.READ, "detect config version " + configVersion + " ( compatible with 0.5.2 config file )");
             loadConfigVersion502(c, jsonObject, LOG);
         } else if (buildNumber <= 506) {
-            LOG.log(Level.CONFIG, NutsLogVerb.READ, "detected config version " + configVersion + " ( compatible with 0.5.6 config file )");
+            LOG.log(Level.CONFIG, NutsLogVerb.READ, "detect config version " + configVersion + " ( compatible with 0.5.6 config file )");
             loadConfigVersion506(c, jsonObject, LOG);
         } else {
-            LOG.log(Level.CONFIG, NutsLogVerb.READ, "detected config version " + configVersion + " ( compatible with 0.5.7 config file )");
+            LOG.log(Level.CONFIG, NutsLogVerb.READ, "detect config version " + configVersion + " ( compatible with 0.5.7 config file )");
             loadConfigVersion507(c, jsonObject, LOG);
         }
         return c;
@@ -110,7 +110,7 @@ final class PrivateNutsBootConfigLoader {
      * @param jsonObject config JSON object
      */
     private static void loadConfigVersion507(PrivateNutsWorkspaceInitInformation config, Map<String, Object> jsonObject, PrivateNutsLog LOG) {
-        LOG.log(Level.CONFIG, NutsLogVerb.READ, "config version compatibility : 0.5.7");
+        LOG.log(Level.CONFIG, NutsLogVerb.INFO, "config version compatibility : 0.5.7");
         config.setUuid((String) jsonObject.get("uuid"));
         config.setName((String) jsonObject.get("name"));
         config.setWorkspaceLocation((String) jsonObject.get("workspace"));
@@ -148,7 +148,7 @@ final class PrivateNutsBootConfigLoader {
      * @param jsonObject config JSON object
      */
     private static void loadConfigVersion506(PrivateNutsWorkspaceInitInformation config, Map<String, Object> jsonObject, PrivateNutsLog LOG) {
-        LOG.log(Level.CONFIG, NutsLogVerb.READ, "config version compatibility : 0.5.6");
+        LOG.log(Level.CONFIG, NutsLogVerb.INFO, "config version compatibility : 0.5.6");
         config.setUuid((String) jsonObject.get("uuid"));
         config.setName((String) jsonObject.get("name"));
         config.setWorkspaceLocation((String) jsonObject.get("workspace"));
@@ -181,7 +181,7 @@ final class PrivateNutsBootConfigLoader {
      * @param jsonObject config JSON object
      */
     private static void loadConfigVersion502(PrivateNutsWorkspaceInitInformation config, Map<String, Object> jsonObject, PrivateNutsLog LOG) {
-        LOG.log(Level.CONFIG, NutsLogVerb.READ, "config version compatibility : 0.5.2");
+        LOG.log(Level.CONFIG, NutsLogVerb.INFO, "config version compatibility : 0.5.2");
         config.setUuid((String) jsonObject.get("uuid"));
         config.setName((String) jsonObject.get("name"));
         config.setWorkspaceLocation((String) jsonObject.get("workspace"));

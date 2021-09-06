@@ -295,9 +295,9 @@ public class NutsTextStyle {
 
     @Override
     public String toString() {
-        return "NutsTextNodeStyle{" +
-                "type=" + type +
-                ", variant=" + variant +
-                '}';
+        if(variant==0){
+            return String.valueOf(type);
+        }
+        return type+"("+variant+")";
     }
 }

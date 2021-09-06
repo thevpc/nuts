@@ -55,7 +55,7 @@ class PrivateNutsDeleteFilesUtils {
             }
             case NO:
             case ERROR: {
-                PrivateNutsTerm.errPrintf("reset cancelled (applied '--no' argument)%n");
+                PrivateNutsTerm.errln("reset cancelled (applied '--no' argument)");
                 throw new PrivateNutsBootCancelException(NutsMessage.plain("cancel delete folder"));
             }
         }
@@ -106,7 +106,7 @@ class PrivateNutsDeleteFilesUtils {
                                     if (session != null) {
                                         session.err().println(header);
                                     } else {
-                                        PrivateNutsTerm.errPrintf("%s%n", header);
+                                        PrivateNutsTerm.errln("%s", header);
                                     }
                                 }
                             }
@@ -158,8 +158,7 @@ class PrivateNutsDeleteFilesUtils {
                                     throw new NutsBootException(NutsMessage.plain("error response"));
                                 }
                                 case ASK: {
-                                    PrivateNutsTerm.errPrintf("do you confirm deleting %s [y/n/c/a] (default 'n') ?", directory);
-                                    PrivateNutsTerm.errPrintf(" : ");
+                                    PrivateNutsTerm.err("do you confirm deleting %s [y/n/c/a] (default 'n') ? : ", directory);
                                     line = PrivateNutsTerm.readLine();
                                 }
                             }

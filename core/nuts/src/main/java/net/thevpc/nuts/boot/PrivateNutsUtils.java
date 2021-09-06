@@ -85,22 +85,6 @@ final class PrivateNutsUtils {
                 + id.getArtifactId() + "/" + id.getVersion();
     }
 
-    public static List<String> split(String str, String separators, boolean trim) {
-        if (str == null) {
-            return Collections.EMPTY_LIST;
-        }
-        StringTokenizer st = new StringTokenizer(str, separators);
-        List<String> result = new ArrayList<>();
-        while (st.hasMoreElements()) {
-            String s = st.nextToken();
-            if (trim) {
-                s = s.trim();
-            }
-            result.add(s);
-        }
-        return result;
-    }
-
     public static List<String> split(String str, String separators) {
         if (str == null) {
             return Collections.EMPTY_LIST;
@@ -126,10 +110,6 @@ final class PrivateNutsUtils {
         }
         matcher.appendTail(sb);
         return sb.toString();
-    }
-
-    public static List<String> splitUrlStrings(String repositories) {
-        return split(repositories, "\n;", true);
     }
 
     public static int parseFileSize(String s) {
@@ -278,14 +258,6 @@ final class PrivateNutsUtils {
         return url.toString();
     }
 
-    public static String getSystemString(String property, String defaultValue) {
-        String v = System.getProperty(property);
-        if (v == null || v.trim().isEmpty()) {
-            return defaultValue;
-        }
-        return v;
-    }
-
     public static boolean getSysBoolNutsProperty(String property, boolean defaultValue) {
         return
                 NutsUtilStrings.parseBoolean(System.getProperty("nuts." + property), defaultValue, false)
@@ -295,8 +267,11 @@ final class PrivateNutsUtils {
 
 
     public static Set<NutsBootId> parseDependencies(String s) {
-        return PrivateNutsUtils.split(s, ";", false)
-                .stream().map(x -> NutsBootId.parse(x))
+        return s==null?Collections.emptySet() :
+                Arrays.stream(s.split(";"))
+                        .map(String::trim)
+                        .filter(x->x.length()>0)
+                        .map(NutsBootId::parse)
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 

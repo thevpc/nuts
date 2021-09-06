@@ -96,4 +96,15 @@ public class NutsRunAs {
     public int hashCode() {
         return Objects.hash(mode, user);
     }
+
+    @Override
+    public String toString() {
+        switch (mode){
+            case CURRENT_USER:return "run-as:current-user";
+            case SUDO:return "run-as:sudo";
+            case ROOT:return "run-as:root";
+            case USER:return "run-as:user:"+user;
+        }
+        return "run-as:"+mode +" , user='" + user + '\'';
+    }
 }

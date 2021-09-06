@@ -88,6 +88,9 @@ class PrivateNutsClassLoaderUtils {
     private static boolean isLoadedClassPath(URL url, ClassLoader contextClassLoader, PrivateNutsLog LOG) {
         try {
             if (url != null) {
+                if (contextClassLoader == null) {
+                    return false;
+                }
                 File file = PrivateNutsIOUtils.toFile(url);
                 if (file == null) {
                     throw new NutsBootException(NutsMessage.cstyle("unsupported classpath item; expected a file path: %s", url));
@@ -100,19 +103,19 @@ class PrivateNutsClassLoaderUtils {
                     while (entries.hasMoreElements()) {
                         ZipEntry zipEntry = entries.nextElement();
                         String zname = zipEntry.getName();
-                        if (!zname.endsWith("/") && zname.endsWith(".class")) {
+                        if (!zname.endsWith("/") && zname.endsWith(".class") && !zname.contains("$")) {
+                            if (PrivateNutsUtils.isInfiniteLoopThread(NutsBootWorkspace.class.getName(), "isLoadedClassPath")) {
+                                return false;
+                            }
+                            URL incp = contextClassLoader.getResource(zname);
                             String clz = zname.substring(0, zname.length() - 6).replace('/', '.');
-                            try {
-                                if (PrivateNutsUtils.isInfiniteLoopThread(NutsBootWorkspace.class.getName(), "isLoadedClassPath")) {
-                                    return false;
-                                }
-                                if (contextClassLoader == null) {
-                                    return false;
-                                }
-                                Class<?> aClass = contextClassLoader.loadClass(clz);
-                                LOG.log(Level.FINEST, NutsLogVerb.SUCCESS, "class {0} loaded successfully from {1}", new Object[]{aClass, file});
+                            if(incp!=null) {
+                                LOG.log(Level.FINEST, NutsLogVerb.SUCCESS, "url {0} is already in classpath. checked class {1} successfully",
+                                        new Object[]{url,clz});
                                 return true;
-                            } catch (ClassNotFoundException e) {
+                            }else{
+                                LOG.log(Level.FINEST, NutsLogVerb.INFO, "url {0} is not in classpath. failed to check class {1}",
+                                        new Object[]{url,clz});
                                 return false;
                             }
                         }
@@ -129,8 +132,9 @@ class PrivateNutsClassLoaderUtils {
 
             }
         } catch (IOException e) {
-            return false;
+            //
         }
+        LOG.log(Level.FINEST, NutsLogVerb.FAIL, "url {0} is not in classpath. no class found to check",new Object[]{url});
         return false;
     }
 }

@@ -9,6 +9,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.*;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.Instant;
 import java.util.*;
 import java.util.function.Function;
@@ -16,6 +17,7 @@ import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -114,48 +116,24 @@ public final class PrivateNutsMavenUtils {
         return new NutsBootId[0];
     }
 
-    public static String toMavenFileName(String nutsId, String extension) {
-        String[] arr = nutsId.split("[:#]");
-        return arr[1]
-                + "-"
-                + arr[2]
-                + "."
-                + extension;
+    public static String getFileName(NutsBootId id, String ext) {
+        return id.getArtifactId() + "-" + id.getVersion() + "." + ext;
     }
 
-    public static String toMavenPath(String nutsId) {
-        String[] arr = nutsId.split("[:#]");
+    public static String toMavenPath(NutsBootId nutsId) {
         StringBuilder sb = new StringBuilder();
-        sb.append(arr[0].replace(".", "/"));
+        sb.append(nutsId.getGroupId().replace(".", "/"));
         sb.append("/");
-        sb.append(arr[1]);
-        if (arr.length > 2) {
+        sb.append(nutsId.getArtifactId());
+        if (nutsId.getVersionString()!=null && nutsId.getVersionString().length()>0) {
             sb.append("/");
-            sb.append(arr[2]);
+            sb.append(nutsId.getVersionString());
         }
         return sb.toString();
     }
 
-    //        public static String resolveMavenReleaseVersion(String mavenURLBase, String nutsId) {
-//            String mvnUrl = (mavenURLBase + toMavenPath(nutsId) + "/maven-metadata.xml");
-//            String str = null;
-//            try {
-//                str = PrivateNutsUtils.readStringFromURL(new URL(mvnUrl));
-//            } catch (IOException e) {
-//                throw new UncheckedIOException(e);
-//            }
-//            if (str != null) {
-//                for (String line : str.split("\n")) {
-//                    line = line.trim();
-//                    if (line.startsWith("<release>")) {
-//                        return line.substring("<release>".length(), line.length() - "</release>".length()).trim();
-//                    }
-//                }
-//            }
-//            throw new NutsNotFoundException(null, nutsId);
-//        }
-    public static String resolveMavenFullPath(String repo, String nutsId, String ext) {
-        String jarPath = toMavenPath(nutsId) + "/" + toMavenFileName(nutsId, ext);
+    public static String resolveMavenFullPath(String repo, NutsBootId nutsId, String ext) {
+        String jarPath = toMavenPath(nutsId) + "/" + getFileName(nutsId, ext);
         String mvnUrl = repo;
         String sep = "/";
         if (!PrivateNutsIOUtils.isURL(repo)) {
@@ -167,15 +145,12 @@ public final class PrivateNutsMavenUtils {
         return mvnUrl + jarPath;
     }
 
-    public static String getFileName(NutsBootId id, String ext) {
-        return id.getArtifactId() + "-" + id.getVersion() + "." + ext;
-    }
 
     public static String getPathFile(NutsBootId id, String name) {
         return id.getGroupId().replace('.', '/') + '/' + id.getArtifactId() + '/' + id.getVersion() + "/" + name;
     }
 
-    public static File resolveOrDownloadJar(String nutsId, String[] repositories, String cacheFolder, PrivateNutsLog LOG, boolean includeDesc, Instant expire, PrivateNutsErrorInfoList errors) {
+    public static File resolveOrDownloadJar(NutsBootId nutsId, String[] repositories, String cacheFolder, PrivateNutsLog LOG, boolean includeDesc, Instant expire, PrivateNutsErrorInfoList errors) {
         File cachedJarFile = new File(resolveMavenFullPath(cacheFolder, nutsId, "jar"));
         if (cachedJarFile.isFile()) {
             if (PrivateNutsUtils.isFileAccessible(cachedJarFile.toPath(), expire, LOG)) {
@@ -346,7 +321,10 @@ public final class PrivateNutsMavenUtils {
                                     String t = c3.getTextContent().trim();
                                     if (t.length() > 0) {
                                         depsAndRepos.repos.addAll(
-                                                PrivateNutsUtils.split(t, ";", true)
+                                                Arrays.stream(t.split(";"))
+                                                        .map(String::trim)
+                                                                .filter(x->x.length()>0)
+                                                                        .collect(Collectors.toList())
                                         );
                                     }
                                     break;
@@ -462,11 +440,18 @@ public final class PrivateNutsMavenUtils {
      * @return latest runtime version
      */
     static NutsBootId resolveLatestMavenId(NutsBootId zId, Predicate<NutsBootVersion> filter, PrivateNutsLog LOG, Collection<String> bootRepositories) {
-        LOG.log(Level.FINEST, NutsLogVerb.START, "looking for {0} in: ", zId);
-        for (String repoUrl : bootRepositories) {
-            LOG.log(Level.FINEST, NutsLogVerb.START, "    {0}", repoUrl);
+        if(LOG.isLoggable(Level.FINEST)) {
+            if(bootRepositories.isEmpty()){
+                LOG.log(Level.FINEST, NutsLogVerb.START, "search for {0} nuts there are no repositories to look into.", zId);
+            }else if(bootRepositories.size()==1){
+                LOG.log(Level.FINEST, NutsLogVerb.START, "search for {0} in: {1}", new Object[]{zId,bootRepositories.toArray()[0]});
+            }else{
+                LOG.log(Level.FINEST, NutsLogVerb.START, "search for {0} in: ", zId);
+                for (String repoUrl : bootRepositories) {
+                    LOG.log(Level.FINEST, NutsLogVerb.START, "    {0}", repoUrl);
+                }
+            }
         }
-
         String path = zId.getGroupId().replace('.', '/') + '/' + zId.getArtifactId();
         NutsBootVersion bestVersion = null;
         String bestPath = null;
@@ -474,7 +459,7 @@ public final class PrivateNutsMavenUtils {
         for (String repoUrl : bootRepositories) {
             boolean found = false;
             if (!repoUrl.contains("://")) {
-                File mavenNutsCoreFolder = new File(repoUrl, path + "/".replace("/", File.separator));
+                File mavenNutsCoreFolder = new File(repoUrl, path.replace("/", File.separator));
                 if (mavenNutsCoreFolder.isDirectory()) {
                     File[] children = mavenNutsCoreFolder.listFiles();
                     if (children != null) {
@@ -486,8 +471,14 @@ public final class PrivateNutsMavenUtils {
                                     if (filter == null || filter.test(p)) {
                                         found = true;
                                         if (bestVersion == null || bestVersion.compareTo(p) < 0) {
-                                            bestVersion = p;
-                                            bestPath = "local location : " + file.getPath();
+                                            //we will ignore artifact classifier to simplify search
+                                            Path jarPath = file.toPath().resolve(
+                                                    getFileName(new NutsBootId(zId.getGroupId(),zId.getArtifactId(),p),"jar")
+                                            );
+                                            if(Files.isRegularFile(jarPath)) {
+                                                bestVersion = p;
+                                                bestPath = "local location : " + jarPath;
+                                            }
                                         }
                                     }
                                 }
@@ -533,7 +524,7 @@ public final class PrivateNutsMavenUtils {
             return null;
         }
         NutsBootId iid = new NutsBootId(zId.getGroupId(), zId.getArtifactId(), bestVersion);
-        LOG.log(Level.FINEST, NutsLogVerb.SUCCESS, "resolved " + iid + " from " + bestPath);
+        LOG.log(Level.FINEST, NutsLogVerb.SUCCESS, "resolve " + iid + " from " + bestPath);
         return iid;
     }
 
@@ -584,7 +575,7 @@ public final class PrivateNutsMavenUtils {
             if (useCache && cacheFolder != null && cacheFolder.equals(repository)) {
                 return null; // I do not remember why I did this!
             }
-            File file = getBootCacheFile(vid.toString(), path, repository, cacheFolder, useCache, expire, errorList, workspaceInformation, pathExpansionConverter, LOG);
+            File file = getBootCacheFile(vid, path, repository, cacheFolder, useCache, expire, errorList, workspaceInformation, pathExpansionConverter, LOG);
             if (file != null) {
                 return file;
             }
@@ -592,7 +583,7 @@ public final class PrivateNutsMavenUtils {
         return null;
     }
 
-    private static File getBootCacheFile(String nutsId, String path, String repository, String cacheFolder, boolean useCache, Instant expire, PrivateNutsErrorInfoList errorList, PrivateNutsWorkspaceInitInformation workspaceInformation, Function<String, String> pathExpansionConverter, PrivateNutsLog LOG) {
+    private static File getBootCacheFile(NutsBootId nutsId, String path, String repository, String cacheFolder, boolean useCache, Instant expire, PrivateNutsErrorInfoList errorList, PrivateNutsWorkspaceInitInformation workspaceInformation, Function<String, String> pathExpansionConverter, PrivateNutsLog LOG) {
         boolean cacheLocalFiles = true;//Boolean.getBoolean("nuts.cache.cache-local-files");
         repository = PrivateNutsIOUtils.expandPath(repository, workspaceInformation.getWorkspaceLocation(), pathExpansionConverter);
         File repositoryFolder = null;
@@ -619,16 +610,16 @@ public final class PrivateNutsMavenUtils {
             urlPath += path;
             long start = System.currentTimeMillis();
             try {
-                LOG.log(Level.CONFIG, NutsLogVerb.SUCCESS, "loading  {0}", new Object[]{urlPath});
+                LOG.log(Level.CONFIG, NutsLogVerb.SUCCESS, "load  {0}", new Object[]{urlPath});
                 PrivateNutsIOUtils.copy(new URL(urlPath), to, LOG);
                 errorList.removeErrorsFor(nutsId);
                 long end = System.currentTimeMillis();
-                LOG.log(Level.CONFIG, NutsLogVerb.SUCCESS, "loaded   {0} ({1}ms)", new Object[]{urlPath, end - start});
+                LOG.log(Level.CONFIG, NutsLogVerb.SUCCESS, "load   {0} ({1}ms)", new Object[]{urlPath, end - start});
                 ok = to;
             } catch (IOException ex) {
                 errorList.add(new PrivateNutsErrorInfo(nutsId, repository, urlPath, "unable to load", ex));
                 long end = System.currentTimeMillis();
-                LOG.log(Level.CONFIG, NutsLogVerb.FAIL, "loaded   {0} ({1}ms)", new Object[]{urlPath, end - start});
+                LOG.log(Level.CONFIG, NutsLogVerb.FAIL, "load   {0} ({1}ms)", new Object[]{urlPath, end - start});
                 //not found
             }
             return ok;
@@ -643,11 +634,11 @@ public final class PrivateNutsMavenUtils {
             if (file.isFile()) {
                 ff = file;
             } else {
-                LOG.log(Level.CONFIG, NutsLogVerb.FAIL, "locating {0}", new Object[]{file});
+                LOG.log(Level.CONFIG, NutsLogVerb.FAIL, "locate {0}", new Object[]{file});
             }
         } else {
             File file = new File(repoFolder, path.replace('/', File.separatorChar));
-            LOG.log(Level.CONFIG, NutsLogVerb.FAIL, "locating {0} ; repository is not a valid folder : {1}", new Object[]{file, repoFolder});
+            LOG.log(Level.CONFIG, NutsLogVerb.FAIL, "locate {0} ; repository is not a valid folder : {1}", new Object[]{file, repoFolder});
         }
 
         if (ff != null) {
@@ -671,7 +662,7 @@ public final class PrivateNutsMavenUtils {
                         LOG.log(Level.CONFIG, NutsLogVerb.CACHE, "recover cached " + ext + " file {0} to {1}", new Object[]{ff, to});
                     } else {
                         PrivateNutsIOUtils.copy(ff, to, LOG);
-                        LOG.log(Level.CONFIG, NutsLogVerb.CACHE, "cached " + ext + " file {0} to {1}", new Object[]{ff, to});
+                        LOG.log(Level.CONFIG, NutsLogVerb.CACHE, "cache " + ext + " file {0} to {1}", new Object[]{ff, to});
                     }
                     return to;
                 } catch (IOException ex) {

@@ -5,17 +5,24 @@ import java.util.Scanner;
 class PrivateNutsTerm {
     private static Scanner inScanner;
 
-    static void errPrintf(String msg, Object... p) {
+    static void errln(String msg, Object... p) {
+        System.err.printf(msg, p);
+        System.err.printf("%n");
+        System.err.flush();
+    }
+
+    static void err(String msg, Object... p) {
         System.err.printf(msg, p);
         System.err.flush();
     }
 
-    static void outPrintf(String msg, Object... p) {
+    static void outln(String msg, Object... p) {
         System.out.printf(msg, p);
+        System.out.printf("%n");
         System.out.flush();
     }
 
-    static void errPrintStack(Throwable exception) {
+    static void errln(Throwable exception) {
         exception.printStackTrace(System.err);
     }
 

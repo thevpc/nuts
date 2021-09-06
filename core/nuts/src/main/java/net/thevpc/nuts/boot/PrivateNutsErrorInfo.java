@@ -1,13 +1,13 @@
 package net.thevpc.nuts.boot;
 
 class PrivateNutsErrorInfo {
-    private final String nutsId;
+    private final NutsBootId nutsId;
     private final String repository;
     private final String url;
     private final String message;
     private final Throwable throwable;
 
-    public PrivateNutsErrorInfo(String nutsId, String repository, String url, String message, Throwable throwable) {
+    public PrivateNutsErrorInfo(NutsBootId nutsId, String repository, String url, String message, Throwable throwable) {
         this.nutsId = nutsId;
         this.repository = repository;
         this.url = url;
@@ -15,7 +15,7 @@ class PrivateNutsErrorInfo {
         this.throwable = throwable;
     }
 
-    public String getNutsId() {
+    public NutsBootId getNutsId() {
         return nutsId;
     }
 

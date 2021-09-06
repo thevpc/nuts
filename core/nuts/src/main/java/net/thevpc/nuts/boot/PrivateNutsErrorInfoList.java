@@ -6,7 +6,7 @@ import java.util.List;
 class PrivateNutsErrorInfoList {
     private final List<PrivateNutsErrorInfo> all = new ArrayList<>();
 
-    public void removeErrorsFor(String nutsId) {
+    public void removeErrorsFor(NutsBootId nutsId) {
         all.removeIf(x -> x.getNutsId().equals(nutsId));
     }
 

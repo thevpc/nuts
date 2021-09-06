@@ -71,7 +71,6 @@ public class PrivateNutsLog {
             m.appendTail(sb);
             doLog(lvl, logVerb, sb.toString());
         }
-//        LOG.log(lvl, s, objects);
     }
 
     public void log(Level lvl, String message, Throwable err) {
@@ -79,19 +78,17 @@ public class PrivateNutsLog {
             doLog(lvl, NutsLogVerb.FAIL, message);
             err.printStackTrace(System.err);
         }
-        //LOG.log(lvl, s, err);
     }
 
     private void doLog(Level lvl, NutsLogVerb logVerb, String s) {
-//        System.err.printf("%s %-6s %-7s : [%-7s] %s%n", DEFAULT_DATE_TIME_FORMATTER.format(Instant.now()), lvl, "BOOT", logVerb, s);
-        System.err.printf("%s %-6s %-7s : %s%n", DEFAULT_DATE_TIME_FORMATTER.format(Instant.now()), lvl, logVerb, s);
+        PrivateNutsTerm.errln("%s %-7s %-7s : %s", DEFAULT_DATE_TIME_FORMATTER.format(Instant.now()), lvl, logVerb, s);
     }
 
     public boolean isLoggable(Level lvl) {
         if (options == null) {
             return false;
         }
-        if (/*options.isDebug() && */options.getLogConfig() != null && lvl.intValue() >= options.getLogConfig().getLogTermLevel().intValue()) {
+        if (options.getLogConfig() != null && lvl.intValue() >= options.getLogConfig().getLogTermLevel().intValue()) {
             return true;
         }
         return false;
