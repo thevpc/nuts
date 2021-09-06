@@ -118,7 +118,7 @@ public class FolderNutIdIterator implements Iterator<NutsId> {
                             }
                         }
                     } catch (IOException ex) {
-                        //
+                        session.getWorkspace().log().of(FolderNutIdIterator.class).with().session(session).level(Level.FINEST).error(ex).log("unable to iterate {0}", file.path);
                     }
                 }
             } else {
@@ -126,11 +126,12 @@ public class FolderNutIdIterator implements Iterator<NutsId> {
                 NutsId t = null;
                 try {
                     t = model.parseId(file.path, rootFolder, filter, repository, session);
-                } catch (Exception e) {
-                    //e.printStackTrace();
+                } catch (Exception ex) {
+                    session.getWorkspace().log().of(FolderNutIdIterator.class).with().session(session).level(Level.FINEST).error(ex).log("unable to parse id from file {0}", file.path);
                 }
                 if (t != null) {
                     last = t;
+                    return true;
                 }
             }
         }

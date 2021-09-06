@@ -34,6 +34,7 @@ import net.thevpc.nuts.runtime.core.common.DefaultObservableMap;
 import net.thevpc.nuts.runtime.core.common.ObservableMap;
 import net.thevpc.nuts.runtime.core.config.NutsWorkspaceConfigManagerExt;
 import net.thevpc.nuts.runtime.core.parser.DefaultNutsIdParser;
+import net.thevpc.nuts.runtime.core.util.CoreNumberUtils;
 import net.thevpc.nuts.runtime.standalone.gui.CoreNutsUtilGui;
 import net.thevpc.nuts.runtime.standalone.util.NutsJavaSdkUtils;
 
@@ -107,20 +108,12 @@ public class DefaultNutsWorkspaceEnvManagerModel {
 
     public Integer getEnvAsInt(String property, Integer defaultValue) {
         String t = getEnv(property);
-        try {
-            return Integer.parseInt(t);
-        } catch (Exception ex) {
-            return defaultValue;
-        }
+        return CoreNumberUtils.convertToInteger(t,defaultValue);
     }
 
     public Integer getOptionAsInt(String property, Integer defaultValue) {
         String t = getOption(property);
-        try {
-            return Integer.parseInt(t);
-        } catch (Exception ex) {
-            return defaultValue;
-        }
+        return CoreNumberUtils.convertToInteger(t,defaultValue);
     }
 
     public Boolean getEnvAsBoolean(String property, Boolean defaultValue) {
@@ -370,7 +363,7 @@ public class DefaultNutsWorkspaceEnvManagerModel {
                 return ((Number) t).intValue();
             }
             if (t instanceof CharSequence) {
-                return Integer.parseInt(t.toString());
+                return CoreNumberUtils.convertToInteger(t.toString(),defaultValue);
             }
         } catch (Exception ex) {
             //

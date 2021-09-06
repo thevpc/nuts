@@ -106,4 +106,12 @@ public class CoreNumberUtils {
         return -1;
     }
 
+    public static boolean isInt(String s) {
+        try {
+            Integer.parseInt(s);
+            return true;
+        } catch (Exception ex) {
+            return false;
+        }
+    }
 }

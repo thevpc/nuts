@@ -661,7 +661,7 @@ public class CoreNutsUtils {
         try {
             int a = 0;
             for (String part : s.split("\\.")) {
-                a = a * 100 + Integer.parseInt(part);
+                a = a * 100 + CoreNumberUtils.convertToInteger(part,0);
             }
             return a;
         } catch (Exception ex) {

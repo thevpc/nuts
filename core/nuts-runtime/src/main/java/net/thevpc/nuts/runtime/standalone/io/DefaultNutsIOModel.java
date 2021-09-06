@@ -61,7 +61,7 @@ public class DefaultNutsIOModel {
     }
 
     public String expandPath(String path) {
-        return expandPath(path, ws.locations().getWorkspaceLocation().toString());
+        return expandPath(path, ws.locations().getWorkspaceLocation());
     }
 
     public String expandPath(String path, String baseFolder) {

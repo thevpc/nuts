@@ -41,6 +41,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.core.util.CoreNumberUtils;
 
 /**
  *
@@ -267,13 +268,13 @@ public class NutsElementPathFilter {
                             if (vir.length() > 0) {
                                 if (vir.indexOf('-') > 0) {
                                     String[] inter = vir.split("-");
-                                    if (inter.length == 2 && isInt(inter[0]) && isInt(inter[1])) {
+                                    if (inter.length == 2 && CoreNumberUtils.isInt(inter[0]) && CoreNumberUtils.isInt(inter[1])) {
                                         int a = Integer.parseInt(inter[0]);
                                         int b = Integer.parseInt(inter[1]);
                                         ors.add(new NutsElementNameMatcherValueInterval(a, b));
                                     }
                                 } else {
-                                    if (isInt(vir)) {
+                                    if (CoreNumberUtils.isInt(vir)) {
                                         int a = Integer.parseInt(vir);
                                         ors.add(new NutsElementNameMatcherValue(a));
                                     }
@@ -322,7 +323,7 @@ public class NutsElementPathFilter {
                     if (s.startsWith(":#")) {
                         s = s.substring(2);
                         return createIndexValueInervalMatcher(s);
-                    } else if (isInt(s)) {
+                    } else if (CoreNumberUtils.isInt(s)) {
                         return new NutsElementIndexMatcherForValue(Integer.parseInt(s));
                     } else if (s.matches("[0-9][0-9,-]+")) {
                         return createIndexValueInervalMatcher(s);
@@ -340,13 +341,13 @@ public class NutsElementPathFilter {
                 if (vir.length() > 0) {
                     if (vir.indexOf('-') > 0) {
                         String[] inter = vir.split("-");
-                        if (inter.length == 2 && isInt(inter[0]) && isInt(inter[1])) {
+                        if (inter.length == 2 && CoreNumberUtils.isInt(inter[0]) && CoreNumberUtils.isInt(inter[1])) {
                             int a = Integer.parseInt(inter[0]);
                             int b = Integer.parseInt(inter[1]);
                             ors.add(new NutsElementIndexMatcherValueInterval(a, b));
                         }
                     } else {
-                        if (isInt(vir)) {
+                        if (CoreNumberUtils.isInt(vir)) {
                             ors.add(new NutsElementIndexMatcherForValue(Integer.parseInt(vir)));
                         }
                     }
@@ -361,15 +362,6 @@ public class NutsElementPathFilter {
             }
         }
 
-    }
-
-    private static boolean isInt(String s) {
-        try {
-            Integer.parseInt(s);
-            return true;
-        } catch (Exception ex) {
-            return false;
-        }
     }
 
     private static abstract class AbstractJsonPath implements NutsElementPath {

@@ -1,4 +1,4 @@
-theme-name=default
+theme-name=ansi
 
 PRIMARY(0)=foregroundColor(1)
 PRIMARY(*)=foregroundColor(*%16)

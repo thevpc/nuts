@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.core.format.text;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.format.text.bloc.CustomStyleBlocTextFormatter;
 import net.thevpc.nuts.runtime.core.format.text.parser.*;
+import net.thevpc.nuts.runtime.core.util.CoreNumberUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
@@ -277,7 +278,7 @@ public class DefaultNutsTextManager implements NutsTextManager {
                 }
                 if (x < cc.length()) {
                     NutsTextStyle found = NutsTextStyle.of(NutsTextStyleType.valueOf(expandAlias(kind.toUpperCase().substring(0, x))),
-                            Integer.parseInt(kind.substring(x))
+                            CoreNumberUtils.convertToInteger(kind.substring(x),0)
                     );
                     return new CustomStyleBlocTextFormatter(found, session);
                 } else {

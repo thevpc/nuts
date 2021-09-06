@@ -7,6 +7,7 @@ package net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.io.NonBlockingInputStreamAdapter;
+import net.thevpc.nuts.runtime.core.util.CoreNumberUtils;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.util._IOUtils;
 
 import java.io.PrintStream;
@@ -50,7 +51,7 @@ public class NutsSettingsConnectSubCommand extends AbstractNutsSettingsSubComman
                 server = server.substring(server.indexOf("@") + 1);
             }
             if (server.contains(":")) {
-                port = Integer.parseInt(server.substring(server.indexOf(":") + 1));
+                port =  CoreNumberUtils.convertToInteger(server.substring(server.indexOf(":") + 1),-1);
                 server = server.substring(0, server.indexOf(":"));
             }
             if (!NutsUtilStrings.isBlank(login) && NutsUtilStrings.isBlank(password)) {

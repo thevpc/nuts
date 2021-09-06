@@ -26,6 +26,7 @@
 package net.thevpc.nuts.runtime.core.app;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.core.util.CoreNumberUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsJavaSdkUtils;
 
@@ -1113,7 +1114,7 @@ public final class CoreNutsArgumentsParser {
                 a = cmdLine.nextString();
                 String v = a.getStringValue();
                 if (enabled) {
-                    logConfig.setLogFileSize(Integer.parseInt(v));
+                    logConfig.setLogFileSize(CoreNumberUtils.convertToInteger(v,-1));
                 }
                 break;
             }

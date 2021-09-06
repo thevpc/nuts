@@ -451,6 +451,14 @@ Boot Runtime Version: ###${nuts.workspace-runtime.version}###
  ```sh --create```
       will create non existing workspace of fail
 
+ ```sh --theme=<theme-name>```
+      start nuts using a specific terminal coloring theme.
+      Current themes include:
+        - ##default## use default theme for the current environment
+        - ##ansi##    use ANSI colors
+        - ##horizon## used as default on linux and other NIX
+        - ##grass##   used as default on windows
+        - any file path or url   : define your customized theme
 
 ###) NUTS NON STANDARD OPTIONS:
 

@@ -264,7 +264,7 @@ public class NdiUtils {
                         }
                         Files.write(out, content);
                         if(session.isPlainTrace()){
-                            session.out().printf("create file %s%n",session.getWorkspace().io().path(out));
+                            session.out().resetLine().printf("create file %s%n",session.getWorkspace().io().path(out));
                         }
                     } catch (IOException e) {
                         throw new UncheckedIOException(e);
@@ -286,7 +286,7 @@ public class NdiUtils {
                             }
                             Files.write(out, content);
                             if(session.isPlainTrace()){
-                                session.out().printf("create file %s%n",session.getWorkspace().io().path(out));
+                                session.out().resetLine().printf("create file %s%n",session.getWorkspace().io().path(out));
                             }
                         } catch (IOException e) {
                             throw new UncheckedIOException(e);

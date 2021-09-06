@@ -269,7 +269,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                         arg = arg.trim();
                         if (arg.length() > 0) {
                             if (arg.matches("[0-9]+")) {
-                                port = Integer.parseInt(arg);
+                                port= CoreNumberUtils.convertToInteger(arg,port);
                             } else {
                                 switch (arg) {
                                     case "suspend": {

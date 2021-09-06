@@ -10,49 +10,49 @@
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
  * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.runtime.core.app;
+
+import net.thevpc.nuts.NutsArgument;
+import net.thevpc.nuts.NutsUtilStrings;
+import net.thevpc.nuts.runtime.core.filters.DefaultNutsTokenFilter;
+import net.thevpc.nuts.runtime.core.util.CoreNumberUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.UncheckedIOException;
 import java.util.NoSuchElementException;
 
-import net.thevpc.nuts.NutsUtilStrings;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.core.filters.DefaultNutsTokenFilter;
-import net.thevpc.nuts.NutsArgument;
-import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
-
 /**
  * @author thevpc
  */
 public class DefaultNutsArgument extends DefaultNutsTokenFilter implements NutsArgument {
+    /**
+     * equal character
+     */
+    private final char eq;
     boolean enabled = true;
     boolean negated = false;
     String optionPrefix = null;
     String optionName = null;
     String keyPart = null;
     String valuePart = null;
-    /**
-     * equal character
-     */
-    private final char eq;
 
     public DefaultNutsArgument(String expression) {
-        this(expression,'\0');
+        this(expression, '\0');
     }
 
 
@@ -128,8 +128,8 @@ public class DefaultNutsArgument extends DefaultNutsTokenFilter implements NutsA
                             } else if (c == '!') {
                                 negated = true;
                                 status = EXPECT_NAME;
-                            } else if (isEq(c,eq)) {
-                                eq=c;
+                            } else if (isEq(c, eq)) {
+                                eq = c;
                                 status = EXPECT_VAL;
                                 b_val = new StringBuilder();
                             } else {
@@ -158,8 +158,8 @@ public class DefaultNutsArgument extends DefaultNutsTokenFilter implements NutsA
                             } else if (c == '!') {
                                 negated = true;
                                 status = EXPECT_NAME;
-                            } else if (isEq(c,eq)) {
-                                eq=c;
+                            } else if (isEq(c, eq)) {
+                                eq = c;
                                 status = EXPECT_VAL;
                                 b_val = new StringBuilder();
                             } else {
@@ -175,8 +175,8 @@ public class DefaultNutsArgument extends DefaultNutsTokenFilter implements NutsA
                             if (c == '!') {
                                 negated = true;
                                 status = EXPECT_NAME;
-                            } else if ((isEq(c,eq))) {
-                                eq=c;
+                            } else if ((isEq(c, eq))) {
+                                eq = c;
                                 status = EXPECT_VAL;
                                 b_val = new StringBuilder();
                             } else {
@@ -189,8 +189,8 @@ public class DefaultNutsArgument extends DefaultNutsTokenFilter implements NutsA
                             break;
                         }
                         case EXPECT_NAME: {
-                            if ((isEq(c,eq))) {
-                                eq=c;
+                            if ((isEq(c, eq))) {
+                                eq = c;
                                 status = EXPECT_VAL;
                                 b_val = new StringBuilder();
                             } else {
@@ -206,7 +206,7 @@ public class DefaultNutsArgument extends DefaultNutsTokenFilter implements NutsA
                             b_val.append(c);
                             break;
                         }
-                        default:{
+                        default: {
                             throw new IllegalStateException("Unsupported state");
                         }
                     }
@@ -219,15 +219,16 @@ public class DefaultNutsArgument extends DefaultNutsTokenFilter implements NutsA
             keyPart = b_key.toString();
             valuePart = b_val == null ? null : b_val.toString();
         }
-        this.eq=(eq=='\0'?'=':eq);
+        this.eq = (eq == '\0' ? '=' : eq);
     }
-    private static boolean isEq(char found,char expected){
-        if(expected=='\0'){
-            if(found=='=' ||found==':'){
+
+    private static boolean isEq(char found, char expected) {
+        if (expected == '\0') {
+            if (found == '=' || found == ':') {
                 return true;
             }
-        }else{
-            if(found==expected){
+        } else {
+            if (found == expected) {
                 return true;
             }
         }
@@ -245,55 +246,12 @@ public class DefaultNutsArgument extends DefaultNutsTokenFilter implements NutsA
 
     @Override
     public boolean isOption() {
-        return optionPrefix!=null && optionPrefix.length() > 0;
+        return optionPrefix != null && optionPrefix.length() > 0;
     }
 
     @Override
     public boolean isNonOption() {
         return !isOption();
-    }
-
-    @Override
-    public boolean isKeyValue() {
-        return valuePart != null;
-    }
-
-    public String getStringOptionPrefix() {
-        return optionPrefix;
-    }
-
-    @Override
-    public String getKeyValueSeparator() {
-        return String.valueOf(eq);
-    }
-
-    @Override
-    public NutsArgument getArgumentKey() {
-        if (expression == null) {
-            return this;
-        }
-        return new DefaultNutsArgument(keyPart, eq);
-    }
-
-    @Override
-    public NutsArgument getArgumentOptionName() {
-        if (expression == null) {
-            return this;
-        }
-        return new DefaultNutsArgument(optionName, eq);
-    }
-
-    @Override
-    public String getStringOptionName() {
-        return optionName;
-    }
-
-    @Override
-    public NutsArgument getArgumentValue() {
-        if (expression == null) {
-            return this;
-        }
-        return new DefaultNutsArgument(valuePart, eq);
     }
 
     @Override
@@ -304,16 +262,6 @@ public class DefaultNutsArgument extends DefaultNutsTokenFilter implements NutsA
     @Override
     public String getString(String defaultValue) {
         return expression == null ? defaultValue : expression;
-    }
-
-    @Override
-    public boolean isNull() {
-        return expression == null;
-    }
-
-    @Override
-    public boolean isBlank() {
-        return expression == null || expression.trim().isEmpty();
     }
 
     @Override
@@ -328,15 +276,7 @@ public class DefaultNutsArgument extends DefaultNutsTokenFilter implements NutsA
 
     @Override
     public boolean isInt() {
-        try {
-            if (expression != null) {
-                Integer.parseInt(expression);
-                return true;
-            }
-        } catch (NumberFormatException ex) {
-            //ignore
-        }
-        return false;
+        return CoreNumberUtils.convertToInteger(expression, null) != null;
     }
 
     @Override
@@ -348,6 +288,29 @@ public class DefaultNutsArgument extends DefaultNutsTokenFilter implements NutsA
     }
 
     @Override
+    public long getLongValue() {
+        try {
+            return getArgumentValue().getLong();
+        } catch (NumberFormatException e) {
+            throw new NumberFormatException("invalid long value for " + getString() + ": " + CoreStringUtils.exceptionToString(e));
+        }
+    }
+
+    @Override
+    public double getDoubleValue() {
+        try {
+            return getArgumentValue().getDouble();
+        } catch (NumberFormatException e) {
+            throw new NumberFormatException("invalid double value for " + getString() + ": " + CoreStringUtils.exceptionToString(e));
+        }
+    }
+
+    @Override
+    public int getInt(int defaultValue) {
+        return CoreNumberUtils.convertToInteger(expression, defaultValue);
+    }
+
+    @Override
     public int getIntValue(int defaultValue) {
         return getArgumentValue().getInt(defaultValue);
     }
@@ -356,38 +319,8 @@ public class DefaultNutsArgument extends DefaultNutsTokenFilter implements NutsA
     public int getIntValue() {
         try {
             return getArgumentValue().getInt();
-        }catch (NumberFormatException e){
-            throw new NumberFormatException("invalid int value for "+getString()+": "+ CoreStringUtils.exceptionToString(e));
-        }
-    }
-
-    @Override
-    public long getLongValue() {
-        try {
-            return getArgumentValue().getLong();
-        }catch (NumberFormatException e){
-            throw new NumberFormatException("invalid long value for "+getString()+": "+CoreStringUtils.exceptionToString(e));
-        }
-    }
-
-    @Override
-    public double getDoubleValue() {
-        try {
-            return getArgumentValue().getDouble();
-        }catch (NumberFormatException e){
-            throw new NumberFormatException("invalid double value for "+getString()+": "+CoreStringUtils.exceptionToString(e));
-        }
-    }
-
-    @Override
-    public int getInt(int defaultValue) {
-        if (NutsUtilStrings.isBlank(expression)) {
-            return defaultValue;
-        }
-        try {
-            return Integer.parseInt(expression);
-        } catch (NumberFormatException ex) {
-            return defaultValue;
+        } catch (NumberFormatException e) {
+            throw new NumberFormatException("invalid int value for " + getString() + ": " + CoreStringUtils.exceptionToString(e));
         }
     }
 
@@ -473,12 +406,7 @@ public class DefaultNutsArgument extends DefaultNutsTokenFilter implements NutsA
 
     @Override
     public Boolean getBoolean(Boolean defaultValue) {
-        return NutsUtilStrings.parseBoolean(expression, defaultValue,false);
-    }
-
-    @Override
-    public String toString() {
-        return String.valueOf(expression);
+        return NutsUtilStrings.parseBoolean(expression, defaultValue, false);
     }
 
     @Override
@@ -487,6 +415,49 @@ public class DefaultNutsArgument extends DefaultNutsTokenFilter implements NutsA
             throw new NoSuchElementException("missing value");
         }
         return this;
+    }
+
+    @Override
+    public boolean isKeyValue() {
+        return valuePart != null;
+    }
+
+    @Override
+    public NutsArgument getArgumentKey() {
+        if (expression == null) {
+            return this;
+        }
+        return new DefaultNutsArgument(keyPart, eq);
+    }
+
+    public String getStringOptionPrefix() {
+        return optionPrefix;
+    }
+
+    @Override
+    public String getKeyValueSeparator() {
+        return String.valueOf(eq);
+    }
+
+    @Override
+    public NutsArgument getArgumentOptionName() {
+        if (expression == null) {
+            return this;
+        }
+        return new DefaultNutsArgument(optionName, eq);
+    }
+
+    @Override
+    public String getStringOptionName() {
+        return optionName;
+    }
+
+    @Override
+    public NutsArgument getArgumentValue() {
+        if (expression == null) {
+            return this;
+        }
+        return new DefaultNutsArgument(valuePart, eq);
     }
 
     @Override
@@ -500,11 +471,6 @@ public class DefaultNutsArgument extends DefaultNutsTokenFilter implements NutsA
     }
 
     @Override
-    public boolean getBooleanValue() {
-        return getArgumentValue().getBoolean();
-    }
-
-    @Override
     public Boolean getBooleanValue(Boolean defaultValue) {
         return getArgumentValue().getBoolean(defaultValue);
     }
@@ -512,5 +478,25 @@ public class DefaultNutsArgument extends DefaultNutsTokenFilter implements NutsA
     @Override
     public String getStringValue(String defaultValue) {
         return getArgumentValue().getString(defaultValue);
+    }
+
+    @Override
+    public boolean getBooleanValue() {
+        return getArgumentValue().getBoolean();
+    }
+
+    @Override
+    public boolean isNull() {
+        return expression == null;
+    }
+
+    @Override
+    public boolean isBlank() {
+        return expression == null || expression.trim().isEmpty();
+    }
+
+    @Override
+    public String toString() {
+        return String.valueOf(expression);
     }
 }
