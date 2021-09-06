@@ -1,0 +1,122 @@
+## This file is an example of NTF theme file
+## Theme files are used to define colors to consider when rendering NTF text.
+## Theme files are simple property files.
+## The contain three types of information:
+##   Theme name (here: theme-name=horizon )
+##   NTF styles  (here PRIMARY(0)=foregroundColor(DARK_BLUE) )
+##   and  custom define variables (here 'BRIGHT_RED=9')
+##
+## valid NTF style ids are
+##   PRIMARY,SECONDARY,TITLE,KEYWORD,OPTION, ERROR, SUCCESS,
+##   WARN,INFO,CONFIG,DATE,NUMBER,BOOLEAN,STRING,SEPARATOR,
+##   OPERATOR,INPUT,FAIL,DANGER,VAR,PALE,VERSION,PATH
+## each NTF style is indexed by a number or * for any number
+## and has an expression function as value
+## valid functions are
+##    plain
+##    underlined
+##    bold
+##    blink
+##    striked
+##    reversed
+##    italic
+##    foreground or foregroundColor
+##    background or backgroundColor
+##    foregroundTrueColor
+##    backgroundTrueColor
+## besides expressions can reference styles as well and hence
+## the following are valid functions :
+##    primary, secondary, bool, comments, config, danger, date,
+##    number, error, warn, version, variable, input, title, success,
+##    option, pale, operator, keyword, info, fail, string, separator
+
+
+
+theme-name=horizon
+
+BLACK=1
+DARK_RED=1
+DARK_GREEN=2
+DARK_YELLOW=3
+DARK_BLUE=4
+DARK_VIOLET=5
+DARK_SKY=6
+LIGHT_GRAY=7
+DARK_GRAY=8
+BRIGHT_RED=9
+BRIGHT_GREEN=10
+BRIGHT_YELLOW=11
+BRIGHT_BLUE=12
+BRIGHT_VIOLET=13
+BRIGHT_SKY=14
+WHITE=15
+
+PRIMARY(0)=foregroundColor(DARK_BLUE)
+PRIMARY(1)=foregroundColor(DARK_BLUE)
+PRIMARY(2)=foregroundColor(BRIGHT_BLUE)
+PRIMARY(3)=foregroundColor(DARK_SKY)
+PRIMARY(4)=foregroundColor(BRIGHT_SKY)
+PRIMARY(5)=foregroundColor(DARK_GREEN)
+PRIMARY(6)=foregroundColor(BRIGHT_GREEN)
+PRIMARY(7)=foregroundColor(DARK_VIOLET)
+PRIMARY(8)=foregroundColor(BRIGHT_VIOLET)
+PRIMARY(9)=foregroundColor(DARK_YELLOW)
+PRIMARY(10)=foregroundColor(BRIGHT_YELLOW)
+PRIMARY(11)=foregroundColor(DARK_RED)
+PRIMARY(12)=foregroundColor(BRIGHT_RED)
+PRIMARY(13)=foregroundColor(DARK_GRAY)
+PRIMARY(14)=foregroundColor(LIGHT_GRAY)
+PRIMARY(15)=foregroundColor(WHITE)
+PRIMARY(*)=PRIMARY(*%16)
+
+SECONDARY(0)=backgroundColor(DARK_BLUE)
+SECONDARY(1)=backgroundColor(DARK_BLUE)
+SECONDARY(2)=backgroundColor(BRIGHT_BLUE)
+SECONDARY(3)=backgroundColor(DARK_SKY)
+SECONDARY(4)=backgroundColor(BRIGHT_SKY)
+SECONDARY(5)=backgroundColor(DARK_GREEN)
+SECONDARY(6)=backgroundColor(BRIGHT_GREEN)
+SECONDARY(7)=backgroundColor(DARK_VIOLET)
+SECONDARY(8)=backgroundColor(BRIGHT_VIOLET)
+SECONDARY(9)=backgroundColor(DARK_YELLOW)
+SECONDARY(10)=backgroundColor(BRIGHT_YELLOW)
+SECONDARY(11)=backgroundColor(DARK_RED)
+SECONDARY(12)=backgroundColor(BRIGHT_RED)
+SECONDARY(13)=backgroundColor(DARK_GRAY)
+SECONDARY(14)=backgroundColor(LIGHT_GRAY)
+SECONDARY(15)=backgroundColor(WHITE)
+SECONDARY(*)=SECONDARY(*%16)
+
+TITLE(*)=primary(*),underlined()
+
+KEYWORD(0)=foregroundColor(DARK_BLUE)
+KEYWORD(1)=foregroundColor(DARK_SKY)
+KEYWORD(2)=foregroundColor(DARK_VIOLET)
+KEYWORD(3)=foregroundColor(BRIGHT_VIOLET)
+KEYWORD(*)=KEYWORD(*%4)
+
+OPTION(0)=foregroundColor(DARK_SKY)
+OPTION(1)=foregroundColor(66)
+OPTION(2)=foregroundColor(102)
+OPTION(3)=foregroundColor(138)
+OPTION(*)=KEYWORD(*%4)
+
+ERROR(*)=foregroundColor(DARK_RED)
+SUCCESS(*)=foregroundColor(DARK_GREEN)
+WARN(*)=foregroundColor(DARK_YELLOW)
+INFO(*)=foregroundColor(DARK_SKY)
+CONFIG(*)=foregroundColor(DARK_VIOLET)
+DATE(*)=foregroundColor(DARK_VIOLET)
+NUMBER(*)=foregroundColor(DARK_VIOLET)
+BOOLEAN(*)=foregroundColor(DARK_VIOLET)
+STRING(*)=foregroundColor(DARK_GRAY)
+SEPARATOR(*)=foregroundColor(208)
+OPERATOR(*)=foregroundColor(208)
+INPUT(*)=foregroundColor(BRIGHT_YELLOW)
+FAIL(*)=foregroundColor(124)
+DANGER(*)=foregroundColor(124)
+VAR(*)=foregroundColor(190)
+PALE(*)=foregroundColor(250)
+VERSION(*)=foregroundColor(220)
+PATH(*)=foregroundColor(114)
+

@@ -1,0 +1,67 @@
+## This file is an example of NTF theme file
+## Theme files are used to define colors to consider when rendering NTF text.
+## Theme files are simple property files.
+## The contain three types of information:
+##   Theme name (here: theme-name=horizon )
+##   NTF styles  (here PRIMARY(0)=foregroundColor(DARK_BLUE) )
+##   and  custom define variables (here 'BRIGHT_RED=9')
+##
+## valid NTF style ids are
+##   PRIMARY,SECONDARY,TITLE,KEYWORD,OPTION, ERROR, SUCCESS,
+##   WARN,INFO,CONFIG,DATE,NUMBER,BOOLEAN,STRING,SEPARATOR,
+##   OPERATOR,INPUT,FAIL,DANGER,VAR,PALE,VERSION,PATH
+## each NTF style is indexed by a number or * for any number
+## and has an expression function as value
+## valid functions are
+##    plain
+##    underlined
+##    bold
+##    blink
+##    striked
+##    reversed
+##    italic
+##    foreground or foregroundColor
+##    background or backgroundColor
+##    foregroundTrueColor
+##    backgroundTrueColor
+## besides expressions can reference styles as well and hence
+## the following are valid functions :
+##    primary, secondary, bool, comments, config, danger, date,
+##    number, error, warn, version, variable, input, title, success,
+##    option, pale, operator, keyword, info, fail, string, separator
+
+
+
+theme-name=horizon
+
+_STRONG=bold
+_STRONGER=bold,underlined
+
+PRIMARY=_STRONG
+
+SECONDARY=_STRONG
+
+TITLE=_STRONGER
+
+KEYWORD=_STRONG
+
+OPTION=plain
+ERROR=plain
+SUCCESS=plain
+WARN=plain
+INFO=plain
+CONFIG=plain
+DATE=plain
+NUMBER=plain
+BOOLEAN=plain
+STRING=plain
+SEPARATOR=plain
+OPERATOR=plain
+INPUT=plain
+VAR=plain
+PALE=plain
+VERSION=plain
+PATH=plain
+
+FAIL(*)=error
+DANGER(*)=error
