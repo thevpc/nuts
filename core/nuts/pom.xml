@@ -90,6 +90,9 @@
                         <manifest>
                             <mainClass>net.thevpc.nuts.Nuts</mainClass>
                         </manifest>
+                        <manifestEntries>
+                            <Automatic-Module-Name>net.thevpc.nuts.nuts</Automatic-Module-Name>
+                        </manifestEntries>
                     </archive>
                 </configuration>
             </plugin>
