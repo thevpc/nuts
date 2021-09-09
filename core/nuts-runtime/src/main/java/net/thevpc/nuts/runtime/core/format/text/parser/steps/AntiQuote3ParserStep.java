@@ -119,7 +119,7 @@ public class AntiQuote3ParserStep extends ParserStep {
                 return;
             }
         }
-        throw new IllegalArgumentException("Unexpected");
+        throw new IllegalArgumentException("unexpected");
     }
 
     @Override

@@ -27,8 +27,10 @@ package net.thevpc.nuts.runtime.core.model;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.CoreArrayUtils;
+import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 
 import java.util.*;
+import java.util.logging.Level;
 
 /**
  * Created by vpc on 1/5/17.
@@ -57,16 +59,11 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
     private String[] icons;
     private String[] categories;
     private String genericName;
-    private String[] arch;
-    private String[] os;
-    private String[] osdist;
-    private String[] platform;
-    private String[] desktopEnvironment;
+    private NutsEnvCondition condition;
     private NutsIdLocation[] locations;
-    private NutsClassifierMapping[] classifierMappings;
     private NutsDependency[] dependencies;
     private NutsDependency[] standardDependencies;
-    private Map<String, String> properties;
+    private NutsDescriptorProperty[] properties;
 
     public DefaultNutsDescriptor(NutsDescriptor d, NutsSession session) {
         this(
@@ -81,16 +78,11 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
                 d.getInstaller(),
                 d.getName(),
                 d.getDescription(),
-                d.getArch(),
-                d.getOs(),
-                d.getOsdist(),
-                d.getPlatform(),
-                d.getDesktopEnvironment(),
+                d.getCondition(),
                 d.getDependencies(),
                 d.getStandardDependencies(),
                 d.getLocations(),
                 d.getProperties(),
-                d.getClassifierMappings(),
                 d.getGenericName(),
                 d.getCategories(),
                 d.getIcons(),
@@ -101,12 +93,10 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
     public DefaultNutsDescriptor(NutsId id, /*String alternative, */NutsId[] parents, String packaging, boolean executable, boolean application,
                                  //                                 String ext,
                                  NutsArtifactCall executor, NutsArtifactCall installer, String name, String description,
-                                 String[] arch, String[] os, String[] osdist,
-                                 String[] platform,
-                                 String[] desktopEnvironment,
+                                 NutsEnvCondition condition,
                                  NutsDependency[] dependencies,
                                  NutsDependency[] standardDependencies,
-                                 NutsIdLocation[] locations, Map<String, String> properties, NutsClassifierMapping[] classifierMappings,
+                                 NutsIdLocation[] locations, NutsDescriptorProperty[] properties,
                                  String genericName, String[] categories, String[] icons,
                                  NutsSession session) {
         super(session);
@@ -141,14 +131,8 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
                         .toArray(String[]::new);
         this.executor = executor;
         this.installer = installer;
-//        this.ext = NutsUtilStrings.trimToNull(ext);
-        this.arch = CoreArrayUtils.toArraySet(arch);
-        this.os = CoreArrayUtils.toArraySet(os);
-        this.osdist = CoreArrayUtils.toArraySet(osdist);
-        this.platform = CoreArrayUtils.toArraySet(platform);
-        this.desktopEnvironment = CoreArrayUtils.toArraySet(desktopEnvironment);
+        this.condition = CoreNutsUtils.trimToBlank(condition,session);
         this.locations = CoreArrayUtils.toArraySet(locations);
-        this.classifierMappings = CoreArrayUtils.toArraySet(classifierMappings);
         this.dependencies = dependencies == null ? new NutsDependency[0] : new NutsDependency[dependencies.length];
         for (int i = 0; i < this.dependencies.length; i++) {
             if (dependencies[i] == null) {
@@ -163,17 +147,23 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
             }
             this.standardDependencies[i] = standardDependencies[i];
         }
-        if (properties == null || properties.isEmpty()) {
+        if (properties == null || properties.length==0) {
             this.properties = null;
         } else {
-            HashMap<String, String> p = new HashMap<>(properties);
-            this.properties = Collections.unmodifiableMap(p);
+            DefaultNutsProperties p = new DefaultNutsProperties();
+            p.addAll(properties);
+            this.properties = p.getAll();
         }
         if (this.properties != null
-                && "true".equals(this.properties.get("nuts.application"))
                 && !application
         ) {
-            System.out.println("why");
+            String p = getPropertyValue("nuts.application");
+            if("true".equals(p)){
+                session.getWorkspace().log().of(DefaultNutsDescriptor.class)
+                        .with().level(Level.FINEST)
+                        .verb(NutsLogVerb.WARNING)
+                        .log("{0} has nuts.application flag armed but is not an application", getId());
+            }
         }
     }
 
@@ -212,28 +202,8 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
     }
 
     @Override
-    public String[] getArch() {
-        return arch;
-    }
-
-    @Override
-    public String[] getOs() {
-        return os;
-    }
-
-    @Override
-    public String[] getOsdist() {
-        return osdist;
-    }
-
-    @Override
-    public String[] getPlatform() {
-        return platform;
-    }
-
-    @Override
-    public String[] getDesktopEnvironment() {
-        return desktopEnvironment;
+    public NutsEnvCondition getCondition() {
+        return condition;
     }
 
     @Override
@@ -244,11 +214,6 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
     @Override
     public String getDescription() {
         return description;
-    }
-
-    @Override
-    public NutsClassifierMapping[] getClassifierMappings() {
-        return classifierMappings;
     }
 
     @Override
@@ -277,8 +242,23 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
     }
 
     @Override
-    public Map<String, String> getProperties() {
-        return properties == null ? Collections.EMPTY_MAP : Collections.unmodifiableMap(properties);
+    public NutsDescriptorProperty getProperty(String name) {
+        if(properties==null){
+            return null;
+        }
+        return Arrays.stream(properties).filter(x->x.getName().equals(name)).findFirst()
+                .orElse(null);
+    }
+
+    @Override
+    public String getPropertyValue(String name) {
+        NutsDescriptorProperty p=getProperty(name);
+        return p==null?null:p.getValue();
+    }
+
+    @Override
+    public NutsDescriptorProperty[] getProperties() {
+        return properties == null ? new NutsDescriptorProperty[0] : properties;
     }
 
     @Override
@@ -301,18 +281,13 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
 
         int result = Objects.hash(id, /*alternative,*/ packaging,
                 //                ext,
-                executable, application, executor, installer, name, description, properties,
-                categories,genericName
+                executable, application, executor, installer, name, description,genericName,condition
                 );
+        result = 31 * result + Arrays.hashCode(categories);
+        result = 31 * result + Arrays.hashCode(properties);
         result = 31 * result + Arrays.hashCode(icons);
         result = 31 * result + Arrays.hashCode(parents);
-        result = 31 * result + Arrays.hashCode(arch);
-        result = 31 * result + Arrays.hashCode(os);
-        result = 31 * result + Arrays.hashCode(osdist);
-        result = 31 * result + Arrays.hashCode(platform);
-        result = 31 * result + Arrays.hashCode(desktopEnvironment);
         result = 31 * result + Arrays.hashCode(locations);
-        result = 31 * result + Arrays.hashCode(classifierMappings);
         result = 31 * result + Arrays.hashCode(dependencies);
         result = 31 * result + Arrays.hashCode(standardDependencies);
         return result;
@@ -341,16 +316,11 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
                 && Arrays.equals(categories, that.categories)
                 && Objects.equals(genericName, that.genericName)
                 && Objects.equals(description, that.description)
-                && Arrays.equals(arch, that.arch)
-                && Arrays.equals(os, that.os)
-                && Arrays.equals(osdist, that.osdist)
-                && Arrays.equals(platform, that.platform)
-                && Arrays.equals(desktopEnvironment, that.desktopEnvironment)
+                && Objects.equals(condition, that.condition)
                 && Arrays.equals(locations, that.locations)
-                && Arrays.equals(classifierMappings, that.classifierMappings)
                 && Arrays.equals(dependencies, that.dependencies)
                 && Arrays.equals(standardDependencies, that.standardDependencies)
-                && Objects.equals(properties, that.properties);
+                && Arrays.equals(properties, that.properties);
     }
 
     @Override
@@ -367,18 +337,14 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
                 + ", installer=" + installer
                 + ", name='" + name + '\''
                 + ", description='" + description + '\''
-                + ", arch=" + Arrays.toString(arch)
-                + ", os=" + Arrays.toString(os)
-                + ", osdist=" + Arrays.toString(osdist)
-                + ", platform=" + Arrays.toString(platform)
-                + ", desktopEnvironment=" + Arrays.toString(desktopEnvironment)
+                + ", condition=" + condition
                 + ", locations=" + Arrays.toString(locations)
                 + ", dependencies=" + Arrays.toString(dependencies)
                 + ", standardDependencies=" + Arrays.toString(standardDependencies)
                 + ", icon=" + Arrays.toString(icons)
-                + ", category=" + categories
+                + ", category=" + Arrays.toString(categories)
                 + ", genericName=" + genericName
-                + ", properties=" + properties
+                + ", properties=" + Arrays.toString(properties)
                 + '}';
     }
 }

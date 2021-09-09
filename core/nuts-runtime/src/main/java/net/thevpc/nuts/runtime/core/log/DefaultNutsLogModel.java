@@ -68,7 +68,6 @@ public class DefaultNutsLogModel {
             logConfig.setLogFileCount(lc.getLogFileCount());
             logConfig.setLogFileBase(lc.getLogFileBase());
             logConfig.setLogFileSize(lc.getLogFileSize());
-            logConfig.setLogInherited(lc.isLogInherited());
         }
         out = workspace.io().stderr();
     }

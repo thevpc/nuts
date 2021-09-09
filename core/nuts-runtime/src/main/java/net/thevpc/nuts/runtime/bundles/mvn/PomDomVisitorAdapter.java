@@ -106,4 +106,24 @@ public class PomDomVisitorAdapter implements PomDomVisitor {
     public void visitEndDependenciesManagement(Element dependenciesElement, PomDependency[] dependencies) {
 
     }
+
+    @Override
+    public void visitStartProfile(Element dependencyElement) {
+
+    }
+
+    @Override
+    public void visitStartProfiles(Element dependenciesElement) {
+
+    }
+
+    @Override
+    public void visitEndProfile(Element profile, PomProfile p) {
+
+    }
+
+    @Override
+    public void visitEndProfiles(Element elem1, PomProfile[] arr) {
+
+    }
 }

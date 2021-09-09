@@ -24,9 +24,16 @@ public class DefaultNutsWorkspaceEnvManager implements NutsWorkspaceEnvManager {
     public static final Pattern UNIX_USER_DIRS_PATTERN = Pattern.compile("^\\s*(?<k>[A-Z_]+)\\s*=\\s*(?<v>.*)$");
     private final DefaultNutsWorkspaceEnvManagerModel model;
     private NutsSession session;
+    protected DefaultNutsPlatformModel sdkModel;
 
     public DefaultNutsWorkspaceEnvManager(DefaultNutsWorkspaceEnvManagerModel model) {
         this.model = model;
+        this.sdkModel = new DefaultNutsPlatformModel(model.getWorkspace());
+    }
+
+    @Override
+    public NutsPlatformManager platforms() {
+        return new DefaultNutsPlatformManager(sdkModel).setSession(getSession());
     }
 
     NutsWorkspaceConfigMain getStoreModelMain() {

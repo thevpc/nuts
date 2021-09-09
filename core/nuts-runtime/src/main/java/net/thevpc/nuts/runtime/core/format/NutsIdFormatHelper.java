@@ -366,8 +366,8 @@ public class NutsIdFormatHelper {
                 return text.forStyled("missing-file-name", NutsTextStyle.error());
             }
             case ARCH: {
-                if (desc != null) {
-                    return keywordArr1(desc.getArch());
+                if (desc != null  && desc.getCondition().getArch().length>0) {
+                    return keywordArr1(desc.getCondition().getArch());
                 }
                 return text.forStyled("missing-arch", NutsTextStyle.error());
             }
@@ -378,14 +378,14 @@ public class NutsIdFormatHelper {
                 return text.forStyled("missing-name", NutsTextStyle.error());
             }
             case OS: {
-                if (desc != null) {
-                    return keywordArr2(desc.getOs());
+                if (desc != null  && desc.getCondition().getOs().length>0) {
+                    return keywordArr2(desc.getCondition().getOs());
                 }
                 return text.forStyled("missing-os", NutsTextStyle.error());
             }
             case OSDIST: {
-                if (desc != null) {
-                    return keywordArr2(desc.getOsdist());
+                if (desc != null && desc.getCondition().getOsDist().length>0) {
+                    return keywordArr2(desc.getCondition().getOsDist());
                 }
                 return text.forStyled("missing-osdist", NutsTextStyle.error());
             }
@@ -396,10 +396,16 @@ public class NutsIdFormatHelper {
                 return text.forStyled("missing-packaging", NutsTextStyle.error());
             }
             case PLATFORM: {
-                if (desc != null) {
-                    return keywordArr1(desc.getPlatform());
+                if (desc != null && desc.getCondition().getPlatform().length>0) {
+                    return keywordArr1(desc.getCondition().getPlatform());
                 }
                 return text.forStyled("missing-platform", NutsTextStyle.error());
+            }
+            case DESKTOP_ENVIRONMENT: {
+                if (desc != null && desc.getCondition().getDesktopEnvironment().length>0) {
+                    return keywordArr1(desc.getCondition().getDesktopEnvironment());
+                }
+                return text.forStyled("missing-desktop-environment", NutsTextStyle.error());
             }
             case INSTALL_DATE: {
                 if (def != null && def.getInstallInformation() != null) {

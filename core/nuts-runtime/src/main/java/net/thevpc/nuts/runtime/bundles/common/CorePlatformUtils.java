@@ -27,6 +27,7 @@ package net.thevpc.nuts.runtime.bundles.common;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.io.SimpleClassStream;
+import net.thevpc.nuts.runtime.core.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 import java.io.*;
@@ -104,7 +105,7 @@ public class CorePlatformUtils {
 //        SUPPORTED_ARCH_ALIASES.put("i386", "x86");
         boolean _e = new String("ø".getBytes()).equals("ø");
         if (_e) {
-            switch (NutsUtilPlatforms.getPlatformOsFamily()) {
+            switch (NutsOsFamily.getCurrent()) {
                 case LINUX:
                 case MACOS: {
                     //okkay
@@ -373,24 +374,12 @@ public class CorePlatformUtils {
 //        return property;
     }
 
-    public static boolean checkSupportedArch(String arch) {
-        if (NutsUtilStrings.isBlank(arch)) {
-            return true;
-        }
-        if (SUPPORTED_ARCH.contains(arch)) {
-            return true;
-        }
-        throw new NutsIllegalArgumentException(null, NutsMessage.cstyle("unsupported Architecture %s please do use one of %s", arch, SUPPORTED_ARCH));
-    }
 
-    public static boolean checkSupportedOs(String os) {
-        if (NutsUtilStrings.isBlank(os)) {
-            return true;
+    public static boolean checkSupportedSys(NutsEnvCondition condition,NutsSession session) {
+        if(!CoreFilterUtils.matchesSys(condition,session)){
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unsupported environment"));
         }
-        if (SUPPORTED_OS.contains(os)) {
-            return true;
-        }
-        throw new NutsIllegalArgumentException(null, NutsMessage.cstyle("unsupported Operating System %s please do use one of %s", os, SUPPORTED_OS));
+        return true;
     }
 
     public static Boolean getExecutableJar(File file) {

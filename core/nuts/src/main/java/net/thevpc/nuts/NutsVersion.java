@@ -10,19 +10,19 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
  * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.NutsApiUtils;
@@ -73,6 +73,8 @@ public interface NutsVersion extends Serializable, NutsTokenFilter, NutsFormatta
      */
     NutsVersionFilter filter();
 
+    NutsVersionFilter filterCompat();
+
     /**
      * parse the current version as an interval array
      * @return new interval array
@@ -84,6 +86,13 @@ public interface NutsVersion extends Serializable, NutsTokenFilter, NutsFormatta
      * @return true if this version denotes as single value and does not match an interval.
      */
     boolean isSingleValue();
+
+    /**
+     * return true if this is a filter
+     * @return true if this is a filter
+     */
+    boolean isFilter();
+
 
     /**
      * increment the last number in the version with 1
@@ -165,6 +174,25 @@ public interface NutsVersion extends Serializable, NutsTokenFilter, NutsFormatta
      * @return number element at position or default value
      */
 
-    BigInteger getNumber(int index,BigInteger defaultValue);
-    BigInteger getNumber(int index,long defaultValue);
+    BigInteger getNumber(int index, BigInteger defaultValue);
+
+    /**
+     * return number element at position or default value. if the index is negative will return from right (-1 is the first starting from the right).
+     * The version is first split (as a suite of number and words) then all words are discarded.
+     * @param index position
+     * @param defaultValue default value
+     * @return number element at position or default value
+     * @since 0.8.3
+     */
+    int getInt(int index, int defaultValue);
+
+    /**
+     * return number element at position or default value. if the index is negative will return from right (-1 is the first starting from the right).
+     * The version is first split (as a suite of number and words) then all words are discarded.
+     * @param index position
+     * @param defaultValue default value
+     * @return number element at position or default value
+     * @since 0.8.3
+     */
+    long getLong(int index, long defaultValue);
 }

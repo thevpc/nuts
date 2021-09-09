@@ -511,4 +511,19 @@ public final class CoreStringUtils {
         }
         return sb.toString();
     }
+
+    public static String[] parseAndTrimToDistinctArray(String s){
+        if(s==null){
+            return  new String[0];
+        }
+        return Arrays.stream(s.split(",")).map(x->x.trim())
+                .filter(x->x.length()>0)
+                .distinct().toArray(String[]::new);
+    }
+
+    public static String joinAndTrimToNull(String[] args){
+        return NutsUtilStrings.trimToNull(
+                String.join(",",args)
+        );
+    }
 }

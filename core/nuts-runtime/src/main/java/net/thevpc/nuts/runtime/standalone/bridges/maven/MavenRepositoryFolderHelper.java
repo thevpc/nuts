@@ -138,7 +138,7 @@ public class MavenRepositoryFolderHelper {
         return new FolderNutIdIterator(repo == null ? null : repo.getName(), folder, rootPath, filter, session, new FolderNutIdIterator.AbstractFolderNutIdIteratorModel() {
             @Override
             public void undeploy(NutsId id, NutsSession session) {
-                throw new IllegalArgumentException("Unsupported");
+                throw new IllegalArgumentException("unsupported undeploy");
             }
 
             @Override

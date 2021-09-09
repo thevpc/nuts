@@ -50,6 +50,7 @@ import net.thevpc.nuts.runtime.core.log.DefaultNutsLogManager;
 import net.thevpc.nuts.runtime.core.log.DefaultNutsLogModel;
 import net.thevpc.nuts.runtime.core.log.DefaultNutsLogger;
 import net.thevpc.nuts.runtime.core.model.DefaultNutsId;
+import net.thevpc.nuts.runtime.core.model.DefaultNutsProperties;
 import net.thevpc.nuts.runtime.core.model.DefaultNutsVersion;
 import net.thevpc.nuts.runtime.core.repos.DefaultNutsRepositoryManager;
 import net.thevpc.nuts.runtime.core.repos.DefaultNutsRepositoryModel;
@@ -119,7 +120,6 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
     protected DefaultNutsWorkspaceEventModel eventsModel;
     protected DefaultNutsTextManagerModel textModel;
     protected DefaultNutsIOModel ioModel;
-    protected DefaultNutsSdkModel sdkModel;
     protected DefaultNutsTerminalModel termModel;
     protected String uuid;
     protected String location;
@@ -216,7 +216,6 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         this.name = Paths.get(info.getWorkspaceLocation()).getFileName().toString();
         this.termModel = new DefaultNutsTerminalModel(this);
         this.concurrentModel = new DefaultNutsConcurrentModel(this);
-        this.sdkModel = new DefaultNutsSdkModel(this);
         this.filtersModel = new DefaultNutsFilterModel(this);
         this.installedRepository = new DefaultNutsInstalledRepository(this, info);
         this.repositoryModel = new DefaultNutsRepositoryModel(this);
@@ -653,12 +652,12 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             if (session.isPlainTrace()) {
                 session.out().resetLine().println("looking for java installations in default locations...");
             }
-            NutsSdkLocation[] found = session.getWorkspace().sdks()
+            NutsPlatformLocation[] found = session.getWorkspace().env().platforms()
                     .setSession(session.copy().setTrace(false))
                     .searchSystem("java");
             int someAdded = 0;
-            for (NutsSdkLocation java : found) {
-                if (session.getWorkspace().sdks().add(java)) {
+            for (NutsPlatformLocation java : found) {
+                if (session.getWorkspace().env().platforms().add(java)) {
                     someAdded++;
                 }
             }
@@ -753,7 +752,50 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                     session
             );
         }
-        NutsDescriptor effectiveDescriptor = descriptor.builder().applyParents(parentDescriptors).applyProperties().build();
+        //compute effective!
+        NutsDescriptorBuilder descrWithParents = descriptor.builder().applyParents(parentDescriptors);
+        //now apply conditions!
+        NutsDescriptorProperty[] properties = Arrays.stream(descrWithParents.getProperties()).filter(x -> CoreNutsUtils.acceptCondition(
+                x.getCondition(), true, session)).toArray(NutsDescriptorProperty[]::new);
+        if(properties.length>0){
+            DefaultNutsProperties pp=new DefaultNutsProperties();
+            List<NutsDescriptorProperty> n=new ArrayList<>();
+            pp.addAll(properties);
+            for (String s : pp.keySet()) {
+                NutsDescriptorProperty[] a = pp.getAll(s);
+                if(a.length==1){
+                    n.add(a[0].builder().setCondition((NutsEnvCondition) null).build());
+                }else{
+                    NutsDescriptorProperty z=null;
+                    for (NutsDescriptorProperty zz : a) {
+                        if(z==null){
+                            z=zz;
+                            boolean wasZZ=(zz.getCondition()==null || zz.getCondition().isBlank());
+                            if(!wasZZ){
+                                break; //match first condition!
+                            }
+                        }else {
+                            boolean wasZ=(z.getCondition()==null || z.getCondition().isBlank());
+                            boolean wasZZ=(zz.getCondition()==null || zz.getCondition().isBlank());
+                            if(wasZ==wasZZ || !wasZ){
+                                z=zz;
+                            }
+                            if(!wasZZ){
+                                break; //match first condition!
+                            }
+                        }
+                    }
+                    if(z!=null){
+                        n.add(z.builder().setCondition((NutsEnvCondition) null).build());
+                    }
+                }
+            }
+            properties=n.toArray(new NutsDescriptorProperty[0]);
+        }
+
+        descrWithParents.setProperties(properties);
+
+        NutsDescriptor effectiveDescriptor = descrWithParents.applyProperties().build();
         NutsDependency[] oldDependencies = effectiveDescriptor.getDependencies();
         List<NutsDependency> newDeps = new ArrayList<>();
         boolean someChange = false;
@@ -1367,7 +1409,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             }
         }
         if (CoreStringUtils.containsVars(g) || CoreStringUtils.containsVars(v) || CoreStringUtils.containsVars(a)) {
-            Map<String, String> p = descriptor.getProperties();
+            Map<String, String> p = CoreNutsUtils.getPropertiesMap(descriptor.getProperties());
             NutsId bestId = id().builder().setGroupId(g).setArtifactId(thisId.getArtifactId()).setVersion(v).build();
             bestId = bestId.builder().apply(new MapToFunction(p)).build();
             if (CoreNutsUtils.isEffectiveId(bestId)) {
@@ -1379,7 +1421,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             while (!all.isEmpty()) {
                 NutsId parent = all.pop();
                 NutsDescriptor dd = fetch().setSession(session).setId(parent).setEffective(true).getResultDescriptor();
-                bestId = bestId.builder().apply(new MapToFunction(dd.getProperties())).build();
+                bestId = bestId.builder().apply(new MapToFunction(CoreNutsUtils.getPropertiesMap(dd.getProperties()))).build();
                 if (CoreNutsUtils.isEffectiveId(bestId)) {
                     return bestId;
                 }
@@ -1830,11 +1872,6 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
     @Override
     public NutsConcurrentManager concurrent() {
         return new DefaultNutsConcurrentManager(concurrentModel);
-    }
-
-    @Override
-    public NutsSdkManager sdks() {
-        return new DefaultNutsSdkManager(sdkModel);
     }
 
     @Override

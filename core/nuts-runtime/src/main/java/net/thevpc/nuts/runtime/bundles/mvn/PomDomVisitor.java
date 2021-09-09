@@ -31,6 +31,7 @@ public interface PomDomVisitor {
     void visitEndRepository(Element dependencyElement, PomRepository dependency);
 
     void visitStartPluginRepository(Element dependencyElement);
+    void visitStartProfile(Element dependencyElement);
 
     void visitEndPluginRepository(Element dependencyElement, PomRepository dependency);
 
@@ -39,10 +40,15 @@ public interface PomDomVisitor {
     void visitEndRepositories(Element dependenciesElement, PomRepository[] dependencies);
 
     void visitStartPluginRepositories(Element dependenciesElement);
+    void visitStartProfiles(Element dependenciesElement);
 
     void visitEndPluginRepositories(Element dependenciesElement, PomRepository[] dependencies);
 
     void visitStartProperties(Element propertiesElement);
 
     void visitEndProperties(Element propertiesElement, Map<String, String> properties);
+
+    void visitEndProfile(Element profile, PomProfile p);
+
+    void visitEndProfiles(Element elem1, PomProfile[] arr);
 }

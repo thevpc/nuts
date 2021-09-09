@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.config.compat;
 
 import net.thevpc.nuts.NutsCommandFactoryConfig;
+import net.thevpc.nuts.NutsPlatformLocation;
 import net.thevpc.nuts.NutsRepositoryRef;
-import net.thevpc.nuts.NutsSdkLocation;
 import net.thevpc.nuts.NutsUserConfig;
 
 import java.io.IOException;
@@ -105,16 +105,16 @@ public class CompatUtils {
         return list;
     }
 
-    public static List<NutsSdkLocation> copyNutsSdkLocationList(List<NutsSdkLocation> refs) {
+    public static List<NutsPlatformLocation> copyNutsSdkLocationList(List<NutsPlatformLocation> refs) {
         if (refs == null) {
             return null;
         }
-        List<NutsSdkLocation> list = new ArrayList<>();
-        for (NutsSdkLocation r : refs) {
+        List<NutsPlatformLocation> list = new ArrayList<>();
+        for (NutsPlatformLocation r : refs) {
             if (r == null) {
                 list.add(null);
             } else {
-                NutsSdkLocation r2 = new NutsSdkLocation(
+                NutsPlatformLocation r2 = new NutsPlatformLocation(
                         r.getId(),
                         r.getProduct(),
                         r.getName(),

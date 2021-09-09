@@ -117,14 +117,15 @@ public class JarPathVersionResolver implements PathVersionResolver{
                                     properties.setProperty("locations", context.getWorkspace().elem().setContentType(NutsContentType.JSON)
                                             .setValue(d.getLocations()).setNtf(false).format().filteredText()
                                     );
-                                    properties.setProperty("platform", String.join(";", d.getPlatform()));
-                                    properties.setProperty("os", String.join(";", d.getOs()));
-                                    properties.setProperty("arch", String.join(";", d.getArch()));
-                                    properties.setProperty("osdist", String.join(";", d.getOsdist()));
+                                    properties.setProperty(NutsConstants.IdProperties.ARCH, String.join(";", d.getCondition().getArch()));
+                                    properties.setProperty(NutsConstants.IdProperties.OS, String.join(";", d.getCondition().getOs()));
+                                    properties.setProperty(NutsConstants.IdProperties.OS_DIST, String.join(";", d.getCondition().getOsDist()));
+                                    properties.setProperty(NutsConstants.IdProperties.PLATFORM, String.join(";", d.getCondition().getPlatform()));
+                                    properties.setProperty(NutsConstants.IdProperties.DESKTOP_ENVIRONMENT, String.join(";", d.getCondition().getDesktopEnvironment()));
                                     properties.setProperty("nuts.version-provider", NutsConstants.Files.DESCRIPTOR_FILE_NAME);
                                     if (d.getProperties() != null) {
-                                        for (Map.Entry<String, String> e : d.getProperties().entrySet()) {
-                                            properties.put("property." + e.getKey(), e.getValue());
+                                        for (NutsDescriptorProperty e : d.getProperties()) {
+                                            properties.put("property." + e.getName(), e.getValue());
                                         }
                                     }
                                     all.add(new VersionDescriptor(d.getId(), properties));
@@ -145,8 +146,8 @@ public class JarPathVersionResolver implements PathVersionResolver{
                                     properties.put("name", d.getName());
                                     properties.setProperty("nuts.version-provider", "maven");
                                     if (d.getProperties() != null) {
-                                        for (Map.Entry<String, String> e : d.getProperties().entrySet()) {
-                                            properties.put("property." + e.getKey(), e.getValue());
+                                        for (NutsDescriptorProperty e : d.getProperties()) {
+                                            properties.put("property." + e.getName(), e.getValue());
                                         }
                                     }
                                     all.add(new VersionDescriptor(

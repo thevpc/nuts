@@ -538,9 +538,9 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                         idType = NutsIdType.RUNTIME;
                         apiId = apiId0;
                     } else {
-                        if (NutsUtilStrings.parseBoolean(descriptor.getProperties().get("nuts-runtime"), false, false)) {
+                        if (NutsUtilStrings.parseBoolean(descriptor.getPropertyValue("nuts-runtime"), false, false)) {
                             idType = NutsIdType.RUNTIME;
-                        } else if (NutsUtilStrings.parseBoolean(descriptor.getProperties().get("nuts-extension"), false, false)) {
+                        } else if (NutsUtilStrings.parseBoolean(descriptor.getPropertyValue("nuts-extension"), false, false)) {
                             idType = NutsIdType.EXTENSION;
                             apiId = apiId0;
                         }

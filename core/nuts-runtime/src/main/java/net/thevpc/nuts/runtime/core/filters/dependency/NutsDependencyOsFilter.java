@@ -39,10 +39,10 @@ public class NutsDependencyOsFilter extends AbstractDependencyFilter  {
 
     @Override
     public boolean acceptDependency(NutsId from, NutsDependency dependency, NutsSession session) {
-        String current = dependency.getOs();
+        String[] current = dependency.getCondition().getOs();
         boolean empty = true;
         if (current != null) {
-            for (String e : current.split("[,; ]")) {
+            for (String e : current) {
                 if (!e.isEmpty()) {
                     empty = false;
                     if (os.contains(NutsOsFamily.parseLenient(e))) {

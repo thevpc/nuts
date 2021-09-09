@@ -109,7 +109,7 @@ public class InternalNutsDescriptorFilterManager extends InternalNutsTypedFilter
     }
 
     @Override
-    public NutsDescriptorFilter byOsdist(String... values) {
+    public NutsDescriptorFilter byOsDist(String... values) {
         checkSession();
         if (values == null || values.length == 0) {
             return always();
@@ -117,6 +117,22 @@ public class InternalNutsDescriptorFilterManager extends InternalNutsTypedFilter
         List<NutsDescriptorFilter> packs = new ArrayList<>();
         for (String v : values) {
             packs.add(new NutsDescriptorFilterOsdist(getSession(), v));
+        }
+        if (packs.size() == 1) {
+            return packs.get(0);
+        }
+        return all(packs.toArray(new NutsDescriptorFilter[0]));
+    }
+
+    @Override
+    public NutsDescriptorFilter byOs(String... values) {
+        checkSession();
+        if (values == null || values.length == 0) {
+            return always();
+        }
+        List<NutsDescriptorFilter> packs = new ArrayList<>();
+        for (String v : values) {
+            packs.add(new NutsDescriptorFilterOs(getSession(), v));
         }
         if (packs.size() == 1) {
             return packs.get(0);
@@ -133,6 +149,22 @@ public class InternalNutsDescriptorFilterManager extends InternalNutsTypedFilter
         List<NutsDescriptorFilter> packs = new ArrayList<>();
         for (String v : values) {
             packs.add(new NutsDescriptorFilterPlatform(getSession(), v));
+        }
+        if (packs.size() == 1) {
+            return packs.get(0);
+        }
+        return all(packs.toArray(new NutsDescriptorFilter[0]));
+    }
+
+    @Override
+    public NutsDescriptorFilter byDesktopEnvironment(String... values) {
+        checkSession();
+        if (values == null || values.length == 0) {
+            return always();
+        }
+        List<NutsDescriptorFilter> packs = new ArrayList<>();
+        for (String v : values) {
+            packs.add(new NutsDescriptorFilterDesktopEnvironment(getSession(), v));
         }
         if (packs.size() == 1) {
             return packs.get(0);

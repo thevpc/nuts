@@ -310,7 +310,7 @@ public class DefaultJShellContext extends AbstractJShellContext {
                 NutsDefinition def = ws.search().addId(selectedId).setEffective(true).setSession(this.getSession()
                         .copy().setTrace(false).setFetchStrategy(NutsFetchStrategy.OFFLINE)).getResultDefinitions().required();
                 NutsDescriptor d = def.getDescriptor();
-                String nuts_autocomplete_support = NutsUtilStrings.trim(d.getProperties().get("nuts.autocomplete"));
+                String nuts_autocomplete_support = NutsUtilStrings.trim(d.getPropertyValue("nuts.autocomplete"));
                 if (d.isApplication()
                         || "true".equalsIgnoreCase(nuts_autocomplete_support)
                         || "supported".equalsIgnoreCase(nuts_autocomplete_support)) {

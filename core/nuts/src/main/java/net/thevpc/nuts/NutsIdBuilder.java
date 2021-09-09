@@ -87,28 +87,14 @@ public interface NutsIdBuilder extends Serializable {
     String getFace();
 
     /**
-     * os supported by the artifact
+     * os and env supported by the artifact
      * @return os supported by the artifact
      */
-    String getOs();
+    NutsEnvConditionBuilder getCondition();
 
-    /**
-     * os distribution supported by the artifact
-     * @return os distribution supported by the artifact
-     */
-    String getOsdist();
+    NutsIdBuilder setCondition(NutsEnvCondition c);
 
-    /**
-     * platform supported by the artifact
-     * @return platform supported by the artifact
-     */
-    String getPlatform();
-
-    /**
-     * hardware architecture supported by the artifact
-     * @return hardware architecture supported by the artifact
-     */
-    String getArch();
+    NutsIdBuilder setCondition(NutsEnvConditionBuilder c);
 
     /**
      * tag used to distinguish between different artifacts that were built from the same source code
@@ -147,38 +133,6 @@ public interface NutsIdBuilder extends Serializable {
      * @return {@code this} instance
      */
     NutsIdBuilder setClassifier(String value);
-
-
-    /**
-     * update platform
-     * @param value new value
-     * @return {@code this} instance
-     */
-    NutsIdBuilder setPlatform(String value);
-
-
-    /**
-     * update arch
-     * @param value new value
-     * @return {@code this} instance
-     */
-    NutsIdBuilder setArch(String value);
-
-
-    /**
-     * update os
-     * @param value new value
-     * @return {@code this} instance
-     */
-    NutsIdBuilder setOs(String value);
-
-
-    /**
-     * update osdist
-     * @param value new value
-     * @return {@code this} instance
-     */
-    NutsIdBuilder setOsdist(String value);
 
 
     /**
@@ -300,7 +254,7 @@ public interface NutsIdBuilder extends Serializable {
      * @param id new value
      * @return {@code this} instance
      */
-    NutsIdBuilder set(NutsId id);
+    NutsIdBuilder setAll(NutsId id);
 
 
     /**
@@ -308,7 +262,7 @@ public interface NutsIdBuilder extends Serializable {
      * @param id new value
      * @return {@code this} instance
      */
-    NutsIdBuilder set(NutsIdBuilder id);
+    NutsIdBuilder setAll(NutsIdBuilder id);
 
     /**
      * replace dollar based variables with the given properties

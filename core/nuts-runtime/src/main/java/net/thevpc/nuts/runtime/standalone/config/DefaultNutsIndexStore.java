@@ -57,8 +57,10 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
                             + String.format("?repositoryUuid=%s&name=%s&repo=%s&group=%s"
                                     + "&os=%s&osdist=%s&arch=%s&face=%s&"/*alternative=%s*/,
                             getRepository().getUuid(),
-                            NutsUtilStrings.trim(id.getArtifactId()), NutsUtilStrings.trim(id.getRepository()), NutsUtilStrings.trim(id.getGroupId()), NutsUtilStrings.trim(id.getOs()),
-                            NutsUtilStrings.trim(id.getOsdist()), NutsUtilStrings.trim(id.getArch()), NutsUtilStrings.trim(id.getFace())
+                            NutsUtilStrings.trim(id.getArtifactId()), NutsUtilStrings.trim(id.getRepository()), NutsUtilStrings.trim(id.getGroupId()),
+                            NutsUtilStrings.trim(String.join(",",id.getCondition().getOs())),
+                            NutsUtilStrings.trim(String.join(",",id.getCondition().getOsDist())),
+                            NutsUtilStrings.trim(String.join(",",id.getCondition().getArch())), NutsUtilStrings.trim(id.getFace())
 //                , NutsUtilStrings.trim(id.getAlternative())
                     );
                     try {
@@ -113,7 +115,10 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
                 + String.format("?repositoryUuid=%s&name=%s&repo=%s&group=%s&version=%s"
                         + "&os=%s&osdist=%s&arch=%s&face=%s"/*&alternative=%s*/, getRepository().getUuid(),
                 NutsUtilStrings.trim(id.getArtifactId()), NutsUtilStrings.trim(id.getRepository()), NutsUtilStrings.trim(id.getGroupId()), NutsUtilStrings.trim(id.getVersion().toString()),
-                NutsUtilStrings.trim(id.getOs()), NutsUtilStrings.trim(id.getOsdist()), NutsUtilStrings.trim(id.getArch()), NutsUtilStrings.trim(id.getFace())
+                NutsUtilStrings.trim(String.join(",",id.getCondition().getOs())),
+                NutsUtilStrings.trim(String.join(",",id.getCondition().getOsDist())),
+                NutsUtilStrings.trim(String.join(",",id.getCondition().getArch())),
+                NutsUtilStrings.trim(id.getFace())
 //                ,NutsUtilStrings.trim(id.getAlternative())
         );
         try {
@@ -136,7 +141,10 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
                 + String.format("?repositoryUuid=%s&name=%s&repo=%s&group=%s&version=%s"
                         + "&os=%s&osdist=%s&arch=%s&face=%s"/*&alternative=%s*/, getRepository().getUuid(),
                 NutsUtilStrings.trim(id.getArtifactId()), NutsUtilStrings.trim(id.getRepository()), NutsUtilStrings.trim(id.getGroupId()), NutsUtilStrings.trim(id.getVersion().toString()),
-                NutsUtilStrings.trim(id.getOs()), NutsUtilStrings.trim(id.getOsdist()), NutsUtilStrings.trim(id.getArch()), NutsUtilStrings.trim(id.getFace())
+                NutsUtilStrings.trim(String.join(",",id.getCondition().getOs())),
+                NutsUtilStrings.trim(String.join(",",id.getCondition().getOsDist())),
+                NutsUtilStrings.trim(String.join(",",id.getCondition().getArch())),
+                NutsUtilStrings.trim(id.getFace())
 //                ,NutsUtilStrings.trim(id.getAlternative())
         );
         try {

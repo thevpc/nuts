@@ -45,7 +45,7 @@ public class AnsiEscapeCommandFromNodeStyle extends AnsiEscapeCommand implements
         if(s.getType().basic()) {
             return new AnsiEscapeCommandFromNodeStyle(s);
         }else {
-            throw new IllegalArgumentException("Unsupported");
+            throw new IllegalArgumentException("unsupported");
         }
     }
 

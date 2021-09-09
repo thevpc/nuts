@@ -510,7 +510,7 @@ class DefaultNutsPrimitiveElement extends AbstractNutsElement implements NutsPri
                 //
             }
         }
-        throw new IllegalArgumentException("Invalid date " + s);
+        throw new IllegalArgumentException("invalid date " + s);
     }
 
     @Override

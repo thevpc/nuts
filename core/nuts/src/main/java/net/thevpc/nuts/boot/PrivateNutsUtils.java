@@ -112,35 +112,6 @@ final class PrivateNutsUtils {
         return sb.toString();
     }
 
-    public static int parseFileSize(String s) {
-        s = s.toLowerCase();
-        int multiplier = 1;
-        int val;
-        if (s.endsWith("g")) {
-            val = Integer.parseInt(s.substring(0, s.length() - 1));
-            multiplier = 1024 * 1024 * 1024;
-        } else if (s.endsWith("gb")) {
-            val = Integer.parseInt(s.substring(0, s.length() - 2));
-            multiplier = 1024 * 1024 * 1024;
-        } else if (s.endsWith("m")) {
-            val = Integer.parseInt(s.substring(0, s.length() - 1));
-            multiplier = 1024 * 1024;
-        } else if (s.endsWith("mb")) {
-            val = Integer.parseInt(s.substring(0, s.length() - 2));
-            multiplier = 1024 * 1024;
-        } else if (s.endsWith("k")) {
-            val = Integer.parseInt(s.substring(0, s.length() - 1));
-            multiplier = 1024 * 1024;
-        } else if (s.endsWith("kb")) {
-            val = Integer.parseInt(s.substring(0, s.length() - 2));
-            multiplier = 1024 * 1024;
-        } else {
-            val = Integer.parseInt(s);
-//            multiplier = 1;
-        }
-        return val * multiplier;
-    }
-
     public static String formatPeriodMilli(long period) {
         StringBuilder sb = new StringBuilder();
         boolean started = false;
@@ -174,7 +145,7 @@ final class PrivateNutsUtils {
     }
 
     public static String resolveJavaCommand(String javaHome) {
-        String exe = NutsUtilPlatforms.getPlatformOsFamily().equals(NutsOsFamily.WINDOWS) ? "java.exe" : "java";
+        String exe = NutsOsFamily.getCurrent().equals(NutsOsFamily.WINDOWS) ? "java.exe" : "java";
         if (javaHome == null || javaHome.isEmpty()) {
             javaHome = System.getProperty("java.home");
             if (NutsUtilStrings.isBlank(javaHome) || "null".equals(javaHome)) {
@@ -251,7 +222,7 @@ final class PrivateNutsUtils {
         if (url == null) {
             return "<EMPTY>";
         }
-        File f = PrivateNutsIOUtils.toFile(url);
+        File f = PrivateNutsUtilIO.toFile(url);
         if (f != null) {
             return f.getPath();
         }

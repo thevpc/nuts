@@ -184,7 +184,7 @@ public class DefaultNutsIOHashAction implements NutsIOHashAction {
             }
             case "desc": {
                 ByteArrayOutputStream o = new ByteArrayOutputStream();
-                ws.descriptor().formatter((NutsDescriptor) value).compact().print(new OutputStreamWriter(o));
+                getSession().getWorkspace().descriptor().formatter((NutsDescriptor) value).compact().print(new OutputStreamWriter(o));
                 try (InputStream is = new ByteArrayInputStream(o.toByteArray())) {
                     out.write(CoreIOUtils.evalHash(is, getValidAlgo()));
                     return this;
@@ -203,6 +203,7 @@ public class DefaultNutsIOHashAction implements NutsIOHashAction {
         if (type == null || value == null) {
             throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("missing Source"));
         }
+        checkSession();
         switch (type) {
             case "stream": {
                 return CoreIOUtils.evalHash(((InputStream) value), getValidAlgo());
@@ -223,7 +224,7 @@ public class DefaultNutsIOHashAction implements NutsIOHashAction {
             }
             case "desc": {
                 ByteArrayOutputStream o = new ByteArrayOutputStream();
-                ws.descriptor().formatter((NutsDescriptor) value).compact().setSession(session).print(new OutputStreamWriter(o));
+                getSession().getWorkspace().descriptor().formatter((NutsDescriptor) value).compact().setSession(session).print(new OutputStreamWriter(o));
                 try (InputStream is = new ByteArrayInputStream(o.toByteArray())) {
                     return CoreIOUtils.evalHash(is, getValidAlgo());
                 } catch (IOException ex) {

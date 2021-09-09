@@ -24,7 +24,6 @@ public class NutsLogFileHandler extends FileHandler {
         String name = config.getLogFileName();
         int maxSize = config.getLogFileSize();
         int count = config.getLogFileCount();
-//        boolean inheritLog = config.isLogInherited();
 //        String rootPackage = "net.thevpc.nuts";
         if (level == null) {
             level = Level.INFO;

@@ -145,7 +145,7 @@ public class Test04_CreateLoadLinuxTest {
 
     @BeforeEach
     public void startup() throws IOException {
-        Assumptions.assumeTrue(NutsUtilPlatforms.getPlatformOsFamily()== NutsOsFamily.LINUX);
+        Assumptions.assumeTrue(NutsOsFamily.getCurrent()== NutsOsFamily.LINUX);
         TestUtils.resetLinuxFolders();
         TestUtils.unsetNutsSystemProperties();
     }

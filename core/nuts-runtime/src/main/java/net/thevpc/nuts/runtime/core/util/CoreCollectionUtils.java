@@ -28,7 +28,6 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import net.thevpc.nuts.NutsClassifierMapping;
 import net.thevpc.nuts.NutsIdLocation;
 import net.thevpc.nuts.NutsUtilStrings;
 
@@ -46,7 +45,7 @@ public class CoreCollectionUtils {
         return all;
     }
 
-    public static Set<String> toSet(String[] values0) {
+    public static Set<String> toTrimmedNonEmptySet(String[] values0) {
         LinkedHashSet<String> set = new LinkedHashSet<>();
         if (values0 != null) {
             for (String a : values0) {
@@ -58,17 +57,8 @@ public class CoreCollectionUtils {
         }
         return set;
     }
-
-    public static Set<NutsClassifierMapping> toSet(NutsClassifierMapping[] classifierMappings) {
-        LinkedHashSet<NutsClassifierMapping> set = new LinkedHashSet<>();
-        if (classifierMappings != null) {
-            for (NutsClassifierMapping a : classifierMappings) {
-                if (a != null) {
-                    set.add(a);
-                }
-            }
-        }
-        return set;
+    public static ArrayList<String> toDistinctTrimmedNonEmptyList(String[] values0) {
+        return new ArrayList<>(toTrimmedNonEmptySet(values0));
     }
 
     public static Set<NutsIdLocation> toSet(NutsIdLocation[] classifierMappings) {

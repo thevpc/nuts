@@ -44,12 +44,13 @@ public class NutsLogConfig implements Serializable,Cloneable{
     private Filter logFileFilter = null;
     private Level logTermLevel = Level.OFF;
     private Filter logTermFilter = null;
+    /**
+     * Log File Size in Mega Bytes
+     */
     private int logFileSize = 0;
     private int logFileCount = 0;
     private String logFileName = null;
     private String logFileBase = null;
-    @Deprecated
-    private boolean logInherited = false;
 
     public NutsLogConfig() {
     }
@@ -64,7 +65,6 @@ public class NutsLogConfig implements Serializable,Cloneable{
             this.logFileCount = other.logFileCount;
             this.logFileName = other.logFileName;
             this.logFileBase = other.logFileBase;
-            this.logInherited = other.logInherited;
         }
     }
 
@@ -104,50 +104,73 @@ public class NutsLogConfig implements Serializable,Cloneable{
         return this;
     }
 
+    /**
+     * Log File Size in Mega Bytes
+     */
     public int getLogFileSize() {
         return logFileSize;
     }
 
+    /**
+     * update Log File Size in Mega Bytes
+     * @param logFileSize Log File Size in Mega Bytes
+     * @return {@code this} instance
+     */
     public NutsLogConfig setLogFileSize(int logFileSize) {
         this.logFileSize = logFileSize;
         return this;
     }
 
+    /**
+     * Log File rotation count
+     */
     public int getLogFileCount() {
         return logFileCount;
     }
 
+    /**
+     * update Log File rotation count
+     * @param logFileCount Log File rotation count
+     * @return {@code this} instance
+     */
     public NutsLogConfig setLogFileCount(int logFileCount) {
         this.logFileCount = logFileCount;
         return this;
     }
 
+    /**
+     * Log File Name pattern
+     * @return Log File Name pattern
+     */
     public String getLogFileName() {
         return logFileName;
     }
 
+    /**
+     * update Log File Name pattern
+     * @param logFileName Log File Name pattern
+     * @return {@code this} instance
+     */
     public NutsLogConfig setLogFileName(String logFileName) {
         this.logFileName = logFileName;
         return this;
     }
 
+    /**
+     * Log File Base directory
+     * @return Log File Base directory
+     */
     public String getLogFileBase() {
         return logFileBase;
     }
 
+    /**
+     * update Log File Base directory
+     * @param logFileBase Log File Base directory
+     * @return {@code this} instance
+     */
     public NutsLogConfig setLogFileBase(String logFileBase) {
         this.logFileBase = logFileBase;
-        return this;
-    }
-
-    @Deprecated
-    public boolean isLogInherited() {
-        return logInherited;
-    }
-
-    @Deprecated
-    public NutsLogConfig setLogInherited(boolean logInherited) {
-        this.logInherited = logInherited;
         return this;
     }
 
@@ -166,7 +189,6 @@ public class NutsLogConfig implements Serializable,Cloneable{
         NutsLogConfig that = (NutsLogConfig) o;
         return logFileSize == that.logFileSize &&
                 logFileCount == that.logFileCount &&
-                logInherited == that.logInherited &&
                 Objects.equals(logFileLevel, that.logFileLevel) &&
                 Objects.equals(logTermLevel, that.logTermLevel) &&
                 Objects.equals(logFileName, that.logFileName) &&
@@ -175,7 +197,7 @@ public class NutsLogConfig implements Serializable,Cloneable{
 
     @Override
     public int hashCode() {
-        return Objects.hash(logFileLevel, logTermLevel, logFileSize, logFileCount, logFileName, logFileBase, logInherited);
+        return Objects.hash(logFileLevel, logTermLevel, logFileSize, logFileCount, logFileName, logFileBase);
     }
 
     @Override
@@ -187,7 +209,6 @@ public class NutsLogConfig implements Serializable,Cloneable{
                 ", logFileCount=" + logFileCount +
                 ", logFileName='" + logFileName + '\'' +
                 ", logFileBase='" + logFileBase + '\'' +
-                ", logInherited=" + logInherited +
                 '}';
     }
 }

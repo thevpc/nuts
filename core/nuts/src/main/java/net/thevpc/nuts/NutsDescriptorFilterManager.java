@@ -38,9 +38,12 @@ public interface NutsDescriptorFilterManager extends NutsTypedFilters<NutsDescri
 
     NutsDescriptorFilter byArch(String... values);
 
-    NutsDescriptorFilter byOsdist(String... values);
+    NutsDescriptorFilter byOs(String... values);
+    NutsDescriptorFilter byOsDist(String... values);
 
     NutsDescriptorFilter byPlatform(String... values);
+
+    NutsDescriptorFilter byDesktopEnvironment(String... values);
 
     NutsDescriptorFilter byExec(Boolean value);
 

@@ -83,6 +83,6 @@ public class UnescapeOutputStream extends BaseTransparentFilterOutputStream impl
                 return ((ExtendedFormatAware) out);
             }
         }
-        throw new IllegalArgumentException("Unsupported");
+        throw new NutsUnsupportedEnumException(session, other);
     }
 }

@@ -37,7 +37,7 @@ class PrivateNutsRepositorySelector {
     private static final Map<String, String> defaultRepositoriesByName = new LinkedHashMap<>();
 
     static {
-        defaultRepositoriesByName.put("system", PrivateNutsIOUtils.syspath(
+        defaultRepositoriesByName.put("system", PrivateNutsUtilIO.syspath(
                 NutsUtilPlatforms.getPlatformHomeFolder(null,
                         NutsStoreLocation.CONFIG, null,
                         true,
@@ -46,7 +46,7 @@ class PrivateNutsRepositorySelector {
                         + "/" + NutsConstants.Names.DEFAULT_REPOSITORY_NAME
         ));
         //
-        defaultRepositoriesByName.put("maven-local", System.getProperty("user.home") + PrivateNutsIOUtils.syspath("/.m2/repository"));
+        defaultRepositoriesByName.put("maven-local", System.getProperty("user.home") + PrivateNutsUtilIO.syspath("/.m2/repository"));
         defaultRepositoriesByName.put(".m2", defaultRepositoriesByName.get("maven-local"));
         defaultRepositoriesByName.put("m2", defaultRepositoriesByName.get("maven-local"));
         //

@@ -120,6 +120,8 @@ public interface NutsWorkspaceEnvManager {
 
     NutsDesktopEnvironmentFamily[] getDesktopEnvironmentFamilies();
 
+    NutsPlatformManager platforms();
+
     NutsId getPlatform();
 
     NutsId getOs();

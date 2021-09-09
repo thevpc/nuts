@@ -107,7 +107,7 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
                 wsString = "";
             } else if (wsString.contains("/") || wsString.contains("\\")) {
                 //workspace path
-                wsString = PrivateNutsIOUtils.getAbsolutePath(wsString);
+                wsString = PrivateNutsUtilIO.getAbsolutePath(wsString);
             } else {
                 //workspace name
             }
@@ -136,7 +136,6 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
                 fillOption("--log-file-size", null, logConfig.getLogFileSize(), arguments, false);
                 fillOption("--log-file-base", null, logConfig.getLogFileBase(), arguments, false);
                 fillOption("--log-file-name", null, logConfig.getLogFileName(), arguments, false);
-                fillOption("--log-inherited", null, logConfig.isLogInherited(), false, arguments, false);
             }
             fillOption("--exclude-extension", "-X", options.getExcludedExtensions(), ";", arguments, false);
 

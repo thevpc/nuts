@@ -1,6 +1,8 @@
 package net.thevpc.nuts.runtime.bundles.mvn;
 
 import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NutsUtilStrings;
+import net.thevpc.nuts.runtime.core.format.xml.NutsXmlUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -17,7 +19,6 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import net.thevpc.nuts.runtime.core.format.xml.NutsXmlUtils;
 
 public class PomXmlParser {
 
@@ -47,8 +48,547 @@ public class PomXmlParser {
     }
 
     private PomLogger logger;
+
     public PomXmlParser(PomLogger logger) {
-        this.logger=logger==null?PomLogger.DEFAULT:logger;
+        this.logger = logger == null ? PomLogger.DEFAULT : logger;
+    }
+
+    private static String elemToStr(Element ex) {
+        return ex.getTextContent() == null ? "" : ex.getTextContent().trim();
+    }
+
+    private static List<Element> getElementChildren(Node profile) {
+        NodeList childList = profile.getChildNodes();
+        List<Element> a = new ArrayList<>();
+        for (int k = 0; k < childList.getLength(); k++) {
+            Element c = toElement(childList.item(k));
+            if (c != null) {
+                a.add(c);
+            }
+        }
+        return a;
+    }
+
+    private static Element toElement(Node n) {
+        if (n instanceof Element) {
+            return (Element) n;
+        }
+        return null;
+    }
+
+    private static Element toElement(Node n, String name) {
+        if (n instanceof Element) {
+            if (((Element) n).getTagName().equals(name)) {
+                return (Element) n;
+            }
+        }
+        return null;
+    }
+
+    public static Map<String, String> parseProperties(Element properties) {
+        Map<String, String> props = new HashMap<>();
+        NodeList propsChildList = properties.getChildNodes();
+        for (int j = 0; j < propsChildList.getLength(); j++) {
+            Element parElem = toElement(propsChildList.item(j));
+            if (parElem != null) {
+                props.put(parElem.getTagName(), elemToStr(parElem));
+            }
+        }
+        return props;
+    }
+
+    public static PomDependency parseDependency(Element dependency, Map<String, String> props) {
+        NodeList dependencyChildList = dependency.getChildNodes();
+        String d_groupId = "";
+        String d_artifactId = "";
+        String d_version = "";
+        String d_classifier = "";
+        String d_scope = "";
+        String d_optional = "";
+        String d_type = "";
+        List<PomId> d_exclusions = new ArrayList<>();
+        for (int k = 0; k < dependencyChildList.getLength(); k++) {
+            Element c = toElement(dependencyChildList.item(k));
+            if (c != null) {
+                switch (c.getTagName()) {
+                    case "groupId": {
+                        d_groupId = elemToStr(c);
+                        break;
+                    }
+                    case "artifactId": {
+                        d_artifactId = elemToStr(c);
+                        break;
+                    }
+                    case "classifier": {
+                        d_classifier = elemToStr(c);
+                        break;
+                    }
+                    case "version": {
+                        d_version = elemToStr(c);
+                        break;
+                    }
+                    case "scope": {
+                        d_scope = elemToStr(c);
+                        break;
+                    }
+                    case "optional": {
+                        d_optional = elemToStr(c);
+                        break;
+                    }
+                    case "type": {
+                        d_type = elemToStr(c);
+                        break;
+                    }
+                    case "exclusions": {
+                        NodeList exclusionsList = c.getChildNodes();
+                        for (int l = 0; l < exclusionsList.getLength(); l++) {
+                            Element ex = toElement(exclusionsList.item(l), "exclusion");
+                            if (ex != null) {
+                                String ex_groupId = "";
+                                String ex_artifactId = "";
+                                NodeList exclusionsList2 = ex.getChildNodes();
+                                for (int m = 0; m < exclusionsList2.getLength(); m++) {
+                                    Element ex2 = toElement(exclusionsList2.item(m));
+                                    if (ex2 != null) {
+                                        switch (ex2.getTagName()) {
+                                            case "groupId": {
+                                                ex_groupId = elemToStr(ex2);
+                                                break;
+                                            }
+                                            case "artifactId": {
+                                                ex_artifactId = elemToStr(ex2);
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                                if (!ex_groupId.isEmpty()) {
+                                    d_exclusions.add(new PomId(ex_groupId, ex_artifactId, null));
+                                }
+                            }
+                        }
+
+                        break;
+                    }
+                }
+            }
+        }
+        if (d_scope.isEmpty()) {
+            d_scope = "compile";
+        }
+        return new PomDependency(
+                d_groupId, d_artifactId, d_classifier, d_version, d_scope, d_optional,
+                props == null ? null : props.get("dependencies." + d_groupId + ":" + d_artifactId + ".os"),
+                props == null ? null : props.get("dependencies." + d_groupId + ":" + d_artifactId + ".arch"),
+                d_type,
+                d_exclusions.toArray(new PomId[0])
+        );
+    }
+
+    public static PomRepositoryPolicy parseRepositoryPolicy(Element dependency) {
+        NodeList childList = dependency.getChildNodes();
+        String enabled = "";
+        String updatePolicy = "";
+        String checksumPolicy = "";
+        for (int k = 0; k < childList.getLength(); k++) {
+            Element c = toElement(childList.item(k));
+            if (c != null) {
+                switch (c.getTagName()) {
+                    case "enabled": {
+                        enabled = elemToStr(c);
+                        break;
+                    }
+                    case "updatePolicy": {
+                        updatePolicy = elemToStr(c);
+                        break;
+                    }
+                    case "checksumPolicy": {
+                        checksumPolicy = elemToStr(c);
+                        break;
+                    }
+                }
+            }
+        }
+        return new PomRepositoryPolicy(
+                enabled.isEmpty() || Boolean.parseBoolean(enabled), updatePolicy, checksumPolicy
+        );
+    }
+
+    public static PomProfile parseProfile(Element profile) {
+        PomProfile pomProfile = new PomProfile();
+        List<PomDependency> dependencies=new ArrayList<>();
+        List<String> modules=new ArrayList<>();
+        List<PomDependency> dependenciesManagement=new ArrayList<>();
+        List<PomRepository> repositories=new ArrayList<>();
+        List<PomRepository> pluginRepositories=new ArrayList<>();
+        Map<String, String> properties=new HashMap<>();
+
+        for (Element elem1 : getElementChildren(profile)) {
+            switch (elem1.getTagName()) {
+                case "id": {
+                    pomProfile.setId(elemToStr(elem1));
+                    break;
+                }
+                case "activation": {
+                    PomProfileActivation a = new PomProfileActivation();
+                    pomProfile.setActivation(a);
+                    for (Element cc : getElementChildren(elem1)) {
+                        switch (cc.getTagName()) {
+                            case "jdk": {
+                                a.setJdk(elemToStr(cc));
+                                break;
+                            }
+                            case "property": {
+                                a.setProperty(elemToStr(cc));
+                                break;
+                            }
+                            case "file": {
+                                a.setFile(elemToStr(cc));
+                                break;
+                            }
+                            case "activeByDefault": {
+                                String s = NutsUtilStrings.trim(elemToStr(cc));
+                                a.setActiveByDefault(s.equalsIgnoreCase("true"));
+                                break;
+                            }
+                            case "os": {
+                                for (Element ccc : getElementChildren(cc)) {
+                                    switch (ccc.getTagName()) {
+                                        case "name": {
+                                            a.setOsName(elemToStr(cc));
+                                            break;
+                                        }
+                                        case "arch": {
+                                            a.setOsArch(elemToStr(cc));
+                                            break;
+                                        }
+                                        case "version": {
+                                            a.setOsVersion(elemToStr(cc));
+                                            break;
+                                        }
+                                        case "family": {
+                                            a.setOsFamily(elemToStr(cc));
+                                            break;
+                                        }
+                                    }
+                                }
+                                break;
+                            }
+                        }
+                    }
+                    break;
+                }
+                case "modules": {
+                    NodeList childList = elem1.getChildNodes();
+                    for (int j = 0; j < childList.getLength(); j++) {
+                        Element parElem = toElement(childList.item(j), "module");
+                        if (parElem != null) {
+                            String s = elemToStr(parElem);
+                            if (!s.isEmpty()) {
+                                modules.add(s);
+                            }
+                        }
+                    }
+                    break;
+                }
+                case "properties": {
+//                    if (visitor != null) {
+//                        visitor.visitStartProperties(elem1);
+//                    }
+                    properties.putAll(parseProperties(elem1));
+//                    if (visitor != null) {
+//                        visitor.visitEndProperties(elem1, props);
+//                    }
+                    break;
+                }
+                case "dependencyManagement": {
+//                    if (visitor != null) {
+//                        visitor.visitStartDependenciesManagement(elem1);
+//                    }
+                    NodeList dependenciesChildList = elem1.getChildNodes();
+                    for (int j = 0; j < dependenciesChildList.getLength(); j++) {
+                        Element dependenciesElem = toElement(dependenciesChildList.item(j), "dependencies");
+                        if (dependenciesElem != null) {
+                            NodeList dependenciesChildList2 = dependenciesElem.getChildNodes();
+                            for (int k = 0; k < dependenciesChildList2.getLength(); k++) {
+                                Element dependency2 = toElement(dependenciesChildList2.item(k), "dependency");
+                                if (dependency2 != null) {
+//                                    if (visitor != null) {
+//                                        visitor.visitStartDependencyManagement(dependency2);
+//                                    }
+                                    HashMap<String, String> props = new HashMap<>();
+                                    PomDependency dep = parseDependency(dependency2, props);
+//                                    if (visitor != null) {
+//                                        visitor.visitEndDependencyManagement(dependency2, dep);
+//                                    }
+
+                                    dependenciesManagement.add(dep);
+                                }
+                            }
+                        }
+                    }
+//                    if (visitor != null) {
+//                        visitor.visitEndDependenciesManagement(elem1, deps.toArray(new PomDependency[0]));
+//                    }
+                    break;
+                }
+                case "dependencies": {
+//                    if (visitor != null) {
+//                        visitor.visitStartDependencies(elem1);
+//                    }
+                    NodeList dependenciesChildList = elem1.getChildNodes();
+                    for (int j = 0; j < dependenciesChildList.getLength(); j++) {
+                        Element dependencyElem = toElement(dependenciesChildList.item(j), "dependency");
+                        if (dependencyElem != null) {
+//                            if (visitor != null) {
+//                                visitor.visitStartDependency(dependencyElem);
+//                            }
+                            HashMap<String, String> props = new HashMap<>();
+                            PomDependency dep = parseDependency(dependencyElem, props);
+//                            if (visitor != null) {
+//                                visitor.visitEndDependency(dependencyElem, dep);
+//                            }
+                            dependencies.add(dep);
+                        }
+                    }
+//                    if (visitor != null) {
+//                        visitor.visitEndDependencies(elem1, deps.toArray(new PomDependency[0]));
+//                    }
+                    break;
+                }
+                case "repositories": {
+//                    if (visitor != null) {
+//                        visitor.visitStartRepositories(elem1);
+//                    }
+                    NodeList dependenciesChildList = elem1.getChildNodes();
+                    for (int j = 0; j < dependenciesChildList.getLength(); j++) {
+                        Element repository = toElement(dependenciesChildList.item(j), "repository");
+                        if (repository != null) {
+//                            if (visitor != null) {
+//                                visitor.visitStartRepository(repository);
+//                            }
+                            PomRepository repo = parseRepository(repository);
+//                            if (visitor != null) {
+//                                visitor.visitEndRepository(repository, repo);
+//                            }
+                            repositories.add(repo);
+                        }
+                    }
+//                    if (visitor != null) {
+//                        visitor.visitEndRepositories(elem1, repos.toArray(new PomRepository[0]));
+//                    }
+                    break;
+                }
+                case "pluginRepositories": {
+//                    if (visitor != null) {
+//                        visitor.visitStartPluginRepositories(elem1);
+//                    }
+                    NodeList dependenciesChildList = elem1.getChildNodes();
+                    for (int j = 0; j < dependenciesChildList.getLength(); j++) {
+                        Element repository = toElement(dependenciesChildList.item(j), "pluginRepository");
+                        if (repository != null) {
+//                            if (visitor != null) {
+//                                visitor.visitStartPluginRepository(repository);
+//                            }
+                            PomRepository repo = parseRepository(repository);
+//                            if (visitor != null) {
+//                                visitor.visitEndPluginRepository(repository, repo);
+//                            }
+                            pluginRepositories.add(repo);
+                        }
+                    }
+//                    if (visitor != null) {
+//                        visitor.visitEndPluginRepositories(elem1, pluginRepos.toArray(new PomRepository[0]));
+//                    }
+                    break;
+                }
+            }
+        }
+
+        pomProfile.setDependencies(dependencies.toArray(new PomDependency[0]));
+        pomProfile.setDependenciesManagement(dependenciesManagement.toArray(new PomDependency[0]));
+        pomProfile.setRepositories(repositories.toArray(new PomRepository[0]));
+        pomProfile.setPluginRepositories(pluginRepositories.toArray(new PomRepository[0]));
+        pomProfile.setProperties(properties);
+        return pomProfile;
+    }
+
+    public static PomRepository parseRepository(Element repository) {
+        NodeList childList = repository.getChildNodes();
+        String id = "";
+        String layout = "";
+        String url = "";
+        String name = "";
+        PomRepositoryPolicy snapshots = null;
+        PomRepositoryPolicy releases = null;
+        for (int k = 0; k < childList.getLength(); k++) {
+            Element c = toElement(childList.item(k));
+            if (c != null) {
+                switch (c.getTagName()) {
+                    case "id": {
+                        id = elemToStr(c);
+                        break;
+                    }
+                    case "layout": {
+                        layout = elemToStr(c);
+                        break;
+                    }
+                    case "url": {
+                        url = elemToStr(c);
+                        break;
+                    }
+                    case "name": {
+                        name = elemToStr(c);
+                        break;
+                    }
+                    case "snapshots": {
+                        snapshots = parseRepositoryPolicy(c);
+                        break;
+                    }
+                    case "releases": {
+                        releases = parseRepositoryPolicy(c);
+                        break;
+                    }
+                }
+            }
+        }
+        if (name.isEmpty()) {
+            name = "compile";
+        }
+        return new PomRepository(
+                id, layout, url, name, releases, snapshots
+        );
+    }
+
+    public static Element createExclusionElement(Document doc, PomId exclusionId) {
+        Element e = doc.createElement("exclusion");
+        e.appendChild(createNameTextTag(doc, "groupId", exclusionId.getGroupId()));
+        e.appendChild(createNameTextTag(doc, "artifactId", exclusionId.getArtifactId()));
+        if (exclusionId.getVersion() != null && exclusionId.getVersion().trim().length() > 0) {
+            e.appendChild(createNameTextTag(doc, "version", exclusionId.getVersion()));
+        }
+        return e;
+    }
+
+    public static Element createDependencyElement(Document doc, PomDependency dep) {
+        Element dependency = doc.createElement("dependency");
+        dependency.appendChild(createNameTextTag(doc, "groupId", dep.getGroupId()));
+        dependency.appendChild(createNameTextTag(doc, "artifactId", dep.getArtifactId()));
+        if (dep.getVersion() != null && dep.getVersion().trim().length() > 0) {
+            dependency.appendChild(createNameTextTag(doc, "version", dep.getVersion()));
+        }
+        if (dep.getOptional() != null && dep.getOptional().trim().length() > 0) {
+            dependency.appendChild(createNameTextTag(doc, "optional", dep.getOptional()));
+        }
+        if (dep.getType() != null && dep.getType().trim().length() > 0) {
+            dependency.appendChild(createNameTextTag(doc, "type", dep.getType()));
+        }
+        PomId[] e = dep.getExclusions();
+        if (e.length > 0) {
+            Element exclusions = doc.createElement("exclusions");
+            dependency.appendChild(exclusions);
+            for (PomId pomId : e) {
+                exclusions.appendChild(createExclusionElement(doc, pomId));
+            }
+        }
+        return dependency;
+    }
+
+    public static Element createRepositoryElement(Document doc, PomRepository repo) {
+        return createRepositoryElement(doc, repo, "repository");
+    }
+
+    public static Element createPluginRepositoryElement(Document doc, PomRepository repo) {
+        return createRepositoryElement(doc, repo, "pluginRepository");
+    }
+
+    public static Element createRepositoryPolicy(Document doc, PomRepositoryPolicy repo, String name) {
+        Element snapshots = doc.createElement(name);
+        snapshots.appendChild(createNameTextTag(doc, "enabled", String.valueOf(repo.isEnabled())));
+        if (repo.getUpdatePolicy() != null && repo.getUpdatePolicy().trim().length() > 0) {
+            snapshots.appendChild(createNameTextTag(doc, "updatePolicy", repo.getUpdatePolicy()));
+        }
+        if (repo.getChecksumPolicy() != null && repo.getChecksumPolicy().trim().length() > 0) {
+            snapshots.appendChild(createNameTextTag(doc, "checksumPolicy", repo.getChecksumPolicy()));
+        }
+        return snapshots;
+    }
+
+    public static Element createNameTextTag(Document doc, String name, String value) {
+        Element elem = doc.createElement(name);
+        elem.appendChild(doc.createTextNode(value));
+        return elem;
+    }
+
+    public static Element createRepositoryElement(Document doc, PomRepository repo, String name) {
+        Element repository = doc.createElement(name);
+        repository.appendChild(createNameTextTag(doc, "id", repo.getId()));
+        repository.appendChild(createNameTextTag(doc, "url", repo.getUrl()));
+        if (repo.getLayout() != null && repo.getLayout().trim().length() > 0) {
+            repository.appendChild(createNameTextTag(doc, "layout", repo.getLayout()));
+        }
+        if (repo.getName() != null && repo.getName().trim().length() > 0) {
+            repository.appendChild(createNameTextTag(doc, "name", repo.getName()));
+        }
+        if (repo.getSnapshots() != null) {
+            repository.appendChild(createRepositoryPolicy(doc, repo.getSnapshots(), "snapshots"));
+        }
+        if (repo.getReleases() != null) {
+            repository.appendChild(createRepositoryPolicy(doc, repo.getReleases(), "releases"));
+        }
+        return repository;
+    }
+
+    public static void writeDocument(Document doc, File result, NutsSession session) throws TransformerException {
+        writeDocument(doc, new StreamResult(result), session);
+    }
+
+    public static void writeDocument(Document doc, Writer result, NutsSession session) throws TransformerException {
+        writeDocument(doc, new StreamResult(result), session);
+    }
+
+    public static void writeDocument(Document doc, OutputStream result, NutsSession session) throws TransformerException {
+        writeDocument(doc, new StreamResult(result), session);
+    }
+
+    public static void writeDocument(Document doc, StreamResult result, NutsSession session) throws TransformerException {
+        NutsXmlUtils.writeDocument(doc, result, false, true, session);
+    }
+
+    public static boolean appendOrReplaceDependency(PomDependency dependency, Element dependencyElement, Element dependenciesElement, Map<String, String> props) {
+        if (dependencyElement != null && dependenciesElement == null) {
+            dependenciesElement = (Element) dependencyElement.getParentNode();
+        }
+        Document doc = dependenciesElement.getOwnerDocument();
+        if (dependencyElement == null) {
+            dependenciesElement.appendChild(createDependencyElement(doc, dependency));
+            return true;
+        } else {
+            PomDependency old = parseDependency(dependencyElement, props);
+            if (old == null || !old.equals(dependency)) {
+                dependenciesElement.replaceChild(createDependencyElement(doc, dependency), dependencyElement);
+                return true;
+            }
+            return false;
+        }
+    }
+
+    public static boolean appendOrReplaceRepository(PomRepository repository, Element repositoryElement, Element repositoriesElement) {
+        if (repositoryElement != null && repositoriesElement == null) {
+            repositoriesElement = (Element) repositoryElement.getParentNode();
+        }
+        Document doc = repositoriesElement.getOwnerDocument();
+        if (repositoryElement == null) {
+            repositoriesElement.appendChild(createRepositoryElement(doc, repository));
+            return true;
+        } else {
+            PomRepository old = parseRepository(repositoryElement);
+            if (old == null || !old.equals(repository)) {
+                repositoriesElement.replaceChild(createRepositoryElement(doc, repository), repositoryElement);
+                return true;
+            }
+            return false;
+        }
     }
 
     public Pom parse(URL url, NutsSession session) throws IOException, SAXException, ParserConfigurationException {
@@ -105,7 +645,7 @@ public class PomXmlParser {
     }
 
     public Pom parse(InputStream stream, PomDomVisitor visitor, NutsSession session) throws IOException, SAXException, ParserConfigurationException {
-        Document doc = NutsXmlUtils.createDocumentBuilder(true,session).parse(preValidateStream(stream, session));
+        Document doc = NutsXmlUtils.createDocumentBuilder(true, session).parse(preValidateStream(stream, session));
         return parse(doc, visitor);
     }
 
@@ -138,7 +678,7 @@ public class PomXmlParser {
             if (v != null) {
                 m.appendReplacement(sb, v);
             } else {
-                logger.log(Level.WARNING, "[PomXmlParser] unsupported  xml entity declaration : {0}",key);
+                logger.log(Level.WARNING, "[PomXmlParser] unsupported  xml entity declaration : {0}", key);
                 m.appendReplacement(sb, key);
             }
         }
@@ -156,6 +696,7 @@ public class PomXmlParser {
         List<PomDependency> depsMan = new ArrayList<>();
         List<PomRepository> repos = new ArrayList<>();
         List<PomRepository> pluginRepos = new ArrayList<>();
+        List<PomProfile> profiles = new ArrayList<>();
         //optional, but recommended
         //read this - http://stackoverflow.com/questions/13786607/normalization-in-dom-parsing-with-java-how-does-it-work
         doc.getDocumentElement().normalize();
@@ -277,7 +818,7 @@ public class PomXmlParser {
                                         if (visitor != null) {
                                             visitor.visitStartDependencyManagement(dependency2);
                                         }
-                                        PomDependency dep = parseDependency(dependency2,props);
+                                        PomDependency dep = parseDependency(dependency2, props);
                                         if (visitor != null) {
                                             visitor.visitEndDependencyManagement(dependency2, dep);
                                         }
@@ -302,7 +843,7 @@ public class PomXmlParser {
                                 if (visitor != null) {
                                     visitor.visitStartDependency(dependency);
                                 }
-                                PomDependency dep = parseDependency(dependency,props);
+                                PomDependency dep = parseDependency(dependency, props);
                                 if (visitor != null) {
                                     visitor.visitEndDependency(dependency, dep);
                                 }
@@ -360,6 +901,29 @@ public class PomXmlParser {
                         }
                         break;
                     }
+                    case "profiles": {
+                        if (visitor != null) {
+                            visitor.visitStartProfiles(elem1);
+                        }
+                        NodeList childList = elem1.getChildNodes();
+                        for (int j = 0; j < childList.getLength(); j++) {
+                            Element profile = toElement(childList.item(j), "profile");
+                            if (profile != null) {
+                                if (visitor != null) {
+                                    visitor.visitStartProfile(profile);
+                                }
+                                PomProfile p = parseProfile(profile);
+                                if (visitor != null) {
+                                    visitor.visitEndProfile(profile, p);
+                                }
+                                profiles.add(p);
+                            }
+                        }
+                        if (visitor != null) {
+                            visitor.visitEndProfiles(elem1, profiles.toArray(new PomProfile[0]));
+                        }
+                        break;
+                    }
                 }
             }
         }
@@ -373,339 +937,14 @@ public class PomXmlParser {
                 depsMan.toArray(new PomDependency[0]),
                 repos.toArray(new PomRepository[0]),
                 pluginRepos.toArray(new PomRepository[0]),
-                modules.toArray(new String[0]), doc
+                modules.toArray(new String[0]),
+                profiles.toArray(new PomProfile[0]),
+                doc
         );
         if (visitor != null) {
             visitor.visitEndDocument(doc, pom);
         }
 
         return pom;
-    }
-
-    private static String elemToStr(Element ex) {
-        return ex.getTextContent() == null ? "" : ex.getTextContent().trim();
-    }
-
-    private static Element toElement(Node n) {
-        if (n instanceof Element) {
-            return (Element) n;
-        }
-        return null;
-    }
-
-    private static Element toElement(Node n, String name) {
-        if (n instanceof Element) {
-            if (((Element) n).getTagName().equals(name)) {
-                return (Element) n;
-            }
-        }
-        return null;
-    }
-
-    public static Map<String, String> parseProperties(Element properties) {
-        Map<String, String> props = new HashMap<>();
-        NodeList propsChildList = properties.getChildNodes();
-        for (int j = 0; j < propsChildList.getLength(); j++) {
-            Element parElem = toElement(propsChildList.item(j));
-            if (parElem != null) {
-                props.put(parElem.getTagName(), elemToStr(parElem));
-            }
-        }
-        return props;
-    }
-
-    public static PomDependency parseDependency(Element dependency,Map<String, String> props) {
-        NodeList dependencyChildList = dependency.getChildNodes();
-        String d_groupId = "";
-        String d_artifactId = "";
-        String d_version = "";
-        String d_classifier = "";
-        String d_scope = "";
-        String d_optional = "";
-        String d_type = "";
-        List<PomId> d_exclusions = new ArrayList<>();
-        for (int k = 0; k < dependencyChildList.getLength(); k++) {
-            Element c = toElement(dependencyChildList.item(k));
-            if (c != null) {
-                switch (c.getTagName()) {
-                    case "groupId": {
-                        d_groupId = elemToStr(c);
-                        break;
-                    }
-                    case "artifactId": {
-                        d_artifactId = elemToStr(c);
-                        break;
-                    }
-                    case "classifier": {
-                        d_classifier = elemToStr(c);
-                        break;
-                    }
-                    case "version": {
-                        d_version = elemToStr(c);
-                        break;
-                    }
-                    case "scope": {
-                        d_scope = elemToStr(c);
-                        break;
-                    }
-                    case "optional": {
-                        d_optional = elemToStr(c);
-                        break;
-                    }
-                    case "type": {
-                        d_type = elemToStr(c);
-                        break;
-                    }
-                    case "exclusions": {
-                        NodeList exclusionsList = c.getChildNodes();
-                        for (int l = 0; l < exclusionsList.getLength(); l++) {
-                            Element ex = toElement(exclusionsList.item(l), "exclusion");
-                            if (ex != null) {
-                                String ex_groupId = "";
-                                String ex_artifactId = "";
-                                NodeList exclusionsList2 = ex.getChildNodes();
-                                for (int m = 0; m < exclusionsList2.getLength(); m++) {
-                                    Element ex2 = toElement(exclusionsList2.item(m));
-                                    if (ex2 != null) {
-                                        switch (ex2.getTagName()) {
-                                            case "groupId": {
-                                                ex_groupId = elemToStr(ex2);
-                                                break;
-                                            }
-                                            case "artifactId": {
-                                                ex_artifactId = elemToStr(ex2);
-                                                break;
-                                            }
-                                        }
-                                    }
-                                }
-                                if (!ex_groupId.isEmpty()) {
-                                    d_exclusions.add(new PomId(ex_groupId, ex_artifactId, null));
-                                }
-                            }
-                        }
-
-                        break;
-                    }
-                }
-            }
-        }
-        if (d_scope.isEmpty()) {
-            d_scope = "compile";
-        }
-        return new PomDependency(
-                d_groupId, d_artifactId, d_classifier, d_version, d_scope, d_optional, 
-                props==null?null:props.get("dependencies."+d_groupId+":"+d_artifactId+".os"),
-                props==null?null:props.get("dependencies."+d_groupId+":"+d_artifactId+".arch"),
-                d_type,
-                d_exclusions.toArray(new PomId[0])
-        );
-    }
-
-    public static PomRepositoryPolicy parseRepositoryPolicy(Element dependency) {
-        NodeList childList = dependency.getChildNodes();
-        String enabled = "";
-        String updatePolicy = "";
-        String checksumPolicy = "";
-        for (int k = 0; k < childList.getLength(); k++) {
-            Element c = toElement(childList.item(k));
-            if (c != null) {
-                switch (c.getTagName()) {
-                    case "enabled": {
-                        enabled = elemToStr(c);
-                        break;
-                    }
-                    case "updatePolicy": {
-                        updatePolicy = elemToStr(c);
-                        break;
-                    }
-                    case "checksumPolicy": {
-                        checksumPolicy = elemToStr(c);
-                        break;
-                    }
-                }
-            }
-        }
-        return new PomRepositoryPolicy(
-                enabled.isEmpty() || Boolean.parseBoolean(enabled), updatePolicy, checksumPolicy
-        );
-    }
-
-    public static PomRepository parseRepository(Element repository) {
-        NodeList childList = repository.getChildNodes();
-        String id = "";
-        String layout = "";
-        String url = "";
-        String name = "";
-        PomRepositoryPolicy snapshots = null;
-        PomRepositoryPolicy releases = null;
-        for (int k = 0; k < childList.getLength(); k++) {
-            Element c = toElement(childList.item(k));
-            if (c != null) {
-                switch (c.getTagName()) {
-                    case "id": {
-                        id = elemToStr(c);
-                        break;
-                    }
-                    case "layout": {
-                        layout = elemToStr(c);
-                        break;
-                    }
-                    case "url": {
-                        url = elemToStr(c);
-                        break;
-                    }
-                    case "name": {
-                        name = elemToStr(c);
-                        break;
-                    }
-                    case "snapshots": {
-                        snapshots = parseRepositoryPolicy(c);
-                        break;
-                    }
-                    case "releases": {
-                        releases = parseRepositoryPolicy(c);
-                        break;
-                    }
-                }
-            }
-        }
-        if (name.isEmpty()) {
-            name = "compile";
-        }
-        return new PomRepository(
-                id, layout, url, name, releases, snapshots
-        );
-    }
-
-    public static Element createExclusionElement(Document doc, PomId exclusionId) {
-        Element e = doc.createElement("exclusion");
-        e.appendChild(createNameTextTag(doc, "groupId", exclusionId.getGroupId()));
-        e.appendChild(createNameTextTag(doc, "artifactId", exclusionId.getArtifactId()));
-        if (exclusionId.getVersion() != null && exclusionId.getVersion().trim().length() > 0) {
-            e.appendChild(createNameTextTag(doc, "version", exclusionId.getVersion()));
-        }
-        return e;
-    }
-
-    public static Element createDependencyElement(Document doc, PomDependency dep) {
-        Element dependency = doc.createElement("dependency");
-        dependency.appendChild(createNameTextTag(doc, "groupId", dep.getGroupId()));
-        dependency.appendChild(createNameTextTag(doc, "artifactId", dep.getArtifactId()));
-        if (dep.getVersion() != null && dep.getVersion().trim().length() > 0) {
-            dependency.appendChild(createNameTextTag(doc, "version", dep.getVersion()));
-        }
-        if (dep.getOptional() != null && dep.getOptional().trim().length() > 0) {
-            dependency.appendChild(createNameTextTag(doc, "optional", dep.getOptional()));
-        }
-        if (dep.getType()!= null && dep.getType().trim().length() > 0) {
-            dependency.appendChild(createNameTextTag(doc, "type", dep.getType()));
-        }
-        PomId[] e = dep.getExclusions();
-        if (e.length > 0) {
-            Element exclusions = doc.createElement("exclusions");
-            dependency.appendChild(exclusions);
-            for (PomId pomId : e) {
-                exclusions.appendChild(createExclusionElement(doc, pomId));
-            }
-        }
-        return dependency;
-    }
-
-    public static Element createRepositoryElement(Document doc, PomRepository repo) {
-        return createRepositoryElement(doc, repo, "repository");
-    }
-
-    public static Element createPluginRepositoryElement(Document doc, PomRepository repo) {
-        return createRepositoryElement(doc, repo, "pluginRepository");
-    }
-
-    public static Element createRepositoryPolicy(Document doc, PomRepositoryPolicy repo, String name) {
-        Element snapshots = doc.createElement(name);
-        snapshots.appendChild(createNameTextTag(doc, "enabled", String.valueOf(repo.isEnabled())));
-        if (repo.getUpdatePolicy() != null && repo.getUpdatePolicy().trim().length() > 0) {
-            snapshots.appendChild(createNameTextTag(doc, "updatePolicy", repo.getUpdatePolicy()));
-        }
-        if (repo.getChecksumPolicy() != null && repo.getChecksumPolicy().trim().length() > 0) {
-            snapshots.appendChild(createNameTextTag(doc, "checksumPolicy", repo.getChecksumPolicy()));
-        }
-        return snapshots;
-    }
-
-    public static Element createNameTextTag(Document doc, String name, String value) {
-        Element elem = doc.createElement(name);
-        elem.appendChild(doc.createTextNode(value));
-        return elem;
-    }
-
-    public static Element createRepositoryElement(Document doc, PomRepository repo, String name) {
-        Element repository = doc.createElement(name);
-        repository.appendChild(createNameTextTag(doc, "id", repo.getId()));
-        repository.appendChild(createNameTextTag(doc, "url", repo.getUrl()));
-        if (repo.getLayout() != null && repo.getLayout().trim().length() > 0) {
-            repository.appendChild(createNameTextTag(doc, "layout", repo.getLayout()));
-        }
-        if (repo.getName() != null && repo.getName().trim().length() > 0) {
-            repository.appendChild(createNameTextTag(doc, "name", repo.getName()));
-        }
-        if (repo.getSnapshots() != null) {
-            repository.appendChild(createRepositoryPolicy(doc, repo.getSnapshots(), "snapshots"));
-        }
-        if (repo.getReleases() != null) {
-            repository.appendChild(createRepositoryPolicy(doc, repo.getReleases(), "releases"));
-        }
-        return repository;
-    }
-
-    public static void writeDocument(Document doc, File result,NutsSession session) throws TransformerException {
-        writeDocument(doc, new StreamResult(result),session);
-    }
-
-    public static void writeDocument(Document doc, Writer result,NutsSession session) throws TransformerException {
-        writeDocument(doc, new StreamResult(result),session);
-    }
-
-    public static void writeDocument(Document doc, OutputStream result,NutsSession session) throws TransformerException {
-        writeDocument(doc, new StreamResult(result),session);
-    }
-
-    public static void writeDocument(Document doc, StreamResult result,NutsSession session) throws TransformerException {
-        NutsXmlUtils.writeDocument(doc, result, false,true,session);
-    }
-
-    public static boolean appendOrReplaceDependency(PomDependency dependency, Element dependencyElement, Element dependenciesElement,Map<String,String> props) {
-        if (dependencyElement != null && dependenciesElement == null) {
-            dependenciesElement = (Element) dependencyElement.getParentNode();
-        }
-        Document doc = dependenciesElement.getOwnerDocument();
-        if (dependencyElement == null) {
-            dependenciesElement.appendChild(createDependencyElement(doc, dependency));
-            return true;
-        } else {
-            PomDependency old = parseDependency(dependencyElement,props);
-            if (old == null || !old.equals(dependency)) {
-                dependenciesElement.replaceChild(createDependencyElement(doc, dependency), dependencyElement);
-                return true;
-            }
-            return false;
-        }
-    }
-
-    public static boolean appendOrReplaceRepository(PomRepository repository, Element repositoryElement, Element repositoriesElement) {
-        if (repositoryElement != null && repositoriesElement == null) {
-            repositoriesElement = (Element) repositoryElement.getParentNode();
-        }
-        Document doc = repositoriesElement.getOwnerDocument();
-        if (repositoryElement == null) {
-            repositoriesElement.appendChild(createRepositoryElement(doc, repository));
-            return true;
-        } else {
-            PomRepository old = parseRepository(repositoryElement);
-            if (old == null || !old.equals(repository)) {
-                repositoriesElement.replaceChild(createRepositoryElement(doc, repository), repositoryElement);
-                return true;
-            }
-            return false;
-        }
     }
 }

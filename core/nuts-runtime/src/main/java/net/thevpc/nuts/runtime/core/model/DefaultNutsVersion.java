@@ -83,12 +83,37 @@ public class DefaultNutsVersion extends DefaultNutsTokenFilter implements NutsVe
     }
 
     @Override
+    public NutsVersionFilter filterCompat() {
+        if(isFilter()) {
+            return filter();
+        }
+        return DefaultNutsVersionFilter.parse("["+expression+",[", session);
+    }
+
+    @Override
     public NutsVersionInterval[] intervals() {
         NutsVersionFilter s = filter();
         if (s instanceof DefaultNutsVersionFilter) {
             return ((DefaultNutsVersionFilter) s).getIntervals();
         }
         return new NutsVersionInterval[0];
+    }
+
+    @Override
+    public boolean isFilter() {
+        for (char c : expression.toCharArray()) {
+            switch (c){
+                case '*':
+                case ',':
+                case '(':
+                case ')':
+                case '[':
+                case ']':
+            }{
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -147,9 +172,15 @@ public class DefaultNutsVersion extends DefaultNutsTokenFilter implements NutsVe
     }
 
     @Override
-    public BigInteger getNumber(int index, long defaultValue) {
-        return getNumber(index,BigInteger.valueOf(defaultValue));
+    public int getInt(int index, int defaultValue) {
+        return getNumber(index,BigInteger.valueOf(defaultValue)).intValue();
     }
+
+    @Override
+    public long getLong(int index, long defaultValue) {
+        return getNumber(index,BigInteger.valueOf(defaultValue)).longValue();
+    }
+
 
     public BigInteger getNumber(int level, BigInteger defaultValue) {
         VersionParts parts = getParts();

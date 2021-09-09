@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.thevpc.nuts.ext</groupId>
     <artifactId>next-term</artifactId>
-    <version>0.8.2.0</version>
+    <version>0.8.3.0</version>
     <name>net.thevpc.nuts.ext.next-term</name>
     <packaging>jar</packaging>
     <url>https://github.com/thevpc/nuts/wiki</url>
@@ -57,7 +57,7 @@
         <dependency>
             <groupId>net.thevpc.nuts</groupId>
             <artifactId>nuts</artifactId>
-            <version>0.8.2</version>
+            <version>0.8.3</version>
         </dependency>
         <dependency>
             <groupId>org.jline</groupId>

@@ -48,7 +48,7 @@ public class UnameCommand extends SimpleNshBuiltin {
 
     private static class Result {
 
-        NutsId osdist;
+        NutsId osDist;
         NutsId os;
         NutsArchFamily arch;
     }
@@ -90,7 +90,7 @@ public class UnameCommand extends SimpleNshBuiltin {
         NutsWorkspace ws = context.getWorkspace();
 
         Result rr = new Result();
-        rr.osdist = ws.env().getOsDist();
+        rr.osDist = ws.env().getOsDist();
         rr.os = ws.env().getOs();
         rr.arch = ws.env().getArchFamily();
         if (!config.farch && !config.fos && !config.fdist) {
@@ -104,8 +104,8 @@ public class UnameCommand extends SimpleNshBuiltin {
         if (!config.fos && rr.os != null) {
             rr.os = null;
         }
-        if (!config.fdist && rr.osdist != null) {
-            rr.osdist = null;
+        if (!config.fdist && rr.osDist != null) {
+            rr.osDist = null;
         }
         context.setPrintlnOutObject(rr);
     }
@@ -120,8 +120,8 @@ public class UnameCommand extends SimpleNshBuiltin {
         if (result.os != null) {
             sb.add(result.os.toString());
         }
-        if (result.osdist != null) {
-            sb.add(result.osdist.toString());
+        if (result.osDist != null) {
+            sb.add(result.osDist.toString());
         }
         if (sb.isEmpty()) {
             sb.add("UNKNOWN");

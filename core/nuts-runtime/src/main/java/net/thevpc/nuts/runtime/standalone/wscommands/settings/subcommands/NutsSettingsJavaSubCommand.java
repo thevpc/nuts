@@ -25,6 +25,7 @@ public class NutsSettingsJavaSubCommand extends AbstractNutsSettingsSubCommand {
         NutsWorkspace ws = session.getWorkspace();
         NutsPrintStream out = session.out();
         NutsWorkspaceConfigManager conf = ws.config();
+        NutsPlatformManager platforms = ws.env().platforms();
         if (cmdLine.next("add java") != null) {
             if (cmdLine.next("--search") != null) {
                 List<String> extraLocations = new ArrayList<>();
@@ -32,13 +33,13 @@ public class NutsSettingsJavaSubCommand extends AbstractNutsSettingsSubCommand {
                     extraLocations.add(cmdLine.next().getString());
                 }
                 if (extraLocations.isEmpty()) {
-                    for (NutsSdkLocation loc : ws.sdks().searchSystem("java")) {
-                        ws.sdks().add(loc);
+                    for (NutsPlatformLocation loc : platforms.searchSystem("java")) {
+                        platforms.add(loc);
                     }
                 } else {
                     for (String extraLocation : extraLocations) {
-                        for (NutsSdkLocation loc : ws.sdks().searchSystem("java", extraLocation)) {
-                            ws.sdks().add(loc);
+                        for (NutsPlatformLocation loc : platforms.searchSystem("java", extraLocation)) {
+                            platforms.add(loc);
                         }
                     }
                 }
@@ -48,9 +49,9 @@ public class NutsSettingsJavaSubCommand extends AbstractNutsSettingsSubCommand {
                 }
             } else {
                 while (cmdLine.hasNext()) {
-                    NutsSdkLocation loc = ws.sdks().resolve("java", cmdLine.next().getString(), null);
+                    NutsPlatformLocation loc = platforms.resolve("java", cmdLine.next().getString(), null);
                     if (loc != null) {
-                        ws.sdks().add(loc);
+                        platforms.add(loc);
                     }
                 }
                 if (autoSave) {
@@ -61,15 +62,15 @@ public class NutsSettingsJavaSubCommand extends AbstractNutsSettingsSubCommand {
         } else if (cmdLine.next("remove java") != null) {
             while (cmdLine.hasNext()) {
                 String name = cmdLine.next().getString();
-                NutsSdkLocation loc = ws.sdks().findByName("java", name);
+                NutsPlatformLocation loc = platforms.findByName("java", name);
                 if (loc == null) {
-                    loc = ws.sdks().findByPath("java", name);
+                    loc = platforms.findByPath("java", name);
                     if (loc == null) {
-                        loc = ws.sdks().findByVersion("java", name);
+                        loc = platforms.findByVersion("java", name);
                     }
                 }
                 if (loc != null) {
-                    ws.sdks().remove(loc);
+                    platforms.remove(loc);
                 }
             }
             if (autoSave) {
@@ -89,10 +90,10 @@ public class NutsSettingsJavaSubCommand extends AbstractNutsSettingsSubCommand {
                 }
             }
             if (cmdLine.isExecMode()) {
-                NutsSdkLocation[] sdks = ws.sdks().find("java", null);
-                Arrays.sort(sdks, new Comparator<NutsSdkLocation>() {
+                NutsPlatformLocation[] sdks = platforms.find("java", null);
+                Arrays.sort(sdks, new Comparator<NutsPlatformLocation>() {
                     @Override
-                    public int compare(NutsSdkLocation o1, NutsSdkLocation o2) {
+                    public int compare(NutsPlatformLocation o1, NutsPlatformLocation o2) {
                         int x = o1.getName().compareTo(o2.getName());
                         if (x != 0) {
                             return x;
@@ -108,7 +109,7 @@ public class NutsSettingsJavaSubCommand extends AbstractNutsSettingsSubCommand {
                         return x;
                     }
                 });
-                for (NutsSdkLocation jloc : sdks) {
+                for (NutsPlatformLocation jloc : sdks) {
                     m.addRow(jloc.getName(), jloc.getVersion(), jloc.getPath());
                 }
                 out.print(t.format());

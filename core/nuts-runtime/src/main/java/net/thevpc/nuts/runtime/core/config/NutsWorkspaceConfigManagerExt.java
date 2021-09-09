@@ -95,7 +95,7 @@ public interface NutsWorkspaceConfigManagerExt extends NutsWorkspaceConfigManage
 //
 //    void onExtensionsPrepared(NutsSession session);
 //
-//    NutsSdkManager sdks();
+//    NutsPlatformManager sdks();
 //
 //    NutsImportManager imports();
 

@@ -29,6 +29,7 @@ import net.thevpc.nuts.runtime.bundles.parsers.QueryStringParser;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsDependencyScopes;
 
 /**
@@ -45,20 +46,19 @@ public class DefaultNutsDependency implements NutsDependency {
     private final String classifier;
     private final String optional;
     private final String type;
-    private final String os;
-    private final String arch;
     private final NutsId[] exclusions;
     private final String properties;
+    private final NutsEnvCondition condition;
     private transient final NutsSession session;
 
     public DefaultNutsDependency(String repository, String groupId, String artifactId, String classifier, NutsVersion version, String scope, String optional, NutsId[] exclusions,
-                                 String os, String arch, String type,
+                                 NutsEnvCondition condition, String type,
                                  Map<String, String> properties, NutsSession ws) {
-        this(repository, groupId, artifactId, classifier, version, scope, optional, exclusions, os, arch, type, QueryStringParser.formatSortedPropertiesQuery(properties), ws);
+        this(repository, groupId, artifactId, classifier, version, scope, optional, exclusions, condition, type, QueryStringParser.formatSortedPropertiesQuery(properties), ws);
     }
 
     public DefaultNutsDependency(String repository, String groupId, String artifactId, String classifier, NutsVersion version, String scope, String optional, NutsId[] exclusions,
-                                 String os, String arch, String type,
+                                 NutsEnvCondition condition, String type,
                                  String properties, NutsSession session) {
         this.repository = NutsUtilStrings.trimToNull(repository);
         this.groupId = NutsUtilStrings.trimToNull(groupId);
@@ -80,8 +80,7 @@ public class DefaultNutsDependency implements NutsDependency {
                 throw new NullPointerException();
             }
         }
-        this.os = NutsUtilStrings.trimToNull(os);
-        this.arch = NutsUtilStrings.trimToNull(arch);
+        this.condition = CoreNutsUtils.trimToBlank(condition,session);
         this.type = NutsUtilStrings.trimToNull(type);
         this.properties = QueryStringParser.formatSortedPropertiesQuery(properties);
         this.session = session;
@@ -145,19 +144,8 @@ public class DefaultNutsDependency implements NutsDependency {
                 .setGroupId(getGroupId())
                 .setArtifactId(getArtifactId())
                 .setVersion(getVersion())
-                .setOs(getOs())
-                .setArch(getArch())
+                .setCondition(getCondition())
                 .setProperties(m).build();
-    }
-
-    @Override
-    public String getOs() {
-        return os;
-    }
-
-    @Override
-    public String getArch() {
-        return arch;
     }
 
     @Override
@@ -244,11 +232,22 @@ public class DefaultNutsDependency implements NutsDependency {
         if (!NutsUtilStrings.isBlank(type)) {
             p.put(NutsConstants.IdProperties.TYPE, type);
         }
-        if (!NutsUtilStrings.isBlank(os)) {
-            p.put(NutsConstants.IdProperties.OS, os);
-        }
-        if (!NutsUtilStrings.isBlank(arch)) {
-            p.put(NutsConstants.IdProperties.ARCH, arch);
+        if (condition!=null && !condition.isBlank()) {
+            if(condition.getOs().length>0) {
+                p.put(NutsConstants.IdProperties.OS, String.join(",",condition.getOs()));
+            }
+            if(condition.getOsDist().length>0) {
+                p.put(NutsConstants.IdProperties.OS_DIST, String.join(",",condition.getOsDist()));
+            }
+            if(condition.getDesktopEnvironment().length>0) {
+                p.put(NutsConstants.IdProperties.DESKTOP_ENVIRONMENT, String.join(",",condition.getDesktopEnvironment()));
+            }
+            if(condition.getArch().length>0) {
+                p.put(NutsConstants.IdProperties.ARCH, String.join(",",condition.getArch()));
+            }
+            if(condition.getPlatform().length>0) {
+                p.put(NutsConstants.IdProperties.PLATFORM, String.join(",",condition.getPlatform()));
+            }
         }
         if (exclusions.length>0) {
             p.put(NutsConstants.IdProperties.EXCLUSIONS, Arrays.stream(exclusions)
@@ -286,5 +285,25 @@ public class DefaultNutsDependency implements NutsDependency {
     @Override
     public NutsDependencyFormat formatter() {
         return session.getWorkspace().dependency().formatter().setValue(this);
+    }
+
+    @Override
+    public NutsEnvCondition getCondition() {
+        return condition;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DefaultNutsDependency that = (DefaultNutsDependency) o;
+        return Objects.equals(repository, that.repository) && Objects.equals(groupId, that.groupId) && Objects.equals(artifactId, that.artifactId) && Objects.equals(version, that.version) && Objects.equals(scope, that.scope) && Objects.equals(classifier, that.classifier) && Objects.equals(optional, that.optional) && Objects.equals(type, that.type) && Arrays.equals(exclusions, that.exclusions) && Objects.equals(properties, that.properties) && Objects.equals(condition, that.condition) && Objects.equals(session, that.session);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(repository, groupId, artifactId, version, scope, classifier, optional, type, properties, condition, session);
+        result = 31 * result + Arrays.hashCode(exclusions);
+        return result;
     }
 }

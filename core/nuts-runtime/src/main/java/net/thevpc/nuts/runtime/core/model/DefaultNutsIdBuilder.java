@@ -28,6 +28,7 @@ package net.thevpc.nuts.runtime.core.model;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.bundles.parsers.QueryStringParser;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 import java.util.Map;
 import java.util.function.Function;
@@ -41,11 +42,32 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
     private String groupId;
     private String artifactId;
     private NutsVersion version;
+    private NutsEnvConditionBuilder condition;
     private transient QueryStringParser propertiesQuery = new QueryStringParser(true, (name, value) -> {
         if (name != null) {
             switch (name) {
                 case NutsConstants.IdProperties.VERSION: {
                     setVersion(value);
+                    return true;
+                }
+                case NutsConstants.IdProperties.OS: {
+                    condition.setOs(new String[]{value});
+                    return true;
+                }
+                case NutsConstants.IdProperties.ARCH: {
+                    condition.setArch(new String[]{value});
+                    return true;
+                }
+                case NutsConstants.IdProperties.PLATFORM: {
+                    condition.setPlatform(new String[]{value});
+                    return true;
+                }
+                case NutsConstants.IdProperties.OS_DIST: {
+                    condition.setOsDist(new String[]{value});
+                    return true;
+                }
+                case NutsConstants.IdProperties.DESKTOP_ENVIRONMENT: {
+                    condition.setDesktopEnvironment(new String[]{value});
                     return true;
                 }
             }
@@ -55,10 +77,12 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
 
     public DefaultNutsIdBuilder(NutsSession session) {
         this.session=session;
+        this.condition=session.getWorkspace().descriptor().envConditionBuilder();
     }
 
     public DefaultNutsIdBuilder(NutsId id,NutsSession session) {
         this.session=session;
+        this.condition=session.getWorkspace().descriptor().envConditionBuilder();
         setGroupId(id.getGroupId());
         setArtifactId(id.getArtifactId());
         setVersion(id.getVersion());
@@ -67,14 +91,15 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
 
     public DefaultNutsIdBuilder(String groupId, String artifactId, NutsVersion version, String propertiesQuery,NutsSession session) {
         this.session=session;
+        this.condition=session.getWorkspace().descriptor().envConditionBuilder();
         this.groupId = NutsUtilStrings.trimToNull(groupId);
         this.artifactId = NutsUtilStrings.trimToNull(artifactId);
         this.version = version == null ? session.getWorkspace().version().parser().parse("") : version;
-        this.propertiesQuery.setProperties(propertiesQuery);
+        setProperties(propertiesQuery);
     }
 
     @Override
-    public NutsIdBuilder set(NutsId id) {
+    public NutsIdBuilder setAll(NutsId id) {
         if (id == null) {
             clear();
         } else {
@@ -96,7 +121,7 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
     }
 
     @Override
-    public NutsIdBuilder set(NutsIdBuilder id) {
+    public NutsIdBuilder setAll(NutsIdBuilder id) {
         if (id == null) {
             clear();
         } else {
@@ -149,33 +174,10 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
 //        return NutsUtilStrings.trimToNull(s);
 //    }
 
-    @Override
-    public String getOs() {
-        String s = getProperties().get(NutsConstants.IdProperties.OS);
-        return NutsUtilStrings.trimToNull(s);
-    }
-
-    @Override
-    public String getOsdist() {
-        String s = getProperties().get(NutsConstants.IdProperties.OSDIST);
-        return NutsUtilStrings.trimToNull(s);
-    }
-
-    @Override
-    public String getPlatform() {
-        String s = getProperties().get(NutsConstants.IdProperties.PLATFORM);
-        return NutsUtilStrings.trimToNull(s);
-    }
 
     @Override
     public String getPackaging() {
         String s = getProperties().get(NutsConstants.IdProperties.PACKAGING);
-        return NutsUtilStrings.trimToNull(s);
-    }
-
-    @Override
-    public String getArch() {
-        String s = getProperties().get(NutsConstants.IdProperties.ARCH);
         return NutsUtilStrings.trimToNull(s);
     }
 
@@ -219,35 +221,78 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
     }
 
     @Override
-    public NutsIdBuilder setPlatform(String value) {
-        return setProperty(NutsConstants.IdProperties.PLATFORM, NutsUtilStrings.trimToNull(value));
+    public NutsIdBuilder setCondition(NutsEnvCondition c) {
+        if(c==null){
+            setProperty(NutsConstants.IdProperties.OS, null);
+            setProperty(NutsConstants.IdProperties.OS_DIST, null);
+            setProperty(NutsConstants.IdProperties.ARCH, null);
+            setProperty(NutsConstants.IdProperties.PLATFORM, null);
+            setProperty(NutsConstants.IdProperties.DESKTOP_ENVIRONMENT, null);
+        }else{
+            setProperty(NutsConstants.IdProperties.OS, CoreStringUtils.joinAndTrimToNull(c.getOs()));
+            setProperty(NutsConstants.IdProperties.OS_DIST, CoreStringUtils.joinAndTrimToNull(c.getOsDist()));
+            setProperty(NutsConstants.IdProperties.ARCH, CoreStringUtils.joinAndTrimToNull(c.getArch()));
+            setProperty(NutsConstants.IdProperties.PLATFORM, CoreStringUtils.joinAndTrimToNull(c.getPlatform()));
+            setProperty(NutsConstants.IdProperties.DESKTOP_ENVIRONMENT, CoreStringUtils.joinAndTrimToNull(c.getDesktopEnvironment()));
+
+        }
+        return this;
     }
 
     @Override
-    public NutsIdBuilder setArch(String value) {
-        return setProperty(NutsConstants.IdProperties.ARCH, NutsUtilStrings.trimToNull(value));
+    public NutsEnvConditionBuilder getCondition() {
+        return session.getWorkspace().descriptor().envConditionBuilder()
+                .setOs(CoreStringUtils.parseAndTrimToDistinctArray(getProperties().get(NutsConstants.IdProperties.OS)))
+                ;
     }
 
     @Override
-    public NutsIdBuilder setOs(String value) {
-        return setProperty(NutsConstants.IdProperties.OSDIST, NutsUtilStrings.trimToNull(value));
+    public NutsIdBuilder setCondition(NutsEnvConditionBuilder c) {
+        if(c==null){
+            return setCondition((NutsEnvCondition) null);
+        }else {
+            return setCondition(c.build());
+        }
     }
 
-    @Override
-    public NutsIdBuilder setOsdist(String value) {
-        return setProperty(NutsConstants.IdProperties.OS, NutsUtilStrings.trimToNull(value));
-    }
 
     @Override
     public NutsIdBuilder setProperty(String property, String value) {
-        propertiesQuery.setProperty(property, value);
+        switch (property){
+            case NutsConstants.IdProperties.OS:{
+                condition.setOs(CoreStringUtils.parseAndTrimToDistinctArray(value));
+                break;
+            }
+            case NutsConstants.IdProperties.OS_DIST:{
+                condition.setOsDist(CoreStringUtils.parseAndTrimToDistinctArray(value));
+                break;
+            }
+            case NutsConstants.IdProperties.ARCH:{
+                condition.setArch(CoreStringUtils.parseAndTrimToDistinctArray(value));
+                break;
+            }
+            case NutsConstants.IdProperties.PLATFORM:{
+                condition.setPlatform(CoreStringUtils.parseAndTrimToDistinctArray(value));
+                break;
+            }
+            case NutsConstants.IdProperties.DESKTOP_ENVIRONMENT:{
+                condition.setDesktopEnvironment(CoreStringUtils.parseAndTrimToDistinctArray(value));
+                break;
+            }
+            default:{
+                propertiesQuery.setProperty(property, value);
+            }
+        }
         return this;
     }
 
 
     @Override
     public NutsIdBuilder setProperties(Map<String, String> queryMap) {
-        propertiesQuery.setProperties(queryMap);
+        propertiesQuery.clear();
+        for (Map.Entry<String, String> e : queryMap.entrySet()) {
+            setProperty(e.getKey(),e.getValue());
+        }
         return this;
     }
 
@@ -271,12 +316,33 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
 
     @Override
     public String getPropertiesQuery() {
-        return propertiesQuery.getPropertiesQuery();
+        return QueryStringParser.formatPropertiesQuery(getProperties());
     }
 
     @Override
     public Map<String, String> getProperties() {
-        return propertiesQuery.getProperties();
+        Map<String, String> m = propertiesQuery.getProperties();
+//        String s=CoreStringUtils.joinAndTrimToNull(condition.getOs());
+//        if(s!=null){
+//            m.put(NutsConstants.IdProperties.OS,s);
+//        }
+//        s=CoreStringUtils.joinAndTrimToNull(condition.getOsDist());
+//        if(s!=null){
+//            m.put(NutsConstants.IdProperties.OS_DIST,s);
+//        }
+//        s=CoreStringUtils.joinAndTrimToNull(condition.getArch());
+//        if(s!=null){
+//            m.put(NutsConstants.IdProperties.ARCH,s);
+//        }
+//        s=CoreStringUtils.joinAndTrimToNull(condition.getPlatform());
+//        if(s!=null){
+//            m.put(NutsConstants.IdProperties.PLATFORM,s);
+//        }
+//        s=CoreStringUtils.joinAndTrimToNull(condition.getDesktopEnvironment());
+//        if(s!=null){
+//            m.put(NutsConstants.IdProperties.DESKTOP_ENVIRONMENT,s);
+//        }
+        return m;
     }
 
     @Override

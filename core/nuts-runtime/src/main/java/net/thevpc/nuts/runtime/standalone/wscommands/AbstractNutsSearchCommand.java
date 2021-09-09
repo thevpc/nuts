@@ -240,7 +240,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     }
 
     @Override
-    public NutsSearchCommand clearArchs() {
+    public NutsSearchCommand clearArch() {
         this.arch.clear();
         return this;
     }
@@ -291,15 +291,15 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     }
 
     @Override
-    public NutsSearchCommand addArchs(Collection<String> values) {
+    public NutsSearchCommand addArch(Collection<String> values) {
         if (values != null) {
-            addArchs(values.toArray(new String[0]));
+            addArch(values.toArray(new String[0]));
         }
         return this;
     }
 
     @Override
-    public NutsSearchCommand addArchs(String... values) {
+    public NutsSearchCommand addArch(String... values) {
         if (values != null) {
             arch.addAll(Arrays.asList(values));
         }
@@ -307,21 +307,21 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     }
 
     @Override
-    public NutsSearchCommand clearPackagings() {
+    public NutsSearchCommand clearPackaging() {
         packaging.clear();
         return this;
     }
 
     @Override
-    public NutsSearchCommand addPackagings(Collection<String> values) {
+    public NutsSearchCommand addPackaging(Collection<String> values) {
         if (values != null) {
-            addPackagings(values.toArray(new String[0]));
+            addPackaging(values.toArray(new String[0]));
         }
         return this;
     }
 
     @Override
-    public NutsSearchCommand addPackagings(String... values) {
+    public NutsSearchCommand addPackaging(String... values) {
         if (values != null) {
             this.packaging.addAll(Arrays.asList(values));
         }
@@ -727,9 +727,9 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     }
 
     @Override
-    public NutsResultList<String> getResultOses() {
+    public NutsResultList<String> getResultOs() {
         return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
-                .mapMulti(x -> Arrays.asList(x.getDescriptor().getOs()))
+                .mapMulti(x -> Arrays.asList(x.getDescriptor().getCondition().getOs()))
                 .notBlank()
                 .distinct()
         );
@@ -745,16 +745,16 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     }
 
     @Override
-    public NutsResultList<String> getResultOsdists() {
+    public NutsResultList<String> getResultOsDist() {
         return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
-                .mapMulti(x -> Arrays.asList(x.getDescriptor().getOsdist()))
+                .mapMulti(x -> Arrays.asList(x.getDescriptor().getCondition().getOsDist()))
                 .notBlank()
                 .distinct()
         );
     }
 
     @Override
-    public NutsResultList<String> getResultPackagings() {
+    public NutsResultList<String> getResultPackaging() {
         return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
                 .mapMulti(x -> Arrays.asList(x.getDescriptor().getPackaging()))
                 .notBlank()
@@ -763,18 +763,27 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     }
 
     @Override
-    public NutsResultList<String> getResultPlatforms() {
+    public NutsResultList<String> getResultPlatform() {
         return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
-                .mapMulti(x -> Arrays.asList(x.getDescriptor().getPlatform()))
+                .mapMulti(x -> Arrays.asList(x.getDescriptor().getCondition().getPlatform()))
                 .notBlank()
                 .distinct()
         );
     }
 
     @Override
-    public NutsResultList<String> getResultArchs() {
+    public NutsResultList<String> getResultDesktopEnvironment() {
         return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
-                .mapMulti(x -> Arrays.asList(x.getDescriptor().getArch()))
+                .mapMulti(x -> Arrays.asList(x.getDescriptor().getCondition().getDesktopEnvironment()))
+                .notBlank()
+                .distinct()
+        );
+    }
+
+    @Override
+    public NutsResultList<String> getResultArch() {
+        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
+                .mapMulti(x -> Arrays.asList(x.getDescriptor().getCondition().getArch()))
                 .notBlank());
     }
 
@@ -1129,7 +1138,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
                 //optimized case
                 switch (a[0]) {
                     case ARCH: {
-                        r = getResultArchs();
+                        r = getResultArch();
                         break;
                     }
                     case FILE: {
@@ -1145,11 +1154,15 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
                         break;
                     }
                     case PACKAGING: {
-                        r = getResultPackagings();
+                        r = getResultPackaging();
                         break;
                     }
                     case PLATFORM: {
-                        r = getResultPlatforms();
+                        r = getResultPlatform();
+                        break;
+                    }
+                    case DESKTOP_ENVIRONMENT: {
+                        r = getResultDesktopEnvironment();
                         break;
                     }
                     case EXEC_ENTRY: {
@@ -1157,11 +1170,11 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
                         break;
                     }
                     case OS: {
-                        r = getResultOses();
+                        r = getResultOs();
                         break;
                     }
                     case OSDIST: {
-                        r = getResultOsdists();
+                        r = getResultOsDist();
                         break;
                     }
                     case ID: {

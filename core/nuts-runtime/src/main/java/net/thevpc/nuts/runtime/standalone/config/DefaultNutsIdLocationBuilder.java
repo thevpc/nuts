@@ -28,6 +28,7 @@ package net.thevpc.nuts.runtime.standalone.config;
 
 import net.thevpc.nuts.NutsIdLocation;
 import net.thevpc.nuts.NutsIdLocationBuilder;
+import net.thevpc.nuts.NutsSession;
 
 import java.util.Objects;
 
@@ -35,11 +36,16 @@ public class DefaultNutsIdLocationBuilder implements NutsIdLocationBuilder {
     private String url;
     private String classifier;
     private String region;
+    private NutsSession session;
 
     public DefaultNutsIdLocationBuilder() {
     }
+    public DefaultNutsIdLocationBuilder(NutsSession session) {
+        this.session=session;
+    }
 
-    public DefaultNutsIdLocationBuilder(NutsIdLocation value) {
+    public DefaultNutsIdLocationBuilder(NutsIdLocation value,NutsSession session) {
+        this.session=session;
         setUrl(value.getUrl());
         setClassifier(value.getClassifier());
     }

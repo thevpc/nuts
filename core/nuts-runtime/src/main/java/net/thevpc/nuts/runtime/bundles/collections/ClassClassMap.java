@@ -53,7 +53,7 @@ public class ClassClassMap extends ClassMap<Class> {
     @Override
     @Deprecated
     public Class put(Class classKey, Class value) {
-        throw new IllegalArgumentException("Unsupported. use add() instead.");
+        throw new IllegalArgumentException("unsupported. use add() instead.");
     }
 
     @Override

@@ -38,7 +38,7 @@ import java.util.Map;
  */
 public interface NutsId extends NutsTokenFilter, Serializable, Comparable<NutsId>,NutsFormattable {
 
-    public static NutsId parse(String value,NutsSession session){
+    static NutsId parse(String value,NutsSession session){
         NutsApiUtils.checkSession(session);
         return session.getWorkspace().id().parser().parse(value);
     }
@@ -98,25 +98,7 @@ public interface NutsId extends NutsTokenFilter, Serializable, Comparable<NutsId
      * os supported by the artifact
      * @return os supported by the artifact
      */
-    String getOs();
-
-    /**
-     * os distribution supported by the artifact
-     * @return os distribution supported by the artifact
-     */
-    String getOsdist();
-
-    /**
-     * platform supported by the artifact
-     * @return platform supported by the artifact
-     */
-    String getPlatform();
-
-    /**
-     * hardware architecture supported by the artifact
-     * @return hardware architecture supported by the artifact
-     */
-    String getArch();
+    NutsEnvCondition getCondition();
 
     /**
      * properties in the url query form
@@ -218,4 +200,8 @@ public interface NutsId extends NutsTokenFilter, Serializable, Comparable<NutsId
     NutsIdBuilder builder();
 
     NutsDependency toDependency();
+
+    NutsIdFilter filter();
+
+    NutsIdFilter filterCompat();
 }

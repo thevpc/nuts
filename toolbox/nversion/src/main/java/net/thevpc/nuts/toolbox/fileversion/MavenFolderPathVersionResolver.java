@@ -34,6 +34,7 @@ import java.util.Properties;
 import java.util.Set;
 import net.thevpc.nuts.NutsApplicationContext;
 import net.thevpc.nuts.NutsDescriptor;
+import net.thevpc.nuts.NutsDescriptorProperty;
 import net.thevpc.nuts.NutsDescriptorStyle;
 
 /**
@@ -57,8 +58,8 @@ public class MavenFolderPathVersionResolver implements PathVersionResolver {
                 properties.put("name", d.getName());
                 properties.setProperty("nuts.version-provider", "maven");
                 if (d.getProperties() != null) {
-                    for (Map.Entry<String, String> e : d.getProperties().entrySet()) {
-                        properties.put("property." + e.getKey(), e.getValue());
+                    for (NutsDescriptorProperty e : d.getProperties()) {
+                        properties.put("property." + e.getName(), e.getValue());
                     }
                 }
                 all.add(new VersionDescriptor(

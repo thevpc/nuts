@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -22,7 +22,7 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.NutsApiUtils;
@@ -40,50 +40,10 @@ import java.util.Map;
  */
 public interface NutsDependencyBuilder {
 
-    public static NutsDependencyBuilder of(NutsSession session){
+    public static NutsDependencyBuilder of(NutsSession session) {
         NutsApiUtils.checkSession(session);
         return session.getWorkspace().dependency().builder();
     }
-
-    /**
-     * set repository value
-     *
-     * @param repository new value
-     * @return {@code this} instance
-     */
-    NutsDependencyBuilder setRepository(String repository);
-
-    /**
-     * set group value
-     *
-     * @param groupId new value
-     * @return {@code this} instance
-     */
-    NutsDependencyBuilder setGroupId(String groupId);
-
-    /**
-     * set name value
-     *
-     * @param artifactId new value
-     * @return {@code this} instance
-     */
-    NutsDependencyBuilder setArtifactId(String artifactId);
-
-    /**
-     * set version value
-     *
-     * @param version new value
-     * @return {@code this} instance
-     */
-    NutsDependencyBuilder setVersion(NutsVersion version);
-
-    /**
-     * set version value
-     *
-     * @param version new value
-     * @return {@code this} instance
-     */
-    NutsDependencyBuilder setVersion(String version);
 
     /**
      * set id value
@@ -92,71 +52,6 @@ public interface NutsDependencyBuilder {
      * @return {@code this} instance
      */
     NutsDependencyBuilder setId(NutsId id);
-
-    /**
-     * set scope value
-     *
-     * @param scope new value
-     * @return {@code this} instance
-     */
-    NutsDependencyBuilder setScope(NutsDependencyScope scope);
-
-    /**
-     * set scope value
-     *
-     * @param scope new value
-     * @return {@code this} instance
-     */
-    NutsDependencyBuilder setScope(String scope);
-
-    /**
-     * set optional value
-     *
-     * @param optional new value
-     * @return {@code this} instance
-     */
-    NutsDependencyBuilder setOptional(String optional);
-
-
-    /**
-     * set type value
-     *
-     * @param type new value
-     * @return {@code this} instance
-     */
-    NutsDependencyBuilder setType(String type);
-
-    /**
-     * set classifier value
-     *
-     * @param classifier new value
-     * @return {@code this} instance
-     */
-    NutsDependencyBuilder setClassifier(String classifier);
-
-    /**
-     * set os value
-     *
-     * @param os new value
-     * @return {@code this} instance
-     */
-    NutsDependencyBuilder setOs(String os);
-
-    /**
-     * set arch value
-     *
-     * @param arch new value
-     * @return {@code this} instance
-     */
-    NutsDependencyBuilder setArch(String arch);
-
-    /**
-     * set exclusions value
-     *
-     * @param exclusions new value
-     * @return {@code this} instance
-     */
-    NutsDependencyBuilder setExclusions(NutsId[] exclusions);
 
     /**
      * reset this instance with value
@@ -181,7 +76,6 @@ public interface NutsDependencyBuilder {
      * @return {@code this} instance
      */
     NutsDependencyBuilder set(NutsDependency value);
-
 
     /**
      * reset this instance with value
@@ -214,6 +108,14 @@ public interface NutsDependencyBuilder {
     String getType();
 
     /**
+     * set type value
+     *
+     * @param type new value
+     * @return {@code this} instance
+     */
+    NutsDependencyBuilder setType(String type);
+
+    /**
      * return optional
      *
      * @return optional
@@ -221,11 +123,35 @@ public interface NutsDependencyBuilder {
     String getOptional();
 
     /**
+     * set optional value
+     *
+     * @param optional new value
+     * @return {@code this} instance
+     */
+    NutsDependencyBuilder setOptional(String optional);
+
+    /**
      * return scope
      *
      * @return scope
      */
     String getScope();
+
+    /**
+     * set scope value
+     *
+     * @param scope new value
+     * @return {@code this} instance
+     */
+    NutsDependencyBuilder setScope(NutsDependencyScope scope);
+
+    /**
+     * set scope value
+     *
+     * @param scope new value
+     * @return {@code this} instance
+     */
+    NutsDependencyBuilder setScope(String scope);
 
     /**
      * return id
@@ -242,23 +168,27 @@ public interface NutsDependencyBuilder {
     String getRepository();
 
     /**
-     * return os
+     * set repository value
      *
-     * @return os
+     * @param repository new value
+     * @return {@code this} instance
      */
-    String getOs();
-    /**
-     * return arch
-     *
-     * @return arch
-     */
-    String getArch();
+    NutsDependencyBuilder setRepository(String repository);
+
     /**
      * return group
      *
      * @return group
      */
     String getGroupId();
+
+    /**
+     * set group value
+     *
+     * @param groupId new value
+     * @return {@code this} instance
+     */
+    NutsDependencyBuilder setGroupId(String groupId);
 
     /**
      * return name
@@ -268,11 +198,37 @@ public interface NutsDependencyBuilder {
     String getArtifactId();
 
     /**
+     * set name value
+     *
+     * @param artifactId new value
+     * @return {@code this} instance
+     */
+    NutsDependencyBuilder setArtifactId(String artifactId);
+
+    /**
      * return classifier
      *
      * @return classifier
      */
     String getClassifier();
+
+    /**
+     * set classifier value
+     *
+     * @param classifier new value
+     * @return {@code this} instance
+     */
+    NutsDependencyBuilder setClassifier(String classifier);
+
+    /**
+     * set condition
+     *
+     * @param condition condition
+     * @return {@code this} instance
+     */
+    NutsDependencyBuilder setCondition(NutsEnvCondition condition);
+
+    NutsDependencyBuilder setCondition(NutsEnvConditionBuilder condition);
 
     /**
      * return full name
@@ -289,11 +245,35 @@ public interface NutsDependencyBuilder {
     NutsVersion getVersion();
 
     /**
+     * set version value
+     *
+     * @param version new value
+     * @return {@code this} instance
+     */
+    NutsDependencyBuilder setVersion(NutsVersion version);
+
+    /**
+     * set version value
+     *
+     * @param version new value
+     * @return {@code this} instance
+     */
+    NutsDependencyBuilder setVersion(String version);
+
+    /**
      * return exclusions
      *
      * @return exclusions
      */
     NutsId[] getExclusions();
+
+    /**
+     * set exclusions value
+     *
+     * @param exclusions new value
+     * @return {@code this} instance
+     */
+    NutsDependencyBuilder setExclusions(NutsId[] exclusions);
 
     /**
      * build new instance of NutsDependencies
@@ -304,15 +284,23 @@ public interface NutsDependencyBuilder {
 
     NutsDependencyBuilder setProperty(String property, String value);
 
-    NutsDependencyBuilder setProperties(Map<String, String> queryMap);
-
     NutsDependencyBuilder addProperties(Map<String, String> queryMap);
-
-    NutsDependencyBuilder setProperties(String propertiesQuery);
 
     NutsDependencyBuilder addProperties(String propertiesQuery);
 
     String getPropertiesQuery();
 
     Map<String, String> getProperties();
+
+    NutsDependencyBuilder setProperties(Map<String, String> queryMap);
+
+    NutsDependencyBuilder setProperties(String propertiesQuery);
+
+    /**
+     * return condition builder
+     *
+     * @return condition condition builder
+     */
+    NutsEnvConditionBuilder getCondition();
+
 }

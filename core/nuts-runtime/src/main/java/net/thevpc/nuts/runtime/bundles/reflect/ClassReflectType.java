@@ -23,6 +23,8 @@
  */
 package net.thevpc.nuts.runtime.bundles.reflect;
 
+import net.thevpc.nuts.NutsSession;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -60,6 +62,7 @@ public class ClassReflectType implements ReflectType {
     private ReflectPropertyAccessStrategy propertyAccessStrategy;
     private ReflectPropertyDefaultValueStrategy propertyDefaultValueStrategy;
     private Constructor noArgConstr;
+    private Constructor sessionConstr;
 
     public ClassReflectType(Type type,
             ReflectPropertyAccessStrategy propertyAccessStrategy,
@@ -81,19 +84,70 @@ public class ClassReflectType implements ReflectType {
     }
 
     @Override
+    public boolean hasNoArgsConstructor() {
+        if (noArgConstr == null) {
+            try {
+                noArgConstr = clazz.getConstructor();
+                noArgConstr.setAccessible(true);
+            } catch (Exception ex) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public boolean hasSessionConstructor() {
+        if (sessionConstr == null) {
+            try {
+                sessionConstr = clazz.getConstructor(NutsSession.class);
+                sessionConstr.setAccessible(true);
+            } catch (Exception ex) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
     public Object newInstance() {
         if (noArgConstr == null) {
             try {
                 noArgConstr = clazz.getConstructor();
                 noArgConstr.setAccessible(true);
             } catch (NoSuchMethodException ex) {
-                throw new IllegalArgumentException("Unable to resolve default constructore fo " + clazz, ex);
+                throw new IllegalArgumentException("Unable to resolve default constructor fo " + clazz, ex);
             } catch (SecurityException ex) {
                 throw new IllegalArgumentException("Not allowed to access default constructor for " + clazz, ex);
             }
         }
         try {
             return noArgConstr.newInstance();
+        } catch (InstantiationException | InvocationTargetException ex) {
+            Throwable c = ex.getCause();
+            if (c instanceof RuntimeException) {
+                throw (RuntimeException) c;
+            }
+            throw new IllegalArgumentException(c);
+        } catch (IllegalAccessException ex) {
+            throw new IllegalArgumentException(ex);
+        }
+    }
+
+    @Override
+    public Object newInstance(NutsSession session) {
+        if (sessionConstr == null) {
+            try {
+                sessionConstr = clazz.getConstructor(NutsSession.class);
+                sessionConstr.setAccessible(true);
+            } catch (NoSuchMethodException ex) {
+                throw new IllegalArgumentException("Unable to resolve default constructor fo " + clazz, ex);
+            } catch (SecurityException ex) {
+                throw new IllegalArgumentException("Not allowed to access default constructor for " + clazz, ex);
+            }
+        }
+        try {
+            return sessionConstr.newInstance(session);
         } catch (InstantiationException | InvocationTargetException ex) {
             Throwable c = ex.getCause();
             if (c instanceof RuntimeException) {

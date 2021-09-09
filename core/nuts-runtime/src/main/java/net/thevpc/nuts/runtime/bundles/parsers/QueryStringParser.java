@@ -83,6 +83,11 @@ public class QueryStringParser {
         _setProperties(queryMap, true);
     }
 
+    public QueryStringParser clear() {
+        this.properties.clear();
+        return this;
+    }
+
     public QueryStringParser setProperties(String propertiesQuery) {
         Map<String, String> m2 = parseMap(propertiesQuery);
         this.properties.clear();

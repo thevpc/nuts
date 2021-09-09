@@ -80,37 +80,7 @@ public interface NutsDescriptor extends Serializable {
      */
     String getPackaging();
 
-    /**
-     * supported archs. if empty, all arch are supported (for example for java, all arch are supported).
-     * @return supported archs
-     */
-    String[] getArch();
-
-    /**
-     * supported operating systems. if empty, all oses are supported (for example for java, all arch are supported).
-     * @return supported oses
-     */
-    String[] getOs();
-
-    /**
-     * supported operating system distributions (mostly for linux systems). if empty, all distributions are supported.
-     * @return supported operating system distributions
-     */
-    String[] getOsdist();
-
-    /**
-     * supported platforms (java, dotnet, ...). if empty platform is not relevant.
-     * This is helpful to bind application to a jdk version for instance (in that case platform may be in the form java#8 for instance)
-     * @return supported platforms
-     */
-    String[] getPlatform();
-
-    /**
-     * supported desktop environments (gnome, kde, none, ...). if empty desktop environment is not relevant.
-     * This is helpful to bind application to a specific environment
-     * @return supported platforms
-     */
-    String[] getDesktopEnvironment();
+    NutsEnvCondition getCondition();
 
     /**
      * user friendly name, a short description for the artifact
@@ -142,12 +112,6 @@ public interface NutsDescriptor extends Serializable {
      * @return long description for the artifact
      */
     String getDescription();
-
-    /**
-     * ordered list of classifier mapping used to resolve valid classifier to use of ra given environment.
-     * @return ordered list of classifier mapping used to resolve valid classifier to use of ra given environment
-     */
-    NutsClassifierMapping[] getClassifierMappings();
 
     /**
      * list of available mirror locations from which nuts can download artifact content.
@@ -189,7 +153,23 @@ public interface NutsDescriptor extends Serializable {
      * custom properties that can be used as place holders (int ${name} form) in other fields.
      * @return custom properties that can be used as place holders (int ${name} form) in other fields.
      */
-    Map<String, String> getProperties();
+    NutsDescriptorProperty[] getProperties();
+
+    /**
+     * custom property
+     * @param name name
+     * @return custom property value by name
+     * @since 0.8.3
+     */
+    NutsDescriptorProperty getProperty(String name);
+
+    /**
+     * custom property
+     * @param name name
+     * @return custom property value by name
+     * @since 0.8.3
+     */
+    String getPropertyValue(String name);
 
     /**
      * create new builder filled with this descriptor fields.

@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.core.format.text;
 
+import net.thevpc.nuts.NutsUnsupportedEnumException;
 import net.thevpc.nuts.runtime.core.terminals.NutsTerminalModeOp;
 
 import java.io.OutputStream;
@@ -42,7 +43,7 @@ public class FilterFormatOutputStream extends RenderedOutputStream implements Ex
                 return new UnescapeOutputStream(this,session);
             }
         }
-        throw new IllegalArgumentException("Unsupported");
+        throw new NutsUnsupportedEnumException(session, other);
     }
 
 }

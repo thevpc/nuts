@@ -54,7 +54,7 @@ public class Test01_InstallTest {
 
     @BeforeEach
     public void startup() throws IOException {
-        Assumptions.assumeTrue(NutsUtilPlatforms.getPlatformOsFamily().equals(NutsOsFamily.LINUX));
+        Assumptions.assumeTrue(NutsOsFamily.getCurrent().equals(NutsOsFamily.LINUX));
         TestUtils.unsetNutsSystemProperties();
     }
 

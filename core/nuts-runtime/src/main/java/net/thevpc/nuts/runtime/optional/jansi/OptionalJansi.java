@@ -35,7 +35,7 @@ import net.thevpc.nuts.runtime.standalone.boot.StdFd;
 public class OptionalJansi {
 
     public static boolean isAvailable() {
-        if (NutsUtilPlatforms.getPlatformOsFamily() == NutsOsFamily.WINDOWS) {
+        if (NutsOsFamily.getCurrent() == NutsOsFamily.WINDOWS) {
             try {
                 Class.forName("org.fusesource.jansi.io.AnsiOutputStream");
                 return true;

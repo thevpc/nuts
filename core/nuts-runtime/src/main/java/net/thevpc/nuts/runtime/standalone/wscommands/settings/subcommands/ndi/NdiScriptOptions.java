@@ -199,8 +199,7 @@ public class NdiScriptOptions implements Cloneable {
                                             .getParent())
                             .filter(
                                     f
-                                            -> session.getWorkspace().version().parse(f.getFileName().toString()).getNumber(0, -1)
-                                            .equals(BigInteger.valueOf(-1))
+                                            -> session.getWorkspace().version().parse(f.getFileName().toString()).getLong(0, -1)==-1
                                             && Files.exists(f.resolve("nuts-api-config.json"))
                             ).map(
                                     f -> session.getWorkspace().version().parse(f.getFileName().toString())

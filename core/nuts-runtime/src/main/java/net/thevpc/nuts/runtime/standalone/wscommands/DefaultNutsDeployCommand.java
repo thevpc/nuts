@@ -205,12 +205,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                 }
 
                 NutsId effId = dws.resolveEffectiveId(descriptor, validWorkspaceSession);
-                for (String os : descriptor.getOs()) {
-                    CorePlatformUtils.checkSupportedOs(ws.id().parser().setLenient(false).parse(os).getShortName());
-                }
-                for (String arch : descriptor.getArch()) {
-                    CorePlatformUtils.checkSupportedArch(ws.id().parser().setLenient(false).parse(arch).getShortName());
-                }
+                CorePlatformUtils.checkSupportedSys(descriptor.getCondition(),validWorkspaceSession);
                 if (NutsUtilStrings.isBlank(repository)) {
                     NutsRepositoryFilter repositoryFilter = null;
                     //TODO CHECK ME, why offline

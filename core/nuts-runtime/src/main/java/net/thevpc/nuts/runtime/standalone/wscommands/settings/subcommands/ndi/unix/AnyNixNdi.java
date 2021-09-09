@@ -44,7 +44,7 @@ public abstract class AnyNixNdi extends BaseSystemNdi {
             }
             return line.trim();
         }
-        throw new IllegalArgumentException("not a comment: " + line);
+        throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("not a comment: %s",line));
     }
 
     @Override

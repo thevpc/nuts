@@ -19,6 +19,7 @@ public class Pom {
     PomId parent;
     PomRepository[] repositories;
     PomRepository[] pluginRepositories;
+    PomProfile[] profiles;
     String[] modules;
     Document xml;
 
@@ -30,7 +31,7 @@ public class Pom {
             PomDependency[] dependencies,
             PomDependency[] dependenciesManagement,
             PomRepository[] repositories, PomRepository[] pluginRepositories,
-            String[] modules, Document xml
+            String[] modules, PomProfile[] profiles,Document xml
     ) {
         this.groupId = groupId;
         this.artifactId = artifactId;
@@ -47,7 +48,12 @@ public class Pom {
         this.repositories = repositories;
         this.pluginRepositories = pluginRepositories;
         this.modules = modules;
+        this.profiles = profiles;
         this.xml = xml;
+    }
+
+    public PomProfile[] getProfiles() {
+        return profiles;
     }
 
     public Document getXml() {

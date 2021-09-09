@@ -72,7 +72,7 @@ public class ExtendedFormatAwarePrintWriter extends PrintWriter implements Exten
                 return new EscapeOutputStream(new SimpleWriterOutputStream(this, session), session);
             }
         }
-        throw new IllegalArgumentException("Unsupported");
+        throw new NutsUnsupportedEnumException(session, other);
     }
 
     @Override

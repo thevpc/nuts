@@ -51,7 +51,7 @@ public class NutsDescriptorFilterPlatform extends AbstractDescriptorFilter imple
 
     @Override
     public boolean acceptDescriptor(NutsDescriptor descriptor, NutsSession session) {
-        return CoreFilterUtils.matchesPlatform(platform, descriptor, session);
+        return CoreFilterUtils.matchesPlatform(platform, descriptor.getCondition(), session);
     }
 
     /**

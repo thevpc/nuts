@@ -53,6 +53,7 @@ public enum NutsArchFamily implements NutsEnum {
     ITANIUM_64,
     UNKNOWN;
 
+    private static final NutsArchFamily _curr = parseLenient(System.getProperty("os.arch"), UNKNOWN, UNKNOWN);
     /**
      * lower-cased identifier for the enum entry
      */
@@ -65,14 +66,16 @@ public enum NutsArchFamily implements NutsEnum {
     /**
      * resolved platform architecture (from {@code System.getProperty("os.arch")})
      * or UNKNOWN
+     *
      * @return resolved platform architecture
      */
     public static NutsArchFamily getArchFamily() {
-        return parseLenient(System.getProperty("os.arch"),UNKNOWN);
+        return parseLenient(System.getProperty("os.arch"), UNKNOWN);
     }
 
     /**
      * parse string and return null if parse fails
+     *
      * @param arch value to parse
      * @return parsed instance or null
      */
@@ -82,6 +85,7 @@ public enum NutsArchFamily implements NutsEnum {
 
     /**
      * parse string and return {@code emptyOrErrorValue} if parse fails
+     *
      * @param arch value to parse
      * @return parsed instance or {@code emptyOrErrorValue}
      */
@@ -90,9 +94,9 @@ public enum NutsArchFamily implements NutsEnum {
     }
 
     /**
-     *
      * parse string and return {@code emptyValue} when null or {@code errorValue} if parse fails
-     * @param arch value to parse
+     *
+     * @param arch       value to parse
      * @param emptyValue value when the value is null or empty
      * @param errorValue value when the value cannot be parsed
      * @return parsed value
@@ -206,6 +210,10 @@ public enum NutsArchFamily implements NutsEnum {
                 return errorValue;
             }
         }
+    }
+
+    public static NutsArchFamily getCurrent() {
+        return _curr;
     }
 
     /**

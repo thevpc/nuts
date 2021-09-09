@@ -590,15 +590,6 @@ public final class CoreNutsArgumentsParser {
                     case "--log-file-name":
                     case "--log-file-base":
                     case "--log-file-count":
-                    case "--log-inherited": {
-                        if (enabled) {
-                            if (logConfig == null) {
-                                logConfig = new NutsLogConfig();
-                            }
-                        }
-                        parseLogLevel(logConfig, cmdLine, enabled, session);
-                        break;
-                    }
                     case "-X":
                     case "--exclude-extension": {
                         a = cmdLine.nextString();
@@ -1141,14 +1132,6 @@ public final class CoreNutsArgumentsParser {
                 String v = a.getStringValue();
                 if (enabled) {
                     logConfig.setLogFileBase(v);
-                }
-                break;
-            }
-
-            case "--log-inherited": {
-                cmdLine.skip();
-                if (enabled) {
-                    logConfig.setLogInherited(true);
                 }
                 break;
             }

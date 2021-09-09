@@ -43,6 +43,7 @@ public enum NutsDisplayProperty  implements NutsEnum {
     ARCH,
     PACKAGING,
     PLATFORM,
+    DESKTOP_ENVIRONMENT,
     OS,
     OSDIST,
     EXEC_ENTRY,
@@ -87,8 +88,15 @@ public enum NutsDisplayProperty  implements NutsEnum {
         try {
             return NutsDisplayProperty.valueOf(value.toUpperCase());
         } catch (Exception notFound) {
-            return errorValue;
+            //
         }
+        switch (value){
+            case "de":return DESKTOP_ENVIRONMENT;
+            case "osdist":return OSDIST;
+            case "repo":return REPOSITORY;
+            case "repo_id":return REPOSITORY_ID;
+        }
+        return errorValue;
     }
 
 }

@@ -241,7 +241,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      *
      * @return {@code this} instance
      */
-    NutsSearchCommand clearArchs();
+    NutsSearchCommand clearArch();
 
     /**
      * define locked ids to prevent them to be updated or the force other ids to
@@ -290,30 +290,22 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * @param values arch to search for
      * @return {@code this} instance
      */
-    NutsSearchCommand addArchs(Collection<String> values);
+    NutsSearchCommand addArch(Collection<String> values);
 
     /**
-     * add archs to search
+     * add arch to search
      *
      * @param values arch to search for
      * @return {@code this} instance
      */
-    NutsSearchCommand addArchs(String... values);
+    NutsSearchCommand addArch(String... values);
 
     /**
-     * reset packagings to search
+     * reset packaging to search
      *
      * @return {@code this} instance
      */
-    NutsSearchCommand clearPackagings();
-
-    /**
-     * add packagings to search
-     *
-     * @param values packagings to search for
-     * @return {@code this} instance
-     */
-    NutsSearchCommand addPackagings(Collection<String> values);
+    NutsSearchCommand clearPackaging();
 
     /**
      * add packagings to search
@@ -321,7 +313,15 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * @param values packagings to search for
      * @return {@code this} instance
      */
-    NutsSearchCommand addPackagings(String... values);
+    NutsSearchCommand addPackaging(Collection<String> values);
+
+    /**
+     * add packagings to search
+     *
+     * @param values packagings to search for
+     * @return {@code this} instance
+     */
+    NutsSearchCommand addPackaging(String... values);
 
     /**
      * add packaging to search
@@ -338,45 +338,6 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * @return {@code this} instance
      */
     NutsSearchCommand removePackaging(String value);
-
-//    /**
-//     * reset repositories to search into
-//     *
-//     * @return {@code this} instance
-//     */
-//    NutsSearchCommand clearRepositories();
-//
-//    /**
-//     * add repositories to search into
-//     *
-//     * @param values repositories to search into
-//     * @return {@code this} instance
-//     */
-//    NutsSearchCommand addRepositories(Collection<String> values);
-//
-//    /**
-//     * add repositories to search into
-//     *
-//     * @param values repositories to search into
-//     * @return {@code this} instance
-//     */
-//    NutsSearchCommand addRepositories(String... values);
-//
-//    /**
-//     * add repository to search into
-//     *
-//     * @param value repository to search into
-//     * @return {@code this} instance
-//     */
-//    NutsSearchCommand addRepository(String value);
-//
-//    /**
-//     * add repository to search into
-//     *
-//     * @param value repository to search into
-//     * @return {@code this} instance
-//     */
-//    NutsSearchCommand removeRepository(String value);
 
     /**
      * add locked ids to prevent them to be updated or the force other ids to
@@ -1035,7 +996,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * <li>packaging</li>
      * <li>platform</li>
      * <li>os</li>
-     * <li>osdist</li>
+     * <li>osDist</li>
      * <li>exec-entry</li>
      * <li>file-name</li>
      * <li>file</li>
@@ -1065,7 +1026,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      *
      * @return result as operating system names
      */
-    NutsResultList<String> getResultOses();
+    NutsResultList<String> getResultOs();
 
     /**
      * return result as execution entries
@@ -1075,32 +1036,40 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     NutsResultList<NutsExecutionEntry> getResultExecutionEntries();
 
     /**
-     * return result as osdist names
+     * return result as osDist names
      *
-     * @return result as osdist names
+     * @return result as osDist names
      */
-    NutsResultList<String> getResultOsdists();
+    NutsResultList<String> getResultOsDist();
 
     /**
-     * return result as packagings
+     * return result as packaging
      *
-     * @return result as packagings
+     * @return result as packaging
      */
-    NutsResultList<String> getResultPackagings();
+    NutsResultList<String> getResultPackaging();
 
     /**
      * return result as platforms
      *
      * @return result as platforms
      */
-    NutsResultList<String> getResultPlatforms();
+    NutsResultList<String> getResultPlatform();
+
+    /**
+     * return result as desktop environments
+     *
+     * @return result as desktop environments
+     * @since 0.8.3
+     */
+    NutsResultList<String> getResultDesktopEnvironment();
 
     /**
      * return result as archs
      *
      * @return result as archs
      */
-    NutsResultList<String> getResultArchs();
+    NutsResultList<String> getResultArch();
 
     /**
      * true when print result

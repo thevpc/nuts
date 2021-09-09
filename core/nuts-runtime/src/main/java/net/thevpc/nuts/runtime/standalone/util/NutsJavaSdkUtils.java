@@ -1,8 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.util;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.common.CorePlatformUtils;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.DefaultNutsWorkspace;
 import net.thevpc.nuts.runtime.standalone.config.NutsSdkLocationComparator;
 
@@ -58,9 +56,9 @@ public class NutsJavaSdkUtils {
         return LOG;
     }
 
-    public NutsSdkLocation resolveJdkLocation(String requestedJavaVersion, NutsSession session) {
+    public NutsPlatformLocation resolveJdkLocation(String requestedJavaVersion, NutsSession session) {
         requestedJavaVersion = NutsUtilStrings.trim(requestedJavaVersion);
-        NutsSdkLocation bestJava = session.getWorkspace().sdks().setSession(session).findByVersion("java",
+        NutsPlatformLocation bestJava = session.getWorkspace().env().platforms().setSession(session).findByVersion("java",
                 session.getWorkspace().version().filter().byValue(requestedJavaVersion)
         );
         if (bestJava == null) {
@@ -70,7 +68,7 @@ public class NutsJavaSdkUtils {
                 packaging = "jdk";
             }
             String product = "JDK";
-            NutsSdkLocation current = new NutsSdkLocation(
+            NutsPlatformLocation current = new NutsPlatformLocation(
                     session.getWorkspace().env().getPlatform(),
                     product,
                     product + "-" + System.getProperty("java.version"),
@@ -96,7 +94,7 @@ public class NutsJavaSdkUtils {
         return bestJava;
     }
 
-    public NutsSdkLocation[] searchJdkLocations(NutsSession session) {
+    public NutsPlatformLocation[] searchJdkLocations(NutsSession session) {
         String[] conf = {};
         switch (session.getWorkspace().env().getOsFamily()) {
             case LINUX:
@@ -117,14 +115,14 @@ public class NutsJavaSdkUtils {
                 break;
             }
         }
-        List<NutsSdkLocation> all = new ArrayList<>();
+        List<NutsPlatformLocation> all = new ArrayList<>();
         for (String s : conf) {
             all.addAll(Arrays.asList(searchJdkLocations(s, session)));
         }
-        return all.toArray(new NutsSdkLocation[0]);
+        return all.toArray(new NutsPlatformLocation[0]);
     }
 
-    public Future<NutsSdkLocation[]> searchJdkLocationsFuture(NutsSession session) {
+    public Future<NutsPlatformLocation[]> searchJdkLocationsFuture(NutsSession session) {
         LinkedHashSet<String> conf = new LinkedHashSet<>();
         File file = new File(System.getProperty("java.home"));
         try {
@@ -133,10 +131,10 @@ public class NutsJavaSdkUtils {
             //
         }
 
-        List<Future<NutsSdkLocation[]>> all = new ArrayList<>();
-        NutsSdkLocation base = resolveJdkLocation(file.getPath(), null, session);
+        List<Future<NutsPlatformLocation[]>> all = new ArrayList<>();
+        NutsPlatformLocation base = resolveJdkLocation(file.getPath(), null, session);
         if (base != null) {
-            all.add(CompletableFuture.completedFuture(new NutsSdkLocation[]{base}));
+            all.add(CompletableFuture.completedFuture(new NutsPlatformLocation[]{base}));
         }
         switch (session.getWorkspace().env().getOsFamily()) {
             case LINUX:
@@ -160,29 +158,29 @@ public class NutsJavaSdkUtils {
         for (String s : conf) {
             all.add(searchJdkLocationsFuture(Paths.get(s), session));
         }
-        return session.getWorkspace().concurrent().executorService().submit(new Callable<NutsSdkLocation[]>() {
+        return session.getWorkspace().concurrent().executorService().submit(new Callable<NutsPlatformLocation[]>() {
             @Override
-            public NutsSdkLocation[] call() throws Exception {
-                List<NutsSdkLocation> locs = new ArrayList<>();
-                for (Future<NutsSdkLocation[]> nutsSdkLocationFuture : all) {
-                    NutsSdkLocation[] e = nutsSdkLocationFuture.get();
+            public NutsPlatformLocation[] call() throws Exception {
+                List<NutsPlatformLocation> locs = new ArrayList<>();
+                for (Future<NutsPlatformLocation[]> nutsSdkLocationFuture : all) {
+                    NutsPlatformLocation[] e = nutsSdkLocationFuture.get();
                     if (e != null) {
                         locs.addAll(Arrays.asList(e));
                     }
                 }
                 locs.sort(new NutsSdkLocationComparator(session.getWorkspace()));
-                return locs.toArray(new NutsSdkLocation[0]);
+                return locs.toArray(new NutsPlatformLocation[0]);
             }
         });
     }
 
-    public NutsSdkLocation[] searchJdkLocations(String loc, NutsSession session) {
+    public NutsPlatformLocation[] searchJdkLocations(String loc, NutsSession session) {
         Path s = Paths.get(loc);
-        List<NutsSdkLocation> all = new ArrayList<>();
+        List<NutsPlatformLocation> all = new ArrayList<>();
         if (Files.isDirectory(s)) {
             try (final DirectoryStream<Path> it = Files.newDirectoryStream(s)) {
                 for (Path d : it) {
-                    NutsSdkLocation r = resolveJdkLocation(d.toString(), null, session);
+                    NutsPlatformLocation r = resolveJdkLocation(d.toString(), null, session);
                     if (r != null) {
                         all.add(r);
                         if (session != null && session.isPlainTrace()) {
@@ -199,22 +197,19 @@ public class NutsJavaSdkUtils {
             }
         }
         all.sort(new NutsSdkLocationComparator(session.getWorkspace()));
-        return all.toArray(new NutsSdkLocation[0]);
+        return all.toArray(new NutsPlatformLocation[0]);
     }
 
-    public Future<NutsSdkLocation[]> searchJdkLocationsFuture(Path s, NutsSession session) {
-        if (session == null) {
-            throw new IllegalArgumentException("Session cannot be null");
-        }
-        List<Future<NutsSdkLocation>> all = new ArrayList<>();
+    public Future<NutsPlatformLocation[]> searchJdkLocationsFuture(Path s, NutsSession session) {
+        List<Future<NutsPlatformLocation>> all = new ArrayList<>();
         if (Files.isDirectory(s)) {
             try (final DirectoryStream<Path> it = Files.newDirectoryStream(s)) {
                 for (Path d : it) {
                     all.add(
-                            session.getWorkspace().concurrent().executorService().submit(new Callable<NutsSdkLocation>() {
+                            session.getWorkspace().concurrent().executorService().submit(new Callable<NutsPlatformLocation>() {
                                 @Override
-                                public NutsSdkLocation call() throws Exception {
-                                    NutsSdkLocation r = null;
+                                public NutsPlatformLocation call() throws Exception {
+                                    NutsPlatformLocation r = null;
                                     try {
                                         r = resolveJdkLocation(d.toString(), null, session);
                                         if (r != null) {
@@ -240,22 +235,22 @@ public class NutsJavaSdkUtils {
                 throw new UncheckedIOException(ex);
             }
         }
-        return session.getWorkspace().concurrent().executorService().submit(new Callable<NutsSdkLocation[]>() {
+        return session.getWorkspace().concurrent().executorService().submit(new Callable<NutsPlatformLocation[]>() {
             @Override
-            public NutsSdkLocation[] call() throws Exception {
-                List<NutsSdkLocation> locs = new ArrayList<>();
-                for (Future<NutsSdkLocation> nutsSdkLocationFuture : all) {
-                    NutsSdkLocation e = nutsSdkLocationFuture.get();
+            public NutsPlatformLocation[] call() throws Exception {
+                List<NutsPlatformLocation> locs = new ArrayList<>();
+                for (Future<NutsPlatformLocation> nutsSdkLocationFuture : all) {
+                    NutsPlatformLocation e = nutsSdkLocationFuture.get();
                     if (e != null) {
                         locs.add(e);
                     }
                 }
-                return locs.toArray(new NutsSdkLocation[0]);
+                return locs.toArray(new NutsPlatformLocation[0]);
             }
         });
     }
 
-    public NutsSdkLocation resolveJdkLocation(String path, String preferredName, NutsSession session) {
+    public NutsPlatformLocation resolveJdkLocation(String path, String preferredName, NutsSession session) {
         NutsWorkspaceUtils.checkSession(ws, session);
         if (path == null) {
             throw new NutsException(session, NutsMessage.formatted("missing path"));
@@ -333,7 +328,7 @@ public class NutsJavaSdkUtils {
         } else {
             preferredName = NutsUtilStrings.trim(preferredName);
         }
-        NutsSdkLocation r = new NutsSdkLocation(
+        NutsPlatformLocation r = new NutsPlatformLocation(
                 NutsWorkspaceUtils.of(session).createSdkId("java", jdkVersion),
                 product,
                 preferredName,

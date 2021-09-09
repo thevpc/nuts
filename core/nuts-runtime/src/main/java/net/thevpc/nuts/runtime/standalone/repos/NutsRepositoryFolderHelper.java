@@ -195,11 +195,12 @@ public class NutsRepositoryFolderHelper {
             NutsDescriptor d = Files.isRegularFile(file) ? getWorkspace().descriptor().parser().setSession(session).parse(file) : null;
             if (d != null) {
                 Map<String, String> query = id.getProperties();
-                String os = query.get("os");
-                String arch = query.get("arch");
-                String dist = query.get("dist");
-                String platform = query.get("platform");
-                if (CoreFilterUtils.matchesEnv(arch, os, dist, platform, d, session)) {
+                String os = query.get(NutsConstants.IdProperties.OS);
+                String arch = query.get(NutsConstants.IdProperties.ARCH);
+                String dist = query.get(NutsConstants.IdProperties.OS_DIST);
+                String platform = query.get(NutsConstants.IdProperties.PLATFORM);
+                String de = query.get(NutsConstants.IdProperties.DESKTOP_ENVIRONMENT);
+                if (CoreFilterUtils.matchesEnv(arch, os, dist, platform, de,d.getCondition(), session)) {
                     return d;
                 }
             }

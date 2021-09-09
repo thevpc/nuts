@@ -51,7 +51,7 @@ public abstract class DelegateNutsDescriptor extends AbstractNutsDescriptor {
     }
 
     @Override
-    public Map<String, String> getProperties() {
+    public NutsDescriptorProperty[] getProperties() {
         return getBase().getProperties();
     }
 
@@ -110,43 +110,13 @@ public abstract class DelegateNutsDescriptor extends AbstractNutsDescriptor {
     }
 
     @Override
-    public String[] getArch() {
-        return getBase().getArch();
+    public NutsEnvCondition getCondition() {
+        return getBase().getCondition();
     }
-
-    @Override
-    public String[] getOs() {
-        return getBase().getOs();
-    }
-
-    @Override
-    public String[] getOsdist() {
-        return getBase().getOsdist();
-    }
-
-    @Override
-    public String[] getPlatform() {
-        return getBase().getPlatform();
-    }
-
-    @Override
-    public String[] getDesktopEnvironment() {
-        return getBase().getDesktopEnvironment();
-    }
-
-//    @Override
-//    public String getAlternative() {
-//        return getBase().getAlternative();
-//    }
 
     @Override
     public NutsIdLocation[] getLocations() {
         return getBase().getLocations();
-    }
-
-    @Override
-    public NutsClassifierMapping[] getClassifierMappings() {
-        return getBase().getClassifierMappings();
     }
 
     @Override

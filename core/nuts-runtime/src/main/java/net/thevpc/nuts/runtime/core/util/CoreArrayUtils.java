@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-import net.thevpc.nuts.NutsClassifierMapping;
 import net.thevpc.nuts.NutsIdLocation;
 
 /**
@@ -53,19 +52,14 @@ public class CoreArrayUtils {
         return all.toArray((T[]) Array.newInstance(cls, all.size()));
     }
 
-    public static String[] toArraySet(String[] values0, String[]... values) {
-        Set<String> set = CoreCollectionUtils.toSet(values0);
+    public static String[] toDistinctTrimmedNonEmptyArray(String[] values0, String[]... values) {
+        Set<String> set = CoreCollectionUtils.toTrimmedNonEmptySet(values0);
         if (values != null) {
             for (String[] value : values) {
-                set.addAll(CoreCollectionUtils.toSet(value));
+                set.addAll(CoreCollectionUtils.toTrimmedNonEmptySet(value));
             }
         }
         return set.toArray(new String[0]);
-    }
-
-    public static NutsClassifierMapping[] toArraySet(NutsClassifierMapping[] classifierMappings) {
-        Set<NutsClassifierMapping> set = CoreCollectionUtils.toSet(classifierMappings);
-        return set.toArray(new NutsClassifierMapping[0]);
     }
 
     public static NutsIdLocation[] toArraySet(NutsIdLocation[] classifierMappings) {

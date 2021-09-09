@@ -38,12 +38,12 @@ import java.util.function.UnaryOperator;
  * Nuts descriptors define a <strong>mutable</strong> image to all information needed to execute an artifact.
  * It help creating an instance of {@link NutsDescriptor} by calling {@link #build()}
  *
- * @since 0.5.4
  * @app.category Descriptor
+ * @since 0.5.4
  */
 public interface NutsDescriptorBuilder extends Serializable {
 
-    static NutsDescriptorBuilder of(NutsSession session){
+    static NutsDescriptorBuilder of(NutsSession session) {
         NutsApiUtils.checkSession(session);
         return session.getWorkspace().descriptor().descriptorBuilder();
     }
@@ -111,6 +111,14 @@ public interface NutsDescriptorBuilder extends Serializable {
     boolean isApplication();
 
     /**
+     * set nutsApp flag
+     *
+     * @param nutsApp new value
+     * @return {@code this} instance
+     */
+    NutsDescriptorBuilder setApplication(boolean nutsApp);
+
+    /**
      * return descriptor packaging (used to resolve file extension)
      *
      * @return return descriptor packaging (used to resolve file extension)
@@ -124,82 +132,6 @@ public interface NutsDescriptorBuilder extends Serializable {
      * @return {@code this} instance
      */
     NutsDescriptorBuilder setPackaging(String packaging);
-
-    /**
-     * supported archs. if empty, all arch are supported (for example for java, all arch are supported).
-     *
-     * @return supported archs
-     */
-    String[] getArch();
-
-    /**
-     * set archs
-     *
-     * @param archs value to set
-     * @return {@code this} instance
-     */
-    NutsDescriptorBuilder setArch(String[] archs);
-
-    /**
-     * supported operating systems. if empty, all oses are supported (for example for java, all arch are supported).
-     *
-     * @return supported oses
-     */
-    String[] getOs();
-
-    /**
-     * set os
-     *
-     * @param os value to set
-     * @return {@code this} instance
-     */
-    NutsDescriptorBuilder setOs(String[] os);
-
-    /**
-     * supported operating system distributions (mostly for linux systems). if empty, all distributions are supported.
-     *
-     * @return supported operating system distributions
-     */
-    String[] getOsdist();
-
-    /**
-     * set osdist
-     *
-     * @param osdist value to set
-     * @return {@code this} instance
-     */
-    NutsDescriptorBuilder setOsdist(String[] osdist);
-
-    /**
-     * supported platforms (java, dotnet, ...). if empty patform is not relevant.
-     * This is helpful to bind application to a jdk version for instance (in that case platform may be in the form java#8 for instance)
-     *
-     * @return supported platforms
-     */
-    String[] getPlatform();
-
-    /**
-     * set platform
-     *
-     * @param platform value to set
-     * @return {@code this} instance
-     */
-    NutsDescriptorBuilder setPlatform(String[] platform);
-
-    /**
-     * supported desktop environment (kde, gnome, none, ...). if empty desktop environment is not relevant.
-     *
-     * @return supported environment list
-     */
-    String[] getDesktopEnvironment();
-
-    /**
-     * set desktopEnvironment
-     *
-     * @param desktopEnvironment value to set
-     * @return {@code this} instance
-     */
-    NutsDescriptorBuilder setDesktopEnvironment(String[] desktopEnvironment);
 
     /**
      * user friendly name, a short description for the artifact
@@ -228,6 +160,12 @@ public interface NutsDescriptorBuilder extends Serializable {
 
     NutsDescriptorBuilder setCategories(List<String> categories);
 
+    NutsEnvConditionBuilder getCondition();
+
+    NutsDescriptorBuilder setCondition(NutsEnvConditionBuilder condition);
+
+    NutsDescriptorBuilder setCondition(NutsEnvCondition condition);
+
     /**
      * long description for the artifact
      *
@@ -242,21 +180,6 @@ public interface NutsDescriptorBuilder extends Serializable {
      * @return {@code this} instance
      */
     NutsDescriptorBuilder setDescription(String description);
-
-    /**
-     * ordered list of classifier mapping used to resolve valid classifier to use of ra given environment.
-     *
-     * @return ordered list of classifier mapping used to resolve valid classifier to use of ra given environment
-     */
-    NutsClassifierMapping[] getClassifierMappings();
-
-    /**
-     * set classifier mappings
-     *
-     * @param value new value
-     * @return {@code this} instance
-     */
-    NutsDescriptorBuilder setClassifierMappings(NutsClassifierMapping[] value);
 
     /**
      * list of available mirror locations from which nuts can download artifact content.
@@ -342,7 +265,7 @@ public interface NutsDescriptorBuilder extends Serializable {
      *
      * @return custom properties that can be used as place holders (int ${name} form) in other fields.
      */
-    Map<String, String> getProperties();
+    NutsDescriptorProperty[] getProperties();
 
     /**
      * set properties
@@ -350,7 +273,7 @@ public interface NutsDescriptorBuilder extends Serializable {
      * @param properties new value
      * @return {@code this} instance
      */
-    NutsDescriptorBuilder setProperties(Map<String, String> properties);
+    NutsDescriptorBuilder setProperties(NutsDescriptorProperty[] properties);
 
     /**
      * add location
@@ -359,24 +282,6 @@ public interface NutsDescriptorBuilder extends Serializable {
      * @return {@code this} instance
      */
     NutsDescriptorBuilder addLocation(NutsIdLocation location);
-
-
-    /**
-     * add classifier mapping
-     *
-     * @param mapping classifier mapping
-     * @return {@code this} instance
-     */
-    NutsDescriptorBuilder addClassifierMapping(NutsClassifierMapping mapping);
-
-
-    /**
-     * set nutsApp flag
-     *
-     * @param nutsApp new value
-     * @return {@code this} instance
-     */
-    NutsDescriptorBuilder setApplication(boolean nutsApp);
 
     /**
      * set or unset property.
@@ -389,75 +294,12 @@ public interface NutsDescriptorBuilder extends Serializable {
     NutsDescriptorBuilder setProperty(String name, String value);
 
     /**
-     * add os
-     *
-     * @param os new value to add
-     * @return {@code this} instance
-     */
-    NutsDescriptorBuilder addOs(String os);
-
-    /**
-     * add os dist
-     *
-     * @param osdist new value to add
-     * @return {@code this} instance
-     */
-    NutsDescriptorBuilder addOsdist(String osdist);
-
-    /**
-     * add arch
-     *
-     * @param arch new value to add
-     * @return {@code this} instance
-     */
-    NutsDescriptorBuilder addArch(String arch);
-
-    /**
-     * add platform
-     *
-     * @param platform new value to add
-     * @return {@code this} instance
-     */
-    NutsDescriptorBuilder addPlatform(String platform);
-
-    /**
-     * remove os
-     *
-     * @param os value to remove
-     * @return {@code this} instance
-     */
-    NutsDescriptorBuilder removeOs(String os);
-
-    /**
-     * remove osdist
-     *
-     * @param osdist value to remove
-     * @return {@code this} instance
-     */
-    NutsDescriptorBuilder removeOsdist(String osdist);
-
-    /**
-     * remove arch
-     *
-     * @param arch value to remove
-     * @return {@code this} instance
-     */
-    NutsDescriptorBuilder removeArch(String arch);
-
-    /**
-     * remove platform
-     *
-     * @param platform value to remove
-     * @return {@code this} instance
-     */
-    NutsDescriptorBuilder removePlatform(String platform);
-    /**
      * set all fields from {@code other}
      *
      * @param other builder to copy from
      * @return {@code this} instance
      */
-    NutsDescriptorBuilder set(NutsDescriptorBuilder other);
+    NutsDescriptorBuilder setAll(NutsDescriptorBuilder other);
 
     /**
      * set all fields from {@code other}
@@ -465,7 +307,7 @@ public interface NutsDescriptorBuilder extends Serializable {
      * @param other descriptor to copy from
      * @return {@code this} instance
      */
-    NutsDescriptorBuilder set(NutsDescriptor other);
+    NutsDescriptorBuilder setAll(NutsDescriptor other);
 
     /**
      * clear this instance (set null/default all properties)
@@ -473,8 +315,6 @@ public interface NutsDescriptorBuilder extends Serializable {
      * @return {@code this instance}
      */
     NutsDescriptorBuilder clear();
-
-    NutsDescriptorBuilder removeDesktopEnvironment(String desktopEnvironment);
 
     /**
      * remove dependency
@@ -525,12 +365,30 @@ public interface NutsDescriptorBuilder extends Serializable {
     NutsDescriptorBuilder addStandardDependencies(NutsDependency[] dependencies);
 
     /**
+     * add property
+     *
+     * @param property property
+     * @return {@code this} instance
+     * @since 0.8.3
+     */
+    NutsDescriptorBuilder addProperty(NutsDescriptorProperty property);
+
+    /**
+     * remove property
+     *
+     * @param property property
+     * @return {@code this} instance
+     * @since 0.8.3
+     */
+    NutsDescriptorBuilder removeProperties(NutsDescriptorProperty property);
+
+    /**
      * merge properties
      *
      * @param properties new value
      * @return {@code this} instance
      */
-    NutsDescriptorBuilder addProperties(Map<String, String> properties);
+    NutsDescriptorBuilder addProperties(NutsDescriptorProperty[] properties);
 
     /**
      * replace placeholders with the corresponding property value in properties list
@@ -562,7 +420,7 @@ public interface NutsDescriptorBuilder extends Serializable {
      * @param converter function to provide new value to replace with
      * @return {@code this} instance
      */
-    NutsDescriptorBuilder replaceProperty(Predicate<Map.Entry<String, String>> filter, Function<Map.Entry<String, String>, String> converter);
+    NutsDescriptorBuilder replaceProperty(Predicate<NutsDescriptorProperty> filter, Function<NutsDescriptorProperty, NutsDescriptorProperty> converter);
 
     /**
      * create a new instance of descriptor with added/merged dependencies
@@ -587,5 +445,14 @@ public interface NutsDescriptorBuilder extends Serializable {
      * @return {@code this} instance
      */
     NutsDescriptor build();
+
+    /**
+     * create a copy
+     *
+     * @return a copy
+     * @since 0.8.2
+     */
+    NutsDescriptorBuilder copy();
+
 
 }

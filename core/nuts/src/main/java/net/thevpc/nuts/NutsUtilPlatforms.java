@@ -40,30 +40,10 @@ import java.util.Map;
  */
 public final class NutsUtilPlatforms {
 
-    public static NutsOsFamily getPlatformOsFamily() {
-        String property = System.getProperty("os.name").toLowerCase(Locale.ENGLISH);
-        if (property.startsWith("linux")) {
-            return NutsOsFamily.LINUX;
-        }
-        if (property.startsWith("win")) {
-            return NutsOsFamily.WINDOWS;
-        }
-        if (property.startsWith("mac")) {
-            return NutsOsFamily.MACOS;
-        }
-        if (property.startsWith("sunos")) {
-            return NutsOsFamily.UNIX;
-        }
-        if (property.startsWith("freebsd")) {
-            return NutsOsFamily.UNIX;
-        }
-        return NutsOsFamily.UNKNOWN;
-    }
-
     public static String getPlatformGlobalHomeFolder(NutsStoreLocation location, String workspaceName) {
         String s = null;
         String locationName = location.id();
-        NutsOsFamily platformOsFamily = getPlatformOsFamily();
+        NutsOsFamily platformOsFamily = NutsOsFamily.getCurrent();
         s = NutsUtilStrings.trim(System.getProperty("nuts.home.global." + locationName + "." + platformOsFamily.id()));
         if (!s.isEmpty()) {
             return s + "/" + workspaceName;
@@ -196,6 +176,7 @@ public final class NutsUtilPlatforms {
         }
         throw new UnsupportedOperationException();
     }
+
     /**
      * creates a string key combining layout and location.
      * le key has the form of a concatenated layout and location ids separated by ':'
@@ -239,7 +220,7 @@ public final class NutsUtilPlatforms {
         }
         boolean wasSystem = false;
         if (platformOsFamily == null) {
-            platformOsFamily = NutsUtilPlatforms.getPlatformOsFamily();
+            platformOsFamily = NutsOsFamily.getCurrent();
         }
         String s = null;
         String locationName = location.id();

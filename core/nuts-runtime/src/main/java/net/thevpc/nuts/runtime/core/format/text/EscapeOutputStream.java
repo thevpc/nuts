@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.core.format.text;
 
-import net.thevpc.nuts.NutsTerminalMode;
-import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextNodeParser;
 import net.thevpc.nuts.runtime.core.io.BaseTransparentFilterOutputStream;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
@@ -9,7 +8,6 @@ import net.thevpc.nuts.runtime.core.terminals.NutsTerminalModeOp;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import net.thevpc.nuts.NutsSession;
 
 public class EscapeOutputStream extends BaseTransparentFilterOutputStream implements ExtendedFormatAware {
 
@@ -22,7 +20,7 @@ public class EscapeOutputStream extends BaseTransparentFilterOutputStream implem
         this.ws = session.getWorkspace();
         NutsTerminalModeOp t = CoreIOUtils.resolveNutsTerminalModeOp(out);
         if (t.in() != NutsTerminalMode.FORMATTED && t.in() != NutsTerminalMode.FILTERED) {
-            throw new IllegalArgumentException("Illegal Formatted");
+            throw new NutsIllegalArgumentException(session, NutsMessage.plain("illegal Formatted"));
         }
     }
 
@@ -79,6 +77,6 @@ public class EscapeOutputStream extends BaseTransparentFilterOutputStream implem
                 return ((ExtendedFormatAware) out);
             }
         }
-        throw new IllegalArgumentException("Unsupported");
+        throw new NutsUnsupportedEnumException(session, other);
     }
 }

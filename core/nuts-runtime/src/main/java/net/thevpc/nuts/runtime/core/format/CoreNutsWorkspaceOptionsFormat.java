@@ -141,7 +141,6 @@ public class CoreNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsForma
                 fillOption("--log-file-size", null, logConfig.getLogFileSize(), arguments, false);
                 fillOption("--log-file-base", null, logConfig.getLogFileBase(), arguments, false);
                 fillOption("--log-file-name", null, logConfig.getLogFileName(), arguments, false);
-                fillOption("--log-inherited", null, logConfig.isLogInherited(), false, arguments, false);
             }
             fillOption("--exclude-extension", "-X", options.getExcludedExtensions(), ";", arguments, false);
 

@@ -178,8 +178,8 @@ public class DefaultNutsWorkspaceConfigModel {
         }
 
         if (force || storeModelMainChanged) {
-            List<NutsSdkLocation> plainSdks = new ArrayList<>();
-            plainSdks.addAll(Arrays.asList(ws.sdks().find(null, null)));
+            List<NutsPlatformLocation> plainSdks = new ArrayList<>();
+            plainSdks.addAll(Arrays.asList(ws.env().platforms().find(null, null)));
             storeModelMain.setSdk(plainSdks);
             storeModelMain.setRepositories(new ArrayList<>(
                     Arrays.stream(ws.repos().getRepositories()).filter(x -> !x.config().isTemporary())
@@ -201,7 +201,7 @@ public class DefaultNutsWorkspaceConfigModel {
                 }
             }
             if (storeModelMain.getSdk() != null) {
-                for (NutsSdkLocation item : storeModelMain.getSdk()) {
+                for (NutsPlatformLocation item : storeModelMain.getSdk()) {
                     //inherited
                     item.setConfigVersion(null);
                 }
@@ -906,8 +906,8 @@ public class DefaultNutsWorkspaceConfigModel {
 
     private void setConfigMain(NutsWorkspaceConfigMain config, NutsSession session, boolean fire) {
         this.storeModelMain = config == null ? new NutsWorkspaceConfigMain() : config;
-        DefaultNutsSdkManager d = (DefaultNutsSdkManager) session.getWorkspace().sdks();
-        d.getModel().setSdks(this.storeModelMain.getSdk().toArray(new NutsSdkLocation[0]), session);
+        DefaultNutsPlatformManager d = (DefaultNutsPlatformManager) session.getWorkspace().env().platforms();
+        d.getModel().setPlatforms(this.storeModelMain.getSdk().toArray(new NutsPlatformLocation[0]), session);
         NutsRepositoryManager repos = session.getWorkspace().repos();
         repos.removeAllRepositories();
         if (this.storeModelMain.getRepositories() != null) {
@@ -1051,7 +1051,7 @@ public class DefaultNutsWorkspaceConfigModel {
                     def.getDependencies().stream().map(x -> x.toId().getLongName()).collect(Collectors.joining(";"))
             );
             if (runtime) {
-                m.put("bootRepositories", def.getDescriptor().getProperties().get("nuts-runtime-repositories"));
+                m.put("bootRepositories", def.getDescriptor().getPropertyValue("nuts-runtime-repositories"));
             }
         }
 

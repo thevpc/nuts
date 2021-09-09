@@ -280,14 +280,25 @@ public class CoreFilterUtils {
     }
 
 
-    public static NutsDescriptorFilter createNutsDescriptorFilter(String arch, String os, String osdist, String
-            platform, NutsWorkspace ws) {
+    public static NutsDescriptorFilter createNutsDescriptorFilter(String arch, String os, String osDist, String
+            platform, String desktopEnv, NutsWorkspace ws) {
         NutsDescriptorFilterManager d = ws.descriptor().filter();
-        return (NutsDescriptorFilter) d.byArch(arch).and(d.byOsdist(osdist)).and(d.byPlatform(platform));
+        return (NutsDescriptorFilter) d.byArch(arch)
+                .and(d.byOs(os))
+                .and(d.byOsDist(osDist))
+                .and(d.byPlatform(platform))
+                .and(d.byDesktopEnvironment(desktopEnv))
+                ;
     }
 
     public static NutsDescriptorFilter createNutsDescriptorFilter(Map<String, String> faceMap, NutsWorkspace ws) {
-        return createNutsDescriptorFilter(faceMap == null ? null : faceMap.get("arch"), faceMap == null ? null : faceMap.get("os"), faceMap == null ? null : faceMap.get("osdist"), faceMap == null ? null : faceMap.get("platform"), ws);
+        return createNutsDescriptorFilter(
+                faceMap == null ? null : faceMap.get(NutsConstants.IdProperties.ARCH),
+                faceMap == null ? null : faceMap.get(NutsConstants.IdProperties.OS),
+                faceMap == null ? null : faceMap.get(NutsConstants.IdProperties.OS_DIST),
+                faceMap == null ? null : faceMap.get(NutsConstants.IdProperties.PLATFORM),
+                faceMap == null ? null : faceMap.get(NutsConstants.IdProperties.DESKTOP_ENVIRONMENT),
+                ws);
     }
 
     public static <T> Predicate<NutsId> createFilter(NutsIdFilter t, NutsSession session) {
@@ -342,13 +353,39 @@ public class CoreFilterUtils {
         return false;
     }
 
-    public static boolean matchesArch(String arch, NutsDescriptor desc, NutsSession session) {
+    public static boolean matchesSys(NutsEnvCondition cond, NutsSession session) {
+        NutsWorkspaceEnvManager env = session.getWorkspace().env();
+        return
+                matchesArch(
+                        env.getArch().toString(),
+                        cond, session
+                )
+                && matchesOs(
+                        env.getOs().toString(),
+                        cond, session
+                )
+                && matchesOsDist(
+                        env.getOsDist().toString(),
+                        cond, session
+                )
+                && matchesPlatform(
+                        env.getPlatform().toString(),
+                        cond, session
+                )
+                && matchesDesktopEnvironment(
+                        env.getDesktopEnvironment().toString(),
+                        cond, session
+                )
+                ;
+    }
+
+    public static boolean matchesArch(String arch, NutsEnvCondition cond, NutsSession session) {
         if (NutsUtilStrings.isBlank(arch)) {
             return true;
         }
         NutsIdParser parser = session.getWorkspace().id().parser();
         NutsId _v = parser.parse(arch);
-        String[] all = desc.getArch();
+        String[] all = cond.getArch();
         if (all != null && all.length > 0) {
             for (String v : all) {
                 if (NutsUtilStrings.isBlank(v)) {
@@ -367,7 +404,7 @@ public class CoreFilterUtils {
         }
     }
 
-    public static boolean matchesOs(String os, NutsDescriptor desc, NutsSession session) {
+    public static boolean matchesOs(String os, NutsEnvCondition desc, NutsSession session) {
         if (NutsUtilStrings.isBlank(os)) {
             return true;
         }
@@ -380,11 +417,7 @@ public class CoreFilterUtils {
                     return true;
                 }
                 NutsId y = parser.setLenient(false).parse(v);
-                if (y.equalsShortName(_v)) {
-                    if (y.getVersion().filter().acceptVersion(_v.getVersion(), session)) {
-                        return true;
-                    }
-                }
+                return y.filterCompat().acceptId(_v,session);
             }
             return false;
         } else {
@@ -392,24 +425,20 @@ public class CoreFilterUtils {
         }
     }
 
-    public static boolean matchesOsdist(String osdist, NutsDescriptor desc, NutsSession session) {
-        if (NutsUtilStrings.isBlank(osdist)) {
+    public static boolean matchesOsDist(String osDist, NutsEnvCondition desc, NutsSession session) {
+        if (NutsUtilStrings.isBlank(osDist)) {
             return true;
         }
         NutsIdParser parser = session.getWorkspace().id().parser();
-        NutsId _v = parser.parse(osdist);
-        String[] all = desc.getOsdist();
+        NutsId _v = parser.parse(osDist);
+        String[] all = desc.getOsDist();
         if (all != null && all.length > 0) {
             for (String v : all) {
                 if (NutsUtilStrings.isBlank(v)) {
                     return true;
                 }
                 NutsId y = parser.setLenient(false).parse(v);
-                if (y.equalsShortName(_v)) {
-                    if (y.getVersion().filter().acceptVersion(_v.getVersion(), session)) {
-                        return true;
-                    }
-                }
+                return y.filterCompat().acceptId(_v,session);
             }
             return false;
         } else {
@@ -418,7 +447,7 @@ public class CoreFilterUtils {
 
     }
 
-    public static boolean matchesPlatform(String platform, NutsDescriptor desc, NutsSession session) {
+    public static boolean matchesPlatform(String platform, NutsEnvCondition desc, NutsSession session) {
         if (NutsUtilStrings.isBlank(platform)) {
             return true;
         }
@@ -431,15 +460,7 @@ public class CoreFilterUtils {
                     return true;
                 }
                 NutsId y = parser.setLenient(false).parse(v);
-                if (y.getShortName().equals("java")) {
-                    //should accept any platform !!!
-                    return true;
-                }
-                if (y.equalsShortName(_v)) {
-                    if (y.getVersion().filter().acceptVersion(_v.getVersion(), session)) {
-                        return true;
-                    }
-                }
+                return y.filterCompat().acceptId(_v,session);
             }
             return false;
         } else {
@@ -447,7 +468,28 @@ public class CoreFilterUtils {
         }
     }
 
-    public static boolean matchesEnv(String arch, String os, String dist, String platform, NutsDescriptor
+    public static boolean matchesDesktopEnvironment(String platform, NutsEnvCondition desc, NutsSession session) {
+        if (NutsUtilStrings.isBlank(platform)) {
+            return true;
+        }
+        NutsIdParser parser = session.getWorkspace().id().parser();
+        NutsId _v = parser.parse(platform);
+        String[] all = desc.getPlatform();
+        if (all != null && all.length > 0) {
+            for (String v : all) {
+                if (NutsUtilStrings.isBlank(v)) {
+                    return true;
+                }
+                NutsId y = parser.setLenient(false).parse(v);
+                return y.filterCompat().acceptId(_v,session);
+            }
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public static boolean matchesEnv(String arch, String os, String dist, String platform, String de, NutsEnvCondition
             desc, NutsSession session) {
         if (!matchesArch(arch, desc, session)) {
             return false;
@@ -455,10 +497,13 @@ public class CoreFilterUtils {
         if (!matchesOs(os, desc, session)) {
             return false;
         }
-        if (!matchesOsdist(dist, desc, session)) {
+        if (!matchesOsDist(dist, desc, session)) {
             return false;
         }
         if (!matchesPlatform(platform, desc, session)) {
+            return false;
+        }
+        if (!matchesDesktopEnvironment(de, desc, session)) {
             return false;
         }
         return true;
@@ -493,8 +538,8 @@ public class CoreFilterUtils {
         }
 
         @Override
-        public String toString() {
-            return t.toString();
+        public int hashCode() {
+            return Objects.hash(t, session);
         }
 
         @Override
@@ -506,8 +551,8 @@ public class CoreFilterUtils {
         }
 
         @Override
-        public int hashCode() {
-            return Objects.hash(t, session);
+        public String toString() {
+            return t.toString();
         }
     }
 }

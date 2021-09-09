@@ -51,7 +51,7 @@ public class DefaultNutsBootModel implements NutsBootModel {
         this.workspace = workspace;
         this.workspaceInitInformation = workspaceInitInformation;
         this.bootSession = new DefaultNutsSession(workspace, workspaceInitInformation.getOptions());
-        StdFd std = detectAnsiTerminalSupport(NutsUtilPlatforms.getPlatformOsFamily());
+        StdFd std = detectAnsiTerminalSupport(NutsOsFamily.getCurrent());
         NutsTerminalMode terminalMode = workspaceInitInformation.getOptions().getTerminalMode();
         if (terminalMode == null) {
             if (workspaceInitInformation.getOptions().isBot()) {

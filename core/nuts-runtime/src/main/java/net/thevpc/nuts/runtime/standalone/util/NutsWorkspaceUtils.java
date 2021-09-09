@@ -149,7 +149,7 @@ public class NutsWorkspaceUtils {
             session = ws.createSession();
         } else {
             if (session.getWorkspace() != ws) {
-                throw new IllegalArgumentException("session was created with a different Workspace");
+                throw new NutsIllegalArgumentException(session, NutsMessage.plain("session was created with a different Workspace"));
             }
         }
         return session;
@@ -166,11 +166,23 @@ public class NutsWorkspaceUtils {
 
     public NutsId configureFetchEnv(NutsId id) {
         Map<String, String> qm = id.getProperties();
-        if (qm.get(NutsConstants.IdProperties.FACE) == null && qm.get("arch") == null && qm.get("os") == null && qm.get("osdist") == null && qm.get("platform") == null) {
-            qm.put("arch", ws.env().getArchFamily().id());
-            qm.put("os", ws.env().getOs().toString());
+        if (qm.get(NutsConstants.IdProperties.FACE) == null
+                && qm.get(NutsConstants.IdProperties.ARCH) == null
+                && qm.get(NutsConstants.IdProperties.OS) == null
+                && qm.get(NutsConstants.IdProperties.OS_DIST) == null
+                && qm.get(NutsConstants.IdProperties.PLATFORM) == null
+                && qm.get(NutsConstants.IdProperties.DESKTOP_ENVIRONMENT) == null
+        ) {
+            qm.put(NutsConstants.IdProperties.ARCH, ws.env().getArchFamily().id());
+            qm.put(NutsConstants.IdProperties.OS, ws.env().getOs().toString());
             if (ws.env().getOsDist() != null) {
-                qm.put("osdist", ws.env().getOsDist().toString());
+                qm.put(NutsConstants.IdProperties.OS_DIST, ws.env().getOsDist().toString());
+            }
+            if (ws.env().getPlatform() != null) {
+                qm.put(NutsConstants.IdProperties.PLATFORM, ws.env().getPlatform().toString());
+            }
+            if (ws.env().getDesktopEnvironment() != null) {
+                qm.put(NutsConstants.IdProperties.DESKTOP_ENVIRONMENT, ws.env().getDesktopEnvironment().toString());
             }
             return id.builder().setProperties(qm).build();
         }

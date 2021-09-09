@@ -4,7 +4,7 @@ Network Updatable Things Services
      __        __    
   /\ \ \ _  __/ /______
  /  \/ / / / / __/ ___/
-/ /\  / /_/ / /_(__  )   dev version  (accessible on thevpc.net)
+/ /\  / /_/ / /_(__  )   dev version 0.8.3.0 (accessible on thevpc.net)
 \_\ \/\__,_/\__/____/    production version 0.8.2.1 (accessible on maven central)
 </pre>
 
@@ -28,7 +28,7 @@ nuts --version
 It should show a result in the format : nuts-api-version/nuts-impl-version
 
 ```
-/
+0.8.3/0.8.3.0
 ```
 
 ## Installing Nuts (Development, recommended for testing)

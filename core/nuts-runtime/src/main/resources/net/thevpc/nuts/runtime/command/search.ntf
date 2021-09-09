@@ -134,11 +134,12 @@ search for artifacts
          ```kw install-user```      : artifact install user
          ```kw id```                : artifact id
          ```kw name```              : simple name
-         ```kw packaging```         : artifact packaging
-         ```kw arch```              : artifact supported architectures
-         ```kw platform```          : artifact supported platforms
-         ```kw os```                : artifact supported operation systems
-         ```kw osdist```            : artifact supported OS distributions
+         ```kw packaging```         : artifact packaging (jar, war, msi, exe, ...)
+         ```kw arch```              : artifact supported architectures (x86, x64,...)
+         ```kw platform```          : artifact supported platforms (java, dotnet, ...)
+         ```kw os```                : artifact supported operation systems (Linux, Windows,...)
+         ```kw osdist```            : artifact supported OS distributions (OpenSuSE, Ubuntu, ...)
+         ```kw de```                : artifact supported OS Desktop Environment (KDE, GNOME,...)
          ```kw exec-entry```        : Main class
          ```kw file-name```         : artifact file name
          ```kw file```              : artifact file path

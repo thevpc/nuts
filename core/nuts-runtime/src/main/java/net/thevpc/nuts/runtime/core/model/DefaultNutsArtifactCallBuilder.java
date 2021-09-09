@@ -28,6 +28,7 @@ package net.thevpc.nuts.runtime.core.model;
 import net.thevpc.nuts.NutsArtifactCall;
 import net.thevpc.nuts.NutsArtifactCallBuilder;
 import net.thevpc.nuts.NutsId;
+import net.thevpc.nuts.NutsSession;
 
 import java.io.Serializable;
 import java.util.*;
@@ -44,11 +45,17 @@ public class DefaultNutsArtifactCallBuilder implements NutsArtifactCallBuilder, 
     private NutsId id;
     private String[] arguments = new String[0];
     private final Map<String,String> properties = new LinkedHashMap<>();
+    private NutsSession session;
 
     public DefaultNutsArtifactCallBuilder() {
     }
 
-    public DefaultNutsArtifactCallBuilder(NutsArtifactCall value) {
+    public DefaultNutsArtifactCallBuilder(NutsSession session) {
+        this.session=session;
+    }
+
+    public DefaultNutsArtifactCallBuilder(NutsArtifactCall value,NutsSession session) {
+        this.session=session;
         setId(value.getId());
         setArguments(value.getArguments());
         setProperties(value.getProperties());

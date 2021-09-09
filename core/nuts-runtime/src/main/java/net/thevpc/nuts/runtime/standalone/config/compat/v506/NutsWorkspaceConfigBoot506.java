@@ -90,7 +90,7 @@ public final class NutsWorkspaceConfigBoot506 extends NutsConfigItem {
     private String extensionDependencies = null;
     private List<NutsCommandFactoryConfig> commandFactories;
     private Properties env = new Properties();
-    private List<NutsSdkLocation> sdk = new ArrayList<>();
+    private List<NutsPlatformLocation> sdk = new ArrayList<>();
     private List<String> imports = new ArrayList<>();
     private boolean secure = false;
     private String authenticationAgent;
@@ -149,7 +149,7 @@ public final class NutsWorkspaceConfigBoot506 extends NutsConfigItem {
         return this;
     }
 
-    public NutsWorkspaceConfigBoot506 setSdk(List<NutsSdkLocation> sdk) {
+    public NutsWorkspaceConfigBoot506 setSdk(List<NutsPlatformLocation> sdk) {
         this.sdk = sdk;
         return this;
     }
@@ -172,7 +172,7 @@ public final class NutsWorkspaceConfigBoot506 extends NutsConfigItem {
         return users;
     }
 
-    public List<NutsSdkLocation> getSdk() {
+    public List<NutsPlatformLocation> getSdk() {
         return sdk;
     }
 

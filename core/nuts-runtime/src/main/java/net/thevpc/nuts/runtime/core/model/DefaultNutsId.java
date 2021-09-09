@@ -29,10 +29,10 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.parsers.QueryStringParser;
 import net.thevpc.nuts.runtime.core.filters.DefaultNutsTokenFilter;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
 import net.thevpc.nuts.runtime.bundles.string.GlobUtils;
+import net.thevpc.nuts.runtime.core.filters.id.NutsIdIdFilter;
 
 /**
  * Created by vpc on 1/5/17.
@@ -226,27 +226,36 @@ public class DefaultNutsId implements NutsId {
     }
 
     @Override
-    public String getOs() {
-        String s = getProperties().get(NutsConstants.IdProperties.OS);
-        return NutsUtilStrings.trimToNull(s);
-    }
+    public NutsEnvCondition getCondition() {
+        NutsEnvConditionBuilder c = session.getWorkspace().descriptor().envConditionBuilder();
+        Map<String, String> properties = getProperties();
+        c.setOs(
+                Arrays.stream(
+                        NutsUtilStrings.trim(properties.get(NutsConstants.IdProperties.OS)).split(",")
+                ).map(String::trim).filter(x -> x.length() > 0).distinct().toArray(String[]::new)
+        );
+        c.setOsDist(
+                Arrays.stream(
+                        NutsUtilStrings.trim(properties.get(NutsConstants.IdProperties.OS_DIST)).split(",")
+                ).map(String::trim).filter(x -> x.length() > 0).distinct().toArray(String[]::new)
+        );
+        c.setPlatform(
+                Arrays.stream(
+                        NutsUtilStrings.trim(properties.get(NutsConstants.IdProperties.PLATFORM)).split(",")
+                ).map(String::trim).filter(x -> x.length() > 0).distinct().toArray(String[]::new)
+        );
+        c.setArch(
+                Arrays.stream(
+                        NutsUtilStrings.trim(properties.get(NutsConstants.IdProperties.ARCH)).split(",")
+                ).map(String::trim).filter(x -> x.length() > 0).distinct().toArray(String[]::new)
+        );
+        c.setDesktopEnvironment(
+                Arrays.stream(
+                        NutsUtilStrings.trim(properties.get(NutsConstants.IdProperties.DESKTOP_ENVIRONMENT)).split(",")
+                ).map(String::trim).filter(x -> x.length() > 0).distinct().toArray(String[]::new)
+        );
 
-    @Override
-    public String getOsdist() {
-        String s = getProperties().get(NutsConstants.IdProperties.OSDIST);
-        return NutsUtilStrings.trimToNull(s);
-    }
-
-    @Override
-    public String getPlatform() {
-        String s = getProperties().get(NutsConstants.IdProperties.PLATFORM);
-        return NutsUtilStrings.trimToNull(s);
-    }
-
-    @Override
-    public String getArch() {
-        String s = getProperties().get(NutsConstants.IdProperties.ARCH);
-        return NutsUtilStrings.trimToNull(s);
+        return c.build();
     }
 
     @Override
@@ -405,5 +414,15 @@ public class DefaultNutsId implements NutsId {
         //latest versions first
         x = this.getVersion().compareTo(o2.getVersion());
         return -x;
+    }
+
+    @Override
+    public NutsIdFilter filter() {
+        return new NutsIdIdFilter(this,false,session);
+    }
+
+    @Override
+    public NutsIdFilter filterCompat() {
+        return new NutsIdIdFilter(this,true,session);
     }
 }

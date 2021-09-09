@@ -122,13 +122,10 @@ public interface NutsDependency extends Serializable, NutsFormattable{
      */
     NutsVersion getVersion();
     
-    String getOs();
+    NutsEnvCondition getCondition();
     
     String getType();
     
-    String getArch();
-
-
     /**
      * dependency exclusions
      * @return dependency exclusions

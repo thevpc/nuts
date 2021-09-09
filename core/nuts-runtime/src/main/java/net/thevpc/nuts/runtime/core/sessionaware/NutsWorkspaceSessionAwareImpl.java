@@ -219,11 +219,6 @@ public class NutsWorkspaceSessionAwareImpl implements NutsWorkspace, NutsWorkspa
     }
 
     @Override
-    public NutsSdkManager sdks() {
-        return ws().sdks().setSession(getSession());
-    }
-
-    @Override
     public NutsImportManager imports() {
         return ws().imports().setSession(getSession());
     }

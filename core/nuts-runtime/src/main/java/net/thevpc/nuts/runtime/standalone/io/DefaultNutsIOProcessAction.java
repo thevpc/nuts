@@ -97,10 +97,10 @@ public class DefaultNutsIOProcessAction implements NutsIOProcessAction {
             return v;
         }
         NutsVersionFilter nvf = NutsUtilStrings.isBlank(version) ? null : ws.version().parser().parse(version).filter();
-        NutsSdkLocation[] availableJava = ws.sdks().setSession(session).find("java",
+        NutsPlatformLocation[] availableJava = ws.env().platforms().setSession(session).find("java",
                 java -> "jdk".equals(java.getPackaging()) && (nvf == null || nvf.acceptVersion(ws.version().parser().parse(java.getVersion()), session))
         );
-        for (NutsSdkLocation java : availableJava) {
+        for (NutsPlatformLocation java : availableJava) {
             detectedJavaHomes.add(java.getPath());
             v = getJpsJavaHome(java.getPath());
             if (v != null) {

@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.core.format.text;
 
 import net.thevpc.nuts.NutsOutputStreamTransparentAdapter;
 import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NutsUnsupportedEnumException;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.core.terminals.NutsTerminalModeOp;
 
@@ -160,6 +161,6 @@ public class SimpleWriterOutputStream extends OutputStream implements ExtendedFo
                 return new EscapeOutputStream(this,session);
             }
         }
-        throw new IllegalArgumentException("Unsupported");
+        throw new NutsUnsupportedEnumException(session, other);
     }
 }

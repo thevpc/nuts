@@ -585,8 +585,7 @@ final class PrivateNutsArgumentsParser {
                     case "--log-file-size":
                     case "--log-file-name":
                     case "--log-file-base":
-                    case "--log-file-count":
-                    case "--log-inherited": {
+                    case "--log-file-count":{
                         if (enabled) {
                             if (logConfig == null) {
                                 logConfig = new NutsLogConfig();
@@ -1137,14 +1136,6 @@ final class PrivateNutsArgumentsParser {
                 String v = a.getStringValue();
                 if (enabled) {
                     logConfig.setLogFileBase(v);
-                }
-                break;
-            }
-
-            case "--log-inherited": {
-                cmdLine.skip();
-                if (enabled) {
-                    logConfig.setLogInherited(true);
                 }
                 break;
             }

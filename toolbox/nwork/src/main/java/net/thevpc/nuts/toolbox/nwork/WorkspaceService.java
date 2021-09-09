@@ -322,8 +322,8 @@ public class WorkspaceService {
                         String currentVersion = dependency.getVersion().toString();
                         currentVersion = currentVersion.trim();
                         if (currentVersion.contains("$")) {
-                            for (Map.Entry<String, String> entry : pom.getProperties().entrySet()) {
-                                String k = "${" + entry.getKey() + "}";
+                            for (NutsDescriptorProperty entry : pom.getProperties()) {
+                                String k = "${" + entry.getName() + "}";
                                 if (currentVersion.equals(k)) {
                                     currentVersion = entry.getValue();
                                     break;

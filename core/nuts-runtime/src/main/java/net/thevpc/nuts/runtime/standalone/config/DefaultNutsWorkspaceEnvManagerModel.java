@@ -54,7 +54,7 @@ public class DefaultNutsWorkspaceEnvManagerModel {
     private NutsDesktopEnvironmentFamily[] osDesktopEnvironmentFamilies;
     private NutsDesktopEnvironmentFamily osDesktopEnvironmentFamily;
     private NutsId arch;
-    private NutsId osdist;
+    private NutsId osDist;
     private NutsArchFamily archFamily = NutsArchFamily.getArchFamily();
 
     public DefaultNutsWorkspaceEnvManagerModel(NutsWorkspace ws, NutsWorkspaceInitInformation info, NutsSession session) {
@@ -77,7 +77,7 @@ public class DefaultNutsWorkspaceEnvManagerModel {
         if (platformOsDist == null) {
             platformOsDist = "default";
         }
-        osdist = nip.parse(platformOsDist);
+        osDist = nip.parse(platformOsDist);
         platform = NutsJavaSdkUtils.of(session).createJdkId(System.getProperty("java.version"), session);
         arch = session.getWorkspace().id().parser().parse(System.getProperty("os.arch"));
 
@@ -203,7 +203,7 @@ public class DefaultNutsWorkspaceEnvManagerModel {
 
     public NutsOsFamily getOsFamily() {
         if (osFamily == null) {
-            osFamily = NutsUtilPlatforms.getPlatformOsFamily();
+            osFamily = NutsOsFamily.getCurrent();
         }
         return osFamily;
     }
@@ -266,7 +266,7 @@ public class DefaultNutsWorkspaceEnvManagerModel {
             }
             return a.toArray(new NutsId[0]);
         }
-        if(NutsUtilPlatforms.getPlatformOsFamily()==NutsOsFamily.WINDOWS){
+        if(NutsOsFamily.getCurrent()==NutsOsFamily.WINDOWS){
             return new NutsId[]{
                     session.getWorkspace().id().builder().setArtifactId("windows").build()
             };
@@ -341,7 +341,7 @@ public class DefaultNutsWorkspaceEnvManagerModel {
     }
 
     public NutsId getOsDist() {
-        return osdist;
+        return osDist;
     }
 
     public Map<String, Object> getProperties() {

@@ -68,9 +68,11 @@ public class NutsIndexerUtils {
         _condPut(entity, "group", id.getGroupId());
         _condPut(entity, "version", id.getVersion().getValue());
         _condPut(entity, "face", id.getFace());
-        _condPut(entity, "os", id.getOs());
-        _condPut(entity, "osdist", id.getOsdist());
-        _condPut(entity, "arch", id.getArch());
+        _condPut(entity, NutsConstants.IdProperties.OS, String.join(",",id.getCondition().getOs()));
+        _condPut(entity, NutsConstants.IdProperties.OS_DIST, String.join(",",id.getCondition().getOsDist()));
+        _condPut(entity, NutsConstants.IdProperties.ARCH, String.join(",",id.getCondition().getArch()));
+        _condPut(entity, NutsConstants.IdProperties.PLATFORM, String.join(",",id.getCondition().getPlatform()));
+        _condPut(entity, NutsConstants.IdProperties.DESKTOP_ENVIRONMENT, String.join(",",id.getCondition().getDesktopEnvironment()));
         _condPut(entity, NutsConstants.IdProperties.CLASSIFIER, id.getClassifier());
 //        _condPut(entity, NutsConstants.IdProperties.ALTERNATIVE, id.getAlternative());
         _condPut(entity, "stringId", id.toString());
@@ -87,10 +89,14 @@ public class NutsIndexerUtils {
                 .setFace(StringUtils.isEmpty(dependency.toId().getFace()) ? "default" : dependency.toId().getFace())
                 .build();
         _condPut(entity, NutsConstants.IdProperties.FACE, id2.getFace());
-        _condPut(entity, "os", id2.getOs());
-        _condPut(entity, "osdist", id2.getOsdist());
-        _condPut(entity, "arch", id2.getArch());
+
+        _condPut(entity, NutsConstants.IdProperties.OS, String.join(",",id2.getCondition().getOs()));
+        _condPut(entity, NutsConstants.IdProperties.OS_DIST, String.join(",",id2.getCondition().getOsDist()));
+        _condPut(entity, NutsConstants.IdProperties.ARCH, String.join(",",id2.getCondition().getArch()));
+        _condPut(entity, NutsConstants.IdProperties.PLATFORM, String.join(",",id2.getCondition().getPlatform()));
+        _condPut(entity, NutsConstants.IdProperties.DESKTOP_ENVIRONMENT, String.join(",",id2.getCondition().getDesktopEnvironment()));
         _condPut(entity, NutsConstants.IdProperties.CLASSIFIER, id2.getClassifier());
+
 //        _condPut(entity, NutsConstants.IdProperties.ALTERNATIVE, dependency.getId().getAlternative());
         _condPut(entity, "stringId", id2.toString());
         return entity;
@@ -108,8 +114,10 @@ public class NutsIndexerUtils {
             String group,
             String version,
             String os,
-            String osdist,
+            String osDist,
             String arch,
+            String platform,
+            String desktopEnvironment,
             String classifier
 //            ,String alternative
     ) {
@@ -118,9 +126,11 @@ public class NutsIndexerUtils {
                 .add(new PhraseQuery.Builder().add(new Term("namespace", namespace)).build(), BooleanClause.Occur.MUST)
                 .add(new PhraseQuery.Builder().add(new Term("group", group)).build(), BooleanClause.Occur.MUST)
                 .add(new PhraseQuery.Builder().add(new Term("version", version)).build(), BooleanClause.Occur.MUST)
-                .add(new PhraseQuery.Builder().add(new Term("os", os)).build(), BooleanClause.Occur.MUST)
-                .add(new PhraseQuery.Builder().add(new Term("osdist", osdist)).build(), BooleanClause.Occur.MUST)
-                .add(new PhraseQuery.Builder().add(new Term("arch", arch)).build(), BooleanClause.Occur.MUST)
+                .add(new PhraseQuery.Builder().add(new Term(NutsConstants.IdProperties.OS, os)).build(), BooleanClause.Occur.MUST)
+                .add(new PhraseQuery.Builder().add(new Term(NutsConstants.IdProperties.OS_DIST, osDist)).build(), BooleanClause.Occur.MUST)
+                .add(new PhraseQuery.Builder().add(new Term(NutsConstants.IdProperties.ARCH, arch)).build(), BooleanClause.Occur.MUST)
+                .add(new PhraseQuery.Builder().add(new Term(NutsConstants.IdProperties.PLATFORM, platform)).build(), BooleanClause.Occur.MUST)
+                .add(new PhraseQuery.Builder().add(new Term(NutsConstants.IdProperties.DESKTOP_ENVIRONMENT, desktopEnvironment)).build(), BooleanClause.Occur.MUST)
                 .add(new PhraseQuery.Builder().add(new Term(NutsConstants.IdProperties.CLASSIFIER, classifier)).build(), BooleanClause.Occur.MUST)
 //                .add(new PhraseQuery.Builder().add(new Term(NutsConstants.IdProperties.ALTERNATIVE, alternative)).build(), BooleanClause.Occur.MUST)
                 .add(new BooleanClause(new MatchAllDocsQuery(), BooleanClause.Occur.SHOULD))
@@ -133,10 +143,16 @@ public class NutsIndexerUtils {
                 .setRepository(NutsUtilStrings.trim(map.get("namespace")))
                 .setGroupId(NutsUtilStrings.trim(map.get("group")))
                 .setVersion(NutsUtilStrings.trim(map.get("version")))
-                .setOs(NutsUtilStrings.trim(map.get("os")))
-                .setOsdist(NutsUtilStrings.trim(map.get("osdist")))
+                .setCondition(
+                        ws.descriptor().envConditionBuilder()
+                                //TODO what if the result is ',' separated array?
+                                .setArch(NutsUtilStrings.trim(map.get(NutsConstants.IdProperties.ARCH)))
+                                .setOs(NutsUtilStrings.trim(map.get(NutsConstants.IdProperties.OS)))
+                                .setOsDist(NutsUtilStrings.trim(map.get(NutsConstants.IdProperties.OS_DIST)))
+                                .setPlatform(NutsUtilStrings.trim(map.get(NutsConstants.IdProperties.PLATFORM)))
+                                .setDesktopEnvironment(NutsUtilStrings.trim(map.get(NutsConstants.IdProperties.DESKTOP_ENVIRONMENT)))
+                )
                 .setClassifier(NutsUtilStrings.trim(map.get(NutsConstants.IdProperties.CLASSIFIER)))
-                .setArch(NutsUtilStrings.trim(map.get("arch")))
 //                .setAlternative(trim(map.get(NutsConstants.IdProperties.ALTERNATIVE)))
                 .build();
     }

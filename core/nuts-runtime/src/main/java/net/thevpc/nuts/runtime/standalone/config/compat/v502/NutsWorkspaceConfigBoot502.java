@@ -27,13 +27,9 @@ package net.thevpc.nuts.runtime.standalone.config.compat.v502;
 
 import java.io.Serializable;
 import java.util.*;
-import net.thevpc.nuts.NutsCommandFactoryConfig;
-import net.thevpc.nuts.NutsId;
-import net.thevpc.nuts.NutsOsFamily;
-import net.thevpc.nuts.NutsRepositoryRef;
-import net.thevpc.nuts.NutsSdkLocation;
-import net.thevpc.nuts.NutsStoreLocationStrategy;
-import net.thevpc.nuts.NutsUserConfig;
+
+import net.thevpc.nuts.*;
+import net.thevpc.nuts.NutsPlatformLocation;
 import net.thevpc.nuts.runtime.standalone.config.NutsWorkspaceConfigBoot;
 
 /**
@@ -126,7 +122,7 @@ public final class NutsWorkspaceConfigBoot502 implements Serializable {
     private List<NutsId> extensions;
     private List<NutsCommandFactoryConfig> commandFactories;
     private Properties env = new Properties();
-    private List<NutsSdkLocation> sdk = new ArrayList<>();
+    private List<NutsPlatformLocation> sdk = new ArrayList<>();
     private List<String> imports = new ArrayList<>();
     private boolean secure = false;
     private String authenticationAgent;
@@ -174,7 +170,7 @@ public final class NutsWorkspaceConfigBoot502 implements Serializable {
 
     }
 
-    public void setSdk(List<NutsSdkLocation> sdk) {
+    public void setSdk(List<NutsPlatformLocation> sdk) {
         this.sdk = sdk;
 
     }
@@ -197,7 +193,7 @@ public final class NutsWorkspaceConfigBoot502 implements Serializable {
         return users;
     }
 
-    public List<NutsSdkLocation> getSdk() {
+    public List<NutsPlatformLocation> getSdk() {
         return sdk;
     }
 

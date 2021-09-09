@@ -158,7 +158,7 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
                 return model.getXmlMan(getSession());
             }
             case TSON: {
-                throw new IllegalArgumentException("tson not supported yet");
+                throw new NutsUnsupportedEnumException(getSession(), contentType);
             }
         }
         throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("invalid content type %s. Only structured content types are allowed.",contentType));

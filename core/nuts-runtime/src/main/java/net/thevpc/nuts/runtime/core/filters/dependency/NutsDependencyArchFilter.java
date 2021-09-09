@@ -39,10 +39,10 @@ public class NutsDependencyArchFilter extends AbstractDependencyFilter {
 
     @Override
     public boolean acceptDependency(NutsId from, NutsDependency dependency, NutsSession session) {
-        String current = dependency.getArch();
+        String[] current = dependency.getCondition().getArch();
         boolean empty = true;
         if (current != null) {
-            for (String e : current.split("[,; ]")) {
+            for (String e : current) {
                 if (!e.isEmpty()) {
                     empty = false;
                     if (archs.contains(NutsArchFamily.parseLenient(e,NutsArchFamily.UNKNOWN))) {

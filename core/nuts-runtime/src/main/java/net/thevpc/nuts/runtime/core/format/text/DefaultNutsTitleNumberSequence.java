@@ -78,7 +78,7 @@ public class DefaultNutsTitleNumberSequence implements NutsTextNumbering {
     public NutsTextNumbering newLevel(int level) {
 //        level = level - 1;
         if (level <= 0) {
-            throw new IllegalArgumentException("Invalid level. must be >= 1");
+            throw new IllegalArgumentException("invalid level. must be >= 1");
         }
         int max = level >= value.length ? level + 1 : value.length;
         NutsTitleNumber[] pattern = new NutsTitleNumber[max];

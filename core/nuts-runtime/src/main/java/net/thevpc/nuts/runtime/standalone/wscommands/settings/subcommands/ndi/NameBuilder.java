@@ -4,6 +4,7 @@ import net.thevpc.nuts.NutsConstants;
 import net.thevpc.nuts.NutsDescriptor;
 import net.thevpc.nuts.NutsId;
 import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 public class NameBuilder {
     private NutsId id;
@@ -186,7 +187,7 @@ public class NameBuilder {
                         break;
                     }
                     case 'a': {
-                        String str = toValidString(id.getArch());
+                        String str = toValidString(CoreStringUtils.joinAndTrimToNull(id.getCondition().getArch()));
                         if (wasSep) {
                             if (!str.isEmpty()) {
                                 sb.append(toValidChar(' '));

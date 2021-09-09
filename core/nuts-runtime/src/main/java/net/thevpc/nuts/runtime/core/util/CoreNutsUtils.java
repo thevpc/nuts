@@ -24,10 +24,10 @@
 package net.thevpc.nuts.runtime.core.util;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.common.CorePlatformUtils;
 import net.thevpc.nuts.runtime.bundles.iter.IteratorBuilder;
 import net.thevpc.nuts.runtime.bundles.parsers.StringPlaceHolderParser;
 import net.thevpc.nuts.runtime.bundles.parsers.StringTokenizerUtils;
+import net.thevpc.nuts.runtime.core.model.DefaultNutsEnvCondition;
 import net.thevpc.nuts.runtime.standalone.DefaultNutsWorkspace;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
@@ -43,6 +43,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 /**
  * Created by vpc on 5/16/17.
@@ -103,7 +104,7 @@ public class CoreNutsUtils {
     static {
         _QUERY_EMPTY_ENV.put(NutsConstants.IdProperties.ARCH, null);
         _QUERY_EMPTY_ENV.put(NutsConstants.IdProperties.OS, null);
-        _QUERY_EMPTY_ENV.put(NutsConstants.IdProperties.OSDIST, null);
+        _QUERY_EMPTY_ENV.put(NutsConstants.IdProperties.OS_DIST, null);
         _QUERY_EMPTY_ENV.put(NutsConstants.IdProperties.PLATFORM, null);
     }
 
@@ -160,7 +161,9 @@ public class CoreNutsUtils {
     }
 
     public static boolean containsVars(NutsId id) {
-        return (CoreStringUtils.containsVars(id.getGroupId()) && CoreStringUtils.containsVars(id.getArtifactId()) && CoreStringUtils.containsVars(id.getVersion().getValue()));
+        return (CoreStringUtils.containsVars(id.getGroupId())
+                && CoreStringUtils.containsVars(id.getArtifactId())
+                && CoreStringUtils.containsVars(id.getVersion().getValue()));
     }
 
     public static String[] applyStringProperties(String[] child, Function<String, String> properties) {
@@ -661,7 +664,7 @@ public class CoreNutsUtils {
         try {
             int a = 0;
             for (String part : s.split("\\.")) {
-                a = a * 100 + CoreNumberUtils.convertToInteger(part,0);
+                a = a * 100 + CoreNumberUtils.convertToInteger(part, 0);
             }
             return a;
         } catch (Exception ex) {
@@ -829,7 +832,6 @@ public class CoreNutsUtils {
     }
 
 
-
     public static Iterator<NutsDependency> itIdToDep(Iterator<NutsId> id) {
         return IteratorBuilder.of(id).convert(x -> x.toDependency(), "IdToDependency").build();
     }
@@ -838,6 +840,93 @@ public class CoreNutsUtils {
         String _optional = copyFrom.getOptional();
         String _scope = copyFrom.getScope();
         return IteratorBuilder.of(id).convert(x -> x.toDependency().builder().setOptional(_optional).setScope(_scope).build(), "IdToDependency").build();
+    }
+
+    private static boolean acceptCondition(NutsId[] curr, String[] expected, NutsSession session) {
+        if(expected.length>0) {
+            boolean accept = false;
+            for (NutsId v : curr) {
+                if(acceptCondition(v,expected,session)){
+                    accept = true;
+                    break;
+                }
+            }
+            if (!accept) {
+                return false;
+            }
+        }
+        return true;
+    }
+    private static boolean acceptCondition(NutsId curr, String[] expected, NutsSession session) {
+        if (expected.length != 0) {
+            boolean accept = false;
+            NutsId a = curr;
+            for (String v : expected) {
+                if (NutsId.parse(v, session).filter().acceptId(a, session)) {
+                    accept = true;
+                    break;
+                }
+            }
+            if (!accept) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static boolean acceptCondition(NutsEnvCondition condition, boolean allInstalledPlatforms, NutsSession session) {
+        if (condition == null || condition.isBlank()) {
+            return true;
+        }
+        NutsWorkspaceEnvManager env = session.getWorkspace().env();
+        List<NutsId> pfs=new ArrayList<>();
+        if(allInstalledPlatforms){
+            for (String s : Arrays.stream(condition.getPlatform()).collect(Collectors.toSet())) {
+                pfs.addAll(Arrays.stream(session.getWorkspace().env().platforms().findAll(s)).map(NutsPlatformLocation::getId).collect(Collectors.toList()));
+            }
+        }else {
+            pfs.add(env.getPlatform());
+        }
+        return
+                acceptCondition(env.getArch(), condition.getArch(), session)
+                        && acceptCondition(env.getOs(), condition.getOs(), session)
+                        && acceptCondition(env.getOsDist(), condition.getOsDist(), session)
+                        && acceptCondition(env.getDesktopEnvironment(), condition.getDesktopEnvironment(), session)
+                        && acceptCondition(
+                                pfs.toArray(new NutsId[0])
+                                , condition.getDesktopEnvironment(), session);
+    }
+
+    public static NutsEnvCondition blankCondition(NutsSession session) {
+        return new DefaultNutsEnvCondition(null, null, null, null, null, session);
+    }
+
+    public static NutsEnvCondition trimToNull(NutsEnvCondition c, NutsSession session) {
+        if (c == null || c.isBlank()) {
+            return null;
+        }
+        return c;
+    }
+
+    public static NutsEnvCondition trimToBlank(NutsEnvCondition c, NutsSession session) {
+        if (c == null) {
+            return blankCondition(session);
+        }
+        return c;
+    }
+
+    public static Map<String, String> getPropertiesMap(NutsDescriptorProperty[] list) {
+        Map<String, String> m = new LinkedHashMap<>();
+        if (list != null) {
+            for (NutsDescriptorProperty property : list) {
+                if (property.getCondition() == null || property.getCondition().isBlank()) {
+                    m.put(property.getName(), property.getValue());
+                } else {
+                    throw new IllegalArgumentException("unexpected properties with conditions. probably a bug");
+                }
+            }
+        }
+        return m;
     }
 
     public static class NutsDefaultThreadFactory implements ThreadFactory {
@@ -869,5 +958,4 @@ public class CoreNutsUtils {
             return t;
         }
     }
-
 }

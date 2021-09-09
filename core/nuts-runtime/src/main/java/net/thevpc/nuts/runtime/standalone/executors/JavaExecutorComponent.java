@@ -421,14 +421,38 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
 
         @Override
         public Object runWithContext() throws Throwable {
-            Method mainMethod = null;
             if (cls.getName().equals("net.thevpc.nuts.Nuts")) {
-                mainMethod = cls.getMethod("run", NutsSession.class, String[].class);
-                mainMethod.setAccessible(true);
+                NutsWorkspace workspace = session.getWorkspace();
+                NutsWorkspaceOptionsBuilder o = NutsWorkspaceOptionsBuilder.of().parseArguments(
+                        joptions.getApp().toArray(new String[0])
+                );
+                String[] appArgs;
+                if (o.getApplicationArguments().length == 0) {
+                    if (o.isSkipWelcome()) {
+                        return null;
+                    }
+                    appArgs = new String[]{"welcome"};
+                } else {
+                    appArgs = o.getApplicationArguments();
+                }
+                session.configure(o.build());
+                Object oldId = NutsApplications.getSharedMap().get("nuts.embedded.application.id");
                 NutsApplications.getSharedMap().put("nuts.embedded.application.id", id);
-                mainMethod.invoke(null, new Object[]{getSession(), joptions.getApp().toArray(new String[0])});
+                try {
+                    workspace.exec()
+                            .setSession(session)
+                            .addCommand(appArgs)
+                            .addExecutorOptions(o.getExecutorOptions())
+                            .setExecutionType(o.getExecutionType())
+                            .setFailFast(true)
+                            .setDry(session.isDry())
+                            .run();
+                }finally {
+                    NutsApplications.getSharedMap().put("nuts.embedded.application.id", oldId);
+                }
                 return null;
             }
+            Method mainMethod = null;
             boolean isNutsApp = false;
             Object nutsApp = null;
             try {

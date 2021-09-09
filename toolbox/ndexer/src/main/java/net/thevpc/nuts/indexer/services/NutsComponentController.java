@@ -86,9 +86,12 @@ public class NutsComponentController {
                         .setRepository(namespace)
                         .setGroupId(group)
                         .setVersion(version)
-                        .setArch(arch)
-                        .setOs(os)
-                        .setOsdist(osdist)
+                        .setCondition(
+                                ws.descriptor().envConditionBuilder()
+                                        .setArch(new String[]{arch})
+                                        .setOs(new String[]{os})
+                                        .setOsDist(new String[]{osdist}).build()
+                        )
                         .setFace(face)
 //                        .setAlternative(alternative)
                         .build();
@@ -113,6 +116,8 @@ public class NutsComponentController {
                                                                     @RequestParam("os") String os,
                                                                     @RequestParam("osdist") String osdist,
                                                                     @RequestParam("arch") String arch,
+                                                                    @RequestParam("platform") String platform,
+                                                                    @RequestParam("de") String desktopEnvironment,
                                                                     @RequestParam("face") String face
 //            ,@RequestParam(NutsConstants.IdProperties.ALTERNATIVE) String alternative
     ) {
@@ -128,9 +133,13 @@ public class NutsComponentController {
                         .setArtifactId(name)
                         .setRepository(namespace)
                         .setGroupId(group)
-                        .setArch(arch)
-                        .setOs(os)
-                        .setOsdist(osdist)
+                        .setCondition(NutsEnvConditionBuilder.of(session)
+                                .setArch(arch)
+                                .setOs(os)
+                                .setOsDist(osdist)
+                                .setPlatform(platform)
+                                .setDesktopEnvironment(desktopEnvironment)
+                        )
                         .setFace(face)
 //                        .setAlternative(alternative)
                         .build();
@@ -151,6 +160,8 @@ public class NutsComponentController {
                                                    @RequestParam("version") String version,
                                                    @RequestParam("os") String os,
                                                    @RequestParam("osdist") String osdist,
+                                                   @RequestParam("platform") String platform,
+                                                   @RequestParam("de") String desktopEnvironment,
                                                    @RequestParam("arch") String arch,
                                                    @RequestParam("face") String face
 //            ,@RequestParam(NutsConstants.IdProperties.ALTERNATIVE) String alternative
@@ -169,9 +180,13 @@ public class NutsComponentController {
                                 .setRepository(namespace)
                                 .setGroupId(group)
                                 .setVersion(version)
-                                .setArch(arch)
-                                .setOs(os)
-                                .setOsdist(osdist)
+                                .setCondition(NutsEnvConditionBuilder.of(session)
+                                        .setArch(arch)
+                                        .setOs(os)
+                                        .setOsDist(osdist)
+                                        .setPlatform(platform)
+                                        .setDesktopEnvironment(desktopEnvironment)
+                                )
                                 .setFace(face)
 //                                .setAlternative(alternative)
                                 .build());
@@ -191,6 +206,8 @@ public class NutsComponentController {
                                                @RequestParam("version") String version,
                                                @RequestParam("os") String os,
                                                @RequestParam("osdist") String osdist,
+                                               @RequestParam("platform") String platform,
+                                               @RequestParam("de") String desktopEnvironment,
                                                @RequestParam("arch") String arch,
                                                @RequestParam("face") String face
 //            ,@RequestParam(NutsConstants.IdProperties.ALTERNATIVE) String alternative
@@ -208,9 +225,13 @@ public class NutsComponentController {
                         .setRepository(namespace)
                         .setGroupId(group)
                         .setVersion(version)
-                        .setArch(arch)
-                        .setOs(os)
-                        .setOsdist(osdist)
+                        .setCondition(NutsEnvConditionBuilder.of(session)
+                                .setArch(arch)
+                                .setOs(os)
+                                .setOsDist(osdist)
+                                .setPlatform(platform)
+                                .setDesktopEnvironment(desktopEnvironment)
+                        )
                         .setFace(face)
 //                        .setAlternative(alternative)
                         .build();

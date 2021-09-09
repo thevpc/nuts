@@ -21,15 +21,15 @@ public class NutsApiUtils {
     }
 
     public static int processThrowable(Throwable ex, PrintStream out) {
-        return PrivateNutsApplicationUtils.processThrowable(ex, out);
+        return PrivateNutsUtilApplication.processThrowable(ex, out);
     }
 
     public static int processThrowable(Throwable ex, PrintStream out, boolean showMessage, boolean showTrace, boolean showGui) {
-        return PrivateNutsApplicationUtils.processThrowable(ex, out, showMessage, showTrace, showGui);
+        return PrivateNutsUtilApplication.processThrowable(ex, out, showMessage, showTrace, showGui);
     }
 
     public static boolean isGraphicalDesktopEnvironment() {
-        return PrivateNutsGui.isGraphicalDesktopEnvironment();
+        return PrivateNutsUtilGui.isGraphicalDesktopEnvironment();
     }
 
     public static boolean getSysBoolNutsProperty(String property, boolean defaultValue) {
@@ -37,24 +37,24 @@ public class NutsApiUtils {
     }
 
     public static String resolveNutsVersionFromClassPath() {
-        return PrivateNutsMavenUtils.resolveNutsApiVersionFromClassPath();
+        return PrivateNutsUtilMaven.resolveNutsApiVersionFromClassPath();
     }
 
     public static String resolveNutsIdDigest() {
         return resolveNutsIdDigest(
                 new NutsBootId("net.thevpc.nuts", "nuts", NutsBootVersion.parse(Nuts.getVersion())),
-                PrivateNutsClassLoaderUtils.resolveClasspathURLs(Thread.currentThread().getContextClassLoader())
+                PrivateNutsUtilClassLoader.resolveClasspathURLs(Thread.currentThread().getContextClassLoader())
         );
     }
 
     public static String resolveNutsIdDigest(NutsBootId id, URL[] urls) {
-        return PrivateNutsDigestUtils.getURLDigest(
-                PrivateNutsClassLoaderUtils.findClassLoaderJar(id, urls)
+        return PrivateNutsUtilDigest.getURLDigest(
+                PrivateNutsUtilClassLoader.findClassLoaderJar(id, urls)
         );
     }
 
     public static URL findClassLoaderJar(NutsBootId id, URL[] urls) {
-        return PrivateNutsClassLoaderUtils.findClassLoaderJar(id, urls);
+        return PrivateNutsUtilClassLoader.findClassLoaderJar(id, urls);
     }
 
 

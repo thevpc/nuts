@@ -180,9 +180,7 @@ public final class Nuts {
 
     /**
      * open then run Nuts application with the provided arguments. This Main
-     * will
-     * <strong>NEVER</strong>
-     * call {@link System#exit(int)}.
+     * will <strong>NEVER</strong> call {@link System#exit(int)}.
      *
      * @param args boot arguments
      */

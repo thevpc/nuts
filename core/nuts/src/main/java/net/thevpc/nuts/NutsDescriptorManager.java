@@ -39,12 +39,14 @@ public interface NutsDescriptorManager {
      */
     NutsDescriptorBuilder descriptorBuilder();
 
+    NutsEnvConditionBuilder envConditionBuilder();
+
     /**
      * create classifier mappings builder.
      *
      * @return new instance of NutsClassifierMappingBuilder
      */
-    NutsClassifierMappingBuilder classifierBuilder();
+    NutsDescriptorPropertyBuilder propertyBuilder();
 
     /**
      * create descriptor builder.

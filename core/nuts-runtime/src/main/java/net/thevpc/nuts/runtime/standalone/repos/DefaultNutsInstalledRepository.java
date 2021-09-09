@@ -652,7 +652,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
     /////////////////////////////////////////////////////////////////////////////////////////////
     @Override
     public NutsRepositorySecurityManager security() {
-        throw new IllegalArgumentException("Unsupported security() for " + getName() + " repository");
+        throw new IllegalArgumentException("unsupported security() for " + getName() + " repository");
     }
 
     @Override
@@ -684,7 +684,9 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
         return new AbstractNutsPushRepositoryCommand(this) {
             @Override
             public NutsPushRepositoryCommand run() {
-                throw new IllegalArgumentException("Unsupported push() for " + getName() + " repository");
+                throw new NutsIllegalArgumentException(getSession(),
+                NutsMessage.cstyle("unsupported push() for %s repository",getName())
+                        );
             }
         };
     }

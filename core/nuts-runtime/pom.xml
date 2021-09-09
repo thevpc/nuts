@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.thevpc.nuts</groupId>
     <artifactId>nuts-runtime</artifactId>
-    <version>0.8.2.2</version>
+    <version>0.8.3.0</version>
     <packaging>jar</packaging>
     <name>net.thevpc.nuts.nuts-runtime</name>
     <url>https://github.com/thevpc/nuts</url>
@@ -88,7 +88,7 @@
         <dependency>
             <groupId>net.thevpc.nuts</groupId>
             <artifactId>nuts</artifactId>
-            <version>0.8.2</version>
+            <version>0.8.3</version>
         </dependency>
         <dependency>
             <groupId>org.fusesource.jansi</groupId>

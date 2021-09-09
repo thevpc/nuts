@@ -118,6 +118,7 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
             return null;
         }
         if ("org.apache.catalina:apache-tomcat".equals(id.getShortName())) {
+
             NutsWorkspace ws = session.getWorkspace();
 //            String r = getUrl(id.getVersion(), ".zip.md5");
             String r = getUrl(id.getVersion(), ".zip");
@@ -138,11 +139,42 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
                 }
             }
             if (found) {
+                // http://tomcat.apache.org/whichversion.html
+                int i = id.getVersion().getInt(0,-1);
+                int j = id.getVersion().getInt(1,-1);
+                String javaVersion="";
+                if (i<=0){
+                     //
+                }else if(i<=3){
+                    javaVersion="#1.1";
+                }else if(i<=4){
+                    javaVersion="#1.3";
+                }else if(i<=5){
+                    javaVersion="#1.4";
+                }else if(i<=6){
+                    javaVersion="#1.5";
+                }else if(i<=7){
+                    javaVersion="#1.6";
+                }else if(i<=8){
+                    javaVersion="#1.7";
+                }else if(i<=9){
+                    javaVersion="#1.8";
+                }else /*if(i<=10)*/{
+                    if(j<=0) {
+                        javaVersion="#1.8";
+                    }else{
+                        javaVersion = "#11";
+                    }
+                }
+
                 return ws.descriptor()
                         .descriptorBuilder()
                         .setId(id.getLongNameId())
                         .setPackaging("zip")
-                        .setPlatform(new String[]{"java"})
+                        .setCondition(
+                                NutsEnvConditionBuilder.of(session)
+                                        .setPlatform("java"+javaVersion)
+                        )
                         .setDescription("Apache Tomcat Official Zip Bundle")
                         .setProperty("dynamic-descriptor", "true")
                         .build();

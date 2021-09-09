@@ -36,20 +36,20 @@ import java.util.Objects;
  */
 public class NutsDescriptorFilterOsdist extends AbstractDescriptorFilter implements JsNutsDescriptorFilter {
 
-    private final String osdist;
+    private final String osDist;
 
-    public NutsDescriptorFilterOsdist(NutsSession ws, String osdist) {
+    public NutsDescriptorFilterOsdist(NutsSession ws, String osDist) {
         super(ws, NutsFilterOp.CUSTOM);
-        this.osdist = osdist;
+        this.osDist = osDist;
     }
 
-    public String getOsdist() {
-        return osdist;
+    public String getOsDist() {
+        return osDist;
     }
 
     @Override
     public boolean acceptDescriptor(NutsDescriptor descriptor, NutsSession session) {
-        return CoreFilterUtils.matchesOsdist(osdist, descriptor, session);
+        return CoreFilterUtils.matchesOsDist(osDist, descriptor.getCondition(), session);
     }
 
     /**
@@ -57,7 +57,7 @@ public class NutsDescriptorFilterOsdist extends AbstractDescriptorFilter impleme
      */
     @Override
     public NutsDescriptorFilter simplify() {
-        if (NutsUtilStrings.isBlank(osdist)) {
+        if (NutsUtilStrings.isBlank(osDist)) {
             return null;
         }
         return this;
@@ -65,13 +65,13 @@ public class NutsDescriptorFilterOsdist extends AbstractDescriptorFilter impleme
 
     @Override
     public String toJsNutsDescriptorFilterExpr() {
-        return "descriptor.matchesOsdist('" + CoreStringUtils.escapeQuoteStrings(osdist) + "')";
+        return "descriptor.matchesOsdist('" + CoreStringUtils.escapeQuoteStrings(osDist) + "')";
     }
 
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 97 * hash + Objects.hashCode(this.osdist);
+        hash = 97 * hash + Objects.hashCode(this.osDist);
         return hash;
     }
 
@@ -87,7 +87,7 @@ public class NutsDescriptorFilterOsdist extends AbstractDescriptorFilter impleme
             return false;
         }
         final NutsDescriptorFilterOsdist other = (NutsDescriptorFilterOsdist) obj;
-        if (!Objects.equals(this.osdist, other.osdist)) {
+        if (!Objects.equals(this.osDist, other.osDist)) {
             return false;
         }
         return true;
@@ -95,7 +95,7 @@ public class NutsDescriptorFilterOsdist extends AbstractDescriptorFilter impleme
 
     @Override
     public String toString() {
-        return "Osdist{" + osdist + '}';
+        return "Osdist{" + osDist + '}';
     }
 
 }

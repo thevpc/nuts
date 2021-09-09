@@ -7,7 +7,7 @@
     <groupId>net.thevpc.nuts.toolbox</groupId>
     <artifactId>nwar</artifactId>
     <name>net.thevpc.nuts.toolbox.nwar</name>
-    <version>0.8.2.0</version>
+    <version>0.8.3.0</version>
     <packaging>war</packaging>
     <description>Nuts Web Front End</description>
 
@@ -23,12 +23,12 @@
         <dependency>
             <groupId>net.thevpc.nuts</groupId>
             <artifactId>nuts</artifactId>
-            <version>0.8.2</version>
+            <version>0.8.3</version>
         </dependency>
         <dependency>
             <groupId>net.thevpc.nuts.lib</groupId>
             <artifactId>nlib-servlet</artifactId>
-            <version>0.8.2.0</version>
+            <version>0.8.3.0</version>
         </dependency>
 
     </dependencies>

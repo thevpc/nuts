@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.core.format.text;
 
+import net.thevpc.nuts.NutsUnsupportedEnumException;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.core.io.BaseTransparentFilterOutputStream;
 import net.thevpc.nuts.runtime.core.terminals.NutsTerminalModeOp;
@@ -43,6 +44,6 @@ public class RawOutputStream extends BaseTransparentFilterOutputStream implement
                 return new UnescapeOutputStream(this,session);
             }
         }
-        throw new IllegalArgumentException("Unsupported");
+        throw new NutsUnsupportedEnumException(session, other);
     }
 }

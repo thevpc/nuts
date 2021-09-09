@@ -50,7 +50,7 @@ public class NutsDescriptorFilterArch extends AbstractDescriptorFilter implement
 
     @Override
     public boolean acceptDescriptor(NutsDescriptor descriptor, NutsSession session) {
-        return CoreFilterUtils.matchesArch(arch, descriptor, session);
+        return CoreFilterUtils.matchesArch(arch, descriptor.getCondition(), session);
     }
 
     /**

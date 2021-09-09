@@ -47,8 +47,7 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
     private String scope;
     private String optional;
     private String type;
-    private String os;
-    private String arch;
+    private NutsEnvConditionBuilder condition;
     private String classifier;
     private NutsId[] exclusions = new NutsId[0];
     private transient NutsSession session;
@@ -80,11 +79,23 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
                     return true;
                 }
                 case NutsConstants.IdProperties.OS: {
-                    setOs(value);
+                    condition.setOs(new String[]{value});
                     return true;
                 }
                 case NutsConstants.IdProperties.ARCH: {
-                    setArch(value);
+                    condition.setArch(new String[]{value});
+                    return true;
+                }
+                case NutsConstants.IdProperties.PLATFORM: {
+                    condition.setPlatform(new String[]{value});
+                    return true;
+                }
+                case NutsConstants.IdProperties.OS_DIST: {
+                    condition.setOsDist(new String[]{value});
+                    return true;
+                }
+                case NutsConstants.IdProperties.DESKTOP_ENVIRONMENT: {
+                    condition.setDesktopEnvironment(new String[]{value});
                     return true;
                 }
                 case NutsConstants.IdProperties.TYPE: {
@@ -102,6 +113,19 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
 
     public DefaultNutsDependencyBuilder(NutsSession session) {
         this.session = session;
+        condition=new DefaultNutsEnvConditionBuilder(session);
+    }
+
+    @Override
+    public NutsDependencyBuilder setCondition(NutsEnvCondition condition) {
+        this.condition.setAll(condition);
+        return this;
+    }
+
+    @Override
+    public NutsDependencyBuilder setCondition(NutsEnvConditionBuilder condition) {
+        this.condition.setAll(condition);
+        return this;
     }
 
     @Override
@@ -192,18 +216,6 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
     }
 
     @Override
-    public NutsDependencyBuilder setOs(String os) {
-        this.os = NutsUtilStrings.trimToNull(os);
-        return this;
-    }
-
-    @Override
-    public NutsDependencyBuilder setArch(String arch) {
-        this.arch = NutsUtilStrings.trimToNull(arch);
-        return this;
-    }
-
-    @Override
     public NutsDependencyBuilder setExclusions(NutsId[] exclusions) {
         if (exclusions != null) {
             exclusions = Arrays.copyOf(exclusions, exclusions.length);
@@ -217,14 +229,6 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
         return set(value);
     }
 
-    public String getOs() {
-        return os;
-    }
-
-    public String getArch() {
-        return arch;
-    }
-
     @Override
     public NutsDependencyBuilder set(NutsDependencyBuilder value) {
         if (value != null) {
@@ -236,8 +240,7 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
             setOptional(value.getOptional());
             setExclusions(value.getExclusions());
             setClassifier(value.getClassifier());
-            setOs(value.getOs());
-            setArch(value.getArch());
+            getCondition().setAll(value.getCondition());
             setType(value.getType());
             setProperties(value.getProperties());
         } else {
@@ -257,8 +260,7 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
             setOptional(value.getOptional());
             setExclusions(value.getExclusions());
             setClassifier(value.getClassifier());
-            setOs(value.getOs());
-            setArch(value.getArch());
+            getCondition().setAll(value.getCondition());
             setType(value.getType());
             setProperties(value.getProperties());
         } else {
@@ -282,8 +284,7 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
         setOptional(null);
         setExclusions((NutsId[]) null);
         setClassifier(null);
-        setOs(null);
-        setArch(null);
+        getCondition().clear();
         setType(null);
         setProperties((Map<String, String>) null);
         return this;
@@ -331,9 +332,9 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
                 .setGroupId(getGroupId())
                 .setArtifactId(getArtifactId())
                 .setVersion(getVersion())
-                .setOs(getOs())
-                .setArch(getArch())
-                .setProperties(m).build();
+                .setCondition(getCondition())
+                .setProperties(m).build()
+                ;
     }
 
     @Override
@@ -382,8 +383,7 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
                 getScope(),
                 getOptional(),
                 getExclusions(),
-                getOs(),
-                getArch(),
+                getCondition().build(),
                 getType(),
                 getPropertiesQuery(), session
         );
@@ -449,5 +449,9 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
     @Override
     public String toString() {
         return build().toString();
+    }
+
+    public NutsEnvConditionBuilder getCondition() {
+        return condition;
     }
 }

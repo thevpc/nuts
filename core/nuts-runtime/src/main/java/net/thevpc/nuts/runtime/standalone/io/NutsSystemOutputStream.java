@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.io;
 
-import net.thevpc.nuts.NutsTerminalMode;
-import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.common.CorePlatformUtils;
 import net.thevpc.nuts.runtime.core.format.text.EscapeOutputStream;
 import net.thevpc.nuts.runtime.core.format.text.ExtendedFormatAware;
@@ -13,8 +12,6 @@ import net.thevpc.nuts.runtime.core.terminals.NutsTerminalModeOp;
 import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import net.thevpc.nuts.NutsOsFamily;
-import net.thevpc.nuts.NutsSession;
 //import net.thevpc.nuts.runtime.optional.jansi.OptionalJansi;
 
 public class NutsSystemOutputStream extends BaseTransparentFilterOutputStream implements ExtendedFormatAware {
@@ -100,10 +97,8 @@ public class NutsSystemOutputStream extends BaseTransparentFilterOutputStream im
                 return NutsTerminalModeOp.FILTER;
             case INHERITED:
                 return NutsTerminalModeOp.NOP;
-            default: {
-                throw new IllegalArgumentException("Unsupported " + type);
-            }
         }
+        throw new NutsUnsupportedEnumException(session, type);
     }
 
     @Override
@@ -128,7 +123,7 @@ public class NutsSystemOutputStream extends BaseTransparentFilterOutputStream im
                 return new UnescapeOutputStream(new NutsSystemOutputStream(base, NutsTerminalMode.FORMATTED, session), session);
             }
         }
-        throw new IllegalArgumentException("Unsupported");
+        throw new NutsUnsupportedEnumException(session, other);
     }
 
     @Override

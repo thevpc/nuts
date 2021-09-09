@@ -59,6 +59,7 @@ public enum NutsOsFamily implements NutsEnum {
      * lower-cased identifier for the enum entry
      */
     private final String id;
+    private static final NutsOsFamily _curr=parseLenient(System.getProperty("os.name"), UNKNOWN, UNKNOWN);
 
     NutsOsFamily() {
         this.id = name().toLowerCase().replace('_', '-');
@@ -87,6 +88,7 @@ public enum NutsOsFamily implements NutsEnum {
                 return WINDOWS;
             case "linux":
                 return LINUX;
+            case "mac":
             case "macos":
                 return MACOS;
             case "unix":
@@ -94,7 +96,43 @@ public enum NutsOsFamily implements NutsEnum {
             case "unknown":
                 return UNKNOWN;
         }
+        if (e.startsWith("linux")) {
+            return NutsOsFamily.LINUX;
+        }
+        if (e.startsWith("win")) {
+            return NutsOsFamily.WINDOWS;
+        }
+        if (e.startsWith("mac")) {
+            return NutsOsFamily.MACOS;
+        }
+        if (e.startsWith("sunos")) {
+            return NutsOsFamily.UNIX;
+        }
+        if (e.startsWith("freebsd")) {
+            return NutsOsFamily.UNIX;
+        }
+        //process plexus os families
+        switch (e) {
+            case "dos":
+                return NutsOsFamily.WINDOWS;
+            case "netware":
+                return NutsOsFamily.UNKNOWN;
+            case "os/2":
+                return NutsOsFamily.UNKNOWN;
+            case "tandem":
+                return NutsOsFamily.UNKNOWN;
+            case "zos":
+                return NutsOsFamily.UNKNOWN;
+            case "os/400":
+                return NutsOsFamily.UNIX;
+            case "openvms":
+                return NutsOsFamily.UNKNOWN;
+        }
         return errorValue;
+    }
+
+    public static NutsOsFamily getCurrent() {
+        return _curr;
     }
 
     /**

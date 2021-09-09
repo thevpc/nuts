@@ -66,7 +66,7 @@ public class Test16_TermLayout {
 
     @BeforeEach
     public void startup() throws IOException {
-        Assumptions.assumeTrue(NutsUtilPlatforms.getPlatformOsFamily() == NutsOsFamily.LINUX);
+        Assumptions.assumeTrue(NutsOsFamily.getCurrent() == NutsOsFamily.LINUX);
         TestUtils.unsetNutsSystemProperties();
     }
 
