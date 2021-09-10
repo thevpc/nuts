@@ -47,8 +47,7 @@ Java HotSpot(TM) 64-Bit Server VM (build 25.211-b12, mixed mode)
     { label: 'MacOS', value: 'macos', },
     { label: 'Windows', value: 'windows', },
     { label: '*NIX wget', value: 'wget', },
-    { label: '*NIX curl', value: 'curl', },
-    { label: 'Any Java enabled OS', value: 'java', },
+    { label: '*NIX curl', value: 'curl', }
   ]
 }>
 <TabItem value="windows">
@@ -75,23 +74,32 @@ Any of the created shortcuts for windows is a nuts-aware terminal.
 </TabItem>
 <TabItem value="linux">
 
-__using curl:__
+__for testing or development (using wget):__
+When you are using **nuts** for the first time or you want to reset any previous installation:
 ```
-NDVER=${apiVersion} && curl -OL https://repo.maven.apache.org/maven2\
-/net/thevpc/nuts/nuts/$NDVER/nuts-$NDVER.jar && java -jar \
-      nuts-$NDVER.jar -zy && . ~/.bashrc
-```
-
-__using wget:__
-```
-NDVER=${apiVersion} && wget -https://repo.maven.apache.org/maven2\
-/net/thevpc/nuts/nuts/$NDVER/nuts-$NDVER.jar && java -jar \
-      nuts-$NDVER.jar -zy && ~/.bashrc
+wget http://thevpc.net/nuts.jar -qO nuts.jar && java -jar nuts.jar -Zy -r==dev,maven-central && . ~/.bashrc
 ```
 
-__Using helper script:__
+When you are re-using a previous **nuts** workspace:
 ```
-curl -OL -http://thevpc.net/nuts-install.sh && . ./nuts-install.sh
+wget http://thevpc.net/nuts.jar -qO nuts.jar && java -jar nuts.jar -zyN -r dev && . ~/.bashrc
+```
+
+__for production (using wget):__
+This will reset/delete any previous nuts installation before installing the latest version.
+Removing the '-Z' flag if you do not want to reset the workspace.
+```
+NDVER=${stableApiVersion} && wget https://repo.maven.apache.org/maven2\
+/net/thevpc/nuts/nuts/$NDVER/nuts-$NDVER.jar && java -jar \
+      nuts-$NDVER.jar -Zy && . ~/.bashrc
+```
+
+__for production (using curl):__
+This will reset/delete any previous nuts installation before installing the latest version.
+Removing the '-Z' flag if you do not want to reset the workspace.
+```
+NDVER=${stableApiVersion} && curl -sOL https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/$NDVER/nuts-$NDVER.jar \
+      && java -jar nuts-$NDVER.jar -Zy && . ~/.bashrc
 ```
 
 Linux Systems installation is based on bash shell. First launch will configure "~/.bashrc" so that **nuts** and other companion tool commands will be available in any future terminal instances.
@@ -110,9 +118,8 @@ Any bash terminal application is a nuts-aware terminal.
 <TabItem value="macos">
 
 ```
-NDVER=${apiVersion} && curl -OL https://github.com/thevpc/vpc-public-maven/raw/master\
-/net/vpc/app/nuts/nuts/$NDVER/nuts-$NDVER.jar && java -jar \
-      nuts-$NDVER.jar -y
+NDVER=${stableApiVersion} && curl -sOL https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/$NDVER/nuts-$NDVER.jar \
+      && java -jar nuts-$NDVER.jar -Zy
 ```
 
 MacOS Systems installation is based on **bash** shell. First launch will configure "~/.bashrc" so that **nuts** and other companion tool commands will be available in any future terminal instances.
@@ -144,9 +151,9 @@ Any bash terminal application is a nuts-aware terminal.
 <TabItem value="curl">
 
 ```
-  NDVER=${apiVersion} && curl -OL https://github.com/thevpc/vpc-public-maven/raw/master\
-/net/vpc/app/nuts/nuts/$NDVER/nuts-$NDVER.jar && java -jar \
-      nuts-$NDVER.jar -y
+NDVER=${stableApiVersion} && wget https://repo.maven.apache.org/maven2\
+/net/thevpc/nuts/nuts/$NDVER/nuts-$NDVER.jar && java -jar \
+      nuts-$NDVER.jar -Zy && . ~/.bashrc
 ```
 :::tip
 
@@ -156,21 +163,7 @@ Any bash terminal application is a nuts-aware terminal.
 
 </TabItem>
 
-<TabItem value="java">
 
-```
-  NDVER=${apiVersion} && curl -OL https://github.com/thevpc/vpc-public-maven/raw/master\
-/net/vpc/app/nuts/nuts/$NDVER/nuts-$NDVER.jar && java -jar \
-      nuts-$NDVER.jar -y
-```
-
-:::tip
-
-Any bash terminal application is a nuts-aware terminal.
-
-:::
-
-</TabItem>
 </Tabs>
 
 
@@ -179,9 +172,8 @@ Yous should then see some log like the following :
 ![install-log-example](../../static/img/install-log-example.png)
 
 As you can see, installation upon first launch, will also trigger installation of other optional programs called "companion tools".
-Actually they are recommended helpful tools :
-  + **nsh** which stands for __Nuts Shell__ , a bash compatible shell implementation program that will run equally on linux an windows systems.
-  + **nadmin** an administration tool for **```nuts```** 
+Actually they are recommended helpful a tool called **nsh** :
+  + **nsh** stands for __Nuts Shell__ , is a bash compatible shell implementation program that will run equally on linux and windows systems.
 
 :::important
 
@@ -211,4 +203,4 @@ To run a command using **nuts** just type
 nuts <command>
 ```
 
-Several commands are available, and you can always manually run any java and non java application. More info is available in the **```nuts```** official [wiki](https://github.com/thevpc/nuts/wiki) .
+Several commands are available, and you can always manually run any java and non java application.

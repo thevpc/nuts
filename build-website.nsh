@@ -3,7 +3,7 @@
 ##    nuts -ZSby -w build-nuts ./build-website.nsh
 ## in order to build nuts website. This assumes that nuts is built and installed in the current machine
 ## Note that this will create a new workspace 'build-nuts' (and reset it) to use it
-## if not just issue, you need at lease 'mvn build install' the project, then:
+## if not, you need at least 'mvn clean install' the project, then:
 ##    java -jar core/nuts/target/nuts-0.8.1.jar -ZSby -w build-nuts ./build-website.nsh
 ## N.B:  please make sure to replace '0.8.1' with the actual nuts version
 
