@@ -47,5 +47,25 @@ mvn clean install
 - Add tests relevant to the fixed bug or new feature.
 
 ---------------
+#PREPARING DEV ENVIRONMENT
+
+create a key:
+gpg --gen-key
+
+add in ~/.m2/settings.xml the following
+
+<profile>
+      <id>ossrh</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <properties>
+        <gpg.executable>gpg2</gpg.executable>
+        <gpg.keyname>YOUR-KEY-438B05CFD2263E2EB91FD083C7E3C476060E40DD</gpg.keyname>
+        <gpg.passphrase>YOUR PASSWORD</gpg.passphrase>
+      </properties>
+    </profile>        
+
+---------------
 
 This CONTRIBUTING.md file is adapted from the [DeepLearning4j CONTRIBUTING.md](https://alvinalexander.com/java/jwarehouse/deeplearning4j/CONTRIBUTING.md.shtml)
