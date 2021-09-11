@@ -47,13 +47,16 @@ mvn clean install
 - Add tests relevant to the fixed bug or new feature.
 
 ---------------
-#PREPARING DEV ENVIRONMENT
+## PREPARING DEV ENVIRONMENT
 
 create a key:
+```bash
 gpg --gen-key
+```
 
-add in ~/.m2/settings.xml the following
+add in `~/.m2/settings.xml` the following
 
+```xml
 <profile>
       <id>ossrh</id>
       <activation>
@@ -65,7 +68,7 @@ add in ~/.m2/settings.xml the following
         <gpg.passphrase>YOUR PASSWORD</gpg.passphrase>
       </properties>
     </profile>        
-
+```
 ---------------
 
 This CONTRIBUTING.md file is adapted from the [DeepLearning4j CONTRIBUTING.md](https://alvinalexander.com/java/jwarehouse/deeplearning4j/CONTRIBUTING.md.shtml)
