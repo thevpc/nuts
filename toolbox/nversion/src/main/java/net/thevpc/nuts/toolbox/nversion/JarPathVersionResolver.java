@@ -47,7 +47,7 @@ public class JarPathVersionResolver implements PathVersionResolver{
         }
         Set<VersionDescriptor> all = new HashSet<>();
         try (InputStream is = context.getWorkspace().io().path(context.getWorkspace().io()
-                .path(filePath).builder().withAppBaseDir().expand().build().toString()
+                .path(filePath).builder().withAppBaseDir().build().toString()
         ).input().open()) {
             context.getWorkspace().io().uncompress()
                     .from(is)
@@ -88,9 +88,9 @@ public class JarPathVersionResolver implements PathVersionResolver{
                                 }
                                 properties.setProperty("nuts.version-provider", "OSGI");
                                 //OSGI
-                                if (!_StringUtils.isBlank(Bundle_SymbolicName)
-                                        && !_StringUtils.isBlank(Bundle_Name)
-                                        && !_StringUtils.isBlank(Bundle_Version)) {
+                                if (!NutsUtilStrings.isBlank(Bundle_SymbolicName)
+                                        && !NutsUtilStrings.isBlank(Bundle_Name)
+                                        && !NutsUtilStrings.isBlank(Bundle_Version)) {
                                     all.add(new VersionDescriptor(
                                             context.getWorkspace().id().builder().setGroupId(Bundle_SymbolicName).setArtifactId(Bundle_Name).setVersion(Bundle_Version).build(),
                                             properties

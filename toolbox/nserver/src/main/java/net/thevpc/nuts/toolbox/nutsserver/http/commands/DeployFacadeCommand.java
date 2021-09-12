@@ -2,9 +2,9 @@ package net.thevpc.nuts.toolbox.nutsserver.http.commands;
 
 import net.thevpc.nuts.NutsDescriptor;
 import net.thevpc.nuts.NutsId;
+import net.thevpc.nuts.NutsUtilStrings;
 import net.thevpc.nuts.toolbox.nutsserver.AbstractFacadeCommand;
 import net.thevpc.nuts.toolbox.nutsserver.FacadeCommandContext;
-import net.thevpc.nuts.toolbox.nutsserver.bundled._StringUtils;
 import net.thevpc.nuts.toolbox.nutsserver.util.ItemStreamInfo;
 import net.thevpc.nuts.toolbox.nutsserver.util.MultipartStreamHelper;
 
@@ -23,7 +23,7 @@ public class DeployFacadeCommand extends AbstractFacadeCommand {
     @Override
     public void executeImpl(FacadeCommandContext context) throws IOException {
         String boundary = context.getRequestHeaderFirstValue("Content-type");
-        if (_StringUtils.isBlank(boundary)) {
+        if (NutsUtilStrings.isBlank(boundary)) {
             context.sendError(400, "invalid JShellCommandNode arguments : " + getName() + " . invalid format.");
             return;
         }

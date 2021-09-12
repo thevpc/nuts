@@ -31,6 +31,7 @@ import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 import net.thevpc.nuts.NutsApplicationContext;
+import net.thevpc.nuts.NutsUtilStrings;
 import org.boris.pecoff4j.PE;
 import org.boris.pecoff4j.ResourceDirectory;
 import org.boris.pecoff4j.ResourceEntry;
@@ -98,7 +99,7 @@ public class ExePathVersionResolver implements PathVersionResolver{
                         }
                     }
                     p.setProperty("nuts.version-provider", "win-pe");
-                    if (!_StringUtils.isBlank(artifactId) && !_StringUtils.isBlank(artifactVersion)) {
+                    if (!NutsUtilStrings.isBlank(artifactId) && !NutsUtilStrings.isBlank(artifactVersion)) {
                         d.add(new VersionDescriptor(
                                 context.getWorkspace().id().builder().setArtifactId(artifactId).setVersion(artifactVersion).build(),
                                 p

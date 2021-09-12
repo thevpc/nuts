@@ -116,7 +116,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
 
     public String getRemoteInstanceName() {
         String n = getConfig().getRemoteName();
-        return _StringUtils.isBlank(n) ? "default" : n;
+        return NutsUtilStrings.isBlank(n) ? "default" : n;
     }
 
     public void restart(String[] redeploy, boolean deleteOutLog) {

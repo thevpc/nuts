@@ -243,7 +243,7 @@ public class FilePath extends NutsPathBase implements NutsPathSPI {
 
     @Override
     public NutsPathBuilder builder() {
-        return new FilePathBuilder(getSession(), this);
+        return new DefaultPathBuilder(getSession(), this);
     }
 
 }

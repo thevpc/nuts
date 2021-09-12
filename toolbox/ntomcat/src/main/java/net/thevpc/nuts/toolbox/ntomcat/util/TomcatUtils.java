@@ -1,6 +1,7 @@
 package net.thevpc.nuts.toolbox.ntomcat.util;
 
 import net.thevpc.nuts.NutsApplicationContext;
+import net.thevpc.nuts.NutsUtilStrings;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -10,14 +11,10 @@ import java.util.*;
 
 public class TomcatUtils {
 
-    public static boolean isBlank(String string) {
-        return string == null || string.trim().isEmpty();
-    }
-
     public static String toValidFileName(String name, String defaultName) {
-        String r = trim(name);
+        String r = NutsUtilStrings.trim(name);
         if (r.isEmpty()) {
-            return trim(defaultName);
+            return NutsUtilStrings.trim(defaultName);
         }
         return r
                 .replace('/', '_')
@@ -26,16 +23,6 @@ public class TomcatUtils {
                 .replace('\\', '_');
     }
 
-    public static String trim(String appName) {
-        return appName == null ? "" : appName.trim();
-    }
-
-    //    public static void writeJson(PrintStream out, Object config, NutsWorkspace ws) {
-//        NutsIOManager jsonSerializer = ws.io();
-//        PrintWriter w = new PrintWriter(out);
-//        jsonSerializer.json().write(config, new PrintWriter(out));
-//        w.flush();
-//    }
     public static boolean isPositiveInt(String s) {
         if (s == null) {
             return false;
@@ -140,7 +127,7 @@ public class TomcatUtils {
                     line = line.trim();
                     if (line.startsWith("Apache Tomcat Version")) {
                         String v = line.substring("Apache Tomcat Version".length()).trim();
-                        if (!isBlank(v)) {
+                        if (!NutsUtilStrings.isBlank(v)) {
                             return v;
                         }
                     }

@@ -10,15 +10,18 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.function.Function;
 
-public class FilePathBuilder implements NutsPathBuilder {
+public class DefaultPathBuilder implements NutsPathBuilder {
+    EffectiveResolver effectiveResolver;
     private Function<String, String> resolver;
     private NutsSession session;
     private String baseDir;
     private NutsPath base;
+    private boolean expandVars = true;
 
-    public FilePathBuilder(NutsSession session,NutsPath base) {
+    public DefaultPathBuilder(NutsSession session, NutsPath base) {
         this.session = session;
         this.base = base;
+        this.effectiveResolver = new EffectiveResolver(session);
     }
 
     @Override
@@ -33,7 +36,7 @@ public class FilePathBuilder implements NutsPathBuilder {
 
     @Override
     public NutsPathBuilder setVarResolver(Function<String, String> resolver) {
-        this.resolver=resolver;
+        this.resolver = resolver;
         return this;
     }
 
@@ -51,7 +54,7 @@ public class FilePathBuilder implements NutsPathBuilder {
 
     @Override
     public String getBaseDir() {
-        if(baseDir==null){
+        if (baseDir == null) {
             return System.getProperty("user.dir");
         }
         return baseDir;
@@ -59,45 +62,50 @@ public class FilePathBuilder implements NutsPathBuilder {
 
     @Override
     public NutsPathBuilder setBaseDir(String baseDir) {
-        this.baseDir=baseDir;
+        this.baseDir = baseDir;
         return this;
     }
 
     @Override
-    public NutsPathBuilder expand() {
-        base=expandToPath();
+    public NutsPath build() {
+        NutsPath p = expandVars ? expandVars(base) : base;
+        if (baseDir != null) {
+            if (p.isFilePath()) {
+                return expandFile(p);
+            }
+        }
+        return base;
+    }
+
+    public boolean isExpandVars() {
+        return expandVars;
+    }
+
+    public NutsPathBuilder setExpandVars(boolean expandVars) {
+        this.expandVars = expandVars;
         return this;
     }
 
     @Override
     public String toString() {
-        try{
+        try {
             return build().toString();
-        }catch (Exception e){
+        } catch (Exception e) {
             return base.toString();
         }
     }
 
-    private NutsPath expandToPath() {
-        String path = base.toString();
+    private NutsPath expandVars(NutsPath path) {
         NutsIOManager io = session.getWorkspace().io();
-        if (path != null && path.length() > 0) {
-            path = StringPlaceHolderParser.replaceDollarPlaceHolders(path, new Function<String, String>() {
-                @Override
-                public String apply(String s) {
-                    if(resolver!=null){
-                        String v = resolver.apply(s);
-                        if(v!=null){
-                            return v;
-                        }
-                    }
-                    return new NutsWorkspaceVarExpansionFunction(session.getWorkspace()).apply(s);
-                }
-            });
-            if (CoreIOUtils.isURL(path)) {
-                return io.path(path);
-            }
-            Path ppath = Paths.get(path);
+        return io.path(StringPlaceHolderParser.replaceDollarPlaceHolders(path.toString(), effectiveResolver));
+    }
+
+    private NutsPath expandFile(NutsPath npath) {
+        Path fp = npath.toFilePath();
+        NutsIOManager io = session.getWorkspace().io();
+        if (fp != null && fp.toString().length() > 0) {
+            Path ppath = fp;
+            String path = fp.toString();
 //            if (path.startsWith("file:") || path.startsWith("http://") || path.startsWith("https://")) {
 //                return path;
 //            }
@@ -124,6 +132,8 @@ public class FilePathBuilder implements NutsPathBuilder {
                     }
                     return io.path(ppath.toAbsolutePath().normalize());
                 }
+            } else if (path.equals(".") || path.equals("..")) {
+                return io.path(ppath.toAbsolutePath().normalize());
             } else if (ppath.isAbsolute()) {
                 return io.path(ppath.normalize());
             } else if (baseDir != null) {
@@ -135,14 +145,27 @@ public class FilePathBuilder implements NutsPathBuilder {
                 return io.path(ppath.toAbsolutePath().normalize());
             }
         }
-        if (CoreIOUtils.isURL(baseDir)) {
-            return io.path(baseDir);
-        }
-        return io.path(Paths.get(baseDir).toAbsolutePath().normalize());
+        return npath;
     }
 
-    @Override
-    public NutsPath build() {
-        return base;
+    private class EffectiveResolver implements Function<String, String> {
+        NutsWorkspaceVarExpansionFunction fallback;
+        NutsSession session;
+
+        public EffectiveResolver(NutsSession session) {
+            this.session = session;
+            fallback = new NutsWorkspaceVarExpansionFunction(session.getWorkspace());
+        }
+
+        @Override
+        public String apply(String s) {
+            if (resolver != null) {
+                String v = resolver.apply(s);
+                if (v != null) {
+                    return v;
+                }
+            }
+            return fallback.apply(s);
+        }
     }
 }

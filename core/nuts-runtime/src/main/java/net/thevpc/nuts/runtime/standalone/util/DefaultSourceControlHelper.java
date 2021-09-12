@@ -91,7 +91,7 @@ public class DefaultSourceControlHelper {
 
             try {
                 ZipUtils.unzip(session, nutToInstall.getPath().toString(), ws.io()
-                        .path(folder.toString()).builder().withAppBaseDir().expand().build().toString(), new UnzipOptions().setSkipRoot(false));
+                        .path(folder.toString()).builder().withAppBaseDir().build().toString(), new UnzipOptions().setSkipRoot(false));
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
             }

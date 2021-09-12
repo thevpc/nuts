@@ -23,19 +23,17 @@
  */
 package net.thevpc.nuts.toolbox.ndb.util;
 
+import net.thevpc.nuts.NutsUtilStrings;
+
 /**
  *
  * @author vpc
  */
 public class NdbUtils {
 
-    public static boolean isBlank(String string) {
-        return string == null || string.trim().isEmpty();
-    }
-
     public static String coalesce(String... cmd) {
         for (String string : cmd) {
-            if (!isBlank(string)) {
+            if (!NutsUtilStrings.isBlank(string)) {
                 return string;
             }
         }

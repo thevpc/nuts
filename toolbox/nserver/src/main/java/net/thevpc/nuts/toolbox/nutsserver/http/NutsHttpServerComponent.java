@@ -32,7 +32,6 @@ import net.thevpc.nuts.toolbox.nutsserver.NutsServer;
 import net.thevpc.nuts.toolbox.nutsserver.NutsServerComponent;
 import net.thevpc.nuts.toolbox.nutsserver.NutsServerConstants;
 import net.thevpc.nuts.toolbox.nutsserver.ServerConfig;
-import net.thevpc.nuts.toolbox.nutsserver.bundled._StringUtils;
 
 import javax.net.ssl.*;
 import java.io.*;
@@ -112,7 +111,7 @@ public class NutsHttpServerComponent implements NutsServerComponent {
         int port = httpConfig.getPort();
         int backlog = httpConfig.getBacklog();
         Executor executor = httpConfig.getExecutor();
-        if (_StringUtils.isBlank(serverId)) {
+        if (NutsUtilStrings.isBlank(serverId)) {
             String serverName = NutsServerConstants.DEFAULT_HTTP_SERVER;
             try {
                 serverName = InetAddress.getLocalHost().getHostName();

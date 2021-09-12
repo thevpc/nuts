@@ -2,7 +2,6 @@ package net.thevpc.nuts.toolbox.nutsserver;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.nutsserver.bundled._IOUtils;
-import net.thevpc.nuts.toolbox.nutsserver.bundled._StringUtils;
 import net.thevpc.nuts.toolbox.nutsserver.http.NutsHttpServerConfig;
 
 import java.io.*;
@@ -157,10 +156,10 @@ public class NutsServerMain implements NutsApplication {
                     NutsWorkspace nutsWorkspace = null;
                     String wsContext = entry.getKey();
                     String wsLocation = entry.getValue();
-                    if (_StringUtils.isBlank(wsContext) || wsContext.equals(".")) {
+                    if (NutsUtilStrings.isBlank(wsContext) || wsContext.equals(".")) {
                         wsContext = "";
                     }
-                    if (_StringUtils.isBlank(wsContext)) {
+                    if (NutsUtilStrings.isBlank(wsContext)) {
                         if (context.getWorkspace() == null) {
                             throw new NutsIllegalArgumentException(context.getSession(),
                                     NutsMessage.cstyle("nuts-server: missing workspace"));

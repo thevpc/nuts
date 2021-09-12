@@ -28,7 +28,7 @@ public class NVersionMain implements NutsApplication {
         if (expression.startsWith("file:") || expression.contains("://")) {
             return io.path(expression);
         }
-        return io.path(_IOUtils.getAbsoluteFile2(expression, cwd));
+        return io.path(expression).builder().setBaseDir(cwd).build();
     }
 
     private Set<VersionDescriptor> detectVersions(String filePath, NutsApplicationContext context, NutsWorkspace ws) throws IOException {
@@ -113,7 +113,7 @@ public class NVersionMain implements NutsApplication {
                 try {
                     processed++;
                     value = detectVersions(context.getWorkspace().io()
-                            .path(arg).builder().withAppBaseDir().expand().build().toString(), context, ws);
+                            .path(arg).builder().withAppBaseDir().build().toString(), context, ws);
                 } catch (IOException e) {
                     throw new NutsExecutionException(context.getSession(),NutsMessage.cstyle("nversion: unable to detect version for %s",arg), e, 2);
                 }
@@ -151,7 +151,7 @@ public class NVersionMain implements NutsApplication {
                 }
                 if (error) {
                     for (String t : unsupportedFileTypes) {
-                        File f = new File(context.getWorkspace().io().path(t).builder().withAppBaseDir().expand().build().toString());
+                        File f = new File(context.getWorkspace().io().path(t).builder().withAppBaseDir().build().toString());
                         if (f.isFile()) {
                             pp.setProperty(t, text.builder().append("<<ERROR>>", NutsTextStyle.error()).append(" unsupported file type").toString());
                         } else if (f.isDirectory()) {
@@ -196,7 +196,7 @@ public class NVersionMain implements NutsApplication {
                 if (error) {
                     if (!unsupportedFileTypes.isEmpty()) {
                         for (String t : unsupportedFileTypes) {
-                            File f = new File(context.getWorkspace().io().path(t).builder().withAppBaseDir().expand().build().toString());
+                            File f = new File(context.getWorkspace().io().path(t).builder().withAppBaseDir().build().toString());
                             if (f.isFile()) {
                                 err.printf("%s : unsupported file type%n", t);
                             } else if (f.isDirectory()) {

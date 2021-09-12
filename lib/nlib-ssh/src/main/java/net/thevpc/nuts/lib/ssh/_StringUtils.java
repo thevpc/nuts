@@ -10,9 +10,6 @@ public class _StringUtils {
     public static Map<String, String> parseMap(String text, String entrySeparators) {
         return parseMap(text, "=", entrySeparators);
     }
-    public static boolean isBlank(String string) {
-        return string == null || string.trim().isEmpty();
-    }
 
     public static Map<String, String> parseMap(String text, String eqSeparators, String entrySeparators) {
         Map<String, String> m = new LinkedHashMap<>();

@@ -1,5 +1,7 @@
 package net.thevpc.nuts.lib.ssh;
 
+import net.thevpc.nuts.NutsUtilStrings;
+
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -68,7 +70,7 @@ public class SshAddress {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("ssh://");
-        if (!_StringUtils.isBlank(user)) {
+        if (!NutsUtilStrings.isBlank(user)) {
             sb.append(user).append("@");
         }
         sb.append(host);

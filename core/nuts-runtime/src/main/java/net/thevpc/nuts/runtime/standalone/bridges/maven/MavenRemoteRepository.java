@@ -528,7 +528,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
             if (nutsRepository.getRepositoryType().equals(NutsConstants.RepoTypes.MAVEN)
                     && nutsRepository.config().getLocation(true) != null
                     && nutsRepository.config().getLocation(true).equals(
-                    Paths.get(session.getWorkspace().io().path("~/.m2").builder().withWorkspaceBaseDir().expand().build().toString()).toString()
+                    Paths.get(session.getWorkspace().io().path("~/.m2").builder().withWorkspaceBaseDir().build().toString()).toString()
             )) {
                 return nutsRepository;
             }

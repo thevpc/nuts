@@ -91,7 +91,7 @@ public class CpCommand extends SimpleNshBuiltin {
                 throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("empty file path"), 2);
             }
             options.xfiles.add(context.getWorkspace().io().path((value.contains("://") ? value :
-                    context.getWorkspace().io().path(value).builder().withWorkspaceBaseDir().expand().build().toString()
+                    context.getWorkspace().io().path(value).builder().withWorkspaceBaseDir().build().toString()
             )));
         }
         if (options.xfiles.size() < 2) {

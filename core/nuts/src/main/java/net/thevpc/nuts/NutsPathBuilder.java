@@ -46,7 +46,9 @@ public interface NutsPathBuilder extends NutsFormattable {
      *
      * @return expanded path
      */
-    NutsPathBuilder expand();
-
     NutsPath build();
+
+    boolean isExpandVars();
+
+    NutsPathBuilder setExpandVars(boolean expandVars);
 }

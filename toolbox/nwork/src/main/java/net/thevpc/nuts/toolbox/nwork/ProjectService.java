@@ -199,7 +199,7 @@ public class ProjectService {
                 a = new RepositoryAddress();
             }
             String nutsRepository = a.getNutsRepository();
-            if (_StringUtils.isBlank(nutsRepository)) {
+            if (NutsUtilStrings.isBlank(nutsRepository)) {
                 throw new NutsExecutionException(appContext.getSession(), NutsMessage.cstyle("missing repository. try 'nwork set -r vpc-public-maven' or something like that"), 2);
             }
             try {
@@ -250,7 +250,7 @@ public class ProjectService {
                         a = new RepositoryAddress();
                     }
                     String nutsRepository = a.getNutsRepository();
-                    if (_StringUtils.isBlank(nutsRepository)) {
+                    if (NutsUtilStrings.isBlank(nutsRepository)) {
                         throw new NutsExecutionException(appContext.getSession(), NutsMessage.cstyle("missing repository. try 'nwork set -r vpc-public-maven' or something like that"), 2);
                     }
                     try {

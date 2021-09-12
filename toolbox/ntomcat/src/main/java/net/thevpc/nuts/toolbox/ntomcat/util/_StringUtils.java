@@ -23,26 +23,17 @@
  */
 package net.thevpc.nuts.toolbox.ntomcat.util;
 
+import net.thevpc.nuts.NutsUtilStrings;
+
 /**
  *
  * @author vpc
  */
 public class _StringUtils {
 
-    public static boolean isBlank(String string) {
-        return string == null || string.trim().isEmpty();
-    }
-    public static String trim(String value) {
-        if (value == null) {
-            return "";
-        }
-        return value.trim();
-    }
-
-
     public static String coalesce(String... cmd) {
         for (String string : cmd) {
-            if (!isBlank(string)) {
+            if (!NutsUtilStrings.isBlank(string)) {
                 return string;
             }
         }

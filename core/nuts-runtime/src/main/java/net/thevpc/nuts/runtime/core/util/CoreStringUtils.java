@@ -381,20 +381,20 @@ public final class CoreStringUtils {
         return msg;
     }
 
-    /**
-     * copied from StringUtils (in order to remove dependency)
-     *
-     * @param cmd string array
-     * @return the first non empty element of the array
-     */
-    public static String coalesce(String... cmd) {
-        for (String string : cmd) {
-            if (!NutsUtilStrings.isBlank(string)) {
-                return string;
-            }
-        }
-        return null;
-    }
+//    /**
+//     * copied from StringUtils (in order to remove dependency)
+//     *
+//     * @param cmd string array
+//     * @return the first non empty element of the array
+//     */
+//    public static String coalesce(String... cmd) {
+//        for (String string : cmd) {
+//            if (!NutsUtilStrings.isBlank(string)) {
+//                return string;
+//            }
+//        }
+//        return null;
+//    }
 
     /**
      * copied from StringUtils (in order to remove dependency)

@@ -25,10 +25,7 @@
 */
 package net.thevpc.nuts.lib.servlet;
 
-import net.thevpc.nuts.Nuts;
-import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.NutsOpenMode;
-import net.thevpc.nuts.NutsWorkspaceOptionsBuilder;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.nutsserver.AdminServerConfig;
 import net.thevpc.nuts.toolbox.nutsserver.DefaultNutsWorkspaceServerManager;
 import net.thevpc.nuts.toolbox.nutsserver.NutsServer;
@@ -70,10 +67,10 @@ public class NutsHttpServlet extends HttpServlet {
 
     public static int parseInt(String v1, int defaultValue) {
         try {
-            if (_StringUtils.isBlank(v1)) {
+            if (NutsUtilStrings.isBlank(v1)) {
                 return defaultValue;
             }
-            return Integer.parseInt(_StringUtils.trim(v1));
+            return Integer.parseInt(NutsUtilStrings.trim(v1));
         } catch (NumberFormatException e) {
             return defaultValue;
         }
@@ -173,7 +170,7 @@ public class NutsHttpServlet extends HttpServlet {
             workspacesByWebContextPath.put(webContext, ws);
         }
 
-        if (_StringUtils.isBlank(serverId)) {
+        if (NutsUtilStrings.isBlank(serverId)) {
             String serverName = DEFAULT_HTTP_SERVER;
             try {
                 serverName = InetAddress.getLocalHost().getHostName();
@@ -197,7 +194,7 @@ public class NutsHttpServlet extends HttpServlet {
                 serverConfig.setPort(adminServerPort);
                 adminServerRef = serverManager.startServer(serverConfig);
             } catch (Exception ex) {
-                LOG.log(Level.SEVERE, "Unable to start admin server", ex);
+                LOG.log(Level.SEVERE, "unable to start admin server", ex);
             }
         }
     }

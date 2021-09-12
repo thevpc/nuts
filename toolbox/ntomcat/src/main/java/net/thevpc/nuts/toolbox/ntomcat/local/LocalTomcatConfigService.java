@@ -163,7 +163,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
 
     public String getValidCatalinaVersion() {
         String v = getConfig().getCatalinaVersion();
-        if (!TomcatUtils.isBlank(v)) {
+        if (!NutsUtilStrings.isBlank(v)) {
             return v;
         }
         v = TomcatUtils.getFolderCatalinaHomeVersion(getCatalinaHome());
@@ -179,7 +179,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         LocalTomcatConfig c = getConfig();
         Path catalinaBase = c.getCatalinaBase() == null ? null : Paths.get(c.getCatalinaBase());
         Path catalinaHome = getCatalinaHome();
-        if (TomcatUtils.isBlank(getConfig().getCatalinaHome())
+        if (NutsUtilStrings.isBlank(getConfig().getCatalinaHome())
                 && catalinaBase == null) {
             catalinaBase = Paths.get(getName());
         }
@@ -222,7 +222,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
 
     public Path getCatalinaHome() {
         String h = getConfig().getCatalinaHome();
-        if (TomcatUtils.isBlank(h)) {
+        if (NutsUtilStrings.isBlank(h)) {
             Path h2 = resolveCatalinaHome();
             getConfig().setCatalinaHome(h2.toString());
             save();
@@ -306,7 +306,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         List<String> apps = new ArrayList<>();
         if (args != null) {
             for (String arg : args) {
-                if (!TomcatUtils.isBlank(arg)) {
+                if (!NutsUtilStrings.isBlank(arg)) {
                     for (String s : arg.split("[, ]")) {
                         if (!s.isEmpty()) {
                             apps.add(s);
@@ -576,7 +576,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
     public void deployFile(Path file, String contextName, String domain) {
         String fileName = file.getFileName().toString();
         if (fileName.endsWith(".war")) {
-            if (TomcatUtils.isBlank(contextName)) {
+            if (NutsUtilStrings.isBlank(contextName)) {
                 contextName = fileName.substring(0, fileName.length() - ".war".length());
             }
             Path c = getDefaulDeployFolder(domain).resolve(contextName + ".war");

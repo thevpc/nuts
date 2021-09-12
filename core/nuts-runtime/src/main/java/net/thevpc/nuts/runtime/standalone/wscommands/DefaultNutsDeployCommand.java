@@ -62,7 +62,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                 }
                 if (c.descriptor != null) {
                     if ("zip".equals(c.descriptor.getPackaging())) {
-                        Path zipFilePath = Paths.get(ws.io().path(fileSource.toString() + ".zip").builder().withAppBaseDir().expand().build().toString());
+                        Path zipFilePath = Paths.get(ws.io().path(fileSource.toString() + ".zip").builder().withAppBaseDir().build().toString());
                         ZipUtils.zip(ws, fileSource.toString(), new ZipOptions(), zipFilePath.toString());
                         c.contentFile = ws.io().input().setMultiRead(true).of(zipFilePath);
                         c.addTemp(zipFilePath);
@@ -72,7 +72,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                 }
             } else if (Files.isRegularFile(fileSource)) {
                 if (c.descriptor == null) {
-                    File ext = new File(ws.io().path(fileSource.toString() + "." + NutsConstants.Files.DESCRIPTOR_FILE_NAME).builder().withAppBaseDir().expand().build().toString());
+                    File ext = new File(ws.io().path(fileSource.toString() + "." + NutsConstants.Files.DESCRIPTOR_FILE_NAME).builder().withAppBaseDir().build().toString());
                     if (ext.exists()) {
                         c.descriptor = ws.descriptor().parser().setSession(session).parse(ext);
                     } else {
@@ -177,7 +177,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                     }
                     if (descriptor != null) {
                         if ("zip".equals(descriptor.getPackaging())) {
-                            Path zipFilePath = Paths.get(ws.io().path(contentFile.toString() + ".zip").builder().withAppBaseDir().expand().build().toString());
+                            Path zipFilePath = Paths.get(ws.io().path(contentFile.toString() + ".zip").builder().withAppBaseDir().build().toString());
                             try {
                                 ZipUtils.zip(ws, contentFile.toString(), new ZipOptions(), zipFilePath.toString());
                             } catch (IOException ex) {

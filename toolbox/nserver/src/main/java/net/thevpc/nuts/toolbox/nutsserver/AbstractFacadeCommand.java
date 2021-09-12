@@ -31,8 +31,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import net.thevpc.nuts.NutsUtilStrings;
 import net.thevpc.nuts.NutsWorkspaceSecurityManager;
-import net.thevpc.nuts.toolbox.nutsserver.bundled._StringUtils;
 
 /**
  * Created by vpc on 1/24/17.
@@ -62,7 +62,7 @@ public abstract class AbstractFacadeCommand implements FacadeCommand {
         NutsWorkspaceSecurityManager secu = context.getWorkspace().security();
         userLogin = userLogin == null ? null :new String(secu.getCredentials(userLogin.toCharArray()));
         userPassword = userPassword==null?null:secu.getCredentials(userPassword);
-        if (!_StringUtils.isBlank(userLogin)) {
+        if (!NutsUtilStrings.isBlank(userLogin)) {
             boolean loggedId = false;
             try {
                 context.getWorkspace().security().login(userLogin, userPassword);

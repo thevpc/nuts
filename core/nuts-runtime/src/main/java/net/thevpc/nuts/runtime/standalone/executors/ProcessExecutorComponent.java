@@ -98,7 +98,7 @@ public class ProcessExecutorComponent implements NutsExecutorComponent {
                 dir = execArgs[i].substring(arg.indexOf('=') + 1);
             }
         }
-        String directory = NutsUtilStrings.isBlank(dir) ? null : executionContext.getWorkspace().io().path(dir).builder().withAppBaseDir().expand().build().toString();
+        String directory = NutsUtilStrings.isBlank(dir) ? null : executionContext.getWorkspace().io().path(dir).builder().withAppBaseDir().build().toString();
         return ProcessExecHelper.ofDefinition(nutMainFile,
                 app.toArray(new String[0]), osEnv, directory, executionContext.getExecutorProperties(), showCommand, true, executionContext.getSleepMillis(), false, false, null, null, executionContext.getRunAs(), executionContext.getTraceSession(),
                 executionContext.getExecSession()

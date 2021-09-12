@@ -5,6 +5,8 @@
  */
 package net.thevpc.nuts.lib.template;
 
+import net.thevpc.nuts.NutsUtilStrings;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -113,7 +115,7 @@ public class JavaUtils {
         for (String line : javaCode.split("\n")) {
             line = line.trim();
 //            System.out.println(line);
-            if (!_StringUtils.isBlank(line)) {
+            if (!NutsUtilStrings.isBlank(line)) {
                 if (pack == null && _StringUtils.isStartsWithWord(line, "package")) {
                     pack = line.substring("package".length(), line.indexOf(';', "package".length())).trim();
                 } else {
@@ -146,7 +148,7 @@ public class JavaUtils {
         for (String line : javaCode.split("\n")) {
             line = line.trim();
 //            System.out.println(line);
-            if (!_StringUtils.isBlank(line)) {
+            if (!NutsUtilStrings.isBlank(line)) {
                 if (pack == null && _StringUtils.isStartsWithWord(line, "package")) {
                     pack = line.substring("package".length(), line.length()).trim();
                     if (pack.indexOf(';') >= 0) {

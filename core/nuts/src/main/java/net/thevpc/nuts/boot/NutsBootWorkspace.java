@@ -1171,10 +1171,10 @@ public final class NutsBootWorkspace {
         PrivateNutsTerm.errln("unable to bootstrap nuts (hash %s):", getApiDigest());
         PrivateNutsTerm.errln("%s", extraMessage);
         PrivateNutsTerm.errln("here after current environment info:");
-        PrivateNutsTerm.errln("  nuts-boot-api-version            : %s", PrivateNutsUtils.nvl(actualBootConfig.getApiVersion(), "<?> Not Found!"));
-        PrivateNutsTerm.errln("  nuts-boot-runtime                : %s", PrivateNutsUtils.nvl(actualBootConfig.getRuntimeId(), "<?> Not Found!"));
-        PrivateNutsTerm.errln("  nuts-boot-repositories           : %s", PrivateNutsUtils.nvl(actualBootConfig.getBootRepositories(), "<?> Not Found!"));
-        PrivateNutsTerm.errln("  workspace-location               : %s", PrivateNutsUtils.nvl(workspace, "<default-location>"));
+        PrivateNutsTerm.errln("  nuts-boot-api-version            : %s", PrivateNutsUtils.coalesce(actualBootConfig.getApiVersion(), "<?> Not Found!"));
+        PrivateNutsTerm.errln("  nuts-boot-runtime                : %s", PrivateNutsUtils.coalesce(actualBootConfig.getRuntimeId(), "<?> Not Found!"));
+        PrivateNutsTerm.errln("  nuts-boot-repositories           : %s", PrivateNutsUtils.coalesce(actualBootConfig.getBootRepositories(), "<?> Not Found!"));
+        PrivateNutsTerm.errln("  workspace-location               : %s", PrivateNutsUtils.coalesce(workspace, "<default-location>"));
         PrivateNutsTerm.errln("  nuts-store-apps                  : %s", rbc_locations.get(NutsStoreLocation.APPS.id()));
         PrivateNutsTerm.errln("  nuts-store-config                : %s", rbc_locations.get(NutsStoreLocation.CONFIG.id()));
         PrivateNutsTerm.errln("  nuts-store-var                   : %s", rbc_locations.get(NutsStoreLocation.VAR.id()));

@@ -5,6 +5,8 @@
  */
 package net.thevpc.nuts.lib.template;
 
+import net.thevpc.nuts.NutsUtilStrings;
+
 import java.io.IOException;
 import java.io.StringReader;
 import java.text.DateFormat;
@@ -532,7 +534,7 @@ public class MessageNameFormat {
 
     ////////////////////////////////////////////////////////////////////////////
     public static DateFormat resolveDateFormat(String dateFormatString, Locale loc, String defaultDateFormatString) {
-        if (_StringUtils.isBlank(dateFormatString)) {
+        if (NutsUtilStrings.isBlank(dateFormatString)) {
             dateFormatString = defaultDateFormatString;
         }
         if (dateFormatString.equalsIgnoreCase("short")) {

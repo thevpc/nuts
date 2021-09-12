@@ -22,9 +22,6 @@ class _StringUtils {
         Arrays.sort(all);
         return String.join("\n", all);
     }
-    public static boolean isBlank(String string) {
-        return string == null || string.trim().isEmpty();
-    }
 
     public static String consumeWord(String string) {
         string = string.trim();

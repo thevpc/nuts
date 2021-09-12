@@ -29,10 +29,6 @@ package net.thevpc.nuts.toolbox.nwork;
  */
 public class _StringUtils {
 
-    public static boolean isBlank(String string) {
-        return string == null || string.trim().isEmpty();
-    }
-
     public static String alignLeft(String s, int width) {
         StringBuilder sb = new StringBuilder(width<=0?1:width);
         if (s != null) {

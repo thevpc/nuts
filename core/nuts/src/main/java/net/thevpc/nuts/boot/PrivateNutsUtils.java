@@ -199,7 +199,7 @@ final class PrivateNutsUtils {
         return ss.isEmpty() ? "<EMPTY>" : ss;
     }
 
-    public static String nvl(Object... all) {
+    public static String coalesce(Object... all) {
         for (Object object : all) {
             if (object != null) {
                 return desc(object);

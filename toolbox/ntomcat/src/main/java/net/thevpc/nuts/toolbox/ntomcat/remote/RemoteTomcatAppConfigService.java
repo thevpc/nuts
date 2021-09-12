@@ -4,7 +4,6 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.ntomcat.remote.config.RemoteTomcatAppConfig;
 import net.thevpc.nuts.toolbox.ntomcat.remote.config.RemoteTomcatConfig;
 import net.thevpc.nuts.toolbox.ntomcat.util._FileUtils;
-import net.thevpc.nuts.toolbox.ntomcat.util._StringUtils;
 
 import java.io.File;
 import java.util.Arrays;
@@ -33,12 +32,12 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
             throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("missing source war file %s", localWarPath), 2);
         }
         String remoteTempPath = cconfig.getRemoteTempPath();
-        if (_StringUtils.isBlank(remoteTempPath)) {
+        if (NutsUtilStrings.isBlank(remoteTempPath)) {
             remoteTempPath = "/tmp";
         }
         String remoteFilePath = ("/" + remoteTempPath + "/" + _FileUtils.getFileName(localWarPath));
         String server = cconfig.getServer();
-        if (_StringUtils.isBlank(server)) {
+        if (NutsUtilStrings.isBlank(server)) {
             server = "localhost";
         }
         if (!server.startsWith("ssh://")) {
@@ -56,7 +55,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
                 ).setSession(context.getSession())
                 .run();
         String v = config.getVersionCommand();
-        if (_StringUtils.isBlank(v)) {
+        if (NutsUtilStrings.isBlank(v)) {
             v = "nsh nversion --color=never %file";
         }
         List<String> cmd = Arrays.asList(
@@ -111,7 +110,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
                 "--app",
                 name,
                 "--version",
-                _StringUtils.trim(version)
+                NutsUtilStrings.trim(version)
         );
     }
 
