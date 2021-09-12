@@ -1,30 +1,30 @@
 # Contributing to Nuts
 
-Thanks for your interest in nuts. 
+Thanks for your interest in `nuts`. 
 Our goal is to leverage the power of Java, Maven and Gradle to build a rock solid package manager.
 
 ## Getting Started
 
-Nuts's [open issues are here](https://github.com/thevpc/nuts/issues). 
+`nuts`'s [open issues are here](https://github.com/thevpc/nuts/issues). 
 In time, we'll tag issues that would make a good first pull request for new contributors. 
 An easy way to get started helping the project is to *file an issue*. 
-You can do that on the Nuts issues page by clicking on the green button at the right. 
+You can do that on the `nuts` issues page by clicking on the green button at the right. 
 Issues can include bugs to fix, features to add, or documentation that looks outdated.
 
 For some tips on contributing to open source, this [post is helpful](http://blog.smartbear.com/programming/14-ways-to-contribute-to-open-source-without-being-a-programming-genius-or-a-rock-star/).
 
 ## Contributions
 
-Nuts welcomes contributions from everyone.
+`nuts` welcomes contributions from everyone.
 
-Contributions to Nuts should be made in the form of GitHub pull requests. Each pull request will
+Contributions to `nuts` should be made in the form of GitHub pull requests. Each pull request will
 be reviewed by a core contributor (someone with permission to land patches) and either landed in the
 main tree or given feedback for changes that would be required.
 
 ---------------
-## PREPARING DEV ENVIRONMENT
-To contribute to Nuts Package Management Development you need the following software installed on your machine:
-* java JDK 8 (nuts is still compatible with java 8)
+## Preparing Dev Environment
+To contribute to `nuts` Package Management Development you need the following software installed on your machine:
+* java JDK 8 (`nuts` is still compatible with java 8)
 * maven 3.8+
 * GnuPG (gpg) 2+
 * You favorite IDE (I'm using Netbeans and sometimes IntellijIdea and very sporadically Eclipse)
@@ -45,7 +45,7 @@ update (or create) `~/.m2/settings.xml` file with the following content:
       </activation>
       <properties>
         <gpg.executable>gpg2</gpg.executable>
-        <gpg.keyname>YOUR-KEY-438B05CFD2263E2EB91FD083C7E3C476060E40DD</gpg.keyname>
+        <gpg.keyname>YOUR-KEY-444B05CFD2263E2EB91FD083C7E3C476060E40DD</gpg.keyname>
         <gpg.passphrase>YOUR PASSWORD</gpg.passphrase>
       </properties>
     </profile>
@@ -53,10 +53,18 @@ update (or create) `~/.m2/settings.xml` file with the following content:
 ```
 
 ## Compiling Nuts
+Here is the typical commands to get your own local copy of `nuts` sources and to compile them:
+
 ```bash
 git clone https://github.com/thevpc/nuts.git
 cd nuts
 mvn clean install
+```
+
+and here is how to generate the website and documentation (assuming you are under `nuts` repo root folder)
+
+```bash
+./nuts-build-website
 ```
 
 ## Pull Request Checklist
@@ -84,8 +92,8 @@ The repository is organized in several folders described here after:
 * **[.dir-template]** : contains template files for generating `README.md` and `METADATA` (among other) files according to the current `nuts` development version
 * **[core]**          : contains the core of `nuts` package manager (and the only required pieces for `nuts` to work). Practically this contains the Bootstrap (and API) project (called `nuts`) and the Runtime (Implementation) project (called `nuts-runtime`)
 * **[docs]**          : contains a generated (using docusaurus) web site that is deployed to github pages (https://thevpc.github.io/nuts/)
-* **[ext]**           : contains some nuts extensions/plugins
-* **[install]**       : ignore this for the moment :), it is a work on progress and an attempt to simplify nuts installation process. Still very embryonic though.
+* **[ext]**           : contains some `nuts` extensions/plugins
+* **[install]**       : ignore this for the moment :), it is a work on progress and an attempt to simplify `nuts` installation process. Still very embryonic though.
 * **[lib]**           : contains a suite of libraries that are based on `nuts` and that can be used by other applications.
 * **[test]**          : contains unit test projects
 * **[toolbox]**       : contains a suite of applications that are based on `nuts` and that complement `nuts` features
