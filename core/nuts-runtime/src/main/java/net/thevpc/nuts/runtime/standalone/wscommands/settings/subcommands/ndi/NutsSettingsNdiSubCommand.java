@@ -4,9 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.optional.mslink.OptionalMsLinkHelper;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.PathInfo;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.AbstractNutsSettingsSubCommand;
-import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.unix.LinuxNdi;
-import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.unix.MacosNdi;
-import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.unix.UnixNdi;
+import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.unix.*;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.win.WindowsNdi;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.util.NdiUtils;
 
@@ -21,13 +19,32 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
 
     public static SystemNdi createNdi(NutsSession session) {
         SystemNdi ndi = null;
-        switch (session.getWorkspace().env().getOsFamily()) {
-            case LINUX: {
-                ndi = new LinuxNdi(session);
-                break;
-            }
+        NutsWorkspaceEnvManager workspaceEnvManager = session.getWorkspace().env();
+        switch (workspaceEnvManager.getOsFamily()) {
+            case LINUX:
             case UNIX: {
-                ndi = new UnixNdi(session);
+                switch (workspaceEnvManager.getShellFamily()) {
+                    case BASH: {
+                        ndi = new BashNdi(session);
+                        break;
+                    }
+                    case CSH: {
+                        ndi = new CshNdi(session);
+                        break;
+                    }
+                    case KSH: {
+                        ndi = new KshNdi(session);
+                        break;
+                    }
+                    case ZSH: {
+                        ndi = new ZshNdi(session);
+                        break;
+                    }
+                    case FISH: {
+                        ndi = new FishNdi(session);
+                        break;
+                    }
+                }
                 break;
             }
             case MACOS: {
@@ -369,8 +386,7 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
             }
             if (switchWorkspaceLocation != null || switchWorkspaceApi != null) {
                 NdiScriptOptions oo = new NdiScriptOptions()
-                        .setSession(session)
-                ;
+                        .setSession(session);
                 oo.getLauncher().setSwitchWorkspaceLocation(switchWorkspaceLocation);
                 oo.getLauncher().setCreateDesktopShortcut(createDesktop);
                 oo.getLauncher().setMenuCategory(menuCategory);
