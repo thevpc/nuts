@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 
 public abstract class AnyNixNdi extends BaseSystemNdi {
     public static final ReplaceString SHEBAN_SH = new ReplaceString("#!/bin/sh", "#!.*");
-
     public AnyNixNdi(NutsSession session) {
         super(session);
     }
