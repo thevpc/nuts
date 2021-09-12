@@ -146,6 +146,11 @@ public class DefaultNutsWorkspaceEnvManager implements NutsWorkspaceEnvManager {
     }
 
     @Override
+    public NutsShellFamily getShellFamily() {
+        return model.getShellFamily();
+    }
+
+    @Override
     public NutsId getDesktopEnvironment() {
         return getDesktopEnvironments()[0];
     }
