@@ -113,6 +113,8 @@ public interface NutsWorkspaceEnvManager {
 
     NutsOsFamily getOsFamily();
 
+    NutsShellFamily getShellFamily();
+
     NutsId getDesktopEnvironment() ;
     NutsId[] getDesktopEnvironments() ;
 
