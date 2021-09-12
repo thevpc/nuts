@@ -2,9 +2,8 @@ package net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.u
 
 import net.thevpc.nuts.NutsSession;
 
-public class UnixNdi extends AnyNixNdi {
-    public UnixNdi(NutsSession session) {
+public class BashNdi extends AnyNixNdi {
+    public BashNdi(NutsSession session) {
         super(session);
     }
-
 }

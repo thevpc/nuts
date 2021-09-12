@@ -50,6 +50,7 @@ public class DefaultNutsWorkspaceEnvManagerModel {
     private NutsId platform;
     private NutsId os;
     private NutsOsFamily osFamily;
+    private NutsShellFamily shellFamily;
     private NutsId[] desktopEnvironments;
     private NutsDesktopEnvironmentFamily[] osDesktopEnvironmentFamilies;
     private NutsDesktopEnvironmentFamily osDesktopEnvironmentFamily;
@@ -206,6 +207,13 @@ public class DefaultNutsWorkspaceEnvManagerModel {
             osFamily = NutsOsFamily.getCurrent();
         }
         return osFamily;
+    }
+
+    public NutsShellFamily getShellFamily() {
+        if (shellFamily == null) {
+            shellFamily = NutsShellFamily.getCurrent();
+        }
+        return shellFamily;
     }
 
     public NutsId[] getDesktopEnvironments(NutsSession session) {
