@@ -1,0 +1,31 @@
+#!/bin/sh
+## call this script (you need to be located in nuts github repository root folder)
+## to build repository documentation and website
+## N.B.:  please make sure to replace '0.8.3' with the actual nuts version
+
+NUTS_VERSION=0.8.3
+NUTS_JAR=~/.m2/repository/net/thevpc/nuts/nuts/$NUTS_VERSION/nuts-$NUTS_VERSION.jar
+
+## Please update this path to point to your valid java 8 home, but
+## DO NOT commit your changes to GIT for this file !!
+#NUTS_JAVA_HOME='';
+NUTS_JAVA_HOME=/usr/lib64/jvm/java-1.8.0-openjdk-1.8.0
+
+base=$(dirname $0)
+cd $base;
+
+JAVA_CMD='java'
+
+
+if [ x"$NUTS_JAVA_HOME" != "x" ] ; then
+    JAVA_CMD="$NUTS_JAVA_HOME/bin/java";
+elif [ x"${JAVA_HOME}" != "x" ] ; then
+    JAVA_CMD="${JAVA_HOME}/bin/java";
+fi
+
+if [ x"$1" = x"--debug" ] ; then
+  NUTS_DEBUG_ARG="-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005"
+fi
+
+$JAVA_CMD $NUTS_DEBUG_ARG -jar core/nuts/target/nuts-$NUTS_VERSION.jar -ZSbyK -w development-build ./nuts-build-website.nsh
+

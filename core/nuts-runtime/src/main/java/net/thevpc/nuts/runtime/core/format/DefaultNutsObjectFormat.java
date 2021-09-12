@@ -28,6 +28,8 @@ package net.thevpc.nuts.runtime.core.format;
 import java.io.File;
 import java.io.Writer;
 import java.nio.file.Path;
+import java.util.List;
+import java.util.Map;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NutsContentType;
@@ -40,71 +42,77 @@ import net.thevpc.nuts.runtime.core.format.plain.NutsObjectFormatPlain;
 public class DefaultNutsObjectFormat extends NutsObjectFormatBase {
 
     private NutsContentType outputFormat;
-    private NutsObjectFormat base;
+//    private NutsObjectFormat base;
 
     public DefaultNutsObjectFormat(NutsWorkspace ws) {
         super(ws, "object-format");
     }
 
-    @Override
-    public NutsObjectFormat setSession(NutsSession session) {
-        super.setSession(session);
-        if (base != null) {
-            base.setSession(getSession());
-        }
-        return this;
-    }
-
-    @Override
-    public NutsObjectFormat setValue(Object value) {
-        super.setValue(value);
-        if (base != null) {
-            base.setValue(value);
-        }
-        return this;
-    }
-
-    public NutsContentType getOutputFormat() {
-        checkSession();
-        NutsContentType t = getSession().getOutputFormat();
-        t=t == null ? NutsContentType.PLAIN : t;
-        if(getSession().isBot()){
-            switch(t){
-                case PLAIN:{
-                    return NutsContentType.PROPS;
-                }
-                case TREE:
-                case TABLE:
-                {
-                    return NutsContentType.JSON;
-                }
-            }
-        }
-        return t;
-    }
+//    public NutsContentType getOutputFormat() {
+//        checkSession();
+//        NutsContentType t = getSession().getOutputFormat();
+//        t=t == null ? NutsContentType.PLAIN : t;
+//        if(getSession().isBot()){
+//            switch(t){
+//                case PLAIN:{
+//                    return NutsContentType.PROPS;
+//                }
+//                case TREE:
+//                case TABLE:
+//                {
+//                    return NutsContentType.JSON;
+//                }
+//            }
+//        }
+//        return t;
+//    }
 
     public NutsObjectFormat getBase() {
         checkSession();
         NutsSession session = getSession();
-        NutsContentType nextOutputFormat = getOutputFormat();
-        if (base == null || this.outputFormat != nextOutputFormat) {
-            this.outputFormat = nextOutputFormat;
-            base = createObjectFormat();
-            base.setValue(getValue());
-            base.setSession(session);
-            base.configure(true, session.getWorkspace().env().getBootOptions().getOutputFormatOptions());
-            base.configure(true, session.getOutputFormatOptions());
-        }
+        NutsObjectFormat base = createObjectFormat();
+        base.setValue(getValue());
+        base.setSession(session);
+        base.configure(true, session.getWorkspace().env().getBootOptions().getOutputFormatOptions());
+        base.configure(true, session.getOutputFormatOptions());
         return base;
     }
 
     public NutsObjectFormat createObjectFormat() {
         checkSession();
         NutsWorkspace ws = getSession().getWorkspace();
-        switch (getOutputFormat()) {
+        NutsContentType t = getSession().getOutputFormat();
+        if(t==null){
+            t = NutsContentType.PLAIN;
+            Object v = getValue();
+            Object vv = getSession().getWorkspace().elem().destruct(v);
+            if(vv instanceof Map || vv instanceof List){
+                t = NutsContentType.JSON;
+            }
+//        }else {
+//            t = t == null ? NutsContentType.PLAIN : t;
+//            if (getSession().isBot()) {
+//                switch (t) {
+//                    case PLAIN: {
+//                        t = NutsContentType.PROPS;
+//                        break;
+//                    }
+//                    case TREE:
+//                    case TABLE: {
+//                        t = NutsContentType.JSON;
+//                        break;
+//                    }
+//                }
+//            }
+        }
+        switch (t) {
+            //structured formats!
             case XML:
-            case JSON:{
-                return ws.elem().setContentType(getOutputFormat());
+            case JSON:
+            case TSON:
+            case YAML:
+            {
+                return ws.elem().setContentType(t);
             }
             case PROPS: {
                 return ws.formats().props();
@@ -112,20 +120,20 @@ public class DefaultNutsObjectFormat extends NutsObjectFormatBase {
             case TREE: {
                 return ws.formats().tree();
             }
-            case PLAIN: {
-                return new NutsObjectFormatPlain(ws);
-            }
             case TABLE: {
                 return ws.formats().table();
             }
+            case PLAIN: {
+                return new NutsObjectFormatPlain(ws);
+            }
         }
-        throw new NutsException(getSession(), NutsMessage.cstyle("unsupported format %s",getOutputFormat()));
+        throw new NutsUnsupportedEnumException(getSession(), t);
     }
 
-    @Override
-    public NutsSession getSession() {
-        return base != null ? base.getSession() : super.getSession();
-    }
+//    @Override
+//    public NutsSession getSession() {
+//        return base != null ? base.getSession() : super.getSession();
+//    }
 
     @Override
     public NutsString format() {

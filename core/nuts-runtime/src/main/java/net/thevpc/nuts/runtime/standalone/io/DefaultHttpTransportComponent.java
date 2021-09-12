@@ -76,7 +76,7 @@ public class DefaultHttpTransportComponent implements NutsTransportComponent {
             try {
                 return url.openStream();
             } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
+                throw new NutsIOException(session, ex);
             }
         }
 

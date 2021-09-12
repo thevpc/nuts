@@ -5,10 +5,7 @@
  */
 package net.thevpc.nuts.toolbox.ntemplate.filetemplate;
 
-import net.thevpc.nuts.NutsLogVerb;
-import net.thevpc.nuts.NutsLoggerOp;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsTextFormatStyle;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.eval.FtexEvaluator;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.processors.CopyStreamProcessor;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.processors.DefaultExecutor;
@@ -33,6 +30,10 @@ import java.util.stream.Stream;
  */
 public class FileTemplater {
 
+    public static final String ROOT_DIR = "rootDir";
+    public static final String WORKING_DIR = "workingDir";
+    public static final String SOURCE_PATH = "sourcePath";
+    public static final String PROJECT_FILENAME = "project.ftex";
     private static final Map<String, TemplateProcessor> globalProcessorsByMimeType = new HashMap<>();
     private static final Map<String, TemplateProcessor> globalExecProcessorsByMimeType = new HashMap<>();
     private static final StreamToTemplateProcessor DEFAULT_PROCESSOR = new StreamToTemplateProcessor(new CopyStreamProcessor());
@@ -48,10 +49,6 @@ public class FileTemplater {
 
         }
     };
-    public static final String ROOT_DIR = "rootDir";
-    public static final String WORKING_DIR = "workingDir";
-    public static final String SOURCE_PATH = "sourcePath";
-    public static final String PROJECT_FILENAME = "project.ftex";
 
     static {
         globalProcessorsByMimeType.put(MimeTypeConstants.PLACEHOLDER_DOLLARS, new StreamToTemplateProcessor(new DollarVarStreamProcessor()));
@@ -61,6 +58,9 @@ public class FileTemplater {
         globalExecProcessorsByMimeType.put(MimeTypeConstants.IGNORE, IGNORE_PROCESSOR);
     }
 
+    private final Map<String, Object> vars = new HashMap<>();
+    private final Map<String, TemplateProcessor> processorsByMimeType = new HashMap<>();
+    private final Map<String, TemplateProcessor> execProcessorsByMimeType = new HashMap<>();
     private FileTemplater parent;
     private Function<String, Object> customVarEvaluator;
     private TemplateProcessorFactory processorFactory;
@@ -69,9 +69,6 @@ public class FileTemplater {
     private String sourcePath;
     private String rootDir;
     private String workingDir;
-    private final Map<String, Object> vars = new HashMap<>();
-    private final Map<String, TemplateProcessor> processorsByMimeType = new HashMap<>();
-    private final Map<String, TemplateProcessor> execProcessorsByMimeType = new HashMap<>();
     private boolean userParentProperties;
     private PathTranslator pathTranslator;
     private String projectFileName = PROJECT_FILENAME;
@@ -114,6 +111,17 @@ public class FileTemplater {
     public FileTemplater(FileTemplater parent) {
         this(parent.session);
         this.parent = parent;
+    }
+
+    private static Path workingPath(Path p) {
+        if (Files.isDirectory(p)) {
+            return p;
+        }
+        Path pp = p.getParent();
+        if (pp == null) {
+            throw new IllegalArgumentException("Unsupported");
+        }
+        return pp;
     }
 
     public NutsSession getSession() {
@@ -356,13 +364,13 @@ public class FileTemplater {
         return setVar("log", log);
     }
 
+    public FileTemplater getParent() {
+        return parent;
+    }
+
     public FileTemplater setParent(FileTemplater parent) {
         this.parent = parent;
         return this;
-    }
-
-    public FileTemplater getParent() {
-        return parent;
     }
 
     public String getWorkingDirRequired() {
@@ -377,12 +385,12 @@ public class FileTemplater {
         return (Optional) getVar(WORKING_DIR);
     }
 
-    public Optional<String> getRootDir() {
-        return (Optional) getVar(ROOT_DIR);
-    }
-
     public FileTemplater setWorkingDir(String workingDir) {
         return setVar(WORKING_DIR, workingDir);
+    }
+
+    public Optional<String> getRootDir() {
+        return (Optional) getVar(ROOT_DIR);
     }
 
     public FileTemplater setRootDir(String rootDir) {
@@ -547,15 +555,15 @@ public class FileTemplater {
                         try {
                             processRegularFile(x, null);
                         } catch (Exception ex) {
-                            throw new RuntimeException("error processing " + x + ": " + ex.toString(), ex);
+                            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("error processing %s : %s", x, ex), ex);
                         }
                     }
                 });
             } catch (IOException e) {
-                throw new UncheckedIOException(e);
+                throw new NutsIOException(getSession(), e);
             }
         } else {
-            throw new UncheckedIOException(new IOException("Unsupported path " + path));
+            throw new NutsIOException(getSession(), NutsMessage.cstyle("unsupported path %s", path));
         }
     }
 
@@ -576,10 +584,10 @@ public class FileTemplater {
                             }
                         });
             } catch (IOException e) {
-                throw new UncheckedIOException(e);
+                throw new NutsIOException(getSession(), e);
             }
         } else {
-            throw new UncheckedIOException(new IOException("Unsupported path " + path));
+            throw new NutsIOException(getSession(), NutsMessage.cstyle("unsupported path %s", path));
         }
     }
 
@@ -591,7 +599,7 @@ public class FileTemplater {
         Path absolutePath = toAbsolutePath(path);
         Path parentPath = absolutePath.getParent();
         if (!Files.isRegularFile(absolutePath)) {
-            throw new IllegalArgumentException("no a file : " + path.toString());
+            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("no a file : %s", path));
         }
         String[] mimeTypesArray = mimeTypesString == null ? FileProcessorUtils.splitMimeTypes(getMimeTypeResolver().resolveMimetype(path.toString()))
                 : FileProcessorUtils.splitMimeTypes(mimeTypesString);
@@ -622,18 +630,18 @@ public class FileTemplater {
                         return out.toString();
                     }
                 } catch (IOException ex) {
-                    throw new UncheckedIOException("error executing file : " + path.toString(), ex);
+                    throw new NutsIOException(getSession(), NutsMessage.cstyle("error executing file : %s", path), ex);
                 }
             }
         }
-        throw new IllegalArgumentException("processor not found for " + mimeTypesString);
+        throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("processor not found for %s", mimeTypesString));
     }
 
     public void processRegularFile(Path path, String mimeType) {
         Path absolutePath = toAbsolutePath(path);
         Path parentPath = absolutePath.getParent();
         if (!Files.isRegularFile(absolutePath)) {
-            throw new IllegalArgumentException("unsupported file : " + path.toString());
+            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("unsupported file : %s", path.toString()));
         }
         String[] mimeTypes = mimeType == null ? FileProcessorUtils.splitMimeTypes(getMimeTypeResolver().resolveMimetype(path.toString()))
                 : FileProcessorUtils.splitMimeTypes(mimeType);
@@ -688,9 +696,9 @@ public class FileTemplater {
                     return bos.toString();
                 }
             }
-            throw new IllegalArgumentException("unsupported mimetype : " + mimeType);
+            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("unsupported mimetype : %s", mimeType));
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(getSession(), ex);
         }
     }
 
@@ -721,7 +729,7 @@ public class FileTemplater {
                 return;
             }
         }
-        throw new IllegalArgumentException("unsupported mimetype : " + mimeType);
+        throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("unsupported mimetype : %s", mimeType));
     }
 
     public MimeTypeResolver getMimeTypeResolver() {
@@ -749,6 +757,11 @@ public class FileTemplater {
         return null;
     }
 
+    public FileTemplater setPathTranslator(PathTranslator pathTranslator) {
+        this.pathTranslator = pathTranslator;
+        return this;
+    }
+
     public FileTemplater setPathTranslator(Path from, Path to) {
         return setPathTranslator(new DefaultPathTranslator(from, to));
     }
@@ -757,31 +770,26 @@ public class FileTemplater {
         return setPathTranslator(new DefaultPathTranslator(Paths.get(getWorkingDirRequired()), to));
     }
 
-    public FileTemplater setPathTranslator(PathTranslator pathTranslator) {
-        this.pathTranslator = pathTranslator;
-        return this;
-    }
-
     public void processProject(TemplateConfig config) {
         String projectPath = config.getProjectPath();
         String scriptType = config.getScriptType();
         String targetFolder = config.getTargetFolder();
         if (projectPath == null) {
             if (config.getPaths().isEmpty()) {
-                throw new IllegalArgumentException("missing path to process");
+                throw new NutsIllegalArgumentException(getSession(), NutsMessage.plain("missing path to process"));
             }
             if (targetFolder == null) {
-                throw new IllegalArgumentException("missing target folder");
+                throw new NutsIllegalArgumentException(getSession(), NutsMessage.plain("missing target folder"));
             }
         }
         Path oProjectDirPath = Paths.get(projectPath);
         Path oProjectFile = oProjectDirPath.resolve(getProjectFileName());
         Path oProjectSrc = oProjectDirPath.resolve("src");
         if (!Files.isDirectory(oProjectSrc)) {
-            throw new IllegalArgumentException("invalid project, missing src/ folder : " + oProjectDirPath);
+            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("invalid project, missing src/ folder : %s", oProjectDirPath));
         }
         if (!Files.isRegularFile(oProjectFile)) {
-            throw new IllegalArgumentException("invalid project, missing project.ftex : " + oProjectDirPath);
+            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("invalid project, missing project.ftex : %s", oProjectDirPath));
         }
         List<String> initScripts = new ArrayList<>(config.getInitScripts());
         initScripts.add(oProjectFile.toString());
@@ -809,20 +817,20 @@ public class FileTemplater {
             }
         }
         if (targetFolder == null) {
-            throw new IllegalArgumentException("missing target folder");
+            throw new NutsIllegalArgumentException(getSession(), NutsMessage.plain("missing target folder"));
         }
         FileProcessorUtils.mkdirs(Paths.get(targetFolder));
         try {
             targetFolder = Paths.get(targetFolder).toRealPath().toString();
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(getSession(), ex);
         }
         for (String path : paths) {
             Path opath;
             try {
                 opath = Paths.get(path).toRealPath();
             } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
+                throw new NutsIOException(getSession(), ex);
             }
             if (Files.isDirectory(opath)) {
                 this.setWorkingDir(opath.toString());
@@ -838,17 +846,6 @@ public class FileTemplater {
             }
             this.processTree(opath, config.getPathFilter());
         }
-    }
-
-    private static Path workingPath(Path p) {
-        if (Files.isDirectory(p)) {
-            return p;
-        }
-        Path pp = p.getParent();
-        if (pp == null) {
-            throw new IllegalArgumentException("Unsupported");
-        }
-        return pp;
     }
 
 }

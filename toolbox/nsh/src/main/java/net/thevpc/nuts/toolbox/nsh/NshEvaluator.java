@@ -103,8 +103,8 @@ public class NshEvaluator extends DefaultJShellEvaluator {
         c2.getSession().setLogLevel(Level.OFF);
         c2.getSession().setTrace(false);
 
-        NutsPrintStream out = c2.getWorkspace().io().createMemoryPrintStream();
-        NutsPrintStream err = c2.getWorkspace().io().createMemoryPrintStream();
+        NutsPrintStream out = NutsPrintStream.ofMemory(c2.getSession());
+        NutsPrintStream err = NutsPrintStream.ofMemory(c2.getSession());
 
         NutsSessionTerminal terminal = c2.getSession().getWorkspace().term().createTerminal(
                 new ByteArrayInputStream(new byte[0]), out, err

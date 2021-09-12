@@ -1215,13 +1215,13 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
             }
             if (options.getBot() != null) {
                 boolean wasBot = isBot();
-                this.setBot(options.getBot());
-                boolean becomesBot = isBot();
-                if (!wasBot && becomesBot) {
-                    if (getTerminal().out().mode() != NutsTerminalMode.FORMATTED) {
+                boolean becomesBot = options.isBot();
+                this.setBot(becomesBot);
+                if (/*!wasBot && */becomesBot) {
+                    if (getTerminal().out().mode() != NutsTerminalMode.FILTERED) {
                         getTerminal().setOut(getTerminal().out().convertMode(NutsTerminalMode.FILTERED));
                     }
-                    if (getTerminal().err().mode() != NutsTerminalMode.FORMATTED) {
+                    if (getTerminal().err().mode() != NutsTerminalMode.FILTERED) {
                         getTerminal().setErr(getTerminal().err().convertMode(NutsTerminalMode.FILTERED));
                     }
                 }
