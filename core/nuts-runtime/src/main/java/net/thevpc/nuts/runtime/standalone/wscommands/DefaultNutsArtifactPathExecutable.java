@@ -156,7 +156,9 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                 }
                 if (c.descriptor != null) {
                     if ("zip".equals(c.descriptor.getPackaging())) {
-                        Path zipFilePath = Paths.get(ws.io().expandPath(fileSource.toString() + ".zip"));
+                        Path zipFilePath = Paths.get(ws.io().path(fileSource.toString() + ".zip")
+                                .builder().withAppBaseDir().expand().build().toString()
+                        );
                         ZipUtils.zip(session.getWorkspace(), fileSource.toString(), new ZipOptions(), zipFilePath.toString());
                         c.contentFile = ws.io().input().setMultiRead(true).of(zipFilePath);
                         c.addTemp(zipFilePath);

@@ -512,7 +512,7 @@ public class CoreIOUtils {
                 }
             }
         }
-        return ws.io().expandPath(loc, rootFolder.toString());
+        return ws.io().path(loc).builder().setBaseDir(rootFolder.toString()).build().toString();
     }
 
     public static String trimSlashes(String repositoryIdPath) {

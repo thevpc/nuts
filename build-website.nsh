@@ -1,11 +1,10 @@
 #!/bin/nuts
 ## call this script (you need to be located in nuts github repository root folder) using the following command:
-##    nuts -ZSby -w build-nuts ./build-website.nsh
+##  java -jar core/nuts/target/nuts-0.8.3.jar -ZSby --bot -w development-build ./build-website.nsh
 ## in order to build nuts website. This assumes that nuts is built and installed in the current machine
-## Note that this will create a new workspace 'build-nuts' (and reset it) to use it
-## if not, you need at least 'mvn clean install' the project, then:
-##    java -jar core/nuts/target/nuts-0.8.1.jar -ZSby -w build-nuts ./build-website.nsh
-## N.B:  please make sure to replace '0.8.1' with the actual nuts version
+## Note that this will create a new workspace 'development-build' (and reset it) to use it
+## if not, you need at least 'mvn clean install' first
+## N.B.:  please make sure to replace '0.8.3' with the actual nuts version
 
 ## install dependencies
 nuts -y install ntemplate ndocusaurus

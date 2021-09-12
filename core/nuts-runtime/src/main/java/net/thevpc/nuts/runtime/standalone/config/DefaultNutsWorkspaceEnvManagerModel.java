@@ -224,7 +224,6 @@ public class DefaultNutsWorkspaceEnvManagerModel {
     }
 
     public boolean isGraphicalDesktopEnvironment() {
-        //perhaps We can better work here
         return CoreNutsUtilGui.isGraphicalDesktopEnvironment();
     }
 

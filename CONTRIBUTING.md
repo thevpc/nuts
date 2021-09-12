@@ -1,7 +1,7 @@
 # Contributing to Nuts
 
 Thanks for your interest in nuts. 
-Our goal is to leverage the power of Java, Maven and Gradle to build to build a rock solid package manager.
+Our goal is to leverage the power of Java, Maven and Gradle to build a rock solid package manager.
 
 ## Getting Started
 
@@ -20,6 +20,37 @@ Nuts welcomes contributions from everyone.
 Contributions to Nuts should be made in the form of GitHub pull requests. Each pull request will
 be reviewed by a core contributor (someone with permission to land patches) and either landed in the
 main tree or given feedback for changes that would be required.
+
+---------------
+## PREPARING DEV ENVIRONMENT
+To contribute to Nuts Package Management Development you need the following software installed on your machine:
+* java JDK 8 (nuts is still compatible with java 8)
+* maven 3.8+
+* GnuPG (gpg) 2+
+* You favorite IDE (I'm using Netbeans and sometimes IntellijIdea and very sporadically Eclipse)
+
+create a key:
+```bash
+gpg --gen-key
+```
+
+update (or create) `~/.m2/settings.xml` file with the following content:
+
+```xml
+<settings xmlns="http://maven.apache.org/settings/1.0.0">
+  <profile>
+      <id>ossrh</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <properties>
+        <gpg.executable>gpg2</gpg.executable>
+        <gpg.keyname>YOUR-KEY-438B05CFD2263E2EB91FD083C7E3C476060E40DD</gpg.keyname>
+        <gpg.passphrase>YOUR PASSWORD</gpg.passphrase>
+      </properties>
+    </profile>
+  </settings>
+```
 
 ## Compiling Nuts
 ```bash
@@ -46,29 +77,22 @@ mvn clean install
 
 - Add tests relevant to the fixed bug or new feature.
 
----------------
-## PREPARING DEV ENVIRONMENT
 
-create a key:
-```bash
-gpg --gen-key
-```
+## Quick Look on sources organization
+The repository is organized in several folders described here after:
 
-add in `~/.m2/settings.xml` the following
+* **[.dir-template]** : contains template files for generating `README.md` and `METADATA` (among other) files according to the current `nuts` development version
+* **[core]**          : contains the core of `nuts` package manager (and the only required pieces for `nuts` to work). Practically this contains the Bootstrap (and API) project (called `nuts`) and the Runtime (Implementation) project (called `nuts-runtime`)
+* **[docs]**          : contains a generated (using docusaurus) web site that is deployed to github pages (https://thevpc.github.io/nuts/)
+* **[ext]**           : contains some nuts extensions/plugins
+* **[install]**       : ignore this for the moment :), it is a work on progress and an attempt to simplify nuts installation process. Still very embryonic though.
+* **[lib]**           : contains a suite of libraries that are based on `nuts` and that can be used by other applications.
+* **[test]**          : contains unit test projects
+* **[toolbox]**       : contains a suite of applications that are based on `nuts` and that complement `nuts` features
+* **[web-toolbox]**   : contains a suite of web applications that are based on `nuts` and that complement `nuts` features
+* **[website]**       : contains the sources of `nuts`'s docusaurus based website.
+  * **[website/.dir-template]**       : contains the effective sources of `nuts`'s documentation (used to create the website as well).
 
-```xml
-<profile>
-      <id>ossrh</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <properties>
-        <gpg.executable>gpg2</gpg.executable>
-        <gpg.keyname>YOUR-KEY-438B05CFD2263E2EB91FD083C7E3C476060E40DD</gpg.keyname>
-        <gpg.passphrase>YOUR PASSWORD</gpg.passphrase>
-      </properties>
-    </profile>        
-```
----------------
+--------------------------------
 
-This CONTRIBUTING.md file is adapted from the [DeepLearning4j CONTRIBUTING.md](https://alvinalexander.com/java/jwarehouse/deeplearning4j/CONTRIBUTING.md.shtml)
+  This CONTRIBUTING.md file is adapted from the [DeepLearning4j CONTRIBUTING.md](https://alvinalexander.com/java/jwarehouse/deeplearning4j/CONTRIBUTING.md.shtml)

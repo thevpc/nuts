@@ -59,25 +59,6 @@ public interface NutsIOManager extends NutsComponent<Object/* any object or null
     NutsPath path(String path, ClassLoader classLoader);
 
     /**
-     * expand path to Workspace Location
-     *
-     * @param path path to expand
-     * @return expanded path
-     */
-    String expandPath(String path);
-
-    /**
-     * expand path to {@code baseFolder}. Expansion mechanism supports '~'
-     * prefix (linux like) and will expand path to {@code baseFolder} if it was
-     * resolved as a relative path.
-     *
-     * @param path path to expand
-     * @param baseFolder base folder to expand relative paths to
-     * @return expanded path
-     */
-    String expandPath(String path, String baseFolder);
-
-    /**
      * create a null input stream instance
      *
      * @return null input stream instance

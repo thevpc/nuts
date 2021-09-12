@@ -549,7 +549,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                 out.println("\t\t " + xarg);
 //                }
             }
-            String directory = NutsUtilStrings.isBlank(joptions.getDir()) ? null : ws.io().expandPath(joptions.getDir());
+            String directory = NutsUtilStrings.isBlank(joptions.getDir()) ? null : ws.io().path(joptions.getDir()).builder().withAppBaseDir().expand().build().toString();
             ProcessExecHelper.ofDefinition(def,
                     args.toArray(new String[0]), osEnv, directory, executionContext.getExecutorProperties(), joptions.isShowCommand(), true, executionContext.getSleepMillis(), executionContext.isInheritSystemIO(), false, NutsUtilStrings.isBlank(executionContext.getRedirectOutputFile()) ? null : new File(executionContext.getRedirectOutputFile()), NutsUtilStrings.isBlank(executionContext.getRedirectInputFile()) ? null : new File(executionContext.getRedirectInputFile()), executionContext.getRunAs(), executionContext.getTraceSession(),
                     execSession
@@ -576,7 +576,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
 //                    }
                 }
             }
-            String directory = NutsUtilStrings.isBlank(joptions.getDir()) ? null : ws.io().expandPath(joptions.getDir());
+            String directory = NutsUtilStrings.isBlank(joptions.getDir()) ? null : ws.io().path(joptions.getDir()).builder().withAppBaseDir().expand().build().toString();
             return ProcessExecHelper.ofDefinition(def,
                     args.toArray(new String[0]), osEnv, directory, executionContext.getExecutorProperties(), joptions.isShowCommand(), true, executionContext.getSleepMillis(), executionContext.isInheritSystemIO(), false, NutsUtilStrings.isBlank(executionContext.getRedirectOutputFile()) ? null : new File(executionContext.getRedirectOutputFile()), NutsUtilStrings.isBlank(executionContext.getRedirectInputFile()) ? null : new File(executionContext.getRedirectInputFile()), executionContext.getRunAs(), executionContext.getTraceSession(),
                     execSession

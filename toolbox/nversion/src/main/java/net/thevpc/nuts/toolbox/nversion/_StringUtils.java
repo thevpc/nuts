@@ -1,4 +1,4 @@
-package net.thevpc.nuts.toolbox.fileversion;
+package net.thevpc.nuts.toolbox.nversion;
 
 class _StringUtils {
     public static boolean isBlank(String string) {

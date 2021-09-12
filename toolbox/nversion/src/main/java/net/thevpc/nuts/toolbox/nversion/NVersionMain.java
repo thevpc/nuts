@@ -1,4 +1,4 @@
-package net.thevpc.nuts.toolbox.fileversion;
+package net.thevpc.nuts.toolbox.nversion;
 
 import net.thevpc.nuts.*;
 
@@ -112,7 +112,8 @@ public class NVersionMain implements NutsApplication {
                 Set<VersionDescriptor> value = null;
                 try {
                     processed++;
-                    value = detectVersions(context.getWorkspace().io().expandPath(arg), context, ws);
+                    value = detectVersions(context.getWorkspace().io()
+                            .path(arg).builder().withAppBaseDir().expand().build().toString(), context, ws);
                 } catch (IOException e) {
                     throw new NutsExecutionException(context.getSession(),NutsMessage.cstyle("nversion: unable to detect version for %s",arg), e, 2);
                 }
@@ -150,7 +151,7 @@ public class NVersionMain implements NutsApplication {
                 }
                 if (error) {
                     for (String t : unsupportedFileTypes) {
-                        File f = new File(context.getWorkspace().io().expandPath(t));
+                        File f = new File(context.getWorkspace().io().path(t).builder().withAppBaseDir().expand().build().toString());
                         if (f.isFile()) {
                             pp.setProperty(t, text.builder().append("<<ERROR>>", NutsTextStyle.error()).append(" unsupported file type").toString());
                         } else if (f.isDirectory()) {
@@ -195,7 +196,7 @@ public class NVersionMain implements NutsApplication {
                 if (error) {
                     if (!unsupportedFileTypes.isEmpty()) {
                         for (String t : unsupportedFileTypes) {
-                            File f = new File(context.getWorkspace().io().expandPath(t));
+                            File f = new File(context.getWorkspace().io().path(t).builder().withAppBaseDir().expand().build().toString());
                             if (f.isFile()) {
                                 err.printf("%s : unsupported file type%n", t);
                             } else if (f.isDirectory()) {

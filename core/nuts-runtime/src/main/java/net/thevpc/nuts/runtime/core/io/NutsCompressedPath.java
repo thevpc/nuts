@@ -235,4 +235,8 @@ public class NutsCompressedPath extends NutsPathBase {
         }
     }
 
+    @Override
+    public NutsPathBuilder builder() {
+        return base.builder();
+    }
 }

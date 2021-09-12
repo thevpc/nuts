@@ -90,7 +90,8 @@ public class DefaultSourceControlHelper {
         if ("zip".equals(nutToInstall.getDescriptor().getPackaging())) {
 
             try {
-                ZipUtils.unzip(session, nutToInstall.getPath().toString(), ws.io().expandPath(folder.toString()), new UnzipOptions().setSkipRoot(false));
+                ZipUtils.unzip(session, nutToInstall.getPath().toString(), ws.io()
+                        .path(folder.toString()).builder().withAppBaseDir().expand().build().toString(), new UnzipOptions().setSkipRoot(false));
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
             }

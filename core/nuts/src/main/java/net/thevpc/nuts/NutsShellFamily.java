@@ -82,7 +82,11 @@ public enum NutsShellFamily implements NutsEnum {
             e = "";
         } else {
             String[] parts = e.trim().toLowerCase().split("/");
-            e = parts[parts.length - 1];
+            if(parts.length>0) {
+                e = parts[parts.length - 1];
+            }else{
+                e="";
+            }
         }
         switch (e) {
             case "":

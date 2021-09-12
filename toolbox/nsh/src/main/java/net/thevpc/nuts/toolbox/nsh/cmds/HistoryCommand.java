@@ -146,7 +146,7 @@ public class HistoryCommand extends SimpleNshBuiltin {
 
                         shistory.save();
                     } else {
-                        shistory.save(new File(context.getWorkspace().io().expandPath(options.sval)));
+                        shistory.save(new File(context.getWorkspace().io().path(options.sval).builder().withWorkspaceBaseDir().expand().build().toString()));
                     }
                 } catch (IOException ex) {
                     throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("%s",ex), ex, 100);
@@ -159,7 +159,7 @@ public class HistoryCommand extends SimpleNshBuiltin {
                         shistory.clear();
                         shistory.load();
                     } else {
-                        shistory.load(new File(context.getWorkspace().io().expandPath(options.sval)));
+                        shistory.load(new File(context.getWorkspace().io().path(options.sval).builder().withWorkspaceBaseDir().expand().build().toString()));
                     }
                 } catch (IOException ex) {
                     throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("%s",ex), ex, 100);

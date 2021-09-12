@@ -606,7 +606,7 @@ public class DefaultNutsWorkspaceExtensionModel {
 
     protected URL expandURL(String url, NutsSession session) {
         try {
-            url = ws.io().expandPath(url);
+            url = ws.io().path(url).builder().withWorkspaceBaseDir().expand().build().toString();
             if (CoreIOUtils.isPathHttp(url)) {
                 return new URL(url);
             }

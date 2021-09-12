@@ -56,9 +56,9 @@ public class DefaultNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
         Map<String, String> defaults = new HashMap<>();
         for (NutsAddRepositoryOptions d : rm.getDefaultRepositories()) {
             if (d.getConfig() != null) {
-                def.put(ws.io().expandPath(d.getConfig().getLocation(), null), d);
+                def.put(ws.io().path(d.getConfig().getLocation()).builder().expand().build().toString(), d);
             } else {
-                def.put(ws.io().expandPath(d.getLocation(), null), d);
+                def.put(ws.io().path(d.getLocation()).builder().expand().build().toString(), d);
             }
             defaults.put(d.getName(), null);
         }
@@ -68,8 +68,7 @@ public class DefaultNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
             NutsAddRepositoryOptions oo = NutsRepositorySelector.createRepositoryOptions(s, false, session);
             String sloc = ws.io()
                     .setSession(session)
-                    .expandPath(oo
-                    .getConfig().getLocation(), null);
+                    .path(oo.getConfig().getLocation()).builder().expand().build().toString();
             if (def.containsKey(sloc)) {
                 ws.repos().addRepository(def.get(sloc));
                 def.remove(sloc);

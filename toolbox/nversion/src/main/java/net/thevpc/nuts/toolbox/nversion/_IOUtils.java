@@ -1,4 +1,4 @@
-package net.thevpc.nuts.toolbox.fileversion;
+package net.thevpc.nuts.toolbox.nversion;
 
 import java.io.File;
 import java.io.IOException;

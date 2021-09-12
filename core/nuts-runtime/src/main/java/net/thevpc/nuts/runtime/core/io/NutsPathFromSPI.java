@@ -159,4 +159,9 @@ public class NutsPathFromSPI extends NutsPathBase {
                     getNutsPath().getContentLength()));
         }
     }
+
+    @Override
+    public NutsPathBuilder builder() {
+        return new FilePathBuilder(getSession(),this);
+    }
 }

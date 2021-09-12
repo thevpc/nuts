@@ -60,59 +60,6 @@ public class DefaultNutsIOModel {
         return DefaultNutsIOManager.DEFAULT_SUPPORT;
     }
 
-    public String expandPath(String path) {
-        return expandPath(path, ws.locations().getWorkspaceLocation());
-    }
-
-    public String expandPath(String path, String baseFolder) {
-        if (path != null && path.length() > 0) {
-            path = StringPlaceHolderParser.replaceDollarPlaceHolders(path, pathExpansionConverter);
-            if (CoreIOUtils.isURL(path)) {
-                return path;
-            }
-            Path ppath = Paths.get(path);
-//            if (path.startsWith("file:") || path.startsWith("http://") || path.startsWith("https://")) {
-//                return path;
-//            }
-            if (path.startsWith("~")) {
-                if (path.equals("~~")) {
-                    Path nutsHome = Paths.get(ws.locations().getHomeLocation(NutsStoreLocation.CONFIG));
-                    return nutsHome.normalize().toString();
-                } else if (path.startsWith("~~") && path.length() > 2 && (path.charAt(2) == '/' || path.charAt(2) == '\\')) {
-                    Path nutsHome = Paths.get(ws.locations().getHomeLocation(NutsStoreLocation.CONFIG));
-                    return nutsHome.resolve(path.substring(3)).normalize().toString();
-                } else if (path.equals("~")) {
-                    return (System.getProperty("user.home"));
-                } else if (path.startsWith("~") && path.length() > 1 && (path.charAt(1) == '/' || path.charAt(1) == '\\')) {
-                    return System.getProperty("user.home") + File.separator + path.substring(2);
-                } else if (baseFolder != null) {
-                    if (CoreIOUtils.isURL(baseFolder)) {
-                        return baseFolder + "/" + path;
-                    }
-                    return Paths.get(baseFolder).resolve(path).toAbsolutePath().normalize().toString();
-                } else {
-                    if (CoreIOUtils.isURL(path)) {
-                        return path;
-                    }
-                    return ppath.toAbsolutePath().normalize().toString();
-                }
-            } else if (ppath.isAbsolute()) {
-                return ppath.normalize().toString();
-            } else if (baseFolder != null) {
-                if (CoreIOUtils.isURL(baseFolder)) {
-                    return baseFolder + "/" + path;
-                }
-                return Paths.get(baseFolder).resolve(path).toAbsolutePath().normalize().toString();
-            } else {
-                return ppath.toAbsolutePath().normalize().toString();
-            }
-        }
-        if (CoreIOUtils.isURL(baseFolder)) {
-            return baseFolder;
-        }
-        return Paths.get(baseFolder).toAbsolutePath().normalize().toString();
-    }
-
     public InputStream nullInputStream() {
         return NullInputStream.INSTANCE;
     }

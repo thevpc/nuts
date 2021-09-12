@@ -192,7 +192,7 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
     public String getLocation(boolean expand,NutsSession session) {
         String s = config.getLocation();
         if (s != null && expand) {
-            s = repository.getWorkspace().io().expandPath(s);
+            s = repository.getWorkspace().io().path(s).builder().withWorkspaceBaseDir().expand().build().toString();
         }
         return s;
     }

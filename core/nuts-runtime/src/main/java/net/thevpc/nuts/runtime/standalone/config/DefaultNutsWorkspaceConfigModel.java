@@ -453,9 +453,10 @@ public class DefaultNutsWorkspaceConfigModel {
 //    }
     public String resolveRepositoryPath(String repositoryLocation, NutsSession session) {
         String root = this.getRepositoriesRoot(session);
-        return Paths.get(session.getWorkspace().io().expandPath(repositoryLocation,
-                root != null ? root : Paths.get(session.getWorkspace().locations().getStoreLocation(NutsStoreLocation.CONFIG))
-                                .resolve(NutsConstants.Folders.REPOSITORIES).toString())).toString();
+        return Paths.get(session.getWorkspace().io().path(repositoryLocation).builder()
+                .setBaseDir(root != null ? root : Paths.get(session.getWorkspace().locations().getStoreLocation(NutsStoreLocation.CONFIG))
+                                .resolve(NutsConstants.Folders.REPOSITORIES).toString())
+                .build().toString()).toString();
     }
 
     //    

@@ -90,4 +90,6 @@ public interface NutsPath extends NutsFormattable {
     long getContentLength();
 
     Instant getLastModifiedInstant();
+
+    NutsPathBuilder builder();
 }

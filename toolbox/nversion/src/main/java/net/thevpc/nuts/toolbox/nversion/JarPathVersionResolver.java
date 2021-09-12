@@ -23,7 +23,7 @@
  * <br>
  * ====================================================================
 */
-package net.thevpc.nuts.toolbox.fileversion;
+package net.thevpc.nuts.toolbox.nversion;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,7 +46,9 @@ public class JarPathVersionResolver implements PathVersionResolver{
             return null;
         }
         Set<VersionDescriptor> all = new HashSet<>();
-        try (InputStream is = context.getWorkspace().io().path(context.getWorkspace().io().expandPath(filePath)).input().open()) {
+        try (InputStream is = context.getWorkspace().io().path(context.getWorkspace().io()
+                .path(filePath).builder().withAppBaseDir().expand().build().toString()
+        ).input().open()) {
             context.getWorkspace().io().uncompress()
                     .from(is)
                     .visit(new NutsIOUncompressVisitor() {

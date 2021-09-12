@@ -79,18 +79,6 @@ public class DefaultNutsIOManager implements NutsIOManager {
     }
 
     @Override
-    public String expandPath(String path) {
-        checkSession();
-        return model.expandPath(path);
-    }
-
-    @Override
-    public String expandPath(String path, String baseFolder) {
-        checkSession();
-        return model.expandPath(path, baseFolder);
-    }
-
-    @Override
     public InputStream nullInputStream() {
         checkSession();
         return model.nullInputStream();

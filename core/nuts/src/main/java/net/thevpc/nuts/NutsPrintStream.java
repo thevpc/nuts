@@ -6,6 +6,26 @@ import java.io.Writer;
 import java.util.Locale;
 
 public interface NutsPrintStream {
+    static NutsPrintStream ofNull(NutsSession session) {
+        return session.getWorkspace().io().nullPrintStream();
+    }
+
+    static NutsPrintStream ofMemory(NutsSession session) {
+        return session.getWorkspace().io().createMemoryPrintStream();
+    }
+
+    static NutsPrintStream of(OutputStream out, NutsSession session) {
+        return session.getWorkspace().io().createPrintStream(out);
+    }
+
+    static NutsPrintStream of(OutputStream out, NutsTerminalMode mode, NutsSession session) {
+        return session.getWorkspace().io().createPrintStream(out, mode);
+    }
+
+    static NutsPrintStream of(Writer out, NutsSession session) {
+        return session.getWorkspace().io().createPrintStream(out);
+    }
+
     NutsPrintStream flush();
 
     NutsPrintStream close();
@@ -21,6 +41,7 @@ public interface NutsPrintStream {
     NutsPrintStream write(char buf[], int off, int len);
 
     NutsPrintStream print(NutsString b);
+
     NutsPrintStream print(boolean b);
 
     NutsPrintStream print(char c);
@@ -46,6 +67,7 @@ public interface NutsPrintStream {
     NutsPrintStream println(char x);
 
     NutsPrintStream println(NutsString b);
+
     NutsPrintStream println(int x);
 
     NutsPrintStream println(long x);
@@ -67,10 +89,11 @@ public interface NutsPrintStream {
     /**
      * print java formatted string (with {})
      * {@code
-     *     printj("{1,choice,0#|1# 1 file|1< {1} files}",nbr);
+     * printj("{1,choice,0#|1# 1 file|1< {1} files}",nbr);
      * }
+     *
      * @param format java style format (with {})
-     * @param args format args
+     * @param args   format args
      * @return {@code this} instance
      */
     NutsPrintStream printj(String format, Object... args);

@@ -168,6 +168,11 @@ public class URLPath extends NutsPathBase implements NutsPathSPI {
     }
 
     @Override
+    public NutsPathBuilder builder() {
+        return new FilePathBuilder(getSession(), this);
+    }
+
+    @Override
     public NutsFormat formatter() {
         return new MyPathFormat(this)
                 .setSession(getSession())
@@ -243,4 +248,5 @@ public class URLPath extends NutsPathBase implements NutsPathSPI {
             return super.getURL();
         }
     }
+
 }

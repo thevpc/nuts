@@ -10,7 +10,7 @@
             <goal>org.codehaus.mojo:exec-maven-plugin:1.5.0:exec</goal>
         </goals>
         <properties>
-            <exec.args>-Dnuts.debug=true -classpath %classpath net.thevpc.nuts.toolbox.fileversion.NVersionMain
+            <exec.args>-Dnuts.debug=true -classpath %classpath net.thevpc.nuts.toolbox.nversion.NVersionMain
                 /data/public/git/nuts/nuts</exec.args>
             <exec.executable>java</exec.executable>
         </properties>
@@ -26,7 +26,7 @@
         </goals>
         <properties>
             <exec.args>-agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address} -Dnuts.debug=true -classpath
-                %classpath net.thevpc.nuts.toolbox.fileversion.NVersionMain /data/public/git/nuts/nuts</exec.args>
+                %classpath net.thevpc.nuts.toolbox.nversion.NVersionMain /data/public/git/nuts/nuts</exec.args>
             <exec.executable>java</exec.executable>
             <jpda.listen>true</jpda.listen>
         </properties>
@@ -41,7 +41,7 @@
             <goal>org.codehaus.mojo:exec-maven-plugin:1.5.0:exec</goal>
         </goals>
         <properties>
-            <exec.args>-Dnuts.debug=true -classpath %classpath net.thevpc.nuts.toolbox.fileversion.NVersionMain
+            <exec.args>-Dnuts.debug=true -classpath %classpath net.thevpc.nuts.toolbox.nversion.NVersionMain
                 /data/public/git/nuts/nuts</exec.args>
             <exec.executable>java</exec.executable>
         </properties>
