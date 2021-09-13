@@ -29,18 +29,17 @@ public class MvnClient {
         if (id.getShortName().equals(NET_VPC_APP_NUTS_MVN)) {
             return false;
         }
-        NutsSession searchSession = CoreNutsUtils.silent(session);
         switch (status) {
             case INIT: {
                 status = Status.DIRTY;
                 try {
-                    NutsDefinition ff = ws.search()
-                            .addId(NET_VPC_APP_NUTS_MVN).setSession(searchSession)
-                            .setSession(searchSession.copy().setFetchStrategy(NutsFetchStrategy.ONLINE))
+                    NutsDefinition ff = session.getWorkspace().search()
+                            .addId(NET_VPC_APP_NUTS_MVN)
+                            .setSession(session.copy().setFetchStrategy(NutsFetchStrategy.ONLINE))
                             .setOptional(false)
                             .setInlineDependencies(true).setLatest(true).getResultDefinitions().required();
                     for (NutsId nutsId : ws.search().addId(ff.getId()).setInlineDependencies(true).getResultIds()) {
-                        ws.fetch().setId(nutsId).setSession(searchSession.copy().setFetchStrategy(NutsFetchStrategy.ONLINE))
+                        ws.fetch().setId(nutsId).setSession(session.copy().setFetchStrategy(NutsFetchStrategy.ONLINE))
                                 .setOptional(false)
                                 .setDependencies(true).getResultDefinition();
                     }

@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.remote;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.wscommands.AbstractNutsSearchCommand;
+import net.thevpc.nuts.runtime.standalone.wscommands.search.AbstractNutsSearchCommand;
 
 import java.util.Arrays;
 import java.util.Iterator;

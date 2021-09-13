@@ -6,8 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.wscommands.settings;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
-import net.thevpc.nuts.runtime.standalone.wscommands.DefaultInternalNutsExecutableCommand;
+import net.thevpc.nuts.runtime.standalone.wscommands.exec.DefaultInternalNutsExecutableCommand;
 
 import java.util.ArrayList;
 import java.util.List;

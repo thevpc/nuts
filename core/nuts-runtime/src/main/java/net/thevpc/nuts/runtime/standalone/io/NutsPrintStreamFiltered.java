@@ -5,9 +5,6 @@ import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsTerminalCommand;
 import net.thevpc.nuts.NutsTerminalMode;
 import net.thevpc.nuts.runtime.core.format.text.renderer.StripperFormattedPrintStreamRenderer;
-import net.thevpc.nuts.runtime.standalone.wscommands.AbstractNutsExecCommand;
-
-import java.io.ByteArrayOutputStream;
 
 public class NutsPrintStreamFiltered extends NutsPrintStreamRendered {
     public NutsPrintStreamFiltered(NutsPrintStreamBase base, Bindings bindings) {

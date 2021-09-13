@@ -155,15 +155,6 @@ public class NutsWorkspaceUtils {
         return session;
     }
 
-    public NutsSession validateSilentSession(NutsSession session) {
-        if (session == null) {
-            session = ws.createSession().setTrace(false);
-            return session;
-        } else {
-            return CoreNutsUtils.silent(session);
-        }
-    }
-
     public NutsId configureFetchEnv(NutsId id) {
         Map<String, String> qm = id.getProperties();
         if (qm.get(NutsConstants.IdProperties.FACE) == null

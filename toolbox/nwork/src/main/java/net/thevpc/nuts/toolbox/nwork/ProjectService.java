@@ -274,7 +274,6 @@ public class ProjectService {
                             ws2 = appContext.getWorkspace();
                             s = appContext.getSession();
                         }
-                        s.setTrace(false);
                         List<NutsId> found = ws2.search()
                                 .addId(g.getId().getGroupId() + ":" + g.getId().getArtifactId())
                                 .addRepositoryFilter(ws2.filters().repository().byName(nutsRepository))

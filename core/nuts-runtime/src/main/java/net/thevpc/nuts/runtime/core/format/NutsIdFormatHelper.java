@@ -587,7 +587,7 @@ public class NutsIdFormatHelper {
             try {
                 if (this.installStatus.isNonDeployed() || def == null) {
                     this.defFetched = ws.fetch().setId(id).setSession(
-                            session.copy().setTrace(false).setFetchStrategy(NutsFetchStrategy.OFFLINE)
+                            session.copy().setFetchStrategy(NutsFetchStrategy.OFFLINE)
                     )
                             .setContent(true)
                             .setOptional(false)
@@ -702,7 +702,7 @@ public class NutsIdFormatHelper {
 //                NutsId nut2 = null;
 //                updatable = false;
 //                try {
-//                    nut2 = ws.fetch().parse(parse.setVersion("")).setSession(session.copy().setProperty("monitor-allowed", false)).setTransitive(true).wired().setTrace(false).getResultId();
+//                    nut2 = ws.fetch().parse(parse.setVersion("")).setSession(session.copy().setProperty("monitor-allowed", false)).setTransitive(true).wired().getResultId();
 //                } catch (Exception ex) {
 //                    //ignore
 //                }

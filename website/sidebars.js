@@ -13,14 +13,13 @@ module.exports = {
          'info/troubleshooting',
       ],
       'Nuts Concepts': [
+         'concepts/aliases',
          'concepts/commandline',
          'concepts/projects',
       ],
       'Advanced Features': [
-         'advanced/aliases',
          'advanced/automation',
          'advanced/filesystem',
-         'advanced/portableWorkspaces',
          'advanced/doc1',
       ],
       'Commands': [
@@ -30,7 +29,6 @@ module.exports = {
          'dev/building',
          'dev/nutsApp',
          'dev/nutsPath',
-         'dev/firstNutsApp',
       ],
       'API Documentation': [],
    }

@@ -3,9 +3,9 @@ package net.thevpc.nuts.runtime.standalone.config;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.config.NutsWorkspaceConfigManagerExt;
 import net.thevpc.nuts.runtime.standalone.DefaultNutsWorkspace;
-import net.thevpc.nuts.runtime.standalone.wscommands.CommandNutsWorkspaceCommandFactory;
-import net.thevpc.nuts.runtime.standalone.wscommands.ConfigNutsWorkspaceCommandFactory;
-import net.thevpc.nuts.runtime.standalone.wscommands.DefaultNutsWorkspaceCustomCommand;
+import net.thevpc.nuts.runtime.standalone.wscommands.settings.CommandNutsWorkspaceCommandFactory;
+import net.thevpc.nuts.runtime.standalone.wscommands.settings.ConfigNutsWorkspaceCommandFactory;
+import net.thevpc.nuts.runtime.standalone.wscommands.settings.DefaultNutsWorkspaceCustomCommand;
 
 import java.util.*;
 import java.util.logging.Level;

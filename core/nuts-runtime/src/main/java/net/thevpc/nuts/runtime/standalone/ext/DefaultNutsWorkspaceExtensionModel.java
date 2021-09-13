@@ -438,7 +438,6 @@ public class DefaultNutsWorkspaceExtensionModel {
     public NutsWorkspaceExtension wireExtension(NutsId id, NutsFetchCommand options) {
         NutsSession session = options.getSession();
         NutsWorkspaceUtils.checkSession(ws, session);
-        NutsSession searchSession = session.setTrace(false);
         if (id == null) {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("extension Id could not be null"));
         }
@@ -448,11 +447,9 @@ public class DefaultNutsWorkspaceExtensionModel {
         }
 
         _LOGOP(session).level(Level.FINE).verb(NutsLogVerb.UPDATE).formatted().log("installing extension {0}", id);
-        NutsDefinition nutsDefinitions = ws.search()
+        NutsDefinition nutsDefinitions = session.getWorkspace().search()
                 .copyFrom(options)
-                .setSession(searchSession)
-                .addId(id).setSession(session)
-                //
+                .addId(id)
                 .setOptional(false)
                 .addScope(NutsDependencyScopePattern.RUN)
                 .setDependencyFilter(CoreNutsDependencyUtils.createJavaRunDependencyFilter(session))

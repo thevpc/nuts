@@ -3,11 +3,11 @@ package net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.w
 import net.thevpc.nuts.NutsId;
 import net.thevpc.nuts.NutsPrintStream;
 import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.optional.mslink.OptionalMsLinkHelper;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.PathInfo;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.base.AbstractFreeDesktopEntryWriter;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.FreeDesktopEntry;
-import net.thevpc.nuts.runtime.standalone.wscommands.settings.util._IOUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -109,13 +109,13 @@ public class WindowFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter
     }
 
     public boolean tryWrite(FreeDesktopEntry file, Path out) {
-        byte[] old = _IOUtils.loadFileContentLenient(out);
+        byte[] old = CoreIOUtils.loadFileContentLenient(out);
         if (old.length == 0) {
             write(file, out);
             return true;
         }
         write(file, out);
-        byte[] next = _IOUtils.loadFileContentLenient(out);
+        byte[] next = CoreIOUtils.loadFileContentLenient(out);
         return !Arrays.equals(old, next);
     }
 

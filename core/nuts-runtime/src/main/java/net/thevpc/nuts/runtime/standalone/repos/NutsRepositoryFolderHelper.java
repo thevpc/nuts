@@ -16,7 +16,7 @@ import net.thevpc.nuts.runtime.core.terminals.DefaultWriteTypeProcessor;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.NamedByteArrayInputStream;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
-import net.thevpc.nuts.runtime.standalone.wscommands.DefaultNutsArtifactPathExecutable;
+import net.thevpc.nuts.runtime.standalone.wscommands.exec.DefaultNutsArtifactPathExecutable;
 import net.thevpc.nuts.spi.NutsDeployRepositoryCommand;
 import net.thevpc.nuts.spi.NutsRepositorySPI;
 import net.thevpc.nuts.spi.NutsRepositoryUndeployCommand;

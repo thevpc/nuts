@@ -1023,7 +1023,7 @@ public class DefaultNutsWorkspaceConfigModel {
                 //
                 .setContent(true)
                 .setFailFast(false)
-                .setSession(CoreNutsUtils.silent(session))
+                .setSession(session)
                 .getResultDefinition();
         if (def == null) {
             _LOGOP(session).level(Level.CONFIG)
@@ -1087,12 +1087,9 @@ public class DefaultNutsWorkspaceConfigModel {
             } else {
                 if (fetch) {
                     NutsDefinition def = ws.fetch().setId(id).setDependencies(true)
-                            //
                             .setOptional(false)
                             .addScope(NutsDependencyScopePattern.RUN)
                             .setDependencyFilter(CoreNutsDependencyUtils.createJavaRunDependencyFilter(session))
-                            //
-                            .setSession(session.copy().setTrace(false))
                             .setContent(true)
                             .setFailFast(false)
                             .getResultDefinition();

@@ -1882,6 +1882,27 @@ public class CoreIOUtils {
                 false);
     }
 
+    public static String loadFileContentLenientString(Path out) {
+        return new String(loadFileContentLenient(out));
+    }
+
+    public static byte[] loadFileContentLenient(Path out) {
+        if (Files.isRegularFile(out)) {
+            try {
+                return Files.readAllBytes(out);
+            } catch (Exception ex) {
+                //ignore
+            }
+        }
+        return new byte[0];
+    }
+
+    public static PipeThread pipe(String name, final NonBlockingInputStream in, final OutputStream out, NutsSession session) {
+        PipeThread p = new PipeThread(name, in, out,session);
+        p.start();
+        return p;
+    }
+
     public enum MonitorType {
         STREAM,
         DEFAULT,

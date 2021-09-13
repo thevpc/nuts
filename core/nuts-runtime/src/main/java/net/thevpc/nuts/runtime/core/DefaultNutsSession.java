@@ -576,22 +576,6 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         return this;
     }
 
-    //    @Override
-//    public NutsSession setSilent() {
-//        return setTrace(false);
-//    }
-//    @Override
-//    public boolean isForce() {
-//        if(force==null){
-//            return ws.env().getBootOptions().isForce();
-//        }
-//        return force;
-//    }
-//    @Override
-//    public NutsSession setForce(Boolean force) {
-//        this.force = force;
-//        return this;
-//    }
     @Override
     public boolean isYes() {
         return getConfirm() == NutsConfirmationMode.YES;

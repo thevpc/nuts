@@ -58,7 +58,7 @@ public class Test08_FindLinuxTest {
                 "--archetype", "default",
                 "--skip-companions").getWorkspace();
 
-        NutsResultList<NutsId> resultIds = ws.search().setSession(ws.createSession().setTrace(false)).addId("net.thevpc.scholar.doovos.kernel:doovos-kernel-core")
+        NutsResultList<NutsId> resultIds = ws.search().setSession(ws.createSession()).addId("net.thevpc.scholar.doovos.kernel:doovos-kernel-core")
                 .setLatest(true).setInlineDependencies(true).getResultIds();
         TestUtils.println(resultIds.list());
     }

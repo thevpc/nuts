@@ -101,7 +101,6 @@ public class NshEvaluator extends DefaultJShellEvaluator {
         DefaultJShellContext c2 = (DefaultJShellContext) c1.getShellContext();
         c2.setSession(c2.getSession().copy());
         c2.getSession().setLogLevel(Level.OFF);
-        c2.getSession().setTrace(false);
 
         NutsPrintStream out = NutsPrintStream.ofMemory(c2.getSession());
         NutsPrintStream err = NutsPrintStream.ofMemory(c2.getSession());

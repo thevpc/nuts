@@ -482,10 +482,6 @@ public class CoreNutsUtils {
                 .setTemporary(false);
     }
 
-    public static NutsSession silent(NutsSession session) {
-        return session.isTrace() ? session.copy().setTrace(false) : session;
-    }
-
     public static Map<String, Object> traceJsonNutsDefinition(NutsSession session, NutsDefinition def) {
         Map<String, Object> x = new LinkedHashMap<>();
         x.put("id", def.getId());

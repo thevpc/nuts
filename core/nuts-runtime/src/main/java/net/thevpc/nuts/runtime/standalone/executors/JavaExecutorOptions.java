@@ -150,7 +150,7 @@ public final class JavaExecutorOptions {
         }
 
         List<NutsDefinition> nutsDefinitions = new ArrayList<>();
-        NutsSearchCommand se = getWorkspace().search().setSession(CoreNutsUtils.silent(session));
+        NutsSearchCommand se = getWorkspace().search().setSession(session);
         if (tempId) {
             for (NutsDependency dependency : descriptor.getDependencies()) {
                 se.addId(dependency.toId());
@@ -367,7 +367,7 @@ public final class JavaExecutorOptions {
     }
 
     private void addNp(List<NutsClassLoaderNode> classPath, String value) {
-        NutsSession searchSession = CoreNutsUtils.silent(this.session);
+        NutsSession searchSession = this.session;
         NutsSearchCommand ns = getWorkspace().search().setLatest(true)
                 .setSession(searchSession);
         for (String n : StringTokenizerUtils.split(value, ";, ")) {

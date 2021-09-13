@@ -22,10 +22,11 @@ if [ x"$NUTS_JAVA_HOME" != "x" ] ; then
 elif [ x"${JAVA_HOME}" != "x" ] ; then
     JAVA_CMD="${JAVA_HOME}/bin/java";
 fi
-
+NUTS_TRACE='--trace=false'
 if [ x"$1" = x"--debug" ] ; then
   NUTS_DEBUG_ARG="-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005"
+#  NUTS_TRACE='--trace=true'
 fi
 
-$JAVA_CMD $NUTS_DEBUG_ARG -jar core/nuts/target/nuts-$NUTS_VERSION.jar -ZSbyK -w development-build ./nuts-build-website.nsh
+$JAVA_CMD $NUTS_DEBUG_ARG -jar core/nuts/target/nuts-$NUTS_VERSION.jar -ZSbyK -w development-build $NUTS_TRACE ./nuts-build-website.nsh
 

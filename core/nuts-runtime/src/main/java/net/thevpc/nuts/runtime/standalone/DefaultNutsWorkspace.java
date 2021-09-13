@@ -78,7 +78,16 @@ import net.thevpc.nuts.runtime.standalone.security.ReadOnlyNutsWorkspaceOptions;
 import net.thevpc.nuts.runtime.standalone.util.CoreDigestHelper;
 import net.thevpc.nuts.runtime.standalone.util.NutsClassLoaderUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
-import net.thevpc.nuts.runtime.standalone.wscommands.*;
+import net.thevpc.nuts.runtime.standalone.wscommands.deploy.DefaultNutsDeployCommand;
+import net.thevpc.nuts.runtime.standalone.wscommands.exec.DefaultNutsExecCommand;
+import net.thevpc.nuts.runtime.standalone.wscommands.fetch.DefaultNutsFetchCommand;
+import net.thevpc.nuts.runtime.standalone.wscommands.install.DefaultNutsInstallCommand;
+import net.thevpc.nuts.runtime.standalone.wscommands.push.DefaultNutsPushCommand;
+import net.thevpc.nuts.runtime.standalone.wscommands.search.DefaultNutsSearchCommand;
+import net.thevpc.nuts.runtime.standalone.wscommands.settings.DefaultNutsUpdateStatisticsCommand;
+import net.thevpc.nuts.runtime.standalone.wscommands.undeploy.DefaultNutsUndeployCommand;
+import net.thevpc.nuts.runtime.standalone.wscommands.uninstall.DefaultNutsUninstallCommand;
+import net.thevpc.nuts.runtime.standalone.wscommands.update.DefaultNutsUpdateCommand;
 import net.thevpc.nuts.spi.*;
 
 import java.io.IOException;
@@ -653,7 +662,6 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 session.out().resetLine().println("looking for java installations in default locations...");
             }
             NutsPlatformLocation[] found = session.getWorkspace().env().platforms()
-                    .setSession(session.copy().setTrace(false))
                     .searchSystem("java");
             int someAdded = 0;
             for (NutsPlatformLocation java : found) {
@@ -967,17 +975,17 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             switch (def.getType()) {
                 case API: {
                     oldDef = fetch().setSession(
-                            CoreNutsUtils.silent(session).copy().setFetchStrategy(NutsFetchStrategy.ONLINE)
+                            session.copy().setFetchStrategy(NutsFetchStrategy.ONLINE)
                     ).setId(NutsConstants.Ids.NUTS_API + "#" + Nuts.getVersion()).setFailFast(false).getResultDefinition();
                     break;
                 }
                 case RUNTIME: {
-                    oldDef = fetch().setSession(CoreNutsUtils.silent(session).copy().setFetchStrategy(NutsFetchStrategy.ONLINE)).setId(getRuntimeId())
+                    oldDef = fetch().setSession(session.copy().setFetchStrategy(NutsFetchStrategy.ONLINE)).setId(getRuntimeId())
                             .setFailFast(false).getResultDefinition();
                     break;
                 }
                 default: {
-                    oldDef = search().setSession(CoreNutsUtils.silent(session)).addId(def.getId().getShortNameId())
+                    oldDef = search().setSession(session).addId(def.getId().getShortNameId())
                             .setInstallStatus(this.filters().setSession(session).installStatus().byDeployed(true))
                             .setFailFast(false).getResultDefinitions().first();
                     break;
@@ -1569,7 +1577,6 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
 
     @Override
     public NutsInstallStatus getInstallStatus(NutsId id, boolean checkDependencies, NutsSession session) {
-        session = NutsWorkspaceUtils.of(session).validateSilentSession(session);
         NutsDefinition nutToInstall;
         try {
             nutToInstall = search().addId(id)

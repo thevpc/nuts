@@ -192,7 +192,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             NutsDefinition fetched = null;
             if (nid.getVersion().isBlank()) {
                 fetched = session.getWorkspace().search()
-                        .setSession(session.copy().setTrace(false))
+                        .setSession(session.copy())
                         .addId(options.getId()).setLatest(true).getResultDefinitions().required();
                 nid = fetched.getId().getShortNameId();
                 //nutsId=fetched.getId().getLongNameId();
@@ -894,7 +894,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
 //    public String createNutsEnvString(NdiScriptOptions options, boolean updateEnv, boolean updatePATH) {
 //        final NutsWorkspace ws = session.getWorkspace();
 //        String NUTS_JAR_PATH = ws.search()
-//                .setSession(session.copy().setTrace(false))
+//                .setSession(session.copy())
 //                .addId(ws.getApiId()).getResultPaths().required();
 //
 //        TreeSet<String> exports = new TreeSet<>();

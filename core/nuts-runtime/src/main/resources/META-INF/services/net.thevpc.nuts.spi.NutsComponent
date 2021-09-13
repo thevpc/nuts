@@ -25,15 +25,15 @@ net.thevpc.nuts.runtime.standalone.security.DefaultNutsAuthenticationAgent
 
 ##################### Settings Subcommands!
 
-net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.NutsSettingsArchetypeSubCommand
-net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.NutsSettingsImportSubCommand
-net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.NutsSettingsBackupSubCommand
-net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.NutsSettingsLogSubCommand
-net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.NutsSettingsRepositorySubCommand
-net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.NutsSettingsUserSubCommand
-net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.NutsSettingsJavaSubCommand
-net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.NutsSettingsDeleteFoldersSubCommand
-net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.NutsSettingsIndexSubCommand
-net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.NutsSettingsConnectSubCommand
-net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.NutsSettingsAliasSubCommand
+net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.archetype.NutsSettingsArchetypeSubCommand
+net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.imports.NutsSettingsImportSubCommand
+net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.backup.NutsSettingsBackupSubCommand
+net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.log.NutsSettingsLogSubCommand
+net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.repo.NutsSettingsRepositorySubCommand
+net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.user.NutsSettingsUserSubCommand
+net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.java.NutsSettingsJavaSubCommand
+net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.delete.NutsSettingsDeleteFoldersSubCommand
+net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.index.NutsSettingsIndexSubCommand
+net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.connect.NutsSettingsConnectSubCommand
+net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.alias.NutsSettingsAliasSubCommand
 net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.NutsSettingsNdiSubCommand

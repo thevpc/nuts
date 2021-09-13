@@ -12,9 +12,9 @@ import java.util.*;
 import net.thevpc.nuts.runtime.core.config.NutsRepositoryConfigManagerExt;
 import net.thevpc.nuts.runtime.core.config.NutsWorkspaceConfigManagerExt;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
-import net.thevpc.nuts.runtime.standalone.wscommands.DefaultNutsAddUserCommand;
-import net.thevpc.nuts.runtime.standalone.wscommands.DefaultNutsRemoveUserCommand;
-import net.thevpc.nuts.runtime.standalone.wscommands.DefaultNutsUpdateUserCommand;
+import net.thevpc.nuts.runtime.standalone.wscommands.settings.DefaultNutsAddUserCommand;
+import net.thevpc.nuts.runtime.standalone.wscommands.settings.DefaultNutsRemoveUserCommand;
+import net.thevpc.nuts.runtime.standalone.wscommands.settings.DefaultNutsUpdateUserCommand;
 import net.thevpc.nuts.runtime.standalone.repos.DefaultNutsRepoConfigManager;
 
 /**

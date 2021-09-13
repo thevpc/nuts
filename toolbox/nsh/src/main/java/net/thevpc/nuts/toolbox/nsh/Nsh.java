@@ -58,12 +58,11 @@ public class Nsh implements NutsApplication {
         Set<String> reinstalled = new TreeSet<>();
         Set<String> firstInstalled = new TreeSet<>();
         NutsSession sessionCopy = session.copy();
-        sessionCopy.setTrace(false);
         for (JShellBuiltin command : commands) {
             if (!CONTEXTUAL_BUILTINS.contains(command.getName())) {
                 //avoid recursive definition!
                 if (ws.commands()
-                        .setSession(sessionCopy.setConfirm(NutsConfirmationMode.YES).setTrace(false))
+                        .setSession(sessionCopy.setConfirm(NutsConfirmationMode.YES))
                         .addCommand(new NutsCommandConfig()
                                 .setFactoryId("nsh")
                                 .setName(command.getName())

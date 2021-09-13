@@ -129,7 +129,7 @@ public class ProcessExecHelper implements IProcessExecHelper {
         for (Map.Entry<String, String> entry : execProperties.entrySet()) {
             map.put(entry.getKey(), entry.getValue());
         }
-        Path nutsJarFile = workspace.fetch().setNutsApi().setSession(CoreNutsUtils.silent(session)).getResultPath();
+        Path nutsJarFile = workspace.fetch().setNutsApi().setSession(session).getResultPath();
         if (nutsJarFile != null) {
             map.put("nuts.jar", nutsJarFile.toAbsolutePath().normalize().toString());
         }

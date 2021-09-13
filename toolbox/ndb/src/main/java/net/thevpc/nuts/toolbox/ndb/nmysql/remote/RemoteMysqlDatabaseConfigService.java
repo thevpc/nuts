@@ -125,7 +125,7 @@ public class RemoteMysqlDatabaseConfigService {
                 }
             }
             context.getWorkspace().exec().setExecutionType(NutsExecutionType.EMBEDDED)
-                    .setSession(session.copy().setTrace(false))
+                    .setSession(session.copy())
                     .addCommand("nsh",
                             "--bot",
                             "-c",
@@ -240,7 +240,7 @@ public class RemoteMysqlDatabaseConfigService {
 
     public String execRemoteNuts(String... cmd) {
         NutsExecCommand b = context.getWorkspace().exec()
-                .setSession(context.getSession().copy().setTrace(false));
+                .setSession(context.getSession().copy());
         if ("localhost".equals(this.config.getServer())) {
             b.addCommand("nuts");
             b.addCommand("-b");

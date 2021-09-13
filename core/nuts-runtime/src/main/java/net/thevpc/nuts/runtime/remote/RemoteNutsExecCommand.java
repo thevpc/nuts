@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.remote;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.wscommands.AbstractNutsExecCommand;
+import net.thevpc.nuts.runtime.standalone.wscommands.exec.AbstractNutsExecCommand;
 
 public class RemoteNutsExecCommand extends AbstractNutsExecCommand {
 
