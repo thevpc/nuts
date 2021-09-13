@@ -3,6 +3,7 @@ package net.thevpc.nuts.toolbox.docusaurus;
 import net.thevpc.nuts.NutsElement;
 import net.thevpc.nuts.NutsObjectElement;
 import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NutsUtilStrings;
 import net.thevpc.nuts.lib.md.MdElement;
 import net.thevpc.nuts.lib.md.docusaurus.DocusaurusUtils;
 import net.thevpc.nuts.lib.md.util.MdUtils;
@@ -38,11 +39,13 @@ public class DocusaurusFolder implements DocusaurusFileOrFolder {
             if (x != 0) {
                 return x;
             }
-            x = o1.getTitle().toLowerCase().compareTo(o2.getTitle().toLowerCase());
+            String title1 = NutsUtilStrings.trim(o1.getTitle());
+            String title2 = NutsUtilStrings.trim(o2.getTitle());
+            x = title1.toLowerCase().compareTo(title2.toLowerCase());
             if (x != 0) {
                 return x;
             }
-            return o1.getTitle().compareTo(o2.getTitle());
+            return title1.compareTo(title2);
         }
     };
     private String longId;
