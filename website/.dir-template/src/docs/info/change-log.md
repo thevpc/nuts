@@ -8,16 +8,8 @@ ${include($"${resources}/header.md")}
 View Official releases [here](https://github.com/thevpc/nuts/releases) :
 Starred releases are most stable ones.
 
-## nuts 0.8.4.0 (NEXT VERSION)
-- ```2021/XX/XX 	nuts 0.8.2.0 (*)``` not released yet [download nuts-0.8.2.jar](https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/0.8.2/nuts-0.8.4.jar)
-- WARNING: API has evolved with multiple incompatibilities with previous versions
-- TODO  : {api}   add comments support in 'element' and and propagate support for xml,json and so on
-- TODO  : {impl}  better yaml parser
-- TODO  : {impl}  implement yaml formatter (both print as raw and as colorized)
-- TODO  : {impl}  bundle tson parser
-
-## nuts 0.8.3.0 (DEV VERSION)
-- ```2021/XX/XX 	nuts 0.8.3.0 (*)``` not released yet [download nuts-0.8.3.jar](http://thevpc.net/nuts-0.8.3.jar)
+## nuts 0.8.3.0 (DEVELOPMENT VERSION)
+- ```2021/XX/XX 	nuts 0.8.3.0 (*)``` not released yet [download nuts-0.8.3.jar](http://thevpc.net/nuts.jar)
 - WARNING : {api}  API has evolved with little incompatibilities with previous versions
 - CHANGED : {api}  ws.io.expandPath replaced by NutsPath.builder.setExpanded(true)
 - CHANGED : {api}  removed deprecated feature inheritedLog

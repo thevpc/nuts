@@ -83,3 +83,6 @@
 /lib/nlib-servlet/nlib-servlet.iml
 /lib/nlib-md/nlib-md.iml
 /.~lock.DEV_VERSION_TRACKING.xlsx#
+/incubating/nutsc/build
+/incubating/nutsc/dist
+/.dir-template/website/static/nuts.jar

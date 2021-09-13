@@ -3,7 +3,6 @@ import java.net.*;
 import java.nio.file.*;
 
 fun main(String[] args){
-    Console2();
     String metadata=URL("https://raw.github.com/thevpc/nuts/master/meta-data.txt").readString;
     String apiVersion,jarLocation;
     for(line:metadata.split("\n").trim){

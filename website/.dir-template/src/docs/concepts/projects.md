@@ -40,78 +40,63 @@ The library will be loaded on the wire (if not yet present in the classpath of c
 * **jansi** is used to support terminal coloring and the "Nuts Text Format" (NTF), a simple text format (markdown like) that helps creating colorful terminal applications.
 
 ## Companion tools projects
-Companion tools include **nadmin** and **nsh** 
-These two applications are implemented following the "**```nuts```** Application Framework" and hence are dependent on **nuts-api** library. 
-They are recommended applications to install with **nuts** itself, however they are not mandatory and may be ignored particularly when using **nuts-api** as library.
-
-### **nadmin**
-**nadmin** (for **```nuts```** admin) is an administration tool to manage the **```nuts```** workspaces. 
-It adds support for managing users, credentials, authorizations, workspaces and repositories by providing command line support for such actions.
-**nadmin** adds also seamless integration of **```nuts```** commands in your favorite operating system and environment by creating scripts that point to your favorite workspaces and applications. 
-**nadmin** is responsible of creating script shortcuts to your common commands so that you can invoke tem directly from your environment. 
-For instance it creates an "nadmin" script and configures your PATH environment to help calling the nuts admin tool instead of the common way to do so "nuts nadmin". 
-On window system, **nadmin** will create shortcuts and menus.
-
+Companion tools include mainly **nsh** 
+This application is implemented following the "**```nuts```** Application Framework" and hence is dependent on **nuts-api** library.
+**nsh** is a recommended for installation because it adds portable bash like features to the tool, however is is mandatory and may be ignored particularly when using **nuts-api** as library.
 
 ### **nsh**
 **nsh** (for **```nuts```** shell) is simply a portable POSIX bash compatible implementation. 
 It supports all common builtin commands (ls, cd, rm, ...) and adds support to grep, ssh and scp in a seamless manner. 
-It also supports command line, scripts (including commons constructs with if, do, case, ...) and pipes (|) and common bash syntax.
+It also supports command line, scripts (including commons constructs with if, do, case, ...), pipes (|) and common bash syntax.
 
 
 ## Toolbox projects
 **```nuts```** comes with an array of tools out of the box you can install and play with. Here are some of them:
 
-
 ### **nversion**
 **nversion** is a small tool that helps detecting files versions. 
 It supports jar, war, ear, dll and exe file versions. It opens a file and looks for it's version in its meta-data.
 
-### **nmysql**
-**nmysql** is a companion tool to the mysql and mariadb servers. 
-The initial actions supported are backup and restore including push/pull mechanism from/to a couple of databases for synchronization. 
+### **ndb**
+**ndb** is a companion tool to the relational databased. **mysql**, **mariadb** and **nderby** servers are supported. 
+The main actions supported are backup and restore including push/pull mechanism from/to a couple of databases for synchronization. 
 It supports jdbc and ssh based access to remote mysql/mariadb installation.
 
 ### **ntomcat**
 **ntomcat** is a companion tool to the tomcat http server. 
-The initial actions supported are start, stop, status, configure (http ports etc..) and deploy. 
+The main actions supported are start, stop, status, configure (http ports etc..) and deploy. 
 It supports as well installation of several versions of Tomcat and multi domain configuration for deployments.
-
-### **nderby**
-**nderby** is a companion tool to the derby database server. 
-The initial actions supported are start, stop, status and configure. 
-It supports as well installation of several versions of Derby.
 
 ### **nmvn**
 **nmvn** is a companion tool to maven. 
-It supports installations of several versions of it and running them seamlessly.
+It supports installations of several versions of maven and running them seamlessly.
 
 ### **noapi**
 **noapi** (for Nuts OpenApi) is an OpenAPI documentation generator.
 
 ### **ncode**
-**ncode** is a small code search tool. It searches for files, files contents and classes within jars.
-You ca search for files than contains some text or jars that contain some class, or jars of a specific version of java.
+**ncode** is a small code search tool. It searches for files, file contents and classes within jars.
+You can search for files than contains some text or jars that contain some class, or jars of a specific version of java.
 
 ### **nwork**
-**worky** is a developer centered tool. The 'y' in **worky** refers to 'my' in the "Tunisian Dialect" and hence means "my work". **Worky** is the tool we - maven users - need to check if the version of project we are working on is yet to be deployed to nexus or not. So basically it checks if the version is the same, and downloads the server's version and then compares binaries to local project's to check if we have missed to update the version in our pom.xml. I know I'm not the only one having pain with jar deployments to nexus. **Worky** does other things as well to help me on on daily basis.
+**nwork** is a developer centered tool. **nwork** is the tool we - maven users - need to check if the version of project we are working on is yet to be deployed to nexus or not. So basically it checks if the version is the same, and downloads the server's version and then compares binaries to local project's to check if we have missed to update the version in our pom.xml. I know I'm not the only one having pain with jar deployments to nexus. **nwork** does other things as well to help me on on daily basis.
 
 ### **ntemplate**
 **ntemplate** is a file templating tool that replaces place-holders in the files with an evaluated expression. 
 
 ### **njob**
-**njob** is powerful terminal task manager
+**njob** is a powerful terminal todo list
 
 ### **ndoc**
 **ndoc** is a javadoc generator. It supports standard format and adds markdown format.
 
 ### **ndocusaurus**
-**ndocusaurus** is a [Docusaurus 2](https://docusaurus.io) toolbox that adds several features to the initial tool: 
-* adds templating (using ntemplate)
-* adds pdf generation
+**ndocusaurus** is a [Docusaurus 2](https://docusaurus.io) toolbox that adds several features to the tool such as: 
+* templating (using ntemplate)
+* pdf generation
 
 ### **ntalk-agent**
-**ntalk-agent** is a client-to-client communication broker
+**ntalk-agent** is a client-to-client communication broker used for sharing **nuts** workspaces
 
 ### **nclown**
 **nclown** is an angular web application frontend for **```nuts```**. It helps navigating, searching and installing artifacts. It is intended to be a web admin tool as well.
@@ -155,6 +140,8 @@ This includes : **nutsc** (a native c bootstrapper) and **nuts-installer** (a **
 Although not included in this Git repository some other tools are based on **```nuts```** and hence are installable using ```nuts install the-app``` command. Those tools are published in other repositories.
 
 ### **netbeans-launcher** : this tool supports installation and launch of multiple netbeans instances in parallel. See [Netbeans Launcher GitHub Repository](https://github.com/thevpc/netbeans-launcher)
+
+### **pnote** : this tool is a multi purpose, developer oriented, Note taking application. See [Pangaea Note](https://github.com/thevpc/pangaea-note)
 
 ### **upa-box** : this tool supports creation of UPA aware projects. UPA is a non structured ORM for the Java Language. See [Netbeans Launcher GitHub Repository](https://github.com/thevpc/upa)
 

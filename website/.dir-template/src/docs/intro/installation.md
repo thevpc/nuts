@@ -192,7 +192,7 @@ nuts --version
 It should show a result in the format : nuts-api-version/nuts-impl-version
 
 ```
-${apiVersion}/${implVersion}
+${stableApiVersion}/${stableImplVersion}
 ```
 
 ## Run a command

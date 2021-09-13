@@ -25,11 +25,6 @@
             <artifactId>hadra-lang</artifactId>
             <version>0.1.0</version> <!--updated-->
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>${project.groupId}</groupId>-->
-<!--            <artifactId>hadra-lang</artifactId>-->
-<!--            <version>1.0.0</version>-->
-<!--        </dependency>-->
     </dependencies>
     <build>
         <plugins>
