@@ -4,7 +4,7 @@ title: Building
 sidebar_label: Building Nuts Projects
 ---
 
-${include($"${resources}/header.md")}
+${{include($"${resources}/header.md")}}
 
 To build`nuts` Package Management you need the following software installed on your machine:
 * java JDK 8 (`nuts` is still compatible with java 8)

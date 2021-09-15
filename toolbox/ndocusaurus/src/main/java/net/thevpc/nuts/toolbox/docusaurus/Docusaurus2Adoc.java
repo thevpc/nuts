@@ -134,11 +134,34 @@ public class Docusaurus2Adoc {
                 tree2 = new DocusaurusTreeTransform(session, minDepth, p, toPath).transformDocument(tree);
             }
             List<MdElement> b = new ArrayList<>();
-            if (tree2 == null || !startsWithTitle(tree2, minDepth)) {
-                b.add(new MdTitle("#", MdText.phrase(part.getTitle()), minDepth, new MdElement[0]));
-            }
+//            if (tree2 == null || !startsWithTitle(tree2, minDepth)) {
+//                b.add(new MdTitle("#", MdText.phrase(part.getTitle()), minDepth, new MdElement[0]));
+//            }
             if (tree2 != null) {
-                b.add(tree2);
+                if(tree2 instanceof MdBody
+                        && ((MdBody) tree2).getChildren().length>0
+                        && ((MdBody) tree2).getChildren()[0] instanceof MdTitle
+                        && ((MdTitle) (((MdBody) tree2).getChildren()[0])).type().depth()==minDepth
+                ){
+                    //discard the first title and replace with chapter title
+                    List<MdElement> cc=new ArrayList<>();
+                    MdTitle t0=((MdTitle) (((MdBody) tree2).getChildren()[0]));
+                    MdTitle t2=new MdTitle(t0.getCode(),MdText.phrase(part.getTitle()),t0.type().depth(),t0.getChildren());
+                    cc.add(t2);
+                    MdBody b2=new MdBody(cc.toArray(new MdElement[0]));
+                    b.add(b2);
+                }else if(tree2 instanceof MdTitle &&  ((MdTitle) tree2).type().depth()==minDepth){
+                    //discard the first title and replace with chapter title
+                    MdTitle t0=((MdTitle) tree2);
+                    MdTitle t2=new MdTitle(t0.getCode(),MdText.phrase(part.getTitle()),t0.type().depth(),t0.getChildren());
+                    b.add(t2);
+                }else {
+                    //add chapter title
+                    b.add(new MdTitle("#", MdText.phrase(part.getTitle()), minDepth, new MdElement[0]));
+                    b.add(tree2);
+                }
+            }else{
+                b.add(new MdTitle("#", MdText.phrase(part.getTitle()), minDepth, new MdElement[0]));
             }
             if (!b.isEmpty()) {
                 asciiDoctorWriter.write(new MdBody(b.toArray(new MdElement[0])));

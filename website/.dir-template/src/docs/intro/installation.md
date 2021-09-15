@@ -8,7 +8,7 @@ order: 3
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-${include($"${resources}/header.md")}
+${{include($"${resources}/header.md")}}
 
 
 ## System Requirements
@@ -52,14 +52,14 @@ Java HotSpot(TM) 64-Bit Server VM (build 25.211-b12, mixed mode)
 }>
 <TabItem value="windows">
 
-download [nuts-${apiVersion}.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.${apiVersion}/nuts-${apiVersion}.jar)
+download [nuts-${{apiVersion}}.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.${{apiVersion}}/nuts-${{apiVersion}}.jar)
 ```
-java -jar -y nuts-${apiVersion}.jar
+java -jar -y nuts-${{apiVersion}}.jar
 ```
 
 On Windows systems, first launch will create a new **```nuts```** Menu (under Programs) and a couple of Desktop shortcuts to launch a configured command terminal.
-- **nuts-cmd-${apiVersion}** : this shortcut will open a configured command terminal. **```nuts```** command will be available as well as several nuts companion tools installed by **nadmin** by default
-- **nuts-cmd**       : this shortcut will point to the last installed **nuts** version, here ${apiVersion}  
+- **nuts-cmd-${{apiVersion}}** : this shortcut will open a configured command terminal. **```nuts```** command will be available as well as several nuts companion tools installed by **nadmin** by default
+- **nuts-cmd**       : this shortcut will point to the last installed **nuts** version, here ${{apiVersion}}  
 
 Any of these shortcuts will launch a nuts-aware terminal.
 
@@ -87,19 +87,19 @@ wget http://thevpc.net/nuts.jar -qO nuts.jar && java -jar nuts.jar -zyN -r dev &
 
 __for production (using wget):__
 This will reset/delete any previous nuts installation before installing the latest version.
-Removing the '-Z' flag if you do not want to reset the workspace.
+Removing the `-Z` flag if you do not want to reset the workspace.
 ```
-NDVER=${stableApiVersion} && wget https://repo.maven.apache.org/maven2\
-/net/thevpc/nuts/nuts/$NDVER/nuts-$NDVER.jar && java -jar \
-      nuts-$NDVER.jar -Zy && . ~/.bashrc
+NVER=${{stableApiVersion}} && wget https://repo.maven.apache.org/maven2\
+/net/thevpc/nuts/nuts/$NVER/nuts-$NVER.jar && java -jar \
+      nuts-$NVER.jar -Zy && . ~/.bashrc
 ```
 
 __for production (using curl):__
 This will reset/delete any previous nuts installation before installing the latest version.
-Removing the '-Z' flag if you do not want to reset the workspace.
+Removing the `-Z` flag if you do not want to reset the workspace.
 ```
-NDVER=${stableApiVersion} && curl -sOL https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/$NDVER/nuts-$NDVER.jar \
-      && java -jar nuts-$NDVER.jar -Zy && . ~/.bashrc
+NVER=${{stableApiVersion}} && curl -sOL https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/$NVER/nuts-$NVER.jar \
+      && java -jar nuts-$NVER.jar -Zy && . ~/.bashrc
 ```
 
 Linux Systems installation is based on bash shell. First launch will configure "~/.bashrc" so that **nuts** and other companion tool commands will be available in any future terminal instances.
@@ -118,8 +118,8 @@ Any bash terminal application is a nuts-aware terminal.
 <TabItem value="macos">
 
 ```
-NDVER=${stableApiVersion} && curl -sOL https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/$NDVER/nuts-$NDVER.jar \
-      && java -jar nuts-$NDVER.jar -Zy
+NVER=${{stableApiVersion}} && curl -sOL https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/$NVER/nuts-$NVER.jar \
+      && java -jar nuts-$NVER.jar -Zy
 ```
 
 MacOS Systems installation is based on **bash** shell. First launch will configure "~/.bashrc" so that **nuts** and other companion tool commands will be available in any future terminal instances.
@@ -135,9 +135,9 @@ Any bash terminal application is a nuts-aware terminal.
 <TabItem value="wget">
 
 ```
-  NDVER=${apiVersion} && rm -f nuts-$NDVER.jar && wget https://github.com/thevpc/\
-vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/$NDVER/nuts-$NDVER.jar &&\
-    java -jar nuts-$NDVER.jar -y
+  NVER=${{apiVersion}} && rm -f nuts-$NVER.jar && wget https://github.com/thevpc/\
+vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/$NVER/nuts-$NVER.jar &&\
+    java -jar nuts-$NVER.jar -y
 ```
 
 :::tip
@@ -151,9 +151,9 @@ Any bash terminal application is a nuts-aware terminal.
 <TabItem value="curl">
 
 ```
-NDVER=${stableApiVersion} && wget https://repo.maven.apache.org/maven2\
-/net/thevpc/nuts/nuts/$NDVER/nuts-$NDVER.jar && java -jar \
-      nuts-$NDVER.jar -Zy && . ~/.bashrc
+NVER=${{stableApiVersion}} && wget https://repo.maven.apache.org/maven2\
+/net/thevpc/nuts/nuts/$NVER/nuts-$NVER.jar && java -jar \
+      nuts-$NVER.jar -Zy && . ~/.bashrc
 ```
 :::tip
 
@@ -192,7 +192,7 @@ nuts --version
 It should show a result in the format : nuts-api-version/nuts-impl-version
 
 ```
-${stableApiVersion}/${stableImplVersion}
+${{stableApiVersion}}/${{stableImplVersion}}
 ```
 
 ## Run a command

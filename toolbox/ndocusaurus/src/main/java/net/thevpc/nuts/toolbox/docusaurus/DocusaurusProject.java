@@ -231,11 +231,13 @@ public class DocusaurusProject {
             for (NutsElementEntry member : a.asObject()) {
                 DocusaurusFileOrFolder[] cc = LJSON_to_DocusaurusFileOrFolder_list(member.getValue(), root);
                 String rootPath = root.getPath();
-                Path parentPath = null;
-                if(rootPath!=null){
-                    parentPath=Paths.get(rootPath);
-                }else{
-                    parentPath=detectFileParent(cc);
+                Path parentPath = detectFileParent(cc);
+                if(parentPath==null) {
+                    if (rootPath != null) {
+                        parentPath = Paths.get(rootPath);
+                    } else {
+                        parentPath = detectFileParent(cc);
+                    }
                 }
                 aa.add(new DocusaurusFolder(
                         member.getKey().asString(),//no id  here!

@@ -5,7 +5,7 @@ sidebar_label: Introduction
 order: 1
 ---
 
-${include($"${resources}/header.md")}
+${{include($"${resources}/header.md")}}
 
 **```nuts```** stands for **Network Updatable Things Services** tool and is a portable package manager for java (mainly) that handles remote artifacts, installs these artifacts to the current machine and executes such artifacts on need.
 **```nuts```** solves the **fatjar** problem delegating the dependency resolution to the time when the application is to be executed and

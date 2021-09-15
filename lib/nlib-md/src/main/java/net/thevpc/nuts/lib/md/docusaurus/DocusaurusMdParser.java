@@ -142,10 +142,10 @@ public class DocusaurusMdParser implements MdParser {
                         if (backtics == 3) {
                             return TextReader.GlobberRet.ACCEPT;
                         }
-                        return TextReader.GlobberRet.HIT_END;
+                        return TextReader.GlobberRet.WAIT_FOR_MORE;
                     } else {
                         backtics = 0;
-                        return TextReader.GlobberRet.HIT_END;
+                        return TextReader.GlobberRet.WAIT_FOR_MORE;
                     }
                 }
             });
@@ -156,21 +156,29 @@ public class DocusaurusMdParser implements MdParser {
                 c = n;
                 n = "";
             }
-            boolean inline = c == null || c.indexOf('\n') < 0;
-            return new MdCode(n, c == null ? "" : c, inline);
+            return MdFactory.codeBacktick3(n, c == null ? "" : c);
         }
-        String c = reader.readStringOrEmpty((curr, next) -> {
-            if (next == '`') {
-                return TextReader.GlobberRet.ACCEPT;
-            } else {
-                return TextReader.GlobberRet.HIT_END;
+        s = reader.readChars('`', 1, 2);
+        if(s.length()==1) {
+            String c = reader.readStringOrEmpty(new TextReader.Globber() {
+                boolean accepted=false;
+                @Override
+                public TextReader.GlobberRet accept(StringBuilder curr, char next) {
+                    if (next == '`') {
+                        return TextReader.GlobberRet.ACCEPT_END;
+                    } else {
+                        return TextReader.GlobberRet.WAIT_FOR_MORE;
+                    }
+                }
+            });
+            if (c != null && c.endsWith("`")) {
+                c = c.substring(0, c.length() - 1);
             }
-        });
-        if (c != null && c.endsWith("`")) {
-            c = c.substring(0, c.length() - 3);
+            return MdFactory.codeBacktick1("", c == null ? "" : c);
+        }else if(s.length()==2){
+            return MdFactory.codeBacktick1("", "");
         }
-        boolean inline = c == null || c.indexOf('\n') < 0;
-        return new MdCode("", c == null ? "" : c, inline);
+        return null;
     }
 
     public MdElement readAdmonition() {
@@ -190,10 +198,10 @@ public class DocusaurusMdParser implements MdParser {
                         if (colons == 3) {
                             return TextReader.GlobberRet.ACCEPT;
                         }
-                        return TextReader.GlobberRet.HIT_END;
+                        return TextReader.GlobberRet.WAIT_FOR_MORE;
                     } else {
                         colons = 0;
-                        return TextReader.GlobberRet.HIT_END;
+                        return TextReader.GlobberRet.WAIT_FOR_MORE;
                     }
                 }
             });

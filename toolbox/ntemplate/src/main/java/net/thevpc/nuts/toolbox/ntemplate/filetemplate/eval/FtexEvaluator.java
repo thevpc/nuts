@@ -3,6 +3,7 @@ package net.thevpc.nuts.toolbox.ntemplate.filetemplate.eval;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.ExprEvaluator;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.FileTemplater;
+import net.thevpc.nuts.toolbox.ntemplate.filetemplate.MimeTypeConstants;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.util.FileProcessorUtils;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.util.StringUtils;
 
@@ -247,7 +248,7 @@ public class FtexEvaluator implements ExprEvaluator {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         context.newChild().processStream(
                 new ByteArrayInputStream(value.getBytes()),
-                baos, "text/plain");
+                baos, MimeTypeConstants.PLACEHOLDER_DOLLARS);
         return baos.toString();
     }
 

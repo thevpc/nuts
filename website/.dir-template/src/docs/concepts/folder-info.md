@@ -6,4 +6,5 @@ order: 2
 ---
 
 # Nuts Concepts
-This is an introduction for Nuts Concepts
+```nuts``` introduces a set of unique concepts that are important to leverage. These concepts are 
+mainly introduced for portability and repeatability.

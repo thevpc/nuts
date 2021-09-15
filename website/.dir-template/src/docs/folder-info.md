@@ -5,4 +5,4 @@ order: 1
 ---
 
 # Introduction
-This is an introduction
+This is an introduction of Document

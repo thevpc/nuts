@@ -4,32 +4,32 @@ module.exports = {
          'intro/introduction',
          'intro/nutsAndMaven',
          'intro/installation',
+         'intro/license',
+         'intro/changelog',
       ],
       'Getting Started': [
-         'info/changelog',
-         'info/faq',
-         'info/license',
          'info/running',
+         'info/faq',
          'info/troubleshooting',
       ],
       'Nuts Concepts': [
          'concepts/aliases',
+         'concepts/automation',
          'concepts/commandline',
-         'concepts/projects',
-      ],
-      'Advanced Features': [
-         'advanced/automation',
-         'advanced/filesystem',
-         'advanced/doc1',
+         'concepts/filesystem',
+         'concepts/nutsPath',
+         'concepts/doc1',
       ],
       'Commands': [
          'cmd/install-cmd',
       ],
       'Application Framework': [
-         'dev/building',
          'dev/nutsApp',
-         'dev/nutsPath',
       ],
       'API Documentation': [],
+      'Contributing': [
+         'contributing/building',
+         'contributing/projects',
+      ],
    }
 };

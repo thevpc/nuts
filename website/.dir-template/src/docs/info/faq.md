@@ -2,10 +2,13 @@
 id: faq
 title: Frequently Asked Questions
 sidebar_label: Frequently Asked Questions
+order: 3
 ---
-${include($"${resources}/header.md")}
+${{include($"${resources}/header.md")}}
 
-## Why do we need a package manager for Java. Isn't **Maven** enough?
+## Why not maven?
+or, "Why do we need a package manager for Java. Isn't **Maven** enough?".
+
 Please read [Nuts Introduction, Why and What for](../intro/nuts-and-maven.md).
 In few words maven manages dependencies to build applications, nuts uses maven dependencies system to install applications.
 
@@ -19,11 +22,10 @@ Hence the name.
 
 
 ## Does nuts support only jar packaging
-Not only. **```nuts```** supports all packagings supported by maven. 
+Not only. **```nuts```** supports all types of packaging, particularly, those supported by maven. 
 This includes  pom , jar , maven-plugin , ejb , war , ear , rar.
-However **```nuts```** is also intended to support any "thing" including "exe" ,"dll", "so", "zip" files, etc.
-**```nuts```** differs from maven as it defines other properties to the artifact descriptor (aka pom in maven) : os (operating system), 
-arch (hardware architecture), osdist (relevant for linux for instance : opensuse, ubuntu) and platform (relevant to vm platforms like java vm, dotnet clr, etc).
+**```nuts```** is also intended to support any "thing" including "exe" ,"dll", "so", "zip" files, etc.
+**```nuts```** differs from maven as it defines other properties to the artifact descriptor (aka pom in maven) : os (operating system), arch (hardware architecture), osdist (relevant for linux for instance : opensuse, ubuntu) and platform (relevant to vm platforms like java vm, dotnet clr, etc).
 Such properties are queried to download the most appropriate binaries for the the current environment.
 
 
@@ -33,33 +35,38 @@ You can drop me an email (see my github profile email) to add you as contributor
 You can also open a new issue for feature implementation to invite any other contributor to implement that feature (or even implement it your self).
 
 ## Where can I find Documentation about the Project
-Mainly all of the documentation car be found in 2 places:
+Mainly all of the documentation can be found in 2 places:
 
 * this website: it includes both user documentation and javadocs (code documentation)
 * each command help option. when you type 
-  ```sh 
+
+```sh 
   nuts --help
   ``` 
-  or 
+ 
+or 
+
   ```sh 
   nsh --help
   ``` 
+
   you will get more details on nuts or on the tool (here nsh)
 
 ## How can I make my application "Nuts aware"
 If by **```nuts```** aware you mean that you would download your application and run it using **```nuts```**, then you just need to create the application using maven and deploy your application to the public maven central.
 Nothing really special is to be done from your side. You do not have to use plugins like 'maven-assembly-plugin' and 'maven-shade-plugin' to include your dependencies.
-Or, you can also use NAF (**```nuts```** Application Framework) make your application full featured "Nuts aware" application.
+Or, you can also use NAF (**```nuts```** Application Framework) to make your application full featured "Nuts aware" application.
 
-## Why should I consider implementing my terminal application using Nuts Application Framework (NAF)
+## Why Nuts Application Framework (NAF)
+or, "Why should I consider implementing my terminal application using Nuts Application Framework (NAF)?"
 First of all, NAF is a simple 300k jar so for what it provided to you, you would be surprised. 
 Indeed, implementing your application using NAF will provide you a clean way to :
 
 * seamless integration with **```nuts```** and all other NAF applications (obviously!)
 
-* support standard file system layout (XDG) where config files and log files are not necessarily in the same folder see [Nuts File System](../advanced/filesystem.md) for more details.
+* support standard file system layout (XDG) where config files and log files are not necessarily in the same folder see [Nuts File System](../concepts/filesystem.md) for more details.
 
-* support application life cycle events (onInstall, onUninstall, onUpgrade), 
+* support application life cycle events (onInstall, onUninstall, onUpdate), 
 
 * standard support of command line arguments
 
@@ -67,7 +74,7 @@ Indeed, implementing your application using NAF will provide you a clean way to 
 
 * terminal coloring, and terminal components (progress bar, etc...)
 
-* json,xml,table,tree and plain format support out of the box as output to all your commands
+* json, yaml, xml, table, tree and plain format support out of the box as output to all your commands
 
 * pipe manipulation when calling sub processes
 

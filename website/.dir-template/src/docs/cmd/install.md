@@ -3,7 +3,7 @@ id: install-cmd
 title: Install Command
 sidebar_label: Install Command
 ---
-${include($"${resources}/header.md")}
+${{include($"${resources}/header.md")}}
 
 ## Purpose
 The install command is used to install or reinstall packages.

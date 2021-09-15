@@ -44,10 +44,13 @@ On Linux, Unix, MacOS and any POSIX System the default locations are :
         * run      : "/run/user/$USER_ID/nuts"
 
 As an example, the configuration folder for the artifact net.vpc.app:netbeans-launcher#1.2.4 in the default workspace in a Linux environment is
+
 ```
 home/me/.config/nuts/default-workspace/config/id/net/vpc/app/netbeans-launcher/1.2.4/
 ```
+
 And the log file "app.log" for the same artifact in the workspace named "personal" in a Windows environment is located at
+
 ```
 C:/Users/me/AppData/Roaming/nuts/log/nuts/personal/config/id/net/vpc/app/netbeans-launcher/1.2.4/app.log
 ```
@@ -61,38 +64,50 @@ In **Exploded strategy**  **```nuts```** defines top level folders (in linux ~/.
 The **Standalone strategy**   is indeed provided mainly for Roaming workspaces that can be shared, copied, moved to other locations. A single root folder will contain all of the Store Locations.
 
 As an example, in "Standalone Strategy", the configuration folder for the artifact net.vpc.app:netbeans-launcher#1.2.4 in the default workspace in a Linux environment is
+
 ```
 home/me/.config/nuts/default-workspace/config/id/net/vpc/app/netbeans-launcher/1.2.4/
 ```
+
 And the log file "app.log" for the same artifact in the workspace named "personal" in the same Linux environment is located at
+
 ```
 /home/me/.config/nuts/default-workspace/log/id/net/vpc/app/netbeans-launcher/1.2.4/
 ```
+
 You can see here that the following folder will contain ALL the data files of the workspace.
+
 ```
 /home/me/.config/nuts/default-workspace
 ```
+
 whereas in the **Exploded strategy** the Store Location are "exploded" into multiple root folders.
 
 ## Custom Store Locations
-Of course, your able to configure separately each Store Location to meet your needs.
+Of course, you are able to configure separately each Store Location to meet your needs.
 
 ### Selecting strategies
 The following command will create an exploded workspace
+
 ```
 nuts -w my-workspace --exploded
 ```
 
-The following comman will create an standalone workspace
+The following command will create a standalone workspace
+
 ```
 nuts -w my-workspace --standalone
 ```
+
 ### Finer Customization
 The following command will create an exploded workspace and moves all config files to the SSD partition folder /myssd/myconfig
+
 ```
 nuts -w my-workspace --system-config-home=/myssd/myconfig
 ```
+
 You can type help for more details.
+
 ```
 nuts help
 ```

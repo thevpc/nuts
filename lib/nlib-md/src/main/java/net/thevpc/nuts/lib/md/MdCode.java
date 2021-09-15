@@ -25,14 +25,20 @@ import java.util.Objects;
  */
 public class MdCode extends MdAbstractElement {
 
+    private String type;
     private String language;
     private String value;
     private boolean inline;
 
-    public MdCode(String code, String value, boolean inline) {
-        this.language = code==null?"":code;
+    public MdCode(String type,String language, String value, boolean inline) {
+        this.type = type;
+        this.language = language==null?"":language;
         this.value = value;
         this.inline = inline;
+    }
+
+    public String getType() {
+        return type;
     }
 
     public boolean isInline() {
@@ -56,11 +62,11 @@ public class MdCode extends MdAbstractElement {
     public String toString() {
         if(inline){
             String lang=language+((language.length()>0)?" ":"");
-            return "```" + lang + value + "```";
+            return type + lang + value + type;
         }
-        return "```" + language + "\n"
+        return type + language + "\n"
                 + value + "\n"
-                + "```";
+                + type;
     }
     @Override
     public boolean isEndWithNewline() {

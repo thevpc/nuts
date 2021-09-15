@@ -228,8 +228,8 @@ public class NOpenAPIService {
             for (NutsElementEntry ee : entries.getObject("components").getObject("headers")) {
                 table.addRows(
                         MdFactory.row().addCells(
-                                MdFactory.code("", ee.getKey() + (ee.getValue().asObject().getBoolean("deprecated") ? " (DEPRECATED)" : "")),
-                                MdFactory.code("", ee.getValue().asObject().getObject("schema").getString("type")),
+                                MdFactory.codeBacktick3("", ee.getKey() + (ee.getValue().asObject().getBoolean("deprecated") ? " (DEPRECATED)" : "")),
+                                MdFactory.codeBacktick3("", ee.getValue().asObject().getObject("schema").getString("type")),
                                 MdFactory.text(ee.getValue().asObject().getBoolean("required") ? "required" : ""),
                                 MdFactory.text(ee.getValue().asObject().getString("description"))
                         )
@@ -253,8 +253,8 @@ public class NOpenAPIService {
                                 )
                                 .addRows(MdFactory.row()
                                         .addCells(
-                                                MdFactory.code("", ee.getValue().asObject().getString("name")),
-                                                MdFactory.code("", ee.getValue().asObject().getString("in").toUpperCase())
+                                                MdFactory.codeBacktick3("", ee.getValue().asObject().getString("name")),
+                                                MdFactory.codeBacktick3("", ee.getValue().asObject().getString("in").toUpperCase())
                                         ))
                                 .build()
                         );
@@ -324,7 +324,7 @@ public class NOpenAPIService {
                 all.add(MdFactory.title(3, method.toUpperCase() + " " + url));
                 all.add(MdFactory.text(call.getString("summary")));
                 all.add(
-                        MdFactory.code("", "[" + method.toUpperCase() + "] " + url)
+                        MdFactory.codeBacktick3("", "[" + method.toUpperCase() + "] " + url)
                 );
                 all.add(MdFactory.text(call.getString("description")));
                 all.add(MdFactory.title(4, "REQUEST"));
@@ -340,8 +340,8 @@ public class NOpenAPIService {
                             headerParameters.stream().map(
                                     headerParameter -> new MdRow(
                                             new MdElement[]{
-                                                MdFactory.code("", headerParameter.asObject().getString("name")),
-                                                MdFactory.code("", headerParameter.asObject().getString("type")),
+                                                MdFactory.codeBacktick3("", headerParameter.asObject().getString("name")),
+                                                MdFactory.codeBacktick3("", headerParameter.asObject().getString("type")),
                                                 MdFactory.text(headerParameter.asObject().getBoolean("required") ? "required" : ""),
                                                 MdFactory.text(headerParameter.asObject().getString("description"))
                                             }, false
@@ -360,8 +360,8 @@ public class NOpenAPIService {
                             queryParameters.stream().map(
                                     headerParameter -> new MdRow(
                                             new MdElement[]{
-                                                MdFactory.code("", headerParameter.asObject().getString("name")),
-                                                MdFactory.code("", headerParameter.asObject().getString("type")),
+                                                MdFactory.codeBacktick3("", headerParameter.asObject().getString("name")),
+                                                MdFactory.codeBacktick3("", headerParameter.asObject().getString("type")),
                                                 MdFactory.text(headerParameter.asObject().getBoolean("required") ? "required" : ""),
                                                 MdFactory.text(headerParameter.asObject().getString("description"))
                                             }, false
@@ -378,7 +378,7 @@ public class NOpenAPIService {
                     for (NutsElementEntry ii : r) {
                         all.add(MdFactory.title(5, "REQUEST BODY - " + ii.getKey() + (required ? " [required]" : "")));
                         all.add(MdFactory.text(desc));
-                        all.add(MdFactory.code("javascript", toCode(ii.getValue(), "")));
+                        all.add(MdFactory.codeBacktick3("javascript", toCode(ii.getValue(), "")));
                     }
                 }
 
@@ -391,7 +391,7 @@ public class NOpenAPIService {
                             all.add(MdFactory.text(v.asObject().getString("description")));
                             for (NutsElementEntry content : v.asObject().getObject("content")) {
                                 all.add(MdFactory.title(6, "RESPONSE MODEL - " + content.getKey()));
-                                all.add(MdFactory.code("javascript", toCode(content.getValue(), "")));
+                                all.add(MdFactory.codeBacktick3("javascript", toCode(content.getValue(), "")));
                             }
                         });
             }

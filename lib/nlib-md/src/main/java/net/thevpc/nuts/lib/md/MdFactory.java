@@ -68,11 +68,17 @@ public class MdFactory {
         return seq(true, arr);
     }
 
-    public static MdElement code(String lang, String code) {
-        return new MdCode(lang,code,false);
+
+    public static MdElement codeBacktick1(String lang, String code) {
+        return new MdCode("`",lang,code,code.indexOf('\n')<0);
     }
-    public static MdElement codeInline(String code) {
-        return new MdCode("",code,true);
+
+    public static MdElement codeBacktick3(String lang, String code) {
+        return new MdCode("```",lang,code,code.indexOf('\n')<0);
+    }
+
+    public static MdElement codeBacktick3(String lang, String code,boolean inline) {
+        return new MdCode("```",lang,code,inline);
     }
 
     public static MdElement title(int depth, String e) {

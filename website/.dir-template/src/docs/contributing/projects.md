@@ -4,7 +4,7 @@ title: Repository Structure
 sidebar_label: Nuts Projects
 ---
 
-${include($"${resources}/header.md")}
+${{include($"${resources}/header.md")}}
 
 **```nuts```** repository is composed of several projects that can be organized in 5 categories
 
@@ -139,11 +139,15 @@ This includes : **nutsc** (a native c bootstrapper) and **nuts-installer** (a **
 ## Honorable mentions
 Although not included in this Git repository some other tools are based on **```nuts```** and hence are installable using ```nuts install the-app``` command. Those tools are published in other repositories.
 
-### **netbeans-launcher** : this tool supports installation and launch of multiple netbeans instances in parallel. See [Netbeans Launcher GitHub Repository](https://github.com/thevpc/netbeans-launcher)
+### **netbeans-launcher** 
+this tool supports installation and launch of multiple netbeans instances in parallel. See [Netbeans Launcher GitHub Repository](https://github.com/thevpc/netbeans-launcher)
 
-### **pnote** : this tool is a multi purpose, developer oriented, Note taking application. See [Pangaea Note](https://github.com/thevpc/pangaea-note)
+### **pnote**
+this tool is a multi purpose, developer oriented, Note taking application. See [Pangaea Note](https://github.com/thevpc/pangaea-note)
 
-### **upa-box** : this tool supports creation of UPA aware projects. UPA is a non structured ORM for the Java Language. See [Netbeans Launcher GitHub Repository](https://github.com/thevpc/upa)
+### **upa-box**
+this tool supports creation of UPA aware projects. UPA is a non structured ORM for the Java Language. See [Netbeans Launcher GitHub Repository](https://github.com/thevpc/upa)
 
-### **vr-box** : this tool supports creation of VR aware projects. VR is a web portal framework. See [Netbeans Launcher GitHub Repository](https://github.com/thevpc/vr)
+### **vr-box**
+this tool supports creation of VR aware projects. VR is a web portal framework. See [Netbeans Launcher GitHub Repository](https://github.com/thevpc/vr)
 

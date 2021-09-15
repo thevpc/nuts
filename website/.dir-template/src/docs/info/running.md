@@ -2,9 +2,10 @@
 id: running
 title: Running Nuts
 sidebar_label: Running Nuts
+order: 1
 ---
 
-${include($"${resources}/header.md")}
+${{include($"${resources}/header.md")}}
 
 ## Running a deployed artifact
 You can run any jar using **```nuts```** as far as the jar is accessible from one of the supported repositories.

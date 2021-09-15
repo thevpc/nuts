@@ -48,9 +48,14 @@ public class FileTemplater {
     };
 
     static {
-        globalProcessorsByMimeType.put(MimeTypeConstants.PLACEHOLDER_DOLLARS, new StreamToTemplateProcessor(DollarVarStreamProcessor.INSTANCE));
-        globalProcessorsByMimeType.put(MimeTypeConstants.ANY_TEXT, new StreamToTemplateProcessor(DollarVarStreamProcessor.INSTANCE));
-        globalProcessorsByMimeType.put("application/x-shellscript", new StreamToTemplateProcessor(DollarBracket2VarStreamProcessor.INSTANCE));
+        registerGlobalProcessorByMimeType(DollarVarStreamProcessor.INSTANCE,MimeTypeConstants.PLACEHOLDER_DOLLARS);
+        registerGlobalProcessorByMimeType(DollarBracket2VarStreamProcessor.INSTANCE,
+                MimeTypeConstants.ANY_TEXT,
+                "application/x-shellscript",
+                "application/json",
+                "application/javascript",
+                "application/java"
+        );
         globalProcessorsByMimeType.put(MimeTypeConstants.ANY_TYPE, DEFAULT_PROCESSOR);
         globalExecProcessorsByMimeType.put(MimeTypeConstants.FTEX, FTEX_PROCESSOR);
         globalExecProcessorsByMimeType.put(MimeTypeConstants.IGNORE, IGNORE_PROCESSOR);
@@ -109,6 +114,18 @@ public class FileTemplater {
     public FileTemplater(FileTemplater parent) {
         this(parent.session);
         this.parent = parent;
+    }
+
+    public static void registerGlobalProcessorByMimeType(TemplateProcessor p, String... mimetypes) {
+        for (String mimetype : mimetypes) {
+            globalProcessorsByMimeType.put(mimetype, p);
+        }
+    }
+
+    public static void registerGlobalProcessorByMimeType(StreamProcessor p, String... mimetypes) {
+        for (String mimetype : mimetypes) {
+            globalProcessorsByMimeType.put(mimetype, new StreamToTemplateProcessor(p));
+        }
     }
 
     private static Path workingPath(Path p) {

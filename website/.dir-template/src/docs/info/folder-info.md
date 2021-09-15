@@ -5,4 +5,4 @@ sidebar_label: Getting Started
 order: 2
 ---
 
-This is an introduction for Getting Started
+In this section we will consider the simplest usage of `nuts` package manager.

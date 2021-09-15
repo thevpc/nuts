@@ -80,7 +80,7 @@ public class TextReader {
                     return GlobberRet.ACCEPT;
                 }
                 if (m.hitEnd()) {
-                    return GlobberRet.HIT_END;
+                    return GlobberRet.WAIT_FOR_MORE;
                 }
                 return GlobberRet.REJECT_LAST;
             }
@@ -242,10 +242,13 @@ public class TextReader {
         int r;
         while ((r = readChar()) > 0) {
             GlobberRet a = whileCond.accept(sb, (char) r);
-            if (a == GlobberRet.ACCEPT) {
+            if (a == GlobberRet.ACCEPT_END) {
+                sb.append(((char) r));
+                return sb.toString();
+            }else if (a == GlobberRet.ACCEPT) {
                 sb.append(((char) r));
                 lastAccept = sb.toString();
-            } else if (a == GlobberRet.HIT_END) {
+            } else if (a == GlobberRet.WAIT_FOR_MORE) {
                 sb.append(((char) r));
             } else if (a == GlobberRet.REJECT_ALL) {
                 unread(r);
@@ -304,7 +307,7 @@ public class TextReader {
                     if (len + 1 >= finalMin) {
                         return GlobberRet.ACCEPT;
                     }
-                    return GlobberRet.HIT_END;
+                    return GlobberRet.WAIT_FOR_MORE;
                 } else {
                     return GlobberRet.REJECT_LAST;
                 }
@@ -326,7 +329,7 @@ public class TextReader {
                     if (len + 1 >= finalMin) {
                         return GlobberRet.ACCEPT;
                     }
-                    return GlobberRet.HIT_END;
+                    return GlobberRet.WAIT_FOR_MORE;
                 } else {
                     return GlobberRet.REJECT_LAST;
                 }
@@ -540,10 +543,11 @@ public class TextReader {
 
 
     public enum GlobberRet {
+        ACCEPT_END,
         ACCEPT,
         REJECT_LAST,
         REJECT_ALL,
-        HIT_END,
+        WAIT_FOR_MORE,
     }
 
     public interface Globber {
@@ -570,63 +574,63 @@ public class TextReader {
                             return GlobberRet.REJECT_LAST;
                         case '(': {
                             pars++;
-                            return GlobberRet.HIT_END;
+                            return GlobberRet.WAIT_FOR_MORE;
                         }
                         case '{': {
                             acc++;
-                            return GlobberRet.HIT_END;
+                            return GlobberRet.WAIT_FOR_MORE;
                         }
                         case '[': {
                             sqAcc++;
-                            return GlobberRet.HIT_END;
+                            return GlobberRet.WAIT_FOR_MORE;
                         }
                         case ')': {
                             pars--;
                             if (pars == 0 && acc == 0 && sqAcc == 0) {
                                 return GlobberRet.ACCEPT;
                             }
-                            return GlobberRet.HIT_END;
+                            return GlobberRet.WAIT_FOR_MORE;
                         }
                         case '}': {
                             acc--;
                             if (pars == 0 && acc == 0 && sqAcc == 0) {
                                 return GlobberRet.ACCEPT;
                             }
-                            return GlobberRet.HIT_END;
+                            return GlobberRet.WAIT_FOR_MORE;
                         }
                         case ']': {
                             sqAcc--;
                             if (pars == 0 && acc == 0 && sqAcc == 0) {
                                 return GlobberRet.ACCEPT;
                             }
-                            return GlobberRet.HIT_END;
+                            return GlobberRet.WAIT_FOR_MORE;
                         }
                         case '\'': {
                             mode = QUOTE1;
                             wasEscape = false;
-                            return GlobberRet.HIT_END;
+                            return GlobberRet.WAIT_FOR_MORE;
                         }
                         case '"': {
                             mode = QUOTE2;
                             wasEscape = false;
-                            return GlobberRet.HIT_END;
+                            return GlobberRet.WAIT_FOR_MORE;
                         }
                         case '`': {
                             mode = AQUOTE;
                             wasEscape = false;
-                            return GlobberRet.HIT_END;
+                            return GlobberRet.WAIT_FOR_MORE;
                         }
                         default: {
                             if (next > 0x32) {
                                 if (pars == 0 && acc == 0 && sqAcc == 0) {
                                     return GlobberRet.ACCEPT;
                                 }
-                                return GlobberRet.HIT_END;
+                                return GlobberRet.WAIT_FOR_MORE;
                             } else {
                                 if (pars == 0 && acc == 0 && sqAcc == 0) {
                                     return GlobberRet.REJECT_LAST;
                                 }
-                                return GlobberRet.HIT_END;
+                                return GlobberRet.WAIT_FOR_MORE;
                             }
                         }
                     }
@@ -636,7 +640,7 @@ public class TextReader {
                         case '\\': {
                             if (wasEscape) {
                                 wasEscape = false;
-                                return GlobberRet.HIT_END;
+                                return GlobberRet.WAIT_FOR_MORE;
                             } else {
                                 wasEscape = true;
                             }
@@ -645,17 +649,17 @@ public class TextReader {
                         case '\'': {
                             if (wasEscape) {
                                 wasEscape=false;
-                                return GlobberRet.HIT_END;
+                                return GlobberRet.WAIT_FOR_MORE;
                             }else{
                                 mode=PLAIN;
                                 if(pars==0 && acc==0 && sqAcc==0) {
                                     return GlobberRet.ACCEPT;
                                 }
-                                return GlobberRet.HIT_END;
+                                return GlobberRet.WAIT_FOR_MORE;
                             }
                         }
                         default:{
-                            return GlobberRet.HIT_END;
+                            return GlobberRet.WAIT_FOR_MORE;
                         }
                     }
                 }
@@ -664,7 +668,7 @@ public class TextReader {
                         case '\\': {
                             if (wasEscape) {
                                 wasEscape = false;
-                                return GlobberRet.HIT_END;
+                                return GlobberRet.WAIT_FOR_MORE;
                             } else {
                                 wasEscape = true;
                             }
@@ -673,17 +677,17 @@ public class TextReader {
                         case '"': {
                             if (wasEscape) {
                                 wasEscape=false;
-                                return GlobberRet.HIT_END;
+                                return GlobberRet.WAIT_FOR_MORE;
                             }else{
                                 mode=PLAIN;
                                 if(pars==0 && acc==0 && sqAcc==0) {
                                     return GlobberRet.ACCEPT;
                                 }
-                                return GlobberRet.HIT_END;
+                                return GlobberRet.WAIT_FOR_MORE;
                             }
                         }
                         default:{
-                            return GlobberRet.HIT_END;
+                            return GlobberRet.WAIT_FOR_MORE;
                         }
                     }
                 }
@@ -692,7 +696,7 @@ public class TextReader {
                         case '\\': {
                             if (wasEscape) {
                                 wasEscape = false;
-                                return GlobberRet.HIT_END;
+                                return GlobberRet.WAIT_FOR_MORE;
                             } else {
                                 wasEscape = true;
                             }
@@ -701,17 +705,17 @@ public class TextReader {
                         case '`': {
                             if (wasEscape) {
                                 wasEscape=false;
-                                return GlobberRet.HIT_END;
+                                return GlobberRet.WAIT_FOR_MORE;
                             }else{
                                 mode=PLAIN;
                                 if(pars==0 && acc==0 && sqAcc==0) {
                                     return GlobberRet.ACCEPT;
                                 }
-                                return GlobberRet.HIT_END;
+                                return GlobberRet.WAIT_FOR_MORE;
                             }
                         }
                         default:{
-                            return GlobberRet.HIT_END;
+                            return GlobberRet.WAIT_FOR_MORE;
                         }
                     }
                 }

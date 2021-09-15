@@ -1,16 +1,10 @@
 ---
 id: doc1
-title: Style Guide
-sidebar_label: Style Guide
+title: Nuts Text Format
+sidebar_label: Nuts Text Format
 ---
 
-```
-     __        __    
-  /\ \ \ _  __/ /______
- /  \/ / / / / __/ ___/
-/ /\  / /_/ / /_(__  )
-\_\ \/\__,_/\__/____/    version v${apiVersion}
-```
+${{include($"${resources}/header.md")}}
 
 # Nuts Text Format
 **```nuts```** comes up with a simple coloring syntax that helps writing better looking portable command line programs.

@@ -1,7 +1,7 @@
 ---
 id: aliases
-title: Aliases
-sidebar_label: Aliases and Imports
+title: Aliases, Imports & Launchers
+sidebar_label: Aliases, Imports & Launchers
 ---
 
 Aliases, Imports and launchers, are three features in nuts where you can call artifacts with a simple word instead of using the full id. Indeed, usually, artifacts are uniquely identified by groupId, artifactId, version and classifier (whenever applicable). This is kind of cumbersome if most of the cases:
@@ -27,14 +27,14 @@ nuts nsh
 As a matter of fact, there are a couple of imports automatically defined 'net.thevpc' and 'net.thevpc.toolbox' 
 
 ## Aliases
-Aliases help you define your own command by calling existing artifacts and defining some arguments as well. It is very similar to shell aliases where you define 'll' as and alias to '/bin/ls -l' for example.
+Aliases help you define your own command by calling existing artifacts and defining some arguments as well. It is very similar to shell aliases where you define `ll` as an alias to `/bin/ls -l` for example.
 
 ```bash
 nuts net.thevpc.toolbox.nsh:nsh#0.8.3.0
 # becomes
-nuts settings add alias nshl='net.thevpc.toolbox.nsh:nsh#0.8.3.0 --list'
+nuts settings add alias ll='net.thevpc.toolbox.nsh:nsh#0.8.3.0 -c ls -l'
 # now call it simply with
-nuts nshl
+nuts ll
 ```
 
 ## Launchers
@@ -44,7 +44,6 @@ Launchers help you define your own system command by calling nuts with existing 
 ```bash
 nuts net.thevpc.toolbox.nsh:nsh#0.8.3.0
 # becomes
-nuts settings add launcher -- nshl='net.thevpc.toolbox.nsh:nsh#0.8.3.0 --list'
-# now call it simply with
-nuts nshl
+nuts settings add launcher --menu --desktop 'net.thevpc.toolbox.nsh:nsh#0.8.3.0'
+# now call it simply click on the desktop icon or open via system menu
 ```

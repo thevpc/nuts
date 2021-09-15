@@ -2,9 +2,10 @@
 id: troubleshooting
 title: Troubleshooting
 sidebar_label: Troubleshooting
+order: 5
 ---
 
-${include($"${resources}/header.md")}
+${{include($"${resources}/header.md")}}
 
 Whenever installation fails, it is more likely there is a mis-configuration or invalid libraries bundles used. You may have to options
 to circumvent this which are two levels or workspace reinitialization.
@@ -15,7 +16,7 @@ libraries for them to be downloaded later and searches for a valid nuts installa
 do a forced update). To run nuts in recover mode type :
 
 ```
-nuts --recover
+nuts -z
 ```
 
 ## newer mode
@@ -32,22 +33,22 @@ invoke this unless your are really knowing what you are doing.
 To run nuts in reset mode type :
 
 ```
-nuts --reset
+nuts -Z
 ```
 
 ## kill mode
 **kill mode** is a special variant of reset mode where workspace will not be recreated after deletion. 
-This can be achieved by using a combination of reset mode and --skip-boot (-Q)option. Do not ever
-invoke it unless you are really knowing what you are doing. To run nuts in reset mode type :
+This can be achieved by using a combination of reset mode and --skip-boot (-Q) option. Do not ever
+invoke it unless you are really knowing what you are doing. To run nuts in kill mode type :
 
-To run nuts in prune mode type :
+To run nuts in kill mode type :
 ```
-nuts --reset -Q
+nuts -ZQ
 ```
 
 ## After invoking reset mode
-After invoking reset mode, nuts commands (installed by nuts settings) will not be available anymore. 
-you should use the jar based invocation at least once to reinstall these commands.
+After invoking reset mode, nuts shell launchers (installed by nuts settings) will not be available anymore. 
+PATH environment will point (temporarily) to a non existing folder. You should use the jar based invocation at least once to reinstall these commands.
 
 ```
 java -jar nuts-0.5.7.jar

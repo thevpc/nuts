@@ -13,7 +13,7 @@ import java.io.StringReader;
 
 public class TestDocusaurusParser {
     @Test
-    public void test() {
+    public void test01() {
         String s = "\n" +
                 "## Where can I find Documentation about the Project\n" +
                 "Mainly all of the documentation car be found in 2 places:\n" +
@@ -34,7 +34,7 @@ public class TestDocusaurusParser {
     }
 
     @Test
-    public void test2() {
+    public void test02() {
         String s = "\n" +
                 "## Where can I find Documentation about the Project\n" +
                 "Mainly all of the documentation car be found in 2 places:\n" +
@@ -55,7 +55,7 @@ public class TestDocusaurusParser {
     }
 
     @Test
-    public void test3() {
+    public void test03() {
 //        String s="* **config** : defines the" ;
 //        String s="id: install-cmd" ;
 //        String s="id_test: _install_" ;
@@ -71,7 +71,7 @@ public class TestDocusaurusParser {
     }
 
     @Test
-    public void test4() {
+    public void test04() {
 //        String file="/data/git/nuts/website/.dir-template/src/docs/intro/installation.md";
 //        String file="/data/git/nuts/website/.dir-template/src/docs/cmd/install.md";
         String file = "/data/git/nuts/website/.dir-template/src/docs/intro/nuts-and-maven.md";
@@ -87,7 +87,7 @@ public class TestDocusaurusParser {
     }
 
     @Test
-    public void test9() {
+    public void test09() {
         String s = "* one\n" +
                 "* two\n";
         MdParser parser = new DocusaurusMdParser(new StringReader(s));
@@ -107,7 +107,7 @@ public class TestDocusaurusParser {
     }
 
     @Test
-    public void test8() {
+    public void test08() {
         String s = "* each command help option. when you type \n" +
                 "  ```sh \n" +
                 "  nuts --help\n" +
@@ -137,7 +137,7 @@ public class TestDocusaurusParser {
     }
 
     @Test
-    public void test5() {
+    public void test05() {
         String s = "---\n" +
                 "Here are all **```nuts```** requirements :";
         MdParser parser = new DocusaurusMdParser(new StringReader(s));
@@ -146,7 +146,7 @@ public class TestDocusaurusParser {
     }
 
     @Test
-    public void test6() {
+    public void test06() {
         String s = "---\n" +
                 "id: filesystem\n" +
                 "title: File system\n" +
@@ -258,7 +258,7 @@ public class TestDocusaurusParser {
     }
 
     @Test
-    public void test7() {
+    public void test07() {
         MdElementAndChildrenList li = new MdElementAndChildrenList();
         li.add(new MdTitle("##", MdText.phrase("Title 1"), 2));
         li.add(MdText.phrase("description 1"));
@@ -283,4 +283,18 @@ public class TestDocusaurusParser {
         w.flush();
         Assertions.assertTrue(r.isBody() && r.asBody().size() == 3);
     }
+
+    @Test
+    public void test11() {
+        String s = "Removing the `-Z` flag if you do not want to reset the workspace.\n" +
+                "```\n" +
+                "NVER=${{stableApiVersion}} && wget https://repo.maven.apache.org/maven2\\\n" +
+                "/net/thevpc/nuts/nuts/$NVER/nuts-$NVER.jar && java -jar \\\n" +
+                "      nuts-$NVER.jar -Zy && . ~/.bashrc\n" +
+                "```\n";
+        MdParser parser = MdFactory.createParser("docusaurus", new StringReader(s));
+        MdElement e = parser.parse();
+        System.out.println(e);
+    }
+
 }

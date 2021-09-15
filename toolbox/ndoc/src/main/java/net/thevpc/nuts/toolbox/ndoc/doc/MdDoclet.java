@@ -90,7 +90,7 @@ public class MdDoclet /*extends Doclet*/ {
                 : tcd.getCls().isEnum() ? "enum"
                 : tcd.getCls().isRecord() ? "record"
                 : "class";
-        seq.add(MdFactory.code("java", tcd.getCls().modifiers() + " " + classType + " " + tcd.getCls().qualifiedName()));
+        seq.add(MdFactory.codeBacktick3("java", tcd.getCls().modifiers() + " " + classType + " " + tcd.getCls().qualifiedName()));
         if (tcd.getCls().comments() != null) {
             seq.add(tcd.getCls().comments().getDescription());
         }
@@ -199,7 +199,7 @@ public class MdDoclet /*extends Doclet*/ {
             seq.add(mem.commentText().getDescription());
         }
         seq.add(MdFactory.br());
-        seq.add(MdFactory.code("java", sig(mem, true, true)));
+        seq.add(MdFactory.codeBacktick3("java", sig(mem, true, true)));
 
         JDParameter[] params = mem.parameters();
         for (JDParameter param : params) {
@@ -235,7 +235,7 @@ public class MdDoclet /*extends Doclet*/ {
         }
         return MdFactory.seq(
                 MdFactory.title(4, icon + " " + mem.name()),
-                MdFactory.code("java", mem.modifiers() + " " + stype(mem.type()) + " " + mem.name() + (mem.constantValueExpression() == null ? "" : (" = " + mem.constantValueExpression())))
+                MdFactory.codeBacktick3("java", mem.modifiers() + " " + stype(mem.type()) + " " + mem.name() + (mem.constantValueExpression() == null ? "" : (" = " + mem.constantValueExpression())))
         );
     }
 
@@ -296,7 +296,7 @@ public class MdDoclet /*extends Doclet*/ {
         } else {
             throw new IllegalArgumentException("Should never happen");
         }
-        seq.add(MdFactory.code("java", code.toString()));
+        seq.add(MdFactory.codeBacktick3("java", code.toString()));
         return MdFactory.seq(seq);
     }
 

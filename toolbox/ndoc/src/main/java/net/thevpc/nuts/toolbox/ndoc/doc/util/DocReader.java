@@ -47,7 +47,7 @@ public class DocReader {
             JavadocInlineTag ee = (JavadocInlineTag) e;
             switch (ee.getType()) {
                 case CODE: {
-                    all.add(new MdCode(ee.getName(), ee.getContent(), true));
+                    all.add(MdFactory.codeBacktick3(ee.getName(), ee.getContent(),true));
                     break;
                 }
                 case LINK: {
@@ -59,7 +59,7 @@ public class DocReader {
                     break;
                 }
                 case LITERAL: {
-                    all.add(new MdCode(ee.getName(), ee.getContent(), true));
+                    all.add(MdFactory.codeBacktick3(ee.getName(), ee.getContent(),true));
                     break;
                 }
                 case VALUE: {
@@ -67,7 +67,7 @@ public class DocReader {
                     break;
                 }
                 case SYSTEM_PROPERTY: {
-                    all.add(new MdCode(ee.getName(), ee.getContent(), true));
+                    all.add(MdFactory.codeBacktick3(ee.getName(), ee.getContent(),true));
                     break;
                 }
                 case DOC_ROOT: {
@@ -175,13 +175,13 @@ public class DocReader {
                 return new MdItalic(xml.getContent());
             }
             case "pre": {
-                return new MdCode("", xml.getContent().toString(), false);
+                return MdFactory.codeBacktick3("", xml.getContent().toString(),false);
             }
             case "code": {
-                return new MdCode("", xml.getContent().toString(), false);
+                return MdFactory.codeBacktick3("", xml.getContent().toString(),false);
             }
             case "tt": {
-                return new MdCode("", xml.getContent().toString(), true);
+                return MdFactory.codeBacktick3("", xml.getContent().toString(),true);
             }
             case "br": {
                 return new MdBr();

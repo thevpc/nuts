@@ -5,7 +5,7 @@ sidebar_label: Nuts and Maven
 order: 2
 ---
 
-${include($"${resources}/header.md")}
+${{include($"${resources}/header.md")}}
 
 ## You'd still be Maven, yet you gonna be Nuts
 Is there any package manager for Java(TM) applications? You can google for it and you will find that many have 
@@ -47,10 +47,10 @@ So you'd still be maven, yet you gonna be **```nuts```**.
 ## Nuts Package manager
 **```nuts```** is actually :
 + a transitive dependency resolution manager
-+ package manager (backports maven and supports maven repositories)
-+ automation tool
-+ feature rich toolset
-+ application framework
++ a package manager (backports maven and supports maven repositories)
++ an automation tool
++ a feature rich toolset
++ an application framework
 + decentralized
 + sandbox based
 
@@ -132,7 +132,7 @@ wire where things resolve here to any piece of software depending (or not) on ot
 we start by opening a new terminal (termm, konsole or whatever you prefer) then download **```nuts```** using this command : 
 On linux/MacOS system we issue :
 ```
-wget https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/${apiVersion}/nuts-${apiVersion}.jar
+wget https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/${{apiVersion}}/nuts-${{apiVersion}}.jar
 ```
 
 Let's check that java is installed :
@@ -142,7 +142,7 @@ java --version
 
 Now we run **```nuts```**
 ```
-java -jar nuts-${apiVersion}.jar -zy
+java -jar nuts-${{apiVersion}}.jar -zy
 ```
 We used the flags ```-y``` to auto-confirm and ```-z``` to ignore cached binaries (combined here as ```-zy```). 
 These flags are not required. We use them here to make installation work in all cases.

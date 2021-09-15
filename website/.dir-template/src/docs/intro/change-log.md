@@ -2,8 +2,9 @@
 id: changelog
 title: Change Log
 sidebar_label: Change Log
+order: 50
 ---
-${include($"${resources}/header.md")}
+${{include($"${resources}/header.md")}}
 
 View Official releases [here](https://github.com/thevpc/nuts/releases) :
 Starred releases are most stable ones.

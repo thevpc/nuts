@@ -7,4 +7,4 @@ type: {"name":"javadoc","sources": ["../../../../../core/nuts"]}
 ---
 
 # API Documentation
-This is an introduction
+This is an introduction of API Documentation
