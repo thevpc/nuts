@@ -20,9 +20,9 @@ public class RunningTomcat {
         NutsArgument a=null;
         while(cmdline.hasNext()){
             if((a=cmdline.nextString("-Dcatalina.home"))!=null) {
-                home = a.getStringValue();
+                home = a.getValue().getString();
             }else if((a=cmdline.nextString("-Dcatalina.base"))!=null){
-                base=a.getStringValue();
+                base=a.getValue().getString();
             }else{
                 cmdline.skip();
             }

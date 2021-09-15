@@ -36,9 +36,9 @@ import java.util.Map;
  * @since 0.1.0
  * @app.category Descriptor
  */
-public interface NutsId extends NutsTokenFilter, Serializable, Comparable<NutsId>,NutsFormattable {
+public interface NutsId extends /*NutsTokenFilter, Serializable,*/ Comparable<NutsId>,NutsFormattable {
 
-    static NutsId parse(String value,NutsSession session){
+    static NutsId of(String value, NutsSession session){
         NutsApiUtils.checkSession(session);
         return session.getWorkspace().id().parser().parse(value);
     }
@@ -50,41 +50,41 @@ public interface NutsId extends NutsTokenFilter, Serializable, Comparable<NutsId
      */
     boolean equalsShortName(NutsId other);
 
-    /**
-     * non null group id token
-     * @return non null group id token
-     */
-    NutsTokenFilter groupIdToken();
+//    /**
+//     * non null group id token
+//     * @return non null group id token
+//     */
+//    NutsTokenFilter groupIdToken();
+//
+//    /**
+//     * non null properties query token
+//     * @return non null properties query token
+//     */
+//    NutsTokenFilter propertiesToken();
+//
+//    /**
+//     * non null version token
+//     * @return non null version token
+//     */
+//    NutsTokenFilter versionToken();
 
-    /**
-     * non null properties query token
-     * @return non null properties query token
-     */
-    NutsTokenFilter propertiesToken();
-
-    /**
-     * non null version token
-     * @return non null version token
-     */
-    NutsTokenFilter versionToken();
-
-    /**
-     * non null artifact id token
-     * @return non null artifact id token
-     */
-    NutsTokenFilter artifactIdToken();
-
-    /**
-     * non null repository non null repository token
-     * @return non null repository non null repository token
-     */
-    NutsTokenFilter repositoryToken();
-
-    /**
-     * non null token filter that searches in all id fields
-     * @return non null token filter that searches in all id fields
-     */
-    NutsTokenFilter anyToken();
+//    /**
+//     * non null artifact id token
+//     * @return non null artifact id token
+//     */
+//    NutsTokenFilter artifactIdToken();
+//
+//    /**
+//     * non null repository non null repository token
+//     * @return non null repository non null repository token
+//     */
+//    NutsTokenFilter repositoryToken();
+//
+//    /**
+//     * non null token filter that searches in all id fields
+//     * @return non null token filter that searches in all id fields
+//     */
+//    NutsTokenFilter anyToken();
 
     /**
      * id face define is a release file type selector of the id.
@@ -203,5 +203,13 @@ public interface NutsId extends NutsTokenFilter, Serializable, Comparable<NutsId
 
     NutsIdFilter filter();
 
+    /**
+     * filter accepted any id with the defined version or greater
+     * @return filter accepted any id with the defined version or greater
+     */
     NutsIdFilter filterCompat();
+
+    boolean isNull();
+
+    boolean isBlank();
 }

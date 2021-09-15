@@ -148,10 +148,10 @@ public class NutsFetchDisplayOptions {
         if (a == null) {
             return false;
         }
-        switch (a.getStringKey()) {
+        switch (a.getKey().getString()) {
             case "-l":
             case "--long": {
-                setDisplayLong(cmdLine.nextBoolean().getBooleanValue());
+                setDisplayLong(cmdLine.nextBoolean().getValue().getBoolean());
                 return true;
             }
             case "--display": {
@@ -197,7 +197,7 @@ public class NutsFetchDisplayOptions {
     }
 
     public static NutsDisplayProperty[] parseNutsDisplayProperty(NutsCommandLine commandLine) {
-        return parseNutsDisplayProperty(commandLine.nextString().getStringValue());
+        return parseNutsDisplayProperty(commandLine.nextString().getValue().getString());
     }
 
     public static NutsDisplayProperty[] parseNutsDisplayProperty(String str) {

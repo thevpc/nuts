@@ -22,7 +22,7 @@ public class PrivateNutsUtilApplication {
         NutsSession session = NutsExceptionBase.detectSession(ex);
         NutsWorkspaceOptionsBuilder bo = null;
         if (session != null) {
-            bo = session.getWorkspace().env().getBootOptions().builder();
+            bo = session.getWorkspace().boot().getBootOptions().builder();
             if(bo.isGui()) {
                 if (!session.getWorkspace().env().isGraphicalDesktopEnvironment()) {
                     bo.setGui(false);

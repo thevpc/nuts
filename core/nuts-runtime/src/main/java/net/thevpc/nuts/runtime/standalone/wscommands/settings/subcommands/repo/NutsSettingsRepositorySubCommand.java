@@ -72,31 +72,31 @@ public class NutsSettingsRepositorySubCommand extends AbstractNutsSettingsSubCom
             while (cmdLine.hasNext()) {
                 NutsArgument a = cmdLine.peek();
                 boolean enabled = a.isEnabled();
-                switch (a.getStringKey()) {
+                switch (a.getKey().getString()) {
                     case "-l":
                     case "--location": {
-                        String val = cmdLine.nextString().getStringValue();
+                        String val = cmdLine.nextString().getValue().getString();
                         if (enabled) {
                             location = val;
                         }
                         break;
                     }
                     case "--name": {
-                        String val = cmdLine.nextString().getStringValue();
+                        String val = cmdLine.nextString().getValue().getString();
                         if (enabled) {
                             repositoryName = val;
                         }
                         break;
                     }
                     case "--type": {
-                        String val = cmdLine.nextString().getStringValue();
+                        String val = cmdLine.nextString().getValue().getString();
                         if (enabled) {
                             repoType = val;
                         }
                         break;
                     }
                     case "--parent": {
-                        String val = cmdLine.nextString().getStringValue();
+                        String val = cmdLine.nextString().getValue().getString();
                         if (enabled) {
                             parent = val;
                         }
@@ -150,16 +150,16 @@ public class NutsSettingsRepositorySubCommand extends AbstractNutsSettingsSubCom
             while (cmdLine.hasNext()) {
                 NutsArgument a = cmdLine.peek();
                 boolean enabled = a.isEnabled();
-                switch (a.getStringKey()) {
+                switch (a.getKey().getString()) {
                     case "--name": {
-                        String val = cmdLine.nextString().getStringValue();
+                        String val = cmdLine.nextString().getValue().getString();
                         if (enabled) {
                             repositoryName = val;
                         }
                         break;
                     }
                     case "--parent": {
-                        String val = cmdLine.nextString().getStringValue();
+                        String val = cmdLine.nextString().getValue().getString();
                         if (enabled) {
                             parent = val;
                         }
@@ -200,9 +200,9 @@ public class NutsSettingsRepositorySubCommand extends AbstractNutsSettingsSubCom
                 while (cmdLine.hasNext()) {
                     NutsArgument a = cmdLine.peek();
                     boolean enabled = a.isEnabled();
-                    switch (a.getStringKey()) {
+                    switch (a.getKey().getString()) {
                         case "--parent": {
-                            String val = cmdLine.nextString().getStringValue();
+                            String val = cmdLine.nextString().getValue().getString();
                             if (enabled) {
                                 parent = val;
                             }
@@ -323,9 +323,9 @@ public class NutsSettingsRepositorySubCommand extends AbstractNutsSettingsSubCom
         while (cmdLine.hasNext()) {
             NutsArgument a = cmdLine.peek();
             boolean enabled = a.isEnabled();
-            switch (a.getStringKey()) {
+            switch (a.getKey().getString()) {
                 case "--name": {
-                    String val = cmdLine.nextString().getStringValue();
+                    String val = cmdLine.nextString().getValue().getString();
                     if (enabled) {
                         repositoryName = val;
                     }

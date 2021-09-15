@@ -553,10 +553,10 @@ public class CoreNutsUtils {
 
     public static NutsContentType readOptionOutputFormat(NutsCommandLine cmdLine) {
         NutsArgument a = cmdLine.peek();
-        switch (a.getStringKey()) {
+        switch (a.getKey().getString()) {
             case "--output-format": {
                 a = cmdLine.nextString();
-                return CoreEnumUtils.parseEnumString(a.getStringValue(), NutsContentType.class, false);
+                return CoreEnumUtils.parseEnumString(a.getValue().getString(), NutsContentType.class, false);
             }
             case "--json": {
                 a = cmdLine.nextString();
@@ -810,7 +810,7 @@ public class CoreNutsUtils {
         Object o = session.getProperty("monitor-allowed");
         NutsWorkspace ws = session.getWorkspace();
         if (o != null) {
-            o = ws.commandLine().create(String.valueOf(o)).next().getBoolean();
+            o = ws.commandLine().create(String.valueOf(o)).next().getAll().getBoolean();
         }
         boolean monitorable = true;
         if (o instanceof Boolean) {
@@ -858,7 +858,7 @@ public class CoreNutsUtils {
             boolean accept = false;
             NutsId a = curr;
             for (String v : expected) {
-                if (NutsId.parse(v, session).filter().acceptId(a, session)) {
+                if (NutsId.of(v, session).filter().acceptId(a, session)) {
                     accept = true;
                     break;
                 }

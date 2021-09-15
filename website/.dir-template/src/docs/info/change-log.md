@@ -10,11 +10,14 @@ Starred releases are most stable ones.
 
 ## nuts 0.8.3.0 (DEVELOPMENT VERSION)
 - ```2021/XX/XX 	nuts 0.8.3.0 (*)``` not released yet [download nuts-0.8.3.jar](http://thevpc.net/nuts.jar)
-- WARNING : {api}  API has evolved with little incompatibilities with previous versions
+- WARNING : {api}  API has evolved with incompatibilities with previous versions
 - CHANGED : {api}  ws.io.expandPath replaced by NutsPath.builder.setExpanded(true)
-- CHANGED : {api}  removed deprecated feature inheritedLog
-- CHANGED : {api}  removed deprecated ClassifierMapping
+- REMOVED : {api}  removed deprecated ClassifierMapping
+- REMOVED : {api}  removed NutsTokenFilter (little to no interest)
+- REMOVED : {api}  removed deprecated feature inheritedLog
+- ADDED   : {api}  NutsVal, a simple wrapper for strings and objects with helpful converters used in args, env, options and properties.
 - CHANGED : {api}  changed descriptor to add maven profiles support, mainly added platform for dependency and added os/platform etc to property
+- ADDED   : {api}  added NutsShellFamily to support bash, csh, and other shell families
 - ADDED   : {pom } add Manifest Entry 'Automatic-Module-Name' in all projects to support j9+ module technology
 - FIXED   : {impl} NutsFormat now creates any missing parent folder when calling print(Path/File) or println(Path/File)
 

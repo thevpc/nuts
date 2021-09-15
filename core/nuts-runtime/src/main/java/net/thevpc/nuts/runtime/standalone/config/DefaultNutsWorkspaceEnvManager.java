@@ -15,7 +15,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
-import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -48,27 +47,9 @@ public class DefaultNutsWorkspaceEnvManager implements NutsWorkspaceEnvManager {
     }
 
     @Override
-    public String getEnv(String property, String defaultValue) {
+    public NutsVal getEnv(String property) {
         checkSession();
-        return model.getEnv(property, defaultValue);
-    }
-
-    @Override
-    public String getEnv(String property) {
-        checkSession();
-        return model.getOption(property);
-    }
-
-    @Override
-    public Integer getEnvAsInt(String property, Integer defaultValue) {
-        checkSession();
-        return model.getEnvAsInt(property, defaultValue);
-    }
-
-    @Override
-    public Boolean getEnvAsBoolean(String property, Boolean defaultValue) {
-        checkSession();
-        return model.getEnvAsBoolean(property, defaultValue);
+        return model.getEnv(property);
     }
 
     @Override
@@ -85,45 +66,9 @@ public class DefaultNutsWorkspaceEnvManager implements NutsWorkspaceEnvManager {
     }
 
     @Override
-    public Integer getPropertyAsInt(String property, Integer defaultValue) {
-        checkSession();
-        return model.getPropertyAsInt(property, defaultValue);
-    }
-
-    @Override
-    public String getPropertyAsString(String property, String defaultValue) {
-        checkSession();
-        return model.getPropertyAsString(property, defaultValue);
-    }
-
-    @Override
-    public Boolean getPropertyAsBoolean(String property, Boolean defaultValue) {
-        checkSession();
-        return model.getPropertyAsBoolean(property, defaultValue);
-    }
-
-    @Override
-    public Object getProperty(String property) {
+    public NutsVal getProperty(String property) {
         checkSession();
         return model.getProperty(property);
-    }
-
-    @Override
-    public <T> T getOrCreateProperty(String property, Supplier<T> supplier) {
-        checkSession();
-        return model.getOrCreateProperty(property, supplier);
-    }
-
-    @Override
-    public <T> T getOrCreateProperty(Class<T> property, Supplier<T> supplier) {
-        checkSession();
-        return model.getOrCreateProperty(property, supplier);
-    }
-
-    @Override
-    public Object getProperty(String property, Object defaultValue) {
-        checkSession();
-        return model.getProperty(property, defaultValue);
     }
 
     @Override
@@ -131,12 +76,6 @@ public class DefaultNutsWorkspaceEnvManager implements NutsWorkspaceEnvManager {
         checkSession();
         model.setProperty(property, value);
         return this;
-    }
-
-    @Override
-    public NutsWorkspaceOptions getBootOptions() {
-        checkSession();
-        return _configModel().getOptions(getSession());
     }
 
     @Override
@@ -200,30 +139,6 @@ public class DefaultNutsWorkspaceEnvManager implements NutsWorkspaceEnvManager {
     }
 
     @Override
-    public String getOption(String property) {
-        checkSession();
-        return model.getOption(property);
-    }
-
-    @Override
-    public String getOption(String property, String defaultValue) {
-        checkSession();
-        return model.getOption(property, defaultValue);
-    }
-
-    @Override
-    public Boolean getOptionAsBoolean(String property, Boolean defaultValue) {
-        checkSession();
-        return model.getOptionAsBoolean(property, defaultValue);
-    }
-
-    @Override
-    public Integer getOptionAsInt(String property, Integer defaultValue) {
-        checkSession();
-        return model.getOptionAsInt(property, defaultValue);
-    }
-
-    @Override
     public NutsSession getSession() {
         return session;
     }
@@ -234,41 +149,6 @@ public class DefaultNutsWorkspaceEnvManager implements NutsWorkspaceEnvManager {
         return this;
     }
 
-    @Override
-    public ClassLoader getBootClassLoader() {
-        checkSession();
-        return _configModel().getBootClassLoader();
-    }
-
-    @Override
-    public URL[] getBootClassWorldURLs() {
-        checkSession();
-        return _configModel().getBootClassWorldURLs();
-    }
-
-    @Override
-    public String getBootRepositories() {
-        checkSession();
-        return _configModel().getBootRepositories();
-    }
-
-    @Override
-    public long getCreationStartTimeMillis() {
-        checkSession();
-        return _configModel().getCreationStartTimeMillis();
-    }
-
-    @Override
-    public long getCreationFinishTimeMillis() {
-        checkSession();
-        return _configModel().getCreationFinishTimeMillis();
-    }
-
-    @Override
-    public long getCreationTimeMillis() {
-        checkSession();
-        return _configModel().getCreationTimeMillis();
-    }
 
     @Override
     public boolean isGraphicalDesktopEnvironment() {
@@ -297,7 +177,7 @@ public class DefaultNutsWorkspaceEnvManager implements NutsWorkspaceEnvManager {
             }
         }
         if (optionName != null) {
-            String o = getOption(optionName, null);
+            String o = session.getWorkspace().boot().getCustomBootOption(optionName).getString();
             if (!NutsUtilStrings.isBlank(o)) {
                 NutsSupportMode q = NutsSupportMode.parseLenient(o, null, null);
                 if (q != null) {

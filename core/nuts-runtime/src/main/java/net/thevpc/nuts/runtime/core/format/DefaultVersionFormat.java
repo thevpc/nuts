@@ -30,20 +30,21 @@ public class DefaultVersionFormat extends DefaultFormatBase<NutsVersionFormat> i
             return false;
         }
         boolean enabled = a.isEnabled();
-        switch (a.getStringKey()) {
+        switch (a.getKey().getString()) {
             case "-a":
             case "--all": {
-                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
                 if (enabled) {
                     this.all = val;
                 }
                 return true;
             }
             case "--add": {
-                NutsArgument r = cmdLine.nextString().getArgumentValue();
+                NutsArgument aa = cmdLine.nextString();
+                NutsArgument r = NutsArgument.of(aa.getValue().getString(),getSession());
                 if (enabled) {
                     this.all = true;
-                    extraProperties.put(r.getStringKey(), r.getStringValue());
+                    extraProperties.put(r.getKey().getString(), r.getValue().getString());
                 }
                 return true;
             }

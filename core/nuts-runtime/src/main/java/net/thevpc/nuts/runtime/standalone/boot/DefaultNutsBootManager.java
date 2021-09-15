@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages and libraries
  * for runtime execution. Nuts is the ultimate companion for maven (and other
@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,6 +25,14 @@ package net.thevpc.nuts.runtime.standalone.boot;
 
 import net.thevpc.nuts.NutsBootManager;
 import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NutsVal;
+import net.thevpc.nuts.NutsWorkspaceOptions;
+import net.thevpc.nuts.runtime.standalone.DefaultNutsVal;
+import net.thevpc.nuts.runtime.standalone.config.DefaultNutsWorkspaceConfigManager;
+import net.thevpc.nuts.runtime.standalone.config.DefaultNutsWorkspaceConfigModel;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
+
+import java.net.URL;
 
 /**
  *
@@ -32,10 +40,10 @@ import net.thevpc.nuts.NutsSession;
  */
 public class DefaultNutsBootManager implements NutsBootManager {
 
-    private NutsBootModel model;
+    private DefaultNutsBootModel model;
     private NutsSession session;
 
-    public DefaultNutsBootManager(NutsBootModel model) {
+    public DefaultNutsBootManager(DefaultNutsBootModel model) {
         this.model = model;
     }
 
@@ -43,9 +51,9 @@ public class DefaultNutsBootManager implements NutsBootManager {
         return model;
     }
 
-    public void setModel(NutsBootModel model) {
-        this.model = model;
-    }
+//    public void setModel(NutsBootModel model) {
+//        this.model = model;
+//    }
 
     @Override
     public NutsSession getSession() {
@@ -56,6 +64,69 @@ public class DefaultNutsBootManager implements NutsBootManager {
     public NutsBootManager setSession(NutsSession session) {
         this.session = session;
         return this;
+    }
+
+    @Override
+    public NutsVal getCustomBootOption(String name) {
+        checkSession();
+        NutsVal q = model.getCustomBootOptions().get(name);
+        if(q!=null){
+            return q;
+        }
+        return new DefaultNutsVal(null);
+    }
+
+    @Override
+    public NutsWorkspaceOptions getBootOptions() {
+        checkSession();
+        return _configModel().getOptions(getSession());
+    }
+
+    private DefaultNutsWorkspaceConfigModel _configModel() {
+        DefaultNutsWorkspaceConfigManager config = (DefaultNutsWorkspaceConfigManager) session.getWorkspace().config();
+        DefaultNutsWorkspaceConfigModel configModel = config.getModel();
+        return configModel;
+    }
+
+    private void checkSession() {
+        NutsWorkspaceUtils.checkSession(model.getWorkspace(), session);
+    }
+
+
+    @Override
+    public ClassLoader getBootClassLoader() {
+        checkSession();
+        return _configModel().getBootClassLoader();
+    }
+
+    @Override
+    public URL[] getBootClassWorldURLs() {
+        checkSession();
+        return _configModel().getBootClassWorldURLs();
+    }
+
+    @Override
+    public String getBootRepositories() {
+        checkSession();
+        return _configModel().getBootRepositories();
+    }
+
+    @Override
+    public long getCreationStartTimeMillis() {
+        checkSession();
+        return _configModel().getCreationStartTimeMillis();
+    }
+
+    @Override
+    public long getCreationFinishTimeMillis() {
+        checkSession();
+        return _configModel().getCreationFinishTimeMillis();
+    }
+
+    @Override
+    public long getCreationTimeMillis() {
+        checkSession();
+        return _configModel().getCreationTimeMillis();
     }
 
 }

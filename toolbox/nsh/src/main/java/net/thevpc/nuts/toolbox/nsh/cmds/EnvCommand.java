@@ -71,9 +71,9 @@ public class EnvCommand extends SimpleNshBuiltin {
         NutsArgument a = commandLine.peek();
         switch (options.readStatus) {
             case 0: {
-                switch (a.getStringKey()) {
+                switch (a.getKey().getString()) {
                     case "--sort": {
-                        options.sort = (commandLine.nextBoolean().getBooleanValue());
+                        options.sort = (commandLine.nextBoolean().getValue().getBoolean());
                         return true;
                     }
                     case "--external":
@@ -111,22 +111,22 @@ public class EnvCommand extends SimpleNshBuiltin {
                     }
                     case "--as-user":{
                         a = commandLine.nextString();
-                        options.runAs = NutsRunAs.user(a.getStringValue());
+                        options.runAs = NutsRunAs.user(a.getValue().getString());
                         return true;
                     }
                     case "-C":
                     case "--chdir": {
-                        options.dir = commandLine.nextString().getStringValue();
+                        options.dir = commandLine.nextString().getValue().getString();
                         return true;
                     }
                     case "-u":
                     case "--unset": {
-                        options.unsetVers.add(commandLine.nextString().getStringValue());
+                        options.unsetVers.add(commandLine.nextString().getValue().getString());
                         return true;
                     }
                     case "-i":
                     case "--ignore-environment": {
-                        options.ignoreEnvironment = (commandLine.nextBoolean().getBooleanValue());
+                        options.ignoreEnvironment = (commandLine.nextBoolean().getValue().getBoolean());
                         return true;
                     }
                     case "-": {
@@ -136,7 +136,7 @@ public class EnvCommand extends SimpleNshBuiltin {
                     }
                     default: {
                         if (a.isKeyValue()) {
-                            options.newEnv.put(a.getStringKey(), a.getStringValue());
+                            options.newEnv.put(a.getKey().getString(), a.getValue().getString());
                             commandLine.skip();
                             options.readStatus = 1;
                             return true;
@@ -153,7 +153,7 @@ public class EnvCommand extends SimpleNshBuiltin {
             }
             case 1: {
                 if (a.isKeyValue()) {
-                    options.newEnv.put(a.getStringKey(), a.getStringValue());
+                    options.newEnv.put(a.getKey().getString(), a.getValue().getString());
                 } else {
                     options.command.add(a.getString());
                     options.readStatus = 2;

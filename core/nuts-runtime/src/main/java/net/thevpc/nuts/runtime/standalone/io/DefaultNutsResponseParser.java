@@ -60,10 +60,10 @@ public class DefaultNutsResponseParser<T> implements NutsQuestionParser<T> {
                 }
                 String sReponse = response.toString();
                 NutsArgument a = new DefaultNutsArgument(sReponse);
-                if (!a.isBoolean()) {
+                if (!a.getAll().isBoolean()) {
                     throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid response %s", sReponse));
                 }
-                return (T) (Object) a.getBoolean();
+                return (T) (Object) a.getAll().getBoolean();
             }
 
             default: {

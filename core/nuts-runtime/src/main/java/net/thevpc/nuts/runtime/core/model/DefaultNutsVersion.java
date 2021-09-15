@@ -31,19 +31,19 @@ import java.util.List;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.filters.version.DefaultNutsVersionFilter;
-import net.thevpc.nuts.runtime.core.filters.DefaultNutsTokenFilter;
 import net.thevpc.nuts.runtime.core.util.CoreNumberUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 /**
  * Created by vpc on 1/15/17.
  */
-public class DefaultNutsVersion extends DefaultNutsTokenFilter implements NutsVersion {
+public class DefaultNutsVersion /*extends DefaultNutsTokenFilter*/ implements NutsVersion {
 
     private static final long serialVersionUID = 1L;
 //    public static final NutsVersion EMPTY = new DefaultNutsVersion("");
     private VersionParts parts;
     private transient NutsSession session;
+    protected String expression;
     public static NutsVersion valueOf(String value, NutsSession session) {
         value = NutsUtilStrings.trim(value);
         if (value.isEmpty()) {
@@ -53,9 +53,19 @@ public class DefaultNutsVersion extends DefaultNutsTokenFilter implements NutsVe
     }
 
     private DefaultNutsVersion(String expression,NutsSession session) {
-        super(NutsUtilStrings.trim(expression));
+        this.expression=(NutsUtilStrings.trim(expression));
         this.session=session;
     }
+    @Override
+    public boolean isNull() {
+        return expression == null;
+    }
+
+    @Override
+    public boolean isBlank() {
+        return expression == null || expression.trim().isEmpty();
+    }
+
 
     @Override
     public NutsFormat formatter() {
@@ -233,13 +243,13 @@ public class DefaultNutsVersion extends DefaultNutsTokenFilter implements NutsVe
         return expression != null ? expression.hashCode() : 0;
     }
 
-    @Override
-    public boolean matches(String expression) {
-        if (NutsUtilStrings.isBlank(expression)) {
-            return true;
-        }
-        return DefaultNutsVersionFilter.parse(expression,session).acceptVersion(this, session);
-    }
+//    @Override
+//    public boolean matches(String expression) {
+//        if (NutsUtilStrings.isBlank(expression)) {
+//            return true;
+//        }
+//        return DefaultNutsVersionFilter.parse(expression,session).acceptVersion(this, session);
+//    }
 
     public static boolean versionMatches(String version, String pattern) {
         if (isBlankVersion(pattern)) {

@@ -105,17 +105,17 @@ public class NutsServerMain implements NutsApplication {
             } else if (commandLine.next("--admin") != null) {
                 servers.add().serverType = "admin";
             } else if ((a = commandLine.nextBoolean("-R", "--read-only")) != null) {
-                servers.current().readOnly = a.getBooleanValue();
+                servers.current().readOnly = a.getValue().getBoolean();
             } else if ((a = commandLine.nextString("-n", "--name")) != null) {
-                servers.current().name = a.getStringValue();
+                servers.current().name = a.getValue().getString();
             } else if ((a = commandLine.nextString("-a", "--address")) != null) {
-                servers.current().addr = a.getStringValue();
+                servers.current().addr = a.getValue().getString();
             } else if ((a = commandLine.nextString("-p", "--port")) != null) {
-                servers.current().port = a.getArgumentValue().getInt();
+                servers.current().port = a.getValue().getInt();
             } else if ((a = commandLine.nextString("-h", "--host")) != null || (a = commandLine.nextNonOption()) != null) {
                 StringBuilder s = new StringBuilder();
-                if (a.getStringKey().equals("-h") || a.getStringKey().equals("--host")) {
-                    s.append(a.getStringValue());
+                if (a.getKey().getString().equals("-h") || a.getKey().getString().equals("--host")) {
+                    s.append(a.getValue().getString());
                 } else {
                     s.append(a.getString());
                 }
@@ -125,11 +125,11 @@ public class NutsServerMain implements NutsApplication {
                 }
                 servers.add().set(u);
             } else if ((a = commandLine.nextString("-l", "--backlog")) != null) {
-                servers.current().port = a.getArgumentValue().getInt();
+                servers.current().port = a.getValue().getInt();
             } else if ((a = commandLine.nextString("--ssl-certificate")) != null) {
-                servers.current().sslCertificate = a.getStringValue();
+                servers.current().sslCertificate = a.getValue().getString();
             } else if ((a = commandLine.nextString("--ssl-passphrase")) != null) {
-                servers.current().sslPassphrase = a.getStringValue();
+                servers.current().sslPassphrase = a.getValue().getString();
             } else if ((a = commandLine.nextString("-w", "--workspace")) != null) {
                 String ws = a.getString();
                 String serverContext = "";
@@ -320,13 +320,13 @@ public class NutsServerMain implements NutsApplication {
             } else if (commandLine.next("--admin") != null) {
                 servers.add().serverType = "admin";
             } else if ((a = commandLine.nextString("-a", "--address")) != null) {
-                servers.current().addr = a.getStringValue();
+                servers.current().addr = a.getValue().getString();
             } else if ((a = commandLine.nextString("-p", "--port")) != null) {
-                servers.current().port = a.getArgumentValue().getInt();
+                servers.current().port = a.getValue().getInt();
             } else if ((a = commandLine.nextString("-h", "--host")) != null || (a = commandLine.nextNonOption()) != null) {
                 StringBuilder s = new StringBuilder();
-                if (a.getStringKey().equals("-h") || a.getStringKey().equals("--host")) {
-                    s.append(a.getStringValue());
+                if (a.getKey().getString().equals("-h") || a.getKey().getString().equals("--host")) {
+                    s.append(a.getValue().getString());
                 } else {
                     s.append(a.getString());
                 }

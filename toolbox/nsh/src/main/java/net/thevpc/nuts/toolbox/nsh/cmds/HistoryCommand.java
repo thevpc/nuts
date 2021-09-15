@@ -27,7 +27,6 @@ package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -76,7 +75,7 @@ public class HistoryCommand extends SimpleNshBuiltin {
             return true;
         } else if ((a = commandLine.nextString("-d", "--delete")) != null) {
             options.action = Action.DELETE;
-            options.ival = a.getArgumentValue().getInt();
+            options.ival = a.getValue().getInt();
             commandLine.setCommandName(getName()).unexpectedArgument();
             return true;
         } else if ((a = commandLine.next("-D", "--remove-duplicates")) != null) {
@@ -86,7 +85,7 @@ public class HistoryCommand extends SimpleNshBuiltin {
         } else if ((a = commandLine.next("-w", "--write")) != null) {
             options.action = Action.WRITE;
             if (a.isKeyValue()) {
-                options.sval = a.getStringValue();
+                options.sval = a.getValue().getString();
             } else if (!commandLine.isEmpty()) {
                 options.sval = commandLine.next().getString();
             }
@@ -95,16 +94,16 @@ public class HistoryCommand extends SimpleNshBuiltin {
         } else if ((a = commandLine.next("-r", "--read")) != null) {
             options.action = Action.READ;
             if (a.isKeyValue()) {
-                options.sval = a.getStringValue();
+                options.sval = a.getValue().getString();
             } else if (!commandLine.isEmpty()) {
                 options.sval = commandLine.next().getString();
             }
             commandLine.setCommandName(getName()).unexpectedArgument();
             return true;
         } else {
-            if (commandLine.peek().getInt(0) != 0) {
+            if (commandLine.peek().getAll().getInt(0) != 0) {
                 options.action = Action.PRINT;
-                options.ival = Math.abs(commandLine.next().getInt());
+                options.ival = Math.abs(commandLine.next().getAll().getInt());
                 return true;
             }
         }

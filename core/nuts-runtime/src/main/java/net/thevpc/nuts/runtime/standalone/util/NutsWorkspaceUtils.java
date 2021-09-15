@@ -108,11 +108,16 @@ public class NutsWorkspaceUtils {
     }
 
     public ReflectRepository getReflectRepository() {
-        return ws.env().setSession(session).getOrCreateProperty(ReflectRepository.class,
-                () -> new DefaultReflectRepository(ReflectConfigurationBuilder.create()
-                        .setPropertyAccessStrategy(ReflectPropertyAccessStrategy.FIELD)
-                        .setPropertyDefaultValueStrategy(ReflectPropertyDefaultValueStrategy.PROPERTY_DEFAULT)
-                        .build()));
+        NutsWorkspaceEnvManager env = ws.env().setSession(session);
+        ReflectRepository o = (ReflectRepository) env.getProperty(ReflectRepository.class.getName()).getObject();
+        if(o==null){
+            o=new DefaultReflectRepository(ReflectConfigurationBuilder.create()
+                    .setPropertyAccessStrategy(ReflectPropertyAccessStrategy.FIELD)
+                    .setPropertyDefaultValueStrategy(ReflectPropertyDefaultValueStrategy.PROPERTY_DEFAULT)
+                    .build());
+            env.setProperty(ReflectRepository.class.getName(),o);
+        }
+        return o;
     }
 
     public NutsId createSdkId(String type, String version) {
@@ -297,7 +302,7 @@ public class NutsWorkspaceUtils {
 
     public NutsIdFormat getIdFormat() {
         String k = DefaultSearchFormatPlain.class.getName() + "#NutsIdFormat";
-        NutsIdFormat f = (NutsIdFormat) ws.env().getProperty(k);
+        NutsIdFormat f = (NutsIdFormat) ws.env().getProperty(k).getObject();
         if (f == null) {
             f = ws.id().formatter();
             ws.env().setProperty(k, f);
@@ -307,7 +312,7 @@ public class NutsWorkspaceUtils {
 
     public NutsDescriptorFormat getDescriptorFormat() {
         String k = DefaultSearchFormatPlain.class.getName() + "#NutsDescriptorFormat";
-        NutsDescriptorFormat f = (NutsDescriptorFormat) ws.env().getProperty(k);
+        NutsDescriptorFormat f = (NutsDescriptorFormat) ws.env().getProperty(k).getObject();
         if (f == null) {
             f = ws.descriptor().formatter();
             ws.env().setProperty(k, f);
@@ -331,7 +336,7 @@ public class NutsWorkspaceUtils {
     public void checkNutsId(NutsId id) {
         checkNutsIdBase(ws, id);
         if (id.getVersion().isBlank()) {
-            throw new NutsIllegalArgumentException(defaultSession(ws), NutsMessage.cstyle("missing name for %s", id));
+            throw new NutsIllegalArgumentException(defaultSession(ws), NutsMessage.cstyle("missing version for %s", id));
         }
     }
 

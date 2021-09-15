@@ -26,6 +26,8 @@
 */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
 /**
  * Dependency Format Helper
  * @author thevpc
@@ -34,6 +36,10 @@ package net.thevpc.nuts;
  */
 public interface NutsDependencyFormat extends NutsFormat {
 
+    static NutsDependencyFormat of(NutsSession session){
+        NutsApiUtils.checkSession(session);
+        return session.getWorkspace().dependency().formatter();
+    }
     /**
      * true if omit repository from formatted string.
      * @return true if omit repository from formatted string

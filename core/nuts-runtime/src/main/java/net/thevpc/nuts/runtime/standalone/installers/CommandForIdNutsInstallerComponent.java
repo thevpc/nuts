@@ -70,7 +70,7 @@ public class CommandForIdNutsInstallerComponent implements NutsInstallerComponen
                     .addCommand("--nuts-exec-mode=install")
                     .addExecutorOptions("--nuts-auto-install=false")
                     .addCommand(executionContext.getArguments())
-                    .setExecutionType(executionContext.getWorkspace().env().getBootOptions().getExecutionType())
+                    .setExecutionType(executionContext.getWorkspace().boot().getBootOptions().getExecutionType())
                     .setFailFast(true)
                     .run();
         }

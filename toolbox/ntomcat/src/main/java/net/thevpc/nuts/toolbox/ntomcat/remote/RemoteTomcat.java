@@ -89,9 +89,9 @@ public class RemoteTomcat {
         Helper x = new Helper();
         while (args.hasNext()) {
             if ((a = args.nextString("--name")) != null) {
-                x.print(loadOrCreateTomcatConfig(a.getStringValue()));
+                x.print(loadOrCreateTomcatConfig(a.getValue().getString()));
             } else if (args.peek().isNonOption()) {
-                x.print(loadOrCreateTomcatConfig(args.requireNonOption().next().getStringValue()));
+                x.print(loadOrCreateTomcatConfig(args.requireNonOption().next().getValue().getString()));
             } else {
                 context.configureLast(args);
             }
@@ -113,7 +113,7 @@ public class RemoteTomcat {
         while (args.hasNext()) {
             if ((a = args.nextString("--name")) != null) {
                 if (c == null) {
-                    instanceName = a.getStringValue();
+                    instanceName = a.getValue().getString();
                     c = loadOrCreateTomcatConfig(instanceName);
                 } else {
                     throw new NutsExecutionException(session, NutsMessage.cstyle("instance already defined"), 2);
@@ -122,33 +122,33 @@ public class RemoteTomcat {
                 if (c == null) {
                     c = loadOrCreateTomcatConfig(null);
                 }
-                c.getConfig().setServer(a.getStringValue());
+                c.getConfig().setServer(a.getValue().getString());
             } else if ((a = args.nextString("--remote-temp-path")) != null) {
                 if (c == null) {
                     c = loadOrCreateTomcatConfig(null);
                 }
-                c.getConfig().setRemoteTempPath(a.getStringValue());
+                c.getConfig().setRemoteTempPath(a.getValue().getString());
             } else if ((a = args.nextString("--remote-instance")) != null) {
-                String value = a.getStringValue();
+                String value = a.getValue().getString();
                 if (c == null) {
                     c = loadOrCreateTomcatConfig(null);
                 }
                 c.getConfig().setRemoteName(value);
             } else if ((a = args.nextString("--app")) != null) {
-                appName = a.getStringValue();
+                appName = a.getValue().getString();
                 if (c == null) {
                     c = loadOrCreateTomcatConfig(null);
                 }
                 c.getAppOrCreate(appName);
             } else if ((a = args.nextString("--app.path")) != null) {
-                String value = a.getStringValue();
+                String value = a.getValue().getString();
                 if (c == null) {
                     c = loadOrCreateTomcatConfig(null);
                 }
                 RemoteTomcatAppConfigService tomcatAppConfig = c.getAppOrError(appName);
                 tomcatAppConfig.getConfig().setPath(value);
             } else if ((a = args.nextString("--app.version")) != null) {
-                String value = a.getStringValue();
+                String value = a.getValue().getString();
                 if (c == null) {
                     c = loadOrCreateTomcatConfig(null);
                 }
@@ -248,7 +248,7 @@ public class RemoteTomcat {
         args.setCommandName("tomcat --remote install");
         while (args.hasNext()) {
             if ((a = args.nextString("--app")) != null) {
-                loadApp(a.getStringValue()).install();
+                loadApp(a.getValue().getString()).install();
             } else {
                 context.configureLast(args);
             }
@@ -262,9 +262,9 @@ public class RemoteTomcat {
         args.setCommandName("tomcat --remote deploy");
         while (args.hasNext()) {
             if ((a = args.nextString("--app")) != null) {
-                app = a.getStringValue();
+                app = a.getValue().getString();
             } else if ((a = args.nextString("--version")) != null) {
-                version = a.getStringValue();
+                version = a.getValue().getString();
             } else {
                 context.configureLast(args);
             }
@@ -294,13 +294,13 @@ public class RemoteTomcat {
         NutsArgument a;
         while (args.hasNext()) {
             if ((a = args.nextBoolean("--deleteLog")) != null) {
-                deleteLog = a.getBooleanValue();
+                deleteLog = a.getValue().getBoolean();
             } else if ((a = args.nextBoolean("--install")) != null) {
-                install = a.getBooleanValue();
+                install = a.getValue().getBoolean();
             } else if ((a = args.nextString("--name")) != null) {
-                instance = a.getStringValue();
+                instance = a.getValue().getString();
             } else if ((a = args.nextString("--deploy")) != null) {
-                for (String s : a.getStringValue().split(",")) {
+                for (String s : a.getValue().getString().split(",")) {
                     s = s.trim();
                     if (!NutsUtilStrings.isBlank(s)) {
                         apps.add(s);
@@ -309,7 +309,7 @@ public class RemoteTomcat {
 //            } else if ((a = args.nextNonOption(DefaultNonOption.NAME)) != null) {
 //                instance = a.getString();
             } else if (args.peek().isNonOption()) {
-                instance = args.requireNonOption().next().getStringValue();
+                instance = args.requireNonOption().next().getValue().getString();
             } else {
                 context.configureLast(args);
             }
@@ -386,7 +386,7 @@ public class RemoteTomcat {
         args.setCommandName("tomcat --remote show");
         while (args.hasNext()) {
             if ((a = args.nextBoolean("--json")) != null) {
-                h.json = a.getBooleanValue();
+                h.json = a.getValue().getBoolean();
             } else if ((s = readBaseServiceArg(args)) != null) {
                 h.show(s);
             } else {
@@ -440,9 +440,9 @@ public class RemoteTomcat {
     public RemoteTomcatServiceBase readBaseServiceArg(NutsCommandLine args) {
         NutsArgument a;
         if ((a = args.nextString("--name")) != null) {
-            return (loadOrCreateTomcatConfig(a.getStringValue()));
+            return (loadOrCreateTomcatConfig(a.getValue().getString()));
         } else if ((a = args.nextString("--app")) != null) {
-            return (loadApp(a.getStringValue()));
+            return (loadApp(a.getValue().getString()));
         } else if (args.hasNext() && args.peek().isOption()) {
             return null;
         } else {

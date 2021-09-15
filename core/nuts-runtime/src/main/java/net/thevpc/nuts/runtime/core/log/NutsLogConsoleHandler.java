@@ -45,7 +45,7 @@ public class NutsLogConsoleHandler extends StreamHandler {
         if (session.isBot()) {
             return false;
         }
-        NutsLogConfig logConfig = session.getWorkspace().env().getBootOptions().getLogConfig();
+        NutsLogConfig logConfig = session.getWorkspace().boot().getBootOptions().getLogConfig();
         Level sessionLogLevel = session.getLogTermLevel();
         if (sessionLogLevel == null) {
             if (logConfig != null) {

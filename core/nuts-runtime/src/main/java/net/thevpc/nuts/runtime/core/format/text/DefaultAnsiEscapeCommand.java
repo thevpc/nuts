@@ -136,10 +136,10 @@ public class DefaultAnsiEscapeCommand extends AnsiEscapeCommand implements AnsiS
             }
             case NutsTerminalCommand.Ids.LATER_RESET_LINE: {
                 NutsWorkspace ws=session.getWorkspace();
-                int tputCallTimeout = ws.env().getOptionAsInt("nuts.term.tput.call.timeout", 60);
-                Integer w = ws.env().getOptionAsInt("nuts.term.width", null);
+                int tputCallTimeout = ws.boot().getCustomBootOption("nuts.term.tput.call.timeout").getInt( 60);
+                Integer w = ws.boot().getCustomBootOption("nuts.term.width").getInt( null);
                 if (w == null) {
-                    CachedValue<Integer> tput_cols = (CachedValue) ws.env().getProperty("nuts.term.tput.call.instance");
+                    CachedValue<Integer> tput_cols = (CachedValue) ws.env().getProperty("nuts.term.tput.call.instance").getObject();
                     if (tput_cols == null) {
                         tput_cols = new CachedValue<>(new TputEvaluator(session), tputCallTimeout);
                         ws.env().setProperty("nuts.term.tput.call.instance", tput_cols);

@@ -44,7 +44,7 @@ public abstract class AbstractNutsRemoveUserCommand extends NutsWorkspaceCommand
         if (a == null) {
             return false;
         }
-        switch (a.getStringKey()) {
+        switch (a.getKey().getString()) {
             default: {
                 if (super.configureFirst(cmdLine)) {
                     return true;

@@ -77,14 +77,14 @@ public class AliasCommand extends SimpleNshBuiltin {
         Options options = context.getOptions();
         final NutsArgument a = commandLine.peek();
         if (a.isOption()) {
-            if (a.getStringKey().equals("--sort")) {
+            if (a.getKey().getString().equals("--sort")) {
                 commandLine.skip();
                 options.displayOptions.add(a.toString());
                 return true;
             }
         } else if (a.isKeyValue()) {
             commandLine.skip();
-            options.add.put(a.getStringKey(), a.getStringValue());
+            options.add.put(a.getKey().getString(), a.getValue().getString());
             return true;
         } else {
             commandLine.skip();

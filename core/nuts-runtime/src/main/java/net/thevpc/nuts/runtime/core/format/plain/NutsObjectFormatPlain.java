@@ -40,9 +40,9 @@ public class NutsObjectFormatPlain extends NutsObjectFormatBase {
             boolean enabled = n.isEnabled();
             if ((a = commandLine.nextString(DefaultPropertiesFormat.OPTION_MULTILINE_PROPERTY)) != null) {
                 if (enabled) {
-                    NutsArgument i = a.getArgumentValue();
+                    NutsArgument i = NutsArgument.of(a.getValue().getString(),getSession());
                     extraConfig.add(a.getString());
-                    addMultilineProperty(i.getStringKey(), i.getStringValue());
+                    addMultilineProperty(i.getKey().getString(), i.getValue().getString());
                 }
             } else {
                 a = commandLine.next();

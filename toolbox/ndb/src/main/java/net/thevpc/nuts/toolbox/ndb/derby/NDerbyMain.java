@@ -38,19 +38,19 @@ public class NDerbyMain implements NdbSupport {
                 options.cmd = Command.runtimeinfo;
             } else if ((a = cmdLine.nextString("trace")) != null) {
                 options.cmd = Command.trace;
-                options.extraArg = a.getStringValue();
+                options.extraArg = a.getValue().getString();
             } else if ((a = cmdLine.nextString("trace-directory", "tracedirectory")) != null) {
                 options.cmd = Command.tracedirectory;
-                options.extraArg = a.getStringValue();
+                options.extraArg = a.getValue().getString();
             } else if ((a = cmdLine.nextString("max-threads", "maxthreads")) != null) {
                 options.cmd = Command.maxthreads;
-                options.extraArg = a.getStringValue();
+                options.extraArg = a.getValue().getString();
             } else if ((a = cmdLine.nextString("time-slice", "timeslice")) != null) {
                 options.cmd = Command.timeslice;
-                options.extraArg = a.getStringValue();
+                options.extraArg = a.getValue().getString();
             } else if ((a = cmdLine.nextString("log-connections", "logconnections")) != null) {
                 options.cmd = Command.logconnections;
-                options.extraArg = a.getStringValue();
+                options.extraArg = a.getValue().getString();
             } else if ((a = cmdLine.next("stop", "shutdown")) != null) {
                 options.cmd = Command.shutdown;
             } else if ((a = cmdLine.next("ps")) != null) {
@@ -120,10 +120,10 @@ public class NDerbyMain implements NdbSupport {
     private boolean _opt(NutsCommandLine cmdLine, DerbyOptions options) {
         NutsArgument a;
         if ((a = cmdLine.nextString("-v", "--derby-version")) != null) {
-            options.derbyVersion = a.getStringValue();
+            options.derbyVersion = a.getValue().getString();
             return true;
         } else if ((a = cmdLine.nextString("-d", "--db")) != null) {
-            options.derbyDataHomeRoot = a.getStringValue();
+            options.derbyDataHomeRoot = a.getValue().getString();
             return true;
         } else if ((a = cmdLine.nextString("--nb")) != null) {
             options.derbyDataHomeRoot = System.getProperty("user.home") + File.separator + ".netbeans-derby";
@@ -132,13 +132,13 @@ public class NDerbyMain implements NdbSupport {
 //            options.derbyDataHomeReplace = System.getProperty("user.home") + "/.netbeans-derby";
 //            return true;
         } else if ((a = cmdLine.nextString("-h", "--host")) != null) {
-            options.host = a.getStringValue();
+            options.host = a.getValue().getString();
             return true;
         } else if ((a = cmdLine.nextString("-p", "--port")) != null) {
-            options.port = a.getArgumentValue().getInt();
+            options.port = a.getValue().getInt();
             return true;
         } else if ((a = cmdLine.nextString("-ssl", "--ssl")) != null) {
-            options.sslmode = SSLMode.valueOf(a.getStringValue());
+            options.sslmode = SSLMode.valueOf(a.getValue().getString());
             return true;
         } else if (appContext.configureFirst(cmdLine)) {
             return true;

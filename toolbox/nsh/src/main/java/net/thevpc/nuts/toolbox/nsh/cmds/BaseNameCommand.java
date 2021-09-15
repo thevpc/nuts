@@ -60,7 +60,7 @@ public class BaseNameCommand extends SimpleNshBuiltin {
     protected boolean configureFirst(NutsCommandLine cmdLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         NutsArgument a = cmdLine.peek();
-        switch (a.getStringKey()) {
+        switch (a.getKey().getString()) {
             case "-z":
             case "--zero": {
                 cmdLine.skip();
@@ -70,12 +70,12 @@ public class BaseNameCommand extends SimpleNshBuiltin {
             case "-a":
             case "--all":
             case "--multi": {
-                options.multi = cmdLine.nextBoolean().getBooleanValue();
+                options.multi = cmdLine.nextBoolean().getValue().getBoolean();
                 return true;
             }
             case "-s":
             case "--suffix": {
-                options.suffix = cmdLine.nextString().getStringValue();
+                options.suffix = cmdLine.nextString().getValue().getString();
                 options.multi = true;
                 return true;
             }

@@ -41,7 +41,7 @@ public class NutsMvnMain implements NutsApplication {
                 if (appContext.configureFirst(cmd)) {
                     //fo nothing
                 } else if ((a = cmd.nextBoolean("-j", "--json")) != null) {
-                    o.json = a.getBooleanValue();
+                    o.json = a.getValue().getBoolean();
                 } else if ((a = cmd.next("build")) != null) {
                     command = "build";
                 } else if ((a = cmd.next("get")) != null) {

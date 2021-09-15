@@ -66,11 +66,11 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
             NutsCommandLine execModeCommand = this.workspace.commandLine().parse(args[0].substring(args[0].indexOf('=') + 1));
             if (execModeCommand.hasNext()) {
                 NutsArgument a = execModeCommand.next();
-                switch (a.getStringKey()) {
+                switch (a.getKey().getString()) {
                     case "auto-complete": {
                         mode = NutsApplicationMode.AUTO_COMPLETE;
                         if (execModeCommand.hasNext()) {
-                            wordIndex = execModeCommand.next().getInt();
+                            wordIndex = execModeCommand.next().getAll().getInt();
                         }
                         modeArgs = execModeCommand.toStringArray();
                         execModeCommand.skipAll();
@@ -198,7 +198,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
             return false;
         }
         boolean enabled = a.isEnabled();
-        switch (a.getStringKey()) {
+        switch (a.getKey().getString()) {
             case "-?":
             case "-h":
             case "--help": {

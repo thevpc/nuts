@@ -19,7 +19,7 @@ public class NutsIndexerUtils {
     public static Path getCacheDir(NutsSession session, String entity) {
         String k = "NutsIndexerUtils.CACHE." + entity;
         NutsWorkspace ws = session.getWorkspace();
-        String m = (String) ws.env().getProperty(k);
+        String m = ws.env().getProperty(k).getString();
         if (m == null) {
             m = ws.locations()
                     .getStoreLocation(ws.id().setSession(session).resolveId(NutsIndexerUtils.class),

@@ -61,7 +61,7 @@ public class UnameCommand extends SimpleNshBuiltin {
     @Override
     protected boolean configureFirst(NutsCommandLine cmdLine, SimpleNshCommandContext context) {
         Options config = context.getOptions();
-        switch (cmdLine.peek().getStringKey()) {
+        switch (cmdLine.peek().getKey().getString()) {
             case "-m": {
                 config.farch = true;
                 return true;

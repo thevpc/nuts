@@ -197,8 +197,8 @@ public class NutsPrintStreamSystem extends NutsPrintStreamBase {
     @Override
     public int getColumns() {
         NutsWorkspace ws = session.getWorkspace();
-        int tputCallTimeout = ws.env().getOptionAsInt("nuts.term.tput.call.timeout", 60);
-        Integer w = ws.env().getOptionAsInt("nuts.term.width", null);
+        int tputCallTimeout = ws.boot().getCustomBootOption("nuts.term.tput.call.timeout").getInt(60);
+        Integer w = ws.boot().getCustomBootOption("nuts.term.width").getInt(null);
         if (w == null) {
             if (tput_cols == null) {
                 tput_cols = new CachedValue<>(new DefaultAnsiEscapeCommand.TputEvaluator(session), tputCallTimeout);

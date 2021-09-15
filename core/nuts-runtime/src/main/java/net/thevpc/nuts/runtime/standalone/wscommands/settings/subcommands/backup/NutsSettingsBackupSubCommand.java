@@ -29,9 +29,9 @@ public class NutsSettingsBackupSubCommand extends AbstractNutsSettingsSubCommand
             NutsArgument a;
             while (commandLine.hasNext()) {
                 if ((a = commandLine.nextString("--file", "-f")) != null) {
-                    file = a.getStringValue("");
+                    file = a.getValue().getString("");
                 } else if (commandLine.peek().isNonOption()) {
-                    file = commandLine.nextString().getStringValue("");
+                    file = commandLine.nextString().getValue().getString("");
                 } else {
                     session.configureLast(commandLine);
                 }
@@ -73,11 +73,11 @@ public class NutsSettingsBackupSubCommand extends AbstractNutsSettingsSubCommand
             NutsArgument a;
             while (commandLine.hasNext()) {
                 if ((a = commandLine.nextString("--file", "-f")) != null) {
-                    file = a.getStringValue("");
+                    file = a.getValue().getString("");
                 } else if ((a = commandLine.nextString("--workspace", "-w")) != null) {
-                    ws = a.getStringValue("");
+                    ws = a.getValue().getString("");
                 } else if (commandLine.peek().isNonOption()) {
-                    file = commandLine.nextString().getStringValue("");
+                    file = commandLine.nextString().getValue().getString("");
                 } else {
                     session.configureLast(commandLine);
                 }

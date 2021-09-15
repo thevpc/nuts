@@ -68,13 +68,13 @@ public class CatCommand extends SimpleNshBuiltin {
             options.files.add(null);
             return true;
         } else if ((a = commandLine.next("-n", "--number")) != null) {
-            options.n = a.getBooleanValue();
+            options.n = a.getValue().getBoolean();
             return true;
         } else if ((a = commandLine.next("-t", "--show-tabs")) != null) {
-            options.T = a.getBooleanValue();
+            options.T = a.getValue().getBoolean();
             return true;
         } else if ((a = commandLine.next("-E", "--show-ends")) != null) {
-            options.E = a.getBooleanValue();
+            options.E = a.getValue().getBoolean();
             return true;
         } else if (!commandLine.peek().isOption()) {
             String path = commandLine.next().getString();

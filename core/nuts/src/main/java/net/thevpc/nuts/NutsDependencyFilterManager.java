@@ -24,12 +24,19 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
 import java.util.Collection;
 
 /**
  * @app.category Base
  */
 public interface NutsDependencyFilterManager extends NutsTypedFilters<NutsDependencyFilter> {
+
+    static NutsDependencyFilterManager of(NutsSession session){
+        NutsApiUtils.checkSession(session);
+        return session.getWorkspace().dependency().filter();
+    }
 
     NutsDependencyFilterManager setSession(NutsSession session);
 

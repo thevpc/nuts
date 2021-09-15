@@ -25,6 +25,8 @@
 */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
 /**
  * Descriptor Format class that help building, formatting and parsing Descriptors.
  * @author thevpc
@@ -32,6 +34,10 @@ package net.thevpc.nuts;
  * @app.category Format
  */
 public interface NutsDescriptorFormat extends NutsFormat {
+    static NutsDescriptorFormat of(NutsSession session){
+        NutsApiUtils.checkSession(session);
+        return session.getWorkspace().descriptor().formatter();
+    }
 
     /**
      * true if compact flag is armed.

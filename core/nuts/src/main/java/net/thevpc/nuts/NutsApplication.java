@@ -57,7 +57,7 @@ package net.thevpc.nuts;
  *                 //do nothing
  *             }else {
  *                  a=cmdLine.peek();
- *                  switch(a.getStringKey())[
+ *                  switch(a.getKey().getString())[
  *                      case "-o": case "--option":{
  *                          boolOption=cmdLine.nextBoolean().getBooleanValue();
  *                          break;
@@ -98,7 +98,7 @@ package net.thevpc.nuts;
  *                     if(!noMoreOptions){
  *                         return false;
  *                     }
- *                     switch (argument.getStringKey()) {
+ *                     switch (argument.getKey().getString()) {
  *                         case "--clean": {
  *                             hl.clean(cmdLine.nextBoolean().getBooleanValue());
  *                             return true;

@@ -63,10 +63,10 @@ public class UnzipCommand extends SimpleNshBuiltin {
         Options options = context.getOptions();
         NutsArgument a;
         if ((a = commandLine.nextBoolean("-l")) != null) {
-            options.l = a.getBooleanValue();
+            options.l = a.getValue().getBoolean();
             return true;
         } else if ((a = commandLine.nextString("-d")) != null) {
-            options.dir = a.getStringValue();
+            options.dir = a.getValue().getString();
             return true;
         } else if (!commandLine.peek().isOption()) {
             while (commandLine.hasNext()) {

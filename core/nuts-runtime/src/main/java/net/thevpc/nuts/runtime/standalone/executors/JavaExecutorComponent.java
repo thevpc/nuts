@@ -117,7 +117,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                 }
 
                 HashMap<String, String> osEnv = new HashMap<>();
-                NutsWorkspaceOptionsBuilder options = ws.env().getBootOptions().builder();
+                NutsWorkspaceOptionsBuilder options = ws.boot().getBootOptions().builder();
 
                 //copy session parameters to the newly created workspace
                 options.setDry(execSession.isDry());
@@ -261,7 +261,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
 //                    xargs.add(Dnuts_boot_args);
 //                    args.add(Dnuts_boot_args);
 //                }
-                String jdb = ws.env().getOption("jdb", null);
+                String jdb = executionContext.getTraceSession().getWorkspace().boot().getCustomBootOption("jdb").getString();
                 if (jdb != null) {
                     boolean suspend = true;
                     int port = 5005;
@@ -498,7 +498,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
             } else {
                 //NutsWorkspace
                 System.setProperty("nuts.boot.args",
-                        getSession().getWorkspace().env().getBootOptions()
+                        getSession().getWorkspace().boot().getBootOptions()
                                 .formatter().setExported(true).setCompact(true).getBootCommandLine()
                                 .formatter().setCommandlineFamily(NutsCommandlineFamily.BASH).toString()
                 );

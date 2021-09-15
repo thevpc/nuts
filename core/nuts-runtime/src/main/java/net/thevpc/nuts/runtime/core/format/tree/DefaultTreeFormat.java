@@ -234,11 +234,11 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
             return false;
         }
         boolean enabled = a.isEnabled();
-        switch (a.getStringKey()) {
+        switch (a.getKey().getString()) {
             case "--border": {
                 a = cmdLine.nextString("--border");
                 if (enabled) {
-                    switch (a.getArgumentValue().getStringKey()) {
+                    switch (a.getValue().getString("")) {
                         case "simple": {
                             setLinkFormat(LINK_ASCII_FORMATTER);
                             break;
@@ -252,14 +252,14 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
                 return true;
             }
             case "--omit-root": {
-                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
                 if (enabled) {
                     setOmitRoot(val);
                 }
                 return true;
             }
             case "--infinite": {
-                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
                 if (enabled) {
                     this.infinite = val;
                 }
@@ -268,7 +268,7 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
             case DefaultPropertiesFormat.OPTION_MULTILINE_PROPERTY: {
                 NutsArgument i = cmdLine.nextString();
                 if (enabled) {
-                    addMultilineProperty(i.getStringKey(), i.getStringValue());
+                    addMultilineProperty(i.getKey().getString(), i.getValue().getString());
                 }
                 return true;
             }

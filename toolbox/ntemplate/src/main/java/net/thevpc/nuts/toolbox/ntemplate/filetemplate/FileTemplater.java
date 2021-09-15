@@ -7,10 +7,7 @@ package net.thevpc.nuts.toolbox.ntemplate.filetemplate;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.eval.FtexEvaluator;
-import net.thevpc.nuts.toolbox.ntemplate.filetemplate.processors.CopyStreamProcessor;
-import net.thevpc.nuts.toolbox.ntemplate.filetemplate.processors.DefaultExecutor;
-import net.thevpc.nuts.toolbox.ntemplate.filetemplate.processors.DollarVarStreamProcessor;
-import net.thevpc.nuts.toolbox.ntemplate.filetemplate.processors.StreamToTemplateProcessor;
+import net.thevpc.nuts.toolbox.ntemplate.filetemplate.processors.*;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.util.FileProcessorUtils;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.util.StringUtils;
 
@@ -51,8 +48,9 @@ public class FileTemplater {
     };
 
     static {
-        globalProcessorsByMimeType.put(MimeTypeConstants.PLACEHOLDER_DOLLARS, new StreamToTemplateProcessor(new DollarVarStreamProcessor()));
-        globalProcessorsByMimeType.put(MimeTypeConstants.ANY_TEXT, new StreamToTemplateProcessor(new DollarVarStreamProcessor()));
+        globalProcessorsByMimeType.put(MimeTypeConstants.PLACEHOLDER_DOLLARS, new StreamToTemplateProcessor(DollarVarStreamProcessor.INSTANCE));
+        globalProcessorsByMimeType.put(MimeTypeConstants.ANY_TEXT, new StreamToTemplateProcessor(DollarVarStreamProcessor.INSTANCE));
+        globalProcessorsByMimeType.put("application/x-shellscript", new StreamToTemplateProcessor(DollarBracket2VarStreamProcessor.INSTANCE));
         globalProcessorsByMimeType.put(MimeTypeConstants.ANY_TYPE, DEFAULT_PROCESSOR);
         globalExecProcessorsByMimeType.put(MimeTypeConstants.FTEX, FTEX_PROCESSOR);
         globalExecProcessorsByMimeType.put(MimeTypeConstants.IGNORE, IGNORE_PROCESSOR);

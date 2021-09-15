@@ -27,11 +27,9 @@ package net.thevpc.nuts.runtime.core.model;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.parsers.QueryStringParser;
-import net.thevpc.nuts.runtime.core.filters.DefaultNutsTokenFilter;
 
 import java.util.*;
 
-import net.thevpc.nuts.runtime.bundles.string.GlobUtils;
 import net.thevpc.nuts.runtime.core.filters.id.NutsIdIdFilter;
 
 /**
@@ -96,99 +94,99 @@ public class DefaultNutsId implements NutsId {
         return toString().isEmpty();
     }
 
-    @Override
-    public boolean matches(String pattern) {
-        if (pattern == null) {
-            return true;
-        }
-        return toString().matches(pattern);
-    }
+//    @Override
+//    public boolean matches(String pattern) {
+//        if (pattern == null) {
+//            return true;
+//        }
+//        return toString().matches(pattern);
+//    }
 
-    @Override
-    public boolean contains(String substring) {
-        return toString().contains(substring);
-    }
+//    @Override
+//    public boolean contains(String substring) {
+//        return toString().contains(substring);
+//    }
+//
+//    @Override
+//    public NutsTokenFilter groupIdToken() {
+//        return new DefaultNutsTokenFilter(getGroupId());
+//    }
+//
+//    @Override
+//    public NutsTokenFilter propertiesToken() {
+//        return new DefaultNutsTokenFilter(getPropertiesQuery());
+//    }
 
-    @Override
-    public NutsTokenFilter groupIdToken() {
-        return new DefaultNutsTokenFilter(getGroupId());
-    }
+//    @Override
+//    public NutsTokenFilter versionToken() {
+//        return new DefaultNutsTokenFilter(getVersion().getValue());
+//    }
+//
+//    @Override
+//    public NutsTokenFilter artifactIdToken() {
+//        return new DefaultNutsTokenFilter(getArtifactId());
+//    }
+//
+//    @Override
+//    public NutsTokenFilter repositoryToken() {
+//        return new DefaultNutsTokenFilter(getRepository());
+//    }
 
-    @Override
-    public NutsTokenFilter propertiesToken() {
-        return new DefaultNutsTokenFilter(getPropertiesQuery());
-    }
-
-    @Override
-    public NutsTokenFilter versionToken() {
-        return new DefaultNutsTokenFilter(getVersion().getValue());
-    }
-
-    @Override
-    public NutsTokenFilter artifactIdToken() {
-        return new DefaultNutsTokenFilter(getArtifactId());
-    }
-
-    @Override
-    public NutsTokenFilter repositoryToken() {
-        return new DefaultNutsTokenFilter(getRepository());
-    }
-
-    @Override
-    public NutsTokenFilter anyToken() {
-        NutsTokenFilter[] oo = {groupIdToken(), propertiesToken(), versionToken(), artifactIdToken(), repositoryToken()};
-        return new NutsTokenFilter() {
-            @Override
-            public boolean isNull() {
-                for (NutsTokenFilter t : oo) {
-                    if (t.isNull()) {
-                        return true;
-                    }
-                }
-                return false;
-            }
-
-            @Override
-            public boolean isBlank() {
-                for (NutsTokenFilter t : oo) {
-                    if (t.isBlank()) {
-                        return true;
-                    }
-                }
-                return false;
-            }
-
-            @Override
-            public boolean like(String pattern) {
-                for (NutsTokenFilter t : oo) {
-                    if (t.like(pattern)) {
-                        return true;
-                    }
-                }
-                return false;
-            }
-
-            @Override
-            public boolean matches(String pattern) {
-                for (NutsTokenFilter t : oo) {
-                    if (t.matches(pattern)) {
-                        return true;
-                    }
-                }
-                return false;
-            }
-
-            @Override
-            public boolean contains(String pattern) {
-                for (NutsTokenFilter t : oo) {
-                    if (t.contains(pattern)) {
-                        return true;
-                    }
-                }
-                return false;
-            }
-        };
-    }
+//    @Override
+//    public NutsTokenFilter anyToken() {
+//        NutsTokenFilter[] oo = {groupIdToken(), propertiesToken(), versionToken(), artifactIdToken(), repositoryToken()};
+//        return new NutsTokenFilter() {
+//            @Override
+//            public boolean isNull() {
+//                for (NutsTokenFilter t : oo) {
+//                    if (t.isNull()) {
+//                        return true;
+//                    }
+//                }
+//                return false;
+//            }
+//
+//            @Override
+//            public boolean isBlank() {
+//                for (NutsTokenFilter t : oo) {
+//                    if (t.isBlank()) {
+//                        return true;
+//                    }
+//                }
+//                return false;
+//            }
+//
+//            @Override
+//            public boolean like(String pattern) {
+//                for (NutsTokenFilter t : oo) {
+//                    if (t.like(pattern)) {
+//                        return true;
+//                    }
+//                }
+//                return false;
+//            }
+//
+//            @Override
+//            public boolean matches(String pattern) {
+//                for (NutsTokenFilter t : oo) {
+//                    if (t.matches(pattern)) {
+//                        return true;
+//                    }
+//                }
+//                return false;
+//            }
+//
+//            @Override
+//            public boolean contains(String pattern) {
+//                for (NutsTokenFilter t : oo) {
+//                    if (t.contains(pattern)) {
+//                        return true;
+//                    }
+//                }
+//                return false;
+//            }
+//        };
+//    }
 
     @Override
     public boolean equalsShortName(NutsId other) {
@@ -199,13 +197,13 @@ public class DefaultNutsId implements NutsId {
                 && NutsUtilStrings.trim(groupId).equals(NutsUtilStrings.trim(other.getGroupId()));
     }
 
-    @Override
-    public boolean like(String pattern) {
-        if (pattern == null) {
-            return true;
-        }
-        return GlobUtils.ofExact(pattern).matcher(toString()).matches();
-    }
+//    @Override
+//    public boolean like(String pattern) {
+//        if (pattern == null) {
+//            return true;
+//        }
+//        return GlobUtils.ofExact(pattern).matcher(toString()).matches();
+//    }
 
     @Override
     public String getFace() {

@@ -122,9 +122,9 @@ public abstract class AbstractNutsUndeployCommand extends NutsWorkspaceCommandBa
             return false;
         }
         boolean enabled = a.isEnabled();
-        switch (a.getStringKey()) {
+        switch (a.getKey().getString()) {
             case "--offline": {
-                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
                 if (enabled) {
                     setOffline(val);
                 }
@@ -133,7 +133,7 @@ public abstract class AbstractNutsUndeployCommand extends NutsWorkspaceCommandBa
             case "-r":
             case "-repository":
             case "--from": {
-                String val = cmdLine.nextString().getStringValue();
+                String val = cmdLine.nextString().getValue().getString();
                 if (enabled) {
                     setRepository(val);
                 }

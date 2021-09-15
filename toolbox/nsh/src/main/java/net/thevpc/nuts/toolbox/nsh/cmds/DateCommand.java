@@ -81,17 +81,17 @@ public class DateCommand extends SimpleNshBuiltin {
     protected boolean configureFirst(NutsCommandLine cmdLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         NutsArgument a = cmdLine.peek();
-        switch (a.getStringKey()) {
+        switch (a.getKey().getString()) {
             case "-d":
             case "--date": {
                 if(context.getShell().getOptions().isNsh()){
                     a = cmdLine.nextString();
                     if(a.isEnabled()){
-                        options.date=a.getStringValue();
+                        options.date=a.getValue().getString();
                     }
                 }else {
                     a = cmdLine.next();
-                    options.date=a.getStringValue();
+                    options.date=a.getValue().getString();
                 }
                 return true;
             }
@@ -100,11 +100,11 @@ public class DateCommand extends SimpleNshBuiltin {
                 if(context.getShell().getOptions().isNsh()){
                     a = cmdLine.nextString();
                     if(a.isEnabled()){
-                        options.file=a.getStringValue();
+                        options.file=a.getValue().getString();
                     }
                 }else {
                     a = cmdLine.next();
-                    options.file=a.getStringValue();
+                    options.file=a.getValue().getString();
                 }
                 return true;
             }
@@ -112,7 +112,7 @@ public class DateCommand extends SimpleNshBuiltin {
                 if(context.getShell().getOptions().isNsh()){
                     a = cmdLine.next();
                     if(a.isEnabled()){
-                        String s = a.getStringValue();
+                        String s = a.getValue().getString();
                         if(s==null){
                             s="";
                         }
@@ -120,7 +120,7 @@ public class DateCommand extends SimpleNshBuiltin {
                     }
                 }else {
                     a = cmdLine.next();
-                    String s = a.getStringValue();
+                    String s = a.getValue().getString();
                     if(s==null){
                         s="";
                     }
@@ -132,7 +132,7 @@ public class DateCommand extends SimpleNshBuiltin {
                 if(context.getShell().getOptions().isNsh()){
                     a = cmdLine.next();
                     if(a.isEnabled()){
-                        String s = a.getStringValue();
+                        String s = a.getValue().getString();
                         if(s==null){
                             s="";
                         }
@@ -140,7 +140,7 @@ public class DateCommand extends SimpleNshBuiltin {
                     }
                 }else {
                     a = cmdLine.next();
-                    String s = a.getStringValue();
+                    String s = a.getValue().getString();
                     if(s==null){
                         s="";
                     }
@@ -154,7 +154,7 @@ public class DateCommand extends SimpleNshBuiltin {
                 if(context.getShell().getOptions().isNsh()){
                     a = cmdLine.next();
                     if(a.isEnabled()){
-                        String s = a.getStringValue();
+                        String s = a.getValue().getString();
                         if(s==null){
                             s="";
                         }
@@ -162,7 +162,7 @@ public class DateCommand extends SimpleNshBuiltin {
                     }
                 }else {
                     a = cmdLine.next();
-                    String s = a.getStringValue();
+                    String s = a.getValue().getString();
                     if(s==null){
                         s="";
                     }
@@ -195,7 +195,7 @@ public class DateCommand extends SimpleNshBuiltin {
                 if(context.getShell().getOptions().isNsh()){
                     a = cmdLine.nextBoolean();
                     if(a.isEnabled()){
-                        options.debug=a.getBooleanValue();
+                        options.debug=a.getValue().getBoolean();
                     }
                 }else {
                     a = cmdLine.next();
@@ -210,7 +210,7 @@ public class DateCommand extends SimpleNshBuiltin {
                 if(context.getShell().getOptions().isNsh()){
                     a = cmdLine.nextBoolean();
                     if(a.isEnabled()){
-                        options.utc=a.getBooleanValue();
+                        options.utc=a.getValue().getBoolean();
                     }
                 }else {
                     a = cmdLine.next();
@@ -223,7 +223,7 @@ public class DateCommand extends SimpleNshBuiltin {
                 if(context.getShell().getOptions().isNsh()){
                     a = cmdLine.nextBoolean();
                     if(a.isEnabled()){
-                        options.rfcMail=a.getBooleanValue();
+                        options.rfcMail=a.getValue().getBoolean();
                     }
                 }else {
                     a = cmdLine.next();

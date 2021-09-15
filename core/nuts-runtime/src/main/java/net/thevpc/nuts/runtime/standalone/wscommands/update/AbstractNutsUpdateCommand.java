@@ -413,7 +413,7 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
             return false;
         }
         boolean enabled = a.isEnabled();
-        switch (a.getStringKey()) {
+        switch (a.getKey().getString()) {
             case "-a":
             case "--all": {
                 cmdLine.skip();
@@ -433,7 +433,7 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
 //            }
             case "-i":
             case "--installed": {
-                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
                 if (enabled) {
                     this.setInstalled(val);
                 }
@@ -441,7 +441,7 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
             }
             case "-r":
             case "--runtime": {
-                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
                 if (enabled) {
                     this.setRuntime(val);
                 }
@@ -449,7 +449,7 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
             }
             case "-A":
             case "--api": {
-                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
                 if (enabled) {
                     this.setApi(val);
                 }
@@ -458,7 +458,7 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
 
             case "-e":
             case "--extensions": {
-                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
                 if (enabled) {
                     this.setExtensions(val);
                 }
@@ -466,7 +466,7 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
             }
             case "-c":
             case "--companions": {
-                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
                 if (enabled) {
                     this.setCompanions(val);
                 }
@@ -475,7 +475,7 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
             case "-v":
             case "--api-version":
             case "--to-version": {
-                String val = cmdLine.nextString().getStringValue();
+                String val = cmdLine.nextString().getValue().getString();
                 if (enabled) {
                     this.setApiVersion(getSession().getWorkspace().version().parse(val));
                 }
@@ -494,8 +494,8 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
             case "--expire": {
                 a = cmdLine.next();
                 if (enabled) {
-                    if (a.getStringValue() != null) {
-                        expireTime=Instant.parse(a.getStringValue());
+                    if (a.getValue().getString() != null) {
+                        expireTime=Instant.parse(a.getValue().getString());
                     } else {
                         expireTime=Instant.now();
                     }

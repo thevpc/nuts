@@ -45,12 +45,12 @@ public class DefaultNutsHelpInternalExecutable extends DefaultInternalNutsExecut
             } else {
                 NutsArgument a = cmdLine.peek();
                 if (a.isOption()) {
-                    switch (a.getStringKey()) {
+                    switch (a.getKey().getString()) {
                         case "--colors":
                         case "--ntf":{
                             NutsArgument c = cmdLine.nextBoolean();
                             if(c.isEnabled()) {
-                                helpColors = c.getBooleanValue();
+                                helpColors = c.getValue().getBoolean();
                             }
                             break;
                         }

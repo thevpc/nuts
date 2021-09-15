@@ -88,7 +88,7 @@ public final class Nuts {
             NutsSession session = NutsExceptionBase.detectSession(ex);
             NutsWorkspaceOptionsBuilder bo = null;
             if (session != null) {
-                bo = session.getWorkspace().env().getBootOptions().builder();
+                bo = session.getWorkspace().boot().getBootOptions().builder();
                 if (!session.getWorkspace().env().isGraphicalDesktopEnvironment()) {
                     bo.setGui(false);
                 }

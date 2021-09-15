@@ -20,11 +20,11 @@ public class NDocusaurusMain implements NutsApplication {
 
             @Override
             public boolean onNextOption(NutsArgument option, NutsCommandLine commandline) {
-                switch (option.getStringKey()) {
+                switch (option.getKey().getString()) {
                     case "-d":
                     case "--dir": {
                         if (workdir == null) {
-                            workdir = commandline.nextString().getStringValue();
+                            workdir = commandline.nextString().getValue().getString();
                             return true;
                         }
                     }
@@ -36,15 +36,15 @@ public class NDocusaurusMain implements NutsApplication {
             public boolean onNextNonOption(NutsArgument nonOption, NutsCommandLine commandline) {
                 switch (nonOption.getString()) {
                     case "start": {
-                        start = commandline.nextBoolean().getBooleanValue();
+                        start = commandline.nextBoolean().getValue().getBoolean();
                         return true;
                     }
                     case "build": {
-                        build = commandline.nextBoolean().getBooleanValue();
+                        build = commandline.nextBoolean().getValue().getBoolean();
                         return true;
                     }
                     case "pdf": {
-                        buildPdf = commandline.nextBoolean().getBooleanValue();
+                        buildPdf = commandline.nextBoolean().getValue().getBoolean();
                         return true;
                     }
                 }
@@ -70,7 +70,7 @@ public class NDocusaurusMain implements NutsApplication {
                         .setBuildWebSite(build)
                         .setStartWebSite(start)
                         .setBuildPdf(buildPdf)
-                        .setAutoInstallNutsPackages(appContext.getWorkspace().env().getBootOptions().getConfirm()== NutsConfirmationMode.YES)
+                        .setAutoInstallNutsPackages(appContext.getWorkspace().boot().getBootOptions().getConfirm()== NutsConfirmationMode.YES)
                         .run();
             }
         });

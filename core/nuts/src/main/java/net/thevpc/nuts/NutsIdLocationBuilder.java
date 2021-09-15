@@ -25,6 +25,8 @@
 */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
 /**
  * Mutable IdLocation class that helps creating instance of immutable {@link NutsIdLocation}.
  * Instances of {@link NutsIdLocation} are used in {@link NutsDescriptor} (see {@link NutsDescriptor#getLocations()})
@@ -32,6 +34,10 @@ package net.thevpc.nuts;
  * @app.category Base
  */
 public interface NutsIdLocationBuilder {
+    static NutsIdLocationBuilder of(NutsSession session){
+        NutsApiUtils.checkSession(session);
+        return session.getWorkspace().descriptor().locationBuilder();
+    }
 
     /**
      * return location url

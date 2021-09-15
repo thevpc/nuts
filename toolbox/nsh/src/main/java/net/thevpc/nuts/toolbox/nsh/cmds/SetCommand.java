@@ -61,7 +61,7 @@ public class SetCommand extends SimpleNshBuiltin {
         NutsArgument a = commandLine.peek();
         if (a.isNonOption()) {
             if (a.isKeyValue()) {
-                options.vars.put(a.getStringKey(), a.getStringValue());
+                options.vars.put(a.getKey().getString(), a.getValue().getString());
                 return true;
             }
         }

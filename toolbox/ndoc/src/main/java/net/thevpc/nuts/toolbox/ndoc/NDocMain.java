@@ -24,25 +24,25 @@ public class NDocMain implements NutsApplication {
 
             @Override
             public boolean onNextOption(NutsArgument option, NutsCommandLine commandline) {
-                switch (option.getStringKey()) {
+                switch (option.getKey().getString()) {
                     case "-s":
                     case "--source": {
-                        src.add(commandline.nextString().getStringValue());
+                        src.add(commandline.nextString().getValue().getString());
                         return true;
                     }
                     case "-t":
                     case "--target": {
-                        target = commandline.nextString().getStringValue();
+                        target = commandline.nextString().getValue().getString();
                         return true;
                     }
                     case "-p":
                     case "--package": {
-                        pck.add(commandline.nextString().getStringValue());
+                        pck.add(commandline.nextString().getValue().getString());
                         return true;
                     }
                     case "-b":
                     case "--backend": {
-                        backend= commandline.nextString().getStringValue();
+                        backend= commandline.nextString().getValue().getString();
                         return true;
                     }
                 }

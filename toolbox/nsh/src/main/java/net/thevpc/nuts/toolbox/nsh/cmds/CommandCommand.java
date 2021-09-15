@@ -63,7 +63,7 @@ public class CommandCommand extends SimpleNshBuiltin {
         if (context.getExecutionContext().configureFirst(commandLine)) {
             return true;
         } else if ((a = commandLine.nextBoolean("-p")) != null) {
-            options.p = a.getBooleanValue();
+            options.p = a.getValue().getBoolean();
         } else if (!commandLine.peek().isOption()) {
             if (options.commandName == null) {
                 options.commandName = commandLine.next().getString();

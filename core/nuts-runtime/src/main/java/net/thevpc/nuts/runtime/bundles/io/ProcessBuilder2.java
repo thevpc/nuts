@@ -60,13 +60,13 @@ public class ProcessBuilder2 {
         NutsTextManager factory = session.getWorkspace().text();
         if (a.isKeyValue()) {
             if (a.isOption()) {
-                sb.append(factory.forStyled(CoreStringUtils.enforceDoubleQuote(a.getStringKey(), session), NutsTextStyle.option()));
+                sb.append(factory.forStyled(CoreStringUtils.enforceDoubleQuote(a.getKey().getString(), session), NutsTextStyle.option()));
                 sb.append("=");
-                sb.append(CoreStringUtils.enforceDoubleQuote(a.getStringValue(), session));
+                sb.append(CoreStringUtils.enforceDoubleQuote(a.getValue().getString(), session));
             } else {
-                sb.append(factory.forStyled(CoreStringUtils.enforceDoubleQuote(a.getStringKey(), session), NutsTextStyle.primary4()));
+                sb.append(factory.forStyled(CoreStringUtils.enforceDoubleQuote(a.getKey().getString(), session), NutsTextStyle.primary4()));
                 sb.append("=");
-                sb.append(CoreStringUtils.enforceDoubleQuote(a.getStringValue(), session));
+                sb.append(CoreStringUtils.enforceDoubleQuote(a.getValue().getString(), session));
             }
         } else {
             if (a.isOption()) {

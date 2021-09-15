@@ -295,10 +295,10 @@ public abstract class AbstractNutsInstallCommand extends NutsWorkspaceCommandBas
             return false;
         }
         boolean enabled = a.isEnabled();
-        switch (a.getStringKey()) {
+        switch (a.getKey().getString()) {
             case "-c":
             case "--companions": {
-                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
                 if (enabled) {
                     this.setCompanions(val);
                 }
@@ -306,7 +306,7 @@ public abstract class AbstractNutsInstallCommand extends NutsWorkspaceCommandBas
             }
             case "-i":
             case "--installed": {
-                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
                 if (enabled) {
                     this.setInstalled(val);
                 }

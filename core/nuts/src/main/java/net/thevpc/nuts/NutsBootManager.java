@@ -23,6 +23,8 @@
  */
 package net.thevpc.nuts;
 
+import java.net.URL;
+
 /**
  *
  * @author vpc
@@ -32,4 +34,22 @@ public interface NutsBootManager {
     NutsSession getSession();
 
     NutsBootManager setSession(NutsSession session);
+
+    NutsVal getCustomBootOption(String name);
+
+    NutsWorkspaceOptions getBootOptions();
+
+    ClassLoader getBootClassLoader();
+
+    URL[] getBootClassWorldURLs();
+
+    String getBootRepositories();
+
+    long getCreationStartTimeMillis();
+
+    long getCreationFinishTimeMillis();
+
+    long getCreationTimeMillis();
+
+
 }

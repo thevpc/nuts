@@ -171,11 +171,11 @@ public class Test11_DefaultNutsArgument {
         Assertions.assertEquals(enabled,a.isEnabled(),"Enabled:"+a.getString());
         Assertions.assertEquals(keyValue,a.isKeyValue(),"KeyValue:"+a.getString());
         Assertions.assertEquals(negated,a.isNegated(),"Negated:"+a.getString());
-        Assertions.assertEquals("StringKey:"+a.getString(),key,a.getStringKey());
-        Assertions.assertEquals("StringValue:"+a.getString(),value,a.getStringValue());
-        Assertions.assertEquals("StringOptionName:"+a.getString(),optionName,a.getStringOptionName());
-        Assertions.assertEquals("StringOptionPrefix:"+a.getString(),optionPrefix,a.getStringOptionPrefix());
-        Assertions.assertEquals("KeyValueSeparator:"+a.getString(),eq,a.getKeyValueSeparator());
+        Assertions.assertEquals("StringKey:"+a.getString(),key,a.getKey().getString());
+        Assertions.assertEquals("StringValue:"+a.getString(),value,a.getValue().getString());
+        Assertions.assertEquals("StringOptionName:"+a.getString(),optionName,a.getOptionName().getString());
+        Assertions.assertEquals("StringOptionPrefix:"+a.getString(),optionPrefix,a.getOptionPrefix());
+        Assertions.assertEquals("KeyValueSeparator:"+a.getString(),eq,a.getSeparator());
         TestUtils.println("OK : "+a.getString());
     }
 

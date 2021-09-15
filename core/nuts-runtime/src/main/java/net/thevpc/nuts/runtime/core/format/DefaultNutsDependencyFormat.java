@@ -260,55 +260,55 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
             return false;
         }
         boolean enabled=a.isEnabled();
-        switch (a.getStringKey()) {
+        switch (a.getKey().getString()) {
             case "--omit-env": {
-                boolean val= cmdLine.nextBoolean().getBooleanValue();
+                boolean val= cmdLine.nextBoolean().getValue().getBoolean();
                 if(enabled) {
                     setOmitOtherProperties(val);
                 }
                 return true;
             }
 //            case "--omit-face": {
-//                setOmitFace(cmdLine.nextBoolean().getBooleanValue());
+//                setOmitFace(cmdLine.nextBoolean().getValue().getBoolean());
 //                return true;
 //            }
             case "--omit-group": {
-                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
                 if(enabled) {
                 setOmitGroupId(val);
                 }
                 return true;
             }
             case "--omit-imported-group": {
-                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
                 if(enabled) {
                     setOmitImportedGroup(val);
                 }
                 return true;
             }
             case "--omit-repo": {
-                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
                 if(enabled) {
                     setOmitRepository(val);
                 }
                 return true;
             }
             case "--highlight-imported-group": {
-                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
                 if(enabled) {
                     setHighlightImportedGroup(val);
                 }
                 return true;
             }
             case "--highlight-optional": {
-                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
                 if(enabled) {
                     setHighlightOptional(val);
                 }
                 return true;
             }
             case "--highlight-scope": {
-                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
                 if(enabled) {
                     setHighlightScope(val);
                 }

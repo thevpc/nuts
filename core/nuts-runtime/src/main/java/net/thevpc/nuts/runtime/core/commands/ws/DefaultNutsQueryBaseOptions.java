@@ -274,9 +274,9 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
             return false;
         }
         boolean enabled = a.isEnabled();
-        switch (a.getStringKey()) {
+        switch (a.getKey().getString()) {
             case "--failfast": {
-                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
                 if (enabled) {
                     this.setFailFast(val);
                 }
@@ -284,21 +284,21 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
             }
             case "-r":
             case "--repository": {
-                String val = cmdLine.nextString().getStringValue();
+                String val = cmdLine.nextString().getValue().getString();
                 if (enabled) {
                     addRepositoryFilter(getSession().getWorkspace().filters().repository().byName(val));
                 }
                 return true;
             }
             case "--dependencies": {
-                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
                 if (enabled) {
                     this.setDependencies(val);
                 }
                 return true;
             }
             case "--scope": {
-                String s = cmdLine.nextString().getStringValue();
+                String s = cmdLine.nextString().getValue().getString();
                 if (enabled) {
                     NutsDependencyScopePattern p = NutsDependencyScopes.parseDependencyScopePattern(s);
                     this.addScope(p);
@@ -321,21 +321,21 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
                 return true;
             }
             case "--effective": {
-                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
                 if (enabled) {
                     this.setEffective(val);
                 }
                 return true;
             }
             case "--content": {
-                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
                 if (enabled) {
                     this.setContent(val);
                 }
                 return true;
             }
             case "--location": {
-                String location = cmdLine.nextString().getStringValue();
+                String location = cmdLine.nextString().getValue().getString();
                 if (enabled) {
                     this.setLocation(NutsUtilStrings.isBlank(location) ? null : Paths.get(location));
                 }

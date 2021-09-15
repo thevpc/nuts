@@ -5,13 +5,15 @@
  */
 package net.thevpc.nuts.runtime.standalone.ext;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.spi.*;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import net.thevpc.nuts.runtime.standalone.ext.DefaultNutsWorkspaceExtensionModel;
+import net.thevpc.nuts.NutsId;
+import net.thevpc.nuts.NutsServiceLoader;
+import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NutsWorkspaceExtensionManager;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
+import net.thevpc.nuts.spi.NutsComponent;
+
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author thevpc
@@ -29,15 +31,6 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         return model;
     }
 
-    public NutsSession getSession() {
-        return session;
-    }
-
-    public NutsWorkspaceExtensionManager setSession(NutsSession session) {
-        this.session = session;
-        return this;
-    }
-
     @Override
     public boolean installWorkspaceExtensionComponent(Class extensionPointType, Object extensionImpl) {
         checkSession();
@@ -50,7 +43,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         return model.discoverTypes(id, classLoader, session);
     }
 
-//    @Override
+    //    @Override
 //    public Set<Class> discoverTypes(ClassLoader classLoader) {
 //        return objectFactory.discoverTypes(classLoader);
 //    }
@@ -163,38 +156,22 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         return model.getConfigExtensions(session);
     }
 
-    //TODO fix me!
-    public <T> T createApiTypeInstance(Class<T> type,String name,Class[] argTypes,Object[] args){
-        checkSession();
-        if(name==null || name.equals("")){
-            name="default";
-        }
-        String argTypesString=Arrays.stream(argTypes).map(Class::getName).collect(Collectors.joining(","));
-        switch (type.getName()){
-            case "net.thevpc.nuts.NutsPrintStream":{
-                switch (name){
-                    case "default":{
+    public NutsSession getSession() {
+        return session;
+    }
 
-                    }
-                    case "null":{
-                        if(argTypes.length==0){
-
-                        }
-                    }
-                }
-                break;
-            }
-        }
-        throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle(
-                "unsupported constructor %s:%s(%s)",
-                type.getName(),
-                name,
-                argTypesString
-        ));
+    public NutsWorkspaceExtensionManager setSession(NutsSession session) {
+        this.session = session;
+        return this;
     }
 
     private void checkSession() {
         NutsWorkspaceUtils.checkSession(model.getWorkspace(), session);
+    }
+
+    public <T> T create(Class<T> type, String name, Class[] argTypes, Object[] args) {
+        checkSession();
+        return model.createApiTypeInstance(type, name, argTypes, args,session);
     }
 
 }

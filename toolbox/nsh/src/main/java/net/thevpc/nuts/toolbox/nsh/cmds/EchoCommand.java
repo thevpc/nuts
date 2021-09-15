@@ -56,13 +56,13 @@ public class EchoCommand extends SimpleNshBuiltin {
     @Override
     protected boolean configureFirst(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
-        switch (commandLine.peek().getStringKey()) {
+        switch (commandLine.peek().getKey().getString()) {
             case "-n": {
-                options.newLine = !commandLine.nextBoolean().getBooleanValue();
+                options.newLine = !commandLine.nextBoolean().getValue().getBoolean();
                 return true;
             }
             case "-p": {
-                options.plain = commandLine.nextBoolean().getBooleanValue();
+                options.plain = commandLine.nextBoolean().getValue().getBoolean();
                 return true;
             }
             default: {

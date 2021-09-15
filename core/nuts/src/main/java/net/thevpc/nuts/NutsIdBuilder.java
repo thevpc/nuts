@@ -25,6 +25,8 @@
 */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
 import java.io.Serializable;
 import java.util.Map;
 import java.util.function.Function;
@@ -36,6 +38,10 @@ import java.util.function.Function;
  * @app.category Descriptor
  */
 public interface NutsIdBuilder extends Serializable {
+    static NutsIdBuilder of(NutsSession session){
+        NutsApiUtils.checkSession(session);
+        return session.getWorkspace().id().builder();
+    }
 
 
     

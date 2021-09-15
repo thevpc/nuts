@@ -36,13 +36,7 @@ public interface NutsWorkspaceEnvManager {
 
     Map<String, String> getEnvMap();
 
-    String getEnv(String property, String defaultValue);
-
-    String getEnv(String property);
-
-    Integer getEnvAsInt(String property, Integer defaultValue);
-
-    Boolean getEnvAsBoolean(String property, Boolean defaultValue);
+    NutsVal getEnv(String property);
 
     /**
      * @param property property
@@ -59,47 +53,11 @@ public interface NutsWorkspaceEnvManager {
     Map<String, Object> getProperties();
 
     /**
-     * @param property     property
-     * @param defaultValue defaultValue
-     * @return property value
-     * @since 0.8.1
-     */
-    Integer getPropertyAsInt(String property, Integer defaultValue);
-
-    /**
-     * @param property     property
-     * @param defaultValue defaultValue
-     * @return property value
-     * @since 0.8.1
-     */
-    String getPropertyAsString(String property, String defaultValue);
-
-    /**
-     * @param property     property
-     * @param defaultValue defaultValue
-     * @return property value
-     * @since 0.8.1
-     */
-    Boolean getPropertyAsBoolean(String property, Boolean defaultValue);
-
-    /**
      * @param property property name
      * @return property value
      * @since 0.8.1
      */
-    Object getProperty(String property);
-
-    <T> T getOrCreateProperty(String property, Supplier<T> supplier);
-
-    <T> T getOrCreateProperty(Class<T> propertyType, Supplier<T> supplier);
-
-    /**
-     * @param property     property name
-     * @param defaultValue default value
-     * @return property value
-     * @since 0.8.1
-     */
-    Object getProperty(String property, Object defaultValue);
+    NutsVal getProperty(String property);
 
     /**
      * @param property property
@@ -108,8 +66,6 @@ public interface NutsWorkspaceEnvManager {
      * @since 0.8.1
      */
     NutsWorkspaceEnvManager setProperty(String property, Object value);
-
-    NutsWorkspaceOptions getBootOptions();
 
     NutsOsFamily getOsFamily();
 
@@ -134,29 +90,9 @@ public interface NutsWorkspaceEnvManager {
 
     NutsArchFamily getArchFamily();
 
-    String getOption(String property);
-
-    String getOption(String property, String defaultValue);
-
-    Boolean getOptionAsBoolean(String property, Boolean defaultValue);
-
-    Integer getOptionAsInt(String property, Integer defaultValue);
-
     NutsSession getSession();
 
     NutsWorkspaceEnvManager setSession(NutsSession session);
-
-    ClassLoader getBootClassLoader();
-
-    URL[] getBootClassWorldURLs();
-
-    String getBootRepositories();
-
-    long getCreationStartTimeMillis();
-
-    long getCreationFinishTimeMillis();
-
-    long getCreationTimeMillis();
 
     boolean isGraphicalDesktopEnvironment();
 

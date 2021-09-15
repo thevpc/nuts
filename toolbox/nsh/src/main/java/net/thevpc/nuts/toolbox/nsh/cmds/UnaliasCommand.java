@@ -59,8 +59,8 @@ public class UnaliasCommand extends SimpleNshBuiltin {
         Options options = context.getOptions();
         NutsArgument a = commandLine.peek();
         if (a.isOption()) {
-            if (a.getStringKey().equals("-a")) {
-                options.all = commandLine.nextBoolean().getBooleanValue();
+            if (a.getKey().getString().equals("-a")) {
+                options.all = commandLine.nextBoolean().getValue().getBoolean();
                 return true;
             }
         } else {

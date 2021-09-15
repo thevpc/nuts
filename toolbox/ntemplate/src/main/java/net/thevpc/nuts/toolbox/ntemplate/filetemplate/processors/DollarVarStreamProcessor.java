@@ -8,6 +8,7 @@ import net.thevpc.nuts.toolbox.ntemplate.filetemplate.util.FileProcessorUtils;
 import java.io.*;
 
 public class DollarVarStreamProcessor implements StreamProcessor {
+    public static final DollarVarStreamProcessor INSTANCE = new DollarVarStreamProcessor();
 
     public DollarVarStreamProcessor() {
     }

@@ -61,7 +61,7 @@ public class DirNameCommand extends SimpleNshBuiltin {
     protected boolean configureFirst(NutsCommandLine cmdLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         NutsArgument a = cmdLine.peek();
-        switch (a.getStringKey()) {
+        switch (a.getKey().getString()) {
             case "-z":
             case "--zero": {
                 cmdLine.skip();

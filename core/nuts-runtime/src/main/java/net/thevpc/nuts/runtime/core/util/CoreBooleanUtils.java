@@ -44,7 +44,7 @@ public final class CoreBooleanUtils {
             return defaultValue;
         }
         DefaultNutsArgument u = new DefaultNutsArgument(o);
-        return u.getBoolean(defaultValue);
+        return u.getAll().getBoolean(defaultValue);
     }
     
 }

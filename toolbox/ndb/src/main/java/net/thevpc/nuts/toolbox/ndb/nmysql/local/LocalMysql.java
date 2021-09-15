@@ -81,7 +81,7 @@ package net.thevpc.nuts.toolbox.ndb.nmysql.local;
 //        commandLine.setCommandName("mysql --local list");
 //        AtName name = null;
 //        while (commandLine.hasNext()) {
-//            if (commandLine.peek().getStringKey().equals("--name")) {
+//            if (commandLine.peek()getKey().getString().equals("--name")) {
 //                name = AtName.nextConfigOption(commandLine);
 //            } else if (name == null && commandLine.peek().isNonOption()) {
 //                name = AtName.nextConfigNonOption(commandLine);
@@ -156,7 +156,7 @@ package net.thevpc.nuts.toolbox.ndb.nmysql.local;
 //        boolean askPassword = false;
 //        while (commandLine.hasNext()) {
 //            if (commandLine.peek().isOption()) {
-//                switch (commandLine.peek().getStringKey()) {
+//                switch (commandLine.peek()getKey().getString()) {
 //                    case "--name": {
 //                        if (name == null) {
 //                            name = AtName.nextAppOption(commandLine);
@@ -388,7 +388,7 @@ package net.thevpc.nuts.toolbox.ndb.nmysql.local;
 //        NutsArgument a;
 //        while (commandLine.hasNext()) {
 //            if (commandLine.peek().isOption()) {
-//                switch (commandLine.peek().getStringKey()) {
+//                switch (commandLine.peek()getKey().getString()) {
 //                    case "--name": {
 //                        if (name == null) {
 //                            name = AtName.nextAppOption(commandLine);
@@ -429,7 +429,7 @@ package net.thevpc.nuts.toolbox.ndb.nmysql.local;
 //        NutsArgument a;
 //        while (commandLine.hasNext()) {
 //            if (commandLine.peek().isOption()) {
-//                switch (commandLine.peek().getStringKey()) {
+//                switch (commandLine.peek()getKey().getString()) {
 //                    case "--name": {
 //                        if (name == null) {
 //                            name = AtName.nextAppOption(commandLine);

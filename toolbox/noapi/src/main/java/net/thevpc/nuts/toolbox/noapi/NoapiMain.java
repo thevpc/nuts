@@ -58,10 +58,10 @@ public class NoapiMain implements NutsApplication {
             @Override
             public boolean onNextNonOption(NutsArgument nonOption, NutsCommandLine commandline) {
                 if (path == null) {
-                    path = commandline.nextString().getStringKey();
+                    path = commandline.nextString().getKey().getString();
                     return true;
                 } else if (target == null) {
-                    target = commandline.nextString().getStringKey();
+                    target = commandline.nextString().getKey().getString();
                     return true;
                 }
                 return false;

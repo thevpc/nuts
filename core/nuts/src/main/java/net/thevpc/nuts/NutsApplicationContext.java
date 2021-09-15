@@ -271,7 +271,7 @@ public interface NutsApplicationContext extends NutsCommandLineConfigurable {
      *                 if(!noMoreOptions){
      *                     return false;
      *                 }
-     *                 switch (argument.getStringKey()) {
+     *                 switch (argument.getKey().getString()) {
      *                     case "--clean": {
      *                         hl.clean(cmdLine.nextBoolean().getBooleanValue());
      *                         return true;

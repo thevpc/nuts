@@ -152,6 +152,8 @@ public interface NutsWorkspace extends NutsComponent<NutsWorkspaceOptions> {
 
     NutsConcurrentManager concurrent();
 
+    NutsUtilManager util();
+
     NutsImportManager imports();
 
     NutsCustomCommandManager commands();

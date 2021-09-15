@@ -17,7 +17,7 @@ public abstract class RemoteNutsWorkspace extends AbstractNutsWorkspace {
                     .set("cmd", commandName)
                     .set("body", body).build();
             NutsString json = e.setValue(q).format();
-            String wsURL = env().getBootOptions().getWorkspace();
+            String wsURL = boot().getBootOptions().getWorkspace();
             byte[] result = cli.request("nuts/ws:"+wsURL, json.toString().getBytes());
             NutsObjectElement resultObject = e.parse(result, NutsObjectElement.class);
             NutsElementFormat prv = elem().setSession(session);

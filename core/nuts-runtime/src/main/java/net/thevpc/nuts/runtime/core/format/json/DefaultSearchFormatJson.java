@@ -50,9 +50,9 @@ public class DefaultSearchFormatJson extends DefaultSearchFormatBase {
             return true;
         }
         boolean enabled = a.isEnabled();
-        switch (a.getStringKey()) {
+        switch (a.getKey().getString()) {
             case "--compact": {
-                boolean val = cmd.nextBoolean().getBooleanValue();
+                boolean val = cmd.nextBoolean().getValue().getBoolean();
                 if (enabled) {
                     this.compact = val;
                 }

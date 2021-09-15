@@ -16,7 +16,7 @@ public class BootAPINutsDescriptorFilter extends AbstractDescriptorFilter {
     public boolean acceptDescriptor(NutsDescriptor descriptor, NutsSession session) {
         for (NutsDependency dependency : descriptor.getDependencies()) {
             if (dependency.getSimpleName().equals(NutsConstants.Ids.NUTS_API)) {
-                if (bootApiVersion.matches(dependency.getVersion().toString())) {
+                if (bootApiVersion.filter().acceptVersion(dependency.getVersion(), session)) {
                     return true;
                 } else {
                     return false;

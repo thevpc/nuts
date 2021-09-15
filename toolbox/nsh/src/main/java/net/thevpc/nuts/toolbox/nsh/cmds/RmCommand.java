@@ -53,7 +53,7 @@ public class RmCommand extends SimpleNshBuiltin {
         Options options = context.getOptions();
         NutsArgument a;
         if ((a = commandLine.nextBoolean("-R")) != null) {
-            options.R = a.getBooleanValue();
+            options.R = a.getValue().getBoolean();
             return true;
         } else if (commandLine.peek().isNonOption()) {
             options.files.add(ShellHelper.xfileOf(commandLine.next().getString(), context.getRootContext().getCwd(), context.getSession()));

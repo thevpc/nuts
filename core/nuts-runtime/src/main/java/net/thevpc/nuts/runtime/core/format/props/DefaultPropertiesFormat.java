@@ -30,24 +30,24 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
     public boolean configureFirst(NutsCommandLine commandLine) {
         NutsArgument a;
         if ((a = commandLine.nextString(OPTION_MULTILINE_PROPERTY)) != null) {
-            NutsArgument i = a.getArgumentValue();
+            NutsArgument i = NutsArgument.of(a.getValue().getString(),getSession());
             if (i.isEnabled()) {
-                addMultilineProperty(i.getStringKey(), i.getStringValue());
+                addMultilineProperty(i.getKey().getString(), i.getValue().getString());
             }
             return true;
         } else if ((a = commandLine.nextBoolean("--compact")) != null) {
             if (a.isEnabled()) {
-                this.compact = a.getBooleanValue();
+                this.compact = a.getValue().getBoolean();
             }
             return true;
         } else if ((a = commandLine.nextBoolean("--props")) != null) {
             if (a.isEnabled()) {
-                this.javaProps = a.getBooleanValue();
+                this.javaProps = a.getValue().getBoolean();
             }
             return true;
         } else if ((a = commandLine.nextBoolean("--escape-text")) != null) {
             if (a.isEnabled()) {
-                this.escapeText = a.getBooleanValue();
+                this.escapeText = a.getValue().getBoolean();
             }
             return true;
         }

@@ -144,7 +144,7 @@ public class NutsSettingsAliasSubCommand extends AbstractNutsSettingsSubCommand 
                                 cmdLine.pushBack(a);
                                 cmdLine.unexpectedArgument();
                             }
-                            toAdd.put(a.getStringKey(), new AliasInfo(a.getStringKey(), a.getStringValue(), null, null, null));
+                            toAdd.put(a.getKey().getString(), new AliasInfo(a.getKey().getString(), a.getValue().getString(), null, null, null));
                         } else {
                             if (n == null) {
                                 n = a.toString();

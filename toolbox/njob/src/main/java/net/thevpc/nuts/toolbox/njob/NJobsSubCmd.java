@@ -36,42 +36,42 @@ public class NJobsSubCmd {
         boolean show = false;
         while (cmd.hasNext()) {
             NutsArgument a = cmd.peek();
-            switch (a.getStringKey()) {
+            switch (a.getKey().getString()) {
                 case "--list":
                 case "-l": {
-                    list = cmd.nextBoolean().getBooleanValue();
+                    list = cmd.nextBoolean().getValue().getBoolean();
                     break;
                 }
                 case "--show":
                 case "-s": {
-                    show = cmd.nextBoolean().getBooleanValue();
+                    show = cmd.nextBoolean().getValue().getBoolean();
                     break;
                 }
                 case "--time":
                 case "--on":
                 case "--start":
                 case "-t": {
-                    t.setStartTime(new TimeParser().parseInstant(cmd.nextString().getStringValue(), false));
+                    t.setStartTime(new TimeParser().parseInstant(cmd.nextString().getValue().getString(), false));
                     break;
                 }
                 case "--at": {
-                    t.setStartTime(new TimeParser().setTimeOnly(true).parseInstant(cmd.nextString().getStringValue(), false));
+                    t.setStartTime(new TimeParser().setTimeOnly(true).parseInstant(cmd.nextString().getValue().getString(), false));
                     break;
                 }
                 case "--for":
                 case "--project":
                 case "-p": {
-                    t.setProject(cmd.nextString().getStringValue());
+                    t.setProject(cmd.nextString().getValue().getString());
                     break;
                 }
                 case "--obs":
                 case "-o": {
-                    t.setObservations(cmd.nextString().getStringValue());
+                    t.setObservations(cmd.nextString().getValue().getString());
                     break;
                 }
                 case "--duration":
                 case "-d": {
-                    t.setDuration(TimePeriod.parse(cmd.nextString().getStringValue(), false));
+                    t.setDuration(TimePeriod.parse(cmd.nextString().getValue().getString(), false));
                     break;
                 }
                 default: {
@@ -111,61 +111,61 @@ public class NJobsSubCmd {
         List<Consumer<NJob>> runLater = new ArrayList<>();
         while (cmd.hasNext()) {
             NutsArgument a = cmd.peek();
-            switch (a.getStringKey()) {
+            switch (a.getKey().getString()) {
                 case "--list":
                 case "-l": {
-                    list = cmd.nextBoolean().getBooleanValue();
+                    list = cmd.nextBoolean().getValue().getBoolean();
                     break;
                 }
                 case "--show":
                 case "-s": {
-                    show = cmd.nextBoolean().getBooleanValue();
+                    show = cmd.nextBoolean().getValue().getBoolean();
                     break;
                 }
                 case "--start": {
-                    Instant v = new TimeParser().parseInstant(cmd.nextString().getStringValue(), false);
+                    Instant v = new TimeParser().parseInstant(cmd.nextString().getValue().getString(), false);
                     runLater.add(t -> t.setStartTime(v));
                     break;
                 }
                 case "-t":
                 case "--on": {
-                    String v = cmd.nextString().getStringValue();
+                    String v = cmd.nextString().getValue().getString();
                     runLater.add(t -> t.setStartTime(TimePeriod.parseOpPeriodAsInstant(v, t.getStartTime(), true)));
                     break;
                 }
                 case "--at": {
-                    Instant v = new TimeParser().setTimeOnly(true).parseInstant(cmd.nextString().getStringValue(), false);
+                    Instant v = new TimeParser().setTimeOnly(true).parseInstant(cmd.nextString().getValue().getString(), false);
                     runLater.add(t -> t.setStartTime(v));
                     break;
                 }
                 case "-d":
                 case "--duration": {
-                    TimePeriod v = TimePeriod.parse(cmd.nextString().getStringValue(), false);
+                    TimePeriod v = TimePeriod.parse(cmd.nextString().getValue().getString(), false);
                     runLater.add(t -> t.setDuration(v));
                     break;
                 }
                 case "-n":
                 case "--name": {
-                    String v = cmd.nextString().getStringValue();
+                    String v = cmd.nextString().getValue().getString();
                     runLater.add(t -> t.setName(v));
                     break;
                 }
                 case "-p":
                 case "--project": {
-                    String v = cmd.nextString().getStringValue();
+                    String v = cmd.nextString().getValue().getString();
                     runLater.add(t -> t.setProject(v));
                     break;
                 }
                 case "-o":
                 case "--obs": {
-                    String v = cmd.nextString().getStringValue();
+                    String v = cmd.nextString().getValue().getString();
                     runLater.add(t -> t.setObservations(v));
                     break;
                 }
                 case "-o+":
                 case "--obs+":
                 case "+obs": {
-                    String v = cmd.nextString().getStringValue();
+                    String v = cmd.nextString().getValue().getString();
                     runLater.add(t -> {
                         String s = t.getObservations();
                         if (s == null) {
@@ -313,27 +313,27 @@ public class NJobsSubCmd {
         Predicate<NJob> whereFilter = null;
         while (cmd.hasNext()) {
             NutsArgument a = cmd.peek();
-            switch (a.getStringKey()) {
+            switch (a.getKey().getString()) {
                 case "-w":
                 case "--weeks": {
                     countType = ChronoUnit.WEEKS;
-                    count = cmd.nextString().getIntValue();
+                    count = cmd.nextString().getValue().getInt();
                     break;
                 }
                 case "-m":
                 case "--months": {
                     countType = ChronoUnit.MONTHS;
-                    count = cmd.nextString().getIntValue();
+                    count = cmd.nextString().getValue().getInt();
                     break;
                 }
                 case "-l": {
                     countType = null;
-                    count = cmd.nextString().getIntValue();
+                    count = cmd.nextString().getValue().getInt();
                     break;
                 }
                 case "-u":
                 case "--unit": {
-                    timeUnit = TimePeriod.parseUnit(cmd.nextString().getStringValue(), false);
+                    timeUnit = TimePeriod.parseUnit(cmd.nextString().getValue().getString(), false);
                     break;
                 }
                 case "-g":
@@ -342,7 +342,7 @@ public class NJobsSubCmd {
                 case "--groupby":
                 case "--group-by": {
                     NutsArgument y = cmd.nextString();
-                    switch (y.getStringValue()) {
+                    switch (y.getValue().getString()) {
                         case "p":
                         case "project": {
                             groupBy = NJobGroup.PROJECT_NAME;
@@ -366,14 +366,14 @@ public class NJobsSubCmd {
                 }
                 case "-p":
                 case "--project": {
-                    String s = cmd.nextString().getStringValue();
+                    String s = cmd.nextString().getValue().getString();
                     Predicate<String> sp = parent.createProjectFilter(s);
                     Predicate<NJob> t = x -> sp.test(x.getProject());
                     whereFilter = parent.appendPredicate(whereFilter, t);
                     break;
                 }
                 case "--name": {
-                    String s = cmd.nextString().getStringValue();
+                    String s = cmd.nextString().getValue().getString();
                     Predicate<String> sp = parent.createStringFilter(s);
                     Predicate<NJob> t = x -> sp.test(x.getName());
                     whereFilter = parent.appendPredicate(whereFilter, t);
@@ -381,7 +381,7 @@ public class NJobsSubCmd {
                 }
                 case "-b":
                 case "--beneficiary": {
-                    String s = cmd.nextString().getStringValue();
+                    String s = cmd.nextString().getValue().getString();
                     Predicate<String> sp = parent.createStringFilter(s);
                     Predicate<NJob> t = x -> {
                         NProject project = service.projects().getProject(x.getProject());
@@ -392,7 +392,7 @@ public class NJobsSubCmd {
                 }
                 case "-c":
                 case "--company": {
-                    String s = cmd.nextString().getStringValue();
+                    String s = cmd.nextString().getValue().getString();
                     Predicate<String> sp = parent.createStringFilter(s);
                     Predicate<NJob> t = x -> {
                         NProject project = service.projects().getProject(x.getProject());
@@ -403,7 +403,7 @@ public class NJobsSubCmd {
                 }
                 case "-d":
                 case "--duration": {
-                    String s = cmd.nextString().getStringValue();
+                    String s = cmd.nextString().getValue().getString();
                     Predicate<TimePeriod> p = TimePeriod.parseFilter(s, false);
                     Predicate<NJob> t = x -> p.test(x.getDuration());
                     whereFilter = parent.appendPredicate(whereFilter, t);
@@ -412,7 +412,7 @@ public class NJobsSubCmd {
                 case "-t":
                 case "--startTime":
                 case "--start-time": {
-                    String s = cmd.nextString().getStringValue();
+                    String s = cmd.nextString().getValue().getString();
                     Predicate<Instant> t = new TimeParser().parseInstantFilter(s, false);
                     whereFilter = parent.appendPredicate(whereFilter, x -> t.test(x.getStartTime()));
                     break;

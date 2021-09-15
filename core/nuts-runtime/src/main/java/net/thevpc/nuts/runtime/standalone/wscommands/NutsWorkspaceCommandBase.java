@@ -101,7 +101,7 @@ public abstract class NutsWorkspaceCommandBase<T extends NutsWorkspaceCommand> i
         if (a == null) {
             return false;
         }
-//        switch (a.getStringKey()) {
+//        switch (a.getKey().getString()) {
 //        }
 
         if (getSession().configureFirst(cmdLine)) {

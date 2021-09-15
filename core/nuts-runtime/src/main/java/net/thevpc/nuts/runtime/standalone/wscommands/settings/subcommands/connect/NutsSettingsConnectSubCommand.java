@@ -31,7 +31,7 @@ public class NutsSettingsConnectSubCommand extends AbstractNutsSettingsSubComman
             NutsArgument a;
             while (commandLine.hasNext()) {
                 if ((a = commandLine.nextString("--password")) != null) {
-                    password = a.getStringValue("").toCharArray();
+                    password = a.getValue().getString("").toCharArray();
                 } else if (commandLine.peek().isOption()) {
                     session.configureLast(commandLine);
                 } else {

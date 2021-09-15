@@ -785,20 +785,20 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
     public boolean configureFirst(NutsCommandLine cmdLine) {
         NutsArgument a;
         if ((a = cmdLine.nextBoolean("--no-header")) != null) {
-            boolean val = a.getBooleanValue();
+            boolean val = a.getValue().getBoolean();
             if (a.isEnabled()) {
                 setVisibleHeader(!val);
             }
             return true;
         } else if ((a = cmdLine.nextBoolean("--header")) != null) {
-            boolean val = a.getBooleanValue();
+            boolean val = a.getValue().getBoolean();
             if (a.isEnabled()) {
                 setVisibleHeader(val);
             }
             return true;
         } else if ((a = cmdLine.nextString("--border")) != null) {
             if (a.isEnabled()) {
-                setBorder(a.getArgumentValue().getStringKey());
+                setBorder(a.getValue().getString(""));
             }
             return true;
         } else if (cmdLine.hasNext() && cmdLine.peek().isOption()) {

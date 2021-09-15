@@ -37,7 +37,7 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
         while (commandLine.hasNext()) {
             NutsArgument a = commandLine.peek();
             if (a.isOption()) {
-                switch (a.getStringKey()) {
+                switch (a.getKey().getString()) {
                     case "--help": {
                         commandLine.skipAll();
                         showDefaultHelp();

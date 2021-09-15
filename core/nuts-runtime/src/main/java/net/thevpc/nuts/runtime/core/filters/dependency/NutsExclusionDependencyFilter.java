@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.core.filters.dependency;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.bundles.string.GlobUtils;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 
 import java.util.Arrays;
@@ -27,8 +28,9 @@ public class NutsExclusionDependencyFilter extends AbstractDependencyFilter{
         }
         for (NutsId exclusion : exclusions) {
             NutsId nutsId = dependency.toId();
-            if (nutsId.groupIdToken().like(exclusion.getGroupId())
-                    && nutsId.artifactIdToken().like(exclusion.getArtifactId())
+            if (
+                    GlobUtils.ofExact(exclusion.getGroupId()).matcher(NutsUtilStrings.trim(nutsId.getGroupId())).matches()
+                    && GlobUtils.ofExact(exclusion.getArtifactId()).matcher(NutsUtilStrings.trim(nutsId.getArtifactId())).matches()
                     && exclusion.getVersion().filter().acceptVersion(nutsId.getVersion(), session)) {
                 return false;
             }

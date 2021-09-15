@@ -25,7 +25,7 @@ public class NMysqlMain implements NdbSupport {
     public void run(NutsApplicationContext context, NutsCommandLine commandLine) {
         NMySqlService service = new NMySqlService(context);
         while (commandLine.hasNext()) {
-            switch (commandLine.peek().getStringKey()) {
+            switch (commandLine.peek().getKey().getString()) {
                 case "add":
                 case "create": {
                     commandLine.skip();
@@ -102,7 +102,7 @@ public class NMysqlMain implements NdbSupport {
         NutsArgument a;
         while (commandLine.hasNext()) {
             if (commandLine.peek().isOption()) {
-                switch (commandLine.peek().getStringKey()) {
+                switch (commandLine.peek().getKey().getString()) {
                     case "--name": {
                         if (name == null) {
                             name = AtName.nextAppOption(commandLine);
@@ -113,7 +113,7 @@ public class NMysqlMain implements NdbSupport {
                     }
                     case "--path": {
                         if (path == null) {
-                            path = commandLine.nextString().getStringValue();
+                            path = commandLine.nextString().getValue().getString();
                         } else {
                             commandLine.unexpectedArgument(NutsMessage.cstyle("already defined"));
                         }
@@ -152,7 +152,7 @@ public class NMysqlMain implements NdbSupport {
         NutsArgument a;
         while (commandLine.hasNext()) {
             if (commandLine.peek().isOption()) {
-                switch (commandLine.peek().getStringKey()) {
+                switch (commandLine.peek().getKey().getString()) {
                     case "--name": {
                         if (name == null) {
                             name = AtName.nextAppOption(commandLine);
@@ -163,7 +163,7 @@ public class NMysqlMain implements NdbSupport {
                     }
                     case "--path": {
                         if (path == null) {
-                            path = commandLine.nextString().getStringValue();
+                            path = commandLine.nextString().getValue().getString();
                         } else {
                             commandLine.unexpectedArgument(NutsMessage.cstyle("already defined"));
                         }
@@ -228,7 +228,7 @@ public class NMysqlMain implements NdbSupport {
         boolean askPassword = false;
         while (commandLine.hasNext()) {
             if (commandLine.peek().isOption()) {
-                switch (commandLine.peek().getStringKey()) {
+                switch (commandLine.peek().getKey().getString()) {
                     case "--name": {
                         if (name == null) {
                             name = AtName.nextAppOption(commandLine);
@@ -243,7 +243,7 @@ public class NMysqlMain implements NdbSupport {
                         } else if (expectedRemote) {
                             commandLine.unexpectedArgument();
                         }
-                        c_shutdown_wait_time = commandLine.nextString().getArgumentValue().getInt();
+                        c_shutdown_wait_time = commandLine.nextString().getValue().getInt();
                         break;
                     }
                     case "--startup-wait-time": {
@@ -252,7 +252,7 @@ public class NMysqlMain implements NdbSupport {
                         } else if (expectedRemote) {
                             commandLine.unexpectedArgument();
                         }
-                        c_startup_wait_time = commandLine.nextString().getArgumentValue().getInt();
+                        c_startup_wait_time = commandLine.nextString().getValue().getInt();
                         break;
                     }
                     case "--backup-folder": {
@@ -261,7 +261,7 @@ public class NMysqlMain implements NdbSupport {
                         } else if (expectedRemote) {
                             commandLine.unexpectedArgument();
                         }
-                        c_archive_folder = commandLine.nextString().getStringValue();
+                        c_archive_folder = commandLine.nextString().getValue().getString();
                         break;
                     }
                     case "--running-folder": {
@@ -270,7 +270,7 @@ public class NMysqlMain implements NdbSupport {
                         } else if (expectedRemote) {
                             commandLine.unexpectedArgument();
                         }
-                        c_running_folder = commandLine.nextString().getStringValue();
+                        c_running_folder = commandLine.nextString().getValue().getString();
                         break;
                     }
                     case "--log-file": {
@@ -279,7 +279,7 @@ public class NMysqlMain implements NdbSupport {
                         } else if (expectedRemote) {
                             commandLine.unexpectedArgument();
                         }
-                        c_log_file = commandLine.nextString().getStringValue();
+                        c_log_file = commandLine.nextString().getValue().getString();
                         break;
                     }
                     case "--mysql-command": {
@@ -288,7 +288,7 @@ public class NMysqlMain implements NdbSupport {
                         } else if (expectedRemote) {
                             commandLine.unexpectedArgument();
                         }
-                        c_mysql_command = commandLine.nextString().getStringValue();
+                        c_mysql_command = commandLine.nextString().getValue().getString();
                         break;
                     }
                     case "--mysqldump-command": {
@@ -297,7 +297,7 @@ public class NMysqlMain implements NdbSupport {
                         } else if (expectedRemote) {
                             commandLine.unexpectedArgument();
                         }
-                        c_mysqldump_command = commandLine.nextString().getStringValue();
+                        c_mysqldump_command = commandLine.nextString().getValue().getString();
                         break;
                     }
                     case "--kill": {
@@ -306,7 +306,7 @@ public class NMysqlMain implements NdbSupport {
                         } else if (expectedRemote) {
                             commandLine.unexpectedArgument();
                         }
-                        c_kill = commandLine.nextBoolean().getBooleanValue();
+                        c_kill = commandLine.nextBoolean().getValue().getBoolean();
                         break;
                     }
                     case "--user": {
@@ -315,7 +315,7 @@ public class NMysqlMain implements NdbSupport {
                         } else if (expectedRemote) {
                             commandLine.unexpectedArgument();
                         }
-                        user = commandLine.nextString().getStringValue();
+                        user = commandLine.nextString().getValue().getString();
                         break;
                     }
                     case "--password": {
@@ -324,7 +324,7 @@ public class NMysqlMain implements NdbSupport {
                         } else if (expectedRemote) {
                             commandLine.unexpectedArgument();
                         }
-                        password = commandLine.nextString().getStringValue();
+                        password = commandLine.nextString().getValue().getString();
                         break;
                     }
                     case "--ask-password": {
@@ -333,7 +333,7 @@ public class NMysqlMain implements NdbSupport {
                         } else if (expectedRemote) {
                             commandLine.unexpectedArgument();
                         }
-                        askPassword = commandLine.nextBoolean().getBooleanValue();
+                        askPassword = commandLine.nextBoolean().getValue().getBoolean();
                         break;
                     }
                     case "--db": {
@@ -342,7 +342,7 @@ public class NMysqlMain implements NdbSupport {
                         } else if (expectedRemote) {
                             commandLine.unexpectedArgument();
                         }
-                        dbname = commandLine.nextString().getStringValue();
+                        dbname = commandLine.nextString().getValue().getString();
                         break;
                     }
                     case "--local-name": {
@@ -378,7 +378,7 @@ public class NMysqlMain implements NdbSupport {
                             commandLine.unexpectedArgument();
                         }
                         if (forRemote_server == null) {
-                            forRemote_server = commandLine.nextString().getStringValue();
+                            forRemote_server = commandLine.nextString().getValue().getString();
                         } else {
                             commandLine.unexpectedArgument(NutsMessage.cstyle("already defined"));
                         }
@@ -723,7 +723,7 @@ public class NMysqlMain implements NdbSupport {
 
         while (commandLine.hasNext()) {
             if (commandLine.peek().isOption()) {
-                switch (commandLine.peek().getStringKey()) {
+                switch (commandLine.peek().getKey().getString()) {
                     case "--remote": {
                         commandLine.nextBoolean();
                         currentLocal = false;
@@ -847,7 +847,7 @@ public class NMysqlMain implements NdbSupport {
         Boolean expectedLocal = null;
         while (commandLine.hasNext()) {
             if (commandLine.peek().isOption()) {
-                switch (commandLine.peek().getStringKey()) {
+                switch (commandLine.peek().getKey().getString()) {
                     case "--local": {
                         commandLine.nextBoolean();
                         expectedLocal = true;

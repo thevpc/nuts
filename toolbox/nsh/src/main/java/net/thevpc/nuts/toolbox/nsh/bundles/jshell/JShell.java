@@ -1150,7 +1150,7 @@ public class JShell {
     }
 
     public JShellContext getNutsShellContext() {
-        JShellFileContext f = (JShellFileContext) getWorkspace().env().getProperty(JShellFileContext.class.getName());
+        JShellFileContext f = (JShellFileContext) getWorkspace().env().getProperty(JShellFileContext.class.getName()).getObject();
         return (JShellContext) f.getShellContext();
 
     }
@@ -1205,7 +1205,7 @@ public class JShell {
         public List<NutsArgumentCandidate> resolveCandidates(NutsCommandLine commandline, int wordIndex, NutsSession session) {
             NutsWorkspace workspace = session.getWorkspace();
             List<NutsArgumentCandidate> candidates = new ArrayList<>();
-            JShellFileContext fileContext = (JShellFileContext) workspace.env().getProperty(JShellFileContext.class.getName());
+            JShellFileContext fileContext = (JShellFileContext) workspace.env().getProperty(JShellFileContext.class.getName()).getObject();
             JShellContext nutsConsoleContext = (JShellContext) fileContext.getShellContext();
 
             if (wordIndex == 0) {

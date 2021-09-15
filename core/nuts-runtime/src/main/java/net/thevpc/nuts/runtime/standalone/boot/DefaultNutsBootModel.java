@@ -26,6 +26,7 @@ package net.thevpc.nuts.runtime.standalone.boot;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.common.CorePlatformUtils;
 import net.thevpc.nuts.runtime.core.DefaultNutsSession;
+import net.thevpc.nuts.runtime.core.app.DefaultNutsArgument;
 import net.thevpc.nuts.runtime.core.terminals.DefaultNutsSessionTerminal;
 import net.thevpc.nuts.runtime.core.terminals.DefaultNutsSystemTerminalBaseBoot;
 import net.thevpc.nuts.runtime.core.terminals.DefaultSystemTerminal;
@@ -33,6 +34,8 @@ import net.thevpc.nuts.runtime.optional.jansi.OptionalJansi;
 import net.thevpc.nuts.runtime.standalone.io.NutsPrintStreamSystem;
 
 import java.io.InputStream;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  *
@@ -46,6 +49,7 @@ public class DefaultNutsBootModel implements NutsBootModel {
     private NutsPrintStream stdout;
     private NutsPrintStream stderr;
     private InputStream stdin;
+    private Map<String, NutsVal> customBootOptions = new LinkedHashMap<>();
 
     public DefaultNutsBootModel(NutsWorkspace workspace, NutsWorkspaceInitInformation workspaceInitInformation) {
         this.workspace = workspace;
@@ -71,6 +75,19 @@ public class DefaultNutsBootModel implements NutsBootModel {
         stdin=System.in;
         DefaultSystemTerminal sys = new DefaultSystemTerminal(new DefaultNutsSystemTerminalBaseBoot(this));
         bootSession.setTerminal(new DefaultNutsSessionTerminal(bootSession,sys));
+
+        String[] properties = workspaceInitInformation.getOptions().getProperties();
+        if (properties != null) {
+            for (String property : properties) {
+                if (property != null) {
+                    DefaultNutsArgument a = new DefaultNutsArgument(property);
+                    if(a.isEnabled()) {
+                        String key = a.getKey().getString();
+                        this.customBootOptions.put(key, a.getValue());
+                    }
+                }
+            }
+        }
     }
 
     public NutsPrintStream stdout() {
@@ -124,5 +141,8 @@ public class DefaultNutsBootModel implements NutsBootModel {
         }
         return new StdFd(System.in,System.out,System.err,false);
     }
-    
+
+    public Map<String, NutsVal> getCustomBootOptions() {
+        return customBootOptions;
+    }
 }

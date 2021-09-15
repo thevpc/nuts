@@ -115,16 +115,16 @@ public class LsCommand extends SimpleNshBuiltin {
         Options options = context.getOptions();
         NutsArgument a;
         if ((a = commandLine.nextBoolean("-d", "--dir")) != null) {
-            options.d = a.getBooleanValue();
+            options.d = a.getValue().getBoolean();
             return true;
         } else if ((a = commandLine.nextBoolean("-l", "--list")) != null) {
-            options.l = a.getBooleanValue();
+            options.l = a.getValue().getBoolean();
             return true;
         } else if ((a = commandLine.nextBoolean("-a", "--all")) != null) {
-            options.a = a.getBooleanValue();
+            options.a = a.getValue().getBoolean();
             return true;
         } else if ((a = commandLine.nextBoolean("-h")) != null) {
-            options.h = a.getBooleanValue();
+            options.h = a.getValue().getBoolean();
             return true;
         } else if (commandLine.peek().isNonOption()) {
             String path = commandLine.next(context.getWorkspace().commandLine().createName("file")).getString();

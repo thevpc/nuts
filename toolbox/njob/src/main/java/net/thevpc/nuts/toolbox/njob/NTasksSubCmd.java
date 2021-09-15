@@ -38,23 +38,23 @@ public class NTasksSubCmd {
         List<Consumer<NTask>> runLater = new ArrayList<>();
         while (cmd.hasNext()) {
             if ((a = cmd.nextBoolean("--list", "-l")) != null) {
-                list = a.getBooleanValue();
+                list = a.getValue().getBoolean();
             } else if ((a = cmd.nextBoolean("--show", "-s")) != null) {
-                show = a.getBooleanValue();
+                show = a.getValue().getBoolean();
             } else if ((a = cmd.nextString("--on", "--due", "-t")) != null) {
-                String s = a.getStringValue();
+                String s = a.getValue().getString();
                 runLater.add(t -> t.setDueTime(new TimeParser().parseInstant(s, false)));
             } else if ((a = cmd.nextString("--at")) != null) {
-                String s = a.getStringValue();
+                String s = a.getValue().getString();
                 runLater.add(t -> t.setDueTime(new TimeParser().setTimeOnly(true).parseInstant(s, false)));
             } else if ((a = cmd.nextString("--start")) != null) {
-                String s = a.getStringValue();
+                String s = a.getValue().getString();
                 runLater.add(t -> t.setStartTime(new TimeParser().parseInstant(s, false)));
             } else if ((a = cmd.nextString("--end")) != null) {
-                String s = a.getStringValue();
+                String s = a.getValue().getString();
                 runLater.add(t -> t.setEndTime(new TimeParser().parseInstant(s, false)));
             } else if ((a = cmd.nextString("--for")) != null) {
-                String s = a.getStringValue();
+                String s = a.getValue().getString();
                 runLater.add(t -> {
                     Instant u = new TimeParser().parseInstant(s, true);
                     if (u != null) {
@@ -64,13 +64,13 @@ public class NTasksSubCmd {
                     }
                 });
             } else if ((a = cmd.nextString("-p", "--project")) != null) {
-                String s = a.getStringValue();
+                String s = a.getValue().getString();
                 runLater.add(t -> t.setProject(s));
             } else if ((a = cmd.nextString("-n", "--name")) != null) {
-                String s = a.getStringValue();
+                String s = a.getValue().getString();
                 runLater.add(t -> t.setName(s));
             } else if ((a = cmd.nextString("-f", "--flag")) != null) {
-                String s = a.getStringValue();
+                String s = a.getValue().getString();
                 runLater.add(t -> {
                     String v = s;
                     NFlag f = null;
@@ -82,7 +82,7 @@ public class NTasksSubCmd {
                     t.setFlag(f);
                 });
             } else if ((a = cmd.nextString("-j", "--job")) != null) {
-                String s = a.getStringValue();
+                String s = a.getValue().getString();
                 runLater.add(t -> {
                     String jobId = s;
                     NJob job = service.jobs().getJob(jobId);
@@ -92,7 +92,7 @@ public class NTasksSubCmd {
                     t.setJobId(job.getId());
                 });
             } else if ((a = cmd.nextString("-T", "--parent")) != null) {
-                String s = a.getStringValue();
+                String s = a.getValue().getString();
                 runLater.add(t -> {
                     String taskId = s;
                     NTask parentTask = service.tasks().getTask(taskId);
@@ -102,7 +102,7 @@ public class NTasksSubCmd {
                     t.setParentTaskId(parentTask.getId());
                 });
             } else if ((a = cmd.nextString("-P", "--priority")) != null) {
-                String s = a.getStringValue();
+                String s = a.getValue().getString();
                 runLater.add(t -> {
                     String v = s;
                     NPriority p = NPriority.NORMAL;
@@ -116,12 +116,12 @@ public class NTasksSubCmd {
                     t.setPriority(p);
                 });
             } else if ((a = cmd.nextString("-o", "--obs")) != null) {
-                String s = a.getStringValue();
+                String s = a.getValue().getString();
                 runLater.add(t -> {
                     t.setObservations(s);
                 });
             } else if ((a = cmd.nextString("-d", "--duration")) != null) {
-                String s = a.getStringValue();
+                String s = a.getValue().getString();
                 runLater.add(t -> {
                     t.setDuration(TimePeriod.parse(s, true));
                 });
@@ -178,36 +178,36 @@ public class NTasksSubCmd {
         List<Consumer<NTask>> runLater = new ArrayList<>();
         while (cmd.hasNext()) {
             NutsArgument a = cmd.peek();
-            switch (a.getStringKey()) {
+            switch (a.getKey().getString()) {
                 case "--list":
                 case "-l": {
-                    list = cmd.nextBoolean().getBooleanValue();
+                    list = cmd.nextBoolean().getValue().getBoolean();
                     break;
                 }
                 case "--show":
                 case "-s": {
-                    show = cmd.nextBoolean().getBooleanValue();
+                    show = cmd.nextBoolean().getValue().getBoolean();
                     break;
                 }
                 case "--start": {
-                    Instant v = new TimeParser().parseInstant(cmd.nextString().getStringValue(), false);
+                    Instant v = new TimeParser().parseInstant(cmd.nextString().getValue().getString(), false);
                     runLater.add(t -> t.setStartTime(v));
                     break;
                 }
                 case "-t":
                 case "--on":
                 case "--due": {
-                    String v = cmd.nextString().getStringValue();
+                    String v = cmd.nextString().getValue().getString();
                     runLater.add(t -> t.setDueTime(TimePeriod.parseOpPeriodAsInstant(v, t.getDueTime(), true)));
                     break;
                 }
                 case "--at": {
-                    Instant v = new TimeParser().setTimeOnly(true).parseInstant(cmd.nextString().getStringValue(), false);
+                    Instant v = new TimeParser().setTimeOnly(true).parseInstant(cmd.nextString().getValue().getString(), false);
                     runLater.add(t -> t.setDueTime(v));
                     break;
                 }
                 case "--end": {
-                    Instant v = new TimeParser().parseInstant(cmd.nextString().getStringValue(), false);
+                    Instant v = new TimeParser().parseInstant(cmd.nextString().getValue().getString(), false);
                     runLater.add(t -> t.setEndTime(v));
                     break;
                 }
@@ -257,8 +257,8 @@ public class NTasksSubCmd {
                 case "--prio":
                 case "--prio--": {
                     a = cmd.next();
-                    String v = a.getStringValue();
-                    if (!a.getStringKey().equals("--prio")) {
+                    String v = a.getValue().getString();
+                    if (!a.getKey().getString().equals("--prio")) {
                         v = null;
                     }
                     if (v == null) {
@@ -270,32 +270,32 @@ public class NTasksSubCmd {
                     break;
                 }
                 case "--status": {
-                    NTaskStatus v = NTaskStatus.parse(cmd.nextString().getStringValue());
+                    NTaskStatus v = NTaskStatus.parse(cmd.nextString().getValue().getString());
                     runLater.add(t -> t.setStatus(v));
                     break;
                 }
                 case "-d":
                 case "--duration": {
-                    TimePeriod v = TimePeriod.parse(cmd.nextString().getStringValue(), false);
+                    TimePeriod v = TimePeriod.parse(cmd.nextString().getValue().getString(), false);
                     runLater.add(t -> t.setDuration(v));
                     break;
                 }
                 case "-n":
                 case "--name": {
-                    String v = cmd.nextString().getStringValue();
+                    String v = cmd.nextString().getValue().getString();
                     runLater.add(t -> t.setName(v));
                     break;
                 }
                 case "-f":
                 case "--flag": {
-                    String v = cmd.nextString().getStringValue();
+                    String v = cmd.nextString().getValue().getString();
                     NFlag f = NFlag.parse(v);
                     runLater.add(t -> t.setFlag(f));
                     break;
                 }
                 case "-j":
                 case "--job": {
-                    String jobId = cmd.nextString().getStringValue();
+                    String jobId = cmd.nextString().getValue().getString();
                     NJob job = service.jobs().getJob(jobId);
                     if (job == null) {
                         cmd.throwError(NutsMessage.cstyle("invalid job %s", jobId));
@@ -305,7 +305,7 @@ public class NTasksSubCmd {
                 }
                 case "-T":
                 case "--parent": {
-                    String taskId = cmd.nextString().getStringValue();
+                    String taskId = cmd.nextString().getValue().getString();
                     NTask parentTask = service.tasks().getTask(taskId);
                     if (parentTask == null) {
                         cmd.throwError(NutsMessage.cstyle("invalid parent task %s", taskId));
@@ -315,7 +315,7 @@ public class NTasksSubCmd {
                 }
                 case "-P":
                 case "--priority": {
-                    String v = cmd.nextString().getStringValue();
+                    String v = cmd.nextString().getValue().getString();
                     runLater.add(t -> {
                         NPriority p = t.getPriority();
                         if (v.equalsIgnoreCase("higher")) {
@@ -330,7 +330,7 @@ public class NTasksSubCmd {
                     break;
                 }
                 case "--for": {
-                    String v = cmd.nextString().getStringValue();
+                    String v = cmd.nextString().getValue().getString();
                     runLater.add(t -> {
                         Instant u = TimePeriod.parseOpPeriodAsInstant(v, t.getDueTime(), true);
                         if (u != null) {
@@ -343,20 +343,20 @@ public class NTasksSubCmd {
                 }
                 case "-p":
                 case "--project": {
-                    String v = cmd.nextString().getStringValue();
+                    String v = cmd.nextString().getValue().getString();
                     runLater.add(t -> t.setProject(v));
                     break;
                 }
                 case "-o":
                 case "--obs": {
-                    String v = cmd.nextString().getStringValue();
+                    String v = cmd.nextString().getValue().getString();
                     runLater.add(t -> t.setObservations(v));
                     break;
                 }
                 case "-o+":
                 case "--obs+":
                 case "+obs": {
-                    String v = cmd.nextString().getStringValue();
+                    String v = cmd.nextString().getValue().getString();
                     runLater.add(t -> {
                         String s = t.getObservations();
                         if (s == null) {
@@ -423,27 +423,27 @@ public class NTasksSubCmd {
         NTaskStatusFilter status = null;
         while (cmd.hasNext()) {
             NutsArgument a = cmd.peek();
-            switch (a.getStringKey()) {
+            switch (a.getKey().getString()) {
                 case "-w":
                 case "--weeks": {
                     countType = ChronoUnit.WEEKS;
-                    count = cmd.nextString().getIntValue();
+                    count = cmd.nextString().getValue().getInt();
                     break;
                 }
                 case "-m":
                 case "--months": {
                     countType = ChronoUnit.MONTHS;
-                    count = cmd.nextString().getIntValue();
+                    count = cmd.nextString().getValue().getInt();
                     break;
                 }
                 case "-l": {
                     countType = null;
-                    count = cmd.nextString().getIntValue();
+                    count = cmd.nextString().getValue().getInt();
                     break;
                 }
                 case "-u":
                 case "--unit": {
-                    timeUnit = TimePeriod.parseUnit(cmd.nextString().getStringValue(), false);
+                    timeUnit = TimePeriod.parseUnit(cmd.nextString().getValue().getString(), false);
                     break;
                 }
                 case "--todo": {
@@ -490,7 +490,7 @@ public class NTasksSubCmd {
                 case "--groupby":
                 case "--group-by": {
                     NutsArgument y = cmd.nextString();
-                    switch (y.getStringValue()) {
+                    switch (y.getValue().getString()) {
                         case "p":
                         case "project": {
                             groupBy = NJobGroup.PROJECT_NAME;
@@ -514,7 +514,7 @@ public class NTasksSubCmd {
                 }
                 case "--project":
                 case "-p": {
-                    String s = cmd.nextString().getStringValue();
+                    String s = cmd.nextString().getValue().getString();
                     Predicate<String> sp = parent.createProjectFilter(s);
                     Predicate<NTask> t = x -> sp.test(x.getProject());
                     whereFilter = parent.appendPredicate(whereFilter, t);
@@ -522,7 +522,7 @@ public class NTasksSubCmd {
                 }
                 case "-n":
                 case "--name": {
-                    String s = cmd.nextString().getStringValue();
+                    String s = cmd.nextString().getValue().getString();
                     Predicate<String> sp = parent.createStringFilter(s);
                     Predicate<NTask> t = x -> sp.test(x.getName());
                     whereFilter = parent.appendPredicate(whereFilter, t);
@@ -530,7 +530,7 @@ public class NTasksSubCmd {
                 }
                 case "-b":
                 case "--beneficiary": {
-                    String s = cmd.nextString().getStringValue();
+                    String s = cmd.nextString().getValue().getString();
                     Predicate<String> sp = parent.createStringFilter(s);
                     Predicate<NTask> t = x -> {
                         NProject project = service.projects().getProject(x.getProject());
@@ -541,7 +541,7 @@ public class NTasksSubCmd {
                 }
                 case "-c":
                 case "--company": {
-                    String s = cmd.nextString().getStringValue();
+                    String s = cmd.nextString().getValue().getString();
                     Predicate<String> sp = parent.createStringFilter(s);
                     Predicate<NTask> t = x -> {
                         NProject project = service.projects().getProject(x.getProject());
@@ -552,7 +552,7 @@ public class NTasksSubCmd {
                 }
                 case "-d":
                 case "--duration": {
-                    String s = cmd.nextString().getStringValue();
+                    String s = cmd.nextString().getValue().getString();
                     Predicate<TimePeriod> p = TimePeriod.parseFilter(s, false);
                     Predicate<NTask> t = x -> p.test(x.getDuration());
                     whereFilter = parent.appendPredicate(whereFilter, t);
@@ -561,7 +561,7 @@ public class NTasksSubCmd {
                 case "-t":
                 case "--startTime":
                 case "--start-time": {
-                    String s = cmd.nextString().getStringValue();
+                    String s = cmd.nextString().getValue().getString();
                     Predicate<Instant> t = new TimeParser().parseInstantFilter(s, false);
                     whereFilter = parent.appendPredicate(whereFilter, x -> t.test(x.getStartTime()));
                     break;

@@ -162,8 +162,8 @@ public class CoreIOUtils {
     }
 
 //    public static void clearMonitor(NutsPrintStream out, NutsWorkspace ws) {
-//        NutsTerminalMode terminalMode = ws.env().getBootOptions().getTerminalMode();
-//        boolean bot = ws.env().getBootOptions().isBot();
+//        NutsTerminalMode terminalMode = ws.boot().getBootOptions().getTerminalMode();
+//        boolean bot = ws.boot().getBootOptions().isBot();
 //        if (terminalMode == null) {
 //            terminalMode = bot ? NutsTerminalMode.FILTERED : NutsTerminalMode.FORMATTED;
 //        }

@@ -108,7 +108,7 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase {
         this.session = criteria.getSession();
         this.workspace = session.getWorkspace();
         if (workspace != null) {
-            NutsWorkspaceOptions options=session.getWorkspace().env().getBootOptions();
+            NutsWorkspaceOptions options=session.getWorkspace().boot().getBootOptions();
             NutsTerminalMode terminalMode = options.getTerminalMode();
             if (terminalMode == null) {
                 if (options.isBot()) {

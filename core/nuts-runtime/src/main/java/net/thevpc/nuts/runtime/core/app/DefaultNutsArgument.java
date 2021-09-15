@@ -25,11 +25,9 @@
  */
 package net.thevpc.nuts.runtime.core.app;
 
-import net.thevpc.nuts.NutsArgument;
-import net.thevpc.nuts.NutsUtilStrings;
-import net.thevpc.nuts.runtime.core.filters.DefaultNutsTokenFilter;
-import net.thevpc.nuts.runtime.core.util.CoreNumberUtils;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+import net.thevpc.nuts.*;
+import net.thevpc.nuts.boot.NutsBootStrValImpl;
+import net.thevpc.nuts.runtime.standalone.DefaultNutsVal;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -39,17 +37,18 @@ import java.util.NoSuchElementException;
 /**
  * @author thevpc
  */
-public class DefaultNutsArgument extends DefaultNutsTokenFilter implements NutsArgument {
+public class DefaultNutsArgument /*extends DefaultNutsTokenFilter*/ implements NutsArgument {
     /**
      * equal character
      */
     private final char eq;
-    boolean enabled = true;
-    boolean negated = false;
-    String optionPrefix = null;
-    String optionName = null;
-    String keyPart = null;
-    String valuePart = null;
+    private final boolean enabled;
+    private final boolean negated;
+    private final String optionPrefix;
+    private final String optionName;
+    private final String keyPart;
+    private final String valuePart;
+    private final String expression;
 
     public DefaultNutsArgument(String expression) {
         this(expression, '\0');
@@ -63,13 +62,19 @@ public class DefaultNutsArgument extends DefaultNutsTokenFilter implements NutsA
      * @param eq         equals
      */
     public DefaultNutsArgument(String expression, char eq) {
-        super(expression);
+        boolean _enabled = true;
+        boolean _negated = false;
+        this.expression=expression;
         if (expression == null) {
-            //
+            optionPrefix=null;
+            optionName=null;
+            keyPart=null;
+            valuePart=null;
         } else if (expression.length() == 0) {
             optionPrefix = "";
             optionName = "";
             keyPart = "";
+            valuePart=null;
         } else if (expression.length() == 1) {
             switch (expression.charAt(0)) {
                 case '-':
@@ -77,12 +82,14 @@ public class DefaultNutsArgument extends DefaultNutsTokenFilter implements NutsA
                     optionPrefix = expression;
                     optionName = "";
                     keyPart = expression;
+                    valuePart=null;
                     break;
                 }
                 default: {
                     optionPrefix = "";
                     optionName = "";
                     keyPart = expression;
+                    valuePart=null;
                 }
             }
         } else {
@@ -113,7 +120,7 @@ public class DefaultNutsArgument extends DefaultNutsTokenFilter implements NutsA
                                 reader.mark(1);
                                 r = reader.read();
                                 if (r == '/') {
-                                    enabled = false;
+                                    _enabled = false;
                                     status = EXPECT_NEG;
                                 } else {
                                     if (b_option_prefix.length() > 0) {
@@ -126,7 +133,7 @@ public class DefaultNutsArgument extends DefaultNutsTokenFilter implements NutsA
                                     status = EXPECT_NAME;
                                 }
                             } else if (c == '!') {
-                                negated = true;
+                                _negated = true;
                                 status = EXPECT_NAME;
                             } else if (isEq(c, eq)) {
                                 eq = c;
@@ -146,7 +153,7 @@ public class DefaultNutsArgument extends DefaultNutsTokenFilter implements NutsA
                                 reader.mark(1);
                                 r = reader.read();
                                 if (r == '/') {
-                                    enabled = false;
+                                    _enabled = false;
                                     status = EXPECT_NEG;
                                 } else {
                                     b_option_name.append('/');
@@ -156,7 +163,7 @@ public class DefaultNutsArgument extends DefaultNutsTokenFilter implements NutsA
                                     status = EXPECT_NAME;
                                 }
                             } else if (c == '!') {
-                                negated = true;
+                                _negated = true;
                                 status = EXPECT_NAME;
                             } else if (isEq(c, eq)) {
                                 eq = c;
@@ -173,7 +180,7 @@ public class DefaultNutsArgument extends DefaultNutsTokenFilter implements NutsA
                         }
                         case EXPECT_NEG: {
                             if (c == '!') {
-                                negated = true;
+                                _negated = true;
                                 status = EXPECT_NAME;
                             } else if ((isEq(c, eq))) {
                                 eq = c;
@@ -219,6 +226,8 @@ public class DefaultNutsArgument extends DefaultNutsTokenFilter implements NutsA
             keyPart = b_key.toString();
             valuePart = b_val == null ? null : b_val.toString();
         }
+        this.enabled=_enabled;
+        this.negated=_negated;
         this.eq = (eq == '\0' ? '=' : eq);
     }
 
@@ -260,11 +269,6 @@ public class DefaultNutsArgument extends DefaultNutsTokenFilter implements NutsA
     }
 
     @Override
-    public String getString(String defaultValue) {
-        return expression == null ? defaultValue : expression;
-    }
-
-    @Override
     public boolean isNegated() {
         return negated;
     }
@@ -272,141 +276,6 @@ public class DefaultNutsArgument extends DefaultNutsTokenFilter implements NutsA
     @Override
     public boolean isEnabled() {
         return enabled;
-    }
-
-    @Override
-    public boolean isInt() {
-        return CoreNumberUtils.convertToInteger(expression, null) != null;
-    }
-
-    @Override
-    public int getInt() {
-        if (NutsUtilStrings.isBlank(expression)) {
-            throw new NumberFormatException("missing value");
-        }
-        return Integer.parseInt(expression);
-    }
-
-    @Override
-    public long getLongValue() {
-        try {
-            return getArgumentValue().getLong();
-        } catch (NumberFormatException e) {
-            throw new NumberFormatException("invalid long value for " + getString() + ": " + CoreStringUtils.exceptionToString(e));
-        }
-    }
-
-    @Override
-    public double getDoubleValue() {
-        try {
-            return getArgumentValue().getDouble();
-        } catch (NumberFormatException e) {
-            throw new NumberFormatException("invalid double value for " + getString() + ": " + CoreStringUtils.exceptionToString(e));
-        }
-    }
-
-    @Override
-    public int getInt(int defaultValue) {
-        return CoreNumberUtils.convertToInteger(expression, defaultValue);
-    }
-
-    @Override
-    public int getIntValue(int defaultValue) {
-        return getArgumentValue().getInt(defaultValue);
-    }
-
-    @Override
-    public int getIntValue() {
-        try {
-            return getArgumentValue().getInt();
-        } catch (NumberFormatException e) {
-            throw new NumberFormatException("invalid int value for " + getString() + ": " + CoreStringUtils.exceptionToString(e));
-        }
-    }
-
-    @Override
-    public boolean isLong() {
-        try {
-            if (expression != null) {
-                Long.parseLong(expression);
-                return true;
-            }
-        } catch (NumberFormatException ex) {
-            //ignore
-        }
-        return false;
-    }
-
-    @Override
-    public long getLong() {
-        if (NutsUtilStrings.isBlank(expression)) {
-            throw new NumberFormatException("missing value");
-        }
-        return Long.parseLong(expression);
-    }
-
-    @Override
-    public long getLong(long defaultValue) {
-        if (NutsUtilStrings.isBlank(expression)) {
-            return defaultValue;
-        }
-        try {
-            return Long.parseLong(expression);
-        } catch (NumberFormatException ex) {
-            return defaultValue;
-        }
-    }
-
-    @Override
-    public boolean isDouble() {
-        try {
-            if (expression != null) {
-                Double.parseDouble(expression);
-                return true;
-            }
-        } catch (NumberFormatException ex) {
-            //ignore
-        }
-        return false;
-    }
-
-    @Override
-    public double getDouble() {
-        if (NutsUtilStrings.isBlank(expression)) {
-            throw new NumberFormatException("missing value");
-        }
-        return Double.parseDouble(expression);
-    }
-
-    @Override
-    public double getDouble(double defaultValue) {
-        if (NutsUtilStrings.isBlank(expression)) {
-            return defaultValue;
-        }
-        try {
-            return Double.parseDouble(expression);
-        } catch (NumberFormatException ex) {
-            return defaultValue;
-        }
-    }
-
-    @Override
-    public boolean getBoolean() {
-        boolean b = NutsUtilStrings.parseBoolean(expression, false, false);
-        if (isNegated()) {
-            return !b;
-        }
-        return b;
-    }
-
-    @Override
-    public boolean isBoolean() {
-        return NutsUtilStrings.parseBoolean(expression, null, null) != null;
-    }
-
-    @Override
-    public Boolean getBoolean(Boolean defaultValue) {
-        return NutsUtilStrings.parseBoolean(expression, defaultValue, false);
     }
 
     @Override
@@ -423,76 +292,45 @@ public class DefaultNutsArgument extends DefaultNutsTokenFilter implements NutsA
     }
 
     @Override
-    public NutsArgument getArgumentKey() {
-        if (expression == null) {
-            return this;
-        }
-        return new DefaultNutsArgument(keyPart, eq);
+    public NutsVal getValue() {
+        return new DefaultNutsVal(valuePart) {
+            @Override
+            public boolean getBoolean() {
+                return getBoolean(true,false);
+            }
+            @Override
+            public Boolean getBoolean(Boolean emptyValue, Boolean errorValue) {
+                Boolean b = NutsUtilStrings.parseBoolean(this.getString(), emptyValue, errorValue);
+                if (b!=null && isNegated()) {
+                    return !b;
+                }
+                return b;
+            }
+        };
     }
 
-    public String getStringOptionPrefix() {
+    @Override
+    public NutsVal getKey() {
+        return new DefaultNutsVal(keyPart);
+    }
+
+    @Override
+    public NutsVal getAll() {
+        return new DefaultNutsVal(expression);
+    }
+
+    public String getOptionPrefix() {
         return optionPrefix;
     }
 
     @Override
-    public String getKeyValueSeparator() {
+    public String getSeparator() {
         return String.valueOf(eq);
     }
 
     @Override
-    public NutsArgument getArgumentOptionName() {
-        if (expression == null) {
-            return this;
-        }
-        return new DefaultNutsArgument(optionName, eq);
-    }
-
-    @Override
-    public String getStringOptionName() {
-        return optionName;
-    }
-
-    @Override
-    public NutsArgument getArgumentValue() {
-        if (expression == null) {
-            return this;
-        }
-        return new DefaultNutsArgument(valuePart, eq);
-    }
-
-    @Override
-    public String getStringKey() {
-        return getArgumentKey().getString();
-    }
-
-    @Override
-    public String getStringValue() {
-        return getArgumentValue().getString();
-    }
-
-    @Override
-    public Boolean getBooleanValue(Boolean defaultValue) {
-        return getArgumentValue().getBoolean(defaultValue);
-    }
-
-    @Override
-    public String getStringValue(String defaultValue) {
-        return getArgumentValue().getString(defaultValue);
-    }
-
-    @Override
-    public boolean getBooleanValue() {
-        return getArgumentValue().getBoolean();
-    }
-
-    @Override
-    public boolean isNull() {
-        return expression == null;
-    }
-
-    @Override
-    public boolean isBlank() {
-        return expression == null || expression.trim().isEmpty();
+    public NutsVal getOptionName() {
+        return new NutsBootStrValImpl(optionName);
     }
 
     @Override

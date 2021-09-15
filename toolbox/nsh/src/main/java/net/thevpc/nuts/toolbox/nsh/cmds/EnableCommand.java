@@ -69,34 +69,34 @@ public class EnableCommand extends SimpleNshBuiltin {
         Options options = context.getOptions();
         final NutsArgument a = commandLine.peek();
         if (a.isOption()) {
-            if (a.getStringKey().equals("--sort")) {
+            if (a.getKey().getString().equals("--sort")) {
                 options.displayOptions.add(a.toString());
                 return true;
             }
         } else if (a.isOption()) {
-            switch (a.getStringKey()) {
+            switch (a.getKey().getString()) {
                 case "-a": {
-                    options.a = commandLine.nextBoolean().getBooleanValue();
+                    options.a = commandLine.nextBoolean().getValue().getBoolean();
                     return true;
                 }
                 case "-d": {
-                    options.d = commandLine.nextBoolean().getBooleanValue();
+                    options.d = commandLine.nextBoolean().getValue().getBoolean();
                     return true;
                 }
                 case "-n": {
-                    options.n = commandLine.nextBoolean().getBooleanValue();
+                    options.n = commandLine.nextBoolean().getValue().getBoolean();
                     return true;
                 }
                 case "-p": {
-                    options.p = commandLine.nextBoolean().getBooleanValue();
+                    options.p = commandLine.nextBoolean().getValue().getBoolean();
                     return true;
                 }
                 case "-s": {
-                    options.s = commandLine.nextBoolean().getBooleanValue();
+                    options.s = commandLine.nextBoolean().getValue().getBoolean();
                     return true;
                 }
                 case "-f": {
-                    options.file = commandLine.nextString().getStringValue();
+                    options.file = commandLine.nextString().getValue().getString();
                     return true;
                 }
             }

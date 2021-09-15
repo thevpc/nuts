@@ -29,25 +29,25 @@ public class NTemplateMain implements NutsApplication {
 
             @Override
             public boolean onNextOption(NutsArgument option, NutsCommandLine commandline) {
-                switch (option.getStringKey()) {
+                switch (option.getKey().getString()) {
                     case "-i":
                     case "--init": {
-                        config.addInitScript(commandline.nextString().getStringValue());
+                        config.addInitScript(commandline.nextString().getValue().getString());
                         return true;
                     }
                     case "-s":
                     case "--scriptType": {
-                        config.setScriptType(commandline.nextString().getStringValue());
+                        config.setScriptType(commandline.nextString().getValue().getString());
                         return true;
                     }
                     case "-t":
                     case "--to": {
-                        config.setTargetFolder(commandline.nextString().getStringValue());
+                        config.setTargetFolder(commandline.nextString().getValue().getString());
                         return true;
                     }
                     case "-p":
                     case "--project": {
-                        config.setProjectPath(commandline.nextString().getStringValue());
+                        config.setProjectPath(commandline.nextString().getValue().getString());
                         return true;
                     }
 

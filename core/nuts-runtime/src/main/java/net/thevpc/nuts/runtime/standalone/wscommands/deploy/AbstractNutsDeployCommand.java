@@ -290,10 +290,10 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
             return false;
         }
         boolean enabled = a.isEnabled();
-        switch (a.getStringKey()) {
+        switch (a.getKey().getString()) {
             case "-d":
             case "--desc": {
-                String val = cmdLine.nextString().getStringValue();
+                String val = cmdLine.nextString().getValue().getString();
                 if (enabled) {
                     setDescriptor(val);
                 }
@@ -302,7 +302,7 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
             case "-s":
             case "--source":
             case "--from": {
-                String val = cmdLine.nextString().getStringValue();
+                String val = cmdLine.nextString().getValue().getString();
                 if (enabled) {
                     from(val);
                 }
@@ -311,14 +311,14 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
             case "-r":
             case "--target":
             case "--to": {
-                String val = cmdLine.nextString().getStringValue();
+                String val = cmdLine.nextString().getValue().getString();
                 if (enabled) {
                     to(val);
                 }
                 return true;
             }
             case "--desc-sha1": {
-                String val = cmdLine.nextString().getStringValue();
+                String val = cmdLine.nextString().getValue().getString();
                 if (enabled) {
                     this.setDescSha1(val);
                 }
@@ -326,7 +326,7 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
             }
             case "--desc-sha1-file": {
                 try {
-                    String val = cmdLine.nextString().getStringValue();
+                    String val = cmdLine.nextString().getValue().getString();
                     if (enabled) {
                         this.setDescSha1(new String(Files.readAllBytes(Paths.get(val))));
                     }
@@ -337,7 +337,7 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
                 return true;
             }
             case "--sha1": {
-                String val = cmdLine.nextString().getStringValue();
+                String val = cmdLine.nextString().getValue().getString();
                 if (enabled) {
                     this.setSha1(val);
                 }
@@ -345,7 +345,7 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
             }
             case "--sha1-file": {
                 try {
-                    String val = cmdLine.nextString().getStringValue();
+                    String val = cmdLine.nextString().getValue().getString();
                     if (enabled) {
                         this.setSha1(new String(Files.readAllBytes(Paths.get(val))));
                     }

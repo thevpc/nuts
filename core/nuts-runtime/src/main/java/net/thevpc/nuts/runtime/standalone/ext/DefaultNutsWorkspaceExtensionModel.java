@@ -10,6 +10,7 @@ import net.thevpc.nuts.runtime.core.NutsWorkspaceFactory;
 import net.thevpc.nuts.runtime.core.config.NutsWorkspaceConfigManagerExt;
 import net.thevpc.nuts.runtime.core.io.NutsFormattedPrintStream;
 import net.thevpc.nuts.runtime.core.DefaultNutsClassLoader;
+import net.thevpc.nuts.runtime.standalone.ext.apiimpl.NutsValImplHelper;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.config.NutsWorkspaceConfigBoot;
@@ -589,7 +590,7 @@ public class DefaultNutsWorkspaceExtensionModel {
     public String[] getExtensionRepositoryLocations(NutsId appId) {
         //should parse this form config?
         //or should be parse from and extension component?
-        String repos = ws.env().getEnv("bootstrapRepositoryLocations", "") + ";" //                + NutsConstants.BootstrapURLs.LOCAL_NUTS_FOLDER
+        String repos = ws.env().getEnv("bootstrapRepositoryLocations").getString( "") + ";" //                + NutsConstants.BootstrapURLs.LOCAL_NUTS_FOLDER
                 //                + ";" + NutsConstants.BootstrapURLs.REMOTE_NUTS_GIT
                 ;
         List<String> urls = new ArrayList<>();
@@ -772,4 +773,25 @@ public class DefaultNutsWorkspaceExtensionModel {
         return ws;
     }
 
+
+    //TODO fix me!
+    public <T> T createApiTypeInstance(Class<T> type,String name,Class[] argTypes,Object[] args,NutsSession session){
+        if(name==null || name.equals("")){
+            name="default";
+        }
+        String argTypesString=Arrays.stream(argTypes).map(Class::getName).collect(Collectors.joining(","));
+        T ret=null;
+        switch (type.getName()){
+            case "net.thevpc.nuts.NutsVal":{
+                ret=(T) new NutsValImplHelper().createApiTypeInstance(name,argTypes,args);
+                break;
+            }
+        }
+        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle(
+                "unsupported constructor %s:%s(%s)",
+                type.getName(),
+                name,
+                argTypesString
+        ));
+    }
 }

@@ -39,10 +39,6 @@ public class BTreeSet<T extends Comparable<T>> {
         this.maxChildrenSize = maxKeySize + 1;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    //@Override
     public boolean add(T value) {
         if (root == null) {
             root = new Node<T>(null, maxKeySize, maxChildrenSize);
@@ -150,9 +146,6 @@ public class BTreeSet<T extends Comparable<T>> {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public T remove(T value) {
         T removed = null;
         Node<T> node = this.getNode(value);
@@ -217,17 +210,11 @@ public class BTreeSet<T extends Comparable<T>> {
         return value;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public void clear() {
         root = null;
         size = 0;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public boolean contains(T value) {
         Node<T> node = getNode(value);
         return (node != null);
@@ -495,16 +482,10 @@ public class BTreeSet<T extends Comparable<T>> {
         return node.numberOfKeys() - 1;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public int size() {
         return size;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public boolean validate() {
         if (root == null) return true;
         return validateNode(root);
@@ -593,16 +574,10 @@ public class BTreeSet<T extends Comparable<T>> {
         return true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public java.util.Collection<T> toCollection() {
         return (new JavaCompatibleBTree<T>(this));
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         return TreePrinter.getString(this);
@@ -742,9 +717,6 @@ public class BTreeSet<T extends Comparable<T>> {
             return childrenSize;
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public String toString() {
             StringBuilder builder = new StringBuilder();
@@ -819,41 +791,26 @@ public class BTreeSet<T extends Comparable<T>> {
             this.tree = tree;
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public boolean add(T value) {
             return tree.add(value);
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public boolean remove(Object value) {
             return (tree.remove((T)value)!=null);
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public boolean contains(Object value) {
             return tree.contains((T)value);
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public int size() {
             return tree.size();
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public java.util.Iterator<T> iterator() {
             return (new BTreeIterator<T>(this.tree));
@@ -874,18 +831,12 @@ public class BTreeSet<T extends Comparable<T>> {
                 }
             }
 
-            /**
-             * {@inheritDoc}
-             */
             @Override
             public boolean hasNext() {
                 if ((lastNode!=null && index<lastNode.keysSize)||(toVisit.size()>0)) return true;
                 return false;
             }
 
-            /**
-             * {@inheritDoc}
-             */
             @Override
             public C next() {
                 if (lastNode!=null && (index < lastNode.keysSize)) {
@@ -910,9 +861,6 @@ public class BTreeSet<T extends Comparable<T>> {
                 return null;
             }
 
-            /**
-             * {@inheritDoc}
-             */
             @Override
             public void remove() {
                 if (lastNode!=null && lastValue!=null) {

@@ -232,7 +232,7 @@ public class ProcessExecHelper implements IProcessExecHelper {
             case WINDOWS: {
                 String s = (String) session.getProperty("WINDOWS_ROOT_USER");
                 if (s == null) {
-                    s = session.getWorkspace().env().getEnv("WINDOWS_ROOT_USER", null);
+                    s = session.getWorkspace().env().getEnv("WINDOWS_ROOT_USER").getString();
                 }
                 if (NutsUtilStrings.isBlank(s)) {
                     s = "Administrator";

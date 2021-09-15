@@ -255,10 +255,10 @@ public abstract class AbstractDefaultNutsPushCommand extends NutsWorkspaceComman
             return false;
         }
         boolean enabled = a.isEnabled();
-        switch (a.getStringKey()) {
+        switch (a.getKey().getString()) {
             case "-o":
             case "--offline": {
-                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
                 if (enabled) {
                     setOffline(val);
                 }
@@ -266,7 +266,7 @@ public abstract class AbstractDefaultNutsPushCommand extends NutsWorkspaceComman
             }
             case "-x":
             case "--freeze": {
-                for (String id : cmdLine.nextString().getStringValue().split(",")) {
+                for (String id : cmdLine.nextString().getValue().getString().split(",")) {
                     if (enabled) {
                         addLockedId(id);
                     }
@@ -276,7 +276,7 @@ public abstract class AbstractDefaultNutsPushCommand extends NutsWorkspaceComman
             case "-r":
             case "-repository":
             case "--from": {
-                String val = cmdLine.nextString().getStringValue();
+                String val = cmdLine.nextString().getValue().getString();
                 if (enabled) {
                     setRepository(val);
                 }
@@ -299,7 +299,7 @@ public abstract class AbstractDefaultNutsPushCommand extends NutsWorkspaceComman
                     cmdLine.unexpectedArgument();
                 } else {
                     cmdLine.skip();
-                    addId(a.getString());
+                    addId(a.getAll().getString());
                     return true;
                 }
             }

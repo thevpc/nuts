@@ -63,7 +63,7 @@ public class MkdirCommand extends SimpleNshBuiltin {
         Options options = context.getOptions();
         NutsArgument a;
         if ((a = commandLine.nextBoolean("--parent", "-p")) != null) {
-            options.p = a.getBooleanValue();
+            options.p = a.getValue().getBoolean();
             return true;
         } else if (commandLine.peek().isNonOption()) {
             options.files.addAll(Arrays.asList(commandLine.toStringArray()));

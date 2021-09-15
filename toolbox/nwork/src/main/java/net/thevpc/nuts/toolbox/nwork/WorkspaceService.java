@@ -207,9 +207,9 @@ public class WorkspaceService {
         List<File> toScan = new ArrayList<>();
         while (cmdLine.hasNext()) {
             if ((a = cmdLine.nextBoolean("-i", "--interactive")) != null) {
-                interactive = a.getBooleanValue();
+                interactive = a.getValue().getBoolean();
             } else if ((a = cmdLine.nextBoolean("-r", "--reset")) != null) {
-                reset = a.getBooleanValue();
+                reset = a.getValue().getBoolean();
             } else if (cmdLine.peek().isNonOption()) {
                 String folder = cmdLine.nextNonOption(commandLineFormat.createName("Folder")).getString();
                 run = true;
@@ -252,21 +252,21 @@ public class WorkspaceService {
 //            } else if (tf.configureFirst(cmd)) {
                 //consumed
             } else if ((a = cmd.nextBoolean("-c", "--commitable", "--changed")) != null) {
-                commitable = a.getBooleanValue();
+                commitable = a.getValue().getBoolean();
             } else if ((a = cmd.nextBoolean("-d", "--dirty")) != null) {
-                dirty = a.getBooleanValue();
+                dirty = a.getValue().getBoolean();
             } else if ((a = cmd.nextBoolean("-w", "--new")) != null) {
-                newP = a.getBooleanValue();
+                newP = a.getValue().getBoolean();
             } else if ((a = cmd.nextBoolean("-o", "--old")) != null) {
-                old = a.getBooleanValue();
+                old = a.getValue().getBoolean();
             } else if ((a = cmd.nextBoolean("-0", "--ok", "--uptodate")) != null) {
-                uptodate = a.getBooleanValue();
+                uptodate = a.getValue().getBoolean();
             } else if ((a = cmd.nextBoolean("-e", "--invalid", "--error")) != null) {
-                invalid = a.getBooleanValue();
+                invalid = a.getValue().getBoolean();
             } else if ((a = cmd.nextBoolean("-p", "--progress")) != null) {
-                progress = a.getBooleanValue();
+                progress = a.getValue().getBoolean();
             } else if ((a = cmd.nextBoolean("-v", "--verbose")) != null) {
-                verbose = a.getBooleanValue();
+                verbose = a.getValue().getBoolean();
             } else if (cmd.peek().isOption()) {
                 cmd.setCommandName("nwork check").unexpectedArgument();
             } else {
@@ -751,11 +751,11 @@ public class WorkspaceService {
         while (cmd.hasNext()) {
             if ((a = cmd.nextString("-r", "--repo")) != null) {
                 WorkspaceConfig conf = getWorkspaceConfig();
-                conf.getDefaultRepositoryAddress().setNutsRepository(a.getStringValue());
+                conf.getDefaultRepositoryAddress().setNutsRepository(a.getValue().getString());
                 setWorkspaceConfig(conf);
             } else if ((a = cmd.nextString("-w", "--workspace")) != null) {
                 WorkspaceConfig conf = getWorkspaceConfig();
-                conf.getDefaultRepositoryAddress().setNutsWorkspace(a.getStringValue());
+                conf.getDefaultRepositoryAddress().setNutsWorkspace(a.getValue().getString());
                 setWorkspaceConfig(conf);
             } else {
                 cmd.setCommandName("nwork set").unexpectedArgument();

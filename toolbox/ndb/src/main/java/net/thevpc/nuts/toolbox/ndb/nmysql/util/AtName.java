@@ -41,7 +41,7 @@ public class AtName {
 
     public static AtName nextConfigOption(NutsCommandLine cmd) {
         NutsArgument a = cmd.nextString();
-        AtName name2 = new AtName(a.getStringValue());
+        AtName name2 = new AtName(a.getValue().getString());
         if (!name2.getConfigName().isEmpty() && !name2.getDatabaseName().isEmpty()) {
             cmd.pushBack(a);
             cmd.unexpectedArgument(NutsMessage.cstyle("should be valid a config name"));
@@ -59,7 +59,7 @@ public class AtName {
 
     public static AtName nextAppOption(NutsCommandLine cmd) {
         NutsArgument a = cmd.nextString();
-        return a==null?null:new AtName(a.getStringValue());
+        return a==null?null:new AtName(a.getValue().getString());
     }
 
     public static AtName nextAppNonOption(NutsCommandLine cmd) {

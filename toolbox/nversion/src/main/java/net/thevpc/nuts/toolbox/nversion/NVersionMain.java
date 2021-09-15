@@ -78,27 +78,27 @@ public class NVersionMain implements NutsApplication {
         int processed = 0;
         while (commandLine.hasNext()) {
             if ((a = commandLine.nextBoolean("--maven")) != null) {
-                maven = a.getBooleanValue();
+                maven = a.getValue().getBoolean();
             } else if ((a = commandLine.nextBoolean("--win-pe")) != null) {
-                winPE = a.getBooleanValue();
+                winPE = a.getValue().getBoolean();
             } else if ((a = commandLine.nextBoolean("--exe")) != null) {
-                winPE = a.getBooleanValue();
+                winPE = a.getValue().getBoolean();
             } else if ((a = commandLine.nextBoolean("--dll")) != null) {
-                winPE = a.getBooleanValue();
+                winPE = a.getValue().getBoolean();
             } else if ((a = commandLine.nextBoolean("--long")) != null) {
-                longFormat = a.getBooleanValue();
+                longFormat = a.getValue().getBoolean();
             } else if ((a = commandLine.nextBoolean("--name")) != null) {
-                nameFormat = a.getBooleanValue();
+                nameFormat = a.getValue().getBoolean();
             } else if ((a = commandLine.nextBoolean("--sort")) != null) {
-                sort = a.getBooleanValue();
+                sort = a.getValue().getBoolean();
             } else if ((a = commandLine.nextBoolean("--id")) != null) {
-                idFormat = a.getBooleanValue();
+                idFormat = a.getValue().getBoolean();
             } else if ((a = commandLine.nextBoolean("--all")) != null) {
-                all = a.getBooleanValue();
+                all = a.getValue().getBoolean();
             } else if ((a = commandLine.nextBoolean("--table")) != null) {
-                table = a.getBooleanValue();
+                table = a.getValue().getBoolean();
             } else if ((a = commandLine.nextBoolean("--error")) != null) {
-                error = a.getBooleanValue();
+                error = a.getValue().getBoolean();
             } else if (commandLine.peek().isNonOption()) {
                 a = commandLine.next();
                 jarFiles.add(a.getString());

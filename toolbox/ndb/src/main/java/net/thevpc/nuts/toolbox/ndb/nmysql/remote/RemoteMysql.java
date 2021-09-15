@@ -62,7 +62,7 @@ package net.thevpc.nuts.toolbox.ndb.nmysql.remote;
 //        args.setCommandName("mysql --remote list");
 //        AtName name = null;
 //        while (args.hasNext()) {
-//            if (args.peek().getStringKey().equals("--name")) {
+//            if (args.peek().getKey().getString().equals("--name")) {
 //                name = AtName.nextConfigOption(args);
 //            } else if (name == null && args.peek().isNonOption()) {
 //                name = AtName.nextConfigNonOption(args);
@@ -123,7 +123,7 @@ package net.thevpc.nuts.toolbox.ndb.nmysql.remote;
 //        String server = null;
 //        while (commandLine.hasNext()) {
 //            if (commandLine.peek().isOption()) {
-//                switch (commandLine.peek().getStringKey()) {
+//                switch (commandLine.peek().getKey().getString()) {
 //                    case "--name": {
 //                        if (name == null) {
 //                            name = AtName.nextAppOption(commandLine);
@@ -287,7 +287,7 @@ package net.thevpc.nuts.toolbox.ndb.nmysql.remote;
 //        NutsArgument a;
 //        while (commandLine.hasNext()) {
 //             if (commandLine.peek().isOption()) {
-//                switch (commandLine.peek().getStringKey()) {
+//                switch (commandLine.peek().getKey().getString()) {
 //                    case "--name": {
 //                        if (name == null) {
 //                            name = AtName.nextAppOption(commandLine);
@@ -328,7 +328,7 @@ package net.thevpc.nuts.toolbox.ndb.nmysql.remote;
 //        NutsArgument a;
 //        while (commandLine.hasNext()) {
 //            if (commandLine.peek().isOption()) {
-//                switch (commandLine.peek().getStringKey()) {
+//                switch (commandLine.peek().getKey().getString()) {
 //                    case "--name": {
 //                        if (name == null) {
 //                            name = AtName.nextAppOption(commandLine);

@@ -54,8 +54,8 @@ public class HeadCommand extends SimpleNshBuiltin {
     protected boolean configureFirst(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         NutsArgument a = commandLine.peek();
-        if (a.isOption() && a.getArgumentKey().isInt()) {
-            options.max = a.getArgumentKey().getInt();
+        if (a.isOption() && a.getKey().isInt()) {
+            options.max = a.getKey().getInt();
             commandLine.skip();
             return true;
         } else if (!a.isOption()) {

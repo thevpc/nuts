@@ -445,7 +445,7 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
             return true;
         }
         boolean enabled = a.isEnabled();
-        switch (a.getStringKey()) {
+        switch (a.getKey().getString()) {
             case "--external":
             case "--spawn":
             case "-x": {
@@ -492,10 +492,10 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
             {
                 NutsArgument s = cmdLine.nextString();
                 if (enabled) {
-                    if(NutsUtilStrings.isBlank(s.getStringValue())){
+                    if(NutsUtilStrings.isBlank(s.getValue().getString())){
                         throw new NutsIllegalArgumentException(getSession(),NutsMessage.cstyle("missing user name"));
                     }
-                    setRunAs(NutsRunAs.user(s.getStringValue()));
+                    setRunAs(NutsRunAs.user(s.getValue().getString()));
                 }
                 return true;
             }
@@ -510,13 +510,13 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
             case "--inherit-system-io": {
                 NutsArgument val = cmdLine.nextBoolean();
                 if (enabled) {
-                    setInheritSystemIO(val.getBooleanValue());
+                    setInheritSystemIO(val.getValue().getBoolean());
                 }
                 return true;
             }
             case "-dry":
             case "-d": {
-                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
                 if (enabled) {
                     setDry(val);
                 }

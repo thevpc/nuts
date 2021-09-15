@@ -62,15 +62,15 @@ public class CpCommand extends SimpleNshBuiltin {
     protected boolean configureFirst(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         NutsArgument a;
-        switch (commandLine.peek().getStringKey()){
+        switch (commandLine.peek().getKey().getString()){
             case "--mkdir":{
-                options.mkdir = commandLine.nextBoolean().getBooleanValue();
+                options.mkdir = commandLine.nextBoolean().getValue().getBoolean();
                 return true;
             }
             case "-r":
             case "-R":
             case "--recursive":{
-                options.recursive = commandLine.nextBoolean().getBooleanValue();
+                options.recursive = commandLine.nextBoolean().getValue().getBoolean();
                 return true;
             }
             default:{

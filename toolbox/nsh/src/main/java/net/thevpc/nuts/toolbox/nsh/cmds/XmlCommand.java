@@ -70,10 +70,10 @@ public class XmlCommand extends SimpleNshBuiltin {
         Options options = context.getOptions();
         NutsArgument a;
         if ((a = commandLine.nextString("-f", "--file")) != null) {
-            options.input = a.getStringValue();
+            options.input = a.getValue().getString();
             return true;
         } else if ((a = commandLine.nextString("-q", "--xpath")) != null) {
-            options.xpaths.add(a.getStringValue());
+            options.xpaths.add(a.getValue().getString());
             return true;
         }
         return false;

@@ -77,7 +77,7 @@ public class SshCommand extends AbstractNshBuiltin {
                 }
             } else if ((a = commandLine.next("--nuts-jre")) != null) {
                 if (acceptDashNuts) {
-                    o.nutsJre = a.getStringValue();
+                    o.nutsJre = a.getValue().getString();
                 } else {
                     o.cmd.add(a.getString());
                 }

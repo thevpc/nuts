@@ -38,7 +38,7 @@
 //                if(a.isEnabled()) {
 //                    NutsArgument i = a.getArgumentValue();
 //                    extraConfig.add(a.getString());
-//                    addMultilineProperty(i.getStringKey(), i.getStringValue());
+//                    addMultilineProperty(i.getKey().getString(), i.getStringValue());
 //                }
 //            } else {
 //                a = commandLine.next();

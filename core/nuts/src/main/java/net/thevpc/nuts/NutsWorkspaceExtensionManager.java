@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -11,7 +11,7 @@
  * architecture to help supporting a large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -23,7 +23,7 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.spi.NutsComponent;
@@ -41,7 +41,7 @@ public interface NutsWorkspaceExtensionManager {
 
     boolean installWorkspaceExtensionComponent(Class extensionPointType, Object extensionImpl);
 
-    Set<Class> discoverTypes(NutsId id,ClassLoader classLoader);
+    Set<Class> discoverTypes(NutsId id, ClassLoader classLoader);
 
     <T extends NutsComponent<B>, B> NutsServiceLoader<T, B> createServiceLoader(Class<T> serviceType, Class<B> criteriaType);
 
@@ -108,5 +108,17 @@ public interface NutsWorkspaceExtensionManager {
     NutsSession getSession();
 
     NutsWorkspaceExtensionManager setSession(NutsSession session);
+
+    /**
+     * create an instance of a supported Nuts Type
+     * @param type type interface
+     * @param name constructor type, null for 'default'
+     * @param argTypes argument types
+     * @param args argument instances
+     * @param <T> type interface
+     * @return new instance of T or error
+     */
+    <T> T create(Class<T> type, String name, Class[] argTypes, Object[] args);
+
 
 }

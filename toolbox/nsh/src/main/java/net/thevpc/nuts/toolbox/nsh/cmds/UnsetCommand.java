@@ -59,11 +59,11 @@ public class UnsetCommand extends SimpleNshBuiltin {
         Options options = context.getOptions();
         NutsArgument a = commandLine.peek();
         if (a.isOption()) {
-            if (a.getStringKey().equals("-v")) {
-                options.fct = !commandLine.nextBoolean().getBooleanValue();
+            if (a.getKey().getString().equals("-v")) {
+                options.fct = !commandLine.nextBoolean().getValue().getBoolean();
                 return true;
-            } else if (a.getStringKey().equals("-f")) {
-                options.fct = commandLine.nextBoolean().getBooleanValue();
+            } else if (a.getKey().getString().equals("-f")) {
+                options.fct = commandLine.nextBoolean().getValue().getBoolean();
                 return true;
             }
         } else {

@@ -28,6 +28,7 @@ package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.NutsArgument;
 import net.thevpc.nuts.NutsSingleton;
+import net.thevpc.nuts.NutsVal;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellQuitException;
 import net.thevpc.nuts.NutsCommandLine;
@@ -58,9 +59,12 @@ public class ExitCommand extends SimpleNshBuiltin {
         final NutsArgument a = commandLine.peek();
         if (a.isOption()) {
             return false;
-        } else if (a.isInt() && a.getInt() > 0) {
-            options.code = a.getInt();
-            return true;
+        } else {
+            NutsVal raw = a.getAll();
+            if (raw.isInt() && raw.getInt() > 0) {
+                options.code = raw.getInt();
+                return true;
+            }
         }
         return false;
     }

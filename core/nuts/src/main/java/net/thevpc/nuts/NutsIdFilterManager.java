@@ -26,10 +26,17 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
 /**
  * @app.category Base
  */
 public interface NutsIdFilterManager extends NutsTypedFilters<NutsIdFilter> {
+    static NutsIdFilterManager of(NutsSession session){
+        NutsApiUtils.checkSession(session);
+        return session.getWorkspace().id().filter();
+    }
+
     NutsIdFilterManager setSession(NutsSession session);
     NutsIdFilter byExpression(String expression);
 

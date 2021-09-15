@@ -33,7 +33,7 @@ public class NutsSettingsDeleteFoldersSubCommand extends AbstractNutsSettingsSub
                 while (cmdLine.hasNext()) {
                     NutsArgument a;
                     if ((a = cmdLine.nextBoolean("-y", "--yes")) != null) {
-                        force = a.getBooleanValue();
+                        force = a.getValue().getBoolean();
                     } else if (!cmdLine.peek().isOption()) {
                         String s = cmdLine.peek().toString();
                         try {

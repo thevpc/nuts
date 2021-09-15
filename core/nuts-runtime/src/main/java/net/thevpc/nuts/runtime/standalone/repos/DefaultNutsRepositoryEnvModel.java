@@ -70,7 +70,7 @@ public class DefaultNutsRepositoryEnvModel {
             return t;
         }
         if (inherit) {
-            t = repository.getWorkspace().env().getEnv(key, null);
+            t = repository.getWorkspace().env().getEnv(key).getString();
             if (!NutsUtilStrings.isBlank(t)) {
                 return t;
             }

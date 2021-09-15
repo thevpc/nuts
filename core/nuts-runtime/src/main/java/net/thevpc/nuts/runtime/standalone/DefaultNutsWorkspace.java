@@ -143,6 +143,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
     private DefaultCustomCommandsModel aliasesModel;
     private DefaultImportModel importModel;
     private DefaultNutsConcurrentModel concurrentModel;
+    private DefaultNutsUtilModel utilModel;
 
     public DefaultNutsWorkspace(NutsWorkspaceInitInformation info) {
         initWorkspace(info);
@@ -216,7 +217,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         this.uuid = info.getUuid();
         this.bootModel = new DefaultNutsBootModel(this, info);
         ((CoreNutsWorkspaceInitInformation) info).setSession(defaultSession());
-
+        this.utilModel = new DefaultNutsUtilModel(this);
         this.ioModel = new DefaultNutsIOModel(this, bootModel);
         this.logModel = new DefaultNutsLogModel(this, info);
         this.logModel.setDefaultSession(defaultSession());
@@ -363,6 +364,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         NutsBootWorkspaceFactory bootFactory = info.getBootWorkspaceFactory();
         ClassLoader bootClassLoader = info.getClassWorldLoader();
         NutsWorkspaceConfigManager _config = config().setSession(defaultSession());
+        NutsBootManager _boot = boot().setSession(defaultSession());
         NutsWorkspaceEnvManager _env = env().setSession(defaultSession());
         if (uoptions == null) {
             uoptions = new ReadOnlyNutsWorkspaceOptions(_config.optionsBuilder().build(), defaultSession());
@@ -507,7 +509,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                     LOG.with().session(defaultSession()).level(Level.CONFIG).verb(NutsLogVerb.SUCCESS).log("nuts workspace v{0} created.", nutsVersion);
                 }
                 //should install default
-                if (defaultSession().isPlainTrace() && !_env.getBootOptions().isSkipWelcome()) {
+                if (defaultSession().isPlainTrace() && !_boot.getBootOptions().isSkipWelcome()) {
                     NutsPrintStream out = defaultSession().out();
                     out.resetLine();
                     StringBuilder version = new StringBuilder(nutsVersion.toString());
@@ -539,7 +541,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                     ).println(out);
                     out.println();
                 }
-                for (URL bootClassWorldURL : _env.getBootClassWorldURLs()) {
+                for (URL bootClassWorldURL : _boot.getBootClassWorldURLs()) {
                     NutsInstalledRepository repo = getInstalledRepository();
                     NutsRepositorySPI repoSPI = NutsWorkspaceUtils.of(defaultSession()).repoSPI(repo);
                     NutsDeployRepositoryCommand desc = repoSPI.deploy()
@@ -609,7 +611,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             configModel.setEndCreateTimeMillis(System.currentTimeMillis());
             if (justInstalled) {
                 installSettings(defaultSession());
-                if (!_env.getBootOptions().isSkipCompanions()) {
+                if (!_boot.getBootOptions().isSkipCompanions()) {
                     installCompanions(defaultSession());
                 }
                 DefaultNutsWorkspaceEvent workspaceCreatedEvent = new DefaultNutsWorkspaceEvent(defaultSession(), null, null, null, null);
@@ -631,12 +633,12 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             }
             LOG.with().session(defaultSession()).level(Level.FINE).verb(NutsLogVerb.SUCCESS)
                     .formatted().log("```sh nuts``` workspace loaded in ```error {0}```",
-                            CoreTimeUtils.formatPeriodMilli(_env.getCreationFinishTimeMillis() - _env.getCreationStartTimeMillis())
+                            CoreTimeUtils.formatPeriodMilli(_boot.getCreationFinishTimeMillis() - _boot.getCreationStartTimeMillis())
                     );
 
             if (CoreBooleanUtils.getSysBoolNutsProperty("perf", false)) {
                 defaultSession().out().printf("```sh nuts``` workspace loaded in %s%n",
-                        configModel.getWorkspace().text().forStyled(CoreTimeUtils.formatPeriodMilli(_env.getCreationFinishTimeMillis() - _env.getCreationStartTimeMillis()),
+                        configModel.getWorkspace().text().forStyled(CoreTimeUtils.formatPeriodMilli(_boot.getCreationFinishTimeMillis() - _boot.getCreationStartTimeMillis()),
                                 NutsTextStyle.error()
                         )
                 );
@@ -657,58 +659,64 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
     }
 
     private void installSettings(NutsSession session) {
-        try {
-            if (session.isPlainTrace()) {
-                session.out().resetLine().println("looking for java installations in default locations...");
-            }
-            NutsPlatformLocation[] found = session.getWorkspace().env().platforms()
-                    .searchSystem("java");
-            int someAdded = 0;
-            for (NutsPlatformLocation java : found) {
-                if (session.getWorkspace().env().platforms().add(java)) {
-                    someAdded++;
+        NutsWorkspace ws = session.getWorkspace();
+        NutsBootManager boot = ws.boot();
+        NutsWorkspaceEnvManager env = ws.env();
+        NutsWorkspaceConfigManager config = ws.config();
+        if(boot.getCustomBootOption("install-java").getBoolean(true,false)) {
+            try {
+                if (session.isPlainTrace()) {
+                    session.out().resetLine().println("looking for java installations in default locations...");
+                }
+                NutsPlatformLocation[] found = env.platforms()
+                        .searchSystem("java");
+                int someAdded = 0;
+                for (NutsPlatformLocation java : found) {
+                    if (env.platforms().add(java)) {
+                        someAdded++;
+                    }
+                }
+                NutsTextManager factory = ws.text();
+                if (session.isPlainTrace()) {
+                    if (someAdded == 0) {
+                        session.out().print("```error no new``` java installation locations found...\n");
+                    } else if (someAdded == 1) {
+                        session.out().printf("%s new java installation location added...\n", factory.forStyled("1", NutsTextStyle.primary2()));
+                    } else {
+                        session.out().printf("%s new java installation locations added...\n", factory.forStyled("" + someAdded, NutsTextStyle.primary2()));
+                    }
+                    session.out().println("you can always add another installation manually using 'nuts settings add java' command.");
+                }
+                if (!config.isReadOnly()) {
+                    config.save();
+                }
+            } catch (Exception ex) {
+                LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).error(ex).log("unable to resolve default JDK/JDK locations : {0}", ex, ex);
+                if (session.isPlainTrace()) {
+                    NutsPrintStream out = session.out();
+                    out.resetLine();
+                    out.printf("```unable to resolve default JDK/JDK locations``` :  %s%n", ex);
                 }
             }
-            NutsTextManager factory = session.getWorkspace().text();
-            if (session.isPlainTrace()) {
-                if (someAdded == 0) {
-                    session.out().print("```error no new``` java installation locations found...\n");
-                } else if (someAdded == 1) {
-                    session.out().printf("%s new java installation location added...\n", factory.forStyled("1", NutsTextStyle.primary2()));
-                } else {
-                    session.out().printf("%s new java installation locations added...\n", factory.forStyled("" + someAdded, NutsTextStyle.primary2()));
+        }
+        if(boot.getCustomBootOption("install-launchers").getBoolean(true,false)) {
+            try {
+                env.addLauncher(
+                        new NutsLauncherOptions()
+                                .setId(getApiId())
+                                .setCreateScript(true)
+                                .setCreateDesktopShortcut(NutsSupportCondition.PREFERRED)
+                                .setCreateMenuShortcut(NutsSupportCondition.SUPPORTED)
+                );
+            } catch (Exception ex) {
+                LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).error(ex).log("unable to install desktop launchers : {0}", ex, ex);
+                if (session.isPlainTrace()) {
+                    NutsPrintStream out = session.out();
+                    out.resetLine();
+                    out.printf("```error unable to install desktop launchers``` :  %s%n", ex);
                 }
-                session.out().println("you can always add another installation manually using 'nuts settings add java' command.");
-            }
-            if (!session.getWorkspace().config().isReadOnly()) {
-                session.getWorkspace().config().save();
-            }
-        } catch (Exception ex) {
-            LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).error(ex).log("unable to resolve default JDK/JDK locations : {0}", ex, ex);
-            if (session.isPlainTrace()) {
-                NutsPrintStream out = session.out();
-                out.resetLine();
-                out.printf("```unable to resolve default JDK/JDK locations``` :  %s%n", ex);
             }
         }
-        try {
-            session.getWorkspace().env().addLauncher(
-                    new NutsLauncherOptions()
-                            .setId(getApiId())
-                            .setCreateScript(true)
-                            .setCreateDesktopShortcut(NutsSupportCondition.PREFERRED)
-                            .setCreateMenuShortcut(NutsSupportCondition.SUPPORTED)
-            );
-        } catch (Exception ex) {
-            LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).error(ex).log("unable to install desktop launchers : {0}", ex, ex);
-            if (session.isPlainTrace()) {
-                NutsPrintStream out = session.out();
-                out.resetLine();
-                out.printf("```error unable to install desktop launchers``` :  %s%n", ex);
-            }
-        }
-
-
     }
 
     public void installCompanions(NutsSession session) {
@@ -1053,7 +1061,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                     .setTraceSession(session.copy())
                     .setExecSession(session.copy())
                     .setDefinition(def).setArguments(args).setFailFast(true).setTemporary(false)
-                    .setExecutionType(env().setSession(session).getBootOptions().getExecutionType())
+                    .setExecutionType(boot().setSession(session).getBootOptions().getExecutionType())
                     .setRunAs(NutsRunAs.currentUser())// install or update always uses current user
                     ;
             NutsArtifactCall installer = def.getDescriptor().getInstaller();
@@ -1879,6 +1887,11 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
     @Override
     public NutsConcurrentManager concurrent() {
         return new DefaultNutsConcurrentManager(concurrentModel);
+    }
+
+    @Override
+    public NutsUtilManager util() {
+        return new DefaultNutsUtilManager(utilModel);
     }
 
     @Override

@@ -157,7 +157,7 @@ public class JarDescriptorContentParserComponent implements NutsDescriptorConten
         NutsArgument a;
         while (!cmd.isEmpty()) {
             if ((a = cmd.nextBoolean("--all-mains")) != null) {
-                alwaysSelectAllMainClasses = a.getBoolean();
+                alwaysSelectAllMainClasses = a.getValue().getBoolean();
             } else {
                 cmd.skip();
             }

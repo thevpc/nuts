@@ -25,6 +25,8 @@
 */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
 import java.io.Serializable;
 import java.util.Map;
 
@@ -35,6 +37,11 @@ import java.util.Map;
  * @app.category Descriptor
  */
 public interface NutsDependency extends Serializable, NutsFormattable{
+
+    static NutsDependency of(String value, NutsSession session){
+        NutsApiUtils.checkSession(session);
+        return session.getWorkspace().dependency().parser().parseDependency(value);
+    }
 
     /**
      * return mutable id builder instance initialized with {@code this} instance.

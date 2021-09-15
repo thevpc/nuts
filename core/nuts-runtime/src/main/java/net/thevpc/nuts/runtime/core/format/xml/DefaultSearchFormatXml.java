@@ -98,16 +98,16 @@ public class DefaultSearchFormatXml extends DefaultSearchFormatBase {
             return true;
         }
         boolean enabled = a.isEnabled();
-        switch (a.getStringKey()) {
+        switch (a.getKey().getString()) {
             case "--compact": {
-                boolean val = cmd.nextBoolean().getBooleanValue();
+                boolean val = cmd.nextBoolean().getValue().getBoolean();
                 if (enabled) {
                     this.compact = val;
                 }
                 return true;
             }
             case "--root-name": {
-                String val = cmd.nextString().getStringValue();
+                String val = cmd.nextString().getValue().getString();
                 if (enabled) {
                     this.rootName = val;
                 }

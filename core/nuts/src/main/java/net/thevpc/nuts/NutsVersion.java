@@ -43,12 +43,17 @@ import java.math.BigInteger;
  * @since 0.5.4
  * @app.category Descriptor
  */
-public interface NutsVersion extends Serializable, NutsTokenFilter, NutsFormattable, Comparable<NutsVersion> {
+public interface NutsVersion extends Serializable, /*NutsTokenFilter, */NutsFormattable, Comparable<NutsVersion> {
 
-    static NutsVersion parse(String str, NutsSession session) {
+    static NutsVersion of(String str, NutsSession session) {
         NutsApiUtils.checkSession(session);
         return session.getWorkspace().version().parse(str);
     }
+
+    boolean isNull();
+
+    boolean isBlank();
+
 
     /**
      * return string representation of the version

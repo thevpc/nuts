@@ -63,15 +63,15 @@ public final class JavaExecutorOptions {
         List<NutsClassLoaderNode> currentCP = new ArrayList<>();
         while (cmdLine.hasNext()) {
             a = cmdLine.peek();
-            switch (a.getStringKey()) {
+            switch (a.getKey().getString()) {
                 case "--java-version":
                 case "-java-version": {
-                    javaVersion = cmdLine.nextString().getStringValue();
+                    javaVersion = cmdLine.nextString().getValue().getString();
                     break;
                 }
                 case "--java-home":
                 case "-java-home": {
-                    javaHome = cmdLine.nextString().getStringValue();
+                    javaHome = cmdLine.nextString().getValue().getString();
                     break;
                 }
                 case "--class-path":
@@ -80,7 +80,7 @@ public final class JavaExecutorOptions {
                 case "-classpath":
                 case "--cp":
                 case "-cp": {
-                    String r = cmdLine.nextString().getStringValue();
+                    String r = cmdLine.nextString().getValue().getString();
                     addCp(currentCP, r);
                     break;
                 }
@@ -91,39 +91,39 @@ public final class JavaExecutorOptions {
                 case "-nutspath":
                 case "--np":
                 case "-np": {
-                    addNp(currentCP, cmdLine.nextString().getStringValue());
+                    addNp(currentCP, cmdLine.nextString().getValue().getString());
                     break;
                 }
                 case "--main-class":
                 case "-main-class":
                 case "--class":
                 case "-class": {
-                    this.mainClass = cmdLine.nextString().getStringValue();
+                    this.mainClass = cmdLine.nextString().getValue().getString();
                     break;
                 }
                 case "--dir":
                 case "-dir": {
-                    this.dir = cmdLine.nextString().getStringValue();
+                    this.dir = cmdLine.nextString().getValue().getString();
                     break;
                 }
                 case "--win":
                 case "--javaw": {
-                    this.javaw = cmdLine.nextBoolean().getBooleanValue();
+                    this.javaw = cmdLine.nextBoolean().getValue().getBoolean();
                     break;
                 }
                 case "--jar":
                 case "-jar": {
-                    this.jar = cmdLine.nextBoolean().getBooleanValue();
+                    this.jar = cmdLine.nextBoolean().getValue().getBoolean();
                     break;
                 }
                 case "--show-command":
                 case "-show-command": {
-                    this.showCommand = cmdLine.nextBoolean().getBooleanValue();
+                    this.showCommand = cmdLine.nextBoolean().getValue().getBoolean();
                     break;
                 }
                 case "--exclude-base":
                 case "-exclude-base": {
-                    this.excludeBase = cmdLine.nextBoolean().getBooleanValue();
+                    this.excludeBase = cmdLine.nextBoolean().getValue().getBoolean();
                     break;
                 }
                 default: {

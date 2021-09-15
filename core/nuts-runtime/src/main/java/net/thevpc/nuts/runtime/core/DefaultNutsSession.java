@@ -80,7 +80,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
 
     public DefaultNutsSession(NutsWorkspace ws) {
         this.ws = new NutsWorkspaceSessionAwareImpl(this, ws);
-        copyFrom(this.ws.env().getBootOptions());
+        copyFrom(this.ws.boot().getBootOptions());
     }
 
     public DefaultNutsSession(NutsWorkspace ws, NutsWorkspaceOptions options) {
@@ -120,12 +120,12 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         NutsArgument a = cmdLine.peek();
         if (a != null) {
             boolean enabled = a.isEnabled();
-            switch (a.getStringKey()) {
+            switch (a.getKey().getString()) {
                 case "-T":
                 case "--output-format-option": {
                     a = cmdLine.nextString();
                     if (enabled) {
-                        this.addOutputFormatOptions(a.getStringValue(""));
+                        this.addOutputFormatOptions(a.getValue().getString(""));
                     }
                     return true;
                 }
@@ -133,7 +133,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                 case "--output-format":
                     a = cmdLine.nextString();
                     if (enabled) {
-                        String t = a.getStringValue("");
+                        String t = a.getValue().getString("");
                         int i = CoreStringUtils.firstIndexOf(t, new char[]{' ', ';', ':', '='});
                         if (i > 0) {
                             this.setOutputFormat(NutsContentType.valueOf(t.substring(0, i).toUpperCase()));
@@ -147,8 +147,8 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                     a = cmdLine.next();
                     if (enabled) {
                         this.setOutputFormat(NutsContentType.TSON);
-                        if (a.getStringValue() != null) {
-                            this.addOutputFormatOptions(a.getStringValue());
+                        if (a.getValue().getString() != null) {
+                            this.addOutputFormatOptions(a.getValue().getString());
                         }
                     }
                     break;
@@ -156,8 +156,8 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                     a = cmdLine.next();
                     if (enabled) {
                         this.setOutputFormat(NutsContentType.YAML);
-                        if (a.getStringValue() != null) {
-                            this.addOutputFormatOptions(a.getStringValue());
+                        if (a.getValue().getString() != null) {
+                            this.addOutputFormatOptions(a.getValue().getString());
                         }
                     }
                     break;
@@ -165,8 +165,8 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                     a = cmdLine.next();
                     if (enabled) {
                         this.setOutputFormat(NutsContentType.JSON);
-                        if (a.getStringValue() != null) {
-                            this.addOutputFormatOptions(a.getStringValue());
+                        if (a.getValue().getString() != null) {
+                            this.addOutputFormatOptions(a.getValue().getString());
                         }
                     }
                     return true;
@@ -175,8 +175,8 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                     a = cmdLine.next();
                     if (enabled) {
                         this.setOutputFormat(NutsContentType.PROPS);
-                        if (a.getStringValue() != null) {
-                            this.addOutputFormatOptions(a.getStringValue());
+                        if (a.getValue().getString() != null) {
+                            this.addOutputFormatOptions(a.getValue().getString());
                         }
                     }
                     return true;
@@ -185,8 +185,8 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                     a = cmdLine.next();
                     if (enabled) {
                         this.setOutputFormat(NutsContentType.PLAIN);
-                        if (a.getStringValue() != null) {
-                            this.addOutputFormatOptions(a.getStringValue());
+                        if (a.getValue().getString() != null) {
+                            this.addOutputFormatOptions(a.getValue().getString());
                         }
                     }
                     return true;
@@ -195,8 +195,8 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                     a = cmdLine.next();
                     if (enabled) {
                         this.setOutputFormat(NutsContentType.TABLE);
-                        if (a.getStringValue() != null) {
-                            this.addOutputFormatOptions(a.getStringValue());
+                        if (a.getValue().getString() != null) {
+                            this.addOutputFormatOptions(a.getValue().getString());
                         }
                     }
                     return true;
@@ -205,8 +205,8 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                     a = cmdLine.next();
                     if (enabled) {
                         this.setOutputFormat(NutsContentType.TREE);
-                        if (a.getStringValue() != null) {
-                            this.addOutputFormatOptions(a.getStringValue());
+                        if (a.getValue().getString() != null) {
+                            this.addOutputFormatOptions(a.getValue().getString());
                         }
                     }
                     return true;
@@ -215,8 +215,8 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                     a = cmdLine.next();
                     if (enabled) {
                         this.setOutputFormat(NutsContentType.XML);
-                        if (a.getStringValue() != null) {
-                            this.addOutputFormatOptions(a.getStringValue());
+                        if (a.getValue().getString() != null) {
+                            this.addOutputFormatOptions(a.getValue().getString());
                         }
                     }
                     return true;
@@ -262,20 +262,20 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                 case "--trace": {
                     NutsArgument v = cmdLine.nextBoolean();
                     if (enabled) {
-                        this.setTrace(v.getBooleanValue());
+                        this.setTrace(v.getValue().getBoolean());
                     }
                     return true;
                 }
                 case "--progress": {
                     NutsArgument v = cmdLine.nextString();
                     if (enabled) {
-                        this.setProgressOptions(v.getStringValue());
+                        this.setProgressOptions(v.getValue().getString());
                     }
                     return true;
                 }
                 case "--no-progress": {
                     a = cmdLine.nextBoolean();
-                    if (enabled && a.getBooleanValue()) {
+                    if (enabled && a.getValue().getBoolean()) {
                         this.setProgressOptions("none");
                     }
                     return true;
@@ -284,14 +284,14 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                 case "--fetch": {
                     a = cmdLine.nextString();
                     if (enabled) {
-                        this.setFetchStrategy(NutsFetchStrategy.valueOf(a.getStringValue("").toUpperCase().replace("-", "_")));
+                        this.setFetchStrategy(NutsFetchStrategy.valueOf(a.getValue().getString("").toUpperCase().replace("-", "_")));
                     }
                     return true;
                 }
                 case "-a":
                 case "--anywhere": {
                     a = cmdLine.nextBoolean();
-                    if (enabled && a.getBooleanValue()) {
+                    if (enabled && a.getValue().getBoolean()) {
                         this.setFetchStrategy(NutsFetchStrategy.ANYWHERE);
                     }
                     return true;
@@ -299,21 +299,21 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                 case "-F":
                 case "--offline": {
                     a = cmdLine.nextBoolean();
-                    if (enabled && a.getBooleanValue()) {
+                    if (enabled && a.getValue().getBoolean()) {
                         this.setFetchStrategy(NutsFetchStrategy.OFFLINE);
                     }
                     return true;
                 }
                 case "--online": {
                     a = cmdLine.nextBoolean();
-                    if (enabled && a.getBooleanValue()) {
+                    if (enabled && a.getValue().getBoolean()) {
                         this.setFetchStrategy(NutsFetchStrategy.ONLINE);
                     }
                     return true;
                 }
                 case "--remote": {
                     a = cmdLine.nextBoolean();
-                    if (enabled && a.getBooleanValue()) {
+                    if (enabled && a.getValue().getBoolean()) {
                         this.setFetchStrategy(NutsFetchStrategy.REMOTE);
                     }
                     return true;
@@ -323,13 +323,13 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                     //if the value is not immediately attached with '=' don't consider
                     a = cmdLine.next();
                     if (enabled) {
-                        String v = a.getStringValue("");
+                        String v = a.getValue().getString("");
                         if (v.isEmpty()) {
                             getTerminal().setOut(getTerminal().out().convertMode(NutsTerminalMode.FORMATTED));
                             getTerminal().setErr(getTerminal().err().convertMode(NutsTerminalMode.FORMATTED));
                         } else {
                             NutsArgument bb = ws.commandLine().createArgument(v);
-                            Boolean b = bb.getBoolean(null);
+                            Boolean b = bb.getAll().getBoolean(null);
                             if (b != null) {
                                 if (b) {
                                     getTerminal().setOut(getTerminal().out().convertMode(NutsTerminalMode.FORMATTED));
@@ -385,7 +385,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                 case "-B":
                 case "--bot": {
                     a = cmdLine.nextBoolean();
-                    if (enabled && a.getBooleanValue()) {
+                    if (enabled && a.getValue().getBoolean()) {
                         getTerminal().setOut(getTerminal().out().convertMode(NutsTerminalMode.FILTERED));
                         getTerminal().setErr(getTerminal().err().convertMode(NutsTerminalMode.FILTERED));
                         setProgressOptions("none");
@@ -400,36 +400,36 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                 case "-D": {
                     a = cmdLine.nextBoolean();
                     if (enabled) {
-                        setDry(a.getBooleanValue());
+                        setDry(a.getValue().getBoolean());
                     }
                     return true;
                 }
                 case "--out-line-prefix": {
                     a = cmdLine.nextString();
                     if (enabled) {
-                        this.setOutLinePrefix(a.getStringValue());
+                        this.setOutLinePrefix(a.getValue().getString());
                     }
                     return true;
                 }
                 case "--err-line-prefix": {
                     a = cmdLine.nextString();
                     if (enabled) {
-                        this.setErrLinePrefix(a.getStringValue());
+                        this.setErrLinePrefix(a.getValue().getString());
                     }
                     return true;
                 }
                 case "--line-prefix": {
                     a = cmdLine.nextString();
                     if (enabled) {
-                        this.setOutLinePrefix(a.getStringValue());
-                        this.setErrLinePrefix(a.getStringValue());
+                        this.setOutLinePrefix(a.getValue().getString());
+                        this.setErrLinePrefix(a.getValue().getString());
                     }
                     return true;
                 }
                 case "--embedded":
                 case "-b": {
                     a = cmdLine.nextBoolean();
-                    if (enabled && a.getBooleanValue()) {
+                    if (enabled && a.getValue().getBoolean()) {
                         setExecutionType(NutsExecutionType.EMBEDDED);
                     }
                     //ignore
@@ -439,35 +439,35 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                 case "--spawn":
                 case "-x": {
                     a = cmdLine.nextBoolean();
-                    if (enabled && a.getBooleanValue()) {
+                    if (enabled && a.getValue().getBoolean()) {
                         setExecutionType(NutsExecutionType.SPAWN);
                     }
                     break;
                 }
                 case "--system": {
                     a = cmdLine.nextBoolean();
-                    if (enabled && a.getBooleanValue()) {
+                    if (enabled && a.getValue().getBoolean()) {
                         setExecutionType(NutsExecutionType.SYSTEM);
                     }
                     break;
                 }
                 case "--current-user": {
                     a = cmdLine.nextBoolean();
-                    if (enabled && a.getBooleanValue()) {
+                    if (enabled && a.getValue().getBoolean()) {
                         setRunAs(NutsRunAs.currentUser());
                     }
                     break;
                 }
                 case "--as-root": {
                     a = cmdLine.nextBoolean();
-                    if (enabled && a.getBooleanValue()) {
+                    if (enabled && a.getValue().getBoolean()) {
                         setRunAs(NutsRunAs.root());
                     }
                     break;
                 }
                 case "--sudo": {
                     a = cmdLine.nextBoolean();
-                    if (enabled && a.getBooleanValue()) {
+                    if (enabled && a.getValue().getBoolean()) {
                         setRunAs(NutsRunAs.sudo());
                     }
                     break;
@@ -475,7 +475,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                 case "--as-user": {
                     a = cmdLine.nextString();
                     if (enabled) {
-                        setRunAs(NutsRunAs.user(a.getStringValue()));
+                        setRunAs(NutsRunAs.user(a.getValue().getString()));
                     }
                     break;
                 }
@@ -495,7 +495,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         if (b) {
             return false;
         }
-        return (trace != null) ? trace : ws.env().getBootOptions().isTrace();
+        return (trace != null) ? trace : ws.boot().getBootOptions().isTrace();
     }
 
     @Override
@@ -562,7 +562,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         if (bot != null) {
             return bot;
         }
-        return ws.env().getBootOptions().isBot();
+        return ws.boot().getBootOptions().isBot();
     }
 
     @Override
@@ -596,7 +596,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         if (this.outputFormat != null) {
             return this.outputFormat;
         }
-        NutsContentType o = ws.env().getBootOptions().getOutputFormat();
+        NutsContentType o = ws.boot().getBootOptions().getOutputFormat();
         if (o != null) {
             return o;
         }
@@ -781,7 +781,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         if (fetchStrategy != null) {
             return fetchStrategy;
         }
-        NutsFetchStrategy wfetchStrategy = ws.env().getBootOptions().getFetchStrategy();
+        NutsFetchStrategy wfetchStrategy = ws.boot().getBootOptions().getFetchStrategy();
         if (wfetchStrategy != null) {
             return wfetchStrategy;
         }
@@ -921,7 +921,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
 //    }
     @Override
     public NutsConfirmationMode getConfirm() {
-        NutsConfirmationMode cm = (confirm != null) ? confirm : ws.env().getBootOptions().getConfirm();
+        NutsConfirmationMode cm = (confirm != null) ? confirm : ws.boot().getBootOptions().getConfirm();
         if (isBot()) {
             if (cm == null) {
                 return NutsConfirmationMode.ERROR;
@@ -1027,7 +1027,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         if (transitive != null) {
             return transitive;
         }
-        return ws.env().getBootOptions().isTransitive();
+        return ws.boot().getBootOptions().isTransitive();
     }
 
     @Override
@@ -1041,7 +1041,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         if (cached != null) {
             return cached;
         }
-        return ws.env().getBootOptions().isCached();
+        return ws.boot().getBootOptions().isCached();
     }
 
     @Override
@@ -1055,7 +1055,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         if (indexed != null) {
             return indexed;
         }
-        return ws.env().getBootOptions().isIndexed();
+        return ws.boot().getBootOptions().isIndexed();
     }
 
     @Override
@@ -1091,7 +1091,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         if (gui != null) {
             return gui;
         }
-        return ws.env().getBootOptions().isGui();
+        return ws.boot().getBootOptions().isGui();
     }
 
     @Override
@@ -1125,7 +1125,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     @Override
     public boolean isDry() {
         if (dry == null) {
-            return ws.env().getBootOptions().isDry();
+            return ws.boot().getBootOptions().isDry();
         }
         return dry;
     }
@@ -1271,7 +1271,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         if (executionType != null) {
             return executionType;
         }
-        return ws.env().getBootOptions().getExecutionType();
+        return ws.boot().getBootOptions().getExecutionType();
     }
 
     @Override
@@ -1283,7 +1283,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     @Override
     public boolean isDebug() {
         if (debug == null) {
-            return ws.env().getBootOptions().isDebug();
+            return ws.boot().getBootOptions().isDebug();
         }
         return debug;
     }
@@ -1302,7 +1302,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     @Override
     public String getLocale() {
         if (locale == null) {
-            return ws.env().getBootOptions().getLocale();
+            return ws.boot().getBootOptions().getLocale();
         }
         return locale;
     }
@@ -1317,7 +1317,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         if (runAs != null) {
             return runAs;
         }
-        NutsRunAs r = ws.env().getBootOptions().getRunAs();
+        NutsRunAs r = ws.boot().getBootOptions().getRunAs();
         if (r != null) {
             return r;
         }

@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages and libraries
  * for runtime execution. Nuts is the ultimate companion for maven (and other
@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,16 +23,15 @@
  */
 package net.thevpc.nuts.runtime.core.sessionaware;
 
-import java.util.Set;
-
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.core.commands.ws.NutsExecutionContextBuilder;
 import net.thevpc.nuts.runtime.core.repos.NutsInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.config.DefaultNutsWorkspaceEnvManager;
 
+import java.util.Set;
+
 /**
- *
  * @author vpc
  */
 public class NutsWorkspaceSessionAwareImpl implements NutsWorkspace, NutsWorkspaceExt {
@@ -41,16 +40,11 @@ public class NutsWorkspaceSessionAwareImpl implements NutsWorkspace, NutsWorkspa
     private NutsWorkspace ws;
 
     public NutsWorkspaceSessionAwareImpl(NutsSession session, NutsWorkspace ws) {
-        if(ws instanceof NutsWorkspaceSessionAwareImpl){
-            ws=((NutsWorkspaceSessionAwareImpl) ws).ws;
+        if (ws instanceof NutsWorkspaceSessionAwareImpl) {
+            ws = ((NutsWorkspaceSessionAwareImpl) ws).ws;
         }
         this.ws = ws;
         this.session = session;
-    }
-
-    @Override
-    public String getHashName() {
-        return ws().getHashName();
     }
 
     @Override
@@ -61,6 +55,11 @@ public class NutsWorkspaceSessionAwareImpl implements NutsWorkspace, NutsWorkspa
     @Override
     public String getName() {
         return ws().getName();
+    }
+
+    @Override
+    public String getHashName() {
+        return ws().getHashName();
     }
 
     @Override
@@ -76,6 +75,11 @@ public class NutsWorkspaceSessionAwareImpl implements NutsWorkspace, NutsWorkspa
     @Override
     public NutsId getRuntimeId() {
         return ws().getRuntimeId();
+    }
+
+    @Override
+    public String getLocation() {
+        return ws.getLocation();
     }
 
     @Override
@@ -219,6 +223,11 @@ public class NutsWorkspaceSessionAwareImpl implements NutsWorkspace, NutsWorkspa
     }
 
     @Override
+    public NutsUtilManager util() {
+        return ws.util().setSession(getSession());
+    }
+
+    @Override
     public NutsImportManager imports() {
         return ws().imports().setSession(getSession());
     }
@@ -245,6 +254,26 @@ public class NutsWorkspaceSessionAwareImpl implements NutsWorkspace, NutsWorkspa
     }
 
     @Override
+    public NutsBootManager boot() {
+        return ws.boot().setSession(session);
+    }
+
+    @Override
+    public NutsTerminalManager term() {
+        return ws.term().setSession(session);
+    }
+
+    @Override
+    public NutsTextManager text() {
+        return ws.text().setSession(getSession());
+    }
+
+    @Override
+    public NutsElementFormat elem() {
+        return ws.elem().setSession(getSession());
+    }
+
+    @Override
     public int getSupportLevel(NutsSupportLevelContext<NutsWorkspaceOptions> context) {
         return ws().getSupportLevel(context);
     }
@@ -255,21 +284,6 @@ public class NutsWorkspaceSessionAwareImpl implements NutsWorkspace, NutsWorkspa
 
     public NutsSession getSession() {
         return session;
-    }
-
-    @Override
-    public NutsTerminalManager term() {
-        return ws.term().setSession(session);
-    }
-
-    @Override
-    public NutsBootManager boot() {
-        return ws.boot().setSession(session);
-    }
-
-    @Override
-    public String getLocation() {
-        return ws.getLocation();
     }
 
     @Override
@@ -355,16 +369,6 @@ public class NutsWorkspaceSessionAwareImpl implements NutsWorkspace, NutsWorkspa
     @Override
     public NutsSession defaultSession() {
         return ((NutsWorkspaceExt) ws).defaultSession();
-    }
-
-    @Override
-    public NutsTextManager text() {
-        return ws.text().setSession(getSession());
-    }
-
-    @Override
-    public NutsElementFormat elem() {
-        return ws.elem().setSession(getSession());
     }
 
     @Override

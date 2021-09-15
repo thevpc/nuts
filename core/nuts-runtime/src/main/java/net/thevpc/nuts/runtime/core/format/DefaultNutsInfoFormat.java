@@ -129,17 +129,17 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
             return false;
         }
         boolean enabled = a.isEnabled();
-        switch (a.getStringKey()) {
+        switch (a.getKey().getString()) {
             case "-r":
             case "--repos": {
-                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
                 if (enabled) {
                     this.setShowRepositories(val);
                 }
                 return true;
             }
             case "--fancy": {
-                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
                 if (enabled) {
                     this.setFancy(val);
                 }
@@ -147,16 +147,17 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
             }
             case "-l":
             case "--lenient": {
-                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
                 if (enabled) {
                     this.setLenient(val);
                 }
                 return true;
             }
             case "--add": {
-                NutsArgument val = cmdLine.nextString().getArgumentValue();
+                NutsVal aa = cmdLine.nextString().getValue();
+                NutsArgument val = NutsArgument.of(aa.getString(),getSession());
                 if (enabled) {
-                    extraProperties.put(val.getStringKey(), val.getStringValue());
+                    extraProperties.put(val.getKey().getString(), val.getValue().getString());
                 }
                 return true;
             }
@@ -204,7 +205,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
             }
             case "-g":
             case "--get": {
-                String r = cmdLine.nextString().getStringValue();
+                String r = cmdLine.nextString().getValue().getString();
                 if (enabled) {
                     requests.add(r);
                 }
@@ -243,7 +244,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
         FilteredMap props = new FilteredMap(filter);
         NutsWorkspace ws = getSession().getWorkspace();
         NutsWorkspaceConfigManager rt = ws.config();
-        NutsWorkspaceOptions options = ws.env().getBootOptions();
+        NutsWorkspaceOptions options = ws.boot().getBootOptions();
         Set<String> extraKeys = new TreeSet<>(extraProperties.keySet());
 
         props.put("name", stringValue(ws.getName()));
@@ -251,7 +252,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
 //        NutsIdFormat idFormat = ws.id().formatter();
         props.put("nuts-api-id", ws.getApiId());
         props.put("nuts-runtime-id", ws.getRuntimeId());
-        URL[] cl = ws.env().getBootClassWorldURLs();
+        URL[] cl = ws.boot().getBootClassWorldURLs();
         List<NutsPath> runtimeClassPath = new ArrayList<>();
         if (cl != null) {
             for (URL url : cl) {
@@ -319,18 +320,18 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
         props.put("user-home", ws.io().path(System.getProperty("user.home")));
         props.put("user-dir", ws.io().path(System.getProperty("user.dir")));
         props.put("command-line-long",
-                ws.env().getBootOptions().formatter().setCompact(false).getBootCommandLine()
+                ws.boot().getBootOptions().formatter().setCompact(false).getBootCommandLine()
         );
-        props.put("command-line-short", ws.env().getBootOptions().formatter().setCompact(true).getBootCommandLine());
-        props.put("inherited", ws.env().getBootOptions().isInherited());
+        props.put("command-line-short", ws.boot().getBootOptions().formatter().setCompact(true).getBootCommandLine());
+        props.put("inherited", ws.boot().getBootOptions().isInherited());
         // nuts-boot-args must always be parsed in bash format
         props.put("inherited-nuts-boot-args", ws.commandLine().setCommandlineFamily(NutsCommandlineFamily.BASH).parse(System.getProperty("nuts.boot.args")).format());
         props.put("inherited-nuts-args", ws.commandLine().parse(System.getProperty("nuts.args"))
                 .format()
         );
-        props.put("creation-started", Instant.ofEpochMilli(ws.env().getCreationStartTimeMillis()));
-        props.put("creation-finished", Instant.ofEpochMilli(ws.env().getCreationFinishTimeMillis()));
-        props.put("creation-within", CoreTimeUtils.formatPeriodMilli(ws.env().getCreationTimeMillis()).trim());
+        props.put("creation-started", Instant.ofEpochMilli(ws.boot().getCreationStartTimeMillis()));
+        props.put("creation-finished", Instant.ofEpochMilli(ws.boot().getCreationFinishTimeMillis()));
+        props.put("creation-within", CoreTimeUtils.formatPeriodMilli(ws.boot().getCreationTimeMillis()).trim());
         props.put("repositories-count", (ws.repos().setSession(getSession()).getRepositories().length));
         for (String extraKey : extraKeys) {
             props.put(extraKey, extraProperties.get(extraKey));

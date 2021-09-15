@@ -221,7 +221,7 @@ public interface NutsCommandLine extends Iterable<NutsArgument>,NutsFormattable{
      * @param errorMessage message to throw
      * @return {@code this} instance
      */
-    public NutsCommandLine unexpectedArgument(NutsString errorMessage) ;
+    NutsCommandLine unexpectedArgument(NutsString errorMessage) ;
 
     /**
      * throw exception if command line is not empty
@@ -229,7 +229,7 @@ public interface NutsCommandLine extends Iterable<NutsArgument>,NutsFormattable{
      * @param errorMessage message to throw
      * @return {@code this} instance
      */
-    public NutsCommandLine unexpectedArgument(NutsMessage errorMessage) ;
+    NutsCommandLine unexpectedArgument(NutsMessage errorMessage) ;
 
     /**
      * throw exception if command line is not empty

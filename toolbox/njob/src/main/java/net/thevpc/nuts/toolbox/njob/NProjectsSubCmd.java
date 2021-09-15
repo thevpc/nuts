@@ -37,22 +37,22 @@ public class NProjectsSubCmd {
         boolean show = false;
         while (cmd.hasNext()) {
             NutsArgument a = cmd.peek();
-            if (a.getStringKey().equals("--list") || a.getStringKey().equals("-l")) {
-                list = cmd.nextBoolean().getBooleanValue();
-            } else if (a.getStringKey().equals("--show") || a.getStringKey().equals("-s")) {
-                show = cmd.nextBoolean().getBooleanValue();
-            } else if (a.getStringKey().equals("-t") || a.getStringKey().equals("--start") || a.getStringKey().equals("--on")) {
-                t.setStartTime(new TimeParser().parseInstant(cmd.nextString().getStringValue(), false));
-            } else if (a.getStringKey().equals("--at")) {
-                t.setStartTime(new TimeParser().setTimeOnly(true).parseInstant(cmd.nextString().getStringValue(), false));
-            } else if (a.getStringKey().equals("-b") || a.getStringKey().equals("--beneficiary") || a.getStringKey().equals("--for")) {
-                t.setBeneficiary(cmd.nextString().getStringValue());
-            } else if (a.getStringKey().equals("-c") || a.getStringKey().equals("--company") || a.getStringKey().equals("--via")) {
-                t.setCompany(cmd.nextString().getStringValue());
-            } else if (a.getStringKey().equals("-1") || a.getStringKey().equals("--day1")) {
-                t.setStartWeekDay(WeekDay.parse(cmd.nextString().getStringValue()));
-            } else if (a.getStringKey().equals("-o") || a.getStringKey().equals("--obs")) {
-                t.setObservations(cmd.nextString().getStringValue());
+            if (a.getKey().getString().equals("--list") || a.getKey().getString().equals("-l")) {
+                list = cmd.nextBoolean().getValue().getBoolean();
+            } else if (a.getKey().getString().equals("--show") || a.getKey().getString().equals("-s")) {
+                show = cmd.nextBoolean().getValue().getBoolean();
+            } else if (a.getKey().getString().equals("-t") || a.getKey().getString().equals("--start") || a.getKey().getString().equals("--on")) {
+                t.setStartTime(new TimeParser().parseInstant(cmd.nextString().getValue().getString(), false));
+            } else if (a.getKey().getString().equals("--at")) {
+                t.setStartTime(new TimeParser().setTimeOnly(true).parseInstant(cmd.nextString().getValue().getString(), false));
+            } else if (a.getKey().getString().equals("-b") || a.getKey().getString().equals("--beneficiary") || a.getKey().getString().equals("--for")) {
+                t.setBeneficiary(cmd.nextString().getValue().getString());
+            } else if (a.getKey().getString().equals("-c") || a.getKey().getString().equals("--company") || a.getKey().getString().equals("--via")) {
+                t.setCompany(cmd.nextString().getValue().getString());
+            } else if (a.getKey().getString().equals("-1") || a.getKey().getString().equals("--day1")) {
+                t.setStartWeekDay(WeekDay.parse(cmd.nextString().getValue().getString()));
+            } else if (a.getKey().getString().equals("-o") || a.getKey().getString().equals("--obs")) {
+                t.setObservations(cmd.nextString().getValue().getString());
             } else if (a.isNonOption()) {
                 if (t.getName() == null) {
                     t.setName(cmd.next().toString());
@@ -88,51 +88,51 @@ public class NProjectsSubCmd {
         List<Consumer<NProject>> runLater = new ArrayList<>();
         while (cmd.hasNext()) {
             NutsArgument a = cmd.peek();
-            switch (a.getStringKey()) {
+            switch (a.getKey().getString()) {
                 case "-l":
                 case "--list": {
-                    list = cmd.nextBoolean().getBooleanValue();
+                    list = cmd.nextBoolean().getValue().getBoolean();
                     break;
                 }
                 case "-s":
                 case "--show": {
-                    show = cmd.nextBoolean().getBooleanValue();
+                    show = cmd.nextBoolean().getValue().getBoolean();
                     break;
                 }
                 case "--on":
                 case "--start": {
-                    Instant v = new TimeParser().parseInstant(cmd.nextString().getStringValue(), false);
+                    Instant v = new TimeParser().parseInstant(cmd.nextString().getValue().getString(), false);
                     runLater.add(t -> t.setStartTime(v));
                     break;
                 }
                 case "--at": {
-                    Instant v = new TimeParser().setTimeOnly(true).parseInstant(cmd.nextString().getStringValue(), false);
+                    Instant v = new TimeParser().setTimeOnly(true).parseInstant(cmd.nextString().getValue().getString(), false);
                     runLater.add(t -> t.setStartTime(v));
                     break;
                 }
                 case "--for":
                 case "--beneficiary":
                 case "-b": {
-                    String v = cmd.nextString().getStringValue();
+                    String v = cmd.nextString().getValue().getString();
                     runLater.add(t -> t.setBeneficiary(v));
                     break;
                 }
                 case "--company":
                 case "--via":
                 case "-c": {
-                    String v = cmd.nextString().getStringValue();
+                    String v = cmd.nextString().getValue().getString();
                     runLater.add(t -> t.setCompany(v));
                     break;
                 }
                 case "--day1":
                 case "-1": {
-                    WeekDay v = WeekDay.parse(cmd.nextString().getStringValue());
+                    WeekDay v = WeekDay.parse(cmd.nextString().getValue().getString());
                     runLater.add(t -> t.setStartWeekDay(v));
                     break;
                 }
                 case "--obs":
                 case "-o": {
-                    String v = cmd.nextString().getStringValue();
+                    String v = cmd.nextString().getValue().getString();
                     runLater.add(t -> t.setObservations(v));
                     break;
                 }
@@ -143,14 +143,14 @@ public class NProjectsSubCmd {
                             cmd.pushBack(c);
                             cmd.unexpectedArgument();
                         } else {
-                            mergeTo = c.getStringValue();
+                            mergeTo = c.getValue().getString();
                         }
                     }
                     break;
                 }
                 case "++obs":
                 case "+o": {
-                    String v = cmd.nextString().getStringValue();
+                    String v = cmd.nextString().getValue().getString();
                     runLater.add(t -> {
                         String s = t.getObservations();
                         if (s == null) {
@@ -218,10 +218,10 @@ public class NProjectsSubCmd {
         Predicate<NProject> whereFilter = null;
         while (cmd.hasNext()) {
             NutsArgument a = cmd.peek();
-            switch (a.getStringKey()) {
+            switch (a.getKey().getString()) {
                 case "-b":
                 case "-beneficiary": {
-                    String s = cmd.nextString().getStringValue();
+                    String s = cmd.nextString().getValue().getString();
                     Predicate<String> sp = parent.createStringFilter(s);
                     Predicate<NProject> t = x -> sp.test(x.getBeneficiary());
                     whereFilter = parent.appendPredicate(whereFilter, t);
@@ -229,7 +229,7 @@ public class NProjectsSubCmd {
                 }
                 case "-c":
                 case "-company": {
-                    String s = cmd.nextString().getStringValue();
+                    String s = cmd.nextString().getValue().getString();
                     Predicate<String> sp = parent.createStringFilter(s);
                     Predicate<NProject> t = x -> sp.test(x.getCompany());
                     whereFilter = parent.appendPredicate(whereFilter, t);
@@ -237,14 +237,14 @@ public class NProjectsSubCmd {
                 }
                 case "-n":
                 case "--name": {
-                    String s = cmd.nextString().getStringValue();
+                    String s = cmd.nextString().getValue().getString();
                     Predicate<String> sp = parent.createStringFilter(s);
                     Predicate<NProject> t = x -> sp.test(x.getName());
                     whereFilter = parent.appendPredicate(whereFilter, t);
                     break;
                 }
                 case "--unused": {
-                    boolean unused = cmd.nextBoolean().getBooleanValue();
+                    boolean unused = cmd.nextBoolean().getValue().getBoolean();
                     Predicate<NProject> t = x -> service.projects().isUsedProject(x.getId()) != unused;
                     whereFilter = parent.appendPredicate(whereFilter, t);
                     break;
@@ -252,7 +252,7 @@ public class NProjectsSubCmd {
                 case "-t":
                 case "--startTime":
                 case "--start-time": {
-                    String s = cmd.nextString().getStringValue();
+                    String s = cmd.nextString().getValue().getString();
                     Predicate<Instant> t = new TimeParser().parseInstantFilter(s, false);
                     whereFilter = parent.appendPredicate(whereFilter, x -> t.test(x.getStartTime()));
                     break;

@@ -19,7 +19,7 @@ public class RunningDerby {
         NutsArgument a=null;
         while(cmdline.hasNext()){
             if((a=cmdline.nextString("-Dderby.system.home"))!=null) {
-                home = a.getStringValue();
+                home = a.getValue().getString();
             }else{
                 cmdline.skip();
             }

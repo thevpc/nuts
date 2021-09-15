@@ -34,7 +34,7 @@ public class DefaultNutsWelcomeInternalExecutable extends DefaultInternalNutsExe
         while (commandLine.hasNext()) {
             NutsArgument a = commandLine.peek();
             if (a.isOption()) {
-                switch (a.getStringKey()) {
+                switch (a.getKey().getString()) {
                     case "--help": {
                         commandLine.skipAll();
                         showDefaultHelp();

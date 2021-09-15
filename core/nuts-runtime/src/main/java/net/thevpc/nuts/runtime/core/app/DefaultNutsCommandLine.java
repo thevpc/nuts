@@ -316,7 +316,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
             if (hasNext()) {
                 NutsArgument peeked = peek();
                 names = new String[]{
-                        peeked.getStringKey()
+                        peeked.getKey().getString()
                 };
             }
         } else {
@@ -339,7 +339,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
             String name = nameSeqArray[nameSeqArray.length - 1];
             NutsArgument p = get(nameSeqArray.length - 1);
             if (p != null) {
-                if (p.getStringKey().equals(name)) {
+                if (p.getKey().getString().equals(name)) {
                     switch (expectValue) {
                         case ANY: {
                             skip(nameSeqArray.length);
@@ -364,15 +364,15 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
                             if (p.isNegated()) {
                                 if (p.isKeyValue()) {
                                     //should not happen
-                                    boolean x = p.getBoolean();
-                                    return createArgument(p.getStringKey() + eq + (!x));
+                                    boolean x = p.getValue().getBoolean();
+                                    return createArgument(p.getKey().getString() + eq + (!x));
                                 } else {
-                                    return createArgument(p.getStringKey() + eq + (false));
+                                    return createArgument(p.getKey().getString() + eq + (false));
                                 }
                             } else if (p.isKeyValue()) {
                                 return p;
                             } else {
-                                return createArgument(p.getStringKey() + eq + (true));
+                                return createArgument(p.getKey().getString() + eq + (true));
                             }
                         }
                         default: {
@@ -450,7 +450,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
             if (argument == null) {
                 return false;
             }
-            if (!argument.getStringKey().equals(values[i])) {
+            if (!argument.getKey().getString().equals(values[i])) {
                 return false;
             }
         }
@@ -494,7 +494,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
     public int indexOf(String name) {
         int i = 0;
         while (i < length()) {
-            if (get(i).getStringKey().equals(name)) {
+            if (get(i).getKey().getString().equals(name)) {
                 return i;
             }
             i++;
@@ -661,19 +661,19 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
                         if (xs.length() > 0 && xs.equals(a)) {
 //                            switch (expectValue) {
 //                                case ANY: {
-//                                    candidates.add(createCandidate("<AnyValueFor" + p.getStringKey() + ">"));
+//                                    candidates.add(createCandidate("<AnyValueFor" + pgetKey().getString() + ">"));
 //                                    break;
 //                                }
 //                                case STRING: {
-//                                    candidates.add(createCandidate("<StringValueFor" + p.getStringKey() + ">"));
+//                                    candidates.add(createCandidate("<StringValueFor" + pgetKey().getString() + ">"));
 //                                    break;
 //                                }
 //                                case BOOLEAN: {
-//                                    candidates.add(createCandidate("<BooleanValueFor" + p.getStringKey() + ">"));
+//                                    candidates.add(createCandidate("<BooleanValueFor" + pgetKey().getString() + ">"));
 //                                    break;
 //                                }
 //                                default: {
-//                                    candidates.add(createCandidate("<OtherValueFor" + p.getStringKey() + ">"));
+//                                    candidates.add(createCandidate("<OtherValueFor" + pgetKey().getString() + ">"));
 //                                }
 //                            }
                             skipToNext = true;
@@ -692,19 +692,19 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
                     String name = nameSeqArray[nameSeqArray.length - 1];
                     NutsArgument p = get(nameSeqArray.length - 1);
                     if (p != null) {
-                        if (name.startsWith(p.getStringKey())) {
+                        if (name.startsWith(p.getKey().getString())) {
                             candidates.add(createCandidate(name));
 //                            switch (expectValue) {
 //                                case ANY: {
-//                                    candidates.add(createCandidate("<AnyValueFor" + p.getStringKey() + ">"));
+//                                    candidates.add(createCandidate("<AnyValueFor" + pgetKey().getString() + ">"));
 //                                    break;
 //                                }
 //                                case STRING: {
-//                                    candidates.add(createCandidate("<StringValueFor" + p.getStringKey() + ">"));
+//                                    candidates.add(createCandidate("<StringValueFor" + pgetKey().getString() + ">"));
 //                                    break;
 //                                }
 //                                case BOOLEAN: {
-//                                    candidates.add(createCandidate("<BooleanValueFor" + p.getStringKey() + ">"));
+//                                    candidates.add(createCandidate("<BooleanValueFor" + pgetKey().getString() + ">"));
 //                                    break;
 //                                }
 //                                default: {

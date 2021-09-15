@@ -80,7 +80,7 @@ public class WhoamiCommand extends SimpleNshBuiltin {
     @Override
     protected boolean configureFirst(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options config = context.getOptions();
-        switch (commandLine.peek().getStringKey()) {
+        switch (commandLine.peek().getKey().getString()) {
             case "--all":
             case "-a": {
                 config.argAll = true;

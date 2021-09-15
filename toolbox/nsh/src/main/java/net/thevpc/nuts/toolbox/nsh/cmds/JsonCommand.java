@@ -63,15 +63,15 @@ public class JsonCommand extends SimpleNshBuiltin {
         Options options = context.getOptions();
         NutsArgument a;
         if ((a = commandLine.nextString("-f", "--file")) != null) {
-            options.input = a.getStringValue();
+            options.input = a.getValue().getString();
             return true;
         } else if ((a = commandLine.nextString("-q")) != null) {
             options.queryType = "jpath";
-            options.queries.add(a.getStringValue());
+            options.queries.add(a.getValue().getString());
             return true;
         } else if ((a = commandLine.nextString("--xpath")) != null) {
             options.queryType = "xpath";
-            options.queries.add(a.getStringValue());
+            options.queries.add(a.getValue().getString());
             return true;
         }
         return false;

@@ -25,7 +25,7 @@ public class DefaultNutsConcurrentModel {
         if (executorService == null) {
             synchronized (this) {
                 if (executorService == null) {
-                    executorService = workspace.env().setSession(session).getBootOptions().getExecutorService();
+                    executorService = workspace.boot().setSession(session).getBootOptions().getExecutorService();
                     if (executorService == null) {
                         ThreadPoolExecutor executorService2 = (ThreadPoolExecutor) Executors.newCachedThreadPool(CoreNutsUtils.nutsDefaultThreadFactory);
                         executorService2.setKeepAliveTime(60, TimeUnit.SECONDS);

@@ -96,7 +96,7 @@ public abstract class AbstractNutsFetchCommand extends DefaultNutsQueryBaseOptio
             return false;
         }
         boolean enabled = a.isEnabled();
-        switch (a.getStringKey()) {
+        switch (a.getKey().getString()) {
             case "--not-installed": {
                 cmdLine.skip();
                 if (enabled) {
