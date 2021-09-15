@@ -20,7 +20,7 @@ Nuts Package manager is an Open Source package manager for the Java © ecosystem
 imageUrl: 'img/install.png',
 description: (
 <>
-install, run and manage all the versions of your applications in parallal.
+install, run and manage all the versions of your applications in parallel.
 </>
 ),
 },
