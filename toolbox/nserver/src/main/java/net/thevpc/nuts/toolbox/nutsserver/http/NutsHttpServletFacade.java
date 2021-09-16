@@ -191,7 +191,7 @@ public class NutsHttpServletFacade {
                 fetch = ws.search().setSession(
                         context.getSession().copy().setTransitive(transitive)
                 )
-                        .addId(id).getResultIds().list();
+                        .addId(id).getResultIds().toList();
             } catch (Exception exc) {
                 //
             }

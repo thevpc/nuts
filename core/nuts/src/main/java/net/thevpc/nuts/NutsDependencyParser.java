@@ -53,7 +53,5 @@ public interface NutsDependencyParser {
     NutsDependency parseDependency(String dependency);
 
 
-    NutsDependencyScope parseScope(String scope);
-
     boolean parseOptional(String optional);
 }

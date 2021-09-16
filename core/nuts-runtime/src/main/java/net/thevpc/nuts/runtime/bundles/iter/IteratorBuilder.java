@@ -31,13 +31,13 @@ public class IteratorBuilder<T> {
         this.it = it;
     }
 
-    public static <T> IteratorBuilder<T> ofCoalesce(List<Iterator<T>> t) {
+    public static <T> IteratorBuilder<T> ofCoalesce(List<Iterator<? extends T>> t) {
         return new IteratorBuilder<>(
                 IteratorUtils.coalesce(t)
         );
     }
 
-    public static <T> IteratorBuilder<T> ofList(List<Iterator<T>> t) {
+    public static <T> IteratorBuilder<T> ofList(List<Iterator<? extends T>> t) {
         return new IteratorBuilder<>(
                 IteratorUtils.concat(t)
         );

@@ -70,4 +70,9 @@ public class MdBr extends MdAbstractElement {
     public int hashCode() {
         return Objects.hash(type);
     }
+
+    @Override
+    public boolean isBlank() {
+        return false;
+    }
 }

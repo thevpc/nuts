@@ -9,7 +9,6 @@ import net.thevpc.nuts.toolbox.nutsserver.FacadeCommandContext;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
-import java.util.Map;
 
 public class GetMavenFacadeCommand extends AbstractFacadeCommand {
     public GetMavenFacadeCommand() {
@@ -123,7 +122,7 @@ public class GetMavenFacadeCommand extends AbstractFacadeCommand {
             if (split.size() >= 3) {
                 NutsId id = context.getWorkspace().id().builder().setArtifactId(split.get(split.size() - 2))
                         .setGroupId(String.join(".", split.subList(0, split.size() - 2))).build();
-                NutsResultList<NutsId> resultIds = context.getWorkspace().search().addId(id).setDistinct(true).setSorted(true).getResultIds();
+                NutsStream<NutsId> resultIds = context.getWorkspace().search().addId(id).setDistinct(true).setSorted(true).getResultIds();
                 if(context.isHeadMethod()){
                     context.sendResponseHeaders(200,-1);
                     return;
@@ -135,7 +134,7 @@ public class GetMavenFacadeCommand extends AbstractFacadeCommand {
                             .append("artifactId", id.getArtifactId())
                             .push("versioning")
                     ;
-                    List<NutsId> versions = resultIds.list();
+                    List<NutsId> versions = resultIds.toList();
                     if (versions.size() > 0) {
                         xml.append("release", versions.get(0).getVersion().toString());
                         xml.push("versions");

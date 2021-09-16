@@ -65,7 +65,7 @@ public class DefaultNutsDependency implements NutsDependency {
         this.artifactId = NutsUtilStrings.trimToNull(artifactId);
         this.version = version == null ? session.getWorkspace().version().parser().parse("") : version;
         this.classifier = NutsUtilStrings.trimToNull(classifier);
-        this.scope = NutsDependencyScopes.normalizeScope(scope);
+        this.scope = NutsDependencyScope.parseLenient(scope,NutsDependencyScope.API,NutsDependencyScope.OTHER).id();
 
         String o = NutsUtilStrings.trimToNull(optional);
         if ("false".equalsIgnoreCase(o)) {

@@ -13,7 +13,7 @@
 ## for it to work properly.
 ## if the very first argument is '--debug' nuts will run nuts in debug mode (-agentlib:jdwp)
 ## with suspend mode and is useful if you want to debug nuts itself.
-## In the cas you are debugging an application called by nuts
+## In the case you are debugging an application called by nuts
 ## you can simply call 'nuts ---jdb your-application' (Please note the 3 dashes preceding jdb)
 ##
 NUTS_VERSION=0.8.3

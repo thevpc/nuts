@@ -31,14 +31,16 @@ public class NutsDependencyScopeFilter extends AbstractDependencyFilter {
     public NutsDependencyScopeFilter addScopePatterns(Collection<NutsDependencyScopePattern> scope) {
         EnumSet<NutsDependencyScope> s2 = EnumSet.copyOf(this.scope);
         for (NutsDependencyScopePattern ss : scope) {
-            s2.addAll(NutsDependencyScopes.expand(ss));
+            if(ss!=null) {
+                s2.addAll(ss.toScopes());
+            }
         }
         return new NutsDependencyScopeFilter(getSession(),s2);
     }
 
     @Override
     public boolean acceptDependency(NutsId from, NutsDependency dependency, NutsSession session) {
-        return scope.isEmpty() || scope.contains(NutsDependencyScopes.parseDependencyScope(dependency.getScope()));
+        return scope.isEmpty() || scope.contains(NutsDependencyScope.parseLenient(dependency.getScope(),NutsDependencyScope.API,NutsDependencyScope.API));
     }
 
     @Override

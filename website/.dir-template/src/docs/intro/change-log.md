@@ -12,6 +12,8 @@ Starred releases are most stable ones.
 ## nuts 0.8.3.0 (DEVELOPMENT VERSION)
 - ```2021/XX/XX 	nuts 0.8.3.0 (*)``` not released yet [download nuts-0.8.3.jar](http://thevpc.net/nuts.jar)
 - WARNING : {api}  API has evolved with incompatibilities with previous versions
+- ADDED   : {api}  added 'NutsPath.isDirectory' and 'NutsPath.isRegularFile' 
+- CHANGED : {api}  NutsResultList renamed to NutsStream and revamped with handy stream features and added ws.util.streamOf(...)
 - CHANGED : {api}  ws.io.expandPath replaced by NutsPath.builder.setExpanded(true)
 - REMOVED : {api}  removed deprecated ClassifierMapping
 - REMOVED : {api}  removed NutsTokenFilter (little to no interest)

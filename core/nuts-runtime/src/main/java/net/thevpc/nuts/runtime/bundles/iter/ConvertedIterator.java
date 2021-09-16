@@ -37,10 +37,10 @@ import java.util.function.Function;
 public class ConvertedIterator<F, T> implements Iterator<T> {
 
     private final Iterator<F> base;
-    private final Function<F, T> converter;
+    private final Function<? super F, ? extends T> converter;
     private final String convertName;
 
-    public ConvertedIterator(Iterator<F> base, Function<F, T> converter,String convertName) {
+    public ConvertedIterator(Iterator<F> base, Function<? super F, ? extends T> converter,String convertName) {
         this.base = base;
         this.converter = converter;
         if(convertName==null){

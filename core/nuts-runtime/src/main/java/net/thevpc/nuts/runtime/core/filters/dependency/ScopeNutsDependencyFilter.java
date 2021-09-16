@@ -14,14 +14,16 @@ public class ScopeNutsDependencyFilter extends AbstractDependencyFilter{
     public ScopeNutsDependencyFilter(NutsSession ws, NutsDependencyScopePattern... scopes) {
         super(ws, NutsFilterOp.CUSTOM);
         for (NutsDependencyScopePattern scope : scopes) {
-            this.scopes.addAll(NutsDependencyScopes.expand(scope));
+            if(scope!=null) {
+                this.scopes.addAll(scope.toScopes());
+            }
         }
     }
 
     @Override
     public boolean acceptDependency(NutsId from, NutsDependency dependency, NutsSession session) {
 
-        NutsDependencyScope d = NutsDependencyScopes.parseScope(dependency.getScope(), true);
+        NutsDependencyScope d = NutsDependencyScope.parseLenient(dependency.getScope(), NutsDependencyScope.API,NutsDependencyScope.API);
         return d != null && scopes.contains(d);
     }
 

@@ -17,6 +17,9 @@
  */
 package net.thevpc.nuts.lib.md;
 
+import net.thevpc.nuts.NutsBlankable;
+
+import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -84,5 +87,12 @@ public class MdUnNumberedList extends MdParent {
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), id);
+    }
+
+    @Override
+    public boolean isBlank() {
+        return (getChildren() == null
+                || getChildren().length == 0
+                || Arrays.stream(getChildren()).allMatch(x -> NutsBlankable.isBlank(x)));
     }
 }

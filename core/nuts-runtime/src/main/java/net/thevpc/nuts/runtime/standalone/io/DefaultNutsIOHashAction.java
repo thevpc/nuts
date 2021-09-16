@@ -10,20 +10,24 @@
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
  * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.runtime.standalone.io;
+
+import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -31,12 +35,7 @@ import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
-
 /**
- *
  * @author thevpc
  */
 public class DefaultNutsIOHashAction implements NutsIOHashAction {
@@ -49,51 +48,6 @@ public class DefaultNutsIOHashAction implements NutsIOHashAction {
 
     public DefaultNutsIOHashAction(NutsWorkspace ws) {
         this.ws = ws;
-    }
-
-    @Override
-    public String getAlgorithm() {
-        return algorithm;
-    }
-
-    @Override
-    public NutsIOHashAction algorithm(String algorithm) {
-        return setAlgorithm(algorithm);
-    }
-
-    @Override
-    public NutsIOHashAction setAlgorithm(String algorithm) {
-        if (NutsUtilStrings.isBlank(algorithm)) {
-            algorithm = null;
-        }
-        try {
-            MessageDigest.getInstance(algorithm);
-            this.algorithm = algorithm;
-        } catch (NoSuchAlgorithmException ex) {
-            throw new IllegalArgumentException(ex);
-        }
-        return this;
-    }
-
-    @Override
-    public NutsSession getSession() {
-        return session;
-    }
-
-    @Override
-    public NutsIOHashAction setSession(NutsSession session) {
-        this.session = session;
-        return this;
-    }
-
-    @Override
-    public NutsIOHashAction sha1() {
-        return setAlgorithm("SHA1");
-    }
-
-    @Override
-    public NutsIOHashAction md5() {
-        return setAlgorithm("MD5");
     }
 
     @Override
@@ -136,68 +90,6 @@ public class DefaultNutsIOHashAction implements NutsIOHashAction {
         return NutsUtilStrings.toHexString(computeBytes());
     }
 
-    protected String getValidAlgo() {
-        if (algorithm == null) {
-            return "SHA1";
-        }
-        return algorithm;
-    }
-
-    @Override
-    public NutsIOHashAction writeHash(OutputStream out) {
-        checkSession();
-        if (type == null || value == null) {
-            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("missing Source"));
-        }
-        switch (type) {
-            case "stream": {
-                try {
-                    out.write(CoreIOUtils.evalHash(((InputStream) value), getValidAlgo()));
-                    return this;
-                } catch (IOException ex) {
-                    throw new UncheckedIOException(ex);
-                }
-            }
-            case "file": {
-                try (InputStream is = new BufferedInputStream(Files.newInputStream(((File) value).toPath()))) {
-                    out.write(CoreIOUtils.evalHash(is, getValidAlgo()));
-                    return this;
-                } catch (IOException ex) {
-                    throw new UncheckedIOException(ex);
-                }
-            }
-            case "path": {
-                try (InputStream is = new BufferedInputStream(Files.newInputStream(((Path) value)))) {
-                    out.write(CoreIOUtils.evalHash(is, getValidAlgo()));
-                    return this;
-                } catch (IOException ex) {
-                    throw new UncheckedIOException(ex);
-                }
-            }
-            case "nuts-path": {
-                try (InputStream is = new BufferedInputStream((((NutsPath) value)).input().open())) {
-                    out.write(CoreIOUtils.evalHash(is, getValidAlgo()));
-                    return this;
-                } catch (IOException ex) {
-                    throw new UncheckedIOException(ex);
-                }
-            }
-            case "desc": {
-                ByteArrayOutputStream o = new ByteArrayOutputStream();
-                getSession().getWorkspace().descriptor().formatter((NutsDescriptor) value).compact().print(new OutputStreamWriter(o));
-                try (InputStream is = new ByteArrayInputStream(o.toByteArray())) {
-                    out.write(CoreIOUtils.evalHash(is, getValidAlgo()));
-                    return this;
-                } catch (IOException ex) {
-                    throw new UncheckedIOException(ex);
-                }
-            }
-            default: {
-                throw new NutsUnsupportedArgumentException(getSession(), NutsMessage.cstyle("unsupported type %s", type));
-            }
-        }
-    }
-
     @Override
     public byte[] computeBytes() {
         if (type == null || value == null) {
@@ -235,6 +127,73 @@ public class DefaultNutsIOHashAction implements NutsIOHashAction {
                 throw new NutsUnsupportedArgumentException(getSession(), NutsMessage.cstyle("unsupported type %s", type));
             }
         }
+    }
+
+    @Override
+    public NutsIOHashAction writeHash(OutputStream out) {
+        try {
+            out.write(computeBytes());
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
+        return this;
+    }
+
+    @Override
+    public NutsIOHashAction md5() {
+        return setAlgorithm("MD5");
+    }
+
+    @Override
+    public NutsSession getSession() {
+        return session;
+    }
+
+    @Override
+    public NutsIOHashAction setSession(NutsSession session) {
+        this.session = session;
+        return this;
+    }
+
+    @Override
+    public NutsIOHashAction sha1() {
+        return setAlgorithm("SHA1");
+    }
+
+    @Override
+    public NutsIOHashAction sha256() {
+        return setAlgorithm("SHA256");
+    }
+
+    @Override
+    public NutsIOHashAction setAlgorithm(String algorithm) {
+        if (NutsUtilStrings.isBlank(algorithm)) {
+            algorithm = null;
+        }
+        try {
+            MessageDigest.getInstance(algorithm);
+            this.algorithm = algorithm;
+        } catch (NoSuchAlgorithmException ex) {
+            throw new IllegalArgumentException(ex);
+        }
+        return this;
+    }
+
+    @Override
+    public NutsIOHashAction algorithm(String algorithm) {
+        return setAlgorithm(algorithm);
+    }
+
+    @Override
+    public String getAlgorithm() {
+        return algorithm;
+    }
+
+    protected String getValidAlgo() {
+        if (algorithm == null) {
+            return "SHA1";
+        }
+        return algorithm;
     }
 
     protected void checkSession() {

@@ -222,7 +222,7 @@ public class ProjectService {
                 List<NutsDefinition> found = ws2.search()
                         .addId(sid)
                         .addRepositoryFilter(ws2.filters().repository().byName(nutsRepository))
-                        .setLatest(true).setSession(s).setContent(true).getResultDefinitions().list();
+                        .setLatest(true).setSession(s).setContent(true).getResultDefinitions().toList();
                 if (found.size() > 0) {
                     Path p = found.get(0).getContent().getFilePath();
                     if (p == null) {
@@ -277,7 +277,7 @@ public class ProjectService {
                         List<NutsId> found = ws2.search()
                                 .addId(g.getId().getGroupId() + ":" + g.getId().getArtifactId())
                                 .addRepositoryFilter(ws2.filters().repository().byName(nutsRepository))
-                                .setLatest(true).setSession(s).getResultIds().list();
+                                .setLatest(true).setSession(s).getResultIds().toList();
                         if (found.size() > 0) {
                             return found.get(0).getVersion().toString();
                         }

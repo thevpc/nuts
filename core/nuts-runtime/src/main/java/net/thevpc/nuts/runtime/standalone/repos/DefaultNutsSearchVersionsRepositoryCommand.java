@@ -52,7 +52,7 @@ public class DefaultNutsSearchVersionsRepositoryCommand extends AbstractNutsSear
         NutsWorkspaceUtils.of(session).checkSimpleNameNutsId(id);
         xrepo.checkAllowedFetch(id, session);
         try {
-            List<Iterator<NutsId>> resultList = new ArrayList<>();
+            List<Iterator<? extends NutsId>> resultList = new ArrayList<>();
             if (session.isIndexed() && xrepo.getIndexStore() != null && xrepo.getIndexStore().isEnabled()) {
                 Iterator<NutsId> d = null;
                 try {

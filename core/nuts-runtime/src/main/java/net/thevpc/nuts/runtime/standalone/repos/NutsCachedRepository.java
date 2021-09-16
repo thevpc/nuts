@@ -140,7 +140,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
     @Override
     public final Iterator<NutsId> searchImpl(final NutsIdFilter filter, NutsFetchMode fetchMode, NutsSession session) {
         List<CommonRootsHelper.PathBase> roots = CommonRootsHelper.resolveRootPaths(filter);
-        List<Iterator<NutsId>> li = new ArrayList<>();
+        List<Iterator<? extends NutsId>> li = new ArrayList<>();
         List<String> rootStrings = new ArrayList<>();
         for (CommonRootsHelper.PathBase root : roots) {
             li.add(lib.findInFolder(Paths.get(root.getName()), filter, root.isDeep() ? Integer.MAX_VALUE : 2, session));
@@ -261,7 +261,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
     @Override
     public final Iterator<NutsId> searchVersionsImpl(NutsId id, NutsIdFilter idFilter, NutsFetchMode fetchMode, NutsSession session) {
 
-        List<Iterator<NutsId>> all = new ArrayList<>();
+        List<Iterator<? extends NutsId>> all = new ArrayList<>();
         if (fetchMode != NutsFetchMode.REMOTE) {
             try {
                 all.add(lib.searchVersions(id, idFilter, true, session));

@@ -136,10 +136,10 @@ public class Test06_UpateTest {
                 uws.repos().getRepository("local").config().getStoreLocation(NutsStoreLocation.LIB),
                 nws.repos().getRepository("temp").config().getStoreLocation(NutsStoreLocation.LIB));
 
-        TestUtils.println(uws.search().addId(api.getId().getShortNameId()).getResultIds().list());
-        TestUtils.println(uws.search().addId(rt.getId().getShortNameId()).getResultIds().list());
-        List<NutsId> foundApis = uws.search().addId(api.getId().getShortNameId()).getResultIds().list();
-        List<NutsId> foundRts = uws.search().addId(rt.getId().getShortNameId()).getResultIds().list();
+        TestUtils.println(uws.search().addId(api.getId().getShortNameId()).getResultIds().toList());
+        TestUtils.println(uws.search().addId(rt.getId().getShortNameId()).getResultIds().toList());
+        List<NutsId> foundApis = uws.search().addId(api.getId().getShortNameId()).getResultIds().toList();
+        List<NutsId> foundRts = uws.search().addId(rt.getId().getShortNameId()).getResultIds().toList();
         Assertions.assertTrue(foundApis.stream().map(NutsId::getLongName).collect(Collectors.toSet()).contains(api.getId().builder().setVersion(apiv1).getLongName()));
         if (!implOnly) {
             Assertions.assertTrue(foundApis.stream().map(NutsId::getLongName).collect(Collectors.toSet()).contains(api.getId().builder().setVersion(apiv2).getLongName()));
@@ -148,10 +148,10 @@ public class Test06_UpateTest {
         Assertions.assertTrue(foundRts.stream().map(NutsId::getLongName).collect(Collectors.toSet()).contains(rt.getId().builder().setVersion(rtv2).getLongName()));
 
         TestUtils.println("========================");
-        TestUtils.println(nws.search().addId(api.getId().getShortNameId()).setRepository("temp").getResultIds().list());
-        TestUtils.println(nws.search().addId(rt.getId().getShortNameId()).setRepository("temp").getResultIds().list());
-        TestUtils.println(nws.search().addId(api.getId().getShortNameId()).getResultIds().list());
-        TestUtils.println(nws.search().addId(rt.getId().getShortNameId()).getResultIds().list());
+        TestUtils.println(nws.search().addId(api.getId().getShortNameId()).setRepository("temp").getResultIds().toList());
+        TestUtils.println(nws.search().addId(rt.getId().getShortNameId()).setRepository("temp").getResultIds().toList());
+        TestUtils.println(nws.search().addId(api.getId().getShortNameId()).getResultIds().toList());
+        TestUtils.println(nws.search().addId(rt.getId().getShortNameId()).getResultIds().toList());
 
         //check updates!
         NutsUpdateCommand foundUpdates = nws.update().setAll().checkUpdates();

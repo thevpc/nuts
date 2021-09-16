@@ -311,7 +311,7 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
             case DIR_TEXT:
             case GITHUB:
             case MAVEN: {
-                List<Iterator<NutsId>> li = new ArrayList<>();
+                List<Iterator<? extends NutsId>> li = new ArrayList<>();
                 for (String root : roots) {
                     if (root.endsWith("/*")) {
                         String name = root.substring(0, root.length() - 2);
@@ -323,7 +323,7 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
                 return IteratorUtils.concat(li);
             }
             case DIR_LIST: {
-                List<Iterator<NutsId>> li = new ArrayList<>();
+                List<Iterator<? extends NutsId>> li = new ArrayList<>();
                 for (String root : roots) {
                     if (root.endsWith("/*")) {
                         String name = root.substring(0, root.length() - 2);

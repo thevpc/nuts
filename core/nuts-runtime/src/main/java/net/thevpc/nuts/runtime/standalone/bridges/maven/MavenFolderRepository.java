@@ -232,7 +232,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
     public Iterator<NutsId> searchCore(final NutsIdFilter filter, String[] roots, NutsFetchMode fetchMode, NutsSession session) {
         if (fetchMode != NutsFetchMode.REMOTE) {
             Path locationFolder = getLocationAsPath(session);
-            List<Iterator<NutsId>> list = new ArrayList<>();
+            List<Iterator<? extends NutsId>> list = new ArrayList<>();
 
             for (String root : roots) {
                 if (root.endsWith("/*")) {

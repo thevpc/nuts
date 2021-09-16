@@ -36,23 +36,23 @@ import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
  */
 public class QueueIterator<T> implements Iterator<T> {
 
-    private Queue<Iterator<T>> children = new LinkedList<Iterator<T>>();
+    private Queue<Iterator<? extends T>> children = new LinkedList<Iterator<? extends T>>();
     private int size;
 
-    public void addNonNull(Iterator<T> child) {
+    public void addNonNull(Iterator<? extends T> child) {
         if (child != null) {
             add(child);
         }
     }
 
-    public void addNonEmpty(Iterator<T> child) {
+    public void addNonEmpty(Iterator<? extends T> child) {
         child = IteratorUtils.nullifyIfEmpty(child);
         if (child != null) {
             add(child);
         }
     }
 
-    public void add(Iterator<T> child) {
+    public void add(Iterator<? extends T> child) {
         if (child == null) {
             throw new NullPointerException();
         }

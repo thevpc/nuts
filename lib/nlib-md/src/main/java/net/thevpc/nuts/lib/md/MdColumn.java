@@ -17,6 +17,9 @@
  */
 package net.thevpc.nuts.lib.md;
 
+import net.thevpc.nuts.NutsBlankable;
+
+import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -68,5 +71,10 @@ public class MdColumn extends MdAbstractElement{
     @Override
     public int hashCode() {
         return Objects.hash(name, horizontalAlign);
+    }
+
+    @Override
+    public boolean isBlank() {
+        return NutsBlankable.isBlank(name);
     }
 }

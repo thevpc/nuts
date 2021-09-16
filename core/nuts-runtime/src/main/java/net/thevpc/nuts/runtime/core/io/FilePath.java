@@ -18,6 +18,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.FileTime;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.Objects;
 
 public class FilePath extends NutsPathBase implements NutsPathSPI {
@@ -29,6 +30,35 @@ public class FilePath extends NutsPathBase implements NutsPathSPI {
             throw new IllegalArgumentException("invalid value");
         }
         this.value = value;
+    }
+
+    @Override
+    public NutsPath resolve(String other) {
+        String[] others= Arrays.stream(NutsUtilStrings.trim(other).split("[/\\\\]"))
+                .filter(x->x.length()>0).toArray(String[]::new);
+        if(others.length>0){
+            Path value2=value;
+            for (String s : others) {
+                value2=value2.resolve(s);
+            }
+            return new FilePath(value2,getSession());
+        }
+        return this;
+    }
+
+    @Override
+    public String getProtocol() {
+        return "";
+    }
+
+    @Override
+    public boolean isRegularFile() {
+        return Files.isRegularFile(value);
+    }
+
+    @Override
+    public boolean isDirectory() {
+        return Files.isDirectory(value);
     }
 
     @Override

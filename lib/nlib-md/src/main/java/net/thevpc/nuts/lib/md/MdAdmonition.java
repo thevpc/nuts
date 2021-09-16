@@ -35,6 +35,11 @@ public class MdAdmonition extends MdAbstractElement {
         this.type = type;
     }
 
+    @Override
+    public boolean isBlank() {
+        return content.isBlank();
+    }
+
     public MdAdmonitionType getType() {
         return type;
     }

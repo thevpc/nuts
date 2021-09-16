@@ -76,4 +76,9 @@ public class MdItalic extends MdAbstractElement {
     public int hashCode() {
         return Objects.hash(type, content);
     }
+
+    @Override
+    public boolean isBlank() {
+        return content.isBlank();
+    }
 }

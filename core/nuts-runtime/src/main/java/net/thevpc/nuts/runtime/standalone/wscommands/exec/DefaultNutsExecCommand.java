@@ -360,7 +360,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
                         .setOptional(false).setFailFast(false)
                         .setLatest(true)
                         //                        .configure(true,"--trace-monitor")
-                        .getResultIds().list();
+                        .getResultIds().toList();
             }
         }
         if (ff.isEmpty()) {
@@ -472,7 +472,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
                     }
                     if (eid.getGroupId() != null) {
                         //nutsDefinition
-                        NutsResultList<NutsDefinition> q = getSession().getWorkspace().search().addId(eid).setLatest(true)
+                        NutsStream<NutsDefinition> q = getSession().getWorkspace().search().addId(eid).setLatest(true)
                                 .getResultDefinitions();
                         NutsDefinition[] availableExecutors = q.stream().limit(2).toArray(NutsDefinition[]::new);
                         if (availableExecutors.length > 1) {

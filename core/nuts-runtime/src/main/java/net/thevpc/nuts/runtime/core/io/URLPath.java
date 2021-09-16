@@ -9,9 +9,12 @@ import net.thevpc.nuts.spi.NutsFormatSPI;
 import net.thevpc.nuts.spi.NutsPathSPI;
 
 import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.Objects;
 
 public class URLPath extends NutsPathBase implements NutsPathSPI {
@@ -80,6 +83,28 @@ public class URLPath extends NutsPathBase implements NutsPathSPI {
     }
 
     @Override
+    public NutsPath resolve(String other) {
+        String[] others = Arrays.stream(NutsUtilStrings.trim(other).split("[/\\\\]"))
+                .filter(x -> x.length() > 0).toArray(String[]::new);
+        if (others.length > 0) {
+            StringBuilder file2 = new StringBuilder(url.getFile());
+            for (String s : others) {
+                if (file2.length() == 0 || file2.charAt(file2.length() - 1) != '/') {
+                    file2.append("/");
+                }
+                file2.append(s);
+            }
+            return rebuildURLPath(rebuildURLString(url.getProtocol(), url.getAuthority(), file2.toString(), url.getRef()));
+        }
+        return this;
+    }
+
+    @Override
+    public String getProtocol() {
+        return url == null ? null : url.getProtocol();
+    }
+
+    @Override
     public NutsPath toCompressedForm() {
         return new NutsCompressedPath(this);
     }
@@ -127,6 +152,34 @@ public class URLPath extends NutsPathBase implements NutsPathSPI {
     }
 
     @Override
+    public boolean isDirectory() {
+        if (url.toString().endsWith("/")) {
+            return exists();
+        }
+        try {
+            Path f = toFilePath();
+            return Files.isDirectory(f);
+        } catch (Exception e) {
+            //
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isRegularFile() {
+        if (!url.toString().endsWith("/")) {
+            return exists();
+        }
+        try {
+            Path f = toFilePath();
+            return Files.isRegularFile(f);
+        } catch (Exception e) {
+            //
+        }
+        return false;
+    }
+
+    @Override
     public boolean exists() {
         if (url == null) {
             return false;
@@ -170,6 +223,42 @@ public class URLPath extends NutsPathBase implements NutsPathSPI {
     @Override
     public NutsPathBuilder builder() {
         return new DefaultPathBuilder(getSession(), this);
+    }
+
+    protected NutsPath rebuildURLPath(String other) {
+        try {
+            return new URLPath(new URL(other), getSession());
+        } catch (MalformedURLException e) {
+            throw new NutsIOException(getSession(), e);
+        }
+    }
+
+    protected String rebuildURLString(String protocol, String authority, String file, String ref) {
+        int len = protocol.length() + 1;
+        if (authority != null && authority.length() > 0) {
+            len += 2 + authority.length();
+        }
+        if (file != null) {
+            len += file.length();
+        }
+        if (ref != null) {
+            len += 1 + ref.length();
+        }
+        StringBuilder result = new StringBuilder(len);
+        result.append(protocol);
+        result.append(":");
+        if (authority != null && authority.length() > 0) {
+            result.append("//");
+            result.append(authority);
+        }
+        if (file != null) {
+            result.append(file);
+        }
+        if (ref != null) {
+            result.append("#");
+            result.append(ref);
+        }
+        return result.toString();
     }
 
     @Override

@@ -16,7 +16,7 @@ import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
  */
 public class CoalesceIterator<T> implements Iterator<T> {
 
-    private Queue<Iterator<T>> children = new LinkedList<Iterator<T>>();
+    private Queue<Iterator<? extends T>> children = new LinkedList<Iterator<? extends T>>();
     private int size = 0;
 
     public void addNonNull(Iterator<T> child) {
@@ -32,7 +32,7 @@ public class CoalesceIterator<T> implements Iterator<T> {
         }
     }
 
-    public void add(Iterator<T> child) {
+    public void add(Iterator<? extends T> child) {
         if (child == null) {
             throw new NullPointerException();
         }
@@ -54,7 +54,7 @@ public class CoalesceIterator<T> implements Iterator<T> {
             if (children.peek().hasNext()) {
                 if (size > 1) {
                     //should remove all successors;
-                    Iterator<T> h = children.poll();
+                    Iterator<? extends T> h = children.poll();
                     children.clear();
                     children.offer(h);
                     size = 1;

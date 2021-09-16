@@ -189,7 +189,7 @@ public class MavenUtils {
                 break;
             }
             default: {
-                dependencyScope = NutsDependencyScopes.parseScope(s, true);
+                dependencyScope = NutsDependencyScope.parseLenient(s, NutsDependencyScope.API, NutsDependencyScope.API);
                 if (dependencyScope == null) {
                     LOG.with().session(session).level(Level.FINER).verb(NutsLogVerb.FAIL).log("unable to parse maven scope {0} for {1}", s, d);
                     dependencyScope = NutsDependencyScope.API;

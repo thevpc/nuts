@@ -2,12 +2,15 @@ package net.thevpc.nuts.runtime.standalone.io;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.io.DefaultNutsProcessInfo;
-import net.thevpc.nuts.runtime.standalone.util.NutsCollectionResult;
+import net.thevpc.nuts.runtime.standalone.util.NutsCollectionStream;
 import net.thevpc.nuts.runtime.bundles.iter.IteratorBuilder;
 import net.thevpc.nuts.runtime.bundles.iter.IteratorUtils;
 
 import java.io.File;
 import java.util.*;
+
+import net.thevpc.nuts.runtime.standalone.util.NutsEmptyStream;
+import net.thevpc.nuts.runtime.standalone.util.NutsIteratorStream;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 public class DefaultNutsIOProcessAction implements NutsIOProcessAction {
@@ -128,7 +131,7 @@ public class DefaultNutsIOProcessAction implements NutsIOProcessAction {
     }
 
     @Override
-    public NutsResultList<NutsProcessInfo> getResultList() {
+    public NutsStream<NutsProcessInfo> getResultList() {
         checkSession();
         String processType = NutsUtilStrings.trim(getType());
         if (processType.toLowerCase().startsWith("java#")) {
@@ -139,11 +142,11 @@ public class DefaultNutsIOProcessAction implements NutsIOProcessAction {
             if (isFailFast()) {
                 throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("unsupported list processes of type : %s" , processType));
             }
-            return new NutsCollectionResult<>(getSession(), "process-" + processType, Collections.emptyList());
+            return new NutsEmptyStream<>(getSession(), "process-" + processType);
         }
     }
 
-    private NutsResultList<NutsProcessInfo> getResultListJava(String version) {
+    private NutsStream<NutsProcessInfo> getResultListJava(String version) {
         checkSession();
         Iterator<NutsProcessInfo> it = IteratorBuilder.ofLazy(() -> {
             String cmd = "jps";
@@ -178,6 +181,6 @@ public class DefaultNutsIOProcessAction implements NutsIOProcessAction {
                     pid, cls, null, args
             );
         }).build();
-        return new NutsCollectionResult<NutsProcessInfo>(getSession(), "process-" + getType(), it);
+        return new NutsIteratorStream<NutsProcessInfo>(getSession(), "process-" + getType(), it);
     }
 }

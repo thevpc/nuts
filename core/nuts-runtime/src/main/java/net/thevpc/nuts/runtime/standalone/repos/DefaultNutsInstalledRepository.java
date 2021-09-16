@@ -719,7 +719,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
             @Override
             public NutsSearchRepositoryCommand run() {
                 Iterator<InstallInfoConfig> installIter = searchInstallConfig(getSession());
-                Iterator<NutsId> idIter = IteratorUtils.convert(installIter, x -> x.getId(), "NutsInstallInformation->Id");
+                Iterator<NutsId> idIter = IteratorUtils.map(installIter, x -> x.getId(), "NutsInstallInformation->Id");
                 NutsIdFilter ff = getFilter();
                 if (ff != null) {
                     idIter = IteratorUtils.filter(idIter, new NutsIdFilterToPredicate(ff, getSession()));

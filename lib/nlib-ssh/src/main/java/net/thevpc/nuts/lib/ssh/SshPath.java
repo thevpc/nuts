@@ -97,7 +97,7 @@ public class SshPath {
         return port;
     }
 
-    public String toString() {
+    public static String toString(String host,int port,String path,String user,String password,String keyFile) {
         StringBuilder sb = new StringBuilder("ssh://");
         if (!(user==null || user.trim().length()==0)) {
             sb.append(user).append("@");
@@ -125,6 +125,10 @@ public class SshPath {
             }
         }
         return sb.toString();
+    }
+
+    public String toString() {
+        return toString(host,port,path,user,password,keyFile);
     }
 
 }

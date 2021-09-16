@@ -16,6 +16,12 @@ public interface NutsPathSPI {
         return null;
     }
 
+    default String getProtocol() {
+        return null;
+    }
+
+    NutsPath resolve(String path);
+
     default NutsPath toCompressedForm() {
         return null;
     }
@@ -27,6 +33,10 @@ public interface NutsPathSPI {
     default Path toFilePath() {
         return null;
     }
+
+    boolean isDirectory();
+
+    boolean isRegularFile();
 
     boolean exists();
 

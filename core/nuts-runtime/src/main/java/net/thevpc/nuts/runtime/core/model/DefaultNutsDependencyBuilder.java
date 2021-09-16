@@ -183,7 +183,7 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
 
     @Override
     public NutsDependencyBuilder setScope(String scope) {
-        this.scope = NutsDependencyScopes.normalizeScope(scope);
+        this.scope = NutsDependencyScope.parseLenient(scope,NutsDependencyScope.API,NutsDependencyScope.OTHER).id();
         return this;
     }
 

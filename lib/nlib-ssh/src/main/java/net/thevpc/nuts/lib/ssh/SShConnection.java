@@ -184,10 +184,10 @@ public class SShConnection implements AutoCloseable {
                 sb.append((char) c);
             } while (c != '\n');
             if (b == 1) { // error
-                System.out.print(sb.toString());
+                //err.print(sb.toString());
             }
             if (b == 2) { // fatal error
-                System.out.print(sb.toString());
+                //err.print(sb.toString());
             }
         }
         return b;

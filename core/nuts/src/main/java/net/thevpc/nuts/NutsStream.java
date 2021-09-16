@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -11,7 +11,7 @@
  * architecture to help supporting a large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -23,10 +23,13 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts;
 
-import java.util.List;
+import java.util.*;
+import java.util.function.Function;
+import java.util.function.IntFunction;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 /**
@@ -38,7 +41,7 @@ import java.util.stream.Stream;
  * @since 0.5.4
  * @app.category Base
  */
-public interface NutsResultList<T> extends Iterable<T> {
+public interface NutsStream<T> extends Iterable<T> {
 
     /**
      * return result as a  java.util.List .
@@ -49,7 +52,13 @@ public interface NutsResultList<T> extends Iterable<T> {
      *
      * @return result as a  java.util.List
      */
-    List<T> list();
+    List<T> toList();
+
+    Set<T> toSet();
+
+    Set<T> toSortedSet();
+
+    Set<T> toOrderedSet();
 
     /**
      * return the first value or null if none found.
@@ -61,6 +70,17 @@ public interface NutsResultList<T> extends Iterable<T> {
      * @return the first value or null if none found
      */
     T first();
+
+    /**
+     * return the last value or null if none found. consumes all of the stream
+     *
+     * Calling this method twice will result in unexpected behavior (may return
+     * an incorrect value such as null as the result is already consumed or
+     * throw an Exception)
+     *
+     * @return the last value or null if none found
+     */
+    T last();
 
     /**
      * return the first value or NutsNotFoundException if not found.
@@ -97,6 +117,7 @@ public interface NutsResultList<T> extends Iterable<T> {
      */
     Stream<T> stream();
 
+
     /**
      * return elements count of this result.
      *
@@ -108,4 +129,46 @@ public interface NutsResultList<T> extends Iterable<T> {
      */
     long count();
 
+    /**
+     * return NutsStream a stream consisting of the results of applying the given function to the elements of this stream.
+     * @param mapper mapper
+     * @param <R> to type
+     * @return NutsStream a stream consisting of the results of applying the given function to the elements of this stream.
+     */
+    <R> NutsStream<R> map(Function<? super T, ? extends R> mapper);
+
+    NutsStream<T> sorted();
+
+    NutsStream<T> sorted(Comparator<T> comp);
+
+    NutsStream<T> distinct();
+
+    <R> NutsStream<T> distinctBy(Function<T, R> d);
+
+    NutsStream<T> nonNull();
+
+    NutsStream<T> nonBlank();
+
+    NutsStream<T> filter(Predicate<? super T> predicate);
+
+    NutsStream<T> coalesce(Iterator<? extends T> other);
+
+    T[] toArray(IntFunction<T[]> generator);
+
+    <K, U> Map<K, U> toMap(Function<? super T, ? extends K> keyMapper,
+                           Function<? super T, ? extends U> valueMapper);
+
+    <K, U> Map<K, U> toOrderedMap(Function<? super T, ? extends K> keyMapper,
+                                  Function<? super T, ? extends U> valueMapper);
+
+    <K, U> Map<K, U> toSortedMap(Function<? super T, ? extends K> keyMapper,
+                                 Function<? super T, ? extends U> valueMapper);
+
+    <R> NutsStream<R> flatMapIter(Function<? super T, ? extends Iterator<? extends R>> mapper);
+
+    <R> NutsStream<R> flatMapStream(Function<? super T, ? extends Stream<? extends R>> mapper);
+
+    <K> Map<K, List<T>> groupBy(Function<? super T, ? extends K> classifier);
+
+    <K> NutsStream<Map.Entry<K, List<T>>> groupedBy(Function<? super T, ? extends K> classifier);
 }

@@ -170,7 +170,7 @@ public final class JavaExecutorOptions {
                     .addScope(NutsDependencyScopePattern.RUN)
                     .setDependencyFilter(CoreNutsDependencyUtils.createJavaRunDependencyFilter(session))
                     //
-                    .getResultDefinitions().list()
+                    .getResultDefinitions().toList()
             );
         }
         if (this.jar) {

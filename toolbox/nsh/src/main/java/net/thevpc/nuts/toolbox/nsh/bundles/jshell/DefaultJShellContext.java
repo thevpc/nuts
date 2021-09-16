@@ -304,7 +304,7 @@ public class DefaultJShellContext extends AbstractJShellContext {
                     .addScope(NutsDependencyScopePattern.RUN)
                     .setOptional(false)
                     .setSession(this.getSession().copy().setFetchStrategy(NutsFetchStrategy.OFFLINE))
-                    .getResultIds().list();
+                    .getResultIds().toList();
             if (nutsIds.size() == 1) {
                 NutsId selectedId = nutsIds.get(0);
                 NutsDefinition def = ws.search().addId(selectedId).setEffective(true).setSession(this.getSession()

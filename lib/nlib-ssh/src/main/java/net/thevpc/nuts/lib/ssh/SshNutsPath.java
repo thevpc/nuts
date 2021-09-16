@@ -10,6 +10,7 @@ import java.io.OutputStream;
 import java.io.Writer;
 import java.nio.file.Path;
 import java.time.Instant;
+import java.util.Arrays;
 
 class SshNutsPath implements NutsPathSPI {
     private SshPath path;
@@ -19,6 +20,35 @@ class SshNutsPath implements NutsPathSPI {
     public SshNutsPath(SshPath path, NutsSession session) {
         this.path = path;
         this.session = session;
+    }
+
+    @Override
+    public NutsPath resolve(String path) {
+        String[] others = Arrays.stream(NutsUtilStrings.trim(path).split("[/\\\\]"))
+                .filter(x -> x.length() > 0).toArray(String[]::new);
+        if (others.length > 0) {
+            StringBuilder loc = new StringBuilder(this.path.getPath());
+            if (loc.length() == 0 || loc.charAt(loc.length() - 1) != '/') {
+                loc.append('/');
+            }
+            loc.append(String.join("/", others));
+            return
+                    getSession().getWorkspace().io().path(
+                            SshPath.toString(
+                                    this.path.getHost(),
+                                    this.path.getPort(),
+                                    loc.toString(),
+                                    this.path.getUser(),
+                                    this.path.getPassword(),
+                                    this.path.getKeyFile()
+                            ));
+        }
+        return getSession().getWorkspace().io().path(toString());
+    }
+
+    @Override
+    public String getProtocol() {
+        return "ssh";
     }
 
     @Override
@@ -133,6 +163,48 @@ class SshNutsPath implements NutsPathSPI {
                 .addListener(listener)
         ) {
             c.mkdir(path.getPath(), parents);
+        }
+    }
+
+    @Override
+    public boolean isDirectory() {
+        try (SShConnection c = new SShConnection(path.toAddress(),getSession())
+                .addListener(listener)
+        ) {
+            c.grabOutputString();
+            int i= c.execStringCommand("file "+path.getPath());
+            if(i>0){
+                return false;
+            }
+            String s = c.getOutputString();
+            int ii = s.indexOf(':');
+            if(ii>0){
+                return s.substring(i+1).trim().equals("directory");
+            }
+            return false;
+        }catch (Exception e){
+            return false;
+        }
+    }
+
+    @Override
+    public boolean isRegularFile() {
+        try (SShConnection c = new SShConnection(path.toAddress(),getSession())
+                .addListener(listener)
+        ) {
+            c.grabOutputString();
+            int i= c.execStringCommand("file "+path.getPath());
+            if(i>0){
+                return false;
+            }
+            String s = c.getOutputString();
+            int ii = s.indexOf(':');
+            if(ii>0){
+                return !s.substring(i+1).trim().equals("directory");
+            }
+            return false;
+        }catch (Exception e){
+            return false;
         }
     }
 

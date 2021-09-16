@@ -17,6 +17,9 @@
  */
 package net.thevpc.nuts.lib.md;
 
+import net.thevpc.nuts.NutsBlankable;
+
+import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -24,14 +27,15 @@ import java.util.Objects;
  */
 public class MdNumberedList extends MdParent {
     private MdElementType id;
+
     public MdNumberedList(MdNumberedItem[] content) {
         super(content);
-        id=new MdElementType(MdElementTypeGroup.UNNUMBERED_LIST,getChild(0).type().depth());
+        id = new MdElementType(MdElementTypeGroup.UNNUMBERED_LIST, getChild(0).type().depth());
     }
 
-    public MdNumberedList(int depth,MdNumberedItem[] content) {
+    public MdNumberedList(int depth, MdNumberedItem[] content) {
         super(content);
-        id=new MdElementType(MdElementTypeGroup.UNNUMBERED_LIST,depth);
+        id = new MdElementType(MdElementTypeGroup.UNNUMBERED_LIST, depth);
     }
 
     public MdElementType type() {
@@ -43,6 +47,11 @@ public class MdNumberedList extends MdParent {
     }
 
     @Override
+    public boolean isEndWithNewline() {
+        return true;
+    }
+
+    @Override
     public MdNumberedItem[] getChildren() {
         return (MdNumberedItem[]) super.getChildren();
     }
@@ -50,6 +59,20 @@ public class MdNumberedList extends MdParent {
     @Override
     public MdNumberedItem getChild(int i) {
         return (MdNumberedItem) super.getChild(i);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        MdNumberedList that = (MdNumberedList) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), id);
     }
 
     @Override
@@ -67,21 +90,10 @@ public class MdNumberedList extends MdParent {
     }
 
     @Override
-    public boolean isEndWithNewline() {
-        return true;
+    public boolean isBlank() {
+        return (getChildren() == null
+                || getChildren().length == 0
+                || Arrays.stream(getChildren()).allMatch(x -> NutsBlankable.isBlank(x)));
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-        MdNumberedList that = (MdNumberedList) o;
-        return Objects.equals(id, that.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), id);
-    }
 }

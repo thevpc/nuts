@@ -30,7 +30,7 @@ package net.thevpc.nuts;
  * @since 0.8.3
  * @app.category Descriptor
  */
-public interface NutsEnvCondition {
+public interface NutsEnvCondition extends NutsBlankable{
     /**
      * supported archs. if empty, all arch are supported (for example for java, all arch are supported).
      *

@@ -1,5 +1,6 @@
 package net.thevpc.nuts.lib.md;
 
+import net.thevpc.nuts.NutsBlankable;
 import net.thevpc.nuts.lib.md.util.MdInlineHelper;
 
 import java.util.Arrays;
@@ -86,4 +87,10 @@ public class MdPhrase extends MdParent {
         return !isInline();
     }
 
+    @Override
+    public boolean isBlank() {
+        return (getChildren() == null
+                || getChildren().length == 0
+                || Arrays.stream(getChildren()).allMatch(x -> NutsBlankable.isBlank(x)));
+    }
 }

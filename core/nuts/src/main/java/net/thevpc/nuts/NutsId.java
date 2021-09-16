@@ -36,7 +36,7 @@ import java.util.Map;
  * @since 0.1.0
  * @app.category Descriptor
  */
-public interface NutsId extends /*NutsTokenFilter, Serializable,*/ Comparable<NutsId>,NutsFormattable {
+public interface NutsId extends /*NutsTokenFilter, Serializable,*/ Comparable<NutsId>,NutsFormattable,NutsBlankable {
 
     static NutsId of(String value, NutsSession session){
         NutsApiUtils.checkSession(session);

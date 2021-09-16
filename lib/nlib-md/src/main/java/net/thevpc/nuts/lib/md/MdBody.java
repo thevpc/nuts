@@ -1,5 +1,9 @@
 package net.thevpc.nuts.lib.md;
 
+import net.thevpc.nuts.NutsBlankable;
+
+import java.util.Arrays;
+
 public class MdBody extends MdParent {
     public MdBody(MdElement[] content) {
         super(content);
@@ -34,4 +38,10 @@ public class MdBody extends MdParent {
         return true;
     }
 
+    @Override
+    public boolean isBlank() {
+        return (getChildren() == null
+                || getChildren().length == 0
+                || Arrays.stream(getChildren()).allMatch(x -> NutsBlankable.isBlank(x)));
+    }
 }

@@ -406,7 +406,7 @@ public class DefaultNutsWorkspaceExtensionModel {
                 .setDependencies(true)
                 .setDependencyFilter(CoreNutsDependencyUtils.createJavaRunDependencyFilter(session))
                 .setLatest(true)
-                .getResultDefinitions().list()) {
+                .getResultDefinitions().toList()) {
             loadedExtensionURLs.add(def.getContent().getURL());
         }
     }

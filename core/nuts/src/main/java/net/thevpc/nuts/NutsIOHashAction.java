@@ -104,10 +104,16 @@ public interface NutsIOHashAction {
     NutsIOHashAction setSession(NutsSession session);
 
     /**
-     * select MD5 hash algorithm
+     * select SHA1 hash algorithm
      * @return {@code this} instance
      */
     NutsIOHashAction sha1();
+
+    /**
+     * select SHA256 hash algorithm
+     * @return {@code this} instance
+     */
+    NutsIOHashAction sha256();
 
     /**
      * select hash algorithm.

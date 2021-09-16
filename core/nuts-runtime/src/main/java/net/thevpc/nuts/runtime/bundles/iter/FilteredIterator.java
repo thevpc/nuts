@@ -35,10 +35,10 @@ import java.util.function.Predicate;
 public class FilteredIterator<T> implements Iterator<T> {
 
     private Iterator<T> base;
-    private Predicate<T> filter;
+    private Predicate<? super T> filter;
     private T last;
 
-    public FilteredIterator(Iterator<T> base, Predicate<T> filter) {
+    public FilteredIterator(Iterator<T> base, Predicate<? super T> filter) {
         if (base == null) {
             this.base = IteratorUtils.emptyIterator();
         } else {

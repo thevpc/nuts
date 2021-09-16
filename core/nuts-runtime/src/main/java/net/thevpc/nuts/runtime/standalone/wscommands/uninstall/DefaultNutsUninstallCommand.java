@@ -13,8 +13,6 @@ import net.thevpc.nuts.runtime.core.events.DefaultNutsInstallEvent;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.NutsExtensionListHelper;
-import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
-import net.thevpc.nuts.runtime.standalone.wscommands.uninstall.AbstractNutsUninstallCommand;
 
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -48,7 +46,7 @@ public class DefaultNutsUninstallCommand extends AbstractNutsUninstallCommand {
                     .setSession(session.copy().setTransitive(false))
                     .setOptional(false).setEffective(true)
                     .setContent(true)//include content so that we can remove it by calling executor
-                    .getResultDefinitions().list();
+                    .getResultDefinitions().toList();
             for (Iterator<NutsDefinition> it = resultDefinitions.iterator(); it.hasNext();) {
                 NutsDefinition resultDefinition = it.next();
                 if (!resultDefinition.getInstallInformation().isInstalledOrRequired()) {

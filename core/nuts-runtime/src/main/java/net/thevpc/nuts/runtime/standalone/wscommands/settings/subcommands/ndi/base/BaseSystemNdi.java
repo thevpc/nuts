@@ -713,6 +713,10 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         if (iconPath != null && iconPath.length() > 0) {
             return iconPath;
         }
+        return getPreferredIconPath(appId);
+    }
+
+    public String getPreferredIconPath(NutsId appId) {
         NutsWorkspace ws = session.getWorkspace();
         NutsDefinition appDef = ws.search().addId(appId).setLatest(true).setEffective(true).getResultDefinitions().singleton();
         String descAppIcon = resolveBestIcon(appDef.getDescriptor().getIcons());
@@ -733,14 +737,17 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                         );
             }
         }
+        String iconPath=null;
         if (descAppIcon != null) {
-            NutsPath p0 = ws.io().path(descAppIcon);
+            String descAppIcon0=descAppIcon;
+            String descAppIconDigest=ws.io().hash().md5().setSource(new ByteArrayInputStream(descAppIcon0.getBytes())).computeString();
+            NutsPath p0 = NutsPath.of(descAppIcon,session);
             if (descAppIcon.startsWith("classpath://")) {
                 descAppIcon = "nuts-resource://" + appDef.getId().getLongName() + "" + descAppIcon.substring("classpath://".length() - 1);
             }
-            String bestName = "icon." + p0.getLastExtension();
-            Path localIconPath = Paths.get(ws.locations().getStoreLocation(appDef.getId(), NutsStoreLocation.APPS))
-                    .resolve(".nuts")
+            String bestName = descAppIconDigest+"." + p0.getLastExtension();
+            Path localIconPath = Paths.get(ws.locations().getStoreLocation(appDef.getId(), NutsStoreLocation.CACHE))
+                    .resolve("icons")
                     .resolve(bestName);
             if (Files.isRegularFile(localIconPath)) {
                 iconPath = localIconPath.toString();

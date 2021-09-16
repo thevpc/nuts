@@ -57,7 +57,7 @@ public class Test05_FindLinuxTest {
                 "--skip-companions" //            "--verbose"
         ).getWorkspace();
 
-        NutsResultList<NutsId> result = ws.search()
+        NutsStream<NutsId> result = ws.search()
                 .setSession(ws.createSession().setFetchStrategy(NutsFetchStrategy.REMOTE))
                 .setLatest(true).addId(NutsConstants.Ids.NUTS_API).getResultIds();
         //There is one result because nuts id is always installed
@@ -77,7 +77,7 @@ public class Test05_FindLinuxTest {
                 "--skip-companions").getWorkspace();
 
         int count = 0;
-        NutsResultList<NutsId> result = ws.search()
+        NutsStream<NutsId> result = ws.search()
                 .setSession(ws.createSession().setFetchStrategy(NutsFetchStrategy.REMOTE))
                 .setLatest(true).addId(NutsConstants.Ids.NUTS_API).getResultIds();
         Assertions.assertTrue(result.count() > 0);
@@ -96,8 +96,8 @@ public class Test05_FindLinuxTest {
                 "--skip-companions").getWorkspace();
 
         ws = ws.createSession().getWorkspace();
-        List<NutsId> result1 = ws.search().setLatest(true).addId("nuts-runtime").getResultIds().list();
-        List<NutsId> result2 = ws.search().setLatest(false).addId("nuts-runtime").getResultIds().list();
+        List<NutsId> result1 = ws.search().setLatest(true).addId("nuts-runtime").getResultIds().toList();
+        List<NutsId> result2 = ws.search().setLatest(false).addId("nuts-runtime").getResultIds().toList();
         TestUtils.println(result1);
         TestUtils.println(result2);
         Assertions.assertTrue(result1.size() > 0);
@@ -116,8 +116,8 @@ public class Test05_FindLinuxTest {
                 "--skip-companions").getWorkspace();
         ws = ws.createSession().getWorkspace();
 
-        List<NutsId> result1 = ws.search().configure(false, "nuts-runtime").getResultIds().list();
-        List<NutsId> result2 = ws.search().configure(false, "--latest", "nuts-runtime").getResultIds().list();
+        List<NutsId> result1 = ws.search().configure(false, "nuts-runtime").getResultIds().toList();
+        List<NutsId> result2 = ws.search().configure(false, "--latest", "nuts-runtime").getResultIds().toList();
         TestUtils.println("=====================");
         TestUtils.println(result1);
         TestUtils.println("=====================");

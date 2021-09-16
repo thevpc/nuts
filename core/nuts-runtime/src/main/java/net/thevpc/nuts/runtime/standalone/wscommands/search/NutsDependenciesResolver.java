@@ -190,9 +190,8 @@ public class NutsDependenciesResolver {
     }
 
     private NutsDependencyScope combineScopes(String parentScope0, String childScope0) {
-        NutsWorkspace ws = session.getWorkspace();
-        NutsDependencyScope parentScope = ws.dependency().parser().parseScope(parentScope0);
-        NutsDependencyScope childScope = ws.dependency().parser().parseScope(childScope0);
+        NutsDependencyScope parentScope = NutsDependencyScope.parseLenient(parentScope0,NutsDependencyScope.API,NutsDependencyScope.API);
+        NutsDependencyScope childScope = NutsDependencyScope.parseLenient(childScope0,NutsDependencyScope.API,NutsDependencyScope.API);
         return combineScopes(parentScope, childScope);
     }
 

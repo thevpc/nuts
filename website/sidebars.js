@@ -17,7 +17,6 @@ module.exports = {
          'concepts/automation',
          'concepts/commandline',
          'concepts/filesystem',
-         'concepts/nutsPath',
          'concepts/doc1',
       ],
       'Commands': [
@@ -25,6 +24,8 @@ module.exports = {
       ],
       'Application Framework': [
          'dev/nutsApp',
+         'dev/nutsPath',
+         'dev/nutsStream',
       ],
       'API Documentation': [],
       'Contributing': [

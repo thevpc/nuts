@@ -13,6 +13,7 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.nio.file.Path;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.Objects;
 
 public class NutsPathFromSPI extends NutsPathBase {
@@ -21,6 +22,44 @@ public class NutsPathFromSPI extends NutsPathBase {
     public NutsPathFromSPI(NutsPathSPI base) {
         super(base.getSession());
         this.base = base;
+    }
+
+    @Override
+    public NutsPath resolve(String other) {
+        String[] others = Arrays.stream(NutsUtilStrings.trim(other).split("[/\\\\]"))
+                .filter(x -> x.length() > 0).toArray(String[]::new);
+        if (others.length == 0) {
+            return this;
+        }
+        NutsPath n = base.resolve(String.join("/",others));
+        if (n == null) {
+            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("unable to resolve %s",other));
+        }
+        return n;
+    }
+
+    @Override
+    public String getProtocol() {
+        String n = base.getProtocol();
+        if (n == null) {
+            String ts = base.toString();
+            int i=ts.indexOf(':');
+            if(i>=0){
+                return ts.substring(0,i);
+            }
+            return null;
+        }
+        return n;
+    }
+
+    @Override
+    public boolean isDirectory() {
+        return base.isDirectory();
+    }
+
+    @Override
+    public boolean isRegularFile() {
+        return base.isRegularFile();
     }
 
     @Override

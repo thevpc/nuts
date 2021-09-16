@@ -28,9 +28,8 @@ import net.thevpc.nuts.runtime.bundles.iter.IteratorUtils;
 import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.core.repos.NutsInstalledRepository;
 import net.thevpc.nuts.runtime.core.util.CoreNutsDependencyUtils;
-import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
-import net.thevpc.nuts.runtime.standalone.util.NutsCollectionResult;
-import net.thevpc.nuts.runtime.standalone.wscommands.install.AbstractNutsInstallCommand;
+import net.thevpc.nuts.runtime.standalone.util.NutsCollectionStream;
+import net.thevpc.nuts.runtime.standalone.util.NutsListStream;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -137,12 +136,12 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
     }
 
     @Override
-    public NutsResultList<NutsDefinition> getResult() {
+    public NutsStream<NutsDefinition> getResult() {
         checkSession();
         if (result == null) {
             run();
         }
-        return new NutsCollectionResult<NutsDefinition>(getSession(),
+        return new NutsListStream<NutsDefinition>(getSession(),
                 ids.isEmpty() ? null : ids.keySet().toArray()[0].toString(),
                 Arrays.asList(result)
         );
@@ -160,7 +159,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
         InstallIdList list = new InstallIdList(NutsInstallStrategy.INSTALL);
         for (Map.Entry<NutsId, NutsInstallStrategy> idAndStrategy : this.getIdMap().entrySet()) {
             if (!list.isVisited(idAndStrategy.getKey())) {
-                List<NutsId> allIds = ws.search().addId(idAndStrategy.getKey()).setSession(session).setLatest(true).getResultIds().list();
+                List<NutsId> allIds = ws.search().addId(idAndStrategy.getKey()).setSession(session).setLatest(true).getResultIds().toList();
                 if (allIds.isEmpty()) {
                     throw new NutsNotFoundException(getSession(), idAndStrategy.getKey());
                 }
@@ -172,7 +171,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
         if (this.isCompanions()) {
             for (NutsId sid : ws.getCompanionIds(session)) {
                 if (!list.isVisited(sid)) {
-                    List<NutsId> allIds = ws.search().setSession(session).addId(sid).setLatest(true).setTargetApiVersion(ws.getApiVersion()).getResultIds().list();
+                    List<NutsId> allIds = ws.search().setSession(session).addId(sid).setLatest(true).setTargetApiVersion(ws.getApiVersion()).getResultIds().toList();
                     if (allIds.isEmpty()) {
                         throw new NutsNotFoundException(getSession(), sid);
                     }

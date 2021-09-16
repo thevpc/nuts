@@ -144,7 +144,7 @@ public class DataService {
                     .addId(id)
                     .setFailFast(false)
                     .setContent(false)
-                    .getResultIds().list();
+                    .getResultIds().toList();
             Map<String, String> oldRow = new HashMap<>(row);
             row.put("allDependencies", ws.elem().setContentType(NutsContentType.JSON)
                     .setValue(allDependencies.stream().map(Object::toString)

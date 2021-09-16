@@ -17,6 +17,8 @@
  */
 package net.thevpc.nuts.lib.md;
 
+import net.thevpc.nuts.NutsBlankable;
+
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -77,5 +79,10 @@ public class MdRow extends MdAbstractElement {
         int result = Objects.hash(header);
         result = 31 * result + Arrays.hashCode(cells);
         return result;
+    }
+
+    @Override
+    public boolean isBlank() {
+        return(cells==null || Arrays.stream(cells).allMatch(x->NutsBlankable.isBlank(x)));
     }
 }

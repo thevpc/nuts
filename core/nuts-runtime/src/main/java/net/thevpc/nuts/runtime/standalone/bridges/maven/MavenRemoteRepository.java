@@ -312,7 +312,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
             case DEFAULT:
             case DIR_TEXT:
             case GITHUB: {
-                List<Iterator<NutsId>> li = new ArrayList<>();
+                List<Iterator<? extends NutsId>> li = new ArrayList<>();
                 for (String root : roots) {
                     session.getTerminal().printProgress("%-8s %s", "browse", session.getWorkspace().io().path(root).toCompressedForm());
                     if (root.endsWith("/*")) {
@@ -325,7 +325,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
                 return IteratorUtils.concat(li);
             }
             case DIR_LIST: {
-                List<Iterator<NutsId>> li = new ArrayList<>();
+                List<Iterator<? extends NutsId>> li = new ArrayList<>();
                 for (String root : roots) {
                     session.getTerminal().printProgress("%-8s %s", "browse", session.getWorkspace().io().path(root).toCompressedForm());
                     if (root.endsWith("/*")) {

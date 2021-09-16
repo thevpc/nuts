@@ -37,6 +37,11 @@ public class MdBold extends MdAbstractElement {
         this.content = content;
     }
 
+    @Override
+    public boolean isBlank() {
+        return content.isBlank();
+    }
+
     public String getType() {
         return type;
     }

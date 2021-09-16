@@ -36,18 +36,22 @@ public enum NutsDependencyScope implements NutsEnum{
      * equivalent to maven's compile and to gradle's api
      */
     API,
+
     /**
      * equivalent to gradle's implementation
      */
     IMPLEMENTATION,
+
     /**
      * equivalent to maven's provided
      */
     PROVIDED,
+
     /**
      * equivalent to maven's import
      */
     IMPORT,
+
     /**
      * equivalent to maven's runtime
      */
@@ -64,18 +68,22 @@ public enum NutsDependencyScope implements NutsEnum{
      * equivalent to maven's test
      */
     TEST_IMPLEMENTATION,
+
     /**
      * dependencies needed for test but are provided by container.
      */
     TEST_PROVIDED,
+
     /**
      * dependencies needed for test execution
      */
     TEST_RUNTIME,
+
     /**
      * dependencies needed for test execution
      */
     TEST_SYSTEM,
+
     /**
      * other
      */
@@ -168,6 +176,48 @@ public enum NutsDependencyScope implements NutsEnum{
         }
         if (value.isEmpty()) {
             return emptyValue;
+        }
+        switch (value.toLowerCase()) {
+            case "compileonly": //gradle
+            case "compile_only": //gradle
+            case "provided": //gradle
+                return NutsDependencyScope.PROVIDED;
+            case "test"://maven
+            case "testcompile"://gradle
+            case "test_compile":
+            case "testapi":
+            case "test_api":
+                return NutsDependencyScope.TEST_API;
+            case "testruntime":
+            case "test_runtime":
+                return NutsDependencyScope.TEST_RUNTIME;
+            case "testsystem":
+            case "test_system":
+                return NutsDependencyScope.TEST_SYSTEM;
+            case "testprovided":
+            case "test_provided":
+            case "testcompileonly":
+            case "test_compile_only":
+                return NutsDependencyScope.TEST_PROVIDED;
+            case "api":
+            case "compile":
+                return NutsDependencyScope.API;
+            case "impl":
+            case "implementation":
+                return NutsDependencyScope.IMPLEMENTATION;
+            case "import":
+                return NutsDependencyScope.IMPORT;
+            case "runtime":
+                return NutsDependencyScope.RUNTIME;
+            case "test_impl":
+            case "test_implementation":
+                return NutsDependencyScope.TEST_IMPLEMENTATION;
+            case "test_other":
+                return NutsDependencyScope.TEST_OTHER;
+            case "other":
+                return NutsDependencyScope.OTHER;
+            case "system":
+                return NutsDependencyScope.SYSTEM;
         }
         try {
             return NutsDependencyScope.valueOf(value.toUpperCase());

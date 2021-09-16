@@ -25,6 +25,8 @@
 */
 package net.thevpc.nuts;
 
+import java.util.EnumSet;
+
 /**
  * Supported dependency scope pattern.
  * A dependency scope pattern
@@ -61,11 +63,14 @@ public enum NutsDependencyScopePattern implements NutsEnum{
      * system (maven)
      */
     SYSTEM,
-
     /**
-     * testCompile (gradle) / test (maven)
+     * equivalent to maven's test
      */
-    TEST_COMPILE,
+    TEST_API,
+    /**
+     * equivalent to maven's test
+     */
+    TEST_IMPLEMENTATION,
 
     /**
      * testCompileOnly (gradle)
@@ -78,53 +83,48 @@ public enum NutsDependencyScopePattern implements NutsEnum{
     TEST_RUNTIME,
 
     /**
+     * dependencies needed for test execution
+     */
+    TEST_SYSTEM,
+
+    /**
      * other
      */
     OTHER,
+    /**
+     * dependencies needed for test execution
+     */
+    TEST_OTHER,
 
     /**
-     * dependencies needed for running/executing unit tests the nuts : includes
+     * [PATTERN] testCompile (gradle) / test (maven)
+     */
+    TEST_COMPILE,
+
+    /**
+     * [PATTERN] dependencies needed for running/executing unit tests the nuts : includes
      * 'test,compile,system,runtime' witch are NOT optional
      */
     TEST,
 
     /**
-     * maven compile
+     * [PATTERN] maven compile
      */
     COMPILE,
     /**
-     * dependencies needed for running/executing the nuts : includes
+     * [PATTERN] dependencies needed for running/executing the nuts : includes
      * 'compile,system,runtime' witch are NOT optional
      */
     RUN,
 
     /**
-     * run test
+     * [PATTERN] run test
      */
     RUN_TEST,
     /**
-     * all dependencies (no restriction)
+     * [PATTERN] all dependencies (no restriction)
      */
     ALL,
-    
-    
-    
-    /**
-     * equivalent to maven's test
-     */
-    TEST_API,
-    /**
-     * equivalent to maven's test
-     */
-    TEST_IMPLEMENTATION,
-    /**
-     * dependencies needed for test execution
-     */
-    TEST_SYSTEM,
-    /**
-     * dependencies needed for test execution
-     */
-    TEST_OTHER;
     ;
 
     /**
@@ -162,11 +162,156 @@ public enum NutsDependencyScopePattern implements NutsEnum{
         if (value.isEmpty()) {
             return emptyValue;
         }
+        switch (value.toLowerCase()) {
+            case "compileonly": //gradle
+            case "compile_only": //gradle
+            case "provided": //gradle
+                return NutsDependencyScopePattern.PROVIDED;
+//            case "test"://maven
+            case "testcompile"://gradle
+//            case "test_compile":
+            case "testapi":
+            case "test_api":
+                return NutsDependencyScopePattern.TEST_API;
+            case "testruntime":
+            case "test_runtime":
+                return NutsDependencyScopePattern.TEST_RUNTIME;
+            case "testsystem":
+            case "test_system":
+                return NutsDependencyScopePattern.TEST_SYSTEM;
+            case "testprovided":
+            case "test_provided":
+            case "testcompileonly":
+            case "test_compile_only":
+                return NutsDependencyScopePattern.TEST_PROVIDED;
+            case "api":
+//            case "compile":
+                return NutsDependencyScopePattern.API;
+            case "impl":
+            case "implementation":
+                return NutsDependencyScopePattern.IMPLEMENTATION;
+            case "import":
+                return NutsDependencyScopePattern.IMPORT;
+            case "runtime":
+                return NutsDependencyScopePattern.RUNTIME;
+            case "test_impl":
+            case "test_implementation":
+                return NutsDependencyScopePattern.TEST_IMPLEMENTATION;
+            case "test_other":
+                return NutsDependencyScopePattern.TEST_OTHER;
+            case "other":
+                return NutsDependencyScopePattern.OTHER;
+            case "system":
+                return NutsDependencyScopePattern.SYSTEM;
+
+            case "test_compile":
+                return NutsDependencyScopePattern.TEST_COMPILE;
+            case "test":
+                return NutsDependencyScopePattern.TEST;
+            case "compile":
+                return NutsDependencyScopePattern.COMPILE;
+            case "run":
+                return NutsDependencyScopePattern.RUN;
+            case "run_test":
+                return NutsDependencyScopePattern.RUN_TEST;
+            case "all":
+                return NutsDependencyScopePattern.ALL;
+        }
         try {
             return NutsDependencyScopePattern.valueOf(value.toUpperCase());
         } catch (Exception notFound) {
             return errorValue;
         }
+    }
+
+    public EnumSet<NutsDependencyScope> toScopes() {
+        EnumSet<NutsDependencyScope> v = EnumSet.noneOf(NutsDependencyScope.class);
+        switch (this) {
+            case RUN: {
+                v.add(NutsDependencyScope.API);
+                v.add(NutsDependencyScope.IMPLEMENTATION);
+                v.add(NutsDependencyScope.SYSTEM);
+                v.add(NutsDependencyScope.RUNTIME);
+                break;
+            }
+            case RUN_TEST: {
+                v.addAll(NutsDependencyScopePattern.RUN.toScopes());
+                v.add(NutsDependencyScope.TEST_API);
+                v.add(NutsDependencyScope.TEST_RUNTIME);
+                break;
+            }
+            case COMPILE: {
+                v.add(NutsDependencyScope.API);
+                v.add(NutsDependencyScope.IMPLEMENTATION);
+                v.add(NutsDependencyScope.SYSTEM);
+                v.add(NutsDependencyScope.PROVIDED);
+                break;
+            }
+            case TEST: {
+                v.add(NutsDependencyScope.TEST_API);
+                v.add(NutsDependencyScope.TEST_RUNTIME);
+                v.add(NutsDependencyScope.TEST_PROVIDED);
+                break;
+            }
+            case ALL: {
+                v.add(NutsDependencyScope.API);
+                v.add(NutsDependencyScope.IMPLEMENTATION);
+                v.add(NutsDependencyScope.RUNTIME);
+                v.add(NutsDependencyScope.SYSTEM);
+                v.add(NutsDependencyScope.PROVIDED);
+                v.add(NutsDependencyScope.TEST_API);
+                v.add(NutsDependencyScope.TEST_RUNTIME);
+                v.add(NutsDependencyScope.TEST_PROVIDED);
+                v.add(NutsDependencyScope.OTHER);
+                break;
+            }
+            case API: {
+                v.add(NutsDependencyScope.API);
+            }
+            case IMPORT: {
+                v.add(NutsDependencyScope.IMPORT);
+            }
+            case IMPLEMENTATION: {
+                v.add(NutsDependencyScope.IMPLEMENTATION);
+            }
+            case PROVIDED: {
+                v.add(NutsDependencyScope.PROVIDED);
+            }
+            case RUNTIME: {
+                v.add(NutsDependencyScope.RUNTIME);
+            }
+            case SYSTEM: {
+                v.add(NutsDependencyScope.SYSTEM);
+            }
+            case TEST_COMPILE: {
+                v.add(NutsDependencyScope.TEST_API);
+            }
+            case TEST_PROVIDED: {
+                v.add(NutsDependencyScope.TEST_PROVIDED);
+            }
+            case TEST_RUNTIME: {
+                v.add(NutsDependencyScope.TEST_RUNTIME);
+            }
+            case TEST_SYSTEM: {
+                v.add(NutsDependencyScope.TEST_SYSTEM);
+            }
+            case TEST_API: {
+                v.add(NutsDependencyScope.TEST_API);
+            }
+            case TEST_IMPLEMENTATION: {
+                v.add(NutsDependencyScope.TEST_IMPLEMENTATION);
+            }
+            case TEST_OTHER: {
+                v.add(NutsDependencyScope.TEST_OTHER);
+            }
+            case OTHER: {
+                v.add(NutsDependencyScope.OTHER);
+            }
+            default: {
+                throw new IllegalArgumentException("unsupported scope pattern " + this);
+            }
+        }
+        return v;
     }
 
 }

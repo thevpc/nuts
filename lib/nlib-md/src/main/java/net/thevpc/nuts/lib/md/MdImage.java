@@ -17,6 +17,8 @@
  */
 package net.thevpc.nuts.lib.md;
 
+import net.thevpc.nuts.NutsBlankable;
+
 import java.util.Objects;
 
 /**
@@ -88,5 +90,10 @@ public class MdImage extends MdAbstractElement {
     public enum ImageFormat{
         PATH,
         ID,
+    }
+
+    @Override
+    public boolean isBlank() {
+        return NutsBlankable.isBlank(imageTitle) && NutsBlankable.isBlank(imageUrl);
     }
 }

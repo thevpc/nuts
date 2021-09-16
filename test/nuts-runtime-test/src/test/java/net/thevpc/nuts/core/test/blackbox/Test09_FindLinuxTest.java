@@ -42,7 +42,7 @@ public class Test09_FindLinuxTest {
 //                .repository("maven-local")
                 .setDefaultVersions(true)
                 .setInstallStatus(ws.filters().installStatus().byDeployed(true))
-                .getResultIds().list();
+                .getResultIds().toList();
                 
         TestUtils.println(def);
     }

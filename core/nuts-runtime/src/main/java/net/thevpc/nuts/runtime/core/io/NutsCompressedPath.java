@@ -31,6 +31,26 @@ public class NutsCompressedPath extends NutsPathBase {
         this.base = base;
     }
 
+    @Override
+    public NutsPath resolve(String other) {
+        return base.resolve(other).toCompressedForm();
+    }
+
+    @Override
+    public String getProtocol() {
+        return base.getProtocol();
+    }
+
+    @Override
+    public boolean isDirectory() {
+        return base.isDirectory();
+    }
+
+    @Override
+    public boolean isRegularFile() {
+        return base.isRegularFile();
+    }
+
     public static String compressUrl(String path) {
         if (path.startsWith("http://")
                 || path.startsWith("https://")) {

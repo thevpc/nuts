@@ -17,6 +17,8 @@
  */
 package net.thevpc.nuts.lib.md;
 
+import net.thevpc.nuts.NutsBlankable;
+
 import java.util.Arrays;
 
 /**
@@ -68,5 +70,13 @@ public class MdTable extends MdAbstractElement {
         int result = Arrays.hashCode(columns);
         result = 31 * result + Arrays.hashCode(rows);
         return result;
+    }
+
+    @Override
+    public boolean isBlank() {
+        return
+                (columns==null || Arrays.stream(columns).allMatch(x->NutsBlankable.isBlank(x)))
+                || (rows==null || Arrays.stream(rows).allMatch(x->NutsBlankable.isBlank(x)))
+                ;
     }
 }

@@ -640,28 +640,28 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      *
      * @return result as ids
      */
-    NutsResultList<NutsId> getResultIds();
+    NutsStream<NutsId> getResultIds();
 
     /**
      * execute query and return result as dependencies
      *
      * @return result as dependencies
      */
-    NutsResultList<NutsDependencies> getResultDependencies();
+    NutsStream<NutsDependencies> getResultDependencies();
 
     /**
      * execute query and return result as inlined dependencies
      *
      * @return result as dependencies
      */
-    NutsResultList<NutsDependency> getResultInlineDependencies();
+    NutsStream<NutsDependency> getResultInlineDependencies();
 
     /**
      * execute query and return result as definitions
      *
      * @return result as definitions
      */
-    NutsResultList<NutsDefinition> getResultDefinitions();
+    NutsStream<NutsDefinition> getResultDefinitions();
 
     /**
      * execute query and return result as class loader
@@ -941,35 +941,35 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      *
      * @return result as content paths
      */
-    NutsResultList<String> getResultPaths();
+    NutsStream<String> getResultPaths();
 
     /**
      * return result as content path names
      *
      * @return result as content path names
      */
-    NutsResultList<String> getResultPathNames();
+    NutsStream<String> getResultPathNames();
 
     /**
      * execute query and return install dates
      *
      * @return query result
      */
-    NutsResultList<Instant> getResultInstallDates();
+    NutsStream<Instant> getResultInstallDates();
 
     /**
      * execute query and return install users
      *
      * @return query result
      */
-    NutsResultList<String> getResultInstallUsers();
+    NutsStream<String> getResultInstallUsers();
 
     /**
      * execute query and return install folders
      *
      * @return query result
      */
-    NutsResultList<String> getResultInstallFolders();
+    NutsStream<String> getResultInstallFolders();
 
     /**
      * execute query and return store location path
@@ -977,7 +977,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * @param location location type to return
      * @return query result
      */
-    NutsResultList<String> getResultStoreLocations(NutsStoreLocation location);
+    NutsStream<String> getResultStoreLocations(NutsStoreLocation location);
 
     /**
      * execute query and return the selected columns. Supported columns are :
@@ -1012,49 +1012,49 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * @param columns columns to return
      * @return query result
      */
-    NutsResultList<String[]> getResultStrings(String[] columns);
+    NutsStream<String[]> getResultStrings(String[] columns);
 
     /**
      * return result as artifact names
      *
      * @return result as artifact names
      */
-    NutsResultList<String> getResultNames();
+    NutsStream<String> getResultNames();
 
     /**
      * return result as operating system names
      *
      * @return result as operating system names
      */
-    NutsResultList<String> getResultOs();
+    NutsStream<String> getResultOs();
 
     /**
      * return result as execution entries
      *
      * @return result as execution entries
      */
-    NutsResultList<NutsExecutionEntry> getResultExecutionEntries();
+    NutsStream<NutsExecutionEntry> getResultExecutionEntries();
 
     /**
      * return result as osDist names
      *
      * @return result as osDist names
      */
-    NutsResultList<String> getResultOsDist();
+    NutsStream<String> getResultOsDist();
 
     /**
      * return result as packaging
      *
      * @return result as packaging
      */
-    NutsResultList<String> getResultPackaging();
+    NutsStream<String> getResultPackaging();
 
     /**
      * return result as platforms
      *
      * @return result as platforms
      */
-    NutsResultList<String> getResultPlatform();
+    NutsStream<String> getResultPlatform();
 
     /**
      * return result as desktop environments
@@ -1062,14 +1062,14 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * @return result as desktop environments
      * @since 0.8.3
      */
-    NutsResultList<String> getResultDesktopEnvironment();
+    NutsStream<String> getResultDesktopEnvironment();
 
     /**
      * return result as archs
      *
      * @return result as archs
      */
-    NutsResultList<String> getResultArch();
+    NutsStream<String> getResultArch();
 
     /**
      * true when print result

@@ -1,6 +1,6 @@
 package net.thevpc.nuts;
 
-public interface NutsVal {
+public interface NutsVal extends NutsBlankable{
     static NutsVal of(Object value, NutsSession session) {
         return session.getWorkspace().util().valOf(value);
     }

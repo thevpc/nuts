@@ -47,6 +47,11 @@ public class MdUnNumberedItem extends MdAbstractElement {
         id=new MdElementType(MdElementTypeGroup.UNNUMBERED_ITEM,depth);
     }
 
+    @Override
+    public boolean isBlank() {
+        return value.isBlank();
+    }
+
     public MdElement[] getChildren() {
         return children;
     }

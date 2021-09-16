@@ -17,6 +17,8 @@
  */
 package net.thevpc.nuts.lib.md;
 
+import net.thevpc.nuts.NutsBlankable;
+
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -94,5 +96,11 @@ public class MdNumberedItem extends MdAbstractElement {
         int result = Objects.hash(number, sep, value, id);
         result = 31 * result + Arrays.hashCode(children);
         return result;
+    }
+
+    @Override
+    public boolean isBlank() {
+        return NutsBlankable.isBlank(value)
+                && (children==null || Arrays.stream(children).allMatch(x->NutsBlankable.isBlank(x)));
     }
 }

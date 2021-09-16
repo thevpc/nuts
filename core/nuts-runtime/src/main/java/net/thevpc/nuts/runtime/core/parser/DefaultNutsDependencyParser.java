@@ -59,11 +59,6 @@ public class DefaultNutsDependencyParser implements NutsDependencyParser {
     }
 
     @Override
-    public NutsDependencyScope parseScope(String scope) {
-        return NutsDependencyScopes.parseScope(scope,isLenient());
-    }
-
-    @Override
     public boolean parseOptional(String optional) {
         if(NutsUtilStrings.isBlank(optional)){
             return false;

@@ -43,7 +43,7 @@ public class NutsRepositoryMirroringHelper {
         if (!session.isTransitive()) {
             return namedNutIdIterator;
         }
-        List<Iterator<NutsId>> list = new ArrayList<>();
+        List<Iterator<? extends NutsId>> list = new ArrayList<>();
         list.add(namedNutIdIterator);
         if (repo.config().setSession(session).isSupportedMirroring()) {
             for (NutsRepository repo : repo.config().setSession(session).getMirrors()) {
@@ -139,7 +139,7 @@ public class NutsRepositoryMirroringHelper {
         if (!session.isTransitive() || !rconfig.isSupportedMirroring()) {
             return li;
         }
-        List<Iterator<NutsId>> all = new ArrayList<>();
+        List<Iterator<? extends NutsId>> all = new ArrayList<>();
         all.add(li);
         for (NutsRepository remote : rconfig.setSession(session).getMirrors()) {
             NutsRepositorySPI repoSPI = NutsWorkspaceUtils.of(session).repoSPI(remote);

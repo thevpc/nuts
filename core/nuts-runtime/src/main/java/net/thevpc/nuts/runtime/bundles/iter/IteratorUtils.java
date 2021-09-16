@@ -11,7 +11,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import net.thevpc.nuts.NutsDependency;
 
 import net.thevpc.nuts.NutsPredicates;
 import net.thevpc.nuts.runtime.bundles.io.FileDepthFirstIterator;
@@ -56,12 +55,12 @@ public class IteratorUtils {
         return t;
     }
 
-    public static <T> Iterator<T> concat(List<Iterator<T>> all) {
+    public static <T> Iterator<T> concat(List<Iterator<? extends T>> all) {
         if (all == null || all.isEmpty()) {
             return IteratorUtils.emptyIterator();
         }
         QueueIterator<T> t = new QueueIterator<>();
-        for (Iterator<T> it : all) {
+        for (Iterator<? extends T> it : all) {
             if (!isNullOrEmpty(it)) {
                 if (it instanceof QueueIterator) {
                     QueueIterator tt = (QueueIterator) it;
@@ -83,12 +82,16 @@ public class IteratorUtils {
         return t;
     }
 
-    public static <T> Iterator<T> coalesce(List<Iterator<T>> all) {
+    public static <T> Iterator<T> coalesce2(List<Iterator<T>> all) {
+        return coalesce((List) all);
+    }
+
+    public static <T> Iterator<T> coalesce(List<Iterator<? extends T>> all) {
         if (all == null || all.isEmpty()) {
             return IteratorUtils.emptyIterator();
         }
         CoalesceIterator<T> t = new CoalesceIterator<>();
-        for (Iterator<T> it : all) {
+        for (Iterator<? extends T> it : all) {
             if (!isNullOrEmpty(it)) {
                 t.add(it);
             }
@@ -103,7 +106,7 @@ public class IteratorUtils {
         return t;
     }
 
-    public static <T> Iterator<T> filter(Iterator<T> from, Predicate<T> filter) {
+    public static <T> Iterator<T> filter(Iterator<T> from, Predicate<? super T> filter) {
         if (from == null) {
             return emptyIterator();
         }
@@ -125,7 +128,8 @@ public class IteratorUtils {
         return flatMap(from, (c->c));
     }
 
-    public static <B, T> Iterator<T> flatMap(Iterator<B> from, Function<B, Iterator<T>> fun) {
+    //? super T, ? extends Iterator<? extends R>
+    public static <T, R> Iterator<R> flatMap(Iterator<T> from, Function<? super T, ? extends Iterator<? extends R>> fun) {
         if (from == null) {
             return emptyIterator();
         }
@@ -147,7 +151,7 @@ public class IteratorUtils {
         return new OnFinishIterator<>(from, r);
     }
 
-    public static <F, T> Iterator<T> convert(Iterator<F> from, Function<F, T> converter, String name) {
+    public static <F, T> Iterator<T> map(Iterator<F> from, Function<? super F, ? extends T> converter, String name) {
         if (isNullOrEmpty(from)) {
             return emptyIterator();
         }
@@ -392,13 +396,13 @@ public class IteratorUtils {
         }
     }
 
-    private static class FlatMapIterator<B, T> implements Iterator<T> {
+    private static class FlatMapIterator<TT, RR> implements Iterator<RR> {
 
-        private final Iterator<B> from;
-        private final Function<B, Iterator<T>> fun;
-        Iterator<T> n;
+        private final Iterator<TT> from;
+        private final Function<? super TT, ? extends Iterator<? extends RR>> fun;
+        Iterator<? extends RR> n;
 
-        public FlatMapIterator(Iterator<B> from, Function<B, Iterator<T>> fun) {
+        public FlatMapIterator(Iterator<TT> from, Function<? super TT, ? extends Iterator<? extends RR>> fun) {
             this.from = from;
             this.fun = fun;
             n = null;
@@ -409,7 +413,7 @@ public class IteratorUtils {
             while (true) {
                 if (n == null) {
                     if (from.hasNext()) {
-                        B p = from.next();
+                        TT p = from.next();
                         if (p == null) {
                             n = Collections.emptyIterator();
                         } else {
@@ -431,7 +435,7 @@ public class IteratorUtils {
         }
 
         @Override
-        public T next() {
+        public RR next() {
             return n.next();
         }
 

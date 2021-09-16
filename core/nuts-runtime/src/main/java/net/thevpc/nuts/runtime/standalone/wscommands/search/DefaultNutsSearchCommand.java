@@ -324,7 +324,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
 //        }
 //        return CoreCommonUtils.toList(applyPrintDecoratorIterOfNutsId(curr.iterator(), print));
 //    }
-//    private NutsCollectionResult<NutsId> applyVersionFlagFilters(Iterator<NutsId> curr, boolean print) {
+//    private NutsCollectionStream<NutsId> applyVersionFlagFilters(Iterator<NutsId> curr, boolean print) {
 //        if (!isLatest() && !isDistinct()) {
 //            return buildCollectionResult(curr, print);
 //            //nothing
@@ -369,7 +369,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
 //        }
 //        throw new NutsUnexpectedException(getSession());
 //    }
-//    private NutsCollectionResult<NutsDependency> applyVersionFlagFilters2(Iterator<NutsDependency> curr, boolean print) {
+//    private NutsCollectionStream<NutsDependency> applyVersionFlagFilters2(Iterator<NutsDependency> curr, boolean print) {
 //        if (!isLatest() && !isDistinct()) {
 //            return buildCollectionResult(curr, print);
 //            //nothing
@@ -414,7 +414,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
 //        }
 //        throw new NutsUnexpectedException(getSession());
 //    }
-//    protected NutsCollectionResult<NutsDependency> getResultDependenciesBase(boolean print, boolean sort) {
+//    protected NutsCollectionStream<NutsDependency> getResultDependenciesBase(boolean print, boolean sort) {
 //        DefaultNutsSearch build = build();
 ////        build.getOptions().session(build.getOptions().getSession().copy().trace(print));
 //        Iterator<NutsDependency> base0 = findIterator2(build);
@@ -424,7 +424,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
 //        if (!isLatest() && !isDistinct() && !sort && !isInlineDependencies()) {
 //            return buildCollectionResult(base0, print);
 //        }
-//        NutsCollectionResult<NutsDependency> a = applyVersionFlagFilters2(base0, false);
+//        NutsCollectionStream<NutsDependency> a = applyVersionFlagFilters2(base0, false);
 //        Iterator<NutsDependency> curr = a.iterator();
 //        if (isInlineDependencies()) {
 //            if (!isBasePackage()) {
@@ -517,7 +517,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
         boolean inlineDependencies=forceInlineDependencies==null?isInlineDependencies():forceInlineDependencies;
         DefaultNutsSearch search = build();
 
-        List<Iterator<NutsId>> allResults = new ArrayList<>();
+        List<Iterator<? extends NutsId>> allResults = new ArrayList<>();
         checkSession();
         NutsWorkspace ws = getSession().getWorkspace();
 
@@ -567,10 +567,10 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                     } else {
                         nutsId2.add(nutsId);
                     }
-                    List<Iterator<NutsId>> coalesce = new ArrayList<>();
+                    List<Iterator<? extends NutsId>> coalesce = new ArrayList<>();
                     NutsSession finalSession = session;
                     for (NutsId nutsId1 : nutsId2) {
-                        List<Iterator<NutsId>> idLookup = new ArrayList<>();
+                        List<Iterator<? extends NutsId>> idLookup = new ArrayList<>();
                         NutsIdFilter idFilter2 = ws.filters().all(sIdFilter,
                                 ws.id().filter().byName(nutsId1.getFullName())
                         );
@@ -631,7 +631,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
         } else {
             NutsIdFilter filter = CoreNutsUtils.simplify(CoreFilterUtils.idFilterOf(null, sIdFilter, sDescriptorFilter, ws));
 
-            List<Iterator<NutsId>> all = new ArrayList<>();
+            List<Iterator<? extends NutsId>> all = new ArrayList<>();
             for (NutsRepositoryAndFetchMode repoAndMode : wu.filterRepositoryAndFetchModes(
                     NutsRepositorySupportedAction.SEARCH, null, sRepositoryFilter,
                     fetchMode, session
@@ -699,7 +699,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
             Iterator<NutsId> curr = baseIterator;
             baseIterator = IteratorUtils.flatMap(curr,
                     x -> {
-                        return IteratorUtils.convert(
+                        return IteratorUtils.map(
                                 toFetch().setId(x).setContent(false).setDependencies(true).getResultDefinition().getDependencies().mergedDependencies().iterator(),
                                 y -> y.toId(), "dependencyToId");
                     });

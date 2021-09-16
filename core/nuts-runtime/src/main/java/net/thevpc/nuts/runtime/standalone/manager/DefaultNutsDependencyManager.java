@@ -6,6 +6,7 @@ import net.thevpc.nuts.runtime.core.format.DefaultNutsDependencyFormat;
 import net.thevpc.nuts.runtime.core.parser.DefaultNutsDependencyParser;
 import net.thevpc.nuts.runtime.standalone.util.NutsDependencyScopes;
 
+import java.util.Collections;
 import java.util.Set;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
@@ -67,6 +68,6 @@ public class DefaultNutsDependencyManager implements NutsDependencyManager {
 
     @Override
     public Set<NutsDependencyScope> toScopeSet(NutsDependencyScopePattern other) {
-        return NutsDependencyScopes.expand(other);
+        return other==null? Collections.emptySet() : other.toScopes();
     }
 }
