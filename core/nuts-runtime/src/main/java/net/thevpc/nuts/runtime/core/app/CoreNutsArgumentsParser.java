@@ -815,6 +815,14 @@ public final class CoreNutsArgumentsParser {
                         //ignore
                         break;
                     }
+                    case "--open-file":{
+                        a = cmdLine.nextBoolean();
+                        if (enabled && a.getValue().getBoolean()) {
+                            options.setExecutionType(NutsExecutionType.OPEN);
+                        }
+                        //ignore
+                        break;
+                    }
                     case "--external":
                     case "--spawn":
                     case "-x": {

@@ -39,9 +39,16 @@ public class DefaultNutsArtifactCall implements NutsArtifactCall, Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private final NutsId id;
-    private final String[] arguments;
-    private final Map<String, String> properties;
+    private NutsId id;
+    private String[] arguments;
+    private Map<String, String> properties;
+
+    /**
+     * constructor used by serializers and deserializers
+     */
+    protected DefaultNutsArtifactCall() {
+        //for serialization purposes!
+    }
 
     public DefaultNutsArtifactCall(NutsArtifactCall other) {
         this.id = other.getId();
@@ -60,7 +67,7 @@ public class DefaultNutsArtifactCall implements NutsArtifactCall, Serializable {
     public DefaultNutsArtifactCall(NutsId id, String[] options, Map<String, String> properties) {
         this.id = id;
         this.arguments = options == null ? new String[0] : options;
-        this.properties = properties == null ? new HashMap<>() : properties;
+        this.properties = properties == null ? Collections.emptyMap() : properties;
     }
 
     public NutsId getId() {
@@ -68,10 +75,18 @@ public class DefaultNutsArtifactCall implements NutsArtifactCall, Serializable {
     }
 
     public String[] getArguments() {
+        if(arguments==null){
+            //could be null upon deserialization
+            this.arguments = new String[0];
+        }
         return arguments;
     }
 
     public Map<String, String> getProperties() {
+        if(properties==null){
+            //could be null upon deserialization
+            this.properties = Collections.emptyMap();
+        }
         return Collections.unmodifiableMap(properties);
     }
 

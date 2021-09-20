@@ -463,6 +463,13 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
                 }
                 return true;
             }
+            case "--open-file":{
+                cmdLine.skip();
+                if (enabled) {
+                    setExecutionType(NutsExecutionType.OPEN);
+                }
+                return true;
+            }
             case "--user-cmd":
             case "--system":
             {

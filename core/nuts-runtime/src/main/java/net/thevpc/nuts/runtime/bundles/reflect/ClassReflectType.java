@@ -113,12 +113,12 @@ public class ClassReflectType implements ReflectType {
     public Object newInstance() {
         if (noArgConstr == null) {
             try {
-                noArgConstr = clazz.getConstructor();
+                noArgConstr = clazz.getDeclaredConstructor();
                 noArgConstr.setAccessible(true);
             } catch (NoSuchMethodException ex) {
-                throw new IllegalArgumentException("Unable to resolve default constructor fo " + clazz, ex);
+                throw new IllegalArgumentException("unable to resolve default constructor fo " + clazz, ex);
             } catch (SecurityException ex) {
-                throw new IllegalArgumentException("Not allowed to access default constructor for " + clazz, ex);
+                throw new IllegalArgumentException("not allowed to access default constructor for " + clazz, ex);
             }
         }
         try {
