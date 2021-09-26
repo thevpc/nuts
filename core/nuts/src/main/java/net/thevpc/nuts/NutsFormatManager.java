@@ -82,5 +82,5 @@ public interface NutsFormatManager {
     NutsSession getSession();
 
     NutsFormatManager setSession(NutsSession session);
-    
+
 }

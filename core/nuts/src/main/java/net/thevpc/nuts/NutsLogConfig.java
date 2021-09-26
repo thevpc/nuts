@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -11,7 +11,7 @@
  * architecture to help supporting a large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -23,7 +23,7 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts;
 
 import java.io.Serializable;
@@ -37,7 +37,7 @@ import java.util.logging.Level;
  * @since 0.5.4
  * @app.category Logging
  */
-public class NutsLogConfig implements Serializable,Cloneable{
+public class NutsLogConfig implements Serializable, Cloneable {
     private static final long serialVersionUID = 1;
 
     private Level logFileLevel = Level.OFF;
@@ -56,7 +56,7 @@ public class NutsLogConfig implements Serializable,Cloneable{
     }
 
     public NutsLogConfig(NutsLogConfig other) {
-        if(other!=null){
+        if (other != null) {
             this.logFileLevel = other.logFileLevel;
             this.logTermLevel = other.logTermLevel;
             this.logFileFilter = other.logFileFilter;
@@ -174,12 +174,17 @@ public class NutsLogConfig implements Serializable,Cloneable{
         return this;
     }
 
-    public NutsLogConfig copy(){
+    public NutsLogConfig copy() {
         try {
             return (NutsLogConfig) clone();
         } catch (CloneNotSupportedException e) {
             throw new NutsBootException(NutsMessage.plain("unsupported clone"));
         }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(logFileLevel, logTermLevel, logFileSize, logFileCount, logFileName, logFileBase);
     }
 
     @Override
@@ -193,11 +198,6 @@ public class NutsLogConfig implements Serializable,Cloneable{
                 Objects.equals(logTermLevel, that.logTermLevel) &&
                 Objects.equals(logFileName, that.logFileName) &&
                 Objects.equals(logFileBase, that.logFileBase);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(logFileLevel, logTermLevel, logFileSize, logFileCount, logFileName, logFileBase);
     }
 
     @Override

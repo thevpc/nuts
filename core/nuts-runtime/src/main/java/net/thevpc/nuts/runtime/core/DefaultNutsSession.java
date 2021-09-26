@@ -946,7 +946,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     public NutsSession addOutputFormatOptions(String... options) {
         if (options != null) {
             for (String option : options) {
-                if (!NutsUtilStrings.isBlank(option)) {
+                if (!NutsBlankable.isBlank(option)) {
                     outputFormatOptions.add(option);
                 }
             }

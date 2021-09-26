@@ -125,7 +125,7 @@ public final class PrivateNutsUtilMaven {
         sb.append(nutsId.getGroupId().replace(".", "/"));
         sb.append("/");
         sb.append(nutsId.getArtifactId());
-        if (nutsId.getVersionString()!=null && nutsId.getVersionString().length()>0) {
+        if (nutsId.getVersionString() != null && nutsId.getVersionString().length() > 0) {
             sb.append("/");
             sb.append(nutsId.getVersionString());
         }
@@ -281,23 +281,23 @@ public final class PrivateNutsUtilMaven {
                                     }
                                 }
                             }
-                            if (NutsUtilStrings.isBlank(groupId)) {
+                            if (NutsBlankable.isBlank(groupId)) {
                                 throw new NutsBootException(NutsMessage.plain("unexpected empty groupId"));
                             } else if (groupId.contains("$")) {
                                 throw new NutsBootException(NutsMessage.cstyle("unexpected maven variable in groupId=%s", groupId));
                             }
-                            if (NutsUtilStrings.isBlank(artifactId)) {
+                            if (NutsBlankable.isBlank(artifactId)) {
                                 throw new NutsBootException(NutsMessage.plain("unexpected empty artifactId"));
                             } else if (artifactId.contains("$")) {
                                 throw new NutsBootException(NutsMessage.cstyle("unexpected maven variable in artifactId=%s", artifactId));
                             }
-                            if (NutsUtilStrings.isBlank(version)) {
+                            if (NutsBlankable.isBlank(version)) {
                                 throw new NutsBootException(NutsMessage.cstyle("unexpected empty artifactId"));
                             } else if (version.contains("$")) {
                                 throw new NutsBootException(NutsMessage.cstyle("unexpected maven variable in artifactId=%s", version));
                             }
                             //this is maven dependency, using "compile"
-                            if (NutsUtilStrings.isBlank(scope) || scope.equals("compile")) {
+                            if (NutsBlankable.isBlank(scope) || scope.equals("compile")) {
                                 depsAndRepos.deps.add(
                                         new NutsBootId(
                                                 groupId, artifactId, NutsBootVersion.parse(version), NutsUtilStrings.parseBoolean(optional, false, false),
@@ -323,8 +323,8 @@ public final class PrivateNutsUtilMaven {
                                         depsAndRepos.repos.addAll(
                                                 Arrays.stream(t.split(";"))
                                                         .map(String::trim)
-                                                                .filter(x->x.length()>0)
-                                                                        .collect(Collectors.toList())
+                                                        .filter(x -> x.length() > 0)
+                                                        .collect(Collectors.toList())
                                         );
                                     }
                                     break;
@@ -440,12 +440,12 @@ public final class PrivateNutsUtilMaven {
      * @return latest runtime version
      */
     static NutsBootId resolveLatestMavenId(NutsBootId zId, Predicate<NutsBootVersion> filter, PrivateNutsLog LOG, Collection<String> bootRepositories) {
-        if(LOG.isLoggable(Level.FINEST)) {
-            if(bootRepositories.isEmpty()){
+        if (LOG.isLoggable(Level.FINEST)) {
+            if (bootRepositories.isEmpty()) {
                 LOG.log(Level.FINEST, NutsLogVerb.START, "search for {0} nuts there are no repositories to look into.", zId);
-            }else if(bootRepositories.size()==1){
-                LOG.log(Level.FINEST, NutsLogVerb.START, "search for {0} in: {1}", new Object[]{zId,bootRepositories.toArray()[0]});
-            }else{
+            } else if (bootRepositories.size() == 1) {
+                LOG.log(Level.FINEST, NutsLogVerb.START, "search for {0} in: {1}", new Object[]{zId, bootRepositories.toArray()[0]});
+            } else {
                 LOG.log(Level.FINEST, NutsLogVerb.START, "search for {0} in: ", zId);
                 for (String repoUrl : bootRepositories) {
                     LOG.log(Level.FINEST, NutsLogVerb.START, "    {0}", repoUrl);
@@ -473,9 +473,9 @@ public final class PrivateNutsUtilMaven {
                                         if (bestVersion == null || bestVersion.compareTo(p) < 0) {
                                             //we will ignore artifact classifier to simplify search
                                             Path jarPath = file.toPath().resolve(
-                                                    getFileName(new NutsBootId(zId.getGroupId(),zId.getArtifactId(),p),"jar")
+                                                    getFileName(new NutsBootId(zId.getGroupId(), zId.getArtifactId(), p), "jar")
                                             );
-                                            if(Files.isRegularFile(jarPath)) {
+                                            if (Files.isRegularFile(jarPath)) {
                                                 bestVersion = p;
                                                 bestPath = "local location : " + jarPath;
                                             }
@@ -686,10 +686,10 @@ public final class PrivateNutsUtilMaven {
 //        boolean devMode = false;
         String propValue = null;
         try {
-            switch (propName){
+            switch (propName) {
                 case "groupId":
                 case "artifactId":
-                case "versionId":{
+                case "versionId": {
                     propValue = PrivateNutsUtilIO.loadURLProperties(
                             Nuts.class.getResource("/META-INF/maven/net.thevpc.nuts/nuts/pom.properties"),
                             null, false, new PrivateNutsLog()).getProperty(propName);
@@ -699,7 +699,7 @@ public final class PrivateNutsUtilMaven {
         } catch (Exception ex) {
             //
         }
-        if (!NutsUtilStrings.isBlank(propValue)) {
+        if (!NutsBlankable.isBlank(propValue)) {
             return propValue;
         }
         URL pomXml = Nuts.class.getResource("/META-INF/maven/net.thevpc.nuts/nuts/pom.xml");
@@ -710,7 +710,7 @@ public final class PrivateNutsUtilMaven {
                 //
             }
         }
-        if (!NutsUtilStrings.isBlank(propValue)) {
+        if (!NutsBlankable.isBlank(propValue)) {
             return propValue;
         }
         //check if we are in dev mode
@@ -730,7 +730,7 @@ public final class PrivateNutsUtilMaven {
                 }
             }
         }
-        if (!NutsUtilStrings.isBlank(propValue)) {
+        if (!NutsBlankable.isBlank(propValue)) {
             return propValue;
         }
         return null;

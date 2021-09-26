@@ -34,6 +34,20 @@ public enum NutsDesktopIntegrationItem implements NutsEnum {
         }
     }
 
+    public static NutsDesktopIntegrationItem parse(String value, NutsSession session) {
+        return parse(value, null, session);
+    }
+
+    public static NutsDesktopIntegrationItem parse(String value, NutsDesktopIntegrationItem emptyValue, NutsSession session) {
+        NutsDesktopIntegrationItem v = parseLenient(value, emptyValue, null);
+        if (v == null) {
+            if (!NutsBlankable.isBlank(value)) {
+                throw new NutsParseEnumException(session, value, NutsDesktopIntegrationItem.class);
+            }
+        }
+        return v;
+    }
+
     @Override
     public String id() {
         return id;

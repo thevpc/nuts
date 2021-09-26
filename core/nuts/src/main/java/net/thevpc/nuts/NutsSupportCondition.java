@@ -23,7 +23,7 @@
  */
 package net.thevpc.nuts;
 
-public enum NutsSupportCondition implements NutsEnum{
+public enum NutsSupportCondition implements NutsEnum {
     SUPPORTED,
     PREFERRED,
     ALWAYS,
@@ -62,8 +62,23 @@ public enum NutsSupportCondition implements NutsEnum{
         }
     }
 
+    public static NutsSupportCondition parse(String value, NutsSession session) {
+        return parse(value, null, session);
+    }
+
+    public static NutsSupportCondition parse(String value, NutsSupportCondition emptyValue, NutsSession session) {
+        NutsSupportCondition v = parseLenient(value, emptyValue, null);
+        if (v == null) {
+            if (!NutsBlankable.isBlank(value)) {
+                throw new NutsParseEnumException(session, value, NutsSupportCondition.class);
+            }
+        }
+        return v;
+    }
+
     /**
      * lower cased identifier.
+     *
      * @return lower cased identifier
      */
     public String id() {

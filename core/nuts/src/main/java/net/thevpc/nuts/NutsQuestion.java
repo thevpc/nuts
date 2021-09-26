@@ -10,7 +10,7 @@
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -22,7 +22,7 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts;
 
 /**
@@ -95,9 +95,9 @@ public interface NutsQuestion<T> extends NutsCommandLineConfigurable {
 
     NutsQuestion<T> setParser(NutsQuestionParser<T> parser);
 
-    NutsQuestion<T> setValidator(NutsQuestionValidator<T> validator);
-
     NutsQuestionValidator<T> getValidator();
+
+    NutsQuestion<T> setValidator(NutsQuestionValidator<T> validator);
 
     NutsQuestion<T> run();
 
@@ -113,9 +113,9 @@ public interface NutsQuestion<T> extends NutsCommandLineConfigurable {
 
     NutsSession getSession();
 
-    NutsQuestion<T> setCancelMessage(String message,Object... params);
-
     NutsQuestion<T> setSession(NutsSession session);
+
+    NutsQuestion<T> setCancelMessage(String message, Object... params);
 
     /**
      * configure the current command with the given arguments. This is an

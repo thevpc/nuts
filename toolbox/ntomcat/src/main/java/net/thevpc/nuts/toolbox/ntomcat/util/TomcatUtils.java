@@ -1,6 +1,7 @@
 package net.thevpc.nuts.toolbox.ntomcat.util;
 
 import net.thevpc.nuts.NutsApplicationContext;
+import net.thevpc.nuts.NutsBlankable;
 import net.thevpc.nuts.NutsUtilStrings;
 
 import java.io.*;
@@ -127,7 +128,7 @@ public class TomcatUtils {
                     line = line.trim();
                     if (line.startsWith("Apache Tomcat Version")) {
                         String v = line.substring("Apache Tomcat Version".length()).trim();
-                        if (!NutsUtilStrings.isBlank(v)) {
+                        if (!NutsBlankable.isBlank(v)) {
                             return v;
                         }
                     }

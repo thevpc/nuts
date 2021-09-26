@@ -38,7 +38,11 @@ public class DefaultNutsVersionManager implements NutsVersionManager {
     @Override
     public NutsVersionParser parser() {
         checkSession();
-        return new DefaultNutsVersionParser(getSession());
+        return new DefaultNutsVersionParser(getSession())
+                .setAcceptBlank(true)
+                .setLenient(false)
+                .setAcceptBlank(true)
+                ;
     }
 
     @Override

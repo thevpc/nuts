@@ -10,7 +10,7 @@
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -22,7 +22,7 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts;
 
 /**
@@ -31,8 +31,8 @@ package net.thevpc.nuts;
  * @app.category Exceptions
  */
 public class NutsParseEnumException extends NutsException {
-    private String invalidValue;
-    private Class<? extends Enum> enumType;
+    private final String invalidValue;
+    private final Class<? extends Enum> enumType;
 
     /**
      * create new instance of NutsUnexpectedEnumException
@@ -41,7 +41,7 @@ public class NutsParseEnumException extends NutsException {
      * @param invalidValue invalid value
      */
     public NutsParseEnumException(NutsSession session, String invalidValue, Class<? extends Enum> enumType) {
-        this(session,null,invalidValue, enumType);
+        this(session, null, invalidValue, enumType);
     }
 
     /**
@@ -54,11 +54,11 @@ public class NutsParseEnumException extends NutsException {
     public NutsParseEnumException(NutsSession session, NutsMessage message, String invalidValue, Class<? extends Enum> enumType) {
         super(session,
                 message == null ? (
-                        NutsMessage.cstyle("invalid value %s of type %s",invalidValue, enumType.getName()))
+                        NutsMessage.cstyle("invalid value %s of type %s", invalidValue, enumType.getName()))
                         : message
         );
         this.enumType = enumType;
-        this.invalidValue= invalidValue;
+        this.invalidValue = invalidValue;
     }
 
     /**

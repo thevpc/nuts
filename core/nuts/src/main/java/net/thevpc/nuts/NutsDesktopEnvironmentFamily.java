@@ -47,6 +47,20 @@ public enum NutsDesktopEnvironmentFamily implements NutsEnum {
         return errorValue;
     }
 
+    public static NutsDesktopEnvironmentFamily parse(String value, NutsSession session) {
+        return parse(value, null, session);
+    }
+
+    public static NutsDesktopEnvironmentFamily parse(String value, NutsDesktopEnvironmentFamily emptyValue, NutsSession session) {
+        NutsDesktopEnvironmentFamily v = parseLenient(value, emptyValue, null);
+        if (v == null) {
+            if (!NutsBlankable.isBlank(value)) {
+                throw new NutsParseEnumException(session, value, NutsDesktopEnvironmentFamily.class);
+            }
+        }
+        return v;
+    }
+
     /**
      * lower cased identifier.
      *

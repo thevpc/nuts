@@ -118,24 +118,24 @@ public class MavenUtils {
         String osVersion = null;
         String platform = null;
         if (a != null) {
-            if (!NutsUtilStrings.isBlank(a.getOsVersion())) {
+            if (!NutsBlankable.isBlank(a.getOsVersion())) {
                 osVersion = a.getOsVersion();
             }
-            if (!NutsUtilStrings.isBlank(a.getOsArch())) {
+            if (!NutsBlankable.isBlank(a.getOsArch())) {
                 arch = NutsArchFamily.parseLenient(a.getOsArch(), null, null);
             }
-            if (!NutsUtilStrings.isBlank(a.getOsName())) {
+            if (!NutsBlankable.isBlank(a.getOsName())) {
                 NutsOsFamily os2 = NutsOsFamily.parseLenient(a.getOsName(), null, null);
                 if (os2 != null) {
                     os = os2;
                 }
-            } else if (!NutsUtilStrings.isBlank(a.getOsFamily())) {
+            } else if (!NutsBlankable.isBlank(a.getOsFamily())) {
                 NutsOsFamily os2 = NutsOsFamily.parseLenient(a.getOsFamily(), null, null);
                 if (os2 != null) {
                     os = os2;
                 }
             }
-            if (!NutsUtilStrings.isBlank(a.getJdk())) {
+            if (!NutsBlankable.isBlank(a.getJdk())) {
                 String jdk = a.getJdk();
                 platform = "java#" + jdk;
             }
@@ -309,7 +309,7 @@ public class MavenUtils {
                 }
             }
             String mavenCompilerTarget = pom.getProperties().get("maven.compiler.target");
-            if(!NutsUtilStrings.isBlank(mavenCompilerTarget)){
+            if(!NutsBlankable.isBlank(mavenCompilerTarget)){
                 mavenCompilerTarget="#"+mavenCompilerTarget.trim();
             }else{
                 mavenCompilerTarget="";
@@ -429,10 +429,10 @@ public class MavenUtils {
                 NutsId thisId = nutsDescriptor.getId();
                 if (!CoreNutsUtils.isEffectiveId(thisId)) {
                     if (parentId != null) {
-                        if (NutsUtilStrings.isBlank(thisId.getGroupId())) {
+                        if (NutsBlankable.isBlank(thisId.getGroupId())) {
                             thisId = thisId.builder().setGroupId(parentId.getGroupId()).build();
                         }
-                        if (NutsUtilStrings.isBlank(thisId.getVersion().getValue())) {
+                        if (NutsBlankable.isBlank(thisId.getVersion().getValue())) {
                             thisId = thisId.builder().setVersion(parentId.getVersion().getValue()).build();
                         }
                     }
@@ -473,7 +473,7 @@ public class MavenUtils {
                     nutsDescriptor = nutsDescriptor.builder().setId(thisId).build();
                 }
                 NutsDescriptorProperty nutsPackaging = nutsDescriptor.getProperty("nuts-packaging");
-                if (nutsPackaging!=null && !NutsUtilStrings.isBlank(nutsPackaging.getValue())) {
+                if (nutsPackaging!=null && !NutsBlankable.isBlank(nutsPackaging.getValue())) {
                     nutsDescriptor = nutsDescriptor.builder().setPackaging(nutsDescriptor.getProperty("nuts-packaging").getValue())
                             .build();
                 }
@@ -604,23 +604,23 @@ public class MavenUtils {
                                     }
                                 }
                             }
-                            if (NutsUtilStrings.isBlank(groupId)) {
+                            if (NutsBlankable.isBlank(groupId)) {
                                 throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unexpected empty groupId"));
                             } else if (groupId.contains("$")) {
                                 throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unexpected maven variable in groupId=%s", groupId));
                             }
-                            if (NutsUtilStrings.isBlank(artifactId)) {
+                            if (NutsBlankable.isBlank(artifactId)) {
                                 throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unexpected empty artifactId"));
                             } else if (artifactId.contains("$")) {
                                 throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unexpected maven variable in artifactId=%s", artifactId));
                             }
-                            if (NutsUtilStrings.isBlank(version)) {
+                            if (NutsBlankable.isBlank(version)) {
                                 throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unexpected empty artifactId"));
                             } else if (version.contains("$")) {
                                 throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unexpected maven variable in artifactId=%s", version));
                             }
                             //this is maven dependency, using "compile"
-                            if (NutsUtilStrings.isBlank(scope) || scope.equals("compile")) {
+                            if (NutsBlankable.isBlank(scope) || scope.equals("compile")) {
                                 depsAndRepos.deps.add(groupId + ":" + artifactId + "#" + version);
                             } else if (version.contains("$")) {
                                 throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unexpected maven variable in artifactId=%s", version));

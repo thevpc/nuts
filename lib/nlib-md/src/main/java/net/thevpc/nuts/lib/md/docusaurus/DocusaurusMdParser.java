@@ -631,7 +631,9 @@ public class DocusaurusMdParser implements MdParser {
                             return t;
                         }
                     }
-                    return readText(cond.copy().setConsumeNewline(NewLineAction.STOP));
+//                    return readText(cond.copy().setConsumeNewline(NewLineAction.STOP));
+                    reader.readChar();
+                    return new MdText(""+c, true);
                 }
                 case '*': {
                     if (cond.exit(c, reader)) {
@@ -651,7 +653,9 @@ public class DocusaurusMdParser implements MdParser {
                     if (b != null) {
                         return b;
                     }
-                    return readText(new Cond());
+//                    return readText(new Cond());
+                    reader.readChar();
+                    return new MdText(""+c, true);
                 }
                 case '-':
                 case '+': {
@@ -664,7 +668,9 @@ public class DocusaurusMdParser implements MdParser {
                             return t;
                         }
                     }
-                    return readText(cond.copy().setConsumeNewline(NewLineAction.STOP));
+//                    return readText(cond.copy().setConsumeNewline(NewLineAction.STOP));
+                    reader.readChar();
+                    return new MdText(""+c, true);
                 }
                 case '!': {
                     if (cond.exit(c, reader)) {
@@ -674,7 +680,8 @@ public class DocusaurusMdParser implements MdParser {
                     if (t != null) {
                         return t;
                     }
-                    return readText(cond);
+                    reader.readChar();
+                    return new MdText("!", true);
                 }
                 case '_': {
                     if (cond.exit(c, reader)) {
@@ -684,7 +691,8 @@ public class DocusaurusMdParser implements MdParser {
                     if (b != null) {
                         return b;
                     }
-                    return readText(cond.copy().setConsumeNewline(NewLineAction.STOP));
+                    reader.readChar();
+                    return new MdText("_", true);
                 }
                 case ':': {
                     if (cond.exit(c, reader)) {
@@ -694,7 +702,8 @@ public class DocusaurusMdParser implements MdParser {
                     if (b != null) {
                         return b;
                     }
-                    return readText(cond.copy().setConsumeNewline(NewLineAction.STOP));
+                    reader.readChar();
+                    return new MdText(":", true);
                 }
                 case '`': {
                     if (cond.exit(c, reader)) {
@@ -704,7 +713,8 @@ public class DocusaurusMdParser implements MdParser {
                     if (t != null) {
                         return t;
                     }
-                    return readText(cond.copy().setConsumeNewline(NewLineAction.STOP));
+                    reader.readChar();
+                    return new MdText("`", true);
                 }
                 case '<': {
                     if (cond.exit(c, reader)) {
@@ -714,7 +724,8 @@ public class DocusaurusMdParser implements MdParser {
                     if (t != null) {
                         return t;
                     }
-                    return readText(cond.copy().setConsumeNewline(NewLineAction.STOP));
+                    reader.readChar();
+                    return new MdText("<", true);
                 }
                 case '|': {
                     if (cond.exit(c, reader)) {
@@ -727,7 +738,8 @@ public class DocusaurusMdParser implements MdParser {
                         return null;
                     }
                     //reader.readChar();//skip pipe!
-                    return readText(cond.copy().setConsumeNewline(NewLineAction.STOP));
+                    reader.readChar();
+                    return new MdText("|", true);
                 }
                 default: {
                     if (cond.exit(c, reader)) {

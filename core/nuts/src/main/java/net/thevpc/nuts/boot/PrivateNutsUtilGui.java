@@ -6,12 +6,12 @@ final class PrivateNutsUtilGui {
 
     public static boolean isGraphicalDesktopEnvironment() {
         try {
-            if(!java.awt.GraphicsEnvironment.isHeadless()){
+            if (!java.awt.GraphicsEnvironment.isHeadless()) {
                 return false;
             }
             try {
                 java.awt.GraphicsDevice[] screenDevices = java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
-                if(screenDevices == null || screenDevices.length == 0){
+                if (screenDevices == null || screenDevices.length == 0) {
                     return false;
                 }
             } catch (java.awt.HeadlessException e) {

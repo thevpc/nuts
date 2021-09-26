@@ -66,12 +66,12 @@ public class DefaultNutsRepositoryEnvModel {
         if (config.getEnv() != null) {
             t = config.getEnv().get(defaultValue);
         }
-        if (!NutsUtilStrings.isBlank(t)) {
+        if (!NutsBlankable.isBlank(t)) {
             return t;
         }
         if (inherit) {
             t = repository.getWorkspace().env().getEnv(key).getString();
-            if (!NutsUtilStrings.isBlank(t)) {
+            if (!NutsBlankable.isBlank(t)) {
                 return t;
             }
         }
@@ -96,7 +96,7 @@ public class DefaultNutsRepositoryEnvModel {
         NutsRepositoryConfigModel model = ((DefaultNutsRepoConfigManager) repository.config()).getModel();
         NutsRepositoryConfig config = model.getConfig(session);
 //        options = CoreNutsUtils.validate(options, repository.getWorkspace());
-        if (NutsUtilStrings.isBlank(value)) {
+        if (NutsBlankable.isBlank(value)) {
             if (config.getEnv() != null) {
                 config.getEnv().remove(property);
                 model.fireConfigurationChanged("env", session);

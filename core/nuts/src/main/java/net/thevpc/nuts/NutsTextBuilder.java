@@ -8,7 +8,7 @@ import java.util.Collection;
  * @app.category Format
  */
 public interface NutsTextBuilder extends NutsString {
-    static NutsTextBuilder of(NutsSession session){
+    static NutsTextBuilder of(NutsSession session) {
         NutsApiUtils.checkSession(session);
         return session.getWorkspace().text().builder();
     }

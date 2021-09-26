@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages and libraries
  * for runtime execution. Nuts is the ultimate companion for maven (and other
@@ -11,7 +11,7 @@
  * large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -43,9 +43,13 @@ public interface NutsWorkspaceLocationManager {
 
     NutsStoreLocationStrategy getStoreLocationStrategy();
 
+    NutsWorkspaceLocationManager setStoreLocationStrategy(NutsStoreLocationStrategy strategy);
+
     NutsStoreLocationStrategy getRepositoryStoreLocationStrategy();
 
     NutsOsFamily getStoreLocationLayout();
+
+    NutsWorkspaceLocationManager setStoreLocationLayout(NutsOsFamily layout);
 
     /**
      * all home locations key/value map where keys are in the form "location"
@@ -76,10 +80,6 @@ public interface NutsWorkspaceLocationManager {
     String getWorkspaceLocation();
 
     NutsWorkspaceLocationManager setStoreLocation(NutsStoreLocation folderType, String location);
-
-    NutsWorkspaceLocationManager setStoreLocationStrategy(NutsStoreLocationStrategy strategy);
-
-    NutsWorkspaceLocationManager setStoreLocationLayout(NutsOsFamily layout);
 
     NutsWorkspaceLocationManager setHomeLocation(NutsOsFamily layout, NutsStoreLocation folderType, String location);
 

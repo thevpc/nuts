@@ -23,7 +23,7 @@
  */
 package net.thevpc.nuts;
 
-public enum NutsSupportMode implements NutsEnum{
+public enum NutsSupportMode implements NutsEnum {
     UNSUPPORTED,
     SUPPORTED,
     PREFERRED;
@@ -36,7 +36,6 @@ public enum NutsSupportMode implements NutsEnum{
     NutsSupportMode() {
         this.id = name().toLowerCase().replace('_', '-');
     }
-
 
 
     public static NutsSupportMode parseLenient(String any) {
@@ -63,6 +62,20 @@ public enum NutsSupportMode implements NutsEnum{
                 return emptyValue;
         }
         return errorValue;
+    }
+
+    public static NutsSupportMode parse(String value, NutsSession session) {
+        return parse(value, null, session);
+    }
+
+    public static NutsSupportMode parse(String value, NutsSupportMode emptyValue, NutsSession session) {
+        NutsSupportMode v = parseLenient(value, emptyValue, null);
+        if (v == null) {
+            if (!NutsBlankable.isBlank(value)) {
+                throw new NutsParseEnumException(session, value, NutsSupportMode.class);
+            }
+        }
+        return v;
     }
 
     public boolean acceptCondition(NutsSupportCondition request, NutsSession session) {

@@ -10,19 +10,19 @@
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
  * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts;
 
 import java.io.File;
@@ -56,7 +56,7 @@ public interface NutsIOUncompressAction {
      * @param value value
      * @return {@code this} instance
      */
-    NutsIOUncompressAction setFormatOption(String option,Object value);
+    NutsIOUncompressAction setFormatOption(String option, Object value);
 
     /**
      * return format option
@@ -150,6 +150,15 @@ public interface NutsIOUncompressAction {
     NutsIOUncompressAction setTarget(File target);
 
     /**
+     * update target
+     * @param target target
+     * @return {@code this} instance
+     */
+    NutsIOUncompressAction setTarget(String target);
+
+    NutsIOUncompressAction setTarget(NutsOutput target);
+
+    /**
      * update source to uncompress from
      * @param source source to uncompress from
      * @return {@code this} instance
@@ -176,13 +185,6 @@ public interface NutsIOUncompressAction {
      * @return {@code this} instance
      */
     NutsIOUncompressAction to(File target);
-
-    /**
-     * update target
-     * @param target target
-     * @return {@code this} instance
-     */
-    NutsIOUncompressAction setTarget(String target);
 
     /**
      * update source to uncompress from
@@ -218,8 +220,6 @@ public interface NutsIOUncompressAction {
     NutsIOUncompressAction run();
 
     NutsIOUncompressAction visit(NutsIOUncompressVisitor visitor);
-
-    NutsIOUncompressAction setTarget(NutsOutput target);
 
     /**
      * true if log progress flag is armed

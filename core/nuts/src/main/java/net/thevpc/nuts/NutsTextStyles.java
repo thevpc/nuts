@@ -1,8 +1,8 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
- *
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
+ * <p>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
  * maven (and other build managers) as it helps installing all package
@@ -10,7 +10,7 @@
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -36,7 +36,7 @@ public final class NutsTextStyles implements Iterable<NutsTextStyle> {
 
     public static NutsTextStyles NONE = new NutsTextStyles(new NutsTextStyle[0]);
 
-    private NutsTextStyle[] elements;
+    private final NutsTextStyle[] elements;
 
     private NutsTextStyles(NutsTextStyle[] elements) {
         this.elements = Arrays.copyOf(elements, elements.length);
@@ -103,7 +103,7 @@ public final class NutsTextStyles implements Iterable<NutsTextStyle> {
         if (elements.length <= 0) {
             return this;
         }
-        return new NutsTextStyles(Arrays.copyOfRange(elements, 1,elements.length));
+        return new NutsTextStyles(Arrays.copyOfRange(elements, 1, elements.length));
     }
 
     public NutsTextStyle get(int index) {

@@ -60,7 +60,7 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
     @Override
     public NutsIOUncompressAction setFormat(String format) {
         checkSession();
-        if (NutsUtilStrings.isBlank(format)) {
+        if (NutsBlankable.isBlank(format)) {
             format = "zip";
         }
         switch (format) {
@@ -257,7 +257,7 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
     public NutsIOUncompressAction run() {
         checkSession();
         String format = getFormat();
-        if (NutsUtilStrings.isBlank(format)) {
+        if (NutsBlankable.isBlank(format)) {
             format = "zip";
         }
         NutsInput _source = source;
@@ -301,7 +301,7 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
     public NutsIOUncompressAction visit(NutsIOUncompressVisitor visitor) {
         checkSession();
         String format = getFormat();
-        if (NutsUtilStrings.isBlank(format)) {
+        if (NutsBlankable.isBlank(format)) {
             format = "zip";
         }
         NutsInput _source = source;

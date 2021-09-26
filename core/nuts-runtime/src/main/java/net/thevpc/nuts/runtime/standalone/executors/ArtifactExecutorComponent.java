@@ -88,7 +88,7 @@ public class ArtifactExecutorComponent implements NutsExecutorComponent {
         app.add(nutMainFile.getPath().toString());
         app.addAll(Arrays.asList(appArgs));
 
-//        File directory = NutsUtilStrings.isBlank(dir) ? null : new File(executionContext.getWorkspace().io().expandPath(dir));
+//        File directory = NutsBlankable.isBlank(dir) ? null : new File(executionContext.getWorkspace().io().expandPath(dir));
         executionContext.getWorkspace()
                 .exec()
                 .addCommand(app)

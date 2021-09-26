@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -11,7 +11,7 @@
  * architecture to help supporting a large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -23,7 +23,7 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.NutsId;
@@ -37,11 +37,11 @@ import net.thevpc.nuts.NutsSession;
 public interface NutsPushRepositoryCommand extends NutsRepositoryCommand {
 
     /**
-     * local only (installed or not)
-     * @param offline enable offline mode
-     * @return {@code this} instance
+     * return id to push.
+     *
+     * @return id to push
      */
-    NutsPushRepositoryCommand setOffline(boolean offline);
+    NutsId getId();
 
     /**
      * set id to push.
@@ -50,13 +50,6 @@ public interface NutsPushRepositoryCommand extends NutsRepositoryCommand {
      * @return {@code this} instance
      */
     NutsPushRepositoryCommand setId(NutsId id);
-
-    /**
-     * return id to push.
-     *
-     * @return id to push
-     */
-    NutsId getId();
 
     /**
      * set session
@@ -93,15 +86,22 @@ public interface NutsPushRepositoryCommand extends NutsRepositoryCommand {
     boolean isOffline();
 
     /**
-     * repository to push from
-     * @param repository repository to push from
+     * local only (installed or not)
+     * @param offline enable offline mode
      * @return {@code this} instance
      */
-    NutsPushRepositoryCommand setRepository(String repository);
+    NutsPushRepositoryCommand setOffline(boolean offline);
 
     /**
      * repository to push from
      * @return repository to push from
      */
     String getRepository();
+
+    /**
+     * repository to push from
+     * @param repository repository to push from
+     * @return {@code this} instance
+     */
+    NutsPushRepositoryCommand setRepository(String repository);
 }

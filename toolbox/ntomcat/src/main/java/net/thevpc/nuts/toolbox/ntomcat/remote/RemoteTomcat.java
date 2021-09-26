@@ -166,7 +166,7 @@ public class RemoteTomcat {
         while (!ok) {
             try {
                 ok = true;
-                if (NutsUtilStrings.isBlank(c.getConfig().getServer())) {
+                if (NutsBlankable.isBlank(c.getConfig().getServer())) {
                     ok = false;
                     c.getConfig().setServer(session.getTerminal()
                                     .ask()
@@ -179,7 +179,7 @@ public class RemoteTomcat {
                                     .getValue()
                     );
                 }
-                if (NutsUtilStrings.isBlank(c.getConfig().getRemoteTempPath())) {
+                if (NutsBlankable.isBlank(c.getConfig().getRemoteTempPath())) {
                     ok = false;
                     c.getConfig()
                             .setRemoteTempPath(session.getTerminal().ask()
@@ -194,7 +194,7 @@ public class RemoteTomcat {
                             );
                 }
                 for (RemoteTomcatAppConfigService aa : c.getApps()) {
-                    if (NutsUtilStrings.isBlank(aa.getConfig().getPath())) {
+                    if (NutsBlankable.isBlank(aa.getConfig().getPath())) {
                         ok = false;
                         aa.getConfig().setPath(session.getTerminal().ask()
                                 .resetLine()
@@ -302,7 +302,7 @@ public class RemoteTomcat {
             } else if ((a = args.nextString("--deploy")) != null) {
                 for (String s : a.getValue().getString().split(",")) {
                     s = s.trim();
-                    if (!NutsUtilStrings.isBlank(s)) {
+                    if (!NutsBlankable.isBlank(s)) {
                         apps.add(s);
                     }
                 }

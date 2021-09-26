@@ -3,9 +3,14 @@ package net.thevpc.nuts.runtime.core.parser;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.model.DefaultNutsVersion;
 
+import java.util.regex.Pattern;
+
 public class DefaultNutsVersionParser implements NutsVersionParser {
+    private static final Pattern PATTERN=Pattern.compile("[A-Za-z0-9._*,()\\[] ]");
     private NutsSession session;
-    private boolean lenient=true;
+    private boolean lenient=false;
+    private boolean acceptBlank = true;
+    private boolean acceptIntervals = true;
 
     public DefaultNutsVersionParser(NutsSession session) {
         this.session = session;
@@ -27,11 +32,43 @@ public class DefaultNutsVersionParser implements NutsVersionParser {
     }
 
     @Override
+    public boolean isAcceptBlank() {
+        return acceptBlank;
+    }
+
+    @Override
+    public NutsVersionParser setAcceptBlank(boolean acceptBlank) {
+        this.acceptBlank = acceptBlank;
+        return this;
+    }
+
+    public boolean isAcceptIntervals() {
+        return acceptIntervals;
+    }
+
+    public NutsVersionParser setAcceptIntervals(boolean acceptIntervals) {
+        this.acceptIntervals = acceptIntervals;
+        return this;
+    }
+
+    @Override
     public NutsVersion parse(String version) {
-        NutsVersion v = DefaultNutsVersion.valueOf(version,session);
-        if(v==null && !isLenient()){
-            throw new NutsParseException(session, NutsMessage.cstyle("invalid version format : %s", version));
+        if(NutsBlankable.isBlank(version)){
+            if(isAcceptBlank()){
+                return new DefaultNutsVersion("",session);
+            }
+            throw new NutsParseException(session, NutsMessage.plain("blank version"));
         }
-        return v;
+        String version2 = NutsUtilStrings.trim(version);
+        if(PATTERN.matcher(version2).matches()) {
+            DefaultNutsVersion v = new DefaultNutsVersion(version2, session);
+            if(!isAcceptIntervals()){
+                if(v.isFilter()){
+                    throw new NutsParseException(session, NutsMessage.cstyle("invalid version format : %s", version));
+                }
+            }
+            return v;
+        }
+        throw new NutsParseException(session, NutsMessage.cstyle("invalid version format : %s", version));
     }
 }

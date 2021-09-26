@@ -67,7 +67,7 @@ public class NutsTextFormatPropertiesTheme implements NutsTextFormatTheme {
     @Override
     public String getName() {
         String themeName = props.getProperty("theme-name");
-        if (NutsUtilStrings.isBlank(themeName)) {
+        if (NutsBlankable.isBlank(themeName)) {
             themeName = UUID.randomUUID().toString();
             props.put("theme-name", themeName);
         }

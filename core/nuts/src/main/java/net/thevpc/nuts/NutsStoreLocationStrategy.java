@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -11,7 +11,7 @@
  * architecture to help supporting a large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -23,7 +23,7 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts;
 
 /**
@@ -31,7 +31,7 @@ package net.thevpc.nuts;
  * @since 0.5.4
  * @app.category Base
  */
-public enum NutsStoreLocationStrategy implements NutsEnum{
+public enum NutsStoreLocationStrategy implements NutsEnum {
     /**
      * Default location strategy. locations will be exploded to distinct roots
      */
@@ -48,14 +48,6 @@ public enum NutsStoreLocationStrategy implements NutsEnum{
 
     NutsStoreLocationStrategy() {
         this.id = name().toLowerCase().replace('_', '-');
-    }
-
-    /**
-     * lower cased identifier.
-     * @return lower cased identifier
-     */
-    public String id() {
-        return id;
     }
 
     public static NutsStoreLocationStrategy parseLenient(String value) {
@@ -80,5 +72,27 @@ public enum NutsStoreLocationStrategy implements NutsEnum{
         } catch (Exception notFound) {
             return errorValue;
         }
+    }
+
+    public static NutsStoreLocationStrategy parse(String value, NutsSession session) {
+        return parse(value, null, session);
+    }
+
+    public static NutsStoreLocationStrategy parse(String value, NutsStoreLocationStrategy emptyValue, NutsSession session) {
+        NutsStoreLocationStrategy v = parseLenient(value, emptyValue, null);
+        if (v == null) {
+            if (!NutsBlankable.isBlank(value)) {
+                throw new NutsParseEnumException(session, value, NutsStoreLocationStrategy.class);
+            }
+        }
+        return v;
+    }
+
+    /**
+     * lower cased identifier.
+     * @return lower cased identifier
+     */
+    public String id() {
+        return id;
     }
 }

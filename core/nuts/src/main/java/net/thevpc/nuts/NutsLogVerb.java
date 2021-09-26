@@ -47,10 +47,10 @@ public final class NutsLogVerb {
      */
     public static final NutsLogVerb CACHE = of("CACHE");
 
-    private String name;
+    private final String name;
 
     public NutsLogVerb(String name) {
-        if(name==null){
+        if (name == null) {
             throw new NullPointerException("null log verb");
         }
         this.name = name;
@@ -88,6 +88,6 @@ public final class NutsLogVerb {
 
     @Override
     public String toString() {
-        return name.toString();
+        return name;
     }
 }

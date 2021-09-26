@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -11,7 +11,7 @@
  * architecture to help supporting a large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -23,7 +23,7 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts;
 
 import java.net.URL;
@@ -62,7 +62,7 @@ public class NutsDefaultContent implements NutsContent {
      */
     @Override
     public Path getFilePath() {
-        return location==null?null:Paths.get(location.asString());
+        return location == null ? null : Paths.get(location.asString());
     }
 
     @Override
@@ -71,13 +71,13 @@ public class NutsDefaultContent implements NutsContent {
     }
 
     @Override
-    public NutsPath getLocation() {
-        return location;
+    public URL getURL() {
+        return location == null ? null : getPath().toURL();
     }
 
     @Override
-    public URL getURL() {
-        return location ==null?null: getPath().toURL();
+    public NutsPath getLocation() {
+        return location;
     }
 
     /**
@@ -99,8 +99,8 @@ public class NutsDefaultContent implements NutsContent {
     }
 
     @Override
-    public String toString() {
-        return "Content{" + "file=" + location + ", cached=" + cached + ", temporary=" + temporary + '}';
+    public int hashCode() {
+        return Objects.hash(location, cached, temporary);
     }
 
     @Override
@@ -114,7 +114,7 @@ public class NutsDefaultContent implements NutsContent {
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(location, cached, temporary);
+    public String toString() {
+        return "Content{" + "file=" + location + ", cached=" + cached + ", temporary=" + temporary + '}';
     }
 }

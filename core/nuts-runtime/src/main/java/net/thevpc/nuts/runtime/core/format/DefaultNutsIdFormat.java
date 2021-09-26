@@ -203,7 +203,7 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
 //        NutsTextFormatManager tf = getWorkspace().text();
         NutsTextBuilder sb = getSession().getWorkspace().text().builder();
         if (!isOmitGroupId()) {
-            if (!NutsUtilStrings.isBlank(id.getGroupId())) {
+            if (!NutsBlankable.isBlank(id.getGroupId())) {
                 boolean importedGroup2 = "net.thevpc.nuts".equals(id.getGroupId());
                 boolean importedGroup = getSession().getWorkspace().imports().getAll().contains(id.getGroupId());
                 if (!(importedGroup && isOmitImportedGroupId())) {
@@ -217,13 +217,13 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
             }
         }
         sb.append(id.getArtifactId(), NutsTextStyle.primary1());
-        if (!NutsUtilStrings.isBlank(id.getVersion().getValue())) {
+        if (!NutsBlankable.isBlank(id.getVersion().getValue())) {
             sb.append("#", NutsTextStyle.separator());
             sb.append(id.getVersion());
         }
         boolean firstQ = true;
 
-        if (!NutsUtilStrings.isBlank(classifier)) {
+        if (!NutsBlankable.isBlank(classifier)) {
             if (firstQ) {
                 sb.append("?", NutsTextStyle.separator());
                 firstQ = false;
@@ -247,7 +247,7 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
         }
 //        }
 //        if (highlightOptional) {
-        if (!NutsUtilStrings.isBlank(optional) && !"false".equalsIgnoreCase(optional)) {
+        if (!NutsBlankable.isBlank(optional) && !"false".equalsIgnoreCase(optional)) {
             if (firstQ) {
                 sb.append("?", NutsTextStyle.separator());
                 firstQ = false;
@@ -259,7 +259,7 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
         }
 //        }
         if (!isOmitRepository()) {
-            if (!NutsUtilStrings.isBlank(id.getRepository())) {
+            if (!NutsBlankable.isBlank(id.getRepository())) {
                 if (firstQ) {
                     sb.append("?", NutsTextStyle.separator());
                     firstQ = false;
@@ -271,7 +271,7 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
             }
         }
 
-        if (!NutsUtilStrings.isBlank(exclusions)) {
+        if (!NutsBlankable.isBlank(exclusions)) {
             if (firstQ) {
                 sb.append("?", NutsTextStyle.separator());
                 firstQ = false;
@@ -281,7 +281,7 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
             sb.append("exclusions", NutsTextStyle.keyword(2)).append("=", NutsTextStyle.separator());
             sb.append(exclusions, NutsTextStyle.warn());
         }
-        if (!NutsUtilStrings.isBlank(id.getPropertiesQuery())) {
+        if (!NutsBlankable.isBlank(id.getPropertiesQuery())) {
             Set<String> otherKeys = new TreeSet<>(queryMap.keySet());
             for (String k : otherKeys) {
                 String v = queryMap.get(k);

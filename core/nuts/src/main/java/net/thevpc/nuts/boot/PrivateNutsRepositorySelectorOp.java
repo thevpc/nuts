@@ -1,6 +1,9 @@
 package net.thevpc.nuts.boot;
 
+import net.thevpc.nuts.NutsBlankable;
 import net.thevpc.nuts.NutsEnum;
+import net.thevpc.nuts.NutsParseEnumException;
+import net.thevpc.nuts.NutsSession;
 
 public enum PrivateNutsRepositorySelectorOp implements NutsEnum {
     INCLUDE,
@@ -34,6 +37,20 @@ public enum PrivateNutsRepositorySelectorOp implements NutsEnum {
         } catch (Exception notFound) {
             return errorValue;
         }
+    }
+
+    public static PrivateNutsRepositorySelectorOp parse(String value, NutsSession session) {
+        return parse(value, null, session);
+    }
+
+    public static PrivateNutsRepositorySelectorOp parse(String value, PrivateNutsRepositorySelectorOp emptyValue, NutsSession session) {
+        PrivateNutsRepositorySelectorOp v = parseLenient(value, emptyValue, null);
+        if (v == null) {
+            if (!NutsBlankable.isBlank(value)) {
+                throw new NutsParseEnumException(session, value, PrivateNutsRepositorySelectorOp.class);
+            }
+        }
+        return v;
     }
 
     @Override

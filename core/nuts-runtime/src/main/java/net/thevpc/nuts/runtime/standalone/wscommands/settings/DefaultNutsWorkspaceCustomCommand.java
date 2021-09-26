@@ -103,7 +103,7 @@ public class DefaultNutsWorkspaceCustomCommand implements NutsWorkspaceCustomCom
 
     @Override
     public String getHelpText(NutsSession session) throws NutsExecutionException {
-        if (!NutsUtilStrings.isBlank(helpText)) {
+        if (!NutsBlankable.isBlank(helpText)) {
             return helpText;
         }
         if (helpCommand != null && helpCommand.length > 0) {

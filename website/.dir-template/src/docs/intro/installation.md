@@ -172,8 +172,7 @@ Yous should then see some log like the following :
 ![install-log-example](../../static/img/install-log-example.png)
 
 As you can see, installation upon first launch, will also trigger installation of other optional programs called "companion tools".
-Actually they are recommended helpful a tool called **nsh** :
-  + **nsh** stands for __Nuts Shell__ , is a bash compatible shell implementation program that will run equally on linux and windows systems.
+The main recommended helpful is **nsh**  (stands for __Nuts Shell__), is a bash compatible shell implementation application that will run equally on linux and windows systems.
 
 :::important
 

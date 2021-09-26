@@ -371,7 +371,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
 
     public boolean acceptAction(NutsId id, NutsRepositorySupportedAction supportedAction, NutsFetchMode mode, NutsSession session) {
         String groups = config().setSession(session).getGroups();
-        if (NutsUtilStrings.isBlank(groups)) {
+        if (NutsBlankable.isBlank(groups)) {
             return true;
         }
         return GlobUtils.ofExact(groups).matcher(id.getGroupId()).matches();

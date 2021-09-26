@@ -367,7 +367,7 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
     public NutsUpdateCommand addLockedId(String id) {
         checkSession();
         NutsWorkspace ws = getSession().getWorkspace();
-        if (!NutsUtilStrings.isBlank(id)) {
+        if (!NutsBlankable.isBlank(id)) {
             lockedIds.add(ws.id().parser().setLenient(false).parse(id));
         }
         return this;

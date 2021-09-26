@@ -103,7 +103,7 @@ public class UnzipCommand extends SimpleNshBuiltin {
                                     });
                 } else {
                     String dir = options.dir;
-                    if (NutsUtilStrings.isBlank(dir)) {
+                    if (NutsBlankable.isBlank(dir)) {
                         dir = context.getRootContext().getCwd();
                     }
                     dir = context.getRootContext().getAbsolutePath(dir);

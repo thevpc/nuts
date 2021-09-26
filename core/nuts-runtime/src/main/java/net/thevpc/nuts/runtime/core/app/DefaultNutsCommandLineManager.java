@@ -138,7 +138,7 @@ public class DefaultNutsCommandLineManager implements NutsCommandLineManager {
         }
 
         public static NutsArgumentCandidate createCandidate0(NutsWorkspace ws, String value, String label) {
-            return new NutsDefaultArgumentCandidate(value, NutsUtilStrings.isBlank(label) ? value : label);
+            return new NutsDefaultArgumentCandidate(value, NutsBlankable.isBlank(label) ? value : label);
         }
 
         public static NutsArgumentName createName0(NutsSession session, String type, String label) {

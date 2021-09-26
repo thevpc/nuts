@@ -10,7 +10,7 @@
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -22,7 +22,7 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts;
 
 import java.util.function.Function;
@@ -143,6 +143,7 @@ public interface NutsExecCommandFormat extends NutsFormat {
 
 
     NutsExecCommandFormat setNtf(boolean ntf);
+
     /**
      * env entry
      * @app.category Format

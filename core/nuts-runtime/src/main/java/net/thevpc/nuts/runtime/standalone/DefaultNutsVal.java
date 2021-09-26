@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone;
 
+import net.thevpc.nuts.NutsBlankable;
 import net.thevpc.nuts.NutsVal;
 import net.thevpc.nuts.NutsUtilStrings;
 
@@ -15,7 +16,10 @@ public class DefaultNutsVal implements NutsVal {
     @Override
     public boolean isBlank() {
         if(value instanceof CharSequence){
-            return NutsUtilStrings.isBlank(value.toString());
+            return NutsBlankable.isBlank(value.toString());
+        }
+        if(value instanceof char[]){
+            return NutsBlankable.isBlank(value.toString());
         }
         return value==null;
     }
@@ -151,11 +155,52 @@ public class DefaultNutsVal implements NutsVal {
         throw new NumberFormatException("not a number");
     }
 
+
+    @Override
+    public boolean isFloat() {
+        return !isBlank() && getFloat(null, null) != null;
+    }
+
+    @Override
+    public Float getFloat(Float emptyOrErrorValue) {
+        return getFloat(emptyOrErrorValue, emptyOrErrorValue);
+    }
+
+    @Override
+    public Float getFloat(Float emptyValue, Float errorValue) {
+        if (isBlank()) {
+            return emptyValue;
+        }
+        if(value instanceof Number){
+            return ((Number) value).floatValue();
+        }
+        if(value instanceof CharSequence) {
+            try {
+                return Float.parseFloat(value.toString());
+            } catch (Exception ex) {
+                return errorValue;
+            }
+        }
+        return errorValue;
+    }
+    @Override
+    public float getFloat() {
+        if (isBlank()) {
+            throw new NumberFormatException("empty value");
+        }
+        if(value instanceof Number){
+            return ((Number) value).floatValue();
+        }
+        if(value instanceof CharSequence){
+            return Float.parseFloat(value.toString());
+        }
+        throw new NumberFormatException("not a number");
+    }
+
     @Override
     public boolean isBoolean() {
         return !isBlank() && getBoolean(null, null) != null;
     }
-
 
     @Override
     public boolean getBoolean() {
@@ -193,7 +238,7 @@ public class DefaultNutsVal implements NutsVal {
 
     @Override
     public boolean isString() {
-        return value instanceof String;
+        return value instanceof CharSequence;
     }
 
     @Override

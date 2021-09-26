@@ -24,6 +24,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamResult;
 
+import net.thevpc.nuts.NutsBlankable;
 import net.thevpc.nuts.NutsLogger;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsUtilStrings;
@@ -79,12 +80,12 @@ public class MavenMetadataParser {
         Element metadata = document.createElement("metadata");
         document.appendChild(metadata);
 
-        if (!NutsUtilStrings.isBlank(m.getGroupId())) {
+        if (!NutsBlankable.isBlank(m.getGroupId())) {
             Element groupId = document.createElement("groupId");
             groupId.appendChild(document.createTextNode(m.getGroupId()));
             metadata.appendChild(groupId);
         }
-        if (!NutsUtilStrings.isBlank(m.getArtifactId())) {
+        if (!NutsBlankable.isBlank(m.getArtifactId())) {
             Element artifactId = document.createElement("artifactId");
             artifactId.appendChild(document.createTextNode(m.getArtifactId()));
             metadata.appendChild(artifactId);
@@ -93,13 +94,13 @@ public class MavenMetadataParser {
         Element versioning = document.createElement("versioning");
         metadata.appendChild(versioning);
 
-        if (!NutsUtilStrings.isBlank(m.getRelease())) {
+        if (!NutsBlankable.isBlank(m.getRelease())) {
             Element release = document.createElement("release");
             release.appendChild(document.createTextNode(m.getRelease()));
             versioning.appendChild(release);
         }
 
-        if (!NutsUtilStrings.isBlank(m.getLatest())) {
+        if (!NutsBlankable.isBlank(m.getLatest())) {
             Element latest = document.createElement("latest");
             latest.appendChild(document.createTextNode(m.getLatest()));
             versioning.appendChild(latest);
@@ -109,7 +110,7 @@ public class MavenMetadataParser {
         versioning.appendChild(versions);
         if (m.getVersions() != null) {
             for (String sversion : m.getVersions()) {
-                if (!NutsUtilStrings.isBlank(sversion)) {
+                if (!NutsBlankable.isBlank(sversion)) {
                     Element version = document.createElement("version");
                     version.appendChild(document.createTextNode(sversion));
                     versions.appendChild(version);

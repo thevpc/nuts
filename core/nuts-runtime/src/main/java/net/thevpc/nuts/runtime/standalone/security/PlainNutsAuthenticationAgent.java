@@ -17,7 +17,7 @@ public class PlainNutsAuthenticationAgent implements NutsAuthenticationAgent {
 
     @Override
     public void checkCredentials(char[] credentialsId, char[] password, Map<String, String> envProvider, NutsSession session) {
-        if (password == null || NutsUtilStrings.isBlank(new String(password))) {
+        if (password == null || NutsBlankable.isBlank(new String(password))) {
             throw new NutsSecurityException(session, NutsMessage.plain("missing old password"));
         }
         char[] iid = extractId(credentialsId, session);
@@ -45,7 +45,7 @@ public class PlainNutsAuthenticationAgent implements NutsAuthenticationAgent {
             char[] credentialId,
             Map<String, String> envProvider,
             NutsSession session) {
-        if (credentials == null || NutsUtilStrings.isBlank(new String(credentials))) {
+        if (credentials == null || NutsBlankable.isBlank(new String(credentials))) {
             return null;
         } else {
             char[] val = credentials;
@@ -64,7 +64,7 @@ public class PlainNutsAuthenticationAgent implements NutsAuthenticationAgent {
     }
 
     private char[] extractId(char[] a, NutsSession session) {
-        if (!(a == null || NutsUtilStrings.isBlank(new String(a)))) {
+        if (!(a == null || NutsBlankable.isBlank(new String(a)))) {
             char[] idc = (getId() + ":").toCharArray();
             if (a.length > idc.length + 1) {
                 boolean ok = true;

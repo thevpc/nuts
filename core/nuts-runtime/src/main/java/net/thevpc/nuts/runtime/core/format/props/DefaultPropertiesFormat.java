@@ -76,7 +76,7 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
                 if (omitNull) {
                     //do nothing;
                 } else {
-                    String k = (NutsUtilStrings.isBlank(prefix)) ? "value" : prefix;
+                    String k = (NutsBlankable.isBlank(prefix)) ? "value" : prefix;
                     map.put(k, stringValue(e.asPrimitive().getValue()));
                 }
                 break;
@@ -86,14 +86,14 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
             case INTEGER:
             case FLOAT:
             case STRING: {
-                String k = (NutsUtilStrings.isBlank(prefix)) ? "value" : prefix;
+                String k = (NutsBlankable.isBlank(prefix)) ? "value" : prefix;
                 map.put(k, stringValue(e.asPrimitive().getValue()));
                 break;
             }
             case ARRAY: {
                 int index = 1;
                 for (NutsElement datum : e.asArray().children()) {
-                    String k = (NutsUtilStrings.isBlank(prefix)) ? String.valueOf(index) : (prefix + "." + String.valueOf(index));
+                    String k = (NutsBlankable.isBlank(prefix)) ? String.valueOf(index) : (prefix + "." + String.valueOf(index));
                     fillMap(datum, map, k);
                     index++;
                 }
@@ -110,7 +110,7 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
                         );
                     }
                     String ks=k.asPrimitive().getString();
-                    String k2 = (NutsUtilStrings.isBlank(prefix)) ? ks : (prefix + "." + ks);
+                    String k2 = (NutsBlankable.isBlank(prefix)) ? ks : (prefix + "." + ks);
                     fillMap(datum.getValue(), map, k2);
                 }
                 break;

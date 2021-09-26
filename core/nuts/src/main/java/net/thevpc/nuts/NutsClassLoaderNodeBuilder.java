@@ -1,8 +1,8 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
- *
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
+ * <p>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
  * maven (and other build managers) as it helps installing all package
@@ -10,7 +10,7 @@
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -43,8 +43,8 @@ public class NutsClassLoaderNodeBuilder {
     public NutsClassLoaderNodeBuilder setAll(NutsClassLoaderNode o) {
         if (o != null) {
             id = o.getId();
-            enabled=o.isEnabled();
-            url=o.getURL();
+            enabled = o.isEnabled();
+            url = o.getURL();
             dependencies.clear();
             if (o.getDependencies() != null) {
                 for (NutsClassLoaderNode dependency : o.getDependencies()) {
@@ -58,8 +58,8 @@ public class NutsClassLoaderNodeBuilder {
     public NutsClassLoaderNodeBuilder setAll(NutsClassLoaderNodeBuilder o) {
         if (o != null) {
             id = o.getId();
-            enabled=o.isEnabled();
-            url=o.getURL();
+            enabled = o.isEnabled();
+            url = o.getURL();
             dependencies.clear();
             if (o.getDependencies() != null) {
                 for (NutsClassLoaderNode dependency : o.getDependencies()) {
@@ -96,13 +96,13 @@ public class NutsClassLoaderNodeBuilder {
         return dependencies;
     }
 
-    public NutsClassLoaderNodeBuilder addDependency(NutsClassLoaderNode other) {
-        this.dependencies.add(other);
+    public NutsClassLoaderNodeBuilder setDependencies(List<NutsClassLoaderNode> dependencies) {
+        this.dependencies = dependencies;
         return this;
     }
 
-    public NutsClassLoaderNodeBuilder setDependencies(List<NutsClassLoaderNode> dependencies) {
-        this.dependencies = dependencies;
+    public NutsClassLoaderNodeBuilder addDependency(NutsClassLoaderNode other) {
+        this.dependencies.add(other);
         return this;
     }
 

@@ -76,7 +76,7 @@ public class NutsSettingsUserSubCommand extends AbstractNutsSettingsSubCommand {
                     }
                     for (NutsUser u : security) {
                         out.printf("User: %s%n", u.getUser());
-                        if (!NutsUtilStrings.isBlank(u.getRemoteIdentity())) {
+                        if (!NutsBlankable.isBlank(u.getRemoteIdentity())) {
                             out.printf("   Mapper to  : %s%n", u.getRemoteIdentity());
                         }
                         out.printf("   Password   : %s%n", (u.hasCredentials() ? "Set" : "None"));

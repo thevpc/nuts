@@ -10,19 +10,19 @@
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
  * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts;
 
 import java.util.Map;
@@ -57,6 +57,9 @@ public interface NutsInfoFormat extends NutsFormat {
     @Override
     NutsInfoFormat configure(boolean skipUnsupported, String... args);
 
+    @Override
+    NutsInfoFormat setNtf(boolean ntf);
+
     /**
      * include a custom property
      * @param key custom property key
@@ -73,6 +76,12 @@ public interface NutsInfoFormat extends NutsFormat {
     NutsInfoFormat addProperties(Map<String, String> customProperties);
 
     /**
+     * return true if displaying repositories is enabled
+     * @return true if displaying repositories is enabled
+     */
+    boolean isShowRepositories();
+
+    /**
      * enable or disable display of all repositories information
      * @param enable if true enable
      * @return {@code this} instance
@@ -80,10 +89,10 @@ public interface NutsInfoFormat extends NutsFormat {
     NutsInfoFormat setShowRepositories(boolean enable);
 
     /**
-     * return true if displaying repositories is enabled
-     * @return true if displaying repositories is enabled
+     * return true if fancy mode armed
+     * @return true if fancy mode armed
      */
-    boolean isShowRepositories();
+    boolean isFancy();
 
     /**
      * enable fancy (custom, pretty) display mode
@@ -91,13 +100,4 @@ public interface NutsInfoFormat extends NutsFormat {
      * @return {@code this} instance
      */
     NutsInfoFormat setFancy(boolean fancy);
-
-    /**
-     * return true if fancy mode armed
-     * @return true if fancy mode armed
-     */
-    boolean isFancy();
-
-    @Override
-    NutsInfoFormat setNtf(boolean ntf);
 }

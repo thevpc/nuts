@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -11,7 +11,7 @@
  * architecture to help supporting a large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -33,19 +33,51 @@ import net.thevpc.nuts.boot.NutsApiUtils;
  */
 public interface NutsIdParser {
 
-    public static NutsIdParser of(NutsSession session){
+    static NutsIdParser of(NutsSession session) {
         NutsApiUtils.checkSession(session);
         return session.getWorkspace().id().parser();
     }
 
-    NutsIdParser setLenient(boolean lenient);
+    /**
+     * return blank mode.
+     * when true, null is returned whenever a blank id is encountered.
+     * when false, an error is thrown in that case.
+     * @return true if the parse is lenient
+     */
+    boolean isAcceptBlank();
 
+    /**
+     * set blank mode.
+     * when true, null is returned whenever a blank id is encountered.
+     * when false, an error is thrown in that case.
+     * @return true if the parse is lenient
+     */
+    NutsIdParser setAcceptBlank(boolean acceptBlank);
+
+    /**
+     * return lenient mode.
+     * when true, null is returned whenever a non blank id cannot be parsed as a valid nuts id.
+     * when false, an error is thrown in that case.
+     * @return true if the parse is lenient
+     */
     boolean isLenient();
+
+    /**
+     * set lenient mode.
+     * when true, null is returned whenever a non blank id cannot be parsed as a valid nuts id
+     * when false, an error is thrown in that case.
+     * @param lenient true if the parse is lenient
+     * @return {@code this instance}
+     */
+    NutsIdParser setLenient(boolean lenient);
 
     /**
      * parse id or null if not valid.
      * id is parsed in the form
      * group:name#version?key=&lt;value&gt;{@code &}key=&lt;value&gt; ...
+     *
+     * an error is thrown if not lenient or do not accept blank at the given condition.
+     *
      * @param id to parse
      * @return parsed id
      * @throws NutsParseException if the string cannot be evaluated

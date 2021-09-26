@@ -64,7 +64,7 @@ public class NutsIdFilterNone extends AbstractIdFilter implements NutsIdFilter, 
             if (id instanceof NutsScriptAwareIdFilter) {
                 NutsScriptAwareIdFilter b = (NutsScriptAwareIdFilter) id;
                 String expr = b.toJsNutsIdFilterExpr();
-                if (NutsUtilStrings.isBlank(expr)) {
+                if (NutsBlankable.isBlank(expr)) {
                     return null;
                 }
                 sb.append("(").append(expr).append("')");

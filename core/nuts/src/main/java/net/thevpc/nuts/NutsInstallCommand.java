@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -11,7 +11,7 @@
  * architecture to help supporting a large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -23,7 +23,7 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts;
 
 import java.util.Collection;
@@ -97,6 +97,18 @@ public interface NutsInstallCommand extends NutsWorkspaceCommand {
     NutsInstallCommand setId(String id);
 
     /**
+     * clear ids to install
+     * @return {@code this} instance
+     */
+    NutsInstallCommand clearIds();
+
+    /**
+     * return all ids to install
+     * @return all ids to install
+     */
+    NutsId[] getIds();
+
+    /**
      * add artifact ids to install
      * @param ids ids to install
      * @return {@code this} instance
@@ -109,18 +121,6 @@ public interface NutsInstallCommand extends NutsWorkspaceCommand {
      * @return {@code this} instance
      */
     NutsInstallCommand setIds(String... ids);
-
-    /**
-     * clear ids to install
-     * @return {@code this} instance
-     */
-    NutsInstallCommand clearIds();
-
-    /**
-     * return all ids to install
-     * @return all ids to install
-     */
-    NutsId[] getIds();
 
     /**
      * add argument to pass to the install command
@@ -172,6 +172,12 @@ public interface NutsInstallCommand extends NutsWorkspaceCommand {
     NutsInstallCommand defaultVersion(boolean defaultVersion);
 
     /**
+     * return true if the installer will update the default version
+     * @return true if the installer will update the default version
+     */
+    boolean isDefaultVersion();
+
+    /**
      * set default version flag. when true, the installed version will be defined as default
      * @param defaultVersion when true, the installed version will be defined as
      * default
@@ -179,13 +185,7 @@ public interface NutsInstallCommand extends NutsWorkspaceCommand {
      */
     NutsInstallCommand setDefaultVersion(boolean defaultVersion);
 
-    /**
-     * return true if the installer will update the default version
-     * @return true if the installer will update the default version
-     */
-    boolean isDefaultVersion();
-
-    Map<NutsId,NutsInstallStrategy> getIdMap();
+    Map<NutsId, NutsInstallStrategy> getIdMap();
 
     /**
      * return true companions should be installed as well
@@ -206,14 +206,14 @@ public interface NutsInstallCommand extends NutsWorkspaceCommand {
      */
     NutsInstallCommand companions(boolean value);
 
+    NutsInstallStrategy getCompanions();
+
     /**
      * if true update companions
      * @param value flag
      * @return return {@code this} instance
      */
     NutsInstallCommand setCompanions(boolean value);
-
-    NutsInstallStrategy getCompanions();
 
     /**
      * return true installed artifacts should be re-installed as well
@@ -230,9 +230,9 @@ public interface NutsInstallCommand extends NutsWorkspaceCommand {
      */
     NutsInstallCommand setInstalled(boolean value);
 
-    NutsInstallCommand setStrategy(NutsInstallStrategy value);
-
     NutsInstallStrategy getStrategy();
+
+    NutsInstallCommand setStrategy(NutsInstallStrategy value);
 
     /**
      * execute installation and return result.

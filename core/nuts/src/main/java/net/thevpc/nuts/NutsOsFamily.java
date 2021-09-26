@@ -55,11 +55,11 @@ public enum NutsOsFamily implements NutsEnum {
     UNKNOWN;
 
 
+    private static final NutsOsFamily _curr = parseLenient(System.getProperty("os.name"), UNKNOWN, UNKNOWN);
     /**
      * lower-cased identifier for the enum entry
      */
     private final String id;
-    private static final NutsOsFamily _curr=parseLenient(System.getProperty("os.name"), UNKNOWN, UNKNOWN);
 
     NutsOsFamily() {
         this.id = name().toLowerCase().replace('_', '-');
@@ -133,6 +133,20 @@ public enum NutsOsFamily implements NutsEnum {
 
     public static NutsOsFamily getCurrent() {
         return _curr;
+    }
+
+    public static NutsOsFamily parse(String value, NutsSession session) {
+        return parse(value, null, session);
+    }
+
+    public static NutsOsFamily parse(String value, NutsOsFamily emptyValue, NutsSession session) {
+        NutsOsFamily v = parseLenient(value, emptyValue, null);
+        if (v == null) {
+            if (!NutsBlankable.isBlank(value)) {
+                throw new NutsParseEnumException(session, value, NutsOsFamily.class);
+            }
+        }
+        return v;
     }
 
     /**

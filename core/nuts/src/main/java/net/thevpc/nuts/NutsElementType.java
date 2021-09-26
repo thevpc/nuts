@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages and libraries
  * for runtime execution. Nuts is the ultimate companion for maven (and other
@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -29,7 +29,7 @@ package net.thevpc.nuts;
  * @author thevpc
  * @app.category Elements
  */
-public enum NutsElementType implements NutsEnum{
+public enum NutsElementType implements NutsEnum {
     /**
      * null element
      */
@@ -109,28 +109,6 @@ public enum NutsElementType implements NutsEnum{
         this.nbr = nbr;
     }
 
-    public boolean isNumber() {
-        return nbr;
-    }
-
-    /**
-     * lower cased identifier.
-     *
-     * @return lower cased identifier
-     */
-    public String id() {
-        return id;
-    }
-
-    /**
-     * true if private type
-     *
-     * @return true if private type
-     */
-    public boolean isPrimitive() {
-        return primitive;
-    }
-
     public static NutsElementType parseLenient(String value) {
         return parseLenient(value, null);
     }
@@ -153,5 +131,41 @@ public enum NutsElementType implements NutsEnum{
         } catch (Exception notFound) {
             return errorValue;
         }
+    }
+
+    public static NutsElementType parse(String value, NutsSession session) {
+        return parse(value, null, session);
+    }
+
+    public static NutsElementType parse(String value, NutsElementType emptyValue, NutsSession session) {
+        NutsElementType v = parseLenient(value, emptyValue, null);
+        if (v == null) {
+            if (!NutsBlankable.isBlank(value)) {
+                throw new NutsParseEnumException(session, value, NutsElementType.class);
+            }
+        }
+        return v;
+    }
+
+    public boolean isNumber() {
+        return nbr;
+    }
+
+    /**
+     * lower cased identifier.
+     *
+     * @return lower cased identifier
+     */
+    public String id() {
+        return id;
+    }
+
+    /**
+     * true if private type
+     *
+     * @return true if private type
+     */
+    public boolean isPrimitive() {
+        return primitive;
     }
 }

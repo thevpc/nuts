@@ -37,12 +37,14 @@ import java.util.function.Supplier;
 
 /**
  * Mutable Workspace options
+ *
  * @app.category Config
  */
 public interface NutsWorkspaceOptionsBuilder extends Serializable {
 
     /**
      * create NutsWorkspaceOptionsBuilder instance for boot time.
+     *
      * @return new NutsWorkspaceOptionsBuilder instance
      */
     static NutsWorkspaceOptionsBuilder of() {
@@ -51,6 +53,7 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
 
     /**
      * create NutsWorkspaceOptionsBuilder instance for the given session (shall not be null).
+     *
      * @return new NutsWorkspaceOptionsBuilder instance
      */
     static NutsWorkspaceOptionsBuilder of(NutsSession session) {
@@ -77,6 +80,7 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      * <br>
      * <strong>option-type :</strong> exported (inherited in child
      * workspaces)
+     *
      * @return nuts api version to boot.
      */
     String getApiVersion();
@@ -87,6 +91,7 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      * application arguments.
      * <br>
      * <strong>option-type :</strong> runtime (available only for the current workspace instance)
+     *
      * @return application arguments.
      */
     String[] getApplicationArguments();
@@ -98,6 +103,7 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      * <br>
      * <strong>option-type :</strong> create (used when creating new workspace. will not be
      * exported nor promoted to runtime)
+     *
      * @return workspace archetype to consider when creating a new workspace.
      */
     String getArchetype();
@@ -108,6 +114,7 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      * class loader supplier.
      * <br>
      * <strong>option-type :</strong> runtime (available only for the current workspace instance)
+     *
      * @return class loader supplier.
      */
     Supplier<ClassLoader> getClassLoaderSupplier();
@@ -118,6 +125,7 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      * confirm mode.
      * <br>
      * <strong>option-type :</strong> exported (inherited in child workspaces)
+     *
      * @return confirm mode.
      */
     NutsConfirmationMode getConfirm();
@@ -136,6 +144,7 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      * if true no real execution, with dry exec (execute without side effect).
      * <br>
      * <strong>option-type :</strong> runtime (available only for the current workspace instance)
+     *
      * @return if true no real execution, with dry exec (execute without side effect).
      */
     boolean isDry();
@@ -148,6 +157,7 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      * workspace creation evaluated time.
      * <br>
      * <strong>option-type :</strong> runtime (available only for the current workspace instance)
+     *
      * @return workspace creation evaluated time.
      */
     long getCreationTime();
@@ -158,6 +168,7 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      * extensions to be excluded when opening the workspace.
      * <br>
      * <strong>option-type :</strong> exported (inherited in child workspaces)
+     *
      * @return extensions to be excluded when opening the workspace.
      */
     String[] getExcludedExtensions();
@@ -168,6 +179,7 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      * execution type.
      * <br>
      * <strong>option-type :</strong> runtime (available only for the current workspace instance)
+     *
      * @return execution type.
      */
     NutsExecutionType getExecutionType();
@@ -178,6 +190,7 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
 
     /**
      * set runAs mode
+     *
      * @param runAs runAs
      * @return {@code this} instance
      * @since 0.8.1
@@ -188,6 +201,7 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      * extra executor options.
      * <br>
      * <strong>option-type :</strong> runtime (available only for the current workspace instance)
+     *
      * @return extra executor options.
      */
     String[] getExecutorOptions();
@@ -221,6 +235,7 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      * <br>
      * <strong>option-type :</strong> create (used when creating new workspace. will not be
      * exported nor promoted to runtime).
+     *
      * @param homeLocations home locations map
      * @return {@code this} instance
      */
@@ -230,6 +245,7 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      * java command (or java home) used to run workspace.
      * <br>
      * <strong>option-type :</strong> exported (inherited in child workspaces)
+     *
      * @return java command (or java home) used to run workspace.
      */
     String getJavaCommand();
@@ -240,6 +256,7 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      * java options used to run workspace.
      * <br>
      * <strong>option-type :</strong> exported (inherited in child workspaces)
+     *
      * @return java options used to run workspace.
      */
     String getJavaOptions();
@@ -250,6 +267,7 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      * workspace log configuration.
      * <br>
      * <strong>option-type :</strong> exported (inherited in child workspaces)
+     *
      * @return workspace log configuration.
      */
     NutsLogConfig getLogConfig();
@@ -261,6 +279,7 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      * <br>
      * <strong>option-type :</strong> exported (inherited in child
      * workspaces)
+     *
      * @return user friendly workspace name.
      */
     String getName();
@@ -271,6 +290,7 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      * mode used to open workspace.
      * <br>
      * <strong>option-type :</strong> runtime (available only for the current workspace instance)
+     *
      * @return mode used to open workspace.
      */
     NutsOpenMode getOpenMode();
@@ -281,6 +301,7 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      * default output format type.
      * <br>
      * <strong>option-type :</strong> exported (inherited in child workspaces)
+     *
      * @return default output format type.
      */
     NutsContentType getOutputFormat();
@@ -291,6 +312,7 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      * default output formation options.
      * <br>
      * <strong>option-type :</strong> exported (inherited in child workspaces)
+     *
      * @return default output formation options.
      */
     String[] getOutputFormatOptions();
@@ -301,6 +323,7 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      * credential needed to log into workspace.
      * <br>
      * <strong>option-type :</strong> exported (inherited in child workspaces)
+     *
      * @return credential needed to log into workspace.
      */
     char[] getCredentials();
@@ -313,6 +336,7 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      * <br>
      * <strong>option-type :</strong> create (used when creating new workspace. will not be
      * exported nor promoted to runtime)
+     *
      * @return repository store location strategy to consider when creating new repositories
      * for a new workspace.
      */
@@ -325,6 +349,7 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      *
      * <br>
      * <strong>option-type :</strong> exported (inherited in child workspaces)
+     *
      * @return nuts runtime id (or version) to boot.
      */
     String getRuntimeId();
@@ -347,6 +372,7 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      * <br>
      * <strong>option-type :</strong> create (used when creating new workspace. will not be
      * exported nor promoted to runtime)
+     *
      * @return store location layout to consider when creating a new workspace.
      */
     NutsOsFamily getStoreLocationLayout();
@@ -358,6 +384,7 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      * <br>
      * <strong>option-type :</strong> create (used when creating new workspace. will not be
      * exported nor promoted to runtime)
+     *
      * @return store location strategy for creating a new workspace.
      */
     NutsStoreLocationStrategy getStoreLocationStrategy();
@@ -369,6 +396,7 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      * <br>
      * <strong>option-type :</strong> create (used when creating new workspace. will not be
      * exported nor promoted to runtime)
+     *
      * @return store locations map to consider when creating a new workspace.
      */
     Map<String, String> getStoreLocations();
@@ -378,6 +406,7 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      * <br>
      * <strong>option-type :</strong> create (used when creating new workspace. will not be
      * exported nor promoted to runtime)
+     *
      * @param storeLocations store locations map
      * @return {@code this} instance
      */
@@ -387,6 +416,7 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      * terminal mode (inherited, formatted, filtered) to use.
      * <br>
      * <strong>option-type :</strong> exported (inherited in child workspaces)
+     *
      * @return terminal mode (inherited, formatted, filtered) to use.
      */
     NutsTerminalMode getTerminalMode();
@@ -397,6 +427,7 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      * repositories to register temporarily when running the workspace.
      * <br>
      * <strong>option-type :</strong> exported (inherited in child workspaces)
+     *
      * @return repositories to register temporarily when running the workspace.
      */
     String[] getRepositories();
@@ -407,6 +438,7 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      * username to log into when running workspace.
      * <br>
      * <strong>option-type :</strong> exported (inherited in child workspaces)
+     *
      * @return username to log into when running workspace.
      */
     String getUserName();
@@ -416,6 +448,7 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      * <br>
      * <strong>option-type :</strong> exported (inherited in child
      * workspaces)
+     *
      * @return workspace folder location path.
      */
     String getWorkspace();
@@ -427,6 +460,7 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      * Particularly, exception stack traces are displayed instead of simpler messages.
      * <br>
      * <strong>option-type :</strong> runtime (available only for the current workspace instance)
+     *
      * @return if true, extra debug information is written to standard output.
      */
     boolean isDebug();
@@ -436,21 +470,39 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
     NutsWorkspaceOptionsBuilder setDebug(Boolean debug);
 
     /**
-     * if true consider global/system repository
+     * if true consider global/system repository shared between all users
      * <br>
      * <strong>option-type :</strong> exported (inherited in child workspaces)
+     *
      * @return if true consider global/system repository
      */
     boolean isGlobal();
 
+    /**
+     * if true consider global/system repository shared between all users
+     * <br>
+     * <strong>option-type :</strong> exported (inherited in child workspaces)
+     *
+     * @return true for global/system repository, null for 'not set' or false for 'set to non global'
+     */
     Boolean getGlobal();
 
+    /**
+     * update 'global' option.
+     * if true consider global/system repository shared between all users
+     * <br>
+     * <strong>option-type :</strong> exported (inherited in child workspaces)
+     *
+     * @param global if true consider global/system repository shared between all users
+     * @return if true consider global/system repository
+     */
     NutsWorkspaceOptionsBuilder setGlobal(Boolean global);
 
     /**
      * if true consider GUI/Swing mode
      * <br>
      * <strong>option-type :</strong> exported (inherited in child workspaces)
+     *
      * @return if true consider GUI/Swing mode
      */
     boolean isGui();
@@ -463,6 +515,7 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      * if true, workspace were invoked from parent process and hence inherits its options.
      * <br>
      * <strong>option-type :</strong> runtime (available only for the current workspace instance)
+     *
      * @return if true, workspace were invoked from parent process and hence inherits its options.
      */
     boolean isInherited();
@@ -476,6 +529,7 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      * However cache stills modifiable so that it is possible to load external libraries.
      * <br>
      * <strong>option-type :</strong> exported (inherited in child workspaces)
+     *
      * @return if true, workspace configuration are non modifiable.
      */
     boolean isReadOnly();
@@ -497,6 +551,7 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      * if true, boot, cache and temp folder are deleted.
      * <br>
      * <strong>option-type :</strong> runtime (available only for the current workspace instance)
+     *
      * @return if true, boot, cache and temp folder are deleted.
      */
     boolean isRecover();
@@ -509,6 +564,7 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      * if true, workspace will be reset (all configuration and runtime files deleted).
      * <br>
      * <strong>option-type :</strong> runtime (available only for the current workspace instance)
+     *
      * @return if true, workspace will be reset (all configuration and runtime files deleted).
      */
     boolean isReset();
@@ -519,6 +575,7 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      * set the 'reset' flag to delete the workspace folders and files.
      * This is equivalent to the following nuts command line options :
      * "-Z" and "--reset" options
+     *
      * @param reset reset flag, when null inherit default ('false')
      * @return {@code this} instance
      */
@@ -540,6 +597,7 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      * if true, do not install nuts companion tools upon workspace creation.
      * <br>
      * <strong>option-type :</strong> exported (inherited in child workspaces)
+     *
      * @return if true, do not install nuts companion tools upon workspace creation.
      */
     boolean isSkipCompanions();
@@ -554,6 +612,7 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      * defaults to false.
      * <br>
      * <strong>option-type :</strong>  exported (inherited in child workspaces)
+     *
      * @return if true, do not run welcome when no application arguments were resolved
      * @since 0.5.5
      */
@@ -571,6 +630,7 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      * defaults to null.
      * <br>
      * <strong>option-type :</strong>  exported (inherited in child workspaces)
+     *
      * @return out line prefix
      * @since 0.8.0
      */
@@ -591,6 +651,7 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      * defaults to null.
      * <br>
      * <strong>option-type :</strong>  exported (inherited in child workspaces)
+     *
      * @return err line prefix
      * @since 0.8.0
      */
@@ -612,6 +673,7 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      * defaults to false.
      * <br>
      * <strong>option-type :</strong> runtime (available only for the current workspace instance)
+     *
      * @return if true, do not run welcome when no application arguments were resolved
      * @since 0.6.0
      */
@@ -626,6 +688,7 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      * defaults to false.
      * <br>
      * <strong>option-type :</strong> runtime (available only for the current workspace instance)
+     *
      * @param skipBoot skipBoot
      * @return if true, do not run welcome when no application arguments were resolved
      * @since 0.6.0
@@ -636,6 +699,7 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      * when true, extra trace user-friendly information is written to standard output.
      * <br>
      * <strong>option-type :</strong> exported (inherited in child workspaces)
+     *
      * @return when true, extra trace user-friendly information is written to standard output.
      */
     boolean isTrace();
@@ -650,6 +714,7 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      * 'no' value means that progress is disabled.
      * <br>
      * <strong>option-type :</strong> exported (inherited in child workspaces)
+     *
      * @return when true, extra trace user-friendly information is written to standard output.
      */
     String getProgressOptions();
@@ -660,6 +725,7 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      * when true, use cache
      * <br>
      * <strong>option-type :</strong> exported (inherited in child workspaces)
+     *
      * @return use cache when true
      */
     boolean isCached();
@@ -672,6 +738,7 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      * when true, use index
      * <br>
      * <strong>option-type :</strong> exported (inherited in child workspaces)
+     *
      * @return use index when true
      */
     boolean isIndexed();
@@ -684,6 +751,7 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      * when true, use transitive repositories
      * <br>
      * <strong>option-type :</strong> exported (inherited in child workspaces)
+     *
      * @return use transitive repositories when true
      */
     boolean isTransitive();
@@ -696,6 +764,7 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      * when true, application is running in bot (robot) mode. No interaction or trace is allowed.
      * <br>
      * <strong>option-type :</strong> exported (inherited in child workspaces)
+     *
      * @return application is running in bot (robot) mode. No interaction or trace is allowed.
      */
     boolean isBot();
@@ -708,6 +777,7 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      * default fetch strategy
      * <br>
      * <strong>option-type :</strong> exported (inherited in child workspaces)
+     *
      * @return use transitive repositories when true
      */
     NutsFetchStrategy getFetchStrategy();
@@ -720,6 +790,7 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      *
      * <br>
      * <strong>option-type :</strong> runtime (available only for the current workspace instance)
+     *
      * @return default standard input or null
      */
     InputStream getStdin();
@@ -732,6 +803,7 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      *
      * <br>
      * <strong>option-type :</strong> runtime (available only for the current workspace instance)
+     *
      * @return default standard output or null
      */
     PrintStream getStdout();
@@ -744,6 +816,7 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      *
      * <br>
      * <strong>option-type :</strong> runtime (available only for the current workspace instance)
+     *
      * @return default standard error or null
      */
     PrintStream getStderr();
@@ -756,6 +829,7 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      *
      * <br>
      * <strong>option-type :</strong> runtime (available only for the current workspace instance)
+     *
      * @return executor service used to create worker threads. when null, use default.
      */
     ExecutorService getExecutorService();
@@ -803,8 +877,9 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
 
     /**
      * locale
-     * @since 0.8.1
+     *
      * @return session locale
+     * @since 0.8.1
      */
     String getLocale();
 
@@ -821,8 +896,9 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
 
     /**
      * theme
-     * @since 0.8.1
+     *
      * @return session locale
+     * @since 0.8.1
      */
     String getTheme();
 

@@ -41,7 +41,7 @@ public class NutsDependencyJavascriptFilter extends AbstractDependencyFilter imp
     private String code;
 
     public static NutsDependencyJavascriptFilter valueOf(String value, NutsSession ws) {
-        if (NutsUtilStrings.isBlank(value)) {
+        if (NutsBlankable.isBlank(value)) {
             return null;
         }
         return new NutsDependencyJavascriptFilter(ws,value);

@@ -52,6 +52,7 @@ import net.thevpc.nuts.runtime.core.log.DefaultNutsLogger;
 import net.thevpc.nuts.runtime.core.model.DefaultNutsId;
 import net.thevpc.nuts.runtime.core.model.DefaultNutsProperties;
 import net.thevpc.nuts.runtime.core.model.DefaultNutsVersion;
+import net.thevpc.nuts.runtime.core.parser.DefaultNutsVersionParser;
 import net.thevpc.nuts.runtime.core.repos.DefaultNutsRepositoryManager;
 import net.thevpc.nuts.runtime.core.repos.DefaultNutsRepositoryModel;
 import net.thevpc.nuts.runtime.core.repos.NutsInstalledRepository;
@@ -237,7 +238,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         this.eventsModel = new DefaultNutsWorkspaceEventModel(this);
         this.textModel = new DefaultNutsTextManagerModel(this, info);
         this.location = info.getWorkspaceLocation();
-        this.apiVersion = DefaultNutsVersion.valueOf(Nuts.getVersion(), defaultSession());
+        this.apiVersion = new DefaultNutsVersionParser(defaultSession()).parse(Nuts.getVersion());
         this.apiId = new DefaultNutsId("net.thevpc.nuts", "nuts", apiVersion.toString(), defaultSession());
         this.runtimeId = new DefaultNutsId(
                 info.getRuntimeId().getGroupId(),
@@ -559,7 +560,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
 
             } else {
                 uuid = configModel.getStoreModelBoot().getUuid();
-                if (NutsUtilStrings.isBlank(uuid)) {
+                if (NutsBlankable.isBlank(uuid)) {
                     uuid = UUID.randomUUID().toString();
                     configModel.getStoreModelBoot().setUuid(uuid);
                 }
@@ -590,13 +591,13 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 for (NutsRepositorySelector.Selection loc : expected.resolveSelectors(null)) {
                     NutsAddRepositoryOptions d = NutsRepositorySelector.createRepositoryOptions(loc, false, defaultSession());
                     String n = d.getName();
-                    String ruuid = (NutsUtilStrings.isBlank(n) ? "temporary" : n) + "_" + UUID.randomUUID().toString().replace("-", "");
+                    String ruuid = (NutsBlankable.isBlank(n) ? "temporary" : n) + "_" + UUID.randomUUID().toString().replace("-", "");
                     d.setName(ruuid);
                     d.setTemporary(true);
                     d.setEnabled(true);
                     d.setFailSafe(false);
                     if (d.getConfig() != null) {
-                        d.getConfig().setName(NutsUtilStrings.isBlank(n) ? ruuid : n);
+                        d.getConfig().setName(NutsBlankable.isBlank(n) ? ruuid : n);
                         d.getConfig().setStoreLocationStrategy(NutsStoreLocationStrategy.STANDALONE);
                     }
                     repos().setSession(defaultSession()).addRepository(d);
@@ -626,7 +627,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
 //            }
             if (uoptions.getUserName() != null && uoptions.getUserName().trim().length() > 0) {
                 char[] password = uoptions.getCredentials();
-                if (password == null || NutsUtilStrings.isBlank(new String(password))) {
+                if (password == null || NutsBlankable.isBlank(new String(password))) {
                     password = term().setSession(defaultSession()).getTerminal().readPassword("Password : ");
                 }
                 this.security().setSession(defaultSession()).login(uoptions.getUserName(), password);
@@ -669,10 +670,10 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                     session.out().resetLine().println("looking for java installations in default locations...");
                 }
                 NutsPlatformLocation[] found = env.platforms()
-                        .searchSystem("java");
+                        .searchSystemPlatforms(NutsPlatformType.JAVA);
                 int someAdded = 0;
                 for (NutsPlatformLocation java : found) {
-                    if (env.platforms().add(java)) {
+                    if (env.platforms().addPlatform(java)) {
                         someAdded++;
                     }
                 }
@@ -817,9 +818,9 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         boolean someChange = false;
 
         for (NutsDependency d : oldDependencies) {
-            if (NutsUtilStrings.isBlank(d.getScope())
+            if (NutsBlankable.isBlank(d.getScope())
                     || d.getVersion().isBlank()
-                    || NutsUtilStrings.isBlank(d.getOptional())) {
+                    || NutsBlankable.isBlank(d.getOptional())) {
                 NutsDependency standardDependencyOk = null;
                 for (NutsDependency standardDependency : effectiveDescriptor.getStandardDependencies()) {
                     if (standardDependency.getSimpleName().equals(d.toId().getShortName())) {
@@ -828,13 +829,13 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                     }
                 }
                 if (standardDependencyOk != null) {
-                    if (NutsUtilStrings.isBlank(d.getScope())
-                            && !NutsUtilStrings.isBlank(standardDependencyOk.getScope())) {
+                    if (NutsBlankable.isBlank(d.getScope())
+                            && !NutsBlankable.isBlank(standardDependencyOk.getScope())) {
                         someChange = true;
                         d = d.builder().setScope(standardDependencyOk.getScope()).build();
                     }
-                    if (NutsUtilStrings.isBlank(d.getOptional())
-                            && !NutsUtilStrings.isBlank(standardDependencyOk.getOptional())) {
+                    if (NutsBlankable.isBlank(d.getOptional())
+                            && !NutsBlankable.isBlank(standardDependencyOk.getOptional())) {
                         someChange = true;
                         d = d.builder().setOptional(standardDependencyOk.getOptional()).build();
                     }
@@ -873,7 +874,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
 
     protected void initializeWorkspace(String archetype, NutsSession session) {
         checkSession(session);
-        if (NutsUtilStrings.isBlank(archetype)) {
+        if (NutsBlankable.isBlank(archetype)) {
             archetype = "default";
         }
         NutsWorkspaceArchetypeComponent instance = null;
@@ -1323,7 +1324,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             NutsUserConfig adminSecurity = NutsWorkspaceConfigManagerExt.of(config())
                     .getModel()
                     .getUser(NutsConstants.Users.ADMIN, session);
-            if (adminSecurity == null || NutsUtilStrings.isBlank(adminSecurity.getCredentials())) {
+            if (adminSecurity == null || NutsBlankable.isBlank(adminSecurity.getCredentials())) {
                 if (LOG.isLoggable(Level.CONFIG)) {
                     LOG.with().session(session).level(Level.CONFIG).verb(NutsLogVerb.FAIL).log(NutsConstants.Users.ADMIN + " user has no credentials. reset to default");
                 }
@@ -1404,21 +1405,21 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         String a = thisId.getArtifactId();
         String g = thisId.getGroupId();
         String v = thisId.getVersion().getValue();
-        if ((NutsUtilStrings.isBlank(g)) || (NutsUtilStrings.isBlank(v))) {
+        if ((NutsBlankable.isBlank(g)) || (NutsBlankable.isBlank(v))) {
             NutsId[] parents = descriptor.getParents();
             for (NutsId parent : parents) {
                 NutsId p = fetch().setSession(session).setId(parent).setEffective(true).getResultId();
-                if (NutsUtilStrings.isBlank(g)) {
+                if (NutsBlankable.isBlank(g)) {
                     g = p.getGroupId();
                 }
-                if (NutsUtilStrings.isBlank(v)) {
+                if (NutsBlankable.isBlank(v)) {
                     v = p.getVersion().getValue();
                 }
-                if (!NutsUtilStrings.isBlank(g) && !NutsUtilStrings.isBlank(v)) {
+                if (!NutsBlankable.isBlank(g) && !NutsBlankable.isBlank(v)) {
                     break;
                 }
             }
-            if (NutsUtilStrings.isBlank(g) || NutsUtilStrings.isBlank(v)) {
+            if (NutsBlankable.isBlank(g) || NutsBlankable.isBlank(v)) {
                 throw new NutsNotFoundException(session, thisId,
                         NutsMessage.cstyle("unable to fetchEffective for %s. best Result is %s", thisId, thisId)
                         , null);
@@ -1958,6 +1959,20 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
 
         InstallStrategy0() {
             this.id = name().toLowerCase().replace('_', '-');
+        }
+
+        public static InstallStrategy0 parse(String value, NutsSession session) {
+            return parse(value, null,session);
+        }
+
+        public static InstallStrategy0 parse(String value, InstallStrategy0 emptyValue, NutsSession session) {
+            InstallStrategy0 v = parseLenient(value, emptyValue, null);
+            if(v==null){
+                if(!NutsBlankable.isBlank(value)){
+                    throw new NutsParseEnumException(session,value,InstallStrategy0.class);
+                }
+            }
+            return v;
         }
 
         public static InstallStrategy0 parseLenient(String value) {

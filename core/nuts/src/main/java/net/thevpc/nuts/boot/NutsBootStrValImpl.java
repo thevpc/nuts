@@ -1,12 +1,13 @@
 package net.thevpc.nuts.boot;
 
-import net.thevpc.nuts.NutsVal;
+import net.thevpc.nuts.NutsBlankable;
 import net.thevpc.nuts.NutsUtilStrings;
+import net.thevpc.nuts.NutsVal;
 
 import java.util.Objects;
 
 public class NutsBootStrValImpl implements NutsVal {
-    private String value;
+    private final String value;
 
     public NutsBootStrValImpl(String value) {
         this.value = value;
@@ -14,7 +15,7 @@ public class NutsBootStrValImpl implements NutsVal {
 
     @Override
     public boolean isBlank() {
-        return NutsUtilStrings.isBlank(value);
+        return NutsBlankable.isBlank(value);
     }
 
     @Override
@@ -23,8 +24,11 @@ public class NutsBootStrValImpl implements NutsVal {
     }
 
     @Override
-    public boolean isInt() {
-        return !isBlank() && getInt(null, null) != null;
+    public int getInt() {
+        if (NutsBlankable.isBlank(value)) {
+            throw new NumberFormatException("empty value");
+        }
+        return Integer.parseInt(value);
     }
 
     @Override
@@ -34,7 +38,7 @@ public class NutsBootStrValImpl implements NutsVal {
 
     @Override
     public Integer getInt(Integer emptyValue, Integer errorValue) {
-        if (NutsUtilStrings.isBlank(value)) {
+        if (NutsBlankable.isBlank(value)) {
             return emptyValue;
         }
         try {
@@ -43,20 +47,13 @@ public class NutsBootStrValImpl implements NutsVal {
             return errorValue;
         }
     }
-    @Override
-    public int getInt() {
-        if (NutsUtilStrings.isBlank(value)) {
-            throw new NumberFormatException("empty value");
-        }
-        return Integer.parseInt(value);
-    }
-
-    ////////////
 
     @Override
     public boolean isLong() {
         return !isBlank() && getLong(null, null) != null;
     }
+
+    ////////////
 
     @Override
     public Long getLong(Long emptyOrErrorValue) {
@@ -65,7 +62,7 @@ public class NutsBootStrValImpl implements NutsVal {
 
     @Override
     public Long getLong(Long emptyValue, Long errorValue) {
-        if (NutsUtilStrings.isBlank(value)) {
+        if (NutsBlankable.isBlank(value)) {
             return emptyValue;
         }
         try {
@@ -74,18 +71,23 @@ public class NutsBootStrValImpl implements NutsVal {
             return errorValue;
         }
     }
+
     @Override
     public long getLong() {
-        if (NutsUtilStrings.isBlank(value)) {
+        if (NutsBlankable.isBlank(value)) {
             throw new NumberFormatException("empty value");
         }
         return Long.parseLong(value);
     }
 
-
     @Override
     public boolean isDouble() {
         return !isBlank() && getDouble(null, null) != null;
+    }
+
+    @Override
+    public boolean isFloat() {
+        return !isBlank() && getFloat(null, null) != null;
     }
 
     @Override
@@ -95,7 +97,7 @@ public class NutsBootStrValImpl implements NutsVal {
 
     @Override
     public Double getDouble(Double emptyValue, Double errorValue) {
-        if (NutsUtilStrings.isBlank(value)) {
+        if (NutsBlankable.isBlank(value)) {
             return emptyValue;
         }
         try {
@@ -104,12 +106,38 @@ public class NutsBootStrValImpl implements NutsVal {
             return errorValue;
         }
     }
+
     @Override
     public double getDouble() {
-        if (NutsUtilStrings.isBlank(value)) {
+        if (NutsBlankable.isBlank(value)) {
             throw new NumberFormatException("empty value");
         }
         return Double.parseDouble(value);
+    }
+
+    @Override
+    public Float getFloat(Float emptyOrErrorValue) {
+        return getFloat(emptyOrErrorValue, emptyOrErrorValue);
+    }
+
+    @Override
+    public Float getFloat(Float emptyValue, Float errorValue) {
+        if (NutsBlankable.isBlank(value)) {
+            return emptyValue;
+        }
+        try {
+            return Float.parseFloat(value);
+        } catch (Exception ex) {
+            return errorValue;
+        }
+    }
+
+    @Override
+    public float getFloat() {
+        if (NutsBlankable.isBlank(value)) {
+            throw new NumberFormatException("empty value");
+        }
+        return Float.parseFloat(value);
     }
 
     @Override
@@ -117,6 +145,10 @@ public class NutsBootStrValImpl implements NutsVal {
         return !isBlank() && getBoolean(null, null) != null;
     }
 
+    @Override
+    public boolean isInt() {
+        return !isBlank() && getInt(null, null) != null;
+    }
 
     @Override
     public boolean getBoolean() {
@@ -130,10 +162,15 @@ public class NutsBootStrValImpl implements NutsVal {
 
     @Override
     public Boolean getBoolean(Boolean emptyValue, Boolean errorValue) {
-        if (NutsUtilStrings.isBlank(value)) {
+        if (NutsBlankable.isBlank(value)) {
             return emptyValue;
         }
         return NutsUtilStrings.parseBoolean(value, emptyValue, errorValue);
+    }
+
+    @Override
+    public boolean isString() {
+        return true;
     }
 
     @Override
@@ -146,9 +183,17 @@ public class NutsBootStrValImpl implements NutsVal {
         return value == null ? defaultValue : value;
     }
 
+    public Object getObject() {
+        return value;
+    }
+
+    public Object getObject(Object defaultValue) {
+        return value == null ? defaultValue : value;
+    }
+
     @Override
-    public boolean isString() {
-        return true;
+    public int hashCode() {
+        return Objects.hash(value);
     }
 
     @Override
@@ -160,21 +205,8 @@ public class NutsBootStrValImpl implements NutsVal {
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(value);
-    }
-
-    @Override
     public String toString() {
         return String.valueOf(value);
-    }
-
-    public Object getObject(){
-        return value;
-    }
-
-    public Object getObject(Object defaultValue){
-        return value==null?defaultValue:value;
     }
 
 

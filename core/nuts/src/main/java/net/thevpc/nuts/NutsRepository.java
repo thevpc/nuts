@@ -10,19 +10,19 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
  * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts;
 
 import java.util.Map;
@@ -40,7 +40,7 @@ public interface NutsRepository {
      * in memory repositories (and hence fastest) repositories.
      */
     int SPEED_FASTEST = 1000000;
-    
+
     /**
      * value for {@link  NutsRepositoryConfigManager#getSpeed() } resolving to 
      * local file system repositories (and hence faster) repositories.
@@ -175,22 +175,20 @@ public interface NutsRepository {
      * available if local and the folder exists or remote and could ping the repository
      * @return true if config is enabled and runtime is enabled
      */
-    boolean isAvailable() ;
+    boolean isAvailable();
 
     /**
      * available if local and the folder exists or remote and could ping the repository
      * @param force when force, check immediate availability and do not rely on cache
      * @return true if config is enabled and runtime is enabled
      */
-    boolean isAvailable(boolean force) ;
+    boolean isAvailable(boolean force);
 
     /**
      * enabled if config is enabled and runtime is enabled
      * @return true if config is enabled and runtime is enabled
      */
-    boolean isEnabled() ;
-
-    boolean isRemote() ;
+    boolean isEnabled();
 
     /**
      * set runtime enabled
@@ -198,4 +196,6 @@ public interface NutsRepository {
      * @return {@code this} instance
      */
     NutsRepository setEnabled(boolean enabled);
+
+    boolean isRemote();
 }

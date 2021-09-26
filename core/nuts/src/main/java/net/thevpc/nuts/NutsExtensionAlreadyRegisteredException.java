@@ -29,8 +29,8 @@ package net.thevpc.nuts;
 /**
  * Exception thrown when extension is already registered.
  *
- * @since 0.5.4
  * @app.category Exceptions
+ * @since 0.5.4
  */
 public class NutsExtensionAlreadyRegisteredException extends NutsExtensionException {
 
@@ -41,31 +41,34 @@ public class NutsExtensionAlreadyRegisteredException extends NutsExtensionExcept
 
     /**
      * Constructs a new NutsExtensionAlreadyRegisteredException exception
-     * @param session workspace
-     * @param id artifact id
+     *
+     * @param session   workspace
+     * @param id        artifact id
      * @param installed installed id
      */
     public NutsExtensionAlreadyRegisteredException(NutsSession session, NutsId id, String installed) {
         super(session, id,
-                NutsMessage.cstyle("extension already registered %s  as %",(id == null ? "<null>" : id),installed)
+                NutsMessage.cstyle("extension already registered %s  as %", (id == null ? "<null>" : id), installed)
                 , null);
         this.installed = installed;
     }
 
     /**
      * Constructs a new NutsExtensionAlreadyRegisteredException exception
-     * @param session workspace
-     * @param id artifact id
+     *
+     * @param session   workspace
+     * @param id        artifact id
      * @param installed installed id
-     * @param cause cause
+     * @param cause     cause
      */
     public NutsExtensionAlreadyRegisteredException(NutsSession session, NutsId id, String installed, Throwable cause) {
-        super(session, id, NutsMessage.cstyle("extension already registered %s  as %",(id == null ? "<null>" : id),installed), cause);
+        super(session, id, NutsMessage.cstyle("extension already registered %s  as %", (id == null ? "<null>" : id), installed), cause);
         this.installed = installed;
     }
 
     /**
      * registered/installed extension
+     *
      * @return registered/installed extension
      */
     public String getInstalled() {

@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -11,7 +11,7 @@
  * architecture to help supporting a large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -37,6 +37,23 @@ package net.thevpc.nuts;
  * @app.category Command Line
  */
 public interface NutsCommandLineProcessor {
+    NutsCommandLineProcessor NOP = new NutsCommandLineProcessor() {
+        @Override
+        public boolean onNextOption(NutsArgument option, NutsCommandLine commandline) {
+            return false;
+        }
+
+        @Override
+        public boolean onNextNonOption(NutsArgument nonOption, NutsCommandLine commandline) {
+            return false;
+        }
+
+        @Override
+        public void onExec() {
+
+        }
+    };
+
     /**
      * process the given option argument that was peeked from the command line.
      * Implementations <strong>MUST</strong> call one of
@@ -57,14 +74,13 @@ public interface NutsCommandLineProcessor {
      */
     boolean onNextNonOption(NutsArgument nonOption, NutsCommandLine commandline);
 
-
     /**
      * initialize the processor.
      * Called before any other method.
      * @param commandline associated commandline
      */
-    default void onInit(NutsCommandLine commandline){
-        
+    default void onInit(NutsCommandLine commandline) {
+
     }
 
     /**
@@ -72,8 +88,8 @@ public interface NutsCommandLineProcessor {
      * Called after all next methods and before exec and autoComplete methods
      * @param commandline associated commandline
      */
-    default void onPrepare(NutsCommandLine commandline){
-        
+    default void onPrepare(NutsCommandLine commandline) {
+
     }
 
     /**
@@ -86,24 +102,8 @@ public interface NutsCommandLineProcessor {
      * called when auto-complete ({@code autoComplete} is not null)
      * @param autoComplete autoComplete instance
      */
-    default void onAutoComplete(NutsCommandAutoComplete autoComplete){
-        
+    default void onAutoComplete(NutsCommandAutoComplete autoComplete) {
+
     }
-    NutsCommandLineProcessor NOP =new NutsCommandLineProcessor() {
-        @Override
-        public boolean onNextOption(NutsArgument option, NutsCommandLine commandline) {
-            return false;
-        }
-
-        @Override
-        public boolean onNextNonOption(NutsArgument nonOption, NutsCommandLine commandline) {
-            return false;
-        }
-
-        @Override
-        public void onExec() {
-
-        }
-    };
 
 }

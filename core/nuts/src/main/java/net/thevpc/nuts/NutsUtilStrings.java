@@ -7,21 +7,8 @@ package net.thevpc.nuts;
  */
 public class NutsUtilStrings {
     private static final char[] HEX_ARR = "0123456789ABCDEF".toCharArray();
-    public static boolean isBlank(CharSequence s) {
-        return s == null || isBlank(s.toString().toCharArray());
-    }
 
-    public static boolean isBlank(char[] string) {
-        if (string == null || string.length == 0) {
-            return true;
-        }
-        for (char c : string) {
-            if (c > ' ') {
-                return false;
-            }
-        }
-        return true;
-    }
+
 
     /**
      * @param value value

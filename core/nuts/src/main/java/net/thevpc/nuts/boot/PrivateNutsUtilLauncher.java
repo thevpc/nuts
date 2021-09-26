@@ -1,6 +1,8 @@
 package net.thevpc.nuts.boot;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.NutsConstants;
+import net.thevpc.nuts.NutsLogVerb;
+import net.thevpc.nuts.NutsOsFamily;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -12,7 +14,7 @@ import java.util.List;
 import java.util.logging.Level;
 
 class PrivateNutsUtilLauncher {
-    private static boolean ndiAddFileLine(Path filePath, String commentLine, String goodLine, boolean force, String ensureHeader, String headerReplace,PrivateNutsLog LOG) {
+    private static boolean ndiAddFileLine(Path filePath, String commentLine, String goodLine, boolean force, String ensureHeader, String headerReplace, PrivateNutsLog LOG) {
         boolean found = false;
         boolean updatedFile = false;
         List<String> lines = new ArrayList<>();
@@ -70,7 +72,7 @@ class PrivateNutsUtilLauncher {
         return updatedFile;
     }
 
-    static boolean ndiRemoveFileCommented2Lines(Path filePath, String commentLine, boolean force,PrivateNutsLog LOG) {
+    static boolean ndiRemoveFileCommented2Lines(Path filePath, String commentLine, boolean force, PrivateNutsLog LOG) {
         boolean found = false;
         boolean updatedFile = false;
         try {
@@ -116,11 +118,11 @@ class PrivateNutsUtilLauncher {
             if (Files.exists(sysrcFile)) {
 
                 //these two lines will remove older versions of nuts ( before 0.8.0)
-                ndiRemoveFileCommented2Lines(sysrcFile, "net.vpc.app.nuts.toolbox.ndi configuration", true,LOG);
-                ndiRemoveFileCommented2Lines(sysrcFile, "net.vpc.app.nuts configuration", true,LOG);
+                ndiRemoveFileCommented2Lines(sysrcFile, "net.vpc.app.nuts.toolbox.ndi configuration", true, LOG);
+                ndiRemoveFileCommented2Lines(sysrcFile, "net.vpc.app.nuts configuration", true, LOG);
 
                 //this line will remove 0.8.0+ versions of nuts
-                ndiRemoveFileCommented2Lines(sysrcFile, "net.thevpc.nuts configuration", true,LOG);
+                ndiRemoveFileCommented2Lines(sysrcFile, "net.thevpc.nuts configuration", true, LOG);
             }
 
             // if we have deleted a non default workspace, we will fall back to the default one
@@ -139,7 +141,7 @@ class PrivateNutsUtilLauncher {
                 if (latestDefaultVersion != null) {
                     ndiAddFileLine(sysrcFile, "net.thevpc.nuts configuration",
                             "source " + nbase.resolve(latestDefaultVersion).resolve(".nuts-bashrc"),
-                            true, "#!.*", "#!/bin/sh",LOG);
+                            true, "#!.*", "#!/bin/sh", LOG);
                 }
             } catch (Exception e) {
                 //ignore

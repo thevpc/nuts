@@ -156,10 +156,10 @@ public class NutsServerMain implements NutsApplication {
                     NutsWorkspace nutsWorkspace = null;
                     String wsContext = entry.getKey();
                     String wsLocation = entry.getValue();
-                    if (NutsUtilStrings.isBlank(wsContext) || wsContext.equals(".")) {
+                    if (NutsBlankable.isBlank(wsContext) || wsContext.equals(".")) {
                         wsContext = "";
                     }
-                    if (NutsUtilStrings.isBlank(wsContext)) {
+                    if (NutsBlankable.isBlank(wsContext)) {
                         if (context.getWorkspace() == null) {
                             throw new NutsIllegalArgumentException(context.getSession(),
                                     NutsMessage.cstyle("nuts-server: missing workspace"));

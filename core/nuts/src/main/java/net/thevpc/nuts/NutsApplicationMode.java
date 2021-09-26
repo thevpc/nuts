@@ -29,8 +29,8 @@ package net.thevpc.nuts;
 /**
  * Modes Application can run with
  *
- * @since 0.5.5
  * @app.category Application
+ * @since 0.5.5
  */
 public enum NutsApplicationMode implements NutsEnum {
     /**
@@ -86,6 +86,7 @@ public enum NutsApplicationMode implements NutsEnum {
 
     /**
      * parse string and return null if parse fails
+     *
      * @param value value to parse
      * @return parsed instance or null
      */
@@ -95,6 +96,7 @@ public enum NutsApplicationMode implements NutsEnum {
 
     /**
      * parse string and return {@code emptyOrErrorValue} if parse fails
+     *
      * @param value value to parse
      * @return parsed instance or {@code emptyOrErrorValue}
      */
@@ -103,9 +105,9 @@ public enum NutsApplicationMode implements NutsEnum {
     }
 
     /**
-     *
      * parse string and return {@code emptyValue} when null or {@code errorValue} if parse fails
-     * @param value value to parse
+     *
+     * @param value      value to parse
      * @param emptyValue value when the value is null or empty
      * @param errorValue value when the value cannot be parsed
      * @return parsed value
@@ -126,8 +128,23 @@ public enum NutsApplicationMode implements NutsEnum {
         }
     }
 
+    public static NutsApplicationMode parse(String value, NutsSession session) {
+        return parse(value, null, session);
+    }
+
+    public static NutsApplicationMode parse(String value, NutsApplicationMode emptyValue, NutsSession session) {
+        NutsApplicationMode v = parseLenient(value, emptyValue, null);
+        if (v == null) {
+            if (!NutsBlankable.isBlank(value)) {
+                throw new NutsParseEnumException(session, value, NutsApplicationMode.class);
+            }
+        }
+        return v;
+    }
+
     /**
      * lower cased identifier.
+     *
      * @return lower cased identifier
      */
     public String id() {

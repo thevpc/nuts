@@ -58,7 +58,8 @@ public class NutsJavaSdkUtils {
 
     public NutsPlatformLocation resolveJdkLocation(String requestedJavaVersion, NutsSession session) {
         requestedJavaVersion = NutsUtilStrings.trim(requestedJavaVersion);
-        NutsPlatformLocation bestJava = session.getWorkspace().env().platforms().setSession(session).findByVersion("java",
+        NutsPlatformLocation bestJava = session.getWorkspace().env().platforms().setSession(session)
+                .findPlatformByVersion(NutsPlatformType.JAVA,
                 session.getWorkspace().version().filter().byValue(requestedJavaVersion)
         );
         if (bestJava == null) {
@@ -83,7 +84,7 @@ public class NutsJavaSdkUtils {
                 bestJava = current;
             }
             if (bestJava == null) {
-                if (!NutsUtilStrings.isBlank(requestedJavaVersion)) {
+                if (!NutsBlankable.isBlank(requestedJavaVersion)) {
                     _LOGOP(session).level(Level.FINE).verb(NutsLogVerb.WARNING).log("No valid JRE found. recommended {0} . Using default java.home at {1}", requestedJavaVersion, System.getProperty("java.home"));
                 } else {
                     _LOGOP(session).level(Level.FINE).verb(NutsLogVerb.WARNING).log("No valid JRE found. Using default java.home at {0}", System.getProperty("java.home"));
@@ -323,7 +324,7 @@ public class NutsJavaSdkUtils {
         if (Files.isRegularFile(bin.resolve("javac" + appSuffix)) && Files.isRegularFile(bin.resolve("jps" + appSuffix))) {
             packaging = "jdk";
         }
-        if (NutsUtilStrings.isBlank(preferredName)) {
+        if (NutsBlankable.isBlank(preferredName)) {
             preferredName = product + "-" + jdkVersion;
         } else {
             preferredName = NutsUtilStrings.trim(preferredName);
@@ -342,7 +343,7 @@ public class NutsJavaSdkUtils {
     }
 
     public NutsId createJdkId(String version, NutsSession session) {
-        if (NutsUtilStrings.isBlank(version)) {
+        if (NutsBlankable.isBlank(version)) {
             throw new NutsException(session, NutsMessage.formatted("missing version"));
         }
         NutsVersion jv = session.getWorkspace().version().parser().parse(version);
@@ -388,7 +389,7 @@ public class NutsJavaSdkUtils {
         String exe = "java" + appSuffix;
         if (javaHome == null || javaHome.isEmpty()) {
             javaHome = System.getProperty("java.home");
-            if (NutsUtilStrings.isBlank(javaHome) || "null".equals(javaHome)) {
+            if (NutsBlankable.isBlank(javaHome) || "null".equals(javaHome)) {
                 //this may happen is using a precompiled image (such as with graalvm)
                 return exe;
             }

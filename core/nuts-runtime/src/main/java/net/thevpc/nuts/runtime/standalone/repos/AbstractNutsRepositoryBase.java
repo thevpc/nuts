@@ -73,7 +73,7 @@ public abstract class AbstractNutsRepositoryBase extends AbstractNutsRepository 
     @Override
     public boolean acceptAction(NutsId id, NutsRepositorySupportedAction supportedAction, NutsFetchMode mode, NutsSession session) {
         String groups = config().getGroups();
-        if (NutsUtilStrings.isBlank(groups)) {
+        if (NutsBlankable.isBlank(groups)) {
             return true;
         }
         return GlobUtils.ofExact(groups).matcher(id.getGroupId()).matches();

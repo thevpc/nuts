@@ -28,22 +28,17 @@ package net.thevpc.nuts;
 import net.thevpc.nuts.boot.NutsApiUtils;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.UnaryOperator;
-import java.util.stream.Collectors;
 
 /**
  * Nuts environment condition builder, used to check against the current environment
- * @since 0.8.3
+ *
  * @app.category Descriptor
+ * @since 0.8.3
  */
 public interface NutsEnvConditionBuilder extends Serializable {
 
-    static NutsEnvConditionBuilder of(NutsSession session){
+    static NutsEnvConditionBuilder of(NutsSession session) {
         NutsApiUtils.checkSession(session);
         return session.getWorkspace().descriptor().envConditionBuilder();
     }
@@ -238,5 +233,5 @@ public interface NutsEnvConditionBuilder extends Serializable {
 
     NutsEnvConditionBuilder copy();
 
-    NutsEnvConditionBuilder applyProperties(Map<String, String> properties) ;
+    NutsEnvConditionBuilder applyProperties(Map<String, String> properties);
 }

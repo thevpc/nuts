@@ -65,8 +65,9 @@ public final class NutsApplications {
 
     /**
      * run the given application and call System.exit(?)
+     *
      * @param application application
-     * @param args arguments
+     * @param args        arguments
      */
     public static void runApplicationAndExit(NutsApplication application, String[] args) {
         try {
@@ -80,8 +81,9 @@ public final class NutsApplications {
 
     /**
      * creates application instance by calling
+     *
      * @param appType application type
-     * @param <T> application type
+     * @param <T>     application type
      * @return new instance
      */
     public static <T extends NutsApplication> T createApplicationInstance(Class<T> appType) {
@@ -186,6 +188,7 @@ public final class NutsApplications {
 
     /**
      * process throwable and extract exit code
+     *
      * @param ex throwable
      * @return exit code
      */

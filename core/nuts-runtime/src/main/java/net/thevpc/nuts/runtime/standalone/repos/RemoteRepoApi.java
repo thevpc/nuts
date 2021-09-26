@@ -5,7 +5,10 @@
  */
 package net.thevpc.nuts.runtime.standalone.repos;
 
+import net.thevpc.nuts.NutsBlankable;
 import net.thevpc.nuts.NutsEnum;
+import net.thevpc.nuts.NutsParseEnumException;
+import net.thevpc.nuts.NutsSession;
 
 /**
  *
@@ -52,5 +55,19 @@ public enum RemoteRepoApi  implements NutsEnum {
         } catch (Exception notFound) {
             return errorValue;
         }
+    }
+
+    public static RemoteRepoApi parse(String value, NutsSession session) {
+        return parse(value, null,session);
+    }
+
+    public static RemoteRepoApi parse(String value, RemoteRepoApi emptyValue, NutsSession session) {
+        RemoteRepoApi v = parseLenient(value, emptyValue, null);
+        if(v==null){
+            if(!NutsBlankable.isBlank(value)){
+                throw new NutsParseEnumException(session,value,RemoteRepoApi.class);
+            }
+        }
+        return v;
     }
 }

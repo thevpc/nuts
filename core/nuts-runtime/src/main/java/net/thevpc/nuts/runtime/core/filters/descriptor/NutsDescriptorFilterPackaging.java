@@ -58,7 +58,7 @@ public class NutsDescriptorFilterPackaging extends AbstractDescriptorFilter impl
      */
     @Override
     public NutsDescriptorFilter simplify() {
-        if (NutsUtilStrings.isBlank(packaging)) {
+        if (NutsBlankable.isBlank(packaging)) {
             return null;
         }
         return this;

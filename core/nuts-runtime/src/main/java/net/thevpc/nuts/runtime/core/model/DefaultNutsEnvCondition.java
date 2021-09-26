@@ -76,27 +76,27 @@ public class DefaultNutsEnvCondition implements NutsEnvCondition {
     @Override
     public boolean isBlank() {
         for (String s : arch) {
-            if(!NutsUtilStrings.isBlank(s)){
+            if(!NutsBlankable.isBlank(s)){
                 return false;
             }
         }
         for (String s : os) {
-            if(!NutsUtilStrings.isBlank(s)){
+            if(!NutsBlankable.isBlank(s)){
                 return false;
             }
         }
         for (String s : osDist) {
-            if(!NutsUtilStrings.isBlank(s)){
+            if(!NutsBlankable.isBlank(s)){
                 return false;
             }
         }
         for (String s : platform) {
-            if(!NutsUtilStrings.isBlank(s)){
+            if(!NutsBlankable.isBlank(s)){
                 return false;
             }
         }
         for (String s : desktopEnvironment) {
-            if(!NutsUtilStrings.isBlank(s)){
+            if(!NutsBlankable.isBlank(s)){
                 return false;
             }
         }

@@ -5,11 +5,11 @@ import java.util.Objects;
 import java.util.function.Predicate;
 
 public class NutsPredicates {
-    private static Never NEVER = new Never();
-    private static Always ALWAYS = new Always();
-    private static Null NULL = new Null();
+    private static final Never NEVER = new Never();
+    private static final Always ALWAYS = new Always();
+    private static final Null NULL = new Null();
 
-    private static Blank BLANK = new Blank();
+    private static final Blank BLANK = new Blank();
 
     public static <T> Predicate<T> never() {
         return NEVER;
@@ -148,7 +148,7 @@ public class NutsPredicates {
     }
 
     public static class Not<T> extends BaseOpPredicate<T> implements Serializable {
-        private Predicate<T> base;
+        private final Predicate<T> base;
 
         public Not(Predicate<T> base) {
             if (base == null) {
@@ -182,8 +182,8 @@ public class NutsPredicates {
     }
 
     public static class Or<T> extends BaseOpPredicate<T> {
-        private Predicate<T> left;
-        private Predicate<? super T> right;
+        private final Predicate<T> left;
+        private final Predicate<? super T> right;
 
         public Or(Predicate<T> left, Predicate<? super T> right) {
             if (left == null) {
@@ -201,10 +201,7 @@ public class NutsPredicates {
             if (left.test(t)) {
                 return true;
             }
-            if (right.test(t)) {
-                return true;
-            }
-            return false;
+            return right.test(t);
         }
 
         @Override
@@ -227,8 +224,8 @@ public class NutsPredicates {
     }
 
     public static class And<T> extends BaseOpPredicate<T> {
-        private Predicate<T> left;
-        private Predicate<? super T> right;
+        private final Predicate<T> left;
+        private final Predicate<? super T> right;
 
         public And(Predicate<T> left, Predicate<? super T> right) {
             if (left == null) {
@@ -246,10 +243,7 @@ public class NutsPredicates {
             if (!left.test(t)) {
                 return false;
             }
-            if (!right.test(t)) {
-                return false;
-            }
-            return true;
+            return right.test(t);
         }
 
         @Override

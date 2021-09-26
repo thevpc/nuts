@@ -8,10 +8,10 @@ import java.util.Arrays;
  */
 public class NutsClassLoaderNode {
 
-    private String id;
-    private URL url;
-    private boolean enabled;
-    private NutsClassLoaderNode[] dependencies;
+    private final String id;
+    private final URL url;
+    private final boolean enabled;
+    private final NutsClassLoaderNode[] dependencies;
 
     public NutsClassLoaderNode(String id, URL url, boolean enabled, NutsClassLoaderNode... dependencies) {
         this.id = id;
@@ -40,5 +40,5 @@ public class NutsClassLoaderNode {
     public String toString() {
         return "NutsClassLoaderNode{" + "id=" + id + ", url=" + url + ", enabled=" + enabled + ", dependencies=" + dependencies + '}';
     }
-    
+
 }

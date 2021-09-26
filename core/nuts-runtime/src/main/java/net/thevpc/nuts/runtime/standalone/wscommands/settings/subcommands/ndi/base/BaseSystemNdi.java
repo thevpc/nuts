@@ -201,7 +201,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             Path ff = getBinScriptFile(n, options);
             {
                 String s = options.getLauncher().getCustomScriptPath();
-                if (NutsUtilStrings.isBlank(s)) {
+                if (NutsBlankable.isBlank(s)) {
                     NutsDefinition appDef = loadIdDefinition(nid);
                     s = NameBuilder.id(appDef.getId(), "%n", null, appDef.getDescriptor(), session).buildName();
                     s = getBinScriptFile(s, options).toString();
@@ -851,11 +851,11 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     public abstract boolean isShortcutFieldNameUserFriendly() ;
 
     public String resolveShortcutFileName(NutsId id, NutsDescriptor descriptor, String fileName, String name) {
-        if (NutsUtilStrings.isBlank(fileName)) {
+        if (NutsBlankable.isBlank(fileName)) {
             if (isShortcutFieldNameUserFriendly()) {
                 fileName = name;
             }
-            if (NutsUtilStrings.isBlank(fileName)) {
+            if (NutsBlankable.isBlank(fileName)) {
                 if (isShortcutFieldNameUserFriendly()) {
                     fileName = "%N%s%v%s%h";
                 } else {
@@ -930,7 +930,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
 //            tmp.printSet("PATH", varRef("NUTS_WORKSPACE_BINDIR") + getPathVarSep() + varRef("PATH"));
 //        }
 //        String export = getExportCommand(exports.toArray(new String[0]));
-//        if (!NutsUtilStrings.isBlank(export)) {
+//        if (!NutsBlankable.isBlank(export)) {
 //            tmp.println(export);
 //        }
 //        return tmp.buildString();

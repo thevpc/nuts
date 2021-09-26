@@ -179,7 +179,7 @@ public class DefaultNutsWorkspaceLocationModel {
         String ext = getDefaultIdExtension(id, session);
         if (!ext.equals(NutsConstants.Files.DESCRIPTOR_FILE_EXTENSION) && !ext.equals(".pom")) {
             String c = id.getClassifier();
-            if (!NutsUtilStrings.isBlank(c)) {
+            if (!NutsBlankable.isBlank(c)) {
                 classifier = "-" + c;
             }
         }
@@ -188,7 +188,7 @@ public class DefaultNutsWorkspaceLocationModel {
 
 
     public String getDefaultIdContentExtension(String packaging, NutsSession session) {
-        if (NutsUtilStrings.isBlank(packaging)) {
+        if (NutsBlankable.isBlank(packaging)) {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unsupported empty packaging"));
         }
         switch (packaging) {
@@ -249,7 +249,7 @@ public class DefaultNutsWorkspaceLocationModel {
                 if (f.equals("cache") || f.endsWith(".cache")) {
                     return "." + f;
                 }
-                if (NutsUtilStrings.isBlank(f)) {
+                if (NutsBlankable.isBlank(f)) {
                     throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing face in %s", id));
                 }
                 throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unsupported face %s in %s", f, id));

@@ -68,7 +68,7 @@ public class LoginCommand extends SimpleNshBuiltin {
         Options options = context.getOptions();
         if (!NutsConstants.Users.ANONYMOUS.equals(options.login)
                 && (options.password == null
-                || NutsUtilStrings.isBlank(new String(options.password)))) {
+                || NutsBlankable.isBlank(new String(options.password)))) {
             NutsSession session = context.getSession();
             options.password = session.getTerminal().ask()
                     .resetLine()

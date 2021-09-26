@@ -1,5 +1,6 @@
 package net.thevpc.nuts.toolbox.nutsserver.http.commands;
 
+import net.thevpc.nuts.NutsBlankable;
 import net.thevpc.nuts.NutsDescriptor;
 import net.thevpc.nuts.NutsId;
 import net.thevpc.nuts.NutsUtilStrings;
@@ -23,7 +24,7 @@ public class DeployFacadeCommand extends AbstractFacadeCommand {
     @Override
     public void executeImpl(FacadeCommandContext context) throws IOException {
         String boundary = context.getRequestHeaderFirstValue("Content-type");
-        if (NutsUtilStrings.isBlank(boundary)) {
+        if (NutsBlankable.isBlank(boundary)) {
             context.sendError(400, "invalid JShellCommandNode arguments : " + getName() + " . invalid format.");
             return;
         }

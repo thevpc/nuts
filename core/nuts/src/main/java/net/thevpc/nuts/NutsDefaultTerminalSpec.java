@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -11,7 +11,7 @@
  * architecture to help supporting a large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -36,9 +36,9 @@ import java.util.Objects;
  * @app.category Input Output
  */
 public class NutsDefaultTerminalSpec implements NutsTerminalSpec {
+    private final Map<String, Object> other = new HashMap<>();
     private Boolean autoComplete;
     private NutsSystemTerminalBase parent;
-    private final Map<String,Object> other=new HashMap<>();
 
     @Override
     public NutsSystemTerminalBase getParent() {
@@ -63,28 +63,28 @@ public class NutsDefaultTerminalSpec implements NutsTerminalSpec {
     }
 
     @Override
-    public Object get(String name){
+    public Object get(String name) {
         return other.get(name);
     }
 
     @Override
-    public NutsTerminalSpec put(String name, Object o){
-        other.put(name,o);
+    public NutsTerminalSpec put(String name, Object o) {
+        other.put(name, o);
         return this;
     }
 
     @Override
-    public NutsTerminalSpec copyFrom(NutsTerminalSpec other){
-        this.autoComplete=other.getAutoComplete();
+    public NutsTerminalSpec copyFrom(NutsTerminalSpec other) {
+        this.autoComplete = other.getAutoComplete();
         putAll(other.getProperties());
         return this;
     }
 
     @Override
-    public NutsTerminalSpec putAll(Map<String, Object> other){
-        if(other!=null){
+    public NutsTerminalSpec putAll(Map<String, Object> other) {
+        if (other != null) {
             for (Map.Entry<String, Object> e : other.entrySet()) {
-                put(e.getKey(),e.getValue());
+                put(e.getKey(), e.getValue());
             }
         }
         return this;
@@ -96,15 +96,15 @@ public class NutsDefaultTerminalSpec implements NutsTerminalSpec {
     }
 
     @Override
+    public int hashCode() {
+        return Objects.hash(autoComplete, parent, other);
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         NutsDefaultTerminalSpec that = (NutsDefaultTerminalSpec) o;
         return Objects.equals(autoComplete, that.autoComplete) && Objects.equals(parent, that.parent) && Objects.equals(other, that.other);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(autoComplete, parent, other);
     }
 }

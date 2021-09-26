@@ -232,7 +232,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
     }
 
     private static String key(String prefix, String key) {
-        if (NutsUtilStrings.isBlank(prefix)) {
+        if (NutsBlankable.isBlank(prefix)) {
             return key;
         }
         return prefix + "." + key;

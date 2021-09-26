@@ -1,24 +1,24 @@
 ---
 id: nutsApp
-title: Nuts Applications
-sidebar_label: Nuts Applications
+title: Your first Application using nuts
+sidebar_label: Your first Application using nuts
 ---
 ${{include($"${resources}/header.md")}}
 
-# Making you first nuts application
+## Running your application with Nuts
 
 Lets take, step by step, an example of an application that you will run using ```nuts``` package manager
 
-1. create a java maven project First you will create the project using you favourite IDE or using mvn
+First we can create the project using your favourite IDE or using simply `mvn` command
 
 ```
 mvn archetype:generate -DgroupId=com.mycompany.app -DartifactId=my-app -DarchetypeArtifactId=maven-archetype-simple -DarchetypeVersion=1.4 -DinteractiveMode=false
 ```
 
-you will have a fully generated java project
+We will have a fully generated java project
 
-```aidl
-vpc@linux-rogue:~/ttt> tree
+```bash
+~/> tree
 .
 └── my-app
     ├── pom.xml
@@ -38,7 +38,7 @@ vpc@linux-rogue:~/ttt> tree
 
 ```
 
-Now we will add some dependency to the project. Lets add `jexcelapi:jxl#2.4.2` and update pom.xml consequently.
+Now we will add some dependencies to the project. Let's add `jexcelapi:jxl#2.4.2` and update `pom.xml` consequently.
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -64,7 +64,7 @@ Now we will add some dependency to the project. Lets add `jexcelapi:jxl#2.4.2` a
 </project> 
 ```
 
-Now Update the App.java file
+Now we update the App.java file
 
 ```java
 package com.mycompany.app;
@@ -78,7 +78,7 @@ public class App {
 
     public static void main(String[] args) {
         try {
-            WritableWorkbook w = Workbook.createWorkbook(new File("a.xls"));
+            WritableWorkbook w = Workbook.createWorkbook(new File("any-file.xls"));
             System.out.println("Workbook just created");
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -88,54 +88,56 @@ public class App {
 
 ```
 
-finally compile the app:
+finally we compile the app:
 
 ```bash
 mvn clean install
 ```
 
-Of course, you won't be able to run the application yet. Would you? For this app to work there are several ways, all of
-them are complicated and require modifying the pom and even modifying the output jar. You can for instance generate and
-output lib directory and update the META-INF file using maven-dependency-plugin.
-(see https://maven.apache.org/plugins/maven-shade-plugin ; https://www.baeldung.com/executable-jar-with-maven). You
-could also use ```maven-assembly-plugin``` to include the dependencies into the jar itself ('what the fat' jar!).
+Of course, we won't be able to run the application yet. Would we? For this app to work there are several ways, all of
+them are complicated and require modifying the `pom.xml`  and even modifying the output jar. we can for instance generate an
+output lib directory and update the `META-INF` file using `maven-dependency-plugin`.
+(see https://maven.apache.org/plugins/maven-shade-plugin ; https://www.baeldung.com/executable-jar-with-maven). We
+could also use `maven-assembly-plugin` to include the dependencies into the jar itself ('what the fat' jar!).
 Another alternative is to use an uglier solution with ```maven-shade-plugin``` and blend libraries into the main jar. In
-all cases you need as well to configure maven-jar-plugin to specify the main class file.
+all cases we need as well to configure `maven-jar-plugin` to specify the main class file.
 
 I am not exposing all solutions here. You can read this article for more
 details (https://www.baeldung.com/executable-jar-with-maven) but trust me, they all stink.
 
-Instead of that we will use nuts. In that case, actually you are already done, the app is already okkay! you do not need
-to specify the main class neither are your required to bundle jxl and its dependencies. you only need to run the app.
+Instead of that we will use `nuts`. In that case, actually we are already done, the app is already OK! We do not need
+to specify the main class neither are we required to bundle `jxl` and its dependencies. We only need to run the app.
 That's it.
 
+Basically, you can install the application using its identifier `com.mycompany.app:my-app`. The latest version will be resolved.
+
 ```bash
-nuts -y com.mycompany.app:my-app
+nuts install com.mycompany.app:my-app
+nuts my-app
 ```
 
-this will install the application and run it on the fly. Dependencies will be detected, resolved and downloaded. The
-application is installed from your local maven repository. It needs to be deployed to a public repository for it to be
+This will install the application and run it on the fly. Dependencies will be detected, resolved and downloaded. The
+application is installed from local maven repository. It needs to be deployed to a public repository for it to be
 publicly accessible, however.
 
-You can also choose not to install the app and bundle it as a jar. No need for a public repository in that case:
+We can also choose not to install the app and bundle it as a jar. No need for a public repository in that case:
 
 ```bash
 nuts -y com my-app-1.0.0-SNAPSHOT.jar
 ```
 
-As we can see, nuts provides the simplest and thee most elegant way to deploy your application.
+As we can see, `nuts` provides the simplest and the most elegant way to deploy your application.
 
 One question though. what happens if we define multiple main methods (in multiple public classes). It is handled as well
 by ```nuts``` seamlessly. It just asks, at runtime, for the appropriate class to run.
 
 # Using Nuts Application Framework
 
-Using ```nuts``` if transparent as we have seen so far. It is transparent both at build time and run time.
-However, ```nuts``` can provide our application a set of unique helpful features, such as install adn uninstall hooks,
+Using ```nuts``` is transparent as we have seen so far. It is transparent both at build time and runtime.
+However, ```nuts``` can provide our application a set of unique helpful features, such as install and uninstall hooks,
 comprehensive command line support and so on.
 
-To create your first ```NAF``` application, you will need to add nuts as a dependency and change your main class as
-follows:
+To create your first ```NAF``` application, you will need to add nuts as a dependency and change your `pom.xml` as follows:
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -166,9 +168,8 @@ follows:
     </properties>
 </project> 
 ```
-Please take note that we have added a property 'nuts.application=true'. 
-Actually this is no mandatory, but this will help ```nuts``` package manager detect that this application uses NAF before
-downloading it jar (the information will be available in the ```pom.xml``` descriptor on the remote repository).
+Please take note that we have added a property `nuts.application=true`. 
+Actually this is not mandatory, but this will help ```nuts``` package manager detect that this application uses NAF before downloading its jar (the information will be available in the ```pom.xml``` descriptor on the remote repository).
 
 Then we will add some cool features to our application. We write a dummy message whenever the application is installed, uninstalled or updated.
 We will also add support to "--file=[path]" argument to specify the workbook path.
@@ -192,16 +193,20 @@ public class App implements NutsApplication {
     public void run(NutsApplicationContext applicationContext) {
         NutsSession s = applicationContext.getSession();
         NutsCommandLine cmd = applicationContext.getCommandLine();
-        File file = new File("a.xls");
+        File file = new File("file.xls");
         while (cmd.hasNext()) {
-            switch (cmd.getKeyString()) {
+            switch (cmd.getKey().getString()) {
                 case "--file": {
                     NutsArgument a = cmd.nextString();
                     file = new File(a.getStringValue());
                     break;
                 }
+                case "--fill": {
+                    // process other options here ...
+                    break;
+                }
                 default: {
-                    cmd.unexpectedArgument();
+                    s.configureLast(cmd);
                 }
             }
         }
@@ -234,7 +239,7 @@ public class App implements NutsApplication {
 
 ```
 
-now we can install or uninstall  the application and see the expected message.
+Now we can install or uninstall the application and see the expected messages.
 
 ```bash
 nuts -y install com.mycompany.app:my-app

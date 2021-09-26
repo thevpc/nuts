@@ -153,7 +153,7 @@ public class CoreNutsUtils {
     }
 
     public static boolean isEffectiveValue(String value) {
-        return (!NutsUtilStrings.isBlank(value) && !CoreStringUtils.containsVars(value));
+        return (!NutsBlankable.isBlank(value) && !CoreStringUtils.containsVars(value));
     }
 
     public static boolean isEffectiveId(NutsId id) {
@@ -187,7 +187,7 @@ public class CoreNutsUtils {
             return child;
         }
         String s = child.getValue();
-        if (NutsUtilStrings.isBlank(s)) {
+        if (NutsBlankable.isBlank(s)) {
             return ws.version().parser().parse("");
         }
         String s2 = applyStringProperties(s, properties);
@@ -198,7 +198,7 @@ public class CoreNutsUtils {
     }
 
     public static String applyStringProperties(String child, Function<String, String> properties) {
-        if (NutsUtilStrings.isBlank(child)) {
+        if (NutsBlankable.isBlank(child)) {
             return null;
         }
 //        return applyStringProperties(child, properties == null ? null : new StringConverterAdapter(properties));
@@ -409,19 +409,19 @@ public class CoreNutsUtils {
             String name = child.getArtifactId();
             String version = child.getVersion().getValue();
             Map<String, String> props = child.getProperties();
-            if (NutsUtilStrings.isBlank(repository)) {
+            if (NutsBlankable.isBlank(repository)) {
                 modified = true;
                 repository = parent.getRepository();
             }
-            if (NutsUtilStrings.isBlank(group)) {
+            if (NutsBlankable.isBlank(group)) {
                 modified = true;
                 group = parent.getGroupId();
             }
-            if (NutsUtilStrings.isBlank(name)) {
+            if (NutsBlankable.isBlank(name)) {
                 modified = true;
                 name = parent.getArtifactId();
             }
-            if (NutsUtilStrings.isBlank(version)) {
+            if (NutsBlankable.isBlank(version)) {
                 modified = true;
                 version = parent.getVersion().getValue();
             }
@@ -669,7 +669,7 @@ public class CoreNutsUtils {
     }
 
     public static boolean isValidWorkspaceName(String workspace) {
-        if (NutsUtilStrings.isBlank(workspace)) {
+        if (NutsBlankable.isBlank(workspace)) {
             return true;
         }
         String workspaceName = workspace.trim();
@@ -683,7 +683,7 @@ public class CoreNutsUtils {
     }
 
     public static String resolveValidWorkspaceName(String workspace) {
-        if (NutsUtilStrings.isBlank(workspace)) {
+        if (NutsBlankable.isBlank(workspace)) {
             return NutsConstants.Names.DEFAULT_WORKSPACE_NAME;
         }
         String workspaceName = workspace.trim();
@@ -878,7 +878,9 @@ public class CoreNutsUtils {
         List<NutsId> pfs=new ArrayList<>();
         if(allInstalledPlatforms){
             for (String s : Arrays.stream(condition.getPlatform()).collect(Collectors.toSet())) {
-                pfs.addAll(Arrays.stream(session.getWorkspace().env().platforms().findAll(s)).map(NutsPlatformLocation::getId).collect(Collectors.toList()));
+                pfs.addAll(Arrays.stream(session.getWorkspace().env().platforms().findPlatforms(
+                        NutsPlatformType.parseLenient(s, NutsPlatformType.UNKNOWN, NutsPlatformType.UNKNOWN)
+                )).map(NutsPlatformLocation::getId).collect(Collectors.toList()));
             }
         }else {
             pfs.add(env.getPlatform());

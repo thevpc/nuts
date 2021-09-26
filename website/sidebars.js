@@ -20,12 +20,21 @@ module.exports = {
          'concepts/doc1',
       ],
       'Commands': [
+         'cmd/exec-cmd',
+         'cmd/fetch-cmd',
+         'cmd/help-cmd',
+         'cmd/info-cmd',
          'cmd/install-cmd',
+         'cmd/license-cmd',
+         'cmd/cmds',
+         'cmd/search-cmds',
+         'cmd/version-cmd',
+         'cmd/welcome-cmd',
       ],
       'Application Framework': [
-         'dev/nutsApp',
          'dev/nutsPath',
          'dev/nutsStream',
+         'dev/nutsApp',
       ],
       'API Documentation': [],
       'Contributing': [

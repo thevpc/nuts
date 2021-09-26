@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -11,7 +11,7 @@
  * architecture to help supporting a large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -23,7 +23,7 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts;
 
 import java.util.ArrayList;
@@ -43,15 +43,6 @@ public abstract class NutsCommandAutoCompleteBase implements NutsCommandAutoComp
      */
     private final LinkedHashMap<String, NutsArgumentCandidate> candidates = new LinkedHashMap<>();
 
-    /**
-     * possible candidates
-     * @return possible candidates
-     */
-    @Override
-    public List<NutsArgumentCandidate> getCandidates() {
-        return new ArrayList<>(candidates.values());
-    }
-
     @Override
     public NutsWorkspace getWorkspace() {
         return getSession().getWorkspace();
@@ -60,6 +51,15 @@ public abstract class NutsCommandAutoCompleteBase implements NutsCommandAutoComp
     @Override
     public <T> T get(Class<T> t) {
         return null;
+    }
+
+    /**
+     * possible candidates
+     * @return possible candidates
+     */
+    @Override
+    public List<NutsArgumentCandidate> getCandidates() {
+        return new ArrayList<>(candidates.values());
     }
 
     /**

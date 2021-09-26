@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.core.terminals;
 
-import net.thevpc.nuts.NutsEnum;
-import net.thevpc.nuts.NutsTerminalMode;
+import net.thevpc.nuts.*;
 
 public enum NutsTerminalModeOp  implements NutsEnum {
     NOP(NutsTerminalMode.INHERITED, NutsTerminalMode.INHERITED),
@@ -54,5 +53,19 @@ public enum NutsTerminalModeOp  implements NutsEnum {
         } catch (Exception notFound) {
             return errorValue;
         }
+    }
+
+    public static NutsTerminalModeOp parse(String value, NutsSession session) {
+        return parse(value, null,session);
+    }
+
+    public static NutsTerminalModeOp parse(String value, NutsTerminalModeOp emptyValue, NutsSession session) {
+        NutsTerminalModeOp v = parseLenient(value, emptyValue, null);
+        if(v==null){
+            if(!NutsBlankable.isBlank(value)){
+                throw new NutsParseEnumException(session,value,NutsTerminalModeOp.class);
+            }
+        }
+        return v;
     }
 }

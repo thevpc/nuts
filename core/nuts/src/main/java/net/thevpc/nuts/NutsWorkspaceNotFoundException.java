@@ -29,8 +29,8 @@ package net.thevpc.nuts;
 /**
  * This Exception is thrown when the workspace does not exist.
  *
- * @since 0.5.4
  * @app.category Exceptions
+ * @since 0.5.4
  */
 public class NutsWorkspaceNotFoundException extends NutsBootException {
 
@@ -41,6 +41,7 @@ public class NutsWorkspaceNotFoundException extends NutsBootException {
 
     /**
      * Constructs a new NutsWorkspaceNotFoundException exception
+     *
      * @param workspaceLocation location
      */
     public NutsWorkspaceNotFoundException(String workspaceLocation) {
@@ -51,6 +52,7 @@ public class NutsWorkspaceNotFoundException extends NutsBootException {
 
     /**
      * workspace location
+     *
      * @return workspace location
      */
     public String getWorkspaceLocation() {

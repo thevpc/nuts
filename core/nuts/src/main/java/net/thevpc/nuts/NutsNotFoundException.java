@@ -10,7 +10,7 @@
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -22,7 +22,7 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts;
 
 import java.io.Serializable;
@@ -51,7 +51,7 @@ public class NutsNotFoundException extends NutsException {
      * @param id        artifact id
      */
     public NutsNotFoundException(NutsSession session, NutsId id) {
-        this(session, id,(NutsMessage) null);
+        this(session, id, (NutsMessage) null);
     }
 
     /**
@@ -77,7 +77,7 @@ public class NutsNotFoundException extends NutsException {
      */
     public NutsNotFoundException(NutsSession session, NutsId id, NutsIdInvalidDependency[] dependencies, NutsIdInvalidLocation[] locations, Throwable cause) {
         super(session,
-                NutsMessage.cstyle("artifact not found: %s%s", (id == null ? "<null>" : id),dependenciesToString(dependencies))
+                NutsMessage.cstyle("artifact not found: %s%s", (id == null ? "<null>" : id), dependenciesToString(dependencies))
                 , cause);
         this.id = id;
         if (locations != null) {
@@ -98,7 +98,7 @@ public class NutsNotFoundException extends NutsException {
      */
     public NutsNotFoundException(NutsSession session, NutsId id, NutsMessage message, Throwable cause) {
         super(
-                session, message==null? NutsMessage.cstyle("no such nuts : %s",(id == null ? "<null>" : id)) : message,
+                session, message == null ? NutsMessage.cstyle("no such nuts : %s", (id == null ? "<null>" : id)) : message,
                 cause);
         this.id = id;
     }
@@ -111,7 +111,7 @@ public class NutsNotFoundException extends NutsException {
      * @param message   message
      */
     public NutsNotFoundException(NutsSession session, NutsId id, NutsMessage message) {
-        this(session,id,message,null);
+        this(session, id, message, null);
     }
 
     protected static String dependenciesToString(NutsIdInvalidDependency[] dependencies) {
@@ -163,8 +163,8 @@ public class NutsNotFoundException extends NutsException {
      * @app.category Exceptions
      */
     public static class NutsIdInvalidDependency implements Serializable {
-        private NutsId id;
-        private Set<NutsIdInvalidDependency> cause;
+        private final NutsId id;
+        private final Set<NutsIdInvalidDependency> cause;
 
         public NutsIdInvalidDependency(NutsId id, Set<NutsIdInvalidDependency> cause) {
             this.id = id;
@@ -198,9 +198,9 @@ public class NutsNotFoundException extends NutsException {
      * @app.category Exceptions
      */
     public static class NutsIdInvalidLocation implements Serializable {
-        private String repository;
-        private String url;
-        private String message;
+        private final String repository;
+        private final String url;
+        private final String message;
 
         public NutsIdInvalidLocation(String repository, String url, String message) {
             this.repository = repository;

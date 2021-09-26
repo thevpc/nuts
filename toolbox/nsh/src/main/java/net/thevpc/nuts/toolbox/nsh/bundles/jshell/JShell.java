@@ -802,7 +802,7 @@ public class JShell {
             login = ws.security().getCurrentUsername();
         }
         String prompt = ((login != null && login.length() > 0 && !"anonymous".equals(login)) ? (login + "@") : "");//+ wss;
-        if (!NutsUtilStrings.isBlank(getRootContext().getServiceName())) {
+        if (!NutsBlankable.isBlank(getRootContext().getServiceName())) {
             prompt = prompt + "@" + getRootContext().getServiceName();
         }
         prompt += "> ";
@@ -1222,9 +1222,9 @@ public class JShell {
                     JShellAutoCompleteCandidate cmdCandidate = (JShellAutoCompleteCandidate) cmdCandidate0;
                     if (cmdCandidate != null) {
                         String value = cmdCandidate.getValue();
-                        if (!NutsUtilStrings.isBlank(value)) {
+                        if (!NutsBlankable.isBlank(value)) {
                             String display = cmdCandidate.getDisplay();
-                            if (NutsUtilStrings.isBlank(display)) {
+                            if (NutsBlankable.isBlank(display)) {
                                 display = value;
                             }
                             candidates.add(workspace.commandLine().createCandidate(value).setDisplay(display).build());

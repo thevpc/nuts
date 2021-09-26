@@ -110,7 +110,7 @@ public final class DefaultNutsWorkspaceCurrentConfig {
         Path[] homes = new Path[NutsStoreLocation.values().length];
         for (NutsStoreLocation type : NutsStoreLocation.values()) {
             String ss = NutsUtilPlatforms.getPlatformHomeFolder(getStoreLocationLayout(), type, homeLocations, isGlobal(), getName());
-            if (NutsUtilStrings.isBlank(ss)) {
+            if (NutsBlankable.isBlank(ss)) {
                 throw new NutsIllegalArgumentException(session,
                         NutsMessage.cstyle("missing Home for %s", type));
             }
@@ -122,7 +122,7 @@ public final class DefaultNutsWorkspaceCurrentConfig {
             switch (location) {
                 default: {
                     String typeLocation = storeLocations.get(typeId);
-                    if (NutsUtilStrings.isBlank(typeLocation)) {
+                    if (NutsBlankable.isBlank(typeLocation)) {
                         switch (storeLocationStrategy) {
                             case STANDALONE: {
                                 storeLocations.put(typeId, Paths.get(workspaceLocation).resolve(location.id()).toString());
@@ -502,7 +502,7 @@ public final class DefaultNutsWorkspaceCurrentConfig {
 ////        String n = CoreNutsUtils.getArrItem(getStoreLocations(), folderType.ordinal());
 ////        switch (getStoreLocationStrategy()) {
 ////            case STANDALONE: {
-////                if (NutsUtilStrings.isBlank(n)) {
+////                if (NutsBlankable.isBlank(n)) {
 ////                    n = folderType.toString().toLowerCase();
 ////                }
 ////                n = n.trim();

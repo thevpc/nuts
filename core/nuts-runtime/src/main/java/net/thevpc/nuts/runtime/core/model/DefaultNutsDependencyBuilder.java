@@ -311,13 +311,13 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
         if (!NutsDependencyScopes.isDefaultScope(scope)) {
             m.put(NutsConstants.IdProperties.SCOPE, scope);
         }
-        if (!NutsUtilStrings.isBlank(optional) && !"false".equals(optional)) {
+        if (!NutsBlankable.isBlank(optional) && !"false".equals(optional)) {
             m.put(NutsConstants.IdProperties.OPTIONAL, optional);
         }
-        if (!NutsUtilStrings.isBlank(classifier)) {
+        if (!NutsBlankable.isBlank(classifier)) {
             m.put(NutsConstants.IdProperties.CLASSIFIER, classifier);
         }
-        if (!NutsUtilStrings.isBlank(type)) {
+        if (!NutsBlankable.isBlank(type)) {
             m.put(NutsConstants.IdProperties.TYPE, type);
         }
         if (exclusions.length > 0) {
@@ -359,7 +359,7 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
 
     @Override
     public String getFullName() {
-        if (NutsUtilStrings.isBlank(groupId)) {
+        if (NutsBlankable.isBlank(groupId)) {
             return NutsUtilStrings.trim(artifactId);
         }
         return NutsUtilStrings.trim(groupId) + ":" + NutsUtilStrings.trim(artifactId);

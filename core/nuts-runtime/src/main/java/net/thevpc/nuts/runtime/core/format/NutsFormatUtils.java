@@ -28,6 +28,7 @@ package net.thevpc.nuts.runtime.core.format;
 import java.util.Map;
 import static net.thevpc.nuts.runtime.core.util.CoreCommonUtils.stringValue;
 
+import net.thevpc.nuts.NutsBlankable;
 import net.thevpc.nuts.NutsUtilStrings;
 import net.thevpc.nuts.NutsElement;
 import net.thevpc.nuts.NutsElementEntry;
@@ -52,7 +53,7 @@ public class NutsFormatUtils {
                 break;
             }
             case OBJECT: {
-                if (!NutsUtilStrings.isBlank(prefix)) {
+                if (!NutsBlankable.isBlank(prefix)) {
                     prefix += ".";
                 } else {
                     prefix = "";
@@ -63,7 +64,7 @@ public class NutsFormatUtils {
                 break;
             }
             case ARRAY: {
-                if (!NutsUtilStrings.isBlank(prefix)) {
+                if (!NutsBlankable.isBlank(prefix)) {
                     prefix += ".";
                 } else {
                     prefix = "";

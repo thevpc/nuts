@@ -34,8 +34,8 @@ package net.thevpc.nuts;
  * (NO) or cancel the processing and exit with an error message (ERROR)
  *
  * @author thevpc
- * @since 0.5.5
  * @app.category Base
+ * @since 0.5.5
  */
 public enum NutsConfirmationMode implements NutsEnum {
     /**
@@ -88,8 +88,23 @@ public enum NutsConfirmationMode implements NutsEnum {
         }
     }
 
+    public static NutsConfirmationMode parse(String value, NutsSession session) {
+        return parse(value, null, session);
+    }
+
+    public static NutsConfirmationMode parse(String value, NutsConfirmationMode emptyValue, NutsSession session) {
+        NutsConfirmationMode v = parseLenient(value, emptyValue, null);
+        if (v == null) {
+            if (!NutsBlankable.isBlank(value)) {
+                throw new NutsParseEnumException(session, value, NutsConfirmationMode.class);
+            }
+        }
+        return v;
+    }
+
     /**
      * lower cased identifier.
+     *
      * @return lower cased identifier
      */
     public String id() {

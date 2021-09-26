@@ -10,7 +10,7 @@
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -22,7 +22,7 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts;
 
 /**
@@ -38,7 +38,7 @@ public class NutsLockBarrierException extends NutsLockException {
      * @param lockObject lock Object
      */
     public NutsLockBarrierException(NutsSession session, Object lockedObject, Object lockObject) {
-        this(session,null,lockedObject,lockObject);
+        this(session, null, lockedObject, lockObject);
     }
 
     /**
@@ -51,7 +51,7 @@ public class NutsLockBarrierException extends NutsLockException {
     public NutsLockBarrierException(NutsSession session, NutsMessage message, Object lockedObject, Object lockObject) {
         super(session,
                 message == null ? NutsMessage.cstyle("item already locked %s", lockedObject)
-                        : message,lockedObject,lockObject
+                        : message, lockedObject, lockObject
         );
     }
 
@@ -63,10 +63,10 @@ public class NutsLockBarrierException extends NutsLockException {
      * @param lockObject lock Object
      * @param cause cause
      */
-    public NutsLockBarrierException(NutsSession session, NutsMessage message, Object lockedObject, Object lockObject,Throwable cause) {
+    public NutsLockBarrierException(NutsSession session, NutsMessage message, Object lockedObject, Object lockObject, Throwable cause) {
         super(session,
                 message == null ? NutsMessage.cstyle("item already locked %s", lockedObject)
-                        : message,lockObject,cause
+                        : message, lockObject, cause
         );
     }
 }

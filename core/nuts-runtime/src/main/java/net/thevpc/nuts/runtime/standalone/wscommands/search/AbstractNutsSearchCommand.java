@@ -78,7 +78,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     @Override
     public NutsSearchCommand addId(String id) {
         checkSession();
-        if (!NutsUtilStrings.isBlank(id)) {
+        if (!NutsBlankable.isBlank(id)) {
             ids.add(getSession().getWorkspace().id().parser().setLenient(false).parse(id));
         }
         return this;
@@ -97,7 +97,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
         checkSession();
         if (values != null) {
             for (String s : values) {
-                if (!NutsUtilStrings.isBlank(s)) {
+                if (!NutsBlankable.isBlank(s)) {
                     ids.add(getSession().getWorkspace().id().parser().setLenient(false).parse(s));
                 }
             }
@@ -251,7 +251,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
         checkSession();
         if (values != null) {
             for (String s : values) {
-                if (!NutsUtilStrings.isBlank(s)) {
+                if (!NutsBlankable.isBlank(s)) {
                     lockedIds.add(getSession().getWorkspace().id().parser().setLenient(false).parse(s));
                 }
             }
@@ -279,7 +279,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
 
     @Override
     public NutsSearchCommand addArch(String value) {
-        if (!NutsUtilStrings.isBlank(value)) {
+        if (!NutsBlankable.isBlank(value)) {
             this.arch.add(value);
         }
         return this;
@@ -369,7 +369,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     @Override
     public NutsSearchCommand addLockedId(String id) {
         checkSession();
-        if (!NutsUtilStrings.isBlank(id)) {
+        if (!NutsBlankable.isBlank(id)) {
             lockedIds.add(getSession().getWorkspace().id().parser().setLenient(false).parse(id));
         }
         return this;

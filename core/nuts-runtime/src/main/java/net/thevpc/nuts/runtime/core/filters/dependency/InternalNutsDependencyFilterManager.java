@@ -199,7 +199,7 @@ public class InternalNutsDependencyFilterManager extends InternalNutsTypedFilter
     @Override
     public NutsDependencyFilter byExpression(String expression) {
         checkSession();
-        if (NutsUtilStrings.isBlank(expression)) {
+        if (NutsBlankable.isBlank(expression)) {
             return always();
         }
         return NutsDependencyJavascriptFilter.valueOf(expression, getSession());

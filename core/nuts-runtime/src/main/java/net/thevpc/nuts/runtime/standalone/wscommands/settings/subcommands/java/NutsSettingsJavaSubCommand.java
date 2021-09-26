@@ -34,13 +34,13 @@ public class NutsSettingsJavaSubCommand extends AbstractNutsSettingsSubCommand {
                     extraLocations.add(cmdLine.next().getString());
                 }
                 if (extraLocations.isEmpty()) {
-                    for (NutsPlatformLocation loc : platforms.searchSystem("java")) {
-                        platforms.add(loc);
+                    for (NutsPlatformLocation loc : platforms.searchSystemPlatforms(NutsPlatformType.JAVA)) {
+                        platforms.addPlatform(loc);
                     }
                 } else {
                     for (String extraLocation : extraLocations) {
-                        for (NutsPlatformLocation loc : platforms.searchSystem("java", extraLocation)) {
-                            platforms.add(loc);
+                        for (NutsPlatformLocation loc : platforms.searchSystemPlatforms(NutsPlatformType.JAVA, extraLocation)) {
+                            platforms.addPlatform(loc);
                         }
                     }
                 }
@@ -50,9 +50,9 @@ public class NutsSettingsJavaSubCommand extends AbstractNutsSettingsSubCommand {
                 }
             } else {
                 while (cmdLine.hasNext()) {
-                    NutsPlatformLocation loc = platforms.resolve("java", cmdLine.next().getString(), null);
+                    NutsPlatformLocation loc = platforms.resolvePlatform(NutsPlatformType.JAVA, cmdLine.next().getString(), null);
                     if (loc != null) {
-                        platforms.add(loc);
+                        platforms.addPlatform(loc);
                     }
                 }
                 if (autoSave) {
@@ -63,15 +63,15 @@ public class NutsSettingsJavaSubCommand extends AbstractNutsSettingsSubCommand {
         } else if (cmdLine.next("remove java") != null) {
             while (cmdLine.hasNext()) {
                 String name = cmdLine.next().getString();
-                NutsPlatformLocation loc = platforms.findByName("java", name);
+                NutsPlatformLocation loc = platforms.findPlatformByName(NutsPlatformType.JAVA, name);
                 if (loc == null) {
-                    loc = platforms.findByPath("java", name);
+                    loc = platforms.findPlatformByPath(NutsPlatformType.JAVA, name);
                     if (loc == null) {
-                        loc = platforms.findByVersion("java", name);
+                        loc = platforms.findPlatformByVersion(NutsPlatformType.JAVA, name);
                     }
                 }
                 if (loc != null) {
-                    platforms.remove(loc);
+                    platforms.removePlatform(loc);
                 }
             }
             if (autoSave) {
@@ -91,7 +91,7 @@ public class NutsSettingsJavaSubCommand extends AbstractNutsSettingsSubCommand {
                 }
             }
             if (cmdLine.isExecMode()) {
-                NutsPlatformLocation[] sdks = platforms.find("java", null);
+                NutsPlatformLocation[] sdks = platforms.findPlatforms(NutsPlatformType.JAVA, null);
                 Arrays.sort(sdks, new Comparator<NutsPlatformLocation>() {
                     @Override
                     public int compare(NutsPlatformLocation o1, NutsPlatformLocation o2) {

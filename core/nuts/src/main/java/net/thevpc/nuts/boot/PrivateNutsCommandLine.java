@@ -782,7 +782,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
 
     public void throwError(NutsMessage message) {
         StringBuilder m = new StringBuilder();
-        if (!NutsUtilStrings.isBlank(commandName)) {
+        if (!NutsBlankable.isBlank(commandName)) {
             m.append(commandName).append(" : ");
         }
         m.append(message);

@@ -453,7 +453,7 @@ public final class CoreNutsWorkspaceInitInformation implements NutsWorkspaceInit
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder().append("NutsBootConfig{");
-        if (!NutsUtilStrings.isBlank(apiVersion)) {
+        if (!NutsBlankable.isBlank(apiVersion)) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }
@@ -471,25 +471,25 @@ public final class CoreNutsWorkspaceInitInformation implements NutsWorkspaceInit
 //            }
 //            sb.append("runtimeDependencies='").append(runtimeDependenciesSet).append('\'');
 //        }
-        if (!NutsUtilStrings.isBlank(bootRepositories)) {
+        if (!NutsBlankable.isBlank(bootRepositories)) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }
             sb.append("bootRepositories='").append(bootRepositories).append('\'');
         }
-        if (!NutsUtilStrings.isBlank(javaCommand)) {
+        if (!NutsBlankable.isBlank(javaCommand)) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }
             sb.append("javaCommand='").append(javaCommand).append('\'');
         }
-        if (!NutsUtilStrings.isBlank(javaOptions)) {
+        if (!NutsBlankable.isBlank(javaOptions)) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }
             sb.append("javaOptions='").append(javaOptions).append('\'');
         }
-        if (!NutsUtilStrings.isBlank(workspace)) {
+        if (!NutsBlankable.isBlank(workspace)) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }

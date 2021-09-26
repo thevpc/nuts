@@ -10,19 +10,19 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
  * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.NutsApiUtils;
@@ -94,17 +94,24 @@ import java.util.List;
  * @since 0.5.5
  * @app.category Command Line
  */
-public interface NutsCommandLine extends Iterable<NutsArgument>,NutsFormattable{
+public interface NutsCommandLine extends Iterable<NutsArgument>, NutsFormattable {
 
-    static NutsCommandLine of(String[] args,NutsSession session){
+    static NutsCommandLine of(String[] args, NutsSession session) {
         NutsApiUtils.checkSession(session);
         return session.getWorkspace().commandLine().create(args);
     }
 
-    static NutsCommandLine parse(String line,NutsSession session){
+    static NutsCommandLine parse(String line, NutsSession session) {
         NutsApiUtils.checkSession(session);
         return session.getWorkspace().commandLine().parse(line);
     }
+
+    /**
+     * autocomplete instance
+     *
+     * @return autocomplete instance
+     */
+    NutsCommandAutoComplete getAutoComplete();
 
     /**
      * set autocomplete instance
@@ -113,13 +120,6 @@ public interface NutsCommandLine extends Iterable<NutsArgument>,NutsFormattable{
      * @return {@code this} instance
      */
     NutsCommandLine setAutoComplete(NutsCommandAutoComplete autoComplete);
-
-    /**
-     * autocomplete instance
-     *
-     * @return autocomplete instance
-     */
-    NutsCommandAutoComplete getAutoComplete();
 
     /**
      * unregister {@code options} as simple (with simple '-') option. This
@@ -221,7 +221,7 @@ public interface NutsCommandLine extends Iterable<NutsArgument>,NutsFormattable{
      * @param errorMessage message to throw
      * @return {@code this} instance
      */
-    NutsCommandLine unexpectedArgument(NutsString errorMessage) ;
+    NutsCommandLine unexpectedArgument(NutsString errorMessage);
 
     /**
      * throw exception if command line is not empty
@@ -229,7 +229,7 @@ public interface NutsCommandLine extends Iterable<NutsArgument>,NutsFormattable{
      * @param errorMessage message to throw
      * @return {@code this} instance
      */
-    NutsCommandLine unexpectedArgument(NutsMessage errorMessage) ;
+    NutsCommandLine unexpectedArgument(NutsMessage errorMessage);
 
     /**
      * throw exception if command line is not empty

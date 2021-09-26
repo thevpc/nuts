@@ -31,8 +31,8 @@ import java.io.InputStream;
 /**
  * Created by vpc on 2/20/17.
  *
- * @since 0.5.4
  * @app.category Base
+ * @since 0.5.4
  */
 public interface NutsSessionTerminal {
 
@@ -44,9 +44,9 @@ public interface NutsSessionTerminal {
 
     char[] readPassword(NutsPrintStream out, NutsMessage message);
 
-    String readLine(NutsPrintStream out, NutsMessage message,NutsSession session);
+    String readLine(NutsPrintStream out, NutsMessage message, NutsSession session);
 
-    char[] readPassword(NutsPrintStream out, NutsMessage message,NutsSession session);
+    char[] readPassword(NutsPrintStream out, NutsMessage message, NutsSession session);
 
     InputStream getIn();
 
@@ -60,7 +60,7 @@ public interface NutsSessionTerminal {
 
     void setErr(NutsPrintStream out);
 
-//    NutsSystemTerminalBase geTerminalBase();
+    //    NutsSystemTerminalBase geTerminalBase();
 //
 //    void seTerminalBase(NutsSystemTerminalBase terminalBase);
 //
@@ -71,26 +71,24 @@ public interface NutsSessionTerminal {
     /**
      * Reads a single line of text from the terminal's input stream.
      *
-     * @throws java.io.UncheckedIOException If an I/O error occurs.
-     *
      * @param promptFormat prompt message format (cstyle)
-     * @param params prompt message parameters
+     * @param params       prompt message parameters
      * @return A string containing the line read from the terminal's input
      * stream, not including any line-termination characters, or {@code null}
      * if an end of stream has been reached.
+     * @throws java.io.UncheckedIOException If an I/O error occurs.
      */
     String readLine(String promptFormat, Object... params);
 
     /**
      * Reads password as a single line of text from the terminal's input stream.
      *
-     * @throws java.io.UncheckedIOException If an I/O error occurs.
-     *
      * @param promptFormat prompt message format (cstyle)
-     * @param params prompt message parameters
+     * @param params       prompt message parameters
      * @return A string containing the line read from the terminal's input
      * stream, not including any line-termination characters, or {@code null}
      * if an end of stream has been reached.
+     * @throws java.io.UncheckedIOException If an I/O error occurs.
      */
     char[] readPassword(String promptFormat, Object... params);
 
@@ -126,15 +124,17 @@ public interface NutsSessionTerminal {
 
     /**
      * print progress with a message
+     *
      * @param progress 0.0f-1.0f value
-     * @param prompt message
-     * @param params message prams
+     * @param prompt   message
+     * @param params   message prams
      * @return {@code this} instance
      */
     NutsSessionTerminal printProgress(float progress, String prompt, Object... params);
 
     /**
      * print indefinite progress with a message
+     *
      * @param prompt message
      * @param params message prams
      * @return {@code this} instance
@@ -143,14 +143,16 @@ public interface NutsSessionTerminal {
 
     /**
      * print progress with a message
+     *
      * @param progress 0.0f-1.0f value
-     * @param message message
+     * @param message  message
      * @return {@code this} instance
      */
     NutsSessionTerminal printProgress(float progress, NutsMessage message);
 
     /**
      * print indefinite progress with a message
+     *
      * @param message message
      * @return {@code this} instance
      */

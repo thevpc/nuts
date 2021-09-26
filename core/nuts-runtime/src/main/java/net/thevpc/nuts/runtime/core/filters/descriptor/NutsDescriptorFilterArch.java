@@ -58,7 +58,7 @@ public class NutsDescriptorFilterArch extends AbstractDescriptorFilter implement
      */
     @Override
     public NutsDescriptorFilter simplify() {
-        if (NutsUtilStrings.isBlank(arch)) {
+        if (NutsBlankable.isBlank(arch)) {
             return null;
         }
         return this;

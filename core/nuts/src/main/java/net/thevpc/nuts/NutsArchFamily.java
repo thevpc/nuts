@@ -212,6 +212,20 @@ public enum NutsArchFamily implements NutsEnum {
         }
     }
 
+    public static NutsArchFamily parse(String value, NutsSession session) {
+        return parse(value, null, session);
+    }
+
+    public static NutsArchFamily parse(String value, NutsArchFamily emptyValue, NutsSession session) {
+        NutsArchFamily v = parseLenient(value, emptyValue, null);
+        if (v == null) {
+            if (!NutsBlankable.isBlank(value)) {
+                throw new NutsParseEnumException(session, value, NutsArchFamily.class);
+            }
+        }
+        return v;
+    }
+
     public static NutsArchFamily getCurrent() {
         return _curr;
     }

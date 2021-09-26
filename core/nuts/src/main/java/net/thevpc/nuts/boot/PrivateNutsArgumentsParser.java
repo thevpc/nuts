@@ -585,7 +585,7 @@ final class PrivateNutsArgumentsParser {
                     case "--log-file-size":
                     case "--log-file-name":
                     case "--log-file-base":
-                    case "--log-file-count":{
+                    case "--log-file-count": {
                         if (enabled) {
                             if (logConfig == null) {
                                 logConfig = new NutsLogConfig();
@@ -819,6 +819,14 @@ final class PrivateNutsArgumentsParser {
                         //ignore
                         break;
                     }
+                    case "--open-file": {
+                        a = cmdLine.nextBoolean();
+                        if (enabled && a.getValue().getBoolean()) {
+                            options.setExecutionType(NutsExecutionType.OPEN);
+                        }
+                        //ignore
+                        break;
+                    }
                     case "--external":
                     case "--spawn":
                     case "-x": {
@@ -854,7 +862,7 @@ final class PrivateNutsArgumentsParser {
                     case "--run-as": {
                         a = cmdLine.nextString();
                         if (enabled) {
-                            if (NutsUtilStrings.isBlank(a.getValue().getString())) {
+                            if (NutsBlankable.isBlank(a.getValue().getString())) {
                                 throw new NutsBootException(NutsMessage.cstyle("missing user name"));
                             }
                             options.setRunAs(NutsRunAs.user(a.getValue().getString()));
@@ -962,7 +970,7 @@ final class PrivateNutsArgumentsParser {
                     case "--expire": {
                         a = cmdLine.next();
                         if (enabled) {
-                            if (!NutsUtilStrings.isBlank(a.getValue().getString())) {
+                            if (!NutsBlankable.isBlank(a.getValue().getString())) {
                                 options.setExpireTime(Instant.parse(a.getValue().getString()));
                             } else {
                                 options.setExpireTime(Instant.now());
@@ -1081,11 +1089,11 @@ final class PrivateNutsArgumentsParser {
         //error only if not asking for help
         if (!(applicationArguments.size() > 0
                 && (
-                        applicationArguments.get(0).equals("help")
-                    || options.isCommandHelp()
-                    ||  applicationArguments.get(0).equals("version")
-                    || options.isCommandVersion()
-                    )
+                applicationArguments.get(0).equals("help")
+                        || options.isCommandHelp()
+                        || applicationArguments.get(0).equals("version")
+                        || options.isCommandVersion()
+        )
         )) {
             if (!showError.isEmpty()) {
                 StringBuilder errorMessage = new StringBuilder();
@@ -1096,7 +1104,7 @@ final class PrivateNutsArgumentsParser {
                 if (!options.isSkipErrors()) {
                     throw new NutsBootException(NutsMessage.plain(errorMessage.toString()));
                 } else {
-                    PrivateNutsTerm.errln("%s",errorMessage.toString());
+                    PrivateNutsTerm.errln("%s", errorMessage.toString());
                 }
             }
         }

@@ -132,7 +132,7 @@ public class NutsRepositoryRegistryHelper {
     }
 
     private RepoAndRef findRepositoryAndRefById(String repositoryNameOrId) {
-        if (!NutsUtilStrings.isBlank(repositoryNameOrId)) {
+        if (!NutsBlankable.isBlank(repositoryNameOrId)) {
             RepoAndRef y = repositoriesByUuid.get(repositoryNameOrId);
             if (y != null) {
                 return y;
@@ -142,7 +142,7 @@ public class NutsRepositoryRegistryHelper {
     }
 
     private RepoAndRef findRepositoryAndRef(String repositoryNameOrId) {
-        if (!NutsUtilStrings.isBlank(repositoryNameOrId)) {
+        if (!NutsBlankable.isBlank(repositoryNameOrId)) {
             RepoAndRef y = repositoriesByUuid.get(repositoryNameOrId);
             if (y != null) {
                 return y;
@@ -156,7 +156,7 @@ public class NutsRepositoryRegistryHelper {
     }
 
     private RepoAndRef findRepositoryAndRefByName(String repositoryNameOrId) {
-        if (!NutsUtilStrings.isBlank(repositoryNameOrId)) {
+        if (!NutsBlankable.isBlank(repositoryNameOrId)) {
             RepoAndRef y = repositoriesByName.get(repositoryNameOrId);
             if (y != null) {
                 return y;

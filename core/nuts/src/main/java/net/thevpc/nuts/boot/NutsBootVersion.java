@@ -15,10 +15,17 @@ import java.util.Objects;
  * not support multiple intervalls.
  */
 public class NutsBootVersion {
-    private String from;
-    private String to;
-    private boolean includeFrom;
-    private boolean includeTo;
+    private final String from;
+    private final String to;
+    private final boolean includeFrom;
+    private final boolean includeTo;
+
+    private NutsBootVersion(String from, String to, boolean includeFrom, boolean includeTo) {
+        this.from = from;
+        this.to = to;
+        this.includeFrom = includeFrom;
+        this.includeTo = includeTo;
+    }
 
     public static NutsBootVersion parse(String s) {
         if (s == null) {
@@ -55,13 +62,6 @@ public class NutsBootVersion {
         }
     }
 
-    private NutsBootVersion(String from, String to, boolean includeFrom, boolean includeTo) {
-        this.from = from;
-        this.to = to;
-        this.includeFrom = includeFrom;
-        this.includeTo = includeTo;
-    }
-
     public boolean isBlank() {
         return from.isEmpty() && to.isEmpty();
     }
@@ -90,52 +90,34 @@ public class NutsBootVersion {
         return includeTo;
     }
 
-    @Override
-    public String toString() {
-        if (from.equals(to)) {
-            if (includeFrom && includeTo) {
-                return from;
-            } else {
-                //why
-                return (includeFrom ? "[" : "]") + from + (includeTo ? "]" : "[");
-            }
-        } else {
-            return (includeFrom ? "[" : "]") + from + "," + to + (includeTo ? "]" : "[");
-        }
-    }
-
     public boolean accept(NutsBootVersion other) {
-        if(!other.isSingleValue()){
-            throw new NutsBootException(NutsMessage.cstyle("expected single value version: %s",other));
+        if (!other.isSingleValue()) {
+            throw new NutsBootException(NutsMessage.cstyle("expected single value version: %s", other));
         }
         NutsBootVersion a = parse(getFrom());
-        if(a.isBlank()){
+        if (a.isBlank()) {
             //ok
-        }else{
+        } else {
             int c = a.compareTo(other);
-            if(isIncludeFrom()){
-                if(c>0){
+            if (isIncludeFrom()) {
+                if (c > 0) {
                     return false;
                 }
-            }else{
-                if(c>=0){
+            } else {
+                if (c >= 0) {
                     return false;
                 }
             }
         }
         a = parse(getTo());
-        if(a.isBlank()){
+        if (a.isBlank()) {
             //ok
-        }else{
+        } else {
             int c = a.compareTo(other);
-            if(isIncludeTo()){
-                if(c<0){
-                    return false;
-                }
-            }else{
-                if(c<=0){
-                    return false;
-                }
+            if (isIncludeTo()) {
+                return c >= 0;
+            } else {
+                return c > 0;
             }
         }
         return true;
@@ -147,42 +129,42 @@ public class NutsBootVersion {
 
     public int compareTo(NutsBootVersion other) {
         if (this.isSingleValue() && other.isSingleValue()) {
-            String a1i=from;
-            String a2i=other.from;
-            if(a1i.equals(a2i)){
+            String a1i = from;
+            String a2i = other.from;
+            if (a1i.equals(a2i)) {
                 return 0;
             }
-            if("".equals(a1i)){
+            if ("".equals(a1i)) {
                 return 1;
             }
-            if("".equals(a2i)){
+            if ("".equals(a2i)) {
                 return -1;
             }
-            if(NutsConstants.Versions.LATEST.equals(a1i)){
+            if (NutsConstants.Versions.LATEST.equals(a1i)) {
                 return 1;
             }
-            if(NutsConstants.Versions.LATEST.equals(a2i)){
+            if (NutsConstants.Versions.LATEST.equals(a2i)) {
                 return -1;
             }
-            if(NutsConstants.Versions.RELEASE.equals(a1i)){
+            if (NutsConstants.Versions.RELEASE.equals(a1i)) {
                 return 1;
             }
-            if(NutsConstants.Versions.RELEASE.equals(a2i)){
+            if (NutsConstants.Versions.RELEASE.equals(a2i)) {
                 return -1;
             }
             String[] p1 = splitVersionParts(a1i);
             String[] p2 = splitVersionParts(a2i);
-            int m=Math.min(p1.length,p2.length);
+            int m = Math.min(p1.length, p2.length);
             for (int j = 0; j < m; j++) {
-                int x=compareVersionPart(p1[j],p2[j]);
-                if(x!=0){
+                int x = compareVersionPart(p1[j], p2[j]);
+                if (x != 0) {
                     return x;
                 }
             }
-            if(p1.length<p2.length){
+            if (p1.length < p2.length) {
                 return -1;
             }
-            if(p1.length>p2.length){
+            if (p1.length > p2.length) {
                 return 1;
             }
             int i1 = Integer.parseInt(a1i);
@@ -195,64 +177,69 @@ public class NutsBootVersion {
         throw new NutsBootException(NutsMessage.plain("unsupported compare versions"));
     }
 
-    private BigInteger asInt(String s){
+    private BigInteger asInt(String s) {
         try {
             return new BigInteger(s);
-        }catch (Exception e){
+        } catch (Exception e) {
             return null;
         }
     }
 
-    private int compareVersionPart(String a,String b){
-        BigInteger ia=asInt(a);
-        BigInteger ib=asInt(b);
-        if(ia!=null && ib!=null){
+    private int compareVersionPart(String a, String b) {
+        BigInteger ia = asInt(a);
+        BigInteger ib = asInt(b);
+        if (ia != null && ib != null) {
             return ia.compareTo(ib);
         }
         return a.compareTo(b);
     }
 
-    private String[] splitVersionParts(String s){
-        List<String> parts=new ArrayList<>();
-        StringBuilder sb=null;
-        boolean digits=false;
+    private String[] splitVersionParts(String s) {
+        List<String> parts = new ArrayList<>();
+        StringBuilder sb = null;
+        boolean digits = false;
         for (char c : s.toCharArray()) {
-            if(sb==null){
-                if(c>='0' && c<='9'){
-                    digits=true;
+            if (sb == null) {
+                if (c >= '0' && c <= '9') {
+                    digits = true;
                 }
-                sb=new StringBuilder();
+                sb = new StringBuilder();
                 sb.append(c);
-            }else {
+            } else {
                 if (digits) {
-                    if(c>='0' && c<='9'){
+                    if (c >= '0' && c <= '9') {
                         sb.append(c);
-                    }else{
-                        if(sb.length()>0){
+                    } else {
+                        if (sb.length() > 0) {
                             parts.add(sb.toString());
                         }
-                        sb=new StringBuilder();
+                        sb = new StringBuilder();
                         sb.append(c);
-                        digits=false;
+                        digits = false;
                     }
                 } else {
-                    if(c>='0' && c<='9'){
-                        if(sb.length()>0){
+                    if (c >= '0' && c <= '9') {
+                        if (sb.length() > 0) {
                             parts.add(sb.toString());
                         }
-                        sb=new StringBuilder();
+                        sb = new StringBuilder();
                         sb.append(c);
-                        digits=true;
-                    }else{
+                        digits = true;
+                    } else {
                         sb.append(c);
                     }
                 }
             }
         }
-        if(sb!=null && sb.length()>0){
+        if (sb != null && sb.length() > 0) {
             parts.add(sb.toString());
         }
         return parts.toArray(new String[0]);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(from, to, includeFrom, includeTo);
     }
 
     @Override
@@ -264,7 +251,16 @@ public class NutsBootVersion {
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(from, to, includeFrom, includeTo);
+    public String toString() {
+        if (from.equals(to)) {
+            if (includeFrom && includeTo) {
+                return from;
+            } else {
+                //why
+                return (includeFrom ? "[" : "]") + from + (includeTo ? "]" : "[");
+            }
+        } else {
+            return (includeFrom ? "[" : "]") + from + "," + to + (includeTo ? "]" : "[");
+        }
     }
 }

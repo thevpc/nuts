@@ -73,7 +73,7 @@ public class DefaultNutsPushCommand extends AbstractDefaultNutsPushCommand {
             NutsDefinition file = entry.getValue();
             NutsFetchMode fetchMode = this.isOffline() ? NutsFetchMode.LOCAL : NutsFetchMode.REMOTE;
             NutsWorkspaceUtils wu = NutsWorkspaceUtils.of(session);
-            if (NutsUtilStrings.isBlank(this.getRepository())) {
+            if (NutsBlankable.isBlank(this.getRepository())) {
                 Set<String> errors = new LinkedHashSet<>();
                 //TODO : CHECK ME, why offline?
                 boolean ok = false;

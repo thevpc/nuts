@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -11,23 +11,22 @@
  * architecture to help supporting a large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
  * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts;
 
 import java.nio.file.Path;
-import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -43,6 +42,7 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
     ////////////////////////////////////////////////////////
     // Setters
     ////////////////////////////////////////////////////////
+
     /**
      * set id to fetch to nuts-api (api artifact)
      *
@@ -56,31 +56,6 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
      * @return {@code this} instance
      */
     NutsFetchCommand setNutsRuntime();
-
-    /**
-     * set id to fetch.
-     *
-     * @param id id to fetch
-     * @return {@code this} instance
-     */
-    NutsFetchCommand setId(String id);
-
-    /**
-     * set id to fetch.
-     *
-     * @param id id to fetch
-     * @return {@code this} instance
-     */
-    NutsFetchCommand setId(NutsId id);
-
-    /**
-     * set locating where to fetch the artifact. If the location is a folder, a
-     * new name will be generated.
-     *
-     * @param fileOrFolder path to store to
-     * @return {@code this} instance
-     */
-    NutsFetchCommand setLocation(Path fileOrFolder);
 
     /**
      * unset location to store to fetched id and fall back to default location.
@@ -105,10 +80,6 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
      */
     NutsFetchCommand setFailFast(boolean enable);
 
-//    NutsFetch copyFrom(NutsFetch other);
-    ////////////////////////////////////////////////////////
-    // Getter
-    ////////////////////////////////////////////////////////
     /**
      * id to fetch
      *
@@ -116,15 +87,37 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
      */
     NutsId getId();
 
+    /**
+     * set id to fetch.
+     *
+     * @param id id to fetch
+     * @return {@code this} instance
+     */
+    NutsFetchCommand setId(String id);
+
+    /**
+     * set id to fetch.
+     *
+     * @param id id to fetch
+     * @return {@code this} instance
+     */
+    NutsFetchCommand setId(NutsId id);
+
+//    NutsFetch copyFrom(NutsFetch other);
     ////////////////////////////////////////////////////////
-    // Result
+    // Getter
     ////////////////////////////////////////////////////////
+
     /**
      * return result as content
      *
      * @return result as content
      */
     NutsContent getResultContent();
+
+    ////////////////////////////////////////////////////////
+    // Result
+    ////////////////////////////////////////////////////////
 
     /**
      * return result as id
@@ -176,15 +169,16 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
      */
     Path getResultPath();
 
-    ///////////////////////
-    // REDIFNIED
-    ///////////////////////
     /**
      * create copy (new instance) of {@code this} command
      *
      * @return copy (new instance) of {@code this} command
      */
     NutsFetchCommand copy();
+
+    ///////////////////////
+    // REDIFNIED
+    ///////////////////////
 
     /**
      * copy into {@code this} from {@code other} fetch command
@@ -194,13 +188,6 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
      */
     NutsFetchCommand copyFrom(NutsFetchCommand other);
 
-    ///////////////////////
-    // SHARED
-    ///////////////////////
-    ////////////////////////////////////////////////////////
-    // Setters
-    ////////////////////////////////////////////////////////
-
     /**
      * add dependency scope filter. Only relevant with {@link #setDependencies(boolean)}
      *
@@ -208,6 +195,13 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
      * @return {@code this} instance
      */
     NutsFetchCommand addScope(NutsDependencyScopePattern scope);
+
+    ///////////////////////
+    // SHARED
+    ///////////////////////
+    ////////////////////////////////////////////////////////
+    // Setters
+    ////////////////////////////////////////////////////////
 
     /**
      * add dependency scope filter. Only relevant with {@link #setDependencies(boolean)}
@@ -257,40 +251,6 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
     NutsFetchCommand clearScopes();
 
     /**
-     * set option filter. if null filter is removed. if false only non optional
-     * will be retrieved. if true, only optional will be retrieved.
-     *
-     * @param enable option filter
-     * @return {@code this} instance
-     */
-    NutsFetchCommand setOptional(Boolean enable);
-
-    /**
-     * enable/disable dependencies list retrieval
-     * @param enable if true retrieval is enabled.
-     * @return {@code this} instance
-     */
-    NutsFetchCommand setDependencies(boolean enable);
-
-    /**
-     * enable/disable effective descriptor evaluation
-     * @param enable if true evaluation is enabled.
-     * @return {@code this} instance
-     */
-    NutsFetchCommand setEffective(boolean enable);
-
-    /**
-     * enable/disable retrieval of content info
-     * @param enable if true retrieval is enabled.
-     * @return {@code this} instance
-     */
-    NutsFetchCommand setContent(boolean enable);
-
-    ////////////////////////////////////////////////////////
-    // Getters
-    ////////////////////////////////////////////////////////
-    
-    /**
      * get locating where to fetch the artifact. If the location is a folder, a
      * new name will be generated.
      *
@@ -298,6 +258,14 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
      */
     Path getLocation();
 
+    /**
+     * set locating where to fetch the artifact. If the location is a folder, a
+     * new name will be generated.
+     *
+     * @param fileOrFolder path to store to
+     * @return {@code this} instance
+     */
+    NutsFetchCommand setLocation(Path fileOrFolder);
 
     /**
      * dependencies scope filters
@@ -312,11 +280,30 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
     Boolean getOptional();
 
     /**
+     * set option filter. if null filter is removed. if false only non optional
+     * will be retrieved. if true, only optional will be retrieved.
+     *
+     * @param enable option filter
+     * @return {@code this} instance
+     */
+    NutsFetchCommand setOptional(Boolean enable);
+
+    ////////////////////////////////////////////////////////
+    // Getters
+    ////////////////////////////////////////////////////////
+
+    /**
      * content filter
      * @return content filter
      */
     boolean isContent();
 
+    /**
+     * enable/disable retrieval of content info
+     * @param enable if true retrieval is enabled.
+     * @return {@code this} instance
+     */
+    NutsFetchCommand setContent(boolean enable);
 
     /**
      * effective filter
@@ -325,10 +312,24 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
     boolean isEffective();
 
     /**
+     * enable/disable effective descriptor evaluation
+     * @param enable if true evaluation is enabled.
+     * @return {@code this} instance
+     */
+    NutsFetchCommand setEffective(boolean enable);
+
+    /**
      * if true dependencies list is retrieved
      * @return dependencies list retrieval status
      */
     boolean isDependencies();
+
+    /**
+     * enable/disable dependencies list retrieval
+     * @param enable if true retrieval is enabled.
+     * @return {@code this} instance
+     */
+    NutsFetchCommand setDependencies(boolean enable);
 
     /**
      * return repository filter

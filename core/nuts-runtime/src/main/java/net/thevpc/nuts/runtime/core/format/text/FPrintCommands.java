@@ -6,6 +6,8 @@
 package net.thevpc.nuts.runtime.core.format.text;
 
 import java.io.PrintStream;
+
+import net.thevpc.nuts.NutsBlankable;
 import net.thevpc.nuts.NutsConstants;
 import net.thevpc.nuts.NutsTerminalCommand;
 import net.thevpc.nuts.NutsUtilStrings;
@@ -48,7 +50,7 @@ public class FPrintCommands {
     public static void runCommand(StringBuilder out, NutsTerminalCommand cmd) {
         out.append(NutsConstants.Ntf.SILENT);
         out.append("```!").append(cmd.getName());
-        if (!NutsUtilStrings.isBlank(cmd.getArgs())) {
+        if (!NutsBlankable.isBlank(cmd.getArgs())) {
             out.append(" ");
             out.append(cmd.getArgs());
         }

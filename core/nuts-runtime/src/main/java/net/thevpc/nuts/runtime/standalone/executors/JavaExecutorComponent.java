@@ -98,7 +98,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                 executionContext.isTemporary(),
                 executionContext.getArguments(),
                 executionContext.getExecutorArguments(),
-                NutsUtilStrings.isBlank(executionContext.getCwd()) ? System.getProperty("user.dir") : executionContext.getCwd(),
+                NutsBlankable.isBlank(executionContext.getCwd()) ? System.getProperty("user.dir") : executionContext.getCwd(),
                 executionContext.getTraceSession()/*.copy().setProgressOptions("none")*/);
         final NutsSession execSession = executionContext.getExecSession();
         switch (executionContext.getExecutionType()) {
@@ -214,7 +214,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
 //                }
 //                String bootArgumentsString = executionContext.getWorkspace().commandLine().create(bootCommand)
 //                        .toString();
-                if (!NutsUtilStrings.isBlank(bootArgumentsString)) {
+                if (!NutsBlankable.isBlank(bootArgumentsString)) {
                     osEnv.put("nuts_boot_args", bootArgumentsString);
                     joptions.getJvmArgs().add("-Dnuts.boot.args=" + bootArgumentsString);
                 }
@@ -256,7 +256,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                 args.add(joptions.getJavaHome());
                 args.addAll(joptions.getJvmArgs());
 
-//                if (!NutsUtilStrings.isBlank(bootArgumentsString)) {
+//                if (!NutsBlankable.isBlank(bootArgumentsString)) {
 //                    String Dnuts_boot_args = "-Dnuts.boot.args=" + bootArgumentsString;
 //                    xargs.add(Dnuts_boot_args);
 //                    args.add(Dnuts_boot_args);
@@ -549,9 +549,9 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                 out.println("\t\t " + xarg);
 //                }
             }
-            String directory = NutsUtilStrings.isBlank(joptions.getDir()) ? null : ws.io().path(joptions.getDir()).builder().withAppBaseDir().build().toString();
+            String directory = NutsBlankable.isBlank(joptions.getDir()) ? null : ws.io().path(joptions.getDir()).builder().withAppBaseDir().build().toString();
             ProcessExecHelper.ofDefinition(def,
-                    args.toArray(new String[0]), osEnv, directory, executionContext.getExecutorProperties(), joptions.isShowCommand(), true, executionContext.getSleepMillis(), executionContext.isInheritSystemIO(), false, NutsUtilStrings.isBlank(executionContext.getRedirectOutputFile()) ? null : new File(executionContext.getRedirectOutputFile()), NutsUtilStrings.isBlank(executionContext.getRedirectInputFile()) ? null : new File(executionContext.getRedirectInputFile()), executionContext.getRunAs(), executionContext.getTraceSession(),
+                    args.toArray(new String[0]), osEnv, directory, executionContext.getExecutorProperties(), joptions.isShowCommand(), true, executionContext.getSleepMillis(), executionContext.isInheritSystemIO(), false, NutsBlankable.isBlank(executionContext.getRedirectOutputFile()) ? null : new File(executionContext.getRedirectOutputFile()), NutsBlankable.isBlank(executionContext.getRedirectInputFile()) ? null : new File(executionContext.getRedirectInputFile()), executionContext.getRunAs(), executionContext.getTraceSession(),
                     execSession
             ).dryExec();
         }
@@ -576,9 +576,9 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
 //                    }
                 }
             }
-            String directory = NutsUtilStrings.isBlank(joptions.getDir()) ? null : ws.io().path(joptions.getDir()).builder().withAppBaseDir().build().toString();
+            String directory = NutsBlankable.isBlank(joptions.getDir()) ? null : ws.io().path(joptions.getDir()).builder().withAppBaseDir().build().toString();
             return ProcessExecHelper.ofDefinition(def,
-                    args.toArray(new String[0]), osEnv, directory, executionContext.getExecutorProperties(), joptions.isShowCommand(), true, executionContext.getSleepMillis(), executionContext.isInheritSystemIO(), false, NutsUtilStrings.isBlank(executionContext.getRedirectOutputFile()) ? null : new File(executionContext.getRedirectOutputFile()), NutsUtilStrings.isBlank(executionContext.getRedirectInputFile()) ? null : new File(executionContext.getRedirectInputFile()), executionContext.getRunAs(), executionContext.getTraceSession(),
+                    args.toArray(new String[0]), osEnv, directory, executionContext.getExecutorProperties(), joptions.isShowCommand(), true, executionContext.getSleepMillis(), executionContext.isInheritSystemIO(), false, NutsBlankable.isBlank(executionContext.getRedirectOutputFile()) ? null : new File(executionContext.getRedirectOutputFile()), NutsBlankable.isBlank(executionContext.getRedirectInputFile()) ? null : new File(executionContext.getRedirectInputFile()), executionContext.getRunAs(), executionContext.getTraceSession(),
                     execSession
             );
         }

@@ -35,17 +35,17 @@ import java.util.stream.Stream;
 /**
  * Find Result items from find command
  *
- * @see NutsSearchCommand#getResultIds()
- * @author thevpc
  * @param <T> Result Type
- * @since 0.5.4
+ * @author thevpc
  * @app.category Base
+ * @see NutsSearchCommand#getResultIds()
+ * @since 0.5.4
  */
 public interface NutsStream<T> extends Iterable<T> {
 
     /**
      * return result as a  java.util.List .
-     *
+     * <p>
      * consumes the result and returns a list Calling this method twice will
      * result in unexpected behavior (may return an empty list as the result is
      * already consumed or throw an Exception)
@@ -62,7 +62,7 @@ public interface NutsStream<T> extends Iterable<T> {
 
     /**
      * return the first value or null if none found.
-     *
+     * <p>
      * Calling this method twice will result in unexpected behavior (may return
      * an incorrect value such as null as the result is already consumed or
      * throw an Exception)
@@ -73,7 +73,7 @@ public interface NutsStream<T> extends Iterable<T> {
 
     /**
      * return the last value or null if none found. consumes all of the stream
-     *
+     * <p>
      * Calling this method twice will result in unexpected behavior (may return
      * an incorrect value such as null as the result is already consumed or
      * throw an Exception)
@@ -84,7 +84,7 @@ public interface NutsStream<T> extends Iterable<T> {
 
     /**
      * return the first value or NutsNotFoundException if not found.
-     *
+     * <p>
      * Calling this method twice will result in unexpected behavior (may return
      * an incorrect value such as null as the result is already consumed or
      * throw an Exception)
@@ -95,7 +95,7 @@ public interface NutsStream<T> extends Iterable<T> {
 
     /**
      * return the first value while checking that there are no more elements.
-     *
+     * <p>
      * Calling this method twice will result in unexpected behavior (may return
      * an incorrect value such as null as the result is already consumed or
      * throw an Exception)
@@ -109,7 +109,7 @@ public interface NutsStream<T> extends Iterable<T> {
 
     /**
      * return result as a  java.util.stream.Stream .
-     *
+     * <p>
      * Calling this method twice will result in unexpected behavior (may return
      * 0 as the result is already consumed or throw an Exception)
      *
@@ -120,7 +120,7 @@ public interface NutsStream<T> extends Iterable<T> {
 
     /**
      * return elements count of this result.
-     *
+     * <p>
      * consumes the result and returns the number of elements consumed. Calling
      * this method twice will result in unexpected behavior (may return 0 as the
      * result is already consumed or throw an Exception)
@@ -131,8 +131,9 @@ public interface NutsStream<T> extends Iterable<T> {
 
     /**
      * return NutsStream a stream consisting of the results of applying the given function to the elements of this stream.
+     *
      * @param mapper mapper
-     * @param <R> to type
+     * @param <R>    to type
      * @return NutsStream a stream consisting of the results of applying the given function to the elements of this stream.
      */
     <R> NutsStream<R> map(Function<? super T, ? extends R> mapper);

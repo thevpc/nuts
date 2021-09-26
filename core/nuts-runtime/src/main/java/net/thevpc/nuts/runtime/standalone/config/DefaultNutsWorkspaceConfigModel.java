@@ -179,7 +179,7 @@ public class DefaultNutsWorkspaceConfigModel {
 
         if (force || storeModelMainChanged) {
             List<NutsPlatformLocation> plainSdks = new ArrayList<>();
-            plainSdks.addAll(Arrays.asList(ws.env().platforms().find(null, null)));
+            plainSdks.addAll(Arrays.asList(ws.env().platforms().findPlatforms(null, null)));
             storeModelMain.setSdk(plainSdks);
             storeModelMain.setRepositories(new ArrayList<>(
                     Arrays.stream(ws.repos().getRepositories()).filter(x -> !x.config().isTemporary())
@@ -287,7 +287,7 @@ public class DefaultNutsWorkspaceConfigModel {
                     //not loaded
                     break;
                 }
-                if (NutsUtilStrings.isBlank(configLoaded.getWorkspace())) {
+                if (NutsBlankable.isBlank(configLoaded.getWorkspace())) {
                     lastConfigLoaded = configLoaded;
                     break;
                 }
@@ -363,7 +363,7 @@ public class DefaultNutsWorkspaceConfigModel {
 //        if (other == null) {
 //            other = new NutsBootConfig();
 //        }
-//        if (!NutsUtilStrings.isBlank(other.getRuntimeId())) {
+//        if (!NutsBlankable.isBlank(other.getRuntimeId())) {
 //            NutsSession searchSession = ws.createSession().silent();
 //            other.setRuntimeDependencies(ws.search().setSession(searchSession).addId(other.getRuntimeId())
 //                    .scope(NutsDependencyScopePattern.RUN)
@@ -383,7 +383,7 @@ public class DefaultNutsWorkspaceConfigModel {
 //        fireConfigurationChanged();
 //    }
     public boolean isSupportedRepositoryType(String repositoryType, NutsSession session) {
-        if (NutsUtilStrings.isBlank(repositoryType)) {
+        if (NutsBlankable.isBlank(repositoryType)) {
             repositoryType = NutsConstants.RepoTypes.NUTS;
         }
         return session.getWorkspace().extensions().createAllSupported(NutsRepositoryFactoryComponent.class,
@@ -928,7 +928,7 @@ public class DefaultNutsWorkspaceConfigModel {
 
     private void setConfigBoot(NutsWorkspaceConfigBoot config, NutsSession session, boolean fire) {
         this.storeModelBoot = config;
-        if (NutsUtilStrings.isBlank(config.getUuid())) {
+        if (NutsBlankable.isBlank(config.getUuid())) {
             config.setUuid(UUID.randomUUID().toString());
             fire = true;
         }

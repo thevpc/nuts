@@ -10,19 +10,19 @@
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
  * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.NutsApiUtils;
@@ -34,7 +34,7 @@ import net.thevpc.nuts.boot.NutsApiUtils;
  * @app.category Format
  */
 public interface NutsDescriptorFormat extends NutsFormat {
-    static NutsDescriptorFormat of(NutsSession session){
+    static NutsDescriptorFormat of(NutsSession session) {
         NutsApiUtils.checkSession(session);
         return session.getWorkspace().descriptor().formatter();
     }
@@ -52,6 +52,14 @@ public interface NutsDescriptorFormat extends NutsFormat {
      * @param compact compact value
      * @return {@code this} instance
      */
+    NutsDescriptorFormat setCompact(boolean compact);
+
+    /**
+     * value compact flag.
+     * When true, formatted Descriptor will compact JSON result.
+     * @param compact compact value
+     * @return {@code this} instance
+     */
     NutsDescriptorFormat compact(boolean compact);
 
     /**
@@ -60,14 +68,6 @@ public interface NutsDescriptorFormat extends NutsFormat {
      * @return {@code this} instance
      */
     NutsDescriptorFormat compact();
-
-    /**
-     * value compact flag.
-     * When true, formatted Descriptor will compact JSON result.
-     * @param compact compact value
-     * @return {@code this} instance
-     */
-    NutsDescriptorFormat setCompact(boolean compact);
 
     /**
      * set the descriptor instance to print

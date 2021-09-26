@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages and libraries
  * for runtime execution. Nuts is the ultimate companion for maven (and other
@@ -11,7 +11,7 @@
  * large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,28 +37,6 @@ package net.thevpc.nuts;
  * @app.category Format
  */
 public interface NutsTreeFormat extends NutsObjectFormat {
-
-    /**
-     * update session
-     *
-     * @param session session
-     * @return {@code this instance}
-     */
-    @Override
-    NutsTreeFormat setSession(NutsSession session);
-
-    /**
-     * configure the current command with the given arguments. This is an
-     * override of the {@link NutsCommandLineConfigurable#configure(boolean, java.lang.String...)
-     * }
-     * to help return a more specific return type;
-     *
-     * @param skipUnsupported when true, all unsupported options are skipped
-     * @param args argument to configure with
-     * @return {@code this} instance
-     */
-    @Override
-    NutsTreeFormat configure(boolean skipUnsupported, String... args);
 
     /**
      * return node format
@@ -98,8 +76,30 @@ public interface NutsTreeFormat extends NutsObjectFormat {
     NutsTreeModel getModel();
 
     @Override
-    NutsTreeFormat setNtf(boolean ntf);
+    NutsTreeFormat setValue(Object value);
+
+    /**
+     * update session
+     *
+     * @param session session
+     * @return {@code this instance}
+     */
+    @Override
+    NutsTreeFormat setSession(NutsSession session);
+
+    /**
+     * configure the current command with the given arguments. This is an
+     * override of the {@link NutsCommandLineConfigurable#configure(boolean, java.lang.String...)
+     * }
+     * to help return a more specific return type;
+     *
+     * @param skipUnsupported when true, all unsupported options are skipped
+     * @param args argument to configure with
+     * @return {@code this} instance
+     */
+    @Override
+    NutsTreeFormat configure(boolean skipUnsupported, String... args);
 
     @Override
-    NutsTreeFormat setValue(Object value);
+    NutsTreeFormat setNtf(boolean ntf);
 }

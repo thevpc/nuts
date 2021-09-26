@@ -46,7 +46,7 @@ public class DefaultNutsTextManager implements NutsTextManager {
         }
         String msg = m.getMessage();
         String sLocale = getSession() == null ? null : getSession().getLocale();
-        Locale locale = NutsUtilStrings.isBlank(sLocale) ? null : new Locale(sLocale);
+        Locale locale = NutsBlankable.isBlank(sLocale) ? null : new Locale(sLocale);
         Object[] args2 = new Object[params.length];
         NutsTextManager txt = getSession().getWorkspace().text();
         for (int i = 0; i < args2.length; i++) {

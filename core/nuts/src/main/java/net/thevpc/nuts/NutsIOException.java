@@ -10,7 +10,7 @@
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -22,7 +22,7 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts;
 
 /**
@@ -37,7 +37,7 @@ public class NutsIOException extends NutsException {
      * @param message message
      */
     public NutsIOException(NutsSession session, NutsMessage message) {
-        super(session,message);
+        super(session, message);
     }
 
     /**
@@ -47,7 +47,7 @@ public class NutsIOException extends NutsException {
      * @param cause cause
      */
     public NutsIOException(NutsSession session, NutsMessage message, Throwable cause) {
-        super(session,message, cause);
+        super(session, message, cause);
     }
 
     /**
@@ -57,10 +57,10 @@ public class NutsIOException extends NutsException {
      */
     public NutsIOException(NutsSession session, Throwable cause) {
         super(session,
-                cause==null?null
-                        :(cause instanceof NutsExceptionBase)?
-                                ((NutsExceptionBase) cause).getFormattedMessage()
-                                :NutsMessage.plain(cause.getMessage()),
+                cause == null ? null
+                        : (cause instanceof NutsExceptionBase) ?
+                        ((NutsExceptionBase) cause).getFormattedMessage()
+                        : NutsMessage.plain(cause.getMessage()),
                 cause);
     }
 }

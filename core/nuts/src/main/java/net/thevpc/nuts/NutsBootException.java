@@ -33,21 +33,23 @@ import java.util.Stack;
 /**
  * Base Boot Nuts Exception. Thrown when the Workspace could is booting
  * and is not yet available.
+ *
  * @author thevpc
- * @since 0.5.4
  * @app.category Exceptions
+ * @since 0.5.4
  */
 public class NutsBootException extends RuntimeException {
 
     private final int exitCode;
     private final NutsMessage message;
 
-    /** Constructs a new runtime exception with the specified detail message.
+    /**
+     * Constructs a new runtime exception with the specified detail message.
      * The cause is not initialized, and may subsequently be initialized by a
      * call to {@link #initCause}.
      *
-     * @param   message   the detail message. The detail message is saved for
-     *          later retrieval by the {@link #getMessage()} method.
+     * @param message the detail message. The detail message is saved for
+     *                later retrieval by the {@link #getMessage()} method.
      */
     public NutsBootException(NutsMessage message) {
         super(message.toString());
@@ -63,12 +65,12 @@ public class NutsBootException extends RuntimeException {
      * {@code cause} is <i>not</i> automatically incorporated in
      * this runtime exception's detail message.
      *
-     * @param  message the detail message (which is saved for later retrieval
-     *         by the {@link #getMessage()} method).
-     * @param  cause the cause (which is saved for later retrieval by the
-     *         {@link #getCause()} method).  (A {@code null} value is
-     *         permitted, and indicates that the cause is nonexistent or
-     *         unknown.)
+     * @param message the detail message (which is saved for later retrieval
+     *                by the {@link #getMessage()} method).
+     * @param cause   the cause (which is saved for later retrieval by the
+     *                {@link #getCause()} method).  (A {@code null} value is
+     *                permitted, and indicates that the cause is nonexistent or
+     *                unknown.)
      */
     public NutsBootException(NutsMessage message, Throwable cause) {
         super(message.toString(), cause);
@@ -76,13 +78,14 @@ public class NutsBootException extends RuntimeException {
         this.exitCode = 1;
     }
 
-    /** Constructs a new runtime exception with the specified detail message.
+    /**
+     * Constructs a new runtime exception with the specified detail message.
      * The cause is not initialized, and may subsequently be initialized by a
      * call to {@link #initCause}.
      *
-     * @param   exitCode   exit code
-     * @param   message   the detail message. The detail message is saved for
-     *          later retrieval by the {@link #getMessage()} method.
+     * @param exitCode exit code
+     * @param message  the detail message. The detail message is saved for
+     *                 later retrieval by the {@link #getMessage()} method.
      */
     public NutsBootException(NutsMessage message, int exitCode) {
         super(message == null ? "" : message.toString());
@@ -98,13 +101,13 @@ public class NutsBootException extends RuntimeException {
      * {@code cause} is <i>not</i> automatically incorporated in
      * this runtime exception's detail message.
      *
-     * @param  exitCode exit code
-     * @param  message the detail message (which is saved for later retrieval
-     *         by the {@link #getMessage()} method).
-     * @param  cause the cause (which is saved for later retrieval by the
-     *         {@link #getCause()} method).  (A {@code null} value is
-     *         permitted, and indicates that the cause is nonexistent or
-     *         unknown.)
+     * @param exitCode exit code
+     * @param message  the detail message (which is saved for later retrieval
+     *                 by the {@link #getMessage()} method).
+     * @param cause    the cause (which is saved for later retrieval by the
+     *                 {@link #getCause()} method).  (A {@code null} value is
+     *                 permitted, and indicates that the cause is nonexistent or
+     *                 unknown.)
      */
     public NutsBootException(NutsMessage message, Throwable cause, int exitCode) {
         super(message == null ? "" : message.toString(), cause);

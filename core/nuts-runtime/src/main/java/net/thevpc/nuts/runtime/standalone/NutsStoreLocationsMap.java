@@ -27,6 +27,8 @@ package net.thevpc.nuts.runtime.standalone;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import net.thevpc.nuts.NutsBlankable;
 import net.thevpc.nuts.NutsStoreLocation;
 import net.thevpc.nuts.NutsUtilStrings;
 
@@ -60,7 +62,7 @@ public class NutsStoreLocationsMap {
         if (other != null) {
             for (NutsStoreLocation location : NutsStoreLocation.values()) {
                 String v = other.get(location);
-                if (!NutsUtilStrings.isBlank(v)) {
+                if (!NutsBlankable.isBlank(v)) {
                     set(location, v);
                 }
             }
@@ -70,7 +72,7 @@ public class NutsStoreLocationsMap {
 
     public NutsStoreLocationsMap set(NutsStoreLocation location, String value) {
         if (location != null) {
-            if (NutsUtilStrings.isBlank(value)) {
+            if (NutsBlankable.isBlank(value)) {
                 if (locations != null) {
                     locations.remove(location.id());
                 }
@@ -89,7 +91,7 @@ public class NutsStoreLocationsMap {
         if (locations != null) {
             for (NutsStoreLocation location : NutsStoreLocation.values()) {
                 String v = get(location);
-                if (!NutsUtilStrings.isBlank(v)) {
+                if (!NutsBlankable.isBlank(v)) {
                     map.put(location.id(), v);
                 }
             }

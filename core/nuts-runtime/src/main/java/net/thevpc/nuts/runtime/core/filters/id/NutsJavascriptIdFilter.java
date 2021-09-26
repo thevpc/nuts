@@ -43,7 +43,7 @@ public class NutsJavascriptIdFilter extends AbstractIdFilter implements NutsIdFi
     private String code;
 
     public static NutsIdFilter valueOf(String value, NutsSession ws) {
-        if (NutsUtilStrings.isBlank(value)) {
+        if (NutsBlankable.isBlank(value)) {
             return ws.getWorkspace().id().filter().always();
         }
         return new NutsJavascriptIdFilter(ws,value);

@@ -59,7 +59,7 @@ public class NutsDescriptorFilterPlatform extends AbstractDescriptorFilter imple
      */
     @Override
     public NutsDescriptorFilter simplify() {
-        if (NutsUtilStrings.isBlank(platform)) {
+        if (NutsBlankable.isBlank(platform)) {
             return null;
         }
         return this;

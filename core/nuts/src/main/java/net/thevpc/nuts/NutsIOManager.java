@@ -77,7 +77,7 @@ public interface NutsIOManager extends NutsComponent<Object/* any object or null
      * {@code out} is a PrintStream that supports {@code mode}, it should be
      * returned without modification.
      *
-     * @param out stream to wrap
+     * @param out  stream to wrap
      * @param mode mode to support
      * @return {@code mode} supporting PrintStream
      */

@@ -10,19 +10,19 @@
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
  * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts;
 
 import java.io.File;
@@ -38,6 +38,13 @@ import java.nio.file.Path;
 public interface NutsMonitorAction {
 
     /**
+     * return current session
+     *
+     * @return current session
+     */
+    NutsSession getSession();
+
+    /**
      * update current session
      *
      * @param session session
@@ -46,11 +53,11 @@ public interface NutsMonitorAction {
     NutsMonitorAction setSession(NutsSession session);
 
     /**
-     * return current session
+     * return action name
      *
-     * @return current session
+     * @return action name
      */
-    NutsSession getSession();
+    NutsString getName();
 
     /**
      * update action name
@@ -61,11 +68,11 @@ public interface NutsMonitorAction {
     NutsMonitorAction setName(NutsString name);
 
     /**
-     * return action name
+     * return source origin
      *
-     * @return action name
+     * @return source origin
      */
-    NutsString getName();
+    Object getOrigin();
 
     /**
      * update action source origin
@@ -76,11 +83,11 @@ public interface NutsMonitorAction {
     NutsMonitorAction setOrigin(Object origin);
 
     /**
-     * return source origin
+     * return operation length
      *
-     * @return source origin
+     * @return {@code this} instance
      */
-    Object getOrigin();
+    long getLength();
 
     /**
      * update operation length
@@ -89,13 +96,6 @@ public interface NutsMonitorAction {
      * @return {@code this} instance
      */
     NutsMonitorAction setLength(long len);
-
-    /**
-     * return operation length
-     *
-     * @return {@code this} instance
-     */
-    long getLength();
 
     /**
      * update operation source
@@ -147,7 +147,7 @@ public interface NutsMonitorAction {
     /**
      *
      * @return new input source
-     * @since  0.8.0
+     * @since 0.8.0
      */
     NutsInput createSource();
 

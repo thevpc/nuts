@@ -10,19 +10,19 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
  * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts;
 
 /**
@@ -31,7 +31,7 @@ package net.thevpc.nuts;
  * @since 0.5.4
  * @app.category Descriptor
  */
-public enum NutsDependencyScope implements NutsEnum{
+public enum NutsDependencyScope implements NutsEnum {
     /**
      * equivalent to maven's compile and to gradle's api
      */
@@ -96,14 +96,14 @@ public enum NutsDependencyScope implements NutsEnum{
     /**
      * lower-cased identifier for the enum entry
      */
-    private String id;
-    private boolean api;
-    private boolean implementation;
-    private boolean test;
-    private boolean system;
-    private boolean runtime;
-    private boolean provided;
-    private boolean other;
+    private final String id;
+    private final boolean api;
+    private final boolean implementation;
+    private final boolean test;
+    private final boolean system;
+    private final boolean runtime;
+    private final boolean provided;
+    private final boolean other;
 
 
     /**
@@ -111,53 +111,13 @@ public enum NutsDependencyScope implements NutsEnum{
      */
     NutsDependencyScope() {
         this.id = name().toLowerCase().replace('_', '-');
-        api=id.equals("api")||id.equals("test");
-        implementation =id.equals("implementation")||id.endsWith("-implementation");
-        provided=id.equals("provided")||id.endsWith("-provided");
-        runtime=id.equals("provided")||id.endsWith("-runtime");
-        system=id.equals("system")||id.endsWith("-system");
-        test=id.startsWith("test-");
-        other=id.equals("other")||id.startsWith("other-");
-    }
-
-    public boolean isCompile() {
-        return !test;
-    }
-
-    public boolean isApi() {
-        return api;
-    }
-
-    public boolean isImplementation() {
-        return implementation;
-    }
-
-    public boolean isTest() {
-        return test;
-    }
-
-    public boolean isSystem() {
-        return system;
-    }
-
-    public boolean isRuntime() {
-        return runtime;
-    }
-
-    public boolean isProvided() {
-        return provided;
-    }
-
-    public boolean isOther() {
-        return other;
-    }
-
-    /**
-     * lower cased identifier.
-     * @return lower cased identifier
-     */
-    public String id() {
-        return id;
+        api = id.equals("api") || id.equals("test");
+        implementation = id.equals("implementation") || id.endsWith("-implementation");
+        provided = id.equals("provided") || id.endsWith("-provided");
+        runtime = id.equals("provided") || id.endsWith("-runtime");
+        system = id.equals("system") || id.endsWith("-system");
+        test = id.startsWith("test-");
+        other = id.equals("other") || id.startsWith("other-");
     }
 
     public static NutsDependencyScope parseLenient(String value) {
@@ -226,4 +186,57 @@ public enum NutsDependencyScope implements NutsEnum{
         }
     }
 
+    public static NutsDependencyScope parse(String value, NutsSession session) {
+        return parse(value, null, session);
+    }
+
+    public static NutsDependencyScope parse(String value, NutsDependencyScope emptyValue, NutsSession session) {
+        NutsDependencyScope v = parseLenient(value, emptyValue, null);
+        if (v == null) {
+            if (!NutsBlankable.isBlank(value)) {
+                throw new NutsParseEnumException(session, value, NutsDependencyScope.class);
+            }
+        }
+        return v;
+    }
+
+    public boolean isCompile() {
+        return !test;
+    }
+
+    public boolean isApi() {
+        return api;
+    }
+
+    public boolean isImplementation() {
+        return implementation;
+    }
+
+    public boolean isTest() {
+        return test;
+    }
+
+    public boolean isSystem() {
+        return system;
+    }
+
+    public boolean isRuntime() {
+        return runtime;
+    }
+
+    public boolean isProvided() {
+        return provided;
+    }
+
+    public boolean isOther() {
+        return other;
+    }
+
+    /**
+     * lower cased identifier.
+     * @return lower cased identifier
+     */
+    public String id() {
+        return id;
+    }
 }

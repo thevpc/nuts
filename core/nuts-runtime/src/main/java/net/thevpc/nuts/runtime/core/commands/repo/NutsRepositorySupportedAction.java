@@ -26,7 +26,10 @@
 */
 package net.thevpc.nuts.runtime.core.commands.repo;
 
+import net.thevpc.nuts.NutsBlankable;
 import net.thevpc.nuts.NutsEnum;
+import net.thevpc.nuts.NutsParseEnumException;
+import net.thevpc.nuts.NutsSession;
 
 /**
  *
@@ -76,5 +79,19 @@ public enum NutsRepositorySupportedAction  implements NutsEnum {
         } catch (Exception notFound) {
             return errorValue;
         }
+    }
+
+    public static NutsRepositorySupportedAction parse(String value, NutsSession session) {
+        return parse(value, null,session);
+    }
+
+    public static NutsRepositorySupportedAction parse(String value, NutsRepositorySupportedAction emptyValue, NutsSession session) {
+        NutsRepositorySupportedAction v = parseLenient(value, emptyValue, null);
+        if(v==null){
+            if(!NutsBlankable.isBlank(value)){
+                throw new NutsParseEnumException(session,value,NutsRepositorySupportedAction.class);
+            }
+        }
+        return v;
     }
 }

@@ -94,10 +94,10 @@ public class WgetCommand extends SimpleNshBuiltin {
             throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("%s",ex), ex, 100);
         }
         String urlName = _URLUtils.getURLName(url);
-        if (!NutsUtilStrings.isBlank(output2)) {
+        if (!NutsBlankable.isBlank(output2)) {
             output2 = output2.replace("{}", urlName);
         }
-        Path file = Paths.get(context.getGlobalContext().getAbsolutePath(NutsUtilStrings.isBlank(output2) ? urlName : output2));
+        Path file = Paths.get(context.getGlobalContext().getAbsolutePath(NutsBlankable.isBlank(output2) ? urlName : output2));
         context.getWorkspace().io()
                 .copy()
                 .setSession(context.getSession())

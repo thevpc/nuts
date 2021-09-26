@@ -114,7 +114,7 @@ public class SshCommand extends AbstractNshBuiltin {
                         c.skip();
                     }
                 }
-                if (!NutsUtilStrings.isBlank(o.nutsCommand)) {
+                if (!NutsBlankable.isBlank(o.nutsCommand)) {
                     cmd.add(o.nutsCommand);
                 } else {
                     String userHome = null;
@@ -122,7 +122,7 @@ public class SshCommand extends AbstractNshBuiltin {
                             .setRedirectErrorStream(true)
                             .grabOutputString().exec("echo", "$HOME");
                     userHome = sshSession.getOutputString().trim();
-                    if (NutsUtilStrings.isBlank(workspace)) {
+                    if (NutsBlankable.isBlank(workspace)) {
                         workspace = userHome + "/.config/nuts/" + NutsConstants.Names.DEFAULT_WORKSPACE_NAME;
                     }
                     boolean nutsCommandFound = false;

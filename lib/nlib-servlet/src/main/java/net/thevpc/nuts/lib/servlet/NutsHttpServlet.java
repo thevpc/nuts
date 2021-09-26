@@ -67,7 +67,7 @@ public class NutsHttpServlet extends HttpServlet {
 
     public static int parseInt(String v1, int defaultValue) {
         try {
-            if (NutsUtilStrings.isBlank(v1)) {
+            if (NutsBlankable.isBlank(v1)) {
                 return defaultValue;
             }
             return Integer.parseInt(NutsUtilStrings.trim(v1));
@@ -170,7 +170,7 @@ public class NutsHttpServlet extends HttpServlet {
             workspacesByWebContextPath.put(webContext, ws);
         }
 
-        if (NutsUtilStrings.isBlank(serverId)) {
+        if (NutsBlankable.isBlank(serverId)) {
             String serverName = DEFAULT_HTTP_SERVER;
             try {
                 serverName = InetAddress.getLocalHost().getHostName();

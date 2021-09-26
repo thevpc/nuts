@@ -44,7 +44,7 @@ public class DefaultCustomCommandsModel {
             }
         }
         NutsWorkspaceCommandFactory f = null;
-        if (NutsUtilStrings.isBlank(commandFactoryConfig.getFactoryType()) || "command".equals(commandFactoryConfig.getFactoryType().trim())) {
+        if (NutsBlankable.isBlank(commandFactoryConfig.getFactoryType()) || "command".equals(commandFactoryConfig.getFactoryType().trim())) {
             f = new CommandNutsWorkspaceCommandFactory(workspace);
         }
         if (f != null) {
@@ -157,7 +157,7 @@ public class DefaultCustomCommandsModel {
 
     public boolean add(NutsCommandConfig command, NutsSession session) {
         if (command == null
-                || NutsUtilStrings.isBlank(command.getName())
+                || NutsBlankable.isBlank(command.getName())
                 || command.getName().contains(" ") || command.getName().contains(".")
                 || command.getName().contains("/") || command.getName().contains("\\")
                 || command.getCommand() == null
@@ -200,7 +200,7 @@ public class DefaultCustomCommandsModel {
 
     public boolean update(NutsCommandConfig command, NutsSession session) {
         if (command == null
-                || NutsUtilStrings.isBlank(command.getName())
+                || NutsBlankable.isBlank(command.getName())
                 || command.getName().contains(" ") || command.getName().contains(".")
                 || command.getName().contains("/") || command.getName().contains("\\")
                 || command.getCommand() == null
@@ -232,7 +232,7 @@ public class DefaultCustomCommandsModel {
     }
 
     public void remove(String name, NutsSession session) {
-        if (NutsUtilStrings.isBlank(name)) {
+        if (NutsBlankable.isBlank(name)) {
             throw new NutsIllegalArgumentException(session,
                     NutsMessage.cstyle("invalid command : %s" + (name == null ? "<NULL>" : name))
             );

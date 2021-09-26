@@ -85,7 +85,7 @@ public class JavascriptHelper {
             engine = createManagerJdk();
         }
         try {
-            if (NutsUtilStrings.isBlank(initExprs)) {
+            if (NutsBlankable.isBlank(initExprs)) {
                 initExprs = "";
             }
             engine.eval("function accept(x) { " + initExprs + code + " }");
@@ -153,8 +153,8 @@ public class JavascriptHelper {
                 }
                 return GlobUtils.ofContains(pattern).matcher(value.toString()).matches();
             }
-            if (NutsUtilStrings.isBlank(pattern)) {
-                return NutsUtilStrings.isBlank(value.toString());
+            if (NutsBlankable.isBlank(pattern)) {
+                return NutsBlankable.isBlank(value.toString());
             }
             if (value instanceof NutsId) {
                 NutsIdFilter f = session.getWorkspace().id().filter().byExpression(pattern);

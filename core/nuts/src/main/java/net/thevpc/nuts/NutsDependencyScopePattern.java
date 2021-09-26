@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -22,7 +22,7 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts;
 
 import java.util.EnumSet;
@@ -34,7 +34,7 @@ import java.util.EnumSet;
  * @since 0.5.6
  * @app.category Descriptor
  */
-public enum NutsDependencyScopePattern implements NutsEnum{
+public enum NutsDependencyScopePattern implements NutsEnum {
     /**
      * api (gradle) / compile (maven)
      */
@@ -130,20 +130,11 @@ public enum NutsDependencyScopePattern implements NutsEnum{
     /**
      * lower-cased identifier for the enum entry
      */
-    private String id;
+    private final String id;
 
     NutsDependencyScopePattern() {
         this.id = name().toLowerCase().replace('_', '-');
     }
-
-    /**
-     * lower cased identifier.
-     * @return lower cased identifier
-     */
-    public String id() {
-        return id;
-    }
-
 
     public static NutsDependencyScopePattern parseLenient(String value) {
         return parseLenient(value, null);
@@ -222,6 +213,28 @@ public enum NutsDependencyScopePattern implements NutsEnum{
         } catch (Exception notFound) {
             return errorValue;
         }
+    }
+
+    public static NutsDependencyScopePattern parse(String value, NutsSession session) {
+        return parse(value, null, session);
+    }
+
+    public static NutsDependencyScopePattern parse(String value, NutsDependencyScopePattern emptyValue, NutsSession session) {
+        NutsDependencyScopePattern v = parseLenient(value, emptyValue, null);
+        if (v == null) {
+            if (!NutsBlankable.isBlank(value)) {
+                throw new NutsParseEnumException(session, value, NutsDependencyScopePattern.class);
+            }
+        }
+        return v;
+    }
+
+    /**
+     * lower cased identifier.
+     * @return lower cased identifier
+     */
+    public String id() {
+        return id;
     }
 
     public EnumSet<NutsDependencyScope> toScopes() {
@@ -313,5 +326,4 @@ public enum NutsDependencyScopePattern implements NutsEnum{
         }
         return v;
     }
-
 }

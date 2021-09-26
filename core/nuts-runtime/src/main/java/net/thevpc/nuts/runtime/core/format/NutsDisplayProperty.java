@@ -25,7 +25,10 @@
 */
 package net.thevpc.nuts.runtime.core.format;
 
+import net.thevpc.nuts.NutsBlankable;
 import net.thevpc.nuts.NutsEnum;
+import net.thevpc.nuts.NutsParseEnumException;
+import net.thevpc.nuts.NutsSession;
 
 /**
  *
@@ -99,4 +102,17 @@ public enum NutsDisplayProperty  implements NutsEnum {
         return errorValue;
     }
 
+    public static NutsDisplayProperty parse(String value, NutsSession session) {
+        return parse(value, null,session);
+    }
+
+    public static NutsDisplayProperty parse(String value, NutsDisplayProperty emptyValue, NutsSession session) {
+        NutsDisplayProperty v = parseLenient(value, emptyValue, null);
+        if(v==null){
+            if(!NutsBlankable.isBlank(value)){
+                throw new NutsParseEnumException(session,value,NutsDisplayProperty.class);
+            }
+        }
+        return v;
+    }
 }

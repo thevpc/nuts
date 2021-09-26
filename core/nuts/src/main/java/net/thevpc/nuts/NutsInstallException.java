@@ -29,8 +29,8 @@ package net.thevpc.nuts;
 /**
  * Created by vpc on 1/15/17.
  *
- * @since 0.5.4
  * @app.category Exceptions
+ * @since 0.5.4
  */
 public class NutsInstallException extends NutsInstallationException {
 
@@ -38,7 +38,7 @@ public class NutsInstallException extends NutsInstallationException {
      * Custom Constructor
      *
      * @param session workspace
-     * @param id nuts id
+     * @param id      nuts id
      */
     public NutsInstallException(NutsSession session, NutsId id) {
         this(session, id, null, null);
@@ -49,9 +49,9 @@ public class NutsInstallException extends NutsInstallationException {
      * Custom Constructor
      *
      * @param workspace workspace
-     * @param id nuts id
-     * @param msg message
-     * @param ex exception
+     * @param id        nuts id
+     * @param msg       message
+     * @param ex        exception
      */
     public NutsInstallException(NutsSession workspace, NutsId id, NutsMessage msg, Throwable ex) {
         super(workspace, id, msg == null ? NutsMessage.cstyle("unable to install %s", (id == null ? "<null>" : id)) : msg, ex);

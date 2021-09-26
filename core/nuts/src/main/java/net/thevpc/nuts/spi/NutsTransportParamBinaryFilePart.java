@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -11,7 +11,7 @@
  * architecture to help supporting a large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -23,7 +23,7 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.spi;
 
 import java.nio.file.Path;
@@ -60,6 +60,11 @@ public class NutsTransportParamBinaryFilePart extends NutsTransportParamPart {
     }
 
     @Override
+    public int hashCode() {
+        return Objects.hash(name, fileName, value);
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -67,11 +72,6 @@ public class NutsTransportParamBinaryFilePart extends NutsTransportParamPart {
         return Objects.equals(name, that.name) &&
                 Objects.equals(fileName, that.fileName) &&
                 Objects.equals(value, that.value);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, fileName, value);
     }
 
     @Override

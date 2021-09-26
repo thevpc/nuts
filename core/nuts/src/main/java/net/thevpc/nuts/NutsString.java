@@ -56,6 +56,7 @@ public interface NutsString {
 
     /**
      * text length after filtering all special characters
+     *
      * @return effective length after filtering the text
      */
 

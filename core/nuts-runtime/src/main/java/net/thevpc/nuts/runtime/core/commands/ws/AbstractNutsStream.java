@@ -222,10 +222,10 @@ public abstract class AbstractNutsStream<T> implements NutsStream<T> {
                 return false;
             }
             if (x instanceof CharSequence) {
-                return NutsUtilStrings.isBlank((CharSequence) x);
+                return NutsBlankable.isBlank((CharSequence) x);
             }
             if (x instanceof char[]) {
-                return NutsUtilStrings.isBlank((char[]) x);
+                return NutsBlankable.isBlank((char[]) x);
             }
             if (x instanceof NutsBlankable) {
                 return !((NutsBlankable) x).isBlank();

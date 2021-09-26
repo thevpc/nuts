@@ -55,7 +55,7 @@ public class NutsSettingsConnectSubCommand extends AbstractNutsSettingsSubComman
                 port =  CoreNumberUtils.convertToInteger(server.substring(server.indexOf(":") + 1),-1);
                 server = server.substring(0, server.indexOf(":"));
             }
-            if (!NutsUtilStrings.isBlank(login) && NutsUtilStrings.isBlank(password)) {
+            if (!NutsBlankable.isBlank(login) && NutsBlankable.isBlank(password)) {
                 password = session.getTerminal().readPassword("Password:");
             }
             Socket socket = null;
@@ -65,7 +65,7 @@ public class NutsSettingsConnectSubCommand extends AbstractNutsSettingsSubComman
                     socket = new Socket(InetAddress.getByName(server), validPort);
                     CoreIOUtils.pipe("pipe-out-socket-" + server + ":" + validPort, new NonBlockingInputStreamAdapter("pipe-out-socket-" + server + ":" + validPort, socket.getInputStream()), session.out().asPrintStream(),session);
                     PrintStream out = new PrintStream(socket.getOutputStream());
-                    if (!NutsUtilStrings.isBlank(login)) {
+                    if (!NutsBlankable.isBlank(login)) {
                         out.printf("connect ==%s %s== %n", login, new String(password));
                     }
                     while (true) {

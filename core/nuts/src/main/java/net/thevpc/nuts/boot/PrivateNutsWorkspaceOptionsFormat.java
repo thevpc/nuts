@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -102,7 +102,7 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
             fillOption("--java", "-j", options.getJavaCommand(), arguments, false);
             fillOption("--java-options", "-O", options.getJavaOptions(), arguments, false);
             String wsString = options.getWorkspace();
-            if (NutsUtilStrings.isBlank(wsString)) {
+            if (NutsBlankable.isBlank(wsString)) {
                 //default workspace name
                 wsString = "";
             } else if (wsString.contains("/") || wsString.contains("\\")) {
@@ -199,7 +199,7 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
             Map<String, String> storeLocations = options.getStoreLocations();
             for (NutsStoreLocation location : NutsStoreLocation.values()) {
                 String s = storeLocations.get(location.id());
-                if (!NutsUtilStrings.isBlank(s)) {
+                if (!NutsBlankable.isBlank(s)) {
                     fillOption("--" + location.id() + "-location", null, s, arguments, false);
                 }
             }
@@ -208,14 +208,14 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
             if (homeLocations != null) {
                 for (NutsStoreLocation location : NutsStoreLocation.values()) {
                     String s = homeLocations.get(NutsApiUtils.createHomeLocationKey(null, location));
-                    if (!NutsUtilStrings.isBlank(s)) {
+                    if (!NutsBlankable.isBlank(s)) {
                         fillOption("--system-" + location.id() + "-home", null, s, arguments, false);
                     }
                 }
                 for (NutsOsFamily osFamily : NutsOsFamily.values()) {
                     for (NutsStoreLocation location : NutsStoreLocation.values()) {
                         String s = homeLocations.get(NutsApiUtils.createHomeLocationKey(osFamily, location));
-                        if (!NutsUtilStrings.isBlank(s)) {
+                        if (!NutsBlankable.isBlank(s)) {
                             fillOption("--" + osFamily.id() + "-" + location.id() + "-home", null, s, arguments, false);
                         }
                     }
@@ -304,7 +304,7 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
     }
 
     private void fillOption(String longName, String shortName, String value, List<String> arguments, boolean forceSingle) {
-        if (!NutsUtilStrings.isBlank(value)) {
+        if (!NutsBlankable.isBlank(value)) {
             fillOption0(selectOptionName(longName, shortName), value, arguments, forceSingle);
         }
     }
@@ -381,52 +381,53 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
     private boolean fillOption(NutsRunAs value, List<String> arguments) {
         switch (value.getMode()) {
             case CURRENT_USER: {
-                if (!NutsUtilStrings.isBlank(apiVersion) &&
+                if (!NutsBlankable.isBlank(apiVersion) &&
                         NutsBootVersion.parse(apiVersion).compareTo(NutsBootVersion.parse("0.8.1"))
                                 < 0) {
                     arguments.add("--user-cmd");
-                }else{
-                    if(!omitDefaults) {
+                } else {
+                    if (!omitDefaults) {
                         arguments.add("--current-user");
                     }
                 }
                 return true;
             }
             case ROOT: {
-                if (!NutsUtilStrings.isBlank(apiVersion) &&
+                if (!NutsBlankable.isBlank(apiVersion) &&
                         NutsBootVersion.parse(apiVersion).compareTo(NutsBootVersion.parse("0.8.1"))
                                 < 0) {
                     arguments.add("--root-cmd");
-                }else {
+                } else {
                     arguments.add("--as-root");
                 }
                 return true;
             }
             case SUDO: {
-                if (!NutsUtilStrings.isBlank(apiVersion) &&
+                if (!NutsBlankable.isBlank(apiVersion) &&
                         NutsBootVersion.parse(apiVersion).compareTo(NutsBootVersion.parse("0.8.1"))
                                 < 0) {
                     //ignore
-                }else {
+                } else {
                     arguments.add("--sudo");
                 }
                 return true;
             }
             case USER: {
-                if (!NutsUtilStrings.isBlank(apiVersion) &&
+                if (!NutsBlankable.isBlank(apiVersion) &&
                         NutsBootVersion.parse(apiVersion).compareTo(NutsBootVersion.parse("0.8.1"))
                                 < 0) {
                     //ignore
-                }else {
-                    arguments.add("--run-as="+value.getUser());
+                } else {
+                    arguments.add("--run-as=" + value.getUser());
                 }
                 return true;
             }
             default: {
-                throw new NutsBootException(NutsMessage.cstyle("unsupported enum %s",value.getMode()));
+                throw new NutsBootException(NutsMessage.cstyle("unsupported enum %s", value.getMode()));
             }
         }
     }
+
     private boolean tryFillOptionShort(Enum value, List<String> arguments, boolean forceSingle) {
         if (value != null) {
             if (shortOptions) {
@@ -455,11 +456,11 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
                 if (value instanceof NutsExecutionType) {
                     switch ((NutsExecutionType) value) {
                         case SYSTEM: {
-                            if (!NutsUtilStrings.isBlank(apiVersion) &&
+                            if (!NutsBlankable.isBlank(apiVersion) &&
                                     NutsBootVersion.parse(apiVersion).compareTo(NutsBootVersion.parse("0.8.1"))
                                             < 0) {
                                 arguments.add("--user-cmd");
-                            }else{
+                            } else {
                                 arguments.add("--system");
                             }
                             return true;
@@ -474,7 +475,7 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
                             }
                             return true;
                         }
-                        case OPEN:{
+                        case OPEN: {
                             return true;
                         }
                     }

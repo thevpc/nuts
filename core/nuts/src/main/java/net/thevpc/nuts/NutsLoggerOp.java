@@ -33,6 +33,7 @@ import java.util.logging.Level;
 
 /**
  * Log operation
+ *
  * @app.category Logging
  */
 public interface NutsLoggerOp {
@@ -45,6 +46,7 @@ public interface NutsLoggerOp {
 
     /**
      * set or unset formatted mode (Nuts Stream Format)
+     *
      * @param value formatted flag
      * @return {@code this} instance
      */
@@ -52,12 +54,14 @@ public interface NutsLoggerOp {
 
     /**
      * set formatted mode (Nuts Stream Format)
+     *
      * @return {@code this} instance
      */
     NutsLoggerOp formatted();
 
     /**
      * set log verb
+     *
      * @param verb verb or category
      * @return {@code this} instance
      */
@@ -65,6 +69,7 @@ public interface NutsLoggerOp {
 
     /**
      * set log error
+     *
      * @param error error thrown
      * @return {@code this} instance
      */
@@ -72,6 +77,7 @@ public interface NutsLoggerOp {
 
     /**
      * set operation time
+     *
      * @param time operation time in ms
      * @return {@code this} instance
      */
@@ -79,6 +85,7 @@ public interface NutsLoggerOp {
 
     /**
      * set operation level
+     *
      * @param level message level
      * @return {@code this} instance
      */
@@ -86,6 +93,7 @@ public interface NutsLoggerOp {
 
     /**
      * set message style (cstyle or jstyle)
+     *
      * @param style message format style
      * @return {@code this} instance
      */
@@ -93,13 +101,15 @@ public interface NutsLoggerOp {
 
     /**
      * log the given message
-     * @param msg message
+     *
+     * @param msg    message
      * @param params message params
      */
     void log(String msg, Object... params);
 
     /**
      * log the given message
+     *
      * @param msgSupplier message supplier
      */
     void log(Supplier<String> msgSupplier);

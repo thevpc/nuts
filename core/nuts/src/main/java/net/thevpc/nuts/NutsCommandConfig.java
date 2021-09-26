@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -11,19 +11,19 @@
  * architecture to help supporting a large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
  * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts;
 
 import java.util.Arrays;
@@ -35,7 +35,7 @@ import java.util.Objects;
  * @since 0.5.4
  * @app.category Config
  */
-public class NutsCommandConfig extends NutsConfigItem{
+public class NutsCommandConfig extends NutsConfigItem {
     private static final long serialVersionUID = 1;
 
     /**
@@ -200,16 +200,12 @@ public class NutsCommandConfig extends NutsConfigItem{
     }
 
     @Override
-    public String toString() {
-        return "NutsCommandConfig{" +
-                "owner=" + owner +
-                ", name='" + name + '\'' +
-                ", factoryId='" + factoryId + '\'' +
-                ", command=" + Arrays.toString(command) +
-                ", executorOptions=" + Arrays.toString(executorOptions) +
-                ", helpCommand=" + Arrays.toString(helpCommand) +
-                ", helpText='" + helpText + '\'' +
-                '}';
+    public int hashCode() {
+        int result = Objects.hash(owner, name, factoryId, helpText);
+        result = 31 * result + Arrays.hashCode(command);
+        result = 31 * result + Arrays.hashCode(executorOptions);
+        result = 31 * result + Arrays.hashCode(helpCommand);
+        return result;
     }
 
     @Override
@@ -227,11 +223,15 @@ public class NutsCommandConfig extends NutsConfigItem{
     }
 
     @Override
-    public int hashCode() {
-        int result = Objects.hash(owner, name, factoryId, helpText);
-        result = 31 * result + Arrays.hashCode(command);
-        result = 31 * result + Arrays.hashCode(executorOptions);
-        result = 31 * result + Arrays.hashCode(helpCommand);
-        return result;
+    public String toString() {
+        return "NutsCommandConfig{" +
+                "owner=" + owner +
+                ", name='" + name + '\'' +
+                ", factoryId='" + factoryId + '\'' +
+                ", command=" + Arrays.toString(command) +
+                ", executorOptions=" + Arrays.toString(executorOptions) +
+                ", helpCommand=" + Arrays.toString(helpCommand) +
+                ", helpText='" + helpText + '\'' +
+                '}';
     }
 }

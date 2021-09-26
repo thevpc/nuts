@@ -1291,7 +1291,7 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
      */
     @Override
     public NutsWorkspaceOptionsBuilder setStoreLocation(NutsStoreLocation location, String value) {
-        if (NutsUtilStrings.isBlank(value)) {
+        if (NutsBlankable.isBlank(value)) {
             storeLocations.remove(location.id());
         } else {
             storeLocations.put(location.id(), value);
@@ -1310,7 +1310,7 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
     @Override
     public NutsWorkspaceOptionsBuilder setHomeLocation(NutsOsFamily layout, NutsStoreLocation location, String value) {
         String key = NutsUtilPlatforms.createHomeLocationKey(layout, location);
-        if (NutsUtilStrings.isBlank(value)) {
+        if (NutsBlankable.isBlank(value)) {
             homeLocations.remove(key);
         } else {
             homeLocations.put(key, value);

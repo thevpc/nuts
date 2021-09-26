@@ -87,7 +87,7 @@ public class CpCommand extends SimpleNshBuiltin {
     protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         for (String value : options.files) {
-            if (NutsUtilStrings.isBlank(value)) {
+            if (NutsBlankable.isBlank(value)) {
                 throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("empty file path"), 2);
             }
             options.xfiles.add(context.getWorkspace().io().path((value.contains("://") ? value :

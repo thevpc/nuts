@@ -98,7 +98,7 @@ public class RemoteMysqlDatabaseConfigService {
         Map<String,Object> resMap=context.getWorkspace().elem().parse(remoteTempPath.getBytes(),Map.class);
         String ppath=(String)resMap.get("path");
 
-        if (NutsUtilStrings.isBlank(localPath)) {
+        if (NutsBlankable.isBlank(localPath)) {
             localPath = Paths.get(context.getVarFolder())
                     .resolve("pull-backups")
                     .resolve(client.getName() + "-" + getName())
@@ -173,7 +173,7 @@ public class RemoteMysqlDatabaseConfigService {
         if (backup) {
             localPath = loc.backup(localPath).path;
         } else {
-            if (NutsUtilStrings.isBlank(localPath)) {
+            if (NutsBlankable.isBlank(localPath)) {
                 throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("missing local path"), 2);
             }
         }
@@ -279,7 +279,7 @@ public class RemoteMysqlDatabaseConfigService {
     }
 
     private String prepareSshServer(String server) {
-        if (NutsUtilStrings.isBlank(server)) {
+        if (NutsBlankable.isBlank(server)) {
             server = "ssh://localhost";
         }
         if (!server.startsWith("ssh://")) {

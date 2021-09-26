@@ -265,7 +265,7 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
                         .setEffective(true).setLatest(true).getResultDefinitions().first();
                 if (def != null) {
                     String n = def.getEffectiveDescriptor().getName();
-                    if (!NutsUtilStrings.isBlank(n)) {
+                    if (!NutsBlankable.isBlank(n)) {
                         title = NutsMessage.cstyle("%s - %s",n, def.getEffectiveDescriptor().getId().getVersion());
                     }
                 }

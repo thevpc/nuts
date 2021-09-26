@@ -133,7 +133,7 @@ public class DefaultNutsIOLockAction extends AbstractNutsIOLockAction {
         if (lockedObject instanceof NutsId) {
             NutsId nid = (NutsId) lockedObject;
             String face = nid.getFace();
-            if (NutsUtilStrings.isBlank(face)) {
+            if (NutsBlankable.isBlank(face)) {
                 face = "content";
             }
             return Paths.get(getWs().locations().setSession(getSession()).getStoreLocation((NutsId) lockedObject, NutsStoreLocation.RUN)).resolve("nuts-" + face);

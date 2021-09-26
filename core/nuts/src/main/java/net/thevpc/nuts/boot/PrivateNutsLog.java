@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -11,7 +11,7 @@
  * architecture to help supporting a large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -37,7 +37,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * 
+ *
  * @author thevpc
  * @app.category Internal
  */
@@ -88,10 +88,7 @@ public class PrivateNutsLog {
         if (options == null) {
             return false;
         }
-        if (options.getLogConfig() != null && lvl.intValue() >= options.getLogConfig().getLogTermLevel().intValue()) {
-            return true;
-        }
-        return false;
+        return options.getLogConfig() != null && lvl.intValue() >= options.getLogConfig().getLogTermLevel().intValue();
     }
 
     public void setOptions(NutsWorkspaceOptions options) {

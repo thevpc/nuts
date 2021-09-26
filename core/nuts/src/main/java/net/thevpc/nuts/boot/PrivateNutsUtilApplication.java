@@ -23,7 +23,7 @@ public class PrivateNutsUtilApplication {
         NutsWorkspaceOptionsBuilder bo = null;
         if (session != null) {
             bo = session.getWorkspace().boot().getBootOptions().builder();
-            if(bo.isGui()) {
+            if (bo.isGui()) {
                 if (!session.getWorkspace().env().isGraphicalDesktopEnvironment()) {
                     bo.setGui(false);
                 }
@@ -41,7 +41,7 @@ public class PrivateNutsUtilApplication {
                 //any, ignore...
             }
             bo = options;
-            if(bo.isGui()) {
+            if (bo.isGui()) {
                 if (!NutsApiUtils.isGraphicalDesktopEnvironment()) {
                     bo.setGui(false);
                 }

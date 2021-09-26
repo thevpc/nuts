@@ -183,7 +183,7 @@ public interface NutsApplication {
      * @param args application arguments. should not be null or contain nulls
      */
     default void run(String[] args) {
-        run((NutsSession) null, args);
+        run(null, args);
     }
 
     /**

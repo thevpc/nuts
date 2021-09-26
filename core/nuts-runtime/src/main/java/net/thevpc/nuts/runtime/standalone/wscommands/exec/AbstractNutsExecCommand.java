@@ -499,7 +499,7 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
             {
                 NutsArgument s = cmdLine.nextString();
                 if (enabled) {
-                    if(NutsUtilStrings.isBlank(s.getValue().getString())){
+                    if(NutsBlankable.isBlank(s.getValue().getString())){
                         throw new NutsIllegalArgumentException(getSession(),NutsMessage.cstyle("missing user name"));
                     }
                     setRunAs(NutsRunAs.user(s.getValue().getString()));

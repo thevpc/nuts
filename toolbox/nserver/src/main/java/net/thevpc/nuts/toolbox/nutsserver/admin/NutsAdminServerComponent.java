@@ -63,7 +63,7 @@ public class NutsAdminServerComponent implements NutsServerComponent {
         if (executor == null) {
             executor = new ThreadPoolExecutor(2, 10, 30, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(10));
         }
-        if (NutsUtilStrings.isBlank(serverId)) {
+        if (NutsBlankable.isBlank(serverId)) {
             String serverName = NutsServerConstants.DEFAULT_ADMIN_SERVER;
             try {
                 serverName = InetAddress.getLocalHost().getHostName();

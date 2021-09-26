@@ -529,7 +529,7 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
     @Override
     public NutsIOCompressAction setFormat(String format) {
         checkSession();
-        if (NutsUtilStrings.isBlank(format)) {
+        if (NutsBlankable.isBlank(format)) {
             format = "zip";
         }
         switch (format) {

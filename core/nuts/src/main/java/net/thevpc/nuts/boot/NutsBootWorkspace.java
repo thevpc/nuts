@@ -122,7 +122,7 @@ public final class NutsBootWorkspace {
     }
 
     private static void revalidateLocations(PrivateNutsWorkspaceInitInformation workspaceInformation, String workspaceName, boolean immediateLocation) {
-        if (NutsUtilStrings.isBlank(workspaceInformation.getName())) {
+        if (NutsBlankable.isBlank(workspaceInformation.getName())) {
             workspaceInformation.setName(workspaceName);
         }
         Map<String, String> homeLocations = workspaceInformation.getHomeLocations();
@@ -139,7 +139,7 @@ public final class NutsBootWorkspace {
         for (NutsStoreLocation type : NutsStoreLocation.values()) {
             homes[type.ordinal()] = NutsUtilPlatforms.getPlatformHomeFolder(workspaceInformation.getStoreLocationLayout(), type, homeLocations,
                     workspaceInformation.isGlobal(), workspaceInformation.getName());
-            if (NutsUtilStrings.isBlank(homes[type.ordinal()])) {
+            if (NutsBlankable.isBlank(homes[type.ordinal()])) {
                 throw new NutsBootException(NutsMessage.cstyle("missing Home for %s", type.id()));
             }
         }
@@ -151,7 +151,7 @@ public final class NutsBootWorkspace {
         for (NutsStoreLocation location : NutsStoreLocation.values()) {
             String typeId = location.id();
             String _storeLocation = storeLocations.get(typeId);
-            if (NutsUtilStrings.isBlank(_storeLocation)) {
+            if (NutsBlankable.isBlank(_storeLocation)) {
                 switch (storeLocationStrategy) {
                     case STANDALONE: {
                         storeLocations.put(typeId, (workspace + File.separator + typeId));
@@ -223,6 +223,7 @@ public final class NutsBootWorkspace {
 
     /**
      * repositories used to locale nuts-runtime artifact
+     *
      * @return repositories
      */
     public Set<String> resolveBootRuntimeRepositories() {
@@ -231,7 +232,7 @@ public final class NutsBootWorkspace {
         }
         LOG.log(Level.FINE, NutsLogVerb.START, "resolve boot repositories to load nuts-runtime from options : {0} and config: {1}", new Object[]{
                 (options.getRepositories() == null ? "[]" : Arrays.toString(options.getRepositories()))
-                , NutsUtilStrings.isBlank(workspaceInformation.getBootRepositories()) ? "[]" : workspaceInformation.getBootRepositories()
+                , NutsBlankable.isBlank(workspaceInformation.getBootRepositories()) ? "[]" : workspaceInformation.getBootRepositories()
         });
         PrivateNutsRepositorySelectorList bootRepositories = PrivateNutsRepositorySelector.parse(options.getRepositories());
         PrivateNutsRepositorySelector[] old = PrivateNutsRepositorySelector.parse(new String[]{workspaceInformation.getBootRepositories()}).toArray();
@@ -254,6 +255,7 @@ public final class NutsBootWorkspace {
 
     /**
      * repositories used to locale nuts-runtime dependencies nad extensions artifacts
+     *
      * @return repositories
      */
     public Set<String> resolveBootRuntimeDependenciesRepositories() {
@@ -262,7 +264,7 @@ public final class NutsBootWorkspace {
         }
         LOG.log(Level.FINE, NutsLogVerb.START, "resolve boot repositories to load nuts-runtime dependencies from options : {0} and config: {1}", new Object[]{
                 (options.getRepositories() == null ? "[]" : Arrays.toString(options.getRepositories()))
-                , NutsUtilStrings.isBlank(workspaceInformation.getBootRepositories()) ? "[]" : workspaceInformation.getBootRepositories()
+                , NutsBlankable.isBlank(workspaceInformation.getBootRepositories()) ? "[]" : workspaceInformation.getBootRepositories()
         });
         PrivateNutsRepositorySelectorList bootRepositories = PrivateNutsRepositorySelector.parse(options.getRepositories());
         PrivateNutsRepositorySelector[] old = PrivateNutsRepositorySelector.parse(new String[]{workspaceInformation.getBootRepositories()}).toArray();
@@ -294,7 +296,7 @@ public final class NutsBootWorkspace {
         repos.addAll(bootRepositories);
         PrivateNutsErrorInfoList errorList = new PrivateNutsErrorInfoList();
         File file = PrivateNutsUtilMaven.resolveOrDownloadJar(
-                new NutsBootId("net.thevpc.nuts","nuts",NutsBootVersion.parse(workspaceInformation.getApiVersion())),
+                new NutsBootId("net.thevpc.nuts", "nuts", NutsBootVersion.parse(workspaceInformation.getApiVersion())),
                 repos.toArray(new String[0]),
                 workspaceInformation.getLib(), LOG,
                 false,
@@ -400,7 +402,7 @@ public final class NutsBootWorkspace {
                         //not loaded
                         break;
                     }
-                    if (NutsUtilStrings.isBlank(configLoaded.getWorkspaceLocation())) {
+                    if (NutsBlankable.isBlank(configLoaded.getWorkspaceLocation())) {
                         lastConfigLoaded = configLoaded;
                         break;
                     }
@@ -491,7 +493,7 @@ public final class NutsBootWorkspace {
             if (options.isInherited()) {
                 //when Inherited, always use the current Api version!
                 workspaceInformation.setApiVersion(Nuts.getVersion());
-            }else{
+            } else {
                 if (NutsConstants.Versions.LATEST.equalsIgnoreCase(workspaceInformation.getApiVersion())
                         || NutsConstants.Versions.RELEASE.equalsIgnoreCase(workspaceInformation.getApiVersion())
                 ) {
@@ -501,7 +503,7 @@ public final class NutsBootWorkspace {
                     }
                     workspaceInformation.setApiVersion(s.getVersion().toString());
                 }
-                if (NutsUtilStrings.isBlank(workspaceInformation.getApiVersion())) {
+                if (NutsBlankable.isBlank(workspaceInformation.getApiVersion())) {
                     workspaceInformation.setApiVersion(Nuts.getVersion());
                 }
             }
@@ -519,7 +521,7 @@ public final class NutsBootWorkspace {
                     loadedApiConfig = true;
                     if (workspaceInformation.getRuntimeId() == null) {
                         String runtimeId = (String) obj.get("runtimeId");
-                        if (NutsUtilStrings.isBlank(runtimeId)) {
+                        if (NutsBlankable.isBlank(runtimeId)) {
                             LOG.log(Level.CONFIG, NutsLogVerb.FAIL, "{0} does not contain runtime-id", new Object[]{NutsConstants.Files.WORKSPACE_API_CONFIG_FILE_NAME});
                         }
                         workspaceInformation.setRuntimeId(NutsBootId.parse(runtimeId));
@@ -614,16 +616,16 @@ public final class NutsBootWorkspace {
                             loadedDeps.toArray(new NutsBootId[0])
                     ));
                     LinkedHashSet<String> bootRepositories =
-                            Arrays.stream((extraBootRepositories==null?"":extraBootRepositories).split(";"))
-                                    .map(String::trim).filter(x->x.length()>0)
+                            Arrays.stream((extraBootRepositories == null ? "" : extraBootRepositories).split(";"))
+                                    .map(String::trim).filter(x -> x.length() > 0)
                                     .collect(Collectors.toCollection(LinkedHashSet::new));
                     bootRepositories.addAll(resolveBootRuntimeRepositories());
-                    if(LOG.isLoggable(Level.CONFIG)) {
-                        if(bootRepositories.size()==0){
+                    if (LOG.isLoggable(Level.CONFIG)) {
+                        if (bootRepositories.size() == 0) {
                             LOG.log(Level.CONFIG, NutsLogVerb.FAIL, "workspace bootRepositories could not be resolved");
-                        }else if(bootRepositories.size()==1){
-                            LOG.log(Level.CONFIG, NutsLogVerb.INFO, "workspace bootRepositories resolved to : {0}",new Object[]{bootRepositories.toArray()[0]});
-                        }else {
+                        } else if (bootRepositories.size() == 1) {
+                            LOG.log(Level.CONFIG, NutsLogVerb.INFO, "workspace bootRepositories resolved to : {0}", new Object[]{bootRepositories.toArray()[0]});
+                        } else {
                             LOG.log(Level.CONFIG, NutsLogVerb.INFO, "workspace bootRepositories resolved to : ");
                             for (String repository : bootRepositories) {
                                 LOG.log(Level.CONFIG, NutsLogVerb.INFO, "    {0}", repository);
@@ -740,9 +742,9 @@ public final class NutsBootWorkspace {
                     throw new NutsWorkspaceAlreadyExistsException(workspaceInformation.getWorkspaceLocation());
                 }
             }
-            if (NutsUtilStrings.isBlank(workspaceInformation.getApiId())
+            if (NutsBlankable.isBlank(workspaceInformation.getApiId())
                     || workspaceInformation.getRuntimeId() == null
-                    || NutsUtilStrings.isBlank(workspaceInformation.getBootRepositories())
+                    || NutsBlankable.isBlank(workspaceInformation.getBootRepositories())
                     || workspaceInformation.getRuntimeBootDescriptor() == null
                     || workspaceInformation.getExtensionBootDescriptors() == null) {
                 throw new NutsBootException(NutsMessage.plain("invalid workspace state"));
@@ -755,9 +757,9 @@ public final class NutsBootWorkspace {
             String workspaceBootLibFolder = workspaceInformation.getLib();
 
             String[] repositories =
-                    Arrays.stream((workspaceInformation.getBootRepositories()==null?"":workspaceInformation.getBootRepositories())
-                                    .split("[\n;]")
-                    ).map(String::trim).filter(x->x.length()>0).toArray(String[]::new);
+                    Arrays.stream((workspaceInformation.getBootRepositories() == null ? "" : workspaceInformation.getBootRepositories())
+                            .split("[\n;]")
+                    ).map(String::trim).filter(x -> x.length() > 0).toArray(String[]::new);
 
             NutsClassLoaderNodeBuilder rt = new NutsClassLoaderNodeBuilder();
             File runtimeJarFile = PrivateNutsUtilMaven.getBootCacheJar(workspaceInformation.getRuntimeId(), repositories, workspaceBootLibFolder, !recover, "runtime", options.getExpireTime(), errorList, workspaceInformation, pathExpansionConverter, LOG);
@@ -812,12 +814,12 @@ public final class NutsBootWorkspace {
             workspaceClassLoader = bootClassWorldURLs.length == 0 ? getContextClassLoader() : new PrivateNutsBootClassLoader(deps.toArray(new NutsClassLoaderNode[0]), getContextClassLoader());
             workspaceInformation.setWorkspaceClassLoader(workspaceClassLoader);
             if (LOG.isLoggable(Level.CONFIG)) {
-                if(bootClassWorldURLs.length==0){
+                if (bootClassWorldURLs.length == 0) {
                     LOG.log(Level.CONFIG, NutsLogVerb.SUCCESS, "empty nuts class world. All dependencies are already loaded in classpath, most likely");
-                }else if(bootClassWorldURLs.length==1){
+                } else if (bootClassWorldURLs.length == 1) {
                     LOG.log(Level.CONFIG, NutsLogVerb.SUCCESS, "resolve nuts class world to : {0} {1}",
                             new Object[]{PrivateNutsUtilDigest.getURLDigest(bootClassWorldURLs[0]), bootClassWorldURLs[0]});
-                }else {
+                } else {
                     LOG.log(Level.CONFIG, NutsLogVerb.SUCCESS, "resolve nuts class world is to : ");
                     for (URL u : bootClassWorldURLs) {
                         LOG.log(Level.CONFIG, NutsLogVerb.SUCCESS, "    {0} : {1}",
@@ -834,11 +836,11 @@ public final class NutsBootWorkspace {
             }
             factories.sort(new PrivateNutsBootWorkspaceFactoryComparator(options));
             if (LOG.isLoggable(Level.CONFIG)) {
-                if(factories.isEmpty()){
+                if (factories.isEmpty()) {
                     LOG.log(Level.CONFIG, NutsLogVerb.SUCCESS, "unable to detect NutsBootWorkspaceFactory service implementations");
-                }else if(factories.size()==1) {
-                    LOG.log(Level.CONFIG, NutsLogVerb.SUCCESS, "detect NutsBootWorkspaceFactory service implementation : {0}",factories.get(0).getClass().getName());
-                }else{
+                } else if (factories.size() == 1) {
+                    LOG.log(Level.CONFIG, NutsLogVerb.SUCCESS, "detect NutsBootWorkspaceFactory service implementation : {0}", factories.get(0).getClass().getName());
+                } else {
                     LOG.log(Level.CONFIG, NutsLogVerb.SUCCESS, "detect NutsBootWorkspaceFactory service implementations are :");
                     for (NutsBootWorkspaceFactory u : factories) {
                         LOG.log(Level.CONFIG, NutsLogVerb.SUCCESS, "    {0}",
@@ -852,7 +854,7 @@ public final class NutsBootWorkspace {
                 factoryInstance = a;
                 try {
                     if (LOG.isLoggable(Level.CONFIG)) {
-                        LOG.log(Level.CONFIG, NutsLogVerb.INFO, "create workspace using {0}",factoryInstance.getClass().getName());
+                        LOG.log(Level.CONFIG, NutsLogVerb.INFO, "create workspace using {0}", factoryInstance.getClass().getName());
                     }
                     workspaceInformation.setBootWorkspaceFactory(factoryInstance);
                     nutsWorkspace = a.createWorkspace(workspaceInformation);
@@ -1280,7 +1282,7 @@ public final class NutsBootWorkspace {
      */
     private int checkRequirements(boolean unsatisfiedOnly) {
         int req = 0;
-        if (!NutsUtilStrings.isBlank(workspaceInformation.getApiVersion())) {
+        if (!NutsBlankable.isBlank(workspaceInformation.getApiVersion())) {
             if (!unsatisfiedOnly || !workspaceInformation.getApiVersion().equals(Nuts.getVersion())) {
                 req += 1;
             }

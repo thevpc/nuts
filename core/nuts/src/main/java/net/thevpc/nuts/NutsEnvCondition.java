@@ -27,14 +27,15 @@ package net.thevpc.nuts;
 
 /**
  * Nuts environment condition, used to check against the current environment
- * @since 0.8.3
+ *
  * @app.category Descriptor
+ * @since 0.8.3
  */
-public interface NutsEnvCondition extends NutsBlankable{
+public interface NutsEnvCondition extends NutsBlankable {
     /**
-     * supported archs. if empty, all arch are supported (for example for java, all arch are supported).
+     * supported arch list. if empty, all arch are supported (for example for java, all arch are supported).
      *
-     * @return supported archs
+     * @return supported arch list
      */
     String[] getArch();
 
@@ -63,14 +64,21 @@ public interface NutsEnvCondition extends NutsBlankable{
     /**
      * supported desktop environments (gnome, kde, none, ...). if empty desktop environment is not relevant.
      * This is helpful to bind application to a specific environment
+     *
      * @return supported platforms
      */
     String[] getDesktopEnvironment();
 
+    /**
+     * create builder from this instance
+     *
+     * @return builder copy of this instance
+     */
     NutsEnvConditionBuilder builder();
 
     /**
      * true if no condition
+     *
      * @return true if no condition
      */
     boolean isBlank();

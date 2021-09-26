@@ -30,7 +30,6 @@ package net.thevpc.nuts;
 import net.thevpc.nuts.boot.NutsApiUtils;
 
 import java.io.File;
-import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -147,7 +146,7 @@ public final class NutsUtilPlatforms {
                     }
                     case WINDOWS: {
                         String pf = System.getenv("TMP");
-                        if (NutsUtilStrings.isBlank(pf)) {
+                        if (NutsBlankable.isBlank(pf)) {
                             pf = getWindowsSystemRoot() + "\\TEMP";
                         }
                         return pf + "\\nuts" + syspath(workspaceName);
@@ -165,7 +164,7 @@ public final class NutsUtilPlatforms {
                     }
                     case WINDOWS: {
                         String pf = System.getenv("TMP");
-                        if (NutsUtilStrings.isBlank(pf)) {
+                        if (NutsBlankable.isBlank(pf)) {
                             pf = getWindowsSystemRoot() + "\\TEMP";
                         }
                         return pf + "\\nuts\\run" + syspath(workspaceName);
@@ -348,11 +347,11 @@ public final class NutsUtilPlatforms {
 
     public static String getWindowsProgramFiles() {
         String s = System.getenv("ProgramFiles");
-        if (!NutsUtilStrings.isBlank(s)) {
+        if (!NutsBlankable.isBlank(s)) {
             return s;
         }
         String c = getWindowsSystemDrive();
-        if (!NutsUtilStrings.isBlank(c)) {
+        if (!NutsBlankable.isBlank(c)) {
             return c + "\\Program Files";
         }
         return "C:\\Program Files";
@@ -360,11 +359,11 @@ public final class NutsUtilPlatforms {
 
     public static String getWindowsProgramFilesX86() {
         String s = System.getenv("ProgramFiles(x86)");
-        if (!NutsUtilStrings.isBlank(s)) {
+        if (!NutsBlankable.isBlank(s)) {
             return s;
         }
         String c = getWindowsSystemDrive();
-        if (!NutsUtilStrings.isBlank(c)) {
+        if (!NutsBlankable.isBlank(c)) {
             return c + "\\Program Files (x86)";
         }
         return "C:\\Program Files (x86)";
@@ -374,15 +373,15 @@ public final class NutsUtilPlatforms {
     public static String getWindowsSystemRoot() {
         String e;
         e = System.getenv("SystemRoot");
-        if (!NutsUtilStrings.isBlank(e)) {
+        if (!NutsBlankable.isBlank(e)) {
             return e;
         }
         e = System.getenv("windir");
-        if (!NutsUtilStrings.isBlank(e)) {
+        if (!NutsBlankable.isBlank(e)) {
             return e;
         }
         e = System.getenv("SystemDrive");
-        if (!NutsUtilStrings.isBlank(e)) {
+        if (!NutsBlankable.isBlank(e)) {
             return e + "\\Windows";
         }
         return "C:\\Windows";
@@ -390,15 +389,15 @@ public final class NutsUtilPlatforms {
 
     public static String getWindowsSystemDrive() {
         String e = System.getenv("SystemDrive");
-        if (!NutsUtilStrings.isBlank(e)) {
+        if (!NutsBlankable.isBlank(e)) {
             return e;
         }
         e = System.getenv("SystemRoot");
-        if (!NutsUtilStrings.isBlank(e)) {
+        if (!NutsBlankable.isBlank(e)) {
             return e.substring(0, 2);
         }
         e = System.getenv("windir");
-        if (!NutsUtilStrings.isBlank(e)) {
+        if (!NutsBlankable.isBlank(e)) {
             return e.substring(0, 2);
         }
         return null;

@@ -44,7 +44,7 @@ public class NutsInvalidRepositoryException extends NutsRepositoryException {
     public NutsInvalidRepositoryException(NutsSession session, String repository, NutsMessage message) {
         super(session, repository,
                 NutsMessage.cstyle("invalid repository %s : %s", (repository == null ? "<null>" : repository), message)
-                        , null);
+                , null);
     }
 
 }

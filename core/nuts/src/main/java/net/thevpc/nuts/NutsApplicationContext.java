@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -11,7 +11,7 @@
  * architecture to help supporting a large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -23,7 +23,7 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts;
 
 
@@ -77,7 +77,17 @@ public interface NutsApplicationContext extends NutsCommandLineConfigurable {
     NutsApplicationContext configure(boolean skipUnsupported, String... args);
 
     /**
-     * print application help to the default out ({@code getSession().out()}) 
+     * calls configureFirst and ensure this is the last test.
+     * If the argument is not supported, throws unsupported argument
+     * by calling {@link NutsCommandLine#unexpectedArgument()}
+     *
+     * @param commandLine arguments to configure with
+     * @since 0.7.1
+     */
+    void configureLast(NutsCommandLine commandLine);
+
+    /**
+     * print application help to the default out ({@code getSession().out()})
      * print stream.
      */
     void printHelp();
@@ -226,7 +236,7 @@ public interface NutsApplicationContext extends NutsCommandLineConfigurable {
     NutsVersion getAppPreviousVersion();
 
     /**
-     * a new instance of command line arguments to process filled 
+     * a new instance of command line arguments to process filled
      * with application's arguments.
      *
      * @return a new instance of command line arguments to process
@@ -322,7 +332,7 @@ public interface NutsApplicationContext extends NutsCommandLineConfigurable {
      * @since 0.7.0
      */
     void processCommandLine(NutsCommandLineProcessor commandLineProcessor);
-    
+
     /**
      * application store folder path for the given {@code location}
      * @param location location type
@@ -332,19 +342,9 @@ public interface NutsApplicationContext extends NutsCommandLineConfigurable {
 
     /**
      * return true if {@code getAutoComplete()==null }
-     * @return true if {@code getAutoComplete()==null } 
+     * @return true if {@code getAutoComplete()==null }
      */
     boolean isExecMode();
-    
-    /**
-     * calls configureFirst and ensure this is the last test.
-     * If the argument is not supported, throws unsupported argument
-     * by calling {@link NutsCommandLine#unexpectedArgument()}
-     *
-     * @param commandLine arguments to configure with
-     * @since 0.7.1
-     */
-    void configureLast(NutsCommandLine commandLine);
 
     NutsAppStoreLocationResolver getStoreLocationResolver();
 

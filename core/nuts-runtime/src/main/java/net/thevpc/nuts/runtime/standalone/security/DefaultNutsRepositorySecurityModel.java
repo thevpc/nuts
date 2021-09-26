@@ -44,7 +44,7 @@ public class DefaultNutsRepositorySecurityModel {
     public void checkAllowed(String right, String operationName, NutsSession session) {
         NutsWorkspaceUtils.checkSession(repository.getWorkspace(), session);
         if (!isAllowed(right, session)) {
-            if (NutsUtilStrings.isBlank(operationName)) {
+            if (NutsBlankable.isBlank(operationName)) {
                 throw new NutsSecurityException(session, NutsMessage.cstyle("%s not allowed!",right));
             } else {
                 throw new NutsSecurityException(session, NutsMessage.cstyle("%s : %s not allowed!",operationName,right));

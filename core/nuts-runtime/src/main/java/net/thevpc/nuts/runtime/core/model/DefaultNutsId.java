@@ -289,7 +289,7 @@ public class DefaultNutsId implements NutsId {
 
     @Override
     public String getShortName() {
-        if (NutsUtilStrings.isBlank(groupId)) {
+        if (NutsBlankable.isBlank(groupId)) {
             return NutsUtilStrings.trim(artifactId);
         }
         return NutsUtilStrings.trim(groupId) + ":" + NutsUtilStrings.trim(artifactId);
@@ -323,14 +323,14 @@ public class DefaultNutsId implements NutsId {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        if (!NutsUtilStrings.isBlank(groupId)) {
+        if (!NutsBlankable.isBlank(groupId)) {
             sb.append(groupId).append(":");
         }
         sb.append(artifactId);
         if (!version.isBlank()) {
             sb.append("#").append(version);
         }
-        if (!NutsUtilStrings.isBlank(properties)) {
+        if (!NutsBlankable.isBlank(properties)) {
             sb.append("?");
             sb.append(properties);
         }

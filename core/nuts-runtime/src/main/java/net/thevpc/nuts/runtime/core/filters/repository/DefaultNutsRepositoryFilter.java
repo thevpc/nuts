@@ -21,7 +21,7 @@ public class DefaultNutsRepositoryFilter extends AbstractRepositoryFilter{
         this.exactRepos = new HashSet<>();
         this.wildcardRepos = new HashSet<>();
         for (String repo : exactRepos) {
-            if (!NutsUtilStrings.isBlank(repo)) {
+            if (!NutsBlankable.isBlank(repo)) {
                 if(repo.indexOf('*')>0) {
                     this.wildcardRepos.add(GlobUtils.ofExact(repo));
                 }else if(repo.length()>2 && repo.startsWith("/") && repo.endsWith("/")){

@@ -26,8 +26,8 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
     }
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext<String> criteria) {
-        String s = criteria.getConstraints();
+    public int getSupportLevel(NutsSupportLevelContext<String> context) {
+        String s = context.getConstraints();
         return "sh".equals(s) ? NutsComponent.DEFAULT_SUPPORT : NutsComponent.NO_SUPPORT;
     }
 

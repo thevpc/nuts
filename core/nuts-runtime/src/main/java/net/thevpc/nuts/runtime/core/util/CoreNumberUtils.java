@@ -23,6 +23,7 @@
  */
 package net.thevpc.nuts.runtime.core.util;
 
+import net.thevpc.nuts.NutsBlankable;
 import net.thevpc.nuts.NutsUtilStrings;
 
 import java.math.BigInteger;
@@ -34,7 +35,7 @@ import java.math.BigInteger;
 public class CoreNumberUtils {
 
     public static Integer convertToInteger(String value, Integer defaultValue) {
-        if (NutsUtilStrings.isBlank(value)) {
+        if (NutsBlankable.isBlank(value)) {
             return defaultValue;
         }
         try {
@@ -44,7 +45,7 @@ public class CoreNumberUtils {
         }
     }
     public static Long convertToLong(String value, Long defaultValue) {
-        if (NutsUtilStrings.isBlank(value)) {
+        if (NutsBlankable.isBlank(value)) {
             return defaultValue;
         }
         try {
@@ -54,7 +55,7 @@ public class CoreNumberUtils {
         }
     }
     public static BigInteger convertToBigInteger(String value, BigInteger defaultValue) {
-        if (NutsUtilStrings.isBlank(value)) {
+        if (NutsBlankable.isBlank(value)) {
             return defaultValue;
         }
         try {

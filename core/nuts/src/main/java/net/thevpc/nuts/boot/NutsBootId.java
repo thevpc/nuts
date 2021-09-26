@@ -27,7 +27,10 @@ package net.thevpc.nuts.boot;
 import net.thevpc.nuts.NutsConstants;
 import net.thevpc.nuts.NutsUtilStrings;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -51,7 +54,7 @@ public final class NutsBootId {
     private final String arch;
 
     public NutsBootId(String groupId, String artifactId, NutsBootVersion version) {
-        this(groupId, artifactId, version,false,null,null);
+        this(groupId, artifactId, version, false, null, null);
     }
 
     public NutsBootId(String groupId, String artifactId, NutsBootVersion version, boolean optional, String os, String arch) {
@@ -61,18 +64,6 @@ public final class NutsBootId {
         this.optional = optional;
         this.os = os == null ? "" : os;
         this.arch = arch == null ? "" : arch;
-    }
-
-    public String getOs() {
-        return os;
-    }
-
-    public String getArch() {
-        return arch;
-    }
-
-    public boolean isOptional() {
-        return optional;
     }
 
     private static String readUntil(Reader r, boolean include, IntPredicate stop) {
@@ -101,7 +92,6 @@ public final class NutsBootId {
         }
     }
 
-
     public static NutsBootId[] parseAll(String id) {
         List<NutsBootId> all = new ArrayList<>();
         if (id != null) {
@@ -129,8 +119,8 @@ public final class NutsBootId {
                     }
                 }
                 String s = sb.toString();
-                s=s.trim();
-                if(!s.isEmpty()) {
+                s = s.trim();
+                if (!s.isEmpty()) {
                     all.add(parse(s));
                 }
             }
@@ -218,49 +208,20 @@ public final class NutsBootId {
                 optional, os, arch);
     }
 
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        if (groupId != null && groupId.length() > 0) {
-            sb.append(groupId).append(":");
-        }
-        sb.append(artifactId);
-        if (version != null && !version.isBlank()) {
-            sb.append("#").append(version);
-        }
-        boolean inter = false;
-        if (optional) {
-            if (!inter) {
-                sb.append("?");
-                inter = true;
-            } else {
-                sb.append("&");
-            }
-            sb.append("optional=true");
-        }
-        if (os.length() > 0) {
-            if (!inter) {
-                sb.append("?");
-                inter = true;
-            } else {
-                sb.append("&");
-            }
-            sb.append("os=").append(os);
-        }
-        if (arch.length() > 0) {
-            if (!inter) {
-                sb.append("?");
-                inter = true;
-            } else {
-                sb.append("&");
-            }
-            sb.append("arch=").append(arch);
-        }
-        return sb.toString();
+    public String getOs() {
+        return os;
+    }
+
+    public String getArch() {
+        return arch;
+    }
+
+    public boolean isOptional() {
+        return optional;
     }
 
     public String getVersionString() {
-        return version==null?null:version.toString();
+        return version == null ? null : version.toString();
     }
 
     public NutsBootVersion getVersion() {
@@ -276,20 +237,20 @@ public final class NutsBootId {
     }
 
     public String getShortName() {
-        if(groupId.isEmpty()){
+        if (groupId.isEmpty()) {
             return artifactId;
         }
         return groupId + ":" + artifactId;
     }
 
     public String getLongName() {
-        StringBuilder sb=new StringBuilder();
-        if(!groupId.isEmpty()){
+        StringBuilder sb = new StringBuilder();
+        if (!groupId.isEmpty()) {
             sb.append(groupId);
             sb.append(":");
         }
         sb.append(artifactId);
-        if(!version.isBlank()){
+        if (!version.isBlank()) {
             sb.append("#");
             sb.append(version);
         }
@@ -335,10 +296,48 @@ public final class NutsBootId {
         if (!Objects.equals(this.os, other.os)) {
             return false;
         }
-        if (!Objects.equals(this.arch, other.arch)) {
-            return false;
+        return Objects.equals(this.arch, other.arch);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        if (groupId != null && groupId.length() > 0) {
+            sb.append(groupId).append(":");
         }
-        return true;
+        sb.append(artifactId);
+        if (version != null && !version.isBlank()) {
+            sb.append("#").append(version);
+        }
+        boolean inter = false;
+        if (optional) {
+            if (!inter) {
+                sb.append("?");
+                inter = true;
+            } else {
+                sb.append("&");
+            }
+            sb.append("optional=true");
+        }
+        if (os.length() > 0) {
+            if (!inter) {
+                sb.append("?");
+                inter = true;
+            } else {
+                sb.append("&");
+            }
+            sb.append("os=").append(os);
+        }
+        if (arch.length() > 0) {
+            if (!inter) {
+                sb.append("?");
+                inter = true;
+            } else {
+                sb.append("&");
+            }
+            sb.append("arch=").append(arch);
+        }
+        return sb.toString();
     }
 
 }

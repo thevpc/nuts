@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -11,7 +11,7 @@
  * architecture to help supporting a large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -23,7 +23,7 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts;
 
 import java.util.Collection;
@@ -82,15 +82,9 @@ public interface NutsUpdateUserCommand extends NutsWorkspaceCommand {
 
     NutsUpdateUserCommand credentials(char[] password);
 
-    NutsUpdateUserCommand setCredentials(char[] password);
-
     NutsUpdateUserCommand oldCredentials(char[] password);
 
-    NutsUpdateUserCommand setOldCredentials(char[] oldCredentials);
-
     NutsUpdateUserCommand remoteIdentity(String remoteIdentity);
-
-    NutsUpdateUserCommand setRemoteIdentity(String remoteIdentity);
 
     String getUsername();
 
@@ -98,25 +92,25 @@ public interface NutsUpdateUserCommand extends NutsWorkspaceCommand {
 
     boolean isResetPermissions();
 
+    NutsUpdateUserCommand setResetPermissions(boolean resetPermissions);
+
     NutsUpdateUserCommand resetPermissions();
 
     NutsUpdateUserCommand resetPermissions(boolean resetPermissions);
 
-    NutsUpdateUserCommand setResetPermissions(boolean resetPermissions);
-
     boolean isResetGroups();
+
+    NutsUpdateUserCommand setResetGroups(boolean resetGroups);
 
     NutsUpdateUserCommand resetGroups();
 
     NutsUpdateUserCommand resetGroups(boolean resetGroups);
 
-    NutsUpdateUserCommand setResetGroups(boolean resetGroups);
-
-    NutsUpdateUserCommand setRemoteCredentials(char[] password);
-
     NutsUpdateUserCommand remoteCredentials(char[] password);
 
     char[] getRemoteCredentials();
+
+    NutsUpdateUserCommand setRemoteCredentials(char[] password);
 
     String[] getAddGroups();
 
@@ -124,21 +118,19 @@ public interface NutsUpdateUserCommand extends NutsWorkspaceCommand {
 
     char[] getCredentials();
 
+    NutsUpdateUserCommand setCredentials(char[] password);
+
     char[] getOldCredentials();
 
+    NutsUpdateUserCommand setOldCredentials(char[] oldCredentials);
+
     String getRemoteIdentity();
+
+    NutsUpdateUserCommand setRemoteIdentity(String remoteIdentity);
 
     String[] getAddPermissions();
 
     String[] getRemovePermissions();
-
-    /**
-     * copy session
-     *
-     * @return {@code this} instance
-     */
-    @Override
-    NutsUpdateUserCommand copySession();
 
     /**
      * update session
@@ -148,6 +140,14 @@ public interface NutsUpdateUserCommand extends NutsWorkspaceCommand {
      */
     @Override
     NutsUpdateUserCommand setSession(NutsSession session);
+
+    /**
+     * copy session
+     *
+     * @return {@code this} instance
+     */
+    @Override
+    NutsUpdateUserCommand copySession();
 
     /**
      * configure the current command with the given arguments. This is an

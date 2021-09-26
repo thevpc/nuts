@@ -32,10 +32,9 @@ import java.util.List;
 import java.util.Set;
 
 /**
- *
  * @author thevpc
- * @since 0.5.4
  * @app.category Extensions
+ * @since 0.5.4
  */
 public interface NutsWorkspaceExtensionManager {
 
@@ -49,9 +48,10 @@ public interface NutsWorkspaceExtensionManager {
 
     /**
      * create supported extension implementation or return null.
-     * @param <T> extension type class
-     * @param <V> extension context type
-     * @param type extension type
+     *
+     * @param <T>             extension type class
+     * @param <V>             extension context type
+     * @param type            extension type
      * @param supportCriteria context
      * @return valid instance or null if no extension implementation was found
      */
@@ -59,12 +59,13 @@ public interface NutsWorkspaceExtensionManager {
 
     /**
      * create supported extension implementation or return null.
-     * @param <T> extension type class
-     * @param <V> extension context type
-     * @param type extension type
-     * @param supportCriteria context
+     *
+     * @param <T>                       extension type class
+     * @param <V>                       extension context type
+     * @param type                      extension type
+     * @param supportCriteria           context
      * @param constructorParameterTypes constructor Parameter Types
-     * @param constructorParameters constructor Parameters
+     * @param constructorParameters     constructor Parameters
      * @return valid instance or null if no extension implementation was found
      */
     <T extends NutsComponent<V>, V> T createSupported(Class<T> type, V supportCriteria, Class[] constructorParameterTypes, Object[] constructorParameters);
@@ -111,11 +112,12 @@ public interface NutsWorkspaceExtensionManager {
 
     /**
      * create an instance of a supported Nuts Type
-     * @param type type interface
-     * @param name constructor type, null for 'default'
+     *
+     * @param type     type interface
+     * @param name     constructor type, null for 'default'
      * @param argTypes argument types
-     * @param args argument instances
-     * @param <T> type interface
+     * @param args     argument instances
+     * @param <T>      type interface
      * @return new instance of T or error
      */
     <T> T create(Class<T> type, String name, Class[] argTypes, Object[] args);

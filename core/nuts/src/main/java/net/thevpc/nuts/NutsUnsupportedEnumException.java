@@ -10,19 +10,19 @@
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
  * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts;
 
 /**
@@ -54,7 +54,7 @@ public class NutsUnsupportedEnumException extends NutsException {
     public NutsUnsupportedEnumException(NutsSession session, NutsMessage message, Enum enumValue) {
         super(session,
                 message != null ? message : NutsMessage.cstyle(
-                        "unexpected/unsupported enum %s of type %s",enumValue, enumValue.getClass().getName())
+                        "unexpected/unsupported enum %s of type %s", enumValue, enumValue.getClass().getName())
         );
         this.enumValue = enumValue;
     }
@@ -70,7 +70,7 @@ public class NutsUnsupportedEnumException extends NutsException {
     public NutsUnsupportedEnumException(NutsSession session, NutsMessage message, String stringValue, Enum enumValue) {
         super(session,
                 message == null ? (
-                        NutsMessage.cstyle("unexpected/unsupported value %s of type %s",stringValue, enumValue.getClass().getName()))
+                        NutsMessage.cstyle("unexpected/unsupported value %s of type %s", stringValue, enumValue.getClass().getName()))
                         : message
         );
     }

@@ -15,19 +15,19 @@ class PrivateNutsUtilDigest {
     public static String getURLDigest(URL url) {
         if (url != null) {
             File ff = PrivateNutsUtilIO.toFile(url);
-            if(ff!=null){
+            if (ff != null) {
                 return getFileOrDirectoryDigest(ff.toPath());
             }
             InputStream is = null;
             try {
                 is = url.openStream();
-                if(is!=null) {
+                if (is != null) {
                     return getStreamDigest(is);
                 }
             } catch (Exception e) {
                 //
-            }finally {
-                if(is!=null){
+            } finally {
+                if (is != null) {
                     try {
                         is.close();
                     } catch (IOException e) {
@@ -40,12 +40,12 @@ class PrivateNutsUtilDigest {
     }
 
     public static String getFileOrDirectoryDigest(Path p) {
-        if(Files.isDirectory(p)) {
+        if (Files.isDirectory(p)) {
             return getDirectoryDigest(p);
-        }else if(Files.isRegularFile(p)){
-            try(InputStream is=Files.newInputStream(p)){
+        } else if (Files.isRegularFile(p)) {
+            try (InputStream is = Files.newInputStream(p)) {
                 return getStreamDigest(is);
-            }catch (IOException ex){
+            } catch (IOException ex) {
                 return null;
             }
         }
@@ -58,14 +58,14 @@ class PrivateNutsUtilDigest {
             Files.walkFileTree(p, new FileVisitor<Path>() {
                 @Override
                 public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                    incrementalUpdateFileDigest(new ByteArrayInputStream(dir.toString().getBytes()),md);
+                    incrementalUpdateFileDigest(new ByteArrayInputStream(dir.toString().getBytes()), md);
                     return FileVisitResult.CONTINUE;
                 }
 
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    incrementalUpdateFileDigest(new ByteArrayInputStream(file.toString().getBytes()),md);
-                    incrementalUpdateFileDigest(Files.newInputStream(file),md);
+                    incrementalUpdateFileDigest(new ByteArrayInputStream(file.toString().getBytes()), md);
+                    incrementalUpdateFileDigest(Files.newInputStream(file), md);
                     return FileVisitResult.CONTINUE;
                 }
 

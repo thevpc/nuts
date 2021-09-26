@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -11,7 +11,7 @@
  * architecture to help supporting a large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -23,15 +23,14 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts;
 
 /**
  * Install strategy defines the strategy used by installer
-
  * @app.category Base
  */
-public enum NutsInstallStrategy implements NutsEnum{
+public enum NutsInstallStrategy implements NutsEnum {
     /**
      * the default strategy points to 'INSTALL' but this can be configured.
      */
@@ -69,15 +68,10 @@ public enum NutsInstallStrategy implements NutsEnum{
      */
     SWITCH_VERSION;
 
-    private String id;
+    private final String id;
 
     NutsInstallStrategy() {
         this.id = name().toLowerCase().replace('_', '-');
-    }
-
-    @Override
-    public String id() {
-        return id;
     }
 
     public static NutsInstallStrategy parseLenient(String value) {
@@ -102,5 +96,24 @@ public enum NutsInstallStrategy implements NutsEnum{
         } catch (Exception notFound) {
             return errorValue;
         }
+    }
+
+    public static NutsInstallStrategy parse(String value, NutsSession session) {
+        return parse(value, null, session);
+    }
+
+    public static NutsInstallStrategy parse(String value, NutsInstallStrategy emptyValue, NutsSession session) {
+        NutsInstallStrategy v = parseLenient(value, emptyValue, null);
+        if (v == null) {
+            if (!NutsBlankable.isBlank(value)) {
+                throw new NutsParseEnumException(session, value, NutsInstallStrategy.class);
+            }
+        }
+        return v;
+    }
+
+    @Override
+    public String id() {
+        return id;
     }
 }

@@ -55,7 +55,7 @@ class PrivateNutsUtilBootId {
 
         //by default ignore optionals
         if (s.isOptional()) {
-            if (!bootOptionals && !PrivateNutsUtilWorkspaceOptions.isBootOptional(s.getArtifactId(),woptions)) {
+            if (!bootOptionals && !PrivateNutsUtilWorkspaceOptions.isBootOptional(s.getArtifactId(), woptions)) {
                 return false;
             }
         }

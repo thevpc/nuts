@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages and libraries
  * for runtime execution. Nuts is the ultimate companion for maven (and other
@@ -11,7 +11,7 @@
  * large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -46,7 +46,7 @@ import java.util.function.Predicate;
  */
 public interface NutsElementFormat extends NutsObjectFormat {
 
-    static NutsElementFormat of(NutsSession session){
+    static NutsElementFormat of(NutsSession session) {
         NutsApiUtils.checkSession(session);
         return session.getWorkspace().elem();
     }
@@ -98,19 +98,6 @@ public interface NutsElementFormat extends NutsObjectFormat {
     NutsElementFormat setSession(NutsSession session);
 
     /**
-     * compile pathExpression into a valid NutsElementPath that helps filtering
-     * elements tree. JSONPath expressions refer to a JSON structure the same
-     * way as XPath expression are used with XML documents. JSONPath expressions
-     * can use the dot notation and/or bracket notations .store.book[0].title
-     * The trailing root is not necessary : .store.book[0].title You can also
-     * use bracket notation store['book'][0].title for input paths.
-     *
-     * @param pathExpression element path expression
-     * @return Element Path filter
-     */
-    NutsElementPath compilePath(String pathExpression);
-
-    /**
      * configure the current command with the given arguments. This is an
      * override of the {@link NutsCommandLineConfigurable#configure(boolean, java.lang.String...)
      * }
@@ -122,6 +109,22 @@ public interface NutsElementFormat extends NutsObjectFormat {
      */
     @Override
     NutsElementFormat configure(boolean skipUnsupported, String... args);
+
+    @Override
+    NutsElementFormat setNtf(boolean ntf);
+
+    /**
+     * compile pathExpression into a valid NutsElementPath that helps filtering
+     * elements tree. JSONPath expressions refer to a JSON structure the same
+     * way as XPath expression are used with XML documents. JSONPath expressions
+     * can use the dot notation and/or bracket notations .store.book[0].title
+     * The trailing root is not necessary : .store.book[0].title You can also
+     * use bracket notation store['book'][0].title for input paths.
+     *
+     * @param pathExpression element path expression
+     * @return Element Path filter
+     */
+    NutsElementPath compilePath(String pathExpression);
 
     /**
      * true is compact json flag is armed
@@ -293,15 +296,16 @@ public interface NutsElementFormat extends NutsObjectFormat {
 
     NutsElement toElement(Object any);
 
-//    NutsElementEntryBuilder forEntry();
-    NutsElementEntry forEntry(NutsElement key, NutsElement value);
-
 //    /**
 //     * create object element builder (mutable)
 //     *
 //     * @return primitive builder
 //     */
 //    NutsPrimitiveElementBuilder forPrimitive();
+
+    //    NutsElementEntryBuilder forEntry();
+    NutsElementEntry forEntry(NutsElement key, NutsElement value);
+
     /**
      * create object element builder (mutable)
      *
@@ -315,9 +319,6 @@ public interface NutsElementFormat extends NutsObjectFormat {
      * @return array element
      */
     NutsArrayElementBuilder forArray();
-
-    @Override
-    public NutsElementFormat setNtf(boolean ntf);
 
     //    public NutsPrimitiveElement forNutsString(NutsString str) {
     //        return str == null ? DefaultNutsPrimitiveElementBuilder.NULL : new DefaultNutsPrimitiveElement(NutsElementType.NUTS_STRING, str);

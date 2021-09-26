@@ -313,14 +313,14 @@ public class NutsRepositorySelector {
                 for (Map.Entry<String, String> entry : existing.entrySet()) {
                     String k = entry.getKey();
                     String v = entry.getValue();
-                    if (NutsUtilStrings.isBlank(v) && !NutsUtilStrings.isBlank(k)) {
+                    if (NutsBlankable.isBlank(v) && !NutsBlankable.isBlank(k)) {
                         String u2 = getRepositoryURLByName(k);
                         if (u2 != null) {
                             v = u2;
                         } else {
                             v = k;
                         }
-                    } else if (!NutsUtilStrings.isBlank(v) && NutsUtilStrings.isBlank(k)) {
+                    } else if (!NutsBlankable.isBlank(v) && NutsBlankable.isBlank(k)) {
                         String u2 = getRepositoryNameByURL(k);
                         if (u2 != null) {
                             k = u2;

@@ -224,7 +224,7 @@ public class DefaultNutsWorkspaceSecurityModel {
 
     public void checkAllowed(String permission, String operationName, NutsSession session) {
         if (!isAllowed(permission, session)) {
-            if (NutsUtilStrings.isBlank(operationName)) {
+            if (NutsBlankable.isBlank(operationName)) {
                 throw new NutsSecurityException(session, NutsMessage.cstyle("%s not allowed!", permission));
             } else {
                 throw new NutsSecurityException(session, NutsMessage.cstyle("%s : %s not allowed!", operationName, permission));
@@ -254,7 +254,7 @@ public class DefaultNutsWorkspaceSecurityModel {
             return true;
         }
         String name = getCurrentUsername(session);
-        if (NutsUtilStrings.isBlank(name)) {
+        if (NutsBlankable.isBlank(name)) {
             return false;
         }
         if (NutsConstants.Users.ADMIN.equals(name)) {
@@ -319,8 +319,8 @@ public class DefaultNutsWorkspaceSecurityModel {
         if (currentSubject != null) {
             for (Principal principal : currentSubject.getPrincipals()) {
                 name = principal.getName();
-                if (!NutsUtilStrings.isBlank(name)) {
-                    if (!NutsUtilStrings.isBlank(name)) {
+                if (!NutsBlankable.isBlank(name)) {
+                    if (!NutsBlankable.isBlank(name)) {
                         return name;
                     }
                 }
@@ -377,7 +377,7 @@ public class DefaultNutsWorkspaceSecurityModel {
 
     public NutsAuthenticationAgent getAuthenticationAgent(String authenticationAgentId, NutsSession session) {
         authenticationAgentId = NutsUtilStrings.trim(authenticationAgentId);
-        if (NutsUtilStrings.isBlank(authenticationAgentId)) {
+        if (NutsBlankable.isBlank(authenticationAgentId)) {
             authenticationAgentId = NutsWorkspaceConfigManagerExt.of(ws.config())
                     .getModel().getStoredConfigSecurity().getAuthenticationAgent();
         }

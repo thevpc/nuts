@@ -10,7 +10,7 @@
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -22,10 +22,13 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Common Nuts constants. Represents various constants used in runtime
@@ -37,6 +40,12 @@ import java.util.*;
  * @app.category Constants
  */
 public final class NutsConstants {
+
+    /**
+     * private constructor
+     */
+    private NutsConstants() {
+    }
 
     /**
      * name constants
@@ -234,7 +243,7 @@ public final class NutsConstants {
          * </ul>
          */
         public static final String ARCH = "arch";
-        
+
         /**
          * dependency type
          */
@@ -568,6 +577,7 @@ public final class NutsConstants {
         private Versions() {
         }
     }
+
     /**
      * version special names
      * @app.category Constants
@@ -585,11 +595,5 @@ public final class NutsConstants {
          */
         private Ntf() {
         }
-    }
-
-    /**
-     * private constructor
-     */
-    private NutsConstants() {
     }
 }

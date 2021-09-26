@@ -10,19 +10,19 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
  * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts;
 
 import java.io.InputStream;
@@ -329,6 +329,7 @@ public interface NutsWorkspaceOptions extends Serializable {
      * @return if true, extra debug information is written to standard output.
      */
     boolean isDebug();
+
     Boolean getDebug();
 
     /**
@@ -338,6 +339,7 @@ public interface NutsWorkspaceOptions extends Serializable {
      * @return if true consider global/system repository
      */
     boolean isGlobal();
+
     Boolean getGlobal();
 
     /**
@@ -347,15 +349,17 @@ public interface NutsWorkspaceOptions extends Serializable {
      * @return if true consider GUI/Swing mode
      */
     boolean isGui();
+
     Boolean getGui();
 
     /**
      * if true, workspace were invoked from parent process and hence inherits its options.
      * <br>
      * <strong>option-type :</strong> runtime (available only for the current workspace instance)
-     * @return  if true, workspace were invoked from parent process and hence inherits its options.
+     * @return if true, workspace were invoked from parent process and hence inherits its options.
      */
     boolean isInherited();
+
     Boolean getInherited();
 
     /**
@@ -366,6 +370,7 @@ public interface NutsWorkspaceOptions extends Serializable {
      * @return if true, workspace configuration are non modifiable.
      */
     boolean isReadOnly();
+
     Boolean getReadOnly();
 
     /**
@@ -375,6 +380,7 @@ public interface NutsWorkspaceOptions extends Serializable {
      * @return if true, boot, cache and temp folder are deleted.
      */
     boolean isRecover();
+
     Boolean getRecover();
 
     /**
@@ -402,6 +408,7 @@ public interface NutsWorkspaceOptions extends Serializable {
      * @return if true, do not install nuts companion tools upon workspace creation.
      */
     boolean isSkipCompanions();
+
     Boolean getSkipCompanions();
 
     /**
@@ -414,6 +421,7 @@ public interface NutsWorkspaceOptions extends Serializable {
      * @since 0.5.5
      */
     boolean isSkipWelcome();
+
     Boolean getSkipWelcome();
 
 
@@ -450,15 +458,17 @@ public interface NutsWorkspaceOptions extends Serializable {
      * @since 0.6.0
      */
     boolean isSkipBoot();
+
     Boolean getSkipBoot();
 
     /**
      * when true, extra trace user-friendly information is written to standard output.
      * <br>
      * <strong>option-type :</strong> exported (inherited in child workspaces)
-     * @return  when true, extra trace user-friendly information is written to standard output.
+     * @return when true, extra trace user-friendly information is written to standard output.
      */
     boolean isTrace();
+
     Boolean getTrace();
 
     /**
@@ -467,7 +477,7 @@ public interface NutsWorkspaceOptions extends Serializable {
      * 'no' value means that progress is disabled.
      * <br>
      * <strong>option-type :</strong> exported (inherited in child workspaces)
-     * @return  when true, extra trace user-friendly information is written to standard output.
+     * @return when true, extra trace user-friendly information is written to standard output.
      */
     String getProgressOptions();
 
@@ -475,27 +485,30 @@ public interface NutsWorkspaceOptions extends Serializable {
      * when true, use cache
      * <br>
      * <strong>option-type :</strong> exported (inherited in child workspaces)
-     * @return  use cache when true
+     * @return use cache when true
      */
     boolean isCached();
+
     Boolean getCached();
 
     /**
      * when true, use index
      * <br>
      * <strong>option-type :</strong> exported (inherited in child workspaces)
-     * @return  use index when true
+     * @return use index when true
      */
     boolean isIndexed();
+
     Boolean getIndexed();
 
     /**
      * when true, use transitive repositories
      * <br>
      * <strong>option-type :</strong> exported (inherited in child workspaces)
-     * @return  use transitive repositories when true
+     * @return use transitive repositories when true
      */
     boolean isTransitive();
+
     Boolean getTransitive();
 
     /**
@@ -505,14 +518,14 @@ public interface NutsWorkspaceOptions extends Serializable {
      * @return application is running in bot (robot) mode. No interaction or trace is allowed.
      */
     boolean isBot();
-    
+
     Boolean getBot();
 
     /**
      * default fetch strategy
      * <br>
      * <strong>option-type :</strong> exported (inherited in child workspaces)
-     * @return  use transitive repositories when true
+     * @return use transitive repositories when true
      */
     NutsFetchStrategy getFetchStrategy();
 
@@ -523,7 +536,7 @@ public interface NutsWorkspaceOptions extends Serializable {
      *
      * <br>
      * <strong>option-type :</strong> runtime (available only for the current workspace instance)
-     * @return  default standard input or null
+     * @return default standard input or null
      */
     InputStream getStdin();
 
@@ -533,7 +546,7 @@ public interface NutsWorkspaceOptions extends Serializable {
      *
      * <br>
      * <strong>option-type :</strong> runtime (available only for the current workspace instance)
-     * @return  default standard output or null
+     * @return default standard output or null
      */
     PrintStream getStdout();
 
@@ -543,7 +556,7 @@ public interface NutsWorkspaceOptions extends Serializable {
      *
      * <br>
      * <strong>option-type :</strong> runtime (available only for the current workspace instance)
-     * @return  default standard error or null
+     * @return default standard error or null
      */
     PrintStream getStderr();
 
@@ -553,7 +566,7 @@ public interface NutsWorkspaceOptions extends Serializable {
      *
      * <br>
      * <strong>option-type :</strong> runtime (available only for the current workspace instance)
-     * @return  executor service used to create worker threads. when null, use default.
+     * @return executor service used to create worker threads. when null, use default.
      */
     ExecutorService getExecutorService();
 

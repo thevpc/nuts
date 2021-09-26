@@ -35,12 +35,12 @@ import java.util.Map;
  * to get an instance of immutable NutsDependency
  *
  * @author thevpc
- * @since 0.5.4
  * @app.category Descriptor
+ * @since 0.5.4
  */
 public interface NutsDependencyBuilder {
 
-    public static NutsDependencyBuilder of(NutsSession session) {
+    static NutsDependencyBuilder of(NutsSession session) {
         NutsApiUtils.checkSession(session);
         return session.getWorkspace().dependency().builder();
     }
@@ -221,16 +221,6 @@ public interface NutsDependencyBuilder {
     NutsDependencyBuilder setClassifier(String classifier);
 
     /**
-     * set condition
-     *
-     * @param condition condition
-     * @return {@code this} instance
-     */
-    NutsDependencyBuilder setCondition(NutsEnvCondition condition);
-
-    NutsDependencyBuilder setCondition(NutsEnvConditionBuilder condition);
-
-    /**
      * return full name
      *
      * @return full name
@@ -302,5 +292,15 @@ public interface NutsDependencyBuilder {
      * @return condition condition builder
      */
     NutsEnvConditionBuilder getCondition();
+
+    /**
+     * set condition
+     *
+     * @param condition condition
+     * @return {@code this} instance
+     */
+    NutsDependencyBuilder setCondition(NutsEnvCondition condition);
+
+    NutsDependencyBuilder setCondition(NutsEnvConditionBuilder condition);
 
 }

@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -11,7 +11,7 @@
  * architecture to help supporting a large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -32,28 +32,26 @@ import java.util.function.Predicate;
  * @app.category Toolkit
  */
 public interface NutsPlatformManager {
-    String[] findPlatformTypes();
+    boolean addPlatform(NutsPlatformLocation location);
 
-    boolean add(NutsPlatformLocation location);
+    boolean updatePlatform(NutsPlatformLocation oldLocation, NutsPlatformLocation newLocation);
 
-    boolean update(NutsPlatformLocation oldLocation, NutsPlatformLocation newLocation);
+    boolean removePlatform(NutsPlatformLocation location);
 
-    boolean remove(NutsPlatformLocation location);
+    NutsPlatformLocation findPlatformByName(NutsPlatformType platformType, String locationName);
 
-    NutsPlatformLocation findByName(String platformType, String locationName);
+    NutsPlatformLocation findPlatformByPath(NutsPlatformType platformType, String path);
 
-    NutsPlatformLocation findByPath(String platformType, String path);
+    NutsPlatformLocation findPlatformByVersion(NutsPlatformType platformType, String version);
 
-    NutsPlatformLocation findByVersion(String platformType, String version);
+    NutsPlatformLocation findPlatform(NutsPlatformLocation location);
 
-    NutsPlatformLocation find(NutsPlatformLocation location);
-
-    NutsPlatformLocation findByVersion(String platformType, NutsVersionFilter requestedVersion);
+    NutsPlatformLocation findPlatformByVersion(NutsPlatformType platformType, NutsVersionFilter requestedVersion);
 
 
-    NutsPlatformLocation[] searchSystem(String platformType);
+    NutsPlatformLocation[] searchSystemPlatforms(NutsPlatformType platformType);
 
-    NutsPlatformLocation[] searchSystem(String platformType, String path);
+    NutsPlatformLocation[] searchSystemPlatforms(NutsPlatformType platformType, String path);
 
     /**
      * verify if the path is a valid platform path and return null if not
@@ -63,13 +61,13 @@ public interface NutsPlatformManager {
      * @param preferredName preferredName
      * @return null if not a valid jdk path
      */
-    NutsPlatformLocation resolve(String platformType, String path, String preferredName);
+    NutsPlatformLocation resolvePlatform(NutsPlatformType platformType, String path, String preferredName);
 
-    NutsPlatformLocation findOne(String type, Predicate<NutsPlatformLocation> filter);
+    NutsPlatformLocation findPlatform(NutsPlatformType type, Predicate<NutsPlatformLocation> filter);
 
-    NutsPlatformLocation[] find(String type, Predicate<NutsPlatformLocation> filter);
+    NutsPlatformLocation[] findPlatforms(NutsPlatformType type, Predicate<NutsPlatformLocation> filter);
 
-    NutsPlatformLocation[] findAll(String type);
+    NutsPlatformLocation[] findPlatforms(NutsPlatformType type);
 
     NutsSession getSession();
 

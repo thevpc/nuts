@@ -23,9 +23,10 @@ public interface NutsDependencies extends Iterable<NutsDependency> {
 
     /**
      * dependencies merged with ids, which may constitute a full classpath
+     *
      * @return dependencies merged with ids, which may constitute a full classpath
      */
     List<NutsDependency> mergedDependencies();
-    
+
     List<NutsDependencyTreeNode> mergedNodes();
 }

@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,6 +40,14 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
     NutsExecCommandFormat formatter();
 
     /**
+     * if true, an exception is thrown whenever the command returns non zero
+     * value.
+     *
+     * @return true if failFast is armed
+     */
+    boolean isFailFast();
+
+    /**
      * when the execution returns a non zero result, an exception is
      * thrown.Particularly, if grabOutputString is used, error exception will
      * state the output message
@@ -49,14 +57,6 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
      * @return {@code this} instance
      */
     NutsExecCommand setFailFast(boolean failFast);
-
-    /**
-     * if true, an exception is thrown whenever the command returns non zero
-     * value.
-     *
-     * @return true if failFast is armed
-     */
-    boolean isFailFast();
 
     /**
      * return command to execute
@@ -75,20 +75,29 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
     NutsExecCommand setCommand(String... command);
 
     /**
-     * append command arguments
-     *
-     * @param command command
-     * @return {@code this} instance
-     */
-    NutsExecCommand addCommand(String... command);
-
-    /**
      * reset command arguments to the given collection
      *
      * @param command command
      * @return {@code this} instance
      */
     NutsExecCommand setCommand(Collection<String> command);
+
+    /**
+     * set command artifact definition. The definition is expected to include
+     * content, dependencies, effective descriptor and install information.
+     *
+     * @param definition definition for the executable
+     * @return {@code this} instance
+     */
+    NutsExecCommand setCommand(NutsDefinition definition);
+
+    /**
+     * append command arguments
+     *
+     * @param command command
+     * @return {@code this} instance
+     */
+    NutsExecCommand addCommand(String... command);
 
     /**
      * append command arguments
@@ -104,15 +113,6 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
      * @return {@code this} instance
      */
     NutsExecCommand clearCommand();
-
-    /**
-     * set command artifact definition. The definition is expected to include
-     * content, dependencies, effective descriptor and install information.
-     *
-     * @param definition definition for the executable
-     * @return {@code this} instance
-     */
-    NutsExecCommand setCommand(NutsDefinition definition);
 
     /**
      * append executor options
@@ -153,6 +153,14 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
     Map<String, String> getEnv();
 
     /**
+     * clear existing env and set new env
+     *
+     * @param env new env
+     * @return {@code this} instance
+     */
+    NutsExecCommand setEnv(Map<String, String> env);
+
+    /**
      * merge env properties
      *
      * @param env env properties
@@ -168,14 +176,6 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
      * @return {@code this} instance
      */
     NutsExecCommand setEnv(String key, String value);
-
-    /**
-     * clear existing env and set new env
-     *
-     * @param env new env
-     * @return {@code this} instance
-     */
-    NutsExecCommand setEnv(Map<String, String> env);
 
     /**
      * clear env
@@ -222,6 +222,14 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
     NutsPrintStream getOut();
 
     /**
+     * set new command output stream (standard output destination)
+     *
+     * @param out standard output destination
+     * @return {@code this} instance
+     */
+    NutsExecCommand setOut(NutsPrintStream out);
+
+    /**
      * grab to memory standard output
      *
      * @return {@code this} instance
@@ -250,12 +258,11 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
     String getErrorString();
 
     /**
-     * set new command output stream (standard output destination)
+     * return new command error stream (standard error destination)
      *
-     * @param out standard output destination
-     * @return {@code this} instance
+     * @return new command error stream (standard error destination)
      */
-    NutsExecCommand setOut(NutsPrintStream out);
+    NutsPrintStream getErr();
 
     /**
      * set new command error stream (standard error destination)
@@ -266,18 +273,19 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
     NutsExecCommand setErr(NutsPrintStream err);
 
     /**
-     * return new command error stream (standard error destination)
-     *
-     * @return new command error stream (standard error destination)
-     */
-    NutsPrintStream getErr();
-
-    /**
      * return execution type
      *
      * @return execution type
      */
     NutsExecutionType getExecutionType();
+
+    /**
+     * set execution type
+     *
+     * @param executionType execution type
+     * @return {@code this} instance
+     */
+    NutsExecCommand setExecutionType(NutsExecutionType executionType);
 
     /**
      * return true if standard error is redirected to standard output
@@ -294,17 +302,9 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
      */
     NutsExecCommand setRedirectErrorStream(boolean redirectErrorStream);
 
-    /**
-     * set execution type
-     *
-     * @param executionType execution type
-     * @return {@code this} instance
-     */
-    NutsExecCommand setExecutionType(NutsExecutionType executionType);
+    NutsRunAs getRunAs();
 
     NutsExecCommand setRunAs(NutsRunAs runAs);
-
-    NutsRunAs getRunAs();
 
     /**
      * return true if dry execution.

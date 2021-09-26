@@ -70,7 +70,7 @@ public class InternalNutsDescriptorFilterManager extends InternalNutsTypedFilter
     @Override
     public NutsDescriptorFilter byExpression(String expression) {
         checkSession();
-        if (NutsUtilStrings.isBlank(expression)) {
+        if (NutsBlankable.isBlank(expression)) {
             return always();
         }
         return NutsDescriptorJavascriptFilter.valueOf(expression, getSession());

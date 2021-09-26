@@ -27,7 +27,8 @@ import net.thevpc.nuts.*;
 
 import java.io.*;
 import java.net.URL;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.attribute.FileTime;
 import java.time.Instant;
 import java.util.*;
@@ -48,7 +49,7 @@ final class PrivateNutsUtils {
     private static final Pattern DOLLAR_PLACE_HOLDER_PATTERN = Pattern.compile("[$][{](?<name>([a-zA-Z]+))[}]");
 
     public static boolean isValidWorkspaceName(String workspace) {
-        if (NutsUtilStrings.isBlank(workspace)) {
+        if (NutsBlankable.isBlank(workspace)) {
             return true;
         }
         String workspaceName = workspace.trim();
@@ -58,7 +59,7 @@ final class PrivateNutsUtils {
     }
 
     public static String resolveValidWorkspaceName(String workspace) {
-        if (NutsUtilStrings.isBlank(workspace)) {
+        if (NutsBlankable.isBlank(workspace)) {
             return NutsConstants.Names.DEFAULT_WORKSPACE_NAME;
         }
         String workspaceName = workspace.trim();
@@ -148,7 +149,7 @@ final class PrivateNutsUtils {
         String exe = NutsOsFamily.getCurrent().equals(NutsOsFamily.WINDOWS) ? "java.exe" : "java";
         if (javaHome == null || javaHome.isEmpty()) {
             javaHome = System.getProperty("java.home");
-            if (NutsUtilStrings.isBlank(javaHome) || "null".equals(javaHome)) {
+            if (NutsBlankable.isBlank(javaHome) || "null".equals(javaHome)) {
                 //this may happen is using a precompiled image (such as with graalvm)
                 return exe;
             }
@@ -166,7 +167,7 @@ final class PrivateNutsUtils {
             return true;
         }
         String javaHome = System.getProperty("java.home");
-        if (NutsUtilStrings.isBlank(javaHome) || "null".equals(javaHome)) {
+        if (NutsBlankable.isBlank(javaHome) || "null".equals(javaHome)) {
             return cmd.equals("java") || cmd.equals("java.exe") || cmd.equals("javaw.exe") || cmd.equals("javaw");
         }
         String jh = javaHome.replace("\\", "/");
@@ -238,12 +239,12 @@ final class PrivateNutsUtils {
 
 
     public static Set<NutsBootId> parseDependencies(String s) {
-        return s==null?Collections.emptySet() :
+        return s == null ? Collections.emptySet() :
                 Arrays.stream(s.split(";"))
                         .map(String::trim)
-                        .filter(x->x.length()>0)
+                        .filter(x -> x.length() > 0)
                         .map(NutsBootId::parse)
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+                        .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     public static boolean isFileAccessible(Path path, Instant expireTime, PrivateNutsLog LOG) {
@@ -336,6 +337,20 @@ final class PrivateNutsUtils {
         );
     }
 
+    public static <K, V> LinkedHashMap<K, V> copy(Map<K, V> o) {
+        if (o == null) {
+            return new LinkedHashMap<>();
+        }
+        return new LinkedHashMap<>(o);
+    }
+
+    public static <K> LinkedHashSet<K> copy(Set<K> o) {
+        if (o == null) {
+            return new LinkedHashSet<>(o);
+        }
+        return new LinkedHashSet<>();
+    }
+
     /**
      * @app.category Internal
      */
@@ -343,19 +358,5 @@ final class PrivateNutsUtils {
 
         LinkedHashSet<NutsBootId> deps = new LinkedHashSet<>();
         LinkedHashSet<String> repos = new LinkedHashSet<>();
-    }
-
-    public static <K,V> LinkedHashMap<K,V> copy(Map<K,V> o){
-        if(o==null){
-            return new LinkedHashMap<>();
-        }
-        return new LinkedHashMap<>(o);
-    }
-
-    public static <K> LinkedHashSet<K> copy(Set<K> o){
-        if(o==null){
-            return new LinkedHashSet<>(o);
-        }
-        return new LinkedHashSet<>();
     }
 }

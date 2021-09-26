@@ -194,7 +194,7 @@ public class CoreIOUtils {
         List<URL> urls = new ArrayList<>();
         if (all != null) {
             for (String s : all) {
-                if (!NutsUtilStrings.isBlank(s)) {
+                if (!NutsBlankable.isBlank(s)) {
                     try {
                         URL u = new URL(s);
                         urls.add(u);
@@ -229,7 +229,7 @@ public class CoreIOUtils {
     }
 
     public static File toFile(String url) {
-        if (NutsUtilStrings.isBlank(url)) {
+        if (NutsBlankable.isBlank(url)) {
             return null;
         }
         URL u;
@@ -364,7 +364,7 @@ public class CoreIOUtils {
     }
 
     public static Path toPathFile(String s, NutsSession session) {
-        if (NutsUtilStrings.isBlank(s)) {
+        if (NutsBlankable.isBlank(s)) {
             return null;
         }
         if (s.startsWith("file:")) {
@@ -397,7 +397,7 @@ public class CoreIOUtils {
     }
 
     public static boolean isPathFile(String s) {
-        if (NutsUtilStrings.isBlank(s)) {
+        if (NutsBlankable.isBlank(s)) {
             return false;
         }
         if (s.startsWith("file:")) {
@@ -418,7 +418,7 @@ public class CoreIOUtils {
     }
 
     public static boolean isPathLocal(String s) {
-        if (NutsUtilStrings.isBlank(s)) {
+        if (NutsBlankable.isBlank(s)) {
             return false;
         }
         if (s.startsWith("file:")
@@ -439,7 +439,7 @@ public class CoreIOUtils {
     }
 
     public static boolean isPathHttp(String s) {
-        if (NutsUtilStrings.isBlank(s)) {
+        if (NutsBlankable.isBlank(s)) {
             return false;
         }
         if (s.startsWith("http://")
@@ -450,10 +450,10 @@ public class CoreIOUtils {
     }
 
     public static boolean isPathURL(String s) {
-        if (NutsUtilStrings.isBlank(s)) {
+        if (NutsBlankable.isBlank(s)) {
             return false;
         }
-        if (NutsUtilStrings.isBlank(s)
+        if (NutsBlankable.isBlank(s)
                 || s.startsWith("file:")
                 || s.startsWith("jar:")
                 || s.startsWith("zip:")) {
@@ -479,22 +479,22 @@ public class CoreIOUtils {
         NutsWorkspace ws = session.getWorkspace();
         String loc = options.getLocation();
         String goodName = options.getName();
-        if (NutsUtilStrings.isBlank(goodName)) {
+        if (NutsBlankable.isBlank(goodName)) {
             goodName = options.getConfig().getName();
         }
-        if (NutsUtilStrings.isBlank(goodName)) {
+        if (NutsBlankable.isBlank(goodName)) {
             goodName = options.getName();
         }
-        if (NutsUtilStrings.isBlank(goodName)) {
+        if (NutsBlankable.isBlank(goodName)) {
             if (options.isTemporary()) {
                 goodName = "temp-" + UUID.randomUUID().toString();
             } else {
                 goodName = "repo-" + UUID.randomUUID().toString();
             }
         }
-        if (NutsUtilStrings.isBlank(loc)) {
+        if (NutsBlankable.isBlank(loc)) {
             if (options.isTemporary()) {
-                if (NutsUtilStrings.isBlank(goodName)) {
+                if (NutsBlankable.isBlank(goodName)) {
                     goodName = "temp";
                 }
                 if (goodName.length() < 3) {
@@ -504,8 +504,8 @@ public class CoreIOUtils {
                         .setSession(session)
                         .createTempFolder(goodName + "-");
             } else {
-                if (NutsUtilStrings.isBlank(loc)) {
-                    if (NutsUtilStrings.isBlank(goodName)) {
+                if (NutsBlankable.isBlank(loc)) {
+                    if (NutsBlankable.isBlank(goodName)) {
                         goodName = CoreNutsUtils.randomColorName() + "-repo";
                     }
                     loc = goodName;
@@ -1598,7 +1598,7 @@ public class CoreIOUtils {
     }
 
     public static Path toPath(String path) {
-        return NutsUtilStrings.isBlank(path) ? null : Paths.get(path);
+        return NutsBlankable.isBlank(path) ? null : Paths.get(path);
     }
 
     public static java.io.InputStream interruptible(java.io.InputStream in) {

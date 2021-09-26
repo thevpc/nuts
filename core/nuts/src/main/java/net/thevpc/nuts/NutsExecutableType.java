@@ -10,19 +10,19 @@
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
  * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts;
 
 /**
@@ -30,7 +30,7 @@ package net.thevpc.nuts;
  * @author thevpc
  * @since 0.5.4
  */
-public enum NutsExecutableType implements NutsEnum{
+public enum NutsExecutableType implements NutsEnum {
     /**
      * internal command is one of : version, info, install,
      * uninstall,check-updates,license, help, exec, welcome
@@ -65,14 +65,6 @@ public enum NutsExecutableType implements NutsEnum{
         this.id = name().toLowerCase().replace('_', '-');
     }
 
-    /**
-     * lower cased identifier.
-     * @return lower cased identifier
-     */
-    public String id() {
-        return id;
-    }
-
     public static NutsExecutableType parseLenient(String value) {
         return parseLenient(value, null);
     }
@@ -95,5 +87,27 @@ public enum NutsExecutableType implements NutsEnum{
         } catch (Exception notFound) {
             return errorValue;
         }
+    }
+
+    public static NutsExecutableType parse(String value, NutsSession session) {
+        return parse(value, null, session);
+    }
+
+    public static NutsExecutableType parse(String value, NutsExecutableType emptyValue, NutsSession session) {
+        NutsExecutableType v = parseLenient(value, emptyValue, null);
+        if (v == null) {
+            if (!NutsBlankable.isBlank(value)) {
+                throw new NutsParseEnumException(session, value, NutsExecutableType.class);
+            }
+        }
+        return v;
+    }
+
+    /**
+     * lower cased identifier.
+     * @return lower cased identifier
+     */
+    public String id() {
+        return id;
     }
 }

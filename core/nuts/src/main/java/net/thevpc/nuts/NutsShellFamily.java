@@ -59,11 +59,11 @@ public enum NutsShellFamily implements NutsEnum {
     UNKNOWN;
 
 
+    private static final NutsShellFamily _curr = parseLenient(System.getenv("SHELL"), UNKNOWN, UNKNOWN);
     /**
      * lower-cased identifier for the enum entry
      */
     private final String id;
-    private static final NutsShellFamily _curr = parseLenient(System.getenv("SHELL"), UNKNOWN, UNKNOWN);
 
     NutsShellFamily() {
         this.id = name().toLowerCase().replace('_', '-');
@@ -82,10 +82,10 @@ public enum NutsShellFamily implements NutsEnum {
             e = "";
         } else {
             String[] parts = e.trim().toLowerCase().split("/");
-            if(parts.length>0) {
+            if (parts.length > 0) {
                 e = parts[parts.length - 1];
-            }else{
-                e="";
+            } else {
+                e = "";
             }
         }
         switch (e) {
@@ -108,6 +108,20 @@ public enum NutsShellFamily implements NutsEnum {
 
     public static NutsShellFamily getCurrent() {
         return _curr;
+    }
+
+    public static NutsShellFamily parse(String value, NutsSession session) {
+        return parse(value, null, session);
+    }
+
+    public static NutsShellFamily parse(String value, NutsShellFamily emptyValue, NutsSession session) {
+        NutsShellFamily v = parseLenient(value, emptyValue, null);
+        if (v == null) {
+            if (!NutsBlankable.isBlank(value)) {
+                throw new NutsParseEnumException(session, value, NutsShellFamily.class);
+            }
+        }
+        return v;
     }
 
     /**

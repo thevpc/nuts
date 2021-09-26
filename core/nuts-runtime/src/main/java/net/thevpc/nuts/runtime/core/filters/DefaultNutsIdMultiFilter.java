@@ -140,7 +140,7 @@
 //                if (id.value instanceof NutsScriptAwareIdFilter) {
 //                    NutsScriptAwareIdFilter b = (NutsScriptAwareIdFilter) id.value;
 //                    String expr = b.toJsNutsIdFilterExpr();
-//                    if (NutsUtilStrings.isBlank(expr)) {
+//                    if (NutsBlankable.isBlank(expr)) {
 //                        return null;
 //                    }
 //                    sb.append("(").append(expr).append("')");
@@ -151,7 +151,7 @@
 //                if (id.value instanceof JsNutsVersionFilter) {
 //                    JsNutsVersionFilter b = (JsNutsVersionFilter) id.value;
 //                    String expr = b.toJsNutsVersionFilterExpr();
-//                    if (NutsUtilStrings.isBlank(expr)) {
+//                    if (NutsBlankable.isBlank(expr)) {
 //                        return null;
 //                    }
 //                    sb.append("(").append(expr).append("')");
@@ -162,7 +162,7 @@
 //                if (id.value instanceof JsNutsDescriptorFilter) {
 //                    JsNutsDescriptorFilter b = (JsNutsDescriptorFilter) id.value;
 //                    String expr = b.toJsNutsDescriptorFilterExpr();
-//                    if (NutsUtilStrings.isBlank(expr)) {
+//                    if (NutsBlankable.isBlank(expr)) {
 //                        return null;
 //                    }
 //                    sb.append("(").append(expr).append("')");

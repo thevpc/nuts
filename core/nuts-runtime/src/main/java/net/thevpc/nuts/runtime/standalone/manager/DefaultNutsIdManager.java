@@ -77,12 +77,12 @@ public class DefaultNutsIdManager implements NutsIdManager {
     @Override
     public NutsIdParser parser() {
         checkSession();
-        return new DefaultNutsIdParser(getSession());
+        return new DefaultNutsIdParser(getSession()).setAcceptBlank(true).setLenient(false);
     }
 
     @Override
     public NutsId parse(String id) {
-        return parser().parse(id);
+        return parser().setAcceptBlank(true).setLenient(false).parse(id);
     }
 
     public NutsWorkspace getWorkspace() {

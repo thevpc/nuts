@@ -77,8 +77,8 @@ public class MavenRepositoryFactoryComponent implements NutsRepositoryFactoryCom
         }
         String repositoryType = criteria.getConstraints().getType();
         String location = criteria.getConstraints().getLocation();
-        if (NutsUtilStrings.isBlank(repositoryType)) {
-            if (!NutsUtilStrings.isBlank(location)) {
+        if (NutsBlankable.isBlank(repositoryType)) {
+            if (!NutsBlankable.isBlank(location)) {
                 NutsRepositoryURL nru = new NutsRepositoryURL(location);
                 if (nru.getRepositoryType().isMaven()) {
                     criteria.getConstraints().setType(nru.getRepositoryType().toString());

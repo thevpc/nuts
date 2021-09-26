@@ -73,7 +73,7 @@ public class LocalMysqlConfigService {
         List<String> apps = new ArrayList<>();
         if (args != null) {
             for (String arg : args) {
-                if (!NutsUtilStrings.isBlank(arg)) {
+                if (!NutsBlankable.isBlank(arg)) {
                     for (String s : arg.split("[, ]")) {
                         if (!s.isEmpty()) {
                             apps.add(s);
@@ -169,7 +169,7 @@ public class LocalMysqlConfigService {
 
     public String getMysqlCommand() {
         String s = getConfig().getMysqlCommand();
-        if (NutsUtilStrings.isBlank(s)) {
+        if (NutsBlankable.isBlank(s)) {
             s = "mysql";
         }
         return s;
@@ -177,7 +177,7 @@ public class LocalMysqlConfigService {
 
     public String getMysqldumpCommand() {
         String s = getConfig().getMysqldumpCommand();
-        if (NutsUtilStrings.isBlank(s)) {
+        if (NutsBlankable.isBlank(s)) {
             s = "mysqldump";
         }
         return s;

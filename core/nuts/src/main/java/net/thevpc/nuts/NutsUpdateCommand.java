@@ -10,7 +10,7 @@
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -22,7 +22,7 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts;
 
 import java.util.Collection;
@@ -72,8 +72,6 @@ public interface NutsUpdateCommand extends NutsWorkspaceCommand {
 
     String[] getArgs();
 
-    NutsUpdateCommand setEnableInstall(boolean enableInstall);
-
     /**
      * if true enable installing new artifacts when an update is request for
      * non installed packages.
@@ -81,6 +79,15 @@ public interface NutsUpdateCommand extends NutsWorkspaceCommand {
      * @return true if enable install
      */
     boolean isEnableInstall();
+
+    NutsUpdateCommand setEnableInstall(boolean enableInstall);
+
+    /**
+     * return true when include optional dependencies
+     *
+     * @return return true when include optional dependencies
+     */
+    boolean isOptional();
 
     /**
      * when true include optional dependencies
@@ -91,11 +98,11 @@ public interface NutsUpdateCommand extends NutsWorkspaceCommand {
     NutsUpdateCommand setOptional(boolean includeOptional);
 
     /**
-     * return true when include optional dependencies
+     * return target api version required for updating other artifacts
      *
-     * @return return true when include optional dependencies
+     * @return target api version required for updating other artifacts
      */
-    boolean isOptional();
+    NutsVersion getApiVersion();
 
     /**
      * set target api version required for updating other artifacts
@@ -104,13 +111,6 @@ public interface NutsUpdateCommand extends NutsWorkspaceCommand {
      * @return {@code this} instance
      */
     NutsUpdateCommand setApiVersion(NutsVersion value);
-
-    /**
-     * return target api version required for updating other artifacts
-     *
-     * @return target api version required for updating other artifacts
-     */
-    NutsVersion getApiVersion();
 
     /**
      * @return null if no updates
@@ -146,14 +146,15 @@ public interface NutsUpdateCommand extends NutsWorkspaceCommand {
      */
     NutsUpdateCommand setAll();
 
-    NutsUpdateCommand setApi(boolean enable);
-
     boolean isApi();
 
-    NutsUpdateCommand setExtensions(boolean enable);
+    NutsUpdateCommand setApi(boolean enable);
 
     boolean isExtensions();
 
+    NutsUpdateCommand setExtensions(boolean enable);
+
+    boolean isCompanions();
 
     /**
      * update workspace companion versions
@@ -162,16 +163,13 @@ public interface NutsUpdateCommand extends NutsWorkspaceCommand {
      */
     NutsUpdateCommand setCompanions(boolean updateCompanions);
 
-    boolean isCompanions();
-
+    boolean isRuntime();
 
     NutsUpdateCommand setRuntime(boolean enable);
 
-    boolean isRuntime();
+    boolean isInstalled();
 
     NutsUpdateCommand setInstalled(boolean enable);
-
-    boolean isInstalled();
 
     NutsUpdateCommand addScope(NutsDependencyScope scope);
 

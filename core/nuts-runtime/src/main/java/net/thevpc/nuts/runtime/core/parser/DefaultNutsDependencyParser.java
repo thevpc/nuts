@@ -60,7 +60,7 @@ public class DefaultNutsDependencyParser implements NutsDependencyParser {
 
     @Override
     public boolean parseOptional(String optional) {
-        if(NutsUtilStrings.isBlank(optional)){
+        if(NutsBlankable.isBlank(optional)){
             return false;
         }
         return "true".equals(optional.trim());

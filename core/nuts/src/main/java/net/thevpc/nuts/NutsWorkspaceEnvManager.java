@@ -24,10 +24,8 @@
  */
 package net.thevpc.nuts;
 
-import java.net.URL;
 import java.nio.file.Path;
 import java.util.Map;
-import java.util.function.Supplier;
 
 /**
  * @app.category Base
@@ -71,8 +69,9 @@ public interface NutsWorkspaceEnvManager {
 
     NutsShellFamily getShellFamily();
 
-    NutsId getDesktopEnvironment() ;
-    NutsId[] getDesktopEnvironments() ;
+    NutsId getDesktopEnvironment();
+
+    NutsId[] getDesktopEnvironments();
 
     NutsDesktopEnvironmentFamily getDesktopEnvironmentFamily();
 

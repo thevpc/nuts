@@ -357,7 +357,7 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
 
     @Override
     public String getFullName() {
-        if (NutsUtilStrings.isBlank(groupId)) {
+        if (NutsBlankable.isBlank(groupId)) {
             return NutsUtilStrings.trim(artifactId);
         }
         return NutsUtilStrings.trim(groupId) + ":" + NutsUtilStrings.trim(artifactId);
@@ -365,7 +365,7 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
 
     @Override
     public String getShortName() {
-        if (NutsUtilStrings.isBlank(groupId)) {
+        if (NutsBlankable.isBlank(groupId)) {
             return NutsUtilStrings.trim(artifactId);
         }
         return NutsUtilStrings.trim(groupId) + ":" + NutsUtilStrings.trim(artifactId);
@@ -395,11 +395,11 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        if (!NutsUtilStrings.isBlank(groupId)) {
+        if (!NutsBlankable.isBlank(groupId)) {
             sb.append(groupId).append(":");
         }
         sb.append(artifactId);
-        if (!NutsUtilStrings.isBlank(version.getValue())) {
+        if (!NutsBlankable.isBlank(version.getValue())) {
             sb.append("#").append(version);
         }
         if (!propertiesQuery.isEmpty()) {

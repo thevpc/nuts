@@ -172,7 +172,7 @@ public class NutsRepositoryMirroringHelper {
             throw new NutsRepositoryNotFoundException(session, "Not Repo for pushing " + id);
         }
         NutsRepository repo = this.repo;
-        if (NutsUtilStrings.isBlank(repository)) {
+        if (NutsBlankable.isBlank(repository)) {
             List<NutsRepository> all = new ArrayList<>();
             for (NutsRepository remote : repo.config().setSession(session).getMirrors()) {
                 int lvl = NutsRepositoryUtils.getSupportSpeedLevel(remote,NutsRepositorySupportedAction.DEPLOY, id, NutsFetchMode.LOCAL, false,session);

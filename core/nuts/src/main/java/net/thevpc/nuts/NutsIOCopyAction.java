@@ -10,19 +10,19 @@
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
  * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts;
 
 import java.io.File;
@@ -345,15 +345,6 @@ public interface NutsIOCopyAction {
     NutsIOCopyAction setProgressMonitor(NutsProgressMonitor value);
 
     /**
-     * set skip root flag to {@code value}
-     *
-     * @param value new value
-     * @return {@code this} instance
-     * @since 0.5.8
-     */
-    NutsIOCopyAction setSkipRoot(boolean value);
-
-    /**
      * return true if skip root flag is armed.
      *
      * @return true if skip root flag is armed
@@ -361,6 +352,14 @@ public interface NutsIOCopyAction {
      */
     boolean isSkipRoot();
 
+    /**
+     * set skip root flag to {@code value}
+     *
+     * @param value new value
+     * @return {@code this} instance
+     * @since 0.5.8
+     */
+    NutsIOCopyAction setSkipRoot(boolean value);
 
     /**
      * return true created stream should be marked as interruptible

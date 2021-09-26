@@ -28,6 +28,8 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+
+import net.thevpc.nuts.NutsBlankable;
 import net.thevpc.nuts.NutsIdLocation;
 import net.thevpc.nuts.NutsUtilStrings;
 
@@ -50,7 +52,7 @@ public class CoreCollectionUtils {
         if (values0 != null) {
             for (String a : values0) {
                 a = NutsUtilStrings.trim(a);
-                if (!NutsUtilStrings.isBlank(a)) {
+                if (!NutsBlankable.isBlank(a)) {
                     set.add(a);
                 }
             }

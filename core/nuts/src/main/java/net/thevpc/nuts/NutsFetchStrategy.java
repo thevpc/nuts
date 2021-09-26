@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -11,7 +11,7 @@
  * architecture to help supporting a large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -23,7 +23,7 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts;
 
 import java.util.Arrays;
@@ -35,7 +35,7 @@ import java.util.Iterator;
  * @since 0.5.4
  * @app.category Commands
  */
-public enum NutsFetchStrategy implements Iterable<NutsFetchMode>, NutsEnum{
+public enum NutsFetchStrategy implements Iterable<NutsFetchMode>, NutsEnum {
     /**
      * enables search within local only artifacts (where installed or not).
      * Local artifacts include local folder based repositories and cached (fetched) repositories (whether or
@@ -57,7 +57,7 @@ public enum NutsFetchStrategy implements Iterable<NutsFetchMode>, NutsEnum{
 
     /**
      * search in the remote
-      */
+     */
     REMOTE(true, NutsFetchMode.REMOTE);
 
 
@@ -65,24 +65,14 @@ public enum NutsFetchStrategy implements Iterable<NutsFetchMode>, NutsEnum{
      * when true, stop when the first result was found
      */
     private final boolean stopFast;
-
-    /**
-     * modes array
-     */
-    private NutsFetchMode[] all;
-
     /**
      * lower-cased identifier for the enum entry
      */
     private final String id;
-
     /**
-     * lower cased identifier.
-     * @return lower cased identifier
+     * modes array
      */
-    public String id() {
-        return id;
-    }
+    private final NutsFetchMode[] all;
 
     /**
      * private default constructor
@@ -93,31 +83,6 @@ public enum NutsFetchStrategy implements Iterable<NutsFetchMode>, NutsEnum{
         this.id = name().toLowerCase().replace('_', '-');
         this.stopFast = stopFast;
         this.all = Arrays.copyOf(all, all.length);
-    }
-
-    /**
-     * if true, do not consider next Fetch mode if the latter gives at least one result.
-     * @return true if do not consider next Fetch mode if the latter gives at least one result.
-     */
-    public boolean isStopFast() {
-        return stopFast;
-    }
-
-    /**
-     * ordered fetch modes
-     * @return ordered fetch modes
-     */
-    public NutsFetchMode[] modes() {
-        return Arrays.copyOf(all, all.length);
-    }
-
-    /**
-     * ordered fetch modes iterator
-     * @return ordered fetch modes iterator
-     */
-    @Override
-    public Iterator<NutsFetchMode> iterator() {
-        return Arrays.asList(all).iterator();
     }
 
     public static NutsFetchStrategy parseLenient(String value) {
@@ -144,4 +109,50 @@ public enum NutsFetchStrategy implements Iterable<NutsFetchMode>, NutsEnum{
         }
     }
 
+    public static NutsFetchStrategy parse(String value, NutsSession session) {
+        return parse(value, null, session);
+    }
+
+    public static NutsFetchStrategy parse(String value, NutsFetchStrategy emptyValue, NutsSession session) {
+        NutsFetchStrategy v = parseLenient(value, emptyValue, null);
+        if (v == null) {
+            if (!NutsBlankable.isBlank(value)) {
+                throw new NutsParseEnumException(session, value, NutsFetchStrategy.class);
+            }
+        }
+        return v;
+    }
+
+    /**
+     * lower cased identifier.
+     * @return lower cased identifier
+     */
+    public String id() {
+        return id;
+    }
+
+    /**
+     * if true, do not consider next Fetch mode if the latter gives at least one result.
+     * @return true if do not consider next Fetch mode if the latter gives at least one result.
+     */
+    public boolean isStopFast() {
+        return stopFast;
+    }
+
+    /**
+     * ordered fetch modes
+     * @return ordered fetch modes
+     */
+    public NutsFetchMode[] modes() {
+        return Arrays.copyOf(all, all.length);
+    }
+
+    /**
+     * ordered fetch modes iterator
+     * @return ordered fetch modes iterator
+     */
+    @Override
+    public Iterator<NutsFetchMode> iterator() {
+        return Arrays.asList(all).iterator();
+    }
 }

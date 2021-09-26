@@ -150,7 +150,7 @@ final class PrivateNutsJsonParser {
         int encountered = st.nextToken();
         if (encountered != expected) {
             throw new NutsBootException(
-                    NutsMessage.cstyle("json syntax error : expected %s  , encountered %s",str(expected), str(encountered))
+                    NutsMessage.cstyle("json syntax error : expected %s  , encountered %s", str(expected), str(encountered))
             );
         }
     }

@@ -143,7 +143,7 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
                     writeRaw(s.getStart());
 //                    writeRaw(s.getKind());
                     writeEscapedSpecial(s.getCommand().getName());
-                    if (!NutsUtilStrings.isBlank(s.getCommand().getArgs())) {
+                    if (!NutsBlankable.isBlank(s.getCommand().getArgs())) {
                         writeEscapedSpecial(" ");
                         writeEscapedSpecial(s.getCommand().getArgs());
                     }

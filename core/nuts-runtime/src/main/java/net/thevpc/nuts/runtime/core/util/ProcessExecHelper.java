@@ -168,13 +168,13 @@ public class ProcessExecHelper implements IProcessExecHelper {
             public String apply(String skey) {
                 if (skey.equals("java") || skey.startsWith("java#")) {
                     String javaVer = skey.substring(4);
-                    if (NutsUtilStrings.isBlank(javaVer)) {
+                    if (NutsBlankable.isBlank(javaVer)) {
                         return defaultJavaCommand;
                     }
                     return NutsJavaSdkUtils.of(execSession.getWorkspace()).resolveJavaCommandByVersion(javaVer, false, session);
                 } else if (skey.equals("javaw") || skey.startsWith("javaw#")) {
                     String javaVer = skey.substring(4);
-                    if (NutsUtilStrings.isBlank(javaVer)) {
+                    if (NutsBlankable.isBlank(javaVer)) {
                         return defaultJavaCommand;
                     }
                     return NutsJavaSdkUtils.of(execSession.getWorkspace()).resolveJavaCommandByVersion(javaVer, true, session);
@@ -192,9 +192,9 @@ public class ProcessExecHelper implements IProcessExecHelper {
         };
         for (Map.Entry<String, String> e : map.entrySet()) {
             String k = e.getKey();
-            if (!NutsUtilStrings.isBlank(k)) {
+            if (!NutsBlankable.isBlank(k)) {
                 k = k.replace('.', '_');
-                if (!NutsUtilStrings.isBlank(e.getValue())) {
+                if (!NutsBlankable.isBlank(e.getValue())) {
                     envmap.put(k, e.getValue());
                 }
             }
@@ -215,7 +215,7 @@ public class ProcessExecHelper implements IProcessExecHelper {
             CoreIOUtils.setExecutable(path);
         }
         Path pdirectory = null;
-        if (NutsUtilStrings.isBlank(directory)) {
+        if (NutsBlankable.isBlank(directory)) {
             pdirectory = Paths.get(workspace.locations().getWorkspaceLocation());
         } else {
             pdirectory = Paths.get(workspace.locations().getWorkspaceLocation()).resolve(directory);
@@ -234,7 +234,7 @@ public class ProcessExecHelper implements IProcessExecHelper {
                 if (s == null) {
                     s = session.getWorkspace().env().getEnv("WINDOWS_ROOT_USER").getString();
                 }
-                if (NutsUtilStrings.isBlank(s)) {
+                if (NutsBlankable.isBlank(s)) {
                     s = "Administrator";
                 }
                 return s;
@@ -282,7 +282,7 @@ public class ProcessExecHelper implements IProcessExecHelper {
 //                break;
 //            }
 //            case USER: {
-//                if (NutsUtilStrings.isBlank(runAsUser)
+//                if (NutsBlankable.isBlank(runAsUser)
 //                        || System.getProperty("user.name").equals(runAsUser.trim())
 //                ) {
 //                    runAsMode = NutsExecutionType.SYSTEM;

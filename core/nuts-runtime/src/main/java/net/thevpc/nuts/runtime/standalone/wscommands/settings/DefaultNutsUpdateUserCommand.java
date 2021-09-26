@@ -54,10 +54,10 @@ public class DefaultNutsUpdateUserCommand extends AbstractNutsUpdateUserCommand 
         checkSession();
         NutsWorkspace ws = getSession().getWorkspace();
         NutsWorkspaceSecurityManager sec = ws.security().setSession(session);
-        if (!(getCredentials()==null || NutsUtilStrings.isBlank(new String(getCredentials())))) {
+        if (!(getCredentials()==null || NutsBlankable.isBlank(new String(getCredentials())))) {
             sec.checkAllowed(NutsConstants.Permissions.SET_PASSWORD, "set-user-credentials");
             String currentLogin = sec.getCurrentUsername();
-            if (NutsUtilStrings.isBlank(login)) {
+            if (NutsBlankable.isBlank(login)) {
                 if (!NutsConstants.Users.ANONYMOUS.equals(currentLogin)) {
                     login = currentLogin;
                 } else {

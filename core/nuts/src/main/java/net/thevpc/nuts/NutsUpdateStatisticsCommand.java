@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -11,7 +11,7 @@
  * architecture to help supporting a large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -23,7 +23,7 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts;
 
 import java.nio.file.Path;
@@ -58,14 +58,6 @@ public interface NutsUpdateStatisticsCommand extends NutsWorkspaceCommand {
     NutsUpdateStatisticsCommand addPaths(Collection<Path> all);
 
     /**
-     * copy session
-     *
-     * @return {@code this} instance
-     */
-    @Override
-    NutsUpdateStatisticsCommand copySession();
-
-    /**
      * update session
      *
      * @param session session
@@ -73,6 +65,14 @@ public interface NutsUpdateStatisticsCommand extends NutsWorkspaceCommand {
      */
     @Override
     NutsUpdateStatisticsCommand setSession(NutsSession session);
+
+    /**
+     * copy session
+     *
+     * @return {@code this} instance
+     */
+    @Override
+    NutsUpdateStatisticsCommand copySession();
 
     /**
      * configure the current command with the given arguments. This is an

@@ -104,7 +104,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
         if (id == null) {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing id"));
         }
-        if (NutsUtilStrings.isBlank(id.getArtifactId())) {
+        if (NutsBlankable.isBlank(id.getArtifactId())) {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing artifactId for %s", id));
         }
         //NutsWorkspaceUtils.of(session).checkSimpleNameNutsId(id);

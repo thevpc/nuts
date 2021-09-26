@@ -5,9 +5,23 @@ import java.util.Formatter;
 
 public class NutsMessage {
 
-    private String message;
-    private NutsTextFormatStyle style;
-    private Object[] params;
+    private final String message;
+    private final NutsTextFormatStyle style;
+    private final Object[] params;
+
+    public NutsMessage(NutsTextFormatStyle style, String message, Object... params) {
+        if (message == null || params == null || style == null) {
+            throw new NullPointerException();
+        }
+        this.style = style;
+        if (style == NutsTextFormatStyle.PLAIN || style == NutsTextFormatStyle.FORMATTED) {
+            if (params != null && params.length > 0) {
+                throw new IllegalArgumentException("arguments are not supported for " + style);
+            }
+        }
+        this.message = message;
+        this.params = params;
+    }
 
     public static NutsMessage formatted(String message) {
         return new NutsMessage(NutsTextFormatStyle.FORMATTED, message);
@@ -23,20 +37,6 @@ public class NutsMessage {
 
     public static NutsMessage jstyle(String message, Object... params) {
         return new NutsMessage(NutsTextFormatStyle.JSTYLE, message, params);
-    }
-
-    public NutsMessage(NutsTextFormatStyle style, String message, Object... params) {
-        if (message == null || params == null || style == null) {
-            throw new NullPointerException();
-        }
-        this.style = style;
-        if(style==NutsTextFormatStyle.PLAIN || style==NutsTextFormatStyle.FORMATTED){
-            if(params!=null && params.length>0){
-                throw new IllegalArgumentException("arguments are not supported for "+style);
-            }
-        }
-        this.message = message;
-        this.params = params;
     }
 
     public NutsTextFormatStyle getStyle() {

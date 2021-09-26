@@ -42,5 +42,5 @@ do
 done
 
 
-$JAVA_CMD $NUTS_DEBUG_ARG -jar core/nuts/target/nuts-$NUTS_VERSION.jar -ZSbyK -w development-build $NUTS_VERBOSE $NUTS_TRACE ./nuts-build-website.nsh
+$JAVA_CMD $NUTS_DEBUG_ARG -jar core/nuts/target/nuts-$NUTS_VERSION.jar -ZSbyK -w development-build $NUTS_VERBOSE $NUTS_TRACE ---!install-java ---!install-launchers ./nuts-build-website.nsh
 

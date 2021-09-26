@@ -59,7 +59,7 @@ public class NutsDescriptorFilterNone extends AbstractDescriptorFilter implement
             if (id instanceof JsNutsDescriptorFilter) {
                 JsNutsDescriptorFilter b = (JsNutsDescriptorFilter) id;
                 String expr = b.toJsNutsDescriptorFilterExpr();
-                if (NutsUtilStrings.isBlank(expr)) {
+                if (NutsBlankable.isBlank(expr)) {
                     return null;
                 }
                 sb.append("(").append(expr).append("')");

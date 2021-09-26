@@ -32,10 +32,11 @@ import net.thevpc.nuts.boot.NutsApiUtils;
  * @app.category Base
  */
 public interface NutsDescriptorFilterManager extends NutsTypedFilters<NutsDescriptorFilter> {
-    static NutsDescriptorFilterManager of(NutsSession session){
+    static NutsDescriptorFilterManager of(NutsSession session) {
         NutsApiUtils.checkSession(session);
         return session.getWorkspace().descriptor().filter();
     }
+
     NutsDescriptorFilterManager setSession(NutsSession session);
 
     NutsDescriptorFilter byExpression(String expression);
@@ -45,6 +46,7 @@ public interface NutsDescriptorFilterManager extends NutsTypedFilters<NutsDescri
     NutsDescriptorFilter byArch(String... values);
 
     NutsDescriptorFilter byOs(String... values);
+
     NutsDescriptorFilter byOsDist(String... values);
 
     NutsDescriptorFilter byPlatform(String... values);

@@ -399,9 +399,33 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
         return apiVersion;
     }
 
+    /**
+     * set apiVersion
+     *
+     * @param apiVersion new value
+     * @return {@code this} instance
+     */
+    @Override
+    public NutsWorkspaceOptionsBuilder setApiVersion(String apiVersion) {
+        this.apiVersion = apiVersion;
+        return this;
+    }
+
     @Override
     public String[] getApplicationArguments() {
         return applicationArguments == null ? new String[0] : Arrays.copyOf(applicationArguments, applicationArguments.length);
+    }
+
+    /**
+     * set applicationArguments
+     *
+     * @param applicationArguments new value
+     * @return {@code this} instance
+     */
+    @Override
+    public NutsWorkspaceOptionsBuilder setApplicationArguments(String[] applicationArguments) {
+        this.applicationArguments = applicationArguments;
+        return this;
     }
 
     @Override
@@ -409,14 +433,50 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
         return archetype;
     }
 
+    /**
+     * set archetype
+     *
+     * @param archetype new value
+     * @return {@code this} instance
+     */
+    @Override
+    public NutsWorkspaceOptionsBuilder setArchetype(String archetype) {
+        this.archetype = archetype;
+        return this;
+    }
+
     @Override
     public Supplier<ClassLoader> getClassLoaderSupplier() {
         return classLoaderSupplier;
     }
 
+    /**
+     * set provider
+     *
+     * @param provider new value
+     * @return {@code this} instance
+     */
+    @Override
+    public NutsWorkspaceOptionsBuilder setClassLoaderSupplier(Supplier<ClassLoader> provider) {
+        this.classLoaderSupplier = provider;
+        return this;
+    }
+
     @Override
     public NutsConfirmationMode getConfirm() {
         return confirm;
+    }
+
+    /**
+     * set confirm
+     *
+     * @param confirm new value
+     * @return {@code this} instance
+     */
+    @Override
+    public NutsWorkspaceOptionsBuilder setConfirm(NutsConfirmationMode confirm) {
+        this.confirm = confirm;
+        return this;
     }
 
     @Override
@@ -429,9 +489,33 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
         return dry;
     }
 
+    /**
+     * set dry
+     *
+     * @param dry new value
+     * @return {@code this} instance
+     */
+    @Override
+    public NutsWorkspaceOptionsBuilder setDry(Boolean dry) {
+        this.dry = dry;
+        return this;
+    }
+
     @Override
     public long getCreationTime() {
         return creationTime;
+    }
+
+    /**
+     * set creationTime
+     *
+     * @param creationTime new value
+     * @return {@code this} instance
+     */
+    @Override
+    public NutsWorkspaceOptionsBuilder setCreationTime(long creationTime) {
+        this.creationTime = creationTime;
+        return this;
     }
 
     @Override
@@ -439,9 +523,33 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
         return excludedExtensions;
     }
 
+    /**
+     * set excludedExtensions
+     *
+     * @param excludedExtensions new value
+     * @return {@code this} instance
+     */
+    @Override
+    public NutsWorkspaceOptionsBuilder setExcludedExtensions(String[] excludedExtensions) {
+        this.excludedExtensions = excludedExtensions;
+        return this;
+    }
+
     @Override
     public NutsExecutionType getExecutionType() {
         return executionType;
+    }
+
+    /**
+     * set executionType
+     *
+     * @param executionType new value
+     * @return {@code this} instance
+     */
+    @Override
+    public NutsWorkspaceOptionsBuilder setExecutionType(NutsExecutionType executionType) {
+        this.executionType = executionType;
+        return this;
     }
 
     @Override
@@ -449,9 +557,32 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
         return runAs;
     }
 
+    /**
+     * set runAsUser
+     *
+     * @param runAs new value
+     * @return {@code this} instance
+     */
+    public NutsWorkspaceOptionsBuilder setRunAs(NutsRunAs runAs) {
+        this.runAs = runAs == null ? NutsRunAs.CURRENT_USER : runAs;
+        return this;
+    }
+
     @Override
     public String[] getExecutorOptions() {
         return executorOptions == null ? new String[0] : executorOptions;
+    }
+
+    /**
+     * set executorOptions
+     *
+     * @param executorOptions new value
+     * @return {@code this} instance
+     */
+    @Override
+    public NutsWorkspaceOptionsBuilder setExecutorOptions(String[] executorOptions) {
+        this.executorOptions = executorOptions;
+        return this;
     }
 
     @Override
@@ -466,8 +597,23 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
     }
 
     @Override
+    public NutsWorkspaceOptionsBuilder setHomeLocations(Map<String, String> homeLocations) {
+        this.homeLocations.clear();
+        if (homeLocations != null) {
+            this.homeLocations.putAll(homeLocations);
+        }
+        return this;
+    }
+
+    @Override
     public String getJavaCommand() {
         return javaCommand;
+    }
+
+    @Override
+    public NutsWorkspaceOptionsBuilder setJavaCommand(String javaCommand) {
+        this.javaCommand = javaCommand;
+        return this;
     }
 
     @Override
@@ -475,9 +621,33 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
         return javaOptions;
     }
 
+    /**
+     * set javaOptions
+     *
+     * @param javaOptions new value
+     * @return {@code this} instance
+     */
+    @Override
+    public NutsWorkspaceOptionsBuilder setJavaOptions(String javaOptions) {
+        this.javaOptions = javaOptions;
+        return this;
+    }
+
     @Override
     public NutsLogConfig getLogConfig() {
         return logConfig;
+    }
+
+    /**
+     * set logConfig
+     *
+     * @param logConfig new value
+     * @return {@code this} instance
+     */
+    @Override
+    public NutsWorkspaceOptionsBuilder setLogConfig(NutsLogConfig logConfig) {
+        this.logConfig = logConfig;
+        return this;
     }
 
     @Override
@@ -485,9 +655,33 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
         return name;
     }
 
+    /**
+     * set workspace name
+     *
+     * @param workspaceName new value
+     * @return {@code this} instance
+     */
+    @Override
+    public NutsWorkspaceOptionsBuilder setName(String workspaceName) {
+        this.name = workspaceName;
+        return this;
+    }
+
     @Override
     public NutsOpenMode getOpenMode() {
         return openMode;
+    }
+
+    /**
+     * set openMode
+     *
+     * @param openMode new value
+     * @return {@code this} instance
+     */
+    @Override
+    public NutsWorkspaceOptionsBuilder setOpenMode(NutsOpenMode openMode) {
+        this.openMode = openMode;
+        return this;
     }
 
     @Override
@@ -495,9 +689,33 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
         return outputFormat;
     }
 
+    /**
+     * set outputFormat
+     *
+     * @param outputFormat new value
+     * @return {@code this} instance
+     */
+    @Override
+    public NutsWorkspaceOptionsBuilder setOutputFormat(NutsContentType outputFormat) {
+        this.outputFormat = outputFormat;
+        return this;
+    }
+
     @Override
     public String[] getOutputFormatOptions() {
         return outputFormatOptions.toArray(new String[0]);
+    }
+
+    /**
+     * set output format options
+     *
+     * @param options new value
+     * @return {@code this} instance
+     */
+    @Override
+    public NutsWorkspaceOptionsBuilder setOutputFormatOptions(String... options) {
+        outputFormatOptions.clear();
+        return addOutputFormatOptions(options);
     }
 
     @Override
@@ -505,14 +723,50 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
         return credentials;
     }
 
+    /**
+     * set password
+     *
+     * @param credentials new value
+     * @return {@code this} instance
+     */
+    @Override
+    public NutsWorkspaceOptionsBuilder setCredentials(char[] credentials) {
+        this.credentials = credentials;
+        return this;
+    }
+
     @Override
     public NutsStoreLocationStrategy getRepositoryStoreLocationStrategy() {
         return repositoryStoreLocationStrategy;
     }
 
+    /**
+     * set repositoryStoreLocationStrategy
+     *
+     * @param repositoryStoreLocationStrategy new value
+     * @return {@code this} instance
+     */
+    @Override
+    public NutsWorkspaceOptionsBuilder setRepositoryStoreLocationStrategy(NutsStoreLocationStrategy repositoryStoreLocationStrategy) {
+        this.repositoryStoreLocationStrategy = repositoryStoreLocationStrategy;
+        return this;
+    }
+
     @Override
     public String getRuntimeId() {
         return runtimeId;
+    }
+
+    /**
+     * set runtimeId
+     *
+     * @param runtimeId new value
+     * @return {@code this} instance
+     */
+    @Override
+    public NutsWorkspaceOptionsBuilder setRuntimeId(String runtimeId) {
+        this.runtimeId = runtimeId;
+        return this;
     }
 
     @Override
@@ -525,9 +779,33 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
         return storeLocationLayout;
     }
 
+    /**
+     * set storeLocationLayout
+     *
+     * @param storeLocationLayout new value
+     * @return {@code this} instance
+     */
+    @Override
+    public NutsWorkspaceOptionsBuilder setStoreLocationLayout(NutsOsFamily storeLocationLayout) {
+        this.storeLocationLayout = storeLocationLayout;
+        return this;
+    }
+
     @Override
     public NutsStoreLocationStrategy getStoreLocationStrategy() {
         return storeLocationStrategy;
+    }
+
+    /**
+     * set storeLocationStrategy
+     *
+     * @param storeLocationStrategy new value
+     * @return {@code this} instance
+     */
+    @Override
+    public NutsWorkspaceOptionsBuilder setStoreLocationStrategy(NutsStoreLocationStrategy storeLocationStrategy) {
+        this.storeLocationStrategy = storeLocationStrategy;
+        return this;
     }
 
     @Override
@@ -536,13 +814,46 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
     }
 
     @Override
+    public NutsWorkspaceOptionsBuilder setStoreLocations(Map<String, String> storeLocations) {
+        this.storeLocations.clear();
+        if (storeLocations != null) {
+            this.storeLocations.putAll(storeLocations);
+        }
+        return this;
+    }
+
+    @Override
     public NutsTerminalMode getTerminalMode() {
         return terminalMode;
+    }
+
+    /**
+     * set terminalMode
+     *
+     * @param terminalMode new value
+     * @return {@code this} instance
+     */
+    @Override
+    public NutsWorkspaceOptionsBuilder setTerminalMode(NutsTerminalMode terminalMode) {
+        this.terminalMode = terminalMode;
+        return this;
     }
 
     @Override
     public String[] getRepositories() {
         return repositories == null ? new String[0] : repositories;
+    }
+
+    /**
+     * set repositories
+     *
+     * @param repositories new value
+     * @return {@code this} instance
+     */
+    @Override
+    public NutsWorkspaceOptionsBuilder setRepositories(String[] repositories) {
+        this.repositories = repositories;
+        return this;
     }
 
     @Override
@@ -555,6 +866,18 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
         return workspace;
     }
 
+    /**
+     * set workspace
+     *
+     * @param workspace workspace
+     * @return {@code this} instance
+     */
+    @Override
+    public NutsWorkspaceOptionsBuilder setWorkspace(String workspace) {
+        this.workspace = workspace;
+        return this;
+    }
+
     @Override
     public boolean isDebug() {
         return debug != null && debug;
@@ -563,6 +886,18 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
     @Override
     public Boolean getDebug() {
         return debug;
+    }
+
+    /**
+     * set debug
+     *
+     * @param debug new value
+     * @return {@code this} instance
+     */
+    @Override
+    public NutsWorkspaceOptionsBuilder setDebug(Boolean debug) {
+        this.debug = debug;
+        return this;
     }
 
     @Override
@@ -575,6 +910,18 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
         return global;
     }
 
+    /**
+     * set global
+     *
+     * @param global new value
+     * @return {@code this} instance
+     */
+    @Override
+    public NutsWorkspaceOptionsBuilder setGlobal(Boolean global) {
+        this.global = global;
+        return this;
+    }
+
     @Override
     public boolean isGui() {
         return gui != null && gui;
@@ -583,6 +930,18 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
     @Override
     public Boolean getGui() {
         return gui;
+    }
+
+    /**
+     * set gui
+     *
+     * @param gui new value
+     * @return {@code this} instance
+     */
+    @Override
+    public NutsWorkspaceOptionsBuilder setGui(Boolean gui) {
+        this.gui = gui;
+        return this;
     }
 
     @Override
@@ -595,6 +954,18 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
         return inherited;
     }
 
+    /**
+     * set inherited
+     *
+     * @param inherited new value
+     * @return {@code this} instance
+     */
+    @Override
+    public NutsWorkspaceOptionsBuilder setInherited(Boolean inherited) {
+        this.inherited = inherited;
+        return this;
+    }
+
     @Override
     public boolean isReadOnly() {
         return readOnly != null && readOnly;
@@ -603,6 +974,18 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
     @Override
     public Boolean getReadOnly() {
         return readOnly;
+    }
+
+    /**
+     * set readOnly
+     *
+     * @param readOnly new value
+     * @return {@code this} instance
+     */
+    @Override
+    public NutsWorkspaceOptionsBuilder setReadOnly(Boolean readOnly) {
+        this.readOnly = readOnly;
+        return this;
     }
 
     @Override
@@ -615,6 +998,18 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
         return recover;
     }
 
+    /**
+     * set recover
+     *
+     * @param recover new value
+     * @return {@code this} instance
+     */
+    @Override
+    public NutsWorkspaceOptionsBuilder setRecover(Boolean recover) {
+        this.recover = recover;
+        return this;
+    }
+
     @Override
     public boolean isReset() {
         return reset != null && reset;
@@ -623,6 +1018,18 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
     @Override
     public Boolean getReset() {
         return reset;
+    }
+
+    /**
+     * set reset
+     *
+     * @param reset new value
+     * @return {@code this} instance
+     */
+    @Override
+    public NutsWorkspaceOptionsBuilder setReset(Boolean reset) {
+        this.reset = reset;
+        return this;
     }
 
     @Override
@@ -636,6 +1043,12 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
     }
 
     @Override
+    public NutsWorkspaceOptionsBuilder setCommandVersion(Boolean version) {
+        this.commandVersion = version;
+        return this;
+    }
+
+    @Override
     public boolean isCommandHelp() {
         return commandHelp != null && commandHelp;
     }
@@ -643,6 +1056,12 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
     @Override
     public Boolean getCommandHelp() {
         return commandHelp;
+    }
+
+    @Override
+    public NutsWorkspaceOptionsBuilder setCommandHelp(Boolean help) {
+        this.commandHelp = help;
+        return this;
     }
 
     @Override
@@ -655,6 +1074,18 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
         return skipCompanions;
     }
 
+    /**
+     * set skipInstallCompanions
+     *
+     * @param skipInstallCompanions new value
+     * @return {@code this} instance
+     */
+    @Override
+    public NutsWorkspaceOptionsBuilder setSkipCompanions(Boolean skipInstallCompanions) {
+        this.skipCompanions = skipInstallCompanions;
+        return this;
+    }
+
     @Override
     public boolean isSkipWelcome() {
         return skipWelcome != null && skipWelcome;
@@ -665,14 +1096,38 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
         return skipWelcome;
     }
 
+    /**
+     * set skipWelcome
+     *
+     * @param skipWelcome new value
+     * @return {@code this} instance
+     */
+    @Override
+    public NutsWorkspaceOptionsBuilder setSkipWelcome(Boolean skipWelcome) {
+        this.skipWelcome = skipWelcome;
+        return this;
+    }
+
     @Override
     public String getOutLinePrefix() {
         return outLinePrefix;
     }
 
     @Override
+    public NutsWorkspaceOptionsBuilder setOutLinePrefix(String outLinePrefix) {
+        this.outLinePrefix = outLinePrefix;
+        return this;
+    }
+
+    @Override
     public String getErrLinePrefix() {
         return errLinePrefix;
+    }
+
+    @Override
+    public NutsWorkspaceOptionsBuilder setErrLinePrefix(String errLinePrefix) {
+        this.errLinePrefix = errLinePrefix;
+        return this;
     }
 
     @Override
@@ -685,6 +1140,18 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
         return skipBoot;
     }
 
+    /**
+     * set skipWelcome
+     *
+     * @param skipBoot new value
+     * @return {@code this} instance
+     */
+    @Override
+    public NutsWorkspaceOptionsBuilder setSkipBoot(Boolean skipBoot) {
+        this.skipBoot = skipBoot;
+        return this;
+    }
+
     @Override
     public boolean isTrace() {
         return trace == null || trace;
@@ -695,8 +1162,26 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
         return trace;
     }
 
+    /**
+     * set trace
+     *
+     * @param trace new value
+     * @return {@code this} instance
+     */
+    @Override
+    public NutsWorkspaceOptionsBuilder setTrace(Boolean trace) {
+        this.trace = trace;
+        return this;
+    }
+
     public String getProgressOptions() {
         return progressOptions;
+    }
+
+    @Override
+    public NutsWorkspaceOptionsBuilder setProgressOptions(String progressOptions) {
+        this.progressOptions = progressOptions;
+        return this;
     }
 
     public boolean isCached() {
@@ -708,6 +1193,12 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
         return cached;
     }
 
+    @Override
+    public NutsWorkspaceOptionsBuilder setCached(Boolean cached) {
+        this.cached = cached;
+        return this;
+    }
+
     public boolean isIndexed() {
         return indexed == null || indexed;
     }
@@ -715,6 +1206,12 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
     @Override
     public Boolean getIndexed() {
         return indexed;
+    }
+
+    @Override
+    public NutsWorkspaceOptionsBuilder setIndexed(Boolean indexed) {
+        this.indexed = indexed;
+        return this;
     }
 
     @Override
@@ -728,6 +1225,12 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
     }
 
     @Override
+    public NutsWorkspaceOptionsBuilder setTransitive(Boolean transitive) {
+        this.transitive = transitive;
+        return this;
+    }
+
+    @Override
     public boolean isBot() {
         return bot != null && bot;
     }
@@ -738,8 +1241,20 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
     }
 
     @Override
+    public NutsWorkspaceOptionsBuilder setBot(Boolean bot) {
+        this.bot = bot;
+        return this;
+    }
+
+    @Override
     public NutsFetchStrategy getFetchStrategy() {
         return fetchStrategy;
+    }
+
+    @Override
+    public NutsWorkspaceOptionsBuilder setFetchStrategy(NutsFetchStrategy fetchStrategy) {
+        this.fetchStrategy = fetchStrategy == null ? NutsFetchStrategy.ONLINE : fetchStrategy;
+        return this;
     }
 
     @Override
@@ -748,8 +1263,20 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
     }
 
     @Override
+    public NutsWorkspaceOptionsBuilder setStdin(InputStream stdin) {
+        this.stdin = stdin;
+        return this;
+    }
+
+    @Override
     public PrintStream getStdout() {
         return stdout;
+    }
+
+    @Override
+    public NutsWorkspaceOptionsBuilder setStdout(PrintStream stdout) {
+        this.stdout = stdout;
+        return this;
     }
 
     @Override
@@ -758,13 +1285,31 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
     }
 
     @Override
+    public NutsWorkspaceOptionsBuilder setStderr(PrintStream stderr) {
+        this.stderr = stderr;
+        return this;
+    }
+
+    @Override
     public ExecutorService getExecutorService() {
         return executorService;
     }
 
     @Override
+    public NutsWorkspaceOptionsBuilder setExecutorService(ExecutorService executorService) {
+        this.executorService = executorService;
+        return this;
+    }
+
+    @Override
     public Instant getExpireTime() {
         return expireTime;
+    }
+
+    @Override
+    public NutsWorkspaceOptionsBuilder setExpireTime(Instant expireTime) {
+        this.expireTime = expireTime;
+        return this;
     }
 
     @Override
@@ -778,6 +1323,12 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
     }
 
     @Override
+    public NutsWorkspaceOptionsBuilder setSkipErrors(Boolean value) {
+        this.skipErrors = value;
+        return this;
+    }
+
+    @Override
     public boolean isSwitchWorkspace() {
         return switchWorkspace != null && switchWorkspace;
     }
@@ -787,9 +1338,20 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
         return switchWorkspace;
     }
 
+    public NutsWorkspaceOptionsBuilder setSwitchWorkspace(Boolean switchWorkspace) {
+        this.switchWorkspace = switchWorkspace;
+        return this;
+    }
+
     @Override
     public NutsMessage[] getErrors() {
         return Arrays.copyOf(errors, errors.length);
+    }
+
+    @Override
+    public NutsWorkspaceOptionsBuilder setErrors(NutsMessage[] errors) {
+        this.errors = errors == null ? new NutsMessage[0] : Arrays.copyOf(errors, errors.length);
+        return this;
     }
 
     @Override
@@ -798,13 +1360,31 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
     }
 
     @Override
+    public NutsWorkspaceOptionsBuilder setProperties(String[] properties) {
+        this.properties = properties;
+        return this;
+    }
+
+    @Override
     public String getLocale() {
         return locale;
     }
 
     @Override
+    public NutsWorkspaceOptionsBuilder setLocale(String locale) {
+        this.locale = locale;
+        return this;
+    }
+
+    @Override
     public String getTheme() {
         return theme;
+    }
+
+    @Override
+    public NutsWorkspaceOptionsBuilder setTheme(String theme) {
+        this.theme = theme;
+        return this;
     }
 
     @Override
@@ -888,78 +1468,6 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
     }
 
     /**
-     * set workspace
-     *
-     * @param workspace workspace
-     * @return {@code this} instance
-     */
-    @Override
-    public NutsWorkspaceOptionsBuilder setWorkspace(String workspace) {
-        this.workspace = workspace;
-        return this;
-    }
-
-    /**
-     * set workspace name
-     *
-     * @param workspaceName new value
-     * @return {@code this} instance
-     */
-    @Override
-    public NutsWorkspaceOptionsBuilder setName(String workspaceName) {
-        this.name = workspaceName;
-        return this;
-    }
-
-    /**
-     * set global
-     *
-     * @param global new value
-     * @return {@code this} instance
-     */
-    @Override
-    public NutsWorkspaceOptionsBuilder setGlobal(Boolean global) {
-        this.global = global;
-        return this;
-    }
-
-    /**
-     * set gui
-     *
-     * @param gui new value
-     * @return {@code this} instance
-     */
-    @Override
-    public NutsWorkspaceOptionsBuilder setGui(Boolean gui) {
-        this.gui = gui;
-        return this;
-    }
-
-    /**
-     * set archetype
-     *
-     * @param archetype new value
-     * @return {@code this} instance
-     */
-    @Override
-    public NutsWorkspaceOptionsBuilder setArchetype(String archetype) {
-        this.archetype = archetype;
-        return this;
-    }
-
-    /**
-     * set excludedExtensions
-     *
-     * @param excludedExtensions new value
-     * @return {@code this} instance
-     */
-    @Override
-    public NutsWorkspaceOptionsBuilder setExcludedExtensions(String[] excludedExtensions) {
-        this.excludedExtensions = excludedExtensions;
-        return this;
-    }
-
-    /**
      * set login
      *
      * @param username new value
@@ -972,311 +1480,6 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
     }
 
     /**
-     * set password
-     *
-     * @param credentials new value
-     * @return {@code this} instance
-     */
-    @Override
-    public NutsWorkspaceOptionsBuilder setCredentials(char[] credentials) {
-        this.credentials = credentials;
-        return this;
-    }
-
-    /**
-     * set executionType
-     *
-     * @param executionType new value
-     * @return {@code this} instance
-     */
-    @Override
-    public NutsWorkspaceOptionsBuilder setExecutionType(NutsExecutionType executionType) {
-        this.executionType = executionType;
-        return this;
-    }
-
-    /**
-     * set inherited
-     *
-     * @param inherited new value
-     * @return {@code this} instance
-     */
-    @Override
-    public NutsWorkspaceOptionsBuilder setInherited(Boolean inherited) {
-        this.inherited = inherited;
-        return this;
-    }
-
-    /**
-     * set terminalMode
-     *
-     * @param terminalMode new value
-     * @return {@code this} instance
-     */
-    @Override
-    public NutsWorkspaceOptionsBuilder setTerminalMode(NutsTerminalMode terminalMode) {
-        this.terminalMode = terminalMode;
-        return this;
-    }
-
-    @Override
-    public NutsWorkspaceOptionsBuilder setSkipErrors(Boolean value) {
-        this.skipErrors = value;
-        return this;
-    }
-
-    public NutsWorkspaceOptionsBuilder setSwitchWorkspace(Boolean switchWorkspace) {
-        this.switchWorkspace = switchWorkspace;
-        return this;
-    }
-
-    @Override
-    public NutsWorkspaceOptionsBuilder setErrors(NutsMessage[] errors) {
-        this.errors = errors == null ? new NutsMessage[0] : Arrays.copyOf(errors, errors.length);
-        return this;
-    }
-
-    /**
-     * set dry
-     *
-     * @param dry new value
-     * @return {@code this} instance
-     */
-    @Override
-    public NutsWorkspaceOptionsBuilder setDry(Boolean dry) {
-        this.dry = dry;
-        return this;
-    }
-
-    /**
-     * set creationTime
-     *
-     * @param creationTime new value
-     * @return {@code this} instance
-     */
-    @Override
-    public NutsWorkspaceOptionsBuilder setCreationTime(long creationTime) {
-        this.creationTime = creationTime;
-        return this;
-    }
-
-    /**
-     * set readOnly
-     *
-     * @param readOnly new value
-     * @return {@code this} instance
-     */
-    @Override
-    public NutsWorkspaceOptionsBuilder setReadOnly(Boolean readOnly) {
-        this.readOnly = readOnly;
-        return this;
-    }
-
-    /**
-     * set trace
-     *
-     * @param trace new value
-     * @return {@code this} instance
-     */
-    @Override
-    public NutsWorkspaceOptionsBuilder setTrace(Boolean trace) {
-        this.trace = trace;
-        return this;
-    }
-
-    @Override
-    public NutsWorkspaceOptionsBuilder setProgressOptions(String progressOptions) {
-        this.progressOptions = progressOptions;
-        return this;
-    }
-
-    /**
-     * set runtimeId
-     *
-     * @param runtimeId new value
-     * @return {@code this} instance
-     */
-    @Override
-    public NutsWorkspaceOptionsBuilder setRuntimeId(String runtimeId) {
-        this.runtimeId = runtimeId;
-        return this;
-    }
-
-    /**
-     * set provider
-     *
-     * @param provider new value
-     * @return {@code this} instance
-     */
-    @Override
-    public NutsWorkspaceOptionsBuilder setClassLoaderSupplier(Supplier<ClassLoader> provider) {
-        this.classLoaderSupplier = provider;
-        return this;
-    }
-
-    /**
-     * set applicationArguments
-     *
-     * @param applicationArguments new value
-     * @return {@code this} instance
-     */
-    @Override
-    public NutsWorkspaceOptionsBuilder setApplicationArguments(String[] applicationArguments) {
-        this.applicationArguments = applicationArguments;
-        return this;
-    }
-
-    @Override
-    public NutsWorkspaceOptionsBuilder setJavaCommand(String javaCommand) {
-        this.javaCommand = javaCommand;
-        return this;
-    }
-
-    /**
-     * set javaOptions
-     *
-     * @param javaOptions new value
-     * @return {@code this} instance
-     */
-    @Override
-    public NutsWorkspaceOptionsBuilder setJavaOptions(String javaOptions) {
-        this.javaOptions = javaOptions;
-        return this;
-    }
-
-    /**
-     * set executorOptions
-     *
-     * @param executorOptions new value
-     * @return {@code this} instance
-     */
-    @Override
-    public NutsWorkspaceOptionsBuilder setExecutorOptions(String[] executorOptions) {
-        this.executorOptions = executorOptions;
-        return this;
-    }
-
-    /**
-     * set recover
-     *
-     * @param recover new value
-     * @return {@code this} instance
-     */
-    @Override
-    public NutsWorkspaceOptionsBuilder setRecover(Boolean recover) {
-        this.recover = recover;
-        return this;
-    }
-
-    /**
-     * set reset
-     *
-     * @param reset new value
-     * @return {@code this} instance
-     */
-    @Override
-    public NutsWorkspaceOptionsBuilder setReset(Boolean reset) {
-        this.reset = reset;
-        return this;
-    }
-
-    @Override
-    public NutsWorkspaceOptionsBuilder setCommandVersion(Boolean version) {
-        this.commandVersion = version;
-        return this;
-    }
-
-    @Override
-    public NutsWorkspaceOptionsBuilder setCommandHelp(Boolean help) {
-        this.commandHelp = help;
-        return this;
-    }
-
-    /**
-     * set debug
-     *
-     * @param debug new value
-     * @return {@code this} instance
-     */
-    @Override
-    public NutsWorkspaceOptionsBuilder setDebug(Boolean debug) {
-        this.debug = debug;
-        return this;
-    }
-
-    /**
-     * set repositories
-     *
-     * @param repositories new value
-     * @return {@code this} instance
-     */
-    @Override
-    public NutsWorkspaceOptionsBuilder setRepositories(String[] repositories) {
-        this.repositories = repositories;
-        return this;
-    }
-
-    /**
-     * set logConfig
-     *
-     * @param logConfig new value
-     * @return {@code this} instance
-     */
-    @Override
-    public NutsWorkspaceOptionsBuilder setLogConfig(NutsLogConfig logConfig) {
-        this.logConfig = logConfig;
-        return this;
-    }
-
-    /**
-     * set apiVersion
-     *
-     * @param apiVersion new value
-     * @return {@code this} instance
-     */
-    @Override
-    public NutsWorkspaceOptionsBuilder setApiVersion(String apiVersion) {
-        this.apiVersion = apiVersion;
-        return this;
-    }
-
-    /**
-     * set storeLocationLayout
-     *
-     * @param storeLocationLayout new value
-     * @return {@code this} instance
-     */
-    @Override
-    public NutsWorkspaceOptionsBuilder setStoreLocationLayout(NutsOsFamily storeLocationLayout) {
-        this.storeLocationLayout = storeLocationLayout;
-        return this;
-    }
-
-    /**
-     * set storeLocationStrategy
-     *
-     * @param storeLocationStrategy new value
-     * @return {@code this} instance
-     */
-    @Override
-    public NutsWorkspaceOptionsBuilder setStoreLocationStrategy(NutsStoreLocationStrategy storeLocationStrategy) {
-        this.storeLocationStrategy = storeLocationStrategy;
-        return this;
-    }
-
-    /**
-     * set repositoryStoreLocationStrategy
-     *
-     * @param repositoryStoreLocationStrategy new value
-     * @return {@code this} instance
-     */
-    @Override
-    public NutsWorkspaceOptionsBuilder setRepositoryStoreLocationStrategy(NutsStoreLocationStrategy repositoryStoreLocationStrategy) {
-        this.repositoryStoreLocationStrategy = repositoryStoreLocationStrategy;
-        return this;
-    }
-
-    /**
      * set store location
      *
      * @param location location
@@ -1285,7 +1488,7 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
      */
     @Override
     public NutsWorkspaceOptionsBuilder setStoreLocation(NutsStoreLocation location, String value) {
-        if (NutsUtilStrings.isBlank(value)) {
+        if (NutsBlankable.isBlank(value)) {
             storeLocations.remove(location.id());
         } else {
             storeLocations.put(location.id(), value);
@@ -1304,83 +1507,11 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
     @Override
     public NutsWorkspaceOptionsBuilder setHomeLocation(NutsOsFamily layout, NutsStoreLocation location, String value) {
         String key = NutsUtilPlatforms.createHomeLocationKey(layout, location);
-        if (NutsUtilStrings.isBlank(value)) {
+        if (NutsBlankable.isBlank(value)) {
             homeLocations.remove(key);
         } else {
             homeLocations.put(key, value);
         }
-        return this;
-    }
-
-    /**
-     * set skipInstallCompanions
-     *
-     * @param skipInstallCompanions new value
-     * @return {@code this} instance
-     */
-    @Override
-    public NutsWorkspaceOptionsBuilder setSkipCompanions(Boolean skipInstallCompanions) {
-        this.skipCompanions = skipInstallCompanions;
-        return this;
-    }
-
-    /**
-     * set skipWelcome
-     *
-     * @param skipBoot new value
-     * @return {@code this} instance
-     */
-    @Override
-    public NutsWorkspaceOptionsBuilder setSkipBoot(Boolean skipBoot) {
-        this.skipBoot = skipBoot;
-        return this;
-    }
-
-    /**
-     * set skipWelcome
-     *
-     * @param skipWelcome new value
-     * @return {@code this} instance
-     */
-    @Override
-    public NutsWorkspaceOptionsBuilder setSkipWelcome(Boolean skipWelcome) {
-        this.skipWelcome = skipWelcome;
-        return this;
-    }
-
-    /**
-     * set openMode
-     *
-     * @param openMode new value
-     * @return {@code this} instance
-     */
-    @Override
-    public NutsWorkspaceOptionsBuilder setOpenMode(NutsOpenMode openMode) {
-        this.openMode = openMode;
-        return this;
-    }
-
-    /**
-     * set confirm
-     *
-     * @param confirm new value
-     * @return {@code this} instance
-     */
-    @Override
-    public NutsWorkspaceOptionsBuilder setConfirm(NutsConfirmationMode confirm) {
-        this.confirm = confirm;
-        return this;
-    }
-
-    /**
-     * set outputFormat
-     *
-     * @param outputFormat new value
-     * @return {@code this} instance
-     */
-    @Override
-    public NutsWorkspaceOptionsBuilder setOutputFormat(NutsContentType outputFormat) {
-        this.outputFormat = outputFormat;
         return this;
     }
 
@@ -1402,137 +1533,6 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
                 }
             }
         }
-        return this;
-    }
-
-    /**
-     * set output format options
-     *
-     * @param options new value
-     * @return {@code this} instance
-     */
-    @Override
-    public NutsWorkspaceOptionsBuilder setOutputFormatOptions(String... options) {
-        outputFormatOptions.clear();
-        return addOutputFormatOptions(options);
-    }
-
-    @Override
-    public NutsWorkspaceOptionsBuilder setFetchStrategy(NutsFetchStrategy fetchStrategy) {
-        this.fetchStrategy = fetchStrategy == null ? NutsFetchStrategy.ONLINE : fetchStrategy;
-        return this;
-    }
-
-    @Override
-    public NutsWorkspaceOptionsBuilder setCached(Boolean cached) {
-        this.cached = cached;
-        return this;
-    }
-
-    @Override
-    public NutsWorkspaceOptionsBuilder setIndexed(Boolean indexed) {
-        this.indexed = indexed;
-        return this;
-    }
-
-    @Override
-    public NutsWorkspaceOptionsBuilder setTransitive(Boolean transitive) {
-        this.transitive = transitive;
-        return this;
-    }
-
-    @Override
-    public NutsWorkspaceOptionsBuilder setBot(Boolean bot) {
-        this.bot = bot;
-        return this;
-    }
-
-    @Override
-    public NutsWorkspaceOptionsBuilder setStdin(InputStream stdin) {
-        this.stdin = stdin;
-        return this;
-    }
-
-    @Override
-    public NutsWorkspaceOptionsBuilder setStdout(PrintStream stdout) {
-        this.stdout = stdout;
-        return this;
-    }
-
-    @Override
-    public NutsWorkspaceOptionsBuilder setStderr(PrintStream stderr) {
-        this.stderr = stderr;
-        return this;
-    }
-
-    @Override
-    public NutsWorkspaceOptionsBuilder setExecutorService(ExecutorService executorService) {
-        this.executorService = executorService;
-        return this;
-    }
-
-    @Override
-    public NutsWorkspaceOptionsBuilder setHomeLocations(Map<String, String> homeLocations) {
-        this.homeLocations.clear();
-        if (homeLocations != null) {
-            this.homeLocations.putAll(homeLocations);
-        }
-        return this;
-    }
-
-    @Override
-    public NutsWorkspaceOptionsBuilder setStoreLocations(Map<String, String> storeLocations) {
-        this.storeLocations.clear();
-        if (storeLocations != null) {
-            this.storeLocations.putAll(storeLocations);
-        }
-        return this;
-    }
-
-    @Override
-    public NutsWorkspaceOptionsBuilder setExpireTime(Instant expireTime) {
-        this.expireTime = expireTime;
-        return this;
-    }
-
-    @Override
-    public NutsWorkspaceOptionsBuilder setOutLinePrefix(String outLinePrefix) {
-        this.outLinePrefix = outLinePrefix;
-        return this;
-    }
-
-    @Override
-    public NutsWorkspaceOptionsBuilder setErrLinePrefix(String errLinePrefix) {
-        this.errLinePrefix = errLinePrefix;
-        return this;
-    }
-
-    @Override
-    public NutsWorkspaceOptionsBuilder setProperties(String[] properties) {
-        this.properties = properties;
-        return this;
-    }
-
-    @Override
-    public NutsWorkspaceOptionsBuilder setLocale(String locale) {
-        this.locale = locale;
-        return this;
-    }
-
-    @Override
-    public NutsWorkspaceOptionsBuilder setTheme(String theme) {
-        this.theme = theme;
-        return this;
-    }
-
-    /**
-     * set runAsUser
-     *
-     * @param runAs new value
-     * @return {@code this} instance
-     */
-    public NutsWorkspaceOptionsBuilder setRunAs(NutsRunAs runAs) {
-        this.runAs = runAs == null ? NutsRunAs.CURRENT_USER : runAs;
         return this;
     }
 

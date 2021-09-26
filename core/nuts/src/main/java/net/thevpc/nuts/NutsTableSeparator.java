@@ -3,7 +3,7 @@ package net.thevpc.nuts;
 /**
  * @app.category Format
  */
-public enum NutsTableSeparator implements NutsEnum{
+public enum NutsTableSeparator implements NutsEnum {
     FIRST_ROW_START,
     FIRST_ROW_LINE,
     FIRST_ROW_SEP,
@@ -29,15 +29,6 @@ public enum NutsTableSeparator implements NutsEnum{
         this.id = name().toLowerCase().replace('_', '-');
     }
 
-    /**
-     * lower cased identifier.
-     *
-     * @return lower cased identifier
-     */
-    public String id() {
-        return id;
-    }
-
     public static NutsTableSeparator parseLenient(String value) {
         return parseLenient(value, null);
     }
@@ -60,5 +51,28 @@ public enum NutsTableSeparator implements NutsEnum{
         } catch (Exception notFound) {
             return errorValue;
         }
+    }
+
+    public static NutsTableSeparator parse(String value, NutsSession session) {
+        return parse(value, null, session);
+    }
+
+    public static NutsTableSeparator parse(String value, NutsTableSeparator emptyValue, NutsSession session) {
+        NutsTableSeparator v = parseLenient(value, emptyValue, null);
+        if (v == null) {
+            if (!NutsBlankable.isBlank(value)) {
+                throw new NutsParseEnumException(session, value, NutsTableSeparator.class);
+            }
+        }
+        return v;
+    }
+
+    /**
+     * lower cased identifier.
+     *
+     * @return lower cased identifier
+     */
+    public String id() {
+        return id;
     }
 }

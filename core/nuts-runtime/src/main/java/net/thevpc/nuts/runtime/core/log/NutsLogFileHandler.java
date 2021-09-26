@@ -29,10 +29,10 @@ public class NutsLogFileHandler extends FileHandler {
             level = Level.INFO;
         }
         int MEGA = 1024 * 1024;
-        if (name == null || NutsUtilStrings.isBlank(name)) {
+        if (name == null || NutsBlankable.isBlank(name)) {
             name = Instant.now().toString().replace(":", "") + "-nuts-%g.log";
         }
-        if (folder == null || NutsUtilStrings.isBlank(folder)) {
+        if (folder == null || NutsBlankable.isBlank(folder)) {
             folder = logFolder + "/" + NutsConstants.Folders.ID + "/net/thevpc/nuts/nuts/" + session.getWorkspace().getApiVersion();
         }
         String pattern = (folder + "/" + name).replace('/', File.separatorChar);

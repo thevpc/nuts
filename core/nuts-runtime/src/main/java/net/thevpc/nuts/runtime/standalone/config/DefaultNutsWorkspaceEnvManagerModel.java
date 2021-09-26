@@ -108,7 +108,7 @@ public class DefaultNutsWorkspaceEnvManagerModel {
     public void setEnv(String property, String value, NutsSession session) {
         Map<String, String> env = getStoreModelMain().getEnv();
 //        session = CoreNutsUtils.validate(session, workspace);
-        if (NutsUtilStrings.isBlank(value)) {
+        if (NutsBlankable.isBlank(value)) {
             if (env != null && env.containsKey(property)) {
                 env.remove(property);
                 NutsWorkspaceConfigManagerExt.of(workspace.config())
@@ -179,7 +179,7 @@ public class DefaultNutsWorkspaceEnvManagerModel {
         String _XDG_CURRENT_DESKTOP = System.getenv("XDG_CURRENT_DESKTOP");
 
 
-        if (!NutsUtilStrings.isBlank(_XDG_SESSION_DESKTOP) && !NutsUtilStrings.isBlank(_XDG_SESSION_DESKTOP)) {
+        if (!NutsBlankable.isBlank(_XDG_SESSION_DESKTOP) && !NutsBlankable.isBlank(_XDG_SESSION_DESKTOP)) {
             String[] supportedSessions = new LinkedHashSet<>(
                     Arrays.stream(_XDG_CURRENT_DESKTOP.trim().split(":"))
                             .map(x -> x.trim().toLowerCase()).filter(x -> x.length() > 0)

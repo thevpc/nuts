@@ -56,7 +56,7 @@ class DefaultNutsWorkspaceBootConfig implements NutsWorkspaceBootConfig {
         for (NutsStoreLocation type : NutsStoreLocation.values()) {
             homes[type.ordinal()] = NutsUtilPlatforms.getPlatformHomeFolder(storeLocationLayout, type, homeLocations,
                     global, name);
-            if (NutsUtilStrings.isBlank(homes[type.ordinal()])) {
+            if (NutsBlankable.isBlank(homes[type.ordinal()])) {
                 throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing Home for %s", type.id()));
             }
         }
@@ -66,7 +66,7 @@ class DefaultNutsWorkspaceBootConfig implements NutsWorkspaceBootConfig {
         for (NutsStoreLocation location : NutsStoreLocation.values()) {
             String typeId = location.id();
             String _storeLocation = storeLocations.get(typeId);
-            if (NutsUtilStrings.isBlank(_storeLocation)) {
+            if (NutsBlankable.isBlank(_storeLocation)) {
                 switch (storeLocationStrategy) {
                     case STANDALONE: {
                         storeLocations.put(typeId, (effectiveWorkspace + File.separator + typeId));

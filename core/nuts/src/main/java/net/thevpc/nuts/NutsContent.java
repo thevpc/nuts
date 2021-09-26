@@ -32,14 +32,16 @@ import java.nio.file.Path;
 
 /**
  * Content describes a artifact file location and its characteristics.
+ *
  * @author thevpc
- * @since 0.5.4
  * @app.category Descriptor
+ * @since 0.5.4
  */
 public interface NutsContent extends Serializable {
 
     /**
      * artifact local path
+     *
      * @return artifact local path
      */
     Path getFilePath();
@@ -52,12 +54,14 @@ public interface NutsContent extends Serializable {
 
     /**
      * when true, the content was retrieved from cache rather then from remote location.
+     *
      * @return true if content is cached
      */
     boolean isCached();
 
     /**
      * when true, the path location is temporary and should be deleted after usage
+     *
      * @return true if content temporary
      */
     boolean isTemporary();

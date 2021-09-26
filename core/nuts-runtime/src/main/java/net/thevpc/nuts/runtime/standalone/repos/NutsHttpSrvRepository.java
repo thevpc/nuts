@@ -232,13 +232,13 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
             credentials = "anonymous".toCharArray();
         } else {
             newLogin = security.getRemoteIdentity();
-            if (NutsUtilStrings.isBlank(newLogin)) {
+            if (NutsBlankable.isBlank(newLogin)) {
                 NutsUser security2 = getWorkspace().security().setSession(session).findUser(login);
                 if (security2 != null) {
                     newLogin = security2.getRemoteIdentity();
                 }
             }
-            if (NutsUtilStrings.isBlank(newLogin)) {
+            if (NutsBlankable.isBlank(newLogin)) {
                 newLogin = login;
             } else {
                 security = NutsRepositoryConfigManagerExt.of(config()).getModel().getUser(newLogin, session);

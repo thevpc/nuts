@@ -12,21 +12,6 @@ import java.util.Stack;
  * @since 0.5.4
  */
 public interface NutsExceptionBase {
-    NutsMessage getFormattedMessage();
-
-    NutsString getFormattedString();
-
-    String getMessage();
-
-    /**
-     * current workspace
-     *
-     * @return current workspace
-     */
-    NutsWorkspace getWorkspace();
-
-    NutsSession getSession();
-
     static NutsExceptionBase detectExceptionBase(Throwable th) {
         Set<Throwable> visited = new HashSet<>();
         Stack<Throwable> stack = new Stack<>();
@@ -55,4 +40,19 @@ public interface NutsExceptionBase {
         }
         return null;
     }
+
+    NutsMessage getFormattedMessage();
+
+    NutsString getFormattedString();
+
+    String getMessage();
+
+    /**
+     * current workspace
+     *
+     * @return current workspace
+     */
+    NutsWorkspace getWorkspace();
+
+    NutsSession getSession();
 }

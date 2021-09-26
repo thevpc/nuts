@@ -195,7 +195,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
         NutsDependencyFilter depFilter = ws.dependency().filter().always();
         NutsRepositoryFilter rfilter = ws.repos().filter().always();
         for (String j : this.getScripts()) {
-            if (!NutsUtilStrings.isBlank(j)) {
+            if (!NutsBlankable.isBlank(j)) {
                 if (CoreStringUtils.containsTopWord(j, "descriptor")) {
                     _descriptorFilter = _descriptorFilter.and(ws.descriptor().filter().byExpression(j));
                 } else if (CoreStringUtils.containsTopWord(j, "dependency")) {
@@ -539,7 +539,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                 NutsId nutsId = ws.id().parser().parse(id);
                 if (nutsId != null) {
                     List<NutsId> nutsId2 = new ArrayList<>();
-                    if (NutsUtilStrings.isBlank(nutsId.getGroupId())) {
+                    if (NutsBlankable.isBlank(nutsId.getGroupId())) {
                         if (nutsId.getArtifactId().equals("nuts")) {
                             nutsId2.add(nutsId.builder().setGroupId("net.thevpc.nuts").build());
                         } else {
@@ -773,7 +773,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
 //                if (nutsId != null) {
 //                    NutsDependency dep = nutsId.toDependency();
 //                    List<NutsId> nutsId2 = new ArrayList<>();
-//                    if (NutsUtilStrings.isBlank(nutsId.getGroupId())) {
+//                    if (NutsBlankable.isBlank(nutsId.getGroupId())) {
 //                        if (nutsId.getArtifactId().equals("nuts")) {
 //                            nutsId2.add(nutsId.builder().setGroupId("net.thevpc.nuts").build());
 //                        } else {

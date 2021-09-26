@@ -153,7 +153,7 @@ public abstract class AbstractNshBuiltin implements NshBuiltin {
             if (line == null) {
                 break;
             }
-            if (!NutsUtilStrings.isBlank(line)) {
+            if (!NutsBlankable.isBlank(line)) {
                 return line;
             }
         }

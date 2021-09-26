@@ -22,7 +22,7 @@ public class DefaultNutsWorkspaceListManager implements NutsWorkspaceListManager
 
     public DefaultNutsWorkspaceListManager(NutsWorkspace ws, NutsSession session, String name) {
         this.defaultWorkspace = ws;
-        if (NutsUtilStrings.isBlank(name)) {
+        if (NutsBlankable.isBlank(name)) {
             name = "default";
         }
         this.name = name.trim();

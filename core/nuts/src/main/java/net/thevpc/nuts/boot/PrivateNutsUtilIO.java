@@ -1,5 +1,6 @@
 package net.thevpc.nuts.boot;
 
+import net.thevpc.nuts.NutsBlankable;
 import net.thevpc.nuts.NutsLogVerb;
 import net.thevpc.nuts.NutsUtilStrings;
 
@@ -9,9 +10,9 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
-import java.nio.file.*;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.security.MessageDigest;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Properties;
 import java.util.function.Function;
 import java.util.logging.Level;
@@ -137,7 +138,7 @@ public class PrivateNutsUtilIO {
     }
 
     public static File toFile(String url) {
-        if (NutsUtilStrings.isBlank(url)) {
+        if (NutsBlankable.isBlank(url)) {
             return null;
         }
         URL u = null;

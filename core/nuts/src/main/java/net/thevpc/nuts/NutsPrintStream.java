@@ -30,15 +30,15 @@ public interface NutsPrintStream {
 
     NutsPrintStream close();
 
-    NutsPrintStream write(byte b[]);
+    NutsPrintStream write(byte[] b);
 
     NutsPrintStream write(int b);
 
-    NutsPrintStream write(byte buf[], int off, int len);
+    NutsPrintStream write(byte[] buf, int off, int len);
 
-    NutsPrintStream write(char buf[]);
+    NutsPrintStream write(char[] buf);
 
-    NutsPrintStream write(char buf[], int off, int len);
+    NutsPrintStream write(char[] buf, int off, int len);
 
     NutsPrintStream print(NutsString b);
 
@@ -54,7 +54,7 @@ public interface NutsPrintStream {
 
     NutsPrintStream print(double d);
 
-    NutsPrintStream print(char s[]);
+    NutsPrintStream print(char[] s);
 
     NutsPrintStream print(String s);
 
@@ -76,7 +76,7 @@ public interface NutsPrintStream {
 
     NutsPrintStream println(double x);
 
-    NutsPrintStream println(char x[]);
+    NutsPrintStream println(char[] x);
 
     NutsPrintStream println(String x);
 

@@ -5,11 +5,28 @@ import net.thevpc.nuts.*;
 import java.io.PrintStream;
 import java.net.URL;
 
+/**
+ * this class implements several utility methods to be used by Nuts API interfaces
+ */
 public class NutsApiUtils {
 
     private NutsApiUtils() {
     }
+    public static boolean isBlank(CharSequence s) {
+        return s == null || isBlank(s.toString().toCharArray());
+    }
 
+    public static boolean isBlank(char[] string) {
+        if (string == null || string.length == 0) {
+            return true;
+        }
+        for (char c : string) {
+            if (c > ' ') {
+                return false;
+            }
+        }
+        return true;
+    }
     public static void checkSession(NutsSession session) {
         if (session == null) {
             throw new IllegalArgumentException("missing session");

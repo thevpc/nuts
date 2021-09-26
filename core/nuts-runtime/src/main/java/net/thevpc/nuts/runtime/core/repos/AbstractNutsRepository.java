@@ -212,7 +212,7 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
         String ext = getIdExtension(id, session);
         if (!ext.equals(NutsConstants.Files.DESCRIPTOR_FILE_EXTENSION) && !ext.equals(".pom")) {
             String c = id.getClassifier();
-            if (!NutsUtilStrings.isBlank(c)) {
+            if (!NutsBlankable.isBlank(c)) {
                 classifier = "-" + c;
             }
         }

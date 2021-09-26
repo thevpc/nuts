@@ -86,7 +86,7 @@
 //                if (omitNull) {
 //                    //do nothing;
 //                } else {
-//                    String k = (NutsUtilStrings.isBlank(prefix)) ? "value" : prefix;
+//                    String k = (NutsBlankable.isBlank(prefix)) ? "value" : prefix;
 //                    map.put(k, stringValue(e.primitive().getValue()));
 //                }
 //                break;
@@ -96,14 +96,14 @@
 //            case INTEGER:
 //            case FLOAT:
 //            case STRING: {
-//                String k = (NutsUtilStrings.isBlank(prefix)) ? "value" : prefix;
+//                String k = (NutsBlankable.isBlank(prefix)) ? "value" : prefix;
 //                map.put(k, stringValue(e.primitive().getValue()));
 //                break;
 //            }
 //            case ARRAY: {
 //                int index = 1;
 //                for (NutsElement datum : e.array().children()) {
-//                    String k = (NutsUtilStrings.isBlank(prefix)) ? String.valueOf(index) : (prefix + "." + String.valueOf(index));
+//                    String k = (NutsBlankable.isBlank(prefix)) ? String.valueOf(index) : (prefix + "." + String.valueOf(index));
 //                    fillMap(datum, map, k);
 //                    index++;
 //                }
@@ -111,7 +111,7 @@
 //            }
 //            case OBJECT: {
 //                for (NutsNamedElement datum : e.object().children()) {
-//                    String k = (NutsUtilStrings.isBlank(prefix)) ? datum.getName() : (prefix + "." + datum.getName());
+//                    String k = (NutsBlankable.isBlank(prefix)) ? datum.getName() : (prefix + "." + datum.getName());
 //                    fillMap(datum.getValue(), map, k);
 //                }
 //                break;

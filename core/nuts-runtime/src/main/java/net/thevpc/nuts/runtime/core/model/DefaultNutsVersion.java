@@ -28,6 +28,7 @@ package net.thevpc.nuts.runtime.core.model;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.filters.version.DefaultNutsVersionFilter;
@@ -44,15 +45,18 @@ public class DefaultNutsVersion /*extends DefaultNutsTokenFilter*/ implements Nu
     private VersionParts parts;
     private transient NutsSession session;
     protected String expression;
-    public static NutsVersion valueOf(String value, NutsSession session) {
-        value = NutsUtilStrings.trim(value);
-        if (value.isEmpty()) {
-            return new DefaultNutsVersion("",session);
-        }
-        return new DefaultNutsVersion(value,session);
-    }
+//    public static NutsVersion valueOf(String value, NutsSession session) {
+//        value = NutsUtilStrings.trim(value);
+//        if (value.isEmpty()) {
+//            return new DefaultNutsVersion("",session);
+//        }
+//        if(PATTERN.matcher(value).matches()) {
+//            return new DefaultNutsVersion(value, session);
+//        }
+//        throw new NutsParseEnumException();
+//    }
 
-    private DefaultNutsVersion(String expression,NutsSession session) {
+    public DefaultNutsVersion(String expression,NutsSession session) {
         this.expression=(NutsUtilStrings.trim(expression));
         this.session=session;
     }
@@ -245,7 +249,7 @@ public class DefaultNutsVersion /*extends DefaultNutsTokenFilter*/ implements Nu
 
 //    @Override
 //    public boolean matches(String expression) {
-//        if (NutsUtilStrings.isBlank(expression)) {
+//        if (NutsBlankable.isBlank(expression)) {
 //            return true;
 //        }
 //        return DefaultNutsVersionFilter.parse(expression,session).acceptVersion(this, session);
@@ -499,7 +503,7 @@ public class DefaultNutsVersion /*extends DefaultNutsTokenFilter*/ implements Nu
     }
 
     public static boolean isBlankVersion(String pattern) {
-        if (NutsUtilStrings.isBlank(pattern)) {
+        if (NutsBlankable.isBlank(pattern)) {
             return true;
         }
         return NutsConstants.Versions.LATEST.equals(pattern) || NutsConstants.Versions.RELEASE.equals(pattern);

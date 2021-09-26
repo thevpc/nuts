@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -11,7 +11,7 @@
  * architecture to help supporting a large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -39,6 +39,25 @@ public interface NutsVersionParser {
     }
 
     /**
+     * return blank mode.
+     * when true, null is returned whenever a blank id is encountered.
+     * when false, an error is thrown in that case.
+     * @return true if the parse is lenient
+     */
+    boolean isAcceptBlank();
+
+    /**
+     * set blank mode.
+     * when true, null is returned whenever a blank id is encountered.
+     * when false, an error is thrown in that case.
+     * @return true if the parse is lenient
+     */
+    NutsVersionParser setAcceptBlank(boolean acceptBlank);
+
+    boolean isAcceptIntervals();
+
+    NutsVersionParser setAcceptIntervals(boolean acceptIntervals);
+    /**
      * return version instance representing the {@code version} string
      *
      * @param version string (may be null)
@@ -46,9 +65,9 @@ public interface NutsVersionParser {
      */
     NutsVersion parse(String version);
 
-    NutsVersionParser setLenient(boolean lenient);
-
     boolean isLenient();
+
+    NutsVersionParser setLenient(boolean lenient);
 
 
 }

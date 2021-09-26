@@ -144,7 +144,7 @@ public class WhoamiCommand extends SimpleNshBuiltin {
                     NutsUser ruser = repository.security().getEffectiveUser(login);
                     if (ruser != null && (ruser.getGroups().length > 0
                             || ruser.getPermissions().length > 0
-                            || !NutsUtilStrings.isBlank(ruser.getRemoteIdentity()))) {
+                            || !NutsBlankable.isBlank(ruser.getRemoteIdentity()))) {
                         RepoResult rt = new RepoResult();
                         rr.add(rt);
                         rt.name = repository.getName();

@@ -337,7 +337,7 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
             case "--location": {
                 String location = cmdLine.nextString().getValue().getString();
                 if (enabled) {
-                    this.setLocation(NutsUtilStrings.isBlank(location) ? null : Paths.get(location));
+                    this.setLocation(NutsBlankable.isBlank(location) ? null : Paths.get(location));
                 }
                 return true;
             }

@@ -5,6 +5,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.security;
 
+import net.thevpc.nuts.NutsBlankable;
 import net.thevpc.nuts.NutsUser;
 import net.thevpc.nuts.NutsUserConfig;
 
@@ -28,7 +29,7 @@ public class DefaultNutsUser implements NutsUser {
     public DefaultNutsUser(NutsUserConfig config, String[] inheritedPermissions) {
         user = config.getUser();
         remoteIdentity = config.getRemoteIdentity();
-        credentials = !NutsUtilStrings.isBlank(config.getCredentials());
+        credentials = !NutsBlankable.isBlank(config.getCredentials());
 
         String[] rights0 = config.getPermissions();
         permissions = Arrays.copyOf(rights0, rights0.length);

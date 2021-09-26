@@ -36,8 +36,8 @@ import java.util.logging.Level;
  * JSON Config Best Effort Loader
  *
  * @author thevpc
- * @since 0.5.6
  * @app.category Internal
+ * @since 0.5.6
  */
 final class PrivateNutsBootConfigLoader {
 
@@ -106,7 +106,7 @@ final class PrivateNutsBootConfigLoader {
      * best effort to load config object from jsonObject saved with nuts version
      * "0.5.6" and later.
      *
-     * @param config config object to fill
+     * @param config     config object to fill
      * @param jsonObject config JSON object
      */
     private static void loadConfigVersion507(PrivateNutsWorkspaceInitInformation config, Map<String, Object> jsonObject, PrivateNutsLog LOG) {
@@ -118,9 +118,9 @@ final class PrivateNutsBootConfigLoader {
         config.setJavaOptions((String) jsonObject.get("javaOptions"));
         config.setHomeLocations((Map<String, String>) jsonObject.get("homeLocations"));
         config.setStoreLocations((Map<String, String>) jsonObject.get("storeLocations"));
-        config.setStoreLocationStrategy(NutsStoreLocationStrategy.parseLenient((String) jsonObject.get("storeLocationStrategy"),null,null));
-        config.setStoreLocationLayout(NutsOsFamily.parseLenient((String) jsonObject.get("storeLocationLayout"),null,null));
-        config.setRepositoryStoreLocationStrategy(NutsStoreLocationStrategy.parseLenient((String) jsonObject.get("repositoryStoreLocationStrategy"),null,null));
+        config.setStoreLocationStrategy(NutsStoreLocationStrategy.parseLenient((String) jsonObject.get("storeLocationStrategy"), null, null));
+        config.setStoreLocationLayout(NutsOsFamily.parseLenient((String) jsonObject.get("storeLocationLayout"), null, null));
+        config.setRepositoryStoreLocationStrategy(NutsStoreLocationStrategy.parseLenient((String) jsonObject.get("repositoryStoreLocationStrategy"), null, null));
         config.setBootRepositories((String) jsonObject.get("bootRepositories"));
 
         List<Map<String, Object>> extensions = (List<Map<String, Object>>) jsonObject.get("extensions");
@@ -144,7 +144,7 @@ final class PrivateNutsBootConfigLoader {
      * best effort to load config object from jsonObject saved with nuts version
      * "[0.5.6]" and later.
      *
-     * @param config config object to fill
+     * @param config     config object to fill
      * @param jsonObject config JSON object
      */
     private static void loadConfigVersion506(PrivateNutsWorkspaceInitInformation config, Map<String, Object> jsonObject, PrivateNutsLog LOG) {
@@ -177,7 +177,7 @@ final class PrivateNutsBootConfigLoader {
      * best effort to load config object from jsonObject saved with nuts version
      * "[0.5.2,0.5.6[".
      *
-     * @param config config object to fill
+     * @param config     config object to fill
      * @param jsonObject config JSON object
      */
     private static void loadConfigVersion502(PrivateNutsWorkspaceInitInformation config, Map<String, Object> jsonObject, PrivateNutsLog LOG) {

@@ -48,9 +48,9 @@ public class DefaultNutsRepoFactoryComponent implements NutsRepositoryFactoryCom
             return NO_SUPPORT;
         }
         String repositoryType = criteria.getConstraints().getType();
-        if (NutsUtilStrings.isBlank(repositoryType)) {
+        if (NutsBlankable.isBlank(repositoryType)) {
             String location = criteria.getConstraints().getLocation();
-            if (!NutsUtilStrings.isBlank(location)) {
+            if (!NutsBlankable.isBlank(location)) {
                 NutsRepositoryURL nru = new NutsRepositoryURL(location);
                 if (nru.getRepositoryType().isNuts()) {
                     criteria.getConstraints().setType(nru.getRepositoryType().toString());
@@ -104,7 +104,7 @@ public class DefaultNutsRepoFactoryComponent implements NutsRepositoryFactoryCom
                 && !"nuts:api".equals(repositoryType)) {
             return NO_SUPPORT;
         }
-        if (NutsUtilStrings.isBlank(location)) {
+        if (NutsBlankable.isBlank(location)) {
             return DEFAULT_SUPPORT;
         }
         if (!location.contains("://")) {
@@ -129,13 +129,13 @@ public class DefaultNutsRepoFactoryComponent implements NutsRepositoryFactoryCom
     @Override
     public NutsRepository create(NutsAddRepositoryOptions options, NutsSession session, NutsRepository parentRepository) {
         NutsRepositoryConfig config = options.getConfig();
-        if (NutsUtilStrings.isBlank(config.getType())) {
-            if (NutsUtilStrings.isBlank(config.getLocation())) {
+        if (NutsBlankable.isBlank(config.getType())) {
+            if (NutsBlankable.isBlank(config.getLocation())) {
                 config.setType(NutsConstants.RepoTypes.NUTS);
             }
         }
         if (NutsConstants.RepoTypes.NUTS.equals(config.getType())) {
-            if (NutsUtilStrings.isBlank(config.getLocation()) || CoreIOUtils.isPathFile(config.getLocation())) {
+            if (NutsBlankable.isBlank(config.getLocation()) || CoreIOUtils.isPathFile(config.getLocation())) {
                 return new NutsFolderRepository(options, session, parentRepository);
             }
             if (CoreIOUtils.isPathURL(config.getLocation())) {

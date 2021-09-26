@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -11,7 +11,7 @@
  * architecture to help supporting a large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -23,31 +23,53 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.NutsApiUtils;
 
-import java.io.Serializable;
-
 /**
- * Capable of being blanked
- * 
+ * Capable of being blank
+ *
  * @since 0.8.3
  * @app.category Command Line
  */
-public interface NutsBlankable{
+public interface NutsBlankable {
 
-    static boolean isBlank(String str){
-        return NutsUtilStrings.isBlank(str);
+    /**
+     * true if the value is null or blank (trimmed to empty)
+     * @param value value to check
+     * @return true if the value is null or blank
+     */
+    static boolean isBlank(String value) {
+        return NutsApiUtils.isBlank(value);
     }
 
-    static boolean isBlank(char[] str){
-        return NutsUtilStrings.isBlank(str);
+    /**
+     * true if the value is null or blank (trimmed to empty)
+     * @param value value to check
+     * @return true if the value is null or blank
+     */
+    static boolean isBlank(CharSequence value) {
+        return NutsApiUtils.isBlank(value);
     }
 
-    static boolean isBlank(NutsBlankable a){
-        return a==null || a.isBlank();
+    /**
+     * true if the value is null or blank (trimmed to empty)
+     * @param value value to check
+     * @return true if the value is null or blank
+     */
+    static boolean isBlank(char[] value) {
+        return NutsApiUtils.isBlank(value);
+    }
+
+    /**
+     * true if the value is null or blank
+     * @param value value to check
+     * @return true if the value is null or blank
+     */
+    static boolean isBlank(NutsBlankable value) {
+        return value == null || value.isBlank();
     }
 
     /**

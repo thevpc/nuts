@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.core.common;
 
+import net.thevpc.nuts.NutsBlankable;
 import net.thevpc.nuts.NutsUtilStrings;
 
 import java.util.concurrent.TimeUnit;
@@ -17,7 +18,7 @@ public class TimePeriod {
     }
 
     public static TimePeriod parse(String str, boolean lenient, TimeUnit defaultUnit) {
-        if (NutsUtilStrings.isBlank(str)) {
+        if (NutsBlankable.isBlank(str)) {
             return null;
         }
         if (defaultUnit == null) {

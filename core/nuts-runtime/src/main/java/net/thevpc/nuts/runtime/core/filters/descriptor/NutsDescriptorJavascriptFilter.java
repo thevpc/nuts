@@ -39,7 +39,7 @@ public class NutsDescriptorJavascriptFilter extends AbstractDescriptorFilter imp
     private String code;
 
     public static NutsDescriptorFilter valueOf(String value, NutsSession ws) {
-        if (NutsUtilStrings.isBlank(value)) {
+        if (NutsBlankable.isBlank(value)) {
             return ws.getWorkspace().descriptor().filter().always();
         }
         return new NutsDescriptorJavascriptFilter(ws,value);

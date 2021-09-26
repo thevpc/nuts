@@ -70,7 +70,7 @@ public class DefaultNutsTextManagerModel {
 
     public NutsTextFormatTheme createTheme(String y, NutsSession session) {
         y = y == null ? "" : y.trim();
-        if (NutsUtilStrings.isBlank(y)) {
+        if (NutsBlankable.isBlank(y)) {
             y = "default";
         }
         if ("default".equals(y)) {

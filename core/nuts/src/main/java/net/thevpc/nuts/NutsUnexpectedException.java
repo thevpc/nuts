@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -11,7 +11,7 @@
  * architecture to help supporting a large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -23,10 +23,8 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts;
-
-import java.io.IOException;
 
 /**
  *
@@ -41,7 +39,7 @@ public class NutsUnexpectedException extends NutsException {
      * @param session workspace
      */
     public NutsUnexpectedException(NutsSession session) {
-        this(session, (NutsMessage) null);
+        this(session, null);
     }
 
     /**
@@ -50,7 +48,7 @@ public class NutsUnexpectedException extends NutsException {
      * @param message message
      */
     public NutsUnexpectedException(NutsSession session, NutsMessage message) {
-        super(session, message==null?NutsMessage.plain("unexpected behaviour"):message);
+        super(session, message == null ? NutsMessage.plain("unexpected behaviour") : message);
     }
 
     /**
@@ -60,7 +58,7 @@ public class NutsUnexpectedException extends NutsException {
      * @param cause cause
      */
     public NutsUnexpectedException(NutsSession session, NutsMessage message, Throwable cause) {
-        super(session, message==null?NutsMessage.plain("unexpected behaviour"):message, cause);
+        super(session, message == null ? NutsMessage.plain("unexpected behaviour") : message, cause);
     }
 
     /**
@@ -72,7 +70,7 @@ public class NutsUnexpectedException extends NutsException {
      * @param writableStackTrace whether or not the stack trace should be writable
      */
     public NutsUnexpectedException(NutsSession session, NutsMessage message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(session, message==null?NutsMessage.plain("unexpected behaviour"):message, cause, enableSuppression, writableStackTrace);
+        super(session, message == null ? NutsMessage.plain("unexpected behaviour") : message, cause, enableSuppression, writableStackTrace);
     }
 
 }

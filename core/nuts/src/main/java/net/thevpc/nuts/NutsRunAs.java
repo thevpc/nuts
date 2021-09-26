@@ -27,13 +27,13 @@ public class NutsRunAs {
     }
 
     public static NutsRunAs user(String name) {
-        if (NutsUtilStrings.isBlank(name)) {
+        if (NutsBlankable.isBlank(name)) {
             throw new IllegalArgumentException("invalid user name");
         }
         return new NutsRunAs(Mode.SUDO, name);
     }
 
-    public Mode getMode(){
+    public Mode getMode() {
         return mode;
     }
 
@@ -41,21 +41,57 @@ public class NutsRunAs {
         return user;
     }
 
-    public enum Mode implements NutsEnum{
+    @Override
+    public int hashCode() {
+        return Objects.hash(mode, user);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        NutsRunAs nutsRunAs = (NutsRunAs) o;
+        return mode == nutsRunAs.mode && Objects.equals(user, nutsRunAs.user);
+    }
+
+    @Override
+    public String toString() {
+        switch (mode) {
+            case CURRENT_USER:
+                return "run-as:current-user";
+            case SUDO:
+                return "run-as:sudo";
+            case ROOT:
+                return "run-as:root";
+            case USER:
+                return "run-as:user:" + user;
+        }
+        return "run-as:" + mode + " , user='" + user + '\'';
+    }
+
+    public enum Mode implements NutsEnum {
         CURRENT_USER,
         USER,
         ROOT,
         SUDO;
-        ;
-        private String id;
+        private final String id;
 
         Mode() {
             this.id = name().toLowerCase().replace('_', '-');
         }
 
-        @Override
-        public String id() {
-            return id;
+        public static Mode parse(String value, NutsSession session) {
+            return parse(value, null, session);
+        }
+
+        public static Mode parse(String value, Mode emptyValue, NutsSession session) {
+            Mode v = parseLenient(value, emptyValue, null);
+            if (v == null) {
+                if (!NutsBlankable.isBlank(value)) {
+                    throw new NutsParseEnumException(session, value, Mode.class);
+                }
+            }
+            return v;
         }
 
         public static Mode parseLenient(String value) {
@@ -82,29 +118,10 @@ public class NutsRunAs {
             }
         }
 
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        NutsRunAs nutsRunAs = (NutsRunAs) o;
-        return mode == nutsRunAs.mode && Objects.equals(user, nutsRunAs.user);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(mode, user);
-    }
-
-    @Override
-    public String toString() {
-        switch (mode){
-            case CURRENT_USER:return "run-as:current-user";
-            case SUDO:return "run-as:sudo";
-            case ROOT:return "run-as:root";
-            case USER:return "run-as:user:"+user;
+        @Override
+        public String id() {
+            return id;
         }
-        return "run-as:"+mode +" , user='" + user + '\'';
+
     }
 }

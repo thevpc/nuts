@@ -132,7 +132,7 @@ public class CorePlatformUtils {
     private static String buildUnixOsNameAndVersion(String name, NutsWorkspace ws) {
         Map<String, String> m = getOsDistMap(ws);
         String v = m.get("osVersion");
-        if (NutsUtilStrings.isBlank(v)) {
+        if (NutsBlankable.isBlank(v)) {
             return name;
         }
         return name + "#" + v;
@@ -270,7 +270,7 @@ public class CorePlatformUtils {
                                     disVersion = v;
                                     break;
                             }
-                            if (!NutsUtilStrings.isBlank(disVersion) && !NutsUtilStrings.isBlank(disName) && !NutsUtilStrings.isBlank(disId)) {
+                            if (!NutsBlankable.isBlank(disVersion) && !NutsBlankable.isBlank(disName) && !NutsBlankable.isBlank(disId)) {
                                 break;
                             }
                         }
@@ -294,8 +294,8 @@ public class CorePlatformUtils {
             Map<String, String> m = getOsDistMap(ws);
             String distId = m.get("distId");
             String distVersion = m.get("distVersion");
-            if (!NutsUtilStrings.isBlank(distId)) {
-                if (!NutsUtilStrings.isBlank(distId)) {
+            if (!NutsBlankable.isBlank(distId)) {
+                if (!NutsBlankable.isBlank(distId)) {
                     return distId + "#" + distVersion;
                 } else {
                     return distId;
@@ -511,7 +511,7 @@ public class CorePlatformUtils {
                     return null;
                 }
                 String mainClass = manifest.getMainAttributes().getValue("Main-Class");
-                return !NutsUtilStrings.isBlank(mainClass) ? mainClass : null;
+                return !NutsBlankable.isBlank(mainClass) ? mainClass : null;
             }
         } catch (Exception ex) {
             //invalid file

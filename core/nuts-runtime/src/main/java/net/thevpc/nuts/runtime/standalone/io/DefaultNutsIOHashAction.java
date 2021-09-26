@@ -167,7 +167,7 @@ public class DefaultNutsIOHashAction implements NutsIOHashAction {
 
     @Override
     public NutsIOHashAction setAlgorithm(String algorithm) {
-        if (NutsUtilStrings.isBlank(algorithm)) {
+        if (NutsBlankable.isBlank(algorithm)) {
             algorithm = null;
         }
         try {

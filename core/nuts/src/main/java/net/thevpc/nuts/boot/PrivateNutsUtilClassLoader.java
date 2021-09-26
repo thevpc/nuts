@@ -41,9 +41,9 @@ class PrivateNutsUtilClassLoader {
         for (URL url : urls) {
             NutsBootId[] nutsBootIds = PrivateNutsUtilMaven.resolveJarIds(url);
             for (NutsBootId i : nutsBootIds) {
-                if (NutsUtilStrings.isBlank(id.getGroupId()) || i.getGroupId().equals(id.getGroupId())) {
-                    if (NutsUtilStrings.isBlank(id.getArtifactId()) || i.getArtifactId().equals(id.getArtifactId())) {
-                        if (NutsUtilStrings.isBlank(id.getVersionString()) || i.getVersion().toString().equals(id.getVersionString())) {
+                if (NutsBlankable.isBlank(id.getGroupId()) || i.getGroupId().equals(id.getGroupId())) {
+                    if (NutsBlankable.isBlank(id.getArtifactId()) || i.getArtifactId().equals(id.getArtifactId())) {
+                        if (NutsBlankable.isBlank(id.getVersionString()) || i.getVersion().toString().equals(id.getVersionString())) {
                             return url;
                         }
                     }
@@ -58,25 +58,25 @@ class PrivateNutsUtilClassLoader {
         if (contextClassLoader != null) {
             if (contextClassLoader instanceof URLClassLoader) {
                 all.addAll(Arrays.asList(((URLClassLoader) contextClassLoader).getURLs()));
-            }else{
+            } else {
                 //open jdk 9+ uses module and AppClassLoader no longer extends URLClassLoader
                 try {
                     Enumeration<URL> r = contextClassLoader.getResources("META-INF/MANIFEST.MF");
                     while (r.hasMoreElements()) {
                         URL u = r.nextElement();
-                        if("jrt".equals(u.getProtocol())) {
+                        if ("jrt".equals(u.getProtocol())) {
                             //ignore java runtime until we find a way to retrieve their content
                             // In anyways we do not think this is useful for nuts.jar file!
-                        }else if("jar".equals(u.getProtocol())){
-                            if(u.getFile().endsWith("!/META-INF/MANIFEST.MF")){
+                        } else if ("jar".equals(u.getProtocol())) {
+                            if (u.getFile().endsWith("!/META-INF/MANIFEST.MF")) {
                                 String jar = u.getFile().substring(0, u.getFile().length() - "!/META-INF/MANIFEST.MF".length());
                                 all.add(new URL(jar));
                             }
-                        }else {
+                        } else {
                             //ignore any other loading url format!
                         }
                     }
-                }catch (IOException ex){
+                } catch (IOException ex) {
                     //ignore...
                 }
             }
@@ -109,13 +109,13 @@ class PrivateNutsUtilClassLoader {
                             }
                             URL incp = contextClassLoader.getResource(zname);
                             String clz = zname.substring(0, zname.length() - 6).replace('/', '.');
-                            if(incp!=null) {
+                            if (incp != null) {
                                 LOG.log(Level.FINEST, NutsLogVerb.SUCCESS, "url {0} is already in classpath. checked class {1} successfully",
-                                        new Object[]{url,clz});
+                                        new Object[]{url, clz});
                                 return true;
-                            }else{
+                            } else {
                                 LOG.log(Level.FINEST, NutsLogVerb.INFO, "url {0} is not in classpath. failed to check class {1}",
-                                        new Object[]{url,clz});
+                                        new Object[]{url, clz});
                                 return false;
                             }
                         }
@@ -134,7 +134,7 @@ class PrivateNutsUtilClassLoader {
         } catch (IOException e) {
             //
         }
-        LOG.log(Level.FINEST, NutsLogVerb.FAIL, "url {0} is not in classpath. no class found to check",new Object[]{url});
+        LOG.log(Level.FINEST, NutsLogVerb.FAIL, "url {0} is not in classpath. no class found to check", new Object[]{url});
         return false;
     }
 }

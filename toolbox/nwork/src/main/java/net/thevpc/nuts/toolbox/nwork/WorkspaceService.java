@@ -665,7 +665,7 @@ public class WorkspaceService {
                             if (interactive) {
                                 String id = appContext.getSession().getTerminal().readLine("enter Id %s: ",
                                         (p2.getId() == null ? "" : ("(" + text.forPlain(p2.getId()) + ")")));
-                                if (!NutsUtilStrings.isBlank(id)) {
+                                if (!NutsBlankable.isBlank(id)) {
                                     p2.setId(id);
                                 }
                             }

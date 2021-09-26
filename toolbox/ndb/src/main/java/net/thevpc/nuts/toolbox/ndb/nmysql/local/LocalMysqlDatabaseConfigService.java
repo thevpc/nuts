@@ -58,9 +58,9 @@ public class LocalMysqlDatabaseConfigService {
     }
 
     public ArchiveResult backup(String path) {
-        if (NutsUtilStrings.isBlank(path)) {
+        if (NutsBlankable.isBlank(path)) {
             String databaseName = getConfig().getDatabaseName();
-            if (NutsUtilStrings.isBlank(databaseName)) {
+            if (NutsBlankable.isBlank(databaseName)) {
                 databaseName = name;
             }
             path = databaseName + "-" + new SimpleDateFormat("yyyyMMddHHmm").format(new Date()) + ".sql.zip";
@@ -188,7 +188,7 @@ public class LocalMysqlDatabaseConfigService {
 
     public String getDatabaseName() {
         String s = getConfig().getDatabaseName();
-        if (NutsUtilStrings.isBlank(s)) {
+        if (NutsBlankable.isBlank(s)) {
             s = name;
         }
         return s;

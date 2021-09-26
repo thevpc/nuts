@@ -1,6 +1,9 @@
 package net.thevpc.nuts.boot;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.NutsArgument;
+import net.thevpc.nuts.NutsCommandLineManager;
+import net.thevpc.nuts.NutsUtilStrings;
+import net.thevpc.nuts.NutsVal;
 
 import java.util.NoSuchElementException;
 
@@ -28,7 +31,7 @@ final class PrivateNutsArgumentImpl /*extends PrivateNutsTokenFilter*/ implement
      * @param eq         equals
      */
     public PrivateNutsArgumentImpl(String expression, char eq) {
-        this.expression=expression;
+        this.expression = expression;
         this.eq = eq;
     }
 
@@ -147,6 +150,86 @@ final class PrivateNutsArgumentImpl /*extends PrivateNutsTokenFilter*/ implement
         return expression != null && expression.indexOf(eq) >= 0;
     }
 
+    @Override
+    public String getOptionPrefix() {
+        String k = getArgumentKey();
+        if (k != null) {
+            if (k.startsWith("---")) {
+                return "---";
+            }
+            if (k.startsWith("--")) {
+                return "--";
+            }
+            if (k.startsWith("-")) {
+                return "-";
+            }
+            if (k.startsWith("+++")) {
+                return "+++";
+            }
+            if (k.startsWith("++")) {
+                return "++";
+            }
+            if (k.startsWith("+")) {
+                return "+";
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public String getSeparator() {
+        return String.valueOf(eq);
+    }
+
+    @Override
+    public NutsVal getOptionName() {
+        String k = getArgumentKey();
+        if (k != null) {
+            String p = getOptionPrefix();
+            if (p != null) {
+                return new NutsBootStrValImpl(k.substring(p.length()));
+            }
+        }
+        return new NutsBootStrValImpl(null);
+    }
+
+    @Override
+    public NutsVal getValue() {
+        String vv = null;
+        if (expression != null) {
+            int x = expression.indexOf(eq);
+            if (x >= 0) {
+                vv = expression.substring(x + 1);
+            }
+        }
+        return new NutsBootStrValImpl(vv) {
+
+            @Override
+            public boolean getBoolean() {
+                return getBoolean(true, false);
+            }
+
+            @Override
+            public Boolean getBoolean(Boolean emptyValue, Boolean errorValue) {
+                Boolean b = NutsUtilStrings.parseBoolean(this.getString(), emptyValue, errorValue);
+                if (b != null && isNegated()) {
+                    return !b;
+                }
+                return b;
+            }
+        };
+    }
+
+    @Override
+    public NutsVal getKey() {
+        return new NutsBootStrValImpl(getArgumentKey());
+    }
+
+    @Override
+    public NutsVal getAll() {
+        return new NutsBootStrValImpl(expression);
+    }
+
     public String getArgumentKey() {
         if (expression == null) {
             return null;
@@ -182,89 +265,6 @@ final class PrivateNutsArgumentImpl /*extends PrivateNutsTokenFilter*/ implement
         }
         return p;
     }
-
-    @Override
-    public String getOptionPrefix() {
-        String k = getArgumentKey();
-        if(k!=null) {
-            if (k.startsWith("---")) {
-                return "---";
-            }
-            if (k.startsWith("--")) {
-                return "--";
-            }
-            if (k.startsWith("-")) {
-                return "-";
-            }
-            if (k.startsWith("+++")) {
-                return "+++";
-            }
-            if (k.startsWith("++")) {
-                return "++";
-            }
-            if (k.startsWith("+")) {
-                return "+";
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public String getSeparator() {
-        return String.valueOf(eq);
-    }
-
-    @Override
-    public NutsVal getOptionName() {
-        String k = getArgumentKey();
-        if(k!=null){
-            String p = getOptionPrefix();
-            if(p!=null){
-                return new NutsBootStrValImpl(k.substring(p.length()));
-            }
-        }
-        return new NutsBootStrValImpl(null);
-    }
-
-
-
-
-    @Override
-    public NutsVal getValue() {
-        String vv=null;
-        if (expression != null) {
-            int x = expression.indexOf(eq);
-            if (x >= 0) {
-                vv= expression.substring(x + 1);
-            }
-        }
-        return new NutsBootStrValImpl(vv) {
-
-            @Override
-            public boolean getBoolean() {
-                return getBoolean(true,false);
-            }
-            @Override
-            public Boolean getBoolean(Boolean emptyValue, Boolean errorValue) {
-                Boolean b = NutsUtilStrings.parseBoolean(this.getString(), emptyValue, errorValue);
-                if (b!=null && isNegated()) {
-                    return !b;
-                }
-                return b;
-            }
-        };
-    }
-
-    @Override
-    public NutsVal getKey() {
-        return new NutsBootStrValImpl(getArgumentKey());
-    }
-
-    @Override
-    public NutsVal getAll() {
-        return new NutsBootStrValImpl(expression);
-    }
-
 
     public boolean isNull() {
         return expression == null;

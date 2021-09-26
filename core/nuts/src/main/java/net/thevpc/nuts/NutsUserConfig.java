@@ -10,19 +10,19 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
  * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts;
 
 import java.util.Arrays;
@@ -52,8 +52,8 @@ public final class NutsUserConfig extends NutsConfigItem {
         this.credentials = other.getCredentials();
         this.remoteIdentity = other.getRemoteIdentity();
         this.remoteCredentials = other.getRemoteCredentials();
-        this.groups=other.getGroups()==null?null:Arrays.copyOf(other.getGroups(),other.getGroups().length);
-        this.permissions =other.getPermissions()==null?null:Arrays.copyOf(other.getPermissions(),other.getPermissions().length);
+        this.groups = other.getGroups() == null ? null : Arrays.copyOf(other.getGroups(), other.getGroups().length);
+        this.permissions = other.getPermissions() == null ? null : Arrays.copyOf(other.getPermissions(), other.getPermissions().length);
     }
 
     public NutsUserConfig(String user, String credentials, String[] groups, String[] permissions) {
@@ -112,6 +112,14 @@ public final class NutsUserConfig extends NutsConfigItem {
     }
 
     @Override
+    public int hashCode() {
+        int result = Objects.hash(user, credentials, remoteIdentity, remoteCredentials);
+        result = 31 * result + Arrays.hashCode(groups);
+        result = 31 * result + Arrays.hashCode(permissions);
+        return result;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -122,14 +130,6 @@ public final class NutsUserConfig extends NutsConfigItem {
                 Arrays.equals(permissions, that.permissions) &&
                 Objects.equals(remoteIdentity, that.remoteIdentity) &&
                 Objects.equals(remoteCredentials, that.remoteCredentials);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = Objects.hash(user, credentials, remoteIdentity, remoteCredentials);
-        result = 31 * result + Arrays.hashCode(groups);
-        result = 31 * result + Arrays.hashCode(permissions);
-        return result;
     }
 
     @Override

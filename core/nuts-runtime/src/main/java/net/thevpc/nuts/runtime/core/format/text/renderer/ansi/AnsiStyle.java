@@ -5,6 +5,7 @@
  */
 package net.thevpc.nuts.runtime.core.format.text.renderer.ansi;
 
+import net.thevpc.nuts.NutsBlankable;
 import net.thevpc.nuts.NutsUtilStrings;
 import net.thevpc.nuts.runtime.core.format.text.RenderedRawStream;
 import net.thevpc.nuts.runtime.core.format.text.renderer.StyleRenderer;
@@ -65,8 +66,8 @@ public class AnsiStyle implements StyleRenderer {
 
     public boolean isPlain() {
         if (!bold && !blink && !underlined && !italic && !striked && !reversed
-                && NutsUtilStrings.isBlank(foreground)
-                && NutsUtilStrings.isBlank(background)
+                && NutsBlankable.isBlank(foreground)
+                && NutsBlankable.isBlank(background)
         ) {
             return true;
         }
@@ -93,7 +94,7 @@ public class AnsiStyle implements StyleRenderer {
 
             sb.append(foreground);
         }
-        if (!NutsUtilStrings.isBlank(background)) {
+        if (!NutsBlankable.isBlank(background)) {
             if (first) {
                 first = false;
             } else {

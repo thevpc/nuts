@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.standalone.io;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.io.DefaultNutsProcessInfo;
-import net.thevpc.nuts.runtime.standalone.util.NutsCollectionStream;
 import net.thevpc.nuts.runtime.bundles.iter.IteratorBuilder;
 import net.thevpc.nuts.runtime.bundles.iter.IteratorUtils;
 
@@ -99,8 +98,8 @@ public class DefaultNutsIOProcessAction implements NutsIOProcessAction {
         if (v != null) {
             return v;
         }
-        NutsVersionFilter nvf = NutsUtilStrings.isBlank(version) ? null : ws.version().parser().parse(version).filter();
-        NutsPlatformLocation[] availableJava = ws.env().platforms().setSession(session).find("java",
+        NutsVersionFilter nvf = NutsBlankable.isBlank(version) ? null : ws.version().parser().parse(version).filter();
+        NutsPlatformLocation[] availableJava = ws.env().platforms().setSession(session).findPlatforms(NutsPlatformType.JAVA,
                 java -> "jdk".equals(java.getPackaging()) && (nvf == null || nvf.acceptVersion(ws.version().parser().parse(java.getVersion()), session))
         );
         for (NutsPlatformLocation java : availableJava) {

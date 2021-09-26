@@ -1,5 +1,6 @@
 package net.thevpc.nuts.lib.ssh;
 
+import net.thevpc.nuts.NutsBlankable;
 import net.thevpc.nuts.NutsUtilStrings;
 
 import java.util.Map;
@@ -70,7 +71,7 @@ public class SshAddress {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("ssh://");
-        if (!NutsUtilStrings.isBlank(user)) {
+        if (!NutsBlankable.isBlank(user)) {
             sb.append(user).append("@");
         }
         sb.append(host);

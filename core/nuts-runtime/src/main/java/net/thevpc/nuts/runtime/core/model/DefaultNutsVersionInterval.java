@@ -26,10 +26,8 @@
 package net.thevpc.nuts.runtime.core.model;
 
 import java.io.Serializable;
-import net.thevpc.nuts.NutsConstants;
-import net.thevpc.nuts.NutsUtilStrings;
-import net.thevpc.nuts.NutsVersion;
-import net.thevpc.nuts.NutsVersionInterval;
+
+import net.thevpc.nuts.*;
 
 /**
  * Created by vpc on 2/1/17.
@@ -54,13 +52,13 @@ public class DefaultNutsVersionInterval implements NutsVersionInterval, Serializ
 
     @Override
     public boolean acceptVersion(NutsVersion version) {
-        if (!NutsUtilStrings.isBlank(lowerBound) && !lowerBound.equals(NutsConstants.Versions.LATEST) && !lowerBound.equals(NutsConstants.Versions.RELEASE)) {
+        if (!NutsBlankable.isBlank(lowerBound) && !lowerBound.equals(NutsConstants.Versions.LATEST) && !lowerBound.equals(NutsConstants.Versions.RELEASE)) {
             int t = version.compareTo(lowerBound);
             if ((includeLowerBound && t < 0) || (!includeLowerBound && t <= 0)) {
                 return false;
             }
         }
-        if (!NutsUtilStrings.isBlank(upperBound) && !upperBound.equals(NutsConstants.Versions.LATEST) && !upperBound.equals(NutsConstants.Versions.RELEASE)) {
+        if (!NutsBlankable.isBlank(upperBound) && !upperBound.equals(NutsConstants.Versions.LATEST) && !upperBound.equals(NutsConstants.Versions.RELEASE)) {
             int t = version.compareTo(upperBound);
             return (!includeUpperBound || t <= 0) && (includeUpperBound || t < 0);
         }

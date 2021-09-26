@@ -28,20 +28,19 @@ package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.NutsApiUtils;
 
-import java.util.NoSuchElementException;
-
 /**
  * Command Line Argument
  *
  * @author thevpc
- * @since 0.5.5
  * @app.category Command Line
+ * @since 0.5.5
  */
 public interface NutsArgument {
 
     /**
      * create instance for the given value and with the given session
-     * @param value value
+     *
+     * @param value   value
      * @param session session (must not be null)
      * @return new instance
      */
@@ -113,6 +112,7 @@ public interface NutsArgument {
 
     /**
      * return option prefix part  ('-' and '--')
+     *
      * @return option prefix part  ('-' and '--')
      * @since 0.5.7
      */
@@ -120,6 +120,7 @@ public interface NutsArgument {
 
     /**
      * return query value separator
+     *
      * @return query value separator
      * @since 0.5.7
      */
@@ -127,6 +128,7 @@ public interface NutsArgument {
 
     /**
      * return option key part excluding prefix ('-' and '--')
+     *
      * @return option key part excluding prefix ('-' and '--')
      * @since 0.5.7
      */
@@ -157,7 +159,6 @@ public interface NutsArgument {
 
 
     /**
-     *
      * return key part (never null) of the argument. The key does not include
      * neither ! nor // or = argument parts as they are parsed separately. Here
      * are some examples of getStringKey() result for some common arguments
@@ -180,7 +181,6 @@ public interface NutsArgument {
     NutsVal getKey();
 
     NutsVal getAll();
-
 
 
 }

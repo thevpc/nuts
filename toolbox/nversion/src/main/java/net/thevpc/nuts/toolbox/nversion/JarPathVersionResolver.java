@@ -88,9 +88,9 @@ public class JarPathVersionResolver implements PathVersionResolver{
                                 }
                                 properties.setProperty("nuts.version-provider", "OSGI");
                                 //OSGI
-                                if (!NutsUtilStrings.isBlank(Bundle_SymbolicName)
-                                        && !NutsUtilStrings.isBlank(Bundle_Name)
-                                        && !NutsUtilStrings.isBlank(Bundle_Version)) {
+                                if (!NutsBlankable.isBlank(Bundle_SymbolicName)
+                                        && !NutsBlankable.isBlank(Bundle_Name)
+                                        && !NutsBlankable.isBlank(Bundle_Version)) {
                                     all.add(new VersionDescriptor(
                                             context.getWorkspace().id().builder().setGroupId(Bundle_SymbolicName).setArtifactId(Bundle_Name).setVersion(Bundle_Version).build(),
                                             properties

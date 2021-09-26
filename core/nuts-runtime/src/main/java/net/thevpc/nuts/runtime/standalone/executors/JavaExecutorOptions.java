@@ -133,13 +133,13 @@ public final class JavaExecutorOptions {
         }
         if (getJavaHome() == null) {
             if (javaw) {
-                if (!NutsUtilStrings.isBlank(getJavaVersion())) {
+                if (!NutsBlankable.isBlank(getJavaVersion())) {
                     javaHome = "${javaw#" + getJavaVersion() + "}";
                 } else {
                     javaHome = "${javaw}";
                 }
             } else {
-                if (!NutsUtilStrings.isBlank(getJavaVersion())) {
+                if (!NutsBlankable.isBlank(getJavaVersion())) {
                     javaHome = "${java#" + getJavaVersion() + "}";
                 } else {
                     javaHome = "${java}";
@@ -348,7 +348,7 @@ public final class JavaExecutorOptions {
             addNp(classPath, value);
         } else {
             for (String n : StringTokenizerUtils.split(value, ":")) {
-                if (!NutsUtilStrings.isBlank(n)) {
+                if (!NutsBlankable.isBlank(n)) {
                     File f = CoreIOUtils.toFile(n);
                     if (f == null) {
                         throw new IllegalArgumentException("invalid path " + n);
@@ -371,7 +371,7 @@ public final class JavaExecutorOptions {
         NutsSearchCommand ns = getWorkspace().search().setLatest(true)
                 .setSession(searchSession);
         for (String n : StringTokenizerUtils.split(value, ";, ")) {
-            if (!NutsUtilStrings.isBlank(n)) {
+            if (!NutsBlankable.isBlank(n)) {
                 ns.addId(n);
             }
         }

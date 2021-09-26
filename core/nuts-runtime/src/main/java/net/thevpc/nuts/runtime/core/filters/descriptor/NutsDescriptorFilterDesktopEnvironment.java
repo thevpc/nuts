@@ -58,7 +58,7 @@ public class NutsDescriptorFilterDesktopEnvironment extends AbstractDescriptorFi
      */
     @Override
     public NutsDescriptorFilter simplify() {
-        if (NutsUtilStrings.isBlank(desktopEnvironment)) {
+        if (NutsBlankable.isBlank(desktopEnvironment)) {
             return null;
         }
         return this;

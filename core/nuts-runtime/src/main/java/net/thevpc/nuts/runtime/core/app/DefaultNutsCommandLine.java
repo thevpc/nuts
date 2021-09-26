@@ -569,7 +569,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
 
     @Override
     public void throwError(NutsMessage message) {
-        if (NutsUtilStrings.isBlank(commandName)) {
+        if (NutsBlankable.isBlank(commandName)) {
             throw new NutsIllegalArgumentException(session, message);
         }
         throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("%s : %s", commandName, message));
@@ -617,7 +617,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
     @Override
     public void throwError(NutsString message) {
         NutsTextBuilder m = getWorkspace().text().builder();
-        if (!NutsUtilStrings.isBlank(commandName)) {
+        if (!NutsBlankable.isBlank(commandName)) {
             m.append(commandName).append(" : ");
         }
         m.append(message);

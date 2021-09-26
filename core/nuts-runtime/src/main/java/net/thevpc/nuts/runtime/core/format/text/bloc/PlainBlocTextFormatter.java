@@ -31,7 +31,7 @@ public class PlainBlocTextFormatter implements NutsCodeFormat {
     }
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext<String> criteria) {
+    public int getSupportLevel(NutsSupportLevelContext<String> context) {
         return NutsComponent.DEFAULT_SUPPORT;
     }
 

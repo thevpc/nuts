@@ -218,7 +218,7 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
         NutsWorkspace ws = getSession().getWorkspace();
         if (values != null) {
             for (String s : values) {
-                if (!NutsUtilStrings.isBlank(s)) {
+                if (!NutsBlankable.isBlank(s)) {
                     ids.add(ws.id().parser().setLenient(false).parse(s));
                 }
             }
@@ -272,7 +272,7 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
     public NutsDeployCommand addId(String id) {
         checkSession();
         NutsWorkspace ws = getSession().getWorkspace();
-        if (!NutsUtilStrings.isBlank(id)) {
+        if (!NutsBlankable.isBlank(id)) {
             ids.add(ws.id().parser().setLenient(false).parse(id));
         }
         return this;

@@ -41,7 +41,7 @@ public class NutsVersionJavascriptFilter extends AbstractVersionFilter implement
     private JavascriptHelper engineHelper;
 
     public static NutsVersionFilter valueOf(String value, NutsSession session) {
-        if (NutsUtilStrings.isBlank(value)) {
+        if (NutsBlankable.isBlank(value)) {
             return session.getWorkspace().version().filter().always();
         }
         return new NutsVersionJavascriptFilter(session,value);

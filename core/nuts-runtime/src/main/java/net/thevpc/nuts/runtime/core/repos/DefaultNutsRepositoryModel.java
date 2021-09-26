@@ -213,10 +213,10 @@ public class DefaultNutsRepositoryModel {
             NutsRepositoryConfig config = new NutsRepositoryConfig();
             String name = repoModel.getName();
             String uuid = repoModel.getUuid();
-            if (NutsUtilStrings.isBlank(name)) {
+            if (NutsBlankable.isBlank(name)) {
                 name = "custom";
             }
-            if (NutsUtilStrings.isBlank(uuid)) {
+            if (NutsBlankable.isBlank(uuid)) {
                 uuid = UUID.randomUUID().toString();
             }
             config.setName(name);
@@ -273,7 +273,7 @@ public class DefaultNutsRepositoryModel {
                 }
                 options.setLocation(CoreIOUtils.resolveRepositoryPath(options, rootFolder, session));
             }
-            if (NutsUtilStrings.isBlank(conf.getName())) {
+            if (NutsBlankable.isBlank(conf.getName())) {
                 conf.setName(options.getName());
             }
             NutsRepositoryFactoryComponent factory_ = getWorkspace().extensions()
@@ -286,13 +286,13 @@ public class DefaultNutsRepositoryModel {
                 }
             }
             if (options.isTemporary()) {
-                if (NutsUtilStrings.isBlank(conf.getType())) {
+                if (NutsBlankable.isBlank(conf.getType())) {
                     throw new NutsInvalidRepositoryException(session, options.getName(), NutsMessage.cstyle("unable to detect valid type for temporary repository"));
                 } else {
                     throw new NutsInvalidRepositoryException(session, options.getName(), NutsMessage.cstyle("invalid repository type %s", conf.getType()));
                 }
             } else {
-                if (NutsUtilStrings.isBlank(conf.getType())) {
+                if (NutsBlankable.isBlank(conf.getType())) {
                     throw new NutsInvalidRepositoryException(session, options.getName(), NutsMessage.cstyle("unable to detect valid type for repository"));
                 } else {
                     throw new NutsInvalidRepositoryException(session, options.getName(), NutsMessage.cstyle("invalid repository type %s", conf.getType()));

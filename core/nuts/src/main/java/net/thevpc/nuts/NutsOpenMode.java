@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -11,7 +11,7 @@
  * architecture to help supporting a large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -23,16 +23,15 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts;
 
 /**
- *
  * @author thevpc
- * @since 0.5.4 (renamed from NutsWorkspaceOpenMode to NutsOpenMode in 0.8.1)
  * @app.category Config
+ * @since 0.5.4 (renamed from NutsWorkspaceOpenMode to NutsOpenMode in 0.8.1)
  */
-public enum NutsOpenMode implements NutsEnum{
+public enum NutsOpenMode implements NutsEnum {
     /**
      * Open or Create. Default Mode. If the workspace is found, it will be
      * created otherwise it will be opened
@@ -52,14 +51,14 @@ public enum NutsOpenMode implements NutsEnum{
      * if not exists, then error
      * if exists, then open
      */
-     OPEN_OR_ERROR,
+    OPEN_OR_ERROR,
 
     /**
      * Open Workspace (if found) or return null
      * if not exists, then open
      * if exists, then return null
      */
-     OPEN_OR_NULL;
+    OPEN_OR_NULL;
 
     /**
      * lower-cased identifier for the enum entry
@@ -68,14 +67,6 @@ public enum NutsOpenMode implements NutsEnum{
 
     NutsOpenMode() {
         this.id = name().toLowerCase().replace('_', '-');
-    }
-
-    /**
-     * lower cased identifier.
-     * @return lower cased identifier
-     */
-    public String id() {
-        return id;
     }
 
     public static NutsOpenMode parseLenient(String value) {
@@ -100,5 +91,28 @@ public enum NutsOpenMode implements NutsEnum{
         } catch (Exception notFound) {
             return errorValue;
         }
+    }
+
+    public static NutsOpenMode parse(String value, NutsSession session) {
+        return parse(value, null, session);
+    }
+
+    public static NutsOpenMode parse(String value, NutsOpenMode emptyValue, NutsSession session) {
+        NutsOpenMode v = parseLenient(value, emptyValue, null);
+        if (v == null) {
+            if (!NutsBlankable.isBlank(value)) {
+                throw new NutsParseEnumException(session, value, NutsOpenMode.class);
+            }
+        }
+        return v;
+    }
+
+    /**
+     * lower cased identifier.
+     *
+     * @return lower cased identifier
+     */
+    public String id() {
+        return id;
     }
 }

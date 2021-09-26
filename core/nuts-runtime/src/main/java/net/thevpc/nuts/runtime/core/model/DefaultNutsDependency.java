@@ -121,16 +121,16 @@ public class DefaultNutsDependency implements NutsDependency {
         if (!NutsDependencyScopes.isDefaultScope(scope)) {
             m.put(NutsConstants.IdProperties.SCOPE, scope);
         }
-        if (!NutsUtilStrings.isBlank(optional) && !"false".equals(optional)) {
+        if (!NutsBlankable.isBlank(optional) && !"false".equals(optional)) {
             m.put(NutsConstants.IdProperties.OPTIONAL, optional);
         }
-        if (!NutsUtilStrings.isBlank(classifier)) {
+        if (!NutsBlankable.isBlank(classifier)) {
             m.put(NutsConstants.IdProperties.CLASSIFIER, classifier);
         }
-        if (!NutsUtilStrings.isBlank(type)) {
+        if (!NutsBlankable.isBlank(type)) {
             m.put(NutsConstants.IdProperties.TYPE, type);
         }
-        if (!NutsUtilStrings.isBlank(repository)) {
+        if (!NutsBlankable.isBlank(repository)) {
             m.put(NutsConstants.IdProperties.REPO, repository);
         }
         if (exclusions.length > 0) {
@@ -165,7 +165,7 @@ public class DefaultNutsDependency implements NutsDependency {
 
     @Override
     public String getSimpleName() {
-        if (NutsUtilStrings.isBlank(groupId)) {
+        if (NutsBlankable.isBlank(groupId)) {
             return NutsUtilStrings.trim(artifactId);
         }
         return NutsUtilStrings.trim(groupId) + ":" + NutsUtilStrings.trim(artifactId);
@@ -208,28 +208,28 @@ public class DefaultNutsDependency implements NutsDependency {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        if (!NutsUtilStrings.isBlank(groupId)) {
+        if (!NutsBlankable.isBlank(groupId)) {
             sb.append(groupId).append(":");
         }
         sb.append(artifactId);
-        if (!NutsUtilStrings.isBlank(version.getValue())) {
+        if (!NutsBlankable.isBlank(version.getValue())) {
             sb.append("#").append(version);
         }
         Map<String, String> p = new HashMap<>();
-        if (!NutsUtilStrings.isBlank(repository)) {
+        if (!NutsBlankable.isBlank(repository)) {
             p.put(NutsConstants.IdProperties.REPO, repository);
         }
-        if (!NutsUtilStrings.isBlank(scope)) {
+        if (!NutsBlankable.isBlank(scope)) {
             if (!scope.equals(NutsDependencyScope.API.id())) {
                 p.put(NutsConstants.IdProperties.SCOPE, scope);
             }
         }
-        if (!NutsUtilStrings.isBlank(optional)) {
+        if (!NutsBlankable.isBlank(optional)) {
             if (!optional.equals("false")) {
                 p.put(NutsConstants.IdProperties.OPTIONAL, optional);
             }
         }
-        if (!NutsUtilStrings.isBlank(type)) {
+        if (!NutsBlankable.isBlank(type)) {
             p.put(NutsConstants.IdProperties.TYPE, type);
         }
         if (condition!=null && !condition.isBlank()) {

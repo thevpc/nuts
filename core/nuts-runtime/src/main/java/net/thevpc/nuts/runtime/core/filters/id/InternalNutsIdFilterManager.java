@@ -67,7 +67,7 @@ public class InternalNutsIdFilterManager extends InternalNutsTypedFilters<NutsId
 
     @Override
     public NutsIdFilter byExpression(String expression) {
-        if (NutsUtilStrings.isBlank(expression)) {
+        if (NutsBlankable.isBlank(expression)) {
             return always();
         }
         return NutsJavascriptIdFilter.valueOf(expression, getSession());

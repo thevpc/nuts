@@ -111,7 +111,7 @@ public class NutsHttpServerComponent implements NutsServerComponent {
         int port = httpConfig.getPort();
         int backlog = httpConfig.getBacklog();
         Executor executor = httpConfig.getExecutor();
-        if (NutsUtilStrings.isBlank(serverId)) {
+        if (NutsBlankable.isBlank(serverId)) {
             String serverName = NutsServerConstants.DEFAULT_HTTP_SERVER;
             try {
                 serverName = InetAddress.getLocalHost().getHostName();

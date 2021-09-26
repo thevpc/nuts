@@ -139,7 +139,7 @@ public final class Nuts {
                         + " " + NutsUtilStrings.trim(System.getProperty("nuts.args"))
         );
         NutsWorkspaceOptionsBuilder options = NutsWorkspaceOptionsBuilder.of();
-        if (!NutsUtilStrings.isBlank(nutsWorkspaceOptions)) {
+        if (!NutsBlankable.isBlank(nutsWorkspaceOptions)) {
             options.parseCommandLine(nutsWorkspaceOptions);
         }
         options.setApplicationArguments(args);

@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -11,7 +11,7 @@
  * architecture to help supporting a large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -38,7 +38,7 @@ import java.nio.file.Path;
  */
 public interface NutsDescriptorParser {
 
-    public static NutsDescriptorParser of(NutsSession session){
+    static NutsDescriptorParser of(NutsSession session) {
         NutsApiUtils.checkSession(session);
         return session.getWorkspace().descriptor().parser();
     }
@@ -97,14 +97,14 @@ public interface NutsDescriptorParser {
      */
     NutsDescriptor parse(String descriptorString);
 
-    NutsDescriptorParser setLenient(boolean lenient);
+    NutsDescriptorStyle getDescriptorStyle();
 
     NutsDescriptorParser setDescriptorStyle(NutsDescriptorStyle descriptorStyle);
 
-    NutsDescriptorStyle getDescriptorStyle();
-
     boolean isLenient();
-    
+
+    NutsDescriptorParser setLenient(boolean lenient);
+
     NutsSession getSession();
 
     NutsDescriptorParser setSession(NutsSession session);

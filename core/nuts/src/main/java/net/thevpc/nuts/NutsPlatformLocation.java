@@ -10,33 +10,36 @@
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
  * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts;
 
 import java.util.Objects;
 
 /**
  * SDK location
+ *
  * @author thevpc
- * @since 0.5.4
  * @app.category Config
+ * @since 0.5.4
+ * @since 0.8.3 added type
  */
 public class NutsPlatformLocation extends NutsConfigItem {
 
-    public static final long serialVersionUID = 2;
+    public static final long serialVersionUID = 3;
     private final NutsId id;
+    private final NutsPlatformType platformType;
     private final String name;
     private final String packaging;
     private final String product;
@@ -46,16 +49,19 @@ public class NutsPlatformLocation extends NutsConfigItem {
 
     /**
      * default constructor
-     * @param id id
-     * @param product SDK product. In java this is Oracle JDK or OpenJDK.
-     * @param name SDK name
-     * @param path SDK path
-     * @param version SDK version
+     *
+     * @param id        id
+     * @param product   SDK product. In java this is Oracle JDK or OpenJDK.
+     * @param name      SDK name
+     * @param path      SDK path
+     * @param version   SDK version
      * @param packaging SDK packaging. for Java SDK this is room to set JRE or JDK.
-     * @param priority SDK priority
+     * @param priority  SDK priority
      */
     public NutsPlatformLocation(NutsId id, String product, String name, String path, String version, String packaging, int priority) {
         this.id = id;
+        this.platformType = (id == null || NutsBlankable.isBlank(id.getArtifactId())) ? NutsPlatformType.JAVA :
+                NutsPlatformType.parseLenient(id.getArtifactId(), NutsPlatformType.UNKNOWN, NutsPlatformType.UNKNOWN);
         this.product = product;
         this.name = name;
         this.path = path;
@@ -64,17 +70,20 @@ public class NutsPlatformLocation extends NutsConfigItem {
         this.priority = priority;
     }
 
-
-    public NutsPlatformLocation setPriority(int priority) {
-        return new NutsPlatformLocation(id, product, name, path, version, packaging,priority);
-    }
-
     public int getPriority() {
         return priority;
     }
 
+    public NutsPlatformLocation setPriority(int priority) {
+        return new NutsPlatformLocation(id, product, name, path, version, packaging, priority);
+    }
+
     public NutsId getId() {
         return id;
+    }
+
+    public NutsPlatformType getPlatformType() {
+        return platformType;
     }
 
     /**
@@ -89,6 +98,7 @@ public class NutsPlatformLocation extends NutsConfigItem {
 
     /**
      * SDK version
+     *
      * @return SDK version
      */
     public String getVersion() {
@@ -97,6 +107,7 @@ public class NutsPlatformLocation extends NutsConfigItem {
 
     /**
      * sdk name
+     *
      * @return sdk name
      */
     public String getName() {
@@ -105,6 +116,7 @@ public class NutsPlatformLocation extends NutsConfigItem {
 
     /**
      * sdk path
+     *
      * @return sdk path
      */
     public String getPath() {
@@ -122,6 +134,11 @@ public class NutsPlatformLocation extends NutsConfigItem {
     }
 
     @Override
+    public int hashCode() {
+        return Objects.hash(id, name, packaging, product, path, version, priority);
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -134,11 +151,6 @@ public class NutsPlatformLocation extends NutsConfigItem {
                 Objects.equals(version, that.version) &&
                 Objects.equals(priority, that.priority)
                 ;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, name, packaging, product, path, version, priority);
     }
 
     @Override

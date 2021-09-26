@@ -28,8 +28,8 @@ package net.thevpc.nuts;
  * https://github.com/trustin/os-maven-plugin
  *
  * @author thevpc
- * @since 0.8.1
  * @app.category Base
+ * @since 0.8.1
  */
 public enum NutsCommandLineFormatStrategy implements NutsEnum {
     DEFAULT,
@@ -74,6 +74,20 @@ public enum NutsCommandLineFormatStrategy implements NutsEnum {
                 return SUPPORT_QUOTES;
         }
         return errorValue;
+    }
+
+    public static NutsCommandLineFormatStrategy parse(String value, NutsSession session) {
+        return parse(value, null, session);
+    }
+
+    public static NutsCommandLineFormatStrategy parse(String value, NutsCommandLineFormatStrategy emptyValue, NutsSession session) {
+        NutsCommandLineFormatStrategy v = parseLenient(value, emptyValue, null);
+        if (v == null) {
+            if (!NutsBlankable.isBlank(value)) {
+                throw new NutsParseEnumException(session, value, NutsCommandLineFormatStrategy.class);
+            }
+        }
+        return v;
     }
 
     /**

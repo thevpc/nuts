@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -11,7 +11,7 @@
  * architecture to help supporting a large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -23,7 +23,7 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts;
 
 import java.util.Objects;
@@ -44,42 +44,43 @@ import java.util.Objects;
  */
 public class NutsInstallStatus {
 
-    private final boolean installed;
-    private final  boolean required;
-    private final  boolean obsolete;
-    private final  boolean defaultVersion;
-    private static final NutsInstallStatus[] ALL=new NutsInstallStatus[16];
+    private static final NutsInstallStatus[] ALL = new NutsInstallStatus[16];
+    public static final NutsInstallStatus NONE = of(false, false, false, false);
+    public static final NutsInstallStatus INSTALLED = of(true, false, false, false);
+    public static final NutsInstallStatus REQUIRED = of(false, true, false, false);
+    public static final NutsInstallStatus OBSOLETE = of(false, false, true, false);
+    public static final NutsInstallStatus DEFAULT_VALUE = of(false, false, false, true);
+
     static {
         for (int i = 0; i < 16; i++) {
-            ALL[i]=new NutsInstallStatus(
-                    (i&0x1)!=0,
-                    (i&0x2)!=0,
-                    (i&0x4)!=0,
-                    (i&0x8)!=0
+            ALL[i] = new NutsInstallStatus(
+                    (i & 0x1) != 0,
+                    (i & 0x2) != 0,
+                    (i & 0x4) != 0,
+                    (i & 0x8) != 0
             );
         }
     }
 
-    public static final NutsInstallStatus NONE=of(false, false, false, false);
-    public static final NutsInstallStatus INSTALLED=of(true, false, false, false);
-    public static final NutsInstallStatus REQUIRED=of(false, true, false, false);
-    public static final NutsInstallStatus OBSOLETE=of(false, false, true, false);
-    public static final NutsInstallStatus DEFAULT_VALUE=of(false, false, false, true);
-
-    public static NutsInstallStatus of(boolean installed, boolean required, boolean obsolete, boolean defaultVersion) {
-        return ALL[
-                (installed?1:0)*1
-                +(required?1:0)*2
-                +(obsolete?1:0)*4
-                +(defaultVersion?1:0)*8
-                ];
-    }
+    private final boolean installed;
+    private final boolean required;
+    private final boolean obsolete;
+    private final boolean defaultVersion;
 
     private NutsInstallStatus(boolean installed, boolean required, boolean obsolete, boolean defaultVersion) {
         this.installed = installed;
         this.required = required;
         this.obsolete = obsolete;
         this.defaultVersion = defaultVersion;
+    }
+
+    public static NutsInstallStatus of(boolean installed, boolean required, boolean obsolete, boolean defaultVersion) {
+        return ALL[
+                (installed ? 1 : 0) * 1
+                        + (required ? 1 : 0) * 2
+                        + (obsolete ? 1 : 0) * 4
+                        + (defaultVersion ? 1 : 0) * 8
+                ];
     }
 
     public boolean isDeployed() {
@@ -127,6 +128,11 @@ public class NutsInstallStatus {
     }
 
     @Override
+    public int hashCode() {
+        return Objects.hash(installed, required, obsolete, defaultVersion);
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -135,35 +141,30 @@ public class NutsInstallStatus {
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(installed, required, obsolete, defaultVersion);
-    }
-
-    @Override
     public String toString() {
-        StringBuilder sb=new StringBuilder();
-        if(installed){
-           sb.append("installed");
+        StringBuilder sb = new StringBuilder();
+        if (installed) {
+            sb.append("installed");
         }
-        if(required){
-            if(sb.length()>0){
+        if (required) {
+            if (sb.length() > 0) {
                 sb.append(",");
             }
-           sb.append("required");
+            sb.append("required");
         }
-        if(defaultVersion){
-            if(sb.length()>0){
+        if (defaultVersion) {
+            if (sb.length() > 0) {
                 sb.append(",");
             }
-           sb.append("defaultVersion");
+            sb.append("defaultVersion");
         }
-        if(obsolete){
-            if(sb.length()>0){
+        if (obsolete) {
+            if (sb.length() > 0) {
                 sb.append(",");
             }
             sb.append("obsolete");
         }
-        if(sb.length()==0){
+        if (sb.length() == 0) {
             sb.append("not-deployed");
         }
         return sb.toString();

@@ -45,14 +45,30 @@ import java.math.BigInteger;
  * @since 0.5.4
  */
 public interface NutsVersion extends Serializable, /*NutsTokenFilter, */NutsFormattable, Comparable<NutsVersion>, NutsBlankable {
-
+    /**
+     * parses the version or create error
+     *
+     * @param str     string value
+     * @param session session
+     * @return parsed value
+     */
     static NutsVersion of(String str, NutsSession session) {
         NutsApiUtils.checkSession(session);
         return session.getWorkspace().version().parse(str);
     }
 
+    /**
+     * return true the version value is a null string
+     *
+     * @return true the version value is a null string
+     */
     boolean isNull();
 
+    /**
+     * return true the version value is a blank string
+     *
+     * @return true the version value is a blank string
+     */
     boolean isBlank();
 
 
@@ -72,6 +88,12 @@ public interface NutsVersion extends Serializable, /*NutsTokenFilter, */NutsForm
      */
     int compareTo(String other);
 
+    /**
+     * compare this version to the other version
+     * @param other other version
+     * @return a negative integer, zero, or a positive integer as this object
+     * is less than, equal to, or greater than the specified object.
+     */
     @Override
     int compareTo(NutsVersion other);
 
@@ -82,6 +104,12 @@ public interface NutsVersion extends Serializable, /*NutsTokenFilter, */NutsForm
      */
     NutsVersionFilter filter();
 
+    /**
+     * parse the current version as new instance of {@link NutsVersionFilter} that guarantees forward compatibility
+     * whenever the version is a single value and hence replaces it by '[value,['
+     *
+     * @return new instance of {@link NutsVersionFilter}
+     */
     NutsVersionFilter filterCompat();
 
     /**
@@ -130,6 +158,13 @@ public interface NutsVersion extends Serializable, /*NutsTokenFilter, */NutsForm
      */
     NutsVersion inc(int position, long amount);
 
+    /**
+     * increment the last number in the version with the given {@code amount}
+     *
+     * @param position number position
+     * @param amount   amount of the increment
+     * @return new version incrementing the last number
+     */
     NutsVersion inc(int position, BigInteger amount);
 
     /**

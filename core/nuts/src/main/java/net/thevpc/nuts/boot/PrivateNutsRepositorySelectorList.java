@@ -1,5 +1,6 @@
 package net.thevpc.nuts.boot;
 
+import net.thevpc.nuts.NutsBlankable;
 import net.thevpc.nuts.NutsUtilStrings;
 
 import java.util.ArrayList;
@@ -50,7 +51,7 @@ public class PrivateNutsRepositorySelectorList {
         for (PrivateNutsRepositorySelector r : all) {
             if (r.getOp() != PrivateNutsRepositorySelectorOp.EXCLUDE) {
 //                    boolean accept = true;
-                if (!NutsUtilStrings.isBlank(r.getName())) {
+                if (!NutsBlankable.isBlank(r.getName())) {
                     String u2 = r.getUrl();
                     int i = existing2.indexOfName(r.getName(), 0);
                     if (i >= 0) {

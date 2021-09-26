@@ -51,7 +51,7 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
 
     public Path getRunningFile() {
         String s = getConfig().getSourceFilePath();
-        if (!NutsUtilStrings.isBlank(s)) {
+        if (!NutsBlankable.isBlank(s)) {
             return Paths.get(s);
         }
         String _runningFolder = tomcat.getConfig().getRunningFolder();
@@ -118,7 +118,7 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
     public Path getDeployFile() {
         LocalTomcatDomainConfigService d = tomcat.getDomain(getConfig().getDomain(), NutsOpenMode.OPEN_OR_ERROR);
         String deployName = getConfig().getDeployName();
-        if (NutsUtilStrings.isBlank(deployName)) {
+        if (NutsBlankable.isBlank(deployName)) {
             deployName = name + ".war";
         }
         if (!deployName.endsWith(".war")) {
@@ -147,7 +147,7 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
     }
 
     public LocalTomcatAppConfigService deploy(String version) {
-        if (NutsUtilStrings.isBlank(version)) {
+        if (NutsBlankable.isBlank(version)) {
             version = getCurrentVersion();
         }
         Path runningFile = getRunningFile();
@@ -169,7 +169,7 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
             if (!Files.isRegularFile(f)) {
                 throw new UncheckedIOException(new IOException("File not found " + f));
             }
-            if (NutsUtilStrings.isBlank(version)) {
+            if (NutsBlankable.isBlank(version)) {
                 version = getCurrentVersion();
             }
             Path domainDeployPath = getArchiveFile(version);

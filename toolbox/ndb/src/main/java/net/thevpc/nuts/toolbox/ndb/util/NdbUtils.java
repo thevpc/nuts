@@ -23,6 +23,7 @@
  */
 package net.thevpc.nuts.toolbox.ndb.util;
 
+import net.thevpc.nuts.NutsBlankable;
 import net.thevpc.nuts.NutsUtilStrings;
 
 /**
@@ -33,7 +34,7 @@ public class NdbUtils {
 
     public static String coalesce(String... cmd) {
         for (String string : cmd) {
-            if (!NutsUtilStrings.isBlank(string)) {
+            if (!NutsBlankable.isBlank(string)) {
                 return string;
             }
         }

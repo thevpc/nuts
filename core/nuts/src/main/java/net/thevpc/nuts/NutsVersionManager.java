@@ -27,11 +27,23 @@
 package net.thevpc.nuts;
 
 /**
+ * version manager is responsible of parsing and formatting versons
  * @app.category Base
  */
 public interface NutsVersionManager {
+
+    /**
+     * parse the version to empty version if blank, a valid instance if parse succeeds or throws an error
+     * @param version id to parse
+     * @return parsed version to a valid instance or throws an error
+     */
     NutsVersion parse(String version);
 
+
+    /**
+     * return new parser that accepts blank values but throws errors when the version is invalid
+     * @return new parser that accepts blank values but throws errors when the version is invalid
+     */
     NutsVersionParser parser();
 
     NutsVersionFormat formatter();

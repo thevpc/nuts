@@ -36,6 +36,20 @@ public enum NutsDescriptorStyle implements NutsEnum {
         }
     }
 
+    public static NutsDescriptorStyle parse(String value, NutsSession session) {
+        return parse(value, null, session);
+    }
+
+    public static NutsDescriptorStyle parse(String value, NutsDescriptorStyle emptyValue, NutsSession session) {
+        NutsDescriptorStyle v = parseLenient(value, emptyValue, null);
+        if (v == null) {
+            if (!NutsBlankable.isBlank(value)) {
+                throw new NutsParseEnumException(session, value, NutsDescriptorStyle.class);
+            }
+        }
+        return v;
+    }
+
     /**
      * lower cased identifier.
      *

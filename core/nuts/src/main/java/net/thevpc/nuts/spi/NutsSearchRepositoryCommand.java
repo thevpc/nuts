@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -11,7 +11,7 @@
  * architecture to help supporting a large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -23,7 +23,7 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.NutsFetchMode;
@@ -40,9 +40,12 @@ import java.util.Iterator;
  */
 public interface NutsSearchRepositoryCommand extends NutsRepositoryCommand {
 
+    NutsIdFilter getFilter();
+
     NutsSearchRepositoryCommand setFilter(NutsIdFilter filter);
 
-    NutsIdFilter getFilter();
+    @Override
+    NutsSearchRepositoryCommand setSession(NutsSession session);
 
     /**
      * this method should return immediately after initializing a valid iterator to be
@@ -52,8 +55,11 @@ public interface NutsSearchRepositoryCommand extends NutsRepositoryCommand {
     @Override
     NutsSearchRepositoryCommand run();
 
-    @Override
-    NutsSearchRepositoryCommand setSession(NutsSession session);
+    /**
+     * get fetchMode
+     * @return {@code this} instance
+     */
+    NutsFetchMode getFetchMode();
 
     /**
      * fetchMode
@@ -61,12 +67,6 @@ public interface NutsSearchRepositoryCommand extends NutsRepositoryCommand {
      * @return {@code this} instance
      */
     NutsSearchRepositoryCommand setFetchMode(NutsFetchMode fetchMode);
-
-    /**
-     * get fetchMode
-     * @return {@code this} instance
-     */
-    NutsFetchMode getFetchMode();
 
     /**
      * this method should return immediately and returns valid iterator.

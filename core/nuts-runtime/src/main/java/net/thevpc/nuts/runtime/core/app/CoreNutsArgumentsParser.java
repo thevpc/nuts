@@ -858,7 +858,7 @@ public final class CoreNutsArgumentsParser {
                     case "--run-as": {
                         a = cmdLine.nextString();
                         if (enabled) {
-                            if (NutsUtilStrings.isBlank(a.getValue().getString())) {
+                            if (NutsBlankable.isBlank(a.getValue().getString())) {
                                 throw new NutsBootException(NutsMessage.cstyle("missing user name"));
                             }
                             options.setRunAs(NutsRunAs.user(a.getValue().getString()));
@@ -966,7 +966,7 @@ public final class CoreNutsArgumentsParser {
                     case "--expire": {
                         a = cmdLine.next();
                         if (enabled) {
-                            if (!NutsUtilStrings.isBlank(a.getValue().getString())) {
+                            if (!NutsBlankable.isBlank(a.getValue().getString())) {
                                 options.setExpireTime(Instant.parse(a.getValue().getString()));
                             } else {
                                 options.setExpireTime(Instant.now());

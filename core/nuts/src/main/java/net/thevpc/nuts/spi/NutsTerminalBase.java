@@ -26,20 +26,13 @@
 package net.thevpc.nuts.spi;
 
 
-import net.thevpc.nuts.NutsMessage;
-import net.thevpc.nuts.NutsPrintStream;
-import net.thevpc.nuts.NutsSession;
-
-import java.io.InputStream;
-
 /**
  * Created by vpc on 2/20/17.
  *
- * @since 0.5.4
  * @app.category SPI Base
+ * @since 0.5.4
  */
 public interface NutsTerminalBase {
-
 
 
 }

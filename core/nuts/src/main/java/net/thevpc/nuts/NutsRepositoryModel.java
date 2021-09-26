@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -11,7 +11,7 @@
  * architecture to help supporting a large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -29,7 +29,7 @@ package net.thevpc.nuts;
 import java.util.Iterator;
 
 /**
- * 
+ *
  * @author thevpc
  * @app.category Extensions
  */
@@ -107,11 +107,11 @@ public interface NutsRepositoryModel {
         return true;
     }
 
-    default boolean isAcceptFetchMode(NutsFetchMode mode){
+    default boolean isAcceptFetchMode(NutsFetchMode mode) {
         return true;
     }
 
-    default boolean isRemote(){
+    default boolean isRemote() {
         return true;
     }
 }

@@ -10,7 +10,7 @@
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -22,7 +22,7 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts;
 
 import java.io.File;
@@ -122,7 +122,13 @@ public interface NutsIOHashAction {
      *             including 'MD5' and 'SHA1'
      * @return {@code this} instance
      */
-    NutsIOHashAction setAlgorithm(String algorithm);
+    NutsIOHashAction algorithm(String algorithm);
+
+    /**
+     *
+     * @return selected algorithm. default is 'SHA1'
+     */
+    String getAlgorithm();
 
     /**
      * select hash algorithm.
@@ -131,11 +137,5 @@ public interface NutsIOHashAction {
      *             including 'MD5' and 'SHA1'
      * @return {@code this} instance
      */
-    NutsIOHashAction algorithm(String algorithm);
-
-    /**
-     *
-     * @return selected algorithm. default is 'SHA1'
-     */
-    String getAlgorithm();
+    NutsIOHashAction setAlgorithm(String algorithm);
 }

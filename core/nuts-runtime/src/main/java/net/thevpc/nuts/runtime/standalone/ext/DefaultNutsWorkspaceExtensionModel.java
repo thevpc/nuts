@@ -595,7 +595,7 @@ public class DefaultNutsWorkspaceExtensionModel {
                 ;
         List<String> urls = new ArrayList<>();
         for (String r : StringTokenizerUtils.split(repos, "; ")) {
-            if (!NutsUtilStrings.isBlank(r)) {
+            if (!NutsBlankable.isBlank(r)) {
                 urls.add(r);
             }
         }

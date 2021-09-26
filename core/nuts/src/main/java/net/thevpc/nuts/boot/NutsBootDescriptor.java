@@ -1,15 +1,13 @@
 package net.thevpc.nuts.boot;
 
-import net.thevpc.nuts.boot.NutsBootId;
-
 import java.util.Arrays;
 
 /**
  * @app.category Internal
  */
 public class NutsBootDescriptor {
-    private NutsBootId id;
-    private NutsBootId[] dependencies;
+    private final NutsBootId id;
+    private final NutsBootId[] dependencies;
 
     public NutsBootDescriptor(NutsBootId id, NutsBootId[] dependencies) {
         this.id = id;

@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages and libraries
  * for runtime execution. Nuts is the ultimate companion for maven (and other
@@ -11,7 +11,7 @@
  * large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,7 +25,6 @@
 package net.thevpc.nuts.boot;
 
 import net.thevpc.nuts.NutsClassLoaderNode;
-import net.thevpc.nuts.boot.NutsBootId;
 
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -38,8 +37,8 @@ import java.util.LinkedHashMap;
  */
 class PrivateNutsBootClassLoader extends URLClassLoader {
 
-    private LinkedHashMap<String, NutsClassLoaderNode> nodes = new LinkedHashMap<>();
-    private LinkedHashMap<String, NutsClassLoaderNode> effective = new LinkedHashMap<>();
+    private final LinkedHashMap<String, NutsClassLoaderNode> nodes = new LinkedHashMap<>();
+    private final LinkedHashMap<String, NutsClassLoaderNode> effective = new LinkedHashMap<>();
 
     /**
      * default constructor

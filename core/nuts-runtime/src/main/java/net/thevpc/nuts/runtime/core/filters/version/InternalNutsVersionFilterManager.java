@@ -72,7 +72,7 @@ public class InternalNutsVersionFilterManager extends InternalNutsTypedFilters<N
     @Override
     public NutsVersionFilter byExpression(String expression) {
         checkSession();
-        if (NutsUtilStrings.isBlank(expression)) {
+        if (NutsBlankable.isBlank(expression)) {
             return always();
         }
         return NutsVersionJavascriptFilter.valueOf(expression, getSession());

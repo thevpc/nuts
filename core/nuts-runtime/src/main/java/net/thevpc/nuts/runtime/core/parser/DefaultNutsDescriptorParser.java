@@ -72,7 +72,7 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
     @Override
     public NutsDescriptor parse(String str) {
         checkSession();
-        if (NutsUtilStrings.isBlank(str)) {
+        if (NutsBlankable.isBlank(str)) {
             return null;
         }
         return parse(new ByteArrayInputStream(str.getBytes()), true);

@@ -389,7 +389,7 @@ public final class CoreStringUtils {
 //     */
 //    public static String coalesce(String... cmd) {
 //        for (String string : cmd) {
-//            if (!NutsUtilStrings.isBlank(string)) {
+//            if (!NutsBlankable.isBlank(string)) {
 //                return string;
 //            }
 //        }

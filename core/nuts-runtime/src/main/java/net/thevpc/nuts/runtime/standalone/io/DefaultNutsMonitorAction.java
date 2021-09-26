@@ -282,7 +282,7 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
 
     public InputStream monitorInputStream(String path, Object source, NutsString sourceName) {
         checkSession();
-        if (NutsUtilStrings.isBlank(path)) {
+        if (NutsBlankable.isBlank(path)) {
             throw new UncheckedIOException(new IOException("missing path"));
         }
         if (sourceName==null) {

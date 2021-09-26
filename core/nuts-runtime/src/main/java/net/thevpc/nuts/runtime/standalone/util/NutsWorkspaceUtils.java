@@ -75,10 +75,10 @@ public class NutsWorkspaceUtils {
         if (id == null) {
             throw new NutsIllegalArgumentException(defaultSession(ws), NutsMessage.cstyle("missing id"));
         }
-        if (NutsUtilStrings.isBlank(id.getGroupId())) {
+        if (NutsBlankable.isBlank(id.getGroupId())) {
             throw new NutsIllegalArgumentException(defaultSession(ws), NutsMessage.cstyle("missing group for %s", id));
         }
-        if (NutsUtilStrings.isBlank(id.getArtifactId())) {
+        if (NutsBlankable.isBlank(id.getArtifactId())) {
             throw new NutsIllegalArgumentException(defaultSession(ws), NutsMessage.cstyle("missing name for %s", id));
         }
     }
@@ -121,10 +121,10 @@ public class NutsWorkspaceUtils {
     }
 
     public NutsId createSdkId(String type, String version) {
-        if (NutsUtilStrings.isBlank(type)) {
+        if (NutsBlankable.isBlank(type)) {
             throw new NutsException(session, NutsMessage.formatted("missing sdk type"));
         }
-        if (NutsUtilStrings.isBlank(version)) {
+        if (NutsBlankable.isBlank(version)) {
             throw new NutsException(session, NutsMessage.formatted("missing version"));
         }
         if ("java".equalsIgnoreCase(type)) {
@@ -276,17 +276,17 @@ public class NutsWorkspaceUtils {
         if (id == null) {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing id"));
         }
-        if (NutsUtilStrings.isBlank(id.getGroupId())) {
+        if (NutsBlankable.isBlank(id.getGroupId())) {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing groupId for %s", id));
         }
-        if (NutsUtilStrings.isBlank(id.getArtifactId())) {
+        if (NutsBlankable.isBlank(id.getArtifactId())) {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing artifactId for %s", id));
         }
     }
 
     public void checkLongNameNutsId(NutsId id, NutsSession session) {
         checkSimpleNameNutsId(id);
-        if (NutsUtilStrings.isBlank(id.getVersion().toString())) {
+        if (NutsBlankable.isBlank(id.getVersion().toString())) {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing version for %s", id));
         }
     }
@@ -403,7 +403,7 @@ public class NutsWorkspaceUtils {
                         Attributes a = manifest.getMainAttributes();
                         if (a != null && a.containsKey("Main-Class")) {
                             String v = a.getValue("Main-Class");
-                            if (!NutsUtilStrings.isBlank(v)) {
+                            if (!NutsBlankable.isBlank(v)) {
                                 manifestClass.add(v);
                             }
                         }

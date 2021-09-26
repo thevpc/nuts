@@ -25,7 +25,10 @@ package net.thevpc.nuts.boot;
 
 import net.thevpc.nuts.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -160,7 +163,7 @@ class PrivateNutsRepositorySelector {
     }
 
     public static PrivateNutsRepositorySelectorList parseList(String text) {
-        if (text == null || NutsUtilStrings.isBlank(text)) {
+        if (text == null || NutsBlankable.isBlank(text)) {
             return new PrivateNutsRepositorySelectorList();
         }
         PrivateNutsRepositorySelectorOp op = PrivateNutsRepositorySelectorOp.INCLUDE;
@@ -185,6 +188,42 @@ class PrivateNutsRepositorySelector {
             }
         }
         return new PrivateNutsRepositorySelectorList(all.toArray(new PrivateNutsRepositorySelector[0]));
+    }
+
+    public static PrivateNutsRepositorySelection validateSelection(PrivateNutsRepositorySelection s) {
+        if (s == null) {
+            return null;
+        }
+        String n = NutsUtilStrings.trim(s.getName());
+        String u = NutsUtilStrings.trim(s.getUrl());
+        if (n.isEmpty() && u.isEmpty()) {
+            return null;
+        }
+        if (n.isEmpty()) {
+            //url only
+            n = getRepositoryNameByURL(u);
+            if (n != null) {
+                return new PrivateNutsRepositorySelection(n, u);
+            }
+            String u2 = getRepositoryURLByName(u);
+            if (u2 != null) {
+                return new PrivateNutsRepositorySelection(u, u2);
+            }
+            return new PrivateNutsRepositorySelection("", u);
+        } else if (u.isEmpty()) {
+            //url only
+            u = getRepositoryURLByName(n);
+            if (u != null) {
+                return new PrivateNutsRepositorySelection(n, u);
+            }
+            String n2 = getRepositoryNameByURL(n);
+            if (n2 != null) {
+                return new PrivateNutsRepositorySelection(n2, n);
+            }
+            return new PrivateNutsRepositorySelection(n, n);
+        } else {
+            return new PrivateNutsRepositorySelection(n, u);
+        }
     }
 
     @Override
@@ -230,42 +269,6 @@ class PrivateNutsRepositorySelector {
             return true;
         }
         return _url.length() > 0 && _url.equals(otherURL);
-    }
-
-    public static PrivateNutsRepositorySelection validateSelection(PrivateNutsRepositorySelection s) {
-        if(s==null){
-            return null;
-        }
-        String n=NutsUtilStrings.trim(s.getName());
-        String u=NutsUtilStrings.trim(s.getUrl());
-        if(n.isEmpty() && u.isEmpty()){
-            return null;
-        }
-        if(n.isEmpty()){
-            //url only
-            n = getRepositoryNameByURL(u);
-            if(n!=null){
-                return new PrivateNutsRepositorySelection(n,u);
-            }
-            String u2 = getRepositoryURLByName(u);
-            if(u2!=null){
-                return new PrivateNutsRepositorySelection(u,u2);
-            }
-            return new PrivateNutsRepositorySelection("",u);
-        }else if(u.isEmpty()){
-            //url only
-            u = getRepositoryURLByName(n);
-            if(u!=null){
-                return new PrivateNutsRepositorySelection(n,u);
-            }
-            String n2 = getRepositoryNameByURL(n);
-            if(n2!=null){
-                return new PrivateNutsRepositorySelection(n2,n);
-            }
-            return new PrivateNutsRepositorySelection(n,n);
-        }else{
-            return new PrivateNutsRepositorySelection(n,u);
-        }
     }
 
 }

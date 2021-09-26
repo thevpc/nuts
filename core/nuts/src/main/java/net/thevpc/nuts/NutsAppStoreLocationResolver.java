@@ -25,13 +25,15 @@ package net.thevpc.nuts;
 
 /**
  * application store location
+ *
  * @app.category Application
  */
 public interface NutsAppStoreLocationResolver {
     /**
      * used in {@link NutsApplicationContext#getVersionFolderFolder(NutsStoreLocation, String)}
      * to resolve folder for the given version
-     * @param id nuts id
+     *
+     * @param id         nuts id
      * @param folderType folder type
      * @return valid location, or null for default with resolves to {@code workspace.locations().getStoreLocation(id,folderType)}
      */

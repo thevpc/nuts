@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -42,6 +42,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     ////////////////////////////////////////////////////////
     // Setters
     ////////////////////////////////////////////////////////
+
     /**
      * reset ids to search for
      *
@@ -430,6 +431,22 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     NutsId[] getIds();
 
     /**
+     * add ids to search.
+     *
+     * @param ids id to search
+     * @return {@code this} instance
+     */
+    NutsSearchCommand setIds(String... ids);
+
+    /**
+     * add ids to search.
+     *
+     * @param ids ids to search
+     * @return {@code this} instance
+     */
+    NutsSearchCommand setIds(NutsId... ids);
+
+    /**
      * return true if sort flag is armed.
      *
      * @return true if sort flag is armed.
@@ -501,6 +518,10 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      */
     NutsSearchCommand setDescriptorFilter(NutsDescriptorFilter filter);
 
+    ////////////////////////////////////////////////////////
+    // Getters
+    ////////////////////////////////////////////////////////
+
     /**
      * define descriptor filter.
      *
@@ -516,9 +537,6 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      */
     NutsIdFilter getIdFilter();
 
-    ////////////////////////////////////////////////////////
-    // Getters
-    ////////////////////////////////////////////////////////
     /**
      * define id filter.
      *
@@ -535,11 +553,11 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      */
     NutsSearchCommand setIdFilter(String filter);
 
+//    String[] getRepositories();
+
     String[] getArch();
 
     String[] getPackaging();
-
-//    String[] getRepositories();
 
     /**
      * when true, NutsNotFoundException instances are ignored
@@ -617,6 +635,10 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      */
     boolean isLatest();
 
+    ////////////////////////////////////////////////////////
+    // Result
+    ////////////////////////////////////////////////////////
+
     /**
      * if true search must return only latest versions for each artifact id
      *
@@ -632,9 +654,6 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      */
     NutsFetchCommand toFetch();
 
-    ////////////////////////////////////////////////////////
-    // Result
-    ////////////////////////////////////////////////////////
     /**
      * execute query and return result as ids
      *
@@ -678,6 +697,13 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      */
     ClassLoader getResultClassLoader(ClassLoader parent);
 
+    ///////////////////////
+    // SHARED
+    ///////////////////////
+    ////////////////////////////////////////////////////////
+    // Setters
+    ////////////////////////////////////////////////////////
+
     /**
      * execute query and return result as nuts path string
      *
@@ -691,13 +717,6 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * @return result as class path string
      */
     String getResultClassPath();
-
-    ///////////////////////
-    // SHARED
-    ///////////////////////
-    ////////////////////////////////////////////////////////
-    // Setters
-    ////////////////////////////////////////////////////////
 
     /**
      * remove all dependency scope filters.
@@ -816,6 +835,10 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      */
     boolean isContent();
 
+    ////////////////////////////////////////////////////////
+    // Getters
+    ////////////////////////////////////////////////////////
+
     /**
      * enable/disable retrieval of content info
      *
@@ -831,9 +854,6 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      */
     boolean isEffective();
 
-    ////////////////////////////////////////////////////////
-    // Getters
-    ////////////////////////////////////////////////////////
     /**
      * enable/disable effective descriptor evaluation
      *
@@ -872,6 +892,10 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      */
     NutsSearchCommand setDependencies(boolean enable);
 
+    //
+    // NutsWorkspaceCommand overridden methods
+    //    
+
     /**
      * search for default versions status.
      * <ul>
@@ -895,9 +919,6 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      */
     NutsSearchCommand setDefaultVersions(Boolean enable);
 
-    //
-    // NutsWorkspaceCommand overridden methods
-    //    
     /**
      * copy session
      *
@@ -1101,7 +1122,6 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      */
     NutsSearchCommand setInstallStatus(NutsInstallStatusFilter installStatus);
 
-
     /**
      * add id to search.
      *
@@ -1117,20 +1137,4 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * @return {@code this} instance
      */
     NutsSearchCommand setId(NutsId id);
-
-    /**
-     * add ids to search.
-     *
-     * @param ids id to search
-     * @return {@code this} instance
-     */
-    NutsSearchCommand setIds(String... ids);
-
-    /**
-     * add ids to search.
-     *
-     * @param ids ids to search
-     * @return {@code this} instance
-     */
-    NutsSearchCommand setIds(NutsId... ids);
 }

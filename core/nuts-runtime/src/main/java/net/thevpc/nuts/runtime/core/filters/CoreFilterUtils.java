@@ -333,10 +333,10 @@ public class CoreFilterUtils {
     }
 
     public static boolean matchesPackaging(String packaging, NutsDescriptor desc, NutsSession session) {
-        if (NutsUtilStrings.isBlank(packaging)) {
+        if (NutsBlankable.isBlank(packaging)) {
             return true;
         }
-        if (NutsUtilStrings.isBlank(desc.getPackaging())) {
+        if (NutsBlankable.isBlank(desc.getPackaging())) {
             return true;
         }
         NutsIdParser parser = session.getWorkspace().id().parser();
@@ -380,7 +380,7 @@ public class CoreFilterUtils {
     }
 
     public static boolean matchesArch(String arch, NutsEnvCondition cond, NutsSession session) {
-        if (NutsUtilStrings.isBlank(arch)) {
+        if (NutsBlankable.isBlank(arch)) {
             return true;
         }
         NutsIdParser parser = session.getWorkspace().id().parser();
@@ -388,7 +388,7 @@ public class CoreFilterUtils {
         String[] all = cond.getArch();
         if (all != null && all.length > 0) {
             for (String v : all) {
-                if (NutsUtilStrings.isBlank(v)) {
+                if (NutsBlankable.isBlank(v)) {
                     return true;
                 }
                 NutsId y = parser.setLenient(false).parse(v);
@@ -405,7 +405,7 @@ public class CoreFilterUtils {
     }
 
     public static boolean matchesOs(String os, NutsEnvCondition desc, NutsSession session) {
-        if (NutsUtilStrings.isBlank(os)) {
+        if (NutsBlankable.isBlank(os)) {
             return true;
         }
         NutsIdParser parser = session.getWorkspace().id().parser();
@@ -413,7 +413,7 @@ public class CoreFilterUtils {
         String[] all = desc.getOs();
         if (all != null && all.length > 0) {
             for (String v : all) {
-                if (NutsUtilStrings.isBlank(v)) {
+                if (NutsBlankable.isBlank(v)) {
                     return true;
                 }
                 NutsId y = parser.setLenient(false).parse(v);
@@ -426,7 +426,7 @@ public class CoreFilterUtils {
     }
 
     public static boolean matchesOsDist(String osDist, NutsEnvCondition desc, NutsSession session) {
-        if (NutsUtilStrings.isBlank(osDist)) {
+        if (NutsBlankable.isBlank(osDist)) {
             return true;
         }
         NutsIdParser parser = session.getWorkspace().id().parser();
@@ -434,7 +434,7 @@ public class CoreFilterUtils {
         String[] all = desc.getOsDist();
         if (all != null && all.length > 0) {
             for (String v : all) {
-                if (NutsUtilStrings.isBlank(v)) {
+                if (NutsBlankable.isBlank(v)) {
                     return true;
                 }
                 NutsId y = parser.setLenient(false).parse(v);
@@ -448,7 +448,7 @@ public class CoreFilterUtils {
     }
 
     public static boolean matchesPlatform(String platform, NutsEnvCondition desc, NutsSession session) {
-        if (NutsUtilStrings.isBlank(platform)) {
+        if (NutsBlankable.isBlank(platform)) {
             return true;
         }
         NutsIdParser parser = session.getWorkspace().id().parser();
@@ -456,7 +456,7 @@ public class CoreFilterUtils {
         String[] all = desc.getPlatform();
         if (all != null && all.length > 0) {
             for (String v : all) {
-                if (NutsUtilStrings.isBlank(v)) {
+                if (NutsBlankable.isBlank(v)) {
                     return true;
                 }
                 NutsId y = parser.setLenient(false).parse(v);
@@ -469,7 +469,7 @@ public class CoreFilterUtils {
     }
 
     public static boolean matchesDesktopEnvironment(String platform, NutsEnvCondition desc, NutsSession session) {
-        if (NutsUtilStrings.isBlank(platform)) {
+        if (NutsBlankable.isBlank(platform)) {
             return true;
         }
         NutsIdParser parser = session.getWorkspace().id().parser();
@@ -477,7 +477,7 @@ public class CoreFilterUtils {
         String[] all = desc.getPlatform();
         if (all != null && all.length > 0) {
             for (String v : all) {
-                if (NutsUtilStrings.isBlank(v)) {
+                if (NutsBlankable.isBlank(v)) {
                     return true;
                 }
                 NutsId y = parser.setLenient(false).parse(v);
