@@ -128,7 +128,7 @@ public class DocusaurusTreeTransform extends MdElementTransformBase {
         switch (e.getTag()) {
             case "Tabs": {
                 String props = DocusaurusUtils.skipJsonJSXBrackets(e.getProperties().get("values"));
-                NutsArrayElement rows = session.getWorkspace().elem().parse(props).asSafeArray();
+                NutsArrayElement rows = session.elem().parse(props).asSafeArray();
                 Map<String,MdElement> sub=new HashMap<>();
                 for (MdElement item : MdFactory.asBody(e.getContent()).getChildren()) {
                     if (item.isXml()) {
@@ -136,7 +136,7 @@ public class DocusaurusTreeTransform extends MdElementTransformBase {
                         String t = tabItem.getTag();
                         if (t.equals("TabItem")) {
                             String tt = "Unknown";
-                            NutsElement v = session.getWorkspace().elem().parse(tabItem.getProperties().get("value"));
+                            NutsElement v = session.elem().parse(tabItem.getProperties().get("value"));
                             if (v != null) {
                                 tt = v.asString();
                             }
@@ -163,12 +163,12 @@ public class DocusaurusTreeTransform extends MdElementTransformBase {
 
             case "TabItem": {
                 String tt = "Unknown";
-                NutsElement v = session.getWorkspace().elem().parse(e.getProperties().get("value"));
+                NutsElement v = session.elem().parse(e.getProperties().get("value"));
                 if (v != null) {
                     tt = v.asString();
                 }
                 String props = DocusaurusUtils.skipJsonJSXBrackets(path.getParentPath().getElement().asXml().getProperties().get("values"));
-                for (NutsElement a : session.getWorkspace().elem().parse(props).asSafeArray()) {
+                for (NutsElement a : session.elem().parse(props).asSafeArray()) {
                     if (tt.equals(a.asSafeObject().getSafeString("value"))) {
                         tt = a.asSafeObject().getSafeString("label");
                         break;

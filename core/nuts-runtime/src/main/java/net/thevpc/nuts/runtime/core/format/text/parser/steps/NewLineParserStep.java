@@ -13,9 +13,9 @@ public class NewLineParserStep extends ParserStep {
 
     StringBuilder start = new StringBuilder();
     private NutsSession session;
-    public NewLineParserStep(char c, NutsSession ws) {
+    public NewLineParserStep(char c, NutsSession session) {
         start.append(c);
-        this.session=ws;
+        this.session=session;
     }
 
     @Override
@@ -41,7 +41,7 @@ public class NewLineParserStep extends ParserStep {
 
     @Override
     public NutsText toText() {
-        DefaultNutsTextManager factory0 = (DefaultNutsTextManager) session.getWorkspace().text();
+        DefaultNutsTextManager factory0 = (DefaultNutsTextManager) session.text();
         return factory0.forPlain(start.toString());
     }
 

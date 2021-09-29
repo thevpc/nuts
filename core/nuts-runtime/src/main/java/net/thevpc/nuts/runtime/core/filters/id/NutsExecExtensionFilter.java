@@ -15,8 +15,8 @@ import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
  */
 public class NutsExecExtensionFilter extends AbstractDescriptorFilter {
     private NutsId apiId;
-    public NutsExecExtensionFilter(NutsSession ws, NutsId apiId) {
-        super(ws, NutsFilterOp.CUSTOM);
+    public NutsExecExtensionFilter(NutsSession session, NutsId apiId) {
+        super(session, NutsFilterOp.CUSTOM);
         this.apiId=apiId;
     }
 

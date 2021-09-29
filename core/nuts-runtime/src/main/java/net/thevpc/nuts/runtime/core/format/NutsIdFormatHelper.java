@@ -110,7 +110,7 @@ public class NutsIdFormatHelper {
     }
 
     private NutsIdFormatHelper(NutsId id, NutsDescriptor desc, NutsDefinition def, NutsDependency dep, NutsSession session) {
-        LOG = session.getWorkspace().log().of(NutsIdFormatHelper.class);
+        LOG = session.log().of(NutsIdFormatHelper.class);
         if (id == null) {
             if (def != null) {
                 id = def.getId();
@@ -151,17 +151,17 @@ public class NutsIdFormatHelper {
     }
 
     private static FormatHelper getFormatHelper(NutsSession session) {
-        FormatHelper h = (FormatHelper) session.getWorkspace().env().getProperty(FormatHelper.class.getName()).getObject();
+        FormatHelper h = (FormatHelper) session.env().getProperty(FormatHelper.class.getName()).getObject();
         if (h != null) {
             return h;
         }
-        FormatHelperResetListener h2 = (FormatHelperResetListener) session.getWorkspace().env().getProperty(FormatHelperResetListener.class.getName()).getObject();
+        FormatHelperResetListener h2 = (FormatHelperResetListener) session.env().getProperty(FormatHelperResetListener.class.getName()).getObject();
         if (h2 == null) {
             h2 = new FormatHelperResetListener();
-            session.getWorkspace().events().addWorkspaceListener(h2);
+            session.events().addWorkspaceListener(h2);
         }
         h = new FormatHelper(session);
-        session.getWorkspace().env().setProperty(FormatHelper.class.getName(), h);
+        session.env().setProperty(FormatHelper.class.getName(), h);
         return h;
     }
 
@@ -234,7 +234,7 @@ public class NutsIdFormatHelper {
             }
             int z = 0;
             Stack<NutsRepository> stack = new Stack<>();
-            for (NutsRepository repository : session.getWorkspace().repos()
+            for (NutsRepository repository : session.repos()
                     .setSession(session)
                     .getRepositories()) {
                 stack.push(repository);
@@ -261,7 +261,7 @@ public class NutsIdFormatHelper {
                 return maxUserNameSize;
             }
             int z = "anonymous".length();
-            NutsWorkspaceConfigManagerExt wc = NutsWorkspaceConfigManagerExt.of(session.getWorkspace().config());
+            NutsWorkspaceConfigManagerExt wc = NutsWorkspaceConfigManagerExt.of(session.config());
             NutsUserConfig[] users = wc.getModel().getStoredConfigSecurity().getUsers();
             if (users != null) {
                 for (NutsUserConfig user : users) {
@@ -272,7 +272,7 @@ public class NutsIdFormatHelper {
                 }
             }
             Stack<NutsRepository> stack = new Stack<>();
-            for (NutsRepository repository : session.getWorkspace().repos().getRepositories()) {
+            for (NutsRepository repository : session.repos().getRepositories()) {
                 stack.push(repository);
             }
             while (!stack.isEmpty()) {
@@ -299,7 +299,7 @@ public class NutsIdFormatHelper {
 
     public NutsString getSingleColumnRow(NutsFetchDisplayOptions oo) {
         NutsDisplayProperty[] a = oo.getDisplayProperties();
-        NutsTextManager txt = session.getWorkspace().text();
+        NutsTextManager txt = session.text();
         NutsTextBuilder sb = txt.builder();
         for (int j = 0; j < a.length; j++) {
             NutsString s = buildMain(oo, a[j]);
@@ -719,7 +719,7 @@ public class NutsIdFormatHelper {
     }
 
     public NutsString getFormattedStatusString() {
-        NutsTextManager text = session.getWorkspace().text();
+        NutsTextManager text = session.text();
         if (dep != null) {
             return text.forStyled("" + status_f
                     //                    + status_obs

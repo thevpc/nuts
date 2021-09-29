@@ -52,7 +52,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
         checkSession();
         NutsSession traceSession = getSession();
         NutsSession execSession = traceSession.copy();
-        NutsSessionTerminal terminal = execSession.getWorkspace().term().createTerminal(traceSession.getTerminal());
+        NutsSessionTerminal terminal = execSession.term().createTerminal(traceSession.getTerminal());
         if (this.in != null) {
             terminal.setIn(this.in);
         }
@@ -193,12 +193,12 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
         String goodKw = null;
         boolean forceInstalled = false;
         if (cmdName.endsWith("!")) {
-            goodId = session.getWorkspace().id().parser().setLenient(true).parse(cmdName.substring(0, cmdName.length() - 1));
+            goodId = session.id().parser().setLenient(true).parse(cmdName.substring(0, cmdName.length() - 1));
             if (goodId != null) {
                 forceInstalled = true;
             }
         } else {
-            goodId = session.getWorkspace().id().parser().setLenient(true).parse(cmdName);
+            goodId = session.id().parser().setLenient(true).parse(cmdName);
         }
 
         if (cmdName.contains("/") || cmdName.contains("\\")) {
@@ -293,7 +293,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
                     }
                 }
                 NutsWorkspaceCustomCommand command = null;
-                command = prepareSession.getWorkspace().commands().findCommand(goodKw);
+                command = prepareSession.commands().findCommand(goodKw);
                 if (command != null) {
                     NutsCommandExecOptions o = new NutsCommandExecOptions().setExecutorOptions(executorOptions).setDirectory(directory).setFailFast(failFast)
                             .setExecutionType(executionType).setEnv(env);
@@ -515,8 +515,8 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
                     .setCommandName(commandName)
                     .setSleepMillis(getSleepMillis())
                     .setInheritSystemIO(isInheritSystemIO())
-                    .setRedirectOuputFile(getRedirectOuputFile())
-                    .setRedirectInpuFile(getRedirectInpuFile())
+                    .setRedirectOuputFile(getRedirectOutputFile())
+                    .setRedirectInpuFile(getRedirectInputFile())
                     .build();
             if (dry) {
                 execComponent.dryExec(executionContext);

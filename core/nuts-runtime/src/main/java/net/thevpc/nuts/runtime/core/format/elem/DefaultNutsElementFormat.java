@@ -248,9 +248,9 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
         checkSession();
         NutsElement elem = toElement(value);
         if (out.isNtf()) {
-            NutsPrintStream bos = getSession().getWorkspace().io().createMemoryPrintStream();
+            NutsPrintStream bos = getSession().io().createMemoryPrintStream();
             format.printElement(elem, bos, compact, createFactoryContext());
-            out.print(getSession().getWorkspace().text().forCode(getContentType().id(), bos.toString()));
+            out.print(getSession().text().forCode(getContentType().id(), bos.toString()));
         } else {
             format.printElement(elem, out, compact, createFactoryContext());
         }

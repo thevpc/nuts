@@ -169,7 +169,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
             }
         }
         if (this.isCompanions()) {
-            for (NutsId sid : ws.getCompanionIds(session)) {
+            for (NutsId sid : session.extensions().getCompanionIds()) {
                 if (!list.isVisited(sid)) {
                     List<NutsId> allIds = ws.search().setSession(session).addId(sid).setLatest(true).setTargetApiVersion(ws.getApiVersion()).getResultIds().toList();
                     if (allIds.isEmpty()) {
@@ -358,7 +358,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
             }
             throw new NutsInstallException(getSession(), null, NutsMessage.formatted(sb.toString().trim()), null);
         }
-        NutsMemoryPrintStream mout = session.getWorkspace().io().createMemoryPrintStream();
+        NutsMemoryPrintStream mout = session.io().createMemoryPrintStream();
         if (getSession().isPlainTrace() || (!list.emptyCommand && getSession().getConfirm() == NutsConfirmationMode.ASK)) {
             printList(mout, "new","installed",
                     list.ids(x -> x.doInstall && !x.isAlreadyExists()));
@@ -449,7 +449,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
     private void printList(NutsPrintStream out, String skind, String saction, List<NutsId> all) {
         if (all.size() > 0) {
             if(session.isPlainOut()) {
-                NutsTextManager text = session.getWorkspace().text();
+                NutsTextManager text = session.text();
                 NutsText kind = text.forStyled(skind, NutsTextStyle.primary2());
                 NutsText action =
                         text.forStyled(saction,
@@ -472,7 +472,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                         );
                 out.resetLine().println(msg);
             }else{
-                NutsElementFormat elm = session.getWorkspace().elem();
+                NutsElementFormat elm = session.elem();
                 session.eout().add(elm.forObject()
                         .set("command","warning")
                         .set("artifact-kind",skind)

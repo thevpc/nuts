@@ -55,18 +55,15 @@ public class ExecFacadeCommand extends AbstractFacadeCommand {
         if(cmd==null){
             cmd=new ArrayList<>();
         }
-        NutsWorkspace ws = context.getWorkspace();
-
-        NutsSession session = ws.createSession();
+        NutsSession session = context.getSession();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        session.getTerminal().setOut(ws.io().createPrintStream(out, NutsTerminalMode.FILTERED));
+        session.getTerminal().setOut(session.io().createPrintStream(out, NutsTerminalMode.FILTERED));
         session.getTerminal().setIn(new ByteArrayInputStream(new byte[0]));
 
-        int result = ws.exec()
+        int result = session.exec()
                 .addCommand(cmd)
-                .setSession(session)
                 .getResult();
 
-        context.sendResponseText(200, String.valueOf(result) + "\n" + new String(out.toByteArray()));
+        context.sendResponseText(200, result + "\n" + out);
     }
 }

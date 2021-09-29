@@ -27,9 +27,12 @@
 package net.thevpc.nuts;
 
 
-import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.boot.PrivateNutsUtilIO;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -39,155 +42,60 @@ import java.util.Map;
  */
 public final class NutsUtilPlatforms {
 
-    public static String getPlatformGlobalHomeFolder(NutsStoreLocation location, String workspaceName) {
-        String s = null;
-        String locationName = location.id();
-        NutsOsFamily platformOsFamily = NutsOsFamily.getCurrent();
-        s = NutsUtilStrings.trim(System.getProperty("nuts.home.global." + locationName + "." + platformOsFamily.id()));
-        if (!s.isEmpty()) {
-            return s + "/" + workspaceName;
-        }
-        s = NutsUtilStrings.trim(System.getProperty("nuts.export.home.global." + locationName + "." + platformOsFamily.id()));
-        if (!s.isEmpty()) {
-            return s.trim() + "/" + workspaceName;
-        }
-        switch (location) {
-            case APPS: {
-                switch (platformOsFamily) {
-                    case LINUX:
-                    case MACOS:
-                    case UNIX:
-                    case UNKNOWN: {
-                        return "/opt/nuts/apps/" + workspaceName;
-                    }
-                    case WINDOWS: {
-                        return getWindowsProgramFiles() + "\\nuts\\" + syspath(workspaceName);
-                    }
-                }
-                break;
-            }
-            case LIB: {
-                switch (platformOsFamily) {
-                    case LINUX:
-                    case MACOS:
-                    case UNIX:
-                    case UNKNOWN: {
-                        return "/opt/nuts/lib/" + workspaceName;
-                    }
-                    case WINDOWS: {
-                        return getWindowsProgramFiles() + "\\nuts\\" + syspath(workspaceName);
-                    }
-                }
-                break;
-            }
-            case CONFIG: {
-                switch (platformOsFamily) {
-                    case LINUX:
-                    case MACOS:
-                    case UNIX:
-                    case UNKNOWN: {
-                        return "/etc/opt/nuts/" + workspaceName;
-                    }
-                    case WINDOWS: {
-                        return getWindowsProgramFiles() + "\\nuts" + syspath(workspaceName);
-                    }
-                }
-                break;
-            }
-            case LOG: {
-                switch (platformOsFamily) {
-                    case LINUX:
-                    case MACOS:
-                    case UNIX:
-                    case UNKNOWN: {
-                        return "/var/log/nuts/" + workspaceName;
-                    }
-                    case WINDOWS: {
-                        return getWindowsProgramFiles() + "\\nuts" + syspath(workspaceName);
-                    }
-                }
-                break;
-            }
-            case CACHE: {
-                switch (platformOsFamily) {
-                    case LINUX:
-                    case MACOS:
-                    case UNIX:
-                    case UNKNOWN: {
-                        return "/var/cache/nuts/" + workspaceName;
-                    }
-                    case WINDOWS: {
-                        return getWindowsProgramFiles() + "\\nuts" + syspath(workspaceName);
-                    }
-                }
-                break;
-            }
-            case VAR: {
-                switch (platformOsFamily) {
-                    case LINUX:
-                    case MACOS:
-                    case UNIX:
-                    case UNKNOWN: {
-                        return "/var/opt/nuts/" + workspaceName;
-                    }
-                    case WINDOWS: {
-                        return getWindowsProgramFiles() + "\\nuts" + syspath(workspaceName);
-                    }
-                }
-                break;
-            }
-            case TEMP: {
-                switch (platformOsFamily) {
-                    case LINUX:
-                    case MACOS:
-                    case UNIX:
-                    case UNKNOWN: {
-                        return "/tmp/nuts/global/" + workspaceName;
-                    }
-                    case WINDOWS: {
-                        String pf = System.getenv("TMP");
-                        if (NutsBlankable.isBlank(pf)) {
-                            pf = getWindowsSystemRoot() + "\\TEMP";
-                        }
-                        return pf + "\\nuts" + syspath(workspaceName);
-                    }
-                }
-                break;
-            }
-            case RUN: {
-                switch (platformOsFamily) {
-                    case LINUX:
-                    case MACOS:
-                    case UNIX:
-                    case UNKNOWN: {
-                        return "/tmp/run/nuts/global/" + workspaceName;
-                    }
-                    case WINDOWS: {
-                        String pf = System.getenv("TMP");
-                        if (NutsBlankable.isBlank(pf)) {
-                            pf = getWindowsSystemRoot() + "\\TEMP";
-                        }
-                        return pf + "\\nuts\\run" + syspath(workspaceName);
-                    }
-                }
-                break;
-            }
-        }
-        throw new UnsupportedOperationException();
-    }
+//    /**
+//     * creates a string key combining layout and location.
+//     * le key has the form of a concatenated layout and location ids separated by ':'
+//     * where null layout is replaced by 'system' keyword.
+//     * used in {@link NutsWorkspaceOptions#getHomeLocations()}.
+//     *
+//     * @param storeLocationLayout layout
+//     * @param location            location
+//     * @return combination of layout and location separated by ':'.
+//     */
+//    public static String createHomeLocationKey(NutsOsFamily storeLocationLayout, NutsStoreLocation location) {
+//        return NutsApiUtils.createHomeLocationKey(storeLocationLayout, location);
+//    }
 
     /**
-     * creates a string key combining layout and location.
-     * le key has the form of a concatenated layout and location ids separated by ':'
-     * where null layout is replaced by 'system' keyword.
-     * used in {@link NutsWorkspaceOptions#getHomeLocations()}.
+     * resolves custom nuts home folder from {@code homeLocations}.
+     * Home folder is the root for nuts folders.
+     * It depends on folder type and store layout.
      *
-     * @param storeLocationLayout layout
-     * @param location            location
-     * @return combination of layout and location separated by ':'.
+     * @param location         folder type to resolve home for
+     * @param platformOsFamily location layout to resolve home for
+     * @param homeLocations    workspace home locations
+     * @return home folder path or null
      */
-    public static String createHomeLocationKey(NutsOsFamily storeLocationLayout, NutsStoreLocation location) {
-        return NutsApiUtils.createHomeLocationKey(storeLocationLayout, location);
+    public static String getCustomPlatformHomeFolder(NutsOsFamily platformOsFamily, NutsStoreLocation location, Map<NutsHomeLocation, String> homeLocations) {
+        if (location == null) {
+            return null;
+        }
+        if (platformOsFamily == null) {
+            platformOsFamily = NutsOsFamily.getCurrent();
+        }
+        String s;
+        String locationName = location.id();
+        s = NutsUtilStrings.trim(System.getProperty("nuts.home." + locationName + "." + platformOsFamily.id()));
+        if (!s.isEmpty()) {
+            return s/* + "/" + workspaceName*/;
+        }
+        s = NutsUtilStrings.trim(System.getProperty("nuts.export.home." + locationName + "." + platformOsFamily.id()));
+        if (!s.isEmpty()) {
+            return s/* + "/" + workspaceName*/;
+        }
+        if (homeLocations != null && homeLocations.size() > 0) {
+            NutsHomeLocation key = NutsHomeLocation.of(platformOsFamily, location);
+            s = NutsUtilStrings.trim(homeLocations.get(key));
+            if (!s.isEmpty()) {
+                return s/* + "/" + workspaceName*/;
+            }
+            key = NutsHomeLocation.of(null, location);
+            s = NutsUtilStrings.trim(homeLocations.get(key));
+            if (!s.isEmpty()) {
+                return s /* + "/" + workspaceName*/;
+            }
+        }
+        return null;
     }
 
     /**
@@ -204,44 +112,186 @@ public final class NutsUtilPlatforms {
      * @param workspaceName    workspace name or id (discriminator)
      * @return home folder path
      */
-    public static String getPlatformHomeFolder(
-            NutsOsFamily platformOsFamily,
-            NutsStoreLocation location,
-            Map<String, String> homeLocations,
-            boolean global,
-            String workspaceName) {
-        NutsStoreLocation folderType0 = location;
+    public static String getPlatformHomeFolder(NutsOsFamily platformOsFamily, NutsStoreLocation location, Map<NutsHomeLocation, String> homeLocations, boolean global, String workspaceName) {
         if (location == null) {
-            location = NutsStoreLocation.CONFIG;
+            return getWorkspaceLocation(platformOsFamily, global, workspaceName);
         }
-        if (workspaceName == null || workspaceName.isEmpty()) {
+        String s = getCustomPlatformHomeFolder(platformOsFamily, location, homeLocations);
+        if (s != null) {
+            return s;
+        }
+        return getDefaultPlatformHomeFolder(platformOsFamily, location, global, workspaceName);
+    }
+
+    public static String getWorkspaceLocation(NutsOsFamily platformOsFamily, boolean global, String workspaceName) {
+        if (NutsBlankable.isBlank(workspaceName)) {
             workspaceName = NutsConstants.Names.DEFAULT_WORKSPACE_NAME;
+        }else if(workspaceName.equals(".") || workspaceName.equals("..") || workspaceName.indexOf('/')>=0 || workspaceName.indexOf('\\')>=0){
+            //this is a path!
+            //return it as is and make it absolute
+            return Paths.get(workspaceName).normalize().toAbsolutePath().toString();
         }
-        boolean wasSystem = false;
+        if(platformOsFamily==null){
+            platformOsFamily = NutsOsFamily.getCurrent();
+        }
+        if (global) {
+            switch (platformOsFamily) {
+                case WINDOWS: {
+                    return getWindowsProgramFiles() + "\\nuts\\" + syspath(workspaceName);
+                }
+                default:{
+                    return "/etc/opt/nuts/" + workspaceName;
+                }
+            }
+        }else{
+            switch (platformOsFamily) {
+                case WINDOWS: {
+                    return System.getProperty("user.home") + syspath("/AppData/Roaming/nuts/config/" + workspaceName);
+                }
+                default: {
+                    String val = NutsUtilStrings.trim(System.getenv("XDG_CONFIG_HOME"));
+                    if (!val.isEmpty()) {
+                        return val + "/nuts/" + workspaceName;
+                    }
+                    return System.getProperty("user.home") + "/.config/nuts" + "/" + workspaceName;
+                }
+            }
+        }
+    }
+
+    /**
+     * resolves nuts home folder.Home folder is the root for nuts folders.It
+     * depends on folder type and store layout. For instance log folder depends
+     * on on the underlying operating system (linux,windows,...).
+     * Specifications: XDG Base Directory Specification
+     * (https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html)
+     *
+     * @param location         folder type to resolve home for
+     * @param platformOsFamily location layout to resolve home for
+     * @param global           global workspace
+     * @param workspaceName    workspace name or id (discriminator)
+     * @return home folder path
+     */
+    public static String getDefaultPlatformHomeFolder(NutsOsFamily platformOsFamily, NutsStoreLocation location, boolean global, String workspaceName) {
+        if (location == null) {
+            return getWorkspaceLocation(platformOsFamily, global, workspaceName);
+        }
+        if (NutsBlankable.isBlank(workspaceName)) {
+            workspaceName = NutsConstants.Names.DEFAULT_WORKSPACE_NAME;
+        }else{
+            Path fileName = Paths.get(workspaceName).normalize().toAbsolutePath().getFileName();
+            if(fileName==null){
+                //this happens when workspaceName='/' in that case use NutsConstants.Names.DEFAULT_WORKSPACE_NAME
+                workspaceName = NutsConstants.Names.DEFAULT_WORKSPACE_NAME;
+            }else {
+                workspaceName = fileName.toString();
+            }
+        }
+
         if (platformOsFamily == null) {
             platformOsFamily = NutsOsFamily.getCurrent();
         }
-        String s = null;
         String locationName = location.id();
-        s = NutsUtilStrings.trim(System.getProperty("nuts.home." + locationName + "." + platformOsFamily.id()));
-        if (!s.isEmpty()) {
-            return s + "/" + workspaceName;
-        }
-        s = NutsUtilStrings.trim(System.getProperty("nuts.export.home." + locationName + "." + platformOsFamily.id()));
-        if (!s.isEmpty()) {
-            return s.trim() + "/" + workspaceName;
-        }
-        String key = NutsApiUtils.createHomeLocationKey(platformOsFamily, location);
-        s = homeLocations == null ? "" : NutsUtilStrings.trim(homeLocations.get(key));
-        if (!s.isEmpty()) {
-            return s.trim() + "/" + workspaceName;
-        }
-        key = NutsApiUtils.createHomeLocationKey(null, location);
-        s = homeLocations == null ? "" : NutsUtilStrings.trim(homeLocations.get(key));
-        if (!s.isEmpty()) {
-            return s.trim() + "/" + workspaceName;
-        } else if (global) {
-            return getPlatformGlobalHomeFolder(location, workspaceName);
+        if (global) {
+            String s = null;
+            s = NutsUtilStrings.trim(System.getProperty("nuts.home.global." + locationName + "." + platformOsFamily.id()));
+            if (!s.isEmpty()) {
+                return s + "/" + workspaceName;
+            }
+            s = NutsUtilStrings.trim(System.getProperty("nuts.export.home.global." + locationName + "." + platformOsFamily.id()));
+            if (!s.isEmpty()) {
+                return s.trim() + "/" + workspaceName;
+            }
+            switch (location) {
+                case APPS: {
+                    switch (platformOsFamily) {
+                        case WINDOWS: {
+                            return getWindowsProgramFiles() + "\\nuts\\apps\\" + syspath(workspaceName);
+                        }
+                        default: {
+                            return "/opt/nuts/apps/" + workspaceName;
+                        }
+                    }
+                }
+                case LIB: {
+                    switch (platformOsFamily) {
+                        case WINDOWS: {
+                            return getWindowsProgramFiles() + "\\nuts\\lib\\" + syspath(workspaceName);
+                        }
+                        default: {
+                            return "/opt/nuts/lib/" + workspaceName;
+                        }
+                    }
+                }
+                case CONFIG: {
+                    switch (platformOsFamily) {
+                        case WINDOWS: {
+                            return getWindowsProgramFiles() + "\\nuts\\config\\" + syspath(workspaceName);
+                        }
+                        default:{
+                            return "/etc/opt/nuts/" + workspaceName + "/config";
+                        }
+                    }
+                }
+                case LOG: {
+                    switch (platformOsFamily) {
+                        case WINDOWS: {
+                            return getWindowsProgramFiles() + "\\nuts\\log\\" + syspath(workspaceName);
+                        }
+                        default: {
+                            return "/var/log/nuts/" + workspaceName;
+                        }
+                    }
+                }
+                case CACHE: {
+                    switch (platformOsFamily) {
+                        case WINDOWS: {
+                            return getWindowsProgramFiles() + "\\nuts\\cache\\" + syspath(workspaceName);
+                        }
+                        default: {
+                            return "/var/cache/nuts/" + workspaceName;
+                        }
+                    }
+                }
+                case VAR: {
+                    switch (platformOsFamily) {
+                        case WINDOWS: {
+                            return getWindowsProgramFiles() + "\\nuts\\var\\" + syspath(workspaceName);
+                        }
+                        default: {
+                            return "/var/opt/nuts/" + workspaceName;
+                        }
+                    }
+                }
+                case TEMP: {
+                    switch (platformOsFamily) {
+                        case WINDOWS: {
+                            String pf = System.getenv("TMP");
+                            if (NutsBlankable.isBlank(pf)) {
+                                pf = getWindowsSystemRoot() + "\\TEMP";
+                            }
+                            return pf + "\\nuts\\" + syspath(workspaceName);
+                        }
+                        default: {
+                            return "/tmp/nuts/global/" + workspaceName;
+                        }
+                    }
+                }
+                case RUN: {
+                    switch (platformOsFamily) {
+                        case WINDOWS: {
+                            String pf = System.getenv("TMP");
+                            if (NutsBlankable.isBlank(pf)) {
+                                pf = getWindowsSystemRoot() + "\\TEMP";
+                            }
+                            return pf + "\\nuts\\run\\" + syspath(workspaceName);
+                        }
+                        default: {
+                            return "/tmp/run/nuts/global/" + workspaceName;
+                        }
+                    }
+                }
+            }
         } else {
             switch (location) {
                 case VAR:
@@ -251,8 +301,7 @@ public final class NutsUtilPlatforms {
                         case WINDOWS: {
                             return System.getProperty("user.home") + syspath("/AppData/Roaming/nuts/" + locationName + "/" + workspaceName);
                         }
-                        case MACOS:
-                        case LINUX: {
+                        default: {
                             String val = NutsUtilStrings.trim(System.getenv("XDG_DATA_HOME"));
                             if (!val.isEmpty()) {
                                 return val + "/nuts/" + locationName + "/" + workspaceName;
@@ -260,15 +309,13 @@ public final class NutsUtilPlatforms {
                             return System.getProperty("user.home") + "/.local/share/nuts/" + locationName + "/" + workspaceName;
                         }
                     }
-                    break;
                 }
                 case LOG: {
                     switch (platformOsFamily) {
                         case WINDOWS: {
                             return System.getProperty("user.home") + syspath("/AppData/LocalLow/nuts/" + locationName + "/" + workspaceName);
                         }
-                        case MACOS:
-                        case LINUX: {
+                        default: {
                             String val = NutsUtilStrings.trim(System.getenv("XDG_LOG_HOME"));
                             if (!val.isEmpty()) {
                                 return val + "/nuts/" + workspaceName;
@@ -276,73 +323,50 @@ public final class NutsUtilPlatforms {
                             return System.getProperty("user.home") + "/.local/log/nuts" + "/" + workspaceName;
                         }
                     }
-                    break;
                 }
                 case RUN: {
                     switch (platformOsFamily) {
                         case WINDOWS: {
                             return System.getProperty("user.home") + syspath("/AppData/Local/nuts/" + locationName + "/" + workspaceName);
                         }
-                        case MACOS:
-                        case LINUX: {
+                        default: {
                             String val = NutsUtilStrings.trim(System.getenv("XDG_RUNTIME_DIR"));
                             if (!val.isEmpty()) {
-                                return val + "/nuts" + "/" + workspaceName;
+                                return val + "/nuts/" + workspaceName;
                             }
                             return System.getProperty("user.home") + "/.local/run/nuts" + "/" + workspaceName;
                         }
                     }
-                    break;
                 }
                 case CONFIG: {
-                    switch (platformOsFamily) {
-                        case WINDOWS: {
-                            return System.getProperty("user.home") + syspath("/AppData/Roaming/nuts/" + locationName + "/" + workspaceName
-                                    + (folderType0 == null ? "" : "/config")
-                            );
-                        }
-                        case MACOS:
-                        case LINUX: {
-                            String val = NutsUtilStrings.trim(System.getenv("XDG_CONFIG_HOME"));
-                            if (!val.isEmpty()) {
-                                return val + "/nuts" + "/" + workspaceName + (folderType0 == null ? "" : "/config");
-                            }
-                            return System.getProperty("user.home") + "/.config/nuts" + "/" + workspaceName + (folderType0 == null ? "" : "/config");
-                        }
-                    }
-                    break;
+                    return Paths.get(getWorkspaceLocation(platformOsFamily, global, workspaceName)).resolve("config").toString();
                 }
                 case CACHE: {
                     switch (platformOsFamily) {
                         case WINDOWS: {
                             return System.getProperty("user.home") + syspath("/AppData/Local/nuts/cache/" + workspaceName);
                         }
-                        case MACOS:
-                        case LINUX: {
+                        default: {
                             String val = NutsUtilStrings.trim(System.getenv("XDG_CACHE_HOME"));
                             if (!val.isEmpty()) {
-                                return val + "/nuts" + "/" + workspaceName;
+                                return val + "/nuts/" + workspaceName;
                             }
                             return System.getProperty("user.home") + "/.cache/nuts" + "/" + workspaceName;
                         }
                     }
-                    break;
                 }
                 case TEMP: {
                     switch (platformOsFamily) {
                         case WINDOWS:
                             return System.getProperty("user.home") + syspath("/AppData/Local/nuts/log/" + workspaceName);
-                        case MACOS:
-                        case LINUX:
+                        default:
                             //on macos/unix/linux temp folder is shared. will add user folder as discriminator
-                            return System.getProperty("java.io.tmpdir") + syspath("/" + System.getProperty("user.name") + "/nuts" + "/" + workspaceName);
+                            return System.getProperty("java.io.tmpdir") + syspath("/" + System.getProperty("user.name") + "/nuts/" + workspaceName);
                     }
                 }
             }
         }
-        throw new NutsBootException(
-                NutsMessage.cstyle("unsupported %s/%s for %s", platformOsFamily, location, workspaceName)
-        );
+        throw new NutsBootException(NutsMessage.cstyle("unsupported %s/%s for %s", platformOsFamily, location, workspaceName));
     }
 
     public static String getWindowsProgramFiles() {
@@ -405,6 +429,90 @@ public final class NutsUtilPlatforms {
 
     private static String syspath(String s) {
         return s.replace('/', File.separatorChar);
+    }
+
+    /**
+     *
+     * @param platformOsFamily platformOsFamily or null
+     * @param storeLocationStrategy storeLocationStrategy or null
+     * @param baseLocations baseLocations or null
+     * @param homeLocations homeLocations or null
+     * @param global global
+     * @param workspaceLocation workspaceName or null
+     * @param session session or null
+     * @return
+     */
+    public static Map<NutsStoreLocation, String> buildLocations(
+            NutsOsFamily platformOsFamily,
+            NutsStoreLocationStrategy storeLocationStrategy,
+            Map<NutsStoreLocation, String> baseLocations,
+            Map<NutsHomeLocation, String> homeLocations,
+            boolean global, String workspaceLocation,NutsSession session) {
+        workspaceLocation=getWorkspaceLocation(platformOsFamily, global, workspaceLocation);
+        String[] homes = new String[NutsStoreLocation.values().length];
+        for (NutsStoreLocation location : NutsStoreLocation.values()) {
+            String platformHomeFolder = getPlatformHomeFolder(platformOsFamily, location, homeLocations,
+                    global, workspaceLocation);
+            if (NutsBlankable.isBlank(platformHomeFolder)) {
+                if(session==null) {
+                    throw new NutsBootException(NutsMessage.cstyle("missing Home for %s", location.id()));
+                }else{
+                    throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing Home for %s", location.id()));
+                }
+            }
+            homes[location.ordinal()] = platformHomeFolder;
+        }
+        if (storeLocationStrategy == null) {
+            storeLocationStrategy = NutsStoreLocationStrategy.EXPLODED;
+        }
+        Map<NutsStoreLocation, String> storeLocations = new LinkedHashMap<>();
+        if(baseLocations!=null){
+            for (Map.Entry<NutsStoreLocation, String> e : baseLocations.entrySet()) {
+                NutsStoreLocation loc = e.getKey();
+                if(loc==null){
+                    if(session==null) {
+                        throw new NutsBootException(NutsMessage.plain("null location"));
+                    }else{
+                        throw new NutsIllegalArgumentException(session, NutsMessage.plain("null location"));
+                    }
+                }
+                storeLocations.put(loc, e.getValue());
+            }
+        }
+        for (NutsStoreLocation location : NutsStoreLocation.values()) {
+            String _storeLocation = storeLocations.get(location);
+            if (NutsBlankable.isBlank(_storeLocation)) {
+                switch (storeLocationStrategy) {
+                    case STANDALONE: {
+                        String c = NutsUtilPlatforms.getCustomPlatformHomeFolder(platformOsFamily, location, homeLocations);
+                        storeLocations.put(location, c == null ? (workspaceLocation + File.separator + location.id()) : c);
+                        break;
+                    }
+                    case EXPLODED: {
+                        storeLocations.put(location, homes[location.ordinal()]);
+                        break;
+                    }
+                }
+            } else if (!new File(_storeLocation).isAbsolute()) {
+                switch (storeLocationStrategy) {
+                    case STANDALONE: {
+                        String c = NutsUtilPlatforms.getCustomPlatformHomeFolder(platformOsFamily, location, homeLocations);
+                        storeLocations.put(location, c == null ?
+                                (workspaceLocation + File.separator + location.id() + PrivateNutsUtilIO.syspath("/" + _storeLocation))
+                                :
+                                (c + PrivateNutsUtilIO.syspath("/" + _storeLocation)));
+                        break;
+                    }
+                    case EXPLODED: {
+                        storeLocations.put(location, homes[location.ordinal()] + PrivateNutsUtilIO.syspath("/" + _storeLocation));
+                        break;
+                    }
+                }
+            } else {
+                storeLocations.put(location, _storeLocation);
+            }
+        }
+        return storeLocations;
     }
 
 }

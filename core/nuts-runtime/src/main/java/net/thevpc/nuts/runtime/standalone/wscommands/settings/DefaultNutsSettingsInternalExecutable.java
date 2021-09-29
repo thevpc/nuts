@@ -33,7 +33,7 @@ public class DefaultNutsSettingsInternalExecutable extends DefaultInternalNutsEx
 //                Thread.currentThread().getContextClassLoader());
 
         Boolean autoSave = true;
-        NutsCommandLine cmd = getSession().getWorkspace().commandLine().create(args);
+        NutsCommandLine cmd = getSession().commandLine().create(args);
         boolean empty = true;
         NutsArgument a;
         do {

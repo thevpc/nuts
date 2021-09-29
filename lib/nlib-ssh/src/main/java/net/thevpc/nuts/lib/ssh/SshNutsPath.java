@@ -33,7 +33,7 @@ class SshNutsPath implements NutsPathSPI {
             }
             loc.append(String.join("/", others));
             return
-                    getSession().getWorkspace().io().path(
+                    getSession().io().path(
                             SshPath.toString(
                                     this.path.getHost(),
                                     this.path.getPort(),
@@ -43,7 +43,7 @@ class SshNutsPath implements NutsPathSPI {
                                     this.path.getKeyFile()
                             ));
         }
-        return getSession().getWorkspace().io().path(toString());
+        return getSession().io().path(toString());
     }
 
     @Override
@@ -76,7 +76,7 @@ class SshNutsPath implements NutsPathSPI {
                 NutsTextStyle _path = NutsTextStyle.path();
                 NutsTextStyle _nbr = NutsTextStyle.number();
 //        if(true) {
-                NutsTextManager text = session.getWorkspace().text();
+                NutsTextManager text = session.text();
                 NutsTextBuilder sb = text.builder();
                 String user=path.getUser();
                 String host=path.getHost();

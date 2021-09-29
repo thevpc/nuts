@@ -42,13 +42,13 @@ public class NutsVersionJavascriptFilter extends AbstractVersionFilter implement
 
     public static NutsVersionFilter valueOf(String value, NutsSession session) {
         if (NutsBlankable.isBlank(value)) {
-            return session.getWorkspace().version().filter().always();
+            return session.version().filter().always();
         }
         return new NutsVersionJavascriptFilter(session,value);
     }
 
-    public NutsVersionJavascriptFilter(NutsSession ws,String code) {
-        super(ws, NutsFilterOp.CUSTOM);
+    public NutsVersionJavascriptFilter(NutsSession session,String code) {
+        super(session, NutsFilterOp.CUSTOM);
         this.code = code;
         //check if valid
 //        accept(SAMPLE_DependencyNUTS_DESCRIPTOR);

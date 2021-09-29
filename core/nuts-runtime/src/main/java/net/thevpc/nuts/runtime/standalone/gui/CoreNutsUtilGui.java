@@ -34,7 +34,7 @@ public final class CoreNutsUtilGui {
 
     public static String inputString(NutsMessage message, NutsMessage title, NutsSession session) {
         try {
-            NutsTextManager text = session.getWorkspace().text();
+            NutsTextManager text = session.text();
             if (title == null) {
                 title = NutsMessage.cstyle("Nuts Package Manager - %s", Nuts.getVersion());
             }
@@ -60,7 +60,7 @@ public final class CoreNutsUtilGui {
         if (message == null) {
             message = NutsMessage.plain("");
         }
-        NutsTextManager text = session.getWorkspace().text();
+        NutsTextManager text = session.text();
         String messageString = text.toText(message).filteredText();
         String titleString = text.toText(title).filteredText();
         try {
@@ -88,7 +88,7 @@ public final class CoreNutsUtilGui {
         if (title == null) {
             title = NutsMessage.cstyle("Nuts Package Manager - %s", Nuts.getVersion());
         }
-        NutsTextManager text = session.getWorkspace().text();
+        NutsTextManager text = session.text();
         String messageString = text.toText(message==null?"":message).filteredText();
         String titleString = text.toText(title).filteredText();
         try {

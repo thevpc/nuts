@@ -59,8 +59,8 @@ public class NutsElementMapperMap implements NutsElementMapper<Map> {
         } else if (o.type() == NutsElementType.ARRAY) {
             for (NutsElement ee : o.asArray().children()) {
                 NutsObjectElement kv = ee.asObject();
-                NutsElement k = kv.get(context.element().forString("key"));
-                NutsElement v = kv.get(context.element().forString("value"));
+                NutsElement k = kv.get(context.elem().forString("key"));
+                NutsElement v = kv.get(context.elem().forString("value"));
                 all.put(context.elementToObject(k, elemType1), context.elementToObject(v, elemType2));
             }
         } else {

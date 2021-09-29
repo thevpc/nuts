@@ -22,6 +22,6 @@ public class NutsElementMapperNutsPath implements NutsElementMapper<NutsPath> {
     @Override
     public NutsPath createObject(NutsElement o, Type to, NutsElementFactoryContext context) {
         String i = context.defaultElementToObject(o, String.class);
-        return context.getSession().getWorkspace().io().path(i);
+        return context.getSession().io().path(i);
     }
 }

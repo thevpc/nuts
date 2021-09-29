@@ -48,7 +48,7 @@ public class DefaultNutsTextManager implements NutsTextManager {
         String sLocale = getSession() == null ? null : getSession().getLocale();
         Locale locale = NutsBlankable.isBlank(sLocale) ? null : new Locale(sLocale);
         Object[] args2 = new Object[params.length];
-        NutsTextManager txt = getSession().getWorkspace().text();
+        NutsTextManager txt = getSession().text();
         for (int i = 0; i < args2.length; i++) {
             Object a = params[i];
             if (a == null) {
@@ -172,6 +172,9 @@ public class DefaultNutsTextManager implements NutsTextManager {
                     toText(CoreStringUtils.exceptionToMessage((Throwable) t)),
                     NutsTextStyle.error()
             );
+        }
+        if (t instanceof NutsEnum) {
+            return forStyled(((NutsEnum) t).id(), NutsTextStyle.option());
         }
         return forPlain(t.toString());
     }
@@ -316,7 +319,7 @@ public class DefaultNutsTextManager implements NutsTextManager {
         if (text == null) {
             text = "";
         }
-        DefaultNutsTextManager factory0 = (DefaultNutsTextManager) session.getWorkspace().text();
+        DefaultNutsTextManager factory0 = (DefaultNutsTextManager) session.text();
         if (text.indexOf('\n') >= 0) {
             return factory0.createCode("```",
                     lang, "\n", "```", text

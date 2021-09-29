@@ -139,7 +139,7 @@ public class EnableCommand extends SimpleNshBuiltin {
                 context.out().println(entry.getValue() + " " + entry.getKey());
             }
         } else if (context.getResult() instanceof List) {
-            NutsTextManager text = session.getWorkspace().text();
+            NutsTextManager text = session.text();
             for (String s : ((List<String>) context.getResult())) {
                 context.out().printf("%s%n",
                         text.builder().append("enable: ",NutsTextStyle.error())

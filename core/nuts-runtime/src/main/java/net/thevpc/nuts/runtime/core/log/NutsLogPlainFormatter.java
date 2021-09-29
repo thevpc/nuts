@@ -50,7 +50,7 @@
 //                parameters2 = new Object[0];
 //            }
 //            String msgStr = null;
-//            NutsTextManager text = wRecord.getSession().getWorkspace().text();
+//            NutsTextManager text = wRecord.getSession().text();
 //            if (wRecord.isFormatted()) {
 //                msgStr = (text.setSession(wRecord.getSession()).toText(
 //                        new NutsMessage(

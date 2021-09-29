@@ -1,5 +1,7 @@
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
 public enum NutsDescriptorStyle implements NutsEnum {
     MAVEN,
     NUTS;
@@ -42,11 +44,7 @@ public enum NutsDescriptorStyle implements NutsEnum {
 
     public static NutsDescriptorStyle parse(String value, NutsDescriptorStyle emptyValue, NutsSession session) {
         NutsDescriptorStyle v = parseLenient(value, emptyValue, null);
-        if (v == null) {
-            if (!NutsBlankable.isBlank(value)) {
-                throw new NutsParseEnumException(session, value, NutsDescriptorStyle.class);
-            }
-        }
+        NutsApiUtils.checkNonNullEnum(v,value,NutsDescriptorStyle.class,session);
         return v;
     }
 

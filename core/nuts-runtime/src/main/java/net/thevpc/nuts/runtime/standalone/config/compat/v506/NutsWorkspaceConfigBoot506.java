@@ -68,8 +68,8 @@ public final class NutsWorkspaceConfigBoot506 extends NutsConfigItem {
     // folder types and layout types are exploded so that it is easier
     // to extract from json file even though no json library is available
     // via simple regexp
-    private Map<String, String> storeLocations = null;
-    private Map<String, String> homeLocations = null;
+    private Map<NutsStoreLocation, String> storeLocations = null;
+    private Map<NutsHomeLocation, String> homeLocations = null;
 
     private NutsStoreLocationStrategy repositoryStoreLocationStrategy = null;
     private NutsStoreLocationStrategy storeLocationStrategy = null;
@@ -252,20 +252,20 @@ public final class NutsWorkspaceConfigBoot506 extends NutsConfigItem {
         return commandFactories;
     }
 
-    public NutsWorkspaceConfigBoot506 setStoreLocations(Map<String, String> storeLocations) {
+    public NutsWorkspaceConfigBoot506 setStoreLocations(Map<NutsStoreLocation, String> storeLocations) {
         this.storeLocations = storeLocations;
         return this;
     }
 
-    public Map<String, String> getStoreLocations() {
+    public Map<NutsStoreLocation, String> getStoreLocations() {
         return storeLocations;
     }
 
-    public Map<String, String> getHomeLocations() {
+    public Map<NutsHomeLocation, String> getHomeLocations() {
         return homeLocations;
     }
 
-    public NutsWorkspaceConfigBoot506 setHomeLocations(Map<String, String> homeLocations) {
+    public NutsWorkspaceConfigBoot506 setHomeLocations(Map<NutsHomeLocation, String> homeLocations) {
         this.homeLocations = homeLocations;
         return this;
     }

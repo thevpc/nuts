@@ -1,5 +1,7 @@
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
 public enum NutsDesktopIntegrationItem implements NutsEnum {
     MENU,
     DESKTOP,
@@ -40,11 +42,7 @@ public enum NutsDesktopIntegrationItem implements NutsEnum {
 
     public static NutsDesktopIntegrationItem parse(String value, NutsDesktopIntegrationItem emptyValue, NutsSession session) {
         NutsDesktopIntegrationItem v = parseLenient(value, emptyValue, null);
-        if (v == null) {
-            if (!NutsBlankable.isBlank(value)) {
-                throw new NutsParseEnumException(session, value, NutsDesktopIntegrationItem.class);
-            }
-        }
+        NutsApiUtils.checkNonNullEnum(v,value,NutsDesktopIntegrationItem.class,session);
         return v;
     }
 

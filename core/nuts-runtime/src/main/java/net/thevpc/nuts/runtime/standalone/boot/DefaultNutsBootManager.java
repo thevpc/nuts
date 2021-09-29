@@ -83,7 +83,7 @@ public class DefaultNutsBootManager implements NutsBootManager {
     }
 
     private DefaultNutsWorkspaceConfigModel _configModel() {
-        DefaultNutsWorkspaceConfigManager config = (DefaultNutsWorkspaceConfigManager) session.getWorkspace().config();
+        DefaultNutsWorkspaceConfigManager config = (DefaultNutsWorkspaceConfigManager) session.config();
         DefaultNutsWorkspaceConfigModel configModel = config.getModel();
         return configModel;
     }

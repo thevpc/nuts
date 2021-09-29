@@ -5,8 +5,8 @@ import net.thevpc.nuts.runtime.core.util.Simplifiable;
 
 public final class NutsDependencyFilterTrue extends AbstractDependencyFilter{
 
-    public NutsDependencyFilterTrue(NutsSession ws) {
-        super(ws, NutsFilterOp.TRUE);
+    public NutsDependencyFilterTrue(NutsSession session) {
+        super(session, NutsFilterOp.TRUE);
     }
 
     @Override

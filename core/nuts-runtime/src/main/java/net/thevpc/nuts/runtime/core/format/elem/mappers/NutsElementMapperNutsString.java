@@ -22,6 +22,6 @@ public class NutsElementMapperNutsString implements NutsElementMapper<NutsString
     @Override
     public NutsString createObject(NutsElement o, Type to, NutsElementFactoryContext context) {
         String i = context.defaultElementToObject(o, String.class);
-        return context.getSession().getWorkspace().text().parse(i);
+        return context.getSession().text().parse(i);
     }
 }

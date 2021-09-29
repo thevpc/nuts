@@ -97,7 +97,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 
     @Override
     public NutsDescriptorBuilder setId(String id) {
-        this.id = session.getWorkspace().id().parser().setLenient(false).parse(id);
+        this.id = session.id().parser().setLenient(false).parse(id);
         return this;
     }
 
@@ -334,7 +334,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 
     @Override
     public NutsDescriptorBuilder setProperty(String name, String value) {
-        NutsDescriptorProperty pp = session.getWorkspace().descriptor().propertyBuilder()
+        NutsDescriptorProperty pp = session.descriptor().propertyBuilder()
                 .setName(name)
                 .setValue(value)
                 .build();
@@ -549,7 +549,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         if (properties != null) {
             n_props.addAll(Arrays.asList(properties));
         }
-        NutsEnvConditionBuilder b = session.getWorkspace().descriptor().envConditionBuilder();
+        NutsEnvConditionBuilder b = session.descriptor().envConditionBuilder();
 
         LinkedHashSet<NutsDependency> n_deps = new LinkedHashSet<>();
         LinkedHashSet<NutsDependency> n_sdeps = new LinkedHashSet<>();
@@ -770,7 +770,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     }
 
     private NutsId applyNutsIdProperties(NutsId child, Function<String, String> properties) {
-        return session.getWorkspace().id().builder()
+        return session.id().builder()
                 .setRepository(CoreNutsUtils.applyStringProperties(child.getRepository(), properties))
                 .setGroupId(CoreNutsUtils.applyStringProperties(child.getGroupId(), properties))
                 .setArtifactId(CoreNutsUtils.applyStringProperties(child.getArtifactId(), properties))
@@ -787,7 +787,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         for (int i = 0; i < exclusions.length; i++) {
             exclusions[i] = applyNutsIdProperties(exclusions[i], properties);
         }
-        return session.getWorkspace().dependency().builder()
+        return session.dependency().builder()
                 .setRepository(CoreNutsUtils.applyStringProperties(child.getRepository(), properties))
                 .setGroupId(CoreNutsUtils.applyStringProperties(child.getGroupId(), properties))
                 .setArtifactId(CoreNutsUtils.applyStringProperties(child.getArtifactId(), properties))

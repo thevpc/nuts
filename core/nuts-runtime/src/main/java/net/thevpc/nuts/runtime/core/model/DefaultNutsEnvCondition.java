@@ -41,7 +41,7 @@ public class DefaultNutsEnvCondition implements NutsEnvCondition {
 
     @Override
     public NutsEnvConditionBuilder builder() {
-        return session.getWorkspace().descriptor().envConditionBuilder().setAll(this);
+        return session.descriptor().envConditionBuilder().setAll(this);
     }
 
     private String[] arch;

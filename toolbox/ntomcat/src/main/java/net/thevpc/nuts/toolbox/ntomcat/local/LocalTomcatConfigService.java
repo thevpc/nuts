@@ -425,7 +425,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                 int x=b.getResult();
                 String txt=b.getOutputString();
                 context.getSession().eout().add(
-                        context.getSession().getWorkspace().elem().forObject()
+                        context.getSession().elem().forObject()
                         .set("command","catalina-start")
                         .set("result-code",x)
                         .set("catalina-out",txt)
@@ -441,7 +441,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                 int x=b.getResult();
                 String txt=b.getOutputString();
                 context.getSession().eout().add(
-                        context.getSession().getWorkspace().elem().forObject()
+                        context.getSession().elem().forObject()
                                 .set("command","catalina-stop")
                                 .set("result-code",x)
                                 .set("catalina-out",txt)
@@ -473,7 +473,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                 context.getSession().out().printf("%s Tomcat already started on port " + getHttpConnectorPort() + ".\n", getFormattedPrefix(getName()));
             }else {
                 context.getSession().eout().add(
-                        context.getSession().getWorkspace().elem().forObject()
+                        context.getSession().elem().forObject()
                                 .set("config-name", getName())
                                 .set("command", "start")
                                 .set("result", "already-started")
@@ -645,7 +645,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             if(context.getSession().isPlainOut()) {
                 context.getSession().out().printf("%s Tomcat started on port " + getHttpConnectorPort() + ".\n", getFormattedPrefix(getName()));
             }else{
-                context.getSession().eout().add(context.getSession().getWorkspace().elem()
+                context.getSession().eout().add(context.getSession().elem()
                         .forObject()
                         .set("command","wait-for-running")
                         .set("time",0)
@@ -662,7 +662,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                     context.getSession().out().printf("%s Tomcat started on port" + getHttpConnectorPort() + " .\n", getFormattedPrefix(getName()));
                     return AppStatus.RUNNING;
                 }else{
-                    context.getSession().eout().add(context.getSession().getWorkspace().elem()
+                    context.getSession().eout().add(context.getSession().elem()
                             .forObject()
                             .set("command","wait-for-running")
                             .set("time",0)
@@ -672,7 +672,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                 }
             }else{
                 if(!context.getSession().isPlainOut()) {
-                    context.getSession().eout().add(context.getSession().getWorkspace().elem()
+                    context.getSession().eout().add(context.getSession().elem()
                             .forObject()
                             .set("command","wait-for-running")
                             .set("time",0)
@@ -694,7 +694,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                 if(context.getSession().isPlainOut()) {
                     context.getSession().out().printf("%s Tomcat started on port " + getHttpConnectorPort() + ".\n", getFormattedPrefix(getName()));
                 }else{
-                    context.getSession().eout().add(context.getSession().getWorkspace().elem()
+                    context.getSession().eout().add(context.getSession().elem()
                             .forObject()
                             .set("command","wait-for-running")
                             .set("config-name",getName())
@@ -711,7 +711,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             if(context.getSession().isPlainOut()) {
                 context.getSession().out().printf("%s Tomcat out of memory.\n", getFormattedPrefix(getName()));
             }else{
-                context.getSession().eout().add(context.getSession().getWorkspace().elem()
+                context.getSession().eout().add(context.getSession().elem()
                         .forObject()
                         .set("command","wait-for-running")
                         .set("config-name",getName())
@@ -733,7 +733,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             if(context.getSession().isPlainOut()) {
                 context.getSession().out().printf("%s Tomcat stopped.\n", getFormattedPrefix(getName()));
             }else{
-                context.getSession().eout().add(context.getSession().getWorkspace().elem()
+                context.getSession().eout().add(context.getSession().elem()
                         .forObject()
                         .set("command","wait-for-stopped")
                         .set("config-name",getName())
@@ -757,7 +757,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                 if(context.getSession().isPlainOut()) {
                     context.getSession().out().printf("%s Tomcat stopped.\n", getFormattedPrefix(getName()));
                 }else{
-                    context.getSession().eout().add(context.getSession().getWorkspace().elem()
+                    context.getSession().eout().add(context.getSession().elem()
                             .forObject()
                             .set("command","wait-for-stopped")
                             .set("config-name",getName())
@@ -779,7 +779,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                     if(context.getSession().isPlainOut()) {
                         context.getSession().out().printf("%s Tomcat process killed (%s).\n", getFormattedPrefix(getName()), ps.getPid());
                     }else{
-                        context.getSession().eout().add(context.getSession().getWorkspace().elem()
+                        context.getSession().eout().add(context.getSession().elem()
                                 .forObject()
                                 .set("command","wait-for-stopped")
                                 .set("config-name",getName())
@@ -795,7 +795,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                     if(context.getSession().isPlainOut()) {
                         context.getSession().out().printf("%s Tomcat process could not be killed ( %s).\n", getFormattedPrefix(getName()), ps.getPid());
                     }else{
-                        context.getSession().eout().add(context.getSession().getWorkspace().elem()
+                        context.getSession().eout().add(context.getSession().elem()
                                 .forObject()
                                 .set("command","wait-for-stopped")
                                 .set("config-name",getName())
@@ -816,7 +816,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             if(context.getSession().isPlainOut()) {
                 context.getSession().out().printf("%s Tomcat process could not be terminated (%s).\n", getFormattedPrefix(getName()), ps.getPid());
             }else{
-                context.getSession().eout().add(context.getSession().getWorkspace().elem()
+                context.getSession().eout().add(context.getSession().elem()
                         .forObject()
                         .set("command","wait-for-stopped")
                         .set("config-name",getName())
@@ -832,7 +832,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         if(context.getSession().isPlainOut()) {
             context.getSession().out().printf("%s\n", getFormattedError("Tomcat stopped"));
         }else{
-            context.getSession().eout().add(context.getSession().getWorkspace().elem()
+            context.getSession().eout().add(context.getSession().elem()
                     .forObject()
                     .set("command","wait-for-stopped")
                     .set("config-name",getName())
@@ -1075,7 +1075,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             return;
         }
         if (Files.isRegularFile(file)) {
-            for (String line : context.getSession().getWorkspace().io().path(file.toString())
+            for (String line : context.getSession().io().path(file.toString())
                     .input().tail(tail)) {
                 context.getSession().out().println(line);
             }

@@ -14,8 +14,8 @@ public class NutsVersionFilterNone extends AbstractVersionFilter implements Nuts
 
     private NutsVersionFilter[] all;
 
-    public NutsVersionFilterNone(NutsSession ws, NutsVersionFilter... all) {
-        super(ws, NutsFilterOp.NOT);
+    public NutsVersionFilterNone(NutsSession session, NutsVersionFilter... all) {
+        super(session, NutsFilterOp.NOT);
         List<NutsVersionFilter> valid = new ArrayList<>();
         if (all != null) {
             for (NutsVersionFilter filter : all) {

@@ -25,7 +25,7 @@ public class DefaultNutsHelpInternalExecutable extends DefaultInternalNutsExecut
     private final NutsLogger LOG;
     public DefaultNutsHelpInternalExecutable(String[] args, NutsSession session) {
         super("help", args, session);
-        LOG=session.getWorkspace().log().of(DefaultNutsHelpInternalExecutable.class);
+        LOG=session.log().of(DefaultNutsHelpInternalExecutable.class);
     }
 
     @Override
@@ -35,7 +35,7 @@ public class DefaultNutsHelpInternalExecutable extends DefaultInternalNutsExecut
             return;
         }
         List<String> helpFor = new ArrayList<>();
-        NutsCommandLine cmdLine = getSession().getWorkspace().commandLine().create(args);
+        NutsCommandLine cmdLine = getSession().commandLine().create(args);
         NutsContentType outputFormat = NutsContentType.PLAIN;
         boolean helpColors=false;
         while (cmdLine.hasNext()) {
@@ -68,7 +68,7 @@ public class DefaultNutsHelpInternalExecutable extends DefaultInternalNutsExecut
         }
 
         if(helpColors){
-            NutsTextManager txt = getSession().getWorkspace().text();
+            NutsTextManager txt = getSession().text();
             NutsText n = txt.parser().parseResource("/net/thevpc/nuts/runtime/ntf-help.ntf",
                     txt.parser().createLoader(getClass().getClassLoader())
             );

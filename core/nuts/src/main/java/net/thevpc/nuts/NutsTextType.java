@@ -23,6 +23,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
 /**
  * @app.category Format
  */
@@ -71,11 +73,7 @@ public enum NutsTextType implements NutsEnum {
 
     public static NutsTextType parse(String value, NutsTextType emptyValue, NutsSession session) {
         NutsTextType v = parseLenient(value, emptyValue, null);
-        if (v == null) {
-            if (!NutsBlankable.isBlank(value)) {
-                throw new NutsParseEnumException(session, value, NutsTextType.class);
-            }
-        }
+        NutsApiUtils.checkNonNullEnum(v,value,NutsTextType.class,session);
         return v;
     }
 

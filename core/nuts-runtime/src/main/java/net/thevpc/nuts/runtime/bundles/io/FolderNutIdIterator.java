@@ -92,7 +92,7 @@ public class FolderNutIdIterator implements Iterator<NutsId> {
         while (!stack.isEmpty()) {
             PathAndDepth file = stack.pop();
             if (Files.isDirectory(file.path)) {
-                session.getTerminal().printProgress("%-8s %s", "search",session.getWorkspace().io().path(file.path.toString()).toCompressedForm());
+                session.getTerminal().printProgress("%-8s %s", "search",session.io().path(file.path.toString()).toCompressedForm());
                 visitedFoldersCount++;
                 boolean deep = file.depth < maxDepth;
                 if (Files.isDirectory(file.path)) {
@@ -102,7 +102,7 @@ public class FolderNutIdIterator implements Iterator<NutsId> {
                             try {
                                 return (deep && Files.isDirectory(pathname)) || model.isDescFile(pathname);
                             } catch (Exception ex) {
-                                session.getWorkspace().log().of(FolderNutIdIterator.class).with().session(session).level(Level.FINE).error(ex).log("unable to test desc file {0}", pathname);
+                                session.log().of(FolderNutIdIterator.class).with().session(session).level(Level.FINE).error(ex).log("unable to test desc file {0}", pathname);
                                 return false;
                             }
                         }
@@ -118,7 +118,7 @@ public class FolderNutIdIterator implements Iterator<NutsId> {
                             }
                         }
                     } catch (IOException ex) {
-                        session.getWorkspace().log().of(FolderNutIdIterator.class).with().session(session).level(Level.FINEST).error(ex).log("unable to iterate {0}", file.path);
+                        session.log().of(FolderNutIdIterator.class).with().session(session).level(Level.FINEST).error(ex).log("unable to iterate {0}", file.path);
                     }
                 }
             } else {
@@ -127,7 +127,7 @@ public class FolderNutIdIterator implements Iterator<NutsId> {
                 try {
                     t = model.parseId(file.path, rootFolder, filter, repository, session);
                 } catch (Exception ex) {
-                    session.getWorkspace().log().of(FolderNutIdIterator.class).with().session(session).level(Level.FINEST).error(ex).log("unable to parse id from file {0}", file.path);
+                    session.log().of(FolderNutIdIterator.class).with().session(session).level(Level.FINEST).error(ex).log("unable to parse id from file {0}", file.path);
                 }
                 if (t != null) {
                     last = t;

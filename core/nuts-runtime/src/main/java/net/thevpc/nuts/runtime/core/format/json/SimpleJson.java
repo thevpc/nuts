@@ -807,7 +807,7 @@ public class SimpleJson implements NutsElementStreamFormat {
 
         public NutsElementFormat builder() {
             if (ebuilder == null) {
-                ebuilder = context.getSession().getWorkspace().elem();
+                ebuilder = context.getSession().elem();
             }
             return ebuilder;
         }

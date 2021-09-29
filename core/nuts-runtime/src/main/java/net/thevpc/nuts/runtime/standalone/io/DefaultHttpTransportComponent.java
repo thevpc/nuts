@@ -82,7 +82,7 @@ public class DefaultHttpTransportComponent implements NutsTransportComponent {
 
         @Override
         public NutsPath getPath() {
-            return session.getWorkspace().io().path(url);
+            return session.io().path(url);
         }
 
         public InputStream upload(NutsTransportParamPart... parts) {

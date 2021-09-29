@@ -62,7 +62,6 @@ public class DefaultProjectTemplate implements ProjectTemplate {
                 }
                 return term.ask()
                         .resetLine()
-                        .setSession(session)
                         .forString(
                         getWorkspace().text().builder()
                                 .append(propertyTitle, NutsTextStyle.primary4())
@@ -413,7 +412,7 @@ public class DefaultProjectTemplate implements ProjectTemplate {
             if (!pomFile.isFile()) {
                 return null;
             }
-            session.getWorkspace().descriptor().parser().setDescriptorStyle(NutsDescriptorStyle.MAVEN).parse(pomFile);
+            session.descriptor().parser().setDescriptorStyle(NutsDescriptorStyle.MAVEN).parse(pomFile);
             return pomFile;
         } catch (Exception ex) {
             throw new RuntimeException(ex);
@@ -435,7 +434,6 @@ public class DefaultProjectTemplate implements ProjectTemplate {
             if (p != null) {
                 if (!getSession().getTerminal().ask()
                         .resetLine()
-                        .setSession(session)
                         .forBoolean("accept project location %s?",
                         applicationContext.getWorkspace().text().forStyled(p.getPath(),NutsTextStyle.path()))
                         .setDefaultValue(false)
@@ -445,7 +443,7 @@ public class DefaultProjectTemplate implements ProjectTemplate {
             }
         }
         try {
-            return session.getWorkspace().descriptor().parser().setDescriptorStyle(NutsDescriptorStyle.MAVEN)
+            return session.descriptor().parser().setDescriptorStyle(NutsDescriptorStyle.MAVEN)
                     .parse(new File(getProjectRootFolder(), "pom.xml"));
         } catch (Exception ex) {
             throw new RuntimeException(ex);

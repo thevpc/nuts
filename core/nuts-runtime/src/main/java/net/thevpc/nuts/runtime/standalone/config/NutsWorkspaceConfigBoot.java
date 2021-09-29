@@ -25,10 +25,7 @@
 */
 package net.thevpc.nuts.runtime.standalone.config;
 
-import net.thevpc.nuts.NutsConfigItem;
-import net.thevpc.nuts.NutsId;
-import net.thevpc.nuts.NutsOsFamily;
-import net.thevpc.nuts.NutsStoreLocationStrategy;
+import net.thevpc.nuts.*;
 
 import java.util.*;
 
@@ -48,8 +45,8 @@ public final class NutsWorkspaceConfigBoot extends NutsConfigItem {
     // folder types and layout types are exploded so that it is easier
     // to extract from json file even though no json library is available
     // via simple regexp
-    private Map<String, String> storeLocations = null;
-    private Map<String, String> homeLocations = null;
+    private Map<NutsStoreLocation, String> storeLocations = null;
+    private Map<NutsHomeLocation, String> homeLocations = null;
 
     private NutsStoreLocationStrategy repositoryStoreLocationStrategy = null;
     private NutsStoreLocationStrategy storeLocationStrategy = null;
@@ -98,20 +95,20 @@ public final class NutsWorkspaceConfigBoot extends NutsConfigItem {
         return this;
     }
 
-    public NutsWorkspaceConfigBoot setStoreLocations(Map<String, String> storeLocations) {
+    public NutsWorkspaceConfigBoot setStoreLocations(Map<NutsStoreLocation, String> storeLocations) {
         this.storeLocations = storeLocations;
         return this;
     }
 
-    public Map<String, String> getStoreLocations() {
+    public Map<NutsStoreLocation, String> getStoreLocations() {
         return storeLocations;
     }
 
-    public Map<String, String> getHomeLocations() {
+    public Map<NutsHomeLocation, String> getHomeLocations() {
         return homeLocations;
     }
 
-    public NutsWorkspaceConfigBoot setHomeLocations(Map<String, String> homeLocations) {
+    public NutsWorkspaceConfigBoot setHomeLocations(Map<NutsHomeLocation, String> homeLocations) {
         this.homeLocations = homeLocations;
         return this;
     }

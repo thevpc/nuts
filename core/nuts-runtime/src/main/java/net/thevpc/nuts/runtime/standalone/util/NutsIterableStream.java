@@ -20,8 +20,8 @@ public class NutsIterableStream<T> extends AbstractNutsStream<T> {
 
     private final Iterable<T> o;
 
-    public NutsIterableStream(NutsSession ws, String nutsBase, Iterable<T> o) {
-        super(ws, nutsBase);
+    public NutsIterableStream(NutsSession session, String nutsBase, Iterable<T> o) {
+        super(session, nutsBase);
         this.o = o;
     }
 

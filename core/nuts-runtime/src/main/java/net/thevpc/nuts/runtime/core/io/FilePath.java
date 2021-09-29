@@ -219,7 +219,9 @@ public class FilePath extends NutsPathBase implements NutsPathSPI {
 
     public InputStream inputStream() {
         try {
-            return Files.newInputStream(value);
+            return new InputStreamMetadataAwareImpl(Files.newInputStream(value),
+                    new FixedInputStreamMetadata(toString(),
+                    getContentLength()));
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
@@ -243,9 +245,9 @@ public class FilePath extends NutsPathBase implements NutsPathSPI {
 
         public NutsString asFormattedString() {
             if (p.value == null) {
-                return getSession().getWorkspace().text().forPlain("");
+                return getSession().text().forPlain("");
             }
-            return getSession().getWorkspace().text().toText(p.value);
+            return getSession().text().toText(p.value);
         }
 
         @Override

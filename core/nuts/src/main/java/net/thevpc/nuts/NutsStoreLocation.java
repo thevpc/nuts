@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
 /**
  *
  * @author thevpc
@@ -131,11 +133,7 @@ public enum NutsStoreLocation implements NutsEnum {
 
     public static NutsStoreLocation parse(String value, NutsStoreLocation emptyValue, NutsSession session) {
         NutsStoreLocation v = parseLenient(value, emptyValue, null);
-        if (v == null) {
-            if (!NutsBlankable.isBlank(value)) {
-                throw new NutsParseEnumException(session, value, NutsStoreLocation.class);
-            }
-        }
+        NutsApiUtils.checkNonNullEnum(v,value,NutsStoreLocation.class,session);
         return v;
     }
 

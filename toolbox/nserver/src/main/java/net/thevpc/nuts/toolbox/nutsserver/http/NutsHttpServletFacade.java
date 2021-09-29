@@ -23,6 +23,7 @@
  */
 package net.thevpc.nuts.toolbox.nutsserver.http;
 
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.toolbox.nutsserver.http.commands.*;
 import net.thevpc.nuts.toolbox.nutsserver.util.NutsServerUtils;
 import net.thevpc.nuts.NutsId;
@@ -42,11 +43,11 @@ import java.util.logging.Logger;
 public class NutsHttpServletFacade {
 
     private static final Logger LOG = Logger.getLogger(NutsHttpServletFacade.class.getName());
-    private Map<String, NutsWorkspace> workspaces;
+    private Map<String, NutsSession> workspaces;
     private String serverId;
     private Map<String, FacadeCommand> commands = new HashMap<>();
 
-    public NutsHttpServletFacade(String serverId, Map<String, NutsWorkspace> workspaces) {
+    public NutsHttpServletFacade(String serverId, Map<String, NutsSession> workspaces) {
         this.workspaces = workspaces;
         this.serverId = serverId;
         register(new VersionFacadeCommand());
@@ -63,11 +64,11 @@ public class NutsHttpServletFacade {
         register(new GetBootFacadeCommand());
     }
 
-    public Map<String, NutsWorkspace> getWorkspaces() {
+    public Map<String, NutsSession> getWorkspaces() {
         return workspaces;
     }
 
-    public NutsHttpServletFacade setWorkspaces(Map<String, NutsWorkspace> workspaces) {
+    public NutsHttpServletFacade setWorkspaces(Map<String, NutsSession> workspaces) {
         this.workspaces = workspaces;
         return this;
     }
@@ -122,15 +123,15 @@ public class NutsHttpServletFacade {
     public void execute(NutsHttpServletFacadeContext context) throws IOException {
         String requestPath = context.getRequestURI().getPath();
         URLInfo ii = parse(requestPath, false);
-        NutsWorkspace ws = workspaces.get(ii.context);
-        if (ws == null) {
-            ws = workspaces.get("");
-            if (ws != null) {
+        NutsSession session = workspaces.get(ii.context);
+        if (session == null) {
+            session = workspaces.get("");
+            if (session != null) {
                 ii = parse(requestPath, true);
             }
         }
-        if (ws == null) {
-            context.sendError(404, "Workspace not found");
+        if (session == null) {
+            context.sendError(404, "workspace not found");
             return;
         }
         FacadeCommand facadeCommand = commands.get(ii.command);
@@ -143,7 +144,7 @@ public class NutsHttpServletFacade {
         } else {
             try {
                 try {
-                    facadeCommand.execute(new FacadeCommandContext(context, ws, serverId, ii.command, ii.path, ws.createSession()));
+                    facadeCommand.execute(new FacadeCommandContext(context, serverId, ii.command, ii.path, session));
                 } catch (SecurityException ex) {
                     LOG.log(Level.SEVERE, "SERVER ERROR : " + ex, ex);
 //                    ex.printStackTrace();

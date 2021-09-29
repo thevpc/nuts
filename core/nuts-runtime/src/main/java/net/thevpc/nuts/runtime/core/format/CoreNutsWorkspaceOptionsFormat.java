@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,14 +25,12 @@ package net.thevpc.nuts.runtime.core.format;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NutsBootVersion;
-import net.thevpc.nuts.runtime.core.model.CoreNutsWorkspaceOptions;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 
 import java.util.*;
 
 /**
  * @author thevpc
- * @app.category Format
  */
 public class CoreNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFormat {
 
@@ -59,8 +57,20 @@ public class CoreNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsForma
     }
 
     @Override
+    public NutsWorkspaceOptionsFormat setInit(boolean e) {
+        this.createOptions = true;
+        return this;
+    }
+
+    @Override
     public boolean isRuntime() {
         return runtimeOptions;
+    }
+
+    @Override
+    public NutsWorkspaceOptionsFormat setRuntime(boolean e) {
+        this.runtimeOptions = true;
+        return this;
     }
 
     @Override
@@ -83,18 +93,6 @@ public class CoreNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsForma
     public NutsWorkspaceOptionsFormat setApiVersion(String apiVersion) {
         this.apiVersion = apiVersion;
         this.apiVersionObj = null;
-        return this;
-    }
-
-    @Override
-    public NutsWorkspaceOptionsFormat setRuntime(boolean e) {
-        this.runtimeOptions = true;
-        return this;
-    }
-
-    @Override
-    public NutsWorkspaceOptionsFormat setInit(boolean e) {
-        this.createOptions = true;
         return this;
     }
 
@@ -201,25 +199,25 @@ public class CoreNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsForma
             fillOption("--store-layout", null, options.getStoreLocationLayout(), NutsOsFamily.class, arguments, false);
             fillOption("--store-strategy", null, options.getStoreLocationStrategy(), NutsStoreLocationStrategy.class, arguments, false);
             fillOption("--repo-store-strategy", null, options.getRepositoryStoreLocationStrategy(), NutsStoreLocationStrategy.class, arguments, false);
-            Map<String, String> storeLocations = options.getStoreLocations();
+            Map<NutsStoreLocation, String> storeLocations = options.getStoreLocations();
             for (NutsStoreLocation location : NutsStoreLocation.values()) {
-                String s = storeLocations.get(location.id());
+                String s = storeLocations.get(location);
                 if (!NutsBlankable.isBlank(s)) {
                     fillOption("--" + location.id() + "-location", null, s, arguments, false);
                 }
             }
 
-            Map<String, String> homeLocations = options.getHomeLocations();
+            Map<NutsHomeLocation, String> homeLocations = options.getHomeLocations();
             if (homeLocations != null) {
                 for (NutsStoreLocation location : NutsStoreLocation.values()) {
-                    String s = homeLocations.get(NutsUtilPlatforms.createHomeLocationKey(null, location));
+                    String s = homeLocations.get(NutsHomeLocation.of(null, location));
                     if (!NutsBlankable.isBlank(s)) {
                         fillOption("--system-" + location.id() + "-home", null, s, arguments, false);
                     }
                 }
                 for (NutsOsFamily osFamily : NutsOsFamily.values()) {
                     for (NutsStoreLocation location : NutsStoreLocation.values()) {
-                        String s = homeLocations.get(NutsUtilPlatforms.createHomeLocationKey(osFamily, location));
+                        String s = homeLocations.get(NutsHomeLocation.of(osFamily, location));
                         if (!NutsBlankable.isBlank(s)) {
                             fillOption("--" + osFamily.id() + "-" + location.id() + "-home", null, s, arguments, false);
                         }
@@ -245,11 +243,6 @@ public class CoreNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsForma
             fillOption("--recover", "-z", options.isRecover(), false, arguments, false);
             fillOption("--dry", "-D", options.isDry(), false, arguments, false);
             if (apiVersionObj == null || apiVersionObj.compareTo("0.8.1") >= 0) {
-                if (options.getProperties() != null) {
-                    for (String property : options.getProperties()) {
-                        arguments.add("---" + property);
-                    }
-                }
                 fillOption("--locale", "-L", options.getLocale(), arguments, false);
             }
             if (!omitDefaults || options.getExecutorOptions().length > 0) {
@@ -258,7 +251,16 @@ public class CoreNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsForma
             arguments.addAll(Arrays.asList(options.getExecutorOptions()));
             arguments.addAll(Arrays.asList(options.getApplicationArguments()));
         }
-        return session.getWorkspace().commandLine().create(arguments.toArray(new String[0]));
+        if (true || isImplicitAll()) {
+            if (apiVersionObj == null || apiVersionObj.compareTo("0.8.1") >= 0) {
+                if (options.getCustomOptions() != null) {
+                    for (String property : options.getCustomOptions()) {
+                        arguments.add("---" + property);
+                    }
+                }
+            }
+        }
+        return session.commandLine().create(arguments.toArray(new String[0]));
     }
 
     @Override
@@ -328,49 +330,49 @@ public class CoreNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsForma
                 if (value instanceof NutsOsFamily) {
                     switch ((NutsOsFamily) value) {
                         case LINUX: {
-                            fillOption0(selectOptionName(longName, shortName), selectOptionVal("l", "linux"), arguments, forceSingle);
+                            fillOption0(selectOptionName(longName, shortName), selectOptionVal("linux", "l"), arguments, forceSingle);
                             return;
                         }
                         case WINDOWS: {
-                            fillOption0(selectOptionName(longName, shortName), selectOptionVal("w", "windows"), arguments, forceSingle);
+                            fillOption0(selectOptionName(longName, shortName), selectOptionVal("windows", "w"), arguments, forceSingle);
                             return;
                         }
                         case MACOS: {
-                            fillOption0(selectOptionName(longName, shortName), selectOptionVal("m", "macos"), arguments, forceSingle);
+                            fillOption0(selectOptionName(longName, shortName), selectOptionVal("macos", "m"), arguments, forceSingle);
                             return;
                         }
                         case UNIX: {
-                            fillOption0(selectOptionName(longName, shortName), selectOptionVal("u", "unix"), arguments, forceSingle);
+                            fillOption0(selectOptionName(longName, shortName), selectOptionVal("unix", "u"), arguments, forceSingle);
                             return;
                         }
                         case UNKNOWN: {
-                            fillOption0(selectOptionName(longName, shortName), selectOptionVal("x", "unknown"), arguments, forceSingle);
+                            fillOption0(selectOptionName(longName, shortName), selectOptionVal("unknown", "x"), arguments, forceSingle);
                             return;
                         }
                     }
                 } else if (value instanceof NutsStoreLocationStrategy) {
                     switch ((NutsStoreLocationStrategy) value) {
                         case EXPLODED: {
-                            fillOption0(selectOptionName(longName, shortName), selectOptionVal("e", "exploded"), arguments, forceSingle);
+                            fillOption0(selectOptionName(longName, shortName), selectOptionVal("exploded", "e"), arguments, forceSingle);
                             return;
                         }
                         case STANDALONE: {
-                            fillOption0(selectOptionName(longName, shortName), selectOptionVal("s", "standalone"), arguments, forceSingle);
+                            fillOption0(selectOptionName(longName, shortName), selectOptionVal("standalone", "s"), arguments, forceSingle);
                             return;
                         }
                     }
                 } else if (value instanceof NutsTerminalMode) {
                     switch ((NutsTerminalMode) value) {
                         case FILTERED: {
-                            fillOption0(selectOptionName(longName, shortName), selectOptionVal("n", "no"), arguments, forceSingle);
+                            fillOption0(selectOptionName(longName, shortName), selectOptionVal("no", "n"), arguments, forceSingle);
                             return;
                         }
                         case INHERITED: {
-                            fillOption0(selectOptionName(longName, shortName), selectOptionVal("h", "inherited"), arguments, forceSingle);
+                            fillOption0(selectOptionName(longName, shortName), selectOptionVal("inherited", "h"), arguments, forceSingle);
                             return;
                         }
                         case FORMATTED: {
-                            fillOption0(selectOptionName(longName, shortName), selectOptionVal("y", "yes"), arguments, forceSingle);
+                            fillOption0(selectOptionName(longName, shortName), selectOptionVal("yes", "y"), arguments, forceSingle);
                             return;
                         }
                     }
@@ -389,8 +391,8 @@ public class CoreNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsForma
                         NutsBootVersion.parse(apiVersion).compareTo(NutsBootVersion.parse("0.8.1"))
                                 < 0) {
                     arguments.add("--user-cmd");
-                }else{
-                    if(!omitDefaults) {
+                } else {
+                    if (!omitDefaults) {
                         arguments.add("--current-user");
                     }
                 }
@@ -401,7 +403,7 @@ public class CoreNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsForma
                         NutsBootVersion.parse(apiVersion).compareTo(NutsBootVersion.parse("0.8.1"))
                                 < 0) {
                     arguments.add("--root-cmd");
-                }else {
+                } else {
                     arguments.add("--as-root");
                 }
                 return true;
@@ -411,7 +413,7 @@ public class CoreNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsForma
                         NutsBootVersion.parse(apiVersion).compareTo(NutsBootVersion.parse("0.8.1"))
                                 < 0) {
                     //ignore
-                }else {
+                } else {
                     arguments.add("--sudo");
                 }
                 return true;
@@ -421,8 +423,8 @@ public class CoreNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsForma
                         NutsBootVersion.parse(apiVersion).compareTo(NutsBootVersion.parse("0.8.1"))
                                 < 0) {
                     //ignore
-                }else {
-                    arguments.add("--run-as="+value.getUser());
+                } else {
+                    arguments.add("--run-as=" + value.getUser());
                 }
                 return true;
             }
@@ -438,21 +440,21 @@ public class CoreNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsForma
                 if (value instanceof NutsOpenMode) {
                     switch ((NutsOpenMode) value) {
                         case OPEN_OR_ERROR: {
-                            fillOption0("-o", "r", arguments, forceSingle);
+                            fillOption0(selectOptionName("--open-mode", "-o"), selectOptionVal("open-or-error", "r"), arguments, forceSingle);
                             return true;
                         }
                         case CREATE_OR_ERROR: {
-                            fillOption0("-o", "w", arguments, forceSingle);
+                            fillOption0(selectOptionName("--open-mode", "-o"), selectOptionVal("create-or-error", "w"), arguments, forceSingle);
                             return true;
                         }
                         case OPEN_OR_CREATE: {
                             if (!omitDefaults) {
-                                fillOption0("-o", "rw", arguments, forceSingle);
+                                fillOption0(selectOptionName("--open-mode", "-o"), selectOptionVal("open-or-create", "rw"), arguments, forceSingle);
                             }
                             return true;
                         }
                         case OPEN_OR_NULL: {
-                            fillOption0("-o", "on", arguments, forceSingle);
+                            fillOption0(selectOptionName("--open-mode", "-o"), selectOptionVal("open-or-null", "on"), arguments, forceSingle);
                             return true;
                         }
                     }
@@ -464,22 +466,23 @@ public class CoreNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsForma
                                     NutsBootVersion.parse(apiVersion).compareTo(NutsBootVersion.parse("0.8.1"))
                                             < 0) {
                                 arguments.add("--user-cmd");
-                            }else{
+                            } else {
                                 arguments.add("--system");
                             }
                             return true;
                         }
                         case EMBEDDED: {
-                            arguments.add("-b");
+                            arguments.add(selectOptionName("--embedded", "-b"));
                             return true;
                         }
                         case SPAWN: {
                             if (!omitDefaults) {
-                                arguments.add("-x");
+                                arguments.add(selectOptionName("--spawn", "-x"));
                             }
                             return true;
                         }
-                        case OPEN:{
+                        case OPEN: {
+                            arguments.add(selectOptionName("--open-file", "--open-file"));
                             return true;
                         }
                     }
@@ -487,11 +490,11 @@ public class CoreNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsForma
                 if (value instanceof NutsConfirmationMode) {
                     switch ((NutsConfirmationMode) value) {
                         case YES: {
-                            arguments.add("-y");
+                            arguments.add(selectOptionName("--yes", "-y"));
                             return true;
                         }
                         case NO: {
-                            arguments.add("-n");
+                            arguments.add(selectOptionName("-no", "-n"));
                             return true;
                         }
                         case ASK: {
@@ -501,20 +504,28 @@ public class CoreNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsForma
                             }
                             break;
                         }
+                        case ERROR: {
+                            arguments.add("--error");
+                            return true;
+                        }
                     }
                 }
                 if (value instanceof NutsTerminalMode) {
                     switch ((NutsTerminalMode) value) {
                         case FILTERED: {
-                            arguments.add("-C");
+                            arguments.add(selectOptionName("--!color", "-!c"));
                             return true;
                         }
                         case FORMATTED: {
-                            arguments.add("-c");
+                            arguments.add(selectOptionName("--color", "-c"));
                             return true;
                         }
                         case INHERITED: {
-                            arguments.add("-c=h");
+                            arguments.add(selectOptionName("--color=inherited", "-c=h"));
+                            return true;
+                        }
+                        case ANSI: {
+                            arguments.add(selectOptionName("--color=ansi", "-c=a"));
                             return true;
                         }
                     }
@@ -529,11 +540,15 @@ public class CoreNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsForma
             if (tryFillOptionShort(value, arguments, forceSingle)) {
                 return;
             }
-            arguments.add("--" + value.toString().toLowerCase().replace('_', '-'));
+            if (value instanceof NutsEnum) {
+                arguments.add("--" + ((NutsEnum) value).id());
+            } else {
+                arguments.add("--" + value.toString().toLowerCase().replace('_', '-'));
+            }
         }
     }
 
-    private String selectOptionVal(String shortName, String longName) {
+    private String selectOptionVal(String longName, String shortName) {
         if (shortOptions) {
             return shortName;
         }
@@ -589,7 +604,7 @@ public class CoreNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsForma
     public NutsVersion getApiVersionObj() {
         if (apiVersionObj == null) {
             if (apiVersion != null) {
-                apiVersionObj = session.getWorkspace().version().parser().parse(apiVersion);
+                apiVersionObj = session.version().parser().parse(apiVersion);
             }
         }
         return apiVersionObj;

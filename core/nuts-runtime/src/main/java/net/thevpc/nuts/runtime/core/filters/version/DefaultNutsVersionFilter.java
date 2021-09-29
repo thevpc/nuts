@@ -73,14 +73,14 @@ public class DefaultNutsVersionFilter extends AbstractVersionFilter implements N
      */
     private final List<NutsVersionInterval> intervals = new ArrayList<>();
 
-    public DefaultNutsVersionFilter(NutsSession ws) {
-        super(ws, NutsFilterOp.CUSTOM);
+    public DefaultNutsVersionFilter(NutsSession session) {
+        super(session, NutsFilterOp.CUSTOM);
     }
 
     public static NutsVersionFilter parse(String version, NutsSession session) {
         if (DefaultNutsVersion.isBlankVersion(version) || "*".equals(version)) {
 //            if(session!=null){
-            return session.getWorkspace().version().filter().always();
+            return session.version().filter().always();
 //            }
 //            return new NutsVersionFilterTrue(session.getWorkspace());
         }
@@ -217,7 +217,7 @@ public class DefaultNutsVersionFilter extends AbstractVersionFilter implements N
                 if (min.equals("")) {
                     dd.add(new DefaultNutsVersionInterval(false, false, min, null));
                 } else {
-                    String max = session.getWorkspace().version().parser().parse(min).inc(-1).getValue();
+                    String max = session.version().parser().parse(min).inc(-1).getValue();
                     dd.add(new DefaultNutsVersionInterval(true, false, min, max));
                 }
             } else {

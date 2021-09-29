@@ -41,7 +41,7 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
 
     @Override
     public NutsDescriptorBuilder builder() {
-        return session.getWorkspace().descriptor().descriptorBuilder().setAll(this);
+        return session.descriptor().descriptorBuilder().setAll(this);
     }
 
 }

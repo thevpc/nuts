@@ -103,16 +103,16 @@ public class DefaultVersionFormat extends DefaultFormatBase<NutsVersionFormat> i
             if (isWorkspaceVersion()) {
                 out.printf("%s/%s", getSession().getWorkspace().getApiVersion(), getSession().getWorkspace().getRuntimeId().getVersion());
             } else {
-                out.printf("%s", getSession().getWorkspace().text().forStyled(
+                out.printf("%s", getSession().text().forStyled(
                         getVersion().toString(), NutsTextStyle.version()
                 ));
             }
         } else {
             if (isWorkspaceVersion()) {
-                getSession().getWorkspace().formats().object(buildProps()).print(out);
+                getSession().formats().object(buildProps()).print(out);
             } else {
                 out.print(
-                        getSession().getWorkspace().text().forStyled(
+                        getSession().text().forStyled(
                                 getVersion().toString(), NutsTextStyle.version()
                         )
                 );

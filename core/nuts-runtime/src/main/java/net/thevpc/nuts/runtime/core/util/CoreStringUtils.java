@@ -241,8 +241,8 @@ public final class CoreStringUtils {
         return s;
     }
 
-    public static String enforceDoubleQuote(String s, NutsSession ws) {
-        s = ws.getWorkspace().text().builder().append(s).toString();
+    public static String enforceDoubleQuote(String s, NutsSession session) {
+        s = session.text().builder().append(s).toString();
         if (s.isEmpty() || s.contains(" ") || s.contains("\"") || s.contains("'")) {
             s = "\"" + s + "\"";
         }

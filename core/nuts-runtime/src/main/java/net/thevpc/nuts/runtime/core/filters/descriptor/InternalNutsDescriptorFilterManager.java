@@ -194,7 +194,7 @@ public class InternalNutsDescriptorFilterManager extends InternalNutsTypedFilter
     public NutsDescriptorFilter byExtension(NutsVersion targetApiVersion) {
         checkSession();
         return new NutsExecExtensionFilter(getSession(),
-                targetApiVersion == null ? null : getSession().getWorkspace().id().parser().parse(NutsConstants.Ids.NUTS_API).builder().setVersion(targetApiVersion).build()
+                targetApiVersion == null ? null : getSession().id().parser().parse(NutsConstants.Ids.NUTS_API).builder().setVersion(targetApiVersion).build()
         );
     }
 
@@ -202,7 +202,7 @@ public class InternalNutsDescriptorFilterManager extends InternalNutsTypedFilter
     public NutsDescriptorFilter byRuntime(NutsVersion targetApiVersion) {
         checkSession();
         return new NutsExecRuntimeFilter(getSession(),
-                targetApiVersion == null ? null : getSession().getWorkspace().id().parser().parse(NutsConstants.Ids.NUTS_API).builder().setVersion(targetApiVersion).build(),
+                targetApiVersion == null ? null : getSession().id().parser().parse(NutsConstants.Ids.NUTS_API).builder().setVersion(targetApiVersion).build(),
                 false
         );
     }
@@ -211,8 +211,8 @@ public class InternalNutsDescriptorFilterManager extends InternalNutsTypedFilter
     public NutsDescriptorFilter byCompanion(NutsVersion targetApiVersion) {
         checkSession();
         return new NutsExecCompanionFilter(getSession(),
-                targetApiVersion == null ? null : ws.id().parser().parse(NutsConstants.Ids.NUTS_API).builder().setVersion(targetApiVersion).build(),
-                ws.getCompanionIds(getSession()).stream().map(NutsId::getShortName).toArray(String[]::new)
+                targetApiVersion == null ? null : getSession().id().parser().parse(NutsConstants.Ids.NUTS_API).builder().setVersion(targetApiVersion).build(),
+                getSession().extensions().getCompanionIds().stream().map(NutsId::getShortName).toArray(String[]::new)
         );
     }
 
@@ -224,7 +224,7 @@ public class InternalNutsDescriptorFilterManager extends InternalNutsTypedFilter
         }
         return new BootAPINutsDescriptorFilter(
                 getSession(),
-                getSession().getWorkspace().id().parser().parse(NutsConstants.Ids.NUTS_API).builder().setVersion(apiVersion).build().getVersion()
+                getSession().id().parser().parse(NutsConstants.Ids.NUTS_API).builder().setVersion(apiVersion).build().getVersion()
         );
     }
 

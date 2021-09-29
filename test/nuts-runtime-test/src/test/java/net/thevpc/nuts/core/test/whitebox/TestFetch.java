@@ -1,13 +1,14 @@
 package net.thevpc.nuts.core.test.whitebox;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.core.test.utils.TestUtils;
 import org.junit.jupiter.api.Test;
 
 public class TestFetch {
 
     @Test
     public void test(){
-        NutsWorkspace ws = Nuts.openWorkspace().getWorkspace();
+        NutsWorkspace ws = TestUtils.openNewTestWorkspace().getWorkspace();
         NutsDefinition resultDefinition = ws.fetch().setId("org.springframework.boot:spring-boot#2.4.1")
                 .setDependencies(true)
                 .setContent(true)
@@ -26,10 +27,14 @@ public class TestFetch {
 
     @Test
     public void test2(){
-        Nuts.runWorkspace("-w","./temp","-Zyk"
-                ,"--repository=maven+https://repo.spring.io/release"
-                ,"--exclude-repository=maven-local"
-                ,"org.springframework.boot:spring-boot#2.4.1");
+        TestUtils.runNewTestWorkspace("--verbose",
+                "--repositories=spring"
+//                ,"org.springframework.boot:spring-boot#2.4.1"
+                ,"exec"
+                ,"--main-class=1" //multiple main classes are solved, the first is used
+                ,"org.springframework.boot:spring-boot-cli#2.4.1"
+                ,"--version"
+        );
     }
 
     public void show(NutsDependencyTreeNode[] n,String prefix){

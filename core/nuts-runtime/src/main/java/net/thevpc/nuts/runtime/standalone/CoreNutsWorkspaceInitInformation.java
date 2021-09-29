@@ -40,7 +40,6 @@ import java.util.Set;
 /**
  * This class holds information gathered by nuts Boot and passed to Runtime on BootTime
  * @author thevpc
- * @app.category Internal
  */
 public final class CoreNutsWorkspaceInitInformation implements NutsWorkspaceInitInformation {
 
@@ -134,12 +133,12 @@ public final class CoreNutsWorkspaceInitInformation implements NutsWorkspaceInit
     /**
      * workspace store locations
      */
-    private Map<String, String> storeLocations;
+    private Map<NutsStoreLocation, String> storeLocations;
     /**
      * workspace expected locations for all layout. Relevant when moving the
      * workspace cross operating systems
      */
-    private Map<String, String> homeLocations;
+    private Map<NutsHomeLocation, String> homeLocations;
     private NutsSession session;
 
     public CoreNutsWorkspaceInitInformation(NutsWorkspaceInitInformation boot, NutsSession session) {
@@ -358,28 +357,28 @@ public final class CoreNutsWorkspaceInitInformation implements NutsWorkspaceInit
 
     @Override
     public String getStoreLocation(NutsStoreLocation location) {
-        Map<String, String> s = storeLocations;
+        Map<NutsStoreLocation, String> s = storeLocations;
         if (s != null) {
-            return s.get(location.id());
+            return s.get(location);
         }
         return null;
     }
 
     @Override
-    public Map<String, String> getStoreLocations() {
+    public Map<NutsStoreLocation, String> getStoreLocations() {
         return storeLocations;
     }
 
-    public void setStoreLocations(Map<String, String> storeLocations) {
+    public void setStoreLocations(Map<NutsStoreLocation, String> storeLocations) {
         this.storeLocations = storeLocations;
     }
 
     @Override
-    public Map<String, String> getHomeLocations() {
+    public Map<NutsHomeLocation, String> getHomeLocations() {
         return homeLocations;
     }
 
-    public void setHomeLocations(Map<String, String> homeLocations) {
+    public void setHomeLocations(Map<NutsHomeLocation, String> homeLocations) {
         this.homeLocations = homeLocations;
     }
 

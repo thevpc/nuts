@@ -22,9 +22,9 @@ public class PrivateNutsUtilApplication {
         NutsSession session = NutsExceptionBase.detectSession(ex);
         NutsWorkspaceOptionsBuilder bo = null;
         if (session != null) {
-            bo = session.getWorkspace().boot().getBootOptions().builder();
+            bo = session.boot().getBootOptions().builder();
             if (bo.isGui()) {
-                if (!session.getWorkspace().env().isGraphicalDesktopEnvironment()) {
+                if (!session.env().isGraphicalDesktopEnvironment()) {
                     bo.setGui(false);
                 }
             }
@@ -95,14 +95,14 @@ public class PrivateNutsUtilApplication {
         if (out == null) {
             if (session != null) {
                 try {
-                    fout = session.getWorkspace().term().getSystemTerminal().getErr();
+                    fout = session.term().getSystemTerminal().getErr();
                     if (fm != null) {
-                        fm = session.getWorkspace().text().forStyled(fm, NutsTextStyle.error());
+                        fm = session.text().forStyled(fm, NutsTextStyle.error());
                     } else {
-                        fm = session.getWorkspace().text().forStyled(m, NutsTextStyle.error());
+                        fm = session.text().forStyled(m, NutsTextStyle.error());
                     }
                 } catch (Exception ex2) {
-                    session.getWorkspace().log().of(NutsApplications.class).with().level(Level.FINE).error(ex2).log("unable to get system terminal");
+                    session.log().of(NutsApplications.class).with().level(Level.FINE).error(ex2).log("unable to get system terminal");
                     //
                 }
             } else {
@@ -116,7 +116,7 @@ public class PrivateNutsUtilApplication {
             }
         } else {
             if (session != null) {
-                fout = session.getWorkspace().io().createPrintStream(out, NutsTerminalMode.FORMATTED);
+                fout = session.io().createPrintStream(out, NutsTerminalMode.FORMATTED);
             } else {
                 fout = null;
             }
@@ -136,35 +136,35 @@ public class PrivateNutsUtilApplication {
                     fout.flush();
                 } else {
                     if (fm != null) {
-                        session.eout().add(session.getWorkspace().elem().forObject()
+                        session.eout().add(session.elem().forObject()
                                 .set("app-id", session.getAppId() == null ? "" : session.getAppId().toString())
                                 .set("error", fm.filteredText())
                                 .build()
                         );
                         if (showTrace) {
-                            session.eout().add(session.getWorkspace().elem().forObject().set("error-trace",
-                                    session.getWorkspace().elem().forArray().addAll(PrivateNutsUtils.stacktraceToArray(ex)).build()
+                            session.eout().add(session.elem().forObject().set("error-trace",
+                                    session.elem().forArray().addAll(PrivateNutsUtils.stacktraceToArray(ex)).build()
                             ).build());
                         }
                         NutsArrayElementBuilder e = session.eout();
                         if (e.size() > 0) {
-                            session.getWorkspace().formats().object(e.build()).println(fout);
+                            session.formats().object(e.build()).println(fout);
                             e.clear();
                         }
                         fout.flush();
                     } else {
-                        session.eout().add(session.getWorkspace().elem().forObject()
+                        session.eout().add(session.elem().forObject()
                                 .set("app-id", session.getAppId() == null ? "" : session.getAppId().toString())
                                 .set("error", m)
                                 .build());
                         if (showTrace) {
-                            session.eout().add(session.getWorkspace().elem().forObject().set("error-trace",
-                                    session.getWorkspace().elem().forArray().addAll(PrivateNutsUtils.stacktraceToArray(ex)).build()
+                            session.eout().add(session.elem().forObject().set("error-trace",
+                                    session.elem().forArray().addAll(PrivateNutsUtils.stacktraceToArray(ex)).build()
                             ).build());
                         }
                         NutsArrayElementBuilder e = session.eout();
                         if (e.size() > 0) {
-                            session.getWorkspace().formats().object(e.build()).println(fout);
+                            session.formats().object(e.build()).println(fout);
                             e.clear();
                         }
                         fout.flush();
@@ -201,9 +201,9 @@ public class PrivateNutsUtilApplication {
             }
             if (session != null) {
                 //TODO show we delegate to the workspace implementation?
-                PrivateNutsUtilGui.showMessage(NutsMessage.plain(sb.toString()).toString(), "Nuts Package Manager - Error");
+                PrivateNutsUtilGui.showMessage(NutsMessage.plain(sb.toString()).toString(), "Nuts Package Manager - Error",out);
             } else {
-                PrivateNutsUtilGui.showMessage(NutsMessage.plain(sb.toString()).toString(), "Nuts Package Manager - Error");
+                PrivateNutsUtilGui.showMessage(NutsMessage.plain(sb.toString()).toString(), "Nuts Package Manager - Error",out);
             }
         }
         return (errorCode);

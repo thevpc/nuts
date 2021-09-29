@@ -179,7 +179,7 @@ public class DefaultNutsTerminalModel {
         if (old != this.systemTerminal) {
             NutsWorkspaceEvent event = null;
             if (session != null) {
-                for (NutsWorkspaceListener workspaceListener : session.getWorkspace().events().getWorkspaceListeners()) {
+                for (NutsWorkspaceListener workspaceListener : session.events().getWorkspaceListeners()) {
                     if (event == null) {
                         event = new DefaultNutsWorkspaceEvent(session, null, "systemTerminal", old, this.systemTerminal);
                     }
@@ -217,7 +217,7 @@ public class DefaultNutsTerminalModel {
 
 //    public void sendTerminalCommand(NutsPrintStream out, NutsTerminalCommand command, NutsSession session) {
 //        if (isFormatted(out)) {
-//            ((PrintStream) out).printf("%s", session.getWorkspace().text().forCommand(command));
+//            ((PrintStream) out).printf("%s", session.text().forCommand(command));
 //            out.flush();
 //        }
 //    }

@@ -13,12 +13,12 @@ public class NutsDependencyScopeFilter extends AbstractDependencyFilter {
 
     private EnumSet<NutsDependencyScope> scope=EnumSet.noneOf(NutsDependencyScope.class);
 
-    public NutsDependencyScopeFilter(NutsSession ws) {
-        super(ws,NutsFilterOp.CUSTOM);
+    public NutsDependencyScopeFilter(NutsSession session) {
+        super(session,NutsFilterOp.CUSTOM);
     }
 
-    private NutsDependencyScopeFilter(NutsSession ws,Collection<NutsDependencyScope> scope) {
-        super(ws,NutsFilterOp.CUSTOM);
+    private NutsDependencyScopeFilter(NutsSession session,Collection<NutsDependencyScope> scope) {
+        super(session,NutsFilterOp.CUSTOM);
         this.scope = EnumSet.copyOf(scope);
     }
 

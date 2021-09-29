@@ -57,7 +57,7 @@ public interface NutsWorkspaceLocationManager {
      *
      * @return home locations mapping
      */
-    Map<String, String> getStoreLocations();
+    Map<NutsStoreLocation, String> getStoreLocations();
 
     String getDefaultIdFilename(NutsId id);
 
@@ -73,15 +73,15 @@ public interface NutsWorkspaceLocationManager {
      *
      * @return home locations mapping
      */
-    Map<String, String> getHomeLocations();
+    Map<NutsHomeLocation, String> getHomeLocations();
 
-    String getHomeLocation(NutsOsFamily layout, NutsStoreLocation location);
+    String getHomeLocation(NutsHomeLocation location);
 
     String getWorkspaceLocation();
 
     NutsWorkspaceLocationManager setStoreLocation(NutsStoreLocation folderType, String location);
 
-    NutsWorkspaceLocationManager setHomeLocation(NutsOsFamily layout, NutsStoreLocation folderType, String location);
+    NutsWorkspaceLocationManager setHomeLocation(NutsHomeLocation homeType, String location);
 
     NutsSession getSession();
 

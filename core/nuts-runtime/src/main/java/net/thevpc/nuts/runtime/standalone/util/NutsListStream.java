@@ -24,8 +24,8 @@ public class NutsListStream<T> extends AbstractNutsStream<T> {
 
     private final List o;
 
-    public NutsListStream(NutsSession ws, String nutsBase, List<T> o) {
-        super(ws, nutsBase);
+    public NutsListStream(NutsSession session, String nutsBase, List<T> o) {
+        super(session, nutsBase);
         this.o = o;
     }
 

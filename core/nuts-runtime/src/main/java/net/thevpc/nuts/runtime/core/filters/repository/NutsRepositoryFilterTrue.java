@@ -34,8 +34,8 @@ import net.thevpc.nuts.NutsSession;
  * Created by vpc on 2/20/17.
  */
 public class NutsRepositoryFilterTrue extends AbstractRepositoryFilter{
-    public NutsRepositoryFilterTrue(NutsSession ws) {
-        super(ws, NutsFilterOp.TRUE);
+    public NutsRepositoryFilterTrue(NutsSession session) {
+        super(session, NutsFilterOp.TRUE);
     }
 
     @Override

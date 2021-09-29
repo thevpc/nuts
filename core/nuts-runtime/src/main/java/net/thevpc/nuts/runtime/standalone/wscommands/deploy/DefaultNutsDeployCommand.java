@@ -108,7 +108,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
             throw new NutsIllegalArgumentException(getSession(), NutsMessage.formatted("missing package to deploy"));
         }
         if (getSession().isTrace()) {
-            getSession().getWorkspace().formats().object(result).println();
+            getSession().formats().object(result).println();
         }
         return this;
     }
@@ -221,7 +221,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                         return this;
                     }
                 } else {
-                    NutsRepository repo = getSession().getWorkspace().repos().getRepository(repository);
+                    NutsRepository repo = getSession().repos().getRepository(repository);
                     if (repo == null) {
                         throw new NutsRepositoryNotFoundException(getSession(), repository);
                     }

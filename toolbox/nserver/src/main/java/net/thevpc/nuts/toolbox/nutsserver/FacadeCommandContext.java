@@ -51,9 +51,9 @@ public class FacadeCommandContext implements NutsHttpServletFacadeContext {
     private String path;
     private NutsSession session;
 
-    public FacadeCommandContext(NutsHttpServletFacadeContext base, NutsWorkspace workspace, String serverId, String command, String path, NutsSession session) {
+    public FacadeCommandContext(NutsHttpServletFacadeContext base, String serverId, String command, String path, NutsSession session) {
         this.base = base;
-        this.workspace = workspace;
+        this.workspace = session.getWorkspace();
         this.serverId = serverId;
         this.command = command;
         this.path = path;

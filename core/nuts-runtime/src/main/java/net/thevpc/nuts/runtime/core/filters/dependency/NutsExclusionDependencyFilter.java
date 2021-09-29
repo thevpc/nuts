@@ -13,8 +13,8 @@ public class NutsExclusionDependencyFilter extends AbstractDependencyFilter{
     private final NutsDependencyFilter base;
     private final NutsId[] exclusions;
 
-    public NutsExclusionDependencyFilter(NutsSession ws, NutsDependencyFilter base, NutsId[] exclusions) {
-        super(ws, NutsFilterOp.CUSTOM);
+    public NutsExclusionDependencyFilter(NutsSession session, NutsDependencyFilter base, NutsId[] exclusions) {
+        super(session, NutsFilterOp.CUSTOM);
         this.base = base;
         this.exclusions = exclusions;
     }

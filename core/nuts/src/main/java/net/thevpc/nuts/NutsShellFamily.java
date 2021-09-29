@@ -25,6 +25,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
 /**
  * Supported Shell Families
  *
@@ -116,11 +118,7 @@ public enum NutsShellFamily implements NutsEnum {
 
     public static NutsShellFamily parse(String value, NutsShellFamily emptyValue, NutsSession session) {
         NutsShellFamily v = parseLenient(value, emptyValue, null);
-        if (v == null) {
-            if (!NutsBlankable.isBlank(value)) {
-                throw new NutsParseEnumException(session, value, NutsShellFamily.class);
-            }
-        }
+        NutsApiUtils.checkNonNullEnum(v,value,NutsShellFamily.class,session);
         return v;
     }
 

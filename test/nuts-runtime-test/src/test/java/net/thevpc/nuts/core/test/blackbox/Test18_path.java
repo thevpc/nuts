@@ -25,10 +25,8 @@ package net.thevpc.nuts.core.test.blackbox;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import org.junit.jupiter.api.*;
 
-import java.io.File;
 import java.io.IOException;
 
 /**
@@ -45,7 +43,7 @@ public class Test18_path {
 
     @Test
     public void test1() throws Exception {
-        NutsWorkspace ws = TestUtils.openTestWorkspace().getWorkspace();
+        NutsWorkspace ws = TestUtils.openNewTestWorkspace().getWorkspace();
 
         NutsSession session = ws.createSession();
         System.out.println(NutsPath.of("./",session));

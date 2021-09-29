@@ -35,7 +35,7 @@ import net.thevpc.nuts.boot.NutsApiUtils;
 public interface NutsText extends NutsString {
     static NutsString parse(String str, NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.getWorkspace().text().parse(str);
+        return session.text().parse(str);
     }
 
     NutsTextType getType();

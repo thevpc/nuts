@@ -57,7 +57,7 @@ public class Test06_UpateTest {
         TestUtils.setSystemProperties(extraProperties);
         final String workspacePath = baseFolder + "/" + callerName;
 
-        NutsWorkspace uws = Nuts.openWorkspace(
+        NutsSession uws = TestUtils.openNewTestWorkspace(
                 "--workspace", workspacePath + "-update",
                 "--archetype", "minimal",
                 "--standalone",
@@ -65,17 +65,15 @@ public class Test06_UpateTest {
                 "--yes",
                 "--progress=newline",
                 "--skip-companions"
-        ).getWorkspace();
-        NutsSession session = uws.createSession();
-        uws=session.getWorkspace();
+        );
         NutsRepository updateRepo1 = uws.repos().addRepository("local");
-        uws.config().setSession(session).save();
+        uws.config().save();
         //NutsRepository updateRepo1 = uws.config().getRepository("local", session);
         String updateRepoPath = updateRepo1.config().getStoreLocation().toString();
         TestUtils.println(updateRepo1.config().getStoreLocationStrategy());
         uws.info().println();
         TestUtils.println("\n------------------------------------------");
-        NutsWorkspace nws = Nuts.openWorkspace(
+        NutsWorkspace nws = TestUtils.openNewTestWorkspace(
                 "--workspace", workspacePath,
                 "--standalone",
                 "--standalone-repositories",
@@ -90,7 +88,7 @@ public class Test06_UpateTest {
         nws.info().setShowRepositories(true).println();
         TestUtils.println("\n------------------------------------------");
 
-        NutsRepository r = nws.repos().setSession(session).getRepository("temp");
+        NutsRepository r = nws.repos().setSession(uws).getRepository("temp");
         NutsDefinition api = nws.fetch().setContent(true).setNutsApi().getResultDefinition();
         NutsDefinition rt = nws.fetch().setContent(true).setNutsRuntime().getResultDefinition();
 
@@ -103,13 +101,13 @@ public class Test06_UpateTest {
 
         if (!fromToAPI.isIdentity()) {
             uws.deploy()
-                    .setContent(replaceAPIJar(api.getPath(), fromToAPI, uws.createSession()))
+                    .setContent(replaceAPIJar(api.getPath(), fromToAPI, uws))
                     .setDescriptor(api.getDescriptor().builder().setId(api.getId().builder().setVersion(apiv2).build()).build())
                     //                        .setRepository("local")
                     .run();
         }
         uws.deploy()
-                .setContent(replaceRuntimeJar(rt.getPath(), fromToAPI, fromToImpl, uws.createSession()))
+                .setContent(replaceRuntimeJar(rt.getPath(), fromToAPI, fromToImpl, uws))
                 .setDescriptor(
                         rt.getDescriptor()
                                 .builder()
@@ -179,14 +177,14 @@ public class Test06_UpateTest {
                 .resolve(NutsConstants.Files.WORKSPACE_RUNTIME_CACHE_FILE_NAME)
         ));
 //        try {
-//            NutsWorkspace updatedws = Nuts.openWorkspace(new String[]{
-//                "--workspace", workpacePath});
+//            NutsWorkspace updatedws = TestUtils.openNewTestWorkspace(new String[]{
+//                "--workspace", workspacePath});
 //            Assertions.assertFalse(true);
 //        } catch (NutsUnsatisfiedRequirementsException e) {
 //            Assertions.assertTrue(true);
 //        }
 
-        NutsBootWorkspace b = new NutsBootWorkspace(
+        NutsBootWorkspace b = new NutsBootWorkspace(null,
                 "--workspace", workspacePath,
                 "--boot-version=" + newApiVersion,
                 "--bot",
@@ -206,10 +204,8 @@ public class Test06_UpateTest {
     }
 
     private Path replaceAPIJar(Path p, FromTo api, NutsSession session) {
-        NutsWorkspace ws=session.getWorkspace();
         try {
-            Path zipFilePath = Paths.get(ws.io().tmp()
-                    .setSession(session)
+            Path zipFilePath = Paths.get(session.io().tmp()
                     .createTempFile(".zip"));
             Files.copy(p, zipFilePath, StandardCopyOption.REPLACE_EXISTING);
             try (FileSystem fs = FileSystems.newFileSystem(zipFilePath, (ClassLoader) null)) {
@@ -247,10 +243,8 @@ public class Test06_UpateTest {
     }
 
     private Path replaceRuntimeJar(Path p, FromTo api, FromTo impl, NutsSession session) {
-        NutsWorkspace ws=session.getWorkspace();
         try {
-            Path zipFilePath = Paths.get(ws.io().tmp()
-                    .setSession(session)
+            Path zipFilePath = Paths.get(session.io().tmp()
                     .createTempFile(".zip"));
             Files.copy(p, zipFilePath, StandardCopyOption.REPLACE_EXISTING);
             try (FileSystem fs = FileSystems.newFileSystem(zipFilePath, (ClassLoader) null)) {

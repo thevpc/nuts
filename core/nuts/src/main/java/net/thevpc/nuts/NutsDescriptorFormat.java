@@ -36,7 +36,7 @@ import net.thevpc.nuts.boot.NutsApiUtils;
 public interface NutsDescriptorFormat extends NutsFormat {
     static NutsDescriptorFormat of(NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.getWorkspace().descriptor().formatter();
+        return session.descriptor().formatter();
     }
 
     /**

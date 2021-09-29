@@ -25,6 +25,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
 /**
  * Supported dependency scope lists
  * @author thevpc
@@ -192,11 +194,7 @@ public enum NutsDependencyScope implements NutsEnum {
 
     public static NutsDependencyScope parse(String value, NutsDependencyScope emptyValue, NutsSession session) {
         NutsDependencyScope v = parseLenient(value, emptyValue, null);
-        if (v == null) {
-            if (!NutsBlankable.isBlank(value)) {
-                throw new NutsParseEnumException(session, value, NutsDependencyScope.class);
-            }
-        }
+        NutsApiUtils.checkNonNullEnum(v,value,NutsDependencyScope.class,session);
         return v;
     }
 

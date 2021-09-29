@@ -54,8 +54,20 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
     }
 
     @Override
+    public NutsWorkspaceOptionsFormat setInit(boolean e) {
+        this.createOptions = true;
+        return this;
+    }
+
+    @Override
     public boolean isRuntime() {
         return runtimeOptions;
+    }
+
+    @Override
+    public NutsWorkspaceOptionsFormat setRuntime(boolean e) {
+        this.runtimeOptions = true;
+        return this;
     }
 
     @Override
@@ -78,18 +90,6 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
     public NutsWorkspaceOptionsFormat setApiVersion(String apiVersion) {
         this.apiVersion = apiVersion;
         this.apiVersionObj = null;
-        return this;
-    }
-
-    @Override
-    public NutsWorkspaceOptionsFormat setRuntime(boolean e) {
-        this.runtimeOptions = true;
-        return this;
-    }
-
-    @Override
-    public NutsWorkspaceOptionsFormat setInit(boolean e) {
-        this.createOptions = true;
         return this;
     }
 
@@ -196,25 +196,25 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
             fillOption("--store-layout", null, options.getStoreLocationLayout(), NutsOsFamily.class, arguments, false);
             fillOption("--store-strategy", null, options.getStoreLocationStrategy(), NutsStoreLocationStrategy.class, arguments, false);
             fillOption("--repo-store-strategy", null, options.getRepositoryStoreLocationStrategy(), NutsStoreLocationStrategy.class, arguments, false);
-            Map<String, String> storeLocations = options.getStoreLocations();
+            Map<NutsStoreLocation, String> storeLocations = options.getStoreLocations();
             for (NutsStoreLocation location : NutsStoreLocation.values()) {
-                String s = storeLocations.get(location.id());
+                String s = storeLocations.get(location);
                 if (!NutsBlankable.isBlank(s)) {
                     fillOption("--" + location.id() + "-location", null, s, arguments, false);
                 }
             }
 
-            Map<String, String> homeLocations = options.getHomeLocations();
+            Map<NutsHomeLocation, String> homeLocations = options.getHomeLocations();
             if (homeLocations != null) {
                 for (NutsStoreLocation location : NutsStoreLocation.values()) {
-                    String s = homeLocations.get(NutsApiUtils.createHomeLocationKey(null, location));
+                    String s = homeLocations.get(NutsHomeLocation.of(null, location));
                     if (!NutsBlankable.isBlank(s)) {
                         fillOption("--system-" + location.id() + "-home", null, s, arguments, false);
                     }
                 }
                 for (NutsOsFamily osFamily : NutsOsFamily.values()) {
                     for (NutsStoreLocation location : NutsStoreLocation.values()) {
-                        String s = homeLocations.get(NutsApiUtils.createHomeLocationKey(osFamily, location));
+                        String s = homeLocations.get(NutsHomeLocation.of(osFamily, location));
                         if (!NutsBlankable.isBlank(s)) {
                             fillOption("--" + osFamily.id() + "-" + location.id() + "-home", null, s, arguments, false);
                         }
@@ -241,11 +241,6 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
             fillOption("--recover", "-z", options.isRecover(), false, arguments, false);
             fillOption("--dry", "-D", options.isDry(), false, arguments, false);
             if (apiVersionObj == null || apiVersionObj.compareTo("0.8.1") >= 0) {
-                if (options.getProperties() != null) {
-                    for (String property : options.getProperties()) {
-                        arguments.add("---" + property);
-                    }
-                }
                 fillOption("--locale", "-L", options.getLocale(), arguments, false);
             }
             if (!omitDefaults || options.getExecutorOptions().length > 0) {
@@ -253,6 +248,15 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
             }
             arguments.addAll(Arrays.asList(options.getExecutorOptions()));
             arguments.addAll(Arrays.asList(options.getApplicationArguments()));
+        }
+        if (true || isImplicitAll()) {
+            if (apiVersionObj == null || apiVersionObj.compareTo("0.8.1") >= 0) {
+                if (options.getCustomOptions() != null) {
+                    for (String property : options.getCustomOptions()) {
+                        arguments.add("---" + property);
+                    }
+                }
+            }
         }
         return new PrivateNutsCommandLine(arguments.toArray(new String[0]));
     }
@@ -324,49 +328,49 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
                 if (value instanceof NutsOsFamily) {
                     switch ((NutsOsFamily) value) {
                         case LINUX: {
-                            fillOption0(selectOptionName(longName, shortName), selectOptionVal("l", "linux"), arguments, forceSingle);
+                            fillOption0(selectOptionName(longName, shortName), selectOptionVal("linux", "l"), arguments, forceSingle);
                             return;
                         }
                         case WINDOWS: {
-                            fillOption0(selectOptionName(longName, shortName), selectOptionVal("w", "windows"), arguments, forceSingle);
+                            fillOption0(selectOptionName(longName, shortName), selectOptionVal("windows", "w"), arguments, forceSingle);
                             return;
                         }
                         case MACOS: {
-                            fillOption0(selectOptionName(longName, shortName), selectOptionVal("m", "macos"), arguments, forceSingle);
+                            fillOption0(selectOptionName(longName, shortName), selectOptionVal("macos", "m"), arguments, forceSingle);
                             return;
                         }
                         case UNIX: {
-                            fillOption0(selectOptionName(longName, shortName), selectOptionVal("u", "unix"), arguments, forceSingle);
+                            fillOption0(selectOptionName(longName, shortName), selectOptionVal("unix", "u"), arguments, forceSingle);
                             return;
                         }
                         case UNKNOWN: {
-                            fillOption0(selectOptionName(longName, shortName), selectOptionVal("x", "unknown"), arguments, forceSingle);
+                            fillOption0(selectOptionName(longName, shortName), selectOptionVal("unknown", "x"), arguments, forceSingle);
                             return;
                         }
                     }
                 } else if (value instanceof NutsStoreLocationStrategy) {
                     switch ((NutsStoreLocationStrategy) value) {
                         case EXPLODED: {
-                            fillOption0(selectOptionName(longName, shortName), selectOptionVal("e", "exploded"), arguments, forceSingle);
+                            fillOption0(selectOptionName(longName, shortName), selectOptionVal("exploded", "e"), arguments, forceSingle);
                             return;
                         }
                         case STANDALONE: {
-                            fillOption0(selectOptionName(longName, shortName), selectOptionVal("s", "standalone"), arguments, forceSingle);
+                            fillOption0(selectOptionName(longName, shortName), selectOptionVal("standalone", "s"), arguments, forceSingle);
                             return;
                         }
                     }
                 } else if (value instanceof NutsTerminalMode) {
                     switch ((NutsTerminalMode) value) {
                         case FILTERED: {
-                            fillOption0(selectOptionName(longName, shortName), selectOptionVal("n", "no"), arguments, forceSingle);
+                            fillOption0(selectOptionName(longName, shortName), selectOptionVal("no", "n"), arguments, forceSingle);
                             return;
                         }
                         case INHERITED: {
-                            fillOption0(selectOptionName(longName, shortName), selectOptionVal("h", "inherited"), arguments, forceSingle);
+                            fillOption0(selectOptionName(longName, shortName), selectOptionVal("inherited", "h"), arguments, forceSingle);
                             return;
                         }
                         case FORMATTED: {
-                            fillOption0(selectOptionName(longName, shortName), selectOptionVal("y", "yes"), arguments, forceSingle);
+                            fillOption0(selectOptionName(longName, shortName), selectOptionVal("yes", "y"), arguments, forceSingle);
                             return;
                         }
                     }
@@ -434,21 +438,21 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
                 if (value instanceof NutsOpenMode) {
                     switch ((NutsOpenMode) value) {
                         case OPEN_OR_ERROR: {
-                            fillOption0("-o", "r", arguments, forceSingle);
+                            fillOption0(selectOptionName("--open-mode","-o"), selectOptionVal("open-or-error", "r"), arguments, forceSingle);
                             return true;
                         }
                         case CREATE_OR_ERROR: {
-                            fillOption0("-o", "w", arguments, forceSingle);
+                            fillOption0(selectOptionName("--open-mode","-o"), selectOptionVal("create-or-error", "w"), arguments, forceSingle);
                             return true;
                         }
                         case OPEN_OR_CREATE: {
                             if (!omitDefaults) {
-                                fillOption0("-o", "rw", arguments, forceSingle);
+                                fillOption0(selectOptionName("--open-mode","-o"), selectOptionVal("open-or-create", "rw"), arguments, forceSingle);
                             }
                             return true;
                         }
                         case OPEN_OR_NULL: {
-                            fillOption0("-o", "on", arguments, forceSingle);
+                            fillOption0(selectOptionName("--open-mode","-o"), selectOptionVal("open-or-null", "on"), arguments, forceSingle);
                             return true;
                         }
                     }
@@ -466,16 +470,17 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
                             return true;
                         }
                         case EMBEDDED: {
-                            arguments.add("-b");
+                            arguments.add(selectOptionName("--embedded","-b"));
                             return true;
                         }
                         case SPAWN: {
                             if (!omitDefaults) {
-                                arguments.add("-x");
+                                arguments.add(selectOptionName("--spawn","-x"));
                             }
                             return true;
                         }
                         case OPEN: {
+                            arguments.add(selectOptionName("--open-file","--open-file"));
                             return true;
                         }
                     }
@@ -483,11 +488,11 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
                 if (value instanceof NutsConfirmationMode) {
                     switch ((NutsConfirmationMode) value) {
                         case YES: {
-                            arguments.add("-y");
+                            arguments.add(selectOptionName("--yes","-y"));
                             return true;
                         }
                         case NO: {
-                            arguments.add("-n");
+                            arguments.add(selectOptionName("-no","-n"));
                             return true;
                         }
                         case ASK: {
@@ -497,20 +502,28 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
                             }
                             break;
                         }
+                        case ERROR: {
+                            arguments.add("--error");
+                            return true;
+                        }
                     }
                 }
                 if (value instanceof NutsTerminalMode) {
                     switch ((NutsTerminalMode) value) {
                         case FILTERED: {
-                            arguments.add("-C");
+                            arguments.add(selectOptionName("--!color","-!c"));
                             return true;
                         }
                         case FORMATTED: {
-                            arguments.add("-c");
+                            arguments.add(selectOptionName("--color","-c"));
                             return true;
                         }
                         case INHERITED: {
-                            arguments.add("-c=h");
+                            arguments.add(selectOptionName("--color=inherited","-c=h"));
+                            return true;
+                        }
+                        case ANSI:{
+                            arguments.add(selectOptionName("--color=ansi","-c=a"));
                             return true;
                         }
                     }
@@ -529,7 +542,7 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
         }
     }
 
-    private String selectOptionVal(String shortName, String longName) {
+    private String selectOptionVal(String longName, String shortName) {
         if (shortOptions) {
             return shortName;
         }

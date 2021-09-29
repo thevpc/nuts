@@ -37,7 +37,7 @@ public class DefaultNutsSearchVersionsRepositoryCommand extends AbstractNutsSear
 
     protected NutsLogger _LOG(NutsSession session) {
         if (LOG == null) {
-            LOG = session.getWorkspace().log().of(DefaultNutsSearchVersionsRepositoryCommand.class);
+            LOG = session.log().of(DefaultNutsSearchVersionsRepositoryCommand.class);
         }
         return LOG;
     }

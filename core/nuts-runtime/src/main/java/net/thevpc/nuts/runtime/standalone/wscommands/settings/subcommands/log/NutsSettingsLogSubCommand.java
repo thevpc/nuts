@@ -21,7 +21,7 @@ public class NutsSettingsLogSubCommand extends AbstractNutsSettingsSubCommand {
     public boolean exec(NutsCommandLine cmdLine, Boolean autoSave, NutsSession session) {
         if (cmdLine.next("set loglevel", "sll") != null) {
 //            NutsWorkspaceConfigManager configManager = context.getWorkspace().config();
-            NutsLogManager lm= session.getWorkspace().log();
+            NutsLogManager lm= session.log();
             if (cmdLine.next("verbose", "finest") != null) {
                 if (cmdLine.isExecMode()) {
                     lm.setTermLevel(Level.FINEST);

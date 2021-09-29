@@ -131,7 +131,7 @@ public class AntiQuote3ParserStep extends ParserStep {
     public NutsText toText() {
         char[] dst = new char[value.length()];
         value.getChars(0,value.length(), dst,0 );
-        DefaultNutsTextManager factory0 = (DefaultNutsTextManager) session.getWorkspace().text();
+        DefaultNutsTextManager factory0 = (DefaultNutsTextManager) session.text();
         int i=0;
         int endOffset=-1;
         if(dst.length>0 && dst[i]=='!') {

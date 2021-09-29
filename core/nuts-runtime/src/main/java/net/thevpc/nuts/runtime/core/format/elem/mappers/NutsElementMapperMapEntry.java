@@ -14,7 +14,7 @@ public class NutsElementMapperMapEntry implements NutsElementMapper<Map.Entry> {
     @Override
     public NutsElement createElement(Map.Entry o, Type typeOfSrc, NutsElementFactoryContext context) {
         Map.Entry je = (Map.Entry) o;
-        return context.element().forObject()
+        return context.elem().forObject()
                 .set("key", context.objectToElement(je.getKey(), null))
                 .set("value", context.objectToElement(je.getValue(), null))
                 .build();
@@ -34,13 +34,13 @@ public class NutsElementMapperMapEntry implements NutsElementMapper<Map.Entry> {
         if (to instanceof ParameterizedType) {
             Type[] kvt = ((ParameterizedType) to).getActualTypeArguments();
             return new AbstractMap.SimpleEntry(
-                    context.elementToObject(o.asObject().get(context.element().forString("key")), kvt[0]),
-                    context.elementToObject(o.asObject().get(context.element().forString("value")), kvt[0])
+                    context.elementToObject(o.asObject().get(context.elem().forString("key")), kvt[0]),
+                    context.elementToObject(o.asObject().get(context.elem().forString("value")), kvt[0])
             );
         }
         return new AbstractMap.SimpleEntry(
-                context.elementToObject(o.asObject().get(context.element().forString("key")), Object.class),
-                context.elementToObject(o.asObject().get(context.element().forString("value")), Object.class)
+                context.elementToObject(o.asObject().get(context.elem().forString("key")), Object.class),
+                context.elementToObject(o.asObject().get(context.elem().forString("value")), Object.class)
         );
     }
 

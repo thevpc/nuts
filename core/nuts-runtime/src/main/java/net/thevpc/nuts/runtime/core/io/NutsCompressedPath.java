@@ -4,6 +4,8 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.format.DefaultFormatBase;
 
 import java.io.File;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
@@ -21,7 +23,7 @@ public class NutsCompressedPath extends NutsPathBase {
         super(base.getSession());
         this.base = base;
         this.compressedForm = compressUrl(base.toString());
-        this.formattedCompressedForm = base.getSession().getWorkspace().text().forStyled(compressedForm, NutsTextStyle.path());
+        this.formattedCompressedForm = base.getSession().text().forStyled(compressedForm, NutsTextStyle.path());
     }
 
     public NutsCompressedPath(NutsPath base, String compressedForm, NutsString formattedCompressedForm) {
@@ -196,6 +198,16 @@ public class NutsCompressedPath extends NutsPathBase {
     }
 
     @Override
+    public InputStream inputStream() {
+        return base.inputStream();
+    }
+
+    @Override
+    public OutputStream outputStream() {
+        return base.outputStream();
+    }
+
+    @Override
     public void delete(boolean recurse) {
         base.delete(recurse);
     }
@@ -241,7 +253,7 @@ public class NutsCompressedPath extends NutsPathBase {
         }
 
         public NutsString asFormattedString() {
-            return p.base.getSession().getWorkspace().text().forStyled(p.compressedForm, NutsTextStyle.path());
+            return p.base.getSession().text().forStyled(p.compressedForm, NutsTextStyle.path());
         }
 
         @Override

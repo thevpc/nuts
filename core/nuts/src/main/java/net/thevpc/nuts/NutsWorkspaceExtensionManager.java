@@ -38,6 +38,8 @@ import java.util.Set;
  */
 public interface NutsWorkspaceExtensionManager {
 
+    Set<NutsId> getCompanionIds();
+
     boolean installWorkspaceExtensionComponent(Class extensionPointType, Object extensionImpl);
 
     Set<Class> discoverTypes(NutsId id, ClassLoader classLoader);

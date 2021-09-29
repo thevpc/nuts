@@ -30,7 +30,7 @@ public class DefaultNutsWorkspaceCustomCommand implements NutsWorkspaceCustomCom
 
     protected NutsLogger _LOG(NutsSession session) {
         if (LOG == null) {
-            LOG = session.getWorkspace().log().setSession(session).of(DefaultNutsWorkspaceCustomCommand.class);
+            LOG = session.log().setSession(session).of(DefaultNutsWorkspaceCustomCommand.class);
         }
         return LOG;
     }
@@ -86,7 +86,7 @@ public class DefaultNutsWorkspaceCustomCommand implements NutsWorkspaceCustomCom
         r.addAll(Arrays.asList(args));
         args = r.toArray(new String[0]);
 
-        session.getWorkspace().exec()
+        session.exec()
                 .addCommand(args)
                 .addExecutorOptions(executorOptions)
                 .setDirectory(options.getDirectory())

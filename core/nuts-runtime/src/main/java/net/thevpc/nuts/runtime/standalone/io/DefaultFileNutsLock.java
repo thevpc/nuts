@@ -24,7 +24,7 @@ public class DefaultFileNutsLock implements NutsLock {
     }
 
     public TimePeriod getDefaultTimePeriod() {
-        TimePeriod tp = TimePeriod.parse(session.getWorkspace().env().getEnv("DEFAULT_LOCK_PERIOD").getString(), true, TimeUnit.SECONDS);
+        TimePeriod tp = TimePeriod.parse(session.env().getEnv("DEFAULT_LOCK_PERIOD").getString(), true, TimeUnit.SECONDS);
         if (tp == null) {
             return FIVE_MINUTES;
         }

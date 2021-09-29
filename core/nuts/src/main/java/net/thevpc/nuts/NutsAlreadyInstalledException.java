@@ -49,13 +49,13 @@ public class NutsAlreadyInstalledException extends NutsInstallationException {
     /**
      * Custom Constructor
      *
-     * @param workspace workspace
+     * @param session session
      * @param id        nuts id
      * @param msg       message
      * @param cause     exception
      */
-    public NutsAlreadyInstalledException(NutsSession workspace, NutsId id, NutsMessage msg, Exception cause) {
-        super(workspace, id, msg == null ? NutsMessage.cstyle("already installed %s", (id == null ? "<null>" : id)) : msg, cause);
+    public NutsAlreadyInstalledException(NutsSession session, NutsId id, NutsMessage msg, Exception cause) {
+        super(session, id, msg == null ? NutsMessage.cstyle("already installed %s", (id == null ? "<null>" : id)) : msg, cause);
     }
 
 }

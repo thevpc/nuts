@@ -11,8 +11,8 @@ public class NutsDependencyFilterOr extends AbstractDependencyFilter{
 
     private final NutsDependencyFilter[] all;
 
-    public NutsDependencyFilterOr(NutsSession ws, NutsDependencyFilter... all) {
-        super(ws,NutsFilterOp.OR);
+    public NutsDependencyFilterOr(NutsSession session, NutsDependencyFilter... all) {
+        super(session,NutsFilterOp.OR);
         this.all = all;
     }
 

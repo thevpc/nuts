@@ -15,7 +15,7 @@ public class NutsElementMapperChar implements NutsElementMapper<Character> {
 
     @Override
     public NutsElement createElement(Character o, Type typeOfSrc, NutsElementFactoryContext context) {
-        return context.element().forString(String.valueOf(o));
+        return context.elem().forString(String.valueOf(o));
     }
 
     @Override

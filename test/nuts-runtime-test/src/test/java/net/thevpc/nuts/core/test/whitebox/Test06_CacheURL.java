@@ -31,22 +31,19 @@ public class Test06_CacheURL {
         Map<String, String> extraProperties = new HashMap<>();
         extraProperties.put("nuts.export.always-show-command", "true");
         TestUtils.setSystemProperties(extraProperties);
-        String wsPath = baseFolder + "/" + TestUtils.getCallerMethodName();
-
-        NutsWorkspace ws = TestUtils.openTestWorkspace("--workspace", wsPath,
+        NutsSession ws = TestUtils.openNewTestWorkspace(
                 "--standalone",
                 "--archetype", "minimal",
                 //            "--verbose",
-                "--skip-companions").getWorkspace();
-        NutsSession session = ws.createSession();
+                "--skip-companions");
         final String url = "https://repo.maven.apache.org/maven2/archetype-catalog.xml";
-        NutsInput j1 = CoreIOUtils.getCachedUrlWithSHA1(ws, url, "archetype-catalog", true,null);
+        NutsInput j1 = CoreIOUtils.getCachedUrlWithSHA1(url, "archetype-catalog", true,ws);
         //just to consume the stream
-        ws.io().copy().setSession(session).from(j1).to(new ByteArrayOutputStream()).setLogProgress(true).run();
+        ws.io().copy().from(j1).to(new ByteArrayOutputStream()).setLogProgress(true).run();
         TestUtils.println(j1);
-        NutsInput j2 = CoreIOUtils.getCachedUrlWithSHA1(ws, url, "archetype-catalog", true,null);
+        NutsInput j2 = CoreIOUtils.getCachedUrlWithSHA1(url, "archetype-catalog", true,ws);
         //just to consume the stream
-        ws.io().copy().setSession(session).from(j2).to(new ByteArrayOutputStream()).setLogProgress(true).run();
+        ws.io().copy().from(j2).to(new ByteArrayOutputStream()).setLogProgress(true).run();
         TestUtils.println(j2);
     }
 

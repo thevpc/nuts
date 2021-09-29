@@ -2,6 +2,10 @@ package net.thevpc.nuts.boot;
 
 import net.thevpc.nuts.Nuts;
 
+import java.io.PrintStream;
+import java.util.Scanner;
+import java.util.function.Supplier;
+
 final class PrivateNutsUtilGui {
 
     public static boolean isGraphicalDesktopEnvironment() {
@@ -27,7 +31,7 @@ final class PrivateNutsUtilGui {
         }
     }
 
-    public static String inputString(String message, String title) {
+    public static String inputString(String message, String title, Supplier<String> in, PrintStream err) {
         try {
             if (title == null) {
                 title = "Nuts Package Manager - " + Nuts.getVersion();
@@ -42,12 +46,18 @@ final class PrivateNutsUtilGui {
             return line;
         } catch (UnsatisfiedLinkError e) {
             //exception may occur if the sdk is built in headless mode
-            PrivateNutsTerm.errln("[Graphical Environment Unsupported] %s", title);
-            return PrivateNutsTerm.readLine();
+            if(err==null) {
+                err=System.err;
+            }
+            err.printf("[Graphical Environment Unsupported] %s%n", title);
+            if(in==null){
+                return new Scanner(System.in).nextLine();
+            }
+            return in.get();
         }
     }
 
-    public static void showMessage(String message, String title) {
+    public static void showMessage(String message, String title, PrintStream err) {
         if (title == null) {
             title = "Nuts Package Manager";
         }
@@ -55,7 +65,10 @@ final class PrivateNutsUtilGui {
             javax.swing.JOptionPane.showMessageDialog(null, message);
         } catch (UnsatisfiedLinkError e) {
             //exception may occur if the sdk is built in headless mode
-            PrivateNutsTerm.errln("[Graphical Environment Unsupported] %s", title);
+            if(err==null){
+                err=System.err;
+            }
+            err.printf("[Graphical Environment Unsupported] %s%n", title);
         }
     }
 }

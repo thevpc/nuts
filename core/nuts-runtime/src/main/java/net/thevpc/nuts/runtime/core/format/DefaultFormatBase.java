@@ -58,12 +58,12 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
     @Override
     public NutsString format() {
         checkSession();
-        NutsPrintStream out = getSession().getWorkspace().io().createMemoryPrintStream();
+        NutsPrintStream out = getSession().io().createMemoryPrintStream();
         print(out);
         return isNtf() ?
-                getSession().getWorkspace().text().parse(out.toString())
+                getSession().text().parse(out.toString())
                 :
-                getSession().getWorkspace().text().forPlain(out.toString())
+                getSession().text().forPlain(out.toString())
                 ;
     }
 
@@ -98,7 +98,7 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
             print(pout);
             pout.flush();
         } else {
-            NutsPrintStream pout = getSession().getWorkspace().io().createPrintStream(out);
+            NutsPrintStream pout = getSession().io().createPrintStream(out);
             print(pout);
             pout.flush();
         }
@@ -109,7 +109,7 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
         checkSession();
         NutsPrintStream p =
                 out == null ? getValidPrintStream() :
-                        getSession().getWorkspace().io().createPrintStream(out);
+                        getSession().io().createPrintStream(out);
         print(p);
         p.flush();
     }
@@ -144,7 +144,7 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
             println(pout);
             pout.flush();
         } else {
-            NutsPrintStream pout = getSession().getWorkspace().io().createPrintStream(w);
+            NutsPrintStream pout = getSession().io().createPrintStream(w);
             println(pout);
             pout.flush();
         }
@@ -167,7 +167,7 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
             println(pout);
             pout.flush();
         } else {
-            NutsPrintStream pout = getSession().getWorkspace().io().createPrintStream(out);
+            NutsPrintStream pout = getSession().io().createPrintStream(out);
             println(pout);
             pout.flush();
         }

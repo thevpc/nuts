@@ -178,7 +178,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
 
     @Override
     public PathInfo[] createArtifactScript(NdiScriptOptions options) {
-        NutsId nid = session.getWorkspace().id().parser().parse(options.getId());
+        NutsId nid = session.id().parser().parse(options.getId());
         List<PathInfo> r = new ArrayList<>();
         if (isNutsBootId(nid)) {
             r.addAll(Arrays.asList(
@@ -191,7 +191,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             }
             NutsDefinition fetched = null;
             if (nid.getVersion().isBlank()) {
-                fetched = session.getWorkspace().search()
+                fetched = session.search()
                         .setSession(session.copy())
                         .addId(options.getId()).setLatest(true).getResultDefinitions().required();
                 nid = fetched.getId().getShortNameId();
@@ -235,9 +235,9 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     public void removeNutsScript(String id, String switchWorkspaceLocation, NutsSession session) {
         NdiScriptOptions options = new NdiScriptOptions().setSession(session);
         options.getLauncher().setSwitchWorkspaceLocation(switchWorkspaceLocation);
-        NutsId nid = this.session.getWorkspace().id().parser().parse(id);
+        NutsId nid = this.session.id().parser().parse(id);
         Path f = getBinScriptFile(nid.getArtifactId(), options);
-        NutsTextManager factory = this.session.getWorkspace().text();
+        NutsTextManager factory = this.session.text();
         if (Files.isRegularFile(f)) {
             if (session.getTerminal().ask()
                     .resetLine()
@@ -412,11 +412,11 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     }
 
     private NutsDefinition loadIdDefinition(NutsId nid) {
-        return session.getWorkspace().search().addId(nid).setLatest(true).setEffective(true).getResultDefinitions().singleton();
+        return session.search().addId(nid).setLatest(true).setEffective(true).getResultDefinitions().singleton();
     }
 
     public NutsSupportMode getDesktopIntegrationSupport(NutsDesktopIntegrationItem target) {
-        return session.getWorkspace().env().getDesktopIntegrationSupport(target);
+        return session.env().getDesktopIntegrationSupport(target);
     }
 
     protected boolean matchCondition(NutsSupportCondition createDesktop, NutsSupportMode desktopIntegrationSupport) {
@@ -435,7 +435,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     }
 
     public NutsWorkspaceBootConfig loadSwitchWorkspaceLocationConfig(String switchWorkspaceLocation) {
-        NutsWorkspaceBootConfig bootconfig = session.getWorkspace().config().loadBootConfig(switchWorkspaceLocation, false, true);
+        NutsWorkspaceBootConfig bootconfig = session.config().loadBootConfig(switchWorkspaceLocation, false, true);
         if (bootconfig == null) {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid workspace: %s", switchWorkspaceLocation));
         }
@@ -689,8 +689,8 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     }
 
     protected int compareIconPaths(String a, String b) {
-        String n1 = session.getWorkspace().io().path(a).getLastExtension();
-        String n2 = session.getWorkspace().io().path(b).getLastExtension();
+        String n1 = session.io().path(a).getLastExtension();
+        String n2 = session.io().path(b).getLastExtension();
         return compareIconExtensions(n1, n2);
     }
 
@@ -699,7 +699,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             List<String> all = Arrays.stream(iconPaths).map(x -> (x == null) ? "" : x.trim())
                     .filter(x -> !x.isEmpty())
                     .filter(x ->
-                            resolveIconExtensionPriority(session.getWorkspace().io().path(x).getLastExtension()) >= 0
+                            resolveIconExtensionPriority(session.io().path(x).getLastExtension()) >= 0
                     )
                     .sorted(this::compareIconPaths).collect(Collectors.toList());
             if (all.size() > 0) {
@@ -788,7 +788,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         NutsId apiId = ws.getApiId().builder().setVersion(apiVersion).build();
         NutsDefinition apiDefinition = ws.search().addId(apiId).setFailFast(true).setLatest(true).setContent(true).getResultDefinitions().singleton();
 
-        NutsId appId = options.getSession().getWorkspace().id().parser().parse(options.getId());
+        NutsId appId = options.getSession().id().parser().parse(options.getId());
         NutsDefinition appDef = loadIdDefinition(appId);
         List<String> cmd = new ArrayList<>();
 
@@ -821,7 +821,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         shortcutName += "%s%v%s%h";
         shortcutName = NameBuilder.label(appDef.getId(), shortcutName, null, appDef.getDescriptor(), session).buildName();
 
-        String execCmd = session.getWorkspace().commandLine().create(cmd.toArray(new String[0])).toString();
+        String execCmd = session.commandLine().create(cmd.toArray(new String[0])).toString();
         FreeDesktopEntry.Group sl = FreeDesktopEntry.Group.desktopEntry(shortcutName, execCmd, cwd);
         sl.setStartNotify(true);
         sl.setIcon(iconPath);
@@ -883,7 +883,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             name = NameBuilder.label(options.resolveNutsApiId(), "Nuts Terminal%s%v%s%h", null, options.resolveNutsApiDef().getDescriptor(), session)
                     .buildName();
         }
-        String execCmd = session.getWorkspace().commandLine().create(cmd).toString();
+        String execCmd = session.commandLine().create(cmd).toString();
         return createShortcut(nutsDesktopIntegrationItem,
                 options.resolveNutsApiId(),
                 fileName,

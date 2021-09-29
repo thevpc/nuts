@@ -110,7 +110,7 @@ public class DefaultNutsWorkspaceConfigModel {
 
     protected NutsLogger _LOG(NutsSession session) {
         if (LOG == null) {
-            LOG = session.getWorkspace().log().of(DefaultNutsWorkspaceConfigModel.class);
+            LOG = session.log().of(DefaultNutsWorkspaceConfigModel.class);
         }
         return LOG;
     }
@@ -264,7 +264,7 @@ public class DefaultNutsWorkspaceConfigModel {
             //this is a protocol based workspace
             //String protocol=ws.substring(0,ws.indexOf("://"));
             effWorkspaceName = "remote-bootstrap";
-            lastConfigPath = NutsUtilPlatforms.getPlatformHomeFolder(null, null, null,
+            lastConfigPath = NutsUtilPlatforms.getWorkspaceLocation(null,
                     global,
                     CoreNutsUtils.resolveValidWorkspaceName(effWorkspaceName));
             lastConfigLoaded = parseBootConfig(lastConfigPath, session);
@@ -276,8 +276,8 @@ public class DefaultNutsWorkspaceConfigModel {
             for (int i = 0; i < maxDepth; i++) {
                 lastConfigPath
                         = CoreNutsUtils.isValidWorkspaceName(_ws)
-                        ? NutsUtilPlatforms.getPlatformHomeFolder(
-                                null, null, null,
+                        ? NutsUtilPlatforms.getWorkspaceLocation(
+                                null,
                                 global,
                                 CoreNutsUtils.resolveValidWorkspaceName(_ws)
                         ) : CoreIOUtils.getAbsolutePath(_ws);
@@ -305,8 +305,8 @@ public class DefaultNutsWorkspaceConfigModel {
             defaultLocation = CoreNutsUtils.isValidWorkspaceName(_ws);
             lastConfigPath
                     = CoreNutsUtils.isValidWorkspaceName(_ws)
-                    ? NutsUtilPlatforms.getPlatformHomeFolder(
-                            null, null, null,
+                    ? NutsUtilPlatforms.getWorkspaceLocation(
+                            null,
                             global,
                             CoreNutsUtils.resolveValidWorkspaceName(_ws)
                     ) : CoreIOUtils.getAbsolutePath(_ws);
@@ -326,7 +326,7 @@ public class DefaultNutsWorkspaceConfigModel {
 
     public boolean isExcludedExtension(String extensionId, NutsWorkspaceOptions options, NutsSession session) {
         if (extensionId != null && options != null) {
-            NutsId pnid = session.getWorkspace().id().parser().parse(extensionId);
+            NutsId pnid = session.id().parser().parse(extensionId);
             String shortName = pnid.getShortName();
             String artifactId = pnid.getArtifactId();
             for (String excludedExtensionList : options.getExcludedExtensions()) {
@@ -386,14 +386,14 @@ public class DefaultNutsWorkspaceConfigModel {
         if (NutsBlankable.isBlank(repositoryType)) {
             repositoryType = NutsConstants.RepoTypes.NUTS;
         }
-        return session.getWorkspace().extensions().createAllSupported(NutsRepositoryFactoryComponent.class,
+        return session.extensions().createAllSupported(NutsRepositoryFactoryComponent.class,
                 new NutsRepositoryConfig().setType(repositoryType)).size() > 0;
     }
 
     public NutsAddRepositoryOptions[] getDefaultRepositories(NutsSession session) {
 //        session = NutsWorkspaceUtils.of(getWorkspace()).validateSession(session);
         List<NutsAddRepositoryOptions> all = new ArrayList<>();
-        for (NutsRepositoryFactoryComponent provider : session.getWorkspace().extensions()
+        for (NutsRepositoryFactoryComponent provider : session.extensions()
                 .createAll(NutsRepositoryFactoryComponent.class)) {
             for (NutsAddRepositoryOptions d : provider.getDefaultRepositories(session)) {
                 all.add(d);
@@ -411,7 +411,7 @@ public class DefaultNutsWorkspaceConfigModel {
     public Set<String> getAvailableArchetypes(NutsSession session) {
         Set<String> set = new HashSet<>();
         set.add("default");
-        for (NutsWorkspaceArchetypeComponent extension : session.getWorkspace().extensions()
+        for (NutsWorkspaceArchetypeComponent extension : session.extensions()
                 .createAllSupported(NutsWorkspaceArchetypeComponent.class, null)) {
             set.add(extension.getName());
         }
@@ -453,8 +453,8 @@ public class DefaultNutsWorkspaceConfigModel {
 //    }
     public String resolveRepositoryPath(String repositoryLocation, NutsSession session) {
         String root = this.getRepositoriesRoot(session);
-        return Paths.get(session.getWorkspace().io().path(repositoryLocation).builder()
-                .setBaseDir(root != null ? root : Paths.get(session.getWorkspace().locations().getStoreLocation(NutsStoreLocation.CONFIG))
+        return Paths.get(session.io().path(repositoryLocation).builder()
+                .setBaseDir(root != null ? root : Paths.get(session.locations().getStoreLocation(NutsStoreLocation.CONFIG))
                                 .resolve(NutsConstants.Folders.REPOSITORIES).toString())
                 .build().toString()).toString();
     }
@@ -509,7 +509,7 @@ public class DefaultNutsWorkspaceConfigModel {
 //    public NutsId getApiId() {
 //        if (currentConfig == null) {
 //            NutsSession session=NutsWorkspaceUtils.defaultSession(ws);
-//            return session.getWorkspace().id().parser().parseList(NutsConstants.Ids.NUTS_API + "#" + Nuts.getVersion());
+//            return session.id().parser().parseList(NutsConstants.Ids.NUTS_API + "#" + Nuts.getVersion());
 //        }
 //        return current().getApiId();
 //    }
@@ -560,18 +560,18 @@ public class DefaultNutsWorkspaceConfigModel {
         if (apiId == null) {
             throw new NutsNotFoundException(session, apiId);
         }
-        Path apiConfigFile = Paths.get(session.getWorkspace().locations().getStoreLocation(apiId, NutsStoreLocation.CONFIG))
+        Path apiConfigFile = Paths.get(session.locations().getStoreLocation(apiId, NutsStoreLocation.CONFIG))
                 .resolve(NutsConstants.Files.WORKSPACE_API_CONFIG_FILE_NAME);
         if (force || !Files.isRegularFile(apiConfigFile)) {
             Map<String, Object> m = new LinkedHashMap<>();
             if (runtimeId == null) {
-                runtimeId = session.getWorkspace().search().addId(NutsConstants.Ids.NUTS_RUNTIME)
+                runtimeId = session.search().addId(NutsConstants.Ids.NUTS_RUNTIME)
                         .setRuntime(true)
                         .setTargetApiVersion(apiId.getVersion())
                         .setFailFast(false).setLatest(true).getResultIds().first();
             }
             if (runtimeId == null) {
-                runtimeId = MavenUtils.of(session).resolveLatestMavenId(session.getWorkspace().id().parser().parse(NutsConstants.Ids.NUTS_RUNTIME),
+                runtimeId = MavenUtils.of(session).resolveLatestMavenId(session.id().parser().parse(NutsConstants.Ids.NUTS_RUNTIME),
                         (rtVersion) -> rtVersion.startsWith(apiId.getVersion().getValue() + "."),
                         session);
             }
@@ -585,7 +585,7 @@ public class DefaultNutsWorkspaceConfigModel {
             String javaOptions = getStoredConfigApi().getJavaOptions();
             m.put("javaCommand", javaCommand);
             m.put("javaOptions", javaOptions);
-            session.getWorkspace().elem().setContentType(NutsContentType.JSON).setValue(m).print(apiConfigFile);
+            session.elem().setContentType(NutsContentType.JSON).setValue(m).print(apiConfigFile);
         }
         downloadId(apiId, force, null, true, session);
     }
@@ -624,7 +624,7 @@ public class DefaultNutsWorkspaceConfigModel {
             }
             DefaultNutsWorkspaceCurrentConfig cconfig = new DefaultNutsWorkspaceCurrentConfig(ws).merge(_config, session);
             if (cconfig.getApiId() == null) {
-                cconfig.setApiId(session.getWorkspace().id().parser().parse(NutsConstants.Ids.NUTS_API + "#" + initOptions.getApiVersion()));
+                cconfig.setApiId(session.id().parser().parse(NutsConstants.Ids.NUTS_API + "#" + initOptions.getApiVersion()));
             }
             if (cconfig.getRuntimeId() == null) {
                 cconfig.setRuntimeId(initOptions.getRuntimeId() == null ? null : initOptions.getRuntimeId().toString(), session);
@@ -640,7 +640,7 @@ public class DefaultNutsWorkspaceConfigModel {
             }
             cconfig.merge(getOptions(session), session);
 
-            setCurrentConfig(cconfig.build(session.getWorkspace().locations().getWorkspaceLocation(), session));
+            setCurrentConfig(cconfig.build(session.locations().getWorkspaceLocation(), session));
 
             NutsVersionCompat compat = createNutsVersionCompat(Nuts.getVersion());
             NutsWorkspaceConfigApi aconfig = compat.parseApiConfig(session);
@@ -655,14 +655,14 @@ public class DefaultNutsWorkspaceConfigModel {
             NutsWorkspaceConfigMain mconfig = compat.parseMainConfig(session);
             if (options.isRecover() || options.isReset()) {
                 //always reload boot resolved versions!
-                cconfig.setApiId(session.getWorkspace().id().parser().parse(NutsConstants.Ids.NUTS_API + "#" + initOptions.getApiVersion()));
+                cconfig.setApiId(session.id().parser().parse(NutsConstants.Ids.NUTS_API + "#" + initOptions.getApiVersion()));
                 cconfig.setRuntimeId(initOptions.getRuntimeId() == null ? null : initOptions.getRuntimeId().toString(), session);
                 cconfig.setRuntimeBootDescriptor(initOptions.getRuntimeBootDescriptor());
                 cconfig.setExtensionBootDescriptors(initOptions.getExtensionBootDescriptors());
                 cconfig.setBootRepositories(initOptions.getBootRepositories());
             }
             setCurrentConfig(cconfig
-                    .build(session.getWorkspace().locations().getWorkspaceLocation(), session)
+                    .build(session.locations().getWorkspaceLocation(), session)
             );
             setConfigBoot(_config, session, false);
             setConfigApi(aconfig, session, false);
@@ -676,7 +676,7 @@ public class DefaultNutsWorkspaceConfigModel {
             storeModelMainChanged = false;
             return true;
         } catch (RuntimeException ex) {
-            if (session.getWorkspace().boot().getBootOptions().isRecover()) {
+            if (session.boot().getBootOptions().isRecover()) {
                 onLoadWorkspaceError(ex, session);
             } else {
                 throw ex;
@@ -758,7 +758,7 @@ public class DefaultNutsWorkspaceConfigModel {
 
     public void fireConfigurationChanged(String configName, NutsSession session, ConfigEventType t) {
 //        session = NutsWorkspaceUtils.of(ws).validateSession(session);
-        ((DefaultImportManager) session.getWorkspace().imports()).getModel().invalidateCache();
+        ((DefaultImportManager) session.imports()).getModel().invalidateCache();
         switch (t) {
             case API: {
                 storeModelApiChanged = true;
@@ -782,7 +782,7 @@ public class DefaultNutsWorkspaceConfigModel {
             }
         }
         DefaultNutsWorkspaceEvent evt = new DefaultNutsWorkspaceEvent(session, null, "config." + configName, null, true);
-        for (NutsWorkspaceListener workspaceListener : session.getWorkspace().events().getWorkspaceListeners()) {
+        for (NutsWorkspaceListener workspaceListener : session.events().getWorkspaceListeners()) {
             workspaceListener.onConfigurationChanged(evt);
         }
     }
@@ -812,15 +812,15 @@ public class DefaultNutsWorkspaceConfigModel {
     }
 
     public String getRepositoriesRoot(NutsSession session) {
-        return Paths.get(session.getWorkspace().locations().getStoreLocation(NutsStoreLocation.CONFIG)).resolve(NutsConstants.Folders.REPOSITORIES).toString();
+        return Paths.get(session.locations().getStoreLocation(NutsStoreLocation.CONFIG)).resolve(NutsConstants.Folders.REPOSITORIES).toString();
     }
 
     public String getTempRepositoriesRoot(NutsSession session) {
-        return Paths.get(session.getWorkspace().locations().getStoreLocation(NutsStoreLocation.TEMP)).resolve(NutsConstants.Folders.REPOSITORIES).toString();
+        return Paths.get(session.locations().getStoreLocation(NutsStoreLocation.TEMP)).resolve(NutsConstants.Folders.REPOSITORIES).toString();
     }
 
     public boolean isValidWorkspaceFolder(NutsSession session) {
-        Path file = Paths.get(session.getWorkspace().locations().getWorkspaceLocation()).resolve(NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME);
+        Path file = Paths.get(session.locations().getWorkspaceLocation()).resolve(NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME);
         return Files.isRegularFile(file);
     }
 
@@ -868,7 +868,7 @@ public class DefaultNutsWorkspaceConfigModel {
 
     public void onExtensionsPrepared(NutsSession session) {
         try {
-            indexStoreClientFactory = session.getWorkspace().extensions().createSupported(NutsIndexStoreFactory.class, null);
+            indexStoreClientFactory = session.extensions().createSupported(NutsIndexStoreFactory.class, null);
         } catch (Exception ex) {
             //
         }
@@ -907,9 +907,9 @@ public class DefaultNutsWorkspaceConfigModel {
 
     private void setConfigMain(NutsWorkspaceConfigMain config, NutsSession session, boolean fire) {
         this.storeModelMain = config == null ? new NutsWorkspaceConfigMain() : config;
-        DefaultNutsPlatformManager d = (DefaultNutsPlatformManager) session.getWorkspace().env().platforms();
+        DefaultNutsPlatformManager d = (DefaultNutsPlatformManager) session.env().platforms();
         d.getModel().setPlatforms(this.storeModelMain.getSdk().toArray(new NutsPlatformLocation[0]), session);
-        NutsRepositoryManager repos = session.getWorkspace().repos();
+        NutsRepositoryManager repos = session.repos();
         repos.removeAllRepositories();
         if (this.storeModelMain.getRepositories() != null) {
             for (NutsRepositoryRef ref : this.storeModelMain.getRepositories()) {
@@ -1139,7 +1139,7 @@ public class DefaultNutsWorkspaceConfigModel {
 //        options = CoreNutsUtils.validate(options, ws);
         preUpdateConfigStoreLocations = new NutsStoreLocationsMap(currentConfig.getStoreLocations());
         DefaultNutsWorkspaceCurrentConfig d = (DefaultNutsWorkspaceCurrentConfig) currentConfig;
-        d.setUserStoreLocations(new NutsHomeLocationsMap(storeModelBoot.getStoreLocations()).toMapOrNull());
+        d.setUserStoreLocations(new NutsStoreLocationsMap(storeModelBoot.getStoreLocations()).toMapOrNull());
         d.setHomeLocations(new NutsHomeLocationsMap(storeModelBoot.getHomeLocations()).toMapOrNull());
         d.build(ws.locations().getWorkspaceLocation(), session);
         NutsStoreLocationsMap newSL = new NutsStoreLocationsMap(currentConfig.getStoreLocations());
@@ -1293,12 +1293,12 @@ public class DefaultNutsWorkspaceConfigModel {
         }
 
         @Override
-        public Map<String, String> getStoreLocations() {
+        public Map<NutsStoreLocation, String> getStoreLocations() {
             return getStoredConfigBoot().getStoreLocations();
         }
 
         @Override
-        public Map<String, String> getHomeLocations() {
+        public Map<NutsHomeLocation, String> getHomeLocations() {
             return getStoredConfigBoot().getHomeLocations();
         }
 
@@ -1308,8 +1308,8 @@ public class DefaultNutsWorkspaceConfigModel {
         }
 
         @Override
-        public String getHomeLocation(NutsOsFamily layout, NutsStoreLocation folderType) {
-            return new NutsHomeLocationsMap(getStoredConfigBoot().getHomeLocations()).get(layout, folderType);
+        public String getHomeLocation(NutsHomeLocation homeLocation) {
+            return new NutsHomeLocationsMap(getStoredConfigBoot().getHomeLocations()).get(homeLocation);
         }
 
         @Override

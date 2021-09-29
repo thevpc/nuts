@@ -1,5 +1,7 @@
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
 /**
  * @app.category Format
  */
@@ -59,11 +61,7 @@ public enum NutsTableSeparator implements NutsEnum {
 
     public static NutsTableSeparator parse(String value, NutsTableSeparator emptyValue, NutsSession session) {
         NutsTableSeparator v = parseLenient(value, emptyValue, null);
-        if (v == null) {
-            if (!NutsBlankable.isBlank(value)) {
-                throw new NutsParseEnumException(session, value, NutsTableSeparator.class);
-            }
-        }
+        NutsApiUtils.checkNonNullEnum(v,value,NutsTableSeparator.class,session);
         return v;
     }
 

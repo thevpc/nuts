@@ -38,22 +38,22 @@ import net.thevpc.nuts.NutsUtilStrings;
  */
 public class NutsStoreLocationsMap {
 
-    private Map<String, String> locations;
+    private Map<NutsStoreLocation, String> locations;
 
-    public NutsStoreLocationsMap(Map<String, String> locations) {
+    public NutsStoreLocationsMap(Map<NutsStoreLocation, String> locations) {
         this.locations = locations;
     }
 
     public String get(NutsStoreLocation location) {
         if (locations != null) {
             if (location != null) {
-                return locations.get(location.id());
+                return locations.get(location);
             }
         }
         return null;
     }
 
-    public NutsStoreLocationsMap set(Map<String, String> locations) {
+    public NutsStoreLocationsMap set(Map<NutsStoreLocation, String> locations) {
         set(new NutsStoreLocationsMap(locations));
         return this;
     }
@@ -74,33 +74,33 @@ public class NutsStoreLocationsMap {
         if (location != null) {
             if (NutsBlankable.isBlank(value)) {
                 if (locations != null) {
-                    locations.remove(location.id());
+                    locations.remove(location);
                 }
             } else {
                 if (locations == null) {
                     locations = new HashMap<>();
                 }
-                locations.put(location.id(), value);
+                locations.put(location, value);
             }
         }
         return this;
     }
 
-    public Map<String, String> toMap() {
-        Map<String, String> map = new HashMap<>();
+    public Map<NutsStoreLocation, String> toMap() {
+        Map<NutsStoreLocation, String> map = new HashMap<>();
         if (locations != null) {
             for (NutsStoreLocation location : NutsStoreLocation.values()) {
                 String v = get(location);
                 if (!NutsBlankable.isBlank(v)) {
-                    map.put(location.id(), v);
+                    map.put(location, v);
                 }
             }
         }
         return map;
     }
 
-    public Map<String, String> toMapOrNull() {
-        Map<String, String> m = toMap();
+    public Map<NutsStoreLocation, String> toMapOrNull() {
+        Map<NutsStoreLocation, String> m = toMap();
         if (m.isEmpty()) {
             return null;
         }

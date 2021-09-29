@@ -30,14 +30,14 @@ public class DefaultNutsOpenExecutable extends AbstractNutsExecutableCommand {
                                      String[] executorOptions, NutsSession traceSession, NutsSession execSession, NutsExecCommand execCommand
     ) {
         super(cmd[0],
-                execSession.getWorkspace().commandLine().create(cmd).toString(),
+                execSession.commandLine().create(cmd).toString(),
                 NutsExecutableType.SYSTEM);
         this.cmd = cmd;
         this.execCommand = execCommand;
         this.executorOptions = executorOptions == null ? new String[0] : executorOptions;
         this.traceSession = traceSession;
         this.execSession = execSession;
-        NutsCommandLine cmdLine = execSession.getWorkspace().commandLine().create(this.executorOptions);
+        NutsCommandLine cmdLine = execSession.commandLine().create(this.executorOptions);
         while (cmdLine.hasNext()) {
             NutsArgument a = cmdLine.peek();
             switch (a.getKey().getString()) {
@@ -50,7 +50,7 @@ public class DefaultNutsOpenExecutable extends AbstractNutsExecutableCommand {
                 }
             }
         }
-        switch (traceSession.getWorkspace().env().getOsFamily()) {
+        switch (traceSession.env().getOsFamily()) {
             case LINUX: {
                 Path execPath = CoreIOUtils.sysWhich("xdg-open");
                 if (execPath != null) {
@@ -112,7 +112,7 @@ public class DefaultNutsOpenExecutable extends AbstractNutsExecutableCommand {
 
     @Override
     public String getHelpText() {
-        switch (execSession.getWorkspace().env().getOsFamily()) {
+        switch (execSession.env().getOsFamily()) {
             case WINDOWS: {
                 return "No help available. Try " + getName() + " /help";
             }
@@ -125,9 +125,9 @@ public class DefaultNutsOpenExecutable extends AbstractNutsExecutableCommand {
     @Override
     public String toString() {
         if (effectiveOpenExecutable == null) {
-            return "FAIL TO OPEN " + execSession.getWorkspace().commandLine().create(cmd).toString();
+            return "FAIL TO OPEN " + execSession.commandLine().create(cmd).toString();
         }
-        return "OPEN with " + effectiveOpenExecutable[0] + " : " + execSession.getWorkspace().commandLine().create(cmd).toString();
+        return "OPEN with " + effectiveOpenExecutable[0] + " : " + execSession.commandLine().create(cmd).toString();
     }
 
 }

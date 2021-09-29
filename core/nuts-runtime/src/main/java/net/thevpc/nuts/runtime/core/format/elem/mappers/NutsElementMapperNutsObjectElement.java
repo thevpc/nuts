@@ -45,6 +45,6 @@ public class NutsElementMapperNutsObjectElement implements NutsElementMapper<Nut
         if (o.type() == NutsElementType.OBJECT) {
             return o.asObject();
         }
-        return context.element().forObject().set("value", o).build();
+        return context.elem().forObject().set("value", o).build();
     }
 }

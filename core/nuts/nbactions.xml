@@ -21,7 +21,7 @@
         </goals>
         <properties>
             <exec.args>--hold -e /usr/java/latest/bin/java -Dnuts.export.debug=true -Dnuts.export.show-command=false
-                -classpath %classpath net.thevpc.nuts.Nuts --no-progress --json ls /home/vpc</exec.args>
+                -classpath %classpath net.thevpc.nuts.Nuts --!progress --json ls /home/vpc</exec.args>
             <exec.executable>/usr/bin/konsole</exec.executable>
             <exec.workingdir>/home/vpc/aa</exec.workingdir>
         </properties>

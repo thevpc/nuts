@@ -15,7 +15,7 @@ public class NutsElementMapperNull implements NutsElementMapper<Object> {
 
     @Override
     public NutsElement createElement(Object o, Type typeOfSrc, NutsElementFactoryContext context) {
-        return context.element().forNull();
+        return context.elem().forNull();
     }
 
     @Override

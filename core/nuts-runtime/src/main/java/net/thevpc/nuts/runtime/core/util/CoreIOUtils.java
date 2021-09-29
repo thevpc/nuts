@@ -534,7 +534,7 @@ public class CoreIOUtils {
     }
 
     public static NutsPrintStream resolveOut(NutsSession session) {
-        return (session.getTerminal() == null) ? session.getWorkspace().io().nullPrintStream() :
+        return (session.getTerminal() == null) ? session.io().nullPrintStream() :
                 session.getTerminal().out();
     }
 
@@ -802,8 +802,8 @@ public class CoreIOUtils {
     public static java.io.InputStream monitor(URL from, NutsProgressMonitor monitor, NutsSession session) {
         return monitor(
                 NutsWorkspaceUtils.of(session).openURL(from),
-                from, session.getWorkspace().text().forStyled(getURLName(from), NutsTextStyle.path())
-                , session.getWorkspace().io().path(from).getContentLength(), monitor, session);
+                from, session.text().forStyled(getURLName(from), NutsTextStyle.path())
+                , session.io().path(from).getContentLength(), monitor, session);
     }
 
     public static java.io.InputStream monitor(java.io.InputStream from, Object source, NutsString sourceName, long length, NutsProgressMonitor monitor, NutsSession session) {
@@ -815,7 +815,7 @@ public class CoreIOUtils {
         long length = -1;
         if (from instanceof InputStreamMetadataAware) {
             final InputStreamMetadataAware m = (InputStreamMetadataAware) from;
-            sourceName = session.getWorkspace().text().toText(m.getMetaData().getName());
+            sourceName = session.text().toText(m.getMetaData().getName());
             length = m.getMetaData().getLength();
         }
         return new MonitoredInputStream(from, source, sourceName, length, monitor, session);
@@ -844,7 +844,7 @@ public class CoreIOUtils {
             }
         }
         final int[] deleted = new int[]{0, 0, 0};
-        NutsLogger LOG = session == null ? null : session.getWorkspace().log().of(CoreIOUtils.class);
+        NutsLogger LOG = session == null ? null : session.log().of(CoreIOUtils.class);
         try {
             Files.walkFileTree(file, new FileVisitor<Path>() {
                 @Override
@@ -992,7 +992,7 @@ public class CoreIOUtils {
             name = String.valueOf(source);
         }
         if (formattedString == null) {
-            formattedString = session.getWorkspace().text().forPlain(name);
+            formattedString = session.text().forPlain(name);
         }
         return new ByteArrayInput(name, formattedString, source, typeName, session);
     }
@@ -1030,8 +1030,7 @@ public class CoreIOUtils {
 //        }
 //    }
     public static NutsTransportConnection getHttpClientFacade(NutsSession session, String url) {
-        NutsTransportComponent best = session.getWorkspace().extensions()
-                .setSession(session)
+        NutsTransportComponent best = session.extensions()
                 .createSupported(NutsTransportComponent.class, url);
         if (best == null) {
             best = DefaultHttpTransportComponent.INSTANCE;
@@ -1295,14 +1294,13 @@ public class CoreIOUtils {
         }
     }
 
-    public static NutsInput getCachedUrlWithSHA1(NutsWorkspace ws, String path, String sourceTypeName, boolean ignoreSha1NotFound, NutsSession session) {
-        final Path cacheBasePath = Paths.get(ws.locations().getStoreLocation(ws.getRuntimeId(), NutsStoreLocation.CACHE));
+    public static NutsInput getCachedUrlWithSHA1(String path, String sourceTypeName, boolean ignoreSha1NotFound, NutsSession session) {
+        final Path cacheBasePath = Paths.get(session.locations().getStoreLocation(session.getWorkspace().getRuntimeId(), NutsStoreLocation.CACHE));
         final Path urlContent = cacheBasePath.resolve("urls-content");
         String sha1 = null;
         try {
             ByteArrayOutputStream t = new ByteArrayOutputStream();
-            ws.io().copy()
-                    .setSession(session)
+            session.io().copy()
                     .from(path + ".sha1").to(t).run();
             sha1 = t.toString().trim();
         } catch (NutsIOException ex) {
@@ -1310,7 +1308,7 @@ public class CoreIOUtils {
                 throw ex;
             }
         }
-        NanoDB cachedDB = CacheDB.of(ws);
+        NanoDB cachedDB = CacheDB.of(session);
         NanoDBTableFile<CachedURL> cacheTable = cachedDB.createTable(
                 cachedDB.createBeanDefinition(
                         CachedURL.class, false, "url"
@@ -1328,7 +1326,7 @@ public class CoreIOUtils {
                 if (cachedID != null) {
                     Path p = urlContent.resolve(cachedID);
                     if (Files.exists(p)) {
-                        return ws.io().input().of(p);
+                        return session.io().input().of(p);
                     }
                 }
             }
@@ -1358,7 +1356,7 @@ public class CoreIOUtils {
                         if (cachedID != null) {
                             Path p = urlContent.resolve(cachedID);
                             if (Files.exists(p)) {
-                                return ws.io().input().of(p);
+                                return session.io().input().of(p);
                             }
                         }
                     }
@@ -1395,8 +1393,8 @@ public class CoreIOUtils {
                     cacheTable.flush();
                 }
             });
-            return ws.io().input()
-                    .setName(session.getWorkspace().text().forStyled(path, NutsTextStyle.path()))
+            return session.io().input()
+                    .setName(session.text().forStyled(path, NutsTextStyle.path()))
                     .setTypeName(sourceTypeName)
                     .of(new InputStreamMetadataAwareImpl(ist, new FixedInputStreamMetadata(path, size)));
         } catch (IOException ex) {

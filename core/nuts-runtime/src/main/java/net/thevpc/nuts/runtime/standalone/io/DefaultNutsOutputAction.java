@@ -22,11 +22,11 @@ public class DefaultNutsOutputAction implements NutsOutputAction {
         this.ws = ws;
     }
 
-    private static NutsOutput createOutputTarget(OutputStream target, String name, String typeName, NutsSession ws) {
+    private static NutsOutput createOutputTarget(OutputStream target, String name, String typeName, NutsSession session) {
         if (target == null) {
             return null;
         }
-        return new AbstractNutsOutput(target, false, false, name, typeName, ws) {
+        return new AbstractNutsOutput(target, false, false, name, typeName, session) {
             @Override
             public OutputStream open() {
                 return (OutputStream) getSource();
@@ -52,7 +52,7 @@ public class DefaultNutsOutputAction implements NutsOutputAction {
         if (target == null) {
             return null;
         }
-        return session.getWorkspace().io().path(target).output();
+        return session.io().path(target).output();
     }
 
     @Override
@@ -102,19 +102,19 @@ public class DefaultNutsOutputAction implements NutsOutputAction {
     @Override
     public NutsOutput of(URL source) {
         checkSession();
-        return session.getWorkspace().io().path(source).output();
+        return session.io().path(source).output();
     }
 
     @Override
     public NutsOutput of(File source) {
         checkSession();
-        return session.getWorkspace().io().path(source).output();
+        return session.io().path(source).output();
     }
 
     @Override
     public NutsOutput of(Path source) {
         checkSession();
-        return session.getWorkspace().io().path(source).output();
+        return session.io().path(source).output();
     }
 
     @Override

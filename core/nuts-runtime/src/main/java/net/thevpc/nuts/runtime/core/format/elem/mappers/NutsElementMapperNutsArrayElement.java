@@ -25,6 +25,6 @@ public class NutsElementMapperNutsArrayElement implements NutsElementMapper<Nuts
         if (o.type() == NutsElementType.ARRAY) {
             return o.asArray();
         }
-        return context.element().forArray().add(o).build();
+        return context.elem().forArray().add(o).build();
     }
 }

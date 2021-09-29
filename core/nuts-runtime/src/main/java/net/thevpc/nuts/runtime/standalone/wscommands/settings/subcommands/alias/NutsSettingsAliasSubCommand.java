@@ -80,7 +80,7 @@ public class NutsSettingsAliasSubCommand extends AbstractNutsSettingsSubCommand 
                 }
             }
             if (cmdLine.isExecMode()) {
-                List<NutsWorkspaceCustomCommand> r = session.getWorkspace().commands().findAllCommands()
+                List<NutsWorkspaceCustomCommand> r = session.commands().findAllCommands()
                         .stream()
                         .filter(new Predicate<NutsWorkspaceCustomCommand>() {
                             @Override
@@ -105,11 +105,11 @@ public class NutsSettingsAliasSubCommand extends AbstractNutsSettingsSubCommand 
                         .sorted((x, y) -> x.getName().compareTo(y.getName()))
                         .collect(Collectors.toList());
                 if (session.isPlainOut()) {
-                    session.getWorkspace().formats().props(
+                    session.formats().props(
                                     r.stream().collect(
                                             Collectors.toMap(
                                                     NutsWorkspaceCustomCommand::getName,
-                                                    x -> session.getWorkspace().commandLine().create(x.getCommand()).toString(),
+                                                    x -> session.commandLine().create(x.getCommand()).toString(),
                                                     (x, y) -> {
                                                         throw new NutsIllegalArgumentException(session,NutsMessage.cstyle("duplicate %s",x));
                                                     },
@@ -118,7 +118,7 @@ public class NutsSettingsAliasSubCommand extends AbstractNutsSettingsSubCommand 
                                             ))
                             ).println();
                 } else {
-                    session.getWorkspace().formats().object(
+                    session.formats().object(
                             r.stream().map(x -> new AliasInfo(x, session.getWorkspace())).collect(Collectors.toList())
                     ).println();
                 }
@@ -127,9 +127,9 @@ public class NutsSettingsAliasSubCommand extends AbstractNutsSettingsSubCommand 
         } else if (cmdLine.next("remove alias") != null) {
             if (cmdLine.isExecMode()) {
                 while (cmdLine.hasNext()) {
-                    session.getWorkspace().commands().removeCommand(cmdLine.next().toString());
+                    session.commands().removeCommand(cmdLine.next().toString());
                 }
-                session.getWorkspace().config().save();
+                session.config().save();
             }
             return true;
         } else if (cmdLine.next("add alias") != null) {
@@ -161,15 +161,15 @@ public class NutsSettingsAliasSubCommand extends AbstractNutsSettingsSubCommand 
                     cmdLine.required();
                 }
                 for (AliasInfo value : toAdd.values()) {
-                    session.getWorkspace().commands()
+                    session.commands()
                             .addCommand(
                             new NutsCommandConfig()
-                                    .setCommand(session.getWorkspace().commandLine().parse(value.command).toStringArray())
+                                    .setCommand(session.commandLine().parse(value.command).toStringArray())
                                     .setName(value.name)
-                                    .setExecutorOptions(session.getWorkspace().commandLine().parse(value.executionOptions).toStringArray())
+                                    .setExecutorOptions(session.commandLine().parse(value.executionOptions).toStringArray())
                              );
                 }
-                session.getWorkspace().config().save();
+                session.config().save();
             }
             return true;
         }

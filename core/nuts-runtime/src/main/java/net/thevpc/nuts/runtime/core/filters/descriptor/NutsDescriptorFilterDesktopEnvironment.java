@@ -39,8 +39,8 @@ public class NutsDescriptorFilterDesktopEnvironment extends AbstractDescriptorFi
 
     private final String desktopEnvironment;
 
-    public NutsDescriptorFilterDesktopEnvironment(NutsSession ws, String desktopEnvironment) {
-        super(ws, NutsFilterOp.CUSTOM);
+    public NutsDescriptorFilterDesktopEnvironment(NutsSession session, String desktopEnvironment) {
+        super(session, NutsFilterOp.CUSTOM);
         this.desktopEnvironment = desktopEnvironment;
     }
 

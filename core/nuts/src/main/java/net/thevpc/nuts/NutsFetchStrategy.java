@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
 import java.util.Arrays;
 import java.util.Iterator;
 
@@ -115,11 +117,7 @@ public enum NutsFetchStrategy implements Iterable<NutsFetchMode>, NutsEnum {
 
     public static NutsFetchStrategy parse(String value, NutsFetchStrategy emptyValue, NutsSession session) {
         NutsFetchStrategy v = parseLenient(value, emptyValue, null);
-        if (v == null) {
-            if (!NutsBlankable.isBlank(value)) {
-                throw new NutsParseEnumException(session, value, NutsFetchStrategy.class);
-            }
-        }
+        NutsApiUtils.checkNonNullEnum(v,value,NutsFetchStrategy.class,session);
         return v;
     }
 

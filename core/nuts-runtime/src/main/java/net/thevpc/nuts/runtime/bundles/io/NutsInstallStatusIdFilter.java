@@ -7,8 +7,8 @@ import net.thevpc.nuts.runtime.core.filters.id.AbstractIdFilter;
 public class NutsInstallStatusIdFilter extends AbstractIdFilter {
     private NutsInstallStatusFilter installStatus;
 
-    public NutsInstallStatusIdFilter(NutsSession ws, NutsInstallStatusFilter installStatus) {
-        super(ws, NutsFilterOp.CUSTOM);
+    public NutsInstallStatusIdFilter(NutsSession session, NutsInstallStatusFilter installStatus) {
+        super(session, NutsFilterOp.CUSTOM);
         this.installStatus = installStatus;
     }
 

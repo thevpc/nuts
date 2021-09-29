@@ -35,7 +35,7 @@ public interface NutsIdParser {
 
     static NutsIdParser of(NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.getWorkspace().id().parser();
+        return session.id().parser();
     }
 
     /**

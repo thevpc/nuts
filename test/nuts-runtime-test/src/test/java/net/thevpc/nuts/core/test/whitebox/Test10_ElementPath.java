@@ -25,30 +25,23 @@
 */
 package net.thevpc.nuts.core.test.whitebox;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.Nuts;
-import net.thevpc.nuts.NutsElement;
-import net.thevpc.nuts.NutsObjectFormat;
-import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import org.junit.jupiter.api.*;
-import net.thevpc.nuts.NutsElementFormat;
 
 /**
  *
  * @author thevpc
  */
 public class Test10_ElementPath {
-    private static String baseFolder;
 
     @Test
     public void test1() {
-        NutsWorkspace ws = TestUtils.openTestWorkspace("-y","--workspace", baseFolder + "/" + TestUtils.getCallerMethodName()).getWorkspace();
+        NutsWorkspace ws = TestUtils.openNewTestWorkspace().getWorkspace();
         NutsElementFormat e = ws.elem();
         NutsElement p
                 = e.forArray()
@@ -56,7 +49,7 @@ public class Test10_ElementPath {
                                 e.forObject().set("first",
                                         e.forObject()
                                                 .set("name", e.forString("first name"))
-                                                .set("valid", e.forFalse())
+                                                .set("valid", e.forTrue())
                                                 .set("children",
                                                         e.forArray().add(
                                                                 e.forObject()
@@ -76,7 +69,7 @@ public class Test10_ElementPath {
                         ).add(e.forObject().set("second",
                                 e.forObject()
                                         .set("name", e.forString("second name"))
-                                        .set("valid", e.forFalse())
+                                        .set("valid", e.forTrue())
                                         .set("children",
                                                 e.forArray().add(
                                                         e.forObject()
@@ -269,14 +262,17 @@ public class Test10_ElementPath {
             TestUtils.println("CHECKING : '" + tt.path+"'");
             List<NutsElement> filtered1 = e.compilePath(tt.path).filter(p);
             ss.setValue(filtered1).println();
-            Assertions.assertEquals(tt.expected.get(0), ss.format());
+            NutsString sexpected = NutsString.plain(tt.expected.get(0), e.getSession());
+            NutsString sresult = ss.format();
+            if(!sexpected.equals(sresult)){
+                System.out.println("why");
+            }
+            Assertions.assertEquals(sexpected, sresult);
         }
     }
 
     @BeforeAll
     public static void setUpClass() throws IOException {
-        baseFolder = new File("./runtime/test/" + TestUtils.getCallerClassSimpleName()).getCanonicalFile().getPath();
-        CoreIOUtils.delete(null,new File(baseFolder));
         TestUtils.println("####### RUNNING TEST @ "+ TestUtils.getCallerClassSimpleName());
     }
 

@@ -35,7 +35,7 @@ public class NutsElementMapperObjReflect implements NutsElementMapper<Object> {
     @Override
     public NutsElement createElement(Object src, Type typeOfSrc, NutsElementFactoryContext context) {
         ReflectType m = defaultNutsElementFactoryService.getTypesRepository().getType(typeOfSrc);
-        NutsObjectElementBuilder obj = context.element().forObject();
+        NutsObjectElementBuilder obj = context.elem().forObject();
         for (ReflectProperty property : m.getProperties()) {
             final Object v = property.read(src);
             if (!property.isDefaultValue(v)) {
@@ -60,7 +60,7 @@ public class NutsElementMapperObjReflect implements NutsElementMapper<Object> {
             instance = m.newInstance();
         }
         NutsObjectElement eobj = o.asObject();
-        NutsElementFormat prv = context.element();
+        NutsElementFormat prv = context.elem();
         for (ReflectProperty property : m.getProperties()) {
             if (property.isWrite()) {
                 NutsElement v = eobj.get(prv.forString(property.getName()));

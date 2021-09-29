@@ -21,7 +21,7 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
     public final NutsTreeNodeFormat TO_STRING_FORMATTER = new NutsTreeNodeFormat() {
         @Override
         public NutsString format(Object o, int depth, NutsSession session) {
-            return session.getWorkspace().text().builder().append(o).immutable();
+            return session.text().builder().append(o).immutable();
         }
     };
     private NutsTreeNodeFormat formatter;
@@ -104,7 +104,7 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
 //        if(tree instanceof NutsTreeModel){
             return (NutsTreeModel) tree;
         }
-        Object destructredObject = getSession().getWorkspace().elem()
+        Object destructredObject = getSession().elem()
                 .setNtf(true)
                 .setDestructTypeFilter(DefaultNutsFormatDestructTypePredicate.INSTANCE)
                 .destruct(tree);
@@ -137,7 +137,7 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
     @Override
     public String toString() {
         ByteArrayOutputStream b = new ByteArrayOutputStream();
-        NutsPrintStream out = getSession().getWorkspace().io().createPrintStream(b);
+        NutsPrintStream out = getSession().io().createPrintStream(b);
         NutsTreeModel tree = getModel();
         print(tree, "", NutsPositionType.FIRST, tree.getRoot(), out, isEffectiveOmitRoot(), 0, false);
         out.flush();
@@ -295,7 +295,7 @@ public class DefaultTreeFormat extends DefaultFormatBase<NutsTreeFormat> impleme
         if (vv.length == 0 || vv.length == 1) {
             return null;
         }
-        return Arrays.stream(vv).map(x -> getSession().getWorkspace().text().toText(x)).toArray(NutsString[]::new);
+        return Arrays.stream(vv).map(x -> getSession().text().toText(x)).toArray(NutsString[]::new);
     }
 
     private String getMultilineSeparator(NutsString key) {

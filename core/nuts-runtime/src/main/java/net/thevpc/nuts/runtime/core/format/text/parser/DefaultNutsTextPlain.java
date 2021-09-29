@@ -30,6 +30,8 @@ import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsTextPlain;
 import net.thevpc.nuts.NutsTextType;
 
+import java.util.Objects;
+
 /**
  * Created by vpc on 5/23/17.
  */
@@ -37,8 +39,8 @@ public class DefaultNutsTextPlain extends AbstractNutsText implements NutsTextPl
 
     private String text;
 
-    public DefaultNutsTextPlain(NutsSession ws, String text) {
-        super(ws);
+    public DefaultNutsTextPlain(NutsSession session, String text) {
+        super(session);
         this.text = text == null ? "" : text;
     }
 
@@ -57,4 +59,16 @@ public class DefaultNutsTextPlain extends AbstractNutsText implements NutsTextPl
         return text;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DefaultNutsTextPlain that = (DefaultNutsTextPlain) o;
+        return Objects.equals(text, that.text);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(text);
+    }
 }

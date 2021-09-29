@@ -22,8 +22,8 @@ import java.util.stream.StreamSupport;
  */
 public class NutsEmptyStream<T> extends AbstractNutsStream<T> {
 
-    public NutsEmptyStream(NutsSession ws, String nutsBase) {
-        super(ws, nutsBase);
+    public NutsEmptyStream(NutsSession session, String nutsBase) {
+        super(session, nutsBase);
     }
 
     @Override

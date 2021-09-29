@@ -25,6 +25,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
 /**
  * Supported Operating System Families
  *
@@ -141,11 +143,7 @@ public enum NutsOsFamily implements NutsEnum {
 
     public static NutsOsFamily parse(String value, NutsOsFamily emptyValue, NutsSession session) {
         NutsOsFamily v = parseLenient(value, emptyValue, null);
-        if (v == null) {
-            if (!NutsBlankable.isBlank(value)) {
-                throw new NutsParseEnumException(session, value, NutsOsFamily.class);
-            }
-        }
+        NutsApiUtils.checkNonNullEnum(v,value,NutsOsFamily.class,session);
         return v;
     }
 

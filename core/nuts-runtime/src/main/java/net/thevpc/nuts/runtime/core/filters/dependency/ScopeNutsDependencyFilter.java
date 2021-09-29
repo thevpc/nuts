@@ -11,8 +11,8 @@ public class ScopeNutsDependencyFilter extends AbstractDependencyFilter{
 
     private EnumSet<NutsDependencyScope> scopes = EnumSet.noneOf(NutsDependencyScope.class);
 
-    public ScopeNutsDependencyFilter(NutsSession ws, NutsDependencyScopePattern... scopes) {
-        super(ws, NutsFilterOp.CUSTOM);
+    public ScopeNutsDependencyFilter(NutsSession session, NutsDependencyScopePattern... scopes) {
+        super(session, NutsFilterOp.CUSTOM);
         for (NutsDependencyScopePattern scope : scopes) {
             if(scope!=null) {
                 this.scopes.addAll(scope.toScopes());

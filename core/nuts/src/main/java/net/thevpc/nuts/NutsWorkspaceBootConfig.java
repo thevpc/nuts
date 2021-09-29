@@ -49,9 +49,9 @@ public interface NutsWorkspaceBootConfig {
 
     String getBootRepositories();
 
-    Map<String, String> getStoreLocations();
+    Map<NutsStoreLocation, String> getStoreLocations();
 
-    Map<String, String> getHomeLocations();
+    Map<NutsHomeLocation, String> getHomeLocations();
 
     NutsStoreLocationStrategy getStoreLocationStrategy();
 
@@ -67,7 +67,7 @@ public interface NutsWorkspaceBootConfig {
 
     String getStoreLocation(NutsStoreLocation storeLocation);
 
-    String getHomeLocation(NutsOsFamily osFamily, NutsStoreLocation storeLocation);
+    String getHomeLocation(NutsHomeLocation homeLocation);
 
     String getHomeLocation(NutsStoreLocation storeLocation);
 

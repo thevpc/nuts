@@ -88,7 +88,7 @@ public class NutsAdminServerComponent implements NutsServerComponent {
         }
         InetSocketAddress inetSocketAddress = new InetSocketAddress(address, port);
         NutsPrintStream out = session.out();
-        NutsTextManager factory = session.getWorkspace().text();
+        NutsTextManager factory = session.text();
         out.printf("Nuts Admin Service '%s' running %s at %s\n", serverId, factory.forStyled("telnet nsh",NutsTextStyle.primary1()), inetSocketAddress);
         out.printf("Serving workspace : %s\n", invokerWorkspace.getWorkspace().locations().getWorkspaceLocation());
         AdminServerRunnable myNutsServer = new AdminServerRunnable(serverId, port, backlog, address, executor, invokerWorkspace.getWorkspace(), session);

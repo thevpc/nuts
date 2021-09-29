@@ -39,7 +39,7 @@ public interface NutsId extends /*NutsTokenFilter, Serializable,*/ Comparable<Nu
 
     static NutsId of(String value, NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.getWorkspace().id().parser().parse(value);
+        return session.id().parser().parse(value);
     }
 
     /**

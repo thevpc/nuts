@@ -36,7 +36,7 @@ import net.thevpc.nuts.boot.NutsApiUtils;
 public interface NutsIdLocationBuilder {
     static NutsIdLocationBuilder of(NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.getWorkspace().descriptor().locationBuilder();
+        return session.descriptor().locationBuilder();
     }
 
     /**

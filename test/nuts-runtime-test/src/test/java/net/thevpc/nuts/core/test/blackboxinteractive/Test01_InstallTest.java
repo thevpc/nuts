@@ -21,15 +21,11 @@ import org.junit.jupiter.api.*;
  */
 public class Test01_InstallTest {
 
-    private static String baseFolder;
-
-    @Test
     public void nb() throws Exception {
         Map<String, String> extraProperties = new HashMap<>();
         extraProperties.put("nuts.export.always-show-command", "true");
         TestUtils.setSystemProperties(extraProperties);
-        String wsPath = baseFolder + "/" + TestUtils.getCallerMethodName();
-        NutsWorkspace ws = TestUtils.openTestWorkspace("-w="+wsPath,"--standalone","--embedded").getWorkspace();
+        NutsWorkspace ws = TestUtils.openNewTestWorkspace("--standalone","--embedded").getWorkspace();
         TestUtils.println(ws.locations().getWorkspaceLocation());
         TestUtils.println(ws.exec().setExecutionType(NutsExecutionType.SYSTEM).addCommand("ls").which());
 
@@ -43,8 +39,6 @@ public class Test01_InstallTest {
 
     @BeforeAll
     public static void setUpClass() throws IOException {
-        baseFolder = new File("./runtime/test/" + TestUtils.getCallerClassSimpleName()).getCanonicalFile().getPath();
-        CoreIOUtils.delete(null,new File(baseFolder));
         TestUtils.println("####### RUNNING TEST @ "+ TestUtils.getCallerClassSimpleName());
     }
 

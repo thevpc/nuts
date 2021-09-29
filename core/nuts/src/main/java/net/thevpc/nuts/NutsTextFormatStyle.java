@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
 import java.util.Locale;
 
 /**
@@ -88,11 +90,7 @@ public enum NutsTextFormatStyle implements NutsEnum {
 
     public static NutsTextFormatStyle parse(String value, NutsTextFormatStyle emptyValue, NutsSession session) {
         NutsTextFormatStyle v = parseLenient(value, emptyValue, null);
-        if (v == null) {
-            if (!NutsBlankable.isBlank(value)) {
-                throw new NutsParseEnumException(session, value, NutsTextFormatStyle.class);
-            }
-        }
+        NutsApiUtils.checkNonNullEnum(v,value,NutsTextFormatStyle.class,session);
         return v;
     }
 

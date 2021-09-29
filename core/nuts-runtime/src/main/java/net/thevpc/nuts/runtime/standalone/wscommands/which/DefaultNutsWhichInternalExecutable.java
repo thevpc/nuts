@@ -62,7 +62,7 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
             NutsPrintStream out = getSession().out();
             try {
                 NutsExecutableInformation p = execCommand.copy().setSession(getSession()).clearCommand().configure(false, arg).which();
-                NutsElementFormat e = getSession().getWorkspace().elem();
+                NutsElementFormat e = getSession().elem();
 //                boolean showDesc = false;
                 switch (p.getType()) {
                     case SYSTEM: {
@@ -105,7 +105,7 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
                     }
                     case ARTIFACT: {
                         if (p.getId() == null) {
-                            NutsId nid = getSession().getWorkspace().id().parser().setLenient(true).parse(arg);
+                            NutsId nid = getSession().id().parser().setLenient(true).parse(arg);
                             if(nid!=null) {
                                 throw new NutsNotFoundException(getSession(), nid);
                             }else{
@@ -155,7 +155,7 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
                 if(getSession().isPlainOut()){
                     out.printf("%s : %s%n", factory.forStyled(arg,NutsTextStyle.primary4()),factory.forStyled("not found",NutsTextStyle.error()));
                 }else {
-                    NutsElementFormat e = getSession().getWorkspace().elem();
+                    NutsElementFormat e = getSession().elem();
                     getSession().eout().add(
                             e.forObject()
                                     .set("name",arg)

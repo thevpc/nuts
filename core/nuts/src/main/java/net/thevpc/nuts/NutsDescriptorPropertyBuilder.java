@@ -5,7 +5,7 @@ import net.thevpc.nuts.boot.NutsApiUtils;
 public interface NutsDescriptorPropertyBuilder {
     static NutsDescriptorPropertyBuilder of(NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.getWorkspace().descriptor().propertyBuilder();
+        return session.descriptor().propertyBuilder();
     }
 
     String getName();

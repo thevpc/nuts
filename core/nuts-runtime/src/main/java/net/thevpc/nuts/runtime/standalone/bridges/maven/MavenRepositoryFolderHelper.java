@@ -93,7 +93,7 @@ public class MavenRepositoryFolderHelper {
         Path cacheContent = getIdLocalFile(id, session);
         if (cacheContent != null && Files.exists(cacheContent)) {
             return new NutsDefaultContent(
-                    session.getWorkspace().io().path(cacheContent.toString()), true, false);
+                    session.io().path(cacheContent.toString()), true, false);
         }
         return null;
     }

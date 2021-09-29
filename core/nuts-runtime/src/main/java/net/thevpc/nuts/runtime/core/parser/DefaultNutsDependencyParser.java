@@ -45,7 +45,7 @@ public class DefaultNutsDependencyParser implements NutsDependencyParser {
                 name = group;
                 group = null;
             }
-            return session.getWorkspace().dependency().builder()
+            return session.dependency().builder()
                     .setGroupId(group)
                     .setArtifactId(name)
                     .setVersion(version)

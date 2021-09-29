@@ -678,11 +678,11 @@ public final class PrivateNutsUtilMaven {
         return null;
     }
 
-    public static String resolveNutsApiVersionFromClassPath() {
-        return resolveNutsApiPomPattern("version");
+    public static String resolveNutsApiVersionFromClassPath(PrivateNutsLog LOG) {
+        return resolveNutsApiPomPattern("version", LOG);
     }
 
-    public static String resolveNutsApiPomPattern(String propName) {
+    public static String resolveNutsApiPomPattern(String propName, PrivateNutsLog LOG) {
 //        boolean devMode = false;
         String propValue = null;
         try {
@@ -692,7 +692,7 @@ public final class PrivateNutsUtilMaven {
                 case "versionId": {
                     propValue = PrivateNutsUtilIO.loadURLProperties(
                             Nuts.class.getResource("/META-INF/maven/net.thevpc.nuts/nuts/pom.properties"),
-                            null, false, new PrivateNutsLog()).getProperty(propName);
+                            null, false, LOG).getProperty(propName);
                     break;
                 }
             }

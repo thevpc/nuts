@@ -25,6 +25,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
 /**
  * Command execution type.
  * @author thevpc
@@ -97,11 +99,7 @@ public enum NutsExecutionType implements NutsEnum {
 
     public static NutsExecutionType parse(String value, NutsExecutionType emptyValue, NutsSession session) {
         NutsExecutionType v = parseLenient(value, emptyValue, null);
-        if (v == null) {
-            if (!NutsBlankable.isBlank(value)) {
-                throw new NutsParseEnumException(session, value, NutsExecutionType.class);
-            }
-        }
+        NutsApiUtils.checkNonNullEnum(v,value,NutsExecutionType.class,session);
         return v;
     }
 

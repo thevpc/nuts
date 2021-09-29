@@ -66,8 +66,8 @@ public class NutsInstallStatusFilter2 extends AbstractInstallStatusFilter {
 //    }
 
 
-    public NutsInstallStatusFilter2(NutsSession ws, int installed, int required, int obsolete, int defaultVersion) {
-        super(ws, NutsFilterOp.CUSTOM);
+    public NutsInstallStatusFilter2(NutsSession session, int installed, int required, int obsolete, int defaultVersion) {
+        super(session, NutsFilterOp.CUSTOM);
         this.installed = installed;
         this.required = required;
         this.obsolete = obsolete;

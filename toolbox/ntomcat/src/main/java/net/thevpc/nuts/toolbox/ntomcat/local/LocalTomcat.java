@@ -191,7 +191,7 @@ public class LocalTomcat {
         }
         if (args.isExecMode()) {
             NutsSession session = context.getSession();
-            NutsTextManager factory = session.getWorkspace().text();
+            NutsTextManager factory = session.text();
             if (session.isPlainOut()) {
                 NutsPrintStream out = session.out();
                 for (RunningTomcat jpsResult : TomcatUtils.getRunningInstances(context)) {
@@ -223,7 +223,7 @@ public class LocalTomcat {
                     }
                 }
             } else {
-                context.getWorkspace().formats().object().setSession(session)
+                context.getSession().formats().object()
                         .setValue(TomcatUtils.getRunningInstances(context))
                         .println();
             }
@@ -397,7 +397,7 @@ public class LocalTomcat {
                     LocalTomcatConfigService s = nextLocalTomcatConfigService(args, NutsOpenMode.OPEN_OR_ERROR);
                     if (session.getTerminal().ask()
                             .resetLine()
-                            .setSession(session).forBoolean("Confirm Deleting %s?", s.getName()).setDefaultValue(true).getBooleanValue()) {
+                            .forBoolean("Confirm Deleting %s?", s.getName()).setDefaultValue(true).getBooleanValue()) {
                         s.remove();
                     }
                     return;
@@ -406,7 +406,7 @@ public class LocalTomcat {
                     LocalTomcatDomainConfigService s = nextLocalTomcatDomainConfigService(args, NutsOpenMode.OPEN_OR_ERROR);
                     if (session.getTerminal().ask()
                             .resetLine()
-                            .setSession(session).forBoolean("Confirm Deleting %s?", s.getName()).setDefaultValue(true).getBooleanValue()) {
+                            .forBoolean("Confirm Deleting %s?", s.getName()).setDefaultValue(true).getBooleanValue()) {
                         s.remove();
                         s.getTomcat().save();
                     }
@@ -416,7 +416,7 @@ public class LocalTomcat {
                     LocalTomcatAppConfigService s = nextLocalTomcatAppConfigService(args, NutsOpenMode.OPEN_OR_ERROR);
                     if (session.getTerminal().ask()
                             .resetLine()
-                            .setSession(session).forBoolean("Confirm Deleting %s?", s.getName()).setDefaultValue(true).getBooleanValue()) {
+                            .forBoolean("Confirm Deleting %s?", s.getName()).setDefaultValue(true).getBooleanValue()) {
                         s.remove();
                         s.getTomcat().save();
                     }
@@ -466,7 +466,7 @@ public class LocalTomcat {
                 );
             } else {
                 context.getSession().eout().add(
-                        context.getSession().getWorkspace().elem().forObject()
+                        context.getSession().elem().forObject()
                                 .set("config-name", name)
                                 .set("status", "not-found")
                                 .build()

@@ -24,8 +24,8 @@ public class NutsCollectionStream<T> extends AbstractNutsStream<T> {
 
     private final Collection<T> o;
 
-    public NutsCollectionStream(NutsSession ws, String nutsBase, Collection<T> o) {
-        super(ws, nutsBase);
+    public NutsCollectionStream(NutsSession session, String nutsBase, Collection<T> o) {
+        super(session, nutsBase);
         this.o = o;
     }
 

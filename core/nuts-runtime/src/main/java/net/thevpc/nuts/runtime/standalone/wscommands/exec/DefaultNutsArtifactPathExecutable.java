@@ -46,9 +46,9 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
 
     public DefaultNutsArtifactPathExecutable(String cmdName, String[] args, String[] executorOptions, NutsExecutionType executionType, NutsRunAs runAs,NutsSession traceSession, NutsSession execSession, DefaultNutsExecCommand execCommand, boolean inheritSystemIO) {
         super(cmdName,
-                execSession.getWorkspace().commandLine().create(args).toString(),
+                execSession.commandLine().create(args).toString(),
                 NutsExecutableType.ARTIFACT);
-        LOG = execSession.getWorkspace().log().of(DefaultNutsArtifactPathExecutable.class);
+        LOG = execSession.log().of(DefaultNutsArtifactPathExecutable.class);
         this.runAs = runAs;
         this.cmdName = cmdName;
         this.args = args;
@@ -58,7 +58,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
         this.execCommand = execCommand;
         List<String> executorOptionsList = new ArrayList<>();
         for (String option : executorOptions) {
-            NutsArgument a = traceSession.getWorkspace().commandLine().createArgument(option);
+            NutsArgument a = traceSession.commandLine().createArgument(option);
             if (a.getKey().getString().equals("--nuts-auto-install")) {
                 if (a.isKeyValue()) {
 //                    autoInstall= a.isNegated() != a.getBooleanValue();
@@ -74,7 +74,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
 
     @Override
     public NutsId getId() {
-        try (final CharacterizedExecFile c = characterizeForExec(execSession.getWorkspace().io().input().of(cmdName), traceSession, executorOptions)) {
+        try (final CharacterizedExecFile c = characterizeForExec(execSession.io().input().of(cmdName), traceSession, executorOptions)) {
             return c.descriptor == null ? null : c.descriptor.getId();
         }
     }
@@ -106,7 +106,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                     _id,
                     c.descriptor,
                     new NutsDefaultContent(
-                            execSession.getWorkspace().io().path(c.getContentPath())
+                            execSession.io().path(c.getContentPath())
                             , false, c.temps.size() > 0),
                     DefaultNutsInstallInfo.notInstalled(_id),
                     idType, null, traceSession
@@ -234,7 +234,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
 
     @Override
     public String toString() {
-        return "NUTS " + cmdName + " " + execSession.getWorkspace().commandLine().create(args).toString();
+        return "NUTS " + cmdName + " " + execSession.commandLine().create(args).toString();
     }
 
     public static class CharacterizedExecFile implements AutoCloseable {

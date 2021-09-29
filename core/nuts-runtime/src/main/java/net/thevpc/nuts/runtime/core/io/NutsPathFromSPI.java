@@ -183,6 +183,18 @@ public class NutsPathFromSPI extends NutsPathBase {
     }
 
     @Override
+    public InputStream inputStream() {
+        return new InputStreamMetadataAwareImpl(base.inputStream(), new FixedInputStreamMetadata(
+                toString(),
+                getContentLength()));
+    }
+
+    @Override
+    public OutputStream outputStream() {
+        return null;
+    }
+
+    @Override
     public String toString() {
         return base.toString();
     }

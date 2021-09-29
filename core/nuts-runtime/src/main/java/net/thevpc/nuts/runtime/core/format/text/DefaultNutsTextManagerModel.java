@@ -76,7 +76,7 @@ public class DefaultNutsTextManagerModel {
         if ("default".equals(y)) {
             //default always refers to this implementation
             if (defaultTheme == null) {
-                if (session.getWorkspace().env().getOsFamily() == NutsOsFamily.WINDOWS) {
+                if (session.env().getOsFamily() == NutsOsFamily.WINDOWS) {
                     //dark blue and red are very ugly under windows, replace them with green tones !
                     defaultTheme = new NutsTextFormatThemeWrapper(new NutsTextFormatPropertiesTheme("grass", null, session));
                 } else {

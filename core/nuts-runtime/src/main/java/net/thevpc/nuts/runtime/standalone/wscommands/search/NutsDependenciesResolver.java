@@ -368,7 +368,7 @@ public class NutsDependenciesResolver {
 //            return false;
 //        }
 //        if (!os.isEmpty()) {
-//            NutsOsFamily eos = session.getWorkspace().env().getOsFamily();
+//            NutsOsFamily eos = session.env().getOsFamily();
 //            boolean osOk = false;
 //            for (String e : os.split("[,; ]")) {
 //                if (!e.isEmpty()) {
@@ -383,7 +383,7 @@ public class NutsDependenciesResolver {
 //            }
 //        }
 //        if (!arch.isEmpty()) {
-//            NutsArchFamily earch = session.getWorkspace().env().getArchFamily();
+//            NutsArchFamily earch = session.env().getArchFamily();
 //            if (earch != null) {
 //                boolean archOk = false;
 //                for (String e : arch.split("[,; ]")) {

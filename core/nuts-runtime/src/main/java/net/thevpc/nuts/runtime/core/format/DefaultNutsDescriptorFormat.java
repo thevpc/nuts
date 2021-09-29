@@ -66,7 +66,7 @@ public class DefaultNutsDescriptorFormat extends DefaultFormatBase<NutsDescripto
                     .elem().setNtf(true).setContentType(NutsContentType.JSON)
                     .setValue(desc).setCompact(isCompact())
                     .print(os);
-            NutsTextCode r = getSession().getWorkspace().text().forCode("json", os.toString());
+            NutsTextCode r = getSession().text().forCode("json", os.toString());
             out.print(r);
         } else {
             getSession().getWorkspace()

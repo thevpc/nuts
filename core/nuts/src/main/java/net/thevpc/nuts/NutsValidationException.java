@@ -36,10 +36,10 @@ public class NutsValidationException extends NutsException {
 
     /**
      * Constructs a new NutsValidationException exception
-     * @param workspace workspace
+     * @param session session
      */
-    public NutsValidationException(NutsSession workspace) {
-        super(workspace, NutsMessage.formatted("invalid value"));
+    public NutsValidationException(NutsSession session) {
+        super(session, NutsMessage.formatted("invalid value"));
     }
 
     /**

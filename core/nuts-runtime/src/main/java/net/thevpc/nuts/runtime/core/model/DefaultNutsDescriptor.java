@@ -159,7 +159,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
         ) {
             String p = getPropertyValue("nuts.application");
             if("true".equals(p)){
-                session.getWorkspace().log().of(DefaultNutsDescriptor.class)
+                session.log().of(DefaultNutsDescriptor.class)
                         .with().level(Level.FINEST)
                         .verb(NutsLogVerb.WARNING)
                         .log("{0} has nuts.application flag armed but is not an application", getId());

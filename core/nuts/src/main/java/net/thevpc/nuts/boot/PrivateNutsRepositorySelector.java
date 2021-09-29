@@ -41,8 +41,8 @@ class PrivateNutsRepositorySelector {
 
     static {
         defaultRepositoriesByName.put("system", PrivateNutsUtilIO.syspath(
-                NutsUtilPlatforms.getPlatformHomeFolder(null,
-                        NutsStoreLocation.CONFIG, null,
+                NutsUtilPlatforms.getDefaultPlatformHomeFolder(null,
+                        NutsStoreLocation.CONFIG,
                         true,
                         NutsConstants.Names.DEFAULT_WORKSPACE_NAME)
                         + "/" + NutsConstants.Folders.REPOSITORIES

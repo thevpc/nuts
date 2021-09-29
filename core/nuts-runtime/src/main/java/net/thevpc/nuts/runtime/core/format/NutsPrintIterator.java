@@ -34,7 +34,7 @@ public class NutsPrintIterator<T> implements Iterator<T> {
         this.listFormat = session.getIterableOutput();
         this.displayOptions = displayOptions;
         if (this.listFormat == null) {
-            this.listFormat = session.getWorkspace().elem().setContentType(session.getOutputFormat()).iter(out);
+            this.listFormat = session.elem().setContentType(session.getOutputFormat()).iter(out);
         }
         this.listFormat
                 .configure(true, displayOptions.toCommandLineOptions())

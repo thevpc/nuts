@@ -37,18 +37,15 @@ import java.io.IOException;
  */
 public class Test16_TermLayout {
 
-    private static String baseFolder;
 
     @BeforeAll
     public static void setUpClass() throws IOException {
-        baseFolder = new File("./runtime/test/" + TestUtils.getCallerClassSimpleName()).getCanonicalFile().getPath();
-        CoreIOUtils.delete(null, new File(baseFolder));
         TestUtils.println("####### RUNNING TEST @ " + TestUtils.getCallerClassSimpleName());
     }
 
     @Test
     public void test1() throws Exception {
-        NutsWorkspace ws = TestUtils.openTestWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
+        NutsWorkspace ws = TestUtils.openNewTestWorkspace(
                 "-byZSKk"
         ).getWorkspace();
 

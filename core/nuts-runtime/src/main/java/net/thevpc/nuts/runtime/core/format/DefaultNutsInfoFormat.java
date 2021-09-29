@@ -119,7 +119,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
                 }
             }
         }
-        getSession().getWorkspace().formats().object(result).configure(true, args.toArray(new String[0])).print(w);
+        getSession().formats().object(result).configure(true, args.toArray(new String[0])).print(w);
     }
 
     @Override
@@ -394,7 +394,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
     }
 
     private String stringValue(Object s) {
-        return getSession().getWorkspace().text().builder().append(CoreCommonUtils.stringValue(s)).toString();
+        return getSession().text().builder().append(CoreCommonUtils.stringValue(s)).toString();
     }
 
     public boolean isLenient() {

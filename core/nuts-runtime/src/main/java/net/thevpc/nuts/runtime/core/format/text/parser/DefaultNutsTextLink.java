@@ -31,14 +31,16 @@ import net.thevpc.nuts.NutsTextLink;
 import net.thevpc.nuts.NutsTextType;
 import net.thevpc.nuts.NutsText;
 
+import java.util.Objects;
+
 /**
  * Created by vpc on 5/23/17.
  */
 public class DefaultNutsTextLink extends NutsTextSpecialBase implements NutsTextLink {
     private NutsText value;
 
-    public DefaultNutsTextLink(NutsSession ws, String start, String separator, String end, NutsText value) {
-        super(ws, start, "link", separator, end);
+    public DefaultNutsTextLink(NutsSession session, String start, String separator, String end, NutsText value) {
+        super(session, start, "link", separator, end);
         this.value = value;
     }
 
@@ -56,4 +58,17 @@ public class DefaultNutsTextLink extends NutsTextSpecialBase implements NutsText
         return false;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        DefaultNutsTextLink that = (DefaultNutsTextLink) o;
+        return Objects.equals(value, that.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), value);
+    }
 }

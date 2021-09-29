@@ -37,7 +37,7 @@ public interface NutsTableModel {
 
     static NutsMutableTableModel of(NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.getWorkspace().formats().table().createModel();
+        return session.formats().table().createModel();
     }
 
     int getColumnsCount();

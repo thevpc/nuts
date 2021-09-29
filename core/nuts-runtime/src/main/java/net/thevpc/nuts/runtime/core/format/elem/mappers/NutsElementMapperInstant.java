@@ -17,7 +17,7 @@ public class NutsElementMapperInstant implements NutsElementMapper<Instant> {
 
     @Override
     public NutsElement createElement(Instant o, Type typeOfSrc, NutsElementFactoryContext context) {
-        return context.element().forInstant((Instant) o);
+        return context.elem().forInstant((Instant) o);
     }
 
     @Override

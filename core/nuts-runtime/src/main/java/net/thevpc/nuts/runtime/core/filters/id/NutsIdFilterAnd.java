@@ -13,8 +13,8 @@ public class NutsIdFilterAnd extends AbstractIdFilter implements NutsIdFilter, S
 
     private NutsIdFilter[] children;
 
-    public NutsIdFilterAnd(NutsSession ws, NutsIdFilter... all) {
-        super(ws, NutsFilterOp.AND);
+    public NutsIdFilterAnd(NutsSession session, NutsIdFilter... all) {
+        super(session, NutsFilterOp.AND);
         List<NutsIdFilter> valid = new ArrayList<>();
         if (all != null) {
             for (NutsIdFilter filter : all) {

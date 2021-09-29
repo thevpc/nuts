@@ -25,6 +25,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
 import java.util.EnumSet;
 
 /**
@@ -221,11 +223,7 @@ public enum NutsDependencyScopePattern implements NutsEnum {
 
     public static NutsDependencyScopePattern parse(String value, NutsDependencyScopePattern emptyValue, NutsSession session) {
         NutsDependencyScopePattern v = parseLenient(value, emptyValue, null);
-        if (v == null) {
-            if (!NutsBlankable.isBlank(value)) {
-                throw new NutsParseEnumException(session, value, NutsDependencyScopePattern.class);
-            }
-        }
+        NutsApiUtils.checkNonNullEnum(v,value,NutsDependencyScopePattern.class,session);
         return v;
     }
 

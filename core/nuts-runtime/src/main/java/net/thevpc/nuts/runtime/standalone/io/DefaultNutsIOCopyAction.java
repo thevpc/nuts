@@ -409,12 +409,12 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
 
     protected NutsInputAction _input() {
         checkSession();
-        return getSession().getWorkspace().io().input().setSession(getSession());
+        return getSession().io().input().setSession(getSession());
     }
 
     protected NutsOutputAction _output() {
         checkSession();
-        return getSession().getWorkspace().io().output().setSession(getSession());
+        return getSession().io().output().setSession(getSession());
     }
 
     private void checkInterrupted() {
@@ -462,7 +462,7 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
         NutsSession session = getSession();
         long start = System.currentTimeMillis();
         NutsProgressMonitor m = CoreIOUtils.createProgressMonitor(CoreIOUtils.MonitorType.DEFAULT, srcBase, srcBase, session, isLogProgress(), getProgressMonitorFactory());
-        NutsText srcBaseMessage = session.getWorkspace().text().toText(srcBase);
+        NutsText srcBaseMessage = session.text().toText(srcBase);
         m.onStart(new DefaultNutsProgressEvent(srcBase,
                 srcBaseMessage
                 , 0, 0, 0, 0, f.files + f.folders, null, session, false));
@@ -609,7 +609,7 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
             throw new NutsIllegalArgumentException(getSession(), NutsMessage.formatted("unsupported validation if neither safeCopy is armed nor path is defined"));
         }
         if (isLogProgress() || getProgressMonitorFactory() != null) {
-            _source = getSession().getWorkspace().io().monitor().setSource(_source).setSession(session)
+            _source = getSession().io().monitor().setSource(_source).setSession(session)
                     .setProgressFactory(getProgressMonitorFactory())
                     .setLogProgress(isLogProgress())
                     .createSource();
@@ -625,7 +625,7 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
                     CoreIOUtils.mkdirs(to.getParent(),session);
                     temp = to.resolveSibling(to.getFileName() + "~");
                 } else {
-                    temp = Paths.get(getSession().getWorkspace().io().tmp()
+                    temp = Paths.get(getSession().io().tmp()
                             .setSession(session)
                             .createTempFile("temp~")
                     );

@@ -85,6 +85,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
     private static final NutsElementMapper F_ARTIFACT_CALL = new NutsElementMapperNutsArtifactCall();
     private static final NutsElementMapper F_DESCRIPTOR_PROPERTY = new NutsElementMapperNutsDescriptorProperty();
     private static final NutsElementMapper F_DESCRIPTOR_PROPERTY_BUILDER = new NutsElementMapperNutsDescriptorPropertyBuilder();
+    private static final NutsElementMapper F_NUTS_ENUM = new NutsElementMapperNutsEnum();
 
 //    public static final NutsElementFactory F_JSONELEMENT = new NutsElementFactoryJsonElement();
 
@@ -163,6 +164,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         setCoreMapper(NutsEnvConditionBuilder.class, F_NUTS_ENV_CONDITION_BUILDER);
         setCoreMapper(NutsDescriptorProperty.class, F_DESCRIPTOR_PROPERTY);
         setCoreMapper(NutsDescriptorPropertyBuilder.class, F_DESCRIPTOR_PROPERTY_BUILDER);
+        setCoreMapper(NutsEnum.class, F_NUTS_ENUM);
         this.ws = ws;
         this.session = session;
     }
@@ -323,7 +325,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
     protected NutsElement createElement(Object o, Type expectedType, NutsElementFactoryContext context, boolean defaultOnly) {
         if (o == null) {
-            return context.element().forNull();
+            return context.elem().forNull();
         }
         if (expectedType == null) {
             expectedType = o.getClass();

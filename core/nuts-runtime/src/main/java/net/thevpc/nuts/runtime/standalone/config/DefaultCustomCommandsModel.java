@@ -76,7 +76,7 @@ public class DefaultCustomCommandsModel {
             oldCommandFactory.setParameters(commandFactoryConfig.getParameters() == null ? null : new LinkedHashMap<>(commandFactoryConfig.getParameters()));
             oldCommandFactory.setPriority(commandFactoryConfig.getPriority());
         }
-        NutsWorkspaceConfigManagerExt.of(session.getWorkspace().config())
+        NutsWorkspaceConfigManagerExt.of(session.config())
                 .getModel().fireConfigurationChanged("command", session, ConfigEventType.MAIN);
     }
 
@@ -127,7 +127,7 @@ public class DefaultCustomCommandsModel {
             if (factoryId.equals(factory.getFactoryId())) {
                 removeMe = factory;
                 iterator.remove();
-                NutsWorkspaceConfigManagerExt.of(session.getWorkspace().config())
+                NutsWorkspaceConfigManagerExt.of(session.config())
                         .getModel()
                         .fireConfigurationChanged("command", session, ConfigEventType.MAIN);
                 break;
@@ -140,7 +140,7 @@ public class DefaultCustomCommandsModel {
                 if (factoryId.equals(commandFactory.getFactoryId())) {
                     removeMeConfig = commandFactory;
                     iterator.remove();
-                    NutsWorkspaceConfigManagerExt.of(session.getWorkspace().config()).getModel()
+                    NutsWorkspaceConfigManagerExt.of(session.config()).getModel()
                             .fireConfigurationChanged("command", session, ConfigEventType.MAIN);
                     break;
                 }
@@ -176,7 +176,7 @@ public class DefaultCustomCommandsModel {
                     .resetLine()
                     .setDefaultValue(false)
                     .forBoolean("override existing command %s ?",
-                            session.getWorkspace().text().forStyled(
+                            session.text().forStyled(
                                     command.getName(), NutsTextStyle.primary1()
                             )
                     ).getBooleanValue()) {
@@ -189,7 +189,7 @@ public class DefaultCustomCommandsModel {
             defaultCommandFactory.installCommand(command, session);
             if (session.isPlainTrace()) {
                 NutsPrintStream out = session.getTerminal().out();
-                NutsTextManager text = session.getWorkspace().text();
+                NutsTextManager text = session.text();
                 out.printf("%s command %s%n",
                         text.forStyled("install", NutsTextStyle.success()),
                         text.forStyled(command.getName(), NutsTextStyle.primary3()));
@@ -218,7 +218,7 @@ public class DefaultCustomCommandsModel {
             defaultCommandFactory.installCommand(command, session);
             if (session.isPlainTrace()) {
                 NutsPrintStream out = session.getTerminal().out();
-                NutsTextManager text = session.getWorkspace().text();
+                NutsTextManager text = session.text();
                 out.printf("%s command %s%n",
                         text.forStyled("update ", NutsTextStyles.of(NutsTextStyle.success(), NutsTextStyle.underlined())),
                         text.forStyled(command.getName(), NutsTextStyle.primary3()));
@@ -248,7 +248,7 @@ public class DefaultCustomCommandsModel {
         defaultCommandFactory.uninstallCommand(name, session);
         if (session.isPlainTrace()) {
             NutsPrintStream out = session.getTerminal().out();
-            out.printf("%s command %s%n", "uninstall", session.getWorkspace().text().forStyled(name, NutsTextStyle.primary3()));
+            out.printf("%s command %s%n", "uninstall", session.text().forStyled(name, NutsTextStyle.primary3()));
         }
     }
 
@@ -325,7 +325,7 @@ public class DefaultCustomCommandsModel {
     public NutsWorkspaceCustomCommand find(String name, NutsId forId, NutsId forOwner, NutsSession session) {
         NutsWorkspaceCustomCommand a = find(name, session);
         if (a != null && a.getCommand() != null && a.getCommand().length > 0) {
-            NutsId i = session.getWorkspace().id().parser().parse(a.getCommand()[0]);
+            NutsId i = session.id().parser().parse(a.getCommand()[0]);
             if (i != null
                     && (forId == null
                     || i.getShortName().equals(forId.getArtifactId())

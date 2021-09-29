@@ -53,8 +53,8 @@ import org.xml.sax.SAXParseException;
  */
 public class NutsXmlUtils {
 
-//    public static void print(String name, Object object, long elemIndex, Writer out, boolean compact, boolean headerDeclaration, NutsSession ws) {
-//        print(name, object, elemIndex, (Object) out, compact, headerDeclaration, ws);
+//    public static void print(String name, Object object, long elemIndex, Writer out, boolean compact, boolean headerDeclaration, NutsSession session) {
+//        print(name, object, elemIndex, (Object) out, compact, headerDeclaration, session);
 //    }
 //
 //    public static void print(String name, Object object, long elemIndex, PrintStream out, boolean compact, boolean headerDeclaration, NutsSession session) {
@@ -96,7 +96,7 @@ public class NutsXmlUtils {
 //        if(elemIndex>=0){
 //            elem.setAttribute("index",CoreCommonUtils.stringValue(elemIndex));
 //        }
-//        NutsElement elem2 = session.getWorkspace().elem().convert(o,NutsElement.class);
+//        NutsElement elem2 = session.elem().convert(o,NutsElement.class);
 //        switch (elem2.type()){
 //            case STRING:{
 //                elem.setAttribute("type", "string");
@@ -242,19 +242,19 @@ public class NutsXmlUtils {
         b.setErrorHandler(new ErrorHandler() {
             @Override
             public void warning(SAXParseException exception) throws SAXException {
-                session.getWorkspace().log().of(NutsXmlUtils.class).with().session(session)
+                session.log().of(NutsXmlUtils.class).with().session(session)
                         .level(Level.FINEST).verb(NutsLogVerb.WARNING).log(exception.toString());
             }
 
             @Override
             public void error(SAXParseException exception) throws SAXException {
-                session.getWorkspace().log().of(NutsXmlUtils.class).with().session(session)
+                session.log().of(NutsXmlUtils.class).with().session(session)
                         .level(Level.FINEST).verb(NutsLogVerb.WARNING).log(exception.toString());
             }
 
             @Override
             public void fatalError(SAXParseException exception) throws SAXException {
-                session.getWorkspace().log().of(NutsXmlUtils.class).with().session(session)
+                session.log().of(NutsXmlUtils.class).with().session(session)
                         .level(Level.FINEST).verb(NutsLogVerb.WARNING).log(exception.toString());
             }
         });

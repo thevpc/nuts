@@ -40,7 +40,7 @@ public interface NutsLogger {
 
     static NutsLogger of(Class clazz, NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.getWorkspace().log().of(clazz);
+        return session.log().of(clazz);
     }
 
     /**

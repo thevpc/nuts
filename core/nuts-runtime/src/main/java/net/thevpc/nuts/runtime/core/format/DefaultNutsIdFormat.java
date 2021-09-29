@@ -181,8 +181,8 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
         checkSession();
         if (id == null) {
             return isNtf() ?
-                    getSession().getWorkspace().text().forStyled("<null>", NutsTextStyle.of(NutsTextStyleType.BOOLEAN))
-                    : getSession().getWorkspace().text().forPlain("<null>")
+                    getSession().text().forStyled("<null>", NutsTextStyle.of(NutsTextStyleType.BOOLEAN))
+                    : getSession().text().forPlain("<null>")
                     ;
         }
         Map<String, String> queryMap = id.getProperties();
@@ -201,7 +201,7 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
         }
         id = idBuilder.build();
 //        NutsTextFormatManager tf = getWorkspace().text();
-        NutsTextBuilder sb = getSession().getWorkspace().text().builder();
+        NutsTextBuilder sb = getSession().text().builder();
         if (!isOmitGroupId()) {
             if (!NutsBlankable.isBlank(id.getGroupId())) {
                 boolean importedGroup2 = "net.thevpc.nuts".equals(id.getGroupId());
@@ -301,7 +301,7 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
         if (isNtf()) {
             return sb.immutable();
         } else {
-            return getSession().getWorkspace().text().forPlain(sb.filteredText());
+            return getSession().text().forPlain(sb.filteredText());
         }
     }
 

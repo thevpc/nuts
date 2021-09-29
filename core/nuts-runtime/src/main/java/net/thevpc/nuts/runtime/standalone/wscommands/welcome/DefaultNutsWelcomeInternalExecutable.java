@@ -69,7 +69,7 @@ public class DefaultNutsWelcomeInternalExecutable extends DefaultInternalNutsExe
                 session = session.copy().setOutputFormat(NutsContentType.PROPS);
             }
             session.out().resetLine();
-            session.getWorkspace().formats().object(welcome).println();
+            session.formats().object(welcome).println();
         }
     }
 

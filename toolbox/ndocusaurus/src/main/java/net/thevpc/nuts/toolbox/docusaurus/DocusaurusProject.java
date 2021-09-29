@@ -131,7 +131,7 @@ public class DocusaurusProject {
         try {
             a = new String(Files.readAllBytes(Paths.get(resolvePath(path))));
         } catch (IOException ex) {
-            return session.getWorkspace().elem().forNull();
+            return session.elem().forNull();
         }
         //(?s) stands for single line mode in which the dot includes line breaks
         Pattern p = Pattern.compile("(?s)module.exports[ ]*=[ ]*(?<json>.*[^;])[;]?");
@@ -141,9 +141,9 @@ public class DocusaurusProject {
             json = matcher.group("json");
         }
         if (json==null) {
-            return session.getWorkspace().elem().forObject().build();
+            return session.elem().forObject().build();
         }
-        return session.getWorkspace().elem().setContentType(NutsContentType.JSON)
+        return session.elem().setContentType(NutsContentType.JSON)
                 .parse(json,NutsElement.class);
     }
 
@@ -169,10 +169,10 @@ public class DocusaurusProject {
 //        } else if (Files.isDirectory(path)) {
 //            String longId = path.subpath(root.getNameCount(), path.getNameCount()).toString();
 //            Path dfi = path.resolve(DOCUSAURUS_FOLDER_CONFIG);
-//            NutsObjectElement config = session.getWorkspace().elem().forObject().build();
+//            NutsObjectElement config = session.elem().forObject().build();
 //            if (Files.isRegularFile(dfi)) {
 //                try {
-//                    config = session.getWorkspace().elem().parse(new String(Files.readAllBytes(dfi))).asSafeObject();
+//                    config = session.elem().parse(new String(Files.readAllBytes(dfi))).asSafeObject();
 //                } catch (IOException e) {
 //                    //ignore...
 //                }
@@ -243,7 +243,7 @@ public class DocusaurusProject {
                         member.getKey().asString(),//no id  here!
                         member.getKey().asString(),
                         ++order,
-                        session.getWorkspace().elem().forObject().build(),
+                        session.elem().forObject().build(),
                         cc,
                         resolveFolderContent(parentPath),parentPath==null?null:parentPath.toString()
                 ));
@@ -279,7 +279,7 @@ public class DocusaurusProject {
     public DocusaurusFolder getSidebarsDocsFolder() {
         DocusaurusFileOrFolder[] someSidebars = LJSON_to_DocusaurusFileOrFolder_list(getSidebars().getSafe("someSidebar"),  getPhysicalDocsFolder());
         return new DocusaurusFolder("/", "/", 0,
-                session.getWorkspace().elem().forObject().build(), someSidebars,resolveFolderContent(getPhysicalDocsFolderBasePath()),
+                session.elem().forObject().build(), someSidebars,resolveFolderContent(getPhysicalDocsFolderBasePath()),
                 getPhysicalDocsFolder().getPath()
                 );
     }

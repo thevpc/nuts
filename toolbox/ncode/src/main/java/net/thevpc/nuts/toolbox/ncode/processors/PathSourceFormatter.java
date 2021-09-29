@@ -20,7 +20,7 @@ public class PathSourceFormatter implements SourceProcessor {
 
     @Override
     public Object process(Source source, NutsSession session) {
-        return session.getWorkspace().io().path(source.getExternalPath());
+        return session.io().path(source.getExternalPath());
     }
 
 }

@@ -103,7 +103,7 @@ public class AutocompleteCommand extends SimpleNshBuiltin {
 
     @Override
     protected void printPlainObject(SimpleNshCommandContext context, NutsSession session) {
-        NutsTextManager text = session.getWorkspace().text();
+        NutsTextManager text = session.text();
         Properties p = context.getResult();
         for (String o : new TreeSet<String>((Set) p.keySet())) {
             if (o.startsWith("-")) {

@@ -38,22 +38,22 @@ import java.util.function.Function;
 public interface NutsPathBuilder extends NutsFormattable {
     static NutsPathBuilder of(URL path, NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.getWorkspace().io().path(path).builder();
+        return session.io().path(path).builder();
     }
 
     static NutsPathBuilder of(String path, ClassLoader classLoader, NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.getWorkspace().io().path(path, classLoader).builder();
+        return session.io().path(path, classLoader).builder();
     }
 
     static NutsPathBuilder of(File path, NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.getWorkspace().io().path(path).builder();
+        return session.io().path(path).builder();
     }
 
     static NutsPathBuilder of(String path, NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.getWorkspace().io().path(path).builder();
+        return session.io().path(path).builder();
     }
 
     Function<String, String> getVarResolver();

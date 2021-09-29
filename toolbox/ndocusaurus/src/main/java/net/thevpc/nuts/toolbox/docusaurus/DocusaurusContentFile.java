@@ -56,7 +56,7 @@ public class DocusaurusContentFile extends DocusaurusFile{
                         props.put(key, value);
                         if("type".equals(key) && value.length()>0){
                             try {
-                                config = session.getWorkspace().elem().setContentType(NutsContentType.JSON).parse(value);
+                                config = session.elem().setContentType(NutsContentType.JSON).parse(value);
                             }catch (Exception ex){
                                 throw new IllegalArgumentException("invalid json for type in "+location);
                             }

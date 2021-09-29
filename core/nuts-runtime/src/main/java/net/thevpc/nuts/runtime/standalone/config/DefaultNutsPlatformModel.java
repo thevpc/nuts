@@ -65,12 +65,12 @@ public class DefaultNutsPlatformModel {
             if (notify) {
                 if (session.isPlainTrace()) {
                     session.out().resetLine().printf("%s %s %s (%s) %s at %s%n",
-                            session.getWorkspace().text().forStyled("install",NutsTextStyles.of(NutsTextStyle.success())),
+                            session.text().forStyled("install",NutsTextStyles.of(NutsTextStyle.success())),
                             location.getId().getShortName(),
                             location.getPackaging(),
                             location.getProduct(),
-                            session.getWorkspace().version().parser().parse(location.getVersion()),
-                            session.getWorkspace().io().path(location.getPath())
+                            session.version().parser().parse(location.getVersion()),
+                            session.io().path(location.getPath())
                     );
                 }
                 NutsWorkspaceConfigManagerExt.of(workspace.config())
@@ -95,7 +95,7 @@ public class DefaultNutsPlatformModel {
             List<NutsPlatformLocation> list = getPlatforms().get(location.getPlatformType());
             if (list != null) {
                 if (list.remove(location)) {
-                    NutsWorkspaceConfigManagerExt.of(session.getWorkspace().config())
+                    NutsWorkspaceConfigManagerExt.of(session.config())
                             .getModel()
                             .fireConfigurationChanged("platform", session, ConfigEventType.MAIN);
                     return true;
@@ -143,7 +143,7 @@ public class DefaultNutsPlatformModel {
 
     public NutsPlatformLocation findPlatformByVersion(NutsPlatformType type, NutsVersionFilter javaVersionFilter, final NutsSession session) {
         return findOnePlatform(type,
-                location -> javaVersionFilter == null || javaVersionFilter.acceptVersion(session.getWorkspace().version().parser().parse(location.getVersion()), session),
+                location -> javaVersionFilter == null || javaVersionFilter.acceptVersion(session.version().parser().parse(location.getVersion()), session),
                  session);
     }
 

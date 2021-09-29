@@ -88,7 +88,7 @@ public class ExtendedFormatAwarePrintWriter extends PrintWriter implements Exten
     @Override
     public ExtendedFormatAwarePrintWriter format(Locale l, String format, Object... args) {
         if(l==null){
-            print(session.getWorkspace().text().setSession(session).toText(
+            print(session.text().setSession(session).toText(
                     NutsMessage.cstyle(
                             format, args
                     )

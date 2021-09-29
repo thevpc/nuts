@@ -180,12 +180,12 @@ public class NutsPrintStreamSystem extends NutsPrintStreamBase {
             switch (command.getName()) {
                 case NutsTerminalCommand.Ids
                         .CLEAR_LINE: {
-                    //printf("%s", session.getWorkspace().text().forCommand(command));
+                    //printf("%s", session.text().forCommand(command));
                     break;
                 }
                 case NutsTerminalCommand.Ids
                         .CLEAR_LINE_FROM_CURSOR: {
-                    //printf("%s", session.getWorkspace().text().forCommand(command));
+                    //printf("%s", session.text().forCommand(command));
                     break;
                 }
             }

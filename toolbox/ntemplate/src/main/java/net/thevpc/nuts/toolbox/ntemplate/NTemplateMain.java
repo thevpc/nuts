@@ -128,10 +128,10 @@ public class NTemplateMain implements NutsApplication {
 
         @Override
         public Object eval(String content, FileTemplater context) {
-            NutsPrintStream out = shell.getSession().getWorkspace().io().createMemoryPrintStream();
-            NutsPrintStream err = shell.getSession().getWorkspace().io().createMemoryPrintStream();
+            NutsPrintStream out = shell.getSession().io().createMemoryPrintStream();
+            NutsPrintStream err = shell.getSession().io().createMemoryPrintStream();
             shell.getSession().setTerminal(
-                    shell.getSession().getWorkspace().term()
+                    shell.getSession().term()
                             .createTerminal(
                                     new ByteArrayInputStream(new byte[0]),
                                     out,

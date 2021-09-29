@@ -108,7 +108,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
 
     @Override
     public Iterator<NutsInstallInformation> searchInstallInformation(NutsSession session) {
-        Path rootFolder = Paths.get(session.getWorkspace().locations().getStoreLocation(NutsStoreLocation.CONFIG)).resolve(NutsConstants.Folders.ID);
+        Path rootFolder = Paths.get(session.locations().getStoreLocation(NutsStoreLocation.CONFIG)).resolve(NutsConstants.Folders.ID);
         return new FolderObjectIterator<NutsInstallInformation>("NutsInstallInformation",
                 rootFolder,
                 null, -1, session, new FolderObjectIterator.FolderIteratorModel<NutsInstallInformation>() {
@@ -142,7 +142,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
                 return p;
             }
         }
-        Path pp = Paths.get(session.getWorkspace().locations().getStoreLocation(id
+        Path pp = Paths.get(session.locations().getStoreLocation(id
                         //.setAlternative("")
                         .builder().setVersion("ANY").build(), NutsStoreLocation.CONFIG))
                 .resolveSibling("default-version");
@@ -164,7 +164,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
     public void setDefaultVersion(NutsId id, NutsSession session) {
         NutsId baseVersion = id.getShortNameId();
         String version = id.getVersion().getValue();
-        Path pp = Paths.get(session.getWorkspace().locations().getStoreLocation(id
+        Path pp = Paths.get(session.locations().getStoreLocation(id
                         //                .setAlternative("")
                         .builder().setVersion("ANY").build(), NutsStoreLocation.CONFIG))
                 .resolveSibling("default-version");
@@ -207,12 +207,12 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
     @Override
     public void install(NutsId id, NutsSession session, NutsId forId) {
         Instant now = Instant.now();
-        String user = session.getWorkspace().security().setSession(session).getCurrentUsername();
+        String user = session.security().getCurrentUsername();
         NutsWorkspaceUtils.of(session).checkReadOnly();
         InstallInfoConfig ii;
         try {
             String repository = id.getRepository();
-            NutsRepository r = session.getWorkspace().repos().findRepository(repository);
+            NutsRepository r = session.repos().findRepository(repository);
             ii = new InstallInfoConfig();
             ii.setConfigVersion(DefaultNutsWorkspace.VERSION_INSTALL_INFO_CONFIG);
             ii.setId(id);
@@ -254,8 +254,8 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
             String v = getDefaultVersion(def.getId(), session);
             if (v != null && v.equals(def.getId().getVersion().getValue())) {
                 Iterator<NutsId> versions = searchVersions().setId(def.getId())
-                        .setFilter(session.getWorkspace().id().filter().byInstallStatus(
-                                session.getWorkspace().filters().installStatus().byInstalled(true)
+                        .setFilter(session.id().filter().byInstallStatus(
+                                session.filters().installStatus().byInstalled(true)
                         )) //search only in installed, ignore deployed!
                         .setFetchMode(NutsFetchMode.LOCAL)
                         .setSession(session).getResult();
@@ -289,11 +289,11 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
     }
 
     public NutsId pathToId(Path path, NutsSession session) {
-        Path rootFolder = Paths.get(session.getWorkspace().locations().getStoreLocation(NutsStoreLocation.CONFIG)).resolve(NutsConstants.Folders.ID);
+        Path rootFolder = Paths.get(session.locations().getStoreLocation(NutsStoreLocation.CONFIG)).resolve(NutsConstants.Folders.ID);
         String p = path.toString().substring(rootFolder.toString().length());
         List<String> split = StringTokenizerUtils.split(p, "/\\");
         if (split.size() >= 4) {
-            return session.getWorkspace().id().builder().setArtifactId(split.get(split.size() - 3))
+            return session.id().builder().setArtifactId(split.get(split.size() - 3))
                     .setGroupId(String.join(".", split.subList(0, split.size() - 3)))
                     .setVersion(split.get(split.size() - 2)).build();
 
@@ -348,7 +348,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
             printJson(from, NUTS_INSTALL_FILE, fi, session);
         }
         Set<NutsId> list = findDependenciesFrom(from, scope, session);
-        NutsElementFormat element = session.getWorkspace().elem().setSession(session);
+        NutsElementFormat element = session.elem().setSession(session);
         if (!list.contains(to)) {
             list.add(to);
             element.setContentType(NutsContentType.JSON).setValue(list.toArray(new NutsId[0]))
@@ -381,12 +381,12 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
         if (list.contains(to)) {
             list.remove(to);
             stillRequired = list.size() > 0;
-            session.getWorkspace().elem().setContentType(NutsContentType.JSON).setValue(list.toArray(new NutsId[0])).print(getDepsPath(from, true, scope, session));
+            session.elem().setContentType(NutsContentType.JSON).setValue(list.toArray(new NutsId[0])).print(getDepsPath(from, true, scope, session));
         }
         list = findDependenciesTo(to, scope, session);
         if (list.contains(from)) {
             list.remove(from);
-            session.getWorkspace().elem().setContentType(NutsContentType.JSON).setValue(list.toArray(new NutsId[0])).print(getDepsPath(to, false, scope, session));
+            session.elem().setContentType(NutsContentType.JSON).setValue(list.toArray(new NutsId[0])).print(getDepsPath(to, false, scope, session));
         }
         if (fi.required != stillRequired) {
             fi.required = true;
@@ -397,7 +397,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
     public synchronized Set<NutsId> findDependenciesFrom(NutsId from, NutsDependencyScope scope, NutsSession session) {
         Path path = getDepsPath(from, true, scope, session);
         if (Files.isRegularFile(path)) {
-            NutsId[] old = session.getWorkspace().elem().setSession(session).setContentType(NutsContentType.JSON).parse(path, NutsId[].class);
+            NutsId[] old = session.elem().setSession(session).setContentType(NutsContentType.JSON).parse(path, NutsId[].class);
             return new HashSet<NutsId>(Arrays.asList(old));
         }
         return new HashSet<>();
@@ -406,7 +406,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
     public synchronized Set<NutsId> findDependenciesTo(NutsId from, NutsDependencyScope scope, NutsSession session) {
         Path path = getDepsPath(from, false, scope, session);
         if (Files.isRegularFile(path)) {
-            NutsId[] old = session.getWorkspace().elem().setSession(session).setContentType(NutsContentType.JSON).parse(path, NutsId[].class);
+            NutsId[] old = session.elem().setSession(session).setContentType(NutsContentType.JSON).parse(path, NutsId[].class);
             return new HashSet<NutsId>(Arrays.asList(old));
         }
         return new HashSet<>();
@@ -469,7 +469,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
     }
 
     public Iterator<InstallInfoConfig> searchInstallConfig(NutsSession session) {
-        Path rootFolder = Paths.get(session.getWorkspace().locations().getStoreLocation(NutsStoreLocation.CONFIG)).resolve(NutsConstants.Folders.ID);
+        Path rootFolder = Paths.get(session.locations().getStoreLocation(NutsStoreLocation.CONFIG)).resolve(NutsConstants.Folders.ID);
         return new FolderObjectIterator<InstallInfoConfig>("InstallInfoConfig",
                 rootFolder,
                 null, -1, session, new FolderObjectIterator.FolderIteratorModel<InstallInfoConfig>() {
@@ -514,7 +514,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
         NutsInstallStatus s = NutsInstallStatus.of(ii.isInstalled(), ii.isRequired(), obsolete, defaultVersion);
         return new DefaultNutsInstallInfo(ii.getId(),
                 s,
-                session.getWorkspace().locations().getStoreLocation(ii.getId(), NutsStoreLocation.APPS),
+                session.locations().getStoreLocation(ii.getId(), NutsStoreLocation.APPS),
                 ii.getCreatedDate(),
                 ii.getLastModifiedDate(),
                 ii.getInstallUser(),
@@ -546,7 +546,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
 //                }
 //            }
             NutsId id = def.getId();
-            String user = session.getWorkspace().security().setSession(session).getCurrentUsername();
+            String user = session.security().setSession(session).getCurrentUsername();
             NutsWorkspaceUtils.of(session).checkReadOnly();
             try {
                 boolean _install = false;
@@ -618,14 +618,14 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
     }
 
     public <T> T readJson(NutsId id, String name, Class<T> clazz, NutsSession session) {
-        return session.getWorkspace().elem()
+        return session.elem()
                 .setSession(session).setContentType(NutsContentType.JSON)
                 .parse(getPath(id, name, session), clazz);
     }
 
     public void printJson(NutsId id, String name, InstallInfoConfig value, NutsSession session) {
         value.setConfigVersion(workspace.getApiVersion().toString());
-        session.getWorkspace().elem()
+        session.elem()
                 .setSession(session).setContentType(NutsContentType.JSON).setValue(value)
                 .print(getPath(id, name, session));
     }
@@ -644,7 +644,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
     }
 
     public Path getPath(NutsId id, String name, NutsSession session) {
-        return Paths.get(session.getWorkspace().locations().setSession(session).getStoreLocation(id, NutsStoreLocation.CONFIG)).resolve(name);
+        return Paths.get(session.locations().setSession(session).getStoreLocation(id, NutsStoreLocation.CONFIG)).resolve(name);
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////

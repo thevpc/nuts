@@ -23,6 +23,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
 /**
  * uniform platform architecture impl-note: list updated from
  * https://github.com/trustin/os-maven-plugin
@@ -82,11 +84,7 @@ public enum NutsCommandlineFamily implements NutsEnum {
 
     public static NutsCommandlineFamily parse(String value, NutsCommandlineFamily emptyValue, NutsSession session) {
         NutsCommandlineFamily v = parseLenient(value, emptyValue, null);
-        if (v == null) {
-            if (!NutsBlankable.isBlank(value)) {
-                throw new NutsParseEnumException(session, value, NutsCommandlineFamily.class);
-            }
-        }
+        NutsApiUtils.checkNonNullEnum(v,value,NutsCommandlineFamily.class,session);
         return v;
     }
 

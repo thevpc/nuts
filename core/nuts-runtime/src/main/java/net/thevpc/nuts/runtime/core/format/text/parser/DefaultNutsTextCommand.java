@@ -34,6 +34,8 @@ import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.core.format.text.AnsiEscapeCommand;
 import net.thevpc.nuts.runtime.core.format.text.DefaultAnsiEscapeCommand;
 
+import java.util.Objects;
+
 /**
  * Created by vpc on 5/23/17.
  */
@@ -41,8 +43,8 @@ public class DefaultNutsTextCommand extends NutsTextSpecialBase implements NutsT
 
     private final NutsTerminalCommand command;
 
-    public DefaultNutsTextCommand(NutsSession ws, String start, NutsTerminalCommand command, String separator, String end) {
-        super(ws, start, command.getName(),
+    public DefaultNutsTextCommand(NutsSession session, String start, NutsTerminalCommand command, String separator, String end) {
+        super(session, start, command.getName(),
                 (command.getArgs() != null && command.getArgs().length() > 0 && (separator == null || separator.isEmpty())) ? " " : separator
                 , end);
         this.command = command;
@@ -68,5 +70,19 @@ public class DefaultNutsTextCommand extends NutsTextSpecialBase implements NutsT
     @Override
     public NutsTerminalCommand getCommand() {
         return command;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        DefaultNutsTextCommand that = (DefaultNutsTextCommand) o;
+        return Objects.equals(command, that.command);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), command);
     }
 }

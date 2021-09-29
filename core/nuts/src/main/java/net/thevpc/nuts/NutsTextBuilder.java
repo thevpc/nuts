@@ -10,7 +10,7 @@ import java.util.Collection;
 public interface NutsTextBuilder extends NutsString {
     static NutsTextBuilder of(NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.getWorkspace().text().builder();
+        return session.text().builder();
     }
 
     NutsTextStyleGenerator getStyleGenerator();

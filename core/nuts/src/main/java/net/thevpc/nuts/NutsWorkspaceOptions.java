@@ -25,6 +25,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsBootTerminal;
+
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.Serializable;
@@ -148,11 +150,10 @@ public interface NutsWorkspaceOptions extends Serializable {
      * <strong>option-type :</strong> create (used when creating new workspace. will not be
      * exported nor promoted to runtime).
      *
-     * @param layout   layout
      * @param location location
      * @return home location.
      */
-    String getHomeLocation(NutsOsFamily layout, NutsStoreLocation location);
+    String getHomeLocation(NutsHomeLocation location);
 
     /**
      * return home locations.
@@ -162,7 +163,7 @@ public interface NutsWorkspaceOptions extends Serializable {
      *
      * @return home locations
      */
-    Map<String, String> getHomeLocations();
+    Map<NutsHomeLocation, String> getHomeLocations();
 
     /**
      * java command (or java home) used to run workspace.
@@ -286,7 +287,7 @@ public interface NutsWorkspaceOptions extends Serializable {
      * exported nor promoted to runtime)
      * @return store locations map to consider when creating a new workspace.
      */
-    Map<String, String> getStoreLocations();
+    Map<NutsStoreLocation, String> getStoreLocations();
 
     /**
      * terminal mode (inherited, formatted, filtered) to use.
@@ -599,7 +600,7 @@ public interface NutsWorkspaceOptions extends Serializable {
 
     NutsMessage[] getErrors();
 
-    String[] getProperties();
+    String[] getCustomOptions();
 
     /**
      * locale
@@ -614,6 +615,8 @@ public interface NutsWorkspaceOptions extends Serializable {
      * @return session locale
      */
     String getTheme();
+
+    NutsBootTerminal getBootTerminal();
 
     NutsWorkspaceOptionsBuilder builder();
 }

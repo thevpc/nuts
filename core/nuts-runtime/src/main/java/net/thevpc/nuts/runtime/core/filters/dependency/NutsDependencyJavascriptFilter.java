@@ -40,15 +40,15 @@ public class NutsDependencyJavascriptFilter extends AbstractDependencyFilter imp
 
     private String code;
 
-    public static NutsDependencyJavascriptFilter valueOf(String value, NutsSession ws) {
+    public static NutsDependencyJavascriptFilter valueOf(String value, NutsSession session) {
         if (NutsBlankable.isBlank(value)) {
             return null;
         }
-        return new NutsDependencyJavascriptFilter(ws,value);
+        return new NutsDependencyJavascriptFilter(session,value);
     }
 
-    public NutsDependencyJavascriptFilter(NutsSession ws,String code) {
-        super(ws, NutsFilterOp.CUSTOM);
+    public NutsDependencyJavascriptFilter(NutsSession session,String code) {
+        super(session, NutsFilterOp.CUSTOM);
         this.code = code;
         //check if valid
 //        accept(SAMPLE_DependencyNUTS_DESCRIPTOR);

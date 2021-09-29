@@ -39,8 +39,8 @@ public class NutsDescriptorFilterArch extends AbstractDescriptorFilter implement
 
     private final String arch;
 
-    public NutsDescriptorFilterArch(NutsSession ws, String packaging) {
-        super(ws, NutsFilterOp.CUSTOM);
+    public NutsDescriptorFilterArch(NutsSession session, String packaging) {
+        super(session, NutsFilterOp.CUSTOM);
         this.arch = packaging;
     }
 

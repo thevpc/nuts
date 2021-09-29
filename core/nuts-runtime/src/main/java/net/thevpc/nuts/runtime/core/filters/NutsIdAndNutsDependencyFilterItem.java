@@ -25,7 +25,7 @@
 //
 //    public NutsDescriptor getEffDescriptor(NutsSession session) {
 //        if (effDescriptor == null) {
-//            effDescriptor = session.getWorkspace().fetch().setId(id.id)
+//            effDescriptor = session.fetch().setId(id.id)
 //                    .setEffective(true)
 //                    .setSession(CoreNutsUtils.silent(session))
 //                    .getResultDescriptor();
@@ -35,7 +35,7 @@
 //
 //    public NutsDescriptor getDescriptor(NutsSession session) {
 //        if (descriptor == null) {
-//            descriptor = session.getWorkspace().fetch().setId(id.id).setSession(session).getResultDescriptor();
+//            descriptor = session.fetch().setId(id.id).setSession(session).getResultDescriptor();
 //        }
 //        return descriptor;
 //    }

@@ -264,7 +264,7 @@ public class NdiUtils {
                         }
                         Files.write(out, content);
                         if(session.isPlainTrace()){
-                            session.out().resetLine().printf("create file %s%n",session.getWorkspace().io().path(out));
+                            session.out().resetLine().printf("create file %s%n",session.io().path(out));
                         }
                     } catch (IOException e) {
                         throw new UncheckedIOException(e);
@@ -276,7 +276,7 @@ public class NdiUtils {
                             .resetLine()
                             .setDefaultValue(true).setSession(session)
                             .forBoolean("create %s ?",
-                                    session.getWorkspace().text().forStyled(
+                                    session.text().forStyled(
                                             NdiUtils.betterPath(out.toString()), NutsTextStyle.path()
                                     )
                             ).getBooleanValue()) {
@@ -286,7 +286,7 @@ public class NdiUtils {
                             }
                             Files.write(out, content);
                             if(session.isPlainTrace()){
-                                session.out().resetLine().printf("create file %s%n",session.getWorkspace().io().path(out));
+                                session.out().resetLine().printf("create file %s%n",session.io().path(out));
                             }
                         } catch (IOException e) {
                             throw new UncheckedIOException(e);
@@ -315,7 +315,7 @@ public class NdiUtils {
                         throw new UncheckedIOException(e);
                     }
                     if(session.isPlainTrace()){
-                        session.out().printf("update file %s%n",session.getWorkspace().io().path(out));
+                        session.out().printf("update file %s%n",session.io().path(out));
                     }
                     return PathInfo.Status.OVERRIDDEN;
                 }
@@ -324,7 +324,7 @@ public class NdiUtils {
                             .resetLine()
                             .setDefaultValue(true).setSession(session)
                             .forBoolean("override %s ?",
-                                    session.getWorkspace().text().forStyled(
+                                    session.text().forStyled(
                                             NdiUtils.betterPath(out.toString()), NutsTextStyle.path()
                                     )
                             ).getBooleanValue()) {
@@ -339,7 +339,7 @@ public class NdiUtils {
                             throw new UncheckedIOException(e);
                         }
                         if(session.isPlainTrace()){
-                            session.out().printf("update file %s%n",session.getWorkspace().io().path(out));
+                            session.out().printf("update file %s%n",session.io().path(out));
                         }
                         return PathInfo.Status.OVERRIDDEN;
                     }else{

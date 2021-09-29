@@ -34,6 +34,8 @@ import net.thevpc.nuts.NutsCodeFormat;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsText;
 
+import java.util.Objects;
+
 /**
  * Created by vpc on 5/23/17.
  */
@@ -41,8 +43,8 @@ public class DefaultNutsTextCode extends NutsTextSpecialBase implements NutsText
 
     private final String text;
 
-    public DefaultNutsTextCode(NutsSession ws, String start, String kind, String separator, String end, String text) {
-        super(ws,start, kind,
+    public DefaultNutsTextCode(NutsSession session, String start, String kind, String separator, String end, String text) {
+        super(session,start, kind,
                 (kind != null && kind.length() > 0
                         &&
                         text != null && text.length() > 0
@@ -71,5 +73,19 @@ public class DefaultNutsTextCode extends NutsTextSpecialBase implements NutsText
 
     public String getText() {
         return text;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        DefaultNutsTextCode that = (DefaultNutsTextCode) o;
+        return Objects.equals(text, that.text);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), text);
     }
 }

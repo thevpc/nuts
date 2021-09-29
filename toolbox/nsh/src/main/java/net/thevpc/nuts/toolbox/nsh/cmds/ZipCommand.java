@@ -74,7 +74,7 @@ public class ZipCommand extends AbstractNshBuiltin {
         if (outZip == null) {
             commandLine.required(NutsMessage.cstyle("missing out-zip"));
         }
-        NutsIOCompressAction aa = context.getSession().getWorkspace().io().compress()
+        NutsIOCompressAction aa = context.getSession().io().compress()
                 .setTarget(outZip.getPath());
         for (String file : files) {
             aa.addSource(file);

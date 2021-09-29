@@ -92,7 +92,7 @@ public class ProcessExecHelper implements IProcessExecHelper {
             }
         }
 
-        NutsLogger _LL = session.getWorkspace().log().setSession(session).of(NutsWorkspaceUtils.class);
+        NutsLogger _LL = session.log().setSession(session).of(NutsWorkspaceUtils.class);
         if (_LL.isLoggable(Level.FINEST)) {
             _LL.with().level(Level.FINE).verb(NutsLogVerb.START).formatted().log("[exec] {0}",
                     ws.text().forCode("sh",
@@ -133,11 +133,7 @@ public class ProcessExecHelper implements IProcessExecHelper {
         if (nutsJarFile != null) {
             map.put("nuts.jar", nutsJarFile.toAbsolutePath().normalize().toString());
         }
-        map.put("nuts.id", id.getLongName());
-        map.put("nuts.id.version", id.getVersion().getValue());
-        map.put("nuts.id.name", id.getArtifactId());
-        map.put("nuts.id.simpleName", id.getShortName());
-        map.put("nuts.id.group", id.getGroupId());
+        map.put("nuts.artifact", id.toString());
         map.put("nuts.file", nutMainFile.getPath().toString());
         String defaultJavaCommand = NutsJavaSdkUtils.of(execSession.getWorkspace()).resolveJavaCommandByVersion("", false, session);
 
@@ -146,12 +142,6 @@ public class ProcessExecHelper implements IProcessExecHelper {
             map.put("nuts.cmd", map.get("nuts.java") + " -jar " + map.get("nuts.jar"));
         }
         map.put("nuts.workspace", workspace.locations().getWorkspaceLocation());
-        map.put("nuts.version", id.getVersion().getValue());
-        map.put("nuts.name", id.getArtifactId());
-        map.put("nuts.group", id.getGroupId());
-        map.put("nuts.face", id.getFace());
-        map.put("nuts.repo", id.getRepository());
-        map.put("nuts.id", id.toString());
         if (installerFile != null) {
             map.put("nuts.installer", installerFile.toString());
         }
@@ -227,12 +217,12 @@ public class ProcessExecHelper implements IProcessExecHelper {
     }
 
     private static String resolveRootUserName(NutsSession session) {
-        NutsOsFamily sysFamily = session.getWorkspace().env().getOsFamily();
+        NutsOsFamily sysFamily = session.env().getOsFamily();
         switch (sysFamily) {
             case WINDOWS: {
                 String s = (String) session.getProperty("WINDOWS_ROOT_USER");
                 if (s == null) {
-                    s = session.getWorkspace().env().getEnv("WINDOWS_ROOT_USER").getString();
+                    s = session.env().getEnv("WINDOWS_ROOT_USER").getString();
                 }
                 if (NutsBlankable.isBlank(s)) {
                     s = "Administrator";
@@ -247,12 +237,12 @@ public class ProcessExecHelper implements IProcessExecHelper {
 
     private static List<String> buildEffectiveCommand(String[] cmd, NutsRunAs runAsMode, NutsSession session) {
         //String runAsEffective = null;
-        NutsOsFamily sysFamily = session.getWorkspace().env().getOsFamily();
+        NutsOsFamily sysFamily = session.env().getOsFamily();
         List<String> command = new ArrayList<>(Arrays.asList(cmd));
         if (runAsMode == null) {
             runAsMode = NutsRunAs.CURRENT_USER;
         }
-        boolean runWithGui = session.isGui() && session.getWorkspace().env().isGraphicalDesktopEnvironment();
+        boolean runWithGui = session.isGui() && session.env().isGraphicalDesktopEnvironment();
         String rootUserName = resolveRootUserName(session);
         String currentUserName = System.getProperty("user.name");
 
@@ -331,7 +321,7 @@ public class ProcessExecHelper implements IProcessExecHelper {
                     case MACOS:
                     case UNIX: {
                         if (runWithGui) {
-                            NutsDesktopEnvironmentFamily[] de = session.getWorkspace().env().getDesktopEnvironmentFamilies();
+                            NutsDesktopEnvironmentFamily[] de = session.env().getDesktopEnvironmentFamilies();
                             Path kdesu = CoreIOUtils.sysWhich("kdesu");
                             Path gksu = CoreIOUtils.sysWhich("gksu");
                             String currSu = null;
@@ -388,7 +378,7 @@ public class ProcessExecHelper implements IProcessExecHelper {
                     case MACOS:
                     case UNIX: {
                         if (runWithGui) {
-                            NutsDesktopEnvironmentFamily[] de = session.getWorkspace().env().getDesktopEnvironmentFamilies();
+                            NutsDesktopEnvironmentFamily[] de = session.env().getDesktopEnvironmentFamilies();
                             Path kdesu = CoreIOUtils.sysWhich("kdesudo");
                             Path gksu = CoreIOUtils.sysWhich("gksudo");
                             String currSu = null;

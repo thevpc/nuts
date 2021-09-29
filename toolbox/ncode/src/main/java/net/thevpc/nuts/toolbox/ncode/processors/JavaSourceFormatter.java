@@ -35,16 +35,16 @@ public class JavaSourceFormatter implements SourceProcessor {
             }
             return NutsMessage.cstyle(
                     "%s %s %s %s",
-                    session.getWorkspace().text().forStyled(leftAlign(v1, 4), NutsTextStyle.config()),
-                    session.getWorkspace().text().forStyled(leftAlign(v2, 4), NutsTextStyle.info()),
-                    session.getWorkspace().text().forStyled(leftAlign(n, clsNameSize), NutsTextStyle.primary1()),
-                    session.getWorkspace().text().forStyled(source.getExternalPath(), NutsTextStyle.path()),
+                    session.text().forStyled(leftAlign(v1, 4), NutsTextStyle.config()),
+                    session.text().forStyled(leftAlign(v2, 4), NutsTextStyle.info()),
+                    session.text().forStyled(leftAlign(n, clsNameSize), NutsTextStyle.primary1()),
+                    session.text().forStyled(source.getExternalPath(), NutsTextStyle.path()),
                     source.toString()
             );
         } else {
             return NutsMessage.cstyle(
                     "%s : %s",
-                    session.getWorkspace().text().forStyled("invalid source", NutsTextStyle.error()),
+                    session.text().forStyled("invalid source", NutsTextStyle.error()),
                     source.toString()
             );
         }

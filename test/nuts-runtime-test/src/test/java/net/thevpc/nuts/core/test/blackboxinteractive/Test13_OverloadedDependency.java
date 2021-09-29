@@ -5,7 +5,6 @@
  */
 package net.thevpc.nuts.core.test.blackboxinteractive;
 
-import net.thevpc.nuts.Nuts;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
@@ -21,7 +20,6 @@ import java.util.Map;
  */
 public class Test13_OverloadedDependency {
 
-    private static String baseFolder;
 
     public static void main(String[] args) {
         try {
@@ -37,8 +35,8 @@ public class Test13_OverloadedDependency {
         extraProperties.put("nuts.export.always-show-command", "true");
         TestUtils.setSystemProperties(extraProperties);
 
-        NutsWorkspace ws = TestUtils.openTestWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
-                "-z", "-b" ,"--debug" ,"--progress=newline",
+        NutsWorkspace ws = TestUtils.openNewTestWorkspace(
+                 "-b" ,"--debug" ,"--progress=newline",
                 "--archetype", "default",
                 "--log-info").getWorkspace();
         ws.install().addId("netbeans-launcher").run();
@@ -47,8 +45,6 @@ public class Test13_OverloadedDependency {
 
 //    @BeforeAll
     public static void setUpClass() throws IOException {
-        baseFolder = new File("./runtime/test/" + TestUtils.getCallerClassSimpleName()).getCanonicalFile().getPath();
-        CoreIOUtils.delete(null,new File(baseFolder));
         TestUtils.println("####### RUNNING TEST @ "+ TestUtils.getCallerClassSimpleName());
     }
 }

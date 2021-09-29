@@ -42,7 +42,7 @@ public interface NutsDependencyBuilder {
 
     static NutsDependencyBuilder of(NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.getWorkspace().dependency().builder();
+        return session.dependency().builder();
     }
 
     /**

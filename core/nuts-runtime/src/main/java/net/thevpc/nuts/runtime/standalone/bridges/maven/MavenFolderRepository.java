@@ -55,7 +55,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
 
         @Override
         protected NutsInput openStream(NutsId id, String path, Object source, String typeName, String action, NutsSession session) {
-            return session.getWorkspace().io().input().setTypeName(typeName).of(Paths.get(path));
+            return session.io().input().setTypeName(typeName).of(Paths.get(path));
         }
 
         @Override
@@ -80,7 +80,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
 
     public MavenFolderRepository(NutsAddRepositoryOptions options, NutsSession session, NutsRepository parentRepository) {
         super(options, session, parentRepository, SPEED_FASTER, false, NutsConstants.RepoTypes.MAVEN);
-        LOG = session.getWorkspace().log().of(MavenFolderRepository.class);
+        LOG = session.log().of(MavenFolderRepository.class);
         if (options.getConfig().getStoreLocationStrategy() != NutsStoreLocationStrategy.STANDALONE) {
             cache.setWriteEnabled(false);
             cache.setReadEnabled(false);
@@ -139,13 +139,13 @@ public class MavenFolderRepository extends NutsCachedRepository {
         }
         if (localPath == null) {
             return new NutsDefaultContent(
-                    session.getWorkspace().io().path(f.toString()), true, false);
+                    session.io().path(f.toString()), true, false);
         } else {
             getWorkspace().io().copy()
                     .setSession(session)
                     .from(f).to(localPath).setSafe(true).run();
             return new NutsDefaultContent(
-                    session.getWorkspace().io().path(localPath), true, false);
+                    session.io().path(localPath), true, false);
         }
     }
 
@@ -181,8 +181,8 @@ public class MavenFolderRepository extends NutsCachedRepository {
             }
             try {
                 namedNutIdIterator = findInFolder(getLocationAsPath(session),getLocalGroupAndArtifactFile(id, session),
-                        session.getWorkspace().id().filter().nonnull(idFilter).and(
-                                session.getWorkspace().id().filter().byName(id.getShortName())
+                        session.id().filter().nonnull(idFilter).and(
+                                session.id().filter().byName(id.getShortName())
                         ),
                         Integer.MAX_VALUE, session);
             } catch (NutsNotFoundException ex) {
@@ -351,7 +351,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
                                         gn.append(ns);
                                     }
                                     return validate(
-                                            session.getWorkspace().id().builder()
+                                            session.id().builder()
                                                     .setGroupId(gn.toString())
                                                     .setArtifactId(an)
                                                     .setVersion(vn)

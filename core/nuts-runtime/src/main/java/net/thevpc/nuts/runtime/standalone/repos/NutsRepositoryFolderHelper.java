@@ -98,7 +98,7 @@ public class NutsRepositoryFolderHelper {
         Path cacheContent = getLongNameIdLocalFile(id.builder().setFaceContent().build(), session);
         if (cacheContent != null && pathExists(cacheContent, session)) {
             return new NutsDefaultContent(
-                    session.getWorkspace().io().path(cacheContent.toString()),
+                    session.io().path(cacheContent.toString()),
                     cacheFolder, false);
         }
         return null;
@@ -366,7 +366,7 @@ public class NutsRepositoryFolderHelper {
         Path pckFile = deployContent(id, inputSource, descriptor, writeType, session);
         if (repo != null) {
             NutsRepositoryUtils.of(repo).events().fireOnDeploy(new DefaultNutsContentEvent(
-                    session.getWorkspace().io().path(pckFile.toString()), deployment, session, repo));
+                    session.io().path(pckFile.toString()), deployment, session, repo));
         }
         return descriptor.builder().setId(id.getLongNameId()).build();
     }
@@ -401,7 +401,7 @@ public class NutsRepositoryFolderHelper {
             ws2.io().copy().setSession(session)
                     .from(
                             ws2.io().input().setName(
-                                            session.getWorkspace().text().toText(
+                                            session.text().toText(
                                                     NutsMessage.cstyle("sha1(%s)", desc.getId())
                                             ))
                                     .setTypeName("descriptor hash")
@@ -439,9 +439,9 @@ public class NutsRepositoryFolderHelper {
                 return pckFile;
             }
         }
-        return session.getWorkspace().concurrent().lock().setSource(pckFile).call(() -> {
-            session.getWorkspace().io().copy().from(content).to(pckFile).setSafe(true).run();
-            session.getWorkspace().io().copy().from(new NamedByteArrayInputStream(
+        return session.concurrent().lock().setSource(pckFile).call(() -> {
+            session.io().copy().from(content).to(pckFile).setSafe(true).run();
+            session.io().copy().from(new NamedByteArrayInputStream(
                             CoreIOUtils.evalSHA1Hex(pckFile).getBytes(),
                             "sha1://" + id
                     )
@@ -462,7 +462,7 @@ public class NutsRepositoryFolderHelper {
             })) {
                 if (repo != null) {
                     NutsRepositoryUtils.of(repo).events().fireOnUndeploy(new DefaultNutsContentEvent(
-                            command.getSession().getWorkspace().io().path(localFolder.toString())
+                            command.getSession().io().path(localFolder.toString())
                             , command, command.getSession(), repo));
                     return true;
                 }

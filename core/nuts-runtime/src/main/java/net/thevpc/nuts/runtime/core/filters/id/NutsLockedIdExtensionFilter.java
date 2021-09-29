@@ -17,8 +17,8 @@ import net.thevpc.nuts.runtime.core.filters.descriptor.AbstractDescriptorFilter;
  */
 public class NutsLockedIdExtensionFilter extends AbstractDescriptorFilter{
     private NutsId[] lockedIds;
-    public NutsLockedIdExtensionFilter(NutsSession ws, NutsId[] lockedIds) {
-        super(ws, NutsFilterOp.CUSTOM);
+    public NutsLockedIdExtensionFilter(NutsSession session, NutsId[] lockedIds) {
+        super(session, NutsFilterOp.CUSTOM);
         this.lockedIds =lockedIds;
     }
 

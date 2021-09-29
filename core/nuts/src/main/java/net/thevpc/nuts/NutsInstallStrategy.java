@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
 /**
  * Install strategy defines the strategy used by installer
  * @app.category Base
@@ -104,11 +106,7 @@ public enum NutsInstallStrategy implements NutsEnum {
 
     public static NutsInstallStrategy parse(String value, NutsInstallStrategy emptyValue, NutsSession session) {
         NutsInstallStrategy v = parseLenient(value, emptyValue, null);
-        if (v == null) {
-            if (!NutsBlankable.isBlank(value)) {
-                throw new NutsParseEnumException(session, value, NutsInstallStrategy.class);
-            }
-        }
+        NutsApiUtils.checkNonNullEnum(v,value,NutsInstallStrategy.class,session);
         return v;
     }
 

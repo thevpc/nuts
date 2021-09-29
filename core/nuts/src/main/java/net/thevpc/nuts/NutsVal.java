@@ -42,7 +42,7 @@ public interface NutsVal extends NutsBlankable {
      * @return a wrapped instance for the given value
      */
     static NutsVal of(Object value, NutsSession session) {
-        return session.getWorkspace().util().valOf(value);
+        return session.util().valOf(value);
     }
 
     /**

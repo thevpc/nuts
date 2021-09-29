@@ -42,7 +42,7 @@ public class DefaultNutsDescriptorPropertyBuilder implements NutsDescriptorPrope
 
     public DefaultNutsDescriptorPropertyBuilder(NutsSession session) {
         this.session = session;
-        this.condition = session.getWorkspace().descriptor().envConditionBuilder();
+        this.condition = session.descriptor().envConditionBuilder();
     }
 
     @Override

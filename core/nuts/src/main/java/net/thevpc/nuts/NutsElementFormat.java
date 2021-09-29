@@ -48,7 +48,7 @@ public interface NutsElementFormat extends NutsObjectFormat {
 
     static NutsElementFormat of(NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.getWorkspace().elem();
+        return session.elem();
     }
 
     /**

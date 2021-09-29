@@ -157,17 +157,17 @@ public class JavascriptHelper {
                 return NutsBlankable.isBlank(value.toString());
             }
             if (value instanceof NutsId) {
-                NutsIdFilter f = session.getWorkspace().id().filter().byExpression(pattern);
+                NutsIdFilter f = session.id().filter().byExpression(pattern);
                 return f.acceptId((NutsId) value, session);
             }
             if (value instanceof NutsDependency) {
-                NutsDependencyFilter f = session.getWorkspace().dependency().filter().byExpression(pattern);
+                NutsDependencyFilter f = session.dependency().filter().byExpression(pattern);
                 //TODO, how to pass parent Id for dependency?
                 NutsId from = null;
                 return f == null || f.acceptDependency(from, (NutsDependency) value, session);
             }
             if (value instanceof NutsVersion) {
-                NutsVersionFilter f = session.getWorkspace().version().filter().byExpression(pattern);
+                NutsVersionFilter f = session.version().filter().byExpression(pattern);
                 return f == null || f.acceptVersion((NutsVersion) value, session);
             }
             return true;

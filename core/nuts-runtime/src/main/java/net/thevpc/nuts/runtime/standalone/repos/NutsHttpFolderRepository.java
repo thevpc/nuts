@@ -72,7 +72,7 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
 
     public NutsHttpFolderRepository(NutsAddRepositoryOptions options, NutsSession session, NutsRepository parentRepository) {
         super(options, session, parentRepository, SPEED_SLOW, false, NutsConstants.RepoTypes.NUTS);
-        LOG = session.getWorkspace().log().of(NutsHttpFolderRepository.class);
+        LOG = session.log().of(NutsHttpFolderRepository.class);
     }
 
     private boolean isDescFile0(String pathname) {
@@ -284,14 +284,14 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
             String path = getPath(id, session);
             getWorkspace().io().copy().setSession(session).from(path).to(localFile).setSafe(true).setLogProgress(true).run();
             return new NutsDefaultContent(
-                    session.getWorkspace().io().path(localFile), false, false);
+                    session.io().path(localFile), false, false);
         } else {
             for (NutsIdLocation location : descriptor.getLocations()) {
                 if (CoreNutsUtils.acceptClassifier(location, id.getClassifier())) {
                     try {
                         getWorkspace().io().copy().setSession(session).from(location.getUrl()).to(localFile).setSafe(true).setLogProgress(true).run();
                         return new NutsDefaultContent(
-                                session.getWorkspace().io().path(localFile), false, false);
+                                session.io().path(localFile), false, false);
                     } catch (Exception ex) {
                         LOG.with().session(session).level(Level.SEVERE).error(ex).log("unable to download location for id {0} in location {1} : {2}", id, location.getUrl(), ex);
                     }

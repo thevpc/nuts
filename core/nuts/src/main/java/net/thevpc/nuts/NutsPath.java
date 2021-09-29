@@ -29,9 +29,13 @@ package net.thevpc.nuts;
 import net.thevpc.nuts.boot.NutsApiUtils;
 
 import java.io.File;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
 import java.nio.file.Path;
 import java.time.Instant;
+import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * this interface describes any local or remote file path. It includes simple file path (ex. '/home/here' and 'c:\\here')
@@ -41,27 +45,27 @@ import java.time.Instant;
 public interface NutsPath extends NutsFormattable {
     static NutsPath of(URL path, NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.getWorkspace().io().path(path);
+        return session.io().path(path);
     }
 
     static NutsPath of(String path, ClassLoader classLoader, NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.getWorkspace().io().path(path, classLoader);
+        return session.io().path(path, classLoader);
     }
 
     static NutsPath of(File path, NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.getWorkspace().io().path(path);
+        return session.io().path(path);
     }
 
     static NutsPath of(Path path, NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.getWorkspace().io().path(path);
+        return session.io().path(path);
     }
 
     static NutsPath of(String path, NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.getWorkspace().io().path(path);
+        return session.io().path(path);
     }
 
     /**
@@ -122,6 +126,10 @@ public interface NutsPath extends NutsFormattable {
 
     NutsInput input();
 
+    InputStream inputStream();
+
+    OutputStream outputStream();
+
     NutsOutput output();
 
     NutsSession getSession();
@@ -141,4 +149,11 @@ public interface NutsPath extends NutsFormattable {
     Instant getLastModifiedInstant();
 
     NutsPathBuilder builder();
+
+    Stream<String> lines();
+
+    List<String> head(int count);
+
+    List<String> tail(int count);
+
 }

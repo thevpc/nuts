@@ -208,7 +208,7 @@ public class LsCommand extends SimpleNshBuiltin {
         } else if (context.getResult() instanceof ResultError) {
             ResultError s = context.getResult();
             for (Map.Entry<String, String> e : s.result.entrySet()) {
-                NutsTextManager text = session.getWorkspace().text();
+                NutsTextManager text = session.text();
                 out.printf("%s%n",
                         text.builder().append(e.getKey(),NutsTextStyle.primary5())
                         .append(" : ")
@@ -241,7 +241,7 @@ public class LsCommand extends SimpleNshBuiltin {
             out.print(" ");
         }
         String name = new File(item.path).getName();
-        NutsTextManager text = session.getWorkspace().text();
+        NutsTextManager text = session.text();
         if (item.hidden) {
             out.println(text.forStyled(name,NutsTextStyle.pale()));
         } else if (item.type == 'd') {

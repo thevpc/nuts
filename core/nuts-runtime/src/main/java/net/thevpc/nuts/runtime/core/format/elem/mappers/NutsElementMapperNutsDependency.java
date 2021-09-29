@@ -11,7 +11,7 @@ public class NutsElementMapperNutsDependency implements NutsElementMapper<NutsDe
     public Object destruct(NutsDependency o, Type typeOfSrc, NutsElementFactoryContext context) {
         if (o.getExclusions().length == 0) {
             //use compact form
-            if (context.element().isNtf()) {
+            if (context.elem().isNtf()) {
                 NutsWorkspace ws = context.getSession().getWorkspace();
 //                    NutsText n = ws.text().parse(
 //                            ws.dependency().formatter().setNtf(true).setValue(o).format()
@@ -20,12 +20,12 @@ public class NutsElementMapperNutsDependency implements NutsElementMapper<NutsDe
                 return ws.dependency().formatter().setNtf(true).setValue(o).format();
             } else {
 
-                return context.defaultDestruct(context.getSession().getWorkspace().dependency().formatter(o)
-                        .setNtf(context.element().isNtf())
+                return context.defaultDestruct(context.getSession().dependency().formatter(o)
+                        .setNtf(context.elem().isNtf())
                         .format(), null);
             }
         }
-        return context.defaultDestruct(context.getSession().getWorkspace().dependency().builder().set(o), null);
+        return context.defaultDestruct(context.getSession().dependency().builder().set(o), null);
     }
 
     @Override
@@ -44,21 +44,21 @@ public class NutsElementMapperNutsDependency implements NutsElementMapper<NutsDe
 //                    return ws.elem().forString(ws.dependency().formatter().setNtf(true).setValue(o).format());
 //                } else {
 
-        return context.defaultObjectToElement(context.getSession().getWorkspace().dependency().formatter(o)
-                .setNtf(context.element().isNtf())
+        return context.defaultObjectToElement(context.getSession().dependency().formatter(o)
+                .setNtf(context.elem().isNtf())
                 .format(), null);
 //                }
 //            }
-//            return context.defaultObjectToElement(context.getSession().getWorkspace().dependency().builder().set(o), null);
+//            return context.defaultObjectToElement(context.getSession().dependency().builder().set(o), null);
     }
 
     @Override
     public NutsDependency createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
         if (o.type() == NutsElementType.STRING) {
-            return context.getSession().getWorkspace().dependency().parser().setLenient(false).parseDependency(o.asPrimitive().getString());
+            return context.getSession().dependency().parser().setLenient(false).parseDependency(o.asPrimitive().getString());
         }
         DefaultNutsDependencyBuilder builder = (DefaultNutsDependencyBuilder) context.defaultElementToObject(o, DefaultNutsDependencyBuilder.class);
-        return context.getSession().getWorkspace().dependency().builder().set(builder).build();
+        return context.getSession().dependency().builder().set(builder).build();
     }
 
 }

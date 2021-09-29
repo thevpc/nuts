@@ -80,7 +80,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
     public String getResultDescriptorHash() {
         try {
             checkSession();
-            return getSession().getWorkspace().io().hash().setSource(getResultDescriptor()).computeString();
+            return getSession().io().hash().setSource(getResultDescriptor()).computeString();
         } catch (NutsNotFoundException ex) {
             if (!isFailFast()) {
                 return null;
@@ -548,7 +548,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                         }
                     }
                     if (idType == NutsIdType.REGULAR) {
-                        for (NutsId companionTool : ws.getCompanionIds(session)) {
+                        for (NutsId companionTool : session.extensions().getCompanionIds()) {
                             if (companionTool.getShortName().equals(getId().getShortName())) {
                                 idType = NutsIdType.COMPANION;
                                 apiId = apiId0;

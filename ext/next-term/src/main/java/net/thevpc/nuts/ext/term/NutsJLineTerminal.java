@@ -122,7 +122,7 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase {
     private AttributedString toAttributedString(NutsText n, NutsTextStyles styles, NutsSession session) {
         switch (n.getType()) {
             case PLAIN: {
-                styles=session.getWorkspace().text().getTheme().toBasicStyles(styles, session);
+                styles=session.text().getTheme().toBasicStyles(styles, session);
                 NutsTextPlain p = (NutsTextPlain) n;
                 if (styles.isNone()) {
                     return new AttributedString(p.getText());
@@ -240,7 +240,7 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase {
                 .highlighter(new Highlighter() {
                     @Override
                     public AttributedString highlight(LineReader reader, String buffer) {
-                        NutsTextManager text = session.getWorkspace().text();
+                        NutsTextManager text = session.text();
                         NutsCommandReadHighlighter h = getCommandReadHighlighter();
                         NutsText n=(h!=null)?h.highlight(buffer, session):text.forPlain(buffer);
                         return toAttributedString(n, NutsTextStyles.NONE, session);
@@ -262,17 +262,17 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase {
                 //                .parse(parse)
                 .build();
         reader.unsetOpt(LineReader.Option.INSERT_TAB);
-        reader.setVariable(LineReader.HISTORY_FILE, Paths.get(session.getWorkspace().locations().getWorkspaceLocation()).resolve("history").normalize().toFile());
+        reader.setVariable(LineReader.HISTORY_FILE, Paths.get(session.locations().getWorkspaceLocation()).resolve("history").normalize().toFile());
         if (reader instanceof LineReaderImpl) {
             ((LineReaderImpl) reader).setHistory(new NutsJLineHistory(reader, session, this));
         }
-        this.out = session.getWorkspace().io().setSession(session).createPrintStream(
+        this.out = session.io().createPrintStream(
                 new TransparentPrintStream(
                         new PrintStream(reader.getTerminal().output(), true),
                         System.out
                 ),
                 NutsTerminalMode.FORMATTED);
-        this.err = session.getWorkspace().io().setSession(session).createPrintStream(
+        this.err = session.io().createPrintStream(
                 new TransparentPrintStream(
                         new PrintStream(reader.getTerminal().output(), true),
                         System.err
@@ -296,7 +296,7 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase {
         try {
             prepare(criteria.getSession());
         }catch (Exception ex){
-            criteria.getSession().getWorkspace().log().of(NutsJLineTerminal.class)
+            criteria.getSession().log().of(NutsJLineTerminal.class)
                             .with().level(Level.FINEST).verb(NutsLogVerb.FAIL).error(ex).log("unable to create NutsJLineTerminal. ignored.");
             return NO_SUPPORT;
         }
@@ -310,11 +310,11 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase {
             out = getOut();
         }
         if (out == null) {
-            out = session.getWorkspace().io().stdout();
+            out = session.io().stdout();
         }
         String readLine = null;
         try {
-            readLine = reader.readLine(session.getWorkspace().text().toText(message).toString());
+            readLine = reader.readLine(session.text().toText(message).toString());
         } catch (UserInterruptException e) {
             throw new NutsJLineInterruptException();
         }
@@ -330,11 +330,11 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase {
     public char[] readPassword(NutsPrintStream out, NutsMessage message,NutsSession session) {
         prepare(session);
         if (out == null) {
-            return reader.readLine(session.getWorkspace().text().toText(message).toString(), '*').toCharArray();
+            return reader.readLine(session.text().toText(message).toString(), '*').toCharArray();
         }else{
             //should I use some out??
         }
-        return reader.readLine(session.getWorkspace().text().toText(message).toString(), '*').toCharArray();
+        return reader.readLine(session.text().toText(message).toString(), '*').toCharArray();
     }
 
     @Override

@@ -12,17 +12,17 @@ public class NutsDependencyArchFilter extends AbstractDependencyFilter {
 
     private Set<NutsArchFamily> archs = EnumSet.noneOf(NutsArchFamily.class);
 
-    public NutsDependencyArchFilter(NutsSession ws) {
-        super(ws, NutsFilterOp.CUSTOM);
+    public NutsDependencyArchFilter(NutsSession session) {
+        super(session, NutsFilterOp.CUSTOM);
     }
 
-    private NutsDependencyArchFilter(NutsSession ws, Collection<NutsArchFamily> os) {
-        super(ws, NutsFilterOp.CUSTOM);
+    private NutsDependencyArchFilter(NutsSession session, Collection<NutsArchFamily> os) {
+        super(session, NutsFilterOp.CUSTOM);
         this.archs = EnumSet.copyOf(os);
     }
 
-    public NutsDependencyArchFilter(NutsSession ws, String os) {
-        super(ws, NutsFilterOp.CUSTOM);
+    public NutsDependencyArchFilter(NutsSession session, String os) {
+        super(session, NutsFilterOp.CUSTOM);
         this.archs = EnumSet.noneOf(NutsArchFamily.class);
         for (String e : os.split("[,; ]")) {
             if (!e.isEmpty()) {

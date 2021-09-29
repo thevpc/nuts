@@ -30,18 +30,30 @@ public interface NutsEnum {
     static <T extends NutsEnum> T parse(Class<T> type, String value, NutsSession session) {
         Method m = null;
         try {
-            m = type.getMethod("parseLenient", String.class, NutsSession.class);
+            m = type.getMethod("parse", String.class, NutsSession.class);
         } catch (Exception ex) {
-            throw new IllegalArgumentException("NutsEnum classes must implement a public static method parse(String,NutsSession)");
+            NutsMessage msg = NutsMessage.cstyle("NutsEnum %s must implement a public static method parse(String,NutsSession)", type.getName());
+            if (session == null) {
+                throw new NutsBootException(msg);
+            }
+            throw new NutsIllegalArgumentException(session, msg);
         }
         if (!Modifier.isStatic(m.getModifiers()) || !Modifier.isPublic(m.getModifiers()) || !m.getReturnType().equals(type)) {
-            throw new IllegalArgumentException("NutsEnum classes must implement a public static method parse(String,NutsSession)");
+            NutsMessage msg = NutsMessage.cstyle("NutsEnum %s must implement a public static method parse(String,NutsSession)", type.getName());
+            if (session == null) {
+                throw new NutsBootException(msg);
+            }
+            throw new NutsIllegalArgumentException(session, msg);
         }
         T r = null;
         try {
             r = (T) m.invoke(null, value, session);
         } catch (Exception ex) {
-            throw new IllegalArgumentException("unable to run  parse(String,NutsSession)");
+            NutsMessage msg = NutsMessage.cstyle("failed executing %s.parse(String) ", type.getName());
+            if (session == null) {
+                throw new NutsBootException(msg);
+            }
+            throw new NutsParseEnumException(session, msg, value, type);
         }
         return r;
     }
@@ -60,16 +72,28 @@ public interface NutsEnum {
         try {
             m = type.getMethod("parseLenient", String.class);
         } catch (Exception ex) {
-            throw new IllegalArgumentException("NutsEnum classes must implement a public static method parseLenient(String)");
+            NutsMessage msg = NutsMessage.cstyle("NutsEnum %s must implement a public static method parseLenient(String)", type.getName());
+//            if(session==null){
+            throw new NutsBootException(msg);
+//            }
+//            throw new NutsIllegalArgumentException(session, msg);
         }
         if (!Modifier.isStatic(m.getModifiers()) || !Modifier.isPublic(m.getModifiers()) || !m.getReturnType().equals(type)) {
-            throw new IllegalArgumentException("NutsEnum classes must implement a public static method parseLenient(String)");
+            NutsMessage msg = NutsMessage.cstyle("NutsEnum %s must implement a public static method parseLenient(String)", type.getName());
+//            if(session==null){
+            throw new NutsBootException(msg);
+//            }
+//            throw new NutsIllegalArgumentException(session, msg);
         }
         T r = null;
         try {
             r = (T) m.invoke(null, value);
         } catch (Exception ex) {
-            throw new IllegalArgumentException("unable to run  parseLenient(String)");
+            NutsMessage msg = NutsMessage.cstyle("failed executing %s.parseLenient(String) ", type.getName());
+//            if(session==null){
+            throw new NutsBootException(msg);
+//            }
+//            throw new NutsParseEnumException(session, msg, value, type);
         }
         return r;
     }
@@ -100,7 +124,11 @@ public interface NutsEnum {
         try {
             r = (T) m.invoke(null, value, emptyOrErrorValue);
         } catch (Exception ex) {
-            throw new IllegalArgumentException("unable to run  parseLenient(String," + typeSimpleName + ")");
+            NutsMessage msg = NutsMessage.cstyle("failed executing %s.parseLenient(String,%s) ", type.getName(), typeSimpleName);
+//            if(session==null){
+            throw new NutsBootException(msg);
+//            }
+//            throw new NutsParseEnumException(session, msg, value, type);
         }
         return r;
     }
@@ -120,18 +148,30 @@ public interface NutsEnum {
         Method m = null;
         String typeSimpleName = type.getSimpleName();
         try {
-            m = type.getMethod("parseLenient", String.class, type);
+            m = type.getMethod("parse", String.class, type,NutsSession.class);
         } catch (Exception ex) {
-            throw new IllegalArgumentException("NutsEnum classes must implement a public static method parse(String," + typeSimpleName + ",NutsSession)");
+            NutsMessage msg = NutsMessage.cstyle("NutsEnum %s must implement a public static method parse(String,%s,NutsSession)", type.getName(), typeSimpleName);
+            if (session == null) {
+                throw new NutsBootException(msg);
+            }
+            throw new NutsIllegalArgumentException(session, msg);
         }
         if (!Modifier.isStatic(m.getModifiers()) || !Modifier.isPublic(m.getModifiers()) || !m.getReturnType().equals(type)) {
-            throw new IllegalArgumentException("NutsEnum classes must implement a public static method parse(String," + typeSimpleName + ",NutsSession)");
+            NutsMessage msg = NutsMessage.cstyle("NutsEnum %s must implement a public static method parse(String,%s,NutsSession)", type.getName(), typeSimpleName);
+            if (session == null) {
+                throw new NutsBootException(msg);
+            }
+            throw new NutsIllegalArgumentException(session, msg);
         }
         T r = null;
         try {
             r = (T) m.invoke(null, value, emptyValue, session);
         } catch (Exception ex) {
-            throw new IllegalArgumentException("unable to run  parse(String," + typeSimpleName + ",NutsSession)");
+            NutsMessage msg = NutsMessage.cstyle("failed executing %s.parse(String,%s,NutsSession) ", type.getName(), typeSimpleName);
+            if (session == null) {
+                throw new NutsBootException(msg);
+            }
+            throw new NutsParseEnumException(session, msg, value, type);
         }
         return r;
     }
@@ -153,16 +193,28 @@ public interface NutsEnum {
         try {
             m = type.getMethod("parseLenient", String.class, type, type);
         } catch (Exception ex) {
-            throw new IllegalArgumentException("NutsEnum classes must implement a public static method parseLenient(String," + typeSimpleName + "," + typeSimpleName + ")");
+            NutsMessage msg = NutsMessage.cstyle("NutsEnum %s must implement a public static method parseLenient(String,%s,%s,NutsSession)", type.getName(), typeSimpleName, typeSimpleName);
+//            if(session==null){
+            throw new NutsBootException(msg);
+//            }
+//            throw new NutsIllegalArgumentException(session, msg);
         }
         if (!Modifier.isStatic(m.getModifiers()) || !Modifier.isPublic(m.getModifiers()) || !m.getReturnType().equals(type)) {
-            throw new IllegalArgumentException("NutsEnum classes must implement a public static method parseLenient(String," + typeSimpleName + "," + typeSimpleName + ")");
+            NutsMessage msg = NutsMessage.cstyle("NutsEnum %s must implement a public static method parseLenient(String,%s,%s,NutsSession)", type.getName(), typeSimpleName, typeSimpleName);
+//            if(session==null){
+            throw new NutsBootException(msg);
+//            }
+//            throw new NutsIllegalArgumentException(session, msg);
         }
         T r = null;
         try {
             r = (T) m.invoke(null, value, emptyValue, errorOrUnknownValue);
         } catch (Exception ex) {
-            throw new IllegalArgumentException("unable to run  parseLenient(String," + typeSimpleName + "," + typeSimpleName + ")");
+            NutsMessage msg = NutsMessage.cstyle("failed executing %s.parse(String,%s,%s,NutsSession) ", type.getName(), typeSimpleName, typeSimpleName);
+//            if(session==null){
+            throw new NutsBootException(msg);
+//            }
+//            throw new NutsParseEnumException(session, msg, value, type);
         }
         return r;
     }

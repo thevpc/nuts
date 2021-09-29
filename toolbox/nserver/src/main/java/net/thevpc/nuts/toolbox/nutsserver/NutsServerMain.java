@@ -153,7 +153,7 @@ public class NutsServerMain implements NutsApplication {
             }
             for (SrvInfo server : servers.all) {
                 for (Map.Entry<String, String> entry : server.workspaceLocations.entrySet()) {
-                    NutsWorkspace nutsWorkspace = null;
+                    NutsSession nutsSession = null;
                     String wsContext = entry.getKey();
                     String wsLocation = entry.getValue();
                     if (NutsBlankable.isBlank(wsContext) || wsContext.equals(".")) {
@@ -164,19 +164,19 @@ public class NutsServerMain implements NutsApplication {
                             throw new NutsIllegalArgumentException(context.getSession(),
                                     NutsMessage.cstyle("nuts-server: missing workspace"));
                         }
-                        nutsWorkspace = context.getWorkspace();
-                        server.workspaces.put(wsContext, nutsWorkspace);
+                        nutsSession = context.getSession();
+                        server.workspaces.put(wsContext, nutsSession);
                     } else {
-                        nutsWorkspace = server.workspaces.get(wsContext);
-                        if (nutsWorkspace == null) {
-                            nutsWorkspace = Nuts.openWorkspace(
+                        nutsSession = server.workspaces.get(wsContext);
+                        if (nutsSession == null) {
+                            nutsSession = Nuts.openWorkspace(
                                     NutsWorkspaceOptionsBuilder.of()
                                             .setWorkspace(wsLocation)
                                             .setOpenMode(NutsOpenMode.OPEN_OR_ERROR)
                                             .setReadOnly(server.readOnly)
                                             .build()
-                            ).getWorkspace();
-                            server.workspaces.put(wsContext, nutsWorkspace);
+                            );
+                            server.workspaces.put(wsContext, nutsSession);
                         }
                     }
                 }
@@ -403,7 +403,7 @@ public class NutsServerMain implements NutsApplication {
                     );
                 }
             } else {
-                context.getSession().getWorkspace().formats().object(results).println();
+                context.getSession().formats().object(results).println();
             }
         }
     }
@@ -436,8 +436,8 @@ public class NutsServerMain implements NutsApplication {
         List<SrvInfo> all = new ArrayList<>();
         NutsSession session;
 
-        SrvInfoList(NutsSession ws) {
-            this.session = ws;
+        SrvInfoList(NutsSession session) {
+            this.session = session;
         }
 
         SrvInfo add() {
@@ -464,7 +464,7 @@ public class NutsServerMain implements NutsApplication {
         String sslCertificate = null;
         String sslPassphrase = null;
         Map<String, String> workspaceLocations = new LinkedHashMap<>();
-        Map<String, NutsWorkspace> workspaces = new HashMap<>();
+        Map<String, NutsSession> workspaces = new HashMap<>();
         boolean readOnly = false;
 
         public void set(HostStr s) {

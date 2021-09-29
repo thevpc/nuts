@@ -29,7 +29,7 @@ public class Test13_Color {
         extraProperties.put("nuts.export.always-show-command", "true");
         TestUtils.setSystemProperties(extraProperties);
 
-        NutsWorkspace ws = TestUtils.openTestWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
+        NutsWorkspace ws = TestUtils.openNewTestWorkspace(
                 "--archetype", "default",
                 "--log-info",
                 "--skip-companions").getWorkspace();

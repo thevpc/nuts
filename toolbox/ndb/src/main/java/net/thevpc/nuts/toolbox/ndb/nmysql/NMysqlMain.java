@@ -188,19 +188,19 @@ public class NMysqlMain implements NdbSupport {
         }
         LocalMysqlConfigService c = service.loadLocalMysqlConfig(name.getConfigName(), NutsOpenMode.OPEN_OR_ERROR);
         LocalMysqlDatabaseConfigService d = c.getDatabase(name.getDatabaseName(), NutsOpenMode.OPEN_OR_ERROR);
-        NutsWorkspace ws = service.getContext().getSession().getWorkspace();
+        NutsSession s = service.getContext().getSession();
         if (backup) {
             if (path == null) {
                 path = d.getDatabaseName() + "-" + MysqlUtils.newDateString();
             }
             LocalMysqlDatabaseConfigService.ArchiveResult result = d.backup(path);
-            ws.formats().object(result).println();
+            s.formats().object(result).println();
         } else {
             if (path == null) {
                 commandLine.required(NutsMessage.cstyle("missing --path"));
             }
             LocalMysqlDatabaseConfigService.RestoreResult result = d.restore(path);
-            ws.formats().object(result).println();
+            s.formats().object(result).println();
         }
     }
 
@@ -445,7 +445,6 @@ public class NMysqlMain implements NdbSupport {
                             overrideExisting = true;
                             if (!session.getTerminal().ask()
                                     .resetLine()
-                                    .setSession(session)
                                     .forBoolean("already exists %s. override?", factory.forStyled(name.toString(),
                                             NutsTextStyle.primary3())
                                     )
@@ -458,7 +457,6 @@ public class NMysqlMain implements NdbSupport {
                             overrideExisting = true;
                             if (!session.getTerminal().ask()
                                     .resetLine()
-                                    .setSession(session)
                                     .forBoolean("already exists %s. override?", factory.forStyled(name.toString(), NutsTextStyle.primary3()))
                                     .setDefaultValue(false).getBooleanValue()) {
                                 throw new NutsExecutionException(session, NutsMessage.cstyle("already exists %s", name), 2);
@@ -616,7 +614,6 @@ public class NMysqlMain implements NdbSupport {
                             overrideExisting = true;
                             if (!session.getTerminal().ask()
                                     .resetLine()
-                                    .setSession(session)
                                     .forBoolean("already exists %s. override?", factory.forStyled(name.toString(), NutsTextStyle.primary3()))
                                     .setDefaultValue(false).getBooleanValue()) {
                                 throw new NutsExecutionException(session, NutsMessage.cstyle("already exists %s", name), 2);
@@ -627,7 +624,6 @@ public class NMysqlMain implements NdbSupport {
                             overrideExisting = true;
                             if (!session.getTerminal().ask()
                                     .resetLine()
-                                    .setSession(session)
                                     .forBoolean("already exists %s. override?", factory.forStyled(name.toString(), NutsTextStyle.primary3()))
                                     .setDefaultValue(false).getBooleanValue()) {
                                 throw new NutsExecutionException(session, NutsMessage.cstyle("already exists %s", name), 2);
@@ -791,7 +787,7 @@ public class NMysqlMain implements NdbSupport {
     }
 
     public Object toObject(String dbName, String confName, LocalMysqlDatabaseConfig config, boolean describe, boolean plain, NutsApplicationContext context) {
-        NutsTextManager text = context.getSession().getWorkspace().text();
+        NutsTextManager text = context.getSession().text();
         if (!describe) {
             if (plain) {
                 return text.builder()
@@ -815,7 +811,7 @@ public class NMysqlMain implements NdbSupport {
     }
 
     public Object toObject(String dbName, String confName, RemoteMysqlDatabaseConfig config, boolean describe, boolean plain, NutsApplicationContext context) {
-        NutsTextManager text = context.getSession().getWorkspace().text();
+        NutsTextManager text = context.getSession().text();
         if (!describe) {
             if (plain) {
                 return text.builder()
@@ -936,7 +932,7 @@ public class NMysqlMain implements NdbSupport {
                     break;
                 }
                 default: {
-                    service.getContext().getSession().getWorkspace().formats().object(result).println();
+                    service.getContext().getSession().formats().object(result).println();
                 }
             }
         }

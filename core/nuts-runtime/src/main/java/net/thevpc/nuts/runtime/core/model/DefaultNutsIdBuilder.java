@@ -77,12 +77,12 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
 
     public DefaultNutsIdBuilder(NutsSession session) {
         this.session=session;
-        this.condition=session.getWorkspace().descriptor().envConditionBuilder();
+        this.condition=session.descriptor().envConditionBuilder();
     }
 
     public DefaultNutsIdBuilder(NutsId id,NutsSession session) {
         this.session=session;
-        this.condition=session.getWorkspace().descriptor().envConditionBuilder();
+        this.condition=session.descriptor().envConditionBuilder();
         setGroupId(id.getGroupId());
         setArtifactId(id.getArtifactId());
         setVersion(id.getVersion());
@@ -91,10 +91,10 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
 
     public DefaultNutsIdBuilder(String groupId, String artifactId, NutsVersion version, String propertiesQuery,NutsSession session) {
         this.session=session;
-        this.condition=session.getWorkspace().descriptor().envConditionBuilder();
+        this.condition=session.descriptor().envConditionBuilder();
         this.groupId = NutsUtilStrings.trimToNull(groupId);
         this.artifactId = NutsUtilStrings.trimToNull(artifactId);
-        this.version = version == null ? session.getWorkspace().version().parser().parse("") : version;
+        this.version = version == null ? session.version().parser().parse("") : version;
         setProperties(propertiesQuery);
     }
 
@@ -146,13 +146,13 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
 
     @Override
     public NutsIdBuilder setVersion(NutsVersion value) {
-        this.version = value == null ? session.getWorkspace().version().parser().parse("") : value;
+        this.version = value == null ? session.version().parser().parse("") : value;
         return this;
     }
 
     @Override
     public NutsIdBuilder setVersion(String value) {
-        this.version = session.getWorkspace().version().parser().parse(value);
+        this.version = session.version().parser().parse(value);
         return this;
     }
 
@@ -241,7 +241,7 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
 
     @Override
     public NutsEnvConditionBuilder getCondition() {
-        return session.getWorkspace().descriptor().envConditionBuilder()
+        return session.descriptor().envConditionBuilder()
                 .setOs(CoreStringUtils.parseAndTrimToDistinctArray(getProperties().get(NutsConstants.IdProperties.OS)))
                 ;
     }
@@ -455,7 +455,7 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
     public NutsIdBuilder omitImportedGroupId() {
         String g = getGroupId();
         if(g!=null && g.length()>0){
-            if(session.getWorkspace().imports().isImportedGroupId(g)){
+            if(session.imports().isImportedGroupId(g)){
                 setGroupId(null);
             }
         }

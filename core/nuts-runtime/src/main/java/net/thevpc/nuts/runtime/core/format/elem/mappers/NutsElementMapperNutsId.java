@@ -8,8 +8,8 @@ public class NutsElementMapperNutsId implements NutsElementMapper<NutsId> {
 
     @Override
     public Object destruct(NutsId o, Type typeOfSrc, NutsElementFactoryContext context) {
-        if (context.element().isNtf()) {
-            return context.getSession().getWorkspace().id().formatter(o).setNtf(true).format();
+        if (context.elem().isNtf()) {
+            return context.getSession().id().formatter(o).setNtf(true).format();
         } else {
             return o.toString();
         }
@@ -17,7 +17,7 @@ public class NutsElementMapperNutsId implements NutsElementMapper<NutsId> {
 
     @Override
     public NutsElement createElement(NutsId o, Type typeOfSrc, NutsElementFactoryContext context) {
-        if (context.element().isNtf()) {
+        if (context.elem().isNtf()) {
 //                NutsWorkspace ws = context.getSession().getWorkspace();
 //                NutsText n = ws.text().toText(ws.id().formatter(o).setNtf(true).format());
 //                return ws.elem().forPrimitive().buildNutsString(n);
@@ -30,7 +30,7 @@ public class NutsElementMapperNutsId implements NutsElementMapper<NutsId> {
 
     @Override
     public NutsId createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
-        return context.getSession().getWorkspace().id().parser().parse(o.asPrimitive().getString());
+        return context.getSession().id().parser().parse(o.asPrimitive().getString());
     }
 
 }

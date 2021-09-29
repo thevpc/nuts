@@ -36,7 +36,7 @@ public interface NutsMutableTableModel extends NutsTableModel {
 
     static NutsMutableTableModel of(NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.getWorkspace().formats().table().createModel();
+        return session.formats().table().createModel();
     }
 
     /**

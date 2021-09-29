@@ -40,7 +40,7 @@ import java.util.function.Function;
 public interface NutsIdBuilder extends Serializable {
     static NutsIdBuilder of(NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.getWorkspace().id().builder();
+        return session.id().builder();
     }
 
     /**

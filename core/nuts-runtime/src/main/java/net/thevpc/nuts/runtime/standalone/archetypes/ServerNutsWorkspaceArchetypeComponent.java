@@ -51,18 +51,17 @@ public class ServerNutsWorkspaceArchetypeComponent implements NutsWorkspaceArche
 
     @Override
     public void initializeWorkspace(NutsSession session) {
-        NutsWorkspace ws = session.getWorkspace();
-        DefaultNutsWorkspaceConfigManager rm = (DefaultNutsWorkspaceConfigManager) ws.config();
+        DefaultNutsWorkspaceConfigManager rm = (DefaultNutsWorkspaceConfigManager) session.config();
         Map<String,String> defaults=new HashMap<>();
         defaults.put("maven-local", null);
         defaults.put("maven-central", null);
         defaults.put(NutsConstants.Names.DEFAULT_REPOSITORY_NAME, null);
         NutsRepositorySelector.Selection[] br = rm.getModel().resolveBootRepositoriesList().resolveSelectors(defaults);
-            NutsRepositoryManager repos = ws.repos().setSession(session);
+            NutsRepositoryManager repos = session.repos().setSession(session);
         for (NutsRepositorySelector.Selection s : br) {
             repos.addRepository(s.toString());
         }
-        NutsWorkspaceSecurityManager sec = session.getWorkspace().security().setSession(session);
+        NutsWorkspaceSecurityManager sec = session.security().setSession(session);
 
         //has read rights
         sec.addUser("guest").setCredentials("user".toCharArray()).addPermissions(
@@ -72,7 +71,7 @@ public class ServerNutsWorkspaceArchetypeComponent implements NutsWorkspaceArche
         ).run();
 
         //has write rights
-        sec = session.getWorkspace().security().setSession(session);
+        sec = session.security().setSession(session);
         sec.addUser("contributor").setCredentials("user".toCharArray()).addPermissions(
                 NutsConstants.Permissions.FETCH_DESC,
                 NutsConstants.Permissions.FETCH_CONTENT,

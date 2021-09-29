@@ -767,7 +767,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
     }
 
     private NutsElementFormat _elems() {
-        return getSession().getWorkspace().elem().setSession(getSession());
+        return getSession().elem().setSession(getSession());
     }
 
     @Override
@@ -860,7 +860,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
             this.session = session;
             this.ws = session.getWorkspace();
             this.formatter = formatter;
-            this.metrics = session.getWorkspace().text().setSession(session);
+            this.metrics = session.text().setSession(session);
             this.valign = valign;
             this.halign = halign;
             if (str == null) {

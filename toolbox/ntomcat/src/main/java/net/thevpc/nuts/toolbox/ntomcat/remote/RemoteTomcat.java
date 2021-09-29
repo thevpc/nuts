@@ -170,12 +170,11 @@ public class RemoteTomcat {
                     ok = false;
                     c.getConfig().setServer(session.getTerminal()
                                     .ask()
-                                    .setSession(session)
                                     .forString("[instance=%s] would you enter %s value ?"
                                     , text.forStyled(c.getName(), NutsTextStyle.primary1())
                                     , text.forStyled("--server", NutsTextStyle.option())
                             )
-                                    .setDefaultValue("ssh://login@myserver/instanceName").setSession(session)
+                                    .setDefaultValue("ssh://login@myserver/instanceName")
                                     .getValue()
                     );
                 }
@@ -184,12 +183,10 @@ public class RemoteTomcat {
                     c.getConfig()
                             .setRemoteTempPath(session.getTerminal().ask()
                                     .resetLine()
-                                    .setSession(session)
                                     .forString("[instance=%s] would you enter %s value ?"
                                             , text.forStyled(c.getName(), NutsTextStyle.primary1())
                                             , text.forStyled("--remote-temp-path", NutsTextStyle.option())
                                     ).setDefaultValue("/tmp")
-                                    .setSession(session)
                                     .getValue()
                             );
                 }
@@ -198,13 +195,11 @@ public class RemoteTomcat {
                         ok = false;
                         aa.getConfig().setPath(session.getTerminal().ask()
                                 .resetLine()
-                                    .setSession(session)
                                 .forString("[instance=%s] [app=%s] would you enter %s value ?"
                                         , text.forStyled(c.getName(), NutsTextStyle.primary1())
                                         , text.forStyled(aa.getName(), NutsTextStyle.option())
                                         , text.forStyled("--app.path", NutsTextStyle.option())
                                 )
-                                .setSession(session)
                                 .getValue());
                     }
                 }

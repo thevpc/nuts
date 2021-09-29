@@ -127,13 +127,13 @@ public class NdiScriptOptions implements Cloneable {
         if (nutsApiJarPath == null) {
             NutsId nid = resolveNutsApiId();
             if (getLauncher().getSwitchWorkspaceLocation() == null) {
-                NutsDefinition apiDef = session.getWorkspace().search()
+                NutsDefinition apiDef = session.search()
                         .addId(nid).setOptional(false).setLatest(true).setContent(true).getResultDefinitions().required();
                 nutsApiJarPath = apiDef.getPath();
             } else {
                 NutsWorkspaceBootConfig bootConfig = loadSwitchWorkspaceLocationConfig(getLauncher().getSwitchWorkspaceLocation());
                 nutsApiJarPath = Paths.get(bootConfig.getStoreLocation(nid, NutsStoreLocation.LIB),
-                        session.getWorkspace().locations().getDefaultIdFilename(nid));
+                        session.locations().getDefaultIdFilename(nid));
             }
         }
         return nutsApiJarPath;
@@ -173,7 +173,7 @@ public class NdiScriptOptions implements Cloneable {
     }
 
     public NutsDefinition resolveNutsApiDef() {
-        return session.getWorkspace().search().addId(resolveNutsApiId())
+        return session.search().addId(resolveNutsApiId())
                 .setLatest(true)
                 .setContent(true)
                 .setFailFast(true)
@@ -186,7 +186,7 @@ public class NdiScriptOptions implements Cloneable {
                 if (nutsVersion == null) {
                     nutsApiId = session.getWorkspace().getApiId();
                 } else {
-                    nutsApiId = session.getWorkspace().search().addId(
+                    nutsApiId = session.search().addId(
                             session.getWorkspace().getApiId().builder().setVersion(nutsVersion).build()
                     ).setLatest(true).getResultIds().singleton();
                 }
@@ -199,10 +199,10 @@ public class NdiScriptOptions implements Cloneable {
                                             .getParent())
                             .filter(
                                     f
-                                            -> session.getWorkspace().version().parse(f.getFileName().toString()).getLong(0, -1)==-1
+                                            -> session.version().parse(f.getFileName().toString()).getLong(0, -1)==-1
                                             && Files.exists(f.resolve("nuts-api-config.json"))
                             ).map(
-                                    f -> session.getWorkspace().version().parse(f.getFileName().toString())
+                                    f -> session.version().parse(f.getFileName().toString())
                             ).sorted(Comparator.reverseOrder()).findFirst().orElse(null);
                 } catch (IOException e) {
                     throw new UncheckedIOException(e);
@@ -225,13 +225,13 @@ public class NdiScriptOptions implements Cloneable {
             NutsWorkspaceBootConfig bootConfig = loadSwitchWorkspaceLocationConfig(getLauncher().getSwitchWorkspaceLocation());
             return Paths.get(bootConfig.getEffectiveWorkspace());
         } else {
-            return Paths.get(session.getWorkspace().locations().getWorkspaceLocation());
+            return Paths.get(session.locations().getWorkspaceLocation());
         }
     }
 
     public NutsWorkspaceBootConfig loadSwitchWorkspaceLocationConfig(String switchWorkspaceLocation) {
         if (workspaceBootConfig == null) {
-            workspaceBootConfig = session.getWorkspace().config().loadBootConfig(switchWorkspaceLocation, false, true);
+            workspaceBootConfig = session.config().loadBootConfig(switchWorkspaceLocation, false, true);
             if (workspaceBootConfig == null) {
                 throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid workspace: %s", switchWorkspaceLocation));
             }

@@ -37,7 +37,7 @@ public interface NutsArgumentCandidateBuilder extends Serializable {
 
     static NutsArgumentCandidateBuilder of(NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.getWorkspace().commandLine().createCandidate();
+        return session.commandLine().createCandidate();
     }
 
     /**

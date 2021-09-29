@@ -10,7 +10,7 @@ import java.util.Collection;
 public interface NutsTextManager {
     static NutsTextManager of(NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.getWorkspace().text();
+        return session.text();
     }
 
     NutsSession getSession();

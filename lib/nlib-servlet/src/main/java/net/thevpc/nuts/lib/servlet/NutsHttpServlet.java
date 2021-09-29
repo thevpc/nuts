@@ -133,21 +133,21 @@ public class NutsHttpServlet extends HttpServlet {
     @Override
     public void init() throws ServletException {
         super.init();
-        Map<String, NutsWorkspace> workspacesByLocation = new HashMap<>();
-        Map<String, NutsWorkspace> workspacesByWebContextPath = new HashMap<>();
-        NutsWorkspace workspace = Nuts.openWorkspace(
+        Map<String, NutsSession> workspacesByLocation = new HashMap<>();
+        Map<String, NutsSession> workspacesByWebContextPath = new HashMap<>();
+        NutsSession session = Nuts.openWorkspace(
                 NutsWorkspaceOptionsBuilder.of()
                         .setRuntimeId(runtimeId)
                         .setWorkspace(workspaceLocation)
                         .setOpenMode(NutsOpenMode.OPEN_OR_CREATE)
                         .setArchetype("server")
                         .build()
-        ).getWorkspace();
-        DefaultNutsWorkspaceServerManager serverManager = new DefaultNutsWorkspaceServerManager(workspace.createSession());
+        );
+        DefaultNutsWorkspaceServerManager serverManager = new DefaultNutsWorkspaceServerManager(session);
         if (workspaces.isEmpty()) {
             String wl = workspaceLocation == null ? "" : workspaceLocation;
             workspaces.put("", wl);
-            workspacesByLocation.put(wl, workspace);
+            workspacesByLocation.put(wl, session);
         }
         for (Map.Entry<String, String> w : workspaces.entrySet()) {
             String webContext = w.getKey();
@@ -155,19 +155,19 @@ public class NutsHttpServlet extends HttpServlet {
             if (location == null) {
                 location = "";
             }
-            NutsWorkspace ws = workspacesByLocation.get(location);
-            if (ws == null) {
-                ws = Nuts.openWorkspace(
+            NutsSession session2 = workspacesByLocation.get(location);
+            if (session2 == null) {
+                session2 = Nuts.openWorkspace(
                         NutsWorkspaceOptionsBuilder.of()
                         .setRuntimeId(runtimeId)
                         .setWorkspace(location)
                         .setOpenMode(NutsOpenMode.OPEN_OR_CREATE)
                         .setArchetype("server")
                                 .build()
-                ).getWorkspace();
-                workspacesByLocation.put(location, ws);
+                );
+                workspacesByLocation.put(location, session2);
             }
-            workspacesByWebContextPath.put(webContext, ws);
+            workspacesByWebContextPath.put(webContext, session2);
         }
 
         if (NutsBlankable.isBlank(serverId)) {

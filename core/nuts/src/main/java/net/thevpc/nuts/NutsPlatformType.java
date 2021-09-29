@@ -23,6 +23,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
 /**
  * uniform platform
  *
@@ -111,11 +113,7 @@ public enum NutsPlatformType implements NutsEnum {
 
     public static NutsPlatformType parse(String value, NutsPlatformType emptyValue, NutsSession session) {
         NutsPlatformType v = parseLenient(value, emptyValue, null);
-        if (v == null) {
-            if (!NutsBlankable.isBlank(value)) {
-                throw new NutsParseEnumException(session, value, NutsPlatformType.class);
-            }
-        }
+        NutsApiUtils.checkNonNullEnum(v,value,NutsPlatformType.class,session);
         return v;
     }
 

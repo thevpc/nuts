@@ -85,9 +85,9 @@ public interface NutsWorkspaceInitInformation extends Serializable {
 
     String getStoreLocation(NutsStoreLocation location);
 
-    Map<String, String> getStoreLocations();
+    Map<NutsStoreLocation, String> getStoreLocations();
 
-    Map<String, String> getHomeLocations();
+    Map<NutsHomeLocation, String> getHomeLocations();
 
     boolean isGlobal();
 

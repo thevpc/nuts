@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 public interface NutsUtilManager {
     static NutsUtilManager of(NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.getWorkspace().util();
+        return session.util();
     }
 
     NutsSession getSession();

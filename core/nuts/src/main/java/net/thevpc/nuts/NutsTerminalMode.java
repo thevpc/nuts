@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
 /**
  *
  * @author thevpc
@@ -97,11 +99,7 @@ public enum NutsTerminalMode implements NutsEnum {
 
     public static NutsTerminalMode parse(String value, NutsTerminalMode emptyValue, NutsSession session) {
         NutsTerminalMode v = parseLenient(value, emptyValue, null);
-        if (v == null) {
-            if (!NutsBlankable.isBlank(value)) {
-                throw new NutsParseEnumException(session, value, NutsTerminalMode.class);
-            }
-        }
+        NutsApiUtils.checkNonNullEnum(v,value,NutsTerminalMode.class,session);
         return v;
     }
 

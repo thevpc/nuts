@@ -29,7 +29,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.model.CoreNutsWorkspaceOptions;
 
 /**
  *
@@ -37,38 +36,38 @@ import net.thevpc.nuts.runtime.core.model.CoreNutsWorkspaceOptions;
  */
 public class NutsHomeLocationsMap {
 
-    private Map<String, String> locations;
+    private Map<NutsHomeLocation, String> locations;
 
-    public NutsHomeLocationsMap(Map<String, String> locations) {
+    public NutsHomeLocationsMap(Map<NutsHomeLocation, String> locations) {
         this.locations = locations;
     }
 
-    public String get(NutsOsFamily osFamily, NutsStoreLocation location) {
+    public String get(NutsHomeLocation location) {
         if (locations != null) {
             if (location != null) {
-                return locations.get(NutsUtilPlatforms.createHomeLocationKey(osFamily, location));
+                return locations.get(location);
             }
         }
         return null;
     }
 
-    public NutsHomeLocationsMap set(Map<String, String> locations) {
+    public NutsHomeLocationsMap set(Map<NutsHomeLocation, String> locations) {
         return set(new NutsHomeLocationsMap(locations));
     }
 
     public NutsHomeLocationsMap set(NutsHomeLocationsMap other) {
         if (other != null) {
             for (NutsStoreLocation location : NutsStoreLocation.values()) {
-                String v = other.get(null, location);
+                String v = other.get(NutsHomeLocation.of(null, location));
                 if (!NutsBlankable.isBlank(v)) {
-                    set(null, location, v);
+                    set(NutsHomeLocation.of(null, location), v);
                 }
             }
             for (NutsStoreLocation location : NutsStoreLocation.values()) {
                 for (NutsOsFamily osFamily : NutsOsFamily.values()) {
-                    String v = other.get(osFamily, location);
+                    String v = other.get(NutsHomeLocation.of(osFamily, location));
                     if (!NutsBlankable.isBlank(v)) {
-                        set(osFamily, location, v);
+                        set(NutsHomeLocation.of(osFamily, location), v);
                     }
                 }
             }
@@ -76,36 +75,37 @@ public class NutsHomeLocationsMap {
         return this;
     }
 
-    public NutsHomeLocationsMap set(NutsOsFamily osFamily, NutsStoreLocation location, String value) {
-        if (location != null) {
+    public NutsHomeLocationsMap set(NutsHomeLocation type, String value) {
+        NutsStoreLocation storeLocation = type.getStoreLocation();
+        if (storeLocation != null) {
             if (NutsBlankable.isBlank(value)) {
                 if (locations != null) {
-                    locations.remove(NutsUtilPlatforms.createHomeLocationKey(osFamily, location));
+                    locations.remove(type);
                 }
             } else {
                 if (locations == null) {
                     locations = new HashMap<>();
                 }
-                locations.put(NutsUtilPlatforms.createHomeLocationKey(osFamily, location), value);
+                locations.put(type, value);
             }
         }
         return this;
     }
 
-    public Map<String, String> toMap() {
-        Map<String, String> map = new HashMap<>();
+    public Map<NutsHomeLocation, String> toMap() {
+        Map<NutsHomeLocation, String> map = new HashMap<>();
         if (locations != null) {
             for (NutsStoreLocation location : NutsStoreLocation.values()) {
-                String v = get(null, location);
+                String v = get(NutsHomeLocation.of(null, location));
                 if (!NutsBlankable.isBlank(v)) {
-                    map.put(NutsUtilPlatforms.createHomeLocationKey(null, location), v);
+                    map.put(NutsHomeLocation.of(null, location), v);
                 }
             }
             for (NutsStoreLocation location : NutsStoreLocation.values()) {
                 for (NutsOsFamily osFamily : NutsOsFamily.values()) {
-                    String v = get(osFamily, location);
+                    String v = get(NutsHomeLocation.of(osFamily, location));
                     if (!NutsBlankable.isBlank(v)) {
-                        map.put(NutsUtilPlatforms.createHomeLocationKey(osFamily, location), v);
+                        map.put(NutsHomeLocation.of(osFamily, location), v);
                     }
                 }
             }
@@ -113,8 +113,8 @@ public class NutsHomeLocationsMap {
         return map;
     }
 
-    public Map<String, String> toMapOrNull() {
-        Map<String, String> m = toMap();
+    public Map<NutsHomeLocation, String> toMapOrNull() {
+        Map<NutsHomeLocation, String> m = toMap();
         if (m.isEmpty()) {
             return null;
         }

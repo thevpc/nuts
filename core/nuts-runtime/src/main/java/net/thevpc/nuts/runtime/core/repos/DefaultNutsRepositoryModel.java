@@ -255,8 +255,8 @@ public class DefaultNutsRepositoryModel {
                 options.setConfig(conf);
                 if (options.isEnabled()) {
                     options.setEnabled(
-                            session.getWorkspace().boot().getBootOptions().getRepositories() == null
-                                    || NutsRepositorySelector.parse(session.getWorkspace().boot().getBootOptions().getRepositories()).acceptExisting(
+                            session.boot().getBootOptions().getRepositories() == null
+                                    || NutsRepositorySelector.parse(session.boot().getBootOptions().getRepositories()).acceptExisting(
                                     options.getName(),
                                     conf.getLocation()
                             ));
@@ -265,8 +265,8 @@ public class DefaultNutsRepositoryModel {
                 options.setConfig(conf);
                 if (options.isEnabled()) {
                     options.setEnabled(
-                            session.getWorkspace().boot().getBootOptions().getRepositories() == null
-                                    || NutsRepositorySelector.parse(session.getWorkspace().boot().getBootOptions().getRepositories()).acceptExisting(
+                            session.boot().getBootOptions().getRepositories() == null
+                                    || NutsRepositorySelector.parse(session.boot().getBootOptions().getRepositories()).acceptExisting(
                                     options.getName(),
                                     conf.getLocation()
                             ));
@@ -339,7 +339,7 @@ public class DefaultNutsRepositoryModel {
                 }
                 conf = ws.elem().setSession(session).setContentType(NutsContentType.JSON).parse(file, NutsRepositoryConfig.class);
             } catch (RuntimeException ex) {
-                if (session.getWorkspace().boot().getBootOptions().isRecover()) {
+                if (session.boot().getBootOptions().isRecover()) {
                     onLoadRepositoryError(file, name, null, ex, session);
                 } else {
                     throw ex;

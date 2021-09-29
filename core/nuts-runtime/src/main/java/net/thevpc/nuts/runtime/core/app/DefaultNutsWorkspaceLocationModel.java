@@ -32,13 +32,13 @@ public class DefaultNutsWorkspaceLocationModel {
     }
 
 
-    public void setHomeLocation(NutsOsFamily layout, NutsStoreLocation folder, String location, NutsSession session) {
-        if (folder == null) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid store root folder null"));
-        }
+    public void setHomeLocation(NutsHomeLocation homeType, String location, NutsSession session) {
+//        if (homeType == null) {
+//            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid store root folder null"));
+//        }
 //        session = CoreNutsUtils.validate(session, ws);
         cfg().onPreUpdateConfig("home-location", session);
-        cfg().getStoreModelBoot().setHomeLocations(new NutsHomeLocationsMap(cfg().getStoreModelBoot().getHomeLocations()).set(layout, folder, location).toMapOrNull());
+        cfg().getStoreModelBoot().setHomeLocations(new NutsHomeLocationsMap(cfg().getStoreModelBoot().getHomeLocations()).set(homeType, location).toMapOrNull());
         cfg().onPostUpdateConfig("home-location", session);
     }
 
@@ -141,18 +141,18 @@ public class DefaultNutsWorkspaceLocationModel {
     }
 
 
-    public Map<String, String> getStoreLocations(NutsSession session) {
+    public Map<NutsStoreLocation, String> getStoreLocations(NutsSession session) {
         return cfg().current().getStoreLocations();
     }
 
 
-    public Map<String, String> getHomeLocations(NutsSession session) {
+    public Map<NutsHomeLocation, String> getHomeLocations(NutsSession session) {
         return cfg().current().getHomeLocations();
     }
 
 
-    public String getHomeLocation(NutsOsFamily layout, NutsStoreLocation location, NutsSession session) {
-        return cfg().current().getHomeLocation(layout, location);
+    public String getHomeLocation(NutsHomeLocation location, NutsSession session) {
+        return cfg().current().getHomeLocation(location);
     }
 
 

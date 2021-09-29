@@ -26,6 +26,7 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.boot.NutsBootTerminal;
 
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -58,7 +59,7 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      */
     static NutsWorkspaceOptionsBuilder of(NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.getWorkspace().config().optionsBuilder();
+        return session.config().optionsBuilder();
     }
 
     /**
@@ -214,11 +215,10 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      * <strong>option-type :</strong> create (used when creating new workspace. will not be
      * exported nor promoted to runtime).
      *
-     * @param layout   layout
      * @param location location
      * @return home location.
      */
-    String getHomeLocation(NutsOsFamily layout, NutsStoreLocation location);
+    String getHomeLocation(NutsHomeLocation location);
 
     /**
      * return home locations.
@@ -228,7 +228,7 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      *
      * @return home locations
      */
-    Map<String, String> getHomeLocations();
+    Map<NutsHomeLocation, String> getHomeLocations();
 
     /**
      * set home locations.
@@ -239,7 +239,7 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      * @param homeLocations home locations map
      * @return {@code this} instance
      */
-    NutsWorkspaceOptionsBuilder setHomeLocations(Map<String, String> homeLocations);
+    NutsWorkspaceOptionsBuilder setHomeLocations(Map<NutsHomeLocation, String> homeLocations);
 
     /**
      * java command (or java home) used to run workspace.
@@ -399,7 +399,7 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      *
      * @return store locations map to consider when creating a new workspace.
      */
-    Map<String, String> getStoreLocations();
+    Map<NutsStoreLocation, String> getStoreLocations();
 
     /**
      * set store location strategy for creating a new workspace.
@@ -410,7 +410,7 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      * @param storeLocations store locations map
      * @return {@code this} instance
      */
-    NutsWorkspaceOptionsBuilder setStoreLocations(Map<String, String> storeLocations);
+    NutsWorkspaceOptionsBuilder setStoreLocations(Map<NutsStoreLocation, String> storeLocations);
 
     /**
      * terminal mode (inherited, formatted, filtered) to use.
@@ -871,9 +871,9 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
 
     NutsWorkspaceOptionsBuilder setErrors(NutsMessage[] errors);
 
-    String[] getProperties();
+    String[] getCustomOptions();
 
-    NutsWorkspaceOptionsBuilder setProperties(String[] properties);
+    NutsWorkspaceOptionsBuilder setCustomOptions(String[] properties);
 
     /**
      * locale
@@ -911,6 +911,8 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      */
     NutsWorkspaceOptionsBuilder setTheme(String theme);
 
+    NutsWorkspaceOptionsBuilder setBootTerminal(NutsBootTerminal bootTerminal);
+
     NutsWorkspaceOptionsBuilder setAll(NutsWorkspaceOptions other);
 
     NutsWorkspaceOptionsBuilder parseCommandLine(String commandLine);
@@ -921,7 +923,7 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
 
     NutsWorkspaceOptionsBuilder setStoreLocation(NutsStoreLocation location, String value);
 
-    NutsWorkspaceOptionsBuilder setHomeLocation(NutsOsFamily layout, NutsStoreLocation location, String value);
+    NutsWorkspaceOptionsBuilder setHomeLocation(NutsHomeLocation location, String value);
 
     NutsWorkspaceOptionsBuilder addOutputFormatOptions(String... options);
 

@@ -30,8 +30,8 @@ public class NutsPatternIdFilter extends AbstractIdFilter implements NutsIdFilte
     private Map<String, String> qm;
     private List<Predicate<Map<String, String>>> q = new ArrayList<>();
 
-    public NutsPatternIdFilter(NutsSession ws, NutsId id) {
-        super(ws, NutsFilterOp.CUSTOM);
+    public NutsPatternIdFilter(NutsSession session, NutsId id) {
+        super(session, NutsFilterOp.CUSTOM);
         this.id = id;
         this.wildcard = containsWildcad(id.toString());
         g = GlobUtils.ofExact(id.getGroupId());

@@ -189,14 +189,13 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
             return null;
         }
         if ("org.apache.catalina:apache-tomcat".equals(id.getShortName())) {
-            NutsWorkspace ws = session.getWorkspace();
             String r = getUrl(id.getVersion(), ".zip");
             if (localPath == null) {
                 localPath = getIdLocalFile(id.builder().setFaceContent().build(), fetchMode, repository, session);
             }
-            ws.io().copy().from(r).to(localPath).setSafe(true).setSession(session).setLogProgress(true).run();
+            session.io().copy().from(r).to(localPath).setSafe(true).setLogProgress(true).run();
             return new NutsDefaultContent(
-                    session.getWorkspace().io().path(localPath), false, false);
+                    session.io().path(localPath), false, false);
         }
         return null;
     }

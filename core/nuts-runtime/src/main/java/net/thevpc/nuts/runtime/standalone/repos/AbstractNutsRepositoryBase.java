@@ -50,7 +50,7 @@ public abstract class AbstractNutsRepositoryBase extends AbstractNutsRepository 
 
     public AbstractNutsRepositoryBase(NutsAddRepositoryOptions options, NutsSession session, NutsRepository parentRepository, int speed, boolean supportedMirroring, String repositoryType) {
         this.initSession=session;
-        LOG = session.getWorkspace().log().of(AbstractNutsRepositoryBase.class);
+        LOG = session.log().of(AbstractNutsRepositoryBase.class);
         init(options, session, parentRepository, speed, supportedMirroring, repositoryType);
     }
 
@@ -66,7 +66,7 @@ public abstract class AbstractNutsRepositoryBase extends AbstractNutsRepository 
         this.parentRepository = parent;
 //        NutsWorkspaceUtils.checkSession(workspace, session);
         this.configModel = new DefaultNutsRepositoryConfigModel(this, options, initSession,speed, supportedMirroring, repositoryType);
-        this.nutsIndexStore = initSession.getWorkspace().config().getIndexStoreClientFactory().createIndexStore(this);
+        this.nutsIndexStore = initSession.config().getIndexStoreClientFactory().createIndexStore(this);
         setEnabled(options.isEnabled());
     }
 
@@ -162,16 +162,16 @@ public abstract class AbstractNutsRepositoryBase extends AbstractNutsRepository 
     }
 
     protected String getIdComponentExtension(String packaging, NutsSession session) {
-        return session.getWorkspace().locations().getDefaultIdContentExtension(packaging);
+        return session.locations().getDefaultIdContentExtension(packaging);
     }
 
     protected String getIdExtension(NutsId id, NutsSession session) {
-        return session.getWorkspace().locations().getDefaultIdExtension(id);
+        return session.locations().getDefaultIdExtension(id);
     }
 
     @Override
     public String getIdBasedir(NutsId id, NutsSession session) {
-        return session.getWorkspace().locations().setSession(session).getDefaultIdBasedir(id);
+        return session.locations().setSession(session).getDefaultIdBasedir(id);
     }
 
     protected String getIdRemotePath(NutsId id, NutsSession session) {

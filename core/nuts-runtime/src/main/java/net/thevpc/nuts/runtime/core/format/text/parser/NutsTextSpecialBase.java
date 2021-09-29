@@ -29,6 +29,8 @@ package net.thevpc.nuts.runtime.core.format.text.parser;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsText;
 
+import java.util.Objects;
+
 /**
  * Created by vpc on 5/23/17.
  */
@@ -39,8 +41,8 @@ public abstract class NutsTextSpecialBase extends AbstractNutsText implements Nu
     private final String separator;
     private final String end;
 
-    public NutsTextSpecialBase(NutsSession ws, String start, String kind, String separator, String end) {
-        super(ws);
+    public NutsTextSpecialBase(NutsSession session, String start, String kind, String separator, String end) {
+        super(session);
         this.start=start==null?"":start;
         this.end=end==null?"":end;
         this.kind = kind==null?"":kind;
@@ -63,4 +65,16 @@ public abstract class NutsTextSpecialBase extends AbstractNutsText implements Nu
         return end;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        NutsTextSpecialBase that = (NutsTextSpecialBase) o;
+        return Objects.equals(start, that.start) && Objects.equals(kind, that.kind) && Objects.equals(separator, that.separator) && Objects.equals(end, that.end);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(start, kind, separator, end);
+    }
 }

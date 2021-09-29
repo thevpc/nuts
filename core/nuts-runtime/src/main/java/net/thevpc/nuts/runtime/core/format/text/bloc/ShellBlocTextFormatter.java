@@ -148,7 +148,7 @@ public class ShellBlocTextFormatter implements NutsCodeFormat {
         if (ar.hasNext()) {
             sb2.append(ar.nextChar());
         }
-        NutsTextManager factory = session.getWorkspace().text();
+        NutsTextManager factory = session.text();
         return new NutsText[]{factory.forStyled(sb2.toString(), NutsTextStyle.separator())};
     }
 

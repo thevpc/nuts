@@ -23,6 +23,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
 /**
  * uniform platform architecture impl-note: list updated from
  * https://github.com/trustin/os-maven-plugin
@@ -82,11 +84,7 @@ public enum NutsCommandLineFormatStrategy implements NutsEnum {
 
     public static NutsCommandLineFormatStrategy parse(String value, NutsCommandLineFormatStrategy emptyValue, NutsSession session) {
         NutsCommandLineFormatStrategy v = parseLenient(value, emptyValue, null);
-        if (v == null) {
-            if (!NutsBlankable.isBlank(value)) {
-                throw new NutsParseEnumException(session, value, NutsCommandLineFormatStrategy.class);
-            }
-        }
+        NutsApiUtils.checkNonNullEnum(v,value,NutsCommandLineFormatStrategy.class,session);
         return v;
     }
 

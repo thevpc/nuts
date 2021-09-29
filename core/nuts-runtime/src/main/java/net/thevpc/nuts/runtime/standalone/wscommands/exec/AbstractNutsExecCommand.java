@@ -538,6 +538,8 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
                     addExecutorOption(a.getString());
                 } else {
                     addCommand(a.getString());
+                    addCommand(cmdLine.toStringArray());
+                    cmdLine.skipAll();
                 }
                 return true;
             }
@@ -762,20 +764,20 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
         return this;
     }
 
-    public String getRedirectOuputFile() {
+    public String getRedirectOutputFile() {
         return redirectOuputFile;
     }
 
-    public NutsExecCommand setRedirectOuputFile(String redirectOuputFile) {
-        this.redirectOuputFile = redirectOuputFile;
+    public NutsExecCommand setRedirectOutputFile(String redirectOutputFile) {
+        this.redirectOuputFile = redirectOutputFile;
         return this;
     }
 
-    public String getRedirectInpuFile() {
+    public String getRedirectInputFile() {
         return redirectInpuFile;
     }
 
-    public NutsExecCommand setRedirectInpuFile(String redirectInpuFile) {
+    public NutsExecCommand setRedirectInputFile(String redirectInpuFile) {
         this.redirectInpuFile = redirectInpuFile;
         return this;
     }

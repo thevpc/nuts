@@ -23,8 +23,8 @@ import java.util.stream.StreamSupport;
 public class NutsIteratorStream<T> extends AbstractNutsStream<T> {
 
     private final Iterator<T> o;
-    public NutsIteratorStream(NutsSession ws, String nutsBase, Iterator<T> o) {
-        super(ws, nutsBase);
+    public NutsIteratorStream(NutsSession session, String nutsBase, Iterator<T> o) {
+        super(session, nutsBase);
         this.o = o;
     }
 

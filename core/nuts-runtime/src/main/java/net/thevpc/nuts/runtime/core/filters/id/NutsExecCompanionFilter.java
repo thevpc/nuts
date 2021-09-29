@@ -19,8 +19,8 @@ import net.thevpc.nuts.runtime.core.filters.descriptor.AbstractDescriptorFilter;
 public class NutsExecCompanionFilter extends AbstractDescriptorFilter{
     private NutsId apiId;
     private Set<String> companions;
-    public NutsExecCompanionFilter(NutsSession ws, NutsId apiId, String[] shortIds) {
-        super(ws, NutsFilterOp.CUSTOM);
+    public NutsExecCompanionFilter(NutsSession session, NutsId apiId, String[] shortIds) {
+        super(session, NutsFilterOp.CUSTOM);
         this.apiId=apiId;
         this.companions=new HashSet<>(Arrays.asList(shortIds));
     }

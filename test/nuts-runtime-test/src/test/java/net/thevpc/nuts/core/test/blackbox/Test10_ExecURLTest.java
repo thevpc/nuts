@@ -5,9 +5,7 @@
  */
 package net.thevpc.nuts.core.test.blackbox;
 
-import net.thevpc.nuts.NutsUtilPlatforms;
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.Nuts;
 import net.thevpc.nuts.NutsOsFamily;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
@@ -24,23 +22,29 @@ import java.util.Map;
  */
 public class Test10_ExecURLTest {
 
-    private static String baseFolder;
-
     @Test
     public void execURL() throws Exception {
         Map<String, String> extraProperties = new HashMap<>();
         extraProperties.put("nuts.export.always-show-command", "true");
         TestUtils.setSystemProperties(extraProperties);
 
-        NutsWorkspace ws = TestUtils.openTestWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
+        NutsWorkspace ws = TestUtils.openNewTestWorkspace(
                 "--archetype", "default",
-                "--skip-companions").getWorkspace();
+                "--skip-companions",
+                "--verbose"
+        ).getWorkspace();
         ws = ws.createSession().getWorkspace();
         TestUtils.println(ws.version().formatter());
-        String result = ws.exec().addCommand(
-                //this is an old link, do not change to 'thevpc'
-                "https://raw.githubusercontent.com/thevpc/vpc-public-maven/master/net/vpc/app/netbeans-launcher/1.2.2/netbeans-launcher-1.2.2.jar",
-                "--version"
+        String result = ws.exec()
+                //there are three classes and no main-class, so need to specify the one
+                .addExecutorOption("--main-class=Version")
+//                .addExecutorOption("--main-class=junit.runner.Version")
+                //get the command
+                .addCommand(
+                        "https://search.maven.org/remotecontent?filepath=junit/junit/4.12/junit-4.12.jar"
+//                        "https://search.maven.org/remotecontent?filepath=net/java/sezpoz/demo/app/1.6/app-1.6.jar"
+//                "https://search.maven.org/remotecontent?filepath=net/thevpc/hl/hl/0.1.0/hl-0.1.0.jar",
+//                "--version"
         ).setRedirectErrorStream(true).grabOutputString().setFailFast(true).getOutputString();
         TestUtils.println("Result:");
         TestUtils.println(result);
@@ -49,14 +53,11 @@ public class Test10_ExecURLTest {
 
     @BeforeAll
     public static void setUpClass() throws IOException {
-        baseFolder = new File("./runtime/test/" + TestUtils.getCallerClassSimpleName()).getCanonicalFile().getPath();
-        CoreIOUtils.delete(null,new File(baseFolder));
         TestUtils.println("####### RUNNING TEST @ "+ TestUtils.getCallerClassSimpleName());
     }
 
     @AfterAll
     public static void tearUpClass() throws IOException {
-        CoreIOUtils.delete(null,new File(baseFolder));
     }
 
     @BeforeEach

@@ -13,8 +13,8 @@ public class NutsInstallStatusFilterNone extends AbstractInstallStatusFilter{
 
     private NutsInstallStatusFilter[] all;
 
-    public NutsInstallStatusFilterNone(NutsSession ws, NutsInstallStatusFilter... all) {
-        super(ws, NutsFilterOp.NOT);
+    public NutsInstallStatusFilterNone(NutsSession session, NutsInstallStatusFilter... all) {
+        super(session, NutsFilterOp.NOT);
         List<NutsInstallStatusFilter> valid = new ArrayList<>();
         if (all != null) {
             for (NutsInstallStatusFilter filter : all) {

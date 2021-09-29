@@ -197,7 +197,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         }
         String n;
         String p;
-        if (path.contains("\\") || path.contains("/")) {
+        if (path.contains("\\") || path.contains("/") || path.equals(".") || path.equals("..")) {
             Path pp = Paths.get(path).toAbsolutePath().normalize();
             n = pp.getFileName().toString();
             p = pp.getParent() == null ? null : pp.getParent().toString();
@@ -208,9 +208,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         if (p == null) {
             return ("Root " + n).trim();
         } else {
-            Path root = Paths.get(NutsUtilPlatforms.getPlatformHomeFolder(
-                    null,
-                    NutsStoreLocation.CONFIG,
+            Path root = Paths.get(NutsUtilPlatforms.getWorkspaceLocation(
                     null,
                     false,
                     null

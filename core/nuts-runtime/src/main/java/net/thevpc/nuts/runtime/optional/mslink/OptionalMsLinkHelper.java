@@ -49,10 +49,10 @@ public class OptionalMsLinkHelper {
     }
 
     public void write() {
-        String[] cmd = session.getWorkspace().commandLine().parse(command).toStringArray();
+        String[] cmd = session.commandLine().parse(command).toStringArray();
         mslinks.ShellLink se = mslinks.ShellLink.createLink(cmd[0])
                 .setWorkingDir(wd)
-                .setCMDArgs(session.getWorkspace().commandLine().create(
+                .setCMDArgs(session.commandLine().create(
                         Arrays.copyOfRange(cmd, 1, cmd.length)
                 ).toString());
 

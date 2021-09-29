@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
 /**
  * Modes Application can run with
  *
@@ -134,11 +136,7 @@ public enum NutsApplicationMode implements NutsEnum {
 
     public static NutsApplicationMode parse(String value, NutsApplicationMode emptyValue, NutsSession session) {
         NutsApplicationMode v = parseLenient(value, emptyValue, null);
-        if (v == null) {
-            if (!NutsBlankable.isBlank(value)) {
-                throw new NutsParseEnumException(session, value, NutsApplicationMode.class);
-            }
-        }
+        NutsApiUtils.checkNonNullEnum(v,value,NutsApplicationMode.class,session);
         return v;
     }
 

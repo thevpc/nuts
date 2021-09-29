@@ -472,14 +472,14 @@ public class CorePlatformUtils {
 //        return new NutsException(null, ex);
 //    }
 //
-//    public static NutsException toNutsException(Throwable ex, NutsSession ws) {
+//    public static NutsException toNutsException(Throwable ex, NutsSession session) {
 //        if (ex instanceof NutsException) {
 //            return (NutsException) ex;
 //        }
-//        return new NutsException(ws, ex);
+//        return new NutsException(session, ex);
 //    }
 
-    public static <T> T runWithinLoader(Callable<T> callable, ClassLoader loader, NutsSession ws) {
+    public static <T> T runWithinLoader(Callable<T> callable, ClassLoader loader, NutsSession session) {
         Ref<T> ref = new Ref<>();
         Thread thread = new Thread(() -> {
             try {
@@ -487,7 +487,7 @@ public class CorePlatformUtils {
             } catch (RuntimeException ex) {
                 throw ex;
             } catch (Exception ex) {
-                throw new NutsException(ws, NutsMessage.plain("run with loader failed"), ex);
+                throw new NutsException(session, NutsMessage.plain("run with loader failed"), ex);
             }
         }, "RunWithinLoader");
         thread.setContextClassLoader(loader);
@@ -495,7 +495,7 @@ public class CorePlatformUtils {
         try {
             thread.join();
         } catch (InterruptedException ex) {
-            throw new NutsException(ws, NutsMessage.plain("run with loader failed"), ex);
+            throw new NutsException(session, NutsMessage.plain("run with loader failed"), ex);
         }
         return ref.get();
     }
@@ -618,5 +618,11 @@ public class CorePlatformUtils {
             return main;
         }
 
+    }
+    public static String getSimpleClassName(String cn){
+        if (cn.indexOf('.') > 0) {
+            return cn.substring(cn.lastIndexOf('.') + 1);
+        }
+        return cn;
     }
 }

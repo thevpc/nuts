@@ -7,8 +7,8 @@ import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.core.filters.NutsTypedFiltersParser;
 
 public class NutsInstallStatusFilterParser extends NutsTypedFiltersParser<NutsInstallStatusFilter> {
-    public NutsInstallStatusFilterParser(String str,NutsSession ws) {
-        super(str,ws);
+    public NutsInstallStatusFilterParser(String str,NutsSession session) {
+        super(str,session);
     }
 
     @Override

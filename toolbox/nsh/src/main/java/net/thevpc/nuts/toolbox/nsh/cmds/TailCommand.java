@@ -82,7 +82,7 @@ public class TailCommand extends AbstractNshBuiltin {
         BufferedReader r = null;
         try {
             try {
-                r = new BufferedReader(new InputStreamReader(context.getSession().getWorkspace().io().path(file)
+                r = new BufferedReader(new InputStreamReader(context.getSession().io().path(file)
                         .input().open()));
                 String line = null;
                 int count = 0;

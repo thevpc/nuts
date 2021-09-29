@@ -53,7 +53,7 @@ public class DefaultNutsIdParser implements NutsIdParser {
         }
         Matcher m = NUTS_ID_PATTERN.matcher(nutsId);
         if (m.find()) {
-            NutsIdBuilder builder = session.getWorkspace().id().builder();
+            NutsIdBuilder builder = session.id().builder();
             String group = m.group("group");
             String artifact = m.group("artifact");
             builder.setArtifactId(artifact);

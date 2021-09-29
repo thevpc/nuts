@@ -34,7 +34,7 @@ public class DefaultNutsSearchRepositoryCommand extends AbstractNutsSearchReposi
 
     protected NutsLogger _LOG(NutsSession session) {
         if (LOG == null) {
-            LOG = session.getWorkspace().log().of(DefaultNutsSearchRepositoryCommand.class);
+            LOG = session.log().of(DefaultNutsSearchRepositoryCommand.class);
         }
         return LOG;
     }

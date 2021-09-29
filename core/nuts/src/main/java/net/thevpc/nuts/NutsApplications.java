@@ -141,7 +141,7 @@ public final class NutsApplications {
         ctxSession.setIndexed(session.isIndexed());
         ctxSession.setCached(session.isCached());
         ctxSession.setTransitive(session.isTransitive());
-        ctxSession.setTerminal(ctxSession.getWorkspace().term().createTerminal(session.getTerminal()));
+        ctxSession.setTerminal(ctxSession.term().createTerminal(session.getTerminal()));
         return applicationContext;
     }
 
@@ -162,7 +162,7 @@ public final class NutsApplications {
                 );
         switch (applicationContext.getMode()) {
             /**
-             * both RUN and AUTO_COMPLETE executes the save branch. Later
+             * both RUN and AUTO_COMPLETE execute the save branch. Later
              * applicationContext.isExecMode()
              */
             case RUN:

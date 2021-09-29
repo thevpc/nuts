@@ -10,20 +10,18 @@
     <packaging>pom</packaging>
     <modules>
         <module>core/nuts</module>
+        <module>core/nuts-runtime</module>
+
+        <module>lib/nlib-ssh</module>
+        <module>ext/next-term</module>
+        <module>toolbox/nsh</module>
 
         <module>lib/nlib-talk-agent</module>
-        <module>lib/nlib-ssh</module>
         <module>lib/nlib-md</module>
-
-        <module>toolbox/ntalk-agent</module>
-
-        <module>core/nuts-runtime</module>
-<!--##        <module>nuts-installer</module>-->
-        <module>ext/next-term</module>
         <module>lib/nlib-template</module>
         <module>lib/nlib-servlet</module>
         <module>lib/nlib-tomcat-classloader</module>
-        <module>toolbox/nsh</module>
+
         <module>toolbox/nserver</module>
         <module>toolbox/ndiff</module>
         <module>toolbox/ncode</module>
@@ -38,9 +36,11 @@
         <module>toolbox/nmvn</module>
         <module>toolbox/ndexer</module>
         <module>toolbox/noapi</module>
-<!--##        <module>test/nuts-runtime-test</module>-->
-<!--##        <module>web-toolbox/nwar</module>-->
+        <module>toolbox/ntalk-agent</module>
+        <!--##        <module>test/nuts-runtime-test</module>-->
+        <!--##        <module>web-toolbox/nwar</module>-->
         <!--##<module>toolbox/nuts-clown</module>-->
+        <!--##        <module>nuts-installer</module>-->
     </modules>
     <properties>
     </properties>

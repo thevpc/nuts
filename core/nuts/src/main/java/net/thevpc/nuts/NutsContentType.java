@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
 /**
  * Formats supported by Nuts
  * @author thevpc
@@ -118,11 +120,7 @@ public enum NutsContentType implements NutsEnum {
 
     public static NutsContentType parse(String value, NutsContentType emptyValue, NutsSession session) {
         NutsContentType v = parseLenient(value, emptyValue, null);
-        if (v == null) {
-            if (!NutsBlankable.isBlank(value)) {
-                throw new NutsParseEnumException(session, value, NutsContentType.class);
-            }
-        }
+        NutsApiUtils.checkNonNullEnum(v,value,NutsContentType.class,session);
         return v;
     }
 

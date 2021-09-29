@@ -31,6 +31,8 @@ import net.thevpc.nuts.NutsTextTitle;
 import net.thevpc.nuts.NutsTextType;
 import net.thevpc.nuts.NutsText;
 
+import java.util.Objects;
+
 /**
  * Created by vpc on 5/23/17.
  */
@@ -40,8 +42,8 @@ public class DefaultNutsTextTitle extends AbstractNutsText implements NutsTextTi
     private NutsText child;
     private int level;
 
-    public DefaultNutsTextTitle(NutsSession ws, String start, int level, NutsText child) {
-        super(ws);
+    public DefaultNutsTextTitle(NutsSession session, String start, int level, NutsText child) {
+        super(session);
         this.start = start;
         this.level = level;
         this.child = child;
@@ -75,4 +77,16 @@ public class DefaultNutsTextTitle extends AbstractNutsText implements NutsTextTi
         return child;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DefaultNutsTextTitle that = (DefaultNutsTextTitle) o;
+        return level == that.level && Objects.equals(start, that.start) && Objects.equals(child, that.child);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(start, child, level);
+    }
 }

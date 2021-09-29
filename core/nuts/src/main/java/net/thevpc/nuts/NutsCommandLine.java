@@ -98,12 +98,12 @@ public interface NutsCommandLine extends Iterable<NutsArgument>, NutsFormattable
 
     static NutsCommandLine of(String[] args, NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.getWorkspace().commandLine().create(args);
+        return session.commandLine().create(args);
     }
 
     static NutsCommandLine parse(String line, NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.getWorkspace().commandLine().parse(line);
+        return session.commandLine().parse(line);
     }
 
     /**

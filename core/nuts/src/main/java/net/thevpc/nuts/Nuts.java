@@ -23,8 +23,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.NutsApiUtils;
-import net.thevpc.nuts.boot.NutsBootWorkspace;
+import net.thevpc.nuts.boot.*;
 
 import java.util.logging.Level;
 
@@ -57,7 +56,7 @@ public final class Nuts {
         if (version == null) {
             synchronized (Nuts.class) {
                 if (version == null) {
-                    String v = NutsApiUtils.resolveNutsVersionFromClassPath();
+                    String v = NutsApiUtils.resolveNutsVersionFromClassPath(new PrivateNutsLog(null));
                     if (v == null) {
                         throw new NutsBootException(
                                 NutsMessage.plain(
@@ -88,8 +87,8 @@ public final class Nuts {
             NutsSession session = NutsExceptionBase.detectSession(ex);
             NutsWorkspaceOptionsBuilder bo = null;
             if (session != null) {
-                bo = session.getWorkspace().boot().getBootOptions().builder();
-                if (!session.getWorkspace().env().isGraphicalDesktopEnvironment()) {
+                bo = session.boot().getBootOptions().builder();
+                if (!session.env().isGraphicalDesktopEnvironment()) {
                     bo.setGui(false);
                 }
             } else {
@@ -132,6 +131,21 @@ public final class Nuts {
      * @return NutsSession instance
      */
     public static NutsSession openInheritedWorkspace(String... args) throws NutsUnsatisfiedRequirementsException {
+        return openInheritedWorkspace(null, args);
+    }
+
+    /**
+     * open a workspace using "nuts.boot.args" and "nut.args" system
+     * properties. "nuts.boot.args" is to be passed by nuts parent process.
+     * "nuts.args" is an optional property that can be 'exec' method. This
+     * method is to be called by child processes of nuts in order to inherit
+     * workspace configuration.
+     *
+     * @param term boot terminal or null for defaults
+     * @param args arguments
+     * @return NutsSession instance
+     */
+    public static NutsSession openInheritedWorkspace(NutsBootTerminal term, String... args) throws NutsUnsatisfiedRequirementsException {
         long startTime = System.currentTimeMillis();
         NutsBootWorkspace boot;
         String nutsWorkspaceOptions = NutsUtilStrings.trim(
@@ -145,6 +159,7 @@ public final class Nuts {
         options.setApplicationArguments(args);
         options.setInherited(true);
         options.setCreationTime(startTime);
+        options.setBootTerminal(term);
         boot = new NutsBootWorkspace(options.build());
         return boot.openWorkspace();// openWorkspace(boot.getOptions());
     }
@@ -156,7 +171,18 @@ public final class Nuts {
      * @return new NutsSession instance
      */
     public static NutsSession openWorkspace(String... args) throws NutsUnsatisfiedRequirementsException {
-        return new NutsBootWorkspace(args).openWorkspace();
+        return new NutsBootWorkspace(null, args).openWorkspace();
+    }
+
+    /**
+     * open a workspace. Nuts Boot arguments are passed in <code>args</code>
+     *
+     * @param term boot temrinal or null for null
+     * @param args nuts boot arguments
+     * @return new NutsSession instance
+     */
+    public static NutsSession openWorkspace(NutsBootTerminal term, String... args) throws NutsUnsatisfiedRequirementsException {
+        return new NutsBootWorkspace(term, args).openWorkspace();
     }
 
     /**
@@ -181,10 +207,29 @@ public final class Nuts {
     /**
      * open then run Nuts application with the provided arguments. This Main
      * will <strong>NEVER</strong> call {@link System#exit(int)}.
+     * Not that if --help or --version are detected in the command line arguments
+     * the workspace will not be opened and a null session is returned after displaying
+     * help/version information on the standard
+     *
+     * @param term boot terminal or null for defaults
+     * @param args boot arguments
+     * @return session
+     */
+    public static NutsSession runWorkspace(NutsBootTerminal term, String... args) throws NutsExecutionException {
+        return new NutsBootWorkspace(term,args).runWorkspace();
+    }
+
+    /**
+     * open then run Nuts application with the provided arguments. This Main
+     * will <strong>NEVER</strong> call {@link System#exit(int)}.
+     * Not that if --help or --version are detected in the command line arguments
+     * the workspace will not be opened and a null session is returned after displaying
+     * help/version information on the standard
      *
      * @param args boot arguments
+     * @return session
      */
-    public static void runWorkspace(String... args) throws NutsExecutionException {
-        new NutsBootWorkspace(args).runWorkspace();
+    public static NutsSession runWorkspace(String... args) throws NutsExecutionException {
+        return new NutsBootWorkspace(null,args).runWorkspace();
     }
 }

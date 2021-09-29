@@ -18,7 +18,7 @@ public class CustomStyleBlocTextFormatter implements NutsCodeFormat {
     public CustomStyleBlocTextFormatter(NutsTextStyle style, NutsSession session) {
         this.session = session;
         this.style = style;
-        factory = session.getWorkspace().text();
+        factory = session.text();
     }
 
     @Override

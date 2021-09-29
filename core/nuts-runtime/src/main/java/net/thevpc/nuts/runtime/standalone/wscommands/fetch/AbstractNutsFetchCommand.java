@@ -101,7 +101,7 @@ public abstract class AbstractNutsFetchCommand extends DefaultNutsQueryBaseOptio
                 cmdLine.skip();
                 if (enabled) {
                     setRepositoryFilter(
-                            getSession().getWorkspace().filters().repository().installedRepo().neg()
+                            getSession().filters().repository().installedRepo().neg()
                                     .and(this.getRepositoryFilter())
                     );
                 }
@@ -112,7 +112,7 @@ public abstract class AbstractNutsFetchCommand extends DefaultNutsQueryBaseOptio
                 cmdLine.skip();
                 if (enabled) {
                     setRepositoryFilter(
-                            getSession().getWorkspace().filters().repository().installedRepo()
+                            getSession().filters().repository().installedRepo()
                                     .and(this.getRepositoryFilter())
                     );
                 }

@@ -51,7 +51,7 @@ public interface NutsWorkspaceStoredConfig {
      *
      * @return home locations mapping
      */
-    Map<String, String> getStoreLocations();
+    Map<NutsStoreLocation, String> getStoreLocations();
 
     /**
      * all home locations key/value map where keys are in the form
@@ -59,11 +59,11 @@ public interface NutsWorkspaceStoredConfig {
      *
      * @return home locations mapping
      */
-    Map<String, String> getHomeLocations();
+    Map<NutsHomeLocation, String> getHomeLocations();
 
     String getStoreLocation(NutsStoreLocation folderType);
 
-    String getHomeLocation(NutsOsFamily layout, NutsStoreLocation location);
+    String getHomeLocation(NutsHomeLocation homeLocation);
 
     NutsId getApiId();
 

@@ -76,7 +76,7 @@ public class DefaultNutsBootModel implements NutsBootModel {
         DefaultSystemTerminal sys = new DefaultSystemTerminal(new DefaultNutsSystemTerminalBaseBoot(this));
         bootSession.setTerminal(new DefaultNutsSessionTerminal(bootSession,sys));
 
-        String[] properties = workspaceInitInformation.getOptions().getProperties();
+        String[] properties = workspaceInitInformation.getOptions().getCustomOptions();
         if (properties != null) {
             for (String property : properties) {
                 if (property != null) {

@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
 /**
  * Text align constants
  *
@@ -90,11 +92,7 @@ public enum NutsPositionType implements NutsEnum {
 
     public static NutsPositionType parse(String value, NutsPositionType emptyValue, NutsSession session) {
         NutsPositionType v = parseLenient(value, emptyValue, null);
-        if (v == null) {
-            if (!NutsBlankable.isBlank(value)) {
-                throw new NutsParseEnumException(session, value, NutsPositionType.class);
-            }
-        }
+        NutsApiUtils.checkNonNullEnum(v,value,NutsPositionType.class,session);
         return v;
     }
 

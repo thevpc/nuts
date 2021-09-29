@@ -12,8 +12,8 @@ public class NutsDescriptorFilterAnd extends AbstractDescriptorFilter implements
 
     private NutsDescriptorFilter[] all;
 
-    public NutsDescriptorFilterAnd(NutsSession ws, NutsDescriptorFilter... all) {
-        super(ws, NutsFilterOp.AND);
+    public NutsDescriptorFilterAnd(NutsSession session, NutsDescriptorFilter... all) {
+        super(session, NutsFilterOp.AND);
         List<NutsDescriptorFilter> valid = new ArrayList<>();
         if (all != null) {
             for (NutsDescriptorFilter filter : all) {

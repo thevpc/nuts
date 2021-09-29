@@ -664,7 +664,8 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         NutsBootManager boot = ws.boot();
         NutsWorkspaceEnvManager env = ws.env();
         NutsWorkspaceConfigManager config = ws.config();
-        if(boot.getCustomBootOption("install-java").getBoolean(true,false)) {
+        boolean initializeAllPlatforms=boot.getCustomBootOption("init-platforms").getBoolean(true,false);
+        if(initializeAllPlatforms && boot.getCustomBootOption("init-java").getBoolean(true,false)) {
             try {
                 if (session.isPlainTrace()) {
                     session.out().resetLine().println("looking for java installations in default locations...");
@@ -700,7 +701,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 }
             }
         }
-        if(boot.getCustomBootOption("install-launchers").getBoolean(true,false)) {
+        if(boot.getCustomBootOption("init-launchers").getBoolean(true,false)) {
             try {
                 env.addLauncher(
                         new NutsLauncherOptions()
@@ -723,7 +724,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
     public void installCompanions(NutsSession session) {
         NutsWorkspaceUtils.checkSession(this, session);
         NutsTextManager text = text().setSession(session);
-        Set<NutsId> companionIds = getCompanionIds(session);
+        Set<NutsId> companionIds = session.extensions().getCompanionIds();
         if (companionIds.isEmpty()) {
             return;
         }
@@ -940,7 +941,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         NutsWorkspaceUtils wu = NutsWorkspaceUtils.of(session);
 
         if (session.isPlainTrace()) {
-            NutsTextManager text = session.getWorkspace().text();
+            NutsTextManager text = session.text();
             if (strategy0 == InstallStrategy0.UPDATE) {
                 session.out().resetLine().printf("%s %s ...%n",
                         text.forStyled("update", NutsTextStyle.warn()),
@@ -1465,7 +1466,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         } else if (shortName.equals(NutsConstants.Ids.NUTS_RUNTIME)) {
             idType = NutsIdType.RUNTIME;
         } else {
-            for (NutsId companionTool : getCompanionIds(session)) {
+            for (NutsId companionTool : session.extensions().getCompanionIds()) {
                 if (companionTool.getShortName().equals(shortName)) {
                     idType = NutsIdType.COMPANION;
                 }
@@ -1707,15 +1708,15 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         return location;
     }
 
-    @Override
-    public Set<NutsId> getCompanionIds(NutsSession session) {
-        NutsWorkspaceUtils.checkSession(this, session);
-        NutsIdParser parser = id().setSession(session).parser();
-        return Collections.unmodifiableSet(new HashSet<>(
-                        Arrays.asList(parser.parse("net.thevpc.nuts.toolbox:nsh"))
-                )
-        );
-    }
+//    @Override
+//    public Set<NutsId> getCompanionIds(NutsSession session) {
+//        NutsWorkspaceUtils.checkSession(this, session);
+//        NutsIdParser parser = id().setSession(session).parser();
+//        return Collections.unmodifiableSet(new HashSet<>(
+//                        Arrays.asList(parser.parse("net.thevpc.nuts.toolbox:nsh"))
+//                )
+//        );
+//    }
 
     @Override
     public NutsSearchCommand search() {

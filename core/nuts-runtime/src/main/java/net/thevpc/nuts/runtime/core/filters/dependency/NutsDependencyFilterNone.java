@@ -10,8 +10,8 @@ public class NutsDependencyFilterNone extends AbstractDependencyFilter{
 
     private final NutsDependencyFilter[] all;
 
-    public NutsDependencyFilterNone(NutsSession ws, NutsDependencyFilter... all) {
-        super(ws,NutsFilterOp.NOT);
+    public NutsDependencyFilterNone(NutsSession session, NutsDependencyFilter... all) {
+        super(session,NutsFilterOp.NOT);
         this.all = all;
     }
 

@@ -688,4 +688,237 @@ public interface NutsSession extends NutsCommandLineConfigurable {
 
     NutsSession setRunAs(NutsRunAs runAs);
 
+    ////////////////////////////////////////
+
+    //COMMANDS
+
+    /**
+     *
+     * @since 0.8.3
+     */
+    NutsSearchCommand search();
+
+    /**
+     *
+     * @since 0.8.3
+     */
+    NutsFetchCommand fetch();
+
+    /**
+     *
+     * @since 0.8.3
+     */
+    NutsDeployCommand deploy();
+
+    /**
+     *
+     * @since 0.8.3
+     */
+    NutsUndeployCommand undeploy();
+
+    /**
+     *
+     * @since 0.8.3
+     */
+    NutsExecCommand exec();
+
+    /**
+     *
+     * @since 0.8.3
+     */
+    NutsInstallCommand install();
+
+    /**
+     *
+     * @since 0.8.3
+     */
+    NutsUninstallCommand uninstall();
+
+    /**
+     *
+     * @since 0.8.3
+     */
+    NutsUpdateCommand update();
+
+    /**
+     *
+     * @since 0.8.3
+     */
+    NutsPushCommand push();
+
+    /**
+     *
+     * @since 0.8.3
+     */
+    NutsUpdateStatisticsCommand updateStatistics();
+
+    /**
+     *
+     * @since 0.8.3
+     */
+    NutsWorkspaceAppsManager apps();
+
+    /**
+     *
+     * @since 0.8.3
+     */
+    NutsWorkspaceExtensionManager extensions();
+
+    /**
+     *
+     * @since 0.8.3
+     */
+    NutsWorkspaceConfigManager config();
+
+    /**
+     *
+     * @since 0.8.3
+     */
+    NutsRepositoryManager repos();
+
+    /**
+     *
+     * @since 0.8.3
+     */
+    NutsWorkspaceSecurityManager security();
+
+    /**
+     *
+     * @since 0.8.3
+     */
+    NutsFilterManager filters();
+
+    /**
+     *
+     * @since 0.8.3
+     */
+    NutsIOManager io();
+
+    /**
+     *
+     * @since 0.8.3
+     */
+    NutsLogManager log();
+
+    /**
+     *
+     * @since 0.8.3
+     */
+
+    NutsWorkspaceEventManager events();
+
+    /**
+     *
+     * @since 0.8.3
+     */
+    NutsCommandLineManager commandLine();
+
+    /**
+     * create id format instance
+     *
+     * @return id format
+     * @since 0.8.3
+     */
+    NutsIdManager id();
+
+    /**
+     * create version format instance
+     *
+     * @return version format
+     * @since 0.8.3
+     */
+    NutsVersionManager version();
+
+    /**
+     * create info format instance
+     *
+     * @return info format
+     * @since 0.8.3
+     */
+    NutsInfoFormat info();
+
+    /**
+     * create descriptor format instance
+     *
+     * @return descriptor format
+     * @since 0.8.3
+     */
+    NutsDescriptorManager descriptor();
+
+    /**
+     * return dependency manager
+     *
+     * @return dependency manager
+     * @since 0.8.3
+     */
+    NutsDependencyManager dependency();
+
+    /**
+     *
+     * @since 0.8.3
+     */
+    NutsFormatManager formats();
+
+    /**
+     *
+     * @since 0.8.3
+     */
+    NutsConcurrentManager concurrent();
+
+    /**
+     *
+     * @since 0.8.3
+     */
+    NutsUtilManager util();
+
+    /**
+     *
+     * @since 0.8.3
+     */
+    NutsImportManager imports();
+
+    /**
+     *
+     * @since 0.8.3
+     */
+    NutsCustomCommandManager commands();
+
+    /**
+     *
+     * @since 0.8.3
+     */
+    NutsWorkspaceLocationManager locations();
+
+    /**
+     *
+     * @since 0.8.3
+     */
+    NutsWorkspaceEnvManager env();
+
+    /**
+     *
+     * @since 0.8.3
+     */
+    NutsBootManager boot();
+
+    /**
+     *
+     * @since 0.8.3
+     */
+    NutsTerminalManager term();
+
+    /**
+     *
+     * @since 0.8.3
+     */
+    NutsTextManager text();
+
+    /**
+     * create element format instance
+     *
+     * @return element format
+     * @since 0.8.3
+     */
+    NutsElementFormat elem();
+
 }

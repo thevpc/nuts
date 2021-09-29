@@ -15,7 +15,7 @@ public class NutsElementMapperString implements NutsElementMapper<String> {
 
     @Override
     public NutsElement createElement(String o, Type typeOfSrc, NutsElementFactoryContext context) {
-        return context.element().forString(String.valueOf(o));
+        return context.elem().forString(String.valueOf(o));
     }
 
     @Override

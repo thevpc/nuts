@@ -15,7 +15,7 @@ public class NutsElementMapperBoolean implements NutsElementMapper<Boolean> {
 
     @Override
     public NutsElement createElement(Boolean o, Type typeOfSrc, NutsElementFactoryContext context) {
-        return context.element().forBoolean((Boolean) o);
+        return context.elem().forBoolean((Boolean) o);
     }
 
     @Override

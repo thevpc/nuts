@@ -144,7 +144,7 @@ public class NutsLogRichFormatter extends Formatter {
         }
         String message = wRecord.getMessage();
         if (!wRecord.isFormatted()) {
-            message = wRecord.getSession().getWorkspace().text().forPlain(message).toString();
+            message = wRecord.getSession().text().forPlain(message).toString();
         }
         NutsString msgStr =
                 wRecord.getWorkspace().text()
@@ -166,7 +166,7 @@ public class NutsLogRichFormatter extends Formatter {
         lastMillis = wRecord.getMillis();
         if (wRecord.getThrown() != null) {
             sb.append(
-                    wRecord.getSession().getWorkspace().text().forPlain(
+                    wRecord.getSession().text().forPlain(
                             NutsLogUtils.stacktrace(wRecord.getThrown())
                     ).toString()
             );

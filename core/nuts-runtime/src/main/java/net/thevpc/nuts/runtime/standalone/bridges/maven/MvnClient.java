@@ -33,7 +33,7 @@ public class MvnClient {
             case INIT: {
                 status = Status.DIRTY;
                 try {
-                    NutsDefinition ff = session.getWorkspace().search()
+                    NutsDefinition ff = session.search()
                             .addId(NET_VPC_APP_NUTS_MVN)
                             .setSession(session.copy().setFetchStrategy(NutsFetchStrategy.ONLINE))
                             .setOptional(false)

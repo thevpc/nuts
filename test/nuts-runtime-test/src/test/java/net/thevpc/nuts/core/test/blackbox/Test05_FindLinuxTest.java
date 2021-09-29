@@ -22,28 +22,6 @@ import org.junit.jupiter.api.*;
  */
 public class Test05_FindLinuxTest {
 
-    private static String baseFolder;
-
-    @Test
-    public void find1() throws Exception {
-        Map<String, String> extraProperties = new HashMap<>();
-        extraProperties.put("nuts.export.always-show-command", "true");
-        TestUtils.setSystemProperties(extraProperties);
-
-        //should throw NutsNotFoundException because
-        //would not be able to install nsh and other companions
-        try {
-            NutsWorkspace ws = TestUtils.openTestWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
-                    "--archetype", "minimal",
-                    //            "--skip-companions",
-                    "--verbose").getWorkspace();
-        }catch (NutsInvalidWorkspaceException ex){
-            Assertions.fail();
-        }catch (NutsNotFoundException ex){
-            Assertions.fail();
-        }
-    }
-
     @Test()
     public void find2() throws Exception {
         Map<String, String> extraProperties = new HashMap<>();
@@ -51,9 +29,9 @@ public class Test05_FindLinuxTest {
         TestUtils.setSystemProperties(extraProperties);
 
         //should throw NutsNotFoundException because
-        //would not be able to installe nsh and other companions
-        NutsWorkspace ws = TestUtils.openTestWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
-                "--archetype", "minimal",
+        //would not be able to install nsh and other companions
+        NutsWorkspace ws = TestUtils.openNewTestWorkspace(
+//                "--archetype", "minimal",
                 "--skip-companions" //            "--verbose"
         ).getWorkspace();
 
@@ -72,7 +50,7 @@ public class Test05_FindLinuxTest {
 
         //should throw NutsNotFoundException because
         //would not be able to install nsh and other companions
-        NutsWorkspace ws = TestUtils.openTestWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
+        NutsWorkspace ws = TestUtils.openNewTestWorkspace(
                 "--archetype", "default",
                 "--skip-companions").getWorkspace();
 
@@ -90,8 +68,8 @@ public class Test05_FindLinuxTest {
         TestUtils.setSystemProperties(extraProperties);
 
         //should throw NutsNotFoundException because
-        //would not be able to installe nsh and other companions
-        NutsWorkspace ws = TestUtils.openTestWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
+        //would not be able to install nsh and other companions
+        NutsWorkspace ws = TestUtils.openNewTestWorkspace(
                 "--archetype", "default",
                 "--skip-companions").getWorkspace();
 
@@ -110,8 +88,8 @@ public class Test05_FindLinuxTest {
         TestUtils.setSystemProperties(extraProperties);
 
         //should throw NutsNotFoundException because
-        //would not be able to installe nsh and other companions
-        NutsWorkspace ws = TestUtils.openTestWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
+        //would not be able to install nsh and other companions
+        NutsWorkspace ws = TestUtils.openNewTestWorkspace(
                 "--archetype", "default",
                 "--skip-companions").getWorkspace();
         ws = ws.createSession().getWorkspace();
@@ -128,14 +106,11 @@ public class Test05_FindLinuxTest {
 
     @BeforeAll
     public static void setUpClass() throws IOException {
-        baseFolder = new File("./runtime/test/" + TestUtils.getCallerClassSimpleName()).getCanonicalFile().getPath();
-        CoreIOUtils.delete(null,new File(baseFolder));
         TestUtils.println("####### RUNNING TEST @ "+ TestUtils.getCallerClassSimpleName());
     }
 
     @AfterAll
     public static void tearUpClass() throws IOException {
-        CoreIOUtils.delete(null,new File(baseFolder));
     }
 
     @BeforeEach

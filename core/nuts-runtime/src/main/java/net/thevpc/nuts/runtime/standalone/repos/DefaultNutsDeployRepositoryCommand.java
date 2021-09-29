@@ -51,7 +51,7 @@ public class DefaultNutsDeployRepositoryCommand extends AbstractNutsDeployReposi
 
     protected NutsLogger _LOG(NutsSession session) {
         if (LOG == null) {
-            LOG = session.getWorkspace().log().of(DefaultNutsDeployRepositoryCommand.class);
+            LOG = session.log().of(DefaultNutsDeployRepositoryCommand.class);
         }
         return LOG;
     }

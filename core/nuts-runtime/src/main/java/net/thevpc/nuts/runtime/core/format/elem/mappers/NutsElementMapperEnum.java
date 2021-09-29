@@ -14,7 +14,10 @@ public class NutsElementMapperEnum implements NutsElementMapper<Enum> {
 
     @Override
     public NutsElement createElement(Enum o, Type typeOfSrc, NutsElementFactoryContext context) {
-        return context.element().forString(String.valueOf(o));
+        if(o instanceof NutsEnum){
+            return context.elem().forString(((NutsEnum) o).id());
+        }
+        return context.elem().forString(String.valueOf(o));
     }
 
     @Override
@@ -29,7 +32,11 @@ public class NutsElementMapperEnum implements NutsElementMapper<Enum> {
             }
             case STRING: {
                 NutsPrimitiveElement p = o.asPrimitive();
-                return Enum.valueOf(ReflectUtils.getRawClass(to), p.getString());
+                Class cc = ReflectUtils.getRawClass(to);
+                if(NutsEnum.class.isAssignableFrom(cc)){
+                    return (Enum) NutsEnum.parse(cc, p.getString(),context.getSession());
+                }
+                return Enum.valueOf(cc, p.getString());
             }
         }
         throw new NutsUnsupportedEnumException(context.getSession(), o.type());

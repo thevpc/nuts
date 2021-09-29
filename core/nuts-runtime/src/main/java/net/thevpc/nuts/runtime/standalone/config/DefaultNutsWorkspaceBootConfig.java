@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.config;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.boot.PrivateNutsUtilIO;
 import net.thevpc.nuts.runtime.standalone.NutsHomeLocationsMap;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 
@@ -27,8 +28,8 @@ class DefaultNutsWorkspaceBootConfig implements NutsWorkspaceBootConfig {
     // folder types and layout types are exploded so that it is easier
     // to extract from json file even though no json library is available
     // via simple regexp
-    private Map<String, String> storeLocations = null;
-    private Map<String, String> homeLocations = null;
+    private Map<NutsStoreLocation, String> storeLocations = null;
+    private Map<NutsHomeLocation, String> homeLocations = null;
 
     private NutsStoreLocationStrategy repositoryStoreLocationStrategy = null;
     private NutsStoreLocationStrategy storeLocationStrategy = null;
@@ -51,46 +52,10 @@ class DefaultNutsWorkspaceBootConfig implements NutsWorkspaceBootConfig {
         this.repositoryStoreLocationStrategy = bootModel.getRepositoryStoreLocationStrategy();
         this.storeLocationStrategy = bootModel.getStoreLocationStrategy();
         this.storeLocationLayout = bootModel.getStoreLocationLayout();
-
-        String[] homes = new String[NutsStoreLocation.values().length];
-        for (NutsStoreLocation type : NutsStoreLocation.values()) {
-            homes[type.ordinal()] = NutsUtilPlatforms.getPlatformHomeFolder(storeLocationLayout, type, homeLocations,
-                    global, name);
-            if (NutsBlankable.isBlank(homes[type.ordinal()])) {
-                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing Home for %s", type.id()));
-            }
-        }
         if (storeLocationStrategy == null) {
             storeLocationStrategy = NutsStoreLocationStrategy.EXPLODED;
         }
-        for (NutsStoreLocation location : NutsStoreLocation.values()) {
-            String typeId = location.id();
-            String _storeLocation = storeLocations.get(typeId);
-            if (NutsBlankable.isBlank(_storeLocation)) {
-                switch (storeLocationStrategy) {
-                    case STANDALONE: {
-                        storeLocations.put(typeId, (effectiveWorkspace + File.separator + typeId));
-                        break;
-                    }
-                    case EXPLODED: {
-                        storeLocations.put(typeId, homes[location.ordinal()]);
-                        break;
-                    }
-                }
-            } else if (!CoreIOUtils.isAbsolutePath(_storeLocation)) {
-                switch (storeLocationStrategy) {
-                    case STANDALONE: {
-                        storeLocations.put(typeId, (effectiveWorkspace + File.separator + location.id()));
-                        break;
-                    }
-                    case EXPLODED: {
-                        storeLocations.put(typeId, homes[location.ordinal()] + CoreIOUtils.syspath("/" + _storeLocation));
-                        break;
-                    }
-                }
-            }
-        }
-
+        this.storeLocations=NutsUtilPlatforms.buildLocations(null,storeLocationStrategy, storeLocations, homeLocations, global, effectiveWorkspace,session);
         List<NutsWorkspaceConfigBoot.ExtensionConfig> extensions = bootModel.getExtensions();
         if (extensions == null) {
             this.extensions= Collections.emptyList();
@@ -142,12 +107,12 @@ class DefaultNutsWorkspaceBootConfig implements NutsWorkspaceBootConfig {
     }
 
     @Override
-    public Map<String, String> getStoreLocations() {
+    public Map<NutsStoreLocation, String> getStoreLocations() {
         return Collections.unmodifiableMap(storeLocations);
     }
 
     @Override
-    public Map<String, String> getHomeLocations() {
+    public Map<NutsHomeLocation, String> getHomeLocations() {
         return Collections.unmodifiableMap(homeLocations);
     }
 
@@ -215,13 +180,13 @@ class DefaultNutsWorkspaceBootConfig implements NutsWorkspaceBootConfig {
 
     @Override
     public String getStoreLocation(NutsStoreLocation storeLocation) {
-        return storeLocations.get(storeLocation.id());
+        return storeLocations.get(storeLocation);
     }
 
 
     @Override
-    public String getHomeLocation(NutsOsFamily osFamily, NutsStoreLocation storeLocation) {
-        return new NutsHomeLocationsMap(homeLocations).get(osFamily, storeLocation);
+    public String getHomeLocation(NutsHomeLocation homeLocation) {
+        return new NutsHomeLocationsMap(homeLocations).get(homeLocation);
     }
 
 

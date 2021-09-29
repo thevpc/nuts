@@ -329,9 +329,9 @@ public class DocusaurusCtrl {
         @Override
         public Object eval(String content, FileTemplater context) {
             NutsSession session = shell.getSession();
-            NutsPrintStream out = session.getWorkspace().io().createMemoryPrintStream();
+            NutsPrintStream out = session.io().createMemoryPrintStream();
             session.setTerminal(
-                    session.getWorkspace().term()
+                    session.term()
                             .createTerminal(
                                     new ByteArrayInputStream(new byte[0]),
                                     out,

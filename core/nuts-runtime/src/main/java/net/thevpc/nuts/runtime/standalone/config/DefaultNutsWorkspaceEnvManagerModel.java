@@ -78,7 +78,7 @@ public class DefaultNutsWorkspaceEnvManagerModel {
         }
         osDist = nip.parse(platformOsDist);
         platform = NutsJavaSdkUtils.of(session).createJdkId(System.getProperty("java.version"), session);
-        arch = session.getWorkspace().id().parser().parse(System.getProperty("os.arch"));
+        arch = session.id().parser().parse(System.getProperty("os.arch"));
 
     }
 
@@ -172,7 +172,7 @@ public class DefaultNutsWorkspaceEnvManagerModel {
     protected NutsId[] getDesktopEnvironments0(NutsSession session) {
         if (!isGraphicalDesktopEnvironment()) {
             return new NutsId[]{
-                    session.getWorkspace().id().builder().setArtifactId("none").build()
+                    session.id().builder().setArtifactId("none").build()
             };
         }
         String _XDG_SESSION_DESKTOP = System.getenv("XDG_SESSION_DESKTOP");
@@ -188,7 +188,7 @@ public class DefaultNutsWorkspaceEnvManagerModel {
             String sd = _XDG_SESSION_DESKTOP.toLowerCase();
             List<NutsId> a = new ArrayList<>();
             for (int i = 0; i < supportedSessions.length; i++) {
-                NutsIdBuilder nb = session.getWorkspace().id().builder().setArtifactId(supportedSessions[i]);
+                NutsIdBuilder nb = session.id().builder().setArtifactId(supportedSessions[i]);
                 if ("kde".equals(sd)) {
                     String _KDE_FULL_SESSION = System.getenv("KDE_FULL_SESSION");
                     String _KDE_SESSION_VERSION = System.getenv("KDE_SESSION_VERSION");
@@ -211,17 +211,17 @@ public class DefaultNutsWorkspaceEnvManagerModel {
                 a.add(nb.build());
             }
             if (a.isEmpty()) {
-                a.add(session.getWorkspace().id().builder().setArtifactId("unknown").build());
+                a.add(session.id().builder().setArtifactId("unknown").build());
             }
             return a.toArray(new NutsId[0]);
         }
         if (NutsOsFamily.getCurrent() == NutsOsFamily.WINDOWS) {
             return new NutsId[]{
-                    session.getWorkspace().id().builder().setArtifactId("windows").build()
+                    session.id().builder().setArtifactId("windows").build()
             };
         }
         return new NutsId[]{
-                session.getWorkspace().id().builder().setArtifactId("unknown").build()
+                session.id().builder().setArtifactId("unknown").build()
         };
     }
 

@@ -79,15 +79,15 @@ public class JShell {
     }
 
     public JShell(NutsSession session, String[] args) {
-        this(session.getWorkspace().apps().createApplicationContext(null, new String[]{}, 0, Nsh.class, null), null, null, args);
+        this(session.apps().createApplicationContext(null, new String[]{}, 0, Nsh.class, null), null, null, args);
     }
 
     public JShell(NutsSession session, NutsId appId, String[] args) {
-        this(session.getWorkspace().apps().createApplicationContext(session, new String[]{}, 0, Nsh.class, null), appId, null, args);
+        this(session.apps().createApplicationContext(session, new String[]{}, 0, Nsh.class, null), appId, null, args);
     }
 
     public JShell(NutsSession session, NutsId appId, String serviceName, String[] args) {
-        this(session.getWorkspace().apps().createApplicationContext(session, new String[]{}, 0, Nsh.class, null), appId, serviceName, args);
+        this(session.apps().createApplicationContext(session, new String[]{}, 0, Nsh.class, null), appId, serviceName, args);
     }
 
     private JShell(NutsApplicationContext appContext, NutsId appId, String serviceName, String[] args) {
@@ -609,7 +609,7 @@ public class JShell {
                 .setCommandReadHighlighter(new NutsCommandReadHighlighter() {
                     @Override
                     public NutsText highlight(String buffer, NutsSession session) {
-                        return session.getWorkspace().text().forCode("sh", buffer).parse(session);
+                        return session.text().forCode("sh", buffer).parse(session);
                     }
                 });
         prepareContext(getRootContext());

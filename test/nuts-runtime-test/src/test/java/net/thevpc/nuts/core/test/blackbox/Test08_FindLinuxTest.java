@@ -21,8 +21,6 @@ import org.junit.jupiter.api.*;
  */
 public class Test08_FindLinuxTest {
 
-    private static String baseFolder;
-
     @Test
     public void find3() throws Exception {
         Map<String, String> extraProperties = new HashMap<>();
@@ -30,13 +28,13 @@ public class Test08_FindLinuxTest {
         TestUtils.setSystemProperties(extraProperties);
 
         //should throw NutsNotFoundException because
-        //would not be able to installe nsh and other companions
-        NutsWorkspace ws = TestUtils.openTestWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
+        //would not be able to install nsh and other companions
+        NutsWorkspace ws = TestUtils.openNewTestWorkspace(
                 "--archetype", "default",
                 "--skip-companions").getWorkspace();
 
         NutsSession session = ws.createSession();
-        NutsDefinition def = session.getWorkspace().search().addId(
+        NutsDefinition def = session.search().addId(
                 "net.thevpc.common:thevpc-common-io#1.3.12"
 //                "netbeans-launcher#1.1.0"
                 )
@@ -53,8 +51,8 @@ public class Test08_FindLinuxTest {
         TestUtils.setSystemProperties(extraProperties);
 
         //should throw NutsNotFoundException because
-        //would not be able to installe nsh and other companions
-        NutsWorkspace ws = TestUtils.openTestWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
+        //would not be able to install nsh and other companions
+        NutsWorkspace ws = TestUtils.openNewTestWorkspace(
                 "--archetype", "default",
                 "--skip-companions").getWorkspace();
 
@@ -65,14 +63,11 @@ public class Test08_FindLinuxTest {
 
     @BeforeAll
     public static void setUpClass() throws IOException {
-        baseFolder = new File("./runtime/test/" + TestUtils.getCallerClassSimpleName()).getCanonicalFile().getPath();
-        CoreIOUtils.delete(null,new File(baseFolder));
         TestUtils.println("####### RUNNING TEST @ "+ TestUtils.getCallerClassSimpleName());
     }
 
     @AfterAll
     public static void tearUpClass() throws IOException {
-        CoreIOUtils.delete(null,new File(baseFolder));
     }
 
     @BeforeEach

@@ -42,7 +42,7 @@ public interface NutsArgumentCandidate extends Serializable {
 
     static NutsArgumentCandidate of(String value, NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.getWorkspace().commandLine().createCandidate(value).build();
+        return session.commandLine().createCandidate(value).build();
     }
 
     /**

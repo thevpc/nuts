@@ -40,7 +40,7 @@ public interface NutsDescriptorParser {
 
     static NutsDescriptorParser of(NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.getWorkspace().descriptor().parser();
+        return session.descriptor().parser();
     }
 
     /**

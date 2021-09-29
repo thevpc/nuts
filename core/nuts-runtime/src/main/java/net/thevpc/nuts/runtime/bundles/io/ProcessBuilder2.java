@@ -57,7 +57,7 @@ public class ProcessBuilder2 {
     private static String formatArg(String s, NutsSession session) {
         DefaultNutsArgument a = new DefaultNutsArgument(s);
         StringBuilder sb = new StringBuilder();
-        NutsTextManager factory = session.getWorkspace().text();
+        NutsTextManager factory = session.text();
         if (a.isKeyValue()) {
             if (a.isOption()) {
                 sb.append(factory.forStyled(CoreStringUtils.enforceDoubleQuote(a.getKey().getString(), session), NutsTextStyle.option()));
@@ -335,25 +335,25 @@ public class ProcessBuilder2 {
                     if (isGrabOutputString()) {
                         throw new NutsExecutionException(session,
                                 NutsMessage.cstyle("execution failed with code %d and message : %s. Command was %s", result, getOutputString(),
-                                        session.getWorkspace().commandLine().create(getCommand()))
+                                        session.commandLine().create(getCommand()))
                                 , result);
                     }
                 } else {
                     if (isGrabErrorString()) {
                         throw new NutsExecutionException(session,
                                 NutsMessage.cstyle("execution failed with code %d and message : %s. Command was %s", result, getOutputString(),
-                                        session.getWorkspace().commandLine().create(getCommand()))
+                                        session.commandLine().create(getCommand()))
                                 , result);
                     }
                     if (isGrabOutputString()) {
                         throw new NutsExecutionException(session, NutsMessage.cstyle(
                                 "execution failed with code %d and message : %s. Command was %s", result, getOutputString(),
-                                session.getWorkspace().commandLine().create(getCommand())
+                                session.commandLine().create(getCommand())
                                 ), result);
                     }
                 }
                 throw new NutsExecutionException(session, NutsMessage.cstyle("execution failed with code %d. Command was %s", result,
-                        session.getWorkspace().commandLine().create(getCommand())
+                        session.commandLine().create(getCommand())
                         ), result);
             }
         }
@@ -653,7 +653,7 @@ public class ProcessBuilder2 {
     }
 
     private String escape(NutsSession session, String f) {
-        return session.getWorkspace().text().forPlain(f).toString();
+        return session.text().forPlain(f).toString();
     }
 
     public String getFormattedCommandString(NutsSession session, CommandStringFormat f) {
@@ -696,7 +696,7 @@ public class ProcessBuilder2 {
                     sb.append(" ");
                 }
                 sb.append(
-                        session.getWorkspace().text().forStyled(CoreStringUtils.enforceDoubleQuote(k, session), NutsTextStyle.primary4())
+                        session.text().forStyled(CoreStringUtils.enforceDoubleQuote(k, session), NutsTextStyle.primary4())
                 ).append("=").append(CoreStringUtils.enforceDoubleQuote(v, session));
             }
         }

@@ -42,16 +42,16 @@ public class NutsJavascriptIdFilter extends AbstractIdFilter implements NutsIdFi
 
     private String code;
 
-    public static NutsIdFilter valueOf(String value, NutsSession ws) {
+    public static NutsIdFilter valueOf(String value, NutsSession session) {
         if (NutsBlankable.isBlank(value)) {
-            return ws.getWorkspace().id().filter().always();
+            return session.id().filter().always();
         }
-        return new NutsJavascriptIdFilter(ws,value);
+        return new NutsJavascriptIdFilter(session,value);
     }
 
 
-    public NutsJavascriptIdFilter(NutsSession ws,String code) {
-        super(ws, NutsFilterOp.CUSTOM);
+    public NutsJavascriptIdFilter(NutsSession session,String code) {
+        super(session, NutsFilterOp.CUSTOM);
         this.code = code;
     }
 

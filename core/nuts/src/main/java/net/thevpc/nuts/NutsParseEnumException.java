@@ -32,31 +32,34 @@ package net.thevpc.nuts;
  */
 public class NutsParseEnumException extends NutsException {
     private final String invalidValue;
-    private final Class<? extends Enum> enumType;
+    private final Class enumType;
 
     /**
      * create new instance of NutsUnexpectedEnumException
      * @param session workspace
-     * @param enumType enumeration instance (cannot be null)
+     * @param enumType java Enum or NutsEnum type (cannot be null)
      * @param invalidValue invalid value
      */
-    public NutsParseEnumException(NutsSession session, String invalidValue, Class<? extends Enum> enumType) {
+    public NutsParseEnumException(NutsSession session, String invalidValue, Class enumType) {
         this(session, null, invalidValue, enumType);
     }
 
     /**
      * create new instance of NutsUnexpectedEnumException
      * @param session workspace
-     * @param enumType enumeration instance (cannot be null)
+     * @param enumType java Enum or NutsEnum type (cannot be null)
      * @param invalidValue invalid value
      * @param message message
      */
-    public NutsParseEnumException(NutsSession session, NutsMessage message, String invalidValue, Class<? extends Enum> enumType) {
+    public NutsParseEnumException(NutsSession session, NutsMessage message, String invalidValue, Class enumType) {
         super(session,
                 message == null ? (
                         NutsMessage.cstyle("invalid value %s of type %s", invalidValue, enumType.getName()))
                         : message
         );
+        if(enumType==null || (!Enum.class.isAssignableFrom(enumType) && !NutsEnum.class.isAssignableFrom(enumType))){
+            throw new NutsIllegalArgumentException(session,NutsMessage.cstyle("failed creating NutsParseEnumException for %s",(enumType==null?null: enumType.getName())));
+        }
         this.enumType = enumType;
         this.invalidValue = invalidValue;
     }
@@ -73,7 +76,7 @@ public class NutsParseEnumException extends NutsException {
      * enum type
      * @return enum type
      */
-    public Class<? extends Enum> getEnumType() {
+    public Class getEnumType() {
         return enumType;
     }
 }

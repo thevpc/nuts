@@ -148,13 +148,13 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
 
     @Override
     public NutsDependencyBuilder setVersion(NutsVersion version) {
-        this.version = version == null ? session.getWorkspace().version().parser().parse("") : version;
+        this.version = version == null ? session.version().parser().parse("") : version;
         return this;
     }
 
     @Override
     public NutsDependencyBuilder setVersion(String classifier) {
-        this.version = session.getWorkspace().version().parser().parse(classifier);
+        this.version = session.version().parser().parse(classifier);
         return this;
     }
 
@@ -327,7 +327,7 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
             }
             m.put(NutsConstants.IdProperties.EXCLUSIONS, String.join(",", ex));
         }
-        return session.getWorkspace().id().builder()
+        return session.id().builder()
                 .setRepository(getRepository())
                 .setGroupId(getGroupId())
                 .setArtifactId(getArtifactId())
@@ -435,7 +435,7 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
             exclusions = "";
         }
         List<NutsId> ids = new ArrayList<>();
-        NutsIdParser parser = session.getWorkspace().id().parser();
+        NutsIdParser parser = session.id().parser();
         for (String s : exclusions.split("[;,]")) {
             NutsId ii = parser.parse(s.trim());
             if (ii != null) {

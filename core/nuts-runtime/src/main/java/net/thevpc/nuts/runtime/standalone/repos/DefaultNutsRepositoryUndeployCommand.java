@@ -37,7 +37,7 @@ public class DefaultNutsRepositoryUndeployCommand extends AbstractNutsRepository
 
     protected NutsLogger _LOG(NutsSession session) {
         if (LOG == null) {
-            LOG = session.getWorkspace().log().of(DefaultNutsRepositoryUndeployCommand.class);
+            LOG = session.log().of(DefaultNutsRepositoryUndeployCommand.class);
         }
         return LOG;
     }

@@ -269,14 +269,21 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                 case "--progress": {
                     NutsArgument v = cmdLine.nextString();
                     if (enabled) {
-                        this.setProgressOptions(v.getValue().getString());
-                    }
-                    return true;
-                }
-                case "--no-progress": {
-                    a = cmdLine.nextBoolean();
-                    if (enabled && a.getValue().getBoolean()) {
-                        this.setProgressOptions("none");
+                        String s = v.getValue().getString();
+                        if(a.isNegated()){
+                            Boolean q = NutsUtilStrings.parseBoolean(s, true, null);
+                            if(q==null){
+                                if(NutsBlankable.isBlank(s)){
+                                    s="false";
+                                }else{
+                                    s="false,"+s;
+                                }
+                            }
+                            this.setProgressOptions(s);
+                        }else {
+                            this.setProgressOptions(s);
+                        }
+                        this.setProgressOptions(s);
                     }
                     return true;
                 }
@@ -1337,5 +1344,185 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         }
         sb.append(")");
         return sb.toString();
+    }
+
+    @Override
+    public NutsSearchCommand search() {
+        return getWorkspace().search();
+    }
+
+    @Override
+    public NutsFetchCommand fetch() {
+        return getWorkspace().fetch();
+    }
+
+    @Override
+    public NutsDeployCommand deploy() {
+        return getWorkspace().deploy();
+    }
+
+    @Override
+    public NutsUndeployCommand undeploy() {
+        return getWorkspace().undeploy();
+    }
+
+    @Override
+    public NutsExecCommand exec() {
+        return getWorkspace().exec();
+    }
+
+    @Override
+    public NutsInstallCommand install() {
+        return getWorkspace().install();
+    }
+
+    @Override
+    public NutsUninstallCommand uninstall() {
+        return getWorkspace().uninstall();
+    }
+
+    @Override
+    public NutsUpdateCommand update() {
+        return getWorkspace().update();
+    }
+
+    @Override
+    public NutsPushCommand push() {
+        return getWorkspace().push();
+    }
+
+    @Override
+    public NutsUpdateStatisticsCommand updateStatistics() {
+        return getWorkspace().updateStatistics();
+    }
+
+    @Override
+    public NutsWorkspaceAppsManager apps() {
+        return getWorkspace().apps();
+    }
+
+    @Override
+    public NutsWorkspaceExtensionManager extensions() {
+        return getWorkspace().extensions();
+    }
+
+    @Override
+    public NutsWorkspaceConfigManager config() {
+        return getWorkspace().config();
+    }
+
+    @Override
+    public NutsRepositoryManager repos() {
+        return getWorkspace().repos();
+    }
+
+    @Override
+    public NutsWorkspaceSecurityManager security() {
+        return getWorkspace().security();
+    }
+
+    @Override
+    public NutsFilterManager filters() {
+        return getWorkspace().filters();
+    }
+
+    @Override
+    public NutsIOManager io() {
+        return getWorkspace().io();
+    }
+
+    @Override
+    public NutsLogManager log() {
+        return getWorkspace().log();
+    }
+
+    @Override
+    public NutsWorkspaceEventManager events() {
+        return getWorkspace().events();
+    }
+
+    @Override
+    public NutsCommandLineManager commandLine() {
+        return getWorkspace().commandLine();
+    }
+
+    @Override
+    public NutsIdManager id() {
+        return getWorkspace().id();
+    }
+
+    @Override
+    public NutsVersionManager version() {
+        return getWorkspace().version();
+    }
+
+    @Override
+    public NutsInfoFormat info() {
+        return getWorkspace().info();
+    }
+
+    @Override
+    public NutsDescriptorManager descriptor() {
+        return getWorkspace().descriptor();
+    }
+
+    @Override
+    public NutsDependencyManager dependency() {
+        return getWorkspace().dependency();
+    }
+
+    @Override
+    public NutsFormatManager formats() {
+        return getWorkspace().formats();
+    }
+
+    @Override
+    public NutsConcurrentManager concurrent() {
+        return getWorkspace().concurrent();
+    }
+
+    @Override
+    public NutsUtilManager util() {
+        return getWorkspace().util();
+    }
+
+    @Override
+    public NutsImportManager imports() {
+        return getWorkspace().imports();
+    }
+
+    @Override
+    public NutsCustomCommandManager commands() {
+        return getWorkspace().commands();
+    }
+
+    @Override
+    public NutsWorkspaceLocationManager locations() {
+        return getWorkspace().locations();
+    }
+
+    @Override
+    public NutsWorkspaceEnvManager env() {
+        return getWorkspace().env();
+    }
+
+    @Override
+    public NutsBootManager boot() {
+        return getWorkspace().boot();
+    }
+
+    @Override
+    public NutsTerminalManager term() {
+        return getWorkspace().term();
+    }
+
+    @Override
+    public NutsTextManager text() {
+        return getWorkspace().text();
+    }
+
+    @Override
+    public NutsElementFormat elem() {
+        return getWorkspace().elem();
     }
 }

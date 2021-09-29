@@ -25,12 +25,9 @@ package net.thevpc.nuts.core.test.blackbox;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import org.junit.jupiter.api.*;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Paths;
 
 /**
  *
@@ -38,18 +35,14 @@ import java.nio.file.Paths;
  */
 public class Test17_Json {
 
-    private static String baseFolder;
-
     @BeforeAll
     public static void setUpClass() throws IOException {
-        baseFolder = new File("./runtime/test/" + TestUtils.getCallerClassSimpleName()).getCanonicalFile().getPath();
-        CoreIOUtils.delete(null, new File(baseFolder));
         TestUtils.println("####### RUNNING TEST @ " + TestUtils.getCallerClassSimpleName());
     }
 
     @Test
     public void test1() throws Exception {
-        NutsWorkspace ws = TestUtils.openTestWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
+        NutsWorkspace ws = TestUtils.openNewTestWorkspace(
                 "-byZSKk"
         ).getWorkspace();
 
@@ -62,17 +55,17 @@ public class Test17_Json {
 //                .setNtf(false)
 //                .format();
 
-//        System.out.println(session.getWorkspace().text().forPlain("a@@@"));
-//        System.out.println(session.getWorkspace().text().forPlain("a@@@").filteredText());
+//        System.out.println(session.text().forPlain("a@@@"));
+//        System.out.println(session.text().forPlain("a@@@").filteredText());
 
-        System.out.println(session.getWorkspace().text().forPlain("a##@"));
-        System.out.println(session.getWorkspace().text().forPlain("a##@").filteredText());
+        System.out.println(session.text().forPlain("a##@"));
+        System.out.println(session.text().forPlain("a##@").filteredText());
 
     }
 
     @Test
-    public void test2() throws Exception {
-        NutsWorkspace ws = TestUtils.openTestWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
+    public void test2()  {
+        NutsWorkspace ws = TestUtils.openNewTestWorkspace(
                 "-byZSKk"
         ).getWorkspace();
         NutsSession session = ws.createSession();
@@ -228,11 +221,11 @@ public class Test17_Json {
 //                .setNtf(false)
 //                .format();
 
-//        System.out.println(session.getWorkspace().text().forPlain("a@@@"));
-//        System.out.println(session.getWorkspace().text().forPlain("a@@@").filteredText());
+//        System.out.println(session.text().forPlain("a@@@"));
+//        System.out.println(session.text().forPlain("a@@@").filteredText());
 
-        System.out.println(session.getWorkspace().text().forPlain("a##@"));
-        System.out.println(session.getWorkspace().text().forPlain("a##@").filteredText());
+        System.out.println(session.text().forPlain("a##@"));
+        System.out.println(session.text().forPlain("a##@").filteredText());
 
     }
 

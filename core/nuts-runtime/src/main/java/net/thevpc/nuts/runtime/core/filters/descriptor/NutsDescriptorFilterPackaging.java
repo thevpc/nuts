@@ -39,8 +39,8 @@ public class NutsDescriptorFilterPackaging extends AbstractDescriptorFilter impl
 
     private final String packaging;
 
-    public NutsDescriptorFilterPackaging(NutsSession ws, String packaging) {
-        super(ws, NutsFilterOp.CUSTOM);
+    public NutsDescriptorFilterPackaging(NutsSession session, String packaging) {
+        super(session, NutsFilterOp.CUSTOM);
         this.packaging = packaging;
     }
 

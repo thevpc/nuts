@@ -28,6 +28,8 @@ package net.thevpc.nuts.runtime.core.format.text.parser;
 
 import net.thevpc.nuts.*;
 
+import java.util.Objects;
+
 /**
  * Created by vpc on 5/23/17.
  */
@@ -39,8 +41,8 @@ public class DefaultNutsTextStyled extends AbstractNutsText implements NutsTextS
     private NutsTextStyles textStyles;
     private boolean completed;
 
-    public DefaultNutsTextStyled(NutsSession ws, String start, String end, NutsText child, boolean completed, NutsTextStyles textStyle) {
-        super(ws);
+    public DefaultNutsTextStyled(NutsSession session, String start, String end, NutsText child, boolean completed, NutsTextStyles textStyle) {
+        super(session);
         this.start = start;
         this.end = end;
         this.child = child;
@@ -81,5 +83,18 @@ public class DefaultNutsTextStyled extends AbstractNutsText implements NutsTextS
     @Override
     public String toString() {
         return super.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DefaultNutsTextStyled that = (DefaultNutsTextStyled) o;
+        return completed == that.completed && Objects.equals(start, that.start) && Objects.equals(end, that.end) && Objects.equals(child, that.child) && Objects.equals(textStyles, that.textStyles);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(start, end, child, textStyles, completed);
     }
 }

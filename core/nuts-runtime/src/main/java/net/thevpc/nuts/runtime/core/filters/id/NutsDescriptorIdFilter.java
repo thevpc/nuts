@@ -40,12 +40,12 @@ public class NutsDescriptorIdFilter extends AbstractIdFilter implements NutsIdFi
             return true;
         }
         if(LOG==null){
-            LOG=session.getWorkspace().log().of(MavenRepositoryFolderHelper.class);
+            LOG=session.log().of(MavenRepositoryFolderHelper.class);
         }
         NutsDescriptor descriptor = null;
         try {
 //                descriptor = repository.fetchDescriptor().setId(id).setSession(session).getResult();
-            descriptor = session.getWorkspace().fetch().setId(id).setSession(session).getResultDescriptor();
+            descriptor = session.fetch().setId(id).setSession(session).getResultDescriptor();
             if (!CoreNutsUtils.isEffectiveId(descriptor.getId())) {
                 NutsDescriptor nutsDescriptor = null;
                 try {

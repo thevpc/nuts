@@ -48,13 +48,13 @@ public class NutsInstallException extends NutsInstallationException {
     /**
      * Custom Constructor
      *
-     * @param workspace workspace
+     * @param session session
      * @param id        nuts id
      * @param msg       message
      * @param ex        exception
      */
-    public NutsInstallException(NutsSession workspace, NutsId id, NutsMessage msg, Throwable ex) {
-        super(workspace, id, msg == null ? NutsMessage.cstyle("unable to install %s", (id == null ? "<null>" : id)) : msg, ex);
+    public NutsInstallException(NutsSession session, NutsId id, NutsMessage msg, Throwable ex) {
+        super(session, id, msg == null ? NutsMessage.cstyle("unable to install %s", (id == null ? "<null>" : id)) : msg, ex);
     }
 
 

@@ -16,7 +16,6 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
 
-import net.thevpc.nuts.Nuts;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.core.test.utils.TestUtils;
@@ -39,8 +38,8 @@ public class Test02_SimpleClassStream {
 
     @Test
     public void test1() throws Exception {
-        NutsWorkspace ws = TestUtils.openTestWorkspace( "--workspace", baseFolder + "/" + TestUtils.getCallerMethodName()).getWorkspace();
-        Path path = Paths.get("/home/vpc/.m2/repository/org/ow2/asm/asm-commons/7.0/asm-commons-7.0.jar");
+        NutsWorkspace ws = TestUtils.openNewTestWorkspace( ).getWorkspace();
+        Path path = Paths.get(System.getProperty("user.home")).resolve(".m2/repository/org/ow2/asm/asm-commons/7.0/asm-commons-7.0.jar");
         NutsSession session=ws.createSession();
         if (Files.exists(path)) {
 //        parseAnyFile(Paths.get(System.getProperty("user.home")).resolve(".m2/repository"));
@@ -54,21 +53,21 @@ public class Test02_SimpleClassStream {
 //        mm(Paths.get("/data/vpc/Data/xprojects/net/thevpc/nuts/nuts-runtime/target/classes/net/thevpc/nuts/core/util/CommonRootsHelper.class"));
     }
 
-    private static void parseAnyFile(Path file, NutsSession ws) throws IOException {
+    private static void parseAnyFile(Path file, NutsSession session) throws IOException {
         if (Files.isDirectory(file)) {
-            parseFolder(file, ws);
+            parseFolder(file, session);
         } else {
-            parseRegularFile(file, ws);
+            parseRegularFile(file, session);
         }
     }
 
-    private static void parseRegularFile(Path file, NutsSession ws) throws IOException {
+    private static void parseRegularFile(Path file, NutsSession session) throws IOException {
         long from = System.currentTimeMillis();
         if (file.getFileName().toString().endsWith(".class")) {
-            parseClassFile(file.toAbsolutePath().normalize(), ws);
+            parseClassFile(file.toAbsolutePath().normalize(), session);
         }
         if (file.getFileName().toString().endsWith(".jar")) {
-            parseJarFile(file.toAbsolutePath().normalize(), ws);
+            parseJarFile(file.toAbsolutePath().normalize(), session);
         }
         long to = System.currentTimeMillis();
         if (max < to - from) {
@@ -77,11 +76,11 @@ public class Test02_SimpleClassStream {
         TestUtils.println("### TIME [" + file + "] " + CoreTimeUtils.formatPeriodMilli(to - from) + " -- " + max);
     }
 
-    private static void parseFolder(Path file, NutsSession ws) throws IOException {
+    private static void parseFolder(Path file, NutsSession session) throws IOException {
         Files.walkFileTree(file, new FileVisitor<Path>() {
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                parseRegularFile(file, ws);
+                parseRegularFile(file, session);
                 return FileVisitResult.CONTINUE;
             }
 
@@ -110,7 +109,7 @@ public class Test02_SimpleClassStream {
         }
     }
 
-    private static void parseClassFile(Path file, NutsSession ws) throws IOException {
+    private static void parseClassFile(Path file, NutsSession session) throws IOException {
         TestUtils.println(file);
 
         SimpleClassStream scs = new SimpleClassStream(Files.newInputStream(file), new SimpleClassStream.Visitor() {

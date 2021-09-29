@@ -146,7 +146,7 @@ public abstract class AbstractSystemTerminalAdapter extends AbstractNutsTerminal
                 getProgressBar(session).printProgress(
                         Float.isNaN(progress) ? -1
                                 : (int) (progress * 100),
-                        session.getWorkspace().text().toText(message).toString(),
+                        session.text().toText(message).toString(),
                         err()
                 );
             }
@@ -196,13 +196,13 @@ public abstract class AbstractSystemTerminalAdapter extends AbstractNutsTerminal
 
 //    @Override
 //    public NutsTerminal sendOutCommand(NutsTerminalCommand command) {
-//        session.getWorkspace().term().sendTerminalCommand(out(), command);
+//        session.term().sendTerminalCommand(out(), command);
 //        return this;
 //    }
 
 //    @Override
 //    public NutsTerminal sendErrCommand(NutsTerminalCommand command) {
-//        session.getWorkspace().term().sendTerminalCommand(out(), command);
+//        session.term().sendTerminalCommand(out(), command);
 //        return this;
 //    }
 }

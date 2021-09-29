@@ -57,7 +57,7 @@ public class DefaultNutsElementFactoryContext implements NutsElementFactoryConte
     }
 
     @Override
-    public NutsElementFormat element() {
+    public NutsElementFormat elem() {
         return base;
     }
 

@@ -38,7 +38,7 @@ public class DefaultNutsPushRepositoryCommand extends AbstractNutsPushRepository
 
     protected NutsLogger _LOG(NutsSession session) {
         if (LOG == null) {
-            LOG = session.getWorkspace().log().of(DefaultNutsPushRepositoryCommand.class);
+            LOG = session.log().of(DefaultNutsPushRepositoryCommand.class);
         }
         return LOG;
     }

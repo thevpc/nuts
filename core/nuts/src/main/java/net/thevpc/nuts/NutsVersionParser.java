@@ -35,7 +35,7 @@ public interface NutsVersionParser {
 
     static NutsVersionParser parse(NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.getWorkspace().version().parser();
+        return session.version().parser();
     }
 
     /**

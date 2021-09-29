@@ -158,7 +158,7 @@ public abstract class SimpleNshBuiltin extends AbstractNshBuiltin {
             if(session==null){
                 session=context.getSession();
             }
-            NutsObjectFormat objstream = session.getWorkspace().formats().object(any);
+            NutsObjectFormat objstream = session.formats().object(any);
             if (err) {
                 if (errObjectNewLine) {
                     objstream.println(session.err());
@@ -252,8 +252,8 @@ public abstract class SimpleNshBuiltin extends AbstractNshBuiltin {
             }
         }else{
             NutsSession session = context.getSession().copy();
-            NutsPrintStream printStream = session.getWorkspace().io().createMemoryPrintStream();
-            session.setTerminal(session.getWorkspace().term().createTerminal(
+            NutsPrintStream printStream = session.io().createMemoryPrintStream();
+            session.setTerminal(session.term().createTerminal(
                     new ByteArrayInputStream(new byte[0]),
                     printStream,
                     printStream

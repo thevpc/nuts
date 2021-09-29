@@ -12,8 +12,8 @@ public class NutsInstallStatusFilterAnd extends AbstractInstallStatusFilter{
 
     private NutsInstallStatusFilter[] all;
 
-    public NutsInstallStatusFilterAnd(NutsSession ws, NutsInstallStatusFilter... all) {
-        super(ws, NutsFilterOp.AND);
+    public NutsInstallStatusFilterAnd(NutsSession session, NutsInstallStatusFilter... all) {
+        super(session, NutsFilterOp.AND);
         List<NutsInstallStatusFilter> valid = new ArrayList<>();
         if (all != null) {
             for (NutsInstallStatusFilter filter : all) {

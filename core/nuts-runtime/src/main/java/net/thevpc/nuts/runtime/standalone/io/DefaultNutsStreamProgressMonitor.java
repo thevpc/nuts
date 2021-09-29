@@ -69,11 +69,11 @@ public class DefaultNutsStreamProgressMonitor implements NutsProgressMonitor/*, 
     public boolean onProgress0(NutsProgressEvent event, boolean end) {
         if(!optionsProcessed) {
             optionsProcessed=true;
-            optionNewline= CoreNutsUtils.parseProgressOptions(event.getSession()).contains("newline");
+            optionNewline= CoreNutsUtils.parseProgressOptions(event.getSession()).isArmedNewline();
         }
         double partialSeconds = event.getPartialMillis() / 1000.0;
         if (event.getCurrentValue() == 0 || partialSeconds > 0.5 || event.getCurrentValue() == event.getMaxValue()) {
-            NutsTextManager text = event.getSession().getWorkspace().text();
+            NutsTextManager text = event.getSession().text();
             if(!optionNewline) {
                 out.resetLine();
 //                out.run(NutsTerminalCommand.MOVE_LINE_START);

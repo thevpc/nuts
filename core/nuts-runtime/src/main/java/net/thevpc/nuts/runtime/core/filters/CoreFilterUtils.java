@@ -339,7 +339,7 @@ public class CoreFilterUtils {
         if (NutsBlankable.isBlank(desc.getPackaging())) {
             return true;
         }
-        NutsIdParser parser = session.getWorkspace().id().parser();
+        NutsIdParser parser = session.id().parser();
         NutsId _v = parser.parse(packaging);
         NutsId _v2 = parser.parse(desc.getPackaging());
         if (_v == null || _v2 == null) {
@@ -354,7 +354,7 @@ public class CoreFilterUtils {
     }
 
     public static boolean matchesSys(NutsEnvCondition cond, NutsSession session) {
-        NutsWorkspaceEnvManager env = session.getWorkspace().env();
+        NutsWorkspaceEnvManager env = session.env();
         return
                 matchesArch(
                         env.getArch().toString(),
@@ -383,7 +383,7 @@ public class CoreFilterUtils {
         if (NutsBlankable.isBlank(arch)) {
             return true;
         }
-        NutsIdParser parser = session.getWorkspace().id().parser();
+        NutsIdParser parser = session.id().parser();
         NutsId _v = parser.parse(arch);
         String[] all = cond.getArch();
         if (all != null && all.length > 0) {
@@ -408,7 +408,7 @@ public class CoreFilterUtils {
         if (NutsBlankable.isBlank(os)) {
             return true;
         }
-        NutsIdParser parser = session.getWorkspace().id().parser();
+        NutsIdParser parser = session.id().parser();
         NutsId _v = parser.parse(os);
         String[] all = desc.getOs();
         if (all != null && all.length > 0) {
@@ -429,7 +429,7 @@ public class CoreFilterUtils {
         if (NutsBlankable.isBlank(osDist)) {
             return true;
         }
-        NutsIdParser parser = session.getWorkspace().id().parser();
+        NutsIdParser parser = session.id().parser();
         NutsId _v = parser.parse(osDist);
         String[] all = desc.getOsDist();
         if (all != null && all.length > 0) {
@@ -451,7 +451,7 @@ public class CoreFilterUtils {
         if (NutsBlankable.isBlank(platform)) {
             return true;
         }
-        NutsIdParser parser = session.getWorkspace().id().parser();
+        NutsIdParser parser = session.id().parser();
         NutsId _v = parser.parse(platform);
         String[] all = desc.getPlatform();
         if (all != null && all.length > 0) {
@@ -472,7 +472,7 @@ public class CoreFilterUtils {
         if (NutsBlankable.isBlank(platform)) {
             return true;
         }
-        NutsIdParser parser = session.getWorkspace().id().parser();
+        NutsIdParser parser = session.id().parser();
         NutsId _v = parser.parse(platform);
         String[] all = desc.getPlatform();
         if (all != null && all.length > 0) {

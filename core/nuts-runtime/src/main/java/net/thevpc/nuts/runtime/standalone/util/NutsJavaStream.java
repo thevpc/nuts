@@ -21,8 +21,8 @@ import java.util.stream.StreamSupport;
 public class NutsJavaStream<T> extends AbstractNutsStream<T> {
 
     private final Stream<T> o;
-    public NutsJavaStream(NutsSession ws, String nutsBase, Stream<T> o) {
-        super(ws, nutsBase);
+    public NutsJavaStream(NutsSession session, String nutsBase, Stream<T> o) {
+        super(session, nutsBase);
         this.o = o;
     }
 

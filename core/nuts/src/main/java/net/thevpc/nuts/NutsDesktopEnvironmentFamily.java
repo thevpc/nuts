@@ -1,5 +1,7 @@
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
 public enum NutsDesktopEnvironmentFamily implements NutsEnum {
     WINDOWS,
     KDE,
@@ -53,11 +55,7 @@ public enum NutsDesktopEnvironmentFamily implements NutsEnum {
 
     public static NutsDesktopEnvironmentFamily parse(String value, NutsDesktopEnvironmentFamily emptyValue, NutsSession session) {
         NutsDesktopEnvironmentFamily v = parseLenient(value, emptyValue, null);
-        if (v == null) {
-            if (!NutsBlankable.isBlank(value)) {
-                throw new NutsParseEnumException(session, value, NutsDesktopEnvironmentFamily.class);
-            }
-        }
+        NutsApiUtils.checkNonNullEnum(v,value,NutsDesktopEnvironmentFamily.class,session);
         return v;
     }
 

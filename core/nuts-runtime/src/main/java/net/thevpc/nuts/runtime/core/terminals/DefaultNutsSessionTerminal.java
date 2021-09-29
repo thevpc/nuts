@@ -114,7 +114,7 @@ public class DefaultNutsSessionTerminal extends AbstractNutsSessionTerminal {
         if ((
                 in == ws.io().stdin()
         ) && ((cons = System.console()) != null)) {
-            String txt = session.getWorkspace().text().toText(message).toString();
+            String txt = session.text().toText(message).toString();
             if ((passwd = cons.readPassword("%s", txt)) != null) {
                 return passwd;
             } else {
@@ -232,7 +232,7 @@ public class DefaultNutsSessionTerminal extends AbstractNutsSessionTerminal {
                 getProgressBar().printProgress(
                         Float.isNaN(progress) ? -1 :
                                 (int) (progress * 100),
-                        session.getWorkspace().text().toText(message).toString(),
+                        session.text().toText(message).toString(),
                         err()
                 );
             }

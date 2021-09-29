@@ -39,8 +39,8 @@ public class NutsDescriptorFilterOs extends AbstractDescriptorFilter implements 
 
     private final String os;
 
-    public NutsDescriptorFilterOs(NutsSession ws, String os) {
-        super(ws, NutsFilterOp.CUSTOM);
+    public NutsDescriptorFilterOs(NutsSession session, String os) {
+        super(session, NutsFilterOp.CUSTOM);
         this.os = os;
     }
 

@@ -53,8 +53,8 @@ public class DefaultNutsDependency implements NutsDependency {
 
     public DefaultNutsDependency(String repository, String groupId, String artifactId, String classifier, NutsVersion version, String scope, String optional, NutsId[] exclusions,
                                  NutsEnvCondition condition, String type,
-                                 Map<String, String> properties, NutsSession ws) {
-        this(repository, groupId, artifactId, classifier, version, scope, optional, exclusions, condition, type, QueryStringParser.formatSortedPropertiesQuery(properties), ws);
+                                 Map<String, String> properties, NutsSession session) {
+        this(repository, groupId, artifactId, classifier, version, scope, optional, exclusions, condition, type, QueryStringParser.formatSortedPropertiesQuery(properties), session);
     }
 
     public DefaultNutsDependency(String repository, String groupId, String artifactId, String classifier, NutsVersion version, String scope, String optional, NutsId[] exclusions,
@@ -63,7 +63,7 @@ public class DefaultNutsDependency implements NutsDependency {
         this.repository = NutsUtilStrings.trimToNull(repository);
         this.groupId = NutsUtilStrings.trimToNull(groupId);
         this.artifactId = NutsUtilStrings.trimToNull(artifactId);
-        this.version = version == null ? session.getWorkspace().version().parser().parse("") : version;
+        this.version = version == null ? session.version().parser().parse("") : version;
         this.classifier = NutsUtilStrings.trimToNull(classifier);
         this.scope = NutsDependencyScope.parseLenient(scope,NutsDependencyScope.API,NutsDependencyScope.OTHER).id();
 
@@ -140,7 +140,7 @@ public class DefaultNutsDependency implements NutsDependency {
             }
             m.put(NutsConstants.IdProperties.EXCLUSIONS, String.join(",", ex));
         }
-        return session.getWorkspace().id().builder()
+        return session.id().builder()
                 .setGroupId(getGroupId())
                 .setArtifactId(getArtifactId())
                 .setVersion(getVersion())
@@ -284,7 +284,7 @@ public class DefaultNutsDependency implements NutsDependency {
 
     @Override
     public NutsDependencyFormat formatter() {
-        return session.getWorkspace().dependency().formatter().setValue(this);
+        return session.dependency().formatter().setValue(this);
     }
 
     @Override

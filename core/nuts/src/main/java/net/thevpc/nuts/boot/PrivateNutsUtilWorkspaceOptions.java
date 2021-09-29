@@ -4,7 +4,7 @@ import net.thevpc.nuts.NutsWorkspaceOptions;
 
 class PrivateNutsUtilWorkspaceOptions {
     static boolean isBootOptional(String name, NutsWorkspaceOptions woptions) {
-        for (String property : woptions.getProperties()) {
+        for (String property : woptions.getCustomOptions()) {
             PrivateNutsArgumentImpl a = new PrivateNutsArgumentImpl(property, '=');
             if (a.getKey().getString().equals("boot-" + name)) {
                 return true;
@@ -14,7 +14,7 @@ class PrivateNutsUtilWorkspaceOptions {
     }
 
     static boolean isBootOptional(NutsWorkspaceOptions woptions) {
-        for (String property : woptions.getProperties()) {
+        for (String property : woptions.getCustomOptions()) {
             PrivateNutsArgumentImpl a = new PrivateNutsArgumentImpl(property, '=');
             if (a.getKey().getString().equals("boot-optional")) {
                 return true;

@@ -264,7 +264,7 @@ public class DefaultJShellContext extends AbstractJShellContext {
     @Override
     public JShellContext setOut(PrintStream out) {
         getSession().getTerminal().setOut(
-                getSession().getWorkspace().io().createPrintStream(out)
+                getSession().io().createPrintStream(out)
         );
 //        commandContext.getTerminal().setOut(workspace.createPrintStream(out,
 //                true//formatted
@@ -274,7 +274,7 @@ public class DefaultJShellContext extends AbstractJShellContext {
 
     public JShellContext setErr(PrintStream err) {
         getSession().getTerminal().setErr(
-                getSession().getWorkspace().io().createPrintStream(err)
+                getSession().io().createPrintStream(err)
         );
         return this;
     }

@@ -25,7 +25,7 @@ public class NutsSettingsRepositorySubCommand extends AbstractNutsSettingsSubCom
     @Override
     public boolean exec(NutsCommandLine cmdLine, Boolean autoSave, NutsSession session) {
 
-        NutsCommandLineManager commandLineFormat = session.getWorkspace().commandLine();
+        NutsCommandLineManager commandLineFormat = session.commandLine();
         NutsWorkspace ws = session.getWorkspace();
 //        if (cmdLine.next("add repo", "cr") != null) {
 //            String repositoryName = null;
@@ -139,7 +139,7 @@ public class NutsSettingsRepositorySubCommand extends AbstractNutsSettingsSubCom
                     repo = p.config().addMirror(o);
                 }
                 out.printf("repository added successfully%n");
-                session.getWorkspace().config().save();
+                session.config().save();
 
             }
             cmdLine.setCommandName("config add repo").unexpectedArgument();
@@ -189,7 +189,7 @@ public class NutsSettingsRepositorySubCommand extends AbstractNutsSettingsSubCom
                     NutsRepository p = ws.repos().getRepository(parent);
                     p.config().removeMirror(repositoryName);
                 }
-                session.getWorkspace().config().save();
+                session.config().save();
             }
             return true;
 
@@ -225,7 +225,7 @@ public class NutsSettingsRepositorySubCommand extends AbstractNutsSettingsSubCom
             }
             if (cmdLine.isExecMode()) {
                 NutsRepository[] r = parent == null ? ws.repos().getRepositories() : ws.repos().getRepository(parent).config().getMirrors();
-                session.getWorkspace().formats().object(
+                session.formats().object(
                         Arrays.stream(ws.repos().getRepositories())
                                 .map(x -> repoInfo(x, session.getOutputFormat() != NutsContentType.TABLE && session.getOutputFormat() != NutsContentType.PLAIN, session)
                                 )
@@ -255,23 +255,23 @@ public class NutsSettingsRepositorySubCommand extends AbstractNutsSettingsSubCom
                                                 .setName(repositoryName)
                                                 .setLocation(location)
                                                 .setType(repoType)));
-                session.getWorkspace().config().save();
+                session.config().save();
 
             } else if (cmdLine.next("remove repo", "rr") != null) {
                 String location = cmdLine.required().nextNonOption(commandLineFormat.createName("RepositoryName")).getString();
                 NutsRepository editedRepo = ws.repos().getRepository(repoId);
                 editedRepo.config().removeMirror(location);
-                session.getWorkspace().config().save();
+                session.config().save();
 
             } else if (cmdLine.next("enable", "br") != null) {
                 NutsRepository editedRepo = ws.repos().getRepository(repoId);
                 editedRepo.config().setEnabled(true);
-                session.getWorkspace().config().save();
+                session.config().save();
 
             } else if (cmdLine.next("disable", "dr") != null) {
                 NutsRepository editedRepo = ws.repos().getRepository(repoId);
                 editedRepo.config().setEnabled(true);
-                session.getWorkspace().config().save();
+                session.config().save();
             } else if (cmdLine.next("list repos", "lr") != null) {
                 NutsRepository editedRepo = ws.repos().getRepository(repoId);
                 NutsRepository[] linkRepositories = editedRepo.config()
@@ -351,7 +351,7 @@ public class NutsSettingsRepositorySubCommand extends AbstractNutsSettingsSubCom
         if (cmdLine.isExecMode()) {
             NutsRepository editedRepo = ws.repos().getRepository(repositoryName);
             editedRepo.config().setEnabled(enableRepo);
-            session.getWorkspace().config().save();
+            session.config().save();
         }
     }
 

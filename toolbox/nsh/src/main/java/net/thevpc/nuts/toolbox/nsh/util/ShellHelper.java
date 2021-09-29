@@ -20,7 +20,7 @@ public class ShellHelper {
     }
 
     public static NutsPath xfileOf(String expression, String cwd, NutsSession session) {
-        NutsIOManager io = session.getWorkspace().io();
+        NutsIOManager io = session.io();
         if (expression.startsWith("file:") || expression.contains("://")) {
             return io.path(expression);
         }
@@ -86,7 +86,7 @@ public class ShellHelper {
 
         @Override
         public InputStream monitorInputStream(InputStream stream, long length, NutsString message) {
-            return session.getWorkspace().io().monitor().setSource(stream).setLength(length).setName(message).setSession(session).create();
+            return session.io().monitor().setSource(stream).setLength(length).setName(message).create();
         }
     }
 

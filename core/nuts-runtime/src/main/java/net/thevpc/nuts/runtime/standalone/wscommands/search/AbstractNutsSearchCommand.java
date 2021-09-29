@@ -79,7 +79,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     public NutsSearchCommand addId(String id) {
         checkSession();
         if (!NutsBlankable.isBlank(id)) {
-            ids.add(getSession().getWorkspace().id().parser().setLenient(false).parse(id));
+            ids.add(getSession().id().parser().setLenient(false).parse(id));
         }
         return this;
     }
@@ -98,7 +98,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
         if (values != null) {
             for (String s : values) {
                 if (!NutsBlankable.isBlank(s)) {
-                    ids.add(getSession().getWorkspace().id().parser().setLenient(false).parse(s));
+                    ids.add(getSession().id().parser().setLenient(false).parse(s));
                 }
             }
         }
@@ -120,7 +120,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     @Override
     public NutsSearchCommand removeId(String id) {
         checkSession();
-        ids.remove(getSession().getWorkspace().id().parser().parse(id));
+        ids.remove(getSession().id().parser().parse(id));
         return this;
     }
 
@@ -252,7 +252,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
         if (values != null) {
             for (String s : values) {
                 if (!NutsBlankable.isBlank(s)) {
-                    lockedIds.add(getSession().getWorkspace().id().parser().setLenient(false).parse(s));
+                    lockedIds.add(getSession().id().parser().setLenient(false).parse(s));
                 }
             }
         }
@@ -362,7 +362,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     @Override
     public NutsSearchCommand removeLockedId(String id) {
         checkSession();
-        lockedIds.remove(getSession().getWorkspace().id().parser().parse(id));
+        lockedIds.remove(getSession().id().parser().parse(id));
         return this;
     }
 
@@ -370,7 +370,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     public NutsSearchCommand addLockedId(String id) {
         checkSession();
         if (!NutsBlankable.isBlank(id)) {
-            lockedIds.add(getSession().getWorkspace().id().parser().setLenient(false).parse(id));
+            lockedIds.add(getSession().id().parser().setLenient(false).parse(id));
         }
         return this;
     }
@@ -462,7 +462,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     @Override
     public NutsSearchCommand setDescriptorFilter(String filter) {
         checkSession();
-        this.descriptorFilter = getSession().getWorkspace().descriptor().filter().byExpression(filter);
+        this.descriptorFilter = getSession().descriptor().filter().byExpression(filter);
         return this;
     }
 
@@ -480,7 +480,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     @Override
     public NutsSearchCommand setIdFilter(String filter) {
         checkSession();
-        this.idFilter = getSession().getWorkspace().id().filter().byExpression(filter);
+        this.idFilter = getSession().id().filter().byExpression(filter);
         return this;
     }
 
@@ -926,7 +926,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
             case "--api-version": {
                 String val = cmdLine.nextBoolean().getValue().getString();
                 if (enabled) {
-                    this.setTargetApiVersion(getSession().getWorkspace().version().parse(val));
+                    this.setTargetApiVersion(getSession().version().parse(val));
                 }
                 return true;
             }
@@ -991,7 +991,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
                 NutsArgument b = cmdLine.nextBoolean();
                 if (enabled) {
                     checkSession();
-                    this.setInstallStatus(getSession().getWorkspace().filters().installStatus().byDeployed(b.getValue().getBoolean()));
+                    this.setInstallStatus(getSession().filters().installStatus().byDeployed(b.getValue().getBoolean()));
                 }
                 return true;
             }
@@ -1001,7 +1001,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
                 if (enabled) {
                     checkSession();
                     this.setInstallStatus(
-                            getSession().getWorkspace().filters().installStatus().byInstalled(b.getValue().getBoolean())
+                            getSession().filters().installStatus().byInstalled(b.getValue().getBoolean())
                     );
                 }
                 return true;
@@ -1010,7 +1010,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
                 NutsArgument b = cmdLine.nextBoolean();
                 if (enabled) {
                     checkSession();
-                    this.setInstallStatus(getSession().getWorkspace().filters().installStatus().byRequired(b.getValue().getBoolean()));
+                    this.setInstallStatus(getSession().filters().installStatus().byRequired(b.getValue().getBoolean()));
                 }
                 return true;
             }
@@ -1018,7 +1018,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
                 NutsArgument b = cmdLine.nextBoolean();
                 if (enabled) {
                     checkSession();
-                    this.setInstallStatus(getSession().getWorkspace().filters().installStatus().byObsolete(b.getValue().getBoolean()));
+                    this.setInstallStatus(getSession().filters().installStatus().byObsolete(b.getValue().getBoolean()));
                 }
                 return true;
             }
@@ -1026,7 +1026,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
                 NutsArgument aa = cmdLine.nextString();
                 if (enabled) {
                     checkSession();
-                    this.setInstallStatus(getSession().getWorkspace().filters().installStatus().parse(aa.getValue().getString()));
+                    this.setInstallStatus(getSession().filters().installStatus().parse(aa.getValue().getString()));
                 }
                 return true;
             }

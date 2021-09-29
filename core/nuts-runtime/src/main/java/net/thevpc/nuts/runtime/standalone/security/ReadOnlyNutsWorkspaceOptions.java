@@ -24,6 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.security;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.boot.NutsBootTerminal;
 import net.thevpc.nuts.runtime.core.model.CoreNutsWorkspaceOptions;
 
 import java.io.InputStream;
@@ -119,13 +120,13 @@ public class ReadOnlyNutsWorkspaceOptions implements NutsWorkspaceOptions {
     }
 
     @Override
-    public String getHomeLocation(NutsOsFamily layout, NutsStoreLocation location) {
-        return options.getHomeLocation(layout, location);
+    public String getHomeLocation(NutsHomeLocation homeLocation) {
+        return options.getHomeLocation(homeLocation);
     }
 
     @Override
-    public Map<String, String> getHomeLocations() {
-        Map<String, String> v = options.getHomeLocations();
+    public Map<NutsHomeLocation, String> getHomeLocations() {
+        Map<NutsHomeLocation, String> v = options.getHomeLocations();
         return v == null ? null : Collections.unmodifiableMap(v);
     }
 
@@ -195,7 +196,7 @@ public class ReadOnlyNutsWorkspaceOptions implements NutsWorkspaceOptions {
     }
 
     @Override
-    public Map<String, String> getStoreLocations() {
+    public Map<NutsStoreLocation, String> getStoreLocations() {
         return options.getStoreLocations();
     }
 
@@ -465,8 +466,8 @@ public class ReadOnlyNutsWorkspaceOptions implements NutsWorkspaceOptions {
     }
 
     @Override
-    public String[] getProperties() {
-        return options.getProperties();
+    public String[] getCustomOptions() {
+        return options.getCustomOptions();
     }
 
     @Override
@@ -482,5 +483,10 @@ public class ReadOnlyNutsWorkspaceOptions implements NutsWorkspaceOptions {
     @Override
     public NutsWorkspaceOptionsBuilder builder() {
         return new CoreNutsWorkspaceOptions(session).setAll(this);
+    }
+
+    @Override
+    public NutsBootTerminal getBootTerminal() {
+        return options.getBootTerminal();
     }
 }

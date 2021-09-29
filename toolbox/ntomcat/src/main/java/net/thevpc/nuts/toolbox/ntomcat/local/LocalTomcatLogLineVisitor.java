@@ -19,7 +19,7 @@ class LocalTomcatLogLineVisitor {
     }
 
     public void visit() {
-        session.getWorkspace().io().path(path).input().lines()
+        session.io().path(path).input().lines()
                 .forEach(this::nextLine);
     }
 

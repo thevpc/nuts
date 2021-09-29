@@ -69,9 +69,9 @@ public class AnsiEscapeCommandList extends AnsiEscapeCommand implements Iterable
     }
 
     @Override
-    public AnsiStyle apply(AnsiStyle old, RenderedRawStream out, NutsSession ws, AnsiStyleStyleApplierResolver applierResolver) {
+    public AnsiStyle apply(AnsiStyle old, RenderedRawStream out, NutsSession session, AnsiStyleStyleApplierResolver applierResolver) {
         for (AnsiEscapeCommand cmd : children) {
-            old = applierResolver.resolveStyleApplyer(cmd).apply(old, out, ws, applierResolver);
+            old = applierResolver.resolveStyleApplyer(cmd).apply(old, out, session, applierResolver);
         }
         return old;
     }

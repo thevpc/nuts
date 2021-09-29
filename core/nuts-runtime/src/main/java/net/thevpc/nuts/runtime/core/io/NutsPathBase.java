@@ -3,8 +3,16 @@ package net.thevpc.nuts.runtime.core.io;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.format.DefaultFormatBase;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UncheckedIOException;
 import java.net.URL;
 import java.nio.file.Path;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 public abstract class NutsPathBase implements NutsPath {
     private NutsSession session;
@@ -52,7 +60,7 @@ public abstract class NutsPathBase implements NutsPath {
 
     @Override
     public NutsString getFormattedName() {
-        return getSession().getWorkspace().text().forStyled(getName(),NutsTextStyle.path());
+        return getSession().text().forStyled(getName(),NutsTextStyle.path());
     }
 
     @Override
@@ -88,7 +96,7 @@ public abstract class NutsPathBase implements NutsPath {
 
 
     public NutsString toNutsString() {
-        return session.getWorkspace().text().forPlain(toString());
+        return session.text().forPlain(toString());
     }
 
     @Override
@@ -108,7 +116,7 @@ public abstract class NutsPathBase implements NutsPath {
 
         @Override
         public void print(NutsPrintStream out) {
-            out.print(p.session.getWorkspace().text().forStyled(p.toNutsString(), NutsTextStyle.path()));
+            out.print(p.session.text().forStyled(p.toNutsString(), NutsTextStyle.path()));
         }
 
         @Override
@@ -116,4 +124,68 @@ public abstract class NutsPathBase implements NutsPath {
             return false;
         }
     }
+
+    @Override
+    public Stream<String> lines() {
+        BufferedReader br = new BufferedReader(new InputStreamReader(input().open()));
+        Iterator<String> sourceIterator = new Iterator<String>() {
+            String line = null;
+
+            @Override
+            public boolean hasNext() {
+                boolean hasNext = false;
+                try {
+                    try {
+                        line = br.readLine();
+                    } catch (IOException e) {
+                        throw new UncheckedIOException(e);
+                    }
+                    hasNext = line != null;
+                    return hasNext;
+                } finally {
+                    if (!hasNext) {
+                        try {
+                            br.close();
+                        } catch (IOException e) {
+                            throw new UncheckedIOException(e);
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public String next() {
+                return line;
+            }
+        };
+        return StreamSupport.stream(
+                Spliterators.spliteratorUnknownSize(sourceIterator, Spliterator.ORDERED),
+                false);
+    }
+
+    @Override
+    public List<String> head(int count) {
+        return lines().limit(count).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<String> tail(int count) {
+        LinkedList<String> lines = new LinkedList<>();
+        BufferedReader br = new BufferedReader(new InputStreamReader(input().open()));
+        String line;
+        try {
+            int count0 = 0;
+            while ((line = br.readLine()) != null) {
+                lines.add(line);
+                count0++;
+                if (count0 > count) {
+                    lines.remove();
+                }
+            }
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+        return lines;
+    }
+
 }

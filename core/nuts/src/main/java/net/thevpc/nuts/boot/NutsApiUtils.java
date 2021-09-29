@@ -12,6 +12,7 @@ public class NutsApiUtils {
 
     private NutsApiUtils() {
     }
+
     public static boolean isBlank(CharSequence s) {
         return s == null || isBlank(s.toString().toCharArray());
     }
@@ -27,6 +28,7 @@ public class NutsApiUtils {
         }
         return true;
     }
+
     public static void checkSession(NutsSession session) {
         if (session == null) {
             throw new IllegalArgumentException("missing session");
@@ -53,8 +55,8 @@ public class NutsApiUtils {
         return PrivateNutsUtils.getSysBoolNutsProperty(property, defaultValue);
     }
 
-    public static String resolveNutsVersionFromClassPath() {
-        return PrivateNutsUtilMaven.resolveNutsApiVersionFromClassPath();
+    public static String resolveNutsVersionFromClassPath(PrivateNutsLog LOG) {
+        return PrivateNutsUtilMaven.resolveNutsApiVersionFromClassPath(LOG);
     }
 
     public static String resolveNutsIdDigest() {
@@ -76,25 +78,31 @@ public class NutsApiUtils {
 
 
     public static NutsWorkspaceOptionsBuilder createOptionsBuilder() {
-        return new PrivateBootWorkspaceOptions();
+        return new PrivateBootWorkspaceOptions(new PrivateNutsLog(null));
     }
 
-    public static NutsWorkspaceOptions createOptions() {
-        return new PrivateBootWorkspaceOptions();
-    }
+//    /**
+//     * creates a string key combining layout and location.
+//     * le key has the form of a concatenated layout and location ids separated by ':'
+//     * where null layout is replaced by 'system' keyword.
+//     * used in {@link NutsWorkspaceOptions#getHomeLocations()}.
+//     *
+//     * @param storeLocationLayout layout
+//     * @param location            location
+//     * @return combination of layout and location separated by ':'.
+//     */
+//    public static String createHomeLocationKey(NutsOsFamily storeLocationLayout, NutsStoreLocation location) {
+//        return (storeLocationLayout == null ? "system" : storeLocationLayout.id()) + ":" + (location == null ? "system" : location.id());
+//    }
 
-    /**
-     * creates a string key combining layout and location.
-     * le key has the form of a concatenated layout and location ids separated by ':'
-     * where null layout is replaced by 'system' keyword.
-     * used in {@link NutsWorkspaceOptions#getHomeLocations()}.
-     *
-     * @param storeLocationLayout layout
-     * @param location            location
-     * @return combination of layout and location separated by ':'.
-     */
-    public static String createHomeLocationKey(NutsOsFamily storeLocationLayout, NutsStoreLocation location) {
-        return (storeLocationLayout == null ? "system" : storeLocationLayout.id()) + ":" + (location == null ? "system" : location.id());
+    public static <T extends NutsEnum> void checkNonNullEnum(T objectValue, String stringValue, Class<T> enumType, NutsSession session) {
+        if (objectValue == null) {
+            if (!NutsBlankable.isBlank(stringValue)) {
+                if (session == null) {
+                    throw new NutsBootException(NutsMessage.cstyle("invalid value %s of type %s", stringValue, enumType.getName()));
+                }
+                throw new NutsParseEnumException(session, stringValue, NutsCommandLineFormatStrategy.class);
+            }
+        }
     }
-
 }

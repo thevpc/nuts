@@ -39,7 +39,7 @@ public interface NutsObjectElementBuilder extends NutsElementBuilder {
 
     static NutsObjectElementBuilder of(NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.getWorkspace().elem().forObject();
+        return session.elem().forObject();
     }
 
     /**

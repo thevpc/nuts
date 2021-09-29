@@ -99,7 +99,7 @@ public final class CoreServiceUtils {
         return names;
     }
 
-    public static List<Class> loadServiceClasses(Class service, ClassLoader classLoader, NutsSession ws) {
+    public static List<Class> loadServiceClasses(Class service, ClassLoader classLoader, NutsSession session) {
         String fullName = "META-INF/services/" + service.getName();
         Enumeration<URL> configs;
         LinkedHashSet<String> names = new LinkedHashSet<>();
@@ -121,10 +121,10 @@ public final class CoreServiceUtils {
             try {
                 c = Class.forName(n, false, classLoader);
             } catch (ClassNotFoundException x) {
-                throw new NutsException(ws, NutsMessage.cstyle("unable to load service class %s", n), x);
+                throw new NutsException(session, NutsMessage.cstyle("unable to load service class %s", n), x);
             }
             if (!service.isAssignableFrom(c)) {
-                throw new NutsException(ws,
+                throw new NutsException(session,
                         NutsMessage.cstyle("not a valid type %s <> %s", c, service));
             }
             classes.add(c);

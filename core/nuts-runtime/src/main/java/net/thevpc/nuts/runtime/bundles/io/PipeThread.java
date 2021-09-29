@@ -62,7 +62,7 @@ public class PipeThread extends Thread implements StopMonitor {
                 try {
                     lock.wait();
                 } catch (InterruptedException e) {
-                    session.getWorkspace().log().of(PipeThread.class).with()
+                    session.log().of(PipeThread.class).with()
                             .error(e)
                             .level(Level.FINEST)
                             .verb(NutsLogVerb.WARNING)
@@ -93,7 +93,7 @@ public class PipeThread extends Thread implements StopMonitor {
                 }
             }
         } catch (IOException e) {
-            session.getWorkspace().log().of(PipeThread.class).with()
+            session.log().of(PipeThread.class).with()
                     .error(e)
                     .level(Level.FINEST)
                     .verb(NutsLogVerb.WARNING)

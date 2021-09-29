@@ -7,8 +7,8 @@ import net.thevpc.nuts.runtime.core.util.Simplifiable;
 
 public class NutsVersionFilterFalse extends AbstractVersionFilter implements NutsVersionFilter, Simplifiable<NutsVersionFilter>, NutsScriptAwareIdFilter {
 
-    public NutsVersionFilterFalse(NutsSession ws) {
-        super(ws, NutsFilterOp.FALSE);
+    public NutsVersionFilterFalse(NutsSession session) {
+        super(session, NutsFilterOp.FALSE);
     }
 
     @Override

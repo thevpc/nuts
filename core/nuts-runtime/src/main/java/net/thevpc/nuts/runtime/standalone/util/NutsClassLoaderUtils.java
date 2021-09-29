@@ -26,10 +26,7 @@ package net.thevpc.nuts.runtime.standalone.util;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.List;
+import java.util.*;
 
 import net.thevpc.nuts.*;
 
@@ -53,19 +50,31 @@ public final class NutsClassLoaderUtils {
                 def.getContent().getURL(),
                 true,
                 def.getDependencies().nodes().stream().map(x -> toClassLoaderNode(x, session))
+                        .filter(Objects::nonNull)
                         .toArray(NutsClassLoaderNode[]::new)
         );
     }
 
     private static NutsClassLoaderNode toClassLoaderNode(NutsDependencyTreeNode d, NutsSession session) {
-        NutsContent cc = session.getWorkspace().fetch().setId(d.getDependency().toId())
-                .setSession(session)
-                .getResultContent();
+        NutsContent cc=null;
+        try {
+            cc = session.fetch().setId(d.getDependency().toId())
+                    .setSession(session)
+                    .getResultContent();
+        }catch (NutsNotFoundException ex){
+            //
+        }
         if (cc == null) {
+            if(d.getDependency().isOptional()){
+                return null;
+            }
             throw new NutsNotFoundException(session, d.getDependency().toId());
         }
         URL url = cc.getURL();
         if (url == null) {
+            if(d.getDependency().isOptional()){
+                return null;
+            }
             throw new NutsNotFoundException(session, d.getDependency().toId());
         }
         return new NutsClassLoaderNode(

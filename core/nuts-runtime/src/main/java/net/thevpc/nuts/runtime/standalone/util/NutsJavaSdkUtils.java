@@ -31,8 +31,8 @@ public class NutsJavaSdkUtils {
         this.ws = ws;
     }
 
-    public static NutsJavaSdkUtils of(NutsSession ws) {
-        return of(ws.getWorkspace());
+    public static NutsJavaSdkUtils of(NutsSession session) {
+        return of(session.getWorkspace());
     }
 
     public static NutsJavaSdkUtils of(NutsWorkspace ws) {
@@ -51,26 +51,26 @@ public class NutsJavaSdkUtils {
 
     protected NutsLogger _LOG(NutsSession session) {
         if (LOG == null) {
-            LOG = session.getWorkspace().log().of(NutsJavaSdkUtils.class);
+            LOG = session.log().of(NutsJavaSdkUtils.class);
         }
         return LOG;
     }
 
     public NutsPlatformLocation resolveJdkLocation(String requestedJavaVersion, NutsSession session) {
         requestedJavaVersion = NutsUtilStrings.trim(requestedJavaVersion);
-        NutsPlatformLocation bestJava = session.getWorkspace().env().platforms().setSession(session)
+        NutsPlatformLocation bestJava = session.env().platforms()
                 .findPlatformByVersion(NutsPlatformType.JAVA,
-                session.getWorkspace().version().filter().byValue(requestedJavaVersion)
+                session.version().filter().byValue(requestedJavaVersion)
         );
         if (bestJava == null) {
-            String appSuffix = session.getWorkspace().env().getOsFamily() == NutsOsFamily.WINDOWS ? ".exe" : "";
+            String appSuffix = session.env().getOsFamily() == NutsOsFamily.WINDOWS ? ".exe" : "";
             String packaging = "jre";
             if (new File(System.getProperty("java.home"), "bin" + File.separator + "javac" + (appSuffix)).isFile()) {
                 packaging = "jdk";
             }
             String product = "JDK";
             NutsPlatformLocation current = new NutsPlatformLocation(
-                    session.getWorkspace().env().getPlatform(),
+                    session.env().getPlatform(),
                     product,
                     product + "-" + System.getProperty("java.version"),
                     System.getProperty("java.home"),
@@ -79,8 +79,8 @@ public class NutsJavaSdkUtils {
                     0
             );
             current.setConfigVersion(DefaultNutsWorkspace.VERSION_SDK_LOCATION);
-            NutsVersionFilter requestedJavaVersionFilter = session.getWorkspace().version().parser().parse(requestedJavaVersion).filter();
-            if (requestedJavaVersionFilter == null || requestedJavaVersionFilter.acceptVersion(session.getWorkspace().version().parser().parse(current.getVersion()), session)) {
+            NutsVersionFilter requestedJavaVersionFilter = session.version().parser().parse(requestedJavaVersion).filter();
+            if (requestedJavaVersionFilter == null || requestedJavaVersionFilter.acceptVersion(session.version().parser().parse(current.getVersion()), session)) {
                 bestJava = current;
             }
             if (bestJava == null) {
@@ -97,7 +97,7 @@ public class NutsJavaSdkUtils {
 
     public NutsPlatformLocation[] searchJdkLocations(NutsSession session) {
         String[] conf = {};
-        switch (session.getWorkspace().env().getOsFamily()) {
+        switch (session.env().getOsFamily()) {
             case LINUX:
             case UNIX:
             case UNKNOWN: {
@@ -137,7 +137,7 @@ public class NutsJavaSdkUtils {
         if (base != null) {
             all.add(CompletableFuture.completedFuture(new NutsPlatformLocation[]{base}));
         }
-        switch (session.getWorkspace().env().getOsFamily()) {
+        switch (session.env().getOsFamily()) {
             case LINUX:
             case UNIX:
             case UNKNOWN: {
@@ -159,7 +159,7 @@ public class NutsJavaSdkUtils {
         for (String s : conf) {
             all.add(searchJdkLocationsFuture(Paths.get(s), session));
         }
-        return session.getWorkspace().concurrent().executorService().submit(new Callable<NutsPlatformLocation[]>() {
+        return session.concurrent().executorService().submit(new Callable<NutsPlatformLocation[]>() {
             @Override
             public NutsPlatformLocation[] call() throws Exception {
                 List<NutsPlatformLocation> locs = new ArrayList<>();
@@ -185,7 +185,7 @@ public class NutsJavaSdkUtils {
                     if (r != null) {
                         all.add(r);
                         if (session != null && session.isPlainTrace()) {
-                            NutsTextManager factory = session.getWorkspace().text();
+                            NutsTextManager factory = session.text();
                             session.out().printf("detected java %s %s at %s%n", r.getPackaging(),
                                     factory.forStyled(r.getVersion(), NutsTextStyle.version()),
                                     factory.forStyled(r.getPath(), NutsTextStyle.path())
@@ -207,7 +207,7 @@ public class NutsJavaSdkUtils {
             try (final DirectoryStream<Path> it = Files.newDirectoryStream(s)) {
                 for (Path d : it) {
                     all.add(
-                            session.getWorkspace().concurrent().executorService().submit(new Callable<NutsPlatformLocation>() {
+                            session.concurrent().executorService().submit(new Callable<NutsPlatformLocation>() {
                                 @Override
                                 public NutsPlatformLocation call() throws Exception {
                                     NutsPlatformLocation r = null;
@@ -216,7 +216,7 @@ public class NutsJavaSdkUtils {
                                         if (r != null) {
                                             if (session.isPlainTrace()) {
                                                 synchronized (session.getWorkspace()) {
-                                                    NutsTextManager factory = session.getWorkspace().text();
+                                                    NutsTextManager factory = session.text();
                                                     session.out().printf("detected java %s %s at %s%n", r.getPackaging(),
                                                             factory.forStyled(r.getVersion(), NutsTextStyle.version()),
                                                             factory.forStyled(r.getPath(), NutsTextStyle.path())
@@ -236,7 +236,7 @@ public class NutsJavaSdkUtils {
                 throw new UncheckedIOException(ex);
             }
         }
-        return session.getWorkspace().concurrent().executorService().submit(new Callable<NutsPlatformLocation[]>() {
+        return session.concurrent().executorService().submit(new Callable<NutsPlatformLocation[]>() {
             @Override
             public NutsPlatformLocation[] call() throws Exception {
                 List<NutsPlatformLocation> locs = new ArrayList<>();
@@ -256,7 +256,7 @@ public class NutsJavaSdkUtils {
         if (path == null) {
             throw new NutsException(session, NutsMessage.formatted("missing path"));
         }
-        String appSuffix = session.getWorkspace().env().getOsFamily() == NutsOsFamily.WINDOWS ? ".exe" : "";
+        String appSuffix = session.env().getOsFamily() == NutsOsFamily.WINDOWS ? ".exe" : "";
         Path bin = Paths.get(path).resolve("bin");
         Path javaExePath = bin.resolve("java" + appSuffix);
         if (!Files.isRegularFile(javaExePath)) {
@@ -271,7 +271,7 @@ public class NutsJavaSdkUtils {
             //I do not know why but sometimes, the process exists before receiving stdout result!!
             final int MAX_ITER = 5;
             for (int i = 0; i < MAX_ITER; i++) {
-                NutsExecCommand cmd = session.getWorkspace().exec()
+                NutsExecCommand cmd = session.exec()
                         .setSession(session)
                         .setExecutionType(NutsExecutionType.SYSTEM)
                         .addCommand(javaExePath.toString(), "-version")
@@ -346,7 +346,7 @@ public class NutsJavaSdkUtils {
         if (NutsBlankable.isBlank(version)) {
             throw new NutsException(session, NutsMessage.formatted("missing version"));
         }
-        NutsVersion jv = session.getWorkspace().version().parser().parse(version);
+        NutsVersion jv = session.version().parser().parse(version);
         long n1 = jv.getNumber(0, BigInteger.ZERO).longValue();
         long n2 = jv.getNumber(1, BigInteger.ZERO).longValue();
         long classFileId = 0;
@@ -357,7 +357,7 @@ public class NutsJavaSdkUtils {
         if (classFileId == 0) {
             classFileId = 52;
         }
-        return session.getWorkspace().id().builder().setArtifactId("java")
+        return session.id().builder().setArtifactId("java")
                 .setProperty("s", standard)
                 .setProperty("c", String.valueOf(classFileId))
                 .setVersion(version)
@@ -367,9 +367,9 @@ public class NutsJavaSdkUtils {
     public String resolveJavaCommandByVersion(String requestedJavaVersion, boolean javaw, NutsSession session) {
         String bestJavaPath = resolveJdkLocation(requestedJavaVersion, session).getPath();
         if (bestJavaPath.contains("/") || bestJavaPath.contains("\\") || bestJavaPath.equals(".") || bestJavaPath.equals("..")) {
-            Path file = Paths.get(session.getWorkspace().locations().getWorkspaceLocation()).resolve(bestJavaPath);
+            Path file = Paths.get(session.locations().getWorkspaceLocation()).resolve(bestJavaPath);
             if (Files.isDirectory(file) && Files.isDirectory(file.resolve("bin"))) {
-                boolean winOs = session.getWorkspace().env().getOsFamily() == NutsOsFamily.WINDOWS;
+                boolean winOs = session.env().getOsFamily() == NutsOsFamily.WINDOWS;
                 if (winOs) {
                     if (javaw) {
                         bestJavaPath = file.resolve("bin" + File.separatorChar + "javaw.exe").toString();
@@ -385,7 +385,7 @@ public class NutsJavaSdkUtils {
     }
 
     public String resolveJavaCommandByHome(String javaHome, NutsSession session) {
-        String appSuffix = session.getWorkspace().env().getOsFamily() == NutsOsFamily.WINDOWS ? ".exe" : "";
+        String appSuffix = session.env().getOsFamily() == NutsOsFamily.WINDOWS ? ".exe" : "";
         String exe = "java" + appSuffix;
         if (javaHome == null || javaHome.isEmpty()) {
             javaHome = System.getProperty("java.home");

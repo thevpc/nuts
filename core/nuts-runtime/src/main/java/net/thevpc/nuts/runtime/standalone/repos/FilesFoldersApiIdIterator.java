@@ -113,7 +113,7 @@ class FilesFoldersApiIdIterator implements Iterator<NutsId> {
                 try {
                     t = model.parseId(file.path, rootUrl, filter, repository, session);
                 } catch (Exception ex) {
-                    session.getWorkspace().log().of(FilesFoldersApi.class).with().session(session).level(Level.FINE).error(ex).log("error parsing url : {0} : {1}", file.path, toString());//e.printStackTrace();
+                    session.log().of(FilesFoldersApi.class).with().session(session).level(Level.FINE).error(ex).log("error parsing url : {0} : {1}", file.path, toString());//e.printStackTrace();
                 }
                 if (t != null) {
                     last = t;

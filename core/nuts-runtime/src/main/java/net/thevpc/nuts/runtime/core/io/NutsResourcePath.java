@@ -46,7 +46,7 @@ public class NutsResourcePath implements NutsPathSPI {
         } else {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid path %s", path));
         }
-        NutsIdParser nutsIdParser = session.getWorkspace().id().parser().setLenient(false);
+        NutsIdParser nutsIdParser = session.id().parser().setLenient(false);
         this.ids = Arrays.stream(idsStr.split(";")).map(x -> {
             x = x.trim();
             if (x.length() > 0) {
@@ -82,7 +82,7 @@ public class NutsResourcePath implements NutsPathSPI {
                                 this.ids.toArray(new NutsId[0])
                         ).setLatest(true).setContent(true).setDependencies(true)
                         .setDependencyFilter(
-                                getSession().getWorkspace().filters().dependency()
+                                getSession().filters().dependency()
                                         .byScope(NutsDependencyScopePattern.RUN)
                         )
                         .setOptional(false).getResultClassLoader();
@@ -92,7 +92,7 @@ public class NutsResourcePath implements NutsPathSPI {
                 }
                 URL resource = resultClassLoader.getResource(loc);
                 if (resource != null) {
-                    urlPath = getSession().getWorkspace().io().path(resource);
+                    urlPath = getSession().io().path(resource);
                 }
             } catch (Exception e) {
                 //e.printStackTrace();
@@ -218,7 +218,7 @@ public class NutsResourcePath implements NutsPathSPI {
         if (up == null) {
             throw new NutsIOException(getSession(), NutsMessage.cstyle("unable to resolve output stream %s", toString()));
         }
-        return up.output().open();
+        return up.outputStream();
     }
 
     @Override
@@ -280,7 +280,7 @@ public class NutsResourcePath implements NutsPathSPI {
 
         public NutsString asFormattedString() {
             String path = p.path;
-            NutsTextManager text = p.getSession().getWorkspace().text();
+            NutsTextManager text = p.getSession().text();
             NutsTextBuilder tb = text.builder();
             tb.append("nuts-resource://", NutsTextStyle.primary1());
             if (path.startsWith("nuts-resource://(")) {

@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
  */
 public class Test14_Commandline {
 
-    private static String baseFolder;
 
     @Test
     public void test1() throws Exception {
@@ -29,7 +28,7 @@ public class Test14_Commandline {
         extraProperties.put("nuts.export.always-show-command", "true");
         TestUtils.setSystemProperties(extraProperties);
 
-        NutsWorkspace ws = TestUtils.openTestWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
+        NutsWorkspace ws = TestUtils.openNewTestWorkspace(
                 "--archetype", "default",
                 "--log-info",
                 "--skip-companions",
@@ -37,7 +36,7 @@ public class Test14_Commandline {
         ).getWorkspace();
         NutsSession session = ws.createSession();
 
-        NutsArgument[] cmd = session.getWorkspace().commandLine().parse("-ad+ +ad--").toArgumentArray();
+        NutsArgument[] cmd = session.commandLine().parse("-ad+ +ad--").toArgumentArray();
         Set<String> set = Arrays.stream(cmd).map(x -> x.toString()).collect(Collectors.toSet());
         Set<String> expectedSet = new HashSet<>(Arrays.asList(
                 "-a", "-d+", "+a","+d--"
@@ -48,8 +47,6 @@ public class Test14_Commandline {
 
     @BeforeAll
     public static void setUpClass() throws IOException {
-        baseFolder = new File("./runtime/test/" + TestUtils.getCallerClassSimpleName()).getCanonicalFile().getPath();
-        CoreIOUtils.delete(null,new File(baseFolder));
         TestUtils.println("####### RUNNING TEST @ "+ TestUtils.getCallerClassSimpleName());
     }
 

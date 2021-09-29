@@ -31,14 +31,16 @@ import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsTextAnchor;
 import net.thevpc.nuts.NutsTextType;
 
+import java.util.Objects;
+
 /**
  * Created by vpc on 5/23/17.
  */
 public class DefaultNutsTextAnchor extends NutsTextSpecialBase implements NutsTextAnchor {
     private String value;
 
-    public DefaultNutsTextAnchor(NutsSession ws, String start, String separator, String end, String value) {
-        super(ws,start, "anchor", separator, end);
+    public DefaultNutsTextAnchor(NutsSession session, String start, String separator, String end, String value) {
+        super(session,start, "anchor", separator, end);
         this.value = value;
     }
 
@@ -55,4 +57,17 @@ public class DefaultNutsTextAnchor extends NutsTextSpecialBase implements NutsTe
         return false;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        DefaultNutsTextAnchor that = (DefaultNutsTextAnchor) o;
+        return Objects.equals(value, that.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), value);
+    }
 }

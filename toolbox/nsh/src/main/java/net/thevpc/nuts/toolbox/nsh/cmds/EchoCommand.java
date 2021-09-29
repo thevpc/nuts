@@ -86,7 +86,7 @@ public class EchoCommand extends SimpleNshBuiltin {
         Options options = context.getOptions();
         Object ns=options.plain?
                 options.message.toString()
-                :context.getSession().getWorkspace().text().parse(options.message.toString());
+                :context.getSession().text().parse(options.message.toString());
         if (options.newLine) {
             context.setPrintlnOutObject(ns);
         } else {

@@ -86,7 +86,7 @@ public class DefaultNutsSystemTerminalBaseBoot implements NutsSystemTerminalBase
 //            getProgressBar().printProgress(
 //                    Float.isNaN(progress)?-1:
 //                            (int)(progress*100),
-//                    session.getWorkspace().text().toText(NutsMessage.cstyle(prompt,params)).toString(),
+//                    session.text().toText(NutsMessage.cstyle(prompt,params)).toString(),
 //                    getErr()
 //            );
 //        }
@@ -99,7 +99,7 @@ public class DefaultNutsSystemTerminalBaseBoot implements NutsSystemTerminalBase
 //            getParent().printProgress(prompt, params);
 //        }else{
 //            getProgressBar().printProgress(-1,
-//                    session.getWorkspace().text().toText(NutsMessage.cstyle(prompt,params)).toString(),
+//                    session.text().toText(NutsMessage.cstyle(prompt,params)).toString(),
 //                    getErr()
 //            );
 //        }

@@ -7,8 +7,8 @@ public class BootAPINutsDescriptorFilter extends AbstractDescriptorFilter {
 
     private final NutsVersion bootApiVersion;
 
-    public BootAPINutsDescriptorFilter(NutsSession ws, NutsVersion bootApiVersion) {
-        super(ws, NutsFilterOp.CUSTOM);
+    public BootAPINutsDescriptorFilter(NutsSession session, NutsVersion bootApiVersion) {
+        super(session, NutsFilterOp.CUSTOM);
         this.bootApiVersion = bootApiVersion;
     }
 

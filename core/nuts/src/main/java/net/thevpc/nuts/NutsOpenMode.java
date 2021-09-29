@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
 /**
  * @author thevpc
  * @app.category Config
@@ -99,11 +101,7 @@ public enum NutsOpenMode implements NutsEnum {
 
     public static NutsOpenMode parse(String value, NutsOpenMode emptyValue, NutsSession session) {
         NutsOpenMode v = parseLenient(value, emptyValue, null);
-        if (v == null) {
-            if (!NutsBlankable.isBlank(value)) {
-                throw new NutsParseEnumException(session, value, NutsOpenMode.class);
-            }
-        }
+        NutsApiUtils.checkNonNullEnum(v,value,NutsOpenMode.class,session);
         return v;
     }
 

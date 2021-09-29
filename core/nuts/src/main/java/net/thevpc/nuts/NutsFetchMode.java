@@ -25,6 +25,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
 /**
  * fetch mode defines if the artifact should be looked for withing the "installed" meta repository, "local" (offline)
  * machine repositories or over the wire (remote repositories).
@@ -101,11 +103,7 @@ public enum NutsFetchMode implements NutsEnum {
 
     public static NutsFetchMode parse(String value, NutsFetchMode emptyValue, NutsSession session) {
         NutsFetchMode v = parseLenient(value, emptyValue, null);
-        if (v == null) {
-            if (!NutsBlankable.isBlank(value)) {
-                throw new NutsParseEnumException(session, value, NutsFetchMode.class);
-            }
-        }
+        NutsApiUtils.checkNonNullEnum(v,value,NutsFetchMode.class,session);
         return v;
     }
 

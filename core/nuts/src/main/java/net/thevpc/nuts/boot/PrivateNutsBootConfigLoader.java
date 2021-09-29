@@ -116,8 +116,8 @@ final class PrivateNutsBootConfigLoader {
         config.setWorkspaceLocation((String) jsonObject.get("workspace"));
         config.setJavaCommand((String) jsonObject.get("javaCommand"));
         config.setJavaOptions((String) jsonObject.get("javaOptions"));
-        config.setHomeLocations((Map<String, String>) jsonObject.get("homeLocations"));
-        config.setStoreLocations((Map<String, String>) jsonObject.get("storeLocations"));
+        config.setHomeLocations(asNutsHomeLocationMap((Map) jsonObject.get("homeLocations")));
+        config.setStoreLocations(asNutsStoreLocationMap((Map) jsonObject.get("storeLocations")));
         config.setStoreLocationStrategy(NutsStoreLocationStrategy.parseLenient((String) jsonObject.get("storeLocationStrategy"), null, null));
         config.setStoreLocationLayout(NutsOsFamily.parseLenient((String) jsonObject.get("storeLocationLayout"), null, null));
         config.setRepositoryStoreLocationStrategy(NutsStoreLocationStrategy.parseLenient((String) jsonObject.get("repositoryStoreLocationStrategy"), null, null));
@@ -139,6 +139,46 @@ final class PrivateNutsBootConfigLoader {
         }
     }
 
+    private static Map<NutsHomeLocation, String> asNutsHomeLocationMap(Map m) {
+        Map<NutsHomeLocation, String> a = new LinkedHashMap<>();
+        if(m!=null) {
+            for (Map.Entry<Object, String> e : ((Map<Object, String>) m).entrySet()) {
+                Object k = e.getKey();
+                NutsHomeLocation kk;
+                if (k instanceof NutsHomeLocation) {
+                    kk = (NutsHomeLocation) k;
+                } else if (k == null) {
+                    kk = NutsHomeLocation.of(null, null);
+                } else {
+                    kk = NutsHomeLocation.parse((String) k, NutsHomeLocation.of(null, null), null);
+                }
+                a.put(kk, e.getValue());
+            }
+        }
+        return a;
+    }
+
+    private static Map<NutsStoreLocation, String> asNutsStoreLocationMap(Map m) {
+        Map<NutsStoreLocation, String> a = new LinkedHashMap<>();
+        if (m != null) {
+            for (Map.Entry<Object, String> e : ((Map<Object, String>) m).entrySet()) {
+                Object k = e.getKey();
+                NutsStoreLocation kk;
+                if (k instanceof NutsStoreLocation) {
+                    kk = (NutsStoreLocation) k;
+                } else if (k == null) {
+                    kk = null;
+                } else {
+                    kk = NutsStoreLocation.parse((String) k, null, null);
+                }
+                if (kk != null) {
+                    a.put(kk, e.getValue());
+                }
+            }
+        }
+        return a;
+    }
+
 
     /**
      * best effort to load config object from jsonObject saved with nuts version
@@ -157,8 +197,8 @@ final class PrivateNutsBootConfigLoader {
         config.setRuntimeId(runtimeId == null ? null : NutsBootId.parse(runtimeId));
         config.setJavaCommand((String) jsonObject.get("javaCommand"));
         config.setJavaOptions((String) jsonObject.get("javaOptions"));
-        config.setStoreLocations((Map<String, String>) jsonObject.get("storeLocations"));
-        config.setHomeLocations((Map<String, String>) jsonObject.get("homeLocations"));
+        config.setStoreLocations(asNutsStoreLocationMap((Map) jsonObject.get("storeLocations")));
+        config.setHomeLocations(asNutsHomeLocationMap((Map) jsonObject.get("homeLocations")));
         String s = (String) jsonObject.get("storeLocationStrategy");
         if (s != null && s.length() > 0) {
             config.setStoreLocationStrategy(NutsStoreLocationStrategy.valueOf(s.toUpperCase()));
@@ -190,8 +230,8 @@ final class PrivateNutsBootConfigLoader {
         config.setRuntimeId(runtimeId == null ? null : NutsBootId.parse(runtimeId));
         config.setJavaCommand((String) jsonObject.get("bootJavaCommand"));
         config.setJavaOptions((String) jsonObject.get("bootJavaOptions"));
-        Map<String, String> storeLocations = new LinkedHashMap<>();
-        Map<String, String> homeLocations = new LinkedHashMap<>();
+        Map<NutsStoreLocation, String> storeLocations = new LinkedHashMap<>();
+        Map<NutsHomeLocation, String> homeLocations = new LinkedHashMap<>();
         for (NutsStoreLocation folder : NutsStoreLocation.values()) {
             String folderName502 = folder.name();
             if (folder == NutsStoreLocation.APPS) {
@@ -199,11 +239,11 @@ final class PrivateNutsBootConfigLoader {
             }
             String k = folderName502.toLowerCase() + "StoreLocation";
             String v = (String) jsonObject.get(k);
-            storeLocations.put(folder.id(), v);
+            storeLocations.put(folder, v);
 
             k = folderName502.toLowerCase() + "SystemHome";
             v = (String) jsonObject.get(k);
-            homeLocations.put(NutsApiUtils.createHomeLocationKey(null, folder), v);
+            homeLocations.put(NutsHomeLocation.of(null, folder), v);
             for (NutsOsFamily osFamily : NutsOsFamily.values()) {
                 switch (osFamily) {
                     case LINUX: {
@@ -231,7 +271,7 @@ final class PrivateNutsBootConfigLoader {
                     }
                 }
                 v = (String) jsonObject.get(k);
-                homeLocations.put(NutsApiUtils.createHomeLocationKey(osFamily, folder), v);
+                homeLocations.put(NutsHomeLocation.of(osFamily, folder), v);
             }
         }
         config.setHomeLocations(homeLocations);

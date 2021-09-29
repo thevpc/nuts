@@ -177,7 +177,7 @@ public class DefaultNutsWorkspaceEnvManager implements NutsWorkspaceEnvManager {
             }
         }
         if (optionName != null) {
-            String o = session.getWorkspace().boot().getCustomBootOption(optionName).getString();
+            String o = session.boot().getCustomBootOption(optionName).getString();
             if (!NutsBlankable.isBlank(o)) {
                 NutsSupportMode q = NutsSupportMode.parseLenient(o, null, null);
                 if (q != null) {
@@ -303,7 +303,7 @@ public class DefaultNutsWorkspaceEnvManager implements NutsWorkspaceEnvManager {
     }
 
     private DefaultNutsWorkspaceConfigModel _configModel() {
-        DefaultNutsWorkspaceConfigManager config = (DefaultNutsWorkspaceConfigManager) session.getWorkspace().config();
+        DefaultNutsWorkspaceConfigManager config = (DefaultNutsWorkspaceConfigManager) session.config();
         return config.getModel();
     }
 

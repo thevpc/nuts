@@ -12,8 +12,8 @@ public class NutsDescriptorFilterNone extends AbstractDescriptorFilter implement
 
     private NutsDescriptorFilter[] all;
 
-    public NutsDescriptorFilterNone(NutsSession ws, NutsDescriptorFilter... all) {
-        super(ws, NutsFilterOp.NOT);
+    public NutsDescriptorFilterNone(NutsSession session, NutsDescriptorFilter... all) {
+        super(session, NutsFilterOp.NOT);
         List<NutsDescriptorFilter> valid = new ArrayList<>();
         if (all != null) {
             for (NutsDescriptorFilter filter : all) {

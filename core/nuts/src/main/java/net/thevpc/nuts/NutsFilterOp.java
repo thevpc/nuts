@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
 /**
  * Filter Type
  * @since 0.8.0
@@ -74,11 +76,7 @@ public enum NutsFilterOp implements NutsEnum {
 
     public static NutsFilterOp parse(String value, NutsFilterOp emptyValue, NutsSession session) {
         NutsFilterOp v = parseLenient(value, emptyValue, null);
-        if (v == null) {
-            if (!NutsBlankable.isBlank(value)) {
-                throw new NutsParseEnumException(session, value, NutsFilterOp.class);
-            }
-        }
+        NutsApiUtils.checkNonNullEnum(v,value,NutsFilterOp.class,session);
         return v;
     }
 

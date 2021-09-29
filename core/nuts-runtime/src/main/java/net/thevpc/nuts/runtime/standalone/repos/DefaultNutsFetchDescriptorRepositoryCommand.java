@@ -53,7 +53,7 @@ public class DefaultNutsFetchDescriptorRepositoryCommand extends AbstractNutsFet
 
     protected NutsLogger _LOG(NutsSession session) {
         if (LOG == null) {
-            LOG = session.getWorkspace().log().of(DefaultNutsFetchDescriptorRepositoryCommand.class);
+            LOG = session.log().of(DefaultNutsFetchDescriptorRepositoryCommand.class);
         }
         return LOG;
     }

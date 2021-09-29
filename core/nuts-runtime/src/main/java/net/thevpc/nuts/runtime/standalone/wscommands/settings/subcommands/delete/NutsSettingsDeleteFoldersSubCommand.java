@@ -57,9 +57,9 @@ public class NutsSettingsDeleteFoldersSubCommand extends AbstractNutsSettingsSub
     }
 
     private void deleteWorkspaceFolder(NutsSession session, NutsStoreLocation folder, boolean force) {
-        String sstoreLocation = session.getWorkspace().locations().getStoreLocation(folder);
+        String sstoreLocation = session.locations().getStoreLocation(folder);
         if (sstoreLocation != null) {
-            NutsTextManager factory = session.getWorkspace().text();
+            NutsTextManager factory = session.text();
             Path storeLocation = Paths.get(sstoreLocation);
             if (Files.exists(storeLocation)) {
                 session.out().printf("```error deleting``` %s for workspace %s folder %s ...%n",
@@ -79,16 +79,16 @@ public class NutsSettingsDeleteFoldersSubCommand extends AbstractNutsSettingsSub
                 }
             }
         }
-        for (NutsRepository repository : session.getWorkspace().repos().getRepositories()) {
+        for (NutsRepository repository : session.repos().getRepositories()) {
             deleteRepoFolder(repository, session, folder, force);
         }
     }
 
     private void deleteRepoFolder(NutsRepository repository, NutsSession session, NutsStoreLocation folder, boolean force) {
-        String sstoreLocation = session.getWorkspace().locations().getStoreLocation(folder);
+        String sstoreLocation = session.locations().getStoreLocation(folder);
         if (sstoreLocation != null) {
             Path storeLocation=Paths.get(sstoreLocation);
-            NutsTextManager factory = session.getWorkspace().text();
+            NutsTextManager factory = session.text();
             if (Files.exists(storeLocation)) {
                 session.out().printf("```error deleting``` %s for repository %s folder %s ...%n",
                         factory.forStyled(folder.id(),NutsTextStyle.primary1()),
@@ -115,7 +115,7 @@ public class NutsSettingsDeleteFoldersSubCommand extends AbstractNutsSettingsSub
     }
 
     private void deleteCache(NutsSession session, boolean force) {
-        String sstoreLocation = session.getWorkspace().locations().getStoreLocation(NutsStoreLocation.CACHE);
+        String sstoreLocation = session.locations().getStoreLocation(NutsStoreLocation.CACHE);
         if (sstoreLocation != null) {
             Path storeLocation = Paths.get(sstoreLocation);
 //            File cache = new File(storeLocation);
@@ -126,7 +126,7 @@ public class NutsSettingsDeleteFoldersSubCommand extends AbstractNutsSettingsSub
                     throw new UncheckedIOException(ex);
                 }
             }
-            for (NutsRepository repository : session.getWorkspace().repos().getRepositories()) {
+            for (NutsRepository repository : session.repos().getRepositories()) {
                 deleteRepoCache(repository, session, force);
             }
         }
@@ -137,7 +137,7 @@ public class NutsSettingsDeleteFoldersSubCommand extends AbstractNutsSettingsSub
         if (s != null) {
             if (Files.exists(s)) {
                 session.out().printf("```error deleting``` %s folder %s ...%n",
-                        session.getWorkspace().text().forStyled("cache",NutsTextStyle.primary1())
+                        session.text().forStyled("cache",NutsTextStyle.primary1())
                         ,s);
                 if (force
                         || session.getTerminal().ask()

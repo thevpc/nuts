@@ -5,15 +5,11 @@
  */
 package net.thevpc.nuts.runtime.standalone.ext;
 
-import net.thevpc.nuts.NutsId;
-import net.thevpc.nuts.NutsServiceLoader;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsWorkspaceExtensionManager;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsComponent;
 
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author thevpc
@@ -30,6 +26,17 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
     public DefaultNutsWorkspaceExtensionModel getModel() {
         return model;
     }
+
+    @Override
+    public Set<NutsId> getCompanionIds() {
+        NutsWorkspaceUtils.checkSession(model.getWorkspace(),getSession());
+        NutsIdParser parser = session.id().parser();
+        return Collections.unmodifiableSet(new HashSet<>(
+                        Arrays.asList(parser.parse("net.thevpc.nuts.toolbox:nsh"))
+                )
+        );
+    }
+
 
     @Override
     public boolean installWorkspaceExtensionComponent(Class extensionPointType, Object extensionImpl) {

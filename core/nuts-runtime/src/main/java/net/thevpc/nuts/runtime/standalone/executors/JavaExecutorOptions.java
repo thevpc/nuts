@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.executors;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.bundles.common.CorePlatformUtils;
 import net.thevpc.nuts.runtime.bundles.parsers.StringTokenizerUtils;
 import net.thevpc.nuts.runtime.core.util.*;
 import net.thevpc.nuts.runtime.standalone.util.NutsClassLoaderUtils;
@@ -13,6 +14,7 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -204,9 +206,9 @@ public final class JavaExecutorOptions {
                 }
             } else if (!mainClass.contains(".")) {
                 NutsExecutionEntry[] classes = getWorkspace().apps().execEntries().parse(path);
-                List<String> possibileClasses = Arrays.stream(classes).map(NutsExecutionEntry::getName)
+                List<String> possibleClasses = Arrays.stream(classes).map(NutsExecutionEntry::getName)
                         .collect(Collectors.toList());
-                String r = resolveMainClass(mainClass, possibileClasses);
+                String r = resolveMainClass(mainClass, possibleClasses);
                 if (r != null) {
                     mainClass = r;
                 }
@@ -239,9 +241,7 @@ public final class JavaExecutorOptions {
 //                nutsPath.add(0, nutsIdFormat.value(id).format());
 //                classPath.add(0, path.toString());
             }
-            for (NutsClassLoaderNode cp : currentCP) {
-                classPath.add(cp);
-            }
+            classPath.addAll(currentCP);
             if (this.mainClass.contains(":")) {
                 List<String> possibleClasses = StringTokenizerUtils.split(getMainClass(), ":");
                 switch (possibleClasses.size()) {
@@ -251,52 +251,55 @@ public final class JavaExecutorOptions {
                         //
                         break;
                     default: {
-                        if (!session.isPlainOut()) {
-                            throw new NutsExecutionException(session, NutsMessage.cstyle("multiple runnable classes detected : %s" + possibleClasses), 102);
-                        }
-                        NutsTextManager text = getWorkspace().text();
-                        NutsTextBuilder msgString = text.builder();
-
-                        msgString.append("multiple runnable classes detected  - actually ")
-                                .append(text.forStyled("" + possibleClasses.size(), NutsTextStyle.primary5()))
-                                .append(" . Select one :\n");
-                        int x = ((int) Math.log(possibleClasses.size())) + 2;
-                        for (int i = 0; i < possibleClasses.size(); i++) {
-                            StringBuilder clsIndex = new StringBuilder();
-                            clsIndex.append((i + 1));
-                            while (clsIndex.length() < x) {
-                                clsIndex.append(' ');
+                            if (!session.isPlainOut()
+                                    || session.isBot()
+//                                    || !session.isAsk()
+                            ) {
+                                throw new NutsExecutionException(session, NutsMessage.cstyle("multiple runnable classes detected : %s" + possibleClasses), 102);
                             }
-                            msgString.append(clsIndex.toString(), NutsTextStyle.primary4());
-                            msgString.append(possibleClasses.get(i), NutsTextStyle.primary4());
-                            msgString.append("\n");
-                        }
-                        msgString.append("enter class ")
-                                .append("#", NutsTextStyle.primary5()).append(" or ").append("name", NutsTextStyle.primary5())
-                                .append(" to run it. type ").append("cancel!", NutsTextStyle.error())
-                                .append(" to cancel : ");
+                            NutsTextManager text = getWorkspace().text();
+                            NutsTextBuilder msgString = text.builder();
 
-                        mainClass = session.getTerminal()
-                                .ask()
-                                .resetLine()
-                                .setSession(session)
-                                .forString(msgString.toString())
-                                .setValidator((value, question) -> {
-                                    Integer anyInt = CoreNumberUtils.convertToInteger(value, null);
-                                    if (anyInt != null) {
-                                        int i = anyInt;
-                                        if (i >= 1 && i <= possibleClasses.size()) {
-                                            return possibleClasses.get(i - 1);
-                                        }
-                                    } else {
-                                        for (String possibleClass : possibleClasses) {
-                                            if (possibleClass.equals(value)) {
-                                                return possibleClass;
+                            msgString.append("multiple runnable classes detected  - actually ")
+                                    .append(text.forStyled("" + possibleClasses.size(), NutsTextStyle.primary5()))
+                                    .append(" . Select one :\n");
+                            int x = ((int) Math.log(possibleClasses.size())) + 2;
+                            for (int i = 0; i < possibleClasses.size(); i++) {
+                                StringBuilder clsIndex = new StringBuilder();
+                                clsIndex.append((i + 1));
+                                while (clsIndex.length() < x) {
+                                    clsIndex.append(' ');
+                                }
+                                msgString.append(clsIndex.toString(), NutsTextStyle.primary4());
+                                msgString.append(possibleClasses.get(i), NutsTextStyle.primary4());
+                                msgString.append("\n");
+                            }
+                            msgString.append("enter class ")
+                                    .append("#", NutsTextStyle.primary5()).append(" or ").append("name", NutsTextStyle.primary5())
+                                    .append(" to run it. type ").append("cancel!", NutsTextStyle.error())
+                                    .append(" to cancel : ");
+
+                            mainClass = session.getTerminal()
+                                    .ask()
+                                    .resetLine()
+                                    .setSession(session)
+                                    .forString(msgString.toString())
+                                    .setValidator((value, question) -> {
+                                        Integer anyInt = CoreNumberUtils.convertToInteger(value, null);
+                                        if (anyInt != null) {
+                                            int i = anyInt;
+                                            if (i >= 1 && i <= possibleClasses.size()) {
+                                                return possibleClasses.get(i - 1);
+                                            }
+                                        } else {
+                                            for (String possibleClass : possibleClasses) {
+                                                if (possibleClass.equals(value)) {
+                                                    return possibleClass;
+                                                }
                                             }
                                         }
-                                    }
-                                    throw new NutsValidationException(session);
-                                }).getValue();
+                                        throw new NutsValidationException(session);
+                                    }).getValue();
                         break;
                     }
                 }
@@ -311,26 +314,48 @@ public final class JavaExecutorOptions {
             if (v != null) {
                 if (v >= 1 && v <= possibleClasses.size()) {
                     return possibleClasses.get(v - 1);
+                }else if(v<0){
+                    int i=possibleClasses.size()+v;
+                    if (i >= 0 && i < possibleClasses.size()) {
+                        return possibleClasses.get(i);
+                    }
                 }
             } else {
                 if (possibleClasses.contains(name)) {
                     return name;
                 } else {
+                    List<String> extraPossibilities=new ArrayList<>();
                     for (String possibleClass : possibleClasses) {
-                        int x = possibleClass.indexOf('.');
+                        int x = possibleClass.lastIndexOf('.');
                         if (x > 0) {
                             if (possibleClass.substring(x + 1).equals(name)) {
-                                return name;
+                                extraPossibilities.add(possibleClass);
                             }
                         }
                     }
+                    if(extraPossibilities.size()==1){
+                        return extraPossibilities.get(0);
+                    }
+                    if(extraPossibilities.size()>1){
+                        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("ambiguous main-class %s matches all of %s",
+                                name,extraPossibilities.toString()
+                                ));
+                    }
                     for (String possibleClass : possibleClasses) {
-                        int x = possibleClass.indexOf('.');
+                        int x = possibleClass.lastIndexOf('.');
                         if (x > 0) {
                             if (possibleClass.substring(x + 1).equalsIgnoreCase(name)) {
-                                return name;
+                                extraPossibilities.add(possibleClass);
                             }
                         }
+                    }
+                    if(extraPossibilities.size()==1){
+                        return extraPossibilities.get(0);
+                    }
+                    if(extraPossibilities.size()>1){
+                        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("ambiguous main-class %s matches all of from %s",
+                                name,extraPossibilities.toString()
+                        ));
                     }
                 }
             }

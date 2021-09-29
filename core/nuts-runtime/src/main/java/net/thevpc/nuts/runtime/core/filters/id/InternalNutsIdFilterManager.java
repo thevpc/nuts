@@ -95,9 +95,9 @@ public class InternalNutsIdFilterManager extends InternalNutsTypedFilters<NutsId
         NutsIdFilter f = null;
         for (String wildcardId : names) {
             if (f == null) {
-                f = new NutsPatternIdFilter(getSession(), getSession().getWorkspace().id().parser().parse(wildcardId));
+                f = new NutsPatternIdFilter(getSession(), getSession().id().parser().parse(wildcardId));
             } else {
-                f = (NutsIdFilter) f.or(new NutsPatternIdFilter(getSession(), getSession().getWorkspace().id().parser().parse(wildcardId)));
+                f = (NutsIdFilter) f.or(new NutsPatternIdFilter(getSession(), getSession().id().parser().parse(wildcardId)));
             }
         }
         return f;

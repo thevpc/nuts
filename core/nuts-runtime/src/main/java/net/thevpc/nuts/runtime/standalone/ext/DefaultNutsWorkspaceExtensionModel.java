@@ -448,7 +448,7 @@ public class DefaultNutsWorkspaceExtensionModel {
         }
 
         _LOGOP(session).level(Level.FINE).verb(NutsLogVerb.UPDATE).formatted().log("installing extension {0}", id);
-        NutsDefinition nutsDefinitions = session.getWorkspace().search()
+        NutsDefinition nutsDefinitions = session.search()
                 .copyFrom(options)
                 .addId(id)
                 .setOptional(false)

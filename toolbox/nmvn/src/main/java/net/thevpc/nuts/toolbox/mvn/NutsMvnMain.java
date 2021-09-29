@@ -150,9 +150,7 @@ public class NutsMvnMain implements NutsApplication {
     }
 
     private static Path createTempPom(NutsSession session) {
-        NutsWorkspace ws=session.getWorkspace();
-        Path d = Paths.get(ws.io().tmp()
-                .setSession(session)
+        Path d = Paths.get(session.io().tmp()
                 .createTempFolder(null));
         try (Writer out = Files.newBufferedWriter(d.resolve("pom.xml"))) {
             out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"

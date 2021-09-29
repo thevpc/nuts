@@ -37,7 +37,7 @@ public class DefaultSourceControlHelper {
 
     protected NutsLogger _LOG(NutsSession session) {
         if (LOG == null) {
-            LOG = session.getWorkspace().log().of(DefaultSourceControlHelper.class);
+            LOG = session.log().of(DefaultSourceControlHelper.class);
         }
         return LOG;
     }
@@ -111,7 +111,7 @@ public class DefaultSourceControlHelper {
                     newId,
                     d,
                     new NutsDefaultContent(
-                            session.getWorkspace().io().path(folder.toString()),
+                            session.io().path(folder.toString()),
                             false,
                             false),
                     null,

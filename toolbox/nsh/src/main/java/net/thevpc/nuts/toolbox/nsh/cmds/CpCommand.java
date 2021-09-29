@@ -105,7 +105,7 @@ public class CpCommand extends SimpleNshBuiltin {
     }
 
     public void copy(NutsPath from, NutsPath to, Options o, JShellExecutionContext context) {
-        NutsIOCopyAction ccp = context.getSession().getWorkspace().io().copy()
+        NutsIOCopyAction ccp = context.getSession().io().copy()
                 .from(from)
                 .to(to)
                 .setRecursive(o.recursive)

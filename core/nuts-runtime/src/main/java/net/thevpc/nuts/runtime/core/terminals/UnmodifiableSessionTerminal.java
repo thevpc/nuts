@@ -135,7 +135,7 @@ public class UnmodifiableSessionTerminal extends AbstractNutsSessionTerminal {
                 getProgressBar().printProgress(
                         Float.isNaN(progress) ? -1
                                 : (int) (progress * 100),
-                        session.getWorkspace().text().toText(message).toString(),
+                        session.text().toText(message).toString(),
                         err()
                 );
             }

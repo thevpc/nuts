@@ -101,7 +101,7 @@ public class FileTemplater {
 
             private NutsLoggerOp log() {
                 if (logOp == null) {
-                    logOp = session.getWorkspace().log().of(FileTemplater.this.getClass())
+                    logOp = session.log().of(FileTemplater.this.getClass())
                             .with()
                             .style(NutsTextFormatStyle.JSTYLE)
                     ;

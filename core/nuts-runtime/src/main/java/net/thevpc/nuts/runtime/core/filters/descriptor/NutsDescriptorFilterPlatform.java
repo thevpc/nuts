@@ -40,8 +40,8 @@ public class NutsDescriptorFilterPlatform extends AbstractDescriptorFilter imple
 
     private final String platform;
 
-    public NutsDescriptorFilterPlatform(NutsSession ws, String packaging) {
-        super(ws, NutsFilterOp.CUSTOM);
+    public NutsDescriptorFilterPlatform(NutsSession session, String packaging) {
+        super(session, NutsFilterOp.CUSTOM);
         this.platform = packaging;
     }
 

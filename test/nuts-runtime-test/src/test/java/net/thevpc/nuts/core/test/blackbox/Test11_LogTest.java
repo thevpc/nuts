@@ -5,9 +5,7 @@
  */
 package net.thevpc.nuts.core.test.blackbox;
 
-import net.thevpc.nuts.NutsUtilPlatforms;
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.Nuts;
 import net.thevpc.nuts.NutsOsFamily;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
@@ -24,15 +22,13 @@ import java.util.Map;
  */
 public class Test11_LogTest {
 
-    private static String baseFolder;
-
     @Test
     public void execURL() throws Exception {
         Map<String, String> extraProperties = new HashMap<>();
         extraProperties.put("nuts.export.always-show-command", "true");
         TestUtils.setSystemProperties(extraProperties);
 
-        NutsWorkspace ws = TestUtils.openTestWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
+        NutsWorkspace ws = TestUtils.openNewTestWorkspace(
                 "--archetype", "default",
                 "--skip-companions").getWorkspace();
 
@@ -40,7 +36,7 @@ public class Test11_LogTest {
         TestUtils.println(ws.version().formatter());
         String result = ws.exec().addCommand(
                 //this is an old link, do not change to 'thevpc'
-                "https://raw.githubusercontent.com/thevpc/vpc-public-maven/master/net/vpc/app/netbeans-launcher/1.2.2/netbeans-launcher-1.2.2.jar",
+                "https://search.maven.org/remotecontent?filepath=net/thevpc/hl/hl/0.1.0/hl-0.1.0.jar",
                 "--version"
         ).setRedirectErrorStream(true).grabOutputString().setFailFast(true).getOutputString();
         TestUtils.println("Result:");
@@ -50,14 +46,11 @@ public class Test11_LogTest {
 
     @BeforeAll
     public static void setUpClass() throws IOException {
-        baseFolder = new File("./runtime/test/" + TestUtils.getCallerClassSimpleName()).getCanonicalFile().getPath();
-        CoreIOUtils.delete(null,new File(baseFolder));
         TestUtils.println("####### RUNNING TEST @ "+ TestUtils.getCallerClassSimpleName());
     }
 
     @AfterAll
     public static void tearUpClass() throws IOException {
-        CoreIOUtils.delete(null,new File(baseFolder));
     }
 
     @BeforeEach

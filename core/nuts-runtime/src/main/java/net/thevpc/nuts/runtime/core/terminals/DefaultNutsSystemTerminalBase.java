@@ -64,7 +64,7 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase {
 //            getProgressBar().printProgress(
 //                    Float.isNaN(progress)?-1:
 //                            (int)(progress*100),
-//                    session.getWorkspace().text().toText(NutsMessage.cstyle(prompt,params)).toString(),
+//                    session.text().toText(NutsMessage.cstyle(prompt,params)).toString(),
 //                    getErr()
 //            );
 //        }
@@ -77,7 +77,7 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase {
 //            getParent().printProgress(prompt, params);
 //        }else{
 //            getProgressBar().printProgress(-1,
-//                    session.getWorkspace().text().toText(NutsMessage.cstyle(prompt,params)).toString(),
+//                    session.text().toText(NutsMessage.cstyle(prompt,params)).toString(),
 //                    getErr()
 //            );
 //        }
@@ -108,7 +108,7 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase {
         this.session = criteria.getSession();
         this.workspace = session.getWorkspace();
         if (workspace != null) {
-            NutsWorkspaceOptions options=session.getWorkspace().boot().getBootOptions();
+            NutsWorkspaceOptions options=session.boot().getBootOptions();
             NutsTerminalMode terminalMode = options.getTerminalMode();
             if (terminalMode == null) {
                 if (options.isBot()) {

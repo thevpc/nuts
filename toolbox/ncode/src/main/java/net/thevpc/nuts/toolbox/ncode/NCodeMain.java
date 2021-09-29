@@ -136,7 +136,7 @@ public class NCodeMain implements NutsApplication {
                 }
             }
         }
-        NutsFormatManager formats = applicationContext.getSession().getWorkspace().formats();
+        NutsFormatManager formats = applicationContext.getSession().formats();
         if (type != null) {
             if (paths.isEmpty()) {
                 System.err.println("missing location");

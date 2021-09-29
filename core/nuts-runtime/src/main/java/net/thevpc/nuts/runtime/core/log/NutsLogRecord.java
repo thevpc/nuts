@@ -56,7 +56,7 @@ public class NutsLogRecord extends LogRecord {
 //    public NutsLogRecord filter(){
 //        if(isFormatted()) {
 //            NutsLogRecord r = new NutsLogRecord(session,getLevel(), verb,
-//                    session.getWorkspace().text().builder().append(getMessage()).filteredText()
+//                    session.text().builder().append(getMessage()).filteredText()
 //                    ,getParameters(),false,time,formatStyle);
 //            r.setSequenceNumber(this.getSequenceNumber());
 //            r.setThreadID(this.getThreadID());

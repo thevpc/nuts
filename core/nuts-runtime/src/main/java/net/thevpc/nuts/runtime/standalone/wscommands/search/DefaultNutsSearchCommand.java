@@ -104,11 +104,11 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
         }
 
         if(!searchInInstalled && searchInOtherRepositories) {
-            otherFilters.add(session.getWorkspace().filters().repository().installedRepo().neg());
+            otherFilters.add(session.filters().repository().installedRepo().neg());
         }else if(searchInInstalled && !searchInOtherRepositories){
-            otherFilters.add(session.getWorkspace().filters().repository().installedRepo());
+            otherFilters.add(session.filters().repository().installedRepo());
         }else if(!searchInInstalled && !searchInOtherRepositories){
-            otherFilters.add(session.getWorkspace().filters().repository().never());
+            otherFilters.add(session.filters().repository().never());
         }
         if(otherFilters.isEmpty()){
             return null;
@@ -145,7 +145,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
             someIds.add(id.toString());
         }
         if (this.getIds().length == 0 && isCompanion()) {
-            someIds.addAll(ws.getCompanionIds(session).stream().map(NutsId::getShortName).collect(Collectors.toList()));
+            someIds.addAll(session.extensions().getCompanionIds().stream().map(NutsId::getShortName).collect(Collectors.toList()));
         }
         if (this.getIds().length == 0 && isRuntime()) {
             someIds.add(NutsConstants.Ids.NUTS_RUNTIME);

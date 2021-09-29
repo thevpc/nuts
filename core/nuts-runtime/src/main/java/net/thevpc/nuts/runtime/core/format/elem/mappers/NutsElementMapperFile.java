@@ -14,7 +14,7 @@ public class NutsElementMapperFile implements NutsElementMapper<File> {
 
     @Override
     public NutsElement createElement(File o, Type typeOfSrc, NutsElementFactoryContext context) {
-        if (context.element().isNtf()) {
+        if (context.elem().isNtf()) {
             NutsWorkspace ws = context.getSession().getWorkspace();
 //                NutsText n = ws.text().forStyled(o.toString(), NutsTextStyle.path());
 //                return ws.elem().forPrimitive().buildNutsString(n);

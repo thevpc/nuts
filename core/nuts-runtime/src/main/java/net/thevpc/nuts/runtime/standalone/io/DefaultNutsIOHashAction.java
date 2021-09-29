@@ -116,7 +116,7 @@ public class DefaultNutsIOHashAction implements NutsIOHashAction {
             }
             case "desc": {
                 ByteArrayOutputStream o = new ByteArrayOutputStream();
-                getSession().getWorkspace().descriptor().formatter((NutsDescriptor) value).compact().setSession(session).print(new OutputStreamWriter(o));
+                getSession().descriptor().formatter((NutsDescriptor) value).compact().setSession(session).print(new OutputStreamWriter(o));
                 try (InputStream is = new ByteArrayInputStream(o.toByteArray())) {
                     return CoreIOUtils.evalHash(is, getValidAlgo());
                 } catch (IOException ex) {

@@ -15,6 +15,6 @@ import net.thevpc.nuts.runtime.core.format.text.renderer.AnsiStyleStyleApplierRe
  */
 public interface AnsiStyleStyleApplier {
 
-    AnsiStyle apply(AnsiStyle old, RenderedRawStream out, NutsSession ws, AnsiStyleStyleApplierResolver applierResolver);
+    AnsiStyle apply(AnsiStyle old, RenderedRawStream out, NutsSession session, AnsiStyleStyleApplierResolver applierResolver);
 
 }

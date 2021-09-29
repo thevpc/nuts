@@ -26,7 +26,7 @@ public class DefaultSearchFormatXml extends DefaultSearchFormatBase {
 
     public DefaultSearchFormatXml(NutsSession session, NutsPrintStream writer, NutsFetchDisplayOptions options) {
         super(session, writer, NutsContentType.XML, options);
-        codeFormat = session.getWorkspace().text().setSession(session).getCodeFormat("xml");
+        codeFormat = session.text().setSession(session).getCodeFormat("xml");
     }
 
     public String getRootName() {

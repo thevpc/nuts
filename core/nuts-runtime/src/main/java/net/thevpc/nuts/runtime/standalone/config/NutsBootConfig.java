@@ -109,12 +109,12 @@ public final class NutsBootConfig implements Cloneable, Serializable {
     /**
      * workspace store locations
      */
-    private Map<String, String> storeLocations;
+    private Map<NutsStoreLocation, String> storeLocations;
     /**
      * workspace expected locations for all layout. Relevant when moving the
      * workspace cross operating systems
      */
-    private Map<String, String> homeLocations;
+    private Map<NutsHomeLocation, String> homeLocations;
 
     public NutsBootConfig() {
     }
@@ -290,11 +290,11 @@ public final class NutsBootConfig implements Cloneable, Serializable {
 //    public String getStoreLocation(NutsStoreLocation folder) {
 //        return this.storeLocations[folder.ordinal()];
 //    }
-    public void setStoreLocations(Map<String, String> storeLocations) {
+    public void setStoreLocations(Map<NutsStoreLocation, String> storeLocations) {
         this.storeLocations = storeLocations;
     }
 
-    public void setHomeLocations(Map<String, String> homeLocations) {
+    public void setHomeLocations(Map<NutsHomeLocation, String> homeLocations) {
         this.homeLocations = homeLocations;
     }
 
@@ -328,11 +328,11 @@ public final class NutsBootConfig implements Cloneable, Serializable {
         return this;
     }
 
-    public Map<String, String> getStoreLocations() {
+    public Map<NutsStoreLocation, String> getStoreLocations() {
         return storeLocations;
     }
 
-    public Map<String, String> getHomeLocations() {
+    public Map<NutsHomeLocation, String> getHomeLocations() {
         return homeLocations;
     }
 

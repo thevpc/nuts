@@ -54,7 +54,7 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
 
         List<String> executorOptionsList = new ArrayList<>();
         for (String option : executorOptions) {
-            NutsArgument a = traceSession.getWorkspace().commandLine().createArgument(option);
+            NutsArgument a = traceSession.commandLine().createArgument(option);
             if (a.getKey().getString().equals("--nuts-auto-install")) {
                 if (a.isKeyValue()) {
                     autoInstall = a.isNegated() != a.getValue().getBoolean();
@@ -78,8 +78,8 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
         NutsInstallStatus installStatus = def.getInstallInformation().getInstallStatus();
         if (!installStatus.isInstalled()) {
             if(autoInstall) {
-                traceSession.getWorkspace().install().setSession(traceSession).addId(def.getId()).run();
-                NutsInstallStatus st = traceSession.getWorkspace().fetch().setSession(traceSession).setId(def.getId()).getResultDefinition().getInstallInformation().getInstallStatus();
+                traceSession.install().setSession(traceSession).addId(def.getId()).run();
+                NutsInstallStatus st = traceSession.fetch().setSession(traceSession).setId(def.getId()).getResultDefinition().getInstallInformation().getInstallStatus();
                 if (!st.isInstalled()) {
                     throw new NutsUnexpectedException(execSession, NutsMessage.cstyle("auto installation of %s failed",def.getId()));
                 }
@@ -87,13 +87,13 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
                 throw new NutsUnexpectedException(execSession, NutsMessage.cstyle("you must install %s to be able to run it",def.getId()));
             }
         } else if (installStatus.isObsolete()) {
-            traceSession.getWorkspace().install().setSession(traceSession).addId(def.getId()).run();
+            traceSession.install().setSession(traceSession).addId(def.getId()).run();
         }
 //        LinkedHashSet<NutsDependency> reinstall = new LinkedHashSet<>();
 //        NutsDependencyFilter depFilter = CoreNutsDependencyUtils.createJavaRunDependencyFilter(traceSession);
 //        for (NutsDependency dependency : def.getDependencies()) {
 //            if (depFilter.acceptDependency(def.getId(), dependency, traceSession)) {
-//                NutsInstallStatus st = traceSession.getWorkspace().fetch()
+//                NutsInstallStatus st = tracesession.fetch()
 //                        .setSession(traceSession.copy().setFetchStrategy(NutsFetchStrategy.OFFLINE))
 //                        .setId(dependency.toId()).getResultDefinition().getInstallInformation().getInstallStatus();
 //                if (st.isObsolete() || st.isNonDeployed()) {
@@ -102,15 +102,15 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
 //            }
 //        }
 //        if (!reinstall.isEmpty()) {
-//            NutsInstallCommand iii = traceSession.getWorkspace().install().setSession(traceSession).setStrategy(NutsInstallStrategy.REINSTALL);
+//            NutsInstallCommand iii = tracesession.install().setSession(traceSession).setStrategy(NutsInstallStrategy.REINSTALL);
 //            for (NutsDependency nutsId : reinstall) {
 //                iii.id(nutsId.toId());
 //            }
 //            iii.run();
 //            for (NutsDependency dependency : reinstall) {
-//                boolean optional = execSession.getWorkspace().dependency().parser().parseOptional(dependency.getOptional());
+//                boolean optional = execsession.dependency().parser().parseOptional(dependency.getOptional());
 //
-//                NutsInstallStatus st = traceSession.getWorkspace().fetch().setSession(traceSession.copy().setFetchStrategy(NutsFetchStrategy.OFFLINE))
+//                NutsInstallStatus st = tracesession.fetch().setSession(traceSession.copy().setFetchStrategy(NutsFetchStrategy.OFFLINE))
 //                        .setId(dependency.toId()).getResultDefinition().getInstallInformation().getInstallStatus();
 //                if ((st.isObsolete() || st.isNonDeployed()) && !optional) {
 //                    throw new NutsUnexpectedException(execSession, "unresolved dependency " + dependency + " has status " + st);
@@ -123,7 +123,7 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
     @Override
     public void dryExecute() {
         if (autoInstall && !def.getInstallInformation().getInstallStatus().isInstalled()) {
-            execSession.getWorkspace().security().checkAllowed(NutsConstants.Permissions.AUTO_INSTALL, commandName);
+            execSession.security().checkAllowed(NutsConstants.Permissions.AUTO_INSTALL, commandName);
             NutsPrintStream out = execSession.out();
             out.printf("[dry] ==install== %s%n", def.getId().getLongName());
         }
@@ -132,7 +132,7 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
 
     @Override
     public String toString() {
-        return "NUTS " + getId().toString() + " " + execSession.getWorkspace().commandLine().create(appArgs).toString();
+        return "NUTS " + getId().toString() + " " + execSession.commandLine().create(appArgs).toString();
     }
 
 }

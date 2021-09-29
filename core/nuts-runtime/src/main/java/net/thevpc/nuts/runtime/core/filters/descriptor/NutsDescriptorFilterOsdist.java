@@ -38,8 +38,8 @@ public class NutsDescriptorFilterOsdist extends AbstractDescriptorFilter impleme
 
     private final String osDist;
 
-    public NutsDescriptorFilterOsdist(NutsSession ws, String osDist) {
-        super(ws, NutsFilterOp.CUSTOM);
+    public NutsDescriptorFilterOsdist(NutsSession session, String osDist) {
+        super(session, NutsFilterOp.CUSTOM);
         this.osDist = osDist;
     }
 

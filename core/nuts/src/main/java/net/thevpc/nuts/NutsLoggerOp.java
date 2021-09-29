@@ -39,7 +39,7 @@ import java.util.logging.Level;
 public interface NutsLoggerOp {
     static NutsLoggerOp of(Class clazz, NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.getWorkspace().log().of(clazz).with();
+        return session.log().of(clazz).with();
     }
 
     NutsLoggerOp session(NutsSession session);

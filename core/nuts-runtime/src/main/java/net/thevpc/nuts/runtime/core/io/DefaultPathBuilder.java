@@ -42,7 +42,7 @@ public class DefaultPathBuilder implements NutsPathBuilder {
 
     @Override
     public NutsPathBuilder withWorkspaceBaseDir() {
-        setBaseDir(session.getWorkspace().locations().getWorkspaceLocation());
+        setBaseDir(session.locations().getWorkspaceLocation());
         return this;
     }
 
@@ -96,13 +96,13 @@ public class DefaultPathBuilder implements NutsPathBuilder {
     }
 
     private NutsPath expandVars(NutsPath path) {
-        NutsIOManager io = session.getWorkspace().io();
+        NutsIOManager io = session.io();
         return io.path(StringPlaceHolderParser.replaceDollarPlaceHolders(path.toString(), effectiveResolver));
     }
 
     private NutsPath expandFile(NutsPath npath) {
         Path fp = npath.toFilePath();
-        NutsIOManager io = session.getWorkspace().io();
+        NutsIOManager io = session.io();
         if (fp != null && fp.toString().length() > 0) {
             Path ppath = fp;
             String path = fp.toString();
@@ -110,7 +110,7 @@ public class DefaultPathBuilder implements NutsPathBuilder {
 //                return path;
 //            }
             if (path.startsWith("~")) {
-                NutsWorkspaceLocationManager locations = session.getWorkspace().locations();
+                NutsWorkspaceLocationManager locations = session.locations();
                 if (path.equals("~~")) {
                     Path nutsHome = Paths.get(locations.getHomeLocation(NutsStoreLocation.CONFIG));
                     return io.path(nutsHome.normalize().toString());

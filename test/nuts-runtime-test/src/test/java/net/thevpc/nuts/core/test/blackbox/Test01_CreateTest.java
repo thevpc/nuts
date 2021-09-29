@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import org.junit.jupiter.api.*;
 
 /**
@@ -22,16 +21,14 @@ import org.junit.jupiter.api.*;
  */
 public class Test01_CreateTest {
 
-    private static String baseFolder;
-
     @Test
     public void minimal1() throws Exception {
         Map<String, String> extraProperties = new HashMap<>();
         extraProperties.put("nuts.export.always-show-command", "true");
         TestUtils.setSystemProperties(extraProperties);
-        String wsPath = baseFolder + "/" + TestUtils.getCallerMethodName();
+        String wsPath = TestUtils.getTestBaseFolder().getPath();
 
-        NutsSession session = TestUtils.openTestWorkspace("--workspace", wsPath,
+        NutsSession session = TestUtils.openNewTestWorkspace("--workspace", wsPath,
                 "--standalone",
                 "--archetype", "minimal",
                 "--verbose",
@@ -56,7 +53,7 @@ public class Test01_CreateTest {
 //        System.out.println(str);
 //        System.out.println("---------------------------------");
 //        session.out().println(str);
-//        NutsLogger _log = session.getWorkspace().log().of("example");
+//        NutsLogger _log = session.log().of("example");
 //        _log.with()
 //                .level(Level.INFO)
 //                .log(str);
@@ -65,7 +62,7 @@ public class Test01_CreateTest {
                 ;
         System.out.println("-----------------------");
         System.out.println(str);
-        NutsText txt = session.getWorkspace().text().parse(str);
+        NutsText txt = session.text().parse(str);
         System.out.println("-----------------------");
         System.out.println(txt);
     }
@@ -76,7 +73,7 @@ public class Test01_CreateTest {
         extraProperties.put("nuts.export.always-show-command", "true");
         TestUtils.setSystemProperties(extraProperties);
 
-        NutsWorkspace ws = TestUtils.openTestWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
+        NutsWorkspace ws = TestUtils.openNewTestWorkspace(
                 "--standalone",
                 "--archetype", "minimal",
                 "--verbose",
@@ -89,7 +86,7 @@ public class Test01_CreateTest {
         extraProperties.put("nuts.export.always-show-command", "true");
         TestUtils.setSystemProperties(extraProperties);
 
-        NutsWorkspace ws = TestUtils.openTestWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
+        NutsWorkspace ws = TestUtils.openNewTestWorkspace(
                 "--exploded",
                 "--archetype", "minimal",
                 "--verbose",
@@ -101,9 +98,9 @@ public class Test01_CreateTest {
         Map<String, String> extraProperties = new HashMap<>();
         extraProperties.put("nuts.export.always-show-command", "true");
         TestUtils.setSystemProperties(extraProperties);
-        String wsPath = baseFolder + "/" + TestUtils.getCallerMethodName();
+        String wsPath = TestUtils.getTestBaseFolder().getPath();
 
-        NutsWorkspace ws = TestUtils.openTestWorkspace("--workspace", wsPath,
+        NutsWorkspace ws = TestUtils.openNewTestWorkspace(
                 "--exploded",
                 "--archetype", "minimal",
                 "--verbose",
@@ -126,7 +123,7 @@ public class Test01_CreateTest {
         extraProperties.put("nuts.export.always-show-command", "true");
         TestUtils.setSystemProperties(extraProperties);
 
-        NutsWorkspace ws = TestUtils.openTestWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
+        NutsWorkspace ws = TestUtils.openNewTestWorkspace(
                 "--exploded",
                 "--archetype", "minimal",
                 "--verbose",
@@ -139,7 +136,7 @@ public class Test01_CreateTest {
         extraProperties.put("nuts.export.always-show-command", "true");
         TestUtils.setSystemProperties(extraProperties);
 
-        NutsWorkspace ws = TestUtils.openTestWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
+        NutsWorkspace ws = TestUtils.openNewTestWorkspace(
                 "--exploded",
                 "--archetype", "minimal",
                 "--verbose",
@@ -148,14 +145,11 @@ public class Test01_CreateTest {
 
     @BeforeAll
     public static void setUpClass() throws IOException {
-        baseFolder = new File("./runtime/test/" + TestUtils.getCallerClassSimpleName()).getCanonicalFile().getPath();
-        CoreIOUtils.delete(null,new File(baseFolder));
         TestUtils.println("####### RUNNING TEST @ "+ TestUtils.getCallerClassSimpleName());
     }
 
     @AfterAll
     public static void tearUpClass() throws IOException {
-        CoreIOUtils.delete(null,new File(baseFolder));
     }
 
     @BeforeEach

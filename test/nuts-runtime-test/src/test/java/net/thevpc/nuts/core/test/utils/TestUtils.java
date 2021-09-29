@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -141,21 +142,91 @@ public class TestUtils {
         }
     }
 
-    public static NutsSession openTestWorkspace(String... args) {
+    public static Path locateFolder(String a) {
         String test_id = TestUtils.getCallerMethodId(1);
         File path;
         try {
-            path = new File("./runtime/test/" + test_id).getCanonicalFile();
+            path = new File("./runtime/test/" + test_id+"/"+a).getCanonicalFile();
+            return path.toPath();
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
+    }
+    public static Path initFolder(String a) {
+        String test_id = TestUtils.getCallerMethodId(1);
+        File path;
+        try {
+            path = new File("./runtime/test/" + test_id+"/"+a).getCanonicalFile();
             CoreIOUtils.delete(null, path);
+            return path.toPath();
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
+    }
+
+    public static NutsSession openNewTestWorkspace(String... args) {
+        return openOrReOpenTestWorkspace(true,false,args);
+    }
+    public static NutsSession openExistingTestWorkspace(String... args) {
+        return openOrReOpenTestWorkspace(false,false,args);
+    }
+    public static NutsSession runNewTestWorkspace(String... args) {
+        return openOrReOpenTestWorkspace(true,true,args);
+    }
+    public static NutsSession runExistingTestWorkspace(String... args) {
+        return openOrReOpenTestWorkspace(false,true,args);
+    }
+
+    public static File getTestBaseFolder() {
+        String test_id = TestUtils.getCallerMethodId(1);
+        File path;
+        try {
+            return new File("./runtime/test/" + test_id).getCanonicalFile();
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
+    }
+
+    private static NutsSession openOrReOpenTestWorkspace(boolean deleteFolder, boolean run,String... args) {
+        String test_id = TestUtils.getCallerMethodId(2);
+        File path;
+        try {
+            path = new File("./runtime/test/" + test_id).getCanonicalFile();
+            if(deleteFolder) {
+                CoreIOUtils.delete(null, path);
+            }
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
         List<String> argsList=new ArrayList<>();
-        argsList.add("-w");
-        argsList.add(path.getPath());
-        argsList.add("-y");
+        //create a new workspace for each new test case
+        argsList.add("--workspace="+path.getPath());
+        //workspace will contain all the data (do not consider system XDG layout)
+        //this is not mandatory though, as we are creating a path based workspace
+        argsList.add("--standalone");
+        //disable creation of desktop icons
+        argsList.add("---system-desktop-launcher=unsupported");
+        //disable creation of desktop menus
+        argsList.add("---system-menu-launcher=unsupported");
+        //disable creation of any icons
+        argsList.add("---system-custom-launcher=unsupported");
+        //disable creating of bashrc, etc...
+        argsList.add("---!switch"); //TODO not yet implemented
+        //disable auto-detection of java
+        argsList.add("---!init-platforms");
+        //disable auto-creation of nuts icons and menus
+        argsList.add("---!init-launchers");
+        //disable progress indicator
+        argsList.add("---!progress");
+        //disable interactive mode and 'always confirm'
+        argsList.add("--yes");
+//        argsList.add("--embedded");
         argsList.addAll(Arrays.asList(args));
-        return Nuts.openWorkspace(argsList.toArray(new String[0]));
+        if(run){
+            return Nuts.runWorkspace(argsList.toArray(new String[0]));
+        }else {
+            return Nuts.openWorkspace(argsList.toArray(new String[0]));
+        }
     }
 
     public static File getAndResetTestFolder() {

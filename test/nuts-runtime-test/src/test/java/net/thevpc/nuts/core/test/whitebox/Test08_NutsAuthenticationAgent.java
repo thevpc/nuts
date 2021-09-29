@@ -46,8 +46,7 @@ public class Test08_NutsAuthenticationAgent {
     private void testHelperRetrievable(NutsAuthenticationAgent a) {
         String mySecret = "my-secret";
         Map<String,String> envProvider = new LinkedHashMap<>();
-        NutsWorkspace ws = Nuts.openWorkspace().getWorkspace();
-        NutsSession session = ws.createSession();
+        NutsSession session = TestUtils.openNewTestWorkspace();
         String withAllowRetreiveId = new String(a.createCredentials(mySecret.toCharArray(), true, null, envProvider, session));
         TestUtils.println(withAllowRetreiveId);
         Assertions.assertTrue(withAllowRetreiveId.startsWith(a.getId() + ":"));
@@ -68,8 +67,7 @@ public class Test08_NutsAuthenticationAgent {
     private void testHelperHashed(NutsAuthenticationAgent a, boolean alwaysRetrievable) {
         String mySecret = "my-secret";
         Map<String,String> envProvider = new LinkedHashMap<>();
-        NutsWorkspace ws = Nuts.openWorkspace().getWorkspace();
-        NutsSession session = ws.createSession();
+        NutsSession session = TestUtils.openNewTestWorkspace();
         String withoutAllowRetreiveId = new String(a.createCredentials(mySecret.toCharArray(), false, null, envProvider, session));
         TestUtils.println(withoutAllowRetreiveId);
         Assertions.assertTrue(withoutAllowRetreiveId.startsWith(a.getId() + ":"));

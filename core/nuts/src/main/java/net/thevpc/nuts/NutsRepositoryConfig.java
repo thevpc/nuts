@@ -42,7 +42,7 @@ public class NutsRepositoryConfig extends NutsConfigItem {
     private String name;
     private String type;
     private String location;
-    private Map<String, String> storeLocations = null;
+    private Map<NutsStoreLocation, String> storeLocations = null;
     private NutsStoreLocationStrategy storeLocationStrategy = null;
     private String groups;
     private Map<String, String> env;
@@ -153,11 +153,11 @@ public class NutsRepositoryConfig extends NutsConfigItem {
         return this;
     }
 
-    public Map<String, String> getStoreLocations() {
+    public Map<NutsStoreLocation, String> getStoreLocations() {
         return storeLocations;
     }
 
-    public NutsRepositoryConfig setStoreLocations(Map<String, String> storeLocations) {
+    public NutsRepositoryConfig setStoreLocations(Map<NutsStoreLocation, String> storeLocations) {
         this.storeLocations = storeLocations;
         return this;
     }

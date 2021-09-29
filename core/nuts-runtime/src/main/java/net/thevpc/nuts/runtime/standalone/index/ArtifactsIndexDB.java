@@ -14,8 +14,8 @@ public class ArtifactsIndexDB {
 
 
 
-    public static ArtifactsIndexDB of(NutsWorkspace ws) {
-        synchronized (ws) {
+    public static ArtifactsIndexDB of(NutsSession ws) {
+        synchronized (ws.getWorkspace()) {
             ArtifactsIndexDB o = (ArtifactsIndexDB) ws.env().getProperties().get(ArtifactsIndexDB.class.getName());
             if (o == null) {
                 o = new ArtifactsIndexDB(DEFAULT_ARTIFACT_TABLE_NAME, CacheDB.of(ws));

@@ -58,7 +58,7 @@ public class DefaultNutsInputAction implements NutsInputAction {
 
     @Override
     public NutsInput of(String resource) {
-        return resource==null?null:session.getWorkspace().io().path(resource).input();
+        return resource==null?null:session.io().path(resource).input();
     }
 
     private NutsInput toMulti(NutsInput v) {
@@ -76,7 +76,7 @@ public class DefaultNutsInputAction implements NutsInputAction {
         checkSession();
         NutsString n = getName();
         if(n==null){
-            n=getSession().getWorkspace().text().forStyled("<bytes>",NutsTextStyle.path());
+            n=getSession().text().forStyled("<bytes>",NutsTextStyle.path());
         }
         NutsInput v = CoreIOUtils.createInputSource(bytes, n.filteredText(),n,  getTypeName(), getSession());
         v = toMulti(v);
@@ -91,7 +91,7 @@ public class DefaultNutsInputAction implements NutsInputAction {
         checkSession();
         NutsString name = getName();
         if(name==null){
-            name=getSession().getWorkspace().text().toText(source);
+            name=getSession().text().toText(source);
         }
         return toMulti(new CoreIOUtils.InputStream(name.filteredText(),name, source, "inputStream", getSession()));
     }
@@ -99,19 +99,19 @@ public class DefaultNutsInputAction implements NutsInputAction {
     @Override
     public NutsInput of(URL source) {
         checkSession();
-        return getSession().getWorkspace().io().path(source).input();
+        return getSession().io().path(source).input();
     }
 
     @Override
     public NutsInput of(File source) {
         checkSession();
-        return getSession().getWorkspace().io().path(source).input();
+        return getSession().io().path(source).input();
     }
 
     @Override
     public NutsInput of(Path source) {
         checkSession();
-        return getSession().getWorkspace().io().path(source).input();
+        return getSession().io().path(source).input();
     }
 
     @Override

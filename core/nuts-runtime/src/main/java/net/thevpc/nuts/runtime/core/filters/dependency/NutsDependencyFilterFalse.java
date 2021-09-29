@@ -4,8 +4,8 @@ import net.thevpc.nuts.*;
 
 public final class NutsDependencyFilterFalse extends AbstractDependencyFilter{
 
-    public NutsDependencyFilterFalse(NutsSession ws) {
-        super(ws, NutsFilterOp.FALSE);
+    public NutsDependencyFilterFalse(NutsSession session) {
+        super(session, NutsFilterOp.FALSE);
     }
 
     @Override

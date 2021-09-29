@@ -41,8 +41,8 @@ public class Nsh implements NutsApplication {
         NutsWorkspace ws = applicationContext.getWorkspace();
         NutsWorkspaceConfigManager cfg = ws.config();
 //        HashMap<String, String> parameters = new HashMap<>();
-//        parameters.put("forList", nshIdStr + " --no-color -c find-forCommand");
-//        parameters.put("find", nshIdStr + " --no-color -c find-forCommand %n");
+//        parameters.put("forList", nshIdStr + " --!color -c find-forCommand");
+//        parameters.put("find", nshIdStr + " --!color -c find-forCommand %n");
 //        parameters.put("exec", nshIdStr + " -c %n");
 //        cfg.installCommandFactory(
 //                new NutsWorkspaceCommandFactoryConfig()
@@ -88,7 +88,7 @@ public class Nsh implements NutsApplication {
             });
         }
         if (session.isPlainTrace()) {
-            NutsTextManager factory = session.getWorkspace().text();
+            NutsTextManager factory = session.text();
             if (firstInstalled.size() > 0) {
                 session.out().printf("registered %s nsh commands : %s \n",
                         factory.forStyled(""+firstInstalled.size(),NutsTextStyle.primary3())
@@ -103,7 +103,7 @@ public class Nsh implements NutsApplication {
             }
         }
         cfg.save(false);
-        session.getWorkspace().env().addLauncher(
+        session.env().addLauncher(
                 new NutsLauncherOptions()
                         .setId(session.getAppId())
                         .setCreateScript(true)

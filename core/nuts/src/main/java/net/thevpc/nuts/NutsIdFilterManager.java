@@ -34,7 +34,7 @@ import net.thevpc.nuts.boot.NutsApiUtils;
 public interface NutsIdFilterManager extends NutsTypedFilters<NutsIdFilter> {
     static NutsIdFilterManager of(NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.getWorkspace().id().filter();
+        return session.id().filter();
     }
 
     NutsIdFilterManager setSession(NutsSession session);

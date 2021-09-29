@@ -55,7 +55,7 @@ public class DefaultNutsLogger implements NutsLogger {
     }
 
     public boolean isLoggable(Level level) {
-        NutsLogManager _log = getSession().getWorkspace().log();
+        NutsLogManager _log = getSession().log();
         if (isLoggable(level, _log.getTermLevel())) {
             return true;
         }
@@ -185,7 +185,7 @@ public class DefaultNutsLogger implements NutsLogger {
      * @param record the LogRecord to be published
      */
     private void log0(LogRecord record) {
-        DefaultNutsLogManager logManager = (DefaultNutsLogManager) getSession().getWorkspace().log();
+        DefaultNutsLogManager logManager = (DefaultNutsLogManager) getSession().log();
         logManager.getModel().updateHandlers(record);
         Handler ch = logManager.getModel().getTermHandler();
         if (ch != null) {
@@ -220,7 +220,7 @@ public class DefaultNutsLogger implements NutsLogger {
 
     public void resumeTerminal(NutsSession session) {
         suspendTerminalMode = false;
-        DefaultNutsLogManager logManager = (DefaultNutsLogManager) session.getWorkspace().log().setSession(session);
+        DefaultNutsLogManager logManager = (DefaultNutsLogManager) session.log().setSession(session);
         Handler ch = logManager.getTermHandler();
         for (Iterator<LogRecord> iterator = suspendedTerminalRecords.iterator(); iterator.hasNext(); ) {
             LogRecord r = iterator.next();

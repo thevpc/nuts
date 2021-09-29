@@ -45,7 +45,7 @@ public interface NutsDescriptorBuilder extends Serializable {
 
     static NutsDescriptorBuilder of(NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.getWorkspace().descriptor().descriptorBuilder();
+        return session.descriptor().descriptorBuilder();
     }
 
     /**

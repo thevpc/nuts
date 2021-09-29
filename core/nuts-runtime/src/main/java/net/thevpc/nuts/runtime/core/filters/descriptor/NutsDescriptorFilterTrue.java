@@ -32,8 +32,8 @@ import net.thevpc.nuts.*;
  */
 public class NutsDescriptorFilterTrue extends AbstractDescriptorFilter implements JsNutsDescriptorFilter {
 
-    public NutsDescriptorFilterTrue(NutsSession ws) {
-        super(ws, NutsFilterOp.TRUE);
+    public NutsDescriptorFilterTrue(NutsSession session) {
+        super(session, NutsFilterOp.TRUE);
     }
 
     @Override

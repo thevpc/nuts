@@ -25,6 +25,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
 /**
  * user interaction mode. Some operations may require user confirmation before
  * performing critical operations such as overriding existing values, deleting
@@ -94,11 +96,7 @@ public enum NutsConfirmationMode implements NutsEnum {
 
     public static NutsConfirmationMode parse(String value, NutsConfirmationMode emptyValue, NutsSession session) {
         NutsConfirmationMode v = parseLenient(value, emptyValue, null);
-        if (v == null) {
-            if (!NutsBlankable.isBlank(value)) {
-                throw new NutsParseEnumException(session, value, NutsConfirmationMode.class);
-            }
-        }
+        NutsApiUtils.checkNonNullEnum(v,value,NutsConfirmationMode.class,session);
         return v;
     }
 

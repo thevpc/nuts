@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
 /**
  * Artifacts are organized according to {@code NutsIdType} to reflect how the artifact
  * should be managed by the workspace.
@@ -105,11 +107,7 @@ public enum NutsIdType implements NutsEnum {
 
     public static NutsIdType parse(String value, NutsIdType emptyValue, NutsSession session) {
         NutsIdType v = parseLenient(value, emptyValue, null);
-        if (v == null) {
-            if (!NutsBlankable.isBlank(value)) {
-                throw new NutsParseEnumException(session, value, NutsIdType.class);
-            }
-        }
+        NutsApiUtils.checkNonNullEnum(v,value,NutsIdType.class,session);
         return v;
     }
 

@@ -62,7 +62,6 @@ public class RemoteMysqlDatabaseConfigService {
         if(lastRun.exists()){
             if(!session.getTerminal().ask()
                     .resetLine()
-                    .setSession(session)
                     .forBoolean("a previous pull has failed. would you like to resume (yes) or ignore and re-run the pull (no).")
                     .getBooleanValue()
             ){
@@ -124,13 +123,13 @@ public class RemoteMysqlDatabaseConfigService {
                     throw new NutsIOException(session,e);
                 }
             }
-            context.getWorkspace().exec().setExecutionType(NutsExecutionType.EMBEDDED)
+            context.getSession().exec().setExecutionType(NutsExecutionType.EMBEDDED)
                     .setSession(session.copy())
                     .addCommand("nsh",
                             "--bot",
                             "-c",
                             "cp",
-                            remoteFullFilePath.toString(), localPath).setSession(session)
+                            remoteFullFilePath.toString(), localPath)
                     .setRedirectErrorStream(true)
                     .grabOutputString()
                     .setFailFast(true)
@@ -182,7 +181,7 @@ public class RemoteMysqlDatabaseConfigService {
         }
         RemoteMysqlDatabaseConfig cconfig = getConfig();
         String remoteTempPath = null;
-        final String searchResultString = execRemoteNuts("search --no-color --json net.thevpc.nuts.toolbox:nmysql --display temp-folder --installed --first");
+        final String searchResultString = execRemoteNuts("search --!color --json net.thevpc.nuts.toolbox:nmysql --display temp-folder --installed --first");
         List<Map> result = this.context.getWorkspace().elem().setContentType(NutsContentType.JSON).parse(new StringReader(searchResultString), List.class);
         if (result.isEmpty()) {
             throw new NutsIllegalArgumentException(context.getSession(),NutsMessage.cstyle("Mysql is not installed on the remote machine"));

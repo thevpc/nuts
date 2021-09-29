@@ -48,8 +48,8 @@ public class NutsWorkspaceUtils {
 //        LOG = ws.log().of(NutsWorkspaceUtils.class);
     }
 
-    public static NutsWorkspaceUtils of(NutsSession ws) {
-        return new NutsWorkspaceUtils(ws);
+    public static NutsWorkspaceUtils of(NutsSession session) {
+        return new NutsWorkspaceUtils(session);
     }
 
     /**
@@ -137,8 +137,8 @@ public class NutsWorkspaceUtils {
     }
 
     public void checkReadOnly() {
-        if (session.getWorkspace().config().isReadOnly()) {
-            throw new NutsReadOnlyException(session, session.getWorkspace().locations().getWorkspaceLocation());
+        if (session.config().isReadOnly()) {
+            throw new NutsReadOnlyException(session, session.locations().getWorkspaceLocation());
         }
     }
 

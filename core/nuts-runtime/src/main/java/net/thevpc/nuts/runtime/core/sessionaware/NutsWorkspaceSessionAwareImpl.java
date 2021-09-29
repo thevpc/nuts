@@ -82,10 +82,10 @@ public class NutsWorkspaceSessionAwareImpl implements NutsWorkspace, NutsWorkspa
         return ws.getLocation();
     }
 
-    @Override
-    public Set<NutsId> getCompanionIds(NutsSession session) {
-        return ws().getCompanionIds(session);
-    }
+//    @Override
+//    public Set<NutsId> getCompanionIds(NutsSession session) {
+//        return ws().getCompanionIds(session);
+//    }
 
     @Override
     public NutsSearchCommand search() {

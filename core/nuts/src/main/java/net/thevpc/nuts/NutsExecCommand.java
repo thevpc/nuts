@@ -410,12 +410,12 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
 
     NutsExecCommand setInheritSystemIO(boolean inheritSystemIO);
 
-    String getRedirectOuputFile();
+    String getRedirectOutputFile();
 
-    NutsExecCommand setRedirectOuputFile(String redirectOuputFile);
+    NutsExecCommand setRedirectOutputFile(String redirectOuputFile);
 
-    String getRedirectInpuFile();
+    String getRedirectInputFile();
 
-    NutsExecCommand setRedirectInpuFile(String redirectInpuFile);
+    NutsExecCommand setRedirectInputFile(String redirectInpuFile);
 
 }

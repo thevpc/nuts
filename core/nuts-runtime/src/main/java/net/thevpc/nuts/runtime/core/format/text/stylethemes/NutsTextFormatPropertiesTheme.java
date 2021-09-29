@@ -21,7 +21,7 @@ public class NutsTextFormatPropertiesTheme implements NutsTextFormatTheme {
     public NutsTextFormatPropertiesTheme(String name, ClassLoader cls, NutsSession session) {
         this.session = session;
         if (name.indexOf('/') >= 0 || name.indexOf('\\') >= 0) {
-            try (InputStream is = session.getWorkspace().io().path(name).input().open()) {
+            try (InputStream is = session.io().path(name).input().open()) {
                 props.load(is);
             } catch (IOException e) {
                 throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid theme: %s", name), e);
@@ -47,8 +47,8 @@ public class NutsTextFormatPropertiesTheme implements NutsTextFormatTheme {
                     throw new UncheckedIOException(e);
                 }
             } else {
-                Path themeFile = Paths.get(session.getWorkspace().locations().getStoreLocation(
-                        session.getWorkspace().id().parser().parse("net.thevpc.nuts:nuts-runtime#SHARED"),
+                Path themeFile = Paths.get(session.locations().getStoreLocation(
+                        session.id().parser().parse("net.thevpc.nuts:nuts-runtime#SHARED"),
                         NutsStoreLocation.CONFIG
                 )).resolve("themes").resolve(name);
                 if (Files.isRegularFile(themeFile)) {

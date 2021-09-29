@@ -67,7 +67,7 @@ public class DefaultNutsWorkspaceLocationManager implements NutsWorkspaceLocatio
     }
 
     @Override
-    public Map<String, String> getStoreLocations() {
+    public Map<NutsStoreLocation, String> getStoreLocations() {
         checkSession();
         return model.getStoreLocations(session);
     }
@@ -97,15 +97,15 @@ public class DefaultNutsWorkspaceLocationManager implements NutsWorkspaceLocatio
     }
 
     @Override
-    public Map<String, String> getHomeLocations() {
+    public Map<NutsHomeLocation, String> getHomeLocations() {
         checkSession();
         return model.getHomeLocations(session);
     }
 
     @Override
-    public String getHomeLocation(NutsOsFamily layout, NutsStoreLocation location) {
+    public String getHomeLocation(NutsHomeLocation location) {
         checkSession();
-        return model.getHomeLocation(layout, location, session);
+        return model.getHomeLocation(location, session);
     }
 
     @Override
@@ -139,9 +139,9 @@ public class DefaultNutsWorkspaceLocationManager implements NutsWorkspaceLocatio
     }
 
     @Override
-    public NutsWorkspaceLocationManager setHomeLocation(NutsOsFamily layout, NutsStoreLocation folderType, String location) {
+    public NutsWorkspaceLocationManager setHomeLocation(NutsHomeLocation homeType, String location) {
         checkSession();
-        model.setHomeLocation(layout, folderType, location, session);
+        model.setHomeLocation(homeType, location, session);
         return this;
     }
 

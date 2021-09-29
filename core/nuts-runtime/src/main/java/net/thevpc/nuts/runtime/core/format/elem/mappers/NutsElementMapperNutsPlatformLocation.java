@@ -19,7 +19,7 @@ public class NutsElementMapperNutsPlatformLocation implements NutsElementMapper<
     @Override
     public NutsPlatformLocation createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
         NutsObjectElement obj = o.asObject();
-        NutsElementFormat _prm = context.element();
+        NutsElementFormat _prm = context.elem();
         NutsId id = context.elementToObject(obj.get(_prm.forString("id")), NutsId.class);
         String product = context.elementToObject(obj.get(_prm.forString("product")), String.class);
         String name = context.elementToObject(obj.get(_prm.forString("name")), String.class);

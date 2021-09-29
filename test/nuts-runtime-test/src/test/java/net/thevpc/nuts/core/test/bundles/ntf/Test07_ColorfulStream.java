@@ -42,7 +42,7 @@ public class Test07_ColorfulStream {
 
     private static void writeColors(String s) {
         System.out.println(s);
-        NutsWorkspace ws = TestUtils.openTestWorkspace().getWorkspace();
+        NutsWorkspace ws = TestUtils.openNewTestWorkspace().getWorkspace();
         {
             NutsSession session = ws.createSession();
             NutsText node = new DefaultNutsTextNodeParser(session).parse(new StringReader(s));
@@ -61,7 +61,7 @@ public class Test07_ColorfulStream {
 //    @Test
 //    public void test2() {
 ////        String msg="x{{\\?}}x";
-//        NutsWorkspace ws = Nuts.openWorkspace();
+//        NutsWorkspace ws = TestUtils.openNewTestWorkspace();
 //        PrintStream out = new PrintStream(new FormatOutputStream(System.out, ws));
 //        for (String msg : new String[]{
 //                "[]", "<>",
@@ -80,7 +80,7 @@ public class Test07_ColorfulStream {
 //    public void test3() {
 ////        String msg="x{{\\?}}x";
 //
-//        NutsWorkspace ws = Nuts.openWorkspace();
+//        NutsWorkspace ws = TestUtils.openNewTestWorkspace();
 //        PrintStream out = new PrintStream(new FormatOutputStream(System.out, ws));
 //        out.println("#####value             ##### = me");
 //    }
@@ -88,7 +88,7 @@ public class Test07_ColorfulStream {
 //    @Test
 //    public void test4() {
 ////        String msg="x{{\\?}}x";
-//        NutsWorkspace ws = Nuts.openWorkspace();
+//        NutsWorkspace ws = TestUtils.openNewTestWorkspace();
 ////        ByteArrayOutputStream bos = new ByteArrayOutputStream();
 //        NutsTextNodeWriter w = new NutsTextNodeWriterRenderer(System.out, AnsiUnixTermPrintRenderer.ANSI_RENDERER, ws)
 //                .setWriteConfiguration(new NutsTextWriteConfiguration().setTitleNumberEnabled(true));
@@ -126,7 +126,7 @@ public class Test07_ColorfulStream {
 ////        String msg="x{{\\?}}x";
 //
 ////        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-//        NutsWorkspace ws = Nuts.openWorkspace();
+//        NutsWorkspace ws = TestUtils.openNewTestWorkspace();
 //        NutsTextNodeWriter w = new NutsTextNodeWriterRenderer(System.out, AnsiUnixTermPrintRenderer.ANSI_RENDERER, ws)
 //                .setWriteConfiguration(new NutsTextWriteConfiguration().setTitleNumberEnabled(true));
 //        NutsTextNodeWriterStringer w2 = new NutsTextNodeWriterStringer(System.out, ws);
@@ -181,7 +181,7 @@ public class Test07_ColorfulStream {
 ////        String msg="x{{\\?}}x";
 //
 ////        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-//        NutsWorkspace ws = Nuts.openWorkspace();
+//        NutsWorkspace ws = TestUtils.openNewTestWorkspace();
 //        NutsTextNodeWriter w = new NutsTextNodeWriterRenderer(System.out, AnsiUnixTermPrintRenderer.ANSI_RENDERER, ws)
 //                .setWriteConfiguration(new NutsTextWriteConfiguration().setTitleNumberEnabled(true));
 //        NutsTextNodeWriterStringer w2 = new NutsTextNodeWriterStringer(System.out, ws);
@@ -205,7 +205,7 @@ public class Test07_ColorfulStream {
 //
 //    @Test
 //    public void test7() {
-//        NutsWorkspace ws = Nuts.openWorkspace();
+//        NutsWorkspace ws = TestUtils.openNewTestWorkspace();
 //        String t_colors = CoreIOUtils.loadString(getClass().getResourceAsStream(
 //                "/net/thevpc/nuts/runtime/ntf-help.ntf"
 //        ), true);
@@ -214,7 +214,7 @@ public class Test07_ColorfulStream {
 //
 //    @Test
 //    public void test8() {
-//        NutsWorkspace ws = Nuts.openWorkspace();
+//        NutsWorkspace ws = TestUtils.openNewTestWorkspace();
 //        {
 //            String t_string = "###\u001Eaa\u001E###";
 //            writeColors(t_string);
@@ -248,7 +248,7 @@ public class Test07_ColorfulStream {
 //
 //    @Test
 //    public void test9() {
-//        NutsWorkspace ws = Nuts.openWorkspace();
+//        NutsWorkspace ws = TestUtils.openNewTestWorkspace();
 //        {
 //            String t_string = "##) aa\n" +
 //                    "hello";
@@ -259,7 +259,7 @@ public class Test07_ColorfulStream {
 //
 //    @Test
 //    public void test10() {
-//        NutsWorkspace ws = Nuts.openWorkspace();
+//        NutsWorkspace ws = TestUtils.openNewTestWorkspace();
 //        {
 //            String t_string =
 //                    "${workspace}\n" +
@@ -430,7 +430,7 @@ public class Test07_ColorfulStream {
 //
 //    @Test
 //    public void test20() {
-//        NutsWorkspace ws = Nuts.openWorkspace();
+//        NutsWorkspace ws = TestUtils.openNewTestWorkspace();
 //        {
 //            String t_string =
 //                    "##)Hello you:\n how are you" +
@@ -454,7 +454,7 @@ public class Test07_ColorfulStream {
 //
 //    @Test
 //    public void test22() {
-//        NutsWorkspace ws = Nuts.openWorkspace();
+//        NutsWorkspace ws = TestUtils.openNewTestWorkspace();
 //        {
 //            String sb = "##:p1:njob##\u001E";
 //            writeColors(sb);
@@ -464,7 +464,7 @@ public class Test07_ColorfulStream {
 //    @Test
 //    public void test23() {
 //
-//        NutsWorkspace ws = Nuts.openWorkspace();
+//        NutsWorkspace ws = TestUtils.openNewTestWorkspace();
 //        {
 //            for (int i = 0; i < 255; i++) {
 //                String sb = "##:" + i + ":foreground " + i + "## " + "##:s" + i + ":background " + i + "\n##";
@@ -481,7 +481,7 @@ public class Test07_ColorfulStream {
 //    @Test
 //    public void test24() {
 //
-//        NutsWorkspace ws = Nuts.openWorkspace();
+//        NutsWorkspace ws = TestUtils.openNewTestWorkspace();
 //        {
 //            NutsText command = ws.text().command(NutsTerminalManager.CMD_LATER_RESET_LINE);
 //            NutsTextNodeWriter w = new NutsTextNodeWriterRenderer(System.out, AnsiUnixTermPrintRenderer.ANSI_RENDERER, ws)
@@ -498,7 +498,7 @@ public class Test07_ColorfulStream {
 //
 //    @Test
 //    public void test25() {
-//        NutsWorkspace ws = Nuts.openWorkspace();
+//        NutsWorkspace ws = TestUtils.openNewTestWorkspace();
 //        NutsSession session = ws.createSession();
 //        session.out().print("Hi");
 //        ws.io().term().sendCommand(session.out(), NutsTerminalManager.CMD_LATER_RESET_LINE);

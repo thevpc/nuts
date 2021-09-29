@@ -4,8 +4,8 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.filters.NutsTypedFiltersParser;
 
 public class NutsDescriptorFilterParser extends NutsTypedFiltersParser<NutsDescriptorFilter> {
-    public NutsDescriptorFilterParser(String str, NutsSession ws) {
-        super(str,ws);
+    public NutsDescriptorFilterParser(String str, NutsSession session) {
+        super(str,session);
     }
 
     @Override

@@ -69,7 +69,7 @@ public class RootParserStep extends ParserStep {
                 all.add(n);
             }
         }
-        return session.getWorkspace().text().forList(all).simplify();
+        return session.text().forList(all).simplify();
     }
 
     @Override

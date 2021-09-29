@@ -23,8 +23,6 @@ import org.junit.jupiter.api.*;
  */
 public class Test09_FindLinuxTest {
 
-    private static String baseFolder;
-
     @Test
     public void find() throws Exception {
         Map<String, String> extraProperties = new HashMap<>();
@@ -33,12 +31,12 @@ public class Test09_FindLinuxTest {
 
         //should throw NutsNotFoundException because
         //would not be able to install nsh and other companions
-        NutsWorkspace ws = TestUtils.openTestWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
+        NutsWorkspace ws = TestUtils.openNewTestWorkspace(
                 "--archetype", "default",
                 "--skip-companions").getWorkspace();
         ws=ws.createSession().getWorkspace();
         NutsSession session = ws.createSession();
-        List<NutsId> def = session.getWorkspace().search().addId("nuts").setOptional(false).setLatest(true).setFailFast(false)
+        List<NutsId> def = session.search().addId("nuts").setOptional(false).setLatest(true).setFailFast(false)
 //                .repository("maven-local")
                 .setDefaultVersions(true)
                 .setInstallStatus(ws.filters().installStatus().byDeployed(true))
@@ -49,14 +47,11 @@ public class Test09_FindLinuxTest {
 
     @BeforeAll
     public static void setUpClass() throws IOException {
-        baseFolder = new File("./runtime/test/" + TestUtils.getCallerClassSimpleName()).getCanonicalFile().getPath();
-        CoreIOUtils.delete(null,new File(baseFolder));
         TestUtils.println("####### RUNNING TEST @ "+ TestUtils.getCallerClassSimpleName());
     }
 
     @AfterAll
     public static void tearUpClass() throws IOException {
-        CoreIOUtils.delete(null,new File(baseFolder));
     }
 
     @BeforeEach

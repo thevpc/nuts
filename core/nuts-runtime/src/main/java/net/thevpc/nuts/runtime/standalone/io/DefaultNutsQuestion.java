@@ -73,7 +73,7 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
             ), 243);
         }
 
-        boolean gui = session.isGui() && session.getWorkspace().env().isGraphicalDesktopEnvironment();
+        boolean gui = session.isGui() && session.env().isGraphicalDesktopEnvironment();
 
         String message = this.getMessage();
         if (message.endsWith("\n")) {
@@ -100,7 +100,7 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
             ByteArrayOutputStream bos = null;
             if (gui) {
                 bos = new ByteArrayOutputStream();
-                out = session.getWorkspace().io().createPrintStream(bos);
+                out = session.io().createPrintStream(bos);
             }
             if (resetLine) {
                 out.resetLine();
@@ -257,11 +257,11 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
     }
 
     private String showGuiInput(String str, boolean pwd) {
-        String ft = getSession().getWorkspace().text().parse(str).filteredText();
+        String ft = getSession().text().parse(str).filteredText();
         NutsMessage title = NutsMessage.cstyle("Nuts Package Manager - %s",getSession().getWorkspace().getApiId().getVersion());
         if (session.getAppId() != null) {
             try {
-                NutsDefinition def = session.getWorkspace().search().setId(session.getAppId())
+                NutsDefinition def = session.search().setId(session.getAppId())
                         .setEffective(true).setLatest(true).getResultDefinitions().first();
                 if (def != null) {
                     String n = def.getEffectiveDescriptor().getName();

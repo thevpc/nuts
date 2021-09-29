@@ -18,13 +18,12 @@ public class NutsIndexerUtils {
 
     public static Path getCacheDir(NutsSession session, String entity) {
         String k = "NutsIndexerUtils.CACHE." + entity;
-        NutsWorkspace ws = session.getWorkspace();
-        String m = ws.env().getProperty(k).getString();
+        String m = session.env().getProperty(k).getString();
         if (m == null) {
-            m = ws.locations()
-                    .getStoreLocation(ws.id().setSession(session).resolveId(NutsIndexerUtils.class),
+            m = session.locations()
+                    .getStoreLocation(session.id().resolveId(NutsIndexerUtils.class),
                             NutsStoreLocation.CACHE) + File.separator + entity;
-            ws.env().setProperty(k, m);
+            session.env().setProperty(k, m);
         }
         return new File(m).toPath();
     }

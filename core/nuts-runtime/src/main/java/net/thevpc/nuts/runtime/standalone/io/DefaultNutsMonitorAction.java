@@ -174,7 +174,7 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
     @Override
     public NutsInput createSource() {
         checkSession();
-        NutsInput base = getSession().getWorkspace().io().input().of(source);
+        NutsInput base = getSession().io().input().of(source);
         boolean isPath = base.isFile();
         boolean isUrl = base.isURL();
         String sourceKind0 = sourceKind;
@@ -187,16 +187,16 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
             sourceTypeName0 = ((NutsInput) source).getTypeName();
         }
         if (sourceName0 == null && getOrigin() instanceof NutsInput) {
-            sourceName0 = session.getWorkspace().text().toText(((NutsInput) getOrigin()).getName());
+            sourceName0 = session.text().toText(((NutsInput) getOrigin()).getName());
         }
         if (sourceName0 == null && source instanceof NutsInput) {
-            sourceName0 = session.getWorkspace().text().toText(((NutsInput) source).getName());
+            sourceName0 = session.text().toText(((NutsInput) source).getName());
         }
         if (sourceKind0.equalsIgnoreCase("inputSource")) {
             return monitorInputStream(((NutsInput) source), sourceOrigin, sourceName0);
         }
         if (sourceName0 == null) {
-            sourceName0 = session.getWorkspace().text().forStyled(NutsCompressedPath.compressPath(source.toString()),NutsTextStyle.path());
+            sourceName0 = session.text().forStyled(NutsCompressedPath.compressPath(source.toString()),NutsTextStyle.path());
         }
         switch (sourceKind0) {
             case "string": {
@@ -286,7 +286,7 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
             throw new UncheckedIOException(new IOException("missing path"));
         }
         if (sourceName==null) {
-            sourceName = session.getWorkspace().text().forStyled(path,NutsTextStyle.path());
+            sourceName = session.text().forStyled(path,NutsTextStyle.path());
         }
         NutsProgressMonitor monitor = CoreIOUtils.createProgressMonitor(CoreIOUtils.MonitorType.STREAM, path, source, session, isLogProgress(), getProgressFactory());
         boolean verboseMode
@@ -297,7 +297,7 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
             if (verboseMode && monitor != null) {
                 monitor.onStart(new DefaultNutsProgressEvent(source, sourceName, 0, 0, 0, 0, size, null, session, true));
             }
-            stream = getSession().getWorkspace().io().input().setTypeName(getSourceTypeName()).of(path);
+            stream = getSession().io().input().setTypeName(getSourceTypeName()).of(path);
             size = stream.length();
         } catch (UncheckedIOException | NutsIOException e) {
             if (verboseMode && monitor != null) {
@@ -330,7 +330,7 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
             throw new UncheckedIOException(new IOException("missing inputSource"));
         }
         if (sourceName==null) {
-            sourceName = session.getWorkspace().text().toText(inputSource.getName());
+            sourceName = session.text().toText(inputSource.getName());
         }
         NutsProgressMonitor monitor = CoreIOUtils.createProgressMonitor(CoreIOUtils.MonitorType.STREAM, inputSource, source, session, isLogProgress(), getProgressFactory());
         boolean verboseMode
@@ -367,7 +367,7 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
         if (sourceTypeName == null) {
             sourceTypeName = inputSource.getTypeName();
         }
-        return getSession().getWorkspace().io().input()
+        return getSession().io().input()
                 .setTypeName(sourceTypeName)
                 .of(CoreIOUtils.monitor(openedStream, source, sourceName, size, new SilentStartNutsInputStreamProgressMonitorAdapter(ws, monitor, inputSource.toString()), session))
                 ;
@@ -379,7 +379,7 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
             throw new UncheckedIOException(new IOException("missing inputSource"));
         }
         if (sourceName==null || sourceName.isEmpty()) {
-            sourceName = session.getWorkspace().text().toText(inputSource);
+            sourceName = session.text().toText(inputSource);
         }
         NutsProgressMonitor monitor = CoreIOUtils.createProgressMonitor(CoreIOUtils.MonitorType.STREAM, inputSource, source, session, isLogProgress(), getProgressFactory());
         boolean verboseMode
@@ -406,9 +406,9 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
 //        }
 
         if (monitor == null) {
-            return getSession().getWorkspace().io().input().setSession(getSession()).of(inputSource);
+            return getSession().io().input().setSession(getSession()).of(inputSource);
         }
-        InputStream openedStream = getSession().getWorkspace().io().input().setSession(getSession()).of(inputSource).open();
+        InputStream openedStream = getSession().io().input().setSession(getSession()).of(inputSource).open();
         if (!verboseMode) {
             monitor.onStart(new DefaultNutsProgressEvent(source, sourceName, 0, 0, 0, 0, size, null, session, size < 0));
         }
@@ -416,7 +416,7 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
         if (sourceTypeName == null) {
             sourceTypeName = "nuts-Path";//inputSource.getTypeName();
         }
-        return getSession().getWorkspace().io().input()
+        return getSession().io().input()
                 .setTypeName(sourceTypeName)
                 .of(CoreIOUtils.monitor(openedStream, source, sourceName, size, new SilentStartNutsInputStreamProgressMonitorAdapter(ws, monitor, inputSource.toString()), session))
                 ;
@@ -430,7 +430,7 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
             if (m == null) {
                 return stream;
             }
-            return CoreIOUtils.monitor(stream, sourceOrigin, (name == null ? session.getWorkspace().text().forPlain("Stream") : name), length, m, session);
+            return CoreIOUtils.monitor(stream, sourceOrigin, (name == null ? session.text().forPlain("Stream") : name), length, m, session);
         } else {
             if (stream instanceof InputStreamMetadataAware) {
                 NutsProgressMonitor m = CoreIOUtils.createProgressMonitor(CoreIOUtils.MonitorType.STREAM, stream, sourceOrigin, session, isLogProgress(), getProgressFactory());

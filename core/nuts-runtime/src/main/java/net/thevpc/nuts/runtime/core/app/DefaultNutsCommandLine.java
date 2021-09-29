@@ -546,7 +546,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
 
     public NutsCommandLine parseLine(String commandLine) {
         setArguments(
-                session.getWorkspace().commandLine().parse(commandLine).toStringArray()
+                session.commandLine().parse(commandLine).toStringArray()
         );
         return this;
     }
@@ -626,7 +626,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
 
     @Override
     public NutsCommandLineFormat formatter() {
-        return session.getWorkspace().commandLine().formatter().setValue(this);
+        return session.commandLine().formatter().setValue(this);
     }
 
     private NutsArgumentCandidate[] resolveRecommendations(NutsArgumentType expectValue, String[] names, int autoCompletecurrentWordIndex) {

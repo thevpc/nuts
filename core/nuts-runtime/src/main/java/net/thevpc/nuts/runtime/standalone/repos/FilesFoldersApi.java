@@ -35,7 +35,7 @@ public class FilesFoldersApi {
         String dotFilesUrl = baseUrl;
 //        NutsVersion versionString = ws.version().parser().parse("0.5.5");
         try {
-            session.getTerminal().printProgress("%-8s %s","browse", session.getWorkspace().io().path(baseUrl).toCompressedForm());
+            session.getTerminal().printProgress("%-8s %s","browse", session.io().path(baseUrl).toCompressedForm());
             List<String> splitted = null;
             try (InputStream foldersFileStream
                     = ws.io().monitor().setSource(dotFilesUrl).setSession(session).create()) {
@@ -92,7 +92,7 @@ public class FilesFoldersApi {
         String dotFilesUrl = baseUrl + "/" + CoreNutsConstants.Files.DOT_FILES;
         NutsVersion versionString = ws.version().parser().parse("0.5.5");
         try {
-            session.getTerminal().printProgress("%-8s %s", "browse",session.getWorkspace().io().path(baseUrl).toCompressedForm());
+            session.getTerminal().printProgress("%-8s %s", "browse",session.io().path(baseUrl).toCompressedForm());
             foldersFileStream = ws.io().monitor().setSource(dotFilesUrl).setSession(session).create();
             List<String> splitted = StringTokenizerUtils.split(CoreIOUtils.loadString(foldersFileStream, true), "\n\r");
             for (String s : splitted) {
@@ -178,7 +178,7 @@ public class FilesFoldersApi {
                     try {
                         nutsDescriptor = NutsWorkspaceExt.of(session.getWorkspace()).resolveEffectiveDescriptor(t, session);
                     } catch (Exception ex) {
-                        session.getWorkspace().log().of(FilesFoldersApi.class).with().session(session).level(Level.FINE).error(ex).log(
+                        session.log().of(FilesFoldersApi.class).with().session(session).level(Level.FINE).error(ex).log(
                                 "error resolving effective descriptor for {0} in url {1} : {2}", t.getId(),
                                 pathname,
                                 ex);//e.printStackTrace();
@@ -203,11 +203,11 @@ public class FilesFoldersApi {
         public NutsId parseId(String pathname, String rootPath, NutsIdFilter filter, NutsRepository repository, NutsSession session) throws IOException {
             NutsDescriptor t = null;
             try {
-                t = parseDescriptor(pathname, session.getWorkspace().io()
+                t = parseDescriptor(pathname, session.io()
                         .monitor().setSource(pathname).setSession(session).create(),
                         NutsFetchMode.LOCAL, repository, session, rootPath);
             } catch (Exception ex) {
-                session.getWorkspace().log().of(FilesFoldersApi.class).with().session(session).level(Level.FINE).error(ex).log("error parsing url : {0} : {1}", pathname, toString());//e.printStackTrace();
+                session.log().of(FilesFoldersApi.class).with().session(session).level(Level.FINE).error(ex).log("error parsing url : {0} : {1}", pathname, toString());//e.printStackTrace();
             }
             if (t != null) {
                 return validate(null, t, pathname, rootPath, filter, repository, session);

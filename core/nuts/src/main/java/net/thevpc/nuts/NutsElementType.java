@@ -23,6 +23,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
 /**
  * Element type. this an extension of json element types.
  *
@@ -139,11 +141,7 @@ public enum NutsElementType implements NutsEnum {
 
     public static NutsElementType parse(String value, NutsElementType emptyValue, NutsSession session) {
         NutsElementType v = parseLenient(value, emptyValue, null);
-        if (v == null) {
-            if (!NutsBlankable.isBlank(value)) {
-                throw new NutsParseEnumException(session, value, NutsElementType.class);
-            }
-        }
+        NutsApiUtils.checkNonNullEnum(v,value,NutsElementType.class,session);
         return v;
     }
 

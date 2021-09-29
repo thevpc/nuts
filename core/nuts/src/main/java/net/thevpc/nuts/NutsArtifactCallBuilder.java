@@ -41,7 +41,7 @@ import java.util.Map;
 public interface NutsArtifactCallBuilder extends Serializable {
     static NutsArtifactCallBuilder of(NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.getWorkspace().descriptor().callBuilder();
+        return session.descriptor().callBuilder();
     }
 
     /**

@@ -65,7 +65,7 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
             return (Map) value;
         }
         LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
-        fillMap(getSession().getWorkspace().elem()
+        fillMap(getSession().elem()
                 .toElement(value), map, rootName);
         return map;
     }
@@ -103,7 +103,7 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
                 for (NutsElementEntry datum : e.asObject().children()) {
                     NutsElement k = datum.getKey();
                     if (!k.isString()) {
-                        k = getSession().getWorkspace().elem()
+                        k = getSession().elem()
                                 .setSession(getSession())
                                 .forString(
                                 k.toString()
@@ -182,7 +182,7 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
         if (javaProps) {
             CoreIOUtils.storeProperties(ObjectOutputFormatWriterHelper.explodeMap(mm), w.asPrintStream(), sorted);
         } else {
-            printMap(out, getSession().getWorkspace().text().forBlank(), mm);
+            printMap(out, getSession().text().forBlank(), mm);
         }
     }
 
@@ -239,7 +239,7 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
     }
 
     private void printKeyValue(NutsPrintStream out, NutsString prefix, int len, String fancySep, NutsString key, NutsString value) {
-        NutsTextManager txt = getSession().getWorkspace().text();
+        NutsTextManager txt = getSession().text();
         if (prefix == null) {
             prefix = txt.forBlank();
         }
@@ -292,7 +292,7 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
         if (escapeText) {
             return CoreCommonUtils.stringValueFormatted(o, escapeText, getSession());
         } else {
-            return getSession().getWorkspace().text().forPlain(String.valueOf(o));
+            return getSession().text().forPlain(String.valueOf(o));
         }
     }
 

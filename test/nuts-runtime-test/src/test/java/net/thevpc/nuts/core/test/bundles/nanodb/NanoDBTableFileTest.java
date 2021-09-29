@@ -1,5 +1,6 @@
 package net.thevpc.nuts.core.test.bundles.nanodb;
 
+import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.bundles.nanodb.NanoDB;
 import net.thevpc.nuts.runtime.bundles.nanodb.NanoDBTableFile;
@@ -14,7 +15,7 @@ public class NanoDBTableFileTest {
             System.out.println("getUTFLength(\""+s+"\")="+ NanoDBTableFile.getUTFLength(s));
         }
         System.out.println("getUTFLength(\"Hammadi\")="+ NanoDBTableFile.getUTFLength("Hammadi"));
-        NanoDB db=new NanoDB(new File(".test-bd"));
+        NanoDB db=new NanoDB(TestUtils.initFolder(".test-bd").toFile());
         NanoDBTableFile<Person> test=db.createTable(db.createBeanDefinition(Person.class,false,"id"));
         test.add(new Person(1,"Hammadi"));
         test.add(new Person(2,"Hammadi"));
@@ -31,7 +32,7 @@ public class NanoDBTableFileTest {
 
     @Test
     public void testPerf(){
-        File dir = new File(".test-db-perf");
+        File dir = TestUtils.initFolder(".test-db-perf").toFile();
         long from = System.currentTimeMillis();
         CoreIOUtils.delete(null,dir);
         try(NanoDB db=new NanoDB(dir)) {

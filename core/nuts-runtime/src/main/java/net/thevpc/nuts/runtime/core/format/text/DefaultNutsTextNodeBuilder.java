@@ -19,7 +19,7 @@ public class DefaultNutsTextNodeBuilder implements NutsTextBuilder {
 
     public DefaultNutsTextNodeBuilder(NutsSession session) {
         this.session = session;
-        text1 = session.getWorkspace().text();
+        text1 = session.text();
     }
 
     @Override
@@ -97,9 +97,9 @@ public class DefaultNutsTextNodeBuilder implements NutsTextBuilder {
     public NutsTextBuilder append(Object text, NutsTextStyles styles) {
         if (text != null) {
             if (styles.size() == 0) {
-                all.add(session.getWorkspace().text().toText(text));
+                all.add(session.text().toText(text));
             } else {
-                all.add(text1.forStyled(session.getWorkspace().text().toText(text), styles));
+                all.add(text1.forStyled(session.text().toText(text), styles));
             }
         }
         return this;
@@ -108,7 +108,7 @@ public class DefaultNutsTextNodeBuilder implements NutsTextBuilder {
     @Override
     public NutsTextBuilder append(Object node) {
         if (node != null) {
-            return append(session.getWorkspace().text().toText(node));
+            return append(session.text().toText(node));
         }
         return this;
     }

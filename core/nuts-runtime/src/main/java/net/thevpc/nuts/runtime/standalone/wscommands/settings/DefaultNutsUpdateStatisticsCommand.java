@@ -34,7 +34,7 @@ public class DefaultNutsUpdateStatisticsCommand extends AbstractNutsUpdateStatis
         NutsWorkspace ws = getSession().getWorkspace();
         for (String repository : getRepositrories()) {
             processed = true;
-            NutsRepository repo = getSession().getWorkspace().repos().getRepository(repository);
+            NutsRepository repo = getSession().repos().getRepository(repository);
             NutsRepositorySPI repoSPI = NutsWorkspaceUtils.of(session).repoSPI(repo);
             repoSPI.updateStatistics()
                     .setSession(session)
@@ -84,7 +84,7 @@ public class DefaultNutsUpdateStatisticsCommand extends AbstractNutsUpdateStatis
             if (session.isPlainTrace()) {
                 session.out().resetLine().printf("%s updating workspace stats%n", factory.forStyled(getWorkspace().locations().getWorkspaceLocation(), NutsTextStyle.path()));
             }
-            for (NutsRepository repo : getSession().getWorkspace().repos().getRepositories()) {
+            for (NutsRepository repo : getSession().repos().getRepositories()) {
                 if (session.isPlainTrace()) {
                     session.out().resetLine().printf("%s updating stats %s%n", factory.forStyled(getWorkspace().locations().getWorkspaceLocation(), NutsTextStyle.path()), repo);
                 }

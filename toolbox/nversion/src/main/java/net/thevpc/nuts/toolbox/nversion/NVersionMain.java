@@ -24,7 +24,7 @@ public class NVersionMain implements NutsApplication {
     }
 
     public static NutsPath xfileOf(String expression, String cwd, NutsSession session) {
-        NutsIOManager io = session.getWorkspace().io();
+        NutsIOManager io = session.io();
         if (expression.startsWith("file:") || expression.contains("://")) {
             return io.path(expression);
         }

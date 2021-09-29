@@ -54,7 +54,7 @@ public interface NutsVersion extends Serializable, /*NutsTokenFilter, */NutsForm
      */
     static NutsVersion of(String str, NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.getWorkspace().version().parse(str);
+        return session.version().parse(str);
     }
 
     /**

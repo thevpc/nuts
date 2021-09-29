@@ -35,7 +35,7 @@ public interface NutsDependencyParser {
 
     static NutsDependencyParser of(NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.getWorkspace().dependency().parser();
+        return session.dependency().parser();
     }
 
     boolean isLenient();

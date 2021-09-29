@@ -459,7 +459,7 @@ public class NJobsSubCmd {
                         .setBorder("spaces")
                         .setValue(m).println();
             } else {
-                context.getSession().getWorkspace().formats().object(r.collect(Collectors.toList())).print(context.getSession().out());
+                context.getSession().formats().object(r.collect(Collectors.toList())).print(context.getSession().out());
             }
         }
     }

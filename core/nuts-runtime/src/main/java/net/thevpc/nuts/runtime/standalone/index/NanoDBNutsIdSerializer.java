@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.index;
 
 import net.thevpc.nuts.NutsId;
 import net.thevpc.nuts.NutsIdParser;
-import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.runtime.bundles.nanodb.NanoDBInputStream;
 import net.thevpc.nuts.runtime.bundles.nanodb.NanoDBNonNullSerializer;
 import net.thevpc.nuts.runtime.bundles.nanodb.NanoDBNullSerializer;
@@ -10,11 +10,11 @@ import net.thevpc.nuts.runtime.bundles.nanodb.NanoDBOutputStream;
 
 public class NanoDBNutsIdSerializer {
     public static class NonNull extends NanoDBNonNullSerializer<NutsId> {
-        private final NutsWorkspace ws;
+        private final NutsSession session;
 
-        public NonNull(NutsWorkspace ws) {
+        public NonNull(NutsSession session) {
             super(NutsId.class);
-            this.ws = ws;
+            this.session = session;
         }
 
         @Override
@@ -24,17 +24,17 @@ public class NanoDBNutsIdSerializer {
 
         @Override
         public NutsId read(NanoDBInputStream in) {
-            NutsIdParser parser = ws.id().parser();
+            NutsIdParser parser = session.id().parser();
             return parser.parse(in.readUTF());
         }
     }
     
     public static class Null extends NanoDBNullSerializer<NutsId> {
-        private final NutsWorkspace ws;
+        private final NutsSession session;
 
-        public Null(NutsWorkspace ws) {
+        public Null(NutsSession session) {
             super(NutsId.class);
-            this.ws = ws;
+            this.session = session;
         }
 
         @Override
@@ -44,7 +44,7 @@ public class NanoDBNutsIdSerializer {
 
         @Override
         public NutsId readNonNull(NanoDBInputStream in) {
-            NutsIdParser parser = ws.id().parser();
+            NutsIdParser parser = session.id().parser();
             return parser.parse(in.readUTF());
         }
     }

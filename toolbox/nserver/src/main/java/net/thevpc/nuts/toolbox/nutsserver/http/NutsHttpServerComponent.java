@@ -97,14 +97,14 @@ public class NutsHttpServerComponent implements NutsServerComponent {
     }
 
     @Override
-    public NutsServer start(NutsSession invokerWorkspace, ServerConfig config) {
+    public NutsServer start(NutsSession invokerSession, ServerConfig config) {
         NutsHttpServerConfig httpConfig = (NutsHttpServerConfig) config;
-        Map<String, NutsWorkspace> workspaces = httpConfig.getWorkspaces();
-        if (invokerWorkspace == null) {
-            throw new NutsIllegalArgumentException(invokerWorkspace, NutsMessage.cstyle("missing workspace"));
+        Map<String, NutsSession> workspaces = httpConfig.getWorkspaces();
+        if (invokerSession == null) {
+            throw new NutsIllegalArgumentException(invokerSession, NutsMessage.cstyle("missing workspace"));
         }
         if (workspaces.isEmpty()) {
-            workspaces.put("", invokerWorkspace.getWorkspace());
+            workspaces.put("", invokerSession);
         }
         String serverId = httpConfig.getServerId();
         InetAddress address = httpConfig.getAddress();
@@ -127,7 +127,7 @@ public class NutsHttpServerComponent implements NutsServerComponent {
 
             serverId = serverName;//+ "-" + new File(workspace.getWorkspaceLocation()).getName();
         }
-        NutsSession session = invokerWorkspace;
+        NutsSession session = invokerSession;
         this.facade = new NutsHttpServletFacade(serverId, workspaces);
         if (port <= 0) {
             port = NutsServerConstants.DEFAULT_HTTP_SERVER_PORT;
@@ -170,10 +170,10 @@ public class NutsHttpServerComponent implements NutsServerComponent {
         server.setExecutor(executor);
         if (httpConfig.isTls()) {
             if (httpConfig.getSslKeystorePassphrase() == null) {
-                throw new NutsIllegalArgumentException(invokerWorkspace, NutsMessage.cstyle("missing SslKeystorePassphrase"));
+                throw new NutsIllegalArgumentException(invokerSession, NutsMessage.cstyle("missing SslKeystorePassphrase"));
             }
             if (httpConfig.getSslKeystoreCertificate() == null) {
-                throw new NutsIllegalArgumentException(invokerWorkspace, NutsMessage.cstyle("missing SslKeystoreCertificate"));
+                throw new NutsIllegalArgumentException(invokerSession, NutsMessage.cstyle("missing SslKeystoreCertificate"));
             }
             try {
                 SSLContext sslContext = SSLContext.getInstance("TLS");
@@ -219,7 +219,7 @@ public class NutsHttpServerComponent implements NutsServerComponent {
                     }
                 });
             } catch (GeneralSecurityException e) {
-                throw new NutsIllegalArgumentException(invokerWorkspace,NutsMessage.plain("start server failed"), e);
+                throw new NutsIllegalArgumentException(invokerSession,NutsMessage.plain("start server failed"), e);
             }
         }
 
@@ -232,7 +232,7 @@ public class NutsHttpServerComponent implements NutsServerComponent {
         });
         server.start();
         NutsPrintStream out = session.out();
-        NutsTextManager factory = session.getWorkspace().text();
+        NutsTextManager factory = session.text();
         out.printf("Nuts Http Service '%s' running %s at %s\n", serverId,
                 factory.forStyled(
                         (httpConfig.isTls() ? "https" : "http"), NutsTextStyle.primary1()
@@ -240,7 +240,7 @@ public class NutsHttpServerComponent implements NutsServerComponent {
                 inetSocketAddress);
         if (workspaces.size() == 1) {
             out.print("Serving workspace : ");
-            for (Map.Entry<String, NutsWorkspace> entry : workspaces.entrySet()) {
+            for (Map.Entry<String, NutsSession> entry : workspaces.entrySet()) {
                 String k = entry.getKey();
                 if (k.equals("")) {
                     out.printf("%s\n", entry.getValue().locations().getWorkspaceLocation());
@@ -250,7 +250,7 @@ public class NutsHttpServerComponent implements NutsServerComponent {
             }
         } else {
             out.println("Serving workspaces:");
-            for (Map.Entry<String, NutsWorkspace> entry : workspaces.entrySet()) {
+            for (Map.Entry<String, NutsSession> entry : workspaces.entrySet()) {
                 String k = entry.getKey();
                 if (k.equals("")) {
                     k = "<default>";

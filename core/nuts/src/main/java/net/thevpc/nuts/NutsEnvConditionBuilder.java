@@ -40,7 +40,7 @@ public interface NutsEnvConditionBuilder extends Serializable {
 
     static NutsEnvConditionBuilder of(NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.getWorkspace().descriptor().envConditionBuilder();
+        return session.descriptor().envConditionBuilder();
     }
 
     /**

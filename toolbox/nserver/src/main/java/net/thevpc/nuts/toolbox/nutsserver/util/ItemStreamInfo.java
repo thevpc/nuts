@@ -49,9 +49,9 @@ public class ItemStreamInfo {
     private InputStream content;
     private NutsSession session;
 
-    public ItemStreamInfo(InputStream header, InputStream content,NutsSession ws) throws IOException {
+    public ItemStreamInfo(InputStream header, InputStream content,NutsSession session) throws IOException {
         this.content = content;
-        this.session = ws;
+        this.session = session;
         BufferedReader r = new BufferedReader(new InputStreamReader(header));
         String line = null;
         while ((line = r.readLine()) != null) {

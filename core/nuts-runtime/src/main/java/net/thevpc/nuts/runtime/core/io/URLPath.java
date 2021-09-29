@@ -272,13 +272,14 @@ public class URLPath extends NutsPathBase implements NutsPathSPI {
     public NutsFormatSPI getFormatterSPI() {
         return new NutsFormatSPIFromNutsFormat(formatter());
     }
-
     public InputStream inputStream() {
         try {
             if (url == null) {
                 throw new NutsIOException(getSession(), NutsMessage.cstyle("unable to resolve input stream %s", toString()));
             }
-            return url.openStream();
+            return new InputStreamMetadataAwareImpl(url.openStream()
+                    , new FixedInputStreamMetadata(toString(),getContentLength()))
+                    ;
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
@@ -305,9 +306,9 @@ public class URLPath extends NutsPathBase implements NutsPathSPI {
 
         public NutsString asFormattedString() {
             if (p.url == null) {
-                return getSession().getWorkspace().text().forPlain("");
+                return getSession().text().forPlain("");
             }
-            return getSession().getWorkspace().text().toText(p.url);
+            return getSession().text().toText(p.url);
         }
 
         @Override

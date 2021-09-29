@@ -48,7 +48,7 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
      */
     private final List<String> outputFormatOptions = new ArrayList<>();
 
-    private String[] properties;
+    private String[] customOptions;
     /**
      * nuts api version to boot option-type : exported (inherited in child
      * workspaces)
@@ -276,13 +276,13 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
      * option-type : create (used when creating new workspace. will not be
      * exported nor promoted to runtime)
      */
-    private Map<String, String> storeLocations = new HashMap<>();
+    private Map<NutsStoreLocation, String> storeLocations = new HashMap<>();
 
     /**
      * option-type : create (used when creating new workspace. will not be
      * exported nor promoted to runtime)
      */
-    private Map<String, String> homeLocations = new HashMap<>();
+    private Map<NutsHomeLocation, String> homeLocations = new HashMap<>();
 
     /**
      * option-type : create (used when creating new workspace. will not be
@@ -368,8 +368,11 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
      * option-type : exported (inherited in child workspaces)
      */
     private String theme;
+    private NutsBootTerminal bootTerminal;
+    private final PrivateNutsLog log;
 
-    public PrivateBootWorkspaceOptions() {
+    public PrivateBootWorkspaceOptions(PrivateNutsLog log) {
+        this.log = log;
     }
 
     @Override
@@ -586,18 +589,17 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
     }
 
     @Override
-    public String getHomeLocation(NutsOsFamily layout, NutsStoreLocation location) {
-        String key = NutsUtilPlatforms.createHomeLocationKey(layout, location);
-        return homeLocations.get(key);
+    public String getHomeLocation(NutsHomeLocation location) {
+        return homeLocations.get(location);
     }
 
     @Override
-    public Map<String, String> getHomeLocations() {
+    public Map<NutsHomeLocation, String> getHomeLocations() {
         return new LinkedHashMap<>(homeLocations);
     }
 
     @Override
-    public NutsWorkspaceOptionsBuilder setHomeLocations(Map<String, String> homeLocations) {
+    public NutsWorkspaceOptionsBuilder setHomeLocations(Map<NutsHomeLocation, String> homeLocations) {
         this.homeLocations.clear();
         if (homeLocations != null) {
             this.homeLocations.putAll(homeLocations);
@@ -809,12 +811,12 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
     }
 
     @Override
-    public Map<String, String> getStoreLocations() {
+    public Map<NutsStoreLocation, String> getStoreLocations() {
         return new LinkedHashMap<>(storeLocations);
     }
 
     @Override
-    public NutsWorkspaceOptionsBuilder setStoreLocations(Map<String, String> storeLocations) {
+    public NutsWorkspaceOptionsBuilder setStoreLocations(Map<NutsStoreLocation, String> storeLocations) {
         this.storeLocations.clear();
         if (storeLocations != null) {
             this.storeLocations.putAll(storeLocations);
@@ -1355,13 +1357,13 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
     }
 
     @Override
-    public String[] getProperties() {
-        return properties == null ? new String[0] : properties;
+    public String[] getCustomOptions() {
+        return customOptions == null ? new String[0] : customOptions;
     }
 
     @Override
-    public NutsWorkspaceOptionsBuilder setProperties(String[] properties) {
-        this.properties = properties;
+    public NutsWorkspaceOptionsBuilder setCustomOptions(String[] properties) {
+        this.customOptions = properties;
         return this;
     }
 
@@ -1384,6 +1386,12 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
     @Override
     public NutsWorkspaceOptionsBuilder setTheme(String theme) {
         this.theme = theme;
+        return this;
+    }
+
+    @Override
+    public NutsWorkspaceOptionsBuilder setBootTerminal(NutsBootTerminal bootTerminal) {
+        this.bootTerminal = bootTerminal;
         return this;
     }
 
@@ -1446,13 +1454,14 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
 //        this.setExcludedRepositories(other.getExcludedRepositories() == null ? null : Arrays.copyOf(other.getExcludedRepositories(), other.getExcludedRepositories().length));
         this.setRepositories(other.getRepositories() == null ? null : Arrays.copyOf(other.getRepositories(), other.getRepositories().length));
         this.setApplicationArguments(other.getApplicationArguments() == null ? null : Arrays.copyOf(other.getApplicationArguments(), other.getApplicationArguments().length));
-        this.setProperties(other.getProperties() == null ? null : Arrays.copyOf(other.getProperties(), other.getProperties().length));
+        this.setCustomOptions(other.getCustomOptions() == null ? null : Arrays.copyOf(other.getCustomOptions(), other.getCustomOptions().length));
         this.setExpireTime(other.getExpireTime());
         this.setErrors(other.getErrors());
         this.setSkipErrors(other.getSkipErrors());
         this.setSwitchWorkspace(other.getSwitchWorkspace());
         this.setLocale(other.getLocale());
         this.setTheme(other.getTheme());
+        this.setBootTerminal(other.getBootTerminal());
         return this;
     }
 
@@ -1463,7 +1472,7 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
 
     @Override
     public NutsWorkspaceOptionsBuilder parseArguments(String[] args) {
-        PrivateNutsArgumentsParser.parseNutsArguments(args, this);
+        PrivateNutsArgumentsParser.parseNutsArguments(args, this, log);
         return this;
     }
 
@@ -1489,9 +1498,9 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
     @Override
     public NutsWorkspaceOptionsBuilder setStoreLocation(NutsStoreLocation location, String value) {
         if (NutsBlankable.isBlank(value)) {
-            storeLocations.remove(location.id());
+            storeLocations.remove(location);
         } else {
-            storeLocations.put(location.id(), value);
+            storeLocations.put(location, value);
         }
         return this;
     }
@@ -1499,18 +1508,16 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
     /**
      * set home location
      *
-     * @param layout   layout
      * @param location location
      * @param value    new value
      * @return {@code this} instance
      */
     @Override
-    public NutsWorkspaceOptionsBuilder setHomeLocation(NutsOsFamily layout, NutsStoreLocation location, String value) {
-        String key = NutsUtilPlatforms.createHomeLocationKey(layout, location);
+    public NutsWorkspaceOptionsBuilder setHomeLocation(NutsHomeLocation location, String value) {
         if (NutsBlankable.isBlank(value)) {
-            homeLocations.remove(key);
+            homeLocations.remove(location);
         } else {
-            homeLocations.put(key, value);
+            homeLocations.put(location, value);
         }
         return this;
     }
@@ -1538,18 +1545,23 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
 
     @Override
     public NutsWorkspaceOptions build() {
-        PrivateBootWorkspaceOptions c = new PrivateBootWorkspaceOptions();
+        PrivateBootWorkspaceOptions c = new PrivateBootWorkspaceOptions(log);
         c.setAll(this);
         return c;
     }
 
     @Override
-    public String toString() {
-        return formatter().getBootCommandLine().toString();
+    public NutsBootTerminal getBootTerminal() {
+        return bootTerminal;
     }
 
     @Override
     public NutsWorkspaceOptionsBuilder builder() {
-        return new PrivateBootWorkspaceOptions().setAll(this);
+        return new PrivateBootWorkspaceOptions(log).setAll(this);
+    }
+
+    @Override
+    public String toString() {
+        return formatter().getBootCommandLine().toString();
     }
 }

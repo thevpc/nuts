@@ -7,23 +7,23 @@ import java.util.Locale;
 
 public interface NutsPrintStream {
     static NutsPrintStream ofNull(NutsSession session) {
-        return session.getWorkspace().io().nullPrintStream();
+        return session.io().nullPrintStream();
     }
 
     static NutsPrintStream ofMemory(NutsSession session) {
-        return session.getWorkspace().io().createMemoryPrintStream();
+        return session.io().createMemoryPrintStream();
     }
 
     static NutsPrintStream of(OutputStream out, NutsSession session) {
-        return session.getWorkspace().io().createPrintStream(out);
+        return session.io().createPrintStream(out);
     }
 
     static NutsPrintStream of(OutputStream out, NutsTerminalMode mode, NutsSession session) {
-        return session.getWorkspace().io().createPrintStream(out, mode);
+        return session.io().createPrintStream(out, mode);
     }
 
     static NutsPrintStream of(Writer out, NutsSession session) {
-        return session.getWorkspace().io().createPrintStream(out);
+        return session.io().createPrintStream(out);
     }
 
     NutsPrintStream flush();

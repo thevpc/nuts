@@ -19,9 +19,9 @@ class PrivateNutsUtilDeleteFiles {
     }
 
     static String getStoreLocationPath(PrivateNutsWorkspaceInitInformation workspaceInformation, NutsStoreLocation value) {
-        Map<String, String> storeLocations = workspaceInformation.getStoreLocations();
+        Map<NutsStoreLocation, String> storeLocations = workspaceInformation.getStoreLocations();
         if (storeLocations != null) {
-            return storeLocations.get(value.id());
+            return storeLocations.get(value);
         }
         return null;
     }
@@ -55,7 +55,7 @@ class PrivateNutsUtilDeleteFiles {
             }
             case NO:
             case ERROR: {
-                PrivateNutsTerm.errln("reset cancelled (applied '--no' argument)");
+                LOG.log(Level.WARNING, NutsLogVerb.WARNING, "reset cancelled (applied '--no' argument)");
                 throw new PrivateNutsBootCancelException(NutsMessage.plain("cancel delete folder"));
             }
         }
@@ -106,7 +106,7 @@ class PrivateNutsUtilDeleteFiles {
                                     if (session != null) {
                                         session.err().println(header);
                                     } else {
-                                        PrivateNutsTerm.errln("%s", header);
+                                        LOG.log(Level.WARNING, NutsLogVerb.WARNING, "{0}", header);
                                     }
                                 }
                             }
@@ -119,7 +119,7 @@ class PrivateNutsUtilDeleteFiles {
         return count;
     }
 
-    private static long deleteAndConfirm(File directory, boolean force, PrivateNutsDeleteFilesContext refForceAll, NutsSession session, PrivateNutsLog LOG, NutsWorkspaceOptions woptions) {
+    private static long deleteAndConfirm(File directory, boolean force, PrivateNutsDeleteFilesContext refForceAll, NutsSession session, PrivateNutsLog log, NutsWorkspaceOptions woptions) {
         if (directory.exists()) {
             if (!force && !refForceAll.isForce() && refForceAll.accept(directory)) {
                 String line = null;
@@ -138,7 +138,7 @@ class PrivateNutsUtilDeleteFiles {
                         if (woptions.isGui()) {
                             line = PrivateNutsUtilGui.inputString(
                                     NutsMessage.cstyle("do you confirm deleting %s [y/n/c/a] (default 'n') ?", directory).toString(),
-                                    null
+                                    null,()->log.readLine(),log.err()
                             );
                         } else {
                             NutsConfirmationMode cc = woptions.getConfirm();
@@ -158,8 +158,8 @@ class PrivateNutsUtilDeleteFiles {
                                     throw new NutsBootException(NutsMessage.plain("error response"));
                                 }
                                 case ASK: {
-                                    PrivateNutsTerm.err("do you confirm deleting %s [y/n/c/a] (default 'n') ? : ", directory);
-                                    line = PrivateNutsTerm.readLine();
+                                    log.log(Level.WARNING, NutsLogVerb.WARNING, "do you confirm deleting {0} [y/n/c/a] (default 'n') ? : ", directory);
+                                    line = log.readLine();
                                 }
                             }
                         }
@@ -215,7 +215,7 @@ class PrivateNutsUtilDeleteFiles {
                     }
                 });
                 count[0]++;
-                LOG.log(Level.FINEST, NutsLogVerb.WARNING, "delete folder : {0} ({1} files/folders deleted)", new Object[]{directory, count[0]});
+                log.log(Level.FINEST, NutsLogVerb.WARNING, "delete folder : {0} ({1} files/folders deleted)", new Object[]{directory, count[0]});
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
             }

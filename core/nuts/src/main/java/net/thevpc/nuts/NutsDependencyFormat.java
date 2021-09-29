@@ -38,7 +38,7 @@ public interface NutsDependencyFormat extends NutsFormat {
 
     static NutsDependencyFormat of(NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.getWorkspace().dependency().formatter();
+        return session.dependency().formatter();
     }
 
     /**

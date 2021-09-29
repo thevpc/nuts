@@ -297,14 +297,14 @@ public class JobServiceCmd {
                 .setCommandReadHighlighter(new NutsCommandReadHighlighter() {
                     @Override
                     public NutsText highlight(String buffer, NutsSession session) {
-                        return session.getWorkspace().text().forCode("sh", buffer).parse(session);
+                        return session.text().forCode("sh", buffer).parse(session);
                     }
                 });
         context.getWorkspace().env().setProperty(JobServiceCmd.class.getName(), this);
 
 //        session.setTerminal(
-//                session.getWorkspace().io().term().createTerminal(
-//                session.getWorkspace().io().term().getSystemTerminal(), 
+//                session.io().term().createTerminal(
+//                session.io().term().getSystemTerminal(), 
 //                        session
 //        ));
         NutsTextManager text = context.getWorkspace().text();

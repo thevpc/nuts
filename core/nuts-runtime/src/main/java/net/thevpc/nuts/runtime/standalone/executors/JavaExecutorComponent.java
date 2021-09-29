@@ -245,7 +245,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                 List<NutsString> xargs = new ArrayList<>();
                 List<String> args = new ArrayList<>();
 
-                NutsTextManager txt = execSession.getWorkspace().text();
+                NutsTextManager txt = execSession.text();
                 xargs.add(txt.forPlain(joptions.getJavaHome()));
                 xargs.addAll(
                         joptions.getJvmArgs().stream()
@@ -343,7 +343,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
 
         @Override
         public void dryExec() {
-            NutsTextManager text = getSession().getWorkspace().text();
+            NutsTextManager text = getSession().text();
             List<String> cmdLine = new ArrayList<>();
             cmdLine.add("embedded-java");
             cmdLine.add("-cp");
@@ -355,7 +355,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                     text.builder()
                             .append("exec", NutsTextStyle.pale())
                             .append(" ")
-                            .append(getSession().getWorkspace().commandLine().create(cmdLine))
+                            .append(getSession().commandLine().create(cmdLine))
             );
         }
 
@@ -371,7 +371,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
             DefaultNutsClassLoader classLoader = null;
             Throwable th = null;
             try {
-                classLoader = ((DefaultNutsWorkspaceExtensionManager) session.getWorkspace().extensions()).getModel().getNutsURLClassLoader(
+                classLoader = ((DefaultNutsWorkspaceExtensionManager) session.extensions()).getModel().getNutsURLClassLoader(
                         def.getId().toString(),
                         null//getSession().getWorkspace().config().getBootClassLoader()
                         , session

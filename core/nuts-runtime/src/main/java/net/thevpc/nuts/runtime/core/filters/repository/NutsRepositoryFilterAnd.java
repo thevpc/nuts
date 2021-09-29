@@ -12,8 +12,8 @@ public class NutsRepositoryFilterAnd extends AbstractRepositoryFilter{
 
     private NutsRepositoryFilter[] all;
 
-    public NutsRepositoryFilterAnd(NutsSession ws, NutsRepositoryFilter... all) {
-        super(ws, NutsFilterOp.AND);
+    public NutsRepositoryFilterAnd(NutsSession session, NutsRepositoryFilter... all) {
+        super(session, NutsFilterOp.AND);
         List<NutsRepositoryFilter> valid = new ArrayList<>();
         if (all != null) {
             for (NutsRepositoryFilter filter : all) {

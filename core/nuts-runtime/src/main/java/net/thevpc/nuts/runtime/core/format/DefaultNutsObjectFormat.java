@@ -73,7 +73,7 @@ public class DefaultNutsObjectFormat extends NutsObjectFormatBase {
         NutsObjectFormat base = createObjectFormat();
         base.setValue(getValue());
         base.setSession(session);
-        base.configure(true, session.getWorkspace().boot().getBootOptions().getOutputFormatOptions());
+        base.configure(true, session.boot().getBootOptions().getOutputFormatOptions());
         base.configure(true, session.getOutputFormatOptions());
         return base;
     }
@@ -85,7 +85,7 @@ public class DefaultNutsObjectFormat extends NutsObjectFormatBase {
         if(t==null){
             t = NutsContentType.PLAIN;
             Object v = getValue();
-            Object vv = getSession().getWorkspace().elem().destruct(v);
+            Object vv = getSession().elem().destruct(v);
             if(vv instanceof Map || vv instanceof List){
                 t = NutsContentType.JSON;
             }

@@ -6,7 +6,10 @@ import net.thevpc.nuts.runtime.core.model.DefaultNutsVersion;
 import java.util.regex.Pattern;
 
 public class DefaultNutsVersionParser implements NutsVersionParser {
-    private static final Pattern PATTERN=Pattern.compile("[A-Za-z0-9._*,()\\[] ]");
+    /**
+     * ${} added to support versions as maven place-holders
+     */
+    private static final Pattern PATTERN=Pattern.compile("[A-Za-z0-9._*,()\\[\\] ${}-]+");
     private NutsSession session;
     private boolean lenient=false;
     private boolean acceptBlank = true;

@@ -17,8 +17,8 @@ public class NutsExecStatusIdFilter extends AbstractDescriptorFilter {
     private final Boolean executable;
     private final Boolean nutsApplication;
 
-    public NutsExecStatusIdFilter(NutsSession ws, Boolean executable, Boolean nutsApplication) {
-        super(ws, NutsFilterOp.CUSTOM);
+    public NutsExecStatusIdFilter(NutsSession session, Boolean executable, Boolean nutsApplication) {
+        super(session, NutsFilterOp.CUSTOM);
         this.executable = executable;
         this.nutsApplication = nutsApplication;
     }

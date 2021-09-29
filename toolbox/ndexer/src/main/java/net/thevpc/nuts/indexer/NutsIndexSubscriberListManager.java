@@ -37,10 +37,10 @@ public class NutsIndexSubscriberListManager {
     }
 
     private Path getConfigFile(NutsSession session) {
-        return Paths.get(this.defaultWorkspace
+        return Paths.get(session
                 .locations()
-                .getStoreLocation(this.defaultWorkspace
-                                .id().setSession(session).resolveId(NutsIndexSubscriberListManager.class),
+                .getStoreLocation(session
+                                .id().resolveId(NutsIndexSubscriberListManager.class),
                         NutsStoreLocation.CONFIG)).resolve(
                         name + "-nuts-subscriber-list.json");
     }

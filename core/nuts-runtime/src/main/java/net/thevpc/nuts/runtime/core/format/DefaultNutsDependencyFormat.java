@@ -137,7 +137,7 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
                 }
             }
         }
-        NutsIdFormat id1 = getSession().getWorkspace().id().formatter();
+        NutsIdFormat id1 = getSession().id().formatter();
         for (String omitQueryProperty : getOmitQueryProperties()) {
             id1.setOmitProperty(omitQueryProperty,true);
         }

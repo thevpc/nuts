@@ -118,7 +118,7 @@ public class DefaultNutsRepoFactoryComponent implements NutsRepositoryFactoryCom
 
     @Override
     public NutsAddRepositoryOptions[] getDefaultRepositories(NutsSession session) {
-        if (!session.getWorkspace().config().isGlobal()) {
+        if (!session.config().isGlobal()) {
             return new NutsAddRepositoryOptions[]{
                 NutsRepositorySelector.createRepositoryOptions(NutsRepositorySelector.parseSelection("system"), true, session)
             };

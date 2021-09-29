@@ -40,28 +40,18 @@ import java.util.Objects;
  *    <li>INSTALLED OBSOLETE</li>
  *    <li>INSTALLED REQUIRED OBSOLETE</li>
  * </ul>
+ *
  * @app.category Base
  */
 public class NutsInstallStatus {
 
-    private static final NutsInstallStatus[] ALL = new NutsInstallStatus[16];
+    private static final NutsInstallStatus[] ALL = _buildNutsInstallStatusArray();
+
     public static final NutsInstallStatus NONE = of(false, false, false, false);
     public static final NutsInstallStatus INSTALLED = of(true, false, false, false);
     public static final NutsInstallStatus REQUIRED = of(false, true, false, false);
     public static final NutsInstallStatus OBSOLETE = of(false, false, true, false);
     public static final NutsInstallStatus DEFAULT_VALUE = of(false, false, false, true);
-
-    static {
-        for (int i = 0; i < 16; i++) {
-            ALL[i] = new NutsInstallStatus(
-                    (i & 0x1) != 0,
-                    (i & 0x2) != 0,
-                    (i & 0x4) != 0,
-                    (i & 0x8) != 0
-            );
-        }
-    }
-
     private final boolean installed;
     private final boolean required;
     private final boolean obsolete;
@@ -72,6 +62,19 @@ public class NutsInstallStatus {
         this.required = required;
         this.obsolete = obsolete;
         this.defaultVersion = defaultVersion;
+    }
+
+    private static NutsInstallStatus[] _buildNutsInstallStatusArray() {
+        NutsInstallStatus[] ALL = new NutsInstallStatus[16];
+        for (int i = 0; i < 16; i++) {
+            ALL[i] = new NutsInstallStatus(
+                    (i & 0x1) != 0,
+                    (i & 0x2) != 0,
+                    (i & 0x4) != 0,
+                    (i & 0x8) != 0
+            );
+        }
+        return ALL;
     }
 
     public static NutsInstallStatus of(boolean installed, boolean required, boolean obsolete, boolean defaultVersion) {

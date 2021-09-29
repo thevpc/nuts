@@ -35,7 +35,7 @@ public interface NutsDependencyFilterManager extends NutsTypedFilters<NutsDepend
 
     static NutsDependencyFilterManager of(NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.getWorkspace().dependency().filter();
+        return session.dependency().filter();
     }
 
     NutsDependencyFilterManager setSession(NutsSession session);

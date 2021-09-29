@@ -16,8 +16,8 @@ public class DefaultNutsRepositoryFilter extends AbstractRepositoryFilter{
     private final Set<String> exactRepos;
     private final Set<Pattern> wildcardRepos;
 
-    public DefaultNutsRepositoryFilter(NutsSession ws,Collection<String> exactRepos) {
-        super(ws, NutsFilterOp.CUSTOM);
+    public DefaultNutsRepositoryFilter(NutsSession session,Collection<String> exactRepos) {
+        super(session, NutsFilterOp.CUSTOM);
         this.exactRepos = new HashSet<>();
         this.wildcardRepos = new HashSet<>();
         for (String repo : exactRepos) {

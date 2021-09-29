@@ -477,7 +477,7 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
             case "--to-version": {
                 String val = cmdLine.nextString().getValue().getString();
                 if (enabled) {
-                    this.setApiVersion(getSession().getWorkspace().version().parse(val));
+                    this.setApiVersion(getSession().version().parse(val));
                 }
                 return true;
             }

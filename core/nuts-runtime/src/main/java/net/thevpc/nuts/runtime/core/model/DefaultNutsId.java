@@ -45,7 +45,7 @@ public class DefaultNutsId implements NutsId {
     private transient NutsSession session;
 
     public DefaultNutsId(String groupId, String artifactId, String version, Map<String, String> properties,NutsSession session) {
-        this( groupId, artifactId, session.getWorkspace().version().parser().parse(version), properties,session);
+        this( groupId, artifactId, session.version().parser().parse(version), properties,session);
     }
 
     protected DefaultNutsId(String groupId, String artifactId, NutsVersion version, Map<String, String> properties,NutsSession session) {
@@ -225,7 +225,7 @@ public class DefaultNutsId implements NutsId {
 
     @Override
     public NutsEnvCondition getCondition() {
-        NutsEnvConditionBuilder c = session.getWorkspace().descriptor().envConditionBuilder();
+        NutsEnvConditionBuilder c = session.descriptor().envConditionBuilder();
         Map<String, String> properties = getProperties();
         c.setOs(
                 Arrays.stream(

@@ -29,6 +29,7 @@ import net.thevpc.nuts.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by vpc on 5/23/17.
@@ -100,5 +101,17 @@ public class DefaultNutsTextList extends AbstractNutsText implements NutsTextLis
     public Iterator<NutsText> iterator() {
         return children.iterator();
     }
-    
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DefaultNutsTextList nutsTexts = (DefaultNutsTextList) o;
+        return Objects.equals(children, nutsTexts.children);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(children);
+    }
 }

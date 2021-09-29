@@ -19,7 +19,7 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
 
     public static SystemNdi createNdi(NutsSession session) {
         SystemNdi ndi = null;
-        NutsWorkspaceEnvManager workspaceEnvManager = session.getWorkspace().env();
+        NutsWorkspaceEnvManager workspaceEnvManager = session.env();
         switch (workspaceEnvManager.getOsFamily()) {
             case LINUX:
             case UNIX: {
@@ -182,7 +182,7 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
                 }
             } else if ((a = commandLine.nextString("-c", "--companions")) != null) {
                 session.setConfirm(NutsConfirmationMode.YES);
-                for (NutsId companion : ws.getCompanionIds(session)) {
+                for (NutsId companion : session.extensions().getCompanionIds()) {
                     idsToInstall.add(ws.search().addId(companion).setLatest(true).getResultIds().required().getLongName());
                     missingAnyArgument = false;
                 }
@@ -418,7 +418,7 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
                 }
 
             } else {
-                session.getWorkspace().formats().object(result).println();
+                session.formats().object(result).println();
             }
         }
     }

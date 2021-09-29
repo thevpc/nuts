@@ -112,7 +112,7 @@ public class WindowsNdi extends BaseSystemNdi {
     @Override
     protected FreeDesktopEntryWriter createFreeDesktopEntryWriter() {
         return new WindowFreeDesktopEntryWriter(
-                session.getWorkspace().env().getDesktopPath()
+                session.env().getDesktopPath()
                 , session);
     }
 

@@ -5,8 +5,8 @@ import net.thevpc.nuts.runtime.core.filters.id.NutsScriptAwareIdFilter;
 
 public class NutsInstallStatusFilterFalse extends AbstractInstallStatusFilter implements NutsScriptAwareIdFilter {
 
-    public NutsInstallStatusFilterFalse(NutsSession ws) {
-        super(ws, NutsFilterOp.FALSE);
+    public NutsInstallStatusFilterFalse(NutsSession session) {
+        super(session, NutsFilterOp.FALSE);
     }
 
     @Override

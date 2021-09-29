@@ -87,7 +87,7 @@ public class UnzipCommand extends SimpleNshBuiltin {
             File file = new File(context.getRootContext().getAbsolutePath(path));
             try {
                 if (options.l) {
-                    context.getSession().getWorkspace().io().uncompress()
+                    context.getSession().io().uncompress()
                             .from(file.getPath())
                                     .visit(new NutsIOUncompressVisitor() {
                                         @Override
@@ -107,7 +107,7 @@ public class UnzipCommand extends SimpleNshBuiltin {
                         dir = context.getRootContext().getCwd();
                     }
                     dir = context.getRootContext().getAbsolutePath(dir);
-                    context.getSession().getWorkspace().io().uncompress()
+                    context.getSession().io().uncompress()
                                     .from(file.getPath())
                                     .to(dir)
                                             .setSkipRoot(options.skipRoot)

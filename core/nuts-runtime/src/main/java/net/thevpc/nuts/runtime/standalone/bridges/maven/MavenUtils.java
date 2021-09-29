@@ -67,7 +67,7 @@ public class MavenUtils {
     private MavenUtils(NutsWorkspace ws, NutsSession session) {
         this.ws = ws;
         this.session = session;
-        LOG = session.getWorkspace().log().of(MavenUtils.class);
+        LOG = session.log().of(MavenUtils.class);
     }
 
     public static MavenUtils of(NutsSession session) {
@@ -81,10 +81,10 @@ public class MavenUtils {
     }
 
     public static PomIdResolver createPomIdResolver(NutsSession session) {
-        PomIdResolver wp = (PomIdResolver) session.getWorkspace().env().getProperty(PomIdResolver.class.getName()).getObject();
+        PomIdResolver wp = (PomIdResolver) session.env().getProperty(PomIdResolver.class.getName()).getObject();
         if (wp == null) {
             wp = new PomIdResolver(new NutsPomUrlReader(session), new NutsPomLogger(session));
-            session.getWorkspace().env().setProperty(PomIdResolver.class.getName(), wp);
+            session.env().setProperty(PomIdResolver.class.getName(), wp);
         }
         return wp;
     }
@@ -148,7 +148,7 @@ public class MavenUtils {
         if (arch != null) {
             ars = arch.id();
         }
-        return session.getWorkspace().descriptor().envConditionBuilder()
+        return session.descriptor().envConditionBuilder()
                 .setOs(oss == null ? new String[0] : new String[]{oss})
                 .setArch(ars == null ? new String[0] : new String[]{ars})
                 .setPlatform(platform == null ? new String[0] : new String[]{platform})
@@ -196,7 +196,7 @@ public class MavenUtils {
                 }
             }
         }
-        return session.getWorkspace().dependency().builder()
+        return session.dependency().builder()
                 .setGroupId(d.getGroupId())
                 .setArtifactId(d.getArtifactId())
                 .setClassifier(d.getClassifier())
@@ -296,12 +296,12 @@ public class MavenUtils {
             }
             List<NutsDescriptorProperty> props = new ArrayList<>();
             for (Map.Entry<String, String> e : pom.getProperties().entrySet()) {
-                props.add(session.getWorkspace().descriptor().propertyBuilder().setName(e.getKey())
+                props.add(session.descriptor().propertyBuilder().setName(e.getKey())
                         .setValue(e.getValue()).build());
             }
             for (PomProfile profile : profiles) {
                 for (Map.Entry<String, String> e : profile.getProperties().entrySet()) {
-                    props.add(session.getWorkspace().descriptor().propertyBuilder()
+                    props.add(session.descriptor().propertyBuilder()
                             .setName(e.getKey())
                             .setValue(e.getValue())
                             .setCondition(toCondition(session, null, null, profile.getActivation()))
@@ -364,7 +364,7 @@ public class MavenUtils {
 
     public NutsDescriptor parsePomXml(Path path, NutsFetchMode fetchMode, NutsRepository repository) throws IOException {
         try {
-            session.getTerminal().printProgress("%-8s %s", "parse", session.getWorkspace().io().path(path.toString()).toCompressedForm());
+            session.getTerminal().printProgress("%-8s %s", "parse", session.io().path(path.toString()).toCompressedForm());
             try (InputStream is = Files.newInputStream(path)) {
                 NutsDescriptor nutsDescriptor = parsePomXml(is, fetchMode, path.toString(), repository);
                 if (nutsDescriptor.getId().getArtifactId() == null) {
@@ -550,7 +550,7 @@ public class MavenUtils {
     }
 
     public DepsAndRepos loadDependenciesAndRepositoriesFromPomUrl(String url, NutsSession session) {
-        session.getTerminal().printProgress("%-8s %s", "load", session.getWorkspace().io().path(url).toCompressedForm());
+        session.getTerminal().printProgress("%-8s %s", "load", session.io().path(url).toCompressedForm());
         DepsAndRepos depsAndRepos = new DepsAndRepos();
 //        String repositories = null;
 //        String dependencies = null;
@@ -768,7 +768,7 @@ public class MavenUtils {
 
         public NutsPomLogger(NutsSession session) {
             this.session = session;
-            LOG = session.getWorkspace().log().of(PomIdResolver.class);
+            LOG = session.log().of(PomIdResolver.class);
         }
 
         @Override

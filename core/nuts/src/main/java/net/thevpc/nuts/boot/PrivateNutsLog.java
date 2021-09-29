@@ -29,9 +29,12 @@ package net.thevpc.nuts.boot;
 import net.thevpc.nuts.NutsLogVerb;
 import net.thevpc.nuts.NutsWorkspaceOptions;
 
+import java.io.InputStream;
+import java.io.PrintStream;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -51,6 +54,15 @@ public class PrivateNutsLog {
             .withZone(ZoneId.systemDefault());
     private static final Pattern LOG_PARAM_PATTERN = Pattern.compile("\\{(?<v>[0-9]+)}");
     private NutsWorkspaceOptions options;
+    private NutsBootTerminal bootTerminal;
+    private Scanner inScanner;
+
+    public PrivateNutsLog(NutsBootTerminal bootTerminal) {
+        InputStream in = (bootTerminal == null || bootTerminal.getIn() == null) ? System.in : bootTerminal.getIn();
+        PrintStream out = (bootTerminal == null || bootTerminal.getOut() == null) ? System.out : bootTerminal.getOut();
+        PrintStream err = (bootTerminal == null || bootTerminal.getErr() == null) ? out : bootTerminal.getErr();
+        this.bootTerminal=new NutsBootTerminal(in,out,err);
+    }
 
     public void log(Level lvl, NutsLogVerb logVerb, String message) {
         log(lvl, logVerb, message, new Object[0]);
@@ -81,7 +93,7 @@ public class PrivateNutsLog {
     }
 
     private void doLog(Level lvl, NutsLogVerb logVerb, String s) {
-        PrivateNutsTerm.errln("%s %-7s %-7s : %s", DEFAULT_DATE_TIME_FORMATTER.format(Instant.now()), lvl, logVerb, s);
+        errln("%s %-7s %-7s : %s", DEFAULT_DATE_TIME_FORMATTER.format(Instant.now()), lvl, logVerb, s);
     }
 
     public boolean isLoggable(Level lvl) {
@@ -93,5 +105,38 @@ public class PrivateNutsLog {
 
     public void setOptions(NutsWorkspaceOptions options) {
         this.options = options;
+    }
+
+
+    void errln(String msg, Object... p) {
+        this.bootTerminal.getErr().printf(msg, p);
+        this.bootTerminal.getErr().printf("%n");
+        this.bootTerminal.getErr().flush();
+    }
+
+    public PrintStream err() {
+        return bootTerminal.getErr();
+    }
+
+    void err(String msg, Object... p) {
+        this.bootTerminal.getErr().printf(msg, p);
+        this.bootTerminal.getErr().flush();
+    }
+
+    void outln(String msg, Object... p) {
+        this.bootTerminal.getOut().printf(msg, p);
+        this.bootTerminal.getOut().printf("%n");
+        this.bootTerminal.getOut().flush();
+    }
+
+    void errln(Throwable exception) {
+        exception.printStackTrace(this.bootTerminal.getErr());
+    }
+
+    public String readLine() {
+        if (inScanner == null) {
+            inScanner = new Scanner(System.in);
+        }
+        return inScanner.nextLine();
     }
 }

@@ -3,7 +3,6 @@ package net.thevpc.nuts.runtime.standalone.config;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NutsBootDescriptor;
 import net.thevpc.nuts.boot.NutsBootId;
-import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.NutsHomeLocationsMap;
 import net.thevpc.nuts.runtime.standalone.NutsStoreLocationsMap;
 
@@ -16,10 +15,10 @@ import java.util.Map;
 
 public final class DefaultNutsWorkspaceCurrentConfig {
 
-    private final Map<String, String> userStoreLocations = new HashMap<>();
-    private final Map<String, String> effStoreLocationsMap = new HashMap<>();
+    private final Map<NutsStoreLocation, String> userStoreLocations = new HashMap<>();
+    private final Map<NutsStoreLocation, String> effStoreLocationsMap = new HashMap<>();
     private final Path[] effStoreLocationPath = new Path[NutsStoreLocation.values().length];
-    private final Map<String, String> homeLocations = new HashMap<>();
+    private final Map<NutsHomeLocation, String> homeLocations = new HashMap<>();
     private final NutsWorkspace ws;
     private String name;
     private NutsId apiId;
@@ -32,7 +31,7 @@ public final class DefaultNutsWorkspaceCurrentConfig {
     private NutsStoreLocationStrategy storeLocationStrategy;
     private NutsStoreLocationStrategy repositoryStoreLocationStrategy;
     private NutsOsFamily storeLocationLayout;
-    private boolean global;
+    private Boolean global;
 //    private NutsId platform;
 //    private NutsId os;
 //    private NutsOsFamily osFamily;
@@ -70,23 +69,35 @@ public final class DefaultNutsWorkspaceCurrentConfig {
         if (c.getStoreLocationLayout() != null) {
             this.storeLocationLayout = c.getStoreLocationLayout();
         }
-        this.userStoreLocations.putAll(new NutsStoreLocationsMap(c.getStoreLocations()).toMap());
-        this.homeLocations.putAll(new NutsHomeLocationsMap(c.getHomeLocations()).toMap());
-        this.global |= c.isGlobal();
+        for (Map.Entry<NutsStoreLocation, String> e : new NutsStoreLocationsMap(c.getStoreLocations()).toMap().entrySet()) {
+            String o = this.userStoreLocations.get(e.getKey());
+            if(NutsBlankable.isBlank(o)){
+                this.userStoreLocations.put(e.getKey(),e.getValue());
+            }
+        }
+        for (Map.Entry<NutsHomeLocation, String> e : new NutsHomeLocationsMap(c.getHomeLocations()).toMap().entrySet()) {
+            String o = this.homeLocations.get(e.getKey());
+            if(NutsBlankable.isBlank(o)){
+                this.homeLocations.put(e.getKey(),e.getValue());
+            }
+        }
+        if(this.global==null) {
+            this.global = c.isGlobal();
+        }
         return this;
     }
 
     public void setRuntimeId(String s, NutsSession session) {
         this.bootRuntime = s.contains("#")
-                ? session.getWorkspace().id().parser().parse(s)
-                : session.getWorkspace().id().parser().parse(NutsConstants.Ids.NUTS_RUNTIME + "#" + s);
+                ? session.id().parser().parse(s)
+                : session.id().parser().parse(NutsConstants.Ids.NUTS_RUNTIME + "#" + s);
     }
 
     public DefaultNutsWorkspaceCurrentConfig mergeRuntime(NutsWorkspaceOptions c, NutsSession session) {
         if (c.getRuntimeId() != null) {
             this.bootRuntime = c.getRuntimeId().contains("#")
-                    ? session.getWorkspace().id().parser().parse(c.getRuntimeId())
-                    : session.getWorkspace().id().parser().parse(NutsConstants.Ids.NUTS_RUNTIME + "#" + c.getRuntimeId());
+                    ? session.id().parser().parse(c.getRuntimeId())
+                    : session.id().parser().parse(NutsConstants.Ids.NUTS_RUNTIME + "#" + c.getRuntimeId());
         }
 //        this.bootRuntimeDependencies = c.getRuntimeDependencies();
 //        this.bootExtensionDependencies = c.getExtensionDependencies();
@@ -107,64 +118,26 @@ public final class DefaultNutsWorkspaceCurrentConfig {
         if (repositoryStoreLocationStrategy == null) {
             repositoryStoreLocationStrategy = NutsStoreLocationStrategy.EXPLODED;
         }
-        Path[] homes = new Path[NutsStoreLocation.values().length];
-        for (NutsStoreLocation type : NutsStoreLocation.values()) {
-            String ss = NutsUtilPlatforms.getPlatformHomeFolder(getStoreLocationLayout(), type, homeLocations, isGlobal(), getName());
-            if (NutsBlankable.isBlank(ss)) {
-                throw new NutsIllegalArgumentException(session,
-                        NutsMessage.cstyle("missing Home for %s", type));
-            }
-            homes[type.ordinal()] = Paths.get(ss);
-        }
-        Map<String, String> storeLocations = getStoreLocations();
-        for (NutsStoreLocation location : NutsStoreLocation.values()) {
-            String typeId = location.id();
-            switch (location) {
-                default: {
-                    String typeLocation = storeLocations.get(typeId);
-                    if (NutsBlankable.isBlank(typeLocation)) {
-                        switch (storeLocationStrategy) {
-                            case STANDALONE: {
-                                storeLocations.put(typeId, Paths.get(workspaceLocation).resolve(location.id()).toString());
-                                break;
-                            }
-                            case EXPLODED: {
-                                storeLocations.put(typeId, homes[location.ordinal()].toString());
-                                break;
-                            }
-                        }
-                    } else if (!CoreIOUtils.isAbsolutePath(typeLocation)) {
-                        switch (storeLocationStrategy) {
-                            case STANDALONE: {
-                                storeLocations.put(typeId, Paths.get(workspaceLocation).resolve(location.id()).toString());
-                                break;
-                            }
-                            case EXPLODED: {
-                                storeLocations.put(typeId, homes[location.ordinal()].resolve(typeLocation).toString());
-                                break;
-                            }
-                        }
-                    }
-
-                }
-            }
-        }
+        Map<NutsStoreLocation, String> storeLocations = NutsUtilPlatforms.buildLocations(getStoreLocationLayout(), storeLocationStrategy,
+                getStoreLocations(), homeLocations, isGlobal(), workspaceLocation,
+                session
+        );
         this.effStoreLocationsMap.clear();
         this.effStoreLocationsMap.putAll(storeLocations);
         for (int i = 0; i < effStoreLocationPath.length; i++) {
-            effStoreLocationPath[i] = Paths.get(effStoreLocationsMap.get(NutsStoreLocation.values()[i].id()));
+            effStoreLocationPath[i] = Paths.get(effStoreLocationsMap.get(NutsStoreLocation.values()[i]));
         }
         if (apiId == null) {
-            apiId = session.getWorkspace().id().parser().parse(NutsConstants.Ids.NUTS_API + "#" + Nuts.getVersion());
+            apiId = session.id().parser().parse(NutsConstants.Ids.NUTS_API + "#" + Nuts.getVersion());
         }
         if (storeLocationLayout == null) {
-            storeLocationLayout = session.getWorkspace().env().getOsFamily();
+            storeLocationLayout = session.env().getOsFamily();
         }
         return this;
     }
 
     public DefaultNutsWorkspaceCurrentConfig merge(NutsWorkspaceConfigApi c, NutsSession session) {
-        NutsIdParser parser = session.getWorkspace().id().parser();
+        NutsIdParser parser = session.id().parser();
         if (c.getApiVersion() != null) {
             this.apiId = parser.parse(NutsConstants.Ids.NUTS_API + "#" + c.getApiVersion());
         }
@@ -187,13 +160,13 @@ public final class DefaultNutsWorkspaceCurrentConfig {
 
     public DefaultNutsWorkspaceCurrentConfig merge(NutsWorkspaceConfigRuntime c, NutsSession session) {
         if (c.getId() != null) {
-            this.bootRuntime = session.getWorkspace().id().parser().parse(c.getId());
+            this.bootRuntime = session.id().parser().parse(c.getId());
         }
         if (c.getDependencies() != null) {
             this.runtimeBootDescriptor = new NutsBootDescriptor(
                     NutsBootId.parse(this.bootRuntime.toString()),
                     Arrays.stream(c.getDependencies().split(";"))
-                            .map(x -> NutsBootId.parse(x)).toArray(NutsBootId[]::new)
+                            .map(NutsBootId::parse).toArray(NutsBootId[]::new)
 
             );
         }
@@ -213,16 +186,28 @@ public final class DefaultNutsWorkspaceCurrentConfig {
         if (c.getStoreLocationLayout() != null) {
             this.storeLocationLayout = c.getStoreLocationLayout();
         }
-        this.userStoreLocations.putAll(new NutsStoreLocationsMap(c.getStoreLocations()).toMap());
-        this.homeLocations.putAll(new NutsHomeLocationsMap(c.getHomeLocations()).toMap());
-        this.global |= c.isGlobal();
+        for (Map.Entry<NutsStoreLocation, String> e : new NutsStoreLocationsMap(c.getStoreLocations()).toMap().entrySet()) {
+            String o = this.userStoreLocations.get(e.getKey());
+            if(NutsBlankable.isBlank(o)){
+                this.userStoreLocations.put(e.getKey(),e.getValue());
+            }
+        }
+        for (Map.Entry<NutsHomeLocation, String> e : new NutsHomeLocationsMap(c.getHomeLocations()).toMap().entrySet()) {
+            String o = this.homeLocations.get(e.getKey());
+            if(NutsBlankable.isBlank(o)){
+                this.homeLocations.put(e.getKey(),e.getValue());
+            }
+        }
+        if(this.global==null) {
+            this.global = c.isGlobal();
+        }
 //        this.gui |= c.isGui();
         return this;
     }
 
     public DefaultNutsWorkspaceCurrentConfig merge(NutsBootConfig c, NutsSession session) {
         this.name = c.getName();
-        NutsIdParser parser = session.getWorkspace().id().parser();
+        NutsIdParser parser = session.id().parser();
         if (c.getApiVersion() != null) {
             this.apiId = parser.parse(NutsConstants.Ids.NUTS_API + "#" + c.getApiVersion());
         }
@@ -255,9 +240,21 @@ public final class DefaultNutsWorkspaceCurrentConfig {
         if (c.getStoreLocationLayout() != null) {
             this.storeLocationLayout = c.getStoreLocationLayout();
         }
-        this.userStoreLocations.putAll(new NutsStoreLocationsMap(c.getStoreLocations()).toMap());
-        this.homeLocations.putAll(new NutsHomeLocationsMap(c.getHomeLocations()).toMap());
-        this.global |= c.isGlobal();
+        for (Map.Entry<NutsStoreLocation, String> e : new NutsStoreLocationsMap(c.getStoreLocations()).toMap().entrySet()) {
+            String o = this.userStoreLocations.get(e.getKey());
+            if(NutsBlankable.isBlank(o)){
+                this.userStoreLocations.put(e.getKey(),e.getValue());
+            }
+        }
+        for (Map.Entry<NutsHomeLocation, String> e : new NutsHomeLocationsMap(c.getHomeLocations()).toMap().entrySet()) {
+            String o = this.homeLocations.get(e.getKey());
+            if(NutsBlankable.isBlank(o)){
+                this.homeLocations.put(e.getKey(),e.getValue());
+            }
+        }
+        if(this.global==null) {
+            this.global = c.isGlobal();
+        }
         return this;
     }
 
@@ -281,7 +278,7 @@ public final class DefaultNutsWorkspaceCurrentConfig {
     }
 
     public boolean isGlobal() {
-        return this.global;
+        return this.global!=null && this.global;
     }
 
     public DefaultNutsWorkspaceCurrentConfig setGlobal(boolean global) {
@@ -355,15 +352,15 @@ public final class DefaultNutsWorkspaceCurrentConfig {
         return this;
     }
 
-    public Map<String, String> getStoreLocations() {
+    public Map<NutsStoreLocation, String> getStoreLocations() {
         return new LinkedHashMap<>(effStoreLocationsMap);
     }
 
-    public Map<String, String> getHomeLocations() {
+    public Map<NutsHomeLocation, String> getHomeLocations() {
         return new LinkedHashMap<>(homeLocations);
     }
 
-    public DefaultNutsWorkspaceCurrentConfig setHomeLocations(Map<String, String> homeLocations) {
+    public DefaultNutsWorkspaceCurrentConfig setHomeLocations(Map<NutsHomeLocation, String> homeLocations) {
         this.homeLocations.clear();
         if (homeLocations != null) {
             this.homeLocations.putAll(homeLocations);
@@ -372,12 +369,12 @@ public final class DefaultNutsWorkspaceCurrentConfig {
     }
 
     public String getStoreLocation(NutsStoreLocation folderType) {
-        return effStoreLocationPath[folderType.ordinal()].toString();
+        Path p = effStoreLocationPath[folderType.ordinal()];
+        return p==null?null:p.toString();
     }
 
-    public String getHomeLocation(NutsOsFamily layout, NutsStoreLocation folderType) {
-        String path = new NutsHomeLocationsMap(homeLocations).get(layout, folderType);
-        return path;
+    public String getHomeLocation(NutsHomeLocation location) {
+        return new NutsHomeLocationsMap(homeLocations).get(location);
     }
 
     public String getHomeLocation(NutsStoreLocation folderType) {
@@ -397,7 +394,7 @@ public final class DefaultNutsWorkspaceCurrentConfig {
         return this;
     }
 
-    public DefaultNutsWorkspaceCurrentConfig setUserStoreLocations(Map<String, String> userStoreLocations) {
+    public DefaultNutsWorkspaceCurrentConfig setUserStoreLocations(Map<NutsStoreLocation, String> userStoreLocations) {
         this.userStoreLocations.clear();
         if (userStoreLocations != null) {
             this.userStoreLocations.putAll(userStoreLocations);
@@ -477,7 +474,7 @@ public final class DefaultNutsWorkspaceCurrentConfig {
 
     //
     public String getStoreLocation(String id, NutsStoreLocation folderType, NutsSession session) {
-        return getStoreLocation(session.getWorkspace().id().parser().parse(id), folderType, session);
+        return getStoreLocation(session.id().parser().parse(id), folderType, session);
     }
 
     //
@@ -488,11 +485,11 @@ public final class DefaultNutsWorkspaceCurrentConfig {
         }
         switch (folderType) {
             case CACHE:
-                return Paths.get(storeLocation).resolve(NutsConstants.Folders.ID).resolve(session.getWorkspace().locations().getDefaultIdBasedir(id)).toString();
+                return Paths.get(storeLocation).resolve(NutsConstants.Folders.ID).resolve(session.locations().getDefaultIdBasedir(id)).toString();
             case CONFIG:
-                return Paths.get(storeLocation).resolve(NutsConstants.Folders.ID).resolve(session.getWorkspace().locations().getDefaultIdBasedir(id)).toString();
+                return Paths.get(storeLocation).resolve(NutsConstants.Folders.ID).resolve(session.locations().getDefaultIdBasedir(id)).toString();
         }
-        return Paths.get(storeLocation).resolve(session.getWorkspace().locations().getDefaultIdBasedir(id)).toString();
+        return Paths.get(storeLocation).resolve(session.locations().getDefaultIdBasedir(id)).toString();
     }
 
 //    

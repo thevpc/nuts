@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
 /**
  * Argument parse Type
  *
@@ -111,11 +113,7 @@ public enum NutsArgumentType implements NutsEnum {
 
     public static NutsArgumentType parse(String value, NutsArgumentType emptyValue, NutsSession session) {
         NutsArgumentType v = parseLenient(value, emptyValue, null);
-        if (v == null) {
-            if (!NutsBlankable.isBlank(value)) {
-                throw new NutsParseEnumException(session, value, NutsArgumentType.class);
-            }
-        }
+        NutsApiUtils.checkNonNullEnum(v,value,NutsArgumentType.class,session);
         return v;
     }
 

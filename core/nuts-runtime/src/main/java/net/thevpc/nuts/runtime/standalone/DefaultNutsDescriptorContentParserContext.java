@@ -47,7 +47,7 @@ public class DefaultNutsDescriptorContentParserContext implements NutsDescriptor
     private final String[] parseOptions;
 
     public DefaultNutsDescriptorContentParserContext(NutsSession session, NutsInput file, String fileExtension, String mimeType, String[] parseOptions) {
-        this.file = session.getWorkspace().io().input().setMultiRead(true).of(file);
+        this.file = session.io().input().setMultiRead(true).of(file);
         this.session = session;
         this.fileExtension = fileExtension;
         this.mimeType = mimeType;

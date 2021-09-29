@@ -96,7 +96,7 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
 
     protected NutsLogger _LOG(NutsSession session) {
         if (LOG == null) {
-            LOG = session.getWorkspace().log().of(DefaultNutsRepositoryConfigModel.class);
+            LOG = session.log().of(DefaultNutsRepositoryConfigModel.class);
         }
         return LOG;
     }

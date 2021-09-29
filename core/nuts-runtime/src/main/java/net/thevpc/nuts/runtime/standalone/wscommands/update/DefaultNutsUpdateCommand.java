@@ -208,7 +208,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
 
     private Set<NutsId> getCompanionsToUpdate() {
         Set<NutsId> ext = new HashSet<>();
-        for (NutsId extension : ws.getCompanionIds(session)) {
+        for (NutsId extension : session.extensions().getCompanionIds()) {
             ext.add(extension.getShortNameId());
         }
         return ext;
@@ -269,7 +269,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                     return new FixAction(nutsInstallInformation.getId(), "MissingInstallation") {
                         @Override
                         public void fix(NutsSession session) {
-                            session.getWorkspace().install().addId(getId()).run();
+                            session.install().addId(getId()).run();
                         }
                     };
                 }
@@ -467,7 +467,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         boolean requireSave = false;
         NutsSession validWorkspaceSession = getSession();
         final NutsPrintStream out = validWorkspaceSession.out();
-        boolean accept = getSession().getWorkspace().term().getTerminal().ask()
+        boolean accept = getSession().term().getTerminal().ask()
                 .resetLine()
                 .forBoolean("would you like to apply updates?").setDefaultValue(true)
                 .setSession(validWorkspaceSession).getValue();
@@ -594,7 +594,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                 }
                 NutsVersion v = bootApiVersion;
                 if (v==null|| v.isBlank()) {
-                    v = getSession().getWorkspace().version().parse(NutsConstants.Versions.LATEST);
+                    v = getSession().version().parse(NutsConstants.Versions.LATEST);
                 }
                 try {
                     oldFile = fetch0().setId(oldId).setSession(session.copy().setFetchStrategy(NutsFetchStrategy.ONLINE)).getResultDefinition();

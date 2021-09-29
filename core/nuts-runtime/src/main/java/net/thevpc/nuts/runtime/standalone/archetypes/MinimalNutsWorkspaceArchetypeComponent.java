@@ -49,18 +49,18 @@ public class MinimalNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
 
     @Override
     public void initializeWorkspace(NutsSession session) {
-        NutsWorkspace ws = session.getWorkspace();
+//        NutsWorkspace ws = session.getWorkspace();
 
-        DefaultNutsWorkspaceConfigManager rm = (DefaultNutsWorkspaceConfigManager) ws.config();
+        DefaultNutsWorkspaceConfigManager rm = (DefaultNutsWorkspaceConfigManager) session.config();
         Map<String, String> defaults = new HashMap<>();
         defaults.put(NutsConstants.Names.DEFAULT_REPOSITORY_NAME, null);
         NutsRepositorySelector.Selection[] br = rm.getModel().resolveBootRepositoriesList().resolveSelectors(defaults);
-        NutsRepositoryManager repos = ws.repos().setSession(session);
+        NutsRepositoryManager repos = session.repos().setSession(session);
         for (NutsRepositorySelector.Selection s : br) {
             repos.addRepository(s.toString());
         }
         //simple rights for minimal utilization
-        NutsUpdateUserCommand uu = ws.security().setSession(session)
+        NutsUpdateUserCommand uu = session.security().setSession(session)
                 .updateUser(NutsConstants.Users.ANONYMOUS);
 //        for (String right : NutsConstants.Rights.RIGHTS) {
 //            if (!NutsConstants.Rights.ADMIN.equals(right)) {

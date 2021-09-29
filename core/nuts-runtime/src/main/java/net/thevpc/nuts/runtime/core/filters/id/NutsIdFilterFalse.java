@@ -6,8 +6,8 @@ import net.thevpc.nuts.runtime.core.util.Simplifiable;
 
 public class NutsIdFilterFalse extends AbstractIdFilter implements NutsIdFilter, Simplifiable<NutsIdFilter>, NutsScriptAwareIdFilter {
 
-    public NutsIdFilterFalse(NutsSession ws) {
-        super(ws, NutsFilterOp.FALSE);
+    public NutsIdFilterFalse(NutsSession session) {
+        super(session, NutsFilterOp.FALSE);
     }
 
     @Override

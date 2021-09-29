@@ -23,6 +23,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
 public enum NutsSupportCondition implements NutsEnum {
     SUPPORTED,
     PREFERRED,
@@ -68,11 +70,7 @@ public enum NutsSupportCondition implements NutsEnum {
 
     public static NutsSupportCondition parse(String value, NutsSupportCondition emptyValue, NutsSession session) {
         NutsSupportCondition v = parseLenient(value, emptyValue, null);
-        if (v == null) {
-            if (!NutsBlankable.isBlank(value)) {
-                throw new NutsParseEnumException(session, value, NutsSupportCondition.class);
-            }
-        }
+        NutsApiUtils.checkNonNullEnum(v,value,NutsSupportCondition.class,session);
         return v;
     }
 

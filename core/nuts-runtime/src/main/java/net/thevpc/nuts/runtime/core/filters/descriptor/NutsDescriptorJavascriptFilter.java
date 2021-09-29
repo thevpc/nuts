@@ -38,15 +38,15 @@ public class NutsDescriptorJavascriptFilter extends AbstractDescriptorFilter imp
 
     private String code;
 
-    public static NutsDescriptorFilter valueOf(String value, NutsSession ws) {
+    public static NutsDescriptorFilter valueOf(String value, NutsSession session) {
         if (NutsBlankable.isBlank(value)) {
-            return ws.getWorkspace().descriptor().filter().always();
+            return session.descriptor().filter().always();
         }
-        return new NutsDescriptorJavascriptFilter(ws,value);
+        return new NutsDescriptorJavascriptFilter(session,value);
     }
 
-    public NutsDescriptorJavascriptFilter(NutsSession ws,String code) {
-        super(ws, NutsFilterOp.CUSTOM);
+    public NutsDescriptorJavascriptFilter(NutsSession session,String code) {
+        super(session, NutsFilterOp.CUSTOM);
         this.code = code;
     }
 

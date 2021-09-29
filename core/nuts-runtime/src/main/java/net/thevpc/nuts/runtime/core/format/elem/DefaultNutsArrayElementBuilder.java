@@ -272,7 +272,7 @@ public class DefaultNutsArrayElementBuilder implements NutsArrayElementBuilder {
     }
 
     private NutsElementFormat _elements() {
-        return session.getWorkspace().elem().setSession(session);
+        return session.elem().setSession(session);
     }
 //
 //    private NutsPrimitiveElementBuilder _primitive() {

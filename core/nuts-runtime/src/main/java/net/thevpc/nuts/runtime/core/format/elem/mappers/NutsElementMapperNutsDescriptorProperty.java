@@ -13,21 +13,21 @@ public class NutsElementMapperNutsDescriptorProperty implements NutsElementMappe
     @Override
     public Object destruct(NutsDescriptorProperty src, Type typeOfSrc, NutsElementFactoryContext context) {
         return context.defaultDestruct(
-                context.getSession().getWorkspace().descriptor().propertyBuilder().setAll(src), null
+                context.getSession().descriptor().propertyBuilder().setAll(src), null
         );
     }
 
     @Override
     public NutsElement createElement(NutsDescriptorProperty o, Type typeOfSrc, NutsElementFactoryContext context) {
         return context.defaultObjectToElement(
-                context.getSession().getWorkspace().descriptor().propertyBuilder().setAll(o), null
+                context.getSession().descriptor().propertyBuilder().setAll(o), null
         );
     }
 
     @Override
     public NutsDescriptorProperty createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
         DefaultNutsDescriptorPropertyBuilder builder = (DefaultNutsDescriptorPropertyBuilder) context.defaultElementToObject(o, DefaultNutsDescriptorPropertyBuilder.class);
-        return context.getSession().getWorkspace().descriptor().propertyBuilder().setAll(builder).build();
+        return context.getSession().descriptor().propertyBuilder().setAll(builder).build();
     }
 
 }

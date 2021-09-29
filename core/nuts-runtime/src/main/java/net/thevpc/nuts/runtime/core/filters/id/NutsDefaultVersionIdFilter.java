@@ -19,8 +19,8 @@ public class NutsDefaultVersionIdFilter extends AbstractIdFilter implements Nuts
 
     private final Boolean defaultVersion;
 
-    public NutsDefaultVersionIdFilter(NutsSession ws, Boolean defaultVersion) {
-        super(ws, NutsFilterOp.CUSTOM);
+    public NutsDefaultVersionIdFilter(NutsSession session, Boolean defaultVersion) {
+        super(session, NutsFilterOp.CUSTOM);
         this.defaultVersion = defaultVersion;
     }
 

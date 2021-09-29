@@ -83,7 +83,7 @@ public class FolderObjectIterator<T> implements Iterator<T> {
         }
         this.folder=folder;
         stack.push(new PathAndDepth(folder, 0));
-        LOG = session.getWorkspace().log().of(DefaultNutsInstalledRepository.class);
+        LOG = session.log().of(DefaultNutsInstalledRepository.class);
     }
 
     @Override
@@ -92,7 +92,7 @@ public class FolderObjectIterator<T> implements Iterator<T> {
         while (!stack.isEmpty()) {
             PathAndDepth file = stack.pop();
             if (Files.isDirectory(file.path)) {
-                session.getTerminal().printProgress("%-8s %s","browse",session.getWorkspace().io().path(file.path.toString()).toCompressedForm());
+                session.getTerminal().printProgress("%-8s %s","browse",session.io().path(file.path.toString()).toCompressedForm());
                 visitedFoldersCount++;
                 boolean deep = maxDepth < 0 || file.depth < maxDepth;
                 if (Files.isDirectory(file.path)) {
@@ -102,7 +102,7 @@ public class FolderObjectIterator<T> implements Iterator<T> {
                             try {
                                 return (deep && Files.isDirectory(pathname)) || model.isObjectFile(pathname);
                             } catch (Exception ex) {
-                                session.getWorkspace().log().of(FolderObjectIterator.class).with().session(session).level(Level.FINE).error(ex).log("Unable to test desk file {0}" ,pathname);
+                                session.log().of(FolderObjectIterator.class).with().session(session).level(Level.FINE).error(ex).log("Unable to test desk file {0}" ,pathname);
                                 return false;
                             }
                         }

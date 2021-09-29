@@ -229,7 +229,7 @@ public class ZipUtils {
                     newFile.mkdirs();
                 } else {
                     File newFile = new File(outputFolder + File.separator + fileName);
-                    session.getWorkspace().log().of(ZipUtils.class).with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).log("file unzip : {0}", newFile.getAbsoluteFile());
+                    session.log().of(ZipUtils.class).with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).log("file unzip : {0}", newFile.getAbsoluteFile());
                     //create all non exists folders
                     //else you will hit FileNotFoundException for compressed folder
                     newFile.getParentFile().mkdirs();

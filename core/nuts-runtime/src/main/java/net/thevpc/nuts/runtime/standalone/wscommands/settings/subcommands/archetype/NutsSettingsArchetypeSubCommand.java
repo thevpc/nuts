@@ -19,7 +19,7 @@ public class NutsSettingsArchetypeSubCommand extends AbstractNutsSettingsSubComm
     public boolean exec(NutsCommandLine cmdLine, Boolean autoSave, NutsSession session) {
         if (cmdLine.next("list archetypes", "la") != null) {
             if (cmdLine.isExecMode()) {
-                session.getWorkspace().formats().object(session.getWorkspace().config().getAvailableArchetypes())
+                session.formats().object(session.config().getAvailableArchetypes())
                         .println();
             }
             return true;

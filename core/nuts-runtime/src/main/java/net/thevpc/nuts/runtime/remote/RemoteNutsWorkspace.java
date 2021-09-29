@@ -28,7 +28,7 @@ public abstract class RemoteNutsWorkspace extends AbstractNutsWorkspace {
             } else {
                 //TODO mush deserialize exception
                 throw new NutsException(session, NutsMessage.cstyle("unable to call %s",
-                        session.getWorkspace().text().forStyled(commandName,NutsTextStyle.primary1())));
+                        session.text().forStyled(commandName,NutsTextStyle.primary1())));
             }
         }
     }

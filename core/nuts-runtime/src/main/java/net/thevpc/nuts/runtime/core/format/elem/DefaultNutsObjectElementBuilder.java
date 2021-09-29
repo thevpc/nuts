@@ -207,6 +207,6 @@ public class DefaultNutsObjectElementBuilder implements NutsObjectElementBuilder
     }
 
     private NutsElementFormat _elements() {
-        return session.getWorkspace().elem().setSession(session);
+        return session.elem().setSession(session);
     }
 }

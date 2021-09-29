@@ -70,7 +70,7 @@ public abstract class AnyNixNdi extends BaseSystemNdi {
     }
 
     public void onPostGlobal(NdiScriptOptions options, PathInfo[] updatedPaths) {
-        NutsTextManager factory = session.getWorkspace().text();
+        NutsTextManager factory = session.text();
         if (Arrays.stream(updatedPaths).anyMatch(x -> x.getStatus() != PathInfo.Status.DISCARDED) && session.isTrace()) {
             if (session.isPlainTrace()) {
                 session.out().resetLine().printf("%s %s to point to workspace %s%n",
@@ -81,7 +81,7 @@ public abstract class AnyNixNdi extends BaseSystemNdi {
                         factory.builder().appendJoined(", ",
                                 Arrays.stream(updatedPaths).map(x ->
                                         factory.forStyled(x.getPath().getFileName().toString(), NutsTextStyle.path())).collect(Collectors.toList())),
-                        factory.forStyled(session.getWorkspace().locations().getWorkspaceLocation(), NutsTextStyle.path())
+                        factory.forStyled(session.locations().getWorkspaceLocation(), NutsTextStyle.path())
                 );
             }
             session.getTerminal().ask()
@@ -159,7 +159,7 @@ public abstract class AnyNixNdi extends BaseSystemNdi {
     @Override
     protected FreeDesktopEntryWriter createFreeDesktopEntryWriter() {
         return new UnixFreeDesktopEntryWriter(session,
-                session.getWorkspace().env().getDesktopPath()
+                session.env().getDesktopPath()
         );
     }
 

@@ -21,29 +21,23 @@ import org.junit.jupiter.api.*;
  */
 public class Test07_AppTypeTest {
 
-    private static String baseFolder;
-
     @Test
-    public void testUpdate() throws Exception {
-        CoreIOUtils.delete(null,new File(baseFolder));
+    public void testSearchDescriptor() throws Exception {
         Map<String, String> extraProperties = new HashMap<>();
         extraProperties.put("nuts.export.always-show-command", "true");
         TestUtils.setSystemProperties(extraProperties);
-        final String workpacePath = baseFolder + "/" + TestUtils.getCallerMethodName();
 
-        NutsWorkspace uws = TestUtils.openTestWorkspace(
-                "--workspace", workpacePath + "-update",
+        NutsSession session = TestUtils.openNewTestWorkspace(
                 "--standalone",
                 "--skip-companions"
-        ).getWorkspace();
-        uws = uws.createSession().getWorkspace();
-        NutsDefinition u = uws.search().addId("nsh").getResultDefinitions().required();
+        );
+        NutsDefinition u = session.search().addId("nsh").getResultDefinitions().required();
         System.out.println(u.getDescriptor());
         TestUtils.println(u.getId()+":"+(u.getDescriptor().isExecutable() ? "executable" : "non-executable"));
         TestUtils.println(u.getId()+":"+(u.getDescriptor().isApplication() ? "app" : "non-app"));
         Assertions.assertTrue(u.getDescriptor().isExecutable());
         Assertions.assertTrue(u.getDescriptor().isApplication());
-        u = uws.search().addId("nsh").getResultDefinitions().required();
+        u = session.search().addId("nsh").getResultDefinitions().required();
         TestUtils.println(u.getId()+":"+(u.getDescriptor().isExecutable() ? "executable" : "non-executable"));
         TestUtils.println(u.getId()+":"+(u.getDescriptor().isApplication() ? "app" : "non-app"));
         Assertions.assertTrue(u.getDescriptor().isExecutable());
@@ -52,14 +46,11 @@ public class Test07_AppTypeTest {
 
     @BeforeAll
     public static void setUpClass() throws IOException {
-        baseFolder = new File("./runtime/test/" + TestUtils.getCallerClassSimpleName()).getPath();
-        CoreIOUtils.delete(null,new File(baseFolder));
         TestUtils.println("####### RUNNING TEST @ "+ TestUtils.getCallerClassSimpleName());
     }
 
     @AfterAll
     public static void tearUpClass() throws IOException {
-        CoreIOUtils.delete(null,new File(baseFolder));
     }
 
     @BeforeEach

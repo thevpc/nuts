@@ -286,7 +286,7 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
             case "--repository": {
                 String val = cmdLine.nextString().getValue().getString();
                 if (enabled) {
-                    addRepositoryFilter(getSession().getWorkspace().filters().repository().byName(val));
+                    addRepositoryFilter(getSession().filters().repository().byName(val));
                 }
                 return true;
             }
@@ -353,7 +353,7 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
 //    @Override
     public T setRepository(String filter) {
         checkSession();
-        this.repositoryFilter = getSession().getWorkspace().repos().filter().byName(filter);
+        this.repositoryFilter = getSession().repos().filter().byName(filter);
         return (T) this;
     }
 //    @Override

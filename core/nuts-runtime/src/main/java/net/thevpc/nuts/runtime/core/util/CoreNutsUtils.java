@@ -25,8 +25,8 @@ package net.thevpc.nuts.runtime.core.util;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.iter.IteratorBuilder;
+import net.thevpc.nuts.runtime.bundles.parsers.StringMapParser;
 import net.thevpc.nuts.runtime.bundles.parsers.StringPlaceHolderParser;
-import net.thevpc.nuts.runtime.bundles.parsers.StringTokenizerUtils;
 import net.thevpc.nuts.runtime.core.model.DefaultNutsEnvCondition;
 import net.thevpc.nuts.runtime.standalone.DefaultNutsWorkspace;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
@@ -507,8 +507,8 @@ public class CoreNutsUtils {
             x.put("repository-uuid", def.getRepositoryUuid());
         }
         if (def.getDescriptor() != null) {
-            x.put("descriptor", session.getWorkspace().descriptor().formatter().setValue(def.getDescriptor()).format());
-            x.put("effective-descriptor", session.getWorkspace().descriptor().formatter(
+            x.put("descriptor", session.descriptor().formatter().setValue(def.getDescriptor()).format());
+            x.put("effective-descriptor", session.descriptor().formatter(
                     NutsWorkspaceUtils.of(session).getEffectiveDescriptor(def)
             ).format());
         }
@@ -775,24 +775,36 @@ public class CoreNutsUtils {
         return false;
     }
 
-    public static Set<String> parseProgressOptions(NutsSession session) {
-        LinkedHashSet<String> set = new LinkedHashSet<>();
-        for (String s : StringTokenizerUtils.split(session.getProgressOptions(), ",; ")) {
-            Boolean n = NutsUtilStrings.parseBoolean(s, null, null);
-            if (n == null) {
-                set.add(s);
+    public static ProgressOptions parseProgressOptions(NutsSession session) {
+        ProgressOptions o = new ProgressOptions();
+        boolean enabledVisited = false;
+        StringMapParser p = new StringMapParser("=", ",; ");
+        Map<String, String> m = p.parseMap(session.getProgressOptions());
+        for (Map.Entry<String, String> e : m.entrySet()) {
+            String k = e.getKey();
+            String v = e.getValue();
+            if (!enabledVisited) {
+                if (v == null) {
+                    Boolean a = NutsUtilStrings.parseBoolean(k, null, null);
+                    if (a != null) {
+                        o.enabled = a;
+                        enabledVisited = true;
+                    } else {
+                        o.vals.put(k, NutsVal.of(v, session));
+                    }
+                }
             } else {
-                set.add(n.toString());
+                o.vals.put(k, NutsVal.of(v, session));
             }
         }
-        return set;
+        return o;
     }
 
     public static boolean acceptProgress(NutsSession session) {
         if (!session.isPlainOut()) {
             return false;
         }
-        if (session.isBot() || parseProgressOptions(session).contains("false")) {
+        if (session.isBot() || !parseProgressOptions(session).isEnabled()) {
             return false;
         }
         return true;
@@ -827,7 +839,6 @@ public class CoreNutsUtils {
         return monitorable;
     }
 
-
     public static Iterator<NutsDependency> itIdToDep(Iterator<NutsId> id) {
         return IteratorBuilder.of(id).convert(x -> x.toDependency(), "IdToDependency").build();
     }
@@ -839,10 +850,10 @@ public class CoreNutsUtils {
     }
 
     private static boolean acceptCondition(NutsId[] curr, String[] expected, NutsSession session) {
-        if(expected.length>0) {
+        if (expected.length > 0) {
             boolean accept = false;
             for (NutsId v : curr) {
-                if(acceptCondition(v,expected,session)){
+                if (acceptCondition(v, expected, session)) {
                     accept = true;
                     break;
                 }
@@ -853,6 +864,7 @@ public class CoreNutsUtils {
         }
         return true;
     }
+
     private static boolean acceptCondition(NutsId curr, String[] expected, NutsSession session) {
         if (expected.length != 0) {
             boolean accept = false;
@@ -874,15 +886,15 @@ public class CoreNutsUtils {
         if (condition == null || condition.isBlank()) {
             return true;
         }
-        NutsWorkspaceEnvManager env = session.getWorkspace().env();
-        List<NutsId> pfs=new ArrayList<>();
-        if(allInstalledPlatforms){
+        NutsWorkspaceEnvManager env = session.env();
+        List<NutsId> pfs = new ArrayList<>();
+        if (allInstalledPlatforms) {
             for (String s : Arrays.stream(condition.getPlatform()).collect(Collectors.toSet())) {
-                pfs.addAll(Arrays.stream(session.getWorkspace().env().platforms().findPlatforms(
+                pfs.addAll(Arrays.stream(session.env().platforms().findPlatforms(
                         NutsPlatformType.parseLenient(s, NutsPlatformType.UNKNOWN, NutsPlatformType.UNKNOWN)
                 )).map(NutsPlatformLocation::getId).collect(Collectors.toList()));
             }
-        }else {
+        } else {
             pfs.add(env.getPlatform());
         }
         return
@@ -891,8 +903,8 @@ public class CoreNutsUtils {
                         && acceptCondition(env.getOsDist(), condition.getOsDist(), session)
                         && acceptCondition(env.getDesktopEnvironment(), condition.getDesktopEnvironment(), session)
                         && acceptCondition(
-                                pfs.toArray(new NutsId[0])
-                                , condition.getDesktopEnvironment(), session);
+                        pfs.toArray(new NutsId[0])
+                        , condition.getDesktopEnvironment(), session);
     }
 
     public static NutsEnvCondition blankCondition(NutsSession session) {
@@ -925,6 +937,27 @@ public class CoreNutsUtils {
             }
         }
         return m;
+    }
+
+    public static class ProgressOptions {
+        private boolean enabled;
+        private Map<String, NutsVal> vals = new LinkedHashMap<>();
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public boolean isArmedNewline() {
+            return isArmed("newline") || isArmed("%n");
+        }
+
+        public boolean isArmed(String k) {
+            NutsVal q = vals.get(k);
+            if (q == null) {
+                return false;
+            }
+            return q.getBoolean(true);
+        }
     }
 
     public static class NutsDefaultThreadFactory implements ThreadFactory {

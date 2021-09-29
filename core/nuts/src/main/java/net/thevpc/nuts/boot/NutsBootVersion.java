@@ -12,7 +12,7 @@ import java.util.Objects;
 /**
  * Simplistic implementation of Nuts Version (does not implement the hole interface nor does it implement all the features).
  * This implementation is mainly meant to handle nuts-runtime and its dependencies versions. For instance it doe not
- * not support multiple intervalls.
+ * not support multiple intervals.
  */
 public class NutsBootVersion {
     private final String from;

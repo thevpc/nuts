@@ -12,7 +12,7 @@ import java.io.Reader;
 public interface NutsTextParser {
     static NutsTextParser of(NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.getWorkspace().text().parser();
+        return session.text().parser();
     }
 
     String escapeText(String text);

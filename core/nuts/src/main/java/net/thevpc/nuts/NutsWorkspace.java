@@ -61,9 +61,8 @@ public interface NutsWorkspace extends NutsComponent<NutsWorkspaceOptions> {
 
     String getLocation();
 
-    Set<NutsId> getCompanionIds(NutsSession session);
-
-    //COMMANDS
+    ///////////////////// factory
+    NutsSession createSession();
 
     NutsSearchCommand search();
 
@@ -161,9 +160,6 @@ public interface NutsWorkspace extends NutsComponent<NutsWorkspaceOptions> {
     NutsWorkspaceLocationManager locations();
 
     NutsWorkspaceEnvManager env();
-
-    ///////////////////// factory
-    NutsSession createSession();
 
     NutsBootManager boot();
 

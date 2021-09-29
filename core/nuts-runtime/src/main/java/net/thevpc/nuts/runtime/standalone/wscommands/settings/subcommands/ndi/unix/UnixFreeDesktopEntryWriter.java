@@ -126,7 +126,7 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
         //    KDE  : 'kbuildsycoca5'
         Path a = NdiUtils.sysWhich("kbuildsycoca5");
         if (a != null) {
-            String outStr = session.getWorkspace().exec().setCommand(a.toString())
+            String outStr = session.exec().setCommand(a.toString())
                     .setExecutionType(NutsExecutionType.SYSTEM)
                     .setRedirectErrorStream(true).grabOutputString()
                     .run()
@@ -139,7 +139,7 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
         //    GNOME: update-desktop-database ~/.local/share/applications
         a = NdiUtils.sysWhich("update-desktop-database");
         if (a != null) {
-            String outStr = session.getWorkspace().exec().setCommand(a.toString(), System.getProperty("user.home") + "/.local/share/applications")
+            String outStr = session.exec().setCommand(a.toString(), System.getProperty("user.home") + "/.local/share/applications")
                     .setExecutionType(NutsExecutionType.SYSTEM)
                     .setRedirectErrorStream(true).grabOutputString()
                     .run()
@@ -152,7 +152,7 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
         // more generic : xdg-desktop-menu forceupdate
         a = NdiUtils.sysWhich("xdg-desktop-menu");
         if (a != null) {
-            String outStr = session.getWorkspace().exec().setCommand(a.toString(), "forceupdate")
+            String outStr = session.exec().setCommand(a.toString(), "forceupdate")
                     .setExecutionType(NutsExecutionType.SYSTEM)
                     .setRedirectErrorStream(true).grabOutputString()
                     .run()

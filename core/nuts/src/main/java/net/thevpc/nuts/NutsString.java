@@ -37,7 +37,12 @@ public interface NutsString {
 
     static NutsString parse(String str, NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.getWorkspace().text().parse(str);
+        return session.text().parse(str);
+    }
+
+    static NutsString plain(String str, NutsSession session) {
+        NutsApiUtils.checkSession(session);
+        return session.text().forPlain(str);
     }
 
     NutsString immutable();

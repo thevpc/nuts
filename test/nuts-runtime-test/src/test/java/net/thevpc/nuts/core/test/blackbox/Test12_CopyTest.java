@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
  */
 public class Test12_CopyTest {
 
-    private static String baseFolder;
 
     @Test
     public void copy01() throws Exception {
@@ -34,17 +33,13 @@ public class Test12_CopyTest {
         extraProperties.put("nuts.export.always-show-command", "true");
         TestUtils.setSystemProperties(extraProperties);
 
-        NutsWorkspace ws = TestUtils.openTestWorkspace("--workspace", baseFolder + "/" + TestUtils.getCallerMethodName(),
+        NutsSession session = TestUtils.openNewTestWorkspace(
                 "--archetype", "default",
                 "--log-info",
-                "--skip-companions").getWorkspace();
-        NutsSession session = ws.createSession();
-        ws = ws.createSession().getWorkspace();
-        Path from = Paths.get(ws.io().tmp()
-                .setSession(session)
+                "--skip-companions");
+        Path from = Paths.get(session.io().tmp()
                 .createTempFolder("source"));
-        Path to = Paths.get(ws.io().tmp()
-                .setSession(session)
+        Path to = Paths.get(session.io().tmp()
                 .createTempFolder("target"));
         TestUtils.println("from="+from);
         TestUtils.println("to="+to);
@@ -66,7 +61,7 @@ public class Test12_CopyTest {
         }
         TestUtils.println("start-----------");
 
-        ws.io().copy().from(from).to(to)
+        session.io().copy().from(from).to(to)
                 .setLogProgress(true)
                 .setProgressMonitor(new NutsProgressMonitor() {
             @Override
@@ -89,8 +84,6 @@ public class Test12_CopyTest {
 
     @BeforeAll
     public static void setUpClass() throws IOException {
-        baseFolder = new File("./runtime/test/" + TestUtils.getCallerClassSimpleName()).getCanonicalFile().getPath();
-        CoreIOUtils.delete(null,new File(baseFolder));
         TestUtils.println("####### RUNNING TEST @ "+ TestUtils.getCallerClassSimpleName());
     }
 

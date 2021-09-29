@@ -7,8 +7,8 @@ public class NutsDependencyOptionFilter extends AbstractDependencyFilter{
 
     private final Boolean optional;
 
-    public NutsDependencyOptionFilter(NutsSession ws, Boolean optional) {
-        super(ws, NutsFilterOp.CUSTOM);
+    public NutsDependencyOptionFilter(NutsSession session, Boolean optional) {
+        super(session, NutsFilterOp.CUSTOM);
         this.optional = optional;
     }
 
