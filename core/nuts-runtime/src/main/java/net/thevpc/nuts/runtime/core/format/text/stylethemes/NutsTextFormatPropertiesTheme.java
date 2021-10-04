@@ -21,7 +21,7 @@ public class NutsTextFormatPropertiesTheme implements NutsTextFormatTheme {
     public NutsTextFormatPropertiesTheme(String name, ClassLoader cls, NutsSession session) {
         this.session = session;
         if (name.indexOf('/') >= 0 || name.indexOf('\\') >= 0) {
-            try (InputStream is = session.io().path(name).input().open()) {
+            try (InputStream is = session.io().path(name).getInputStream()) {
                 props.load(is);
             } catch (IOException e) {
                 throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid theme: %s", name), e);

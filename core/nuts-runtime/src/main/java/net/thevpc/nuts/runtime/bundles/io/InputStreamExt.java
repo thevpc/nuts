@@ -5,6 +5,10 @@
  */
 package net.thevpc.nuts.runtime.bundles.io;
 
+import net.thevpc.nuts.NutsInputStreamMetadataAware;
+import net.thevpc.nuts.NutsInputStreamMetadata;
+import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
+
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -12,7 +16,7 @@ import java.io.InputStream;
  *
  * @author thevpc
  */
-public class InputStreamExt extends InputStream implements InputStreamMetadataAware,Interruptible {
+public class InputStreamExt extends InputStream implements NutsInputStreamMetadataAware,Interruptible {
 
     private InputStream in;
     private Runnable onClose;
@@ -64,11 +68,8 @@ public class InputStreamExt extends InputStream implements InputStreamMetadataAw
     }
 
     @Override
-    public InputStreamMetadata getMetaData() {
-        if (in instanceof InputStreamMetadataAware) {
-            return ((InputStreamMetadataAware) in).getMetaData();
-        }
-        return null;
+    public NutsInputStreamMetadata getInputStreamMetadata() {
+        return NutsInputStreamMetadata.of(in);
     }
 
 }

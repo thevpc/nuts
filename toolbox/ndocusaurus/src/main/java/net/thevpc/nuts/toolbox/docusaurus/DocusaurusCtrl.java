@@ -110,7 +110,7 @@ public class DocusaurusCtrl {
         if (genSidebarMenu) {
             DocusaurusFolder root = project.getPhysicalDocsFolder();
             root = new DocusaurusFolder(
-                    "someSidebar", "someSidebar", 0, appContext.getWorkspace().elem().forObject().build(), root.getChildren(),
+                    "someSidebar", "someSidebar", 0, appContext.getSession().elem().forObject().build(), root.getChildren(),
                     root.getContent(appContext.getSession()),
                     project.getPhysicalDocsFolderBasePath().toString()
             );
@@ -193,12 +193,10 @@ public class DocusaurusCtrl {
     }
 
     private void runNativeCommand(Path workFolder, String... cmd) {
-        NutsSession s = appContext.getSession();
-        appContext.getWorkspace()
+        appContext.getSession()
                 .exec()
                 .setExecutionType(NutsExecutionType.EMBEDDED)
                 .addCommand(cmd).setDirectory(workFolder.toString())
-                .setSession(s)
                 .setFailFast(true).getResult();
     }
 
@@ -209,8 +207,7 @@ public class DocusaurusCtrl {
         } else {
             s = s.setConfirm(NutsConfirmationMode.ERROR);
         }
-        appContext.getWorkspace().exec().addCommand(cmd).setDirectory(workFolder.toString())
-                .setSession(s)
+        s.exec().addCommand(cmd).setDirectory(workFolder.toString())
                 .setExecutionType(NutsExecutionType.EMBEDDED)
                 .setFailFast(true).getResult();
     }

@@ -131,12 +131,12 @@ class SshNutsPath implements NutsPathSPI {
     }
 
     @Override
-    public InputStream inputStream() {
+    public InputStream getInputStream() {
         return new SshFileInputStream(path,session);
     }
 
     @Override
-    public OutputStream outputStream() {
+    public OutputStream getOutputStream() {
         throw new NutsIOException(getSession(), NutsMessage.cstyle("not supported output stream for %s",toString()));
     }
 
@@ -216,6 +216,33 @@ class SshNutsPath implements NutsPathSPI {
     @Override
     public boolean exists() {
         throw new NutsIOException(getSession(), NutsMessage.cstyle("not supported exists for %s",toString()));
+    }
+
+    @Override
+    public NutsPath[] getChildren() {
+        try (SShConnection c = new SShConnection(path.toAddress(),getSession())
+                .addListener(listener)
+        ) {
+            c.grabOutputString();
+            int i= c.execStringCommand("ls "+path.getPath());
+            if(i>0){
+                return new NutsPath[0];
+            }
+            String[] s = c.getOutputString().split("[\n|\r]");
+            return Arrays.stream(s).map(
+                    x->{
+                        String cc=path.getPath();
+                        if(!cc.endsWith("/")){
+                            cc+="/";
+                        }
+                        cc+=x;
+                        return getSession().io().path(path.setPath(cc).toString());
+                    }
+            ).toArray(NutsPath[]::new);
+        }catch (Exception e){
+            //return false;
+        }
+        return new NutsPath[0];
     }
 
     @Override

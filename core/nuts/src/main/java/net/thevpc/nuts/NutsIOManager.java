@@ -142,9 +142,9 @@ public interface NutsIOManager extends NutsComponent<Object/* any object or null
      */
     NutsIOHashAction hash();
 
-    NutsInputAction input();
-
-    NutsOutputAction output();
+//    NutsInputAction input();
+//
+//    NutsOutputAction output();
 
     NutsSession getSession();
 

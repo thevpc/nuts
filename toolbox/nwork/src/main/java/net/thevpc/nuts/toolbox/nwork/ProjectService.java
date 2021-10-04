@@ -21,7 +21,7 @@ public class ProjectService {
     public ProjectService(NutsApplicationContext context, RepositoryAddress defaultRepositoryAddress, Path file) throws IOException {
         this.appContext = context;
         this.defaultRepositoryAddress = defaultRepositoryAddress == null ? new RepositoryAddress() : defaultRepositoryAddress;
-        config = context.getWorkspace().elem().setSession(appContext.getSession()).setContentType(NutsContentType.JSON).parse(file, ProjectConfig.class);
+        config = context.getSession().elem().setContentType(NutsContentType.JSON).parse(file, ProjectConfig.class);
         sharedConfigFolder = Paths.get(context.getVersionFolderFolder(NutsStoreLocation.CONFIG, NWorkConfigVersions.CURRENT));
     }
 
@@ -53,13 +53,13 @@ public class ProjectService {
     public void save() throws IOException {
         Path configFile = getConfigFile();
         Files.createDirectories(configFile.getParent());
-        appContext.getWorkspace().elem().setSession(appContext.getSession()).setContentType(NutsContentType.JSON).setValue(config).print(configFile);
+        appContext.getSession().elem().setContentType(NutsContentType.JSON).setValue(config).print(configFile);
     }
 
     public boolean load() {
         Path configFile = getConfigFile();
         if (Files.isRegularFile(configFile)) {
-            ProjectConfig u = appContext.getWorkspace().elem().setSession(appContext.getSession()).setContentType(NutsContentType.JSON).parse(configFile, ProjectConfig.class);
+            ProjectConfig u = appContext.getSession().elem().setContentType(NutsContentType.JSON).parse(configFile, ProjectConfig.class);
             if (u != null) {
                 config = u;
                 return true;

@@ -12,6 +12,6 @@ public class NCompaniesSubCmd {
         this.parent = parent;
         this.context = parent.context;
         this.service = parent.service;
-        this.ws = parent.ws;
+        this.ws = parent.session;
     }
 }

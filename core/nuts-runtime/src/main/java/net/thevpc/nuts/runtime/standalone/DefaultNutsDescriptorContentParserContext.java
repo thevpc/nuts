@@ -29,9 +29,9 @@ import net.thevpc.nuts.*;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
 
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.standalone.io.NamedByteArrayInputStream;
 import net.thevpc.nuts.spi.NutsDescriptorContentParserContext;
 
 /**
@@ -40,14 +40,14 @@ import net.thevpc.nuts.spi.NutsDescriptorContentParserContext;
 public class DefaultNutsDescriptorContentParserContext implements NutsDescriptorContentParserContext {
 
     private final NutsSession session;
-    private final NutsInput file;
+    private final NutsPath file;
     private final String fileExtension;
     private final String mimeType;
     private byte[] bytes;
     private final String[] parseOptions;
 
-    public DefaultNutsDescriptorContentParserContext(NutsSession session, NutsInput file, String fileExtension, String mimeType, String[] parseOptions) {
-        this.file = session.io().input().setMultiRead(true).of(file);
+    public DefaultNutsDescriptorContentParserContext(NutsSession session, Path file, String fileExtension, String mimeType, String[] parseOptions) {
+        this.file = NutsPath.of(file,session);
         this.session = session;
         this.fileExtension = fileExtension;
         this.mimeType = mimeType;
@@ -73,19 +73,19 @@ public class DefaultNutsDescriptorContentParserContext implements NutsDescriptor
     public InputStream getHeadStream() {
         if (bytes == null) {
             try {
-                try (InputStream is = file.open()) {
+                try (InputStream is = file.getInputStream()) {
                     bytes = CoreIOUtils.loadByteArray(is, 1024 * 1024 * 10, true);
                 }
             } catch (IOException e) {
                 throw new NutsIOException(session,e);
             }
         }
-        return new NamedByteArrayInputStream(bytes, file.getName());
+        return CoreIOUtils.createBytesStream(bytes,NutsMessage.cstyle("%s",file),file.getContentType(),file.getUserKind(),session);
     }
 
     @Override
     public InputStream getFullStream() {
-        return file.open();
+        return file.getInputStream();
     }
 
     @Override

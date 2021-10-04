@@ -77,6 +77,12 @@ public interface NutsIOUncompressAction {
      * @return {@code this} instance
      */
     NutsIOUncompressAction setSource(InputStream source);
+    /**
+     * update source to uncompress from
+     * @param source source to uncompress from
+     * @return {@code this} instance
+     */
+    NutsIOUncompressAction setSource(NutsPath source);
 
     /**
      * update source to uncompress from
@@ -127,7 +133,7 @@ public interface NutsIOUncompressAction {
      */
     NutsIOUncompressAction from(URL source);
 
-    NutsIOUncompressAction to(NutsOutput target);
+    NutsIOUncompressAction to(NutsPath target);
 
     /**
      * target to uncompress to
@@ -156,7 +162,7 @@ public interface NutsIOUncompressAction {
      */
     NutsIOUncompressAction setTarget(String target);
 
-    NutsIOUncompressAction setTarget(NutsOutput target);
+    NutsIOUncompressAction setTarget(NutsPath target);
 
     /**
      * update source to uncompress from
@@ -191,14 +197,7 @@ public interface NutsIOUncompressAction {
      * @param source source to uncompress from
      * @return {@code this} instance
      */
-    NutsIOUncompressAction from(Object source);
-
-    /**
-     * update target
-     * @param target target
-     * @return {@code this} instance
-     */
-    NutsIOUncompressAction to(Object target);
+    NutsIOUncompressAction from(NutsPath source);
 
     /**
      * return current session

@@ -1,5 +1,6 @@
 package net.thevpc.nuts.indexer;
 
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.NutsWorkspaceListManager;
 
@@ -18,9 +19,8 @@ public class NutsWorkspaceListManagerPool {
     public synchronized NutsWorkspaceListManager openListManager(String name) {
         NutsWorkspaceListManager o = pool.get(name);
         if (o == null) {
-            NutsWorkspace ws = app.getApplicationContext().getWorkspace();
-            ws=ws.createSession().getWorkspace();
-            o = ws.config().createWorkspaceListManager(name);
+            NutsSession session = app.getApplicationContext().getSession();
+            o = session.config().createWorkspaceListManager(name);
             pool.put(name, o);
         }
         return o;

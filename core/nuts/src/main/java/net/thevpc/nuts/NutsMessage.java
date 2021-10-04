@@ -51,6 +51,10 @@ public class NutsMessage {
         return params;
     }
 
+    public NutsString toNutsString(NutsSession session) {
+        return session.text().toText(this);
+    }
+
     @Override
     public String toString() {
         switch (style) {

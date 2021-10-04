@@ -17,8 +17,8 @@ public class NutsIndexSubscriberListManagerPool {
     public synchronized NutsIndexSubscriberListManager openSubscriberListManager(String name) {
         NutsIndexSubscriberListManager o = pool.get(name);
         if (o == null) {
-            NutsSession session=app.getApplicationContext().getWorkspace().createSession();
-            o = new NutsIndexSubscriberListManager(app.getApplicationContext().getWorkspace(), session,name);
+            NutsSession session=app.getApplicationContext().getSession();
+            o = new NutsIndexSubscriberListManager(session,name);
             pool.put(name, o);
         }
         return o;

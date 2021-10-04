@@ -118,7 +118,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
             session.getTerminal().printProgress("%-8s %s", "search", session.io().path(path).toCompressedForm());
             try {
                 try (InputStream s = session.io().monitor().setSource(path).setOrigin(source).setSession(session)
-                        .setSourceTypeName(typeName).createSource().open()) {
+                        .setSourceTypeName(typeName).create()) {
                     //
                 }
                 return true;
@@ -128,9 +128,9 @@ public class MavenRemoteRepository extends NutsCachedRepository {
         }
 
         @Override
-        protected NutsInput openStream(NutsId id, String path, Object source, String typeName, String action, NutsSession session) {
+        protected InputStream openStream(NutsId id, String path, Object source, String typeName, String action, NutsSession session) {
             session.getTerminal().printProgress("%-8s %s", action, session.io().path(path).toCompressedForm());
-            return session.io().monitor().setSource(path).setOrigin(source).setSession(session).setSourceTypeName(typeName).createSource();
+            return session.io().monitor().setSource(path).setOrigin(source).setSession(session).setSourceTypeName(typeName).create();
         }
 
     };
@@ -341,11 +341,11 @@ public class MavenRemoteRepository extends NutsCachedRepository {
                 // this will find only in archetype, not in full index....
                 String url = CoreIOUtils.buildUrl(config.getLocation(true), "/archetype-catalog.xml");
                 try {
-                    NutsInput s = CoreIOUtils.getCachedUrlWithSHA1(url, "archetype-catalog.xml",
+                    InputStream s = CoreIOUtils.getCachedUrlWithSHA1(url, "archetype-catalog.xml",
                             true,
                             session
                     );
-                    final InputStream is = session.io().monitor().setSource(s.open()).setSession(session).create();
+                    final InputStream is = session.io().monitor().setSource(s).setSession(session).create();
                     return MavenUtils.of(session)
                             .createArchetypeCatalogIterator(is, filter, true, session);
                 } catch (UncheckedIOException ex) {
@@ -391,7 +391,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
             String metadataURL = CoreIOUtils.buildUrl(apiUrlBase, groupId.replace('.', '/') + "/" + artifactId);
 
             try {
-                metadataStream = helper.openStream(id, metadataURL, id.builder().setFace(CoreNutsConstants.QueryFaces.CATALOG).build(), "artifact catalog", "retrieve", session).open();
+                metadataStream = helper.openStream(id, metadataURL, id.builder().setFace(CoreNutsConstants.QueryFaces.CATALOG).build(), "artifact catalog", "retrieve", session);
             } catch (UncheckedIOException | NutsIOException ex) {
                 throw new NutsNotFoundException(session, id, ex);
             }
@@ -440,7 +440,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
             String metadataURL = CoreIOUtils.buildUrl(config().getLocation(true), groupId.replace('.', '/') + "/" + artifactId + "/maven-metadata.xml");
 
             try {
-                metadataStream = helper.openStream(id, metadataURL, id.builder().setFace(CoreNutsConstants.QueryFaces.CATALOG).build(), "artifact catalog", "retrieve", session).open();
+                metadataStream = helper.openStream(id, metadataURL, id.builder().setFace(CoreNutsConstants.QueryFaces.CATALOG).build(), "artifact catalog", "retrieve", session);
             } catch (UncheckedIOException | NutsIOException ex) {
                 return null;
             }

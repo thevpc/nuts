@@ -10,26 +10,26 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
  * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.runtime.standalone.io.progress;
 
-import net.thevpc.nuts.NutsProgressMonitor;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsString;
-import net.thevpc.nuts.runtime.bundles.io.*;
-import net.thevpc.nuts.runtime.standalone.io.progress.DefaultNutsProgressEvent;
+import net.thevpc.nuts.*;
+import net.thevpc.nuts.NutsInputStreamMetadataAware;
+import net.thevpc.nuts.runtime.bundles.io.InterruptException;
+import net.thevpc.nuts.runtime.bundles.io.Interruptible;
+import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,20 +37,20 @@ import java.io.InputStream;
 /**
  * @author thevpc
  */
-public class MonitoredInputStream extends InputStream implements InputStreamMetadataAware, Interruptible {
+public class MonitoredInputStream extends InputStream implements NutsInputStreamMetadataAware, Interruptible {
 
     private final InputStream base;
-    private long count;
-    private long lastCount;
-    private long startTime;
-    private long lastTime;
     private final long length;
     private final NutsProgressMonitor monitor;
     private final Object source;
     private final NutsString sourceName;
+    private long count;
+    private long lastCount;
+    private long startTime;
+    private long lastTime;
     private boolean completed = false;
     private boolean interrupted = false;
-    private NutsSession session;
+    private final NutsSession session;
 
     public MonitoredInputStream(InputStream base, Object source, NutsString sourceName, long length, NutsProgressMonitor monitor, NutsSession session) {
         this.base = base;
@@ -66,12 +66,12 @@ public class MonitoredInputStream extends InputStream implements InputStreamMeta
 
     @Override
     public void interrupt() throws InterruptException {
-        interrupted=true;
+        interrupted = true;
     }
 
     @Override
     public int read() throws IOException {
-        if(interrupted){
+        if (interrupted) {
             throw new IOException(new InterruptException("Interrupted"));
         }
         try {
@@ -90,52 +90,13 @@ public class MonitoredInputStream extends InputStream implements InputStreamMeta
     }
 
     @Override
-    public boolean markSupported() {
-        return base.markSupported();
-    }
-
-    @Override
-    public synchronized void reset() throws IOException {
+    public int read(byte[] b) throws IOException {
         try {
-            base.reset();
-        } catch (IOException ex) {
-            onComplete(ex);
-            throw ex;
-        }
-    }
-
-    @Override
-    public synchronized void mark(int readlimit) {
-        base.mark(readlimit);
-    }
-
-    @Override
-    public void close() throws IOException {
-        onComplete(null);
-        base.close();
-    }
-
-    @Override
-    public int available() throws IOException {
-        try {
-            if(interrupted){
-                throw new IOException(new InterruptException("Interrupted"));
-            }
-            return base.available();
-        } catch (IOException ex) {
-            onComplete(ex);
-            throw ex;
-        }
-    }
-
-    @Override
-    public long skip(long n) throws IOException {
-        try {
-            if(interrupted){
+            if (interrupted) {
                 throw new IOException(new InterruptException("Interrupted"));
             }
             onBeforeRead();
-            long r = base.skip(n);
+            int r = base.read(b);
             onAfterRead(r);
             return r;
         } catch (IOException ex) {
@@ -147,7 +108,7 @@ public class MonitoredInputStream extends InputStream implements InputStreamMeta
     @Override
     public int read(byte[] b, int off, int len) throws IOException {
         try {
-            if(interrupted){
+            if (interrupted) {
                 throw new IOException(new InterruptException("Interrupted"));
             }
             onBeforeRead();
@@ -161,19 +122,58 @@ public class MonitoredInputStream extends InputStream implements InputStreamMeta
     }
 
     @Override
-    public int read(byte[] b) throws IOException {
+    public long skip(long n) throws IOException {
         try {
-            if(interrupted){
+            if (interrupted) {
                 throw new IOException(new InterruptException("Interrupted"));
             }
             onBeforeRead();
-            int r = base.read(b);
+            long r = base.skip(n);
             onAfterRead(r);
             return r;
         } catch (IOException ex) {
             onComplete(ex);
             throw ex;
         }
+    }
+
+    @Override
+    public int available() throws IOException {
+        try {
+            if (interrupted) {
+                throw new IOException(new InterruptException("Interrupted"));
+            }
+            return base.available();
+        } catch (IOException ex) {
+            onComplete(ex);
+            throw ex;
+        }
+    }
+
+    @Override
+    public void close() throws IOException {
+        onComplete(null);
+        base.close();
+    }
+
+    @Override
+    public synchronized void mark(int readlimit) {
+        base.mark(readlimit);
+    }
+
+    @Override
+    public synchronized void reset() throws IOException {
+        try {
+            base.reset();
+        } catch (IOException ex) {
+            onComplete(ex);
+            throw ex;
+        }
+    }
+
+    @Override
+    public boolean markSupported() {
+        return base.markSupported();
     }
 
     private void onBeforeRead() {
@@ -184,7 +184,7 @@ public class MonitoredInputStream extends InputStream implements InputStreamMeta
                 this.lastTime = now;
                 this.lastCount = 0;
                 this.count = 0;
-                monitor.onStart(new DefaultNutsProgressEvent(source, sourceName, 0, 0, 0, 0, length, null,session,length<0));
+                monitor.onStart(new DefaultNutsProgressEvent(source, sourceName, 0, 0, 0, 0, length, null, session, length < 0));
             }
         }
     }
@@ -193,7 +193,7 @@ public class MonitoredInputStream extends InputStream implements InputStreamMeta
         if (!completed) {
             long now = System.currentTimeMillis();
             this.count += count;
-            if (monitor.onProgress(new DefaultNutsProgressEvent(source, sourceName, this.count, now - startTime, this.count - lastCount, now - lastTime, length, null,session,length<0))) {
+            if (monitor.onProgress(new DefaultNutsProgressEvent(source, sourceName, this.count, now - startTime, this.count - lastCount, now - lastTime, length, null, session, length < 0))) {
                 this.lastCount = this.count;
                 this.lastTime = now;
             }
@@ -204,13 +204,16 @@ public class MonitoredInputStream extends InputStream implements InputStreamMeta
         if (!completed) {
             completed = true;
             long now = System.currentTimeMillis();
-            monitor.onComplete(new DefaultNutsProgressEvent(source, sourceName, this.count, now - startTime, this.count - lastCount, now - lastTime, length, ex,session,length<0));
+            monitor.onComplete(new DefaultNutsProgressEvent(source, sourceName, this.count, now - startTime, this.count - lastCount, now - lastTime, length, ex, session, length < 0));
         }
     }
 
     @Override
-    public InputStreamMetadata getMetaData() {
-        return new FixedInputStreamMetadata(String.valueOf(sourceName), length);
+    public NutsInputStreamMetadata getInputStreamMetadata() {
+        NutsInputStreamMetadata md = NutsInputStreamMetadata.of(base);
+        return new NutsDefaultInputStreamMetadata(sourceName, length, md.getContentType(),
+                md.getUserKind()
+        );
     }
 
     @Override

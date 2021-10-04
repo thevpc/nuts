@@ -24,6 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.repocommands;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.bundles.io.NutsStreamOrPath;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsDeployRepositoryCommand;
 
@@ -38,7 +39,7 @@ import java.nio.file.Path;
 public abstract class AbstractNutsDeployRepositoryCommand extends NutsRepositoryCommandBase<NutsDeployRepositoryCommand> implements NutsDeployRepositoryCommand {
 
     private NutsId id;
-    private Object content;
+    private NutsStreamOrPath content;
     private NutsDescriptor descriptor;
 
     public AbstractNutsDeployRepositoryCommand(NutsRepository repo) {
@@ -55,7 +56,7 @@ public abstract class AbstractNutsDeployRepositoryCommand extends NutsRepository
 
     @Override
     public Object getContent() {
-        return content;
+        return content.getValue();
     }
 
     @Override
@@ -69,26 +70,37 @@ public abstract class AbstractNutsDeployRepositoryCommand extends NutsRepository
     }
 
     @Override
+    public NutsDeployRepositoryCommand setContent(NutsPath content) {
+        checkSession();
+        this.content = content==null?null:NutsStreamOrPath.of(content);
+        return this;
+    }
+
+    @Override
     public NutsDeployRepositoryCommand setContent(Path content) {
-        this.content = content;
+        checkSession();
+        this.content = content==null?null:NutsStreamOrPath.of(NutsPath.of(content,getSession()));
         return this;
     }
 
     @Override
     public NutsDeployRepositoryCommand setContent(URL content) {
-        this.content = content;
+        checkSession();
+        this.content = content==null?null:NutsStreamOrPath.of(NutsPath.of(content,getSession()));
         return this;
     }
 
     @Override
     public NutsDeployRepositoryCommand setContent(File content) {
-        this.content = content;
+        checkSession();
+        this.content = content==null?null:NutsStreamOrPath.of(NutsPath.of(content,getSession()));
         return this;
     }
 
     @Override
     public NutsDeployRepositoryCommand setContent(InputStream content) {
-        this.content = content;
+        checkSession();
+        this.content = content==null?null:NutsStreamOrPath.of(content);
         return this;
     }
 

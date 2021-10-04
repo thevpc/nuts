@@ -65,7 +65,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
 
     public RemoteTomcatConfigService save() {
         Path f = getConfigPath();
-        context.getWorkspace().elem().setContentType(NutsContentType.JSON).setValue(config).print(f);
+        context.getSession().elem().setContentType(NutsContentType.JSON).setValue(config).print(f);
         return this;
     }
 
@@ -148,7 +148,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
         }
         Path f = getConfigPath();
         if (Files.exists(f)) {
-            config = context.getWorkspace().elem().setContentType(NutsContentType.JSON).parse(f, RemoteTomcatConfig.class);
+            config = context.getSession().elem().setContentType(NutsContentType.JSON).parse(f, RemoteTomcatConfig.class);
             return this;
         }
         throw new NamedItemNotFoundException("instance not found : " + getName(),getName());
@@ -167,7 +167,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
 
     @Override
     public RemoteTomcatConfigService print(NutsPrintStream out) {
-        context.getWorkspace().elem().setContentType(NutsContentType.JSON).setValue(getConfig()).print(out);
+        context.getSession().elem().setContentType(NutsContentType.JSON).setValue(getConfig()).print(out);
         out.flush();
         return this;
     }
@@ -233,8 +233,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
         cmdList.add("nuts");
         cmdList.add("--bot");
         cmdList.addAll(Arrays.asList(cmd));
-        context.getWorkspace().exec()
-                .setSession(context.getSession())
+        context.getSession().exec()
                 .addCommand(cmdList)
                 .setFailFast(true)
                 .run();

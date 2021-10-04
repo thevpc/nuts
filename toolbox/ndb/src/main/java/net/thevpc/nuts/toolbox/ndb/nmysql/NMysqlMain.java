@@ -432,10 +432,9 @@ public class NMysqlMain implements NdbSupport {
         if (expectedRemote && forRemote_server == null) {
             commandLine.required(NutsMessage.cstyle("required --server option"));
         }
-        NutsTextManager factory = service.getContext()
-                .getWorkspace().text();
+        NutsSession session = service.getContext().getSession();
+        NutsTextManager factory = session.text();
         if (commandLine.isExecMode()) {
-            NutsSession session = service.getContext().getSession();
             if (!expectedRemote) {
                 LocalMysqlConfigService c = service.loadLocalMysqlConfig(name.getConfigName(), add ? NutsOpenMode.OPEN_OR_CREATE : NutsOpenMode.OPEN_OR_ERROR);
                 boolean overrideExisting = false;
@@ -540,7 +539,7 @@ public class NMysqlMain implements NdbSupport {
                     if (password != null) {
                         someUpdates = true;
                         r.getConfig().setPassword(
-                                new String(service.getContext().getWorkspace().security().createCredentials(password.toCharArray(), true,
+                                new String(session.security().createCredentials(password.toCharArray(), true,
                                         null))
                         );
                     }
@@ -552,7 +551,7 @@ public class NMysqlMain implements NdbSupport {
                         r.getConfig().setDatabaseName(dbname);
                     }
                     if (askPassword || (!add && password == null)) {
-                        r.getConfig().setPassword(new String(service.getContext().getWorkspace().security()
+                        r.getConfig().setPassword(new String(session.security()
                                         .createCredentials(session.getTerminal().readPassword("Password"), true,
                                                 null)
                                 )

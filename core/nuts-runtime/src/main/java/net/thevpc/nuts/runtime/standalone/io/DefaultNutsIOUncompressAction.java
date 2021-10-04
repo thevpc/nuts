@@ -6,6 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.io;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.bundles.io.NutsStreamOrPath;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.NutsLogVerb;
 
@@ -31,8 +32,8 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
     private boolean logProgress = false;
     private String format = "zip";
     private NutsWorkspace ws;
-    private NutsInput source;
-    private NutsOutput target;
+    private NutsStreamOrPath source;
+    private NutsStreamOrPath target;
     private NutsSession session;
     private NutsProgressFactory progressMonitorFactory;
 
@@ -86,90 +87,80 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
         NutsWorkspaceUtils.checkSession(ws, session);
     }
 
-    private NutsInputAction _input() {
-        checkSession();
-        return ws.io().input().setSession(getSession());
+    @Override
+    public NutsIOUncompressAction setSource(InputStream source) {
+        this.source = source==null?null:NutsStreamOrPath.of(source);
+        return this;
     }
 
     @Override
-    public NutsIOUncompressAction setSource(InputStream source) {
-        this.source = _input().of(source);
+    public NutsIOUncompressAction setSource(NutsPath source) {
+        this.source = source==null?null:NutsStreamOrPath.of(source);
         return this;
     }
 
     @Override
     public NutsIOUncompressAction setSource(File source) {
-        this.source = _input().of(source);
+        this.source = source==null?null:NutsStreamOrPath.of(session.io().path(source));
         return this;
     }
 
     @Override
     public NutsIOUncompressAction setSource(Path source) {
-        this.source = _input().of(source);
+        this.source = source==null?null:NutsStreamOrPath.of(session.io().path(source));
         return this;
     }
 
     @Override
     public NutsIOUncompressAction setSource(URL source) {
-        this.source = _input().of(source);
+        this.source = source==null?null:NutsStreamOrPath.of(session.io().path(source));
         return this;
     }
 
     @Override
     public NutsIOUncompressAction setTarget(Path target) {
-        this.target = _output().of(target);
+        this.target = target==null?null:NutsStreamOrPath.of(session.io().path(target));
         return this;
     }
 
     @Override
     public NutsIOUncompressAction setTarget(String target) {
-        this.target = _output().of(target);
+        this.target = target==null?null:NutsStreamOrPath.of(session.io().path(target));
         return this;
     }
 
     @Override
     public NutsIOUncompressAction setTarget(File target) {
-        this.target = _output().of(target);
+        this.target = target==null?null:NutsStreamOrPath.of(session.io().path(target));
         return this;
     }
 
-    public DefaultNutsIOUncompressAction setSource(Object source) {
-        this.source = _input().of(source);
+    public NutsIOUncompressAction setTarget(NutsPath target) {
+        this.target = target==null?null:NutsStreamOrPath.of(target);
         return this;
     }
 
     @Override
     public NutsIOUncompressAction from(String source) {
-        this.source = _input().of(source);
+        this.source = source==null?null:NutsStreamOrPath.of(session.io().path(source));
         return this;
-    }
-
-    protected NutsOutputAction _output() {
-        checkSession();
-        return ws.io().output().setSession(getSession());
     }
 
     @Override
     public NutsIOUncompressAction to(String target) {
-        this.target = _output().of(target);
+        this.target = target==null?null:NutsStreamOrPath.of(session.io().path(target));
         return this;
     }
 
     @Override
-    public NutsIOUncompressAction from(Object source) {
-        this.source = _input().of(source);
+    public NutsIOUncompressAction from(NutsPath source) {
+        this.source = source==null?null:NutsStreamOrPath.of(source);
         return this;
     }
 
     @Override
-    public NutsIOUncompressAction to(Object target) {
-        this.target = _output().of(target);
-        return this;
-    }
-
-    @Override
-    public NutsIOUncompressAction to(NutsOutput target) {
-        this.target = _output().of(target);
+    public NutsIOUncompressAction to(NutsPath target) {
+        this.target = target==null?null:NutsStreamOrPath.of(target);
         return this;
     }
 
@@ -179,16 +170,7 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
     }
 
     //    @Override
-    public DefaultNutsIOUncompressAction setTarget(Object target) {
-        this.target = _output().of(target);
-        return this;
-    }
 
-    @Override
-    public NutsIOUncompressAction setTarget(NutsOutput target) {
-        this.target = _output().of(target);
-        return this;
-    }
 
     @Override
     public boolean isLogProgress() {
@@ -260,25 +242,33 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
         if (NutsBlankable.isBlank(format)) {
             format = "zip";
         }
-        NutsInput _source = source;
+        NutsStreamOrPath _source = source;
         if (_source == null) {
             throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("missing source"));
         }
         if (target == null) {
             throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("missing target"));
         }
+        if (!target.isPath() || !target.getPath().isFilePath() ) {
+            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("invalid target %s",target.getValue()));
+        }
         if (isLogProgress() || getProgressMonitorFactory() != null) {
-            _source = ws.io().monitor().setSource(_source).setSession(session)
-                    .setProgressFactory(getProgressMonitorFactory())
+            NutsMonitorAction m = session.io().monitor();
+            if(_source.isInputStream()){
+                m.setSource(_source.getInputStream());
+            }else{
+                m.setSource(_source.getPath());
+            }
+            _source = NutsStreamOrPath.of(m.setProgressFactory(getProgressMonitorFactory())
                     .setLogProgress(isLogProgress())
-                    .createSource();
+                    .create());
         }
         //boolean _source_isPath = _source.isPath();
 //        if (!path.toLowerCase().startsWith("file://")) {
 //            LOG.log(Level.FINE, "downloading url {0} to file {1}", new Object[]{path, file});
 //        } else {
         _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.START).log("uncompress {0} to {1}", _source, target);
-        Path folder = target.getFilePath();
+        Path folder = target.getPath().toFilePath();
         CoreIOUtils.mkdirs(folder,session);
 
         switch (format) {
@@ -304,25 +294,34 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
         if (NutsBlankable.isBlank(format)) {
             format = "zip";
         }
-        NutsInput _source = source;
+        NutsStreamOrPath _source = source;
         if (_source == null) {
             throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("missing source"));
         }
         if (target == null) {
             throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("missing target"));
         }
+        if (!target.isPath() || !target.getPath().isFilePath() ) {
+            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("invalid target %s",target.getValue()));
+        }
         if (isLogProgress() || getProgressMonitorFactory() != null) {
-            _source = ws.io().monitor().setSource(_source).setSession(session)
+            NutsMonitorAction m = session.io().monitor();
+            if(_source.isInputStream()){
+                m.setSource(_source.getInputStream());
+            }else{
+                m.setSource(_source.getPath());
+            }
+            _source = NutsStreamOrPath.of(m
                     .setProgressFactory(getProgressMonitorFactory())
                     .setLogProgress(isLogProgress())
-                    .createSource();
+                    .create());
         }
         //boolean _source_isPath = _source.isPath();
 //        if (!path.toLowerCase().startsWith("file://")) {
 //            LOG.log(Level.FINE, "downloading url {0} to file {1}", new Object[]{path, file});
 //        } else {
         _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.START).log("uncompress {0} to {1}", _source, target);
-        Path folder = target.getFilePath();
+        Path folder = target.getPath().toFilePath();
         CoreIOUtils.mkdirs(folder,session);
 
         switch (format) {
@@ -344,16 +343,16 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
 
     private void runZip() {
         checkSession();
-        NutsInput _source = source;
+        NutsStreamOrPath _source = source;
 //        }
         try {
 
             byte[] buffer = new byte[1024];
 
             //create output directory is not exists
-            Path folder = target.getFilePath();
+            Path folder = target.getPath().toFilePath();
             //get the zip file content
-            InputStream _in = _source.open();
+            InputStream _in = _source.getInputStream();
             try {
                 try (ZipInputStream zis = new ZipInputStream(_in)) {
                     //get the zipped file list entry
@@ -405,13 +404,13 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
             }
         } catch (IOException ex) {
             _LOGOP(session).level(Level.CONFIG).verb(NutsLogVerb.FAIL).log("error uncompressing {0} to {1} : {2}",
-                    _source.getSource(), target.getSource(), ex);
+                    _source.getValue(), target.getValue(), ex);
             throw new UncheckedIOException(ex);
         }
     }
     private void visitZip(NutsIOUncompressVisitor visitor) {
         checkSession();
-        NutsInput _source = source;
+        NutsStreamOrPath _source = source;
 //        }
         try {
 
@@ -420,7 +419,7 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
             //create output directory is not exists
 //            Path folder = target.getPath();
             //get the zip file content
-            InputStream _in = _source.open();
+            InputStream _in = _source.getInputStream();
             try {
                 try (ZipInputStream zis = new ZipInputStream(_in)) {
                     //get the zipped file list entry
@@ -478,22 +477,22 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
             }
         } catch (IOException ex) {
             _LOGOP(session).level(Level.CONFIG).verb(NutsLogVerb.FAIL).log("error uncompressing {0} to {1} : {2}",
-                    _source.getSource(), target.getSource(), ex);
+                    _source.getValue(), target.getValue(), ex);
             throw new UncheckedIOException(ex);
         }
     }
 
     private void runGZip() {
-        NutsInput _source = source;
+        NutsStreamOrPath _source = source;
         try {
             String baseName = _source.getName();
             byte[] buffer = new byte[1024];
 
             //create output directory is not exists
-            Path folder = target.getFilePath();
+            Path folder = target.getPath().toFilePath();
 
             //get the zip file content
-            InputStream _in = _source.open();
+            InputStream _in = _source.getInputStream();
             try {
                 try (GZIPInputStream zis = new GZIPInputStream(_in)) {
                     String n = CoreIOUtils.getURLName(baseName == null ? "" : baseName);
@@ -523,19 +522,19 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
             }
         } catch (IOException ex) {
             _LOGOP(session).level(Level.CONFIG).verb(NutsLogVerb.FAIL)
-                    .log("error uncompressing {0} to {1} : {2}", _source.getSource(),
-                            target.getSource(), ex);
+                    .log("error uncompressing {0} to {1} : {2}", _source.getValue(),
+                            target.getValue(), ex);
             throw new UncheckedIOException(ex);
         }
     }
     private void visitGZip(NutsIOUncompressVisitor visitor) {
-        NutsInput _source = source;
+        NutsStreamOrPath _source = source;
         try {
             String baseName = _source.getName();
             byte[] buffer = new byte[1024];
 
             //get the zip file content
-            InputStream _in = _source.open();
+            InputStream _in = _source.getInputStream();
             try {
                 try (GZIPInputStream zis = new GZIPInputStream(_in)) {
                     String n = CoreIOUtils.getURLName(baseName == null ? "" : baseName);
@@ -568,8 +567,8 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
             }
         } catch (IOException ex) {
             _LOGOP(session).level(Level.CONFIG).verb(NutsLogVerb.FAIL)
-                    .log("error uncompressing {0} to {1} : {2}", _source.getSource(),
-                            target.getSource(), ex);
+                    .log("error uncompressing {0} to {1} : {2}", _source.getValue(),
+                            target.getValue(), ex);
             throw new UncheckedIOException(ex);
         }
     }

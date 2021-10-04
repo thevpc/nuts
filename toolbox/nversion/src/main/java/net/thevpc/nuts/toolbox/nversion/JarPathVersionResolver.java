@@ -46,10 +46,10 @@ public class JarPathVersionResolver implements PathVersionResolver{
             return null;
         }
         Set<VersionDescriptor> all = new HashSet<>();
-        try (InputStream is = context.getWorkspace().io().path(context.getWorkspace().io()
+        try (InputStream is = context.getSession().io().path(context.getSession().io()
                 .path(filePath).builder().withAppBaseDir().build().toString()
-        ).input().open()) {
-            context.getWorkspace().io().uncompress()
+        ).getInputStream()) {
+            context.getSession().io().uncompress()
                     .from(is)
                     .visit(new NutsIOUncompressVisitor() {
                         @Override
@@ -92,14 +92,14 @@ public class JarPathVersionResolver implements PathVersionResolver{
                                         && !NutsBlankable.isBlank(Bundle_Name)
                                         && !NutsBlankable.isBlank(Bundle_Version)) {
                                     all.add(new VersionDescriptor(
-                                            context.getWorkspace().id().builder().setGroupId(Bundle_SymbolicName).setArtifactId(Bundle_Name).setVersion(Bundle_Version).build(),
+                                            context.getSession().id().builder().setGroupId(Bundle_SymbolicName).setArtifactId(Bundle_Name).setVersion(Bundle_Version).build(),
                                             properties
                                     ));
                                 }
 
                             } else if (("META-INF/" + NutsConstants.Files.DESCRIPTOR_FILE_NAME).equals(path)) {
                                 try {
-                                    NutsDescriptor d = context.getWorkspace().descriptor().parser().parse(inputStream);
+                                    NutsDescriptor d = context.getSession().descriptor().parser().parse(inputStream);
                                     inputStream.close();
                                     Properties properties = new Properties();
                                     properties.setProperty("parents", Arrays.stream(d.getParents()).map(Object::toString).collect(Collectors.joining(",")));
@@ -116,7 +116,7 @@ public class JarPathVersionResolver implements PathVersionResolver{
                                     if (d.getDescription() != null) {
                                         properties.setProperty("description", d.getDescription());
                                     }
-                                    properties.setProperty("locations", context.getWorkspace().elem().setContentType(NutsContentType.JSON)
+                                    properties.setProperty("locations", context.getSession().elem().setContentType(NutsContentType.JSON)
                                             .setValue(d.getLocations()).setNtf(false).format().filteredText()
                                     );
                                     properties.setProperty(NutsConstants.IdProperties.ARCH, String.join(";", d.getCondition().getArch()));
@@ -139,7 +139,7 @@ public class JarPathVersionResolver implements PathVersionResolver{
 
                                 Properties properties = new Properties();
                                 try {
-                                    NutsDescriptor d = context.getWorkspace().descriptor()
+                                    NutsDescriptor d = context.getSession().descriptor()
                                             .parser().setDescriptorStyle(NutsDescriptorStyle.MAVEN)
                                             .parse(inputStream);
                                     properties.put("groupId", d.getId().getGroupId());
@@ -153,7 +153,7 @@ public class JarPathVersionResolver implements PathVersionResolver{
                                         }
                                     }
                                     all.add(new VersionDescriptor(
-                                            context.getWorkspace().id().builder().setGroupId(d.getId().getGroupId())
+                                            context.getSession().id().builder().setGroupId(d.getId().getGroupId())
                                                     .setRepository(d.getId().getArtifactId())
                                                     .setVersion(d.getId().getVersion())
                                                     .build(),
@@ -176,7 +176,7 @@ public class JarPathVersionResolver implements PathVersionResolver{
                                     prop.setProperty("nuts.version-provider", "maven");
                                     if (version != null && version.trim().length() != 0) {
                                         all.add(new VersionDescriptor(
-                                                context.getWorkspace().id().builder()
+                                                context.getSession().id().builder()
                                                         .setGroupId(groupId).setArtifactId(artifactId).setVersion(version)
                                                         .build(),
                                                 prop

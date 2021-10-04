@@ -102,7 +102,7 @@ public class ExePathVersionResolver implements PathVersionResolver{
                     p.setProperty("nuts.version-provider", "win-pe");
                     if (!NutsBlankable.isBlank(artifactId) && !NutsBlankable.isBlank(artifactVersion)) {
                         d.add(new VersionDescriptor(
-                                context.getWorkspace().id().builder().setArtifactId(artifactId).setVersion(artifactVersion).build(),
+                                context.getSession().id().builder().setArtifactId(artifactId).setVersion(artifactVersion).build(),
                                 p
                         ));
                     }

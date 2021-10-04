@@ -61,7 +61,7 @@ public class IOUtils {
                 return;
             }
             if (!project.isNewlyCreated(file.getPath())) {
-                if (!console.ask("override://" + file.getPath(), "override file " + file.getName(), new ValidatorFactory(project.getWorkspace()).BOOLEAN, null).equals("true")) {
+                if (!console.ask("override://" + file.getPath(), "override file " + file.getName(), new ValidatorFactory(project.getSession()).BOOLEAN, null).equals("true")) {
                     console.println("```error [WONT OVERRIDE]``` " + file.getPath());
                     return;
                 }
@@ -77,10 +77,10 @@ public class IOUtils {
         fileWriter.flush();
         fileWriter.close();
         if (isOverride) {
-            console.println("[OVERRIDE] %s%n",project.getWorkspace().text().forStyled(file.getPath(), NutsTextStyle.path()));
+            console.println("[OVERRIDE] %s%n",project.getSession().text().forStyled(file.getPath(), NutsTextStyle.path()));
         } else {
             project.setNewlyCreated(file.getPath());
-            console.println("[GENERATE] %s%n" + project.getWorkspace().text().forStyled(file.getPath(),NutsTextStyle.path()));
+            console.println("[GENERATE] %s%n" + project.getSession().text().forStyled(file.getPath(),NutsTextStyle.path()));
         }
     }
 

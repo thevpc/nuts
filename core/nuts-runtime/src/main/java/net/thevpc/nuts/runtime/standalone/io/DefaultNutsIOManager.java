@@ -178,15 +178,15 @@ public class DefaultNutsIOManager implements NutsIOManager {
         return model.hash().setSession(session);
     }
 
-    @Override
-    public NutsInputAction input() {
-        return model.input().setSession(session);
-    }
-
-    @Override
-    public NutsOutputAction output() {
-        return model.output().setSession(session);
-    }
+//    @Override
+//    public NutsInputAction input() {
+//        return model.input().setSession(session);
+//    }
+//
+//    @Override
+//    public NutsOutputAction output() {
+//        return model.output().setSession(session);
+//    }
 
     public NutsSession getSession() {
         return session;

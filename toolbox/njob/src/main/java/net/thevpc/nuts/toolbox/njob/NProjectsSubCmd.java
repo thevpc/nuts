@@ -8,7 +8,6 @@ import net.thevpc.nuts.toolbox.njob.time.WeekDay;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -21,14 +20,14 @@ public class NProjectsSubCmd {
 
     private JobService service;
     private NutsApplicationContext context;
-    private NutsWorkspace ws;
+    private NutsSession session;
     private JobServiceCmd parent;
 
     public NProjectsSubCmd(JobServiceCmd parent) {
         this.parent = parent;
         this.context = parent.context;
         this.service = parent.service;
-        this.ws = parent.ws;
+        this.session = parent.session;
     }
 
     public void runProjectAdd(NutsCommandLine cmd) {
@@ -67,15 +66,15 @@ public class NProjectsSubCmd {
             service.projects().addProject(t);
             if (context.getSession().isPlainTrace()) {
                 context.getSession().out().printf("project %s (%s) added.\n",
-                        context.getWorkspace().text().forStyled(t.getId(), NutsTextStyle.primary5()),
+                        context.getSession().text().forStyled(t.getId(), NutsTextStyle.primary5()),
                         t.getName()
                 );
             }
             if (show) {
-                runProjectShow(ws.commandLine().create(t.getId()));
+                runProjectShow(session.commandLine().create(t.getId()));
             }
             if (list) {
-                runProjectList(ws.commandLine().create());
+                runProjectList(session.commandLine().create());
             }
         }
     }
@@ -181,7 +180,7 @@ public class NProjectsSubCmd {
             cmd.throwError(NutsMessage.formatted("project name expected"));
         }
         if (cmd.isExecMode()) {
-            NutsTextManager text = context.getWorkspace().text();
+            NutsTextManager text = context.getSession().text();
             for (NProject project : projects) {
                 for (Consumer<NProject> c : runLater) {
                     c.accept(project);
@@ -198,18 +197,18 @@ public class NProjectsSubCmd {
                 service.projects().mergeProjects(mergeTo, projects.stream().map(x -> x.getId()).toArray(String[]::new));
                 if (context.getSession().isPlainTrace()) {
                     context.getSession().out().printf("projects merged to %s.\n",
-                            context.getWorkspace()
+                            context.getSession()
                             .text().forStyled(mergeTo, NutsTextStyle.primary5())
                     );
                 }
             }
             if (show) {
                 for (NProject t : new LinkedHashSet<>(projects)) {
-                    runProjectShow(ws.commandLine().create(t.getId()));
+                    runProjectShow(session.commandLine().create(t.getId()));
                 }
             }
             if (list) {
-                runProjectList(ws.commandLine().create());
+                runProjectList(session.commandLine().create());
             }
         }
     }
@@ -279,7 +278,7 @@ public class NProjectsSubCmd {
                             );
 
             if (context.getSession().isPlainTrace()) {
-                NutsMutableTableModel m = ws.formats().table().createModel();
+                NutsMutableTableModel m = session.formats().table().createModel();
                 List<NProject> lastResults = new ArrayList<>();
                 int[] index = new int[1];
                 r.forEach(x -> {
@@ -301,7 +300,7 @@ public class NProjectsSubCmd {
                     );
                 });
                 context.getSession().setProperty("LastResults", lastResults.toArray(new NProject[0]));
-                ws.formats().table()
+                session.formats().table()
                         .setBorder("spaces")
                         .setValue(m).println(context.getSession().out());
             } else {
@@ -311,7 +310,7 @@ public class NProjectsSubCmd {
     }
 
     private void runProjectRemove(NutsCommandLine cmd) {
-        NutsTextManager text = context.getWorkspace().text();
+        NutsTextManager text = context.getSession().text();
         while (cmd.hasNext()) {
             NutsArgument a = cmd.next();
             if (cmd.isExecMode()) {

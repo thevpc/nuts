@@ -88,6 +88,8 @@ public interface NutsDescriptorParser {
      */
     NutsDescriptor parse(InputStream stream);
 
+    NutsDescriptor parse(NutsPath path);
+
     /**
      * parse descriptor.
      *

@@ -440,7 +440,7 @@ public class LocalTomcat {
     }
 
     public NutsString getBracketsPrefix(String str) {
-        return context.getWorkspace().text().builder()
+        return context.getSession().text().builder()
                 .append("[")
                 .append(str, NutsTextStyle.primary5())
                 .append("]");
@@ -462,7 +462,7 @@ public class LocalTomcat {
         } else {
             if (context.getSession().isPlainOut()) {
                 context.getSession().out().printf("%s Tomcat %s.\n", getBracketsPrefix(name),
-                        context.getWorkspace().text().forStyled("not found", NutsTextStyle.error())
+                        context.getSession().text().forStyled("not found", NutsTextStyle.error())
                 );
             } else {
                 context.getSession().eout().add(
@@ -606,7 +606,7 @@ public class LocalTomcat {
             context.configureLast(args);
         }
         LocalTomcatConfigService c = toLocalTomcatConfigService(s);
-        context.getWorkspace().formats().object().setSession(context.getSession())
+        context.getSession().formats().object().setSession(context.getSession())
                 .setValue(c.getCatalinaBase())
                 .println();
     }
@@ -619,7 +619,7 @@ public class LocalTomcat {
             context.configureLast(args);
         }
         LocalTomcatConfigService c = toLocalTomcatConfigService(s);
-        context.getWorkspace().formats().object().setSession(context.getSession())
+        context.getSession().formats().object().setSession(context.getSession())
                 .setValue(c.getValidCatalinaVersion())
                 .println();
     }
@@ -632,7 +632,7 @@ public class LocalTomcat {
             context.configureLast(args);
         }
         LocalTomcatConfigService c = toLocalTomcatConfigService(s);
-        context.getWorkspace().formats().object().setSession(context.getSession())
+        context.getSession().formats().object().setSession(context.getSession())
                 .setValue(c.getCatalinaHome())
                 .println();
     }
@@ -712,7 +712,7 @@ public class LocalTomcat {
                     break;
                 }
             }
-            context.getWorkspace().formats().object().setSession(context.getSession())
+            context.getSession().formats().object().setSession(context.getSession())
                     .setValue(port)
                     .println();
         }

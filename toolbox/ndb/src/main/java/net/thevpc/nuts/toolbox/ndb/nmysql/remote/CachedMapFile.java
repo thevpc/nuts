@@ -32,7 +32,7 @@ public class CachedMapFile {
         if (enabled) {
             if (Files.isRegularFile(path)) {
                 try {
-                    map = context.getWorkspace().elem()
+                    map = context.getSession().elem()
                             .setContentType(NutsContentType.JSON)
                             .parse(path, Map.class);
                     loaded=true;
@@ -91,7 +91,7 @@ public class CachedMapFile {
             }
             map.put(k, v);
             try {
-                context.getWorkspace().elem().setValue(map)
+                context.getSession().elem().setValue(map)
                         .setContentType(NutsContentType.JSON)
                         .print(path);
             } catch (Exception ex) {

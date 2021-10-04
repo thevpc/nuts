@@ -35,6 +35,10 @@ import java.io.PrintStream;
  */
 public interface NutsString {
 
+    static NutsString of(NutsMessage str, NutsSession session) {
+        return session.text().toText(str);
+    }
+
     static NutsString parse(String str, NutsSession session) {
         NutsApiUtils.checkSession(session);
         return session.text().parse(str);

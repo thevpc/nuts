@@ -47,13 +47,13 @@ public class DerbyService {
 
     public DerbyService(NutsApplicationContext appContext) {
         this.appContext = appContext;
-        LOG = appContext.getWorkspace().log().of(getClass());
+        LOG = appContext.getSession().log().of(getClass());
     }
 
     public boolean isRunning() {
         DerbyOptions options=new DerbyOptions();
         options.cmd=Command.ping;
-        NutsTextManager factory = appContext.getWorkspace().text();
+        NutsTextManager factory = appContext.getSession().text();
         try {
             String s= command(options).setFailFast(true).grabOutputString().getOutputString();
             if(s!=null){
@@ -131,17 +131,17 @@ public class DerbyService {
     }
 
     private Path download(String id, Path folder, boolean optional) {
-        final NutsId iid = appContext.getWorkspace().id().parser().parse(id);
+        final NutsId iid = appContext.getSession().id().parser().parse(id);
 //        Path downloadBaseFolder = folder//.resolve(iid.getVersion().getValue());
         Path targetFile = folder.resolve(iid.getArtifactId() + ".jar");
         if (!Files.exists(targetFile)) {
             if (optional) {
-                Path r = appContext.getWorkspace().fetch().setLocation(targetFile).setId(id).setFailFast(false).getResultPath();
+                Path r = appContext.getSession().fetch().setLocation(targetFile).setId(id).setFailFast(false).getResultPath();
                 if (r != null) {
                     LOG.with().session(appContext.getSession()).level(Level.FINEST).verb(NutsLogVerb.READ).log("downloading {0} to {1}", id, targetFile);
                 }
             } else {
-                appContext.getWorkspace().fetch().setLocation(targetFile).setId(id).setFailFast(true).getResultPath();
+                appContext.getSession().fetch().setLocation(targetFile).setId(id).setFailFast(true).getResultPath();
                 LOG.with().session(appContext.getSession()).level(Level.FINEST).verb(NutsLogVerb.READ).log("downloading {0} to {1}", id, targetFile);
             }
         } else {
@@ -151,11 +151,11 @@ public class DerbyService {
     }
 
     public Set<String> findVersions() {
-        NutsWorkspace ws = appContext.getWorkspace();
-        NutsId java = appContext.getWorkspace().env().getPlatform();
-        List<String> all = ws.search().setSession(appContext.getSession().copy()).addId("org.apache.derby:derbynet").setDistinct(true)
+        NutsSession session = appContext.getSession();
+        NutsId java = session.env().getPlatform();
+        List<String> all = session.search().setSession(appContext.getSession().copy()).addId("org.apache.derby:derbynet").setDistinct(true)
                 .setIdFilter(
-                        (java.getVersion().compareTo("1.9") < 0) ? ws.version().filter().byValue("[,10.15.1.3[").to(NutsIdFilter.class) :
+                        (java.getVersion().compareTo("1.9") < 0) ? session.version().filter().byValue("[,10.15.1.3[").to(NutsIdFilter.class) :
                                 null)
                 .getResultIds().stream().map(x -> x.getVersion().toString()).collect(Collectors.toList());
         TreeSet<String> lastFirst = new TreeSet<>(new Comparator<String>() {
@@ -171,13 +171,13 @@ public class DerbyService {
     public NutsExecCommand command(DerbyOptions options) {
         List<String> command = new ArrayList<>();
         List<String> executorOptions = new ArrayList<>();
-        NutsWorkspace ws = appContext.getWorkspace();
+        NutsSession session = appContext.getSession();
         String currentDerbyVersion = options.derbyVersion;
         if (currentDerbyVersion == null) {
-            NutsId java = appContext.getWorkspace().env().getPlatform();
-            NutsId best = ws.search().setSession(appContext.getSession().copy()).addId("org.apache.derby:derbynet").setDistinct(true).setLatest(true)
+            NutsId java = session.env().getPlatform();
+            NutsId best = session.search().setSession(appContext.getSession().copy()).addId("org.apache.derby:derbynet").setDistinct(true).setLatest(true)
                     .setIdFilter(
-                            (java.getVersion().compareTo("1.9") < 0) ? ws.version().filter().byValue("[,10.15.1.3[").to(NutsIdFilter.class) :
+                            (java.getVersion().compareTo("1.9") < 0) ? session.version().filter().byValue("[,10.15.1.3[").to(NutsIdFilter.class) :
                                     null)
                     .setSession(appContext.getSession().copy())
                     .getResultIds().singleton();
@@ -200,7 +200,7 @@ public class DerbyService {
         } catch (IOException ex) {
             throw new NutsExecutionException(appContext.getSession(),NutsMessage.cstyle("failed to create directory %s",derbyDataHomeRoot), 1);
         }
-        Path derbyBinHome = Paths.get(ws.locations().getStoreLocation(appContext.getAppId(), NutsStoreLocation.APPS)).resolve(currentDerbyVersion);
+        Path derbyBinHome = Paths.get(session.locations().getStoreLocation(appContext.getAppId(), NutsStoreLocation.APPS)).resolve(currentDerbyVersion);
         Path derbyLibHome = derbyBinHome.resolve("lib");
         Path derby = download("org.apache.derby:derby#" + currentDerbyVersion, derbyLibHome, false);
         Path derbynet = download("org.apache.derby:derbynet#" + currentDerbyVersion, derbyLibHome, false);
@@ -249,13 +249,13 @@ public class DerbyService {
         if (options.extraArg != null) {
             command.add(options.extraArg);
         }
-        return ws
+        return session
                 .exec()
                 .addExecutorOptions(executorOptions)
                 .addCommand(command)
                 .setDirectory(derbyBinHome.toString())
                 .setFailFast(true)
-                .setSession(appContext.getSession());
+                ;
     }
 
     void exec(DerbyOptions options) {

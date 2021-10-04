@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.wscommands.deploy;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.common.CorePlatformUtils;
+import net.thevpc.nuts.runtime.bundles.io.NutsStreamOrPath;
 import net.thevpc.nuts.runtime.bundles.io.ZipOptions;
 import net.thevpc.nuts.runtime.bundles.io.ZipUtils;
 import net.thevpc.nuts.runtime.core.CoreNutsConstants;
@@ -17,9 +18,6 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * local implementation
@@ -30,7 +28,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
         super(ws);
     }
 
-    private static CharacterizedDeployFile characterizeForDeploy(NutsWorkspace ws, NutsInput contentFile, NutsFetchCommand options, String[] parseOptions, NutsSession session) {
+    private static CharacterizedDeployFile characterizeForDeploy(NutsWorkspace ws, NutsStreamOrPath contentFile, NutsFetchCommand options, String[] parseOptions, NutsSession session) {
         if (parseOptions == null) {
             parseOptions = new String[0];
         }
@@ -38,48 +36,49 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
         CharacterizedDeployFile c = new CharacterizedDeployFile();
         try {
             c.baseFile = CoreIOUtils.toPathInputSource(contentFile, c.temps, session);
-            c.contentFile = contentFile;
-            Path fileSource = c.contentFile.getFilePath();
-            if (!Files.exists(fileSource)) {
-                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("file does not exists %s", fileSource));
+            c.contentStreamOrPath = contentFile;
+            if (!Files.exists(c.baseFile)) {
+                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("file does not exists %s", c.baseFile));
             }
-            if (c.descriptor == null && c.baseFile.isURL()) {
+            if (c.descriptor == null && c.contentStreamOrPath.isPath() && c.contentStreamOrPath.getPath().isURL()) {
                 try {
-                    c.descriptor = ws.descriptor().parser().setSession(session).parse(ws.io().input().of(c.baseFile.getURL().toString() + "." + NutsConstants.Files.DESCRIPTOR_FILE_NAME).open());
+                    c.descriptor = ws.descriptor().parser().setSession(session).parse(
+                            c.contentStreamOrPath.getPath().resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME)
+                    );
                 } catch (Exception ex) {
                     //ignore
                 }
             }
-            if (Files.isDirectory(fileSource)) {
+            if (Files.isDirectory(c.baseFile)) {
                 if (c.descriptor == null) {
-                    Path ext = fileSource.resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME);
+                    Path ext = c.baseFile.resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME);
                     if (Files.exists(ext)) {
                         c.descriptor = ws.descriptor().parser().setSession(session).parse(ext);
                     } else {
-                        c.descriptor = CoreIOUtils.resolveNutsDescriptorFromFileContent(c.contentFile, parseOptions, session);
+                        c.descriptor = CoreIOUtils.resolveNutsDescriptorFromFileContent(c.baseFile, parseOptions, session);
                     }
                 }
                 if (c.descriptor != null) {
                     if ("zip".equals(c.descriptor.getPackaging())) {
-                        Path zipFilePath = Paths.get(ws.io().path(fileSource.toString() + ".zip").builder().withAppBaseDir().build().toString());
-                        ZipUtils.zip(ws, fileSource.toString(), new ZipOptions(), zipFilePath.toString());
-                        c.contentFile = ws.io().input().setMultiRead(true).of(zipFilePath);
+                        Path zipFilePath = Paths.get(ws.io().path(c.baseFile.toString() + ".zip").builder().withAppBaseDir().build().toString());
+                        ZipUtils.zip(ws, c.baseFile.toString(), new ZipOptions(), zipFilePath.toString());
+                        c.contentStreamOrPath = NutsStreamOrPath.of(NutsPath.of(zipFilePath,session));
                         c.addTemp(zipFilePath);
                     } else {
                         throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid Nut Folder source. expected 'zip' ext in descriptor"));
                     }
                 }
-            } else if (Files.isRegularFile(fileSource)) {
+            } else if (Files.isRegularFile(c.baseFile)) {
                 if (c.descriptor == null) {
-                    File ext = new File(ws.io().path(fileSource.toString() + "." + NutsConstants.Files.DESCRIPTOR_FILE_NAME).builder().withAppBaseDir().build().toString());
+                    File ext = new File(ws.io().path(c.baseFile.toString() + "." + NutsConstants.Files.DESCRIPTOR_FILE_NAME).builder().withAppBaseDir().build().toString());
                     if (ext.exists()) {
                         c.descriptor = ws.descriptor().parser().setSession(session).parse(ext);
                     } else {
-                        c.descriptor = CoreIOUtils.resolveNutsDescriptorFromFileContent(c.contentFile, parseOptions, session);
+                        c.descriptor = CoreIOUtils.resolveNutsDescriptorFromFileContent(c.baseFile, parseOptions, session);
                     }
                 }
             } else {
-                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("path does not denote a valid file or folder %s", c.contentFile));
+                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("path does not denote a valid file or folder %s", c.contentStreamOrPath));
             }
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
@@ -100,7 +99,9 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                     .addIds(ids.toArray(new NutsId[0])).setLatest(true).setRepository(fromRepository).getResultIds()) {
                 NutsDefinition fetched = ws.fetch().setContent(true).setId(nutsId).setSession(getSession()).getResultDefinition();
                 if (fetched.getPath() != null) {
-                    runDeployFile(fetched.getPath(), fetched.getDescriptor(), null);
+                    runDeployFile(NutsStreamOrPath.of(
+                           NutsPath.of(fetched.getPath(),session)
+                    ), fetched.getDescriptor(), null);
                 }
             }
         }
@@ -117,7 +118,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
         return runDeployFile(getContent(), getDescriptor(), getDescSha1());
     }
 
-    private NutsDeployCommand runDeployFile(Object content, Object descriptor0, String descSHA1) {
+    private NutsDeployCommand runDeployFile(NutsStreamOrPath content, Object descriptor0, String descSHA1) {
         checkSession();
         NutsWorkspace ws = getSession().getWorkspace();
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
@@ -125,8 +126,8 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
         wu.checkReadOnly();
 
         Path tempFile = null;
-        NutsInput contentSource;
-        contentSource = ws.io().input().setMultiRead(true).setTypeName("artifact binaries").of(content);
+        NutsStreamOrPath contentSource;
+        contentSource = content.toMultiRead(session);
         NutsDescriptor descriptor = buildDescriptor(descriptor0, descSHA1);
 
         CharacterizedDeployFile characterizedFile = null;
@@ -146,7 +147,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
             tempFile = Paths.get(ws.io().tmp()
                     .setSession(session)
                     .createTempFile(name));
-            ws.io().copy().setSession(validWorkspaceSession).from(contentSource.open()).to(tempFile).setSafe(true).run();
+            ws.io().copy().setSession(validWorkspaceSession).from(contentSource.getInputStream()).to(tempFile).setSafe(true).run();
             contentFile2 = tempFile;
 
             Path contentFile0 = contentFile2;
@@ -163,7 +164,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                         descriptor2 = ws.descriptor().parser().setSession(session).parse(descFile);
                     } else {
                         descriptor2 = CoreIOUtils.resolveNutsDescriptorFromFileContent(
-                                ws.io().input().setMultiRead(true).of(contentFile),
+                                contentFile,
                                 getParseOptions(), validWorkspaceSession);
                     }
                     if (descriptor == null) {
@@ -190,7 +191,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                 } else {
                     if (descriptor == null) {
                         descriptor = CoreIOUtils.resolveNutsDescriptorFromFileContent(
-                                ws.io().input().setMultiRead(true).of(contentFile), getParseOptions(), validWorkspaceSession);
+                                contentFile, getParseOptions(), validWorkspaceSession);
                     }
                 }
                 if (descriptor == null) {
@@ -275,26 +276,34 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                 throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("invalid content Hash"));
             }
             return mdescriptor;
-        } else if (CoreIOUtils.isValidInputStreamSource(descriptor.getClass())) {
-            NutsInput inputStreamSource = ws.io().input().setMultiRead(true).setTypeName("artifact descriptor").of(descriptor);
-            if (descSHA1 != null) {
-                inputStreamSource = ws.io().input().setMultiRead(true).of(inputStreamSource);
-                try (InputStream is = inputStreamSource.open()) {
-                    if (!ws.io().hash().sha1().setSource(is).computeString().equalsIgnoreCase(descSHA1)) {
-                        throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("invalid content Hash"));
-                    }
-                } catch (IOException ex) {
-                    throw new UncheckedIOException(ex);
-                }
-            }
-            try (InputStream is = inputStreamSource.open()) {
-                return ws.descriptor().parser().setSession(session).parse(is);
-            } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
-            }
-
         } else {
-            throw new NutsException(getSession(), NutsMessage.cstyle("unexpected type %s", descriptor.getClass().getName()));
+            NutsStreamOrPath nutsStreamOrPath = NutsStreamOrPath.ofAnyInputOrNull(descriptor, session);
+            if(nutsStreamOrPath!=null) {
+                NutsStreamOrPath d = nutsStreamOrPath.isInputStream()?
+                        NutsStreamOrPath.of((InputStream) descriptor).toDisposable(session)
+                        :nutsStreamOrPath
+                        ;
+                try {
+                    if (descSHA1 != null) {
+                        try (InputStream is = d.getInputStream()) {
+                            if (!ws.io().hash().sha1().setSource(is).computeString().equalsIgnoreCase(descSHA1)) {
+                                throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("invalid content Hash"));
+                            }
+                        } catch (IOException ex) {
+                            throw new UncheckedIOException(ex);
+                        }
+                    }
+                    try (InputStream is = d.getInputStream()) {
+                        return ws.descriptor().parser().setSession(session).parse(is);
+                    } catch (IOException ex) {
+                        throw new UncheckedIOException(ex);
+                    }
+                } finally {
+                    d.dispose();
+                }
+            }else{
+                throw new NutsException(getSession(), NutsMessage.cstyle("unexpected type %s", descriptor.getClass().getName()));
+            }
         }
     }
 
@@ -336,36 +345,6 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
             addId(id.toString());
         }
         return this;
-    }
-
-    private static class CharacterizedDeployFile implements AutoCloseable {
-
-        public NutsInput baseFile;
-        public NutsInput contentFile;
-        public List<Path> temps = new ArrayList<>();
-        public NutsDescriptor descriptor;
-
-        public Path getContentPath() {
-            return (Path) contentFile.getSource();
-        }
-
-        public void addTemp(Path f) {
-            temps.add(f);
-        }
-
-        @Override
-        public void close() {
-            for (Iterator<Path> it = temps.iterator(); it.hasNext(); ) {
-                Path temp = it.next();
-                try {
-                    Files.delete(temp);
-                } catch (IOException ex) {
-                    throw new UncheckedIOException(ex);
-                }
-                it.remove();
-            }
-        }
-
     }
 
 }

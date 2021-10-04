@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.wscommands.deploy;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.bundles.io.NutsStreamOrPath;
 import net.thevpc.nuts.runtime.standalone.wscommands.NutsWorkspaceCommandBase;
 
 import java.io.File;
@@ -16,7 +17,7 @@ import java.util.List;
 public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeployCommand> implements NutsDeployCommand {
 
     protected List<NutsId> result;
-    protected Object content;
+    protected NutsStreamOrPath content;
     protected Object descriptor;
     protected String sha1;
     protected String descSha1;
@@ -45,26 +46,26 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
 
     @Override
     public NutsDeployCommand setContent(InputStream stream) {
-        content = stream;
+        content = stream==null?null:NutsStreamOrPath.of(stream);
         return this;
     }
 
     @Override
     public NutsDeployCommand setContent(String path) {
-        content = path;
+        content = path==null?null:NutsStreamOrPath.of(getSession().io().path(path));
         return this;
     }
 
     @Override
     public NutsDeployCommand setContent(File file) {
-        content = file;
+        content = file==null?null:NutsStreamOrPath.of(getSession().io().path(file));
         invalidateResult();
         return this;
     }
 
     @Override
     public NutsDeployCommand setContent(Path file) {
-        content = file;
+        content = file==null?null:NutsStreamOrPath.of(getSession().io().path(file));
         invalidateResult();
         return this;
     }
@@ -120,13 +121,13 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
         return this;
     }
 
-    public Object getContent() {
+    public NutsStreamOrPath getContent() {
         return content;
     }
 
     @Override
     public NutsDeployCommand setContent(URL url) {
-        content = url;
+        content = url==null?null:NutsStreamOrPath.of(getSession().io().path(url));
         invalidateResult();
         return this;
     }

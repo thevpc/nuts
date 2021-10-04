@@ -33,8 +33,6 @@ import net.thevpc.nuts.runtime.core.repos.NutsRepositorySelector;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.standalone.io.NamedByteArrayInputStream;
-import net.thevpc.nuts.runtime.standalone.util.NutsDependencyScopes;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -233,7 +231,8 @@ public class MavenUtils {
                 return null;
             }
             byte[] bytes = CoreIOUtils.loadByteArray(stream);
-            Pom pom = new PomXmlParser(new NutsPomLogger(session)).parse(new NamedByteArrayInputStream(bytes, urlDesc), session);
+            InputStream bytesStream = CoreIOUtils.createBytesStream(bytes, urlDesc == null ? null : NutsMessage.formatted(urlDesc), "text/xml", urlDesc, session);
+            Pom pom = new PomXmlParser(new NutsPomLogger(session)).parse(bytesStream,session);
             boolean executable = false;// !"maven-archetype".equals(packaging.toString()); // default is true :)
             boolean application = false;// !"maven-archetype".equals(packaging.toString()); // default is true :)
             if ("true".equals(pom.getProperties().get("nuts.executable"))) {

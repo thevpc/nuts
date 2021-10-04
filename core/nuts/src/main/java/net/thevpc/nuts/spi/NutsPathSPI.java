@@ -10,6 +10,8 @@ import java.nio.file.Path;
 import java.time.Instant;
 
 public interface NutsPathSPI {
+    NutsPath[] getChildren();
+
     NutsFormatSPI getFormatterSPI();
 
     default String getName() {
@@ -52,9 +54,9 @@ public interface NutsPathSPI {
 
     String getLocation();
 
-    InputStream inputStream();
+    InputStream getInputStream();
 
-    OutputStream outputStream();
+    OutputStream getOutputStream();
 
     NutsSession getSession();
 
@@ -64,4 +66,5 @@ public interface NutsPathSPI {
 
     Instant getLastModifiedInstant();
 
+    NutsPath getParent();
 }

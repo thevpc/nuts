@@ -1,13 +1,13 @@
 package net.thevpc.nuts.lib.template;
 
-import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.NutsSession;
 
 public class ValidatorFactory {
 
-    private NutsWorkspace ws;
+    private NutsSession session;
 
-    public ValidatorFactory(NutsWorkspace ws) {
-        this.ws = ws;
+    public ValidatorFactory(NutsSession session) {
+        this.session = session;
     }
 
     public final StringValidator STRING = new StringValidator() {
@@ -124,7 +124,7 @@ public class ValidatorFactory {
     public final StringValidator BOOLEAN = new StringValidator() {
         @Override
         public String validate(String value) {
-            Boolean b = ws.commandLine().createArgument(value).getAll().getBoolean(null);
+            Boolean b = session.commandLine().createArgument(value).getAll().getBoolean(null);
             if (b == null) {
                 throw new IllegalArgumentException("Invalid boolean");
             }

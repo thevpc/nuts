@@ -110,8 +110,8 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
         return getWorkspace().io().monitor().setSource(path).setOrigin(source).setSourceTypeName(sourceTypeName).setSession(session).create();
     }
 
-    protected NutsInput openStream(NutsId id, String path, Object source, String sourceTypeName, NutsSession session) {
-        return getWorkspace().io().monitor().setSource(path).setOrigin(source).setSourceTypeName(sourceTypeName).setSession(session).createSource();
+    protected InputStream openStream(NutsId id, String path, Object source, String sourceTypeName, NutsSession session) {
+        return getWorkspace().io().monitor().setSource(path).setOrigin(source).setSourceTypeName(sourceTypeName).setSession(session).create();
     }
 
     public Iterator<NutsId> findVersionsImplGithub(NutsId id, NutsIdFilter idFilter, NutsSession session) {
@@ -128,11 +128,11 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
             String metadataURL = CoreIOUtils.buildUrl(apiUrlBase, groupId.replace('.', '/') + "/" + artifactId);
 
             try {
-                metadataStream = openStream(id, metadataURL, id.builder().setFace(CoreNutsConstants.QueryFaces.CATALOG).build(), "artifact catalog", session).open();
+                metadataStream = openStream(id, metadataURL, id.builder().setFace(CoreNutsConstants.QueryFaces.CATALOG).build(), "artifact catalog", session);
             } catch (UncheckedIOException | NutsIOException ex) {
                 throw new NutsNotFoundException(session, id, ex);
             }
-            List<Map<String, Object>> info = getWorkspace().elem().setContentType(NutsContentType.JSON).parse(new InputStreamReader(metadataStream), List.class);
+            List<Map<String, Object>> info = session.elem().setContentType(NutsContentType.JSON).parse(new InputStreamReader(metadataStream), List.class);
             if (info != null) {
                 for (Map<String, Object> version : info) {
                     if ("dir".equals(version.get("type"))) {
@@ -214,7 +214,7 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
                     + getIdFilename(id.builder().setFaceDescriptor().build(), session)
             );
 
-            try (InputStream metadataStream = openStream(id, metadataURL, id.builder().setFace(CoreNutsConstants.QueryFaces.CATALOG).build(), "artifact catalog", session).open()) {
+            try (InputStream metadataStream = openStream(id, metadataURL, id.builder().setFace(CoreNutsConstants.QueryFaces.CATALOG).build(), "artifact catalog", session)) {
                 // ok found!!
                 ret.add(id);
             } catch (UncheckedIOException | IOException ex) {

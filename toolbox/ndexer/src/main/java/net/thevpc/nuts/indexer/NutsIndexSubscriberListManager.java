@@ -14,8 +14,8 @@ public class NutsIndexSubscriberListManager {
     private NutsIndexSubscriberListConfig config;
     private NutsWorkspace defaultWorkspace;
 
-    public NutsIndexSubscriberListManager(NutsWorkspace ws, NutsSession session,String name) {
-        this.defaultWorkspace = ws;
+    public NutsIndexSubscriberListManager(NutsSession session,String name) {
+        this.defaultWorkspace = session.getWorkspace();
         if (name==null || name.trim().isEmpty()) {
             name = "default";
         }

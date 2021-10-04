@@ -154,11 +154,11 @@ public final class NutsApplications {
      */
     public static void runApplication(NutsApplication applicationInstance, String[] args, NutsSession session) {
         NutsApplicationContext applicationContext = createApplicationContext(applicationInstance, args, session);
-        NutsWorkspace ws = applicationContext.getWorkspace();
-        boolean inherited = ws.boot().getBootOptions().isInherited();
-        ws.log().of(NutsApplications.class).with().level(Level.FINE).verb(NutsLogVerb.START).formatted()
+        session = applicationContext.getSession();
+        boolean inherited = session.boot().getBootOptions().isInherited();
+        session.log().of(NutsApplications.class).with().level(Level.FINE).verb(NutsLogVerb.START).formatted()
                 .log("running application {0}: {1} {2}", inherited ? "(inherited)" : "",
-                        applicationInstance.getClass().getName(), ws.commandLine().create(args)
+                        applicationInstance.getClass().getName(), session.commandLine().create(args)
                 );
         switch (applicationContext.getMode()) {
             /**

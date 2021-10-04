@@ -3,15 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.thevpc.nuts.runtime.bundles.io;
+package net.thevpc.nuts;
 
 /**
  *
  * @author thevpc
  */
-public interface InputStreamMetadata {
+public interface NutsInputStreamMetadataAware {
 
-    long getLength();
-
-    String getName();
+    NutsInputStreamMetadata getInputStreamMetadata();
 }

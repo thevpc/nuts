@@ -1,26 +1,25 @@
 package net.thevpc.nuts.lib.ssh;
 
 import net.thevpc.nuts.NutsBlankable;
-import net.thevpc.nuts.NutsUtilStrings;
 
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SshAddress {
-    private static Pattern pattern = Pattern.compile("^(?<protocol>(([a-zA-Z0-9_-]+)://))?((?<user>([^:?]+))@)?(?<host>[^:?]+)(:(?<port>[0-9]+))?(\\?(?<query>.+))?$");
-    private String user = null;
-    private String host = null;
-    private String password = null;
-    private String keyFile = null;
-    private int port = -1;
+    private static final Pattern pattern = Pattern.compile("^(?<protocol>(([a-zA-Z0-9_-]+)://))?((?<user>([^:?]+))@)?(?<host>[^:?]+)(:(?<port>[0-9]+))?(\\?(?<query>.+))?$");
+    private final String user;
+    private final String host;
+    private final String password;
+    private final String keyFile;
+    private final int port;
 
     public SshAddress(String url) {
         Matcher m = pattern.matcher(url);
         if (m.find()) {
-            String protocol=m.group("protocol");
-            if(protocol!=null && !protocol.equals("ssh://")){
-                throw new IllegalArgumentException("Illegal ssh protocol format "+url);
+            String protocol = m.group("protocol");
+            if (protocol != null && !protocol.equals("ssh://")) {
+                throw new IllegalArgumentException("Illegal ssh protocol format " + url);
             }
             user = m.group("user");
             host = m.group("host");
@@ -46,25 +45,45 @@ public class SshAddress {
         return user;
     }
 
+    public SshAddress setUser(String user) {
+        return new SshAddress(user, host, port, keyFile, password);
+    }
+
     public String getHost() {
         return host;
+    }
+
+    public SshAddress setHost(String host) {
+        return new SshAddress(user, host, port, keyFile, password);
     }
 
     public String getPassword() {
         return password;
     }
 
+    public SshAddress setPassword(String password) {
+        return new SshAddress(user, host, port, keyFile, password);
+    }
+
     public String getKeyFile() {
         return keyFile;
+    }
+
+    public SshAddress setKeyFile(String keyFile) {
+        return new SshAddress(user, host, port, keyFile, password);
     }
 
     public int getPort() {
         return port;
     }
 
+    public SshAddress setPort(int port) {
+        return new SshAddress(user, host, port, keyFile, password);
+    }
+
     public SshPath getPath(String path) {
         return new SshPath(
-                user,host, port, keyFile, password, path
+                user, host, port, keyFile, password, path
         );
     }
 
@@ -75,7 +94,7 @@ public class SshAddress {
             sb.append(user).append("@");
         }
         sb.append(host);
-        if (port >= 0) {
+        if (port > 0) {
             sb.append(":").append(port);
         }
         if (password != null || keyFile != null) {

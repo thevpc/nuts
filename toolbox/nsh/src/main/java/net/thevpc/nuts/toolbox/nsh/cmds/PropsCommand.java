@@ -320,7 +320,7 @@ public class PropsCommand extends AbstractNshBuiltin {
             }
         } else {
             NutsPath filePath = ShellHelper.xfileOf(targetFile, context.getGlobalContext().getCwd(), context.getSession());
-            try (OutputStream os = filePath.outputStream()) {
+            try (OutputStream os = filePath.getOutputStream()) {
                 Format format = o.targetFormat;
                 if (format == Format.AUTO) {
                     format = detectFileFormat(filePath.getName(), null);

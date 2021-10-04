@@ -66,9 +66,7 @@ public interface NutsIOCopyAction {
      * @return {@code this} instance
      * @throws NutsUnsupportedArgumentException if unsupported type
      */
-    NutsIOCopyAction setSource(Object source);
-
-    NutsIOCopyAction setSource(NutsInput source);
+    NutsIOCopyAction setSource(NutsPath source);
 
     /**
      * update source to copy from
@@ -111,7 +109,7 @@ public interface NutsIOCopyAction {
      * @return {@code this} instance
      * @throws NutsUnsupportedArgumentException if unsupported type
      */
-    NutsIOCopyAction from(Object source);
+//    NutsIOCopyAction from(NutsPath source);
 
     /**
      * update source to copy from
@@ -125,7 +123,7 @@ public interface NutsIOCopyAction {
      * @param source source to copy from
      * @return {@code this} instance
      */
-    NutsIOCopyAction from(NutsInput source);
+    NutsIOCopyAction from(NutsPath source);
 
     /**
      * update source to copy from
@@ -173,7 +171,14 @@ public interface NutsIOCopyAction {
      * @param target target to copy to
      * @return {@code this} instance
      */
-    NutsIOCopyAction setTarget(NutsOutput target);
+    NutsIOCopyAction setTarget(NutsPrintStream target);
+
+    /**
+     * update target to copy from
+     * @param target target to copy to
+     * @return {@code this} instance
+     */
+//    NutsIOCopyAction setTarget(NutsOutput target);
 
     /**
      * update target to copy from
@@ -208,7 +213,7 @@ public interface NutsIOCopyAction {
      * @param target target
      * @return {@code this} instance
      */
-    NutsIOCopyAction to(Object target);
+//    NutsIOCopyAction to(NutsPath target);
 
     /**
      * update target
@@ -216,6 +221,14 @@ public interface NutsIOCopyAction {
      * @return {@code this} instance
      */
     NutsIOCopyAction to(OutputStream target);
+
+
+    /**
+     * update target
+     * @param target target
+     * @return {@code this} instance
+     */
+    NutsIOCopyAction to(NutsPrintStream target);
 
     /**
      * update target to copy from
@@ -243,7 +256,7 @@ public interface NutsIOCopyAction {
      * @param target target to copy to
      * @return {@code this} instance
      */
-    NutsIOCopyAction to(NutsOutput target);
+    NutsIOCopyAction to(NutsPath target);
 
     /**
      * return validator

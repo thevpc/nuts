@@ -35,7 +35,7 @@ public class NJobMain implements NutsApplication {
                 cmdLine.unexpectedArgument();
             }
         };
-        ts.runCommands(appContext.getWorkspace().commandLine().create("summary"));
+        ts.runCommands(appContext.getSession().commandLine().create("summary"));
     }
 
 }

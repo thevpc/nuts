@@ -16,6 +16,7 @@ import java.util.stream.StreamSupport;
 
 public abstract class NutsPathBase implements NutsPath {
     private NutsSession session;
+    private String userKind;
 
     public NutsPathBase(NutsSession session) {
         if (session == null) {
@@ -127,7 +128,7 @@ public abstract class NutsPathBase implements NutsPath {
 
     @Override
     public Stream<String> lines() {
-        BufferedReader br = new BufferedReader(new InputStreamReader(input().open()));
+        BufferedReader br = new BufferedReader(new InputStreamReader(getInputStream()));
         Iterator<String> sourceIterator = new Iterator<String>() {
             String line = null;
 
@@ -171,7 +172,7 @@ public abstract class NutsPathBase implements NutsPath {
     @Override
     public List<String> tail(int count) {
         LinkedList<String> lines = new LinkedList<>();
-        BufferedReader br = new BufferedReader(new InputStreamReader(input().open()));
+        BufferedReader br = new BufferedReader(new InputStreamReader(getInputStream()));
         String line;
         try {
             int count0 = 0;
@@ -188,4 +189,14 @@ public abstract class NutsPathBase implements NutsPath {
         return lines;
     }
 
+    @Override
+    public String getUserKind() {
+        return userKind;
+    }
+
+    @Override
+    public NutsPathBase setUserKind(String userKind) {
+        this.userKind = userKind;
+        return this;
+    }
 }

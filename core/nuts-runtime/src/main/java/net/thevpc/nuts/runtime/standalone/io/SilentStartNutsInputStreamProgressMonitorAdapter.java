@@ -15,7 +15,7 @@ class SilentStartNutsInputStreamProgressMonitorAdapter implements NutsProgressMo
     private final NutsProgressMonitor finalMonitor;
     private final String path;
 
-    public SilentStartNutsInputStreamProgressMonitorAdapter(NutsWorkspace ws, NutsProgressMonitor finalMonitor, String path) {
+    public SilentStartNutsInputStreamProgressMonitorAdapter(NutsProgressMonitor finalMonitor, String path) {
         this.finalMonitor = finalMonitor;
         this.path = path;
     }

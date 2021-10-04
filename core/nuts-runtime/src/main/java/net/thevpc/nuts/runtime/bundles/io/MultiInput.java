@@ -9,5 +9,5 @@ package net.thevpc.nuts.runtime.bundles.io;
  *
  * @author thevpc
  */
-public interface MultiInput extends CoreInput {
-}
+//public interface MultiInput extends CoreInput {
+//}

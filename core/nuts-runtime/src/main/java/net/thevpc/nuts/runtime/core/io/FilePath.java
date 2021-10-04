@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.core.io;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.io.FixedInputStreamMetadata;
 import net.thevpc.nuts.runtime.bundles.io.InputStreamMetadataAwareImpl;
 import net.thevpc.nuts.runtime.core.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
@@ -22,7 +21,7 @@ import java.util.Arrays;
 import java.util.Objects;
 
 public class FilePath extends NutsPathBase implements NutsPathSPI {
-    private Path value;
+    private final Path value;
 
     public FilePath(Path value, NutsSession session) {
         super(session);
@@ -30,35 +29,6 @@ public class FilePath extends NutsPathBase implements NutsPathSPI {
             throw new IllegalArgumentException("invalid value");
         }
         this.value = value;
-    }
-
-    @Override
-    public NutsPath resolve(String other) {
-        String[] others= Arrays.stream(NutsUtilStrings.trim(other).split("[/\\\\]"))
-                .filter(x->x.length()>0).toArray(String[]::new);
-        if(others.length>0){
-            Path value2=value;
-            for (String s : others) {
-                value2=value2.resolve(s);
-            }
-            return new FilePath(value2,getSession());
-        }
-        return this;
-    }
-
-    @Override
-    public String getProtocol() {
-        return "";
-    }
-
-    @Override
-    public boolean isRegularFile() {
-        return Files.isRegularFile(value);
-    }
-
-    @Override
-    public boolean isDirectory() {
-        return Files.isDirectory(value);
     }
 
     @Override
@@ -75,24 +45,6 @@ public class FilePath extends NutsPathBase implements NutsPathSPI {
         }
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(value);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        FilePath urlPath = (FilePath) o;
-        return Objects.equals(value, urlPath.value);
-    }
-
-    @Override
-    public String toString() {
-        return value.toString();
-    }
-
     public String getName() {
         return CoreIOUtils.getURLName(value.toString());
     }
@@ -105,6 +57,25 @@ public class FilePath extends NutsPathBase implements NutsPathSPI {
     @Override
     public String getLocation() {
         return value.toString();
+    }
+
+    @Override
+    public NutsPath resolve(String other) {
+        String[] others = Arrays.stream(NutsUtilStrings.trim(other).split("[/\\\\]"))
+                .filter(x -> x.length() > 0).toArray(String[]::new);
+        if (others.length > 0) {
+            Path value2 = value;
+            for (String s : others) {
+                value2 = value2.resolve(s);
+            }
+            return new FilePath(value2, getSession());
+        }
+        return this;
+    }
+
+    @Override
+    public String getProtocol() {
+        return "";
     }
 
     @Override
@@ -126,18 +97,33 @@ public class FilePath extends NutsPathBase implements NutsPathSPI {
     }
 
     @Override
-    public NutsInput input() {
-        return new FilePathInput();
+    public NutsPath[] getChildren() {
+        if (Files.isDirectory(value)) {
+            try {
+                return Files.list(value).map(x -> getSession().io().path(x)).toArray(NutsPath[]::new);
+            } catch (IOException e) {
+                //
+            }
+        }
+        return new NutsPath[0];
     }
 
-    @Override
-    public NutsOutput output() {
-        return new NutsPathOutput(null, this, getSession()) {
-            @Override
-            public OutputStream open() {
-                return outputStream();
-            }
-        };
+    public InputStream getInputStream() {
+        try {
+            return InputStreamMetadataAwareImpl.of(Files.newInputStream(value),
+                    new NutsDefaultInputStreamMetadata(this)
+            );
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    public OutputStream getOutputStream() {
+        try {
+            return Files.newOutputStream(value);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
     @Override
@@ -178,6 +164,26 @@ public class FilePath extends NutsPathBase implements NutsPathSPI {
         }
     }
 
+//    @Override
+//    public NutsOutput output() {
+//        return new NutsPathOutput(null, this, getSession()) {
+//            @Override
+//            public OutputStream open() {
+//                return getOutputStream();
+//            }
+//        };
+//    }
+
+    @Override
+    public boolean isDirectory() {
+        return Files.isDirectory(value);
+    }
+
+    @Override
+    public boolean isRegularFile() {
+        return Files.isRegularFile(value);
+    }
+
     public boolean exists() {
         return Files.exists(value);
     }
@@ -205,6 +211,50 @@ public class FilePath extends NutsPathBase implements NutsPathSPI {
     }
 
     @Override
+    public NutsPathBuilder builder() {
+        return new DefaultPathBuilder(getSession(), this);
+    }
+
+    @Override
+    public NutsPath getParent() {
+        Path p = value.getParent();
+        if (p == null) {
+            return null;
+        }
+        return getSession().io().path(p);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(value);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        FilePath urlPath = (FilePath) o;
+        return Objects.equals(value, urlPath.value);
+    }
+
+    @Override
+    public String toString() {
+        return value.toString();
+    }
+
+//    private class FilePathInput extends NutsPathInput {
+//        public FilePathInput() {
+//            super(FilePath.this);
+//        }
+//
+//        @Override
+//        public InputStream open() {
+//            return new InputStreamMetadataAwareImpl(inputStream(), new NutsDefaultInputStreamMetadata(getNutsPath().toString(),
+//                    getNutsPath().getContentLength()));
+//        }
+//    }
+
+    @Override
     public NutsFormat formatter() {
         return new MyPathFormat(this)
                 .setSession(getSession())
@@ -217,26 +267,8 @@ public class FilePath extends NutsPathBase implements NutsPathSPI {
         return new NutsFormatSPIFromNutsFormat(formatter);
     }
 
-    public InputStream inputStream() {
-        try {
-            return new InputStreamMetadataAwareImpl(Files.newInputStream(value),
-                    new FixedInputStreamMetadata(toString(),
-                    getContentLength()));
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
-    }
-
-    public OutputStream outputStream() {
-        try {
-            return Files.newOutputStream(value);
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
-    }
-
     private static class MyPathFormat extends DefaultFormatBase<NutsFormat> {
-        private FilePath p;
+        private final FilePath p;
 
         public MyPathFormat(FilePath p) {
             super(p.getSession().getWorkspace(), "path");
@@ -260,22 +292,4 @@ public class FilePath extends NutsPathBase implements NutsPathSPI {
             return false;
         }
     }
-
-    private class FilePathInput extends NutsPathInput {
-        public FilePathInput() {
-            super(FilePath.this);
-        }
-
-        @Override
-        public InputStream open() {
-            return new InputStreamMetadataAwareImpl(inputStream(), new FixedInputStreamMetadata(getNutsPath().toString(),
-                    getNutsPath().getContentLength()));
-        }
-    }
-
-    @Override
-    public NutsPathBuilder builder() {
-        return new DefaultPathBuilder(getSession(), this);
-    }
-
 }

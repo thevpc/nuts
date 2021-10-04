@@ -6,6 +6,8 @@ package net.thevpc.nuts.lib.template;
 
 import java.io.File;
 import java.util.List;
+
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsWorkspace;
 
 /**
@@ -14,7 +16,7 @@ import net.thevpc.nuts.NutsWorkspace;
  */
 public interface ProjectTemplate {
 
-    NutsWorkspace getWorkspace();
+    NutsSession getSession();
 
     TemplateConsole getConsole();
 

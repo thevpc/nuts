@@ -20,7 +20,7 @@ public class NDerbyMain implements NdbSupport {
     @Override
     public void run(NutsApplicationContext appContext, NutsCommandLine cmdLine) {
         this.appContext = appContext;
-        NutsWorkspace ws = appContext.getWorkspace();
+        NutsSession session = appContext.getSession();
         NutsArgument a;
         DerbyOptions options = new DerbyOptions();
         cmdLine.setCommandName("derby");
@@ -69,26 +69,26 @@ public class NDerbyMain implements NdbSupport {
             DerbyService srv = new DerbyService(appContext);
             int effectivePort = options.port < 0 ? 1527 : options.port;
             if (options.cmd == Command.start) {
-                NutsTextManager factory = appContext.getWorkspace().text();
+                NutsTextManager factory = session.text();
                 if (cmdLine.isExecMode()) {
                     if (new DerbyService(appContext).isRunning()) {
-                        appContext.getSession().out().printf("derby is %s on port %s%n",
+                        session.out().printf("derby is %s on port %s%n",
                                 factory.forStyled("already running", NutsTextStyle.warn()),
                                 factory.forStyled("" + effectivePort, NutsTextStyle.number())
                         );
-                        throw new NutsExecutionException(appContext.getSession(), NutsMessage.cstyle("derby is already running on port %d", effectivePort), 3);
+                        throw new NutsExecutionException(session, NutsMessage.cstyle("derby is already running on port %d", effectivePort), 3);
                     }
                 }
             } else if (options.cmd == Command.shutdown) {
-                NutsTextManager factory = appContext.getWorkspace().text();
+                NutsTextManager factory = appContext.getSession().text();
                 if (cmdLine.isExecMode()) {
                     if (!new DerbyService(appContext).isRunning()) {
-                        appContext.getSession().out().printf("derby is %s on port %s%n",
+                        session.out().printf("derby is %s on port %s%n",
                                 factory.forStyled("already stopped", NutsTextStyle.warn()),
                                 factory.forStyled("" + effectivePort, NutsTextStyle.number())
                         );
-                        appContext.getSession().out().printf("derby is %s%n", factory.forStyled("already stopped", NutsTextStyle.warn()));
-                        throw new NutsExecutionException(appContext.getSession(), NutsMessage.cstyle("derby is already stopped on port %d", effectivePort), 3);
+                        session.out().printf("derby is %s%n", factory.forStyled("already stopped", NutsTextStyle.warn()));
+                        throw new NutsExecutionException(session, NutsMessage.cstyle("derby is already stopped on port %d", effectivePort), 3);
                     }
                 }
             }
@@ -107,12 +107,13 @@ public class NDerbyMain implements NdbSupport {
             }
         }
         options.cmd = Command.ping;
-        NutsTextManager factory = appContext.getWorkspace().text();
+        NutsSession session = appContext.getSession();
+        NutsTextManager factory = session.text();
         if (cmdLine.isExecMode()) {
             if (new DerbyService(appContext).isRunning()) {
-                appContext.getSession().out().printf("derby is %s%n", factory.forStyled("running", NutsTextStyle.primary1()));
+                session.out().printf("derby is %s%n", factory.forStyled("running", NutsTextStyle.primary1()));
             } else {
-                appContext.getSession().out().printf("derby is %s%n", factory.forStyled("stopped", NutsTextStyle.error()));
+                session.out().printf("derby is %s%n", factory.forStyled("stopped", NutsTextStyle.error()));
             }
         }
     }
@@ -163,9 +164,9 @@ public class NDerbyMain implements NdbSupport {
                 args.unexpectedArgument();
             }
         }
-        NutsTextManager factory = appContext.getWorkspace().text();
+        NutsSession session = appContext.getSession();
+        NutsTextManager factory = session.text();
         if (args.isExecMode()) {
-            NutsSession session = appContext.getSession();
             if (session.isPlainOut()) {
                 NutsPrintStream out = session.out();
                 for (RunningDerby jpsResult : DerbyUtils.getRunningInstances(appContext)) {

@@ -31,7 +31,7 @@ public class NVersionMain implements NutsApplication {
         return io.path(expression).builder().setBaseDir(cwd).build();
     }
 
-    private Set<VersionDescriptor> detectVersions(String filePath, NutsApplicationContext context, NutsWorkspace ws) throws IOException {
+    private Set<VersionDescriptor> detectVersions(String filePath, NutsApplicationContext context, NutsSession ws) throws IOException {
         for (PathVersionResolver r : resolvers) {
             Set<VersionDescriptor> x = r.resolve(filePath, context);
             if (x != null) {
@@ -59,7 +59,7 @@ public class NVersionMain implements NutsApplication {
 
     @Override
     public void run(NutsApplicationContext context) {
-        NutsWorkspace ws = context.getWorkspace();
+        NutsSession session = context.getSession();
         Set<String> unsupportedFileTypes = new HashSet<>();
         Set<String> jarFiles = new HashSet<>();
         Set<String> exeFiles = new HashSet<>();
@@ -112,8 +112,8 @@ public class NVersionMain implements NutsApplication {
                 Set<VersionDescriptor> value = null;
                 try {
                     processed++;
-                    value = detectVersions(context.getWorkspace().io()
-                            .path(arg).builder().withAppBaseDir().build().toString(), context, ws);
+                    value = detectVersions(context.getSession().io()
+                            .path(arg).builder().withAppBaseDir().build().toString(), context, session);
                 } catch (IOException e) {
                     throw new NutsExecutionException(context.getSession(),NutsMessage.cstyle("nversion: unable to detect version for %s",arg), e, 2);
                 }
@@ -133,9 +133,9 @@ public class NVersionMain implements NutsApplication {
 
             NutsPrintStream out = context.getSession().out();
             NutsPrintStream err = context.getSession().out();
-            NutsTextManager text = context.getWorkspace().text();
+            NutsTextManager text = context.getSession().text();
             if (table) {
-                NutsPropertiesFormat tt = context.getWorkspace().formats().props().setSorted(sort);
+                NutsPropertiesFormat tt = context.getSession().formats().props().setSorted(sort);
                 Properties pp = new Properties();
                 for (Map.Entry<String, Set<VersionDescriptor>> entry : results.entrySet()) {
                     VersionDescriptor o = entry.getValue().toArray(new VersionDescriptor[0])[0];
@@ -151,7 +151,7 @@ public class NVersionMain implements NutsApplication {
                 }
                 if (error) {
                     for (String t : unsupportedFileTypes) {
-                        File f = new File(context.getWorkspace().io().path(t).builder().withAppBaseDir().build().toString());
+                        File f = new File(context.getSession().io().path(t).builder().withAppBaseDir().build().toString());
                         if (f.isFile()) {
                             pp.setProperty(t, text.builder().append("<<ERROR>>", NutsTextStyle.error()).append(" unsupported file type").toString());
                         } else if (f.isDirectory()) {
@@ -182,7 +182,7 @@ public class NVersionMain implements NutsApplication {
                             out.printf("%s%n", text.toText(descriptor.getId()));
                         } else if (longFormat) {
                             out.printf("%s%n", text.toText(descriptor.getId()));
-                            NutsPropertiesFormat f = context.getWorkspace().formats().props()
+                            NutsPropertiesFormat f = context.getSession().formats().props()
                                     .setSorted(true);
                             f.setValue(descriptor.getProperties()).print(out);
                         } else {
@@ -196,7 +196,7 @@ public class NVersionMain implements NutsApplication {
                 if (error) {
                     if (!unsupportedFileTypes.isEmpty()) {
                         for (String t : unsupportedFileTypes) {
-                            File f = new File(context.getWorkspace().io().path(t).builder().withAppBaseDir().build().toString());
+                            File f = new File(context.getSession().io().path(t).builder().withAppBaseDir().build().toString());
                             if (f.isFile()) {
                                 err.printf("%s : unsupported file type%n", t);
                             } else if (f.isDirectory()) {

@@ -13,9 +13,9 @@ public class NTomcatMain implements NutsApplication {
 
     @Override
     public void run(NutsApplicationContext appContext) {
-        NutsRepository apacheRepo = appContext.getWorkspace().repos().findRepository("apache-tomcat");
+        NutsRepository apacheRepo = appContext.getSession().repos().findRepository("apache-tomcat");
         if (apacheRepo == null) {
-            appContext.getWorkspace().repos().addRepository(
+            appContext.getSession().repos().addRepository(
                     new NutsAddRepositoryOptions()
                             .setRepositoryModel(new ApacheTomcatRepositoryModel())
                             .setTemporary(true)

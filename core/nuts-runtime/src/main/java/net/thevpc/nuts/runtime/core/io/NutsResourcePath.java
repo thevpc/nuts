@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.core.io;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.core.DefaultNutsClassLoader;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.spi.NutsFormatSPI;
 import net.thevpc.nuts.spi.NutsPathSPI;
@@ -20,6 +21,7 @@ public class NutsResourcePath implements NutsPathSPI {
     private List<NutsId> ids;
     private String location;
     private boolean urlPathLookedUp = false;
+    private URL[] urls = null;
     private NutsPath urlPath = null;
     private NutsSession session;
 
@@ -86,6 +88,7 @@ public class NutsResourcePath implements NutsPathSPI {
                                         .byScope(NutsDependencyScopePattern.RUN)
                         )
                         .setOptional(false).getResultClassLoader();
+                urls = ((DefaultNutsClassLoader) resultClassLoader).getURLs();
                 //class loader do not expect
                 if (loc.length() > 1 && loc.startsWith("/")) {
                     loc = loc.substring(1);
@@ -100,6 +103,12 @@ public class NutsResourcePath implements NutsPathSPI {
             }
         }
         return urlPath;
+    }
+
+    @Override
+    public NutsPath[] getChildren() {
+        //TODO : parse urls for children!
+        return new NutsPath[0];
     }
 
     @Override
@@ -204,21 +213,30 @@ public class NutsResourcePath implements NutsPathSPI {
     }
 
     @Override
-    public InputStream inputStream() {
+    public NutsPath getParent() {
+        String ppath = CoreIOUtils.getURLParentPath(location);
+        if(ppath==null){
+            return null;
+        }
+        return session.io().path(rebuildURL(ppath,ids.toArray(new NutsId[0])));
+    }
+
+    @Override
+    public InputStream getInputStream() {
         NutsPath up = toURLPath();
         if (up == null) {
             throw new NutsIOException(getSession(), NutsMessage.cstyle("unable to resolve input stream %s", toString()));
         }
-        return up.input().open();
+        return up.getInputStream();
     }
 
     @Override
-    public OutputStream outputStream() {
+    public OutputStream getOutputStream() {
         NutsPath up = toURLPath();
         if (up == null) {
             throw new NutsIOException(getSession(), NutsMessage.cstyle("unable to resolve output stream %s", toString()));
         }
-        return up.outputStream();
+        return up.getOutputStream();
     }
 
     @Override

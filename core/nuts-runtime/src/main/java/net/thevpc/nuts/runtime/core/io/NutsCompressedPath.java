@@ -1,7 +1,10 @@
 package net.thevpc.nuts.runtime.core.io;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.bundles.io.InputStreamMetadataAwareImpl;
+import net.thevpc.nuts.runtime.bundles.io.URLBuilder;
 import net.thevpc.nuts.runtime.core.format.DefaultFormatBase;
+import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 
 import java.io.File;
 import java.io.InputStream;
@@ -62,43 +65,11 @@ public class NutsCompressedPath extends NutsPathBase {
             } catch (MalformedURLException e) {
                 return path;
             }
-            // pre-compute length of StringBuffer
-            int len = u.getProtocol().length() + 1;
-            if (u.getAuthority() != null && u.getAuthority().length() > 0) {
-                len += 2 + u.getAuthority().length();
-            }
-            if (u.getPath() != null) {
-                len += u.getPath().length();
-            }
-            if (u.getQuery() != null) {
-                len += 1 + u.getQuery().length();
-            }
-            if (u.getRef() != null) {
-                len += 1 + u.getRef().length();
-            }
-
-            StringBuilder result = new StringBuilder(len);
-            result.append(u.getProtocol());
-            result.append(":");
-            if (u.getAuthority() != null && u.getAuthority().length() > 0) {
-                result.append("//");
-                result.append(u.getAuthority());
-            }
-            if (u.getPath() != null) {
-                result.append(compressPath(u.getPath(), 0, 2));
-            }
-            if (u.getQuery() != null) {
-                result.append('?');
-                result.append("...");
-//                result.append(u.getQuery());
-            }
-            if (u.getRef() != null) {
-                result.append("#");
-                result.append("...");
-//                result.append(u.getRef());
-            }
-            return result.toString();
-
+            return URLBuilder.buildURLString(u.getProtocol(),u.getAuthority(),
+                    u.getPath()!=null?compressPath(u.getPath(), 0, 2):null,
+                    u.getQuery()!=null? "?...":null,
+                    u.getRef()!=null? "#...":null
+            );
         } else {
             return compressPath(path);
         }
@@ -187,24 +158,27 @@ public class NutsCompressedPath extends NutsPathBase {
         return base.toFilePath();
     }
 
+//    @Override
+//    public NutsInput input() {
+//        return base.input();
+//    }
+//
+//    @Override
+//    public NutsOutput output() {
+//        return base.output();
+//    }
+
     @Override
-    public NutsInput input() {
-        return base.input();
+    public InputStream getInputStream() {
+        InputStream is = base.getInputStream();
+        NutsInputStreamMetadata m = NutsInputStreamMetadata.of(is);
+        NutsInputStreamMetadata m2 = new NutsDefaultInputStreamMetadata(m).setUserKind(getUserKind());
+        return InputStreamMetadataAwareImpl.of(is,m2);
     }
 
     @Override
-    public NutsOutput output() {
-        return base.output();
-    }
-
-    @Override
-    public InputStream inputStream() {
-        return base.inputStream();
-    }
-
-    @Override
-    public OutputStream outputStream() {
-        return base.outputStream();
+    public OutputStream getOutputStream() {
+        return base.getOutputStream();
     }
 
     @Override
@@ -270,5 +244,15 @@ public class NutsCompressedPath extends NutsPathBase {
     @Override
     public NutsPathBuilder builder() {
         return base.builder();
+    }
+
+    @Override
+    public NutsPath[] getChildren() {
+        return new NutsPath[0];
+    }
+
+    @Override
+    public NutsPath getParent() {
+        return base.getParent();
     }
 }

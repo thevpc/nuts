@@ -99,4 +99,39 @@ public class URLBuilder {
         }
     }
 
+    public static String buildURLString(String protocol,String authority,String path,String query,String ref){
+        // pre-compute length of StringBuffer
+        int len = protocol.length() + 1;
+        if (authority != null && authority.length() > 0) {
+            len += 2 + authority.length();
+        }
+        if (path != null) {
+            len += path.length();
+        }
+        if (query != null) {
+            len += 1 + query.length();
+        }
+        if (ref != null) {
+            len += 1 + ref.length();
+        }
+
+        StringBuilder result = new StringBuilder(len);
+        result.append(protocol);
+        result.append(":");
+        if (authority != null && authority.length() > 0) {
+            result.append("//");
+            result.append(authority);
+        }
+        if (path != null) {
+            result.append(path);
+        }
+        if (query != null) {
+            result.append(query);
+        }
+        if (ref != null) {
+            result.append(ref);
+        }
+        return result.toString();
+    }
+
 }

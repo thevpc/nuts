@@ -100,7 +100,7 @@ public class JShell {
         this.appId = appId;
         //super.setCwd(workspace.getConfigManager().getCwd());
         if (this.appId == null) {
-            this.appId = appContext.getWorkspace().id().resolveId(JShell.class);
+            this.appId = appContext.getSession().id().resolveId(JShell.class);
         }
         if (this.appId == null) {
             throw new IllegalArgumentException("unable to resolve application id");
@@ -110,14 +110,14 @@ public class JShell {
         NutsWorkspace ws = this.getWorkspace();
         JShellHistory hist = getHistory();
 
-        this.appContext.getWorkspace().env().setProperty(JShellFileContext.class.getName(), _rootContext
+        this.appContext.getSession().env().setProperty(JShellFileContext.class.getName(), _rootContext
         );
         _nrootContext.setSession(appContext.getSession());
         //add default commands
         List<NshBuiltin> allCommand = new ArrayList<>();
         NutsSupportLevelContext<JShell> constraints = new NutsDefaultSupportLevelContext<>(appContext.getSession(), this);
 
-        for (NshBuiltin command : this.appContext.getWorkspace().extensions().
+        for (NshBuiltin command : this.appContext.getSession().extensions().
                 createServiceLoader(NshBuiltin.class, JShell.class, NshBuiltin.class.getClassLoader())
                 .loadAll(this)) {
             NshBuiltin old = (NshBuiltin) _rootContext.builtins().find(command.getName());
@@ -193,7 +193,7 @@ public class JShell {
     private static String resolveServiceName(NutsApplicationContext appContext, String serviceName, NutsId appId) {
         if ((serviceName == null || serviceName.trim().isEmpty())) {
             if (appId == null) {
-                appId = appContext.getWorkspace().id().setSession(appContext.getSession()).resolveId(JShell.class);
+                appId = appContext.getSession().id().resolveId(JShell.class);
             }
             serviceName = appId.getArtifactId();
         }
@@ -581,7 +581,7 @@ public class JShell {
     }
 
     protected void printHeader(NutsPrintStream out) {
-        out.resetLine().println(appContext.getWorkspace().text().builder()
+        out.resetLine().println(appContext.getSession().text().builder()
                 .appendCode("sh", "nuts")
                 .append(" shell ")
                 .append("v" + getWorkspace().getRuntimeId().getVersion().toString(), NutsTextStyle.version())
@@ -598,11 +598,11 @@ public class JShell {
     }
 
     protected void executeInteractive(JShellFileContext context) {
-        appContext.getWorkspace().term().enableRichTerm();
-        appContext.getWorkspace().term().getSystemTerminal()
+        appContext.getSession().term().enableRichTerm();
+        appContext.getSession().term().getSystemTerminal()
                 .setCommandAutoCompleteResolver(new NshAutoCompleter())
                 .setCommandHistory(
-                        appContext.getWorkspace().commandLine().createHistory()
+                        appContext.getSession().commandLine().createHistory()
                                 .setPath(Paths.get(appContext.getVarFolder()).resolve("nsh-history.hist"))
                                 .build()
                 )
@@ -1111,7 +1111,7 @@ public class JShell {
     }
 
     public String getVersion() {
-        NutsId nutsId = appContext.getWorkspace().id().resolveId(getClass());
+        NutsId nutsId = appContext.getSession().id().resolveId(getClass());
         if (nutsId == null) {
             return "dev";
         }
@@ -1172,7 +1172,7 @@ public class JShell {
     }
 
     public JShellContext createContext(JShellContext ctx, JShellNode root, JShellNode parent, JShellVariables env) {
-        return new DefaultJShellContext(this, root, parent, ctx, getWorkspace(), appContext.getSession(), env);
+        return new DefaultJShellContext(this, root, parent, ctx, appContext.getSession().getWorkspace(), appContext.getSession(), env);
     }
 
     public static class MemResult {

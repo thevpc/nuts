@@ -38,8 +38,7 @@ public class Nsh implements NutsApplication {
         }
         //id will not include version or
         String nshIdStr = applicationContext.getAppId().getShortName();
-        NutsWorkspace ws = applicationContext.getWorkspace();
-        NutsWorkspaceConfigManager cfg = ws.config();
+        NutsWorkspaceConfigManager cfg = session.config();
 //        HashMap<String, String> parameters = new HashMap<>();
 //        parameters.put("forList", nshIdStr + " --!color -c find-forCommand");
 //        parameters.put("find", nshIdStr + " --!color -c find-forCommand %n");
@@ -61,7 +60,7 @@ public class Nsh implements NutsApplication {
         for (JShellBuiltin command : commands) {
             if (!CONTEXTUAL_BUILTINS.contains(command.getName())) {
                 //avoid recursive definition!
-                if (ws.commands()
+                if (session.commands()
                         .setSession(sessionCopy.setConfirm(NutsConfirmationMode.YES))
                         .addCommand(new NutsCommandConfig()
                                 .setFactoryId("nsh")
@@ -125,18 +124,18 @@ public class Nsh implements NutsApplication {
     public void onUninstallApplication(NutsApplicationContext applicationContext) {
         LOG.log(Level.FINER, "[nsh] uninstallation...");
         try {
-            NutsWorkspace ws = applicationContext.getWorkspace();
+            NutsSession session = applicationContext.getSession();
             try {
-                ws.commands().removeCommandFactory("nsh");
+                session.commands().removeCommandFactory("nsh");
             } catch (Exception notFound) {
                 //ignore!
             }
-            for (NutsWorkspaceCustomCommand command : ws.commands().findCommandsByOwner(applicationContext.getAppId())) {
+            for (NutsWorkspaceCustomCommand command : session.commands().findCommandsByOwner(applicationContext.getAppId())) {
                 try {
-                    ws.commands().removeCommand(command.getName());
+                    session.commands().removeCommand(command.getName());
                 } catch (Exception ex) {
                     if (applicationContext.getSession().isPlainTrace()) {
-                        NutsTextManager factory = ws.text();
+                        NutsTextManager factory = session.text();
                         applicationContext.getSession().err().printf("unable to uninstall %s.\n",
                                 factory.forStyled(command.getName(),NutsTextStyle.primary3())
                         );

@@ -130,8 +130,6 @@ public interface NutsIOCompressAction {
      */
     Object getTarget();
 
-    NutsIOCompressAction setTarget(NutsOutput target);
-
     /**
      * update target
      *
@@ -164,8 +162,6 @@ public interface NutsIOCompressAction {
      */
     NutsIOCompressAction setTarget(String target);
 
-    NutsIOCompressAction setTarget(Object target);
-
     /**
      * update target
      *
@@ -197,16 +193,6 @@ public interface NutsIOCompressAction {
      * @return {@code this} instance
      */
     NutsIOCompressAction to(File target);
-
-    NutsIOCompressAction to(NutsOutput target);
-
-    /**
-     * update target
-     *
-     * @param target target
-     * @return {@code this} instance
-     */
-    NutsIOCompressAction to(Object target);
 
     /**
      * return current session

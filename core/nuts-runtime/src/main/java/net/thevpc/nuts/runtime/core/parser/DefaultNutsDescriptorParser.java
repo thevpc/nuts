@@ -6,7 +6,6 @@ import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 import java.io.*;
 import java.net.URL;
-import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
@@ -24,17 +23,7 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
     @Override
     public NutsDescriptor parse(URL url) {
         checkSession();
-        try {
-            try (InputStream is = NutsWorkspaceUtils.of(getSession()).openURL(url)) {
-                return parse(is, true);
-            } catch (NutsException ex) {
-                throw ex;
-            } catch (RuntimeException ex) {
-                throw new NutsParseException(getSession(), NutsMessage.cstyle("unable to parse url %s", url), ex);
-            }
-        } catch (IOException ex) {
-            throw new NutsParseException(getSession(), NutsMessage.cstyle("unable to parse url %s", url), ex);
-        }
+        return parse(getSession().io().path(url));
     }
 
     @Override
@@ -45,16 +34,7 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
     @Override
     public NutsDescriptor parse(Path path) {
         checkSession();
-        if (!Files.exists(path)) {
-            throw new NutsNotFoundException(getSession(), null, NutsMessage.cstyle("at file %s", path), null);
-        }
-        try {
-            return parse(Files.newInputStream(path), true);
-        } catch (NutsException ex) {
-            throw ex;
-        } catch (Exception ex) {
-            throw new NutsParseException(getSession(), NutsMessage.cstyle("unable to parse file %s", path), ex);
-        }
+        return parse(getSession().io().path(path));
     }
 
     @Override
@@ -70,6 +50,27 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
     }
 
     @Override
+    public NutsDescriptor parse(NutsPath path) {
+        checkSession();
+        boolean startParsing = false;
+        try {
+            try (InputStream is = path.getInputStream()) {
+                startParsing = true;
+                return parse(is, true);
+            } catch (NutsException ex) {
+                throw ex;
+            } catch (RuntimeException ex) {
+                throw new NutsParseException(getSession(), NutsMessage.cstyle("unable to parse url %s", path), ex);
+            }
+        } catch (IOException ex) {
+            if (!startParsing) {
+                throw new NutsNotFoundException(getSession(), null, NutsMessage.cstyle("at file %s", path), null);
+            }
+            throw new NutsParseException(getSession(), NutsMessage.cstyle("unable to parse url %s", path), ex);
+        }
+    }
+
+    @Override
     public NutsDescriptor parse(String str) {
         checkSession();
         if (NutsBlankable.isBlank(str)) {
@@ -79,8 +80,36 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
     }
 
     @Override
+    public NutsDescriptorStyle getDescriptorStyle() {
+        return descriptorStyle;
+    }
+
+    @Override
+    public DefaultNutsDescriptorParser setDescriptorStyle(NutsDescriptorStyle descriptorStyle) {
+        this.descriptorStyle = descriptorStyle;
+        return this;
+    }
+
+    @Override
+    public boolean isLenient() {
+        return lenient;
+    }
+
+    @Override
     public NutsDescriptorParser setLenient(boolean lenient) {
         this.lenient = lenient;
+        return this;
+    }
+
+    @Override
+    public NutsSession getSession() {
+        return session;
+    }
+
+
+    @Override
+    public NutsDescriptorParser setSession(NutsSession session) {
+        this.session = session;
         return this;
     }
 
@@ -132,35 +161,5 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
 
     public NutsWorkspace getWorkspace() {
         return ws;
-    }
-
-    @Override
-    public NutsSession getSession() {
-        return session;
-    }
-
-
-    @Override
-    public NutsDescriptorParser setSession(NutsSession session) {
-        this.session = session;
-        return this;
-    }
-
-
-    @Override
-    public boolean isLenient() {
-        return lenient;
-    }
-
-
-    @Override
-    public NutsDescriptorStyle getDescriptorStyle() {
-        return descriptorStyle;
-    }
-
-    @Override
-    public DefaultNutsDescriptorParser setDescriptorStyle(NutsDescriptorStyle descriptorStyle) {
-        this.descriptorStyle = descriptorStyle;
-        return this;
     }
 }

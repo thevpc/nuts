@@ -229,7 +229,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
                 cmd.skip();
                 if (enabled) {
                     if (cmd.isExecMode()) {
-                        getSession().out().printf("%s%n", getWorkspace().id().setSession(session).resolveId(getClass()).getVersion().toString());
+                        getSession().out().printf("%s%n", getSession().id().resolveId(getClass()).getVersion().toString());
                         cmd.skipAll();
                     }
                     throw new NutsExecutionException(session, NutsMessage.cstyle("version"), 0);

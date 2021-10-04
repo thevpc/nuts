@@ -1,6 +1,7 @@
 package net.thevpc.nuts.indexer;
 
 import net.thevpc.nuts.Nuts;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsWorkspace;
 
 import java.util.LinkedHashMap;
@@ -15,22 +16,22 @@ public class NutsWorkspacePool {
 
     @Autowired
     private NutsIndexerApplication.Config app;
-    private final Map<String, NutsWorkspace> pool = new LinkedHashMap<>();
+    private final Map<String, NutsSession> pool = new LinkedHashMap<>();
 
-    public NutsWorkspace openWorkspace(String ws) {
-        NutsWorkspace o = pool.get(ws);
+    public NutsSession openWorkspace(String ws) {
+        NutsSession o = pool.get(ws);
         if (o == null) {
-            if (app.getApplicationContext().getWorkspace().locations().getWorkspaceLocation().toString().equals(ws)) {
-                o = app.getApplicationContext().getWorkspace();
+            if (app.getApplicationContext().getSession().locations().getWorkspaceLocation().equals(ws)) {
+                o = app.getApplicationContext().getSession();
             } else {
                 o = Nuts.openWorkspace(NutsWorkspaceOptionsBuilder.of()
                         .setSkipCompanions(true)
                         .setWorkspace(ws)
                         .build()
-                ).getWorkspace();
+                );
             }
             pool.put(ws, o);
-            pool.put(o.getUuid(), o);
+            pool.put(o.getWorkspace().getUuid(), o);
         }
         return o;
     }

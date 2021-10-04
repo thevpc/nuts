@@ -167,13 +167,13 @@ public class DefaultNutsIOModel {
         return new DefaultNutsIOHashAction(ws);
     }
 
-    public NutsInputAction input() {
-        return new DefaultNutsInputAction(ws);
-    }
-
-    public NutsOutputAction output() {
-        return new DefaultNutsOutputAction(ws);
-    }
+//    public NutsInputAction input() {
+//        return new DefaultNutsInputAction(ws);
+//    }
+//
+//    public NutsOutputAction output() {
+//        return new DefaultNutsOutputAction(ws);
+//    }
 
 //    
 //    public void invokeLocked(Runnable r, Runnable rollback, NutsLock lock) {

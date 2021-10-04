@@ -43,7 +43,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
         if (!server.startsWith("ssh://")) {
             server = "ssh://" + server;
         }
-        context.getWorkspace().exec()
+        context.getSession().exec()
                 .addCommand(
                         "nsh",
                         "--bot",
@@ -59,7 +59,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
             v = "nsh nversion --color=never %file";
         }
         List<String> cmd = Arrays.asList(
-                context.getWorkspace().commandLine().parse(v).toStringArray()
+                context.getSession().commandLine().parse(v).toStringArray()
         );
         boolean fileAdded = false;
         for (int i = 0; i < cmd.size(); i++) {
@@ -71,7 +71,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
         if (!fileAdded) {
             cmd.add(config.getPath());
         }
-        NutsExecCommand s = context.getWorkspace()
+        NutsExecCommand s = context.getSession()
                 .exec()
                 .setRedirectErrorStream(true)
                 .grabOutputString()
@@ -123,11 +123,11 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
     }
 
     public RemoteTomcatAppConfigService print(NutsPrintStream out) {
-        NutsWorkspace ws = context.getWorkspace();
+        NutsSession session = context.getSession();
         Map<String, Object> m = new LinkedHashMap<>();
         m.put("config-name", getName());
-        m.putAll(ws.elem().convert(getConfig(), Map.class));
-        ws.formats().object().setSession(context.getSession()).setValue(m).print(out);
+        m.putAll(session.elem().convert(getConfig(), Map.class));
+        session.formats().object().setSession(context.getSession()).setValue(m).print(out);
         return this;
     }
 
@@ -139,7 +139,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
     }
 
     public NutsString getBracketsPrefix(String str) {
-        return context.getWorkspace().text().builder()
+        return context.getSession().text().builder()
                 .append("[")
                 .append(str, NutsTextStyle.primary5())
                 .append("]");

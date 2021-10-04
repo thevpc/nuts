@@ -3,12 +3,12 @@ package net.thevpc.nuts.runtime.core.format.text;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.format.text.bloc.CustomStyleBlocTextFormatter;
 import net.thevpc.nuts.runtime.core.format.text.parser.*;
+import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.core.util.CoreNumberUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
-import java.io.File;
-import java.io.StringReader;
+import java.io.*;
 import java.net.URL;
 import java.nio.file.Path;
 import java.text.MessageFormat;
@@ -145,7 +145,14 @@ public class DefaultNutsTextManager implements NutsTextManager {
         if (t instanceof NutsString) {
             return ((NutsString) t).toText();
         }
-        if (t instanceof NutsInput || t instanceof NutsOutput) {
+        if (t instanceof InputStream) {
+            String q = NutsInputStreamMetadata.of((InputStream) t).getName();
+            if(q==null){
+                q=t.toString();
+            }
+            return forStyled(q, NutsTextStyle.path());
+        }
+        if (t instanceof OutputStream || t instanceof Writer) {
             return forStyled(t.toString(), NutsTextStyle.path());
         }
         if (t instanceof Enum) {

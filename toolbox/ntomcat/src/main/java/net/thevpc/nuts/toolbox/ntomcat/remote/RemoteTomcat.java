@@ -162,7 +162,7 @@ public class RemoteTomcat {
             c = loadOrCreateTomcatConfig(null);
         }
         boolean ok = false;
-        NutsTextManager text = getContext().getWorkspace().text();
+        NutsTextManager text = getContext().getSession().text();
         while (!ok) {
             try {
                 ok = true;
@@ -311,7 +311,7 @@ public class RemoteTomcat {
         }
         if (install) {
             for (String app : apps) {
-                install(getContext().getWorkspace().commandLine().create(
+                install(getContext().getSession().commandLine().create(
                         new String[]{
                                 "--name",
                                 instance,
@@ -368,12 +368,13 @@ public class RemoteTomcat {
             boolean json = false;
 
             public void show(RemoteTomcatServiceBase aa) {
+                NutsSession session = getContext().getSession();
                 if (json) {
-                    getContext().getSession().out().printf("%s :\n", getContext().getWorkspace().text().forStyled(aa.getName(), NutsTextStyle.primary4()));
-                    aa.println(getContext().getSession().out());
+                    session.out().printf("%s :\n", session.text().forStyled(aa.getName(), NutsTextStyle.primary4()));
+                    aa.println(session.out());
                 } else {
-                    getContext().getSession().out().printf("%s :\n", getContext().getWorkspace().text().forStyled(aa.getName(), NutsTextStyle.primary4()));
-                    aa.println(getContext().getSession().out());
+                    session.out().printf("%s :\n", session.text().forStyled(aa.getName(), NutsTextStyle.primary4()));
+                    aa.println(session.out());
                 }
             }
         }

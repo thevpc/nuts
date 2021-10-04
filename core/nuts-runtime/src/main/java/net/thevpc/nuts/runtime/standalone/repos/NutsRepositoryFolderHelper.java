@@ -7,6 +7,8 @@ package net.thevpc.nuts.runtime.standalone.repos;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.io.FolderNutIdIterator;
+import net.thevpc.nuts.runtime.bundles.io.InputStreamMetadataAwareImpl;
+import net.thevpc.nuts.runtime.bundles.io.NutsStreamOrPath;
 import net.thevpc.nuts.runtime.core.CoreNutsConstants;
 import net.thevpc.nuts.runtime.core.events.DefaultNutsContentEvent;
 import net.thevpc.nuts.runtime.core.filters.CoreFilterUtils;
@@ -14,8 +16,8 @@ import net.thevpc.nuts.runtime.core.repos.NutsRepositoryExt0;
 import net.thevpc.nuts.runtime.core.repos.NutsRepositoryUtils;
 import net.thevpc.nuts.runtime.core.terminals.DefaultWriteTypeProcessor;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.standalone.io.NamedByteArrayInputStream;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
+import net.thevpc.nuts.runtime.standalone.wscommands.exec.CharacterizedExecFile;
 import net.thevpc.nuts.runtime.standalone.wscommands.exec.DefaultNutsArtifactPathExecutable;
 import net.thevpc.nuts.spi.NutsDeployRepositoryCommand;
 import net.thevpc.nuts.spi.NutsRepositorySPI;
@@ -36,14 +38,13 @@ import java.util.TreeSet;
  * @author thevpc
  */
 public class NutsRepositoryFolderHelper {
+    private final NutsRepository repo;
+    private final NutsWorkspace ws;
+    private final Path rootPath;
+    private final boolean cacheFolder;
     private NutsLogger LOG;
-
-    private NutsRepository repo;
-    private NutsWorkspace ws;
-    private Path rootPath;
     private boolean readEnabled = true;
     private boolean writeEnabled = true;
-    private boolean cacheFolder;
 
     public NutsRepositoryFolderHelper(NutsRepository repo, NutsWorkspace ws, Path rootPath, boolean cacheFolder) {
         this.repo = repo;
@@ -200,7 +201,7 @@ public class NutsRepositoryFolderHelper {
                 String dist = query.get(NutsConstants.IdProperties.OS_DIST);
                 String platform = query.get(NutsConstants.IdProperties.PLATFORM);
                 String de = query.get(NutsConstants.IdProperties.DESKTOP_ENVIRONMENT);
-                if (CoreFilterUtils.matchesEnv(arch, os, dist, platform, de,d.getCondition(), session)) {
+                if (CoreFilterUtils.matchesEnv(arch, os, dist, platform, de, d.getCondition(), session)) {
                     return d;
                 }
             }
@@ -326,9 +327,11 @@ public class NutsRepositoryFolderHelper {
                     NutsMessage.cstyle("invalid deployment; missing content for %s", deployment.getId()));
         }
         NutsDescriptor descriptor = deployment.getDescriptor();
-        NutsInput inputSource = ws.io().setSession(session).input().setTypeName("package content").setMultiRead(true).of(deployment.getContent());
+        NutsStreamOrPath inputSource = NutsStreamOrPath.ofAnyInputOrNull(deployment.getContent(), session)
+                .toMultiRead(session)
+                .setKindType(("package content"));
         if (descriptor == null) {
-            try (final DefaultNutsArtifactPathExecutable.CharacterizedExecFile c = DefaultNutsArtifactPathExecutable.characterizeForExec(inputSource, session, null)) {
+            try (final CharacterizedExecFile c = DefaultNutsArtifactPathExecutable.characterizeForExec(inputSource, session, null)) {
                 if (c.descriptor == null) {
                     throw new NutsNotFoundException(session, null,
                             NutsMessage.cstyle("unable to resolve a valid descriptor for %s", deployment.getContent()), null);
@@ -398,14 +401,19 @@ public class NutsRepositoryFolderHelper {
         return ws2.concurrent().lock().setSource(descFile).call(() -> {
 
             ws2.descriptor().formatter(desc).setNtf(false).print(descFile);
+            byte[] bytes = ws2.io().hash().sha1().setSource(desc).computeString().getBytes();
             ws2.io().copy().setSession(session)
                     .from(
-                            ws2.io().input().setName(
-                                            session.text().toText(
-                                                    NutsMessage.cstyle("sha1(%s)", desc.getId())
-                                            ))
-                                    .setTypeName("descriptor hash")
-                                    .of(ws2.io().hash().sha1().setSource(desc).computeString().getBytes())
+                            InputStreamMetadataAwareImpl.of(
+                                    new ByteArrayInputStream(bytes)
+                                    , new NutsDefaultInputStreamMetadata(
+                                            NutsMessage.cstyle("sha1(%s)", desc.getId()),
+                                            bytes.length,
+                                            CoreIOUtils.MIME_TYPE_SHA1,
+                                            "descriptor hash",
+                                            session
+                                    )
+                            )
                     ).to(descFile.resolveSibling(descFile.getFileName() + ".sha1")).setSafe(true).run();
             return descFile;
         });
@@ -417,13 +425,10 @@ public class NutsRepositoryFolderHelper {
             return false;
         }
         Path descFile = getLongNameIdLocalFile(id.builder().setFaceDescriptor().build(), session);
-        if (!Files.exists(descFile) || (cacheFolder && CoreIOUtils.isObsoletePath(session, descFile))) {
-            return false;
-        }
-        return true;
+        return Files.exists(descFile) && (!cacheFolder || !CoreIOUtils.isObsoletePath(session, descFile));
     }
 
-    public Path deployContent(NutsId id, Object content, NutsDescriptor descriptor, NutsConfirmationMode writeType, NutsSession session) {
+    public Path deployContent(NutsId id, NutsStreamOrPath content, NutsDescriptor descriptor, NutsConfirmationMode writeType, NutsSession session) {
         if (!isWriteEnabled()) {
             return null;
         }
@@ -440,10 +445,14 @@ public class NutsRepositoryFolderHelper {
             }
         }
         return session.concurrent().lock().setSource(pckFile).call(() -> {
-            session.io().copy().from(content).to(pckFile).setSafe(true).run();
-            session.io().copy().from(new NamedByteArrayInputStream(
-                            CoreIOUtils.evalSHA1Hex(pckFile).getBytes(),
-                            "sha1://" + id
+            (content.isPath() ? session.io().copy().from(content.getPath()) : session.io().copy().from(content.getInputStream()))
+                    .to(pckFile).setSafe(true).run();
+            session.io().copy().from(
+                    CoreIOUtils.createBytesStream(CoreIOUtils.evalSHA1Hex(pckFile).getBytes(),
+                            NutsMessage.cstyle("sha1://%s", id),
+                            CoreIOUtils.MIME_TYPE_SHA1,
+                            null,
+                            session
                     )
             ).to(pckFile.resolveSibling(pckFile.getFileName() + ".sha1")).setSafe(true).run();
             return pckFile;

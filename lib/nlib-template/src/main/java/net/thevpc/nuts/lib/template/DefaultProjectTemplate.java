@@ -63,7 +63,7 @@ public class DefaultProjectTemplate implements ProjectTemplate {
                 return term.ask()
                         .resetLine()
                         .forString(
-                        getWorkspace().text().builder()
+                        getSession().text().builder()
                                 .append(propertyTitle, NutsTextStyle.primary4())
                                 .append(" (")
                                 .append(propName,NutsTextStyle.pale())
@@ -144,7 +144,7 @@ public class DefaultProjectTemplate implements ProjectTemplate {
     public ProjectProperty getConfigProperty(String name) {
         ProjectProperty projectProperty = config.get(name);
         if (projectProperty == null) {
-            projectProperty = new ProjectProperty(name, name, null, null, new ValidatorFactory(getWorkspace()).STRING, this, false);
+            projectProperty = new ProjectProperty(name, name, null, null, new ValidatorFactory(getSession()).STRING, this, false);
             config.put(name, projectProperty);
         }
         return projectProperty;
@@ -152,10 +152,6 @@ public class DefaultProjectTemplate implements ProjectTemplate {
 
     public File getProjectRootFolder() {
         return new File(getConfigProperty("ProjectRootFolder").get());
-    }
-
-    public NutsWorkspace getWorkspace() {
-        return getApplicationContext().getWorkspace();
     }
 
     public NutsApplicationContext getApplicationContext() {
@@ -435,7 +431,7 @@ public class DefaultProjectTemplate implements ProjectTemplate {
                 if (!getSession().getTerminal().ask()
                         .resetLine()
                         .forBoolean("accept project location %s?",
-                        applicationContext.getWorkspace().text().forStyled(p.getPath(),NutsTextStyle.path()))
+                        applicationContext.getSession().text().forStyled(p.getPath(),NutsTextStyle.path()))
                         .setDefaultValue(false)
                         .getBooleanValue()) {
                     throw new NutsUserCancelException(getSession());

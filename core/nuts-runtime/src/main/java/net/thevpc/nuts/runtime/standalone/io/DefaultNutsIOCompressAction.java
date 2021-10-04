@@ -6,7 +6,9 @@
 package net.thevpc.nuts.runtime.standalone.io;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.NutsLogVerb;
+import net.thevpc.nuts.runtime.bundles.io.NutsStreamOrPath;
+import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 import java.io.*;
 import java.net.URL;
@@ -20,8 +22,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 /**
  * @author thevpc
@@ -29,12 +29,11 @@ import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
 
     private final NutsLogger LOG;
-
+    private final List<NutsStreamOrPath> sources = new ArrayList<>();
+    private final NutsWorkspace ws;
     private boolean safe = true;
     private boolean logProgress = false;
-    private List<NutsInput> sources = new ArrayList<>();
-    private NutsOutput target;
-    private NutsWorkspace ws;
+    private NutsStreamOrPath target;
     private NutsSession session;
     private boolean skipRoot;
     private NutsProgressFactory progressMonitorFactory;
@@ -45,14 +44,204 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
         LOG = ws.log().of(DefaultNutsIOCompressAction.class);
     }
 
-    protected NutsInputAction _input() {
-        checkSession();
-        return ws.io().input().setSession(getSession());
+    private static String concatPath(String a, String b) {
+        if (a.endsWith("/")) {
+            if (b.startsWith("/")) {
+                return a + b.substring(1);
+            } else {
+                return a + b;
+            }
+        } else {
+            if (b.startsWith("/")) {
+                return a + b;
+            } else {
+                return a + "/" + b;
+            }
+        }
     }
 
-    protected NutsOutputAction _output() {
+    private void checkSession() {
+        NutsWorkspaceUtils.checkSession(ws, session);
+    }
+
+    public void runZip() {
         checkSession();
-        return ws.io().output().setSession(getSession());
+        if (sources.isEmpty()) {
+            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("missing source"));
+        }
+        if (target == null) {
+            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("missing target"));
+        }
+        if (isLogProgress() || getProgressMonitorFactory() != null) {
+            //how to monitor???
+        }
+        LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.START).log("compress {0} to {1}", sources, target);
+        try {
+            OutputStream fW = null;
+            ZipOutputStream zip = null;
+            if (this.target.isPath()) {
+                Path tempPath = null;
+                if (isSafe()) {
+                    tempPath = Paths.get(ws.io().tmp()
+                            .setSession(session)
+                            .createTempFile("zip"));
+                }
+                if (this.target.isPath()) {
+                    NutsPath parent = this.target.getPath().getParent();
+                    if (parent != null) {
+                        parent.mkdir(true);
+                    }
+                }
+                if (tempPath == null) {
+                    fW = target.isOutputStream() ? target.getOutputStream() : target.getPath().getOutputStream();
+                } else {
+                    fW = Files.newOutputStream(tempPath);
+                }
+                try {
+                    try {
+                        zip = new ZipOutputStream(fW);
+                        if (skipRoot) {
+                            for (NutsStreamOrPath s : sources) {
+                                Item file1 = new Item(s);
+                                if (file1.isDirectory()) {
+                                    for (Item c : file1.list()) {
+                                        add("", c, zip);
+                                    }
+                                } else {
+                                    add("", file1, zip);
+                                }
+                            }
+                        } else {
+                            for (NutsStreamOrPath s : sources) {
+                                add("", new Item(s), zip);
+                            }
+                        }
+                    } finally {
+                        if (zip != null) {
+                            zip.close();
+                        }
+                    }
+                } finally {
+                    if (fW != null) {
+                        fW.close();
+                    }
+                }
+                if (tempPath != null) {
+                    if (this.target.isOutputStream()) {
+                        CoreIOUtils.copy(
+                                Files.newInputStream(tempPath),
+                                this.target.getOutputStream()
+                        );
+                    } else if (this.target.isPath()
+                            && this.target.getPath().isFilePath()) {
+                        Files.move(tempPath, this.target.getPath().toFilePath(),
+                                StandardCopyOption.REPLACE_EXISTING);
+                    } else {
+                        try (InputStream ii = Files.newInputStream(tempPath)) {
+                            try (OutputStream jj = this.target.getPath().getOutputStream()) {
+                                CoreIOUtils.copy(ii, jj);
+                            }
+                        }
+                    }
+                }
+            } else {
+                throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("unsupported target %s", target));
+            }
+        } catch (IOException ex) {
+            LOG.with().session(session).level(Level.CONFIG).verb(NutsLogVerb.FAIL)
+                    .log("error compressing {0} to {1} : {2}",
+                            sources, target.getValue(), ex);
+            throw new UncheckedIOException(ex);
+        }
+    }
+
+    private void add(String path, Item srcFolder, ZipOutputStream zip) {
+        if (srcFolder.isDirectory()) {
+            addFolderToZip(path, srcFolder, zip);
+        } else {
+            addFileToZip(path, srcFolder, zip, false);
+        }
+    }
+
+    private void addFolderToZip(String path, Item srcFolder, ZipOutputStream zip) throws UncheckedIOException {
+        Item[] dirChildren = srcFolder.list();
+        if (dirChildren.length == 0) {
+            addFileToZip(path, srcFolder, zip, true);
+        } else {
+            for (Item c : dirChildren) {
+                if (path.equals("")) {
+                    addFileToZip(srcFolder.getName(), c, zip, false);
+                } else {
+                    addFileToZip(concatPath(path, c.getName()), c, zip, false);
+                }
+            }
+        }
+    }
+
+    private void addFileToZip(String path, Item srcFile, ZipOutputStream zip, boolean flag) throws UncheckedIOException {
+//        File folder = new File(srcFile);
+        String pathPrefix = path;
+        if (!pathPrefix.endsWith("/")) {
+            pathPrefix = pathPrefix + "/";
+        }
+        if (!pathPrefix.startsWith("/")) {
+            pathPrefix = "/" + pathPrefix;
+        }
+        try {
+
+            if (flag) {
+                zip.putNextEntry(new ZipEntry(pathPrefix + srcFile.getName() + "/"));
+            } else {
+                if (srcFile.isDirectory()) {
+                    addFolderToZip(pathPrefix, srcFile, zip);
+                } else {
+                    byte[] buf = new byte[1024];
+                    int len;
+                    InputStream in = srcFile.open();
+                    zip.putNextEntry(new ZipEntry(pathPrefix + srcFile.getName()));
+                    while ((len = in.read(buf)) > 0) {
+                        zip.write(buf, 0, len);
+                    }
+                }
+            }
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
+    }
+
+    @Override
+    public NutsIOCompressAction setFormatOption(String option, Object value) {
+        return this;
+    }
+
+    @Override
+    public Object getFormatOption(String option) {
+        return null;
+    }
+
+    @Override
+    public String getFormat() {
+        return format;
+    }
+
+    @Override
+    public NutsIOCompressAction setFormat(String format) {
+        checkSession();
+        if (NutsBlankable.isBlank(format)) {
+            format = "zip";
+        }
+        switch (format) {
+            case "zip":
+            case "gzip":
+            case "gz": {
+                this.format = format;
+                break;
+            }
+            default: {
+                throw new NutsUnsupportedArgumentException(getSession(), NutsMessage.cstyle("unsupported compression format %s", format));
+            }
+        }
+        return this;
     }
 
     @Override
@@ -60,77 +249,100 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
         return (List) sources;
     }
 
+    public NutsIOCompressAction addSource(String source) {
+        if (source != null) {
+            this.sources.add(NutsStreamOrPath.of(session.io().path(source)));
+        }
+        return this;
+    }
+
     @Override
     public NutsIOCompressAction addSource(InputStream source) {
-        this.sources.add(_input().of(source));
+        if (source == null) {
+            checkSession();
+            throw new NutsIllegalArgumentException(session, NutsMessage.plain("null source"));
+        }
+        this.sources.add(NutsStreamOrPath.of(source));
         return this;
     }
 
     @Override
     public NutsIOCompressAction addSource(File source) {
-        this.sources.add(_input().of(source));
+        if (source == null) {
+            checkSession();
+            throw new NutsIllegalArgumentException(session, NutsMessage.plain("null source"));
+        }
+        this.sources.add(NutsStreamOrPath.of(session.io().path(source)));
         return this;
     }
 
     @Override
     public NutsIOCompressAction addSource(Path source) {
-        this.sources.add(_input().of(source));
+        if (source == null) {
+            checkSession();
+            throw new NutsIllegalArgumentException(session, NutsMessage.plain("null source"));
+        }
+        this.sources.add(NutsStreamOrPath.of(session.io().path(source)));
         return this;
     }
 
     @Override
     public NutsIOCompressAction addSource(URL source) {
-        this.sources.add(_input().of(source));
+        if (source == null) {
+            checkSession();
+            throw new NutsIllegalArgumentException(session, NutsMessage.plain("null source"));
+        }
+        this.sources.add(NutsStreamOrPath.of(session.io().path(source)));
         return this;
     }
 
     @Override
-    public NutsIOCompressAction setTarget(NutsOutput target) {
-        this.target = target;
-        return this;
+    public Object getTarget() {
+        return target;
     }
 
     @Override
     public NutsIOCompressAction setTarget(OutputStream target) {
-        this.target = _output().of(target);
+        if (target == null) {
+            this.target = null;
+        } else {
+            this.target = NutsStreamOrPath.of(target);
+        }
         return this;
     }
 
     @Override
     public NutsIOCompressAction setTarget(Path target) {
-        this.target = _output().of(target);
+        if (target == null) {
+            this.target = null;
+        } else {
+            this.target = NutsStreamOrPath.of(session.io().path(target));
+        }
         return this;
     }
 
     @Override
     public NutsIOCompressAction setTarget(File target) {
-        this.target = _output().of(target);
+        if (target == null) {
+            this.target = null;
+        } else {
+            this.target = NutsStreamOrPath.of(session.io().path(target));
+        }
         return this;
     }
 
     @Override
     public NutsIOCompressAction setTarget(String target) {
-        this.target = _output().of(target);
-        return this;
-    }
-
-    public NutsIOCompressAction addSource(Object source) {
-        this.sources.add(_input().of(source));
-        return this;
-    }
-
-    public NutsIOCompressAction addSource(String source) {
-        this.sources.add(_input().of(source));
+        if (target == null) {
+            this.target = null;
+        } else {
+            this.target = NutsStreamOrPath.of(session.io().path(target));
+        }
         return this;
     }
 
     @Override
-    public NutsIOCompressAction to(NutsOutput target) {
-        return setTarget(target);
-    }
-
-    @Override
-    public NutsIOCompressAction to(Object target) {
+    public NutsIOCompressAction to(OutputStream target) {
         return setTarget(target);
     }
 
@@ -140,39 +352,12 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
     }
 
     @Override
-    public Object getTarget() {
-        return target;
-    }
-
-    @Override
-    public NutsIOCompressAction setTarget(Object target) {
-        this.target = _output().of(target);
-        return this;
-    }
-
-    @Override
-    public boolean isLogProgress() {
-        return logProgress;
-    }
-
-    @Override
-    public DefaultNutsIOCompressAction setLogProgress(boolean value) {
-        this.logProgress = value;
-        return this;
+    public NutsIOCompressAction to(Path target) {
+        return setTarget(target);
     }
 
     @Override
     public NutsIOCompressAction to(File target) {
-        return setTarget(target);
-    }
-
-    @Override
-    public NutsIOCompressAction to(OutputStream target) {
-        return setTarget(target);
-    }
-
-    @Override
-    public NutsIOCompressAction to(Path target) {
         return setTarget(target);
     }
 
@@ -204,80 +389,15 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
         return this;
     }
 
-    private void checkSession() {
-        NutsWorkspaceUtils.checkSession(ws, session);
+    @Override
+    public boolean isLogProgress() {
+        return logProgress;
     }
 
-    public void runZip() {
-        checkSession();
-        if (sources.isEmpty()) {
-            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("missing source"));
-        }
-        if (target == null) {
-            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("missing target"));
-        }
-        if (isLogProgress() || getProgressMonitorFactory() != null) {
-            //how to monitor???
-        }
-        LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.START).log("compress {0} to {1}", sources, target);
-        try {
-            OutputStream fW = null;
-            ZipOutputStream zip = null;
-            if (this.target.isPath()) {
-                Path tempPath = null;
-                if (isSafe()) {
-                    tempPath = Paths.get(ws.io().tmp()
-                            .setSession(session)
-                            .createTempFile("zip"));
-                }
-                Path path = this.target.getFilePath();
-                CoreIOUtils.mkdirs(path.getParent(),session);
-                if (tempPath == null) {
-                    fW = target.open();
-                } else {
-                    fW = Files.newOutputStream(tempPath);
-                }
-                try {
-                    try {
-                        zip = new ZipOutputStream(fW);
-                        if (skipRoot) {
-                            for (NutsInput s : sources) {
-                                Item file1 = new Item(s);
-                                if (file1.isDirectory()) {
-                                    for (Item c : file1.list()) {
-                                        add("", c, zip);
-                                    }
-                                } else {
-                                    add("", file1, zip);
-                                }
-                            }
-                        } else {
-                            for (NutsInput s : sources) {
-                                add("", new Item(s), zip);
-                            }
-                        }
-                    } finally {
-                        if (zip != null) {
-                            zip.close();
-                        }
-                    }
-                } finally {
-                    if (fW != null) {
-                        fW.close();
-                    }
-                }
-                if (tempPath != null) {
-                    Files.move(tempPath, path, StandardCopyOption.REPLACE_EXISTING);
-                }
-            } else {
-                throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("unsupported target %s", target));
-            }
-        } catch (IOException ex) {
-            LOG.with().session(session).level(Level.CONFIG).verb(NutsLogVerb.FAIL)
-                    .log("error compressing {0} to {1} : {2}",
-                            sources, target.getSource(), ex);
-            throw new UncheckedIOException(ex);
-        }
+    @Override
+    public DefaultNutsIOCompressAction setLogProgress(boolean value) {
+        this.logProgress = value;
+        return this;
     }
 
     /**
@@ -337,169 +457,6 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
         return this;
     }
 
-    private void add(String path, Item srcFolder, ZipOutputStream zip) {
-        if (srcFolder.isDirectory()) {
-            addFolderToZip(path, srcFolder, zip);
-        } else {
-            addFileToZip(path, srcFolder, zip, false);
-        }
-    }
-
-    private void addFolderToZip(String path, Item srcFolder, ZipOutputStream zip) throws UncheckedIOException {
-        Item[] dirChildren = srcFolder.list();
-        if (dirChildren.length == 0) {
-            addFileToZip(path, srcFolder, zip, true);
-        } else {
-            for (Item c : dirChildren) {
-                if (path.equals("")) {
-                    addFileToZip(srcFolder.getName(), c, zip, false);
-                } else {
-                    addFileToZip(concatPath(path, c.getName()), c, zip, false);
-                }
-            }
-        }
-    }
-
-    private static String concatPath(String a, String b) {
-        if (a.endsWith("/")) {
-            if (b.startsWith("/")) {
-                return a + b.substring(1);
-            } else {
-                return a + b;
-            }
-        } else {
-            if (b.startsWith("/")) {
-                return a + b;
-            } else {
-                return a + "/" + b;
-            }
-        }
-    }
-
-    private void addFileToZip(String path, Item srcFile, ZipOutputStream zip, boolean flag) throws UncheckedIOException {
-//        File folder = new File(srcFile);
-        String pathPrefix = path;
-        if (!pathPrefix.endsWith("/")) {
-            pathPrefix = pathPrefix + "/";
-        }
-        if (!pathPrefix.startsWith("/")) {
-            pathPrefix = "/" + pathPrefix;
-        }
-        try {
-
-            if (flag) {
-                zip.putNextEntry(new ZipEntry(pathPrefix + srcFile.getName() + "/"));
-            } else {
-                if (srcFile.isDirectory()) {
-                    addFolderToZip(pathPrefix, srcFile, zip);
-                } else {
-                    byte[] buf = new byte[1024];
-                    int len;
-                    InputStream in = srcFile.open();
-                    zip.putNextEntry(new ZipEntry(pathPrefix + srcFile.getName()));
-                    while ((len = in.read(buf)) > 0) {
-                        zip.write(buf, 0, len);
-                    }
-                }
-            }
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
-        }
-    }
-
-    private static class Item {
-
-        private Object o;
-
-        public Item(Object value) {
-            this.o = value;
-        }
-
-        public boolean isDirectory() {
-            if (o instanceof File) {
-                return ((File) o).isDirectory();
-            }
-            if (o instanceof Path) {
-                return Files.isDirectory(((Path) o));
-            }
-            if (o instanceof NutsInput) {
-                NutsInput s = (NutsInput) o;
-                if (s.isFile()) {
-                    return Files.isDirectory(s.getFilePath());
-                }
-            }
-            return false;
-        }
-
-        private Item[] list() {
-            if (o instanceof File) {
-                File[] g = ((File) o).listFiles();
-                if (g == null) {
-                    return new Item[0];
-                }
-                return Arrays.stream(g).map(Item::new).toArray(Item[]::new);
-            }
-            if (o instanceof Path) {
-                Path o1 = (Path) o;
-                if (Files.isDirectory(o1)) {
-                    try {
-                        return Files.list(o1).map(Item::new).toArray(Item[]::new);
-                    } catch (IOException ex) {
-                        throw new UncheckedIOException(ex);
-                    }
-                }
-            }
-            if (o instanceof NutsInput) {
-                NutsInput s = (NutsInput) o;
-                if (s.isFile()) {
-                    Path o1 = s.getFilePath();
-                    try {
-                        return Files.list(o1).map(Item::new).toArray(Item[]::new);
-                    } catch (IOException ex) {
-                        throw new UncheckedIOException(ex);
-                    }
-                }
-            }
-            return new Item[0];
-        }
-
-        public InputStream open() {
-            if (o instanceof File) {
-                try {
-                    return new FileInputStream(((File) o));
-                } catch (IOException e) {
-                    throw new UncheckedIOException(e);
-                }
-            }
-            if (o instanceof Path) {
-                try {
-                    return Files.newInputStream(((Path) o));
-                } catch (IOException e) {
-                    throw new UncheckedIOException(e);
-                }
-            }
-            if (o instanceof NutsInput) {
-                NutsInput s = (NutsInput) o;
-                return s.open();
-            }
-            throw new UncheckedIOException(new IOException("Unsupported type " + o));
-        }
-
-        public String getName() {
-            if (o instanceof File) {
-                return ((File) o).getName();
-            }
-            if (o instanceof Path) {
-                return ((Path) o).getFileName().toString();
-            }
-            if (o instanceof NutsInput) {
-                NutsInput s = (NutsInput) o;
-                return s.getFilePath().getFileName().toString();
-            }
-            return "";
-        }
-    }
-
     @Override
     public boolean isSkipRoot() {
         return skipRoot;
@@ -511,38 +468,36 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
         return this;
     }
 
-    @Override
-    public NutsIOCompressAction setFormatOption(String option, Object value) {
-        return this;
-    }
+    private static class Item {
 
-    @Override
-    public Object getFormatOption(String option) {
-        return null;
-    }
+        private final NutsStreamOrPath o;
 
-    @Override
-    public String getFormat() {
-        return format;
-    }
-
-    @Override
-    public NutsIOCompressAction setFormat(String format) {
-        checkSession();
-        if (NutsBlankable.isBlank(format)) {
-            format = "zip";
+        public Item(NutsStreamOrPath value) {
+            this.o = value;
         }
-        switch (format) {
-            case "zip":
-            case "gzip":
-            case "gz": {
-                this.format = format;
-                break;
-            }
-            default: {
-                throw new NutsUnsupportedArgumentException(getSession(), NutsMessage.cstyle("unsupported compression format %s",format));
-            }
+
+        public boolean isDirectory() {
+            return (o.isPath() && o.getPath().isDirectory());
         }
-        return this;
+
+        private Item[] list() {
+            if (o.isPath()) {
+                NutsPath p = o.getPath();
+                return Arrays.stream(p.getChildren()).map(x->new Item(NutsStreamOrPath.of(x)))
+                        .toArray(Item[]::new);
+            }
+            return new Item[0];
+        }
+
+        public InputStream open() {
+            if(o.isInputStream()){
+                return o.getInputStream();
+            }
+            return o.getPath().getInputStream();
+        }
+
+        public String getName() {
+            return o.getName();
+        }
     }
 }

@@ -86,10 +86,8 @@ public class MavenRepositoryFactoryComponent implements NutsRepositoryFactoryCom
                     return DEFAULT_SUPPORT;
                 }
                 if (nru.isHttp()) {
-                    NutsInput in = criteria.getWorkspace().io().input().setTypeName("nuts-repository.json").of(
-                            nru.getLocation() + "/nuts-repository.json"
-                    );
-                    try (InputStream s = in.open()) {
+                    try (InputStream s = criteria.getSession().io().path(nru.getLocation() + "/nuts-repository.json")
+                            .setUserKind("nuts-repository.json").getInputStream()) {
                         Map<String, Object> m = criteria.getWorkspace().elem().setContentType(NutsContentType.JSON)
                                 .parse(s, Map.class);
                         if (m != null) {
@@ -113,16 +111,9 @@ public class MavenRepositoryFactoryComponent implements NutsRepositoryFactoryCom
                         criteria.getConstraints().setType("maven+dirtext");
                         return DEFAULT_SUPPORT;
                     }
-                    in = criteria.getWorkspace().io().input().setTypeName("archetype-catalog.xml").of(
+                    if (criteria.getWorkspace().io().path(
                             location + "/archetype-catalog.xml"
-                    );
-                    boolean exists = false;
-                    try (InputStream s = in.open()) {
-                        exists = true;
-                    } catch (Exception ex) {
-                        exists = false;
-                    }
-                    if (exists) {
+                    ).setUserKind("archetype-catalog.xml").exists()) {
                         criteria.getConstraints().setType(NutsConstants.RepoTypes.MAVEN);
                         return DEFAULT_SUPPORT;
                     }

@@ -54,8 +54,9 @@ public class MavenFolderRepository extends NutsCachedRepository {
         }
 
         @Override
-        protected NutsInput openStream(NutsId id, String path, Object source, String typeName, String action, NutsSession session) {
-            return session.io().input().setTypeName(typeName).of(Paths.get(path));
+        protected InputStream openStream(NutsId id, String path, Object source, String typeName, String action, NutsSession session) {
+            return NutsPath.of(Paths.get(path),session).getInputStream();
+//                    session.io().input().setTypeName(typeName).of(Paths.get(path));
         }
 
         @Override
@@ -65,7 +66,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
 
         @Override
         protected String getStreamSHA1(NutsId id, NutsSession session, String typeName) {
-            return CoreIOUtils.evalSHA1Hex(getStream(id.builder().setFace(NutsConstants.QueryFaces.CONTENT_HASH).build(), typeName, "verify", session).open(), true);
+            return CoreIOUtils.evalSHA1Hex(getStream(id.builder().setFace(NutsConstants.QueryFaces.CONTENT_HASH).build(), typeName, "verify", session), true);
         }
 
         @Override

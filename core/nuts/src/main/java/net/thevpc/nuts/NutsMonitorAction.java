@@ -105,7 +105,7 @@ public interface NutsMonitorAction {
      */
     NutsMonitorAction setSource(String path);
 
-    NutsMonitorAction setSource(NutsInput inputSource);
+//    NutsMonitorAction setSource(NutsPath inputSource);
 
     NutsMonitorAction setSource(NutsPath inputSource);
 
@@ -144,12 +144,6 @@ public interface NutsMonitorAction {
 
     NutsMonitorAction setSourceTypeName(String sourceType);
 
-    /**
-     *
-     * @return new input source
-     * @since 0.8.0
-     */
-    NutsInput createSource();
 
     /**
      * return true if log progress on terminal

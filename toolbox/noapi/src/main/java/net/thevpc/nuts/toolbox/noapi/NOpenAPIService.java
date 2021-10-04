@@ -47,8 +47,7 @@ public class NOpenAPIService {
             if (keep) {
                 temp = addExtension(source, "adoc").toString();
             } else {
-                temp = appContext.getWorkspace().io().tmp()
-                        .setSession(appContext.getSession())
+                temp = appContext.getSession().io().tmp()
                         .createTempFile("temp.adoc");
             }
             writeAdoc(md, temp, keep && appContext.getSession().isPlainTrace());
@@ -65,7 +64,7 @@ public class NOpenAPIService {
             );
             if (appContext.getSession().isPlainTrace()) {
                 appContext.getSession().out().printf("generated pdf %s\n",
-                        appContext.getWorkspace().text().forStyled(
+                        appContext.getSession().text().forStyled(
                                 target, NutsTextStyle.primary4()
                         )
                 );
@@ -86,7 +85,7 @@ public class NOpenAPIService {
         }
         if (trace) {
             appContext.getSession().out().printf("generated src %s\n",
-                    appContext.getWorkspace().text().forStyled(
+                    appContext.getSession().text().forStyled(
                             target, NutsTextStyle.primary4()
                     )
             );
@@ -133,16 +132,16 @@ public class NOpenAPIService {
 
     private NutsElement loadElement(InputStream inputStream, boolean json) {
         if (json) {
-            return appContext.getWorkspace().elem().setContentType(NutsContentType.JSON).parse(inputStream, NutsElement.class);
+            return appContext.getSession().elem().setContentType(NutsContentType.JSON).parse(inputStream, NutsElement.class);
         } else {
-            return appContext.getWorkspace().elem().setContentType(NutsContentType.YAML).parse(inputStream, NutsElement.class);
+            return appContext.getSession().elem().setContentType(NutsContentType.YAML).parse(inputStream, NutsElement.class);
 //            final Object o = new Yaml().load(inputStream);
 //            return appContext.getWorkspace().elem().toElement(o);
         }
     }
 
     private MdDocument toMarkdown(InputStream inputStream, boolean json) {
-        NutsElementFormat prv = appContext.getWorkspace().elem().setSession(appContext.getSession());
+        NutsElementFormat prv = appContext.getSession().elem();
         MdDocumentBuilder doc = new MdDocumentBuilder();
         doc.setProperty("headers", new String[]{
             ":source-highlighter: coderay",
@@ -401,7 +400,7 @@ public class NOpenAPIService {
     }
 
     private String toCode(NutsElement o, String indent) {
-        NutsElementFormat prv = appContext.getWorkspace().elem().setSession(appContext.getSession());
+        NutsElementFormat prv = appContext.getSession().elem();
         String descSep = " // ";
         if (o.isObject()) {
             NutsElement a = o.asObject().get(prv.forString("schema"));

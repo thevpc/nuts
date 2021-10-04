@@ -84,7 +84,7 @@ public class ProjectProperty {
     }
 
     public boolean getBoolean(boolean defaultValue) {
-        String s = get(String.valueOf(defaultValue), new ValidatorFactory(service.getWorkspace()).BOOLEAN);
+        String s = get(String.valueOf(defaultValue), new ValidatorFactory(service.getSession()).BOOLEAN);
         return "true".equalsIgnoreCase(s) || "yes".equalsIgnoreCase(s);
     }
 

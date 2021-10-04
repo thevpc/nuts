@@ -70,7 +70,7 @@ public class NDocusaurusMain implements NutsApplication {
                         .setBuildWebSite(build)
                         .setStartWebSite(start)
                         .setBuildPdf(buildPdf)
-                        .setAutoInstallNutsPackages(appContext.getWorkspace().boot().getBootOptions().getConfirm()== NutsConfirmationMode.YES)
+                        .setAutoInstallNutsPackages(appContext.getSession().boot().getBootOptions().getConfirm()== NutsConfirmationMode.YES)
                         .run();
             }
         });

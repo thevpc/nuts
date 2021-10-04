@@ -1,9 +1,6 @@
 package net.thevpc.nuts.toolbox.ndb.derby;
 
-import net.thevpc.nuts.NutsArgument;
-import net.thevpc.nuts.NutsCommandLine;
-import net.thevpc.nuts.NutsProcessInfo;
-import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.*;
 
 import java.util.Objects;
 
@@ -12,10 +9,10 @@ public class RunningDerby {
     private String home;
     private String argsLine;
 
-    public RunningDerby(NutsProcessInfo r, NutsWorkspace ws) {
+    public RunningDerby(NutsProcessInfo r, NutsSession session) {
         pid =r.getPid();
         argsLine=r.getCommandLine();
-        NutsCommandLine cmdline = ws.commandLine().parse(r.getCommandLine()).setExpandSimpleOptions(false);
+        NutsCommandLine cmdline = session.commandLine().parse(r.getCommandLine()).setExpandSimpleOptions(false);
         NutsArgument a=null;
         while(cmdline.hasNext()){
             if((a=cmdline.nextString("-Dderby.system.home"))!=null) {

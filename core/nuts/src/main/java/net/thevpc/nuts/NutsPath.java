@@ -124,13 +124,13 @@ public interface NutsPath extends NutsFormattable {
 
     Path asFilePath();
 
-    NutsInput input();
+    NutsPath[] getChildren();
 
-    InputStream inputStream();
+    InputStream getInputStream();
 
-    OutputStream outputStream();
+    OutputStream getOutputStream();
 
-    NutsOutput output();
+//    NutsOutput output();
 
     NutsSession getSession();
 
@@ -155,5 +155,10 @@ public interface NutsPath extends NutsFormattable {
     List<String> head(int count);
 
     List<String> tail(int count);
+
+    NutsPath getParent();
+
+    String getUserKind();
+    NutsPath setUserKind(String userKind);
 
 }
