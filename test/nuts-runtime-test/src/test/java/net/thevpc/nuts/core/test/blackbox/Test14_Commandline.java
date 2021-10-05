@@ -57,7 +57,7 @@ public class Test14_Commandline {
 
     @BeforeEach
     public void startup() throws IOException {
-        Assumptions.assumeTrue(NutsOsFamily.getCurrent()== NutsOsFamily.LINUX);
+//        Assumptions.assumeTrue(NutsOsFamily.getCurrent()== NutsOsFamily.LINUX);
         TestUtils.unsetNutsSystemProperties();
     }
 

@@ -133,8 +133,8 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
                                 this.target.getOutputStream()
                         );
                     } else if (this.target.isPath()
-                            && this.target.getPath().isFilePath()) {
-                        Files.move(tempPath, this.target.getPath().toFilePath(),
+                            && this.target.getPath().isFile()) {
+                        Files.move(tempPath, this.target.getPath().toFile(),
                                 StandardCopyOption.REPLACE_EXISTING);
                     } else {
                         try (InputStream ii = Files.newInputStream(tempPath)) {

@@ -70,7 +70,7 @@ public class DefaultPathBuilder implements NutsPathBuilder {
     public NutsPath build() {
         NutsPath p = expandVars ? expandVars(base) : base;
         if (baseDir != null) {
-            if (p.isFilePath()) {
+            if (p.isFile()) {
                 return expandFile(p);
             }
         }
@@ -101,7 +101,7 @@ public class DefaultPathBuilder implements NutsPathBuilder {
     }
 
     private NutsPath expandFile(NutsPath npath) {
-        Path fp = npath.toFilePath();
+        Path fp = npath.toFile();
         NutsIOManager io = session.io();
         if (fp != null && fp.toString().length() > 0) {
             Path ppath = fp;

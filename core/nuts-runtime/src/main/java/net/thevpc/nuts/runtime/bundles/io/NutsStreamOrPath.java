@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.bundles.io;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 
 import java.io.*;
 import java.net.URL;
@@ -21,7 +20,7 @@ public class NutsStreamOrPath {
         this.disposable = disposable;
         if (disposable) {
             if (value instanceof NutsPath) {
-                if (((NutsPath) value).isFilePath()) {
+                if (((NutsPath) value).isFile()) {
                     return;
                 }
             }
@@ -80,7 +79,7 @@ public class NutsStreamOrPath {
     public boolean dispose() {
         if (disposable) {
             try {
-                Path f = ((NutsPath) value).toFilePath();
+                Path f = ((NutsPath) value).toFile();
                 if (Files.isRegularFile(f)) {
                     Files.delete(f);
                     return true;

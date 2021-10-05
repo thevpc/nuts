@@ -249,7 +249,7 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
         if (target == null) {
             throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("missing target"));
         }
-        if (!target.isPath() || !target.getPath().isFilePath() ) {
+        if (!target.isPath() || !target.getPath().isFile() ) {
             throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("invalid target %s",target.getValue()));
         }
         if (isLogProgress() || getProgressMonitorFactory() != null) {
@@ -269,7 +269,7 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
 //        } else {
         _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.START)
                 .log(NutsMessage.jstyle("uncompress {0} to {1}", _source, target));
-        Path folder = target.getPath().toFilePath();
+        Path folder = target.getPath().toFile();
         CoreIOUtils.mkdirs(folder,session);
 
         switch (format) {
@@ -302,7 +302,7 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
         if (target == null) {
             throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("missing target"));
         }
-        if (!target.isPath() || !target.getPath().isFilePath() ) {
+        if (!target.isPath() || !target.getPath().isFile() ) {
             throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("invalid target %s",target.getValue()));
         }
         if (isLogProgress() || getProgressMonitorFactory() != null) {
@@ -323,7 +323,7 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
 //        } else {
         _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.START)
                 .log(NutsMessage.jstyle("uncompress {0} to {1}", _source, target));
-        Path folder = target.getPath().toFilePath();
+        Path folder = target.getPath().toFile();
         CoreIOUtils.mkdirs(folder,session);
 
         switch (format) {
@@ -352,7 +352,7 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
             byte[] buffer = new byte[1024];
 
             //create output directory is not exists
-            Path folder = target.getPath().toFilePath();
+            Path folder = target.getPath().toFile();
             //get the zip file content
             InputStream _in = _source.getInputStream();
             try {
@@ -494,7 +494,7 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
             byte[] buffer = new byte[1024];
 
             //create output directory is not exists
-            Path folder = target.getPath().toFilePath();
+            Path folder = target.getPath().toFile();
 
             //get the zip file content
             InputStream _in = _source.getInputStream();

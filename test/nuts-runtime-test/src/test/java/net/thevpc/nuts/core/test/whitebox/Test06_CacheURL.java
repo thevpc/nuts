@@ -7,16 +7,17 @@ package net.thevpc.nuts.core.test.whitebox;
 
 import java.io.ByteArrayOutputStream;
 
-import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import org.junit.jupiter.api.*;
+import net.thevpc.nuts.core.test.utils.*;
 
 /**
  *
@@ -37,11 +38,11 @@ public class Test06_CacheURL {
                 //            "--verbose",
                 "--skip-companions");
         final String url = "https://repo.maven.apache.org/maven2/archetype-catalog.xml";
-        NutsInput j1 = CoreIOUtils.getCachedUrlWithSHA1(url, "archetype-catalog", true,ws);
+        InputStream j1 = CoreIOUtils.getCachedUrlWithSHA1(url, "archetype-catalog", true,ws);
         //just to consume the stream
         ws.io().copy().from(j1).to(new ByteArrayOutputStream()).setLogProgress(true).run();
         TestUtils.println(j1);
-        NutsInput j2 = CoreIOUtils.getCachedUrlWithSHA1(url, "archetype-catalog", true,ws);
+        InputStream j2 = CoreIOUtils.getCachedUrlWithSHA1(url, "archetype-catalog", true,ws);
         //just to consume the stream
         ws.io().copy().from(j2).to(new ByteArrayOutputStream()).setLogProgress(true).run();
         TestUtils.println(j2);
@@ -59,7 +60,7 @@ public class Test06_CacheURL {
 
     @BeforeEach
     public void startup() throws IOException {
-        Assumptions.assumeTrue(NutsOsFamily.getCurrent()== NutsOsFamily.LINUX);
+//        Assumptions.assumeTrue(NutsOsFamily.getCurrent()== NutsOsFamily.LINUX);
         TestUtils.unsetNutsSystemProperties();
     }
 

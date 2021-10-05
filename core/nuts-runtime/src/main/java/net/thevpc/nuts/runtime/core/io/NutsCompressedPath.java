@@ -153,8 +153,8 @@ public class NutsCompressedPath extends NutsPathBase {
     }
 
     @Override
-    public Path toFilePath() {
-        return base.toFilePath();
+    public Path toFile() {
+        return base.toFile();
     }
 
 //    @Override

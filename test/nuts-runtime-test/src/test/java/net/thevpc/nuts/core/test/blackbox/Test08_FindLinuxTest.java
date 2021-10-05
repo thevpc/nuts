@@ -72,7 +72,7 @@ public class Test08_FindLinuxTest {
 
     @BeforeEach
     public void startup() throws IOException {
-        Assumptions.assumeTrue(NutsOsFamily.getCurrent()== NutsOsFamily.LINUX);
+//        Assumptions.assumeTrue(NutsOsFamily.getCurrent()== NutsOsFamily.LINUX);
         TestUtils.unsetNutsSystemProperties();
     }
 

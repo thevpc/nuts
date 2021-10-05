@@ -70,7 +70,7 @@ public abstract class NutsPathBase implements NutsPath {
     }
 
     @Override
-    public boolean isFilePath() {
+    public boolean isFile() {
         return asFilePath()!=null;
     }
 
@@ -89,7 +89,7 @@ public abstract class NutsPathBase implements NutsPath {
     @Override
     public Path asFilePath() {
         try {
-            return toFilePath();
+            return toFile();
         } catch (Exception ex) {
             return null;
         }

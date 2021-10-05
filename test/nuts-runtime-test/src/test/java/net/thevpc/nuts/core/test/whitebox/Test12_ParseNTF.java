@@ -26,7 +26,7 @@
 package net.thevpc.nuts.core.test.whitebox;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.core.test.utils.TestUtils;
+import net.thevpc.nuts.core.test.utils.*;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -84,7 +84,7 @@ public class Test12_ParseNTF {
 
 //        String str="missing command. try ```sh ndocusaurus pdf | start | build```";
         String str = "##:p2:╭───╮##\u001E\n##:p3:│##";
-        NutsText q = txt.forStyled(txt.parse(str), NutsTextStyle.error());
+        NutsText q = txt.ofStyled(txt.parse(str), NutsTextStyle.error());
         String qs = q.toString();
         NutsText q2 = txt.parse(qs);
         q2 = txt.parse(qs);

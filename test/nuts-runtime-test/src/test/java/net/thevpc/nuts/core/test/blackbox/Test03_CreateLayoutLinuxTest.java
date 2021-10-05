@@ -189,7 +189,7 @@ public class Test03_CreateLayoutLinuxTest {
     public void customLayout_use_standalone() throws Exception {
         String test_id = TestUtils.getCallerMethodId();
         File base = new File("./runtime/test/" + test_id).getCanonicalFile();
-        Assumptions.assumeTrue(NutsOsFamily.getCurrent() == NutsOsFamily.LINUX);
+//        Assumptions.assumeTrue(NutsOsFamily.getCurrent() == NutsOsFamily.LINUX);
         TestUtils.println("Deleting " + base);
         CoreIOUtils.delete(null, base);
         NutsSession s = TestUtils.openNewTestWorkspace("--reset", "-b", "--debug", "--workspace", base.getPath(), "--standalone", "info");
@@ -235,7 +235,7 @@ public class Test03_CreateLayoutLinuxTest {
 
     @BeforeEach
     public void startup() throws IOException {
-        Assumptions.assumeTrue(NutsOsFamily.getCurrent() == NutsOsFamily.LINUX);
+//        Assumptions.assumeTrue(NutsOsFamily.getCurrent() == NutsOsFamily.LINUX);
         File stash = new File(System.getProperty("user.home"), "stash/nuts");
         stash.mkdirs();
 //        TestUtils.resetLinuxFolders();

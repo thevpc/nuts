@@ -62,7 +62,7 @@ public class Test10_ExecURLTest {
 
     @BeforeEach
     public void startup() throws IOException {
-        Assumptions.assumeTrue(NutsOsFamily.getCurrent()== NutsOsFamily.LINUX);
+//        Assumptions.assumeTrue(NutsOsFamily.getCurrent()== NutsOsFamily.LINUX);
         TestUtils.unsetNutsSystemProperties();
     }
 

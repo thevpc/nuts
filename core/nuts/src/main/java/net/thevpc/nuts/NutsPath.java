@@ -113,9 +113,9 @@ public interface NutsPath extends NutsFormattable {
 
     boolean isURL();
 
-    boolean isFilePath();
+    boolean isFile();
 
-    Path toFilePath();
+    Path toFile();
 
 
     String toString();

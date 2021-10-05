@@ -92,7 +92,7 @@ public class FilePath extends NutsPathBase implements NutsPathSPI {
     }
 
     @Override
-    public Path toFilePath() {
+    public Path toFile() {
         return value;
     }
 

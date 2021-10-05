@@ -96,7 +96,7 @@ public class NutsPathFromSPI extends NutsPathBase {
     }
 
     @Override
-    public Path toFilePath() {
+    public Path toFile() {
         return base.toFilePath();
     }
 

@@ -119,7 +119,7 @@ public class URLPath extends NutsPathBase implements NutsPathSPI {
     }
 
     @Override
-    public Path toFilePath() {
+    public Path toFile() {
         File f = CoreIOUtils.toFile(toURL());
         if (f != null) {
             return f.toPath();
@@ -135,7 +135,7 @@ public class URLPath extends NutsPathBase implements NutsPathSPI {
     @Override
     public NutsPath[] getChildren() {
         try {
-            Path f = toFilePath();
+            Path f = toFile();
             return getSession().io().path(f).getChildren();
         } catch (Exception e) {
             //
@@ -193,7 +193,7 @@ public class URLPath extends NutsPathBase implements NutsPathSPI {
             return exists();
         }
         try {
-            Path f = toFilePath();
+            Path f = toFile();
             return Files.isDirectory(f);
         } catch (Exception e) {
             //
@@ -207,7 +207,7 @@ public class URLPath extends NutsPathBase implements NutsPathSPI {
             return exists();
         }
         try {
-            Path f = toFilePath();
+            Path f = toFile();
             return Files.isRegularFile(f);
         } catch (Exception e) {
             //

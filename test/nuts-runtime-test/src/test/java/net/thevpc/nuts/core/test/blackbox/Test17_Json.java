@@ -24,7 +24,7 @@
 package net.thevpc.nuts.core.test.blackbox;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.core.test.utils.TestUtils;
+import net.thevpc.nuts.core.test.utils.*;
 import org.junit.jupiter.api.*;
 
 import java.io.IOException;
@@ -58,8 +58,8 @@ public class Test17_Json {
 //        System.out.println(session.text().forPlain("a@@@"));
 //        System.out.println(session.text().forPlain("a@@@").filteredText());
 
-        System.out.println(session.text().forPlain("a##@"));
-        System.out.println(session.text().forPlain("a##@").filteredText());
+        System.out.println(session.text().ofPlain("a##@"));
+        System.out.println(session.text().ofPlain("a##@").filteredText());
 
     }
 
@@ -224,8 +224,8 @@ public class Test17_Json {
 //        System.out.println(session.text().forPlain("a@@@"));
 //        System.out.println(session.text().forPlain("a@@@").filteredText());
 
-        System.out.println(session.text().forPlain("a##@"));
-        System.out.println(session.text().forPlain("a##@").filteredText());
+        System.out.println(session.text().ofPlain("a##@"));
+        System.out.println(session.text().ofPlain("a##@").filteredText());
 
     }
 
@@ -236,7 +236,7 @@ public class Test17_Json {
 
     @BeforeEach
     public void startup() throws IOException {
-        Assumptions.assumeTrue(NutsOsFamily.getCurrent() == NutsOsFamily.LINUX);
+//        Assumptions.assumeTrue(NutsOsFamily.getCurrent() == NutsOsFamily.LINUX);
         TestUtils.unsetNutsSystemProperties();
     }
 

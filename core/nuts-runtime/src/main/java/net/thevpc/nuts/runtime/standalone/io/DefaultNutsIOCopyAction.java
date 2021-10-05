@@ -306,8 +306,8 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
             if (!target.isPath()) {
                 throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("unsupported copy of directory to %s",target));
             }
-            Path fromPath=_source.getPath().toFilePath();
-            Path toPath = target.getPath().toFilePath();
+            Path fromPath=_source.getPath().toFile();
+            Path toPath = target.getPath().toFile();
             CopyData cd = new CopyData();
             if (isLogProgress() || getProgressMonitorFactory() != null) {
                 prepareCopyFolder(fromPath, cd);
@@ -584,7 +584,7 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
     private void copyStream() {
         checkSession();
         NutsStreamOrPath _source = source;
-        boolean _target_isPath = target.isPath() && target.getPath().isFilePath();
+        boolean _target_isPath = target.isPath() && target.getPath().isFile();
         if (checker != null && !_target_isPath && !safe) {
             throw new NutsIllegalArgumentException(getSession(), NutsMessage.formatted("unsupported validation if neither safeCopy is armed nor path is defined"));
         }
@@ -607,7 +607,7 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
             if (safe) {
                 Path temp = null;
                 if (_target_isPath) {
-                    Path to = target.getPath().toFilePath();
+                    Path to = target.getPath().toFile();
                     CoreIOUtils.mkdirs(to.getParent(),session);
                     temp = to.resolveSibling(to.getFileName() + "~");
                 } else {
@@ -617,8 +617,8 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
                     );
                 }
                 try {
-                    if (_source.isPath() && _source.getPath().isFilePath()) {
-                        copy(_source.getPath().toFilePath(), temp, StandardCopyOption.REPLACE_EXISTING);
+                    if (_source.isPath() && _source.getPath().isFile()) {
+                        copy(_source.getPath().toFile(), temp, StandardCopyOption.REPLACE_EXISTING);
                     } else {
                         try (InputStream ins = _source.getInputStream()) {
                             copy(ins, temp, StandardCopyOption.REPLACE_EXISTING);
@@ -627,12 +627,12 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
                     _validate(temp);
                     if (_target_isPath) {
                         try {
-                            Files.move(temp, target.getPath().toFilePath(), StandardCopyOption.REPLACE_EXISTING);
+                            Files.move(temp, target.getPath().toFile(), StandardCopyOption.REPLACE_EXISTING);
                         }catch (FileSystemException e){
                             // happens when the file is used by another process
                             // in that case try to check if the file needs to be copied
                             //if not, return safely!
-                            if(CoreIOUtils.compareContent(temp,target.getPath().toFilePath())){
+                            if(CoreIOUtils.compareContent(temp,target.getPath().toFile())){
                                 //cannot write the file (used by another process), but no pbm because does not need to
                                 return;
                             }throw e;
@@ -650,10 +650,10 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
                 }
             } else {
                 if (_target_isPath) {
-                    Path to = target.getPath().toFilePath();
+                    Path to = target.getPath().toFile();
                     CoreIOUtils.mkdirs(to.getParent(),session);
-                    if (_source.isPath() && _source.getPath().isFilePath()) {
-                        copy(_source.getPath().toFilePath(), to, StandardCopyOption.REPLACE_EXISTING);
+                    if (_source.isPath() && _source.getPath().isFile()) {
+                        copy(_source.getPath().toFile(), to, StandardCopyOption.REPLACE_EXISTING);
                     } else {
                         try (InputStream ins = _source.getInputStream()) {
                             copy(ins, to, StandardCopyOption.REPLACE_EXISTING);
@@ -664,8 +664,8 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
                     ByteArrayOutputStream bos = null;
                     if (checker != null) {
                         bos = new ByteArrayOutputStream();
-                        if (_source.isPath() && _source.getPath().isFilePath()) {
-                            copy(_source.getPath().toFilePath(), bos);
+                        if (_source.isPath() && _source.getPath().isFile()) {
+                            copy(_source.getPath().toFile(), bos);
                         } else {
                             try (InputStream ins = _source.getInputStream()) {
                                 copy(ins, bos);
@@ -676,9 +676,9 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
                         }
                         _validate(bos.toByteArray());
                     } else {
-                        if (_source.isPath() && _source.getPath().isFilePath()) {
+                        if (_source.isPath() && _source.getPath().isFile()) {
                             try (OutputStream ops = target.getOutputStream()) {
-                                copy(_source.getPath().toFilePath(), ops);
+                                copy(_source.getPath().toFile(), ops);
                             }
                         } else {
                             try (InputStream ins = _source.getInputStream()) {

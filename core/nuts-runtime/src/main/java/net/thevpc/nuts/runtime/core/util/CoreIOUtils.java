@@ -1523,8 +1523,8 @@ public class CoreIOUtils {
 
     public static Path toPathInputSource(NutsStreamOrPath is, List<Path> tempPaths, NutsSession session) {
         NutsWorkspace ws = session.getWorkspace();
-        if (is.isPath() && is.getPath().isFilePath()) {
-            return is.getPath().toFilePath();
+        if (is.isPath() && is.getPath().isFile()) {
+            return is.getPath().toFile();
         }
         Path temp = Paths.get(ws.io().tmp()
                 .setSession(session)
