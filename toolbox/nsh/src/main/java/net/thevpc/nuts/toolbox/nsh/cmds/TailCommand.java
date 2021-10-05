@@ -83,7 +83,7 @@ public class TailCommand extends AbstractNshBuiltin {
         try {
             try {
                 r = new BufferedReader(new InputStreamReader(context.getSession().io().path(file)
-                        .input().open()));
+                        .getInputStream()));
                 String line = null;
                 int count = 0;
                 LinkedList<String> lines=new LinkedList<>();

@@ -243,19 +243,22 @@ public class NutsXmlUtils {
             @Override
             public void warning(SAXParseException exception) throws SAXException {
                 session.log().of(NutsXmlUtils.class).with().session(session)
-                        .level(Level.FINEST).verb(NutsLogVerb.WARNING).log(exception.toString());
+                        .level(Level.FINEST).verb(NutsLogVerb.WARNING)
+                        .log(NutsMessage.jstyle("{0}",exception));
             }
 
             @Override
             public void error(SAXParseException exception) throws SAXException {
                 session.log().of(NutsXmlUtils.class).with().session(session)
-                        .level(Level.FINEST).verb(NutsLogVerb.WARNING).log(exception.toString());
+                        .level(Level.FINEST).verb(NutsLogVerb.WARNING)
+                        .log(NutsMessage.jstyle("{0}",exception));
             }
 
             @Override
             public void fatalError(SAXParseException exception) throws SAXException {
                 session.log().of(NutsXmlUtils.class).with().session(session)
-                        .level(Level.FINEST).verb(NutsLogVerb.WARNING).log(exception.toString());
+                        .level(Level.FINEST).verb(NutsLogVerb.WARNING)
+                        .log(NutsMessage.jstyle("{0}",exception));
             }
         });
         return b;

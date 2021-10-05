@@ -695,114 +695,133 @@ public interface NutsSession extends NutsCommandLineConfigurable {
     /**
      *
      * @since 0.8.3
+     * @return new search command instance
      */
     NutsSearchCommand search();
 
     /**
      *
      * @since 0.8.3
+     * @return new fetch command instance
      */
     NutsFetchCommand fetch();
 
     /**
      *
      * @since 0.8.3
+     * @return new deploy command instance
      */
     NutsDeployCommand deploy();
 
     /**
      *
      * @since 0.8.3
+     * @return new undeploy command instance
      */
     NutsUndeployCommand undeploy();
 
     /**
      *
      * @since 0.8.3
+     * @return new execution command instance
      */
     NutsExecCommand exec();
 
     /**
      *
      * @since 0.8.3
+     * @return new installation command instance
      */
     NutsInstallCommand install();
 
     /**
      *
      * @since 0.8.3
+     * @return new un-installation command instance
      */
     NutsUninstallCommand uninstall();
 
     /**
      *
      * @since 0.8.3
+     * @return new update command instance
      */
     NutsUpdateCommand update();
 
     /**
      *
      * @since 0.8.3
+     * @return new push command instance
      */
     NutsPushCommand push();
 
     /**
      *
      * @since 0.8.3
+     * @return new update-stats manager instance
      */
     NutsUpdateStatisticsCommand updateStatistics();
 
     /**
      *
      * @since 0.8.3
+     * @return new apps manager instance
      */
     NutsWorkspaceAppsManager apps();
 
     /**
      *
      * @since 0.8.3
+     * @return new extension manager instance
      */
     NutsWorkspaceExtensionManager extensions();
 
     /**
      *
      * @since 0.8.3
+     * @return new config manager instance
      */
     NutsWorkspaceConfigManager config();
 
     /**
      *
      * @since 0.8.3
+     * @return new repo manager instance
      */
     NutsRepositoryManager repos();
 
     /**
      *
      * @since 0.8.3
+     * @return new security manager instance
      */
     NutsWorkspaceSecurityManager security();
 
     /**
      *
      * @since 0.8.3
+     * @return new filter manager instance
      */
     NutsFilterManager filters();
 
     /**
      *
      * @since 0.8.3
+     * @return new io manager instance
      */
     NutsIOManager io();
 
     /**
      *
      * @since 0.8.3
+     * @return new log manager instance
      */
     NutsLogManager log();
 
     /**
      *
      * @since 0.8.3
+     * @return new events manager instance
      */
 
     NutsWorkspaceEventManager events();
@@ -810,6 +829,7 @@ public interface NutsSession extends NutsCommandLineConfigurable {
     /**
      *
      * @since 0.8.3
+     * @return new events commandline instance
      */
     NutsCommandLineManager commandLine();
 
@@ -856,60 +876,70 @@ public interface NutsSession extends NutsCommandLineConfigurable {
     /**
      *
      * @since 0.8.3
+     * @return new format manager instance
      */
     NutsFormatManager formats();
 
     /**
      *
      * @since 0.8.3
+     * @return new concurrent manager instance
      */
     NutsConcurrentManager concurrent();
 
     /**
      *
      * @since 0.8.3
+     * @return new utilities' manager instance
      */
     NutsUtilManager util();
 
     /**
      *
      * @since 0.8.3
+     * @return new import manager instance
      */
     NutsImportManager imports();
 
     /**
      *
      * @since 0.8.3
+     * @return new alias command manager instance
      */
     NutsCustomCommandManager commands();
 
     /**
      *
      * @since 0.8.3
+     * @return new location manager instance
      */
     NutsWorkspaceLocationManager locations();
 
     /**
      *
      * @since 0.8.3
+     * @return new env manager instance
      */
     NutsWorkspaceEnvManager env();
 
     /**
      *
      * @since 0.8.3
+     * @return new boot manager instance
      */
     NutsBootManager boot();
 
     /**
      *
      * @since 0.8.3
+     * @return new terminal manager instance
      */
     NutsTerminalManager term();
 
     /**
      *
      * @since 0.8.3
+     * @return new text manager instance
      */
     NutsTextManager text();
 

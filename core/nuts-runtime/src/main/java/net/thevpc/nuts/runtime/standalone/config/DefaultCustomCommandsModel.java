@@ -298,7 +298,8 @@ public class DefaultCustomCommandsModel {
     private NutsWorkspaceCustomCommand toDefaultNutsWorkspaceCommand(NutsCommandConfig c, NutsSession session) {
         if (c.getCommand() == null || c.getCommand().length == 0) {
 
-            _LOGOP(session).level(Level.WARNING).verb(NutsLogVerb.FAIL).log("invalid command definition ''{0}''. Missing command . Ignored", c.getName());
+            _LOGOP(session).level(Level.WARNING).verb(NutsLogVerb.FAIL)
+                    .log(NutsMessage.jstyle("invalid command definition ''{0}''. Missing command . Ignored", c.getName()));
             return null;
         }
 //        if (c.getOwner() == null) {

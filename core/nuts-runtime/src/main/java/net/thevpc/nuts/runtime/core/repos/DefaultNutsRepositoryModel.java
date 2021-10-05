@@ -361,7 +361,8 @@ public class DefaultNutsRepositoryModel {
             throw new UncheckedIOException("error loading repository " + file.toString(), new IOException(ex));
         }
         String fileName = "nuts-repository" + (name == null ? "" : ("-") + name) + (uuid == null ? "" : ("-") + uuid) + "-" + Instant.now().toString();
-        LOG.with().session(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL).log("erroneous repository config file. Unable to load file {0} : {1}", new Object[]{file, ex});
+        LOG.with().session(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL).log(
+                NutsMessage.jstyle("erroneous repository config file. Unable to load file {0} : {1}", file, ex));
         Path logError = Paths.get(getWorkspace().locations().getStoreLocation(getWorkspace().getApiId(), NutsStoreLocation.LOG))
                 .resolve("invalid-config");
         try {
@@ -370,7 +371,8 @@ public class DefaultNutsRepositoryModel {
             throw new UncheckedIOException("unable to log repository error while loading config file " + file.toString() + " : " + ex1.toString(), new IOException(ex));
         }
         Path newfile = logError.resolve(fileName + ".json");
-        LOG.with().session(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL).log("erroneous repository config file will be replaced by a fresh one. Old config is copied to {0}", newfile.toString());
+        LOG.with().session(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL)
+                .log(NutsMessage.jstyle("erroneous repository config file will be replaced by a fresh one. Old config is copied to {0}", newfile));
         try {
             Files.move(file, newfile);
         } catch (IOException e) {

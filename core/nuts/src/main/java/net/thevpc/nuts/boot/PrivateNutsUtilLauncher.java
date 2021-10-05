@@ -2,6 +2,7 @@ package net.thevpc.nuts.boot;
 
 import net.thevpc.nuts.NutsConstants;
 import net.thevpc.nuts.NutsLogVerb;
+import net.thevpc.nuts.NutsMessage;
 import net.thevpc.nuts.NutsOsFamily;
 
 import java.io.IOException;
@@ -102,7 +103,7 @@ class PrivateNutsUtilLauncher {
             }
             return updatedFile;
         } catch (IOException ex) {
-            LOG.log(Level.WARNING, "unable to update update " + filePath, ex);
+            LOG.log(Level.WARNING, NutsMessage.jstyle("unable to update update " + filePath), ex);
             return false;
         }
     }
@@ -145,7 +146,7 @@ class PrivateNutsUtilLauncher {
                 }
             } catch (Exception e) {
                 //ignore
-                LOG.log(Level.FINEST, NutsLogVerb.FAIL, "unable to undo NDI : {0}", new String[]{e.toString()});
+                LOG.log(Level.FINEST, NutsLogVerb.FAIL, NutsMessage.jstyle("unable to undo NDI : {0}", e.toString()));
             }
         }
     }

@@ -85,25 +85,25 @@ public class FileTemplater {
             @Override
             public void info(String title, String message) {
                 log().verb(NutsLogVerb.INFO).level(Level.FINER)
-                        .log("{0} : {1}", title, message);
+                        .log(NutsMessage.jstyle("{0} : {1}", title, message));
             }
 
             @Override
             public void debug(String title, String message) {
                 log().verb(NutsLogVerb.DEBUG).level(Level.FINER)
-                        .log("{0} : {1}", title, message);
+                        .log(NutsMessage.jstyle("{0} : {1}", title, message));
             }
 
             @Override
             public void error(String title, String message) {
-                log().verb(NutsLogVerb.FAIL).level(Level.FINER).log("{0} : {1}", title, message);
+                log().verb(NutsLogVerb.FAIL).level(Level.FINER)
+                        .log(NutsMessage.jstyle("{0} : {1}", title, message));
             }
 
             private NutsLoggerOp log() {
                 if (logOp == null) {
                     logOp = session.log().of(FileTemplater.this.getClass())
                             .with()
-                            .style(NutsTextFormatStyle.JSTYLE)
                     ;
                 }
                 return logOp;

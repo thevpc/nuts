@@ -156,9 +156,12 @@ public final class NutsApplications {
         NutsApplicationContext applicationContext = createApplicationContext(applicationInstance, args, session);
         session = applicationContext.getSession();
         boolean inherited = session.boot().getBootOptions().isInherited();
-        session.log().of(NutsApplications.class).with().level(Level.FINE).verb(NutsLogVerb.START).formatted()
-                .log("running application {0}: {1} {2}", inherited ? "(inherited)" : "",
+        session.log().of(NutsApplications.class).with().level(Level.FINE).verb(NutsLogVerb.START)
+                .log(
+                        NutsMessage.jstyle(
+                        "running application {0}: {1} {2}", inherited ? "(inherited)" : "",
                         applicationInstance.getClass().getName(), session.commandLine().create(args)
+                        )
                 );
         switch (applicationContext.getMode()) {
             /**

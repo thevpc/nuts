@@ -194,7 +194,8 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
             }
             return n.iterator();
         } catch (Exception ex) {
-            LOG.with().session(session).level(Level.SEVERE).error(ex).log("error find versions : {0}", ex);
+            LOG.with().session(session).level(Level.SEVERE).error(ex)
+                    .log(NutsMessage.jstyle("error find versions : {0}", ex));
 //            return IteratorUtils.emptyIterator();
             return null;
         }
@@ -293,7 +294,8 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
                         return new NutsDefaultContent(
                                 session.io().path(localFile), false, false);
                     } catch (Exception ex) {
-                        LOG.with().session(session).level(Level.SEVERE).error(ex).log("unable to download location for id {0} in location {1} : {2}", id, location.getUrl(), ex);
+                        LOG.with().session(session).level(Level.SEVERE).error(ex)
+                                .log(NutsMessage.jstyle("unable to download location for id {0} in location {1} : {2}", id, location.getUrl(), ex));
                     }
                 }
             }

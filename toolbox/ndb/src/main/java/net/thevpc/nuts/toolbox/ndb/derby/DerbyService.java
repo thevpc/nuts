@@ -138,14 +138,14 @@ public class DerbyService {
             if (optional) {
                 Path r = appContext.getSession().fetch().setLocation(targetFile).setId(id).setFailFast(false).getResultPath();
                 if (r != null) {
-                    LOG.with().session(appContext.getSession()).level(Level.FINEST).verb(NutsLogVerb.READ).log("downloading {0} to {1}", id, targetFile);
+                    LOG.with().session(appContext.getSession()).level(Level.FINEST).verb(NutsLogVerb.READ).log(NutsMessage.jstyle("downloading {0} to {1}", id, targetFile));
                 }
             } else {
                 appContext.getSession().fetch().setLocation(targetFile).setId(id).setFailFast(true).getResultPath();
-                LOG.with().session(appContext.getSession()).level(Level.FINEST).verb(NutsLogVerb.READ).log("downloading {0} to {1}", id, targetFile);
+                LOG.with().session(appContext.getSession()).level(Level.FINEST).verb(NutsLogVerb.READ).log(NutsMessage.jstyle("downloading {0} to {1}", id, targetFile));
             }
         } else {
-            LOG.with().session(appContext.getSession()).level(Level.FINEST).verb(NutsLogVerb.READ).log("using {0} form {1}", id, targetFile);
+            LOG.with().session(appContext.getSession()).level(Level.FINEST).verb(NutsLogVerb.READ).log(NutsMessage.jstyle("using {0} form {1}", id, targetFile));
         }
         return targetFile;
     }

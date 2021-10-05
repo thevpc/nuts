@@ -50,6 +50,7 @@ public interface NutsIdParser {
      * set blank mode.
      * when true, null is returned whenever a blank id is encountered.
      * when false, an error is thrown in that case.
+     * @param acceptBlank acceptBlank
      * @return true if the parse is lenient
      */
     NutsIdParser setAcceptBlank(boolean acceptBlank);

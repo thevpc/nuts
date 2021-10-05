@@ -94,10 +94,11 @@ public class ProcessExecHelper implements IProcessExecHelper {
 
         NutsLogger _LL = session.log().setSession(session).of(NutsWorkspaceUtils.class);
         if (_LL.isLoggable(Level.FINEST)) {
-            _LL.with().level(Level.FINE).verb(NutsLogVerb.START).formatted().log("[exec] {0}",
+            _LL.with().level(Level.FINE).verb(NutsLogVerb.START).log(
+                    NutsMessage.jstyle("[exec] {0}",
                     ws.text().forCode("sh",
                             pb.getCommandString()
-                    ));
+                    )));
         }
         if (showCommand || CoreBooleanUtils.getSysBoolNutsProperty("show-command", false)) {
             if (prepareTerminal.out().mode() == NutsTerminalMode.FORMATTED) {

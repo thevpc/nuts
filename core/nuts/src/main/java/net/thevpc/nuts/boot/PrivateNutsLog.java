@@ -27,6 +27,7 @@
 package net.thevpc.nuts.boot;
 
 import net.thevpc.nuts.NutsLogVerb;
+import net.thevpc.nuts.NutsMessage;
 import net.thevpc.nuts.NutsWorkspaceOptions;
 
 import java.io.InputStream;
@@ -52,7 +53,6 @@ public class PrivateNutsLog {
     public static final DateTimeFormatter DEFAULT_DATE_TIME_FORMATTER
             = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
             .withZone(ZoneId.systemDefault());
-    private static final Pattern LOG_PARAM_PATTERN = Pattern.compile("\\{(?<v>[0-9]+)}");
     private NutsWorkspaceOptions options;
     private NutsBootTerminal bootTerminal;
     private Scanner inScanner;
@@ -64,30 +64,15 @@ public class PrivateNutsLog {
         this.bootTerminal=new NutsBootTerminal(in,out,err);
     }
 
-    public void log(Level lvl, NutsLogVerb logVerb, String message) {
-        log(lvl, logVerb, message, new Object[0]);
-    }
-
-    public void log(Level lvl, NutsLogVerb logVerb, String message, Object object) {
-        log(lvl, logVerb, message, new Object[]{object});
-    }
-
-    public void log(Level lvl, NutsLogVerb logVerb, String message, Object[] objects) {
+    public void log(Level lvl, NutsLogVerb logVerb, NutsMessage message) {
         if (isLoggable(lvl)) {
-            Matcher m = LOG_PARAM_PATTERN.matcher(message);
-            StringBuffer sb = new StringBuffer();
-            while (m.find()) {
-                String v = m.group("v");
-                m.appendReplacement(sb, Matcher.quoteReplacement(String.valueOf(objects[Integer.parseInt(v)])));
-            }
-            m.appendTail(sb);
-            doLog(lvl, logVerb, sb.toString());
+            doLog(lvl, logVerb, message==null?"":message.toString());
         }
     }
 
-    public void log(Level lvl, String message, Throwable err) {
+    public void log(Level lvl, NutsMessage message, Throwable err) {
         if (isLoggable(lvl)) {
-            doLog(lvl, NutsLogVerb.FAIL, message);
+            doLog(lvl, NutsLogVerb.FAIL, message==null?"":message.toString());
             err.printStackTrace(System.err);
         }
     }

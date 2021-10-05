@@ -66,21 +66,18 @@ public class NutsLogUtils {
                                 lvl.intValue() <= Level.INFO.intValue() ? NutsLogVerb.INFO :
                                         lvl.intValue() <= Level.FINE.intValue() ? NutsLogVerb.DEBUG :
                                                 NutsLogVerb.DEBUG,
-                record.getMessage(),
-                record.getParameters(),
-                true,
+                NutsMessage.jstyle(record.getMessage(),
+                        record.getParameters()),
                 record.getMillis(),
-                NutsTextFormatStyle.JSTYLE
+                record.getThrown()
         );
         h.setResourceBundle(record.getResourceBundle());
         h.setResourceBundleName(record.getResourceBundleName());
         h.setSequenceNumber(record.getSequenceNumber());
-        h.setMillis(record.getMillis());
         h.setSourceClassName(record.getSourceClassName());
         h.setLoggerName(record.getLoggerName());
         h.setSourceMethodName(record.getSourceMethodName());
         h.setThreadID(record.getThreadID());
-        h.setThrown(record.getThrown());
         return h;
     }
 

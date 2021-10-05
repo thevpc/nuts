@@ -113,7 +113,9 @@ public class NutsPathFromSPI extends NutsPathBase {
                     .verb(NutsLogVerb.WARNING)
                     .level(Level.WARNING)
                     .error(ex)
-                    .log("error execution {0}.children()", base.getClass().getName());
+                    .log(
+                            NutsMessage.jstyle("error execution {0}.children()", base.getClass().getName())
+                    );
         }
         return new NutsPath[0];
     }

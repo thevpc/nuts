@@ -189,7 +189,8 @@ public class MavenUtils {
             default: {
                 dependencyScope = NutsDependencyScope.parseLenient(s, NutsDependencyScope.API, NutsDependencyScope.API);
                 if (dependencyScope == null) {
-                    LOG.with().session(session).level(Level.FINER).verb(NutsLogVerb.FAIL).log("unable to parse maven scope {0} for {1}", s, d);
+                    LOG.with().session(session).level(Level.FINER).verb(NutsLogVerb.FAIL)
+                            .log(NutsMessage.jstyle("unable to parse maven scope {0} for {1}", s, d));
                     dependencyScope = NutsDependencyScope.API;
                 }
             }
@@ -268,11 +269,11 @@ public class MavenUtils {
 
             long time = System.currentTimeMillis() - startTime;
             String fetchString = "[" + CoreStringUtils.alignLeft(fetchMode.id(), 7) + "] ";
-            LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.SUCCESS).time(time).formatted()
-                    .log("{0}{1} parse pom    {2}", fetchString,
+            LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.SUCCESS).time(time)
+                    .log(NutsMessage.jstyle("{0}{1} parse pom    {2}", fetchString,
                             CoreStringUtils.alignLeft(repository == null ? "<no-repo>" : repository.getName(), 20),
                             urlDesc
-                    );
+                    ));
 
             String icons = pom.getProperties().get("nuts.icons");
             if (icons == null) {
@@ -342,8 +343,8 @@ public class MavenUtils {
                     .build();
         } catch (Exception e) {
             long time = System.currentTimeMillis() - startTime;
-            LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.FAIL).time(time).formatted()
-                    .log("caching pom file {0}", urlDesc);
+            LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.FAIL).time(time)
+                    .log(NutsMessage.jstyle("caching pom file {0}", urlDesc));
             throw new NutsParseException(session, NutsMessage.cstyle("error parsing %s", urlDesc), e);
         }
     }
@@ -369,7 +370,8 @@ public class MavenUtils {
                 if (nutsDescriptor.getId().getArtifactId() == null) {
                     //why name is null ? should checkout!
                     if (LOG.isLoggable(Level.FINE)) {
-                        LOG.with().session(session).level(Level.FINE).verb(NutsLogVerb.FAIL).log("Unable to fetch Valid Nuts from " + path + " : resolved id was " + nutsDescriptor.getId());
+                        LOG.with().session(session).level(Level.FINE).verb(NutsLogVerb.FAIL)
+                                .log(NutsMessage.jstyle("unable to fetch Valid Nuts from {0} : resolved id was {1}",path, nutsDescriptor.getId()));
                     }
                     return null;
                 }
@@ -647,7 +649,7 @@ public class MavenUtils {
 
         } catch (Exception ex) {
             LOG.with().session(session).level(Level.SEVERE).error(ex)
-                    .log("failed to loadDependenciesAndRepositoriesFromPomUrl {0} : {1}", url, ex);
+                    .log(NutsMessage.jstyle("failed to loadDependenciesAndRepositoriesFromPomUrl {0} : {1}", url, ex));
             //ignore
         } finally {
             if (xml != null) {
@@ -741,7 +743,7 @@ public class MavenUtils {
                 }
             } catch (Exception ex) {
                 LOG.with().session(session).level(Level.SEVERE).error(ex)
-                        .log("failed to load and parse {0} : {1}", mavenMetadataXml, ex);
+                        .log(NutsMessage.jstyle("failed to load and parse {0} : {1}", mavenMetadataXml, ex));
                 // ignore any error
             }
             if (found) {
@@ -775,7 +777,7 @@ public class MavenUtils {
             LOG.with().session(session)
                     .level(Level.FINE)
                     .verb(NutsLogVerb.FAIL)
-                    .log(msg, params);
+                    .log(NutsMessage.jstyle(msg, params));
         }
 
         @Override
@@ -783,7 +785,7 @@ public class MavenUtils {
             LOG.with().session(session)
                     .level(Level.FINE)
                     .verb(NutsLogVerb.FAIL)
-                    .log("%s", msg);
+                    .log(NutsMessage.jstyle("{0}", msg));
         }
     }
 

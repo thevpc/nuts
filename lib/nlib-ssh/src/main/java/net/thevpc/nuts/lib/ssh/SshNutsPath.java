@@ -46,6 +46,43 @@ class SshNutsPath implements NutsPathSPI {
         return getSession().io().path(toString());
     }
 
+    public static String getURLParentPath(String ppath) {
+        if (ppath == null) {
+            return null;
+        }
+        while (ppath.endsWith("/")) {
+            ppath = ppath.substring(0, ppath.length() - 1);
+        }
+        if (ppath.isEmpty()) {
+            return null;
+        }
+        int i = ppath.lastIndexOf('/');
+        if (i <= 0) {
+            ppath = "/";
+        } else {
+            ppath = ppath.substring(0, i + 1);
+        }
+        return ppath;
+    }
+
+    @Override
+    public NutsPath getParent() {
+        String loc=getURLParentPath(this.path.getPath());
+        if(loc==null){
+            return null;
+        }
+        return
+                getSession().io().path(
+                        SshPath.toString(
+                                this.path.getHost(),
+                                this.path.getPort(),
+                                loc,
+                                this.path.getUser(),
+                                this.path.getPassword(),
+                                this.path.getKeyFile()
+                        ));
+    }
+
     @Override
     public String getProtocol() {
         return "ssh";

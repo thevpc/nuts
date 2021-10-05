@@ -75,7 +75,7 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
         if (isLogProgress() || getProgressMonitorFactory() != null) {
             //how to monitor???
         }
-        LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.START).log("compress {0} to {1}", sources, target);
+        LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.START).log(NutsMessage.jstyle("compress {0} to {1}", sources, target));
         try {
             OutputStream fW = null;
             ZipOutputStream zip = null;
@@ -149,8 +149,8 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
             }
         } catch (IOException ex) {
             LOG.with().session(session).level(Level.CONFIG).verb(NutsLogVerb.FAIL)
-                    .log("error compressing {0} to {1} : {2}",
-                            sources, target.getValue(), ex);
+                    .log(NutsMessage.jstyle("error compressing {0} to {1} : {2}",
+                            sources, target.getValue(), ex));
             throw new UncheckedIOException(ex);
         }
     }

@@ -23,6 +23,7 @@
  */
 package net.thevpc.nuts.runtime.bundles.io;
 
+import net.thevpc.nuts.NutsMessage;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.NutsLogVerb;
@@ -229,7 +230,8 @@ public class ZipUtils {
                     newFile.mkdirs();
                 } else {
                     File newFile = new File(outputFolder + File.separator + fileName);
-                    session.log().of(ZipUtils.class).with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).log("file unzip : {0}", newFile.getAbsoluteFile());
+                    session.log().of(ZipUtils.class).with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING)
+                            .log(NutsMessage.jstyle("file unzip : {0}", newFile.getAbsoluteFile()));
                     //create all non exists folders
                     //else you will hit FileNotFoundException for compressed folder
                     newFile.getParentFile().mkdirs();

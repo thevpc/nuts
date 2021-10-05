@@ -55,6 +55,7 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
     /**
      * create NutsWorkspaceOptionsBuilder instance for the given session (shall not be null).
      *
+     * @param session session
      * @return new NutsWorkspaceOptionsBuilder instance
      */
     static NutsWorkspaceOptionsBuilder of(NutsSession session) {

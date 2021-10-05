@@ -1,9 +1,6 @@
 package net.thevpc.nuts.runtime.core.log;
 
-import net.thevpc.nuts.NutsLogVerb;
-import net.thevpc.nuts.NutsLoggerOp;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsTextFormatStyle;
+import net.thevpc.nuts.*;
 
 import java.util.function.Supplier;
 import java.util.logging.Level;
@@ -24,21 +21,13 @@ public class NoOpNutsLoggerOp implements NutsLoggerOp {
     }
 
     @Override
-    public void log(String msg, Object... params) {
+    public void log(NutsMessage msg) {
+
     }
 
     @Override
-    public void log(Supplier<String> msgSupplier) {
-    }
+    public void log(Supplier<NutsMessage> msgSupplier) {
 
-    @Override
-    public NutsLoggerOp formatted(boolean value) {
-        return this;
-    }
-
-    @Override
-    public NutsLoggerOp formatted() {
-        return this;
     }
 
     @Override
@@ -48,11 +37,6 @@ public class NoOpNutsLoggerOp implements NutsLoggerOp {
 
     @Override
     public NutsLoggerOp level(Level level) {
-        return this;
-    }
-
-    @Override
-    public NutsLoggerOp style(NutsTextFormatStyle style) {
         return this;
     }
 

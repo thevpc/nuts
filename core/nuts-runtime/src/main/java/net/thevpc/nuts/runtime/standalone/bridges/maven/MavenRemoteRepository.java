@@ -70,15 +70,15 @@ public class MavenRemoteRepository extends NutsCachedRepository {
         public NutsId parseId(String path, String rootPath, NutsIdFilter filter, NutsRepository repository, NutsSession session) throws IOException {
             String fn = CoreIOUtils.getURLName(path);
             if (fn.endsWith(".pom")) {
-                String versionFolder = CoreIOUtils.getURLParent(path);
-                if (versionFolder.length() > 0) {
-                    String vn = CoreIOUtils.getURLName(versionFolder);
-                    String artifactFolder = CoreIOUtils.getURLParent(versionFolder);
-                    if (artifactFolder.length() > 0) {
+                String versionFolder = CoreIOUtils.getURLParentPath(path);
+                if (versionFolder!=null) {
+                    String vn = CoreIOUtils.getURLParentPath(versionFolder);
+                    String artifactFolder = CoreIOUtils.getURLParentPath(versionFolder);
+                    if (artifactFolder!=null) {
                         String an = CoreIOUtils.getURLName(artifactFolder);
                         if (fn.equals(an + "-" + vn + ".pom")) {
-                            String groupFolder = CoreIOUtils.getURLParent(artifactFolder);
-                            if (groupFolder.length() > 0) {
+                            String groupFolder = CoreIOUtils.getURLParentPath(artifactFolder);
+                            if (groupFolder!=null) {
                                 String[] gg = CoreIOUtils.urlTrimFirstSlash(groupFolder.substring(rootPath.length())).split("/");
                                 StringBuilder gn = new StringBuilder();
                                 for (int i = 0; i < gg.length; i++) {

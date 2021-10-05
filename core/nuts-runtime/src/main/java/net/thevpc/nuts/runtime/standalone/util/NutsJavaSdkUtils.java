@@ -85,9 +85,11 @@ public class NutsJavaSdkUtils {
             }
             if (bestJava == null) {
                 if (!NutsBlankable.isBlank(requestedJavaVersion)) {
-                    _LOGOP(session).level(Level.FINE).verb(NutsLogVerb.WARNING).log("No valid JRE found. recommended {0} . Using default java.home at {1}", requestedJavaVersion, System.getProperty("java.home"));
+                    _LOGOP(session).level(Level.FINE).verb(NutsLogVerb.WARNING)
+                            .log(NutsMessage.jstyle("no valid JRE found. recommended {0} . Using default java.home at {1}", requestedJavaVersion, System.getProperty("java.home")));
                 } else {
-                    _LOGOP(session).level(Level.FINE).verb(NutsLogVerb.WARNING).log("No valid JRE found. Using default java.home at {0}", System.getProperty("java.home"));
+                    _LOGOP(session).level(Level.FINE).verb(NutsLogVerb.WARNING)
+                            .log(NutsMessage.jstyle("no valid JRE found. Using default java.home at {0}", System.getProperty("java.home")));
                 }
                 bestJava = current;
             }
@@ -282,7 +284,8 @@ public class NutsJavaSdkUtils {
                 if (cmdOutputString.length() > 0) {
                     break;
                 } else {
-                    _LOGOP(session).level(i == (MAX_ITER - 1) ? Level.WARNING : Level.FINER).verb(NutsLogVerb.WARNING).log("unable to execute {0}. returned empty string ({1}/{2})", javaExePath, i + 1, MAX_ITER);
+                    _LOGOP(session).level(i == (MAX_ITER - 1) ? Level.WARNING : Level.FINER).verb(NutsLogVerb.WARNING)
+                            .log(NutsMessage.jstyle("unable to execute {0}. returned empty string ({1}/{2})", javaExePath, i + 1, MAX_ITER));
                 }
             }
             if (cmdOutputString.length() > 0) {
@@ -312,11 +315,13 @@ public class NutsJavaSdkUtils {
             }
         } catch (Exception ex) {
             loggedError = true;
-            _LOGOP(session).error(ex).level(Level.SEVERE).verb(NutsLogVerb.WARNING).log("unable to execute {0}. JDK Home ignored", javaExePath);
+            _LOGOP(session).error(ex).level(Level.SEVERE).verb(NutsLogVerb.WARNING)
+                    .log(NutsMessage.jstyle("unable to execute {0}. JDK Home ignored", javaExePath));
         }
         if (jdkVersion == null) {
             if (!loggedError) {
-                _LOGOP(session).level(Level.SEVERE).verb(NutsLogVerb.WARNING).log("execute {0} failed with result code {1} and result string \"{2}\". JDK Home ignored", javaExePath.toString(), cmdRresult, cmdOutputString);
+                _LOGOP(session).level(Level.SEVERE).verb(NutsLogVerb.WARNING)
+                        .log(NutsMessage.jstyle("execute {0} failed with result code {1} and result string \"{2}\". JDK Home ignored", javaExePath.toString(), cmdRresult, cmdOutputString));
             }
             return null;
         }

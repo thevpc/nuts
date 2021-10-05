@@ -65,12 +65,15 @@ public class DefaultNutsTerminalModel {
                 );
                 setSystemTerminal(systemTerminal, session);
                 if (getSystemTerminal().isAutoCompleteSupported()) {
-                    _LOGOP(session).level(Level.FINE).verb(NutsLogVerb.SUCCESS).log("enable rich terminal");
+                    _LOGOP(session).level(Level.FINE).verb(NutsLogVerb.SUCCESS)
+                            .log(NutsMessage.jstyle("enable rich terminal"));
                 } else {
-                    _LOGOP(session).level(Level.FINE).verb(NutsLogVerb.FAIL).log("unable to enable rich terminal");
+                    _LOGOP(session).level(Level.FINE).verb(NutsLogVerb.FAIL)
+                            .log(NutsMessage.jstyle("unable to enable rich terminal"));
                 }
             } else {
-                _LOGOP(session).level(Level.FINE).verb(NutsLogVerb.WARNING).log("enableRichTerm discarded; next-term is excluded.");
+                _LOGOP(session).level(Level.FINE).verb(NutsLogVerb.WARNING)
+                        .log(NutsMessage.jstyle("enableRichTerm discarded; next-term is excluded."));
             }
         }
     }
@@ -158,7 +161,8 @@ public class DefaultNutsTerminalModel {
                 syst = new DefaultSystemTerminal(terminal);
                 NutsWorkspaceUtils.setSession(syst, session);
             } catch (Exception ex) {
-                _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).log("unable to create system terminal : {0}", ex.getMessage());
+                _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.WARNING)
+                        .log(NutsMessage.jstyle("unable to create system terminal : {0}", ex));
                 DefaultNutsSystemTerminalBase b = new DefaultNutsSystemTerminalBase();
                 NutsWorkspaceUtils.setSession(b, session);
                 syst = new DefaultSystemTerminal(b);

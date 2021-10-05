@@ -93,7 +93,7 @@ public class DefaultNutsHelpInternalExecutable extends DefaultInternalNutsExecut
                         try {
                             w = getSession().getWorkspace().exec().addCommand(arg).which();
                         } catch (Exception ex) {
-                            LOG.with().session(getSession()).level(Level.FINE).error(ex).log( "failed to execute : {0}", arg);
+                            LOG.with().session(getSession()).level(Level.FINE).error(ex).log( NutsMessage.jstyle("failed to execute : {0}", arg));
                             //ignore
                         }
                         if (w != null) {

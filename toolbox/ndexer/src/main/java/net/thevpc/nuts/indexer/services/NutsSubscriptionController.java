@@ -2,6 +2,7 @@ package net.thevpc.nuts.indexer.services;
 
 import javax.annotation.PostConstruct;
 
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.indexer.NutsIndexSubscriberListManager;
 import net.thevpc.nuts.indexer.NutsWorkspacePool;
 import net.thevpc.nuts.NutsRepository;
@@ -38,13 +39,12 @@ public class NutsSubscriptionController {
     @RequestMapping("subscribe")
     public ResponseEntity<Void> subscribe(@RequestParam("workspaceLocation") String workspaceLocation,
             @RequestParam("repositoryUuid") String repositoryUuid) {
-        NutsWorkspace workspace = workspacePool.openWorkspace(workspaceLocation);
-        workspace=workspace.createSession().getWorkspace();
-        NutsRepository[] repositories = workspace.repos().getRepositories();
+        NutsSession session = workspacePool.openWorkspace(workspaceLocation);
+        NutsRepository[] repositories = session.repos().getRepositories();
         for (NutsRepository repository : repositories) {
             if (repository.getUuid().equals(repositoryUuid)) {
                 this.subscriberManager.subscribe(repositoryUuid,
-                        workspaceManager.getWorkspaceLocation(workspace.getUuid()), this.subscriberManager.getDefaultWorkspace().createSession());
+                        workspaceManager.getWorkspaceLocation(session.getWorkspace().getUuid()), this.subscriberManager.getDefaultWorkspace().createSession());
 
                 return ResponseEntity.ok().build();
             }
@@ -55,14 +55,12 @@ public class NutsSubscriptionController {
     @RequestMapping("unsubscribe")
     public ResponseEntity<Void> unsubscribe(@RequestParam("workspaceLocation") String workspaceLocation,
             @RequestParam("repositoryUuid") String repositoryUuid) {
-        NutsWorkspace workspace = workspacePool.openWorkspace(workspaceLocation);
-        workspace=workspace.createSession().getWorkspace();
-        NutsRepository[] repositories = workspace.repos().getRepositories();
+        NutsSession session = workspacePool.openWorkspace(workspaceLocation);
+        NutsRepository[] repositories = session.repos().getRepositories();
         for (NutsRepository repository : repositories) {
             if (repository.getUuid().equals(repositoryUuid)) {
                 this.subscriberManager.unsubscribe(repositoryUuid,
-                        workspaceManager.getWorkspaceLocation(workspace.getUuid()), this.subscriberManager.getDefaultWorkspace().createSession());
-
+                        workspaceManager.getWorkspaceLocation(session.getWorkspace().getUuid()), this.subscriberManager.getDefaultWorkspace().createSession());
                 return ResponseEntity.ok().build();
             }
         }
@@ -73,14 +71,12 @@ public class NutsSubscriptionController {
     public ResponseEntity<Boolean> isSubscribed(@RequestParam("workspaceLocation") String workspaceLocation,
             @RequestParam("repositoryUuid") String repositoryUuid) {
         System.out.println(workspaceLocation + " " + repositoryUuid);
-        NutsWorkspace workspace = workspacePool.openWorkspace(workspaceLocation);
-        workspace=workspace.createSession().getWorkspace();
-        NutsRepository[] repositories = workspace.repos().getRepositories();
+        NutsSession session = workspacePool.openWorkspace(workspaceLocation);
+        NutsRepository[] repositories = session.repos().getRepositories();
         for (NutsRepository repository : repositories) {
             if (repository.getUuid().equals(repositoryUuid)) {
                 boolean subscribed = this.subscriberManager.isSubscribed(repositoryUuid,
-                        workspaceManager.getWorkspaceLocation(workspace.getUuid()));
-
+                        workspaceManager.getWorkspaceLocation(session.getWorkspace().getUuid()));
                 return ResponseEntity.ok(subscribed);
             }
         }

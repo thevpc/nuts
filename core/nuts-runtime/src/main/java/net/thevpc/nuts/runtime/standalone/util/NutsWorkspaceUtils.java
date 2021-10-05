@@ -242,13 +242,15 @@ public class NutsWorkspaceUtils {
                     try {
                         d = NutsRepositoryUtils.getSupportDeployLevel(repository, fmode, id, mode, session.isTransitive(), session);
                     } catch (Exception ex) {
-                        _LOGOP(session).level(Level.FINE).error(ex).log("unable to resolve support deploy level for : {0}", repository.getName());
+                        _LOGOP(session).level(Level.FINE).error(ex)
+                                .log(NutsMessage.jstyle("unable to resolve support deploy level for : {0}", repository.getName()));
                     }
                 }
                 try {
                     t = NutsRepositoryUtils.getSupportSpeedLevel(repository, fmode, id, mode, session.isTransitive(), session);
                 } catch (Exception ex) {
-                    _LOGOP(session).level(Level.FINE).error(ex).log("unable to resolve support speed level for : {0}", repository.getName());
+                    _LOGOP(session).level(Level.FINE).error(ex)
+                            .log(NutsMessage.jstyle("unable to resolve support speed level for : {0}", repository.getName()));
                 }
                 if (t > 0) {
                     repos2.add(new RepoAndLevel(repository, d, t, postComp));
@@ -350,12 +352,12 @@ public class NutsWorkspaceUtils {
             long time = (startTime != 0) ? (System.currentTimeMillis() - startTime) : 0;
             String fetchString = "[" + CoreStringUtils.alignLeft(fetchMode.name(), 7) + "] ";
             _LOGOP(session).level(Level.FINEST)
-                    .verb(tracePhase).formatted().time(time)
-                    .log("{0}{1} {2}",
+                    .verb(tracePhase).time(time)
+                    .log(NutsMessage.jstyle("{0}{1} {2}",
                             fetchString,
                             id,
                             CoreStringUtils.alignLeft(message, 18)
-                    );
+                    ));
         }
     }
 
@@ -365,7 +367,8 @@ public class NutsWorkspaceUtils {
         try {
             mainClass = CorePlatformUtils.getMainClassType(classStream);
         } catch (Exception ex) {
-            _LOGOP(session).level(Level.FINE).error(ex).log("invalid file format {0}", sourceName);
+            _LOGOP(session).level(Level.FINE).error(ex)
+                    .log(NutsMessage.jstyle("invalid file format {0}", sourceName));
         }
         if (mainClass != null) {
             return new DefaultNutsExecutionEntry(
@@ -429,7 +432,8 @@ public class NutsWorkspaceUtils {
             }
         }
         if (defaultEntry != null && !defaultFound) {
-            _LOGOP(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL).log("invalid default entry " + defaultEntry + " in " + sourceName);
+            _LOGOP(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL)
+                    .log(NutsMessage.jstyle("invalid default entry " + defaultEntry + " in " + sourceName));
 //            entries.add(new DefaultNutsExecutionEntry(defaultEntry, true, false));
         }
         return entries.toArray(new NutsExecutionEntry[0]);
@@ -511,7 +515,8 @@ public class NutsWorkspaceUtils {
         }
 
         public void fireOnInstall(NutsInstallEvent event) {
-            u._LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE).formatted().log("installed {0}", event.getDefinition().getId());
+            u._LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE)
+                    .log(NutsMessage.jstyle("installed {0}", event.getDefinition().getId()));
             for (NutsInstallListener listener : u.ws.events().getInstallListeners()) {
                 listener.onInstall(event);
             }
@@ -521,7 +526,8 @@ public class NutsWorkspaceUtils {
         }
 
         public void fireOnRequire(NutsInstallEvent event) {
-            u._LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE).formatted().log("required {0}", event.getDefinition().getId());
+            u._LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE)
+                    .log(NutsMessage.jstyle("required {0}", event.getDefinition().getId()));
             for (NutsInstallListener listener : u.ws.events().getInstallListeners()) {
                 listener.onRequire(event);
             }
@@ -533,13 +539,13 @@ public class NutsWorkspaceUtils {
         public void fireOnUpdate(NutsUpdateEvent event) {
             if (u._LOG(event.getSession()).isLoggable(Level.FINEST)) {
                 if (event.getOldValue() == null) {
-                    u._LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE).formatted()
-                            .log("updated {0}", event.getNewValue().getId());
+                    u._LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE)
+                            .log(NutsMessage.jstyle("updated {0}", event.getNewValue().getId()));
                 } else {
-                    u._LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE).formatted()
-                            .log("updated {0} (old is {1})",
+                    u._LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE)
+                            .log(NutsMessage.jstyle("updated {0} (old is {1})",
                                     event.getOldValue().getId().getLongNameId(),
-                                    event.getNewValue().getId().getLongNameId());
+                                    event.getNewValue().getId().getLongNameId()));
                 }
             }
             for (NutsInstallListener listener : u.ws.events().getInstallListeners()) {
@@ -552,8 +558,8 @@ public class NutsWorkspaceUtils {
 
         public void fireOnUninstall(NutsInstallEvent event) {
             if (u._LOG(event.getSession()).isLoggable(Level.FINEST)) {
-                u._LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE).formatted()
-                        .log("uninstalled {0}", event.getDefinition().getId());
+                u._LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE)
+                        .log(NutsMessage.jstyle("uninstalled {0}", event.getDefinition().getId()));
             }
             for (NutsInstallListener listener : u.ws.events().getInstallListeners()) {
                 listener.onUninstall(event);
@@ -565,8 +571,8 @@ public class NutsWorkspaceUtils {
 
         public void fireOnAddRepository(NutsWorkspaceEvent event) {
             if (u._LOG(event.getSession()).isLoggable(Level.CONFIG)) {
-                u._LOGOP(event.getSession()).level(Level.CONFIG).verb(NutsLogVerb.UPDATE).formatted()
-                        .log("added repo ##{0}##", event.getRepository().getName());
+                u._LOGOP(event.getSession()).level(Level.CONFIG).verb(NutsLogVerb.UPDATE)
+                        .log(NutsMessage.jstyle("added repo ##{0}##", event.getRepository().getName()));
             }
 
             for (NutsWorkspaceListener listener : u.ws.events().getWorkspaceListeners()) {
@@ -579,8 +585,8 @@ public class NutsWorkspaceUtils {
 
         public void fireOnRemoveRepository(NutsWorkspaceEvent event) {
             if (u._LOG(event.getSession()).isLoggable(Level.FINEST)) {
-                u._LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE).formatted()
-                        .log("removed repo ##{0}##", event.getRepository().getName());
+                u._LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE)
+                        .log(NutsMessage.jstyle("removed repo ##{0}##", event.getRepository().getName()));
             }
             for (NutsWorkspaceListener listener : u.ws.events().getWorkspaceListeners()) {
                 listener.onRemoveRepository(event);

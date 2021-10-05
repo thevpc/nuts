@@ -165,6 +165,18 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
     }
 
     @Override
+    public NutsIOCopyAction setTarget(NutsPrintStream target) {
+        this.target = target==null?null:NutsStreamOrPath.of(target);
+        return this;
+    }
+
+    @Override
+    public NutsIOCopyAction to(NutsPrintStream target) {
+        this.target = target==null?null:NutsStreamOrPath.of(target);
+        return this;
+    }
+
+    @Override
     public NutsIOCopyAction setTarget(NutsPath target) {
         this.target = target==null?null:NutsStreamOrPath.of(target);
         return this;
@@ -588,9 +600,9 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
                     .setLogProgress(isLogProgress())
                     .create());
         }
-        _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.START).log("copy {0} to {1}",
+        _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.START).log(NutsMessage.jstyle("copy {0} to {1}",
                 _source,
-                target);
+                target));
         try {
             if (safe) {
                 Path temp = null;
@@ -680,8 +692,8 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
             }
         } catch (IOException ex) {
             _LOGOP(session).level(Level.CONFIG).verb(NutsLogVerb.FAIL)
-                    .log("error copying {0} to {1} : {2}", _source.getValue(),
-                            target.getValue(), ex);
+                    .log(NutsMessage.jstyle("error copying {0} to {1} : {2}", _source.getValue(),
+                            target.getValue(), ex));
             throw new UncheckedIOException(ex);
         }
     }

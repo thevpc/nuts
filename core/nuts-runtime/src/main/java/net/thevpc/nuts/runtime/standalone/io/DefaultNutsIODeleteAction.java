@@ -64,12 +64,14 @@ public class DefaultNutsIODeleteAction extends AbstractNutsIODeleteAction {
                     try {
                         Files.delete(file);
                         if (LOG != null) {
-                            LOG.with().session(getSession()).level(Level.FINEST).verb(NutsLogVerb.WARNING).log( "delete file " + file);
+                            LOG.with().session(getSession()).level(Level.FINEST).verb(NutsLogVerb.WARNING)
+                                    .log( NutsMessage.jstyle("delete file {0}", file));
                         }
                         deleted[0]++;
                     } catch (IOException e) {
                         if (LOG != null) {
-                            LOG.with().session(getSession()).level(Level.FINEST).verb(NutsLogVerb.WARNING).log( "failed deleting file : " + file);
+                            LOG.with().session(getSession()).level(Level.FINEST).verb(NutsLogVerb.WARNING)
+                                    .log( NutsMessage.jstyle("failed deleting file : {0}", file));
                         }
                         deleted[2]++;
                         grabException(e);
@@ -87,12 +89,14 @@ public class DefaultNutsIODeleteAction extends AbstractNutsIODeleteAction {
                     try {
                         Files.delete(dir);
                         if (LOG != null) {
-                            LOG.with().session(getSession()).level(Level.FINEST).verb(NutsLogVerb.WARNING).log( "delete folder " + dir);
+                            LOG.with().session(getSession()).level(Level.FINEST).verb(NutsLogVerb.WARNING)
+                                    .log( NutsMessage.jstyle("delete folder {0}", dir));
                         }
                         deleted[1]++;
                     } catch (IOException e) {
                         if (LOG != null) {
-                            LOG.with().session(getSession()).level(Level.FINEST).verb(NutsLogVerb.WARNING).log( "failed deleting folder : " + dir);
+                            LOG.with().session(getSession()).level(Level.FINEST).verb(NutsLogVerb.WARNING)
+                                    .log( NutsMessage.jstyle("failed deleting folder : {0}", dir));
                         }
                         deleted[2]++;
                         grabException(e);

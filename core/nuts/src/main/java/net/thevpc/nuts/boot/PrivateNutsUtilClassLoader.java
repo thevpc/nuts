@@ -28,7 +28,7 @@ class PrivateNutsUtilClassLoader {
         for (URL url0 : urls0) {
             if (url0 != null) {
                 if (isLoadedClassPath(url0, contextClassLoader, LOG)) {
-                    LOG.log(Level.WARNING, NutsLogVerb.CACHE, "url will not be loaded (already in classloader) : {0}", new Object[]{url0});
+                    LOG.log(Level.WARNING, NutsLogVerb.CACHE, NutsMessage.jstyle("url will not be loaded (already in classloader) : {0}", url0));
                 } else {
                     urls.add(url0);
                 }
@@ -110,12 +110,12 @@ class PrivateNutsUtilClassLoader {
                             URL incp = contextClassLoader.getResource(zname);
                             String clz = zname.substring(0, zname.length() - 6).replace('/', '.');
                             if (incp != null) {
-                                LOG.log(Level.FINEST, NutsLogVerb.SUCCESS, "url {0} is already in classpath. checked class {1} successfully",
-                                        new Object[]{url, clz});
+                                LOG.log(Level.FINEST, NutsLogVerb.SUCCESS, NutsMessage.jstyle("url {0} is already in classpath. checked class {1} successfully",
+                                        url, clz));
                                 return true;
                             } else {
-                                LOG.log(Level.FINEST, NutsLogVerb.INFO, "url {0} is not in classpath. failed to check class {1}",
-                                        new Object[]{url, clz});
+                                LOG.log(Level.FINEST, NutsLogVerb.INFO, NutsMessage.jstyle("url {0} is not in classpath. failed to check class {1}",
+                                        url, clz));
                                 return false;
                             }
                         }
@@ -134,7 +134,7 @@ class PrivateNutsUtilClassLoader {
         } catch (IOException e) {
             //
         }
-        LOG.log(Level.FINEST, NutsLogVerb.FAIL, "url {0} is not in classpath. no class found to check", new Object[]{url});
+        LOG.log(Level.FINEST, NutsLogVerb.FAIL, NutsMessage.jstyle("url {0} is not in classpath. no class found to check", url));
         return false;
     }
 }

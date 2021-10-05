@@ -258,7 +258,7 @@ final class PrivateNutsUtils {
                     }
                 }
             } catch (Exception ex0) {
-                LOG.log(Level.FINEST, NutsLogVerb.FAIL, "unable to get LastModifiedTime for file : {0}", new String[]{path.toString(), ex0.toString()});
+                LOG.log(Level.FINEST, NutsLogVerb.FAIL, NutsMessage.jstyle("unable to get LastModifiedTime for file : {0}", path.toString(), ex0.toString()));
             }
         }
         return proceed;

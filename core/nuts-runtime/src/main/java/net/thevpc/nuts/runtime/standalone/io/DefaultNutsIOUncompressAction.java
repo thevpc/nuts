@@ -267,7 +267,8 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
 //        if (!path.toLowerCase().startsWith("file://")) {
 //            LOG.log(Level.FINE, "downloading url {0} to file {1}", new Object[]{path, file});
 //        } else {
-        _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.START).log("uncompress {0} to {1}", _source, target);
+        _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.START)
+                .log(NutsMessage.jstyle("uncompress {0} to {1}", _source, target));
         Path folder = target.getPath().toFilePath();
         CoreIOUtils.mkdirs(folder,session);
 
@@ -320,7 +321,8 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
 //        if (!path.toLowerCase().startsWith("file://")) {
 //            LOG.log(Level.FINE, "downloading url {0} to file {1}", new Object[]{path, file});
 //        } else {
-        _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.START).log("uncompress {0} to {1}", _source, target);
+        _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.START)
+                .log(NutsMessage.jstyle("uncompress {0} to {1}", _source, target));
         Path folder = target.getPath().toFilePath();
         CoreIOUtils.mkdirs(folder,session);
 
@@ -382,7 +384,8 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
                             CoreIOUtils.mkdirs(newFile,session);
                         } else {
                             Path newFile = folder.resolve(fileName);
-                            _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).log("file unzip : " + newFile);
+                            _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.WARNING)
+                                    .log(NutsMessage.jstyle("file unzip : {0}", newFile));
                             //create all non exists folders
                             //else you will hit FileNotFoundException for compressed folder
                             if (newFile.getParent() != null) {
@@ -403,8 +406,9 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
                 _in.close();
             }
         } catch (IOException ex) {
-            _LOGOP(session).level(Level.CONFIG).verb(NutsLogVerb.FAIL).log("error uncompressing {0} to {1} : {2}",
-                    _source.getValue(), target.getValue(), ex);
+            _LOGOP(session).level(Level.CONFIG).verb(NutsLogVerb.FAIL).log(
+                    NutsMessage.jstyle("error uncompressing {0} to {1} : {2}",
+                    _source.getValue(), target.getValue(), ex));
             throw new UncheckedIOException(ex);
         }
     }
@@ -476,8 +480,9 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
                 _in.close();
             }
         } catch (IOException ex) {
-            _LOGOP(session).level(Level.CONFIG).verb(NutsLogVerb.FAIL).log("error uncompressing {0} to {1} : {2}",
-                    _source.getValue(), target.getValue(), ex);
+            _LOGOP(session).level(Level.CONFIG).verb(NutsLogVerb.FAIL)
+                    .log(NutsMessage.jstyle("error uncompressing {0} to {1} : {2}",
+                    _source.getValue(), target.getValue(), ex));
             throw new UncheckedIOException(ex);
         }
     }
@@ -504,7 +509,8 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
                     }
                     //get the zipped file list entry
                     Path newFile = folder.resolve(n);
-                    _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).log("file unzip : {0}", newFile);
+                    _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.WARNING)
+                            .log(NutsMessage.jstyle("file unzip : {0}", newFile));
                     //create all non exists folders
                     //else you will hit FileNotFoundException for compressed folder
                     if (newFile.getParent() != null) {
@@ -522,8 +528,8 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
             }
         } catch (IOException ex) {
             _LOGOP(session).level(Level.CONFIG).verb(NutsLogVerb.FAIL)
-                    .log("error uncompressing {0} to {1} : {2}", _source.getValue(),
-                            target.getValue(), ex);
+                    .log(NutsMessage.jstyle("error uncompressing {0} to {1} : {2}", _source.getValue(),
+                            target.getValue(), ex));
             throw new UncheckedIOException(ex);
         }
     }
@@ -567,8 +573,8 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
             }
         } catch (IOException ex) {
             _LOGOP(session).level(Level.CONFIG).verb(NutsLogVerb.FAIL)
-                    .log("error uncompressing {0} to {1} : {2}", _source.getValue(),
-                            target.getValue(), ex);
+                    .log(NutsMessage.jstyle("error uncompressing {0} to {1} : {2}", _source.getValue(),
+                            target.getValue(), ex));
             throw new UncheckedIOException(ex);
         }
     }

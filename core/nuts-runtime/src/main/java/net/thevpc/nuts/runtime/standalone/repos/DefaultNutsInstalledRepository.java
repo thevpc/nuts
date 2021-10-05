@@ -125,7 +125,8 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
                         return getInstallInformation(c, session);
                     }
                 } catch (Exception ex) {
-                    _LOGOP(session).error(ex).log("Unable to parse {0}", path);
+                    _LOGOP(session).error(ex)
+                            .log(NutsMessage.jstyle("unable to parse {0}", path));
                 }
                 return null;
             }
@@ -454,7 +455,8 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
                 }
                 if (changeStatus && !workspace.config().isReadOnly()) {
                     workspace.concurrent().lock().setSource(path).setSession(session).call(() -> {
-                                _LOGOP(session).level(Level.CONFIG).log("install-info upgraded {0}", finalPath.toString());
+                                _LOGOP(session).level(Level.CONFIG)
+                                        .log(NutsMessage.jstyle("install-info upgraded {0}", finalPath));
                                 c.setConfigVersion(workspace.getApiVersion().toString());
                                 workspace.elem().setSession(session).setContentType(NutsContentType.JSON).setValue(c).print(finalPath);
                                 return null;
@@ -486,7 +488,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
                         return c;
                     }
                 } catch (Exception ex) {
-                    _LOGOP(session).error(ex).log("Unable to parse {0}", path);
+                    _LOGOP(session).error(ex).log(NutsMessage.jstyle("unable to parse {0}", path));
                 }
                 return null;
             }

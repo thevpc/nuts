@@ -1027,9 +1027,10 @@ public class DefaultNutsWorkspaceConfigModel {
                 .getResultDefinition();
         if (def == null) {
             _LOGOP(session).level(Level.CONFIG)
-                    .verb(NutsLogVerb.WARNING).log("selected repositories ({0}) cannot reach runtime package. fallback to default.",
+                    .verb(NutsLogVerb.WARNING)
+                    .log(NutsMessage.jstyle("selected repositories ({0}) cannot reach runtime package. fallback to default.",
                     Arrays.stream(ws.repos().setSession(session).getRepositories()).map(NutsRepository::getName).collect(Collectors.joining(", "))
-            );
+                    ));
             HashMap<String, String> defaults = new HashMap<>();
             MavenUtils.DepsAndRepos dd = MavenUtils.of(session).loadDependenciesAndRepositoriesFromPomPath(id,
                     resolveBootRepositoriesList().resolveSelectors(defaults),
@@ -1168,14 +1169,15 @@ public class DefaultNutsWorkspaceConfigModel {
         Path logError = Paths.get(ws.locations().getStoreLocation(ws.getApiId(), NutsStoreLocation.LOG)).resolve("invalid-config");
         Path logFile = logError.resolve(fileName + ".error");
         _LOGOP(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL)
-                .log("erroneous workspace config file. Unable to load file {0} : {1}", new Object[]{file, ex});
+                .log(NutsMessage.jstyle("erroneous workspace config file. Unable to load file {0} : {1}", file, ex));
         try {
             CoreIOUtils.mkdirs(logError,session);
         } catch (Exception ex1) {
             throw new UncheckedIOException("unable to log workspace error while loading config file " + file.toString() + " : " + ex1.toString(), new IOException(ex));
         }
         Path newfile = logError.resolve(fileName + ".json");
-        _LOGOP(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL).log("erroneous workspace config file will be replaced by a fresh one. Old config is copied to {0}\n error logged to  {1}", newfile.toString(), logFile);
+        _LOGOP(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL)
+                .log(NutsMessage.jstyle("erroneous workspace config file will be replaced by a fresh one. Old config is copied to {0}\n error logged to  {1}", newfile.toString(), logFile));
         try {
             Files.move(file, newfile);
         } catch (IOException e) {
@@ -1226,8 +1228,8 @@ public class DefaultNutsWorkspaceConfigModel {
             return createNutsVersionCompat(version).parseConfig(bytes, session);
         } catch (Exception ex) {
             _LOGOP(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL)
-                    .log("erroneous workspace config file. Unable to load file {0} : {1}",
-                            new Object[]{file, ex});
+                    .log(NutsMessage.jstyle("erroneous workspace config file. Unable to load file {0} : {1}",
+                            file, ex));
             throw new UncheckedIOException("unable to load config file " + file.toString(), new IOException(ex));
         }
     }

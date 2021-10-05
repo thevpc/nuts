@@ -273,28 +273,46 @@ public class CoreIOUtils {
         return url.substring(x);
     }
 
-    public static String getURLParent(String url) {
-        int x = url.length() - 1;
-        if (x == 0) {
-            return "";
+    public static String getURLParentPath(String ppath) {
+        if (ppath == null) {
+            return null;
         }
-        while (x > 0) {
-            char c = url.charAt(x);
-            if (c == '/') {
-                x--;
-            } else {
-                break;
-            }
+        while (ppath.endsWith("/")) {
+            ppath = ppath.substring(0, ppath.length() - 1);
         }
-        while (x > 0) {
-            char c = url.charAt(x);
-            if (c == '/') {
-                break;
-            }
-            x--;
+        if (ppath.isEmpty()) {
+            return null;
         }
-        return url.substring(0, x);
+        int i = ppath.lastIndexOf('/');
+        if (i <= 0) {
+            ppath = "/";
+        } else {
+            ppath = ppath.substring(0, i + 1);
+        }
+        return ppath;
     }
+//    public static String getURLParent(String url) {
+//        int x = url.length() - 1;
+//        if (x == 0) {
+//            return "";
+//        }
+//        while (x > 0) {
+//            char c = url.charAt(x);
+//            if (c == '/') {
+//                x--;
+//            } else {
+//                break;
+//            }
+//        }
+//        while (x > 0) {
+//            char c = url.charAt(x);
+//            if (c == '/') {
+//                break;
+//            }
+//            x--;
+//        }
+//        return url.substring(0, x);
+//    }
 
     public static File toFile(URL url) {
         if (url == null) {
@@ -843,12 +861,15 @@ public class CoreIOUtils {
                     try {
                         Files.delete(file);
                         if (LOG != null) {
-                            LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).log("delete file " + file);
+                            LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).log(
+                                    NutsMessage.jstyle("delete file {0}", file));
                         }
                         deleted[0]++;
                     } catch (IOException e) {
                         if (LOG != null) {
-                            LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).log("failed deleting file : " + file);
+                            LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING)
+                                    .log(NutsMessage.jstyle("failed deleting file : {0}",file)
+                                    );
                         }
                         deleted[2]++;
                     }
@@ -865,12 +886,15 @@ public class CoreIOUtils {
                     try {
                         Files.delete(dir);
                         if (LOG != null) {
-                            LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).log("delete folder " + dir);
+                            LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING)
+                                    .log(NutsMessage.jstyle("delete folder {0}", dir));
                         }
                         deleted[1]++;
                     } catch (IOException e) {
                         if (LOG != null) {
-                            LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).log("failed deleting folder: " + dir);
+                            LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING)
+                                    .log(NutsMessage.jstyle("failed deleting folder: {0}", dir)
+                                    );
                         }
                         deleted[2]++;
                     }
@@ -2513,24 +2537,6 @@ public class CoreIOUtils {
         return false;
     }
 
-    public static String getURLParentPath(String ppath) {
-        if (ppath == null) {
-            return null;
-        }
-        while (ppath.endsWith("/")) {
-            ppath = ppath.substring(0, ppath.length() - 1);
-        }
-        if (ppath.isEmpty()) {
-            return null;
-        }
-        int i = ppath.lastIndexOf('/');
-        if (i <= 0) {
-            ppath = "/";
-        } else {
-            ppath = ppath.substring(0, i + 1);
-        }
-        return ppath;
-    }
 
     public static InputStream createBytesStream(byte[] bytes, NutsMessage message, String contentType, String kind, NutsSession session) {
         return InputStreamMetadataAwareImpl.of(

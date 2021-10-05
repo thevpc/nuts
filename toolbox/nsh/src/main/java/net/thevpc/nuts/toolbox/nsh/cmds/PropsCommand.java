@@ -252,7 +252,7 @@ public class PropsCommand extends AbstractNshBuiltin {
         Map<String, String> p = new LinkedHashMap<>();
         String sourceFile = o.sourceFile;
         NutsPath filePath = ShellHelper.xfileOf(sourceFile, context.getGlobalContext().getCwd(), context.getSession());
-        try (InputStream is = filePath.input().open()) {
+        try (InputStream is = filePath.getInputStream()) {
 
             Format sourceFormat = o.sourceFormat;
             if (sourceFormat == Format.AUTO) {

@@ -68,7 +68,8 @@ public class FilesFoldersApi {
                 }
             }
         } catch (UncheckedIOException | NutsIOException ex) {
-            ws.log().of(FilesFoldersApi.class).with().session(session).level(Level.FINE).verb(NutsLogVerb.FAIL).log("unable to navigate : file not found {0}", dotFilesUrl);
+            ws.log().of(FilesFoldersApi.class).with().session(session).level(Level.FINE).verb(NutsLogVerb.FAIL)
+                    .log(NutsMessage.jstyle("unable to navigate : file not found {0}", dotFilesUrl));
         }
         return all.toArray(new Item[0]);
     }
@@ -140,7 +141,8 @@ public class FilesFoldersApi {
                 }
             }
         } catch (UncheckedIOException | NutsIOException ex) {
-            ws.log().of(FilesFoldersApi.class).with().session(session).level(Level.FINE).verb(NutsLogVerb.FAIL).log("unable to navigate : file not found {0}", dotFilesUrl);
+            ws.log().of(FilesFoldersApi.class).with().session(session).level(Level.FINE).verb(NutsLogVerb.FAIL)
+                    .log(NutsMessage.jstyle("unable to navigate : file not found {0}", dotFilesUrl));
         }
         if (versionString.compareTo("0.5.7") < 0) {
             if (folders) {
@@ -151,7 +153,8 @@ public class FilesFoldersApi {
                     foldersFileContent = StringTokenizerUtils.split(CoreIOUtils.loadString(stream, true), "\n\r")
                             .stream().map(x -> x.trim()).filter(x -> x.length() > 0).toArray(String[]::new);
                 } catch (IOException | UncheckedIOException | NutsIOException ex) {
-                    ws.log().of(FilesFoldersApi.class).with().session(session).level(Level.FINE).verb(NutsLogVerb.FAIL).log("unable to navigate : file not found {0}", dotFolderUrl);
+                    ws.log().of(FilesFoldersApi.class).with().session(session).level(Level.FINE).verb(NutsLogVerb.FAIL)
+                            .log(NutsMessage.jstyle("unable to navigate : file not found {0}", dotFolderUrl));
                 }
                 if (foldersFileContent != null) {
                     for (String folder : foldersFileContent) {
@@ -179,9 +182,9 @@ public class FilesFoldersApi {
                         nutsDescriptor = NutsWorkspaceExt.of(session.getWorkspace()).resolveEffectiveDescriptor(t, session);
                     } catch (Exception ex) {
                         session.log().of(FilesFoldersApi.class).with().session(session).level(Level.FINE).error(ex).log(
-                                "error resolving effective descriptor for {0} in url {1} : {2}", t.getId(),
+                                NutsMessage.jstyle("error resolving effective descriptor for {0} in url {1} : {2}", t.getId(),
                                 pathname,
-                                ex);//e.printStackTrace();
+                                ex));//e.printStackTrace();
                     }
                     t = nutsDescriptor;
                 }
@@ -207,7 +210,8 @@ public class FilesFoldersApi {
                         .monitor().setSource(pathname).setSession(session).create(),
                         NutsFetchMode.LOCAL, repository, session, rootPath);
             } catch (Exception ex) {
-                session.log().of(FilesFoldersApi.class).with().session(session).level(Level.FINE).error(ex).log("error parsing url : {0} : {1}", pathname, toString());//e.printStackTrace();
+                session.log().of(FilesFoldersApi.class).with().session(session).level(Level.FINE).error(ex)
+                        .log(NutsMessage.jstyle("error parsing url : {0} : {1}", pathname, toString()));//e.printStackTrace();
             }
             if (t != null) {
                 return validate(null, t, pathname, rootPath, filter, repository, session);

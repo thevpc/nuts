@@ -141,8 +141,10 @@ public class NutsRepositoryUtils {
 
         public void fireOnAddRepository(NutsRepositoryEvent event) {
             if (u._LOG(event.getSession()).isLoggable(Level.FINEST)) {
-                u._LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE).formatted().log("{0} add    repo {1}", CoreStringUtils.alignLeft(u.repo.getName(), 20), event
-                        .getRepository().getName());
+                u._LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE)
+                        .log(NutsMessage.jstyle("{0} add    repo {1}", CoreStringUtils.alignLeft(u.repo.getName(), 20), event
+                        .getRepository().getName())
+                        );
             }
             for (NutsRepositoryListener listener : u.repo.getRepositoryListeners()) {
                 listener.onAddRepository(event);
@@ -157,8 +159,9 @@ public class NutsRepositoryUtils {
 
         public void fireOnRemoveRepository(NutsRepositoryEvent event) {
             if (u._LOG(event.getSession()).isLoggable(Level.FINEST)) {
-                u._LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE).formatted().log("{0} remove repo {1}", new Object[]{CoreStringUtils.alignLeft(u.repo.getName(), 20), event
-                    .getRepository().getName()});
+                u._LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE).log(
+                        NutsMessage.jstyle("{0} remove repo {1}", CoreStringUtils.alignLeft(u.repo.getName(), 20), event
+                    .getRepository().getName()));
             }
             for (NutsRepositoryListener listener : u.repo.getRepositoryListeners()) {
 //            if (event == null) {

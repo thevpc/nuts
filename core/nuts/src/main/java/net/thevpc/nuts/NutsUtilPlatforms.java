@@ -440,7 +440,7 @@ public final class NutsUtilPlatforms {
      * @param global global
      * @param workspaceLocation workspaceName or null
      * @param session session or null
-     * @return
+     * @return locations map
      */
     public static Map<NutsStoreLocation, String> buildLocations(
             NutsOsFamily platformOsFamily,

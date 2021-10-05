@@ -45,21 +45,6 @@ public interface NutsLoggerOp {
     NutsLoggerOp session(NutsSession session);
 
     /**
-     * set or unset formatted mode (Nuts Stream Format)
-     *
-     * @param value formatted flag
-     * @return {@code this} instance
-     */
-    NutsLoggerOp formatted(boolean value);
-
-    /**
-     * set formatted mode (Nuts Stream Format)
-     *
-     * @return {@code this} instance
-     */
-    NutsLoggerOp formatted();
-
-    /**
      * set log verb
      *
      * @param verb verb or category
@@ -92,25 +77,16 @@ public interface NutsLoggerOp {
     NutsLoggerOp level(Level level);
 
     /**
-     * set message style (cstyle or jstyle)
-     *
-     * @param style message format style
-     * @return {@code this} instance
-     */
-    NutsLoggerOp style(NutsTextFormatStyle style);
-
-    /**
      * log the given message
      *
      * @param msg    message
-     * @param params message params
      */
-    void log(String msg, Object... params);
+    void log(NutsMessage msg);
 
     /**
      * log the given message
      *
      * @param msgSupplier message supplier
      */
-    void log(Supplier<String> msgSupplier);
+    void log(Supplier<NutsMessage> msgSupplier);
 }

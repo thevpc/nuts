@@ -102,7 +102,8 @@ public class FolderObjectIterator<T> implements Iterator<T> {
                             try {
                                 return (deep && Files.isDirectory(pathname)) || model.isObjectFile(pathname);
                             } catch (Exception ex) {
-                                session.log().of(FolderObjectIterator.class).with().session(session).level(Level.FINE).error(ex).log("Unable to test desk file {0}" ,pathname);
+                                session.log().of(FolderObjectIterator.class).with().session(session).level(Level.FINE).error(ex)
+                                        .log(NutsMessage.jstyle("Unable to test desk file {0}" ,pathname));
                                 return false;
                             }
                         }
@@ -118,7 +119,8 @@ public class FolderObjectIterator<T> implements Iterator<T> {
                             }
                         }
                     } catch (IOException ex) {
-                        LOG.with().error(ex).log("Unable to parse {0}",file.path);
+                        LOG.with().error(ex).log(
+                                NutsMessage.jstyle("unable to parse {0}",file.path));
                     }
                 }
             } else {

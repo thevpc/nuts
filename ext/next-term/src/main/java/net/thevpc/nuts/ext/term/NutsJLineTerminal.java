@@ -297,7 +297,8 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase {
             prepare(criteria.getSession());
         }catch (Exception ex){
             criteria.getSession().log().of(NutsJLineTerminal.class)
-                            .with().level(Level.FINEST).verb(NutsLogVerb.FAIL).error(ex).log("unable to create NutsJLineTerminal. ignored.");
+                            .with().level(Level.FINEST).verb(NutsLogVerb.FAIL).error(ex)
+                    .log(NutsMessage.jstyle("unable to create NutsJLineTerminal. ignored."));
             return NO_SUPPORT;
         }
         return DEFAULT_SUPPORT + 1;

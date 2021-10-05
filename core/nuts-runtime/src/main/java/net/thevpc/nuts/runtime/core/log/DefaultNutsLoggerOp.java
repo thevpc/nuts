@@ -1,26 +1,19 @@
 package net.thevpc.nuts.runtime.core.log;
 
-import net.thevpc.nuts.NutsLogVerb;
-import net.thevpc.nuts.NutsLoggerOp;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsTextFormatStyle;
+import net.thevpc.nuts.*;
 
 import java.util.function.Supplier;
 import java.util.logging.Level;
 
 public class DefaultNutsLoggerOp implements NutsLoggerOp {
-    public static final Object[] OBJECTS0 = new Object[0];
     private NutsSession session;
     private DefaultNutsLogger logger;
     private Level level = Level.FINE;
     private NutsLogVerb verb;
-    private String msg;
+    private NutsMessage msg;
     private long time;
-    private boolean formatted=true;
-    private Supplier<String> msgSupplier;
+    private Supplier<NutsMessage> msgSupplier;
     private Throwable error;
-    private NutsTextFormatStyle style = NutsTextFormatStyle.JSTYLE;
-    private Object[] params = OBJECTS0;
 
     public DefaultNutsLoggerOp(DefaultNutsLogger logger) {
         this.logger = logger;
@@ -33,18 +26,6 @@ public class DefaultNutsLoggerOp implements NutsLoggerOp {
     @Override
     public NutsLoggerOp session(NutsSession session) {
         this.session = session;
-        return this;
-    }
-
-    @Override
-    public NutsLoggerOp formatted(boolean value) {
-        this.formatted = value;
-        return this;
-    }
-
-    @Override
-    public NutsLoggerOp formatted() {
-        this.formatted = true;
         return this;
     }
 
@@ -67,14 +48,13 @@ public class DefaultNutsLoggerOp implements NutsLoggerOp {
     }
 
     @Override
-    public void log(String msg, Object... params) {
-        this.msg = msg;
-        this.params = params;
+    public void log(NutsMessage message) {
+        this.msg = message;
         run();
     }
 
     @Override
-    public void log(Supplier<String> msgSupplier) {
+    public void log(Supplier<NutsMessage> msgSupplier) {
         this.msgSupplier = msgSupplier;
         run();
     }
@@ -85,15 +65,9 @@ public class DefaultNutsLoggerOp implements NutsLoggerOp {
         return this;
     }
 
-    @Override
-    public NutsLoggerOp style(NutsTextFormatStyle style) {
-        this.style = style == null ? NutsTextFormatStyle.JSTYLE : style;
-        return this;
-    }
-
     private void run() {
         if (logger.isLoggable(level)) {
-            String m = msg;
+            NutsMessage m = msg;
             if (msgSupplier != null) {
                 m = msgSupplier.get();
             }
@@ -106,11 +80,9 @@ public class DefaultNutsLoggerOp implements NutsLoggerOp {
                     level,
                     verb,
                     m,
-                    params, formatted, time, style
+                    time,
+                    error
             );
-            if (error != null) {
-                record.setThrown(error);
-            }
             logger.log(record);
         }
     }

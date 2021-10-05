@@ -23,7 +23,6 @@ public class NutsLogRichFormatter extends Formatter {
     @Override
     public String format(LogRecord record) {
         NutsLogRecord wRecord = NutsLogUtils.toNutsLogRecord(record, session);
-        NutsTextFormatStyle style = wRecord.getFormatStyle();
         NutsTextManager tf = wRecord.getWorkspace().text().setSession(wRecord.getSession());
 
         NutsTextBuilder sb = tf.builder();
@@ -138,24 +137,12 @@ public class NutsLogRichFormatter extends Formatter {
         sb.append(" "
                 + NutsLogUtils.formatClassName(wRecord.getSourceClassName())
                 + ": ");
-        Object[] parameters2 = wRecord.getParameters();
-        if (parameters2 == null) {
-            parameters2 = new Object[0];
-        }
-        String message = wRecord.getMessage();
-        if (!wRecord.isFormatted()) {
-            message = wRecord.getSession().text().forPlain(message).toString();
-        }
+
+        NutsMessage message = wRecord.getNutsMessage();
         NutsString msgStr =
                 wRecord.getWorkspace().text()
                         .setSession(wRecord.getSession())
-                        .toText(
-                                new NutsMessage(style,
-                                        message,
-                                        parameters2
-                                )
-
-                        );
+                        .toText(message);
         sb.append(msgStr);
         if (wRecord.getTime() > 0) {
             sb.append(" (");

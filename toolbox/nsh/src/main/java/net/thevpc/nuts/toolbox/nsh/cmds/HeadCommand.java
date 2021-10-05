@@ -83,7 +83,7 @@ public class HeadCommand extends SimpleNshBuiltin {
         try {
             try {
                 r = new BufferedReader(new InputStreamReader(context.getSession().io().path(file)
-                        .input().open()));
+                        .getInputStream()));
                 String line = null;
                 int count = 0;
                 while (count < max && (line = r.readLine()) != null) {

@@ -10,9 +10,7 @@ import java.util.logging.*;
 public class DefaultNutsLogger implements NutsLogger {
     private NutsWorkspace workspace;
     private NutsSession session;
-    private boolean defaultFormatted=true;
     private long defaultTime;
-    private NutsTextFormatStyle defaultStyle= NutsTextFormatStyle.JSTYLE;
     private Logger log;
     private static final int offValue = Level.OFF.intValue();
     private LinkedList<LogRecord> suspendedTerminalRecords = new LinkedList<>();
@@ -74,65 +72,30 @@ public class DefaultNutsLogger implements NutsLogger {
         return false;
     }
 
-    public void log(Level level, String msg, Throwable thrown) {
-        log(session, level, msg, thrown);
+    public void log(Level level, NutsLogVerb verb, NutsMessage msg, Throwable thrown) {
+        log(session, level, verb,msg, thrown);
     }
 
-    public void log(NutsSession session, Level level, String msg, Throwable thrown) {
+    public void log(NutsSession session, Level level, NutsLogVerb verb, NutsMessage msg, Throwable thrown) {
         if (!isLoggable(level)) {
             return;
         }
         if(session==null){
             session=this.session;
         }
-        LogRecord lr = new NutsLogRecord(session, level, NutsLogVerb.FAIL, msg, DefaultNutsLoggerOp.OBJECTS0, defaultFormatted, defaultTime,defaultStyle);
-        lr.setThrown(thrown);
-        doLog(lr);
+        doLog(new NutsLogRecord(session, level, verb, msg, defaultTime,thrown));
     }
 
-    public void log(Level level, NutsLogVerb verb, String msg) {
-        log(session,level, verb, msg);
-    }
-
-    public void log(NutsSession session,Level level, NutsLogVerb verb, String msg) {
+    public void log(NutsSession session,Level level, NutsLogVerb verb, Supplier<NutsMessage> msgSupplier, Supplier<Throwable> errorSupplier) {
         if (!isLoggable(level)) {
             return;
         }
         if(session==null){
             session=this.session;
         }
-        LogRecord lr = new NutsLogRecord(session, level, verb, msg, DefaultNutsLoggerOp.OBJECTS0, defaultFormatted, defaultTime,defaultStyle);
-        doLog(lr);
-    }
-
-    public void log(Level level, NutsLogVerb verb, Supplier<String> msgSupplier) {
-        log(session, level, verb, msgSupplier);
-    }
-    public void log(NutsSession session,Level level, NutsLogVerb verb, Supplier<String> msgSupplier) {
-        if (!isLoggable(level)) {
-            return;
-        }
-        if(session==null){
-            session=this.session;
-        }
-        LogRecord lr = new NutsLogRecord(session, level, verb, msgSupplier.get(), DefaultNutsLoggerOp.OBJECTS0, defaultFormatted, defaultTime,defaultStyle);
-        doLog(lr);
-    }
-
-    public void log(Level level, NutsLogVerb verb, String msg, Object[] params) {
-        log(session,level, verb, msg, params);
-    }
-
-    public void log(NutsSession session,Level level, NutsLogVerb verb, String msg, Object[] params) {
-        if (!isLoggable(level)) {
-            return;
-        }
-        if(session==null){
-            session=this.session;
-        }
-        LogRecord lr = new NutsLogRecord(session,  level, verb, msg, params, defaultFormatted, defaultTime,defaultStyle);
-        lr.setParameters(params);
-        doLog(lr);
+        doLog(new NutsLogRecord(session, level, verb, msgSupplier==null?null:msgSupplier.get(), defaultTime,
+                errorSupplier==null?null:errorSupplier.get()
+        ));
     }
 
     // private support method for logging.

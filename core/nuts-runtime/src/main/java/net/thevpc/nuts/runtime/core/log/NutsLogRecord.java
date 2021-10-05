@@ -1,40 +1,35 @@
 package net.thevpc.nuts.runtime.core.log;
 
-import net.thevpc.nuts.NutsLogVerb;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsTextFormatStyle;
-import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.*;
 
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
 public class NutsLogRecord extends LogRecord {
     private NutsSession session;
+    private NutsMessage nmsg;
     private NutsLogVerb verb;
-    private boolean formatted;
+    /**
+     * duration
+     */
     private long time;
-    private NutsTextFormatStyle formatStyle = NutsTextFormatStyle.JSTYLE;
 
-    public NutsLogRecord(NutsSession session, Level level, NutsLogVerb verb, String msg, Object[] objects, boolean formatted, long time, NutsTextFormatStyle style) {
-        super(level, msg);
+    public NutsLogRecord(NutsSession session, Level level, NutsLogVerb verb, NutsMessage msg, long time,Throwable thrown) {
+        super(level, msg.getMessage());
+        this.nmsg = msg;
         this.verb = verb;
         this.session = session;
-        this.formatted = formatted;
         this.time = time;
-        this.formatStyle = style == null ? NutsTextFormatStyle.CSTYLE : style;
-        setParameters(objects);
+        setParameters(msg.getParams());
+        setThrown(thrown);
     }
 
-    public NutsTextFormatStyle getFormatStyle() {
-        return formatStyle;
+    public NutsMessage getNutsMessage() {
+        return nmsg;
     }
 
     public long getTime() {
         return time;
-    }
-
-    public boolean isFormatted() {
-        return formatted;
     }
 
     public NutsLogVerb getVerb() {

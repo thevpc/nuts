@@ -201,7 +201,8 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                     descTracker.addFailure(location);
                 } catch (Exception ex) {
                     //ignore
-                    _LOGOP(getSession()).error(ex).level(Level.SEVERE).log("unexpected error while fetching descriptor for {0}", id);
+                    _LOGOP(getSession()).error(ex).level(Level.SEVERE)
+                            .log(NutsMessage.jstyle("unexpected error while fetching descriptor for {0}", id));
                     if (_LOG(getSession()).isLoggable(Level.FINEST)) {
                         wu.traceMessage(nutsFetchModes, id.getLongNameId(), NutsLogVerb.FAIL, "fetch def", startTime);
                     }
@@ -215,7 +216,8 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                         foundDefinition.setEffectiveDescriptor(dws.resolveEffectiveDescriptor(foundDefinition.getDescriptor(), session));
                     } catch (NutsNotFoundException ex) {
                         //ignore
-                        _LOGOP(getSession()).level(Level.WARNING).verb(NutsLogVerb.WARNING).log("artifact descriptor found, but its parent is not: {0} with parent {1}", id.getLongName(), Arrays.toString(foundDefinition.getDescriptor().getParents()));
+                        _LOGOP(getSession()).level(Level.WARNING).verb(NutsLogVerb.WARNING)
+                                .log(NutsMessage.jstyle("artifact descriptor found, but its parent is not: {0} with parent {1}", id.getLongName(), Arrays.toString(foundDefinition.getDescriptor().getParents())));
                         foundDefinition = null;
                     }
                 }

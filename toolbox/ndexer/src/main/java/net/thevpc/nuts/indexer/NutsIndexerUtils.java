@@ -136,14 +136,14 @@ public class NutsIndexerUtils {
                 .build();
     }
 
-    public static NutsId mapToNutsId(Map<String, String> map, NutsWorkspace ws) {
-        return ws.id().builder()
+    public static NutsId mapToNutsId(Map<String, String> map, NutsSession session) {
+        return session.id().builder()
                 .setArtifactId(NutsUtilStrings.trim(map.get("name")))
                 .setRepository(NutsUtilStrings.trim(map.get("namespace")))
                 .setGroupId(NutsUtilStrings.trim(map.get("group")))
                 .setVersion(NutsUtilStrings.trim(map.get("version")))
                 .setCondition(
-                        ws.descriptor().envConditionBuilder()
+                        session.descriptor().envConditionBuilder()
                                 //TODO what if the result is ',' separated array?
                                 .setArch(NutsUtilStrings.trim(map.get(NutsConstants.IdProperties.ARCH)))
                                 .setOs(NutsUtilStrings.trim(map.get(NutsConstants.IdProperties.OS)))

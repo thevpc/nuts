@@ -117,7 +117,7 @@ public class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFa
         try {
             Path storeLocation = getCommandsFolder(session);
             if (!Files.isDirectory(storeLocation)) {
-                _LOGOP(session).level(Level.SEVERE).log("unable to locate commands. Invalid store locate {0}", storeLocation);
+                _LOGOP(session).level(Level.SEVERE).log(NutsMessage.jstyle("unable to locate commands. Invalid store locate {0}", storeLocation));
                 return all;
             }
             Files.list(storeLocation).forEach(file -> {
@@ -127,7 +127,7 @@ public class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFa
                     try {
                         c = session.elem().setContentType(NutsContentType.JSON).parse(file, NutsCommandConfig.class);
                     } catch (Exception ex) {
-                        _LOGOP(session).level(Level.FINE).error(ex).log("unable to parse {0}", file);
+                        _LOGOP(session).level(Level.FINE).error(ex).log(NutsMessage.jstyle("unable to parse {0}", file));
                         //
                     }
                     if (c != null) {

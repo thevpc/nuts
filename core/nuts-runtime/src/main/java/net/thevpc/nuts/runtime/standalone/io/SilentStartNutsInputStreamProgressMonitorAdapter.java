@@ -1,14 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.io;
 
-import net.thevpc.nuts.NutsProgressEvent;
-import net.thevpc.nuts.NutsProgressMonitor;
-import net.thevpc.nuts.NutsLogger;
-import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.NutsLogVerb;
+import net.thevpc.nuts.*;
 
 import java.util.logging.Level;
-import net.thevpc.nuts.NutsLoggerOp;
-import net.thevpc.nuts.NutsSession;
 
 class SilentStartNutsInputStreamProgressMonitorAdapter implements NutsProgressMonitor {
     private NutsLogger LOG;
@@ -39,9 +33,11 @@ class SilentStartNutsInputStreamProgressMonitorAdapter implements NutsProgressMo
     public void onComplete(NutsProgressEvent event) {
         finalMonitor.onComplete(event);
         if (event.getError() != null) {
-            _LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.FAIL).log("download failed    : {0}", path);
+            _LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.FAIL)
+                    .log(NutsMessage.jstyle("download failed    : {0}", path));
         } else {
-            _LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.SUCCESS).log( "download succeeded : {0}", path);
+            _LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.SUCCESS)
+                    .log(NutsMessage.jstyle( "download succeeded : {0}", path));
         }
     }
 

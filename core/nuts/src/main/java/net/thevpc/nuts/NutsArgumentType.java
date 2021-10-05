@@ -76,6 +76,7 @@ public enum NutsArgumentType implements NutsEnum {
 
     /**
      * parse string and return {@code emptyOrErrorValue} if parse fails
+     * @param emptyOrErrorValue emptyOrErrorValue
      * @param value value to parse
      * @return parsed instance or {@code emptyOrErrorValue}
      */

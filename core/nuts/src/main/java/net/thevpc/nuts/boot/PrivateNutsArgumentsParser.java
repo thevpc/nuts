@@ -1099,7 +1099,7 @@ final class PrivateNutsArgumentsParser {
                 if (!options.isSkipErrors()) {
                     throw new NutsBootException(NutsMessage.plain(errorMessage.toString()));
                 } else {
-                    log.log(Level.WARNING, NutsLogVerb.WARNING, "{0}", errorMessage.toString());
+                    log.log(Level.WARNING, NutsLogVerb.WARNING, NutsMessage.jstyle("{0}", errorMessage.toString()));
                 }
             }
         }

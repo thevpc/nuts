@@ -519,7 +519,8 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
 
         if (ws.config().setSession(validWorkspaceSession).save(requireSave)) {
             if (_LOG(session).isLoggable(Level.INFO)) {
-                _LOGOP(session).level(Level.INFO).verb(NutsLogVerb.WARNING).log("workspace is updated. Nuts should be restarted for changes to take effect.");
+                _LOGOP(session).level(Level.INFO).verb(NutsLogVerb.WARNING)
+                        .log(NutsMessage.jstyle("workspace is updated. Nuts should be restarted for changes to take effect."));
             }
             if (apiUpdate != null && apiUpdate.isUpdateAvailable() && !apiUpdate.isUpdateApplied()) {
                 if (validWorkspaceSession.isPlainTrace()) {
@@ -606,7 +607,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                             .addId(NutsConstants.Ids.NUTS_API + "#" + v).setLatest(true).getResultIds().first();
                     newFile = newId == null ? null : latestOnlineDependencies(fetch0()).setFailFast(false).setSession(session).setId(newId).getResultDefinition();
                 } catch (NutsNotFoundException ex) {
-                    _LOGOP(session).level(Level.SEVERE).error(ex).log("error : {0}", ex);
+                    _LOGOP(session).level(Level.SEVERE).error(ex).log(NutsMessage.jstyle("error : {0}", ex));
                     //ignore
                 }
                 break;
@@ -621,7 +622,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                     try {
                         oldFile = fetch0().setId(oldId).setSession(session.copy().setFetchStrategy(NutsFetchStrategy.ONLINE)).getResultDefinition();
                     } catch (NutsNotFoundException ex) {
-                        _LOGOP(session).level(Level.SEVERE).error(ex).log("error : {0}", ex);
+                        _LOGOP(session).level(Level.SEVERE).error(ex).log(NutsMessage.jstyle("error : {0}", ex));
                         //ignore
                     }
                 }
@@ -640,7 +641,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                             .setFailFast(false)
                             .getResultDefinition();
                 } catch (NutsNotFoundException ex) {
-                    _LOGOP(session).level(Level.SEVERE).error(ex).log("error : {0}", ex);
+                    _LOGOP(session).level(Level.SEVERE).error(ex).log(NutsMessage.jstyle("error : {0}", ex));
                     //ignore
                 }
                 break;

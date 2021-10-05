@@ -106,13 +106,13 @@ public class DefaultWriteTypeProcessor {
                 break;
             }
             case NO: {
-                getLog().with().session(session).level(Level.FINE).verb(NutsLogVerb.WARNING).log( getLogMessage(), getLogMessageParams());
+                getLog().with().session(session).level(Level.FINE).verb(NutsLogVerb.WARNING)
+                        .log( NutsMessage.jstyle(getLogMessage(), getLogMessageParams()));
                 return false;
             }
         }
         getLog().with().session(session).level(Level.FINE).verb(NutsLogVerb.WARNING)
-                .formatted()
-                .log( getLogMessage(), getLogMessageParams());
+                .log( NutsMessage.jstyle(getLogMessage(), getLogMessageParams()));
         return true;
     }
 }

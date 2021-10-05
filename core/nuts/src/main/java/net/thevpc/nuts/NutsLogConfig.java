@@ -106,6 +106,7 @@ public class NutsLogConfig implements Serializable, Cloneable {
 
     /**
      * Log File Size in Mega Bytes
+     * @return  log file size
      */
     public int getLogFileSize() {
         return logFileSize;
@@ -123,6 +124,7 @@ public class NutsLogConfig implements Serializable, Cloneable {
 
     /**
      * Log File rotation count
+     * @return log rotation files count
      */
     public int getLogFileCount() {
         return logFileCount;

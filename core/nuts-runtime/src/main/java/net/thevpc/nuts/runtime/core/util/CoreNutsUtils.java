@@ -542,13 +542,13 @@ public class CoreNutsUtils {
         }
         long time = (startTime != 0) ? (System.currentTimeMillis() - startTime) : 0;
         String modeString = CoreStringUtils.alignLeft(fetchMode.id(), 7);
-        log.with().session(session).level(lvl).verb(tracePhase).time(time).formatted()
-                .log("[{0}] {1} {2} {3} {4}",
+        log.with().session(session).level(lvl).verb(tracePhase).time(time)
+                .log(NutsMessage.jstyle("[{0}] {1} {2} {3} {4}",
                         modeString,
                         CoreStringUtils.alignLeft(name, 20),
                         CoreStringUtils.alignLeft(title, 18),
                         (id == null ? "" : id),
-                        extraMsg);
+                        extraMsg));
     }
 
     public static NutsContentType readOptionOutputFormat(NutsCommandLine cmdLine) {

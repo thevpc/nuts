@@ -76,7 +76,8 @@ public abstract class AbstractMavenRepositoryHelper {
                 break;
             }
             default: {
-                _LOGOP(session).level(Level.SEVERE).error(new IllegalArgumentException("unsupported Hash Type " + id.getFace())).log("[BUG] Unsupported Hash Type {0}", id.getFace());
+                _LOGOP(session).level(Level.SEVERE).error(new IllegalArgumentException("unsupported Hash Type " + id.getFace()))
+                        .log(NutsMessage.jstyle("[BUG] Unsupported Hash Type {0}", id.getFace()));
                 throw new IOException("unsupported hash type " + id.getFace());
             }
         }

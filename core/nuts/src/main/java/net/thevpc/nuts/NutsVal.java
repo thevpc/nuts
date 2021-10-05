@@ -69,6 +69,7 @@ public interface NutsVal extends NutsBlankable {
     /**
      * return best effort to convert the value to an int. return {@code emptyOrErrorValue} when blank or  fails
      *
+     * @param  emptyOrErrorValue emptyOrErrorValue
      * @return best effort to convert the value to an int
      */
     Integer getInt(Integer emptyOrErrorValue);
@@ -76,6 +77,8 @@ public interface NutsVal extends NutsBlankable {
     /**
      * return best effort to convert the value to an int. return {@code emptyValue} whe blank and {@code errorValue} when fails
      *
+     * @param  emptyValue emptyValue
+     * @param  errorValue errorValue
      * @return best effort to convert the value to an int
      */
     Integer getInt(Integer emptyValue, Integer errorValue);
@@ -89,6 +92,7 @@ public interface NutsVal extends NutsBlankable {
     /**
      * return best effort to convert the value to a long. return {@code emptyOrErrorValue} when blank or  fails
      *
+     * @param  emptyOrErrorValue emptyOrErrorValue
      * @return best effort to convert the value to a long
      */
     Long getLong(Long emptyOrErrorValue);
@@ -96,6 +100,8 @@ public interface NutsVal extends NutsBlankable {
     /**
      * return best effort to convert the value to a long. return {@code emptyValue} whe blank and {@code errorValue} when fails
      *
+     * @param  emptyValue emptyValue
+     * @param  errorValue errorValue
      * @return best effort to convert the value to a long
      */
     Long getLong(Long emptyValue, Long errorValue);
@@ -122,6 +128,7 @@ public interface NutsVal extends NutsBlankable {
     /**
      * return best effort to convert the value to a double. return {@code emptyOrErrorValue} when blank or  fails
      *
+     * @param  emptyOrErrorValue emptyOrErrorValue
      * @return best effort to convert the value to a double
      */
     Double getDouble(Double emptyOrErrorValue);
@@ -129,6 +136,8 @@ public interface NutsVal extends NutsBlankable {
     /**
      * return best effort to convert the value to a double. return {@code emptyValue} whe blank and {@code errorValue} when fails
      *
+     * @param  emptyValue emptyValue
+     * @param  errorValue errorValue
      * @return best effort to convert the value to a double
      */
     Double getDouble(Double emptyValue, Double errorValue);
@@ -144,6 +153,7 @@ public interface NutsVal extends NutsBlankable {
     /**
      * return best effort to convert the value to a float. return {@code emptyOrErrorValue} when blank or  fails
      *
+     * @param  emptyOrErrorValue emptyOrErrorValue
      * @return best effort to convert the value to a float
      */
     Float getFloat(Float emptyOrErrorValue);
@@ -151,6 +161,8 @@ public interface NutsVal extends NutsBlankable {
     /**
      * return best effort to convert the value to a float. return {@code emptyValue} whe blank and {@code errorValue} when fails
      *
+     * @param  emptyValue emptyValue
+     * @param  errorValue errorValue
      * @return best effort to convert the value to a float
      */
     Float getFloat(Float emptyValue, Float errorValue);
@@ -184,6 +196,7 @@ public interface NutsVal extends NutsBlankable {
     /**
      * return best effort to convert the value to a boolean. return {@code emptyOrErrorValue} when blank or  fails
      *
+     * @param  emptyOrErrorValue emptyOrErrorValue
      * @return best effort to convert the value to a boolean
      */
     Boolean getBoolean(Boolean emptyOrErrorValue);
@@ -191,6 +204,8 @@ public interface NutsVal extends NutsBlankable {
     /**
      * return best effort to convert the value to a boolean. return {@code emptyValue} whe blank and {@code errorValue} when fails
      *
+     * @param  emptyValue emptyValue
+     * @param  errorValue errorValue
      * @return best effort to convert the value to a boolean
      */
     Boolean getBoolean(Boolean emptyValue, Boolean errorValue);

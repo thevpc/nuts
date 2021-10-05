@@ -102,7 +102,8 @@ public class FolderNutIdIterator implements Iterator<NutsId> {
                             try {
                                 return (deep && Files.isDirectory(pathname)) || model.isDescFile(pathname);
                             } catch (Exception ex) {
-                                session.log().of(FolderNutIdIterator.class).with().session(session).level(Level.FINE).error(ex).log("unable to test desc file {0}", pathname);
+                                session.log().of(FolderNutIdIterator.class).with().session(session).level(Level.FINE).error(ex)
+                                        .log(NutsMessage.jstyle("unable to test desc file {0}", pathname));
                                 return false;
                             }
                         }
@@ -118,7 +119,8 @@ public class FolderNutIdIterator implements Iterator<NutsId> {
                             }
                         }
                     } catch (IOException ex) {
-                        session.log().of(FolderNutIdIterator.class).with().session(session).level(Level.FINEST).error(ex).log("unable to iterate {0}", file.path);
+                        session.log().of(FolderNutIdIterator.class).with().session(session).level(Level.FINEST).error(ex)
+                                .log(NutsMessage.jstyle("unable to iterate {0}", file.path));
                     }
                 }
             } else {
@@ -127,7 +129,8 @@ public class FolderNutIdIterator implements Iterator<NutsId> {
                 try {
                     t = model.parseId(file.path, rootFolder, filter, repository, session);
                 } catch (Exception ex) {
-                    session.log().of(FolderNutIdIterator.class).with().session(session).level(Level.FINEST).error(ex).log("unable to parse id from file {0}", file.path);
+                    session.log().of(FolderNutIdIterator.class).with().session(session).level(Level.FINEST).error(ex)
+                            .log(NutsMessage.jstyle("unable to parse id from file {0}", file.path));
                 }
                 if (t != null) {
                     last = t;

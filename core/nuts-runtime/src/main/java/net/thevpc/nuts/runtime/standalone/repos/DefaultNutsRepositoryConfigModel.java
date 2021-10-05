@@ -416,9 +416,16 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
             configurationChanged = false;
             if (_LOG(session).isLoggable(Level.CONFIG)) {
                 if (created) {
-                    _LOGOP(session).level(Level.CONFIG).verb(NutsLogVerb.SUCCESS).log(CoreStringUtils.alignLeft(repository.getName(), 20) + " created repository " + repository.getName() + " at " + getStoreLocation());
+                    _LOGOP(session).level(Level.CONFIG).verb(NutsLogVerb.SUCCESS)
+                            .log(NutsMessage.jstyle(
+                                    "{0} created repository {1} at {2}",
+                                    CoreStringUtils.alignLeft(repository.getName(), 20) , repository.getName() , getStoreLocation()
+                                    ));
                 } else {
-                    _LOGOP(session).level(Level.CONFIG).verb(NutsLogVerb.SUCCESS).log(CoreStringUtils.alignLeft(repository.getName(), 20) + " updated repository " + repository.getName() + " at " + getStoreLocation());
+                    _LOGOP(session).level(Level.CONFIG).verb(NutsLogVerb.SUCCESS).log(NutsMessage.jstyle(
+                            "{0} updated repository {1} at {2}",
+                            CoreStringUtils.alignLeft(repository.getName(), 20) , repository.getName() , getStoreLocation()
+                    ));
                 }
             }
             ok = true;

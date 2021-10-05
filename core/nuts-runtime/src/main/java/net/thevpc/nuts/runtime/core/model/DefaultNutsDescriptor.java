@@ -162,7 +162,9 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
                 session.log().of(DefaultNutsDescriptor.class)
                         .with().level(Level.FINEST)
                         .verb(NutsLogVerb.WARNING)
-                        .log("{0} has nuts.application flag armed but is not an application", getId());
+                        .log(
+                                NutsMessage.jstyle("{0} has nuts.application flag armed but is not an application", getId())
+                        );
             }
         }
     }

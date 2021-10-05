@@ -102,7 +102,9 @@ public class PrivateNutsUtilApplication {
                         fm = session.text().forStyled(m, NutsTextStyle.error());
                     }
                 } catch (Exception ex2) {
-                    session.log().of(NutsApplications.class).with().level(Level.FINE).error(ex2).log("unable to get system terminal");
+                    session.log().of(NutsApplications.class).with().level(Level.FINE).error(ex2).log(
+                            NutsMessage.jstyle("unable to get system terminal")
+                    );
                     //
                 }
             } else {

@@ -49,14 +49,13 @@ public class RefreshDataService {
         Iterator<NutsWorkspaceLocation> iterator = subscriber.getWorkspaceLocations().values().iterator();
         if (iterator.hasNext()) {
             NutsWorkspaceLocation workspaceLocation = iterator.next();
-            NutsWorkspace ws = workspacePool.openWorkspace(workspaceLocation.getLocation());
-            NutsSession session = ws.createSession();
+            NutsSession session = workspacePool.openWorkspace(workspaceLocation.getLocation());
             Map<String, NutsId> oldData = this.dataService
                     .getAllData(NutsIndexerUtils.getCacheDir(session, subscriber.cacheFolderName()))
                     .stream()
-                    .collect(Collectors.toMap(map -> map.get("stringId"), map -> NutsIndexerUtils.mapToNutsId(map, ws), (v1, v2) -> v1));
-            Iterator<NutsDefinition> definitions = ws.search()
-                    .setRepositoryFilter(ws.repos().filter().byUuid(subscriber.getUuid()))
+                    .collect(Collectors.toMap(map -> map.get("stringId"), map -> NutsIndexerUtils.mapToNutsId(map, session), (v1, v2) -> v1));
+            Iterator<NutsDefinition> definitions = session.search()
+                    .setRepositoryFilter(session.repos().filter().byUuid(subscriber.getUuid()))
                     .setFailFast(false)
                     .setContent(false)
                     .setEffective(true)
@@ -79,7 +78,7 @@ public class RefreshDataService {
 
                 NutsDependency[] directDependencies = definition.getEffectiveDescriptor().getDependencies();
                 id.put("dependencies",
-                        ws.elem().setContentType(NutsContentType.JSON).setValue(Arrays.stream(directDependencies).map(Object::toString).collect(Collectors.toList()))
+                        session.elem().setContentType(NutsContentType.JSON).setValue(Arrays.stream(directDependencies).map(Object::toString).collect(Collectors.toList()))
                                 .setNtf(false).format().filteredText()
                 );
                 dataToIndex.add(id);

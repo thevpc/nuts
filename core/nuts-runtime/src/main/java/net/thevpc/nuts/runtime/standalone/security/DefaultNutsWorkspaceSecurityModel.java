@@ -113,7 +113,8 @@ public class DefaultNutsWorkspaceSecurityModel {
         NutsUser adminSecurity = findUser(NutsConstants.Users.ADMIN, session);
         if (adminSecurity == null || !adminSecurity.hasCredentials()) {
             if (_LOG(session).isLoggable(Level.CONFIG)) {
-                _LOGOP(session).level(Level.CONFIG).verb(NutsLogVerb.WARNING).log(NutsConstants.Users.ADMIN + " user has no credentials. reset to default");
+                _LOGOP(session).level(Level.CONFIG).verb(NutsLogVerb.WARNING)
+                        .log(NutsMessage.jstyle("{0} user has no credentials. reset to default",NutsConstants.Users.ADMIN));
             }
             NutsUserConfig u = NutsWorkspaceConfigManagerExt.of(ws.config()).getModel().getUser(NutsConstants.Users.ADMIN, session);
             u.setCredentials(CoreStringUtils.chrToStr(createCredentials("admin".toCharArray(), false, null, session)));

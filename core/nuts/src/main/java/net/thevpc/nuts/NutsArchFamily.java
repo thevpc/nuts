@@ -88,6 +88,7 @@ public enum NutsArchFamily implements NutsEnum {
     /**
      * parse string and return {@code emptyOrErrorValue} if parse fails
      *
+     * @param emptyOrErrorValue emptyOrErrorValue
      * @param arch value to parse
      * @return parsed instance or {@code emptyOrErrorValue}
      */

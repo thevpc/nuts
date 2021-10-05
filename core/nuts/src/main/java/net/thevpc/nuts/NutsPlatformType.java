@@ -63,6 +63,7 @@ public enum NutsPlatformType implements NutsEnum {
      * parse string and return {@code emptyOrErrorValue} if parse fails
      *
      * @param value value to parse
+     * @param emptyOrErrorValue emptyOrErrorValue
      * @return parsed instance or {@code emptyOrErrorValue}
      */
     public static NutsPlatformType parseLenient(String value, NutsPlatformType emptyOrErrorValue) {

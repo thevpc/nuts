@@ -70,12 +70,15 @@ public class DefaultNutsDeployRepositoryCommand extends AbstractNutsDeployReposi
                 try {
                     xrepo.getIndexStore().revalidate(this.getId(), session);
                 } catch (NutsException ex) {
-                    _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.FAIL).log("error revalidating Indexer for {0} : {1}", getRepo().getName(), ex);
+                    _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.FAIL)
+                            .log(NutsMessage.jstyle("error revalidating Indexer for {0} : {1}", getRepo().getName(), ex));
                 }
             }
-            _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.SUCCESS).log("{0} deploy {1}", CoreStringUtils.alignLeft(getRepo().getName(), 20), this.getId());
+            _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.SUCCESS)
+                    .log(NutsMessage.jstyle("{0} deploy {1}", CoreStringUtils.alignLeft(getRepo().getName(), 20), this.getId()));
         } catch (RuntimeException ex) {
-            _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.FAIL).log("{0} deploy {1}", CoreStringUtils.alignLeft(getRepo().getName(), 20), this.getId());
+            _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.FAIL)
+                    .log(NutsMessage.jstyle("{0} deploy {1}", CoreStringUtils.alignLeft(getRepo().getName(), 20), this.getId()));
             throw ex;
         }
         return this;

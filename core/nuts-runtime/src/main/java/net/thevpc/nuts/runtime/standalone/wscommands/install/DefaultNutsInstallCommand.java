@@ -415,7 +415,8 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                             resultList.add(info.definition);
                         }
                     } catch (RuntimeException ex) {
-                        _LOGOP(session).error(ex).verb(NutsLogVerb.WARNING).level(Level.FINE).formatted().log("failed to install {0}", info.id);
+                        _LOGOP(session).error(ex).verb(NutsLogVerb.WARNING).level(Level.FINE)
+                                .log(NutsMessage.jstyle("failed to install {0}", info.id));
                         failedList.add(info.id);
                         if (session.isPlainTrace()) {
                             if (!ws.term().setSession(getSession()).getTerminal().ask()

@@ -37,6 +37,10 @@ public class NutsStreamOrPath {
         return new NutsStreamOrPath(value, Type.PATH, false);
     }
 
+    public static NutsStreamOrPath of(NutsPrintStream value) {
+        return new NutsStreamOrPath(value, Type.NUTS_PRINT_STREAM, false);
+    }
+
     public static NutsStreamOrPath ofAnyInputOrNull(Object value, NutsSession session) {
         if (value == null) {
             return null;
@@ -118,11 +122,20 @@ public class NutsStreamOrPath {
     }
 
     public InputStream getInputStream() {
-        return (InputStream) value;
+        switch (type){
+            case PATH:return getPath().getInputStream();
+            case INPUT_STREAM:return (InputStream) value;
+        }
+        throw new IllegalArgumentException("no an input stream");
     }
 
     public OutputStream getOutputStream() {
-        return (OutputStream) value;
+        switch (type){
+            case PATH:return getPath().getOutputStream();
+            case OUTPUT_STREAM:return (OutputStream) value;
+            case NUTS_PRINT_STREAM:return ((NutsPrintStream) value).asOutputStream();
+        }
+        throw new IllegalArgumentException("no an output stream");
     }
 
     public Object getValue() {
@@ -192,5 +205,7 @@ public class NutsStreamOrPath {
         PATH,
         INPUT_STREAM,
         OUTPUT_STREAM,
+        NUTS_PRINT_STREAM
+        ;
     }
 }
