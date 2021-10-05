@@ -43,7 +43,7 @@ public class CoreCommonUtils {
         NutsWorkspace ws = session.getWorkspace();
         NutsTextManager txt = ws.text();
         if (o == null) {
-            return txt.forBlank();
+            return txt.ofBlank();
         }
         if (o instanceof NutsFormattable) {
             return txt.toText(o);
@@ -56,15 +56,15 @@ public class CoreCommonUtils {
             Collection<NutsElementEntry> c = ((NutsObjectElement) o).children();
             Object[] a = c.toArray();
             if (a.length == 0) {
-                return txt.forBlank();
+                return txt.ofBlank();
             }
             if (a.length == 1) {
-                return txt.forPlain(stringValue(a[0]));
+                return txt.ofPlain(stringValue(a[0]));
             }
             return txt.builder()
                     .append("{")
                     .appendJoined(
-                            txt.forPlain(", "),
+                            txt.ofPlain(", "),
                             c.stream().map(x -> stringValueFormatted(x, escapeString, session)).collect(Collectors.toList())
                     )
                     .append("}");
@@ -107,20 +107,20 @@ public class CoreCommonUtils {
             o = ((Map) o).entrySet();
         }
         if (o == null) {
-            return txt.forBlank();
+            return txt.ofBlank();
         }
         if (o instanceof Instant) {
-            return txt.forPlain(
+            return txt.ofPlain(
                     CoreNutsUtils.DEFAULT_DATE_TIME_FORMATTER.format(((Instant) o))
             );
         }
         if (o instanceof Temporal) {
-            return txt.forPlain(
+            return txt.ofPlain(
                     CoreNutsUtils.DEFAULT_DATE_TIME_FORMATTER.format(((Temporal) o))
             );
         }
         if (o instanceof Date) {
-            return txt.forPlain(
+            return txt.ofPlain(
                     CoreNutsUtils.DEFAULT_DATE_TIME_FORMATTER.format(((Date) o).toInstant())
             );
         }
@@ -128,16 +128,16 @@ public class CoreCommonUtils {
             Collection c = ((Collection) o);
             Object[] a = c.toArray();
             if (a.length == 0) {
-                return txt.forBlank();
+                return txt.ofBlank();
             }
             if (a.length == 1) {
-                return txt.forPlain(stringValue(a[0]));
+                return txt.ofPlain(stringValue(a[0]));
             }
             List<NutsString> ll = ((Collection<Object>) c).stream().map(x -> stringValueFormatted(x, escapeString, session)).collect(Collectors.toList());
             return txt.builder()
                     .append("[")
                     .appendJoined(
-                            txt.forPlain(", "),
+                            txt.ofPlain(", "),
                             ll
                     )
                     .append("]");
@@ -146,16 +146,16 @@ public class CoreCommonUtils {
             Map c = ((Map) o);
             Map.Entry[] a = (Map.Entry[]) c.entrySet().toArray(new Map.Entry[0]);
             if (a.length == 0) {
-                return txt.forBlank();
+                return txt.ofBlank();
             }
             if (a.length == 1) {
-                return txt.forPlain(stringValue(a[0]));
+                return txt.ofPlain(stringValue(a[0]));
             }
             List<NutsString> ll = Arrays.stream(a).map(x -> stringValueFormatted(x, escapeString, session)).collect(Collectors.toList());
             return txt.builder()
                     .append("{")
                     .appendJoined(
-                            txt.forPlain(", "),
+                            txt.ofPlain(", "),
                             ll
                     )
                     .append("}");
@@ -163,7 +163,7 @@ public class CoreCommonUtils {
         if (o.getClass().isArray()) {
             int len = Array.getLength(o);
             if (len == 0) {
-                return txt.forBlank();
+                return txt.ofBlank();
             }
             if (len == 1) {
                 return stringValueFormatted(Array.get(o, 0), escapeString, session);
@@ -175,7 +175,7 @@ public class CoreCommonUtils {
             return txt.builder()
                     .append("[")
                     .appendJoined(
-                            txt.forPlain(", "),
+                            txt.ofPlain(", "),
                             all
                     )
                     .append("]");

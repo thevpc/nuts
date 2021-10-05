@@ -14,6 +14,7 @@ Starred releases are most stable ones.
 - WARNING : {api}  API has evolved with incompatibilities with previous versions
 - ADDED   : {api}  replaced string messages with NutsMessage in NutsLogger
 - ADDED   : {api}  removed 'NutsInput' and 'NutsOutput'
+- ADDED   : {api}  removed 'NutsCommandlineFamily' and replaced by 'NutsShellFamily'
 - ADDED   : {api}  added 'NutsBootTerminal' to help nuts bootstrap using custom stdin/out end err  
 - CHANGED : {api}  added 'NutsHomeLocation' to replace compound key NutsOSFamily and NutsStoreLocation  
 - ADDED   : {api}  added 'NutsPath.isDirectory' and 'NutsPath.isRegularFile' 

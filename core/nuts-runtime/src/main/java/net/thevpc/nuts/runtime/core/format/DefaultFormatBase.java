@@ -63,7 +63,7 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
         return isNtf() ?
                 getSession().text().parse(out.toString())
                 :
-                getSession().text().forPlain(out.toString())
+                getSession().text().ofPlain(out.toString())
                 ;
     }
 

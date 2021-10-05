@@ -123,12 +123,12 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
                 if (ctx.isTitleNumberEnabled()) {
                     NutsTextNumbering seq = ctx.getTitleNumberSequence();
                     if (seq == null) {
-                        seq = ws.text().forNumbering();
+                        seq = ws.text().ofNumbering();
                         ctx.setTitleNumberSequence(seq);
                     }
                     NutsTextNumbering a = seq.newLevel(s.getLevel());
-                    NutsText sWithTitle = factory0.forList(
-                            ws.text().forPlain(a.toString() + " "),
+                    NutsText sWithTitle = factory0.ofList(
+                            ws.text().ofPlain(a.toString() + " "),
                             s.getChild()
                     );
                     writeNode(s2, sWithTitle, ctx);

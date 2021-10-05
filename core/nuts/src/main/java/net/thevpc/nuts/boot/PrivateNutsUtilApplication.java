@@ -97,9 +97,9 @@ public class PrivateNutsUtilApplication {
                 try {
                     fout = session.term().getSystemTerminal().getErr();
                     if (fm != null) {
-                        fm = session.text().forStyled(fm, NutsTextStyle.error());
+                        fm = session.text().ofStyled(fm, NutsTextStyle.error());
                     } else {
-                        fm = session.text().forStyled(m, NutsTextStyle.error());
+                        fm = session.text().ofStyled(m, NutsTextStyle.error());
                     }
                 } catch (Exception ex2) {
                     session.log().of(NutsApplications.class).with().level(Level.FINE).error(ex2).log(

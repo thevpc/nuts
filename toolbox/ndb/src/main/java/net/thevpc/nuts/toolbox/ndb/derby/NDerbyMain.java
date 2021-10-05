@@ -73,8 +73,8 @@ public class NDerbyMain implements NdbSupport {
                 if (cmdLine.isExecMode()) {
                     if (new DerbyService(appContext).isRunning()) {
                         session.out().printf("derby is %s on port %s%n",
-                                factory.forStyled("already running", NutsTextStyle.warn()),
-                                factory.forStyled("" + effectivePort, NutsTextStyle.number())
+                                factory.ofStyled("already running", NutsTextStyle.warn()),
+                                factory.ofStyled("" + effectivePort, NutsTextStyle.number())
                         );
                         throw new NutsExecutionException(session, NutsMessage.cstyle("derby is already running on port %d", effectivePort), 3);
                     }
@@ -84,10 +84,10 @@ public class NDerbyMain implements NdbSupport {
                 if (cmdLine.isExecMode()) {
                     if (!new DerbyService(appContext).isRunning()) {
                         session.out().printf("derby is %s on port %s%n",
-                                factory.forStyled("already stopped", NutsTextStyle.warn()),
-                                factory.forStyled("" + effectivePort, NutsTextStyle.number())
+                                factory.ofStyled("already stopped", NutsTextStyle.warn()),
+                                factory.ofStyled("" + effectivePort, NutsTextStyle.number())
                         );
-                        session.out().printf("derby is %s%n", factory.forStyled("already stopped", NutsTextStyle.warn()));
+                        session.out().printf("derby is %s%n", factory.ofStyled("already stopped", NutsTextStyle.warn()));
                         throw new NutsExecutionException(session, NutsMessage.cstyle("derby is already stopped on port %d", effectivePort), 3);
                     }
                 }
@@ -111,9 +111,9 @@ public class NDerbyMain implements NdbSupport {
         NutsTextManager factory = session.text();
         if (cmdLine.isExecMode()) {
             if (new DerbyService(appContext).isRunning()) {
-                session.out().printf("derby is %s%n", factory.forStyled("running", NutsTextStyle.primary1()));
+                session.out().printf("derby is %s%n", factory.ofStyled("running", NutsTextStyle.primary1()));
             } else {
-                session.out().printf("derby is %s%n", factory.forStyled("stopped", NutsTextStyle.error()));
+                session.out().printf("derby is %s%n", factory.ofStyled("stopped", NutsTextStyle.error()));
             }
         }
     }
@@ -173,16 +173,16 @@ public class NDerbyMain implements NdbSupport {
                     switch (format) {
                         case "short": {
                             out.printf("%s\n",
-                                    factory.forStyled(jpsResult.getPid(), NutsTextStyle.primary1())
+                                    factory.ofStyled(jpsResult.getPid(), NutsTextStyle.primary1())
                             );
                             break;
                         }
                         case "long": {
                             out.printf("%s %s %s %s %s%n",
-                                    factory.forStyled(jpsResult.getPid(), NutsTextStyle.primary1()),
-                                    factory.forPlain("HOME:"),
-                                    factory.forStyled(jpsResult.getHome(), NutsTextStyle.path()),
-                                    factory.forPlain("CMD:"),
+                                    factory.ofStyled(jpsResult.getPid(), NutsTextStyle.primary1()),
+                                    factory.ofPlain("HOME:"),
+                                    factory.ofStyled(jpsResult.getHome(), NutsTextStyle.path()),
+                                    factory.ofPlain("CMD:"),
 
                                     appContext.getCommandLine().parseLine(jpsResult.getArgsLine())
                                             .format()
@@ -191,7 +191,7 @@ public class NDerbyMain implements NdbSupport {
                         }
                         default: {
                             out.printf("%s %s\n",
-                                    factory.forStyled(jpsResult.getPid(), NutsTextStyle.primary1()),
+                                    factory.ofStyled(jpsResult.getPid(), NutsTextStyle.primary1()),
                                     jpsResult.getHome()
                             );
                             break;

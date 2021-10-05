@@ -290,11 +290,11 @@ public class NutsSettingsRepositorySubCommand extends AbstractNutsSettingsSubCom
                 }
                 for (NutsRepository repository : linkRepositories) {
                     m.addRow(
-                            ws.text().forStyled(repository.getName(), NutsTextStyle.primary4()),
+                            ws.text().ofStyled(repository.getName(), NutsTextStyle.primary4()),
                             repository.config().isEnabled()
-                            ? repository.isEnabled() ? ws.text().forStyled("ENABLED", NutsTextStyle.success())
-                            : ws.text().forStyled("<RT-DISABLED>", NutsTextStyle.error())
-                            : ws.text().forStyled("<DISABLED>", NutsTextStyle.error()),
+                            ? repository.isEnabled() ? ws.text().ofStyled("ENABLED", NutsTextStyle.success())
+                            : ws.text().ofStyled("<RT-DISABLED>", NutsTextStyle.error())
+                            : ws.text().ofStyled("<DISABLED>", NutsTextStyle.error()),
                             repository.getRepositoryType(),
                             repository.config().getLocation(false)
                     );

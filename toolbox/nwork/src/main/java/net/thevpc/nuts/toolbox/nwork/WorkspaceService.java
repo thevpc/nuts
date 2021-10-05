@@ -9,7 +9,6 @@ import net.thevpc.nuts.toolbox.nwork.config.RepositoryAddress;
 import net.thevpc.nuts.toolbox.nwork.config.WorkspaceConfig;
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.io.UncheckedIOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -188,9 +187,9 @@ public class WorkspaceService {
                 .append(p2.getId(), NutsTextStyle.primary4())
                 .append(" ")
                 .appendJoined(
-                        text.forPlain(", "),
+                        text.ofPlain(", "),
                         p2.getTechnologies().stream().map(
-                                x -> text.forStyled(x, NutsTextStyle.primary5())
+                                x -> text.ofStyled(x, NutsTextStyle.primary5())
                         ).collect(Collectors.toList())
                 )
                 .append(" : ")
@@ -435,20 +434,20 @@ public class WorkspaceService {
                         status += " ";
                         len++;
                     }
-                    switch (tf.forPlain(p2.status).filteredText()) {
+                    switch (tf.ofPlain(p2.status).filteredText()) {
                         case "new": {
                             appContext.getSession().out().printf("[%s] %s : %s",
-                                    tfactory.forStyled("new", NutsTextStyle.primary3()),
+                                    tfactory.ofStyled("new", NutsTextStyle.primary3()),
                                     p2.id,
-                                    tfactory.forStyled(p2.local, NutsTextStyle.primary2())
+                                    tfactory.ofStyled(p2.local, NutsTextStyle.primary2())
                             );
                             break;
                         }
                         case "commitable": {
                             appContext.getSession().out().printf("[%s] %s : %s - %s",
-                                    tfactory.forStyled("commitable", NutsTextStyle.primary4()),
+                                    tfactory.ofStyled("commitable", NutsTextStyle.primary4()),
                                     p2.id,
-                                    tfactory.forStyled(p2.local, NutsTextStyle.primary2()),
+                                    tfactory.ofStyled(p2.local, NutsTextStyle.primary2()),
                                     p2.remote
                             );
                             break;
@@ -460,7 +459,7 @@ public class WorkspaceService {
                         }
                         case "old": {
                             appContext.getSession().out().printf("[%s] %s : ```error %s``` - %s",
-                                    tfactory.forStyled("old", NutsTextStyle.primary2()),
+                                    tfactory.ofStyled("old", NutsTextStyle.primary2()),
                                     p2.id, p2.local, p2.remote);
                             break;
                         }
@@ -618,9 +617,9 @@ public class WorkspaceService {
                                 if (session.isPlainOut()) {
                                     session.out().printf("```error [CONFLICT]``` multiple paths for the same id %s. "
                                             + "please consider adding .nuts-info file with " + SCAN + "=false  :  %s -- %s%n",
-                                            text.forStyled(p2.getId(), NutsTextStyle.primary2()),
-                                            text.forStyled(p2.getPath(), NutsTextStyle.path()),
-                                            text.forStyled(p3.getPath(), NutsTextStyle.path())
+                                            text.ofStyled(p2.getId(), NutsTextStyle.primary2()),
+                                            text.ofStyled(p2.getPath(), NutsTextStyle.path()),
+                                            text.ofStyled(p3.getPath(), NutsTextStyle.path())
                                     );
                                 }
                                 if (structuredOutContentType) {
@@ -664,7 +663,7 @@ public class WorkspaceService {
                             }
                             if (interactive) {
                                 String id = session.getTerminal().readLine("enter Id %s: ",
-                                        (p2.getId() == null ? "" : ("(" + text.forPlain(p2.getId()) + ")")));
+                                        (p2.getId() == null ? "" : ("(" + text.ofPlain(p2.getId()) + ")")));
                                 if (!NutsBlankable.isBlank(id)) {
                                     p2.setId(id);
                                 }

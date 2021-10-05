@@ -3,7 +3,6 @@ package net.thevpc.nuts.runtime.core.format.text;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.format.text.bloc.CustomStyleBlocTextFormatter;
 import net.thevpc.nuts.runtime.core.format.text.parser.*;
-import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.core.util.CoreNumberUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
@@ -71,7 +70,7 @@ public class DefaultNutsTextManager implements NutsTextManager {
                 return txt.parse(MessageFormat.format(msg, args2));
             }
             case PLAIN: {
-                return txt.forPlain(msg);
+                return txt.ofPlain(msg);
             }
             case FORMATTED: {
                 return txt.parse(msg);
@@ -80,7 +79,7 @@ public class DefaultNutsTextManager implements NutsTextManager {
         throw new NutsUnsupportedEnumException(getSession(), style);
     }    @Override
     public NutsText parse(String t) {
-        return t == null ? forBlank() : parser().parse(new StringReader(t));
+        return t == null ? ofBlank() : parser().parse(new StringReader(t));
     }
 
     public NutsText title(NutsText t, int level) {
@@ -97,7 +96,7 @@ public class DefaultNutsTextManager implements NutsTextManager {
     }
 
     public NutsText fg(String t, int level) {
-        return fg(forPlain(t), level);
+        return fg(ofPlain(t), level);
     }
 
     public NutsText fg(NutsText t, int level) {
@@ -109,7 +108,7 @@ public class DefaultNutsTextManager implements NutsTextManager {
     }
 
     public NutsText bg(String t, int level) {
-        return bg(forPlain(t), level);
+        return bg(ofPlain(t), level);
     }    @Override
     public DefaultNutsTextManager setSession(NutsSession session) {
         this.session = session;
@@ -120,8 +119,8 @@ public class DefaultNutsTextManager implements NutsTextManager {
         NutsTextStyle textStyle = NutsTextStyle.primary(variant);
         return createStyled("##:s" + variant + ":", "##", t, NutsTextStyles.of(textStyle), true);
     }    @Override
-    public NutsText forBlank() {
-        return forPlain("");
+    public NutsText ofBlank() {
+        return ofPlain("");
     }
 
     public NutsText comments(String image) {
@@ -131,7 +130,7 @@ public class DefaultNutsTextManager implements NutsTextManager {
     public NutsText toText(Object t) {
         checkSession();
         if (t == null) {
-            return forBlank();
+            return ofBlank();
         }
         if (t instanceof NutsText) {
             return (NutsText) t;
@@ -150,40 +149,40 @@ public class DefaultNutsTextManager implements NutsTextManager {
             if(q==null){
                 q=t.toString();
             }
-            return forStyled(q, NutsTextStyle.path());
+            return ofStyled(q, NutsTextStyle.path());
         }
         if (t instanceof OutputStream || t instanceof Writer) {
-            return forStyled(t.toString(), NutsTextStyle.path());
+            return ofStyled(t.toString(), NutsTextStyle.path());
         }
         if (t instanceof Enum) {
             if (t instanceof NutsEnum) {
-                return forStyled(((NutsEnum) t).id(), NutsTextStyle.option());
+                return ofStyled(((NutsEnum) t).id(), NutsTextStyle.option());
             } else {
-                return forStyled(((Enum<?>) t).name(), NutsTextStyle.option());
+                return ofStyled(((Enum<?>) t).name(), NutsTextStyle.option());
             }
         }
         if (t instanceof Number) {
-            return forStyled(t.toString(), NutsTextStyle.number());
+            return ofStyled(t.toString(), NutsTextStyle.number());
         }
         if (t instanceof Date || t instanceof Temporal) {
-            return forStyled(t.toString(), NutsTextStyle.date());
+            return ofStyled(t.toString(), NutsTextStyle.date());
         }
         if (t instanceof Boolean) {
-            return forStyled(t.toString(), NutsTextStyle.bool());
+            return ofStyled(t.toString(), NutsTextStyle.bool());
         }
         if (t instanceof Path || t instanceof File || t instanceof URL) {
-            return forStyled(t.toString(), NutsTextStyle.path());
+            return ofStyled(t.toString(), NutsTextStyle.path());
         }
         if (t instanceof Throwable) {
-            return forStyled(
+            return ofStyled(
                     toText(CoreStringUtils.exceptionToMessage((Throwable) t)),
                     NutsTextStyle.error()
             );
         }
         if (t instanceof NutsEnum) {
-            return forStyled(((NutsEnum) t).id(), NutsTextStyle.option());
+            return ofStyled(((NutsEnum) t).id(), NutsTextStyle.option());
         }
-        return forPlain(t.toString());
+        return ofPlain(t.toString());
     }
 
     public NutsText literal(String image) {
@@ -193,7 +192,7 @@ public class DefaultNutsTextManager implements NutsTextManager {
     public NutsText stringLiteral(String image) {
         return fg(image, 3);
     }    @Override
-    public NutsTextPlain forPlain(String t) {
+    public NutsTextPlain ofPlain(String t) {
         checkSession();
         return new DefaultNutsTextPlain(getSession(), t);
     }
@@ -201,14 +200,14 @@ public class DefaultNutsTextManager implements NutsTextManager {
     public NutsText numberLiteral(String image) {
         return fg(image, 1);
     }    @Override
-    public NutsTextList forList(NutsText... nodes) {
-        return forList(Arrays.asList(nodes));
+    public NutsTextList ofList(NutsText... nodes) {
+        return ofList(Arrays.asList(nodes));
     }
 
     public NutsText reservedWord(String image) {
         return fg(image, 1);
     }    @Override
-    public NutsTextList forList(Collection<NutsText> nodes) {
+    public NutsTextList ofList(Collection<NutsText> nodes) {
         checkSession();
         if (nodes == null) {
             return new DefaultNutsTextList(getSession(), new NutsText[0]);
@@ -219,43 +218,43 @@ public class DefaultNutsTextManager implements NutsTextManager {
     public NutsText annotation(String image) {
         return fg(image, 3);
     }    @Override
-    public NutsTextStyled forStyled(String other, NutsTextStyle decorations) {
-        return forStyled(forPlain(other), decorations);
+    public NutsTextStyled ofStyled(String other, NutsTextStyle decorations) {
+        return ofStyled(ofPlain(other), decorations);
     }
 
     public NutsText separator(String image) {
         return fg(image, 6);
     }    @Override
-    public NutsTextStyled forStyled(NutsString other, NutsTextStyle decorations) {
-        return forStyled(other.toText(), decorations);
+    public NutsTextStyled ofStyled(NutsString other, NutsTextStyle decorations) {
+        return ofStyled(other.toText(), decorations);
     }
 
     public NutsText commandName(String image) {
         return fg(image, 1);
     }    @Override
-    public NutsTextStyled forStyled(String other, NutsTextStyles decorations) {
-        return forStyled(forPlain(other), decorations);
+    public NutsTextStyled ofStyled(String other, NutsTextStyles decorations) {
+        return ofStyled(ofPlain(other), decorations);
     }
 
     public NutsText subCommand1Name(String image) {
         return fg(image, 2);
     }    @Override
-    public NutsTextStyled forStyled(NutsString other, NutsTextStyles decorations) {
+    public NutsTextStyled ofStyled(NutsString other, NutsTextStyles decorations) {
         checkSession();
-        return forStyled(other.toText(), decorations);
+        return ofStyled(other.toText(), decorations);
     }
 
     public NutsText subCommand2Name(String image) {
         return fg(image, 3);
     }    @Override
-    public NutsTextStyled forStyled(NutsText other, NutsTextStyles styles) {
+    public NutsTextStyled ofStyled(NutsText other, NutsTextStyles styles) {
         return createStyled(other, styles, true);
     }
 
     public NutsText optionName(String image) {
         return fg(image, 4);
     }    @Override
-    public NutsTextCommand forCommand(NutsTerminalCommand command) {
+    public NutsTextCommand ofCommand(NutsTerminalCommand command) {
         checkSession();
         return new DefaultNutsTextCommand(getSession(), "```!", command, "", "```");
     }
@@ -263,7 +262,7 @@ public class DefaultNutsTextManager implements NutsTextManager {
     public NutsText userInput(String image) {
         return fg(image, 8);
     }    @Override
-    public NutsTextAnchor forAnchor(String anchorName) {
+    public NutsTextAnchor ofAnchor(String anchorName) {
         return createAnchor(
                 "```!",
                 "", "```", anchorName
@@ -301,7 +300,7 @@ public class DefaultNutsTextManager implements NutsTextManager {
         }
         return getCodeFormat("plain");
     }    @Override
-    public NutsTextLink forLink(NutsText value) {
+    public NutsTextLink ofLink(NutsText value) {
         return createLink(
                 "```!",
                 "", "```", value
@@ -321,7 +320,7 @@ public class DefaultNutsTextManager implements NutsTextManager {
         }
         return ss;
     }    @Override
-    public NutsTextCode forCode(String lang, String text) {
+    public NutsTextCode ofCode(String lang, String text) {
         checkSession();
         if (text == null) {
             text = "";
@@ -460,7 +459,7 @@ public class DefaultNutsTextManager implements NutsTextManager {
      * @param textNodeStyle textNodeStyle
      * @return NutsText
      */
-    public NutsTextStyled forStyled(NutsText other, NutsTextStyle textNodeStyle) {
+    public NutsTextStyled ofStyled(NutsText other, NutsTextStyle textNodeStyle) {
         return createStyled(other, NutsTextStyles.of(textNodeStyle), true);
     }
 
@@ -483,13 +482,13 @@ public class DefaultNutsTextManager implements NutsTextManager {
 
 
     @Override
-    public NutsTextNumbering forNumbering() {
+    public NutsTextNumbering ofNumbering() {
         checkSession();
         return new DefaultNutsTitleNumberSequence("");
     }
 
     @Override
-    public NutsTextNumbering forTitleNumberSequence(String pattern) {
+    public NutsTextNumbering ofTitleNumberSequence(String pattern) {
         checkSession();
         return new DefaultNutsTitleNumberSequence((pattern == null || pattern.isEmpty()) ? "1.1.1.a.1" : pattern);
     }

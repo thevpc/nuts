@@ -182,7 +182,7 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
         if (javaProps) {
             CoreIOUtils.storeProperties(ObjectOutputFormatWriterHelper.explodeMap(mm), w.asPrintStream(), sorted);
         } else {
-            printMap(out, getSession().text().forBlank(), mm);
+            printMap(out, getSession().text().ofBlank(), mm);
         }
     }
 
@@ -241,12 +241,12 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
     private void printKeyValue(NutsPrintStream out, NutsString prefix, int len, String fancySep, NutsString key, NutsString value) {
         NutsTextManager txt = getSession().text();
         if (prefix == null) {
-            prefix = txt.forBlank();
+            prefix = txt.ofBlank();
         }
         NutsString formattedKey = compact ? key
                 : txt.builder().append(key).append(CoreStringUtils.fillString(' ', len - key.textLength()));
         if (fancySep != null) {
-            NutsString cc = compact ? key : txt.forPlain(CoreStringUtils.alignLeft("", len + 3));
+            NutsString cc = compact ? key : txt.ofPlain(CoreStringUtils.alignLeft("", len + 3));
             String[] split = value.toString().split(fancySep);
             if (split.length == 0) {
                 out.print(prefix);
@@ -279,7 +279,7 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
             if (prefix.isEmpty() || prefix.toString().endsWith("#")) {
                 out.print(NutsConstants.Ntf.SILENT);
             }
-            out.printf("%s", txt.forStyled(formattedKey, NutsTextStyle.primary3()));
+            out.printf("%s", txt.ofStyled(formattedKey, NutsTextStyle.primary3()));
             if (separator.isEmpty() || separator.startsWith("#")) {
                 out.print(NutsConstants.Ntf.SILENT);
             }
@@ -292,7 +292,7 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
         if (escapeText) {
             return CoreCommonUtils.stringValueFormatted(o, escapeText, getSession());
         } else {
-            return getSession().text().forPlain(String.valueOf(o));
+            return getSession().text().ofPlain(String.valueOf(o));
         }
     }
 

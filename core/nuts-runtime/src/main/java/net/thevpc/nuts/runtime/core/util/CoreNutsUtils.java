@@ -754,7 +754,7 @@ public class CoreNutsUtils {
 
     public static NutsString desc(Object s, NutsTextManager text) {
         if (s == null || (s instanceof String && ((String) s).isEmpty())) {
-            return text.forStyled("<EMPTY>", NutsTextStyle.option());
+            return text.ofStyled("<EMPTY>", NutsTextStyle.option());
         }
         return text.toText(s);
     }

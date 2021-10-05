@@ -408,12 +408,12 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
                     session.out().resetLine().printf("%s script %-" + namesSize + "s for %s"
                                     + " at %s%n",
                             (ndiScriptInfo.getStatus() == PathInfo.Status.OVERRIDDEN)
-                                    ? ws.text().forStyled("re-install", NutsTextStyles.of(NutsTextStyle.success(), NutsTextStyle.underlined()))
-                                    : ws.text().forStyled("install", NutsTextStyle.success())
+                                    ? ws.text().ofStyled("re-install", NutsTextStyles.of(NutsTextStyle.success(), NutsTextStyle.underlined()))
+                                    : ws.text().ofStyled("install", NutsTextStyle.success())
                             ,
-                            ws.text().forStyled(ndiScriptInfo.getPath().getFileName().toString(), NutsTextStyle.path()),
+                            ws.text().ofStyled(ndiScriptInfo.getPath().getFileName().toString(), NutsTextStyle.path()),
                             ndiScriptInfo.getId(),
-                            ws.text().forStyled(NdiUtils.betterPath(ndiScriptInfo.getPath().toString()), NutsTextStyle.path())
+                            ws.text().ofStyled(NdiUtils.betterPath(ndiScriptInfo.getPath().toString()), NutsTextStyle.path())
                     );
                 }
 

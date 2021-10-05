@@ -272,7 +272,7 @@ public class MavenUtils {
             LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.SUCCESS).time(time)
                     .log(NutsMessage.jstyle("{0}{1} parse pom    {2}", fetchString,
                             CoreStringUtils.alignLeft(repository == null ? "<no-repo>" : repository.getName(), 20),
-                            urlDesc
+                            session.text().ofStyled(urlDesc,NutsTextStyle.path())
                     ));
 
             String icons = pom.getProperties().get("nuts.icons");

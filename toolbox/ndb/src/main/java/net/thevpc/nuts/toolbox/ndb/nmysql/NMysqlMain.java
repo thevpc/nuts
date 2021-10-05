@@ -444,7 +444,7 @@ public class NMysqlMain implements NdbSupport {
                             overrideExisting = true;
                             if (!session.getTerminal().ask()
                                     .resetLine()
-                                    .forBoolean("already exists %s. override?", factory.forStyled(name.toString(),
+                                    .forBoolean("already exists %s. override?", factory.ofStyled(name.toString(),
                                             NutsTextStyle.primary3())
                                     )
                                     .setDefaultValue(false).getBooleanValue()) {
@@ -456,7 +456,7 @@ public class NMysqlMain implements NdbSupport {
                             overrideExisting = true;
                             if (!session.getTerminal().ask()
                                     .resetLine()
-                                    .forBoolean("already exists %s. override?", factory.forStyled(name.toString(), NutsTextStyle.primary3()))
+                                    .forBoolean("already exists %s. override?", factory.ofStyled(name.toString(), NutsTextStyle.primary3()))
                                     .setDefaultValue(false).getBooleanValue()) {
                                 throw new NutsExecutionException(session, NutsMessage.cstyle("already exists %s", name), 2);
                             }
@@ -511,21 +511,21 @@ public class NMysqlMain implements NdbSupport {
                         if (add) {
                             if (overrideExisting) {
                                 session.out().printf("adding local config (with override) %s%n",
-                                        factory.forStyled(
+                                        factory.ofStyled(
                                                 NdbUtils.coalesce(name.getConfigName(), "default"), NutsTextStyle.primary3())
                                 );
                             } else {
                                 session.out().printf("adding local config %s%n",
-                                        factory.forStyled(
+                                        factory.ofStyled(
                                                 NdbUtils.coalesce(name.getConfigName(), "default"), NutsTextStyle.primary3()));
                             }
                         } else {
                             if (overrideExisting) {
                                 session.out().printf("updating local config (with override) %s%n",
-                                        factory.forStyled(NdbUtils.coalesce(name.getConfigName(), "default"), NutsTextStyle.primary3()));
+                                        factory.ofStyled(NdbUtils.coalesce(name.getConfigName(), "default"), NutsTextStyle.primary3()));
                             } else {
                                 session.out().printf("updating local config %s%n",
-                                        factory.forStyled(
+                                        factory.ofStyled(
                                                 NdbUtils.coalesce(name.getConfigName(), "default"), NutsTextStyle.primary3()));
                             }
                         }
@@ -570,19 +570,19 @@ public class NMysqlMain implements NdbSupport {
                         if (add) {
                             if (overrideExisting) {
                                 session.out().printf("adding local instance (with override) %s%n",
-                                        factory.forStyled(r.getFullName(), NutsTextStyle.primary3()));
+                                        factory.ofStyled(r.getFullName(), NutsTextStyle.primary3()));
                             } else {
                                 session.out().printf("adding local instance %s%n",
-                                        factory.forStyled(r.getFullName(), NutsTextStyle.primary3()));
+                                        factory.ofStyled(r.getFullName(), NutsTextStyle.primary3()));
                             }
                         } else {
                             if (overrideExisting) {
                                 session.out().printf("updating local instance (with override) %s%n",
-                                        factory.forStyled(r.getFullName(), NutsTextStyle.primary3())
+                                        factory.ofStyled(r.getFullName(), NutsTextStyle.primary3())
                                 );
                             } else {
                                 session.out().printf("updating local instance %s%n",
-                                        factory.forStyled(r.getFullName(), NutsTextStyle.primary3())
+                                        factory.ofStyled(r.getFullName(), NutsTextStyle.primary3())
                                 );
                             }
                         }
@@ -613,7 +613,7 @@ public class NMysqlMain implements NdbSupport {
                             overrideExisting = true;
                             if (!session.getTerminal().ask()
                                     .resetLine()
-                                    .forBoolean("already exists %s. override?", factory.forStyled(name.toString(), NutsTextStyle.primary3()))
+                                    .forBoolean("already exists %s. override?", factory.ofStyled(name.toString(), NutsTextStyle.primary3()))
                                     .setDefaultValue(false).getBooleanValue()) {
                                 throw new NutsExecutionException(session, NutsMessage.cstyle("already exists %s", name), 2);
                             }
@@ -623,7 +623,7 @@ public class NMysqlMain implements NdbSupport {
                             overrideExisting = true;
                             if (!session.getTerminal().ask()
                                     .resetLine()
-                                    .forBoolean("already exists %s. override?", factory.forStyled(name.toString(), NutsTextStyle.primary3()))
+                                    .forBoolean("already exists %s. override?", factory.ofStyled(name.toString(), NutsTextStyle.primary3()))
                                     .setDefaultValue(false).getBooleanValue()) {
                                 throw new NutsExecutionException(session, NutsMessage.cstyle("already exists %s", name), 2);
                             }
@@ -650,18 +650,18 @@ public class NMysqlMain implements NdbSupport {
                         if (add) {
                             if (overrideExisting) {
                                 session.out().printf("adding remote config (with override) %s%n",
-                                        factory.forStyled(NdbUtils.coalesce(name.getConfigName(), "default"), NutsTextStyle.primary3()));
+                                        factory.ofStyled(NdbUtils.coalesce(name.getConfigName(), "default"), NutsTextStyle.primary3()));
                             } else {
                                 session.out().printf("adding remote config %s%n",
-                                        factory.forStyled(NdbUtils.coalesce(name.getConfigName(), "default"), NutsTextStyle.primary3()));
+                                        factory.ofStyled(NdbUtils.coalesce(name.getConfigName(), "default"), NutsTextStyle.primary3()));
                             }
                         } else {
                             if (overrideExisting) {
                                 session.out().printf("updating remote config (with override) %s%n",
-                                        factory.forStyled(NdbUtils.coalesce(name.getConfigName(), "default"), NutsTextStyle.primary3()));
+                                        factory.ofStyled(NdbUtils.coalesce(name.getConfigName(), "default"), NutsTextStyle.primary3()));
                             } else {
                                 session.out().printf("updating remote config %s%n",
-                                        factory.forStyled(NdbUtils.coalesce(name.getConfigName(), "default"), NutsTextStyle.primary3()));
+                                        factory.ofStyled(NdbUtils.coalesce(name.getConfigName(), "default"), NutsTextStyle.primary3()));
                             }
                         }
                     }
@@ -683,19 +683,19 @@ public class NMysqlMain implements NdbSupport {
                         if (add) {
                             if (overrideExisting) {
                                 session.out().printf("adding remote instance (with override) %s%n",
-                                        factory.forStyled(r.getFullName(), NutsTextStyle.primary3()));
+                                        factory.ofStyled(r.getFullName(), NutsTextStyle.primary3()));
                             } else {
                                 session.out().printf("adding remote instance %s%n",
-                                        factory.forStyled(r.getFullName(), NutsTextStyle.primary3()));
+                                        factory.ofStyled(r.getFullName(), NutsTextStyle.primary3()));
                             }
                         } else {
                             if (overrideExisting) {
                                 session.out().printf("updating remote instance (with override) %s%n",
-                                        factory.forStyled(r.getFullName(), NutsTextStyle.primary3())
+                                        factory.ofStyled(r.getFullName(), NutsTextStyle.primary3())
                                 );
                             } else {
                                 session.out().printf("updating remote instance %s%n",
-                                        factory.forStyled(r.getFullName(), NutsTextStyle.primary3()));
+                                        factory.ofStyled(r.getFullName(), NutsTextStyle.primary3()));
                             }
                         }
                     }

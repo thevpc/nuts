@@ -22,7 +22,7 @@ public class JsonCodeFormatter implements NutsCodeFormat {
     @Override
     public NutsText tokenToText(String text, String nodeType,NutsSession session) {
         factory.setSession(session);
-        return factory.forPlain(text);
+        return factory.ofPlain(text);
     }
 
     @Override
@@ -41,7 +41,7 @@ public class JsonCodeFormatter implements NutsCodeFormat {
                 case '{':
                 case '}':
                 case ':': {
-                    all.add(factory.forStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
+                    all.add(factory.ofStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
                     break;
                 }
                 case '\'': {
@@ -71,7 +71,7 @@ public class JsonCodeFormatter implements NutsCodeFormat {
                     if(d!=null) {
                         all.addAll(Arrays.asList(d));
                     }else{
-                        all.add(factory.forStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
+                        all.add(factory.ofStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
                     }
                     break;
                 }
@@ -81,7 +81,7 @@ public class JsonCodeFormatter implements NutsCodeFormat {
                     }else if(ar.peekChars("/*")){
                         all.addAll(Arrays.asList(StringReaderExtUtils.readSlashStarComments(session,ar)));
                     }else{
-                        all.add(factory.forStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
+                        all.add(factory.ofStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
                     }
                     break;
                 }
@@ -96,20 +96,20 @@ public class JsonCodeFormatter implements NutsCodeFormat {
                                 switch (txt) {
                                     case "true":
                                     case "false": {
-                                        d[0] = factory.forStyled(d[0], NutsTextStyle.keyword());
+                                        d[0] = factory.ofStyled(d[0], NutsTextStyle.keyword());
                                         break;
                                     }
                                 }
                             }
                             all.addAll(Arrays.asList(d));
                         } else {
-                            all.add(factory.forStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
+                            all.add(factory.ofStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
                         }
                     }
                     break;
                 }
             }
         }
-        return factory.forList(all.toArray(new NutsText[0]));
+        return factory.ofList(all.toArray(new NutsText[0]));
     }
 }

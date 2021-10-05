@@ -352,7 +352,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
                 if (traceSession.isPlainTrace()) {
                     traceSession.out().resetLine().printf("%s is %s, will search for it online. Type ```error CTRL^C``` to stop...\n",
                             nid,
-                            ws.text().forStyled("not installed", NutsTextStyle.error())
+                            ws.text().ofStyled("not installed", NutsTextStyle.error())
                     );
                     traceSession.out().flush();
                 }

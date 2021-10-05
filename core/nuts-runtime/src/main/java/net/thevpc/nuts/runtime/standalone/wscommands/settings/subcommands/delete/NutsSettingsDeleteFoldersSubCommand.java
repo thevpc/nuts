@@ -63,9 +63,9 @@ public class NutsSettingsDeleteFoldersSubCommand extends AbstractNutsSettingsSub
             Path storeLocation = Paths.get(sstoreLocation);
             if (Files.exists(storeLocation)) {
                 session.out().printf("```error deleting``` %s for workspace %s folder %s ...%n",
-                        factory.forStyled(folder.id(),NutsTextStyle.primary1()),
-                        factory.forStyled(session.getWorkspace().getName(),NutsTextStyle.primary1()),
-                        factory.forStyled(storeLocation.toString(),NutsTextStyle.path()));
+                        factory.ofStyled(folder.id(),NutsTextStyle.primary1()),
+                        factory.ofStyled(session.getWorkspace().getName(),NutsTextStyle.primary1()),
+                        factory.ofStyled(storeLocation.toString(),NutsTextStyle.path()));
                 if (force
                         || session.getTerminal().ask()
                         .resetLine()
@@ -91,9 +91,9 @@ public class NutsSettingsDeleteFoldersSubCommand extends AbstractNutsSettingsSub
             NutsTextManager factory = session.text();
             if (Files.exists(storeLocation)) {
                 session.out().printf("```error deleting``` %s for repository %s folder %s ...%n",
-                        factory.forStyled(folder.id(),NutsTextStyle.primary1()),
-                        factory.forStyled(repository.getName(),NutsTextStyle.primary1()),
-                        factory.forStyled(storeLocation.toString(),NutsTextStyle.path()));
+                        factory.ofStyled(folder.id(),NutsTextStyle.primary1()),
+                        factory.ofStyled(repository.getName(),NutsTextStyle.primary1()),
+                        factory.ofStyled(storeLocation.toString(),NutsTextStyle.path()));
                 if (force
                         || session.getTerminal().ask()
                         .resetLine()
@@ -137,7 +137,7 @@ public class NutsSettingsDeleteFoldersSubCommand extends AbstractNutsSettingsSub
         if (s != null) {
             if (Files.exists(s)) {
                 session.out().printf("```error deleting``` %s folder %s ...%n",
-                        session.text().forStyled("cache",NutsTextStyle.primary1())
+                        session.text().ofStyled("cache",NutsTextStyle.primary1())
                         ,s);
                 if (force
                         || session.getTerminal().ask()

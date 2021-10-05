@@ -22,7 +22,6 @@ import net.thevpc.nuts.runtime.core.format.table.DefaultSearchFormatTable;
 import net.thevpc.nuts.runtime.core.format.text.DefaultNutsTextManagerModel;
 import net.thevpc.nuts.runtime.core.format.tree.DefaultSearchFormatTree;
 import net.thevpc.nuts.runtime.core.format.xml.DefaultSearchFormatXml;
-import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementFormat> implements NutsElementFormat {
@@ -250,7 +249,7 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
         if (out.isNtf()) {
             NutsPrintStream bos = getSession().io().createMemoryPrintStream();
             format.printElement(elem, bos, compact, createFactoryContext());
-            out.print(getSession().text().forCode(getContentType().id(), bos.toString()));
+            out.print(getSession().text().ofCode(getContentType().id(), bos.toString()));
         } else {
             format.printElement(elem, out, compact, createFactoryContext());
         }

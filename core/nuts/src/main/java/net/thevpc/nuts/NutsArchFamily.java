@@ -66,16 +66,6 @@ public enum NutsArchFamily implements NutsEnum {
     }
 
     /**
-     * resolved platform architecture (from {@code System.getProperty("os.arch")})
-     * or UNKNOWN
-     *
-     * @return resolved platform architecture
-     */
-    public static NutsArchFamily getArchFamily() {
-        return parseLenient(System.getProperty("os.arch"), UNKNOWN);
-    }
-
-    /**
      * parse string and return null if parse fails
      *
      * @param arch value to parse

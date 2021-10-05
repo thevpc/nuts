@@ -70,7 +70,7 @@ public class HelpCommand extends AbstractNshBuiltin {
         Function<String, String> ss = code ? new Function<String, String>() {
             @Override
             public String apply(String t) {
-                return text.forPlain(t).toString();
+                return text.ofPlain(t).toString();
             }
         } : x -> x;
         if (commandLine.isExecMode()) {
@@ -80,7 +80,7 @@ public class HelpCommand extends AbstractNshBuiltin {
                 );
                 String helpText = (n==null?"no help found":n.toString());
                 context.out().println(ss.apply(helpText));
-                context.out().println(context.getWorkspace().text().forStyled("AVAILABLE COMMANDS ARE:", NutsTextStyle.primary1()));
+                context.out().println(context.getWorkspace().text().ofStyled("AVAILABLE COMMANDS ARE:", NutsTextStyle.primary1()));
                 JShellBuiltin[] commands = context.getGlobalContext().builtins().getAll();
                 Arrays.sort(commands, new Comparator<JShellBuiltin>() {
                     @Override
@@ -96,7 +96,7 @@ public class HelpCommand extends AbstractNshBuiltin {
                     }
                 }
                 for (JShellBuiltin cmd : commands) {
-                    context.out().printf("%s : ", text.forStyled(_StringUtils.formatLeft(cmd.getName(), max),NutsTextStyle.primary4()));
+                    context.out().printf("%s : ", text.ofStyled(_StringUtils.formatLeft(cmd.getName(), max),NutsTextStyle.primary4()));
                     context.out().println(ss.apply(cmd.getHelpHeader())); //formatted
                 }
             } else {
@@ -104,11 +104,11 @@ public class HelpCommand extends AbstractNshBuiltin {
                 for (String commandName : commandNames) {
                     JShellBuiltin command1 = context.getGlobalContext().builtins().find(commandName);
                     if (command1 == null) {
-                        context.err().printf("command not found : %s\n", text.forStyled(commandName,NutsTextStyle.error()));
+                        context.err().printf("command not found : %s\n", text.ofStyled(commandName,NutsTextStyle.error()));
                         x=1;
                     } else {
                         String help = command1.getHelp();
-                        context.out().printf("%s : %s\f", text.forStyled("COMMAND",NutsTextStyle.primary4()),"commandName");
+                        context.out().printf("%s : %s\f", text.ofStyled("COMMAND",NutsTextStyle.primary4()),"commandName");
                         context.out().println(ss.apply(help));
                     }
                 }

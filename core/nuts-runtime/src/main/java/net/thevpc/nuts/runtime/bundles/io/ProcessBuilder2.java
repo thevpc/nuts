@@ -27,11 +27,11 @@ package net.thevpc.nuts.runtime.bundles.io;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.app.DefaultNutsArgument;
-import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.core.app.NutsCommandLineShellOptions;
+import net.thevpc.nuts.runtime.core.app.NutsCommandLineShellSupport;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 import java.io.*;
-import java.nio.file.Path;
 import java.util.*;
 
 public class ProcessBuilder2 {
@@ -60,17 +60,17 @@ public class ProcessBuilder2 {
         NutsTextManager factory = session.text();
         if (a.isKeyValue()) {
             if (a.isOption()) {
-                sb.append(factory.forStyled(CoreStringUtils.enforceDoubleQuote(a.getKey().getString(), session), NutsTextStyle.option()));
+                sb.append(factory.ofStyled(CoreStringUtils.enforceDoubleQuote(a.getKey().getString(), session), NutsTextStyle.option()));
                 sb.append("=");
                 sb.append(CoreStringUtils.enforceDoubleQuote(a.getValue().getString(), session));
             } else {
-                sb.append(factory.forStyled(CoreStringUtils.enforceDoubleQuote(a.getKey().getString(), session), NutsTextStyle.primary4()));
+                sb.append(factory.ofStyled(CoreStringUtils.enforceDoubleQuote(a.getKey().getString(), session), NutsTextStyle.primary4()));
                 sb.append("=");
                 sb.append(CoreStringUtils.enforceDoubleQuote(a.getValue().getString(), session));
             }
         } else {
             if (a.isOption()) {
-                sb.append(factory.forStyled(CoreStringUtils.enforceDoubleQuote(a.getString(), session), NutsTextStyle.option()));
+                sb.append(factory.ofStyled(CoreStringUtils.enforceDoubleQuote(a.getString(), session), NutsTextStyle.option()));
             } else {
                 sb.append(CoreStringUtils.enforceDoubleQuote(a.getString(), session));
             }
@@ -494,7 +494,17 @@ public class ProcessBuilder2 {
     }
 
     public String getCommandString(CommandStringFormat f) {
-        StringBuilder sb = new StringBuilder();
+        List<String> fullCommandString=new ArrayList<>();
+        File ff = getDirectory();
+        if (ff == null) {
+            ff = new File(".");
+        }
+        try {
+            ff = ff.getCanonicalFile();
+        } catch (Exception ex) {
+            ff = ff.getAbsoluteFile();
+        }
+        fullCommandString.add("cwd="+ff.getPath());
         if (env != null) {
             for (Map.Entry<String, String> e : env.entrySet()) {
                 String k = e.getKey();
@@ -518,10 +528,7 @@ public class ProcessBuilder2 {
                         v = v2;
                     }
                 }
-                if (sb.length() > 0) {
-                    sb.append(" ");
-                }
-                sb.append(CoreStringUtils.enforceDoubleQuote(k)).append("=").append(CoreStringUtils.enforceDoubleQuote(v));
+                fullCommandString.add(k+"="+v);
             }
         }
         for (int i = 0; i < command.size(); i++) {
@@ -535,11 +542,18 @@ public class ProcessBuilder2 {
                     s = k2;
                 }
             }
-            if (sb.length() > 0) {
-                sb.append(" ");
-            }
-            sb.append(CoreStringUtils.enforceDoubleQuote(s));
+            fullCommandString.add(s);
         }
+        StringBuilder sb=new StringBuilder()
+                .append(
+                        NutsCommandLineShellSupport.of(NutsShellFamily.getCurrent(), session)
+                                .escapeArguments(fullCommandString.toArray(new String[0]),
+                                        new NutsCommandLineShellOptions()
+                                                .setSession(session)
+                                                .setExpectEnv(true)
+                                                .setFormatStrategy(NutsCommandLineFormatStrategy.SUPPORT_QUOTES)
+                                )
+                );
         if (baseIO) {
             ProcessBuilder.Redirect r;
             if (f == null || f.acceptRedirectOutput()) {
@@ -653,12 +667,12 @@ public class ProcessBuilder2 {
     }
 
     private String escape(NutsSession session, String f) {
-        return session.text().forPlain(f).toString();
+        return session.text().ofPlain(f).toString();
     }
 
     public String getFormattedCommandString(NutsSession session, CommandStringFormat f) {
 //        NutsFormatManager tf = session.formats();
-        StringBuilder sb = new StringBuilder();
+//        StringBuilder sb = new StringBuilder();
         File ff = getDirectory();
         if (ff == null) {
             ff = new File(".");
@@ -668,7 +682,8 @@ public class ProcessBuilder2 {
         } catch (Exception ex) {
             ff = ff.getAbsoluteFile();
         }
-        sb.append("cwd=```error ").append(CoreStringUtils.enforceDoubleQuote(ff.getPath(), session)).append("```");
+        List<String> fullCommandString=new ArrayList<>();
+        fullCommandString.add("cwd="+ff.getPath());
         if (env != null) {
             for (Map.Entry<String, String> e : env.entrySet()) {
                 String k = e.getKey();
@@ -692,12 +707,7 @@ public class ProcessBuilder2 {
                         v = v2;
                     }
                 }
-                if (sb.length() > 0) {
-                    sb.append(" ");
-                }
-                sb.append(
-                        session.text().forStyled(CoreStringUtils.enforceDoubleQuote(k, session), NutsTextStyle.primary4())
-                ).append("=").append(CoreStringUtils.enforceDoubleQuote(v, session));
+                fullCommandString.add(k+"="+v);
             }
         }
         boolean commandFirstTokenVisited = false;
@@ -712,22 +722,26 @@ public class ProcessBuilder2 {
                     s = k2;
                 }
             }
-            if (sb.length() > 0) {
-                sb.append(" ");
-            }
-            if (!commandFirstTokenVisited) {
-                commandFirstTokenVisited = true;
-                sb.append("```error ").append(CoreStringUtils.enforceDoubleQuote(s, session)).append("```");
-            } else {
-                sb.append(formatArg(s, session));
-            }
+            fullCommandString.add(s);
         }
+
+        StringBuilder sb=new StringBuilder()
+                .append("```system ").append(
+                NutsCommandLineShellSupport.of(NutsShellFamily.getCurrent(), session)
+                        .escapeArguments(fullCommandString.toArray(new String[0]),
+                                new NutsCommandLineShellOptions()
+                                        .setSession(session)
+                                        .setFormatStrategy(NutsCommandLineFormatStrategy.SUPPORT_QUOTES)
+                                        .setExpectEnv(true)
+                                )
+        ).append(" ```");
+
         if (baseIO) {
             ProcessBuilder.Redirect r;
             if (f == null || f.acceptRedirectOutput()) {
                 r = base.redirectOutput();
                 if (null == r.type()) {
-                    sb.append("##:separator:").append(escape(session, " > ")).append("## ").append("##:pale:{?}##");
+                    sb.append(" ##:separator:").append(escape(session, "> ")).append("## ").append("##:pale:{?}##");
                 } else {
                     switch (r.type()) {
                         //sb.append(" > ").append("{inherited}");
@@ -736,25 +750,25 @@ public class ProcessBuilder2 {
                         case PIPE:
                             break;
                         case WRITE:
-                            sb.append("##:separator:").append(escape(session, " >")).append("## ").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
+                            sb.append(" ##:separator:").append(escape(session, ">")).append("## ").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
                             break;
                         case APPEND:
-                            sb.append("##:separator:").append(escape(session, " >>")).append("## ").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
+                            sb.append(" ##:separator:").append(escape(session, ">>")).append("## ").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
                             break;
                         default:
-                            sb.append("##:separator:").append(escape(session, " >")).append("## ").append("##:pale:{?}##");
+                            sb.append(" ##:separator:").append(escape(session, ">")).append("## ").append("##:pale:{?}##");
                             break;
                     }
                 }
             }
             if (f == null || f.acceptRedirectError()) {
                 if (base.redirectErrorStream()) {
-                    sb.append("##:separator:").append(escape(session, " 2>&1")).append("##");
+                    sb.append(" ##:separator:").append(escape(session, "2>&1")).append("##");
                 } else {
                     if (f == null || f.acceptRedirectError()) {
                         r = base.redirectError();
                         if (null == r.type()) {
-                            sb.append("##:separator:").append(escape(session, " 2>")).append("## ").append("##:pale:{?}##");
+                            sb.append(" ##:separator:").append(escape(session, "2>")).append("## ").append("##:pale:{?}##");
                         } else {
                             switch (r.type()) {
                                 //sb.append(" 2> ").append("{inherited}");
@@ -763,13 +777,13 @@ public class ProcessBuilder2 {
                                 case PIPE:
                                     break;
                                 case WRITE:
-                                    sb.append("##:separator:").append(escape(session, " 2>")).append("## ").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
+                                    sb.append(" ##:separator:").append(escape(session, "2>")).append("## ").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
                                     break;
                                 case APPEND:
-                                    sb.append("##:separator:").append(escape(session, " 2>>")).append("## ").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
+                                    sb.append(" ##:separator:").append(escape(session, "2>>")).append("## ").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
                                     break;
                                 default:
-                                    sb.append("##:separator:").append(escape(session, " 2>")).append("## ").append("##:pale:{?}##");
+                                    sb.append(" ##:separator:").append(escape(session, "2>")).append("## ").append("##:pale:{?}##");
                                     break;
                             }
                         }
@@ -779,7 +793,7 @@ public class ProcessBuilder2 {
             if (f == null || f.acceptRedirectInput()) {
                 r = base.redirectInput();
                 if (null == r.type()) {
-                    sb.append("##:separator:").append(escape(session, " <")).append("## ").append("##:pale:{?}##");
+                    sb.append(" ##:separator:").append(escape(session, "<")).append("## ").append("##:pale:{?}##");
                 } else {
                     switch (r.type()) {
                         //sb.append(" < ").append("{inherited}");
@@ -788,10 +802,10 @@ public class ProcessBuilder2 {
                         case PIPE:
                             break;
                         case READ:
-                            sb.append("##:separator:").append(escape(session, " <")).append("## ").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
+                            sb.append(" ##:separator:").append(escape(session, "<")).append("## ").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
                             break;
                         default:
-                            sb.append("##:separator:").append(escape(session, " <")).append("## ").append("##:pale:{?}##");
+                            sb.append(" ##:separator:").append(escape(session, "<")).append("## ").append("##:pale:{?}##");
                             break;
                     }
                 }
@@ -799,31 +813,31 @@ public class ProcessBuilder2 {
         } else if (base.redirectErrorStream()) {
             if (out != null) {
                 if (f == null || f.acceptRedirectOutput()) {
-                    sb.append("##:separator:").append(escape(session, " > ")).append("## ").append("##:pale:{stream}##");
+                    sb.append(" ##:separator:").append(escape(session, "> ")).append("## ").append("##:pale:{stream}##");
                 }
                 if (f == null || f.acceptRedirectError()) {
-                    sb.append("##:separator:").append(escape(session, " 2>&1")).append("##");
+                    sb.append(" ##:separator:").append(escape(session, "2>&1")).append("##");
                 }
             }
             if (in != null) {
                 if (f == null || f.acceptRedirectInput()) {
-                    sb.append("##:separator:").append(escape(session, " <")).append("## ").append("##:pale:{stream}##");
+                    sb.append(" ##:separator:").append(escape(session, "<")).append("## ").append("##:pale:{stream}##");
                 }
             }
         } else {
             if (out != null) {
                 if (f == null || f.acceptRedirectOutput()) {
-                    sb.append("##:separator:").append(escape(session, " >")).append("## ").append("##:pale:{stream}##");
+                    sb.append(" ##:separator:").append(escape(session, ">")).append("## ").append("##:pale:{stream}##");
                 }
             }
             if (err != null) {
                 if (f == null || f.acceptRedirectError()) {
-                    sb.append("##:separator:").append(escape(session, " 2>")).append("## ").append("##:pale:{stream}##");
+                    sb.append(" ##:separator:").append(escape(session, "2>")).append("## ").append("##:pale:{stream}##");
                 }
             }
             if (in != null) {
                 if (f == null || f.acceptRedirectInput()) {
-                    sb.append("##:separator:").append(escape(session, " <")).append("## ").append("##:pale:{stream}##");
+                    sb.append(" ##:separator:").append(escape(session, "<")).append("## ").append("##:pale:{stream}##");
                 }
             }
         }

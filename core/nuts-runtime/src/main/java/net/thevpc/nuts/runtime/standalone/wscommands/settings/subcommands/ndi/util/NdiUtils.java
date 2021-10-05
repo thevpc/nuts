@@ -276,7 +276,7 @@ public class NdiUtils {
                             .resetLine()
                             .setDefaultValue(true).setSession(session)
                             .forBoolean("create %s ?",
-                                    session.text().forStyled(
+                                    session.text().ofStyled(
                                             NdiUtils.betterPath(out.toString()), NutsTextStyle.path()
                                     )
                             ).getBooleanValue()) {
@@ -324,7 +324,7 @@ public class NdiUtils {
                             .resetLine()
                             .setDefaultValue(true).setSession(session)
                             .forBoolean("override %s ?",
-                                    session.text().forStyled(
+                                    session.text().ofStyled(
                                             NdiUtils.betterPath(out.toString()), NutsTextStyle.path()
                                     )
                             ).getBooleanValue()) {

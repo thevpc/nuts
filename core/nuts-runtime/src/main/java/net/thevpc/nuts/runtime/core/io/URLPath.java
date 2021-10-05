@@ -348,7 +348,7 @@ public class URLPath extends NutsPathBase implements NutsPathSPI {
 
         public NutsString asFormattedString() {
             if (p.url == null) {
-                return getSession().text().forPlain("");
+                return getSession().text().ofPlain("");
             }
             return getSession().text().toText(p.url);
         }

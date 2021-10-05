@@ -198,13 +198,13 @@ public class LocalTomcat {
                     switch (format) {
                         case "short": {
                             out.printf("%s\n",
-                                    factory.forStyled(jpsResult.getPid(), NutsTextStyle.primary1())
+                                    factory.ofStyled(jpsResult.getPid(), NutsTextStyle.primary1())
                             );
                             break;
                         }
                         case "long": {
                             out.printf("%s v%s HOME: %s BASE: %s ==CMD:== %s\n",
-                                    factory.forStyled(jpsResult.getPid(), NutsTextStyle.primary1()),
+                                    factory.ofStyled(jpsResult.getPid(), NutsTextStyle.primary1()),
                                     jpsResult.getHome() == null ? null : TomcatUtils.getFolderCatalinaHomeVersion(Paths.get(jpsResult.getHome())),
                                     jpsResult.getHome(),
                                     jpsResult.getBase(),
@@ -214,7 +214,7 @@ public class LocalTomcat {
                         }
                         default: {
                             out.printf("%s ==v==%s ==BASE:== %s\n",
-                                    factory.forStyled(jpsResult.getPid(), NutsTextStyle.primary1()),
+                                    factory.ofStyled(jpsResult.getPid(), NutsTextStyle.primary1()),
                                     jpsResult.getHome() == null ? null : TomcatUtils.getFolderCatalinaHomeVersion(Paths.get(jpsResult.getHome())),
                                     jpsResult.getBase()
                             );
@@ -462,7 +462,7 @@ public class LocalTomcat {
         } else {
             if (context.getSession().isPlainOut()) {
                 context.getSession().out().printf("%s Tomcat %s.\n", getBracketsPrefix(name),
-                        context.getSession().text().forStyled("not found", NutsTextStyle.error())
+                        context.getSession().text().ofStyled("not found", NutsTextStyle.error())
                 );
             } else {
                 context.getSession().eout().add(

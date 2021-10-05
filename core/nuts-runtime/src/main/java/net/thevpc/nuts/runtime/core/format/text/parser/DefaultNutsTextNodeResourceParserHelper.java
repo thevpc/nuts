@@ -149,7 +149,7 @@ public class DefaultNutsTextNodeResourceParserHelper {
                 }
             }
             if (start) {
-                node = session.text().forList(ok).simplify();
+                node = session.text().ofList(ok).simplify();
             }
             return node;
         }

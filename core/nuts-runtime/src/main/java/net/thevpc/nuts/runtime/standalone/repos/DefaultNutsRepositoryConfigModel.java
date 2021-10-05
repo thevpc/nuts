@@ -419,12 +419,14 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
                     _LOGOP(session).level(Level.CONFIG).verb(NutsLogVerb.SUCCESS)
                             .log(NutsMessage.jstyle(
                                     "{0} created repository {1} at {2}",
-                                    CoreStringUtils.alignLeft(repository.getName(), 20) , repository.getName() , getStoreLocation()
+                                    CoreStringUtils.alignLeft(repository.getName(), 20) , repository.getName() ,
+                                    session.text().ofStyled(getStoreLocation(),NutsTextStyle.path())
                                     ));
                 } else {
                     _LOGOP(session).level(Level.CONFIG).verb(NutsLogVerb.SUCCESS).log(NutsMessage.jstyle(
                             "{0} updated repository {1} at {2}",
-                            CoreStringUtils.alignLeft(repository.getName(), 20) , repository.getName() , getStoreLocation()
+                            CoreStringUtils.alignLeft(repository.getName(), 20) , repository.getName() ,
+                            session.text().ofStyled(getStoreLocation(),NutsTextStyle.path())
                     ));
                 }
             }

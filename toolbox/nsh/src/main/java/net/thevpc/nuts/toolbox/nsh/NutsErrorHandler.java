@@ -64,7 +64,7 @@ public class NutsErrorHandler implements JShellErrorHandler {
         NutsPrintStream err = ((JShellContext) (context.getShellContext())).getSession().getTerminal().err();
         err.printf("%s\n",
                 ((JShellContext)context.getShellContext()).getWorkspace()
-                        .text().forStyled(message, NutsTextStyle.error())
+                        .text().ofStyled(message, NutsTextStyle.error())
                 );
         err.flush();
     }

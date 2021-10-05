@@ -906,7 +906,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
     }
 
     private NutsString highlightText(String text) {
-        return getWorkspace().text().forStyled(text, NutsTextStyle.primary3());
+        return getWorkspace().text().ofStyled(text, NutsTextStyle.primary3());
     }
 
     private boolean _configureLast(NutsCommandLine commandLine, NutsCommandLineConfigurable configurable) {

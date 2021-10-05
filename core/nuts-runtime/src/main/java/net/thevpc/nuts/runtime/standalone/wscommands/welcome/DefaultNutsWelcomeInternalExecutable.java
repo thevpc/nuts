@@ -54,7 +54,7 @@ public class DefaultNutsWelcomeInternalExecutable extends DefaultInternalNutsExe
         } else {
             Map<String, Object> welcome = new LinkedHashMap<>();
             welcome.put("message", "Welcome to nuts. Yeah, it is working...");
-            welcome.put("name", ws.text().forStyled("nuts", NutsTextStyle.primary(1)));
+            welcome.put("name", ws.text().ofStyled("nuts", NutsTextStyle.primary(1)));
             welcome.put("long-name", "Network Updatable Things Services");
             welcome.put("description", "The Free and Open Source Package Manager for Java (TM) and other Things ...");
             welcome.put("url", ws.io().path("http://github.com/thevpc/nuts"));

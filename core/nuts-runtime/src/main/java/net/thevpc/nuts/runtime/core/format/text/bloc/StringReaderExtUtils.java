@@ -18,7 +18,7 @@ public class StringReaderExtUtils {
             sb.append(ar.nextChar());
         }
         return new NutsText[]{
-            factory.forPlain(sb.toString())
+            factory.ofPlain(sb.toString())
         };
     }
 
@@ -47,7 +47,7 @@ public class StringReaderExtUtils {
             }
         }
         return new NutsText[]{
-            factory.forStyled(sb.toString(), NutsTextStyle.comments())
+            factory.ofStyled(sb.toString(), NutsTextStyle.comments())
         };
     }
 
@@ -76,7 +76,7 @@ public class StringReaderExtUtils {
             }
         }
         return new NutsText[]{
-            factory.forStyled(sb.toString(), NutsTextStyle.comments(2))
+            factory.ofStyled(sb.toString(), NutsTextStyle.comments(2))
         };
     }
 
@@ -91,7 +91,7 @@ public class StringReaderExtUtils {
                 switch (ar.peekChar()) {
                     case '\\': {
                         if (sb.length() > 0) {
-                            all.add(factory.forStyled(sb.toString(), NutsTextStyle.string()));
+                            all.add(factory.ofStyled(sb.toString(), NutsTextStyle.string()));
                             sb.setLength(0);
                         }
                         StringBuilder sb2 = new StringBuilder();
@@ -107,7 +107,7 @@ public class StringReaderExtUtils {
                                 }
                             }
                         }
-                        all.add(factory.forStyled(sb2.toString(), NutsTextStyle.separator()));
+                        all.add(factory.ofStyled(sb2.toString(), NutsTextStyle.separator()));
                         break;
                     }
                     case '\"': {
@@ -121,7 +121,7 @@ public class StringReaderExtUtils {
                 }
             }
             if (sb.length() > 0) {
-                all.add(factory.forStyled(sb.toString(), NutsTextStyle.string()));
+                all.add(factory.ofStyled(sb.toString(), NutsTextStyle.string()));
                 sb.setLength(0);
             }
             return all.toArray(new NutsText[0]);
@@ -141,7 +141,7 @@ public class StringReaderExtUtils {
                 switch (ar.peekChar()) {
                     case '\\': {
                         if (sb.length() > 0) {
-                            all.add(factory.forStyled(sb.toString(), NutsTextStyle.string()));
+                            all.add(factory.ofStyled(sb.toString(), NutsTextStyle.string()));
                             sb.setLength(0);
                         }
                         StringBuilder sb2 = new StringBuilder();
@@ -157,7 +157,7 @@ public class StringReaderExtUtils {
                                 }
                             }
                         }
-                        all.add(factory.forStyled(sb2.toString(), NutsTextStyle.separator()));
+                        all.add(factory.ofStyled(sb2.toString(), NutsTextStyle.separator()));
                         break;
                     }
                     case '\'': {
@@ -171,7 +171,7 @@ public class StringReaderExtUtils {
                 }
             }
             if (sb.length() > 0) {
-                all.add(factory.forStyled(sb.toString(), NutsTextStyle.string(2)));
+                all.add(factory.ofStyled(sb.toString(), NutsTextStyle.string(2)));
                 sb.setLength(0);
             }
             return all.toArray(new NutsText[0]);
@@ -195,7 +195,7 @@ public class StringReaderExtUtils {
                 break;
             }
         }
-        all.add(factory.forPlain(sb.toString()));
+        all.add(factory.ofPlain(sb.toString()));
         return all.toArray(new NutsText[0]);
 
     }
@@ -260,7 +260,7 @@ public class StringReaderExtUtils {
         }
         if (lastOk >= 0) {
             return new NutsText[]{
-                factory.forStyled(ar.nextChars(lastOk + 1), NutsTextStyle.number())
+                factory.ofStyled(ar.nextChars(lastOk + 1), NutsTextStyle.number())
             };
         }
         return null;

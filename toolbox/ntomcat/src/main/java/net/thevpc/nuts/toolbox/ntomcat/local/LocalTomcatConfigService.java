@@ -233,24 +233,24 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
 
     public NutsString getFormattedError(String str) {
         return context.getSession()
-                .text().forStyled(str, NutsTextStyle.error())
+                .text().ofStyled(str, NutsTextStyle.error())
                 ;
     }
 
     public NutsString getFormattedSuccess(String str) {
         return context.getSession()
-                .text().forStyled(str, NutsTextStyle.success())
+                .text().ofStyled(str, NutsTextStyle.success())
                 ;
     }
 
     public NutsString getFormattedPath(Path str) {
         return context.getSession()
-                .text().forStyled(str == null ? "" : str.toString(), NutsTextStyle.path())
+                .text().ofStyled(str == null ? "" : str.toString(), NutsTextStyle.path())
                 ;
     }
 
     public NutsString getFormattedPath(String str) {
-        return context.getSession().text().forStyled(str == null ? "" : str.toString(), NutsTextStyle.path())
+        return context.getSession().text().ofStyled(str == null ? "" : str.toString(), NutsTextStyle.path())
                 ;
     }
 

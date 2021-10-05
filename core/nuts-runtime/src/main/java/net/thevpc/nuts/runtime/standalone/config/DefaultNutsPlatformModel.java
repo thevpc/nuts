@@ -65,7 +65,7 @@ public class DefaultNutsPlatformModel {
             if (notify) {
                 if (session.isPlainTrace()) {
                     session.out().resetLine().printf("%s %s %s (%s) %s at %s%n",
-                            session.text().forStyled("install",NutsTextStyles.of(NutsTextStyle.success())),
+                            session.text().ofStyled("install",NutsTextStyles.of(NutsTextStyle.success())),
                             location.getId().getShortName(),
                             location.getPackaging(),
                             location.getProduct(),

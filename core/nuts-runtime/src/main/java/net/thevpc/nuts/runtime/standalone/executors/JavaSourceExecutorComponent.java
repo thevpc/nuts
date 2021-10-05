@@ -30,7 +30,6 @@ import net.thevpc.nuts.NutsExecutorComponent;
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
 import java.io.File;
-import java.io.PrintStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
@@ -70,7 +69,7 @@ public class JavaSourceExecutorComponent implements NutsExecutorComponent {
         NutsWorkspace ws = executionContext.getWorkspace();
         String folder = "__temp_folder";
         NutsPrintStream out = executionContext.getTraceSession().out();
-        out.println(executionContext.getWorkspace().text().forStyled("compile", NutsTextStyle.primary4()));
+        out.println(executionContext.getWorkspace().text().ofStyled("compile", NutsTextStyle.primary4()));
         out.printf("%s%n",
                 executionContext.getWorkspace().commandLine().create(
                         "embedded-javac",

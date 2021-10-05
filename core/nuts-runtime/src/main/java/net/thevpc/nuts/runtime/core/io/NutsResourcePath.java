@@ -305,7 +305,21 @@ public class NutsResourcePath implements NutsPathSPI {
                 tb.append("(", NutsTextStyle.separator());
                 int x = path.indexOf(')');
                 if (x > 0) {
-                    tb.append(path.substring("nuts-resource://(".length(), x));
+                    String idsStr = path.substring("nuts-resource://(".length(), x);
+                    NutsIdParser nutsIdParser = p.getSession().id().parser().setLenient(false);
+                    tb.appendJoined(
+                            p.getSession().text().ofStyled(";",NutsTextStyle.separator()),
+                            Arrays.stream(idsStr.split(";")).map(xi -> {
+                        xi = xi.trim();
+                        if (xi.length() > 0) {
+                            NutsId pp = nutsIdParser.parse(xi);
+                            if(pp==null){
+                                return xi;
+                            }
+                            return pp;
+                        }
+                        return null;
+                    }).filter(Objects::nonNull).collect(Collectors.toList()));
                     tb.append(")", NutsTextStyle.separator());
                     tb.append(path.substring(x + 1), NutsTextStyle.path());
                 } else {
@@ -314,7 +328,13 @@ public class NutsResourcePath implements NutsPathSPI {
             } else if (path.startsWith("nuts-resource://")) {
                 int x = path.indexOf('/', "nuts-resource://".length());
                 if (x > 0) {
-                    tb.append(path.substring("nuts-resource://".length(), x));
+                    String sid = path.substring("nuts-resource://".length(), x);
+                    NutsId ii = p.getSession().id().parser().setLenient(true).parse(sid);
+                    if(ii==null) {
+                        tb.append(sid);
+                    }else{
+                        tb.append(ii);
+                    }
                     tb.append(path.substring(x), NutsTextStyle.path());
                 } else {
                     return text.toText(path);
@@ -322,7 +342,7 @@ public class NutsResourcePath implements NutsPathSPI {
             } else {
                 return text.toText(path);
             }
-            return text.toText(path);
+            return tb.toText();
         }
 
         @Override

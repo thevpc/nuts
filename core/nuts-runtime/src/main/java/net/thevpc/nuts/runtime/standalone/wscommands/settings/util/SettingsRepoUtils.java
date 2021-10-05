@@ -10,7 +10,7 @@ public class SettingsRepoUtils {
         out.print(prefix);
         NutsTextManager factory = context.getSession().text();
         if (enabled) {
-            out.print(factory.forStyled(repository.getName() + disabledString, NutsTextStyle.primary2()));
+            out.print(factory.ofStyled(repository.getName() + disabledString, NutsTextStyle.primary2()));
         } else {
             out.print("```error " + repository.getName() + disabledString + "```");
         }

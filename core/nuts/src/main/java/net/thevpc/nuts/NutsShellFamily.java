@@ -36,6 +36,10 @@ import net.thevpc.nuts.boot.NutsApiUtils;
  */
 public enum NutsShellFamily implements NutsEnum {
     /**
+     * Posix Shell Family
+     */
+    SH,
+    /**
      * Bash Shell Family
      */
     BASH,
@@ -56,12 +60,37 @@ public enum NutsShellFamily implements NutsEnum {
      */
     FISH,
     /**
+     * Windows cmd standard shell
+     */
+    WIN_CMD,
+    /**
+     * Windows power shell
+     */
+    WIN_POWER_SHELL,
+    /**
      * Uncategorized Shell Family
      */
     UNKNOWN;
 
 
-    private static final NutsShellFamily _curr = parseLenient(System.getenv("SHELL"), UNKNOWN, UNKNOWN);
+    private static final NutsShellFamily _curr =_resolveCurrent();
+
+    private static NutsShellFamily _resolveCurrent(){
+        switch (NutsOsFamily.getCurrent()){
+            case WINDOWS:{
+                return WIN_CMD;
+            }
+            case LINUX:
+            case UNIX:{
+                return parseLenient(System.getenv("SHELL"), BASH, BASH);
+            }
+            case MACOS:{
+                return parseLenient(System.getenv("SHELL"), ZSH, ZSH);
+            }
+        }
+        return UNKNOWN;
+    }
+
     /**
      * lower-cased identifier for the enum entry
      */
@@ -104,6 +133,18 @@ public enum NutsShellFamily implements NutsEnum {
                 return ZSH;
             case "fish":
                 return FISH;
+            case "windows_cmd":
+            case "win_cmd":
+            case "cmd":
+            case "win":
+                return WIN_CMD;
+            case "windows_power_shell":
+            case "windows_powershell":
+            case "win_power_shell":
+            case "win_powershell":
+            case "power_shell":
+            case "powershell":
+                return WIN_POWER_SHELL;
         }
         return errorValue;
     }

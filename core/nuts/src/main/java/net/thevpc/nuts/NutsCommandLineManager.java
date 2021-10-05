@@ -107,12 +107,12 @@ public interface NutsCommandLineManager {
      * @since 0.8.1
      * @return command line family
      */
-    NutsCommandlineFamily getCommandlineFamily();
+    NutsShellFamily getCommandlineFamily();
 
     /**
      * change command line family
      * @param family family
      * @return {@code this} instance
      */
-    NutsCommandLineManager setCommandlineFamily(NutsCommandlineFamily family);
+    NutsCommandLineManager setCommandlineFamily(NutsShellFamily family);
 }

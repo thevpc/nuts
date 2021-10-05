@@ -6,7 +6,7 @@ import net.thevpc.nuts.runtime.core.format.DefaultFormatBase;
 public class DefaultNutsCommandLineFormat extends DefaultFormatBase<NutsCommandLineFormat> implements NutsCommandLineFormat {
 
     private NutsCommandLine value;
-    private NutsCommandlineFamily formatFamily=NutsCommandlineFamily.DEFAULT;
+    private NutsShellFamily formatFamily=NutsShellFamily.getCurrent();
     private NutsCommandLineFormatStrategy formatStrategy=NutsCommandLineFormatStrategy.DEFAULT;
 
     public DefaultNutsCommandLineFormat(NutsWorkspace ws) {
@@ -34,12 +34,12 @@ public class DefaultNutsCommandLineFormat extends DefaultFormatBase<NutsCommandL
     public NutsCommandLineFormat setValue(String args) {
         return setValue(args == null ? null : getSession().commandLine().parse(args));
     }
-    public NutsCommandlineFamily getCommandlineFamily() {
+    public NutsShellFamily getShellFamily() {
         return formatFamily;
     }
 
-    public NutsCommandLineFormat setCommandlineFamily(NutsCommandlineFamily family) {
-        this.formatFamily = family==null?NutsCommandlineFamily.DEFAULT : family;
+    public NutsCommandLineFormat setShellFamily(NutsShellFamily family) {
+        this.formatFamily = family==null?NutsShellFamily.getCurrent() : family;
         return this;
     }
 
@@ -66,10 +66,15 @@ public class DefaultNutsCommandLineFormat extends DefaultFormatBase<NutsCommandL
         checkSession();
         if (value != null) {
             String cmd =
-                    NutsCommandLineBashFamilySupport.of(getCommandlineFamily(), getSession())
-                    .escapeArguments(value.toStringArray(),getFormatStrategy(), getSession());
+                    NutsCommandLineShellSupport.of(getShellFamily(), getSession())
+                    .escapeArguments(value.toStringArray(),
+                            new NutsCommandLineShellOptions()
+                                    .setSession(getSession())
+                                    .setFormatStrategy(getFormatStrategy())
+                                    .setExpectEnv(true)
+                    );
             if (isNtf()) {
-                out.print("```sh " + cmd + "```");
+                out.print("```system " + cmd + " ```");
             } else {
                 out.print(cmd);
             }

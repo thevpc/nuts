@@ -28,7 +28,6 @@ import net.thevpc.nuts.runtime.bundles.iter.IteratorUtils;
 import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.core.repos.NutsInstalledRepository;
 import net.thevpc.nuts.runtime.core.util.CoreNutsDependencyUtils;
-import net.thevpc.nuts.runtime.standalone.util.NutsCollectionStream;
 import net.thevpc.nuts.runtime.standalone.util.NutsListStream;
 
 import java.util.*;
@@ -451,9 +450,9 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
         if (all.size() > 0) {
             if(session.isPlainOut()) {
                 NutsTextManager text = session.text();
-                NutsText kind = text.forStyled(skind, NutsTextStyle.primary2());
+                NutsText kind = text.ofStyled(skind, NutsTextStyle.primary2());
                 NutsText action =
-                        text.forStyled(saction,
+                        text.ofStyled(saction,
                                 saction.equals("set as default") ? NutsTextStyle.primary3() :
                                         saction.equals("ignored") ? NutsTextStyle.pale() :
                                                 NutsTextStyle.primary1()
@@ -464,7 +463,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                         .append(kind).append(" ").append((all.size() > 1 ? "artifacts are" : "artifact is"))
                         .append(" going to be ").append(action).append(" : ")
                         .appendJoined(
-                                ws.text().forPlain(", "),
+                                ws.text().ofPlain(", "),
                                 all.stream().map(x
                                                 -> ws.text().toText(
                                                 x.builder().omitImportedGroupId().build()

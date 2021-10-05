@@ -19,39 +19,39 @@ public interface NutsTextManager {
 
     NutsTextBuilder builder();
 
-    NutsText forBlank();
+    NutsText ofBlank();
 
     NutsText toText(Object t);
 
-    NutsTextPlain forPlain(String t);
+    NutsTextPlain ofPlain(String t);
 
-    NutsTextList forList(NutsText... nodes);
+    NutsTextList ofList(NutsText... nodes);
 
-    NutsTextList forList(Collection<NutsText> nodes);
+    NutsTextList ofList(Collection<NutsText> nodes);
 
-    NutsTextStyled forStyled(String other, NutsTextStyles decorations);
+    NutsTextStyled ofStyled(String other, NutsTextStyles decorations);
 
-    NutsTextStyled forStyled(NutsString other, NutsTextStyles decorations);
+    NutsTextStyled ofStyled(NutsString other, NutsTextStyles decorations);
 
-    NutsTextStyled forStyled(NutsText other, NutsTextStyles decorations);
+    NutsTextStyled ofStyled(NutsText other, NutsTextStyles decorations);
 
-    NutsTextStyled forStyled(String other, NutsTextStyle decorations);
+    NutsTextStyled ofStyled(String other, NutsTextStyle decorations);
 
-    NutsTextStyled forStyled(NutsString other, NutsTextStyle decorations);
+    NutsTextStyled ofStyled(NutsString other, NutsTextStyle decorations);
 
-    NutsTextStyled forStyled(NutsText other, NutsTextStyle decorations);
+    NutsTextStyled ofStyled(NutsText other, NutsTextStyle decorations);
 
-    NutsTextCommand forCommand(NutsTerminalCommand command);
+    NutsTextCommand ofCommand(NutsTerminalCommand command);
 
-    NutsTextCode forCode(String lang, String text);
+    NutsTextCode ofCode(String lang, String text);
 
-    NutsTextNumbering forNumbering();
+    NutsTextNumbering ofNumbering();
 
-    NutsTextNumbering forTitleNumberSequence(String pattern);
+    NutsTextNumbering ofTitleNumberSequence(String pattern);
 
-    NutsTextAnchor forAnchor(String anchorName);
+    NutsTextAnchor ofAnchor(String anchorName);
 
-    NutsTextLink forLink(NutsText value);
+    NutsTextLink ofLink(NutsText value);
 
     NutsTextFormatTheme getTheme();
 

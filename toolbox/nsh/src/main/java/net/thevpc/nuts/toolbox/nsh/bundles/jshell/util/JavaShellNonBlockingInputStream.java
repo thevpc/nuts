@@ -173,7 +173,6 @@ public interface JavaShellNonBlockingInputStream extends Closeable {
     /**
      * Closes this input stream and releases any system resources associated
      * with the stream.
-     * <p>
      * <p> The <code>close</code> method of <code>InputStream</code> does
      * nothing.
      *

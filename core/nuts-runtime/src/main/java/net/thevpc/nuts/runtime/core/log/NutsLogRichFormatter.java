@@ -28,7 +28,7 @@ public class NutsLogRichFormatter extends Formatter {
         NutsTextBuilder sb = tf.builder();
         String date = CoreNutsUtils.DEFAULT_DATE_TIME_FORMATTER.format(Instant.ofEpochMilli(wRecord.getMillis()));
 
-        sb.append(tf.forStyled(date, NutsTextStyle.pale()));
+        sb.append(tf.ofStyled(date, NutsTextStyle.pale()));
         boolean verboseLog = false;//read from session or workspace;
         if (verboseLog) {
             sb.append(" ");
@@ -153,7 +153,7 @@ public class NutsLogRichFormatter extends Formatter {
         lastMillis = wRecord.getMillis();
         if (wRecord.getThrown() != null) {
             sb.append(
-                    wRecord.getSession().text().forPlain(
+                    wRecord.getSession().text().ofPlain(
                             NutsLogUtils.stacktrace(wRecord.getThrown())
                     ).toString()
             );

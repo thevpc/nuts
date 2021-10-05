@@ -51,7 +51,6 @@ import net.thevpc.nuts.runtime.core.log.DefaultNutsLogModel;
 import net.thevpc.nuts.runtime.core.log.DefaultNutsLogger;
 import net.thevpc.nuts.runtime.core.model.DefaultNutsId;
 import net.thevpc.nuts.runtime.core.model.DefaultNutsProperties;
-import net.thevpc.nuts.runtime.core.model.DefaultNutsVersion;
 import net.thevpc.nuts.runtime.core.parser.DefaultNutsVersionParser;
 import net.thevpc.nuts.runtime.core.repos.DefaultNutsRepositoryManager;
 import net.thevpc.nuts.runtime.core.repos.DefaultNutsRepositoryModel;
@@ -285,14 +284,14 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             LOGCRF.log(NutsMessage.jstyle("   nuts-workspace-name            : {0}", CoreNutsUtils.desc(info.getName(), text)));
             LOGCRF.log(NutsMessage.jstyle("   nuts-api-version               : {0}", version().setSession(defaultSession()).parser().parse(Nuts.getVersion())));
             LOGCRF.log(NutsMessage.jstyle("   nuts-api-url                   : {0}", io().setSession(defaultSession()).path(getApiURL())));
-            LOGCRF.log(NutsMessage.jstyle("   nuts-api-digest                : {0}", text.forStyled(getApiDigest(), NutsTextStyle.version())));
+            LOGCRF.log(NutsMessage.jstyle("   nuts-api-digest                : {0}", text.ofStyled(getApiDigest(), NutsTextStyle.version())));
             LOGCRF.log(NutsMessage.jstyle("   nuts-boot-repositories         : {0}", CoreNutsUtils.desc(info.getBootRepositories(), text)));
             LOGCRF.log(NutsMessage.jstyle("   nuts-runtime                   : {0}", getRuntimeId()));
             LOGCRF.log(NutsMessage.jstyle("   nuts-runtime-digest            : {0}",
-                    text.forStyled(new CoreDigestHelper().append(info.getClassWorldURLs()).getDigest(), NutsTextStyle.version())
+                    text.ofStyled(new CoreDigestHelper().append(info.getClassWorldURLs()).getDigest(), NutsTextStyle.version())
             ));
             LOGCRF.log(NutsMessage.jstyle("   nuts-runtime-dependencies      : {0}",
-                    text.builder().appendJoined(text.forStyled(";", NutsTextStyle.separator()),
+                    text.builder().appendJoined(text.ofStyled(";", NutsTextStyle.separator()),
                             Arrays.stream(info.getRuntimeBootDescriptor().getDependencies())
                                     .map(x -> id().setSession(defaultSession()).parser().parse(x.toString()))
                                     .collect(Collectors.toList())
@@ -300,14 +299,14 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             ));
             NutsIOManager io = io().setSession(defaultSession());
             LOGCRF.log(NutsMessage.jstyle("   nuts-runtime-urls              : {0}",
-                    text.builder().appendJoined(text.forStyled(";", NutsTextStyle.separator()),
+                    text.builder().appendJoined(text.ofStyled(";", NutsTextStyle.separator()),
                             Arrays.stream(info.getClassWorldURLs())
                                     .map(x -> io.path(x.toString()))
                                     .collect(Collectors.toList())
                     )
             ));
             LOGCRF.log(NutsMessage.jstyle("   nuts-extension-dependencies    : {0}",
-                    text.builder().appendJoined(text.forStyled(";", NutsTextStyle.separator()),
+                    text.builder().appendJoined(text.ofStyled(";", NutsTextStyle.separator()),
                             toIds(info.getExtensionBootDescriptors()).stream()
                                     .map(x ->
                                             id().setSession(defaultSession()).parser().parse(x.toString())
@@ -338,10 +337,10 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             LOGCRF.log(NutsMessage.jstyle("   option-progress                : {0}", CoreNutsUtils.desc(info.getOptions().getProgressOptions(), text)));
             LOGCRF.log(NutsMessage.jstyle("   inherited                      : {0}", info.getOptions().isInherited()));
             LOGCRF.log(NutsMessage.jstyle("   inherited-nuts-boot-args       : {0}", System.getProperty("nuts.boot.args") == null ? CoreNutsUtils.desc(null, text)
-                    : CoreNutsUtils.desc(commandLine.setCommandlineFamily(NutsCommandlineFamily.BASH).parse(System.getProperty("nuts.boot.args")), text)
+                    : CoreNutsUtils.desc(commandLine.setCommandlineFamily(NutsShellFamily.SH).parse(System.getProperty("nuts.boot.args")), text)
             ));
             LOGCRF.log(NutsMessage.jstyle("   inherited-nuts-args            : {0}", System.getProperty("nuts.args") == null ? CoreNutsUtils.desc(null, text)
-                    : CoreNutsUtils.desc(text.toText(commandLine.setCommandlineFamily(NutsCommandlineFamily.BASH).parse(System.getProperty("nuts.args"))), text)
+                    : CoreNutsUtils.desc(text.toText(commandLine.setCommandlineFamily(NutsShellFamily.SH).parse(System.getProperty("nuts.args"))), text)
             ));
             LOGCRF.log(NutsMessage.jstyle("   option-open-mode               : {0}", CoreNutsUtils.formatLogValue(text, info.getOptions().getOpenMode(), info.getOptions().getOpenMode() == null ? NutsOpenMode.OPEN_OR_CREATE : info.getOptions().getOpenMode())));
             LOGCRF.log(NutsMessage.jstyle("   java-home                      : {0}", System.getProperty("java.home")));
@@ -459,7 +458,10 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 justInstalled = true;
                 NutsWorkspaceUtils.of(defaultSession()).checkReadOnly();
                 LOG.with().session(defaultSession()).level(Level.CONFIG).verb(NutsLogVerb.SUCCESS)
-                        .log(NutsMessage.jstyle("creating NEW workspace at {0}", locations().getWorkspaceLocation()));
+                        .log(NutsMessage.jstyle("creating {0} workspace at {1}",
+                        defaultSession().text().ofStyled("NEW",NutsTextStyle.info()),
+                        defaultSession().io().path(locations().getWorkspaceLocation())
+                                ));
                 NutsWorkspaceConfigBoot bconfig = new NutsWorkspaceConfigBoot();
                 //load from config with resolution applied
                 bconfig.setUuid(uuid);
@@ -643,7 +645,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
 
             if (CoreBooleanUtils.getSysBoolNutsProperty("perf", false)) {
                 defaultSession().out().printf("```sh nuts``` workspace loaded in %s%n",
-                        configModel.getWorkspace().text().forStyled(CoreTimeUtils.formatPeriodMilli(_boot.getCreationFinishTimeMillis() - _boot.getCreationStartTimeMillis()),
+                        configModel.getWorkspace().text().ofStyled(CoreTimeUtils.formatPeriodMilli(_boot.getCreationFinishTimeMillis() - _boot.getCreationStartTimeMillis()),
                                 NutsTextStyle.error()
                         )
                 );
@@ -687,9 +689,9 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                     if (someAdded == 0) {
                         session.out().print("```error no new``` java installation locations found...\n");
                     } else if (someAdded == 1) {
-                        session.out().printf("%s new java installation location added...\n", factory.forStyled("1", NutsTextStyle.primary2()));
+                        session.out().printf("%s new java installation location added...\n", factory.ofStyled("1", NutsTextStyle.primary2()));
                     } else {
-                        session.out().printf("%s new java installation locations added...\n", factory.forStyled("" + someAdded, NutsTextStyle.primary2()));
+                        session.out().printf("%s new java installation locations added...\n", factory.ofStyled("" + someAdded, NutsTextStyle.primary2()));
                     }
                     session.out().println("you can always add another installation manually using 'nuts settings add java' command.");
                 }
@@ -738,7 +740,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             NutsPrintStream out = session.out();
             out.resetLine();
             out.printf("looking for recommended companion tools to install... detected : %s%n",
-                    text.builder().appendJoined(text.forPlain(","),
+                    text.builder().appendJoined(text.ofPlain(","),
                             companionIds
                     )
             );
@@ -755,7 +757,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 out.printf("```error unable to install companion tools``` :  %s \n"
                                 + "this happens when none of the following repositories are able to locate them : %s\n",
                         ex,
-                        text.builder().appendJoined(text.forPlain(", "),
+                        text.builder().appendJoined(text.ofPlain(", "),
                                 Arrays.stream(repos().setSession(session).getRepositories()).map(x
                                         -> text.builder().append(x.getName(), NutsTextStyle.primary3())
                                 ).collect(Collectors.toList())
@@ -951,7 +953,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             NutsTextManager text = session.text();
             if (strategy0 == InstallStrategy0.UPDATE) {
                 session.out().resetLine().printf("%s %s ...%n",
-                        text.forStyled("update", NutsTextStyle.warn()),
+                        text.ofStyled("update", NutsTextStyle.warn()),
                         def.getId().getLongNameId()
                 );
             } else if (strategy0 == InstallStrategy0.REQUIRE) {
@@ -966,12 +968,12 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 if (reinstall) {
                     session.out().resetLine().printf(
                             "%s %s ...%n",
-                            text.forStyled("re-install", NutsTextStyles.of(NutsTextStyle.success(), NutsTextStyle.underlined())),
+                            text.ofStyled("re-install", NutsTextStyles.of(NutsTextStyle.success(), NutsTextStyle.underlined())),
                             def.getId().getLongNameId()
                     );
                 } else {
                     session.out().resetLine().printf("%s %s ...%n",
-                            text.forStyled("install", NutsTextStyle.success()),
+                            text.ofStyled("install", NutsTextStyle.success()),
                             def.getId().getLongNameId()
                     );
                 }
@@ -1192,13 +1194,13 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 NutsText installedString = null;
                 if (newNutsInstallInformation != null) {
                     if (newNutsInstallInformation.isJustReInstalled()) {
-                        installedString = text.forStyled("re-install", NutsTextStyles.of(NutsTextStyle.success(), NutsTextStyle.underlined()));
+                        installedString = text.ofStyled("re-install", NutsTextStyles.of(NutsTextStyle.success(), NutsTextStyle.underlined()));
                     } else if (newNutsInstallInformation.isJustInstalled()) {
-                        installedString = text.forStyled("install", NutsTextStyle.success());
+                        installedString = text.ofStyled("install", NutsTextStyle.success());
                     } else if (newNutsInstallInformation.isJustReRequired()) {
-                        installedString = text.forStyled("re-require", NutsTextStyles.of(NutsTextStyle.info(), NutsTextStyle.underlined()));
+                        installedString = text.ofStyled("re-require", NutsTextStyles.of(NutsTextStyle.info(), NutsTextStyle.underlined()));
                     } else if (newNutsInstallInformation.isJustRequired()) {
-                        installedString = text.forStyled("require", NutsTextStyle.info());
+                        installedString = text.ofStyled("require", NutsTextStyle.info());
                     }
                 }
                 if (installedString != null) {
@@ -1266,7 +1268,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                         out.resetLine().printf("%s  %s %s.%s%n",
                                 installedString,
                                 def.getId().getLongNameId(),
-                                text.forStyled("successfully", NutsTextStyle.success()),
+                                text.ofStyled("successfully", NutsTextStyle.success()),
                                 text.parse(setAsDefaultString)
                         );
                     }

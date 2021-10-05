@@ -208,4 +208,13 @@ public class NutsStreamOrPath {
         NUTS_PRINT_STREAM
         ;
     }
+
+    @Override
+    public String toString() {
+        return "NutsStreamOrPath{" +
+                "value=" + value +
+                ", type=" + type +
+                ", disposable=" + disposable +
+                '}';
+    }
 }

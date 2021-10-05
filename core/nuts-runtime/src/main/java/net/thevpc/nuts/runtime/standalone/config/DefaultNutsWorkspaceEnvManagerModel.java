@@ -54,7 +54,7 @@ public class DefaultNutsWorkspaceEnvManagerModel {
     private NutsDesktopEnvironmentFamily osDesktopEnvironmentFamily;
     private NutsId arch;
     private NutsId osDist;
-    private NutsArchFamily archFamily = NutsArchFamily.getArchFamily();
+    private NutsArchFamily archFamily = NutsArchFamily.getCurrent();
 
     public DefaultNutsWorkspaceEnvManagerModel(NutsWorkspace ws, NutsWorkspaceInitInformation info, NutsSession session) {
         this.workspace = ws;

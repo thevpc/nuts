@@ -365,7 +365,7 @@ public final class NutsBootWorkspace {
                 }
                 sb.append(s);
             }
-            LOG.log(Level.FINE, NutsLogVerb.START,NutsMessage.jstyle("[EXEC] {0}", sb));
+            LOG.log(Level.FINE, NutsLogVerb.START,NutsMessage.jstyle("[exec] {0}", sb));
         }
         return cmd.toArray(new String[0]);
     }

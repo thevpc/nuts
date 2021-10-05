@@ -67,14 +67,14 @@ public interface NutsCommandLineFormat extends NutsFormat {
      * @since 0.8.1
      * @return command line family
      */
-    NutsCommandlineFamily getCommandlineFamily();
+    NutsShellFamily getShellFamily();
 
     /**
      * change command line family
      * @param family family
      * @return {@code this} instance
      */
-    NutsCommandLineFormat setCommandlineFamily(NutsCommandlineFamily family);
+    NutsCommandLineFormat setShellFamily(NutsShellFamily family);
 
     /**
      * update session

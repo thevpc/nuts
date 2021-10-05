@@ -184,63 +184,63 @@ public class WhoamiCommand extends SimpleNshBuiltin {
             NutsTextManager factory = session.text();
             if (result.loginStack != null) {
                 context.out().printf("%s      :",
-                        factory.forStyled("stack",NutsTextStyle.primary5())
+                        factory.ofStyled("stack",NutsTextStyle.primary5())
                         );
                 for (String log : result.loginStack) {
                     context.out().printf(" %s",
-                            factory.forStyled(log,NutsTextStyle.primary3())
+                            factory.ofStyled(log,NutsTextStyle.primary3())
                             );
                 }
                 context.out().println();
             }
             if (result.groups != null && result.groups.length > 0) {
                 context.out().printf("%s : %s\n",
-                        factory.forStyled("identities",NutsTextStyle.primary5()),
+                        factory.ofStyled("identities",NutsTextStyle.primary5()),
                         Arrays.toString(result.groups));
             }
             if (result.rights != null && result.rights.length > 0) {
                 context.out().printf("%s     : %s\n",
-                        factory.forStyled("rights",NutsTextStyle.primary5()),
+                        factory.ofStyled("rights",NutsTextStyle.primary5()),
                         Arrays.toString(result.rights));
             }
             if (result.inherited != null && result.inherited.length > 0) {
                 context.out().printf("%s  : %s\n",
-                        factory.forStyled("inherited",NutsTextStyle.primary5()),
+                        factory.ofStyled("inherited",NutsTextStyle.primary5()),
                         Arrays.toString(result.inherited));
             } else {
                 context.out().printf("%s  : %s\n",
-                        factory.forStyled("inherited",NutsTextStyle.primary5()),
+                        factory.ofStyled("inherited",NutsTextStyle.primary5()),
                         "NONE");
             }
             if (result.remoteId != null) {
                 context.out().printf("%s  : %s\n",
-                        factory.forStyled("remote-id",NutsTextStyle.primary5()),
+                        factory.ofStyled("remote-id",NutsTextStyle.primary5()),
                         result.remoteId);
             }
             if (result.repos != null) {
                 for (RepoResult repo : result.repos) {
                     context.out().printf(
                             "[ %s ]: \n",
-                            factory.forStyled(repo.name,NutsTextStyle.primary4())
+                            factory.ofStyled(repo.name,NutsTextStyle.primary4())
                     );
                     if (repo.identities.length > 0) {
                         context.out().printf("    %s : %s\n",
-                                factory.forStyled("identities",NutsTextStyle.primary5()),
+                                factory.ofStyled("identities",NutsTextStyle.primary5()),
                                 Arrays.toString(repo.identities));
                     }
                     if (result.rights != null && repo.rights.length > 0) {
                         context.out().printf("    %s     : %s\n",
-                                factory.forStyled("rights",NutsTextStyle.primary5()),
+                                factory.ofStyled("rights",NutsTextStyle.primary5()),
                                 Arrays.toString(repo.rights));
                     }
                     if (repo.inherited != null && repo.inherited.length > 0) {
                         context.out().printf("    %s  : %s\n",
-                                factory.forStyled("inherited",NutsTextStyle.primary5()),
+                                factory.ofStyled("inherited",NutsTextStyle.primary5()),
                                 Arrays.toString(repo.inherited));
                     }
                     if (repo.remoteId != null) {
                         context.out().printf("    %s  : %s\n",
-                                factory.forStyled("remote-id",NutsTextStyle.primary5()),
+                                factory.ofStyled("remote-id",NutsTextStyle.primary5()),
                                 repo.remoteId);
                     }
                 }

@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.executors;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.common.CorePlatformUtils;
 import net.thevpc.nuts.runtime.bundles.parsers.StringTokenizerUtils;
 import net.thevpc.nuts.runtime.core.util.*;
 import net.thevpc.nuts.runtime.standalone.util.NutsClassLoaderUtils;
@@ -14,7 +13,6 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -261,7 +259,7 @@ public final class JavaExecutorOptions {
                             NutsTextBuilder msgString = text.builder();
 
                             msgString.append("multiple runnable classes detected  - actually ")
-                                    .append(text.forStyled("" + possibleClasses.size(), NutsTextStyle.primary5()))
+                                    .append(text.ofStyled("" + possibleClasses.size(), NutsTextStyle.primary5()))
                                     .append(" . Select one :\n");
                             int x = ((int) Math.log(possibleClasses.size())) + 2;
                             for (int i = 0; i < possibleClasses.size(); i++) {

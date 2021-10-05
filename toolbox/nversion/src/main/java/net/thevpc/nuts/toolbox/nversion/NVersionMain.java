@@ -169,15 +169,15 @@ public class NVersionMain implements NutsApplication {
                 for (String k : keys) {
                     if (results.size() > 1) {
                         if (longFormat || all) {
-                            out.printf("%s:%n", text.forStyled(k, NutsTextStyle.primary3()));
+                            out.printf("%s:%n", text.ofStyled(k, NutsTextStyle.primary3()));
                         } else {
-                            out.printf("%s: ", text.forStyled(k, NutsTextStyle.primary3()));
+                            out.printf("%s: ", text.ofStyled(k, NutsTextStyle.primary3()));
                         }
                     }
                     Set<VersionDescriptor> v = results.get(k);
                     for (VersionDescriptor descriptor : v) {
                         if (nameFormat) {
-                            out.printf("%s%n", text.forStyled(descriptor.getId().getShortName(), NutsTextStyle.primary4()));
+                            out.printf("%s%n", text.ofStyled(descriptor.getId().getShortName(), NutsTextStyle.primary4()));
                         } else if (idFormat) {
                             out.printf("%s%n", text.toText(descriptor.getId()));
                         } else if (longFormat) {

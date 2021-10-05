@@ -68,8 +68,8 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
                     case SYSTEM: {
                         if(getSession().isPlainOut()){
                             out.printf("%s : %s %s%n",
-                                    factory.forStyled(arg, NutsTextStyle.primary4()),
-                                    factory.forStyled("system command", NutsTextStyle.primary6())
+                                    factory.ofStyled(arg, NutsTextStyle.primary4()),
+                                    factory.ofStyled("system command", NutsTextStyle.primary6())
                                     , p.getDescription());
 
                         }else {
@@ -86,8 +86,8 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
                     case ALIAS: {
                         if(getSession().isPlainOut()){
                             out.printf("%s : %s (owner %s ) : %s%n",
-                                    factory.forStyled(arg, NutsTextStyle.primary4()),
-                                    factory.forStyled("nuts alias", NutsTextStyle.primary6()),
+                                    factory.ofStyled(arg, NutsTextStyle.primary4()),
+                                    factory.ofStyled("nuts alias", NutsTextStyle.primary6()),
                                     p.getId(),
                                     ws.commandLine().create(ws.commands().findCommand(p.getName()).getCommand())
                             );
@@ -114,8 +114,8 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
                         }
                         if(getSession().isPlainOut()){
                             out.printf("%s : %s %s%n",
-                                    factory.forStyled(arg, NutsTextStyle.primary4()),
-                                    factory.forStyled("artifact", NutsTextStyle.primary6()),
+                                    factory.ofStyled(arg, NutsTextStyle.primary4()),
+                                    factory.ofStyled("artifact", NutsTextStyle.primary6()),
                                     p.getId()/*, p.getDescription()*/
                             );
                         }else {
@@ -133,8 +133,8 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
                     case INTERNAL: {
                         if(getSession().isPlainOut()){
                             out.printf("%s : %s %n",
-                                    factory.forStyled("internal command", NutsTextStyle.primary6()),
-                                    factory.forStyled(arg, NutsTextStyle.primary4())
+                                    factory.ofStyled("internal command", NutsTextStyle.primary6()),
+                                    factory.ofStyled(arg, NutsTextStyle.primary4())
                             );
                         }else {
                             getSession().eout().add(
@@ -153,7 +153,7 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
 //                }
             } catch (NutsNotFoundException ex) {
                 if(getSession().isPlainOut()){
-                    out.printf("%s : %s%n", factory.forStyled(arg,NutsTextStyle.primary4()),factory.forStyled("not found",NutsTextStyle.error()));
+                    out.printf("%s : %s%n", factory.ofStyled(arg,NutsTextStyle.primary4()),factory.ofStyled("not found",NutsTextStyle.error()));
                 }else {
                     NutsElementFormat e = getSession().elem();
                     getSession().eout().add(

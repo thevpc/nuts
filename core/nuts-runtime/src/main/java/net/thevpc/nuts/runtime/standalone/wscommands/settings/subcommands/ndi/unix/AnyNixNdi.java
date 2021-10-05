@@ -75,13 +75,13 @@ public abstract class AnyNixNdi extends BaseSystemNdi {
             if (session.isPlainTrace()) {
                 session.out().resetLine().printf("%s %s to point to workspace %s%n",
                         session.isYes() ?
-                                factory.forStyled("force updating", NutsTextStyle.warn().append(NutsTextStyle.underlined())) :
-                                factory.forStyled("force updating", NutsTextStyle.warn())
+                                factory.ofStyled("force updating", NutsTextStyle.warn().append(NutsTextStyle.underlined())) :
+                                factory.ofStyled("force updating", NutsTextStyle.warn())
                         ,
                         factory.builder().appendJoined(", ",
                                 Arrays.stream(updatedPaths).map(x ->
-                                        factory.forStyled(x.getPath().getFileName().toString(), NutsTextStyle.path())).collect(Collectors.toList())),
-                        factory.forStyled(session.locations().getWorkspaceLocation(), NutsTextStyle.path())
+                                        factory.ofStyled(x.getPath().getFileName().toString(), NutsTextStyle.path())).collect(Collectors.toList())),
+                        factory.ofStyled(session.locations().getWorkspaceLocation(), NutsTextStyle.path())
                 );
             }
             session.getTerminal().ask()
@@ -89,7 +89,7 @@ public abstract class AnyNixNdi extends BaseSystemNdi {
                     .forBoolean(
                             "```error ATTENTION``` You may need to re-run terminal or issue \"%s\" in your current terminal for new environment to take effect.%n"
                                     + "Please type 'ok' if you agree, 'why' if you need more explanation or 'cancel' to cancel updates.",
-                            factory.forStyled(". ~/" + getBashrcName(), NutsTextStyle.path())
+                            factory.ofStyled(". ~/" + getBashrcName(), NutsTextStyle.path())
                     )
                     .setHintMessage("")
                     .setSession(session)
@@ -112,12 +112,12 @@ public abstract class AnyNixNdi extends BaseSystemNdi {
                             if ("why".equalsIgnoreCase(r)) {
                                 NutsPrintStream out = session.out();
                                 out.resetLine();
-                                out.printf("\\\"%s\\\" is a special file in your home that is invoked upon each interactive terminal launch.%n", factory.forStyled(getBashrcName(), NutsTextStyle.path()));
+                                out.printf("\\\"%s\\\" is a special file in your home that is invoked upon each interactive terminal launch.%n", factory.ofStyled(getBashrcName(), NutsTextStyle.path()));
                                 out.print("It helps configuring environment variables. ```sh nuts``` make usage of such facility to update your **PATH** env variable\n");
                                 out.print("to point to current ```sh nuts``` workspace, so that when you call a ```sh nuts``` command it will be resolved correctly...\n");
-                                out.printf("However updating \\\"%s\\\" does not affect the running process/terminal. So you have basically two choices :%n", factory.forStyled(getBashrcName(), NutsTextStyle.path()));
+                                out.printf("However updating \\\"%s\\\" does not affect the running process/terminal. So you have basically two choices :%n", factory.ofStyled(getBashrcName(), NutsTextStyle.path()));
                                 out.print(" - Either to restart the process/terminal (konsole, term, xterm, sh, bash, ...)%n");
-                                out.printf(" - Or to run by your self the \\\"%s\\\" script (don\\'t forget the leading dot)%n", factory.forStyled(". ~/" + getBashrcName(), NutsTextStyle.path()));
+                                out.printf(" - Or to run by your self the \\\"%s\\\" script (don\\'t forget the leading dot)%n", factory.ofStyled(". ~/" + getBashrcName(), NutsTextStyle.path()));
                                 throw new NutsValidationException(session, NutsMessage.cstyle("Try again..."));
                             } else if ("cancel".equalsIgnoreCase(r) || "cancel!".equalsIgnoreCase(r)) {
                                 throw new NutsUserCancelException(session);

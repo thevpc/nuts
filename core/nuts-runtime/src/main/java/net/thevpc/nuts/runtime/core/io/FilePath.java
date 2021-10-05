@@ -277,7 +277,7 @@ public class FilePath extends NutsPathBase implements NutsPathSPI {
 
         public NutsString asFormattedString() {
             if (p.value == null) {
-                return getSession().text().forPlain("");
+                return getSession().text().ofPlain("");
             }
             return getSession().text().toText(p.value);
         }

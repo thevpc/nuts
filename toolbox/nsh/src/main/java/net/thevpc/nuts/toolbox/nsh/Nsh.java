@@ -90,14 +90,14 @@ public class Nsh implements NutsApplication {
             NutsTextManager factory = session.text();
             if (firstInstalled.size() > 0) {
                 session.out().printf("registered %s nsh commands : %s \n",
-                        factory.forStyled(""+firstInstalled.size(),NutsTextStyle.primary3())
-                        ,factory.forStyled(String.join(", ", firstInstalled),NutsTextStyle.primary3())
+                        factory.ofStyled(""+firstInstalled.size(),NutsTextStyle.primary3())
+                        ,factory.ofStyled(String.join(", ", firstInstalled),NutsTextStyle.primary3())
                 );
             }
             if (reinstalled.size() > 0) {
                 session.out().printf("re-registered %s nsh commands : %s \n",
-                        factory.forStyled(""+reinstalled.size(),NutsTextStyle.primary3())
-                        ,factory.forStyled(String.join(", ", reinstalled),NutsTextStyle.primary3())
+                        factory.ofStyled(""+reinstalled.size(),NutsTextStyle.primary3())
+                        ,factory.ofStyled(String.join(", ", reinstalled),NutsTextStyle.primary3())
                 );
             }
         }
@@ -137,7 +137,7 @@ public class Nsh implements NutsApplication {
                     if (applicationContext.getSession().isPlainTrace()) {
                         NutsTextManager factory = session.text();
                         applicationContext.getSession().err().printf("unable to uninstall %s.\n",
-                                factory.forStyled(command.getName(),NutsTextStyle.primary3())
+                                factory.ofStyled(command.getName(),NutsTextStyle.primary3())
                         );
                     }
                 }

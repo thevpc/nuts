@@ -63,7 +63,7 @@ public class DefaultXmlNutsElementStreamFormat implements NutsElementStreamForma
         if (out.isNtf()) {
             NutsPrintStream bos = context.getWorkspace().io().createMemoryPrintStream();
             NutsXmlUtils.writeDocument(doc, new StreamResult(bos.asPrintStream()), compact, true, session);
-            out.print(context.getWorkspace().text().forCode("xml", bos.toString()));
+            out.print(context.getWorkspace().text().ofCode("xml", bos.toString()));
         } else {
             NutsXmlUtils.writeDocument(doc, new StreamResult(out.asPrintStream()), compact, true, session);
         }

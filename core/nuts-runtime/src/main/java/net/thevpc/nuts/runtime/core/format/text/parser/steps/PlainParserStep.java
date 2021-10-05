@@ -278,7 +278,7 @@ public class PlainParserStep extends ParserStep {
     public NutsText toText() {
         String t = value.toString();
 //        String q = NutsTextNodeWriterStringer.removeEscapes(t);
-        return session.text().forPlain(t);
+        return session.text().ofPlain(t);
     }
 
     @Override

@@ -181,8 +181,8 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
         checkSession();
         if (id == null) {
             return isNtf() ?
-                    getSession().text().forStyled("<null>", NutsTextStyle.of(NutsTextStyleType.BOOLEAN))
-                    : getSession().text().forPlain("<null>")
+                    getSession().text().ofStyled("<null>", NutsTextStyle.of(NutsTextStyleType.BOOLEAN))
+                    : getSession().text().ofPlain("<null>")
                     ;
         }
         Map<String, String> queryMap = id.getProperties();
@@ -301,7 +301,7 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
         if (isNtf()) {
             return sb.immutable();
         } else {
-            return getSession().text().forPlain(sb.filteredText());
+            return getSession().text().ofPlain(sb.filteredText());
         }
     }
 

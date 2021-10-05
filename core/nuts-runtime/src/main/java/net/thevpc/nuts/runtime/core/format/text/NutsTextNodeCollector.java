@@ -23,10 +23,10 @@ public class NutsTextNodeCollector implements NutsTextVisitor {
         if (all.isEmpty()) {
             return null;
         }
-        return ws.text().forList(all).simplify();
+        return ws.text().ofList(all).simplify();
     }
 
     public NutsText getRootOrEmpty() {
-        return ws.text().forList(all).simplify();
+        return ws.text().ofList(all).simplify();
     }
 }

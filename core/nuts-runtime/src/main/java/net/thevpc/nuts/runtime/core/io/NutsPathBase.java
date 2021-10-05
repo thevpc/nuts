@@ -61,7 +61,7 @@ public abstract class NutsPathBase implements NutsPath {
 
     @Override
     public NutsString getFormattedName() {
-        return getSession().text().forStyled(getName(),NutsTextStyle.path());
+        return getSession().text().ofStyled(getName(),NutsTextStyle.path());
     }
 
     @Override
@@ -97,7 +97,7 @@ public abstract class NutsPathBase implements NutsPath {
 
 
     public NutsString toNutsString() {
-        return session.text().forPlain(toString());
+        return session.text().ofPlain(toString());
     }
 
     @Override
@@ -117,7 +117,7 @@ public abstract class NutsPathBase implements NutsPath {
 
         @Override
         public void print(NutsPrintStream out) {
-            out.print(p.session.text().forStyled(p.toNutsString(), NutsTextStyle.path()));
+            out.print(p.session.text().ofStyled(p.toNutsString(), NutsTextStyle.path()));
         }
 
         @Override

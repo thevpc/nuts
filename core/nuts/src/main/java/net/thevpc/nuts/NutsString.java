@@ -46,7 +46,7 @@ public interface NutsString {
 
     static NutsString plain(String str, NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.text().forPlain(str);
+        return session.text().ofPlain(str);
     }
 
     NutsString immutable();

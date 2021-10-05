@@ -14,7 +14,6 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.repos.NutsRepositoryFolderHelper;
 import net.thevpc.nuts.runtime.standalone.bridges.maven.MavenRepositoryFolderHelper;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
-import net.thevpc.nuts.runtime.standalone.wscommands.settings.AbstractNutsUpdateStatisticsCommand;
 import net.thevpc.nuts.spi.NutsRepositorySPI;
 
 /**
@@ -82,11 +81,11 @@ public class DefaultNutsUpdateStatisticsCommand extends AbstractNutsUpdateStatis
         NutsTextManager factory = getWorkspace().text();
         if (!processed) {
             if (session.isPlainTrace()) {
-                session.out().resetLine().printf("%s updating workspace stats%n", factory.forStyled(getWorkspace().locations().getWorkspaceLocation(), NutsTextStyle.path()));
+                session.out().resetLine().printf("%s updating workspace stats%n", factory.ofStyled(getWorkspace().locations().getWorkspaceLocation(), NutsTextStyle.path()));
             }
             for (NutsRepository repo : getSession().repos().getRepositories()) {
                 if (session.isPlainTrace()) {
-                    session.out().resetLine().printf("%s updating stats %s%n", factory.forStyled(getWorkspace().locations().getWorkspaceLocation(), NutsTextStyle.path()), repo);
+                    session.out().resetLine().printf("%s updating stats %s%n", factory.ofStyled(getWorkspace().locations().getWorkspaceLocation(), NutsTextStyle.path()), repo);
                 }
                 NutsWorkspaceUtils.of(session).repoSPI(repo).updateStatistics()
                         .setSession(session)

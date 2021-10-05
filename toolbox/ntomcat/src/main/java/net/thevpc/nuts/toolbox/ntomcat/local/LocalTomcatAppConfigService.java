@@ -3,7 +3,6 @@ package net.thevpc.nuts.toolbox.ntomcat.local;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.ntomcat.NTomcatConfigVersions;
 import net.thevpc.nuts.toolbox.ntomcat.local.config.LocalTomcatAppConfig;
-import net.thevpc.nuts.toolbox.ntomcat.util.TomcatUtils;
 import net.thevpc.nuts.toolbox.ntomcat.util._StringUtils;
 
 import java.io.IOException;
@@ -80,11 +79,11 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
     }
     public NutsString getFormattedPath(String str) {
         return context.getSession()
-                .text().forStyled(str,NutsTextStyle.path());
+                .text().ofStyled(str,NutsTextStyle.path());
     }
     public NutsString getFormattedVersion(String str) {
         return context.getSession()
-                .text().forStyled(str,NutsTextStyle.version());
+                .text().ofStyled(str,NutsTextStyle.version());
     }
     public NutsString getFormattedPrefix(String str) {
         return context.getSession()

@@ -176,7 +176,7 @@ public class DefaultCustomCommandsModel {
                     .resetLine()
                     .setDefaultValue(false)
                     .forBoolean("override existing command %s ?",
-                            session.text().forStyled(
+                            session.text().ofStyled(
                                     command.getName(), NutsTextStyle.primary1()
                             )
                     ).getBooleanValue()) {
@@ -191,8 +191,8 @@ public class DefaultCustomCommandsModel {
                 NutsPrintStream out = session.getTerminal().out();
                 NutsTextManager text = session.text();
                 out.printf("%s command %s%n",
-                        text.forStyled("install", NutsTextStyle.success()),
-                        text.forStyled(command.getName(), NutsTextStyle.primary3()));
+                        text.ofStyled("install", NutsTextStyle.success()),
+                        text.ofStyled(command.getName(), NutsTextStyle.primary3()));
             }
             return true;
         }
@@ -220,8 +220,8 @@ public class DefaultCustomCommandsModel {
                 NutsPrintStream out = session.getTerminal().out();
                 NutsTextManager text = session.text();
                 out.printf("%s command %s%n",
-                        text.forStyled("update ", NutsTextStyles.of(NutsTextStyle.success(), NutsTextStyle.underlined())),
-                        text.forStyled(command.getName(), NutsTextStyle.primary3()));
+                        text.ofStyled("update ", NutsTextStyles.of(NutsTextStyle.success(), NutsTextStyle.underlined())),
+                        text.ofStyled(command.getName(), NutsTextStyle.primary3()));
             }
             return true;
         }else{
@@ -248,7 +248,7 @@ public class DefaultCustomCommandsModel {
         defaultCommandFactory.uninstallCommand(name, session);
         if (session.isPlainTrace()) {
             NutsPrintStream out = session.getTerminal().out();
-            out.printf("%s command %s%n", "uninstall", session.text().forStyled(name, NutsTextStyle.primary3()));
+            out.printf("%s command %s%n", "uninstall", session.text().ofStyled(name, NutsTextStyle.primary3()));
         }
     }
 

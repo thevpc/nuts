@@ -242,7 +242,7 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase {
                     public AttributedString highlight(LineReader reader, String buffer) {
                         NutsTextManager text = session.text();
                         NutsCommandReadHighlighter h = getCommandReadHighlighter();
-                        NutsText n=(h!=null)?h.highlight(buffer, session):text.forPlain(buffer);
+                        NutsText n=(h!=null)?h.highlight(buffer, session):text.ofPlain(buffer);
                         return toAttributedString(n, NutsTextStyles.NONE, session);
                     }
 

@@ -198,7 +198,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                         .setExported(true)
                         .setApiVersion(nutsDependencyVersion == null ? null : nutsDependencyVersion.toString())
                         .setCompact(true)
-                        .getBootCommandLine().formatter().setCommandlineFamily(NutsCommandlineFamily.BASH).toString();
+                        .getBootCommandLine().formatter().setShellFamily(NutsShellFamily.SH).toString();
 //                if(nutsDependencyVersion!=null && nutsDependencyVersion.compareTo(executionContext.getWorkspace().getApiVersion())<0){
 //                    if(nutsDependencyVersion.compareTo("0.8.0")<0){
 //                        for (String s : bootCommand) {
@@ -246,10 +246,10 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                 List<String> args = new ArrayList<>();
 
                 NutsTextManager txt = execSession.text();
-                xargs.add(txt.forPlain(joptions.getJavaHome()));
+                xargs.add(txt.ofPlain(joptions.getJavaHome()));
                 xargs.addAll(
                         joptions.getJvmArgs().stream()
-                                .map(txt::forPlain)
+                                .map(txt::ofPlain)
                                 .collect(Collectors.toList())
                 );
 
@@ -289,24 +289,24 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                         }
                     }
                     String ds = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=" + (suspend ? 'y' : 'n') + ",address=" + port;
-                    xargs.add(txt.forPlain(ds));
+                    xargs.add(txt.ofPlain(ds));
                     args.add(ds);
                 }
 
                 if (joptions.isJar()) {
-                    xargs.add(txt.forPlain("-jar"));
+                    xargs.add(txt.ofPlain("-jar"));
                     xargs.add(ws.id().formatter(def.getId()).format());
 
                     args.add("-jar");
                     args.add(contentFile.toString());
                 } else {
-                    xargs.add(txt.forPlain("--nuts-path"));
+                    xargs.add(txt.ofPlain("--nuts-path"));
                     xargs.add(
                             txt.builder().appendJoined(
                                     ";", joptions.getClassPathNidStrings()
                             ).immutable()
                     );
-                    xargs.add(txt.forPlain(
+                    xargs.add(txt.ofPlain(
                                     joptions.getMainClass()
                             )
                     );
@@ -317,7 +317,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                 }
                 xargs.addAll(
                         joptions.getApp().stream()
-                                .map(txt::forPlain)
+                                .map(txt::ofPlain)
                                 .collect(Collectors.toList())
                 );
                 args.addAll(joptions.getApp());
@@ -494,13 +494,13 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
             if (isNutsApp) {
                 //NutsWorkspace
                 NutsApplications.getSharedMap().put("nuts.embedded.application.id", id);
-                mainMethod.invoke(nutsApp, new Object[]{getSession().copy(), joptions.getApp().toArray(new String[0])});
+                mainMethod.invoke(nutsApp, getSession().copy(), joptions.getApp().toArray(new String[0]));
             } else {
                 //NutsWorkspace
                 System.setProperty("nuts.boot.args",
                         getSession().getWorkspace().boot().getBootOptions()
                                 .formatter().setExported(true).setCompact(true).getBootCommandLine()
-                                .formatter().setCommandlineFamily(NutsCommandlineFamily.BASH).toString()
+                                .formatter().setShellFamily(NutsShellFamily.SH).toString()
                 );
                 mainMethod = cls.getMethod("main", String[].class);
 //                List<String> nargs = new ArrayList<>();
@@ -564,7 +564,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
         private ProcessExecHelper preExec() {
             if (joptions.isShowCommand() || CoreBooleanUtils.getSysBoolNutsProperty("show-command", false)) {
                 NutsPrintStream out = execSession.out();
-                out.printf("%s %n", ws.text().forStyled("nuts-exec", NutsTextStyle.primary1()));
+                out.printf("%s %n", ws.text().ofStyled("nuts-exec", NutsTextStyle.primary1()));
                 for (int i = 0; i < xargs.size(); i++) {
                     NutsString xarg = xargs.get(i);
 //                    if (i > 0 && xargs.get(i - 1).equals("--nuts-path")) {

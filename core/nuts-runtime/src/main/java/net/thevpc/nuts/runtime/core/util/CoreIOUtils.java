@@ -806,7 +806,7 @@ public class CoreIOUtils {
     public static java.io.InputStream monitor(URL from, NutsProgressMonitor monitor, NutsSession session) {
         return monitor(
                 NutsWorkspaceUtils.of(session).openURL(from),
-                from, session.text().forStyled(getURLName(from), NutsTextStyle.path())
+                from, session.text().ofStyled(getURLName(from), NutsTextStyle.path())
                 , session.io().path(from).getContentLength(), monitor, session);
     }
 
@@ -1401,7 +1401,7 @@ public class CoreIOUtils {
             });
             return InputStreamMetadataAwareImpl.of(ist, new NutsDefaultInputStreamMetadata(
                     path,
-                    session.text().forStyled(path, NutsTextStyle.path()),
+                    session.text().ofStyled(path, NutsTextStyle.path()),
                     size,session.io().path(path).getContentType(),sourceTypeName
                     )
             );

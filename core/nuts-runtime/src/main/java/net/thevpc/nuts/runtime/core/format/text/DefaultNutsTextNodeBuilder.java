@@ -49,13 +49,13 @@ public class DefaultNutsTextNodeBuilder implements NutsTextBuilder {
 
     @Override
     public NutsTextBuilder appendCommand(NutsTerminalCommand command) {
-        all.add(text1.forCommand(command));
+        all.add(text1.ofCommand(command));
         return this;
     }
 
     @Override
     public NutsTextBuilder appendCode(String lang, String text) {
-        all.add(text1.forCode(lang, text));
+        all.add(text1.ofCode(lang, text));
         return this;
     }
 
@@ -99,7 +99,7 @@ public class DefaultNutsTextNodeBuilder implements NutsTextBuilder {
             if (styles.size() == 0) {
                 all.add(session.text().toText(text));
             } else {
-                all.add(text1.forStyled(session.text().toText(text), styles));
+                all.add(text1.ofStyled(session.text().toText(text), styles));
             }
         }
         return this;
@@ -174,12 +174,12 @@ public class DefaultNutsTextNodeBuilder implements NutsTextBuilder {
     @Override
     public NutsText build() {
         if(all.size()==0){
-            return text1.forPlain("");
+            return text1.ofPlain("");
         }
         if(all.size()==1){
             return all.get(0);
         }
-        return text1.forList(all).simplify();
+        return text1.ofList(all).simplify();
     }
 
     @Override

@@ -9,9 +9,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.common.BytesSizeFormat;
 import net.thevpc.nuts.runtime.core.terminals.CoreTerminalUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.core.format.text.FPrintCommands;
 
-import java.io.PrintStream;
 import java.text.DecimalFormat;
 
 /**
@@ -95,19 +93,19 @@ public class DefaultNutsCountProgressMonitor implements NutsProgressMonitor/*, N
 //            formattedLine.append("]");
             BytesSizeFormat mf = mf(event);
             DecimalFormat df = df(event);
-            formattedLine.append(" ").append(text.forStyled(String.format("%6s", df.format(percent)),NutsTextStyle.config())).append("% ");
-            formattedLine.append(" ").append(text.forStyled(mf.format(partialSpeed),NutsTextStyle.config())).append("/s");
+            formattedLine.append(" ").append(text.ofStyled(String.format("%6s", df.format(percent)),NutsTextStyle.config())).append("% ");
+            formattedLine.append(" ").append(text.ofStyled(mf.format(partialSpeed),NutsTextStyle.config())).append("/s");
             if (event.getMaxValue() < 0) {
                 if (globalSpeed == 0) {
                     formattedLine.append(" ( -- )");
                 } else {
-                    formattedLine.append(" (").append(text.forStyled(mf.format(globalSpeed),NutsTextStyle.info())).append(")");
+                    formattedLine.append(" (").append(text.ofStyled(mf.format(globalSpeed),NutsTextStyle.info())).append(")");
                 }
             } else {
-                formattedLine.append(" (").append(text.forStyled(mf.format(event.getMaxValue()),NutsTextStyle.warn())).append(")");
+                formattedLine.append(" (").append(text.ofStyled(mf.format(event.getMaxValue()),NutsTextStyle.warn())).append(")");
             }
             if (event.getError() != null) {
-                formattedLine.append(" ").append(text.forStyled("ERROR",NutsTextStyle.error())).append(" ");
+                formattedLine.append(" ").append(text.ofStyled("ERROR",NutsTextStyle.error())).append(" ");
             }
             formattedLine.append(" ").append(event.getMessage()).append(" ");
             String ff = formattedLine.toString();

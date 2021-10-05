@@ -609,7 +609,7 @@ public class JShell {
                 .setCommandReadHighlighter(new NutsCommandReadHighlighter() {
                     @Override
                     public NutsText highlight(String buffer, NutsSession session) {
-                        return session.text().forCode("sh", buffer).parse(session);
+                        return session.text().ofCode("sh", buffer).parse(session);
                     }
                 });
         prepareContext(getRootContext());

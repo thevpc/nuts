@@ -290,6 +290,7 @@ public class ShellUtils {
      * GLOB (shell wildcards) to regular expression pattern
      *
      * @param pattern pattern
+     * @param contains contains
      * @return regexpr string
      */
     public static String simpexpToRegexp(String pattern, boolean contains) {

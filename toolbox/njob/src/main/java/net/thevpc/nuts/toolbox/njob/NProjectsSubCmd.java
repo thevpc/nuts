@@ -66,7 +66,7 @@ public class NProjectsSubCmd {
             service.projects().addProject(t);
             if (context.getSession().isPlainTrace()) {
                 context.getSession().out().printf("project %s (%s) added.\n",
-                        context.getSession().text().forStyled(t.getId(), NutsTextStyle.primary5()),
+                        context.getSession().text().ofStyled(t.getId(), NutsTextStyle.primary5()),
                         t.getName()
                 );
             }
@@ -188,8 +188,8 @@ public class NProjectsSubCmd {
                 service.projects().updateProject(project);
                 if (context.getSession().isPlainTrace()) {
                     context.getSession().out().printf("project %s (%s) updated.\n",
-                            text.forStyled(project.getId(), NutsTextStyle.primary5()),
-                            text.forStyled(project.getName(), NutsTextStyle.primary1())
+                            text.ofStyled(project.getId(), NutsTextStyle.primary5()),
+                            text.ofStyled(project.getName(), NutsTextStyle.primary1())
                     );
                 }
             }
@@ -198,7 +198,7 @@ public class NProjectsSubCmd {
                 if (context.getSession().isPlainTrace()) {
                     context.getSession().out().printf("projects merged to %s.\n",
                             context.getSession()
-                            .text().forStyled(mergeTo, NutsTextStyle.primary5())
+                            .text().ofStyled(mergeTo, NutsTextStyle.primary5())
                     );
                 }
             }
@@ -318,13 +318,13 @@ public class NProjectsSubCmd {
                 if (service.projects().removeProject(t.getId())) {
                     if (context.getSession().isPlainTrace()) {
                         context.getSession().out().printf("project %s removed.\n",
-                                text.forStyled(a.toString(), NutsTextStyle.primary5())
+                                text.ofStyled(a.toString(), NutsTextStyle.primary5())
                         );
                     }
                 } else {
                     context.getSession().out().printf("project %s %s.\n",
-                            text.forStyled(a.toString(), NutsTextStyle.primary5()),
-                            text.forStyled("not found", NutsTextStyle.error())
+                            text.ofStyled(a.toString(), NutsTextStyle.primary5()),
+                            text.ofStyled("not found", NutsTextStyle.error())
                     );
                 }
             }

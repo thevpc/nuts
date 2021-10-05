@@ -4,13 +4,14 @@ import net.thevpc.nuts.NutsDefaultArgumentCandidate;
 import net.thevpc.nuts.*;
 
 import java.util.List;
+
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 public class DefaultNutsCommandLineManager implements NutsCommandLineManager {
 
     private NutsWorkspace ws;
     private NutsSession session;
-    private NutsCommandlineFamily family=NutsCommandlineFamily.DEFAULT;
+    private NutsShellFamily family = NutsShellFamily.getCurrent();
 
     public DefaultNutsCommandLineManager(NutsWorkspace ws) {
         this.ws = ws;
@@ -25,12 +26,12 @@ public class DefaultNutsCommandLineManager implements NutsCommandLineManager {
         return this;
     }
 
-    public NutsCommandlineFamily getCommandlineFamily() {
+    public NutsShellFamily getCommandlineFamily() {
         return family;
     }
 
-    public NutsCommandLineManager setCommandlineFamily(NutsCommandlineFamily family) {
-        this.family = family==null?NutsCommandlineFamily.DEFAULT : family;
+    public NutsCommandLineManager setCommandlineFamily(NutsShellFamily family) {
+        this.family = family == null ? NutsShellFamily.getCurrent() : family;
         return this;
     }
 
@@ -48,7 +49,7 @@ public class DefaultNutsCommandLineManager implements NutsCommandLineManager {
         checkSession();
         return new DefaultNutsCommandLineFormat(getWorkspace())
                 .setSession(session)
-                .setCommandlineFamily(getCommandlineFamily())
+                .setShellFamily(getCommandlineFamily())
                 ;
     }
 
@@ -58,37 +59,31 @@ public class DefaultNutsCommandLineManager implements NutsCommandLineManager {
         return new DefaultNutsCommandLine(getSession(), parseCommandLineArr(line));
     }
 
-    private String[] parseCommandLineArr(String line){
-        NutsCommandlineFamily f = getCommandlineFamily();
-        if(f==null){
-            f=NutsCommandlineFamily.DEFAULT;
+    private String[] parseCommandLineArr(String line) {
+        NutsShellFamily f = getCommandlineFamily();
+        if (f == null) {
+            f = NutsShellFamily.getCurrent();
         }
-        if(f==NutsCommandlineFamily.DEFAULT) {
-            switch (getWorkspace().env().getOsFamily()) {
-                case WINDOWS: {
-                    f = NutsCommandlineFamily.WINDOWS_CMD;
-                    break;
-                }
-                case LINUX: {
-                    f = NutsCommandlineFamily.BASH;
-                    break;
-                }
-                default: {
-                    f = NutsCommandlineFamily.BASH;
-                }
+        switch (f) {
+            case WIN_CMD:
+            case WIN_POWER_SHELL:
+            {
+                return new DefaultCommandLineWindowsCmd().parseCommandLineArrBash(line, getSession());
             }
-        }
-        switch (f){
-            case WINDOWS_CMD:{
-                return new DefaultCommandLineWindowsCmd().parseCommandLineArrBash(line,getSession());
+            case SH:
+            case BASH:
+            case CSH:
+            case ZSH:
+            case KSH:
+            case FISH:
+            {
+                return new DefaultCommandLineBash().parseCommandLineArrBash(line, getSession());
             }
-            case BASH:{
-                return new DefaultCommandLineBash().parseCommandLineArrBash(line,getSession());
-            }
-            default:{
-                return new DefaultCommandLineBash().parseCommandLineArrBash(line,getSession());
+            case UNKNOWN:{
+                return new DefaultCommandLineBash().parseCommandLineArrBash(line, getSession());
             }
         }
+        return new DefaultCommandLineBash().parseCommandLineArrBash(line, getSession());
     }
 
     protected void checkSession() {

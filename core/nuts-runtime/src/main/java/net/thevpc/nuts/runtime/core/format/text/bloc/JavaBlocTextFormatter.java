@@ -32,7 +32,7 @@ public class JavaBlocTextFormatter implements NutsCodeFormat {
 
     @Override
     public NutsText tokenToText(String text, String nodeType,NutsSession session) {
-        return factory.setSession(session).forPlain(text);
+        return factory.setSession(session).ofPlain(text);
     }
     
 
@@ -66,7 +66,7 @@ public class JavaBlocTextFormatter implements NutsCodeFormat {
                 case '>':
                 case '!':
                 case ';': {
-                    all.add(factory.forStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
+                    all.add(factory.ofStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
                     break;
                 }
                 case '\'': {
@@ -96,7 +96,7 @@ public class JavaBlocTextFormatter implements NutsCodeFormat {
                     if (d != null) {
                         all.addAll(Arrays.asList(d));
                     } else {
-                        all.add(factory.forStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
+                        all.add(factory.ofStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
                     }
                     break;
                 }
@@ -106,7 +106,7 @@ public class JavaBlocTextFormatter implements NutsCodeFormat {
                     } else if (ar.peekChars("/*")) {
                         all.addAll(Arrays.asList(StringReaderExtUtils.readSlashStarComments(session, ar)));
                     } else {
-                        all.add(factory.forStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
+                        all.add(factory.ofStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
                     }
                     break;
                 }
@@ -119,18 +119,18 @@ public class JavaBlocTextFormatter implements NutsCodeFormat {
                             if (d.length == 1 && d[0].getType() == NutsTextType.PLAIN) {
                                 String txt = ((NutsTextPlain) d[0]).getText();
                                 if (reservedWords.contains(txt)) {
-                                    d[0] = factory.forStyled(d[0], NutsTextStyle.keyword());
+                                    d[0] = factory.ofStyled(d[0], NutsTextStyle.keyword());
                                 }
                             }
                             all.addAll(Arrays.asList(d));
                         } else {
-                            all.add(factory.forStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
+                            all.add(factory.ofStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
                         }
                     }
                     break;
                 }
             }
         }
-        return factory.forList(all.toArray(new NutsText[0]));
+        return factory.ofList(all.toArray(new NutsText[0]));
     }
 }

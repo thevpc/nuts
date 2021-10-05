@@ -61,7 +61,6 @@ public interface NutsWorkspaceExt {
 
     NutsExecutionContextBuilder createExecutionContext();
 
-    @Deprecated
     void deployBoot(NutsSession session, NutsId def, boolean withDependencies);
 
     NutsSession defaultSession();

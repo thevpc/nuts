@@ -335,6 +335,8 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
         if (scope == null) {
             scope = NutsDependencyScope.API;
         }
+        //remove repository from id!
+        from=from.builder().setRepository(null).build();
         InstallInfoConfig fi = getInstallInfoConfig(from, null, session);
         if (fi == null) {
             throw new NutsInstallException(session, from);
@@ -348,7 +350,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
             fi.required = true;
             printJson(from, NUTS_INSTALL_FILE, fi, session);
         }
-        Set<NutsId> list = findDependenciesFrom(from, scope, session);
+        Set<NutsId> list = loadDependenciesFrom(from, scope, session);
         NutsElementFormat element = session.elem().setSession(session);
         if (!list.contains(to)) {
             list.add(to);
@@ -356,7 +358,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
                     .setSession(session)
                     .print(getDepsPath(from, true, scope, session));
         }
-        list = findDependenciesTo(to, scope, session);
+        list = loadfindDependenciesTo(to, scope, session);
         if (!list.contains(from)) {
             list.add(from);
             element.setContentType(NutsContentType.JSON).setValue(list.toArray(new NutsId[0]))
@@ -377,14 +379,14 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
         if (ft == null) {
             throw new NutsInstallException(session, to);
         }
-        Set<NutsId> list = findDependenciesFrom(from, scope, session);
+        Set<NutsId> list = loadDependenciesFrom(from, scope, session);
         boolean stillRequired = false;
         if (list.contains(to)) {
             list.remove(to);
             stillRequired = list.size() > 0;
             session.elem().setContentType(NutsContentType.JSON).setValue(list.toArray(new NutsId[0])).print(getDepsPath(from, true, scope, session));
         }
-        list = findDependenciesTo(to, scope, session);
+        list = loadfindDependenciesTo(to, scope, session);
         if (list.contains(from)) {
             list.remove(from);
             session.elem().setContentType(NutsContentType.JSON).setValue(list.toArray(new NutsId[0])).print(getDepsPath(to, false, scope, session));
@@ -395,7 +397,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
         }
     }
 
-    public synchronized Set<NutsId> findDependenciesFrom(NutsId from, NutsDependencyScope scope, NutsSession session) {
+    public synchronized Set<NutsId> loadDependenciesFrom(NutsId from, NutsDependencyScope scope, NutsSession session) {
         Path path = getDepsPath(from, true, scope, session);
         if (Files.isRegularFile(path)) {
             NutsId[] old = session.elem().setSession(session).setContentType(NutsContentType.JSON).parse(path, NutsId[].class);
@@ -404,7 +406,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
         return new HashSet<>();
     }
 
-    public synchronized Set<NutsId> findDependenciesTo(NutsId from, NutsDependencyScope scope, NutsSession session) {
+    public synchronized Set<NutsId> loadfindDependenciesTo(NutsId from, NutsDependencyScope scope, NutsSession session) {
         Path path = getDepsPath(from, false, scope, session);
         if (Files.isRegularFile(path)) {
             NutsId[] old = session.elem().setSession(session).setContentType(NutsContentType.JSON).parse(path, NutsId[].class);
@@ -533,9 +535,9 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
         if (deploy) {
             this.deploy()
                     .setId(def.getId())
+                    .setSession(session.copy().setConfirm(NutsConfirmationMode.YES))
                     .setContent(def.getPath())
                     //.setFetchMode(NutsFetchMode.LOCAL)
-                    .setSession(session.copy().setConfirm(NutsConfirmationMode.YES))
                     .setDescriptor(def.getDescriptor())
                     .run();
         }

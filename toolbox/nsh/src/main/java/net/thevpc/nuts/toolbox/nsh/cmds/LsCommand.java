@@ -26,7 +26,6 @@
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import java.io.File;
-import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.attribute.PosixFileAttributes;
 import java.nio.file.attribute.PosixFilePermission;
@@ -243,17 +242,17 @@ public class LsCommand extends SimpleNshBuiltin {
         String name = new File(item.path).getName();
         NutsTextManager text = session.text();
         if (item.hidden) {
-            out.println(text.forStyled(name,NutsTextStyle.pale()));
+            out.println(text.ofStyled(name,NutsTextStyle.pale()));
         } else if (item.type == 'd') {
-            out.println(text.forStyled(name,NutsTextStyle.primary3()));
+            out.println(text.ofStyled(name,NutsTextStyle.primary3()));
         } else if (item.exec2 || item.jperms.charAt(2) == 'x') {
-            out.println(text.forStyled(name,NutsTextStyle.primary4()));
+            out.println(text.ofStyled(name,NutsTextStyle.primary4()));
         } else if (item.config) {
-            out.println(text.forStyled(name,NutsTextStyle.primary5()));
+            out.println(text.ofStyled(name,NutsTextStyle.primary5()));
         } else if (item.archive) {
-            out.println(text.forStyled(name,NutsTextStyle.primary1()));
+            out.println(text.ofStyled(name,NutsTextStyle.primary1()));
         } else {
-            out.println(text.forPlain(name));
+            out.println(text.ofPlain(name));
         }
     }
 

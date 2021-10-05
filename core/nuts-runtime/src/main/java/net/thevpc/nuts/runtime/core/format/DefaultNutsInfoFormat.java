@@ -325,7 +325,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
         props.put("command-line-short", ws.boot().getBootOptions().formatter().setCompact(true).getBootCommandLine());
         props.put("inherited", ws.boot().getBootOptions().isInherited());
         // nuts-boot-args must always be parsed in bash format
-        props.put("inherited-nuts-boot-args", ws.commandLine().setCommandlineFamily(NutsCommandlineFamily.BASH).parse(System.getProperty("nuts.boot.args")).format());
+        props.put("inherited-nuts-boot-args", ws.commandLine().setCommandlineFamily(NutsShellFamily.SH).parse(System.getProperty("nuts.boot.args")).format());
         props.put("inherited-nuts-args", ws.commandLine().parse(System.getProperty("nuts.args"))
                 .format()
         );
@@ -355,7 +355,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
         props.put(key(prefix, "uuid"), stringValue(repo.getUuid()));
         props.put(key(prefix, "type"),
                 //display as enum
-                ws.text().forStyled(repo.config().getType(),NutsTextStyle.option())
+                ws.text().ofStyled(repo.config().getType(),NutsTextStyle.option())
                 );
         props.put(key(prefix, "speed"), (repo.config().getSpeed()));
         props.put(key(prefix, "enabled"), (repo.config().isEnabled()));

@@ -8,7 +8,6 @@ import java.io.PrintStream;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import net.thevpc.nuts.toolbox.ndb.util.NdbUtils;
 
 public class LocalMysqlDatabaseConfigService {
     private String name;
@@ -102,7 +101,7 @@ public class LocalMysqlDatabaseConfigService {
         } else {
             if (session.isPlainTrace()) {
                 session.out().printf("%s create archive %s%n", getBracketsPrefix(getDatabaseName()), session
-                        .text().forStyled(path,NutsTextStyle.path()));
+                        .text().ofStyled(path,NutsTextStyle.path()));
             }
 //                ProcessBuilder2 p = new ProcessBuilder2().setCommand("sh", "-c",
 //                        "set -o pipefail && \"" + mysql.getMysqldumpCommand() + "\" -u \"$CMD_USER\" -p\"$CMD_PWD\" --databases \"$CMD_DB\" | gzip > \"$CMD_FILE\""
@@ -120,7 +119,7 @@ public class LocalMysqlDatabaseConfigService {
                     .grabOutputString()
                     .setRedirectErrorStream(true);
             if (session.isPlainTrace()) {
-                session.out().printf("%s    [EXEC] %s%n", getBracketsPrefix(getDatabaseName()),
+                session.out().printf("%s    [exec] %s%n", getBracketsPrefix(getDatabaseName()),
                         cmd.formatter().setEnvReplacer(envEntry -> {
                             if ("CMD_PWD".equals(envEntry.getName())) {
                                 return "****";

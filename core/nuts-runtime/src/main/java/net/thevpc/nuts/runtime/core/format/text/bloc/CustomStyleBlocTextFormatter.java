@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.core.format.text.bloc;
 
 import net.thevpc.nuts.NutsSupportLevelContext;
 import net.thevpc.nuts.NutsTextStyle;
-import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.spi.NutsComponent;
 import net.thevpc.nuts.NutsCodeFormat;
 import net.thevpc.nuts.NutsSession;
@@ -23,12 +22,12 @@ public class CustomStyleBlocTextFormatter implements NutsCodeFormat {
 
     @Override
     public NutsText stringToText(String text, NutsSession session) {
-        return factory.setSession(session).forStyled(factory.setSession(session).forPlain(text), style);
+        return factory.setSession(session).ofStyled(factory.setSession(session).ofPlain(text), style);
     }
 
     @Override
     public NutsText tokenToText(String text, String nodeType, NutsSession session) {
-        return factory.setSession(session).forPlain(text);
+        return factory.setSession(session).ofPlain(text);
     }
 
     @Override

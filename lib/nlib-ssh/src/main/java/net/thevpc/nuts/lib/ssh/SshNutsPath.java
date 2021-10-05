@@ -4,11 +4,8 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.NutsFormatSPI;
 import net.thevpc.nuts.spi.NutsPathSPI;
 
-import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.Writer;
-import java.nio.file.Path;
 import java.time.Instant;
 import java.util.Arrays;
 
@@ -122,38 +119,38 @@ class SshNutsPath implements NutsPathSPI {
                 String password=path.getPassword();
                 String keyFile=path.getKeyFile();
 
-                sb.append(text.forStyled("ssh://", _sep));
+                sb.append(text.ofStyled("ssh://", _sep));
                 if (!(user == null || user.trim().length() == 0)) {
                     sb.append(user)
-                            .append(text.forStyled("@", _sep));
+                            .append(text.ofStyled("@", _sep));
                 }
                 sb.append(host);
                 if (port >= 0) {
-                    sb.append(text.forStyled(":", _sep))
-                            .append(text.forStyled(String.valueOf(port),_nbr));
+                    sb.append(text.ofStyled(":", _sep))
+                            .append(text.ofStyled(String.valueOf(port),_nbr));
                 }
                 if (!path0.startsWith("/")) {
-                    sb.append(text.forStyled('/'+path0,_path));
+                    sb.append(text.ofStyled('/'+path0,_path));
                 }else {
-                    sb.append(text.forStyled(path0,_path));
+                    sb.append(text.ofStyled(path0,_path));
                 }
                 if (password != null || keyFile != null) {
-                    sb.append(text.forStyled("?",_sep));
+                    sb.append(text.ofStyled("?",_sep));
                     boolean first = true;
                     if (password != null) {
                         first = false;
                         sb
                                 .append("password")
-                                .append(text.forStyled("=",_sep))
+                                .append(text.ofStyled("=",_sep))
                                 .append(password);
                     }
                     if (keyFile != null) {
                         if (!first) {
-                            sb.append(text.forStyled(",",_sep));
+                            sb.append(text.ofStyled(",",_sep));
                         }
                         sb
                                 .append("key-file")
-                                .append(text.forStyled("=",_sep))
+                                .append(text.ofStyled("=",_sep))
                                 .append(keyFile);
                     }
                 }

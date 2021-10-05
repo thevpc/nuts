@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.core.format.text.parser.steps;
 
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsTerminalCommand;
-import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.core.format.text.DefaultNutsTextManager;
 import net.thevpc.nuts.runtime.core.format.text.parser.*;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
@@ -177,7 +176,7 @@ public class AntiQuote3ParserStep extends ParserStep {
                             start2,
                             w.toString(),
                             end.toString(),
-                            factory0.forPlain(value)
+                            factory0.ofPlain(value)
                     );
                 }
             }

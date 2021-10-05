@@ -16,7 +16,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 public abstract class BaseSystemNdi extends AbstractSystemNdi {
@@ -242,7 +241,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             if (session.getTerminal().ask()
                     .resetLine()
                     .forBoolean("tool %s will be removed. Confirm?",
-                            factory.forStyled(NdiUtils.betterPath(f.toString()), NutsTextStyle.path())
+                            factory.ofStyled(NdiUtils.betterPath(f.toString()), NutsTextStyle.path())
                     )
                     .setDefaultValue(true)
                     .setSession(session)
@@ -253,7 +252,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                     throw new UncheckedIOException(ex);
                 }
                 if (session.isPlainTrace()) {
-                    session.out().printf("tool %s removed.%n", factory.forStyled(NdiUtils.betterPath(f.toString()), NutsTextStyle.path()));
+                    session.out().printf("tool %s removed.%n", factory.ofStyled(NdiUtils.betterPath(f.toString()), NutsTextStyle.path()));
                 }
             }
         }

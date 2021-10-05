@@ -17,7 +17,6 @@ import java.util.Map;
 
 import net.thevpc.nuts.toolbox.ndb.nmysql.util.AtName;
 import net.thevpc.nuts.toolbox.ndb.nmysql.util.MysqlUtils;
-import net.thevpc.nuts.toolbox.ndb.util.NdbUtils;
 
 public class RemoteMysqlDatabaseConfigService {
 
@@ -108,8 +107,8 @@ public class RemoteMysqlDatabaseConfigService {
         NutsTextManager text = session.text();
         if (session.isPlainTrace()) {
             session.out().printf("%s copy '%s' to '%s'%n", getBracketsPrefix(name),
-                    text.forStyled(remoteFullFilePath.toString(),NutsTextStyle.path()),
-                    text.forStyled(localPath,NutsTextStyle.path())
+                    text.ofStyled(remoteFullFilePath.toString(),NutsTextStyle.path()),
+                    text.ofStyled(localPath,NutsTextStyle.path())
             );
         }
         if(lastRun.get("localPath")!=null){
@@ -194,7 +193,7 @@ public class RemoteMysqlDatabaseConfigService {
         NutsTextManager text = session.text();
         if (session.isPlainTrace()) {
             session.out().printf("%s copy %s to %s%n", getBracketsPrefix(name),
-                    text.forStyled(localPath,NutsTextStyle.path()),
+                    text.ofStyled(localPath,NutsTextStyle.path()),
                     remoteFullFilePath
             );
         }
@@ -271,7 +270,7 @@ public class RemoteMysqlDatabaseConfigService {
                         return null;
                     })
                     .format();
-            session.out().printf("[EXEC] %s%n", ff);
+            session.out().printf("[exec] %s%n", ff);
         }
         b.setRedirectErrorStream(true)
                 .grabOutputString()

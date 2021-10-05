@@ -189,8 +189,8 @@ public class NutsJavaSdkUtils {
                         if (session != null && session.isPlainTrace()) {
                             NutsTextManager factory = session.text();
                             session.out().printf("detected java %s %s at %s%n", r.getPackaging(),
-                                    factory.forStyled(r.getVersion(), NutsTextStyle.version()),
-                                    factory.forStyled(r.getPath(), NutsTextStyle.path())
+                                    factory.ofStyled(r.getVersion(), NutsTextStyle.version()),
+                                    factory.ofStyled(r.getPath(), NutsTextStyle.path())
                             );
                         }
                     }
@@ -220,8 +220,8 @@ public class NutsJavaSdkUtils {
                                                 synchronized (session.getWorkspace()) {
                                                     NutsTextManager factory = session.text();
                                                     session.out().printf("detected java %s %s at %s%n", r.getPackaging(),
-                                                            factory.forStyled(r.getVersion(), NutsTextStyle.version()),
-                                                            factory.forStyled(r.getPath(), NutsTextStyle.path())
+                                                            factory.ofStyled(r.getVersion(), NutsTextStyle.version()),
+                                                            factory.ofStyled(r.getPath(), NutsTextStyle.path())
                                                     );
                                                 }
                                             }

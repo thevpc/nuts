@@ -158,7 +158,7 @@ public class NTasksSubCmd {
             service.tasks().addTask(t);
             if (context.getSession().isPlainTrace()) {
                 context.getSession().out().printf("task %s (%s) added.\n",
-                        context.getSession().text().forStyled(t.getId(), NutsTextStyle.primary5()),
+                        context.getSession().text().ofStyled(t.getId(), NutsTextStyle.primary5()),
                         t.getName()
                 );
             }
@@ -397,8 +397,8 @@ public class NTasksSubCmd {
                 service.tasks().updateTask(task);
                 if (context.getSession().isPlainTrace()) {
                     context.getSession().out().printf("task %s (%s) updated.\n",
-                            text.forStyled(task.getId(), NutsTextStyle.primary5()),
-                            text.forStyled(task.getName(), NutsTextStyle.primary1())
+                            text.ofStyled(task.getId(), NutsTextStyle.primary5()),
+                            text.ofStyled(task.getName(), NutsTextStyle.primary1())
                     );
                 }
             }
@@ -630,13 +630,13 @@ public class NTasksSubCmd {
                 if (service.tasks().removeTask(t.getId())) {
                     if (context.getSession().isPlainTrace()) {
                         context.getSession().out().printf("task %s removed.\n",
-                                text.forStyled(a.toString(), NutsTextStyle.primary5())
+                                text.ofStyled(a.toString(), NutsTextStyle.primary5())
                         );
                     }
                 } else {
                     context.getSession().out().printf("task %s %s.\n",
-                            text.forStyled(a.toString(), NutsTextStyle.primary5()),
-                            text.forStyled("not found", NutsTextStyle.error())
+                            text.ofStyled(a.toString(), NutsTextStyle.primary5()),
+                            text.ofStyled("not found", NutsTextStyle.error())
                     );
                 }
             }

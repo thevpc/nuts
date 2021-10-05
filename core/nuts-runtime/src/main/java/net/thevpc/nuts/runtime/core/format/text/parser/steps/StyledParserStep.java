@@ -159,7 +159,7 @@ public class StyledParserStep extends ParserStep {
                             content.append(c);
                         }else {
                             if (!content.isEmpty()) {
-                                children.add(text.forPlain(content.readAll()));
+                                children.add(text.ofPlain(content.readAll()));
                             }
                             if (curState == CurState.SHARP_CONTENT) {
                                 curState = CurState.SHARP_CONTENT_SHARP;
@@ -178,7 +178,7 @@ public class StyledParserStep extends ParserStep {
                             content.append(c);
                         }else {
                             if (!content.isEmpty()) {
-                                children.add(text.forPlain(content.readAll()));
+                                children.add(text.ofPlain(content.readAll()));
                             }
                             beforeChangingStep();
                             state.applyPush(c, true, false, exitOnBrace);
@@ -249,7 +249,7 @@ public class StyledParserStep extends ParserStep {
                         } else {
                             logErr("expected " + CoreStringUtils.fillString("#", sharpsStartCount) + "<END>");
                             sharpsEndCount=0;
-                            children.add(text.forPlain(CoreStringUtils.fillString("#", sharpsStartCount)));
+                            children.add(text.ofPlain(CoreStringUtils.fillString("#", sharpsStartCount)));
                             if (curState == CurState.SHARP_CONTENT_SHARP) {
                                 curState = CurState.SHARP_CONTENT_SHARP_END;
                             } else if (curState == CurState.SHARP2_COL_NAME_CONTENT_SHARP) {
@@ -372,7 +372,7 @@ public class StyledParserStep extends ParserStep {
                             content.append(c);
                         }else {
                             if (!content.isEmpty()) {
-                                children.add(text.forPlain(content.readAll()));
+                                children.add(text.ofPlain(content.readAll()));
                             }
                             beforeChangingStep();
                             state.applyPush(new StyledParserStep("#", false, session, state,true));
@@ -385,7 +385,7 @@ public class StyledParserStep extends ParserStep {
                             content.append(c);
                         }else {
                             if (!content.isEmpty()) {
-                                children.add(text.forPlain(content.readAll()));
+                                children.add(text.ofPlain(content.readAll()));
                             }
                             curState = CurState.SHARP2_OBRACE_NAME_COL_CONTENT_CBRACE;
                         }
@@ -399,7 +399,7 @@ public class StyledParserStep extends ParserStep {
                         }else {
                             //ignore
                             if (!content.isEmpty()) {
-                                children.add(text.forPlain(content.readAll()));
+                                children.add(text.ofPlain(content.readAll()));
                             }
                         }
                         break;
@@ -410,7 +410,7 @@ public class StyledParserStep extends ParserStep {
                             content.append(c);
                         }else {
                             if (!content.isEmpty()) {
-                                children.add(text.forPlain(content.readAll()));
+                                children.add(text.ofPlain(content.readAll()));
                             }
                             beforeChangingStep();
                             state.applyPush(c, true, false, exitOnBrace);
@@ -443,14 +443,14 @@ public class StyledParserStep extends ParserStep {
                         break;
                     }
                     case '`': {
-                        children.add(text.forPlain("}"));
+                        children.add(text.ofPlain("}"));
                         curState = CurState.SHARP2_OBRACE_NAME_COL_CONTENT;
                         beforeChangingStep();
                         state.applyPush(c, true, false, exitOnBrace);
                         break;
                     }
                     case NutsConstants.Ntf.SILENT: {
-                        children.add(text.forPlain("}"));
+                        children.add(text.ofPlain("}"));
                         curState = CurState.SHARP2_OBRACE_NAME_COL_CONTENT;
                         //ignore
                         break;
@@ -479,7 +479,7 @@ public class StyledParserStep extends ParserStep {
                     }
                     case '`': {
                         sharpsEndCount=0;
-                        children.add(text.forPlain("}#"));
+                        children.add(text.ofPlain("}#"));
                         curState = CurState.SHARP2_OBRACE_NAME_COL_CONTENT;
                         beforeChangingStep();
                         state.applyPush(c, true, false, exitOnBrace);
@@ -487,14 +487,14 @@ public class StyledParserStep extends ParserStep {
                     }
                     case NutsConstants.Ntf.SILENT: {
                         sharpsEndCount=0;
-                        children.add(text.forPlain("}#"));
+                        children.add(text.ofPlain("}#"));
                         curState = CurState.SHARP2_OBRACE_NAME_COL_CONTENT;
                         //ignore
                         break;
                     }
                     default: {
                         sharpsEndCount=0;
-                        children.add(text.forPlain("}#"));
+                        children.add(text.ofPlain("}#"));
                         curState = CurState.SHARP2_OBRACE_NAME_COL_CONTENT;
                         content.append(c);
                     }
@@ -518,7 +518,7 @@ public class StyledParserStep extends ParserStep {
                     }
                     default:{
                         if (!content.isEmpty()) {
-                            children.add(text.forPlain(content.readAll()));
+                            children.add(text.ofPlain(content.readAll()));
                         }
                         state.applyPopReplay(c);
                     }
@@ -542,7 +542,7 @@ public class StyledParserStep extends ParserStep {
                     }
                     default:{
                         if (!content.isEmpty()) {
-                            children.add(text.forPlain(content.readAll()));
+                            children.add(text.ofPlain(content.readAll()));
                         }
                         state.applyPopReplay(c);
                     }
@@ -551,7 +551,7 @@ public class StyledParserStep extends ParserStep {
             }
             case SHARP2_OBRACE_NAME_COL_CONTENT_CBRACE_SHARP2_END:{
                 if (!content.isEmpty()) {
-                    children.add(text.forPlain(content.readAll()));
+                    children.add(text.ofPlain(content.readAll()));
                 }
                 state.applyPopReplay(c);
                 break;
@@ -588,29 +588,29 @@ public class StyledParserStep extends ParserStep {
         List<NutsText> childrenTextNodes2 = new ArrayList<>(children);
         NutsTextManager text = session.text();
         if (!content.isEmpty()) {
-            childrenTextNodes2.add(text.forPlain(content.toString()));
+            childrenTextNodes2.add(text.ofPlain(content.toString()));
         }
 
-        NutsText a = text.forList(childrenTextNodes2.toArray(new NutsText[0])).simplify();
+        NutsText a = text.ofList(childrenTextNodes2.toArray(new NutsText[0])).simplify();
         if(a==null){
-            return  text.forPlain("");
+            return  text.ofPlain("");
         }
         switch (curState) {
             case SHARP:
             {
-                return text.forPlain("#");
+                return text.ofPlain("#");
             }
             case EMPTY:{
-                return text.forPlain("");
+                return text.ofPlain("");
             }
             case SHARP_CONTENT:
             case SHARP_CONTENT_SHARP:
             case SHARP_CONTENT_SHARP_END:
             {
-                return text.forStyled(a, NutsTextStyle.primary(sharpsStartCount));
+                return text.ofStyled(a, NutsTextStyle.primary(sharpsStartCount));
             }
             case SHARP2_OBRACE_NAME:{
-                return text.forPlain("##{"+ name.toString());
+                return text.ofPlain("##{"+ name.toString());
             }
             case SHARP2_OBRACE_NAME_COL_CONTENT:
             case SHARP2_COL_NAME_SHARP1:
@@ -625,7 +625,7 @@ public class StyledParserStep extends ParserStep {
             {
                 NutsTextStyle s = parseHelper.parseSimpleNutsTextStyle(name.toString());
                 if (s != null) {
-                    return text.forStyled(a, s);
+                    return text.ofStyled(a, s);
                 }
                 s = parseHelper.parseSimpleNutsTextStyle(name.toString());
                 throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unable to resolve style from %s",name.toString()));

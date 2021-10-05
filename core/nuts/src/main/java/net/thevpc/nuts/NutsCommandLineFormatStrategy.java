@@ -48,8 +48,8 @@ public enum NutsCommandLineFormatStrategy implements NutsEnum {
         this.id = name().toLowerCase();//.replace('_', '-');
     }
 
-    public static NutsCommandLineFormatStrategy getArchFamily() {
-        return parseLenient(System.getProperty("os.arch"));
+    public static NutsCommandLineFormatStrategy getCurrent() {
+        return SUPPORT_QUOTES;
     }
 
     public static NutsCommandLineFormatStrategy parseLenient(String arch) {

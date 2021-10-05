@@ -4,7 +4,6 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.io.InputStreamMetadataAwareImpl;
 import net.thevpc.nuts.runtime.bundles.io.URLBuilder;
 import net.thevpc.nuts.runtime.core.format.DefaultFormatBase;
-import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 
 import java.io.File;
 import java.io.InputStream;
@@ -26,7 +25,7 @@ public class NutsCompressedPath extends NutsPathBase {
         super(base.getSession());
         this.base = base;
         this.compressedForm = compressUrl(base.toString());
-        this.formattedCompressedForm = base.getSession().text().forStyled(compressedForm, NutsTextStyle.path());
+        this.formattedCompressedForm = base.getSession().text().ofStyled(compressedForm, NutsTextStyle.path());
     }
 
     public NutsCompressedPath(NutsPath base, String compressedForm, NutsString formattedCompressedForm) {
@@ -227,7 +226,7 @@ public class NutsCompressedPath extends NutsPathBase {
         }
 
         public NutsString asFormattedString() {
-            return p.base.getSession().text().forStyled(p.compressedForm, NutsTextStyle.path());
+            return p.base.getSession().text().ofStyled(p.compressedForm, NutsTextStyle.path());
         }
 
         @Override

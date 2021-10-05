@@ -11,12 +11,10 @@ import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.core.commands.ws.DefaultNutsUpdateResult;
 import net.thevpc.nuts.runtime.core.config.NutsWorkspaceConfigManagerExt;
 import net.thevpc.nuts.runtime.core.repos.NutsInstalledRepository;
-import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.DefaultNutsWorkspaceUpdateResult;
 import net.thevpc.nuts.runtime.standalone.NutsExtensionListHelper;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
-import net.thevpc.nuts.runtime.standalone.wscommands.update.AbstractNutsUpdateCommand;
 
 import java.time.Instant;
 import java.util.*;
@@ -296,10 +294,10 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
             NutsUpdateResult[] updates = result.getAllUpdates();
             if (updates.length == 0) {
                 out.printf("All packages are %s. You are running latest version%s.%n",
-                        ws.text().forStyled("up-to-date", NutsTextStyle.success()),
+                        ws.text().ofStyled("up-to-date", NutsTextStyle.success()),
                         result.getAllResults().length > 1 ? "s" : "");
             } else {
-                out.printf("Workspace has %s package%s to update.%n", ws.text().forStyled("" + updates.length, NutsTextStyle.primary1()),
+                out.printf("Workspace has %s package%s to update.%n", ws.text().ofStyled("" + updates.length, NutsTextStyle.primary1()),
                         (updates.length > 1 ? "s" : ""));
                 int widthCol1 = 2;
                 int widthCol2 = 2;
@@ -311,14 +309,14 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                 for (NutsUpdateResult update : updates) {
                     if (update.isUpdateVersionAvailable()) {
                         out.printf("%s  : %s => %s%n",
-                                factory.forStyled(CoreStringUtils.alignLeft(update.getLocal().getId().getVersion().toString(), widthCol2), NutsTextStyle.primary6()),
+                                factory.ofStyled(CoreStringUtils.alignLeft(update.getLocal().getId().getVersion().toString(), widthCol2), NutsTextStyle.primary6()),
                                 CoreStringUtils.alignLeft(update.getAvailable().getId().getShortName(), widthCol1),
-                                factory.forPlain(update.getAvailable().getId().getVersion().toString()));
+                                factory.ofPlain(update.getAvailable().getId().getVersion().toString()));
                     } else if (update.isUpdateStatusAvailable()) {
                         out.printf("%s  : %s => %s%n",
-                                factory.forStyled(CoreStringUtils.alignLeft(update.getLocal().getId().getVersion().toString(), widthCol2), NutsTextStyle.primary6()),
+                                factory.ofStyled(CoreStringUtils.alignLeft(update.getLocal().getId().getVersion().toString(), widthCol2), NutsTextStyle.primary6()),
                                 CoreStringUtils.alignLeft(update.getAvailable().getId().getShortName(), widthCol1),
-                                factory.forStyled("set as default", NutsTextStyle.primary4()));
+                                factory.ofStyled("set as default", NutsTextStyle.primary4()));
                     }
                 }
             }
@@ -545,7 +543,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                 if (d0 == null) {
                     out.resetLine().printf("%s is %s to latest version %s%n",
                             simpleId,
-                            factory.forStyled("updated", NutsTextStyle.primary3()),
+                            factory.ofStyled("updated", NutsTextStyle.primary3()),
                             d1 == null ? null : d1.getId().getVersion()
                     );
                 } else if (d1 == null) {
@@ -557,18 +555,18 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                         if (v1.compareTo(v0) == 0) {
                             out.resetLine().printf("%s is %s to %s %n",
                                     simpleId,
-                                    factory.forStyled("forced", NutsTextStyle.primary3()),
+                                    factory.ofStyled("forced", NutsTextStyle.primary3()),
                                     d0.getId().getVersion());
                         } else {
                             out.resetLine().printf("%s is %s from %s to older version %s%n",
                                     simpleId,
-                                    factory.forStyled("forced", NutsTextStyle.primary3()),
+                                    factory.ofStyled("forced", NutsTextStyle.primary3()),
                                     d0.getId().getVersion(), d1.getId().getVersion());
                         }
                     } else {
                         out.resetLine().printf("%s is %s from %s to latest version %s%n",
                                 simpleId,
-                                factory.forStyled("updated", NutsTextStyle.primary3()),
+                                factory.ofStyled("updated", NutsTextStyle.primary3()),
                                 d0.getId().getVersion(), d1.getId().getVersion());
                     }
                 }

@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.thevpc.nuts.spi.NutsComponent;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 public class XmlCodeFormatter implements NutsCodeFormat {
 
@@ -45,19 +44,19 @@ public class XmlCodeFormatter implements NutsCodeFormat {
             case "separator":
                 return formatNodeSeparator(text);
         }
-        return factory.forPlain(text);
+        return factory.ofPlain(text);
     }
 
     public NutsText formatNodeName(String text) {
-        return factory.forStyled(factory.forPlain(text), NutsTextStyle.keyword());
+        return factory.ofStyled(factory.ofPlain(text), NutsTextStyle.keyword());
     }
 
     public NutsText formatNodeString(String text) {
-        return factory.forStyled(factory.forPlain(text), NutsTextStyle.string());
+        return factory.ofStyled(factory.ofPlain(text), NutsTextStyle.string());
     }
 
     public NutsText formatNodeSeparator(String text) {
-        return factory.forStyled(factory.forPlain(text), NutsTextStyle.separator());
+        return factory.ofStyled(factory.ofPlain(text), NutsTextStyle.separator());
     }
 
     @Override
@@ -76,16 +75,16 @@ public class XmlCodeFormatter implements NutsCodeFormat {
         while ((s = st.nextToken()) != StreamTokenizerExt.TT_EOF) {
             switch (s) {
                 case StreamTokenizerExt.TT_SPACES: {
-                    nodes.add(factory.forPlain(st.image));
+                    nodes.add(factory.ofPlain(st.image));
                     break;
                 }
                 case StreamTokenizerExt.TT_COMMENTS: {
-                    nodes.add(factory.forStyled(factory.forPlain(st.image), NutsTextStyle.comments()));
+                    nodes.add(factory.ofStyled(factory.ofPlain(st.image), NutsTextStyle.comments()));
                     break;
                 }
                 case StreamTokenizerExt.TT_INTEGER:
                 case StreamTokenizerExt.TT_DOUBLE: {
-                    nodes.add(factory.forStyled(factory.forPlain(st.image), NutsTextStyle.number()));
+                    nodes.add(factory.ofStyled(factory.ofPlain(st.image), NutsTextStyle.number()));
                     break;
                 }
                 case StreamTokenizerExt.TT_WORD: {
@@ -99,7 +98,7 @@ public class XmlCodeFormatter implements NutsCodeFormat {
                         if (st.image.equals("true") || st.image.equals("false")) {
                             nodes.add(formatNodeName(st.image));
                         } else {
-                            nodes.add(factory.forPlain(st.image));
+                            nodes.add(factory.ofPlain(st.image));
                         }
                     }
                     break;
@@ -116,15 +115,15 @@ public class XmlCodeFormatter implements NutsCodeFormat {
                 case '>':
                 case '&':
                 case '=': {
-                    nodes.add(factory.forStyled(factory.forPlain(st.image), NutsTextStyle.separator()));
+                    nodes.add(factory.ofStyled(factory.ofPlain(st.image), NutsTextStyle.separator()));
                     break;
                 }
                 default: {
-                    nodes.add(factory.forStyled(factory.forPlain(st.image), NutsTextStyle.separator()));
+                    nodes.add(factory.ofStyled(factory.ofPlain(st.image), NutsTextStyle.separator()));
                 }
             }
             last.add(st.image == null ? "" : st.image);
         }
-        return factory.forList(nodes).simplify();
+        return factory.ofList(nodes).simplify();
     }
 }

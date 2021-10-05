@@ -407,7 +407,7 @@ public class NutsRepositoryFolderHelper {
                             InputStreamMetadataAwareImpl.of(
                                     new ByteArrayInputStream(bytes)
                                     , new NutsDefaultInputStreamMetadata(
-                                            NutsMessage.cstyle("sha1(%s)", desc.getId()),
+                                            NutsMessage.cstyle("sha1://%s", desc.getId()),
                                             bytes.length,
                                             CoreIOUtils.MIME_TYPE_SHA1,
                                             "descriptor hash",

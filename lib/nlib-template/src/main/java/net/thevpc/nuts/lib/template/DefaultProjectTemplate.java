@@ -431,7 +431,7 @@ public class DefaultProjectTemplate implements ProjectTemplate {
                 if (!getSession().getTerminal().ask()
                         .resetLine()
                         .forBoolean("accept project location %s?",
-                        applicationContext.getSession().text().forStyled(p.getPath(),NutsTextStyle.path()))
+                        applicationContext.getSession().text().ofStyled(p.getPath(),NutsTextStyle.path()))
                         .setDefaultValue(false)
                         .getBooleanValue()) {
                     throw new NutsUserCancelException(getSession());

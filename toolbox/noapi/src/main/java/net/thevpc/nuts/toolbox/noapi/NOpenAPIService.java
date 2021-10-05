@@ -64,7 +64,7 @@ public class NOpenAPIService {
             );
             if (appContext.getSession().isPlainTrace()) {
                 appContext.getSession().out().printf("generated pdf %s\n",
-                        appContext.getSession().text().forStyled(
+                        appContext.getSession().text().ofStyled(
                                 target, NutsTextStyle.primary4()
                         )
                 );
@@ -85,7 +85,7 @@ public class NOpenAPIService {
         }
         if (trace) {
             appContext.getSession().out().printf("generated src %s\n",
-                    appContext.getSession().text().forStyled(
+                    appContext.getSession().text().ofStyled(
                             target, NutsTextStyle.primary4()
                     )
             );

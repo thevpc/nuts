@@ -350,7 +350,7 @@ public class NutsWorkspaceUtils {
         if (_LOG(session).isLoggable(Level.FINEST)) {
 
             long time = (startTime != 0) ? (System.currentTimeMillis() - startTime) : 0;
-            String fetchString = "[" + CoreStringUtils.alignLeft(fetchMode.name(), 7) + "] ";
+            String fetchString = "[" + CoreStringUtils.alignLeft(fetchMode.id(), 7) + "] ";
             _LOGOP(session).level(Level.FINEST)
                     .verb(tracePhase).time(time)
                     .log(NutsMessage.jstyle("{0}{1} {2}",
