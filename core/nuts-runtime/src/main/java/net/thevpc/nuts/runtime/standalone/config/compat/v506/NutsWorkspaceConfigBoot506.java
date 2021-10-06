@@ -47,7 +47,7 @@ public final class NutsWorkspaceConfigBoot506 extends NutsConfigItem {
      * boot package Id in long format (as defined in
      * {@link NutsId#getLongName()})
      *
-     * @see NutsId#getLongNameId()
+     * @see NutsId#getLongId()
      */
     private String runtimeId = null;
 
@@ -58,7 +58,7 @@ public final class NutsWorkspaceConfigBoot506 extends NutsConfigItem {
      * valid implementation of nuts-api. These packages should be accessible
      * from {@link NutsWorkspaceConfigBoot#getBootRepositories()}
      *
-     * @see NutsId#getLongNameId()
+     * @see NutsId#getLongId()
      */
     private String runtimeDependencies = null;
     private String bootRepositories = null;
@@ -85,7 +85,7 @@ public final class NutsWorkspaceConfigBoot506 extends NutsConfigItem {
      * folder or accessible from
      * {@link NutsWorkspaceConfigBoot#getBootRepositories()}
      *
-     * @see NutsId#getLongNameId()
+     * @see NutsId#getLongId()
      */
     private String extensionDependencies = null;
     private List<NutsCommandFactoryConfig> commandFactories;

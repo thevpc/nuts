@@ -54,7 +54,7 @@ public final class NutsWorkspaceConfigBoot502 implements Serializable {
      * boot package Id in long format (as defined in
      * {@link NutsId#getLongName()})
      *
-     * @see NutsId#getLongNameId()
+     * @see NutsId#getLongId()
      */
     private String bootRuntime = null;
 
@@ -65,7 +65,7 @@ public final class NutsWorkspaceConfigBoot502 implements Serializable {
      * valid implementation of nuts-api. These packages should be accessible
      * from {@link NutsWorkspaceConfigBoot#getBootRepositories()}
      *
-     * @see NutsId#getLongNameId()
+     * @see NutsId#getLongId()
      */
     private String bootRuntimeDependencies = null;
     private String bootRepositories = null;

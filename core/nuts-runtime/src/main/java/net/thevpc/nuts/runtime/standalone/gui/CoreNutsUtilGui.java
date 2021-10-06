@@ -11,7 +11,7 @@ public final class CoreNutsUtilGui {
 
     public static boolean isGraphicalDesktopEnvironment() {
         try {
-            if (!java.awt.GraphicsEnvironment.isHeadless()) {
+            if (java.awt.GraphicsEnvironment.isHeadless()) {
                 return false;
             }
             try {

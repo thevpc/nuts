@@ -31,7 +31,7 @@ public class NVersionMain implements NutsApplication {
         return io.path(expression).builder().setBaseDir(cwd).build();
     }
 
-    private Set<VersionDescriptor> detectVersions(String filePath, NutsApplicationContext context, NutsSession ws) throws IOException {
+    private Set<VersionDescriptor> detectVersions(String filePath, NutsApplicationContext context) throws IOException {
         for (PathVersionResolver r : resolvers) {
             Set<VersionDescriptor> x = r.resolve(filePath, context);
             if (x != null) {
@@ -113,7 +113,7 @@ public class NVersionMain implements NutsApplication {
                 try {
                     processed++;
                     value = detectVersions(context.getSession().io()
-                            .path(arg).builder().withAppBaseDir().build().toString(), context, session);
+                            .path(arg).builder().withAppBaseDir().build().toString(), context);
                 } catch (IOException e) {
                     throw new NutsExecutionException(context.getSession(),NutsMessage.cstyle("nversion: unable to detect version for %s",arg), e, 2);
                 }

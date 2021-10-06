@@ -27,7 +27,7 @@ public class DefaultNutsWorkspaceEnvManager implements NutsWorkspaceEnvManager {
 
     public DefaultNutsWorkspaceEnvManager(DefaultNutsWorkspaceEnvManagerModel model) {
         this.model = model;
-        this.sdkModel = new DefaultNutsPlatformModel(model.getWorkspace());
+        this.sdkModel = new DefaultNutsPlatformModel(model);
     }
 
     @Override

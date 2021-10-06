@@ -73,22 +73,21 @@ public class Test06_UpateTest {
         TestUtils.println(updateRepo1.config().getStoreLocationStrategy());
         uws.info().println();
         TestUtils.println("\n------------------------------------------");
-        NutsWorkspace nws = TestUtils.openNewTestWorkspace(
+        NutsSession nws = TestUtils.openNewTestWorkspace(
                 "--workspace", workspacePath,
                 "--standalone",
                 "--standalone-repositories",
                 "--progress=newline",
                 "--yes",
                 "--skip-companions"
-        ).getWorkspace();
-        nws=nws.createSession().getWorkspace();
+        );
         nws.repos().addRepository(new NutsAddRepositoryOptions().setTemporary(true).setName("temp").setLocation(updateRepoPath)
                 .setConfig(new NutsRepositoryConfig().setStoreLocationStrategy(NutsStoreLocationStrategy.STANDALONE))
         );
         nws.info().setShowRepositories(true).println();
         TestUtils.println("\n------------------------------------------");
 
-        NutsRepository r = nws.repos().setSession(uws).getRepository("temp");
+        NutsRepository r = nws.repos().getRepository("temp");
         NutsDefinition api = nws.fetch().setContent(true).setNutsApi().getResultDefinition();
         NutsDefinition rt = nws.fetch().setContent(true).setNutsRuntime().getResultDefinition();
 
@@ -134,10 +133,10 @@ public class Test06_UpateTest {
                 uws.repos().getRepository("local").config().getStoreLocation(NutsStoreLocation.LIB),
                 nws.repos().getRepository("temp").config().getStoreLocation(NutsStoreLocation.LIB));
 
-        TestUtils.println(uws.search().addId(api.getId().getShortNameId()).getResultIds().toList());
-        TestUtils.println(uws.search().addId(rt.getId().getShortNameId()).getResultIds().toList());
-        List<NutsId> foundApis = uws.search().addId(api.getId().getShortNameId()).getResultIds().toList();
-        List<NutsId> foundRts = uws.search().addId(rt.getId().getShortNameId()).getResultIds().toList();
+        TestUtils.println(uws.search().addId(api.getId().getShortId()).getResultIds().toList());
+        TestUtils.println(uws.search().addId(rt.getId().getShortId()).getResultIds().toList());
+        List<NutsId> foundApis = uws.search().addId(api.getId().getShortId()).getResultIds().toList();
+        List<NutsId> foundRts = uws.search().addId(rt.getId().getShortId()).getResultIds().toList();
         Assertions.assertTrue(foundApis.stream().map(NutsId::getLongName).collect(Collectors.toSet()).contains(api.getId().builder().setVersion(apiv1).getLongName()));
         if (!implOnly) {
             Assertions.assertTrue(foundApis.stream().map(NutsId::getLongName).collect(Collectors.toSet()).contains(api.getId().builder().setVersion(apiv2).getLongName()));
@@ -146,10 +145,10 @@ public class Test06_UpateTest {
         Assertions.assertTrue(foundRts.stream().map(NutsId::getLongName).collect(Collectors.toSet()).contains(rt.getId().builder().setVersion(rtv2).getLongName()));
 
         TestUtils.println("========================");
-        TestUtils.println(nws.search().addId(api.getId().getShortNameId()).setRepository("temp").getResultIds().toList());
-        TestUtils.println(nws.search().addId(rt.getId().getShortNameId()).setRepository("temp").getResultIds().toList());
-        TestUtils.println(nws.search().addId(api.getId().getShortNameId()).getResultIds().toList());
-        TestUtils.println(nws.search().addId(rt.getId().getShortNameId()).getResultIds().toList());
+        TestUtils.println(nws.search().addId(api.getId().getShortId()).setRepository("temp").getResultIds().toList());
+        TestUtils.println(nws.search().addId(rt.getId().getShortId()).setRepository("temp").getResultIds().toList());
+        TestUtils.println(nws.search().addId(api.getId().getShortId()).getResultIds().toList());
+        TestUtils.println(nws.search().addId(rt.getId().getShortId()).getResultIds().toList());
 
         //check updates!
         NutsUpdateCommand foundUpdates = nws.update().setAll().checkUpdates();

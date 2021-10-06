@@ -14,12 +14,12 @@ public class ArtifactsIndexDB {
 
 
 
-    public static ArtifactsIndexDB of(NutsSession ws) {
-        synchronized (ws.getWorkspace()) {
-            ArtifactsIndexDB o = (ArtifactsIndexDB) ws.env().getProperties().get(ArtifactsIndexDB.class.getName());
+    public static ArtifactsIndexDB of(NutsSession session) {
+        synchronized (session.getWorkspace()) {
+            ArtifactsIndexDB o = (ArtifactsIndexDB) session.env().getProperties().get(ArtifactsIndexDB.class.getName());
             if (o == null) {
-                o = new ArtifactsIndexDB(DEFAULT_ARTIFACT_TABLE_NAME, CacheDB.of(ws));
-                ws.env().getProperties().put(ArtifactsIndexDB.class.getName(), o);
+                o = new ArtifactsIndexDB(DEFAULT_ARTIFACT_TABLE_NAME, CacheDB.of(session));
+                session.env().getProperties().put(ArtifactsIndexDB.class.getName(), o);
             }
             return o;
         }
@@ -48,7 +48,7 @@ public class ArtifactsIndexDB {
     private static NanoDBTableDefinition<NutsId> def(String name, NanoDB db) {
         return new NanoDBTableDefinition<NutsId>(
                 name, NutsId.class, db.getSerializers().of(NutsId.class,false),
-                new NanoDBDefaultIndexDefinition<>("id", String.class,false, x->x.getLongNameId()
+                new NanoDBDefaultIndexDefinition<>("id", String.class,false, x->x.getLongId()
                         .builder().setRepository(x.getRepository()).build().toString()
                         ),
                 new NanoDBDefaultIndexDefinition<>("groupId", String.class,false, NutsId::getGroupId),
@@ -68,7 +68,7 @@ public class ArtifactsIndexDB {
 
     public boolean contains(NutsId id) {
         return table.findByIndex("id",
-                id.getLongNameId()
+                id.getLongId()
                 .builder().setRepository(id.getRepository())
                 .build().toDependency()
         ).findAny().orElse(null)!=null;

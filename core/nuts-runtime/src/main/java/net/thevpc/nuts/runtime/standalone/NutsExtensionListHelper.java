@@ -70,7 +70,7 @@ public class NutsExtensionListHelper {
         LinkedHashMap<String, NutsWorkspaceConfigBoot.ExtensionConfig> m = new LinkedHashMap<>();
         for (NutsWorkspaceConfigBoot.ExtensionConfig id : list) {
             m.put(id.getId().getShortName(),
-                    new NutsWorkspaceConfigBoot.ExtensionConfig(id.getId().getLongNameId(), id.isEnabled())
+                    new NutsWorkspaceConfigBoot.ExtensionConfig(id.getId().getLongId(), id.isEnabled())
             );
         }
         list.clear();

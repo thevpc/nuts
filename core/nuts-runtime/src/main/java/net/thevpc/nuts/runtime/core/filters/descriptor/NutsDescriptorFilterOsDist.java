@@ -34,11 +34,11 @@ import java.util.Objects;
 /**
  * Created by vpc on 2/20/17.
  */
-public class NutsDescriptorFilterOsdist extends AbstractDescriptorFilter implements JsNutsDescriptorFilter {
+public class NutsDescriptorFilterOsDist extends AbstractDescriptorFilter implements JsNutsDescriptorFilter {
 
     private final String osDist;
 
-    public NutsDescriptorFilterOsdist(NutsSession session, String osDist) {
+    public NutsDescriptorFilterOsDist(NutsSession session, String osDist) {
         super(session, NutsFilterOp.CUSTOM);
         this.osDist = osDist;
     }
@@ -86,7 +86,7 @@ public class NutsDescriptorFilterOsdist extends AbstractDescriptorFilter impleme
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final NutsDescriptorFilterOsdist other = (NutsDescriptorFilterOsdist) obj;
+        final NutsDescriptorFilterOsDist other = (NutsDescriptorFilterOsDist) obj;
         if (!Objects.equals(this.osDist, other.osDist)) {
             return false;
         }

@@ -182,7 +182,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
     private Set<NutsId> getExtensionsToUpdate() {
         Set<NutsId> ext = new HashSet<>();
         for (NutsId extension : getSession().getWorkspace().extensions().getConfigExtensions()) {
-            ext.add(extension.getShortNameId());
+            ext.add(extension.getShortId());
         }
         if (updateExtensions) {
             return ext;
@@ -195,8 +195,8 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                 if (id.getShortName().equals(ws.getRuntimeId().getShortName())) {
                     continue;
                 }
-                if (ext.contains(id.getShortNameId())) {
-                    ext2.add(id.getShortNameId());
+                if (ext.contains(id.getShortId())) {
+                    ext2.add(id.getShortId());
                 }
 
             }
@@ -207,7 +207,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
     private Set<NutsId> getCompanionsToUpdate() {
         Set<NutsId> ext = new HashSet<>();
         for (NutsId extension : session.extensions().getCompanionIds()) {
-            ext.add(extension.getShortNameId());
+            ext.add(extension.getShortId());
         }
         return ext;
     }
@@ -224,7 +224,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         if (isInstalled()) {
             baseRegulars.addAll(ws.search().setSession(getSession())
                     .setInstallStatus(ws.filters().installStatus().byInstalled(true))
-                    .getResultIds().stream().map(NutsId::getShortNameId).collect(Collectors.toList()));
+                    .getResultIds().stream().map(NutsId::getShortId).collect(Collectors.toList()));
             // This bloc is to handle packages that were installed by their jar/content but was removed for any reason!
             NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
             NutsInstalledRepository ir = dws.getInstalledRepository();
@@ -357,7 +357,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                     .forBoolean("version is too restrictive. Do you intend to force update of %s ?", id).getBooleanValue();
         }
         DefaultNutsUpdateResult r = new DefaultNutsUpdateResult();
-        r.setId(id.getShortNameId());
+        r.setId(id.getShortId());
         boolean shouldUpdateDefault = false;
         NutsDefinition d0 = ws.search().addId(id).setSession(session)
                 .setInstallStatus(ws.filters().installStatus().byDeployed(true))
@@ -388,7 +388,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
             newAnywhereSession.setExpireTime(now);
         }
 
-        NutsSearchCommand sc = ws.search().addId(d0.getId().getShortNameId())
+        NutsSearchCommand sc = ws.search().addId(d0.getId().getShortId())
                 .setSession(newAnywhereSession)
                 .setFailFast(false)
                 .setLatest(true)
@@ -535,7 +535,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         NutsDefinition d0 = r.getLocal();
         NutsDefinition d1 = r.getAvailable();
 //        final String simpleName = d0 != null ? d0.getId().getShortName() : d1 != null ? d1.getId().getShortName() : id.getShortName();
-        final NutsId simpleId = d0 != null ? d0.getId().getShortNameId() : d1 != null ? d1.getId().getShortNameId() : id.getShortNameId();
+        final NutsId simpleId = d0 != null ? d0.getId().getShortId() : d1 != null ? d1.getId().getShortId() : id.getShortId();
         final NutsPrintStream out = getSession().out();
         NutsTextManager factory = ws.text();
         if (r.isUpdateApplied()) {

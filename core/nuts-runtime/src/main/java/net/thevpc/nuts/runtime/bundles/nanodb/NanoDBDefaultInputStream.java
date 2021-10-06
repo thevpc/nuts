@@ -77,6 +77,14 @@ class NanoDBDefaultInputStream implements NanoDBInputStream {
         }
     }
 
+    @Override
+    public boolean readBoolean() {
+        try {
+            return in.readBoolean();
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
+    }
 //    @Override
 //    public Object readObject() {
 //        try {

@@ -188,7 +188,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
         NutsContent c = null;
         SuccessFailResult<NutsContent, RuntimeException> res = session.concurrent().lock().setSource(id.builder().setFaceContent().build()).call(() -> {
             if (cache.isWriteEnabled()) {
-                Path cachePath = cache.getLongNameIdLocalFile(id, session);
+                Path cachePath = cache.getLongIdLocalFile(id, session);
                 NutsContent c2 = fetchContentCore(id, descriptor, cachePath.toString(), fetchMode, session);
                 if (c2 != null) {
                     String localPath2 = localPath;

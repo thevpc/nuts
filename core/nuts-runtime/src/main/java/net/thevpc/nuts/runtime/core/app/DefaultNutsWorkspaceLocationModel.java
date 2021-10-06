@@ -157,7 +157,7 @@ public class DefaultNutsWorkspaceLocationModel {
 
 
     public String getDefaultIdBasedir(NutsId id, NutsSession session) {
-        NutsWorkspaceUtils.of(session).checkSimpleNameNutsId(id);
+        NutsWorkspaceUtils.of(session).checkShortId(id);
         String groupId = id.getGroupId();
         String artifactId = id.getArtifactId();
         String plainIdPath = groupId.replace('.', '/') + "/" + artifactId;

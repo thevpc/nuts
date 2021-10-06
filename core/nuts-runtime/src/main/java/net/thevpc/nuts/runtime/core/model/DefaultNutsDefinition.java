@@ -57,6 +57,9 @@ public class DefaultNutsDefinition implements NutsDefinition {
         this.descriptor = descriptor;
         this.content = content;
         this.id = id;
+        if (!id.isLongId()) {
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("id should not have query defined in descriptors : %s",id));
+        }
         this.installInformation = install;
         this.repositoryUuid = repoUuid;
         this.repositoryName = repoName;

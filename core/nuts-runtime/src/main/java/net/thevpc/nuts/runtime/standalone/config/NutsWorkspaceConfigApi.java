@@ -11,7 +11,7 @@ public class NutsWorkspaceConfigApi extends NutsConfigItem {
      * boot package Id in long format (as defined in
      * {@link NutsId#getLongName()})
      *
-     * @see NutsId#getLongNameId()
+     * @see NutsId#getLongId()
      */
     private String runtimeId = null;
 

@@ -136,7 +136,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
 
     @Override
     public String getDefaultVersion(NutsId id, NutsSession session) {
-        NutsId baseVersion = id.getShortNameId();
+        NutsId baseVersion = id.getShortId();
         synchronized (cachedDefaultVersions) {
             String p = cachedDefaultVersions.get(baseVersion);
             if (p != null) {
@@ -163,7 +163,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
 
     @Override
     public void setDefaultVersion(NutsId id, NutsSession session) {
-        NutsId baseVersion = id.getShortNameId();
+        NutsId baseVersion = id.getShortId();
         String version = id.getVersion().getValue();
         Path pp = Paths.get(session.locations().getStoreLocation(id
                         //                .setAlternative("")
@@ -417,7 +417,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
 
     public InstallInfoConfig getInstallInfoConfig(NutsId id, Path path, NutsSession session) {
         if (id == null && path == null) {
-            NutsWorkspaceUtils.of(session).checkSimpleNameNutsId(id);
+            NutsWorkspaceUtils.of(session).checkShortId(id);
         }
         if (path == null) {
             path = getPath(id, NUTS_INSTALL_FILE, session);

@@ -116,7 +116,7 @@ public class InternalNutsDescriptorFilterManager extends InternalNutsTypedFilter
         }
         List<NutsDescriptorFilter> packs = new ArrayList<>();
         for (String v : values) {
-            packs.add(new NutsDescriptorFilterOsdist(getSession(), v));
+            packs.add(new NutsDescriptorFilterOsDist(getSession(), v));
         }
         if (packs.size() == 1) {
             return packs.get(0);

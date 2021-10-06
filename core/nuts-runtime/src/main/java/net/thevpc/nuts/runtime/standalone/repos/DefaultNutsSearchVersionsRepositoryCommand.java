@@ -49,7 +49,7 @@ public class DefaultNutsSearchVersionsRepositoryCommand extends AbstractNutsSear
         //id = id.builder().setFaceContent().build();
         getRepo().security().setSession(session).checkAllowed(NutsConstants.Permissions.FETCH_DESC, "find-versions");
         NutsRepositoryExt xrepo = NutsRepositoryExt.of(getRepo());
-        NutsWorkspaceUtils.of(session).checkSimpleNameNutsId(id);
+        NutsWorkspaceUtils.of(session).checkShortId(id);
         xrepo.checkAllowedFetch(id, session);
         try {
             List<Iterator<? extends NutsId>> resultList = new ArrayList<>();

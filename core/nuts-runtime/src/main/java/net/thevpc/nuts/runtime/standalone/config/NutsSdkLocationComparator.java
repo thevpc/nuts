@@ -1,22 +1,19 @@
 package net.thevpc.nuts.runtime.standalone.config;
 
-import net.thevpc.nuts.NutsPlatformLocation;
-import net.thevpc.nuts.NutsUtilStrings;
-import net.thevpc.nuts.NutsVersion;
-import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.*;
 
 import java.util.Comparator;
 
 public class NutsSdkLocationComparator implements Comparator<NutsPlatformLocation> {
-    private NutsWorkspace ws;
-    public NutsSdkLocationComparator(NutsWorkspace ws) {
-        this.ws=ws;
+    private NutsSession session;
+    public NutsSdkLocationComparator(NutsSession session) {
+        this.session =session;
     }
 
     @Override
     public int compare(NutsPlatformLocation o1, NutsPlatformLocation o2) {
-        NutsVersion v1 = ws.version().parser().parse(o1.getVersion());
-        NutsVersion v2 = ws.version().parser().parse(o2.getVersion());
+        NutsVersion v1 = session.version().parser().parse(o1.getVersion());
+        NutsVersion v2 = session.version().parser().parse(o2.getVersion());
         int x = (v1 == null || v2 == null) ? 0 : (v1 != null && v2 != null) ? v1.compareTo(v2) : v2 == null ? 1 : -1;
         if (x != 0) {
             return x;

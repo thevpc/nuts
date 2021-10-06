@@ -171,7 +171,7 @@ public class NutsJavaSdkUtils {
                         locs.addAll(Arrays.asList(e));
                     }
                 }
-                locs.sort(new NutsSdkLocationComparator(session.getWorkspace()));
+                locs.sort(new NutsSdkLocationComparator(session));
                 return locs.toArray(new NutsPlatformLocation[0]);
             }
         });
@@ -199,13 +199,15 @@ public class NutsJavaSdkUtils {
                 throw new UncheckedIOException(ex);
             }
         }
-        all.sort(new NutsSdkLocationComparator(session.getWorkspace()));
+        all.sort(new NutsSdkLocationComparator(session));
         return all.toArray(new NutsPlatformLocation[0]);
     }
 
     public Future<NutsPlatformLocation[]> searchJdkLocationsFuture(Path s, NutsSession session) {
         List<Future<NutsPlatformLocation>> all = new ArrayList<>();
-        if (Files.isDirectory(s)) {
+        if(s==null) {
+            return CompletableFuture.completedFuture(new NutsPlatformLocation[0]);
+        }else if (Files.isDirectory(s)) {
             try (final DirectoryStream<Path> it = Files.newDirectoryStream(s)) {
                 for (Path d : it) {
                     all.add(

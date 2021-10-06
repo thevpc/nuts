@@ -11,11 +11,12 @@ import java.util.function.Predicate;
 
 public class DefaultNutsPlatformModel {
 
-    private final Map<NutsPlatformType, List<NutsPlatformLocation>> configPlatforms = new LinkedHashMap<>();
     private NutsWorkspace workspace;
+    private DefaultNutsWorkspaceEnvManagerModel model;
 
-    public DefaultNutsPlatformModel(NutsWorkspace ws) {
-        this.workspace = ws;
+    public DefaultNutsPlatformModel(DefaultNutsWorkspaceEnvManagerModel model) {
+        this.workspace = model.getWorkspace();
+        this.model = model;
     }
 
     public NutsWorkspace getWorkspace() {
@@ -45,7 +46,7 @@ public class DefaultNutsPlatformModel {
             List<NutsPlatformLocation> list = getPlatforms().get(location.getPlatformType());
             if (list == null) {
                 list = new ArrayList<>();
-                configPlatforms.put(location.getPlatformType(), list);
+                model.getConfigPlatforms().put(location.getPlatformType(), list);
             }
             NutsPlatformLocation old = null;
             for (NutsPlatformLocation nutsPlatformLocation : list) {
@@ -177,7 +178,7 @@ public class DefaultNutsPlatformModel {
 
 //    
     public void setPlatforms(NutsPlatformLocation[] locations, NutsSession session) {
-        configPlatforms.clear();
+        model.getConfigPlatforms().clear();
         for (NutsPlatformLocation platform : locations) {
             add0(platform, session, false);
         }
@@ -192,7 +193,7 @@ public class DefaultNutsPlatformModel {
         if (filter == null) {
             if (type == null) {
                 List<NutsPlatformLocation> all = new ArrayList<>();
-                for (List<NutsPlatformLocation> value : configPlatforms.values()) {
+                for (List<NutsPlatformLocation> value : model.getConfigPlatforms().values()) {
                     all.addAll(value);
                 }
                 return all.toArray(new NutsPlatformLocation[0]);
@@ -238,6 +239,6 @@ public class DefaultNutsPlatformModel {
 //    }
 
     public Map<NutsPlatformType, List<NutsPlatformLocation>> getPlatforms() {
-        return configPlatforms;
+        return model.getConfigPlatforms();
     }
 }

@@ -70,7 +70,7 @@ public class NutsRepositoryMirroringHelper {
     }
 
     protected NutsContent fetchContent(NutsId id, NutsDescriptor descriptor, String localPath, NutsFetchMode fetchMode, NutsSession session) {
-        Path cacheContent = cache.getLongNameIdLocalFile(id, session);
+        Path cacheContent = cache.getLongIdLocalFile(id, session);
         NutsRepositoryConfigManager rconfig = repo.config().setSession(session);
         if (session.isTransitive() && rconfig.isSupportedMirroring()) {
             for (NutsRepository mirror : rconfig.setSession(session).getMirrors()) {
@@ -106,7 +106,7 @@ public class NutsRepositoryMirroringHelper {
 
     protected NutsDescriptor fetchDescriptorImplInMirrors(NutsId id, NutsFetchMode fetchMode, NutsSession session) {
         String idFilename = getIdFilename(id, session);
-        Path versionFolder = cache.getLongNameIdLocalFolder(id, session);
+        Path versionFolder = cache.getLongIdLocalFolder(id, session);
         NutsRepositoryConfigManager rconf = repo.config().setSession(session);
         if (session.isTransitive() && rconf.isSupportedMirroring()) {
             for (NutsRepository remote : rconf.getMirrors()) {
@@ -230,7 +230,7 @@ public class NutsRepositoryMirroringHelper {
 //                        NutsId id2 = C                                oreNutsUtils.createComponentFaceId(getWorkspace().resolveEffectiveId(nutsDescriptor,session),nutsDescriptor,null);
                         NutsWorkspaceExt dws = NutsWorkspaceExt.of(getWorkspace());
                         NutsId id2 = dws.resolveEffectiveId(nutsDescriptor, session).builder().setFaceDescriptor().build();
-                        Path localNutFile = cache.getLongNameIdLocalFile(id2, session);
+                        Path localNutFile = cache.getLongIdLocalFile(id2, session);
                         getWorkspace().descriptor().formatter(nutsDescriptor).print(localNutFile);
                         if (bestId == null || id2.getVersion().compareTo(bestId.getVersion()) > 0) {
                             bestId = id2;

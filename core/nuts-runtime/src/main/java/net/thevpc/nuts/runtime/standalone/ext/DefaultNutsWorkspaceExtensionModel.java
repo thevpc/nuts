@@ -489,7 +489,7 @@ public class DefaultNutsWorkspaceExtensionModel {
 
     private boolean isLoadedClassPath(NutsDefinition file, NutsSession session) {
         //session = CoreNutsUtils.validateSession(session,ws);
-        if (file.getId().equalsShortName(ws.id().parser().setLenient(false).parse(NutsConstants.Ids.NUTS_API))) {
+        if (file.getId().equalsShortId(ws.id().parser().setLenient(false).parse(NutsConstants.Ids.NUTS_API))) {
             return true;
         }
         try {

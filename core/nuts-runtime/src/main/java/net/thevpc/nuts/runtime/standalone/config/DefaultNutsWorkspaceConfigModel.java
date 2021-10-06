@@ -179,7 +179,7 @@ public class DefaultNutsWorkspaceConfigModel {
 
         if (force || storeModelMainChanged) {
             List<NutsPlatformLocation> plainSdks = new ArrayList<>();
-            plainSdks.addAll(Arrays.asList(ws.env().platforms().findPlatforms(null, null)));
+            plainSdks.addAll(Arrays.asList(ws.env().platforms().findPlatforms()));
             storeModelMain.setSdk(plainSdks);
             storeModelMain.setRepositories(new ArrayList<>(
                     Arrays.stream(ws.repos().getRepositories()).filter(x -> !x.config().isTemporary())

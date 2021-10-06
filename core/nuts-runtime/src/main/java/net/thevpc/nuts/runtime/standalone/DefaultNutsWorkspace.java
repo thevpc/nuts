@@ -237,12 +237,15 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         this.eventsModel = new DefaultNutsWorkspaceEventModel(this);
         this.textModel = new DefaultNutsTextManagerModel(this, info);
         this.location = info.getWorkspaceLocation();
-        this.apiVersion = new DefaultNutsVersionParser(defaultSession()).parse(Nuts.getVersion());
-        this.apiId = new DefaultNutsId("net.thevpc.nuts", "nuts", apiVersion.toString(), defaultSession());
+        DefaultNutsVersionParser vparser = new DefaultNutsVersionParser(defaultSession());
+        this.apiVersion = vparser.parse(Nuts.getVersion());
+        this.apiId = new DefaultNutsId("net.thevpc.nuts", "nuts", apiVersion,null,(Map<String, String>)null, defaultSession());
         this.runtimeId = new DefaultNutsId(
                 info.getRuntimeId().getGroupId(),
                 info.getRuntimeId().getArtifactId(),
-                info.getRuntimeId().getVersion().toString(),
+                vparser.parse(info.getRuntimeId().getVersion().toString()),
+                null,
+                (Map<String, String>)null,
                 defaultSession());
 
         boolean errorTheme = false;
@@ -554,8 +557,8 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                             .setContent(bootClassWorldURL)
                             //.setFetchMode(NutsFetchMode.LOCAL)
                             .run();
-                    if (desc.getId().getLongNameId().equals(getApiId().getLongNameId())
-                            || desc.getId().getLongNameId().equals(getRuntimeId().getLongNameId())) {
+                    if (desc.getId().getLongId().equals(getApiId().getLongId())
+                            || desc.getId().getLongId().equals(getRuntimeId().getLongId())) {
                         repo.install(desc.getId(), defaultSession(), null);
                     } else {
                         repo.install(desc.getId(), defaultSession(), getRuntimeId());
@@ -700,11 +703,49 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 }
             } catch (Exception ex) {
                 LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).error(ex)
-                        .log(NutsMessage.jstyle("unable to resolve default JDK/JDK locations : {0}", ex));
+                        .log(NutsMessage.jstyle("unable to resolve default JRE/JDK locations : {0}", ex));
                 if (session.isPlainTrace()) {
                     NutsPrintStream out = session.out();
                     out.resetLine();
-                    out.printf("```unable to resolve default JDK/JDK locations``` :  %s%n", ex);
+                    out.printf("```unable to resolve default JRE/JDK locations``` :  %s%n", ex);
+                }
+            }
+        }else{
+            //at least add current vm
+            try {
+                if (session.isPlainTrace()) {
+                    session.out().resetLine().println("adding current JVM...");
+                }
+                NutsPlatformLocation found0 = env.platforms()
+                        .resolvePlatform(NutsPlatformType.JAVA, System.getProperty("java.home"), null);
+                NutsPlatformLocation[] found = found0==null?new NutsPlatformLocation[0] : new NutsPlatformLocation[]{found0};
+                int someAdded = 0;
+                for (NutsPlatformLocation java : found) {
+                    if (env.platforms().addPlatform(java)) {
+                        someAdded++;
+                    }
+                }
+                NutsTextManager factory = ws.text();
+                if (session.isPlainTrace()) {
+                    if (someAdded == 0) {
+                        session.out().print("```error no new``` java installation locations found...\n");
+                    } else if (someAdded == 1) {
+                        session.out().printf("%s new java installation location added...\n", factory.ofStyled("1", NutsTextStyle.primary2()));
+                    } else {
+                        session.out().printf("%s new java installation locations added...\n", factory.ofStyled("" + someAdded, NutsTextStyle.primary2()));
+                    }
+                    session.out().println("you can always add another installation manually using 'nuts settings add java' command.");
+                }
+                if (!config.isReadOnly()) {
+                    config.save();
+                }
+            } catch (Exception ex) {
+                LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).error(ex)
+                        .log(NutsMessage.jstyle("unable to resolve default JRE/JDK locations : {0}", ex));
+                if (session.isPlainTrace()) {
+                    NutsPrintStream out = session.out();
+                    out.resetLine();
+                    out.printf("```unable to resolve default JRE/JDK locations``` :  %s%n", ex);
                 }
             }
         }
@@ -954,7 +995,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             if (strategy0 == InstallStrategy0.UPDATE) {
                 session.out().resetLine().printf("%s %s ...%n",
                         text.ofStyled("update", NutsTextStyle.warn()),
-                        def.getId().getLongNameId()
+                        def.getId().getLongId()
                 );
             } else if (strategy0 == InstallStrategy0.REQUIRE) {
                 reinstall = def.getInstallInformation().getInstallStatus().isRequired();
@@ -969,12 +1010,12 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                     session.out().resetLine().printf(
                             "%s %s ...%n",
                             text.ofStyled("re-install", NutsTextStyles.of(NutsTextStyle.success(), NutsTextStyle.underlined())),
-                            def.getId().getLongNameId()
+                            def.getId().getLongId()
                     );
                 } else {
                     session.out().resetLine().printf("%s %s ...%n",
                             text.ofStyled("install", NutsTextStyle.success()),
-                            def.getId().getLongNameId()
+                            def.getId().getLongId()
                     );
                 }
             }
@@ -1004,7 +1045,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                     break;
                 }
                 default: {
-                    oldDef = search().setSession(session).addId(def.getId().getShortNameId())
+                    oldDef = search().setSession(session).addId(def.getId().getShortId())
                             .setInstallStatus(this.filters().setSession(session).installStatus().byDeployed(true))
                             .setFailFast(false).getResultDefinitions().first();
                     break;
@@ -1210,7 +1251,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                             if (session.isPlainTrace()) {
                                 out.resetLine().printf("%s %s from %s repository (%s) temporarily file %s.%s%n",
                                         installedString,
-                                        def.getId().getLongNameId(),
+                                        def.getId().getLongId(),
                                         remoteRepo ? "remote" : "local",
                                         def.getRepositoryName(),
                                         def.getLocation(),
@@ -1220,7 +1261,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                         } else {
                             if (session.isPlainTrace()) {
                                 out.resetLine().printf("%s %s from %s repository (%s).%s%n", installedString,
-                                        def.getId().getLongNameId(),
+                                        def.getId().getLongId(),
                                         remoteRepo ? "remote" : "local",
                                         def.getRepositoryName(),
                                         text.parse(setAsDefaultString));
@@ -1231,7 +1272,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                             if (session.isPlainTrace()) {
                                 out.resetLine().printf("%s %s from %s repository (%s) temporarily file %s.%s%n",
                                         installedString,
-                                        def.getId().getLongNameId(),
+                                        def.getId().getLongId(),
                                         remoteRepo ? "remote" : "local",
                                         def.getRepositoryName(),
                                         def.getLocation(),
@@ -1241,7 +1282,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                             if (session.isPlainTrace()) {
                                 out.resetLine().printf("%s %s from %s repository (%s).%s%n",
                                         installedString,
-                                        def.getId().getLongNameId(),
+                                        def.getId().getLongId(),
                                         remoteRepo ? "remote" : "local",
                                         def.getRepositoryName(),
                                         text.parse(setAsDefaultString)
@@ -1267,7 +1308,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                     if (session.isPlainTrace()) {
                         out.resetLine().printf("%s  %s %s.%s%n",
                                 installedString,
-                                def.getId().getLongNameId(),
+                                def.getId().getLongId(),
                                 text.ofStyled("successfully", NutsTextStyle.success()),
                                 text.parse(setAsDefaultString)
                         );
@@ -1547,7 +1588,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
     public boolean requiresRuntimeExtension(NutsSession session) {
         boolean coreFound = false;
         for (NutsId ext : extensions().setSession(session).getConfigExtensions()) {
-            if (ext.equalsShortName(getRuntimeId())) {
+            if (ext.equalsShortId(getRuntimeId())) {
                 coreFound = true;
                 break;
             }
@@ -1635,12 +1676,12 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         a.put("configVersion", Nuts.getVersion());
         a.put("id", id.getLongName());
         a.put("dependencies", m.getDependencies().stream().map(NutsDependency::getLongName).collect(Collectors.joining(";")));
-        defs.put(m.getId().getLongNameId(), m);
+        defs.put(m.getId().getLongId(), m);
         if (withDependencies) {
             for (NutsDependency dependency : m.getDependencies()) {
-                if (!defs.containsKey(dependency.toId().getLongNameId())) {
+                if (!defs.containsKey(dependency.toId().getLongId())) {
                     m = fetch().setId(id).setContent(true).setDependencies(true).setFailFast(false).getResultDefinition();
-                    defs.put(m.getId().getLongNameId(), m);
+                    defs.put(m.getId().getLongId(), m);
                 }
             }
         }
@@ -1657,8 +1698,8 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
 
             Map<String, String> pr = new LinkedHashMap<>();
             pr.put("file.updated.date", Instant.now().toString());
-            pr.put("project.id", def.getId().getShortNameId().toString());
-            pr.put("project.name", def.getId().getShortNameId().toString());
+            pr.put("project.id", def.getId().getShortId().toString());
+            pr.put("project.name", def.getId().getShortId().toString());
             pr.put("project.version", def.getId().getVersion().toString());
             pr.put("repositories", "~/.m2/repository"
                     + ";" + NutsRepositorySelector.createRepositoryOptions(NutsRepositorySelector.parseSelection("vpc-public-maven"), true, session).getConfig().getLocation()
@@ -1678,7 +1719,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             );
 
             try (Writer writer = Files.newBufferedWriter(
-                    bootstrapFolder.resolve(this.locations().getDefaultIdBasedir(def.getId().getLongNameId()))
+                    bootstrapFolder.resolve(this.locations().getDefaultIdBasedir(def.getId().getLongId()))
                             .resolve("nuts.properties")
             )) {
                 CoreIOUtils.storeProperties(pr, writer, false);

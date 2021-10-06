@@ -170,7 +170,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
         long startTime = System.currentTimeMillis();
         checkSession();
         NutsWorkspaceUtils wu = NutsWorkspaceUtils.of(session);
-        wu.checkLongNameNutsId(id, session);
+        wu.checkLongId(id, session);
         checkSession();
         NutsWorkspace _ws = getSession().getWorkspace();
         NutsWorkspaceUtils.checkSession(_ws, options.getSession());
@@ -204,7 +204,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                     _LOGOP(getSession()).error(ex).level(Level.SEVERE)
                             .log(NutsMessage.jstyle("unexpected error while fetching descriptor for {0}", id));
                     if (_LOG(getSession()).isLoggable(Level.FINEST)) {
-                        wu.traceMessage(nutsFetchModes, id.getLongNameId(), NutsLogVerb.FAIL, "fetch def", startTime);
+                        wu.traceMessage(nutsFetchModes, id.getLongId(), NutsLogVerb.FAIL, "fetch def", startTime);
                     }
                     descTracker.addFailure(location);
                 }
@@ -293,7 +293,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                             }
                         }
                         if (!contentSuccessful /*&& includedRemote*/) {
-                            wu.traceMessage(nutsFetchModes, id.getLongNameId(), NutsLogVerb.FAIL,
+                            wu.traceMessage(nutsFetchModes, id.getLongId(), NutsLogVerb.FAIL,
                                     "fetched descriptor but failed to fetch artifact binaries", startTime);
                         }
                     }
@@ -311,10 +311,10 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
             }
         } catch (NutsNotFoundException ex) {
             reasons.add(ex);
-            wu.traceMessage(nutsFetchModes, id.getLongNameId(), NutsLogVerb.FAIL, "fetch definition", startTime);
+            wu.traceMessage(nutsFetchModes, id.getLongId(), NutsLogVerb.FAIL, "fetch definition", startTime);
             throw ex;
         } catch (RuntimeException ex) {
-            wu.traceMessage(nutsFetchModes, id.getLongNameId(), NutsLogVerb.FAIL, "[unexpected] fetch definition", startTime);
+            wu.traceMessage(nutsFetchModes, id.getLongId(), NutsLogVerb.FAIL, "[unexpected] fetch definition", startTime);
             throw ex;
         }
         if (foundDefinition != null) {
@@ -488,7 +488,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                                 //this is invalid cache!
                                 Files.delete(cachePath);
                             } else {
-                                wu.traceMessage(nutsFetchModes, id.getLongNameId(), NutsLogVerb.CACHE, "fetch definition", 0);
+                                wu.traceMessage(nutsFetchModes, id.getLongId(), NutsLogVerb.CACHE, "fetch definition", 0);
                                 return d;
                             }
                         }
@@ -534,7 +534,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                 for (NutsDependency dependency : descriptor.getDependencies()) {
                     if (dependency.toId().getShortName().equals(NutsConstants.Ids.NUTS_API)
                             && NutsDependencyScopes.isCompileScope(dependency.getScope())) {
-                        apiId0 = dependency.toId().getLongNameId();
+                        apiId0 = dependency.toId().getLongId();
                     }
                 }
                 if (apiId0 != null) {
@@ -563,7 +563,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
             DefaultNutsDefinition result = new DefaultNutsDefinition(
                     repo.getUuid(),
                     repo.getName(),
-                    newId,
+                    newId.getLongId(),
                     descriptor,
                     null,
                     null,

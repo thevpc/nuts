@@ -16,7 +16,6 @@ import java.util.Map;
 import org.junit.jupiter.api.*;
 
 /**
- *
  * @author thevpc
  */
 public class Test01_CreateTest {
@@ -33,12 +32,12 @@ public class Test01_CreateTest {
                 "--archetype", "minimal",
                 "--verbose",
                 "--skip-companions");
-        NutsWorkspace ws= session.getWorkspace();
-        Assertions.assertEquals(wsPath + "/cache", ws.locations().getStoreLocation(NutsStoreLocation.CACHE));
-        Assertions.assertEquals(wsPath + "/cache/" + NutsConstants.Folders.REPOSITORIES + "/"+
-                        ws.repos().getRepositories()[0].getName()+
-                        "/"+ws.repos().getRepositories()[0].getUuid(),
-                ws.repos().getRepositories()[0].config().getStoreLocation(NutsStoreLocation.CACHE).toString());
+        NutsWorkspace ws = session.getWorkspace();
+        Assertions.assertEquals(new File(wsPath, "cache").getPath(), ws.locations().getStoreLocation(NutsStoreLocation.CACHE));
+        Assertions.assertEquals(new File(wsPath,  "cache/" + NutsConstants.Folders.REPOSITORIES + "/" +
+                        ws.repos().getRepositories()[0].getName() +
+                        "/" + ws.repos().getRepositories()[0].getUuid()).getPath(),
+                ws.repos().getRepositories()[0].config().getStoreLocation(NutsStoreLocation.CACHE));
 
 //        String str="     __        __    \n" +
 //                "  /\\ \\ \\ _  __/ /______\n" +
@@ -57,9 +56,8 @@ public class Test01_CreateTest {
 //        _log.with()
 //                .level(Level.INFO)
 //                .log(str);
-        String str=
-                "a\n\nb"
-                ;
+        String str =
+                "a\n\nb";
         System.out.println("-----------------------");
         System.out.println(str);
         NutsText txt = session.text().parse(str);
@@ -106,15 +104,31 @@ public class Test01_CreateTest {
                 "--verbose",
                 "--skip-companions").getWorkspace();
         NutsSession session = ws.createSession();
-        ws=session.getWorkspace();
-        Assertions.assertEquals(System.getProperty("user.home") + "/.cache/nuts/" + new File(wsPath).getName(),
+        ws = session.getWorkspace();
+        String base = "";
+        switch (NutsOsFamily.getCurrent()) {
+            case WINDOWS: {
+                base =new File(System.getProperty("user.home"),"AppData\\Local\\nuts\\cache").getPath();
+                break;
+            }
+            case MACOS:
+            case LINUX:
+            case UNIX:
+            case UNKNOWN:
+            {
+                base =new File(System.getProperty("user.home"),".cache/nuts").getPath();
+                break;
+            }
+        }
+        Assertions.assertEquals(new File(base, new File(wsPath).getName()).getPath(),
                 ws.locations().getStoreLocation(NutsStoreLocation.CACHE));
         Assertions.assertEquals(
-                System.getProperty("user.home") + "/.cache/nuts/" + new File(wsPath).getName() + "/"
-                + NutsConstants.Folders.REPOSITORIES + "/"
-                + ws.repos().getRepositories()[0].getName()
-                + "/" + ws.repos().getRepositories()[0].getUuid(),
-                ws.repos().getRepositories()[0].config().getStoreLocation(NutsStoreLocation.CACHE).toString());
+                new File(base, new File(wsPath).getName() + "/"
+                        + NutsConstants.Folders.REPOSITORIES + "/"
+                        + ws.repos().getRepositories()[0].getName()
+                        + "/" + ws.repos().getRepositories()[0].getUuid()
+                ).getPath(),
+                ws.repos().getRepositories()[0].config().getStoreLocation(NutsStoreLocation.CACHE));
     }
 
     @Test
@@ -145,7 +159,7 @@ public class Test01_CreateTest {
 
     @BeforeAll
     public static void setUpClass() throws IOException {
-        TestUtils.println("####### RUNNING TEST @ "+ TestUtils.getCallerClassSimpleName());
+        TestUtils.println("####### RUNNING TEST @ " + TestUtils.getCallerClassSimpleName());
     }
 
     @AfterAll

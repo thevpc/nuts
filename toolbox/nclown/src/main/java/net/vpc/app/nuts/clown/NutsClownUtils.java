@@ -21,7 +21,7 @@ public class NutsClownUtils {
         _condPut(entity, "version", id.getVersion().getValue());
         _condPut(entity, "face", id.getFace());
         _condPut(entity, "os", id.getOs());
-        _condPut(entity, "osdist", id.getOsdist());
+        _condPut(entity, "osdist", id.getOsDist());
 //        _condPut(entity, "scope", id.getScope());
         _condPut(entity, "arch", id.getArch());
         _condPut(entity, NutsConstants.IdProperties.CLASSIFIER, id.getClassifier());

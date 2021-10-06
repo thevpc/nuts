@@ -169,7 +169,7 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
 
                 return ws.descriptor()
                         .descriptorBuilder()
-                        .setId(id.getLongNameId())
+                        .setId(id.getLongId())
                         .setPackaging("zip")
                         .setCondition(
                                 NutsEnvConditionBuilder.of(session)

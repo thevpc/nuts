@@ -53,7 +53,7 @@ public class MinimalNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
 
         DefaultNutsWorkspaceConfigManager rm = (DefaultNutsWorkspaceConfigManager) session.config();
         Map<String, String> defaults = new HashMap<>();
-        defaults.put(NutsConstants.Names.DEFAULT_REPOSITORY_NAME, null);
+//        defaults.put(NutsConstants.Names.DEFAULT_REPOSITORY_NAME, null);
         NutsRepositorySelector.Selection[] br = rm.getModel().resolveBootRepositoriesList().resolveSelectors(defaults);
         NutsRepositoryManager repos = session.repos().setSession(session);
         for (NutsRepositorySelector.Selection s : br) {

@@ -516,7 +516,7 @@ public final class CoreStringUtils {
         if(s==null){
             return  new String[0];
         }
-        return Arrays.stream(s.split(",")).map(x->x.trim())
+        return Arrays.stream(s.split("[,;| \t]")).map(String::trim)
                 .filter(x->x.length()>0)
                 .distinct().toArray(String[]::new);
     }

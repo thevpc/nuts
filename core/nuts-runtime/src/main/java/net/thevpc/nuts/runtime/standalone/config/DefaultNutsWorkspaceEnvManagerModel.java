@@ -55,6 +55,7 @@ public class DefaultNutsWorkspaceEnvManagerModel {
     private NutsId arch;
     private NutsId osDist;
     private NutsArchFamily archFamily = NutsArchFamily.getCurrent();
+    private final Map<NutsPlatformType, List<NutsPlatformLocation>> configPlatforms = new LinkedHashMap<>();
 
     public DefaultNutsWorkspaceEnvManagerModel(NutsWorkspace ws, NutsWorkspaceInitInformation info, NutsSession session) {
         this.workspace = ws;
@@ -169,16 +170,10 @@ public class DefaultNutsWorkspaceEnvManagerModel {
         return CoreNutsUtilGui.isGraphicalDesktopEnvironment();
     }
 
-    protected NutsId[] getDesktopEnvironments0(NutsSession session) {
-        if (!isGraphicalDesktopEnvironment()) {
-            return new NutsId[]{
-                    session.id().builder().setArtifactId("none").build()
-            };
-        }
+    protected NutsId[] getDesktopEnvironmentsXDGOrEmpty(NutsSession session) {
         String _XDG_SESSION_DESKTOP = System.getenv("XDG_SESSION_DESKTOP");
         String _XDG_CURRENT_DESKTOP = System.getenv("XDG_CURRENT_DESKTOP");
-
-
+        List<NutsId> a = new ArrayList<>();
         if (!NutsBlankable.isBlank(_XDG_SESSION_DESKTOP) && !NutsBlankable.isBlank(_XDG_SESSION_DESKTOP)) {
             String[] supportedSessions = new LinkedHashSet<>(
                     Arrays.stream(_XDG_CURRENT_DESKTOP.trim().split(":"))
@@ -186,7 +181,6 @@ public class DefaultNutsWorkspaceEnvManagerModel {
                             .collect(Collectors.toList())
             ).toArray(new String[0]);
             String sd = _XDG_SESSION_DESKTOP.toLowerCase();
-            List<NutsId> a = new ArrayList<>();
             for (int i = 0; i < supportedSessions.length; i++) {
                 NutsIdBuilder nb = session.id().builder().setArtifactId(supportedSessions[i]);
                 if ("kde".equals(sd)) {
@@ -210,19 +204,39 @@ public class DefaultNutsWorkspaceEnvManagerModel {
                 }
                 a.add(nb.build());
             }
-            if (a.isEmpty()) {
-                a.add(session.id().builder().setArtifactId("unknown").build());
-            }
-            return a.toArray(new NutsId[0]);
         }
-        if (NutsOsFamily.getCurrent() == NutsOsFamily.WINDOWS) {
+        return a.toArray(new NutsId[0]);
+    }
+
+    protected NutsId[] getDesktopEnvironments0(NutsSession session) {
+        if (!isGraphicalDesktopEnvironment()) {
             return new NutsId[]{
-                    session.id().builder().setArtifactId("windows").build()
+                    session.id().builder().setArtifactId(NutsDesktopEnvironmentFamily.WINDOWS_SHELL.id()).build()
             };
         }
-        return new NutsId[]{
-                session.id().builder().setArtifactId("unknown").build()
-        };
+        switch (session.env().getOsFamily()){
+            case WINDOWS:{
+                return new NutsId[]{
+                        session.id().builder().setArtifactId(NutsDesktopEnvironmentFamily.WINDOWS_SHELL.id()).build()
+                };
+            }
+            case MACOS:{
+                return new NutsId[]{
+                        session.id().builder().setArtifactId(NutsDesktopEnvironmentFamily.MACOS_AQUA.id()).build()
+                };
+            }
+            case UNIX:
+            case LINUX:{
+                NutsId[] all = getDesktopEnvironmentsXDGOrEmpty(session);
+                if(all.length==0){
+                    return new NutsId[]{session.id().builder().setArtifactId(NutsDesktopEnvironmentFamily.UNKNOWN.id()).build()};
+                }
+                return all;
+            }
+            default:{
+                return new NutsId[]{session.id().builder().setArtifactId(NutsDesktopEnvironmentFamily.UNKNOWN.id()).build()};
+            }
+        }
     }
 
     public NutsDesktopEnvironmentFamily[] getDesktopEnvironmentFamilies(NutsSession session) {
@@ -328,4 +342,7 @@ public class DefaultNutsWorkspaceEnvManagerModel {
         return workspace;
     }
 
+    public Map<NutsPlatformType, List<NutsPlatformLocation>> getConfigPlatforms() {
+        return configPlatforms;
+    }
 }

@@ -193,7 +193,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                 fetched = session.search()
                         .setSession(session.copy())
                         .addId(options.getId()).setLatest(true).getResultDefinitions().required();
-                nid = fetched.getId().getShortNameId();
+                nid = fetched.getId().getShortId();
                 //nutsId=fetched.getId().getLongNameId();
             }
             String n = nid.getArtifactId();

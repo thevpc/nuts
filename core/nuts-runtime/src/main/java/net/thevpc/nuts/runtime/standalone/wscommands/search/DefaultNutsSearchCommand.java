@@ -660,7 +660,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
             if (!isLatest() && !isDistinct()) {
                 //nothing
             } else if (!isLatest() && isDistinct()) {
-                baseIterator = IteratorBuilder.of(baseIterator).distinct((NutsId nutsId) -> nutsId.getLongNameId()
+                baseIterator = IteratorBuilder.of(baseIterator).distinct((NutsId nutsId) -> nutsId.getLongId()
                         .toString()).iterator();
             } else if (isLatest() && isDistinct()) {
                 Iterator<NutsId> curr = baseIterator;
@@ -708,7 +708,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
         if (!isLatest() && !isDistinct()) {
             //nothing
         } else if (!isLatest() && isDistinct()) {
-            baseIterator = IteratorBuilder.of(baseIterator).distinct((NutsId nutsId) -> nutsId.getLongNameId()
+            baseIterator = IteratorBuilder.of(baseIterator).distinct((NutsId nutsId) -> nutsId.getLongId()
                     .toString()).iterator();
         } else if (isLatest() && isDistinct()) {
             Iterator<NutsId> curr = baseIterator;

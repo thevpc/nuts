@@ -276,6 +276,14 @@ public class DefaultNutsRepositoryModel {
             if (NutsBlankable.isBlank(conf.getName())) {
                 conf.setName(options.getName());
             }
+            if (NutsBlankable.isBlank(conf.getType())
+                    && NutsBlankable.isBlank(conf.getLocation())
+                    && !NutsBlankable.isBlank(options.getLocation())
+                    && session.io().path(options.getLocation()).isFile()
+            ) {
+                conf.setType("nuts");
+                conf.setLocation(options.getLocation());
+            }
             NutsRepositoryFactoryComponent factory_ = getWorkspace().extensions()
                     .setSession(session)
                     .createSupported(NutsRepositoryFactoryComponent.class, conf);

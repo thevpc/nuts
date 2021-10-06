@@ -110,7 +110,7 @@ public class MavenRepositoryFolderHelper {
     }
 
     public Path getLocalGroupAndArtifactFile(NutsId id, NutsSession session) {
-        NutsWorkspaceUtils.of(session).checkSimpleNameNutsId(id);
+        NutsWorkspaceUtils.of(session).checkShortId(id);
         Path groupFolder = getStoreLocation().resolve(id.getGroupId().replace('.', File.separatorChar));
         return groupFolder.resolve(id.getArtifactId());
     }

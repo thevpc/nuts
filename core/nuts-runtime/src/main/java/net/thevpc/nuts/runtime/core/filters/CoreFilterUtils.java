@@ -345,7 +345,7 @@ public class CoreFilterUtils {
         if (_v == null || _v2 == null) {
             return _v == _v2;
         }
-        if (_v.equalsShortName(_v2)) {
+        if (_v.equalsShortId(_v2)) {
             if (_v.getVersion().filter().acceptVersion(_v2.getVersion(), session)) {
                 return true;
             }
@@ -353,47 +353,70 @@ public class CoreFilterUtils {
         return false;
     }
 
-    public static boolean matchesSys(NutsEnvCondition cond, NutsSession session) {
+    public static boolean matchesSys(NutsEnvCondition envCond,boolean currentVM, NutsSession session) {
         NutsWorkspaceEnvManager env = session.env();
-        return
-                matchesArch(
-                        env.getArch().toString(),
-                        cond, session
-                )
-                && matchesOs(
-                        env.getOs().toString(),
-                        cond, session
-                )
-                && matchesOsDist(
-                        env.getOsDist().toString(),
-                        cond, session
-                )
-                && matchesPlatform(
-                        env.getPlatform().toString(),
-                        cond, session
-                )
-                && matchesDesktopEnvironment(
-                        env.getDesktopEnvironment().toString(),
-                        cond, session
-                )
-                ;
+        if(!matchesArch(
+                env.getArch().toString(),
+                envCond, session
+        )){
+            return false;
+        }
+        if(!matchesOs(
+                env.getOs().toString(),
+                envCond, session
+        )){
+            return false;
+        }
+        if(!matchesOsDist(
+                env.getOsDist().toString(),
+                envCond, session
+        )){
+            return false;
+        }
+        if(currentVM){
+            if(!matchesPlatform(
+                    env.getPlatform().toString(),
+                    envCond, session
+            )){
+                return false;
+            }
+        }else{
+            if(!matchesPlatform(
+                    env.platforms().findPlatforms(),
+                    envCond, session
+            )){
+                return false;
+            }
+        }
+
+        if(!matchesDesktopEnvironment(
+                env.getDesktopEnvironments(),
+                envCond, session
+        )){
+            return false;
+        }
+        return true;
     }
 
-    public static boolean matchesArch(String arch, NutsEnvCondition cond, NutsSession session) {
-        if (NutsBlankable.isBlank(arch)) {
+    public static boolean matchesArch(String current, NutsEnvCondition envCond, NutsSession session) {
+        if (NutsBlankable.isBlank(current)) {
             return true;
         }
         NutsIdParser parser = session.id().parser();
-        NutsId _v = parser.parse(arch);
-        String[] all = cond.getArch();
-        if (all != null && all.length > 0) {
-            for (String v : all) {
-                if (NutsBlankable.isBlank(v)) {
+        NutsId currentId = parser.parse(current);
+        String[] allConds = envCond.getArch();
+        if (allConds != null && allConds.length > 0) {
+            for (String cond : allConds) {
+                if (NutsBlankable.isBlank(cond)) {
                     return true;
                 }
-                NutsId y = parser.setLenient(false).parse(v);
-                if (y.equalsShortName(_v)) {
-                    if (y.getVersion().filter().acceptVersion(_v.getVersion(), session)) {
+                NutsId idCond = parser.setLenient(false).parse(cond);
+                NutsArchFamily w = NutsArchFamily.parseLenient(idCond.getArtifactId(), null, null);
+                if(w!=null){
+                    idCond=idCond.builder().setArtifactId(w.id()).build();
+                }
+                if (idCond.equalsShortId(currentId)) {
+                    if (idCond.getVersion().filter().acceptVersion(currentId.getVersion(), session)) {
                         return true;
                     }
                 }
@@ -404,20 +427,24 @@ public class CoreFilterUtils {
         }
     }
 
-    public static boolean matchesOs(String os, NutsEnvCondition desc, NutsSession session) {
+    public static boolean matchesOs(String os, NutsEnvCondition envCond, NutsSession session) {
         if (NutsBlankable.isBlank(os)) {
             return true;
         }
         NutsIdParser parser = session.id().parser();
-        NutsId _v = parser.parse(os);
-        String[] all = desc.getOs();
-        if (all != null && all.length > 0) {
-            for (String v : all) {
-                if (NutsBlankable.isBlank(v)) {
+        NutsId currentId = parser.parse(os);
+        String[] allConds = envCond.getOs();
+        if (allConds != null && allConds.length > 0) {
+            for (String cond : allConds) {
+                if (NutsBlankable.isBlank(cond)) {
                     return true;
                 }
-                NutsId y = parser.setLenient(false).parse(v);
-                return y.filterCompat().acceptId(_v,session);
+                NutsId condId = parser.setLenient(false).parse(cond);
+                NutsOsFamily w = NutsOsFamily.parseLenient(condId.getArtifactId(), null, null);
+                if(w!=null){
+                    condId=condId.builder().setArtifactId(w.id()).build();
+                }
+                return condId.compatNewer().filter().acceptId(currentId,session);
             }
             return false;
         } else {
@@ -425,20 +452,20 @@ public class CoreFilterUtils {
         }
     }
 
-    public static boolean matchesOsDist(String osDist, NutsEnvCondition desc, NutsSession session) {
-        if (NutsBlankable.isBlank(osDist)) {
+    public static boolean matchesOsDist(String current, NutsEnvCondition envCond, NutsSession session) {
+        if (NutsBlankable.isBlank(current)) {
             return true;
         }
         NutsIdParser parser = session.id().parser();
-        NutsId _v = parser.parse(osDist);
-        String[] all = desc.getOsDist();
-        if (all != null && all.length > 0) {
-            for (String v : all) {
-                if (NutsBlankable.isBlank(v)) {
+        NutsId currentId = parser.parse(current);
+        String[] allConds = envCond.getOsDist();
+        if (allConds != null && allConds.length > 0) {
+            for (String cond : allConds) {
+                if (NutsBlankable.isBlank(cond)) {
                     return true;
                 }
-                NutsId y = parser.setLenient(false).parse(v);
-                return y.filterCompat().acceptId(_v,session);
+                NutsId y = parser.setLenient(false).parse(cond);
+                return y.compatNewer().filter().acceptId(currentId,session);
             }
             return false;
         } else {
@@ -447,20 +474,36 @@ public class CoreFilterUtils {
 
     }
 
-    public static boolean matchesPlatform(String platform, NutsEnvCondition desc, NutsSession session) {
-        if (NutsBlankable.isBlank(platform)) {
+    public static boolean matchesPlatform(NutsPlatformLocation[] platforms, NutsEnvCondition envCond, NutsSession session) {
+        for (NutsPlatformLocation platform : platforms) {
+            NutsId id = platform.getId();
+            if(id!=null){
+                if(matchesPlatform(id.toString(),envCond, session)){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public static boolean matchesPlatform(String current, NutsEnvCondition envCond, NutsSession session) {
+        if (NutsBlankable.isBlank(current)) {
             return true;
         }
         NutsIdParser parser = session.id().parser();
-        NutsId _v = parser.parse(platform);
-        String[] all = desc.getPlatform();
-        if (all != null && all.length > 0) {
-            for (String v : all) {
-                if (NutsBlankable.isBlank(v)) {
+        NutsId currentId = parser.parse(current);
+        String[] allConds = envCond.getPlatform();
+        if (allConds != null && allConds.length > 0) {
+            for (String cond : allConds) {
+                if (NutsBlankable.isBlank(cond)) {
                     return true;
                 }
-                NutsId y = parser.setLenient(false).parse(v);
-                return y.filterCompat().acceptId(_v,session);
+                NutsId idCond = parser.setLenient(false).parse(cond);
+                NutsPlatformType w = NutsPlatformType.parseLenient(idCond.getArtifactId(), null, null);
+                if(w!=null){
+                    idCond=idCond.builder().setArtifactId(w.id()).build();
+                }
+                return idCond.compatNewer().filter().acceptId(currentId,session);
             }
             return false;
         } else {
@@ -468,20 +511,33 @@ public class CoreFilterUtils {
         }
     }
 
-    public static boolean matchesDesktopEnvironment(String platform, NutsEnvCondition desc, NutsSession session) {
-        if (NutsBlankable.isBlank(platform)) {
+    public static boolean matchesDesktopEnvironment(NutsId[] platforms, NutsEnvCondition envCond, NutsSession session) {
+        for (NutsId platform : platforms) {
+            if(matchesDesktopEnvironment(platform.toString(),envCond,session)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean matchesDesktopEnvironment(String current, NutsEnvCondition envCond, NutsSession session) {
+        if (NutsBlankable.isBlank(current)) {
             return true;
         }
         NutsIdParser parser = session.id().parser();
-        NutsId _v = parser.parse(platform);
-        String[] all = desc.getPlatform();
-        if (all != null && all.length > 0) {
-            for (String v : all) {
-                if (NutsBlankable.isBlank(v)) {
+        NutsId currentId = parser.parse(current);
+        String[] allConds = envCond.getPlatform();
+        if (allConds != null && allConds.length > 0) {
+            for (String cond : allConds) {
+                if (NutsBlankable.isBlank(cond)) {
                     return true;
                 }
-                NutsId y = parser.setLenient(false).parse(v);
-                return y.filterCompat().acceptId(_v,session);
+                NutsId idCond = parser.setLenient(false).parse(cond);
+                NutsDesktopEnvironmentFamily w = NutsDesktopEnvironmentFamily.parseLenient(idCond.getArtifactId(), null, null);
+                if(w!=null){
+                    idCond=idCond.builder().setArtifactId(w.id()).build();
+                }
+                return idCond.compatNewer().filter().acceptId(currentId,session);
             }
             return false;
         } else {

@@ -111,6 +111,11 @@ public class DefaultNutsPlatformManager implements NutsPlatformManager {
     }
 
     @Override
+    public NutsPlatformLocation[] findPlatforms() {
+        return findPlatforms(null,null);
+    }
+
+    @Override
     public NutsPlatformLocation[] findPlatforms(NutsPlatformType type) {
         checkSession();
         return model.findPlatforms(type, null, session);

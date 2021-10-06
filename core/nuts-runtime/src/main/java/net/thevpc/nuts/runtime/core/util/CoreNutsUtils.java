@@ -125,7 +125,7 @@ public class CoreNutsUtils {
         if (all != null) {
             for (NutsId nutsId : all) {
                 if (nutsId != null) {
-                    if (nutsId.equalsShortName(id)) {
+                    if (nutsId.equalsShortId(id)) {
                         return nutsId;
                     }
                 }

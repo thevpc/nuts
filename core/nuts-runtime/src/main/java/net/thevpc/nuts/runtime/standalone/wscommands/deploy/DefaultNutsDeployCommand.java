@@ -204,7 +204,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                 }
 
                 NutsId effId = dws.resolveEffectiveId(descriptor, validWorkspaceSession);
-                CorePlatformUtils.checkSupportedSys(descriptor.getCondition(), validWorkspaceSession);
+                CorePlatformUtils.checkSupportedSys(descriptor.getCondition(),false, validWorkspaceSession);
                 if (NutsBlankable.isBlank(repository)) {
                     NutsRepositoryFilter repositoryFilter = null;
                     //TODO CHECK ME, why offline

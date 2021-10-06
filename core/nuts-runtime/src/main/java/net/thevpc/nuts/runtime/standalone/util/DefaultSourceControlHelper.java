@@ -109,7 +109,7 @@ public class DefaultSourceControlHelper {
             return new DefaultNutsDefinition(
                     nutToInstall.getRepositoryUuid(),
                     nutToInstall.getRepositoryName(),
-                    newId,
+                    newId.getLongId(),
                     d,
                     new NutsDefaultContent(
                             session.io().path(folder.toString()),

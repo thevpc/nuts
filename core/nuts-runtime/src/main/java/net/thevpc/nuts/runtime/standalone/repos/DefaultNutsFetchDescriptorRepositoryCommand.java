@@ -70,7 +70,7 @@ public class DefaultNutsFetchDescriptorRepositoryCommand extends AbstractNutsFet
     public NutsFetchDescriptorRepositoryCommand run() {
         NutsWorkspace ws = getRepo().getWorkspace();
         NutsSession session = getSession();
-        NutsWorkspaceUtils.of(session).checkLongNameNutsId(id, session);
+        NutsWorkspaceUtils.of(session).checkLongId(id, session);
         NutsWorkspaceUtils.checkSession(ws, session);
         getRepo().security().setSession(getSession()).checkAllowed(NutsConstants.Permissions.FETCH_DESC, "fetch-descriptor");
         Map<String, String> queryMap = id.getProperties();
@@ -87,7 +87,7 @@ public class DefaultNutsFetchDescriptorRepositoryCommand extends AbstractNutsFet
             if (DefaultNutsVersion.isBlankVersion(versionString)) {
                 NutsId a = xrepo.searchLatestVersion(id.builder().setVersion("").build(), null, getFetchMode(), session);
                 if (a == null) {
-                    throw new NutsNotFoundException(getSession(), id.getLongNameId());
+                    throw new NutsNotFoundException(getSession(), id.getLongId());
                 }
                 a = a.builder().setFaceDescriptor().build();
                 d = xrepo.fetchDescriptorImpl(a, getFetchMode(), session);
@@ -98,19 +98,19 @@ public class DefaultNutsFetchDescriptorRepositoryCommand extends AbstractNutsFet
                 NutsIdFilter filter = CoreFilterUtils.idFilterOf(id.getProperties(), ws.id().filter().byName(id.getFullName()), null, ws);
                 NutsId a = xrepo.searchLatestVersion(id.builder().setVersion("").build(), filter, getFetchMode(), session);
                 if (a == null) {
-                    throw new NutsNotFoundException(getSession(), id.getLongNameId());
+                    throw new NutsNotFoundException(getSession(), id.getLongId());
                 }
                 a = a.builder().setFaceDescriptor().build();
                 d = xrepo.fetchDescriptorImpl(a, getFetchMode(), session);
             }
             if (d == null) {
-                throw new NutsNotFoundException(getSession(), id.getLongNameId());
+                throw new NutsNotFoundException(getSession(), id.getLongId());
             }
-            CoreNutsUtils.traceMessage(_LOG(session), Level.FINER, getRepo().getName(), session, getFetchMode(), id.getLongNameId(), NutsLogVerb.SUCCESS, "fetch descriptor", startTime, null);
+            CoreNutsUtils.traceMessage(_LOG(session), Level.FINER, getRepo().getName(), session, getFetchMode(), id.getLongId(), NutsLogVerb.SUCCESS, "fetch descriptor", startTime, null);
             result = d;
         } catch (Exception ex) {
             if (!CoreNutsUtils.isUnsupportedFetchModeException(ex)) {
-                CoreNutsUtils.traceMessage(_LOG(session), Level.FINEST, getRepo().getName(), session, getFetchMode(), id.getLongNameId(), NutsLogVerb.FAIL, "fetch descriptor", startTime, CoreStringUtils.exceptionToMessage(ex));
+                CoreNutsUtils.traceMessage(_LOG(session), Level.FINEST, getRepo().getName(), session, getFetchMode(), id.getLongId(), NutsLogVerb.FAIL, "fetch descriptor", startTime, CoreStringUtils.exceptionToMessage(ex));
             }
             throw ex;
         }

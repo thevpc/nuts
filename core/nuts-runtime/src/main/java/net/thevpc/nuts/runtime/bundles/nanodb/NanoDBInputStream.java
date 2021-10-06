@@ -19,5 +19,7 @@ public interface NanoDBInputStream extends AutoCloseable {
 
     byte readByte();
 
+    boolean readBoolean();
+
 //        Object readObject();
 }

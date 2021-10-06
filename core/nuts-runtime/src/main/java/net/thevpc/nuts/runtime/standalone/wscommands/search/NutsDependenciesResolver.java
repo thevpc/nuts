@@ -53,7 +53,7 @@ public class NutsDependenciesResolver {
         }
         NutsDependencyTreeNodeBuild info = new NutsDependencyTreeNodeBuild(null, def, dependency, dependency, 0);
         for (NutsId exclusion : dependency.getExclusions()) {
-            info.exclusions.add(exclusion.getShortNameId());
+            info.exclusions.add(exclusion.getShortId());
         }
         defs.add(info);
         return this;
@@ -105,7 +105,7 @@ public class NutsDependenciesResolver {
                                 .setScope(combineScopes(currentNode.effDependency.getScope(), dependency.getScope()))
                                 .build();
                         if (getEffDependencyFilter().acceptDependency(currentNode.def.getId(), effDependency, session)
-                                && !currentNode.exclusions.contains(dependency.toId().getShortNameId())
+                                && !currentNode.exclusions.contains(dependency.toId().getShortId())
                                 ) {
                             NutsDefinition def2 = null;
                             try {
@@ -120,7 +120,7 @@ public class NutsDependenciesResolver {
                             NutsDependencyTreeNodeBuild info = new NutsDependencyTreeNodeBuild(currentNode, def2, dependency, effDependency, currentNode.depth + 1);
                             info.exclusions.addAll(currentNode.exclusions);
                             for (NutsId exclusion : dependency.getExclusions()) {
-                                info.exclusions.add(exclusion.getShortNameId());
+                                info.exclusions.add(exclusion.getShortId());
                             }
                             currentNode.children.add(info);
                             nonMergedRootNodeBuilders.add(info);
@@ -148,7 +148,7 @@ public class NutsDependenciesResolver {
                                 .build();
                         if (getEffDependencyFilter().acceptDependency(
                                 currentNode.getEffectiveId(), effDependency, session
-                        )  && !currentNode.exclusions.contains(dependency.toId().getShortNameId())) {
+                        )  && !currentNode.exclusions.contains(dependency.toId().getShortId())) {
                             NutsDefinition def2 = null;
                             try {
                                 def2 = ws.search()
@@ -162,7 +162,7 @@ public class NutsDependenciesResolver {
                             NutsDependencyTreeNodeBuild info = new NutsDependencyTreeNodeBuild(currentNode, def2, dependency, effDependency, currentNode.depth + 1);
                             info.exclusions.addAll(currentNode.exclusions);
                             for (NutsId exclusion : dependency.getExclusions()) {
-                                info.exclusions.add(exclusion.getShortNameId());
+                                info.exclusions.add(exclusion.getShortId());
                             }
                             currentNode.children.add(info);
                             queue.add(info);
@@ -302,7 +302,7 @@ public class NutsDependenciesResolver {
             if (id == null) {
                 id = currentNode.dependency.toId();
             }
-            return new NutsDependencyInfo(id.getShortNameId(), id, currentNode.dependency, currentNode.depth);
+            return new NutsDependencyInfo(id.getShortId(), id, currentNode.dependency, currentNode.depth);
         }
 
         public NutsDependency getDependency() {

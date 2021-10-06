@@ -101,7 +101,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
             throw new NutsNotFoundException(session, id, new NutsFetchModeNotSupportedException(session, this, fetchMode, id.toString(), null));
         }
         boolean transitive = session.isTransitive();
-        session.getTerminal().printProgress("loading descriptor for ", id.getLongNameId());
+        session.getTerminal().printProgress("loading descriptor for ", id.getLongId());
         try (InputStream stream = CoreIOUtils.getHttpClientFacade(session, getUrl("/fetch-descriptor?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart(session))).open()) {
             NutsDescriptor descriptor = getWorkspace().descriptor().parser().setSession(session).parse(stream);
             if (descriptor != null) {
@@ -124,7 +124,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
         boolean transitive = session.isTransitive();
         InputStream ret = null;
         try {
-            session.getTerminal().printProgress("search version for %s", id.getLongNameId(), session);
+            session.getTerminal().printProgress("search version for %s", id.getLongId(), session);
             ret = CoreIOUtils.getHttpClientFacade(session, getUrl("/find-versions?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart(session))).open();
         } catch (UncheckedIOException | NutsIOException e) {
             return IteratorUtils.emptyIterator();

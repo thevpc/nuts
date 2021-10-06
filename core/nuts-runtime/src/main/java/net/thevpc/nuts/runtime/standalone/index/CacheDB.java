@@ -21,12 +21,7 @@ public class CacheDB {
                                 NutsStoreLocation.CACHE
                         ),"/cachedb")
                 );
-                if(o.getSerializers().findSerializer(NutsId.class,true)==null){
-                    o.getSerializers().setSerializer(NutsId.class,true,new NanoDBNutsIdSerializer.Null(session));
-                }
-                if(o.getSerializers().findSerializer(NutsId.class,false)==null){
-                    o.getSerializers().setSerializer(NutsId.class,false,new NanoDBNutsIdSerializer.NonNull(session));
-                }
+                o.getSerializers().setSerializer(NutsId.class,()->new NanoDBNutsIdSerializer(session));
                 session.env().getProperties().put(NanoDB.class.getName(), o);
             }
             return o;

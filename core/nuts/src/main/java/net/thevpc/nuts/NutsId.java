@@ -43,11 +43,26 @@ public interface NutsId extends /*NutsTokenFilter, Serializable,*/ Comparable<Nu
     }
 
     /**
-     * true if other has exact shot name than {@code this}
+     * true if other has exact short name than {@code this}
      * @param other other id
-     * @return true if other has exact shot name than {@code this}
+     * @return true if other has exact short name than {@code this}
      */
-    boolean equalsShortName(NutsId other);
+    boolean equalsShortId(NutsId other);
+
+    /**
+     * true if other has exact long name than {@code this}
+     * @param other other id
+     * @return true if other has exact long name than {@code this}
+     */
+    boolean equalsLongId(NutsId other);
+
+    /**
+     * true if this id is a long name
+     * @return true if this id is a long name
+     */
+    boolean isLongId();
+
+    boolean isShortId();
 
 //    /**
 //     * non null group id token
@@ -157,15 +172,15 @@ public interface NutsId extends /*NutsTokenFilter, Serializable,*/ Comparable<Nu
      *
      * @return group and name only Id instance
      */
-    NutsId getShortNameId();
+    NutsId getShortId();
 
     /**
-     * return a new instance of NutsId defining only group, name and version,
+     * return a new instance of NutsId defining only group, name, version and classifier if available,
      * ignoring repository, and queryMap values.
      *
      * @return group, name and version only Id instance
      */
-    NutsId getLongNameId();
+    NutsId getLongId();
 
     /**
      * return name part of this id
@@ -206,7 +221,23 @@ public interface NutsId extends /*NutsTokenFilter, Serializable,*/ Comparable<Nu
      * filter accepted any id with the defined version or greater
      * @return filter accepted any id with the defined version or greater
      */
-    NutsIdFilter filterCompat();
+    /**
+     * when the current version is a single value version X , returns ],X] version that guarantees backward compatibility
+     * in all other cases returns the current version
+     *
+     * @return when the current version is a single value version X , returns ],X] version that guarantees backward compatibility in all other cases returns the current version
+     * @since 0.8.3
+     */
+    NutsId compatNewer();
+
+    /**
+     * when the current version is a single value version X , returns [X,[ version that guarantees forward compatibility
+     * in all other cases returns the current version
+     *
+     * @return when the current version is a single value version X , returns [X,[ version that guarantees forward compatibility in all other cases returns the current version
+     * @since 0.8.3
+     */
+    NutsId compatOlder() ;
 
     boolean isNull();
 

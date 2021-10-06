@@ -67,6 +67,8 @@ public interface NutsPlatformManager {
 
     NutsPlatformLocation[] findPlatforms(NutsPlatformType type, Predicate<NutsPlatformLocation> filter);
 
+    NutsPlatformLocation[] findPlatforms();
+
     NutsPlatformLocation[] findPlatforms(NutsPlatformType type);
 
     NutsSession getSession();

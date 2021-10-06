@@ -151,7 +151,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
     }
 
     protected Path getLocalGroupAndArtifactFile(NutsId id, NutsSession session) {
-        NutsWorkspaceUtils.of(session).checkSimpleNameNutsId(id);
+        NutsWorkspaceUtils.of(session).checkShortId(id);
         Path groupFolder = getLocationAsPath(session).resolve(id.getGroupId().replace('.', File.separatorChar));
         return groupFolder.resolve(id.getArtifactId());
     }

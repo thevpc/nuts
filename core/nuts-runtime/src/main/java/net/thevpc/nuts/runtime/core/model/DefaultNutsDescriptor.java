@@ -108,8 +108,8 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing artifactId for %s", id));
         }
         //NutsWorkspaceUtils.of(session).checkSimpleNameNutsId(id);
-        if (!id.getProperties().isEmpty()) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("id should not have query defined in descriptors"));
+        if (!id.isLongId()) {
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("id should not have query defined in descriptors : %s",id));
         }
         this.id = id;
 //        this.alternative = NutsUtilStrings.trimToNull(alternative);

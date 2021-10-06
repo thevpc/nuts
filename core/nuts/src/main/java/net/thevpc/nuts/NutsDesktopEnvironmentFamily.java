@@ -3,10 +3,29 @@ package net.thevpc.nuts;
 import net.thevpc.nuts.boot.NutsApiUtils;
 
 public enum NutsDesktopEnvironmentFamily implements NutsEnum {
-    WINDOWS,
+    WINDOWS_SHELL,
+    MACOS_AQUA,
     KDE,
     GNOME,
+    LXDE,
+    LXQT,
+    XFCE,
+    MATE,
+
+    CDE,
+    OPENBOX,
+
+    LUMINA,
+    UNITY,
     UBUNTU,
+    PANTHEON,
+    CINNAMON,
+    DEEPIN,
+    BUDGIE,
+    ENLIGHTENMENT,
+    AWESOME,
+    I3,
+
     UNKNOWN,
     NONE;
 
@@ -31,20 +50,35 @@ public enum NutsDesktopEnvironmentFamily implements NutsEnum {
         if (e == null) {
             e = "";
         } else {
-            e = e.toLowerCase().trim();
+            e = e.toLowerCase().trim().replace("-","").replace("_","");
         }
         switch (e) {
             case "":
                 return emptyValue;
             case "win":
             case "windows":
-                return WINDOWS;
+            case "windowsshell":
+                return WINDOWS_SHELL;
+            case "mac":
+            case "macos":
+            case "macaqua":
+            case "macosaqua":
+            case "aqua":
+                return MACOS_AQUA;
             case "kde":
+            case "plasma":
                 return KDE;
             case "gnome":
                 return GNOME;
             case "unknown":
                 return UNKNOWN;
+            default:{
+                try {
+                    return NutsDesktopEnvironmentFamily.valueOf(e.toUpperCase());
+                }catch (Exception ex){
+                    //ignore error
+                }
+            }
         }
         return errorValue;
     }

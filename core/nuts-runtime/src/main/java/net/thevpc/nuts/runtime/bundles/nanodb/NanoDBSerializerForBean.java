@@ -6,7 +6,23 @@ import java.lang.reflect.Modifier;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class NanoDBBeanSerializer {
+public class NanoDBSerializerForBean<T> extends NanoDBNonNullSerializer<T>{
+
+    private LinkedHashMap<String, FieldInfo> fields;
+    private NanoDBSerializers serializers;
+    public NanoDBSerializerForBean(Class<T> type, NanoDBSerializers serializers) {
+        super(type);
+        this.serializers = serializers;
+        this.fields = buildFields(type, serializers);
+    }
+
+    public void write(T obj, NanoDBOutputStream out) {
+        writeNonNullHelper(obj,getSupportedType(), out, fields);
+    }
+
+    public T read(NanoDBInputStream in) {
+        return readNonNullHelper(in,getSupportedType(), fields);
+    }
 
     private static <T> LinkedHashMap<String, FieldInfo> buildFields(Class<T> type, NanoDBSerializers serializers){
         LinkedHashMap<String, FieldInfo> fields=new LinkedHashMap<>();
@@ -53,43 +69,6 @@ public class NanoDBBeanSerializer {
         }
     }
 
-    public static class NonNull<T> extends NanoDBNonNullSerializer<T> {
-        private LinkedHashMap<String, FieldInfo> fields;
-        private NanoDBSerializers serializers;
-        public NonNull(Class<T> type, NanoDBSerializers serializers) {
-            super(type);
-            this.serializers = serializers;
-            this.fields = buildFields(type, serializers);
-
-        }
-
-        public void write(T obj, NanoDBOutputStream out) {
-            writeNonNullHelper(obj,getSupportedType(), out, fields);
-        }
-
-        public T read(NanoDBInputStream in) {
-            return readNonNullHelper(in,getSupportedType(), fields);
-        }
-    }
-
-    public static class Null<T> extends NanoDBNullSerializer<T> {
-        private LinkedHashMap<String, FieldInfo> fields;
-        private NanoDBSerializers serializers;
-        public Null(Class<T> type, NanoDBSerializers serializers) {
-            super(type);
-            this.serializers = serializers;
-            this.fields = buildFields(type, serializers);
-
-        }
-
-        public void writeNonNull(T obj, NanoDBOutputStream out) {
-            writeNonNullHelper(obj,getSupportedType(), out, fields);
-        }
-
-        public T readNonNull(NanoDBInputStream in) {
-            return readNonNullHelper(in,getSupportedType(), fields);
-        }
-    }
 
     private static class FieldInfo {
         String name;

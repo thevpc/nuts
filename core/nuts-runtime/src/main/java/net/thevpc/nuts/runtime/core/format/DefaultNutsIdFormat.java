@@ -189,7 +189,6 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
         String scope = queryMap.remove(NutsConstants.IdProperties.SCOPE);
         String optional = queryMap.remove(NutsConstants.IdProperties.OPTIONAL);
         String classifier = queryMap.remove(NutsConstants.IdProperties.CLASSIFIER);
-//        String alternative = queryMap.remove(NutsConstants.IdProperties.ALTERNATIVE);
         String exclusions = queryMap.remove(NutsConstants.IdProperties.EXCLUSIONS);
         String repo = queryMap.remove(NutsConstants.IdProperties.REPO);
         NutsIdBuilder idBuilder = id.builder();
@@ -200,7 +199,6 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
             idBuilder.setProperty(NutsConstants.IdProperties.FACE, null);
         }
         id = idBuilder.build();
-//        NutsTextFormatManager tf = getWorkspace().text();
         NutsTextBuilder sb = getSession().text().builder();
         if (!isOmitGroupId()) {
             if (!NutsBlankable.isBlank(id.getGroupId())) {

@@ -103,7 +103,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
             DefaultNutsDefinition nutToRun = new DefaultNutsDefinition(
                     null,
                     null,
-                    _id,
+                    _id.getLongId(),
                     c.descriptor,
                     new NutsDefaultContent(
                             execSession.io().path(c.contentFile)

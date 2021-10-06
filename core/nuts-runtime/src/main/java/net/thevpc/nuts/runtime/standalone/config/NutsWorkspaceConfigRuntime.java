@@ -10,7 +10,7 @@ public class NutsWorkspaceConfigRuntime extends NutsConfigItem {
      * boot package Id in long format (as defined in
      * {@link NutsId#getLongName()})
      *
-     * @see NutsId#getLongNameId()
+     * @see NutsId#getLongId()
      */
     private String id = null;
 
@@ -21,7 +21,7 @@ public class NutsWorkspaceConfigRuntime extends NutsConfigItem {
      * valid implementation of nuts-api. These packages should be accessible
      * from {@link NutsWorkspaceConfigBoot#getBootRepositories()}
      *
-     * @see NutsId#getLongNameId()
+     * @see NutsId#getLongId()
      */
     private String dependencies = null;
 

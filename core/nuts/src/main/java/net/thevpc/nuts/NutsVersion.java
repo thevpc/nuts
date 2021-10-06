@@ -105,12 +105,22 @@ public interface NutsVersion extends Serializable, /*NutsTokenFilter, */NutsForm
     NutsVersionFilter filter();
 
     /**
-     * parse the current version as new instance of {@link NutsVersionFilter} that guarantees forward compatibility
-     * whenever the version is a single value and hence replaces it by '[value,['
+     * when the current version is a single value version X , returns ],X] version that guarantees backward compatibility
+     * in all other cases returns the current version
      *
-     * @return new instance of {@link NutsVersionFilter}
+     * @return when the current version is a single value version X , returns ],X] version that guarantees backward compatibility in all other cases returns the current version
+     * @since 0.8.3
      */
-    NutsVersionFilter filterCompat();
+    NutsVersion compatNewer();
+
+    /**
+     * when the current version is a single value version X , returns [X,[ version that guarantees forward compatibility
+     * in all other cases returns the current version
+     *
+     * @return when the current version is a single value version X , returns [X,[ version that guarantees forward compatibility in all other cases returns the current version
+     * @since 0.8.3
+     */
+    NutsVersion compatOlder() ;
 
     /**
      * parse the current version as an interval array

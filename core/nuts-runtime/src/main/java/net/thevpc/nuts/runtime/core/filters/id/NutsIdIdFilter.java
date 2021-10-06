@@ -23,17 +23,15 @@ public class NutsIdIdFilter extends AbstractIdFilter implements NutsIdFilter, Si
 
     private NutsLogger LOG;
     private final NutsId filter;
-    private final boolean compat;
 
-    public NutsIdIdFilter(NutsId filter, boolean compat,NutsSession session) {
+    public NutsIdIdFilter(NutsId filter, NutsSession session) {
         super(session, NutsFilterOp.CUSTOM);
         this.filter = filter;
-        this.compat = compat;
     }
 
     @Override
     public boolean acceptSearchId(NutsSearchId sid, NutsSession session) {
-        return filter == null ? true : acceptId(sid.getId(session),session);
+        return filter == null || acceptId(sid.getId(session), session);
     }
 
     @Override
@@ -45,14 +43,8 @@ public class NutsIdIdFilter extends AbstractIdFilter implements NutsIdFilter, Si
             LOG=session.log().of(NutsIdIdFilter.class);
         }
         if(id.getShortName().equals(filter.getShortName())){
-            if(compat){
-                if (!filter.getVersion().filterCompat().acceptVersion(id.getVersion(), session)) {
-                    return false;
-                }
-            }else {
-                if (!filter.getVersion().filter().acceptVersion(id.getVersion(), session)) {
-                    return false;
-                }
+            if (!filter.getVersion().filter().acceptVersion(id.getVersion(), session)) {
+                return false;
             }
             Map<String, String> e = filter.getProperties();
             Map<String, String> m = id.getProperties();

@@ -97,11 +97,38 @@ public class DefaultNutsVersion /*extends DefaultNutsTokenFilter*/ implements Nu
     }
 
     @Override
-    public NutsVersionFilter filterCompat() {
-        if(isFilter()) {
-            return filter();
+    public NutsVersion compatNewer() {
+        String v = toExplicitSingleValueOrNullString();
+        if(v==null) {
+            return this;
         }
-        return DefaultNutsVersionFilter.parse("["+expression+",[", session);
+        return new DefaultNutsVersion("["+expression+",[", session);
+    }
+
+    @Override
+    public NutsVersion compatOlder() {
+        String v = toExplicitSingleValueOrNullString();
+        if(v==null) {
+            return this;
+        }
+        return new DefaultNutsVersion("],"+v+"]", session);
+    }
+
+    private String toExplicitSingleValueOrNullString(){
+        if(!isBlank() && !isFilter()){
+            return expression;
+        }
+        return null;
+    }
+
+    private String toSingleValueOrNullString(){
+        NutsVersionInterval[] nutsVersionIntervals = intervals();
+        if(nutsVersionIntervals.length==1){
+            if(nutsVersionIntervals[0].isFixedValue()){
+                return nutsVersionIntervals[0].getLowerBound();
+            }
+        }
+        return null;
     }
 
     @Override
@@ -122,9 +149,9 @@ public class DefaultNutsVersion /*extends DefaultNutsTokenFilter*/ implements Nu
                 case '(':
                 case ')':
                 case '[':
-                case ']':
-            }{
-                return true;
+                case ']':{
+                    return true;
+                }
             }
         }
         return false;

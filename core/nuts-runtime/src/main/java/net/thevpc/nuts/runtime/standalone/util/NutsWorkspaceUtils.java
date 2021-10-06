@@ -274,7 +274,7 @@ public class NutsWorkspaceUtils {
         return ret;
     }
 
-    public void checkSimpleNameNutsId(NutsId id) {
+    public void checkShortId(NutsId id) {
         if (id == null) {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing id"));
         }
@@ -286,8 +286,8 @@ public class NutsWorkspaceUtils {
         }
     }
 
-    public void checkLongNameNutsId(NutsId id, NutsSession session) {
-        checkSimpleNameNutsId(id);
+    public void checkLongId(NutsId id, NutsSession session) {
+        checkShortId(id);
         if (NutsBlankable.isBlank(id.getVersion().toString())) {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing version for %s", id));
         }
@@ -544,8 +544,8 @@ public class NutsWorkspaceUtils {
                 } else {
                     u._LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE)
                             .log(NutsMessage.jstyle("updated {0} (old is {1})",
-                                    event.getOldValue().getId().getLongNameId(),
-                                    event.getNewValue().getId().getLongNameId()));
+                                    event.getOldValue().getId().getLongId(),
+                                    event.getNewValue().getId().getLongId()));
                 }
             }
             for (NutsInstallListener listener : u.ws.events().getInstallListeners()) {

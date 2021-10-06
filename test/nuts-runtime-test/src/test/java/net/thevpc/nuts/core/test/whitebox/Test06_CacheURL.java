@@ -32,19 +32,19 @@ public class Test06_CacheURL {
         Map<String, String> extraProperties = new HashMap<>();
         extraProperties.put("nuts.export.always-show-command", "true");
         TestUtils.setSystemProperties(extraProperties);
-        NutsSession ws = TestUtils.openNewTestWorkspace(
+        NutsSession session = TestUtils.openNewTestWorkspace(
                 "--standalone",
                 "--archetype", "minimal",
                 //            "--verbose",
                 "--skip-companions");
         final String url = "https://repo.maven.apache.org/maven2/archetype-catalog.xml";
-        InputStream j1 = CoreIOUtils.getCachedUrlWithSHA1(url, "archetype-catalog", true,ws);
+        InputStream j1 = CoreIOUtils.getCachedUrlWithSHA1(url, "archetype-catalog", true,session);
         //just to consume the stream
-        ws.io().copy().from(j1).to(new ByteArrayOutputStream()).setLogProgress(true).run();
+        session.io().copy().from(j1).to(new ByteArrayOutputStream()).setLogProgress(true).run();
         TestUtils.println(j1);
-        InputStream j2 = CoreIOUtils.getCachedUrlWithSHA1(url, "archetype-catalog", true,ws);
+        InputStream j2 = CoreIOUtils.getCachedUrlWithSHA1(url, "archetype-catalog", true,session);
         //just to consume the stream
-        ws.io().copy().from(j2).to(new ByteArrayOutputStream()).setLogProgress(true).run();
+        session.io().copy().from(j2).to(new ByteArrayOutputStream()).setLogProgress(true).run();
         TestUtils.println(j2);
     }
 
