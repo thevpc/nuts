@@ -232,7 +232,7 @@ public class InternalNutsDescriptorFilterManager extends InternalNutsTypedFilter
     public NutsDescriptorFilter byLockedIds(String... ids) {
         checkSession();
         return new NutsLockedIdExtensionFilter(getSession(),
-                Arrays.stream(ids).map(x -> ws.id().parser().setLenient(false).parse(x)).toArray(NutsId[]::new)
+                Arrays.stream(ids).map(x -> getSession().id().parser().setLenient(false).parse(x)).toArray(NutsId[]::new)
         );
     }
 

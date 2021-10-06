@@ -38,9 +38,8 @@ public class Test02_SimpleClassStream {
 
     @Test
     public void test1() throws Exception {
-        NutsWorkspace ws = TestUtils.openNewTestWorkspace( ).getWorkspace();
+        NutsSession session = TestUtils.openNewTestWorkspace( );
         Path path = Paths.get(System.getProperty("user.home")).resolve(".m2/repository/org/ow2/asm/asm-commons/7.0/asm-commons-7.0.jar");
-        NutsSession session=ws.createSession();
         if (Files.exists(path)) {
 //        parseAnyFile(Paths.get(System.getProperty("user.home")).resolve(".m2/repository"));
             parseAnyFile(path, session);

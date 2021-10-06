@@ -1,16 +1,13 @@
 package net.thevpc.nuts.runtime.standalone.bridges.maven;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 import java.util.logging.Level;
-import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 public class MvnClient {
     private final NutsLogger LOG;
     public static final String NET_VPC_APP_NUTS_MVN = "net.thevpc.nuts.toolbox:mvn";
-    private NutsWorkspace ws;
+    private NutsSession session;
     private Status status = Status.INIT;
 
     public enum Status {
@@ -20,9 +17,9 @@ public class MvnClient {
         FAIL,
     }
 
-    public MvnClient(NutsWorkspace ws) {
-        this.ws = ws;
-        LOG=NutsWorkspaceUtils.defaultSession(ws).getWorkspace().log().of(MvnClient.class);
+    public MvnClient(NutsSession session) {
+        this.session = session;
+        LOG=session.log().of(MvnClient.class);
     }
 
     public boolean get(NutsId id, String repoURL, NutsSession session) {
@@ -38,8 +35,8 @@ public class MvnClient {
                             .setSession(session.copy().setFetchStrategy(NutsFetchStrategy.ONLINE))
                             .setOptional(false)
                             .setInlineDependencies(true).setLatest(true).getResultDefinitions().required();
-                    for (NutsId nutsId : ws.search().addId(ff.getId()).setInlineDependencies(true).getResultIds()) {
-                        ws.fetch().setId(nutsId).setSession(session.copy().setFetchStrategy(NutsFetchStrategy.ONLINE))
+                    for (NutsId nutsId : this.session.search().addId(ff.getId()).setInlineDependencies(true).getResultIds()) {
+                        this.session.fetch().setId(nutsId).setSession(session.copy().setFetchStrategy(NutsFetchStrategy.ONLINE))
                                 .setOptional(false)
                                 .setDependencies(true).getResultDefinition();
                     }
@@ -65,7 +62,7 @@ public class MvnClient {
             }
         }
         try {
-            NutsExecCommand b = ws
+            NutsExecCommand b = this.session
                     .exec()
                     .setFailFast(true)
                     .addCommand(

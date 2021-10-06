@@ -136,7 +136,7 @@ public class DefaultNutsIOLockAction extends AbstractNutsIOLockAction {
             if (NutsBlankable.isBlank(face)) {
                 face = "content";
             }
-            return Paths.get(getWs().locations().setSession(getSession()).getStoreLocation((NutsId) lockedObject, NutsStoreLocation.RUN)).resolve("nuts-" + face);
+            return Paths.get(getSession().locations().setSession(getSession()).getStoreLocation((NutsId) lockedObject, NutsStoreLocation.RUN)).resolve("nuts-" + face);
         } else if (lockedObject instanceof Path) {
             return (Path) lockedObject;
         } else if (lockedObject instanceof File) {

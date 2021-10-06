@@ -11,14 +11,14 @@ import java.io.UncheckedIOException;
 public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
 
     private OutputStream out;
-    private NutsWorkspace ws;
+    private NutsSession ws;
 
-    public NutsTextNodeWriterStringer(OutputStream out, NutsWorkspace ws) {
+    public NutsTextNodeWriterStringer(OutputStream out, NutsSession ws) {
         this.out = out;
         this.ws = ws;
     }
 
-    public static String toString(NutsText n, NutsWorkspace ws) {
+    public static String toString(NutsText n, NutsSession ws) {
         if (n == null) {
             return "";
         }

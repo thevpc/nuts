@@ -60,7 +60,7 @@ public class DefaultNutsTextCode extends NutsTextSpecialBase implements NutsText
 
     @Override
     public NutsText parse(NutsSession session) {
-        NutsCodeFormat t = ((DefaultNutsTextManager) getWorkspace().text())
+        NutsCodeFormat t = ((DefaultNutsTextManager) session.text())
                 .setSession(session)
                 .resolveBlocTextFormatter(getKind());
         return t.stringToText(text, session);

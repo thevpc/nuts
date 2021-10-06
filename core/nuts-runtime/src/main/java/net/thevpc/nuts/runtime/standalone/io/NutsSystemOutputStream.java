@@ -41,7 +41,7 @@ public class NutsSystemOutputStream extends BaseTransparentFilterOutputStream im
             }
         }else*/
         {
-            NutsOsFamily os = ws.env().getOsFamily();
+            NutsOsFamily os = session.env().getOsFamily();
             if ((os == NutsOsFamily.WINDOWS && (CorePlatformUtils.IS_CYGWIN || CorePlatformUtils.IS_MINGW_XTERM))
                     || os == NutsOsFamily.LINUX || os == NutsOsFamily.UNIX || os == NutsOsFamily.MACOS) {
                 FilterOutputStream filterOutputStream = new AnsiResetOnCloseOutputStream(base);

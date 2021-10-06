@@ -40,7 +40,7 @@ public class NutsInstallStatusFilterAnd extends AbstractInstallStatusFilter{
 
     @Override
     public NutsInstallStatusFilter simplify() {
-        return CoreNutsUtils.simplifyFilterAnd(getWorkspace(),NutsInstallStatusFilter.class,this,all);
+        return CoreNutsUtils.simplifyFilterAnd(getSession(),NutsInstallStatusFilter.class,this,all);
     }
 
 

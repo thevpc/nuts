@@ -10,7 +10,7 @@ public class NutsRepositoryFilterParser extends NutsTypedFiltersParser<NutsRepos
 
     @Override
     protected NutsRepositoryFilterManager getTManager() {
-        return ws.filters().repository();
+        return getSession().filters().repository();
     }
 
     protected NutsRepositoryFilter wordToPredicate(String word){

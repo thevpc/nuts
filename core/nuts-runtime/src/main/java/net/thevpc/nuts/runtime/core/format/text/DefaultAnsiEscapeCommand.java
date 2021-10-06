@@ -135,14 +135,13 @@ public class DefaultAnsiEscapeCommand extends AnsiEscapeCommand implements AnsiS
                 return old.addCommand("\u001b[" + 1 + "K");
             }
             case NutsTerminalCommand.Ids.LATER_RESET_LINE: {
-                NutsWorkspace ws=session.getWorkspace();
-                int tputCallTimeout = ws.boot().getCustomBootOption("nuts.term.tput.call.timeout").getInt( 60);
-                Integer w = ws.boot().getCustomBootOption("nuts.term.width").getInt( null);
+                int tputCallTimeout = session.boot().getCustomBootOption("nuts.term.tput.call.timeout").getInt( 60);
+                Integer w = session.boot().getCustomBootOption("nuts.term.width").getInt( null);
                 if (w == null) {
-                    CachedValue<Integer> tput_cols = (CachedValue) ws.env().getProperty("nuts.term.tput.call.instance").getObject();
+                    CachedValue<Integer> tput_cols = (CachedValue) session.env().getProperty("nuts.term.tput.call.instance").getObject();
                     if (tput_cols == null) {
                         tput_cols = new CachedValue<>(new TputEvaluator(session), tputCallTimeout);
-                        ws.env().setProperty("nuts.term.tput.call.instance", tput_cols);
+                        session.env().setProperty("nuts.term.tput.call.instance", tput_cols);
                     }
                     if (out.baseOutput() instanceof NutsPrintStreamHelper) {
                         w=((NutsPrintStreamHelper) out.baseOutput()).out().getColumns();
@@ -197,13 +196,12 @@ public class DefaultAnsiEscapeCommand extends AnsiEscapeCommand implements AnsiS
 
         @Override
         public Integer get() {
-            NutsWorkspace ws = session.getWorkspace();
-            switch (ws.env().getOsFamily()) {
+            switch (session.env().getOsFamily()) {
                 case LINUX:
                 case UNIX:
                 case MACOS: {
                     try {
-                        String d = ws.exec()
+                        String d = session.exec()
                                 .setExecutionType(NutsExecutionType.SYSTEM)
                                 .grabOutputString()
                                 .setSession(session)

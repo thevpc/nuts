@@ -87,8 +87,8 @@ public class AutocompleteCommand extends SimpleNshBuiltin {
         }
         List<JShellAutoCompleteCandidate> aa = context.getRootContext().resolveAutoCompleteCandidates(
                 options.cmd, options.items, options.index,
-                context.getWorkspace().commandLine().create(options.items).toString(),
-                context.getExecutionContext().getGlobalContext());
+                context.getSession().commandLine().create(options.items).toString()
+        );
         Properties p = new Properties();
         for (JShellAutoCompleteCandidate autoCompleteCandidate : aa) {
             String value = autoCompleteCandidate.getValue();

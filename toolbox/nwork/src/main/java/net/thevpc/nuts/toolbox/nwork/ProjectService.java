@@ -73,7 +73,7 @@ public class ProjectService {
         if (f.isDirectory()) {
             if (new File(f, "pom.xml").isFile()) {
                 try {
-                    return appContext.getWorkspace().descriptor()
+                    return appContext.getSession().descriptor()
                             .parser()
                             .setDescriptorStyle(NutsDescriptorStyle.MAVEN)
                             .parse(new File(f, "pom.xml"));
@@ -94,7 +94,7 @@ public class ProjectService {
         if (f.isDirectory()) {
             if (new File(f, "pom.xml").isFile()) {
                 try {
-                    NutsDescriptor g = appContext.getWorkspace().descriptor()
+                    NutsDescriptor g = appContext.getSession().descriptor()
                             .parser()
                             .setDescriptorStyle(NutsDescriptorStyle.MAVEN)
                             .parse(new File(f, "pom.xml"));
@@ -148,7 +148,7 @@ public class ProjectService {
     }
 
     public File detectLocalVersionFile(String sid) {
-        NutsId id = appContext.getWorkspace().id().parser().parse(sid);
+        NutsId id = appContext.getSession().id().parser().parse(sid);
         if (config.getTechnologies().contains("maven")) {
             File f = new File(System.getProperty("user.home"), ".m2/repository/"
                     + id.getGroupId().replace('.', File.separatorChar)
@@ -175,7 +175,7 @@ public class ProjectService {
             if (f.isDirectory()) {
                 if (new File(f, "pom.xml").isFile()) {
                     try {
-                        return appContext.getWorkspace().descriptor()
+                        return appContext.getSession().descriptor()
                                 .parser()
                                 .setDescriptorStyle(NutsDescriptorStyle.MAVEN)
                                 .parse(new File(f, "pom.xml")).getId().getVersion().toString();
@@ -189,7 +189,7 @@ public class ProjectService {
     }
 
     public File detectRemoteVersionFile(String sid) {
-        NutsId id = appContext.getWorkspace().id().parser().parse(sid);
+        NutsId id = appContext.getSession().id().parser().parse(sid);
         if (config.getTechnologies().contains("maven")) {
             RepositoryAddress a = config.getAddress();
             if (a == null) {
@@ -203,9 +203,8 @@ public class ProjectService {
                 throw new NutsExecutionException(appContext.getSession(), NutsMessage.cstyle("missing repository. try 'nwork set -r vpc-public-maven' or something like that"), 2);
             }
             try {
-                NutsWorkspace ws2 = null;
                 NutsSession s = null;
-                if (a.getNutsWorkspace() != null && a.getNutsWorkspace().trim().length() > 0 && !a.getNutsWorkspace().equals(appContext.getWorkspace().locations().getWorkspaceLocation())) {
+                if (a.getNutsWorkspace() != null && a.getNutsWorkspace().trim().length() > 0 && !a.getNutsWorkspace().equals(appContext.getSession().locations().getWorkspaceLocation())) {
                     s = Nuts.openWorkspace(
                             NutsWorkspaceOptionsBuilder.of()
                                     .setOpenMode(NutsOpenMode.OPEN_OR_ERROR)
@@ -213,15 +212,13 @@ public class ProjectService {
                                     .setWorkspace(a.getNutsWorkspace())
                                     .build()
                     );
-                    ws2 = s.getWorkspace();
                     s.copyFrom(appContext.getSession());
                 } else {
-                    ws2 = appContext.getWorkspace();
                     s = appContext.getSession();
                 }
-                List<NutsDefinition> found = ws2.search()
+                List<NutsDefinition> found = s.search()
                         .addId(sid)
-                        .addRepositoryFilter(ws2.filters().repository().byName(nutsRepository))
+                        .addRepositoryFilter(s.filters().repository().byName(nutsRepository))
                         .setLatest(true).setSession(s).setContent(true).getResultDefinitions().toList();
                 if (found.size() > 0) {
                     Path p = found.get(0).getContent().getFilePath();
@@ -254,29 +251,26 @@ public class ProjectService {
                         throw new NutsExecutionException(appContext.getSession(), NutsMessage.cstyle("missing repository. try 'nwork set -r vpc-public-maven' or something like that"), 2);
                     }
                     try {
-                        NutsDescriptor g = appContext.getWorkspace().descriptor()
+                        NutsDescriptor g = appContext.getSession().descriptor()
                                 .parser()
                                 .setDescriptorStyle(NutsDescriptorStyle.MAVEN)
                                 .parse(new File(f, "pom.xml"));
-                        NutsWorkspace ws2 = null;
                         NutsSession s = null;
-                        if (a.getNutsWorkspace() != null && a.getNutsWorkspace().trim().length() > 0 && !a.getNutsWorkspace().equals(appContext.getWorkspace().locations().getWorkspaceLocation())) {
+                        if (a.getNutsWorkspace() != null && a.getNutsWorkspace().trim().length() > 0 && !a.getNutsWorkspace().equals(appContext.getSession().locations().getWorkspaceLocation())) {
                             s = Nuts.openWorkspace(
-                                    appContext.getWorkspace().config().optionsBuilder()
+                                    appContext.getSession().config().optionsBuilder()
                                             .setOpenMode(NutsOpenMode.OPEN_OR_ERROR)
                                             .setReadOnly(true)
                                             .setWorkspace(a.getNutsWorkspace())
                                             .build()
                             );
-                            ws2 = s.getWorkspace();
                             s.copyFrom(appContext.getSession());
                         } else {
-                            ws2 = appContext.getWorkspace();
                             s = appContext.getSession();
                         }
-                        List<NutsId> found = ws2.search()
+                        List<NutsId> found = s.search()
                                 .addId(g.getId().getGroupId() + ":" + g.getId().getArtifactId())
-                                .addRepositoryFilter(ws2.filters().repository().byName(nutsRepository))
+                                .addRepositoryFilter(s.filters().repository().byName(nutsRepository))
                                 .setLatest(true).setSession(s).getResultIds().toList();
                         if (found.size() > 0) {
                             return found.get(0).getVersion().toString();

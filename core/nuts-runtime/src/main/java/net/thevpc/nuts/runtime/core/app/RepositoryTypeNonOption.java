@@ -46,7 +46,7 @@ public class RepositoryTypeNonOption extends DefaultNonOption {
     public List<NutsArgumentCandidate> getCandidates(NutsCommandAutoComplete context) {
         TreeSet<String> allValid = new TreeSet<>();
         allValid.add("nuts");
-        for (NutsAddRepositoryOptions repo : context.getWorkspace().config()
+        for (NutsAddRepositoryOptions repo : context.getSession().config()
                 .setSession(context.getSession())
                 .getDefaultRepositories()) {
             if(repo.getConfig()!=null && repo.getConfig().getType()!=null) {
@@ -54,7 +54,7 @@ public class RepositoryTypeNonOption extends DefaultNonOption {
             }
         }
         List<NutsArgumentCandidate> all = new ArrayList<>();
-        NutsCommandLineManager c = context.getWorkspace().commandLine();
+        NutsCommandLineManager c = context.getSession().commandLine();
         for (String v : allValid) {
             all.add(c.createCandidate(v).build());
         }

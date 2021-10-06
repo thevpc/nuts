@@ -42,11 +42,10 @@ public class Test07_ColorfulStream {
 
     private static void writeColors(String s) {
         System.out.println(s);
-        NutsWorkspace ws = TestUtils.openNewTestWorkspace().getWorkspace();
+        NutsSession ws = TestUtils.openNewTestWorkspace();
         {
-            NutsSession session = ws.createSession();
-            NutsText node = new DefaultNutsTextNodeParser(session).parse(new StringReader(s));
-            NutsTextNodeWriter w = new NutsTextNodeWriterRenderer(ws.io().stdout(), AnsiUnixTermPrintRenderer.ANSI_RENDERER, session)
+            NutsText node = new DefaultNutsTextNodeParser(ws).parse(new StringReader(s));
+            NutsTextNodeWriter w = new NutsTextNodeWriterRenderer(ws.io().stdout(), AnsiUnixTermPrintRenderer.ANSI_RENDERER, ws)
                     .setWriteConfiguration(new NutsTextWriteConfiguration().setTitleNumberEnabled(true));
             w.writeNode(node);
         }

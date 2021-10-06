@@ -81,7 +81,7 @@ public class NutsRepositoryMirroringHelper {
                             .getResult();
                     if (c != null) {
                         if (localPath != null) {
-                            getWorkspace().io().copy().setSession(session)
+                            session.io().copy()
                                     .from(c.getFilePath()).to(localPath).setSafe(true).run();
                         } else {
                             return c;
@@ -126,7 +126,7 @@ public class NutsRepositoryMirroringHelper {
 //                    } else {
 //                        goodFile = versionFolder.resolve(NutsUtilStrings.trim(a)).resolve(idFilename);
 //                    }
-                    getWorkspace().descriptor().setSession(session).formatter(nutsDescriptor).print(goodFile);
+                    session.descriptor().setSession(session).formatter(nutsDescriptor).print(goodFile);
                     return nutsDescriptor;
                 }
             }
@@ -196,7 +196,7 @@ public class NutsRepositoryMirroringHelper {
             repo = this.repo.config().setSession(session.copy().setTransitive(false)).getMirror(repository);
         }
         if (repo != null) {
-            NutsId effId = getWorkspace().config().createContentFaceId(id.builder().setProperties("").build(), desc)
+            NutsId effId = session.config().createContentFaceId(id.builder().setProperties("").build(), desc)
 //                    .setAlternative(NutsUtilStrings.trim(desc.getAlternative()))
                     ;
             NutsDeployRepositoryCommand dep = repoSPI.deploy()
@@ -231,7 +231,7 @@ public class NutsRepositoryMirroringHelper {
                         NutsWorkspaceExt dws = NutsWorkspaceExt.of(getWorkspace());
                         NutsId id2 = dws.resolveEffectiveId(nutsDescriptor, session).builder().setFaceDescriptor().build();
                         Path localNutFile = cache.getLongIdLocalFile(id2, session);
-                        getWorkspace().descriptor().formatter(nutsDescriptor).print(localNutFile);
+                        session.descriptor().formatter(nutsDescriptor).print(localNutFile);
                         if (bestId == null || id2.getVersion().compareTo(bestId.getVersion()) > 0) {
                             bestId = id2;
                         }

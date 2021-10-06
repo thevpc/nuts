@@ -51,7 +51,7 @@ public class PermissionNonOption extends DefaultNonOption {
     @Override
     public List<NutsArgumentCandidate> getCandidates(NutsCommandAutoComplete context) {
         List<NutsArgumentCandidate> all = new ArrayList<>();
-        NutsCommandLineManager c= context.getWorkspace().commandLine();
+        NutsCommandLineManager c= context.getSession().commandLine();
         for (String r : NutsConstants.Permissions.ALL) {
             all.add(c.createCandidate(r).build());
         }
@@ -60,7 +60,7 @@ public class PermissionNonOption extends DefaultNonOption {
         NutsUser info = repository != null ? repository.security()
                 .setSession(context.getSession())
                 .getEffectiveUser(user) : 
-                context.getWorkspace().security().setSession(context.getSession()).findUser(user);
+                context.getSession().security().setSession(context.getSession()).findUser(user);
         Set<String> rights = new HashSet<>(info == null ? Collections.emptyList() : Arrays.asList(info.getPermissions()));
         while (i.hasNext()) {
             NutsArgumentCandidate right = i.next();

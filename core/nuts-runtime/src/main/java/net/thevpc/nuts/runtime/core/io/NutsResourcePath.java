@@ -80,7 +80,7 @@ public class NutsResourcePath implements NutsPathSPI {
             urlPathLookedUp = true;
             try {
                 String loc = location;
-                ClassLoader resultClassLoader = getSession().getWorkspace().search().addIds(
+                ClassLoader resultClassLoader = getSession().search().addIds(
                                 this.ids.toArray(new NutsId[0])
                         ).setLatest(true).setContent(true).setDependencies(true)
                         .setDependencyFilter(

@@ -1,23 +1,20 @@
 package net.thevpc.nuts.ext.term;
 
-import net.thevpc.nuts.NutsArgumentCandidate;
-import net.thevpc.nuts.NutsCommandLine;
-import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.*;
 import org.jline.reader.Candidate;
 import org.jline.reader.Completer;
 import org.jline.reader.LineReader;
 import org.jline.reader.ParsedLine;
 
 import java.util.List;
-import net.thevpc.nuts.NutsCommandAutoCompleteResolver;
 
 class NutsJLineCompleter implements Completer {
 
-    private final NutsWorkspace workspace;
+    private final NutsSession session;
     private final NutsJLineTerminal nutsJLineTerminal;
 
-    public NutsJLineCompleter(NutsWorkspace workspace, NutsJLineTerminal nutsJLineTerminal) {
-        this.workspace = workspace;
+    public NutsJLineCompleter(NutsSession session, NutsJLineTerminal nutsJLineTerminal) {
+        this.session = session;
         this.nutsJLineTerminal = nutsJLineTerminal;
     }
 
@@ -26,11 +23,11 @@ class NutsJLineCompleter implements Completer {
         NutsCommandAutoCompleteResolver autoCompleteResolver = nutsJLineTerminal.getAutoCompleteResolver();
         if (autoCompleteResolver != null) {
 
-            NutsCommandLine commandline = workspace.commandLine().create(line.words());
+            NutsCommandLine commandline = session.commandLine().create(line.words());
             if (line.words().size() > 0) {
                 commandline.setCommandName(line.words().get(0));
             }
-            List<NutsArgumentCandidate> nutsArgumentCandidates = autoCompleteResolver.resolveCandidates(commandline, line.wordIndex(), workspace.createSession());
+            List<NutsArgumentCandidate> nutsArgumentCandidates = autoCompleteResolver.resolveCandidates(commandline, line.wordIndex(), session);
             if (nutsArgumentCandidates != null) {
                 for (NutsArgumentCandidate cmdCandidate : nutsArgumentCandidates) {
                     if (cmdCandidate != null) {

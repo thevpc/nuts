@@ -66,7 +66,7 @@ public class HelpCommand extends AbstractNshBuiltin {
                 context.configureLast(commandLine);
             }
         }
-        final NutsTextManager text = context.getWorkspace().text();
+        final NutsTextManager text = context.getSession().text();
         Function<String, String> ss = code ? new Function<String, String>() {
             @Override
             public String apply(String t) {
@@ -80,7 +80,7 @@ public class HelpCommand extends AbstractNshBuiltin {
                 );
                 String helpText = (n==null?"no help found":n.toString());
                 context.out().println(ss.apply(helpText));
-                context.out().println(context.getWorkspace().text().ofStyled("AVAILABLE COMMANDS ARE:", NutsTextStyle.primary1()));
+                context.out().println(context.getSession().text().ofStyled("AVAILABLE COMMANDS ARE:", NutsTextStyle.primary1()));
                 JShellBuiltin[] commands = context.getGlobalContext().builtins().getAll();
                 Arrays.sort(commands, new Comparator<JShellBuiltin>() {
                     @Override

@@ -188,8 +188,8 @@ public class NutsHttpServletFacade {
             boolean transitive = parameters.containsKey("transitive");
             List<NutsId> fetch = null;
             try {
-                NutsWorkspace ws = context.getWorkspace();
-                fetch = ws.search().setSession(
+                NutsSession session = context.getSession();
+                fetch = session.search().setSession(
                         context.getSession().copy().setTransitive(transitive)
                 )
                         .addId(id).getResultIds().toList();

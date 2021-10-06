@@ -100,8 +100,7 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
     public String buildString() {
         try {
             //Path script = getScriptFile(name);
-            final NutsWorkspace ws = getSession().getWorkspace();
-            NutsDefinition anyIdDef = ws.search().addId(getAnyId()).setLatest(true).getResultDefinitions().singleton();
+            NutsDefinition anyIdDef = getSession().search().addId(getAnyId()).setLatest(true).getResultDefinitions().singleton();
             NutsId anyId = anyIdDef.getId();
             StringWriter bos = new StringWriter();
             try (BufferedWriter w = new BufferedWriter(bos)) {
@@ -123,7 +122,7 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
 //                                        }
 //                                        appId=getSession().getWorkspace().getRuntimeId();
 //                                        return appId.getLongName();
-                                        return ws.getRuntimeId().getLongName();
+                                        return getSession().getWorkspace().getRuntimeId().getLongName();
                                     }
                                     case "SCRIPT_NUTS":
                                         return sndi.getNutsStart(options).path().toString();
@@ -146,29 +145,29 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
                                     case "NUTS_API_ID":
                                         return options.resolveNutsApiId().toString();
                                     case "NUTS_VERSION":
-                                        return ws.getApiVersion().toString();
+                                        return getSession().getWorkspace().getApiVersion().toString();
                                     case "NUTS_WORKSPACE":
-                                        return ws.locations().getWorkspaceLocation();
+                                        return getSession().locations().getWorkspaceLocation();
                                     case "NUTS_WORKSPACE_APPS":
-                                        return ws.locations().getStoreLocation(NutsStoreLocation.APPS);
+                                        return getSession().locations().getStoreLocation(NutsStoreLocation.APPS);
                                     case "NUTS_WORKSPACE_CONFIG":
-                                        return ws.locations().getStoreLocation(NutsStoreLocation.CONFIG);
+                                        return getSession().locations().getStoreLocation(NutsStoreLocation.CONFIG);
                                     case "NUTS_WORKSPACE_CACHE":
-                                        return ws.locations().getStoreLocation(NutsStoreLocation.CACHE);
+                                        return getSession().locations().getStoreLocation(NutsStoreLocation.CACHE);
                                     case "NUTS_WORKSPACE_LIB":
-                                        return ws.locations().getStoreLocation(NutsStoreLocation.LIB);
+                                        return getSession().locations().getStoreLocation(NutsStoreLocation.LIB);
                                     case "NUTS_WORKSPACE_LOG":
-                                        return ws.locations().getStoreLocation(NutsStoreLocation.LOG);
+                                        return getSession().locations().getStoreLocation(NutsStoreLocation.LOG);
                                     case "NUTS_WORKSPACE_RUN":
-                                        return ws.locations().getStoreLocation(NutsStoreLocation.RUN);
+                                        return getSession().locations().getStoreLocation(NutsStoreLocation.RUN);
                                     case "NUTS_WORKSPACE_TEMP":
-                                        return ws.locations().getStoreLocation(NutsStoreLocation.TEMP);
+                                        return getSession().locations().getStoreLocation(NutsStoreLocation.TEMP);
                                     case "NUTS_WORKSPACE_VAR":
-                                        return ws.locations().getStoreLocation(NutsStoreLocation.VAR);
+                                        return getSession().locations().getStoreLocation(NutsStoreLocation.VAR);
                                     case "NUTS_JAR_EXPR": {
                                         String NUTS_JAR_PATH = options.resolveNutsApiJarPath().toString();
-                                        if (NUTS_JAR_PATH.startsWith(ws.locations().getStoreLocation(NutsStoreLocation.LIB))) {
-                                            String pp = NUTS_JAR_PATH.substring(ws.locations().getStoreLocation(NutsStoreLocation.LIB).length());
+                                        if (NUTS_JAR_PATH.startsWith(getSession().locations().getStoreLocation(NutsStoreLocation.LIB))) {
+                                            String pp = NUTS_JAR_PATH.substring(getSession().locations().getStoreLocation(NutsStoreLocation.LIB).length());
                                             return sndi.varRef("NUTS_WORKSPACE_LIB") + pp;
                                         } else {
                                             return NUTS_JAR_PATH;
@@ -177,7 +176,7 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
                                     case "NUTS_WORKSPACE_BINDIR_EXPR": {
                                         //="${NUTS_WORKSPACE_APPS}/id/net/thevpc/nuts/nuts/0.8.2/bin"
                                         return sndi.varRef("NUTS_WORKSPACE_APPS") + options.resolveBinFolder().toString().substring(
-                                                ws.locations().getStoreLocation(NutsStoreLocation.APPS).length()
+                                                getSession().locations().getStoreLocation(NutsStoreLocation.APPS).length()
                                         );
                                     }
                                     default: {

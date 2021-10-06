@@ -9,13 +9,13 @@ import java.nio.file.Paths;
 import java.util.List;
 
 public class NutsVersionCompat502 extends AbstractNutsVersionCompat {
-    public NutsVersionCompat502(NutsWorkspace ws,String apiVersion) {
+    public NutsVersionCompat502(NutsSession ws,String apiVersion) {
         super(ws,apiVersion, 502);
     }
 
     @Override
     public NutsWorkspaceConfigBoot parseConfig(byte[] bytes, NutsSession session) {
-        return parseConfig502(bytes).toWorkspaceConfig();
+        return parseConfig502(bytes, session).toWorkspaceConfig();
     }
 
     @Override
@@ -23,8 +23,8 @@ public class NutsVersionCompat502 extends AbstractNutsVersionCompat {
         NutsWorkspaceConfigApi cc = new NutsWorkspaceConfigApi();
         cc.setApiVersion(getApiVersion());
         NutsWorkspaceConfigBoot502 c = parseConfig502(CompatUtils.readAllBytes(
-                Paths.get(getWorkspace().locations().getWorkspaceLocation())
-                .resolve(NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME)));
+                Paths.get(session.locations().getWorkspaceLocation())
+                .resolve(NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME)), session);
         if (c != null) {
             cc.setApiVersion(c.getBootApiVersion());
             cc.setRuntimeId(c.getBootRuntime());
@@ -39,8 +39,8 @@ public class NutsVersionCompat502 extends AbstractNutsVersionCompat {
         NutsWorkspaceConfigRuntime cc = new NutsWorkspaceConfigRuntime();
 //        cc.setApiVersion(getApiVersion());
         NutsWorkspaceConfigBoot502 c = parseConfig502(CompatUtils.readAllBytes(
-                Paths.get(getWorkspace().locations().getWorkspaceLocation())
-                        .resolve(NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME)));
+                Paths.get(session.locations().getWorkspaceLocation())
+                        .resolve(NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME)), session);
         if (c != null) {
             cc.setDependencies(c.getBootRuntimeDependencies());
             cc.setId(c.getBootRuntime());
@@ -52,8 +52,8 @@ public class NutsVersionCompat502 extends AbstractNutsVersionCompat {
     public NutsWorkspaceConfigSecurity parseSecurityConfig(NutsSession session) {
         NutsWorkspaceConfigSecurity cc = new NutsWorkspaceConfigSecurity();
         NutsWorkspaceConfigBoot502 c = parseConfig502(CompatUtils.readAllBytes(
-                Paths.get(getWorkspace().locations().getWorkspaceLocation())
-                        .resolve(NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME)));
+                Paths.get(session.locations().getWorkspaceLocation())
+                        .resolve(NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME)), session);
         if (c != null) {
 //            cc.setConfigVersion(???);
             cc.setSecure(c.isSecure());
@@ -68,8 +68,8 @@ public class NutsVersionCompat502 extends AbstractNutsVersionCompat {
     public NutsWorkspaceConfigMain parseMainConfig(NutsSession session) {
         NutsWorkspaceConfigMain cc = new NutsWorkspaceConfigMain();
         NutsWorkspaceConfigBoot502 c = parseConfig502(CompatUtils.readAllBytes(
-                Paths.get(getWorkspace().locations().getWorkspaceLocation())
-                        .resolve(NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME)));
+                Paths.get(session.locations().getWorkspaceLocation())
+                        .resolve(NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME)), session);
         if (c != null) {
             c.setRepositories(CompatUtils.copyNutsRepositoryRefList(c.getRepositories()));
             c.setCommandFactories(CompatUtils.copyNutsCommandAliasFactoryConfigList(c.getCommandFactories()));
@@ -80,8 +80,8 @@ public class NutsVersionCompat502 extends AbstractNutsVersionCompat {
         return cc;
     }
 
-    private NutsWorkspaceConfigBoot502 parseConfig502(byte[] bytes) {
-        return getWorkspace().elem().setContentType(NutsContentType.JSON).parse(bytes, NutsWorkspaceConfigBoot502.class);
+    private NutsWorkspaceConfigBoot502 parseConfig502(byte[] bytes, NutsSession session) {
+        return session.elem().setContentType(NutsContentType.JSON).parse(bytes, NutsWorkspaceConfigBoot502.class);
     }
 
 

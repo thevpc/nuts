@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.common.ObservableMap;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,17 +36,17 @@ public class DefaultNutsWorkspaceEventModel {
 
     
     public void addUserPropertyListener(NutsMapListener<String, Object> listener) {
-        ((ObservableMap<String, Object>)ws.env().getProperties()).addListener(listener);
+        ((ObservableMap<String, Object>) NutsWorkspaceUtils.defaultSession(ws).env().getProperties()).addListener(listener);
     }
 
     
     public void removeUserPropertyListener(NutsMapListener<String, Object> listener) {
-        ((ObservableMap<String, Object>)ws.env().getProperties()).removeListener(listener);
+        ((ObservableMap<String, Object>)NutsWorkspaceUtils.defaultSession(ws).env().getProperties()).removeListener(listener);
     }
 
     
     public NutsMapListener<String, Object>[] getUserPropertyListeners() {
-        return ((ObservableMap<String, Object>)ws.env().getProperties()).getListeners();
+        return ((ObservableMap<String, Object>)NutsWorkspaceUtils.defaultSession(ws).env().getProperties()).getListeners();
     }
 
     

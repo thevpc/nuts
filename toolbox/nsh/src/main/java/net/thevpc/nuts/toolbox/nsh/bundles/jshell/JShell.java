@@ -58,8 +58,7 @@ public class JShell {
     private static final Logger LOG = Logger.getLogger(JShell.class.getName());
     public boolean fallBackToMain = false;
     public Object shellInterpreter = null;
-    protected JShellFileContext rootContext;
-    //        String forCommand = null;
+    protected JShellContext rootContext;
     long boot_startMillis;
     private String version = "1.0.0";
     private JShellOptions options;
@@ -105,14 +104,12 @@ public class JShell {
         if (this.appId == null) {
             throw new IllegalArgumentException("unable to resolve application id");
         }
-        JShellContext _nrootContext = getRootNutsShellContext();
-        JShellFileContext _rootContext = getRootContext();
-        NutsWorkspace ws = this.getWorkspace();
+        JShellContext _rootContext = getRootContext();
+        NutsSession ws = this.getSession();
         JShellHistory hist = getHistory();
 
-        this.appContext.getSession().env().setProperty(JShellFileContext.class.getName(), _rootContext
-        );
-        _nrootContext.setSession(appContext.getSession());
+        this.appContext.getSession().env().setProperty(JShellContext.class.getName(), _rootContext);
+        _rootContext.setSession(appContext.getSession());
         //add default commands
         List<NshBuiltin> allCommand = new ArrayList<>();
         NutsSupportLevelContext<JShell> constraints = new NutsDefaultSupportLevelContext<>(appContext.getSession(), this);
@@ -278,57 +275,51 @@ public class JShell {
     //    protected JShellContext createRootContext() {
 //        return new DefaultJShellContext(this);
 //    }
-    protected JShellContext createRootContext() {
-        return createContext(null, null, null, null);
+    protected JShellContext createRootContext(String serviceName, String[] args) {
+        return createContext(null, null, null, null,serviceName, args);
     }
 
-    public JShellFileContext createFileContext(JShellContext rootContext, String serviceName, String[] args) {
-        return new DefaultJShellFileContext(
+    public JShellContext createFileContext(JShellContext rootContext, String serviceName, String[] args) {
+        return createNewContext(
                 rootContext,
                 serviceName, args
         );
     }
 
-    public JShellFileContext createSourceFileContext(JShellFileContext parentContext, String serviceName, String[] args) {
+    public JShellContext createSourceFileContext(JShellContext parentContext, String serviceName, String[] args) {
         return createFileContext(
-                parentContext.getShellContext(),
+                parentContext,
                 serviceName, args
         );
     }
 
-    public JShellFileContext createNewContext(JShellFileContext parentContext, String serviceName, String[] args) {
-        return createFileContext(
-                createContext(parentContext.getShellContext()),
-                serviceName, args
-        );
+    public JShellContext createNewContext(JShellContext parentContext, String serviceName, String[] args) {
+        return createContext(parentContext,serviceName, args);
     }
 
-    public JShellFileContext createNewContext(JShellFileContext parentContext) {
-        return createFileContext(
-                createContext(parentContext.getShellContext()),
-                parentContext.getServiceName(), parentContext.getArgsArray()
-        );
+    public JShellContext createNewContext(JShellContext parentContext) {
+        return createContext(parentContext,parentContext.getServiceName(), parentContext.getArgsArray());
     }
 
     //    public JShellContext createContext(JShellContext parentContext) {
 //        return new DefaultJShellContext(parentContext);
 //    }
-    public JShellContext createContext(JShellContext ctx) {
-        return createContext((JShellContext) ctx, null, null, null);
+    public JShellContext createContext(JShellContext ctx, String serviceName, String[] args) {
+        return createContext((JShellContext) ctx, null, null, null,serviceName,args);
     }
 
     public JShellCommandNode createCommandNode(String[] args) {
         return JShellParser.createCommandNode(args);
     }
 
-    public JShellFileContext getRootContext() {
+    public JShellContext getRootContext() {
         if (rootContext == null) {
-            rootContext = createFileContext(createRootContext(), options.getServiceName(), options.getCommandArgs().toArray(new String[0]));
+            rootContext = createRootContext(options.getServiceName(), options.getCommandArgs().toArray(new String[0]));
         }
         return rootContext;
     }
 
-    public void executeLine(String line, boolean storeResult, JShellFileContext context) {
+    public void executeLine(String line, boolean storeResult, JShellContext context) {
         if (context == null) {
             context = getRootContext();
         }
@@ -367,12 +358,12 @@ public class JShell {
         }
     }
 
-    public int onResult(int r, JShellFileContext context) {
+    public int onResult(int r, JShellContext context) {
         context.setLastResult(new JShellResult(r, null, null));
         return r;
     }
 
-    public int onResult(Throwable th, JShellFileContext context) {
+    public int onResult(Throwable th, JShellContext context) {
         if (th == null) {
             context.setLastResult(new JShellResult(0, null, null));
             return 0;
@@ -407,7 +398,7 @@ public class JShell {
         return errorCode;
     }
 
-    public int onResult(int errorCode, Throwable th, JShellFileContext context) {
+    public int onResult(int errorCode, Throwable th, JShellContext context) {
         if (errorCode != 0) {
             if (th == null) {
                 th = new RuntimeException("error occurred. Error Code #" + errorCode);
@@ -423,7 +414,7 @@ public class JShell {
         return errorCode;
     }
 
-    public int executeCommand(String[] command, JShellFileContext context) {
+    public int executeCommand(String[] command, JShellContext context) {
         context.setServiceName(command[0]);
         context.setArgs(Arrays.copyOfRange(command, 1, command.length));
         return context.getShell().evalNode(createCommandNode(command), context);
@@ -447,7 +438,7 @@ public class JShell {
 
     public int executePreparedCommand(String[] command,
                                       boolean considerAliases, boolean considerBuiltins, boolean considerExternal,
-                                      JShellFileContext context
+                                      JShellContext context
     ) {
         context.getShell().traceExecution(() -> String.join(" ", command), context);
         String cmdToken = command[0];
@@ -574,7 +565,7 @@ public class JShell {
         }
     }
 
-    protected String readInteractiveLine(JShellFileContext context) {
+    protected String readInteractiveLine(JShellContext context) {
         NutsSessionTerminal terminal = null;
         terminal = getRootNutsShellContext().getSession().getTerminal();
         return terminal.readLine(getPromptString(context));
@@ -588,16 +579,16 @@ public class JShell {
                 .append(" (c) thevpc 2020"));
     }
 
-    protected void executeHelp(JShellFileContext context) {
+    protected void executeHelp(JShellContext context) {
         context.out().println("Syntax : shell [<FILE>]\n");
         context.out().println("    <FILE> : if present content will be processed as input\n");
     }
 
-    protected void executeVersion(JShellFileContext context) {
+    protected void executeVersion(JShellContext context) {
         context.out().printf("v%s\n", APP_VERSION);
     }
 
-    protected void executeInteractive(JShellFileContext context) {
+    protected void executeInteractive(JShellContext context) {
         appContext.getSession().term().enableRichTerm();
         appContext.getSession().term().getSystemTerminal()
                 .setCommandAutoCompleteResolver(new NshAutoCompleter())
@@ -695,7 +686,7 @@ public class JShell {
 //        throw quitExcepion;
     }
 
-    public int executeFile(JShellFileContext context, boolean ignoreIfNotFound) {
+    public int executeFile(JShellContext context, boolean ignoreIfNotFound) {
         String file = context.getServiceName();
         if (file != null) {
             file = ShellUtils.getAbsolutePath(new File(context.getCwd()), file);
@@ -715,7 +706,7 @@ public class JShell {
                 if (ii == null) {
                     return 0;
                 }
-                JShellFileContext c = context.setRoot(ii);//.setParent(null);
+                JShellContext c = context.setRootNode(ii);//.setParent(null);
                 return context.getShell().evalNode(ii, c);
             } catch (IOException ex) {
                 throw new JShellException(1, ex);
@@ -731,7 +722,7 @@ public class JShell {
         }
     }
 
-    public int executeString(String text, JShellFileContext context) {
+    public int executeString(String text, JShellContext context) {
         if (context == null) {
             context = getRootContext();
         }
@@ -743,14 +734,14 @@ public class JShell {
             if (ii == null) {
                 return 0;
             }
-            JShellFileContext c = context.setRoot(ii);//.setParent(null);
+            JShellContext c = context.setRootNode(ii);//.setParent(null);
             return evalNode(ii, c);
         } catch (IOException ex) {
             throw new JShellException(1, ex);
         }
     }
 
-    public int evalNode(JShellCommandNode node, JShellFileContext context) {
+    public int evalNode(JShellCommandNode node, JShellContext context) {
         try {
             int r = node.eval(context);
             onResult(r, context);
@@ -777,7 +768,7 @@ public class JShell {
         }
     }
 
-    public int safeEval(JShellCommandNode n, JShellFileContext context) {
+    public int safeEval(JShellCommandNode n, JShellContext context) {
         boolean success = false;
         try {
             n.eval(context);
@@ -794,8 +785,8 @@ public class JShell {
     //    public String getPromptString() {
 //        return getPromptString(getRootContext());
 //    }
-    protected String getPromptString(JShellFileContext context) {
-        NutsWorkspace ws = getWorkspace();
+    protected String getPromptString(JShellContext context) {
+        NutsSession ws = getSession();
 //        String wss = ws == null ? "" : new File(getRootContext().getAbsolutePath(ws.config().getWorkspaceLocation().toString())).getName();
         String login = null;
         if (ws != null) {
@@ -809,7 +800,7 @@ public class JShell {
         return prompt;
     }
 
-    protected String getPromptString0(JShellFileContext context) {
+    protected String getPromptString0(JShellContext context) {
 
         String promptValue = context.vars().getAll().getProperty("PS1");
         if (promptValue == null) {
@@ -975,7 +966,7 @@ public class JShell {
 //        return found.toArray(new String[found.size()]);
 //    }
 
-    public void prepareContext(JShellFileContext context) {
+    public void prepareContext(JShellContext context) {
 //        try {
 //            cwd = new File(".").getCanonicalPath();
 //        } catch (IOException ex) {
@@ -991,7 +982,7 @@ public class JShell {
         setUndefinedStartupEnv("IFS", " \t\n", context);
     }
 
-    private void setUndefinedStartupEnv(String name, String defaultValue, JShellFileContext context) {
+    private void setUndefinedStartupEnv(String name, String defaultValue, JShellContext context) {
         if (context.vars().get(name) == null) {
             context.vars().set(name, defaultValue);
         }
@@ -1095,7 +1086,7 @@ public class JShell {
         return sb.toString();
     }
 
-    public void traceExecution(Supplier<String> msg, JShellFileContext context) {
+    public void traceExecution(Supplier<String> msg, JShellContext context) {
         if (getOptions().isXtrace()) {
             String txt = msg.get();
             context.err().println("+ " + txt);
@@ -1135,7 +1126,7 @@ public class JShell {
         StringBuilder err = new StringBuilder();
         ByteArrayPrintStream oout = new ByteArrayPrintStream();
         ByteArrayPrintStream oerr = new ByteArrayPrintStream();
-        JShellFileContext newContext = createNewContext(getRootContext(), command[0], Arrays.copyOfRange(command, 1, command.length));
+        JShellContext newContext = createNewContext(getRootContext(), command[0], Arrays.copyOfRange(command, 1, command.length));
         newContext.setIn(new ByteArrayInputStream(in == null ? new byte[0] : in.toString().getBytes()));
         newContext.setOut(oout);
         newContext.setErr(oerr);
@@ -1146,13 +1137,11 @@ public class JShell {
     }
 
     public JShellContext getRootNutsShellContext() {
-        return (JShellContext) getRootContext().getShellContext();
+        return getRootContext();
     }
 
     public JShellContext getNutsShellContext() {
-        JShellFileContext f = (JShellFileContext) getWorkspace().env().getProperty(JShellFileContext.class.getName()).getObject();
-        return (JShellContext) f.getShellContext();
-
+        return  (JShellContext) appContext.getSession().env().getProperty(JShellContext.class.getName()).getObject();
     }
 
     public NutsSession getSession() {
@@ -1171,69 +1160,8 @@ public class JShell {
         getRootNutsShellContext().setWorkspace(workspace);
     }
 
-    public JShellContext createContext(JShellContext ctx, JShellNode root, JShellNode parent, JShellVariables env) {
-        return new DefaultJShellContext(this, root, parent, ctx, appContext.getSession().getWorkspace(), appContext.getSession(), env);
-    }
-
-    public static class MemResult {
-        private String out;
-        private String err;
-        private int exitCode;
-
-        public MemResult(String out, String err, int exitCode) {
-            this.out = out;
-            this.err = err;
-            this.exitCode = exitCode;
-        }
-
-        public String out() {
-            return out;
-        }
-
-        public String err() {
-            return err;
-        }
-
-        public int exitCode() {
-            return exitCode;
-        }
-    }
-
-    private static class NshAutoCompleter implements NutsCommandAutoCompleteResolver {
-
-        @Override
-        public List<NutsArgumentCandidate> resolveCandidates(NutsCommandLine commandline, int wordIndex, NutsSession session) {
-            NutsWorkspace workspace = session.getWorkspace();
-            List<NutsArgumentCandidate> candidates = new ArrayList<>();
-            JShellFileContext fileContext = (JShellFileContext) workspace.env().getProperty(JShellFileContext.class.getName()).getObject();
-            JShellContext nutsConsoleContext = (JShellContext) fileContext.getShellContext();
-
-            if (wordIndex == 0) {
-                for (JShellBuiltin command : nutsConsoleContext.builtins().getAll()) {
-                    candidates.add(workspace.commandLine().createCandidate(command.getName()).build());
-                }
-            } else {
-                List<String> autoCompleteWords = new ArrayList<>(Arrays.asList(commandline.toStringArray()));
-                int x = commandline.getCommandName().length();
-
-                List<JShellAutoCompleteCandidate> autoCompleteCandidates
-                        = nutsConsoleContext.resolveAutoCompleteCandidates(commandline.getCommandName(), autoCompleteWords, wordIndex, commandline.toString(), fileContext);
-                for (Object cmdCandidate0 : autoCompleteCandidates) {
-                    JShellAutoCompleteCandidate cmdCandidate = (JShellAutoCompleteCandidate) cmdCandidate0;
-                    if (cmdCandidate != null) {
-                        String value = cmdCandidate.getValue();
-                        if (!NutsBlankable.isBlank(value)) {
-                            String display = cmdCandidate.getDisplay();
-                            if (NutsBlankable.isBlank(display)) {
-                                display = value;
-                            }
-                            candidates.add(workspace.commandLine().createCandidate(value).setDisplay(display).build());
-                        }
-                    }
-                }
-            }
-            return candidates;
-        }
+    public JShellContext createContext(JShellContext ctx, JShellNode root, JShellNode parent, JShellVariables env,String serviceName, String[] args) {
+        return new DefaultJShellContext(this, root, parent, ctx, appContext.getSession().getWorkspace(), appContext.getSession(), env,serviceName, args);
     }
 
 }

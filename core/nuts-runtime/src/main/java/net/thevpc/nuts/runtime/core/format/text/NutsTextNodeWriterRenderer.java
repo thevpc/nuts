@@ -40,7 +40,7 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
         }
     };
     private NutsSession session;
-    private NutsWorkspace ws;
+//    private NutsWorkspace ws;
 
     public NutsTextNodeWriterRenderer(NutsPrintStream rawOutput, FormattedPrintStreamRenderer renderer, NutsSession session) {
         this(new NutsPrintStreamHelper(rawOutput), renderer, session);
@@ -54,7 +54,6 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
         this.renderer = renderer == null ? AnsiUnixTermPrintRenderer.ANSI_RENDERER : renderer;
         this.rawOutput = rawOutput;
         this.session = session;
-        this.ws = session.getWorkspace();
     }
 
     @Override
@@ -110,25 +109,25 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
             case STYLED: {
                 DefaultNutsTextStyled s = (DefaultNutsTextStyled) node;
                 NutsTextStyles styles = s.getStyles();
-                NutsTextStyles format = ws.text().getTheme().toBasicStyles(styles, session);
+                NutsTextStyles format = session.text().getTheme().toBasicStyles(styles, session);
                 AnsiEscapeCommand[] s2 = _appendFormats(formats, format);
                 writeNode(s2, s.getChild(), ctx);
                 break;
             }
             case TITLE: {
                 DefaultNutsTextTitle s = (DefaultNutsTextTitle) node;
-                DefaultNutsTextManager factory0 = (DefaultNutsTextManager) ws.text();
-                AnsiEscapeCommand[] s2 = _appendFormats(formats, ws.text().getTheme().toBasicStyles(NutsTextStyles.of(NutsTextStyle.title(s.getLevel())), session
+                DefaultNutsTextManager factory0 = (DefaultNutsTextManager) session.text();
+                AnsiEscapeCommand[] s2 = _appendFormats(formats, session.text().getTheme().toBasicStyles(NutsTextStyles.of(NutsTextStyle.title(s.getLevel())), session
                 ));
                 if (ctx.isTitleNumberEnabled()) {
                     NutsTextNumbering seq = ctx.getTitleNumberSequence();
                     if (seq == null) {
-                        seq = ws.text().ofNumbering();
+                        seq = session.text().ofNumbering();
                         ctx.setTitleNumberSequence(seq);
                     }
                     NutsTextNumbering a = seq.newLevel(s.getLevel());
                     NutsText sWithTitle = factory0.ofList(
-                            ws.text().ofPlain(a.toString() + " "),
+                            session.text().ofPlain(a.toString() + " "),
                             s.getChild()
                     );
                     writeNode(s2, sWithTitle, ctx);
@@ -144,7 +143,7 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
             }
             case COMMAND: {
                 DefaultNutsTextCommand s = (DefaultNutsTextCommand) node;
-                AnsiEscapeCommand yy = DefaultNutsTextCommand.parseAnsiEscapeCommand(s.getCommand(), ws);
+                AnsiEscapeCommand yy = DefaultNutsTextCommand.parseAnsiEscapeCommand(s.getCommand(), session);
                 AnsiEscapeCommand[] s2 = _appendFormats(formats, yy);
                 writeRaw(AnsiEscapeCommands.list(s2), "", ctx.isFiltered());
                 break;
@@ -155,7 +154,7 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
             }
             case LINK: {
                 //ignore!!
-                DefaultNutsTextManager factory0 = (DefaultNutsTextManager) ws.text();
+                DefaultNutsTextManager factory0 = (DefaultNutsTextManager) session.text();
                 writeNode(
                         formats,
                         factory0.createStyled(((NutsTextLink) node).getChild(),

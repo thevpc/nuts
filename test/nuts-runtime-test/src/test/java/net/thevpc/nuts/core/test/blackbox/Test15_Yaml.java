@@ -53,9 +53,8 @@ public class Test15_Yaml {
 
     @Test
     public void test1() throws Exception {
-        NutsWorkspace ws = TestUtils.openNewTestWorkspace("-byZSKk").getWorkspace();
+        NutsSession ws = TestUtils.openNewTestWorkspace("-byZSKk");
         String path = "net/thevpc/nuts/core/test/blackbox/yaml1.yml";
-        ws = ws.createSession().getWorkspace();
         NutsElement e = ws.elem().setContentType(NutsContentType.YAML)
                 .parse(getClass().getClassLoader().getResource(path), NutsElement.class);
         ws.elem().setContentType(NutsContentType.JSON).setValue(e)

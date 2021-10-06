@@ -40,7 +40,7 @@ public class DefaultNutsIOModel {
 
     public DefaultNutsIOModel(NutsWorkspace workspace, DefaultNutsBootModel bootModel) {
         this.ws = workspace;
-        this.pathExpansionConverter = new NutsWorkspaceVarExpansionFunction(ws);
+        this.pathExpansionConverter = new NutsWorkspaceVarExpansionFunction(NutsWorkspaceUtils.defaultSession(ws));
         this.bootModel = bootModel;
         this.stdout = bootModel.stdout();
         this.stderr = bootModel.stderr();
@@ -84,7 +84,7 @@ public class DefaultNutsIOModel {
         if (out == null) {
             return null;
         }
-        NutsWorkspaceOptions woptions = ws.boot().setSession(session).getBootOptions();
+        NutsWorkspaceOptions woptions = session.boot().setSession(session).getBootOptions();
         NutsTerminalMode expectedMode0 = woptions.getTerminalMode();
         if (expectedMode0 == null) {
             if (woptions.isBot()) {

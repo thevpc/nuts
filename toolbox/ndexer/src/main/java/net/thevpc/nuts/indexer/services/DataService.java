@@ -1,10 +1,7 @@
 package net.thevpc.nuts.indexer.services;
 
-import net.thevpc.nuts.NutsContentType;
-import net.thevpc.nuts.NutsUtilStrings;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.indexer.NutsIndexerUtils;
-import net.thevpc.nuts.NutsId;
-import net.thevpc.nuts.NutsWorkspace;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -131,14 +128,14 @@ public class DataService {
         return result;
     }
 
-    public List<Map<String, String>> getAllDependencies(NutsWorkspace ws, Path dirPath, NutsId id) {
+    public List<Map<String, String>> getAllDependencies(NutsSession session, Path dirPath, NutsId id) {
         List<Map<String, String>> rows = searchData(dirPath, NutsIndexerUtils.nutsIdToMap(id), null);
         if (rows.isEmpty()) {
             return null;
         }
         Map<String, String> row = rows.get(0);
         if (!row.containsKey("allDependencies")) {
-            List<NutsId> allDependencies = ws.search()
+            List<NutsId> allDependencies = session.search()
                     .setBasePackage(false)
                     .setInlineDependencies(true)
                     .addId(id)
@@ -146,7 +143,7 @@ public class DataService {
                     .setContent(false)
                     .getResultIds().toList();
             Map<String, String> oldRow = new HashMap<>(row);
-            row.put("allDependencies", ws.elem().setContentType(NutsContentType.JSON)
+            row.put("allDependencies", session.elem().setContentType(NutsContentType.JSON)
                     .setValue(allDependencies.stream().map(Object::toString)
                             .collect(Collectors.toList()))
                             .setNtf(false)
@@ -155,27 +152,27 @@ public class DataService {
             );
             updateData(dirPath, oldRow, row);
         }
-        String[] array = ws.elem().setContentType(NutsContentType.JSON).parse(new StringReader(row.get("allDependencies")), String[].class);
+        String[] array = session.elem().setContentType(NutsContentType.JSON).parse(new StringReader(row.get("allDependencies")), String[].class);
         List<Map<String, String>> allDependencies = Arrays.stream(array)
-                .map(s -> NutsIndexerUtils.nutsIdToMap(ws.id().parser().parse(s)))
+                .map(s -> NutsIndexerUtils.nutsIdToMap(session.id().parser().parse(s)))
                 .collect(Collectors.toList());
         return allDependencies;
     }
 
-    public List<Map<String, String>> getDependencies(NutsWorkspace ws, Path dirPath, NutsId id) {
+    public List<Map<String, String>> getDependencies(NutsSession session, Path dirPath, NutsId id) {
         List<Map<String, String>> rows = searchData(dirPath, NutsIndexerUtils.nutsIdToMap(id), null);
         if (rows.isEmpty()) {
             return null;
         }
         Map<String, String> row = rows.get(0);
-        String[] array = ws.elem().setContentType(NutsContentType.JSON).parse(new StringReader(row.get("dependencies")), String[].class);
+        String[] array = session.elem().setContentType(NutsContentType.JSON).parse(new StringReader(row.get("dependencies")), String[].class);
         List<Map<String, String>> dependencies = Arrays.stream(array)
-                .map(s -> NutsIndexerUtils.nutsIdToMap(ws.id().parser().parse(s)))
+                .map(s -> NutsIndexerUtils.nutsIdToMap(session.id().parser().parse(s)))
                 .collect(Collectors.toList());
         return dependencies;
     }
 
-    public List<Map<String, String>> getAllVersions(NutsWorkspace ws, Path dirPath, NutsId id) {
+    public List<Map<String, String>> getAllVersions(NutsSession session, Path dirPath, NutsId id) {
         Map<String, String> data = NutsIndexerUtils.nutsIdToMap(id);
         List<Map<String, String>> rows =
                 searchData(dirPath, null, NutsIndexerUtils.mapToQuery(data, "version"));

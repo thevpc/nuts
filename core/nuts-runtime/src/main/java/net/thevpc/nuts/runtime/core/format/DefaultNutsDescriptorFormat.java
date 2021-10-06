@@ -62,14 +62,14 @@ public class DefaultNutsDescriptorFormat extends DefaultFormatBase<NutsDescripto
         checkSession();
         if (isNtf()) {
             ByteArrayOutputStream os=new ByteArrayOutputStream();
-            getSession().getWorkspace()
+            getSession()
                     .elem().setNtf(true).setContentType(NutsContentType.JSON)
                     .setValue(desc).setCompact(isCompact())
                     .print(os);
             NutsTextCode r = getSession().text().ofCode("json", os.toString());
             out.print(r);
         } else {
-            getSession().getWorkspace()
+            getSession()
                     .elem().setNtf(false).setContentType(NutsContentType.JSON)
                     .setValue(desc).setCompact(isCompact())
                     .print(out);

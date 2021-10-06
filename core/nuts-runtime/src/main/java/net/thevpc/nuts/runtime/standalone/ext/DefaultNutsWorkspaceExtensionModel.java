@@ -85,7 +85,7 @@ public class DefaultNutsWorkspaceExtensionModel {
 
     protected NutsLogger _LOG(NutsSession session) {
         if (LOG == null) {
-            LOG = this.ws.log().setSession(session).of(DefaultNutsWorkspaceExtensionModel.class);
+            LOG = session.log().of(DefaultNutsWorkspaceExtensionModel.class);
         }
         return LOG;
     }
@@ -99,7 +99,7 @@ public class DefaultNutsWorkspaceExtensionModel {
         if (excluded != null) {
             for (String ex : excluded) {
                 for (String e : StringTokenizerUtils.split(ex, ",; ")) {
-                    NutsId ee = ws.id().parser().parse(e);
+                    NutsId ee = session.id().parser().parse(e);
                     if (ee != null) {
                         this.exclusions.add(ee.getShortName());
                     }
@@ -124,7 +124,7 @@ public class DefaultNutsWorkspaceExtensionModel {
 
     //@Override
     public List<NutsExtensionInformation> findExtensions(String id, String extensionType, NutsSession session) {
-        return findExtensions(ws.id().parser().setLenient(false).parse(id), extensionType, session);
+        return findExtensions(session.id().parser().setLenient(false).parse(id), extensionType, session);
     }
 
     // @Override
@@ -141,7 +141,7 @@ public class DefaultNutsWorkspaceExtensionModel {
             if (u != null) {
                 NutsExtensionInformation[] s = new NutsExtensionInformation[0];
                 try (Reader rr = new InputStreamReader(NutsWorkspaceUtils.of(session).openURL(u))) {
-                    s = ws.elem().setContentType(NutsContentType.JSON).parse(rr, DefaultNutsExtensionInformation[].class);
+                    s = session.elem().setContentType(NutsContentType.JSON).parse(rr, DefaultNutsExtensionInformation[].class);
                 } catch (IOException ex) {
                     _LOGOP(session).level(Level.SEVERE).error(ex)
                             .log(NutsMessage.jstyle("failed to parse NutsExtensionInformation from {0} : {1}", u, ex));
@@ -175,18 +175,18 @@ public class DefaultNutsWorkspaceExtensionModel {
     public void onInitializeWorkspace(NutsWorkspaceInitInformation info, ClassLoader bootClassLoader, NutsSession session) {
         //now will iterate over Extension classes to wire them ...
         objectFactory.discoverTypes(
-                ws.id().setSession(session).parser().parse(info.getRuntimeBootDependencyNode().getId()),
+                session.id().setSession(session).parser().parse(info.getRuntimeBootDependencyNode().getId()),
                 info.getRuntimeBootDependencyNode().getURL(),
                 bootClassLoader,
                 session);
         for (NutsClassLoaderNode idurl : info.getExtensionBootDependencyNodes()) {
             objectFactory.discoverTypes(
-                    ws.id().setSession(session).parser().parse(idurl.getId()),
+                    session.id().setSession(session).parser().parse(idurl.getId()),
                     idurl.getURL(),
                     bootClassLoader,
                     session);
         }
-        this.workspaceExtensionsClassLoader = new DefaultNutsClassLoader("workspaceExtensionsClassLoader", session.getWorkspace(), bootClassLoader);
+        this.workspaceExtensionsClassLoader = new DefaultNutsClassLoader("workspaceExtensionsClassLoader", session, bootClassLoader);
     }
 
 //    public void registerType(RegInfo regInfo, NutsSession session) {
@@ -236,7 +236,7 @@ public class DefaultNutsWorkspaceExtensionModel {
 //        }
 //    }
     public Set<Class> discoverTypes(NutsId id, ClassLoader classLoader, NutsSession session) {
-        URL url = ws.fetch().setId(id).setSession(session).setContent(true).getResultContent().getURL();
+        URL url = session.fetch().setId(id).setSession(session).setContent(true).getResultContent().getURL();
         return objectFactory.discoverTypes(id, url, classLoader, session);
     }
 
@@ -365,7 +365,7 @@ public class DefaultNutsWorkspaceExtensionModel {
                     someUpdates = true;
                 } else {
                     //load extension
-                    NutsDefinition def = ws.search()
+                    NutsDefinition def = session.search()
                             .setSession(session)
                             .addId(extension).setTargetApiVersion(ws.getApiVersion())
                             .setContent(true)
@@ -400,7 +400,7 @@ public class DefaultNutsWorkspaceExtensionModel {
 
     private void updateLoadedExtensionURLs(NutsSession session) {
         loadedExtensionURLs.clear();
-        for (NutsDefinition def : ws.search().addIds(loadedExtensionIds.toArray(new NutsId[0]))
+        for (NutsDefinition def : session.search().addIds(loadedExtensionIds.toArray(new NutsId[0]))
                 .setTargetApiVersion(ws.getApiVersion())
                 .setSession(session)
                 .setContent(true)
@@ -489,7 +489,7 @@ public class DefaultNutsWorkspaceExtensionModel {
 
     private boolean isLoadedClassPath(NutsDefinition file, NutsSession session) {
         //session = CoreNutsUtils.validateSession(session,ws);
-        if (file.getId().equalsShortId(ws.id().parser().setLenient(false).parse(NutsConstants.Ids.NUTS_API))) {
+        if (file.getId().equalsShortId(session.id().parser().setLenient(false).parse(NutsConstants.Ids.NUTS_API))) {
             return true;
         }
         try {
@@ -592,7 +592,8 @@ public class DefaultNutsWorkspaceExtensionModel {
     public String[] getExtensionRepositoryLocations(NutsId appId) {
         //should parse this form config?
         //or should be parse from and extension component?
-        String repos = ws.env().getEnv("bootstrapRepositoryLocations").getString( "") + ";" //                + NutsConstants.BootstrapURLs.LOCAL_NUTS_FOLDER
+        String repos = NutsWorkspaceUtils.defaultSession(ws).env()
+                .getEnv("bootstrapRepositoryLocations").getString( "") + ";" //                + NutsConstants.BootstrapURLs.LOCAL_NUTS_FOLDER
                 //                + ";" + NutsConstants.BootstrapURLs.REMOTE_NUTS_GIT
                 ;
         List<String> urls = new ArrayList<>();
@@ -606,7 +607,7 @@ public class DefaultNutsWorkspaceExtensionModel {
 
     protected URL expandURL(String url, NutsSession session) {
         try {
-            url = ws.io().path(url).builder().withWorkspaceBaseDir().build().toString();
+            url = session.io().path(url).builder().withWorkspaceBaseDir().build().toString();
             if (CoreIOUtils.isPathHttp(url)) {
                 return new URL(url);
             }
@@ -620,7 +621,7 @@ public class DefaultNutsWorkspaceExtensionModel {
     }
 
     private NutsWorkspaceConfigManagerExt configExt() {
-        return NutsWorkspaceConfigManagerExt.of(ws.config());
+        return NutsWorkspaceConfigManagerExt.of(NutsWorkspaceUtils.defaultSession(ws).config());
     }
     //    @Override
 //    public boolean addExtension(NutsId extensionId) {
@@ -695,7 +696,7 @@ public class DefaultNutsWorkspaceExtensionModel {
         if (parent == null) {
             parent = workspaceExtensionsClassLoader;
         }
-        return new DefaultNutsClassLoader(name, session.getWorkspace(), parent);
+        return new DefaultNutsClassLoader(name, session, parent);
 //        NutsURLClassLoaderKey k = new NutsURLClassLoaderKey(urls, parent);
 //        DefaultNutsClassLoader v = cachedClassLoaders.get(k);
 //        if (v == null) {

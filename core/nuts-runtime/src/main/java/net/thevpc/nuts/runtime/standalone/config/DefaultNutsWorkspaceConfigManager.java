@@ -229,7 +229,9 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         return "NutsWorkspaceConfig{"
                 + "workspaceBootId=" + s1
                 + ", workspaceRuntimeId=" + s2
-                + ", workspace=" + ((model.getCurrentConfig() == null) ? "NULL" : ("'" + model.getWorkspace().locations().getWorkspaceLocation() + '\''))
+                + ", workspace=" + ((model.getCurrentConfig() == null) ? "NULL" : ("'" +
+                NutsWorkspaceUtils.defaultSession(model.getWorkspace())
+                .locations().getWorkspaceLocation() + '\''))
                 + '}';
     }
 

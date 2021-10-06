@@ -13,12 +13,12 @@ public class VersionFacadeCommand extends AbstractFacadeCommand {
     @Override
     public void executeImpl(FacadeCommandContext context) throws IOException {
         context.sendResponseText(200,
-                context.getWorkspace()
+                context.getSession()
                         .id().builder()
                         .setRepository(context.getServerId())
                         .setGroupId("net.thevpc.nuts")
                         .setArtifactId("nuts-server")
-                        .setVersion(context.getWorkspace().getRuntimeId().getVersion().toString())
+                        .setVersion(context.getSession().getWorkspace().getRuntimeId().getVersion().toString())
                         .build().toString()
         );
     }

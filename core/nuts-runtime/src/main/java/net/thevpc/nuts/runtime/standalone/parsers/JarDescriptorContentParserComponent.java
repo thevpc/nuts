@@ -54,10 +54,10 @@ import net.thevpc.nuts.spi.NutsDescriptorContentParserContext;
 public class JarDescriptorContentParserComponent implements NutsDescriptorContentParserComponent {
 
     public static final Set<String> POSSIBLE_EXT = new HashSet<>(Collections.singletonList("jar"));//, "war", "ear"
-    private NutsWorkspace ws;
+    private NutsSession ws;
     @Override
     public int getSupportLevel(NutsSupportLevelContext<Object> criteria) {
-        this.ws=criteria.getWorkspace();
+        this.ws=criteria.getSession();
         return DEFAULT_SUPPORT;
     }
 
@@ -97,7 +97,7 @@ public class JarDescriptorContentParserComponent implements NutsDescriptorConten
                                     mainClass.set(attrs.getValue(attrName));
                                 }
                             }
-                            NutsDescriptor d = parserContext.getWorkspace().descriptor().descriptorBuilder()
+                            NutsDescriptor d = parserContext.getSession().descriptor().descriptorBuilder()
                                     .setId(ws.id().parser().parse("temp:jar#1.0"))
                                     .setExecutable(mainClass.isSet())
                                     .setPackaging("jar")
@@ -111,7 +111,7 @@ public class JarDescriptorContentParserComponent implements NutsDescriptorConten
                             break;
                         case ("META-INF/" + NutsConstants.Files.DESCRIPTOR_FILE_NAME):
                             try {
-                                nutsjson.set(parserContext.getWorkspace().descriptor().parser().setSession(parserContext.getSession()).parse(inputStream));
+                                nutsjson.set(parserContext.getSession().descriptor().parser().setSession(parserContext.getSession()).parse(inputStream));
                             } finally {
                                 inputStream.close();
                             }
@@ -146,14 +146,14 @@ public class JarDescriptorContentParserComponent implements NutsDescriptorConten
             baseNutsDescriptor = metainf.get();
         }
         if (baseNutsDescriptor == null) {
-            baseNutsDescriptor = parserContext.getWorkspace().descriptor().descriptorBuilder()
+            baseNutsDescriptor = parserContext.getSession().descriptor().descriptorBuilder()
                     .setId(ws.id().parser().parse("temp:jar#1.0"))
                     .setExecutable(true)
                     .setPackaging("jar")
                     .build();
         }
         boolean alwaysSelectAllMainClasses = false;
-        NutsCommandLine cmd = parserContext.getWorkspace().commandLine().create(parserContext.getParseOptions());
+        NutsCommandLine cmd = parserContext.getSession().commandLine().create(parserContext.getParseOptions());
         NutsArgument a;
         while (!cmd.isEmpty()) {
             if ((a = cmd.nextBoolean("--all-mains")) != null) {
@@ -163,7 +163,7 @@ public class JarDescriptorContentParserComponent implements NutsDescriptorConten
             }
         }
         if (mainClass.get() == null || alwaysSelectAllMainClasses) {
-            NutsExecutionEntry[] classes = parserContext.getWorkspace().apps().execEntries()
+            NutsExecutionEntry[] classes = parserContext.getSession().apps().execEntries()
                     .setSession(parserContext.getSession())
                     .parse(parserContext.getFullStream(), "java", parserContext.getFullStream().toString());
             if (classes.length == 0) {

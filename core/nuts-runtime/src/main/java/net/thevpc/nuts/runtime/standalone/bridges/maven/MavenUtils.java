@@ -59,21 +59,18 @@ import java.util.stream.Collectors;
 public class MavenUtils {
 
     private final NutsLogger LOG;
-    private NutsWorkspace ws;
     private NutsSession session;
 
-    private MavenUtils(NutsWorkspace ws, NutsSession session) {
-        this.ws = ws;
+    private MavenUtils(NutsSession session) {
         this.session = session;
         LOG = session.log().of(MavenUtils.class);
     }
 
     public static MavenUtils of(NutsSession session) {
-        NutsWorkspace ws = session.getWorkspace();
-        MavenUtils wp = (MavenUtils) ws.env().getProperty(MavenUtils.class.getName()).getObject();
+        MavenUtils wp = (MavenUtils) session.env().getProperty(MavenUtils.class.getName()).getObject();
         if (wp == null) {
-            wp = new MavenUtils(ws, session);
-            ws.env().setProperty(MavenUtils.class.getName(), wp);
+            wp = new MavenUtils(session);
+            session.env().setProperty(MavenUtils.class.getName(), wp);
         }
         return wp;
     }
@@ -104,7 +101,7 @@ public class MavenUtils {
     }
 
     public NutsId toNutsId(PomId d) {
-        return ws.id().builder().setGroupId(d.getGroupId()).setArtifactId(d.getArtifactId()).setVersion(toNutsVersion(d.getVersion())).build();
+        return session.id().builder().setGroupId(d.getGroupId()).setArtifactId(d.getArtifactId()).setVersion(toNutsVersion(d.getVersion())).build();
     }
 
     public NutsEnvCondition toCondition(NutsSession session, String os0, String arch0, PomProfileActivation a) {
@@ -314,7 +311,7 @@ public class MavenUtils {
             }else{
                 mavenCompilerTarget="";
             }
-            return ws.descriptor().descriptorBuilder()
+            return session.descriptor().descriptorBuilder()
                     .setId(toNutsId(pom.getPomId()))
                     .setParents(pom.getParent() == null ? new NutsId[0] : new NutsId[]{toNutsId(pom.getParent())})
                     .setPackaging(pom.getPackaging())
@@ -400,7 +397,7 @@ public class MavenUtils {
                 if (parentId != null) {
                     if (!CoreNutsUtils.isEffectiveId(parentId)) {
                         try {
-                            parentDescriptor = ws.fetch().setId(parentId).setEffective(true)
+                            parentDescriptor = session.fetch().setId(parentId).setEffective(true)
                                     .setSession(
                                             session.copy().setTransitive(true)
                                                     .setFetchStrategy(
@@ -447,7 +444,7 @@ public class MavenUtils {
                         NutsDescriptor d = cache.get(pid);
                         if (d == null) {
                             try {
-                                d = ws.fetch().setId(pid).setEffective(true).setSession(session).getResultDescriptor();
+                                d = session.fetch().setId(pid).setEffective(true).setSession(session).getResultDescriptor();
                             } catch (NutsException ex) {
                                 throw ex;
                             } catch (Exception ex) {
@@ -529,7 +526,7 @@ public class MavenUtils {
     }
 
     public DepsAndRepos loadDependenciesAndRepositoriesFromPomPath(String urlPath, NutsRepositorySelector.Selection[] bootRepositories, NutsSession session) {
-        NutsWorkspaceUtils.checkSession(ws, session);
+        NutsWorkspaceUtils.checkSession(this.session.getWorkspace(), session);
         DepsAndRepos depsAndRepos = null;
 //        if (!NO_M2) {
         File mavenNutsCorePom = new File(System.getProperty("user.home"), (".m2/repository/" + urlPath).replace("/", File.separator));

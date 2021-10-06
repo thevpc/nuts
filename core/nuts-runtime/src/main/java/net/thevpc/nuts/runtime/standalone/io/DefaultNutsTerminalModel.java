@@ -29,7 +29,7 @@ public class DefaultNutsTerminalModel {
 
     protected NutsLogger _LOG(NutsSession session) {
         if (LOG == null) {
-            LOG = this.ws.log().setSession(session).of(DefaultNutsTerminalModel.class);
+            LOG = session.log().of(DefaultNutsTerminalModel.class);
         }
         return LOG;
     }
@@ -39,7 +39,7 @@ public class DefaultNutsTerminalModel {
     }
 
     public NutsSystemTerminal createSystemTerminal(NutsTerminalSpec spec, NutsSession session) {
-        NutsSystemTerminalBase termb = ws.extensions()
+        NutsSystemTerminalBase termb = session.extensions()
                 .setSession(session)
                 .createSupported(NutsSystemTerminalBase.class, spec);
         if (termb == null) {
@@ -53,10 +53,9 @@ public class DefaultNutsTerminalModel {
         if (st.isAutoCompleteSupported()) {
             //that's ok
         } else {
-            NutsWorkspace ws = session.getWorkspace();
-            NutsId extId = ws.id().parser().parse("net.thevpc.nuts.ext:next-term#" + ws.getApiVersion());
-            if (!ws.config().isExcludedExtension(extId.toString(), ws.boot().getBootOptions())) {
-                NutsWorkspaceExtensionManager extensions = ws.extensions();
+            NutsId extId = session.id().parser().parse("net.thevpc.nuts.ext:next-term#" + session.getWorkspace().getApiVersion());
+            if (!session.config().isExcludedExtension(extId.toString(), session.boot().getBootOptions())) {
+                NutsWorkspaceExtensionManager extensions = session.extensions();
                 extensions.setSession(session).loadExtension(extId);
                 NutsSystemTerminal systemTerminal = createSystemTerminal(
                         new NutsDefaultTerminalSpec()
@@ -235,8 +234,7 @@ public class DefaultNutsTerminalModel {
         }
 
         public NutsSystemTerminalBase getParent() {
-            return workspace.term()
-                    .setSession(NutsWorkspaceUtils.defaultSession(workspace))
+            return NutsWorkspaceUtils.defaultSession(workspace).term()
                     .getSystemTerminal();
         }
     }

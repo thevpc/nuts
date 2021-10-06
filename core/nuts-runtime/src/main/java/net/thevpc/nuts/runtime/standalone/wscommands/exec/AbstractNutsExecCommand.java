@@ -383,7 +383,7 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
 
     @Override
     public NutsExecCommand copy() {
-        return ws.exec().copyFrom(this);
+        return session.exec().copyFrom(this);
     }
 
     @Override

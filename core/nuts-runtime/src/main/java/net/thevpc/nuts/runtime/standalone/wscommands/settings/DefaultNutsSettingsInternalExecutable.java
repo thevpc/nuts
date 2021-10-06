@@ -94,7 +94,7 @@ public class DefaultNutsSettingsInternalExecutable extends DefaultInternalNutsEx
     public List<NutsSettingsSubCommand> getSubCommands() {
         if (subCommands == null) {
             subCommands = new ArrayList<>(
-                    getSession().getWorkspace().extensions().createAllSupported(NutsSettingsSubCommand.class, this)
+                    getSession().extensions().createAllSupported(NutsSettingsSubCommand.class, this)
             );
         }
         return subCommands;

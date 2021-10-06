@@ -140,7 +140,7 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
             case NUTS: {
                 try {
                     Reader rr = new InputStreamReader(in);
-                    return getWorkspace().elem()
+                    return getSession().elem()
                             .setSession(session)
                             .setContentType(NutsContentType.JSON).parse(rr, NutsDescriptor.class);
                 } finally {

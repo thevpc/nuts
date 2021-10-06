@@ -43,7 +43,7 @@ public class DefaultNutsRepositoryModel {
 
     protected NutsLogger _LOG(NutsSession session) {
         if (LOG == null) {
-            LOG = this.workspace.log().setSession(session).of(DefaultNutsRepositoryModel.class);
+            LOG = session.log().of(DefaultNutsRepositoryModel.class);
         }
         return LOG;
     }
@@ -152,10 +152,10 @@ public class DefaultNutsRepositoryModel {
     }
 
     public void removeRepository(String repositoryId, NutsSession session) {
-        getWorkspace().security().setSession(session).checkAllowed(NutsConstants.Permissions.REMOVE_REPOSITORY, "remove-repository");
+        session.security().setSession(session).checkAllowed(NutsConstants.Permissions.REMOVE_REPOSITORY, "remove-repository");
         final NutsRepository repository = repositoryRegistryHelper.removeRepository(repositoryId);
         if (repository != null) {
-            NutsWorkspaceConfigManagerExt config = NutsWorkspaceConfigManagerExt.of(getWorkspace().config());
+            NutsWorkspaceConfigManagerExt config = NutsWorkspaceConfigManagerExt.of(session.config());
             config.getModel().fireConfigurationChanged("config-main", session, ConfigEventType.MAIN);
             NutsWorkspaceUtils.of(session).events().fireOnRemoveRepository(new DefaultNutsWorkspaceEvent(session, repository, "repository", repository, null));
         }
@@ -170,7 +170,7 @@ public class DefaultNutsRepositoryModel {
     protected void addRepository(NutsRepository repo, NutsSession session, boolean temp) {
         repositoryRegistryHelper.addRepository(repo, session);
         if (!temp) {
-            NutsWorkspaceConfigManagerExt config = NutsWorkspaceConfigManagerExt.of(getWorkspace().config());
+            NutsWorkspaceConfigManagerExt config = NutsWorkspaceConfigManagerExt.of(session.config());
             config.getModel().fireConfigurationChanged("config-main", session, ConfigEventType.MAIN);
             if (repo != null) {
                 // repo would be null if the repo is not accessible
@@ -200,7 +200,7 @@ public class DefaultNutsRepositoryModel {
         NutsRepositoryModel repoModel = options.getRepositoryModel();
         if (rootFolder == null) {
             if (parentRepository == null) {
-                NutsWorkspaceConfigManagerExt cc = NutsWorkspaceConfigManagerExt.of(getWorkspace().config());
+                NutsWorkspaceConfigManagerExt cc = NutsWorkspaceConfigManagerExt.of(session.config());
                 rootFolder = options.isTemporary() ? Paths.get(cc.getModel().getTempRepositoriesRoot(session))
                         : Paths.get(cc.getModel().getRepositoriesRoot(session));
             } else {
@@ -243,7 +243,7 @@ public class DefaultNutsRepositoryModel {
                 options.setEnabled(true);
             } else if (conf == null) {
                 options.setLocation(CoreIOUtils.resolveRepositoryPath(options, rootFolder, session));
-                conf = loadRepository(Paths.get(options.getLocation(), NutsConstants.Files.REPOSITORY_CONFIG_FILE_NAME), options.getName(), getWorkspace(), session);
+                conf = loadRepository(Paths.get(options.getLocation(), NutsConstants.Files.REPOSITORY_CONFIG_FILE_NAME), options.getName(),session);
                 if (conf == null) {
                     if (options.isFailSafe()) {
                         return null;
@@ -284,7 +284,7 @@ public class DefaultNutsRepositoryModel {
                 conf.setType("nuts");
                 conf.setLocation(options.getLocation());
             }
-            NutsRepositoryFactoryComponent factory_ = getWorkspace().extensions()
+            NutsRepositoryFactoryComponent factory_ = session.extensions()
                     .setSession(session)
                     .createSupported(NutsRepositoryFactoryComponent.class, conf);
             if (factory_ != null) {
@@ -326,7 +326,7 @@ public class DefaultNutsRepositoryModel {
         return addRepository(options, session);
     }
 
-    public NutsRepositoryConfig loadRepository(Path file, String name, NutsWorkspace ws, NutsSession session) {
+    public NutsRepositoryConfig loadRepository(Path file, String name, NutsSession session) {
         NutsRepositoryConfig conf = null;
         if (Files.isRegularFile(file) && Files.isReadable(file)) {
             byte[] bytes;
@@ -336,16 +336,16 @@ public class DefaultNutsRepositoryModel {
                 throw new UncheckedIOException(ex);
             }
             try {
-                Map<String, Object> a_config0 = ws.elem().setSession(session).setContentType(NutsContentType.JSON).parse(bytes, Map.class);
+                Map<String, Object> a_config0 = session.elem().setContentType(NutsContentType.JSON).parse(bytes, Map.class);
                 String version = (String) a_config0.get("configVersion");
                 if (version == null) {
-                    version = ws.getApiVersion().toString();
+                    version = session.getWorkspace().getApiVersion().toString();
                 }
                 int buildNumber = CoreNutsUtils.getApiVersionOrdinalNumber(version);
                 if (buildNumber < 506) {
 
                 }
-                conf = ws.elem().setSession(session).setContentType(NutsContentType.JSON).parse(file, NutsRepositoryConfig.class);
+                conf = session.elem().setSession(session).setContentType(NutsContentType.JSON).parse(file, NutsRepositoryConfig.class);
             } catch (RuntimeException ex) {
                 if (session.boot().getBootOptions().isRecover()) {
                     onLoadRepositoryError(file, name, null, ex, session);
@@ -362,16 +362,16 @@ public class DefaultNutsRepositoryModel {
     }
 
     private void onLoadRepositoryError(Path file, String name, String uuid, Throwable ex, NutsSession session) {
-        NutsWorkspaceConfigManager wconfig = getWorkspace().config().setSession(session);
-        NutsBootManager wboot = getWorkspace().boot().setSession(session);
-        NutsWorkspaceEnvManager wenv = getWorkspace().env().setSession(session);
+        NutsWorkspaceConfigManager wconfig = session.config().setSession(session);
+        NutsBootManager wboot = session.boot().setSession(session);
+        NutsWorkspaceEnvManager wenv = session.env().setSession(session);
         if (wconfig.isReadOnly()) {
             throw new UncheckedIOException("error loading repository " + file.toString(), new IOException(ex));
         }
         String fileName = "nuts-repository" + (name == null ? "" : ("-") + name) + (uuid == null ? "" : ("-") + uuid) + "-" + Instant.now().toString();
         LOG.with().session(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL).log(
                 NutsMessage.jstyle("erroneous repository config file. Unable to load file {0} : {1}", file, ex));
-        Path logError = Paths.get(getWorkspace().locations().getStoreLocation(getWorkspace().getApiId(), NutsStoreLocation.LOG))
+        Path logError = Paths.get(session.locations().getStoreLocation(getWorkspace().getApiId(), NutsStoreLocation.LOG))
                 .resolve("invalid-config");
         try {
             CoreIOUtils.mkdirs(logError,session);
@@ -388,11 +388,11 @@ public class DefaultNutsRepositoryModel {
         }
 
         try (PrintStream o = new PrintStream(logError.resolve(fileName + ".error").toFile())) {
-            o.println("workspace.path:" + workspace.locations().getWorkspaceLocation());
+            o.println("workspace.path:" + session.locations().getWorkspaceLocation());
             o.println("repository.path:" + file);
             o.println("workspace.options:" + wboot.getBootOptions().formatter().setCompact(false).setRuntime(true).setInit(true).setExported(true).getBootCommandLine());
             for (NutsStoreLocation location : NutsStoreLocation.values()) {
-                o.println("location." + location.id() + ":" + workspace.locations().getStoreLocation(location));
+                o.println("location." + location.id() + ":" + session.locations().getStoreLocation(location));
             }
             o.println("java.class.path:" + System.getProperty("java.class.path"));
             o.println();

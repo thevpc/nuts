@@ -41,7 +41,7 @@ public class DefaultNutsIOProcessAction implements NutsIOProcessAction {
     @Override
     public boolean isSupportedKillProcess(){
         checkSession();
-        NutsOsFamily f = getSession().getWorkspace().env().getOsFamily();
+        NutsOsFamily f = getSession().env().getOsFamily();
         return f ==NutsOsFamily.LINUX || f ==NutsOsFamily.MACOS || f ==NutsOsFamily.UNIX;
     }
 
@@ -49,7 +49,7 @@ public class DefaultNutsIOProcessAction implements NutsIOProcessAction {
     @Override
     public boolean killProcess(String processId) {
         checkSession();
-        return getSession().getWorkspace().exec()
+        return getSession().exec()
                 .addCommand("kill", "-9", processId)
                 .getResult()==0;
     }
@@ -90,7 +90,7 @@ public class DefaultNutsIOProcessAction implements NutsIOProcessAction {
         return setType(processType);
     }
 
-    private static String getJpsJavaHome(NutsWorkspace ws, String version, NutsSession session) {
+    private static String getJpsJavaHome(String version, NutsSession session) {
         List<String> detectedJavaHomes = new ArrayList<>();
         String jh = System.getProperty("java.home");
         detectedJavaHomes.add(jh);
@@ -98,9 +98,9 @@ public class DefaultNutsIOProcessAction implements NutsIOProcessAction {
         if (v != null) {
             return v;
         }
-        NutsVersionFilter nvf = NutsBlankable.isBlank(version) ? null : ws.version().parser().parse(version).filter();
-        NutsPlatformLocation[] availableJava = ws.env().platforms().setSession(session).findPlatforms(NutsPlatformType.JAVA,
-                java -> "jdk".equals(java.getPackaging()) && (nvf == null || nvf.acceptVersion(ws.version().parser().parse(java.getVersion()), session))
+        NutsVersionFilter nvf = NutsBlankable.isBlank(version) ? null : session.version().parser().parse(version).filter();
+        NutsPlatformLocation[] availableJava = session.env().platforms().setSession(session).findPlatforms(NutsPlatformType.JAVA,
+                java -> "jdk".equals(java.getPackaging()) && (nvf == null || nvf.acceptVersion(session.version().parser().parse(java.getVersion()), session))
         );
         for (NutsPlatformLocation java : availableJava) {
             detectedJavaHomes.add(java.getPath());
@@ -152,11 +152,11 @@ public class DefaultNutsIOProcessAction implements NutsIOProcessAction {
             NutsExecCommand b = null;
             boolean mainArgs = true;
             boolean vmArgs = true;
-            String jdkHome = getJpsJavaHome(ws, version, session);
+            String jdkHome = getJpsJavaHome(version, session);
             if (jdkHome != null) {
                 cmd = jdkHome + File.separator + "bin" + File.separator + cmd;
             }
-            b = getSession().getWorkspace().exec()
+            b = getSession().exec()
                     .setExecutionType(NutsExecutionType.SYSTEM)
                     .addCommand(cmd)
                     .addCommand("-l" + (mainArgs ? "m" : "") + (vmArgs ? "v" : ""))

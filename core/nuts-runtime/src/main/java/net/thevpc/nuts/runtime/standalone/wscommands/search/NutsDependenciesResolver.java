@@ -40,8 +40,7 @@ public class NutsDependenciesResolver {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing dependency"));
         }
         if (def == null) {
-            NutsWorkspace ws = session.getWorkspace();
-            def = ws.search()
+            def = session.search()
                     .addId(dependency.toId()).setSession(session
             ).setEffective(true)
                     .setContent(shouldIncludeContent)
@@ -109,7 +108,7 @@ public class NutsDependenciesResolver {
                                 ) {
                             NutsDefinition def2 = null;
                             try {
-                                def2 = ws.search()
+                                def2 = session.search()
                                         .addId(dependency.toId())
                                         .setSession(session).setEffective(true)
                                         .setContent(shouldIncludeContent)
@@ -151,7 +150,7 @@ public class NutsDependenciesResolver {
                         )  && !currentNode.exclusions.contains(dependency.toId().getShortId())) {
                             NutsDefinition def2 = null;
                             try {
-                                def2 = ws.search()
+                                def2 = session.search()
                                         .addId(dependency.toId())
                                         .setSession(session).setEffective(true)
                                         .setContent(shouldIncludeContent)
@@ -404,15 +403,14 @@ public class NutsDependenciesResolver {
 //    }
     public NutsDependencyFilter getEffDependencyFilter() {
         if (effDependencyFilter == null) {
-            NutsWorkspace ws = session.getWorkspace();
             if (dependencyFilter == null) {
-                effDependencyFilter = ws.dependency().filter().byOs(ws.env().getOsFamily())
-                        .and(ws.dependency().filter().byArch(ws.env().getArchFamily()));
+                effDependencyFilter = session.dependency().filter().byOs(session.env().getOsFamily())
+                        .and(session.dependency().filter().byArch(session.env().getArchFamily()));
             } else {
                 effDependencyFilter
                         = dependencyFilter
-                                .and(ws.dependency().filter().byOs(ws.env().getOsFamily()))
-                                .and(ws.dependency().filter().byArch(ws.env().getArchFamily()));
+                                .and(session.dependency().filter().byOs(session.env().getOsFamily()))
+                                .and(session.dependency().filter().byArch(session.env().getArchFamily()));
             }
 
         }

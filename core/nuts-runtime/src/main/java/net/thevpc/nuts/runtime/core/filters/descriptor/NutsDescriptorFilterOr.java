@@ -40,7 +40,7 @@ public class NutsDescriptorFilterOr extends AbstractDescriptorFilter implements 
 
     @Override
     public NutsDescriptorFilter simplify() {
-        return CoreNutsUtils.simplifyFilterOr(getWorkspace(),NutsDescriptorFilter.class,this,all);
+        return CoreNutsUtils.simplifyFilterOr(getSession(),NutsDescriptorFilter.class,this,all);
     }
 
     @Override

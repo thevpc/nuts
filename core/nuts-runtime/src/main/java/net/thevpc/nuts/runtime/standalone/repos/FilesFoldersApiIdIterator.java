@@ -43,7 +43,7 @@ class FilesFoldersApiIdIterator implements Iterator<NutsId> {
     private final Stack<PathAndDepth> stack = new Stack<>();
     private final NutsIdFilter filter;
     private final NutsSession session;
-    private final NutsWorkspace workspace;
+    private final NutsSession workspace;
     private final FilesFoldersApi.IteratorModel model;
     private final int maxDepth;
     private NutsId last;
@@ -52,7 +52,7 @@ class FilesFoldersApiIdIterator implements Iterator<NutsId> {
     private String rootUrl;
     private RemoteRepoApi strategy;
 
-    public FilesFoldersApiIdIterator(NutsWorkspace workspace, NutsRepository repository, String rootUrl, String basePath, NutsIdFilter filter,
+    public FilesFoldersApiIdIterator(NutsSession workspace, NutsRepository repository, String rootUrl, String basePath, NutsIdFilter filter,
             RemoteRepoApi strategy,
             NutsSession session, FilesFoldersApi.IteratorModel model, int maxDepth) {
         this.repository = repository;

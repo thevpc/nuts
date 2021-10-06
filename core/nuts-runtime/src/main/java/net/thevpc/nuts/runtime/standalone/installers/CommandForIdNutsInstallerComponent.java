@@ -63,14 +63,14 @@ public class CommandForIdNutsInstallerComponent implements NutsInstallerComponen
                                             executionContext.getDefinition().getInstallInformation().getInstallStatus().withInstalled(true)
                                     )
                     );
-            executionContext.getWorkspace().exec()
+            executionContext.getTraceSession().exec()
                     .setSession(executionContext.getExecSession())
                     //                    .executionType(NutsExecutionType.EMBEDDED)
                     .setCommand(def2)
                     .addCommand("--nuts-exec-mode=install")
                     .addExecutorOptions("--nuts-auto-install=false")
                     .addCommand(executionContext.getArguments())
-                    .setExecutionType(executionContext.getWorkspace().boot().getBootOptions().getExecutionType())
+                    .setExecutionType(executionContext.getTraceSession().boot().getBootOptions().getExecutionType())
                     .setFailFast(true)
                     .run();
         }
@@ -89,7 +89,7 @@ public class CommandForIdNutsInstallerComponent implements NutsInstallerComponen
                                             executionContext.getDefinition().getInstallInformation().getInstallStatus().withInstalled(true)
                                     )
                     );
-            executionContext.getWorkspace().exec()
+            executionContext.getTraceSession().exec()
                     .setCommand(def2)
                     .addCommand("--nuts-exec-mode=update", "--yes")
                     //                    .addCommand(id.builder().setRepository(null).build().toString(), "--nuts-exec-mode=update", "--force")
@@ -101,15 +101,15 @@ public class CommandForIdNutsInstallerComponent implements NutsInstallerComponen
     @Override
     public void uninstall(NutsExecutionContext executionContext, boolean deleteData) {
         NutsSession session = executionContext.getExecSession();
-        NutsWorkspace ws = executionContext.getWorkspace();
+//        NutsWorkspace ws = executionContext.getWorkspace();
         NutsWorkspaceUtils.of(executionContext.getTraceSession()).checkReadOnly();
         NutsId id = executionContext.getDefinition().getId();
         if ("jar".equals(executionContext.getDefinition().getDescriptor().getPackaging())) {
-            NutsExecutionEntry[] executionEntries = ws.apps().execEntries().parse(executionContext.getDefinition().getPath());
+            NutsExecutionEntry[] executionEntries = session.apps().execEntries().parse(executionContext.getDefinition().getPath());
             for (NutsExecutionEntry executionEntry : executionEntries) {
                 if (executionEntry.isApp()) {
                     //
-                    int r = ws.exec().addCommand(id.getLongName(), "--nuts-exec-mode=uninstall", "--yes").addCommand(executionContext.getArguments()).getResult();
+                    int r = session.exec().addCommand(id.getLongName(), "--nuts-exec-mode=uninstall", "--yes").addCommand(executionContext.getArguments()).getResult();
                     if (r != 0) {
                         session.out().printf("installation exited with code : " + r + " %n");
                     }

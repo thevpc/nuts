@@ -76,22 +76,23 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
 
     @Override
     public void pushImpl(NutsPushRepositoryCommand command) {
-        NutsContent content = lib.fetchContentImpl(command.getId(), null, command.getSession());
-        NutsDescriptor desc = lib.fetchDescriptorImpl(command.getId(), command.getSession());
+        NutsSession session = command.getSession();
+        NutsContent content = lib.fetchContentImpl(command.getId(), null, session);
+        NutsDescriptor desc = lib.fetchDescriptorImpl(command.getId(), session);
         if (content == null || desc == null) {
-            throw new NutsNotFoundException(command.getSession(), command.getId());
+            throw new NutsNotFoundException(session, command.getId());
         }
-        NutsWorkspaceUtils.checkSession(getWorkspace(), command.getSession());
+        NutsWorkspaceUtils.checkSession(getWorkspace(), session);
         ByteArrayOutputStream descStream = new ByteArrayOutputStream();
-        getWorkspace().descriptor().formatter(desc).print(new OutputStreamWriter(descStream));
-        httpUpload(CoreIOUtils.buildUrl(config().getLocation(true), "/deploy?" + resolveAuthURLPart(command.getSession())),
-                command.getSession(),
+        session.descriptor().formatter(desc).print(new OutputStreamWriter(descStream));
+        httpUpload(CoreIOUtils.buildUrl(config().getLocation(true), "/deploy?" + resolveAuthURLPart(session)),
+                session,
                 new NutsTransportParamBinaryStreamPart("descriptor", "Project.nuts",
                         new ByteArrayInputStream(descStream.toByteArray())),
                 new NutsTransportParamBinaryFilePart("content", content.getPath().getName(), content.getFilePath()),
-                new NutsTransportParamParamPart("descriptor-hash", getWorkspace().io().hash().sha1().setSource(desc).computeString()),
+                new NutsTransportParamParamPart("descriptor-hash", session.io().hash().sha1().setSource(desc).computeString()),
                 new NutsTransportParamParamPart("content-hash", CoreIOUtils.evalSHA1Hex(content.getFilePath())),
-                new NutsTransportParamParamPart("force", String.valueOf(command.getSession().isYes()))
+                new NutsTransportParamParamPart("force", String.valueOf(session.isYes()))
         );
     }
 
@@ -103,7 +104,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
         boolean transitive = session.isTransitive();
         session.getTerminal().printProgress("loading descriptor for ", id.getLongId());
         try (InputStream stream = CoreIOUtils.getHttpClientFacade(session, getUrl("/fetch-descriptor?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart(session))).open()) {
-            NutsDescriptor descriptor = getWorkspace().descriptor().parser().setSession(session).parse(stream);
+            NutsDescriptor descriptor = session.descriptor().parser().setSession(session).parse(stream);
             if (descriptor != null) {
                 String hash = httpGetString(getUrl("/fetch-descriptor-hash?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart(session)), session);
                 if (hash.equals(descriptor.toString())) {
@@ -129,9 +130,9 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
         } catch (UncheckedIOException | NutsIOException e) {
             return IteratorUtils.emptyIterator();
         }
-        Iterator<NutsId> it = new NamedNutIdFromStreamIterator(ret);
-        NutsIdFilter filter2 = getWorkspace().id().filter().nonnull(idFilter).and(
-                getWorkspace().id().filter().byName(id.getShortName())
+        Iterator<NutsId> it = new NamedNutIdFromStreamIterator(ret,session);
+        NutsIdFilter filter2 = session.id().filter().nonnull(idFilter).and(
+                session.id().filter().byName(id.getShortName())
         );
         if (filter2 != null) {
             it = IteratorBuilder.of(it).filter(CoreFilterUtils.createFilter(filter2, session)).iterator();
@@ -158,7 +159,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
                         new NutsTransportParamParamPart("up", ulp[1]),
                         new NutsTransportParamTextReaderPart("js", "search.js", new StringReader(js))
                 );
-                return IteratorBuilder.of(new NamedNutIdFromStreamIterator(ret)).filter(CoreFilterUtils.createFilter(filter, session)).iterator();
+                return IteratorBuilder.of(new NamedNutIdFromStreamIterator(ret,session)).filter(CoreFilterUtils.createFilter(filter, session)).iterator();
             }
         } else {
             ret = httpUpload(getUrl("/find?" + (transitive ? ("transitive") : "") + "&" + resolveAuthURLPart(session)), session,
@@ -170,9 +171,9 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
             );
         }
         if (filter == null) {
-            return new NamedNutIdFromStreamIterator(ret);
+            return new NamedNutIdFromStreamIterator(ret,session);
         }
-        return IteratorBuilder.of(new NamedNutIdFromStreamIterator(ret)).filter(CoreFilterUtils.createFilter(filter, session)).iterator();
+        return IteratorBuilder.of(new NamedNutIdFromStreamIterator(ret,session)).filter(CoreFilterUtils.createFilter(filter, session)).iterator();
 
     }
 
@@ -186,7 +187,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
         if (localPath == null) {
             temp = true;
             String p = getIdFilename(id, session);
-            localPath = getWorkspace().io().tmp()
+            localPath = session.io().tmp()
                     .setSession(session)
                     .setRepositoryId(getUuid())
                     .createTempFile(new File(p).getName());
@@ -194,7 +195,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
 
         try {
             String location = getUrl("/fetch?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart(session));
-            getWorkspace().io().copy().setSession(session).from(location).to(localPath).setSafe(true).setLogProgress(true).run();
+            session.io().copy().from(location).to(localPath).setSafe(true).setLogProgress(true).run();
             String rhash = httpGetString(getUrl("/fetch-hash?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart(session)), session);
             String lhash = CoreIOUtils.evalSHA1Hex(Paths.get(localPath));
             if (rhash.equalsIgnoreCase(lhash)) {
@@ -227,7 +228,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
     }
 
     private String[] resolveEncryptedAuth(NutsSession session) {
-        String login = getWorkspace().security().setSession(session).getCurrentUsername();
+        String login = session.security().setSession(session).getCurrentUsername();
         NutsUserConfig security = NutsRepositoryConfigManagerExt.of(config()).getModel().getUser(login, session);
         String newLogin = "";
         char[] credentials = new char[0];
@@ -237,7 +238,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
         } else {
             newLogin = security.getRemoteIdentity();
             if (NutsBlankable.isBlank(newLogin)) {
-                NutsUser security2 = getWorkspace().security().setSession(session).findUser(login);
+                NutsUser security2 = session.security().findUser(login);
                 if (security2 != null) {
                     newLogin = security2.getRemoteIdentity();
                 }
@@ -253,7 +254,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
             }
             if (security != null) {
                 credentials = security.getRemoteCredentials() == null ? null : security.getRemoteCredentials().toCharArray();
-                credentials = getWorkspace().security().setSession(session).getCredentials(credentials);
+                credentials = session.security().getCredentials(credentials);
             }
         }
 
@@ -270,23 +271,25 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
 
 //    @Override
 //    public void undeployImpl(NutsRepositoryUndeployCommand options) {
-//        throw new NutsUnsupportedOperationException(getWorkspace());
+//        throw new NutsUnsupportedOperationException(session);
 //    }
 //    @Override
 //    public void checkAllowedFetch(NutsId parse, NutsSession session) {
 //        super.checkAllowedFetch(parse, session);
 //        if (session.getFetchMode() != NutsFetchMode.REMOTE) {
-//            throw new NutsNotFoundException(getWorkspace(), parse);
+//            throw new NutsNotFoundException(session(), parse);
 //        }
 //    }
     private class NamedNutIdFromStreamIterator implements Iterator<NutsId> {
 
         private final BufferedReader br;
         private String line;
+        private NutsSession session;
 
-        public NamedNutIdFromStreamIterator(InputStream ret) {
+        public NamedNutIdFromStreamIterator(InputStream ret,NutsSession session) {
             br = new BufferedReader(new InputStreamReader(ret));
             line = null;
+            this.session=session;
         }
 
         @Override
@@ -319,7 +322,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
 
         @Override
         public NutsId next() {
-            NutsId nutsId = getWorkspace().id().parser().setLenient(false).parse(line);
+            NutsId nutsId = session.id().parser().setLenient(false).parse(line);
             return nutsId.builder().setRepository(getName()).build();
         }
     }

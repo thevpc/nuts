@@ -80,7 +80,7 @@ public class DefaultNutsObjectFormat extends NutsObjectFormatBase {
 
     public NutsObjectFormat createObjectFormat() {
         checkSession();
-        NutsWorkspace ws = getSession().getWorkspace();
+        NutsSession ws = getSession();
         NutsContentType t = getSession().getOutputFormat();
         if(t==null){
             t = NutsContentType.PLAIN;
@@ -124,7 +124,7 @@ public class DefaultNutsObjectFormat extends NutsObjectFormatBase {
                 return ws.formats().table();
             }
             case PLAIN: {
-                return new NutsObjectFormatPlain(ws);
+                return new NutsObjectFormatPlain(ws.getWorkspace());
             }
         }
         throw new NutsUnsupportedEnumException(getSession(), t);

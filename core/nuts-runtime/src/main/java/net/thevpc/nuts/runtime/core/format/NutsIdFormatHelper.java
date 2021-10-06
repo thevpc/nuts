@@ -167,28 +167,28 @@ public class NutsIdFormatHelper {
 
     public static class FormatHelperResetListener implements NutsWorkspaceListener, NutsRepositoryListener {
 
-        private void _onReset(NutsWorkspace ws) {
+        private void _onReset(NutsSession ws) {
             ws.env().setProperty(FormatHelper.class.getName(), null);
         }
 
         @Override
         public void onAddRepository(NutsWorkspaceEvent event) {
-            _onReset(event.getWorkspace());
+            _onReset(event.getSession());
         }
 
         @Override
         public void onRemoveRepository(NutsWorkspaceEvent event) {
-            _onReset(event.getWorkspace());
+            _onReset(event.getSession());
         }
 
         @Override
         public void onReloadWorkspace(NutsWorkspaceEvent event) {
-            _onReset(event.getWorkspace());
+            _onReset(event.getSession());
         }
 
         @Override
         public void onCreateWorkspace(NutsWorkspaceEvent event) {
-            _onReset(event.getWorkspace());
+            _onReset(event.getSession());
         }
 
         @Override
@@ -198,22 +198,22 @@ public class NutsIdFormatHelper {
 
         @Override
         public void onAddRepository(NutsRepositoryEvent event) {
-            _onReset(event.getWorkspace());
+            _onReset(event.getSession());
         }
 
         @Override
         public void onRemoveRepository(NutsRepositoryEvent event) {
-            _onReset(event.getWorkspace());
+            _onReset(event.getSession());
         }
 
         @Override
         public void onConfigurationChanged(NutsRepositoryEvent event) {
-            _onReset(event.getWorkspace());
+            _onReset(event.getSession());
         }
 
         @Override
         public void onConfigurationChanged(NutsWorkspaceEvent event) {
-            _onReset(event.getWorkspace());
+            _onReset(event.getSession());
         }
     }
 
@@ -338,7 +338,7 @@ public class NutsIdFormatHelper {
     }
 
     public NutsString buildMain(NutsFetchDisplayOptions oo, NutsDisplayProperty dp) {
-        NutsWorkspace ws = session.getWorkspace();
+        NutsSession ws = session;
         NutsTextManager text = ws.text();
         if (oo.isRequireDefinition()) {
             buildLong();
@@ -420,7 +420,7 @@ public class NutsIdFormatHelper {
                         rname = def.getRepositoryName();
                     }
                     if (def.getRepositoryUuid() != null) {
-                        NutsRepository r = ws.repos()
+                        NutsRepository r = session.repos()
                                 .setSession(session.copy().setTransitive(false))
                                 .findRepositoryById(def.getRepositoryUuid());
                         if (r != null) {
@@ -442,7 +442,7 @@ public class NutsIdFormatHelper {
                 }
                 if (ruuid == null && id != null) {
                     String p = id.getRepository();
-                    NutsRepository r = ws.repos()
+                    NutsRepository r = session.repos()
                             .setSession(session.copy().setTransitive(false))
                             .findRepositoryByName(p);
                     if (r != null) {
@@ -502,7 +502,7 @@ public class NutsIdFormatHelper {
             case EXEC_ENTRY: {
                 if (def != null && def.getContent() != null && def.getContent().getPath() != null) {
                     List<NutsString> results = new ArrayList<NutsString>();
-                    for (NutsExecutionEntry entry : ws.apps().execEntries().parse(def.getContent().getFilePath())) {
+                    for (NutsExecutionEntry entry : session.apps().execEntries().parse(def.getContent().getFilePath())) {
                         if (entry.isDefaultEntry()) {
                             //should all mark?
                             results.add(text.ofPlain(entry.getName()));
@@ -586,7 +586,7 @@ public class NutsIdFormatHelper {
 
             try {
                 if (this.installStatus.isNonDeployed() || def == null) {
-                    this.defFetched = ws.fetch().setId(id).setSession(
+                    this.defFetched = session.fetch().setId(id).setSession(
                             session.copy().setFetchStrategy(NutsFetchStrategy.OFFLINE)
                     )
                             .setContent(true)
@@ -752,8 +752,7 @@ public class NutsIdFormatHelper {
     }
 
     private NutsString keywordArr0(String[] any, NutsTextStyle style) {
-        NutsTextManager txt = session
-                .getWorkspace().text();
+        NutsTextManager txt = session.text();
         if (any == null || any.length == 0) {
             return txt.ofBlank();
         }

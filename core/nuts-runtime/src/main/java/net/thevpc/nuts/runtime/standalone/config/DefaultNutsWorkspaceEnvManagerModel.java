@@ -32,6 +32,7 @@ import net.thevpc.nuts.runtime.core.config.NutsWorkspaceConfigManagerExt;
 import net.thevpc.nuts.runtime.core.parser.DefaultNutsIdParser;
 import net.thevpc.nuts.runtime.standalone.gui.CoreNutsUtilGui;
 import net.thevpc.nuts.runtime.standalone.util.NutsJavaSdkUtils;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -72,8 +73,8 @@ public class DefaultNutsWorkspaceEnvManagerModel {
 //            }
 //        }
         DefaultNutsIdParser nip = new DefaultNutsIdParser(session);
-        os = nip.parse(CorePlatformUtils.getPlatformOs(workspace));
-        String platformOsDist = CorePlatformUtils.getPlatformOsDist(workspace);
+        os = nip.parse(CorePlatformUtils.getPlatformOs(NutsWorkspaceUtils.defaultSession(workspace)));
+        String platformOsDist = CorePlatformUtils.getPlatformOsDist(NutsWorkspaceUtils.defaultSession(workspace));
         if (platformOsDist == null) {
             platformOsDist = "default";
         }
@@ -84,7 +85,7 @@ public class DefaultNutsWorkspaceEnvManagerModel {
     }
 
     NutsWorkspaceConfigMain getStoreModelMain() {
-        return ((DefaultNutsWorkspaceConfigManager) workspace.config())
+        return ((DefaultNutsWorkspaceConfigManager)NutsWorkspaceUtils.defaultSession(workspace).config())
                 .getModel()
                 .getStoreModelMain();
     }
@@ -112,7 +113,7 @@ public class DefaultNutsWorkspaceEnvManagerModel {
         if (NutsBlankable.isBlank(value)) {
             if (env != null && env.containsKey(property)) {
                 env.remove(property);
-                NutsWorkspaceConfigManagerExt.of(workspace.config())
+                NutsWorkspaceConfigManagerExt.of(session.config())
                         .getModel()
                         .fireConfigurationChanged("env", session, ConfigEventType.MAIN);
             }
@@ -124,7 +125,7 @@ public class DefaultNutsWorkspaceEnvManagerModel {
             String old = env.get(property);
             if (!value.equals(old)) {
                 env.put(property, value);
-                NutsWorkspaceConfigManagerExt.of(workspace.config())
+                NutsWorkspaceConfigManagerExt.of(session.config())
                         .getModel()
                         .fireConfigurationChanged("env", session, ConfigEventType.MAIN);
             }

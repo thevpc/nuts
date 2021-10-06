@@ -28,7 +28,7 @@ import java.util.zip.ZipOutputStream;
  */
 public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
 
-    private final NutsLogger LOG;
+    private NutsLogger LOG;
     private final List<NutsStreamOrPath> sources = new ArrayList<>();
     private final NutsWorkspace ws;
     private boolean safe = true;
@@ -41,7 +41,12 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
 
     public DefaultNutsIOCompressAction(NutsWorkspace ws) {
         this.ws = ws;
-        LOG = ws.log().of(DefaultNutsIOCompressAction.class);
+    }
+    protected NutsLogger _LOG(NutsSession session) {
+        if (LOG == null) {
+            LOG = session.log().of(DefaultNutsIOCompressAction.class);
+        }
+        return LOG;
     }
 
     private static String concatPath(String a, String b) {
@@ -75,15 +80,14 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
         if (isLogProgress() || getProgressMonitorFactory() != null) {
             //how to monitor???
         }
-        LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.START).log(NutsMessage.jstyle("compress {0} to {1}", sources, target));
+        _LOG(session).with().level(Level.FINEST).verb(NutsLogVerb.START).log(NutsMessage.jstyle("compress {0} to {1}", sources, target));
         try {
             OutputStream fW = null;
             ZipOutputStream zip = null;
             if (this.target.isPath()) {
                 Path tempPath = null;
                 if (isSafe()) {
-                    tempPath = Paths.get(ws.io().tmp()
-                            .setSession(session)
+                    tempPath = Paths.get(session.io().tmp()
                             .createTempFile("zip"));
                 }
                 if (this.target.isPath()) {
@@ -148,7 +152,7 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
                 throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("unsupported target %s", target));
             }
         } catch (IOException ex) {
-            LOG.with().session(session).level(Level.CONFIG).verb(NutsLogVerb.FAIL)
+            _LOG(session).with().level(Level.CONFIG).verb(NutsLogVerb.FAIL)
                     .log(NutsMessage.jstyle("error compressing {0} to {1} : {2}",
                             sources, target.getValue(), ex));
             throw new UncheckedIOException(ex);

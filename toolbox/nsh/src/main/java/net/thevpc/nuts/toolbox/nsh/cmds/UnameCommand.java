@@ -87,7 +87,7 @@ public class UnameCommand extends SimpleNshBuiltin {
     @Override
     protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options config = context.getOptions();
-        NutsWorkspace ws = context.getWorkspace();
+        NutsSession ws = context.getSession();
 
         Result rr = new Result();
         rr.osDist = ws.env().getOsDist();

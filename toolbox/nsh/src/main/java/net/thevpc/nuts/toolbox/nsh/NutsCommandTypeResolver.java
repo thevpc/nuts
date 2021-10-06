@@ -29,7 +29,6 @@ package net.thevpc.nuts.toolbox.nsh;
 import java.io.File;
 
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellContext;
-import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellFileContext;
 import net.thevpc.nuts.NutsExecutableInformation;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellCommandType;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellCommandTypeResolver;
@@ -41,8 +40,7 @@ import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellCommandTypeResolver;
 public class NutsCommandTypeResolver implements JShellCommandTypeResolver {
 
     @Override
-    public JShellCommandType type(String item, JShellFileContext context) {
-        JShellContext ncontext=(JShellContext)(context.getShellContext());
+    public JShellCommandType type(String item, JShellContext context) {
         String a = context.aliases().get(item);
         if (a != null) {
             return new JShellCommandType(item, "shell alias", a, item + " is aliased to " + a);
@@ -51,7 +49,7 @@ public class NutsCommandTypeResolver implements JShellCommandTypeResolver {
         if (!item.startsWith("/")) {
             path = context.getCwd() + "/" + item;
         }
-        final NutsExecutableInformation w = ncontext.getWorkspace().exec().addCommand(item).which();
+        final NutsExecutableInformation w = context.getSession().exec().addCommand(item).which();
         if (w != null) {
             return new JShellCommandType(item, "nuts " + w.getType().toString().toLowerCase(), w.getValue(), w.getDescription());
         }

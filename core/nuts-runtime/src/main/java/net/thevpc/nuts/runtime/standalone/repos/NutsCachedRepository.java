@@ -55,8 +55,8 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
 
     public NutsCachedRepository(NutsAddRepositoryOptions options, NutsSession session, NutsRepository parent, int speed, boolean supportedMirroring, String repositoryType) {
         super(options, session, parent, speed, supportedMirroring, repositoryType);
-        cache = new NutsRepositoryFolderHelper(this, workspace, Paths.get(config().setSession(session).getStoreLocation(NutsStoreLocation.CACHE)), true);
-        lib = new NutsRepositoryFolderHelper(this, workspace, Paths.get(config().setSession(session).getStoreLocation(NutsStoreLocation.LIB)), false);
+        cache = new NutsRepositoryFolderHelper(this, session, Paths.get(config().setSession(session).getStoreLocation(NutsStoreLocation.CACHE)), true);
+        lib = new NutsRepositoryFolderHelper(this, session, Paths.get(config().setSession(session).getStoreLocation(NutsStoreLocation.LIB)), false);
         mirroring = new NutsRepositoryMirroringHelper(this, cache);
     }
 
@@ -195,8 +195,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
                     //already deployed because fetchContentImpl2 is run against cachePath
 //                cache.deployContent(id, c.getPath(), session);
                     if (localPath2 != null) {
-                        getWorkspace().io().copy()
-                                .setSession(session)
+                        session.io().copy()
                                 .from(cachePath).to(localPath2).run();
                     } else {
                         localPath2 = cachePath.toString();

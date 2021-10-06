@@ -69,7 +69,7 @@ public class NutsPrintStreamSystem extends NutsPrintStreamBase {
         if (ansi != null) {
             return ansi ? NutsTerminalMode.ANSI : NutsTerminalMode.INHERITED;
         }
-        NutsWorkspace ws = session.getWorkspace();
+        NutsSession ws = session;
         //if(out==System.out || out==System.err){
         NutsOsFamily os = ws.env().getOsFamily();
         if (((os == NutsOsFamily.WINDOWS) && (CorePlatformUtils.IS_CYGWIN || CorePlatformUtils.IS_MINGW_XTERM)) || os == NutsOsFamily.LINUX || os == NutsOsFamily.UNIX || os == NutsOsFamily.MACOS) {
@@ -196,9 +196,8 @@ public class NutsPrintStreamSystem extends NutsPrintStreamBase {
 
     @Override
     public int getColumns() {
-        NutsWorkspace ws = session.getWorkspace();
-        int tputCallTimeout = ws.boot().getCustomBootOption("nuts.term.tput.call.timeout").getInt(60);
-        Integer w = ws.boot().getCustomBootOption("nuts.term.width").getInt(null);
+        int tputCallTimeout = session.boot().getCustomBootOption("nuts.term.tput.call.timeout").getInt(60);
+        Integer w = session.boot().getCustomBootOption("nuts.term.width").getInt(null);
         if (w == null) {
             if (tput_cols == null) {
                 tput_cols = new CachedValue<>(new DefaultAnsiEscapeCommand.TputEvaluator(session), tputCallTimeout);

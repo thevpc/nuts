@@ -29,8 +29,7 @@ public class DefaultNutsLicenseInternalExecutable extends DefaultInternalNutsExe
             showDefaultHelp();
             return;
         }
-        NutsWorkspace ws = getSession().getWorkspace();
-        NutsCommandLine commandLine = ws.commandLine().create(args);
+        NutsCommandLine commandLine = getSession().commandLine().create(args);
         while (commandLine.hasNext()) {
             NutsArgument a = commandLine.peek();
             if (a.isOption()) {

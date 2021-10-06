@@ -41,7 +41,7 @@ public class Test10_ElementPath {
 
     @Test
     public void test1() {
-        NutsWorkspace ws = TestUtils.openNewTestWorkspace().getWorkspace();
+        NutsSession ws = TestUtils.openNewTestWorkspace();
         NutsElementFormat e = ws.elem();
         NutsElement p
                 = e.forArray()
@@ -87,7 +87,7 @@ public class Test10_ElementPath {
                         .build()
                         ).build())
                 .build();
-        NutsObjectFormat ss = ws.createSession().json().getWorkspace().formats().object(p);
+        NutsObjectFormat ss = ws.json().formats().object(p);
         ss.println();
         String json = ss.format().toString();
         Assertions.assertEquals("[\n"

@@ -38,7 +38,7 @@ public class FilesFoldersApi {
             session.getTerminal().printProgress("%-8s %s","browse", session.io().path(baseUrl).toCompressedForm());
             List<String> splitted = null;
             try (InputStream foldersFileStream
-                    = ws.io().monitor().setSource(dotFilesUrl).setSession(session).create()) {
+                    = session.io().monitor().setSource(dotFilesUrl).setSession(session).create()) {
                 splitted = new WebHtmlListParser().parse(foldersFileStream);
             } catch (IOException ex) {
                 //
@@ -68,7 +68,7 @@ public class FilesFoldersApi {
                 }
             }
         } catch (UncheckedIOException | NutsIOException ex) {
-            ws.log().of(FilesFoldersApi.class).with().session(session).level(Level.FINE).verb(NutsLogVerb.FAIL)
+            session.log().of(FilesFoldersApi.class).with().level(Level.FINE).verb(NutsLogVerb.FAIL)
                     .log(NutsMessage.jstyle("unable to navigate : file not found {0}", dotFilesUrl));
         }
         return all.toArray(new Item[0]);
@@ -91,10 +91,10 @@ public class FilesFoldersApi {
         NutsWorkspace ws = session.getWorkspace();
         InputStream foldersFileStream = null;
         String dotFilesUrl = baseUrl + "/" + CoreNutsConstants.Files.DOT_FILES;
-        NutsVersion versionString = ws.version().parser().parse("0.5.5");
+        NutsVersion versionString = session.version().parser().parse("0.5.5");
         try {
             session.getTerminal().printProgress("%-8s %s", "browse",session.io().path(baseUrl).toCompressedForm());
-            foldersFileStream = ws.io().monitor().setSource(dotFilesUrl).setSession(session).create();
+            foldersFileStream = session.io().monitor().setSource(dotFilesUrl).setSession(session).create();
             List<String> splitted = StringTokenizerUtils.split(CoreIOUtils.loadString(foldersFileStream, true), "\n\r");
             for (String s : splitted) {
                 s = s.trim();
@@ -103,7 +103,7 @@ public class FilesFoldersApi {
                         if (all.isEmpty()) {
                             s = s.substring(1).trim();
                             if (s.startsWith("version=")) {
-                                versionString = ws.version().parser().parse(s.substring("version=".length()).trim());
+                                versionString = session.version().parser().parse(s.substring("version=".length()).trim());
                             }
                         }
                     } else {
@@ -141,19 +141,19 @@ public class FilesFoldersApi {
                 }
             }
         } catch (UncheckedIOException | NutsIOException ex) {
-            ws.log().of(FilesFoldersApi.class).with().session(session).level(Level.FINE).verb(NutsLogVerb.FAIL)
+            session.log().of(FilesFoldersApi.class).with().level(Level.FINE).verb(NutsLogVerb.FAIL)
                     .log(NutsMessage.jstyle("unable to navigate : file not found {0}", dotFilesUrl));
         }
         if (versionString.compareTo("0.5.7") < 0) {
             if (folders) {
                 String[] foldersFileContent = null;
                 String dotFolderUrl = baseUrl + "/" + CoreNutsConstants.Files.DOT_FOLDERS;
-                try (InputStream stream = ws.io().monitor().setSource(dotFolderUrl)
+                try (InputStream stream = session.io().monitor().setSource(dotFolderUrl)
                         .setSession(session).create()) {
                     foldersFileContent = StringTokenizerUtils.split(CoreIOUtils.loadString(stream, true), "\n\r")
                             .stream().map(x -> x.trim()).filter(x -> x.length() > 0).toArray(String[]::new);
                 } catch (IOException | UncheckedIOException | NutsIOException ex) {
-                    ws.log().of(FilesFoldersApi.class).with().session(session).level(Level.FINE).verb(NutsLogVerb.FAIL)
+                    session.log().of(FilesFoldersApi.class).with().level(Level.FINE).verb(NutsLogVerb.FAIL)
                             .log(NutsMessage.jstyle("unable to navigate : file not found {0}", dotFolderUrl));
                 }
                 if (foldersFileContent != null) {
@@ -167,7 +167,7 @@ public class FilesFoldersApi {
     }
 
     public static Iterator<NutsId> createIterator(
-            NutsWorkspace workspace, NutsRepository repository, String rootUrl, String basePath, NutsIdFilter filter, RemoteRepoApi strategy, NutsSession session, int maxDepth, IteratorModel model
+            NutsSession workspace, NutsRepository repository, String rootUrl, String basePath, NutsIdFilter filter, RemoteRepoApi strategy, NutsSession session, int maxDepth, IteratorModel model
     ) {
         return new FilesFoldersApiIdIterator(workspace, repository, rootUrl, basePath, filter, strategy, session, model, maxDepth);
     }

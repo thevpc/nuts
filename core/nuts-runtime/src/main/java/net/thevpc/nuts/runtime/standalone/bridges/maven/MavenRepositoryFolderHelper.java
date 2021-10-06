@@ -79,14 +79,14 @@ public class MavenRepositoryFolderHelper {
 
     protected NutsLogger _LOG(NutsSession session) {
         if (LOG == null) {
-            LOG = this.ws.log().setSession(session).of(MavenRepositoryFolderHelper.class);
+            LOG = session.log().of(MavenRepositoryFolderHelper.class);
         }
         return LOG;
     }
 
     public Path getIdLocalFile(NutsId id, NutsSession session) {
         return getStoreLocation().resolve(NutsRepositoryExt.of(repo).getIdBasedir(id, session))
-                .resolve(ws.locations().getDefaultIdFilename(id));
+                .resolve(session.locations().getDefaultIdFilename(id));
     }
 
     public NutsContent fetchContentImpl(NutsId id, Path localPath, NutsSession session) {
@@ -104,7 +104,7 @@ public class MavenRepositoryFolderHelper {
 
     protected String getIdFilename(NutsId id, NutsSession session) {
         if (repo == null) {
-            return ws.locations().getDefaultIdFilename(id);
+            return session.locations().getDefaultIdFilename(id);
         }
         return NutsRepositoryExt.of(repo).getIdFilename(id, session);
     }

@@ -129,7 +129,7 @@ public final class NutsApplications {
         NutsApplicationContext applicationContext = null;
         applicationContext = applicationInstance.createApplicationContext(session, args, startTimeMillis);
         if (applicationContext == null) {
-            applicationContext = ws.apps().createApplicationContext(session, args, startTimeMillis, applicationInstance.getClass(), null);
+            applicationContext = session.apps().createApplicationContext(session, args, startTimeMillis, applicationInstance.getClass(), null);
         }
 
         //copy inter-process parameters only

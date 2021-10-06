@@ -53,7 +53,7 @@ public class DefaultNutsRepositoryFilter extends AbstractRepositoryFilter{
     @Override
     public NutsRepositoryFilter simplify() {
         if(exactRepos.isEmpty() && wildcardRepos.isEmpty()){
-            return getWorkspace().repos().filter().always();
+            return getSession().repos().filter().always();
         }
         return this;
     }

@@ -31,12 +31,10 @@ public class Test09_FindLinuxTest {
 
         //should throw NutsNotFoundException because
         //would not be able to install nsh and other companions
-        NutsWorkspace ws = TestUtils.openNewTestWorkspace(
+        NutsSession ws = TestUtils.openNewTestWorkspace(
                 "--archetype", "default",
-                "--skip-companions").getWorkspace();
-        ws=ws.createSession().getWorkspace();
-        NutsSession session = ws.createSession();
-        List<NutsId> def = session.search().addId("nuts").setOptional(false).setLatest(true).setFailFast(false)
+                "--skip-companions");
+        List<NutsId> def = ws.search().addId("nuts").setOptional(false).setLatest(true).setFailFast(false)
 //                .repository("maven-local")
                 .setDefaultVersions(true)
                 .setInstallStatus(ws.filters().installStatus().byDeployed(true))

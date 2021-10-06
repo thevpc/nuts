@@ -22,22 +22,22 @@ public class NutsSettingsUserSubCommand extends AbstractNutsSettingsSubCommand {
     }
 
     public static boolean exec(NutsRepository editedRepo, NutsCommandLine cmdLine, Boolean autoSave, NutsSession session) {
-        NutsWorkspace ws = session.getWorkspace();
-        NutsCommandLineManager commandLineFormat = ws.commandLine();
+//        NutsWorkspace ws = session.getWorkspace();
+        NutsCommandLineManager commandLineFormat = session.commandLine();
         if (cmdLine.next("add user", "au") != null) {
             NutsRepository repository = null;
             if (editedRepo != null) {
                 repository = editedRepo;
             } else {
                 if (cmdLine.next("--repo", "-r") != null) {
-                    repository = ws.repos().getRepository(cmdLine.required().nextNonOption(commandLineFormat.createName("RepositoryId")).getString());
+                    repository = session.repos().getRepository(cmdLine.required().nextNonOption(commandLineFormat.createName("RepositoryId")).getString());
                 }
             }
             if (repository == null) {
                 String user = cmdLine.required().nextNonOption(commandLineFormat.createName("Username")).getString();
                 char[] password = cmdLine.nextNonOption(commandLineFormat.createName("Password")).getString().toCharArray();
                 if (cmdLine.isExecMode()) {
-                    ws.security().addUser(user).setCredentials(password).run();
+                    session.security().addUser(user).setCredentials(password).run();
                 }
             } else {
                 String user = cmdLine.required().nextNonOption(commandLineFormat.createName("Username")).getString();
@@ -53,7 +53,7 @@ public class NutsSettingsUserSubCommand extends AbstractNutsSettingsSubCommand {
                 }
             }
             if (cmdLine.isExecMode()) {
-                ws.config().save();
+                session.config().save();
             }
             return true;
         } else {
@@ -64,13 +64,13 @@ public class NutsSettingsUserSubCommand extends AbstractNutsSettingsSubCommand {
                     repository = editedRepo;
                 } else {
                     if (cmdLine.next("--repo", "-r") != null) {
-                        repository = ws.repos().getRepository(cmdLine.required().nextNonOption(commandLineFormat.createName("repository")).getString());
+                        repository = session.repos().getRepository(cmdLine.required().nextNonOption(commandLineFormat.createName("repository")).getString());
                     }
                 }
                 if (cmdLine.isExecMode()) {
                     NutsUser[] security;
                     if (repository == null) {
-                        security = ws.security().findUsers();
+                        security = session.security().findUsers();
                     } else {
                         security = repository.security().findUsers();
                     }
@@ -92,7 +92,7 @@ public class NutsSettingsUserSubCommand extends AbstractNutsSettingsSubCommand {
                     repository = editedRepo;
                 } else {
                     if (cmdLine.next("--repo", "-r") != null) {
-                        repository = ws.repos().getRepository(cmdLine.required().nextNonOption(commandLineFormat.createName("RepositoryId")).getString());
+                        repository = session.repos().getRepository(cmdLine.required().nextNonOption(commandLineFormat.createName("RepositoryId")).getString());
                     }
                 }
 
@@ -113,7 +113,7 @@ public class NutsSettingsUserSubCommand extends AbstractNutsSettingsSubCommand {
                 if (cmdLine.isExecMode()) {
                     boolean admin;
                     if (repository == null) {
-                        admin = ws.security().isAllowed(NutsConstants.Permissions.ADMIN);
+                        admin = session.security().isAllowed(NutsConstants.Permissions.ADMIN);
                     } else {
                         admin = repository.security().isAllowed(NutsConstants.Permissions.ADMIN);
                     }
@@ -126,11 +126,11 @@ public class NutsSettingsUserSubCommand extends AbstractNutsSettingsSubCommand {
                     }
 
                     if (repository == null) {
-                        ws.security().updateUser(user).setCredentials(password).setOldCredentials(oldPassword).run();
+                        session.security().updateUser(user).setCredentials(password).setOldCredentials(oldPassword).run();
                     } else {
                         repository.security().updateUser(user).setCredentials(password).setOldCredentials(oldPassword).run();
                     }
-                    ws.config().save();
+                    session.config().save();
                 }
                 return true;
 
@@ -140,7 +140,7 @@ public class NutsSettingsUserSubCommand extends AbstractNutsSettingsSubCommand {
                     repository = editedRepo;
                 } else {
                     if (cmdLine.next("--repo", "-r") != null) {
-                        repository = ws.repos().getRepository(cmdLine.required().nextNonOption(commandLineFormat.createName("RepositoryId")).getString());
+                        repository = session.repos().getRepository(cmdLine.required().nextNonOption(commandLineFormat.createName("RepositoryId")).getString());
                     }
                 }
 
@@ -148,7 +148,7 @@ public class NutsSettingsUserSubCommand extends AbstractNutsSettingsSubCommand {
                 if (cmdLine.isExecMode()) {
                     NutsUser u = null;
                     if (repository == null) {
-                        u = ws.security().findUser(user);
+                        u = session.security().findUser(user);
                     } else {
                         u = repository.security().getEffectiveUser(user);
                     }
@@ -189,7 +189,7 @@ public class NutsSettingsUserSubCommand extends AbstractNutsSettingsSubCommand {
                                     if (repository != null) {
                                         repository.security().updateUser(user).addGroup(a).run();
                                     } else {
-                                        ws.security().updateUser(user).addGroup(a).run();
+                                        session.security().updateUser(user).addGroup(a).run();
                                     }
                                 }
                                 break;
@@ -200,7 +200,7 @@ public class NutsSettingsUserSubCommand extends AbstractNutsSettingsSubCommand {
                                     if (repository != null) {
                                         repository.security().updateUser(user).removeGroup(a).run();
                                     } else {
-                                        ws.security().updateUser(user).removeGroup(a).run();
+                                        session.security().updateUser(user).removeGroup(a).run();
                                     }
                                 }
                                 break;
@@ -211,7 +211,7 @@ public class NutsSettingsUserSubCommand extends AbstractNutsSettingsSubCommand {
                                     if (repository != null) {
                                         repository.security().updateUser(user).addPermission(a).run();
                                     } else {
-                                        ws.security().updateUser(user).addPermission(a).run();
+                                        session.security().updateUser(user).addPermission(a).run();
                                     }
                                 }
                                 break;
@@ -222,7 +222,7 @@ public class NutsSettingsUserSubCommand extends AbstractNutsSettingsSubCommand {
                                     if (repository != null) {
                                         repository.security().updateUser(user).removePermission(a).run();
                                     } else {
-                                        ws.security().updateUser(user).removePermission(a).run();
+                                        session.security().updateUser(user).removePermission(a).run();
                                     }
                                 }
                                 break;
@@ -233,7 +233,7 @@ public class NutsSettingsUserSubCommand extends AbstractNutsSettingsSubCommand {
                                     if (repository != null) {
                                         repository.security().updateUser(user).setRemoteIdentity(a).run();
                                     } else {
-                                        ws.security().updateUser(user).setRemoteIdentity(a).run();
+                                        session.security().updateUser(user).setRemoteIdentity(a).run();
                                     }
                                 }
                                 break;
@@ -245,7 +245,7 @@ public class NutsSettingsUserSubCommand extends AbstractNutsSettingsSubCommand {
                                     if (repository != null) {
                                         repository.security().updateUser(user).setCredentials(pwd).setOldCredentials(old).run();
                                     } else {
-                                        ws.security().updateUser(user).setCredentials(pwd).setOldCredentials(old).run();
+                                        session.security().updateUser(user).setCredentials(pwd).setOldCredentials(old).run();
                                     }
                                 }
                                 Arrays.fill(pwd, '\0');
@@ -258,7 +258,7 @@ public class NutsSettingsUserSubCommand extends AbstractNutsSettingsSubCommand {
                     }
                 }
                 if (cmdLine.isExecMode()) {
-                    ws.config().save();
+                    session.config().save();
                 }
                 return true;
 
@@ -268,16 +268,16 @@ public class NutsSettingsUserSubCommand extends AbstractNutsSettingsSubCommand {
                     repository = editedRepo;
                 } else {
                     if (cmdLine.next("--repo", "-r") != null) {
-                        repository = ws.repos().getRepository(cmdLine.required().nextNonOption(commandLineFormat.createName("RepositoryId")).getString());
+                        repository = session.repos().getRepository(cmdLine.required().nextNonOption(commandLineFormat.createName("RepositoryId")).getString());
                     }
                 }
                 //unsecure-box
                 if (cmdLine.isExecMode()) {
                     char[] credentials = null;
-                    if (!ws.security().isAdmin()) {
+                    if (!session.security().isAdmin()) {
                         credentials = session.getTerminal().readPassword("Enter password : ");
                     }
-                    if (ws.security().setSecureMode(false,credentials)) {
+                    if (session.security().setSecureMode(false,credentials)) {
                         out.println("<<unsecure box activated.Anonymous has all rights.>>");
                     } else {
                         out.println("<<unsecure box is already activated.>>");
@@ -286,11 +286,11 @@ public class NutsSettingsUserSubCommand extends AbstractNutsSettingsSubCommand {
                         Arrays.fill(credentials, '\0');
                     }
                 }
-                ws.config().save();
+                session.config().save();
                 return true;
             } else if (cmdLine.next("secure") != null) {
                 char[] credentials = null;
-                if (!ws.security().isAdmin()) {
+                if (!session.security().isAdmin()) {
                     credentials = session.getTerminal().readPassword("Enter password : ");
                 }
                 NutsRepository repository = null;
@@ -298,12 +298,12 @@ public class NutsSettingsUserSubCommand extends AbstractNutsSettingsSubCommand {
                     repository = editedRepo;
                 } else {
                     if (cmdLine.next("--repo", "-r") != null) {
-                        repository = ws.repos().getRepository(cmdLine.required().nextNonOption(commandLineFormat.createName("RepositoryId")).getString());
+                        repository = session.repos().getRepository(cmdLine.required().nextNonOption(commandLineFormat.createName("RepositoryId")).getString());
                     }
                 }
                 //secure-box
                 if (cmdLine.isExecMode()) {
-                    if (ws.security().setSecureMode(true,credentials)) {
+                    if (session.security().setSecureMode(true,credentials)) {
                         out.println("\"\"secure box activated.\"\"");
                     } else {
                         out.println("\"\"secure box already activated.\"\"");
@@ -312,7 +312,7 @@ public class NutsSettingsUserSubCommand extends AbstractNutsSettingsSubCommand {
                 if (credentials != null) {
                     Arrays.fill(credentials, '\0');
                 }
-                ws.config().save();
+                session.config().save();
                 return true;
             }
         }

@@ -48,7 +48,7 @@ public class PropsCommand extends AbstractNshBuiltin {
         NutsCommandLine commandLine = cmdLine(args, context);
         Options o = new Options();
         NutsArgument a;
-        NutsCommandLineManager commandLineFormat = context.getWorkspace().commandLine();
+        NutsCommandLineManager commandLineFormat = context.getSession().commandLine();
         commandLine.setCommandName(getName());
         do {
             if (commandLine.next("get") != null) {
@@ -212,14 +212,14 @@ public class PropsCommand extends AbstractNshBuiltin {
     }
 
     private int action_list(JShellExecutionContext context, Options o) {
-        context.getWorkspace().formats().object().setSession(context.getSession()).setValue(getProperties(o, context)).print();
+        context.getSession().formats().object().setSession(context.getSession()).setValue(getProperties(o, context)).print();
         return 0;
     }
 
     private int action_get(JShellExecutionContext context, Options o) {
         Map<String, String> p = getProperties(o, context);
         String v = p.get(o.property);
-        context.getWorkspace().formats().object().setSession(context.getSession()).setValue(v == null ? "" : v).print();
+        context.getSession().formats().object().setSession(context.getSession()).setValue(v == null ? "" : v).print();
         return 0;
     }
 
@@ -297,8 +297,8 @@ public class PropsCommand extends AbstractNshBuiltin {
             Format format = o.targetFormat;
             switch (format) {
                 case AUTO: {
-                    NutsObjectFormat f = context.getWorkspace().formats().object().setSession(context.getSession()).setValue(p);
-                    f.configure(true, context.getWorkspace().boot().getBootOptions().getOutputFormatOptions());
+                    NutsObjectFormat f = context.getSession().formats().object().setSession(context.getSession()).setValue(p);
+                    f.configure(true, context.getSession().boot().getBootOptions().getOutputFormatOptions());
                     f.configure(true, context.getSession().getOutputFormatOptions());
                     f.println(context.getSession().out());
                     break;

@@ -256,7 +256,7 @@ public class CoreFilterUtils {
 //    }
 
     public static <T extends NutsFilter> T[]
-    getTopLevelFilters(NutsFilter idFilter, Class<T> clazz, NutsWorkspace ws) {
+    getTopLevelFilters(NutsFilter idFilter, Class<T> clazz, NutsSession ws) {
         return Arrays.stream(getTopLevelFilters(idFilter))
                 .map(x -> ws.filters().as(clazz, x))
                 .toArray(value -> (T[]) Array.newInstance(clazz, value));
@@ -273,7 +273,7 @@ public class CoreFilterUtils {
     }
 
     public static NutsIdFilter idFilterOf(Map<String, String> map, NutsIdFilter idFilter, NutsDescriptorFilter
-            descriptorFilter, NutsWorkspace ws) {
+            descriptorFilter, NutsSession ws) {
         return (NutsIdFilter) ws.id().filter().nonnull(idFilter).and(
                 CoreFilterUtils.createNutsDescriptorFilter(map, ws).and(descriptorFilter).to(NutsIdFilter.class)
         );
@@ -281,7 +281,7 @@ public class CoreFilterUtils {
 
 
     public static NutsDescriptorFilter createNutsDescriptorFilter(String arch, String os, String osDist, String
-            platform, String desktopEnv, NutsWorkspace ws) {
+            platform, String desktopEnv, NutsSession ws) {
         NutsDescriptorFilterManager d = ws.descriptor().filter();
         return (NutsDescriptorFilter) d.byArch(arch)
                 .and(d.byOs(os))
@@ -291,7 +291,7 @@ public class CoreFilterUtils {
                 ;
     }
 
-    public static NutsDescriptorFilter createNutsDescriptorFilter(Map<String, String> faceMap, NutsWorkspace ws) {
+    public static NutsDescriptorFilter createNutsDescriptorFilter(Map<String, String> faceMap, NutsSession ws) {
         return createNutsDescriptorFilter(
                 faceMap == null ? null : faceMap.get(NutsConstants.IdProperties.ARCH),
                 faceMap == null ? null : faceMap.get(NutsConstants.IdProperties.OS),
@@ -526,7 +526,7 @@ public class CoreFilterUtils {
         }
         NutsIdParser parser = session.id().parser();
         NutsId currentId = parser.parse(current);
-        String[] allConds = envCond.getPlatform();
+        String[] allConds = envCond.getDesktopEnvironment();
         if (allConds != null && allConds.length > 0) {
             for (String cond : allConds) {
                 if (NutsBlankable.isBlank(cond)) {

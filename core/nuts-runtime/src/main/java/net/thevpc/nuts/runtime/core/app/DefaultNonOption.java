@@ -54,7 +54,7 @@ public class DefaultNonOption implements NutsArgumentName {
     @Override
     public List<NutsArgumentCandidate> getCandidates(NutsCommandAutoComplete context) {
         List<NutsArgumentCandidate> list = new ArrayList<>();
-        list.add(context.getWorkspace().commandLine().createCandidate("<" + getName() + ">").build());
+        list.add(context.getSession().commandLine().createCandidate("<" + getName() + ">").build());
         return list;
     }
 

@@ -154,7 +154,7 @@ public class DefaultPathBuilder implements NutsPathBuilder {
 
         public EffectiveResolver(NutsSession session) {
             this.session = session;
-            fallback = new NutsWorkspaceVarExpansionFunction(session.getWorkspace());
+            fallback = new NutsWorkspaceVarExpansionFunction(session);
         }
 
         @Override

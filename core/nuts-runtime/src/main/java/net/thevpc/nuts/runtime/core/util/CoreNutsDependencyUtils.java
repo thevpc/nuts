@@ -36,8 +36,7 @@ public class CoreNutsDependencyUtils {
     }
 
     public static NutsDependencyFilter createJavaRunDependencyFilter(NutsSession session) {
-        NutsWorkspace ws = session.getWorkspace();
-        NutsDependencyFilterManager d = ws.dependency().filter();
+        NutsDependencyFilterManager d = session.dependency().filter();
         return d
                 .byScope(NutsDependencyScopePattern.RUN)
                 .and(d.byOptional(false))
@@ -46,7 +45,7 @@ public class CoreNutsDependencyUtils {
                                 .or(
                                         d.byType("jar")
                                 )
-                ).and(d.byOs(ws.env().getOsFamily()))
-                .and(d.byArch(ws.env().getArchFamily()));
+                ).and(d.byOs(session.env().getOsFamily()))
+                .and(d.byArch(session.env().getArchFamily()));
     }
 }

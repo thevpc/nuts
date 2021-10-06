@@ -67,8 +67,7 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
         List<String> idsToInstall = new ArrayList<>();
 
 //        ArrayList<String> idsToInstall ;
-        NutsWorkspace ws = session.getWorkspace();
-//        ArrayList<String> executorOptions = new ArrayList<>();
+        //        ArrayList<String> executorOptions = new ArrayList<>();
 //        NutsExecutionType execType = null;
 //        boolean fetch = false;
         boolean missingAnyArgument = true;
@@ -174,8 +173,8 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
                 options.getLauncher().getNutsOptions().add("--exec-options=" + a.getValue().getString());
             } else if ((a = commandLine.nextString("-i", "--installed")) != null) {
                 session.setConfirm(NutsConfirmationMode.YES);
-                for (NutsId resultId : ws.search().setInstallStatus(
-                        ws.filters().installStatus().byInstalled(true)
+                for (NutsId resultId : session.search().setInstallStatus(
+                        session.filters().installStatus().byInstalled(true)
                 ).getResultIds()) {
                     idsToInstall.add(resultId.getLongName());
                     missingAnyArgument = false;
@@ -183,7 +182,7 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
             } else if ((a = commandLine.nextString("-c", "--companions")) != null) {
                 session.setConfirm(NutsConfirmationMode.YES);
                 for (NutsId companion : session.extensions().getCompanionIds()) {
-                    idsToInstall.add(ws.search().addId(companion).setLatest(true).getResultIds().required().getLongName());
+                    idsToInstall.add(session.search().addId(companion).setLatest(true).getResultIds().required().getLongName());
                     missingAnyArgument = false;
                 }
             } else if ((a = commandLine.nextString("--switch")) != null) {
@@ -222,7 +221,7 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
                 if (ignoreUnsupportedOs) {
                     return;
                 }
-                throw new NutsExecutionException(session, NutsMessage.cstyle("platform not supported : %s", ws.env().getOs()), 2);
+                throw new NutsExecutionException(session, NutsMessage.cstyle("platform not supported : %s", session.env().getOs()), 2);
             }
             if (!idsToInstall.isEmpty()) {
                 printResults(session, ndi.addScript(options, idsToInstall.toArray(new String[0])));
@@ -259,7 +258,6 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
     public void runRemoveLauncher(NutsCommandLine commandLine, NutsSession session) {
         ArrayList<String> idsToUninstall = new ArrayList<>();
         boolean forceAll = false;
-        NutsWorkspace ws = session.getWorkspace();
         boolean missingAnyArgument = true;
         NutsArgument a;
         boolean ignoreUnsupportedOs = false;
@@ -278,7 +276,7 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
         if (missingAnyArgument) {
             commandLine.required();
         }
-        Path workspaceLocation = Paths.get(ws.locations().getWorkspaceLocation());
+        Path workspaceLocation = Paths.get(session.locations().getWorkspaceLocation());
         if (commandLine.isExecMode()) {
             if (forceAll) {
                 session.setConfirm(NutsConfirmationMode.YES);
@@ -288,7 +286,7 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
                 if (ignoreUnsupportedOs) {
                     return;
                 }
-                throw new NutsExecutionException(session, NutsMessage.cstyle("platform not supported : %s", ws.env().getOs()), 2);
+                throw new NutsExecutionException(session, NutsMessage.cstyle("platform not supported : %s", session.env().getOs()), 2);
             }
             boolean subTrace = session.isTrace();
             if (!session.isPlainTrace()) {
@@ -311,7 +309,6 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
     }
 
     public void runSwitch(NutsCommandLine commandLine, NutsSession session) {
-        NutsWorkspace ws = session.getWorkspace();
         String switchWorkspaceLocation = null;
         String switchWorkspaceApi = null;
         NutsArgument a;
@@ -382,7 +379,7 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
                 if (ignoreUnsupportedOs) {
                     return;
                 }
-                throw new NutsExecutionException(session, NutsMessage.cstyle("platform not supported : %s ", ws.env().getOs()), 2);
+                throw new NutsExecutionException(session, NutsMessage.cstyle("platform not supported : %s ", session.env().getOs()), 2);
             }
             if (switchWorkspaceLocation != null || switchWorkspaceApi != null) {
                 NdiScriptOptions oo = new NdiScriptOptions()
@@ -399,7 +396,6 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
     }
 
     private void printResults(NutsSession session, PathInfo[] result) {
-        NutsWorkspace ws = session.getWorkspace();
         if (session.isTrace()) {
             result = Arrays.stream(result).filter(x -> x.getStatus() != PathInfo.Status.DISCARDED).toArray(PathInfo[]::new);
             if (session.isPlainTrace()) {
@@ -408,12 +404,12 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
                     session.out().resetLine().printf("%s script %-" + namesSize + "s for %s"
                                     + " at %s%n",
                             (ndiScriptInfo.getStatus() == PathInfo.Status.OVERRIDDEN)
-                                    ? ws.text().ofStyled("re-install", NutsTextStyles.of(NutsTextStyle.success(), NutsTextStyle.underlined()))
-                                    : ws.text().ofStyled("install", NutsTextStyle.success())
+                                    ? session.text().ofStyled("re-install", NutsTextStyles.of(NutsTextStyle.success(), NutsTextStyle.underlined()))
+                                    : session.text().ofStyled("install", NutsTextStyle.success())
                             ,
-                            ws.text().ofStyled(ndiScriptInfo.getPath().getFileName().toString(), NutsTextStyle.path()),
+                            session.text().ofStyled(ndiScriptInfo.getPath().getFileName().toString(), NutsTextStyle.path()),
                             ndiScriptInfo.getId(),
-                            ws.text().ofStyled(NdiUtils.betterPath(ndiScriptInfo.getPath().toString()), NutsTextStyle.path())
+                            session.text().ofStyled(NdiUtils.betterPath(ndiScriptInfo.getPath().toString()), NutsTextStyle.path())
                     );
                 }
 

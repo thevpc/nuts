@@ -89,8 +89,8 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
         setArguments(args);
     }
 
-    public NutsWorkspace getWorkspace() {
-        return session.getWorkspace();
+    public NutsSession getSession() {
+        return session;
     }
 
     @Override
@@ -218,7 +218,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
                 skipAll();
                 return this;
             }
-            NutsTextBuilder m = getWorkspace().text().builder();
+            NutsTextBuilder m = getSession().text().builder();
             m.append("unexpected argument ").append(highlightText(String.valueOf(peek())));
             if (errorMessage != null && errorMessage.textLength() > 0) {
                 m.append(" , ").append(errorMessage);
@@ -230,7 +230,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
 
     @Override
     public NutsCommandLine unexpectedArgument(NutsMessage errorMessage) {
-        return unexpectedArgument(errorMessage == null ? null : getWorkspace().text().toText(errorMessage));
+        return unexpectedArgument(errorMessage == null ? null : getSession().text().toText(errorMessage));
     }
 
     @Override
@@ -251,7 +251,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
                 return this;
             }
             throwError((errorMessage == null || errorMessage.isEmpty())
-                    ? getWorkspace().text().toText("missing arguments")
+                    ? getSession().text().toText("missing arguments")
                     : errorMessage
             );
         }
@@ -260,7 +260,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
 
     @Override
     public NutsCommandLine required(NutsMessage errorMessage) {
-        return required(errorMessage == null ? null : getWorkspace().text().toText(errorMessage));
+        return required(errorMessage == null ? null : getSession().text().toText(errorMessage));
     }
 
     @Override
@@ -376,7 +376,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
                             }
                         }
                         default: {
-                            throwError(getWorkspace().text().builder().append("unsupported ")
+                            throwError(getSession().text().builder().append("unsupported ")
                                     .append(highlightText(String.valueOf(expectValue)))
                                     .build()
                             );
@@ -616,7 +616,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
 
     @Override
     public void throwError(NutsString message) {
-        NutsTextBuilder m = getWorkspace().text().builder();
+        NutsTextBuilder m = getSession().text().builder();
         if (!NutsBlankable.isBlank(commandName)) {
             m.append(commandName).append(" : ");
         }
@@ -732,7 +732,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
     }
 
     private NutsArgumentCandidate createCandidate(String s) {
-        return getWorkspace().commandLine().createCandidate(s).build();
+        return session.commandLine().createCandidate(s).build();
     }
 
     public NutsArgument next(NutsArgumentName name, boolean forceNonOption, boolean error) {
@@ -768,11 +768,11 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
                 return null;//return new Argument("");
             }
             if (hasNext() && (!forceNonOption || !peek().isOption())) {
-                throwError(getWorkspace().text().builder().append("unexpected option ").append(highlightText(String.valueOf(peek())))
+                throwError(getSession().text().builder().append("unexpected option ").append(highlightText(String.valueOf(peek())))
                         .build()
                 );
             }
-            throwError(getWorkspace().text().builder().append("missing argument ").append(highlightText((name == null ? "value" : name.getName())))
+            throwError(getSession().text().builder().append("missing argument ").append(highlightText((name == null ? "value" : name.getName())))
                     .build()
             );
         }
@@ -891,7 +891,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
     }
 
     private NutsArgument createArgument(String v) {
-        return DefaultNutsCommandLineManager.Factory.createArgument0(getWorkspace(), v, eq);
+        return DefaultNutsCommandLineManager.Factory.createArgument0(getSession(), v, eq);
     }
 
     private boolean isAutoComplete() {
@@ -906,7 +906,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
     }
 
     private NutsString highlightText(String text) {
-        return getWorkspace().text().ofStyled(text, NutsTextStyle.primary3());
+        return getSession().text().ofStyled(text, NutsTextStyle.primary3());
     }
 
     private boolean _configureLast(NutsCommandLine commandLine, NutsCommandLineConfigurable configurable) {

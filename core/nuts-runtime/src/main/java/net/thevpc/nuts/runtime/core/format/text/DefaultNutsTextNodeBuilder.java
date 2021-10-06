@@ -195,9 +195,9 @@ public class DefaultNutsTextNodeBuilder implements NutsTextBuilder {
     @Override
     public NutsString immutable() {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        NutsTextNodeWriterStringer ss = new NutsTextNodeWriterStringer(out, session.getWorkspace());
+        NutsTextNodeWriterStringer ss = new NutsTextNodeWriterStringer(out, session);
         ss.writeNode(build(), getConfiguration());
-        return new NutsImmutableString(session.getWorkspace(), out.toString());
+        return new NutsImmutableString(session, out.toString());
     }
 
     @Override

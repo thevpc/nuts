@@ -34,6 +34,7 @@ import net.thevpc.nuts.runtime.standalone.DefaultNutsWorkspace;
 import net.thevpc.nuts.runtime.standalone.config.ConfigEventType;
 import net.thevpc.nuts.runtime.standalone.config.DefaultNutsWorkspaceConfigModel;
 import net.thevpc.nuts.runtime.standalone.config.NutsWorkspaceConfigSecurity;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.DefaultNutsAddUserCommand;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.DefaultNutsRemoveUserCommand;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.DefaultNutsUpdateUserCommand;
@@ -62,8 +63,8 @@ public class DefaultNutsWorkspaceSecurityModel {
 
     public DefaultNutsWorkspaceSecurityModel(final DefaultNutsWorkspace ws) {
         this.ws = ws;
-        this.agent = new WrapperNutsAuthenticationAgent(ws, (session) -> ws.env().setSession(session).getEnvMap(), (x, s) -> getAuthenticationAgent(x, s));
-        ws.events().addWorkspaceListener(new ClearAuthOnWorkspaceChange());
+        this.agent = new WrapperNutsAuthenticationAgent(ws, (session) -> session.env().getEnvMap(), (x, s) -> getAuthenticationAgent(x, s));
+        NutsWorkspaceUtils.defaultSession(ws).events().addWorkspaceListener(new ClearAuthOnWorkspaceChange());
     }
 
     protected NutsLoggerOp _LOGOP(NutsSession session) {
@@ -72,7 +73,7 @@ public class DefaultNutsWorkspaceSecurityModel {
 
     protected NutsLogger _LOG(NutsSession session) {
         if (LOG == null) {
-            LOG = this.ws.log().setSession(session).of(DefaultNutsWorkspaceSecurityModel.class);
+            LOG = session.log().setSession(session).of(DefaultNutsWorkspaceSecurityModel.class);
         }
         return LOG;
     }
@@ -116,9 +117,9 @@ public class DefaultNutsWorkspaceSecurityModel {
                 _LOGOP(session).level(Level.CONFIG).verb(NutsLogVerb.WARNING)
                         .log(NutsMessage.jstyle("{0} user has no credentials. reset to default",NutsConstants.Users.ADMIN));
             }
-            NutsUserConfig u = NutsWorkspaceConfigManagerExt.of(ws.config()).getModel().getUser(NutsConstants.Users.ADMIN, session);
+            NutsUserConfig u = NutsWorkspaceConfigManagerExt.of(session.config()).getModel().getUser(NutsConstants.Users.ADMIN, session);
             u.setCredentials(CoreStringUtils.chrToStr(createCredentials("admin".toCharArray(), false, null, session)));
-            NutsWorkspaceConfigManagerExt.of(ws.config()).getModel().setUser(u, session);
+            NutsWorkspaceConfigManagerExt.of(session.config()).getModel().setUser(u, session);
         }
 
         char[] credentials = CoreIOUtils.evalSHA1(adminPassword);
@@ -129,7 +130,7 @@ public class DefaultNutsWorkspaceSecurityModel {
         Arrays.fill(credentials, '\0');
         boolean activated = false;
         if (isSecure(session)) {
-            NutsWorkspaceConfigManagerExt.of(ws.config()).getModel().setSecure(false, session);
+            NutsWorkspaceConfigManagerExt.of(session.config()).getModel().setSecure(false, session);
             activated = true;
         }
         return activated;
@@ -147,7 +148,7 @@ public class DefaultNutsWorkspaceSecurityModel {
         }
         Arrays.fill(credentials, '\0');
         if (!isSecure(session)) {
-            NutsWorkspaceConfigManagerExt.of(ws.config()).getModel().setSecure(true, session);
+            NutsWorkspaceConfigManagerExt.of(session.config()).getModel().setSecure(true, session);
             deactivated = true;
         }
         return deactivated;
@@ -174,7 +175,7 @@ public class DefaultNutsWorkspaceSecurityModel {
 
 
     public NutsUser findUser(String username, NutsSession session) {
-        NutsUserConfig security = NutsWorkspaceConfigManagerExt.of(ws.config()).getModel().getUser(username, session);
+        NutsUserConfig security = NutsWorkspaceConfigManagerExt.of(session.config()).getModel().getUser(username, session);
         Stack<String> inherited = new Stack<>();
         if (security != null) {
             Stack<String> visited = new Stack<>();
@@ -184,7 +185,7 @@ public class DefaultNutsWorkspaceSecurityModel {
             while (!curr.empty()) {
                 String s = curr.pop();
                 visited.add(s);
-                NutsUserConfig ss = NutsWorkspaceConfigManagerExt.of(ws.config()).getModel().getUser(s, session);
+                NutsUserConfig ss = NutsWorkspaceConfigManagerExt.of(session.config()).getModel().getUser(s, session);
                 if (ss != null) {
                     inherited.addAll(Arrays.asList(ss.getPermissions()));
                     for (String group : ss.getGroups()) {
@@ -201,7 +202,7 @@ public class DefaultNutsWorkspaceSecurityModel {
 
     public NutsUser[] findUsers(NutsSession session) {
         List<NutsUser> all = new ArrayList<>();
-        for (NutsUserConfig secu : NutsWorkspaceConfigManagerExt.of(ws.config()).getModel().getUsers(session)) {
+        for (NutsUserConfig secu : NutsWorkspaceConfigManagerExt.of(session.config()).getModel().getUsers(session)) {
             all.add(findUser(secu.getUser(), session));
         }
         return all.toArray(new NutsUser[0]);
@@ -238,7 +239,7 @@ public class DefaultNutsWorkspaceSecurityModel {
         if (aa != null) {
             return aa;
         }
-        NutsUserConfig s = NutsWorkspaceConfigManagerExt.of(ws.config()).getModel().getUser(n, session);
+        NutsUserConfig s = NutsWorkspaceConfigManagerExt.of(session.config()).getModel().getUser(n, session);
         if (s != null) {
             String[] rr = s.getPermissions();
             aa = new NutsAuthorizations(Arrays.asList(rr == null ? new String[0] : rr));
@@ -272,7 +273,7 @@ public class DefaultNutsWorkspaceSecurityModel {
             if (ea != null) {
                 return ea;
             }
-            NutsUserConfig uc = NutsWorkspaceConfigManagerExt.of(ws.config()).getModel().getUser(n, session);
+            NutsUserConfig uc = NutsWorkspaceConfigManagerExt.of(session.config()).getModel().getUser(n, session);
             if (uc != null) {
                 for (String g : uc.getGroups()) {
                     if (!visitedGroups.contains(g)) {
@@ -340,7 +341,7 @@ public class DefaultNutsWorkspaceSecurityModel {
 
 
     public void login(CallbackHandler handler, NutsSession session) {
-        NutsWorkspaceLoginModule.configure(ws); //initialize it
+        NutsWorkspaceLoginModule.configure(session); //initialize it
         //        if (!NutsConstants.Misc.USER_ANONYMOUS.equals(getCurrentLogin())) {
         //            throw new NutsLoginException("Already logged in");
         //        }
@@ -379,10 +380,10 @@ public class DefaultNutsWorkspaceSecurityModel {
     public NutsAuthenticationAgent getAuthenticationAgent(String authenticationAgentId, NutsSession session) {
         authenticationAgentId = NutsUtilStrings.trim(authenticationAgentId);
         if (NutsBlankable.isBlank(authenticationAgentId)) {
-            authenticationAgentId = NutsWorkspaceConfigManagerExt.of(ws.config())
+            authenticationAgentId = NutsWorkspaceConfigManagerExt.of(session.config())
                     .getModel().getStoredConfigSecurity().getAuthenticationAgent();
         }
-        NutsAuthenticationAgent a = NutsWorkspaceConfigManagerExt.of(ws.config())
+        NutsAuthenticationAgent a = NutsWorkspaceConfigManagerExt.of(session.config())
                 .getModel().createAuthenticationAgent(authenticationAgentId, session);
         return a;
     }
@@ -390,7 +391,7 @@ public class DefaultNutsWorkspaceSecurityModel {
 
     public void setAuthenticationAgent(String authenticationAgentId, NutsSession session) {
 
-        DefaultNutsWorkspaceConfigModel cc = NutsWorkspaceConfigManagerExt.of(ws.config()).getModel();
+        DefaultNutsWorkspaceConfigModel cc = NutsWorkspaceConfigManagerExt.of(session.config()).getModel();
 
         if (cc.createAuthenticationAgent(authenticationAgentId, session) == null) {
             throw new NutsIllegalArgumentException(session,
@@ -407,7 +408,7 @@ public class DefaultNutsWorkspaceSecurityModel {
 
 
     public boolean isSecure(NutsSession session) {
-        return NutsWorkspaceConfigManagerExt.of(ws.config()).getModel().getStoredConfigSecurity().isSecure();
+        return NutsWorkspaceConfigManagerExt.of(session.config()).getModel().getStoredConfigSecurity().isSecure();
     }
 
 

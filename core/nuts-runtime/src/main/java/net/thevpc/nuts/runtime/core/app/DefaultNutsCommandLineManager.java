@@ -111,7 +111,7 @@ public class DefaultNutsCommandLineManager implements NutsCommandLineManager {
     @Override
     public NutsArgument createArgument(String argument) {
         checkSession();
-        return Factory.createArgument0(getWorkspace(), argument, '=');
+        return Factory.createArgument0(getSession(), argument, '=');
     }
 
     @Override
@@ -128,7 +128,7 @@ public class DefaultNutsCommandLineManager implements NutsCommandLineManager {
 
     public static class Factory {
 
-        public static NutsArgument createArgument0(NutsWorkspace ws, String argument, char eq) {
+        public static NutsArgument createArgument0(NutsSession ws, String argument, char eq) {
             return new DefaultNutsArgument(argument, eq);
         }
 

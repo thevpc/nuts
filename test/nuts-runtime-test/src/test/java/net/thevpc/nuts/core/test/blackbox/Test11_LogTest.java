@@ -5,6 +5,7 @@
  */
 package net.thevpc.nuts.core.test.blackbox;
 
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.NutsOsFamily;
 import net.thevpc.nuts.NutsWorkspace;
@@ -28,11 +29,10 @@ public class Test11_LogTest {
         extraProperties.put("nuts.export.always-show-command", "true");
         TestUtils.setSystemProperties(extraProperties);
 
-        NutsWorkspace ws = TestUtils.openNewTestWorkspace(
+        NutsSession ws = TestUtils.openNewTestWorkspace(
                 "--archetype", "default",
-                "--skip-companions").getWorkspace();
+                "--skip-companions");
 
-        ws = ws.createSession().getWorkspace();
         TestUtils.println(ws.version().formatter());
         String result = ws.exec()
                 .addExecutorOption("--main-class=Version")

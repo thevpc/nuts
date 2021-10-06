@@ -63,7 +63,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
         session = this.session;//will be used later
         int wordIndex = -1;
         if (args.length > 0 && args[0].startsWith("--nuts-exec-mode=")) {
-            NutsCommandLine execModeCommand = this.workspace.commandLine().parse(args[0].substring(args[0].indexOf('=') + 1));
+            NutsCommandLine execModeCommand = this.session.commandLine().parse(args[0].substring(args[0].indexOf('=') + 1));
             if (execModeCommand.hasNext()) {
                 NutsArgument a = execModeCommand.next();
                 switch (a.getKey().getString()) {
@@ -91,7 +91,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
                     case "update": {
                         mode = NutsApplicationMode.UPDATE;
                         if (execModeCommand.hasNext()) {
-                            appPreviousVersion = this.workspace.version().parser().parse(execModeCommand.next().getString());
+                            appPreviousVersion = session.version().parser().parse(execModeCommand.next().getString());
                         }
                         modeArgs = execModeCommand.toStringArray();
                         execModeCommand.skipAll();
@@ -108,7 +108,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
         if (_appId != null) {
             //("=== Inherited "+_appId);
         } else {
-            _appId = this.workspace.id().setSession(session).resolveId(appClass);
+            _appId = this.session.id().setSession(session).resolveId(appClass);
         }
         if (_appId == null) {
             throw new NutsExecutionException(session, NutsMessage.cstyle("invalid Nuts Application (%s). Id cannot be resolved",appClass.getName()), 203);
@@ -119,7 +119,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
         //always copy the session to bind to appId
         this.session.setAppId(appId);
 //        NutsWorkspaceConfigManager cfg = workspace.config();
-        NutsWorkspaceLocationManager locations = this.workspace.locations().setSession(session);
+        NutsWorkspaceLocationManager locations = session.locations();
         for (NutsStoreLocation folder : NutsStoreLocation.values()) {
             setFolder(folder, locations.getStoreLocation(this.appId, folder));
             setSharedFolder(folder, locations.getStoreLocation(this.appId.builder().setVersion("SHARED").build(), folder));
@@ -342,7 +342,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
                 return r;
             }
         }
-        return workspace.locations().getStoreLocation(newId,location);
+        return session.locations().getStoreLocation(newId,location);
     }
 
     public NutsApplicationContext setFolder(NutsStoreLocation location, String folder) {
@@ -424,7 +424,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
 
     @Override
     public NutsCommandLine getCommandLine() {
-        return workspace.commandLine().setSession(getSession())
+        return this.session.commandLine().setSession(getSession())
                 .create(getArguments())
                 .setCommandName(getAppId().getArtifactId())
                 .setAutoComplete(getAutoComplete());

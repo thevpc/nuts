@@ -89,6 +89,11 @@ public class MavenFolderRepository extends NutsCachedRepository {
     }
 
     @Override
+    protected boolean isSupportedDeployImpl() {
+        return false;
+    }
+
+    @Override
     protected boolean isAvailableImpl() {
         try {
             String loc = config().setSession(initSession).getLocation(true);
@@ -97,6 +102,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
             return false;
         }
     }
+
     @Override
     public boolean isRemote() {
         return false;
@@ -142,7 +148,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
             return new NutsDefaultContent(
                     session.io().path(f.toString()), true, false);
         } else {
-            getWorkspace().io().copy()
+            session.io().copy()
                     .setSession(session)
                     .from(f).to(localPath).setSafe(true).run();
             return new NutsDefaultContent(

@@ -24,7 +24,6 @@ public class DefaultNutsPushRepositoryCommand extends AbstractNutsPushRepository
 
     public DefaultNutsPushRepositoryCommand(NutsRepository repo) {
         super(repo);
-        LOG = repo.getWorkspace().log().of(DefaultNutsPushRepositoryCommand.class);
     }
 
     protected NutsLoggerOp _LOGOP(NutsSession session) {
@@ -49,7 +48,7 @@ public class DefaultNutsPushRepositoryCommand extends AbstractNutsPushRepository
                         .log(NutsMessage.jstyle("{0} push {1}", CoreStringUtils.alignLeft(getRepo().getName(), 20), getId()));
         } catch (RuntimeException ex) {
 
-            if (LOG.isLoggable(Level.FINEST)) {
+            if (_LOG(session).isLoggable(Level.FINEST)) {
                 _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.FAIL)
                         .log(NutsMessage.jstyle("{0} push {1}", CoreStringUtils.alignLeft(getRepo().getName(), 20), getId()));
             }

@@ -53,20 +53,20 @@ public class DefaultTempAction implements NutsTempAction {
         File rootFolder = null;
         NutsRepository repositoryById = null;
         if (repositoryId == null) {
-            rootFolder = Paths.get(ws.locations().setSession(getSession()).getStoreLocation(NutsStoreLocation.TEMP)).toFile();
+            rootFolder = Paths.get(getSession().locations().setSession(getSession()).getStoreLocation(NutsStoreLocation.TEMP)).toFile();
         } else {
-            repositoryById = ws.repos().setSession(session).getRepository(repositoryId);
-            rootFolder = Paths.get(repositoryById.config().setSession(session).getStoreLocation(NutsStoreLocation.TEMP)).toFile();
+            repositoryById = getSession().repos().setSession(getSession()).getRepository(repositoryId);
+            rootFolder = Paths.get(repositoryById.config().setSession(getSession()).getStoreLocation(NutsStoreLocation.TEMP)).toFile();
         }
-        NutsId appId = session.getAppId();
+        NutsId appId = getSession().getAppId();
         if (appId == null) {
-            appId = session.getWorkspace().getRuntimeId();
+            appId = getSession().getWorkspace().getRuntimeId();
         }
         if (appId != null) {
             rootFolder = new File(
                     rootFolder,
                     NutsConstants.Folders.ID + File.separator
-                            + ws.locations().setSession(session).getDefaultIdBasedir(appId)
+                            + getSession().locations().getDefaultIdBasedir(appId)
             );
         }
         if (name == null) {

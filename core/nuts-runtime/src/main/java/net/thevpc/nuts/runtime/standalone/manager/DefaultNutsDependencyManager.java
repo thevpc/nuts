@@ -63,7 +63,7 @@ public class DefaultNutsDependencyManager implements NutsDependencyManager {
 
     @Override
     public NutsDependencyFilterManager filter() {
-        return getWorkspace().filters().dependency().setSession(getSession());
+        return getSession().filters().dependency().setSession(getSession());
     }
 
     @Override

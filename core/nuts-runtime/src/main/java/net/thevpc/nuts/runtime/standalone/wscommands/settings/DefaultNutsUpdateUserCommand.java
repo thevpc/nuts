@@ -52,8 +52,8 @@ public class DefaultNutsUpdateUserCommand extends AbstractNutsUpdateUserCommand 
     @Override
     public NutsUpdateUserCommand run() {
         checkSession();
-        NutsWorkspace ws = getSession().getWorkspace();
-        NutsWorkspaceSecurityManager sec = ws.security().setSession(session);
+        NutsSession ws = getSession();
+        NutsWorkspaceSecurityManager sec = ws.security().setSession(ws);
         if (!(getCredentials()==null || NutsBlankable.isBlank(new String(getCredentials())))) {
             sec.checkAllowed(NutsConstants.Permissions.SET_PASSWORD, "set-user-credentials");
             String currentLogin = sec.getCurrentUsername();
@@ -66,19 +66,19 @@ public class DefaultNutsUpdateUserCommand extends AbstractNutsUpdateUserCommand 
             }
             if (repo != null) {
                 NutsRepositoryConfigModel rconf = NutsRepositoryConfigManagerExt.of(repo.config()).getModel();
-                NutsUserConfig u = rconf.getUser(login, getSession());
+                NutsUserConfig u = rconf.getUser(login, ws);
                 if (u == null) {
-                    throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("no such user %s", login));
+                    throw new NutsIllegalArgumentException(ws, NutsMessage.cstyle("no such user %s", login));
                 }
                 fillNutsUserConfig(u);
 
                 rconf.setUser(u, session);
 
             } else {
-                DefaultNutsWorkspaceConfigModel wconf = NutsWorkspaceConfigManagerExt.of(ws.config()).getModel();
-                NutsUserConfig u = wconf.getUser(login, getSession());
+                DefaultNutsWorkspaceConfigModel wconf = NutsWorkspaceConfigManagerExt.of(session.config()).getModel();
+                NutsUserConfig u = wconf.getUser(login, ws);
                 if (u == null) {
-                    throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("no such user %s", login));
+                    throw new NutsIllegalArgumentException(ws, NutsMessage.cstyle("no such user %s", login));
                 }
 
                 fillNutsUserConfig(u);
@@ -90,11 +90,11 @@ public class DefaultNutsUpdateUserCommand extends AbstractNutsUpdateUserCommand 
 
     protected void fillNutsUserConfig(NutsUserConfig u) {
         checkSession();
-        NutsWorkspace ws = getSession().getWorkspace();
-        NutsWorkspaceSecurityManager wsec = ws.security().setSession(session);
+        NutsSession ws = getSession();
+        NutsWorkspaceSecurityManager wsec = ws.security().setSession(ws);
         String currentLogin = wsec.getCurrentUsername();
         if (!currentLogin.equals(login)) {
-            repo.security().setSession(session).checkAllowed(NutsConstants.Permissions.ADMIN, "set-user-credentials");
+            repo.security().setSession(ws).checkAllowed(NutsConstants.Permissions.ADMIN, "set-user-credentials");
         }
         if (!wsec.isAllowed(NutsConstants.Permissions.ADMIN)) {
             wsec.checkCredentials(u.getCredentials().toCharArray(),

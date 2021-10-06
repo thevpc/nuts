@@ -42,7 +42,7 @@ import net.thevpc.nuts.runtime.core.util.CoreArrayUtils;
 public class JavaSourceExecutorComponent implements NutsExecutorComponent {
 
     public static NutsId ID;
-    NutsWorkspace ws;
+    NutsSession ws;
 
     @Override
     public NutsId getId() {
@@ -51,7 +51,7 @@ public class JavaSourceExecutorComponent implements NutsExecutorComponent {
 
     @Override
     public int getSupportLevel(NutsSupportLevelContext<NutsDefinition> nutsDefinition) {
-        this.ws = nutsDefinition.getWorkspace();
+        this.ws = nutsDefinition.getSession();
         if (ID == null) {
             ID = ws.id().parser().parse("net.thevpc.nuts.exec:exec-java-src");
         }
@@ -66,12 +66,11 @@ public class JavaSourceExecutorComponent implements NutsExecutorComponent {
         NutsDefinition nutMainFile = executionContext.getDefinition();//executionContext.getWorkspace().fetch(.getId().toString(), true, false);
         Path javaFile = nutMainFile.getPath();
 //        JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-        NutsWorkspace ws = executionContext.getWorkspace();
         String folder = "__temp_folder";
         NutsPrintStream out = executionContext.getTraceSession().out();
-        out.println(executionContext.getWorkspace().text().ofStyled("compile", NutsTextStyle.primary4()));
+        out.println(executionContext.getTraceSession().text().ofStyled("compile", NutsTextStyle.primary4()));
         out.printf("%s%n",
-                executionContext.getWorkspace().commandLine().create(
+                executionContext.getTraceSession().commandLine().create(
                         "embedded-javac",
                         "-d",
                         "<temp-folder>",
@@ -82,12 +81,12 @@ public class JavaSourceExecutorComponent implements NutsExecutorComponent {
         NutsDefinition d = executionContext.getDefinition();
         d = new DefaultNutsDefinition(d, executionContext.getTraceSession());
         ((DefaultNutsDefinition) d).setContent(new NutsDefaultContent(
-                executionContext.getTraceSession().getWorkspace().io().path(folder),
+                executionContext.getTraceSession().io().path(folder),
                 false,
                 true
         ));
         String fileName = javaFile.getFileName().toString();
-        NutsExecutionContext executionContext2 = NutsWorkspaceExt.of(executionContext.getWorkspace())
+        NutsExecutionContext executionContext2 = NutsWorkspaceExt.of(executionContext.getTraceSession())
                 .createExecutionContext()
                 .setAll(executionContext)
                 .setDefinition(d)
@@ -111,24 +110,24 @@ public class JavaSourceExecutorComponent implements NutsExecutorComponent {
         NutsDefinition nutMainFile = executionContext.getDefinition();//executionContext.getWorkspace().fetch(.getId().toString(), true, false);
         Path javaFile = nutMainFile.getPath();
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-        NutsWorkspace ws = executionContext.getWorkspace();
-        Path folder = Paths.get(ws.io().tmp()
-                .setSession(executionContext.getTraceSession())
+        NutsSession session = executionContext.getTraceSession();
+        Path folder = Paths.get(session.io().tmp()
+                .setSession(session)
                 .createTempFolder("jj"));
         int res = compiler.run(null, null, null, "-d", folder.toString(), javaFile.toString());
         if (res != 0) {
-            throw new NutsExecutionException(executionContext.getTraceSession(), NutsMessage.cstyle("compilation failed"), res);
+            throw new NutsExecutionException(session, NutsMessage.cstyle("compilation failed"), res);
         }
         JavaExecutorComponent cc = new JavaExecutorComponent();
         NutsDefinition d = executionContext.getDefinition();
-        d = new DefaultNutsDefinition(d, executionContext.getTraceSession());
+        d = new DefaultNutsDefinition(d, session);
         ((DefaultNutsDefinition) d).setContent(new NutsDefaultContent(
-                executionContext.getTraceSession().getWorkspace().io().path(folder.toString()),
+                session.io().path(folder.toString()),
                 false,
                 true
         ));
         String fileName = javaFile.getFileName().toString();
-        NutsExecutionContext executionContext2 = NutsWorkspaceExt.of(executionContext.getWorkspace())
+        NutsExecutionContext executionContext2 = NutsWorkspaceExt.of(executionContext.getTraceSession())
                 .createExecutionContext()
                 .setAll(executionContext)
                 .setDefinition(d)

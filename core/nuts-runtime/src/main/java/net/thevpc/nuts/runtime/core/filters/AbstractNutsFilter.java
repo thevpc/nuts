@@ -39,27 +39,27 @@ public abstract class AbstractNutsFilter implements NutsFilter {
 
     @Override
     public NutsFilter or(NutsFilter other) {
-        return other == null ? this : getWorkspace().filters().any(this, other);
+        return other == null ? this : getSession().filters().any(this, other);
     }
 
     @Override
     public NutsFilter and(NutsFilter other) {
-        return other == null ? this : getWorkspace().filters().all(this, other);
+        return other == null ? this : getSession().filters().all(this, other);
     }
 
     @Override
     public NutsFilter neg() {
-        return getWorkspace().filters().not(this);
+        return getSession().filters().not(this);
     }
 
     @Override
     public <T extends NutsFilter> T to(Class<T> type) {
-        return getWorkspace().filters().to(type, this);
+        return getSession().filters().to(type, this);
     }
 
     @Override
     public Class<? extends NutsFilter> getFilterType() {
-        return getWorkspace().filters().detectType(this);
+        return getSession().filters().detectType(this);
     }
 
     @Override

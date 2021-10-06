@@ -53,7 +53,7 @@ public class ZipInstallerComponent implements NutsInstallerComponent {
     @Override
     public void install(NutsExecutionContext executionContext) {
         DefaultNutsDefinition nutsDefinition = (DefaultNutsDefinition) executionContext.getDefinition();
-        String installFolder = executionContext.getWorkspace().locations().getStoreLocation(nutsDefinition.getId(), NutsStoreLocation.APPS);
+        String installFolder = executionContext.getTraceSession().locations().getStoreLocation(nutsDefinition.getId(), NutsStoreLocation.APPS);
 
         String skipRoot = (String) executionContext.getExecutorProperties().get("unzip-skip-root");
         try {
@@ -64,9 +64,9 @@ public class ZipInstallerComponent implements NutsInstallerComponent {
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
-        nutsDefinition.setInstallInformation(NutsWorkspaceExt.of(executionContext.getWorkspace()).getInstalledRepository().getInstallInformation(nutsDefinition.getId(), executionContext.getExecSession()));
+        nutsDefinition.setInstallInformation(NutsWorkspaceExt.of(executionContext.getTraceSession()).getInstalledRepository().getInstallInformation(nutsDefinition.getId(), executionContext.getExecSession()));
         if (executionContext.getExecutorArguments().length > 0) {
-            executionContext.getWorkspace()
+            executionContext.getTraceSession()
                     .exec()
                     .addCommand(executionContext.getExecutorArguments())
                     .setSession(executionContext.getExecSession())

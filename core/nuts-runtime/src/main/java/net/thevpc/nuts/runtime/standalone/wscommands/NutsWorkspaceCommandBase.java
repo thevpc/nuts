@@ -34,7 +34,7 @@ public abstract class NutsWorkspaceCommandBase<T extends NutsWorkspaceCommand> i
 
     protected NutsLogger _LOG(NutsSession session) {
         if (LOG == null) {
-            LOG = this.getWorkspace().log().setSession(session).of(getClass());
+            LOG = session.log().of(getClass());
         }
         return LOG;
     }

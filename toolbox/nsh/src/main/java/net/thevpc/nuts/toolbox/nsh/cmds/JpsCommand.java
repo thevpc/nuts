@@ -102,9 +102,9 @@ public class JpsCommand extends SimpleNshBuiltin {
         Options options = context.getOptions();
         List<JpsRow> results = new ArrayList<>();
 
-        NutsExecCommand e = context.getWorkspace().exec()
+        NutsExecCommand e = context.getSession().exec()
                 .setExecutionType(NutsExecutionType.SYSTEM)
-                .addCommand(resolveJpsCommand(context.getWorkspace()), "-l", "-v", "-m")
+                .addCommand(resolveJpsCommand(context.getSession()), "-l", "-v", "-m")
                 .setRedirectErrorStream(true)
                 .grabOutputString()
                 .setFailFast(true).run();
@@ -138,12 +138,12 @@ public class JpsCommand extends SimpleNshBuiltin {
         context.setPrintOutObject(results);
     }
 
-    public static String resolveJpsCommand(NutsWorkspace ws) {
-        return resolveJavaToolCommand(ws,null, "jps");
+    public static String resolveJpsCommand(NutsSession session) {
+        return resolveJavaToolCommand(session,null, "jps");
     }
 
-    public static String resolveJavaToolCommand(NutsWorkspace ws,String javaHome, String javaCommand) {
-        String exe = ws.env().getOsFamily().equals(NutsOsFamily.WINDOWS) ? (javaCommand + ".exe") : javaCommand;
+    public static String resolveJavaToolCommand(NutsSession session,String javaHome, String javaCommand) {
+        String exe = session.env().getOsFamily().equals(NutsOsFamily.WINDOWS) ? (javaCommand + ".exe") : javaCommand;
         if (javaHome == null) {
             javaHome = System.getProperty("java.home");
         }

@@ -29,17 +29,16 @@ public class Test08_FindLinuxTest {
 
         //should throw NutsNotFoundException because
         //would not be able to install nsh and other companions
-        NutsWorkspace ws = TestUtils.openNewTestWorkspace(
+        NutsSession session = TestUtils.openNewTestWorkspace(
                 "--archetype", "default",
-                "--skip-companions").getWorkspace();
+                "--skip-companions");
 
-        NutsSession session = ws.createSession();
         NutsDefinition def = session.search().addId(
                 "net.thevpc.common:thevpc-common-io#1.3.12"
 //                "netbeans-launcher#1.1.0"
                 )
                 .setOptional(false).setInlineDependencies(true).setFailFast(true)
-                .setSession(ws.createSession().setFetchStrategy(NutsFetchStrategy.ONLINE))
+                .setSession(session.copy().setFetchStrategy(NutsFetchStrategy.ONLINE))
                 .setLatest(true).getResultDefinitions().required();
         TestUtils.println(def);
     }
@@ -52,11 +51,11 @@ public class Test08_FindLinuxTest {
 
         //should throw NutsNotFoundException because
         //would not be able to install nsh and other companions
-        NutsWorkspace ws = TestUtils.openNewTestWorkspace(
+        NutsSession s = TestUtils.openNewTestWorkspace(
                 "--archetype", "default",
-                "--skip-companions").getWorkspace();
+                "--skip-companions");
 
-        NutsStream<NutsId> resultIds = ws.search().setSession(ws.createSession()).addId("net.thevpc.scholar.doovos.kernel:doovos-kernel-core")
+        NutsStream<NutsId> resultIds = s.search().setSession(s).addId("net.thevpc.scholar.doovos.kernel:doovos-kernel-core")
                 .setLatest(true).setInlineDependencies(true).getResultIds();
         TestUtils.println(resultIds.toList());
     }

@@ -45,7 +45,7 @@ public class ArchitectureNonOption extends DefaultNonOption {
     @Override
     public List<NutsArgumentCandidate> getCandidates(NutsCommandAutoComplete context) {
         List<NutsArgumentCandidate> all = new ArrayList<>();
-        NutsCommandLineManager c = context.getWorkspace().commandLine();
+        NutsCommandLineManager c = context.getSession().commandLine();
         all.add(c.createCandidate("\"linux x86\"").build());
         all.add(c.createCandidate("\"linux x64\"").build());
         all.add(c.createCandidate("\"win x86\"").build());

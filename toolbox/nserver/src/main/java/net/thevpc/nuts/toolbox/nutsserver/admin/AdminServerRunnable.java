@@ -50,12 +50,12 @@ public class AdminServerRunnable implements NutsServer, Runnable {
     int finalBacklog;
     InetAddress address;
     Executor finalExecutor;
-    NutsWorkspace invokerWorkspace;
+    NutsSession invokerWorkspace;
     boolean running;
     ServerSocket serverSocket = null;
     NutsSession session = null;
 
-    public AdminServerRunnable(String serverId, int finalPort, int finalBacklog, InetAddress address, Executor finalExecutor, NutsWorkspace invokerWorkspace, NutsSession session) {
+    public AdminServerRunnable(String serverId, int finalPort, int finalBacklog, InetAddress address, Executor finalExecutor, NutsSession invokerWorkspace, NutsSession session) {
         this.serverId = serverId;
         this.finalPort = finalPort;
         this.finalBacklog = finalBacklog;
@@ -117,7 +117,7 @@ public class AdminServerRunnable implements NutsServer, Runnable {
                                 try {
                                     PrintStream out = new PrintStream(finalAccept.getOutputStream());
                                     NutsPrintStream eout = invokerWorkspace.io().createPrintStream(out, NutsTerminalMode.FORMATTED);
-                                    NutsSession session = invokerWorkspace.createSession();
+                                    NutsSession session = invokerWorkspace;
                                     session.setTerminal(
                                             invokerWorkspace.term().createTerminal(
                                                     finalAccept.getInputStream(),

@@ -45,7 +45,7 @@ import java.util.zip.ZipOutputStream;
 public class ZipUtils {
 
 //    private static final Logger LOG = Logger.getLogger(ZipUtils.class.getName());
-    public static void zip(NutsWorkspace ws, String target, ZipOptions options, String... source) throws IOException {
+    public static void zip(NutsSession ws, String target, ZipOptions options, String... source) throws IOException {
         if (options == null) {
             options = new ZipOptions();
         }

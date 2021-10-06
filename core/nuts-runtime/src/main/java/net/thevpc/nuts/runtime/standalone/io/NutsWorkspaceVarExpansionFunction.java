@@ -1,16 +1,13 @@
 package net.thevpc.nuts.runtime.standalone.io;
 
-import net.thevpc.nuts.Nuts;
-import net.thevpc.nuts.NutsConstants;
-import net.thevpc.nuts.NutsStoreLocation;
-import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.*;
 
 import java.util.function.Function;
 
 public class NutsWorkspaceVarExpansionFunction implements Function<String, String> {
-    private final NutsWorkspace ws;
+    private final NutsSession ws;
 
-    public NutsWorkspaceVarExpansionFunction(NutsWorkspace ws) {
+    public NutsWorkspaceVarExpansionFunction(NutsSession ws) {
         this.ws = ws;
     }
 
@@ -34,9 +31,9 @@ public class NutsWorkspaceVarExpansionFunction implements Function<String, Strin
             case "home.run":
                 return ws.locations().getHomeLocation(NutsStoreLocation.RUN);
             case "workspace.hash-name":
-                return ws.getHashName();
+                return ws.getWorkspace().getHashName();
             case "workspace.name":
-                return ws.getName();
+                return ws.getWorkspace().getName();
             case "workspace.location":
             case "workspace":
                 return ws.locations().getWorkspaceLocation().toString();
@@ -59,22 +56,22 @@ public class NutsWorkspaceVarExpansionFunction implements Function<String, Strin
             case "workspace.var":
                 return ws.locations().getStoreLocation(NutsStoreLocation.VAR).toString();
             case "nuts.boot.version":
-                return ws.getApiVersion().toString();
+                return ws.getWorkspace().getApiVersion().toString();
             case "nuts.boot.id":
-                return ws.getApiId().toString();
+                return ws.getWorkspace().getApiId().toString();
             case "nuts.workspace-boot.version":
                 return Nuts.getVersion();
             case "nuts.workspace-boot.id":
                 return NutsConstants.Ids.NUTS_API + "#" + Nuts.getVersion();
             case "nuts.workspace-runtime.version": {
                 String rt = ws.boot().getBootOptions().getRuntimeId();
-                return rt == null ? ws.getRuntimeId().getVersion().toString() : rt.contains("#")
+                return rt == null ? ws.getWorkspace().getRuntimeId().getVersion().toString() : rt.contains("#")
                         ? rt.substring(rt.indexOf("#") + 1)
                         : rt;
             }
             case "nuts.workspace-runtime.id": {
                 String rt = ws.boot().getBootOptions().getRuntimeId();
-                return rt == null ? ws.getRuntimeId().getVersion().toString() : rt.contains("#")
+                return rt == null ? ws.getWorkspace().getRuntimeId().getVersion().toString() : rt.contains("#")
                         ? rt
                         : (NutsConstants.Ids.NUTS_RUNTIME + "#" + rt);
             }

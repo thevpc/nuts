@@ -259,7 +259,7 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
     public String filterText(String text) {
         try {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
-            NutsTextNodeWriterStringer s = new NutsTextNodeWriterStringer(out, getSession().getWorkspace());
+            NutsTextNodeWriterStringer s = new NutsTextNodeWriterStringer(out, getSession());
             s.writeNode(this.parse(new StringReader(text)), new NutsTextWriteConfiguration().setFiltered(true));
             s.flush();
             return out.toString();

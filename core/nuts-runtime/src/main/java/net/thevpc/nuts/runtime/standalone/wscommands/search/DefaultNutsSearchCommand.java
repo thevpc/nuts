@@ -139,7 +139,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
     //@Override
     private DefaultNutsSearch build() {
         checkSession();
-        NutsWorkspace ws = getSession().getWorkspace();
+        NutsSession ws = getSession();
         HashSet<String> someIds = new HashSet<>();
         for (NutsId id : this.getIds()) {
             someIds.add(id.toString());
@@ -185,15 +185,15 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                 if (oo.isEmpty()) {
                     idFilter0 = null;
                 } else {
-                    idFilter0 = ws.id().filter().any(oo.toArray(new NutsIdFilter[0]));
+                    idFilter0 = session.id().filter().any(oo.toArray(new NutsIdFilter[0]));
                 }
             }
         }
 
         NutsDescriptorFilter _descriptorFilter = ws.descriptor().filter().always();
-        NutsIdFilter _idFilter = ws.id().filter().always();
+        NutsIdFilter _idFilter = session.id().filter().always();
         NutsDependencyFilter depFilter = ws.dependency().filter().always();
-        NutsRepositoryFilter rfilter = ws.repos().filter().always();
+        NutsRepositoryFilter rfilter = session.repos().filter().always();
         for (String j : this.getScripts()) {
             if (!NutsBlankable.isBlank(j)) {
                 if (CoreStringUtils.containsTopWord(j, "descriptor")) {
@@ -519,10 +519,8 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
 
         List<Iterator<? extends NutsId>> allResults = new ArrayList<>();
         checkSession();
-        NutsWorkspace ws = getSession().getWorkspace();
-
         NutsSession session = search.getSession();
-        NutsWorkspaceUtils.checkSession(ws, session);
+        NutsWorkspaceUtils.checkSession(session.getWorkspace(), session);
         NutsIdFilter sIdFilter = search.getIdFilter();
         NutsRepositoryFilter sRepositoryFilter = search.getRepositoryFilter();
         NutsDescriptorFilter sDescriptorFilter = search.getDescriptorFilter();
@@ -536,7 +534,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
         NutsWorkspaceUtils wu = NutsWorkspaceUtils.of(session);
         if (regularIds.length > 0) {
             for (String id : regularIds) {
-                NutsId nutsId = ws.id().parser().parse(id);
+                NutsId nutsId = session.id().parser().parse(id);
                 if (nutsId != null) {
                     List<NutsId> nutsId2 = new ArrayList<>();
                     if (NutsBlankable.isBlank(nutsId.getGroupId())) {
@@ -548,7 +546,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                             if (!nutsId.getArtifactId().contains("*")) {
                                 NutsRepositorySPI repoSPI = wu
                                         .repoSPI(NutsWorkspaceExt.of(getWorkspace()).getInstalledRepository());
-                                Iterator<NutsId> it = repoSPI.search().setFetchMode(NutsFetchMode.LOCAL).setFilter(ws.filters().id().byName(
+                                Iterator<NutsId> it = repoSPI.search().setFetchMode(NutsFetchMode.LOCAL).setFilter(session.filters().id().byName(
                                         nutsId.builder().setGroupId("*").build().toString()
                                 )).setSession(getSession()).getResult();
                                 installedIds = IteratorUtils.toList(it);
@@ -556,7 +554,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                             if (!installedIds.isEmpty()) {
                                 nutsId2.addAll(installedIds);
                             } else {
-                                for (String aImport : ws.imports().getAll()) {
+                                for (String aImport : session.imports().getAll()) {
                                     //example import(net.thevpc),search(pnote) ==>net.thevpc:pnote
                                     nutsId2.add(nutsId.builder().setGroupId(aImport).build());
                                     //example import(net.thevpc),search(pnote) ==>net.thevpc.pnote:pnote
@@ -571,11 +569,11 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                     NutsSession finalSession = session;
                     for (NutsId nutsId1 : nutsId2) {
                         List<Iterator<? extends NutsId>> idLookup = new ArrayList<>();
-                        NutsIdFilter idFilter2 = ws.filters().all(sIdFilter,
-                                ws.id().filter().byName(nutsId1.getFullName())
+                        NutsIdFilter idFilter2 = session.filters().all(sIdFilter,
+                                session.id().filter().byName(nutsId1.getFullName())
                         );
                         NutsIdFilter filter = CoreNutsUtils.simplify(CoreFilterUtils.idFilterOf(nutsId1.getProperties(),
-                                idFilter2, sDescriptorFilter, ws));
+                                idFilter2, sDescriptorFilter, session));
                         List<NutsRepositoryAndFetchMode> repositoryAndFetchModes = wu.filterRepositoryAndFetchModes(
                                 NutsRepositorySupportedAction.SEARCH, nutsId1, sRepositoryFilter, fetchMode, session
                         );
@@ -598,12 +596,12 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                     }
                     if (nutsId.getGroupId() == null) {
                         //now will look with *:artifactId pattern
-                        NutsSearchCommand search2 = ws.search()
+                        NutsSearchCommand search2 = session.search()
                                 .setSession(session)
                                 .setRepositoryFilter(search.getRepositoryFilter())
                                 .setDescriptorFilter(search.getDescriptorFilter());
                         search2.setIdFilter(
-                                ws.id().filter().byName(nutsId.builder().setGroupId("*").build().toString())
+                                session.id().filter().byName(nutsId.builder().setGroupId("*").build().toString())
                                         .and(search.getIdFilter())
                         );
                         Iterator<NutsId> extraResult = search2.getResultIds().iterator();
@@ -629,7 +627,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                 }
             }
         } else {
-            NutsIdFilter filter = CoreNutsUtils.simplify(CoreFilterUtils.idFilterOf(null, sIdFilter, sDescriptorFilter, ws));
+            NutsIdFilter filter = CoreNutsUtils.simplify(CoreFilterUtils.idFilterOf(null, sIdFilter, sDescriptorFilter, session));
 
             List<Iterator<? extends NutsId>> all = new ArrayList<>();
             for (NutsRepositoryAndFetchMode repoAndMode : wu.filterRepositoryAndFetchModes(

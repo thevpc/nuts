@@ -20,7 +20,7 @@ public class DefaultNutsTextNodeResourceParserHelper {
     public DefaultNutsTextNodeResourceParserHelper(NutsTextParser parser, NutsSession session) {
         this.parser = parser;
         this.session = session;
-        pathExpansionConverter = new NutsWorkspaceVarExpansionFunction(session.getWorkspace());
+        pathExpansionConverter = new NutsWorkspaceVarExpansionFunction(session);
     }
 
     public NutsText parseResource(String resourceName, NutsTextFormatLoader loader) {

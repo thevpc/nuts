@@ -329,8 +329,8 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
             return null;
         }
         NutsSession noProgressSession = traceSession.copy().setProgressOptions("none");
-        List<NutsId> ff = ws.search().addId(nid).setSession(noProgressSession).setOptional(false).setLatest(true).setFailFast(false)
-                .setInstallStatus(ws.filters().installStatus().byDeployed(true))
+        List<NutsId> ff = traceSession.search().addId(nid).setSession(noProgressSession).setOptional(false).setLatest(true).setFailFast(false)
+                .setInstallStatus(session.filters().installStatus().byDeployed(true))
                 .getResultDefinitions().stream()
                 .sorted(Comparator.comparing(x -> !x.getInstallInformation().isDefaultVersion())) // default first
                 .map(NutsDefinition::getId).collect(Collectors.toList());
@@ -352,11 +352,11 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
                 if (traceSession.isPlainTrace()) {
                     traceSession.out().resetLine().printf("%s is %s, will search for it online. Type ```error CTRL^C``` to stop...\n",
                             nid,
-                            ws.text().ofStyled("not installed", NutsTextStyle.error())
+                            session.text().ofStyled("not installed", NutsTextStyle.error())
                     );
                     traceSession.out().flush();
                 }
-                ff = ws.search().addId(nid).setSession(noProgressSession.copy().setFetchStrategy(NutsFetchStrategy.ONLINE))
+                ff = traceSession.search().addId(nid).setSession(noProgressSession.copy().setFetchStrategy(NutsFetchStrategy.ONLINE))
                         .setOptional(false).setFailFast(false)
                         .setLatest(true)
                         //                        .configure(true,"--trace-monitor")
@@ -378,7 +378,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
 
     public boolean isUserCommand(String s) {
         checkSession();
-        NutsWorkspace ws = getSession().getWorkspace();
+        NutsSession ws = getSession();
         String p = System.getenv().get("PATH");
         if (p != null) {
             char r = File.pathSeparatorChar;
@@ -413,9 +413,9 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
 
     protected NutsExecutableInformationExt ws_execId(NutsId goodId, String commandName, String[] appArgs, String[] executorOptions,
                                                      NutsExecutionType executionType, NutsRunAs runAs,
-                                                     NutsSession traceSession, NutsSession execSession) {
-        NutsSession noProgressSession = traceSession.copy().setProgressOptions("none");
-        NutsDefinition def = ws.fetch().setId(goodId)
+                                                     NutsSession session, NutsSession execSession) {
+        NutsSession noProgressSession = session.copy().setProgressOptions("none");
+        NutsDefinition def = session.fetch().setId(goodId)
                 .setSession(noProgressSession)
                 .setDependencies(true)
                 .setFailFast(true)
@@ -424,10 +424,10 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
                 //
                 .setOptional(false)
                 .addScope(NutsDependencyScopePattern.RUN)
-                .setDependencyFilter(CoreNutsDependencyUtils.createJavaRunDependencyFilter(traceSession))
+                .setDependencyFilter(CoreNutsDependencyUtils.createJavaRunDependencyFilter(session))
                 //
                 .getResultDefinition();
-        return ws_execDef(def, commandName, appArgs, executorOptions, env, directory, failFast, executionType, runAs, traceSession, execSession);
+        return ws_execDef(def, commandName, appArgs, executorOptions, env, directory, failFast, executionType, runAs, session, execSession);
     }
 
     protected NutsExecutableInformationExt ws_execDef(NutsDefinition def, String commandName, String[] appArgs, String[] executorOptions, Map<String, String> env, String dir, boolean failFast, NutsExecutionType executionType, NutsRunAs runAs, NutsSession traceSession, NutsSession execSession) {
@@ -445,7 +445,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
         NutsWorkspaceUtils.checkSession(ws, session);
         checkSession();
         NutsWorkspace ws = getSession().getWorkspace();
-        ws.security().setSession(session).checkAllowed(NutsConstants.Permissions.EXEC, commandName);
+        session.security().checkAllowed(NutsConstants.Permissions.EXEC, commandName);
         NutsWorkspaceUtils.checkSession(ws, execSession);
         NutsWorkspaceUtils.checkSession(ws, traceSession);
         if (def != null && def.getPath() != null) {
@@ -472,7 +472,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
                     }
                     if (eid.getGroupId() != null) {
                         //nutsDefinition
-                        NutsStream<NutsDefinition> q = getSession().getWorkspace().search().addId(eid).setLatest(true)
+                        NutsStream<NutsDefinition> q = getSession().search().addId(eid).setLatest(true)
                                 .getResultDefinitions();
                         NutsDefinition[] availableExecutors = q.stream().limit(2).toArray(NutsDefinition[]::new);
                         if (availableExecutors.length > 1) {
@@ -487,7 +487,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
                 }
             }
             if (execComponent == null) {
-                execComponent = getSession().getWorkspace().extensions().createSupported(NutsExecutorComponent.class, def);
+                execComponent = getSession().extensions().createSupported(NutsExecutorComponent.class, def);
                 if (execComponent == null) {
                     throw new NutsNotFoundException(getSession(), def.getId());
                 }

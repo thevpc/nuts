@@ -10,7 +10,7 @@ public class NutsDescriptorFilterParser extends NutsTypedFiltersParser<NutsDescr
 
     @Override
     protected NutsDescriptorFilterManager getTManager() {
-        return ws.filters().descriptor();
+        return getSession().filters().descriptor();
     }
 
     protected NutsDescriptorFilter wordToPredicate(String word){

@@ -58,7 +58,7 @@ public class DefaultNutsPushCommand extends AbstractDefaultNutsPushCommand {
             if (NutsUtilStrings.trim(id.getVersion().getValue()).endsWith(CoreNutsConstants.Versions.CHECKED_OUT_EXTENSION)) {
                 throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("invalid version %s", id.getVersion()));
             }
-            NutsDefinition file = ws.fetch().setId(id).setSession(session.copy().setTransitive(false)).setContent(true).getResultDefinition();
+            NutsDefinition file = session.fetch().setId(id).setSession(session.copy().setTransitive(false)).setContent(true).getResultDefinition();
             if (file == null) {
                 throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("nothing to push"));
             }
@@ -87,7 +87,7 @@ public class DefaultNutsPushCommand extends AbstractDefaultNutsPushCommand {
                         //
                     }
                     if (descr != null && repo.config().isSupportedMirroring()) {
-                        NutsId id2 = ws.config().createContentFaceId(dws.resolveEffectiveId(descr, session), descr);
+                        NutsId id2 = session.config().createContentFaceId(dws.resolveEffectiveId(descr, session), descr);
                         try {
                             repoSPI.push().setId(id2)
                                     .setOffline(offline)
@@ -108,11 +108,11 @@ public class DefaultNutsPushCommand extends AbstractDefaultNutsPushCommand {
                     throw new NutsRepositoryNotFoundException(getSession(), this.getRepository() + " : " + String.join("\n", errors));
                 }
             } else {
-                NutsRepository repo = ws.repos().setSession(session).getRepository(this.getRepository());
+                NutsRepository repo = session.repos().getRepository(this.getRepository());
                 if (!repo.config().isEnabled()) {
                     throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("repository %s is disabled", repo.getName()));
                 }
-                NutsId effId = ws.config().createContentFaceId(id.builder().setProperties("").build(), file.getDescriptor()) //                        .setAlternative(NutsUtilStrings.trim(file.getDescriptor().getAlternative()))
+                NutsId effId = session.config().createContentFaceId(id.builder().setProperties("").build(), file.getDescriptor()) //                        .setAlternative(NutsUtilStrings.trim(file.getDescriptor().getAlternative()))
                         ;
                 NutsRepositorySPI repoSPI = wu.repoSPI(repo);
                 repoSPI.deploy().setSession(session)

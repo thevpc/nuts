@@ -96,7 +96,7 @@ public class ExtendedFormatAwarePrintWriter extends PrintWriter implements Exten
         }else{
             NutsSession s2 = this.session.copy().setLocale(l.toString());
             print(
-                    s2.getWorkspace().text().setSession(s2).toText(
+                    s2.text().setSession(s2).toText(
                             NutsMessage.cstyle(
                                     format, args
                             )

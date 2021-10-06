@@ -26,6 +26,7 @@
  */
 package net.thevpc.nuts.runtime.core.format.text;
 
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsString;
 import net.thevpc.nuts.NutsWorkspace;
 
@@ -37,9 +38,9 @@ import net.thevpc.nuts.NutsText;
  */
 public class NutsImmutableString implements NutsString {
     private final String value;
-    private final NutsWorkspace ws;
+    private transient final NutsSession ws;
 
-    public NutsImmutableString(NutsWorkspace ws, String value) {
+    public NutsImmutableString(NutsSession ws, String value) {
         this.ws = ws;
         this.value = value == null ? "" : value;
     }

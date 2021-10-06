@@ -72,7 +72,7 @@ public class NutsObjectFormatPlain extends NutsObjectFormatBase {
     public void print(NutsPrintStream w) {
         checkSession();
         Object value = getValue();
-        NutsWorkspace ws = getSession().getWorkspace();
+        NutsSession ws = getSession();
         if (value instanceof NutsTableModel) {
             ws.formats().table(value).configure(true, extraConfig.toArray(new String[0])).print(w);
         } else if (value instanceof NutsTreeModel) {
@@ -98,7 +98,7 @@ public class NutsObjectFormatPlain extends NutsObjectFormatBase {
 
     public void printElement(NutsPrintStream w, Object value) {
         NutsPrintStream out = getValidPrintStream(w);
-        NutsWorkspace ws = getSession().getWorkspace();
+        NutsSession ws = getSession();
         if (value instanceof Map) {
             NutsTreeFormat tree = ws.formats().tree();
             tree.configure(true, extraConfig.toArray(new String[0]));

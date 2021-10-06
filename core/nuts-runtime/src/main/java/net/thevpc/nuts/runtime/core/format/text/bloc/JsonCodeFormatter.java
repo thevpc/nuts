@@ -6,6 +6,8 @@ import net.thevpc.nuts.runtime.bundles.parsers.StringReaderExt;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsComponent;
 import net.thevpc.nuts.NutsCodeFormat;
 
@@ -15,7 +17,7 @@ public class JsonCodeFormatter implements NutsCodeFormat {
 
     public JsonCodeFormatter(NutsWorkspace ws) {
         this.ws = ws;
-        factory = ws.text();
+        factory = NutsWorkspaceUtils.defaultSession(ws).text();
     }
 
 

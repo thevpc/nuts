@@ -8,8 +8,8 @@ public class TestFetch {
 
     @Test
     public void test(){
-        NutsWorkspace ws = TestUtils.openNewTestWorkspace().getWorkspace();
-        NutsDefinition resultDefinition = ws.fetch().setId("org.springframework.boot:spring-boot#2.4.1")
+        NutsSession session = TestUtils.openNewTestWorkspace();
+        NutsDefinition resultDefinition = session.fetch().setId("org.springframework.boot:spring-boot#2.4.1")
                 .setDependencies(true)
                 .setContent(true)
                 .getResultDefinition();

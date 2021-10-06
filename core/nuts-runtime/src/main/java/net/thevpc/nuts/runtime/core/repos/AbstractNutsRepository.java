@@ -56,6 +56,7 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
     protected DefaultNutsRepositoryEnvModel envModel;
     protected NutsSession initSession;
     protected CachedValue<Boolean> available = new CachedValue<>(() -> isAvailableImpl(), 30);
+    protected CachedValue<Boolean> supportedDeploy = new CachedValue<>(() -> isSupportedDeployImpl(), 0);
 
     public AbstractNutsRepository() {
         userProperties = new DefaultObservableMap<>();
@@ -74,6 +75,23 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
             return available.update();
         }
         return available.getValue();
+    }
+
+    @Override
+    public boolean isSupportedDeploy() {
+        return isSupportedDeploy(false);
+    }
+
+    @Override
+    public boolean isSupportedDeploy(boolean force) {
+        if (force) {
+            return supportedDeploy.update();
+        }
+        return supportedDeploy.getValue();
+    }
+
+    protected boolean isSupportedDeployImpl() {
+        return true;
     }
 
     protected boolean isAvailableImpl() {
@@ -199,11 +217,11 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
     }
 
     protected String getIdExtension(NutsId id, NutsSession session) {
-        return getWorkspace().locations().setSession(session).getDefaultIdExtension(id);
+        return session.locations().getDefaultIdExtension(id);
     }
 
     public String getIdBasedir(NutsId id, NutsSession session) {
-        return getWorkspace().locations().setSession(session).getDefaultIdBasedir(id);
+        return session.locations().getDefaultIdBasedir(id);
     }
 
     public String getIdFilename(NutsId id, NutsSession session) {

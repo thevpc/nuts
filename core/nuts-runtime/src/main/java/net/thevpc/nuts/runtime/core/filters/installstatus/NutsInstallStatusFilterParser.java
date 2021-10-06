@@ -13,7 +13,7 @@ public class NutsInstallStatusFilterParser extends NutsTypedFiltersParser<NutsIn
 
     @Override
     protected NutsInstallStatusFilterManager getTManager() {
-        return ws.filters().installStatus();
+        return getSession().filters().installStatus();
     }
 
     protected NutsInstallStatusFilter wordToPredicate(String word){

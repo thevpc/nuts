@@ -28,6 +28,7 @@ package net.thevpc.nuts.toolbox.nsh.test;
 
 import net.thevpc.nuts.Nuts;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShell;
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.MemResult;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -45,7 +46,7 @@ public class CommandsTest {
     @Test
     public void testDirname() {
         JShell c = new JShell(Nuts.openWorkspace("-y","--verbose","--workspace", baseFolder + "/" + TestUtils.getCallerMethodName()),new String[0]);
-        JShell.MemResult r = c.executeCommand(new String[]{"dirname", "/", "a", "/a", "/a/"});
+        MemResult r = c.executeCommand(new String[]{"dirname", "/", "a", "/a", "/a/"});
         Assertions.assertEquals(
                 "/\n"
                 + ".\n"
@@ -58,7 +59,7 @@ public class CommandsTest {
     @Test
     public void testBasename() {
         JShell c = new JShell(Nuts.openWorkspace("-y","--verbose","--workspace", baseFolder + "/" + TestUtils.getCallerMethodName()),new String[0]);
-        JShell.MemResult r = c.executeCommand(new String[]{"basename", "-a", "/", "a", "/a", "/a/"});
+        MemResult r = c.executeCommand(new String[]{"basename", "-a", "/", "a", "/a", "/a/"});
         Assertions.assertEquals(
                 "/\n"
                 + "a\n"
@@ -72,12 +73,12 @@ public class CommandsTest {
     public void testEnv() {
         JShell c = new JShell(Nuts.openWorkspace("-y","--verbose","--workspace", baseFolder + "/" + TestUtils.getCallerMethodName()),new String[0]);
         {
-            JShell.MemResult r = c.executeCommand(new String[]{"env"});
+            MemResult r = c.executeCommand(new String[]{"env"});
             Assertions.assertTrue(r.out().contains("PWD="));
             Assertions.assertEquals("", r.err());
         }
         {
-            JShell.MemResult r = c.executeCommand(new String[]{"env", "--json"});
+            MemResult r = c.executeCommand(new String[]{"env", "--json"});
             Assertions.assertTrue(r.out().contains("\"PWD\""));
             Assertions.assertEquals("", r.err());
         }
@@ -87,12 +88,12 @@ public class CommandsTest {
     public void testCheck() {
         JShell c = new JShell(Nuts.openWorkspace("-y","--workspace", baseFolder + "/" + TestUtils.getCallerMethodName()),new String[0]);
         {
-            JShell.MemResult r = c.executeCommand(new String[]{"test", "1", "-lt", "2"});
+            MemResult r = c.executeCommand(new String[]{"test", "1", "-lt", "2"});
             Assertions.assertEquals("", r.out());
             Assertions.assertEquals("", r.err());
         }
         {
-            JShell.MemResult r = c.executeCommand(new String[]{"test", "2", "-lt", "1"});
+            MemResult r = c.executeCommand(new String[]{"test", "2", "-lt", "1"});
             Assertions.assertEquals("", r.out());
             Assertions.assertEquals("", r.err());
         }

@@ -32,12 +32,12 @@ public class Test01_CreateTest {
                 "--archetype", "minimal",
                 "--verbose",
                 "--skip-companions");
-        NutsWorkspace ws = session.getWorkspace();
-        Assertions.assertEquals(new File(wsPath, "cache").getPath(), ws.locations().getStoreLocation(NutsStoreLocation.CACHE));
-        Assertions.assertEquals(new File(wsPath,  "cache/" + NutsConstants.Folders.REPOSITORIES + "/" +
-                        ws.repos().getRepositories()[0].getName() +
-                        "/" + ws.repos().getRepositories()[0].getUuid()).getPath(),
-                ws.repos().getRepositories()[0].config().getStoreLocation(NutsStoreLocation.CACHE));
+        Assertions.assertEquals(new File(wsPath, "cache").getPath(), session.locations().getStoreLocation(NutsStoreLocation.CACHE));
+        Assertions.assertEquals(0,session.repos().getRepositories().length);
+//        Assertions.assertEquals(new File(wsPath,  "cache/" + NutsConstants.Folders.REPOSITORIES + "/" +
+//                        session.repos().getRepositories()[0].getName() +
+//                        "/" + session.repos().getRepositories()[0].getUuid()).getPath(),
+//                session.repos().getRepositories()[0].config().getStoreLocation(NutsStoreLocation.CACHE));
 
 //        String str="     __        __    \n" +
 //                "  /\\ \\ \\ _  __/ /______\n" +
@@ -98,13 +98,11 @@ public class Test01_CreateTest {
         TestUtils.setSystemProperties(extraProperties);
         String wsPath = TestUtils.getTestBaseFolder().getPath();
 
-        NutsWorkspace ws = TestUtils.openNewTestWorkspace(
+        NutsSession session = TestUtils.openNewTestWorkspace(
                 "--exploded",
                 "--archetype", "minimal",
                 "--verbose",
-                "--skip-companions").getWorkspace();
-        NutsSession session = ws.createSession();
-        ws = session.getWorkspace();
+                "--skip-companions");
         String base = "";
         switch (NutsOsFamily.getCurrent()) {
             case WINDOWS: {
@@ -121,14 +119,14 @@ public class Test01_CreateTest {
             }
         }
         Assertions.assertEquals(new File(base, new File(wsPath).getName()).getPath(),
-                ws.locations().getStoreLocation(NutsStoreLocation.CACHE));
+                session.locations().getStoreLocation(NutsStoreLocation.CACHE));
         Assertions.assertEquals(
                 new File(base, new File(wsPath).getName() + "/"
                         + NutsConstants.Folders.REPOSITORIES + "/"
-                        + ws.repos().getRepositories()[0].getName()
-                        + "/" + ws.repos().getRepositories()[0].getUuid()
+                        + session.repos().getRepositories()[0].getName()
+                        + "/" + session.repos().getRepositories()[0].getUuid()
                 ).getPath(),
-                ws.repos().getRepositories()[0].config().getStoreLocation(NutsStoreLocation.CACHE));
+                session.repos().getRepositories()[0].config().getStoreLocation(NutsStoreLocation.CACHE));
     }
 
     @Test

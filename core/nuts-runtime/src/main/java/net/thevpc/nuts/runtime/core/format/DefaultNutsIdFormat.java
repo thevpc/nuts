@@ -203,7 +203,7 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
         if (!isOmitGroupId()) {
             if (!NutsBlankable.isBlank(id.getGroupId())) {
                 boolean importedGroup2 = "net.thevpc.nuts".equals(id.getGroupId());
-                boolean importedGroup = getSession().getWorkspace().imports().getAll().contains(id.getGroupId());
+                boolean importedGroup = getSession().imports().getAll().contains(id.getGroupId());
                 if (!(importedGroup && isOmitImportedGroupId())) {
                     if (importedGroup || importedGroup2) {
                         sb.append(id.getGroupId(), NutsTextStyle.pale());

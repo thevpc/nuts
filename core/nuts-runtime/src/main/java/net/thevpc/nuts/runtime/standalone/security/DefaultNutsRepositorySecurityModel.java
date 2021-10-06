@@ -84,7 +84,7 @@ public class DefaultNutsRepositorySecurityModel {
     }
 
     public boolean isAllowed(String right, NutsSession session) {
-        NutsWorkspaceSecurityManager sec = repository.getWorkspace().security().setSession(session);
+        NutsWorkspaceSecurityManager sec = session.security();
         if (!sec.isSecure()) {
             return true;
         }
@@ -165,7 +165,7 @@ public class DefaultNutsRepositorySecurityModel {
                     .getModel()
                     .getStoredConfig(session).getAuthenticationAgent();
         }
-        NutsAuthenticationAgent a = NutsWorkspaceConfigManagerExt.of(repository.getWorkspace().config())
+        NutsAuthenticationAgent a = NutsWorkspaceConfigManagerExt.of(session.config())
                 .getModel()
                 .createAuthenticationAgent(id, session);
         return a;
@@ -175,7 +175,7 @@ public class DefaultNutsRepositorySecurityModel {
 //        options = CoreNutsUtils.validate(options, repository.getWorkspace());
         DefaultNutsRepoConfigManager cc = (DefaultNutsRepoConfigManager) repository.config().setSession(session);
 
-        if (NutsWorkspaceConfigManagerExt.of(repository.getWorkspace().config())
+        if (NutsWorkspaceConfigManagerExt.of(session.config())
                 .getModel().createAuthenticationAgent(authenticationAgent, session) == null) {
             throw new NutsIllegalArgumentException(session,
                     NutsMessage.cstyle("unsupported Authentication Agent %s", authenticationAgent)

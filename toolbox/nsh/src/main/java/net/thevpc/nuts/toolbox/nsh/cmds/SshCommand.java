@@ -96,14 +96,14 @@ public class SshCommand extends AbstractNshBuiltin {
                     NutsMessage.cstyle("missing ssh command. Interactive ssh is not yet supported!")
                     , 2);
         }
-        final NutsWorkspace ws = context.getWorkspace();
+        final NutsSession session = context.getSession();
         ShellHelper.WsSshListener listener = new ShellHelper.WsSshListener(context.getSession());
         try (SShConnection sshSession = new SShConnection(o.address,context.getSession())
                 .addListener(listener)) {
             List<String> cmd = new ArrayList<>();
             if (o.invokeNuts) {
                 String workspace = null;
-                NutsCommandLine c = context.getWorkspace().commandLine().create(o.cmd.subList(1, o.cmd.size()).toArray(new String[0]));
+                NutsCommandLine c = session.commandLine().create(o.cmd.subList(1, o.cmd.size()).toArray(new String[0]));
                 NutsArgument arg = null;
                 while (c.hasNext()) {
                     if ((arg = c.next("--workspace")) != null) {
@@ -134,12 +134,12 @@ public class SshCommand extends AbstractNshBuiltin {
                         nutsCommandFound = true;
                     }
                     if (!nutsCommandFound) {
-                        Path from = ws.search().addId(ws.getApiId()).getResultDefinitions().required().getPath();
+                        Path from = session.search().addId(session.getWorkspace().getApiId()).getResultDefinitions().required().getPath();
                         if (from == null) {
                             throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("unable to resolve Nuts Jar File"), 2);
                         } else {
                             context.out().printf("Detected nuts.jar location : %s\n", from);
-                            String bootApiFileName = "nuts-" + ws.getApiId() + ".jar";
+                            String bootApiFileName = "nuts-" + session.getWorkspace().getApiId() + ".jar";
                             sshSession.setFailFast(true).copyLocalToRemote(from.toString(), workspace + "/" + bootApiFileName, true);
                             String javaCmd = null;
                             if (o.nutsJre != null) {

@@ -45,20 +45,20 @@ public class DefaultSourceControlHelper {
     //    @Override
     public NutsId commit(Path folder, NutsSession session) {
         NutsWorkspaceUtils.checkSession(ws, session);
-        ws.security().setSession(session).checkAllowed(NutsConstants.Permissions.DEPLOY, "commit");
+        session.security().setSession(session).checkAllowed(NutsConstants.Permissions.DEPLOY, "commit");
         if (folder == null || !Files.isDirectory(folder)) {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("not a directory %s", folder));
         }
 
         Path file = folder.resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME);
-        NutsDescriptor d = ws.descriptor().parser().setSession(session).parse(file);
+        NutsDescriptor d = session.descriptor().parser().setSession(session).parse(file);
         String oldVersion = NutsUtilStrings.trim(d.getId().getVersion().getValue());
         if (oldVersion.endsWith(CoreNutsConstants.Versions.CHECKED_OUT_EXTENSION)) {
             oldVersion = oldVersion.substring(0, oldVersion.length() - CoreNutsConstants.Versions.CHECKED_OUT_EXTENSION.length());
-            String newVersion = ws.version().parser().parse(oldVersion).inc().getValue();
+            String newVersion = session.version().parser().parse(oldVersion).inc().getValue();
             NutsDefinition newVersionFound = null;
             try {
-                newVersionFound = ws.fetch().setId(d.getId().builder().setVersion(newVersion).build()).setSession(session).getResultDefinition();
+                newVersionFound = session.fetch().setId(d.getId().builder().setVersion(newVersion).build()).setSession(session).getResultDefinition();
             } catch (NutsNotFoundException ex) {
                 _LOGOP(session).level(Level.FINE).error(ex)
                         .log(NutsMessage.jstyle("failed to fetch {0}", d.getId().builder().setVersion(newVersion).build()));
@@ -69,8 +69,8 @@ public class DefaultSourceControlHelper {
             } else {
                 d = d.builder().setId(d.getId().builder().setVersion(oldVersion + ".1").build()).build();
             }
-            NutsId newId = ws.deploy().setContent(folder).setDescriptor(d).setSession(session).getResult()[0];
-            ws.descriptor().formatter(d).print(file);
+            NutsId newId = session.deploy().setContent(folder).setDescriptor(d).setSession(session).getResult()[0];
+            session.descriptor().formatter(d).print(file);
             CoreIOUtils.delete(session, folder);
             return newId;
         } else {
@@ -80,30 +80,30 @@ public class DefaultSourceControlHelper {
 
     //    @Override
     public NutsDefinition checkout(String id, Path folder, NutsSession session) {
-        return checkout(ws.id().parser().setLenient(false).parse(id), folder, session);
+        return checkout(session.id().parser().setLenient(false).parse(id), folder, session);
     }
 
     //    @Override
     public NutsDefinition checkout(NutsId id, Path folder, NutsSession session) {
         NutsWorkspaceUtils.checkSession(ws, session);
-        ws.security().setSession(session).checkAllowed(NutsConstants.Permissions.INSTALL, "checkout");
-        NutsDefinition nutToInstall = ws.fetch().setId(id).setSession(session).setOptional(false).setDependencies(true).getResultDefinition();
+        session.security().checkAllowed(NutsConstants.Permissions.INSTALL, "checkout");
+        NutsDefinition nutToInstall = session.fetch().setId(id).setSession(session).setOptional(false).setDependencies(true).getResultDefinition();
         if ("zip".equals(nutToInstall.getDescriptor().getPackaging())) {
 
             try {
-                ZipUtils.unzip(session, nutToInstall.getPath().toString(), ws.io()
+                ZipUtils.unzip(session, nutToInstall.getPath().toString(), session.io()
                         .path(folder.toString()).builder().withAppBaseDir().build().toString(), new UnzipOptions().setSkipRoot(false));
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
             }
 
             Path file = folder.resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME);
-            NutsDescriptor d = ws.descriptor().parser().setSession(session).parse(file);
+            NutsDescriptor d = session.descriptor().parser().setSession(session).parse(file);
             NutsVersion oldVersion = d.getId().getVersion();
             NutsId newId = d.getId().builder().setVersion(oldVersion + CoreNutsConstants.Versions.CHECKED_OUT_EXTENSION).build();
             d = d.builder().setId(newId).build();
 
-            ws.descriptor().formatter(d).print(file);
+            session.descriptor().formatter(d).print(file);
 
             NutsIdType idType = NutsWorkspaceExt.of(ws).resolveNutsIdType(newId, session);
             return new DefaultNutsDefinition(

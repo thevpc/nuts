@@ -40,7 +40,7 @@ import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
 public class ProcessExecutorComponent implements NutsExecutorComponent {
 
     public static NutsId ID;
-    NutsWorkspace ws;
+    NutsSession ws;
 
     @Override
     public NutsId getId() {
@@ -49,7 +49,7 @@ public class ProcessExecutorComponent implements NutsExecutorComponent {
 
     @Override
     public int getSupportLevel(NutsSupportLevelContext<NutsDefinition> nutsDefinition) {
-        this.ws=nutsDefinition.getWorkspace();
+        this.ws=nutsDefinition.getSession();
         if(ID==null){
             ID=ws.id().parser().parse("net.thevpc.nuts.exec:exec-native");
         }
@@ -82,7 +82,7 @@ public class ProcessExecutorComponent implements NutsExecutorComponent {
         }
 
         Map<String, String> osEnv = new HashMap<>();
-        String bootArgumentsString = executionContext.getWorkspace().boot().getBootOptions()
+        String bootArgumentsString = executionContext.getTraceSession().boot().getBootOptions()
                 .formatter().setExported(true).setCompact(true).getBootCommandLine().toString();
         osEnv.put("nuts_boot_args", bootArgumentsString);
         String dir = null;
@@ -98,7 +98,7 @@ public class ProcessExecutorComponent implements NutsExecutorComponent {
                 dir = execArgs[i].substring(arg.indexOf('=') + 1);
             }
         }
-        String directory = NutsBlankable.isBlank(dir) ? null : executionContext.getWorkspace().io().path(dir).builder().withAppBaseDir().build().toString();
+        String directory = NutsBlankable.isBlank(dir) ? null : executionContext.getTraceSession().io().path(dir).builder().withAppBaseDir().build().toString();
         return ProcessExecHelper.ofDefinition(nutMainFile,
                 app.toArray(new String[0]), osEnv, directory, executionContext.getExecutorProperties(), showCommand, true, executionContext.getSleepMillis(), false, false, null, null, executionContext.getRunAs(), executionContext.getTraceSession(),
                 executionContext.getExecSession()

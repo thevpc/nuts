@@ -25,6 +25,7 @@ package net.thevpc.nuts.core.test.bundles.mvn;
 
 import java.io.File;
 
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.runtime.bundles.mvn.Pom;
@@ -38,10 +39,10 @@ import net.thevpc.nuts.runtime.bundles.mvn.PomXmlParser;
 public class TestPomXmlParser {
     public static void main(String[] args) {
         String path="/data/git/dbclient/modules/dbclient-plugins/tool/tool-neormf/pom.xml";
-        NutsWorkspace ws = TestUtils.openNewTestWorkspace("-k").getWorkspace();
+        NutsSession session = TestUtils.openNewTestWorkspace("-k");
         PomXmlParser p=new PomXmlParser(PomLogger.DEFAULT);
         try {
-            Pom t = p.parse(new File(path), ws.createSession());
+            Pom t = p.parse(new File(path), session);
             System.out.println(t);
         } catch (Exception ex) {
             ex.printStackTrace();

@@ -35,7 +35,7 @@ public class NutsSettingsIndexSubCommand extends AbstractNutsSettingsSubCommand 
 
     private void updateStatistics(NutsSession session, String[] repos) {
         NutsWorkspaceConfigManager cfg = session.config();
-        NutsUpdateStatisticsCommand cmd = session.getWorkspace().updateStatistics()
+        NutsUpdateStatisticsCommand cmd = session.updateStatistics()
                 .setSession(session);
         for (String repo : repos) {
             cmd.add(repo);

@@ -25,7 +25,7 @@ public class Test01_InstallTest {
         Map<String, String> extraProperties = new HashMap<>();
         extraProperties.put("nuts.export.always-show-command", "true");
         TestUtils.setSystemProperties(extraProperties);
-        NutsWorkspace ws = TestUtils.openNewTestWorkspace("--standalone","--embedded").getWorkspace();
+        NutsSession ws = TestUtils.openNewTestWorkspace("--standalone","--embedded");
         TestUtils.println(ws.locations().getWorkspaceLocation());
         TestUtils.println(ws.exec().setExecutionType(NutsExecutionType.SYSTEM).addCommand("ls").which());
 

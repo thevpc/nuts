@@ -1,15 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.config;
 
-import net.thevpc.nuts.NutsPlatformLocation;
-import net.thevpc.nuts.NutsUtilStrings;
-import net.thevpc.nuts.NutsVersion;
-import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.*;
 
 import java.util.Comparator;
 
 public class NutsPlatformLocationSelectComparator implements Comparator<NutsPlatformLocation> {
-    private NutsWorkspace ws;
-    public NutsPlatformLocationSelectComparator(NutsWorkspace ws) {
+    private NutsSession ws;
+    public NutsPlatformLocationSelectComparator(NutsSession ws) {
         this.ws=ws;
     }
 

@@ -4,6 +4,8 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.parsers.StringReaderExt;
 
 import java.util.*;
+
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsComponent;
 import net.thevpc.nuts.NutsCodeFormat;
 
@@ -27,7 +29,7 @@ public class JavaBlocTextFormatter implements NutsCodeFormat {
 
     public JavaBlocTextFormatter(NutsWorkspace ws) {
         this.ws = ws;
-        factory = ws.text();
+        factory = NutsWorkspaceUtils.defaultSession(ws).text();
     }
 
     @Override

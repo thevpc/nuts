@@ -238,6 +238,16 @@ public class NutsRepositorySessionAwareImpl implements NutsRepository, NutsRepos
         return repoSPI().isAcceptFetchMode(mode, session);
     }
 
+    @Override
+    public boolean isSupportedDeploy() {
+        return repo.isSupportedDeploy();
+    }
+
+    @Override
+    public boolean isSupportedDeploy(boolean force) {
+        return repo.isSupportedDeploy(force);
+    }
+
     private NutsRepositoryExt repoExt() {
         return ((NutsRepositoryExt) repo);
     }

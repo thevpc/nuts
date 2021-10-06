@@ -5,6 +5,7 @@
  */
 package net.thevpc.nuts.core.test.blackbox;
 
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.NutsOsFamily;
 import net.thevpc.nuts.NutsWorkspace;
@@ -28,14 +29,13 @@ public class Test10_ExecURLTest {
         extraProperties.put("nuts.export.always-show-command", "true");
         TestUtils.setSystemProperties(extraProperties);
 
-        NutsWorkspace ws = TestUtils.openNewTestWorkspace(
+        NutsSession s = TestUtils.openNewTestWorkspace(
                 "--archetype", "default",
                 "--skip-companions",
                 "--verbose"
-        ).getWorkspace();
-        ws = ws.createSession().getWorkspace();
-        TestUtils.println(ws.version().formatter());
-        String result = ws.exec()
+        );
+        TestUtils.println(s.version().formatter());
+        String result = s.exec()
                 //there are three classes and no main-class, so need to specify the one
                 .addExecutorOption("--main-class=Version")
 //                .addExecutorOption("--main-class=junit.runner.Version")

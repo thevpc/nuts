@@ -10,7 +10,7 @@ public class NutsIdFilterParser extends NutsTypedFiltersParser<NutsIdFilter> {
 
     @Override
     protected NutsIdFilterManager getTManager() {
-        return ws.filters().id();
+        return getSession().filters().id();
     }
 
     protected NutsIdFilter wordToPredicate(String word){

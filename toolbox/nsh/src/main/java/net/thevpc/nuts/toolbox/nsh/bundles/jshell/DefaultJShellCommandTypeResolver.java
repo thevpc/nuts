@@ -14,7 +14,7 @@ import java.io.File;
 public class DefaultJShellCommandTypeResolver implements JShellCommandTypeResolver {
 
     @Override
-    public JShellCommandType type(String item, JShellFileContext context) {
+    public JShellCommandType type(String item, JShellContext context) {
         String a = context.aliases().get(item);
         if (a != null) {
             return new JShellCommandType(item, "path", a, item + " is aliased to " + a);

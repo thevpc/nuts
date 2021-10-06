@@ -182,7 +182,7 @@ public class CoreNutsUtils {
         return m2;
     }
 
-    public static NutsVersion applyStringProperties(NutsVersion child, Function<String, String> properties, NutsWorkspace ws) {
+    public static NutsVersion applyStringProperties(NutsVersion child, Function<String, String> properties, NutsSession ws) {
         if (child == null) {
             return child;
         }
@@ -230,7 +230,7 @@ public class CoreNutsUtils {
         return any;
     }
 
-    public static <T extends NutsFilter> T simplifyFilterOr(NutsWorkspace ws, Class<T> cls, T base, NutsFilter... all) {
+    public static <T extends NutsFilter> T simplifyFilterOr(NutsSession ws, Class<T> cls, T base, NutsFilter... all) {
         if (all.length == 0) {
             return (T) ws.filters().always(cls);
         }
@@ -277,7 +277,7 @@ public class CoreNutsUtils {
         return (T) ws.filters().any(cls, all2.toArray((T[]) Array.newInstance(cls, 0)));
     }
 
-    public static <T extends NutsFilter> T simplifyFilterAnd(NutsWorkspace ws, Class<T> cls, T base, NutsFilter... all) {
+    public static <T extends NutsFilter> T simplifyFilterAnd(NutsSession ws, Class<T> cls, T base, NutsFilter... all) {
         if (all.length == 0) {
             return (T) ws.filters().always(cls);
         }
@@ -320,7 +320,7 @@ public class CoreNutsUtils {
         return (T) ws.filters().all(cls, all2.toArray((T[]) Array.newInstance(cls, 0)));
     }
 
-    public static <T extends NutsFilter> T simplifyFilterNone(NutsWorkspace ws, Class<T> cls, T base, NutsFilter... all) {
+    public static <T extends NutsFilter> T simplifyFilterNone(NutsSession ws, Class<T> cls, T base, NutsFilter... all) {
         if (all.length == 0) {
             return (T) ws.filters().always(cls);
         }
@@ -401,7 +401,7 @@ public class CoreNutsUtils {
         return all.toArray((T[]) Array.newInstance(cls, 0));
     }
 
-    public static NutsId applyNutsIdInheritance(NutsId child, NutsId parent, NutsWorkspace ws) {
+    public static NutsId applyNutsIdInheritance(NutsId child, NutsId parent, NutsSession ws) {
         if (parent != null) {
             boolean modified = false;
             String repository = child.getRepository();
@@ -822,7 +822,7 @@ public class CoreNutsUtils {
         Object o = session.getProperty("monitor-allowed");
         NutsWorkspace ws = session.getWorkspace();
         if (o != null) {
-            o = ws.commandLine().create(String.valueOf(o)).next().getAll().getBoolean();
+            o = session.commandLine().create(String.valueOf(o)).next().getAll().getBoolean();
         }
         boolean monitorable = true;
         if (o instanceof Boolean) {

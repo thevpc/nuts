@@ -42,7 +42,7 @@ public class NutsVersionFilterNone extends AbstractVersionFilter implements Nuts
 
     @Override
     public NutsVersionFilter simplify() {
-        return CoreNutsUtils.simplifyFilterNone(getWorkspace(),NutsVersionFilter.class,this,all);
+        return CoreNutsUtils.simplifyFilterNone(getSession(),NutsVersionFilter.class,this,all);
     }
 
     @Override

@@ -242,16 +242,16 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
     private Map<String, Object> buildWorkspaceMap(boolean deep) {
         String prefix = null;
         FilteredMap props = new FilteredMap(filter);
-        NutsWorkspace ws = getSession().getWorkspace();
+        NutsSession ws = getSession();
         NutsWorkspaceConfigManager rt = ws.config();
         NutsWorkspaceOptions options = ws.boot().getBootOptions();
         Set<String> extraKeys = new TreeSet<>(extraProperties.keySet());
 
-        props.put("name", stringValue(ws.getName()));
-        props.put("nuts-api-version", ws.getApiVersion());
+        props.put("name", stringValue(ws.getWorkspace().getName()));
+        props.put("nuts-api-version", ws.getWorkspace().getApiVersion());
 //        NutsIdFormat idFormat = ws.id().formatter();
-        props.put("nuts-api-id", ws.getApiId());
-        props.put("nuts-runtime-id", ws.getRuntimeId());
+        props.put("nuts-api-id", ws.getWorkspace().getApiId());
+        props.put("nuts-runtime-id", ws.getWorkspace().getRuntimeId());
         URL[] cl = ws.boot().getBootClassWorldURLs();
         List<NutsPath> runtimeClassPath = new ArrayList<>();
         if (cl != null) {
@@ -271,7 +271,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
         props.put("nuts-runtime-classpath",
                 ws.text().builder().appendJoined(";",runtimeClassPath)
         );
-        props.put("nuts-workspace-id", stringValue(ws.getUuid()));
+        props.put("nuts-workspace-id", stringValue(ws.getWorkspace().getUuid()));
         props.put("nuts-store-layout", ws.locations().getStoreLocationLayout());
         props.put("nuts-store-strategy", ws.locations().getStoreLocationStrategy());
         props.put("nuts-repo-store-strategy", ws.locations().getRepositoryStoreLocationStrategy());
@@ -348,7 +348,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
     }
 
     private Map<String, Object> buildRepoRepoMap(NutsRepository repo, boolean deep, String prefix) {
-        NutsWorkspace ws = getSession().getWorkspace();
+        NutsSession ws = getSession();
         FilteredMap props = new FilteredMap(filter);
         props.put(key(prefix, "name"), stringValue(repo.getName()));
         props.put(key(prefix, "global-name"), repo.config().getGlobalName());
@@ -367,9 +367,9 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
         }
         props.put(key(prefix, "deploy-order"), (repo.config().getDeployOrder()));
         props.put(key(prefix, "store-location-strategy"), (repo.config().getStoreLocationStrategy()));
-        props.put(key(prefix, "store-location"), ws.io().path(repo.config().getStoreLocation()));
+        props.put(key(prefix, "store-location"), getSession().io().path(repo.config().getStoreLocation()));
         for (NutsStoreLocation value : NutsStoreLocation.values()) {
-            props.put(key(prefix, "store-location-" + value.id()), ws.io().path(repo.config().getStoreLocation(value)));
+            props.put(key(prefix, "store-location-" + value.id()), getSession().io().path(repo.config().getStoreLocation(value)));
         }
         props.put(key(prefix, "supported-mirroring"), (repo.config().isSupportedMirroring()));
         if (repo.config().isSupportedMirroring()) {

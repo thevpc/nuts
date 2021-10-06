@@ -52,6 +52,6 @@ public class LogoutCommand extends SimpleNshBuiltin {
 
     @Override
     protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
-        context.getWorkspace().security().logout();
+        context.getSession().security().logout();
     }
 }

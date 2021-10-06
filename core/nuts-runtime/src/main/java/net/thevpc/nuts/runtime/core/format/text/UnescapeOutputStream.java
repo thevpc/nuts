@@ -11,12 +11,10 @@ import java.io.OutputStream;
 public class UnescapeOutputStream extends BaseTransparentFilterOutputStream implements ExtendedFormatAware {
 
     private NutsSession session;
-    private NutsWorkspace ws;
 
     public UnescapeOutputStream(OutputStream out, NutsSession session) {
         super(out);
         this.session = session;
-        this.ws = session.getWorkspace();
         NutsTerminalModeOp t = CoreIOUtils.resolveNutsTerminalModeOp(out);
         if (t.in() != NutsTerminalMode.FORMATTED && t.in() != NutsTerminalMode.FILTERED) {
             throw new IllegalArgumentException("Illegal Formatted");
@@ -33,7 +31,7 @@ public class UnescapeOutputStream extends BaseTransparentFilterOutputStream impl
     }
 
     private String filterThanEscape(String b) throws IOException {
-        NutsTextManager txt = ws.text().setSession(session);
+        NutsTextManager txt = session.text();
         String filtered = txt.builder().append(b).filteredText();
         return txt.ofPlain(filtered).toString();
 //        return ws.text().escapeText(

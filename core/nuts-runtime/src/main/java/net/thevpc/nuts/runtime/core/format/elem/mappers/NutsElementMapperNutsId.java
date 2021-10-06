@@ -21,7 +21,7 @@ public class NutsElementMapperNutsId implements NutsElementMapper<NutsId> {
 //                NutsWorkspace ws = context.getSession().getWorkspace();
 //                NutsText n = ws.text().toText(ws.id().formatter(o).setNtf(true).format());
 //                return ws.elem().forPrimitive().buildNutsString(n);
-            NutsWorkspace ws = context.getSession().getWorkspace();
+            NutsSession ws = context.getSession();
             return ws.elem().forString(ws.id().formatter(o).setNtf(true).format().toString());
         } else {
             return context.defaultObjectToElement(o.toString(), null);

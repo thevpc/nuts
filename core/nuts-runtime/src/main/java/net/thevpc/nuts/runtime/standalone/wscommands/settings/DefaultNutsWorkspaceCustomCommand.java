@@ -63,7 +63,7 @@ public class DefaultNutsWorkspaceCustomCommand implements NutsWorkspaceCustomCom
         r.addAll(Arrays.asList(args));
         args = r.toArray(new String[0]);
 
-        ws.exec()
+        session.exec()
                 .addCommand(args)
                 .addExecutorOptions(executorOptions)
                 .setDirectory(options.getDirectory())
@@ -108,7 +108,7 @@ public class DefaultNutsWorkspaceCustomCommand implements NutsWorkspaceCustomCom
         }
         if (helpCommand != null && helpCommand.length > 0) {
             try {
-                return ws.exec()
+                return session.exec()
                         .addCommand(helpCommand)
                         .setFailFast(false)
                         .setRedirectErrorStream(true)

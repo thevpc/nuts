@@ -48,7 +48,7 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
 
     protected NutsLogger _LOG(NutsSession session) {
         if (LOG == null) {
-            LOG = this.ws.log().setSession(session).of(DefaultNutsIOUncompressAction.class);
+            LOG = session.log().of(DefaultNutsIOUncompressAction.class);
         }
         return LOG;
     }

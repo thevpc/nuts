@@ -34,7 +34,7 @@ public class NutsRepositoryUtils {
 
     protected NutsLogger _LOG(NutsSession session) {
         if (LOG == null) {
-            LOG = this.repo.getWorkspace().log().setSession(session).of(NutsRepositoryUtils.class);
+            LOG = session.log().of(NutsRepositoryUtils.class);
         }
         return LOG;
     }
@@ -113,17 +113,17 @@ public class NutsRepositoryUtils {
             for (NutsRepositoryListener listener : u.repo.getRepositoryListeners()) {
                 listener.onUndeploy(evt);
             }
-            for (NutsRepositoryListener listener : u.repo.getWorkspace().events().getRepositoryListeners()) {
+            for (NutsRepositoryListener listener : evt.getSession().events().getRepositoryListeners()) {
                 listener.onUndeploy(evt);
             }
         }
 
-        public void fireOnDeploy(NutsContentEvent file) {
+        public void fireOnDeploy(NutsContentEvent event) {
             for (NutsRepositoryListener listener : u.repo.getRepositoryListeners()) {
-                listener.onDeploy(file);
+                listener.onDeploy(event);
             }
-            for (NutsRepositoryListener listener : u.repo.getWorkspace().events().getRepositoryListeners()) {
-                listener.onDeploy(file);
+            for (NutsRepositoryListener listener : event.getSession().events().getRepositoryListeners()) {
+                listener.onDeploy(event);
             }
         }
 
@@ -131,7 +131,7 @@ public class NutsRepositoryUtils {
             for (NutsRepositoryListener listener : u.repo.getRepositoryListeners()) {
                 listener.onPush(event);
             }
-            for (NutsRepositoryListener listener : u.repo.getWorkspace().events().getRepositoryListeners()) {
+            for (NutsRepositoryListener listener : event.getSession().events().getRepositoryListeners()) {
                 listener.onPush(event);
             }
             for (NutsRepositoryListener listener : event.getSession().getListeners(NutsRepositoryListener.class)) {
@@ -149,7 +149,7 @@ public class NutsRepositoryUtils {
             for (NutsRepositoryListener listener : u.repo.getRepositoryListeners()) {
                 listener.onAddRepository(event);
             }
-            for (NutsRepositoryListener listener : u.repo.getWorkspace().events().getRepositoryListeners()) {
+            for (NutsRepositoryListener listener : event.getSession().events().getRepositoryListeners()) {
                 listener.onAddRepository(event);
             }
             for (NutsRepositoryListener listener : event.getSession().getListeners(NutsRepositoryListener.class)) {
@@ -169,7 +169,7 @@ public class NutsRepositoryUtils {
 //            }
                 listener.onRemoveRepository(event);
             }
-            for (NutsRepositoryListener listener : u.repo.getWorkspace().events().getRepositoryListeners()) {
+            for (NutsRepositoryListener listener : event.getSession().events().getRepositoryListeners()) {
 //            if (event == null) {
 //                event = new DefaultNutsRepositoryEvent(getWorkspace(), this, event, "mirror", event, null);
 //            }

@@ -58,7 +58,7 @@ public class NutsSettingsBackupSubCommand extends AbstractNutsSettingsSubCommand
                     file += ".zip";
                 }
                 NutsIOCompressAction cmp = session
-                        .getWorkspace().io()
+                        .io()
                         .compress();
                 for (String s : all) {
                     cmp.addSource(s);
@@ -98,7 +98,7 @@ public class NutsSettingsBackupSubCommand extends AbstractNutsSettingsSubCommand
             if (commandLine.isExecMode()) {
                 NutsObjectElement[] nutsWorkspaceConfigRef = new NutsObjectElement[1];
                 session
-                        .getWorkspace().io()
+                        .io()
                         .uncompress()
                         .from(file)
                         .visit(new NutsIOUncompressVisitor() {
@@ -131,7 +131,7 @@ public class NutsSettingsBackupSubCommand extends AbstractNutsSettingsSubCommand
                 String platformHomeFolder = NutsUtilPlatforms.getWorkspaceLocation(null,
                         session.config().stored().isGlobal(), ws);
                 session
-                        .getWorkspace().io()
+                        .io()
                         .uncompress()
                         .from(file)
                         .to(platformHomeFolder)

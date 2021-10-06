@@ -39,14 +39,14 @@ import java.util.TreeSet;
  */
 public class NutsRepositoryFolderHelper {
     private final NutsRepository repo;
-    private final NutsWorkspace ws;
+    private final NutsSession ws;
     private final Path rootPath;
     private final boolean cacheFolder;
     private NutsLogger LOG;
     private boolean readEnabled = true;
     private boolean writeEnabled = true;
 
-    public NutsRepositoryFolderHelper(NutsRepository repo, NutsWorkspace ws, Path rootPath, boolean cacheFolder) {
+    public NutsRepositoryFolderHelper(NutsRepository repo, NutsSession ws, Path rootPath, boolean cacheFolder) {
         this.repo = repo;
         this.ws = ws;
         if (ws == null && repo == null) {
@@ -75,14 +75,14 @@ public class NutsRepositoryFolderHelper {
     public Path getLongIdLocalFolder(NutsId id, NutsSession session) {
         NutsWorkspaceUtils.of(session).checkNutsId(id);
         if (repo == null) {
-            return getStoreLocation().resolve(getWorkspace().locations().setSession(session).getDefaultIdBasedir(id));
+            return getStoreLocation().resolve(session.locations().setSession(session).getDefaultIdBasedir(id));
         }
         return getStoreLocation().resolve(NutsRepositoryExt0.of(repo).getIdBasedir(id, session));
     }
 
     public Path getLongIdLocalFile(NutsId id, NutsSession session) {
         if (repo == null) {
-            return getLongIdLocalFolder(id, session).resolve(getWorkspace().locations().setSession(session).getDefaultIdFilename(id));
+            return getLongIdLocalFolder(id, session).resolve(session.locations().setSession(session).getDefaultIdFilename(id));
         }
         return getLongIdLocalFolder(id, session).resolve(NutsRepositoryExt0.of(repo).getIdFilename(id, session));
     }
@@ -90,7 +90,7 @@ public class NutsRepositoryFolderHelper {
     public Path getShortIdLocalFolder(NutsId id, NutsSession session) {
         NutsWorkspaceUtils.of(session).checkShortId(id);
         if (repo == null) {
-            return getStoreLocation().resolve(getWorkspace().locations().getDefaultIdBasedir(id.builder().setVersion("").build()));
+            return getStoreLocation().resolve(session.locations().getDefaultIdBasedir(id.builder().setVersion("").build()));
         }
         return getStoreLocation().resolve(NutsRepositoryExt0.of(repo).getIdBasedir(id.builder().setVersion("").build(), session));
     }
@@ -106,12 +106,17 @@ public class NutsRepositoryFolderHelper {
     }
 
     public NutsWorkspace getWorkspace() {
+        return ws.getWorkspace();
+    }
+
+    public NutsSession getSession() {
         return ws;
     }
 
+
     protected String getIdFilename(NutsId id, NutsSession session) {
         if (repo == null) {
-            return ws.locations().getDefaultIdFilename(id);
+            return session.locations().getDefaultIdFilename(id);
         }
         return NutsRepositoryExt0.of(repo).getIdFilename(id, session);
     }
@@ -131,7 +136,7 @@ public class NutsRepositoryFolderHelper {
         Path versionFolder = getLongIdLocalFolder(id, session);
         goodFile = versionFolder.resolve(idFilename);
         if (pathExists(goodFile, session)) {
-            return getWorkspace().descriptor().parser().setSession(session).parse(goodFile);
+            return session.descriptor().parser().setSession(session).parse(goodFile);
         }
 //        String alt = id.getAlternative();
 //        String goodAlt = null;
@@ -193,7 +198,7 @@ public class NutsRepositoryFolderHelper {
 
     protected NutsDescriptor loadMatchingDescriptor(Path file, NutsId id, NutsSession session) {
         if (pathExists(file, session)) {
-            NutsDescriptor d = Files.isRegularFile(file) ? getWorkspace().descriptor().parser().setSession(session).parse(file) : null;
+            NutsDescriptor d = Files.isRegularFile(file) ? session.descriptor().parser().setSession(session).parse(file) : null;
             if (d != null) {
                 Map<String, String> query = id.getProperties();
                 String os = query.get(NutsConstants.IdProperties.OS);
@@ -228,8 +233,8 @@ public class NutsRepositoryFolderHelper {
             return null;
         }
         NutsWorkspace ws = session.getWorkspace();
-        NutsIdFilter filter2 = ws.id().filter().all(filter,
-                ws.id().filter().byName(id.getShortName())
+        NutsIdFilter filter2 = session.id().filter().all(filter,
+                session.id().filter().byName(id.getShortName())
         );
         return findInFolder(getLocalGroupAndArtifactFile(id, session), filter2,
                 deep ? Integer.MAX_VALUE : 1,
@@ -256,7 +261,7 @@ public class NutsRepositoryFolderHelper {
             @Override
             public void undeploy(NutsId id, NutsSession session) {
                 if (repo == null) {
-                    NutsRepositoryFolderHelper.this.undeploy(new DefaultNutsRepositoryUndeployCommand(ws)
+                    NutsRepositoryFolderHelper.this.undeploy(new DefaultNutsRepositoryUndeployCommand(session.getWorkspace())
                             .setFetchMode(NutsFetchMode.LOCAL)
                             .setId(id).setSession(session));
                 } else {
@@ -278,7 +283,7 @@ public class NutsRepositoryFolderHelper {
                     //this is invalid cache!
                     return null;
                 } else {
-                    return getWorkspace().descriptor().parser().setSession(session).parse(pathname);
+                    return session.descriptor().parser().setSession(session).parse(pathname);
                 }
             }
         }, maxDepth);
@@ -376,7 +381,7 @@ public class NutsRepositoryFolderHelper {
 
     protected NutsLogger _LOG(NutsSession session) {
         if (LOG == null) {
-            LOG = this.ws.log().setSession(session).of(DefaultNutsFetchContentRepositoryCommand.class);
+            LOG = session.log().of(DefaultNutsFetchContentRepositoryCommand.class);
         }
         return LOG;
     }
@@ -397,12 +402,11 @@ public class NutsRepositoryFolderHelper {
                 return descFile;
             }
         }
-        NutsWorkspace ws2 = session.getWorkspace();
-        return ws2.concurrent().lock().setSource(descFile).call(() -> {
+        return session.concurrent().lock().setSource(descFile).call(() -> {
 
-            ws2.descriptor().formatter(desc).setNtf(false).print(descFile);
-            byte[] bytes = ws2.io().hash().sha1().setSource(desc).computeString().getBytes();
-            ws2.io().copy().setSession(session)
+            session.descriptor().formatter(desc).setNtf(false).print(descFile);
+            byte[] bytes = session.io().hash().sha1().setSource(desc).computeString().getBytes();
+            session.io().copy()
                     .from(
                             InputStreamMetadataAwareImpl.of(
                                     new ByteArrayInputStream(bytes)
@@ -465,7 +469,7 @@ public class NutsRepositoryFolderHelper {
         }
         Path localFolder = getLongIdLocalFile(command.getId().builder().setFaceContent().build(), command.getSession());
         if (localFolder != null && Files.exists(localFolder)) {
-            if (command.getSession().getWorkspace().concurrent().lock().setSource(localFolder).call(() -> {
+            if (command.getSession().concurrent().lock().setSource(localFolder).call(() -> {
                 CoreIOUtils.delete(command.getSession(), localFolder);
                 return false;
             })) {
@@ -524,7 +528,7 @@ public class NutsRepositoryFolderHelper {
                         }
                     }
                     try (PrintStream p = new PrintStream(new File(folder, CoreNutsConstants.Files.DOT_FILES))) {
-                        p.println("#version=" + ws.getApiVersion());
+                        p.println("#version=" + ws.getWorkspace().getApiVersion());
                         for (String file : folders) {
                             p.println(file + "/");
                         }

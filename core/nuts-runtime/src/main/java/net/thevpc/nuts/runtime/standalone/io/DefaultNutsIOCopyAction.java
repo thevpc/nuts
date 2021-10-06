@@ -66,7 +66,7 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
 
     protected NutsLogger _LOG(NutsSession session) {
         if (LOG == null) {
-            LOG = this.ws.log().setSession(session).of(DefaultNutsIOCopyAction.class);
+            LOG = session.log().of(DefaultNutsIOCopyAction.class);
         }
         return LOG;
     }

@@ -57,7 +57,7 @@ public class DefaultNutsVersionManager implements NutsVersionManager {
 
     @Override
     public NutsVersionFilterManager filter() {
-        return getWorkspace().filters().version().setSession(getSession());
+        return getSession().filters().version().setSession(getSession());
     }
 
     public NutsWorkspace getWorkspace() {

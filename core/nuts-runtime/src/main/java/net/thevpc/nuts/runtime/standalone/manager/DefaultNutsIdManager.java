@@ -40,7 +40,7 @@ public class DefaultNutsIdManager implements NutsIdManager {
 
     @Override
     public NutsIdFilterManager filter() {
-        return ws.filters().id().setSession(getSession());
+        return getSession().filters().id().setSession(getSession());
     }
 
     @Override

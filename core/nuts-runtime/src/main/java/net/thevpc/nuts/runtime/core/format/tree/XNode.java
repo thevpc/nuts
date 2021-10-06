@@ -90,9 +90,9 @@ public class XNode {
             return titleOrValueAsElement;
         } else {
             if (value instanceof List || value instanceof Map) {
-                return ws.text().builder().append(keyAsElement);
+                return session.text().builder().append(keyAsElement);
             } else {
-                return ws.text().builder().append(keyAsElement).append("=").append(titleOrValueAsElement);
+                return session.text().builder().append(keyAsElement).append("=").append(titleOrValueAsElement);
             }
         }
     }
@@ -168,7 +168,7 @@ public class XNode {
                 if (map == null) {
                     all.add(entryNode(keyStr, me.getValue(), session, format));
                 } else {
-                    all.add(entryNode(keyStr, ws.elem().setSession(session)
+                    all.add(entryNode(keyStr, session.elem()
                             .toElement(Arrays.asList(map)), session, format));
                 }
             }

@@ -41,7 +41,7 @@ public class NutsInstallStatusFilterNone extends AbstractInstallStatusFilter{
 
     @Override
     public NutsInstallStatusFilter simplify() {
-        return CoreNutsUtils.simplifyFilterNone(getWorkspace(),NutsInstallStatusFilter.class,this,all);
+        return CoreNutsUtils.simplifyFilterNone(getSession(),NutsInstallStatusFilter.class,this,all);
     }
 
     @Override

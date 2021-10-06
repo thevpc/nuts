@@ -24,7 +24,7 @@ public class DefaultNutsCheckUpdatesInternalExecutable extends DefaultInternalNu
 //            showDefaultHelp();
 //            return;
 //        }
-        getSession().getWorkspace().update().configure(false, args).checkUpdates();
+        getSession().update().configure(false, args).checkUpdates();
     }
 
 }

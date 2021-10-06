@@ -56,10 +56,10 @@ public class ShowerrCommand extends SimpleNshBuiltin {
         NutsArgument a = commandLine.peek();
         if (!a.isOption()) {
             if (options.login == null) {
-                options.login = commandLine.next(context.getWorkspace().commandLine().createName("username")).getString();
+                options.login = commandLine.next(context.getSession().commandLine().createName("username")).getString();
                 return true;
             } else if (options.password == null) {
-                options.password = commandLine.next(context.getWorkspace().commandLine().createName("password")).getString().toCharArray();
+                options.password = commandLine.next(context.getSession().commandLine().createName("password")).getString().toCharArray();
                 return true;
             }
         }
@@ -76,22 +76,22 @@ public class ShowerrCommand extends SimpleNshBuiltin {
         JShellResult r = context.getResult();
         if (r.getCode() == 0) {
             context.out().println(
-                    context.getWorkspace().text().ofStyled(
+                    context.getSession().text().ofStyled(
                             "last command ended successfully with no errors.", NutsTextStyle.success()
                     ));
         } else {
             context.out().println(
-                    context.getWorkspace().text()
+                    context.getSession().text()
                             .ofStyled("last command ended abnormally with the following error :",NutsTextStyle.error())
             );
             if (r.getMessage() != null) {
-                context.out().println(context.getWorkspace().text()
+                context.out().println(context.getSession().text()
                         .ofStyled(r.getMessage(),NutsTextStyle.error()
                         ));
             }
             if (r.getStackTrace() != null) {
                 context.err().println(
-                        context.getWorkspace().text()
+                        context.getSession().text()
                                 .ofStyled(r.getStackTrace(),NutsTextStyle.error())
                 );
             }

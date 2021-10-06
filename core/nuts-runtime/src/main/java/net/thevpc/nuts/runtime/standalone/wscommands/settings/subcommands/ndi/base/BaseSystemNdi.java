@@ -332,8 +332,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         if(session==null){
             throw new IllegalArgumentException("missing session");
         }
-        NutsWorkspace ws = session.getWorkspace();
-        Path workspaceLocation = Paths.get(ws.locations().getWorkspaceLocation());
+        Path workspaceLocation = Paths.get(session.locations().getWorkspaceLocation());
         List<PathInfo> result = new ArrayList<>();
         Boolean systemWideConfig = options.getLauncher().getSystemWideConfig();
         if (!idsToInstall.isEmpty()) {
@@ -342,7 +341,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             }
             boolean includeEnv = options.isIncludeEnv();
             for (String id : idsToInstall) {
-                NutsId nid = ws.id().parser().parse(id);
+                NutsId nid = session.id().parser().parse(id);
                 if (nid == null) {
                     throw new NutsExecutionException(session, NutsMessage.cstyle("unable to create script for %s : invalid id", id), 100);
                 }
@@ -354,18 +353,18 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
 //            if (includeEnv) {
 //                linkNameCurrent = prepareLinkName(linkNameCurrent);
 //            }
-            List<String> nutsIds = idsToInstall.stream().filter(x -> isNutsBootId(ws.id().parser().parse(x))).collect(Collectors.toList());
-            List<String> nonNutsIds = idsToInstall.stream().filter(x -> !isNutsBootId(ws.id().parser().parse(x))).collect(Collectors.toList());
+            List<String> nutsIds = idsToInstall.stream().filter(x -> isNutsBootId(session.id().parser().parse(x))).collect(Collectors.toList());
+            List<String> nonNutsIds = idsToInstall.stream().filter(x -> !isNutsBootId(session.id().parser().parse(x))).collect(Collectors.toList());
             boolean bootAlreadyProcessed = false;
             for (String id : nutsIds) {
                 try {
-                    NutsId nid = ws.id().parser().parse(id);
+                    NutsId nid = session.id().parser().parse(id);
                     bootAlreadyProcessed = true;
                     if (!nid.getVersion().isBlank()) {
                         String verString = nid.getVersion().toString();
                         if (verString.equalsIgnoreCase("current")
                                 || verString.equalsIgnoreCase("curr")) {
-                            id = nid.builder().setVersion(ws.getApiId().getVersion()).build().toString();
+                            id = nid.builder().setVersion(session.getWorkspace().getApiId().getVersion()).build().toString();
                         }
                     }
 
@@ -388,7 +387,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             }
             for (String id : nonNutsIds) {
                 try {
-                    NutsId nid = ws.id().parser().parse(id);
+                    NutsId nid = session.id().parser().parse(id);
                     if (nid == null) {
                         throw new NutsExecutionException(session, NutsMessage.cstyle("unable to create script for %s : invalid id", id), 100);
                     }
@@ -716,8 +715,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     }
 
     public String getPreferredIconPath(NutsId appId) {
-        NutsWorkspace ws = session.getWorkspace();
-        NutsDefinition appDef = ws.search().addId(appId).setLatest(true).setEffective(true).getResultDefinitions().singleton();
+        NutsDefinition appDef = session.search().addId(appId).setLatest(true).setEffective(true).getResultDefinitions().singleton();
         String descAppIcon = resolveBestIcon(appDef.getDescriptor().getIcons());
         if (descAppIcon == null) {
             if (isNutsBootId(appDef.getId())
@@ -739,21 +737,21 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         String iconPath=null;
         if (descAppIcon != null) {
             String descAppIcon0=descAppIcon;
-            String descAppIconDigest=ws.io().hash().md5().setSource(new ByteArrayInputStream(descAppIcon0.getBytes())).computeString();
+            String descAppIconDigest=session.io().hash().md5().setSource(new ByteArrayInputStream(descAppIcon0.getBytes())).computeString();
             NutsPath p0 = NutsPath.of(descAppIcon,session);
             if (descAppIcon.startsWith("classpath://")) {
                 descAppIcon = "nuts-resource://" + appDef.getId().getLongName() + "" + descAppIcon.substring("classpath://".length() - 1);
             }
             String bestName = descAppIconDigest+"." + p0.getLastExtension();
-            Path localIconPath = Paths.get(ws.locations().getStoreLocation(appDef.getId(), NutsStoreLocation.CACHE))
+            Path localIconPath = Paths.get(session.locations().getStoreLocation(appDef.getId(), NutsStoreLocation.CACHE))
                     .resolve("icons")
                     .resolve(bestName);
             if (Files.isRegularFile(localIconPath)) {
                 iconPath = localIconPath.toString();
             } else {
-                NutsPath p = ws.io().path(descAppIcon);
+                NutsPath p = session.io().path(descAppIcon);
                 if (p.exists()) {
-                    ws.io().copy()
+                    session.io().copy()
                             .from(p)
                             .to(localIconPath)
                             .run();
@@ -768,7 +766,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     }
 
     public Path getShortcutPath(NdiScriptOptions options) {
-        NutsDefinition appDef = options.getSession().getWorkspace().search()
+        NutsDefinition appDef = options.getSession().search()
                 .addId(options.getId())
                 .setLatest(true)
                 .setEffective(true).getResultDefinitions().singleton();
@@ -780,12 +778,11 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
 
     public PathInfo[] createShortcut(NutsDesktopIntegrationItem nutsDesktopIntegrationItem, NdiScriptOptions options) {
         String apiVersion = options.getNutsApiVersion().toString();
-        NutsWorkspace ws = session.getWorkspace();
         if (apiVersion == null) {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing nuts-api version to link to"));
         }
-        NutsId apiId = ws.getApiId().builder().setVersion(apiVersion).build();
-        NutsDefinition apiDefinition = ws.search().addId(apiId).setFailFast(true).setLatest(true).setContent(true).getResultDefinitions().singleton();
+        NutsId apiId = session.getWorkspace().getApiId().builder().setVersion(apiVersion).build();
+        NutsDefinition apiDefinition = session.search().addId(apiId).setFailFast(true).setLatest(true).setContent(true).getResultDefinitions().singleton();
 
         NutsId appId = options.getSession().id().parser().parse(options.getId());
         NutsDefinition appDef = loadIdDefinition(appId);

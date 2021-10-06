@@ -72,7 +72,7 @@ public class DefaultNutsDescriptorManager implements NutsDescriptorManager {
     @Override
     public NutsDescriptorFilterManager filter() {
         checkSession();
-        return getWorkspace().filters().descriptor().setSession(getSession());
+        return getSession().filters().descriptor().setSession(getSession());
     }
 
     @Override

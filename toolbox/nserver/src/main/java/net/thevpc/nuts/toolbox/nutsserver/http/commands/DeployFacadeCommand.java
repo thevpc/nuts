@@ -38,7 +38,7 @@ public class DeployFacadeCommand extends AbstractFacadeCommand {
             switch (name) {
                 case "descriptor":
                     try {
-                        descriptor = context.getWorkspace().descriptor().parser()
+                        descriptor = context.getSession().descriptor().parser()
                                 .setSession(context.getSession()).parse(info.getContent());
                     } finally {
                         info.getContent().close();
@@ -46,19 +46,19 @@ public class DeployFacadeCommand extends AbstractFacadeCommand {
                     break;
                 case "content-hash":
                     try {
-                        receivedContentHash = context.getWorkspace().io().hash().setSource(info.getContent()).computeString();
+                        receivedContentHash = context.getSession().io().hash().setSource(info.getContent()).computeString();
                     } finally {
                         info.getContent().close();
                     }
                     break;
                 case "content":
-                    contentFile = context.getWorkspace().io().tmp()
+                    contentFile = context.getSession().io().tmp()
                             .setSession(context.getSession())
                             .createTempFile(
-                            context.getWorkspace().locations().getDefaultIdFilename(
+                            context.getSession().locations().getDefaultIdFilename(
                                     descriptor.getId().builder().setFaceDescriptor().build()
                             ));
-                    context.getWorkspace().io().copy()
+                    context.getSession().io().copy()
                             .setSession(context.getSession())
                             .setSource(info.getContent())
                             .setTarget(contentFile)
@@ -69,7 +69,7 @@ public class DeployFacadeCommand extends AbstractFacadeCommand {
         if (contentFile == null) {
             context.sendError(400, "invalid JShellCommandNode arguments : " + getName() + " : missing file");
         }
-        NutsId id = context.getWorkspace().deploy().setContent(contentFile)
+        NutsId id = context.getSession().deploy().setContent(contentFile)
                 .setSha1(receivedContentHash)
                 .setDescriptor(descriptor)
                 .setSession(context.getSession().copy())

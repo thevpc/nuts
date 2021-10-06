@@ -32,7 +32,7 @@ public class NutsDependencyFilterOr extends AbstractDependencyFilter{
 
     @Override
     public NutsDependencyFilter simplify() {
-        return CoreNutsUtils.simplifyFilterOr(getWorkspace(),NutsDependencyFilter.class,this,all);
+        return CoreNutsUtils.simplifyFilterOr(getSession(),NutsDependencyFilter.class,this,all);
     }
 
     @Override

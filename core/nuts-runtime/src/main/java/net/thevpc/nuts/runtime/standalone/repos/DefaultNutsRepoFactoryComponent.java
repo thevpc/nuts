@@ -58,11 +58,11 @@ public class DefaultNutsRepoFactoryComponent implements NutsRepositoryFactoryCom
                     return DEFAULT_SUPPORT;
                 }
                 if (nru.isHttp()) {
-                    NutsPath in = criteria.getWorkspace().io().path(
+                    NutsPath in = criteria.getSession().io().path(
                             nru.getLocation() + "/nuts-repository.json"
                     );
                     try (InputStream s = in.getInputStream()) {
-                        Map<String, Object> m = criteria.getWorkspace().elem().setSession(criteria.getSession()).setContentType(NutsContentType.JSON)
+                        Map<String, Object> m = criteria.getSession().elem().setSession(criteria.getSession()).setContentType(NutsContentType.JSON)
                                 .parse(s, Map.class);
                         if (m != null) {
                             String type = (String) m.get("type");

@@ -11,6 +11,6 @@ package net.thevpc.nuts.toolbox.nsh.bundles.jshell;
  */
 public interface JShellCommandTypeResolver {
 
-    JShellCommandType type(String path0, JShellFileContext context);
+    JShellCommandType type(String path0, JShellContext context);
 
 }

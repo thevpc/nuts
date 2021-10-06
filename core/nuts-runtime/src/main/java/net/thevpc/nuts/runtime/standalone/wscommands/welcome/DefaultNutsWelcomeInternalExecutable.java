@@ -29,8 +29,7 @@ public class DefaultNutsWelcomeInternalExecutable extends DefaultInternalNutsExe
             return;
         }
         NutsSession session = getSession();
-        NutsWorkspace ws = session.getWorkspace();
-        NutsCommandLine commandLine = ws.commandLine().create(args);
+        NutsCommandLine commandLine = session.commandLine().create(args);
         while (commandLine.hasNext()) {
             NutsArgument a = commandLine.peek();
             if (a.isOption()) {
@@ -50,21 +49,21 @@ public class DefaultNutsWelcomeInternalExecutable extends DefaultInternalNutsExe
         }
 
         if (!session.isBot() && session.isPlainOut()) {
-            session.out().resetLine().println(NutsWorkspaceExt.of(ws).getWelcomeText(session));
+            session.out().resetLine().println(NutsWorkspaceExt.of(session.getWorkspace()).getWelcomeText(session));
         } else {
             Map<String, Object> welcome = new LinkedHashMap<>();
             welcome.put("message", "Welcome to nuts. Yeah, it is working...");
-            welcome.put("name", ws.text().ofStyled("nuts", NutsTextStyle.primary(1)));
+            welcome.put("name", session.text().ofStyled("nuts", NutsTextStyle.primary(1)));
             welcome.put("long-name", "Network Updatable Things Services");
             welcome.put("description", "The Free and Open Source Package Manager for Java (TM) and other Things ...");
-            welcome.put("url", ws.io().path("http://github.com/thevpc/nuts"));
+            welcome.put("url", session.io().path("http://github.com/thevpc/nuts"));
             welcome.put("author", "thevpc");
-            welcome.put("api-id", ws.getApiId().builder().setVersion("").build());
-            welcome.put("api-version", ws.getApiVersion());
-            welcome.put("runtime-id", ws.getRuntimeId().builder().setVersion("").build());
-            welcome.put("runtime-version", ws.getRuntimeId().getVersion());
-            welcome.put("workspace", ws.io().path(ws.locations().getWorkspaceLocation()));
-            welcome.put("hash-name", ws.io().path(ws.getHashName()));
+            welcome.put("api-id", session.getWorkspace().getApiId().builder().setVersion("").build());
+            welcome.put("api-version", session.getWorkspace().getApiVersion());
+            welcome.put("runtime-id", session.getWorkspace().getRuntimeId().builder().setVersion("").build());
+            welcome.put("runtime-version", session.getWorkspace().getRuntimeId().getVersion());
+            welcome.put("workspace", session.io().path(session.locations().getWorkspaceLocation()));
+            welcome.put("hash-name", session.io().path(session.getWorkspace().getHashName()));
             if (session.isPlainOut()) {
                 session = session.copy().setOutputFormat(NutsContentType.PROPS);
             }

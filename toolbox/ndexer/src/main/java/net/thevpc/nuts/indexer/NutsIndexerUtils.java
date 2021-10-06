@@ -42,14 +42,14 @@ public class NutsIndexerUtils {
         if (level == 0) {
             entity.put("mirrors", Arrays.toString(
                     Arrays.stream(repository.config().setSession(session).getMirrors())
-                            .map(nutsRepository -> mapToJson(nutsRepositoryToMap(nutsRepository, level + 1, session), ws))
+                            .map(nutsRepository -> mapToJson(nutsRepositoryToMap(nutsRepository, level + 1, session), session))
                             .toArray()));
-            entity.put("parents", mapToJson(nutsRepositoryToMap(repository.getParentRepository(), level + 1, session), ws));
+            entity.put("parents", mapToJson(nutsRepositoryToMap(repository.getParentRepository(), level + 1, session), session));
         }
         return entity;
     }
 
-    public static String mapToJson(Map<String, String> map, NutsWorkspace ws) {
+    public static String mapToJson(Map<String, String> map, NutsSession ws) {
         StringWriter s = new StringWriter();
         ws.elem().setContentType(NutsContentType.JSON).setValue(map).print(s);
         return s.toString();

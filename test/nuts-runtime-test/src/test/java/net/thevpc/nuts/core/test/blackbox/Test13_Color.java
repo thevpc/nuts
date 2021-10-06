@@ -29,25 +29,24 @@ public class Test13_Color {
         extraProperties.put("nuts.export.always-show-command", "true");
         TestUtils.setSystemProperties(extraProperties);
 
-        NutsWorkspace ws = TestUtils.openNewTestWorkspace(
+        NutsSession session = TestUtils.openNewTestWorkspace(
                 "--archetype", "default",
                 "--log-info",
-                "--skip-companions").getWorkspace();
+                "--skip-companions");
 
         for (NutsTerminalMode sysMode : new NutsTerminalMode[]{NutsTerminalMode.INHERITED, NutsTerminalMode.FORMATTED, NutsTerminalMode.FILTERED}) {
             for (NutsTerminalMode sessionMode : new NutsTerminalMode[]{NutsTerminalMode.INHERITED, NutsTerminalMode.FORMATTED, NutsTerminalMode.FILTERED}) {
-                testMode(ws,sysMode,sessionMode);
+                testMode(session,sysMode,sessionMode);
             }
         }
     }
 
-    public static void testMode(NutsWorkspace ws,NutsTerminalMode systemMode,NutsTerminalMode sessionMode) {
+    public static void testMode(NutsSession session,NutsTerminalMode systemMode,NutsTerminalMode sessionMode) {
         TestUtils.println((systemMode==null?"default":systemMode==NutsTerminalMode.INHERITED?"raw":systemMode.id())
                 +"->"+(sessionMode==null?"default":sessionMode==NutsTerminalMode.INHERITED?"raw":sessionMode.id()));
 //        if(systemMode!=null) {
 //            ws.term().getSystemTerminal().setMode(systemMode);
 //        }
-        NutsSession session = ws.createSession();
         if(sessionMode!=null) {
             session.getTerminal().setOut(session.getTerminal().out().convertMode(sessionMode));
         }

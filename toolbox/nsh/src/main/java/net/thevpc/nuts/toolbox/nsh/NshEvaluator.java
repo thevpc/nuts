@@ -41,21 +41,20 @@ import java.util.logging.Level;
 public class NshEvaluator extends DefaultJShellEvaluator {
 
     @Override
-    public int evalBinaryPipeOperation(JShellCommandNode left, JShellCommandNode right, JShellFileContext context) {
+    public int evalBinaryPipeOperation(JShellCommandNode left, JShellCommandNode right, JShellContext context) {
         final NutsPrintStream nout;
         final PipedOutputStream out;
         final PipedInputStream in;
         final JavaShellNonBlockingInputStream in2;
-        JShellContext ncontext = (JShellContext) (context.getShellContext());
         try {
             out = new PipedOutputStream();
-            nout = ncontext.getWorkspace().io().createPrintStream(out, NutsTerminalMode.FORMATTED);
+            nout = context.getSession().io().createPrintStream(out, NutsTerminalMode.FORMATTED);
             in = new PipedInputStream(out, 1024);
             in2 = (in instanceof JavaShellNonBlockingInputStream) ? (JavaShellNonBlockingInputStream) in : new JavaShellNonBlockingInputStreamAdapter("jpipe-" + right.toString(), in);
         } catch (IOException ex) {
             throw new JShellException(1, ex);
         }
-        final JShellFileContext leftContext = context.getShell().createNewContext(context).setOut(nout.asPrintStream());
+        final JShellContext leftContext = context.getShell().createNewContext(context).setOut(nout.asPrintStream());
         final JShellUniformException[] a = new JShellUniformException[2];
         Thread j1 = new Thread() {
             @Override
@@ -74,7 +73,7 @@ public class NshEvaluator extends DefaultJShellEvaluator {
 
         };
         j1.start();
-        JShellFileContext rightContext = context.getShell().createNewContext(context).setIn((InputStream) in2);
+        JShellContext rightContext = context.getShell().createNewContext(context).setIn((InputStream) in2);
         try {
             context.getShell().evalNode(right, rightContext);
         } catch (JShellUniformException e) {
@@ -96,9 +95,9 @@ public class NshEvaluator extends DefaultJShellEvaluator {
     }
 
     @Override
-    public String evalCommandAndReturnString(JShellCommandNode command, JShellFileContext context) {
-        JShellFileContext c1 = context.getShell().createNewContext(context);
-        DefaultJShellContext c2 = (DefaultJShellContext) c1.getShellContext();
+    public String evalCommandAndReturnString(JShellCommandNode command, JShellContext context) {
+        JShellContext c1 = context.getShell().createNewContext(context);
+        DefaultJShellContext c2 = (DefaultJShellContext) c1;
         c2.setSession(c2.getSession().copy());
         c2.getSession().setLogLevel(Level.OFF);
 

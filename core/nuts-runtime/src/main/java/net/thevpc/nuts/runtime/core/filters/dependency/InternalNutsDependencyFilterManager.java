@@ -208,7 +208,7 @@ public class InternalNutsDependencyFilterManager extends InternalNutsTypedFilter
     @Override
     public NutsDependencyFilter byExclude(NutsDependencyFilter filter, String[] exclusions) {
         checkSession();
-        return new NutsExclusionDependencyFilter(getSession(), filter, Arrays.stream(exclusions).map(x -> ws.id().parser().setLenient(false).parse(x)).toArray(NutsId[]::new));
+        return new NutsExclusionDependencyFilter(getSession(), filter, Arrays.stream(exclusions).map(x -> getSession().id().parser().setLenient(false).parse(x)).toArray(NutsId[]::new));
     }
 
     @Override

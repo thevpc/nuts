@@ -105,16 +105,15 @@ public class WhoamiCommand extends SimpleNshBuiltin {
         if (!config.nutsUser) {
             result.login = System.getProperty("user.name");
         } else {
-            NutsWorkspace validWorkspace = context.getWorkspace();
             NutsSession session = context.getSession();
-            String login = validWorkspace.security().getCurrentUsername();
+            String login = session.security().getCurrentUsername();
             result.login = login;
             if (config.argAll) {
-                NutsUser user = validWorkspace.security().findUser(login);
+                NutsUser user = session.security().findUser(login);
                 Set<String> groups = new TreeSet<>(Arrays.asList(user.getGroups()));
                 Set<String> rights = new TreeSet<>(Arrays.asList(user.getPermissions()));
                 Set<String> inherited = new TreeSet<>(Arrays.asList(user.getInheritedPermissions()));
-                result.loginStack = validWorkspace.security().getCurrentLoginStack();
+                result.loginStack = session.security().getCurrentLoginStack();
                 if (result.loginStack.length <= 1) {
                     result.loginStack = null;
                 }
@@ -140,7 +139,7 @@ public class WhoamiCommand extends SimpleNshBuiltin {
                     result.remoteId = user.getRemoteIdentity();
                 }
                 List<RepoResult> rr = new ArrayList<>();
-                for (NutsRepository repository : context.getWorkspace().repos().getRepositories()) {
+                for (NutsRepository repository : context.getSession().repos().getRepositories()) {
                     NutsUser ruser = repository.security().getEffectiveUser(login);
                     if (ruser != null && (ruser.getGroups().length > 0
                             || ruser.getPermissions().length > 0

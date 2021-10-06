@@ -171,7 +171,7 @@ public class TestCommand extends AbstractNshBuiltin {
 
     @Override
     public int execImpl(String[] args, JShellExecutionContext context) {
-        NutsCommandLine commandLine = context.getWorkspace().commandLine().create(args)
+        NutsCommandLine commandLine = context.getSession().commandLine().create(args)
                 .setCommandName("test")
                 .setExpandSimpleOptions(false)
                 ;

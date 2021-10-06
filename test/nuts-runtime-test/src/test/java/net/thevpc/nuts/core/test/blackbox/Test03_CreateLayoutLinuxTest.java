@@ -54,19 +54,19 @@ public class Test03_CreateLayoutLinuxTest {
                 )
         );
         for (NutsStoreLocation value : NutsStoreLocation.values()) {
-            s.out().printf("%s %s%n", value, s.getWorkspace().locations().getStoreLocation(value));
+            s.out().printf("%s %s%n", value, s.locations().getStoreLocation(value));
         }
 
-        NutsWorkspace wsAgain = TestUtils.openExistingTestWorkspace(
+        NutsSession wsAgain = TestUtils.openExistingTestWorkspace(
                 TestUtils.sarr(
                         TestUtils.createSysDirs(testBaseFolder),
                         //            "--verbose",
                         "-!Z",
                         "--trace",
                         "info"
-                )).getWorkspace();
+                ));
 
-        NutsId ndiId = s.getWorkspace().search().setInstallStatus(s.getWorkspace().filters().installStatus().byInstalled(true)).addId("nsh").getResultIds().singleton();
+        NutsId ndiId = s.search().setInstallStatus(s.filters().installStatus().byInstalled(true)).addId("nsh").getResultIds().singleton();
         Assertions.assertTrue(ndiId.getVersion().getValue().startsWith(TestUtils.NUTS_VERSION + "."));
 
         Assertions.assertEquals(
@@ -152,12 +152,12 @@ public class Test03_CreateLayoutLinuxTest {
                         "--trace",
                         "info")).getWorkspace();
 
-        NutsWorkspace ws2 = TestUtils.openNewTestWorkspace(TestUtils.sarr(
+        NutsSession s2 = TestUtils.openNewTestWorkspace(TestUtils.sarr(
                 TestUtils.createSysDirs(base),
                 //            "--verbose",
                 "--trace",
-                "info")).getWorkspace();
-        NutsId ndiId = ws2.search().setInstallStatus(ws2.filters().installStatus().byInstalled(true)).addId("nsh").getResultIds().singleton();
+                "info"));
+        NutsId ndiId = s2.search().setInstallStatus(s2.filters().installStatus().byInstalled(true)).addId("nsh").getResultIds().singleton();
         Assertions.assertTrue(ndiId.getVersion().getValue().startsWith(TestUtils.NUTS_VERSION + "."));
 
         Assertions.assertEquals(
@@ -193,19 +193,18 @@ public class Test03_CreateLayoutLinuxTest {
         TestUtils.println("Deleting " + base);
         CoreIOUtils.delete(null, base);
         NutsSession s = TestUtils.openNewTestWorkspace("--reset", "-b", "--debug", "--workspace", base.getPath(), "--standalone", "info");
-        NutsWorkspace ws = s.getWorkspace();
         NutsId nshId = null;
         try {
-            nshId = ws.search().setInstallStatus(ws.filters().installStatus().byInstalled(true)).addId("nsh").getResultIds().singleton();
+            nshId = s.search().setInstallStatus(s.filters().installStatus().byInstalled(true)).addId("nsh").getResultIds().singleton();
         } catch (Exception ex) {
-            nshId = ws.search().setInstallStatus(ws.filters().installStatus().byInstalled(true)).addId("nsh").getResultIds().singleton();
+            nshId = s.search().setInstallStatus(s.filters().installStatus().byInstalled(true)).addId("nsh").getResultIds().singleton();
         }
         Assertions.assertTrue(nshId.getVersion().getValue().startsWith(TestUtils.NUTS_VERSION + "."));
-        String c = ws.locations().getStoreLocation(NutsStoreLocation.CONFIG);
+        String c = s.locations().getStoreLocation(NutsStoreLocation.CONFIG);
         TestUtils.println(c);
         TestUtils.println(new File(base, "config").getPath());
         for (NutsStoreLocation value : NutsStoreLocation.values()) {
-            s.out().printf("%s %s%n", value, s.getWorkspace().locations().getStoreLocation(value));
+            s.out().printf("%s %s%n", value, s.locations().getStoreLocation(value));
         }
 
         Assertions.assertEquals(

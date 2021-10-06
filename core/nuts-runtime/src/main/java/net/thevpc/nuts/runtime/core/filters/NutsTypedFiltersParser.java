@@ -12,7 +12,9 @@ public abstract class NutsTypedFiltersParser<T extends NutsFilter> extends Abstr
         addBoolOps();
     }
 
-
+    public NutsSession getSession() {
+        return session;
+    }
 
     protected T nextDefault(){
         return getTManager().always();

@@ -68,10 +68,10 @@ public class DefaultNutsFetchDescriptorRepositoryCommand extends AbstractNutsFet
 
     @Override
     public NutsFetchDescriptorRepositoryCommand run() {
-        NutsWorkspace ws = getRepo().getWorkspace();
+//        NutsWorkspace ws = getRepo().getWorkspace();
         NutsSession session = getSession();
         NutsWorkspaceUtils.of(session).checkLongId(id, session);
-        NutsWorkspaceUtils.checkSession(ws, session);
+        NutsWorkspaceUtils.checkSession(getRepo().getWorkspace(), session);
         getRepo().security().setSession(getSession()).checkAllowed(NutsConstants.Permissions.FETCH_DESC, "fetch-descriptor");
         Map<String, String> queryMap = id.getProperties();
         queryMap.remove(NutsConstants.IdProperties.OPTIONAL);
@@ -95,7 +95,7 @@ public class DefaultNutsFetchDescriptorRepositoryCommand extends AbstractNutsFet
                 id = id.builder().setFaceDescriptor().build();
                 d = xrepo.fetchDescriptorImpl(id, getFetchMode(), session);
             } else {
-                NutsIdFilter filter = CoreFilterUtils.idFilterOf(id.getProperties(), ws.id().filter().byName(id.getFullName()), null, ws);
+                NutsIdFilter filter = CoreFilterUtils.idFilterOf(id.getProperties(), session.id().filter().byName(id.getFullName()), null, session);
                 NutsId a = xrepo.searchLatestVersion(id.builder().setVersion("").build(), filter, getFetchMode(), session);
                 if (a == null) {
                     throw new NutsNotFoundException(getSession(), id.getLongId());

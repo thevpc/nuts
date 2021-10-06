@@ -129,8 +129,8 @@ public class CorePlatformUtils {
     }
 
 
-    private static String buildUnixOsNameAndVersion(String name, NutsWorkspace ws) {
-        Map<String, String> m = getOsDistMap(ws);
+    private static String buildUnixOsNameAndVersion(String name, NutsSession session) {
+        Map<String, String> m = getOsDistMap(session);
         String v = m.get("osVersion");
         if (NutsBlankable.isBlank(v)) {
             return name;
@@ -138,29 +138,29 @@ public class CorePlatformUtils {
         return name + "#" + v;
     }
 
-    public static Map<String, String> getOsDistMap(NutsWorkspace ws) {
+    public static Map<String, String> getOsDistMap(NutsSession session) {
         String property = System.getProperty("os.name").toLowerCase();
         if (property.startsWith("linux")) {
             if (LOADED_OS_DIST_MAP == null) {
-                LOADED_OS_DIST_MAP = getOsDistMapLinux(ws);
+                LOADED_OS_DIST_MAP = getOsDistMapLinux(session);
             }
             return Collections.unmodifiableMap(LOADED_OS_DIST_MAP);
         }
         if (property.startsWith("mac")) {
             if (LOADED_OS_DIST_MAP == null) {
-                LOADED_OS_DIST_MAP = getOsDistMapLinux(ws);
+                LOADED_OS_DIST_MAP = getOsDistMapLinux(session);
             }
             return Collections.unmodifiableMap(LOADED_OS_DIST_MAP);
         }
         if (property.startsWith("sunos")) {
             if (LOADED_OS_DIST_MAP == null) {
-                LOADED_OS_DIST_MAP = getOsDistMapLinux(ws);
+                LOADED_OS_DIST_MAP = getOsDistMapLinux(session);
             }
             return Collections.unmodifiableMap(LOADED_OS_DIST_MAP);
         }
         if (property.startsWith("freebsd")) {
             if (LOADED_OS_DIST_MAP == null) {
-                LOADED_OS_DIST_MAP = getOsDistMapLinux(ws);
+                LOADED_OS_DIST_MAP = getOsDistMapLinux(session);
             }
             return Collections.unmodifiableMap(LOADED_OS_DIST_MAP);
         }
@@ -173,10 +173,10 @@ public class CorePlatformUtils {
      * http://stackoverflow.com/questions/15018474/getting-linux-distro-from-java
      * thanks to //PbxMan//
      *
-     * @param ws ws
+     * @param session session
      * @return os distribution map including keys distId, distName, distVersion,osVersion
      */
-    public static Map<String, String> getOsDistMapLinux(NutsWorkspace ws) {
+    public static Map<String, String> getOsDistMapLinux(NutsSession session) {
         File dir = new File("/etc/");
         List<File> fileList = new ArrayList<>();
         if (dir.exists()) {
@@ -216,7 +216,7 @@ public class CorePlatformUtils {
             CoreStringUtils.clear(osVersion);
             try {
                 osVersion.append(
-                        ws.exec().setExecutionType(NutsExecutionType.SYSTEM)
+                        session.exec().setExecutionType(NutsExecutionType.SYSTEM)
                                 .setCommand("uname", "-r")
                                 .setRedirectErrorStream(true)
                                 .grabOutputString()
@@ -288,10 +288,10 @@ public class CorePlatformUtils {
         return m;
     }
 
-    public static String getPlatformOsDist(NutsWorkspace ws) {
-        String osInfo = getPlatformOs(ws);
+    public static String getPlatformOsDist(NutsSession session) {
+        String osInfo = getPlatformOs(session);
         if (osInfo.startsWith("linux")) {
-            Map<String, String> m = getOsDistMap(ws);
+            Map<String, String> m = getOsDistMap(session);
             String distId = m.get("distId");
             String distVersion = m.get("distVersion");
             if (!NutsBlankable.isBlank(distId)) {
@@ -311,7 +311,7 @@ public class CorePlatformUtils {
      * @param ws workspace
      * @return platform os name
      */
-    public static String getPlatformOs(NutsWorkspace ws) {
+    public static String getPlatformOs(NutsSession ws) {
         String property = System.getProperty("os.name").toLowerCase();
         if (property.startsWith("linux")) {
             return buildUnixOsNameAndVersion("linux", ws);

@@ -25,6 +25,7 @@
 */
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.toolbox.nsh.AbstractNshBuiltin;
 import net.thevpc.nuts.NutsCommandLine;
@@ -42,8 +43,8 @@ public class VersionCommand extends AbstractNshBuiltin {
 
     @Override
     public int execImpl(String[] args, JShellExecutionContext context) {
-        NutsWorkspace ws = context.getWorkspace();
-        NutsCommandLine cmdLine = context.getWorkspace().commandLine().create(args);
+        NutsSession ws = context.getSession();
+        NutsCommandLine cmdLine = context.getSession().commandLine().create(args);
         NutsVersionFormat version = ws.version().formatter();
         version.configure(true, cmdLine);
         version

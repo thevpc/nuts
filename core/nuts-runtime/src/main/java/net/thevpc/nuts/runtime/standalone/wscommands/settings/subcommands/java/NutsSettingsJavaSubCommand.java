@@ -23,10 +23,9 @@ public class NutsSettingsJavaSubCommand extends AbstractNutsSettingsSubCommand {
         if (autoSave == null) {
             autoSave = false;
         }
-        NutsWorkspace ws = session.getWorkspace();
         NutsPrintStream out = session.out();
-        NutsWorkspaceConfigManager conf = ws.config();
-        NutsPlatformManager platforms = ws.env().platforms();
+        NutsWorkspaceConfigManager conf = session.config();
+        NutsPlatformManager platforms = session.env().platforms();
         if (cmdLine.next("add java") != null) {
             if (cmdLine.next("--search") != null) {
                 List<String> extraLocations = new ArrayList<>();

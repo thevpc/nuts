@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.core.format.text.bloc;
 
 import net.thevpc.nuts.NutsSupportLevelContext;
 import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsComponent;
 import net.thevpc.nuts.NutsCodeFormat;
 import net.thevpc.nuts.NutsSession;
@@ -15,7 +16,7 @@ public class PlainBlocTextFormatter implements NutsCodeFormat {
 
     public PlainBlocTextFormatter(NutsWorkspace ws) {
         this.ws = ws;
-        factory = ws.text();
+        factory = NutsWorkspaceUtils.defaultSession(ws).text();
     }
 
     @Override

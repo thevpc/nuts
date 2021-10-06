@@ -14,9 +14,9 @@ public class CommandNutsWorkspaceCommandFactory implements NutsWorkspaceCommandF
     private String[] findCommand;
     private String[] execCommand;
     private String[] listCommand;
-    private NutsWorkspace ws;
+    private NutsSession ws;
 
-    public CommandNutsWorkspaceCommandFactory(NutsWorkspace ws) {
+    public CommandNutsWorkspaceCommandFactory(NutsSession ws) {
         this.ws = ws;
     }
 
@@ -89,7 +89,7 @@ public class CommandNutsWorkspaceCommandFactory implements NutsWorkspaceCommandF
         if (findCommand.length > 0 && execCommand.length > 0) {
             String[] fc = replaceParam(findCommand, name);
             String[] ec = replaceParam(execCommand, name);
-            NutsExecCommand exec = ws.exec().addCommand(fc).setSession(session)
+            NutsExecCommand exec = session.exec().addCommand(fc).setSession(session)
                     //                        .setExecutorOptions("--show-command")
                     .setRedirectErrorStream(true)
                     .grabOutputString()
@@ -98,7 +98,7 @@ public class CommandNutsWorkspaceCommandFactory implements NutsWorkspaceCommandF
             if (r == 0) {
                 return new NutsCommandConfig()
                         .setFactoryId(getFactoryId())
-                        .setOwner(ws.id().parser().parse(ec[0]))
+                        .setOwner(session.id().parser().parse(ec[0]))
                         .setName(name)
                         .setCommand(Arrays.copyOfRange(ec, 1, ec.length));
             }
@@ -110,7 +110,7 @@ public class CommandNutsWorkspaceCommandFactory implements NutsWorkspaceCommandF
     public List<NutsCommandConfig> findCommands(NutsSession session) {
         List<NutsCommandConfig> c = new ArrayList<>();
         if (listCommand.length > 0) {
-            NutsExecCommand b = ws.exec().addCommand(listCommand).setSession(session)
+            NutsExecCommand b = session.exec().addCommand(listCommand).setSession(session)
                     .setRedirectErrorStream(true)
                     .grabOutputString();
             int r = b.getResult();

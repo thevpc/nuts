@@ -60,10 +60,9 @@ public class Test12_ParseNTF {
         Map<String, String> extraProperties = new HashMap<>();
         extraProperties.put("nuts.export.always-show-command", "true");
         TestUtils.setSystemProperties(extraProperties);
-        NutsWorkspace ws = TestUtils.openNewTestWorkspace(
+        NutsSession session = TestUtils.openNewTestWorkspace(
                 "--standalone",
-                "--skip-companions").getWorkspace();
-        NutsSession session = ws.createSession();
+                "--skip-companions");
         NutsTextManager txt = session.text();
         NutsText parsed = txt.parse("##:error0:n#01##");
         System.out.println(parsed);
@@ -74,12 +73,11 @@ public class Test12_ParseNTF {
         Map<String, String> extraProperties = new HashMap<>();
         extraProperties.put("nuts.export.always-show-command", "true");
         TestUtils.setSystemProperties(extraProperties);
-        NutsWorkspace ws = TestUtils.openNewTestWorkspace(
+        NutsSession session = TestUtils.openNewTestWorkspace(
                 "--standalone",
                 "-Z",
                 "--yes",
-                "--skip-companions").getWorkspace();
-        NutsSession session = ws.createSession();
+                "--skip-companions");
         NutsTextManager txt = session.text();
 
 //        String str="missing command. try ```sh ndocusaurus pdf | start | build```";
@@ -98,12 +96,11 @@ public class Test12_ParseNTF {
         Map<String, String> extraProperties = new HashMap<>();
         extraProperties.put("nuts.export.always-show-command", "true");
         TestUtils.setSystemProperties(extraProperties);
-        NutsWorkspace ws = TestUtils.openNewTestWorkspace(
+        NutsSession session = TestUtils.openNewTestWorkspace(
                 "--standalone",
                 "-Z",
                 "--yes",
-                "--skip-companions").getWorkspace();
-        NutsSession session = ws.createSession();
+                "--skip-companions");
         NutsTextManager txt = session.text();
 
 //        String str="missing command. try ```sh ndocusaurus pdf | start | build```";
@@ -120,11 +117,10 @@ public class Test12_ParseNTF {
         Map<String, String> extraProperties = new HashMap<>();
         extraProperties.put("nuts.export.always-show-command", "true");
         TestUtils.setSystemProperties(extraProperties);
-        NutsWorkspace ws = TestUtils.openNewTestWorkspace(
+        NutsSession session = TestUtils.openNewTestWorkspace(
                 "--standalone",
                 "-Z",
-                "--skip-companions").getWorkspace();
-        NutsSession session = ws.createSession();
+                "--skip-companions");
         NutsTextManager txt = session.text();
 
 //        String str="missing command. try ```sh ndocusaurus pdf | start | build```";
@@ -141,11 +137,10 @@ public class Test12_ParseNTF {
         Map<String, String> extraProperties = new HashMap<>();
         extraProperties.put("nuts.export.always-show-command", "true");
         TestUtils.setSystemProperties(extraProperties);
-        NutsWorkspace ws = TestUtils.openNewTestWorkspace(
+        NutsSession session = TestUtils.openNewTestWorkspace(
                 "--standalone",
                 "-Z",
-                "--skip-companions").getWorkspace();
-        NutsSession session = ws.createSession();
+                "--skip-companions");
         NutsTextManager txt = session.text();
 
         String str = "##:separator0:{##\u001E\n" +
@@ -198,11 +193,10 @@ public class Test12_ParseNTF {
         Map<String, String> extraProperties = new HashMap<>();
         extraProperties.put("nuts.export.always-show-command", "true");
         TestUtils.setSystemProperties(extraProperties);
-        NutsWorkspace ws = TestUtils.openNewTestWorkspace(
+        NutsSession session = TestUtils.openNewTestWorkspace(
                 "--standalone",
                 "-Z",
-                "--skip-companions").getWorkspace();
-        NutsSession session = ws.createSession();
+                "--skip-companions");
         NutsTextManager txt = session.text();
 
         String str = "##:separator0:{##\u001E\n" +
@@ -256,11 +250,10 @@ public class Test12_ParseNTF {
         Map<String, String> extraProperties = new HashMap<>();
         extraProperties.put("nuts.export.always-show-command", "true");
         TestUtils.setSystemProperties(extraProperties);
-        NutsWorkspace ws = TestUtils.openNewTestWorkspace(
+        NutsSession session = TestUtils.openNewTestWorkspace(
                 "--standalone",
                 "-Z",
-                "--skip-companions").getWorkspace();
-        NutsSession session = ws.createSession();
+                "--skip-companions");
         NutsTextManager txt = session.text();
 
 //        String str = "##{string0:\"<main>://com.github.vatbub:mslinks#1.0.5\"}##";
@@ -276,8 +269,7 @@ public class Test12_ParseNTF {
         Map<String, String> extraProperties = new HashMap<>();
         extraProperties.put("nuts.export.always-show-command", "true");
         TestUtils.setSystemProperties(extraProperties);
-        NutsWorkspace ws = TestUtils.openNewTestWorkspace("-ZSkK").getWorkspace();
-        NutsSession session = ws.createSession();
+        NutsSession session = TestUtils.openNewTestWorkspace("-ZSkK");
         NutsTextManager txt = session.text();
 
 //        String str = "##{string0:\"<main>://com.github.vatbub:mslinks#1.0.5\"}##";

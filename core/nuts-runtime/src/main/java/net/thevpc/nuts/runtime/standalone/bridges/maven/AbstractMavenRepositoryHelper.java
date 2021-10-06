@@ -52,7 +52,7 @@ public abstract class AbstractMavenRepositoryHelper {
 
     protected NutsLogger _LOG(NutsSession session) {
         if (LOG == null) {
-            LOG = this.repository.getWorkspace().log().setSession(session).of(AbstractMavenRepositoryHelper.class);
+            LOG = session.log().of(AbstractMavenRepositoryHelper.class);
         }
         return LOG;
     }

@@ -12,12 +12,7 @@ public class NutsElementMapperNutsDependency implements NutsElementMapper<NutsDe
         if (o.getExclusions().length == 0) {
             //use compact form
             if (context.elem().isNtf()) {
-                NutsWorkspace ws = context.getSession().getWorkspace();
-//                    NutsText n = ws.text().parse(
-//                            ws.dependency().formatter().setNtf(true).setValue(o).format()
-//                    );
-//                    return ws.elem().forPrimitive().buildNutsString(n);
-                return ws.dependency().formatter().setNtf(true).setValue(o).format();
+                return context.getSession().dependency().formatter().setNtf(true).setValue(o).format();
             } else {
 
                 return context.defaultDestruct(context.getSession().dependency().formatter(o)

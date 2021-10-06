@@ -30,7 +30,7 @@ public class DefaultJShellErrorHandler implements JShellErrorHandler {
     }
 
     @Override
-    public void onError(String message, Throwable th, JShellFileContext context) {
+    public void onError(String message, Throwable th, JShellContext context) {
         th.printStackTrace();
     }
 }

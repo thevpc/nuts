@@ -47,7 +47,7 @@ public class DefaultNutsSystemTerminalBaseBoot implements NutsSystemTerminalBase
 
     private NutsLogger _LOG() {
         if (LOG == null && session != null) {
-            LOG = workspace.log().setSession(session).of(NutsSystemTerminalBase.class);
+            LOG = session.log().of(NutsSystemTerminalBase.class);
         }
         return LOG;
     }
@@ -170,7 +170,7 @@ public class DefaultNutsSystemTerminalBaseBoot implements NutsSystemTerminalBase
             out = getOut();
         }
         if (out == null) {
-            out = workspace.io().stdout();
+            out = session.io().stdout();
         }
         if (message != null) {
             out.printf("%s", message);
@@ -185,7 +185,7 @@ public class DefaultNutsSystemTerminalBaseBoot implements NutsSystemTerminalBase
             out = getOut();
         }
         if (out == null) {
-            out = workspace.io().stdout();
+            out = session.io().stdout();
         }
         if (message != null) {
             out.printf("%s", message);

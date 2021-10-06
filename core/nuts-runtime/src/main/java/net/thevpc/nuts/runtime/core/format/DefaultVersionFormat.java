@@ -126,9 +126,9 @@ public class DefaultVersionFormat extends DefaultFormatBase<NutsVersionFormat> i
         if (extraProperties != null) {
             extraKeys = new TreeSet(extraProperties.keySet());
         }
-        NutsWorkspace ws = getSession().getWorkspace();
-        props.put("nuts-api-version", ws.getApiVersion().toString());
-        props.put("nuts-runtime-version", ws.getRuntimeId().getVersion().toString());
+        NutsSession ws = getSession();
+        props.put("nuts-api-version", ws.getWorkspace().getApiVersion().toString());
+        props.put("nuts-runtime-version", ws.getWorkspace().getRuntimeId().getVersion().toString());
         if (all) {
             props.put("java-version", System.getProperty("java.version"));
             props.put("os-version", ws.env().getOs().getVersion().toString());

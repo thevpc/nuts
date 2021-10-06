@@ -45,7 +45,7 @@ public class NutsIdFilterNone extends AbstractIdFilter implements NutsIdFilter, 
 
     @Override
     public NutsIdFilter simplify() {
-        return CoreNutsUtils.simplifyFilterNone(getWorkspace(),NutsIdFilter.class,this,children);
+        return CoreNutsUtils.simplifyFilterNone(getSession(),NutsIdFilter.class,this,children);
     }
 
     @Override

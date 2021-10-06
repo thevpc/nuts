@@ -25,7 +25,7 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase {
 
     private NutsLogger _LOG() {
         if (LOG == null && session != null) {
-            LOG = workspace.log().setSession(session).of(NutsSystemTerminalBase.class);
+            LOG = session.log().of(NutsSystemTerminalBase.class);
         }
         return LOG;
     }
@@ -117,9 +117,9 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase {
                     terminalMode = NutsTerminalMode.FORMATTED;
                 }
             }
-            this.out = workspace.io().stdout().convertMode(terminalMode);
-            this.err = workspace.io().stderr().convertMode(terminalMode);
-            this.in = workspace.io().stdin();
+            this.out = session.io().stdout().convertMode(terminalMode);
+            this.err = session.io().stderr().convertMode(terminalMode);
+            this.in = session.io().stdin();
             this.scanner = new Scanner(this.in);
         } else {
             //on uninstall do nothing
@@ -134,7 +134,7 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase {
             out = getOut();
         }
         if (out == null) {
-            out = workspace.io().stdout();
+            out = session.io().stdout();
         }
         if(message!=null) {
             out.printf("%s", message);
@@ -149,7 +149,7 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase {
             out = getOut();
         }
         if (out == null) {
-            out = workspace.io().stdout();
+            out = session.io().stdout();
         }
         if(message!=null) {
             out.printf("%s", message);

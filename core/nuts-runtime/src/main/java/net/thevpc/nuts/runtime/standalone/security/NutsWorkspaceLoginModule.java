@@ -48,7 +48,7 @@ public class NutsWorkspaceLoginModule implements LoginModule {
     private Subject subject;
     private UserPrincipal userPrincipal;
     private String login;
-    private static final ThreadLocal<NutsWorkspace> WORKSPACE = new ThreadLocal<>();
+    private static final ThreadLocal<NutsSession> SESSION = new ThreadLocal<>();
 
     static {
         final Configuration configuration = Configuration.getConfiguration();
@@ -58,8 +58,8 @@ public class NutsWorkspaceLoginModule implements LoginModule {
         }
     }
 
-    public static void configure(NutsWorkspace workspace) {
-        NutsWorkspaceLoginModule.WORKSPACE.set(workspace);
+    public static void configure(NutsSession session) {
+        NutsWorkspaceLoginModule.SESSION.set(session);
         //do nothing
     }
 
@@ -90,8 +90,8 @@ public class NutsWorkspaceLoginModule implements LoginModule {
             PasswordCallback callback = (PasswordCallback) callbacks[1];
             char[] password = callback == null ? null : callback.getPassword();
 
-            NutsWorkspace workspace = NutsWorkspaceLoginModule.WORKSPACE.get();
-            if (workspace == null) {
+            NutsSession session = NutsWorkspaceLoginModule.SESSION.get();
+            if (session == null) {
                 throw new LoginException("Authentication failed : No Workspace");
             }
 
@@ -99,15 +99,12 @@ public class NutsWorkspaceLoginModule implements LoginModule {
                 this.login = name;
                 return true;
             }
-            NutsSession defaultSession = NutsWorkspaceUtils.defaultSession(workspace);
-
-            NutsUserConfig registeredUser = NutsWorkspaceConfigManagerExt.of(workspace.config())
+            NutsUserConfig registeredUser = NutsWorkspaceConfigManagerExt.of(session.config())
                     .getModel()
-                    .getUser(name, defaultSession);
+                    .getUser(name, session);
             if (registeredUser != null) {
                 try {
-                    workspace.security()
-                            .setSession(defaultSession)
+                    session.security()
                             .checkCredentials(registeredUser.getCredentials().toCharArray(),password);
                     this.login = name;
                     return true;

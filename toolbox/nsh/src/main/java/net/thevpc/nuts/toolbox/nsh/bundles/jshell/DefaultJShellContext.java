@@ -10,10 +10,7 @@ import net.thevpc.nuts.toolbox.nsh.*;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.util.DirectoryScanner;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
@@ -39,10 +36,17 @@ public class DefaultJShellContext extends AbstractJShellContext {
     private NutsSession session;
     //    private NutsSessionTerminal terminal;
     private NutsCommandAutoComplete autoComplete;
+    private String serviceName;
+    private List<String> args=new ArrayList<>();
+    public int commandLineIndex = -1;
 
     public DefaultJShellContext(JShell shell, JShellNode rootNode, JShellNode parentNode,
-                                JShellContext parentContext, NutsWorkspace workspace, NutsSession session, JShellVariables vars) {
+                                JShellContext parentContext, NutsWorkspace workspace, NutsSession session, JShellVariables vars,
+                                String serviceName, String[] args
+                                ) {
         this(parentContext);
+        this.serviceName = serviceName;
+        this.args.addAll(Arrays.asList(args));
         this.vars = new JShellVariables(this);
         this.shell=shell;
         setFileSystem(new DefaultJShellFileSystem());
@@ -56,7 +60,7 @@ public class DefaultJShellContext extends AbstractJShellContext {
             }
         }
         this.session = session;
-        setRoot(rootNode);
+        setRootNode(rootNode);
         setParentNode(parentNode);
         if (parentContext != null) {
             vars().set(parentContext.vars());
@@ -94,7 +98,7 @@ public class DefaultJShellContext extends AbstractJShellContext {
             }
         }
         this.session = session;
-        setRoot(rootNode);
+        setRootNode(rootNode);
         setParentNode(parentNode);
         if (parentContext != null) {
             vars().set(parentContext.vars());
@@ -244,7 +248,7 @@ public class DefaultJShellContext extends AbstractJShellContext {
     }
 
 
-    public JShellContext setRoot(JShellNode root) {
+    public JShellContext setRootNode(JShellNode root) {
         this.rootNode = root;
         return this;
     }
@@ -282,23 +286,24 @@ public class DefaultJShellContext extends AbstractJShellContext {
 //    public JShellExecutionContext createCommandContext(JShellBuiltin command, JShellFileContext context) {
 //        return new DefaultJShellExecutionContext(context);
 //    }
-    public JShellExecutionContext createCommandContext(JShellBuiltin command, JShellFileContext context) {
-        DefaultJShellExecutionContext c = new DefaultJShellExecutionContext(this, (NshBuiltin) command, context);
+    public JShellExecutionContext createCommandContext(JShellBuiltin command) {
+        DefaultJShellExecutionContext c = new DefaultJShellExecutionContext(this, (NshBuiltin) command);
 //        c.setMode(getTerminalMode());
 //        c.setVerbose(isVerbose());
         return c;
     }
+
     @Override
-    public List<JShellAutoCompleteCandidate> resolveAutoCompleteCandidates(String commandName, List<String> autoCompleteWords, int wordIndex, String autoCompleteLine, JShellFileContext ctx) {
+    public List<JShellAutoCompleteCandidate> resolveAutoCompleteCandidates(String commandName, List<String> autoCompleteWords, int wordIndex, String autoCompleteLine) {
         JShellBuiltin command = this.builtins().find(commandName);
         NutsCommandAutoComplete autoComplete = new NutsDefaultCommandAutoComplete()
                 .setSession(session).setLine(autoCompleteLine).setWords(autoCompleteWords).setCurrentWordIndex(wordIndex);
 
         if (command != null && command instanceof NshBuiltin) {
-            ((NshBuiltin) command).autoComplete(new DefaultJShellExecutionContext(this, (NshBuiltin) command, ctx), autoComplete);
+            ((NshBuiltin) command).autoComplete(new DefaultJShellExecutionContext(this, (NshBuiltin) command), autoComplete);
         } else {
-            NutsWorkspace ws = this.getWorkspace();
-            List<NutsId> nutsIds = ws.search()
+            NutsSession session = this.getSession();
+            List<NutsId> nutsIds = session.search()
                     .addId(commandName)
                     .setLatest(true)
                     .addScope(NutsDependencyScopePattern.RUN)
@@ -307,14 +312,14 @@ public class DefaultJShellContext extends AbstractJShellContext {
                     .getResultIds().toList();
             if (nutsIds.size() == 1) {
                 NutsId selectedId = nutsIds.get(0);
-                NutsDefinition def = ws.search().addId(selectedId).setEffective(true).setSession(this.getSession()
+                NutsDefinition def = session.search().addId(selectedId).setEffective(true).setSession(this.getSession()
                         .copy().setFetchStrategy(NutsFetchStrategy.OFFLINE)).getResultDefinitions().required();
                 NutsDescriptor d = def.getDescriptor();
                 String nuts_autocomplete_support = NutsUtilStrings.trim(d.getPropertyValue("nuts.autocomplete"));
                 if (d.isApplication()
                         || "true".equalsIgnoreCase(nuts_autocomplete_support)
                         || "supported".equalsIgnoreCase(nuts_autocomplete_support)) {
-                    NutsExecCommand t = ws.exec()
+                    NutsExecCommand t = session.exec()
                             .grabOutputString()
                             .grabErrorString()
                             .addCommand(
@@ -331,7 +336,7 @@ public class DefaultJShellContext extends AbstractJShellContext {
                             if (s.length() > 0) {
                                 if (s.startsWith(NutsApplicationContext.AUTO_COMPLETE_CANDIDATE_PREFIX)) {
                                     s = s.substring(NutsApplicationContext.AUTO_COMPLETE_CANDIDATE_PREFIX.length()).trim();
-                                    NutsCommandLineManager commandLineFormat = workspace.commandLine();
+                                    NutsCommandLineManager commandLineFormat = session.commandLine();
                                     NutsCommandLine args = commandLineFormat.parse(s);
                                     String value = null;
                                     String display = null;
@@ -549,6 +554,48 @@ public class DefaultJShellContext extends AbstractJShellContext {
     @Override
     public void setAutoComplete(NutsCommandAutoComplete autoComplete) {
         this.autoComplete = autoComplete;
+    }
+
+
+    @Override
+    public String getServiceName() {
+        return serviceName;
+    }
+
+    @Override
+    public void setServiceName(String serviceName) {
+        this.serviceName=serviceName;
+    }
+
+    @Override
+    public void setArgs(String[] args) {
+        this.args.clear();
+        this.args.addAll(Arrays.asList(args));
+    }
+
+    @Override
+    public String getArg(int index) {
+        List<String> argsList = getArgsList();
+        if(index>=0 && index<argsList.size()) {
+            String r = argsList.get(index);
+            return r==null?"":r;
+        }
+        return "";
+    }
+
+    @Override
+    public int getArgsCount() {
+        return args.size();
+    }
+
+    @Override
+    public String[] getArgsArray() {
+        return args.toArray(new String[0]);
+    }
+
+    @Override
+    public List<String> getArgsList() {
+        return args;
     }
 
 }

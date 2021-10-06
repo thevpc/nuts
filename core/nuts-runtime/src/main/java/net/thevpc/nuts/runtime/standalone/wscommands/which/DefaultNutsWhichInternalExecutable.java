@@ -32,8 +32,8 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
             return;
         }
         List<String> commands = new ArrayList<String>();
-        NutsWorkspace ws = getSession().getWorkspace();
-        NutsCommandLine commandLine = ws.commandLine().create(args);
+//        NutsWorkspace ws = getSession().getWorkspace();
+        NutsCommandLine commandLine = getSession().commandLine().create(args);
         while (commandLine.hasNext()) {
             NutsArgument a = commandLine.peek();
             if (a.isOption()) {
@@ -57,7 +57,7 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
         if (commands.isEmpty()) {
             throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("which: missing commands"));
         }
-        NutsTextManager factory = ws.text();
+        NutsTextManager factory = getSession().text();
         for (String arg : this.args) {
             NutsPrintStream out = getSession().out();
             try {
@@ -89,7 +89,7 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
                                     factory.ofStyled(arg, NutsTextStyle.primary4()),
                                     factory.ofStyled("nuts alias", NutsTextStyle.primary6()),
                                     p.getId(),
-                                    ws.commandLine().create(ws.commands().findCommand(p.getName()).getCommand())
+                                    getSession().commandLine().create(getSession().commands().findCommand(p.getName()).getCommand())
                             );
                         }else {
                             getSession().eout().add(

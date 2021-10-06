@@ -646,7 +646,7 @@ public class Yaccer {
 //        return new Argument(ok);
     }
 
-    public static String evalTokenString(Token token, JShellFileContext context) {
+    public static String evalTokenString(Token token, JShellContext context) {
         switch (token.type) {
             case "WORD": {
                 return token.value.toString();
@@ -739,7 +739,7 @@ public class Yaccer {
     }
 
 
-    public static String evalNodeString(JShellNode node, JShellFileContext context) {
+    public static String evalNodeString(JShellNode node, JShellContext context) {
         if (node instanceof Comments) {
             return "";
         } else if (node instanceof TokenNode) {
@@ -781,7 +781,7 @@ public class Yaccer {
             this.token = token;
         }
 
-        public String evalString(JShellFileContext context) {
+        public String evalString(JShellContext context) {
             return evalTokenString(token, context);
         }
 
@@ -803,7 +803,7 @@ public class Yaccer {
         }
 
         @Override
-        public int eval(final JShellFileContext context) {
+        public int eval(final JShellContext context) {
             String cmd = op.type.equals("NEWLINE") ? ";" : String.valueOf(op.value);
             return context.getShell().getEvaluator().evalBinaryOperation(cmd, left, right, context);
         }
@@ -828,7 +828,7 @@ public class Yaccer {
         }
 
         @Override
-        public int eval(JShellFileContext context) {
+        public int eval(JShellContext context) {
             switch (op.type) {
                 case "&": {
                     return context.getShell().getEvaluator().evalSuffixAndOperation(a, context);
@@ -847,7 +847,7 @@ public class Yaccer {
             this.block = block;
         }
 
-        public boolean eval(JShellFileContext context) {
+        public boolean eval(JShellContext context) {
 //        System.out.println("+ IF " + conditionNode);
             boolean trueCond = false;
             if (cond != null) {
@@ -878,7 +878,7 @@ public class Yaccer {
         JShellCommandNode _else;
 
         @Override
-        public int eval(JShellFileContext context) {
+        public int eval(JShellContext context) {
 //        System.out.println("+ IF " + conditionNode);
             if (_if.eval(context)) {
                 return 0;
@@ -902,7 +902,7 @@ public class Yaccer {
         JShellCommandNode _done;
 
         @Override
-        public int eval(JShellFileContext context) {
+        public int eval(JShellContext context) {
             while (true) {
                 if (!_while.eval(context)) {
                     return 0;
@@ -928,7 +928,7 @@ public class Yaccer {
         }
 
         @Override
-        public int eval(JShellFileContext context) {
+        public int eval(JShellContext context) {
             JShell shell = context.getShell();
             ArrayList<String> cmds = new ArrayList<String>();
             Map<String, String> usingItems = new LinkedHashMap<>();
@@ -1006,7 +1006,7 @@ public class Yaccer {
         }
 
         @Override
-        public int eval(JShellFileContext context) {
+        public int eval(JShellContext context) {
             return context.getShell().evalNode(
                     ((JShellCommandNode) element),
                     context
@@ -1035,7 +1035,7 @@ public class Yaccer {
         }
 
         @Override
-        public int eval(JShellFileContext context) {
+        public int eval(JShellContext context) {
             throw new IllegalArgumentException("Not yet");
         }
     }
@@ -1056,7 +1056,7 @@ public class Yaccer {
         }
 
         @Override
-        public int eval(JShellFileContext context) {
+        public int eval(JShellContext context) {
             if (a != null) {
                 return context.getShell().evalNode(
                         ((JShellCommandNode) a),context
@@ -1085,7 +1085,7 @@ public class Yaccer {
         }
 
         @Override
-        public int eval(JShellFileContext context) {
+        public int eval(JShellContext context) {
             throw new IllegalArgumentException("Not yet");
         }
     }
@@ -1109,7 +1109,7 @@ public class Yaccer {
         }
 
         @Override
-        public int eval(JShellFileContext context) {
+        public int eval(JShellContext context) {
             throw new IllegalArgumentException("Not yet");
         }
     }
@@ -1130,7 +1130,7 @@ public class Yaccer {
             return sb.toString();
         }
 
-        public String[] evalString(JShellFileContext context) {
+        public String[] evalString(JShellContext context) {
             StringBuilder sb = new StringBuilder();
             for (JShellNode node : nodes) {
                 sb.append(evalNodeString(node, context));

@@ -75,8 +75,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
         }
         NutsSession ss = session.copy();
         checkSession();
-        NutsWorkspace ws = getSession().getWorkspace();
-        def.definition = ws.fetch().setId(id).setSession(ss)
+        def.definition = ss.fetch().setId(id).setSession(ss)
                 .setContent(true)
                 .setEffective(true)
                 .setDependencies(includeDeps)
@@ -153,12 +152,12 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
         NutsSession session = getSession();
         NutsPrintStream out = session.out();
-        ws.security().setSession(getSession()).checkAllowed(NutsConstants.Permissions.INSTALL, "install");
+        session.security().checkAllowed(NutsConstants.Permissions.INSTALL, "install");
 //        LinkedHashMap<NutsId, Boolean> allToInstall = new LinkedHashMap<>();
         InstallIdList list = new InstallIdList(NutsInstallStrategy.INSTALL);
         for (Map.Entry<NutsId, NutsInstallStrategy> idAndStrategy : this.getIdMap().entrySet()) {
             if (!list.isVisited(idAndStrategy.getKey())) {
-                List<NutsId> allIds = ws.search().addId(idAndStrategy.getKey()).setSession(session).setLatest(true).getResultIds().toList();
+                List<NutsId> allIds = session.search().addId(idAndStrategy.getKey()).setSession(session).setLatest(true).getResultIds().toList();
                 if (allIds.isEmpty()) {
                     throw new NutsNotFoundException(getSession(), idAndStrategy.getKey());
                 }
@@ -170,7 +169,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
         if (this.isCompanions()) {
             for (NutsId sid : session.extensions().getCompanionIds()) {
                 if (!list.isVisited(sid)) {
-                    List<NutsId> allIds = ws.search().setSession(session).addId(sid).setLatest(true).setTargetApiVersion(ws.getApiVersion()).getResultIds().toList();
+                    List<NutsId> allIds = session.search().setSession(session).addId(sid).setLatest(true).setTargetApiVersion(ws.getApiVersion()).getResultIds().toList();
                     if (allIds.isEmpty()) {
                         throw new NutsNotFoundException(getSession(), sid);
                     }
@@ -187,8 +186,8 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
 //        Map<NutsId, NutsDefinition> defsToIgnore = new LinkedHashMap<>();
 //        Map<NutsId, NutsDefinition> defsOk = new LinkedHashMap<>();
         if (isInstalled()) {
-            for (NutsId resultId : ws.search().setSession(session).setInstallStatus(
-                    ws.filters().installStatus().byInstalled(true)).getResultIds()) {
+            for (NutsId resultId : session.search().setSession(session).setInstallStatus(
+                    session.filters().installStatus().byInstalled(true)).getResultIds()) {
                 list.addForInstall(resultId, getInstalled(), true);
             }
             // This bloc is to handle packages that were installed but their jar/content was removed for any reason!
@@ -349,10 +348,10 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
             for (Map.Entry<String, List<InstallIdInfo>> stringListEntry : error.entrySet()) {
                 out.resetLine().println("the following " + (stringListEntry.getValue().size() > 1 ? "artifacts are" : "artifact is") + " cannot be ```error installed``` (" + stringListEntry.getKey() + ") : "
                         + stringListEntry.getValue().stream().map(x -> x.id)
-                        .map(x -> ws.id().formatter().setOmitImportedGroupId(true).setValue(x.getLongId()).format().toString())
+                        .map(x -> session.id().formatter().setOmitImportedGroupId(true).setValue(x.getLongId()).format().toString())
                         .collect(Collectors.joining(", ")));
                 sb.append("\n" + "the following ").append(stringListEntry.getValue().size() > 1 ? "artifacts are" : "artifact is").append(" cannot be installed (").append(stringListEntry.getKey()).append(") : ").append(stringListEntry.getValue().stream().map(x -> x.id)
-                        .map(x -> ws.id().formatter().setOmitImportedGroupId(true).setValue(x.getLongId()).format().toString())
+                        .map(x -> session.id().formatter().setOmitImportedGroupId(true).setValue(x.getLongId()).format().toString())
                         .collect(Collectors.joining(", ")));
             }
             throw new NutsInstallException(getSession(), null, NutsMessage.formatted(sb.toString().trim()), null);
@@ -387,7 +386,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
         }
         mout.println("should we proceed?");
         List<NutsId> nonIgnored = list.ids(x -> !x.ignored);
-        if (!nonIgnored.isEmpty() && !ws.term().setSession(getSession()).getTerminal().ask()
+        if (!nonIgnored.isEmpty() && !getSession().term().getTerminal().ask()
                 .resetLine()
                 .setSession(session)
                 .forBoolean(mout.toString())
@@ -418,7 +417,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                                 .log(NutsMessage.jstyle("failed to install {0}", info.id));
                         failedList.add(info.id);
                         if (session.isPlainTrace()) {
-                            if (!ws.term().setSession(getSession()).getTerminal().ask()
+                            if (!getSession().term().getTerminal().ask()
                                     .resetLine()
                                     .setSession(session)
                                     .forBoolean("```error failed to install``` %s and its dependencies... Continue installation?", info.id)
@@ -457,15 +456,15 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                                         saction.equals("ignored") ? NutsTextStyle.pale() :
                                                 NutsTextStyle.primary1()
                         );
-                NutsWorkspace ws = getSession().getWorkspace();
-                NutsTextBuilder msg = ws.text().builder();
+                NutsSession session = getSession();
+                NutsTextBuilder msg = getSession().text().builder();
                 msg.append("the following ")
                         .append(kind).append(" ").append((all.size() > 1 ? "artifacts are" : "artifact is"))
                         .append(" going to be ").append(action).append(" : ")
                         .appendJoined(
-                                ws.text().ofPlain(", "),
+                                session.text().ofPlain(", "),
                                 all.stream().map(x
-                                                -> ws.text().toText(
+                                                -> session.text().toText(
                                                 x.builder().omitImportedGroupId().build()
                                         )
                                 ).collect(Collectors.toList())

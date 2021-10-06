@@ -230,7 +230,7 @@ public abstract class NutsPrintStreamBase implements NutsPrintStream {
             print(s);
         } else {
             NutsSession sess = this.session.copy().setLocale(l.toString());
-            NutsText s = sess.getWorkspace().text().toText(
+            NutsText s = sess.text().toText(
                     NutsMessage.cstyle(
                             format, args
                     )

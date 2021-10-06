@@ -192,7 +192,7 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
     public String getLocation(boolean expand,NutsSession session) {
         String s = config.getLocation();
         if (s != null && expand) {
-            s = repository.getWorkspace().io().path(s).builder().withWorkspaceBaseDir().build().toString();
+            s = session.io().path(s).builder().withWorkspaceBaseDir().build().toString();
         }
         return s;
     }
@@ -233,7 +233,7 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
                     return Paths.get(getStoreLocation()).resolve(n).toString();
                 }
                 case EXPLODED: {
-                    Path storeLocation = Paths.get(repository.getWorkspace().locations().getStoreLocation(folderType));
+                    Path storeLocation = Paths.get(session.locations().getStoreLocation(folderType));
                     //uuid is added as
                     return storeLocation.resolve(NutsConstants.Folders.REPOSITORIES).resolve(getName()).resolve(getUuid()).toString();
 
@@ -265,7 +265,7 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
         }
         if (this.config.getStoreLocationStrategy() == null) {
             fireChange = true;
-            this.config.setStoreLocationStrategy(repository.getWorkspace().locations().getRepositoryStoreLocationStrategy());
+            this.config.setStoreLocationStrategy(session.locations().getRepositoryStoreLocationStrategy());
         }
         if (NutsBlankable.isBlank(config.getType())) {
             fireChange = true;
@@ -286,7 +286,7 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
         removeAllMirrors(session);
         if (config.getMirrors() != null) {
             for (NutsRepositoryRef ref : config.getMirrors()) {
-                NutsRepository r = ((DefaultNutsRepositoryManager) repository.getWorkspace().repos())
+                NutsRepository r = ((DefaultNutsRepositoryManager) session.repos())
                         .getModel()
                         .createRepository(
                                 CoreNutsUtils.refToOptions(ref),
@@ -346,7 +346,7 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
             if (NutsConstants.Users.ADMIN.equals(userId) || NutsConstants.Users.ANONYMOUS.equals(userId)) {
                 u = new NutsUserConfig(userId, null, null, null);
                 configUsers.put(userId, u);
-                fireConfigurationChanged("user", repository.getWorkspace().createSession());
+                fireConfigurationChanged("user", session);
             }
         }
         return u;
@@ -394,7 +394,7 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
     public boolean save(boolean force, NutsSession session) {
         NutsWorkspaceUtils.checkSession(repository.getWorkspace(), session);
         boolean ok = false;
-        if (force || (!repository.getWorkspace().config().isReadOnly() && isConfigurationChanged())) {
+        if (force || (!session.config().isReadOnly() && isConfigurationChanged())) {
             NutsWorkspaceUtils.of(session).checkReadOnly();
             repository.security().setSession(session).checkAllowed(NutsConstants.Permissions.SAVE, "save");
             Path file = Paths.get(getStoreLocation()).resolve(NutsConstants.Files.REPOSITORY_CONFIG_FILE_NAME);
@@ -412,7 +412,7 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
 //            if (NutsBlankable.isBlank(config.getConfigVersion())) {
 //                config.setConfigVersion(repository.getWorkspace().getApiVersion());
 //            }
-            repository.getWorkspace().elem().setSession(session).setContentType(NutsContentType.JSON).setValue(config).print(file);
+            session.elem().setSession(session).setContentType(NutsContentType.JSON).setValue(config).print(file);
             configurationChanged = false;
             if (_LOG(session).isLoggable(Level.CONFIG)) {
                 if (created) {
@@ -645,7 +645,7 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
         if (options.isTemporary()) {
             return null;
         }
-        NutsRepository repo = ((DefaultNutsRepositoryManager) repository.getWorkspace().repos())
+        NutsRepository repo = ((DefaultNutsRepositoryManager) session.repos())
                 .getModel()
                 .createRepository(
                         options,

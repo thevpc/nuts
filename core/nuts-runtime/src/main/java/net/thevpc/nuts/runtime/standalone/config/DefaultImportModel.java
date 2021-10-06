@@ -74,7 +74,7 @@ public class DefaultImportModel {
             }
         }
         getStoreModelMain().setImports(new ArrayList<>(simports));
-        NutsWorkspaceConfigManagerExt.of(workspace.config())
+        NutsWorkspaceConfigManagerExt.of(session.config())
                 .getModel()
                 .fireConfigurationChanged("import", session, ConfigEventType.MAIN);
     }

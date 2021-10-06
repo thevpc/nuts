@@ -53,10 +53,10 @@ public class LoginCommand extends SimpleNshBuiltin {
         NutsArgument a = commandLine.peek();
         if (!a.isOption()) {
             if (options.login == null) {
-                options.login = commandLine.next(context.getWorkspace().commandLine().createName("username")).getString();
+                options.login = commandLine.next(context.getSession().commandLine().createName("username")).getString();
                 return true;
             } else if (options.password == null) {
-                options.password = commandLine.next(context.getWorkspace().commandLine().createName("password")).getString().toCharArray();
+                options.password = commandLine.next(context.getSession().commandLine().createName("password")).getString().toCharArray();
                 return true;
             }
         }
@@ -79,7 +79,7 @@ public class LoginCommand extends SimpleNshBuiltin {
     @Override
     protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
-        context.getWorkspace().security().login(options.login, options.password);
+        context.getSession().security().login(options.login, options.password);
     }
 
 }

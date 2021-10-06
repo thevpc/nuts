@@ -64,15 +64,15 @@ public class DefaultNutsAddUserCommand extends AbstractNutsAddUserCommand {
                     .setUser(security, getSession());
         } else {
             checkSession();
-            NutsWorkspace ws = getSession().getWorkspace();
-            NutsWorkspaceSecurityManager sec = ws.security().setSession(session);
+            NutsSession ws = getSession();
+            NutsWorkspaceSecurityManager sec = ws.security();
             NutsUserConfig security = new NutsUserConfig(getUsername(),
                     CoreStringUtils.chrToStr(sec.createCredentials(getCredentials(), false, null)),
                     getGroups(), getPermissions());
             security.setRemoteIdentity(getRemoteIdentity());
             security.setRemoteCredentials(CoreStringUtils.chrToStr(sec.createCredentials(getRemoteCredentials(), true, null)));
             NutsWorkspaceConfigManagerExt.of(ws.config()).getModel()
-                    .setUser(security, session);
+                    .setUser(security, ws);
         }
         return this;
     }

@@ -96,7 +96,7 @@ public class DefaultNutsWorkspaceLocationModel {
         if (repositoryIdOrName == null) {
             return getStoreLocation(folderType, session);
         }
-        NutsRepository repositoryById = ws.repos().setSession(session).getRepository(repositoryIdOrName);
+        NutsRepository repositoryById = session.repos().setSession(session).getRepository(repositoryIdOrName);
         NutsRepositorySPI nutsRepositorySPI = NutsWorkspaceUtils.of(session).repoSPI(repositoryById);
         return nutsRepositorySPI.config().getStoreLocation(folderType);
     }

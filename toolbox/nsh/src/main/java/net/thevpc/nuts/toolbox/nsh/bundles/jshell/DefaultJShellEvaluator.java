@@ -21,28 +21,28 @@ public class DefaultJShellEvaluator implements JShellEvaluator {
         return ShellUtils.readQuotes(chars, i, v);
     }
 
-    protected int readAndEvalSimpleQuotesExpression(char[] chars, int i, StringBuilder out, JShellFileContext context) {
+    protected int readAndEvalSimpleQuotesExpression(char[] chars, int i, StringBuilder out, JShellContext context) {
         StringBuilder v = new StringBuilder();
         int count = readQuotes(chars, i, v);
         out.append(evalSimpleQuotesExpression(v.toString(), context));
         return i + count;
     }
 
-    protected int readAndEvalAntiQuotesString(char[] chars, int i, StringBuilder out, JShellFileContext context) {
+    protected int readAndEvalAntiQuotesString(char[] chars, int i, StringBuilder out, JShellContext context) {
         StringBuilder v = new StringBuilder();
         int count = readQuotes(chars, i, v);
         out.append(evalAntiQuotesExpression(v.toString(), context));
         return i + count;
     }
 
-    protected int readAndEvalDblQuotesExpression(char[] chars, int i, StringBuilder out, JShellFileContext context) {
+    protected int readAndEvalDblQuotesExpression(char[] chars, int i, StringBuilder out, JShellContext context) {
         StringBuilder v = new StringBuilder();
         int count = readQuotes(chars, i, v);
         out.append(evalDoubleQuotesExpression(v.toString(), context));
         return i + count;
     }
 
-    protected int readAndEvalDollarExpression(char[] chars, int i, StringBuilder out, boolean escapeResultPath, JShellFileContext context) {
+    protected int readAndEvalDollarExpression(char[] chars, int i, StringBuilder out, boolean escapeResultPath, JShellContext context) {
         if (i + 1 < chars.length) {
             i++;
             if (chars[i] == '{') {
@@ -73,7 +73,7 @@ public class DefaultJShellEvaluator implements JShellEvaluator {
     }
 
     @Override
-    public int evalSuffixOperation(String opString, JShellCommandNode node, JShellFileContext context) {
+    public int evalSuffixOperation(String opString, JShellCommandNode node, JShellContext context) {
         switch (opString) {
             case "&": {
                 return evalSuffixAndOperation(node, context);
@@ -83,12 +83,12 @@ public class DefaultJShellEvaluator implements JShellEvaluator {
     }
 
     @Override
-    public int evalSuffixAndOperation(JShellCommandNode node, JShellFileContext context) {
+    public int evalSuffixAndOperation(JShellCommandNode node, JShellContext context) {
         return context.getShell().evalNode(node,context);
     }
 
     @Override
-    public int evalBinaryAndOperation(JShellCommandNode left, JShellCommandNode right, JShellFileContext context) {
+    public int evalBinaryAndOperation(JShellCommandNode left, JShellCommandNode right, JShellContext context) {
         int r = context.getShell().evalNode(left, context);
         if(r !=0){
             return r;
@@ -97,7 +97,7 @@ public class DefaultJShellEvaluator implements JShellEvaluator {
     }
 
     @Override
-    public int evalBinaryOperation(String opString, JShellCommandNode left, JShellCommandNode right, JShellFileContext context) {
+    public int evalBinaryOperation(String opString, JShellCommandNode left, JShellCommandNode right, JShellContext context) {
         if (";".equals(opString)) {
             //no trace
         } else {
@@ -117,7 +117,7 @@ public class DefaultJShellEvaluator implements JShellEvaluator {
     }
 
     @Override
-    public int evalBinaryOrOperation(final JShellCommandNode left, JShellCommandNode right, final JShellFileContext context) {
+    public int evalBinaryOrOperation(final JShellCommandNode left, JShellCommandNode right, final JShellContext context) {
         try {
             if(context.getShell().evalNode(left, context)==0) {
                 return 0;
@@ -132,7 +132,7 @@ public class DefaultJShellEvaluator implements JShellEvaluator {
     }
 
     @Override
-    public int evalBinaryPipeOperation(final JShellCommandNode left, JShellCommandNode right, final JShellFileContext context) {
+    public int evalBinaryPipeOperation(final JShellCommandNode left, JShellCommandNode right, final JShellContext context) {
         final PipedOutputStream out;
         final PipedInputStream in;
         final JavaShellNonBlockingInputStream in2;
@@ -146,7 +146,7 @@ public class DefaultJShellEvaluator implements JShellEvaluator {
         }
         final JShellUniformException[] a = new JShellUniformException[2];
         final PrintStream out1 = new PrintStream(out);
-        final JShellFileContext leftContext = context.getShell().createNewContext(context).setOut(out1);
+        final JShellContext leftContext = context.getShell().createNewContext(context).setOut(out1);
         Thread j1 = new Thread() {
             @Override
             public void run() {
@@ -164,7 +164,7 @@ public class DefaultJShellEvaluator implements JShellEvaluator {
 
         };
         j1.start();
-        JShellFileContext rightContext = context.getShell().createNewContext(context).setIn((InputStream) in2);
+        JShellContext rightContext = context.getShell().createNewContext(context).setIn((InputStream) in2);
         try {
             context.getShell().evalNode(right, rightContext);
         } catch (JShellUniformException e) {
@@ -187,7 +187,7 @@ public class DefaultJShellEvaluator implements JShellEvaluator {
     }
 
     @Override
-    public int evalBinarySuiteOperation(JShellCommandNode left, JShellCommandNode right, JShellFileContext context) {
+    public int evalBinarySuiteOperation(JShellCommandNode left, JShellCommandNode right, JShellContext context) {
         int r = 0;
         try {
             r = context.getShell().evalNode(left, context);
@@ -204,9 +204,9 @@ public class DefaultJShellEvaluator implements JShellEvaluator {
     }
 
     @Override
-    public String evalCommandAndReturnString(JShellCommandNode command, JShellFileContext context) {
+    public String evalCommandAndReturnString(JShellCommandNode command, JShellContext context) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        JShellFileContext c2 = context.getShell().createNewContext(context, context.getServiceName(), context.getArgsArray());
+        JShellContext c2 = context.getShell().createNewContext(context, context.getServiceName(), context.getArgsArray());
         PrintStream p = new PrintStream(out);
         c2.setOut(p);
         context.getShell().evalNode(command,c2);
@@ -216,22 +216,22 @@ public class DefaultJShellEvaluator implements JShellEvaluator {
     }
 
     @Override
-    public String evalDollarSharp(JShellFileContext context) {
+    public String evalDollarSharp(JShellContext context) {
         return (String.valueOf(context.getArgsList().size()));
     }
 
     @Override
-    public String evalDollarName(String name, JShellFileContext context) {
+    public String evalDollarName(String name, JShellContext context) {
         return (String.valueOf(context.vars().get(name, "")));
     }
 
     @Override
-    public String evalDollarInterrogation(JShellFileContext context) {
+    public String evalDollarInterrogation(JShellContext context) {
         return (String.valueOf(context.getLastResult().getCode()));
     }
 
     @Override
-    public String evalDollarInteger(int index, JShellFileContext context) {
+    public String evalDollarInteger(int index, JShellContext context) {
         if (index < context.getArgsList().size()) {
             return (String.valueOf(context.getArg(index)));
         }
@@ -239,7 +239,7 @@ public class DefaultJShellEvaluator implements JShellEvaluator {
     }
 
     @Override
-    public String evalDollarExpression(String stringExpression, JShellFileContext context) {
+    public String evalDollarExpression(String stringExpression, JShellContext context) {
         String str = evalSimpleQuotesExpression(stringExpression, context);
         if (str.equals("#")) {
             return evalDollarSharp(context);
@@ -257,7 +257,7 @@ public class DefaultJShellEvaluator implements JShellEvaluator {
     }
 
     @Override
-    public String evalSimpleQuotesExpression(String expressionString, JShellFileContext context) {
+    public String evalSimpleQuotesExpression(String expressionString, JShellContext context) {
 //should replace wildcards ...
         StringBuilder sb = new StringBuilder();
         char[] chars = expressionString.toCharArray();
@@ -285,7 +285,7 @@ public class DefaultJShellEvaluator implements JShellEvaluator {
     }
 
     @Override
-    public String evalDoubleQuotesExpression(String stringExpression, JShellFileContext context) {
+    public String evalDoubleQuotesExpression(String stringExpression, JShellContext context) {
 //should replace wildcards ...
         StringBuilder sb = new StringBuilder();
         char[] chars = stringExpression.toCharArray();
@@ -313,18 +313,18 @@ public class DefaultJShellEvaluator implements JShellEvaluator {
     }
 
     @Override
-    public String evalAntiQuotesExpression(String stringExpression, JShellFileContext context) {
+    public String evalAntiQuotesExpression(String stringExpression, JShellContext context) {
         context.getShell().traceExecution(() -> ("`" + stringExpression + "`"), context);
         JShellCommandNode t = context.getShell().parseCommandLine(stringExpression);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        JShellFileContext c2 = context.getShell().createNewContext(context);
+        JShellContext c2 = context.getShell().createNewContext(context);
         c2.setOut(new PrintStream(out));
         context.getShell().evalNode(t,c2);
         c2.out().flush();
         return out.toString();
     }
 
-    public String evalNoQuotesExpression(String stringExpression, JShellFileContext context) {
+    public String evalNoQuotesExpression(String stringExpression, JShellContext context) {
         StringBuilder sb = new StringBuilder();
         char[] chars = stringExpression.toCharArray();
         for (int i = 0; i < chars.length; i++) {
@@ -359,7 +359,7 @@ public class DefaultJShellEvaluator implements JShellEvaluator {
         return sb.toString();
     }
 
-    public String expandEnvVars(String stringExpression, boolean escapeResultPath, JShellFileContext context) {
+    public String expandEnvVars(String stringExpression, boolean escapeResultPath, JShellContext context) {
         StringBuilder sb = new StringBuilder();
         char[] chars = stringExpression.toCharArray();
         for (int i = 0; i < chars.length; i++) {
@@ -377,7 +377,7 @@ public class DefaultJShellEvaluator implements JShellEvaluator {
         return sb.toString();
     }
 
-    public String evalFieldSubstitutionAfterCommandSubstitution(String commandResult, JShellFileContext context) {
+    public String evalFieldSubstitutionAfterCommandSubstitution(String commandResult, JShellContext context) {
 
         String IFS = context.vars().get("IFS", " \t\n");
         if (!IFS.isEmpty()) {

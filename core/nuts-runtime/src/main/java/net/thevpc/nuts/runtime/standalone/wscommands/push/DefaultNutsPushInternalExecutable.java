@@ -24,7 +24,7 @@ public class DefaultNutsPushInternalExecutable extends DefaultInternalNutsExecut
 //            showDefaultHelp();
 //            return;
 //        }
-        getSession().getWorkspace().push().configure(false, args).run();
+        getSession().push().configure(false, args).run();
     }
 
 }

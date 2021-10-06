@@ -10,12 +10,10 @@ public class DefaultJShellExecutionContext implements JShellExecutionContext {
     private JShellContext shellContext;
     private NshBuiltin builtin;
     private NutsTerminalMode terminalMode = null;
-    private final JShellFileContext fileContext;
 
-    public DefaultJShellExecutionContext(JShellContext shellContext, NshBuiltin command,JShellFileContext fileContext) {
+    public DefaultJShellExecutionContext(JShellContext shellContext, NshBuiltin command) {
         this.shellContext = shellContext;
         this.builtin = command;
-        this.fileContext = fileContext;
     }
     @Override
     public JShellContext getNutsShellContext() {
@@ -35,7 +33,7 @@ public class DefaultJShellExecutionContext implements JShellExecutionContext {
 
     @Override
     public JShell getShell() {
-        return fileContext.getShell();
+        return shellContext.getShell();
     }
 
     @Override
@@ -60,8 +58,8 @@ public class DefaultJShellExecutionContext implements JShellExecutionContext {
 
 
     @Override
-    public JShellFileContext getGlobalContext() {
-        return fileContext;
+    public JShellContext getGlobalContext() {
+        return shellContext;
     }
 
     @Override
@@ -82,7 +80,7 @@ public class DefaultJShellExecutionContext implements JShellExecutionContext {
             case "--version": {
                 cmd.skip();
                 if (cmd.isExecMode()) {
-                    out().printf("%s%n", getWorkspace().id().setSession(getSession()).resolveId(getClass()).getVersion().toString());
+                    out().printf("%s%n", getSession().id().setSession(getSession()).resolveId(getClass()).getVersion().toString());
                     cmd.skipAll();
                 }
                 throw new NutsExecutionException(shellContext.getSession(), NutsMessage.cstyle("Help"), 0);

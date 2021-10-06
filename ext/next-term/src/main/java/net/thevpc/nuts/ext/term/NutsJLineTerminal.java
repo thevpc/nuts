@@ -236,7 +236,7 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase {
             throw new UncheckedIOException(new IOException("unable to create JLine system terminal: " + ex.getMessage(), ex));
         }
         reader = LineReaderBuilder.builder()
-                .completer(new NutsJLineCompleter(session.getWorkspace(), this))
+                .completer(new NutsJLineCompleter(session, this))
                 .highlighter(new Highlighter() {
                     @Override
                     public AttributedString highlight(LineReader reader, String buffer) {

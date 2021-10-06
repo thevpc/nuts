@@ -43,9 +43,8 @@ public class Test18_path {
 
     @Test
     public void test1() throws Exception {
-        NutsWorkspace ws = TestUtils.openNewTestWorkspace().getWorkspace();
+        NutsSession session = TestUtils.openNewTestWorkspace();
 
-        NutsSession session = ws.createSession();
         System.out.println(NutsPath.of("./",session));
         System.out.println(NutsPath.of(".",session));
         System.out.println(NutsPath.of("..",session));

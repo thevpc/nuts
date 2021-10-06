@@ -504,7 +504,7 @@ public class CoreIOUtils {
                 if (goodName.length() < 3) {
                     goodName = goodName + "-repo";
                 }
-                loc = ws.io().tmp()
+                loc = session.io().tmp()
                         .setSession(session)
                         .createTempFolder(goodName + "-");
             } else {
@@ -516,7 +516,7 @@ public class CoreIOUtils {
                 }
             }
         }
-        return ws.io().path(loc).builder().setBaseDir(rootFolder.toString()).build().toString();
+        return session.io().path(loc).builder().setBaseDir(rootFolder.toString()).build().toString();
     }
 
     public static String trimSlashes(String repositoryIdPath) {
@@ -553,9 +553,8 @@ public class CoreIOUtils {
         if (parseOptions == null) {
             parseOptions = new String[0];
         }
-        NutsWorkspace ws = session.getWorkspace();
         if (localPath != null) {
-            List<NutsDescriptorContentParserComponent> allParsers = ws.extensions()
+            List<NutsDescriptorContentParserComponent> allParsers = session.extensions()
                     .setSession(session)
                     .createAllSupported(NutsDescriptorContentParserComponent.class, null);
             if (allParsers.size() > 0) {
@@ -1526,10 +1525,10 @@ public class CoreIOUtils {
         if (is.isPath() && is.getPath().isFile()) {
             return is.getPath().toFile();
         }
-        Path temp = Paths.get(ws.io().tmp()
+        Path temp = Paths.get(session.io().tmp()
                 .setSession(session)
                 .createTempFile(getURLName(is.getName())));
-        NutsIOCopyAction a = ws.io().copy().setSafe(false);
+        NutsIOCopyAction a = session.io().copy().setSafe(false);
         if (is.isPath()) {
             a.from(is.getPath());
         } else {

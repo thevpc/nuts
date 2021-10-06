@@ -56,9 +56,9 @@ public final class JavaExecutorOptions {
         this.execArgs = executorOptions;
 //        List<String> classPath0 = new ArrayList<>();
 //        List<NutsClassLoaderNode> extraCp = new ArrayList<>();
-        NutsIdFormat nutsIdFormat = getWorkspace().id().formatter().setOmitRepository(true);
+        NutsIdFormat nutsIdFormat = session.id().formatter().setOmitRepository(true);
         //will accept all -- and - based options!
-        NutsCommandLine cmdLine = getWorkspace().commandLine().create(getExecArgs()).setExpandSimpleOptions(false);
+        NutsCommandLine cmdLine = session.commandLine().create(getExecArgs()).setExpandSimpleOptions(false);
         NutsArgument a;
         List<NutsClassLoaderNode> currentCP = new ArrayList<>();
         while (cmdLine.hasNext()) {
@@ -146,11 +146,11 @@ public final class JavaExecutorOptions {
                 }
             }
         } else {
-            javaHome = NutsJavaSdkUtils.of(session.getWorkspace()).resolveJavaCommandByHome(getJavaHome(), session);
+            javaHome = NutsJavaSdkUtils.of(session).resolveJavaCommandByHome(getJavaHome(), session);
         }
 
         List<NutsDefinition> nutsDefinitions = new ArrayList<>();
-        NutsSearchCommand se = getWorkspace().search().setSession(session);
+        NutsSearchCommand se = session.search().setSession(session);
         if (tempId) {
             for (NutsDependency dependency : descriptor.getDependencies()) {
                 se.addId(dependency.toId());
@@ -194,7 +194,7 @@ public final class JavaExecutorOptions {
             if (mainClass == null) {
                 if (path != null) {
                     //check manifest!
-                    NutsExecutionEntry[] classes = getWorkspace().apps().execEntries().parse(path);
+                    NutsExecutionEntry[] classes = session.apps().execEntries().parse(path);
                     if (classes.length > 0) {
                         mainClass = String.join(":",
                                 Arrays.stream(classes).map(NutsExecutionEntry::getName)
@@ -203,7 +203,7 @@ public final class JavaExecutorOptions {
                     }
                 }
             } else if (!mainClass.contains(".")) {
-                NutsExecutionEntry[] classes = getWorkspace().apps().execEntries().parse(path);
+                NutsExecutionEntry[] classes = session.apps().execEntries().parse(path);
                 List<String> possibleClasses = Arrays.stream(classes).map(NutsExecutionEntry::getName)
                         .collect(Collectors.toList());
                 String r = resolveMainClass(mainClass, possibleClasses);
@@ -255,7 +255,7 @@ public final class JavaExecutorOptions {
                             ) {
                                 throw new NutsExecutionException(session, NutsMessage.cstyle("multiple runnable classes detected : %s" + possibleClasses), 102);
                             }
-                            NutsTextManager text = getWorkspace().text();
+                            NutsTextManager text = session.text();
                             NutsTextBuilder msgString = text.builder();
 
                             msgString.append("multiple runnable classes detected  - actually ")
@@ -391,7 +391,7 @@ public final class JavaExecutorOptions {
 
     private void addNp(List<NutsClassLoaderNode> classPath, String value) {
         NutsSession searchSession = this.session;
-        NutsSearchCommand ns = getWorkspace().search().setLatest(true)
+        NutsSearchCommand ns = session.search().setLatest(true)
                 .setSession(searchSession);
         for (String n : StringTokenizerUtils.split(value, ";, ")) {
             if (!NutsBlankable.isBlank(n)) {
@@ -399,7 +399,7 @@ public final class JavaExecutorOptions {
             }
         }
         for (NutsId nutsId : ns.getResultIds()) {
-            NutsDefinition f = getWorkspace()
+            NutsDefinition f = session
                     .search().addId(nutsId).setSession(searchSession).setLatest(true).getResultDefinitions().required();
             classPath.add(NutsClassLoaderUtils.definitionToClassLoaderNode(f, session));
         }

@@ -43,7 +43,7 @@ public class NutsVersionFilterOr extends AbstractVersionFilter implements NutsVe
 
     @Override
     public NutsVersionFilter simplify() {
-        return CoreNutsUtils.simplifyFilterOr(getWorkspace(),NutsVersionFilter.class,this,all);
+        return CoreNutsUtils.simplifyFilterOr(getSession(),NutsVersionFilter.class,this,all);
     }
 
     @Override

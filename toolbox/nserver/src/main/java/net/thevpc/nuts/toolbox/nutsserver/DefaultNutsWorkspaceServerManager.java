@@ -57,12 +57,12 @@ public class DefaultNutsWorkspaceServerManager implements NutsWorkspaceServerMan
         if (serverConfig == null) {
             serverConfig = new NutsHttpServerConfig();
         }
-        NutsServerComponent server = ws.extensions().createServiceLoader(NutsServerComponent.class, ServerConfig.class, NutsServerComponent.class.getClassLoader())
+        NutsServerComponent server = session.extensions().createServiceLoader(NutsServerComponent.class, ServerConfig.class, NutsServerComponent.class.getClassLoader())
                 .loadBest(serverConfig);
         if (server == null) {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("not server extensions are registered."));
         }
-        NutsServer s = server.start(ws.createSession()/*.self()*/, serverConfig);
+        NutsServer s = server.start(session/*.self()*/, serverConfig);
         if (servers.get(s.getServerId()) != null) {
             servers.get(s.getServerId()).stop();
         }

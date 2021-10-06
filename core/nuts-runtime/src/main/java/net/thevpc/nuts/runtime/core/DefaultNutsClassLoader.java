@@ -29,15 +29,16 @@ import java.net.URLClassLoader;
 import java.util.LinkedHashMap;
 import net.thevpc.nuts.NutsClassLoaderNode;
 
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsWorkspace;
 
 public class DefaultNutsClassLoader extends URLClassLoader {
 
     private String name;
-    private NutsWorkspace ws;
+    private NutsSession ws;
     private LinkedHashMap<String, NutsClassLoaderNode> nodes = new LinkedHashMap<>();
     private LinkedHashMap<String, NutsClassLoaderNode> effective = new LinkedHashMap<>();
-    public DefaultNutsClassLoader(String name, NutsWorkspace ws, ClassLoader parent) {
+    public DefaultNutsClassLoader(String name, NutsSession ws, ClassLoader parent) {
         super(new URL[0], parent);
         this.name = name;
         this.ws = ws;

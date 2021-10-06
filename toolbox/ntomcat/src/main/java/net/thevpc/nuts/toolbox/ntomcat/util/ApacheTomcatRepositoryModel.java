@@ -44,8 +44,8 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
             return null;
         }
         List<NutsId> all = new ArrayList<>();
-        NutsWorkspace ws = session.getWorkspace();
-        NutsIdBuilder idBuilder = ws.id().builder().setGroupId("org.apache.catalina").setArtifactId("apache-tomcat");
+//        NutsWorkspace ws = session.getWorkspace();
+        NutsIdBuilder idBuilder = session.id().builder().setGroupId("org.apache.catalina").setArtifactId("apache-tomcat");
         for (String s : list(HTTPS_ARCHIVE_APACHE_ORG_DIST_TOMCAT, "tomcat-[0-9.]+/", session)) {
             for (String s2 : list(HTTPS_ARCHIVE_APACHE_ORG_DIST_TOMCAT + s, "v.+/", session)) {
                 String prefix = "apache-tomcat-";
@@ -58,7 +58,7 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
                     //will ignore all alpha versions
                     continue;
                 }
-                NutsVersion version = ws.version().parser().parse(s2.substring(1, s2.length() - 1));
+                NutsVersion version = session.version().parser().parse(s2.substring(1, s2.length() - 1));
                 if (version.compareTo("4.1.32") < 0) {
                     prefix = "jakarta-tomcat-";
                 }
@@ -71,7 +71,7 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
                             prefix + "[0-9]+\\.[0-9]+\\.[0-9]+\\.zip",
                             session)) {
                         String v0 = s3.substring(prefix.length(), s3.length() - 4);
-                        NutsVersion v = ws.version().parser().parse(v0);
+                        NutsVersion v = session.version().parser().parse(v0);
                         NutsId id2 = idBuilder.setVersion(v).build();
                         if (filter == null || filter.acceptId(id2, session)) {
                             all.add(id2);
@@ -119,7 +119,6 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
         }
         if ("org.apache.catalina:apache-tomcat".equals(id.getShortName())) {
 
-            NutsWorkspace ws = session.getWorkspace();
 //            String r = getUrl(id.getVersion(), ".zip.md5");
             String r = getUrl(id.getVersion(), ".zip");
             URL url = null;
@@ -167,7 +166,7 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
                     }
                 }
 
-                return ws.descriptor()
+                return session.descriptor()
                         .descriptorBuilder()
                         .setId(id.getLongId())
                         .setPackaging("zip")
@@ -201,11 +200,10 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
     }
 
     public String getIdLocalFile(NutsId id, NutsFetchMode fetchMode, NutsRepository repository, NutsSession session) {
-        NutsWorkspace ws = session.getWorkspace();
         return Paths.get(repository.config().getStoreLocation())
-                .resolve(
-                ws.locations().getDefaultIdBasedir(id)
-        ).resolve(ws.locations().getDefaultIdFilename(id)).toString();
+                .resolve(session.locations().getDefaultIdBasedir(id))
+                .resolve(session.locations().getDefaultIdFilename(id))
+                .toString();
     }
 
     private String[] list(String url, String regexp, NutsSession session) {
@@ -213,8 +211,7 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
         List<String> all = new ArrayList<>();
         try {
             //NutsWorkspace ws = session.getWorkspace();
-            NutsWorkspace ws = session.getWorkspace();
-            byte[] bytes = ws.io().copy().from(url).setLogProgress(true).getByteArrayResult();
+            byte[] bytes = session.io().copy().from(url).setLogProgress(true).getByteArrayResult();
             Document doc = null;
             try {
                 doc = Jsoup.parse(new ByteArrayInputStream(bytes), "UTF-8", url);

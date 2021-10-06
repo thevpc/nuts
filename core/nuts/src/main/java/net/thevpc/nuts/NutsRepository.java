@@ -185,6 +185,19 @@ public interface NutsRepository {
     boolean isAvailable(boolean force);
 
     /**
+     * available if local or remote repo exists and could deploy to
+     * @return true if config is enabled and runtime is enabled
+     */
+    boolean isSupportedDeploy();
+
+    /**
+     * available if local or remote repo exists and could deploy to
+     * @param force when force, check immediate availability and do not rely on cache
+     * @return true if config is enabled and runtime is enabled
+     */
+    boolean isSupportedDeploy(boolean force);
+
+    /**
      * enabled if config is enabled and runtime is enabled
      * @return true if config is enabled and runtime is enabled
      */

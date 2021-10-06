@@ -42,11 +42,10 @@ public class Test17_Json {
 
     @Test
     public void test1() throws Exception {
-        NutsWorkspace ws = TestUtils.openNewTestWorkspace(
+        NutsSession session = TestUtils.openNewTestWorkspace(
                 "-byZSKk"
-        ).getWorkspace();
+        );
 
-        NutsSession session = ws.createSession();
 //        NutsString e = ws.elem()
 //                .setContentType(NutsContentType.JSON)
 //                .setValue("a@@@")
@@ -65,11 +64,9 @@ public class Test17_Json {
 
     @Test
     public void test2()  {
-        NutsWorkspace ws = TestUtils.openNewTestWorkspace(
+        NutsSession ws = TestUtils.openNewTestWorkspace(
                 "-byZSKk"
-        ).getWorkspace();
-        NutsSession session = ws.createSession();
-        ws=session.getWorkspace();
+        );
         NutsElement a = ws.elem().setContentType(NutsContentType.JSON)
                 .parse(
                         "{\n" +
@@ -224,8 +221,8 @@ public class Test17_Json {
 //        System.out.println(session.text().forPlain("a@@@"));
 //        System.out.println(session.text().forPlain("a@@@").filteredText());
 
-        System.out.println(session.text().ofPlain("a##@"));
-        System.out.println(session.text().ofPlain("a##@").filteredText());
+        System.out.println(ws.text().ofPlain("a##@"));
+        System.out.println(ws.text().ofPlain("a##@").filteredText());
 
     }
 

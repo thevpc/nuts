@@ -37,7 +37,6 @@ public class ProcessExecHelper implements IProcessExecHelper {
                                            boolean inheritSystemIO, boolean redirectErr, File outputFile, File inputFile,
                                            NutsRunAs runAs,
                                            NutsSession session) {
-        NutsWorkspace ws = session.getWorkspace();
         List<String> newCommands = buildEffectiveCommand(args, runAs, session);
         NutsPrintStream out = null;
         NutsPrintStream err = null;
@@ -51,18 +50,18 @@ public class ProcessExecHelper implements IProcessExecHelper {
         if (!inheritSystemIO) {
             if (inputFile == null) {
                 in = execTerminal.in();
-                if (ws.io().setSession(session).isStandardInputStream(in)) {
+                if (session.io().setSession(session).isStandardInputStream(in)) {
                     in = null;
                 }
             }
             if (outputFile == null) {
                 out = execTerminal.out();
-                if (ws.io().setSession(session).isStandardOutputStream(out)) {
+                if (session.io().setSession(session).isStandardOutputStream(out)) {
                     out = null;
                 }
             }
             err = execTerminal.err();
-            if (ws.io().setSession(session).isStandardErrorStream(err)) {
+            if (session.io().setSession(session).isStandardErrorStream(err)) {
                 err = null;
             }
             if (out != null) {
@@ -96,14 +95,14 @@ public class ProcessExecHelper implements IProcessExecHelper {
         if (_LL.isLoggable(Level.FINEST)) {
             _LL.with().level(Level.FINE).verb(NutsLogVerb.START).log(
                     NutsMessage.jstyle("[exec] {0}",
-                    ws.text().ofCode("system",
+                            session.text().ofCode("system",
                             pb.getCommandString()
                     )));
         }
         if (showCommand || CoreBooleanUtils.getSysBoolNutsProperty("show-command", false)) {
             if (prepareTerminal.out().mode() == NutsTerminalMode.FORMATTED) {
-                prepareTerminal.out().printf("%s ", ws.text().ofStyled("[exec]", NutsTextStyle.primary4()));
-                prepareTerminal.out().println(ws.text().ofCode("system", pb.getCommandString()));
+                prepareTerminal.out().printf("%s ", session.text().ofStyled("[exec]", NutsTextStyle.primary4()));
+                prepareTerminal.out().println(session.text().ofCode("system", pb.getCommandString()));
             } else {
                 prepareTerminal.out().print("exec ");
                 prepareTerminal.out().printf("%s%n", pb.getCommandString());
@@ -130,7 +129,7 @@ public class ProcessExecHelper implements IProcessExecHelper {
         for (Map.Entry<String, String> entry : execProperties.entrySet()) {
             map.put(entry.getKey(), entry.getValue());
         }
-        Path nutsJarFile = workspace.fetch().setNutsApi().setSession(session).getResultPath();
+        Path nutsJarFile = session.fetch().setNutsApi().setSession(session).getResultPath();
         if (nutsJarFile != null) {
             map.put("nuts.jar", nutsJarFile.toAbsolutePath().normalize().toString());
         }
@@ -142,7 +141,7 @@ public class ProcessExecHelper implements IProcessExecHelper {
         if (map.containsKey("nuts.jar")) {
             map.put("nuts.cmd", map.get("nuts.java") + " -jar " + map.get("nuts.jar"));
         }
-        map.put("nuts.workspace", workspace.locations().getWorkspaceLocation());
+        map.put("nuts.workspace", session.locations().getWorkspaceLocation());
         if (installerFile != null) {
             map.put("nuts.installer", installerFile.toString());
         }
@@ -171,7 +170,7 @@ public class ProcessExecHelper implements IProcessExecHelper {
                     return NutsJavaSdkUtils.of(execSession.getWorkspace()).resolveJavaCommandByVersion(javaVer, true, session);
                 } else if (skey.equals("nuts")) {
                     NutsDefinition nutsDefinition;
-                    nutsDefinition = workspace.fetch().setId(NutsConstants.Ids.NUTS_API)
+                    nutsDefinition = session.fetch().setId(NutsConstants.Ids.NUTS_API)
                             .setSession(session).getResultDefinition();
                     if (nutsDefinition.getPath() != null) {
                         return ("<::expand::> " + apply("java") + " -jar " + nutsDefinition.getPath());
@@ -194,22 +193,22 @@ public class ProcessExecHelper implements IProcessExecHelper {
         for (String arg : args) {
             String s = NutsUtilStrings.trim(StringPlaceHolderParser.replaceDollarPlaceHolders(arg, mapper));
             if (s.startsWith("<::expand::>")) {
-                Collections.addAll(args2, workspace.commandLine().parse(s).toStringArray());
+                Collections.addAll(args2, session.commandLine().parse(s).toStringArray());
             } else {
                 args2.add(s);
             }
         }
         args = args2.toArray(new String[0]);
 
-        Path path = Paths.get(workspace.locations().getWorkspaceLocation()).resolve(args[0]).normalize();
+        Path path = Paths.get(session.locations().getWorkspaceLocation()).resolve(args[0]).normalize();
         if (Files.exists(path)) {
             CoreIOUtils.setExecutable(path);
         }
         Path pdirectory = null;
         if (NutsBlankable.isBlank(directory)) {
-            pdirectory = Paths.get(workspace.locations().getWorkspaceLocation());
+            pdirectory = Paths.get(session.locations().getWorkspaceLocation());
         } else {
-            pdirectory = Paths.get(workspace.locations().getWorkspaceLocation()).resolve(directory);
+            pdirectory = Paths.get(session.locations().getWorkspaceLocation()).resolve(directory);
         }
         return ofArgs(args, envmap, pdirectory, session.getTerminal(), execSession.getTerminal(), showCommand, failFast,
                 sleep,

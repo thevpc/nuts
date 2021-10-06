@@ -50,7 +50,7 @@ public class ZipCommand extends AbstractNshBuiltin {
 //        NutsPrintStream out = context.out();
         File outZip = null;
         NutsArgument a;
-        NutsCommandLineManager nutsCommandLineFormat = context.getWorkspace().commandLine();
+        NutsCommandLineManager nutsCommandLineFormat = context.getSession().commandLine();
         while (commandLine.hasNext()) {
             if (commandLine.next("-r") != null) {
                 options.r = true;

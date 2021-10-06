@@ -28,12 +28,12 @@ public class DefaultSearchFormatTable extends DefaultSearchFormatBase {
         super(session, writer, NutsContentType.TABLE, options);
     }
 
-    public NutsMutableTableModel getTableModel(NutsWorkspace ws) {
+    public NutsMutableTableModel getTableModel(NutsSession ws) {
         getTable(ws);
         return model;
     }
 
-    public NutsTableFormat getTable(NutsWorkspace ws) {
+    public NutsTableFormat getTable(NutsSession ws) {
         if (table == null) {
             table = ws.formats().table();
             model = table.createModel();
@@ -63,7 +63,7 @@ public class DefaultSearchFormatTable extends DefaultSearchFormatBase {
 
     @Override
     public void start() {
-        getTableModel(getWorkspace())
+        getTableModel(getSession())
                 .addHeaderCells(
                         Arrays.stream(getDisplayOptions().getDisplayProperties())
                                 .map(x -> CoreEnumUtils.getEnumString(x)).toArray()
@@ -76,18 +76,18 @@ public class DefaultSearchFormatTable extends DefaultSearchFormatBase {
         if (fid != null) {
             formatElement(fid, index);
         } else {
-            getTableModel(getWorkspace()).newRow().addCell(object);
+            getTableModel(getSession()).newRow().addCell(object);
         }
         getWriter().flush();
     }
 
     public void formatElement(NutsIdFormatHelper id, long index) {
-        getTableModel(getWorkspace()).newRow().addCells((Object[]) id.getMultiColumnRow(getDisplayOptions()));
+        getTableModel(getSession()).newRow().addCells((Object[]) id.getMultiColumnRow(getDisplayOptions()));
     }
 
     @Override
     public void complete(long count) {
-        getTable(getWorkspace()).println(getWriter());
+        getTable(getSession()).println(getWriter());
     }
 
 }

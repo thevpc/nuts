@@ -67,7 +67,7 @@ public class DefaultNutsSessionTerminal extends AbstractNutsSessionTerminal {
             out = out();
         }
         if (out == null) {
-            out = ws.io().stdout();
+            out = session.io().stdout();
         }
         if (this.in == null && parent != null) {
             if (this.out == null) {
@@ -94,7 +94,7 @@ public class DefaultNutsSessionTerminal extends AbstractNutsSessionTerminal {
             out = out();
         }
         if (out == null) {
-            out = ws.io().stdout();
+            out = session.io().stdout();
         }
 
         if (this.in == null && parent != null) {
@@ -109,10 +109,10 @@ public class DefaultNutsSessionTerminal extends AbstractNutsSessionTerminal {
         Console cons = null;
         char[] passwd = null;
         if (in == null) {
-            in = ws.io().stdin();
+            in = session.io().stdin();
         }
         if ((
-                in == ws.io().stdin()
+                in == session.io().stdin()
         ) && ((cons = System.console()) != null)) {
             String txt = session.text().toText(message).toString();
             if ((passwd = cons.readPassword("%s", txt)) != null) {

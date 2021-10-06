@@ -228,7 +228,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
             throw new NutsNotFoundException(session, id, new NutsFetchModeNotSupportedException(session, this, fetchMode, id.toString(), null));
         }
         if (wrapper == null) {
-            wrapper = getWrapper();
+            wrapper = getWrapper(session);
         }
         NutsWorkspace ws = session.getWorkspace();
         if (wrapper != null && wrapper.get(id, config().getLocation(true), session)) {
@@ -251,11 +251,10 @@ public class MavenRemoteRepository extends NutsCachedRepository {
                     return new NutsDefaultContent(
                             session.io().path(content.toString()), true, false);
                 } else {
-                    String tempFile = ws.io().tmp()
-                            .setSession(session)
+                    String tempFile = session.io().tmp()
                             .setRepositoryId(getUuid())
                             .createTempFile(content.getFileName().toString());
-                    ws.io().copy()
+                    session.io().copy()
                             .setSession(session)
                             .from(content).to(tempFile).setSafe(true).run();
                     return new NutsDefaultContent(
@@ -265,13 +264,12 @@ public class MavenRemoteRepository extends NutsCachedRepository {
         }
         if (localPath == null) {
             String p = helper.getIdPath(id, session);
-            String tempFile = ws.io().tmp()
+            String tempFile = session.io().tmp()
                     .setSession(session)
                     .setRepositoryId(getUuid())
                     .createTempFile(new File(p).getName());
             try {
-                ws.io().copy()
-                        .setSession(session)
+                session.io().copy()
                         .from(helper.getStream(id, "artifact binaries", "retrieve", session)).to(tempFile).setValidator(new NutsIOCopyValidator() {
                             @Override
                             public void validate(InputStream in) throws IOException {
@@ -285,7 +283,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
                     session.io().path(tempFile), true, true);
         } else {
             try {
-                ws.io().copy()
+                session.io().copy()
                         .setSession(session)
                         .from(helper.getStream(id, "artifact content", "retrieve", session)).to(localPath)
                         .setValidator(in -> helper.checkSHA1Hash(
@@ -317,9 +315,9 @@ public class MavenRemoteRepository extends NutsCachedRepository {
                     session.getTerminal().printProgress("%-8s %s", "browse", session.io().path(root).toCompressedForm());
                     if (root.endsWith("/*")) {
                         String name = root.substring(0, root.length() - 2);
-                        li.add(FilesFoldersApi.createIterator(getWorkspace(), this, config.getLocation(true), name, filter, RemoteRepoApi.DIR_TEXT, session, Integer.MAX_VALUE, findModel));
+                        li.add(FilesFoldersApi.createIterator(session, this, config.getLocation(true), name, filter, RemoteRepoApi.DIR_TEXT, session, Integer.MAX_VALUE, findModel));
                     } else {
-                        li.add(FilesFoldersApi.createIterator(getWorkspace(), this, config.getLocation(true), root, filter, RemoteRepoApi.DIR_TEXT, session, 2, findModel));
+                        li.add(FilesFoldersApi.createIterator(session, this, config.getLocation(true), root, filter, RemoteRepoApi.DIR_TEXT, session, 2, findModel));
                     }
                 }
                 return IteratorUtils.concat(li);
@@ -330,9 +328,9 @@ public class MavenRemoteRepository extends NutsCachedRepository {
                     session.getTerminal().printProgress("%-8s %s", "browse", session.io().path(root).toCompressedForm());
                     if (root.endsWith("/*")) {
                         String name = root.substring(0, root.length() - 2);
-                        li.add(FilesFoldersApi.createIterator(getWorkspace(), this, config.getLocation(true), name, filter, RemoteRepoApi.DIR_LIST, session, Integer.MAX_VALUE, findModel));
+                        li.add(FilesFoldersApi.createIterator(session, this, config.getLocation(true), name, filter, RemoteRepoApi.DIR_LIST, session, Integer.MAX_VALUE, findModel));
                     } else {
-                        li.add(FilesFoldersApi.createIterator(getWorkspace(), this, config.getLocation(true), root, filter, RemoteRepoApi.DIR_LIST, session, 2, findModel));
+                        li.add(FilesFoldersApi.createIterator(session, this, config.getLocation(true), root, filter, RemoteRepoApi.DIR_LIST, session, 2, findModel));
                     }
                 }
                 return IteratorUtils.concat(li);
@@ -544,11 +542,11 @@ public class MavenRemoteRepository extends NutsCachedRepository {
         return null;
     }
 
-    private MvnClient getWrapper() {
+    private MvnClient getWrapper(NutsSession session) {
         if (true) {
             return null;
         }
-        return new MvnClient(getWorkspace());
+        return new MvnClient(session);
     }
 
     @Override

@@ -495,17 +495,17 @@ public class DefaultNutsElementFormat extends DefaultFormatBase<NutsElementForma
     public NutsIterableFormat iter(NutsPrintStream writer) {
         switch (getContentType()) {
             case JSON:
-                return new DefaultSearchFormatJson(getSession(), writer, new NutsFetchDisplayOptions(getSession().getWorkspace()));
+                return new DefaultSearchFormatJson(getSession(), writer, new NutsFetchDisplayOptions(getSession()));
             case XML:
-                return new DefaultSearchFormatXml(getSession(), writer, new NutsFetchDisplayOptions(getSession().getWorkspace()));
+                return new DefaultSearchFormatXml(getSession(), writer, new NutsFetchDisplayOptions(getSession()));
             case PLAIN:
-                return new DefaultSearchFormatPlain(getSession(), writer, new NutsFetchDisplayOptions(getSession().getWorkspace()));
+                return new DefaultSearchFormatPlain(getSession(), writer, new NutsFetchDisplayOptions(getSession()));
             case TABLE:
-                return new DefaultSearchFormatTable(getSession(), writer, new NutsFetchDisplayOptions(getSession().getWorkspace()));
+                return new DefaultSearchFormatTable(getSession(), writer, new NutsFetchDisplayOptions(getSession()));
             case TREE:
-                return new DefaultSearchFormatTree(getSession(), writer, new NutsFetchDisplayOptions(getSession().getWorkspace()));
+                return new DefaultSearchFormatTree(getSession(), writer, new NutsFetchDisplayOptions(getSession()));
             case PROPS:
-                return new DefaultSearchFormatProps(getSession(), writer, new NutsFetchDisplayOptions(getSession().getWorkspace()));
+                return new DefaultSearchFormatProps(getSession(), writer, new NutsFetchDisplayOptions(getSession()));
         }
         throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("unsupported iterator for " + getContentType()));
     }

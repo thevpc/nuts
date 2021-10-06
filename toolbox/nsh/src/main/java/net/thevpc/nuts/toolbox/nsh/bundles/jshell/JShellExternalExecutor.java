@@ -11,5 +11,5 @@ package net.thevpc.nuts.toolbox.nsh.bundles.jshell;
  */
 public interface JShellExternalExecutor {
 
-    int execExternalCommand(String[] command, JShellFileContext context);
+    int execExternalCommand(String[] command, JShellContext context);
 }

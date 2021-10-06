@@ -334,7 +334,7 @@ public class DocusaurusCtrl {
                                     out,
                                     out)
             );
-            JShellFileContext ctx = shell.createSourceFileContext(
+            JShellContext ctx = shell.createSourceFileContext(
                     shell.getRootContext(),
                     context.getSourcePath().orElseGet(() -> "nsh"), new String[0]
             );

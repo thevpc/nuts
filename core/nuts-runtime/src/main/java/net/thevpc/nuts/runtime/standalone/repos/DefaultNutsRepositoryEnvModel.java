@@ -70,7 +70,7 @@ public class DefaultNutsRepositoryEnvModel {
             return t;
         }
         if (inherit) {
-            t = repository.getWorkspace().env().getEnv(key).getString();
+            t = session.env().getEnv(key).getString();
             if (!NutsBlankable.isBlank(t)) {
                 return t;
             }
@@ -83,7 +83,7 @@ public class DefaultNutsRepositoryEnvModel {
         NutsRepositoryConfig config = model.getConfig(session);
         Map<String, String> p = new LinkedHashMap<>();
         if (inherit) {
-            p.putAll(repository.getWorkspace().env().getEnvMap());
+            p.putAll(session.env().getEnvMap());
         }
         if (config.getEnv() != null) {
             p.putAll(config.getEnv());

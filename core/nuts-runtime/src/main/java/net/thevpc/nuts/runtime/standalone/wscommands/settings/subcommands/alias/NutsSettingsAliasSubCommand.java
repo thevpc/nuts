@@ -36,7 +36,7 @@ public class NutsSettingsAliasSubCommand extends AbstractNutsSettingsSubCommand 
             this.executionOptions = executionOptions;
         }
 
-        public AliasInfo(NutsWorkspaceCustomCommand a, NutsWorkspace ws) {
+        public AliasInfo(NutsWorkspaceCustomCommand a, NutsSession ws) {
             name = a.getName();
             command = ws.commandLine().create(a.getCommand()).toString();
             executionOptions = ws.commandLine().create(a.getExecutorOptions()).toString();
@@ -119,7 +119,7 @@ public class NutsSettingsAliasSubCommand extends AbstractNutsSettingsSubCommand 
                             ).println();
                 } else {
                     session.formats().object(
-                            r.stream().map(x -> new AliasInfo(x, session.getWorkspace())).collect(Collectors.toList())
+                            r.stream().map(x -> new AliasInfo(x, session)).collect(Collectors.toList())
                     ).println();
                 }
             }

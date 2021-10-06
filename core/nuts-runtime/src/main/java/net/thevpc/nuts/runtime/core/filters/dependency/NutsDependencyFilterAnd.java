@@ -27,7 +27,7 @@ public class NutsDependencyFilterAnd extends AbstractDependencyFilter{
     }
 
     public NutsDependencyFilter simplify() {
-        return CoreNutsUtils.simplifyFilterAnd(getWorkspace(),NutsDependencyFilter.class,this,all);
+        return CoreNutsUtils.simplifyFilterAnd(getSession(),NutsDependencyFilter.class,this,all);
     }
 
     @Override

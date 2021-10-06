@@ -60,18 +60,18 @@ public abstract class AbstractFacadeCommand implements FacadeCommand {
         String userPasswordS = (upList==null || upList.isEmpty())?null: upList.get(0);
 
         char[] userPassword = userPasswordS == null ? null : userPasswordS.toCharArray();
-        NutsWorkspaceSecurityManager secu = context.getWorkspace().security();
+        NutsWorkspaceSecurityManager secu = context.getSession().security();
         userLogin = userLogin == null ? null :new String(secu.getCredentials(userLogin.toCharArray()));
         userPassword = userPassword==null?null:secu.getCredentials(userPassword);
         if (!NutsBlankable.isBlank(userLogin)) {
             boolean loggedId = false;
             try {
-                context.getWorkspace().security().login(userLogin, userPassword);
+                context.getSession().security().login(userLogin, userPassword);
                 loggedId = true;
                 executeImpl(context);
             } finally {
                 if (loggedId) {
-                    context.getWorkspace().security().logout();
+                    context.getSession().security().logout();
                 }
             }
         } else {

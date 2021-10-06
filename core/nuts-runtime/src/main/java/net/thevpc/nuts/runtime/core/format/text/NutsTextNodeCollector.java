@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.core.format.text;
 
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsWorkspace;
 
 import java.util.ArrayList;
@@ -9,8 +10,8 @@ import net.thevpc.nuts.NutsTextVisitor;
 
 public class NutsTextNodeCollector implements NutsTextVisitor {
     private List<NutsText> all = new ArrayList<>();
-    private NutsWorkspace ws;
-    public NutsTextNodeCollector(NutsWorkspace ws) {
+    private NutsSession ws;
+    public NutsTextNodeCollector(NutsSession ws) {
         this.ws=ws;
     }
 

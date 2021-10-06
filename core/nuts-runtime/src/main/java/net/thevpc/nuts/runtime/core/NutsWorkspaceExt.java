@@ -14,6 +14,10 @@ import net.thevpc.nuts.runtime.core.commands.ws.NutsExecutionContextBuilder;
  */
 public interface NutsWorkspaceExt {
 
+    static NutsWorkspaceExt of(NutsSession ws) {
+        return of(ws.getWorkspace());
+    }
+
     static NutsWorkspaceExt of(NutsWorkspace ws) {
         return (NutsWorkspaceExt) ws;
     }

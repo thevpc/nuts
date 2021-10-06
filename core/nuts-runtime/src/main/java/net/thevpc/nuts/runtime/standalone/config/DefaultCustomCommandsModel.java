@@ -28,7 +28,7 @@ public class DefaultCustomCommandsModel {
 
     protected NutsLogger _LOG(NutsSession session) {
         if (LOG == null) {
-            LOG = this.workspace.log().setSession(session).of(DefaultCustomCommandsModel.class);
+            LOG = session.log().of(DefaultCustomCommandsModel.class);
         }
         return LOG;
     }
@@ -45,7 +45,7 @@ public class DefaultCustomCommandsModel {
         }
         NutsWorkspaceCommandFactory f = null;
         if (NutsBlankable.isBlank(commandFactoryConfig.getFactoryType()) || "command".equals(commandFactoryConfig.getFactoryType().trim())) {
-            f = new CommandNutsWorkspaceCommandFactory(workspace);
+            f = new CommandNutsWorkspaceCommandFactory(session);
         }
         if (f != null) {
             f.configure(commandFactoryConfig);

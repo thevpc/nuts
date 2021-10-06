@@ -9,6 +9,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.format.NutsFetchDisplayOptions;
 import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsDependencyScopes;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.wscommands.NutsWorkspaceCommandBase;
 
 import java.nio.file.Path;
@@ -41,7 +42,7 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
     public DefaultNutsQueryBaseOptions(NutsWorkspace ws, String name) {
         super(ws, name);
 //        this.session=ws.createSession();
-        displayOptions = new NutsFetchDisplayOptions(ws);
+        displayOptions = new NutsFetchDisplayOptions(NutsWorkspaceUtils.defaultSession(ws));
     }
 
     //@Override
@@ -406,8 +407,7 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
     //    @Override
     public T setDependencyFilter(String filter) {
         checkSession();
-        NutsWorkspace ws = getSession().getWorkspace();
-        this.dependencyFilter = ws.dependency().filter().byExpression(filter);
+        this.dependencyFilter = getSession().dependency().filter().byExpression(filter);
         return (T) this;
     }
 }

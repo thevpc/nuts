@@ -77,7 +77,7 @@ public abstract class AbstractNutsInstallCommand extends NutsWorkspaceCommandBas
     public NutsInstallCommand addId(String id) {
         checkSession();
         NutsWorkspace ws = getSession().getWorkspace();
-        return addId(id == null ? null : ws.id().parser().parse(id));
+        return addId(id == null ? null : session.id().parser().parse(id));
     }
 
     @Override
@@ -138,9 +138,8 @@ public abstract class AbstractNutsInstallCommand extends NutsWorkspaceCommandBas
     @Override
     public NutsInstallCommand removeId(String id) {
         checkSession();
-        NutsWorkspace ws = getSession().getWorkspace();
         if (id != null) {
-            this.ids.remove(ws.id().parser().parse(id));
+            this.ids.remove(session.id().parser().parse(id));
         }
         return this;
     }

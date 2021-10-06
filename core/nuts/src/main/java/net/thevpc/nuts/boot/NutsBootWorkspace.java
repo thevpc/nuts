@@ -531,7 +531,7 @@ public final class NutsBootWorkspace {
             if (isLoadFromCache() && PrivateNutsUtils.isFileAccessible(nutsApiConfigJsonPath, options.getExpireTime(), LOG)) {
                 try {
                     Map<String, Object> obj = PrivateNutsJsonParser.parse(nutsApiConfigJsonPath);
-                    LOG.log(Level.CONFIG, NutsLogVerb.READ, NutsMessage.jstyle("loaded {0} file : {1}", (Object) new String[]{NutsConstants.Files.WORKSPACE_API_CONFIG_FILE_NAME, nutsApiConfigJsonPath.toString()}));
+                    LOG.log(Level.CONFIG, NutsLogVerb.READ, NutsMessage.jstyle("loaded {0} file : {1}", NutsConstants.Files.WORKSPACE_API_CONFIG_FILE_NAME, nutsApiConfigJsonPath.toString()));
                     loadedApiConfig = true;
                     if (workspaceInformation.getRuntimeId() == null) {
                         String runtimeId = (String) obj.get("runtimeId");
@@ -1134,7 +1134,7 @@ public final class NutsBootWorkspace {
 
         session.setAppId(workspace.getApiId());
         if (LOG2 == null) {
-            LOG2 = workspace.log().setSession(session).of(NutsBootWorkspace.class);
+            LOG2 = session.log().of(NutsBootWorkspace.class);
             LOG2_SESSION = session;
         }
         NutsLoggerOp logOp = LOG2.with().session(session).level(Level.CONFIG);
@@ -1157,8 +1157,7 @@ public final class NutsBootWorkspace {
             if (o.isSkipWelcome()) {
                 return session;
             }
-            workspace.exec()
-                    .setSession(session)
+            session.exec()
                     .addCommand("welcome")
                     .addExecutorOptions(o.getExecutorOptions())
                     .setExecutionType(o.getExecutionType())
@@ -1166,8 +1165,7 @@ public final class NutsBootWorkspace {
                     .setDry(options.isDry())
                     .run();
         } else {
-            workspace.exec()
-                    .setSession(session)
+            session.exec()
                     .addCommand(o.getApplicationArguments())
                     .addExecutorOptions(o.getExecutorOptions())
                     .setExecutionType(o.getExecutionType())

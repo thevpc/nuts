@@ -128,7 +128,7 @@ public class CatCommand extends SimpleNshBuiltin {
     }
 
     private void catText(InputStream in, OutputStream os, Options options, SimpleNshCommandContext context) throws IOException {
-        NutsPrintStream out = context.getWorkspace().io().createPrintStream(os);
+        NutsPrintStream out = context.getSession().io().createPrintStream(os);
         try {
             //do not close!!
             BufferedReader reader = new BufferedReader(new InputStreamReader(in));

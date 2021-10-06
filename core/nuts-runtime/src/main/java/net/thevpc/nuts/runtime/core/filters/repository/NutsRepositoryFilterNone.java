@@ -40,7 +40,7 @@ public class NutsRepositoryFilterNone extends AbstractRepositoryFilter {
 
     @Override
     public NutsRepositoryFilter simplify() {
-        return CoreNutsUtils.simplifyFilterNone(getWorkspace(), NutsRepositoryFilter.class,this,all);
+        return CoreNutsUtils.simplifyFilterNone(getSession(), NutsRepositoryFilter.class,this,all);
     }
 
     @Override

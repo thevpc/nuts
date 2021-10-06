@@ -50,7 +50,7 @@ import java.util.stream.Collectors;
 public class JavaExecutorComponent implements NutsExecutorComponent {
 
     public static NutsId ID;
-    NutsWorkspace ws;
+    NutsSession ws;
 
     @Override
     public NutsId getId() {
@@ -69,7 +69,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
 
     @Override
     public int getSupportLevel(NutsSupportLevelContext<NutsDefinition> nutsDefinition) {
-        this.ws = nutsDefinition.getWorkspace();
+        this.ws = nutsDefinition.getSession();
         if (ID == null) {
             ID = ws.id().parser().parse("net.thevpc.nuts.exec:java");
         }
@@ -91,7 +91,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
     public IProcessExecHelper execHelper(NutsExecutionContext executionContext) {
         NutsDefinition def = executionContext.getDefinition();//executionContext.getWorkspace().fetch(.getId().toString(), true, false);
 //        boolean inheritSystemIO=CoreCommonUtils.parseBoolean(String.valueOf(executionContext.getExecutorProperties().get("inheritSystemIO")),false);
-        final NutsWorkspace ws = executionContext.getWorkspace();
+//        final NutsWorkspace ws = executionContext.getWorkspace();
         Path contentFile = def.getPath();
         final JavaExecutorOptions joptions = new JavaExecutorOptions(
                 def,
@@ -151,13 +151,13 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                 for (String s : joptions.getClassPathNidStrings()) {
                     if (s.startsWith("net.thevpc.nuts:nuts#")) {
                         String v = s.substring("net.thevpc.nuts:nuts#".length());
-                        nutsDependencyVersion = executionContext.getWorkspace().version().parser().parse(v);
+                        nutsDependencyVersion = executionContext.getTraceSession().version().parser().parse(v);
                     } else {
                         Pattern pp = Pattern.compile(".*[/\\\\]nuts-(?<v>[0-9.]+)[.]jar");
                         Matcher mm = pp.matcher(s);
                         if (mm.find()) {
                             String v = mm.group("v");
-                            nutsDependencyVersion = executionContext.getWorkspace().version().parser().parse(v);
+                            nutsDependencyVersion = executionContext.getTraceSession().version().parser().parse(v);
                             break;
                         }
                     }
@@ -261,7 +261,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
 //                    xargs.add(Dnuts_boot_args);
 //                    args.add(Dnuts_boot_args);
 //                }
-                String jdb = executionContext.getTraceSession().getWorkspace().boot().getCustomBootOption("jdb").getString();
+                String jdb = executionContext.getTraceSession().boot().getCustomBootOption("jdb").getString();
                 if (jdb != null) {
                     boolean suspend = true;
                     int port = 5005;
@@ -295,7 +295,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
 
                 if (joptions.isJar()) {
                     xargs.add(txt.ofPlain("-jar"));
-                    xargs.add(ws.id().formatter(def.getId()).format());
+                    xargs.add(executionContext.getTraceSession().id().formatter(def.getId()).format());
 
                     args.add("-jar");
                     args.add(contentFile.toString());
@@ -321,7 +321,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                                 .collect(Collectors.toList())
                 );
                 args.addAll(joptions.getApp());
-                return new JavaProcessExecHelper(execSession, execSession, xargs, joptions, ws, executionContext, def, args, osEnv);
+                return new JavaProcessExecHelper(execSession, execSession, xargs, joptions, executionContext.getTraceSession(), executionContext, def, args, osEnv);
 
             }
 
@@ -439,8 +439,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                 Object oldId = NutsApplications.getSharedMap().get("nuts.embedded.application.id");
                 NutsApplications.getSharedMap().put("nuts.embedded.application.id", id);
                 try {
-                    workspace.exec()
-                            .setSession(session)
+                    session.exec()
                             .addCommand(appArgs)
                             .addExecutorOptions(o.getExecutorOptions())
                             .setExecutionType(o.getExecutionType())
@@ -498,7 +497,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
             } else {
                 //NutsWorkspace
                 System.setProperty("nuts.boot.args",
-                        getSession().getWorkspace().boot().getBootOptions()
+                        getSession().boot().getBootOptions()
                                 .formatter().setExported(true).setCompact(true).getBootCommandLine()
                                 .formatter().setShellFamily(NutsShellFamily.SH).toString()
                 );
@@ -517,13 +516,13 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
         private final NutsSession execSession;
         private final List<NutsString> xargs;
         private final JavaExecutorOptions joptions;
-        private final NutsWorkspace ws;
+        private final NutsSession ws;
         private final NutsExecutionContext executionContext;
         private final NutsDefinition def;
         private final List<String> args;
         private final HashMap<String, String> osEnv;
 
-        public JavaProcessExecHelper(NutsSession ns, NutsSession execSession, List<NutsString> xargs, JavaExecutorOptions joptions, NutsWorkspace ws, NutsExecutionContext executionContext, NutsDefinition def, List<String> args, HashMap<String, String> osEnv) {
+        public JavaProcessExecHelper(NutsSession ns, NutsSession execSession, List<NutsString> xargs, JavaExecutorOptions joptions, NutsSession ws, NutsExecutionContext executionContext, NutsDefinition def, List<String> args, HashMap<String, String> osEnv) {
             super(ns);
             this.execSession = execSession;
             this.xargs = xargs;

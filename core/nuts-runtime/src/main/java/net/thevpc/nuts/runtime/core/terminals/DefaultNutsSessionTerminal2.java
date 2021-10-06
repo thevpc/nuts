@@ -56,13 +56,13 @@ public class DefaultNutsSessionTerminal2 extends AbstractNutsSessionTerminal {
     @Override
     public String readLine(NutsPrintStream out, NutsMessage message, NutsSession session) {
         if(session==null){
-            this.session=session;
+            session=this.session;
         }
         if (out == null) {
             out = out();
         }
         if (out == null) {
-            out = ws.io().stdout();
+            out = session.io().stdout();
         }
         if (this.in == null && parent != null) {
             if (this.out == null) {
@@ -88,13 +88,13 @@ public class DefaultNutsSessionTerminal2 extends AbstractNutsSessionTerminal {
     @Override
     public char[] readPassword(NutsPrintStream out, NutsMessage message,NutsSession session) {
         if(session==null){
-            this.session=session;
+            session=this.session;
         }
         if (out == null) {
             out = out();
         }
         if (out == null) {
-            out = ws.io().stdout();
+            out = session.io().stdout();
         }
 
         if (this.in == null && parent != null) {
@@ -109,10 +109,10 @@ public class DefaultNutsSessionTerminal2 extends AbstractNutsSessionTerminal {
         Console cons = null;
         char[] passwd = null;
         if (in == null) {
-            in = ws.io().stdin();
+            in = session.io().stdin();
         }
         if ((
-                in == ws.io().stdin()
+                in == session.io().stdin()
         ) && ((cons = System.console()) != null)) {
             String txt=session.text().toText(message).toString();
             if ((passwd = cons.readPassword("%s",txt)) != null) {

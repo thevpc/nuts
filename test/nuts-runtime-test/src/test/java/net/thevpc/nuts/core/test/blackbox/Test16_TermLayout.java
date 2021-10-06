@@ -45,11 +45,10 @@ public class Test16_TermLayout {
 
     @Test
     public void test1() throws Exception {
-        NutsWorkspace ws = TestUtils.openNewTestWorkspace(
+        NutsSession session = TestUtils.openNewTestWorkspace(
                 "-byZSKk"
-        ).getWorkspace();
+        );
 
-        NutsSession session = ws.createSession();
         for (int i = 0; i < 100; i++) {
             Thread.sleep(100);
             session.getTerminal().printProgress((i/100f),"message %s",i);

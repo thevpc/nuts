@@ -5,6 +5,7 @@
  */
 package net.thevpc.nuts.core.test.blackboxinteractive;
 
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
@@ -35,10 +36,10 @@ public class Test13_OverloadedDependency {
         extraProperties.put("nuts.export.always-show-command", "true");
         TestUtils.setSystemProperties(extraProperties);
 
-        NutsWorkspace ws = TestUtils.openNewTestWorkspace(
+        NutsSession ws = TestUtils.openNewTestWorkspace(
                  "-b" ,"--debug" ,"--progress=newline",
                 "--archetype", "default",
-                "--log-info").getWorkspace();
+                "--log-info");
         ws.install().addId("netbeans-launcher").run();
         ws.install().addId("tomcat").run();
     }

@@ -11,10 +11,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import net.thevpc.nuts.NutsArgument;
-import net.thevpc.nuts.NutsIdFormat;
-import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.NutsCommandLine;
+
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.CoreEnumUtils;
 
 /**
@@ -43,9 +41,9 @@ public class NutsFetchDisplayOptions {
 
     private NutsIdFormat idFormat;
     private List<NutsDisplayProperty> displays = new ArrayList<>();
-    private NutsWorkspace ws;
+    private NutsSession ws;
 
-    public NutsFetchDisplayOptions(NutsWorkspace ws) {
+    public NutsFetchDisplayOptions(NutsSession ws) {
         this.ws = ws;
         this.idFormat = ws.id().formatter();
         this.idFormat.setHighlightImportedGroupId(true);

@@ -74,8 +74,7 @@ public class TestCProgressBar {
     }
     @Test
     public void test2() {
-        NutsWorkspace ws = TestUtils.openNewTestWorkspace("-k").getWorkspace();
-        NutsSession session = ws.createSession();
+        NutsSession session = TestUtils.openNewTestWorkspace("-k");
         CProgressBar rr = new CProgressBar(session);
         rr.setFormatter(CProgressBar.CIRCLES2);
         rr.setMinPeriod(-1);

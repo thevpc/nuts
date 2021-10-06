@@ -50,10 +50,9 @@ public class NutsComponentController {
             if (iterator.hasNext()) {
                 NutsWorkspaceLocation workspaceLocation = iterator.next();
                 NutsSession session = Nuts.openWorkspace("--workspace",workspaceLocation.getLocation());
-                NutsWorkspace ws = session.getWorkspace();
                 List<Map<String, String>> rows = this.dataService.
                         getAllData(NutsIndexerUtils.getCacheDir(session, subscriber.cacheFolderName()));
-                List<Map<String, Object>> resData = cleanNutsIdMap(ws, rows);
+                List<Map<String, Object>> resData = cleanNutsIdMap(session, rows);
                 return ResponseEntity.ok(resData);
             }
         }
@@ -80,26 +79,25 @@ public class NutsComponentController {
             if (iterator.hasNext()) {
                 NutsWorkspaceLocation workspaceLocation = iterator.next();
                 NutsSession session = Nuts.openWorkspace("--workspace",workspaceLocation.getLocation());
-                NutsWorkspace ws = session.getWorkspace();
-                NutsId id = ws.id().builder()
+                NutsId id = session.id().builder()
                         .setArtifactId(name)
                         .setRepository(namespace)
                         .setGroupId(group)
                         .setVersion(version)
                         .setCondition(
-                                ws.descriptor().envConditionBuilder()
-                                        .setArch(new String[]{arch})
-                                        .setOs(new String[]{os})
-                                        .setOsDist(new String[]{osdist}).build()
+                                session.descriptor().envConditionBuilder()
+                                        .setArch(arch)
+                                        .setOs(os)
+                                        .setOsDist(osdist).build()
                         )
                         .setFace(face)
 //                        .setAlternative(alternative)
                         .build();
                 List<Map<String, String>> result;
                 if (all) {
-                    result = this.dataService.getAllDependencies(ws, NutsIndexerUtils.getCacheDir(session, subscriber.cacheFolderName()), id);
+                    result = this.dataService.getAllDependencies(session, NutsIndexerUtils.getCacheDir(session, subscriber.cacheFolderName()), id);
                 } else {
-                    result = this.dataService.getDependencies(ws, NutsIndexerUtils.getCacheDir(session, subscriber.cacheFolderName()), id);
+                    result = this.dataService.getDependencies(session, NutsIndexerUtils.getCacheDir(session, subscriber.cacheFolderName()), id);
                 }
                 return ResponseEntity.ok(result);
             }
@@ -128,8 +126,7 @@ public class NutsComponentController {
             if (iterator.hasNext()) {
                 NutsWorkspaceLocation workspaceLocation = iterator.next();
                 NutsSession session = Nuts.openWorkspace("--workspace",workspaceLocation.getLocation());
-                NutsWorkspace ws = session.getWorkspace();
-                NutsId id = ws.id().builder()
+                NutsId id = session.id().builder()
                         .setArtifactId(name)
                         .setRepository(namespace)
                         .setGroupId(group)
@@ -143,8 +140,8 @@ public class NutsComponentController {
                         .setFace(face)
 //                        .setAlternative(alternative)
                         .build();
-                List<Map<String, String>> rows = this.dataService.getAllVersions(ws, NutsIndexerUtils.getCacheDir(ws.createSession(), subscriber.cacheFolderName()), id);
-                List<Map<String, Object>> resData = cleanNutsIdMap(ws, rows);
+                List<Map<String, String>> rows = this.dataService.getAllVersions(session, NutsIndexerUtils.getCacheDir(session, subscriber.cacheFolderName()), id);
+                List<Map<String, Object>> resData = cleanNutsIdMap(session, rows);
                 return ResponseEntity.ok(resData);
             }
         }
@@ -175,7 +172,7 @@ public class NutsComponentController {
                 NutsSession session = Nuts.openWorkspace("--workspace",workspaceLocation.getLocation());
                 NutsWorkspace ws = session.getWorkspace();
                 Map<String, String> data = NutsIndexerUtils.nutsIdToMap(
-                        ws.id().builder()
+                        session.id().builder()
                                 .setArtifactId(name)
                                 .setRepository(namespace)
                                 .setGroupId(group)
@@ -190,7 +187,7 @@ public class NutsComponentController {
                                 .setFace(face)
 //                                .setAlternative(alternative)
                                 .build());
-                this.dataService.deleteData(NutsIndexerUtils.getCacheDir(ws.createSession(), subscriber.cacheFolderName()), data);
+                this.dataService.deleteData(NutsIndexerUtils.getCacheDir(session, subscriber.cacheFolderName()), data);
                 return ResponseEntity.ok(true);
             }
         }
@@ -219,8 +216,7 @@ public class NutsComponentController {
             if (iterator.hasNext()) {
                 NutsWorkspaceLocation workspaceLocation = iterator.next();
                 NutsSession session = Nuts.openWorkspace("--workspace",workspaceLocation.getLocation());
-                NutsWorkspace ws = session.getWorkspace();
-                NutsId id = ws.id().builder()
+                NutsId id = session.id().builder()
                         .setArtifactId(name)
                         .setRepository(namespace)
                         .setGroupId(group)
@@ -238,9 +234,9 @@ public class NutsComponentController {
                 Map<String, String> data = NutsIndexerUtils.nutsIdToMap(id);
                 List<Map<String, String>> list = this.dataService.searchData(NutsIndexerUtils.getCacheDir(session, subscriber.cacheFolderName()), data, null);
                 if (list.isEmpty()) {
-                    Iterator<NutsDefinition> it = ws.search()
+                    Iterator<NutsDefinition> it = session.search()
                             .setRepositoryFilter(
-                                    ws.repos().filter().byUuid(subscriber.getUuid())
+                                    session.repos().filter().byUuid(subscriber.getUuid())
                             )
                             .addId(id)
                             .setFailFast(false)
@@ -250,7 +246,7 @@ public class NutsComponentController {
                     if (it.hasNext()) {
                         NutsDefinition definition = it.next();
                         NutsDependency[] directDependencies = definition.getEffectiveDescriptor().getDependencies();
-                        data.put("dependencies", ws.elem().setContentType(NutsContentType.JSON)
+                        data.put("dependencies", session.elem().setContentType(NutsContentType.JSON)
                                 .setValue(Arrays.stream(directDependencies).map(Object::toString)
                                         .collect(Collectors.toList()))
                                         .setNtf(false)
@@ -270,23 +266,23 @@ public class NutsComponentController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 
-    private List<Map<String, Object>> cleanNutsIdMap(NutsWorkspace ws, List<Map<String, String>> rows) {
+    private List<Map<String, Object>> cleanNutsIdMap(NutsSession session, List<Map<String, String>> rows) {
         List<Map<String, Object>> resData = new ArrayList<>();
         for (Map<String, String> row : rows) {
             Map<String, Object> d = new HashMap<>(row);
             if (d.containsKey("dependencies")) {
-                String[] array = ws.elem().setContentType(NutsContentType.JSON).parse(new StringReader(row.get("dependencies")), String[].class);
+                String[] array = session.elem().setContentType(NutsContentType.JSON).parse(new StringReader(row.get("dependencies")), String[].class);
                 List<Map<String, String>> dependencies = new ArrayList<>();
                 for (String s : array) {
-                    dependencies.add(NutsIndexerUtils.nutsIdToMap(ws.id().parser().parse(s)));
+                    dependencies.add(NutsIndexerUtils.nutsIdToMap(session.id().parser().parse(s)));
                 }
                 d.put("dependencies", dependencies);
             }
             if (d.containsKey("allDependencies")) {
-                String[] array = ws.elem().setContentType(NutsContentType.JSON).parse(new StringReader(row.get("allDependencies")), String[].class);
+                String[] array = session.elem().setContentType(NutsContentType.JSON).parse(new StringReader(row.get("allDependencies")), String[].class);
                 List<Map<String, String>> allDependencies = new ArrayList<>();
                 for (String s : array) {
-                    allDependencies.add(NutsIndexerUtils.nutsIdToMap(ws.id().parser().parse(s)));
+                    allDependencies.add(NutsIndexerUtils.nutsIdToMap(session.id().parser().parse(s)));
                 }
                 d.put("allDependencies", allDependencies);
             }

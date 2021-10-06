@@ -32,7 +32,7 @@ public class RemoteNutsSearchCommand extends AbstractNutsSearchCommand {
 
     @Override
     protected Iterator<NutsId> getResultIdIteratorBase(Boolean forceInlineDependencies) {
-        RemoteNutsWorkspace ws = getWorkspace();
+        NutsSession ws = getSession();
         NutsElementFormat e = ws.elem().setSession(getSession());
         NutsObjectElementBuilder eb = e.forObject()
                 .set("execType", getExecType())

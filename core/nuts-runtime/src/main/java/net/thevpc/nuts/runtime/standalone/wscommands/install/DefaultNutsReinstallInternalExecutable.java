@@ -24,7 +24,7 @@ public class DefaultNutsReinstallInternalExecutable extends DefaultInternalNutsE
 //            showDefaultHelp();
 //            return;
 //        }
-        getSession().getWorkspace().install()
+        getSession().install()
                 .configure(true,"--reinstall")
                 .configure(false, args).run();
     }

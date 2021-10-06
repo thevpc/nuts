@@ -45,7 +45,7 @@ public class NutsIdFilterOr extends AbstractIdFilter implements NutsIdFilter, Si
 
     @Override
     public NutsIdFilter simplify() {
-        return CoreNutsUtils.simplifyFilterOr(getWorkspace(),NutsIdFilter.class,this,children);
+        return CoreNutsUtils.simplifyFilterOr(getSession(),NutsIdFilter.class,this,children);
     }
 
     @Override

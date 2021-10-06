@@ -49,9 +49,9 @@ class WrapperNutsAuthenticationAgent {
         String b = new String(a);
         int x = b.indexOf(':');
         if (x <= 0) {
-            if (ws.boot().getBootOptions().isRecover()) {
+            if (session.boot().getBootOptions().isRecover()) {
                 //All stored passwords will be reset to 'secret'
-                ws.createSession().err().println("```error RECOVER MODE : Password could no be parsed due a change in encryption spec. WIll use new default agent```");
+                session.err().println("```error RECOVER MODE : Password could no be parsed due a change in encryption spec. WIll use new default agent```");
                 return null;
             }
             throw new NutsSecurityException(session, NutsMessage.plain("credential id must start with authentication agent id"));

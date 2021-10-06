@@ -50,6 +50,6 @@ public class NutsDependencyScopeFilter extends AbstractDependencyFilter {
 
     @Override
     public NutsDependencyFilter simplify() {
-        return scope.isEmpty()?getWorkspace().filters().dependency().always() : this;
+        return scope.isEmpty()?getSession().filters().dependency().always() : this;
     }
 }

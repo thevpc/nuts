@@ -8,7 +8,6 @@ package net.thevpc.nuts.runtime.core.util;
 import java.util.function.Supplier;
 
 /**
- *
  * @author thevpc
  */
 public class CachedValue<T> {
@@ -37,7 +36,7 @@ public class CachedValue<T> {
     }
 
     public boolean isInvalid() {
-        if (lastDate == 0) {
+        if (lastDate == 0 || timeoutSeconds == 0) {
             return true;
         }
         if (timeoutSeconds < 0) {

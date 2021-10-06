@@ -554,7 +554,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         LinkedHashSet<NutsDependency> n_deps = new LinkedHashSet<>();
         LinkedHashSet<NutsDependency> n_sdeps = new LinkedHashSet<>();
         for (NutsDescriptor parentDescriptor : parentDescriptors) {
-            n_id = CoreNutsUtils.applyNutsIdInheritance(n_id, parentDescriptor.getId(), session.getWorkspace());
+            n_id = CoreNutsUtils.applyNutsIdInheritance(n_id, parentDescriptor.getId(), session);
             if (!n_executable && parentDescriptor.isExecutable()) {
                 n_executable = true;
             }
@@ -791,7 +791,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
                 .setRepository(CoreNutsUtils.applyStringProperties(child.getRepository(), properties))
                 .setGroupId(CoreNutsUtils.applyStringProperties(child.getGroupId(), properties))
                 .setArtifactId(CoreNutsUtils.applyStringProperties(child.getArtifactId(), properties))
-                .setVersion(CoreNutsUtils.applyStringProperties(child.getVersion(), properties, session.getWorkspace()))
+                .setVersion(CoreNutsUtils.applyStringProperties(child.getVersion(), properties, session))
                 .setClassifier(CoreNutsUtils.applyStringProperties(child.getClassifier(), properties))
                 .setScope(CoreNutsUtils.applyStringProperties(child.getScope(), properties))
                 .setOptional(CoreNutsUtils.applyStringProperties(child.getOptional(), properties))

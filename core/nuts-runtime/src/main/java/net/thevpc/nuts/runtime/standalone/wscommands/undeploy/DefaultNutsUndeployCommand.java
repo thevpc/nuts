@@ -21,24 +21,23 @@ public class DefaultNutsUndeployCommand extends AbstractNutsUndeployCommand {
             throw new NutsExecutionException(getSession(), NutsMessage.cstyle("no package to undeploy"), 1);
         }
         checkSession();
-        NutsWorkspace ws = getSession().getWorkspace();
-        NutsSession searchSession = getSession();
+        NutsSession session = getSession();
         for (NutsId id : ids) {
-            NutsDefinition p = ws.search()
-                    .setSession(searchSession
+            NutsDefinition p = getSession().search()
+                    .setSession(session
                             .copy()
                             .setFetchStrategy(isOffline() ? NutsFetchStrategy.OFFLINE : NutsFetchStrategy.ONLINE)
                     )
                     .addIds(id)
-                    .addRepositoryFilter(ws.filters().repository().byName(getRepository()))
+                    .addRepositoryFilter(session.filters().repository().byName(getRepository()))
                     //skip 'installed' repository
                     .setRepositoryFilter(
-                            ws.repos().filter().byName(DefaultNutsInstalledRepository.INSTALLED_REPO_UUID).neg()
+                            session.repos().filter().byName(DefaultNutsInstalledRepository.INSTALLED_REPO_UUID).neg()
                     )
                     .setDistinct(true)
                     .setFailFast(true)
                     .getResultDefinitions().required();
-            NutsRepository repository1 = ws.repos().setSession(getSession()).getRepository(p.getRepositoryUuid());
+            NutsRepository repository1 = session.repos().setSession(getSession()).getRepository(p.getRepositoryUuid());
             NutsRepositorySPI repoSPI = NutsWorkspaceUtils.of(getSession()).repoSPI(repository1);
             repoSPI.undeploy()
                     .setId(p.getId()).setSession(getSession())

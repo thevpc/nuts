@@ -68,7 +68,7 @@ public class NutsElementFactoryXmlElement implements NutsElementMapper<Node> {
             docs = new Stack<>();
             context.getProperties().put(Document.class.getName(), docs);
             try {
-                docs.push(doc != null ? doc : NutsXmlUtils.createDocument(context.getWorkspace().createSession()));
+                docs.push(doc != null ? doc : NutsXmlUtils.createDocument(context.getSession()));
                 return impl.get();
             } finally {
                 docs.pop();
@@ -76,7 +76,7 @@ public class NutsElementFactoryXmlElement implements NutsElementMapper<Node> {
         } else {
             if (docs.isEmpty() || doc != null) {
                 try {
-                    docs.push(doc != null ? doc : NutsXmlUtils.createDocument(context.getWorkspace().createSession()));
+                    docs.push(doc != null ? doc : NutsXmlUtils.createDocument(context.getSession()));
                     return impl.get();
                 } finally {
                     docs.pop();
@@ -96,7 +96,7 @@ public class NutsElementFactoryXmlElement implements NutsElementMapper<Node> {
             Stack<Document> docs = new Stack<>();
             context.getProperties().put(Document.class.getName(), docs);
             try {
-                docs.push(NutsXmlUtils.createDocument(context.getWorkspace().createSession()));
+                docs.push(NutsXmlUtils.createDocument(context.getSession()));
                 return createObject(elem, typeOfResult, context);
             } finally {
                 docs.pop();
@@ -105,7 +105,7 @@ public class NutsElementFactoryXmlElement implements NutsElementMapper<Node> {
             Stack<Document> docs = (Stack<Document>) context.getProperties().get(Document.class.getName());
             if (docs.isEmpty()) {
                 try {
-                    docs.push(NutsXmlUtils.createDocument(context.getWorkspace().createSession()));
+                    docs.push(NutsXmlUtils.createDocument(context.getSession()));
                     return createObject(elem, typeOfResult, context);
                 } finally {
                     docs.pop();
@@ -251,8 +251,7 @@ public class NutsElementFactoryXmlElement implements NutsElementMapper<Node> {
     }
 
     public NutsElement createElement(String type, String value, NutsElementFactoryContext context) {
-        NutsElementFormat f = context.getWorkspace().elem()
-                .setSession(context.getSession());
+        NutsElementFormat f = context.getSession().elem();
         switch (type) {
             case "null": {
                 return f.forNull();
@@ -456,7 +455,7 @@ public class NutsElementFactoryXmlElement implements NutsElementMapper<Node> {
 
     @Override
     public NutsElement createElement(Node node, Type typeOfSrc, NutsElementFactoryContext context) {
-        NutsElementFormat elements = context.getWorkspace().elem().setSession(context.getSession());
+        NutsElementFormat elements = context.getSession().elem().setSession(context.getSession());
         if (node instanceof Attr) {
             Attr at = (Attr) node;
             return elements.forObject().set(at.getName(), context.objectToElement(at.getValue(), String.class)).build();

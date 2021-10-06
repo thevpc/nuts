@@ -44,8 +44,7 @@ public class JobAutoCompleter implements NutsCommandAutoCompleteResolver {
 
     @Override
     public List<NutsArgumentCandidate> resolveCandidates(NutsCommandLine commandline, int wordIndex, NutsSession session) {
-        NutsWorkspace workspace = session.getWorkspace();
-        JobServiceCmd fileContext = (JobServiceCmd) workspace.env().getProperty(JobServiceCmd.class.getName()).getObject();
+        JobServiceCmd fileContext = (JobServiceCmd) session.env().getProperty(JobServiceCmd.class.getName()).getObject();
         NutsDefaultCommandAutoComplete autoComplete = new NutsDefaultCommandAutoComplete()
                 .setSession(session)
                 .setCurrentWordIndex(wordIndex)

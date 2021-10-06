@@ -287,7 +287,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         List<Row> rows = rebuild(getSession());
         if (rows.size() > 0) {
             List<DefaultCell> cells = rows.get(0).cells;
-            NutsWorkspace ws = getSession().getWorkspace();
+            NutsSession ws = getSession();
             if ((getSeparator(NutsTableSeparator.FIRST_ROW_START)
                     + getSeparator(NutsTableSeparator.FIRST_ROW_SEP)
                     + getSeparator(NutsTableSeparator.FIRST_ROW_LINE)

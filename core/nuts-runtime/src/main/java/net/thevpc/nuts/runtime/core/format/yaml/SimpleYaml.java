@@ -201,7 +201,7 @@ public class SimpleYaml implements NutsElementStreamFormat {
 
         public NutsElementFormat builder() {
             if (ebuilder == null) {
-                ebuilder = context.getWorkspace().elem().setSession(context.getSession());
+                ebuilder = context.getSession().elem().setSession(context.getSession());
             }
             return ebuilder;
         }

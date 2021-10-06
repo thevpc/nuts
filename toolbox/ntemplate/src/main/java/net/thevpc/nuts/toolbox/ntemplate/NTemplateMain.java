@@ -138,7 +138,7 @@ public class NTemplateMain implements NutsApplication {
                                     err
                             )
             );
-            JShellFileContext ctx = shell.createSourceFileContext(
+            JShellContext ctx = shell.createSourceFileContext(
                     shell.getRootContext(),
                     context.getSourcePath().orElse("nsh"), new String[0]
             );

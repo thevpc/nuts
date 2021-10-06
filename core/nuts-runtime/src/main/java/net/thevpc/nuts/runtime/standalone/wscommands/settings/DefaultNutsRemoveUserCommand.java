@@ -33,7 +33,7 @@ public class DefaultNutsRemoveUserCommand extends AbstractNutsRemoveUserCommand 
         if (repo != null) {
             NutsRepositoryConfigManagerExt.of(repo.config().setSession(session)).getModel().removeUser(login, getSession());
         } else {
-            NutsWorkspaceConfigManagerExt.of(ws.config().setSession(session)).getModel().removeUser(login, getSession());
+            NutsWorkspaceConfigManagerExt.of(session.config().setSession(session)).getModel().removeUser(login, getSession());
         }
         return this;
     }

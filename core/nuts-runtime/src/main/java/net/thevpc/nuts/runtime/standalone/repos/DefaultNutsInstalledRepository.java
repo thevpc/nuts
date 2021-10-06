@@ -66,7 +66,9 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
 
     public DefaultNutsInstalledRepository(NutsWorkspace ws, NutsWorkspaceInitInformation info) {
         this.workspace = ws;
-        deployments = new NutsRepositoryFolderHelper(this, ws,
+        deployments = new NutsRepositoryFolderHelper(this,
+                NutsWorkspaceUtils.defaultSession(ws)
+                ,
                 Paths.get(info.getStoreLocation(NutsStoreLocation.LIB)).resolve(NutsConstants.Folders.ID)
                 , false
         );
@@ -79,7 +81,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
 
     protected NutsLogger _LOG(NutsSession session) {
         if (LOG == null) {
-            LOG = this.workspace.log().setSession(session).of(DefaultNutsInstalledRepository.class);
+            LOG = session.log().of(DefaultNutsInstalledRepository.class);
         }
         return LOG;
     }
@@ -426,15 +428,14 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
 //            path = getPath(id, NUTS_INSTALL_FILE);
 //        }
         Path finalPath = path;
-        NutsWorkspace workspace = session.getWorkspace();
         if (Files.isRegularFile(path)) {
-            InstallInfoConfig c = workspace.concurrent().lock().setSource(path).setSession(session).call(
-                    () -> workspace.elem().setSession(session).setContentType(NutsContentType.JSON).parse(finalPath, InstallInfoConfig.class),
+            InstallInfoConfig c = session.concurrent().lock().setSource(path).setSession(session).call(
+                    () -> session.elem().setContentType(NutsContentType.JSON).parse(finalPath, InstallInfoConfig.class),
                     CoreNutsUtils.LOCK_TIME, CoreNutsUtils.LOCK_TIME_UNIT
             );
             if (c != null) {
                 boolean changeStatus = false;
-                NutsVersion v = workspace.version().parser().parse(c.getConfigVersion());
+                NutsVersion v = session.version().parser().parse(c.getConfigVersion());
                 if (v.isBlank()) {
                     c.setInstalled(true);
                     c.setConfigVersion("0.5.8"); //last version before 0.6
@@ -455,12 +456,12 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
                         }
                     }
                 }
-                if (changeStatus && !workspace.config().isReadOnly()) {
-                    workspace.concurrent().lock().setSource(path).setSession(session).call(() -> {
+                if (changeStatus && !session.config().isReadOnly()) {
+                    session.concurrent().lock().setSource(path).call(() -> {
                                 _LOGOP(session).level(Level.CONFIG)
                                         .log(NutsMessage.jstyle("install-info upgraded {0}", finalPath));
                                 c.setConfigVersion(workspace.getApiVersion().toString());
-                                workspace.elem().setSession(session).setContentType(NutsContentType.JSON).setValue(c).print(finalPath);
+                                session.elem().setContentType(NutsContentType.JSON).setValue(c).print(finalPath);
                                 return null;
                             },
                             CoreNutsUtils.LOCK_TIME, CoreNutsUtils.LOCK_TIME_UNIT
@@ -748,7 +749,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
                         @Override
                         protected Iterator<NutsId> iterator() {
                             File installFolder
-                                    = Paths.get(getSession().getWorkspace().locations().getStoreLocation(getId()
+                                    = Paths.get(getSession().locations().getStoreLocation(getId()
                                     .builder().setVersion("ANY").build(), NutsStoreLocation.CONFIG)).toFile().getParentFile();
                             if (installFolder.isDirectory()) {
                                 final NutsVersionFilter filter0 = getId().getVersion().filter();
@@ -758,7 +759,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
                                             public NutsId apply(File folder) {
                                                 if (folder.isDirectory()
                                                         && new File(folder, NUTS_INSTALL_FILE).isFile()) {
-                                                    NutsVersion vv = workspace.version().parser().parse(folder.getName());
+                                                    NutsVersion vv = getSession().version().parser().parse(folder.getName());
                                                     NutsIdFilter filter = getFilter();
                                                     NutsSession session = getSession();
                                                     if (filter0.acceptVersion(vv, session) && (filter == null || filter.acceptId(
@@ -1027,7 +1028,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
 //        }
         @Override
         public NutsStoreLocationStrategy getStoreLocationStrategy(NutsSession session) {
-            return ws.locations().getRepositoryStoreLocationStrategy();
+            return session.locations().getRepositoryStoreLocationStrategy();
         }
 
         //        @Override

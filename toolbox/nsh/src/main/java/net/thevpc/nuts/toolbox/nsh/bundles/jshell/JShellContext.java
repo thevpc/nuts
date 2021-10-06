@@ -20,7 +20,7 @@ public interface JShellContext {
 
     JShellNode getRootNode();
 
-    JShellContext setRoot(JShellNode root);
+    JShellContext setRootNode(JShellNode root);
 
     JShellNode getParentNode();
 
@@ -46,9 +46,9 @@ public interface JShellContext {
 
     JShellContext setIn(InputStream in);
 
-    JShellExecutionContext createCommandContext(JShellBuiltin command, JShellFileContext context);
+    JShellExecutionContext createCommandContext(JShellBuiltin command);
 
-    List<JShellAutoCompleteCandidate> resolveAutoCompleteCandidates(String commandName, List<String> autoCompleteWords, int wordIndex, String autoCompleteLine, JShellFileContext ctx);
+    List<JShellAutoCompleteCandidate> resolveAutoCompleteCandidates(String commandName, List<String> autoCompleteWords, int wordIndex, String autoCompleteLine);
 
     JShellContext setEnv(Map<String,String> env);
 
@@ -56,12 +56,12 @@ public interface JShellContext {
 
     String getCwd();
 
-    JShellFileSystem getFileSystem();
-
     void setCwd(String cwd);
 
+    JShellFileSystem getFileSystem();
+
     void setFileSystem(JShellFileSystem fileSystem);
-    
+
     String getAbsolutePath(String path);
 
     String[] expandPaths(String path);
@@ -81,6 +81,20 @@ public interface JShellContext {
     void setAliases(JShellAliasManager aliasManager);
 
     void copyFrom(JShellContext other);
+
+    String getServiceName();
+
+    void setServiceName(String serviceName);
+
+    void setArgs(String[] args);
+
+    String getArg(int index);
+
+    int getArgsCount();
+
+    String[] getArgsArray();
+
+    List<String> getArgsList();
 
 //    JShellContext copy() ;
 

@@ -25,6 +25,7 @@ package net.thevpc.nuts.runtime.core.log;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.AbstractNutsWorkspace;
+import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 import java.nio.file.Path;
@@ -69,7 +70,7 @@ public class DefaultNutsLogModel {
             logConfig.setLogFileBase(lc.getLogFileBase());
             logConfig.setLogFileSize(lc.getLogFileSize());
         }
-        out = workspace.io().stderr();
+        out = NutsWorkspaceUtils.defaultSession(workspace).io().stderr();
     }
 
     public NutsSession getDefaultSession() {

@@ -74,7 +74,7 @@ public class DefaultNutsPlatformModel {
                             session.io().path(location.getPath())
                     );
                 }
-                NutsWorkspaceConfigManagerExt.of(workspace.config())
+                NutsWorkspaceConfigManagerExt.of(session.config())
                         .getModel()
                         .fireConfigurationChanged("platform", session, ConfigEventType.MAIN);
             }
@@ -224,7 +224,7 @@ public class DefaultNutsPlatformModel {
             }
         }
         if (!ret.isEmpty()) {
-            ret.sort(new NutsPlatformLocationSelectComparator(session.getWorkspace()));
+            ret.sort(new NutsPlatformLocationSelectComparator(session));
         }
         return ret.toArray(new NutsPlatformLocation[0]);
     }

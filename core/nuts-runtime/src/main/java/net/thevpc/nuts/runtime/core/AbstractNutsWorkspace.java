@@ -48,8 +48,8 @@ public abstract class AbstractNutsWorkspace implements NutsWorkspace {
     @Override
     public NutsSession createSession() {
         NutsSession nutsSession = new DefaultNutsSession(this);
-        nutsSession.setTerminal(term().setSession(nutsSession).createTerminal());
-        nutsSession.setExpireTime(boot().setSession(nutsSession).getBootOptions().getExpireTime());
+        nutsSession.setTerminal(nutsSession.term().createTerminal());
+        nutsSession.setExpireTime(nutsSession.boot().getBootOptions().getExpireTime());
         return nutsSession;
     }
 

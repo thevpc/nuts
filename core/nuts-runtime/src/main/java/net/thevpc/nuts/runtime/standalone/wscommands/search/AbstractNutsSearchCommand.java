@@ -615,7 +615,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
             allURLs[i] = nutsDefinitions.get(i).getURL();
             allIds[i] = nutsDefinitions.get(i).getId();
         }
-        DefaultNutsClassLoader cl = ((DefaultNutsWorkspaceExtensionManager) getSession().getWorkspace().extensions())
+        DefaultNutsClassLoader cl = ((DefaultNutsWorkspaceExtensionManager) getSession().extensions())
                 .getModel().getNutsURLClassLoader("SEARCH-" + UUID.randomUUID().toString(), parent, getSession());
         for (NutsDefinition def : nutsDefinitions) {
             cl.add(NutsClassLoaderUtils.definitionToClassLoaderNode(def, getSession()));
@@ -704,13 +704,13 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     public NutsStream<String> getResultStoreLocations(NutsStoreLocation location) {
         checkSession();
         return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
-                .map(x -> getSession().getWorkspace().locations().getStoreLocation(x.getId(), location))
+                .map(x -> getSession().locations().getStoreLocation(x.getId(), location))
                 .notNull());
     }
 
     @Override
     public NutsStream<String[]> getResultStrings(String[] columns) {
-        NutsFetchDisplayOptions oo = new NutsFetchDisplayOptions(ws);
+        NutsFetchDisplayOptions oo = new NutsFetchDisplayOptions(getSession());
         oo.addDisplay(columns);
         oo.setIdFormat(getDisplayOptions().getIdFormat());
         return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
@@ -742,7 +742,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
         return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
                 .mapMulti(x
                         -> (x.getContent() == null || x.getContent().getFilePath() == null) ? Collections.emptyList()
-                        : Arrays.asList(getSession().getWorkspace().apps().execEntries().setSession(getSession()).parse(x.getContent().getFilePath()))));
+                        : Arrays.asList(getSession().apps().execEntries().setSession(getSession()).parse(x.getContent().getFilePath()))));
     }
 
     @Override

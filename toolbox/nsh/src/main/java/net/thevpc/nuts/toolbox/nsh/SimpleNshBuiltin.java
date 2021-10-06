@@ -26,17 +26,14 @@
 */
 package net.thevpc.nuts.toolbox.nsh;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.PrintStream;
-import java.util.Arrays;
-
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShell;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellContext;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellExecutionContext;
-import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellFileContext;
-import net.thevpc.nuts.*;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.Arrays;
 
 /**
  *
@@ -182,7 +179,7 @@ public abstract class SimpleNshBuiltin extends AbstractNshBuiltin {
             return context.getGlobalContext().getCwd();
         }
 
-        public JShellFileContext getGlobalContext() {
+        public JShellContext getGlobalContext() {
             return context.getGlobalContext();
         }
 
@@ -207,7 +204,7 @@ public abstract class SimpleNshBuiltin extends AbstractNshBuiltin {
         boolean conf = false;
         int maxLoops = 1000;
         boolean robustMode = false;
-        NutsCommandLine commandLine = context.getWorkspace().commandLine().create(args).setCommandName(getName());
+        NutsCommandLine commandLine = context.getSession().commandLine().create(args).setCommandName(getName());
         initCommandLine(commandLine);
         SimpleNshCommandContext context2 = new SimpleNshCommandContext(args, context, createOptions());
         while (commandLine.hasNext()) {

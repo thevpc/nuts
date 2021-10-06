@@ -17,7 +17,7 @@ public abstract class AbstractNutsFetchCommand extends DefaultNutsQueryBaseOptio
     public NutsFetchCommand setId(String id) {
         checkSession();
         NutsWorkspace ws = getSession().getWorkspace();
-        this.id = ws.id().parser().setLenient(false).parse(id);
+        this.id = session.id().parser().setLenient(false).parse(id);
         return this;
     }
 

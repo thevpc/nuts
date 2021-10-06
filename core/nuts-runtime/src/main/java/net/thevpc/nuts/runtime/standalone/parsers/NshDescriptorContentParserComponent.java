@@ -64,7 +64,7 @@ public class NshDescriptorContentParserComponent implements NutsDescriptorConten
     @Override
     public int getSupportLevel(NutsSupportLevelContext<Object> criteria) {
         if(NSH==null){
-            NSH=criteria.getWorkspace().id().parser().parse("nsh");
+            NSH=criteria.getSession().id().parser().parse("nsh");
         }
         return DEFAULT_SUPPORT;
     }
@@ -85,7 +85,7 @@ public class NshDescriptorContentParserComponent implements NutsDescriptorConten
     }
 
     private static NutsDescriptor readNutDescriptorFromBashScriptFile(NutsSession session, InputStream file) throws IOException {
-        NutsWorkspace ws = session.getWorkspace();
+//        NutsWorkspace ws = session.getWorkspace();
         BufferedReader r = null;
         try {
             r = new BufferedReader(new InputStreamReader(file));
@@ -138,13 +138,13 @@ public class NshDescriptorContentParserComponent implements NutsDescriptorConten
                 }
             }
             if (comment.toString().trim().isEmpty()) {
-                return ws.descriptor().descriptorBuilder()
-                        .setId(ws.id().parser().parse("temp:nsh#1.0"))
+                return session.descriptor().descriptorBuilder()
+                        .setId(session.id().parser().parse("temp:nsh#1.0"))
                         .setPackaging("nsh")
-                        .setExecutor(new DefaultNutsArtifactCall(ws.id().parser().parse("net.thevpc.nuts.toolbox:nsh")))
+                        .setExecutor(new DefaultNutsArtifactCall(session.id().parser().parse("net.thevpc.nuts.toolbox:nsh")))
                         .build();
             }
-            return ws.descriptor().parser().setSession(session).parse(comment.getValidString());
+            return session.descriptor().parser().parse(comment.getValidString());
         } finally {
             if (r != null) {
                 r.close();

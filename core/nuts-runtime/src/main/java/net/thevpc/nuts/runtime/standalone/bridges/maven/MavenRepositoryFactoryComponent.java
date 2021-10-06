@@ -88,7 +88,7 @@ public class MavenRepositoryFactoryComponent implements NutsRepositoryFactoryCom
                 if (nru.isHttp()) {
                     try (InputStream s = criteria.getSession().io().path(nru.getLocation() + "/nuts-repository.json")
                             .setUserKind("nuts-repository.json").getInputStream()) {
-                        Map<String, Object> m = criteria.getWorkspace().elem().setContentType(NutsContentType.JSON)
+                        Map<String, Object> m = criteria.getSession().elem().setContentType(NutsContentType.JSON)
                                 .parse(s, Map.class);
                         if (m != null) {
                             String type = (String) m.get("type");
@@ -101,17 +101,17 @@ public class MavenRepositoryFactoryComponent implements NutsRepositoryFactoryCom
                     } catch (Exception ex) {
                         //ignore
                     }
-                    FilesFoldersApi.Item[] dirList = FilesFoldersApi.getDirItems(true, true, RemoteRepoApi.DIR_LIST, location, criteria.getWorkspace().createSession());
+                    FilesFoldersApi.Item[] dirList = FilesFoldersApi.getDirItems(true, true, RemoteRepoApi.DIR_LIST, location, criteria.getSession());
                     if (dirList != null) {
                         criteria.getConstraints().setType("maven+dirlist");
                         return DEFAULT_SUPPORT;
                     }
-                    dirList = FilesFoldersApi.getDirItems(true, true, RemoteRepoApi.DIR_TEXT, location, criteria.getWorkspace().createSession());
+                    dirList = FilesFoldersApi.getDirItems(true, true, RemoteRepoApi.DIR_TEXT, location, criteria.getSession());
                     if (dirList != null) {
                         criteria.getConstraints().setType("maven+dirtext");
                         return DEFAULT_SUPPORT;
                     }
-                    if (criteria.getWorkspace().io().path(
+                    if (criteria.getSession().io().path(
                             location + "/archetype-catalog.xml"
                     ).setUserKind("archetype-catalog.xml").exists()) {
                         criteria.getConstraints().setType(NutsConstants.RepoTypes.MAVEN);

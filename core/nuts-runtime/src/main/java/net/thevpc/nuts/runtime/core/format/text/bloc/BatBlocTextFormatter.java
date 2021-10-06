@@ -4,6 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.parsers.StringReaderExt;
 import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextPlain;
 import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextStyled;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsComponent;
 
 import java.io.BufferedReader;
@@ -21,7 +22,7 @@ public class BatBlocTextFormatter implements NutsCodeFormat {
 
     public BatBlocTextFormatter(NutsWorkspace ws) {
         this.ws = ws;
-        factory = ws.text();
+        factory = NutsWorkspaceUtils.defaultSession(ws).text();
     }
 
     @Override
@@ -697,10 +698,10 @@ public class BatBlocTextFormatter implements NutsCodeFormat {
         return factory.ofList(all).simplify();
     }
 
-    public NutsText next(StringReaderExt reader, boolean exitOnClosedCurlBrace, boolean exitOnClosedPar, boolean exitOnDblQuote, boolean exitOnAntiQuote) {
+    public NutsText next(StringReaderExt reader, boolean exitOnClosedCurlBrace, boolean exitOnClosedPar, boolean exitOnDblQuote, boolean exitOnAntiQuote, NutsSession session) {
         boolean lineStart = true;
         List<NutsText> all = new ArrayList<>();
-        NutsTextManager factory = ws.text();
+        NutsTextManager factory = session.text();
         boolean exit = false;
         while (!exit && reader.hasNext()) {
             switch (reader.peekChar()) {
@@ -845,7 +846,7 @@ public class BatBlocTextFormatter implements NutsCodeFormat {
                 }
                 case '\"': {
                     lineStart = false;
-                    all.add(nextDoubleQuotes(reader));
+                    all.add(nextDoubleQuotes(reader, session));
                     break;
                 }
                 case '`': {
@@ -855,7 +856,7 @@ public class BatBlocTextFormatter implements NutsCodeFormat {
                     } else {
                         List<NutsText> a = new ArrayList<>();
                         a.add(factory.ofStyled(reader.nextChars(1), NutsTextStyle.string()));
-                        a.add(next(reader, false, false, false, true));
+                        a.add(next(reader, false, false, false, true, session));
                         if (reader.hasNext() && reader.peekChar() == '`') {
                             a.add(factory.ofStyled(reader.nextChars(1), NutsTextStyle.string()));
                         } else {
@@ -1049,15 +1050,15 @@ public class BatBlocTextFormatter implements NutsCodeFormat {
         return factory.ofList(all).simplify();
     }
 
-    private NutsText nextDollar(StringReaderExt reader) {
-        NutsTextManager factory = ws.text();
+    private NutsText nextDollar(StringReaderExt reader, NutsSession session) {
+        NutsTextManager factory = session.text();
         if (reader.isAvailable(2)) {
             char c = reader.peekChar(1);
             switch (c) {
                 case '(': {
                     List<NutsText> a = new ArrayList<>();
                     a.add(factory.ofStyled(reader.nextChars(1), NutsTextStyle.separator()));
-                    a.add(next(reader, false, true, false, false));
+                    a.add(next(reader, false, true, false, false, session));
                     if (reader.hasNext() && reader.peekChar() == ')') {
                         a.add(factory.ofStyled(reader.nextChars(1), NutsTextStyle.separator()));
                     }
@@ -1066,7 +1067,7 @@ public class BatBlocTextFormatter implements NutsCodeFormat {
                 case '{': {
                     List<NutsText> a = new ArrayList<>();
                     a.add(factory.ofStyled(reader.nextChars(1), NutsTextStyle.separator()));
-                    a.add(next(reader, true, false, false, false));
+                    a.add(next(reader, true, false, false, false, session));
                     if (reader.hasNext() && reader.peekChar() == ')') {
                         a.add(factory.ofStyled(reader.nextChars(1), NutsTextStyle.separator()));
                     }
@@ -1107,9 +1108,9 @@ public class BatBlocTextFormatter implements NutsCodeFormat {
         }
     }
 
-    public NutsText nextDoubleQuotes(StringReaderExt reader) {
+    public NutsText nextDoubleQuotes(StringReaderExt reader, NutsSession session) {
         List<NutsText> all = new ArrayList<>();
-        NutsTextManager factory = ws.text();
+        NutsTextManager factory = session.text();
         boolean exit = false;
         StringBuilder sb = new StringBuilder();
         sb.append(reader.nextChar());
@@ -1129,7 +1130,7 @@ public class BatBlocTextFormatter implements NutsCodeFormat {
                         all.add(factory.ofStyled(sb.toString(), NutsTextStyle.string()));
                         sb.setLength(0);
                     }
-                    all.add(nextDollar(reader));
+                    all.add(nextDollar(reader, session));
                 }
                 case '`': {
                     if (sb.length() > 0) {
@@ -1138,7 +1139,7 @@ public class BatBlocTextFormatter implements NutsCodeFormat {
                     }
                     List<NutsText> a = new ArrayList<>();
                     a.add(factory.ofStyled(reader.nextChars(1), NutsTextStyle.string()));
-                    a.add(next(reader, false, false, false, true));
+                    a.add(next(reader, false, false, false, true, session));
                     if (reader.hasNext() && reader.peekChar() == '`') {
                         a.add(factory.ofStyled(reader.nextChars(1), NutsTextStyle.string()));
                     } else {

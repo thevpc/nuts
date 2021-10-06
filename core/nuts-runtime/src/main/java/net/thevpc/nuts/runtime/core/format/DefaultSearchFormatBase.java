@@ -45,7 +45,7 @@ public abstract class DefaultSearchFormatBase implements NutsIterableFormat {
         this.format = format;
         this.writer = writer;
         this.session = session;
-        displayOptions = new NutsFetchDisplayOptions(session.getWorkspace());
+        displayOptions = new NutsFetchDisplayOptions(session);
         if(options!=null){
             displayOptions.configure(true, options.toCommandLineOptions());
         }

@@ -25,11 +25,11 @@
  */
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
-import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellFileContext;
 import net.thevpc.nuts.NutsArgument;
 import net.thevpc.nuts.NutsCommandLine;
 import net.thevpc.nuts.NutsSingleton;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellContext;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -91,7 +91,7 @@ public class SourceCommand extends SimpleNshBuiltin {
         }
 //        JShellContext c2 = context.getShell().createContext(context.getExecutionContext().getGlobalContext());
 //        c2.setArgs(context.getArgs());
-        JShellFileContext c2 = context.getExecutionContext().getGlobalContext();
+        JShellContext c2 = context.getExecutionContext().getGlobalContext();
         for (String goodFile : goodFiles) {
             context.getShell().executeFile(
                     context.getShell().createSourceFileContext(c2, goodFile, context.getArgs()),

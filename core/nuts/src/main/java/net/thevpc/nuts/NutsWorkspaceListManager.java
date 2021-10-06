@@ -46,7 +46,7 @@ public interface NutsWorkspaceListManager {
 
     NutsWorkspaceListManager setConfig(NutsWorkspaceListConfig config);
 
-    NutsWorkspace addWorkspace(String path, NutsSession session);
+    NutsSession addWorkspace(String path, NutsSession session);
 
     boolean removeWorkspace(String name, NutsSession session);
 

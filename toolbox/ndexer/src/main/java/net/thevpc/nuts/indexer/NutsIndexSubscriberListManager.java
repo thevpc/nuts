@@ -12,10 +12,10 @@ public class NutsIndexSubscriberListManager {
     private String name;
     private Map<String, NutsIndexSubscriber> subscribers = new LinkedHashMap<>();
     private NutsIndexSubscriberListConfig config;
-    private NutsWorkspace defaultWorkspace;
+    private NutsSession defaultWorkspace;
 
     public NutsIndexSubscriberListManager(NutsSession session,String name) {
-        this.defaultWorkspace = session.getWorkspace();
+        this.defaultWorkspace = session;
         if (name==null || name.trim().isEmpty()) {
             name = "default";
         }
@@ -121,7 +121,7 @@ public class NutsIndexSubscriberListManager {
                 && this.subscribers.get(repositoryUuid).getWorkspaceLocations().containsKey(workspaceLocation.getUuid());
     }
 
-    public NutsWorkspace getDefaultWorkspace() {
+    public NutsSession getDefaultWorkspace() {
         return defaultWorkspace;
     }
 }

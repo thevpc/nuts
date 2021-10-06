@@ -11,41 +11,41 @@ package net.thevpc.nuts.toolbox.nsh.bundles.jshell;
  */
 public interface JShellEvaluator {
 
-    int evalSuffixOperation(String opString, JShellCommandNode node, JShellFileContext context);
+    int evalSuffixOperation(String opString, JShellCommandNode node, JShellContext context);
 
-    int evalSuffixAndOperation(JShellCommandNode node, JShellFileContext context);
+    int evalSuffixAndOperation(JShellCommandNode node, JShellContext context);
 
-    int evalBinaryAndOperation(JShellCommandNode left, JShellCommandNode right, JShellFileContext context);
+    int evalBinaryAndOperation(JShellCommandNode left, JShellCommandNode right, JShellContext context);
 
-    int evalBinaryOperation(String opString, JShellCommandNode left, JShellCommandNode right, JShellFileContext context);
+    int evalBinaryOperation(String opString, JShellCommandNode left, JShellCommandNode right, JShellContext context);
 
-    int evalBinaryOrOperation(JShellCommandNode left, JShellCommandNode right, JShellFileContext context);
+    int evalBinaryOrOperation(JShellCommandNode left, JShellCommandNode right, JShellContext context);
 
-    int evalBinaryPipeOperation(JShellCommandNode left, JShellCommandNode right, final JShellFileContext context);
+    int evalBinaryPipeOperation(JShellCommandNode left, JShellCommandNode right, final JShellContext context);
 
-    int evalBinarySuiteOperation(JShellCommandNode left, JShellCommandNode right, JShellFileContext context);
+    int evalBinarySuiteOperation(JShellCommandNode left, JShellCommandNode right, JShellContext context);
 
-    String evalCommandAndReturnString(JShellCommandNode left, JShellFileContext context);
+    String evalCommandAndReturnString(JShellCommandNode left, JShellContext context);
 
 
-    String evalDollarSharp(JShellFileContext context);
+    String evalDollarSharp(JShellContext context);
 
-    String evalDollarName(String name, JShellFileContext context);
+    String evalDollarName(String name, JShellContext context);
 
-    String evalDollarInterrogation(JShellFileContext context);
+    String evalDollarInterrogation(JShellContext context);
 
-    String evalDollarInteger(int index, JShellFileContext context);
+    String evalDollarInteger(int index, JShellContext context);
 
-    String evalDollarExpression(String stringExpression, JShellFileContext context);
+    String evalDollarExpression(String stringExpression, JShellContext context);
 
-    String evalSimpleQuotesExpression(String expressionString, JShellFileContext context);
+    String evalSimpleQuotesExpression(String expressionString, JShellContext context);
 
-    String evalDoubleQuotesExpression(String stringExpression, JShellFileContext context);
+    String evalDoubleQuotesExpression(String stringExpression, JShellContext context);
 
-    String evalAntiQuotesExpression(String stringExpression, JShellFileContext context);
+    String evalAntiQuotesExpression(String stringExpression, JShellContext context);
 
-    String evalNoQuotesExpression(String stringExpression, JShellFileContext context);
+    String evalNoQuotesExpression(String stringExpression, JShellContext context);
 
-    String expandEnvVars(String stringExpression, boolean escapeResultPath, JShellFileContext context);
+    String expandEnvVars(String stringExpression, boolean escapeResultPath, JShellContext context);
 
 }

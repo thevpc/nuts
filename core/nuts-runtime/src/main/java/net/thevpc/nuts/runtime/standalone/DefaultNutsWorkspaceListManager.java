@@ -15,13 +15,13 @@ import java.util.*;
  */
 public class DefaultNutsWorkspaceListManager implements NutsWorkspaceListManager {
 
-    private final NutsWorkspace defaultWorkspace;
+    private final NutsSession defaultWorkspace;
     private final String name;
     private Map<String, NutsWorkspaceLocation> workspaces = new LinkedHashMap<>();
     private NutsWorkspaceListConfig config;
 
-    public DefaultNutsWorkspaceListManager(NutsWorkspace ws, NutsSession session, String name) {
-        this.defaultWorkspace = ws;
+    public DefaultNutsWorkspaceListManager(NutsSession session, String name) {
+        this.defaultWorkspace = session;
         if (NutsBlankable.isBlank(name)) {
             name = "default";
         }
@@ -36,9 +36,9 @@ public class DefaultNutsWorkspaceListManager implements NutsWorkspaceListManager
             this.config = new NutsWorkspaceListConfig()
                     .setUuid(UUID.randomUUID().toString())
                     .setName("default-config");
-            this.workspaces.put(ws.getUuid(),
+            this.workspaces.put(session.getWorkspace().getUuid(),
                     new NutsWorkspaceLocation()
-                            .setUuid(ws.getUuid())
+                            .setUuid(session.getWorkspace().getUuid())
                             .setName(NutsConstants.Names.DEFAULT_WORKSPACE_NAME)
                             .setLocation(this.defaultWorkspace.locations().getWorkspaceLocation())
             );
@@ -77,17 +77,17 @@ public class DefaultNutsWorkspaceListManager implements NutsWorkspaceListManager
     }
 
     @Override
-    public NutsWorkspace addWorkspace(String path, NutsSession session) {
-        NutsWorkspace workspace = this.createWorkspace(path).getWorkspace();
+    public NutsSession addWorkspace(String path, NutsSession session) {
+        NutsSession ss = this.createWorkspace(path);
         NutsWorkspaceLocation workspaceLocation = new NutsWorkspaceLocation()
-                .setUuid(workspace.getUuid())
+                .setUuid(ss.getWorkspace().getUuid())
                 .setName(
-                        Paths.get(workspace.locations().getWorkspaceLocation())
+                        Paths.get(ss.locations().getWorkspaceLocation())
                                 .getFileName().toString())
-                .setLocation(workspace.locations().getWorkspaceLocation());
-        workspaces.put(workspace.getUuid(), workspaceLocation);
+                .setLocation(ss.locations().getWorkspaceLocation());
+        workspaces.put(ss.getWorkspace().getUuid(), workspaceLocation);
         this.save(session);
-        return workspace;
+        return ss;
     }
 
     @Override
