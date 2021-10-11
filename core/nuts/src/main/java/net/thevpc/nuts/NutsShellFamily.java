@@ -123,6 +123,7 @@ public enum NutsShellFamily implements NutsEnum {
             case "":
                 return emptyValue;
             case "sh":
+                return SH;
             case "bash":
                 return BASH;
             case "csh":

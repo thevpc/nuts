@@ -8,6 +8,7 @@ import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.ba
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.script.ReplaceString;
 
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public abstract class AnyNixNdi extends BaseSystemNdi {
@@ -16,8 +17,32 @@ public abstract class AnyNixNdi extends BaseSystemNdi {
         super(session);
     }
 
-    public String getBashrcName() {
-        return ".bashrc";
+    public String[] getSysRcNames() {
+        NutsSession session = this.getSession();
+        switch (session.env().getOsFamily()){
+            case LINUX:
+            case UNIX:
+            case MACOS:{
+                return Arrays.stream(session.env().getShellFamilies())
+                        .map(x->{
+                            switch (x){
+                                case SH:return ".profile";
+                                case BASH:return ".bashrc";
+                                case ZSH:return  ".zshenv";
+                                case KSH: return ".kshrc";
+                                case FISH:return ".config/fish/config.fish";
+                                case CSH:return ".cshrc";
+                                default:return null;
+                            }
+                        }).filter(Objects::nonNull)
+                        .toArray(String[]::new);
+            }
+            default:
+                return  new String[0];
+        }
+
+
+
     }
 
     public String getPathVarSep() {
@@ -84,12 +109,13 @@ public abstract class AnyNixNdi extends BaseSystemNdi {
                         factory.ofStyled(session.locations().getWorkspaceLocation(), NutsTextStyle.path())
                 );
             }
+            final String sysRcName = getSysRcNames()[0];
             session.getTerminal().ask()
                     .resetLine()
                     .forBoolean(
                             "```error ATTENTION``` You may need to re-run terminal or issue \"%s\" in your current terminal for new environment to take effect.%n"
                                     + "Please type 'ok' if you agree, 'why' if you need more explanation or 'cancel' to cancel updates.",
-                            factory.ofStyled(". ~/" + getBashrcName(), NutsTextStyle.path())
+                            factory.ofStyled(". ~/" + sysRcName, NutsTextStyle.path())
                     )
                     .setHintMessage("")
                     .setSession(session)
@@ -112,12 +138,12 @@ public abstract class AnyNixNdi extends BaseSystemNdi {
                             if ("why".equalsIgnoreCase(r)) {
                                 NutsPrintStream out = session.out();
                                 out.resetLine();
-                                out.printf("\\\"%s\\\" is a special file in your home that is invoked upon each interactive terminal launch.%n", factory.ofStyled(getBashrcName(), NutsTextStyle.path()));
+                                out.printf("\\\"%s\\\" is a special file in your home that is invoked upon each interactive terminal launch.%n", factory.ofStyled(sysRcName, NutsTextStyle.path()));
                                 out.print("It helps configuring environment variables. ```sh nuts``` make usage of such facility to update your **PATH** env variable\n");
                                 out.print("to point to current ```sh nuts``` workspace, so that when you call a ```sh nuts``` command it will be resolved correctly...\n");
-                                out.printf("However updating \\\"%s\\\" does not affect the running process/terminal. So you have basically two choices :%n", factory.ofStyled(getBashrcName(), NutsTextStyle.path()));
+                                out.printf("However updating \\\"%s\\\" does not affect the running process/terminal. So you have basically two choices :%n", factory.ofStyled(sysRcName, NutsTextStyle.path()));
                                 out.print(" - Either to restart the process/terminal (konsole, term, xterm, sh, bash, ...)%n");
-                                out.printf(" - Or to run by your self the \\\"%s\\\" script (don\\'t forget the leading dot)%n", factory.ofStyled(". ~/" + getBashrcName(), NutsTextStyle.path()));
+                                out.printf(" - Or to run by your self the \\\"%s\\\" script (don\\'t forget the leading dot)%n", factory.ofStyled(". ~/" + sysRcName, NutsTextStyle.path()));
                                 throw new NutsValidationException(session, NutsMessage.cstyle("Try again..."));
                             } else if ("cancel".equalsIgnoreCase(r) || "cancel!".equalsIgnoreCase(r)) {
                                 throw new NutsUserCancelException(session);

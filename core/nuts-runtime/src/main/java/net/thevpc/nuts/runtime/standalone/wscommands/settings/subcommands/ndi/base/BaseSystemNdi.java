@@ -25,32 +25,15 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         super(session);
     }
 
-    public abstract String getBashrcName();
+    public abstract String[] getSysRcNames();
 
-    public NdiScriptInfo getSysRC(NdiScriptOptions options) {
-        return new NdiScriptInfo() {
-            @Override
-            public Path path() {
-                String bashrcName = getBashrcName();
-                if (bashrcName == null) {
-                    return null;
-                }
-                return Paths.get(System.getProperty("user.home")).resolve(bashrcName);
-            }
-
-            @Override
-            public PathInfo create() {
-                Path apiConfigFile = path();
-                if (apiConfigFile == null) {
-                    return null;
-                }
-                return addFileLine("sysrc",
-                        options.resolveNutsApiId(),
-                        apiConfigFile, getCommentLineConfigHeader(),
-                        getCallScriptCommand(getNutsInit(options).path().toString()),
-                        getShebanSh());
-            }
-        };
+    public NdiScriptInfo[] getSysRC(NdiScriptOptions options) {
+        List<NdiScriptInfo> scriptInfos = new ArrayList<>();
+        for (String bashrcName : getSysRcNames()) {
+            NdiScriptInfo i= new RcNdiScriptInfo(bashrcName, options);
+            scriptInfos.add(i);
+        }
+        return scriptInfos.toArray(new NdiScriptInfo[0]);
     }
 
     public NdiScriptInfo getNutsInit(NdiScriptOptions options) {
@@ -296,9 +279,17 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
 
         if (options.getLauncher().getSystemWideConfig() != null && options.getLauncher().getSystemWideConfig()) {
             // create $home/.bashrc
-            PathInfo sysRC = getSysRC(options).create();
-            if (sysRC != null) {
-                all.add(sysRC);
+            //PathInfo sysRC = getSysRC(options).create();
+
+          //  if (sysRC != null) {
+            //    all.add(sysRC);
+            //}
+            for (NdiScriptInfo ndiScriptInfo : getSysRC(options)) {
+                PathInfo sysRC = ndiScriptInfo.create();
+                if (sysRC != null) {
+                       all.add(sysRC);
+                }
+
             }
             if (matchCondition(options.getLauncher().getCreateDesktopShortcut(), getDesktopIntegrationSupport(NutsDesktopIntegrationItem.DESKTOP))) {
                 all.addAll(Arrays.asList(createLaunchTermShortcutGlobal(NutsDesktopIntegrationItem.DESKTOP, options)));
@@ -944,4 +935,34 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         return System.getProperty("path.separator");
     }
 
+    private class RcNdiScriptInfo implements NdiScriptInfo {
+        private final String bashrcName;
+        private final NdiScriptOptions options;
+
+        public RcNdiScriptInfo(String bashrcName, NdiScriptOptions options) {
+            this.bashrcName = bashrcName;
+            this.options = options;
+        }
+
+        @Override
+        public Path path() {
+            if (bashrcName == null) {
+                return null;
+            }
+            return Paths.get(System.getProperty("user.home")).resolve(bashrcName);
+        }
+
+        @Override
+        public PathInfo create() {
+            Path apiConfigFile = path();
+            if (apiConfigFile == null) {
+                return null;
+            }
+            return addFileLine("sysrc",
+                    options.resolveNutsApiId(),
+                    apiConfigFile, getCommentLineConfigHeader(),
+                    getCallScriptCommand(getNutsInit(options).path().toString()),
+                    getShebanSh());
+        }
+    }
 }

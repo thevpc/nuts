@@ -7,8 +7,6 @@ public class MacosNdi extends AnyNixNdi {
         super(session);
     }
 
-    public String getBashrcName() {
-        return ".bash_profile";
-    }
+
 
 }

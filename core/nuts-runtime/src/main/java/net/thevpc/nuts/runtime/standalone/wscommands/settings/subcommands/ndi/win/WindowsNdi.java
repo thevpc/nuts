@@ -17,7 +17,7 @@ public class WindowsNdi extends BaseSystemNdi {
         super(session);
     }
 
-    public String getBashrcName() {
+    public String[] getSysRcNames() {
         return null;
     }
 

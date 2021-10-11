@@ -23,28 +23,8 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
         switch (workspaceEnvManager.getOsFamily()) {
             case LINUX:
             case UNIX: {
-                switch (workspaceEnvManager.getShellFamily()) {
-                    case BASH: {
-                        ndi = new BashNdi(session);
-                        break;
-                    }
-                    case CSH: {
-                        ndi = new CshNdi(session);
-                        break;
-                    }
-                    case KSH: {
-                        ndi = new KshNdi(session);
-                        break;
-                    }
-                    case ZSH: {
-                        ndi = new ZshNdi(session);
-                        break;
-                    }
-                    case FISH: {
-                        ndi = new FishNdi(session);
-                        break;
-                    }
-                }
+
+                ndi=new LinuxNdi(session);
                 break;
             }
             case MACOS: {

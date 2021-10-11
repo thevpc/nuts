@@ -756,6 +756,9 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                         new NutsLauncherOptions()
                                 .setId(getApiId())
                                 .setCreateScript(true)
+                                .setSystemWideConfig(
+                                        session.boot().getBootOptions().isSwitchWorkspace()
+                                )
                                 .setCreateDesktopShortcut(NutsSupportCondition.PREFERRED)
                                 .setCreateMenuShortcut(NutsSupportCondition.SUPPORTED)
                 );

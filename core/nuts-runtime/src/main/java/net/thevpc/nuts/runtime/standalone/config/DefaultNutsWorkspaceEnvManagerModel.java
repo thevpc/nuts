@@ -34,6 +34,9 @@ import net.thevpc.nuts.runtime.standalone.gui.CoreNutsUtilGui;
 import net.thevpc.nuts.runtime.standalone.util.NutsJavaSdkUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -158,6 +161,51 @@ public class DefaultNutsWorkspaceEnvManagerModel {
             shellFamily = NutsShellFamily.getCurrent();
         }
         return shellFamily;
+    }
+
+    /*fix this add field  like above*/
+    public NutsShellFamily [] getShellFamilies() {
+        ArrayList<NutsShellFamily> shellFamilies = new ArrayList<NutsShellFamily>();
+        switch (this.getOsFamily()){
+            case UNIX:
+            case LINUX:
+            case MACOS:
+            {
+                LinkedHashSet<NutsShellFamily> families = new LinkedHashSet<>();
+                families.add(this.getShellFamily());
+                //add bash with existing rc
+                NutsShellFamily[] all = {NutsShellFamily.BASH, NutsShellFamily.CSH, NutsShellFamily.FISH,
+                        NutsShellFamily.KSH, NutsShellFamily.ZSH, NutsShellFamily.SH};
+                for (NutsShellFamily f: all) {
+                    Path path = Paths.get("/bin").resolve(f.id());
+                    if(Files.exists(path))
+                    {
+                        families.add(f);
+                    }
+                }
+                families.addAll(Arrays.asList(all));
+                shellFamilies.addAll(families);
+                break;
+            }
+            case WINDOWS:
+            {
+                LinkedHashSet<NutsShellFamily> families = new LinkedHashSet<>();
+                families.add(this.getShellFamily());
+                //add bash with existing rc
+                families.add(NutsShellFamily.WIN_CMD);
+                if(this.getOs().getVersion().compareTo("7")>=0){
+                    families.add(NutsShellFamily.WIN_POWER_SHELL);
+                }
+                shellFamilies.addAll(families);
+
+                break;
+            }
+            default: {
+                shellFamilies.add(NutsShellFamily.UNKNOWN);
+
+            }
+        }
+         return shellFamilies.toArray(new NutsShellFamily[0]) ;
     }
 
     public NutsId[] getDesktopEnvironments(NutsSession session) {

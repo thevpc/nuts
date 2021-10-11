@@ -83,6 +83,10 @@ public class DefaultNutsWorkspaceEnvManager implements NutsWorkspaceEnvManager {
 //        checkSession();
         return model.getOsFamily();
     }
+    @Override
+    public NutsShellFamily [] getShellFamilies() {
+        return model.getShellFamilies();
+    }
 
     @Override
     public NutsShellFamily getShellFamily() {
