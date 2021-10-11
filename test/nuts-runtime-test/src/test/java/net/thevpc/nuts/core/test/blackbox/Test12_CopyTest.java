@@ -29,10 +29,6 @@ public class Test12_CopyTest {
 
     @Test
     public void copy01() throws Exception {
-        Map<String, String> extraProperties = new HashMap<>();
-        extraProperties.put("nuts.export.always-show-command", "true");
-        TestUtils.setSystemProperties(extraProperties);
-
         NutsSession session = TestUtils.openNewTestWorkspace(
                 "--archetype", "default",
                 "--log-info",

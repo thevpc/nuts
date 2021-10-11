@@ -61,7 +61,10 @@ public class DefaultNutsWorkspaceEventModel {
         }
     }
 
-    
+    public NutsWorkspace getWorkspace() {
+        return ws;
+    }
+
     public NutsWorkspaceListener[] getWorkspaceListeners() {
         return workspaceListeners.toArray(new NutsWorkspaceListener[0]);
     }

@@ -28,6 +28,7 @@ import net.thevpc.nuts.runtime.bundles.common.MapToFunction;
 import net.thevpc.nuts.runtime.bundles.iter.IteratorBuilder;
 import net.thevpc.nuts.runtime.bundles.mvn.*;
 import net.thevpc.nuts.runtime.bundles.parsers.StringTokenizerUtils;
+import net.thevpc.nuts.runtime.core.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.core.model.DefaultNutsVersion;
 import net.thevpc.nuts.runtime.core.repos.NutsRepositorySelector;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
@@ -59,7 +60,7 @@ import java.util.stream.Collectors;
 public class MavenUtils {
 
     private final NutsLogger LOG;
-    private NutsSession session;
+    private final NutsSession session;
 
     private MavenUtils(NutsSession session) {
         this.session = session;
@@ -105,9 +106,9 @@ public class MavenUtils {
     }
 
     public NutsEnvCondition toCondition(NutsSession session, String os0, String arch0, PomProfileActivation a) {
-        if (a == null) {
-            return null;
-        }
+//        if (a == null) {
+//            return null;
+//        }
         NutsOsFamily os = NutsOsFamily.parseLenient(os0, null, null);
         NutsArchFamily arch = NutsArchFamily.parseLenient(arch0, null, null);
         String osVersion = null;
@@ -131,8 +132,7 @@ public class MavenUtils {
                 }
             }
             if (!NutsBlankable.isBlank(a.getJdk())) {
-                String jdk = a.getJdk();
-                platform = "java#" + jdk;
+                platform = "java#" + a.getJdk();
             }
         }
         String oss = null;
@@ -222,15 +222,17 @@ public class MavenUtils {
         return false;
     }
 
-    public NutsDescriptor parsePomXml0(InputStream stream, NutsFetchMode fetchMode, String urlDesc, NutsRepository repository) {
+    public NutsDescriptor parsePomXml(InputStream stream, NutsFetchMode fetchMode, String urlDesc, NutsRepository repository) {
         long startTime = System.currentTimeMillis();
         try {
             if (stream == null) {
                 return null;
             }
             byte[] bytes = CoreIOUtils.loadByteArray(stream);
-            InputStream bytesStream = CoreIOUtils.createBytesStream(bytes, urlDesc == null ? null : NutsMessage.formatted(urlDesc), "text/xml", urlDesc, session);
-            Pom pom = new PomXmlParser(new NutsPomLogger(session)).parse(bytesStream,session);
+            InputStream bytesStream = CoreIOUtils.createBytesStream(bytes,
+                    urlDesc == null ? NutsMessage.formatted("pom.xml") : NutsMessage.formatted(urlDesc), "text/xml",
+                    urlDesc == null ? "pom.xml" : urlDesc, session);
+            Pom pom = new PomXmlParser(session).parse(bytesStream, session);
             boolean executable = false;// !"maven-archetype".equals(packaging.toString()); // default is true :)
             boolean application = false;// !"maven-archetype".equals(packaging.toString()); // default is true :)
             if ("true".equals(pom.getProperties().get("nuts.executable"))) {
@@ -244,9 +246,7 @@ public class MavenUtils {
                             return true;
                         }
                         if (e.getNodeName().equals("goal")) {
-                            if (NutsUtilStrings.trim(e.getTextContent()).equals("exec-war-only")) {
-                                return true;
-                            }
+                            return NutsUtilStrings.trim(e.getTextContent()).equals("exec-war-only");
                         }
                     }
                     return false;
@@ -265,11 +265,14 @@ public class MavenUtils {
             }
 
             long time = System.currentTimeMillis() - startTime;
+            if (fetchMode == null) {
+                fetchMode = NutsFetchMode.REMOTE;
+            }
             String fetchString = "[" + CoreStringUtils.alignLeft(fetchMode.id(), 7) + "] ";
             LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.SUCCESS).time(time)
                     .log(NutsMessage.jstyle("{0}{1} parse pom    {2}", fetchString,
                             CoreStringUtils.alignLeft(repository == null ? "<no-repo>" : repository.getName(), 20),
-                            session.text().ofStyled(urlDesc,NutsTextStyle.path())
+                            session.text().ofStyled(urlDesc, NutsTextStyle.path())
                     ));
 
             String icons = pom.getProperties().get("nuts.icons");
@@ -306,10 +309,10 @@ public class MavenUtils {
                 }
             }
             String mavenCompilerTarget = pom.getProperties().get("maven.compiler.target");
-            if(!NutsBlankable.isBlank(mavenCompilerTarget)){
-                mavenCompilerTarget="#"+mavenCompilerTarget.trim();
-            }else{
-                mavenCompilerTarget="";
+            if (!NutsBlankable.isBlank(mavenCompilerTarget)) {
+                mavenCompilerTarget = "#" + mavenCompilerTarget.trim();
+            } else {
+                mavenCompilerTarget = "";
             }
             return session.descriptor().descriptorBuilder()
                     .setId(toNutsId(pom.getPomId()))
@@ -320,7 +323,7 @@ public class MavenUtils {
                     .setName(pom.getName())
                     .setDescription(pom.getDescription())
                     .setCondition(NutsEnvConditionBuilder.of(session).setPlatform("java"
-                            +mavenCompilerTarget))
+                            + mavenCompilerTarget))
                     .setDependencies(deps.toArray(new NutsDependency[0]))
                     .setStandardDependencies(depsM.toArray(new NutsDependency[0]))
                     .setCategories(
@@ -359,16 +362,16 @@ public class MavenUtils {
         return version == null ? null : version.replace("(", "]").replace(")", "[");
     }
 
-    public NutsDescriptor parsePomXml(Path path, NutsFetchMode fetchMode, NutsRepository repository) throws IOException {
+    public NutsDescriptor parsePomXmlAndResolveParents(Path path, NutsFetchMode fetchMode, NutsRepository repository) throws IOException {
         try {
             session.getTerminal().printProgress("%-8s %s", "parse", session.io().path(path.toString()).toCompressedForm());
             try (InputStream is = Files.newInputStream(path)) {
-                NutsDescriptor nutsDescriptor = parsePomXml(is, fetchMode, path.toString(), repository);
+                NutsDescriptor nutsDescriptor = parsePomXmlAndResolveParents(is, fetchMode, path.toString(), repository);
                 if (nutsDescriptor.getId().getArtifactId() == null) {
                     //why name is null ? should checkout!
                     if (LOG.isLoggable(Level.FINE)) {
                         LOG.with().session(session).level(Level.FINE).verb(NutsLogVerb.FAIL)
-                                .log(NutsMessage.jstyle("unable to fetch Valid Nuts from {0} : resolved id was {1}",path, nutsDescriptor.getId()));
+                                .log(NutsMessage.jstyle("unable to fetch Valid Nuts from {0} : resolved id was {1}", path, nutsDescriptor.getId()));
                     }
                     return null;
                 }
@@ -379,7 +382,7 @@ public class MavenUtils {
         }
     }
 
-    public NutsDescriptor parsePomXml(InputStream stream, NutsFetchMode fetchMode, String urlDesc, NutsRepository repository) {
+    public NutsDescriptor parsePomXmlAndResolveParents(InputStream stream, NutsFetchMode fetchMode, String urlDesc, NutsRepository repository) {
         NutsDescriptor nutsDescriptor = null;
 //        if (session == null) {
 //            session = ws.createSession();
@@ -387,7 +390,7 @@ public class MavenUtils {
         try {
             try {
 //            bytes = IOUtils.loadByteArray(stream, true);
-                nutsDescriptor = parsePomXml0(stream, fetchMode, urlDesc, repository);
+                nutsDescriptor = parsePomXml(stream, fetchMode, urlDesc, repository);
                 HashMap<String, String> properties = new HashMap<>();
                 NutsId parentId = null;
                 for (NutsId nutsId : nutsDescriptor.getParents()) {
@@ -471,7 +474,7 @@ public class MavenUtils {
                     nutsDescriptor = nutsDescriptor.builder().setId(thisId).build();
                 }
                 NutsDescriptorProperty nutsPackaging = nutsDescriptor.getProperty("nuts-packaging");
-                if (nutsPackaging!=null && !NutsBlankable.isBlank(nutsPackaging.getValue())) {
+                if (nutsPackaging != null && !NutsBlankable.isBlank(nutsPackaging.getValue())) {
                     nutsDescriptor = nutsDescriptor.builder().setPackaging(nutsDescriptor.getProperty("nuts-packaging").getValue())
                             .build();
                 }
@@ -554,6 +557,7 @@ public class MavenUtils {
 //        String dependencies = null;
         InputStream xml = null;
         try {
+
             if (CoreIOUtils.isPathHttp(url)) {
                 xml = NutsWorkspaceUtils.of(session).openURL(url);
             } else {
@@ -564,82 +568,43 @@ public class MavenUtils {
                     return depsAndRepos;
                 }
             }
-//            List<String> dependenciesList = new ArrayList<>();
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            Document doc = builder.parse(xml);
-            Element c = doc.getDocumentElement();
-            for (int i = 0; i < c.getChildNodes().getLength(); i++) {
-                if (c.getChildNodes().item(i) instanceof Element && c.getChildNodes().item(i).getNodeName().equals("dependencies")) {
-                    Element c2 = (Element) c.getChildNodes().item(i);
-                    for (int j = 0; j < c2.getChildNodes().getLength(); j++) {
-                        if (c2.getChildNodes().item(j) instanceof Element && c2.getChildNodes().item(j).getNodeName().equals("dependency")) {
-                            Element c3 = (Element) c2.getChildNodes().item(j);
-                            String groupId = null;
-                            String artifactId = null;
-                            String version = null;
-                            String scope = null;
-                            for (int k = 0; k < c3.getChildNodes().getLength(); k++) {
-                                if (c3.getChildNodes().item(k) instanceof Element) {
-                                    Element c4 = (Element) c3.getChildNodes().item(k);
-                                    switch (c4.getNodeName()) {
-                                        case "groupId": {
-                                            groupId = c4.getTextContent().trim();
-                                            break;
-                                        }
-                                        case "artifactId": {
-                                            artifactId = c4.getTextContent().trim();
-                                            break;
-                                        }
-                                        case "version": {
-                                            version = c4.getTextContent().trim();
-                                            break;
-                                        }
-                                        case "scope": {
-                                            scope = c4.getTextContent().trim();
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-                            if (NutsBlankable.isBlank(groupId)) {
-                                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unexpected empty groupId"));
-                            } else if (groupId.contains("$")) {
-                                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unexpected maven variable in groupId=%s", groupId));
-                            }
-                            if (NutsBlankable.isBlank(artifactId)) {
-                                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unexpected empty artifactId"));
-                            } else if (artifactId.contains("$")) {
-                                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unexpected maven variable in artifactId=%s", artifactId));
-                            }
-                            if (NutsBlankable.isBlank(version)) {
-                                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unexpected empty artifactId"));
-                            } else if (version.contains("$")) {
-                                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unexpected maven variable in artifactId=%s", version));
-                            }
-                            //this is maven dependency, using "compile"
-                            if (NutsBlankable.isBlank(scope) || scope.equals("compile")) {
-                                depsAndRepos.deps.add(groupId + ":" + artifactId + "#" + version);
-                            } else if (version.contains("$")) {
-                                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unexpected maven variable in artifactId=%s", version));
-                            }
-                        }
+            NutsDescriptor descr = parsePomXml(xml,
+                    session.getFetchStrategy() == NutsFetchStrategy.OFFLINE ? NutsFetchMode.LOCAL :
+                            NutsFetchMode.REMOTE
+                    , null, null);
+            NutsDescriptorProperty t = descr.getProperty("nuts-runtime-repositories");
+            if (t != null) {
+                if (CoreFilterUtils.acceptCondition(t.getCondition(), true, session)) {
+                    depsAndRepos.deps.addAll(StringTokenizerUtils.split(t.getValue(), ";", true));
+                }
+            }
+            for (NutsDependency dependency : descr.getDependencies()) {
+                if (CoreFilterUtils.acceptCondition(dependency.getCondition(), true, session)) {
+                    String groupId = dependency.getGroupId();
+                    String version = dependency.getVersion().getValue();
+                    String artifactId = dependency.getArtifactId();
+                    String scope = dependency.getScope();
+                    if (NutsBlankable.isBlank(groupId)) {
+                        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unexpected empty groupId"));
+                    } else if (groupId.contains("$")) {
+                        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unexpected maven variable in groupId=%s", groupId));
                     }
-                } else if (c.getChildNodes().item(i) instanceof Element && c.getChildNodes().item(i).getNodeName().equals("properties")) {
-                    Element c2 = (Element) c.getChildNodes().item(i);
-                    for (int j = 0; j < c2.getChildNodes().getLength(); j++) {
-                        if (c2.getChildNodes().item(j) instanceof Element) {
-                            Element c3 = (Element) c2.getChildNodes().item(j);
-                            switch (c3.getNodeName()) {
-                                case "nuts-runtime-repositories": {
-                                    String t = c3.getTextContent().trim();
-                                    if (t.length() > 0) {
-                                        depsAndRepos.deps.addAll(StringTokenizerUtils.split(t, ";", true));
-                                    }
-                                    break;
-                                }
-                            }
-                        }
+                    if (NutsBlankable.isBlank(artifactId)) {
+                        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unexpected empty artifactId"));
+                    } else if (artifactId.contains("$")) {
+                        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unexpected maven variable in artifactId=%s", artifactId));
+                    }
+                    if (NutsBlankable.isBlank(version)) {
+                        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unexpected empty version"));
+                    } else if (version.contains("$")) {
+                        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unexpected maven version in version=%s", version));
+                    }
+                    if (!NutsBlankable.isBlank(scope) && groupId.contains("$")) {
+                        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unexpected maven variable in scope=%s", scope));
+                    }
+                    if (NutsDependencyScope.parseLenient(dependency.getScope(), NutsDependencyScope.API, NutsDependencyScope.API)
+                            == NutsDependencyScope.API) {
+                        depsAndRepos.deps.add(groupId + ":" + artifactId + "#" + version);
                     }
                 }
             }
@@ -757,33 +722,6 @@ public class MavenUtils {
 
         public LinkedHashSet<String> deps = new LinkedHashSet<>();
         public LinkedHashSet<String> repos = new LinkedHashSet<>();
-    }
-
-    private static class NutsPomLogger implements PomLogger {
-
-        private final NutsSession session;
-        NutsLogger LOG;
-
-        public NutsPomLogger(NutsSession session) {
-            this.session = session;
-            LOG = session.log().of(PomIdResolver.class);
-        }
-
-        @Override
-        public void log(Level level, String msg, Object... params) {
-            LOG.with().session(session)
-                    .level(Level.FINE)
-                    .verb(NutsLogVerb.FAIL)
-                    .log(NutsMessage.jstyle(msg, params));
-        }
-
-        @Override
-        public void log(Level level, String msg, Throwable throwable) {
-            LOG.with().session(session)
-                    .level(Level.FINE)
-                    .verb(NutsLogVerb.FAIL)
-                    .log(NutsMessage.jstyle("{0}", msg));
-        }
     }
 
     private static class NutsPomUrlReader implements PomUrlReader {

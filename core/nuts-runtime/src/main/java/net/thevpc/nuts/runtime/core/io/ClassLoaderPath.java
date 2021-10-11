@@ -49,6 +49,6 @@ public class ClassLoaderPath extends URLPath {
     }
 
     protected NutsPath rebuildURLPath(String other) {
-        return new ClassLoaderPath(other, loader, getSession());
+        return new NutsPathFromSPI(new ClassLoaderPath(other, loader, getSession()));
     }
 }

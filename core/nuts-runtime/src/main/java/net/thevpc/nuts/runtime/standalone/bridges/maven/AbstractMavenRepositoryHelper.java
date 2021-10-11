@@ -76,8 +76,8 @@ public abstract class AbstractMavenRepositoryHelper {
                 break;
             }
             default: {
-                _LOGOP(session).level(Level.SEVERE).error(new IllegalArgumentException("unsupported Hash Type " + id.getFace()))
-                        .log(NutsMessage.jstyle("[BUG] Unsupported Hash Type {0}", id.getFace()));
+                _LOGOP(session).level(Level.SEVERE).error(new NutsIllegalArgumentException(session,NutsMessage.cstyle("unsupported Hash Type %s",id.getFace())))
+                        .log(NutsMessage.jstyle("[BUG] unsupported Hash Type {0}", id.getFace()));
                 throw new IOException("unsupported hash type " + id.getFace());
             }
         }
@@ -127,7 +127,7 @@ public abstract class AbstractMavenRepositoryHelper {
                 stream = getStream(idDesc, "artifact descriptor", "retrieve", session);
                 bytes = CoreIOUtils.loadByteArray(stream, true);
                 name = NutsInputStreamMetadata.of(stream).getName();
-                nutsDescriptor = MavenUtils.of(session).parsePomXml(
+                nutsDescriptor = MavenUtils.of(session).parsePomXmlAndResolveParents(
                         CoreIOUtils.createBytesStream(bytes, name == null ? null : NutsMessage.formatted(name), "text/xml", "pom.xml", session)
                         , fetchMode, getIdPath(id, session), repository);
             } finally {

@@ -489,7 +489,7 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
 
     @Override
     public NutsQuestion<T> setSession(NutsSession session) {
-        this.session = session;
+        this.session = NutsWorkspaceUtils.bindSession(ws, session);
         return this;
     }
 

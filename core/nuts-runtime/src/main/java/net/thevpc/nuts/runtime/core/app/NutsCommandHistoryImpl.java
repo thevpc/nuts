@@ -36,10 +36,8 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
-import net.thevpc.nuts.NutsCommandHistory;
-import net.thevpc.nuts.NutsCommandHistoryEntry;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsWorkspace;
+
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 
 /**
@@ -56,7 +54,11 @@ public class NutsCommandHistoryImpl implements NutsCommandHistory {
         this.session = session;
         this.path = path;
         if (path == null) {
-            throw new IllegalArgumentException("path cannot be null");
+            if(session==null) {
+                throw new IllegalArgumentException("path cannot be null");
+            }else{
+                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("path cannot be null"));
+            }
         }
     }
 

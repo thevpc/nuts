@@ -21,22 +21,30 @@ public class Test01_TestInputSource {
         NutsSession session = TestUtils.openNewTestWorkspace();
         NutsPath s = session.io().path("http://maven.ibiblio.org/maven2/archetype-catalog.xml");
 
+        //this is a remote file
         Assertions.assertFalse(s.isFile());
+        //the file is actually a http url
         Assertions.assertTrue(s.isURL());
 
         s = session.io().path("file://maven.ibiblio.org/maven2/archetype-catalog.xml");
-        Assertions.assertTrue(s.isFile());
+        //the file has an 'authority' (//) so it cannot be converted to a valid file
+        Assertions.assertFalse(s.isFile());
+        //the file is actually a file url
         Assertions.assertTrue(s.isURL());
 
         s = session.io().path("file:/maven.ibiblio.org/maven2/archetype-catalog.xml");
+        //the file is actually a file url
         Assertions.assertTrue(s.isFile());
+        //the file is actually a URL
         Assertions.assertTrue(s.isURL());
 
 //        s = CoreIOUtils.createInputSource("zip://maven.ibiblio.org/maven2/toto.zip?archetype-catalog.xml");
 //        Assertions.assertFalse(s.isPath());
 //        Assertions.assertTrue(s.isURL());
         s = session.io().path("/maven.ibiblio.org/maven2/archetype-catalog.xml");
+        //the file is actually a file
         Assertions.assertTrue(s.isFile());
+        //the file can be converted to URL
         Assertions.assertTrue(s.isURL());
 
     }

@@ -375,8 +375,8 @@ public class CorePlatformUtils {
     }
 
 
-    public static boolean checkSupportedSys(NutsEnvCondition condition,boolean currentVM,NutsSession session) {
-        if(!CoreFilterUtils.matchesSys(condition,currentVM,session)){
+    public static boolean checkAcceptCondition(NutsEnvCondition condition, boolean currentVM, NutsSession session) {
+        if(!CoreFilterUtils.acceptCondition(condition,currentVM,session)){
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unsupported environment"));
         }
         return true;

@@ -151,7 +151,7 @@ public class DefaultNutsIOHashAction implements NutsIOHashAction {
 
     @Override
     public NutsIOHashAction setSession(NutsSession session) {
-        this.session = session;
+        this.session = NutsWorkspaceUtils.bindSession(ws, session);
         return this;
     }
 
@@ -174,7 +174,7 @@ public class DefaultNutsIOHashAction implements NutsIOHashAction {
             MessageDigest.getInstance(algorithm);
             this.algorithm = algorithm;
         } catch (NoSuchAlgorithmException ex) {
-            throw new IllegalArgumentException(ex);
+            throw new NutsIllegalArgumentException(getSession(),NutsMessage.cstyle("unable to resolve algo: %s",algorithm),ex);
         }
         return this;
     }

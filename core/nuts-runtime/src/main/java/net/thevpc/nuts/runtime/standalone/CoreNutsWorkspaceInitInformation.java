@@ -28,6 +28,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NutsBootDescriptor;
 import net.thevpc.nuts.boot.NutsBootId;
 import net.thevpc.nuts.runtime.core.model.CoreNutsWorkspaceOptions;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsBootWorkspaceFactory;
 
 import java.io.File;
@@ -140,8 +141,10 @@ public final class CoreNutsWorkspaceInitInformation implements NutsWorkspaceInit
      */
     private Map<NutsHomeLocation, String> homeLocations;
     private NutsSession session;
+    private NutsWorkspace ws;
 
-    public CoreNutsWorkspaceInitInformation(NutsWorkspaceInitInformation boot, NutsSession session) {
+    public CoreNutsWorkspaceInitInformation(NutsWorkspaceInitInformation boot, NutsWorkspace ws,NutsSession session) {
+        this.ws = ws;
         this.session = session;
         options = new CoreNutsWorkspaceOptions(session).setAll(boot.getOptions()).build();
         apiVersion = boot.getApiVersion();
@@ -537,7 +540,7 @@ public final class CoreNutsWorkspaceInitInformation implements NutsWorkspaceInit
     }
 
     public void setSession(NutsSession session) {
-        this.session = session;
-        ((CoreNutsWorkspaceOptions) options).setSession(session);
+        this.session = NutsWorkspaceUtils.bindSession(ws, session);
+        ((CoreNutsWorkspaceOptions) options).setSession(this.session);
     }
 }

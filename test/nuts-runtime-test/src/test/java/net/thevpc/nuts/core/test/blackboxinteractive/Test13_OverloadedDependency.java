@@ -32,10 +32,6 @@ public class Test13_OverloadedDependency {
     }
 //    @Test
     public void test1() {
-        Map<String, String> extraProperties = new HashMap<>();
-        extraProperties.put("nuts.export.always-show-command", "true");
-        TestUtils.setSystemProperties(extraProperties);
-
         NutsSession ws = TestUtils.openNewTestWorkspace(
                  "-b" ,"--debug" ,"--progress=newline",
                 "--archetype", "default",

@@ -64,7 +64,7 @@ public class DefaultImportManager implements NutsImportManager {
 
     @Override
     public DefaultImportManager setSession(NutsSession session) {
-        this.session = session;
+        this.session = NutsWorkspaceUtils.bindSession(model.getWorkspace(), session);
         return this;
     }
 

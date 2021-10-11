@@ -224,7 +224,7 @@ public class NutsPrintStreamSystem extends NutsPrintStreamBase {
                 return new NutsPrintStreamFiltered(this, bindings);
             }
         }
-        throw new IllegalArgumentException("unsupported " + mode() + "->" + other);
+        throw new NutsIllegalArgumentException(getSession(),NutsMessage.cstyle("unsupported %s -> %s",mode(), other));
     }
 
 //

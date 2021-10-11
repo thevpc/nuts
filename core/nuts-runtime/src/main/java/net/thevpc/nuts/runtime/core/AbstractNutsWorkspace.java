@@ -31,7 +31,6 @@ import net.thevpc.nuts.runtime.standalone.boot.DefaultNutsBootModel;
  */
 public abstract class AbstractNutsWorkspace implements NutsWorkspace {
 
-    protected boolean initializing;
     protected NutsSession initSession;
     protected DefaultNutsBootModel bootModel;
 
@@ -51,10 +50,6 @@ public abstract class AbstractNutsWorkspace implements NutsWorkspace {
         nutsSession.setTerminal(nutsSession.term().createTerminal());
         nutsSession.setExpireTime(nutsSession.boot().getBootOptions().getExpireTime());
         return nutsSession;
-    }
-
-    public boolean isInitializing() {
-        return initializing;
     }
 
     @Override

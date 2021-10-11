@@ -25,7 +25,7 @@ public class DefaultNutsUtilManager implements NutsUtilManager {
     }
 
     public NutsUtilManager setSession(NutsSession session) {
-        this.session = session;
+        this.session = NutsWorkspaceUtils.bindSession(model.getWorkspace(), session);
         return this;
     }
 

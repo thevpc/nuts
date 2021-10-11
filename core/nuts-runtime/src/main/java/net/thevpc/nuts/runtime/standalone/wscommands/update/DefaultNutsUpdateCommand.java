@@ -488,8 +488,6 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         }
         if (runtimeUpdateApplicable) {
             wcfg.getModel().prepareBootRuntime(finalRuntimeId, true, validWorkspaceSession);
-        }
-        if (runtimeUpdateApplicable) {
             ((DefaultNutsUpdateResult) runtimeUpdate).setUpdateApplied(true);
             traceSingleUpdate(runtimeUpdate);
         }

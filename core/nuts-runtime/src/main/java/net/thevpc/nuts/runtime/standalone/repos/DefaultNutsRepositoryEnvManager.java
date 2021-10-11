@@ -21,7 +21,7 @@ public class DefaultNutsRepositoryEnvManager implements NutsRepositoryEnvManager
 
     @Override
     public NutsRepositoryEnvManager setSession(NutsSession session) {
-        this.session = session;
+        this.session = NutsWorkspaceUtils.bindSession(model.getWorkspace(), session);
         return this;
     }
     

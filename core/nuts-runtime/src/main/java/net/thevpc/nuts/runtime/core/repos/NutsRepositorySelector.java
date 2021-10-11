@@ -155,8 +155,8 @@ public class NutsRepositorySelector {
         if (s.startsWith("-")
                 || s.startsWith("+")
                 || s.startsWith("=")
-                || s.indexOf(",") >= 0
-                || s.indexOf(";") >= 0) {
+                || s.indexOf(',') >= 0
+                || s.indexOf(';') >= 0) {
             throw new IllegalArgumentException("invalid selection syntax");
         }
         Matcher matcher = Pattern.compile("(?<name>[a-zA-Z-_]+)=(?<value>.+)").matcher(s);

@@ -46,7 +46,7 @@ public class DefaultNutsMonitorAction implements NutsMonitorAction {
 
     @Override
     public NutsMonitorAction setSession(NutsSession session) {
-        this.session = session;
+        this.session = NutsWorkspaceUtils.bindSession(ws, session);
         return this;
     }
 

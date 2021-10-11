@@ -343,36 +343,6 @@ public interface NutsSession extends NutsCommandLineConfigurable {
      */
     NutsFetchStrategy getFetchStrategy();
 
-//    /**
-//     * change fetch strategy to REMOTE
-//     *
-//     * @return {@code this} instance
-//     */
-//    NutsSession fetchRemote();
-//    /**
-//     * change fetch strategy to OFFLINE
-//     *
-//     * @return {@code this} instance
-//     */
-//    NutsSession fetchOffline();
-//    /**
-//     * change fetch strategy to ONLINE
-//     *
-//     * @return {@code this} instance
-//     */
-//    NutsSession fetchOnline();
-//    /**
-//     * change fetch strategy to INSTALLED
-//     * @return {@code this} instance
-//     */
-//    NutsSession fetchInstalled();
-//    /**
-//     * change fetch strategy to ANYWHERE
-//     *
-//     * @return {@code this} instance
-//     */
-//    NutsSession fetchAnyWhere();
-
     /**
      * change fetch strategy
      *

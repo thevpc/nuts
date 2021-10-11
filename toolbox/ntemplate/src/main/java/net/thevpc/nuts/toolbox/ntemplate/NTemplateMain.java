@@ -83,7 +83,7 @@ public class NTemplateMain implements NutsApplication {
             this.appContext = appContext;
             this.fileTemplater = fileTemplater;
             shell = new JShell(appContext, new String[0]);
-            shell.setSession(shell.getSession().copy());
+            shell.getRootContext().setSession(shell.getRootContext().getSession().copy());
             shell.getRootContext().vars().addVarListener(
                     new JShellVarListener() {
                         @Override

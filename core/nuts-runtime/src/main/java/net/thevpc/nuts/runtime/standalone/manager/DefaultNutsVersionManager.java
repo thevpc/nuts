@@ -27,7 +27,7 @@ public class DefaultNutsVersionManager implements NutsVersionManager {
 
     @Override
     public NutsVersionManager setSession(NutsSession session) {
-        this.session = session;
+        this.session = NutsWorkspaceUtils.bindSession(workspace, session);
         return this;
     }
 

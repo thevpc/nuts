@@ -22,13 +22,6 @@ import org.junit.jupiter.api.*;
 public class Test01_InstallTest {
 
     public void nb() throws Exception {
-        Map<String, String> extraProperties = new HashMap<>();
-        extraProperties.put("nuts.export.always-show-command", "true");
-        TestUtils.setSystemProperties(extraProperties);
-        NutsSession ws = TestUtils.openNewTestWorkspace("--standalone","--embedded");
-        TestUtils.println(ws.locations().getWorkspaceLocation());
-        TestUtils.println(ws.exec().setExecutionType(NutsExecutionType.SYSTEM).addCommand("ls").which());
-
 //        Nuts.runWorkspace(
 ////            "--workspace", wsPath,
 ////            "--standalone",

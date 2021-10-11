@@ -49,6 +49,9 @@ public class PomXmlParser {
 
     private PomLogger logger;
 
+    public PomXmlParser(NutsSession session) {
+        this(new NutsPomLogger(session));
+    }
     public PomXmlParser(PomLogger logger) {
         this.logger = logger == null ? PomLogger.DEFAULT : logger;
     }

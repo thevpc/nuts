@@ -33,6 +33,8 @@ public interface NutsBootManager {
 
     NutsSession getSession();
 
+    boolean isFirstBoot();
+
     NutsBootManager setSession(NutsSession session);
 
     NutsVal getCustomBootOption(String name);

@@ -67,7 +67,8 @@ public abstract class DefaultFormatBase0<T> implements NutsCommandLineConfigurab
 
     public T setSession(NutsSession session) {
         //should copy because will change outputformat
-        this.session = session == null ? null : session.copy();
+        session = NutsWorkspaceUtils.bindSession(workspace, session);
+        this.session =session == null ? null : session.copy();
         return (T) this;
     }
 

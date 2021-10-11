@@ -25,10 +25,6 @@ public class Test09_FindLinuxTest {
 
     @Test
     public void find() throws Exception {
-        Map<String, String> extraProperties = new HashMap<>();
-        extraProperties.put("nuts.export.always-show-command", "true");
-        TestUtils.setSystemProperties(extraProperties);
-
         //should throw NutsNotFoundException because
         //would not be able to install nsh and other companions
         NutsSession ws = TestUtils.openNewTestWorkspace(

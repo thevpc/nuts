@@ -52,9 +52,6 @@ public class Test06_UpateTest {
 
     private void testUpdate(boolean implOnly, String callerName) throws Exception {
         CoreIOUtils.delete(null, new File(baseFolder));
-        Map<String, String> extraProperties = new HashMap<>();
-        extraProperties.put("nuts.export.always-show-command", "true");
-        TestUtils.setSystemProperties(extraProperties);
         final String workspacePath = baseFolder + "/" + callerName;
 
         NutsSession uws = TestUtils.openNewTestWorkspace(
@@ -64,7 +61,8 @@ public class Test06_UpateTest {
                 "--standalone-repositories",
                 "--yes",
                 "--progress=newline",
-                "--skip-companions"
+                "--skip-companions",
+                "--verbose"
         );
         NutsRepository updateRepo1 = uws.repos().addRepository("local");
         uws.config().save();

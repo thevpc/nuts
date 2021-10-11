@@ -199,4 +199,9 @@ public abstract class NutsPathBase implements NutsPath {
         this.userKind = userKind;
         return this;
     }
+
+    @Override
+    public NutsPath delete() {
+        return delete(false);
+    }
 }

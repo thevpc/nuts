@@ -29,7 +29,7 @@ public abstract class InternalNutsTypedFilters<T extends NutsFilter> implements 
 
     @Override
     public NutsTypedFilters setSession(NutsSession session) {
-        this.session = session;
+        this.session = NutsWorkspaceUtils.bindSession(ws, session);
         return this;
     }
     
@@ -45,10 +45,6 @@ public abstract class InternalNutsTypedFilters<T extends NutsFilter> implements 
         return filter.to(type);
     }
 
-//    @Override
-//    public T not(NutsFilter other) {
-//        return defaultNutsFilterManager.not(type, other);
-//    }
     protected List<T> convertList(NutsFilter... others) {
         checkSession();
         List<T> all = new ArrayList<>();

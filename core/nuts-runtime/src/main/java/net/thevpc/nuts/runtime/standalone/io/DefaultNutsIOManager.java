@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.io;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.io.FilePath;
+import net.thevpc.nuts.runtime.core.io.NutsPathFromSPI;
 import net.thevpc.nuts.runtime.core.io.URLPath;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
@@ -44,7 +45,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
         if (path == null) {
             return null;
         }
-        return new FilePath(path.toPath(),getSession());
+        return new NutsPathFromSPI(new FilePath(path.toPath(),getSession()));
     }
 
     @Override
@@ -53,7 +54,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
         if (path == null) {
             return null;
         }
-        return new FilePath(path,getSession());
+        return new NutsPathFromSPI(new FilePath(path,getSession()));
     }
 
     @Override
@@ -62,7 +63,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
         if (path == null) {
             return null;
         }
-        return new URLPath(path,getSession());
+        return new NutsPathFromSPI(new URLPath(path,getSession()));
     }
 
     @Override
@@ -193,7 +194,7 @@ public class DefaultNutsIOManager implements NutsIOManager {
     }
 
     public NutsIOManager setSession(NutsSession session) {
-        this.session = session;
+        this.session = NutsWorkspaceUtils.bindSession(model.getWorkspace(), session);
         return this;
     }
 

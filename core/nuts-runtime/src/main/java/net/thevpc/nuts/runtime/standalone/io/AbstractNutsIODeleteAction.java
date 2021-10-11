@@ -27,7 +27,7 @@ public abstract class AbstractNutsIODeleteAction implements NutsIODeleteAction {
 
     @Override
     public NutsIODeleteAction setSession(NutsSession session) {
-        this.session = session;
+        this.session = NutsWorkspaceUtils.bindSession(ws, session);
         return this;
     }
 

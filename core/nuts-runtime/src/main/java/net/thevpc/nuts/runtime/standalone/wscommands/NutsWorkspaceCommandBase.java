@@ -68,7 +68,7 @@ public abstract class NutsWorkspaceCommandBase<T extends NutsWorkspaceCommand> i
      */
     @Override
     public T setSession(NutsSession session) {
-        this.session = session;
+        this.session = NutsWorkspaceUtils.bindSession(ws, session);
         return (T) this;
     }
 

@@ -180,7 +180,8 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                                     ),
                                     c.temps, session);
                         } catch (Exception ex) {
-
+                            //TODO FIX ME
+                            ex.printStackTrace();
                         }
                     }
                     if (c.contentFile == null) {

@@ -353,7 +353,10 @@ public class CoreFilterUtils {
         return false;
     }
 
-    public static boolean matchesSys(NutsEnvCondition envCond,boolean currentVM, NutsSession session) {
+    public static boolean acceptCondition(NutsEnvCondition envCond, boolean currentVMOnLy, NutsSession session) {
+        if(envCond==null || envCond.isBlank()){
+            return true;
+        }
         NutsWorkspaceEnvManager env = session.env();
         if(!matchesArch(
                 env.getArch().toString(),
@@ -373,7 +376,7 @@ public class CoreFilterUtils {
         )){
             return false;
         }
-        if(currentVM){
+        if(currentVMOnLy){
             if(!matchesPlatform(
                     env.getPlatform().toString(),
                     envCond, session

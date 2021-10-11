@@ -565,8 +565,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                     } else {
                         nutsId2.add(nutsId);
                     }
-                    List<Iterator<? extends NutsId>> coalesce = new ArrayList<>();
-                    NutsSession finalSession = session;
+                    List<Iterator<? extends NutsId>> toConcat = new ArrayList<>();
                     for (NutsId nutsId1 : nutsId2) {
                         List<Iterator<? extends NutsId>> idLookup = new ArrayList<>();
                         NutsIdFilter idFilter2 = session.filters().all(sIdFilter,
@@ -582,14 +581,14 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                             NutsRepositorySPI repoSPI = wu.repoSPI(repoAndMode.getRepository());
                             idLookup.add(IteratorBuilder.ofLazyNamed("searchVersions("
                                     + repoAndMode.getRepository().getName() + ","
-                                    + repoAndMode.getFetchMode() + "," + sRepositoryFilter + "," + finalSession + ")",
+                                    + repoAndMode.getFetchMode() + "," + sRepositoryFilter + "," + session + ")",
                                     () -> repoSPI.searchVersions().setId(nutsId1).setFilter(filter)
-                                            .setSession(finalSession)
+                                            .setSession(session)
                                             .setFetchMode(repoAndMode.getFetchMode())
                                             .getResult()).safeIgnore().iterator()
                             );
                         }
-                        coalesce.add(fetchMode.isStopFast()
+                        toConcat.add(fetchMode.isStopFast()
                                 ? IteratorUtils.coalesce(idLookup)
                                 : IteratorUtils.concat(idLookup)
                         );
@@ -605,24 +604,14 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                                         .and(search.getIdFilter())
                         );
                         Iterator<NutsId> extraResult = search2.getResultIds().iterator();
-                        if (fetchMode.isStopFast()) {
-                            coalesce.add(extraResult);
-                            allResults.add(IteratorUtils.coalesce(coalesce));
-                        } else {
-                            allResults.add(
-                                    IteratorUtils.coalesce(
-                                            Arrays.asList(
-                                                    IteratorUtils.concat(coalesce),
-                                                    extraResult
-                                            )
-                                    )
-                            );
-                        }
+                        allResults.add(IteratorUtils.coalesce(
+                                Arrays.asList(
+                                        IteratorUtils.concat(toConcat),
+                                        extraResult
+                                )
+                        ));
                     } else {
-                        allResults.add(fetchMode.isStopFast()
-                                ? IteratorUtils.coalesce(coalesce)
-                                : IteratorUtils.concat(coalesce)
-                        );
+                        allResults.add(IteratorUtils.concat(toConcat));
                     }
                 }
             }

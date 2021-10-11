@@ -388,7 +388,7 @@ public class NutsRepositoryFolderHelper {
 
     public Path deployDescriptor(NutsId id, NutsDescriptor desc, NutsConfirmationMode writeType, NutsSession session) {
         if (!isWriteEnabled()) {
-            throw new IllegalArgumentException("read only repository");
+            throw new NutsIllegalArgumentException(session,NutsMessage.cstyle("read only repository"));
         }
         NutsWorkspaceUtils.of(session).checkNutsId(id);
         Path descFile = getLongIdLocalFile(id.builder().setFaceDescriptor().build(), session);

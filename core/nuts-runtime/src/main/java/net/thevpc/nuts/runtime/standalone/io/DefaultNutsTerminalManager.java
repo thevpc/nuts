@@ -98,7 +98,7 @@ public class DefaultNutsTerminalManager implements NutsTerminalManager {
     }
 
     public NutsTerminalManager setSession(NutsSession session) {
-        this.session = session;
+        this.session = NutsWorkspaceUtils.bindSession(model.getWorkspace(), session);
         return this;
     }
 

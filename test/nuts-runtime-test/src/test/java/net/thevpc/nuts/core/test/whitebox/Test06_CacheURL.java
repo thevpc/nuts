@@ -29,9 +29,6 @@ public class Test06_CacheURL {
 
     @Test
     public void minimal1() throws Exception {
-        Map<String, String> extraProperties = new HashMap<>();
-        extraProperties.put("nuts.export.always-show-command", "true");
-        TestUtils.setSystemProperties(extraProperties);
         NutsSession session = TestUtils.openNewTestWorkspace(
                 "--standalone",
                 "--archetype", "minimal",

@@ -1,5 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io;
 
+import net.thevpc.nuts.NutsIllegalArgumentException;
+import net.thevpc.nuts.NutsMessage;
 import net.thevpc.nuts.NutsPrintStream;
 import net.thevpc.nuts.NutsTerminalMode;
 import net.thevpc.nuts.runtime.core.format.text.FormatOutputStreamSupport;
@@ -74,7 +76,7 @@ public abstract class NutsPrintStreamRendered extends NutsPrintStreamBase {
                 return new NutsPrintStreamFiltered(base, bindings);
             }
         }
-        throw new IllegalArgumentException("unsupported " + mode() + "->" + other);
+        throw new NutsIllegalArgumentException(base.getSession(),NutsMessage.cstyle("unsupported %s -> %s",mode(), other));
     }
 
 }

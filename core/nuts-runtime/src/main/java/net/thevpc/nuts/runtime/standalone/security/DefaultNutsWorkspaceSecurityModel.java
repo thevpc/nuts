@@ -31,6 +31,7 @@ import net.thevpc.nuts.runtime.core.config.NutsWorkspaceConfigManagerExt;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.DefaultNutsWorkspace;
+import net.thevpc.nuts.runtime.standalone.boot.DefaultNutsBootManager;
 import net.thevpc.nuts.runtime.standalone.config.ConfigEventType;
 import net.thevpc.nuts.runtime.standalone.config.DefaultNutsWorkspaceConfigModel;
 import net.thevpc.nuts.runtime.standalone.config.NutsWorkspaceConfigSecurity;
@@ -302,7 +303,7 @@ public class DefaultNutsWorkspaceSecurityModel {
             }
         }
         if (logins.isEmpty()) {
-            if (ws.isInitializing()) {
+            if (isInitializing()) {
                 logins.add(NutsConstants.Users.ADMIN);
             } else {
                 logins.add(NutsConstants.Users.ANONYMOUS);
@@ -311,9 +312,13 @@ public class DefaultNutsWorkspaceSecurityModel {
         return logins.toArray(new String[0]);
     }
 
+    private boolean isInitializing() {
+        return ((DefaultNutsBootManager) ws.boot()).getModel().isInitializing();
+    }
+
 
     public String getCurrentUsername(NutsSession session) {
-        if (ws.isInitializing()) {
+        if (isInitializing()) {
             return NutsConstants.Users.ADMIN;
         }
         String name = null;

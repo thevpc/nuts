@@ -67,7 +67,7 @@ public class DefaultNutsExecutionEntryAction implements NutsExecutionEntryAction
 
     @Override
     public NutsExecutionEntryAction setSession(NutsSession session) {
-        this.session = session;
+        this.session = NutsWorkspaceUtils.bindSession(ws, session);
         return this;
     }
 }

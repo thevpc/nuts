@@ -49,7 +49,7 @@ public abstract class NutsRepositoryCommandBase<T extends NutsRepositoryCommand>
 
     @Override
     public T setSession(NutsSession session) {
-        this.session = session;
+        this.session = NutsWorkspaceUtils.bindSession(repo.getWorkspace(), session);
         return (T) this;
     }
 

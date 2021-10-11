@@ -32,7 +32,7 @@ public interface NutsPathSPI {
         return null;
     }
 
-    default Path toFilePath() {
+    default Path toFile() {
         return null;
     }
 

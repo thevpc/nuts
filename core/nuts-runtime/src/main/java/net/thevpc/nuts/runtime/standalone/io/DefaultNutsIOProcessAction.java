@@ -71,7 +71,7 @@ public class DefaultNutsIOProcessAction implements NutsIOProcessAction {
 
     @Override
     public NutsIOProcessAction setSession(NutsSession session) {
-        this.session = session;
+        this.session = NutsWorkspaceUtils.bindSession(ws, session);
         return this;
     }
 

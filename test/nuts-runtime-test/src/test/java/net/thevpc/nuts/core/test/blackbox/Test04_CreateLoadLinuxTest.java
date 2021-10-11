@@ -21,21 +21,10 @@ import org.junit.jupiter.api.*;
  */
 public class Test04_CreateLoadLinuxTest {
 
-    private Map<String, String> clearUpExtraSystemProperties;
-
     @Test
     public void customLayout() throws Exception {
         String test_id = "customLayout_use_export";
         File base = TestUtils.getTestBaseFolder();
-        Map<String, String> extraProperties = new HashMap<>();
-        extraProperties.put("nuts.export.always-show-command", "true");
-//        for (NutsStoreFolder folder : NutsStoreFolder.values()) {
-//            for (NutsStoreLocationLayout layout : NutsStoreLocationLayout.values()) {
-//                extraProperties.put("nuts.export.home." + folder.id() + "." + layout.id(), new File(base, folder.name().toLowerCase() + "." + layout.name().toLowerCase()).getPath());
-//            }
-//        }
-        TestUtils.setSystemProperties(extraProperties);
-        clearUpExtraSystemProperties = extraProperties;
 
 //        CoreIOUtils.delete(null,base);
         TestUtils.runNewTestWorkspace(
@@ -145,12 +134,6 @@ public class Test04_CreateLoadLinuxTest {
 //        Assumptions.assumeTrue(NutsOsFamily.getCurrent()== NutsOsFamily.LINUX);
 //        TestUtils.resetLinuxFolders();
         TestUtils.unsetNutsSystemProperties();
-    }
-
-    @AfterEach
-    public void cleanup() {
-        TestUtils.setSystemProperties(clearUpExtraSystemProperties);
-        clearUpExtraSystemProperties = null;
     }
 
 }

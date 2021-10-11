@@ -825,7 +825,8 @@ public final class NutsBootWorkspace {
             deps.add(0, workspaceInformation.getRuntimeBootDependencyNode());
 
             bootClassWorldURLs = PrivateNutsUtilClassLoader.resolveClassWorldURLs(deps.toArray(new NutsClassLoaderNode[0]), getContextClassLoader(), LOG);
-            workspaceClassLoader = bootClassWorldURLs.length == 0 ? getContextClassLoader() : new PrivateNutsBootClassLoader(deps.toArray(new NutsClassLoaderNode[0]), getContextClassLoader());
+            workspaceClassLoader = /*bootClassWorldURLs.length == 0 ? getContextClassLoader() : */
+                    new PrivateNutsBootClassLoader(deps.toArray(new NutsClassLoaderNode[0]), getContextClassLoader());
             workspaceInformation.setWorkspaceClassLoader(workspaceClassLoader);
             if (LOG.isLoggable(Level.CONFIG)) {
                 if (bootClassWorldURLs.length == 0) {

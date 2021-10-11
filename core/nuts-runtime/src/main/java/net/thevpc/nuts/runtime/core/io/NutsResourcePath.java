@@ -150,7 +150,7 @@ public class NutsResourcePath implements NutsPathSPI {
     }
 
     @Override
-    public Path toFilePath() {
+    public Path toFile() {
         throw new NutsIOException(getSession(), NutsMessage.cstyle("unable to resolve file %s", toString()));
     }
 

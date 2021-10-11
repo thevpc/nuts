@@ -57,9 +57,6 @@ public class Test12_ParseNTF {
 
     @Test
     public void test1() {
-        Map<String, String> extraProperties = new HashMap<>();
-        extraProperties.put("nuts.export.always-show-command", "true");
-        TestUtils.setSystemProperties(extraProperties);
         NutsSession session = TestUtils.openNewTestWorkspace(
                 "--standalone",
                 "--skip-companions");
@@ -70,9 +67,6 @@ public class Test12_ParseNTF {
 
     @Test
     public void test2() {
-        Map<String, String> extraProperties = new HashMap<>();
-        extraProperties.put("nuts.export.always-show-command", "true");
-        TestUtils.setSystemProperties(extraProperties);
         NutsSession session = TestUtils.openNewTestWorkspace(
                 "--standalone",
                 "-Z",
@@ -93,9 +87,6 @@ public class Test12_ParseNTF {
 
     @Test
     public void test3() {
-        Map<String, String> extraProperties = new HashMap<>();
-        extraProperties.put("nuts.export.always-show-command", "true");
-        TestUtils.setSystemProperties(extraProperties);
         NutsSession session = TestUtils.openNewTestWorkspace(
                 "--standalone",
                 "-Z",
@@ -114,9 +105,6 @@ public class Test12_ParseNTF {
 
     @Test
     public void test4() {
-        Map<String, String> extraProperties = new HashMap<>();
-        extraProperties.put("nuts.export.always-show-command", "true");
-        TestUtils.setSystemProperties(extraProperties);
         NutsSession session = TestUtils.openNewTestWorkspace(
                 "--standalone",
                 "-Z",
@@ -134,9 +122,6 @@ public class Test12_ParseNTF {
 
     @Test
     public void test5() {
-        Map<String, String> extraProperties = new HashMap<>();
-        extraProperties.put("nuts.export.always-show-command", "true");
-        TestUtils.setSystemProperties(extraProperties);
         NutsSession session = TestUtils.openNewTestWorkspace(
                 "--standalone",
                 "-Z",
@@ -190,9 +175,6 @@ public class Test12_ParseNTF {
     }
     @Test
     public void test6() {
-        Map<String, String> extraProperties = new HashMap<>();
-        extraProperties.put("nuts.export.always-show-command", "true");
-        TestUtils.setSystemProperties(extraProperties);
         NutsSession session = TestUtils.openNewTestWorkspace(
                 "--standalone",
                 "-Z",
@@ -247,9 +229,6 @@ public class Test12_ParseNTF {
 
     @Test
     public void test7() {
-        Map<String, String> extraProperties = new HashMap<>();
-        extraProperties.put("nuts.export.always-show-command", "true");
-        TestUtils.setSystemProperties(extraProperties);
         NutsSession session = TestUtils.openNewTestWorkspace(
                 "--standalone",
                 "-Z",
@@ -266,9 +245,6 @@ public class Test12_ParseNTF {
 
     @Test
     public void test8() {
-        Map<String, String> extraProperties = new HashMap<>();
-        extraProperties.put("nuts.export.always-show-command", "true");
-        TestUtils.setSystemProperties(extraProperties);
         NutsSession session = TestUtils.openNewTestWorkspace("-ZSkK");
         NutsTextManager txt = session.text();
 

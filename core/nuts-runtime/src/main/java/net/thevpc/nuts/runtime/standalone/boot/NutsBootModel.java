@@ -28,5 +28,8 @@ package net.thevpc.nuts.runtime.standalone.boot;
  * @author vpc
  */
 public interface NutsBootModel {
-    
+
+    boolean isInitializing();
+    boolean isFirstBoot();
+
 }

@@ -109,7 +109,7 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
 
     @Override
     public NutsDescriptorParser setSession(NutsSession session) {
-        this.session = session;
+        this.session = NutsWorkspaceUtils.bindSession(ws, session);
         return this;
     }
 
@@ -126,7 +126,7 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
         switch (style) {
             case MAVEN: {
                 try {
-                    return MavenUtils.of(session).parsePomXml0(in, NutsFetchMode.LOCAL, "descriptor", null);
+                    return MavenUtils.of(session).parsePomXml(in, NutsFetchMode.LOCAL, "descriptor", null);
                 } finally {
                     if (closeStream) {
                         try {

@@ -22,7 +22,7 @@ public class DefaultNutsCommandLineManager implements NutsCommandLineManager {
     }
 
     public NutsCommandLineManager setSession(NutsSession session) {
-        this.session = session;
+       this.session = NutsWorkspaceUtils.bindSession(ws, session);
         return this;
     }
 

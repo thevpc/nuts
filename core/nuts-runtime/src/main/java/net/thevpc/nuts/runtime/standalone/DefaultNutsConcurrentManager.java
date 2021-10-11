@@ -21,7 +21,7 @@ public class DefaultNutsConcurrentManager implements NutsConcurrentManager {
     }
 
     public NutsConcurrentManager setSession(NutsSession session) {
-        this.session = session;
+        this.session = NutsWorkspaceUtils.bindSession(model.getWorkspace(), session);
         return this;
     }
 

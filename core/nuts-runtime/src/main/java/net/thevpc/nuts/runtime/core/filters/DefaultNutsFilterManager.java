@@ -21,7 +21,7 @@ public class DefaultNutsFilterManager implements NutsFilterManager {
 
     @Override
     public NutsFilterManager setSession(NutsSession session) {
-        this.session = session;
+        this.session = NutsWorkspaceUtils.bindSession(model.getWorkspace(), session);
         return this;
     }
     

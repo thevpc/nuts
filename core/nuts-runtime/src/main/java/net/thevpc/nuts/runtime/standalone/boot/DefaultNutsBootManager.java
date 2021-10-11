@@ -51,9 +51,10 @@ public class DefaultNutsBootManager implements NutsBootManager {
         return model;
     }
 
-//    public void setModel(NutsBootModel model) {
-//        this.model = model;
-//    }
+    @Override
+    public boolean isFirstBoot() {
+        return model.isFirstBoot();
+    }
 
     @Override
     public NutsSession getSession() {
@@ -62,7 +63,7 @@ public class DefaultNutsBootManager implements NutsBootManager {
 
     @Override
     public NutsBootManager setSession(NutsSession session) {
-        this.session = session;
+        this.session = NutsWorkspaceUtils.bindSession(model.getWorkspace(), session);
         return this;
     }
 

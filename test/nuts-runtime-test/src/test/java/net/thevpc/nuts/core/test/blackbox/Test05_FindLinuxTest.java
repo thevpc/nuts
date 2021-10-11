@@ -24,10 +24,6 @@ public class Test05_FindLinuxTest {
 
     @Test()
     public void find2() throws Exception {
-        Map<String, String> extraProperties = new HashMap<>();
-        extraProperties.put("nuts.export.always-show-command", "true");
-        TestUtils.setSystemProperties(extraProperties);
-
         //should throw NutsNotFoundException because
         //would not be able to install nsh and other companions
         NutsSession s = TestUtils.openNewTestWorkspace(
@@ -44,10 +40,6 @@ public class Test05_FindLinuxTest {
 
     @Test()
     public void find3() throws Exception {
-        Map<String, String> extraProperties = new HashMap<>();
-        extraProperties.put("nuts.export.always-show-command", "true");
-        TestUtils.setSystemProperties(extraProperties);
-
         //should throw NutsNotFoundException because
         //would not be able to install nsh and other companions
         NutsSession s = TestUtils.openNewTestWorkspace(
@@ -63,10 +55,6 @@ public class Test05_FindLinuxTest {
 
     @Test()
     public void find4() throws Exception {
-        Map<String, String> extraProperties = new HashMap<>();
-        extraProperties.put("nuts.export.always-show-command", "true");
-        TestUtils.setSystemProperties(extraProperties);
-
         //should throw NutsNotFoundException because
         //would not be able to install nsh and other companions
         NutsSession s = TestUtils.openNewTestWorkspace(
@@ -82,10 +70,6 @@ public class Test05_FindLinuxTest {
 
     @Test()
     public void find5() throws Exception {
-        Map<String, String> extraProperties = new HashMap<>();
-        extraProperties.put("nuts.export.always-show-command", "true");
-        TestUtils.setSystemProperties(extraProperties);
-
         //should throw NutsNotFoundException because
         //would not be able to install nsh and other companions
         NutsSession s = TestUtils.openNewTestWorkspace(

@@ -152,7 +152,7 @@ public class DefaultNutsWorkspaceLocationManager implements NutsWorkspaceLocatio
 
     @Override
     public NutsWorkspaceLocationManager setSession(NutsSession session) {
-        this.session = session;
+        this.session = NutsWorkspaceUtils.bindSession(model.getWorkspace(), session);
         return this;
     }
 

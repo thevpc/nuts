@@ -4,7 +4,6 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.model.DefaultNutsDependencyBuilder;
 import net.thevpc.nuts.runtime.core.format.DefaultNutsDependencyFormat;
 import net.thevpc.nuts.runtime.core.parser.DefaultNutsDependencyParser;
-import net.thevpc.nuts.runtime.standalone.util.NutsDependencyScopes;
 
 import java.util.Collections;
 import java.util.Set;
@@ -12,12 +11,12 @@ import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 public class DefaultNutsDependencyManager implements NutsDependencyManager {
 
-    private NutsWorkspace workspace;
+    private NutsWorkspace ws;
 
     private NutsSession session;
 
     public DefaultNutsDependencyManager(NutsWorkspace workspace) {
-        this.workspace = workspace;
+        this.ws = workspace;
     }
 
     @Override
@@ -27,16 +26,16 @@ public class DefaultNutsDependencyManager implements NutsDependencyManager {
 
     @Override
     public NutsDependencyManager setSession(NutsSession session) {
-        this.session = session;
+        this.session = NutsWorkspaceUtils.bindSession(ws, session);
         return this;
     }
 
     public NutsWorkspace getWorkspace() {
-        return workspace;
+        return ws;
     }
 
     protected void checkSession() {
-        NutsWorkspaceUtils.checkSession(workspace, session);
+        NutsWorkspaceUtils.checkSession(ws, session);
     }
 
     @Override

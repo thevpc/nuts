@@ -27,9 +27,7 @@ package net.thevpc.nuts.runtime.standalone.util;
 
 import java.util.Arrays;
 
-import net.thevpc.nuts.NutsCommandLineConfigurable;
-import net.thevpc.nuts.NutsCommandLine;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.*;
 
 /**
  *
@@ -73,9 +71,13 @@ public class NutsConfigurableHelper {
                 }
                 String[] after = commandLine.toStringArray();
                 if (Arrays.equals(before, after)) {
-                    throw new IllegalStateException("bad implementation of configureFirst in class " + c.getClass().getName() + "."
-                            + " commandline is not consumed; perhaps missing skip() class."
-                            + " args = " + Arrays.toString(after));
+                    throw new NutsIllegalArgumentException(session,
+                            NutsMessage.cstyle(
+                                    "bad implementation of configureFirst in class %s."
+                                            + " commandline is not consumed; perhaps missing skip() class."
+                                            + " args = %s" , c.getClass().getName(), Arrays.toString(after)
+                            )
+                            );
                 }
             } else {
                 if (!c.configureFirst(commandLine)) {

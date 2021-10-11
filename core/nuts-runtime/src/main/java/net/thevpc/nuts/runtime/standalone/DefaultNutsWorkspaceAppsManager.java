@@ -36,7 +36,7 @@ public class DefaultNutsWorkspaceAppsManager implements NutsWorkspaceAppsManager
     }
 
     public NutsWorkspaceAppsManager setSession(NutsSession session) {
-        this.session = session;
+        this.session = NutsWorkspaceUtils.bindSession(ws, session);
         return this;
     }
     

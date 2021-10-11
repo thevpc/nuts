@@ -111,8 +111,16 @@ public interface NutsPath extends NutsFormattable {
 
     URL toURL();
 
+    /**
+     * return true if the path is or can be converted to a valid url
+     * @return true if the path is or can be converted to a valid url
+     */
     boolean isURL();
 
+    /**
+     * return true if the path is or can be converted to a valid local file
+     * @return true if the path is or can be converted to a valid local file
+     */
     boolean isFile();
 
     Path toFile();
@@ -120,8 +128,16 @@ public interface NutsPath extends NutsFormattable {
 
     String toString();
 
+    /**
+     * return a valid url or null
+     * @return a valid url or null
+     */
     URL asURL();
 
+    /**
+     * return a valid local file
+     * @return return a valid local file
+     */
     Path asFilePath();
 
     NutsPath[] getChildren();
@@ -134,9 +150,11 @@ public interface NutsPath extends NutsFormattable {
 
     NutsSession getSession();
 
-    void delete(boolean recurse);
+    NutsPath delete();
 
-    void mkdir(boolean parents);
+    NutsPath delete(boolean recurse);
+
+    NutsPath mkdir(boolean parents);
 
     boolean isDirectory();
 

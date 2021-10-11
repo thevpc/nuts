@@ -23,10 +23,6 @@ public class Test07_AppTypeTest {
 
     @Test
     public void testSearchDescriptor() throws Exception {
-        Map<String, String> extraProperties = new HashMap<>();
-        extraProperties.put("nuts.export.always-show-command", "true");
-        TestUtils.setSystemProperties(extraProperties);
-
         NutsSession session = TestUtils.openNewTestWorkspace(
                 "--standalone",
                 "--skip-companions"

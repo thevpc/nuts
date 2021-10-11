@@ -82,7 +82,7 @@ public class DefaultNutsDescriptorManager implements NutsDescriptorManager {
 
     @Override
     public NutsDescriptorManager setSession(NutsSession session) {
-        this.session = session;
+        this.session = NutsWorkspaceUtils.bindSession(workspace, session);
         return this;
     }
 

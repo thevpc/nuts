@@ -138,7 +138,7 @@ public class MavenRepositoryFolderHelper {
         return new FolderNutIdIterator(repo == null ? null : repo.getName(), folder, rootPath, filter, session, new FolderNutIdIterator.AbstractFolderNutIdIteratorModel() {
             @Override
             public void undeploy(NutsId id, NutsSession session) {
-                throw new IllegalArgumentException("unsupported undeploy");
+                throw new NutsIllegalArgumentException(session,NutsMessage.cstyle("unsupported undeploy"));
             }
 
             @Override
@@ -148,7 +148,7 @@ public class MavenRepositoryFolderHelper {
 
             @Override
             public NutsDescriptor parseDescriptor(Path pathname, NutsSession session) throws IOException {
-                return MavenUtils.of(session).parsePomXml(pathname, NutsFetchMode.LOCAL, repo);
+                return MavenUtils.of(session).parsePomXmlAndResolveParents(pathname, NutsFetchMode.LOCAL, repo);
             }
         }, maxDepth);
     }

@@ -1,9 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.io;
 
-import net.thevpc.nuts.NutsPrintStream;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsTerminalCommand;
-import net.thevpc.nuts.NutsTerminalMode;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.format.text.renderer.AnsiUnixTermPrintRenderer;
 
 public class NutsPrintStreamFormatted extends NutsPrintStreamRendered {
@@ -32,7 +29,7 @@ public class NutsPrintStreamFormatted extends NutsPrintStreamRendered {
                 return new NutsPrintStreamFiltered(base,bindings);
             }
         }
-        throw new IllegalArgumentException("unsupported "+mode()+"->"+other);
+        throw new NutsIllegalArgumentException(base.getSession(),NutsMessage.cstyle("unsupported %s -> %s",mode(), other));
     }
 
     @Override

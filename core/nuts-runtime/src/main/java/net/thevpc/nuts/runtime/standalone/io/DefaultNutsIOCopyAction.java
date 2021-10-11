@@ -278,7 +278,7 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
 
     @Override
     public NutsIOCopyAction setSession(NutsSession session) {
-        this.session = session;
+        this.session = NutsWorkspaceUtils.bindSession(ws, session);
         return this;
     }
 

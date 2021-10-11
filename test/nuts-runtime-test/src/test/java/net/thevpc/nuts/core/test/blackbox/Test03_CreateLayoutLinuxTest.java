@@ -38,10 +38,6 @@ public class Test03_CreateLayoutLinuxTest {
     public void customLayout_reload() throws Exception {
 //        String test_id = TestUtils.getCallerMethodId();
 //        File base = new File("./runtime/test/" + test_id).getCanonicalFile();
-        Map<String, String> extraProperties = new HashMap<>();
-        extraProperties.put("nuts.export.always-show-command", "true");
-        TestUtils.setSystemProperties(extraProperties);
-        System.setProperty("nuts.export.debug", "true");
 //        CoreIOUtils.delete(null, base);
 //        TestUtils.resetLinuxFolders();
         File testBaseFolder = TestUtils.getTestBaseFolder();
@@ -140,11 +136,6 @@ public class Test03_CreateLayoutLinuxTest {
     public void customLayout_use_export() throws Exception {
         String test_id = TestUtils.getCallerMethodId();
         File base = new File("./runtime/test/" + test_id).getCanonicalFile();
-        Map<String, String> extraProperties = new HashMap<>();
-        extraProperties.put("nuts.export.always-show-command", "true");
-        TestUtils.setSystemProperties(extraProperties);
-        System.setProperty("nuts.export.debug", "true");
-//        TestUtils.resetLinuxFolders();
         NutsWorkspace ws1 = TestUtils.openNewTestWorkspace(
                 TestUtils.sarr(
                         TestUtils.createSysDirs(base),

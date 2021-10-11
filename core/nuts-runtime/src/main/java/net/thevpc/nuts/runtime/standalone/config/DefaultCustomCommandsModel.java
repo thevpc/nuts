@@ -40,7 +40,7 @@ public class DefaultCustomCommandsModel {
         }
         for (NutsWorkspaceCommandFactory factory : commandFactories) {
             if (commandFactoryConfig.getFactoryId().equals(factory.getFactoryId())) {
-                throw new IllegalArgumentException();
+                throw new NutsIllegalArgumentException(session,NutsMessage.cstyle("factory already registered : %s",factory.getFactoryId()));
             }
         }
         NutsWorkspaceCommandFactory f = null;

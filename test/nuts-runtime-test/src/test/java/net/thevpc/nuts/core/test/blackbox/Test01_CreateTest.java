@@ -22,9 +22,6 @@ public class Test01_CreateTest {
 
     @Test
     public void minimal1() throws Exception {
-        Map<String, String> extraProperties = new HashMap<>();
-        extraProperties.put("nuts.export.always-show-command", "true");
-        TestUtils.setSystemProperties(extraProperties);
         String wsPath = TestUtils.getTestBaseFolder().getPath();
 
         NutsSession session = TestUtils.openNewTestWorkspace("--workspace", wsPath,
@@ -67,10 +64,6 @@ public class Test01_CreateTest {
 
     @Test
     public void minimal2() throws Exception {
-        Map<String, String> extraProperties = new HashMap<>();
-        extraProperties.put("nuts.export.always-show-command", "true");
-        TestUtils.setSystemProperties(extraProperties);
-
         NutsWorkspace ws = TestUtils.openNewTestWorkspace(
                 "--standalone",
                 "--archetype", "minimal",
@@ -80,10 +73,6 @@ public class Test01_CreateTest {
 
     @Test
     public void minimal3() throws Exception {
-        Map<String, String> extraProperties = new HashMap<>();
-        extraProperties.put("nuts.export.always-show-command", "true");
-        TestUtils.setSystemProperties(extraProperties);
-
         NutsWorkspace ws = TestUtils.openNewTestWorkspace(
                 "--exploded",
                 "--archetype", "minimal",
@@ -93,14 +82,11 @@ public class Test01_CreateTest {
 
     @Test
     public void default1() throws Exception {
-        Map<String, String> extraProperties = new HashMap<>();
-        extraProperties.put("nuts.export.always-show-command", "true");
-        TestUtils.setSystemProperties(extraProperties);
         String wsPath = TestUtils.getTestBaseFolder().getPath();
 
         NutsSession session = TestUtils.openNewTestWorkspace(
                 "--exploded",
-                "--archetype", "minimal",
+                "--archetype", "default",
                 "--verbose",
                 "--skip-companions");
         String base = "";
@@ -131,10 +117,6 @@ public class Test01_CreateTest {
 
     @Test
     public void default2() throws Exception {
-        Map<String, String> extraProperties = new HashMap<>();
-        extraProperties.put("nuts.export.always-show-command", "true");
-        TestUtils.setSystemProperties(extraProperties);
-
         NutsWorkspace ws = TestUtils.openNewTestWorkspace(
                 "--exploded",
                 "--archetype", "minimal",
@@ -144,10 +126,6 @@ public class Test01_CreateTest {
 
     @Test
     public void default3() throws Exception {
-        Map<String, String> extraProperties = new HashMap<>();
-        extraProperties.put("nuts.export.always-show-command", "true");
-        TestUtils.setSystemProperties(extraProperties);
-
         NutsWorkspace ws = TestUtils.openNewTestWorkspace(
                 "--exploded",
                 "--archetype", "minimal",

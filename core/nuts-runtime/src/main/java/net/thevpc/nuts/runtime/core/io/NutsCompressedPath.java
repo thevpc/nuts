@@ -181,13 +181,13 @@ public class NutsCompressedPath extends NutsPathBase {
     }
 
     @Override
-    public void delete(boolean recurse) {
-        base.delete(recurse);
+    public NutsPath delete(boolean recurse) {
+        return base.delete(recurse);
     }
 
     @Override
-    public void mkdir(boolean parents) {
-        base.mkdir(parents);
+    public NutsPath mkdir(boolean parents) {
+        return base.mkdir(parents);
     }
 
     @Override

@@ -24,7 +24,7 @@ public class DefaultNutsIdManager implements NutsIdManager {
 
     @Override
     public NutsIdManager setSession(NutsSession session) {
-        this.session = session;
+        this.session = NutsWorkspaceUtils.bindSession(ws, session);
         return this;
     }
 

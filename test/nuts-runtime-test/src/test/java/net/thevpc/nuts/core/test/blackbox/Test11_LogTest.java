@@ -25,10 +25,6 @@ public class Test11_LogTest {
 
     @Test
     public void execURL() throws Exception {
-        Map<String, String> extraProperties = new HashMap<>();
-        extraProperties.put("nuts.export.always-show-command", "true");
-        TestUtils.setSystemProperties(extraProperties);
-
         NutsSession ws = TestUtils.openNewTestWorkspace(
                 "--archetype", "default",
                 "--skip-companions");

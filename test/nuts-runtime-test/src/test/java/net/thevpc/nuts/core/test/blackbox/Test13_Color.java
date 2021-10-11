@@ -21,63 +21,97 @@ import java.util.Map;
  */
 public class Test13_Color {
 
-    private static String baseFolder;
 
     @Test
     public void test1() throws Exception {
-        Map<String, String> extraProperties = new HashMap<>();
-        extraProperties.put("nuts.export.always-show-command", "true");
-        TestUtils.setSystemProperties(extraProperties);
-
         NutsSession session = TestUtils.openNewTestWorkspace(
                 "--archetype", "default",
                 "--log-info",
                 "--skip-companions");
 
-        for (NutsTerminalMode sysMode : new NutsTerminalMode[]{NutsTerminalMode.INHERITED, NutsTerminalMode.FORMATTED, NutsTerminalMode.FILTERED}) {
-            for (NutsTerminalMode sessionMode : new NutsTerminalMode[]{NutsTerminalMode.INHERITED, NutsTerminalMode.FORMATTED, NutsTerminalMode.FILTERED}) {
-                testMode(session,sysMode,sessionMode);
-            }
-        }
+        testMode(session,NutsTerminalMode.INHERITED,NutsTerminalMode.INHERITED,Result.SUCCESS);
+        testMode(session,NutsTerminalMode.INHERITED,NutsTerminalMode.FORMATTED,Result.SUCCESS);
+        testMode(session,NutsTerminalMode.INHERITED,NutsTerminalMode.FILTERED,Result.SUCCESS);
+        testMode(session,NutsTerminalMode.INHERITED,NutsTerminalMode.ANSI,Result.FAIL);
+
+        testMode(session,NutsTerminalMode.FORMATTED,NutsTerminalMode.INHERITED,Result.SUCCESS);
+        testMode(session,NutsTerminalMode.FORMATTED,NutsTerminalMode.FORMATTED,Result.SUCCESS);
+        testMode(session,NutsTerminalMode.FORMATTED,NutsTerminalMode.FILTERED,Result.SUCCESS);
+        testMode(session,NutsTerminalMode.FORMATTED,NutsTerminalMode.ANSI,Result.FAIL);
+
+        testMode(session,NutsTerminalMode.FILTERED,NutsTerminalMode.INHERITED,Result.SUCCESS);
+        testMode(session,NutsTerminalMode.FILTERED,NutsTerminalMode.FORMATTED,Result.SUCCESS);
+        testMode(session,NutsTerminalMode.FILTERED,NutsTerminalMode.FILTERED,Result.SUCCESS);
+        testMode(session,NutsTerminalMode.FILTERED,NutsTerminalMode.ANSI,Result.FAIL);
+
+        testMode(session,NutsTerminalMode.ANSI,NutsTerminalMode.INHERITED,Result.FAIL);
+        testMode(session,NutsTerminalMode.ANSI,NutsTerminalMode.FORMATTED,Result.FAIL);
+        testMode(session,NutsTerminalMode.ANSI,NutsTerminalMode.FILTERED,Result.FAIL);
+        // How could we create in a save manner an ansi  sys terminal??
+        testMode(session,NutsTerminalMode.ANSI,NutsTerminalMode.ANSI,Result.FAIL);
+    }
+    private enum Result{
+        SUCCESS,
+        FAIL
     }
 
-    public static void testMode(NutsSession session,NutsTerminalMode systemMode,NutsTerminalMode sessionMode) {
-        TestUtils.println((systemMode==null?"default":systemMode==NutsTerminalMode.INHERITED?"raw":systemMode.id())
-                +"->"+(sessionMode==null?"default":sessionMode==NutsTerminalMode.INHERITED?"raw":sessionMode.id()));
+    public static void testMode(NutsSession session,NutsTerminalMode systemMode,NutsTerminalMode sessionMode,Result result) {
+
+        if(sessionMode!=null) {
+            if(result==Result.FAIL){
+                Assertions.assertThrows(NutsIllegalArgumentException.class,()->
+
+                        {
+                            NutsSystemTerminal systemTerminal = session.term().getSystemTerminal();
+                            NutsPrintStream sysInitMode = systemTerminal.out();
+                            TestUtils.println(
+                                    "sys-init="+(sysInitMode.mode()==null?"default": sysInitMode.mode().id())
+                                            +", sys-fixed="+(systemMode==null?"default":systemMode.id())
+                                            +" ->"+sessionMode.id());
+
+                            NutsSessionTerminal terminal = session.term().createTerminal();
+                            NutsPrintStream out = terminal.out().convertMode(systemMode);
+                            NutsTerminalMode initMode = out.mode();
+                            Assertions.assertEquals(systemMode,initMode);
+                            TestUtils.println(
+                                    "sys-init="+(sysInitMode.mode()==null?"default": sysInitMode.mode().id())
+                                            +", sys-fixed="+(systemMode==null?"default":systemMode.id())
+                                            +" ->"+sessionMode.id());
 //        if(systemMode!=null) {
 //            ws.term().getSystemTerminal().setMode(systemMode);
 //        }
-        if(sessionMode!=null) {
-            session.getTerminal().setOut(session.getTerminal().out().convertMode(sessionMode));
+
+                            terminal.setOut(out.convertMode(sessionMode));
+
+                            TestUtils.print("      ");
+                            out.print("{**aa");
+                            out.print("aa**}");
+                            out.println();
+
+                        }
+                );
+                return;
+            }else{
+                NutsSystemTerminal systemTerminal = session.term().getSystemTerminal();
+                NutsPrintStream sysInitMode = systemTerminal.out();
+                NutsSessionTerminal terminal = session.term().createTerminal();
+                NutsPrintStream out = terminal.out().convertMode(systemMode);
+                NutsTerminalMode initMode = out.mode();
+                Assertions.assertEquals(systemMode,initMode);
+                TestUtils.println(
+                        "sys-init="+sysInitMode.mode().id()
+                                +", sys-fixed="+systemMode.id()
+                                +" ->"+ sessionMode.id());
+//        if(systemMode!=null) {
+//            ws.term().getSystemTerminal().setMode(systemMode);
+//        }
+                terminal.setOut(out.convertMode(sessionMode));
+                TestUtils.print("      ");
+                out.print("{**aa");
+                out.print("aa**}");
+                out.println();
+            }
         }
-        TestUtils.print("      ");
-        NutsPrintStream out = session.getTerminal().out();
-        out.print("{**aa");
-        out.print("aa**}");
-        out.println();
-    }
-
-    @BeforeAll
-    public static void setUpClass() throws IOException {
-        baseFolder = new File("./runtime/test/" + TestUtils.getCallerClassSimpleName()).getCanonicalFile().getPath();
-        CoreIOUtils.delete(null,new File(baseFolder));
-        TestUtils.println("####### RUNNING TEST @ "+ TestUtils.getCallerClassSimpleName());
-    }
-
-    @AfterAll
-    public static void tearUpClass() throws IOException {
-        //CoreIOUtils.delete(null,new File(baseFolder));
-    }
-
-    @BeforeEach
-    public void startup() throws IOException {
-//        Assumptions.assumeTrue(NutsOsFamily.getCurrent()== NutsOsFamily.LINUX);
-        TestUtils.unsetNutsSystemProperties();
-    }
-
-    @AfterEach
-    public void cleanup() {
-        TestUtils.unsetNutsSystemProperties();
     }
 
 }

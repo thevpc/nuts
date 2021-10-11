@@ -92,7 +92,7 @@ public class CoreIOUtils {
                 return (PrintWriter) writer;
             }
         }
-        ExtendedFormatAwarePrintWriter s = new ExtendedFormatAwarePrintWriter(writer);
+        ExtendedFormatAwarePrintWriter s = new ExtendedFormatAwarePrintWriter(writer,session);
         NutsWorkspaceUtils.setSession(s, session);
         return s;
     }
@@ -101,7 +101,7 @@ public class CoreIOUtils {
         if (writer == null) {
             return null;
         }
-        ExtendedFormatAwarePrintWriter s = new ExtendedFormatAwarePrintWriter(writer);
+        ExtendedFormatAwarePrintWriter s = new ExtendedFormatAwarePrintWriter(writer,session);
         NutsWorkspaceUtils.setSession(s, session);
         return s;
     }
@@ -155,7 +155,7 @@ public class CoreIOUtils {
                 return aw.convert(NutsTerminalModeOp.FILTER);
             }
             default: {
-                throw new IllegalArgumentException("unsupported terminal mode " + expected);
+                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unsupported terminal mode %s",expected));
             }
         }
     }

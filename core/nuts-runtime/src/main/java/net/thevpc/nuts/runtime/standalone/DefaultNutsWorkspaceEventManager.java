@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 public class DefaultNutsWorkspaceEventManager implements NutsWorkspaceEventManager {
 
@@ -26,7 +27,7 @@ public class DefaultNutsWorkspaceEventManager implements NutsWorkspaceEventManag
 
     @Override
     public NutsWorkspaceEventManager setSession(NutsSession session) {
-        this.session = session;
+        this.session = NutsWorkspaceUtils.bindSession(model.getWorkspace(), session);
         return this;
     }
 

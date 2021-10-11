@@ -29,7 +29,7 @@ public class DefaultNutsRepositorySecurityManager implements NutsRepositorySecur
 
     @Override
     public NutsRepositorySecurityManager setSession(NutsSession session) {
-        this.session = session;
+        this.session = NutsWorkspaceUtils.bindSession(model.getWorkspace(), session);
         return this;
     }
 

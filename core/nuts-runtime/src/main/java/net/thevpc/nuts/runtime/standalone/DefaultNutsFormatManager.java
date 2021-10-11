@@ -8,6 +8,7 @@ import net.thevpc.nuts.runtime.core.format.props.DefaultPropertiesFormat;
 import net.thevpc.nuts.runtime.core.format.table.DefaultTableFormat;
 import net.thevpc.nuts.runtime.core.format.text.DefaultNutsTextManager;
 import net.thevpc.nuts.runtime.core.format.text.DefaultNutsTextManagerModel;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 public class DefaultNutsFormatManager implements NutsFormatManager {
 
@@ -25,7 +26,7 @@ public class DefaultNutsFormatManager implements NutsFormatManager {
     }
 
     public NutsFormatManager setSession(NutsSession session) {
-        this.session = session;
+        this.session = NutsWorkspaceUtils.bindSession(model.getWorkspace(), session);
         return this;
     }
 

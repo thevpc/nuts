@@ -1,16 +1,15 @@
 package net.thevpc.nuts.runtime.standalone.io.progress;
 
-import net.thevpc.nuts.NutsPrintStream;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsTextStyle;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.common.CorePlatformUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.core.format.text.FPrintCommands;
 
 import java.util.Calendar;
 import java.util.Set;
-import net.thevpc.nuts.NutsTextBuilder;
+
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 /**
  *
@@ -47,12 +46,14 @@ public class CProgressBar {
     private IndeterminatePosition indeterminatePosition = DEFAULT_INDETERMINATE_POSITION;
     private boolean optionNewline;
     private Formatter formatter = CorePlatformUtils.SUPPORTS_UTF_ENCODING ?RECTANGLES4:SIMPLE;
+    private NutsWorkspace ws;
 
     public CProgressBar(NutsSession session) {
         this.session = session;
         formatted = session != null;
         if (session != null) {
             optionNewline = CoreNutsUtils.parseProgressOptions(session).isArmedNewline();
+            ws=session.getWorkspace();
         }
     }
 
@@ -225,7 +226,7 @@ public class CProgressBar {
     }
 
     public CProgressBar setSession(NutsSession session) {
-        this.session = session;
+        this.session = NutsWorkspaceUtils.bindSession(ws, session);
         return this;
     }
 

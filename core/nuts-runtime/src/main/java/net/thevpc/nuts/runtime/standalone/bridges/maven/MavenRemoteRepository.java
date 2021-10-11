@@ -63,7 +63,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
         @Override
         public NutsDescriptor parseDescriptor(String pathname, InputStream in, NutsFetchMode fetchMode, NutsRepository repository, NutsSession session, String rootURL) throws IOException {
             session.getTerminal().printProgress("%-8s %s", "parse", session.io().path(pathname).toCompressedForm());
-            return MavenUtils.of(session).parsePomXml(in, fetchMode, pathname, repository);
+            return MavenUtils.of(session).parsePomXmlAndResolveParents(in, fetchMode, pathname, repository);
         }
 
         @Override
@@ -164,7 +164,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
                 break;
             }
             default: {
-                throw new IllegalArgumentException("unsupported maven repo type: " + repoType);
+                throw new NutsIllegalArgumentException(session,NutsMessage.cstyle("unsupported maven repo type: %s", repoType));
             }
         }
     }

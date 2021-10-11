@@ -231,7 +231,7 @@ public class DefaultNutsIOUncompressAction implements NutsIOUncompressAction {
 
     @Override
     public NutsIOUncompressAction setSession(NutsSession session) {
-        this.session = session;
+        this.session = NutsWorkspaceUtils.bindSession(ws, session);
         return this;
     }
 

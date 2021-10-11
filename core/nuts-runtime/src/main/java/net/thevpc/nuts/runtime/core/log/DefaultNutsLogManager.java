@@ -95,7 +95,7 @@ public class DefaultNutsLogManager implements NutsLogManager {
 
     @Override
     public NutsLogManager setSession(NutsSession session) {
-        this.session = session;
+        this.session = NutsWorkspaceUtils.bindSession(model.getWorkspace(), session);
         return this;
     }
 

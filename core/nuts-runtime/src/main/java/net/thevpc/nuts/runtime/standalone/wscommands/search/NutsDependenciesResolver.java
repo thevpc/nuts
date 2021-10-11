@@ -4,6 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.core.model.DefaultNutsDependencies;
 import net.thevpc.nuts.runtime.core.model.DefaultNutsDependencyTreeNode;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -12,6 +13,7 @@ public class NutsDependenciesResolver {
 
     private List<NutsDependencyTreeNodeBuild> defs = new ArrayList<>();
     private NutsSession session;
+    private NutsWorkspace ws;
     private NutsDependencyFilter dependencyFilter;
     private NutsDependencyFilter effDependencyFilter;
     private boolean shouldIncludeContent = false;//shouldIncludeContent(this);
@@ -19,6 +21,7 @@ public class NutsDependenciesResolver {
 
     public NutsDependenciesResolver(NutsSession session) {
         this.session = session;
+        this.ws = session.getWorkspace();
     }
 
     public NutsDependenciesResolver addRootId(NutsId id) {
@@ -63,7 +66,7 @@ public class NutsDependenciesResolver {
     }
 
     public NutsDependenciesResolver setSession(NutsSession session) {
-        this.session = session;
+        this.session = NutsWorkspaceUtils.bindSession(ws, session);
         return this;
     }
 

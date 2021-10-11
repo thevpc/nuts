@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.core.format.text;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.terminals.NutsTerminalModeOp;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 import java.io.OutputStream;
 import java.io.PrintWriter;
@@ -13,30 +14,39 @@ public class ExtendedFormatAwarePrintWriter extends PrintWriter implements Exten
     private NutsSession session;
     private Object base = null;
 
-    public ExtendedFormatAwarePrintWriter(Writer out) {
+    public ExtendedFormatAwarePrintWriter(Writer out,NutsSession session) {
         super(out);
         base = out;
+        this.session=session;
+        this.ws=session.getWorkspace();
     }
 
-    public ExtendedFormatAwarePrintWriter(Writer out, boolean autoFlush) {
+    public ExtendedFormatAwarePrintWriter(Writer out, boolean autoFlush,NutsSession session) {
         super(out, autoFlush);
         base = out;
+        this.session=session;
+        this.ws=session.getWorkspace();
     }
 
-    public ExtendedFormatAwarePrintWriter(OutputStream out) {
+    public ExtendedFormatAwarePrintWriter(OutputStream out,NutsSession session) {
         super(out);
         base = out;
+        this.session=session;
+        this.ws=session.getWorkspace();
     }
 
-    public ExtendedFormatAwarePrintWriter(OutputStream out, boolean autoFlush) {
+    public ExtendedFormatAwarePrintWriter(OutputStream out, boolean autoFlush,NutsSession session) {
         super(out, autoFlush);
         base = out;
+        this.session=session;
+        this.ws=session.getWorkspace();
     }
 
     @Override
     public void setSession(NutsSession session) {
-        this.session = session;
-        this.ws = session==null?null:session.getWorkspace();
+        this.session = NutsWorkspaceUtils.bindSession(ws, session);
+//        this.session = session;
+//        this.ws = session==null?null:session.getWorkspace();
     }
 
     @Override

@@ -44,6 +44,8 @@ import java.util.Map;
 public class DefaultNutsBootModel implements NutsBootModel {
 
     protected NutsWorkspace workspace;
+    protected boolean firstBoot;
+    protected boolean initializing;
     protected NutsWorkspaceInitInformation workspaceInitInformation;
     protected NutsSession bootSession;
     private NutsPrintStream stdout;
@@ -53,6 +55,7 @@ public class DefaultNutsBootModel implements NutsBootModel {
 
     public DefaultNutsBootModel(NutsWorkspace workspace, NutsWorkspaceInitInformation workspaceInitInformation) {
         this.workspace = workspace;
+        this.initializing = true;
         this.workspaceInitInformation = workspaceInitInformation;
         this.bootSession = new DefaultNutsSession(workspace, workspaceInitInformation.getOptions());
         StdFd std = detectAnsiTerminalSupport(NutsOsFamily.getCurrent());
@@ -88,6 +91,25 @@ public class DefaultNutsBootModel implements NutsBootModel {
                 }
             }
         }
+    }
+
+    @Override
+    public boolean isInitializing() {
+        return initializing;
+    }
+
+    public DefaultNutsBootModel setInitializing(boolean initializing) {
+        this.initializing = initializing;
+        return this;
+    }
+
+    public boolean isFirstBoot() {
+        return firstBoot;
+    }
+
+    public DefaultNutsBootModel setFirstBoot(boolean firstBoot) {
+        this.firstBoot = firstBoot;
+        return this;
     }
 
     public NutsPrintStream stdout() {

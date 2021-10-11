@@ -372,7 +372,7 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
 
     @Override
     public NutsIOCompressAction setSession(NutsSession session) {
-        this.session = session;
+        this.session = NutsWorkspaceUtils.bindSession(ws, session);
         return this;
     }
 

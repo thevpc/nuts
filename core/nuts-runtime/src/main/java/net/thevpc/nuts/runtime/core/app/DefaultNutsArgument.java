@@ -214,7 +214,7 @@ public class DefaultNutsArgument /*extends DefaultNutsTokenFilter*/ implements N
                             break;
                         }
                         default: {
-                            throw new IllegalStateException("Unsupported state");
+                            throw new IllegalStateException("unsupported state");
                         }
                     }
                 }

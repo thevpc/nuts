@@ -19,12 +19,15 @@ import net.thevpc.nuts.runtime.core.format.plain.DefaultSearchFormatPlain;
 import net.thevpc.nuts.runtime.core.repos.DefaultNutsRepositoryManager;
 import net.thevpc.nuts.runtime.core.repos.NutsInstalledRepository;
 import net.thevpc.nuts.runtime.core.repos.NutsRepositoryUtils;
-import net.thevpc.nuts.runtime.core.util.*;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.io.DefaultNutsExecutionEntry;
 import net.thevpc.nuts.runtime.standalone.wscommands.NutsRepositoryAndFetchMode;
 import net.thevpc.nuts.spi.NutsRepositorySPI;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.net.URL;
 import java.util.*;
 import java.util.function.Predicate;
@@ -39,8 +42,8 @@ public class NutsWorkspaceUtils {
 
     private NutsLogger LOG;
 
-    private NutsWorkspace ws;
-    private NutsSession session;
+    private final NutsWorkspace ws;
+    private final NutsSession session;
 
     private NutsWorkspaceUtils(NutsSession session) {
         this.session = session;
@@ -62,6 +65,13 @@ public class NutsWorkspaceUtils {
         return ((NutsWorkspaceExt) ws).defaultSession();
     }
 
+    public static NutsSession bindSession(NutsWorkspace ws, NutsSession session) {
+        if (ws != null && session != null && !Objects.equals(session.getWorkspace().getUuid(), ws.getUuid())) {
+            return ws.createSession().copyFrom(session);
+        }
+        return session;
+    }
+
     public static void checkSession(NutsWorkspace ws, NutsSession session) {
         if (session == null) {
             throw new NutsIllegalArgumentException(defaultSession(ws), NutsMessage.cstyle("missing session"));
@@ -71,7 +81,7 @@ public class NutsWorkspaceUtils {
                     session.getWorkspace().getName(), ws.getName(),
                     session.getWorkspace().getLocation(), ws.getLocation(),
                     session.getWorkspace().getUuid(), ws.getUuid()
-                    ));
+            ));
         }
     }
 
@@ -120,12 +130,12 @@ public class NutsWorkspaceUtils {
     public ReflectRepository getReflectRepository() {
         NutsWorkspaceEnvManager env = session.env();
         ReflectRepository o = (ReflectRepository) env.getProperty(ReflectRepository.class.getName()).getObject();
-        if(o==null){
-            o=new DefaultReflectRepository(ReflectConfigurationBuilder.create()
+        if (o == null) {
+            o = new DefaultReflectRepository(ReflectConfigurationBuilder.create()
                     .setPropertyAccessStrategy(ReflectPropertyAccessStrategy.FIELD)
                     .setPropertyDefaultValueStrategy(ReflectPropertyDefaultValueStrategy.PROPERTY_DEFAULT)
                     .build());
-            env.setProperty(ReflectRepository.class.getName(),o);
+            env.setProperty(ReflectRepository.class.getName(), o);
         }
         return o;
     }
@@ -244,7 +254,7 @@ public class NutsWorkspaceUtils {
 
         for (NutsRepository repository : session.repos().setSession(session).getRepositories()) {
             if (repository.isEnabled()
-                    && (fmode==NutsRepositorySupportedAction.SEARCH?repository.isAvailable():repository.isSupportedDeploy())
+                    && (fmode == NutsRepositorySupportedAction.SEARCH ? repository.isAvailable() : repository.isSupportedDeploy())
                     && repoSPI(repository).isAcceptFetchMode(mode, session)
                     && (repositoryFilter == null || repositoryFilter.acceptRepository(repository))) {
                 int t = 0;
@@ -451,11 +461,11 @@ public class NutsWorkspaceUtils {
     }
 
     public InputStream openURL(String o) {
-        return new SimpleHttpClient(o,session).openStream();
+        return new SimpleHttpClient(o, session).openStream();
     }
 
     public InputStream openURL(URL o) {
-        return new SimpleHttpClient(o,session).openStream();
+        return new SimpleHttpClient(o, session).openStream();
     }
 
     //    public static NutsId parseRequiredNutsId0(String nutFormat) {
@@ -519,7 +529,7 @@ public class NutsWorkspaceUtils {
 
     public static class Events {
 
-        private NutsWorkspaceUtils u;
+        private final NutsWorkspaceUtils u;
 
         public Events(NutsWorkspaceUtils u) {
             this.u = u;

@@ -16,9 +16,9 @@ import java.util.*;
 
 public class DefaultNutsTextManager implements NutsTextManager {
 
-    private NutsWorkspace ws;
+    private final NutsWorkspace ws;
     private NutsSession session;
-    private DefaultNutsTextManagerModel shared;
+    private final DefaultNutsTextManagerModel shared;
 
     public DefaultNutsTextManager(NutsWorkspace ws, DefaultNutsTextManagerModel shared) {
         this.ws = ws;
@@ -27,10 +27,6 @@ public class DefaultNutsTextManager implements NutsTextManager {
 
     private void checkSession() {
         NutsWorkspaceUtils.checkSession(ws, getSession());
-    }    @Override
-    public NutsTextBuilder builder() {
-        checkSession();
-        return new DefaultNutsTextNodeBuilder(getSession());
     }
 
     private NutsText _NutsMessage_toString(NutsMessage m) {
@@ -77,9 +73,6 @@ public class DefaultNutsTextManager implements NutsTextManager {
             }
         }
         throw new NutsUnsupportedEnumException(getSession(), style);
-    }    @Override
-    public NutsText parse(String t) {
-        return t == null ? ofBlank() : parser().parse(new StringReader(t));
     }
 
     public NutsText title(NutsText t, int level) {
@@ -89,10 +82,6 @@ public class DefaultNutsTextManager implements NutsTextManager {
         }
         sb.append(")");
         return createTitle(sb.toString(), level, t, true);
-    }    @Override
-    public NutsTextParser parser() {
-        checkSession();
-        return new DefaultNutsTextNodeParser(getSession());
     }
 
     public NutsText fg(String t, int level) {
@@ -102,30 +91,30 @@ public class DefaultNutsTextManager implements NutsTextManager {
     public NutsText fg(NutsText t, int level) {
         NutsTextStyle textStyle = NutsTextStyle.primary(level);
         return createStyled("##:p" + level + ":", "##", t, NutsTextStyles.of(textStyle), true);
-    }    @Override
+    }
+
+    @Override
     public NutsSession getSession() {
         return session;
     }
 
-    public NutsText bg(String t, int level) {
-        return bg(ofPlain(t), level);
-    }    @Override
+    @Override
     public DefaultNutsTextManager setSession(NutsSession session) {
-        this.session = session;
+        this.session = NutsWorkspaceUtils.bindSession(ws, session);
         return this;
     }
 
-    public NutsText bg(NutsText t, int variant) {
-        NutsTextStyle textStyle = NutsTextStyle.primary(variant);
-        return createStyled("##:s" + variant + ":", "##", t, NutsTextStyles.of(textStyle), true);
-    }    @Override
+    @Override
+    public NutsTextBuilder builder() {
+        checkSession();
+        return new DefaultNutsTextNodeBuilder(getSession());
+    }
+
+    @Override
     public NutsText ofBlank() {
         return ofPlain("");
     }
 
-    public NutsText comments(String image) {
-        return fg(image, 4);
-    }
     @Override
     public NutsText toText(Object t) {
         checkSession();
@@ -146,8 +135,8 @@ public class DefaultNutsTextManager implements NutsTextManager {
         }
         if (t instanceof InputStream) {
             String q = NutsInputStreamMetadata.of((InputStream) t).getName();
-            if(q==null){
-                q=t.toString();
+            if (q == null) {
+                q = t.toString();
             }
             return ofStyled(q, NutsTextStyle.path());
         }
@@ -185,88 +174,227 @@ public class DefaultNutsTextManager implements NutsTextManager {
         return ofPlain(t.toString());
     }
 
+    @Override
+    public NutsTextPlain ofPlain(String t) {
+        checkSession();
+        return new DefaultNutsTextPlain(getSession(), t);
+    }
+
+    @Override
+    public NutsTextList ofList(NutsText... nodes) {
+        return ofList(Arrays.asList(nodes));
+    }
+
+    @Override
+    public NutsTextList ofList(Collection<NutsText> nodes) {
+        checkSession();
+        if (nodes == null) {
+            return new DefaultNutsTextList(getSession());
+        }
+        return new DefaultNutsTextList(getSession(), nodes.toArray(new NutsText[0]));
+    }
+
+    @Override
+    public NutsTextStyled ofStyled(String other, NutsTextStyles decorations) {
+        return ofStyled(ofPlain(other), decorations);
+    }
+
+    @Override
+    public NutsTextStyled ofStyled(NutsString other, NutsTextStyles decorations) {
+        checkSession();
+        return ofStyled(other.toText(), decorations);
+    }
+
+    @Override
+    public NutsTextStyled ofStyled(NutsText other, NutsTextStyles styles) {
+        return createStyled(other, styles, true);
+    }
+
+    @Override
+    public NutsTextStyled ofStyled(String other, NutsTextStyle decorations) {
+        return ofStyled(ofPlain(other), decorations);
+    }
+
+    @Override
+    public NutsTextStyled ofStyled(NutsString other, NutsTextStyle decorations) {
+        return ofStyled(other.toText(), decorations);
+    }
+
+    /**
+     * this is the default theme!
+     *
+     * @param other         other
+     * @param textNodeStyle textNodeStyle
+     * @return NutsText
+     */
+    public NutsTextStyled ofStyled(NutsText other, NutsTextStyle textNodeStyle) {
+        return createStyled(other, NutsTextStyles.of(textNodeStyle), true);
+    }
+
+    @Override
+    public NutsTextCommand ofCommand(NutsTerminalCommand command) {
+        checkSession();
+        return new DefaultNutsTextCommand(getSession(), "```!", command, "", "```");
+    }
+
+    @Override
+    public NutsTextCode ofCode(String lang, String text) {
+        checkSession();
+        if (text == null) {
+            text = "";
+        }
+        DefaultNutsTextManager factory0 = (DefaultNutsTextManager) session.text();
+        if (text.indexOf('\n') >= 0) {
+            return factory0.createCode("```",
+                    lang, "\n", "```", text
+            );
+        } else {
+            return factory0.createCode("```",
+                    lang, "", "```", text
+            );
+        }
+    }
+
+    @Override
+    public NutsTextNumbering ofNumbering() {
+        checkSession();
+        return new DefaultNutsTitleNumberSequence("");
+    }
+
+    @Override
+    public NutsTextNumbering ofTitleNumberSequence(String pattern) {
+        checkSession();
+        return new DefaultNutsTitleNumberSequence((pattern == null || pattern.isEmpty()) ? "1.1.1.a.1" : pattern);
+    }
+
+    @Override
+    public NutsTextAnchor ofAnchor(String anchorName) {
+        return createAnchor(
+                "```!",
+                "", "```", anchorName
+        );
+    }
+
+    @Override
+    public NutsTextLink ofLink(NutsText value) {
+        return createLink(
+                "```!",
+                "", "```", value
+        );
+    }
+
+    @Override
+    public NutsTextFormatTheme getTheme() {
+        checkSession();
+        return shared.getTheme(getSession());
+    }
+
+    @Override
+    public NutsTextManager setTheme(NutsTextFormatTheme theme) {
+        checkSession();
+        shared.setTheme(theme, getSession());
+        return this;
+    }
+
+    @Override
+    public NutsTextManager setTheme(String theme) {
+        checkSession();
+        shared.setTheme(theme, getSession());
+        return this;
+    }
+
+    @Override
+    public NutsCodeFormat getCodeFormat(String kind) {
+        checkSession();
+        return shared.getCodeFormat(kind, getSession());
+    }
+
+    @Override
+    public NutsTextManager addCodeFormat(NutsCodeFormat format) {
+        checkSession();
+        shared.addCodeFormat(format, getSession());
+        return this;
+    }
+
+    @Override
+    public NutsTextManager removeCodeFormat(NutsCodeFormat format) {
+        checkSession();
+        shared.removeCodeFormat(format, getSession());
+        return this;
+    }
+
+    @Override
+    public NutsCodeFormat[] getCodeFormats() {
+        checkSession();
+        return shared.getCodeFormats(getSession());
+    }
+
+    @Override
+    public NutsText parse(String t) {
+        return t == null ? ofBlank() : parser().parse(new StringReader(t));
+    }
+
+    @Override
+    public NutsTextParser parser() {
+        checkSession();
+        return new DefaultNutsTextNodeParser(getSession());
+    }
+
+    public NutsText bg(String t, int level) {
+        return bg(ofPlain(t), level);
+    }
+
+    public NutsText bg(NutsText t, int variant) {
+        NutsTextStyle textStyle = NutsTextStyle.primary(variant);
+        return createStyled("##:s" + variant + ":", "##", t, NutsTextStyles.of(textStyle), true);
+    }
+
+    public NutsText comments(String image) {
+        return fg(image, 4);
+    }
+
     public NutsText literal(String image) {
         return fg(image, 1);
     }
 
     public NutsText stringLiteral(String image) {
         return fg(image, 3);
-    }    @Override
-    public NutsTextPlain ofPlain(String t) {
-        checkSession();
-        return new DefaultNutsTextPlain(getSession(), t);
     }
 
     public NutsText numberLiteral(String image) {
         return fg(image, 1);
-    }    @Override
-    public NutsTextList ofList(NutsText... nodes) {
-        return ofList(Arrays.asList(nodes));
     }
 
     public NutsText reservedWord(String image) {
         return fg(image, 1);
-    }    @Override
-    public NutsTextList ofList(Collection<NutsText> nodes) {
-        checkSession();
-        if (nodes == null) {
-            return new DefaultNutsTextList(getSession(), new NutsText[0]);
-        }
-        return new DefaultNutsTextList(getSession(), nodes.toArray(new NutsText[0]));
     }
 
     public NutsText annotation(String image) {
         return fg(image, 3);
-    }    @Override
-    public NutsTextStyled ofStyled(String other, NutsTextStyle decorations) {
-        return ofStyled(ofPlain(other), decorations);
     }
 
     public NutsText separator(String image) {
         return fg(image, 6);
-    }    @Override
-    public NutsTextStyled ofStyled(NutsString other, NutsTextStyle decorations) {
-        return ofStyled(other.toText(), decorations);
     }
 
     public NutsText commandName(String image) {
         return fg(image, 1);
-    }    @Override
-    public NutsTextStyled ofStyled(String other, NutsTextStyles decorations) {
-        return ofStyled(ofPlain(other), decorations);
     }
 
     public NutsText subCommand1Name(String image) {
         return fg(image, 2);
-    }    @Override
-    public NutsTextStyled ofStyled(NutsString other, NutsTextStyles decorations) {
-        checkSession();
-        return ofStyled(other.toText(), decorations);
     }
 
     public NutsText subCommand2Name(String image) {
         return fg(image, 3);
-    }    @Override
-    public NutsTextStyled ofStyled(NutsText other, NutsTextStyles styles) {
-        return createStyled(other, styles, true);
     }
 
     public NutsText optionName(String image) {
         return fg(image, 4);
-    }    @Override
-    public NutsTextCommand ofCommand(NutsTerminalCommand command) {
-        checkSession();
-        return new DefaultNutsTextCommand(getSession(), "```!", command, "", "```");
     }
 
     public NutsText userInput(String image) {
         return fg(image, 8);
-    }    @Override
-    public NutsTextAnchor ofAnchor(String anchorName) {
-        return createAnchor(
-                "```!",
-                "", "```", anchorName
-        );
     }
 
     public NutsCodeFormat resolveBlocTextFormatter(String kind) {
@@ -287,7 +415,7 @@ public class DefaultNutsTextManager implements NutsTextManager {
                 }
                 if (x < cc.length()) {
                     NutsTextStyle found = NutsTextStyle.of(NutsTextStyleType.valueOf(expandAlias(kind.toUpperCase().substring(0, x))),
-                            CoreNumberUtils.convertToInteger(kind.substring(x),0)
+                            CoreNumberUtils.convertToInteger(kind.substring(x), 0)
                     );
                     return new CustomStyleBlocTextFormatter(found, session);
                 } else {
@@ -299,12 +427,6 @@ public class DefaultNutsTextManager implements NutsTextManager {
             }
         }
         return getCodeFormat("plain");
-    }    @Override
-    public NutsTextLink ofLink(NutsText value) {
-        return createLink(
-                "```!",
-                "", "```", value
-        );
     }
 
     private String expandAlias(String ss) {
@@ -319,22 +441,6 @@ public class DefaultNutsTextManager implements NutsTextManager {
             }
         }
         return ss;
-    }    @Override
-    public NutsTextCode ofCode(String lang, String text) {
-        checkSession();
-        if (text == null) {
-            text = "";
-        }
-        DefaultNutsTextManager factory0 = (DefaultNutsTextManager) session.text();
-        if (text.indexOf('\n') >= 0) {
-            return factory0.createCode("```",
-                    lang, "\n", "```", text
-            );
-        } else {
-            return factory0.createCode("```",
-                    lang, "", "```", text
-            );
-        }
     }
 
     public NutsTextStyled createStyled(NutsText child, NutsTextStyles textStyles, boolean completed) {
@@ -430,113 +536,6 @@ public class DefaultNutsTextManager implements NutsTextManager {
     public NutsText createTitle(String start, int level, NutsText child, boolean complete) {
         checkSession();
         return new DefaultNutsTextTitle(getSession(), start, level, child);
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    /**
-     * this is the default theme!
-     *
-     * @param other         other
-     * @param textNodeStyle textNodeStyle
-     * @return NutsText
-     */
-    public NutsTextStyled ofStyled(NutsText other, NutsTextStyle textNodeStyle) {
-        return createStyled(other, NutsTextStyles.of(textNodeStyle), true);
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    @Override
-    public NutsTextNumbering ofNumbering() {
-        checkSession();
-        return new DefaultNutsTitleNumberSequence("");
-    }
-
-    @Override
-    public NutsTextNumbering ofTitleNumberSequence(String pattern) {
-        checkSession();
-        return new DefaultNutsTitleNumberSequence((pattern == null || pattern.isEmpty()) ? "1.1.1.a.1" : pattern);
-    }
-
-    @Override
-    public NutsTextFormatTheme getTheme() {
-        checkSession();
-        return shared.getTheme(getSession());
-    }
-
-    @Override
-    public NutsTextManager setTheme(NutsTextFormatTheme theme) {
-        checkSession();
-        shared.setTheme(theme, getSession());
-        return this;
-    }
-
-    @Override
-    public NutsTextManager setTheme(String theme) {
-        checkSession();
-        shared.setTheme(theme, getSession());
-        return this;
-    }
-
-    @Override
-    public NutsCodeFormat getCodeFormat(String kind) {
-        checkSession();
-        return shared.getCodeFormat(kind, getSession());
-    }
-
-    @Override
-    public NutsTextManager addCodeFormat(NutsCodeFormat format) {
-        checkSession();
-        shared.addCodeFormat(format, getSession());
-        return this;
-    }
-
-    @Override
-    public NutsTextManager removeCodeFormat(NutsCodeFormat format) {
-        checkSession();
-        shared.removeCodeFormat(format, getSession());
-        return this;
-    }
-
-    @Override
-    public NutsCodeFormat[] getCodeFormats() {
-        checkSession();
-        return shared.getCodeFormats(getSession());
     }
 
 }

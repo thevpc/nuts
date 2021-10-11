@@ -305,7 +305,7 @@ public class JShell {
 //        return new DefaultJShellContext(parentContext);
 //    }
     public JShellContext createContext(JShellContext ctx, String serviceName, String[] args) {
-        return createContext((JShellContext) ctx, null, null, null,serviceName,args);
+        return createContext(ctx, null, null, null,serviceName,args);
     }
 
     public JShellCommandNode createCommandNode(String[] args) {
@@ -575,7 +575,7 @@ public class JShell {
         out.resetLine().println(appContext.getSession().text().builder()
                 .appendCode("sh", "nuts")
                 .append(" shell ")
-                .append("v" + getWorkspace().getRuntimeId().getVersion().toString(), NutsTextStyle.version())
+                .append("v" + getRootContext().getWorkspace().getRuntimeId().getVersion().toString(), NutsTextStyle.version())
                 .append(" (c) thevpc 2020"));
     }
 
@@ -1140,24 +1140,8 @@ public class JShell {
         return getRootContext();
     }
 
-    public JShellContext getNutsShellContext() {
-        return  (JShellContext) appContext.getSession().env().getProperty(JShellContext.class.getName()).getObject();
-    }
-
     public NutsSession getSession() {
-        return getNutsShellContext().getSession();
-    }
-
-    public void setSession(NutsSession session) {
-        getNutsShellContext().setSession(session);
-    }
-
-    public NutsWorkspace getWorkspace() {
-        return this.appContext.getWorkspace();
-    }
-
-    public void setWorkspace(NutsWorkspace workspace) {
-        getRootNutsShellContext().setWorkspace(workspace);
+        return getRootContext().getSession();
     }
 
     public JShellContext createContext(JShellContext ctx, JShellNode root, JShellNode parent, JShellVariables env,String serviceName, String[] args) {

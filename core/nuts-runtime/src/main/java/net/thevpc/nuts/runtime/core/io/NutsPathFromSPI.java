@@ -97,7 +97,7 @@ public class NutsPathFromSPI extends NutsPathBase {
 
     @Override
     public Path toFile() {
-        return base.toFilePath();
+        return base.toFile();
     }
 
     @Override
@@ -148,13 +148,15 @@ public class NutsPathFromSPI extends NutsPathBase {
     }
 
     @Override
-    public void delete(boolean recurse) {
+    public NutsPath delete(boolean recurse) {
         base.delete(recurse);
+        return this;
     }
 
     @Override
-    public void mkdir(boolean parents) {
+    public NutsPath mkdir(boolean parents) {
         base.mkdir(parents);
+        return this;
     }
 
     @Override
