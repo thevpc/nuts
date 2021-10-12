@@ -1,20 +1,19 @@
 package net.thevpc.nuts.core.test.bundles.mvn;
 
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.runtime.standalone.bridges.maven.LuceneIndexImporter;
 import net.thevpc.nuts.runtime.standalone.index.ArtifactsIndexDB;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class LuceneFileImporter {
+public class TestLuceneFileImporter {
     @Test
     public void test() {
-        NutsSession session = TestUtils.openNewTestWorkspace("-ZyKk", "-w", "temp/test");
+        NutsSession session = TestUtils.openNewTestWorkspace("-ZyKk");
         LuceneIndexImporter lii = new LuceneIndexImporter(session);
         long count = lii.importGzURL(
-                LuceneFileImporter.class.getResource(
+                TestLuceneFileImporter.class.getResource(
                         "/net/thevpc/nuts/core/test/nexus-maven-repository-index.359.gz"
                 ), "maven-central", session
         );

@@ -264,9 +264,6 @@ public class Test10_ElementPath {
             ss.setValue(filtered1).println();
             NutsString sexpected = NutsString.plain(tt.expected.get(0), e.getSession());
             NutsString sresult = ss.format();
-            if(!sexpected.equals(sresult)){
-                System.out.println("why");
-            }
             Assertions.assertEquals(sexpected, sresult);
         }
     }

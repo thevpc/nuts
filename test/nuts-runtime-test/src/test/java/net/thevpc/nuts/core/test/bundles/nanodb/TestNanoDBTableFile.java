@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 
-public class NanoDBTableFileTest {
+public class TestNanoDBTableFile {
     @Test
     public void test1(){
         for (String s : new String[]{"", "a", "ab", "abc"}) {
@@ -16,7 +16,7 @@ public class NanoDBTableFileTest {
         }
         System.out.println("getUTFLength(\"Hammadi\")="+ NanoDBTableFile.getUTFLength("Hammadi"));
         NanoDB db=new NanoDB(TestUtils.initFolder(".test-bd").toFile());
-        NanoDBTableFile<Person> test=db.createTable(db.createBeanDefinition(Person.class,false,"id"));
+        NanoDBTableFile<Person> test=db.tableBuilder(Person.class).setNullable(false).addAllFields().addIndices("id").create();
         test.add(new Person(1,"Hammadi"));
         test.add(new Person(2,"Hammadi"));
         test.add(new Person(1,"Hammadi"));
@@ -36,7 +36,7 @@ public class NanoDBTableFileTest {
         long from = System.currentTimeMillis();
         CoreIOUtils.delete(null,dir);
         try(NanoDB db=new NanoDB(dir)) {
-            NanoDBTableFile<Person> test=db.createTable(db.createBeanDefinition(Person.class,false,"id"));
+            NanoDBTableFile<Person> test=db.tableBuilder(Person.class).setNullable(false).addIndices("id").create();
             int c = 1000;
             for (int i = 0; i < c * 10; i++) {
                 test.add(new Person(i % 10, "Hammadi"));

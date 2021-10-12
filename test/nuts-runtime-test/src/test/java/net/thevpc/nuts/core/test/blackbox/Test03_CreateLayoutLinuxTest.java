@@ -62,7 +62,9 @@ public class Test03_CreateLayoutLinuxTest {
                         "info"
                 ));
 
-        NutsId ndiId = s.search().setInstallStatus(s.filters().installStatus().byInstalled(true)).addId("nsh").getResultIds().singleton();
+        NutsId ndiId = s.search().setInstallStatus(s.filters().installStatus().byInstalled(true)).addId("nsh")
+                .setDistinct(true)
+                .getResultIds().singleton();
         Assertions.assertTrue(ndiId.getVersion().getValue().startsWith(TestUtils.NUTS_VERSION + "."));
 
         Assertions.assertEquals(
@@ -148,7 +150,8 @@ public class Test03_CreateLayoutLinuxTest {
                 //            "--verbose",
                 "--trace",
                 "info"));
-        NutsId ndiId = s2.search().setInstallStatus(s2.filters().installStatus().byInstalled(true)).addId("nsh").getResultIds().singleton();
+        NutsId ndiId = s2.search().setInstallStatus(s2.filters().installStatus().byInstalled(true)).addId("nsh")
+                .setDistinct(true).getResultIds().singleton();
         Assertions.assertTrue(ndiId.getVersion().getValue().startsWith(TestUtils.NUTS_VERSION + "."));
 
         Assertions.assertEquals(
@@ -183,12 +186,14 @@ public class Test03_CreateLayoutLinuxTest {
 //        Assumptions.assumeTrue(NutsOsFamily.getCurrent() == NutsOsFamily.LINUX);
         TestUtils.println("Deleting " + base);
         CoreIOUtils.delete(null, base);
-        NutsSession s = TestUtils.openNewTestWorkspace("--reset", "-b", "--debug", "--workspace", base.getPath(), "--standalone", "info");
+        NutsSession s = TestUtils.openNewTestWorkspace("--embedded");
         NutsId nshId = null;
         try {
-            nshId = s.search().setInstallStatus(s.filters().installStatus().byInstalled(true)).addId("nsh").getResultIds().singleton();
+            nshId = s.search().setInstallStatus(s.filters().installStatus().byInstalled(true)).addId("nsh")
+                    .setDistinct(true).getResultIds().singleton();
         } catch (Exception ex) {
-            nshId = s.search().setInstallStatus(s.filters().installStatus().byInstalled(true)).addId("nsh").getResultIds().singleton();
+            nshId = s.search().setInstallStatus(s.filters().installStatus().byInstalled(true)).addId("nsh")
+                    .setDistinct(true).getResultIds().singleton();
         }
         Assertions.assertTrue(nshId.getVersion().getValue().startsWith(TestUtils.NUTS_VERSION + "."));
         String c = s.locations().getStoreLocation(NutsStoreLocation.CONFIG);

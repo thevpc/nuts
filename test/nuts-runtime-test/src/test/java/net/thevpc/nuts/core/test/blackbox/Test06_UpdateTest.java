@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 /**
  * @author thevpc
  */
-public class Test06_UpateTest {
+public class Test06_UpdateTest {
 
     private static String baseFolder;
 
@@ -93,7 +93,7 @@ public class Test06_UpateTest {
         NutsVersion apiv2 = implOnly ? apiv1 : apiv1.inc(-1, 10);
         FromTo fromToAPI = new FromTo(apiv1.toString(), apiv2.toString());
 
-        NutsVersion rtv2 = rt.getId().getVersion().inc(-1, 10);
+        NutsVersion rtv2 = rt.getId().getVersion().inc(-2, 10);
         FromTo fromToImpl = new FromTo(rt.getId().getVersion().toString(), rtv2.toString());
 
         if (!fromToAPI.isIdentity()) {
@@ -153,7 +153,7 @@ public class Test06_UpateTest {
         for (NutsUpdateResult u : foundUpdates.getResult().getAllUpdates()) {
             TestUtils.println(u.getAvailable());
         }
-        Assertions.assertEquals(implOnly ? 1 : 2, foundUpdates.getResultCount());
+        Assertions.assertEquals(implOnly ? 1 : 2, foundUpdates.getResultCount(),"checkUpdates result count is incorrect");
         foundUpdates.update();
 
         final String newApiVersion = foundUpdates.getResult().getApi().getAvailable().getId().getVersion().toString();
@@ -187,8 +187,8 @@ public class Test06_UpateTest {
                 "--bot",
                 "--color=never",
                 "--skip-companions",
-                "--version",
-                "--json"
+                "--json",
+                "version"
         );
         TestUtils.println(uws.commandLine().create(b.createProcessCommandLine()).toString());
 
