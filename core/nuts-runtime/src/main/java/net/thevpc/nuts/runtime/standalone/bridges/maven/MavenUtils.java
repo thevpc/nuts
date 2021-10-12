@@ -26,6 +26,7 @@ package net.thevpc.nuts.runtime.standalone.bridges.maven;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.common.MapToFunction;
 import net.thevpc.nuts.runtime.bundles.iter.IteratorBuilder;
+import net.thevpc.nuts.runtime.bundles.iter.IteratorUtils;
 import net.thevpc.nuts.runtime.bundles.mvn.*;
 import net.thevpc.nuts.runtime.bundles.parsers.StringTokenizerUtils;
 import net.thevpc.nuts.runtime.core.filters.CoreFilterUtils;
@@ -506,7 +507,7 @@ public class MavenUtils {
                 return filter.acceptId(toNutsId(id), session);
             }
         }, autoClose);
-        return IteratorBuilder.of(it).convert(pomId -> toNutsId(pomId), "PomId->NutsId").build();
+        return IteratorBuilder.of(it).map(IteratorUtils.namedFunction(this::toNutsId, "PomId->NutsId")).build();
     }
 
     public MavenMetadata parseMavenMetaData(InputStream metadataStream, NutsSession session) {
