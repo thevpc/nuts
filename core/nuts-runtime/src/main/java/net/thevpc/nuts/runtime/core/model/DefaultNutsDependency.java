@@ -173,12 +173,22 @@ public class DefaultNutsDependency implements NutsDependency {
 
     @Override
     public String getLongName() {
-        String s = getSimpleName();
-        NutsVersion v = getVersion();
-        if (v.isBlank()) {
-            return s;
+        StringBuilder sb=new StringBuilder();
+        if (!NutsBlankable.isBlank(groupId)) {
+            sb.append(groupId).append(":");
         }
-        return s + "#" + v;
+        sb.append(NutsUtilStrings.trim(artifactId));
+        NutsVersion v = getVersion();
+        if (!v.isBlank()) {
+            sb.append("#");
+            sb.append(v);
+        }
+        if(!NutsBlankable.isBlank(classifier)){
+            sb.append("?");
+            sb.append("classifier=");
+            sb.append(classifier);
+        }
+        return sb.toString();
     }
 
     @Override

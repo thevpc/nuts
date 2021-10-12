@@ -155,6 +155,7 @@ public class DefaultNutsRepositoryModel {
         session.security().setSession(session).checkAllowed(NutsConstants.Permissions.REMOVE_REPOSITORY, "remove-repository");
         final NutsRepository repository = repositoryRegistryHelper.removeRepository(repositoryId);
         if (repository != null) {
+            session.config().save();
             NutsWorkspaceConfigManagerExt config = NutsWorkspaceConfigManagerExt.of(session.config());
             config.getModel().fireConfigurationChanged("config-main", session, ConfigEventType.MAIN);
             NutsWorkspaceUtils.of(session).events().fireOnRemoveRepository(new DefaultNutsWorkspaceEvent(session, repository, "repository", repository, null));
@@ -169,6 +170,7 @@ public class DefaultNutsRepositoryModel {
 
     protected void addRepository(NutsRepository repo, NutsSession session, boolean temp) {
         repositoryRegistryHelper.addRepository(repo, session);
+        session.config().save();
         if (!temp) {
             NutsWorkspaceConfigManagerExt config = NutsWorkspaceConfigManagerExt.of(session.config());
             config.getModel().fireConfigurationChanged("config-main", session, ConfigEventType.MAIN);

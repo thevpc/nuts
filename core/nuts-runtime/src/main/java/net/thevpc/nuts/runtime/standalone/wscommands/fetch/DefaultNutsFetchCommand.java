@@ -177,7 +177,10 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(_ws);
         NutsFetchStrategy nutsFetchModes = NutsWorkspaceHelper.validate(_ws.getFetchStrategy());
         NutsRepositoryFilter repositoryFilter = this.getRepositoryFilter();
-
+        if(!NutsBlankable.isBlank(id.getRepository())){
+            NutsRepositoryFilter repositoryFilter2=_ws.filters().repository().byName(id.getRepository());
+            repositoryFilter=repositoryFilter2.and(repositoryFilter);
+        }
         NutsRepositoryAndFetchModeTracker descTracker = new NutsRepositoryAndFetchModeTracker(
                 wu.filterRepositoryAndFetchModes(NutsRepositorySupportedAction.SEARCH, id, repositoryFilter,
                         nutsFetchModes, session)

@@ -339,7 +339,7 @@ public class DefaultNutsId implements NutsId {
             sb.append("#");
             sb.append(v);
         }
-        if(NutsBlankable.isBlank(classifier)){
+        if(!NutsBlankable.isBlank(classifier)){
             sb.append("?");
             sb.append("classifier=");
             sb.append(classifier);

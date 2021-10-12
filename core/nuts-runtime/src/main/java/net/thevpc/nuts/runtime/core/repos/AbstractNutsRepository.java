@@ -55,7 +55,7 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
     protected boolean enabled = true;
     protected DefaultNutsRepositoryEnvModel envModel;
     protected NutsSession initSession;
-    protected CachedValue<Boolean> available = new CachedValue<>(() -> isAvailableImpl(), 30);
+    protected CachedValue<Boolean> available = new CachedValue<>(() -> isAvailableImpl(), 0);
     protected CachedValue<Boolean> supportedDeploy = new CachedValue<>(() -> isSupportedDeployImpl(), 0);
 
     public AbstractNutsRepository() {

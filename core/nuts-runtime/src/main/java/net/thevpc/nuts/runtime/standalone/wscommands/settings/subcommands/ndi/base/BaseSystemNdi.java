@@ -401,7 +401,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     }
 
     private NutsDefinition loadIdDefinition(NutsId nid) {
-        return session.search().addId(nid).setLatest(true).setEffective(true).getResultDefinitions().singleton();
+        return session.search().addId(nid).setLatest(true).setEffective(true).setDistinct(true).getResultDefinitions().singleton();
     }
 
     public NutsSupportMode getDesktopIntegrationSupport(NutsDesktopIntegrationItem target) {
@@ -706,7 +706,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     }
 
     public String getPreferredIconPath(NutsId appId) {
-        NutsDefinition appDef = session.search().addId(appId).setLatest(true).setEffective(true).getResultDefinitions().singleton();
+        NutsDefinition appDef = session.search().addId(appId).setLatest(true).setEffective(true).setDistinct(true).getResultDefinitions().singleton();
         String descAppIcon = resolveBestIcon(appDef.getDescriptor().getIcons());
         if (descAppIcon == null) {
             if (isNutsBootId(appDef.getId())
@@ -760,7 +760,9 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         NutsDefinition appDef = options.getSession().search()
                 .addId(options.getId())
                 .setLatest(true)
-                .setEffective(true).getResultDefinitions().singleton();
+                .setEffective(true)
+                .setDistinct(true)
+                .getResultDefinitions().singleton();
 
         String fileName = options.getLauncher().getCustomScriptPath();
         fileName = resolveShortcutFileName(appDef.getId(), appDef.getDescriptor(), fileName, null);
@@ -773,7 +775,9 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing nuts-api version to link to"));
         }
         NutsId apiId = session.getWorkspace().getApiId().builder().setVersion(apiVersion).build();
-        NutsDefinition apiDefinition = session.search().addId(apiId).setFailFast(true).setLatest(true).setContent(true).getResultDefinitions().singleton();
+        NutsDefinition apiDefinition = session.search().addId(apiId).setFailFast(true).setLatest(true).setContent(true)
+                .setDistinct(true)
+                .getResultDefinitions().singleton();
 
         NutsId appId = options.getSession().id().parser().parse(options.getId());
         NutsDefinition appDef = loadIdDefinition(appId);

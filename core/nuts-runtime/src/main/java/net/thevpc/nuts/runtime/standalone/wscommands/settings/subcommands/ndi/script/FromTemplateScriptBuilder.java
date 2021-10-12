@@ -100,7 +100,9 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
     public String buildString() {
         try {
             //Path script = getScriptFile(name);
-            NutsDefinition anyIdDef = getSession().search().addId(getAnyId()).setLatest(true).getResultDefinitions().singleton();
+            NutsDefinition anyIdDef = getSession().search().addId(getAnyId()).setLatest(true)
+                    .setDistinct(true)
+                    .getResultDefinitions().singleton();
             NutsId anyId = anyIdDef.getId();
             StringWriter bos = new StringWriter();
             try (BufferedWriter w = new BufferedWriter(bos)) {

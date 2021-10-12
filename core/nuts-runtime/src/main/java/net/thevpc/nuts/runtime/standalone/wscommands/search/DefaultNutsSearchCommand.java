@@ -567,7 +567,6 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                     }
                     List<Iterator<? extends NutsId>> toConcat = new ArrayList<>();
                     for (NutsId nutsId1 : nutsId2) {
-                        List<Iterator<? extends NutsId>> idLookup = new ArrayList<>();
                         NutsIdFilter idFilter2 = session.filters().all(sIdFilter,
                                 session.id().filter().byName(nutsId1.getFullName())
                         );
@@ -576,21 +575,29 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                         List<NutsRepositoryAndFetchMode> repositoryAndFetchModes = wu.filterRepositoryAndFetchModes(
                                 NutsRepositorySupportedAction.SEARCH, nutsId1, sRepositoryFilter, fetchMode, session
                         );
-                        for (NutsRepositoryAndFetchMode repoAndMode : repositoryAndFetchModes) {
-                            consideredRepos.add(repoAndMode.getRepository());
-                            NutsRepositorySPI repoSPI = wu.repoSPI(repoAndMode.getRepository());
-                            idLookup.add(IteratorBuilder.ofLazyNamed("searchVersions("
-                                    + repoAndMode.getRepository().getName() + ","
-                                    + repoAndMode.getFetchMode() + "," + sRepositoryFilter + "," + session + ")",
-                                    () -> repoSPI.searchVersions().setId(nutsId1).setFilter(filter)
-                                            .setSession(session)
-                                            .setFetchMode(repoAndMode.getFetchMode())
-                                            .getResult()).safeIgnore().iterator()
-                            );
+
+                        List<Iterator<? extends NutsId>> idLocal = new ArrayList<>();
+                        List<Iterator<? extends NutsId>> idRemote = new ArrayList<>();
+                        for (NutsFetchMode fm : new NutsFetchMode[]{NutsFetchMode.LOCAL, NutsFetchMode.REMOTE}) {
+                            List<Iterator<? extends NutsId>> idLookup=fm==NutsFetchMode.LOCAL?idLocal:idRemote;
+                            for (NutsRepositoryAndFetchMode repoAndMode : repositoryAndFetchModes) {
+                                if(repoAndMode.getFetchMode()==fm) {
+                                    consideredRepos.add(repoAndMode.getRepository());
+                                    NutsRepositorySPI repoSPI = wu.repoSPI(repoAndMode.getRepository());
+                                    idLookup.add(IteratorBuilder.ofLazyNamed("searchVersions("
+                                                    + repoAndMode.getRepository().getName() + ","
+                                                    + repoAndMode.getFetchMode() + "," + sRepositoryFilter + "," + session + ")",
+                                            () -> repoSPI.searchVersions().setId(nutsId1).setFilter(filter)
+                                                    .setSession(session)
+                                                    .setFetchMode(repoAndMode.getFetchMode())
+                                                    .getResult()).safeIgnore().iterator()
+                                    );
+                                }
+                            }
                         }
                         toConcat.add(fetchMode.isStopFast()
-                                ? IteratorUtils.coalesce(idLookup)
-                                : IteratorUtils.concat(idLookup)
+                                ? IteratorUtils.coalesce(IteratorUtils.concat(idLocal),IteratorUtils.concat(idRemote))
+                                : IteratorUtils.concatLists(idLocal,idRemote)
                         );
                     }
                     if (nutsId.getGroupId() == null) {
@@ -605,10 +612,8 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                         );
                         Iterator<NutsId> extraResult = search2.getResultIds().iterator();
                         allResults.add(IteratorUtils.coalesce(
-                                Arrays.asList(
-                                        IteratorUtils.concat(toConcat),
-                                        extraResult
-                                )
+                                IteratorUtils.concat(toConcat),
+                                extraResult
                         ));
                     } else {
                         allResults.add(IteratorUtils.concat(toConcat));
@@ -651,6 +656,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                         .toString()).iterator();
             } else if (isLatest() && isDistinct()) {
                 Iterator<NutsId> curr = baseIterator;
+                String fromName=curr.toString();
                 baseIterator = IteratorUtils.supplier(() -> {
                     Map<String, NutsId> visited = new LinkedHashMap<>();
                     while (curr.hasNext()) {
@@ -662,9 +668,10 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                         }
                     }
                     return visited.values().iterator();
-                }, "latestAndDistinct");
+                }, "latestAndDistinct("+fromName+")");
             } else if (isLatest() && !isDistinct()) {
                 Iterator<NutsId> curr = baseIterator;
+                String fromName=curr.toString();
                 baseIterator = IteratorUtils.supplier(() -> {
                     Map<String, List<NutsId>> visited = new LinkedHashMap<>();
                     while (curr.hasNext()) {
@@ -678,18 +685,18 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                             oldList.add(nutsId);
                         }
                     }
-                    return IteratorUtils.name("latestAndDuplicate", IteratorUtils.flatCollection((Iterator) visited.values().iterator()));
-                }, "latestAndDuplicate");
+                    Iterator from = IteratorUtils.flatCollection((Iterator) visited.values().iterator());
+                    return IteratorUtils.name("latestAndDuplicate("+fromName+")", from);
+                });
             }
 
             //now include dependencies
             Iterator<NutsId> curr = baseIterator;
             baseIterator = IteratorUtils.flatMap(curr,
-                    x -> {
-                        return IteratorUtils.map(
-                                toFetch().setId(x).setContent(false).setDependencies(true).getResultDefinition().getDependencies().mergedDependencies().iterator(),
-                                y -> y.toId(), "dependencyToId");
-                    });
+                    x -> IteratorUtils.map(
+                            toFetch().setId(x).setContent(false).setDependencies(true).getResultDefinition().getDependencies().mergedDependencies().iterator(),
+                            IteratorUtils.namedFunction(NutsDependency::toId, "DependencyToId")
+                    ));
         }
 
         if (!isLatest() && !isDistinct()) {
@@ -699,6 +706,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                     .toString()).iterator();
         } else if (isLatest() && isDistinct()) {
             Iterator<NutsId> curr = baseIterator;
+            String fromName=curr.toString();
             baseIterator = IteratorUtils.supplier(() -> {
                 Map<String, NutsId> visited = new LinkedHashMap<>();
                 while (curr.hasNext()) {
@@ -710,9 +718,10 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                     }
                 }
                 return visited.values().iterator();
-            }, "latestAndDistinct");
+            }, "LatestAndDistinct("+fromName+")");
         } else if (isLatest() && !isDistinct()) {
             Iterator<NutsId> curr = baseIterator;
+            String fromName=curr.toString();
             baseIterator = IteratorUtils.supplier(() -> {
                 Map<String, List<NutsId>> visited = new LinkedHashMap<>();
                 while (curr.hasNext()) {
@@ -726,8 +735,8 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                         oldList.add(nutsId);
                     }
                 }
-                return IteratorUtils.name("latestAndDuplicate", IteratorUtils.flatCollection((Iterator) visited.values().iterator()));
-            }, "latestAndDuplicate");
+                return IteratorUtils.flatCollection((Iterator) visited.values().iterator());
+            }, "LatestAndDuplicate("+fromName+")");
         }
 
         if (isSorted()) {

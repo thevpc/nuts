@@ -57,7 +57,7 @@ public abstract class AbstractScriptBuilder implements ScriptBuilder {
 
     public PathInfo build() {
         //Path script = getScriptFile(name);
-        NutsDefinition anyIdDef = session.search().addId(anyId).setLatest(true).getResultDefinitions().singleton();
+        NutsDefinition anyIdDef = session.search().addId(anyId).setLatest(true).setDistinct(true).getResultDefinitions().singleton();
         NutsId anyId = anyIdDef.getId();
         String path = NameBuilder.id(anyId,
                 this.path,"%n", anyIdDef.getDescriptor(),session).buildName();

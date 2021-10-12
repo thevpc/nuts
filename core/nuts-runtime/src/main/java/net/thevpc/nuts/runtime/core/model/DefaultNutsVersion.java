@@ -300,10 +300,10 @@ public class DefaultNutsVersion /*extends DefaultNutsTokenFilter*/ implements Nu
         int digitCount = parts.getDigitCount();
         if (digitCount == 0) {
             parts.addDigit(BigInteger.ZERO, ".");
+            digitCount = parts.getDigitCount();
         }
-        digitCount = parts.getDigitCount();
         if (level < 0) {
-            level = digitCount-1;
+            level = digitCount+level;
             while(level<0){
                 parts.addDigit(BigInteger.ZERO, ".");
                 level++;

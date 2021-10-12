@@ -29,8 +29,8 @@ import java.util.stream.Collectors;
  */
 public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
 
-    private Comparator<NutsId> LATEST_VERSION_FIRST = (x, y) -> -x.getVersion().compareTo(y.getVersion());
-    private Comparator<NutsId> DEFAULT_THEN_LATEST_VERSION_FIRST = (x, y) -> {
+    private final Comparator<NutsId> LATEST_VERSION_FIRST = (x, y) -> -x.getVersion().compareTo(y.getVersion());
+    private final Comparator<NutsId> DEFAULT_THEN_LATEST_VERSION_FIRST = (x, y) -> {
         NutsInstalledRepository rr = NutsWorkspaceExt.of(ws).getInstalledRepository();
         int xi = rr.isDefaultVersion(x, session) ? 0 : 1;
         int yi = rr.isDefaultVersion(y, session) ? 0 : 1;
@@ -97,7 +97,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         }
         checkSession();
         NutsSession ws = getSession();
-        Instant now = expireTime==null?Instant.now():expireTime;
+        Instant now = expireTime == null ? Instant.now() : expireTime;
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
 //        NutsWorkspaceCurrentConfig actualBootConfig = ws.config().current();
 //        NutsWorkspaceCurrentConfig jsonBootConfig = getConfigManager().getBootContext();
@@ -108,10 +108,10 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         NutsUpdateResult apiUpdate = null;
         NutsVersion bootVersion0 = ws.getWorkspace().getApiVersion();
         NutsVersion bootVersion = bootVersion0;
-        if (!(this.getApiVersion()==null || this.getApiVersion().isBlank())) {
+        if (!(this.getApiVersion() == null || this.getApiVersion().isBlank())) {
             bootVersion = this.getApiVersion();
         }
-        if (this.isApi() || !(this.getApiVersion()==null || this.getApiVersion().isBlank())) {
+        if (this.isApi() || !(this.getApiVersion() == null || this.getApiVersion().isBlank())) {
             apiUpdate = checkCoreUpdate(ws.id().parser().parse(NutsConstants.Ids.NUTS_API), this.getApiVersion(), session, Type.API, now);
             if (apiUpdate.isUpdateAvailable()) {
                 bootVersion = apiUpdate.getAvailable().getId().getVersion();
@@ -135,24 +135,26 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
 
         if (this.isExtensions()) {
             for (NutsId d : getExtensionsToUpdate()) {
-                NutsUpdateResult updated = checkRegularUpdate(d, Type.EXTENSION, bootVersion,now,expireTime!=null);
-//                NutsUpdateResult updated = checkCoreUpdate(d, bootVersion, session, "extension", now);
-                allUpdates.put(updated.getId().getShortName(), updated);
-                extUpdates.put(updated.getId().getShortName(), updated);
+                NutsUpdateResult updated = checkRegularUpdate(d, Type.EXTENSION, bootVersion, now, expireTime != null);
+                if (updated.isUpdateAvailable()) {
+                    allUpdates.put(updated.getId().getShortName(), updated);
+                    extUpdates.put(updated.getId().getShortName(), updated);
+                }
             }
         }
 
         if (this.isCompanions()) {
             for (NutsId d : getCompanionsToUpdate()) {
-                NutsUpdateResult updated = checkRegularUpdate(d, Type.COMPANION, bootVersion,now,expireTime!=null);
-                //NutsUpdateResult updated = checkCoreUpdate(ext, bootVersion, session, "companion", now);
-                allUpdates.put(updated.getId().getShortName(), updated);
-                regularUpdates.put(updated.getId().getShortName(), updated);
+                NutsUpdateResult updated = checkRegularUpdate(d, Type.COMPANION, bootVersion, now, expireTime != null);
+                if (updated.isUpdateAvailable()) {
+                    allUpdates.put(updated.getId().getShortName(), updated);
+                    regularUpdates.put(updated.getId().getShortName(), updated);
+                }
             }
         }
 
         for (NutsId id : this.getRegularIds()) {
-            NutsUpdateResult updated = checkRegularUpdate(id, Type.REGULAR, null,now,expireTime!=null);
+            NutsUpdateResult updated = checkRegularUpdate(id, Type.REGULAR, null, now, expireTime != null);
             allUpdates.put(updated.getAvailable().getId().getShortName(), updated);
             regularUpdates.put(updated.getId().getShortName(), updated);
         }
@@ -165,7 +167,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                     //FIX ME
                     if (!dd.getVersion().filter().acceptVersion(updated.getId().getVersion(), session)) {
                         throw new NutsIllegalArgumentException(getSession(),
-                                NutsMessage.cstyle("%s unsatisfied  : %s",dd, updated.getId().getVersion())
+                                NutsMessage.cstyle("%s unsatisfied  : %s", dd, updated.getId().getVersion())
                         );
                     }
                 }
@@ -345,12 +347,12 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         return se;
     }
 
-    protected NutsUpdateResult checkRegularUpdate(NutsId id, Type type, NutsVersion targetApiVersion, Instant now,boolean updateEvenIfExisting) {
+    protected NutsUpdateResult checkRegularUpdate(NutsId id, Type type, NutsVersion targetApiVersion, Instant now, boolean updateEvenIfExisting) {
         checkSession();
         NutsWorkspace ws = getSession().getWorkspace();
         NutsSession session = getSession();
         NutsVersion version = id.getVersion();
-        if(!updateEvenIfExisting && version.isSingleValue()){
+        if (!updateEvenIfExisting && version.isSingleValue()) {
             updateEvenIfExisting = session.getTerminal().ask()
                     .resetLine()
                     .setDefaultValue(true).setSession(session)
@@ -375,7 +377,8 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
 //            }
 //        }
         if (d0 == null) {
-            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("%s is not yet installed for it to be updated.",id));
+            return r;
+            //throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("%s is not yet installed for it to be updated.",id));
         }
         if (!d0.getInstallInformation().isDefaultVersion()) {
             shouldUpdateDefault = true;
@@ -483,11 +486,13 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
             wcfg.getModel().prepareBootApi(finalApiId, finalRuntimeId, true, validWorkspaceSession);
         }
         if (apiUpdateApplicable) {
+            applyRegularUpdate(((DefaultNutsUpdateResult) apiUpdate));
             ((DefaultNutsUpdateResult) apiUpdate).setUpdateApplied(true);
             traceSingleUpdate(apiUpdate);
         }
         if (runtimeUpdateApplicable) {
             wcfg.getModel().prepareBootRuntime(finalRuntimeId, true, validWorkspaceSession);
+            applyRegularUpdate(((DefaultNutsUpdateResult) runtimeUpdate));
             ((DefaultNutsUpdateResult) runtimeUpdate).setUpdateApplied(true);
             traceSingleUpdate(runtimeUpdate);
         }
@@ -500,6 +505,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         for (NutsUpdateResult extension : result.getExtensions()) {
             if (!extension.isUpdateApplied()) {
                 if (extension.getAvailable() != null) {
+                    applyRegularUpdate(((DefaultNutsUpdateResult) extension));
                     h.add(extension.getAvailable().getId());
                     if (h.hasChanged()) {
                         NutsWorkspaceExt.of(ws).deployBoot(validWorkspaceSession, extension.getAvailable().getId(), true);
@@ -590,7 +596,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                     oldId = confId;
                 }
                 NutsVersion v = bootApiVersion;
-                if (v==null|| v.isBlank()) {
+                if (v == null || v.isBlank()) {
                     v = getSession().version().parse(NutsConstants.Versions.LATEST);
                 }
                 try {
@@ -744,7 +750,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         traceSingleUpdate(r);
     }
 
-    public static enum Type {
+    public enum Type {
         API,
         RUNTIME,
         REGULAR,
@@ -754,8 +760,8 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
 
     private static abstract class FixAction {
 
-        private NutsId id;
-        private String problemKey;
+        private final NutsId id;
+        private final String problemKey;
 
         public FixAction(NutsId id, String problemKey) {
             this.id = id;
