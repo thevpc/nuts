@@ -1314,14 +1314,14 @@ public class CoreIOUtils {
             }
         }
         NanoDB cachedDB = CacheDB.of(session);
-        NanoDBTableFile<CachedURL> cacheTable = cachedDB.createTable(
-                cachedDB.createBeanDefinition(
-                        CachedURL.class, false, "url"
-                ), true
-        );
+        NanoDBTableFile<CachedURL> cacheTable =
+                cachedDB.tableBuilder(CachedURL.class).setNullable(false)
+                        .addAllFields()
+                        .addIndices("url")
+                        .getOrCreate();
 
 //        final PersistentMap<String, String> cu=getCachedUrls(session);
-        CachedURL old = cacheTable.findByIndex("path", path).findFirst().orElse(null);
+        CachedURL old = cacheTable.findByIndex("url", path).findFirst().orElse(null);
 //        String cachedSha1 = cu.get("sha1://" + path);
 //        String oldLastModified =cu.get("lastModified://" + path);
 //        String oldSize =cu.get("length://" + path);
