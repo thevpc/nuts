@@ -622,10 +622,9 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
                     CoreIOUtils.mkdirs(to.getParent(),session);
                     temp = to.resolveSibling(to.getFileName() + "~");
                 } else {
-                    temp = Paths.get(getSession().io().tmp()
+                    temp = getSession().io().tmp()
                             .setSession(session)
-                            .createTempFile("temp~")
-                    );
+                            .createTempFile("temp~").toFile();
                 }
                 try {
                     if (_source.isPath() && _source.getPath().isFile()) {

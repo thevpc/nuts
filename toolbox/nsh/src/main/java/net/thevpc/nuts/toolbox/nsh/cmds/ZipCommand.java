@@ -58,7 +58,7 @@ public class ZipCommand extends AbstractNshBuiltin {
                 commandLine.unexpectedArgument();
             } else if (commandLine.peek().isNonOption()) {
                 String path = commandLine.required().nextNonOption(nutsCommandLineFormat.createName("file")).getString();
-                File file = new File(context.getGlobalContext().getAbsolutePath(path));
+                File file = new File(context.getShellContext().getAbsolutePath(path));
                 if (outZip == null) {
                     outZip = file;
                 } else {

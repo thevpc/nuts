@@ -80,13 +80,13 @@ public class DefaultNutsIOManager implements NutsIOManager {
     }
 
     @Override
-    public InputStream nullInputStream() {
+    public InputStream createNullInputStream() {
         checkSession();
         return model.nullInputStream();
     }
 
     @Override
-    public NutsPrintStream nullPrintStream() {
+    public NutsPrintStream createNullPrintStream() {
         checkSession();
         return model.nullPrintStream();
     }

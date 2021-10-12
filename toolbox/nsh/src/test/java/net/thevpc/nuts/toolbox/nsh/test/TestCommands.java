@@ -40,7 +40,7 @@ import java.io.IOException;
  *
  * @author thevpc
  */
-public class CommandsTest {
+public class TestCommands {
     private static String baseFolder;
 
     @Test

@@ -97,7 +97,7 @@ public class WgetCommand extends SimpleNshBuiltin {
         if (!NutsBlankable.isBlank(output2)) {
             output2 = output2.replace("{}", urlName);
         }
-        Path file = Paths.get(context.getGlobalContext().getAbsolutePath(NutsBlankable.isBlank(output2) ? urlName : output2));
+        Path file = Paths.get(context.getShellContext().getAbsolutePath(NutsBlankable.isBlank(output2) ? urlName : output2));
         context.getSession().io()
                 .copy()
                 .setSession(context.getSession())

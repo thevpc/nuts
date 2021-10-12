@@ -251,7 +251,7 @@ public class PropsCommand extends AbstractNshBuiltin {
     private Map<String, String> readProperties(Options o, JShellExecutionContext context) {
         Map<String, String> p = new LinkedHashMap<>();
         String sourceFile = o.sourceFile;
-        NutsPath filePath = ShellHelper.xfileOf(sourceFile, context.getGlobalContext().getCwd(), context.getSession());
+        NutsPath filePath = ShellHelper.xfileOf(sourceFile, context.getShellContext().getCwd(), context.getSession());
         try (InputStream is = filePath.getInputStream()) {
 
             Format sourceFormat = o.sourceFormat;
@@ -319,7 +319,7 @@ public class PropsCommand extends AbstractNshBuiltin {
                 }
             }
         } else {
-            NutsPath filePath = ShellHelper.xfileOf(targetFile, context.getGlobalContext().getCwd(), context.getSession());
+            NutsPath filePath = ShellHelper.xfileOf(targetFile, context.getShellContext().getCwd(), context.getSession());
             try (OutputStream os = filePath.getOutputStream()) {
                 Format format = o.targetFormat;
                 if (format == Format.AUTO) {

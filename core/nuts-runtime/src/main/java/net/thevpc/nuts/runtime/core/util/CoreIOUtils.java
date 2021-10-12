@@ -506,7 +506,7 @@ public class CoreIOUtils {
                 }
                 loc = session.io().tmp()
                         .setSession(session)
-                        .createTempFolder(goodName + "-");
+                        .createTempFolder(goodName + "-").toString();
             } else {
                 if (NutsBlankable.isBlank(loc)) {
                     if (NutsBlankable.isBlank(goodName)) {
@@ -538,7 +538,7 @@ public class CoreIOUtils {
     }
 
     public static NutsPrintStream resolveOut(NutsSession session) {
-        return (session.getTerminal() == null) ? session.io().nullPrintStream() :
+        return (session.getTerminal() == null) ? NutsPrintStream.ofNull(session) :
                 session.getTerminal().out();
     }
 
@@ -1525,9 +1525,9 @@ public class CoreIOUtils {
         if (is.isPath() && is.getPath().isFile()) {
             return is.getPath().toFile();
         }
-        Path temp = Paths.get(session.io().tmp()
+        Path temp = session.io().tmp()
                 .setSession(session)
-                .createTempFile(getURLName(is.getName())));
+                .createTempFile(getURLName(is.getName())).toFile();
         NutsIOCopyAction a = session.io().copy().setSafe(false);
         if (is.isPath()) {
             a.from(is.getPath());

@@ -87,7 +87,7 @@ public class GrepCommand extends AbstractNshBuiltin {
                     expression = commandLine.next().getString();
                 } else {
                     String path = commandLine.next().getString();
-                    File file = new File(context.getGlobalContext().getAbsolutePath(path));
+                    File file = new File(context.getShellContext().getAbsolutePath(path));
                     files.add(file);
                 }
             } else {

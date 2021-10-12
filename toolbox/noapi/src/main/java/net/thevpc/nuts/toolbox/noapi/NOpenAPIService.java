@@ -48,7 +48,7 @@ public class NOpenAPIService {
                 temp = addExtension(source, "adoc").toString();
             } else {
                 temp = appContext.getSession().io().tmp()
-                        .createTempFile("temp.adoc");
+                        .createTempFile("temp.adoc").toString();
             }
             writeAdoc(md, temp, keep && appContext.getSession().isPlainTrace());
             if (new File(target).getParentFile() != null) {

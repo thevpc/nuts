@@ -64,7 +64,7 @@ public class SourceCommand extends SimpleNshBuiltin {
     @Override
     protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
-        final String[] paths = context.getExecutionContext().getGlobalContext().vars().get("PATH", "").split(":|;");
+        final String[] paths = context.getExecutionContext().getShellContext().vars().get("PATH", "").split(":|;");
         List<String> goodFiles = new ArrayList<>();
         for (String file : options.files) {
             boolean found = false;
@@ -91,12 +91,18 @@ public class SourceCommand extends SimpleNshBuiltin {
         }
 //        JShellContext c2 = context.getShell().createContext(context.getExecutionContext().getGlobalContext());
 //        c2.setArgs(context.getArgs());
-        JShellContext c2 = context.getExecutionContext().getGlobalContext();
+        JShellContext c2 = context.getExecutionContext().getShellContext();
         for (String goodFile : goodFiles) {
-            context.getShell().executeFile(
-                    context.getShell().createSourceFileContext(c2, goodFile, context.getArgs()),
-                    false
-            );
+            String oldServiceName = c2.getServiceName();
+            List<String> oldArgList = new ArrayList<>(c2.getArgsList());
+            c2.setServiceName(goodFile);
+            c2.setArgs(context.getArgs());
+            try {
+                context.getShell().executeServiceFile(c2, false);
+            } finally {
+                c2.setServiceName(oldServiceName);
+                c2.setArgs(oldArgList.toArray(new String[0]));
+            }
         }
     }
 

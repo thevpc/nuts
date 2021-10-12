@@ -41,16 +41,26 @@ public class DefaultTempAction implements NutsTempAction {
         return this;
     }
 
-    public String createTempFile(String name) {
+    public NutsPath createTempFile(String name) {
         return createTempFile(name, false);
     }
 
     @Override
-    public String createTempFolder(String name) {
+    public NutsPath createTempFolder(String name) {
         return createTempFile(name, true);
     }
 
-    public String createTempFile(String name, boolean folder) {
+    @Override
+    public NutsPath createTempFile() {
+        return createTempFile(null);
+    }
+
+    @Override
+    public NutsPath createTempFolder() {
+        return createTempFolder(null);
+    }
+
+    public NutsPath createTempFile(String name, boolean folder) {
         File rootFolder = null;
         NutsRepository repositoryById = null;
         if (repositoryId == null) {
@@ -108,7 +118,7 @@ public class DefaultTempAction implements NutsTempAction {
                 try {
                     temp = File.createTempFile(prefix.toString(), ext.toString(), rootFolder);
                     if (temp.delete() && temp.mkdir()) {
-                        return (temp.toPath()).toString();
+                        return session.io().path(temp.toPath());
                     }
                 } catch (IOException ex) {
                     //
@@ -117,7 +127,7 @@ public class DefaultTempAction implements NutsTempAction {
             throw new NutsIOException(session, NutsMessage.cstyle("could not create temp directory: %s*%s", rootFolder + File.separator + prefix, ext));
         } else {
             try {
-                return File.createTempFile(prefix.toString(), ext.toString(), rootFolder).toPath().toString();
+                return session.io().path(File.createTempFile(prefix.toString(), ext.toString(), rootFolder).toPath());
             } catch (IOException e) {
                 throw new NutsIOException(session, e);
             }

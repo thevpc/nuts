@@ -253,7 +253,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
                 } else {
                     String tempFile = session.io().tmp()
                             .setRepositoryId(getUuid())
-                            .createTempFile(content.getFileName().toString());
+                            .createTempFile(content.getFileName().toString()).toString();
                     session.io().copy()
                             .setSession(session)
                             .from(content).to(tempFile).setSafe(true).run();
@@ -267,7 +267,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
             String tempFile = session.io().tmp()
                     .setSession(session)
                     .setRepositoryId(getUuid())
-                    .createTempFile(new File(p).getName());
+                    .createTempFile(new File(p).getName()).toString();
             try {
                 session.io().copy()
                         .from(helper.getStream(id, "artifact binaries", "retrieve", session)).to(tempFile).setValidator(new NutsIOCopyValidator() {

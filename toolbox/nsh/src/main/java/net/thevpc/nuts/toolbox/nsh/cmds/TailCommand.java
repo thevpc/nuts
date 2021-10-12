@@ -65,7 +65,7 @@ public class TailCommand extends AbstractNshBuiltin {
                 }
             } else {
                 String path = a.getString();
-                File file = new File(context.getGlobalContext().getAbsolutePath(path));
+                File file = new File(context.getShellContext().getAbsolutePath(path));
                 files.add(file.getPath());
             }
         }

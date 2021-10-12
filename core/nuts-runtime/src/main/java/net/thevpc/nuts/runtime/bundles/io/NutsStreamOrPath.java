@@ -104,7 +104,7 @@ public class NutsStreamOrPath {
 
     public NutsStreamOrPath toDisposable(NutsSession session) {
         String name = getName();
-        Path tempFile = Paths.get(session.io().tmp().createTempFile(name));
+        Path tempFile = session.io().tmp().createTempFile(name).toFile();
         NutsIOCopyAction copy = session.io().copy();
         if (type == Type.PATH) {
             copy.from((NutsPath) value);

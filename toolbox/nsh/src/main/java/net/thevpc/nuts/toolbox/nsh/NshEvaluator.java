@@ -54,7 +54,7 @@ public class NshEvaluator extends DefaultJShellEvaluator {
         } catch (IOException ex) {
             throw new JShellException(1, ex);
         }
-        final JShellContext leftContext = context.getShell().createNewContext(context).setOut(nout.asPrintStream());
+        final JShellContext leftContext = context.getShell().createContext(context).setOut(nout.asPrintStream());
         final JShellUniformException[] a = new JShellUniformException[2];
         Thread j1 = new Thread() {
             @Override
@@ -73,7 +73,7 @@ public class NshEvaluator extends DefaultJShellEvaluator {
 
         };
         j1.start();
-        JShellContext rightContext = context.getShell().createNewContext(context).setIn((InputStream) in2);
+        JShellContext rightContext = context.getShell().createContext(context).setIn((InputStream) in2);
         try {
             context.getShell().evalNode(right, rightContext);
         } catch (JShellUniformException e) {
@@ -96,7 +96,7 @@ public class NshEvaluator extends DefaultJShellEvaluator {
 
     @Override
     public String evalCommandAndReturnString(JShellCommandNode command, JShellContext context) {
-        JShellContext c1 = context.getShell().createNewContext(context);
+        JShellContext c1 = context.getShell().createContext(context);
         DefaultJShellContext c2 = (DefaultJShellContext) c1;
         c2.setSession(c2.getSession().copy());
         c2.getSession().setLogLevel(Level.OFF);

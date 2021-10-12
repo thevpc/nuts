@@ -10,8 +10,8 @@ nuts -y install ntemplate ndocusaurus
 source $nbw_here/.dir-template/vars.nsh
 
 ## update github README and METADATA files
-echo run ntemplate
-ntemplate -p $nbw_here/.dir-template
+echo run ntemplate -p $nbw_here/.dir-template
+ntemplate -p $nbw_here/.dir-template -t $nbw_here
 
 ## update nuts.jar
 echo copy nuts.jar

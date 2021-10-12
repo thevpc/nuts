@@ -63,14 +63,14 @@ public interface NutsIOManager extends NutsComponent<Object/* any object or null
      *
      * @return null input stream instance
      */
-    InputStream nullInputStream();
+    InputStream createNullInputStream();
 
     /**
      * create a null print stream instance
      *
      * @return null print stream instance
      */
-    NutsPrintStream nullPrintStream();
+    NutsPrintStream createNullPrintStream();
 
     /**
      * create print stream that supports the given {@code mode}. If the given

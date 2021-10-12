@@ -6,19 +6,23 @@
 package net.thevpc.nuts.toolbox.nsh.bundles.jshell;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.toolbox.nsh.*;
+import net.thevpc.nuts.toolbox.nsh.NshBuiltin;
+import net.thevpc.nuts.toolbox.nsh.NutsBuiltinManager;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.util.DirectoryScanner;
 
 import java.io.*;
 import java.util.*;
 
 /**
- *
  * @author thevpc
  */
 public class DefaultJShellContext extends AbstractJShellContext {
 
     private static final JShellResult OK_RESULT = new JShellResult(0, null, null);
+    public String oldCommandLine = null;
+    public JShellResult lastResult = OK_RESULT;
+    public JShellContext parentContext;
+    public int commandLineIndex = -1;
     private JShell shell;
     private JShellVariables vars;
     private JShellNode rootNode;
@@ -26,29 +30,24 @@ public class DefaultJShellContext extends AbstractJShellContext {
     private Map<String, Object> userProperties = new HashMap<>();
     private JShellFunctionManager functionManager = new DefaultJShellFunctionManager();
     private JShellAliasManager aliasManager = new DefaultJShellAliasManager();
-    private JShellBuiltinManager builtinsManager;
-    private String cwd=System.getProperty("user.dir");
+    private JShellBuiltinManager builtinManager;
+    private String cwd = System.getProperty("user.dir");
     private JShellFileSystem fileSystem;
-    public String oldCommandLine = null;
-    public JShellResult lastResult = OK_RESULT;
-    public JShellContext parentContext;
     private NutsWorkspace workspace;
     private NutsSession session;
-    //    private NutsSessionTerminal terminal;
     private NutsCommandAutoComplete autoComplete;
     private String serviceName;
-    private List<String> args=new ArrayList<>();
-    public int commandLineIndex = -1;
+    private List<String> args = new ArrayList<>();
 
     public DefaultJShellContext(JShell shell, JShellNode rootNode, JShellNode parentNode,
                                 JShellContext parentContext, NutsWorkspace workspace, NutsSession session, JShellVariables vars,
                                 String serviceName, String[] args
-                                ) {
+    ) {
         this(parentContext);
         this.serviceName = serviceName;
         this.args.addAll(Arrays.asList(args));
         this.vars = new JShellVariables(this);
-        this.shell=shell;
+        this.shell = shell;
         setFileSystem(new DefaultJShellFileSystem());
         if (parentContext != null) {
             setCwd(parentContext.getCwd());
@@ -127,20 +126,7 @@ public class DefaultJShellContext extends AbstractJShellContext {
 
     }
 
-    @Override
-    public JShellBuiltinManager builtins() {
-        if(builtinsManager==null){
-            builtinsManager=new DefaultJShellCommandManager();
-        }
-        return builtinsManager;
-    }
-
-    @Override
-    public void setBuiltins(JShellBuiltinManager builtinsManager) {
-        this.builtinsManager = builtinsManager;
-    }
-
-//    public DefaultJShellContext(JShell shell, JShellFunctionManager functionManager, JShellAliasManager aliasManager,JShellVariables env, JShellNode root, JShellNode parent, InputStream in, PrintStream out, PrintStream err, String... args) {
+    //    public DefaultJShellContext(JShell shell, JShellFunctionManager functionManager, JShellAliasManager aliasManager,JShellVariables env, JShellNode root, JShellNode parent, InputStream in, PrintStream out, PrintStream err, String... args) {
 //        setShell(shell);
 //        setVars(env);
 //        setAliases(aliasManager);
@@ -153,63 +139,8 @@ public class DefaultJShellContext extends AbstractJShellContext {
 //        setArgs(args);
 //    }
     public DefaultJShellContext(JShellContext other) {
-        this.parentContext=other;
+        this.parentContext = other;
         copyFrom(other);
-    }
-
-    @Override
-    public JShellContext getParentContext() {
-        return parentContext;
-    }
-
-    @Override
-    public JShellAliasManager aliases() {
-        return aliasManager;
-    }
-
-    public void setAliases(JShellAliasManager aliasManager) {
-        this.aliasManager = aliasManager == null ? new DefaultJShellAliasManager() : aliasManager;
-    }
-
-    public void copyFrom(JShellContext other) {
-        if (other != null) {
-            this.shell = other.getShell();
-            this.vars = other.vars();
-            this.functionManager = other.functions();
-            this.aliasManager = other.aliases();
-            this.builtinsManager = other.builtins();
-            this.rootNode = other.getRootNode();
-            this.parentNode = other.getParentNode();
-            this.userProperties = new HashMap<>();
-            this.userProperties.putAll(other.getUserProperties());
-            setFileSystem(other.getFileSystem());
-            this.cwd = other.getCwd();
-            this.parentContext = other.getParentContext();
-            this.workspace = other.workspace();
-            this.session = other.session() == null ? null : other.session().copy();
-        }
-    }
-
-//    public JShellContext copy() {
-//        DefaultJShellContext c = new DefaultJShellContext(shell);
-//        c.copyFrom(this);
-//        return c;
-//    }
-
-    @Override
-    public void setFileSystem(JShellFileSystem fileSystem) {
-        this.fileSystem = fileSystem;
-        setCwd(this.fileSystem.getInitialWorkingDir());
-    }
-
-    @Override
-    public JShellFunctionManager functions() {
-        return functionManager;
-    }
-
-    @Override
-    public Map<String, Object> getUserProperties() {
-        return userProperties;
     }
 
     @Override
@@ -222,15 +153,32 @@ public class DefaultJShellContext extends AbstractJShellContext {
         return rootNode;
     }
 
+    public JShellContext setRootNode(JShellNode root) {
+        this.rootNode = root;
+        return this;
+    }
+
     @Override
     public JShellNode getParentNode() {
         return parentNode;
     }
 
     @Override
+    public JShellContext setParentNode(JShellNode parent) {
+        this.parentNode = parent;
+        return this;
+    }
+
+    @Override
     public InputStream in() {
         return getSession().getTerminal().in();
     }
+
+//    public JShellContext copy() {
+//        DefaultJShellContext c = new DefaultJShellContext(shell);
+//        c.copyFrom(this);
+//        return c;
+//    }
 
     @Override
     public NutsPrintStream out() {
@@ -247,22 +195,64 @@ public class DefaultJShellContext extends AbstractJShellContext {
         return vars;
     }
 
-
-    public JShellContext setRootNode(JShellNode root) {
-        this.rootNode = root;
-        return this;
+    @Override
+    public Watcher bindStreams(InputStream out, InputStream err, OutputStream in) {
+        WatcherImpl w = new WatcherImpl();
+        new Thread(() -> {
+            byte[] buffer = new byte[4024];
+            int x;
+            boolean some = false;
+            while (true) {
+                if (out != null) {
+                    try {
+                        if (out.available() > 0) {
+                            x = out.read(buffer);
+                            if (x > 0) {
+                                out().write(buffer, 0, x);
+                                some = true;
+                            }
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (err != null) {
+                    try {
+                        if (err.available() > 0) {
+                            x = err.read(buffer);
+                            if (x > 0) {
+                                err().write(buffer, 0, x);
+                                some = true;
+                            }
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (in != null) {
+                    try {
+                        if (in().available() > 0) {
+                            x = in().read(buffer);
+                            if (x > 0) {
+                                in.write(buffer, 0, x);
+                                some = true;
+                            }
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (!some && w.askStopped) {
+                    break;
+                }
+            }
+        }).start();
+        return w;
     }
 
     @Override
-    public JShellContext setParentNode(JShellNode parent) {
-        this.parentNode = parent;
-        return this;
-    }
-
-    @Override
-    public JShellContext setIn(InputStream in) {
-        getSession().getTerminal().setIn(in);
-        return this;
+    public JShellFunctionManager functions() {
+        return functionManager;
     }
 
     @Override
@@ -283,7 +273,13 @@ public class DefaultJShellContext extends AbstractJShellContext {
         return this;
     }
 
-//    public JShellExecutionContext createCommandContext(JShellBuiltin command, JShellFileContext context) {
+    @Override
+    public JShellContext setIn(InputStream in) {
+        getSession().getTerminal().setIn(in);
+        return this;
+    }
+
+    //    public JShellExecutionContext createCommandContext(JShellBuiltin command, JShellFileContext context) {
 //        return new DefaultJShellExecutionContext(context);
 //    }
     public JShellExecutionContext createCommandContext(JShellBuiltin command) {
@@ -374,7 +370,6 @@ public class DefaultJShellContext extends AbstractJShellContext {
         return all;
     }
 
-
     @Override
     public JShellContext setEnv(Map<String, String> env) {
         if (env != null) {
@@ -383,29 +378,9 @@ public class DefaultJShellContext extends AbstractJShellContext {
         return this;
     }
 
-    public void setFunctionManager(JShellFunctionManager functionManager) {
-        this.functionManager = functionManager == null ? new DefaultJShellFunctionManager() : functionManager;
-    }
-
     @Override
-    public void setCwd(String cwd) {
-        JShellFileSystem fs = getFileSystem();
-        if(cwd==null || cwd.isEmpty()){
-            this.cwd = fs.getHomeWorkingDir();
-        }else {
-            String r =
-                    fs.isAbsolute(cwd)?cwd:
-                    fs.getAbsolutePath(this.cwd + "/" + cwd);
-            if(fs.exists(r)) {
-                if(fs.isDirectory(r)) {
-                    this.cwd = r;
-                }else{
-                    throw new IllegalArgumentException("not a directory : "+cwd);
-                }
-            }else{
-                throw new IllegalArgumentException("no such file or directory : "+cwd);
-            }
-        }
+    public Map<String, Object> getUserProperties() {
+        return userProperties;
     }
 
     @Override
@@ -414,8 +389,35 @@ public class DefaultJShellContext extends AbstractJShellContext {
     }
 
     @Override
+    public void setCwd(String cwd) {
+        JShellFileSystem fs = getFileSystem();
+        if (cwd == null || cwd.isEmpty()) {
+            this.cwd = fs.getHomeWorkingDir();
+        } else {
+            String r =
+                    fs.isAbsolute(cwd) ? cwd :
+                            fs.getAbsolutePath(this.cwd + "/" + cwd);
+            if (fs.exists(r)) {
+                if (fs.isDirectory(r)) {
+                    this.cwd = r;
+                } else {
+                    throw new IllegalArgumentException("not a directory : " + cwd);
+                }
+            } else {
+                throw new IllegalArgumentException("no such file or directory : " + cwd);
+            }
+        }
+    }
+
+    @Override
     public JShellFileSystem getFileSystem() {
         return fileSystem;
+    }
+
+    @Override
+    public void setFileSystem(JShellFileSystem fileSystem) {
+        this.fileSystem = fileSystem;
+        setCwd(this.fileSystem.getInitialWorkingDir());
     }
 
     @Override
@@ -432,6 +434,29 @@ public class DefaultJShellContext extends AbstractJShellContext {
     }
 
     @Override
+    public JShellContext getParentContext() {
+        return parentContext;
+    }
+
+    @Override
+    public JShellAliasManager aliases() {
+        return aliasManager;
+    }
+
+    @Override
+    public void setBuiltins(JShellBuiltinManager builtinsManager) {
+        this.builtinManager = builtinsManager;
+    }
+
+    @Override
+    public JShellBuiltinManager builtins() {
+        if (builtinManager == null) {
+            builtinManager = new DefaultJShellCommandManager();
+        }
+        return builtinManager;
+    }
+
+    @Override
     public JShellResult getLastResult() {
         return lastResult;
     }
@@ -441,78 +466,68 @@ public class DefaultJShellContext extends AbstractJShellContext {
         this.lastResult = lastResult == null ? OK_RESULT : lastResult;
     }
 
+    public void setAliases(JShellAliasManager aliasManager) {
+        this.aliasManager = aliasManager == null ? new DefaultJShellAliasManager() : aliasManager;
+    }
+
+    public void copyFrom(JShellContext other) {
+        if (other != null) {
+            this.shell = other.getShell();
+            this.vars = other.vars();
+            this.functionManager = other.functions();
+            this.aliasManager = other.aliases();
+            this.builtinManager = other.builtins();
+            this.rootNode = other.getRootNode();
+            this.parentNode = other.getParentNode();
+            this.userProperties = new HashMap<>();
+            this.userProperties.putAll(other.getUserProperties());
+            setFileSystem(other.getFileSystem());
+            this.cwd = other.getCwd();
+            this.parentContext = other.getParentContext();
+            this.workspace = other.workspace();
+            this.session = other.session() == null ? null : other.session().copy();
+        }
+    }
 
     @Override
-    public Watcher bindStreams(InputStream out, InputStream err, OutputStream in) {
-        WatcherImpl w=new WatcherImpl();
-        new Thread(() -> {
-            byte[] buffer=new byte[4024];
-            int x;
-            boolean some=false;
-            while(true){
-                if(out!=null) {
-                    try {
-                        if (out.available() > 0) {
-                            x = out.read(buffer);
-                            if (x > 0) {
-                                out().write(buffer, 0, x);
-                                some=true;
-                            }
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-                if(err!=null) {
-                    try {
-                        if (err.available() > 0) {
-                            x = err.read(buffer);
-                            if (x > 0) {
-                                err().write(buffer, 0, x);
-                                some=true;
-                            }
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-                if(in!=null) {
-                    try {
-                        if (in().available() > 0) {
-                            x = in().read(buffer);
-                            if (x > 0) {
-                                in.write(buffer, 0, x);
-                                some=true;
-                            }
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-                if(!some && w.askStopped){
-                    break;
-                }
-            }
-        }).start();
-        return w;
+    public String getServiceName() {
+        return serviceName;
     }
-    
-    public class WatcherImpl implements Watcher{
-        boolean stopped;
-        boolean askStopped;
-        int threads;
 
-        @Override
-        public void stop() {
-            if(!askStopped){
-                askStopped=true;
-            }
-        }
+    @Override
+    public void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
+    }
 
-        @Override
-        public boolean isStopped() {
-            return stopped;
+    @Override
+    public void setArgs(String[] args) {
+        this.args.clear();
+        this.args.addAll(Arrays.asList(args));
+    }
+
+    @Override
+    public String getArg(int index) {
+        List<String> argsList = getArgsList();
+        if (index >= 0 && index < argsList.size()) {
+            String r = argsList.get(index);
+            return r == null ? "" : r;
         }
+        return "";
+    }
+
+    @Override
+    public int getArgsCount() {
+        return args.size();
+    }
+
+    @Override
+    public String[] getArgsArray() {
+        return args.toArray(new String[0]);
+    }
+
+    @Override
+    public List<String> getArgsList() {
+        return args;
     }
 
     @Override
@@ -556,46 +571,26 @@ public class DefaultJShellContext extends AbstractJShellContext {
         this.autoComplete = autoComplete;
     }
 
-
-    @Override
-    public String getServiceName() {
-        return serviceName;
+    public void setFunctionManager(JShellFunctionManager functionManager) {
+        this.functionManager = functionManager == null ? new DefaultJShellFunctionManager() : functionManager;
     }
 
-    @Override
-    public void setServiceName(String serviceName) {
-        this.serviceName=serviceName;
-    }
+    public class WatcherImpl implements Watcher {
+        boolean stopped;
+        boolean askStopped;
+        int threads;
 
-    @Override
-    public void setArgs(String[] args) {
-        this.args.clear();
-        this.args.addAll(Arrays.asList(args));
-    }
-
-    @Override
-    public String getArg(int index) {
-        List<String> argsList = getArgsList();
-        if(index>=0 && index<argsList.size()) {
-            String r = argsList.get(index);
-            return r==null?"":r;
+        @Override
+        public void stop() {
+            if (!askStopped) {
+                askStopped = true;
+            }
         }
-        return "";
-    }
 
-    @Override
-    public int getArgsCount() {
-        return args.size();
-    }
-
-    @Override
-    public String[] getArgsArray() {
-        return args.toArray(new String[0]);
-    }
-
-    @Override
-    public List<String> getArgsList() {
-        return args;
+        @Override
+        public boolean isStopped() {
+            return stopped;
+        }
     }
 
 }

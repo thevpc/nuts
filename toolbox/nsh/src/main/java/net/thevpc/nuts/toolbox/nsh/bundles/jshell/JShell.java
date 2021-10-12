@@ -105,7 +105,7 @@ public class JShell {
             throw new IllegalArgumentException("unable to resolve application id");
         }
         JShellContext _rootContext = getRootContext();
-        NutsSession ws = this.getSession();
+        NutsSession ws = _rootContext.getSession();
         JShellHistory hist = getHistory();
 
         this.appContext.getSession().env().setProperty(JShellContext.class.getName(), _rootContext);
@@ -268,10 +268,6 @@ public class JShell {
         }
     }
 
-    public void setServiceName(String serviceName) {
-        getRootContext().setServiceName(serviceName);
-    }
-
     //    protected JShellContext createRootContext() {
 //        return new DefaultJShellContext(this);
 //    }
@@ -279,31 +275,10 @@ public class JShell {
         return createContext(null, null, null, null,serviceName, args);
     }
 
-    public JShellContext createFileContext(JShellContext rootContext, String serviceName, String[] args) {
-        return createNewContext(
-                rootContext,
-                serviceName, args
-        );
-    }
-
-    public JShellContext createSourceFileContext(JShellContext parentContext, String serviceName, String[] args) {
-        return createFileContext(
-                parentContext,
-                serviceName, args
-        );
-    }
-
-    public JShellContext createNewContext(JShellContext parentContext, String serviceName, String[] args) {
-        return createContext(parentContext,serviceName, args);
-    }
-
-    public JShellContext createNewContext(JShellContext parentContext) {
+    public JShellContext createContext(JShellContext parentContext) {
         return createContext(parentContext,parentContext.getServiceName(), parentContext.getArgsArray());
     }
 
-    //    public JShellContext createContext(JShellContext parentContext) {
-//        return new DefaultJShellContext(parentContext);
-//    }
     public JShellContext createContext(JShellContext ctx, String serviceName, String[] args) {
         return createContext(ctx, null, null, null,serviceName,args);
     }
@@ -327,7 +302,7 @@ public class JShell {
         if (line.trim().length() > 0 && !line.trim().startsWith("#")) {
             try {
                 getHistory().add(line);
-                JShellCommandNode nn = parseCommandLine(line);
+                JShellCommandNode nn = parseScript(line);
                 context.getShell().evalNode(nn, context);
                 success = true;
             } catch (JShellQuitException e) {
@@ -516,46 +491,47 @@ public class JShell {
             if (appContext.getAutoComplete() != null) {
                 return;
             }
+            JShellContext rootContext = getRootContext();
             if (getOptions().isHelp()) {
-                executeHelp(getRootContext());
+                executeHelp(rootContext);
                 return;
             }
             if (getOptions().isVersion()) {
-                executeVersion(getRootContext());
+                executeVersion(rootContext);
                 return;
             }
             if (getOptions().isStdInAndPos()) {
                 if (getOptions().getCommandArgs().isEmpty()) {
                     //ok
-                    executeInteractive(getRootContext());
+                    executeInteractive(rootContext);
                 } else {
-                    getRootContext().err().println("-s option not supported yet. ignored");
-                    executeInteractive(getRootContext());
+                    rootContext.err().println("-s option not supported yet. ignored");
+                    executeInteractive(rootContext);
                 }
                 if (getOptions().isInteractive()) {
-                    executeInteractive(getRootContext());
+                    executeInteractive(rootContext);
                 }
                 return;
             }
 
             if (getOptions().isCommand()) {
-                executeCommand(getOptions().getCommandArgs().toArray(new String[0]), getRootContext());
+                executeCommand(getOptions().getCommandArgs().toArray(new String[0]), rootContext);
                 if (getOptions().isInteractive()) {
-                    executeInteractive(getRootContext());
+                    executeInteractive(rootContext);
                 }
                 return;
             }
 
             if (!getOptions().getFiles().isEmpty()) {
                 for (String file : getOptions().getFiles()) {
-                    executeFile(createSourceFileContext(getRootContext(), file, getOptions().getCommandArgs().toArray(new String[0])), false);
+                    executeServiceFile(createContext(rootContext, file, getOptions().getCommandArgs().toArray(new String[0])), false);
                 }
                 if (getOptions().isInteractive()) {
-                    executeInteractive(getRootContext());
+                    executeInteractive(rootContext);
                 }
                 return;
             }
-            executeInteractive(getRootContext());
+            executeInteractive(rootContext);
         } catch (NutsExecutionException ex) {
             throw ex;
         } catch (JShellException ex) {
@@ -566,8 +542,7 @@ public class JShell {
     }
 
     protected String readInteractiveLine(JShellContext context) {
-        NutsSessionTerminal terminal = null;
-        terminal = getRootNutsShellContext().getSession().getTerminal();
+        NutsSessionTerminal terminal = context.getSession().getTerminal();
         return terminal.readLine(getPromptString(context));
     }
 
@@ -654,7 +629,7 @@ public class JShell {
                     if (profileFile.startsWith("~/") || profileFile.startsWith("~\\")) {
                         profileFile = System.getProperty("user.home") + profileFile.substring(1);
                     }
-                    executeFile(createSourceFileContext(getRootContext(), profileFile, new String[0]), true);
+                    executeServiceFile(createContext(getRootContext(), profileFile, new String[0]), true);
                 }
             }
         }
@@ -670,23 +645,23 @@ public class JShell {
                     if (profileFile.startsWith("~/") || profileFile.startsWith("~\\")) {
                         profileFile = System.getProperty("user.home") + profileFile.substring(1);
                     }
-                    executeFile(createSourceFileContext(getRootContext(), profileFile, new String[0]), true);
+                    executeServiceFile(createContext(getRootContext(), profileFile, new String[0]), true);
                 }
             }
         }
     }
 
-    protected void onQuit(JShellQuitException quitExcepion) {
+    protected void onQuit(JShellQuitException quitException) {
         try {
             getHistory().save();
         } catch (IOException e) {
             //e.printStackTrace();
         }
-        throw new NutsExecutionException(getSession(), NutsMessage.cstyle("%s", quitExcepion), quitExcepion.getResult());
-//        throw quitExcepion;
+        throw new NutsExecutionException(getRootContext().getSession(), NutsMessage.cstyle("%s", quitException), quitException.getResult());
+//        throw quitException;
     }
 
-    public int executeFile(JShellContext context, boolean ignoreIfNotFound) {
+    public int executeServiceFile(JShellContext context, boolean ignoreIfNotFound) {
         String file = context.getServiceName();
         if (file != null) {
             file = ShellUtils.getAbsolutePath(new File(context.getCwd()), file);
@@ -702,7 +677,7 @@ public class JShell {
         try {
             try {
                 stream = new FileInputStream(file);
-                JShellCommandNode ii = parseCommand(stream);
+                JShellCommandNode ii = parseScript(stream);
                 if (ii == null) {
                     return 0;
                 }
@@ -722,23 +697,19 @@ public class JShell {
         }
     }
 
-    public int executeString(String text, JShellContext context) {
+    public int executeScript(String text, JShellContext context) {
         if (context == null) {
             context = getRootContext();
         }
         if (text == null || text.trim().isEmpty()) {
             return 0;
         }
-        try (InputStream stream = new ByteArrayInputStream(text.getBytes())) {
-            JShellCommandNode ii = parseCommand(stream);
-            if (ii == null) {
-                return 0;
-            }
-            JShellContext c = context.setRootNode(ii);//.setParent(null);
-            return evalNode(ii, c);
-        } catch (IOException ex) {
-            throw new JShellException(1, ex);
+        JShellCommandNode ii = parseScript(text);
+        if (ii == null) {
+            return 0;
         }
+        JShellContext c = context.setRootNode(ii);//.setParent(null);
+        return evalNode(ii, c);
     }
 
     public int evalNode(JShellCommandNode node, JShellContext context) {
@@ -786,7 +757,7 @@ public class JShell {
 //        return getPromptString(getRootContext());
 //    }
     protected String getPromptString(JShellContext context) {
-        NutsSession ws = getSession();
+        NutsSession ws = context.getSession();
 //        String wss = ws == null ? "" : new File(getRootContext().getAbsolutePath(ws.config().getWorkspaceLocation().toString())).getName();
         String login = null;
         if (ws != null) {
@@ -988,7 +959,7 @@ public class JShell {
         }
     }
 
-    public JShellCommandNode parseCommand(InputStream stream) {
+    public JShellScript parseScript(InputStream stream) {
         JShellNode node0 = null;
         try {
             node0 = JShellParser.fromInputStream(stream).parse();
@@ -999,15 +970,15 @@ public class JShell {
             Logger.getLogger(JShell.class.getName()).log(Level.SEVERE, null, ex);
         }
         if (node0 instanceof JShellCommandNode) {
-            return (JShellCommandNode) node0;
+            return new JShellScript((JShellCommandNode) node0);
         }
         throw new IllegalArgumentException("expected node " + node0);
     }
 
-    public JShellCommandNode parseCommandLine(String line) {
+    public JShellScript parseScript(String scriptString) {
         JShellNode node0 = null;
         try {
-            node0 = JShellParser.fromString(line).parse();
+            node0 = JShellParser.fromString(scriptString).parse();
             if (node0 == null) {
                 return null;
             }
@@ -1015,9 +986,9 @@ public class JShell {
             Logger.getLogger(JShell.class.getName()).log(Level.SEVERE, null, ex);
         }
         if (node0 instanceof JShellCommandNode) {
-            return (JShellCommandNode) node0;
+            return new JShellScript((JShellCommandNode) node0);
         }
-        throw new IllegalArgumentException("expected node " + line);
+        throw new IllegalArgumentException("expected node " + scriptString);
     }
 //    public String escapeStringForDoubleQuotes(String s) {
 //        StringBuilder sb=new StringBuilder();
@@ -1126,7 +1097,7 @@ public class JShell {
         StringBuilder err = new StringBuilder();
         ByteArrayPrintStream oout = new ByteArrayPrintStream();
         ByteArrayPrintStream oerr = new ByteArrayPrintStream();
-        JShellContext newContext = createNewContext(getRootContext(), command[0], Arrays.copyOfRange(command, 1, command.length));
+        JShellContext newContext = createContext(getRootContext(), command[0], Arrays.copyOfRange(command, 1, command.length));
         newContext.setIn(new ByteArrayInputStream(in == null ? new byte[0] : in.toString().getBytes()));
         newContext.setOut(oout);
         newContext.setErr(oerr);
@@ -1134,14 +1105,6 @@ public class JShell {
         out.append(oout.toString());
         err.append(oerr.toString());
         return new MemResult(out.toString(), err.toString(), r);
-    }
-
-    public JShellContext getRootNutsShellContext() {
-        return getRootContext();
-    }
-
-    public NutsSession getSession() {
-        return getRootContext().getSession();
     }
 
     public JShellContext createContext(JShellContext ctx, JShellNode root, JShellNode parent, JShellVariables env,String serviceName, String[] args) {

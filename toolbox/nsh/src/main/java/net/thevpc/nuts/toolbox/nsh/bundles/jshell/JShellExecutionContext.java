@@ -17,10 +17,6 @@ public interface JShellExecutionContext {
 
     JShellVariables vars();
 
-    JShellContext getGlobalContext();
-
-
-    JShellContext getNutsShellContext();
 
     NutsWorkspace getWorkspace();
 
@@ -29,6 +25,8 @@ public interface JShellExecutionContext {
     boolean configureFirst(NutsCommandLine cmd);
 
     void configureLast(NutsCommandLine cmd);
+
+    JShellContext getShellContext();
 
     NutsApplicationContext getAppContext();
 

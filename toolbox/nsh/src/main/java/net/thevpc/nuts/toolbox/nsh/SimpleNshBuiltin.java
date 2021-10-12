@@ -176,15 +176,15 @@ public abstract class SimpleNshBuiltin extends AbstractNshBuiltin {
         }
 
         public String getCwd() {
-            return context.getGlobalContext().getCwd();
+            return context.getShellContext().getCwd();
         }
 
         public JShellContext getGlobalContext() {
-            return context.getGlobalContext();
+            return context.getShellContext();
         }
 
         public JShellContext getRootContext() {
-            return context.getNutsShellContext();
+            return context.getShellContext();
         }
 
     }

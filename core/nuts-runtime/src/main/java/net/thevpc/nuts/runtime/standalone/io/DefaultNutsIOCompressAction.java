@@ -87,8 +87,8 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
             if (this.target.isPath()) {
                 Path tempPath = null;
                 if (isSafe()) {
-                    tempPath = Paths.get(session.io().tmp()
-                            .createTempFile("zip"));
+                    tempPath = session.io().tmp()
+                            .createTempFile("zip").toFile();
                 }
                 if (this.target.isPath()) {
                     NutsPath parent = this.target.getPath().getParent();

@@ -1110,7 +1110,7 @@ public class DefaultNutsWorkspaceConfigModel {
                 String tmp = null;
                 try {
                     try {
-                        tmp = session.io().tmp().createTempFile(idFileName);
+                        tmp = session.io().tmp().createTempFile(idFileName).toString();
                         session.io().copy().from(pp
                                 .resolve(session.locations().getDefaultIdBasedir(id))
                                 .resolve(idFileName)

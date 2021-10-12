@@ -142,9 +142,9 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                 descriptor = characterizedFile.descriptor;
             }
             String name = session.locations().getDefaultIdFilename(descriptor.getId().builder().setFaceDescriptor().build());
-            tempFile = Paths.get(session.io().tmp()
+            tempFile = session.io().tmp()
                     .setSession(session)
-                    .createTempFile(name));
+                    .createTempFile(name).toFile();
             session.io().copy().setSession(ws).from(contentSource.getInputStream()).to(tempFile).setSafe(true).run();
             contentFile2 = tempFile;
 

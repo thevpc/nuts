@@ -23,11 +23,11 @@ public class LuceneIndexImporter {
 
     public long importGzURL(URL url, String repository,NutsSession session) {
 //        NutsWorkspace ws = session.getWorkspace();
-        String tempGzFile = session.io().tmp().createTempFile("lucene-repository.gz");
+        String tempGzFile = session.io().tmp().createTempFile("lucene-repository.gz").toString();
         session.io().copy()
                 .setSession(session)
                 .from(url).to(tempGzFile).run();
-        String tempFolder = session.io().tmp().createTempFolder("lucene-repository");
+        String tempFolder = session.io().tmp().createTempFolder("lucene-repository").toString();
         session.io().uncompress().from(tempGzFile).to(
                 tempFolder
         ).setFormat("gz").run();

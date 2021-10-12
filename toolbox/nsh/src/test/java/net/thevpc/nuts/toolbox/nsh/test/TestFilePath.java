@@ -1,6 +1,6 @@
 package net.thevpc.nuts.toolbox.nsh.test;
 
-public class FilePathTest {
+public class TestFilePath {
 //    @Test
 //    public void testOk(){
 //        Assert.assertEquals(

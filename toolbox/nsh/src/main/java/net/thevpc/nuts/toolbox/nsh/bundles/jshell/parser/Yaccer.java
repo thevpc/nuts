@@ -974,7 +974,7 @@ public class Yaccer {
                     }
                 } else {
                     if (!usingItems.isEmpty()) {
-                        context = shell.createNewContext(context);
+                        context = shell.createContext(context);
                         context.vars().set(context.vars());
                         context.vars().set((Map) usingItems);
                     }

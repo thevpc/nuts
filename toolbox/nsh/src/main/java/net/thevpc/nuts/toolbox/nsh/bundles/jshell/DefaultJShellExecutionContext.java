@@ -15,10 +15,7 @@ public class DefaultJShellExecutionContext implements JShellExecutionContext {
         this.shellContext = shellContext;
         this.builtin = command;
     }
-    @Override
-    public JShellContext getNutsShellContext() {
-        return shellContext;
-    }
+
 
     @Override
     public NutsWorkspace getWorkspace() {
@@ -58,10 +55,9 @@ public class DefaultJShellExecutionContext implements JShellExecutionContext {
 
 
     @Override
-    public JShellContext getGlobalContext() {
+    public JShellContext getShellContext() {
         return shellContext;
     }
-
     @Override
     public boolean configureFirst(NutsCommandLine cmd) {
         NutsArgument a = cmd.peek();

@@ -61,7 +61,7 @@ public class HelpCommand extends AbstractNshBuiltin {
                         context.getSession().getTerminal().out().convertMode(NutsTerminalMode.INHERITED)
                 );
             }else if (commandLine.peek().isNonOption()){
-                commandNames.add(commandLine.nextNonOption(new CommandNonOption("command", context.getNutsShellContext())).required().getString());
+                commandNames.add(commandLine.nextNonOption(new CommandNonOption("command", context.getShellContext())).required().getString());
             } else {
                 context.configureLast(commandLine);
             }
@@ -81,7 +81,7 @@ public class HelpCommand extends AbstractNshBuiltin {
                 String helpText = (n==null?"no help found":n.toString());
                 context.out().println(ss.apply(helpText));
                 context.out().println(context.getSession().text().ofStyled("AVAILABLE COMMANDS ARE:", NutsTextStyle.primary1()));
-                JShellBuiltin[] commands = context.getGlobalContext().builtins().getAll();
+                JShellBuiltin[] commands = context.getShellContext().builtins().getAll();
                 Arrays.sort(commands, new Comparator<JShellBuiltin>() {
                     @Override
                     public int compare(JShellBuiltin o1, JShellBuiltin o2) {
@@ -102,7 +102,7 @@ public class HelpCommand extends AbstractNshBuiltin {
             } else {
                 int x=0;
                 for (String commandName : commandNames) {
-                    JShellBuiltin command1 = context.getGlobalContext().builtins().find(commandName);
+                    JShellBuiltin command1 = context.getShellContext().builtins().find(commandName);
                     if (command1 == null) {
                         context.err().printf("command not found : %s\n", text.ofStyled(commandName,NutsTextStyle.error()));
                         x=1;

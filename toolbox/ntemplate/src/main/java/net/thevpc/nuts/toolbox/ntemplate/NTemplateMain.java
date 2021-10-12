@@ -6,13 +6,11 @@ import net.thevpc.nuts.toolbox.nsh.bundles.jshell.*;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.ExprEvaluator;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.FileTemplater;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.TemplateConfig;
-import net.thevpc.nuts.toolbox.ntemplate.filetemplate.TemplateLog;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.util.StringUtils;
 
 import java.io.ByteArrayInputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.logging.Level;
 
 public class NTemplateMain implements NutsApplication {
 
@@ -83,8 +81,9 @@ public class NTemplateMain implements NutsApplication {
             this.appContext = appContext;
             this.fileTemplater = fileTemplater;
             shell = new JShell(appContext, new String[0]);
-            shell.getRootContext().setSession(shell.getRootContext().getSession().copy());
-            shell.getRootContext().vars().addVarListener(
+            JShellContext rootContext = shell.getRootContext();
+            rootContext.setSession(rootContext.getSession().copy());
+            rootContext.vars().addVarListener(
                     new JShellVarListener() {
                         @Override
                         public void varAdded(JShellVar jShellVar, JShellVariables vars, JShellContext context) {
@@ -102,7 +101,7 @@ public class NTemplateMain implements NutsApplication {
                         }
                     }
             );
-            shell.getRootContext()
+            rootContext
                     .builtins()
                     .set(
                             new AbstractNshBuiltin("process", 10) {
@@ -128,21 +127,22 @@ public class NTemplateMain implements NutsApplication {
 
         @Override
         public Object eval(String content, FileTemplater context) {
-            NutsPrintStream out = shell.getSession().io().createMemoryPrintStream();
-            NutsPrintStream err = shell.getSession().io().createMemoryPrintStream();
-            shell.getSession().setTerminal(
-                    shell.getSession().term()
+            NutsSession session = context.getSession();
+            NutsPrintStream out = session.io().createMemoryPrintStream();
+            NutsPrintStream err = session.io().createMemoryPrintStream();
+            session.setTerminal(
+                    session.term()
                             .createTerminal(
                                     new ByteArrayInputStream(new byte[0]),
                                     out,
                                     err
                             )
             );
-            JShellContext ctx = shell.createSourceFileContext(
+            JShellContext ctx = shell.createContext(
                     shell.getRootContext(),
                     context.getSourcePath().orElse("nsh"), new String[0]
             );
-            shell.executeString(content, ctx);
+            shell.executeScript(content, ctx);
             return out.toString();
         }
 

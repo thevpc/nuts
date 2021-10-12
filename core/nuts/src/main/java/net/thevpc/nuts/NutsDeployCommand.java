@@ -55,6 +55,22 @@ public interface NutsDeployCommand extends NutsWorkspaceCommand {
 
     /**
      * set content
+     * @param path content
+     * @return {@code this} instance
+     * @since 0.8.3
+     */
+    NutsDeployCommand setContent(NutsPath path);
+
+    /**
+     * set content
+     * @param content content
+     * @return {@code this} instance
+     * @since 0.8.3
+     */
+    NutsDeployCommand setContent(byte[] content);
+
+    /**
+     * set content
      * @param file content
      * @return {@code this} instance
      */

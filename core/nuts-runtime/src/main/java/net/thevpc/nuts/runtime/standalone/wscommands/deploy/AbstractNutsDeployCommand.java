@@ -4,6 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.io.NutsStreamOrPath;
 import net.thevpc.nuts.runtime.standalone.wscommands.NutsWorkspaceCommandBase;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -53,6 +54,18 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
     @Override
     public NutsDeployCommand setContent(String path) {
         content = path==null?null:NutsStreamOrPath.of(getSession().io().path(path));
+        return this;
+    }
+
+    @Override
+    public NutsDeployCommand setContent(NutsPath path) {
+        content = path==null?null:NutsStreamOrPath.of(path);
+        return this;
+    }
+
+    @Override
+    public NutsDeployCommand setContent(byte[] content) {
+        this.content = content ==null?null:NutsStreamOrPath.of(new ByteArrayInputStream(content));
         return this;
     }
 

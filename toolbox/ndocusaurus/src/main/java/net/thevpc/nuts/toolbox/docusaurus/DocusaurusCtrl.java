@@ -21,7 +21,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Objects;
 import java.util.function.Function;
-import java.util.logging.Level;
 
 /**
  * @author thevpc
@@ -325,7 +324,7 @@ public class DocusaurusCtrl {
 
         @Override
         public Object eval(String content, FileTemplater context) {
-            NutsSession session = shell.getSession();
+            NutsSession session = context.getSession();
             NutsPrintStream out = session.io().createMemoryPrintStream();
             session.setTerminal(
                     session.term()
@@ -334,11 +333,11 @@ public class DocusaurusCtrl {
                                     out,
                                     out)
             );
-            JShellContext ctx = shell.createSourceFileContext(
+            JShellContext ctx = shell.createContext(
                     shell.getRootContext(),
                     context.getSourcePath().orElseGet(() -> "nsh"), new String[0]
             );
-            shell.executeString(content, ctx);
+            shell.executeScript(content, ctx);
             return out.toString();
         }
 

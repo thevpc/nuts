@@ -7,7 +7,7 @@ import java.util.Locale;
 
 public interface NutsPrintStream {
     static NutsPrintStream ofNull(NutsSession session) {
-        return session.io().nullPrintStream();
+        return session.io().createNullPrintStream();
     }
 
     static NutsPrintStream ofMemory(NutsSession session) {
