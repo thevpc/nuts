@@ -154,6 +154,22 @@ public interface NutsIOCopyAction {
     NutsIOCopyAction from(URL source);
 
     /**
+     * update source to copy from
+     * @param source source to copy from
+     * @return {@code this} instance
+     * @since 0.8.3
+     */
+    NutsIOCopyAction from(byte[] source);
+
+    /**
+     * update source to copy from
+     * @param source source to copy from
+     * @return {@code this} instance
+     * @since 0.8.3
+     */
+    NutsIOCopyAction setSource(byte[] source);
+
+    /**
      * source object to copy to. It may be of any of the supported types.
      * @return target object to copy to
      */

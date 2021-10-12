@@ -473,6 +473,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
                     if (eid.getGroupId() != null) {
                         //nutsDefinition
                         NutsStream<NutsDefinition> q = getSession().search().addId(eid).setLatest(true)
+                                .setDistinct(true)
                                 .getResultDefinitions();
                         NutsDefinition[] availableExecutors = q.stream().limit(2).toArray(NutsDefinition[]::new);
                         if (availableExecutors.length > 1) {

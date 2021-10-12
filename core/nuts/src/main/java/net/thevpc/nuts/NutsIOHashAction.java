@@ -68,6 +68,14 @@ public interface NutsIOHashAction {
     NutsIOHashAction setSource(NutsPath path);
 
     /**
+     * file to  hash
+     * @param path source path to  hash
+     * @return {@code this} instance
+     * @since 0.8.3
+     */
+    NutsIOHashAction setSource(byte[] path);
+
+    /**
      * source stream to  hash
      * @param descriptor source descriptor to  hash
      * @return {@code this} instance

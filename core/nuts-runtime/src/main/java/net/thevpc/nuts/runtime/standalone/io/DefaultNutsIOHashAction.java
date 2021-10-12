@@ -26,6 +26,7 @@
 package net.thevpc.nuts.runtime.standalone.io;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.bundles.io.NutsStreamOrPath;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
@@ -40,8 +41,7 @@ import java.security.NoSuchAlgorithmException;
  */
 public class DefaultNutsIOHashAction implements NutsIOHashAction {
 
-    private Object value;
-    private String type;
+    private NutsStreamOrPath source;
     private String algorithm;
     private NutsWorkspace ws;
     private NutsSession session;
@@ -51,37 +51,38 @@ public class DefaultNutsIOHashAction implements NutsIOHashAction {
     }
 
     @Override
-    public NutsIOHashAction setSource(InputStream input) {
-        this.value = input;
-        this.type = "stream";
+    public NutsIOHashAction setSource(InputStream source) {
+        this.source = source==null?null:NutsStreamOrPath.of(source);
         return this;
     }
 
     @Override
-    public NutsIOHashAction setSource(File file) {
-        this.value = file;
-        this.type = "file";
+    public NutsIOHashAction setSource(byte[] source) {
+        this.source = source==null?null:NutsStreamOrPath.of(new ByteArrayInputStream(source));
+        return null;
+    }
+
+    @Override
+    public NutsIOHashAction setSource(File source) {
+        this.source = source==null?null:NutsStreamOrPath.of(session.io().path(source));
         return this;
     }
 
     @Override
-    public NutsIOHashAction setSource(Path path) {
-        this.value = path;
-        this.type = "path";
+    public NutsIOHashAction setSource(Path source) {
+        this.source = source==null?null:NutsStreamOrPath.of(session.io().path(source));
         return this;
     }
 
     @Override
-    public NutsIOHashAction setSource(NutsPath path) {
-        this.value = path;
-        this.type = "nuts-path";
+    public NutsIOHashAction setSource(NutsPath source) {
+        this.source = source==null?null:NutsStreamOrPath.of(source);
         return this;
     }
 
     @Override
-    public NutsIOHashAction setSource(NutsDescriptor descriptor) {
-        this.value = descriptor;
-        this.type = "desc";
+    public NutsIOHashAction setSource(NutsDescriptor source) {
+        this.source = source==null?null:NutsStreamOrPath.ofSpecial(source, NutsStreamOrPath.Type.DESCRIPTOR);
         return this;
     }
 
@@ -92,31 +93,25 @@ public class DefaultNutsIOHashAction implements NutsIOHashAction {
 
     @Override
     public byte[] computeBytes() {
-        if (type == null || value == null) {
+        if (source == null) {
             throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("missing Source"));
         }
         checkSession();
-        switch (type) {
-            case "stream": {
-                return CoreIOUtils.evalHash(((InputStream) value), getValidAlgo());
+        switch (source.getType()) {
+            case INPUT_STREAM: {
+                return CoreIOUtils.evalHash(source.getInputStream(), getValidAlgo());
             }
-            case "file": {
-                try (InputStream is = new BufferedInputStream(Files.newInputStream(((File) value).toPath()))) {
+            case PATH: {
+                try (InputStream is = new BufferedInputStream(source.getInputStream())) {
                     return CoreIOUtils.evalHash(is, getValidAlgo());
                 } catch (IOException ex) {
                     throw new UncheckedIOException(ex);
                 }
             }
-            case "path": {
-                try (InputStream is = new BufferedInputStream(Files.newInputStream(((Path) value)))) {
-                    return CoreIOUtils.evalHash(is, getValidAlgo());
-                } catch (IOException ex) {
-                    throw new UncheckedIOException(ex);
-                }
-            }
-            case "desc": {
+            case DESCRIPTOR: {
                 ByteArrayOutputStream o = new ByteArrayOutputStream();
-                getSession().descriptor().formatter((NutsDescriptor) value).compact().setSession(session).print(new OutputStreamWriter(o));
+                getSession().descriptor().formatter((NutsDescriptor) source.getValue())
+                        .compact().setSession(session).print(new OutputStreamWriter(o));
                 try (InputStream is = new ByteArrayInputStream(o.toByteArray())) {
                     return CoreIOUtils.evalHash(is, getValidAlgo());
                 } catch (IOException ex) {
@@ -124,7 +119,7 @@ public class DefaultNutsIOHashAction implements NutsIOHashAction {
                 }
             }
             default: {
-                throw new NutsUnsupportedArgumentException(getSession(), NutsMessage.cstyle("unsupported type %s", type));
+                throw new NutsUnsupportedArgumentException(getSession(), NutsMessage.cstyle("unsupported type %s", source.getType()));
             }
         }
     }

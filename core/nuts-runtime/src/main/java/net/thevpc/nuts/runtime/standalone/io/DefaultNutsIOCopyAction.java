@@ -86,6 +86,17 @@ public class DefaultNutsIOCopyAction implements NutsIOCopyAction {
 //    }
 
     @Override
+    public NutsIOCopyAction from(byte[] source) {
+        return setSource(source);
+    }
+
+    @Override
+    public NutsIOCopyAction setSource(byte[] source) {
+        this.source = source==null?null:NutsStreamOrPath.of(new ByteArrayInputStream(source));
+        return this;
+    }
+
+    @Override
     public NutsIOCopyAction setSource(NutsPath source) {
         this.source = source==null?null:NutsStreamOrPath.of(source);
         return this;

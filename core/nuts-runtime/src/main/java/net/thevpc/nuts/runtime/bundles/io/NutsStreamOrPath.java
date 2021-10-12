@@ -14,6 +14,10 @@ public class NutsStreamOrPath {
     private final Type type;
     private final boolean disposable;
 
+    public static NutsStreamOrPath ofSpecial(Object value, Type type) {
+        return new NutsStreamOrPath(value,type,false);
+    }
+
     private NutsStreamOrPath(Object value, Type type, boolean disposable) {
         this.value = value;
         this.type = type;
@@ -204,7 +208,8 @@ public class NutsStreamOrPath {
         PATH,
         INPUT_STREAM,
         OUTPUT_STREAM,
-        NUTS_PRINT_STREAM
+        NUTS_PRINT_STREAM,
+        DESCRIPTOR,
         ;
     }
 
