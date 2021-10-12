@@ -545,7 +545,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                                             txt.builder()
                                                     .append(" This is the very first time ")
                                                     .appendCode("sh", "nuts")
-                                                    .append(" has been started for this workspace ")
+                                                    .append(" has been launched for this workspace ")
                                     )
                     ).println(out);
                     out.println();
