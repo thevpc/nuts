@@ -165,6 +165,10 @@ public class DefaultNutsWorkspaceEnvManagerModel {
 
     /*fix this add field  like above*/
     public NutsShellFamily [] getShellFamilies() {
+        return getShellFamilies(true);
+    }
+
+    public NutsShellFamily [] getShellFamilies(boolean allEvenNonInstalled) {
         ArrayList<NutsShellFamily> shellFamilies = new ArrayList<NutsShellFamily>();
         switch (this.getOsFamily()){
             case UNIX:
@@ -174,8 +178,11 @@ public class DefaultNutsWorkspaceEnvManagerModel {
                 LinkedHashSet<NutsShellFamily> families = new LinkedHashSet<>();
                 families.add(this.getShellFamily());
                 //add bash with existing rc
-                NutsShellFamily[] all = {NutsShellFamily.BASH, NutsShellFamily.CSH, NutsShellFamily.FISH,
-                        NutsShellFamily.KSH, NutsShellFamily.ZSH, NutsShellFamily.SH};
+                NutsShellFamily[] all = {NutsShellFamily.BASH, NutsShellFamily.ZSH,
+                        NutsShellFamily.CSH,
+                        NutsShellFamily.KSH,
+                        NutsShellFamily.FISH, NutsShellFamily.SH
+                };
                 for (NutsShellFamily f: all) {
                     Path path = Paths.get("/bin").resolve(f.id());
                     if(Files.exists(path))
@@ -183,7 +190,9 @@ public class DefaultNutsWorkspaceEnvManagerModel {
                         families.add(f);
                     }
                 }
-                families.addAll(Arrays.asList(all));
+                if(allEvenNonInstalled) {
+                    families.addAll(Arrays.asList(all));
+                }
                 shellFamilies.addAll(families);
                 break;
             }
@@ -202,7 +211,6 @@ public class DefaultNutsWorkspaceEnvManagerModel {
             }
             default: {
                 shellFamilies.add(NutsShellFamily.UNKNOWN);
-
             }
         }
          return shellFamilies.toArray(new NutsShellFamily[0]) ;
