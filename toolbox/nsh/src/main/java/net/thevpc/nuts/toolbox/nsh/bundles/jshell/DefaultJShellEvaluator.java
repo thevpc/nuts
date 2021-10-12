@@ -146,7 +146,7 @@ public class DefaultJShellEvaluator implements JShellEvaluator {
         }
         final JShellUniformException[] a = new JShellUniformException[2];
         final PrintStream out1 = new PrintStream(out);
-        final JShellContext leftContext = context.getShell().createContext(context).setOut(out1);
+        final JShellContext leftContext = context.getShell().createNewContext(context).setOut(out1);
         Thread j1 = new Thread() {
             @Override
             public void run() {
@@ -164,7 +164,7 @@ public class DefaultJShellEvaluator implements JShellEvaluator {
 
         };
         j1.start();
-        JShellContext rightContext = context.getShell().createContext(context).setIn((InputStream) in2);
+        JShellContext rightContext = context.getShell().createNewContext(context).setIn((InputStream) in2);
         try {
             context.getShell().evalNode(right, rightContext);
         } catch (JShellUniformException e) {
@@ -206,7 +206,7 @@ public class DefaultJShellEvaluator implements JShellEvaluator {
     @Override
     public String evalCommandAndReturnString(JShellCommandNode command, JShellContext context) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        JShellContext c2 = context.getShell().createContext(context, context.getServiceName(), context.getArgsArray());
+        JShellContext c2 = context.getShell().createNewContext(context, context.getServiceName(), context.getArgsArray());
         PrintStream p = new PrintStream(out);
         c2.setOut(p);
         context.getShell().evalNode(command,c2);
@@ -317,7 +317,7 @@ public class DefaultJShellEvaluator implements JShellEvaluator {
         context.getShell().traceExecution(() -> ("`" + stringExpression + "`"), context);
         JShellCommandNode t = context.getShell().parseScript(stringExpression);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        JShellContext c2 = context.getShell().createContext(context);
+        JShellContext c2 = context.getShell().createNewContext(context);
         c2.setOut(new PrintStream(out));
         context.getShell().evalNode(t,c2);
         c2.out().flush();

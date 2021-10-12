@@ -102,8 +102,12 @@ public class Yaccer {
             if (not != null && (not.isNewline() || not.isEndCommand())) {
                 getLexer().nextToken();
             } else {
+                u=not;
                 break;
             }
+        }
+        if (u == null) {
+            return null;
         }
         if (u.type.equals("!")) {
             Token not = getLexer().nextToken();
@@ -974,7 +978,7 @@ public class Yaccer {
                     }
                 } else {
                     if (!usingItems.isEmpty()) {
-                        context = shell.createContext(context);
+                        context = shell.createNewContext(context);
                         context.vars().set(context.vars());
                         context.vars().set((Map) usingItems);
                     }

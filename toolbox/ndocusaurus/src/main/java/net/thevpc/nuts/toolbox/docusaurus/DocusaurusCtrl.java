@@ -324,7 +324,7 @@ public class DocusaurusCtrl {
 
         @Override
         public Object eval(String content, FileTemplater context) {
-            NutsSession session = context.getSession();
+            NutsSession session = context.getSession().copy();
             NutsPrintStream out = session.io().createMemoryPrintStream();
             session.setTerminal(
                     session.term()
@@ -333,10 +333,11 @@ public class DocusaurusCtrl {
                                     out,
                                     out)
             );
-            JShellContext ctx = shell.createContext(
+            JShellContext ctx = shell.createInlineContext(
                     shell.getRootContext(),
                     context.getSourcePath().orElseGet(() -> "nsh"), new String[0]
             );
+            ctx.setSession(session);
             shell.executeScript(content, ctx);
             return out.toString();
         }

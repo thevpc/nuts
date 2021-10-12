@@ -50,7 +50,7 @@ public interface JShellContext {
 
     List<JShellAutoCompleteCandidate> resolveAutoCompleteCandidates(String commandName, List<String> autoCompleteWords, int wordIndex, String autoCompleteLine);
 
-    JShellContext setEnv(Map<String,String> env);
+    JShellContext setEnv(Map<String, String> env);
 
     Map<String, Object> getUserProperties();
 
@@ -98,11 +98,6 @@ public interface JShellContext {
 
 //    JShellContext copy() ;
 
-    interface Watcher{
-        void stop();
-        boolean isStopped();
-    }
-
     NutsSession session();
 
     NutsSession getSession();
@@ -113,9 +108,16 @@ public interface JShellContext {
 
     NutsWorkspace getWorkspace();
 
-    void setWorkspace(NutsWorkspace workspace);
-
     NutsCommandAutoComplete getAutoComplete();
 
     void setAutoComplete(NutsCommandAutoComplete value);
+
+    void setFunctionManager(JShellFunctionManager functionManager);
+
+    interface Watcher {
+        void stop();
+
+        boolean isStopped();
+    }
+
 }

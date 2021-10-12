@@ -30,6 +30,7 @@ import net.thevpc.nuts.NutsCommandLine;
 import net.thevpc.nuts.NutsSingleton;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellContext;
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellContextForSource;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -93,16 +94,8 @@ public class SourceCommand extends SimpleNshBuiltin {
 //        c2.setArgs(context.getArgs());
         JShellContext c2 = context.getExecutionContext().getShellContext();
         for (String goodFile : goodFiles) {
-            String oldServiceName = c2.getServiceName();
-            List<String> oldArgList = new ArrayList<>(c2.getArgsList());
-            c2.setServiceName(goodFile);
-            c2.setArgs(context.getArgs());
-            try {
-                context.getShell().executeServiceFile(c2, false);
-            } finally {
-                c2.setServiceName(oldServiceName);
-                c2.setArgs(oldArgList.toArray(new String[0]));
-            }
+            JShellContext c=context.getShell().createInlineContext(c2,goodFile,context.getArgs());
+            context.getShell().executeServiceFile(c, false);
         }
     }
 

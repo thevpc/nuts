@@ -275,12 +275,21 @@ public class JShell {
         return createContext(null, null, null, null,serviceName, args);
     }
 
-    public JShellContext createContext(JShellContext parentContext) {
-        return createContext(parentContext,parentContext.getServiceName(), parentContext.getArgsArray());
+    public JShellContext createNewContext(JShellContext parentContext) {
+        return createNewContext(parentContext,parentContext.getServiceName(), parentContext.getArgsArray());
     }
 
-    public JShellContext createContext(JShellContext ctx, String serviceName, String[] args) {
+    public JShellContext createNewContext(JShellContext ctx, String serviceName, String[] args) {
         return createContext(ctx, null, null, null,serviceName,args);
+    }
+    public JShellContext createInlineContext(JShellContext ctx, String serviceName, String[] args) {
+        if(ctx==null){
+            ctx=getRootContext();
+        }
+        JShellContextForSource c = new JShellContextForSource(ctx);
+        c.setServiceName(serviceName);
+        c.setArgs(args);
+        return c;
     }
 
     public JShellCommandNode createCommandNode(String[] args) {
@@ -524,7 +533,7 @@ public class JShell {
 
             if (!getOptions().getFiles().isEmpty()) {
                 for (String file : getOptions().getFiles()) {
-                    executeServiceFile(createContext(rootContext, file, getOptions().getCommandArgs().toArray(new String[0])), false);
+                    executeServiceFile(createNewContext(rootContext, file, getOptions().getCommandArgs().toArray(new String[0])), false);
                 }
                 if (getOptions().isInteractive()) {
                     executeInteractive(rootContext);
@@ -629,7 +638,7 @@ public class JShell {
                     if (profileFile.startsWith("~/") || profileFile.startsWith("~\\")) {
                         profileFile = System.getProperty("user.home") + profileFile.substring(1);
                     }
-                    executeServiceFile(createContext(getRootContext(), profileFile, new String[0]), true);
+                    executeServiceFile(createNewContext(getRootContext(), profileFile, new String[0]), true);
                 }
             }
         }
@@ -645,7 +654,7 @@ public class JShell {
                     if (profileFile.startsWith("~/") || profileFile.startsWith("~\\")) {
                         profileFile = System.getProperty("user.home") + profileFile.substring(1);
                     }
-                    executeServiceFile(createContext(getRootContext(), profileFile, new String[0]), true);
+                    executeServiceFile(createNewContext(getRootContext(), profileFile, new String[0]), true);
                 }
             }
         }
@@ -1097,7 +1106,7 @@ public class JShell {
         StringBuilder err = new StringBuilder();
         ByteArrayPrintStream oout = new ByteArrayPrintStream();
         ByteArrayPrintStream oerr = new ByteArrayPrintStream();
-        JShellContext newContext = createContext(getRootContext(), command[0], Arrays.copyOfRange(command, 1, command.length));
+        JShellContext newContext = createNewContext(getRootContext(), command[0], Arrays.copyOfRange(command, 1, command.length));
         newContext.setIn(new ByteArrayInputStream(in == null ? new byte[0] : in.toString().getBytes()));
         newContext.setOut(oout);
         newContext.setErr(oerr);

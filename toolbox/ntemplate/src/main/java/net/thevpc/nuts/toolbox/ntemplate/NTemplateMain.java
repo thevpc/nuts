@@ -127,7 +127,8 @@ public class NTemplateMain implements NutsApplication {
 
         @Override
         public Object eval(String content, FileTemplater context) {
-            NutsSession session = context.getSession();
+            JShellContext ctx=shell.createInlineContext(shell.getRootContext(),context.getSourcePath().orElse("nsh"),new String[0]);
+            NutsSession session = context.getSession().copy();
             NutsPrintStream out = session.io().createMemoryPrintStream();
             NutsPrintStream err = session.io().createMemoryPrintStream();
             session.setTerminal(
@@ -138,10 +139,7 @@ public class NTemplateMain implements NutsApplication {
                                     err
                             )
             );
-            JShellContext ctx = shell.createContext(
-                    shell.getRootContext(),
-                    context.getSourcePath().orElse("nsh"), new String[0]
-            );
+            ctx.setSession(session);
             shell.executeScript(content, ctx);
             return out.toString();
         }
