@@ -37,7 +37,7 @@ public class IteratorUtils {
     }
 
     public static <T> Iterator<T> safePospone(Iterator<T> t) {
-        return new ErrorHandlerIterator(IteratorErrorHandlerType.POSPONE, t);
+        return new ErrorHandlerIterator(IteratorErrorHandlerType.POSTPONE, t);
     }
 
     public static <T> boolean isNullOrEmpty(Iterator<T> t) {
@@ -84,6 +84,30 @@ public class IteratorUtils {
 
     public static <T> Iterator<T> coalesce2(List<Iterator<T>> all) {
         return coalesce((List) all);
+    }
+
+    public static <T> Iterator<T> coalesce(Iterator<? extends T> ... all) {
+        return coalesce(Arrays.asList(all));
+    }
+
+    public static <T> Iterator<T> concat(Iterator<? extends T> ... all) {
+        return concat(Arrays.asList(all));
+    }
+
+    public static <T> Iterator<T> concatLists(List<Iterator<? extends T>> ... all) {
+        List<Iterator<? extends T>> r=new ArrayList<>();
+        if(all!=null) {
+            for (List<Iterator<? extends T>> a : all) {
+                if (a != null) {
+                    for (Iterator<? extends T> b : a) {
+                        if(b!=null){
+                            r.add(b);
+                        }
+                    }
+                }
+            }
+        }
+        return concat(r);
     }
 
     public static <T> Iterator<T> coalesce(List<Iterator<? extends T>> all) {
@@ -151,11 +175,25 @@ public class IteratorUtils {
         return new OnFinishIterator<>(from, r);
     }
 
-    public static <F, T> Iterator<T> map(Iterator<F> from, Function<? super F, ? extends T> converter, String name) {
+    public static <F, T> Function<F,T> namedFunction(Function<F,T> converter, String name) {
+        return new Function<F, T>() {
+            @Override
+            public T apply(F f) {
+                return converter.apply(f);
+            }
+
+            @Override
+            public String toString() {
+                return name==null?(converter==null?"null":converter.toString()):name;
+            }
+        };
+    }
+
+    public static <F, T> Iterator<T> map(Iterator<F> from, Function<? super F, ? extends T> converter) {
         if (isNullOrEmpty(from)) {
             return emptyIterator();
         }
-        return new ConvertedIterator<>(from, converter, name);
+        return new ConvertedIterator<>(from, converter);
     }
 
     public static <F, T> Iterator<T> convertNonNull(Iterator<F> from, Function<F, T> converter, String name) {
@@ -216,6 +254,10 @@ public class IteratorUtils {
     public static <F, T> Iterator<F> distinct(Iterator<F> it, final Function<F, T> converter) {
         if (isNullOrEmpty(it)) {
             return emptyIterator();
+        }
+        if(converter==null){
+            Predicate<F> filter = new DistinctPredicate<>();
+            return new FilteredIterator<>(it, filter);
         }
         Predicate<F> filter = new DistinctWithConverterPredicate<>(converter);
         return new FilteredIterator<>(it, filter);
@@ -441,7 +483,7 @@ public class IteratorUtils {
 
         @Override
         public String toString() {
-            return "flattenIterator(" + from + ")";
+            return "FlattenIterator(" + from + ")";
         }
     }
 
@@ -484,7 +526,11 @@ public class IteratorUtils {
 
         @Override
         public String toString() {
-            return "sort(" + it + ")";
+            if(removeDuplicates){
+                return "SortDistinct(" + it + ")";
+            }else{
+                return "SortDuplicates(" + it + ")";
+            }
         }
     }
 

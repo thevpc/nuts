@@ -25,6 +25,7 @@ package net.thevpc.nuts.runtime.standalone.wscommands.search;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.iter.IteratorBuilder;
+import net.thevpc.nuts.runtime.bundles.iter.IteratorUtils;
 import net.thevpc.nuts.runtime.core.DefaultNutsClassLoader;
 import net.thevpc.nuts.runtime.core.commands.ws.DefaultNutsQueryBaseOptions;
 import net.thevpc.nuts.runtime.core.format.NutsDisplayProperty;
@@ -32,7 +33,6 @@ import net.thevpc.nuts.runtime.core.format.NutsFetchDisplayOptions;
 import net.thevpc.nuts.runtime.core.format.NutsIdFormatHelper;
 import net.thevpc.nuts.runtime.standalone.ext.DefaultNutsWorkspaceExtensionManager;
 import net.thevpc.nuts.runtime.standalone.util.NutsClassLoaderUtils;
-import net.thevpc.nuts.runtime.standalone.util.NutsCollectionStream;
 import net.thevpc.nuts.runtime.standalone.util.NutsIteratorStream;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
@@ -426,6 +426,20 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     }
 
     @Override
+    public NutsSearchCommand setIds(String... ids) {
+        clearIds();
+        addIds(ids);
+        return this;
+    }
+
+    @Override
+    public NutsSearchCommand setIds(NutsId... ids) {
+        clearIds();
+        addIds(ids);
+        return this;
+    }
+
+    @Override
     public boolean isSorted() {
         return sorted;
     }
@@ -435,7 +449,6 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
         this.sorted = sort;
         return this;
     }
-
 
     //    public NutsQuery setDependencyFilter(TypedObject filter) {
 //        if (filter == null) {
@@ -568,7 +581,6 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
         return this;
     }
 
-
     @Override
     public NutsStream<NutsId> getResultIds() {
         return buildCollectionResult(getResultIdIteratorBase(null));
@@ -577,7 +589,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     @Override
     public NutsStream<NutsDependencies> getResultDependencies() {
         return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(true, isEffective()))
-                .map(x -> x.getDependencies())
+                .map(NutsDefinition::getDependencies)
         );
     }
 
@@ -585,7 +597,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     public NutsStream<NutsDependency> getResultInlineDependencies() {
         return buildCollectionResult(
                 IteratorBuilder.of(getResultIdIteratorBase(true)).map(
-                                x -> x.toDependency(), "Id->Dependency")
+                                IteratorUtils.namedFunction(NutsId::toDependency, "Id->Dependency"))
                         .build()
         );
     }
@@ -616,7 +628,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
             allIds[i] = nutsDefinitions.get(i).getId();
         }
         DefaultNutsClassLoader cl = ((DefaultNutsWorkspaceExtensionManager) getSession().extensions())
-                .getModel().getNutsURLClassLoader("SEARCH-" + UUID.randomUUID().toString(), parent, getSession());
+                .getModel().getNutsURLClassLoader("SEARCH-" + UUID.randomUUID(), parent, getSession());
         for (NutsDefinition def : nutsDefinitions) {
             cl.add(NutsClassLoaderUtils.definitionToClassLoaderNode(def, getSession()));
         }
@@ -807,6 +819,20 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     @Override
     public NutsSearchCommand setInstallStatus(NutsInstallStatusFilter installStatus) {
         this.installStatus = installStatus;
+        return this;
+    }
+
+    @Override
+    public NutsSearchCommand setId(String id) {
+        clearIds();
+        addId(id);
+        return this;
+    }
+
+    @Override
+    public NutsSearchCommand setId(NutsId id) {
+        clearIds();
+        addId(id);
         return this;
     }
 
@@ -1278,7 +1304,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
                 || Arrays.stream(getSession().getFetchStrategy().modes())
                 .anyMatch(x -> x == NutsFetchMode.REMOTE);
         return IteratorBuilder.of(getResultIdIteratorBase(null))
-                .convert(next -> {
+                .map(IteratorUtils.namedFunction(next -> {
 //                    NutsDefinition d = null;
 //                    if (isContent()) {
                     NutsDefinition d = fetch.setId(next).getResultDefinition();
@@ -1301,7 +1327,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
 //                        }
 //                    }
 //                    return d;
-                }, "Id->Definition")
+                }, "Id->Definition"))
                 .notNull().build();
     }
 
@@ -1347,33 +1373,5 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
 
     protected Iterator<NutsId> applyPrintDecoratorIterOfNutsId(Iterator<NutsId> curr, boolean print) {
         return print ? NutsWorkspaceUtils.of(getSearchSession()).decoratePrint(curr, getSearchSession(), getDisplayOptions()) : curr;
-    }
-
-    @Override
-    public NutsSearchCommand setId(String id) {
-        clearIds();
-        addId(id);
-        return this;
-    }
-
-    @Override
-    public NutsSearchCommand setId(NutsId id) {
-        clearIds();
-        addId(id);
-        return this;
-    }
-
-    @Override
-    public NutsSearchCommand setIds(String... ids) {
-        clearIds();
-        addIds(ids);
-        return this;
-    }
-
-    @Override
-    public NutsSearchCommand setIds(NutsId... ids) {
-        clearIds();
-        addIds(ids);
-        return this;
     }
 }

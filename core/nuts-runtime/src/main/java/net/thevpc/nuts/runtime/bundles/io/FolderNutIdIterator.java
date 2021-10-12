@@ -156,6 +156,14 @@ public class FolderNutIdIterator implements Iterator<NutsId> {
         throw new NutsUnsupportedOperationException(session, NutsMessage.cstyle("unsupported remove"));
     }
 
+    @Override
+    public String toString() {
+        return "FolderNutIdIterator{" +
+                "repository='" + repository + '\'' +
+                ", folder=" + folder +
+                '}';
+    }
+
     public long getVisitedFoldersCount() {
         return visitedFoldersCount;
     }
@@ -179,13 +187,13 @@ public class FolderNutIdIterator implements Iterator<NutsId> {
                 }
                 if (t != null && (filter == null || filter.acceptSearchId(new NutsSearchIdByDescriptor(t), session))) {
                     NutsId nutsId = t.getId().builder().setRepository(repository).build();
-//                        nutsId = nutsId.setAlternative(t.getAlternative());
                     return nutsId;
                 }
             }
             if (id != null) {
                 if (filter == null || filter.acceptSearchId(new NutsSearchIdById(id), session)) {
-                    return id;
+                    NutsId nutsId = id.builder().setRepository(repository).build();
+                    return nutsId;
                 }
             }
             return null;

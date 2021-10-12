@@ -61,7 +61,7 @@ public class IteratorBuilder<T> {
         );
     }
 
-    public static IteratorBuilder<File> ofFileDfs(File file) {
+    public static IteratorBuilder<File> ofFileDFS(File file) {
         return of(new FileDepthFirstIterator(file));
     }
 
@@ -99,19 +99,7 @@ public class IteratorBuilder<T> {
     }
 
     public <V> IteratorBuilder<V> map(Function<T, V> t) {
-        return new IteratorBuilder<>(new ConvertedIterator<>(it, t,null));
-    }
-
-    public <V> IteratorBuilder<V> map(Function<T, V> t,String name) {
-        return new IteratorBuilder<>(new ConvertedIterator<>(it, t,name));
-    }
-
-    public <V> IteratorBuilder<V> convert(Function<T, V> t) {
-        return new IteratorBuilder<>(new ConvertedIterator<>(it, t,null));
-    }
-
-    public <V> IteratorBuilder<V> convert(Function<T, V> t,String name) {
-        return new IteratorBuilder<>(new ConvertedIterator<>(it, t,name));
+        return new IteratorBuilder<>(new ConvertedIterator<>(it, t));
     }
 
     public <V> IteratorBuilder<V> mapMulti(Function<T, List<V>> t) {
@@ -127,7 +115,7 @@ public class IteratorBuilder<T> {
     }
 
     public <V> IteratorBuilder<T> sort(Comparator<T> t, boolean removeDuplicates) {
-        return new IteratorBuilder<>(IteratorUtils.sort(it, t, true));
+        return new IteratorBuilder<>(IteratorUtils.sort(it, t, removeDuplicates));
     }
 
     public <V> IteratorBuilder<T> distinct() {
@@ -150,8 +138,8 @@ public class IteratorBuilder<T> {
         return safe(IteratorErrorHandlerType.IGNORE);
     }
 
-    public IteratorBuilder<T> safePospone() {
-        return safe(IteratorErrorHandlerType.POSPONE);
+    public IteratorBuilder<T> safePostpone() {
+        return safe(IteratorErrorHandlerType.POSTPONE);
     }
 
     public IteratorBuilder<T> notNull() {

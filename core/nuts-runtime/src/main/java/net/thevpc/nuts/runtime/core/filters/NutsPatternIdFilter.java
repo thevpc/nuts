@@ -99,16 +99,24 @@ public class NutsPatternIdFilter extends AbstractIdFilter implements NutsIdFilte
             String sv = NutsUtilStrings.trim(x.get(key));
             return valPattern.matcher(sv).matches();
         }
+        @Override
+        public String toString() {
+            return "EntryMatches[key='"+key+"',val='"+(NutsBlankable.isBlank(val)?"*":val)+"']";
+        }
     }
 
     private static class PredicateWildKey extends NutsPredicates.BasePredicate<Map<String, String>> {
 
         private Pattern keyPattern;
         private Pattern valPattern;
+        private String skey;
+        private String sval;
 
         public PredicateWildKey(String key, String val) {
             this.keyPattern = GlobUtils.ofExact(key);
             this.valPattern = GlobUtils.ofExact(val);
+            skey=NutsBlankable.isBlank(key)?"*":key;
+            sval=NutsBlankable.isBlank(val)?"*":val;
         }
 
         @Override
@@ -120,6 +128,11 @@ public class NutsPatternIdFilter extends AbstractIdFilter implements NutsIdFilte
                 }
             }
             return false;
+        }
+
+        @Override
+        public String toString() {
+            return "EntryMatches[key='"+skey+"',val='"+sval+"']";
         }
     }
 

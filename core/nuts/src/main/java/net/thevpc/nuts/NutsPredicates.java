@@ -125,10 +125,22 @@ public class NutsPredicates {
         }
     }
 
-    private static class Blank extends BaseOpPredicate<String> implements Serializable {
+    private static class Blank<T> extends BaseOpPredicate<T> implements Serializable {
         @Override
-        public boolean test(String t) {
-            return t == null || t.trim().isEmpty();
+        public boolean test(T t) {
+            if(t==null){
+                return true;
+            }
+            if(t instanceof CharSequence){
+                return t.toString().trim().isEmpty();
+            }
+            if(t instanceof NutsBlankable){
+                return ((NutsBlankable) t).isBlank();
+            }
+            if(t instanceof char[]){
+                return NutsBlankable.isBlank((char[]) t);
+            }
+            return false;
         }
 
         @Override
@@ -143,7 +155,7 @@ public class NutsPredicates {
 
         @Override
         public String toString() {
-            return "bla,k";
+            return "blank";
         }
     }
 

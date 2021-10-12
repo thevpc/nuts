@@ -18,6 +18,6 @@ class DistinctPredicate<T> extends NutsPredicates.BasePredicate<T> {
 
     @Override
     public String toString() {
-        return "distinct";
+        return "Distinct";
     }
 }

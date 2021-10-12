@@ -1,9 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.config;
 
-import net.thevpc.nuts.NutsId;
-import net.thevpc.nuts.NutsIdFilter;
-import net.thevpc.nuts.NutsPredicates;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.filters.NutsSearchIdById;
 
 class NutsIdFilterToNutsIdPredicate extends NutsPredicates.BasePredicate<NutsId> {
@@ -19,4 +16,8 @@ class NutsIdFilterToNutsIdPredicate extends NutsPredicates.BasePredicate<NutsId>
     public boolean test(NutsId t) {
         return filter.acceptSearchId(new NutsSearchIdById(t), session);
     }
-}
+
+    @Override
+    public String toString() {
+        return filter.toString();
+    }}

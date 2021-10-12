@@ -25,6 +25,7 @@ package net.thevpc.nuts.runtime.core.util;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.iter.IteratorBuilder;
+import net.thevpc.nuts.runtime.bundles.iter.IteratorUtils;
 import net.thevpc.nuts.runtime.bundles.parsers.StringMapParser;
 import net.thevpc.nuts.runtime.bundles.parsers.StringPlaceHolderParser;
 import net.thevpc.nuts.runtime.core.model.DefaultNutsEnvCondition;
@@ -840,13 +841,14 @@ public class CoreNutsUtils {
     }
 
     public static Iterator<NutsDependency> itIdToDep(Iterator<NutsId> id) {
-        return IteratorBuilder.of(id).convert(x -> x.toDependency(), "IdToDependency").build();
+        return IteratorBuilder.of(id).map(IteratorUtils.namedFunction(NutsId::toDependency, "IdToDependency")).build();
     }
 
     public static Iterator<NutsDependency> itIdToDep(Iterator<NutsId> id, NutsDependency copyFrom) {
         String _optional = copyFrom.getOptional();
         String _scope = copyFrom.getScope();
-        return IteratorBuilder.of(id).convert(x -> x.toDependency().builder().setOptional(_optional).setScope(_scope).build(), "IdToDependency").build();
+        return IteratorBuilder.of(id).map(IteratorUtils.namedFunction(
+                x -> x.toDependency().builder().setOptional(_optional).setScope(_scope).build(), "IdToDependency")).build();
     }
 
 //    private static boolean acceptCondition(NutsId[] curr, String[] expected, NutsSession session) {

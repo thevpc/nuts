@@ -26,6 +26,6 @@ class DistinctWithConverterPredicate<F, T> extends NutsPredicates.BasePredicate<
 
     @Override
     public String toString() {
-        return "DistinctConverter";
+        return "DistinctConverter["+converter+"]";
     }
 }

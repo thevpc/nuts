@@ -157,7 +157,7 @@ public abstract class AbstractNutsStream<T> implements NutsStream<T> {
             @Override
             public Iterator<R> iterator() {
                 Iterator<T> it = AbstractNutsStream.this.iterator();
-                return IteratorUtils.map(it, mapper, "mapped(" + it + ")");
+                return IteratorUtils.map(it, mapper);
             }
         };
     }

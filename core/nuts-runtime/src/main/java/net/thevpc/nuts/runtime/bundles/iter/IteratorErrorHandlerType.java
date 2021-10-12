@@ -16,7 +16,7 @@ public enum IteratorErrorHandlerType {
      * error detected in hasNext will be re-thrown in next (hasNext will return
      * true)
      */
-    POSPONE,
+    POSTPONE,
     /**
      * error detected in hasNext will be simply thrown
      */

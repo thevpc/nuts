@@ -40,7 +40,7 @@ public class ErrorHandlerIterator<T> implements Iterator<T> {
                     // do nothing
                     return false;
                 }
-                case POSPONE: {
+                case POSTPONE: {
                     // do nothing
                     this.ex = ex;
                     return true;
@@ -73,7 +73,7 @@ public class ErrorHandlerIterator<T> implements Iterator<T> {
     public String toString() {
         switch (type){
             case THROW:return "ThrowOnError("+other+")";
-            case POSPONE:return "PostponeError("+other+")";
+            case POSTPONE:return "PostponeError("+other+")";
             case IGNORE:return "IgnoreError("+other+")";
         }
         return "ErrorHandlerIterator(" +
