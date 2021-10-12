@@ -37,6 +37,10 @@ public class NanoDB implements AutoCloseable{
         return serializers;
     }
 
+    public NanoDBTableFile findTable(String name) {
+        return tables.get(name);
+    }
+
     public NanoDBTableFile getTable(String name) {
         NanoDBTableFile tableFile = tables.get(name);
         if (tableFile == null) {
@@ -45,31 +49,16 @@ public class NanoDB implements AutoCloseable{
         return tableFile;
     }
 
-    public <T> NanoDBTableDefinition<T> createBeanDefinition(Class<T> type, boolean nullable, String... indices) {
-        return createBeanDefinition(type.getSimpleName(),type,nullable,indices);
+    public <T> NanoDBTableDefinitionBuilderFromBean<T> tableBuilder(Class<T> type) {
+        return new NanoDBTableDefinitionBuilderFromBean<>(type,this);
     }
-
-    public <T> NanoDBTableDefinition<T> createBeanDefinition(String name, Class<T> type, boolean nullable, String... indices) {
-        List<NanoDBDefaultIndexDefinition> defs = new ArrayList<>();
-        for (String index : indices) {
-            for (Field declaredField : type.getDeclaredFields()) {
-                if (declaredField.getName().equals(index)) {
-                    defs.add(new NanoDBFieldIndexDefinition(declaredField));
-                    break;
-                }
-            }
-        }
-        return new NanoDBTableDefinition<T>(
-                name,
-                type,
-                serializers.ofBean(type,nullable),
-                defs.toArray(new NanoDBIndexDefinition[0])
-        );
-    }
-
 
     public <T> NanoDBTableFile<T> createTable(NanoDBTableDefinition<T> def) {
         return createTable(def,false);
+    }
+
+    public <T> NanoDBTableFile<T> getOrCreateTable(NanoDBTableDefinition<T> def) {
+        return createTable(def,true);
     }
 
     public <T> NanoDBTableFile<T> createTable(NanoDBTableDefinition<T> def, boolean getOrCreate) {

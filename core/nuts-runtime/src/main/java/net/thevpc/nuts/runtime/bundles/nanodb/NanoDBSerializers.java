@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.bundles.nanodb;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Supplier;
 
 public class NanoDBSerializers {
@@ -12,16 +13,16 @@ public class NanoDBSerializers {
     public NanoDBSerializers() {
     }
 
-    public NanoDBSerializer ofBean(Class clz) {
-        return ofBean(clz, true);
-    }
-
-    public NanoDBSerializer ofBean(Class clz, boolean nullable) {
-        if (nullable) {
-            return new NanoDBSerializerForNullable(ofBean(clz, false));
-        }
-        return new NanoDBSerializerForBean(clz, this);
-    }
+//    public NanoDBSerializer ofBean(Class clz,Set<String> fields) {
+//        return ofBean(clz,fields, true);
+//    }
+//
+//    public NanoDBSerializer ofBean(Class clz, Set<String> fields, boolean nullable) {
+//        if (nullable) {
+//            return new NanoDBSerializerForNullable(ofBean(clz,fields, false));
+//        }
+//        return new NanoDBSerializerForBean(clz, this,fields);
+//    }
 
     public NanoDBSerializer of(Class clz, boolean nullable) {
         NanoDBSerializer u = findSerializer(clz, nullable);

@@ -3,17 +3,21 @@ package net.thevpc.nuts.runtime.bundles.nanodb;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class NanoDBSerializerForBean<T> extends NanoDBNonNullSerializer<T>{
 
     private LinkedHashMap<String, FieldInfo> fields;
     private NanoDBSerializers serializers;
-    public NanoDBSerializerForBean(Class<T> type, NanoDBSerializers serializers) {
+    private Set<String> acceptedFields;
+    public NanoDBSerializerForBean(Class<T> type, NanoDBSerializers serializers,Set<String> acceptedFields) {
         super(type);
         this.serializers = serializers;
-        this.fields = buildFields(type, serializers);
+        this.acceptedFields = acceptedFields==null? Collections.emptySet():acceptedFields;
+        this.fields = buildFields(type, acceptedFields,serializers);
     }
 
     public void write(T obj, NanoDBOutputStream out) {
@@ -24,23 +28,32 @@ public class NanoDBSerializerForBean<T> extends NanoDBNonNullSerializer<T>{
         return readNonNullHelper(in,getSupportedType(), fields);
     }
 
-    private static <T> LinkedHashMap<String, FieldInfo> buildFields(Class<T> type, NanoDBSerializers serializers){
-        LinkedHashMap<String, FieldInfo> fields=new LinkedHashMap<>();
-        for (Field declaredField : type.getDeclaredFields()) {
-            int m = declaredField.getModifiers();
-            if (!Modifier.isFinal(m) && !Modifier.isStatic(m) && !Modifier.isTransient(m)) {
-                declaredField.setAccessible(true);
-                fields.put(declaredField.getName(),
-                        new FieldInfo(
-                                declaredField.getName(),
-                                declaredField,
-                                serializers.of(declaredField.getType(), true)
-                        )
-                );
+    private static <T> LinkedHashMap<String, FieldInfo> buildFields(Class<T> type, Set<String> acceptedFields,NanoDBSerializers serializers){
+        acceptedFields = acceptedFields==null? Collections.emptySet():acceptedFields;
+        Class c=type;
+        LinkedHashMap<String, FieldInfo> fields = new LinkedHashMap<>();
+        while(c!=null) {
+            for (Field declaredField : c.getDeclaredFields()) {
+                String name = declaredField.getName();
+                if(acceptedFields.isEmpty() || acceptedFields.contains(name)) {
+                    int m = declaredField.getModifiers();
+                    if (!Modifier.isFinal(m) && !Modifier.isStatic(m) && !Modifier.isTransient(m)) {
+                        declaredField.setAccessible(true);
+                        fields.put(name,
+                                new FieldInfo(
+                                        name,
+                                        declaredField,
+                                        serializers.of(declaredField.getType(), true)
+                                )
+                        );
+                    }
+                }
             }
+            c=c.getDeclaringClass();
         }
         return fields;
     }
+
     private static <T> void writeNonNullHelper(T obj,Class<T> supportedType, NanoDBOutputStream out, Map<String, FieldInfo> fields) {
         for (FieldInfo value : fields.values()) {
             Object u = null;
