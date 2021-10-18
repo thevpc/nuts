@@ -10,7 +10,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -83,8 +82,9 @@ public class DefaultNutsWorkspaceEnvManager implements NutsWorkspaceEnvManager {
 //        checkSession();
         return model.getOsFamily();
     }
+
     @Override
-    public NutsShellFamily [] getShellFamilies() {
+    public NutsShellFamily[] getShellFamilies() {
         return model.getShellFamilies();
     }
 
@@ -210,7 +210,7 @@ public class DefaultNutsWorkspaceEnvManager implements NutsWorkspaceEnvManager {
             case WINDOWS: {
                 switch (item) {
                     case DESKTOP: {
-                        if(Files.isDirectory(getDesktopPath())){
+                        if (Files.isDirectory(getDesktopPath())) {
                             return NutsSupportMode.PREFERRED;
                         }
                         return NutsSupportMode.SUPPORTED;

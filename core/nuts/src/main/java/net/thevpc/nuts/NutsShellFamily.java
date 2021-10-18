@@ -73,18 +73,18 @@ public enum NutsShellFamily implements NutsEnum {
     UNKNOWN;
 
 
-    private static final NutsShellFamily _curr =_resolveCurrent();
+    private static final NutsShellFamily _curr = _resolveCurrent();
 
-    private static NutsShellFamily _resolveCurrent(){
-        switch (NutsOsFamily.getCurrent()){
-            case WINDOWS:{
+    private static NutsShellFamily _resolveCurrent() {
+        switch (NutsOsFamily.getCurrent()) {
+            case WINDOWS: {
                 return WIN_CMD;
             }
             case LINUX:
-            case UNIX:{
+            case UNIX: {
                 return parseLenient(System.getenv("SHELL"), BASH, BASH);
             }
-            case MACOS:{
+            case MACOS: {
                 return parseLenient(System.getenv("SHELL"), ZSH, ZSH);
             }
         }
@@ -160,7 +160,7 @@ public enum NutsShellFamily implements NutsEnum {
 
     public static NutsShellFamily parse(String value, NutsShellFamily emptyValue, NutsSession session) {
         NutsShellFamily v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v,value,NutsShellFamily.class,session);
+        NutsApiUtils.checkNonNullEnum(v, value, NutsShellFamily.class, session);
         return v;
     }
 
