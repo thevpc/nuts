@@ -88,7 +88,7 @@ public class DefaultNutsWorkspaceEnvManagerModel {
     }
 
     NutsWorkspaceConfigMain getStoreModelMain() {
-        return ((DefaultNutsWorkspaceConfigManager)NutsWorkspaceUtils.defaultSession(workspace).config())
+        return ((DefaultNutsWorkspaceConfigManager) NutsWorkspaceUtils.defaultSession(workspace).config())
                 .getModel()
                 .getStoreModelMain();
     }
@@ -164,45 +164,45 @@ public class DefaultNutsWorkspaceEnvManagerModel {
     }
 
     /*fix this add field  like above*/
-    public NutsShellFamily [] getShellFamilies() {
+    public NutsShellFamily[] getShellFamilies() {
         return getShellFamilies(true);
     }
 
-    public NutsShellFamily [] getShellFamilies(boolean allEvenNonInstalled) {
-        ArrayList<NutsShellFamily> shellFamilies = new ArrayList<NutsShellFamily>();
-        switch (this.getOsFamily()){
+    public NutsShellFamily[] getShellFamilies(boolean allEvenNonInstalled) {
+        ArrayList<NutsShellFamily> shellFamilies = new ArrayList<>();
+        switch (this.getOsFamily()) {
             case UNIX:
             case LINUX:
-            case MACOS:
-            {
+            case MACOS: {
                 LinkedHashSet<NutsShellFamily> families = new LinkedHashSet<>();
                 families.add(this.getShellFamily());
                 //add bash with existing rc
-                NutsShellFamily[] all = {NutsShellFamily.BASH, NutsShellFamily.ZSH,
+                NutsShellFamily[] all = {
+                        NutsShellFamily.SH,
+                        NutsShellFamily.BASH,
+                        NutsShellFamily.ZSH,
                         NutsShellFamily.CSH,
                         NutsShellFamily.KSH,
-                        NutsShellFamily.FISH, NutsShellFamily.SH
+                        NutsShellFamily.FISH
                 };
-                for (NutsShellFamily f: all) {
+                for (NutsShellFamily f : all) {
                     Path path = Paths.get("/bin").resolve(f.id());
-                    if(Files.exists(path))
-                    {
+                    if (Files.exists(path)) {
                         families.add(f);
                     }
                 }
-                if(allEvenNonInstalled) {
+                if (allEvenNonInstalled) {
                     families.addAll(Arrays.asList(all));
                 }
                 shellFamilies.addAll(families);
                 break;
             }
-            case WINDOWS:
-            {
+            case WINDOWS: {
                 LinkedHashSet<NutsShellFamily> families = new LinkedHashSet<>();
                 families.add(this.getShellFamily());
                 //add bash with existing rc
                 families.add(NutsShellFamily.WIN_CMD);
-                if(this.getOs().getVersion().compareTo("7")>=0){
+                if (this.getOs().getVersion().compareTo("7") >= 0) {
                     families.add(NutsShellFamily.WIN_POWER_SHELL);
                 }
                 shellFamilies.addAll(families);
@@ -213,7 +213,7 @@ public class DefaultNutsWorkspaceEnvManagerModel {
                 shellFamilies.add(NutsShellFamily.UNKNOWN);
             }
         }
-         return shellFamilies.toArray(new NutsShellFamily[0]) ;
+        return shellFamilies.toArray(new NutsShellFamily[0]);
     }
 
     public NutsId[] getDesktopEnvironments(NutsSession session) {
@@ -271,26 +271,26 @@ public class DefaultNutsWorkspaceEnvManagerModel {
                     session.id().builder().setArtifactId(NutsDesktopEnvironmentFamily.WINDOWS_SHELL.id()).build()
             };
         }
-        switch (session.env().getOsFamily()){
-            case WINDOWS:{
+        switch (session.env().getOsFamily()) {
+            case WINDOWS: {
                 return new NutsId[]{
                         session.id().builder().setArtifactId(NutsDesktopEnvironmentFamily.WINDOWS_SHELL.id()).build()
                 };
             }
-            case MACOS:{
+            case MACOS: {
                 return new NutsId[]{
                         session.id().builder().setArtifactId(NutsDesktopEnvironmentFamily.MACOS_AQUA.id()).build()
                 };
             }
             case UNIX:
-            case LINUX:{
+            case LINUX: {
                 NutsId[] all = getDesktopEnvironmentsXDGOrEmpty(session);
-                if(all.length==0){
+                if (all.length == 0) {
                     return new NutsId[]{session.id().builder().setArtifactId(NutsDesktopEnvironmentFamily.UNKNOWN.id()).build()};
                 }
                 return all;
             }
-            default:{
+            default: {
                 return new NutsId[]{session.id().builder().setArtifactId(NutsDesktopEnvironmentFamily.UNKNOWN.id()).build()};
             }
         }

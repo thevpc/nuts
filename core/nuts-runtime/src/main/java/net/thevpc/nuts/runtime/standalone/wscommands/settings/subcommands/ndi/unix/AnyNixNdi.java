@@ -13,36 +13,42 @@ import java.util.stream.Collectors;
 
 public abstract class AnyNixNdi extends BaseSystemNdi {
     public static final ReplaceString SHEBAN_SH = new ReplaceString("#!/bin/sh", "#!.*");
+
     public AnyNixNdi(NutsSession session) {
         super(session);
     }
 
     public String[] getSysRcNames() {
         NutsSession session = this.getSession();
-        switch (session.env().getOsFamily()){
+        switch (session.env().getOsFamily()) {
             case LINUX:
             case UNIX:
-            case MACOS:{
+            case MACOS: {
                 return Arrays.stream(session.env().getShellFamilies())
-                        .map(x->{
-                            switch (x){
-                                case SH:return ".profile";
-                                case BASH:return ".bashrc";
-                                case ZSH:return  ".zshenv";
-                                case KSH: return ".kshrc";
-                                case FISH:return ".config/fish/config.fish";
-                                case CSH:return ".cshrc";
-                                default:return null;
+                        .map(x -> {
+                            switch (x) {
+                                case SH:
+                                    return ".profile";
+                                case BASH:
+                                    return ".bashrc";
+                                case ZSH:
+                                    return ".zshenv";
+                                case KSH:
+                                    return ".kshrc";
+                                case FISH:
+                                    return ".config/fish/config.fish";
+                                case CSH:
+                                    return ".cshrc";
+                                default:
+                                    return null;
                             }
-                        }).filter(Objects::nonNull)
+                        })
+                        .filter(Objects::nonNull)
                         .toArray(String[]::new);
             }
             default:
-                return  new String[0];
+                return new String[0];
         }
-
-
-
     }
 
     public String getPathVarSep() {
@@ -68,7 +74,7 @@ public abstract class AnyNixNdi extends BaseSystemNdi {
             }
             return line.trim();
         }
-        throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("not a comment: %s",line));
+        throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("not a comment: %s", line));
     }
 
     @Override
@@ -169,7 +175,7 @@ public abstract class AnyNixNdi extends BaseSystemNdi {
 
     @Override
     public String getSetVarCommand(String name, String value) {
-        return name +"=\"" + value + "\"";
+        return name + "=\"" + value + "\"";
     }
 
     @Override
