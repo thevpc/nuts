@@ -7,6 +7,8 @@ import net.thevpc.nuts.toolbox.ndiff.jar.DiffResult;
 import net.thevpc.nuts.toolbox.nwork.config.ProjectConfig;
 import net.thevpc.nuts.toolbox.nwork.config.RepositoryAddress;
 import net.thevpc.nuts.toolbox.nwork.config.WorkspaceConfig;
+import net.thevpc.nuts.toolbox.nwork.filescanner.FileScanner;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -225,6 +227,28 @@ public class WorkspaceService {
             }
 
             int scanned = scan(toScan, interactive);
+            if (appContext.getSession().isPlainOut()) {
+                appContext.getSession().out().printf("##SUMMARY## : %s projects scanned%n", scanned);
+            }
+        }
+    }
+    public void find(NutsCommandLine cmdLine, NutsApplicationContext context) {
+        NutsArgument a;
+        NutsCommandLineManager commandLineFormat = context.getSession().commandLine();
+        List<File> toScan = new ArrayList<>();
+        String where=null;
+        while (cmdLine.hasNext()) {
+            if ((a = cmdLine.nextString("-w", "--where")) != null) {
+                where = a.getValue().getString();
+            }else if (cmdLine.peek().isNonOption()) {
+                String folder = cmdLine.nextNonOption(commandLineFormat.createName("Folder")).getString();
+                toScan.add(new File(folder));
+            } else {
+                context.configureLast(cmdLine);
+            }
+        }
+        if (cmdLine.isExecMode()) {
+            int scanned = find(toScan,where);
             if (appContext.getSession().isPlainOut()) {
                 appContext.getSession().out().printf("##SUMMARY## : %s projects scanned%n", scanned);
             }
@@ -577,6 +601,18 @@ public class WorkspaceService {
             System.out.println(this.path + " " + status/*+" "+message*/);
         }
 
+    }
+
+    public int find(List<File> folders,String where) {
+        FileScanner fs=new FileScanner();
+        if(where!=null && where.trim().length()>0) {
+            fs.setPathFilter(FileScanner.parseExpr(where));
+        }
+        fs.getSource().addAll(folders.stream().map(File::toPath).collect(Collectors.toSet()));
+        fs.scan().forEach(x->{
+            appContext.getSession().out().printf("%s%n",x);
+        });
+        return 0;
     }
 
     public int scan(List<File> folders, boolean interactive) {

@@ -86,3 +86,6 @@
 /incubating/nutsc/build
 /incubating/nutsc/dist
 /.dir-template/website/static/nuts.jar
+/core/nuts/.jpeek/
+/core/nuts-runtime/.jpeek/
+/core/.jpeek/

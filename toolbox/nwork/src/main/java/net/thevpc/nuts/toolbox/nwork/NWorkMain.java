@@ -25,6 +25,9 @@ public class NWorkMain implements NutsApplication {
             } else if ((a = cmdLine.next("scan", "s")) != null) {
                 service.scan(cmdLine, appContext);
                 return;
+            } else if ((a = cmdLine.next("find", "f")) != null) {
+                service.find(cmdLine, appContext);
+                return;
             } else if ((a = cmdLine.next("status", "t")) != null) {
                 if (a.getValue().isBoolean()) {
                     service.enableScan(cmdLine, appContext, a.getValue().getBoolean());
