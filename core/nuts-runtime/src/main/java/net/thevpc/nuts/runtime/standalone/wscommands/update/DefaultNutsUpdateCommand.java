@@ -295,11 +295,11 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
             NutsPrintStream out = getSession().out();
             NutsUpdateResult[] updates = result.getAllUpdates();
             if (updates.length == 0) {
-                out.printf("All packages are %s. You are running latest version%s.%n",
+                out.resetLine().printf("all packages are %s. You are running latest version%s.%n",
                         session.text().ofStyled("up-to-date", NutsTextStyle.success()),
                         result.getAllResults().length > 1 ? "s" : "");
             } else {
-                out.printf("Workspace has %s package%s to update.%n", session.text().ofStyled("" + updates.length, NutsTextStyle.primary1()),
+                out.resetLine().printf("workspace has %s package%s to update.%n", session.text().ofStyled("" + updates.length, NutsTextStyle.primary1()),
                         (updates.length > 1 ? "s" : ""));
                 int widthCol1 = 2;
                 int widthCol2 = 2;
