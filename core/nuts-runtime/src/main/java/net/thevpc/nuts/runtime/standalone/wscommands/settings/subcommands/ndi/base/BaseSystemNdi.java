@@ -30,7 +30,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     public NdiScriptInfo[] getSysRC(NdiScriptOptions options) {
         List<NdiScriptInfo> scriptInfos = new ArrayList<>();
         for (String bashrcName : getSysRcNames()) {
-            NdiScriptInfo i= new RcNdiScriptInfo(bashrcName, options);
+            NdiScriptInfo i = new RcNdiScriptInfo(bashrcName, options);
             scriptInfos.add(i);
         }
         return scriptInfos.toArray(new NdiScriptInfo[0]);
@@ -271,9 +271,9 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
 
         String scriptPath = options.getLauncher().getCustomScriptPath();
         all.add(scriptBuilderTemplate("nuts", "nuts", options.resolveNutsApiId(), options)
-                        .setPath(getBinScriptFile(NameBuilder.id(options.resolveNutsApiId(), scriptPath, "%n",
-                                options.resolveNutsApiDef().getDescriptor(), session).buildName(), options))
-                        .build());
+                .setPath(getBinScriptFile(NameBuilder.id(options.resolveNutsApiId(), scriptPath, "%n",
+                        options.resolveNutsApiDef().getDescriptor(), session).buildName(), options))
+                .build());
         all.add(getNutsTermInit(options).create());
         all.add(getNutsTerm(options).create());
 
@@ -281,13 +281,13 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             // create $home/.bashrc
             //PathInfo sysRC = getSysRC(options).create();
 
-          //  if (sysRC != null) {
+            //  if (sysRC != null) {
             //    all.add(sysRC);
             //}
             for (NdiScriptInfo ndiScriptInfo : getSysRC(options)) {
                 PathInfo sysRC = ndiScriptInfo.create();
                 if (sysRC != null) {
-                       all.add(sysRC);
+                    all.add(sysRC);
                 }
 
             }
@@ -320,7 +320,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     public PathInfo[] addScript(NdiScriptOptions options, String[] all) {
         List<String> idsToInstall = Arrays.asList(all);
         NutsSession session = options.getSession();
-        if(session==null){
+        if (session == null) {
             throw new IllegalArgumentException("missing session");
         }
         Path workspaceLocation = Paths.get(session.locations().getWorkspaceLocation());
@@ -725,15 +725,15 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                         );
             }
         }
-        String iconPath=null;
+        String iconPath = null;
         if (descAppIcon != null) {
-            String descAppIcon0=descAppIcon;
-            String descAppIconDigest=session.io().hash().md5().setSource(new ByteArrayInputStream(descAppIcon0.getBytes())).computeString();
-            NutsPath p0 = NutsPath.of(descAppIcon,session);
+            String descAppIcon0 = descAppIcon;
+            String descAppIconDigest = session.io().hash().md5().setSource(new ByteArrayInputStream(descAppIcon0.getBytes())).computeString();
+            NutsPath p0 = NutsPath.of(descAppIcon, session);
             if (descAppIcon.startsWith("classpath://")) {
                 descAppIcon = "nuts-resource://" + appDef.getId().getLongName() + "" + descAppIcon.substring("classpath://".length() - 1);
             }
-            String bestName = descAppIconDigest+"." + p0.getLastExtension();
+            String bestName = descAppIconDigest + "." + p0.getLastExtension();
             Path localIconPath = Paths.get(session.locations().getStoreLocation(appDef.getId(), NutsStoreLocation.CACHE))
                     .resolve("icons")
                     .resolve(bestName);
@@ -839,7 +839,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         return createLaunchTermShortcut(nutsDesktopIntegrationItem, options, fileName, name);
     }
 
-    public abstract boolean isShortcutFieldNameUserFriendly() ;
+    public abstract boolean isShortcutFieldNameUserFriendly();
 
     public String resolveShortcutFileName(NutsId id, NutsDescriptor descriptor, String fileName, String name) {
         if (NutsBlankable.isBlank(fileName)) {
