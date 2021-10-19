@@ -37,6 +37,13 @@ public class PrivateNutsUtilIO {
         return new String(Files.readAllBytes(file.toPath()));
     }
 
+    public static InputStream openURLStream(URL url, PrivateNutsLog LOG) throws IOException{
+        if(LOG!=null) {
+            LOG.log(Level.FINE, NutsLogVerb.START, NutsMessage.jstyle("[open-stream] {0}", url));
+        }
+        return url.openStream();
+    }
+
     public static Properties loadURLProperties(URL url, File cacheFile, boolean useCache, PrivateNutsLog LOG) {
         long startTime = System.currentTimeMillis();
         Properties props = new Properties();

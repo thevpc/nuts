@@ -208,7 +208,7 @@ public final class PrivateNutsUtilMaven {
             if (url.startsWith("http://") || url.startsWith("https://")) {
                 URL url1 = new URL(url);
                 try {
-                    xml = url1.openStream();
+                    xml = PrivateNutsUtilIO.openURLStream(url1,LOG);
                 } catch (IOException ex) {
                     //do not need to log error
                     return depsAndRepos;
@@ -219,7 +219,7 @@ public final class PrivateNutsUtilMaven {
                 if (file == null) {
                     // was not able to resolve to File
                     try {
-                        xml = url1.openStream();
+                        xml = PrivateNutsUtilIO.openURLStream(url1,LOG);
                     } catch (IOException ex) {
                         //do not need to log error
                         return depsAndRepos;
@@ -372,7 +372,7 @@ public final class PrivateNutsUtilMaven {
             depsAndRepos.deps.addAll(ok);
 
         } catch (Exception ex) {
-            LOG.log(Level.FINE, NutsMessage.jstyle("unable to loadDependenciesAndRepositoriesFromPomUrl {0}" + url), ex);
+            LOG.log(Level.FINE, NutsMessage.jstyle("unable to loadDependenciesAndRepositoriesFromPomUrl {0}" , url), ex);
         } finally {
             if (xml != null) {
                 try {
@@ -395,7 +395,7 @@ public final class PrivateNutsUtilMaven {
             DocumentBuilder builder = factory.newDocumentBuilder();
             InputStream is = null;
             try {
-                is = runtimeMetadata.openStream();
+                is = PrivateNutsUtilIO.openURLStream(runtimeMetadata,LOG);
             } catch (IOException ex) {
                 //do not need to log error
                 //ignore
@@ -505,7 +505,7 @@ public final class PrivateNutsUtilMaven {
                     }
                 }
                 if (!found) {
-                    for (NutsBootVersion p : detectVersionsFromTomcatDirectoryListing(basePath)) {
+                    for (NutsBootVersion p : detectVersionsFromTomcatDirectoryListing(basePath,LOG)) {
                         if (filter == null || filter.test(p)) {
                             found = true;
                             if (bestVersion == null || bestVersion.compareTo(p) < 0) {
@@ -528,9 +528,9 @@ public final class PrivateNutsUtilMaven {
         return iid;
     }
 
-    private static List<NutsBootVersion> detectVersionsFromTomcatDirectoryListing(String basePath) {
+    private static List<NutsBootVersion> detectVersionsFromTomcatDirectoryListing(String basePath,PrivateNutsLog LOG) {
         List<NutsBootVersion> all = new ArrayList<>();
-        try (InputStream in = new URL(basePath).openStream()) {
+        try (InputStream in = PrivateNutsUtilIO.openURLStream(new URL(basePath),LOG)) {
             List<String> p = new SimpleTomcatDirectoryListParser().parse(in);
             if (p != null) {
                 for (String s : p) {
@@ -704,7 +704,7 @@ public final class PrivateNutsUtilMaven {
         }
         URL pomXml = Nuts.class.getResource("/META-INF/maven/net.thevpc.nuts/nuts/pom.xml");
         if (pomXml != null) {
-            try (InputStream is = pomXml.openStream()) {
+            try (InputStream is = PrivateNutsUtilIO.openURLStream(pomXml,LOG)) {
                 propValue = resolvePomTagValues(new String[]{propName}, is).get(propName);
             } catch (Exception ex) {
                 //

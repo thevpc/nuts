@@ -68,7 +68,8 @@ public class NutsApiUtils {
 
     public static String resolveNutsIdDigest(NutsBootId id, URL[] urls) {
         return PrivateNutsUtilDigest.getURLDigest(
-                PrivateNutsUtilClassLoader.findClassLoaderJar(id, urls)
+                PrivateNutsUtilClassLoader.findClassLoaderJar(id, urls),
+                null
         );
     }
 
@@ -78,7 +79,10 @@ public class NutsApiUtils {
 
 
     public static NutsWorkspaceOptionsBuilder createOptionsBuilder() {
-        return new PrivateBootWorkspaceOptions(new PrivateNutsLog(null));
+        PrivateNutsLog lvl = new PrivateNutsLog(null);
+        PrivateBootWorkspaceOptions o = new PrivateBootWorkspaceOptions(lvl);
+        lvl.setOptions(o);
+        return o;
     }
 
 //    /**

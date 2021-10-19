@@ -119,10 +119,12 @@ public final class NutsBootWorkspace {
             LOG.setOptions(this.options);
         } else{
             LOG=new PrivateNutsLog(options.getBootTerminal());
+            LOG.setOptions(options);
             if (options.getCreationTime() == 0) {
                 NutsWorkspaceOptionsBuilder copy = options.builder();
                 copy.setCreationTime(creationTime);
                 this.options = copy.build();
+                LOG.setOptions(this.options);
             } else {
                 this.options = options;
             }
@@ -833,12 +835,12 @@ public final class NutsBootWorkspace {
                     LOG.log(Level.CONFIG, NutsLogVerb.SUCCESS, NutsMessage.jstyle("empty nuts class world. All dependencies are already loaded in classpath, most likely"));
                 } else if (bootClassWorldURLs.length == 1) {
                     LOG.log(Level.CONFIG, NutsLogVerb.SUCCESS, NutsMessage.jstyle("resolve nuts class world to : {0} {1}",
-                            PrivateNutsUtilDigest.getURLDigest(bootClassWorldURLs[0]), bootClassWorldURLs[0]));
+                            PrivateNutsUtilDigest.getURLDigest(bootClassWorldURLs[0],LOG), bootClassWorldURLs[0]));
                 } else {
                     LOG.log(Level.CONFIG, NutsLogVerb.SUCCESS, NutsMessage.jstyle("resolve nuts class world is to : "));
                     for (URL u : bootClassWorldURLs) {
                         LOG.log(Level.CONFIG, NutsLogVerb.SUCCESS, NutsMessage.jstyle("    {0} : {1}",
-                                PrivateNutsUtilDigest.getURLDigest(u), u));
+                                PrivateNutsUtilDigest.getURLDigest(u,LOG), u));
                     }
                 }
             }
@@ -1214,7 +1216,7 @@ public final class NutsBootWorkspace {
         NutsClassLoaderNode rtn = workspaceInformation.getRuntimeBootDependencyNode();
         String rtHash = "";
         if (rtn != null) {
-            rtHash = PrivateNutsUtilDigest.getURLDigest(rtn.getURL());
+            rtHash = PrivateNutsUtilDigest.getURLDigest(rtn.getURL(),LOG);
         }
         LOG.log(Level.SEVERE, NutsLogVerb.FAIL,NutsMessage.jstyle("  nuts-runtime-digest                : {0}", rtHash));
 

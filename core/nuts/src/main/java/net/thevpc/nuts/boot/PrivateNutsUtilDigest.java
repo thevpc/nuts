@@ -12,7 +12,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.security.MessageDigest;
 
 class PrivateNutsUtilDigest {
-    public static String getURLDigest(URL url) {
+    public static String getURLDigest(URL url, PrivateNutsLog LOG) {
         if (url != null) {
             File ff = PrivateNutsUtilIO.toFile(url);
             if (ff != null) {
@@ -20,7 +20,7 @@ class PrivateNutsUtilDigest {
             }
             InputStream is = null;
             try {
-                is = url.openStream();
+                is = PrivateNutsUtilIO.openURLStream(url,LOG);
                 if (is != null) {
                     return getStreamDigest(is);
                 }
