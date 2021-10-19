@@ -943,7 +943,7 @@ public class CoreNutsUtils {
     }
 
     public static class ProgressOptions {
-        private boolean enabled;
+        private boolean enabled=true;
         private Map<String, NutsVal> vals = new LinkedHashMap<>();
 
         public boolean isEnabled() {
