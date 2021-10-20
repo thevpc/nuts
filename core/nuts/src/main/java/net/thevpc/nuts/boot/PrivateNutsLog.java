@@ -82,10 +82,14 @@ public class PrivateNutsLog {
     }
 
     public boolean isLoggable(Level lvl) {
-        if (options == null) {
+        if(lvl.intValue()==Level.OFF.intValue()){
+            //this is a special case where we do log in all cases!
+            return true;
+        }
+        if (options == null || options.getLogConfig()==null) {
             return false;
         }
-        return options.getLogConfig() != null && lvl.intValue() >= options.getLogConfig().getLogTermLevel().intValue();
+        return lvl.intValue() >= options.getLogConfig().getLogTermLevel().intValue();
     }
 
     public void setOptions(NutsWorkspaceOptions options) {

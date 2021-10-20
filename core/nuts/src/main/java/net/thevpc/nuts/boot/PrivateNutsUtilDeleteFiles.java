@@ -158,7 +158,8 @@ class PrivateNutsUtilDeleteFiles {
                                     throw new NutsBootException(NutsMessage.plain("error response"));
                                 }
                                 case ASK: {
-                                    log.log(Level.WARNING, NutsLogVerb.WARNING, NutsMessage.jstyle("do you confirm deleting {0} [y/n/c/a] (default 'n') ? : ", directory));
+                                    // Level.OFF is to force logging in all cases
+                                    log.log(Level.OFF, NutsLogVerb.WARNING, NutsMessage.jstyle("do you confirm deleting {0} [y/n/c/a] (default 'n') ? : ", directory));
                                     line = log.readLine();
                                 }
                             }
