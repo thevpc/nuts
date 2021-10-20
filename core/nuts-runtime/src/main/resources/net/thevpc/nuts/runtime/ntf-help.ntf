@@ -105,7 +105,7 @@ Supported styles in NTF are defined in the following table:
                                          | ##:danger danger## ##:fail  fail## ##:var var## ##:pale pale##         |
 
 ##) NTF TITLES:
-Tables are special formatted lines and are usable simply by suffix # chars with parentheses at the start of any new line.
+Titles are special formatted lines and are usable simply by suffix # chars with parentheses at the start of any new line.
 
 #) Title 1
 ```#) Title 1```

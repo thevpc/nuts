@@ -1,40 +1,7 @@
-==worky== is a developer companion
+```sh ndoc``` is documentation tool
 
 ##) SYNOPSIS:
 
-==worky== {{scan}} \[{{-i}}|{{--interactive}}\]  <path>
-    scan for maven projetcs
 
-==worky== {{status}} <id>
-    check id status
-    Options
-        **-c** | **--commitable** | **--changed** 
-            consider changed projects
-        **-w** | **--new** 
-            consider new projects
-        **-o** | **--old** 
-            consider old projects
-        **-0** | **--ok**  | **--uptodate**
-            consider uptodate projects
-        **-e** | **--invalid**  | **--error**
-            consider invalid projects
-        **-p** | **--progress**
-            show progress
-
-==worky== {{enable scan}} <path>
-    enable scan path for maven projects
-
-==worky== {{disable scan}} <path>
-    disable scan path for maven projects
-
-==worky== {{list}}
-    list projects
-
-==worky== {{set}} ...
-    set project configurations
-    Options
-        \[{{-r}} | {{--repo}}\] <repo-path>
-            set repository path
-        \[{{-w}} | {{--workspace}}\] <workspace-path>
-            set workspace path
-
+```nuts -Zy -w test ndoc --progress=none --skip-errors -bZKy ndoc --backend=docusaurus --source /data/git/nuts/core/nuts --target /data/git/nuts/website/docs/javadocs```
+    generate javadoc

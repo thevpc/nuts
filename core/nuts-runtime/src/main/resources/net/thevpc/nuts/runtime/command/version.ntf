@@ -24,3 +24,5 @@ nuts -v
 ```sh nuts -v```
             show version
        
+```sh nuts -Zy -w test version --table ```
+            show version in tabular format

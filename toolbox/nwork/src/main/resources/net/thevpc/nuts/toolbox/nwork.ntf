@@ -40,3 +40,8 @@
             set repository path
         \[{{-w}} | {{--workspace}}\] <workspace-path>
             set workspace path
+
+##) EXAMPLES:
+
+```sh nuts nwork find --where "tag('git-ignored') or tag('backup-ignored') or tag('compiler-build')" /data/git/ /data/git-from-others/ ```
+         list all ignored backup folders and files

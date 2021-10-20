@@ -94,7 +94,7 @@ final class PrivateNutsBootConfigLoader {
         try {
             int a = 0;
             for (String part : s.split("\\.")) {
-                a = a * 100 + Integer.parseInt(part);
+                a = a * 100 + NutsApiUtils.parseInt(part,0,0);
             }
             return a;
         } catch (Exception ex) {

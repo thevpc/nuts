@@ -4,6 +4,7 @@ import net.thevpc.nuts.*;
 
 import java.io.PrintStream;
 import java.net.URL;
+import java.util.logging.Level;
 
 /**
  * this class implements several utility methods to be used by Nuts API interfaces
@@ -108,5 +109,17 @@ public class NutsApiUtils {
                 throw new NutsParseEnumException(session, stringValue, NutsCommandLineFormatStrategy.class);
             }
         }
+    }
+
+    public static Level parseLenientLogLevel(String value, Level emptyValue, Level errorValue) {
+        return PrivateNutsUtils.parseLenientLogLevel(value, emptyValue, errorValue);
+    }
+
+    public static Integer parseInt(String value, Integer emptyValue, Integer errorValue) {
+        return PrivateNutsUtils.parseInt(value, emptyValue, errorValue);
+    }
+
+    public static Integer parseFileSizeInBytes(String value, Integer defaultMultiplier, Integer emptyValue, Integer errorValue) {
+        return PrivateNutsUtils.parseFileSizeInBytes(value, defaultMultiplier, emptyValue, errorValue);
     }
 }

@@ -315,7 +315,7 @@ public class NdiUtils {
                         throw new UncheckedIOException(e);
                     }
                     if(session.isPlainTrace()){
-                        session.out().printf("update file %s%n",session.io().path(out));
+                        session.out().resetLine().printf("update file %s%n",session.io().path(out));
                     }
                     return PathInfo.Status.OVERRIDDEN;
                 }
@@ -339,7 +339,7 @@ public class NdiUtils {
                             throw new UncheckedIOException(e);
                         }
                         if(session.isPlainTrace()){
-                            session.out().printf("update file %s%n",session.io().path(out));
+                            session.out().resetLine().printf("update file %s%n",session.io().path(out));
                         }
                         return PathInfo.Status.OVERRIDDEN;
                     }else{

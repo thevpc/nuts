@@ -49,5 +49,8 @@ a docusaurus project toolbox
         runs website locally (runs npm start)
 
 ##) EXAMPLES:
-```sh ndocusaurus pdf```
-  generates pdf file
+```sh ndocusaurus pdf ```
+        generates pdf file
+
+```sh nuts -Zy -w test ndocusaurus --progress=none --skip-errors -bZy ndocusaurus -d $ProjectFileDir$/website build ```
+        generate website under intellij idea (using $ProjectFileDir$ var)

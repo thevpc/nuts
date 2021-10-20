@@ -6,12 +6,14 @@ display a line of text
 display a line of text
 
 options :
-```sh -n ```sh       : do not output the trailing newline
+```sh -n ```         : do not output the trailing newline
 ```sh -p ```         : plain text, do no use "format" escape characters
 
 ##) EXAMPLES:
 
 ```sh echo hello```
-   displays hello with bold format
+        display hello with bold format
 
 
+```sh nuts -ZSbkKy -w=test -r==maven-local,maven-central nsh -c echo ##hello## world```
+        echo with NFT format

@@ -10,8 +10,13 @@ Network Updatable Things Services
 
 website : [https://thevpc.github.io/nuts](https://thevpc.github.io/nuts)
 
-**nuts** is a Package manager for Java (and other things).
+```nuts``` is a Java™ Package Manager that helps discovering, downloading, assembling and executing local and remote artifacts (packages) in a very handy way. 
 
+Unlike maven which resolves dependencies at compile time, ```nuts``` solves dependencies and builds the classpath at install time and, as a result, saves disk and bandwidth by downloading and caching only libraries required for the current environment and share them between multiple installed applications. 
+
+```nuts``` is unique in that it reuses maven and other build tool descriptor formats to solve dependency graph, and as a result, it does not, whatsoever, have any requirement on existing maven created packages.
+
+```nuts``` is the ultimate solution to get rid of the ugly lib jars, fat-jars, uber-jars and one-jars used for deploying java applications.
 
 ## SYNOPSYS
 

@@ -185,3 +185,9 @@ search for artifacts
 
 ```sh nuts search --anywhere netbeans-*```
             search all artifacts that start with "netbeans-" in all local and remote repositories
+
+```sh nuts -Zy -w test search --repository spring  ```
+            search using spring repository only
+
+```sh -Zy search -l --json ```
+            search locally installed artifacts in json format

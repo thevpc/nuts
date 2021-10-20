@@ -42,3 +42,15 @@ execute a command
            executes the latest version of my-nuts-group:my-nuts
                 supposing that my-nuts-group is added as imported group using
                 config import my-nuts-group
+
+```sh nuts -ZSby -w test ./build-website.nsh ```
+            run sh file
+
+```sh nuts -Zy -w test /home/vpc/target/hl/local.vpc-no-name-1.0.0-SNAPSHOT.jar ```
+            run jar file
+
+```sh nuts --verbose -ZSbkKy -w=test6 tn.corp.mlda:mlda ```
+            run javafx app
+
+```sh nuts -ZykKS -w=temp --verbose exec --main-class=1 org.springframework.boot:spring-boot-cli#2.4.1 ```
+            run spring boot cli

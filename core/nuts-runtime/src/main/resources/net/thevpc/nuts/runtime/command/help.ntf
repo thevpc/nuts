@@ -9,7 +9,13 @@ show help and exit
 
 ##) EXAMPLES
 ```sh nuts help --help```
-            show this help and exit
+        show this help and exit
        
 ```sh nuts help update```
-            show help for update internal command
+        show help for update internal command
+
+```sh nuts -Zy -w test help --colors ```
+        show NTF help
+
+```sh nuts -ZSbkKy -w=test6 settings --help ```
+        echo with NFT format

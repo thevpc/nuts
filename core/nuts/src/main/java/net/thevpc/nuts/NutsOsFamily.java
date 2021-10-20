@@ -85,14 +85,18 @@ public enum NutsOsFamily implements NutsEnum {
             case "": {
                 return emptyValue;
             }
+            case "w":
             case "win":
             case "windows":
                 return WINDOWS;
+            case "l":
             case "linux":
                 return LINUX;
+            case "m":
             case "mac":
             case "macos":
                 return MACOS;
+            case "u":
             case "unix":
                 return UNIX;
             case "unknown":

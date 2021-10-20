@@ -351,6 +351,115 @@ final class PrivateNutsUtils {
         return new LinkedHashSet<>();
     }
 
+    public static Level parseLenientLogLevel(String value, Level emptyValue, Level errorValue) {
+        value = value == null ? "" : value.trim();
+        if (value.isEmpty()) {
+            return emptyValue;
+        }
+        switch (value.trim().toLowerCase()) {
+            case "off": {
+                return Level.OFF;
+            }
+            case "verbose":
+            case "finest": {
+                return Level.FINEST;
+            }
+            case "finer": {
+                return Level.FINER;
+            }
+            case "fine": {
+                return Level.FINE;
+            }
+            case "info": {
+                return Level.INFO;
+            }
+            case "all": {
+                return Level.ALL;
+            }
+            case "warning": {
+                return Level.WARNING;
+            }
+            case "severe": {
+                return Level.SEVERE;
+            }
+            case "config": {
+                return Level.CONFIG;
+            }
+        }
+        Integer i = NutsApiUtils.parseInt(value, null, null);
+        if (i != null) {
+            switch (i) {
+                case Integer.MAX_VALUE:
+                    return Level.OFF;
+                case 1000:
+                    return Level.SEVERE;
+                case 900:
+                    return Level.WARNING;
+                case 800:
+                    return Level.INFO;
+                case 700:
+                    return Level.CONFIG;
+                case 500:
+                    return Level.FINE;
+                case 400:
+                    return Level.FINER;
+                case 300:
+                    return Level.FINEST;
+                case Integer.MIN_VALUE:
+                    return Level.ALL;
+            }
+            return new CustomLogLevel("LEVEL" + i, i);
+        }
+        return errorValue;
+    }
+
+    public static Integer parseInt(String value, Integer emptyValue, Integer errorValue) {
+        if (NutsBlankable.isBlank(value)) {
+            return emptyValue;
+        }
+        value = value.trim();
+        try {
+            return Integer.parseInt(value);
+        } catch (Exception ex) {
+            return errorValue;
+        }
+    }
+
+    public static Integer parseFileSizeInBytes(String value, Integer defaultMultiplier, Integer emptyValue, Integer errorValue) {
+        if (NutsBlankable.isBlank(value)) {
+            return emptyValue;
+        }
+        value = value.trim();
+        Integer i = parseInt(value, null, null);
+        if (i != null) {
+            if (defaultMultiplier != null) {
+                return i * defaultMultiplier;
+            } else {
+                return i;
+            }
+        }
+        for (String s : new String[]{"kb", "mb", "gb", "k", "m", "g"}) {
+            if (value.toLowerCase().endsWith(s)) {
+                String v = value.substring(0, value.length() - s.length()).trim();
+                i = parseInt(v, null, null);
+                if (i != null) {
+                    switch (s) {
+                        case "k":
+                        case "kb":
+                            return i * 1024;
+                        case "m":
+                        case "mb":
+                            return i * 1024 * 1024;
+                        case "g":
+                        case "gb":
+                            return i * 1024 * 1024 * 1024;
+                    }
+                }
+            }
+        }
+        return errorValue;
+    }
+
     /**
      * @app.category Internal
      */
@@ -358,5 +467,11 @@ final class PrivateNutsUtils {
 
         LinkedHashSet<NutsBootId> deps = new LinkedHashSet<>();
         LinkedHashSet<String> repos = new LinkedHashSet<>();
+    }
+
+    private static class CustomLogLevel extends Level {
+        public CustomLogLevel(String name, int value) {
+            super(name, value);
+        }
     }
 }

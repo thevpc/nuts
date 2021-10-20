@@ -88,6 +88,48 @@ public enum NutsOpenMode implements NutsEnum {
         if (value.isEmpty()) {
             return emptyValue;
         }
+        switch (value) {
+            case "R":
+            case "READ":
+            case "O":
+            case "OE":
+            case "O_E":
+            case "OPEN":
+            case "OPEN_ERROR":
+            case "OPEN_OR_ERROR":
+            case "EXISTING": {
+                return NutsOpenMode.OPEN_OR_ERROR;
+            }
+            case "W":
+            case "WRITE":
+            case "C":
+            case "CE":
+            case "C_E":
+            case "CREATE":
+            case "CREATE_ERROR":
+            case "CREATE_OR_ERROR":
+            case "NEW": {
+                return NutsOpenMode.CREATE_OR_ERROR;
+            }
+            case "RW":
+            case "R_W":
+            case "READ_WRITE":
+            case "OC":
+            case "O_C":
+            case "OPEN_CREATE":
+            case "OPEN_OR_CREATE":
+            case "AUTO":
+            case "AUTO_CREATE": {
+                return NutsOpenMode.OPEN_OR_CREATE;
+            }
+            case "ON":
+            case "O_N":
+            case "OPEN_NULL":
+            case "OPEN_OR_NULL":
+            case "TRY": {
+                return NutsOpenMode.OPEN_OR_NULL;
+            }
+        }
         try {
             return NutsOpenMode.valueOf(value.toUpperCase());
         } catch (Exception notFound) {
@@ -101,7 +143,7 @@ public enum NutsOpenMode implements NutsEnum {
 
     public static NutsOpenMode parse(String value, NutsOpenMode emptyValue, NutsSession session) {
         NutsOpenMode v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v,value,NutsOpenMode.class,session);
+        NutsApiUtils.checkNonNullEnum(v, value, NutsOpenMode.class, session);
         return v;
     }
 

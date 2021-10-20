@@ -29,9 +29,8 @@ package net.thevpc.nuts;
 import net.thevpc.nuts.boot.NutsApiUtils;
 
 /**
- *
- * @since 0.5.4
  * @app.category Base
+ * @since 0.5.4
  */
 public enum NutsStoreLocationStrategy implements NutsEnum {
     /**
@@ -69,6 +68,15 @@ public enum NutsStoreLocationStrategy implements NutsEnum {
         if (value.isEmpty()) {
             return emptyValue;
         }
+        String s = value.toUpperCase().replace('-', '_');
+        switch (s) {
+            case "S":
+            case "STANDALONE":
+                return NutsStoreLocationStrategy.STANDALONE;
+            case "E":
+            case "EXPLODED":
+                return NutsStoreLocationStrategy.EXPLODED;
+        }
         try {
             return NutsStoreLocationStrategy.valueOf(value.toUpperCase());
         } catch (Exception notFound) {
@@ -82,12 +90,13 @@ public enum NutsStoreLocationStrategy implements NutsEnum {
 
     public static NutsStoreLocationStrategy parse(String value, NutsStoreLocationStrategy emptyValue, NutsSession session) {
         NutsStoreLocationStrategy v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v,value,NutsStoreLocationStrategy.class,session);
+        NutsApiUtils.checkNonNullEnum(v, value, NutsStoreLocationStrategy.class, session);
         return v;
     }
 
     /**
      * lower cased identifier.
+     *
      * @return lower cased identifier
      */
     public String id() {

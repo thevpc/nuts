@@ -38,14 +38,7 @@ public class NutsBootStrValImpl implements NutsVal {
 
     @Override
     public Integer getInt(Integer emptyValue, Integer errorValue) {
-        if (NutsBlankable.isBlank(value)) {
-            return emptyValue;
-        }
-        try {
-            return Integer.parseInt(value);
-        } catch (Exception ex) {
-            return errorValue;
-        }
+        return NutsApiUtils.parseInt(value,emptyValue,errorValue);
     }
 
     @Override

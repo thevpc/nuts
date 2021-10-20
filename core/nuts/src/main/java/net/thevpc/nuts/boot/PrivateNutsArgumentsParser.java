@@ -86,14 +86,6 @@ final class PrivateNutsArgumentsParser {
                     // they will be persisted. If they are specified later they 
                     // will override persisted values without persisting the changes
 
-//                    case "--boot-repos": {
-//                        a = cmdLine.nextString();
-//                        String bootRepos = a.getStringValue("");
-//                        if (enabled) {
-//                            options.setBootRepositories(bootRepos);
-//                        }
-//                        break;
-//                    }
                     case "-w":
                     case "--workspace": {
                         a = cmdLine.nextString();
@@ -256,7 +248,7 @@ final class PrivateNutsArgumentsParser {
                         a = cmdLine.nextString();
                         String v = a.getValue().getString();
                         if (enabled) {
-                            options.setStoreLocationLayout(parseNutsStoreLocationLayout(v));
+                            options.setStoreLocationLayout(parseNutsOsFamily(v));
                         }
                         break;
                     }
@@ -868,7 +860,7 @@ final class PrivateNutsArgumentsParser {
                         a = cmdLine.nextString();
                         String v = a.getValue().getString();
                         if (enabled) {
-                            options.setOpenMode(parseNutsWorkspaceOpenMode(v));
+                            options.setOpenMode(parseNutsOpenMode(v));
                         }
                         break;
                     }
@@ -1112,7 +1104,21 @@ final class PrivateNutsArgumentsParser {
                 a = cmdLine.nextString();
                 String v = a.getValue().getString();
                 if (enabled) {
-                    logConfig.setLogFileSize(Integer.parseInt(v));
+                    Integer fileSize = NutsApiUtils.parseFileSizeInBytes(v, 1024 * 1024, null, null);
+                    if(fileSize==null){
+                        if(NutsBlankable.isBlank(v)){
+                            throw new NutsBootException(NutsMessage.cstyle("invalid file size : %s", v));
+                        }
+                    }else{
+                        //always in mega
+                        fileSize=fileSize/(1024 * 1024);
+                        if(fileSize<=0){
+                            throw new NutsBootException(NutsMessage.cstyle("invalid file size : %s < 1Mb", v));
+                        }
+                    }
+                    if(fileSize!=null) {
+                        logConfig.setLogFileSize(fileSize);
+                    }
                 }
                 break;
             }
@@ -1209,153 +1215,34 @@ final class PrivateNutsArgumentsParser {
     }
 
     private static NutsStoreLocationStrategy parseNutsStoreLocationStrategy(String s) {
-        String s0 = s;
-        if (s == null || s.isEmpty()) {
-            return null;
+        NutsStoreLocationStrategy m=NutsStoreLocationStrategy.parseLenient(s,null,null);
+        if(m==null && !NutsBlankable.isBlank(s)){
+            throw new NutsBootException(NutsMessage.cstyle("unable to parse value for NutsStoreLocationStrategy : %s", s));
         }
-        s = s.toUpperCase().replace('-', '_');
-        switch (s) {
-            case "S":
-            case "STANDALONE":
-                return NutsStoreLocationStrategy.STANDALONE;
-            case "E":
-            case "EXPLODED":
-                return NutsStoreLocationStrategy.EXPLODED;
-        }
-        throw new NutsBootException(NutsMessage.cstyle("unable to parse value for NutsStoreLocationStrategy : %s", s0));
+        return m;
     }
 
-    private static NutsOsFamily parseNutsStoreLocationLayout(String s) {
-        String s0 = s;
-        if (s == null || s.isEmpty()) {
-            return null;
+    private static NutsOsFamily parseNutsOsFamily(String s) {
+        NutsOsFamily m=NutsOsFamily.parseLenient(s,null,null);
+        if(m==null && !NutsBlankable.isBlank(s)){
+            throw new NutsBootException(NutsMessage.cstyle("unable to parse value for NutsOsFamily : %s", s));
         }
-        s = s.toUpperCase().replace('-', '_');
-        switch (s) {
-            case "L":
-            case "LINUX":
-                return NutsOsFamily.LINUX;
-            case "U":
-            case "UNIX":
-                return NutsOsFamily.UNIX;
-            case "X":
-            case "UNKNOWN":
-                return NutsOsFamily.UNKNOWN;
-            case "W":
-            case "WINDOWS":
-                return NutsOsFamily.WINDOWS;
-            case "M":
-            case "MACOS":
-                return NutsOsFamily.MACOS;
-            case "S":
-            case "SYSTEM":
-                return null;
-        }
-        throw new NutsBootException(NutsMessage.cstyle("unable to parse value for NutsStoreLocationLayout : %s", s0));
+        return m;
     }
 
-    private static NutsTerminalMode parseNutsTerminalMode(String s) {
-        String s0 = s;
-        if (s == null || s.isEmpty()) {
-            return null;
+    private static NutsOpenMode parseNutsOpenMode(String s) {
+        NutsOpenMode m=NutsOpenMode.parseLenient(s,null,null);
+        if(m==null && !NutsBlankable.isBlank(s)){
+            throw new NutsBootException(NutsMessage.cstyle("unable to parse value for NutsOpenMode : %s", s));
         }
-        s = s.toUpperCase().replace('-', '_');
-        switch (s) {
-            case "L":
-            case "FILTERED":
-                return NutsTerminalMode.FILTERED;
-            case "F":
-            case "FORMATTED":
-                return NutsTerminalMode.FORMATTED;
-            case "H":
-            case "INHERITED":
-                return NutsTerminalMode.INHERITED;
-        }
-        throw new NutsBootException(NutsMessage.cstyle("unable to parse value for NutsTerminalMode : %s", s0));
-    }
-
-    private static NutsOpenMode parseNutsWorkspaceOpenMode(String s) {
-        String s0 = s;
-        if (s == null || s.isEmpty()) {
-            return null;
-        }
-        s = s.toUpperCase().replace('-', '_').replace('/', '_');
-        switch (s) {
-            case "R":
-            case "READ":
-            case "O":
-            case "OE":
-            case "O_E":
-            case "OPEN":
-            case "OPEN_ERROR":
-            case "OPEN_OR_ERROR":
-            case "EXISTING": {
-                return NutsOpenMode.OPEN_OR_ERROR;
-            }
-            case "W":
-            case "WRITE":
-            case "C":
-            case "CE":
-            case "C_E":
-            case "CREATE":
-            case "CREATE_ERROR":
-            case "CREATE_OR_ERROR":
-            case "NEW": {
-                return NutsOpenMode.CREATE_OR_ERROR;
-            }
-            case "RW":
-            case "R_W":
-            case "READ_WRITE":
-            case "OC":
-            case "O_C":
-            case "OPEN_CREATE":
-            case "OPEN_OR_CREATE":
-            case "AUTO":
-            case "AUTO_CREATE": {
-                return NutsOpenMode.OPEN_OR_CREATE;
-            }
-            case "ON":
-            case "O_N":
-            case "OPEN_NULL":
-            case "OPEN_OR_NULL":
-            case "TRY": {
-                return NutsOpenMode.OPEN_OR_NULL;
-            }
-        }
-        throw new NutsBootException(NutsMessage.cstyle("unable to parse value for NutsOpenMode : %s", s0));
+        return m;
     }
 
     private static Level parseLevel(String s) {
-        switch (s.trim().toLowerCase()) {
-            case "off": {
-                return Level.OFF;
-            }
-            case "verbose":
-            case "finest": {
-                return Level.FINEST;
-            }
-            case "finer": {
-                return Level.FINER;
-            }
-            case "fine": {
-                return Level.FINE;
-            }
-            case "info": {
-                return Level.INFO;
-            }
-            case "all": {
-                return Level.ALL;
-            }
-            case "warning": {
-                return Level.WARNING;
-            }
-            case "severe": {
-                return Level.SEVERE;
-            }
-            case "config": {
-                return Level.CONFIG;
-            }
+        Level m = NutsApiUtils.parseLenientLogLevel(s, null, null);
+        if(m==null && !NutsBlankable.isBlank(s)){
+            throw new NutsBootException(NutsMessage.cstyle("unable to parse value for Level : %s", s));
         }
-        return Level.INFO;
+        return m;
     }
 }

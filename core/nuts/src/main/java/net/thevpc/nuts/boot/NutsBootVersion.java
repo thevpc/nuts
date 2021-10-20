@@ -167,8 +167,8 @@ public class NutsBootVersion {
             if (p1.length > p2.length) {
                 return 1;
             }
-            int i1 = Integer.parseInt(a1i);
-            int i2 = Integer.parseInt(a2i);
+            int i1 = NutsApiUtils.parseInt(a1i,-1,-1);
+            int i2 = NutsApiUtils.parseInt(a2i,-1,-1);
             if (i1 != i2) {
                 return Integer.compare(i1, i2);
             }
