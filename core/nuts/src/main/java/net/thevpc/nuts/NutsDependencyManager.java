@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.spi.NutsDependencySolver;
+
 import java.util.Set;
 
 /**
@@ -67,4 +69,10 @@ public interface NutsDependencyManager {
     NutsSession getSession();
 
     NutsDependencyManager setSession(NutsSession session);
+
+    NutsDependencySolver createSolver();
+
+    NutsDependencySolver createSolver(String solverName);
+
+    String[] getSolverNames();
 }

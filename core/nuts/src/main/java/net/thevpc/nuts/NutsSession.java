@@ -921,4 +921,18 @@ public interface NutsSession extends NutsCommandLineConfigurable {
      */
     NutsElementFormat elem();
 
+    /**
+     * return dependency solver Name
+     * @return dependency solver Name
+     * @since 0.8.3
+     */
+    String getDependencySolver();
+
+    /**
+     * update dependency solver Name
+     * @param dependencySolver dependency solver name
+     * @return {@code this} instance
+     * @since 0.8.3
+     */
+    NutsSession setDependencySolver(String dependencySolver);
 }

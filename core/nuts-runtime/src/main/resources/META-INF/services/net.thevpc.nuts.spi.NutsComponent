@@ -2,6 +2,11 @@ net.thevpc.nuts.runtime.standalone.io.DefaultHttpTransportComponent
 
 net.thevpc.nuts.runtime.standalone.repos.DefaultNutsRepoFactoryComponent
 
+net.thevpc.nuts.runtime.standalone.solvers.MavenNutsDependencySolverFactory
+net.thevpc.nuts.runtime.standalone.solvers.MavenFirstNutsDependencySolverFactory
+net.thevpc.nuts.runtime.standalone.solvers.GradleNutsDependencySolverFactory
+net.thevpc.nuts.runtime.standalone.solvers.GradleFirstNutsDependencySolverFactory
+net.thevpc.nuts.runtime.standalone.solvers.DescriptorNutsDependencySolverFactory
 
 net.thevpc.nuts.runtime.core.terminals.DefaultNutsSystemTerminalBase
 

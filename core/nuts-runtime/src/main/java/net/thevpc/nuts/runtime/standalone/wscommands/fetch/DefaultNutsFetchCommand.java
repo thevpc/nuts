@@ -12,7 +12,6 @@ import net.thevpc.nuts.runtime.standalone.repos.DefaultNutsInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.util.NutsDependencyScopes;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceHelper;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
-import net.thevpc.nuts.runtime.standalone.wscommands.search.NutsDependenciesResolver;
 import net.thevpc.nuts.runtime.standalone.wscommands.NutsRepositoryAndFetchMode;
 import net.thevpc.nuts.runtime.standalone.wscommands.NutsRepositoryAndFetchModeTracker;
 import net.thevpc.nuts.spi.NutsRepositorySPI;
@@ -227,10 +226,10 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                 if (foundDefinition != null) {
                     if (isDependencies()) {
                         foundDefinition.setDependencies(
-                                new NutsDependenciesResolver(getSession())
-                                        .setDependencyFilter(buildActualDependencyFilter())
-                                        .addRootDefinition(id.toDependency(), foundDefinition)
-                                        .resolve()
+                                getSession().dependency().createSolver()
+                                        .setFilter(buildActualDependencyFilter())
+                                        .add(id.toDependency(), foundDefinition)
+                                        .solve()
                         );
                     }
                     //boolean includeContent = shouldIncludeContent(options);

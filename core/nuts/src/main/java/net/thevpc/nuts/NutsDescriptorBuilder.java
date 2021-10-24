@@ -141,6 +141,19 @@ public interface NutsDescriptorBuilder extends Serializable {
     String getName();
 
     /**
+     * dependency resolution solver.
+     * @return dependency resolution solver
+     */
+    String getSolver();
+
+    /**
+     * update dependency resolution solver
+     * @param solver dependency resolution solver
+     * @return {@code this} instance
+     */
+    NutsDescriptorBuilder setSolver(String solver);
+
+    /**
      * set name
      *
      * @param name value to set

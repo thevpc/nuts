@@ -26,6 +26,7 @@
 package net.thevpc.nuts.runtime.core.model;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.boot.NutsApiUtils;
 import net.thevpc.nuts.runtime.core.util.CoreArrayUtils;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 
@@ -39,31 +40,32 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
 
     private static final long serialVersionUID = 1L;
 
-    private NutsId id;
+    private final NutsId id;
     //    private String alternative;
-    private NutsId[] parents;
-    private String packaging;
+    private final NutsId[] parents;
+    private final String packaging;
+    private final String solver;
     //    private String ext;
-    private boolean executable;
-    private boolean application;
-    private NutsArtifactCall executor;
-    private NutsArtifactCall installer;
+    private final boolean executable;
+    private final boolean application;
+    private final NutsArtifactCall executor;
+    private final NutsArtifactCall installer;
     /**
      * short description
      */
-    private String name;
+    private final String name;
     /**
      * some longer (but not too long) description
      */
-    private String description;
-    private String[] icons;
-    private String[] categories;
-    private String genericName;
-    private NutsEnvCondition condition;
-    private NutsIdLocation[] locations;
-    private NutsDependency[] dependencies;
-    private NutsDependency[] standardDependencies;
-    private NutsDescriptorProperty[] properties;
+    private final String description;
+    private final String[] icons;
+    private final String[] categories;
+    private final String genericName;
+    private final NutsEnvCondition condition;
+    private final NutsIdLocation[] locations;
+    private final NutsDependency[] dependencies;
+    private final NutsDependency[] standardDependencies;
+    private final NutsDescriptorProperty[] properties;
 
     public DefaultNutsDescriptor(NutsDescriptor d, NutsSession session) {
         this(
@@ -86,6 +88,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
                 d.getGenericName(),
                 d.getCategories(),
                 d.getIcons(),
+                d.getSolver(),
                 session
         );
     }
@@ -98,6 +101,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
                                  NutsDependency[] standardDependencies,
                                  NutsIdLocation[] locations, NutsDescriptorProperty[] properties,
                                  String genericName, String[] categories, String[] icons,
+                                 String solver,
                                  NutsSession session) {
         super(session);
         //id can have empty groupId (namely for executors like 'java')
@@ -109,7 +113,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
         }
         //NutsWorkspaceUtils.of(session).checkSimpleNameNutsId(id);
         if (!id.isLongId()) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("id should not have query defined in descriptors : %s",id));
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("id should not have query defined in descriptors : %s", id));
         }
         this.id = id;
 //        this.alternative = NutsUtilStrings.trimToNull(alternative);
@@ -123,15 +127,15 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
         this.description = NutsUtilStrings.trimToNull(description);
         this.name = NutsUtilStrings.trimToNull(name);
         this.genericName = NutsUtilStrings.trimToNull(genericName);
-        this.icons =icons==null?new String[0] :
-                Arrays.stream(icons).map(x->x==null?"":x.trim()).filter(x->x.length()>0)
+        this.icons = icons == null ? new String[0] :
+                Arrays.stream(icons).map(x -> x == null ? "" : x.trim()).filter(x -> x.length() > 0)
                         .toArray(String[]::new);
-        this.categories = categories==null?new String[0] :
-                Arrays.stream(categories).map(x->x==null?"":x.trim()).filter(x->x.length()>0)
+        this.categories = categories == null ? new String[0] :
+                Arrays.stream(categories).map(x -> x == null ? "" : x.trim()).filter(x -> x.length() > 0)
                         .toArray(String[]::new);
         this.executor = executor;
         this.installer = installer;
-        this.condition = CoreNutsUtils.trimToBlank(condition,session);
+        this.condition = CoreNutsUtils.trimToBlank(condition, session);
         this.locations = CoreArrayUtils.toArraySet(locations);
         this.dependencies = dependencies == null ? new NutsDependency[0] : new NutsDependency[dependencies.length];
         for (int i = 0; i < this.dependencies.length; i++) {
@@ -147,7 +151,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
             }
             this.standardDependencies[i] = standardDependencies[i];
         }
-        if (properties == null || properties.length==0) {
+        if (properties == null || properties.length == 0) {
             this.properties = null;
         } else {
             DefaultNutsProperties p = new DefaultNutsProperties();
@@ -158,7 +162,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
                 && !application
         ) {
             String p = getPropertyValue("nuts.application");
-            if("true".equals(p)){
+            if ("true".equals(p)) {
                 session.log().of(DefaultNutsDescriptor.class)
                         .with().level(Level.FINEST)
                         .verb(NutsLogVerb.WARNING)
@@ -167,9 +171,15 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
                         );
             }
         }
+        String solver0 = NutsUtilStrings.trimToNull(solver);
+        this.solver = solver0 == null ? "maven" : solver;
     }
 
-//    @Override
+    @Override
+    public String getSolver() {
+        return solver;
+    }
+    //    @Override
 //    public String getAlternative() {
 //        return alternative;
 //    }
@@ -214,6 +224,21 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
     }
 
     @Override
+    public String[] getIcons() {
+        return icons;
+    }
+
+    @Override
+    public String getGenericName() {
+        return genericName;
+    }
+
+    @Override
+    public String[] getCategories() {
+        return categories;
+    }
+
+    @Override
     public String getDescription() {
         return description;
     }
@@ -244,38 +269,23 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
     }
 
     @Override
-    public NutsDescriptorProperty getProperty(String name) {
-        if(properties==null){
-            return null;
-        }
-        return Arrays.stream(properties).filter(x->x.getName().equals(name)).findFirst()
-                .orElse(null);
-    }
-
-    @Override
-    public String getPropertyValue(String name) {
-        NutsDescriptorProperty p=getProperty(name);
-        return p==null?null:p.getValue();
-    }
-
-    @Override
     public NutsDescriptorProperty[] getProperties() {
         return properties == null ? new NutsDescriptorProperty[0] : properties;
     }
 
     @Override
-    public String[] getIcons() {
-        return icons;
+    public NutsDescriptorProperty getProperty(String name) {
+        if (properties == null) {
+            return null;
+        }
+        return Arrays.stream(properties).filter(x -> x.getName().equals(name)).findFirst()
+                .orElse(null);
     }
 
     @Override
-    public String[] getCategories() {
-        return categories;
-    }
-
-    @Override
-    public String getGenericName() {
-        return genericName;
+    public String getPropertyValue(String name) {
+        NutsDescriptorProperty p = getProperty(name);
+        return p == null ? null : p.getValue();
     }
 
     @Override
@@ -283,8 +293,9 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
 
         int result = Objects.hash(id, /*alternative,*/ packaging,
                 //                ext,
-                executable, application, executor, installer, name, description,genericName,condition
-                );
+                executable, application, executor, installer, name, description, genericName, condition,
+                solver
+        );
         result = 31 * result + Arrays.hashCode(categories);
         result = 31 * result + Arrays.hashCode(properties);
         result = 31 * result + Arrays.hashCode(icons);
@@ -307,6 +318,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
         return executable == that.executable
                 && application == that.application
                 && Objects.equals(id, that.id)
+                && Objects.equals(solver, that.solver)
 //                && Objects.equals(alternative, that.alternative)
                 && Arrays.equals(parents, that.parents)
                 && Objects.equals(packaging, that.packaging)

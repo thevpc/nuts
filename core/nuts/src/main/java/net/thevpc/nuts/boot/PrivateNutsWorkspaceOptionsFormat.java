@@ -150,6 +150,7 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
             fillOption("--read-only", "-R", options.isReadOnly(), false, arguments, false);
             fillOption("--trace", "-t", options.isTrace(), true, arguments, false);
             fillOption("--progress", "-P", options.getProgressOptions(), arguments, false);
+            fillOption("--solver", null, options.getDependencySolver(), arguments, false);
             fillOption("--skip-companions", "-k", options.isSkipCompanions(), false, arguments, false);
             fillOption("--skip-welcome", "-K", options.isSkipWelcome(), false, arguments, false);
             fillOption("--out-line-prefix", null, options.isSkipWelcome(), false, arguments, false);
@@ -538,7 +539,11 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
             if (tryFillOptionShort(value, arguments, forceSingle)) {
                 return;
             }
-            arguments.add("--" + value.toString().toLowerCase().replace('_', '-'));
+            if (value instanceof NutsEnum) {
+                arguments.add("--" + ((NutsEnum) value).id());
+            } else {
+                arguments.add("--" + value.toString().toLowerCase().replace('_', '-'));
+            }
         }
     }
 

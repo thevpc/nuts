@@ -351,6 +351,18 @@ Boot Runtime Version: ###${nuts.workspace-runtime.version}###
             progress monitor writes every message in a new line
 
 
+ ```sh --solver <solverName>``` (default is ```kw default```)
+      configure dependency solver used to resolve dependencies.
+        ```kw default```     : defaults to ```kw maven```, uses maven solver regardless of artifact configured solver
+        ```kw maven```       : uses maven solver regardless of artifact configured solver
+        ```kw gradle```      : uses gradle solver regardless of artifact configured solver
+        ```kw descriptor```        : uses artifact descriptor's solver, or default if not specified.
+                               and switches solver if a dependency requires another solver
+        ```kw maven-first``` : uses maven solver for the first artifact/dependency, then switches is the
+                               dependency descriptor requires another solver
+        ```kw gradle-first```: uses gradle solver for the first artifact/dependency, then switches is the
+                               dependency descriptor requires another solver
+
  ```sh --plain[=<format-options>]```
       define plain text format as default output format (this is default)
 

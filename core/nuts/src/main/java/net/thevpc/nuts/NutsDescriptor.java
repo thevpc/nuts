@@ -78,6 +78,12 @@ public interface NutsDescriptor extends Serializable {
      */
     String getPackaging();
 
+    /**
+     * dependency resolution solver. defaults to 'maven'
+     * @return dependency resolution solver
+     */
+    String getSolver();
+
     NutsEnvCondition getCondition();
 
     /**

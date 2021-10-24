@@ -7,7 +7,10 @@ import net.thevpc.nuts.runtime.core.parser.DefaultNutsDependencyParser;
 
 import java.util.Collections;
 import java.util.Set;
+
+import net.thevpc.nuts.runtime.standalone.config.DefaultNutsWorkspaceConfigManager;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
+import net.thevpc.nuts.spi.NutsDependencySolver;
 
 public class DefaultNutsDependencyManager implements NutsDependencyManager {
 
@@ -68,5 +71,23 @@ public class DefaultNutsDependencyManager implements NutsDependencyManager {
     @Override
     public Set<NutsDependencyScope> toScopeSet(NutsDependencyScopePattern other) {
         return other==null? Collections.emptySet() : other.toScopes();
+    }
+
+    @Override
+    public NutsDependencySolver createSolver() {
+        return createSolver(getSession().getDependencySolver());
+    }
+
+    @Override
+    public NutsDependencySolver createSolver(String solverName) {
+        checkSession();
+        DefaultNutsWorkspaceConfigManager config = (DefaultNutsWorkspaceConfigManager)session.config();
+        return config.createDependencySolver(solverName);
+    }
+
+    @Override
+    public String[] getSolverNames() {
+        DefaultNutsWorkspaceConfigManager config = (DefaultNutsWorkspaceConfigManager)session.config();
+        return config.getDependencySolverNames();
     }
 }

@@ -489,4 +489,9 @@ public class ReadOnlyNutsWorkspaceOptions implements NutsWorkspaceOptions {
     public NutsBootTerminal getBootTerminal() {
         return options.getBootTerminal();
     }
+
+    @Override
+    public String getDependencySolver() {
+        return options.getDependencySolver();
+    }
 }

@@ -929,4 +929,20 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
     NutsWorkspaceOptionsBuilder addOutputFormatOptions(String... options);
 
     NutsWorkspaceOptions build();
+
+
+    /**
+     * return dependency solver Name
+     * @return dependency solver Name
+     * @since 0.8.3
+     */
+    String getDependencySolver() ;
+
+    /**
+     * update dependency solver Name
+     * @param dependencySolver dependency solver name
+     * @return {@code this} instance
+     * @since 0.8.3
+     */
+    NutsWorkspaceOptionsBuilder setDependencySolver(String dependencySolver) ;
 }
