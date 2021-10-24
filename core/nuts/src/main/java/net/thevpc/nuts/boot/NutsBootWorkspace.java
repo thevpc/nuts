@@ -894,7 +894,10 @@ public final class NutsBootWorkspace {
                 }
                 LOG.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("unable to load Workspace Component from ClassPath : {0}", Arrays.asList(bootClassWorldURLs)));
                 throw new NutsInvalidWorkspaceException(this.workspaceInformation.getWorkspaceLocation(),
-                        NutsMessage.cstyle("unable to load Workspace Component from ClassPath : %s", Arrays.asList(bootClassWorldURLs))
+                        NutsMessage.cstyle("unable to load Workspace Component from ClassPath : %s%n  caused by:%n\t%s"
+                                , Arrays.asList(bootClassWorldURLs),
+                                exceptions.stream().map(Throwable::toString).collect(Collectors.joining("\n\t"))
+                                )
                 );
             }
 //            LOG2 = nutsWorkspace.log().of(NutsBootWorkspace.class);
@@ -922,6 +925,12 @@ public final class NutsBootWorkspace {
             );
             if (ex instanceof NutsException) {
                 throw (NutsException) ex;
+            }
+            if (ex instanceof NutsSecurityException) {
+                throw (NutsSecurityException) ex;
+            }
+            if (ex instanceof NutsBootException) {
+                throw (NutsBootException) ex;
             }
             throw new NutsBootException(NutsMessage.plain("unable to locate valid nuts-runtime package"), ex);
         }

@@ -536,6 +536,14 @@ public final class CoreNutsArgumentsParser {
                         }
                         break;
                     }
+                    case "--solver": {
+                        a = cmdLine.nextString();
+                        if (enabled) {
+                            String s = a.getValue().getString();
+                            options.setDependencySolver(s);
+                        }
+                        break;
+                    }
                     case "--dry":
                     case "-D": {
                         a = cmdLine.nextBoolean();

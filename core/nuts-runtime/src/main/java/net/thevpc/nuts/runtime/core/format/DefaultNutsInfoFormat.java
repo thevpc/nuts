@@ -12,6 +12,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import net.thevpc.nuts.runtime.standalone.solvers.NutsDependencySolvers;
 import net.thevpc.nuts.runtime.standalone.util.NutsJavaSdkUtils;
 import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
 import net.thevpc.nuts.runtime.core.util.CoreTimeUtils;
@@ -292,6 +293,23 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
         props.put("nuts-skip-companions", options.isSkipCompanions());
         props.put("nuts-skip-welcome", options.isSkipWelcome());
         props.put("nuts-skip-boot", options.isSkipBoot());
+        String ds = NutsDependencySolvers.resolveSolverName(options.getDependencySolver());
+        String[] allDs = ws.dependency().getSolverNames();
+        props.put("nuts-solver",
+                ws.text().ofStyled(
+                        ds,
+                        Arrays.stream(allDs).map(x->NutsDependencySolvers.resolveSolverName(x))
+                                .anyMatch(x->x.equals(ds))
+                        ?NutsTextStyle.keyword() : NutsTextStyle.error())
+                );
+        props.put("nuts-solver-list",
+                ws.text().builder().appendJoined(";",
+                        Arrays.stream(allDs)
+                                .map(x->ws.text().ofStyled(x,NutsTextStyle.keyword()))
+                                .collect(Collectors.toList())
+                )
+
+        );
         props.put("java-version", ws.version().parser().parse(System.getProperty("java.version")));
         props.put("platform", ws.env().getPlatform());
         props.put("java-home", ws.io().path(System.getProperty("java.home")));

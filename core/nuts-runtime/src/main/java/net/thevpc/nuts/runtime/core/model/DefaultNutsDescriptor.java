@@ -43,7 +43,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
     //    private String alternative;
     private NutsId[] parents;
     private String packaging;
-    //    private String ext;
+    private final String solver;
     private NutsArtifactCall executor;
     private NutsArtifactCall installer;
     /**
@@ -67,7 +67,6 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
     public DefaultNutsDescriptor(NutsDescriptor d, NutsSession session) {
         this(
                 d.getId(),
-//                d.getAlternative(),
                 d.getParents(),
                 d.getPackaging(),
                 d.getExecutor(),
@@ -83,11 +82,12 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
                 d.getCategories(),
                 d.getIcons(),
                 d.getFlags().toArray(new NutsDescriptorFlag[0]),
+                d.getSolver(),
                 session
         );
     }
 
-    public DefaultNutsDescriptor(NutsId id, /*String alternative, */NutsId[] parents, String packaging,
+    public DefaultNutsDescriptor(NutsId id, /*String alternative, */NutsId[] parents, String packaging, boolean executable, boolean application,
                                  //                                 String ext,
                                  NutsArtifactCall executor, NutsArtifactCall installer, String name, String description,
                                  NutsEnvCondition condition,
@@ -96,6 +96,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
                                  NutsIdLocation[] locations, NutsDescriptorProperty[] properties,
                                  String genericName, String[] categories, String[] icons,
                                  NutsDescriptorFlag[] flags,
+                                 String solver,
                                  NutsSession session) {
         super(session);
         //id can have empty groupId (namely for executors like 'java')
@@ -154,18 +155,15 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
                 Arrays.stream(flags==null?new NutsDescriptorFlag[0] : flags)
                         .filter(Objects::nonNull).collect(Collectors.toList())
         ));
+        String solver0 = NutsUtilStrings.trimToNull(solver);
+        this.solver = solver0 == null ? "maven" : solver;
     }
 
     @Override
-    public Set<NutsDescriptorFlag> getFlags() {
-        return flags;
+    public String getSolver() {
+        return solver;
     }
-
-    //    @Override
-//    public String getAlternative() {
-//        return alternative;
-//    }
-
+    
     @Override
     public NutsId getId() {
         return id;
@@ -275,7 +273,8 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
 
         int result = Objects.hash(id, /*alternative,*/ packaging,
                 //                ext,
-                executor, installer, name, description,genericName,condition,flags
+                executor, installer, name, description,genericName,condition,flags,
+                solver
                 );
         result = 31 * result + Arrays.hashCode(categories);
         result = 31 * result + Arrays.hashCode(properties);
@@ -296,9 +295,10 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
             return false;
         }
         DefaultNutsDescriptor that = (DefaultNutsDescriptor) o;
-        return Objects.equals(id, that.id)
+        return  Objects.equals(id, that.id)
 //                && Objects.equals(alternative, that.alternative)
                 && Arrays.equals(parents, that.parents)
+                && Objects.equals(solver, that.solver)
                 && Objects.equals(packaging, that.packaging)
                 && //                        Objects.equals(ext, that.ext) &&
                 Objects.equals(executor, that.executor)
@@ -323,9 +323,8 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
 //                + ", alternative='" + alternative + '\''
                 + ", parents=" + Arrays.toString(parents)
                 + ", packaging='" + packaging + '\''
-                + //                ", ext='" + ext + '\'' +
-                ", flags=" + flags
                 + ", executor=" + executor
+                + ", flags=" + flags
                 + ", installer=" + installer
                 + ", name='" + name + '\''
                 + ", description='" + description + '\''
@@ -337,6 +336,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
                 + ", category=" + Arrays.toString(categories)
                 + ", genericName=" + genericName
                 + ", properties=" + Arrays.toString(properties)
+                + ", solver=" + solver
                 + '}';
     }
 }

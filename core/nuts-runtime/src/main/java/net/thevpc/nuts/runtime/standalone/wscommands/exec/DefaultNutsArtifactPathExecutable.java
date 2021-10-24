@@ -27,7 +27,7 @@ import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.bundles.io.URLBuilder;
 import net.thevpc.nuts.runtime.bundles.io.ZipOptions;
 import net.thevpc.nuts.runtime.bundles.io.ZipUtils;
-import net.thevpc.nuts.runtime.standalone.wscommands.search.NutsDependenciesResolver;
+import net.thevpc.nuts.spi.NutsDependencySolver;
 
 /**
  * @author thevpc
@@ -109,18 +109,18 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                     DefaultNutsInstallInfo.notInstalled(_id),
                     idType, null, traceSession
             );
-            NutsDependenciesResolver resolver = new NutsDependenciesResolver(traceSession);
+            NutsDependencySolver resolver = traceSession.dependency().createSolver();
             NutsDependencyFilterManager ff = traceSession.dependency().filter();
 
             resolver
-                    .setDependencyFilter(ff.byScope(NutsDependencyScopePattern.RUN)
+                    .setFilter(ff.byScope(NutsDependencyScopePattern.RUN)
 //                            .and(ff.byOptional(getOptional())
 //                            ).and(getDependencyFilter())
                     );
             for (NutsDependency dependency : c.descriptor.getDependencies()) {
-                resolver.addRootDefinition(dependency);
+                resolver.add(dependency);
             }
-            nutToRun.setDependencies(resolver.resolve());
+            nutToRun.setDependencies(resolver.solve());
 
             try {
                 execCommand.ws_execId(nutToRun, cmdName, args, executorOptions, execCommand.getEnv(),

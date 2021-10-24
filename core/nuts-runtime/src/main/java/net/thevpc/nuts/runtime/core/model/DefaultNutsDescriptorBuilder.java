@@ -40,7 +40,7 @@ import java.util.stream.Collectors;
 public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 
     private static final long serialVersionUID = 1L;
-    private final List<NutsDescriptorProperty> properties = new ArrayList<>(); //defaults to empty;
+
     private NutsId id;
     //    private String alternative;
     private NutsId[] parents = new NutsId[0]; //defaults to empty;
@@ -59,11 +59,13 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
      * some longer (but not too long) description
      */
     private String description;
+    private String solver;
     private NutsEnvConditionBuilder condition;
     private List<NutsIdLocation> locations = new ArrayList<>(); //defaults to empty;
     private List<NutsDependency> dependencies = new ArrayList<>(); //defaults to empty;
     private List<NutsDependency> standardDependencies = new ArrayList<>(); //defaults to empty;
     private Set<NutsDescriptorFlag> flags = new LinkedHashSet<>();
+    private List<NutsDescriptorProperty> properties = new ArrayList<>(); //defaults to empty;
     private transient DefaultNutsProperties _propertiesBuilder = new DefaultNutsProperties(); //defaults to empty;
     private transient NutsSession session;
 
@@ -145,10 +147,6 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         return this;
     }
 
-//    public String getAlternative() {
-//        return alternative;
-//    }
-
     @Override
     public List<String> getIcons() {
         return icons;
@@ -166,9 +164,8 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     }
 
     @Override
-    public NutsDescriptorBuilder setCategories(List<String> categories) {
-        this.categories = categories == null ? new ArrayList<>() : new ArrayList<>(categories);
-        return this;
+    public String getSolver() {
+        return solver;
     }
 
     @Override
@@ -185,6 +182,18 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     @Override
     public NutsDescriptorBuilder setCondition(NutsEnvCondition condition) {
         this.condition.setAll(condition);
+        return this;
+    }
+
+    @Override
+    public NutsDescriptorBuilder setCategories(List<String> categories) {
+        this.categories = categories == null ? new ArrayList<>() : new ArrayList<>(categories);
+        return this;
+    }
+
+    @Override
+    public NutsDescriptorBuilder setSolver(String solver) {
+        this.solver=solver;
         return this;
     }
 
@@ -333,6 +342,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
             setIcons(new ArrayList<>(other.getIcons()));
             setCategories(other.getCategories());
             setGenericName(other.getGenericName());
+            setSolver(other.getSolver());
             setFlags(other.getFlags());
         } else {
             clear();
@@ -359,6 +369,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
             setIcons(new ArrayList<>(Arrays.asList(other.getIcons())));
             setGenericName(other.getGenericName());
             setCategories(new ArrayList<>(Arrays.asList(other.getCategories())));
+            setSolver(other.getSolver());
             setFlags(other.getFlags());
         } else {
             clear();
@@ -372,19 +383,20 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 //            setAlternative(null);
         setPackaging(null);
         setParents(null);
-        setFlags(new LinkedHashSet<>());
         setDescription(null);
+        setFlags(new LinkedHashSet<>());
         setName(null);
         setExecutor(null);
         setInstaller(null);
         setCondition((NutsEnvCondition) null);
         setLocations(null);
-        setDependencies(null);
-        setStandardDependencies(null);
+        setDependencies((NutsDependency[]) null);
+        setStandardDependencies((NutsDependency[]) null);
         setProperties(null);
         setIcons(new ArrayList<>());
         setCategories(null);
         setGenericName(null);
+        setSolver(null);
         return this;
     }
 
@@ -576,10 +588,10 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         DefaultNutsProperties n_props = new DefaultNutsProperties();
         for (NutsDescriptorProperty property : getProperties()) {
             String v = property.getValue();
-            if (CoreStringUtils.containsVars("${")) {
+            if(CoreStringUtils.containsVars("${")){
                 n_props.add(property.builder().setValue(CoreNutsUtils.applyStringProperties(v, map))
                         .build());
-            } else {
+            }else{
                 n_props.add(property);
             }
         }
@@ -685,6 +697,11 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     }
 
     @Override
+    public NutsDescriptorBuilder copy() {
+        return new DefaultNutsDescriptorBuilder(session).setAll(this);
+    }
+
+    @Override
     public NutsDescriptor build() {
         LinkedHashSet<NutsDescriptorFlag> flags = new LinkedHashSet<>();
         for (NutsDescriptorProperty property : getProperties()) {
@@ -747,14 +764,23 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
                 categories == null ? new String[0] : categories.toArray(new String[0]),
                 icons == null ? new String[0] : icons.toArray(new String[0]),
                 flags.toArray(new NutsDescriptorFlag[0]),
+                getSolver(),
                 session
         );
     }
 
     @Override
-    public NutsDescriptorBuilder copy() {
-        return new DefaultNutsDescriptorBuilder(session).setAll(this);
+    public NutsDescriptorProperty getProperty(String name) {
+        return Arrays.stream(_propertiesBuilder.getAll()).filter(x -> x.getName().equals(name)).findFirst()
+                .orElse(null);
     }
+
+    @Override
+    public String getPropertyValue(String name) {
+        NutsDescriptorProperty p = getProperty(name);
+        return p == null ? null : p.getValue();
+    }
+
 
     public Set<NutsDescriptorFlag> getFlags() {
         return flags;
@@ -803,18 +829,6 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
             }
         }
         return this;
-    }
-
-    @Override
-    public NutsDescriptorProperty getProperty(String name) {
-        return Arrays.stream(_propertiesBuilder.getAll()).filter(x -> x.getName().equals(name)).findFirst()
-                .orElse(null);
-    }
-
-    @Override
-    public String getPropertyValue(String name) {
-        NutsDescriptorProperty p = getProperty(name);
-        return p == null ? null : p.getValue();
     }
 
     private void _rebuildPropertiesBuilder() {
@@ -875,8 +889,8 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(id, packaging, executor, installer, name, icons, categories,
-                genericName, description, condition, locations, dependencies, standardDependencies, properties, flags, session);
+        int result = Objects.hash(id, packaging, executable, application, executor, installer, name, icons, categories,
+                genericName, description, condition, locations, dependencies, standardDependencies, properties, flags,solver, session);
         result = 31 * result + Arrays.hashCode(parents);
         return result;
     }
@@ -886,7 +900,8 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         DefaultNutsDescriptorBuilder that = (DefaultNutsDescriptorBuilder) o;
-        return Objects.equals(id, that.id) && Arrays.equals(parents, that.parents)
+        return executable == that.executable && application == that.application
+                && Objects.equals(id, that.id) && Arrays.equals(parents, that.parents)
                 && Objects.equals(packaging, that.packaging) && Objects.equals(executor, that.executor)
                 && Objects.equals(installer, that.installer) && Objects.equals(name, that.name)
                 && Objects.equals(icons, that.icons) && Objects.equals(categories, that.categories)
@@ -898,6 +913,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
                 && Objects.equals(standardDependencies, that.standardDependencies)
                 && Objects.equals(properties, that.properties)
                 && Objects.equals(flags, that.flags)
+                && Objects.equals(solver, that.solver)
                 && Objects.equals(session, that.session);
     }
 }
