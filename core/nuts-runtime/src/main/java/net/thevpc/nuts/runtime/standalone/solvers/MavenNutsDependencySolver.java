@@ -1,87 +1,63 @@
-package net.thevpc.nuts.runtime.standalone.wscommands.search;
+package net.thevpc.nuts.runtime.standalone.solvers;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.core.model.DefaultNutsDependencies;
 import net.thevpc.nuts.runtime.core.model.DefaultNutsDependencyTreeNode;
-import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
+import net.thevpc.nuts.spi.NutsDependencySolver;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class NutsDependenciesResolver {
+public class MavenNutsDependencySolver implements NutsDependencySolver {
 
     private List<NutsDependencyTreeNodeBuild> defs = new ArrayList<>();
-    private NutsSession session;
+    private List<RootInfo> pending = new ArrayList<>();
     private NutsWorkspace ws;
+    private NutsSession session;
     private NutsDependencyFilter dependencyFilter;
     private NutsDependencyFilter effDependencyFilter;
     private boolean shouldIncludeContent = false;//shouldIncludeContent(this);
     private boolean failFast;
 
-    public NutsDependenciesResolver(NutsSession session) {
-        this.session = session;
-        this.ws = session.getWorkspace();
+    public MavenNutsDependencySolver(NutsSession session) {
+        this.session=session;
+        this.ws=session.getWorkspace();
     }
 
-    public NutsDependenciesResolver addRootId(NutsId id) {
-        addRootDefinition(id.toDependency());
+    ;
+
+    public NutsDependencySolver addRootId(NutsId id) {
+        pending.add(new RootInfo(id.toDependency(), null));
         return this;
     }
 
-    public NutsDependenciesResolver addRootDefinition(NutsDefinition def) {
-        return addRootDefinition(def.getId().toDependency(), def);
-    }
-
-    public NutsDependenciesResolver addRootDefinition(NutsDependency dependency) {
-        return addRootDefinition(dependency, null);
-    }
-
-    public NutsDependenciesResolver addRootDefinition(NutsDependency dependency, NutsDefinition def) {
-
-        if (dependency == null) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing dependency"));
-        }
-        if (def == null) {
-            def = session.search()
-                    .addId(dependency.toId()).setSession(session
-            ).setEffective(true)
-                    .setContent(shouldIncludeContent)
-                    .setEffective(true)
-                    .setLatest(true).getResultDefinitions().required();
-        }
-        if (!def.isSetEffectiveDescriptor()) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("expected an effective definition for %s" ,def.getId()));
-        }
-        NutsDependencyTreeNodeBuild info = new NutsDependencyTreeNodeBuild(null, def, dependency, dependency, 0);
-        for (NutsId exclusion : dependency.getExclusions()) {
-            info.exclusions.add(exclusion.getShortId());
-        }
-        defs.add(info);
+    @Override
+    public NutsDependencySolver add(NutsDefinition def) {
+        pending.add(new RootInfo(null, def));
         return this;
     }
 
-    public NutsSession getSession() {
-        return session;
-    }
-
-    public NutsDependenciesResolver setSession(NutsSession session) {
-        this.session = NutsWorkspaceUtils.bindSession(ws, session);
+    @Override
+    public NutsDependencySolver add(NutsDependency dependency) {
+        pending.add(new RootInfo(dependency, null));
         return this;
     }
 
-    public NutsDependencyFilter getDependencyFilter() {
-        return dependencyFilter;
-    }
-
-    public NutsDependenciesResolver setDependencyFilter(NutsDependencyFilter dependencyFilter) {
+    @Override
+    public NutsDependencySolver setFilter(NutsDependencyFilter dependencyFilter) {
         this.dependencyFilter = dependencyFilter;
         this.effDependencyFilter = null;
         return this;
     }
 
-    public NutsDependencies resolve() {
-        NutsWorkspace ws = session.getWorkspace();
+    @Override
+    public NutsDependencies solve() {
+        //session = NutsWorkspaceUtils.bindSession(ws, session);
+        for (RootInfo rootInfo : pending) {
+            addRootDefinition0(rootInfo.dependency, rootInfo.def, session);
+        }
+        pending.clear();
         List<NutsDependencyTreeNodeBuild> mergedRootNodeBuilders = new ArrayList<>();
         List<NutsDependencyTreeNodeBuild> nonMergedRootNodeBuilders = new ArrayList<>();
         Queue<NutsDependencyTreeNodeBuild> queue = new ArrayDeque<>();
@@ -89,6 +65,16 @@ public class NutsDependenciesResolver {
         LinkedHashSet<NutsDependency> immediates = new LinkedHashSet<>();
         NutsDependencyInfoSet mergedVisitedSet = new NutsDependencyInfoSet();
         NutsDependencyInfoSet nonMergedVisitedSet = new NutsDependencyInfoSet();
+        NutsDependencyFilter effDependencyFilter = null;
+        if (dependencyFilter == null) {
+            effDependencyFilter = session.dependency().filter().byOs(session.env().getOsFamily())
+                    .and(session.dependency().filter().byArch(session.env().getArchFamily()));
+        } else {
+            effDependencyFilter
+                    = dependencyFilter
+                    .and(session.dependency().filter().byOs(session.env().getOsFamily()))
+                    .and(session.dependency().filter().byArch(session.env().getArchFamily()));
+        }
         for (NutsDependencyTreeNodeBuild currentNode : defs) {
             NutsId id = currentNode.getEffectiveId();
             if (sourceIds.add(id)) {
@@ -96,19 +82,19 @@ public class NutsDependenciesResolver {
                 if (mergedVisitedSet.add(currentNode.key)) {
                     mergedRootNodeBuilders.add(currentNode);
                     NutsDependency[] immediate = CoreFilterUtils.filterDependencies(id, currentNode.getEffectiveDescriptor().getDependencies(),
-                            getEffDependencyFilter(), session);
+                            effDependencyFilter, session);
                     immediates.addAll(Arrays.asList(immediate));
                     for (NutsDependency dependency : currentNode.def.getEffectiveDescriptor().getDependencies()) {
-                        dependency=dependency.builder().setProperty("provided-by", currentNode.id.toString()).build();
+                        dependency = dependency.builder().setProperty("provided-by", currentNode.id.toString()).build();
 //                        if(dependency.toId().contains("jai_imageio")){
 //                            System.out.print("");
 //                        }
                         NutsDependency effDependency = dependency.builder()
                                 .setScope(combineScopes(currentNode.effDependency.getScope(), dependency.getScope()))
                                 .build();
-                        if (getEffDependencyFilter().acceptDependency(currentNode.def.getId(), effDependency, session)
+                        if (effDependencyFilter.acceptDependency(currentNode.def.getId(), effDependency, session)
                                 && !currentNode.exclusions.contains(dependency.toId().getShortId())
-                                ) {
+                        ) {
                             NutsDefinition def2 = null;
                             try {
                                 def2 = session.search()
@@ -119,7 +105,7 @@ public class NutsDependenciesResolver {
                             } catch (NutsNotFoundException ex) {
                                 //
                             }
-                            NutsDependencyTreeNodeBuild info = new NutsDependencyTreeNodeBuild(currentNode, def2, dependency, effDependency, currentNode.depth + 1);
+                            NutsDependencyTreeNodeBuild info = new NutsDependencyTreeNodeBuild(currentNode, def2, dependency, effDependency, currentNode.depth + 1, session);
                             info.exclusions.addAll(currentNode.exclusions);
                             for (NutsId exclusion : dependency.getExclusions()) {
                                 info.exclusions.add(exclusion.getShortId());
@@ -141,16 +127,16 @@ public class NutsDependenciesResolver {
                 NutsDescriptor effectiveDescriptor = currentNode.getEffectiveDescriptor();
                 if (effectiveDescriptor != null) {
                     for (NutsDependency dependency : effectiveDescriptor.getDependencies()) {
-                        dependency=dependency.builder().setProperty("provided-by", currentNode.id.toString()).build();
+                        dependency = dependency.builder().setProperty("provided-by", currentNode.id.toString()).build();
 //                        if(dependency.toId().contains("jai_imageio")){
 //                            System.out.print("");
 //                        }
                         NutsDependency effDependency = dependency.builder()
                                 .setScope(combineScopes(currentNode.effDependency.getScope(), dependency.getScope()))
                                 .build();
-                        if (getEffDependencyFilter().acceptDependency(
+                        if (effDependencyFilter.acceptDependency(
                                 currentNode.getEffectiveId(), effDependency, session
-                        )  && !currentNode.exclusions.contains(dependency.toId().getShortId())) {
+                        ) && !currentNode.exclusions.contains(dependency.toId().getShortId())) {
                             NutsDefinition def2 = null;
                             try {
                                 def2 = session.search()
@@ -161,7 +147,7 @@ public class NutsDependenciesResolver {
                             } catch (NutsNotFoundException ex) {
                                 //
                             }
-                            NutsDependencyTreeNodeBuild info = new NutsDependencyTreeNodeBuild(currentNode, def2, dependency, effDependency, currentNode.depth + 1);
+                            NutsDependencyTreeNodeBuild info = new NutsDependencyTreeNodeBuild(currentNode, def2, dependency, effDependency, currentNode.depth + 1, session);
                             info.exclusions.addAll(currentNode.exclusions);
                             for (NutsId exclusion : dependency.getExclusions()) {
                                 info.exclusions.add(exclusion.getShortId());
@@ -182,7 +168,7 @@ public class NutsDependenciesResolver {
         final NutsDependency[] nonMergedDepsList = nonMergedVisitedSet.visitedSet.values().stream().map(NutsDependencyInfo::getDependency)
                 .toArray(NutsDependency[]::new);
         return new DefaultNutsDependencies(
-                sourceIds.toArray(new NutsId[0]), getEffDependencyFilter(),
+                sourceIds.toArray(new NutsId[0]), effDependencyFilter,
                 immediates.toArray(new NutsDependency[0]),
                 nonMergedDepsList,
                 nonMergedRootNodes.toArray(new NutsDependencyTreeNode[0]),
@@ -191,9 +177,47 @@ public class NutsDependenciesResolver {
         );
     }
 
+    @Override
+    public NutsDependencySolver add(NutsDependency dependency, NutsDefinition def) {
+        pending.add(new RootInfo(dependency,def));
+        return this;
+    }
+
+    public NutsDependencySolver addRootDefinition0(NutsDependency dependency, NutsDefinition def, NutsSession session) {
+
+        if (dependency == null) {
+            if (def != null) {
+                dependency = def.getId().toDependency();
+            } else {
+                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing dependency"));
+            }
+        }
+        if (def == null) {
+            def = session.search()
+                    .addId(dependency.toId()).setSession(session
+                    ).setEffective(true)
+                    .setContent(shouldIncludeContent)
+                    .setEffective(true)
+                    .setLatest(true).getResultDefinitions().required();
+        }
+        if (!def.isSetEffectiveDescriptor()) {
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("expected an effective definition for %s", def.getId()));
+        }
+        NutsDependencyTreeNodeBuild info = new NutsDependencyTreeNodeBuild(null, def, dependency, dependency, 0, session);
+        for (NutsId exclusion : dependency.getExclusions()) {
+            info.exclusions.add(exclusion.getShortId());
+        }
+        defs.add(info);
+        return this;
+    }
+
+    public NutsDependencyFilter getDependencyFilter() {
+        return dependencyFilter;
+    }
+
     private NutsDependencyScope combineScopes(String parentScope0, String childScope0) {
-        NutsDependencyScope parentScope = NutsDependencyScope.parseLenient(parentScope0,NutsDependencyScope.API,NutsDependencyScope.API);
-        NutsDependencyScope childScope = NutsDependencyScope.parseLenient(childScope0,NutsDependencyScope.API,NutsDependencyScope.API);
+        NutsDependencyScope parentScope = NutsDependencyScope.parseLenient(parentScope0, NutsDependencyScope.API, NutsDependencyScope.API);
+        NutsDependencyScope childScope = NutsDependencyScope.parseLenient(childScope0, NutsDependencyScope.API, NutsDependencyScope.API);
         return combineScopes(parentScope, childScope);
     }
 
@@ -246,9 +270,19 @@ public class NutsDependenciesResolver {
         return failFast;
     }
 
-    public NutsDependenciesResolver setFailFast(boolean failFast) {
+    public MavenNutsDependencySolver setFailFast(boolean failFast) {
         this.failFast = failFast;
         return this;
+    }
+
+    private static class RootInfo {
+        NutsDependency dependency;
+        NutsDefinition def;
+
+        public RootInfo(NutsDependency dependency, NutsDefinition def) {
+            this.dependency = dependency;
+            this.def = def;
+        }
     }
 
     private static class NutsDependencyInfoSet {
@@ -325,8 +359,9 @@ public class NutsDependenciesResolver {
         int depth;
         NutsDescriptor effDescriptor;
         NutsDependencyInfo key;
+        NutsSession session;
 
-        public NutsDependencyTreeNodeBuild(NutsDependencyTreeNodeBuild parent, NutsDefinition def, NutsDependency dependency, NutsDependency effDependency, int depth) {
+        public NutsDependencyTreeNodeBuild(NutsDependencyTreeNodeBuild parent, NutsDefinition def, NutsDependency dependency, NutsDependency effDependency, int depth, NutsSession session) {
             this.parent = parent;
             this.def = def;
             this.dependency = dependency;
@@ -334,6 +369,7 @@ public class NutsDependenciesResolver {
             this.depth = depth;
             this.id = def != null ? def.getId() : dependency != null ? dependency.toId() : null;
             this.key = NutsDependencyInfo.of(this);
+            this.session = session;
         }
 
         private NutsId getEffectiveId() {
@@ -345,7 +381,7 @@ public class NutsDependenciesResolver {
                 effDescriptor = def.getEffectiveDescriptor();
                 if (effDescriptor == null) {
                     throw new NutsIllegalArgumentException(session,
-                            NutsMessage.cstyle("expected an effective definition for %s",def.getId()));
+                            NutsMessage.cstyle("expected an effective definition for %s", def.getId()));
                 }
             }
             return effDescriptor;
@@ -404,20 +440,26 @@ public class NutsDependenciesResolver {
 //        }
 //        return true;
 //    }
-    public NutsDependencyFilter getEffDependencyFilter() {
-        if (effDependencyFilter == null) {
-            if (dependencyFilter == null) {
-                effDependencyFilter = session.dependency().filter().byOs(session.env().getOsFamily())
-                        .and(session.dependency().filter().byArch(session.env().getArchFamily()));
-            } else {
-                effDependencyFilter
-                        = dependencyFilter
-                                .and(session.dependency().filter().byOs(session.env().getOsFamily()))
-                                .and(session.dependency().filter().byArch(session.env().getArchFamily()));
-            }
+//    public NutsDependencyFilter getEffDependencyFilter(NutsSession session) {
+//        if (effDependencyFilter == null) {
+//            if (dependencyFilter == null) {
+//                effDependencyFilter = session.dependency().filter().byOs(session.env().getOsFamily())
+//                        .and(session.dependency().filter().byArch(session.env().getArchFamily()));
+//            } else {
+//                effDependencyFilter
+//                        = dependencyFilter
+//                                .and(session.dependency().filter().byOs(session.env().getOsFamily()))
+//                                .and(session.dependency().filter().byArch(session.env().getArchFamily()));
+//            }
+//
+//        }
+//        return effDependencyFilter;
+//    }
 
-        }
-        return effDependencyFilter;
+
+    @Override
+    public String getName() {
+        return "maven";
     }
 
 }

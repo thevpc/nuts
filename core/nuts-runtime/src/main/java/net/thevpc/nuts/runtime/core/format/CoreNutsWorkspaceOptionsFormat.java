@@ -153,6 +153,7 @@ public class CoreNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsForma
             fillOption("--read-only", "-R", options.isReadOnly(), false, arguments, false);
             fillOption("--trace", "-t", options.isTrace(), true, arguments, false);
             fillOption("--progress", "-P", options.getProgressOptions(), arguments, false);
+            fillOption("--solver", null, options.getDependencySolver(), arguments, false);
             fillOption("--skip-companions", "-k", options.isSkipCompanions(), false, arguments, false);
             fillOption("--skip-welcome", "-K", options.isSkipWelcome(), false, arguments, false);
             fillOption("--out-line-prefix", null, options.isSkipWelcome(), false, arguments, false);
@@ -234,6 +235,7 @@ public class CoreNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsForma
         if (runtimeOptions || isImplicitAll()) {
             fillOption("--help", "-h", options.isCommandHelp(), false, arguments, false);
             fillOption("--version", "-v", options.isCommandVersion(), false, arguments, false);
+
             if (!(omitDefaults && (options.getOpenMode() == null || options.getOpenMode() == NutsOpenMode.OPEN_OR_CREATE))) {
                 fillOption(options.getOpenMode(), arguments, false);
             }

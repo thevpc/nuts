@@ -483,6 +483,13 @@ public interface NutsWorkspaceOptions extends Serializable {
     String getProgressOptions();
 
     /**
+     * return dependency solver Name
+     * @return dependency solver Name
+     * @since 0.8.3
+     */
+    String getDependencySolver();
+
+    /**
      * when true, use cache
      * <br>
      * <strong>option-type :</strong> exported (inherited in child workspaces)

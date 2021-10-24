@@ -51,6 +51,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     private NutsSessionTerminal terminal;
     private NutsPropertiesHolder properties = new NutsPropertiesHolder();
     private Map<Class, LinkedHashSet<NutsListener>> listeners = new HashMap<>();
+    private String dependencySolver;
     private Boolean trace;
     private Boolean bot;
     private Boolean debug;
@@ -266,6 +267,14 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                         this.setTrace(v.getValue().getBoolean());
                     }
                     return true;
+                }
+                case "--solver": {
+                    a = cmdLine.nextString();
+                    if (enabled) {
+                        String s = a.getValue().getString();
+                        this.setDependencySolver(s);
+                    }
+                    break;
                 }
                 case "--progress": {
                     NutsArgument v = cmdLine.nextString();
@@ -712,6 +721,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         this.logFileFilter = other.getLogFileFilter();
         this.eout = other.eout();
         this.appId = other.getAppId();
+        this.dependencySolver = other.getDependencySolver();
         return this;
     }
 
@@ -740,7 +750,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                 this.logFileLevel = logConfig.getLogFileLevel();
                 this.logFileFilter = logConfig.getLogFileFilter();
             }
-
+            this.dependencySolver=options.getDependencySolver();
         }
         return this;
     }
@@ -1229,6 +1239,9 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
             if (options.getExecutionType() != null) {
                 setExecutionType(options.getExecutionType());
             }
+            if (options.getDependencySolver() != null) {
+                setDependencySolver(options.getDependencySolver());
+            }
         }
         return this;
     }
@@ -1526,5 +1539,16 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     @Override
     public NutsElementFormat elem() {
         return getWorkspace().elem();
+    }
+
+    @Override
+    public String getDependencySolver() {
+        return dependencySolver;
+    }
+
+    @Override
+    public NutsSession setDependencySolver(String dependencySolver) {
+        this.dependencySolver = dependencySolver;
+        return this;
     }
 }

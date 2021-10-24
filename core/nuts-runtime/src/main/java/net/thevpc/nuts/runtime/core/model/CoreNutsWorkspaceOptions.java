@@ -176,6 +176,11 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
     /**
      * option-type : exported (inherited in child workspaces)
      */
+    private String dependencySolver = null;
+
+    /**
+     * option-type : exported (inherited in child workspaces)
+     */
     private NutsLogConfig logConfig;
 
     /**
@@ -1465,6 +1470,7 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
         this.setLocale(other.getLocale());
         this.setTheme(other.getTheme());
         this.setBootTerminal(other.getBootTerminal());
+        this.setDependencySolver(other.getDependencySolver());
         return this;
     }
 
@@ -1553,6 +1559,17 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
         CoreNutsWorkspaceOptions c = new CoreNutsWorkspaceOptions(session);
         c.setAll(this);
         return c;
+    }
+
+    @Override
+    public String getDependencySolver() {
+        return dependencySolver;
+    }
+
+    @Override
+    public NutsWorkspaceOptionsBuilder setDependencySolver(String dependencySolver) {
+        this.dependencySolver = dependencySolver;
+        return this;
     }
 
     @Override

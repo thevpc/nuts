@@ -174,6 +174,11 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
     /**
      * option-type : exported (inherited in child workspaces)
      */
+    private String dependencySolver = null;
+
+    /**
+     * option-type : exported (inherited in child workspaces)
+     */
     private NutsLogConfig logConfig;
 
     /**
@@ -1363,7 +1368,7 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
 
     @Override
     public NutsWorkspaceOptionsBuilder setCustomOptions(String[] properties) {
-        this.customOptions = properties;
+        this.customOptions = properties == null ? new String[0] : properties;
         return this;
     }
 
@@ -1548,6 +1553,17 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
         PrivateBootWorkspaceOptions c = new PrivateBootWorkspaceOptions(log);
         c.setAll(this);
         return c;
+    }
+
+    @Override
+    public String getDependencySolver() {
+        return dependencySolver;
+    }
+
+    @Override
+    public NutsWorkspaceOptionsBuilder setDependencySolver(String dependencySolver) {
+        this.dependencySolver = dependencySolver;
+        return this;
     }
 
     @Override

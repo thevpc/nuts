@@ -27,11 +27,16 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.config.NutsWorkspaceConfigManagerExt;
 import net.thevpc.nuts.runtime.core.model.CoreNutsWorkspaceOptions;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.standalone.solvers.NutsDependencySolvers;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
+import net.thevpc.nuts.spi.NutsDependencySolver;
+import net.thevpc.nuts.spi.NutsDependencySolverFactory;
 import net.thevpc.nuts.spi.NutsIndexStoreFactory;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Set;
 
 /**
@@ -39,7 +44,7 @@ import java.util.Set;
  */
 public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigManager, NutsWorkspaceConfigManagerExt {
 
-    private DefaultNutsWorkspaceConfigModel model;
+    private final DefaultNutsWorkspaceConfigModel model;
     private NutsSession session;
 
     public DefaultNutsWorkspaceConfigManager(DefaultNutsWorkspaceConfigModel model) {
@@ -161,10 +166,6 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         return this;
     }
 
-    protected void checkSession() {
-        NutsWorkspaceUtils.checkSession(model.getWorkspace(), session);
-    }
-
     @Override
     public String getHashName(Object o) {
         if (o == null) {
@@ -184,10 +185,6 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
             return CoreNutsUtils.COLOR_NAMES[Math.abs(i) % CoreNutsUtils.COLOR_NAMES.length];
         }
         return getHashName(o.hashCode());
-    }
-
-    public String getWorkspaceHashName() {
-        return getHashName(model.getWorkspace());
     }
 
     @Override
@@ -220,6 +217,14 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         }
     }
 
+    protected void checkSession() {
+        NutsWorkspaceUtils.checkSession(model.getWorkspace(), session);
+    }
+
+    public String getWorkspaceHashName() {
+        return getHashName(model.getWorkspace());
+    }
+
     @Override
     public String toString() {
         String s1 = "NULL";
@@ -231,8 +236,38 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                 + ", workspaceRuntimeId=" + s2
                 + ", workspace=" + ((model.getCurrentConfig() == null) ? "NULL" : ("'" +
                 NutsWorkspaceUtils.defaultSession(model.getWorkspace())
-                .locations().getWorkspaceLocation() + '\''))
+                        .locations().getWorkspaceLocation() + '\''))
                 + '}';
+    }
+
+    public String[] getDependencySolverNames() {
+        checkSession();
+        // the first element is always the default one,
+        // the rest is lexicographically sorter
+        return Arrays.stream(model.getDependencySolvers(getSession()))
+                .map(NutsDependencySolverFactory::getName)
+                .sorted(new Comparator<String>() {
+                    @Override
+                    public int compare(String o1, String o2) {
+                        if(!o1.equals(o2)){
+                            String n = NutsDependencySolvers.resolveSolverName(session.getDependencySolver());
+                            if(o1.equals(n)){
+                                return -1;
+                            }
+                            if(o2.equals(n)){
+                                return 1;
+                            }
+                        }
+                        return o1.compareTo(o2);
+                    }
+                })
+                .toArray(String[]::new)
+                ;
+    }
+
+    public NutsDependencySolver createDependencySolver(String name) {
+        checkSession();
+        return model.createDependencySolver(name, getSession());
     }
 
 }

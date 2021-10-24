@@ -32,7 +32,6 @@ import net.thevpc.nuts.runtime.core.CoreNutsConstants;
 import net.thevpc.nuts.runtime.core.config.NutsRepositoryConfigManagerExt;
 import net.thevpc.nuts.runtime.core.events.DefaultNutsWorkspaceEvent;
 import net.thevpc.nuts.runtime.standalone.*;
-import net.thevpc.nuts.runtime.standalone.boot.DefaultNutsBootManager;
 import net.thevpc.nuts.runtime.standalone.bridges.maven.MavenUtils;
 import net.thevpc.nuts.runtime.core.model.CoreNutsWorkspaceOptions;
 import net.thevpc.nuts.NutsLogVerb;
@@ -44,11 +43,10 @@ import net.thevpc.nuts.runtime.standalone.config.compat.v506.NutsVersionCompat50
 import net.thevpc.nuts.runtime.standalone.config.compat.v507.NutsVersionCompat507;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.security.ReadOnlyNutsWorkspaceOptions;
+import net.thevpc.nuts.runtime.standalone.solvers.NutsDependencySolvers;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
-import net.thevpc.nuts.spi.NutsIndexStoreFactory;
-import net.thevpc.nuts.spi.NutsRepositoryFactoryComponent;
-import net.thevpc.nuts.spi.NutsWorkspaceArchetypeComponent;
+import net.thevpc.nuts.spi.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -80,6 +78,7 @@ public class DefaultNutsWorkspaceConfigModel {
     protected NutsWorkspaceConfigRuntime storeModelRuntime = new NutsWorkspaceConfigRuntime();
     protected NutsWorkspaceConfigSecurity storeModelSecurity = new NutsWorkspaceConfigSecurity();
     protected NutsWorkspaceConfigMain storeModelMain = new NutsWorkspaceConfigMain();
+    protected Map<String, NutsDependencySolverFactory> dependencySolvers;
     private NutsLogger LOG;
     private DefaultNutsWorkspaceCurrentConfig currentConfig;
     private final NutsWorkspaceStoredConfig storedConfig = new NutsWorkspaceStoredConfigImpl();
@@ -818,6 +817,29 @@ public class DefaultNutsWorkspaceConfigModel {
     public NutsWorkspace getWorkspace() {
         return ws;
     }
+
+    public NutsDependencySolver createDependencySolver(String name,NutsSession session) {
+        NutsDependencySolverFactory c = getSolversMap(session).get(NutsDependencySolvers.resolveSolverName(name));
+        if(c!=null){
+            return c.create(session);
+        }
+        throw new NutsIllegalArgumentException(session,NutsMessage.cstyle("dependency solver not found %s",name));
+    }
+
+    private Map<String, NutsDependencySolverFactory> getSolversMap(NutsSession session) {
+        if(dependencySolvers==null) {
+            dependencySolvers=new LinkedHashMap<>();
+            for (NutsDependencySolverFactory nutsDependencySolver : session.extensions().createAllSupported(NutsDependencySolverFactory.class, null)) {
+                dependencySolvers.put(nutsDependencySolver.getName(), nutsDependencySolver);
+            }
+        }
+        return dependencySolvers;
+    }
+
+    public NutsDependencySolverFactory[] getDependencySolvers(NutsSession session) {
+        return getSolversMap(session).values().toArray(new NutsDependencySolverFactory[0]);
+    }
+
 
     public String getRepositoriesRoot(NutsSession session) {
         return Paths.get(session.locations().getStoreLocation(NutsStoreLocation.CONFIG)).resolve(NutsConstants.Folders.REPOSITORIES).toString();

@@ -133,4 +133,19 @@ public abstract class DelegateNutsDescriptor extends AbstractNutsDescriptor {
     public String[] getCategories() {
         return getBase().getCategories();
     }
+
+    @Override
+    public String getSolver() {
+        return getBase().getSolver();
+    }
+
+    @Override
+    public NutsDescriptorProperty getProperty(String name) {
+        return getBase().getProperty(name);
+    }
+
+    @Override
+    public String getPropertyValue(String name) {
+        return getBase().getPropertyValue(name);
+    }
 }
