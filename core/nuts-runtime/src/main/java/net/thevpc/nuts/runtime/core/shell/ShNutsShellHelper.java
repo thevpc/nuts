@@ -1,16 +1,91 @@
-package net.thevpc.nuts.runtime.core.app;
+package net.thevpc.nuts.runtime.core.shell;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.core.app.NutsCommandLineShellOptions;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
-public class DefaultCommandLineBash implements NutsCommandLineShellSupport {
-    public DefaultCommandLineBash() {
+public class ShNutsShellHelper extends AbstractNixNutsShellHelper {
+    public static final ShNutsShellHelper SH=new ShNutsShellHelper();
+    public static final ReplaceString SHEBAN_SH = new ReplaceString("#!/bin/sh", "#!.*");
+
+    public String getSysRcName() {
+        return ".profile";
     }
 
-    protected String[] parseCommandLineArrBash(String commandLineString,NutsSession session) {
+    public String getPathVarSep() {
+        return ":";
+    }
+
+    @Override
+    public String getExportCommand(String[] names) {
+        return "export " + String.join(" ", names);
+    }
+
+    @Override
+    public String getCallScriptCommand(String path, String... args) {
+        return ". " + dblQte(path) + " " + Arrays.stream(args).map(a -> dblQte(a)).collect(Collectors.joining(" "));
+    }
+
+    @Override
+    public String getSetVarCommand(String name, String value) {
+        return name + "=" +dblQte(value);
+    }
+
+    public String smpQte(String line) {
+        return "'" + line + "'";
+    }
+
+    @Override
+    public String getSetVarStaticCommand(String name, String value) {
+        return name + "=" + smpQte(value) + "";
+    }
+
+    public ReplaceString getShebanSh() {
+        return SHEBAN_SH;
+    }
+
+    public String dblQte(String line) {
+        return "\"" + line + "\"";
+    }
+
+
+    @Override
+    public boolean isComments(String line) {
+        line = line.trim();
+        return line.startsWith("#");
+    }
+
+
+    @Override
+    public String toCommentLine(String line) {
+        return "# " + line;
+    }
+
+
+    @Override
+    public String varRef(String v) {
+        return "${" + v + "}";
+    }
+
+    @Override
+    public String trimComments(String line) {
+        line = line.trim();
+        if (line.startsWith("#")) {
+            while (line.startsWith("#")) {
+                line = line.substring(1);
+            }
+            return line.trim();
+        }
+        return "";
+    }
+
+    @Override
+    public String[] parseCommandLineArr(String commandLineString,NutsSession session) {
         if (commandLineString == null) {
             return new String[0];
         }
@@ -329,6 +404,4 @@ public class DefaultCommandLineBash implements NutsCommandLineShellSupport {
             }
         }
     }
-
-
 }

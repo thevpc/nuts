@@ -889,7 +889,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(id, packaging, executable, application, executor, installer, name, icons, categories,
+        int result = Objects.hash(id, packaging, executor, installer, name, icons, categories,
                 genericName, description, condition, locations, dependencies, standardDependencies, properties, flags,solver, session);
         result = 31 * result + Arrays.hashCode(parents);
         return result;
@@ -900,8 +900,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         DefaultNutsDescriptorBuilder that = (DefaultNutsDescriptorBuilder) o;
-        return executable == that.executable && application == that.application
-                && Objects.equals(id, that.id) && Arrays.equals(parents, that.parents)
+        return  Objects.equals(id, that.id) && Arrays.equals(parents, that.parents)
                 && Objects.equals(packaging, that.packaging) && Objects.equals(executor, that.executor)
                 && Objects.equals(installer, that.installer) && Objects.equals(name, that.name)
                 && Objects.equals(icons, that.icons) && Objects.equals(categories, that.categories)

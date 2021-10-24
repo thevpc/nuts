@@ -87,7 +87,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
         );
     }
 
-    public DefaultNutsDescriptor(NutsId id, /*String alternative, */NutsId[] parents, String packaging, boolean executable, boolean application,
+    public DefaultNutsDescriptor(NutsId id, /*String alternative, */NutsId[] parents, String packaging,
                                  //                                 String ext,
                                  NutsArtifactCall executor, NutsArtifactCall installer, String name, String description,
                                  NutsEnvCondition condition,
@@ -163,7 +163,11 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
     public String getSolver() {
         return solver;
     }
-    
+
+    @Override
+    public Set<NutsDescriptorFlag> getFlags() {
+        return flags;
+    }
     @Override
     public NutsId getId() {
         return id;
