@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -33,13 +34,13 @@ public class Test12_CopyTest {
                 "--archetype", "default",
                 "--log-info",
                 "--skip-companions");
-        Path from = Paths.get(session.io().tmp()
-                .createTempFolder("source"));
-        Path to = Paths.get(session.io().tmp()
-                .createTempFolder("target"));
+        NutsPath from = session.io().tmp()
+                .createTempFolder("source");
+        NutsPath to = session.io().tmp()
+                .createTempFolder("target");
         TestUtils.println("from="+from);
         TestUtils.println("to="+to);
-        long collect = Files.list(from).collect(Collectors.counting());
+        long collect = from.getChildren().length;
         Assertions.assertEquals(0L,collect);
         for (String s : new String[]{
                 "/a/b/c.txt",

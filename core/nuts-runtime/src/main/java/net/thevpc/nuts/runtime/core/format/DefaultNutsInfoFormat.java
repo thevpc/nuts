@@ -271,7 +271,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
         props.put("nuts-runtime-classpath",
                 ws.text().builder().appendJoined(";",runtimeClassPath)
         );
-        props.put("nuts-workspace-id", stringValue(ws.getWorkspace().getUuid()));
+        props.put("nuts-workspace-id", ws.text().ofStyled(stringValue(ws.getWorkspace().getUuid()),NutsTextStyle.path()));
         props.put("nuts-store-layout", ws.locations().getStoreLocationLayout());
         props.put("nuts-store-strategy", ws.locations().getStoreLocationStrategy());
         props.put("nuts-repo-store-strategy", ws.locations().getRepositoryStoreLocationStrategy());

@@ -30,7 +30,7 @@ import net.thevpc.nuts.runtime.core.util.CoreArrayUtils;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 
 import java.util.*;
-import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 /**
  * Created by vpc on 1/5/17.
@@ -44,8 +44,6 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
     private NutsId[] parents;
     private String packaging;
     //    private String ext;
-    private boolean executable;
-    private boolean application;
     private NutsArtifactCall executor;
     private NutsArtifactCall installer;
     /**
@@ -64,6 +62,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
     private NutsDependency[] dependencies;
     private NutsDependency[] standardDependencies;
     private NutsDescriptorProperty[] properties;
+    private Set<NutsDescriptorFlag> flags;
 
     public DefaultNutsDescriptor(NutsDescriptor d, NutsSession session) {
         this(
@@ -71,9 +70,6 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
 //                d.getAlternative(),
                 d.getParents(),
                 d.getPackaging(),
-                d.isExecutable(),
-                d.isApplication(),
-                //                d.getExt(),
                 d.getExecutor(),
                 d.getInstaller(),
                 d.getName(),
@@ -86,11 +82,12 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
                 d.getGenericName(),
                 d.getCategories(),
                 d.getIcons(),
+                d.getFlags().toArray(new NutsDescriptorFlag[0]),
                 session
         );
     }
 
-    public DefaultNutsDescriptor(NutsId id, /*String alternative, */NutsId[] parents, String packaging, boolean executable, boolean application,
+    public DefaultNutsDescriptor(NutsId id, /*String alternative, */NutsId[] parents, String packaging,
                                  //                                 String ext,
                                  NutsArtifactCall executor, NutsArtifactCall installer, String name, String description,
                                  NutsEnvCondition condition,
@@ -98,6 +95,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
                                  NutsDependency[] standardDependencies,
                                  NutsIdLocation[] locations, NutsDescriptorProperty[] properties,
                                  String genericName, String[] categories, String[] icons,
+                                 NutsDescriptorFlag[] flags,
                                  NutsSession session) {
         super(session);
         //id can have empty groupId (namely for executors like 'java')
@@ -118,8 +116,6 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
         if (parents != null) {
             System.arraycopy(parents, 0, this.parents, 0, this.parents.length);
         }
-        this.executable = executable;
-        this.application = application;
         this.description = NutsUtilStrings.trimToNull(description);
         this.name = NutsUtilStrings.trimToNull(name);
         this.genericName = NutsUtilStrings.trimToNull(genericName);
@@ -154,22 +150,18 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
             p.addAll(properties);
             this.properties = p.getAll();
         }
-        if (this.properties != null
-                && !application
-        ) {
-            String p = getPropertyValue("nuts.application");
-            if("true".equals(p)){
-                session.log().of(DefaultNutsDescriptor.class)
-                        .with().level(Level.FINEST)
-                        .verb(NutsLogVerb.WARNING)
-                        .log(
-                                NutsMessage.jstyle("{0} has nuts.application flag armed but is not an application", getId())
-                        );
-            }
-        }
+        this.flags=Collections.unmodifiableSet(new LinkedHashSet<>(
+                Arrays.stream(flags==null?new NutsDescriptorFlag[0] : flags)
+                        .filter(Objects::nonNull).collect(Collectors.toList())
+        ));
     }
 
-//    @Override
+    @Override
+    public Set<NutsDescriptorFlag> getFlags() {
+        return flags;
+    }
+
+    //    @Override
 //    public String getAlternative() {
 //        return alternative;
 //    }
@@ -186,12 +178,12 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
 
     @Override
     public boolean isExecutable() {
-        return executable;
+        return getFlags().contains(NutsDescriptorFlag.EXEC);
     }
 
     @Override
     public boolean isApplication() {
-        return application;
+        return getFlags().contains(NutsDescriptorFlag.APP);
     }
 
     //    @Override
@@ -283,7 +275,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
 
         int result = Objects.hash(id, /*alternative,*/ packaging,
                 //                ext,
-                executable, application, executor, installer, name, description,genericName,condition
+                executor, installer, name, description,genericName,condition,flags
                 );
         result = 31 * result + Arrays.hashCode(categories);
         result = 31 * result + Arrays.hashCode(properties);
@@ -304,9 +296,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
             return false;
         }
         DefaultNutsDescriptor that = (DefaultNutsDescriptor) o;
-        return executable == that.executable
-                && application == that.application
-                && Objects.equals(id, that.id)
+        return Objects.equals(id, that.id)
 //                && Objects.equals(alternative, that.alternative)
                 && Arrays.equals(parents, that.parents)
                 && Objects.equals(packaging, that.packaging)
@@ -322,6 +312,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
                 && Arrays.equals(locations, that.locations)
                 && Arrays.equals(dependencies, that.dependencies)
                 && Arrays.equals(standardDependencies, that.standardDependencies)
+                && Objects.equals(flags, that.flags)
                 && Arrays.equals(properties, that.properties);
     }
 
@@ -333,8 +324,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
                 + ", parents=" + Arrays.toString(parents)
                 + ", packaging='" + packaging + '\''
                 + //                ", ext='" + ext + '\'' +
-                ", executable=" + executable
-                + ", application=" + application
+                ", flags=" + flags
                 + ", executor=" + executor
                 + ", installer=" + installer
                 + ", name='" + name + '\''

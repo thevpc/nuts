@@ -6,7 +6,4 @@ public class LinuxNdi extends AnyNixNdi {
     public LinuxNdi(NutsSession session) {
         super(session);
     }
-
-
-
 }

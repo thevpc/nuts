@@ -26,6 +26,7 @@
 package net.thevpc.nuts;
 
 import java.io.Serializable;
+import java.util.Set;
 
 /**
  * Nuts descriptors define an <strong>immutable</strong> image to all information needed to execute an artifact.
@@ -69,6 +70,13 @@ public interface NutsDescriptor extends Serializable {
      * @return true if the artifact is a java executable that implements {@link NutsApplication} interface.
      */
     boolean isApplication();
+
+    /**
+     * return descriptor flags
+     * @since 0.8.3
+     * @return descriptor flags
+     */
+    Set<NutsDescriptorFlag> getFlags();
 
     //    String getAlternative();
 

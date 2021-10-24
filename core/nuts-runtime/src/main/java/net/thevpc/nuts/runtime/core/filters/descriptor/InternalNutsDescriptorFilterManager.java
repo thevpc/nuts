@@ -173,21 +173,8 @@ public class InternalNutsDescriptorFilterManager extends InternalNutsTypedFilter
     }
 
     @Override
-    public NutsDescriptorFilter byExec(Boolean value) {
-        checkSession();
-        if (value == null) {
-            return always();
-        }
-        return new NutsExecStatusIdFilter(getSession(), value, null);
-    }
-
-    @Override
-    public NutsDescriptorFilter byApp(Boolean value) {
-        checkSession();
-        if (value == null) {
-            return always();
-        }
-        return new NutsExecStatusIdFilter(getSession(), null, value);
+    public NutsDescriptorFilter byFlag(NutsDescriptorFlag... flags) {
+        return new NutsDescriptorFlagsIdFilter(getSession(),flags);
     }
 
     @Override

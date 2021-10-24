@@ -7,7 +7,6 @@ package net.thevpc.nuts.runtime.core.filters.id;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.filters.descriptor.AbstractDescriptorFilter;
-import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
 
 /**
  *
@@ -22,7 +21,7 @@ public class NutsExecExtensionFilter extends AbstractDescriptorFilter {
 
     @Override
     public boolean acceptDescriptor(NutsDescriptor other, NutsSession session) {
-        if(!NutsUtilStrings.parseBoolean(other.getPropertyValue("nuts-extension"),false,false)){
+        if(!other.getFlags().contains(NutsDescriptorFlag.NUTS_EXTENSION)){
             return false;
         }
         for (NutsDependency dependency : other.getDependencies()) {

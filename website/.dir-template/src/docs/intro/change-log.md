@@ -12,6 +12,7 @@ Starred releases are most stable ones.
 ## nuts 0.8.3.0 (DEVELOPMENT VERSION)
 - ```2021/XX/XX 	nuts 0.8.3.0 (*)``` not released yet [download nuts-0.8.3.jar](http://thevpc.net/nuts.jar)
 - WARNING : {api}  API has evolved with incompatibilities with previous versions
+- ADDED   : {api}  added NutsDescriptorFlag to match multiple descriptor info such as app, executable etc.
 - ADDED   : {api}  added NutsIOCopyAction.setSource(byte[]) and NutsIOHashAction.setSource(byte[]) 
 - ADDED   : {api}  removed NutsId.compatFilter and NutsVersion.compatFilter and replaced by compatNewer/compatOlder
 - ADDED   : {api}  replaced string messages with NutsMessage in NutsLogger

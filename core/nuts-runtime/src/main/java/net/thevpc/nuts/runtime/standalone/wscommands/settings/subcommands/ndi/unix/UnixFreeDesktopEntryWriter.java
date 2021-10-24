@@ -5,6 +5,7 @@ import net.thevpc.nuts.NutsId;
 import net.thevpc.nuts.NutsPrintStream;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.PathInfo;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.base.AbstractFreeDesktopEntryWriter;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.FreeDesktopEntry;
@@ -111,7 +112,7 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
                 ByteArrayOutputStream b = new ByteArrayOutputStream();
                 tr.transform(new DOMSource(dom), new StreamResult(b));
                 File menuFile = new File(folder4menus, menuFileName);
-                all.add(new PathInfo("desktop-menu", id, menuFile.toPath(), NdiUtils.tryWrite(b.toByteArray(), menuFile.toPath(),session)));
+                all.add(new PathInfo("desktop-menu", id, menuFile.toPath(), NdiUtils.tryWrite(b.toByteArray(), menuFile.toPath(), session)));
             } catch (ParserConfigurationException | TransformerException ex) {
                 throw new RuntimeException(ex);
             }
@@ -122,45 +123,31 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
         return all.toArray(new PathInfo[0]);
     }
 
+    private void callMeMaye(String ... command) {
+        List<String> cmdList=new ArrayList<>(Arrays.asList(command));
+        String sysCmd=cmdList.remove(0);
+        Path a = NdiUtils.sysWhich(sysCmd);
+        if (a != null) {
+            cmdList.add(0,a.toString());
+            String outStr = session.exec()
+                    .setCommand(cmdList)
+                    .addCommand()
+                    .setExecutionType(NutsExecutionType.SYSTEM)
+                    .setRedirectErrorStream(true).grabOutputString()
+                    .run()
+                    .getOutputString().trim();
+            if (session.isPlainTrace() && !outStr.isEmpty()) {
+                session.out().println(CoreStringUtils.prefixLinesOsNL(outStr,"["+sysCmd+"] "));
+            }
+        }
+    }
     private void updateDesktopMenus() {
         //    KDE  : 'kbuildsycoca5'
-        Path a = NdiUtils.sysWhich("kbuildsycoca5");
-        if (a != null) {
-            String outStr = session.exec().setCommand(a.toString())
-                    .setExecutionType(NutsExecutionType.SYSTEM)
-                    .setRedirectErrorStream(true).grabOutputString()
-                    .run()
-                    .getOutputString().trim();
-            if (session.isPlainTrace() && !outStr.isEmpty()) {
-                session.out().println(outStr);
-            }
-        }
-
+        callMeMaye("kbuildsycoca5");
         //    GNOME: update-desktop-database ~/.local/share/applications
-        a = NdiUtils.sysWhich("update-desktop-database");
-        if (a != null) {
-            String outStr = session.exec().setCommand(a.toString(), System.getProperty("user.home") + "/.local/share/applications")
-                    .setExecutionType(NutsExecutionType.SYSTEM)
-                    .setRedirectErrorStream(true).grabOutputString()
-                    .run()
-                    .getOutputString().trim();
-            if (session.isPlainTrace() && !outStr.isEmpty()) {
-                session.out().println(outStr);
-            }
-        }
-
+        callMeMaye("update-desktop-database",System.getProperty("user.home") + "/.local/share/applications");
         // more generic : xdg-desktop-menu forceupdate
-        a = NdiUtils.sysWhich("xdg-desktop-menu");
-        if (a != null) {
-            String outStr = session.exec().setCommand(a.toString(), "forceupdate")
-                    .setExecutionType(NutsExecutionType.SYSTEM)
-                    .setRedirectErrorStream(true).grabOutputString()
-                    .run()
-                    .getOutputString().trim();
-            if (session.isPlainTrace() && !outStr.isEmpty()) {
-                session.out().println(outStr);
-            }
-        }
+        callMeMaye("xdg-desktop-menu","forceupdate");
     }
 
     private String getDesktopEnvironment() {
@@ -190,7 +177,7 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
     }
 
     public void write(FreeDesktopEntry file, Path out) {
-        CoreIOUtils.mkdirs(out.getParent(),session);
+        CoreIOUtils.mkdirs(out.getParent(), session);
         try (PrintStream p = new PrintStream(Files.newOutputStream(out))) {
             write(file, p);
         } catch (IOException ex) {
@@ -200,8 +187,8 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
 
 
     public PathInfo.Status tryWrite(FreeDesktopEntry file, Path out) {
-        CoreIOUtils.mkdirs(out.getParent(),session);
-        return NdiUtils.tryWrite(writeAsString(file).getBytes(), out,session);
+        CoreIOUtils.mkdirs(out.getParent(), session);
+        return NdiUtils.tryWrite(writeAsString(file).getBytes(), out, session);
     }
 
     public PathInfo.Status tryWrite(FreeDesktopEntry file, File out) {
@@ -218,7 +205,7 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
 
 
     public void write(FreeDesktopEntry file, File out) {
-        CoreIOUtils.mkdirs(out.toPath().getParent(),session);
+        CoreIOUtils.mkdirs(out.toPath().getParent(), session);
         try (PrintStream p = new PrintStream(out)) {
             write(file, p);
         } catch (IOException ex) {

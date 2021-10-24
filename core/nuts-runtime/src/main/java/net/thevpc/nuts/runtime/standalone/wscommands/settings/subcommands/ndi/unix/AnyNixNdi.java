@@ -1,91 +1,41 @@
 package net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.unix;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.core.shell.NutsShellHelper;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.PathInfo;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.FreeDesktopEntryWriter;
+import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.NdiScriptInfo;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.NdiScriptOptions;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.base.BaseSystemNdi;
-import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.script.ReplaceString;
 
+import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-public abstract class AnyNixNdi extends BaseSystemNdi {
-    public static final ReplaceString SHEBAN_SH = new ReplaceString("#!/bin/sh", "#!.*");
+public class AnyNixNdi extends BaseSystemNdi {
 
     public AnyNixNdi(NutsSession session) {
         super(session);
     }
 
-    public String[] getSysRcNames() {
-        NutsSession session = this.getSession();
-        switch (session.env().getOsFamily()) {
-            case LINUX:
-            case UNIX:
-            case MACOS: {
-                return Arrays.stream(session.env().getShellFamilies())
-                        .map(x -> {
-                            switch (x) {
-                                case SH:
-                                    return ".profile";
-                                case BASH:
-                                    return ".bashrc";
-                                case ZSH:
-                                    return ".zshenv";
-                                case KSH:
-                                    return ".kshrc";
-                                case FISH:
-                                    return ".config/fish/config.fish";
-                                case CSH:
-                                    return ".cshrc";
-                                default:
-                                    return null;
-                            }
-                        })
-                        .filter(Objects::nonNull)
-                        .toArray(String[]::new);
-            }
-            default:
-                return new String[0];
-        }
+    protected NutsShellFamily[] getShellGroups() {
+        Set<NutsShellFamily> all=new LinkedHashSet<>(Arrays.asList(session.env().getShellFamilies()));
+        all.retainAll(Arrays.asList(NutsShellFamily.SH,NutsShellFamily.FISH));
+        return all.toArray(new NutsShellFamily[0]);
     }
 
-    public String getPathVarSep() {
-        return ":";
-    }
-
-    @Override
-    public boolean isComments(String line) {
-        line = line.trim();
-        return line.startsWith("#");
-    }
-
-    public boolean isShortcutFieldNameUserFriendly() {
+    public boolean isShortcutFileNameUserFriendly() {
         return false;
     }
 
     @Override
-    public String trimComments(String line) {
-        line = line.trim();
-        if (line.startsWith("#")) {
-            while (line.startsWith("#")) {
-                line = line.substring(1);
-            }
-            return line.trim();
-        }
-        throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("not a comment: %s", line));
-    }
-
-    @Override
-    public String toCommentLine(String line) {
-        return "# " + line;
-    }
-
-    @Override
-    public String createNutsScriptContent(NutsId fnutsId, NdiScriptOptions options) {
+    public String createNutsScriptContent(NutsId fnutsId, NdiScriptOptions options, NutsShellFamily shellFamily) {
         StringBuilder command = new StringBuilder();
-        command.append(getExecFileName("nuts")).append(" ").append(varRef("NUTS_OPTIONS")).append(" ");
+        command.append(getExecFileName("nuts")).append(" ").append(
+                NutsShellHelper.of(shellFamily).varRef("NUTS_OPTIONS")).append(" ");
         if (options.getLauncher().getNutsOptions() != null) {
             for (String no : options.getLauncher().getNutsOptions()) {
                 command.append(" ").append(no);
@@ -94,10 +44,6 @@ public abstract class AnyNixNdi extends BaseSystemNdi {
         command.append(" \"").append(fnutsId).append("\"");
         command.append(" \"$@\"");
         return command.toString();
-    }
-
-    public String newlineString() {
-        return "\n";
     }
 
     public void onPostGlobal(NdiScriptOptions options, PathInfo[] updatedPaths) {
@@ -115,7 +61,7 @@ public abstract class AnyNixNdi extends BaseSystemNdi {
                         factory.ofStyled(session.locations().getWorkspaceLocation(), NutsTextStyle.path())
                 );
             }
-            final String sysRcName = getSysRcNames()[0];
+            final String sysRcName = NutsShellHelper.of(session.env().getShellFamily()).getSysRcName();
             session.getTerminal().ask()
                     .resetLine()
                     .forBoolean(
@@ -164,26 +110,6 @@ public abstract class AnyNixNdi extends BaseSystemNdi {
     }
 
     @Override
-    public String getCallScriptCommand(String path, String... args) {
-        return ". \"" + path + "\" " + Arrays.stream(args).map(a -> dblQte(a)).collect(Collectors.joining(" "));
-    }
-
-    @Override
-    protected String getExportCommand(String[] names) {
-        return "export " + String.join(" ", names);
-    }
-
-    @Override
-    public String getSetVarCommand(String name, String value) {
-        return name + "=\"" + value + "\"";
-    }
-
-    @Override
-    public String getSetVarStaticCommand(String name, String value) {
-        return name + "='" + value + "'";
-    }
-
-    @Override
     public String getExecFileName(String name) {
         return name;
     }
@@ -195,23 +121,25 @@ public abstract class AnyNixNdi extends BaseSystemNdi {
         );
     }
 
-    public ReplaceString getShebanSh() {
-        return SHEBAN_SH;
+
+    public String getTemplateName(String name, NutsShellFamily shellFamily) {
+        switch (shellFamily){
+            case SH:
+            case BASH:
+            case CSH:
+            case ZSH:
+            case KSH:
+            {
+                return "template-" + name + ".sh";
+            }
+            case FISH:
+            {
+                return "template-" + name + ".fish";
+            }
+        }
+        return "template-" + name + ".sh";
     }
 
-    public ReplaceString getCommentLineConfigHeader() {
-        return COMMENT_LINE_CONFIG_HEADER;
-    }
-
-    @Override
-    public String getTemplateName(String name) {
-        return "linux-template-" + name + ".text";
-    }
-
-    @Override
-    public String varRef(String v) {
-        return "${" + v + "}";
-    }
 
     protected int resolveIconExtensionPriority(String extension) {
         extension = extension.toLowerCase();
@@ -231,4 +159,184 @@ public abstract class AnyNixNdi extends BaseSystemNdi {
         }
         return -1;
     }
+
+    public NdiScriptInfo[] getNutsTerm(NdiScriptOptions options) {
+//        return Arrays.stream(getShellGroups())
+//                .map(x -> getNutsTerm(options, x))
+//                .filter(Objects::nonNull)
+//                .toArray(NdiScriptInfo[]::new);
+        return Arrays.stream(new NutsShellFamily[]{NutsShellFamily.SH})
+                .map(x -> getNutsTerm(options, x))
+                .filter(Objects::nonNull)
+                .toArray(NdiScriptInfo[]::new);
+
+    }
+
+    public NdiScriptInfo getNutsTerm(NdiScriptOptions options,NutsShellFamily shellFamily) {
+        switch (shellFamily){
+            case SH:
+            case BASH:
+            case ZSH:
+            case CSH:
+            case KSH:
+            {
+                return new NdiScriptInfo() {
+                    @Override
+                    public Path path() {
+                        return options.resolveBinFolder().resolve(getExecFileName("nuts-term"));
+                    }
+
+                    @Override
+                    public PathInfo create() {
+                        return scriptBuilderTemplate("nuts-term",NutsShellFamily.SH, "nuts-term", options.resolveNutsApiId(), options)
+                                .setPath(path())
+                                .build();
+                    }
+                };
+            }
+            case FISH:
+            {
+                return new NdiScriptInfo() {
+                    @Override
+                    public Path path() {
+                        return options.resolveBinFolder().resolve(getExecFileName("nuts-term"));
+                    }
+
+                    @Override
+                    public PathInfo create() {
+                        return scriptBuilderTemplate("nuts-term",NutsShellFamily.FISH, "nuts-term", options.resolveNutsApiId(), options)
+                                .setPath(path())
+                                .build();
+                    }
+                };
+            }
+        }
+        return null;
+    }
+
+    public NdiScriptInfo getIncludeNutsEnv(NdiScriptOptions options, NutsShellFamily shellFamily) {
+        switch (shellFamily) {
+            case SH:
+            case BASH:
+            case CSH:
+            case KSH:
+            case ZSH: {
+                return new NdiScriptInfo() {
+                    @Override
+                    public Path path() {
+                        return options.resolveIncFolder().resolve(".nuts-env.sh");
+                    }
+
+                    @Override
+                    public PathInfo create() {
+                        return scriptBuilderTemplate("nuts-env", NutsShellFamily.SH, "nuts-env", options.resolveNutsApiId(), options)
+                                .setPath(path())
+                                .build();
+                    }
+                };
+            }
+            case FISH: {
+                return new NdiScriptInfo() {
+                    @Override
+                    public Path path() {
+                        return options.resolveIncFolder().resolve(".nuts-env.fish");
+                    }
+
+                    @Override
+                    public PathInfo create() {
+                        return scriptBuilderTemplate("nuts-env", NutsShellFamily.FISH, "nuts-env", options.resolveNutsApiId(), options)
+                                .setPath(path())
+                                .build();
+                    }
+                };
+            }
+        }
+        return null;
+    }
+    public NdiScriptInfo getIncludeNutsTermInit(NdiScriptOptions options, NutsShellFamily shellFamily) {
+        switch (shellFamily) {
+            case FISH: {
+                return
+                        new NdiScriptInfo() {
+                            @Override
+                            public Path path() {
+                                return options.resolveIncFolder().resolve(".nuts-term-init.fish");
+                            }
+
+                            @Override
+                            public PathInfo create() {
+                                return scriptBuilderTemplate("nuts-term-init", NutsShellFamily.FISH, "nuts-term-init", options.resolveNutsApiId(), options)
+                                        .setPath(path())
+                                        .build();
+                            }
+                        }
+                        ;
+            }
+            case SH:
+            case BASH:
+            case CSH:
+            case KSH:
+            case ZSH: {
+                return
+                        new NdiScriptInfo() {
+                            @Override
+                            public Path path() {
+                                return options.resolveIncFolder().resolve(".nuts-term-init.sh");
+                            }
+
+                            @Override
+                            public PathInfo create() {
+                                return scriptBuilderTemplate("nuts-term-init", NutsShellFamily.SH, "nuts-term-init", options.resolveNutsApiId(), options)
+                                        .setPath(path())
+                                        .build();
+                            }
+                        }
+                        ;
+            }
+        }
+        return null;
+    }
+
+    public NdiScriptInfo getIncludeNutsInit(NdiScriptOptions options, NutsShellFamily shellFamily) {
+        switch (shellFamily) {
+            case SH:
+            case BASH:
+            case CSH:
+            case KSH:
+            case ZSH: {
+                return new NdiScriptInfo() {
+                    @Override
+                    public Path path() {
+                        return options.resolveIncFolder().resolve(".nuts-init.sh");
+                    }
+
+                    @Override
+                    public PathInfo create() {
+                        Path apiConfigFile = path();
+                        return scriptBuilderTemplate("nuts-init", NutsShellFamily.SH, "nuts-init", options.resolveNutsApiId(), options)
+                                .setPath(apiConfigFile)
+                                .buildAddLine(AnyNixNdi.this);
+                    }
+                };
+            }
+            case FISH: {
+                return new NdiScriptInfo() {
+                    @Override
+                    public Path path() {
+                        return options.resolveIncFolder().resolve(".nuts-init.fish");
+                    }
+
+                    @Override
+                    public PathInfo create() {
+                        Path apiConfigFile = path();
+                        return scriptBuilderTemplate("nuts-init", NutsShellFamily.FISH, "nuts-init", options.resolveNutsApiId(), options)
+                                .setPath(apiConfigFile)
+                                .buildAddLine(AnyNixNdi.this);
+                    }
+                };
+            }
+        }
+        return null;
+    }
+
 }

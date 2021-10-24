@@ -31,6 +31,7 @@ import net.thevpc.nuts.runtime.standalone.wscommands.settings.PathInfo;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.unix.AnyNixNdi;
 
 import java.io.*;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -110,10 +111,10 @@ public class NdiUtils {
         return false;
     }
 
-    public static String generateScriptAsString(String resourcePath, Function<String, String> mapper) {
+    public static String generateScriptAsString(String resourcePath, NutsSession session, Function<String, String> mapper) {
         ByteArrayOutputStream b = new ByteArrayOutputStream();
         BufferedWriter w = new BufferedWriter(new OutputStreamWriter(b));
-        generateScript(resourcePath, w, mapper);
+        generateScript(resourcePath, session, w, mapper);
         try {
             w.flush();
         } catch (IOException ex) {
@@ -122,10 +123,14 @@ public class NdiUtils {
         return b.toString();
     }
 
-    public static void generateScript(String resourcePath, BufferedWriter w, Function<String, String> mapper) {
+    public static void generateScript(String resourcePath, NutsSession session, BufferedWriter w, Function<String, String> mapper) {
         try {
             String lineSeparator = System.getProperty("line.separator");
-            BufferedReader br = new BufferedReader(new InputStreamReader(AnyNixNdi.class.getResource(resourcePath).openStream()));
+            URL resource = AnyNixNdi.class.getResource(resourcePath);
+            if (resource == null) {
+                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("resource not found: %s", resource));
+            }
+            BufferedReader br = new BufferedReader(new InputStreamReader(resource.openStream()));
             String line = null;
             Pattern PATTERN = Pattern.compile("[$][$](?<name>([^$]+))[$][$]");
             while ((line = br.readLine()) != null) {
@@ -222,56 +227,44 @@ public class NdiUtils {
         return null;
     }
 
-    public static PathInfo.Status tryWriteStatus(byte[] content, Path out,NutsSession session) {
-        return tryWrite(content, out, DoWhenExist.IGNORE, DoWhenNotExists.IGNORE,session);
+    public static PathInfo.Status tryWriteStatus(byte[] content, Path out, NutsSession session) {
+        return tryWrite(content, out, DoWhenExist.IGNORE, DoWhenNotExists.IGNORE, session);
     }
 
-    public static PathInfo.Status tryWrite(byte[] content, Path out,NutsSession session) {
+    public static PathInfo.Status tryWrite(byte[] content, Path out, NutsSession session) {
         return tryWrite(content, out, DoWhenExist.ASK, DoWhenNotExists.CREATE, session);
     }
 
-    public enum DoWhenExist {
-        IGNORE,
-        OVERRIDE,
-        ASK,
-    }
-
-    public enum DoWhenNotExists {
-        IGNORE,
-        CREATE,
-        ASK,
-    }
-
     public static PathInfo.Status tryWrite(byte[] content, Path out, /*boolean doNotWrite*/ DoWhenExist doWhenExist, DoWhenNotExists doWhenNotExist, NutsSession session) {
-        if(doWhenExist==null){
+        if (doWhenExist == null) {
             throw new NutsIllegalArgumentException(session, NutsMessage.plain("missing doWhenExist"));
         }
-        if(doWhenNotExist==null){
+        if (doWhenNotExist == null) {
             throw new NutsIllegalArgumentException(session, NutsMessage.plain("missing doWhenNotExist"));
         }
 //        System.err.println("[DEBUG] try write "+out);
         out = out.toAbsolutePath().normalize();
         byte[] old = loadFile(out);
         if (old == null) {
-            switch (doWhenNotExist){
-                case IGNORE:{
+            switch (doWhenNotExist) {
+                case IGNORE: {
                     return PathInfo.Status.DISCARDED;
                 }
-                case CREATE:{
+                case CREATE: {
                     try {
                         if (out.getParent() != null) {
                             Files.createDirectories(out.getParent());
                         }
                         Files.write(out, content);
-                        if(session.isPlainTrace()){
-                            session.out().resetLine().printf("create file %s%n",session.io().path(out));
+                        if (session.isPlainTrace()) {
+                            session.out().resetLine().printf("create file %s%n", session.io().path(out));
                         }
                     } catch (IOException e) {
                         throw new UncheckedIOException(e);
                     }
                     return PathInfo.Status.CREATED;
                 }
-                case ASK:{
+                case ASK: {
                     if (session.getTerminal().ask()
                             .resetLine()
                             .setDefaultValue(true).setSession(session)
@@ -285,41 +278,41 @@ public class NdiUtils {
                                 Files.createDirectories(out.getParent());
                             }
                             Files.write(out, content);
-                            if(session.isPlainTrace()){
-                                session.out().resetLine().printf("create file %s%n",session.io().path(out));
+                            if (session.isPlainTrace()) {
+                                session.out().resetLine().printf("create file %s%n", session.io().path(out));
                             }
                         } catch (IOException e) {
                             throw new UncheckedIOException(e);
                         }
                         return PathInfo.Status.CREATED;
-                    }else{
+                    } else {
                         return PathInfo.Status.DISCARDED;
                     }
                 }
-                default:{
-                    throw new NutsUnsupportedEnumException(session,doWhenNotExist);
+                default: {
+                    throw new NutsUnsupportedEnumException(session, doWhenNotExist);
                 }
             }
-        }else {
+        } else {
             if (Arrays.equals(old, content)) {
                 return PathInfo.Status.DISCARDED;
             }
-            switch (doWhenExist){
-                case IGNORE:{
+            switch (doWhenExist) {
+                case IGNORE: {
                     return PathInfo.Status.DISCARDED;
                 }
-                case OVERRIDE:{
+                case OVERRIDE: {
                     try {
                         Files.write(out, content);
                     } catch (IOException e) {
                         throw new UncheckedIOException(e);
                     }
-                    if(session.isPlainTrace()){
-                        session.out().resetLine().printf("update file %s%n",session.io().path(out));
+                    if (session.isPlainTrace()) {
+                        session.out().resetLine().printf("update file %s%n", session.io().path(out));
                     }
                     return PathInfo.Status.OVERRIDDEN;
                 }
-                case ASK:{
+                case ASK: {
                     if (session.getTerminal().ask()
                             .resetLine()
                             .setDefaultValue(true).setSession(session)
@@ -338,18 +331,30 @@ public class NdiUtils {
                         } catch (IOException e) {
                             throw new UncheckedIOException(e);
                         }
-                        if(session.isPlainTrace()){
-                            session.out().resetLine().printf("update file %s%n",session.io().path(out));
+                        if (session.isPlainTrace()) {
+                            session.out().resetLine().printf("update file %s%n", session.io().path(out));
                         }
                         return PathInfo.Status.OVERRIDDEN;
-                    }else{
+                    } else {
                         return PathInfo.Status.DISCARDED;
                     }
                 }
-                default:{
-                    throw new NutsUnsupportedEnumException(session,doWhenExist);
+                default: {
+                    throw new NutsUnsupportedEnumException(session, doWhenExist);
                 }
             }
         }
+    }
+
+    public enum DoWhenExist {
+        IGNORE,
+        OVERRIDE,
+        ASK,
+    }
+
+    public enum DoWhenNotExists {
+        IGNORE,
+        CREATE,
+        ASK,
     }
 }

@@ -30,6 +30,7 @@ import net.thevpc.nuts.boot.NutsApiUtils;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
@@ -85,38 +86,6 @@ public interface NutsDescriptorBuilder extends Serializable {
      * @return {@code this} instance
      */
     NutsDescriptorBuilder setParents(NutsId[] parents);
-
-//    String getAlternative();
-
-    /**
-     * true if the artifact is executable and is considered an application. if not it is a library.
-     *
-     * @return true if the artifact is executable
-     */
-    boolean isExecutable();
-
-    /**
-     * set executable flag
-     *
-     * @param executable new value
-     * @return {@code this} instance
-     */
-    NutsDescriptorBuilder setExecutable(boolean executable);
-
-    /**
-     * true if the artifact is a java executable that implements {@link NutsApplication} interface.
-     *
-     * @return true if the artifact is a java executable that implements {@link NutsApplication} interface.
-     */
-    boolean isApplication();
-
-    /**
-     * set nutsApp flag
-     *
-     * @param nutsApp new value
-     * @return {@code this} instance
-     */
-    NutsDescriptorBuilder setApplication(boolean nutsApp);
 
     /**
      * return descriptor packaging (used to resolve file extension)
@@ -454,5 +423,72 @@ public interface NutsDescriptorBuilder extends Serializable {
      */
     NutsDescriptorBuilder copy();
 
+    /**
+     * return descriptor flags
+     * @return return descriptor flags
+     */
+    Set<NutsDescriptorFlag> getFlags() ;
 
+    /**
+     * set flags
+     *
+     * @param flags flags
+     * @return {@code this} instance
+     */
+    NutsDescriptorBuilder setFlags(Set<NutsDescriptorFlag> flags) ;
+
+    /**
+     * add flag
+     *
+     * @param flag flag
+     * @return {@code this} instance
+     * @since 0.8.3
+     */
+    NutsDescriptorBuilder addFlag(NutsDescriptorFlag flag) ;
+
+    /**
+     * add flags
+     *
+     * @param flags flags
+     * @return {@code this} instance
+     * @since 0.8.3
+     */
+    NutsDescriptorBuilder addFlags(NutsDescriptorFlag ... flags) ;
+
+    /**
+     * remove flag
+     *
+     * @param flag flags
+     * @return {@code this} instance
+     * @since 0.8.3
+     */
+    NutsDescriptorBuilder removeFlag(NutsDescriptorFlag flag) ;
+
+    /**
+     * remove flags
+     *
+     * @param flags flags
+     * @return {@code this} instance
+     * @since 0.8.3
+     */
+    NutsDescriptorBuilder removeFlags(NutsDescriptorFlag ... flags) ;
+
+
+    /**
+     * return first property
+     *
+     * @param name property name
+     * @return first property
+     * @since 0.8.3
+     */
+    NutsDescriptorProperty getProperty(String name);
+
+    /**
+     * return first property value
+     *
+     * @param name property name
+     * @return first property value
+     * @since 0.8.3
+     */
+    String getPropertyValue(String name);
 }

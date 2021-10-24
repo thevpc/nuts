@@ -49,8 +49,8 @@ public enum NutsIdType implements NutsEnum {
 
     /**
      * the id denotes a nuts known extension artifact.
-     * an artifact is a valid nuts extension if it contains a property "nuts-extension" equal to
-     * true in its descriptor.
+     * an artifact is a valid nuts extension if it contains the flag "EXTENSION" armed (property "nuts.extension" equal to
+     * true) in its descriptor.
      */
     EXTENSION,
 

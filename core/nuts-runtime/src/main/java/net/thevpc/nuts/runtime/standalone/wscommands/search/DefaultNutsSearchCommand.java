@@ -222,15 +222,15 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
         if (execType != null) {
             switch (execType) {
                 case "lib": {
-                    _descriptorFilter = _descriptorFilter.and(ws.descriptor().filter().byApp(false)).and(ws.descriptor().filter().byExec(false));
+                    _descriptorFilter = _descriptorFilter.and(ws.descriptor().filter().byFlag(NutsDescriptorFlag.EXEC).neg());
                     break;
                 }
                 case "exec": {
-                    _descriptorFilter = _descriptorFilter.and(ws.descriptor().filter().byExec(true));
+                    _descriptorFilter = _descriptorFilter.and(ws.descriptor().filter().byFlag(NutsDescriptorFlag.EXEC));
                     break;
                 }
                 case "app": {
-                    _descriptorFilter = _descriptorFilter.and(ws.descriptor().filter().byApp(true));
+                    _descriptorFilter = _descriptorFilter.and(ws.descriptor().filter().byFlag(NutsDescriptorFlag.APP));
                     break;
                 }
                 case "extension": {

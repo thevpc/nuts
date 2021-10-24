@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.core.app;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.format.DefaultFormatBase;
+import net.thevpc.nuts.runtime.core.shell.NutsShellHelper;
 
 public class DefaultNutsCommandLineFormat extends DefaultFormatBase<NutsCommandLineFormat> implements NutsCommandLineFormat {
 
@@ -66,7 +67,7 @@ public class DefaultNutsCommandLineFormat extends DefaultFormatBase<NutsCommandL
         checkSession();
         if (value != null) {
             String cmd =
-                    NutsCommandLineShellSupport.of(getShellFamily(), getSession())
+                    NutsShellHelper.of(getShellFamily())
                     .escapeArguments(value.toStringArray(),
                             new NutsCommandLineShellOptions()
                                     .setSession(getSession())

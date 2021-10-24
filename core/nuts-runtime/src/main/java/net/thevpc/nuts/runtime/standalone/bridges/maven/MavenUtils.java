@@ -234,10 +234,9 @@ public class MavenUtils {
                     urlDesc == null ? NutsMessage.formatted("pom.xml") : NutsMessage.formatted(urlDesc), "text/xml",
                     urlDesc == null ? "pom.xml" : urlDesc, session);
             Pom pom = new PomXmlParser(session).parse(bytesStream, session);
-            boolean executable = false;// !"maven-archetype".equals(packaging.toString()); // default is true :)
-            boolean application = false;// !"maven-archetype".equals(packaging.toString()); // default is true :)
-            if ("true".equals(pom.getProperties().get("nuts.executable"))) {
-                executable = true;
+            LinkedHashSet<NutsDescriptorFlag> flags=new LinkedHashSet<>();
+            if (NutsUtilStrings.parseBoolean(pom.getProperties().get("nuts.executable"),false,false)) {
+                flags.add(NutsDescriptorFlag.EXEC);
             } else {
                 final Element ee = pom.getXml().getDocumentElement();
                 if (testNode(ee, x -> {
@@ -252,14 +251,20 @@ public class MavenUtils {
                     }
                     return false;
                 })) {
-                    executable = true;
+                    flags.add(NutsDescriptorFlag.EXEC);
                 }
             }
-            if ("true".equals(pom.getProperties().get("nuts.application"))) {
-                application = true;
+            if (NutsUtilStrings.parseBoolean(pom.getProperties().get("nuts.application"),false,false)) {
+                flags.add(NutsDescriptorFlag.APP);
+                flags.add(NutsDescriptorFlag.EXEC);
             }
-            if (application) {
-                executable = true;
+            if (NutsUtilStrings.parseBoolean(pom.getProperties().get("nuts.gui"),false,false)) {
+                flags.add(NutsDescriptorFlag.GUI);
+                flags.add(NutsDescriptorFlag.EXEC);
+            }
+            if (NutsUtilStrings.parseBoolean(pom.getProperties().get("nuts.term"),false,false)) {
+                flags.add(NutsDescriptorFlag.TERM);
+                flags.add(NutsDescriptorFlag.EXEC);
             }
             if (pom.getPackaging().isEmpty()) {
                 pom.setPackaging("jar");
@@ -319,8 +324,7 @@ public class MavenUtils {
                     .setId(toNutsId(pom.getPomId()))
                     .setParents(pom.getParent() == null ? new NutsId[0] : new NutsId[]{toNutsId(pom.getParent())})
                     .setPackaging(pom.getPackaging())
-                    .setExecutable(executable)
-                    .setApplication(application)
+                    .setFlags(flags)
                     .setName(pom.getName())
                     .setDescription(pom.getDescription())
                     .setCondition(NutsEnvConditionBuilder.of(session).setPlatform("java"

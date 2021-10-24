@@ -28,9 +28,7 @@ package net.thevpc.nuts.runtime.core.commands.ws;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.iter.IteratorUtils;
-import net.thevpc.nuts.runtime.standalone.util.NutsCollectionStream;
 import net.thevpc.nuts.runtime.standalone.util.NutsIteratorStream;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.function.BinaryOperator;
@@ -153,7 +151,6 @@ public abstract class AbstractNutsStream<T> implements NutsStream<T> {
     @Override
     public <R> NutsStream<R> map(Function<? super T, ? extends R> mapper) {
         return new AbstractNutsStream<R>(session, nutsBase) {
-            @NotNull
             @Override
             public Iterator<R> iterator() {
                 Iterator<T> it = AbstractNutsStream.this.iterator();
@@ -165,7 +162,6 @@ public abstract class AbstractNutsStream<T> implements NutsStream<T> {
     @Override
     public NutsStream<T> sorted() {
         return new AbstractNutsStream<T>(session, nutsBase) {
-            @NotNull
             @Override
             public Iterator<T> iterator() {
                 Iterator<T> it = AbstractNutsStream.this.iterator();
@@ -177,7 +173,6 @@ public abstract class AbstractNutsStream<T> implements NutsStream<T> {
     @Override
     public NutsStream<T> sorted(Comparator<T> comp) {
         return new AbstractNutsStream<T>(session, nutsBase) {
-            @NotNull
             @Override
             public Iterator<T> iterator() {
                 Iterator<T> it = AbstractNutsStream.this.iterator();
@@ -189,7 +184,6 @@ public abstract class AbstractNutsStream<T> implements NutsStream<T> {
     @Override
     public NutsStream<T> distinct() {
         return new AbstractNutsStream<T>(session, nutsBase) {
-            @NotNull
             @Override
             public Iterator<T> iterator() {
                 Iterator<T> it = AbstractNutsStream.this.iterator();
@@ -201,7 +195,6 @@ public abstract class AbstractNutsStream<T> implements NutsStream<T> {
     @Override
     public <R> NutsStream<T> distinctBy(Function<T, R> condition) {
         return new AbstractNutsStream<T>(session, nutsBase) {
-            @NotNull
             @Override
             public Iterator<T> iterator() {
                 Iterator<T> it = AbstractNutsStream.this.iterator();
@@ -237,7 +230,6 @@ public abstract class AbstractNutsStream<T> implements NutsStream<T> {
     @Override
     public NutsStream<T> filter(Predicate<? super T> predicate) {
         return new AbstractNutsStream<T>(session, nutsBase) {
-            @NotNull
             @Override
             public Iterator<T> iterator() {
                 Iterator<T> it = AbstractNutsStream.this.iterator();
@@ -249,7 +241,6 @@ public abstract class AbstractNutsStream<T> implements NutsStream<T> {
     @Override
     public NutsStream<T> coalesce(Iterator<? extends T> other) {
         return new AbstractNutsStream<T>(session, nutsBase) {
-            @NotNull
             @Override
             public Iterator<T> iterator() {
                 Iterator<T> it = AbstractNutsStream.this.iterator();
@@ -285,7 +276,6 @@ public abstract class AbstractNutsStream<T> implements NutsStream<T> {
     @Override
     public <R> NutsStream<R> flatMapIter(Function<? super T, ? extends Iterator<? extends R>> mapper) {
         return new AbstractNutsStream<R>(session, nutsBase) {
-            @NotNull
             @Override
             public Iterator<R> iterator() {
                 Iterator<T> it = AbstractNutsStream.this.iterator();
@@ -297,7 +287,6 @@ public abstract class AbstractNutsStream<T> implements NutsStream<T> {
     @Override
     public <R> NutsStream<R> flatMapStream(Function<? super T, ? extends Stream<? extends R>> mapper) {
         return new AbstractNutsStream<R>(session, nutsBase) {
-            @NotNull
             @Override
             public Iterator<R> iterator() {
                 Iterator<T> it = AbstractNutsStream.this.iterator();

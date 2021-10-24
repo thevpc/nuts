@@ -215,7 +215,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
 
     private void initWorkspace(NutsWorkspaceInitInformation info) {
         try {
-            info = new CoreNutsWorkspaceInitInformation(info, this,null);
+            info = new CoreNutsWorkspaceInitInformation(info, this, null);
             this.uuid = info.getUuid();
             this.bootModel = new DefaultNutsBootModel(this, info);
             ((CoreNutsWorkspaceInitInformation) info).setSession(defaultSession());
@@ -377,8 +377,11 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 //builder().build() (just to make a copy)
                 uoptions = new ReadOnlyNutsWorkspaceOptions(uoptions.builder().build(), defaultSession());
             }
-            if (uoptions.getCreationTime() == 0) {
-                configModel.setStartCreateTimeMillis(System.currentTimeMillis());
+            long now = System.currentTimeMillis();
+            if (uoptions.getCreationTime() == 0 || uoptions.getCreationTime() > now) {
+                configModel.setStartCreateTimeMillis(now);
+            } else {
+                configModel.setStartCreateTimeMillis(uoptions.getCreationTime());
             }
 
             NutsBootConfig cfg = new NutsBootConfig();
@@ -616,7 +619,6 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             if (!_config.isReadOnly()) {
                 _config.save(false);
             }
-            configModel.setStartCreateTimeMillis(uoptions.getCreationTime());
             configModel.setEndCreateTimeMillis(System.currentTimeMillis());
             if (justInstalled) {
                 installSettings(defaultSession());
@@ -655,7 +657,9 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 );
             }
         } finally {
-            bootModel.setInitializing(false);
+            if (bootModel != null) {
+                bootModel.setInitializing(false);
+            }
         }
 //        return !exists;
     }

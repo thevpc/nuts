@@ -458,10 +458,14 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                 }
             }
         }
-        nutsDescriptor = nutsDescriptor.builder().setExecutable(executable).build();
-        nutsDescriptor = nutsDescriptor.builder().setApplication(nutsApp).build();
-
-        return nutsDescriptor;
+        NutsDescriptorBuilder nb = nutsDescriptor.builder();
+        if(executable){
+            nb.addFlag(NutsDescriptorFlag.EXEC);
+        }
+        if(nutsApp){
+            nb.addFlag(NutsDescriptorFlag.APP);
+        }
+        return nb.build();
     }
 
     protected DefaultNutsDefinition fetchDescriptorAsDefinition(NutsId id, NutsSession session, NutsFetchStrategy nutsFetchModes, NutsFetchMode mode, NutsRepository repo) {
@@ -544,9 +548,9 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                         idType = NutsIdType.RUNTIME;
                         apiId = apiId0;
                     } else {
-                        if (NutsUtilStrings.parseBoolean(descriptor.getPropertyValue("nuts-runtime"), false, false)) {
+                        if (descriptor.getFlags().contains(NutsDescriptorFlag.NUTS_RUNTIME)) {
                             idType = NutsIdType.RUNTIME;
-                        } else if (NutsUtilStrings.parseBoolean(descriptor.getPropertyValue("nuts-extension"), false, false)) {
+                        } else if (descriptor.getFlags().contains(NutsDescriptorFlag.NUTS_EXTENSION)) {
                             idType = NutsIdType.EXTENSION;
                             apiId = apiId0;
                         }

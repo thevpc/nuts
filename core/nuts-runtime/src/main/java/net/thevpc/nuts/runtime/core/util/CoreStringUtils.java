@@ -25,10 +25,7 @@ package net.thevpc.nuts.runtime.core.util;
 
 import net.thevpc.nuts.*;
 
-import java.io.IOException;
-import java.io.StreamTokenizer;
-import java.io.StringReader;
-import java.io.UncheckedIOException;
+import java.io.*;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.regex.Pattern;
@@ -525,5 +522,42 @@ public final class CoreStringUtils {
         return NutsUtilStrings.trimToNull(
                 String.join(",",args)
         );
+    }
+
+    public static String prefixLinesPortableNL(String str,String prefix) {
+        return prefixLines(str,prefix,"\n");
+    }
+    public static String prefixLinesOsNL(String str,String prefix) {
+        return prefixLines(str,prefix,System.getProperty("line.separator"));
+    }
+
+    public static String prefixLines(String str,String prefix,String nl) {
+        BufferedReader br=new BufferedReader(new StringReader(str==null?"":str));
+        StringBuilder sb=new StringBuilder();
+        String line;
+        boolean first=true;
+        if(nl==null) {
+            nl = System.getProperty("line.separator");
+            if(nl==null) {
+                nl = "\n";
+            }
+        }
+        while(true){
+            try {
+                if ((line = br.readLine()) == null) {
+                    break;
+                }
+            } catch (IOException e) {
+                break;
+            }
+            if(first){
+                first=false;
+            }else{
+                sb.append(nl);
+            }
+            sb.append(prefix);
+            sb.append(line);
+        }
+        return sb.toString();
     }
 }

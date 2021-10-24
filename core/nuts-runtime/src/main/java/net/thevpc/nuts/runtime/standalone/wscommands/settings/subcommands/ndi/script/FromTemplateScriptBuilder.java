@@ -1,6 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.script;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.core.shell.AbstractScriptBuilder;
+import net.thevpc.nuts.runtime.core.shell.NutsShellHelper;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.NdiScriptOptions;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.base.BaseSystemNdi;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.util.NdiUtils;
@@ -21,28 +23,28 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
     private Function<String, String> mapper;
     private final NdiScriptOptions options;
 
-    public FromTemplateScriptBuilder(String templateName, String type, NutsId anyId, BaseSystemNdi sndi, NdiScriptOptions options, NutsSession session) {
-        super(type, anyId, session);
+    public FromTemplateScriptBuilder(String templateName, NutsShellFamily shellFamily,String type, NutsId anyId, BaseSystemNdi sndi, NdiScriptOptions options, NutsSession session) {
+        super(shellFamily,type, anyId, session);
         this.sndi = sndi;
         this.options = options;
         this.templateName = templateName;
     }
 
     public FromTemplateScriptBuilder printCall(String line, String... args) {
-        return println(sndi.getCallScriptCommand(line, args));
+        return println(NutsShellHelper.of(getShellFamily()).getCallScriptCommand(line, args));
     }
 
     public FromTemplateScriptBuilder printSet(String var, String value) {
-        return println(sndi.getSetVarCommand(var, value));
+        return println(NutsShellHelper.of(getShellFamily()).getSetVarCommand(var, value));
     }
 
     public FromTemplateScriptBuilder printSetStatic(String var, String value) {
-        return println(sndi.getSetVarStaticCommand(var, value));
+        return println(NutsShellHelper.of(getShellFamily()).getSetVarStaticCommand(var, value));
     }
 
     public FromTemplateScriptBuilder printComment(String line) {
         for (String s : _split(line)) {
-            println(sndi.toCommentLine(s));
+            println(NutsShellHelper.of(getShellFamily()).toCommentLine(s));
         }
         return this;
     }
@@ -106,7 +108,8 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
             NutsId anyId = anyIdDef.getId();
             StringWriter bos = new StringWriter();
             try (BufferedWriter w = new BufferedWriter(bos)) {
-                NdiUtils.generateScript("/net/thevpc/nuts/runtime/settings/" + sndi.getTemplateName(templateName),
+                NdiUtils.generateScript("/net/thevpc/nuts/runtime/settings/" + sndi.getTemplateName(templateName, getShellFamily()),
+                        getSession(),
                         w, new Function<String, String>() {
                             @Override
                             public String apply(String s) {
@@ -129,13 +132,13 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
                                     case "SCRIPT_NUTS":
                                         return sndi.getNutsStart(options).path().toString();
                                     case "SCRIPT_NUTS_TERM_INIT":
-                                        return sndi.getNutsTermInit(options).path().toString();
+                                        return sndi.getIncludeNutsTermInit(options)[0].path().toString();
                                     case "SCRIPT_NUTS_TERM":
-                                        return sndi.getNutsTerm(options).path().toString();
+                                        return sndi.getNutsTerm(options)[0].path().toString();
                                     case "SCRIPT_NUTS_INIT":
-                                        return sndi.getNutsInit(options).path().toString();
+                                        return sndi.getIncludeNutsInit(options,getShellFamily()).path().toString();
                                     case "SCRIPT_NUTS_ENV":
-                                        return sndi.getNutsEnv(options).path().toString();
+                                        return sndi.getIncludeNutsEnv(options,getShellFamily()).path().toString();
                                     case "NUTS_JAR":
                                         return options.resolveNutsApiJarPath().toString();
                                     case "BIN_FOLDER":
@@ -170,21 +173,21 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
                                         String NUTS_JAR_PATH = options.resolveNutsApiJarPath().toString();
                                         if (NUTS_JAR_PATH.startsWith(getSession().locations().getStoreLocation(NutsStoreLocation.LIB))) {
                                             String pp = NUTS_JAR_PATH.substring(getSession().locations().getStoreLocation(NutsStoreLocation.LIB).length());
-                                            return sndi.varRef("NUTS_WORKSPACE_LIB") + pp;
+                                            return NutsShellHelper.of(getShellFamily()).varRef("NUTS_WORKSPACE_LIB") + pp;
                                         } else {
                                             return NUTS_JAR_PATH;
                                         }
                                     }
                                     case "NUTS_WORKSPACE_BINDIR_EXPR": {
                                         //="${NUTS_WORKSPACE_APPS}/id/net/thevpc/nuts/nuts/0.8.2/bin"
-                                        return sndi.varRef("NUTS_WORKSPACE_APPS") + options.resolveBinFolder().toString().substring(
+                                        return NutsShellHelper.of(getShellFamily()).varRef("NUTS_WORKSPACE_APPS") + options.resolveBinFolder().toString().substring(
                                                 getSession().locations().getStoreLocation(NutsStoreLocation.APPS).length()
                                         );
                                     }
                                     default: {
                                         List<String> q = bodyMap.get(s);
                                         if (q != null) {
-                                            return String.join(sndi.newlineString(), q);
+                                            return String.join(NutsShellHelper.of(getShellFamily()).newlineString(), q);
                                         }
                                         break;
                                     }

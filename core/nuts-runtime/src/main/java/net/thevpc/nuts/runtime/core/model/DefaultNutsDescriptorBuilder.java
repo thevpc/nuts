@@ -40,14 +40,12 @@ import java.util.stream.Collectors;
 public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 
     private static final long serialVersionUID = 1L;
-
+    private final List<NutsDescriptorProperty> properties = new ArrayList<>(); //defaults to empty;
     private NutsId id;
     //    private String alternative;
     private NutsId[] parents = new NutsId[0]; //defaults to empty;
     private String packaging;
     //    private String ext;
-    private boolean executable;
-    private boolean application;
     private NutsArtifactCall executor;
     private NutsArtifactCall installer;
     /**
@@ -65,7 +63,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     private List<NutsIdLocation> locations = new ArrayList<>(); //defaults to empty;
     private List<NutsDependency> dependencies = new ArrayList<>(); //defaults to empty;
     private List<NutsDependency> standardDependencies = new ArrayList<>(); //defaults to empty;
-    private List<NutsDescriptorProperty> properties = new ArrayList<>(); //defaults to empty;
+    private Set<NutsDescriptorFlag> flags = new LinkedHashSet<>();
     private transient DefaultNutsProperties _propertiesBuilder = new DefaultNutsProperties(); //defaults to empty;
     private transient NutsSession session;
 
@@ -115,32 +113,6 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     }
 
     @Override
-    public boolean isExecutable() {
-        return executable;
-    }
-
-    @Override
-    public NutsDescriptorBuilder setExecutable(boolean executable) {
-        this.executable = executable;
-        return this;
-    }
-
-//    @Override
-//    public NutsDescriptorBuilder setAlternative(String alternative) {
-//        this.alternative = alternative;
-//        return this;
-//    }
-
-    @Override
-    public boolean isApplication() {
-        return application;
-    }
-
-    //    @Override
-//    public String getExt() {
-//        return ext;
-//    }
-    @Override
     public String getPackaging() {
         return packaging;
     }
@@ -173,14 +145,14 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         return this;
     }
 
+//    public String getAlternative() {
+//        return alternative;
+//    }
+
     @Override
     public List<String> getIcons() {
         return icons;
     }
-
-//    public String getAlternative() {
-//        return alternative;
-//    }
 
     @Override
     public NutsDescriptorBuilder setIcons(List<String> icons) {
@@ -191,6 +163,12 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     @Override
     public List<String> getCategories() {
         return categories;
+    }
+
+    @Override
+    public NutsDescriptorBuilder setCategories(List<String> categories) {
+        this.categories = categories == null ? new ArrayList<>() : new ArrayList<>(categories);
+        return this;
     }
 
     @Override
@@ -207,12 +185,6 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     @Override
     public NutsDescriptorBuilder setCondition(NutsEnvCondition condition) {
         this.condition.setAll(condition);
-        return this;
-    }
-
-    @Override
-    public NutsDescriptorBuilder setCategories(List<String> categories) {
-        this.categories = categories == null ? new ArrayList<>() : new ArrayList<>(categories);
         return this;
     }
 
@@ -298,7 +270,6 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         return this;
     }
 
-
     @Override
     public NutsDescriptorProperty[] getProperties() {
         return properties.toArray(new NutsDescriptorProperty[0]);
@@ -327,12 +298,6 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     }
 
     @Override
-    public NutsDescriptorBuilder setApplication(boolean nutsApp) {
-        this.application = nutsApp;
-        return this;
-    }
-
-    @Override
     public NutsDescriptorBuilder setProperty(String name, String value) {
         NutsDescriptorProperty pp = session.descriptor().propertyBuilder()
                 .setName(name)
@@ -355,8 +320,6 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 //            setAlternative(other.getAlternative());
             setPackaging(other.getPackaging());
             setParents(other.getParents());
-            setExecutable(other.isExecutable());
-            setApplication(other.isApplication());
             setDescription(other.getDescription());
             setName(other.getName());
             setExecutor(other.getExecutor());
@@ -370,6 +333,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
             setIcons(new ArrayList<>(other.getIcons()));
             setCategories(other.getCategories());
             setGenericName(other.getGenericName());
+            setFlags(other.getFlags());
         } else {
             clear();
         }
@@ -383,8 +347,6 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 //            setAlternative(other.getAlternative());
             setPackaging(other.getPackaging());
             setParents(other.getParents());
-            setExecutable(other.isExecutable());
-            setApplication(other.isApplication());
             setDescription(other.getDescription());
             setName(other.getName());
             setExecutor(other.getExecutor());
@@ -397,6 +359,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
             setIcons(new ArrayList<>(Arrays.asList(other.getIcons())));
             setGenericName(other.getGenericName());
             setCategories(new ArrayList<>(Arrays.asList(other.getCategories())));
+            setFlags(other.getFlags());
         } else {
             clear();
         }
@@ -409,16 +372,15 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 //            setAlternative(null);
         setPackaging(null);
         setParents(null);
-        setExecutable(false);
-        setApplication(false);
+        setFlags(new LinkedHashSet<>());
         setDescription(null);
         setName(null);
         setExecutor(null);
         setInstaller(null);
         setCondition((NutsEnvCondition) null);
         setLocations(null);
-        setDependencies((NutsDependency[]) null);
-        setStandardDependencies((NutsDependency[]) null);
+        setDependencies(null);
+        setStandardDependencies(null);
         setProperties(null);
         setIcons(new ArrayList<>());
         setCategories(null);
@@ -522,8 +484,9 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         NutsId n_id = getId();
 //        String n_alt = getAlternative();
         String n_packaging = getPackaging();
+        LinkedHashSet<NutsDescriptorFlag> flags=new LinkedHashSet<>();
 //        String n_ext = getExt();
-        boolean n_executable = isExecutable();
+        flags.addAll(getFlags());
         String n_name = getName();
         List<String> n_categories = getCategories();
         if (n_categories == null) {
@@ -555,9 +518,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         LinkedHashSet<NutsDependency> n_sdeps = new LinkedHashSet<>();
         for (NutsDescriptor parentDescriptor : parentDescriptors) {
             n_id = CoreNutsUtils.applyNutsIdInheritance(n_id, parentDescriptor.getId(), session);
-            if (!n_executable && parentDescriptor.isExecutable()) {
-                n_executable = true;
-            }
+            flags.addAll(parentDescriptor.getFlags());
             if (n_executor == null) {
                 n_executor = parentDescriptor.getExecutor();
             }
@@ -586,7 +547,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 //        setAlternative(n_alt);
         setParents(n_parents);
         setPackaging(n_packaging);
-        setExecutable(n_executable);
+        setFlags(flags);
         setExecutor(n_executor);
         setInstaller(n_installer);
         setName(n_name);
@@ -615,10 +576,10 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         DefaultNutsProperties n_props = new DefaultNutsProperties();
         for (NutsDescriptorProperty property : getProperties()) {
             String v = property.getValue();
-            if(CoreStringUtils.containsVars("${")){
-                n_props.add(property.builder().setValue(CoreNutsUtils.applyStringProperties(property.getValue(), map))
+            if (CoreStringUtils.containsVars("${")) {
+                n_props.add(property.builder().setValue(CoreNutsUtils.applyStringProperties(v, map))
                         .build());
-            }else{
+            } else {
                 n_props.add(property);
             }
         }
@@ -637,7 +598,6 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 //        this.setAlternative(n_alt);
         this.setParents(getParents());
         this.setPackaging(n_packaging);
-        this.setExecutable(isExecutable());
         this.setExecutor(n_executor);
         this.setInstaller(n_installer);
         this.setName(n_name);
@@ -700,7 +660,6 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
                 d = converter.apply(d);
                 if (d != null) {
                     dependenciesList.add(d);
-                    ;
                 }
             } else {
                 dependenciesList.add(d);
@@ -726,14 +685,59 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     }
 
     @Override
-    public NutsDescriptorBuilder copy() {
-        return new DefaultNutsDescriptorBuilder(session).setAll(this);
-    }
-
-    @Override
     public NutsDescriptor build() {
+        LinkedHashSet<NutsDescriptorFlag> flags = new LinkedHashSet<>();
+        for (NutsDescriptorProperty property : getProperties()) {
+            if (property.getCondition() == null) {
+                switch (property.getName()) {
+                    case "nuts.application": {
+                        flags.add(NutsDescriptorFlag.APP);
+                        flags.add(NutsDescriptorFlag.EXEC);
+                        break;
+                    }
+                    case "nuts.executable": {
+                        flags.add(NutsDescriptorFlag.EXEC);
+                        break;
+                    }
+                    case "nuts.term": {
+                        flags.add(NutsDescriptorFlag.TERM);
+                        break;
+                    }
+                    case "nuts.gui": {
+                        flags.add(NutsDescriptorFlag.GUI);
+                        break;
+                    }
+                    case "nuts.extension": {
+                        flags.add(NutsDescriptorFlag.NUTS_EXTENSION);
+                        break;
+                    }
+                    case "nuts.runtime": {
+                        flags.add(NutsDescriptorFlag.NUTS_RUNTIME);
+                        break;
+                    }
+                }
+            }
+        }
+//                session.log().of(DefaultNutsDescriptor.class)
+//                        .with().level(Level.FINEST)
+//                        .verb(NutsLogVerb.WARNING)
+//                        .log(
+//                                NutsMessage.jstyle("{0} has nuts.application flag armed but is not an application", getId())
+//                        );
+
+        for (NutsDescriptorFlag flag : this.flags) {
+            flags.add(flag);
+            switch (flag) {
+                case APP:
+                case TERM:
+                case GUI: {
+                    flags.add(NutsDescriptorFlag.EXEC);
+                    break;
+                }
+            }
+        }
         return new DefaultNutsDescriptor(
-                getId(), /*getAlternative(),*/ getParents(), getPackaging(), isExecutable(), isApplication(),
+                getId(), /*getAlternative(),*/ getParents(), getPackaging(),
                 //                getExt(),
                 getExecutor(), getInstaller(),
                 getName(), getDescription(), getCondition().build(),
@@ -742,8 +746,75 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
                 genericName,
                 categories == null ? new String[0] : categories.toArray(new String[0]),
                 icons == null ? new String[0] : icons.toArray(new String[0]),
+                flags.toArray(new NutsDescriptorFlag[0]),
                 session
         );
+    }
+
+    @Override
+    public NutsDescriptorBuilder copy() {
+        return new DefaultNutsDescriptorBuilder(session).setAll(this);
+    }
+
+    public Set<NutsDescriptorFlag> getFlags() {
+        return flags;
+    }
+
+    public NutsDescriptorBuilder setFlags(Set<NutsDescriptorFlag> flags) {
+        this.flags = flags == null ? new LinkedHashSet<>() : new LinkedHashSet<>(flags);
+        return this;
+    }
+
+    @Override
+    public NutsDescriptorBuilder addFlag(NutsDescriptorFlag flag) {
+        if (flag != null) {
+            this.flags.add(flag);
+        }
+        return this;
+    }
+
+    @Override
+    public NutsDescriptorBuilder addFlags(NutsDescriptorFlag... flags) {
+        if (flags != null) {
+            for (NutsDescriptorFlag flag : flags) {
+                if (flag != null) {
+                    this.flags.add(flag);
+                }
+            }
+        }
+        return this;
+    }
+
+    @Override
+    public NutsDescriptorBuilder removeFlag(NutsDescriptorFlag flag) {
+        if (flag != null) {
+            this.flags.remove(flag);
+        }
+        return this;
+    }
+
+    @Override
+    public NutsDescriptorBuilder removeFlags(NutsDescriptorFlag... flags) {
+        if (flags != null) {
+            for (NutsDescriptorFlag flag : flags) {
+                if (flag != null) {
+                    this.flags.remove(flag);
+                }
+            }
+        }
+        return this;
+    }
+
+    @Override
+    public NutsDescriptorProperty getProperty(String name) {
+        return Arrays.stream(_propertiesBuilder.getAll()).filter(x -> x.getName().equals(name)).findFirst()
+                .orElse(null);
+    }
+
+    @Override
+    public String getPropertyValue(String name) {
+        NutsDescriptorProperty p = getProperty(name);
+        return p == null ? null : p.getValue();
     }
 
     private void _rebuildPropertiesBuilder() {
@@ -804,8 +875,8 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(id, packaging, executable, application, executor, installer, name, icons, categories,
-                genericName, description, condition, locations, dependencies, standardDependencies, properties, session);
+        int result = Objects.hash(id, packaging, executor, installer, name, icons, categories,
+                genericName, description, condition, locations, dependencies, standardDependencies, properties, flags, session);
         result = 31 * result + Arrays.hashCode(parents);
         return result;
     }
@@ -815,8 +886,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         DefaultNutsDescriptorBuilder that = (DefaultNutsDescriptorBuilder) o;
-        return executable == that.executable && application == that.application
-                && Objects.equals(id, that.id) && Arrays.equals(parents, that.parents)
+        return Objects.equals(id, that.id) && Arrays.equals(parents, that.parents)
                 && Objects.equals(packaging, that.packaging) && Objects.equals(executor, that.executor)
                 && Objects.equals(installer, that.installer) && Objects.equals(name, that.name)
                 && Objects.equals(icons, that.icons) && Objects.equals(categories, that.categories)
@@ -827,6 +897,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
                 && Objects.equals(dependencies, that.dependencies)
                 && Objects.equals(standardDependencies, that.standardDependencies)
                 && Objects.equals(properties, that.properties)
+                && Objects.equals(flags, that.flags)
                 && Objects.equals(session, that.session);
     }
 }

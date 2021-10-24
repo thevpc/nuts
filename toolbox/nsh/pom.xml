@@ -17,6 +17,8 @@
         <github.global.server>github</github.global.server>
         <nuts.application>true</nuts.application>
         <nuts.genericName>Bash Compatible Shell</nuts.genericName>
+        <nuts.application>true</nuts.application>
+        <nuts.term>true</nuts.term>
         <nuts.categories>
             /System/TerminalEmulator
             /Settings/PackageManager/Nuts

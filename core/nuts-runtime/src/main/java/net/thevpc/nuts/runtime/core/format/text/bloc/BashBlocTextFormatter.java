@@ -34,8 +34,7 @@ public class BashBlocTextFormatter implements NutsCodeFormat {
             case "bash":
             case "csh":
             case "zsh":
-            case "ksh":
-            case "fish": {
+            case "ksh":{
                 return NutsComponent.DEFAULT_SUPPORT;
             }
             case "system": {
@@ -44,8 +43,7 @@ public class BashBlocTextFormatter implements NutsCodeFormat {
                     case BASH:
                     case CSH:
                     case ZSH:
-                    case KSH:
-                    case FISH: {
+                    case KSH:{
                         return NutsComponent.DEFAULT_SUPPORT + 10;
                     }
                 }

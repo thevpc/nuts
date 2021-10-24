@@ -1,17 +1,19 @@
-package net.thevpc.nuts.runtime.core.app;
+package net.thevpc.nuts.runtime.core.shell;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.core.app.NutsCommandLineShellOptions;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class DefaultCommandLineWindowsCmd implements NutsCommandLineShellSupport {
-    //special chars : &()[]{}^=;!'+,`~
-    public DefaultCommandLineWindowsCmd() {
+public abstract class AbstractWinNutsShellHelper implements NutsShellHelper{
+    public String newlineString() {
+        return "\r\n";
     }
 
-    protected String[] parseCommandLineArrBash(String commandLineString,NutsSession session) {
+
+    public String[] parseCommandLineArr(String commandLineString, NutsSession session) {
         if (commandLineString == null) {
             return new String[0];
         }
@@ -300,6 +302,7 @@ public class DefaultCommandLineWindowsCmd implements NutsCommandLineShellSupport
         return Pattern.compile("[a-zA-Z][a-zA-Z0-9_]*").matcher(arg).matches();
     }
 
+    @Override
     public String escapeArguments(String[] args, NutsCommandLineShellOptions options) {
         if(options==null){
             options=new NutsCommandLineShellOptions();

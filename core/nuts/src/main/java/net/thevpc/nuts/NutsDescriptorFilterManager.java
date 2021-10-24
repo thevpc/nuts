@@ -53,9 +53,7 @@ public interface NutsDescriptorFilterManager extends NutsTypedFilters<NutsDescri
 
     NutsDescriptorFilter byDesktopEnvironment(String... values);
 
-    NutsDescriptorFilter byExec(Boolean value);
-
-    NutsDescriptorFilter byApp(Boolean value);
+    NutsDescriptorFilter byFlag(NutsDescriptorFlag... flags);
 
     NutsDescriptorFilter byExtension(NutsVersion apiVersion);
 

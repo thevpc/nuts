@@ -99,7 +99,7 @@ public class JarDescriptorContentParserComponent implements NutsDescriptorConten
                             }
                             NutsDescriptor d = parserContext.getSession().descriptor().descriptorBuilder()
                                     .setId(ws.id().parser().parse("temp:jar#1.0"))
-                                    .setExecutable(mainClass.isSet())
+                                    .addFlag(mainClass.isSet()?NutsDescriptorFlag.EXEC : null)
                                     .setPackaging("jar")
                                     .setExecutor(new DefaultNutsArtifactCall(JAVA, 
                                             //new String[]{"-jar"}
@@ -148,7 +148,7 @@ public class JarDescriptorContentParserComponent implements NutsDescriptorConten
         if (baseNutsDescriptor == null) {
             baseNutsDescriptor = parserContext.getSession().descriptor().descriptorBuilder()
                     .setId(ws.id().parser().parse("temp:jar#1.0"))
-                    .setExecutable(true)
+                    .addFlag(NutsDescriptorFlag.EXEC)
                     .setPackaging("jar")
                     .build();
         }
@@ -174,7 +174,7 @@ public class JarDescriptorContentParserComponent implements NutsDescriptorConten
                                 Arrays.stream(classes)
                                         .map(x -> x.getName())
                                         .collect(Collectors.toList())
-                        )}, null)).setExecutable(true).build();
+                        )}, null)).addFlag(NutsDescriptorFlag.EXEC).build();
             }
         } else {
             return baseNutsDescriptor;

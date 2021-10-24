@@ -35,30 +35,29 @@ import net.thevpc.nuts.runtime.core.format.text.stylethemes.NutsTextFormatThemeW
 import net.thevpc.nuts.runtime.core.format.xml.DefaultXmlNutsElementStreamFormat;
 import net.thevpc.nuts.runtime.core.format.yaml.SimpleYaml;
 import net.thevpc.nuts.spi.NutsComponent;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * @author vpc
  */
 public class DefaultNutsTextManagerModel {
 
+    private final List<NutsCodeFormat> codeFormats = new ArrayList<>();
+    private final NutsWorkspaceInitInformation info;
+    private final NutsWorkspace ws;
     private String styleThemeName;
     private NutsTextFormatTheme styleTheme;
-    private final List<NutsCodeFormat> codeFormats = new ArrayList<>();
     private JavaBlocTextFormatter javaBlocTextFormatter;
     private HadraBlocTextFormatter hadraBlocTextFormatter;
     private XmlCodeFormatter xmlBlocTextFormatter;
     private JsonCodeFormatter jsonBlocTextFormatter;
     private BashBlocTextFormatter bashBlocTextFormatter;
+    private BashBlocTextFormatter fishBlocTextFormatter;
     private BatBlocTextFormatter batBlocTextFormatter;
     private PlainBlocTextFormatter plainBlocTextFormatter;
-    private final NutsWorkspaceInitInformation info;
     private NutsTextFormatTheme defaultTheme;
-    private final NutsWorkspace ws;
     private NutsElementFactoryService elementFactoryService;
     private NutsElementStreamFormat jsonMan;
     private NutsElementStreamFormat yamlMan;
@@ -134,33 +133,33 @@ public class DefaultNutsTextManagerModel {
                 case "ksh":
                 case "zsh":
                 case "csh":
-                case "fish":
-                case "bash":
-                {
+                case "bash": {
                     return getBashBlocTextFormatter();
+                }
+                case "fish": {
+                    return getFishBlocTextFormatter();
                 }
 
                 case "bat":
                 case "cmd":
-                case "powsershell":
-                {
+                case "powsershell": {
                     return getBatBlocTextFormatter();
                 }
 
                 case "system": {
-                    switch (NutsShellFamily.getCurrent()){
+                    switch (NutsShellFamily.getCurrent()) {
                         case SH:
                         case BASH:
                         case CSH:
                         case KSH:
-                        case ZSH:
-                        case FISH:
-                        {
+                        case ZSH: {
                             return getBashBlocTextFormatter();
                         }
+                        case FISH: {
+                            return getFishBlocTextFormatter();
+                        }
                         case WIN_CMD:
-                        case WIN_POWER_SHELL:
-                        {
+                        case WIN_POWER_SHELL: {
                             return getBatBlocTextFormatter();
                         }
                     }
@@ -205,7 +204,6 @@ public class DefaultNutsTextManagerModel {
         return null;
     }
 
-    @NotNull
     private NutsCodeFormat getBatBlocTextFormatter() {
         if (batBlocTextFormatter == null) {
             batBlocTextFormatter = new BatBlocTextFormatter(ws);
@@ -213,7 +211,13 @@ public class DefaultNutsTextManagerModel {
         return batBlocTextFormatter;
     }
 
-    @NotNull
+    public BashBlocTextFormatter getFishBlocTextFormatter() {
+        if (fishBlocTextFormatter == null) {
+            fishBlocTextFormatter = new BashBlocTextFormatter(ws);
+        }
+        return fishBlocTextFormatter;
+    }
+
     private NutsCodeFormat getBashBlocTextFormatter() {
         if (bashBlocTextFormatter == null) {
             bashBlocTextFormatter = new BashBlocTextFormatter(ws);

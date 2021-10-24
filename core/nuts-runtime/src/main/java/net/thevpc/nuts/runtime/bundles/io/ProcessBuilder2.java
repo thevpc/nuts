@@ -28,7 +28,7 @@ package net.thevpc.nuts.runtime.bundles.io;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.app.DefaultNutsArgument;
 import net.thevpc.nuts.runtime.core.app.NutsCommandLineShellOptions;
-import net.thevpc.nuts.runtime.core.app.NutsCommandLineShellSupport;
+import net.thevpc.nuts.runtime.core.shell.NutsShellHelper;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 import java.io.*;
@@ -546,7 +546,7 @@ public class ProcessBuilder2 {
         }
         StringBuilder sb=new StringBuilder()
                 .append(
-                        NutsCommandLineShellSupport.of(NutsShellFamily.getCurrent(), session)
+                        NutsShellHelper.of(NutsShellFamily.getCurrent())
                                 .escapeArguments(fullCommandString.toArray(new String[0]),
                                         new NutsCommandLineShellOptions()
                                                 .setSession(session)
@@ -727,7 +727,7 @@ public class ProcessBuilder2 {
 
         StringBuilder sb=new StringBuilder()
                 .append("```system ").append(
-                NutsCommandLineShellSupport.of(NutsShellFamily.getCurrent(), session)
+                        NutsShellHelper.of(NutsShellFamily.getCurrent())
                         .escapeArguments(fullCommandString.toArray(new String[0]),
                                 new NutsCommandLineShellOptions()
                                         .setSession(session)

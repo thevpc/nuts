@@ -186,9 +186,11 @@ public class DefaultNutsWorkspaceEnvManagerModel {
                         NutsShellFamily.FISH
                 };
                 for (NutsShellFamily f : all) {
-                    Path path = Paths.get("/bin").resolve(f.id());
-                    if (Files.exists(path)) {
-                        families.add(f);
+                    if(f!=null) {
+                        Path path = Paths.get("/bin").resolve(f.id());
+                        if (Files.exists(path)) {
+                            families.add(f);
+                        }
                     }
                 }
                 if (allEvenNonInstalled) {

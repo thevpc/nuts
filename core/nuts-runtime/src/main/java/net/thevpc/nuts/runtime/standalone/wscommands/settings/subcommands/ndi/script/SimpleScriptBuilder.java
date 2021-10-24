@@ -2,6 +2,9 @@ package net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.s
 
 import net.thevpc.nuts.NutsId;
 import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NutsShellFamily;
+import net.thevpc.nuts.runtime.core.shell.AbstractScriptBuilder;
+import net.thevpc.nuts.runtime.core.shell.NutsShellHelper;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.base.BaseSystemNdi;
 
 import java.io.BufferedReader;
@@ -16,26 +19,26 @@ public class SimpleScriptBuilder extends AbstractScriptBuilder {
     private BaseSystemNdi sndi;
     private List<String> lines=new ArrayList<>();
 
-    public SimpleScriptBuilder(String type, NutsId anyId, BaseSystemNdi sndi, NutsSession session) {
-        super(type, anyId,session);
+    public SimpleScriptBuilder(NutsShellFamily shellFamily,String type, NutsId anyId, BaseSystemNdi sndi, NutsSession session) {
+        super(shellFamily,type, anyId,session);
         this.sndi = sndi;
     }
 
     public SimpleScriptBuilder printCall(String line, String... args) {
-        return println(sndi.getCallScriptCommand(line,args));
+        return println(NutsShellHelper.of(getShellFamily()).getCallScriptCommand(line,args));
     }
 
     public SimpleScriptBuilder printSet(String var, String value) {
-        return println(sndi.getSetVarCommand(var, value));
+        return println(NutsShellHelper.of(getShellFamily()).getSetVarCommand(var, value));
     }
 
     public SimpleScriptBuilder printSetStatic(String var, String value) {
-        return println(sndi.getSetVarStaticCommand(var, value));
+        return println(NutsShellHelper.of(getShellFamily()).getSetVarStaticCommand(var, value));
     }
 
     public SimpleScriptBuilder printComment(String line) {
         for (String s : _split(line)) {
-            println(sndi.toCommentLine(s));
+            println(NutsShellHelper.of(getShellFamily()).toCommentLine(s));
         }
         return this;
     }
@@ -66,7 +69,7 @@ public class SimpleScriptBuilder extends AbstractScriptBuilder {
 
     @Override
     public String buildString() {
-        return String.join(sndi.newlineString(),lines);
+        return String.join(NutsShellHelper.of(getShellFamily()).newlineString(),lines);
     }
     public SimpleScriptBuilder setPath(Path path) {
         return (SimpleScriptBuilder) super.setPath(path);

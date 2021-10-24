@@ -5,6 +5,7 @@ import net.thevpc.nuts.*;
 
 import java.util.List;
 
+import net.thevpc.nuts.runtime.core.shell.NutsShellHelper;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 public class DefaultNutsCommandLineManager implements NutsCommandLineManager {
@@ -64,26 +65,7 @@ public class DefaultNutsCommandLineManager implements NutsCommandLineManager {
         if (f == null) {
             f = NutsShellFamily.getCurrent();
         }
-        switch (f) {
-            case WIN_CMD:
-            case WIN_POWER_SHELL:
-            {
-                return new DefaultCommandLineWindowsCmd().parseCommandLineArrBash(line, getSession());
-            }
-            case SH:
-            case BASH:
-            case CSH:
-            case ZSH:
-            case KSH:
-            case FISH:
-            {
-                return new DefaultCommandLineBash().parseCommandLineArrBash(line, getSession());
-            }
-            case UNKNOWN:{
-                return new DefaultCommandLineBash().parseCommandLineArrBash(line, getSession());
-            }
-        }
-        return new DefaultCommandLineBash().parseCommandLineArrBash(line, getSession());
+        return NutsShellHelper.of(f).parseCommandLineArr(line,session);
     }
 
     protected void checkSession() {
