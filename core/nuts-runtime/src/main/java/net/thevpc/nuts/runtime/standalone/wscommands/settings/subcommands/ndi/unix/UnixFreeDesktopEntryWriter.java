@@ -9,7 +9,6 @@ import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.PathInfo;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.base.AbstractFreeDesktopEntryWriter;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.FreeDesktopEntry;
-import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.util.NdiUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -112,7 +111,7 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
                 ByteArrayOutputStream b = new ByteArrayOutputStream();
                 tr.transform(new DOMSource(dom), new StreamResult(b));
                 File menuFile = new File(folder4menus, menuFileName);
-                all.add(new PathInfo("desktop-menu", id, menuFile.toPath(), NdiUtils.tryWrite(b.toByteArray(), menuFile.toPath(), session)));
+                all.add(new PathInfo("desktop-menu", id, menuFile.toPath(), CoreIOUtils.tryWrite(b.toByteArray(), menuFile.toPath(), session)));
             } catch (ParserConfigurationException | TransformerException ex) {
                 throw new RuntimeException(ex);
             }
@@ -126,7 +125,7 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
     private void callMeMaye(String ... command) {
         List<String> cmdList=new ArrayList<>(Arrays.asList(command));
         String sysCmd=cmdList.remove(0);
-        Path a = NdiUtils.sysWhich(sysCmd);
+        Path a = CoreIOUtils.sysWhich(sysCmd);
         if (a != null) {
             cmdList.add(0,a.toString());
             String outStr = session.exec()
@@ -188,7 +187,7 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
 
     public PathInfo.Status tryWrite(FreeDesktopEntry file, Path out) {
         CoreIOUtils.mkdirs(out.getParent(), session);
-        return NdiUtils.tryWrite(writeAsString(file).getBytes(), out, session);
+        return CoreIOUtils.tryWrite(writeAsString(file).getBytes(), out, session);
     }
 
     public PathInfo.Status tryWrite(FreeDesktopEntry file, File out) {

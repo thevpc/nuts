@@ -1,12 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.optional.mslink.OptionalMsLinkHelper;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.PathInfo;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.AbstractNutsSettingsSubCommand;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.unix.*;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.win.WindowsNdi;
-import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.util.NdiUtils;
 
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
@@ -389,7 +389,7 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
                             ,
                             session.text().ofStyled(ndiScriptInfo.getPath().getFileName().toString(), NutsTextStyle.path()),
                             ndiScriptInfo.getId(),
-                            session.text().ofStyled(NdiUtils.betterPath(ndiScriptInfo.getPath().toString()), NutsTextStyle.path())
+                            session.text().ofStyled(CoreIOUtils.betterPath(ndiScriptInfo.getPath().toString()), NutsTextStyle.path())
                     );
                 }
 

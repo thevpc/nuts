@@ -56,7 +56,7 @@ public class LocalMysqlConfigService {
 
     public LocalMysqlConfigService saveConfig() {
         Path f = getServerConfigPath();
-        context.getSession().elem().setContentType(NutsContentType.JSON).setValue(config).print(f);
+        context.getSession().elem().setNtf(false).setContentType(NutsContentType.JSON).setValue(config).print(f);
         return this;
     }
 
@@ -110,7 +110,7 @@ public class LocalMysqlConfigService {
     }
 
     public LocalMysqlConfigService write(PrintStream out) {
-        context.getSession().elem().setContentType(NutsContentType.JSON).setValue(getConfig()).print(out);
+        context.getSession().elem().setContentType(NutsContentType.JSON).setValue(getConfig()).setNtf(false).print(out);
         return this;
     }
 

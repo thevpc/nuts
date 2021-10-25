@@ -4,10 +4,10 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.shell.NutsShellHelper;
 import net.thevpc.nuts.runtime.core.shell.ReplaceString;
 import net.thevpc.nuts.runtime.core.shell.ScriptBuilder;
+import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.PathInfo;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.*;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.script.*;
-import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.util.NdiUtils;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -143,7 +143,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
 
 
     public Path getBinScriptFile(String name, NdiScriptOptions options) {
-        if (NdiUtils.isPath(name)) {
+        if (CoreIOUtils.isPath(name)) {
             return Paths.get(name).toAbsolutePath();
         }
         return options.resolveBinFolder().resolve(getExecFileName(name)).toAbsolutePath();
@@ -183,7 +183,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                     NutsDefinition appDef = loadIdDefinition(nid);
                     s = NameBuilder.id(appDef.getId(), "%n", null, appDef.getDescriptor(), session).buildName();
                     s = getBinScriptFile(s, options).toString();
-                } else if (NdiUtils.isPathFolder(s)) {
+                } else if (CoreIOUtils.isPathFolder(s)) {
                     NutsDefinition appDef = loadIdDefinition(nid);
                     s = s + File.separator + NameBuilder.id(appDef.getId(), getExecFileName("%n"), null, appDef.getDescriptor(), session).buildName();
                 } else {
@@ -221,7 +221,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             if (session.getTerminal().ask()
                     .resetLine()
                     .forBoolean("tool %s will be removed. Confirm?",
-                            factory.ofStyled(NdiUtils.betterPath(f.toString()), NutsTextStyle.path())
+                            factory.ofStyled(CoreIOUtils.betterPath(f.toString()), NutsTextStyle.path())
                     )
                     .setDefaultValue(true)
                     .setSession(session)
@@ -232,7 +232,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                     throw new UncheckedIOException(ex);
                 }
                 if (session.isPlainTrace()) {
-                    session.out().printf("tool %s removed.%n", factory.ofStyled(NdiUtils.betterPath(f.toString()), NutsTextStyle.path()));
+                    session.out().printf("tool %s removed.%n", factory.ofStyled(CoreIOUtils.betterPath(f.toString()), NutsTextStyle.path()));
                 }
             }
         }
@@ -574,7 +574,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         byte[] newContent = (String.join(sh.newlineString(), newFileContentRows)).getBytes();
 //        String newContentString = new String(newContent);
 //        PathInfo.Status s = NdiUtils.tryWriteStatus(newContent, filePath,session);
-        return new PathInfo(type, id, filePath, NdiUtils.tryWrite(newContent, filePath, session));
+        return new PathInfo(type, id, filePath, CoreIOUtils.tryWrite(newContent, filePath, session));
     }
 
     public PathInfo removeFileCommented2Lines(String type, NutsId id, Path filePath, String commentLine, boolean force, NutsShellFamily shellFamily) {

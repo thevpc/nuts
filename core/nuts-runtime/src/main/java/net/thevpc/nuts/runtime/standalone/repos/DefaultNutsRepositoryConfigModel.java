@@ -412,7 +412,9 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
 //            if (NutsBlankable.isBlank(config.getConfigVersion())) {
 //                config.setConfigVersion(repository.getWorkspace().getApiVersion());
 //            }
-            session.elem().setSession(session).setContentType(NutsContentType.JSON).setValue(config).print(file);
+            session.elem().setSession(session).setContentType(NutsContentType.JSON).setValue(config)
+                    .setNtf(false)
+                    .print(file);
             configurationChanged = false;
             if (_LOG(session).isLoggable(Level.CONFIG)) {
                 if (created) {

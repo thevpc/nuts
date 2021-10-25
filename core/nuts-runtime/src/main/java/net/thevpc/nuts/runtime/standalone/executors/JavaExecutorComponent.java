@@ -198,7 +198,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                         .setExported(true)
                         .setApiVersion(nutsDependencyVersion == null ? null : nutsDependencyVersion.toString())
                         .setCompact(true)
-                        .getBootCommandLine().formatter().setShellFamily(NutsShellFamily.SH).toString();
+                        .getBootCommandLine().formatter().setShellFamily(NutsShellFamily.SH).setNtf(false).toString();
 //                if(nutsDependencyVersion!=null && nutsDependencyVersion.compareTo(executionContext.getWorkspace().getApiVersion())<0){
 //                    if(nutsDependencyVersion.compareTo("0.8.0")<0){
 //                        for (String s : bootCommand) {

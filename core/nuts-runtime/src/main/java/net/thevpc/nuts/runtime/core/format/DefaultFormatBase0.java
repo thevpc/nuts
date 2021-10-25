@@ -23,7 +23,7 @@ public abstract class DefaultFormatBase0<T> implements NutsCommandLineConfigurab
     private final NutsWorkspace workspace;
     private NutsSession session;
     private final String name;
-    private boolean ntf=false;
+    private boolean ntf=true;
 
     public DefaultFormatBase0(NutsWorkspace workspace, String name) {
         this.workspace = workspace;

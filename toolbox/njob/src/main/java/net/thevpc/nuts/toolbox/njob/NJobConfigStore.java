@@ -23,7 +23,7 @@ public class NJobConfigStore {
 
     public NJobConfigStore(NutsApplicationContext applicationContext) {
         this.context = applicationContext;
-        json = applicationContext.getSession().elem().setContentType(NutsContentType.JSON);
+        json = applicationContext.getSession().elem().setContentType(NutsContentType.JSON).setNtf(false);
         json.setCompact(false);
         //ensure we always consider the latest config version
         dbPath = Paths.get(applicationContext.getVersionFolderFolder(NutsStoreLocation.CONFIG, NJobConfigVersions.CURRENT))

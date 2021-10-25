@@ -51,7 +51,8 @@ public class NutsIndexerUtils {
 
     public static String mapToJson(Map<String, String> map, NutsSession ws) {
         StringWriter s = new StringWriter();
-        ws.elem().setContentType(NutsContentType.JSON).setValue(map).print(s);
+        ws.elem().setContentType(NutsContentType.JSON).setValue(map)
+                .setNtf(false).print(s);
         return s.toString();
     }
 

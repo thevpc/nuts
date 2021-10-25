@@ -52,7 +52,8 @@ public class RemoteMysqlDatabaseConfigService {
     }
 
     public void write(PrintStream out) {
-        context.getSession().elem().setContentType(NutsContentType.JSON).setValue(getConfig()).print(out);
+        context.getSession().elem().setContentType(NutsContentType.JSON).setValue(getConfig())
+                .setNtf(false).print(out);
     }
 
     public String pull(String localPath, boolean restore, boolean deleteRemote) {

@@ -84,7 +84,8 @@ public class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFa
     public void installCommand(NutsCommandConfig command, NutsSession session) {
         checkSession(session);
         Path path = getCommandsFolder(session).resolve(command.getName() + NutsConstants.Files.NUTS_COMMAND_FILE_EXTENSION);
-        session.elem().setContentType(NutsContentType.JSON).setValue(command).print(path);
+        session.elem().setContentType(NutsContentType.JSON).setValue(command)
+                .setNtf(false).print(path);
         NutsWorkspaceConfigManagerExt.of(session.config()).getModel().fireConfigurationChanged("command", session, ConfigEventType.MAIN);
     }
 

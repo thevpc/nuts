@@ -101,7 +101,8 @@ public class NutsIndexSubscriberListManager {
                 ? null
                 : new ArrayList<>(this.subscribers.values()));
         Path file = getConfigFile(session);
-        this.defaultWorkspace.elem().setContentType(NutsContentType.JSON).setValue(this.config).print(file);
+        this.defaultWorkspace.elem().setContentType(NutsContentType.JSON).setValue(this.config)
+                .setNtf(false).print(file);
     }
 
     public boolean unsubscribe(String repositoryUuid, NutsWorkspaceLocation workspaceLocation, NutsSession session) {

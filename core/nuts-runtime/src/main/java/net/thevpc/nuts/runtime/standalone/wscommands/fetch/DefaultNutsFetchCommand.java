@@ -448,7 +448,9 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                         map = new LinkedHashMap<>();
                         map.put("executable", String.valueOf(executable));
                         map.put("nutsApplication", String.valueOf(nutsApp));
-                        session.elem().setContentType(NutsContentType.JSON).setSession(getSession()).setValue(map).print(cachePath);
+                        session.elem().setContentType(NutsContentType.JSON).setSession(getSession()).setValue(map)
+                                .setNtf(false)
+                                .print(cachePath);
                     } catch (Exception ex) {
                         //
                     }
@@ -484,7 +486,8 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                         //this is invalid cache!
                         Files.delete(cachePath);
                     } else {
-                        DefaultNutsDefinition d = ws.elem().setSession(session).setContentType(NutsContentType.JSON).parse(cachePath, DefaultNutsDefinition.class);
+                        DefaultNutsDefinition d = ws.elem().setSession(session)
+                                .setContentType(NutsContentType.JSON).parse(cachePath, DefaultNutsDefinition.class);
                         if (d != null) {
                             NutsRepositoryManager rr = session.copy().setTransitive(true).repos();
                             NutsRepository repositoryById = rr.findRepositoryById(d.getRepositoryUuid());
@@ -576,7 +579,8 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
             );
             if (withCache) {
                 try {
-                    ws.elem().setContentType(NutsContentType.JSON).setSession(session).setValue(result).setNtf(false).print(cachePath);
+                    ws.elem().setContentType(NutsContentType.JSON).setSession(session).setValue(result)
+                            .setNtf(false).print(cachePath);
                 } catch (Exception ex) {
                     //
                 }

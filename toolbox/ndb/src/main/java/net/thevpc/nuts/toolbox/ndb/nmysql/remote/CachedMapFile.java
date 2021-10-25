@@ -93,6 +93,7 @@ public class CachedMapFile {
             try {
                 context.getSession().elem().setValue(map)
                         .setContentType(NutsContentType.JSON)
+                        .setNtf(false)
                         .print(path);
             } catch (Exception ex) {
                 //

@@ -162,7 +162,8 @@ public class DefaultNutsWorkspaceConfigModel {
                     extension.setConfigVersion(null);
                 }
             }
-            session.elem().setContentType(NutsContentType.JSON).setValue(storeModelBoot).print(file);
+            session.elem().setContentType(NutsContentType.JSON).setValue(storeModelBoot)
+                    .setNtf(false).print(file);
             storeModelBootChanged = false;
             ok = true;
         }
@@ -179,7 +180,8 @@ public class DefaultNutsWorkspaceConfigModel {
                     extension.setConfigVersion(null);
                 }
             }
-            session.elem().setSession(session).setContentType(NutsContentType.JSON).setValue(storeModelSecurity).print(file);
+            session.elem().setSession(session).setContentType(NutsContentType.JSON).setValue(storeModelSecurity)
+                    .setNtf(false).print(file);
             storeModelSecurityChanged = false;
             ok = true;
         }
@@ -213,7 +215,8 @@ public class DefaultNutsWorkspaceConfigModel {
                     item.setConfigVersion(null);
                 }
             }
-            session.elem().setSession(session).setContentType(NutsContentType.JSON).setValue(storeModelMain).print(file);
+            session.elem().setSession(session).setContentType(NutsContentType.JSON).setValue(storeModelMain)
+                    .setNtf(false).print(file);
             storeModelMainChanged = false;
             ok = true;
         }
@@ -227,7 +230,8 @@ public class DefaultNutsWorkspaceConfigModel {
                     item.setConfigVersion(null);
                 }
             }
-            session.elem().setSession(session).setContentType(NutsContentType.JSON).setValue(storeModelApi).print(afile);
+            session.elem().setSession(session).setContentType(NutsContentType.JSON).setValue(storeModelApi)
+                    .setNtf(false).print(afile);
             storeModelApiChanged = false;
             ok = true;
         }
@@ -236,7 +240,8 @@ public class DefaultNutsWorkspaceConfigModel {
                     .resolve(NutsConstants.Folders.ID).resolve(session.locations().getDefaultIdBasedir(session.getWorkspace().getRuntimeId()));
             Path afile = runtimeVersionSpecificLocation.resolve(NutsConstants.Files.WORKSPACE_RUNTIME_CONFIG_FILE_NAME);
             storeModelRuntime.setConfigVersion(current().getApiVersion());
-            session.elem().setSession(session).setContentType(NutsContentType.JSON).setValue(storeModelRuntime).print(afile);
+            session.elem().setSession(session).setContentType(NutsContentType.JSON).setValue(storeModelRuntime)
+                    .setNtf(false).print(afile);
             storeModelRuntimeChanged = false;
             ok = true;
         }
@@ -588,7 +593,8 @@ public class DefaultNutsWorkspaceConfigModel {
             String javaOptions = getStoredConfigApi().getJavaOptions();
             m.put("javaCommand", javaCommand);
             m.put("javaOptions", javaOptions);
-            session.elem().setContentType(NutsContentType.JSON).setValue(m).print(apiConfigFile);
+            session.elem().setContentType(NutsContentType.JSON).setValue(m)
+                    .setNtf(false).print(apiConfigFile);
         }
         //downloadId(apiId, force, null, true, NutsIdType.API, session);
     }
@@ -1091,7 +1097,8 @@ public class DefaultNutsWorkspaceConfigModel {
         }
 
         if (force || !Files.isRegularFile(configFile)) {
-            session.elem().setContentType(NutsContentType.JSON).setValue(m).print(configFile);
+            session.elem().setContentType(NutsContentType.JSON).setValue(m)
+                    .setNtf(false).print(configFile);
         }
 //        downloadId(id, force, (def != null && def.getContent().getPath() != null) ? def.getContent().getFilePath() : null, false, runtime,session);
 //        for (NutsId dep : deps) {

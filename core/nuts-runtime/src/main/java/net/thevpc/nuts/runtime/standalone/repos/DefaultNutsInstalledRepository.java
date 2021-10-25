@@ -358,6 +358,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
             list.add(to);
             element.setContentType(NutsContentType.JSON).setValue(list.toArray(new NutsId[0]))
                     .setSession(session)
+                    .setNtf(false)
                     .print(getDepsPath(from, true, scope, session));
         }
         list = loadfindDependenciesTo(to, scope, session);
@@ -365,6 +366,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
             list.add(from);
             element.setContentType(NutsContentType.JSON).setValue(list.toArray(new NutsId[0]))
                     .setSession(session)
+                    .setNtf(false)
                     .print(getDepsPath(to, false, scope, session));
         }
     }
@@ -386,12 +388,16 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
         if (list.contains(to)) {
             list.remove(to);
             stillRequired = list.size() > 0;
-            session.elem().setContentType(NutsContentType.JSON).setValue(list.toArray(new NutsId[0])).print(getDepsPath(from, true, scope, session));
+            session.elem().setContentType(NutsContentType.JSON).setValue(list.toArray(new NutsId[0]))
+                    .setNtf(false)
+                    .print(getDepsPath(from, true, scope, session));
         }
         list = loadfindDependenciesTo(to, scope, session);
         if (list.contains(from)) {
             list.remove(from);
-            session.elem().setContentType(NutsContentType.JSON).setValue(list.toArray(new NutsId[0])).print(getDepsPath(to, false, scope, session));
+            session.elem().setContentType(NutsContentType.JSON).setValue(list.toArray(new NutsId[0]))
+                    .setNtf(false)
+                    .print(getDepsPath(to, false, scope, session));
         }
         if (fi.required != stillRequired) {
             fi.required = true;
@@ -461,7 +467,9 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
                                 _LOGOP(session).level(Level.CONFIG)
                                         .log(NutsMessage.jstyle("install-info upgraded {0}", finalPath));
                                 c.setConfigVersion(workspace.getApiVersion().toString());
-                                session.elem().setContentType(NutsContentType.JSON).setValue(c).print(finalPath);
+                                session.elem().setContentType(NutsContentType.JSON).setValue(c)
+                                        .setNtf(false)
+                                        .print(finalPath);
                                 return null;
                             },
                             CoreNutsUtils.LOCK_TIME, CoreNutsUtils.LOCK_TIME_UNIT
@@ -630,7 +638,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
 
     public void printJson(NutsId id, String name, InstallInfoConfig value, NutsSession session) {
         value.setConfigVersion(workspace.getApiVersion().toString());
-        session.elem()
+        session.elem().setNtf(false)
                 .setSession(session).setContentType(NutsContentType.JSON).setValue(value)
                 .print(getPath(id, name, session));
     }

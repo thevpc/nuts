@@ -354,7 +354,6 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     public NutsDescriptorBuilder setAll(NutsDescriptor other) {
         if (other != null) {
             setId(other.getId());
-//            setAlternative(other.getAlternative());
             setPackaging(other.getPackaging());
             setParents(other.getParents());
             setDescription(other.getDescription());

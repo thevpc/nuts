@@ -4,10 +4,10 @@ import net.thevpc.nuts.NutsDefinition;
 import net.thevpc.nuts.NutsId;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsShellFamily;
+import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.PathInfo;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.NameBuilder;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.base.BaseSystemNdi;
-import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.util.NdiUtils;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -71,8 +71,8 @@ public abstract class AbstractScriptBuilder implements ScriptBuilder {
         Path script = Paths.get(path);
         String newContent = buildString();
 //        PathInfo.Status update0 = NdiUtils.tryWriteStatus(newContent.getBytes(), script,session);
-        PathInfo.Status update = NdiUtils.tryWrite(newContent.getBytes(), script,session);
-        NdiUtils.setExecutable(script);
+        PathInfo.Status update = CoreIOUtils.tryWrite(newContent.getBytes(), script,session);
+        CoreIOUtils.setExecutable(script);
         return new PathInfo(type, anyId, script, update);
     }
 }

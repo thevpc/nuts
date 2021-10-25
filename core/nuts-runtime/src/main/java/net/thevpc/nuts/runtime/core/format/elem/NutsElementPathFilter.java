@@ -631,7 +631,7 @@ public class NutsElementPathFilter {
                 u = new HashSet<>();
                 matchContext.put("unique", u);
             }
-            String v = session.elem().setSession(session).setContentType(NutsContentType.JSON).setValue(value).format()
+            String v = session.elem().setSession(session).setContentType(NutsContentType.JSON).setNtf(false).setValue(value).format()
                     .filteredText()
                     ;
             if (u.contains(v)) {

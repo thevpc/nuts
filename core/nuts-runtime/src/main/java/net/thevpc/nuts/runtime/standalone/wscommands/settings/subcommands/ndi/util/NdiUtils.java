@@ -27,17 +27,10 @@ package net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.u
 
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.wscommands.settings.PathInfo;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.unix.AnyNixNdi;
 
 import java.io.*;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.attribute.PosixFileAttributeView;
-import java.nio.file.attribute.PosixFilePermission;
-import java.util.*;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -46,70 +39,6 @@ import java.util.regex.Pattern;
  * @author thevpc
  */
 public class NdiUtils {
-
-    public static boolean isPathFolder(String p) {
-        if (p == null) {
-            return false;
-        }
-        return (p.equals(".") || p.equals("..") || p.endsWith("/") || p.endsWith("\\"));
-    }
-
-    public static boolean isPath(String p) {
-        if (p == null) {
-            return false;
-        }
-        return (p.equals(".") || p.equals("..") || p.contains("/") || p.contains("\\"));
-    }
-
-    public static Path sysWhich(String commandName) {
-        Path[] p = sysWhichAll(commandName);
-        if (p.length > 0) {
-            return p[0];
-        }
-        return null;
-    }
-
-    public static Path[] sysWhichAll(String commandName) {
-        if (commandName == null || commandName.isEmpty()) {
-            return new Path[0];
-        }
-        List<Path> all = new ArrayList<>();
-        String p = System.getenv("PATH");
-        if (p != null) {
-            for (String s : p.split(File.pathSeparator)) {
-                try {
-                    if (!s.trim().isEmpty()) {
-                        Path c = Paths.get(s, commandName);
-                        if (Files.isRegularFile(c)) {
-                            if (Files.isExecutable(c)) {
-                                all.add(c);
-                            }
-                        }
-                    }
-                } catch (Exception ex) {
-                    //ignore
-                }
-            }
-        }
-        return all.toArray(new Path[0]);
-    }
-
-    public static boolean setExecutable(Path path) {
-        if (Files.exists(path) && !Files.isExecutable(path)) {
-            PosixFileAttributeView p = Files.getFileAttributeView(path, PosixFileAttributeView.class);
-            if (p != null) {
-                try {
-                    Set<PosixFilePermission> old = new HashSet<>(p.readAttributes().permissions());
-                    old.add(PosixFilePermission.OWNER_EXECUTE);
-                    Files.setPosixFilePermissions(path, old);
-                } catch (IOException ex) {
-                    throw new UncheckedIOException(ex);
-                }
-                return true;
-            }
-        }
-        return false;
-    }
 
     public static String generateScriptAsString(String resourcePath, NutsSession session, Function<String, String> mapper) {
         ByteArrayOutputStream b = new ByteArrayOutputStream();
@@ -128,7 +57,7 @@ public class NdiUtils {
             String lineSeparator = System.getProperty("line.separator");
             URL resource = AnyNixNdi.class.getResource(resourcePath);
             if (resource == null) {
-                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("resource not found: %s", resource));
+                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("resource not found"));
             }
             BufferedReader br = new BufferedReader(new InputStreamReader(resource.openStream()));
             String line = null;
@@ -158,203 +87,4 @@ public class NdiUtils {
         }
     }
 
-    public static String betterPath(String path1) {
-        String home = System.getProperty("user.home");
-        if (path1.startsWith(home + "/") || path1.startsWith(home + "\\")) {
-            return "~" + path1.substring(home.length());
-        }
-        return path1;
-    }
-
-    public static String replaceFilePrefixes(String path, Map<String, String> map) {
-        for (Map.Entry<String, String> e : map.entrySet()) {
-            String v = replaceFilePrefix(path, e.getKey(), e.getValue());
-            if (!v.equals(path)) {
-                return v;
-            }
-        }
-        return path;
-    }
-
-    public static String replaceFilePrefix(String path, String prefix, String replacement) {
-        String path1 = path;
-        String fs = File.separator;
-        if (!prefix.endsWith(fs)) {
-            prefix = prefix + fs;
-        }
-        if (!path1.endsWith(fs)) {
-            path1 = prefix + fs;
-        }
-        if (path1.equals(prefix)) {
-            if (replacement == null) {
-                return "";
-            }
-            return replacement;
-        }
-        if (path.startsWith(prefix)) {
-            if (replacement == null || replacement.equals("")) {
-                return path1.substring(prefix.length());
-            }
-            return replacement + fs + path1.substring(prefix.length());
-        }
-        return path;
-    }
-
-    public static String longestCommonParent(String path1, String path2) {
-        int latestSlash = -1;
-        final int len = Math.min(path1.length(), path2.length());
-        for (int i = 0; i < len; i++) {
-            if (path1.charAt(i) != path2.charAt(i)) {
-                break;
-            } else if (path1.charAt(i) == '/') {
-                latestSlash = i;
-            }
-        }
-        if (latestSlash <= 0) {
-            return "";
-        }
-        return path1.substring(0, latestSlash + 1);
-    }
-
-    public static byte[] loadFile(Path out) {
-        if (Files.isRegularFile(out)) {
-            try {
-                return Files.readAllBytes(out);
-            } catch (Exception ex) {
-                //ignore
-            }
-        }
-        return null;
-    }
-
-    public static PathInfo.Status tryWriteStatus(byte[] content, Path out, NutsSession session) {
-        return tryWrite(content, out, DoWhenExist.IGNORE, DoWhenNotExists.IGNORE, session);
-    }
-
-    public static PathInfo.Status tryWrite(byte[] content, Path out, NutsSession session) {
-        return tryWrite(content, out, DoWhenExist.ASK, DoWhenNotExists.CREATE, session);
-    }
-
-    public static PathInfo.Status tryWrite(byte[] content, Path out, /*boolean doNotWrite*/ DoWhenExist doWhenExist, DoWhenNotExists doWhenNotExist, NutsSession session) {
-        if (doWhenExist == null) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.plain("missing doWhenExist"));
-        }
-        if (doWhenNotExist == null) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.plain("missing doWhenNotExist"));
-        }
-//        System.err.println("[DEBUG] try write "+out);
-        out = out.toAbsolutePath().normalize();
-        byte[] old = loadFile(out);
-        if (old == null) {
-            switch (doWhenNotExist) {
-                case IGNORE: {
-                    return PathInfo.Status.DISCARDED;
-                }
-                case CREATE: {
-                    try {
-                        if (out.getParent() != null) {
-                            Files.createDirectories(out.getParent());
-                        }
-                        Files.write(out, content);
-                        if (session.isPlainTrace()) {
-                            session.out().resetLine().printf("create file %s%n", session.io().path(out));
-                        }
-                    } catch (IOException e) {
-                        throw new UncheckedIOException(e);
-                    }
-                    return PathInfo.Status.CREATED;
-                }
-                case ASK: {
-                    if (session.getTerminal().ask()
-                            .resetLine()
-                            .setDefaultValue(true).setSession(session)
-                            .forBoolean("create %s ?",
-                                    session.text().ofStyled(
-                                            NdiUtils.betterPath(out.toString()), NutsTextStyle.path()
-                                    )
-                            ).getBooleanValue()) {
-                        try {
-                            if (out.getParent() != null) {
-                                Files.createDirectories(out.getParent());
-                            }
-                            Files.write(out, content);
-                            if (session.isPlainTrace()) {
-                                session.out().resetLine().printf("create file %s%n", session.io().path(out));
-                            }
-                        } catch (IOException e) {
-                            throw new UncheckedIOException(e);
-                        }
-                        return PathInfo.Status.CREATED;
-                    } else {
-                        return PathInfo.Status.DISCARDED;
-                    }
-                }
-                default: {
-                    throw new NutsUnsupportedEnumException(session, doWhenNotExist);
-                }
-            }
-        } else {
-            if (Arrays.equals(old, content)) {
-                return PathInfo.Status.DISCARDED;
-            }
-            switch (doWhenExist) {
-                case IGNORE: {
-                    return PathInfo.Status.DISCARDED;
-                }
-                case OVERRIDE: {
-                    try {
-                        Files.write(out, content);
-                    } catch (IOException e) {
-                        throw new UncheckedIOException(e);
-                    }
-                    if (session.isPlainTrace()) {
-                        session.out().resetLine().printf("update file %s%n", session.io().path(out));
-                    }
-                    return PathInfo.Status.OVERRIDDEN;
-                }
-                case ASK: {
-                    if (session.getTerminal().ask()
-                            .resetLine()
-                            .setDefaultValue(true).setSession(session)
-                            .forBoolean("override %s ?",
-                                    session.text().ofStyled(
-                                            NdiUtils.betterPath(out.toString()), NutsTextStyle.path()
-                                    )
-                            ).getBooleanValue()) {
-                        try {
-                            try {
-                                Files.write(out, content);
-                            } catch (IOException e) {
-                                throw new UncheckedIOException(e);
-                            }
-                            Files.write(out, content);
-                        } catch (IOException e) {
-                            throw new UncheckedIOException(e);
-                        }
-                        if (session.isPlainTrace()) {
-                            session.out().resetLine().printf("update file %s%n", session.io().path(out));
-                        }
-                        return PathInfo.Status.OVERRIDDEN;
-                    } else {
-                        return PathInfo.Status.DISCARDED;
-                    }
-                }
-                default: {
-                    throw new NutsUnsupportedEnumException(session, doWhenExist);
-                }
-            }
-        }
-    }
-
-    public enum DoWhenExist {
-        IGNORE,
-        OVERRIDE,
-        ASK,
-    }
-
-    public enum DoWhenNotExists {
-        IGNORE,
-        CREATE,
-        ASK,
-    }
 }
