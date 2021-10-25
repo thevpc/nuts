@@ -34,7 +34,7 @@ import java.util.Objects;
 /**
  * Created by vpc on 5/23/17.
  */
-public abstract class NutsTextSpecialBase extends AbstractNutsText implements NutsText {
+public abstract class NutsTextSpecialBase extends AbstractNutsText {
 
     private final String start;
     private final String kind;

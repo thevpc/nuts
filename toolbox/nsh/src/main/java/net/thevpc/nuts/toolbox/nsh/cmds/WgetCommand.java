@@ -34,6 +34,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.thevpc.nuts.spi.NutsSingleton;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 import net.thevpc.nuts.toolbox.nsh.bundles._URLUtils;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellExecutionContext;
@@ -75,7 +76,7 @@ public class WgetCommand extends SimpleNshBuiltin {
     }
 
     @Override
-    protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected void execBuiltin(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         if (options.files.isEmpty()) {
             throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("wget: Missing Files"), 2);

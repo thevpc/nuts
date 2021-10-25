@@ -10,28 +10,30 @@ import java.io.*;
 import java.util.Scanner;
 
 //@NutsPrototype
-public class DefaultNutsSessionTerminal extends AbstractNutsSessionTerminal {
+public class DefaultNutsSessionTerminalFromSystem extends AbstractNutsSessionTerminal {
 
     protected NutsWorkspace ws;
     protected NutsSession session;
     protected NutsPrintStream out;
     protected NutsPrintStream err;
+    protected NutsPrintStreamCache outCache=new NutsPrintStreamCache();
+    protected NutsPrintStreamCache errCache=new NutsPrintStreamCache();
     protected InputStream in;
     protected BufferedReader inReader;
     protected NutsSystemTerminalBase parent;
     protected CProgressBar progressBar;
 
-    public DefaultNutsSessionTerminal(NutsSession session, DefaultNutsSessionTerminal other) {
+    public DefaultNutsSessionTerminalFromSystem(NutsSession session, DefaultNutsSessionTerminalFromSystem other) {
         this.session = session;
         this.parent = other.parent;
         this.ws = session.getWorkspace();
         this.in = other.in;
         this.inReader = other.inReader;
-        this.out = other.out;
-        this.err = other.err;
+        setOut(other.out);
+        setErr(other.err);
     }
 
-    public DefaultNutsSessionTerminal(NutsSession session, NutsSystemTerminalBase parent) {
+    public DefaultNutsSessionTerminalFromSystem(NutsSession session, NutsSystemTerminalBase parent) {
         this.session = session;
         this.parent = parent;
         this.ws = session.getWorkspace();
@@ -150,7 +152,10 @@ public class DefaultNutsSessionTerminal extends AbstractNutsSessionTerminal {
         if (out == null) {
             NutsSystemTerminalBase p = getParent();
             if (p != null) {
-                return p.getOut();
+                NutsPrintStream o = p.getOut();
+                if(o!=null){
+                    return outCache.get(o,getSession());
+                }
             }
         }
         return this.out;
@@ -158,8 +163,8 @@ public class DefaultNutsSessionTerminal extends AbstractNutsSessionTerminal {
 
     @Override
     public void setOut(NutsPrintStream out) {
-        if(out!=null){
-            out=out.convertSession(session);
+        if (out != null) {
+            out = out.setSession(session);
         }
         this.out = out;
     }
@@ -169,7 +174,10 @@ public class DefaultNutsSessionTerminal extends AbstractNutsSessionTerminal {
         if (err == null) {
             NutsSystemTerminalBase p = getParent();
             if (p != null) {
-                return p.getErr();
+                NutsPrintStream o = p.getErr();
+                if(o!=null){
+                    return errCache.get(o,getSession());
+                }
             }
         }
         return this.err;
@@ -177,15 +185,15 @@ public class DefaultNutsSessionTerminal extends AbstractNutsSessionTerminal {
 
     @Override
     public void setErr(NutsPrintStream err) {
-        if(err!=null){
-            err=err.convertSession(session);
+        if (err != null) {
+            err = err.setSession(session);
         }
         this.err = err;
     }
 
     @Override
     public NutsSessionTerminal copy() {
-        final DefaultNutsSessionTerminal r = new DefaultNutsSessionTerminal(session, parent);
+        final DefaultNutsSessionTerminalFromSystem r = new DefaultNutsSessionTerminalFromSystem(session, parent);
         r.copyFrom(this);
         return r;
     }
@@ -263,7 +271,7 @@ public class DefaultNutsSessionTerminal extends AbstractNutsSessionTerminal {
         return progressBar;
     }
 
-    protected void copyFrom(DefaultNutsSessionTerminal other) {
+    protected void copyFrom(DefaultNutsSessionTerminalFromSystem other) {
         this.ws = other.ws;
         this.parent = other.parent;
         this.out = other.out;

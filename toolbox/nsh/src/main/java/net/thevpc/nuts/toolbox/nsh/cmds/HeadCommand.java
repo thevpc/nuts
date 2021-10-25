@@ -26,6 +26,7 @@
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.spi.NutsSingleton;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 
 import java.io.BufferedReader;
@@ -68,7 +69,7 @@ public class HeadCommand extends SimpleNshBuiltin {
     }
 
     @Override
-    protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected void execBuiltin(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         if (options.files.isEmpty()) {
             commandLine.required();
@@ -87,7 +88,7 @@ public class HeadCommand extends SimpleNshBuiltin {
                 String line = null;
                 int count = 0;
                 while (count < max && (line = r.readLine()) != null) {
-                    context.out().println(line);
+                    context.getSession().out().println(line);
                     count++;
                 }
             } finally {

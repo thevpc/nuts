@@ -15,7 +15,7 @@ public class NutsByteArrayPrintStream extends NutsPrintStreamRaw implements Nuts
     }
 
     @Override
-    public NutsPrintStream convertSession(NutsSession session) {
+    public NutsPrintStream setSession(NutsSession session) {
         if(session==null || session==this.session){
             return this;
         }

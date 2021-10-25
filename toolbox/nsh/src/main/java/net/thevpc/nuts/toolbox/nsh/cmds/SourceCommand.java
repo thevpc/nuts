@@ -27,10 +27,9 @@ package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.NutsArgument;
 import net.thevpc.nuts.NutsCommandLine;
-import net.thevpc.nuts.NutsSingleton;
+import net.thevpc.nuts.spi.NutsSingleton;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellContext;
-import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellContextForSource;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -63,7 +62,7 @@ public class SourceCommand extends SimpleNshBuiltin {
     }
 
     @Override
-    protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected void execBuiltin(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         final String[] paths = context.getExecutionContext().getShellContext().vars().get("PATH", "").split(":|;");
         List<String> goodFiles = new ArrayList<>();

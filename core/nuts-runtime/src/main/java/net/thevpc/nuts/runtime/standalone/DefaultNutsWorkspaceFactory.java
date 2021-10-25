@@ -30,7 +30,7 @@ import net.thevpc.nuts.runtime.core.NutsWorkspaceFactory;
 import net.thevpc.nuts.runtime.core.util.CoreServiceUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
-import net.thevpc.nuts.spi.NutsComponent;
+import net.thevpc.nuts.spi.*;
 
 import java.net.URL;
 import java.util.*;

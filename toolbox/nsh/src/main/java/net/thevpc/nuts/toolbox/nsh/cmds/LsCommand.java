@@ -31,8 +31,10 @@ import java.nio.file.attribute.PosixFileAttributes;
 import java.nio.file.attribute.PosixFilePermission;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.spi.NutsSingleton;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 import net.thevpc.nuts.toolbox.nsh.bundles.BytesSizeFormat;
 
@@ -71,7 +73,7 @@ public class LsCommand extends SimpleNshBuiltin {
 
         boolean error = true;
         String workingDir;
-        Map<String, String> result=new HashMap<>();
+        Map<String, NutsMessage> result=new HashMap<>();
     }
 
     public static class ResultGroup {
@@ -136,14 +138,14 @@ public class LsCommand extends SimpleNshBuiltin {
     }
 
     @Override
-    protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected void execBuiltin(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         ResultSuccess success = new ResultSuccess();
         success.workingDir = context.getRootContext().getAbsolutePath(".");
         ResultError errors = null;
         int exitCode = 0;
         if (options.paths.isEmpty()) {
-            options.paths.add(".");
+            options.paths.add(context.getRootContext().getAbsolutePath("."));
         }
         for (String path : options.paths) {
             File file = new File(context.getRootContext().getAbsolutePath(path));
@@ -153,7 +155,7 @@ public class LsCommand extends SimpleNshBuiltin {
                     errors = new ResultError();
                     errors.workingDir = context.getRootContext().getAbsolutePath(".");
                 }
-                errors.result.put(path, "cannot access '" + file + "': No such file or directory");
+                errors.result.put(path,NutsMessage.cstyle("cannot access '%s': No such file or directory",file));
             } else {
                 ResultGroup g = new ResultGroup();
                 success.result.add(g);
@@ -175,49 +177,64 @@ public class LsCommand extends SimpleNshBuiltin {
                 }
             }
         }
-        context.setPrintlnOutObject(success);
-        context.setPrintlnErrObject(errors);
-        context.setExitCode(exitCode);
-//        if (exitCode != 0) {
-//            throw new NutsExecutionException(context.getWorkspace(), exitCode);
-//        }
-    }
-
-    @Override
-    protected void printPlainObject(SimpleNshCommandContext context, NutsSession session) {
-        if(session==null){
-            session=context.getSession();
-        }
-        NutsPrintStream out = context.isErr()?session.err():session.out();
-        Options options = context.getOptions();
-        if (context.getResult() instanceof ResultSuccess) {
-            ResultSuccess s = context.getResult();
-            for (ResultGroup resultGroup : s.result) {
-                if (resultGroup.children != null) {
-                    if (s.result.size() > 1) {
-                        out.printf("%s:\n", resultGroup.name);
+        if(success!=null) {
+            NutsPrintStream out = context.getSession().out();
+            switch (context.getSession().getOutputFormat()){
+                case XML:
+                case JSON:
+                case YAML:
+                case TREE:
+                case TSON:
+                case PROPS:{
+                    out.printlnf(success
+                            .result
+                            .stream().collect(Collectors.toMap(x->x.name,x->x.children))
+                    );
+                    break;
+                }
+                case TABLE:{
+                    out.printlnf(success.result.stream()
+                            .flatMap(x->
+                                x.children.stream().map(y->{
+                                    Map m = (Map)context.getSession().elem().destruct(y);
+                                    m.put("group",x.name);
+                                    return m;
+                                })).collect(Collectors.toList()));
+                    break;
+                }
+                case PLAIN:{
+                    List<ResultItem> s = success.result.stream().flatMap(x -> x.children.stream()).collect(Collectors.toList());
+                    for (ResultGroup resultGroup : success.result) {
+                        if (resultGroup.children != null) {
+                            if (s.size() > 1) {
+                                out.printf("%s:\n", resultGroup.name);
+                            }
+                            for (ResultItem resultItem : resultGroup.children) {
+                                printPlain(resultItem, options, out,context.getSession());
+                            }
+                        } else {
+                            printPlain(resultGroup.file, options, out,context.getSession());
+                        }
                     }
-                    for (ResultItem resultItem : resultGroup.children) {
-                        printPlain(resultItem, options, out,session);
-                    }
-                } else {
-                    printPlain(resultGroup.file, options, out,session);
+                    break;
                 }
             }
-        } else if (context.getResult() instanceof ResultError) {
-            ResultError s = context.getResult();
-            for (Map.Entry<String, String> e : s.result.entrySet()) {
-                NutsTextManager text = session.text();
-                out.printf("%s%n",
-                        text.builder().append(e.getKey(),NutsTextStyle.primary5())
-                        .append(" : ")
-                        .append(e.getValue(),NutsTextStyle.error())
-                        );
-            }
-        } else {
-            super.printPlainObject(context, session);
+        }
+        if(errors!=null) {
+            // if plain
+//            ResultError s = context.getResult();
+//            for (Map.Entry<String, NutsMessage> e : s.result.entrySet()) {
+//                NutsTextManager text = session.text();
+//                out.printf("%s%n",
+//                        text.builder().append(e.getKey(),NutsTextStyle.primary5())
+//                                .append(" : ")
+//                                .append(e.getValue(),NutsTextStyle.error())
+//                );
+//            }
+            throwExecutionException(errors.result,exitCode, context.getSession());
         }
     }
+
 
     private void printPlain(ResultItem item, Options options, NutsPrintStream out, NutsSession session) {
         if (options.l) {

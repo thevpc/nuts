@@ -26,6 +26,7 @@
 package net.thevpc.nuts.toolbox.nsh;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.spi.NutsSupportLevelContext;
 import net.thevpc.nuts.toolbox.nsh.bundles._IOUtils;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShell;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellException;
@@ -160,5 +161,15 @@ public abstract class AbstractNshBuiltin implements NshBuiltin {
         return "No help";
     }
 
+    protected void throwExecutionException(Object errObject,int errorCode,NutsSession session) {
+        session=session.copy();
+        NutsPrintStream printStream = session.io().createMemoryPrintStream();
+        if (errObject != null) {
+            printStream.printf(errObject);
+        }else{
+            printStream.printf("%s: command failed with code %s%n",getName(),errorCode);
+        }
+        throw new NutsExecutionException(session,NutsMessage.formatted(printStream.toString()), errorCode);
+    }
 
 }

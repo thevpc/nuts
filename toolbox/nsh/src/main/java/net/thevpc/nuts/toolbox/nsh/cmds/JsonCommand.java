@@ -26,6 +26,7 @@
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.spi.NutsSingleton;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellContext;
 import org.w3c.dom.Document;
@@ -78,7 +79,7 @@ public class JsonCommand extends SimpleNshBuiltin {
     }
 
     @Override
-    protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected void execBuiltin(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
 //        if (options.xpaths.isEmpty()) {
 //            commandLine.required();
@@ -87,9 +88,9 @@ public class JsonCommand extends SimpleNshBuiltin {
         if (options.queries.isEmpty()) {
             NutsElement inputDocument = readJsonConvertElement(options.input, context.getRootContext());
             if (context.getSession().getOutputFormat() == NutsContentType.PLAIN) {
-                context.setPrintlnOutObject(context.getSession().elem().setContentType(NutsContentType.JSON).setValue(inputDocument).format());
+                context.getSession().out().printlnf(context.getSession().elem().setContentType(NutsContentType.JSON).setValue(inputDocument).format());
             } else {
-                context.setPrintlnOutObject(inputDocument);
+                context.getSession().out().printlnf(inputDocument);
             }
         } else {
             switch (options.queryType) {
@@ -118,9 +119,9 @@ public class JsonCommand extends SimpleNshBuiltin {
                         }
                     }
                     if (context.getSession().getOutputFormat(null) == null) {
-                        context.setPrintlnOutObject(context.getSession().elem().setContentType(NutsContentType.JSON).setValue(resultDocument).format());
+                        context.getSession().out().printlnf(context.getSession().elem().setContentType(NutsContentType.JSON).setValue(resultDocument).format());
                     } else {
-                        context.setPrintlnOutObject(resultDocument);
+                        context.getSession().out().printlnf(resultDocument);
                     }
                     break;
                 }
@@ -136,9 +137,9 @@ public class JsonCommand extends SimpleNshBuiltin {
                     }
                     Object result = all.size() == 1 ? all.get(0) : all;
                     if (context.getSession().getOutputFormat(null) == null) {
-                        context.setPrintlnOutObject(context.getSession().elem().setContentType(NutsContentType.JSON).setValue(result).format());
+                        context.getSession().out().printlnf(context.getSession().elem().setContentType(NutsContentType.JSON).setValue(result).format());
                     } else {
-                        context.setPrintlnOutObject(result);
+                        context.getSession().out().printlnf(result);
                     }
                     break;
                 }

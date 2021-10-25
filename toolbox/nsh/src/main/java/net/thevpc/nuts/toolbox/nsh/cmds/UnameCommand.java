@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,6 +24,7 @@
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.spi.NutsSingleton;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 
 import java.util.ArrayList;
@@ -37,20 +38,6 @@ public class UnameCommand extends SimpleNshBuiltin {
 
     public UnameCommand() {
         super("uname", DEFAULT_SUPPORT);
-    }
-
-    private static class Options {
-
-        boolean farch = false;
-        boolean fos = false;
-        boolean fdist = false;
-    }
-
-    private static class Result {
-
-        NutsId osDist;
-        NutsId os;
-        NutsArchFamily arch;
     }
 
     @Override
@@ -85,7 +72,7 @@ public class UnameCommand extends SimpleNshBuiltin {
     }
 
     @Override
-    protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected void execBuiltin(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options config = context.getOptions();
         NutsSession ws = context.getSession();
 
@@ -107,26 +94,44 @@ public class UnameCommand extends SimpleNshBuiltin {
         if (!config.fdist && rr.osDist != null) {
             rr.osDist = null;
         }
-        context.setPrintlnOutObject(rr);
+        switch (context.getSession().getOutputFormat()) {
+            case PLAIN: {
+                List<String> sb = new ArrayList<>();
+                if (rr.arch != null) {
+                    sb.add(rr.arch.toString());
+                }
+                if (rr.os != null) {
+                    sb.add(rr.os.toString());
+                }
+                if (rr.osDist != null) {
+                    sb.add(rr.osDist.toString());
+                }
+                if (sb.isEmpty()) {
+                    sb.add("UNKNOWN");
+                }
+                context.getSession().out().println(String.join(" ", sb));
+                break;
+            }
+            default: {
+                context.getSession().out().printlnf(rr);
+            }
+        }
     }
 
-    @Override
-    protected void printPlainObject(SimpleNshCommandContext context, NutsSession session) {
-        Result result = context.getResult();
-        List<String> sb = new ArrayList<>();
-        if (result.arch != null) {
-            sb.add(result.arch.toString());
-        }
-        if (result.os != null) {
-            sb.add(result.os.toString());
-        }
-        if (result.osDist != null) {
-            sb.add(result.osDist.toString());
-        }
-        if (sb.isEmpty()) {
-            sb.add("UNKNOWN");
-        }
-        context.out().println(String.join(" ", sb));
+
+
+    private static class Options {
+
+        boolean farch = false;
+        boolean fos = false;
+        boolean fdist = false;
+    }
+
+    private static class Result {
+
+        NutsId osDist;
+        NutsId os;
+        NutsArchFamily arch;
     }
 
 }

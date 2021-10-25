@@ -33,6 +33,7 @@ import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.thevpc.nuts.spi.NutsSingleton;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 
 /**
@@ -78,7 +79,7 @@ public class UnzipCommand extends SimpleNshBuiltin {
     }
 
     @Override
-    protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected void execBuiltin(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         if (options.files.isEmpty()) {
             commandLine.required();
@@ -97,7 +98,7 @@ public class UnzipCommand extends SimpleNshBuiltin {
 
                                         @Override
                                         public boolean visitFile(String path, InputStream inputStream) {
-                                            context.out().printf("%s\n", path);
+                                            context.getSession().out().printf("%s\n", path);
                                             return true;
                                         }
                                     });

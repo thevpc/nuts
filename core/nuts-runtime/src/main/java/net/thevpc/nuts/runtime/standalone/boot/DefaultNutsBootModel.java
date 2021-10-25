@@ -27,7 +27,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.common.CorePlatformUtils;
 import net.thevpc.nuts.runtime.core.DefaultNutsSession;
 import net.thevpc.nuts.runtime.core.app.DefaultNutsArgument;
-import net.thevpc.nuts.runtime.core.terminals.DefaultNutsSessionTerminal;
+import net.thevpc.nuts.runtime.core.terminals.DefaultNutsSessionTerminalFromSystem;
 import net.thevpc.nuts.runtime.core.terminals.DefaultNutsSystemTerminalBaseBoot;
 import net.thevpc.nuts.runtime.core.terminals.DefaultSystemTerminal;
 import net.thevpc.nuts.runtime.optional.jansi.OptionalJansi;
@@ -72,12 +72,12 @@ public class DefaultNutsBootModel implements NutsBootModel {
             }
         }
         stdout =new NutsPrintStreamSystem(std.out,null,null,std.ansiSupport,
-                this.bootSession).convertMode(terminalMode);
+                this.bootSession).setMode(terminalMode);
         stderr =new NutsPrintStreamSystem(std.err,null,null,std.ansiSupport,
-                this.bootSession).convertMode(terminalMode);
+                this.bootSession).setMode(terminalMode);
         stdin=System.in;
         DefaultSystemTerminal sys = new DefaultSystemTerminal(new DefaultNutsSystemTerminalBaseBoot(this));
-        bootSession.setTerminal(new DefaultNutsSessionTerminal(bootSession,sys));
+        bootSession.setTerminal(new DefaultNutsSessionTerminalFromSystem(bootSession,sys));
 
         String[] properties = workspaceInitInformation.getOptions().getCustomOptions();
         if (properties != null) {

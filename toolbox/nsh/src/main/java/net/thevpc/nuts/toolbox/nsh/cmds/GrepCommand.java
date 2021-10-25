@@ -32,6 +32,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellExecutionContext;
 
@@ -114,13 +115,52 @@ public class GrepCommand extends AbstractNshBuiltin {
         //text mode
         boolean prefixFileName = files.size() > 1;
         int x=0;
+        List<ResultItem> results=new ArrayList<>();
         for (File f : files) {
-            x=grepFile(f, p, options, context, prefixFileName);
+            x=grepFile(f, p, options, context, prefixFileName, results);
+        }
+        switch (context.getSession().getOutputFormat()){
+            case PLAIN:{
+                for (ResultItem result : results) {
+                    if (options.n) {
+                        if (result.path != null && prefixFileName) {
+                            out.print(result.path);
+                            out.print(":");
+                        }
+                        out.print(result.number);
+                        out.print(":");
+                    }
+                    out.println(result.line);
+                }
+                break;
+            }
+            default:{
+                if (options.n) {
+                    out.printlnf(results);
+                }else{
+                    out.printlnf(results.stream().map(r->r.line).collect(Collectors.toList()));
+                }
+            }
+        }
+        if(x!=0){
+            throwExecutionException("error",x, context.getSession());
         }
         return x;
     }
 
-    protected int grepFile(File f, Pattern p, Options options, JShellExecutionContext context, boolean prefixFileName) {
+    private static class ResultItem{
+        String path;
+        long number;
+        String line;
+
+        public ResultItem(String path, long number, String line) {
+            this.path = path;
+            this.number = number;
+            this.line = line;
+        }
+    }
+
+    protected int grepFile(File f, Pattern p, Options options, JShellExecutionContext context, boolean prefixFileName, List<ResultItem> results) {
 
         Reader reader = null;
         try {
@@ -132,7 +172,7 @@ public class GrepCommand extends AbstractNshBuiltin {
                     File[] files = f.listFiles();
                     if (files != null) {
                         for (File ff : files) {
-                            grepFile(ff, p, options, context, true);
+                            grepFile(ff, p, options, context, true, results);
                         }
                     }
                     return 0;
@@ -142,20 +182,11 @@ public class GrepCommand extends AbstractNshBuiltin {
                 }
                 try (BufferedReader r = new BufferedReader(reader)) {
                     String line = null;
-                    int nn = 1;
-                    NutsPrintStream out = context.out();
+                    long nn = 1;
                     while ((line = r.readLine()) != null) {
                         boolean matches = p.matcher(line).matches();
                         if (matches != options.invertMatch) {
-                            if (options.n) {
-                                if (fileName != null && prefixFileName) {
-                                    out.print(fileName);
-                                    out.print(":");
-                                }
-                                out.print(nn);
-                                out.print(":");
-                            }
-                            out.println(line);
+                            results.add(new ResultItem(fileName, nn, line));
                         }
                         nn++;
                     }

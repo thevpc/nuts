@@ -8,6 +8,7 @@ package net.thevpc.nuts.runtime.standalone.security;
 import net.thevpc.nuts.*;
 
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
+import net.thevpc.nuts.spi.NutsAuthenticationAgent;
 
 /**
  *

@@ -24,8 +24,10 @@
  * <br>
  * ====================================================================
  */
-package net.thevpc.nuts;
+package net.thevpc.nuts.spi;
 
+import net.thevpc.nuts.NutsSecurityException;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.spi.NutsComponent;
 
 import java.util.Map;

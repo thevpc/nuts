@@ -28,6 +28,8 @@ package net.thevpc.nuts.runtime.standalone.archetypes;
 import java.util.HashMap;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.config.DefaultNutsWorkspaceConfigManager;
+import net.thevpc.nuts.spi.NutsSingleton;
+import net.thevpc.nuts.spi.NutsSupportLevelContext;
 import net.thevpc.nuts.spi.NutsWorkspaceArchetypeComponent;
 
 import java.util.Map;

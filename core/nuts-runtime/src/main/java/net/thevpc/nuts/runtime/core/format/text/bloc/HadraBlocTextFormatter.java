@@ -8,6 +8,7 @@ import java.util.*;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsComponent;
 import net.thevpc.nuts.NutsCodeFormat;
+import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 public class HadraBlocTextFormatter implements NutsCodeFormat {
 

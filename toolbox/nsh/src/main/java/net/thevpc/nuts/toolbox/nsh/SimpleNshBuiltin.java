@@ -31,7 +31,6 @@ import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShell;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellContext;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellExecutionContext;
 
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Arrays;
 
@@ -50,12 +49,6 @@ public abstract class SimpleNshBuiltin extends AbstractNshBuiltin {
         private JShellExecutionContext context;
         private String[] args;
         private Object options;
-        private int exitCode = 0;
-        private Object outObject;
-        private Object errObject;
-        private boolean err;
-        private boolean outObjectNewLine;
-        private boolean errObjectNewLine;
 
         public SimpleNshCommandContext(String[] args, JShellExecutionContext context, Object configObject) {
             this.context = context;
@@ -65,50 +58,6 @@ public abstract class SimpleNshBuiltin extends AbstractNshBuiltin {
 
         public String[] getArgs() {
             return args;
-        }
-
-        public <T> T getResult() {
-            return (T) (err ? errObject : outObject);
-        }
-
-        public Object getOutObject() {
-            return outObject;
-        }
-
-        public void setPrintOutObject(Object outObject) {
-            this.outObject = outObject;
-            this.outObjectNewLine = false;
-        }
-
-        public void setPrintErrObject(Object outObject) {
-            this.errObject = outObject;
-            this.errObjectNewLine = false;
-        }
-
-        public void setPrintlnOutObject(Object outObject) {
-            this.outObject = outObject;
-            this.outObjectNewLine = true;
-        }
-
-        public void setPrintlnErrObject(Object outObject) {
-            this.errObject = outObject;
-            this.errObjectNewLine = true;
-        }
-
-        public Object getErrObject() {
-            return errObject;
-        }
-
-        public void setErrObject(Object errObject) {
-            this.errObject = errObject;
-        }
-
-        public int getExitCode() {
-            return exitCode;
-        }
-
-        public void setExitCode(int exitCode) {
-            this.exitCode = exitCode;
         }
 
         public JShellExecutionContext getExecutionContext() {
@@ -127,48 +76,12 @@ public abstract class SimpleNshBuiltin extends AbstractNshBuiltin {
             return (T) options;
         }
 
-        public boolean isErr() {
-            return err;
-        }
-        public NutsPrintStream out() {
-            return isErr() ? context.err() : context.out();
-        }
-
         public InputStream in() {
             return context.in();
         }
 
-        public SimpleNshCommandContext setErr(boolean err) {
-            this.err = err;
-            return this;
-        }
-
         public NutsPrintStream err() {
             return context.err();
-        }
-
-        public void printObject(Object any) {
-            printObject(any,null);
-        }
-
-        public void printObject(Object any,NutsSession session) {
-            if(session==null){
-                session=context.getSession();
-            }
-            NutsObjectFormat objstream = session.formats().object(any);
-            if (err) {
-                if (errObjectNewLine) {
-                    objstream.println(session.err());
-                } else {
-                    objstream.print(session.err());
-                }
-            } else {
-                if (outObjectNewLine) {
-                    objstream.println();
-                } else {
-                    objstream.print();
-                }
-            }
         }
 
         public NutsWorkspace getWorkspace() {
@@ -193,11 +106,7 @@ public abstract class SimpleNshBuiltin extends AbstractNshBuiltin {
 
     protected abstract boolean configureFirst(NutsCommandLine commandLine, SimpleNshCommandContext context);
 
-    protected void prepareOptions(NutsCommandLine commandLine, SimpleNshCommandContext context) {
-
-    }
-
-    protected abstract void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context);
+    protected abstract void execBuiltin(NutsCommandLine commandLine, SimpleNshCommandContext context);
 
     @Override
     public int execImpl(String[] args, JShellExecutionContext context) {
@@ -236,61 +145,13 @@ public abstract class SimpleNshBuiltin extends AbstractNshBuiltin {
         if (commandLine.isAutoCompleteMode()) {
             return 0;
         }
-        prepareOptions(commandLine, context2);
-        createResult(commandLine, context2);
-        if(context2.getExitCode()==0){
-            final Object outObject = context2.getOutObject();
-            if (outObject != null) {
-                printObject(context2.setErr(false), null);
-            }
-            final Object errObject = context2.getErrObject();
-            if (errObject != null) {
-                printObject(context2.setErr(true), null);
-            }
-        }else{
-            NutsSession session = context.getSession().copy();
-            NutsPrintStream printStream = session.io().createMemoryPrintStream();
-            session.setTerminal(session.term().createTerminal(
-                    new ByteArrayInputStream(new byte[0]),
-                    printStream,
-                    printStream
-            ));
-            final Object errObject = context2.getErrObject();
-            if (errObject != null) {
-                if(context.getSession().isPlainOut()){
-                    printObject(context2.setErr(true), session);
-                }
-            }
-            throw new NutsExecutionException(context.getSession(),NutsMessage.formatted(printStream.toString()), context2.getExitCode());
-        }
+        execBuiltin(commandLine, context2);
         return 0;
     }
 
+
     protected void initCommandLine(NutsCommandLine commandLine) {
 
-    }
-
-    protected void printObject(SimpleNshCommandContext context, NutsSession session) {
-        if(session==null) {
-            session = context.getExecutionContext().getSession();
-        }
-        if (session.isIterableTrace()) {
-            //already processed
-        } else {
-            switch (session.getOutputFormat()) {
-                case PLAIN: {
-                    printPlainObject(context, session);
-                    break;
-                }
-                default: {
-                    context.printObject(context.getResult(),session);
-                }
-            }
-        }
-    }
-
-    protected void printPlainObject(SimpleNshCommandContext context, NutsSession session) {
-        context.printObject(context.getResult(),session);
     }
 
 }

@@ -7,13 +7,7 @@ package net.thevpc.nuts.core.test.blackbox;
 
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import org.junit.jupiter.api.*;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  *
@@ -70,7 +64,7 @@ public class Test13_Color {
                                             +" ->"+sessionMode.id());
 
                             NutsSessionTerminal terminal = session.term().createTerminal();
-                            NutsPrintStream out = terminal.out().convertMode(systemMode);
+                            NutsPrintStream out = terminal.out().setMode(systemMode);
                             NutsTerminalMode initMode = out.mode();
                             Assertions.assertEquals(systemMode,initMode);
                             TestUtils.println(
@@ -81,7 +75,7 @@ public class Test13_Color {
 //            ws.term().getSystemTerminal().setMode(systemMode);
 //        }
 
-                            terminal.setOut(out.convertMode(sessionMode));
+                            terminal.setOut(out.setMode(sessionMode));
 
                             TestUtils.print("      ");
                             out.print("{**aa");
@@ -95,7 +89,7 @@ public class Test13_Color {
                 NutsSystemTerminal systemTerminal = session.term().getSystemTerminal();
                 NutsPrintStream sysInitMode = systemTerminal.out();
                 NutsSessionTerminal terminal = session.term().createTerminal();
-                NutsPrintStream out = terminal.out().convertMode(systemMode);
+                NutsPrintStream out = terminal.out().setMode(systemMode);
                 NutsTerminalMode initMode = out.mode();
                 Assertions.assertEquals(systemMode,initMode);
                 TestUtils.println(
@@ -105,7 +99,7 @@ public class Test13_Color {
 //        if(systemMode!=null) {
 //            ws.term().getSystemTerminal().setMode(systemMode);
 //        }
-                terminal.setOut(out.convertMode(sessionMode));
+                terminal.setOut(out.setMode(sessionMode));
                 TestUtils.print("      ");
                 out.print("{**aa");
                 out.print("aa**}");

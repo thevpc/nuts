@@ -5,15 +5,15 @@ import net.thevpc.nuts.runtime.core.io.FilePath;
 import net.thevpc.nuts.runtime.core.io.NutsPathFromSPI;
 import net.thevpc.nuts.runtime.core.io.URLPath;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
+import net.thevpc.nuts.spi.NutsPathFactory;
+import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Writer;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class DefaultNutsIOManager implements NutsIOManager {
 

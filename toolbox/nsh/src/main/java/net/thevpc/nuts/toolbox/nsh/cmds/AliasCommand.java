@@ -32,8 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import net.thevpc.nuts.NutsArgument;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsSingleton;
+import net.thevpc.nuts.spi.NutsSingleton;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShell;
 import net.thevpc.nuts.NutsCommandLine;
@@ -95,7 +94,7 @@ public class AliasCommand extends SimpleNshBuiltin {
     }
 
     @Override
-    protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected void execBuiltin(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         JShell shell = context.getShell();
         if (options.add.isEmpty() && options.show.isEmpty()) {
@@ -114,22 +113,25 @@ public class AliasCommand extends SimpleNshBuiltin {
                 outRes.add(new ResultItem(a, v));
             }
         }
-        context.setPrintlnOutObject(outRes);
+        switch (context.getSession().getOutputFormat()){
+            case PLAIN:{
+                for (ResultItem resultItem : outRes) {
+                    if (resultItem.value == null) {
+                        context.getSession().err().printf("alias : %s ```error not found```%n", resultItem.name);
+                    } else {
+                        context.getSession().out().printf("alias : %s ='%s'%n", resultItem.name, resultItem.value);
+                    }
+                }
+                break;
+            }
+            default:{
+                context.getSession().out().printlnf(outRes);
+            }
+        }
         if (!errRes.isEmpty()) {
-            context.setErrObject(errRes);
+            throwExecutionException(errRes,1,context.getSession());
         }
     }
 
-    @Override
-    protected void printPlainObject(SimpleNshCommandContext context, NutsSession session) {
-        List<ResultItem> r = context.getResult();
-        for (ResultItem resultItem : r) {
-            if (resultItem.value == null) {
-                context.out().printf("alias : %s ```error not found```%n", resultItem.name);
-            } else {
-                context.out().printf("alias : %s ='%s'%n", resultItem.name, resultItem.value);
-            }
-        }
-    }
 
 }

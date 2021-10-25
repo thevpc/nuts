@@ -28,8 +28,7 @@ package net.thevpc.nuts.toolbox.nsh.cmds;
 import java.util.ArrayList;
 import java.util.List;
 import net.thevpc.nuts.NutsArgument;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsSingleton;
+import net.thevpc.nuts.spi.NutsSingleton;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShell;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellCommandType;
@@ -85,7 +84,7 @@ public class TypeCommand extends SimpleNshBuiltin {
     }
 
     @Override
-    protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected void execBuiltin(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options config = context.getOptions();
         JShell shell = context.getShell();
         List<ResultItem> result = new ArrayList<>();
@@ -131,15 +130,18 @@ public class TypeCommand extends SimpleNshBuiltin {
                 }
             }
         }
-        context.setPrintlnOutObject(result);
-    }
-
-    @Override
-    protected void printPlainObject(SimpleNshCommandContext context, NutsSession session) {
-        List<ResultItem> result = context.getResult();
-        for (ResultItem resultItem : result) {
-            context.out().println(resultItem.message);
+        switch (context.getSession().getOutputFormat()) {
+            case PLAIN: {
+                for (ResultItem resultItem : result) {
+                    context.getSession().out().println(resultItem.message);
+                }
+                break;
+            }
+            default: {
+                context.getSession().out().printlnf(result);
+            }
         }
     }
+
 
 }

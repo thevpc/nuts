@@ -33,7 +33,7 @@ import java.io.PrintStream;
 /**
  * @app.category Base
  */
-public interface NutsString {
+public interface NutsString extends NutsBlankable{
 
     static NutsString of(NutsMessage str, NutsSession session) {
         return session.text().toText(str);
@@ -74,4 +74,6 @@ public interface NutsString {
     NutsText toText();
 
     boolean isEmpty();
+
+    NutsTextBuilder builder();
 }

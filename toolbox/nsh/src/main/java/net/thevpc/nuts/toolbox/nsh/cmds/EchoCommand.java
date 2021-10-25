@@ -25,7 +25,7 @@
 */
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
-import net.thevpc.nuts.NutsSingleton;
+import net.thevpc.nuts.spi.NutsSingleton;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 import net.thevpc.nuts.NutsCommandLine;
 
@@ -82,15 +82,15 @@ public class EchoCommand extends SimpleNshBuiltin {
     }
 
     @Override
-    protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected void execBuiltin(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         Object ns=options.plain?
                 options.message.toString()
                 :context.getSession().text().parse(options.message.toString());
         if (options.newLine) {
-            context.setPrintlnOutObject(ns);
+            context.getSession().out().printlnf(ns);
         } else {
-            context.setPrintOutObject(ns);
+            context.getSession().out().printf(ns);
         }
     }
 }

@@ -1,9 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.io;
 
-import net.thevpc.nuts.NutsIllegalArgumentException;
-import net.thevpc.nuts.NutsMessage;
-import net.thevpc.nuts.NutsPrintStream;
-import net.thevpc.nuts.NutsTerminalMode;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.format.text.FormatOutputStreamSupport;
 import net.thevpc.nuts.runtime.core.format.text.FormattedPrintStreamRenderer;
 
@@ -12,8 +9,8 @@ public abstract class NutsPrintStreamRendered extends NutsPrintStreamBase {
     protected NutsPrintStreamBase base;
     protected FormattedPrintStreamRenderer renderer;
 
-    public NutsPrintStreamRendered(NutsPrintStreamBase base, NutsTerminalMode mode, FormattedPrintStreamRenderer renderer, Bindings bindings) {
-        super(true, mode, base.session, bindings);
+    public NutsPrintStreamRendered(NutsPrintStreamBase base, NutsSession session, NutsTerminalMode mode, FormattedPrintStreamRenderer renderer, Bindings bindings) {
+        super(true, mode, session, bindings);
         this.base=base;
         this.support =new FormatOutputStreamSupport(new NutsPrintStreamHelper(base),renderer,session);
     }
@@ -66,14 +63,14 @@ public abstract class NutsPrintStreamRendered extends NutsPrintStreamBase {
 
     @Override
     public int getColumns() {
-        return convertMode(NutsTerminalMode.INHERITED).getColumns();
+        return setMode(NutsTerminalMode.INHERITED).getColumns();
     }
 
     @Override
     protected NutsPrintStream convertImpl(NutsTerminalMode other) {
         switch (other) {
             case FILTERED: {
-                return new NutsPrintStreamFiltered(base, bindings);
+                return new NutsPrintStreamFiltered(base, getSession(),bindings);
             }
         }
         throw new NutsIllegalArgumentException(base.getSession(),NutsMessage.cstyle("unsupported %s -> %s",mode(), other));

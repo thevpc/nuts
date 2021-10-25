@@ -24,6 +24,7 @@
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.spi.NutsSingleton;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 
 /**
@@ -64,7 +65,7 @@ public class LoginCommand extends SimpleNshBuiltin {
     }
 
     @Override
-    protected void prepareOptions(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected void execBuiltin(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         if (!NutsConstants.Users.ANONYMOUS.equals(options.login)
                 && (options.password == null
@@ -74,11 +75,6 @@ public class LoginCommand extends SimpleNshBuiltin {
                     .resetLine()
                     .forPassword("Password:").getValue();
         }
-    }
-
-    @Override
-    protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
-        Options options = context.getOptions();
         context.getSession().security().login(options.login, options.password);
     }
 

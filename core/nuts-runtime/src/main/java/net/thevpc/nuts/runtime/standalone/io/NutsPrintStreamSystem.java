@@ -10,7 +10,7 @@ import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 
 public class NutsPrintStreamSystem extends NutsPrintStreamBase {
-    private OutputStream out;
+    private final OutputStream out;
     private PrintStream base;
     private CachedValue<Integer> tput_cols;
 
@@ -20,7 +20,7 @@ public class NutsPrintStreamSystem extends NutsPrintStreamBase {
 
     protected NutsPrintStreamSystem(OutputStream out, PrintStream base, CachedValue<Integer> tput_cols, Boolean autoFlush,
                                     NutsTerminalMode mode, NutsSession session, Bindings bindings) {
-        super(autoFlush == null ? true : autoFlush.booleanValue(), mode/*resolveMode(out,ansi, session)*/, session, bindings);
+        super(autoFlush == null || autoFlush.booleanValue(), mode/*resolveMode(out,ansi, session)*/, session, bindings);
         this.out = out;
         this.base = base;
     }
@@ -165,7 +165,7 @@ public class NutsPrintStreamSystem extends NutsPrintStreamBase {
     }
 
     @Override
-    public NutsPrintStream convertSession(NutsSession session) {
+    public NutsPrintStream setSession(NutsSession session) {
         if (session == null || session == this.session) {
             return this;
         }
@@ -218,13 +218,13 @@ public class NutsPrintStreamSystem extends NutsPrintStreamBase {
     protected NutsPrintStream convertImpl(NutsTerminalMode other) {
         switch (other) {
             case FORMATTED: {
-                return new NutsPrintStreamFormatted(this, bindings);
+                return new NutsPrintStreamFormatted(this, getSession(), bindings);
             }
             case FILTERED: {
-                return new NutsPrintStreamFiltered(this, bindings);
+                return new NutsPrintStreamFiltered(this, getSession(), bindings);
             }
         }
-        throw new NutsIllegalArgumentException(getSession(),NutsMessage.cstyle("unsupported %s -> %s",mode(), other));
+        throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("unsupported %s -> %s", mode(), other));
     }
 
 //

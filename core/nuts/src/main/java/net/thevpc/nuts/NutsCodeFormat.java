@@ -24,6 +24,7 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.spi.NutsComponent;
+import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 /**
  * Code Format to help formatting (syntax coloring) to NTF some code

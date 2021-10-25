@@ -35,6 +35,7 @@ import java.util.concurrent.Executor;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.NutsComponent;
+import net.thevpc.nuts.spi.NutsSingleton;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShell;
 import net.thevpc.nuts.toolbox.nutsserver.NutsServer;
@@ -177,7 +178,7 @@ public class AdminServerRunnable implements NutsServer, Runnable {
         }
 
         @Override
-        protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+        protected void execBuiltin(NutsCommandLine commandLine, SimpleNshCommandContext context) {
             if (context.getSession().isPlainTrace()) {
                 context.getSession().out().println("Stopping Server ...");
             }

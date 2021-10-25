@@ -5,7 +5,9 @@ import net.thevpc.nuts.runtime.core.events.DefaultNutsWorkspaceEvent;
 import net.thevpc.nuts.NutsLogVerb;
 import net.thevpc.nuts.runtime.core.terminals.*;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
+import net.thevpc.nuts.spi.NutsDefaultTerminalSpec;
 import net.thevpc.nuts.spi.NutsSystemTerminalBase;
+import net.thevpc.nuts.spi.NutsTerminalSpec;
 
 import java.io.*;
 import java.util.logging.Level;
@@ -111,7 +113,7 @@ public class DefaultNutsTerminalModel {
     }
 
     public NutsSessionTerminal createTerminal(NutsSession session) {
-        return new DefaultNutsSessionTerminal(
+        return new DefaultNutsSessionTerminalFromSystem(
                 session,workspaceSystemTerminalAdapter
         );
 //        return createTerminal(null, session);
@@ -135,13 +137,13 @@ public class DefaultNutsTerminalModel {
 //                NutsWorkspaceUtils.setSession(term, session);
 //                term.setParent(parent);
 //            } else {
-//                term = new DefaultNutsSessionTerminal();
+//                term = new DefaultNutsSessionTerminalFromSystem();
 //                NutsWorkspaceUtils.setSession(term, session);
 //                term.setParent(termb);
 //            }
 //            return term;
 //        } catch (Exception anyException) {
-//            final NutsSessionTerminal c = new DefaultNutsSessionTerminal();
+//            final NutsSessionTerminal c = new DefaultNutsSessionTerminalFromSystem();
 //            NutsWorkspaceUtils.setSession(c, session);
 //            c.setParent(parent);
 //            return c;

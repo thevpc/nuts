@@ -108,7 +108,7 @@ public class NutsPrintStreamRaw extends NutsPrintStreamBase {
     }
 
     @Override
-    public NutsPrintStream convertSession(NutsSession session) {
+    public NutsPrintStream setSession(NutsSession session) {
         if (session == null || session == this.session) {
             return this;
         }
@@ -135,10 +135,10 @@ public class NutsPrintStreamRaw extends NutsPrintStreamBase {
     protected NutsPrintStream convertImpl(NutsTerminalMode other) {
         switch (other) {
             case FORMATTED: {
-                return new NutsPrintStreamFormatted(this, bindings);
+                return new NutsPrintStreamFormatted(this,getSession(), bindings);
             }
             case FILTERED: {
-                return new NutsPrintStreamFiltered(this, bindings);
+                return new NutsPrintStreamFiltered(this, getSession(),bindings);
             }
         }
         throw new NutsIllegalArgumentException(getSession(),NutsMessage.cstyle("unsupported %s -> %s",mode(), other));

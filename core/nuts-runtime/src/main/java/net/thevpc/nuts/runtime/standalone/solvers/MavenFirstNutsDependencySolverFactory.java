@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.solvers;
 
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsSupportLevelContext;
+import net.thevpc.nuts.spi.NutsSupportLevelContext;
 import net.thevpc.nuts.spi.NutsDependencySolver;
 import net.thevpc.nuts.spi.NutsDependencySolverFactory;
 

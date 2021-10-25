@@ -39,6 +39,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.spi.NutsSingleton;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -80,7 +81,7 @@ public class XmlCommand extends SimpleNshBuiltin {
     }
 
     @Override
-    protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected void execBuiltin(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         if (options.xpaths.isEmpty()) {
             commandLine.required();
@@ -150,9 +151,9 @@ public class XmlCommand extends SimpleNshBuiltin {
             }
         }
         if (all.size() == 1) {
-            context.setPrintOutObject(all.get(0));
+            context.getSession().out().printlnf(all.get(0));
         } else {
-            context.setPrintOutObject(all);
+            context.getSession().out().printlnf(all);
         }
     }
 

@@ -31,6 +31,8 @@
 package net.thevpc.nuts.toolbox.nsh.bundles.jshell;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.spi.NutsDefaultSupportLevelContext;
+import net.thevpc.nuts.spi.NutsSupportLevelContext;
 import net.thevpc.nuts.toolbox.nsh.*;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.parser.JShellParser;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.util.ByteArrayPrintStream;

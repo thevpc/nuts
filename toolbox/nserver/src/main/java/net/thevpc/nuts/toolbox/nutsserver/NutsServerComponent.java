@@ -27,7 +27,7 @@ package net.thevpc.nuts.toolbox.nutsserver;
 
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.spi.NutsComponent;
-import net.thevpc.nuts.NutsSingleton;
+import net.thevpc.nuts.spi.NutsSingleton;
 
 /**
  * Created by vpc on 1/24/17.

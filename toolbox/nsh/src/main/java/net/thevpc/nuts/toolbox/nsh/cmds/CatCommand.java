@@ -31,6 +31,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.thevpc.nuts.spi.NutsSingleton;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 import net.thevpc.nuts.toolbox.nsh.bundles._IOUtils;
 import net.thevpc.nuts.toolbox.nsh.bundles._StringUtils;
@@ -86,12 +87,12 @@ public class CatCommand extends SimpleNshBuiltin {
     }
 
     @Override
-    protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected void execBuiltin(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         if (options.files.isEmpty()) {
             options.files.add(null);
         }
-        NutsPrintStream out = context.out();
+        NutsPrintStream out = context.getSession().out();
         try {
             if (options.n || options.T || options.E) {
                 options.currentNumber = 1;

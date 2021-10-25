@@ -1,10 +1,11 @@
 package net.thevpc.nuts.runtime.standalone.io;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.terminals.DefaultNutsSessionTerminal;
-import net.thevpc.nuts.runtime.core.terminals.DefaultNutsSessionTerminal2;
+import net.thevpc.nuts.runtime.core.terminals.DefaultNutsSessionTerminalFromSystem;
+import net.thevpc.nuts.runtime.core.terminals.DefaultNutsSessionTerminalFromSession;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsSystemTerminalBase;
+import net.thevpc.nuts.spi.NutsTerminalSpec;
 
 import java.io.InputStream;
 
@@ -82,15 +83,15 @@ public class DefaultNutsTerminalManager implements NutsTerminalManager {
         if (terminal == null) {
             return createTerminal();
         }
-        if(terminal instanceof DefaultNutsSessionTerminal){
-            DefaultNutsSessionTerminal t = (DefaultNutsSessionTerminal) terminal;
-            return new DefaultNutsSessionTerminal(session, t);
+        if(terminal instanceof DefaultNutsSessionTerminalFromSystem){
+            DefaultNutsSessionTerminalFromSystem t = (DefaultNutsSessionTerminalFromSystem) terminal;
+            return new DefaultNutsSessionTerminalFromSystem(session, t);
         }
-        if(terminal instanceof DefaultNutsSessionTerminal2){
-            DefaultNutsSessionTerminal2 t = (DefaultNutsSessionTerminal2) terminal;
-            return new DefaultNutsSessionTerminal2(session, t);
+        if(terminal instanceof DefaultNutsSessionTerminalFromSession){
+            DefaultNutsSessionTerminalFromSession t = (DefaultNutsSessionTerminalFromSession) terminal;
+            return new DefaultNutsSessionTerminalFromSession(session, t);
         }
-        return new DefaultNutsSessionTerminal2(session, terminal);
+        return new DefaultNutsSessionTerminalFromSession(session, terminal);
     }
 
     public NutsSession getSession() {

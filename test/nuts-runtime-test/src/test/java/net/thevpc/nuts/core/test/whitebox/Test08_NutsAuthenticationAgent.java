@@ -25,10 +25,8 @@
 */
 package net.thevpc.nuts.core.test.whitebox;
 
-import net.thevpc.nuts.Nuts;
-import net.thevpc.nuts.NutsAuthenticationAgent;
+import net.thevpc.nuts.spi.NutsAuthenticationAgent;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.runtime.standalone.security.DefaultNutsAuthenticationAgent;
 import net.thevpc.nuts.runtime.standalone.security.PlainNutsAuthenticationAgent;

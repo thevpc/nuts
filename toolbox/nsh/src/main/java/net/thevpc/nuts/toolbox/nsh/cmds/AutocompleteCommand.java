@@ -26,6 +26,7 @@
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.spi.NutsSingleton;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellAutoCompleteCandidate;
 
 import java.util.*;
@@ -76,7 +77,7 @@ public class AutocompleteCommand extends SimpleNshBuiltin {
     }
 
     @Override
-    protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected void execBuiltin(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         if (options.cmd == null) {
             throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("missing JShellCommandNode"), 1);
@@ -98,24 +99,27 @@ public class AutocompleteCommand extends SimpleNshBuiltin {
             }
             p.setProperty(value == null ? "" : value, dvalue == null ? "" : dvalue);
         }
-        context.setPrintlnOutObject(p);
-    }
-
-    @Override
-    protected void printPlainObject(SimpleNshCommandContext context, NutsSession session) {
-        NutsTextManager text = session.text();
-        Properties p = context.getResult();
-        for (String o : new TreeSet<String>((Set) p.keySet())) {
-            if (o.startsWith("-")) {
-                // option
-                context.out().printf("%s\n", text.ofStyled(o,NutsTextStyle.primary4()));
-            } else if (o.startsWith("<")) {
-                context.out().printf("%s\n", text.ofStyled(o,NutsTextStyle.primary1()));
-            } else {
-                context.out().printf("%s\n",
-                        text.ofStyled(o,NutsTextStyle.pale())
-                );
+        switch (context.getSession().getOutputFormat()) {
+            case PLAIN: {
+                NutsTextManager text = context.getSession().text();
+                for (String o : new TreeSet<String>((Set) p.keySet())) {
+                    if (o.startsWith("-")) {
+                        // option
+                        context.getSession().out().printf("%s\n", text.ofStyled(o,NutsTextStyle.primary4()));
+                    } else if (o.startsWith("<")) {
+                        context.getSession().out().printf("%s\n", text.ofStyled(o,NutsTextStyle.primary1()));
+                    } else {
+                        context.getSession().out().printf("%s\n",
+                                text.ofStyled(o,NutsTextStyle.pale())
+                        );
+                    }
+                }
+                break;
+            }
+            default: {
+                context.getSession().out().printlnf(p);
             }
         }
     }
+
 }

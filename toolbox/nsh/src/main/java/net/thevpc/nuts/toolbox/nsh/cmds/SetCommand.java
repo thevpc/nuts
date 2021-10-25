@@ -30,7 +30,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import net.thevpc.nuts.NutsArgument;
-import net.thevpc.nuts.NutsSingleton;
+import net.thevpc.nuts.spi.NutsSingleton;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellFunction;
 import net.thevpc.nuts.NutsCommandLine;
@@ -69,7 +69,7 @@ public class SetCommand extends SimpleNshBuiltin {
     }
 
     @Override
-    protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected void execBuiltin(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         if (options.vars.isEmpty()) {
             List<String> results = new ArrayList<>();
@@ -79,7 +79,7 @@ public class SetCommand extends SimpleNshBuiltin {
             for (JShellFunction function : context.getRootContext().functions().getAll()) {
                 results.add(function.getDefinition());
             }
-            context.setPrintlnOutObject(results);
+            context.getSession().out().printlnf(results);
         } else {
             for (Map.Entry<String, String> entry : options.vars.entrySet()) {
                 context.getExecutionContext().vars().set(entry.getKey(), entry.getValue());

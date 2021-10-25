@@ -25,8 +25,7 @@ package net.thevpc.nuts.ext.term;
 
 import java.awt.Color;
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.spi.NutsInputStreamTransparentAdapter;
-import net.thevpc.nuts.spi.NutsSystemTerminalBase;
+import net.thevpc.nuts.spi.*;
 import org.jline.reader.*;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;

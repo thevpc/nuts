@@ -39,6 +39,7 @@ import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.DefaultNutsAddUserCommand;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.DefaultNutsRemoveUserCommand;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.DefaultNutsUpdateUserCommand;
+import net.thevpc.nuts.spi.NutsAuthenticationAgent;
 
 import javax.security.auth.Subject;
 import javax.security.auth.callback.*;
