@@ -1,6 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.security;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.spi.NutsAuthenticationAgent;
+import net.thevpc.nuts.spi.NutsSingleton;
+import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 import java.util.Arrays;
 import java.util.Map;

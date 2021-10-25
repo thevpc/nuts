@@ -1,6 +1,7 @@
 package net.thevpc.nuts.lib.ssh;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.spi.NutsPathFactory;
 import net.thevpc.nuts.spi.NutsPathSPI;
 
 public class SshPathFactory implements NutsPathFactory {

@@ -1,9 +1,6 @@
 package net.thevpc.nuts.runtime.core.format.text.parser;
 
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsString;
-import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.NutsText;
+import net.thevpc.nuts.*;
 
 public abstract class AbstractNutsText implements NutsText {
 
@@ -51,4 +48,13 @@ public abstract class AbstractNutsText implements NutsText {
         return immutable().isEmpty();
     }
 
+    @Override
+    public boolean isBlank() {
+        return NutsBlankable.isBlank(filteredText());
+    }
+
+    @Override
+    public NutsTextBuilder builder() {
+        return session.text().builder().append(this);
+    }
 }

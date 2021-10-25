@@ -24,7 +24,8 @@
 package net.thevpc.nuts.runtime.core.commands.ws;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.NutsExecutorComponent;
+import net.thevpc.nuts.spi.NutsExecutorComponent;
+import net.thevpc.nuts.spi.NutsInstallerComponent;
 
 import java.util.Map;
 

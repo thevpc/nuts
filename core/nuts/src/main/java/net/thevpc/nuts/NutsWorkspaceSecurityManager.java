@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.spi.NutsAuthenticationAgent;
+
 import javax.security.auth.callback.CallbackHandler;
 
 /**

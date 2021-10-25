@@ -24,37 +24,21 @@
  * <br>
  * ====================================================================
  */
-package net.thevpc.nuts;
+package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.spi.NutsComponent;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * An Executor Component is responsible of "executing" a nuts package
- * (package) Created by vpc on 1/7/17.
+ * classes that are marked with this annotation will be created once by the
+ * factory.
  *
  * @since 0.5.4
  * @app.category SPI Base
  */
-public interface NutsExecutorComponent extends NutsComponent<NutsDefinition> {
-
-    /**
-     * artifact id
-     * @return artifact id
-     */
-    NutsId getId();
-
-    /**
-     * execute the artifact
-     * @param executionContext executionContext
-     * @throws NutsExecutionException when execution fails
-     */
-    void exec(NutsExecutionContext executionContext) throws NutsExecutionException;
-
-    /**
-     * performs a dry execution (simulation) avoiding any side effect and issuing trace to standard
-     * output in order to log simulation workflow.
-     * @param executionContext executionContext
-     * @throws NutsExecutionException when execution fails
-     */
-    void dryExec(NutsExecutionContext executionContext) throws NutsExecutionException;
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+public @interface NutsSingleton {
 }

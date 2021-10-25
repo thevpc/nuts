@@ -2,7 +2,10 @@ package net.thevpc.nuts.runtime.core.terminals;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNutsBootModel;
+import net.thevpc.nuts.spi.NutsPrototype;
+import net.thevpc.nuts.spi.NutsSupportLevelContext;
 import net.thevpc.nuts.spi.NutsSystemTerminalBase;
+import net.thevpc.nuts.spi.NutsTerminalSpec;
 
 import java.io.InputStream;
 import java.util.Scanner;

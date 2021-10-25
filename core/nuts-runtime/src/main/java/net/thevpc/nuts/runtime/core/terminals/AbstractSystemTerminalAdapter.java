@@ -2,10 +2,10 @@ package net.thevpc.nuts.runtime.core.terminals;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
-import net.thevpc.nuts.runtime.standalone.io.DefaultNutsQuestion;
 import net.thevpc.nuts.runtime.standalone.io.progress.CProgressBar;
-import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
+import net.thevpc.nuts.spi.NutsSupportLevelContext;
 import net.thevpc.nuts.spi.NutsSystemTerminalBase;
+import net.thevpc.nuts.spi.NutsTerminalSpec;
 
 import java.io.InputStream;
 

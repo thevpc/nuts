@@ -24,32 +24,36 @@
  * <br>
  * ====================================================================
  */
-package net.thevpc.nuts;
+package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.spi.NutsSystemTerminalBase;
-
-import java.io.Serializable;
-import java.util.Map;
+import net.thevpc.nuts.NutsDefinition;
+import net.thevpc.nuts.NutsExecutionContext;
+import net.thevpc.nuts.spi.NutsComponent;
 
 /**
- * @app.category Input Output
+ * Component responsible of installing other artifacts.
+ *
+ * @since 0.5.4
+ * @app.category SPI Base
  */
-public interface NutsTerminalSpec extends Serializable {
-    NutsSystemTerminalBase getParent();
+public interface NutsInstallerComponent extends NutsComponent<NutsDefinition> {
 
-    NutsTerminalSpec setParent(NutsSystemTerminalBase parent);
+    /**
+     * install artifact
+     * @param executionContext execution context
+     */
+    void install(NutsExecutionContext executionContext);
 
-    Boolean getAutoComplete();
+    /**
+     * update artifact
+     * @param executionContext execution context
+     */
+    void update(NutsExecutionContext executionContext);
 
-    NutsTerminalSpec setAutoComplete(Boolean autoComplete);
-
-    Object get(String name);
-
-    NutsTerminalSpec put(String name, Object o);
-
-    NutsTerminalSpec copyFrom(NutsTerminalSpec other);
-
-    NutsTerminalSpec putAll(Map<String, Object> other);
-
-    Map<String, Object> getProperties();
+    /**
+     * uninstall artifact
+     * @param executionContext execution context
+     * @param deleteData delete data after uninstall
+     */
+    void uninstall(NutsExecutionContext executionContext, boolean deleteData);
 }

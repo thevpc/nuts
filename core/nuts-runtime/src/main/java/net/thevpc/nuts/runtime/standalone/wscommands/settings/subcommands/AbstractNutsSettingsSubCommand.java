@@ -5,7 +5,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands;
 
-import net.thevpc.nuts.NutsSupportLevelContext;
+import net.thevpc.nuts.spi.NutsSupportLevelContext;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.NutsSettingsSubCommand;
 
 /**

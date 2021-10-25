@@ -15,7 +15,7 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
     private boolean sorted;
     private boolean compact;
     private boolean javaProps;
-    private final String rootName = "";
+    private String rootName = "";
     private final boolean omitNull = true;
     private boolean escapeText = true;
     private String separator = " = ";
@@ -60,63 +60,35 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
     }
 
     public Map buildModel() {
-        Object value = getValue();
-        if (value instanceof Map) {
-            return (Map) value;
-        }
-        LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
-        fillMap(getSession().elem()
-                .toElement(value), map, rootName);
+        Object value = getSession().elem().destruct(getValue());
+        LinkedHashMap<NutsString, NutsString> map = new LinkedHashMap<>();
+        fillMap(NutsString.parse((rootName==null?"":rootName),getSession()), value, map);
         return map;
     }
 
-    private void fillMap(NutsElement e, Map<String, Object> map, String prefix) {
-        switch (e.type()) {
-            case NULL: {
-                if (omitNull) {
-                    //do nothing;
-                } else {
-                    String k = (NutsBlankable.isBlank(prefix)) ? "value" : prefix;
-                    map.put(k, stringValue(e.asPrimitive().getValue()));
+    private void fillMap(NutsString entryKey, Object entryValue, Map<NutsString, NutsString> map) {
+        if(entryValue instanceof Map){
+            for (Map.Entry<Object, Object> entry : ((Map<Object,Object>) entryValue).entrySet()) {
+                Object k = entry.getKey();
+                NutsString ns= entryKey.isEmpty()?stringValue(k): entryKey.builder().append(".").append(stringValue(k));
+                Object v = entry.getValue();
+                fillMap(ns, v,map);
+            }
+        }else if(entryValue instanceof List){
+            List<Object> objects = (List<Object>) entryValue;
+            for (int i = 0; i < objects.size(); i++) {
+                NutsString ns = entryKey.builder().append("[").append(stringValue(i+1)).append("]");
+                fillMap(ns, objects.get(i), map);
+            }
+        }else {
+            if(entryValue ==null && omitNull){
+                //do nothing;
+            }else {
+                if(!entryKey.isEmpty()) {
+                    map.put(entryKey, stringValue(entryValue));
+                }else{
+                    map.put(NutsString.parse("value",getSession()), stringValue(entryValue));
                 }
-                break;
-            }
-            case BOOLEAN:
-            case INSTANT:
-            case INTEGER:
-            case FLOAT:
-            case STRING: {
-                String k = (NutsBlankable.isBlank(prefix)) ? "value" : prefix;
-                map.put(k, stringValue(e.asPrimitive().getValue()));
-                break;
-            }
-            case ARRAY: {
-                int index = 1;
-                for (NutsElement datum : e.asArray().children()) {
-                    String k = (NutsBlankable.isBlank(prefix)) ? String.valueOf(index) : (prefix + "." + String.valueOf(index));
-                    fillMap(datum, map, k);
-                    index++;
-                }
-                break;
-            }
-            case OBJECT: {
-                for (NutsElementEntry datum : e.asObject().children()) {
-                    NutsElement k = datum.getKey();
-                    if (!k.isString()) {
-                        k = getSession().elem()
-                                .setSession(getSession())
-                                .forString(
-                                k.toString()
-                        );
-                    }
-                    String ks=k.asPrimitive().getString();
-                    String k2 = (NutsBlankable.isBlank(prefix)) ? ks : (prefix + "." + ks);
-                    fillMap(datum.getValue(), map, k2);
-                }
-                break;
-            }
-            default: {
-                throw new NutsUnsupportedEnumException(getSession(), e.type());
             }
         }
     }
@@ -292,7 +264,7 @@ public class DefaultPropertiesFormat extends DefaultFormatBase<NutsPropertiesFor
         if (escapeText) {
             return CoreCommonUtils.stringValueFormatted(o, escapeText, getSession());
         } else {
-            return getSession().text().ofPlain(String.valueOf(o));
+            return getSession().text().toText(o);
         }
     }
 

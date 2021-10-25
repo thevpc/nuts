@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.core.format.text.bloc;
 
-import net.thevpc.nuts.NutsSupportLevelContext;
+import net.thevpc.nuts.spi.NutsSupportLevelContext;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsComponent;

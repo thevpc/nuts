@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.spi.NutsSingleton;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 
 /**
@@ -98,7 +99,7 @@ public class JpsCommand extends SimpleNshBuiltin {
     }
 
     @Override
-    protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected void execBuiltin(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         List<JpsRow> results = new ArrayList<>();
 
@@ -135,7 +136,7 @@ public class JpsCommand extends SimpleNshBuiltin {
                 results.add(r);
             }
         }
-        context.setPrintOutObject(results);
+        context.getSession().out().printlnf(results);
     }
 
     public static String resolveJpsCommand(NutsSession session) {

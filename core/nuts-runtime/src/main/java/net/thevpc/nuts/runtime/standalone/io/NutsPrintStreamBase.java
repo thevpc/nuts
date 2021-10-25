@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -113,6 +114,19 @@ public abstract class NutsPrintStreamBase implements NutsPrintStream {
     }
 
     @Override
+    public NutsPrintStream printf(Object obj) {
+        session.formats().object().setValue(obj).print(this);
+        return this;
+    }
+
+    @Override
+    public NutsPrintStream printlnf(Object obj) {
+        session.formats().object().setValue(obj).println(this);
+        println();
+        return this;
+    }
+
+    @Override
     public NutsPrintStream println() {
         this.print(LINE_SEP);
         if (this.autoFlash) {
@@ -209,6 +223,13 @@ public abstract class NutsPrintStreamBase implements NutsPrintStream {
     }
 
     @Override
+    public NutsPrintStream printlnf(String format, Object... args) {
+        format(format, args);
+        println();
+        return this;
+    }
+
+    @Override
     public NutsPrintStream printf(Locale l, String format, Object... args) {
         format(l, format, args);
         return this;
@@ -277,7 +298,7 @@ public abstract class NutsPrintStreamBase implements NutsPrintStream {
     }
 
     @Override
-    public NutsPrintStream convertMode(NutsTerminalMode other) {
+    public NutsPrintStream setMode(NutsTerminalMode other) {
         if (other == null || other == this.mode()) {
             return this;
         }

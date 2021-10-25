@@ -24,34 +24,41 @@
  * <br>
  * ====================================================================
  */
-package net.thevpc.nuts;
+package net.thevpc.nuts.spi;
 
+import net.thevpc.nuts.NutsDefinition;
+import net.thevpc.nuts.NutsExecutionContext;
+import net.thevpc.nuts.NutsExecutionException;
+import net.thevpc.nuts.NutsId;
 import net.thevpc.nuts.spi.NutsComponent;
 
 /**
- * Component responsible of installing other artifacts.
+ * An Executor Component is responsible of "executing" a nuts package
+ * (package) Created by vpc on 1/7/17.
  *
  * @since 0.5.4
  * @app.category SPI Base
  */
-public interface NutsInstallerComponent extends NutsComponent<NutsDefinition> {
+public interface NutsExecutorComponent extends NutsComponent<NutsDefinition> {
 
     /**
-     * install artifact
-     * @param executionContext execution context
+     * artifact id
+     * @return artifact id
      */
-    void install(NutsExecutionContext executionContext);
+    NutsId getId();
 
     /**
-     * update artifact
-     * @param executionContext execution context
+     * execute the artifact
+     * @param executionContext executionContext
+     * @throws NutsExecutionException when execution fails
      */
-    void update(NutsExecutionContext executionContext);
+    void exec(NutsExecutionContext executionContext) throws NutsExecutionException;
 
     /**
-     * uninstall artifact
-     * @param executionContext execution context
-     * @param deleteData delete data after uninstall
+     * performs a dry execution (simulation) avoiding any side effect and issuing trace to standard
+     * output in order to log simulation workflow.
+     * @param executionContext executionContext
+     * @throws NutsExecutionException when execution fails
      */
-    void uninstall(NutsExecutionContext executionContext, boolean deleteData);
+    void dryExec(NutsExecutionContext executionContext) throws NutsExecutionException;
 }

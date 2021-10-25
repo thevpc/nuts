@@ -26,6 +26,8 @@ public interface NutsPrintStream {
         return session.io().createPrintStream(out);
     }
 
+    NutsSession getSession();
+
     NutsPrintStream flush();
 
     NutsPrintStream close();
@@ -59,6 +61,9 @@ public interface NutsPrintStream {
     NutsPrintStream print(String s);
 
     NutsPrintStream print(Object obj);
+    NutsPrintStream printf(Object obj);
+
+    NutsPrintStream printlnf(Object obj);
 
     NutsPrintStream println();
 
@@ -98,6 +103,8 @@ public interface NutsPrintStream {
      */
     NutsPrintStream printj(String format, Object... args);
 
+    NutsPrintStream printlnf(String format, Object... args);
+
     NutsPrintStream printf(Locale l, String format, Object... args);
 
     NutsPrintStream format(String format, Object... args);
@@ -114,9 +121,19 @@ public interface NutsPrintStream {
 
     boolean isAutoFlash();
 
-    NutsPrintStream convertMode(NutsTerminalMode other);
+    /**
+     * update mode and return a new instance
+     * @param other new mode
+     * @return a new instance of NutsPrintStream (if the mode changes)
+     */
+    NutsPrintStream setMode(NutsTerminalMode other);
 
-    NutsPrintStream convertSession(NutsSession session);
+    /**
+     * update session and return a new instance
+     * @param session new session
+     * @return a new instance of NutsPrintStream
+     */
+    NutsPrintStream setSession(NutsSession session);
 
     NutsPrintStream run(NutsTerminalCommand command);
 

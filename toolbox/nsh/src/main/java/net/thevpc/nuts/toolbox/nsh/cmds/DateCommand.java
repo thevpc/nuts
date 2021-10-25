@@ -28,7 +28,7 @@ package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.NutsArgument;
 import net.thevpc.nuts.NutsCommandLine;
-import net.thevpc.nuts.NutsSingleton;
+import net.thevpc.nuts.spi.NutsSingleton;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 
 import java.time.*;
@@ -65,7 +65,6 @@ public class DateCommand extends SimpleNshBuiltin {
 
     @Override
     protected void initCommandLine(NutsCommandLine commandLine) {
-        super.initCommandLine(commandLine);
         for (String s : new String[]{
                 "-Id","-Idate",
                 "-Ih","-Ihours",
@@ -236,7 +235,7 @@ public class DateCommand extends SimpleNshBuiltin {
     }
 
     @Override
-    protected void createResult(NutsCommandLine cmdLine, SimpleNshCommandContext context) {
+    protected void execBuiltin(NutsCommandLine cmdLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         ZonedDateTime dateTimeInMyZone = ZonedDateTime.
                 of(LocalDateTime.now(), ZoneId.systemDefault());
@@ -248,26 +247,26 @@ public class DateCommand extends SimpleNshBuiltin {
                 case "":
                 case "d":
                 case "date":{
-                    context.setPrintlnOutObject(dateTimeInMyZone.toLocalDate().toString());
+                    context.getSession().out().printlnf(dateTimeInMyZone.toLocalDate().toString());
                     break;
                 }
                 case "m":
                 case "minutes":{
-                    context.setPrintlnOutObject(DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm").format(dateTimeInMyZone.toLocalDateTime()));
+                    context.getSession().out().printlnf(DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm").format(dateTimeInMyZone.toLocalDateTime()));
                     break;
                 }
                 case "s":
                 case "seconds":{
-                    context.setPrintlnOutObject(DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss").format(dateTimeInMyZone.toLocalDateTime()));
+                    context.getSession().out().printlnf(DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss").format(dateTimeInMyZone.toLocalDateTime()));
                     break;
                 }
                 case "ns":{
-                    context.setPrintlnOutObject(DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss.SSSSSSSSS").format(dateTimeInMyZone.toLocalDateTime()));
+                    context.getSession().out().printlnf(DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss.SSSSSSSSS").format(dateTimeInMyZone.toLocalDateTime()));
                     break;
                 }
                 default:{
                     //error??
-                    context.setPrintlnOutObject(dateTimeInMyZone.toLocalDate().toString());
+                    context.getSession().out().printlnf(dateTimeInMyZone.toLocalDate().toString());
                     break;
                 }
             }
@@ -276,33 +275,33 @@ public class DateCommand extends SimpleNshBuiltin {
                 case "":
                 case "d":
                 case "date":{
-                    context.setPrintlnOutObject(dateTimeInMyZone.toLocalDate().toString());
+                    context.getSession().out().printlnf(dateTimeInMyZone.toLocalDate().toString());
                     break;
                 }
                 case "m":
                 case "minutes":{
-                    context.setPrintlnOutObject(DateTimeFormatter.ofPattern("uuuu-MM-dd' 'HH:mmXXX").format(dateTimeInMyZone.toLocalDate()));
+                    context.getSession().out().printlnf(DateTimeFormatter.ofPattern("uuuu-MM-dd' 'HH:mmXXX").format(dateTimeInMyZone.toLocalDate()));
                     break;
                 }
                 case "s":
                 case "seconds":{
-                    context.setPrintlnOutObject(DateTimeFormatter.ofPattern("uuuu-MM-dd' 'HH:mm:ssXXX").format(dateTimeInMyZone.toLocalDateTime()));
+                    context.getSession().out().printlnf(DateTimeFormatter.ofPattern("uuuu-MM-dd' 'HH:mm:ssXXX").format(dateTimeInMyZone.toLocalDateTime()));
                     break;
                 }
                 case "ns":{
-                    context.setPrintlnOutObject(DateTimeFormatter.ofPattern("uuuu-MM-dd' 'HH:mm:ss.SSSSSSSSSXXX").format(dateTimeInMyZone.toLocalDateTime()));
+                    context.getSession().out().printlnf(DateTimeFormatter.ofPattern("uuuu-MM-dd' 'HH:mm:ss.SSSSSSSSSXXX").format(dateTimeInMyZone.toLocalDateTime()));
                     break;
                 }
                 default:{
                     //error??
-                    context.setPrintlnOutObject(dateTimeInMyZone.toLocalDate().toString());
+                    context.getSession().out().printlnf(dateTimeInMyZone.toLocalDate().toString());
                     break;
                 }
             }
         }else  if(options.rfcMail){
-            context.setPrintlnOutObject(DateTimeFormatter.ofPattern("EEE, d MMM yyyy HH:mm:ss Z").format(dateTimeInMyZone));
+            context.getSession().out().printlnf(DateTimeFormatter.ofPattern("EEE, d MMM yyyy HH:mm:ss Z").format(dateTimeInMyZone));
         }else{
-            context.setPrintlnOutObject(DateTimeFormatter.ofPattern("EEE MMM d hh:mm:ss a Z yyyy").format(dateTimeInMyZone));
+            context.getSession().out().printlnf(DateTimeFormatter.ofPattern("EEE MMM d hh:mm:ss a Z yyyy").format(dateTimeInMyZone));
         }
     }
 }

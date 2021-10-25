@@ -31,6 +31,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.spi.NutsSingleton;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellHistory;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 
@@ -111,12 +112,11 @@ public class HistoryCommand extends SimpleNshBuiltin {
     }
 
     @Override
-    protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected void execBuiltin(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         JShellHistory shistory = context.getShell().getHistory();
         switch (options.action) {
             case PRINT: {
-                NutsPrintStream out = context.out();
                 List<String> history = shistory.getElements(options.ival <= 0 ? 1000 : options.ival);
                 int offset = shistory.size() - history.size();
                 LinkedHashMap<String, String> result = new LinkedHashMap<>();
@@ -124,7 +124,7 @@ public class HistoryCommand extends SimpleNshBuiltin {
                     String historyElement = history.get(i);
                     result.put(String.valueOf(offset + i + 1), historyElement);
                 }
-                context.setPrintlnOutObject(result);
+                context.getSession().out().printlnf(result);
                 break;
             }
             case CLEAR: {

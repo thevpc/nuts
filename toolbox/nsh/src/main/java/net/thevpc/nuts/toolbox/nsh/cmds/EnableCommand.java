@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -11,19 +11,19 @@
  * architecture to help supporting a large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
  * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import java.util.ArrayList;
@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.Set;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.spi.NutsSingleton;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellBuiltin;
 
@@ -45,18 +46,6 @@ public class EnableCommand extends SimpleNshBuiltin {
 
     public EnableCommand() {
         super("enable", DEFAULT_SUPPORT);
-    }
-
-    private static class Options {
-
-        String file;
-        boolean a;
-        boolean d;
-        boolean n;
-        boolean p;
-        boolean s;
-        Set<String> names = new LinkedHashSet<String>();
-        List<String> displayOptions = new ArrayList<String>();
     }
 
     @Override
@@ -108,14 +97,33 @@ public class EnableCommand extends SimpleNshBuiltin {
     }
 
     @Override
-    protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected void execBuiltin(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         if (options.p || options.names.isEmpty()) {
             Map<String, String> result = new LinkedHashMap<>();
             for (JShellBuiltin command : context.getRootContext().builtins().getAll()) {
                 result.put(command.getName(), command.isEnabled() ? "enabled" : "disabled");
             }
-            context.setPrintlnOutObject(context);
+            switch (context.getSession().getOutputFormat()) {
+                case PLAIN: {
+                    for (Map.Entry<String, String> entry : result.entrySet()) {
+                        context.getSession().out().println(entry.getValue() + " " + entry.getKey());
+                    }
+                    //if list
+//                    for (String s : ((List<String>) context.getResult())) {
+//                        context.out().printf("%s%n",
+//                                text.builder().append("enable: ", NutsTextStyle.error())
+//                                        .append(s, NutsTextStyle.primary5())
+//                                        .append(" ")
+//                                        .append("not a shell builtin", NutsTextStyle.error())
+//                        );
+//                    }
+                    break;
+                }
+                default: {
+                    context.getSession().out().printlnf(result);
+                }
+            }
         } else if (options.n) {
             List<String> nobuiltin = new ArrayList<>();
             for (String name : options.names) {
@@ -127,28 +135,21 @@ public class EnableCommand extends SimpleNshBuiltin {
                 }
             }
             if (!nobuiltin.isEmpty()) {
-                context.setErrObject(nobuiltin);
+                throwExecutionException(nobuiltin, 1, context.getSession());
             }
         }
     }
 
-    @Override
-    protected void printPlainObject(SimpleNshCommandContext context, NutsSession session) {
-        if (context.getResult() instanceof Map) {
-            for (Map.Entry<String, String> entry : ((Map<String, String>) context.getResult()).entrySet()) {
-                context.out().println(entry.getValue() + " " + entry.getKey());
-            }
-        } else if (context.getResult() instanceof List) {
-            NutsTextManager text = session.text();
-            for (String s : ((List<String>) context.getResult())) {
-                context.out().printf("%s%n",
-                        text.builder().append("enable: ",NutsTextStyle.error())
-                        .append(s,NutsTextStyle.primary5())
-                        .append(" ")
-                        .append("not a shell builtin",NutsTextStyle.error())
-                        );
-            }
-        }
+    private static class Options {
+
+        String file;
+        boolean a;
+        boolean d;
+        boolean n;
+        boolean p;
+        boolean s;
+        Set<String> names = new LinkedHashSet<String>();
+        List<String> displayOptions = new ArrayList<String>();
     }
 
 }

@@ -2,16 +2,15 @@ package net.thevpc.nuts.runtime.standalone.io;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.io.NullInputStream;
-import net.thevpc.nuts.runtime.bundles.parsers.StringPlaceHolderParser;
 import net.thevpc.nuts.runtime.core.NutsSupplierBase;
 import net.thevpc.nuts.runtime.core.format.text.SimpleWriterOutputStream;
 import net.thevpc.nuts.runtime.core.io.*;
-import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNutsBootModel;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
+import net.thevpc.nuts.spi.NutsPathFactory;
 import net.thevpc.nuts.spi.NutsPathSPI;
+import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
-import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Writer;
@@ -74,7 +73,7 @@ public class DefaultNutsIOModel {
             return null;
         }
         if (out instanceof NutsPrintStreamAdapter) {
-            return ((NutsPrintStreamAdapter) out).getBaseNutsPrintStream().convertMode(expectedMode);
+            return ((NutsPrintStreamAdapter) out).getBaseNutsPrintStream().setMode(expectedMode);
         }
         SimpleWriterOutputStream w = new SimpleWriterOutputStream(out, session);
         return createPrintStream(w, expectedMode, session);
@@ -103,11 +102,11 @@ public class DefaultNutsIOModel {
             }
         }
         if (out instanceof NutsPrintStreamAdapter) {
-            return ((NutsPrintStreamAdapter) out).getBaseNutsPrintStream().convertMode(expectedMode);
+            return ((NutsPrintStreamAdapter) out).getBaseNutsPrintStream().setMode(expectedMode);
         }
         return
                 new NutsPrintStreamRaw(out, null, null, session, new NutsPrintStreamBase.Bindings())
-                        .convertMode(expectedMode)
+                        .setMode(expectedMode)
                 ;
     }
 

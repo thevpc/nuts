@@ -28,10 +28,12 @@ package net.thevpc.nuts.runtime.standalone.executors;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.ProcessExecHelper;
 import net.thevpc.nuts.runtime.bundles.io.IProcessExecHelper;
-import net.thevpc.nuts.NutsExecutorComponent;
+import net.thevpc.nuts.spi.NutsExecutorComponent;
 
 import java.util.*;
 import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
+import net.thevpc.nuts.spi.NutsSingleton;
+import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 /**
  * Created by vpc on 1/7/17.

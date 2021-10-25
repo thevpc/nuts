@@ -24,13 +24,21 @@
  * <br>
  * ====================================================================
  */
-package net.thevpc.nuts;
+package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.spi.NutsPathSPI;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * @app.category Input Output
+ * classes that are marked with this annotation will be created at each call by
+ * the factory.
+ *
+ * @since 0.5.4
+ * @app.category SPI Base
  */
-public interface NutsPathFactory {
-    NutsSupplier<NutsPathSPI> createPath(String path, NutsSession session, ClassLoader classLoader);
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+public @interface NutsPrototype {
 }

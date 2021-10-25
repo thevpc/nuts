@@ -10,22 +10,23 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
  * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.spi.NutsSingleton;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellResult;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 
@@ -37,12 +38,6 @@ public class ShowerrCommand extends SimpleNshBuiltin {
 
     public ShowerrCommand() {
         super("showerr", DEFAULT_SUPPORT);
-    }
-
-    private static class Options {
-
-        String login;
-        char[] password;
     }
 
     @Override
@@ -67,35 +62,45 @@ public class ShowerrCommand extends SimpleNshBuiltin {
     }
 
     @Override
-    protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
-        context.setPrintOutObject(context.getRootContext().getLastResult());
-    }
-
-    @Override
-    protected void printPlainObject(SimpleNshCommandContext context, NutsSession session) {
-        JShellResult r = context.getResult();
-        if (r.getCode() == 0) {
-            context.out().println(
-                    context.getSession().text().ofStyled(
-                            "last command ended successfully with no errors.", NutsTextStyle.success()
-                    ));
-        } else {
-            context.out().println(
-                    context.getSession().text()
-                            .ofStyled("last command ended abnormally with the following error :",NutsTextStyle.error())
-            );
-            if (r.getMessage() != null) {
-                context.out().println(context.getSession().text()
-                        .ofStyled(r.getMessage(),NutsTextStyle.error()
-                        ));
+    protected void execBuiltin(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+        JShellResult r = context.getRootContext().getLastResult();
+        NutsPrintStream out = context.getSession().out();
+        switch (context.getSession().getOutputFormat()) {
+            case PLAIN: {
+                if (r.getCode() == 0) {
+                    out.println(
+                            context.getSession().text().ofStyled(
+                                    "last command ended successfully with no errors.", NutsTextStyle.success()
+                            ));
+                } else {
+                    out.println(
+                            context.getSession().text()
+                                    .ofStyled("last command ended abnormally with the following error :", NutsTextStyle.error())
+                    );
+                    if (r.getMessage() != null) {
+                        out.println(context.getSession().text()
+                                .ofStyled(r.getMessage(), NutsTextStyle.error()
+                                ));
+                    }
+                    if (r.getStackTrace() != null) {
+                        context.err().println(
+                                context.getSession().text()
+                                        .ofStyled(r.getStackTrace(), NutsTextStyle.error())
+                        );
+                    }
+                }
+                break;
             }
-            if (r.getStackTrace() != null) {
-                context.err().println(
-                        context.getSession().text()
-                                .ofStyled(r.getStackTrace(),NutsTextStyle.error())
-                );
+            default: {
+                out.printlnf(r);
             }
         }
+    }
+
+    private static class Options {
+
+        String login;
+        char[] password;
     }
 
 }

@@ -23,6 +23,7 @@ import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.io.DefaultNutsExecutionEntry;
 import net.thevpc.nuts.runtime.standalone.wscommands.NutsRepositoryAndFetchMode;
 import net.thevpc.nuts.spi.NutsRepositorySPI;
+import net.thevpc.nuts.spi.NutsSessionAware;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;

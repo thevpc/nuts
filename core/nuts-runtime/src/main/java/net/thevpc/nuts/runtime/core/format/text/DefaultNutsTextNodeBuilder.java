@@ -224,4 +224,15 @@ public class DefaultNutsTextNodeBuilder implements NutsTextBuilder {
     public boolean isEmpty() {
         return immutable().isEmpty();
     }
+
+    @Override
+    public boolean isBlank() {
+        return NutsBlankable.isBlank(filteredText());
+    }
+
+    @Override
+    public NutsTextBuilder builder() {
+        return session.text().builder().append(this);
+    }
+
 }

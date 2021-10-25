@@ -16,6 +16,7 @@ import net.thevpc.nuts.runtime.standalone.wscommands.settings.DefaultNutsAddUser
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.DefaultNutsRemoveUserCommand;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.DefaultNutsUpdateUserCommand;
 import net.thevpc.nuts.runtime.standalone.repos.DefaultNutsRepoConfigManager;
+import net.thevpc.nuts.spi.NutsAuthenticationAgent;
 
 /**
  *

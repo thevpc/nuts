@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.core.format.text.bloc;
 
-import net.thevpc.nuts.NutsSupportLevelContext;
+import net.thevpc.nuts.spi.NutsSupportLevelContext;
 import net.thevpc.nuts.NutsTextStyle;
 import net.thevpc.nuts.spi.NutsComponent;
 import net.thevpc.nuts.NutsCodeFormat;

@@ -24,21 +24,30 @@
  * <br>
  * ====================================================================
  */
-package net.thevpc.nuts;
+package net.thevpc.nuts.spi;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.io.Serializable;
+import java.util.Map;
 
 /**
- * classes that are marked with this annotation will be created once by the
- * factory.
- *
- * @since 0.5.4
- * @app.category SPI Base
+ * @app.category Input Output
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface NutsSingleton {
+public interface NutsTerminalSpec extends Serializable {
+    NutsSystemTerminalBase getParent();
+
+    NutsTerminalSpec setParent(NutsSystemTerminalBase parent);
+
+    Boolean getAutoComplete();
+
+    NutsTerminalSpec setAutoComplete(Boolean autoComplete);
+
+    Object get(String name);
+
+    NutsTerminalSpec put(String name, Object o);
+
+    NutsTerminalSpec copyFrom(NutsTerminalSpec other);
+
+    NutsTerminalSpec putAll(Map<String, Object> other);
+
+    Map<String, Object> getProperties();
 }

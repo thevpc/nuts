@@ -25,15 +25,17 @@ package net.thevpc.nuts.runtime.standalone.executors;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.model.DefaultNutsDefinition;
-import net.thevpc.nuts.NutsExecutorComponent;
+import net.thevpc.nuts.spi.NutsExecutorComponent;
 
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
 import java.io.File;
 import java.nio.file.Path;
-import java.nio.file.Paths;
+
 import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.core.util.CoreArrayUtils;
+import net.thevpc.nuts.spi.NutsSingleton;
+import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 /**
  * Created by vpc on 1/7/17.

@@ -24,9 +24,7 @@
  * <br>
  * ====================================================================
  */
-package net.thevpc.nuts;
-
-import net.thevpc.nuts.spi.NutsSystemTerminalBase;
+package net.thevpc.nuts.spi;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -576,7 +576,7 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
         }
 
         @Override
-        public NutsPrintStream convertSession(NutsSession session) {
+        public NutsPrintStream setSession(NutsSession session) {
             if(session==null || session==this.session){
                 return this;
             }

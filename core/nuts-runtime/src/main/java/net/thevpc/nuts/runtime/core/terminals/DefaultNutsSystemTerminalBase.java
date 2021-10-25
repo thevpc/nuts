@@ -1,7 +1,10 @@
 package net.thevpc.nuts.runtime.core.terminals;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.spi.NutsPrototype;
+import net.thevpc.nuts.spi.NutsSupportLevelContext;
 import net.thevpc.nuts.spi.NutsSystemTerminalBase;
+import net.thevpc.nuts.spi.NutsTerminalSpec;
 
 import java.io.InputStream;
 import java.util.Scanner;
@@ -117,8 +120,8 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase {
                     terminalMode = NutsTerminalMode.FORMATTED;
                 }
             }
-            this.out = session.io().stdout().convertMode(terminalMode);
-            this.err = session.io().stderr().convertMode(terminalMode);
+            this.out = session.io().stdout().setMode(terminalMode);
+            this.err = session.io().stderr().setMode(terminalMode);
             this.in = session.io().stdin();
             this.scanner = new Scanner(this.in);
         } else {

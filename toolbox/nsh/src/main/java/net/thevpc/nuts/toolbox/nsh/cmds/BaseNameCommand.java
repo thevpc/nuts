@@ -28,8 +28,7 @@ package net.thevpc.nuts.toolbox.nsh.cmds;
 import java.util.ArrayList;
 import java.util.List;
 import net.thevpc.nuts.NutsArgument;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsSingleton;
+import net.thevpc.nuts.spi.NutsSingleton;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 import net.thevpc.nuts.NutsCommandLine;
 
@@ -106,7 +105,7 @@ public class BaseNameCommand extends SimpleNshBuiltin {
     }
 
     @Override
-    protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected void execBuiltin(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         if (options.names.isEmpty()) {
             commandLine.required();
@@ -132,20 +131,22 @@ public class BaseNameCommand extends SimpleNshBuiltin {
             }
             results.add(basename);
         }
-        context.setPrintlnOutObject(results);
-    }
-
-    @Override
-    protected void printPlainObject(SimpleNshCommandContext context, NutsSession session) {
-        List<String> results = context.getResult();
-        Options options = context.getOptions();
-        for (int i = 0; i < results.size(); i++) {
-            String name = results.get(i);
-            if(i>0){
-                context.out().print(options.sep);
+        switch (context.getSession().getOutputFormat()) {
+            case PLAIN: {
+                for (int i = 0; i < results.size(); i++) {
+                    String name = results.get(i);
+                    if(i>0){
+                        context.getSession().out().print(options.sep);
+                    }
+                    context.getSession().out().print(name);
+                }
+                break;
             }
-            context.out().print(name);
+            default: {
+                context.getSession().out().printlnf(results);
+            }
         }
     }
+
 
 }

@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.config;
 import net.thevpc.nuts.NutsIndexStore;
 import net.thevpc.nuts.spi.NutsIndexStoreFactory;
 import net.thevpc.nuts.NutsRepository;
-import net.thevpc.nuts.NutsSupportLevelContext;
+import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 public class DummyNutsIndexStoreFactory implements NutsIndexStoreFactory {
 

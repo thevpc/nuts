@@ -9,7 +9,6 @@
  * dependencies at runtime. Nuts is not tied to java and is a good choice
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
- *
  * <br>
  * <p>
  * Copyright [2020] [thevpc]
@@ -24,21 +23,22 @@
  * <br>
  * ====================================================================
  */
-package net.thevpc.nuts;
+package net.thevpc.nuts.spi;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NutsWorkspace;
 
 /**
- * classes that are marked with this annotation will be created at each call by
- * the factory.
  *
- * @since 0.5.4
+ * @author thevpc
+ * @param <T> T
  * @app.category SPI Base
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface NutsPrototype {
+public interface NutsSupportLevelContext<T> {
+
+    NutsSession getSession();
+
+    NutsWorkspace getWorkspace();
+
+    T getConstraints();
 }

@@ -28,6 +28,7 @@ import net.thevpc.nuts.runtime.standalone.wscommands.update.DefaultNutsUpdateInt
 import net.thevpc.nuts.runtime.standalone.wscommands.version.DefaultNutsVersionInternalExecutable;
 import net.thevpc.nuts.runtime.standalone.wscommands.welcome.DefaultNutsWelcomeInternalExecutable;
 import net.thevpc.nuts.runtime.standalone.wscommands.which.DefaultNutsWhichInternalExecutable;
+import net.thevpc.nuts.spi.NutsExecutorComponent;
 
 import java.io.File;
 import java.nio.file.Files;

@@ -58,7 +58,7 @@ public class HelpCommand extends AbstractNshBuiltin {
             if (commandLine.next("--ntf") != null) {
                 code = true;
                 context.getSession().getTerminal().setOut(
-                        context.getSession().getTerminal().out().convertMode(NutsTerminalMode.INHERITED)
+                        context.getSession().getTerminal().out().setMode(NutsTerminalMode.INHERITED)
                 );
             }else if (commandLine.peek().isNonOption()){
                 commandNames.add(commandLine.nextNonOption(new CommandNonOption("command", context.getShellContext())).required().getString());

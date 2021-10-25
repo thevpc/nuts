@@ -32,6 +32,7 @@ import java.util.Objects;
 public final class NutsTerminalCommand {
 
     public static final NutsTerminalCommand LATER_RESET_LINE = new NutsTerminalCommand(Ids.LATER_RESET_LINE);
+
     public static final NutsTerminalCommand MOVE_LINE_START = new NutsTerminalCommand(Ids.MOVE_LINE_START);
     public static final NutsTerminalCommand CLEAR_SCREEN = new NutsTerminalCommand(Ids.CLEAR_SCREEN);
     public static final NutsTerminalCommand CLEAR_SCREEN_TO_CURSOR = new NutsTerminalCommand(Ids.CLEAR_SCREEN_FROM_CURSOR);
@@ -55,23 +56,23 @@ public final class NutsTerminalCommand {
         this.args = args;
     }
 
-    public static final NutsTerminalCommand MOVE_TO(int row, int col) {
+    public static NutsTerminalCommand MOVE_TO(int row, int col) {
         return new NutsTerminalCommand(Ids.MOVE_TO, row + "," + col);
     }
 
-    public static final NutsTerminalCommand MOVE_RIGHT(int count) {
+    public static NutsTerminalCommand MOVE_RIGHT(int count) {
         return new NutsTerminalCommand(Ids.MOVE_RIGHT, count <= 0 ? "1" : String.valueOf(count));
     }
 
-    public static final NutsTerminalCommand MOVE_LEFT(int count) {
+    public static NutsTerminalCommand MOVE_LEFT(int count) {
         return new NutsTerminalCommand(Ids.MOVE_LEFT, count <= 0 ? "1" : String.valueOf(count));
     }
 
-    public static final NutsTerminalCommand MOVE_UP(int count) {
+    public static NutsTerminalCommand MOVE_UP(int count) {
         return new NutsTerminalCommand(Ids.MOVE_UP, count <= 0 ? "1" : String.valueOf(count));
     }
 
-    public static final NutsTerminalCommand MOVE_DOWN(int count) {
+    public static NutsTerminalCommand MOVE_DOWN(int count) {
         return new NutsTerminalCommand(Ids.MOVE_DOWN, count <= 0 ? "1" : String.valueOf(count));
     }
 
@@ -140,27 +141,16 @@ public final class NutsTerminalCommand {
     }
 
     @Override
-    public int hashCode() {
-        int hash = 7;
-        return hash;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        NutsTerminalCommand that = (NutsTerminalCommand) o;
+        return Objects.equals(name, that.name) && Objects.equals(args, that.args);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final NutsTerminalCommand other = (NutsTerminalCommand) obj;
-        if (!Objects.equals(this.name, other.name)) {
-            return false;
-        }
-        return Objects.equals(this.args, other.args);
+    public int hashCode() {
+        return Objects.hash(name, args);
     }
 
     @Override
@@ -171,6 +161,7 @@ public final class NutsTerminalCommand {
     public static final class Ids {
 
         public static final String LATER_RESET_LINE = ("later-reset-line");
+
         public static final String MOVE_LINE_START = ("move-line-start");
         public static final String MOVE_TO = ("move-to");
         public static final String MOVE_UP = ("move-up");

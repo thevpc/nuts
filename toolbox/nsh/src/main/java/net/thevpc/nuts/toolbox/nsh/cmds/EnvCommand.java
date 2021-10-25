@@ -35,6 +35,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.spi.NutsSingleton;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 
 /**
@@ -171,7 +172,7 @@ public class EnvCommand extends SimpleNshBuiltin {
     }
 
     @Override
-    protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected void execBuiltin(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         if (options.sort) {
             context.getSession().addOutputFormatOptions("--sort");
@@ -185,7 +186,7 @@ public class EnvCommand extends SimpleNshBuiltin {
         }
         env.putAll(options.newEnv);
         if (options.command.isEmpty()) {
-            context.setPrintlnOutObject(env);
+            context.getSession().out().printlnf(env);
         } else {
             final NutsExecCommand e = context.getSession().exec().addCommand(options.command)
                     .setEnv(env)

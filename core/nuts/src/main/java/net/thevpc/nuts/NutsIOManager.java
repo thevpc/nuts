@@ -24,6 +24,7 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.spi.NutsComponent;
+import net.thevpc.nuts.spi.NutsPathFactory;
 
 import java.io.File;
 import java.io.InputStream;

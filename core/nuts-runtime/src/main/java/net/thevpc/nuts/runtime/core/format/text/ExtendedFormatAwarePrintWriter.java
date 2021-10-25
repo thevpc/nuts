@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.core.format.text;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.terminals.NutsTerminalModeOp;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
+import net.thevpc.nuts.spi.NutsSessionAware;
 
 import java.io.OutputStream;
 import java.io.PrintWriter;

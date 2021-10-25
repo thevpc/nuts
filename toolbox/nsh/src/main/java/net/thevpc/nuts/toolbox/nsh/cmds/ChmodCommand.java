@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Map;
 import net.thevpc.nuts.NutsArgument;
 import net.thevpc.nuts.NutsCommandLine;
-import net.thevpc.nuts.NutsSingleton;
+import net.thevpc.nuts.spi.NutsSingleton;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 
 /**
@@ -193,7 +193,7 @@ public class ChmodCommand extends SimpleNshBuiltin {
     }
 
     @Override
-    protected void createResult(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected void execBuiltin(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         if (options.files.isEmpty()) {
             commandLine.required();
@@ -202,10 +202,9 @@ public class ChmodCommand extends SimpleNshBuiltin {
         for (File f : options.files) {
             chmod(f, options.m, errors);
         }
-        if (errors.isEmpty()) {
-            errors = null;
+        if (!errors.isEmpty()) {
+            throwExecutionException(errors,1, context.getSession());
         }
-        context.setErrObject(errors);
     }
 
     private void chmod(File f, Mods m, Map<String, String> errors) {

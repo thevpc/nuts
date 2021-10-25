@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -11,7 +11,7 @@
  * architecture to help supporting a large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -23,14 +23,14 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import net.thevpc.nuts.NutsArgument;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsSingleton;
+import net.thevpc.nuts.spi.NutsSingleton;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 import net.thevpc.nuts.NutsCommandLine;
 
@@ -42,14 +42,6 @@ public class DirNameCommand extends SimpleNshBuiltin {
 
     public DirNameCommand() {
         super("dirname", DEFAULT_SUPPORT);
-    }
-
-    private static class Options {
-
-        String sep = "\n";
-        List<String> names = new ArrayList<>();
-        boolean multi = false;
-        String suffix = null;
     }
 
     @Override
@@ -81,7 +73,7 @@ public class DirNameCommand extends SimpleNshBuiltin {
     }
 
     @Override
-    protected void createResult(NutsCommandLine cmdLine, SimpleNshCommandContext context) {
+    protected void execBuiltin(NutsCommandLine cmdLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         if (options.names.isEmpty()) {
             cmdLine.required();
@@ -112,19 +104,28 @@ public class DirNameCommand extends SimpleNshBuiltin {
                 results.add(sb.toString());
             }
         }
-        context.setPrintlnOutObject(results);
+        switch (context.getSession().getOutputFormat()) {
+            case PLAIN: {
+                for (int i = 0; i < results.size(); i++) {
+                    String name = results.get(i);
+                    if (i > 0) {
+                        context.getSession().out().print(options.sep);
+                    }
+                    context.getSession().out().print(name);
+                }
+                break;
+            }
+            default: {
+                context.getSession().out().printlnf(results);
+            }
+        }
     }
 
-    @Override
-    protected void printPlainObject(SimpleNshCommandContext context, NutsSession session) {
-        List<String> results = context.getResult();
-        Options options = context.getOptions();
-        for (int i = 0; i < results.size(); i++) {
-            String name = results.get(i);
-            if(i>0) {
-                context.out().print(options.sep);
-            }
-            context.out().print(name);
-        }
+    private static class Options {
+
+        String sep = "\n";
+        List<String> names = new ArrayList<>();
+        boolean multi = false;
+        String suffix = null;
     }
 }

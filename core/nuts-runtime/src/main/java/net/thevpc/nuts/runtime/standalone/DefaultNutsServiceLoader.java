@@ -6,9 +6,9 @@ import net.thevpc.nuts.NutsServiceLoader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ServiceLoader;
-import net.thevpc.nuts.NutsDefaultSupportLevelContext;
+import net.thevpc.nuts.spi.NutsDefaultSupportLevelContext;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsSupportLevelContext;
+import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 public class DefaultNutsServiceLoader<T extends NutsComponent<B>, B> implements NutsServiceLoader<T, B> {
 

@@ -6,6 +6,8 @@ import java.util.Arrays;
 import java.util.Map;
 
 import net.thevpc.nuts.runtime.bundles.io.CoreSecurityUtils;
+import net.thevpc.nuts.spi.NutsAuthenticationAgent;
+import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 public abstract class AbstractNutsAuthenticationAgent implements NutsAuthenticationAgent {
 

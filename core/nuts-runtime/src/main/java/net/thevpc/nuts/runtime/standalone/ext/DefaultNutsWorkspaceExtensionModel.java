@@ -18,11 +18,11 @@ import net.thevpc.nuts.runtime.standalone.DefaultNutsServiceLoader;
 import net.thevpc.nuts.runtime.standalone.DefaultNutsWorkspaceFactory;
 import net.thevpc.nuts.runtime.core.filters.CoreFilterUtils;
 import net.thevpc.nuts.NutsLogVerb;
-import net.thevpc.nuts.runtime.core.terminals.DefaultNutsSessionTerminal;
+import net.thevpc.nuts.runtime.core.terminals.DefaultNutsSessionTerminalFromSystem;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.bundles.collections.ListMap;
 import net.thevpc.nuts.spi.*;
-import net.thevpc.nuts.NutsExecutorComponent;
+import net.thevpc.nuts.spi.NutsExecutorComponent;
 
 import java.io.File;
 import java.io.IOException;
@@ -574,7 +574,7 @@ public class DefaultNutsWorkspaceExtensionModel {
         if (spec != null && spec.get("ignoreClass") != null && spec.get("ignoreClass").equals(termb.getClass())) {
             return null;
         }
-        return new DefaultNutsSessionTerminal(session,termb);
+        return new DefaultNutsSessionTerminalFromSystem(session,termb);
     }
 
     //@Override

@@ -35,6 +35,8 @@ import java.util.Map;
 import net.thevpc.nuts.runtime.core.repos.NutsRepositorySelector;
 import net.thevpc.nuts.runtime.core.repos.NutsRepositoryType;
 import net.thevpc.nuts.runtime.core.repos.NutsRepositoryURL;
+import net.thevpc.nuts.spi.NutsSingleton;
+import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 /**
  * Created by vpc on 1/15/17.

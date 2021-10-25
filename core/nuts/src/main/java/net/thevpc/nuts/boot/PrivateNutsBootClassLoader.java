@@ -33,7 +33,7 @@ import java.util.LinkedHashMap;
 /**
  * Simple Implementation of Nuts BootClassLoader
  *
- * @app.category SPI Base
+ * @app.category Boot
  */
 class PrivateNutsBootClassLoader extends URLClassLoader {
 

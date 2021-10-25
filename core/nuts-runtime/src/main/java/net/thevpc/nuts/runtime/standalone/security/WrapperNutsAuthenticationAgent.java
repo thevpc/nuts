@@ -6,7 +6,7 @@ import java.util.function.Function;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+import net.thevpc.nuts.spi.NutsAuthenticationAgent;
 
 class WrapperNutsAuthenticationAgent {
 

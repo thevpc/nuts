@@ -26,22 +26,19 @@
  */
 package net.thevpc.nuts.runtime.core.format.text;
 
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsString;
-import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.*;
 
 import java.io.StringReader;
-import net.thevpc.nuts.NutsText;
 
 /**
  * @author thevpc
  */
 public class NutsImmutableString implements NutsString {
     private final String value;
-    private transient final NutsSession ws;
+    private transient final NutsSession session;
 
-    public NutsImmutableString(NutsSession ws, String value) {
-        this.ws = ws;
+    public NutsImmutableString(NutsSession session, String value) {
+        this.session = session;
         this.value = value == null ? "" : value;
     }
 
@@ -51,12 +48,12 @@ public class NutsImmutableString implements NutsString {
 
     @Override
     public String filteredText() {
-        return ws.text().
+        return session.text().
                 parser().filterText(value);
     }
 
     public NutsText toText() {
-        return ws.text().parser().parse(new StringReader(value));
+        return session.text().parser().parse(new StringReader(value));
     }
 
     public String getValue() {
@@ -89,5 +86,15 @@ public class NutsImmutableString implements NutsString {
     @Override
     public boolean isEmpty() {
         return textLength()==0;
+    }
+
+    @Override
+    public boolean isBlank() {
+        return NutsBlankable.isBlank(filteredText());
+    }
+
+    @Override
+    public NutsTextBuilder builder() {
+        return session.text().builder().append(this);
     }
 }
