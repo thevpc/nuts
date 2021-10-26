@@ -190,15 +190,7 @@ public final class NutsBootWorkspace {
         if (apiDigest == null) {
             synchronized (Nuts.class) {
                 if (apiDigest == null) {
-                    String v = NutsApiUtils.resolveNutsIdDigest();
-                    if (v == null) {
-                        throw new NutsBootException(
-                                NutsMessage.plain(
-                                        "unable to detect nuts digest. Most likely you are missing valid compilation of nuts. pom.properties could not be resolved and hence, we are unable to resolve nuts version."
-                                )
-                        );
-                    }
-                    apiDigest = v;
+                    apiDigest = NutsApiUtils.resolveNutsIdDigestOrError();
                 }
             }
         }

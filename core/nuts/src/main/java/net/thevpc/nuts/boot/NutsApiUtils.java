@@ -4,6 +4,7 @@ import net.thevpc.nuts.*;
 
 import java.io.PrintStream;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.logging.Level;
 
 /**
@@ -60,6 +61,24 @@ public class NutsApiUtils {
         return PrivateNutsUtilMaven.resolveNutsApiVersionFromClassPath(LOG);
     }
 
+    public static String resolveNutsIdDigestOrError() {
+        String d = resolveNutsIdDigest();
+        if (d == null) {
+            ClassLoader cl = Thread.currentThread().getContextClassLoader();
+            URL[] urls = PrivateNutsUtilClassLoader.resolveClasspathURLs(cl);
+            throw new NutsBootException(
+                    NutsMessage.plain(
+                            "unable to detect nuts digest. Most likely you are missing valid compilation of nuts." +
+                                    " 'pom.properties' could not be resolved and hence, we are unable to resolve nuts version." +
+                                    " java="+ System.getProperty("java.home")+ " as "+System.getProperty("java.version")+
+                                    " urls="+ Arrays.toString(urls)+
+                                    " class-loader="+ cl.getClass().getName()+" as "+cl
+                    )
+            );
+        }
+        return d;
+
+    }
     public static String resolveNutsIdDigest() {
         return resolveNutsIdDigest(
                 new NutsBootId("net.thevpc.nuts", "nuts", NutsBootVersion.parse(Nuts.getVersion())),
