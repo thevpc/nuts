@@ -23,22 +23,22 @@ public class Test13_Color {
                 "--log-info",
                 "--skip-companions");
 
-        testMode(session,NutsTerminalMode.INHERITED,NutsTerminalMode.INHERITED,Result.SUCCESS);
-        testMode(session,NutsTerminalMode.INHERITED,NutsTerminalMode.FORMATTED,Result.SUCCESS);
-        testMode(session,NutsTerminalMode.INHERITED,NutsTerminalMode.FILTERED,Result.SUCCESS);
-        testMode(session,NutsTerminalMode.INHERITED,NutsTerminalMode.ANSI,Result.FAIL);
+//        testMode(session,NutsTerminalMode.INHERITED,NutsTerminalMode.INHERITED,Result.SUCCESS);
+//        testMode(session,NutsTerminalMode.INHERITED,NutsTerminalMode.FORMATTED,Result.SUCCESS);
+//        testMode(session,NutsTerminalMode.INHERITED,NutsTerminalMode.FILTERED,Result.SUCCESS);
+//        testMode(session,NutsTerminalMode.INHERITED,NutsTerminalMode.ANSI,Result.FAIL);
 
-        testMode(session,NutsTerminalMode.FORMATTED,NutsTerminalMode.INHERITED,Result.SUCCESS);
+//        testMode(session,NutsTerminalMode.FORMATTED,NutsTerminalMode.INHERITED,Result.SUCCESS);
         testMode(session,NutsTerminalMode.FORMATTED,NutsTerminalMode.FORMATTED,Result.SUCCESS);
         testMode(session,NutsTerminalMode.FORMATTED,NutsTerminalMode.FILTERED,Result.SUCCESS);
         testMode(session,NutsTerminalMode.FORMATTED,NutsTerminalMode.ANSI,Result.FAIL);
 
-        testMode(session,NutsTerminalMode.FILTERED,NutsTerminalMode.INHERITED,Result.SUCCESS);
+//        testMode(session,NutsTerminalMode.FILTERED,NutsTerminalMode.INHERITED,Result.SUCCESS);
         testMode(session,NutsTerminalMode.FILTERED,NutsTerminalMode.FORMATTED,Result.SUCCESS);
         testMode(session,NutsTerminalMode.FILTERED,NutsTerminalMode.FILTERED,Result.SUCCESS);
         testMode(session,NutsTerminalMode.FILTERED,NutsTerminalMode.ANSI,Result.FAIL);
 
-        testMode(session,NutsTerminalMode.ANSI,NutsTerminalMode.INHERITED,Result.FAIL);
+//        testMode(session,NutsTerminalMode.ANSI,NutsTerminalMode.INHERITED,Result.FAIL);
         testMode(session,NutsTerminalMode.ANSI,NutsTerminalMode.FORMATTED,Result.FAIL);
         testMode(session,NutsTerminalMode.ANSI,NutsTerminalMode.FILTERED,Result.FAIL);
         // How could we create in a save manner an ansi  sys terminal??

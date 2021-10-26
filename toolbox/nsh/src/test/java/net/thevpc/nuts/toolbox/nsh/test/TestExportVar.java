@@ -45,9 +45,7 @@ import java.nio.file.Paths;
 public class TestExportVar {
     @Test
     public void testVars1() {
-        NutsSession ws = Nuts.openWorkspace(
-                "-ZyS",
-                "--verbose", "--workspace", "runtime/test/" + TestUtils.getCallerMethodName());
+        NutsSession ws = TestUtils.openNewTestWorkspace("--verbose");
         NutsPath tempFolder = ws.io().tmp().createTempFolder();
         NutsPath a = tempFolder.resolve("a.nsh");
         NutsPath b = tempFolder.resolve("b.nsh");

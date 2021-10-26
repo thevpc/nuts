@@ -26,52 +26,44 @@
 */
 package net.thevpc.nuts.toolbox.nsh.test;
 
-import net.thevpc.nuts.Nuts;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShell;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.MemResult;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import java.io.File;
-import java.io.IOException;
 
 /**
  *
  * @author thevpc
  */
 public class TestCommands {
-    private static String baseFolder;
 
     @Test
     public void testDirname() {
-        JShell c = new JShell(Nuts.openWorkspace("-y","--verbose","--workspace", baseFolder + "/" + TestUtils.getCallerMethodName()),new String[0]);
+        JShell c = new JShell(TestUtils.openNewTestWorkspace("--verbose"),new String[0]);
         MemResult r = c.executeCommand(new String[]{"dirname", "/", "a", "/a", "/a/"});
         Assertions.assertEquals(
                 "/\n"
                 + ".\n"
                 + "/\n"
-                + "/\n"
-                + "", r.out());
+                + "/", r.out().trim());
         Assertions.assertEquals("", r.err());
     }
 
     @Test
     public void testBasename() {
-        JShell c = new JShell(Nuts.openWorkspace("-y","--verbose","--workspace", baseFolder + "/" + TestUtils.getCallerMethodName()),new String[0]);
+        JShell c = new JShell(TestUtils.openNewTestWorkspace("--verbose"),new String[0]);
         MemResult r = c.executeCommand(new String[]{"basename", "-a", "/", "a", "/a", "/a/"});
         Assertions.assertEquals(
                 "/\n"
                 + "a\n"
                 + "a\n"
-                + "a\n"
-                + "", r.out());
+                + "a", r.out().trim());
         Assertions.assertEquals("", r.err());
     }
 
     @Test
     public void testEnv() {
-        JShell c = new JShell(Nuts.openWorkspace("-y","--verbose","--workspace", baseFolder + "/" + TestUtils.getCallerMethodName()),new String[0]);
+        JShell c = new JShell(TestUtils.openNewTestWorkspace("--verbose"),new String[0]);
         {
             MemResult r = c.executeCommand(new String[]{"env"});
             Assertions.assertTrue(r.out().contains("PWD="));
@@ -86,7 +78,7 @@ public class TestCommands {
 
     @Test
     public void testCheck() {
-        JShell c = new JShell(Nuts.openWorkspace("-y","--workspace", baseFolder + "/" + TestUtils.getCallerMethodName()),new String[0]);
+        JShell c = new JShell(TestUtils.openNewTestWorkspace(),new String[0]);
         {
             MemResult r = c.executeCommand(new String[]{"test", "1", "-lt", "2"});
             Assertions.assertEquals("", r.out());
@@ -97,11 +89,5 @@ public class TestCommands {
             Assertions.assertEquals("", r.out());
             Assertions.assertEquals("", r.err());
         }
-    }
-    @BeforeAll
-    public static void setUpClass() throws IOException {
-        baseFolder = new File("./runtime/test/" + TestUtils.getCallerClassSimpleName()).getCanonicalFile().getPath();
-        TestUtils.delete(null,new File(baseFolder));
-        TestUtils.println("####### RUNNING TEST @ "+ TestUtils.getCallerClassSimpleName());
     }
 }

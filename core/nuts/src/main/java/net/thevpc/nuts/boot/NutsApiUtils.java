@@ -65,14 +65,15 @@ public class NutsApiUtils {
         String d = resolveNutsIdDigest();
         if (d == null) {
             ClassLoader cl = Thread.currentThread().getContextClassLoader();
-            URL[] urls = PrivateNutsUtilClassLoader.resolveClasspathURLs(cl);
+            URL[] urls = PrivateNutsUtilClassLoader.resolveClasspathURLs(cl,true);
             throw new NutsBootException(
                     NutsMessage.plain(
                             "unable to detect nuts digest. Most likely you are missing valid compilation of nuts." +
-                                    " 'pom.properties' could not be resolved and hence, we are unable to resolve nuts version." +
-                                    " java="+ System.getProperty("java.home")+ " as "+System.getProperty("java.version")+
-                                    " urls="+ Arrays.toString(urls)+
-                                    " class-loader="+ cl.getClass().getName()+" as "+cl
+                                    "\n\t 'pom.properties' could not be resolved and hence, we are unable to resolve nuts version." +
+                                    "\n\t java="+ System.getProperty("java.home")+ " as "+System.getProperty("java.version")+
+                                    "\n\t class-path="+ System.getProperty("java.class.path")+
+                                    "\n\t urls="+ Arrays.toString(urls)+
+                                    "\n\t class-loader="+ cl.getClass().getName()+" as "+cl
                     )
             );
         }
@@ -82,7 +83,7 @@ public class NutsApiUtils {
     public static String resolveNutsIdDigest() {
         return resolveNutsIdDigest(
                 new NutsBootId("net.thevpc.nuts", "nuts", NutsBootVersion.parse(Nuts.getVersion())),
-                PrivateNutsUtilClassLoader.resolveClasspathURLs(Thread.currentThread().getContextClassLoader())
+                PrivateNutsUtilClassLoader.resolveClasspathURLs(Thread.currentThread().getContextClassLoader(),true)
         );
     }
 

@@ -6,11 +6,13 @@
 package net.thevpc.nuts.toolbox.nsh.test;
 
 import net.thevpc.nuts.Nuts;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsWorkspace;
 
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.FileVisitor;
 import java.nio.file.Files;
@@ -116,11 +118,120 @@ public class TestUtils {
         }
     }
 
-    public static String getCallerSimpleClasMethod(int index) {
+    public static String getCallerSimpleClassMethod(int index) {
         StackTraceElement i = getCallerStackTraceElement0(3 + index);
         String cn = i.getClassName();
         String m = i.getClassName();
         return cn + "." + m;
+    }
+
+    public static File getTestFolder() {
+        String test_id = TestUtils.getCallerMethodId(2);
+        try {
+            return new File("./runtime/test/" + test_id).getCanonicalFile();
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
+    }
+
+    public static Path locateFolder(String a) {
+        String test_id = TestUtils.getCallerMethodId(1);
+        File path;
+        try {
+            path = new File("./runtime/test/" + test_id+"/"+a).getCanonicalFile();
+            return path.toPath();
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
+    }
+    public static Path initFolder(String a) {
+        String test_id = TestUtils.getCallerMethodId(1);
+        File path;
+        try {
+            path = new File("./runtime/test/" + test_id+"/"+a).getCanonicalFile();
+            delete(null, path);
+            return path.toPath();
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
+    }
+
+    public static NutsSession openNewTestWorkspace(String... args) {
+        return openOrReOpenTestWorkspace(true,false,args);
+    }
+    public static NutsSession openExistingTestWorkspace(String... args) {
+        return openOrReOpenTestWorkspace(false,false,args);
+    }
+    public static NutsSession runNewTestWorkspace(String... args) {
+        return openOrReOpenTestWorkspace(true,true,args);
+    }
+    public static NutsSession runExistingTestWorkspace(String... args) {
+        return openOrReOpenTestWorkspace(false,true,args);
+    }
+
+    public static File getTestBaseFolder() {
+        String test_id = TestUtils.getCallerMethodId(1);
+        File path;
+        try {
+            return new File("./runtime/test/" + test_id).getCanonicalFile();
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
+    }
+
+    private static NutsSession openOrReOpenTestWorkspace(boolean deleteFolder, boolean run,String... args) {
+        String test_id = TestUtils.getCallerMethodId(2);
+        File path;
+        try {
+            path = new File("./runtime/test/" + test_id).getCanonicalFile();
+            if(deleteFolder) {
+                delete(null, path);
+            }
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
+        List<String> argsList=new ArrayList<>();
+        //create a new workspace for each new test case
+        argsList.add("--workspace="+path.getPath());
+        //workspace will contain all the data (do not consider system XDG layout)
+        //this is not mandatory though, as we are creating a path based workspace
+        argsList.add("--standalone");
+        //disable creation of desktop icons
+        argsList.add("---system-desktop-launcher=unsupported");
+        //disable creation of desktop menus
+        argsList.add("---system-menu-launcher=unsupported");
+        //disable creation of any icons
+        argsList.add("---system-custom-launcher=unsupported");
+        //disable creating of bashrc, etc...
+        argsList.add("--!switch");
+        //disable auto-detection of java
+        argsList.add("---!init-platforms");
+        //disable auto-creation of nuts scripts
+        argsList.add("---!init-scripts");
+        //disable auto-creation of nuts icons and menus
+        argsList.add("---!init-launchers");
+        //disable progress indicator
+        argsList.add("---!progress");
+        //disable interactive mode and 'always confirm'
+        argsList.add("--yes");
+//        argsList.add("--embedded");
+        argsList.addAll(Arrays.asList(args));
+        if(run){
+            return Nuts.runWorkspace(argsList.toArray(new String[0]));
+        }else {
+            return Nuts.openWorkspace(argsList.toArray(new String[0]));
+        }
+    }
+
+    public static File getAndResetTestFolder() {
+        String test_id = TestUtils.getCallerMethodId(2);
+        try {
+            File path = new File("./runtime/test/" + test_id).getCanonicalFile();
+            delete(null, path);
+            return path;
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
     }
 
     public static String getCallerMethodId() {

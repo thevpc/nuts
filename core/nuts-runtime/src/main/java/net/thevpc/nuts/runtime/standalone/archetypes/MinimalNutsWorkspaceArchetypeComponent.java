@@ -81,7 +81,7 @@ public class MinimalNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
         } else {
             NutsWorkspaceUtils.of(session).installCurrentJVM();
         }
-        Boolean initScripts = boot.getCustomBootOption("init-launchers").getBoolean(true, false);
+        Boolean initScripts = boot.getCustomBootOption("init-scripts").getBoolean(true, false);
         Boolean initLaunchers = boot.getCustomBootOption("init-launchers").getBoolean(false, false);
         if (initScripts || initLaunchers) {
             NutsWorkspaceUtils.of(session).installLaunchers(initLaunchers);

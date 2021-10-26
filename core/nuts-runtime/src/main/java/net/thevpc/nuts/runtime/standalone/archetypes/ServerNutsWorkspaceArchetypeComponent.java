@@ -92,7 +92,7 @@ public class ServerNutsWorkspaceArchetypeComponent implements NutsWorkspaceArche
             //at least add current vm
             NutsWorkspaceUtils.of(session).installCurrentJVM();
         }
-        Boolean initScripts = boot.getCustomBootOption("init-launchers").getBoolean(true, false);
+        Boolean initScripts = boot.getCustomBootOption("init-scripts").getBoolean(true, false);
         Boolean initLaunchers = boot.getCustomBootOption("init-launchers").getBoolean(true, false);
         if (initScripts || initLaunchers) {
             NutsWorkspaceUtils.of(session).installLaunchers(initLaunchers);

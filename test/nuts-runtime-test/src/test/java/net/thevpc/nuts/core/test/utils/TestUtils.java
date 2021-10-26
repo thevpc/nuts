@@ -211,9 +211,11 @@ public class TestUtils {
         //disable creation of any icons
         argsList.add("---system-custom-launcher=unsupported");
         //disable creating of bashrc, etc...
-        argsList.add("---!switch"); //TODO not yet implemented
+        argsList.add("--!switch");
         //disable auto-detection of java
         argsList.add("---!init-platforms");
+        //disable auto-creation of nuts scripts
+        argsList.add("---!init-scripts");
         //disable auto-creation of nuts icons and menus
         argsList.add("---!init-launchers");
         //disable progress indicator

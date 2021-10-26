@@ -11,6 +11,7 @@
     <modules>
         <module>core/nuts</module>
         <module>core/nuts-runtime</module>
+        <module>test/nuts-runtime-test</module>
 
         <module>lib/nlib-ssh</module>
         <module>ext/next-term</module>
@@ -37,7 +38,6 @@
         <module>toolbox/ndexer</module>
         <module>toolbox/noapi</module>
         <module>toolbox/ntalk-agent</module>
-        <!--##        <module>test/nuts-runtime-test</module>-->
         <!--##        <module>web-toolbox/nwar</module>-->
         <!--##<module>toolbox/nuts-clown</module>-->
         <!--##        <module>nuts-installer</module>-->

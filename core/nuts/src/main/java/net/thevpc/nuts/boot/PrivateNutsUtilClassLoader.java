@@ -4,8 +4,12 @@ import net.thevpc.nuts.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.zip.ZipEntry;
@@ -53,8 +57,26 @@ class PrivateNutsUtilClassLoader {
         return null;
     }
 
-    public static URL[] resolveClasspathURLs(ClassLoader contextClassLoader) {
-        List<URL> all = new ArrayList<>();
+    public static URL[] resolveClasspathURLs(ClassLoader contextClassLoader, boolean includeClassPath) {
+        LinkedHashSet<URL> all = new LinkedHashSet<>();
+        if (includeClassPath) {
+            String classPath = System.getProperty("java.class.path");
+            if (classPath != null) {
+                for (String s : classPath.split(System.getProperty("path.separator"))) {
+                    s = s.trim();
+                    if (s.length() > 0) {
+                        try {
+                            Path pp = Paths.get(s);
+                            if (Files.exists(pp)) {
+                                all.add(pp.toUri().toURL());
+                            }
+                        } catch (MalformedURLException e) {
+                            //e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }
         if (contextClassLoader != null) {
             if (contextClassLoader instanceof URLClassLoader) {
                 all.addAll(Arrays.asList(((URLClassLoader) contextClassLoader).getURLs()));

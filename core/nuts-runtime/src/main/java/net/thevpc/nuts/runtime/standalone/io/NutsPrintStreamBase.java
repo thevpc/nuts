@@ -122,7 +122,6 @@ public abstract class NutsPrintStreamBase implements NutsPrintStream {
     @Override
     public NutsPrintStream printlnf(Object obj) {
         session.formats().object().setValue(obj).println(this);
-        println();
         return this;
     }
 
