@@ -214,6 +214,8 @@ public class TestUtils {
         argsList.add("---!progress");
         //disable interactive mode and 'always confirm'
         argsList.add("--yes");
+        //disable companions
+        argsList.add("--skip-companions");
 //        argsList.add("--embedded");
         argsList.addAll(Arrays.asList(args));
         if(run){

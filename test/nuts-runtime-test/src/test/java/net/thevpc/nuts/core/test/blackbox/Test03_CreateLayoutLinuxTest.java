@@ -20,8 +20,8 @@ import java.util.Map;
  */
 public class Test03_CreateLayoutLinuxTest {
 
-    private static final int NSH_BUILTINS = 34;
-    private static final int NDI_COMPANIONS = 1;
+    private static final int NSH_BUILTINS =0;// 34;
+    private static final int NDI_COMPANIONS = 0;//1;
 
     @BeforeAll
     public static void setUpClass() throws IOException {
@@ -62,13 +62,15 @@ public class Test03_CreateLayoutLinuxTest {
                         "info"
                 ));
 
-        NutsId ndiId = s.search().setInstallStatus(s.filters().installStatus().byInstalled(true)).addId("nsh")
-                .setDistinct(true)
-                .getResultIds().singleton();
-        Assertions.assertTrue(ndiId.getVersion().getValue().startsWith(TestUtils.NUTS_VERSION + "."));
+        if(NDI_COMPANIONS>0) {
+            NutsId ndiId = s.search().setInstallStatus(s.filters().installStatus().byInstalled(true)).addId("nsh")
+                    .setDistinct(true)
+                    .getResultIds().singleton();
+            Assertions.assertTrue(ndiId.getVersion().getValue().startsWith(TestUtils.NUTS_VERSION + "."));
+        }
 
         Assertions.assertEquals(
-                TestUtils.createNamesSet("nsh"),
+                (NDI_COMPANIONS>0)?TestUtils.createNamesSet("nsh"):TestUtils.createNamesSet(),
                 TestUtils.listNamesSet(
                         testBaseFolder.toPath().resolve( "system.config").resolve(NutsConstants.Folders.ID).resolve("net/thevpc/nuts/toolbox").toFile()
                         , File::isDirectory)
@@ -150,12 +152,15 @@ public class Test03_CreateLayoutLinuxTest {
                 //            "--verbose",
                 "--trace",
                 "info"));
-        NutsId ndiId = s2.search().setInstallStatus(s2.filters().installStatus().byInstalled(true)).addId("nsh")
-                .setDistinct(true).getResultIds().singleton();
-        Assertions.assertTrue(ndiId.getVersion().getValue().startsWith(TestUtils.NUTS_VERSION + "."));
+
+        if(NDI_COMPANIONS>0) {
+            NutsId ndiId = s2.search().setInstallStatus(s2.filters().installStatus().byInstalled(true)).addId("nsh")
+                    .setDistinct(true).getResultIds().singleton();
+            Assertions.assertTrue(ndiId.getVersion().getValue().startsWith(TestUtils.NUTS_VERSION + "."));
+        }
 
         Assertions.assertEquals(
-                TestUtils.createNamesSet("nsh"),
+                (NDI_COMPANIONS>0)?TestUtils.createNamesSet("nsh"):TestUtils.createNamesSet(),
                 TestUtils.listNamesSet(new File(base, "system.config/" + NutsConstants.Folders.ID + "/net/thevpc/nuts/toolbox"), File::isDirectory)
         );
         Assertions.assertEquals(

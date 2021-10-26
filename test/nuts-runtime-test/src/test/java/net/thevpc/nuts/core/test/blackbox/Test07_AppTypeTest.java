@@ -27,37 +27,13 @@ public class Test07_AppTypeTest {
                 "--standalone",
                 "--skip-companions"
         );
-        NutsDefinition u = session.search().addId("nsh").getResultDefinitions().required();
+        NutsDefinition u = session.search().addId("org.springframework.boot:spring-boot-cli#2.4.1")
+                .getResultDefinitions().required();
         System.out.println(u.getDescriptor());
         TestUtils.println(u.getId()+":"+(u.getDescriptor().isExecutable() ? "executable" : "non-executable"));
         TestUtils.println(u.getId()+":"+(u.getDescriptor().isApplication() ? "app" : "non-app"));
         Assertions.assertTrue(u.getDescriptor().isExecutable());
-        Assertions.assertTrue(u.getDescriptor().isApplication());
-        u = session.search().addId("nsh").getResultDefinitions().required();
-        TestUtils.println(u.getId()+":"+(u.getDescriptor().isExecutable() ? "executable" : "non-executable"));
-        TestUtils.println(u.getId()+":"+(u.getDescriptor().isApplication() ? "app" : "non-app"));
-        Assertions.assertTrue(u.getDescriptor().isExecutable());
-        Assertions.assertTrue(u.getDescriptor().isApplication());
-    }
-
-    @BeforeAll
-    public static void setUpClass() throws IOException {
-        TestUtils.println("####### RUNNING TEST @ "+ TestUtils.getCallerClassSimpleName());
-    }
-
-    @AfterAll
-    public static void tearUpClass() throws IOException {
-    }
-
-    @BeforeEach
-    public void startup() throws IOException {
-//        Assumptions.assumeTrue(NutsOsFamily.getCurrent()== NutsOsFamily.LINUX);
-        TestUtils.unsetNutsSystemProperties();
-    }
-
-    @AfterEach
-    public void cleanup() {
-        TestUtils.unsetNutsSystemProperties();
+        Assertions.assertTrue(!u.getDescriptor().isApplication());
     }
 
 }
