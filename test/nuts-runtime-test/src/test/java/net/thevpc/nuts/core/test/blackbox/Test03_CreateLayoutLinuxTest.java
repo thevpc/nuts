@@ -84,7 +84,7 @@ public class Test03_CreateLayoutLinuxTest {
                         , x -> x.getName().endsWith(NutsConstants.Files.NUTS_COMMAND_FILE_EXTENSION)).size()
         );
         Assertions.assertEquals(
-                NDI_COMPANIONS + 2,
+                (NDI_COMPANIONS>0)?(NDI_COMPANIONS + 2):0,
                 TestUtils.listNamesSet(
                         testBaseFolder.toPath().resolve( "system.apps").resolve(NutsConstants.Folders.ID)
                         .resolve( "net/thevpc/nuts/nuts/" + TestUtils.NUTS_VERSION + "/bin")
@@ -168,7 +168,7 @@ public class Test03_CreateLayoutLinuxTest {
                 TestUtils.listNamesSet(new File(base, "system.apps/" + NutsConstants.Folders.ID + "/net/thevpc/nuts/nuts/" + TestUtils.NUTS_VERSION + "/cmd"), x -> x.getName().endsWith(NutsConstants.Files.NUTS_COMMAND_FILE_EXTENSION)).size()
         );
         Assertions.assertEquals(
-                NDI_COMPANIONS + 2,
+                (NDI_COMPANIONS>0)?(NDI_COMPANIONS + 2):0,
                 TestUtils.listNamesSet(new File(base, "system.apps/" + NutsConstants.Folders.ID + "/net/thevpc/nuts/nuts/" + TestUtils.NUTS_VERSION + "/bin"), x -> x.isFile() && !x.getName().startsWith(".")).size()
         );
         Assertions.assertEquals(
@@ -192,15 +192,17 @@ public class Test03_CreateLayoutLinuxTest {
         TestUtils.println("Deleting " + base);
         CoreIOUtils.delete(null, base);
         NutsSession s = TestUtils.openNewTestWorkspace("--embedded");
-        NutsId nshId = null;
-        try {
-            nshId = s.search().setInstallStatus(s.filters().installStatus().byInstalled(true)).addId("nsh")
-                    .setDistinct(true).getResultIds().singleton();
-        } catch (Exception ex) {
-            nshId = s.search().setInstallStatus(s.filters().installStatus().byInstalled(true)).addId("nsh")
-                    .setDistinct(true).getResultIds().singleton();
+        if(NDI_COMPANIONS>0) {
+            NutsId nshId = null;
+            try {
+                nshId = s.search().setInstallStatus(s.filters().installStatus().byInstalled(true)).addId("nsh")
+                        .setDistinct(true).getResultIds().singleton();
+            } catch (Exception ex) {
+                nshId = s.search().setInstallStatus(s.filters().installStatus().byInstalled(true)).addId("nsh")
+                        .setDistinct(true).getResultIds().singleton();
+            }
+            Assertions.assertTrue(nshId.getVersion().getValue().startsWith(TestUtils.NUTS_VERSION + "."));
         }
-        Assertions.assertTrue(nshId.getVersion().getValue().startsWith(TestUtils.NUTS_VERSION + "."));
         String c = s.locations().getStoreLocation(NutsStoreLocation.CONFIG);
         TestUtils.println(c);
         TestUtils.println(new File(base, "config").getPath());
@@ -209,7 +211,7 @@ public class Test03_CreateLayoutLinuxTest {
         }
 
         Assertions.assertEquals(
-                TestUtils.createNamesSet("nsh"),
+                (NDI_COMPANIONS>0)?TestUtils.createNamesSet("nsh"):TestUtils.createNamesSet(),
                 TestUtils.listNamesSet(new File(base, "/config/" + NutsConstants.Folders.ID + "/net/thevpc/nuts/toolbox"), File::isDirectory)
         );
         Assertions.assertEquals(
@@ -217,7 +219,7 @@ public class Test03_CreateLayoutLinuxTest {
                 TestUtils.listNamesSet(new File(base, "apps/" + NutsConstants.Folders.ID + "/net/thevpc/nuts/nuts/" + TestUtils.NUTS_VERSION + "/cmd"), x -> x.getName().endsWith(NutsConstants.Files.NUTS_COMMAND_FILE_EXTENSION)).size()
         );
         Assertions.assertEquals(
-                NDI_COMPANIONS + 2, //2=nuts and nuts-term
+                (NDI_COMPANIONS>0)?(NDI_COMPANIONS + 2):0, //2=nuts and nuts-term
                 TestUtils.listNamesSet(new File(base, "apps/" + NutsConstants.Folders.ID + "/net/thevpc/nuts/nuts/" + TestUtils.NUTS_VERSION + "/bin"), x -> x.isFile() && !x.getName().startsWith(".")).size()
         );
         Assertions.assertEquals(

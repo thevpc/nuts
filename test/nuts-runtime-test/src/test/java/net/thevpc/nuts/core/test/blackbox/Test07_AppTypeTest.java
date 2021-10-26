@@ -32,7 +32,7 @@ public class Test07_AppTypeTest {
         System.out.println(u.getDescriptor());
         TestUtils.println(u.getId()+":"+(u.getDescriptor().isExecutable() ? "executable" : "non-executable"));
         TestUtils.println(u.getId()+":"+(u.getDescriptor().isApplication() ? "app" : "non-app"));
-        Assertions.assertTrue(u.getDescriptor().isExecutable());
+        Assertions.assertTrue(!u.getDescriptor().isExecutable());
         Assertions.assertTrue(!u.getDescriptor().isApplication());
     }
 
