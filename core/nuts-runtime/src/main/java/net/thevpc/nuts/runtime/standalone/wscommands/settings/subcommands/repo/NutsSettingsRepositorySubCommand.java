@@ -17,7 +17,7 @@ import java.util.Arrays;
 public class NutsSettingsRepositorySubCommand extends AbstractNutsSettingsSubCommand {
 
     public static RepoInfo repoInfo(NutsRepository x, boolean tree, NutsSession session) {
-        return new RepoInfo(x.getName(), x.config().getType(), x.config().getLocation(true), x.config().isEnabled(),
+        return new RepoInfo(x.getName(), x.config().getType(), x.config().getLocation(true), x.config().isEnabled()?RepoStatus.enabled : RepoStatus.disabled,
                  tree ? Arrays.stream(x.config().setSession(session).getMirrors()).map(e -> repoInfo(e, tree, session)).toArray(RepoInfo[]::new) : null
         );
     }
@@ -355,15 +355,19 @@ public class NutsSettingsRepositorySubCommand extends AbstractNutsSettingsSubCom
         }
     }
 
+    public enum RepoStatus {
+        enabled,
+        disabled,
+    }
     public static class RepoInfo {
 
         String name;
         String type;
         String location;
-        boolean enabled;
+        RepoStatus enabled;
         RepoInfo[] mirrors;
 
-        public RepoInfo(String name, String type, String location, boolean enabled, RepoInfo[] mirrors) {
+        public RepoInfo(String name, String type, String location, RepoStatus enabled, RepoInfo[] mirrors) {
             this.name = name;
             this.type = type;
             this.location = location;
@@ -402,11 +406,11 @@ public class NutsSettingsRepositorySubCommand extends AbstractNutsSettingsSubCom
             this.location = location;
         }
 
-        public boolean isEnabled() {
+        public RepoStatus getEnabled() {
             return enabled;
         }
 
-        public void setEnabled(boolean enabled) {
+        public void setEnabled(RepoStatus enabled) {
             this.enabled = enabled;
         }
     }
