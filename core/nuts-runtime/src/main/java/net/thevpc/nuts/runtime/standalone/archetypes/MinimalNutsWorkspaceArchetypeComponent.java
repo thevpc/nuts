@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,13 +24,16 @@
 package net.thevpc.nuts.runtime.standalone.archetypes;
 
 import java.util.HashMap;
+
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.config.DefaultNutsWorkspaceConfigManager;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsSingleton;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 import net.thevpc.nuts.spi.NutsWorkspaceArchetypeComponent;
 
 import java.util.Map;
+
 import net.thevpc.nuts.runtime.core.repos.NutsRepositorySelector;
 
 /**
@@ -38,6 +41,7 @@ import net.thevpc.nuts.runtime.core.repos.NutsRepositorySelector;
  */
 @NutsSingleton
 public class MinimalNutsWorkspaceArchetypeComponent implements NutsWorkspaceArchetypeComponent {
+    private NutsLogger LOG;
 
     @Override
     public String getName() {
@@ -45,12 +49,8 @@ public class MinimalNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
     }
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext<String> criteria) {
-        return DEFAULT_SUPPORT + 1;
-    }
-
-    @Override
     public void initializeWorkspace(NutsSession session) {
+        this.LOG = session.log().of(MinimalNutsWorkspaceArchetypeComponent.class);
 //        NutsWorkspace ws = session.getWorkspace();
 
         DefaultNutsWorkspaceConfigManager rm = (DefaultNutsWorkspaceConfigManager) session.config();
@@ -70,5 +70,33 @@ public class MinimalNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
 //            }
 //        }
         uu.run();
+    }
+
+    @Override
+    public void startWorkspace(NutsSession session) {
+        NutsBootManager boot = session.boot();
+        boolean initializeAllPlatforms = boot.getCustomBootOption("init-platforms").getBoolean(false, false);
+        if (initializeAllPlatforms && boot.getCustomBootOption("init-java").getBoolean(false, false)) {
+            NutsWorkspaceUtils.of(session).installAllJVM();
+        } else {
+            NutsWorkspaceUtils.of(session).installCurrentJVM();
+        }
+        Boolean initScripts = boot.getCustomBootOption("init-launchers").getBoolean(true, false);
+        Boolean initLaunchers = boot.getCustomBootOption("init-launchers").getBoolean(false, false);
+        if (initScripts || initLaunchers) {
+            NutsWorkspaceUtils.of(session).installLaunchers(initLaunchers);
+        }
+        Boolean skipCompanions = session.boot().getBootOptions().getSkipCompanions();
+        if (skipCompanions == null) {
+            skipCompanions = true;
+        }
+        if (!skipCompanions) {
+            NutsWorkspaceUtils.of(session).installCompanions();
+        }
+    }
+
+    @Override
+    public int getSupportLevel(NutsSupportLevelContext<String> criteria) {
+        return DEFAULT_SUPPORT + 1;
     }
 }
