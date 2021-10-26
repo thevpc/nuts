@@ -42,7 +42,7 @@ public class Test07_ColorfulStream {
 
     private static void writeColors(String s) {
         System.out.println(s);
-        NutsSession ws = TestUtils.openNewTestWorkspace();
+        NutsSession ws = TestUtils.openNewTestWorkspace("--verbose");
         {
             NutsText node = new DefaultNutsTextNodeParser(ws).parse(new StringReader(s));
             NutsTextNodeWriter w = new NutsTextNodeWriterRenderer(ws.io().stdout(), AnsiUnixTermPrintRenderer.ANSI_RENDERER, ws)

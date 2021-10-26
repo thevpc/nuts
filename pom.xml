@@ -11,11 +11,12 @@
     <modules>
         <module>core/nuts</module>
         <module>core/nuts-runtime</module>
-        <module>test/nuts-runtime-test</module>
 
         <module>lib/nlib-ssh</module>
         <module>ext/next-term</module>
         <module>toolbox/nsh</module>
+
+        <module>test/nuts-runtime-test</module>
 
         <module>lib/nlib-talk-agent</module>
         <module>lib/nlib-md</module>
