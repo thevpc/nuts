@@ -651,7 +651,7 @@ public class NutsWorkspaceUtils {
                 config.save();
             }
         } catch (Exception ex) {
-            LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).error(ex)
+            _LOG(session).with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).error(ex)
                     .log(NutsMessage.jstyle("unable to resolve default JRE/JDK locations : {0}", ex));
             if (session.isPlainTrace()) {
                 NutsPrintStream out = session.out();
@@ -692,7 +692,7 @@ public class NutsWorkspaceUtils {
                 config.save();
             }
         } catch (Exception ex) {
-            LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).error(ex)
+            _LOG(session).with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).error(ex)
                     .log(NutsMessage.jstyle("unable to resolve default JRE/JDK locations : {0}", ex));
             if (session.isPlainTrace()) {
                 NutsPrintStream out = session.out();
@@ -716,7 +716,7 @@ public class NutsWorkspaceUtils {
                             .setCreateMenuShortcut(gui?NutsSupportCondition.SUPPORTED:NutsSupportCondition.NEVER)
             );
         } catch (Exception ex) {
-            LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).error(ex)
+            _LOG(session).with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).error(ex)
                     .log(NutsMessage.jstyle("unable to install desktop launchers : {0}", ex));
             if (session.isPlainTrace()) {
                 NutsPrintStream out = session.out();
@@ -745,7 +745,7 @@ public class NutsWorkspaceUtils {
             session.install().companions().setSession(session.copy().setTrace(session.isTrace() && session.isPlainOut()))
                     .run();
         } catch (Exception ex) {
-            LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).error(ex)
+            _LOG(session).with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).error(ex)
                     .log(NutsMessage.jstyle("unable to install companions : {0}", ex));
             if (session.isPlainTrace()) {
                 NutsPrintStream out = session.out();
