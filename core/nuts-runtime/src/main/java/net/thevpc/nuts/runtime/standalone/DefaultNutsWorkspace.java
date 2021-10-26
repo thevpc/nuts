@@ -569,7 +569,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                         repo.install(desc.getId(), defaultSession(), getRuntimeId());
                     }
                 }
-                configModel.installBootIds(defaultSession());
+                configModel.installBootIds(defaultSession().copy().setConfirm(NutsConfirmationMode.YES));
             } else {
                 bootModel.setFirstBoot(false);
                 uuid = configModel.getStoreModelBoot().getUuid();
