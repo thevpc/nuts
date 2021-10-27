@@ -32,7 +32,7 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
         String repository;
         NutsId id;
         public Result(NutsId nid, String repository,NutsString source) {
-            this.id=nid;
+            this.id=nid.getLongId();
             this.source=source;
             this.repository=repository;
         }

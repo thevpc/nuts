@@ -129,7 +129,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
 
     @Override
     public NutsDescriptor deployImpl(NutsDeployRepositoryCommand command) {
-        return lib.deploy(command, NutsConfirmationMode.YES);
+        return lib.deploy(command, command.getSession().getConfirm());
     }
 
     @Override

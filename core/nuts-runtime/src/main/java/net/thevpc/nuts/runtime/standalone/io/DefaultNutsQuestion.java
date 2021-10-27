@@ -66,7 +66,7 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
             os.flush();
             throw new NutsExecutionException(getSession(), NutsMessage.cstyle(
                     "unable to switch to interactive mode for non plain text output format. "
-                            + "You need to provide default response (-y|-n) for question : " + os
+                            + "You need to provide default response (-y|-n) for question : %s", os
             ), 243);
         }
 
