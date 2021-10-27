@@ -384,7 +384,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
         if (repo.config().getLocation(false) != null) {
             props.put(key(prefix, "location-expanded"), repo.config().getLocation(true));
         }
-        props.put(key(prefix, "deploy-order"), (repo.config().getDeployOrder()));
+        props.put(key(prefix, "deploy-order"), (repo.config().getDeployWeight()));
         props.put(key(prefix, "store-location-strategy"), (repo.config().getStoreLocationStrategy()));
         props.put(key(prefix, "store-location"), getSession().io().path(repo.config().getStoreLocation()));
         for (NutsStoreLocation value : NutsStoreLocation.values()) {

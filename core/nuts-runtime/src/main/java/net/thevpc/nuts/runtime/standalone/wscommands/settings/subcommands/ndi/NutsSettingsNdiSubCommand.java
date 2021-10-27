@@ -394,7 +394,7 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
                 }
 
             } else {
-                session.formats().object(result).println();
+                session.out().printlnf(result);
             }
         }
     }

@@ -136,7 +136,7 @@ public class NCodeMain implements NutsApplication {
                 }
             }
         }
-        NutsFormatManager formats = applicationContext.getSession().formats();
+        NutsPrintStream out = applicationContext.getSession().out();
         if (type != null) {
             if (paths.isEmpty()) {
                 System.err.println("missing location");
@@ -148,7 +148,7 @@ public class NCodeMain implements NutsApplication {
             for (String path : paths) {
                 navigate(SourceFactory.create(new File(path)), new JavaSourceFilter(type, file), new JavaSourceFormatter(),applicationContext.getSession(),results);
             }
-            formats.object(results).println();
+            out.printlnf(results);
         } else if (file != null) {
             if (paths.isEmpty()) {
                 cmdLine.throwError(NutsMessage.cstyle("missing location"));
@@ -158,7 +158,7 @@ public class NCodeMain implements NutsApplication {
             for (String path : paths) {
                 navigate(SourceFactory.create(new File(path)), new PathSourceFilter(file), new PathSourceFormatter(),applicationContext.getSession(),results);
             }
-            formats.object(results).println();
+            out.printlnf(results);
         } else {
             cmdLine.throwError(NutsMessage.cstyle("missing arguments"));
         }

@@ -17,7 +17,7 @@ import java.util.List;
 
 public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeployCommand> implements NutsDeployCommand {
 
-    protected List<NutsId> result;
+    protected List<Result> result;
     protected NutsStreamOrPath content;
     protected Object descriptor;
     protected String sha1;
@@ -26,6 +26,17 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
     protected String toRepository;
     protected String[] parseOptions;
     protected final List<NutsId> ids = new ArrayList<>();
+
+    protected static class Result{
+        NutsString source;
+        String repository;
+        NutsId id;
+        public Result(NutsId nid, String repository,NutsString source) {
+            this.id=nid;
+            this.source=source;
+            this.repository=repository;
+        }
+    }
 
     public AbstractNutsDeployCommand(NutsWorkspace ws) {
         super(ws, "deploy");
@@ -202,7 +213,7 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
         if (result == null) {
             run();
         }
-        return result.toArray(new NutsId[0]);
+        return result.stream().map(x->x.id).toArray(NutsId[]::new);
     }
 
     @Override
@@ -210,20 +221,20 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
         result = null;
     }
 
-    protected void addResult(NutsId nid) {
+    protected void addResult(NutsId nid,String repository,NutsString source) {
         checkSession();
         NutsWorkspace ws = getSession().getWorkspace();
         if (result == null) {
             result = new ArrayList<>();
         }
         checkSession();
-        result.add(nid);
-        if (getSession().isPlainTrace()) {
-            getSession().getTerminal().out().resetLine().printf("Nuts %s deployed successfully to %s%n",
-                    nid,
-                    session.text().ofStyled(toRepository == null ? "<default-repo>" : toRepository, NutsTextStyle.primary3())
-            );
-        }
+        result.add(new Result(nid,repository,source));
+//        if (getSession().isPlainTrace()) {
+//            getSession().getTerminal().out().resetLine().printf("Nuts %s deployed successfully to %s%n",
+//                    nid,
+//                    session.text().ofStyled(toRepository == null ? "<default-repo>" : toRepository, NutsTextStyle.primary3())
+//            );
+//        }
     }
 
     @Override

@@ -199,8 +199,7 @@ public class NDerbyMain implements NdbSupport {
                     }
                 }
             } else {
-                session.formats().object(DerbyUtils.getRunningInstances(appContext))
-                        .println();
+                session.out().printlnf(DerbyUtils.getRunningInstances(appContext));
             }
         }
     }
@@ -217,7 +216,7 @@ public class NDerbyMain implements NdbSupport {
         }
         if (args.isExecMode()) {
             DerbyService srv = new DerbyService(appContext);
-            appContext.getSession().formats().object(srv.findVersions()).println();
+            appContext.getSession().out().printlnf(srv.findVersions());
         }
     }
 

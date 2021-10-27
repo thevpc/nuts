@@ -38,14 +38,13 @@ import java.util.stream.Collectors;
 public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
 
     private static final long serialVersionUID = 1L;
-
+    private final String solver;
     private NutsId id;
     //    private String alternative;
     private NutsId[] parents;
     private String packaging;
-    private final String solver;
-    private NutsArtifactCall executor;
-    private NutsArtifactCall installer;
+    private final NutsArtifactCall executor;
+    private final NutsArtifactCall installer;
     /**
      * short description
      */
@@ -57,12 +56,12 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
     private String[] icons;
     private String[] categories;
     private String genericName;
-    private NutsEnvCondition condition;
-    private NutsIdLocation[] locations;
-    private NutsDependency[] dependencies;
-    private NutsDependency[] standardDependencies;
-    private NutsDescriptorProperty[] properties;
-    private Set<NutsDescriptorFlag> flags;
+    private final NutsEnvCondition condition;
+    private final NutsIdLocation[] locations;
+    private final NutsDependency[] dependencies;
+    private final NutsDependency[] standardDependencies;
+    private final NutsDescriptorProperty[] properties;
+    private final Set<NutsDescriptorFlag> flags;
 
     public DefaultNutsDescriptor(NutsDescriptor d, NutsSession session) {
         this(
@@ -100,17 +99,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
                                  NutsSession session) {
         super(session);
         //id can have empty groupId (namely for executors like 'java')
-        if (id == null) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing id"));
-        }
-        if (NutsBlankable.isBlank(id.getArtifactId())) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing artifactId for %s", id));
-        }
-        //NutsWorkspaceUtils.of(session).checkSimpleNameNutsId(id);
-        if (!id.isLongId()) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("id should not have query defined in descriptors : %s",id));
-        }
-        this.id = id;
+        this.id = id == null ? NutsId.of("", session) : id;
 //        this.alternative = NutsUtilStrings.trimToNull(alternative);
         this.packaging = NutsUtilStrings.trimToNull(packaging);
         this.parents = parents == null ? new NutsId[0] : new NutsId[parents.length];
@@ -120,15 +109,15 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
         this.description = NutsUtilStrings.trimToNull(description);
         this.name = NutsUtilStrings.trimToNull(name);
         this.genericName = NutsUtilStrings.trimToNull(genericName);
-        this.icons =icons==null?new String[0] :
-                Arrays.stream(icons).map(x->x==null?"":x.trim()).filter(x->x.length()>0)
+        this.icons = icons == null ? new String[0] :
+                Arrays.stream(icons).map(x -> x == null ? "" : x.trim()).filter(x -> x.length() > 0)
                         .toArray(String[]::new);
-        this.categories = categories==null?new String[0] :
-                Arrays.stream(categories).map(x->x==null?"":x.trim()).filter(x->x.length()>0)
+        this.categories = categories == null ? new String[0] :
+                Arrays.stream(categories).map(x -> x == null ? "" : x.trim()).filter(x -> x.length() > 0)
                         .toArray(String[]::new);
         this.executor = executor;
         this.installer = installer;
-        this.condition = CoreNutsUtils.trimToBlank(condition,session);
+        this.condition = CoreNutsUtils.trimToBlank(condition, session);
         this.locations = CoreArrayUtils.toArraySet(locations);
         this.dependencies = dependencies == null ? new NutsDependency[0] : new NutsDependency[dependencies.length];
         for (int i = 0; i < this.dependencies.length; i++) {
@@ -144,30 +133,139 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
             }
             this.standardDependencies[i] = standardDependencies[i];
         }
-        if (properties == null || properties.length==0) {
+        if (properties == null || properties.length == 0) {
             this.properties = null;
         } else {
             DefaultNutsProperties p = new DefaultNutsProperties();
             p.addAll(properties);
             this.properties = p.getAll();
         }
-        this.flags=Collections.unmodifiableSet(new LinkedHashSet<>(
-                Arrays.stream(flags==null?new NutsDescriptorFlag[0] : flags)
+        this.flags = Collections.unmodifiableSet(new LinkedHashSet<>(
+                Arrays.stream(flags == null ? new NutsDescriptorFlag[0] : flags)
                         .filter(Objects::nonNull).collect(Collectors.toList())
         ));
-        String solver0 = NutsUtilStrings.trimToNull(solver);
-        this.solver = solver0 == null ? "maven" : solver;
+        this.solver = NutsUtilStrings.trimToNull(solver);
     }
 
-    @Override
-    public String getSolver() {
-        return solver;
+    public boolean isBlank() {
+        if (!NutsBlankable.isBlank(id)) {
+            return false;
+        }
+        if (!NutsBlankable.isBlank(packaging)) {
+            return false;
+        }
+        if (parents != null) {
+            for (NutsId parent : parents) {
+                if (!NutsBlankable.isBlank(parent)) {
+                    return false;
+                }
+            }
+        }
+
+        if (!NutsBlankable.isBlank(description)) {
+            return false;
+        }
+        if (!NutsBlankable.isBlank(name)) {
+            return false;
+        }
+        if (!NutsBlankable.isBlank(genericName)) {
+            return false;
+        }
+        if (this.icons != null) {
+            for (String d : this.icons) {
+                if (!NutsBlankable.isBlank(d)) {
+                    return false;
+                }
+            }
+        }
+        if (this.categories != null) {
+            for (String d : this.categories) {
+                if (!NutsBlankable.isBlank(d)) {
+                    return false;
+                }
+            }
+        }
+
+        if (!NutsBlankable.isBlank(executor)) {
+            return false;
+        }
+        if (!NutsBlankable.isBlank(installer)) {
+            return false;
+        }
+        if (!NutsBlankable.isBlank(condition)) {
+            return false;
+        }
+
+        for (NutsIdLocation d : this.locations) {
+            if (!NutsBlankable.isBlank(d)) {
+                return false;
+            }
+        }
+        if (this.dependencies != null) {
+            for (NutsDependency d : this.dependencies) {
+                if (!NutsBlankable.isBlank(d)) {
+                    return false;
+                }
+            }
+        }
+        if (this.standardDependencies != null) {
+            for (NutsDependency d : this.standardDependencies) {
+                if (!NutsBlankable.isBlank(d)) {
+                    return false;
+                }
+            }
+        }
+        if (properties != null && properties.length > 0) {
+            for (NutsDescriptorProperty property : properties) {
+                if (!NutsBlankable.isBlank(property)) {
+                    return false;
+                }
+            }
+        }
+        if (!flags.isEmpty()) {
+            return false;
+        }
+        return NutsBlankable.isBlank(this.solver);
     }
 
-    @Override
-    public Set<NutsDescriptorFlag> getFlags() {
-        return flags;
+    public boolean isValid() {
+        if (NutsBlankable.isBlank(id)) {
+            return false;
+        }
+        if (NutsBlankable.isBlank(id.getGroupId())) {
+            return false;
+        }
+        if (NutsBlankable.isBlank(id.getArtifactId())) {
+            return false;
+        }
+        if (NutsBlankable.isBlank(id.getVersion())) {
+            return false;
+        }
+        return id.isLongId();
     }
+
+    public void check() {
+        if (NutsBlankable.isBlank(id)) {
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing id"));
+        }
+        if (NutsBlankable.isBlank(id.getGroupId())) {
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing groupId"));
+        }
+        if (NutsBlankable.isBlank(id.getArtifactId())) {
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing artifactId"));
+        }
+        if (NutsBlankable.isBlank(id.getVersion())) {
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing version"));
+        }
+        if (NutsBlankable.isBlank(id.getArtifactId())) {
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing artifactId for %s", id));
+        }
+        //NutsWorkspaceUtils.of(session).checkSimpleNameNutsId(id);
+        if (!id.isLongId()) {
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("id should not have query defined in descriptors : %s", id));
+        }
+    }
+
     @Override
     public NutsId getId() {
         return id;
@@ -188,6 +286,11 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
         return getFlags().contains(NutsDescriptorFlag.APP);
     }
 
+    @Override
+    public Set<NutsDescriptorFlag> getFlags() {
+        return flags;
+    }
+
     //    @Override
 //    public String getExt() {
 //        return ext;
@@ -198,6 +301,11 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
     }
 
     @Override
+    public String getSolver() {
+        return solver;
+    }
+
+    @Override
     public NutsEnvCondition getCondition() {
         return condition;
     }
@@ -205,6 +313,21 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public String[] getIcons() {
+        return icons;
+    }
+
+    @Override
+    public String getGenericName() {
+        return genericName;
+    }
+
+    @Override
+    public String[] getCategories() {
+        return categories;
     }
 
     @Override
@@ -238,38 +361,23 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
     }
 
     @Override
-    public NutsDescriptorProperty getProperty(String name) {
-        if(properties==null){
-            return null;
-        }
-        return Arrays.stream(properties).filter(x->x.getName().equals(name)).findFirst()
-                .orElse(null);
-    }
-
-    @Override
-    public String getPropertyValue(String name) {
-        NutsDescriptorProperty p=getProperty(name);
-        return p==null?null:p.getValue();
-    }
-
-    @Override
     public NutsDescriptorProperty[] getProperties() {
         return properties == null ? new NutsDescriptorProperty[0] : properties;
     }
 
     @Override
-    public String[] getIcons() {
-        return icons;
+    public NutsDescriptorProperty getProperty(String name) {
+        if (properties == null) {
+            return null;
+        }
+        return Arrays.stream(properties).filter(x -> x.getName().equals(name)).findFirst()
+                .orElse(null);
     }
 
     @Override
-    public String[] getCategories() {
-        return categories;
-    }
-
-    @Override
-    public String getGenericName() {
-        return genericName;
+    public String getPropertyValue(String name) {
+        NutsDescriptorProperty p = getProperty(name);
+        return p == null ? null : p.getValue();
     }
 
     @Override
@@ -277,9 +385,9 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
 
         int result = Objects.hash(id, /*alternative,*/ packaging,
                 //                ext,
-                executor, installer, name, description,genericName,condition,flags,
+                executor, installer, name, description, genericName, condition, flags,
                 solver
-                );
+        );
         result = 31 * result + Arrays.hashCode(categories);
         result = 31 * result + Arrays.hashCode(properties);
         result = 31 * result + Arrays.hashCode(icons);
@@ -299,7 +407,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
             return false;
         }
         DefaultNutsDescriptor that = (DefaultNutsDescriptor) o;
-        return  Objects.equals(id, that.id)
+        return Objects.equals(id, that.id)
 //                && Objects.equals(alternative, that.alternative)
                 && Arrays.equals(parents, that.parents)
                 && Objects.equals(solver, that.solver)

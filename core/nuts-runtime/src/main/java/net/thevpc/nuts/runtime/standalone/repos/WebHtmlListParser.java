@@ -16,14 +16,14 @@ public class WebHtmlListParser {
         EXPECT_HREF,
     }
 
-    public static void main(String[] args) {
-        try {
-            System.out.println(new WebHtmlListParser().parse(new URL("http://thevpc.net/maven/net/thevpc/nuts/nuts/").openStream()));
-//            System.out.println(new WebHtmlListParser().parse(new URL("http://thevpc.net/maven/net/thevpc/nuts/nuts/0.8.1/").openStream()));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+//    public static void main(String[] args) {
+//        try {
+//            System.out.println(new WebHtmlListParser().parse(new URL("http://thevpc.net/maven/net/thevpc/nuts/nuts/").openStream()));
+////            System.out.println(new WebHtmlListParser().parse(new URL("http://thevpc.net/maven/net/thevpc/nuts/nuts/0.8.1/").openStream()));
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     public List<String> parse(InputStream html){
         try {

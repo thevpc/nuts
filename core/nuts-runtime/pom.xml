@@ -23,13 +23,14 @@
             classpath://net/thevpc/nuts/runtime/nuts.png
             classpath://net/thevpc/nuts/runtime/nuts.ico
         </nuts.icons>
-        <dependencies.org.fusesource.jansi:jansi.os>windows</dependencies.org.fusesource.jansi:jansi.os>
-        <dependencies.com.github.vatbub:mslinks.os>windows</dependencies.com.github.vatbub:mslinks.os>
+        <nuts.windows-os-dependencies>
+            org.fusesource.jansi:jansi
+            com.github.vatbub:mslinks
+        </nuts.windows-os-dependencies>
         <nuts.repositories>
             ~/.m2/repository
             https://repo.maven.apache.org/maven2/
         </nuts.repositories>
-
     </properties>
     <scm>
         <connection>scm:git:git://github.com/thevpc/nuts.git</connection>

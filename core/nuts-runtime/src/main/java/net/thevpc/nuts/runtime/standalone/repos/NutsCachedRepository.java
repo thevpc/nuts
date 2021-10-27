@@ -53,7 +53,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
     protected final NutsRepositoryFolderHelper cache;
     private final NutsRepositoryMirroringHelper mirroring;
 
-    public NutsCachedRepository(NutsAddRepositoryOptions options, NutsSession session, NutsRepository parent, int speed, boolean supportedMirroring, String repositoryType) {
+    public NutsCachedRepository(NutsAddRepositoryOptions options, NutsSession session, NutsRepository parent, NutsSpeedQualifier speed, boolean supportedMirroring, String repositoryType) {
         super(options, session, parent, speed, supportedMirroring, repositoryType);
         cache = new NutsRepositoryFolderHelper(this, session, Paths.get(config().setSession(session).getStoreLocation(NutsStoreLocation.CACHE)), true);
         lib = new NutsRepositoryFolderHelper(this, session, Paths.get(config().setSession(session).getStoreLocation(NutsStoreLocation.LIB)), false);

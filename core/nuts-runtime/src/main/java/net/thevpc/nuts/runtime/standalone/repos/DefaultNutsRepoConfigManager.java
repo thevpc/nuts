@@ -35,13 +35,13 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
 //    }
 
     @Override
-    public int getDeployOrder() {
+    public int getDeployWeight() {
         checkSession();
-        return getModel().getDeployOrder(session);
+        return getModel().getDeployWeight(session);
     }
 
     @Override
-    public int getSpeed() {
+    public NutsSpeedQualifier getSpeed() {
         checkSession();
         return getModel().getSpeed(session);
     }

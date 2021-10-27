@@ -25,6 +25,7 @@
 package net.thevpc.nuts.runtime.core.model;
 
 import net.thevpc.nuts.NutsArtifactCall;
+import net.thevpc.nuts.NutsBlankable;
 import net.thevpc.nuts.NutsId;
 
 import java.io.Serializable;
@@ -54,6 +55,31 @@ public class DefaultNutsArtifactCall implements NutsArtifactCall, Serializable {
         this.id = other.getId();
         this.arguments = other.getArguments();
         this.properties = other.getProperties();
+    }
+
+    @Override
+    public boolean isBlank() {
+        if(!NutsBlankable.isBlank(id)){
+            return false;
+        }
+        if(arguments!=null) {
+            for (String d : arguments) {
+                if (!NutsBlankable.isBlank(d)) {
+                    return false;
+                }
+            }
+        }
+        if(properties!=null) {
+            for (Map.Entry<String,String> d : properties.entrySet()) {
+                if (!NutsBlankable.isBlank(d.getKey())) {
+                    return false;
+                }
+                if (!NutsBlankable.isBlank(d.getValue())) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     public DefaultNutsArtifactCall(NutsId id) {

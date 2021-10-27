@@ -43,7 +43,7 @@ public interface NutsRepositoryConfigManager {
 
     String getGroups();
 
-    int getSpeed();
+    NutsSpeedQualifier getSpeed();
 
     boolean isTemporary();
 
@@ -70,7 +70,7 @@ public interface NutsRepositoryConfigManager {
 
     NutsRepositoryConfigManager setMirrorEnabled(String repoName, boolean enabled);
 
-    int getDeployOrder();
+    int getDeployWeight();
 
     boolean isEnabled();
 

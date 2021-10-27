@@ -109,7 +109,7 @@ public class DefaultVersionFormat extends DefaultFormatBase<NutsVersionFormat> i
             }
         } else {
             if (isWorkspaceVersion()) {
-                getSession().formats().object(buildProps()).print(out);
+                out.printf(buildProps());
             } else {
                 out.print(
                         getSession().text().ofStyled(

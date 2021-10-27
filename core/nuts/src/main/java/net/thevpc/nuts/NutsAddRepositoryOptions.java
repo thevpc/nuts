@@ -84,7 +84,7 @@ public class NutsAddRepositoryOptions implements Serializable {
     /**
      * repository deploy order
      */
-    private int deployOrder;
+    private int deployWeight;
 
 
     /**
@@ -121,7 +121,7 @@ public class NutsAddRepositoryOptions implements Serializable {
         this.create = other.create;
         this.config = other.config;
         this.temporary = other.temporary;
-        this.deployOrder = other.deployOrder;
+        this.deployWeight = other.deployWeight;
         this.order = other.order;
         this.repositoryModel = other.repositoryModel;
     }
@@ -310,8 +310,8 @@ public class NutsAddRepositoryOptions implements Serializable {
      *
      * @return repository deploy order
      */
-    public int getDeployOrder() {
-        return deployOrder;
+    public int getDeployWeight() {
+        return deployWeight;
     }
 
     /**
@@ -320,8 +320,8 @@ public class NutsAddRepositoryOptions implements Serializable {
      * @param value new value
      * @return {@code this} instance
      */
-    public NutsAddRepositoryOptions setDeployOrder(int value) {
-        this.deployOrder = value;
+    public NutsAddRepositoryOptions setDeployWeight(int value) {
+        this.deployWeight = value;
         return this;
     }
 
@@ -337,7 +337,7 @@ public class NutsAddRepositoryOptions implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(name, location, enabled, failSafe, create,
-                temporary, order, deployOrder, config);
+                temporary, order, deployWeight, config);
     }
 
     @Override
@@ -354,7 +354,7 @@ public class NutsAddRepositoryOptions implements Serializable {
                 && create == that.create
                 && temporary == that.temporary
                 && order == that.order
-                && deployOrder == that.deployOrder
+                && deployWeight == that.deployWeight
                 && Objects.equals(name, that.name)
                 && Objects.equals(location, that.location)
                 && Objects.equals(config, that.config);
@@ -369,7 +369,7 @@ public class NutsAddRepositoryOptions implements Serializable {
                 + ", failSafe=" + failSafe
                 + ", create=" + create
                 + ", temporary=" + temporary
-                + ", deployOrder=" + deployOrder
+                + ", deployOrder=" + deployWeight
                 + ", order=" + order
                 + ", config=" + config
                 + '}';

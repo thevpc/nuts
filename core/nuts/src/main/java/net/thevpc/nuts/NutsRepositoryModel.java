@@ -59,8 +59,8 @@ public interface NutsRepositoryModel {
         return MIRRORING | LIB | CACHE;
     }
 
-    default int getSpeed() {
-        return NutsRepository.SPEED_FAST;
+    default NutsSpeedQualifier getSpeed() {
+        return NutsSpeedQualifier.NORMAL;
     }
 
     default String getRepositoryType() {

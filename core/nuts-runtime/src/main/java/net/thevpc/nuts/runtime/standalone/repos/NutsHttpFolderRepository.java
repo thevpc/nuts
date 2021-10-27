@@ -71,7 +71,7 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
     };
 
     public NutsHttpFolderRepository(NutsAddRepositoryOptions options, NutsSession session, NutsRepository parentRepository) {
-        super(options, session, parentRepository, SPEED_SLOW, false, NutsConstants.RepoTypes.NUTS);
+        super(options, session, parentRepository, NutsSpeedQualifier.SLOW, false, NutsConstants.RepoTypes.NUTS);
         LOG = session.log().of(NutsHttpFolderRepository.class);
     }
 

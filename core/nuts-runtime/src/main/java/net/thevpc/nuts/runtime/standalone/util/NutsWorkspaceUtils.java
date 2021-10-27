@@ -259,7 +259,6 @@ public class NutsWorkspaceUtils {
                     && (fmode == NutsRepositorySupportedAction.SEARCH ? repository.isAvailable() : repository.isSupportedDeploy())
                     && repoSPI(repository).isAcceptFetchMode(mode, session)
                     && (repositoryFilter == null || repositoryFilter.acceptRepository(repository))) {
-                int t = 0;
                 int d = 0;
                 if (fmode == NutsRepositorySupportedAction.DEPLOY) {
                     try {
@@ -269,13 +268,14 @@ public class NutsWorkspaceUtils {
                                 .log(NutsMessage.jstyle("unable to resolve support deploy level for : {0}", repository.getName()));
                     }
                 }
+                NutsSpeedQualifier t = NutsSpeedQualifier.NORMAL;
                 try {
                     t = NutsRepositoryUtils.getSupportSpeedLevel(repository, fmode, id, mode, session.isTransitive(), session);
                 } catch (Exception ex) {
                     _LOGOP(session).level(Level.FINE).error(ex)
                             .log(NutsMessage.jstyle("unable to resolve support speed level for : {0}", repository.getName()));
                 }
-                if (t > 0) {
+                if (t!=NutsSpeedQualifier.UNAVAILABLE) {
                     repos2.add(new RepoAndLevel(repository, d, t, postComp));
                 }
             }
@@ -500,25 +500,25 @@ public class NutsWorkspaceUtils {
     private static class RepoAndLevel implements Comparable<RepoAndLevel> {
 
         NutsRepository r;
-        int deployOrder;
-        int speedOrder;
+        int deployWeight;
+        NutsSpeedQualifier speed;
         Comparator<NutsRepository> postComp;
 
-        public RepoAndLevel(NutsRepository r, int deployOrder, int speedOrder, Comparator<NutsRepository> postComp) {
+        public RepoAndLevel(NutsRepository r, int deployWeight, NutsSpeedQualifier speed, Comparator<NutsRepository> postComp) {
             super();
             this.r = r;
-            this.deployOrder = deployOrder;
-            this.speedOrder = speedOrder;
+            this.deployWeight = deployWeight;
+            this.speed = speed;
             this.postComp = postComp;
         }
 
         @Override
         public int compareTo(RepoAndLevel o2) {
-            int x = Integer.compare(this.deployOrder, o2.deployOrder);
+            int x = Integer.compare(this.deployWeight, o2.deployWeight);
             if (x != 0) {
                 return x;
             }
-            x = Integer.compare(o2.speedOrder, this.speedOrder);
+            x = Integer.compare(o2.speed.ordinal(), this.speed.ordinal());
             if (x != 0) {
                 return x;
             }

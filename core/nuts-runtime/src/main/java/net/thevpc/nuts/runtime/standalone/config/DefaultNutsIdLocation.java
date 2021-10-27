@@ -26,6 +26,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.config;
 
+import net.thevpc.nuts.NutsBlankable;
 import net.thevpc.nuts.NutsIdLocation;
 
 import java.util.Objects;
@@ -54,6 +55,20 @@ public class DefaultNutsIdLocation implements NutsIdLocation {
     @Override
     public String getRegion() {
         return region;
+    }
+
+    @Override
+    public boolean isBlank() {
+        if(!NutsBlankable.isBlank(url)){
+            return false;
+        }
+        if(!NutsBlankable.isBlank(classifier)){
+            return false;
+        }
+        if(!NutsBlankable.isBlank(region)){
+            return false;
+        }
+        return true;
     }
 
     @Override

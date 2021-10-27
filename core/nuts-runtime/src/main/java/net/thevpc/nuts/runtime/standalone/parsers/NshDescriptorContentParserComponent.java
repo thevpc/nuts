@@ -64,11 +64,21 @@ public class NshDescriptorContentParserComponent implements NutsDescriptorConten
     }
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext<Object> criteria) {
+    public int getSupportLevel(NutsSupportLevelContext<NutsDescriptorContentParserContext> criteria) {
         if(NSH==null){
             NSH=criteria.getSession().id().parser().parse("nsh");
         }
-        return DEFAULT_SUPPORT;
+        String e = NutsUtilStrings.trim(criteria.getConstraints().getFileExtension());
+        switch (e){
+            case "":
+            case "sh":
+            case "nsh":
+            case "bash":
+            {
+                return DEFAULT_SUPPORT;
+            }
+        }
+        return NO_SUPPORT;
     }
 
     private static String removeBashComment(String str) {

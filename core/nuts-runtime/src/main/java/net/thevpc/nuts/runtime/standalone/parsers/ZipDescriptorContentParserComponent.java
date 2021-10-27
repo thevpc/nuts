@@ -57,8 +57,19 @@ public class ZipDescriptorContentParserComponent implements NutsDescriptorConten
     public static final Set<String> POSSIBLE_EXT = new HashSet<>(Arrays.asList("zip", "gzip", "gz"));
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext<Object> criteria) {
-        return DEFAULT_SUPPORT;
+    public int getSupportLevel(NutsSupportLevelContext<NutsDescriptorContentParserContext> criteria) {
+        String e = NutsUtilStrings.trim(criteria.getConstraints().getFileExtension());
+        switch (e){
+            case "zip":
+            case "gzip":
+            case "jar":
+            case "war":
+            case "ear":
+            {
+                return DEFAULT_SUPPORT;
+            }
+        }
+        return NO_SUPPORT;
     }
 
     @Override

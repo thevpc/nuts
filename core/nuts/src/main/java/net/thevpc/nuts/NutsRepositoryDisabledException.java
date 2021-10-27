@@ -27,29 +27,23 @@
 package net.thevpc.nuts;
 
 /**
- * This class is used in {@link NutsDescriptor} to describe
- * locations/mirrors to download artifact content instead of the
- * regular location.
- * @app.category Descriptor
+ * This exception is thrown when a repository location could no be loaded because
+ * the repository config files are missing.
+ *
+ * @since 0.5.4
+ * @app.category Exceptions
  */
-public interface NutsIdLocation extends NutsBlankable{
+public class NutsRepositoryDisabledException extends NutsRepositoryException {
 
     /**
-     * location url of the artifact content
-     * @return location url of the artifact content
+     * Constructs a new NutsRepositoryNotFoundException exception
+     * @param session  workspace
+     * @param repository repository
      */
-    String getUrl();
+    public NutsRepositoryDisabledException(NutsSession session, String repository) {
+        super(session, repository,
+                NutsMessage.cstyle("repository %s is not enabled", (repository == null ? "<null>" : repository))
+                , null);
+    }
 
-    /**
-     * location (geographic) region that may be used to select
-     * the most effective mirror
-     * @return location (geographic) region that may be used to select the most effective mirror
-     */
-    String getRegion();
-
-    /**
-     * classifier for the artifact
-     * @return classifier for the artifact
-     */
-    String getClassifier();
 }

@@ -35,6 +35,7 @@ import net.thevpc.nuts.spi.*;
 import java.net.URL;
 import java.util.*;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 /**
  * Created by vpc on 1/5/17.
@@ -119,15 +120,27 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
     @Override
     public <T extends NutsComponent<V>, V> List<T> createAllSupported(Class<T> type, V supportCriteria, NutsSession session) {
         List<T> list = createAll(type, session);
+        class TypeAndLevel{
+            T t;
+            int lvl;
+
+            public TypeAndLevel(T t, int lvl) {
+                this.t = t;
+                this.lvl = lvl;
+            }
+        }
+        List<TypeAndLevel> r=new ArrayList<>();
         NutsDefaultSupportLevelContext<V> context = new NutsDefaultSupportLevelContext<>(session, supportCriteria);
         for (Iterator<T> iterator = list.iterator(); iterator.hasNext(); ) {
             T t = iterator.next();
             int supportLevel = t.getSupportLevel(context);
             if (supportLevel <= 0) {
                 iterator.remove();
+            }else{
+                r.add(new TypeAndLevel(t,supportLevel));
             }
         }
-        return list;
+        return r.stream().sorted(Comparator.comparing(x->-x.lvl)).map(x->x.t).collect(Collectors.toList());
     }
 //    @Override
 //    public <T> List<T> discoverInstances(Class<T> type) {

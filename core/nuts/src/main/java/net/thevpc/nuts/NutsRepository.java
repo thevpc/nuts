@@ -36,44 +36,6 @@ import java.util.Map;
 public interface NutsRepository {
 
     /**
-     * value for {@link  NutsRepositoryConfigManager#getSpeed() } resolving to 
-     * in memory repositories (and hence fastest) repositories.
-     */
-    int SPEED_FASTEST = 1000000;
-
-    /**
-     * value for {@link  NutsRepositoryConfigManager#getSpeed() } resolving to 
-     * local file system repositories (and hence faster) repositories.
-     */
-    int SPEED_FASTER = 100000;
-
-    /**
-     * value for {@link  NutsRepositoryConfigManager#getSpeed() } resolving to 
-     * local network repositories (and hence fast) repositories.
-     */
-    int SPEED_FAST = 10000;
-
-    /**
-     * value for {@link  NutsRepositoryConfigManager#getSpeed() } resolving to 
-     * remote network repositories (and hence slow) repositories.
-     */
-    int SPEED_SLOW = 1000;
-
-    /**
-     * value for {@link  NutsRepositoryConfigManager#getSpeed() } resolving to 
-     * remote network repositories with limited known bandwidth
-     * (and hence slower) repositories.
-     */
-    int SPEED_SLOWER = 100;
-
-    /**
-     * value for {@link  NutsRepositoryConfigManager#getSpeed() } resolving to 
-     * remote network repositories with very limited known bandwidth
-     * (and hence slowest) repositories.
-     */
-    int SPEED_SLOWEST = 10;
-
-    /**
      * return repository type
      * @return repository type
      */

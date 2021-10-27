@@ -590,7 +590,7 @@ public class NTasksSubCmd {
                         .setBorder("spaces")
                         .setValue(m).println();
             } else {
-                context.getSession().formats().object(r.collect(Collectors.toList())).print(context.getSession().out());
+                context.getSession().out().printf(r.collect(Collectors.toList()));
             }
         }
     }

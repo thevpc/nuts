@@ -403,7 +403,7 @@ public class NutsServerMain implements NutsApplication {
                     );
                 }
             } else {
-                context.getSession().formats().object(results).println();
+                context.getSession().out().printlnf(results);
             }
         }
     }

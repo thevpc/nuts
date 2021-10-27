@@ -27,6 +27,7 @@ import java.util.zip.ZipFile;
 public final class PrivateNutsUtilMaven {
     public static final Pattern JAR_POM_PATH = Pattern.compile("META-INF/maven/(?<g>[a-zA-Z0-9_.]+)/(?<a>[a-zA-Z0-9_]+)/pom.xml");
     public static final Pattern JAR_NUTS_JSON_POM_PATH = Pattern.compile("META-INF/nuts/(?<g>[a-zA-Z0-9_.]+)/(?<a>[a-zA-Z0-9_]+)/nuts.json");
+    public static final Pattern NUTS_OS_ARCH_DEPS_PATTERN = Pattern.compile("^nuts([.](?<os>[a-zA-Z0-9-_]+-os))?([.](?<arch>[a-zA-Z0-9-_]+-arch))?-dependencies$");
 
     public PrivateNutsUtilMaven() {
     }
@@ -330,16 +331,23 @@ public final class PrivateNutsUtilMaven {
                                     break;
                                 }
                                 default: {
-                                    if (nodeName.startsWith("dependencies.")) {
-                                        String np = nodeName.substring("dependencies.".length());
-                                        if (np.endsWith(".os")) {
-                                            String iid = np.substring(0, np.length() - 3);
-                                            String os = c3.getTextContent().trim();
-                                            osMap.put(iid, os);
-                                        } else if (np.endsWith(".arch")) {
-                                            String iid = np.substring(0, np.length() - 5);
-                                            String arch = c3.getTextContent().trim();
-                                            archMap.put(iid, arch);
+                                    Matcher m = NUTS_OS_ARCH_DEPS_PATTERN.matcher(nodeName);
+                                    if(m.find()){
+                                        String os = m.group("os");
+                                        String arch = m.group("arch");
+                                        String txt = c3.getTextContent().trim();
+                                        for (String a : txt.trim().split("[;,\n\t]")) {
+                                            a=a.trim();
+                                            if(a.startsWith("#")){
+                                                //ignore!
+                                            }else{
+                                                if(!NutsBlankable.isBlank(os)){
+                                                    osMap.put(a, os);
+                                                }
+                                                if(!NutsBlankable.isBlank(arch)){
+                                                    archMap.put(a, arch);
+                                                }
+                                            }
                                         }
                                     }
                                 }

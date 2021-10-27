@@ -80,7 +80,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
     };
 
     public MavenFolderRepository(NutsAddRepositoryOptions options, NutsSession session, NutsRepository parentRepository) {
-        super(options, session, parentRepository, SPEED_FASTER, false, NutsConstants.RepoTypes.MAVEN);
+        super(options, session, parentRepository, NutsSpeedQualifier.FASTER, false, NutsConstants.RepoTypes.MAVEN);
         LOG = session.log().of(MavenFolderRepository.class);
         if (options.getConfig().getStoreLocationStrategy() != NutsStoreLocationStrategy.STANDALONE) {
             cache.setWriteEnabled(false);

@@ -90,6 +90,11 @@ public class DefaultNutsDependency implements NutsDependency {
     }
 
     @Override
+    public boolean isBlank() {
+        return toId().isBlank();
+    }
+
+    @Override
     public String getClassifier() {
         return classifier;
     }

@@ -150,7 +150,7 @@ public class PrivateNutsUtilApplication {
                         }
                         NutsArrayElementBuilder e = session.eout();
                         if (e.size() > 0) {
-                            session.formats().object(e.build()).println(fout);
+                            fout.printlnf(e.build());
                             e.clear();
                         }
                         fout.flush();
@@ -166,7 +166,7 @@ public class PrivateNutsUtilApplication {
                         }
                         NutsArrayElementBuilder e = session.eout();
                         if (e.size() > 0) {
-                            session.formats().object(e.build()).println(fout);
+                            fout.printlnf(e.build());
                             e.clear();
                         }
                         fout.flush();

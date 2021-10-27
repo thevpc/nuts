@@ -44,7 +44,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.logging.Level;
-import java.util.stream.Collectors;
 
 /**
  * Created by vpc on 5/16/17.
@@ -470,7 +469,7 @@ public class CoreNutsUtils {
                 .setFailSafe(options.isFailSafe())
                 .setName(options.getName())
                 .setLocation(options.getLocation())
-                .setDeployOrder(options.getDeployOrder());
+                .setDeployWeight(options.getDeployWeight());
     }
 
     public static NutsAddRepositoryOptions refToOptions(NutsRepositoryRef ref) {
@@ -479,7 +478,7 @@ public class CoreNutsUtils {
                 .setFailSafe(ref.isFailSafe())
                 .setName(ref.getName())
                 .setLocation(ref.getLocation())
-                .setDeployOrder(ref.getDeployOrder())
+                .setDeployWeight(ref.getDeployWeight())
                 .setTemporary(false);
     }
 

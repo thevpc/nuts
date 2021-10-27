@@ -33,7 +33,7 @@ public class CompatUtils {
             } else {
                 NutsRepositoryRef r2 = new NutsRepositoryRef();
                 r2.setEnabled(r.isEnabled());
-                r2.setDeployOrder(r.getDeployOrder());
+                r2.setDeployWeight(r.getDeployWeight());
                 r2.setFailSafe(r.isFailSafe());
                 r2.setLocation(r.getLocation());
                 r2.setName(r.getName());

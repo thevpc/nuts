@@ -17,6 +17,7 @@ import java.util.*;
 import java.util.logging.Level;
 
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.util.NutsSpeedQualifiers;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.core.repos.NutsRepositoryConfigModel;
 import net.thevpc.nuts.runtime.standalone.DefaultNutsWorkspace;
@@ -26,12 +27,12 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
     private NutsLogger LOG;
 
     private final NutsRepository repository;
-    private final int speed;
+    private final NutsSpeedQualifier speed;
     private final String storeLocation;
     private NutsRepositoryConfig config;
     private final Map<String, NutsUserConfig> configUsers = new LinkedHashMap<>();
     private boolean configurationChanged = false;
-    private int deployOrder;
+    private int deployWeight;
     private boolean temporary;
     private boolean enabled = true;
     private String globalName;
@@ -42,7 +43,7 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
     private NutsRepositoryRef repositoryRef;
 
     public DefaultNutsRepositoryConfigModel(NutsRepository repository, NutsAddRepositoryOptions options, NutsSession session,
-            int speed,
+                                            NutsSpeedQualifier speed,
             boolean supportedMirroring, String repositoryType) {
         if (options == null) {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing repository options"));
@@ -57,7 +58,7 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
         String globalName = options.getConfig().getName();
         String repositoryName = options.getName();
 
-        speed = Math.max(0, speed);
+        speed = speed==null?NutsSpeedQualifier.NORMAL : speed;
 
         if (NutsBlankable.isBlank(repositoryType)) {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing repository type"));
@@ -82,7 +83,7 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
         this.globalName = globalName;
         this.storeLocation = storeLocation;
         this.speed = speed;
-        this.deployOrder = options.getDeployOrder();
+        this.deployWeight = options.getDeployWeight();
         this.temporary = options.isTemporary();
         this.enabled = options.isEnabled();
         this.supportedMirroring = supportedMirroring;
@@ -117,8 +118,8 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
         return repositoryName;
     }
 
-    public int getDeployOrder(NutsSession session) {
-        return deployOrder;
+    public int getDeployWeight(NutsSession session) {
+        return deployWeight;
     }
 
 //    public String getEnv(String key, String defaultValue, boolean inherit,NutsSession session) {
@@ -168,14 +169,31 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
     }
 
     @Override
-    public int getSpeed(NutsSession session) {
-        int s = speed;
+    public NutsSpeedQualifier getSpeed(NutsSession session) {
+        List<NutsSpeedQualifier> all=new ArrayList<>();
+        boolean unavailable=false;
+        if(speed==NutsSpeedQualifier.UNAVAILABLE){
+            unavailable=true;
+        }else{
+            all.add(speed);
+        }
         if (isSupportedMirroring(session)) {
             for (NutsRepository mirror : getMirrors(session)) {
-                s += mirror.config().setSession(session).getSpeed();
+                NutsSpeedQualifier mspeed = mirror.config().setSession(session).getSpeed();
+                if(mspeed==NutsSpeedQualifier.UNAVAILABLE){
+                    unavailable=true;
+                }else{
+                    all.add(mspeed);
+                }
             }
         }
-        return s;
+        if(all.isEmpty()){
+            if(unavailable){
+                return NutsSpeedQualifier.UNAVAILABLE;
+            }
+            return NutsSpeedQualifier.NORMAL;
+        }
+        return NutsSpeedQualifiers.max(all.toArray(new NutsSpeedQualifier[0]));
     }
 
     @Override

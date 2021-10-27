@@ -45,7 +45,7 @@ import java.util.Set;
  * @since 0.1.0
  * @app.category Descriptor
  */
-public interface NutsDescriptor extends Serializable {
+public interface NutsDescriptor extends Serializable, NutsBlankable {
 
     /**
      * artifact full id (groupId+artifactId+version)

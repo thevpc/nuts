@@ -48,7 +48,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
     private NutsId remoteId;
 
     public NutsHttpSrvRepository(NutsAddRepositoryOptions options, NutsSession session, NutsRepository parentRepository) {
-        super(options, session, parentRepository, SPEED_SLOW, false, "nuts:api");
+        super(options, session, parentRepository, NutsSpeedQualifier.SLOW, false, "nuts:api");
         LOG = session.log().of(NutsHttpSrvRepository.class);
         try {
             remoteId = session.id().parser().setLenient(false).parse((options.getLocation() + "/version"));

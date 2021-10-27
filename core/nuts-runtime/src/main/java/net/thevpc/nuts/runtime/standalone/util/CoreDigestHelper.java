@@ -122,7 +122,7 @@ public class CoreDigestHelper {
     }
 
 
-    private CoreDigestHelper append(InputStream is) {
+    public CoreDigestHelper append(InputStream is) {
         try {
             byte[] bytes = new byte[4096];
             int numBytes;

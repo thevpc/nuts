@@ -24,15 +24,8 @@
 package net.thevpc.nuts.runtime.core.repos;
 
 import java.nio.file.Path;
-import net.thevpc.nuts.NutsAddRepositoryOptions;
-import net.thevpc.nuts.NutsRepository;
-import net.thevpc.nuts.NutsRepositoryConfig;
-import net.thevpc.nuts.NutsRepositoryRef;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsStoreLocation;
-import net.thevpc.nuts.NutsStoreLocationStrategy;
-import net.thevpc.nuts.NutsUserConfig;
-import net.thevpc.nuts.NutsWorkspace;
+
+import net.thevpc.nuts.*;
 
 /**
  *
@@ -56,7 +49,7 @@ public interface NutsRepositoryConfigModel {
 
     NutsRepository findMirrorByName(String repositoryNameOrId, NutsSession session);
 
-    int getDeployOrder(NutsSession session);
+    int getDeployWeight(NutsSession session);
 
     String getGlobalName(NutsSession session);
 
@@ -72,7 +65,7 @@ public interface NutsRepositoryConfigModel {
 
     NutsRepositoryRef getRepositoryRef(NutsSession session);
 
-    int getSpeed(NutsSession session);
+    NutsSpeedQualifier getSpeed(NutsSession session);
 
     String getStoreLocation();
 

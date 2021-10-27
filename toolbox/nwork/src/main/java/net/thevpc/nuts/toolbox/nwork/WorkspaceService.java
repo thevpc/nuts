@@ -732,7 +732,7 @@ public class WorkspaceService {
             }
         }
         if (structuredOutContentType) {
-            session.formats().object(result).println();
+            session.out().printlnf(result);
         }
         return scanned;
     }

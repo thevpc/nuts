@@ -557,17 +557,23 @@ public class CoreIOUtils {
             parseOptions = new String[0];
         }
         if (localPath != null) {
+            String fileExtension = CoreIOUtils.getFileExtension(localPath.getFileName().toString());
+            NutsDescriptorContentParserContext ctx = new DefaultNutsDescriptorContentParserContext(session, localPath, fileExtension, null, parseOptions);
             List<NutsDescriptorContentParserComponent> allParsers = session.extensions()
                     .setSession(session)
-                    .createAllSupported(NutsDescriptorContentParserComponent.class, null);
+                    .createAllSupported(NutsDescriptorContentParserComponent.class, ctx);
             if (allParsers.size() > 0) {
-                String fileExtension = CoreIOUtils.getFileExtension(localPath.getFileName().toString());
-                NutsDescriptorContentParserContext ctx = new DefaultNutsDescriptorContentParserContext(session, localPath, fileExtension, null, parseOptions);
                 for (NutsDescriptorContentParserComponent parser : allParsers) {
                     NutsDescriptor desc = null;
                     try {
                         desc = parser.parse(ctx);
                     } catch (Exception e) {
+                        session.log().of(CoreIOUtils.class)
+                                .with()
+                                .level(Level.FINE)
+                                .verb(NutsLogVerb.WARNING)
+                                .error(e)
+                                .log(NutsMessage.cstyle("error parsing %s with %s",localPath,parser.getClass().getSimpleName()+". Error ignored"));
                         //e.printStackTrace();
                     }
                     if (desc != null) {

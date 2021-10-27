@@ -38,7 +38,7 @@ public class NutsFolderRepository extends NutsCachedRepository {
 //    public final NutsLogger LOG;
 
     public NutsFolderRepository(NutsAddRepositoryOptions options, NutsSession session, NutsRepository parentRepository) {
-        super(options, session, parentRepository, SPEED_FASTER, true, NutsConstants.RepoTypes.NUTS);
+        super(options, session, parentRepository, NutsSpeedQualifier.FASTER, true, NutsConstants.RepoTypes.NUTS);
 //        LOG = session.log().of(NutsFolderRepository.class);
         extensions.put("src", "-src.zip");
     }

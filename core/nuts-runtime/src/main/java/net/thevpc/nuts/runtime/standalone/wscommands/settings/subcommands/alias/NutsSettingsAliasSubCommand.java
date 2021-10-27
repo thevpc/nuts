@@ -118,9 +118,9 @@ public class NutsSettingsAliasSubCommand extends AbstractNutsSettingsSubCommand 
                                             ))
                             ).println();
                 } else {
-                    session.formats().object(
+                    session.out().printlnf(
                             r.stream().map(x -> new AliasInfo(x, session)).collect(Collectors.toList())
-                    ).println();
+                    );
                 }
             }
             return true;

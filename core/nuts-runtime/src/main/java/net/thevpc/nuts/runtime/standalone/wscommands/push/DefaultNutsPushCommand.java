@@ -105,7 +105,12 @@ public class DefaultNutsPushCommand extends AbstractDefaultNutsPushCommand {
                     }
                 }
                 if (!ok) {
-                    throw new NutsRepositoryNotFoundException(getSession(), this.getRepository() + " : " + String.join("\n", errors));
+                    throw new NutsPushException(session,id, NutsMessage.cstyle(
+                            "unable to push %s to repository %s : %s",
+                            id == null ? "<null>" : id,
+                            this.getRepository(),
+                            String.join("\n", errors)
+                            ));
                 }
             } else {
                 NutsRepository repo = session.repos().getRepository(this.getRepository());

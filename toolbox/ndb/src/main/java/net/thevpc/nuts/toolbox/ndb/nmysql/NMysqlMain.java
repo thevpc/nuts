@@ -194,13 +194,13 @@ public class NMysqlMain implements NdbSupport {
                 path = d.getDatabaseName() + "-" + MysqlUtils.newDateString();
             }
             LocalMysqlDatabaseConfigService.ArchiveResult result = d.backup(path);
-            s.formats().object(result).println();
+            s.out().printlnf(result);
         } else {
             if (path == null) {
                 commandLine.required(NutsMessage.cstyle("missing --path"));
             }
             LocalMysqlDatabaseConfigService.RestoreResult result = d.restore(path);
-            s.formats().object(result).println();
+            s.out().printlnf(result);
         }
     }
 
@@ -931,7 +931,7 @@ public class NMysqlMain implements NdbSupport {
                     break;
                 }
                 default: {
-                    service.getContext().getSession().formats().object(result).println();
+                    service.getContext().getSession().out().printlnf(result);
                 }
             }
         }

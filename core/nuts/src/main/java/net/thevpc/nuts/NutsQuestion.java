@@ -57,22 +57,85 @@ public interface NutsQuestion<T> extends NutsCommandLineConfigurable {
 
     <K extends Enum> NutsQuestion<K> forEnum(Class<K> enumType, String msg, Object... params);
 
+    /**
+     * ask for message of type Boolean
+     * @param msg message
+     * @return ask for message of type Boolean
+     * @since 0.8.3
+     * */
+    NutsQuestion<Boolean> forBoolean(NutsMessage msg);
 
-    String getHintMessage();
+    /**
+     * ask for message of type Password
+     * @param msg message
+     * @return ask for message of type Password
+     * @since 0.8.3
+     * */
+    NutsQuestion<char[]> forPassword(NutsMessage msg);
 
-    Object[] getHintMessageParameters();
+    /**
+     * ask for message of type String
+     * @param msg message
+     * @return ask for message of type String
+     * @since 0.8.3
+     * */
+    NutsQuestion<String> forString(NutsMessage msg);
 
-    String getMessage();
+    /**
+     * ask for message of type int
+     * @param msg message
+     * @return ask for message of type int
+     * @since 0.8.3
+     * */
+    NutsQuestion<Integer> forInteger(NutsMessage msg);
 
-    Object[] getMessageParameters();
+    /**
+     * ask for message of type long
+     * @param msg message
+     * @return ask for message of type long
+     * @since 0.8.3
+     * */
+    NutsQuestion<Long> forLong(NutsMessage msg);
 
-    String getCancelMessage();
+    /**
+     * ask for message of type float
+     * @param msg message
+     * @return ask for message of type float
+     * @since 0.8.3
+     * */
+    NutsQuestion<Float> forFloat(NutsMessage msg);
 
-    Object[] getCancelMessageParameters();
+    /**
+     * ask for message of type double
+     * @param msg message
+     * @return ask for message of type double
+     * @since 0.8.3
+     * */
+    NutsQuestion<Double> forDouble(NutsMessage msg);
 
-    NutsQuestion<T> setMessage(String message, Object... messageParameters);
+    /**
+     * ask for message of type enum
+     * @param msg message
+     * @return ask for message of type enum
+     * @since 0.8.3
+     * */
+    <K extends Enum> NutsQuestion<K> forEnum(Class<K> enumType, NutsMessage msg);
 
-    NutsQuestion<T> setHintMessage(String message, Object... messageParameters);
+
+    NutsMessage getHintMessage();
+
+    NutsMessage getMessage();
+
+    NutsMessage getCancelMessage();
+
+    /**
+     * set message
+     * @param message message
+     * @return {@code this} instance
+     * @since 0.8.3
+     * */
+    NutsQuestion<T> setMessage(NutsMessage message);
+    NutsQuestion<T> setHintMessage(NutsMessage message);
 
     Object[] getAcceptedValues();
 
@@ -115,7 +178,7 @@ public interface NutsQuestion<T> extends NutsCommandLineConfigurable {
 
     NutsQuestion<T> setSession(NutsSession session);
 
-    NutsQuestion<T> setCancelMessage(String message, Object... params);
+    NutsQuestion<T> setCancelMessage(NutsMessage message);
 
     /**
      * configure the current command with the given arguments. This is an

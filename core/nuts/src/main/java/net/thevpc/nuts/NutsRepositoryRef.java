@@ -36,13 +36,13 @@ import java.util.Objects;
  */
 public class NutsRepositoryRef extends NutsConfigItem {
 
-    private static final long serialVersionUID = 1;
+    private static final long serialVersionUID = 2;
 
     private String name;
     private String location;
     private boolean enabled = true;
     private boolean failSafe = false;
-    private int deployOrder;
+    private int deployWeight;
 
     public NutsRepositoryRef() {
     }
@@ -52,13 +52,13 @@ public class NutsRepositoryRef extends NutsConfigItem {
         this.location = other.getLocation();
         this.enabled = other.isEnabled();
         this.failSafe = other.isEnabled();
-        this.deployOrder = other.getDeployOrder();
+        this.deployWeight = other.getDeployWeight();
     }
 
     public NutsRepositoryRef(String name, String location, int deployPriority, boolean enabled) {
         this.name = name;
         this.location = location;
-        this.deployOrder = deployPriority;
+        this.deployWeight = deployPriority;
         this.enabled = enabled;
     }
 
@@ -102,12 +102,12 @@ public class NutsRepositoryRef extends NutsConfigItem {
         return new NutsRepositoryRef(this);
     }
 
-    public int getDeployOrder() {
-        return deployOrder;
+    public int getDeployWeight() {
+        return deployWeight;
     }
 
-    public NutsRepositoryRef setDeployOrder(int deployPriority) {
-        this.deployOrder = deployPriority;
+    public NutsRepositoryRef setDeployWeight(int deployPriority) {
+        this.deployWeight = deployPriority;
         return this;
     }
 
@@ -116,7 +116,7 @@ public class NutsRepositoryRef extends NutsConfigItem {
         int hash = 3;
         hash = 79 * hash + Objects.hashCode(this.name);
         hash = 79 * hash + Objects.hashCode(this.location);
-        hash = 79 * hash + this.deployOrder;
+        hash = 79 * hash + this.deployWeight;
         hash = 79 * hash + (this.enabled ? 1 : 0);
         hash = 79 * hash + (this.failSafe ? 1 : 0);
         return hash;
@@ -140,7 +140,7 @@ public class NutsRepositoryRef extends NutsConfigItem {
         if (this.failSafe != other.failSafe) {
             return false;
         }
-        if (this.deployOrder != other.deployOrder) {
+        if (this.deployWeight != other.deployWeight) {
             return false;
         }
         if (!Objects.equals(this.name, other.name)) {
@@ -151,6 +151,6 @@ public class NutsRepositoryRef extends NutsConfigItem {
 
     @Override
     public String toString() {
-        return "NutsRepositoryRef{" + "name=" + name + ", location=" + location + ", enabled=" + enabled + ", failSafe=" + failSafe + ", deployPriority=" + deployOrder + '}';
+        return "NutsRepositoryRef{" + "name=" + name + ", location=" + location + ", enabled=" + enabled + ", failSafe=" + failSafe + ", deployPriority=" + deployWeight + '}';
     }
 }

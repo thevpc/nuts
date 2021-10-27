@@ -69,7 +69,7 @@ public class AnyNixNdi extends BaseSystemNdi {
                                     + "Please type 'ok' if you agree, 'why' if you need more explanation or 'cancel' to cancel updates.",
                             factory.ofStyled(". ~/" + sysRcName, NutsTextStyle.path())
                     )
-                    .setHintMessage("")
+                    .setHintMessage(NutsMessage.plain(""))
                     .setSession(session)
                     .setParser(new NutsQuestionParser<Boolean>() {
                         @Override

@@ -1281,7 +1281,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     public NutsSession flush() {
         NutsArrayElementBuilder e = eout();
         if (e.size() > 0) {
-            formats().object(e.build()).println();
+            out().printlnf(e.build());
             e.clear();
         }
         out().flush();

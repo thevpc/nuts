@@ -41,15 +41,8 @@ public class Test02_SimpleClassStream {
         NutsSession session = TestUtils.openNewTestWorkspace( );
         Path path = Paths.get(System.getProperty("user.home")).resolve(".m2/repository/org/ow2/asm/asm-commons/7.0/asm-commons-7.0.jar");
         if (Files.exists(path)) {
-//        parseAnyFile(Paths.get(System.getProperty("user.home")).resolve(".m2/repository"));
             parseAnyFile(path, session);
         }
-//        parseAnyFile(Paths.get("/home/vpc/.m2/repository/com/ibm/icu/icu4j/2.6.1/icu4j-2.6.1.jar"));
-
-        ///home/vpc/.m2/repository/org/ow2/asm/asm-commons/7.0/asm-commons-7.0.jar
-        //Paths.get("/data/vpc/Data/xprojects/net/thevpc/nuts/toolbox/nsh/target/nsh-0.5.4.0.jar")
-//        mmFolder(Paths.get("target/classes"));
-//        mm(Paths.get("/data/vpc/Data/xprojects/net/thevpc/nuts/nuts-runtime/target/classes/net/thevpc/nuts/core/util/CommonRootsHelper.class"));
     }
 
     private static void parseAnyFile(Path file, NutsSession session) throws IOException {

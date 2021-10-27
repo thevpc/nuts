@@ -67,8 +67,7 @@ public class DefaultNutsWelcomeInternalExecutable extends DefaultInternalNutsExe
             if (session.isPlainOut()) {
                 session = session.copy().setOutputFormat(NutsContentType.PROPS);
             }
-            session.out().resetLine();
-            session.formats().object(welcome).println();
+            session.out().resetLine().printlnf(welcome);
         }
     }
 

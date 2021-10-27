@@ -36,7 +36,7 @@ import java.util.Map;
  * @since 0.5.3
  * @app.category Descriptor
  */
-public interface NutsDependency extends Serializable, NutsFormattable {
+public interface NutsDependency extends Serializable, NutsFormattable,NutsBlankable {
 
     static NutsDependency of(String value, NutsSession session) {
         NutsApiUtils.checkSession(session);

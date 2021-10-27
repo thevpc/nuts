@@ -228,7 +228,7 @@ public class DefaultNutsRepositoryModel {
             NutsAddRepositoryOptions options2 = new NutsAddRepositoryOptions();
             options2.setName(config.getName());
             options2.setConfig(config);
-            options2.setDeployOrder(options.getDeployOrder());
+            options2.setDeployWeight(options.getDeployWeight());
             options2.setTemporary(true);
             options2.setEnabled(options.isEnabled());
             options2.setLocation(CoreIOUtils.resolveRepositoryPath(options2, rootFolder, session));

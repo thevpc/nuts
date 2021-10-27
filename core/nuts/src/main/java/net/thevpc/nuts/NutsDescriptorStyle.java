@@ -4,7 +4,9 @@ import net.thevpc.nuts.boot.NutsApiUtils;
 
 public enum NutsDescriptorStyle implements NutsEnum {
     MAVEN,
-    NUTS;
+    NUTS,
+    MANIFEST,
+    ;
     /**
      * lower-cased identifier for the enum entry
      */

@@ -13,13 +13,10 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
     private final NutsSessionTerminal terminal;
     private final NutsPrintStream out;
     private final NutsWorkspace ws;
-    private String message;
-    private Object[] messageParameters;
-    private String cancelMessage;
-    private Object[] cancelMessageParameters;
+    private NutsMessage message;
+    private NutsMessage cancelMessage;
     private Object[] acceptedValues;
-    private String hintMessage;
-    private Object[] hintMessageParameters;
+    private NutsMessage hintMessage;
     private T defaultValue;
     private boolean resetLine;
     private Class<T> valueType;
@@ -51,12 +48,12 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
                 case ERROR: {
                     if (cancelMessage != null) {
                         NutsByteArrayPrintStream os = new NutsByteArrayPrintStream(getSession());
-                        os.printf(message, this.getCancelMessage());
+                        os.printf(cancelMessage);
                         os.flush();
                         throw new NutsUserCancelException(getSession(), NutsMessage.formatted(os.toString()));
                     } else {
                         NutsByteArrayPrintStream os = new NutsByteArrayPrintStream(getSession());
-                        os.printf(message, this.getCancelMessageParameters());
+                        os.printf(message);
                         os.flush();
                         throw new NutsUserCancelException(getSession(), NutsMessage.cstyle("cancelled : %s", NutsMessage.formatted(os.toString())));
                     }
@@ -65,7 +62,7 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
         }
         if (!getSession().isPlainOut()) {
             NutsByteArrayPrintStream os = new NutsByteArrayPrintStream(getSession());
-            os.printf(message, this.getMessageParameters());
+            os.printf(message);
             os.flush();
             throw new NutsExecutionException(getSession(), NutsMessage.cstyle(
                     "unable to switch to interactive mode for non plain text output format. "
@@ -75,10 +72,10 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
 
         boolean gui = session.isGui() && session.env().isGraphicalDesktopEnvironment();
 
-        String message = this.getMessage();
-        if (message.endsWith("\n")) {
-            message = message.substring(0, message.length() - 1);
-        }
+        NutsMessage message = this.getMessage();
+//        if (message.endsWith("\n")) {
+//            message = message.substring(0, message.length() - 1);
+//        }
         boolean extraInfo = false;
         NutsQuestionParser<T> p = this.getParser();
         if (p == null) {
@@ -105,7 +102,7 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
             if (resetLine) {
                 out.resetLine();
             }
-            out.printf(message, this.getMessageParameters());
+            out.printf(message);
             boolean first = true;
             if (this.getDefaultValue() != null) {
                 if (first) {
@@ -117,11 +114,9 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
                 out.printf("default is %s", session.text().ofStyled(ff.format(this.getDefaultValue(), this), NutsTextStyle.primary1()));
             }
             if (getHintMessage() != null) {
-                if (getHintMessage().length() > 0) {
-                    out.print(" (");
-                    out.printf(getHintMessage(), getHintMessageParameters());
-                    out.print(")");
-                }
+                out.print(" (");
+                out.printf(getHintMessage());
+                out.print(")");
             } else {
                 if (_acceptedValues.length > 0) {
                     if (first) {
@@ -258,7 +253,7 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
 
     private String showGuiInput(String str, boolean pwd) {
         String ft = getSession().text().parse(str).filteredText();
-        NutsMessage title = NutsMessage.cstyle("Nuts Package Manager - %s",getSession().getWorkspace().getApiId().getVersion());
+        NutsMessage title = NutsMessage.cstyle("Nuts Package Manager - %s", getSession().getWorkspace().getApiId().getVersion());
         if (session.getAppId() != null) {
             try {
                 NutsDefinition def = session.search().setId(session.getAppId())
@@ -266,17 +261,17 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
                 if (def != null) {
                     String n = def.getEffectiveDescriptor().getName();
                     if (!NutsBlankable.isBlank(n)) {
-                        title = NutsMessage.cstyle("%s - %s",n, def.getEffectiveDescriptor().getId().getVersion());
+                        title = NutsMessage.cstyle("%s - %s", n, def.getEffectiveDescriptor().getId().getVersion());
                     }
                 }
             } catch (Exception ex) {
                 //
             }
         }
-        if(password){
-            return CoreNutsUtilGui.inputPassword(NutsMessage.formatted(str),title,getSession());
-        }else {
-            return CoreNutsUtilGui.inputString(NutsMessage.formatted(str),title,getSession());
+        if (password) {
+            return CoreNutsUtilGui.inputPassword(NutsMessage.formatted(str), title, getSession());
+        } else {
+            return CoreNutsUtilGui.inputString(NutsMessage.formatted(str), title, getSession());
         }
     }
 
@@ -298,89 +293,113 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
 
     @Override
     public NutsQuestion<Boolean> forBoolean(String msg, Object... params) {
-        return ((NutsQuestion<Boolean>) this).setValueType(Boolean.class).setMessage(msg, params);
+        return ((NutsQuestion<Boolean>) this).setValueType(Boolean.class).setMessage(NutsMessage.cstyle(msg, params));
     }
 
     @Override
     public NutsQuestion<char[]> forPassword(String msg, Object... params) {
         this.password = true;
-        return ((NutsQuestion<char[]>) this).setValueType(char[].class).setMessage(msg, params);
+        return ((NutsQuestion<char[]>) this).setValueType(char[].class).setMessage(NutsMessage.cstyle(msg, params));
     }
 
     @Override
     public NutsQuestion<String> forString(String msg, Object... params) {
-        return ((NutsQuestion<String>) this).setValueType(String.class).setMessage(msg, params);
+        return ((NutsQuestion<String>) this).setValueType(String.class).setMessage(NutsMessage.cstyle(msg, params));
     }
 
     @Override
     public NutsQuestion<Integer> forInteger(String msg, Object... params) {
-        return ((NutsQuestion<Integer>) this).setValueType(Integer.class).setMessage(msg, params);
+        return ((NutsQuestion<Integer>) this).setValueType(Integer.class).setMessage(NutsMessage.cstyle(msg, params));
     }
 
     @Override
     public NutsQuestion<Long> forLong(String msg, Object... params) {
-        return ((NutsQuestion<Long>) this).setValueType(Long.class).setMessage(msg, params);
+        return forLong(NutsMessage.cstyle(msg, params));
     }
 
     @Override
     public NutsQuestion<Float> forFloat(String msg, Object... params) {
-        return ((NutsQuestion<Float>) this).setValueType(Float.class).setMessage(msg, params);
+        return forFloat(NutsMessage.cstyle(msg, params));
     }
 
     @Override
     public NutsQuestion<Double> forDouble(String msg, Object... params) {
-        return ((NutsQuestion<Double>) this).setValueType(Double.class).setMessage(msg, params);
+        return forDouble(NutsMessage.cstyle(msg, params));
     }
 
     @Override
     public <K extends Enum> NutsQuestion<K> forEnum(Class<K> enumType, String msg, Object... params) {
+        return forEnum(enumType, NutsMessage.cstyle(msg, params));
+    }
+
+    @Override
+    public NutsQuestion<Boolean> forBoolean(NutsMessage msg) {
+        return ((NutsQuestion<Boolean>) this).setValueType(Boolean.class).setMessage(msg);
+    }
+
+    @Override
+    public NutsQuestion<char[]> forPassword(NutsMessage msg) {
+        this.password = true;
+        return ((NutsQuestion<char[]>) this).setValueType(char[].class).setMessage(msg);
+    }
+
+    @Override
+    public NutsQuestion<String> forString(NutsMessage msg) {
+        return ((NutsQuestion<String>) this).setValueType(String.class).setMessage(msg);
+    }
+
+    @Override
+    public NutsQuestion<Integer> forInteger(NutsMessage msg) {
+        return ((NutsQuestion<Integer>) this).setValueType(Integer.class).setMessage(msg);
+    }
+
+    @Override
+    public NutsQuestion<Long> forLong(NutsMessage msg) {
+        return ((NutsQuestion<Long>) this).setValueType(Long.class).setMessage(msg);
+    }
+
+    @Override
+    public NutsQuestion<Float> forFloat(NutsMessage msg) {
+        return ((NutsQuestion<Float>) this).setValueType(Float.class).setMessage(msg);
+    }
+
+    @Override
+    public NutsQuestion<Double> forDouble(NutsMessage msg) {
+        return ((NutsQuestion<Double>) this).setValueType(Double.class).setMessage(msg);
+    }
+
+    @Override
+    public <K extends Enum> NutsQuestion<K> forEnum(Class<K> enumType, NutsMessage msg) {
         K[] values = enumType.getEnumConstants();
         return ((NutsQuestion<K>) this).setValueType(enumType)
-                .setMessage(msg, params)
+                .setMessage(msg)
                 .setAcceptedValues(values);
     }
 
     @Override
-    public String getHintMessage() {
+    public NutsMessage getHintMessage() {
         return hintMessage;
     }
 
     @Override
-    public Object[] getHintMessageParameters() {
-        return hintMessageParameters;
-    }
-
-    @Override
-    public String getMessage() {
+    public NutsMessage getMessage() {
         return message;
     }
 
     @Override
-    public Object[] getMessageParameters() {
-        return messageParameters;
-    }
-
-    @Override
-    public String getCancelMessage() {
+    public NutsMessage getCancelMessage() {
         return cancelMessage;
     }
 
     @Override
-    public Object[] getCancelMessageParameters() {
-        return cancelMessageParameters;
-    }
-
-    @Override
-    public NutsQuestion<T> setMessage(String message, Object... messageParameters) {
+    public NutsQuestion<T> setMessage(NutsMessage message) {
         this.message = message;
-        this.messageParameters = messageParameters;
         return this;
     }
 
     @Override
-    public NutsQuestion<T> setHintMessage(String message, Object... messageParameters) {
+    public NutsQuestion<T> setHintMessage(NutsMessage message) {
         this.hintMessage = message;
-        this.hintMessageParameters = messageParameters;
         return this;
     }
 
@@ -440,14 +459,14 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
     }
 
     @Override
-    public NutsQuestion<T> setValidator(NutsQuestionValidator<T> validator) {
-        this.validator = validator;
-        return this;
+    public NutsQuestionValidator<T> getValidator() {
+        return this.validator;
     }
 
     @Override
-    public NutsQuestionValidator<T> getValidator() {
-        return this.validator;
+    public NutsQuestion<T> setValidator(NutsQuestionValidator<T> validator) {
+        this.validator = validator;
+        return this;
     }
 
     @Override
@@ -476,18 +495,6 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
     }
 
     @Override
-    public NutsQuestion<T> setCancelMessage(String message, Object... params) {
-        if (message == null) {
-            this.cancelMessage = null;
-            this.cancelMessageParameters = null;
-        } else {
-            this.cancelMessage = message;
-            this.cancelMessageParameters = params == null ? new Object[0] : params;
-        }
-        return this;
-    }
-
-    @Override
     public NutsQuestion<T> setSession(NutsSession session) {
         this.session = NutsWorkspaceUtils.bindSession(ws, session);
         return this;
@@ -506,6 +513,12 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
     public final NutsQuestion<T> configure(boolean skipUnsupported, String... args) {
         checkSession();
         return NutsConfigurableHelper.configure(this, getSession(), skipUnsupported, args, "question");
+    }
+
+    @Override
+    public NutsQuestion<T> setCancelMessage(NutsMessage message) {
+        this.cancelMessage = message;
+        return this;
     }
 
     /**

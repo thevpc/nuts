@@ -34,7 +34,7 @@ import java.util.Map;
  * @since 0.5.4
  * @app.category Base
  */
-public interface NutsArtifactCall extends Serializable {
+public interface NutsArtifactCall extends Serializable, NutsBlankable {
 
     /**
      * artifact id

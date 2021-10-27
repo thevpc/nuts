@@ -1,6 +1,6 @@
 package net.thevpc.nuts;
 
-public interface NutsDescriptorProperty {
+public interface NutsDescriptorProperty extends NutsBlankable{
     String getName();
 
     String getValue();

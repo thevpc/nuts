@@ -225,12 +225,12 @@ public class NutsSettingsRepositorySubCommand extends AbstractNutsSettingsSubCom
             }
             if (cmdLine.isExecMode()) {
                 NutsRepository[] r = parent == null ? session.repos().getRepositories() : session.repos().getRepository(parent).config().getMirrors();
-                session.formats().object(
+                out.printlnf(
                         Arrays.stream(session.repos().getRepositories())
                                 .map(x -> repoInfo(x, session.getOutputFormat() != NutsContentType.TABLE && session.getOutputFormat() != NutsContentType.PLAIN, session)
                                 )
                                 .toArray()
-                ).println(out);
+                );
             }
             return true;
 

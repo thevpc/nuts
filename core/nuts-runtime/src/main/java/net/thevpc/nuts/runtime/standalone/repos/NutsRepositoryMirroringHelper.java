@@ -47,13 +47,13 @@ public class NutsRepositoryMirroringHelper {
         list.add(namedNutIdIterator);
         if (repo.config().setSession(session).isSupportedMirroring()) {
             for (NutsRepository repo : repo.config().setSession(session).getMirrors()) {
-                int sup = 0;
+                NutsSpeedQualifier sup = NutsSpeedQualifier.UNAVAILABLE;
                 try {
                     sup = NutsRepositoryUtils.getSupportSpeedLevel(repo, NutsRepositorySupportedAction.SEARCH, id, fetchMode, session.isTransitive(),session);
                 } catch (Exception ex) {
                     //                errors.append(CoreStringUtils.exceptionToString(ex)).append("\n");
                 }
-                if (sup > 0) {
+                if (sup!=NutsSpeedQualifier.UNAVAILABLE) {
                     NutsRepositorySPI repoSPI = NutsWorkspaceUtils.of(session).repoSPI(repo);
                     list.add(IteratorUtils.safeIgnore(new LazyIterator<NutsId>() {
                         @Override
@@ -169,22 +169,22 @@ public class NutsRepositoryMirroringHelper {
             throw new NutsNotFoundException(session, id);
         }
         if (!repo.config().setSession(session).isSupportedMirroring()) {
-            throw new NutsRepositoryNotFoundException(session, "Not Repo for pushing " + id);
+            throw new NutsPushException(session,id, NutsMessage.cstyle("unable to push %s. no repository found.", id == null ? "<null>" : id));
         }
         NutsRepository repo = this.repo;
         if (NutsBlankable.isBlank(repository)) {
             List<NutsRepository> all = new ArrayList<>();
             for (NutsRepository remote : repo.config().setSession(session).getMirrors()) {
-                int lvl = NutsRepositoryUtils.getSupportSpeedLevel(remote,NutsRepositorySupportedAction.DEPLOY, id, NutsFetchMode.LOCAL, false,session);
-                if (lvl > 0) {
+                NutsSpeedQualifier lvl = NutsRepositoryUtils.getSupportSpeedLevel(remote,NutsRepositorySupportedAction.DEPLOY, id, NutsFetchMode.LOCAL, false,session);
+                if (lvl !=NutsSpeedQualifier.UNAVAILABLE) {
                     all.add(remote);
                 }
             }
             if (all.isEmpty()) {
-                throw new NutsRepositoryNotFoundException(session, "Not Repo for pushing " + id);
+                throw new NutsPushException(session,id, NutsMessage.cstyle("unable to push %s. no repository found.", id == null ? "<null>" : id));
             } else if (all.size() > 1) {
                 throw new NutsPushException(session, id,
-                        NutsMessage.cstyle("unable to perform push for %s. At least two Repositories (%s) provides the same nuts %s",
+                        NutsMessage.cstyle("unable to perform push for %s. at least two Repositories (%s) provides the same nuts %s",
                                 id,
                                 all.stream().map(NutsRepository::getName).collect(Collectors.joining(",")),
                                 id

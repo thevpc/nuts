@@ -1,5 +1,7 @@
 package net.thevpc.nuts.runtime.bundles.mvn;
 
+import net.thevpc.nuts.NutsBlankable;
+import net.thevpc.nuts.NutsId;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsUtilStrings;
 import net.thevpc.nuts.runtime.core.format.xml.NutsXmlUtils;
@@ -21,6 +23,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class PomXmlParser {
+    public static final Pattern NUTS_OS_ARCH_DEPS_PATTERN = Pattern.compile("^nuts([.](?<os>[a-zA-Z0-9-_]+-os))?([.](?<arch>[a-zA-Z0-9-_]+-arch))?-dependencies$");
 
     private static Map<String, String> map = new HashMap<>();
     private static Pattern ENTITY_PATTERN = Pattern.compile("&[a-zA-Z]+;");
@@ -100,7 +103,7 @@ public class PomXmlParser {
         return props;
     }
 
-    public static PomDependency parseDependency(Element dependency, Map<String, String> props) {
+    public static PomDependency parseDependency(Element dependency, OsAndArch props,NutsSession session) {
         NodeList dependencyChildList = dependency.getChildNodes();
         String d_groupId = "";
         String d_artifactId = "";
@@ -179,14 +182,55 @@ public class PomXmlParser {
         if (d_scope.isEmpty()) {
             d_scope = "compile";
         }
+        NutsId id = session.id().builder().setGroupId(d_groupId).setArtifactId(d_artifactId).build();
         return new PomDependency(
                 d_groupId, d_artifactId, d_classifier, d_version, d_scope, d_optional,
-                props == null ? null : props.get("dependencies." + d_groupId + ":" + d_artifactId + ".os"),
-                props == null ? null : props.get("dependencies." + d_groupId + ":" + d_artifactId + ".arch"),
+                props == null ? null : props.getOs(id),
+                props == null ? null : props.getArch(id),
                 d_type,
                 d_exclusions.toArray(new PomId[0])
         );
     }
+
+    private static class OsAndArch{
+        Map<String,String> osMap=new HashMap<>();
+        Map<String,String> archMap=new HashMap<>();
+
+        public OsAndArch(Map<String, String> props, NutsSession session) {
+            for (Map.Entry<String, String> entry : props.entrySet()) {
+                Matcher m = NUTS_OS_ARCH_DEPS_PATTERN.matcher(entry.getKey());
+                if(m.find()){
+                    String os = m.group("os");
+                    String arch = m.group("arch");
+                    String txt = entry.getValue().trim();
+                    for (String a : txt.trim().split("[;,\n\t]")) {
+                        a=a.trim();
+                        if(a.startsWith("#")){
+                            //ignore!
+                        }else{
+                            NutsId id = session.id().parser().setLenient(true).parse(a);
+                            if(id!=null) {
+                                if (!NutsBlankable.isBlank(os)) {
+                                    osMap.put(id.getShortName(), os);
+                                }
+                                if (!NutsBlankable.isBlank(arch)) {
+                                    archMap.put(id.getShortName(), arch);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        public String getOs(NutsId id){
+            return osMap.get(id.getShortName());
+        }
+
+        public String getArch(NutsId id){
+            return archMap.get(id.getShortName());
+        }
+    }
+
 
     public static PomRepositoryPolicy parseRepositoryPolicy(Element dependency) {
         NodeList childList = dependency.getChildNodes();
@@ -217,7 +261,7 @@ public class PomXmlParser {
         );
     }
 
-    public static PomProfile parseProfile(Element profile) {
+    public static PomProfile parseProfile(Element profile,NutsSession session) {
         PomProfile pomProfile = new PomProfile();
         List<PomDependency> dependencies=new ArrayList<>();
         List<String> modules=new ArrayList<>();
@@ -320,7 +364,7 @@ public class PomXmlParser {
 //                                        visitor.visitStartDependencyManagement(dependency2);
 //                                    }
                                     HashMap<String, String> props = new HashMap<>();
-                                    PomDependency dep = parseDependency(dependency2, props);
+                                    PomDependency dep = parseDependency(dependency2, new OsAndArch(props,session),session);
 //                                    if (visitor != null) {
 //                                        visitor.visitEndDependencyManagement(dependency2, dep);
 //                                    }
@@ -347,7 +391,7 @@ public class PomXmlParser {
 //                                visitor.visitStartDependency(dependencyElem);
 //                            }
                             HashMap<String, String> props = new HashMap<>();
-                            PomDependency dep = parseDependency(dependencyElem, props);
+                            PomDependency dep = parseDependency(dependencyElem, new OsAndArch(props,session), session);
 //                            if (visitor != null) {
 //                                visitor.visitEndDependency(dependencyElem, dep);
 //                            }
@@ -558,7 +602,7 @@ public class PomXmlParser {
         NutsXmlUtils.writeDocument(doc, result, false, true, session);
     }
 
-    public static boolean appendOrReplaceDependency(PomDependency dependency, Element dependencyElement, Element dependenciesElement, Map<String, String> props) {
+    public static boolean appendOrReplaceDependency(PomDependency dependency, Element dependencyElement, Element dependenciesElement, Map<String, String> props,NutsSession session) {
         if (dependencyElement != null && dependenciesElement == null) {
             dependenciesElement = (Element) dependencyElement.getParentNode();
         }
@@ -567,7 +611,7 @@ public class PomXmlParser {
             dependenciesElement.appendChild(createDependencyElement(doc, dependency));
             return true;
         } else {
-            PomDependency old = parseDependency(dependencyElement, props);
+            PomDependency old = parseDependency(dependencyElement, new OsAndArch(props,session),session);
             if (old == null || !old.equals(dependency)) {
                 dependenciesElement.replaceChild(createDependencyElement(doc, dependency), dependencyElement);
                 return true;
@@ -649,7 +693,7 @@ public class PomXmlParser {
 
     public Pom parse(InputStream stream, PomDomVisitor visitor, NutsSession session) throws IOException, SAXException, ParserConfigurationException {
         Document doc = NutsXmlUtils.createDocumentBuilder(true, session).parse(preValidateStream(stream, session));
-        return parse(doc, visitor);
+        return parse(doc, visitor,session);
     }
 
     private byte[] loadAllBytes(InputStream in) throws IOException {
@@ -690,11 +734,11 @@ public class PomXmlParser {
         return new ByteArrayInputStream(sb.toString().getBytes());
     }
 
-    public Pom parse(Document doc) {
-        return parse(doc, null);
+    public Pom parse(Document doc,NutsSession session) {
+        return parse(doc, null,session);
     }
 
-    public Pom parse(Document doc, PomDomVisitor visitor) {
+    public Pom parse(Document doc, PomDomVisitor visitor,NutsSession session) {
         List<PomDependency> deps = new ArrayList<>();
         List<PomDependency> depsMan = new ArrayList<>();
         List<PomRepository> repos = new ArrayList<>();
@@ -821,7 +865,7 @@ public class PomXmlParser {
                                         if (visitor != null) {
                                             visitor.visitStartDependencyManagement(dependency2);
                                         }
-                                        PomDependency dep = parseDependency(dependency2, props);
+                                        PomDependency dep = parseDependency(dependency2, new OsAndArch(props,session), session);
                                         if (visitor != null) {
                                             visitor.visitEndDependencyManagement(dependency2, dep);
                                         }
@@ -846,7 +890,7 @@ public class PomXmlParser {
                                 if (visitor != null) {
                                     visitor.visitStartDependency(dependency);
                                 }
-                                PomDependency dep = parseDependency(dependency, props);
+                                PomDependency dep = parseDependency(dependency, new OsAndArch(props,session), session);
                                 if (visitor != null) {
                                     visitor.visitEndDependency(dependency, dep);
                                 }
@@ -915,7 +959,7 @@ public class PomXmlParser {
                                 if (visitor != null) {
                                     visitor.visitStartProfile(profile);
                                 }
-                                PomProfile p = parseProfile(profile);
+                                PomProfile p = parseProfile(profile,session);
                                 if (visitor != null) {
                                     visitor.visitEndProfile(profile, p);
                                 }

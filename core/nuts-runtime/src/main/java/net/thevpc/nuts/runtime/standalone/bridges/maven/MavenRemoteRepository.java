@@ -140,7 +140,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
 //        LOG=workspace.log().of(MavenRemoteRepository.class);
 //    }
     protected MavenRemoteRepository(NutsAddRepositoryOptions options, NutsSession session, NutsRepository parentRepository, String repoType) {
-        super(options, session, parentRepository, SPEED_SLOW, false, repoType);
+        super(options, session, parentRepository, NutsSpeedQualifier.SLOW, false, repoType);
         LOG = session.log().of(MavenRemoteRepository.class);
         switch (repoType) {
             case "maven": {

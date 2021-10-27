@@ -817,6 +817,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
 
     public static class InstallInfoConfig extends NutsConfigItem {
 
+        private static final long serialVersionUID = 2;
         private NutsId id;
         private boolean installed;
         private boolean required;
@@ -976,8 +977,8 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
         }
 
         @Override
-        public int getDeployOrder(NutsSession session) {
-            return Integer.MAX_VALUE;
+        public int getDeployWeight(NutsSession session) {
+            return -1;
         }
 
         @Override
@@ -1016,8 +1017,8 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
         }
 
         @Override
-        public int getSpeed(NutsSession session) {
-            return 0;
+        public NutsSpeedQualifier getSpeed(NutsSession session) {
+            return NutsSpeedQualifier.UNAVAILABLE;
         }
 
         @Override

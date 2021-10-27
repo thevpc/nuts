@@ -48,7 +48,7 @@ public abstract class AbstractNutsRepositoryBase extends AbstractNutsRepository 
 
     private final NutsLogger LOG;
 
-    public AbstractNutsRepositoryBase(NutsAddRepositoryOptions options, NutsSession session, NutsRepository parentRepository, int speed, boolean supportedMirroring, String repositoryType) {
+    public AbstractNutsRepositoryBase(NutsAddRepositoryOptions options, NutsSession session, NutsRepository parentRepository, NutsSpeedQualifier speed, boolean supportedMirroring, String repositoryType) {
         this.initSession=session;
         LOG = session.log().of(AbstractNutsRepositoryBase.class);
         init(options, session, parentRepository, speed, supportedMirroring, repositoryType);
@@ -59,7 +59,7 @@ public abstract class AbstractNutsRepositoryBase extends AbstractNutsRepository 
         return nutsIndexStore;
     }
 
-    protected void init(NutsAddRepositoryOptions options, NutsSession initSession, NutsRepository parent, int speed, boolean supportedMirroring, String repositoryType) {
+    protected void init(NutsAddRepositoryOptions options, NutsSession initSession, NutsRepository parent, NutsSpeedQualifier speed, boolean supportedMirroring, String repositoryType) {
         NutsRepositoryConfig optionsConfig = options.getConfig();
 
         this.workspace = initSession.getWorkspace();

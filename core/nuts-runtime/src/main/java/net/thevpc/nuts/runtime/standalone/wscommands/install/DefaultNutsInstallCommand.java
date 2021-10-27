@@ -391,7 +391,9 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                 .setSession(session)
                 .forBoolean(mout.toString())
                 .setDefaultValue(true)
-                .setCancelMessage("installation cancelled : %s ", nonIgnored.stream().map(NutsId::getFullName).collect(Collectors.joining(", ")))
+                .setCancelMessage(
+                        NutsMessage.cstyle("installation cancelled : %s ", nonIgnored.stream().map(NutsId::getFullName).collect(Collectors.joining(", ")))
+                )
                 .getBooleanValue()) {
             throw new NutsUserCancelException(getSession(), NutsMessage.cstyle("installation cancelled: %s", nonIgnored.stream().map(NutsId::getFullName).collect(Collectors.joining(", "))));
         }

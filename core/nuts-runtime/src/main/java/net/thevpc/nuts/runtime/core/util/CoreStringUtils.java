@@ -560,4 +560,8 @@ public final class CoreStringUtils {
         }
         return sb.toString();
     }
+
+    public static String coalesce(String a, String b) {
+        return a==null?b:a;
+    }
 }

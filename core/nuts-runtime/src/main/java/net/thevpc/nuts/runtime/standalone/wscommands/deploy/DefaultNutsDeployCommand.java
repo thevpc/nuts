@@ -18,6 +18,8 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Comparator;
+import java.util.stream.Collectors;
 
 /**
  * local implementation
@@ -87,9 +89,9 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
 
     @Override
     public NutsDeployCommand run() {
+//        checkSession();
         checkSession();
-        checkSession();
-        NutsWorkspace ws = getSession().getWorkspace();
+//        NutsWorkspace ws = getSession().getWorkspace();
         if (getContent() != null || getDescriptor() != null || getSha1() != null || getDescSha1() != null) {
             runDeployFile();
         }
@@ -108,7 +110,21 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
             throw new NutsIllegalArgumentException(getSession(), NutsMessage.formatted("missing package to deploy"));
         }
         if (getSession().isTrace()) {
-            getSession().formats().object(result).println();
+            switch (getSession().getOutputFormat()){
+                case PLAIN:{
+                    for (Result nid : result) {
+                            getSession().getTerminal().out().resetLine().printf("%s deployed successfully as %s to %s%n",
+                                    nid.source,
+                                    nid.id,
+                                    session.text().ofStyled(nid.repository, NutsTextStyle.primary3())
+                            );
+                    }
+                    break;
+                }
+                default:{
+                    getSession().out().printlnf(result);
+                }
+            }
         }
         return this;
     }
@@ -204,19 +220,21 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                 NutsId effId = dws.resolveEffectiveId(descriptor, ws);
                 CorePlatformUtils.checkAcceptCondition(descriptor.getCondition(),false, ws);
                 if (NutsBlankable.isBlank(repository)) {
-                    NutsRepositoryFilter repositoryFilter = null;
-                    //TODO CHECK ME, why offline
-                    for (NutsRepository repo : wu.filterRepositoriesDeploy(effId, repositoryFilter)) {
+                    effId = session.config().createContentFaceId(effId.builder().setProperties("").build(), descriptor);
 
-                        effId = session.config().createContentFaceId(effId.builder().setProperties("").build(), descriptor) //                                    .setAlternative(NutsUtilStrings.trim(descriptor.getAlternative()))
-                        ;
+                    for (NutsRepository repo : wu.filterRepositoriesDeploy(effId, null)
+                            .stream()
+                            .filter(x->x.config().getDeployWeight()>0)
+                            .sorted(Comparator.comparingInt(x->x.config().getDeployWeight()))
+                            .collect(Collectors.toList())) {
+                        int deployOrder = repo.config().getDeployWeight();
                         NutsRepositorySPI repoSPI = wu.repoSPI(repo);
                         repoSPI.deploy()
                                 .setSession(ws)
                                 //.setFetchMode(NutsFetchMode.LOCAL)
                                 .setId(effId).setContent(contentFile).setDescriptor(descriptor)
                                 .run();
-                        addResult(effId);
+                        addResult(effId,repo.getName(),session.text().toText(content.getValue()));
                         return this;
                     }
                 } else {
@@ -225,19 +243,17 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                         throw new NutsRepositoryNotFoundException(getSession(), repository);
                     }
                     if (!repo.config().isEnabled()) {
-                        throw new NutsRepositoryNotFoundException(getSession(), "Repository " + repository + " is disabled.");
+                        throw new NutsRepositoryDisabledException(getSession(), repository);
                     }
-                    effId = session.config().createContentFaceId(effId.builder().setProperties("").build(), descriptor) //                                .setAlternative(NutsUtilStrings.trim(descriptor.getAlternative()))
-                    ;
+                    effId = session.config().createContentFaceId(effId.builder().setProperties("").build(), descriptor);
                     NutsRepositorySPI repoSPI = wu.repoSPI(repo);
                     repoSPI.deploy()
                             .setSession(ws)
-                            //.setFetchMode(NutsFetchMode.LOCAL)
                             .setId(effId)
                             .setContent(contentFile)
                             .setDescriptor(descriptor)
                             .run();
-                    addResult(effId);
+                    addResult(effId,repo.getName(),session.text().toText(content.getValue()));
                     return this;
                 }
                 throw new NutsRepositoryNotFoundException(getSession(), repository);

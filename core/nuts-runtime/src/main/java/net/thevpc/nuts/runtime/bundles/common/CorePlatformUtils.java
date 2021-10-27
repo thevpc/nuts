@@ -619,9 +619,17 @@ public class CorePlatformUtils {
         }
 
     }
+    public static String getPackageName(String cn){
+        int i = cn.lastIndexOf('.');
+        if (i >= 0) {
+            return cn.substring(0, i);
+        }
+        return "";
+    }
     public static String getSimpleClassName(String cn){
-        if (cn.indexOf('.') > 0) {
-            return cn.substring(cn.lastIndexOf('.') + 1);
+        int i = cn.lastIndexOf('.');
+        if (i>=0) {
+            return cn.substring(i + 1);
         }
         return cn;
     }

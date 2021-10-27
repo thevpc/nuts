@@ -459,7 +459,7 @@ public class NutsRepositorySelector {
             case "local": {
                 return new NutsAddRepositoryOptions()
                         .setName(NutsConstants.Names.DEFAULT_REPOSITORY_NAME)
-                        .setDeployOrder(10)
+                        .setDeployWeight(10)
                         .setFailSafe(false)
                         .setCreate(true)
                         .setConfig(
@@ -470,7 +470,7 @@ public class NutsRepositorySelector {
             }
             case "system": {
                 return new NutsAddRepositoryOptions()
-                        .setDeployOrder(100)
+                        .setDeployWeight(100)
                         .setName("system")
                         //                        .setLocation(
                         //                                CoreIOUtils.getNativePath(
